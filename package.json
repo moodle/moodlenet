@@ -1,0 +1,48 @@
+{
+  "name": "@moodlenet/backend",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "AGPL",
+  "description": "MoodleNet Backend Services",
+  "author": "https://github.com/aleclofabbro",
+  "dependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/runtime": "^7.12.1",
+    "@types/express": "^4.17.8",
+    "@types/graphql": "^14.5.0",
+    "@types/mailgun-js": "^0.22.11",
+    "@types/mongodb": "^3.5.27",
+    "@types/node": "^14.11.1",
+    "apollo-server": "^2.18.1",
+    "apollo-server-express": "^2.18.1",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "dotenv-expand": "^5.1.0",
+    "express": "^4.17.1",
+    "graphql": "^15.3.0",
+    "mailgun-js": "^0.22.0",
+    "mongodb": "^3.6.2",
+    "typescript": "^4.0.3",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-typescript": "^7.12.1",
+    "@babel/register": "^7.12.1",
+    "@graphql-codegen/cli": "1.17.10",
+    "@graphql-codegen/introspection": "^1.17.10",
+    "@graphql-codegen/typescript": "1.17.10",
+    "@graphql-codegen/typescript-resolvers": "1.17.10",
+    "@types/faker": "^5.1.2",
+    "faker": "^5.1.0",
+    "tsconfig-paths": "^3.9.0"
+  },
+  "scripts": {
+    "codegen": "graphql-codegen --config graphql/codegen.yml",
+    "start": "node index.js",
+    "build": "babel src --out-dir js --copy-files --extensions '.ts'",
+    "startmon": "nodemon  -w js -w js/ -w graphql/schema.graphql js/index.js",
+    "startmoninspect": "nodemon --inspect  -w js -w js/ -w graphql/schema.graphql js/index.js"
+  }
+}
