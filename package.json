@@ -42,7 +42,8 @@
     "codegen": "graphql-codegen --config graphql/codegen.yml",
     "start": "node index.js",
     "build": "babel src --out-dir js --copy-files --extensions '.ts'",
-    "startmon": "nodemon  -w js -w js/ -w graphql/schema.graphql js/index.js",
-    "startmoninspect": "nodemon --inspect  -w js -w js/ -w graphql/schema.graphql js/index.js"
+    "buildw": "babel src -w --out-dir js --copy-files --extensions '.ts'",
+    "startmon": "nodemon  -w js -w js/ -w graphql/schema.graphql .",
+    "startmoninspect": "nodemon --inspect  -w js -w js/ -w graphql/schema.graphql ."
   }
 }

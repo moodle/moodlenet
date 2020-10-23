@@ -9,14 +9,15 @@ const _id = () => Math.random().toString(36).substring(2)
 type Opts = { logger?(_: IdentifiedDomainEvent<any, any>): unknown }
 type Cfg = { apiTimeout?: number }
 
+const apiReqEvtName = (_: { domain: Domain['name']; apiName: keyof any }) =>
+  `${_.domain}#${String(_.apiName)}`
+const apiResEvtName = (_: { domain: Domain['name']; id: EventId; apiName: keyof any }) =>
+  `${_.domain}#${String(_.apiName)}#${_.id}`
+const apiReqUnsub = (_: { domain: Domain['name']; id: EventId; apiName: keyof any }) =>
+  `UNSUB:${_.domain}#${String(_.apiName)}#${_.id}`
+
 export const make = ({}: Cfg, { logger = () => {} }: Opts) => {
   const emitter = new EventEmitter()
-  const apiReqEvtName = (_: { domain: Domain['name']; apiName: keyof any }) =>
-    `${_.domain}#${String(_.apiName)}`
-  const apiResEvtName = (_: { domain: Domain['name']; id: EventId; apiName: keyof any }) =>
-    `${_.domain}#${String(_.apiName)}#${_.id}`
-  const apiReqUnsub = (_: { domain: Domain['name']; id: EventId; apiName: keyof any }) =>
-    `UNSUB:${_.domain}#${String(_.apiName)}#${_.id}`
 
   const subAll = (handler: (event: IdentifiedDomainEvent<any, any>) => unknown) => {
     emitter.addListener(DEF_EVT_NAME, handler)
@@ -76,11 +77,21 @@ export const make = ({}: Cfg, { logger = () => {} }: Opts) => {
       responseHandler({ res: evt.arg, id })
     }
     emitter.addListener(resEvtName, filteredResponseHandler)
+
+    const apiReqUnsubEvtName = apiReqUnsub({ apiName, domain, id })
+
+    emitter.addListener(apiReqUnsubEvtName, function apiReqUnsubEvtHandler() {
+      unsubApiRes()
+      emitter.removeListener(apiReqUnsubEvtName, apiReqUnsubEvtHandler)
+    })
+
     const unsubApiRes = () => {
-      emitter.emit(apiReqUnsub({ apiName, domain, id }))
+      l('--- unsubApiRes', { apiName, domain, id })
       emitter.removeListener(resEvtName, filteredResponseHandler)
     }
-    return unsubApiRes
+    return () => {
+      emitter.emit(apiReqUnsubEvtName)
+    }
   }
 
   const subApiReq: MsgTransport<Domain>['subApiReq'] = ({ domain, apiName, requestHandler }) => {
@@ -92,11 +103,18 @@ export const make = ({}: Cfg, { logger = () => {} }: Opts) => {
       }
       const requestUnsubHandler = requestHandler({ req: arg, id })
       const apiReqUnsubEvtName = apiReqUnsub({ apiName, domain, id })
-      emitter.addListener(apiReqUnsubEvtName, requestUnsubHandler)
+      emitter.addListener(apiReqUnsubEvtName, function apiReqUnsubEvtHandler() {
+        l('---- unsubApiReq', { apiName, domain, id })
+        requestUnsubHandler()
+        emitter.removeListener(apiReqUnsubEvtName, apiReqUnsubEvtHandler)
+      })
     }
     emitter.addListener(reqEvtName, filteredRequestHandler)
-    const unsubApiReq = () => emitter.removeListener(reqEvtName, filteredRequestHandler)
-    return unsubApiReq
+    const unsubDomainApiReq = () => {
+      l('----*** unsub Domain ApiReq', { apiName, domain })
+      emitter.removeListener(reqEvtName, filteredRequestHandler)
+    }
+    return unsubDomainApiReq
   }
 
   const transport: MsgTransport<any> /* & { emitter: EventEmitter } */ = {
@@ -109,22 +127,33 @@ export const make = ({}: Cfg, { logger = () => {} }: Opts) => {
     // emitter,
   }
 
-  return transport
+  return { transport, emitter }
 }
 
 export const bindApis = <D extends Domain>(
   domain: DomainName<D>,
   apis: DomainApiMap<D>,
-  msgT: MsgTransport<D>
+  msgT: MsgTransport<D>,
+  emitter: EventEmitter
 ) =>
   Object.entries(apis).forEach(([apiName, fun]) => {
     msgT.subApiReq({
       domain,
       apiName,
       requestHandler: ({ req, id }) => {
-        const push: ApiPushFn<Domain, string> = (res) => msgT.apiRes({ apiName, res, domain, id })
-        const unsub = fun({ id, req, push })
-        return unsub
+        const apiReqUnsubEvtName = apiReqUnsub({ apiName, domain, id })
+        const push: ApiPushFn<Domain, string> = (pushRes) => {
+          const isLast = pushRes === null || pushRes.end
+          if (pushRes?.res) {
+            msgT.apiRes({ apiName, res: pushRes.res, domain, id })
+          }
+          if (isLast) {
+            //unsubApiReq()
+            emitter.emit(apiReqUnsubEvtName)
+          }
+        }
+        const unsubApiReq = fun({ id, req, push })
+        return unsubApiReq
       },
     })
   })
@@ -134,3 +163,5 @@ type ApiEvt = {
   id: string
   arg: any
 }
+
+const l = (...args: any[]) => console.log(...args, '\n')
