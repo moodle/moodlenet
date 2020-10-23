@@ -11,11 +11,14 @@ export type Cfg = {
 }
 
 export const makeEmailDomain = ({ workers, trnsp }: Cfg): DomainApiMap<EmailDomain> => {
-  const sendEmail: DomainApiMap<EmailDomain>['sendEmail'] = (req) =>
+  const sendEmail: DomainApiMap<EmailDomain>['sendEmail'] = ({ req, id, push }) => {
     workers.sendEmail(req).then((res) => {
-      trnsp.pub({ type: 'sendEmail', payload: { req: req, res: res } })
-      return res
+      trnsp.pub({ type: 'sendEmail', payload: { req, res, id } })
+      push({ res, end: true })
     })
+    const unsub = () => {}
+    return unsub
+  }
 
   return {
     sendEmail,

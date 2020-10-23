@@ -16,7 +16,6 @@ export const domainTransport = <D extends Domain>({
     })
 
   const sub: DomainTransport<D>['sub'] = (_) => msgT.sub({ ..._, domain })
-  const api: DomainTransport<D>['api'] = (_) => msgT.api({ ..._, domain })
   const apiReq: DomainTransport<D>['apiReq'] = (_) => msgT.apiReq({ ..._, domain })
   const apiRes: DomainTransport<D>['apiRes'] = (_) => msgT.apiRes({ ..._, domain })
   const subApiReq: DomainTransport<D>['subApiReq'] = (_) => msgT.subApiReq({ ..._, domain })
@@ -25,7 +24,6 @@ export const domainTransport = <D extends Domain>({
   return {
     pub,
     sub,
-    api,
     apiReq,
     apiRes,
     subApiReq,

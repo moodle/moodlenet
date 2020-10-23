@@ -30,20 +30,21 @@ export interface MsgTransport<D extends Domain> {
   sub<Type extends keyof DomainEvtMap<D>>(_: {
     domain: DomainName<D>
     type: Type
-    handler: (evt: IdentifiedDomainEvent<D, Type>) => unknown
+    eventHandler: (evt: IdentifiedDomainEvent<D, Type>) => unknown
   }): DomainUnsub
-
-  api<ApiName extends keyof DomainApiMap<D>>(_: {
-    domain: DomainName<D>
-    apiName: ApiName
-    req: ApiReq<D, ApiName>
-  }): ApiRes<D, ApiName>
 
   apiReq<ApiName extends keyof DomainApiMap<D>>(_: {
     domain: DomainName<D>
     apiName: ApiName
     req: ApiReq<D, ApiName>
   }): EventId
+
+  subApiRes<ApiName extends keyof DomainApiMap<D>>(_: {
+    domain: DomainName<D>
+    apiName: ApiName
+    id: EventId
+    responseHandler: (_: null | { res: ApiRes<D, ApiName>; id: EventId }) => unknown
+  }): DomainUnsub
 
   apiRes<ApiName extends keyof DomainApiMap<D>>(_: {
     domain: DomainName<D>
@@ -55,14 +56,7 @@ export interface MsgTransport<D extends Domain> {
   subApiReq<ApiName extends keyof DomainApiMap<D>>(_: {
     domain: DomainName<D>
     apiName: ApiName
-    handler: (req: ApiReq<D, ApiName>, id: EventId) => unknown
-  }): DomainUnsub
-
-  subApiRes<ApiName extends keyof DomainApiMap<D>>(_: {
-    domain: DomainName<D>
-    apiName: ApiName
-    id: EventId
-    handler: (res: ApiRes<D, ApiName>, id: EventId) => unknown
+    requestHandler: (_: { req: ApiReq<D, ApiName>; id: EventId }) => DomainUnsub
   }): DomainUnsub
 }
 
@@ -73,18 +67,19 @@ export interface DomainTransport<D extends Domain> {
 
   sub<Type extends keyof DomainEvtMap<D>>(_: {
     type: Type
-    handler: (evt: IdentifiedDomainEvent<D, Type>) => unknown
+    eventHandler: (evt: IdentifiedDomainEvent<D, Type>) => unknown
   }): DomainUnsub
-
-  api<ApiName extends keyof DomainApiMap<D>>(_: {
-    apiName: ApiName
-    req: ApiReq<D, ApiName>
-  }): ApiRes<D, ApiName>
 
   apiReq<ApiName extends keyof DomainApiMap<D>>(_: {
     apiName: ApiName
     req: ApiReq<D, ApiName>
   }): EventId
+
+  subApiRes<ApiName extends keyof DomainApiMap<D>>(_: {
+    apiName: ApiName
+    id: EventId
+    responseHandler: (_: null | { res: ApiRes<D, ApiName>; id: EventId }) => unknown
+  }): DomainUnsub
 
   apiRes<ApiName extends keyof DomainApiMap<D>>(_: {
     apiName: ApiName
@@ -94,12 +89,6 @@ export interface DomainTransport<D extends Domain> {
 
   subApiReq<ApiName extends keyof DomainApiMap<D>>(_: {
     apiName: ApiName
-    handler: (req: ApiReq<D, ApiName>, id: EventId) => unknown
-  }): DomainUnsub
-
-  subApiRes<ApiName extends keyof DomainApiMap<D>>(_: {
-    apiName: ApiName
-    id: EventId
-    handler: (res: ApiRes<D, ApiName>, id: EventId) => unknown
+    requestHandler: (_: { req: ApiReq<D, ApiName>; id: EventId }) => DomainUnsub
   }): DomainUnsub
 }

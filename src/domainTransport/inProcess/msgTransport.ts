@@ -1,8 +1,7 @@
-import { Domain, DomainApiMap } from '@mn-be/domain/DomainTypes'
+import { ApiPushFn, Domain, DomainApiMap, DomainName } from '@mn-be/domain/DomainTypes'
 import { EventEmitter } from 'events'
-import { IdentifiedDomainEvent, MsgTransport, EventId } from '../DomainTransportTypes'
+import { EventId, IdentifiedDomainEvent, MsgTransport } from '../DomainTransportTypes'
 
-const DEF_API_TO = 5000
 const DEF_EVT_NAME = '*'
 
 const _id = () => Math.random().toString(36).substring(2)
@@ -10,16 +9,19 @@ const _id = () => Math.random().toString(36).substring(2)
 type Opts = { logger?(_: IdentifiedDomainEvent<any, any>): unknown }
 type Cfg = { apiTimeout?: number }
 
-export const make = ({ apiTimeout = DEF_API_TO }: Cfg, { logger = () => {} }: Opts) => {
+export const make = ({}: Cfg, { logger = () => {} }: Opts) => {
   const emitter = new EventEmitter()
   const apiReqEvtName = (_: { domain: Domain['name']; apiName: keyof any }) =>
     `${_.domain}#${String(_.apiName)}`
   const apiResEvtName = (_: { domain: Domain['name']; id: EventId; apiName: keyof any }) =>
     `${_.domain}#${String(_.apiName)}#${_.id}`
+  const apiReqUnsub = (_: { domain: Domain['name']; id: EventId; apiName: keyof any }) =>
+    `UNSUB:${_.domain}#${String(_.apiName)}#${_.id}`
 
   const subAll = (handler: (event: IdentifiedDomainEvent<any, any>) => unknown) => {
     emitter.addListener(DEF_EVT_NAME, handler)
-    return () => emitter.removeListener(DEF_EVT_NAME, handler)
+    const unsubAll = () => emitter.removeListener(DEF_EVT_NAME, handler)
+    return unsubAll
   }
 
   const pub: MsgTransport<Domain>['pub'] = (event) => {
@@ -34,38 +36,16 @@ export const make = ({ apiTimeout = DEF_API_TO }: Cfg, { logger = () => {} }: Op
     return idEvent
   }
 
-  const sub: MsgTransport<Domain>['sub'] = ({ domain, type, handler }) => {
-    const filterHandler = (_: IdentifiedDomainEvent<any, any>) => {
+  const sub: MsgTransport<Domain>['sub'] = ({ domain, type, eventHandler }) => {
+    const filterEventHandler = (_: IdentifiedDomainEvent<any, any>) => {
       if (_.domain !== domain || _.type !== type) {
         return
       }
-      handler(_)
+      eventHandler(_)
     }
-    return subAll(filterHandler)
+    return subAll(filterEventHandler)
   }
 
-  const api: MsgTransport<Domain>['api'] = ({ domain, apiName, req }) =>
-    new Promise((resolve, reject) => {
-      const id = apiReq({ domain, apiName, req })
-      const unsub = subApiRes({ apiName, domain, id, handler: resolve })
-      setTimeout(() => {
-        unsub()
-        reject('timeout')
-      }, apiTimeout)
-    })
-  const subApiReq: MsgTransport<Domain>['subApiReq'] = ({ domain, apiName, handler }) => {
-    const reqEvtName = apiReqEvtName({ domain, apiName })
-
-    const requestHandler = (evt: ApiEvt) => {
-      if (!evt.isReq) {
-        return
-      }
-      handler(evt.arg, evt.id)
-    }
-    emitter.addListener(reqEvtName, requestHandler)
-    const unsub = () => emitter.removeListener(reqEvtName, requestHandler)
-    return unsub
-  }
   const apiReq: MsgTransport<Domain>['apiReq'] = ({ domain, apiName, req }) => {
     const id = _id()
     const reqEvtName = apiReqEvtName({ domain, apiName })
@@ -73,30 +53,55 @@ export const make = ({ apiTimeout = DEF_API_TO }: Cfg, { logger = () => {} }: Op
     emitter.emit(reqEvtName, reqEvt)
     return id
   }
+
   const apiRes: MsgTransport<Domain>['apiRes'] = ({ domain, apiName, id, res }) => {
     const resEvtName = apiResEvtName({ domain, id, apiName })
 
     const reqEvt: ApiEvt = { id, arg: res, isReq: false }
     emitter.emit(resEvtName, reqEvt)
   }
-  const subApiRes: MsgTransport<Domain>['subApiRes'] = ({ domain, apiName, id, handler }) => {
+
+  const subApiRes: MsgTransport<Domain>['subApiRes'] = ({
+    domain,
+    apiName,
+    id,
+    responseHandler,
+  }) => {
     const resEvtName = apiResEvtName({ domain, id, apiName })
 
-    const responseHandler = (evt: ApiEvt) => {
+    const filteredResponseHandler = (evt: ApiEvt) => {
       if (evt.isReq || evt.id !== id) {
         return
       }
-      handler(evt.arg, id)
+      responseHandler({ res: evt.arg, id })
     }
-    emitter.addListener(resEvtName, responseHandler)
-    const unsub = () => emitter.removeListener(resEvtName, responseHandler)
-    return unsub
+    emitter.addListener(resEvtName, filteredResponseHandler)
+    const unsubApiRes = () => {
+      emitter.emit(apiReqUnsub({ apiName, domain, id }))
+      emitter.removeListener(resEvtName, filteredResponseHandler)
+    }
+    return unsubApiRes
+  }
+
+  const subApiReq: MsgTransport<Domain>['subApiReq'] = ({ domain, apiName, requestHandler }) => {
+    const reqEvtName = apiReqEvtName({ domain, apiName })
+
+    const filteredRequestHandler = ({ arg, id, isReq }: ApiEvt) => {
+      if (!isReq) {
+        return
+      }
+      const requestUnsubHandler = requestHandler({ req: arg, id })
+      const apiReqUnsubEvtName = apiReqUnsub({ apiName, domain, id })
+      emitter.addListener(apiReqUnsubEvtName, requestUnsubHandler)
+    }
+    emitter.addListener(reqEvtName, filteredRequestHandler)
+    const unsubApiReq = () => emitter.removeListener(reqEvtName, filteredRequestHandler)
+    return unsubApiReq
   }
 
   const transport: MsgTransport<any> /* & { emitter: EventEmitter } */ = {
     pub,
     sub,
-    api,
     apiReq,
     apiRes,
     subApiReq,
@@ -108,7 +113,7 @@ export const make = ({ apiTimeout = DEF_API_TO }: Cfg, { logger = () => {} }: Op
 }
 
 export const bindApis = <D extends Domain>(
-  domain: D['name'],
+  domain: DomainName<D>,
   apis: DomainApiMap<D>,
   msgT: MsgTransport<D>
 ) =>
@@ -116,9 +121,10 @@ export const bindApis = <D extends Domain>(
     msgT.subApiReq({
       domain,
       apiName,
-      handler: async (arg, id) => {
-        const res = await fun(arg)
-        msgT.apiRes({ apiName, res, domain, id })
+      requestHandler: ({ req, id }) => {
+        const push: ApiPushFn<Domain, string> = (res) => msgT.apiRes({ apiName, res, domain, id })
+        const unsub = fun({ id, req, push })
+        return unsub
       },
     })
   })
