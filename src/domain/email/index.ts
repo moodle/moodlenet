@@ -1,9 +1,9 @@
-import { DomainTransport } from '@mn-be/domainTransport/types'
-import { DomainApiMap } from '../types'
-import { EmailDomain, SendEmailReq } from './types'
+import { DomainTransport } from '@mn-be/domainTransport/DomainTransportTypes'
+import { DomainApiMap } from '../DomainTypes'
+import { EmailDomain, SendEmailOutcome, SendEmailReq } from './EmailDomainTypes'
 
 export type Workers = {
-  sendEmail(emailDesc: SendEmailReq): Promise<{ id: string } | { error: string }>
+  sendEmail(emailDesc: SendEmailReq): Promise<SendEmailOutcome>
 }
 export type Cfg = {
   trnsp: DomainTransport<EmailDomain>
@@ -11,10 +11,10 @@ export type Cfg = {
 }
 
 export const makeEmailDomain = ({ workers, trnsp }: Cfg): DomainApiMap<EmailDomain> => {
-  const sendEmail: DomainApiMap<EmailDomain>['sendEmail'] = async (request) =>
-    workers.sendEmail(request).then((response) => {
-      trnsp.pub('sendEmail', { request, response })
-      return response
+  const sendEmail: DomainApiMap<EmailDomain>['sendEmail'] = (req) =>
+    workers.sendEmail(req).then((res) => {
+      trnsp.pub({ type: 'sendEmail', payload: { req: req, res: res } })
+      return res
     })
 
   return {

@@ -1,4 +1,4 @@
-import { Domain } from '../types'
+import { Domain } from '../DomainTypes'
 
 export type EmailId = any
 
@@ -20,7 +20,7 @@ export type SendEmailError = {
 }
 
 export type EmailApis = {
-  sendEmail(req: SendEmailReq): SendEmailOutcome
+  sendEmail: [SendEmailReq, SendEmailOutcome]
 }
 
 export type EmailDomain = Domain<'Email', EmailEvents, EmailApis>
