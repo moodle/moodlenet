@@ -12,6 +12,7 @@ export const makeWorkers = ({ mailgunCfg }: Cfg, {}: Opts): Workers => {
     mailgun
       .messages()
       .send(req)
+      .then((resp) => ({ id: resp.id }))
       .catch((err) => {
         return {
           error: String(err),

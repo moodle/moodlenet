@@ -1,4 +1,5 @@
-import { Domain } from '@mn-be/domain/DomainTypes'
+import { ApiReq, ApiRes, Domain, DomainApiMap } from '@mn-be/domain/DomainTypes'
+import { EventId } from '.'
 import { DomainTransport, MsgTransport } from './DomainTransportTypes'
 
 export const domainTransport = <D extends Domain>({
@@ -21,7 +22,31 @@ export const domainTransport = <D extends Domain>({
   const subApiReq: DomainTransport<D>['subApiReq'] = (_) => msgT.subApiReq({ ..._, domain })
   const subApiRes: DomainTransport<D>['subApiRes'] = (_) => msgT.subApiRes({ ..._, domain })
 
+  const callApi: DomainTransport<D>['callApi'] = <ApiName extends keyof DomainApiMap<D>>({
+    apiName,
+    req,
+    responseHandler,
+  }: {
+    apiName: ApiName
+    req: ApiReq<D, ApiName>
+    responseHandler: (_: null | { res: ApiRes<D, ApiName>; id: EventId }) => unknown
+  }) => {
+    const id = msgT.apiReq({
+      domain,
+      apiName,
+      req,
+    })
+    const unsub = msgT.subApiRes({
+      domain,
+      apiName,
+      id,
+      responseHandler,
+    })
+    return [unsub, id]
+  }
+
   return {
+    callApi,
     pub,
     sub,
     apiReq,

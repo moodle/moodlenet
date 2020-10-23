@@ -6,10 +6,16 @@ export type EmailEvents = {}
 
 export type SendEmailReq = {
   to: string[]
+  from: string
   subject: string
-  text: string
-  html: string
-}
+} & (
+  | {
+      text: string
+    }
+  | {
+      html: string
+    }
+)
 
 export type SendEmailOutcome = EmailSentResult | SendEmailError
 export type EmailSentResult = {

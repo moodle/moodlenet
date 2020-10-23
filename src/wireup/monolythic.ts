@@ -1,6 +1,6 @@
 import { makeEmailDomain } from '@mn-be/domain/email'
-import { makeWorkers } from '@mn-be/domain/email/mock'
-// import { makeWorkers } from '@mn-be/domain/email/mailgun'
+// import { makeWorkers } from '@mn-be/domain/email/mock'
+import { makeWorkers } from '@mn-be/domain/email/mailgun'
 import { EmailDomain } from '@mn-be/domain/email/EmailDomainTypes'
 import { domainTransport, inProcess } from '@mn-be/domainTransport'
 import { bindApis } from '@mn-be/domainTransport/inProcess'
@@ -9,7 +9,15 @@ import { TestDomain } from '@mn-be/domain/_test/TestDomainTypes'
 
 export const { transport, emitter } = inProcess.make({}, { logger: console.log })
 
-export const emailDomainWorkers = makeWorkers({ mailgunCfg: { apiKey: '', domain: '' } }, {})
+export const emailDomainWorkers = makeWorkers(
+  {
+    mailgunCfg: {
+      apiKey: 'key-fef7986b0ee2452f1a86293a0589f877',
+      domain: 'sandboxe9cad373d8594e63be8dbdc016c3f3e6.mailgun.org',
+    },
+  },
+  {}
+)
 export const emailDomainTransport = domainTransport<EmailDomain>({
   domain: 'Email',
   msgT: transport,

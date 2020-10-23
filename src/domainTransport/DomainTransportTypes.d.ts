@@ -91,4 +91,11 @@ export interface DomainTransport<D extends Domain> {
     apiName: ApiName
     requestHandler: (_: { req: ApiReq<D, ApiName>; id: EventId }) => DomainUnsub
   }): DomainUnsub
+
+  callApi(
+    _: Omit<
+      Parameters<DomainTransport<D>['apiReq']>[0] & Parameters<DomainTransport<D>['subApiRes']>[0],
+      'id'
+    >
+  ): [DomainUnsub, EventId]
 }
