@@ -1,0 +1,6 @@
+{
+"extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./js" /* Redirect output structure to the directory. */,
+  }
+}
