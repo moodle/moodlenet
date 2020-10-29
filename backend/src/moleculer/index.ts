@@ -1,18 +1,26 @@
-import {
-  ActionSchema,
-  CallingOptions,
-  Context,
-  Service as MService,
-  ServiceBroker,
-} from 'moleculer'
+import { ActionSchema, CallingOptions, Context, ServiceBroker, ServiceSchema } from 'moleculer'
 
 export type Service<
   Name extends string = string,
   ActSignMap extends ActionsSignMap = ActionsSignMap
-> = Omit<MService, 'actions'> & {
+> = PickedServiceSchema & {
   name: Name
   actions: ActionsMap<ActSignMap>
 }
+export type PickedServiceSchema = Pick<
+  ServiceSchema,
+  | 'version'
+  | 'settings'
+  | 'dependencies'
+  | 'metadata'
+  | 'mixins'
+  | 'methods'
+  | 'hooks'
+  | 'events' // strip later
+  | 'created'
+  | 'started'
+  | 'stopped'
+>
 /**
  * Actions
  */
