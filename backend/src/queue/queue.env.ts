@@ -1,5 +1,5 @@
 import Redis, { RedisOptions } from 'ioredis'
-import Yup from 'yup'
+import * as Yup from 'yup'
 
 type RedisOptsEnv = Pick<RedisOptions, 'host' | 'port' | 'password' | 'db'>
 
@@ -16,7 +16,7 @@ const Validator = Yup.object<QueueEnv>({
   redisOpts: Yup.object<RedisOptsEnv>({
     host: Yup.string().default('localhost'),
     db: Yup.number().default(0),
-    password: Yup.string().required(),
+    password: Yup.string().default(''),
     port: Yup.number().default(6379),
   }).required(),
 })

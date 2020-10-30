@@ -71,16 +71,16 @@ export type VerifyEmailReq = {
   expirationTime: number
 }
 
-export type VerifyEmailResult = {
-  verifyToken: string
-}
-
-/**
- * VerifyTimeoutEmailJob
- */
-export type VerifyTimeoutEmailReq = {
+export type VerifyEmailStarted = {
   email: string
   token: string
 }
-
-export type VerifyTimeoutEmailResult = unknown
+export type VerifyEmailTokenExpired = {
+  email: string
+  tokenExpired: true
+}
+export type VerifyEmailVerified = {
+  email: string
+  verified: true
+}
+export type VerifyEmailProgress = VerifyEmailStarted | VerifyEmailTokenExpired | VerifyEmailVerified

@@ -1,4 +1,4 @@
-import Yup from 'yup'
+import * as Yup from 'yup'
 type Env = {
   apiKey: string
   domain: string
@@ -9,7 +9,7 @@ const MAILGUN_DOMAIN = process.env.EMAIL_MAILGUN_DOMAIN
 
 const Validator = Yup.object<Env>({
   apiKey: Yup.string().required(),
-  domain: Yup.string().url().required(),
+  domain: Yup.string().required(),
 })
 
 const env = Validator.validateSync({

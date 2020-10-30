@@ -1,4 +1,4 @@
-import Yup from 'yup'
+import * as Yup from 'yup'
 
 export interface Env {
   mongoUrl: string
@@ -7,7 +7,7 @@ export interface Env {
 const DB_URL = process.env.EMAIL_DB_URL // Mongodb URL for Email Services
 
 const Validator = Yup.object<Env>({
-  mongoUrl: Yup.string().url().required(),
+  mongoUrl: Yup.string().default('localhost/email').required(),
 })
 
 const env = Validator.validateSync({

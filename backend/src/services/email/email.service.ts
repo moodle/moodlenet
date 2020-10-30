@@ -1,8 +1,8 @@
 import {
-  enqueVerifyTimeoutEmail,
+  enqueVerifyEmailTokenExpired,
   makeSendEmailWorker,
   makeVerifyEmailWorker,
-  makeVerifyTimeoutEmailWorker,
+  makeVerifyEmailTokenExpiredWorker,
 } from './email.queues'
 import { persistence, sender } from './email.service.env'
 import { uuid } from './helpers'
@@ -24,13 +24,17 @@ const emailService: EmailService = {
       return sendRes
     })
 
-    makeVerifyTimeoutEmailWorker(async (job) => {
-      return persistence.deleteVerifyingEmail({
+    makeVerifyEmailTokenExpiredWorker(async (job) => {
+      await persistence.deleteVerifyingEmail({
         ...job.data,
       })
+      return {
+        verified: true,
+        email: job.data.email,
+      }
     })
 
-    makeVerifyEmailWorker(async (job) => {
+    makeVerifyEmailWorker(async (job, forward) => {
       const token = uuid()
       const mailObj = {
         ...job.data.mailObj,
@@ -55,17 +59,19 @@ const emailService: EmailService = {
         }),
       ])
 
-      enqueVerifyTimeoutEmail(
+      forward(
+        enqueVerifyEmailTokenExpired,
+        job,
         `Email Verification Timeout:${email}[${job.id}]`,
         { email, token },
         {
           delay: expirationTime,
-          linkTo: job,
         }
       )
 
       return {
-        verifyToken: token,
+        token: token,
+        email,
       }
     })
   },
