@@ -78,9 +78,4 @@ const emailService: EmailService = {
 
 const replaceVerifyEmailLinkPlaceholder = (body: string | undefined, token: string) =>
   body?.replace(/\$\{VERIFY_EMAIL_TOKEN\}/g, token)
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> backend/feature/replace_bullmq_with_amqp
 module.exports = emailService

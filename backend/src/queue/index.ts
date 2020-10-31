@@ -53,18 +53,6 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
     { addToQueueGuard, defaultJobOpts, qOpts }: AssertServiceQueueOpts<JobParams> = {}
   ) => {
     const fullQName = `${srvName}.${qName}`
-<<<<<<< HEAD
-    // TODO: create Queue on demand ()=>{}
-    const q = new Queue<JobParams>(fullQName, {
-      ...DEFAULT_QUEUE_OPTS,
-      ...qOpts,
-    })
-
-    const addToQueue: QueueAdder<JobParams, JobProgress> = (_jobName, _jobData, _jobOpts) => {
-      const [jobName, jobDdata, jobOpts] = addToQueueGuard
-        ? addToQueueGuard(_jobName, _jobData, _jobOpts)
-        : [_jobName, _jobData, _jobOpts]
-=======
     const srvDelayedQName = `${srvName}:${SERVICE_DELAY_Q_PREFIX}`
     const ch_Q = (() => {
       // on demand asserrts Queue and returns it with channel
@@ -86,9 +74,7 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
         ...BASE_ASSERT_Q_OPTS(),
         deadLetterRoutingKey: fullQName,
         deadLetterExchange: '',
-        //        'x-message-ttl': 2 ^ 40,
       })
->>>>>>> backend/feature/replace_bullmq_with_amqp
 
     const addToQueue: QueueAdder<JobParams> = async (_jobData, _jobOpts) => {
       const [jobDdata, jobOpts] = addToQueueGuard
@@ -135,29 +121,6 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
       msg: MNQJsonMessage<JobParams>,
       progress: typeof progressJob,
       forward: typeof forwardJob
-<<<<<<< HEAD
-    ) => Promise<JobProgress>
-
-    const makeWorker = (handler: WorkerHandler, mkWopts?: WorkerOptions) => {
-      return new Worker(fullQName, wrappedHandler, {
-        ...DEFAULT_WORKER_OPTS,
-        ...mkWopts,
-      })
-
-      async function wrappedHandler(job: ExtendedJob<JobParams, JobProgress>) {
-        const resultP = handler(job, forwardJob)
-        resultP.then((result) => {
-          const progressQueueName = jobProgressQName(job)
-          if (progressQueueName === undefined) {
-            return
-          }
-
-          const progressQueue = new Queue(progressQueueName)
-          progressQueue.add(job.name, result)
-        })
-        return resultP
-      }
-=======
     ) => Promise<any>
 
     const makeWorker = async (handler: WorkerHandler, mkWConsuleopts?: MNQConsumeOpts) => {
@@ -180,7 +143,6 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
           ...mkWConsuleopts,
         }
       )
->>>>>>> backend/feature/replace_bullmq_with_amqp
     }
 
     return [addToQueue, makeWorker] as const
