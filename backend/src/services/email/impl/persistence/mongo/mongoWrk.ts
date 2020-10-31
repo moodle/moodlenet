@@ -2,23 +2,25 @@ import env from './mongo.env'
 import { MongoClient } from 'mongodb'
 import { EmailPersistenceImpl, StoreSentEmailData, StoreSentVerifyEmailData } from '../../../types'
 
-const db = await (await new MongoClient(env.mongoUrl)).db()
-const sentEmailCollection = db.collection<StoreSentEmailData>('sent')
-const veifyEmailCollection = db.collection<StoreSentVerifyEmailData>('verify')
+const client = new MongoClient(`mongodb://${env.mongoUrl}`).connect()
+const sentEmailCollection = client.then((cli) => cli.db().collection<StoreSentEmailData>('sent'))
+const veifyEmailCollection = client.then((cli) =>
+  cli.db().collection<StoreSentVerifyEmailData>('verify')
+)
 
 const mongoImpl: EmailPersistenceImpl = {
   async storeSentEmail(data) {
-    const res = await sentEmailCollection.insertOne(data)
+    const res = await (await sentEmailCollection).insertOne(data)
     return res.insertedId.toHexString()
   },
 
   async storeSentVerifyEmail(data) {
-    const res = await veifyEmailCollection.insertOne(data)
+    const res = await (await veifyEmailCollection).insertOne(data)
     return res.insertedId.toHexString()
   },
 
   async checkVerifyEmail(data) {
-    const res = await veifyEmailCollection.updateOne(
+    const res = await (await veifyEmailCollection).updateOne(
       { email: data.email, token: data.token, verifiedAt: null },
       {
         $currentDate: {
@@ -29,7 +31,7 @@ const mongoImpl: EmailPersistenceImpl = {
     return res.modifiedCount === 1
   },
   async deleteVerifyingEmail(data) {
-    const res = await veifyEmailCollection.deleteOne({
+    const res = await (await veifyEmailCollection).deleteOne({
       email: data.email,
       token: data.token,
       verifiedAt: null,
@@ -39,3 +41,4 @@ const mongoImpl: EmailPersistenceImpl = {
 }
 
 module.exports = mongoImpl
+export default mongoImpl
