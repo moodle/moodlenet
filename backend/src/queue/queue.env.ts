@@ -1,33 +1,35 @@
-import Redis, { RedisOptions } from 'ioredis'
+import amqp, { Options } from 'amqplib'
 import * as Yup from 'yup'
 
-type RedisOptsEnv = Pick<RedisOptions, 'host' | 'port' | 'password' | 'db'>
+type AmqpOptsEnv = Pick<Options.Connect, 'hostname' | 'port' | 'password' | 'username'>
 
 interface QueueEnv {
-  redisOpts: RedisOptsEnv
+  amqpOpts: AmqpOptsEnv
 }
 
-const REDIS_HOST = process.env.QUEUE_REDIS_HOST
-const REDIS_DB = process.env.QUEUE_REDIS_DB
-const REDIS_PASSWORD = process.env.QUEUE_REDIS_PASSWORD
-const REDIS_PORT = process.env.QUEUE_REDIS_PORT
+const AMQP_HOST = process.env.QUEUE_AMQP_HOST
+const AMQP_USERNAME = process.env.QUEUE_AMQP_USERNAME
+const AMQP_PASSWORD = process.env.QUEUE_AMQP_PASSWORD
+const AMQP_PORT = process.env.QUEUE_AMQP_PORT
 
 const Validator = Yup.object<QueueEnv>({
-  redisOpts: Yup.object<RedisOptsEnv>({
-    host: Yup.string().default('localhost'),
-    db: Yup.number().default(0),
-    password: Yup.string().default(''),
-    port: Yup.number().default(6379),
+  amqpOpts: Yup.object<AmqpOptsEnv>({
+    hostname: Yup.string().default('localhost'),
+    username: Yup.number(),
+    password: Yup.string(),
+    port: Yup.number().default(5672),
   }).required(),
 })
 
 export const env = Validator.validateSync({
   redisOpts: {
-    host: REDIS_HOST,
-    db: REDIS_DB,
-    password: REDIS_PASSWORD,
-    port: REDIS_PORT,
+    hostname: AMQP_HOST,
+    username: AMQP_USERNAME,
+    password: AMQP_PASSWORD,
+    port: AMQP_PORT,
   },
 })!
 
-export const client = new Redis(env.redisOpts)
+export const channelP = amqp
+  .connect({ ...env.amqpOpts })
+  .then((connection) => connection.createChannel())

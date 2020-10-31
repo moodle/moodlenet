@@ -19,39 +19,39 @@ const emailService: EmailService = {
   },
   created() {
     makeSendEmailWorker(async (job) => {
-      const sendRes = await sender.sendEmail(job.data)
-      await persistence.storeSentEmail({ jobId: job.id, res: sendRes })
+      const sendRes = await sender.sendEmail(job.json)
+      await persistence.storeSentEmail({ jobId: job.properties.messageId, res: sendRes })
       return sendRes
     })
 
     makeVerifyEmailTokenExpiredWorker(async (job) => {
       await persistence.deleteVerifyingEmail({
-        ...job.data,
+        ...job.json,
       })
       return {
         verified: true,
-        email: job.data.email,
+        email: job.json.email,
       }
     })
 
-    makeVerifyEmailWorker(async (job, forward) => {
+    makeVerifyEmailWorker(async (job, progress, forward) => {
       const token = uuid()
       const mailObj = {
-        ...job.data.mailObj,
-        html: replaceVerifyEmailLinkPlaceholder(job.data.mailObj.html, token),
-        text: replaceVerifyEmailLinkPlaceholder(job.data.mailObj.text, token),
+        ...job.json.mailObj,
+        html: replaceVerifyEmailLinkPlaceholder(job.json.mailObj.html, token),
+        text: replaceVerifyEmailLinkPlaceholder(job.json.mailObj.text, token),
       }
-      const email = job.data.mailObj.to
-      const { expirationTime } = job.data
+      const email = job.json.mailObj.to
+      const { expirationTime } = job.json
 
       const sendObj: SendEmailObj = { ...mailObj, to: [email] }
       const sendRes = await sender.sendEmail(sendObj)
       const expireDate = new Date(new Date().valueOf() + expirationTime)
 
       const [] = await Promise.all([
-        persistence.storeSentEmail({ jobId: job.id, res: sendRes }),
+        persistence.storeSentEmail({ jobId: job.properties.messageId, res: sendRes }),
         persistence.storeSentVerifyEmail({
-          jobId: job.id,
+          jobId: job.properties.messageId,
           token,
           expireDate,
           email,
@@ -62,22 +62,21 @@ const emailService: EmailService = {
       forward(
         enqueVerifyEmailTokenExpired,
         job,
-        `Email Verification Timeout:${email}[${job.id}]`,
         { email, token },
         {
-          delay: expirationTime,
+          expiration: expirationTime,
         }
       )
 
-      return {
+      progress(job, {
         token: token,
         email,
-      }
+      })
     })
   },
 }
 
 const replaceVerifyEmailLinkPlaceholder = (body: string | undefined, token: string) =>
   body?.replace(/\$\{VERIFY_EMAIL_TOKEN\}/g, token)
-    
+
 module.exports = emailService
