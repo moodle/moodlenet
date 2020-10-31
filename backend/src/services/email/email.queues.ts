@@ -10,18 +10,16 @@ import {
 
 const makeQueue = ServiceQueue<EmailService>('email')
 
-export const [sendEmailQueue, enqueSendEmail, makeSendEmailWorker] = makeQueue<
-  SendEmailObj,
-  SendEmailResult
->('send')
+export const [enqueSendEmail, makeSendEmailWorker] = makeQueue<SendEmailObj, SendEmailResult>(
+  'send'
+)
 
-export const [verifyEmailQueue, enqueVerifyEmail, makeVerifyEmailWorker] = makeQueue<
+export const [enqueVerifyEmail, makeVerifyEmailWorker] = makeQueue<
   VerifyEmailReq,
   VerifyEmailProgress
 >('verify')
 
-export const [
-  verifyEmailTokenExpiredQueue,
-  enqueVerifyEmailTokenExpired,
-  makeVerifyEmailTokenExpiredWorker,
-] = makeQueue<VerifyEmailStarted, VerifyEmailProgress>('verify_token_expired')
+export const [enqueVerifyEmailTokenExpired, makeVerifyEmailTokenExpiredWorker] = makeQueue<
+  VerifyEmailStarted,
+  VerifyEmailProgress
+>('verify_token_expired')

@@ -1,58 +1,59 @@
-import { client } from './queue.env'
+// import {
+//   Job,
+//   JobsOptions,
+//   Queue,
+//   QueueBaseOptions,
+//   QueueOptions,
+//   Worker,
+//   WorkerOptions,
+// } from 'bullmq'
+import { Message, Options, Replies } from 'amqplib'
 import { Service } from '../moleculer'
-import {
-  Job,
-  JobsOptions,
-  Queue,
-  QueueBaseOptions,
-  QueueOptions,
-  Worker,
-  WorkerOptions,
-} from 'bullmq'
 import { uuid } from '../services/email/helpers'
-
+import { channelP } from './queue.env'
+export const SERVICE_DELAY_Q_PREFIX = 'SRV_DELAY_Q'
 export type JobUnexpectedError = { jobError: string; jobId?: string }
-type __JOB_PROGRESS_Q_PARAM_NAME__ = typeof __JOB_PROGRESS_Q_PARAM_NAME__
-const __JOB_PROGRESS_Q_PARAM_NAME__ = '__JOB_PROGRESS_Q_PARAM_NAME__'
 
-export const UNNAMED_JOB = 'UNNAMED_JOB'
-
-export const BASE_Q_OPTS: QueueBaseOptions = {
-  client,
+export type MNQPublishOpts = Options.Publish & {
+  jobName?: string
+  // delay?: number
+  // 'x-dead-letter-exchange'?: string
+  // 'x-dead-letter-routing-key'?: string
+  // 'x-message-ttl'?: string
 }
-export const DEFAULT_QUEUE_OPTS: QueueOptions = { ...BASE_Q_OPTS }
-export const DEFAULT_WORKER_OPTS: WorkerOptions = { ...BASE_Q_OPTS }
-
-export type ExtendedJobsOptions<JobProgress> = JobsOptions & {
-  progressTo?: Queue<JobProgress | JobUnexpectedError> | string
+export type MNQAssertQueueOpts = Options.AssertQueue & {}
+export type MNQConsumeOpts = Options.Consume & {}
+export type MNQJsonMessage<T> = Message & {
+  json: T
 }
 
-export type WithProgressQName<Data> = Data & { [__JOB_PROGRESS_Q_PARAM_NAME__]?: string }
+export const BASE_ASSERT_Q_OPTS = (): MNQAssertQueueOpts => ({
+  durable: true,
+})
+export const DEFAULT_SEND_TO_QUEUE_OPTS = (): MNQPublishOpts => ({})
+export const DEFAULT_CONSUME_OPTS = (): MNQConsumeOpts => ({})
 
-export type ExtendedJob<JobParams, JobProgress> = Job<WithProgressQName<JobParams>, JobProgress>
-
-type QueueAdder<__JobParams, __JobProgress> = (
-  _jobName: string,
-  _jobData: __JobParams,
-  _jobOpts?: ExtendedJobsOptions<__JobProgress>
-) => Promise<ExtendedJob<__JobParams, __JobProgress>>
+type QueueAdder<JobParams> = (
+  _jobData: JobParams,
+  _jobOpts?: MNQPublishOpts
+) => Promise<string | false>
 
 export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
-  type MakeQueueOpts<JobParams, JobProgress> = {
-    qOpts?: QueueOptions
-    defaultJobOpts?: JobsOptions
+  type AssertServiceQueueOpts<JobParams> = {
+    qOpts?: MNQAssertQueueOpts
+    defaultJobOpts?: MNQPublishOpts
     addToQueueGuard?: (
-      jobName: string,
       jobData: JobParams,
-      jobOpts?: ExtendedJobsOptions<JobProgress>
-    ) => [jobName: string, jobDdata: JobParams, jobOpts: ExtendedJobsOptions<JobProgress>]
+      jobOpts?: MNQPublishOpts
+    ) => [jobDdata: JobParams, jobOpts: MNQPublishOpts]
   }
 
   const serviceQueue = <JobParams, JobProgress, QName extends string = string>(
     qName: QName,
-    { addToQueueGuard, defaultJobOpts, qOpts }: MakeQueueOpts<JobParams, JobProgress> = {}
+    { addToQueueGuard, defaultJobOpts, qOpts }: AssertServiceQueueOpts<JobParams> = {}
   ) => {
     const fullQName = `${srvName}.${qName}`
+<<<<<<< HEAD
     // TODO: create Queue on demand ()=>{}
     const q = new Queue<JobParams>(fullQName, {
       ...DEFAULT_QUEUE_OPTS,
@@ -63,27 +64,78 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
       const [jobName, jobDdata, jobOpts] = addToQueueGuard
         ? addToQueueGuard(_jobName, _jobData, _jobOpts)
         : [_jobName, _jobData, _jobOpts]
+=======
+    const srvDelayedQName = `${srvName}:${SERVICE_DELAY_Q_PREFIX}`
+    const ch_Q = (() => {
+      // on demand asserrts Queue and returns it with channel
+      let _q: Replies.AssertQueue
+      return async () => {
+        const channel = await channelP
+        if (!_q) {
+          _q = await (await channelP).assertQueue(fullQName, {
+            ...BASE_ASSERT_Q_OPTS(),
+            ...qOpts,
+          })
+        }
+        return [channel, _q] as const
+      }
+    })()
 
-      return q.add(jobName, dataWithProgressQName(jobDdata, qOptsProgressQName(jobOpts)), {
+    const assertDelayQueue = async () =>
+      (await channelP).assertQueue(srvDelayedQName, {
+        ...BASE_ASSERT_Q_OPTS(),
+        deadLetterRoutingKey: fullQName,
+        deadLetterExchange: '',
+        //        'x-message-ttl': 2 ^ 40,
+      })
+>>>>>>> backend/feature/replace_bullmq_with_amqp
+
+    const addToQueue: QueueAdder<JobParams> = async (_jobData, _jobOpts) => {
+      const [jobDdata, jobOpts] = addToQueueGuard
+        ? addToQueueGuard(_jobData, _jobOpts)
+        : [_jobData, _jobOpts]
+      const [channel, q] = await ch_Q()
+      const messageId = uuid()
+      const publishOpts: MNQPublishOpts = {
         ...defaultJobOpts,
         ...jobOpts,
-        jobId: uuid(),
-      })
+        contentType: 'application/json',
+        messageId,
+      }
+      console.log('publishOpts', publishOpts)
+      if (publishOpts.expiration) {
+        const delayedQ = await assertDelayQueue()
+        return (
+          channel.sendToQueue(delayedQ.queue, json2Buffer(jobDdata), { ...publishOpts }) &&
+          messageId
+        )
+      } else {
+        return channel.sendToQueue(q.queue, json2Buffer(jobDdata), publishOpts) && messageId
+      }
     }
 
-    const forwardJob = <QAdder extends QueueAdder<T, JobProgress>, T>(
+    const forwardJob = <QAdder extends QueueAdder<T>, T>(
       queueAdder: QAdder,
-      job: ExtendedJob<JobParams, JobProgress>,
-      jobName: string,
+      sourceMsg: MNQJsonMessage<JobParams>,
       jobData: T,
-      jobOpts?: ExtendedJobsOptions<JobProgress> | undefined
+      jobOpts?: MNQPublishOpts | undefined
     ) => {
-      return queueAdder(jobName, jobData, { ...jobOpts, progressTo: jobProgressQName(job) })
+      return queueAdder(jobData, { ...jobOpts, replyTo: sourceMsg.properties.replyTo })
+    }
+
+    const progressJob = async (sourceMsg: MNQJsonMessage<JobParams>, progress: JobProgress) => {
+      const [channel] = await ch_Q()
+      const replyToQ = sourceMsg.properties.replyTo
+      return typeof replyToQ === 'string'
+        ? channel.sendToQueue(replyToQ, json2Buffer(progress), DEFAULT_SEND_TO_QUEUE_OPTS())
+        : false
     }
 
     type WorkerHandler = (
-      job: ExtendedJob<JobParams, JobProgress>,
+      msg: MNQJsonMessage<JobParams>,
+      progress: typeof progressJob,
       forward: typeof forwardJob
+<<<<<<< HEAD
     ) => Promise<JobProgress>
 
     const makeWorker = (handler: WorkerHandler, mkWopts?: WorkerOptions) => {
@@ -105,29 +157,36 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
         })
         return resultP
       }
+=======
+    ) => Promise<any>
+
+    const makeWorker = async (handler: WorkerHandler, mkWConsuleopts?: MNQConsumeOpts) => {
+      const [channel] = await ch_Q()
+      return channel.consume(
+        fullQName,
+        (msg) => {
+          msg &&
+            handler({ ...msg, json: buffer2Json(msg.content) }, progressJob, forwardJob).then(
+              () => {
+                channel.ack(msg)
+              },
+              () => {
+                channel.nack(msg)
+              }
+            )
+        },
+        {
+          ...DEFAULT_CONSUME_OPTS(),
+          ...mkWConsuleopts,
+        }
+      )
+>>>>>>> backend/feature/replace_bullmq_with_amqp
     }
 
-    return [q, addToQueue, makeWorker] as const
+    return [addToQueue, makeWorker] as const
   }
 
   return serviceQueue
 }
-
-export const dataWithProgressQName = <T>(
-  data: T,
-  qName: string | undefined
-): WithProgressQName<T> | T =>
-  typeof qName === 'string'
-    ? {
-        ...data,
-        [__JOB_PROGRESS_Q_PARAM_NAME__]: qName,
-      }
-    : data
-
-export const jobProgressQName = (job: Job) => dataProgressQName(job.data)
-
-export const dataProgressQName = (data: any): string | undefined =>
-  data ? data[__JOB_PROGRESS_Q_PARAM_NAME__] : undefined
-
-export const qOptsProgressQName = (opts: ExtendedJobsOptions<any> | undefined) =>
-  opts && ('string' === typeof opts.progressTo ? opts.progressTo : opts.progressTo?.name)
+export const json2Buffer = (json: any) => Buffer.from(JSON.stringify(json))
+export const buffer2Json = (buf: Buffer) => JSON.parse(buf.toString('utf-8'))
