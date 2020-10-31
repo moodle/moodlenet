@@ -78,6 +78,6 @@ const emailService: EmailService = {
 }
 
 const replaceVerifyEmailLinkPlaceholder = (body: string | undefined, token: string) =>
-  body?.replaceAll('${VERIFY_EMAIL_TOKEN}', token)
-
+  body?.replace(/\$\{VERIFY_EMAIL_TOKEN\}/g, token)
+    
 module.exports = emailService

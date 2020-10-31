@@ -52,8 +52,9 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
     qName: QName,
     { addToQueueGuard, defaultJobOpts, qOpts }: MakeQueueOpts<JobParams, JobProgress> = {}
   ) => {
+    const fullQName = `${srvName}.${qName}`
     // TODO: create Queue on demand ()=>{}
-    const q = new Queue<JobParams>(`${srvName}.${qName}`, {
+    const q = new Queue<JobParams>(fullQName, {
       ...DEFAULT_QUEUE_OPTS,
       ...qOpts,
     })
@@ -86,7 +87,7 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
     ) => Promise<JobProgress>
 
     const makeWorker = (handler: WorkerHandler, mkWopts?: WorkerOptions) => {
-      return new Worker(qName, wrappedHandler, {
+      return new Worker(fullQName, wrappedHandler, {
         ...DEFAULT_WORKER_OPTS,
         ...mkWopts,
       })

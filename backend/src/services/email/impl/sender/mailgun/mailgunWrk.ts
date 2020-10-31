@@ -9,17 +9,20 @@ export type Cfg = {
 const mailgun = createMailgun({
   ...env,
 })
-const sendEmail: EmailSenderImpl['sendEmail'] = (req) =>
+const sendEmail: EmailSenderImpl['sendEmail'] = (req) => (
+  console.log(req),
   mailgun
     .messages()
     .send(req)
+    .then((resp) => (console.log(resp), resp))
     .then((resp) => ({ id: resp.id }))
     .catch((err) => {
+      console.log('ERR', err)
       return {
         error: String(err),
       }
     })
-
+)
 const mailgunImpl: EmailSenderImpl = {
   sendEmail,
 }
