@@ -1,6 +1,6 @@
 import env from './mailgun.env'
 import createMailgun from 'mailgun-js'
-import { EmailSenderImpl } from '../../../types'
+import { EmailSenderImpl, SendEmailProgressKO, SendEmailProgressOK } from '../../../types'
 
 export type Cfg = {
   mailgunCfg: createMailgun.ConstructorParams
@@ -15,10 +15,12 @@ const sendEmail: EmailSenderImpl['sendEmail'] = (req) => (
     .messages()
     .send(req)
     .then((resp) => (console.log(resp), resp))
-    .then((resp) => ({ id: resp.id }))
-    .catch((err) => {
+
+    .then<SendEmailProgressOK>((resp) => ({ id: resp.id, type: 'SendEmailProgressOK' }))
+    .catch<SendEmailProgressKO>((err) => {
       console.log('ERR', err)
       return {
+        type: 'SendEmailProgressKO',
         error: String(err),
       }
     })

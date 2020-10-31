@@ -1,3 +1,8 @@
+var dotenv = require('dotenv')
+var dotenvExpand = require('dotenv-expand')
+
+var myEnv = dotenv.config()
+dotenvExpand(myEnv)
 module.exports = {
   // namespace: "dev",
   // nodeID: "node-25",

@@ -2,15 +2,15 @@ import { ServiceQueue } from '../../queue'
 import {
   EmailService,
   SendEmailObj,
-  SendEmailResult,
+  SendEmailProgress,
   VerifyEmailProgress,
   VerifyEmailReq,
-  VerifyEmailStarted,
+  VerifyEmailProgressStarted,
 } from './types'
 
 const makeQueue = ServiceQueue<EmailService>('email')
 
-export const [enqueSendEmail, makeSendEmailWorker] = makeQueue<SendEmailObj, SendEmailResult>(
+export const [enqueSendEmail, makeSendEmailWorker] = makeQueue<SendEmailObj, SendEmailProgress>(
   'send'
 )
 
@@ -20,6 +20,6 @@ export const [enqueVerifyEmail, makeVerifyEmailWorker] = makeQueue<
 >('verify')
 
 export const [enqueVerifyEmailTokenExpired, makeVerifyEmailTokenExpiredWorker] = makeQueue<
-  VerifyEmailStarted,
+  VerifyEmailProgressStarted,
   VerifyEmailProgress
 >('verify_token_expired')

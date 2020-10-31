@@ -17,7 +17,7 @@ export type CheckVerifyEmailResult = boolean
  * Sender Impl
  */
 export interface EmailSenderImpl {
-  sendEmail: (_: SendEmailObj) => Promise<SendEmailResult>
+  sendEmail: (_: SendEmailObj) => Promise<SendEmailProgressOK | SendEmailProgressKO>
 }
 
 /**
@@ -31,7 +31,7 @@ export interface EmailPersistenceImpl {
   checkVerifyEmail: (_: { email: string; token: string }) => Promise<boolean>
   deleteVerifyingEmail: (_: { email: string; token: string }) => Promise<boolean>
 }
-export type StoreSentEmailData = { jobId?: string; res: SendEmailResult }
+export type StoreSentEmailData = { jobId?: string; res: SendEmailProgress }
 
 export type StoreSentVerifyEmailData = {
   jobId?: string
@@ -53,13 +53,15 @@ export type SendEmailObj = {
   html?: string
 }
 
-export type SendEmailResultOK = {
+export type SendEmailProgressOK = {
+  type: 'SendEmailProgressOK'
   id: string
 }
-export type SendEmailResultKO = {
+export type SendEmailProgressKO = {
+  type: 'SendEmailProgressKO'
   error: string
 }
-export type SendEmailResult = SendEmailResultKO | SendEmailResultOK
+export type SendEmailProgress = SendEmailProgressKO | SendEmailProgressOK
 
 /**
  * VerifyEmailJob
@@ -71,16 +73,22 @@ export type VerifyEmailReq = {
   expirationTime: number
 }
 
-export type VerifyEmailStarted = {
+export type VerifyEmailProgressStarted = {
+  type: 'VerifyEmailProgressStarted'
   email: string
   token: string
 }
-export type VerifyEmailTokenExpired = {
+export type VerifyEmailProgressTokenExpired = {
+  type: 'VerifyEmailProgressTokenExpired'
   email: string
   tokenExpired: true
 }
-export type VerifyEmailVerified = {
+export type VerifyEmailProgressVerified = {
+  type: 'VerifyEmailProgressVerified'
   email: string
   verified: true
 }
-export type VerifyEmailProgress = VerifyEmailStarted | VerifyEmailTokenExpired | VerifyEmailVerified
+export type VerifyEmailProgress =
+  | VerifyEmailProgressStarted
+  | VerifyEmailProgressTokenExpired
+  | VerifyEmailProgressVerified

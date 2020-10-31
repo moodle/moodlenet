@@ -30,7 +30,10 @@ export type MNQJsonMessage<T> = Message & {
 export const BASE_ASSERT_Q_OPTS = (): MNQAssertQueueOpts => ({
   durable: true,
 })
-export const DEFAULT_SEND_TO_QUEUE_OPTS = (): MNQPublishOpts => ({})
+export const DEFAULT_SEND_TO_QUEUE_OPTS = (): MNQPublishOpts => ({
+  // persistent: true, // won't work ..
+  deliveryMode: 2,
+})
 export const DEFAULT_CONSUME_OPTS = (): MNQConsumeOpts => ({})
 
 type QueueAdder<JobParams> = (
@@ -48,7 +51,11 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
     ) => [jobDdata: JobParams, jobOpts: MNQPublishOpts]
   }
 
-  const serviceQueue = <JobParams, JobProgress, QName extends string = string>(
+  const serviceQueue = <
+    JobParams,
+    JobProgress extends { type: string },
+    QName extends string = string
+  >(
     qName: QName,
     { addToQueueGuard, defaultJobOpts, qOpts }: AssertServiceQueueOpts<JobParams> = {}
   ) => {
@@ -83,6 +90,7 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
       const [channel, q] = await ch_Q()
       const messageId = uuid()
       const publishOpts: MNQPublishOpts = {
+        ...DEFAULT_SEND_TO_QUEUE_OPTS(),
         ...defaultJobOpts,
         ...jobOpts,
         contentType: 'application/json',
@@ -91,25 +99,27 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
       console.log('publishOpts', publishOpts)
       if (publishOpts.expiration) {
         const delayedQ = await assertDelayQueue()
-        return (
-          channel.sendToQueue(delayedQ.queue, json2Buffer(jobDdata), { ...publishOpts }) &&
-          messageId
-        )
+        return channel.sendToQueue(delayedQ.queue, json2Buffer(jobDdata), publishOpts) && messageId
       } else {
         return channel.sendToQueue(q.queue, json2Buffer(jobDdata), publishOpts) && messageId
       }
     }
 
-    const forwardJob = <QAdder extends QueueAdder<T>, T>(
+    type ForwardJob = <QAdder extends QueueAdder<any>>(
       queueAdder: QAdder,
       sourceMsg: MNQJsonMessage<JobParams>,
-      jobData: T,
+      jobData: QAdder extends QueueAdder<infer T> ? T : never,
       jobOpts?: MNQPublishOpts | undefined
-    ) => {
+    ) => Promise<string | false>
+    const forwardJob: ForwardJob = (queueAdder, sourceMsg, jobData, jobOpts) => {
       return queueAdder(jobData, { ...jobOpts, replyTo: sourceMsg.properties.replyTo })
     }
+    type ProgressJob = (
+      sourceMsg: MNQJsonMessage<JobParams>,
+      progress: JobProgress
+    ) => Promise<boolean>
 
-    const progressJob = async (sourceMsg: MNQJsonMessage<JobParams>, progress: JobProgress) => {
+    const progressJob: ProgressJob = async (sourceMsg, progress) => {
       const [channel] = await ch_Q()
       const replyToQ = sourceMsg.properties.replyTo
       return typeof replyToQ === 'string'
@@ -119,8 +129,8 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
 
     type WorkerHandler = (
       msg: MNQJsonMessage<JobParams>,
-      progress: typeof progressJob,
-      forward: typeof forwardJob
+      progress: ProgressJob,
+      forward: ForwardJob
     ) => Promise<any>
 
     const makeWorker = async (handler: WorkerHandler, mkWConsuleopts?: MNQConsumeOpts) => {

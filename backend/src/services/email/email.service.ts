@@ -62,13 +62,14 @@ const emailService: EmailService = {
       forward(
         enqueVerifyEmailTokenExpired,
         job,
-        { email, token },
+        { email, token, type: 'VerifyEmailProgressStarted' },
         {
           expiration: expirationTime,
         }
       )
 
       progress(job, {
+        type: 'VerifyEmailProgressStarted',
         token: token,
         email,
       })
