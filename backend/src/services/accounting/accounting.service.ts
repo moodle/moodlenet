@@ -1,4 +1,4 @@
-import { uuid } from '../../lib/helpers/misc'
+import { newUuid } from '../../lib/helpers/misc'
 import { AnyProgressOf } from '../../lib/queue/types'
 import { sendEmailWF } from '../email/email.queues'
 import { RegisterNewAccountWF, VerifyEmailWF } from './accounting.queues'
@@ -108,7 +108,7 @@ const accountingService: AccountingService = {
         return
       }
 
-      const token = uuid()
+      const token = newUuid()
       const expirationTimeMillis = env.emailVerificationExpiresDays * 24 * 60 * 60 * 1000
 
       const emailJob = await sendEmailWF.enqueue(

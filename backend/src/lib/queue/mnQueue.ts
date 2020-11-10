@@ -1,5 +1,5 @@
 import { Message, Replies } from 'amqplib'
-import { uuid } from '../helpers/misc'
+import { newUuid } from '../helpers/misc'
 import { Service } from '../moleculer'
 import { channelPromise } from './queue.env'
 import {
@@ -83,12 +83,12 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
         ? addToQueueGuard(jobName, _jobData, _jobOpts)
         : [_jobData, _jobOpts]
       const [channel, q] = await ch_Q()
-      const jobId = jobOpts?.correlationId || uuid()
+      const jobId = jobOpts?.correlationId || newUuid()
       const publishOpts: MNQPublishOpts<JobProgress> = {
         ...DEFAULT_PUBLISH_OPTS<JobProgress>({ jobName, jobId }),
         ...defaultJobOpts,
         ...jobOpts,
-        messageId: jobOpts?.messageId || uuid(),
+        messageId: jobOpts?.messageId || newUuid(),
         contentType: 'application/json',
       }
       publishOpts.expiration = Math.round(Number(publishOpts.expiration) || 0)
@@ -118,7 +118,7 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
       return workflow[stepName].enqueue(sourceMsg.jobName, jobData, {
         ...jobOpts,
         ...DEFAULT_PUBLISH_OPTS(sourceMsg),
-        messageId: jobOpts?.messageId || uuid(),
+        messageId: jobOpts?.messageId || newUuid(),
         replyTo: sourceMsg.properties.replyTo,
         correlationId: sourceMsg.jobId,
       })
