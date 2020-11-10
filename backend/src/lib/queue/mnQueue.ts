@@ -88,8 +88,10 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
         ...DEFAULT_PUBLISH_OPTS<JobProgress>({ jobName, jobId }),
         ...defaultJobOpts,
         ...jobOpts,
+        messageId: jobOpts?.messageId || uuid(),
         contentType: 'application/json',
       }
+      publishOpts.expiration = Math.round(Number(publishOpts.expiration) || 0)
       if (publishOpts.expiration) {
         const delayedQ = await assertDelayQueue()
         const sent = channel.sendToQueue(delayedQ.queue, json2Buffer(jobDdata), publishOpts)
@@ -118,10 +120,12 @@ export const ServiceQueue = <S extends Service>(srvName: S['name']) => {
         ...DEFAULT_PUBLISH_OPTS(sourceMsg),
         messageId: jobOpts?.messageId || uuid(),
         replyTo: sourceMsg.properties.replyTo,
+        correlationId: sourceMsg.jobId,
       })
     }
 
     const progressJob: ProgressJob<JobParams, JobProgress> = async (sourceMsg, progress) => {
+      console.log(getMNQJobMeta(sourceMsg), progress)
       const replyToQ = getProgresQName(sourceMsg)
       if (typeof replyToQ !== 'string') {
         return null

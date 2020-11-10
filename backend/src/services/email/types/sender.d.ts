@@ -1,4 +1,4 @@
-import { AnyProgressOf } from '../../../lib/queue'
+import { AnyProgressOf } from '../../../lib/queue/types'
 import { SendEmailJobReq, SendEmailProgress } from './job'
 
 export interface EmailSenderImpl {

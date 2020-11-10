@@ -1,4 +1,5 @@
-import { MNQJobMeta, getMNQJobMeta } from '../../lib/queue'
+import { getMNQJobMeta } from '../../lib/queue'
+import { MNQJobMeta } from '../../lib/queue/types'
 import { sendEmailWF } from './email.queues'
 import { persistence, sender } from './email.service.env'
 import { SendEmailJobReq } from './types'

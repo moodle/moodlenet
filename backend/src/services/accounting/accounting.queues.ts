@@ -1,4 +1,6 @@
-import { AnyProgressOf, ServiceQueue } from '../../lib/queue'
+import { AnyProgressOf } from '../../lib/queue/types'
+import { ServiceQueue } from '../../lib/queue'
+import { SendEmailProgress } from '../email/types'
 import {
   RegisterNewAccountJobReq,
   RegisterNewAccountProgress,
@@ -28,20 +30,22 @@ export const RegisterNewAccountWF = makeServiceWorkflow<
   RegisterNewAccountProgress,
   {
     registerNewAccount: RegisterNewAccountJobReq
-    sendVerificationEmailProgress: AnyProgressOf<VerifyEmailJobProgress>
+    newRegistrationVerificationEmailProgress: AnyProgressOf<VerifyEmailJobProgress>
   }
 >({
   registerNewAccount: null,
-  sendVerificationEmailProgress: null,
+  newRegistrationVerificationEmailProgress: null,
 })
 
 export const VerifyEmailWF = makeServiceWorkflow<
   VerifyEmailJobProgress,
   {
     verifyAccountEmail: VerifyEmailJobReq
-    cancelAccountVerifyEmailJob: null
+    sendVerificationEmailProgress:
+      | AnyProgressOf<SendEmailProgress>
+      | AnyProgressOf<VerifyEmailJobProgress, 'Expired' | 'Confirmed'>
   }
 >({
-  cancelAccountVerifyEmailJob: null,
+  sendVerificationEmailProgress: null,
   verifyAccountEmail: null,
 })

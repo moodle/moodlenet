@@ -12,4 +12,5 @@ export type VerifyEmailJobProgress = {
   Waiting: { attemptCount: number }
   Confirmed: null
   Expired: { attemptCount: number }
+  Aborted: { reason: string }
 }

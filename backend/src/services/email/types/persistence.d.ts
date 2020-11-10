@@ -1,4 +1,4 @@
-import { MNQJobMeta, AnyProgressOf } from '../../../lib/queue'
+import { MNQJobMeta, AnyProgressOf } from '../../../lib/queue/types'
 import { SendEmailJobReq, SendEmailProgress } from './job'
 
 export type RecordId = string

@@ -2,19 +2,40 @@ import { AccountingPersistenceImpl } from '../../../types'
 
 const mockImpl: AccountingPersistenceImpl = {
   async confirmVerifyEmail(_data) {
-    return Math.random() > 0.5
+    console.log(`\nconfirmVerifyEmail `, _data, '\n')
+    return { id: 'jobId-confirmVerifyEmail', msgId: 'msgId', name: 'jobname-confirmVerifyEmail' }
   },
   async deleteAccountRegistrationRequest(_data) {
-    return Math.random() > 0.5
+    console.log(`\ndeleteAccountRegistrationRequest `, _data, '\n')
+    return {
+      id: 'jobId-deleteAccountRegistrationRequest',
+      msgId: 'msgId',
+      name: 'jobname-deleteAccountRegistrationRequest',
+    }
   },
-  async saveAccountRegistrationRequestJob(data) {
-    return `WRK: storeSentEmail for ${data.jobId}`
+  async saveAccountRegistrationRequestJob(_data) {
+    console.log(`\nsaveAccountRegistrationRequestJob `, _data, '\n')
+    return {
+      id: 'jobId-saveAccountRegistrationRequestJob',
+      msgId: 'msgId',
+      name: 'jobname-saveAccountRegistrationRequestJob',
+    }
   },
-  async saveVerifyEmailJob(data) {
-    return `WRK: storeSentEmail for ${data.jobId}`
+  async saveVerifyEmailJob(_data) {
+    console.log(`\nsaveVerifyEmailJob `, _data, '\n')
+    return { id: 'jobId-saveVerifyEmailJob', msgId: 'msgId', name: 'jobname-saveVerifyEmailJob' }
   },
   async activateAccount(_data) {
-    return Math.random() > 0.5
+    console.log(`\nactivateAccount `, _data, '\n')
+    return { id: 'jobId-activateAccount', msgId: 'msgId', name: 'jobname-activateAccount' }
+  },
+  async updateVerifyEmailProgress(_data) {
+    console.log(`\nupdateVerifyEmailProgress `, _data, '\n')
+    return {
+      id: 'jobId-updateVerifyEmailProgress',
+      msgId: 'msgId',
+      name: 'jobname-updateVerifyEmailProgress',
+    }
   },
 }
 

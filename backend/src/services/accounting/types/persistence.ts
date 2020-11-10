@@ -1,4 +1,4 @@
-import { MNQJobMeta, AnyProgressOf, JobProgressMap } from '../../../lib/queue'
+import { MNQJobMeta, AnyProgressOf } from '../../../lib/queue/types'
 import {
   VerifyEmailJobProgress,
   RegisterNewAccountJobReq,
@@ -8,16 +8,21 @@ import {
 
 export type RecordId = string
 export interface AccountingPersistenceImpl {
-  saveAccountRegistrationRequestJob(_: AccountRegistrationRequestJobData): Promise<RecordId>
-  saveVerifyEmailJob(_: VerifyEmailJobData): Promise<RecordId>
-  confirmVerifyEmail(_: { email: string; token: string }): Promise<boolean>
-  deleteAccountRegistrationRequest(_: { jobId: string }): Promise<boolean>
-  activateAccount(_: { jobId: string }): Promise<boolean>
+  saveAccountRegistrationRequestJob(_: AccountRegistrationRequestJobData): Promise<MNQJobMeta>
+  saveVerifyEmailJob(_: VerifyEmailJobData): Promise<MNQJobMeta>
+  updateVerifyEmailProgress(_: {
+    jobId: string
+    progress: VerifyEmailJobData['progress']
+  }): Promise<MNQJobMeta | null>
+  confirmVerifyEmail(_: { email: string; token: string }): Promise<MNQJobMeta | null>
+  deleteAccountRegistrationRequest(_: { jobId: string }): Promise<MNQJobMeta | null>
+  activateAccount(_: { jobId: string }): Promise<MNQJobMeta | null>
 }
+
 export type AccountRegistrationRequestJobData = {
   jobId: string
   req: RegisterNewAccountJobReq
-  progress: AnyProgressOf<JobProgressMap<RegisterNewAccountProgress>>
+  progress: AnyProgressOf<RegisterNewAccountProgress>
   confirmEmailJob: MNQJobMeta
 }
 
