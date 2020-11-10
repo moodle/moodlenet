@@ -1,25 +1,7 @@
-import { ServiceQueue } from '../../queue'
-import {
-  EmailService,
-  SendEmailObj,
-  SendEmailProgress,
-  VerifyEmailProgress,
-  VerifyEmailReq,
-  VerifyEmailProgressStarted,
-} from './types'
+import { ServiceQueue } from '../../lib/queue'
+import { SendEmailJobReq, SendEmailProgress } from './types'
+import { EmailService } from './types/service'
 
-const makeQueue = ServiceQueue<EmailService>('email')
+const { makeServiceQueue } = ServiceQueue<EmailService>('email')
 
-export const [enqueSendEmail, makeSendEmailWorker] = makeQueue<SendEmailObj, SendEmailProgress>(
-  'send'
-)
-
-export const [enqueVerifyEmail, makeVerifyEmailWorker] = makeQueue<
-  VerifyEmailReq,
-  VerifyEmailProgress
->('verify')
-
-export const [enqueVerifyEmailTokenExpired, makeVerifyEmailTokenExpiredWorker] = makeQueue<
-  VerifyEmailProgressStarted,
-  VerifyEmailProgress
->('verify_token_expired')
+export const sendEmailWF = makeServiceQueue<SendEmailJobReq, SendEmailProgress>('send')

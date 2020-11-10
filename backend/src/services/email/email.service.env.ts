@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 import * as Yup from 'yup'
-import { EmailSenderImpl, EmailPersistenceImpl } from './types'
+import { EmailPersistenceImpl, EmailSenderImpl } from './types'
 
 const SENDER_IMPL_MODULE = process.env.EMAIL_SENDER_IMPL_MODULE // EmailSenderImpl implementatin module (without .js) relative from services/email/impl
 const PERSISTENCE_IMPL_MODULE = process.env.EMAIL_PERSISTENCE_IMPL_MODULE // EmailPersistenceImpl implementatin module (without .js) relative from services/email/impl

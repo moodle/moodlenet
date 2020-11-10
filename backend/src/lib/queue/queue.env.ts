@@ -30,6 +30,6 @@ export const env = Validator.validateSync({
   },
 })!
 
-export const channelP = amqp
+export const channelPromise = amqp
   .connect({ ...env.amqpOpts })
   .then((connection) => connection.createChannel())
