@@ -47,6 +47,12 @@ export type WorkflowNames<
   S extends ServiceNames<D>
 > = keyof D['services'][S]['wf']
 
+export type SignalNames<
+  D extends Domain,
+  S extends ServiceNames<D>,
+  WF extends WorkflowNames<D, S>
+> = keyof Workflow<D, S, WF>['signal']
+
 export type Workflow<
   D extends Domain,
   S extends ServiceNames<D>,
@@ -107,6 +113,15 @@ export type WorkflowSignalMap<
   W extends WorkflowNames<D, S>
 > = Workflow<D, S, W>['signal']
 
+export type SignalPayload<
+  D extends Domain,
+  S extends ServiceNames<D>,
+  W extends WorkflowNames<D, S>,
+  Sig extends TopicWildCard | SignalNames<D, S, W>
+> = Sig extends TopicWildCard
+  ? TypeUnion<WorkflowSignalMap<D, S, W>>
+  : WorkflowSignalMap<D, S, W>[Sig] & { _type: Sig }
+
 export type WorkflowContext<
   D extends Domain,
   S extends ServiceNames<D>,
@@ -123,18 +138,11 @@ export type EventPayload<
 
 export type EventNames<D extends Domain, S extends ServiceNames<D>> = keyof D['services'][S]['ev']
 
-export type Sync<Start, Success, Fail> = {
-  start: Start
-  end: {
-    Success: Success
-    Fail: Fail | SyncFail
-  }
-}
-export type SyncFail = null
-
 export type WFState<D extends Domain, S extends ServiceNames<D>, W extends WorkflowNames<D, S>> = {
   ctx: WorkflowContext<D, S, W>
   state: WorkflowPayload<D, S, W>
+  //TODO : add isFinished:boolean
+  //TODO : add parentWF:`srv.wf.id`
 }
 
 export type WFPersistence = {

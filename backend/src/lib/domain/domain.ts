@@ -1,4 +1,4 @@
-import { delay } from 'bluebird'
+// import { delay } from 'bluebird'
 import { ConsumeMessage, Options } from 'amqplib'
 import { newUuid } from '../helpers/misc'
 import { channelPromise } from './domain.env'
@@ -19,23 +19,39 @@ import {
   WorkflowProgressPayload,
   WorkflowStartParams,
 } from './types'
-const json2Buffer = (json: any) => Buffer.from(JSON.stringify(json))
 
-const buffer2Json = (buf: Buffer) => JSON.parse(buf.toString('utf-8'))
-
+// FIXME: all mono argument functions pls {named:props}
 export const make = <D extends Domain>(domainName: DomainName<D>, persistence: WFPersistence) => {
   const domainExchangeName = `Domain.${domainName}`
   const channel = channelPromise.then((ch) => (ch.assertExchange(domainExchangeName, 'topic'), ch))
 
-  const enqueue = async <S extends ServiceNames<D>, WF extends WorkflowNames<D, S>>(
+  /**
+   *
+   * @param srv
+   * @param wf
+   * @param params
+   * @param _uuid
+   */
+  const enqueue = async <
+    S extends ServiceNames<D>,
+    WF extends WorkflowNames<D, S>
+    // SE extends ServiceNames<D>,
+    // WFE extends WorkflowNames<D, SE>,
+    // SIGE extends SignalNames<D, SE, WFE>
+  >(
     srv: S,
     wf: WF,
     params: WorkflowStartParams<D, S, WF>,
+    // TODO : metti tutto in opts?
     _uuid?: string
+    //TODO : add notifyEnd -> wf#ctx
+    // notifyEnd: SignalPayload<D, SE, WFE, SIGE> extends WorkflowEndPayload<D, S, WF>
+    //   ? `${SE}.${WFE}.sig.${SIGE}`
+    //   : never
   ) => {
     const uuid = _uuid || newUuid()
     const topic = makeWfStartTopic(srv, wf)
-    console.log(`enqueue ${topic} ${uuid}`, params)
+    _log(`enqueue ${topic} ${uuid}`, params)
 
     const ch = await channel
     const done = await ch.publish(domainExchangeName, topic, json2Buffer(params), {
@@ -47,6 +63,14 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
     return { srv, wf, uuid }
   }
 
+  /**
+   *
+   * @param srv
+   * @param wf
+   * @param wfid
+   * @param handler
+   * @param opts
+   */
   const bindWFProgress = <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     srv: S,
     wf: W,
@@ -65,7 +89,7 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
     opts?: { qname?: string; consume?: Options.Consume; queue?: Options.AssertQueue }
   ) => {
     const topic = makeWfTopic(srv, wf, wfid, 'progress', '*')
-    console.log(`bindWFProgress ${topic}`)
+    _log(`bindWFProgress ${topic}`)
 
     const _progress = (wfid: string) => (
       payload: WorkflowProgressPayload<D, S, W>,
@@ -85,6 +109,15 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
       },
     })
   }
+
+  /**
+   *
+   * @param srv
+   * @param wf
+   * @param wfid
+   * @param handler
+   * @param opts
+   */
   const bindWFEnd = <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     srv: S,
     wf: W,
@@ -97,7 +130,7 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
     opts?: { qname?: string; consume?: Options.Consume; queue?: Options.AssertQueue }
   ) => {
     const topic = makeWfTopic(srv, wf, wfid, 'end', '*')
-    console.log(`bindWFEnd ${topic}`)
+    _log(`bindWFEnd ${topic}`)
 
     return makeConsumer({
       opts,
@@ -109,6 +142,15 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
       },
     })
   }
+
+  /**
+   *
+   * @param srv
+   * @param wf
+   * @param uuid
+   * @param handler
+   * @param opts
+   */
   const bindWF = <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     srv: S,
     wf: W,
@@ -122,20 +164,26 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
     opts?: { qname?: string; consume?: Options.Consume; queue?: Options.AssertQueue }
   ) => {
     const topic = makeWfTopic(srv, wf, uuid, '*', '*')
-    console.log(`bindWF ${topic}`)
+    _log(`bindWF ${topic}`)
 
     return makeConsumer({
       opts,
       topic,
       consumer: async (msg) => {
-        const { uuid } = splitWfId(msg.fields.routingKey)!
-        const state = await persistence.getLastWFState(uuid)
         const { payload, meta } = buffer2Json(msg.content)
+        const state = await persistence.getLastWFState(meta.wfid)
         handler(payload, state.ctx, meta)
       },
     })
   }
 
+  /**
+   *
+   * @param srv
+   * @param ev
+   * @param handler
+   * @param opts
+   */
   const bindEV = <S extends ServiceNames<D>, EV extends EventNames<D, S>>(
     srv: S, // | TopicWildCard = '*',
     ev: EV, // | TopicWildCard = '*'
@@ -144,7 +192,7 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
     opts?: { qname?: string; consume?: Options.Consume; queue?: Options.AssertQueue }
   ) => {
     const topic = makeEvTopic(srv, ev)
-    console.log(`bindEV ${topic}`)
+    _log(`bindEV ${topic}`)
     return makeConsumer({
       opts,
       topic,
@@ -155,6 +203,14 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
     })
   }
 
+  /**
+   *
+   * @param srv
+   * @param wf
+   * @param wfid
+   * @param progress
+   * @param ctx
+   */
   const progress = async <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     srv: S,
     wf: W,
@@ -168,10 +224,18 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
     })
     const topic = makeWfTopic(srv, wf, wfid, 'progress', progress._type)
     const msg = { payload: progress, meta: { wfid } }
-    console.log(`progress ${topic}`, msg)
+    _log(`progress ${topic}`, msg)
     return (await channel).publish(domainExchangeName, topic, json2Buffer(msg))
   }
 
+  /**
+   *
+   * @param srv
+   * @param wf
+   * @param wfid
+   * @param end
+   * @param ctx
+   */
   const end = async <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     srv: S,
     wf: W,
@@ -181,7 +245,7 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
   ) => {
     const topic = makeWfTopic(srv, wf, wfid, 'end', end._type)
     const msg = { payload: end, meta: { wfid } }
-    console.log(`end ${topic}`, msg)
+    _log(`end ${topic}`, msg)
     await persistence.endWF(wfid, {
       ctx,
       state: end,
@@ -189,6 +253,13 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
     return (await channel).publish(domainExchangeName, topic, json2Buffer(msg))
   }
 
+  /**
+   *
+   * @param srv
+   * @param wf
+   * @param consumer
+   * @param opts
+   */
   const consumeWF = async <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     srv: S,
     wf: W,
@@ -226,6 +297,10 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
     })
   }
 
+  /**
+   *
+   * @param _
+   */
   const makeConsumer = async (_: {
     topic: string
     consumer: (msg: ConsumeMessage) => Promise<void>
@@ -260,6 +335,12 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
     }
   }
 
+  /**
+   *
+   * @param srv
+   * @param wf
+   * @param params
+   */
   const callSync = async <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     srv: S,
     wf: W,
@@ -296,8 +377,13 @@ export const make = <D extends Domain>(domainName: DomainName<D>, persistence: W
     callSync,
     makeConsumer,
     bindEV,
+    // TODO: signal()
   }
 }
+
+const json2Buffer = (json: any) => Buffer.from(JSON.stringify(json))
+
+const buffer2Json = (buf: Buffer) => JSON.parse(buf.toString('utf-8'))
 
 const makeWfTopic = (
   srv: string,
@@ -305,18 +391,20 @@ const makeWfTopic = (
   uuid: string,
   action: WFLifeCycle | TopicWildCard,
   type: string
-) => `${srv}.${wf}.${uuid}.${action}.${type}`
+) => `${srv}.wf.${wf}.${uuid}.${action}.${type}`
 
 const makeEvTopic = (srv: string, ev: string) => `${srv}.ev.${ev}`
 const makeWfStartTopic = (srv: string, wf: string) => `${srv}.wfstart.${wf}`
 
 // const joinWfId = (_: { srv: string; wf: string; uuid: string }) =>
 //   hasWildcards([_.srv, _.wf, _.uuid]) ? null : `${_.srv}.wf.${_.wf}.${_.uuid}`
-const splitWfId = (wfId: string) => {
-  const arr = wfId.split('.')
-  return arr.length >= 4 && arr[1] === 'wf' && hasWildcards(arr)
-    ? null
-    : { srv: arr[0], wf: arr[2], uuid: arr[3] }
-}
+// const splitWfId = (wfId: string) => {
+//   const arr = wfId.split('.')
+//   return arr.length >= 4 && arr[1] === 'wf' && hasWildcards(arr)
+//     ? null
+//     : { srv: arr[0], wf: arr[2], uuid: arr[3] }
+// }
+// const hasWildcards = (arr: string[]) => arr.filter((_) => _ === '*' || _ === '#').length > 0
 
-const hasWildcards = (arr: string[]) => arr.filter((_) => _ === '*' || _ === '#').length > 0
+const _log = (...args: any[]) =>
+  console.log('DOM----------\n', ...args.reduce((r, _) => [...r, _, '\n'], []), '----------\n\n')

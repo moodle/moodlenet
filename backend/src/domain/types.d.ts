@@ -1,3 +1,5 @@
+import { WorkflowEndPayload } from '../lib/domain/types'
+
 export type MoodleDomain = {
   name: 'MoodleDomain'
   services: {
@@ -14,7 +16,10 @@ export type MoodleDomain = {
             AccountActivated: { AccountActivated: 'AccountActivated' }
             Rejected: { reason: string }
           }
-          signal: {}
+          signal: {
+            EmailConfirmResult: WorkflowEndPayload<MoodleDomain, 'Email', 'SendOne'>
+            aEmailConfirmResult: { a: string }
+          }
         }
         VerifyAccountEmail: {
           context: { email: EmailObj; attemptCount: number; token: string }
@@ -27,7 +32,9 @@ export type MoodleDomain = {
             Expired: { Expired: 'Expired' }
             Aborted: { reason: string }
           }
-          signal: {}
+          signal: {
+            zz: { a: string }
+          }
         }
       }
       ev: {
@@ -35,20 +42,29 @@ export type MoodleDomain = {
         YY: { b: string }
       }
     }
-    // Email: {
-    //   Send: {
-    //     wf: {
-    //       simpleEmail: Sync<EmailObj, { emailId: string }, { error: string }>
-    //     }
-    //     ev: {}
-    //   }
-    // }
+    Email: {
+      wf: {
+        SendOne: {
+          context: { email: EmailObj; attemptCount: number; token: string }
+          enqueue: { email: EmailObj }
+          progress: {}
+          end: {
+            Success: { id: string }
+            Fail: { reason: string }
+          }
+          signal: {
+            dd: { a: string }
+          }
+        }
+      }
+      ev: {}
+    }
   }
 }
 export type EmailObj = {
   to: string
-  from: string
-  subject: string
-  text?: string
-  html?: string
+  // from: string
+  // subject: string
+  // text?: string
+  // html?: string
 }

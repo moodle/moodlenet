@@ -1,6 +1,6 @@
 import { mnDomain } from './mnDomain'
 const l = (...args: any[]) =>
-  console.log('----------\n', ...args.reduce((r, _) => [...r, _, '\n'], []), '----------\n')
+  console.log('APP----------\n', ...args.reduce((r, _) => [...r, _, '\n'], []), '----------\n\n')
 ;(async () => {
   await mnDomain.consumeWF(
     'Accounting',
@@ -34,11 +34,21 @@ const l = (...args: any[]) =>
     { queue: { durable: true }, qname: 'progress1' }
   )
 
-  mnDomain
-    .callSync('Accounting', 'RegisterNewAccount', { email: 'yyy', username: 'ww' })
-    .then((_) => l('yyy call then', _), console.error)
-  mnDomain
+  for (let i = 0; i < 1; i++) {
+    mnDomain
+      .callSync('Accounting', 'RegisterNewAccount', {
+        email: `${i}zz`,
+        username: 'ww',
+      })
+      .then((_) => l(`${i}zz call then`, _), console.error)
+  }
+  console.error('done')
 
-    .callSync('Accounting', 'RegisterNewAccount', { email: 'zz', username: 'ww' })
-    .then((_) => l('zz call then', _), console.error)
+  // mnDomain.enqueue(
+  //   'Email',
+  //   'SendOne',
+  //   { email: { to: '' } },
+  //   'id',
+  //   'Accounting.RegisterNewAccount.sig.EmailConfirmResult'
+  // )
 })()
