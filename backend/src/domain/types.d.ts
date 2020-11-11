@@ -7,12 +7,10 @@ export type MoodleDomain = {
           context: { email: string; username: string }
           enqueue: { email: string; username: string }
           progress: {
-            WaitingConfirmEmail: { x: 22 }
-            aWaitingConfirmEmail: { a: 1 }
-          }
-          end: {
-            AccountActivated: void
-            Rejected: { reason: string }
+            WaitingConfirmEmail: { _end: false }
+            aWaitingConfirmEmail: { _end: false }
+            AccountActivated: { _end: true }
+            Rejected: { _end: true; reason: string }
           }
           signal: {}
         }
@@ -20,16 +18,12 @@ export type MoodleDomain = {
           context: { email: EmailObj; attemptCount: number; token: string }
           enqueue: { email: EmailObj }
           progress: {
-            EmailSent: void
+            EmailSent: { _end: false }
+            Confirmed: { _end: true }
+            Expired: { _end: true }
+            Aborted: { _end: true; reason: string }
           }
-          end: {
-            Confirmed: void
-            Expired: void
-            Aborted: { reason: string }
-          }
-          signal: {
-            Abort: { reason: string }
-          }
+          signal: {}
         }
       }
       ev: {

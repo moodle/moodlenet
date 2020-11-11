@@ -6,10 +6,11 @@ import {
   EventNames,
   EventPayload,
   ServiceNames,
-  WFAction,
+  TopicWildCard,
+  WFLifeCycle,
   WFConsumer,
   Workflow,
-  WorkflowActionPayload,
+  WorkflowLifeCyclePayload,
   WorkflowNames,
   WorkflowStartParams,
 } from './types'
@@ -38,19 +39,21 @@ export const make = <D extends Domain>(domainName: DomainName<D>) => {
     return joinWfId({ srv, wf, uuid })
   }
 
-  const bindWF = <
+  const bindWFProgress = <
     S extends ServiceNames<D>,
     W extends WorkflowNames<D, S>,
-    A extends Exclude<WFAction, 'enqueue'>,
-    T extends keyof Workflow<D, S, W>[A]
+    A extends WFLifeCycle,
+    T extends keyof Workflow<D, S, W>[A] | TopicWildCard
   >(
-    srv: S, // | TopicWildCard = '*',
-    wf: W, // | TopicWildCard = '*',
+    srv: S,
+    wf: W,
     uuid: string = '*',
-    action: A, // | TopicWildCard = '*',
-    type: T, // | TopicWildCard = '*',
-    handler: (payload: WorkflowActionPayload<D, S, W, A, T>) => unknown
-  ) => makeWfTopic(srv, wf, uuid, action)
+    action: A,
+    type: T,
+    handler: (payload: WorkflowLifeCyclePayload<D, S, W, A, T>) => unknown
+  ) => {
+    makeWfTopic(srv, wf, uuid, action)
+  }
 
   const bindEV = <S extends ServiceNames<D>, EV extends EventNames<D, S>>(
     srv: S, // | TopicWildCard = '*',
@@ -96,7 +99,7 @@ export const make = <D extends Domain>(domainName: DomainName<D>) => {
 
   return {
     enqueue,
-    bindWF,
+    bindWFProgress,
     bindEV,
     consumeWF,
     assertConsumeWFQ,
@@ -107,8 +110,8 @@ const makeWfTopic = (
   srv: string,
   wf: string,
   uuid: string,
-  action: WFAction, //| TopicWildCard | 'start'
-  type?: WFAction extends 'enqueue' ? never : string
+  action: WFLifeCycle, //| TopicWildCard | 'start'
+  type?: WFLifeCycle extends 'enqueue' ? never : string
 ) => `${joinWfId({ srv, wf, uuid })}.${action}${!type || action === 'enqueue' ? '' : `.${type}`}`
 
 const makeEvTopic = (srv: string, ev: string) => `${srv}.ev.${ev}`

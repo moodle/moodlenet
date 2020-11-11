@@ -1,31 +1,28 @@
-export type X = any
+export type Payload = any
+export type Progress = { _end: boolean }
+export type StrName = Exclude<string, TopicWildCard>
 export type Domain = {
   name: string
   services: {
-    [service: string]: {
+    [service in StrName]: {
       wf: {
-        [workflow: string]: {
-          context: X
-          enqueue: X
+        [workflow in StrName]: {
+          context: Payload
+          enqueue: Payload
           progress: {
-            [progressName: string]: X
-          }
-          end: {
-            [endType: string]: X
+            [progressName in StrName]: Progress
           }
           signal: {
-            [signalType: string]: X
+            [signalType in StrName]: Payload
           }
         }
       }
       ev: {
-        [signalType: string]: X
+        [signalType in StrName]: Payload
       }
     }
   }
 }
-
-export type WildKey<T, K extends string> = K extends keyof T ? K : keyof T
 
 export type WFConsumer<
   D extends Domain,
@@ -40,7 +37,10 @@ export type WFMeta = {
 }
 
 export type TopicWildCard = '*' //| '#'
-export type WFAction = Exclude<keyof Domain['services'][string]['wf'][string], 'context'>
+export type WFLifeCycle = Exclude<
+  keyof Domain['services'][string]['wf'][string],
+  'context' | 'signal'
+>
 export type DomainName<D extends Domain> = D['name']
 export type ServiceNames<D extends Domain> = keyof D['services']
 
@@ -67,21 +67,20 @@ export type WorkflowProgress<
   W extends WorkflowNames<D, S>
 > = Workflow<D, S, W>['progress']
 
-export type WorkflowActionPayload<
+type TypeUnion<T> = keyof T extends infer P // Introduce an extra type parameter P to distribute over
+  ? P extends keyof T
+    ? T[P] & { _type: P } // Take each P and create the union member
+    : never
+  : never
+
+export type WorkflowProgressPayload<
   D extends Domain,
   S extends ServiceNames<D>,
   W extends WorkflowNames<D, S>,
-  A extends Exclude<WFAction, 'enqueue'>,
-  Type extends keyof Workflow<D, S, W>[A] = keyof Workflow<D, S, W>[A]
-> = {
-  _type: Type
-} & Workflow<D, S, W>[A][Type]
-
-export type WorkflowEndMap<
-  D extends Domain,
-  S extends ServiceNames<D>,
-  W extends WorkflowNames<D, S>
-> = Workflow<D, S, W>['end']
+  Type extends keyof WorkflowProgress<D, S, W>
+> = Type extends TopicWildCard
+  ? TypeUnion<WorkflowProgress<D, S, W>>
+  : WorkflowProgress<D, S, W>[Type] & { _type: Type }
 
 export type WorkflowSignalMap<
   D extends Domain,
@@ -98,8 +97,10 @@ export type WorkflowContext<
 export type EventPayload<
   D extends Domain,
   S extends ServiceNames<D>,
-  E extends EventNames<D, S>
-> = D['services'][S]['ev'][E]
+  E extends TopicWildCard | EventNames<D, S>
+> = E extends TopicWildCard
+  ? TypeUnion<D['services'][S]['ev']>
+  : D['services'][S]['ev'][E] & { _type: E }
 
 export type EventNames<D extends Domain, S extends ServiceNames<D>> = keyof D['services'][S]['ev']
 

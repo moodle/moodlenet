@@ -4,8 +4,8 @@ import { MoodleDomain } from './types'
 const mnDomain = make<MoodleDomain>('MoodleDomain')
 
 mnDomain.enqueue('Accounting', 'RegisterNewAccount', { email: '', username: '' })
-mnDomain.bindWF('Accounting', 'RegisterNewAccount', '*', 'progress', 'WaitingConfirmEmail', (p) => {
-  p.x
+mnDomain.bindWF('Accounting', 'RegisterNewAccount', '*', 'end', '*', (p) => {
+  p._type === 'Rejected' && p.reason
 })
 mnDomain.bindEV('Accounting', 'YY', (p) => {
   p.b
