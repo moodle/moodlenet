@@ -4,13 +4,15 @@ export type MoodleDomain = {
     Accounting: {
       wf: {
         RegisterNewAccount: {
-          context: { email: string; username: string }
+          context: { ctx: string; email: string; username: string }
           enqueue: { email: string; username: string }
           progress: {
-            WaitingConfirmEmail: { _end: false }
-            aWaitingConfirmEmail: { _end: false }
-            AccountActivated: { _end: true }
-            Rejected: { _end: true; reason: string }
+            WaitingConfirmEmail: { WaitingConfirmEmail: 'WaitingConfirmEmail' }
+            aWaitingConfirmEmail: { aWaitingConfirmEmail: 'aWaitingConfirmEmail' }
+          }
+          end: {
+            AccountActivated: { AccountActivated: 'AccountActivated' }
+            Rejected: { reason: string }
           }
           signal: {}
         }
@@ -18,10 +20,12 @@ export type MoodleDomain = {
           context: { email: EmailObj; attemptCount: number; token: string }
           enqueue: { email: EmailObj }
           progress: {
-            EmailSent: { _end: false }
-            Confirmed: { _end: true }
-            Expired: { _end: true }
-            Aborted: { _end: true; reason: string }
+            EmailSent: { EmailSent: 'EmailSent' }
+          }
+          end: {
+            Confirmed: { Confirmed: 'Confirmed' }
+            Expired: { Expired: 'Expired' }
+            Aborted: { reason: string }
           }
           signal: {}
         }

@@ -1,5 +1,6 @@
 export type Payload = any
-export type Progress = { _end: boolean }
+export type Progress = any
+export type End = any
 export type StrName = Exclude<string, TopicWildCard>
 export type Domain = {
   name: string
@@ -11,6 +12,9 @@ export type Domain = {
           enqueue: Payload
           progress: {
             [progressName in StrName]: Progress
+          }
+          end: {
+            [endName in StrName]: End
           }
           signal: {
             [signalType in StrName]: Payload
@@ -24,12 +28,6 @@ export type Domain = {
   }
 }
 
-export type WFConsumer<
-  D extends Domain,
-  S extends ServiceNames<D>,
-  W extends WorkflowNames<D, S>
-> = (params: WorkflowStartParams<D, S, W>, wf: WFMeta) => unknown
-
 export type WFMeta = {
   wfid: string
   // enqueuedAt:Date
@@ -39,7 +37,7 @@ export type WFMeta = {
 export type TopicWildCard = '*' //| '#'
 export type WFLifeCycle = Exclude<
   keyof Domain['services'][string]['wf'][string],
-  'context' | 'signal'
+  'context' | 'signal' | 'enqueue'
 >
 export type DomainName<D extends Domain> = D['name']
 export type ServiceNames<D extends Domain> = keyof D['services']
@@ -67,20 +65,41 @@ export type WorkflowProgress<
   W extends WorkflowNames<D, S>
 > = Workflow<D, S, W>['progress']
 
+export type WorkflowEnd<
+  D extends Domain,
+  S extends ServiceNames<D>,
+  W extends WorkflowNames<D, S>
+> = Workflow<D, S, W>['end']
+
 type TypeUnion<T> = keyof T extends infer P // Introduce an extra type parameter P to distribute over
   ? P extends keyof T
     ? T[P] & { _type: P } // Take each P and create the union member
     : never
   : never
 
+export type WorkflowEndFn<
+  D extends Domain,
+  S extends ServiceNames<D>,
+  W extends WorkflowNames<D, S>
+> = (end: WorkflowEndPayload<D, S, W>, ctx?: WorkflowContext<D, S, W>) => unknown
+
 export type WorkflowProgressPayload<
   D extends Domain,
   S extends ServiceNames<D>,
-  W extends WorkflowNames<D, S>,
-  Type extends keyof WorkflowProgress<D, S, W>
-> = Type extends TopicWildCard
-  ? TypeUnion<WorkflowProgress<D, S, W>>
-  : WorkflowProgress<D, S, W>[Type] & { _type: Type }
+  W extends WorkflowNames<D, S>
+> = TypeUnion<WorkflowProgress<D, S, W>>
+
+export type WorkflowEndPayload<
+  D extends Domain,
+  S extends ServiceNames<D>,
+  W extends WorkflowNames<D, S>
+> = TypeUnion<WorkflowEnd<D, S, W>>
+
+export type WorkflowPayload<
+  D extends Domain,
+  S extends ServiceNames<D>,
+  W extends WorkflowNames<D, S>
+> = WorkflowEndPayload<D, S, W> | WorkflowProgressPayload<D, S, W>
 
 export type WorkflowSignalMap<
   D extends Domain,
@@ -112,3 +131,24 @@ export type Sync<Start, Success, Fail> = {
   }
 }
 export type SyncFail = null
+
+export type WFState<D extends Domain, S extends ServiceNames<D>, W extends WorkflowNames<D, S>> = {
+  ctx: WorkflowContext<D, S, W>
+  state: WorkflowPayload<D, S, W>
+}
+
+export type WFPersistence = {
+  getLastWFState<D extends Domain, S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
+    wfid: string
+  ): Promise<WFState<D, S, W>>
+
+  saveWFState<D extends Domain, S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
+    wfid: string,
+    wfstate: WFState<D, S, W>
+  ): Promise<WFState<D, S, W>>
+
+  endWF<D extends Domain, S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
+    wfid: string,
+    wfstate: WFState<D, S, W>
+  ): Promise<WFState<D, S, W>>
+}
