@@ -1,4 +1,4 @@
-import { WFPersistence } from '../types'
+import { DomainPersistence } from '../types'
 import { delay } from 'bluebird'
 const db = {} as any
 
@@ -8,7 +8,7 @@ const saveWFState = (wfid: string, wfstate: any) => {
 }
 const endWF = (wfid: string, wfstate: any) => saveWFState(wfid, wfstate)
 const getLastWFState = (wfid: string) => rndDelay(db[wfid])
-export const mockWFPersistence: WFPersistence = {
+export const mockDomainPersistence: DomainPersistence = {
   saveWFState,
   endWF,
   getLastWFState,

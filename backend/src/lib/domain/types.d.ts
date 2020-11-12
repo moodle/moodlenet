@@ -148,7 +148,7 @@ export type WFState<D extends Domain, S extends ServiceNames<D>, W extends Workf
   //TODO : add parentWF:`srv.wf.id`
 }
 
-export type WFPersistence = {
+export type DomainPersistence = {
   getLastWFState<D extends Domain, S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     wfid: string
   ): Promise<WFState<D, S, W>>
