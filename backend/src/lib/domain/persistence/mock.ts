@@ -1,17 +1,46 @@
-import { DomainPersistence } from '../types'
+import { DomainPersistence, WFState } from '../types'
 import { delay } from 'bluebird'
-const db = {} as any
+const db: Record<string, WFState<any, any, any>> = {}
 
-const saveWFState = (wfid: string, wfstate: any) => {
-  db[wfid] = wfstate
-  return rndDelay(wfstate)
+const progressWF: DomainPersistence['progressWF'] = ({ id, progress, ctx }) => {
+  db[id] = {
+    ...db[id],
+    updated: new Date(),
+    ctx: ctx || db[id].ctx,
+    progress,
+    status: 'progress'
+  }
+  return rndDelay(db[id])
 }
-const endWF = (wfid: string, wfstate: any) => saveWFState(wfid, wfstate)
-const getLastWFState = (wfid: string) => rndDelay(db[wfid])
+const enqueueWF: DomainPersistence['enqueueWF'] = ({ ctx, id, startParams }) => {
+  db[id] = {
+    status: 'enqueued',
+    ctx,
+    id,
+    startParams,
+    started: new Date(),
+    updated: new Date(),
+  }
+  return rndDelay(db[id])
+}
+const endWF: DomainPersistence['endWF'] = ({ endProgress, id, ctx }) => {
+  db[id] = {
+    ...db[id],
+    status: 'end',
+    updated: new Date(),
+    ctx: ctx || db[id].ctx,
+    progress: endProgress
+  }
+  return rndDelay(db[id])
+}
+
+const getWFState: DomainPersistence['getWFState'] = ({ id }) => rndDelay(db[id])
+
 export const mockDomainPersistence: DomainPersistence = {
-  saveWFState,
   endWF,
-  getLastWFState,
+  enqueueWF,
+  getWFState,
+  progressWF
 }
 
 const min = 10
