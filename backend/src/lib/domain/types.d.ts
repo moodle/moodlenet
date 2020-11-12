@@ -2,32 +2,38 @@ export type Payload = any
 export type Progress = any
 export type End = any
 export type StrName = Exclude<string, TopicWildCard>
+
 export type Domain = {
   name: string
   services: {
-    [service in StrName]: {
-      wf: {
-        [workflow in StrName]: {
-          context: Payload
-          enqueue: Payload
-          progress: {
-            [progressName in StrName]: Progress
-          }
-          end: {
-            [endName in StrName]: End
-          }
-          signal: {
-            [signalType in StrName]: Payload
-          }
-        }
-      }
-      ev: {
-        [signalType in StrName]: Payload
-      }
-    }
+    [service in StrName]: DomainService
   }
 }
 
+export type DomainService = {
+  wf: {
+    [workflow in StrName]: ServiceWorkflow
+  }
+  ev: {
+    [signalType in StrName]: Payload
+  }
+}
+
+export type ServiceWorkflow = {
+  ctx: Payload
+  start: Payload
+  progress: {
+    [progressName in StrName]: Progress
+  }
+  end: {
+    [endName in StrName]: End
+  }
+  signal: {
+    [signalType in StrName]: Payload
+  }
+}
+
+// TODO: think of a good meta
 export type WFMeta = {
   wfid: string
   // enqueuedAt:Date
@@ -35,10 +41,7 @@ export type WFMeta = {
 }
 
 export type TopicWildCard = '*' //| '#'
-export type WFLifeCycle = Exclude<
-  keyof Domain['services'][string]['wf'][string],
-  'context' | 'signal' | 'enqueue'
->
+export type WFLifeCycle = 'progress' | 'end'
 export type DomainName<D extends Domain> = D['name']
 export type ServiceNames<D extends Domain> = keyof D['services']
 
@@ -63,7 +66,7 @@ export type WorkflowStartParams<
   D extends Domain,
   S extends ServiceNames<D>,
   W extends WorkflowNames<D, S>
-> = Workflow<D, S, W>['enqueue']
+> = Workflow<D, S, W>['start']
 
 export type WorkflowProgress<
   D extends Domain,
@@ -126,7 +129,7 @@ export type WorkflowContext<
   D extends Domain,
   S extends ServiceNames<D>,
   W extends WorkflowNames<D, S>
-> = Workflow<D, S, W>['context']
+> = Workflow<D, S, W>['ctx']
 
 export type EventPayload<
   D extends Domain,
