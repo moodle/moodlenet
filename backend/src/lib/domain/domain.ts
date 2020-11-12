@@ -1,7 +1,8 @@
 // import { delay } from 'bluebird'
 import { ConsumeMessage, Options } from 'amqplib'
 import { newUuid } from '../helpers/misc'
-import { channelPromise } from './domain.env'
+import { channelPromise as channel } from './domain.env'
+import { mockDomainPersistence as persistence } from './persistence/mock'
 import {
   Domain,
   DomainName,
@@ -11,50 +12,24 @@ import {
   TopicWildCard,
   WFLifeCycle,
   WFMeta,
-  DomainPersistence,
   WorkflowContext,
   WorkflowEndPayload,
   WorkflowNames,
   WorkflowPayload,
   WorkflowProgressPayload,
-  WorkflowStartParams,
+  WorkflowStartParams
 } from './types'
+
+const getDomainExchangeName = (domainName: string) => `Domain.${domainName}`
+
+
 
 
 /**
  *
  */
-export const enqueue2 = <D extends Domain>(domainName: DomainName<D>) => async<S extends ServiceNames<D> = ServiceNames<D>, WF extends WorkflowNames<D, S> = WorkflowNames<D, S>>
-  (
-    wfpath: `${S}.${WF}`,
-    params: WorkflowStartParams<D, S, WF>,
-    _uuid?: string
-  ) => {
-  const uuid = _uuid || newUuid()
-  const topic = makeWfStartTopic(wfpath)
-  _log(`enqueue2 ${topic} ${uuid}`, params)
-
-  const ch = await channelPromise
-  const done = await ch.publish(`Domain.${domainName}`, topic, json2Buffer(params), {
-    messageId: uuid,
-  })
-  if (!done) {
-    throw new Error(`couldn't enqueue`)
-  }
-  return uuid
-}
-
-export const make = <D extends Domain>(
-  domainName: DomainName<D>,
-  persistence: DomainPersistence
-) => {
-  const domainExchangeName = `Domain.${domainName}`
-  const channel = channelPromise.then((ch) => (ch.assertExchange(domainExchangeName, 'topic'), ch))
-
-  /**
-   *
-   */
-  const enqueue = async <
+export const enqueue = <D extends Domain>(domainName: DomainName<D>) =>
+  async<
     S extends ServiceNames<D>,
     WF extends WorkflowNames<D, S>
   // SE extends ServiceNames<D>,
@@ -75,7 +50,7 @@ export const make = <D extends Domain>(
     _log(`enqueue ${topic} ${uuid}`, params)
 
     const ch = await channel
-    const done = await ch.publish(domainExchangeName, topic, json2Buffer(params), {
+    const done = await ch.publish(getDomainExchangeName(domainName), topic, json2Buffer(params), {
       messageId: uuid,
     })
     if (!done) {
@@ -84,10 +59,11 @@ export const make = <D extends Domain>(
     return uuid
   }
 
-  /**
-   *
-   */
-  const bindWFProgress = <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
+/**
+ *
+ */
+export const bindWFProgress = <D extends Domain>(domainName: DomainName<D>) =>
+  async<S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     wfpath: `${S}.${W}`,
     wfid: string,
     handler: (
@@ -109,12 +85,12 @@ export const make = <D extends Domain>(
     const _progress = (wfid: string) => (
       payload: WorkflowProgressPayload<D, S, W>,
       ctx: WorkflowContext<D, S, W>
-    ) => progress<S, W>(wfpath, wfid, payload, ctx)
+    ) => progress<D>(domainName)<S, W>(wfpath, wfid, payload, ctx)
     const _end = (_wfid: string) => (
       payload: WorkflowEndPayload<D, S, W>,
       ctx: WorkflowContext<D, S, W>
-    ) => end<S, W>(wfpath, _wfid, payload, ctx)
-    return makeConsumer({
+    ) => end<D>(domainName)<S, W>(wfpath, _wfid, payload, ctx)
+    return makeDomainQueueConsumer<D>(domainName)({
       opts,
       topic,
       consumer: async (msg) => {
@@ -125,10 +101,11 @@ export const make = <D extends Domain>(
     })
   }
 
-  /**
-   *
-   */
-  const bindWFEnd = <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
+/**
+ *
+ */
+export const bindWFEnd = <D extends Domain>(domainName: DomainName<D>) =>
+  async<S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     wfpath: `${S}.${W}`,
     wfid: string,
     handler: (
@@ -141,7 +118,7 @@ export const make = <D extends Domain>(
     const topic = makeWfTopic(wfpath, wfid, 'end', '*')
     _log(`bindWFEnd ${topic}`)
 
-    return makeConsumer({
+    return makeDomainQueueConsumer<D>(domainName)({
       opts,
       topic,
       consumer: async (msg) => {
@@ -152,10 +129,11 @@ export const make = <D extends Domain>(
     })
   }
 
-  /**
-   *
-   */
-  const bindWF = <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
+/**
+ *
+ */
+export const bindWF = <D extends Domain>(domainName: DomainName<D>) =>
+  async<S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     wfpath: `${S}.${W}`,
     wfid: string,
     handler: (
@@ -168,7 +146,7 @@ export const make = <D extends Domain>(
     const topic = makeWfTopic(wfpath, wfid, '*', '*')
     _log(`bindWF ${topic}`)
 
-    return makeConsumer({
+    return makeDomainQueueConsumer<D>(domainName)({
       opts,
       topic,
       consumer: async (msg) => {
@@ -179,17 +157,18 @@ export const make = <D extends Domain>(
     })
   }
 
-  /**
-   *
-   */
-  const bindEV = <S extends ServiceNames<D>, EV extends EventNames<D, S>>(
+/**
+ *
+ */
+export const bindEV = <D extends Domain>(domainName: DomainName<D>) =>
+  async<S extends ServiceNames<D>, EV extends EventNames<D, S>>(
     evpath: `${S}.${EV}`,
     handler: (payload: EventPayload<D, S, EV>) => unknown,
     opts?: { qname?: string; consume?: Options.Consume; queue?: Options.AssertQueue }
   ) => {
     const topic = makeEvTopic(evpath)
     _log(`bindEV ${topic}`)
-    return makeConsumer({
+    return makeDomainQueueConsumer<D>(domainName)({
       opts,
       topic,
       consumer: async (msg) => {
@@ -199,10 +178,11 @@ export const make = <D extends Domain>(
     })
   }
 
-  /**
-   *
-   */
-  const progress = async <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
+/**
+ *
+ */
+export const progress = <D extends Domain>(domainName: DomainName<D>) =>
+  async<S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     wfpath: `${S}.${W}`,
     wfid: string,
     progress: WorkflowProgressPayload<D, S, W>,
@@ -215,13 +195,14 @@ export const make = <D extends Domain>(
     const topic = makeWfTopic(wfpath, wfid, 'progress', progress._type)
     const msg = { payload: progress, meta: { wfid } }
     _log(`progress ${topic}`, msg)
-    return (await channel).publish(domainExchangeName, topic, json2Buffer(msg))
+    return (await channel).publish(getDomainExchangeName(domainName), topic, json2Buffer(msg))
   }
 
-  /**
-   *
-   */
-  const end = async <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
+/**
+ *
+ */
+export const end = <D extends Domain>(domainName: DomainName<D>) =>
+  async<S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     wfpath: `${S}.${W}`,
     wfid: string,
     end: WorkflowEndPayload<D, S, W>,
@@ -234,13 +215,14 @@ export const make = <D extends Domain>(
       ctx,
       state: end,
     })
-    return (await channel).publish(domainExchangeName, topic, json2Buffer(msg))
+    return (await channel).publish(getDomainExchangeName(domainName), topic, json2Buffer(msg))
   }
 
-  /**
-   *
-   */
-  const consumeWF = async <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
+/**
+ *
+ */
+export const consumeWF = <D extends Domain>(domainName: DomainName<D>) =>
+  async<S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     wfpath: `${S}.${W}`,
     consumer: (
       params: WorkflowStartParams<D, S, W>,
@@ -260,7 +242,7 @@ export const make = <D extends Domain>(
         ? `${domainName}.${topic}.CONSUMER`
         : opts.qname
       : newUuid()
-    return makeConsumer({
+    return makeDomainQueueConsumer<D>(domainName)({
       topic,
       opts: { qname, queue: { durable: true, ...opts?.queue }, consume: { ...opts?.consume } },
       consumer: async (msg) => {
@@ -269,20 +251,21 @@ export const make = <D extends Domain>(
         const _progress = (
           payload: WorkflowProgressPayload<D, S, W>,
           ctx: WorkflowContext<D, S, W>
-        ) => progress<S, W>(wfpath, wfid, payload, ctx)
+        ) => progress<D>(domainName)<S, W>(wfpath, wfid, payload, ctx)
 
         const _end = (payload: WorkflowEndPayload<D, S, W>, ctx: WorkflowContext<D, S, W>) =>
-          end<S, W>(wfpath, wfid, payload, ctx)
+          end<D>(domainName)<S, W>(wfpath, wfid, payload, ctx)
 
         consumer(buffer2Json(msg.content), _progress, _end, { wfid })
       },
     })
   }
 
-  /**
-   *
-   */
-  const makeConsumer = async (_: {
+/**
+ *
+ */
+export const makeDomainQueueConsumer = <D extends Domain>(domainName: DomainName<D>) =>
+  async (_: {
     topic: string
     consumer: (msg: ConsumeMessage) => Promise<void>
     opts?: { qname?: string; consume?: Options.Consume; queue?: Options.AssertQueue }
@@ -293,7 +276,7 @@ export const make = <D extends Domain>(
     const aq = await ch.assertQueue(qname, {
       ...opts?.queue,
     })
-    await ch.bindQueue(aq.queue, domainExchangeName, topic)
+    await ch.bindQueue(aq.queue, getDomainExchangeName(domainName), topic)
     // await delay(1000)
 
     const cons = await ch.consume(
@@ -316,10 +299,11 @@ export const make = <D extends Domain>(
     }
   }
 
-  /**
-   *
-   */
-  const callSync = async <S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
+/**
+ *
+ */
+export const callSync = <D extends Domain>(domainName: DomainName<D>) =>
+  async<S extends ServiceNames<D>, W extends WorkflowNames<D, S>>(
     wfPath: `${S}.${W}`,
     params: WorkflowStartParams<D, S, W>
   ) =>
@@ -329,7 +313,7 @@ export const make = <D extends Domain>(
       meta: WFMeta
     }>(async (resolve, _reject) => {
       const wfuuid = newUuid()
-      const unsub = await bindWFEnd<S, W>(
+      const unsub = await bindWFEnd<D>(domainName)<S, W>(
         wfPath,
         wfuuid,
         (endPayload, ctx, meta) => {
@@ -339,23 +323,21 @@ export const make = <D extends Domain>(
         { queue: { exclusive: true }, consume: { exclusive: true } }
       )
       // await delay(1000)
-      enqueue<S, W>(wfPath, params, wfuuid)
+      enqueue<D>(domainName)<S, W>(wfPath, params, wfuuid)
     })
 
-  return {
-    enqueue,
-    bindWFProgress,
-    bindWFEnd,
-    bindWF,
-    consumeWF,
-    progress,
-    end,
-    callSync,
-    makeConsumer,
-    bindEV,
-    // TODO: signal()
-  }
-}
+export const domain = <D extends Domain>(domainName: DomainName<D>) => ({
+  enqueue: enqueue<D>(domainName),
+  bindWFProgress: bindWFProgress<D>(domainName),
+  bindWFEnd: bindWFEnd<D>(domainName),
+  bindWF: bindWF<D>(domainName),
+  bindEV: bindEV<D>(domainName),
+  progress: progress<D>(domainName),
+  end: end<D>(domainName),
+  consumeWF: consumeWF<D>(domainName),
+  makeDomainQueueConsumer: makeDomainQueueConsumer<D>(domainName),
+  callSync: callSync<D>(domainName),
+})
 
 const json2Buffer = (json: any) => Buffer.from(JSON.stringify(json))
 

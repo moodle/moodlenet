@@ -1,9 +1,9 @@
-import { enqueue2 } from '../lib/domain/domain';
-import { mnDomain } from './mnDomain'
+import { domain } from '../lib/domain/domain';
 import { MoodleNetDomain } from './MoodleNetDomain';
 const l = (...args: any[]) =>
   console.log('APP----------\n', ...args.reduce((r, _) => [...r, _, '\n'], []), '----------\n\n')
   ; (async () => {
+    const mnDomain = domain<MoodleNetDomain>('MoodleNetDomain')
     await mnDomain.consumeWF(
       'Accounting.RegisterNewAccount',
       (params, progress, end, meta) => {
@@ -34,16 +34,14 @@ const l = (...args: any[]) =>
       { queue: { durable: true }, qname: 'progress1' }
     )
 
-    // for (let i = 0; i < 1; i++) {
-    //   mnDomain
-    //     .callSync('Accounting.RegisterNewAccount', {
-    //       email: `${i}zz`,
-    //       username: 'ww',
-    //     })
-    //     .then((_) => l(`${i}zz call then`, _), console.error)
-    // }
-    // console.error('done')
+    for (let i = 0; i < 10; i++) {
+      mnDomain
+        .callSync('Accounting.RegisterNewAccount', {
+          email: `${i}zz`,
+          username: 'ww',
+        })
+        .then((_) => l(`*** RESP ${i}zz`, _), console.error)
+    }
+    console.error('done')
 
-    // mnDomain.enqueue('Accounting.RegisterNewAccount', { email: '', username: '' })
-    enqueue2<MoodleNetDomain>('MoodleNetDomain')('Accounting.RegisterNewAccount', { email: '', username: '' })
   })()
