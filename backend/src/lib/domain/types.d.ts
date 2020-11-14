@@ -40,41 +40,37 @@ export type WFMeta = {
   // startedAt:Date
 }
 
-export type DomainWFMessageBase = {
-  id: string
-}
+export type DomainWFMessage<P> = [payload: P, id: string]
+
 export type DomainWFStartMessage<
   D extends Domain,
   S extends ServiceNames<D>,
   W extends WorkflowNames<D, S>
-  > = DomainWFMessageBase & {
-    startParams: WorkflowStartParams<D, S, W>
-  }
+  > = DomainWFMessage<WorkflowStartParams<D, S, W>>
+
 export type DomainWFProgressMessage<
   D extends Domain,
   S extends ServiceNames<D>,
   W extends WorkflowNames<D, S>
-  > = DomainWFMessageBase & {
-    progress: WorkflowProgress<D, S, W>
-  }
+  > = DomainWFMessage<WorkflowProgress<D, S, W>>
+
 export type DomainWFEndMessage<
   D extends Domain,
   S extends ServiceNames<D>,
   W extends WorkflowNames<D, S>
-  > = DomainWFMessageBase & {
-    endProgress: WorkflowEndProgress<D, S, W>
-  }
-export type DomainWFMessage<
-  D extends Domain,
-  S extends ServiceNames<D>,
-  W extends WorkflowNames<D, S>
-  > = DomainWFProgressMessage<D, S, W> | DomainWFEndMessage<D, S, W>
+  > = DomainWFMessage<WorkflowEndProgress<D, S, W>>
 
-export type AnyDomainWFMessage<
-  D extends Domain,
-  S extends ServiceNames<D>,
-  W extends WorkflowNames<D, S>,
-  > = DomainWFMessage<D, S, W> | DomainWFStartMessage<D, S, W>
+// export type DomainWFMessage<
+//   D extends Domain,
+//   S extends ServiceNames<D>,
+//   W extends WorkflowNames<D, S>
+//   > = DomainWFProgressMessage<D, S, W> | DomainWFEndMessage<D, S, W>
+
+// export type AnyDomainWFMessage<
+//   D extends Domain,
+//   S extends ServiceNames<D>,
+//   W extends WorkflowNames<D, S>,
+//   > = DomainWFMessage<D, S, W> | DomainWFStartMessage<D, S, W>
 
 export type TopicWildCard = '*' //| '#'
 export type DomainName<D extends Domain> = D['name']
@@ -84,6 +80,7 @@ export type WorkflowNames<
   D extends Domain,
   S extends ServiceNames<D>
   > = keyof D['services'][S]['wf']
+
 
 export type SignalNames<
   D extends Domain,
@@ -102,6 +99,20 @@ export type WorkflowStartParams<
   S extends ServiceNames<D>,
   W extends WorkflowNames<D, S>
   > = Workflow<D, S, W>['start']
+
+export type WorkflowProgressPayload<
+  D extends Domain,
+  S extends ServiceNames<D>,
+  W extends WorkflowNames<D, S>,
+  Name extends keyof WorkflowProgressMap<D, S, W>,
+  > = Workflow<D, S, W>['progress'][Name]
+
+export type WorkflowEndPayload<
+  D extends Domain,
+  S extends ServiceNames<D>,
+  W extends WorkflowNames<D, S>,
+  Name extends keyof WorkflowProgressMap<D, S, W>,
+  > = Workflow<D, S, W>['end'][Name]
 
 export type WorkflowProgressMap<
   D extends Domain,
