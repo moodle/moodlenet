@@ -6930,6 +6930,11 @@ typescript-compare@^0.0.2:
   dependencies:
     typescript-logic "^0.0.0"
 
+typescript-conditional-types@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/typescript-conditional-types/-/typescript-conditional-types-1.0.0.tgz#59f35c80884185c74da895d34eb86030e78af3d9"
+  integrity sha512-NwcyxofnwsEUnzYaBABq9FCjh76iMAC+SO/JcfOJEsMlWvBWnTPZTmO6JB4eEu/ZnWSl1pqzE5f0FdBL1e1Ydw==
+
 typescript-logic@^0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/typescript-logic/-/typescript-logic-0.0.0.tgz#66ebd82a2548f2b444a43667bec120b496890196"

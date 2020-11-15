@@ -176,7 +176,7 @@ export const d = <D extends Domain>(domainName: DomainName<D>) => <S extends Ser
             ? WorkflowProgressNames<D, S, W>
             : ProgressTypeOrWild
           type WfProgress = WorkflowProgress<D, S, W, ProgressType>
-          type WfProgressMsg = DomainWfMessageContent<WfProgress>
+          type WfProgressMsg = DomainWfMessageContent<WfProgress['payload']>
           const wfActionTopic = `${wfTopic}.progress.${progressType}`
           return {
             publish: async (_: { progress: WfProgress['payload']; id: string }) => {

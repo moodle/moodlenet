@@ -3,7 +3,7 @@ import { EmailService } from './services/email/EmailService'
 
 export type MoodleNetDomain = {
   name: 'MoodleNet'
-  services: {
+  srv: {
     Accounting: AccountingService
     Email: EmailService
   }

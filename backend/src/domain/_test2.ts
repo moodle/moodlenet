@@ -20,10 +20,7 @@ const accReg = d<MoodleNetDomain>('MoodleNet')('Accounting').wf('RegisterNewAcco
 
   await accReg.progress('WaitingConfirmEmail').consume({
     handler: (_) => {
-      const {
-        id,
-        progress: { payload, type },
-      } = _
+      const { id, progress } = _
       // l('consume Progress WF', _)
       const rej = Math.random() > 0.5
       rej
@@ -35,7 +32,7 @@ const accReg = d<MoodleNetDomain>('MoodleNet')('Accounting').wf('RegisterNewAcco
     },
     id: '*',
   })
-  for (let i = 0; i < 1000; i++) {
+  for (let i = 0; i < 1; i++) {
     const id = newUuid()
     const x = await accReg.end('*').consume({
       id,

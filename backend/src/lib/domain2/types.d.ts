@@ -169,7 +169,7 @@ export type WorkflowProgress<
   ProgrName extends TopicWildCard | WorkflowProgressNames<D, S, W>
 > = ProgrName extends TopicWildCard
   ? TypeUnion<WorkflowProgressMap<D, S, W>>
-  : { payload: WorkflowProgressMap<D, S, W>[ProgrName]; type: ProgrName }
+  : { payload: WorkflowProgressMap<D, S, W>[ProgrName]; type: ProgrName; id: string }
 
 export type WorkflowEnd<
   D extends Domain,
@@ -178,7 +178,7 @@ export type WorkflowEnd<
   EndName extends TopicWildCard | WorkflowEndNames<D, S, W>
 > = EndName extends TopicWildCard
   ? TypeUnion<WorkflowEndMap<D, S, W>>
-  : { payload: WorkflowEndMap<D, S, W>[EndName]; type: EndName }
+  : { payload: WorkflowEndMap<D, S, W>[EndName]; type: EndName; id: string }
 
 // type WorkflowAnyProgress<
 //   D extends Domain,
