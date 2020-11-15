@@ -29,9 +29,22 @@ export type ServiceWorkflow = {
   }
 }
 
-export type Pointer<P extends PathTo.Any, T> = {
-  p: P
-  _: T
+export type TypeUnion<T> = keyof T extends infer P // Introduce an extra type parameter P to distribute over
+  ? P extends keyof T
+    ? { t: P; p: T[P] } // Take each P and create the union member
+    : never
+  : never
+export type Pointer<
+  Path extends PathTo.Any,
+  Type /* extends ParentType[Name] */,
+  ParentType,
+  KeyName extends keyof ParentType | '*'
+> = {
+  path: Path
+  keyName: KeyName
+  type: Type
+  parent: ParentType
+  payload: KeyName extends '*' ? TypeUnion<ParentType> : { t: KeyName; p: Type }
   // _: {t:Last<P> extends '*' ? keyof P:Last<P>, p: T}
 }
 // prettier-ignore

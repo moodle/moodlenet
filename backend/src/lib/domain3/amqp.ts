@@ -1,6 +1,5 @@
 // import { delay } from 'bluebird'
 import { Options } from 'amqplib'
-import { Last } from 'typescript-tuple'
 import { newUuid } from '../helpers/misc'
 import { channelPromise as channel } from './domain.env'
 import { mockDomainPersistence as persistence } from './persistence/mock'
@@ -34,76 +33,72 @@ export type DomainPublishOpts = Options.Publish & {
 export type AckKO = 'nack' | 'reject'
 export type Ack = 'ack' | AckKO
 
-export const publish = async <Point extends Pointer<PathTo.AnyLeaf, any>>(
+export const publish = async <Point extends Pointer<PathTo.AnyLeaf, any, any, any>>(
   pointer: Point,
-  payload: Point extends Pointer<infer P, infer T> ? { t: Last<P>; p: T } : never,
+  payload: Point['type'],
   opts?: DomainPublishOpts
 ) => {
-  const topicArr = pointer.p
-  _log(`publish ${topicArr}`, payload)
+  const topicArr = pointer.path
+  const topic = topicArr.join('.')
+  _log(`publish ${topic}`, payload)
   const ex = await getDomainExchangeName(topicArr[0])
-  const pub = await (await channel).publish(ex, topicArr.join('.'), json2Buffer(payload), opts)
+  const pub = await (await channel).publish(ex, topic, json2Buffer(payload), opts)
   return pub
 }
 
-export const publishEv = async <Point extends Pointer<PathTo.Event, any>>(
+export const publishEv = async <Point extends Pointer<PathTo.Event, any, any, any>>(
   pointer: Point,
-  payload: Point extends Pointer<any, infer T> ? T : never,
+  payload: Point['type'],
   opts?: DomainPublishOpts
 ) => publish(pointer, payload, opts)
 
-export const publishWf = async <Point extends Pointer<PathTo.WF, any>>(
+export const publishWf = async <Point extends Pointer<PathTo.WF, any, any, any>>(
   pointer: Point,
   id: string,
-  payload: Point extends Pointer<any, infer T> ? T : never,
-  // payload: Point extends Pointer<infer P, infer T> ? { t: Last<P>; p: T } : never,
+  payload: Point['type'],
   opts?: DomainPublishOpts
-) => publish<Point>(({ p: [...pointer.p, id], _: pointer._ } as any) as Point, payload, opts)
+) => publish<Point>(({ path: [...pointer.path, id] } as any) as Point, payload, opts)
 
-export const publishWfStart = async <Point extends Pointer<PathTo.WFStart, any>>(
+export const publishWfStart = async <Point extends Pointer<PathTo.WFStart, any, any, any>>(
   pointer: Point,
-  payload: Point extends Pointer<any, infer T> ? T : never,
+  payload: Point['type'],
   opts?: DomainPublishOpts
 ) => {
   const id = newUuid()
   ;(await publishWf(pointer, id, payload, opts)) && id
 }
 
-export const consumeEv = async <Point extends Pointer<PathTo.Event, any>>(
+export const consumeEv = async <Point extends Pointer<PathTo.Event, any, any, any>>(
   pointer: Point,
-  handler: (
-    _: Point extends Pointer<infer P, infer T> ? { t: Last<P>; p: T } : never
-  ) => Ack | Promise<Ack>,
+  handler: (_: Point['payload']) => Ack | Promise<Ack>,
   opts?: { consume?: DomainConsumeOpts; queue?: DomainQueueOpts }
 ) => consume<Point>(pointer, handler, opts)
 
-export const consumeWf = async <Point extends Pointer<PathTo.WF, any>>(
+export const consumeWf = async <Point extends Pointer<PathTo.WF, any, any, any>>(
   pointer: Point,
   id: string,
-  handler: (
-    _: Point extends Pointer<infer P, infer T> ? { t: Last<P>; p: T } : never
-  ) => Ack | Promise<Ack>,
+  handler: (_: Point['payload']) => Ack | Promise<Ack>,
   opts?: { consume?: DomainConsumeOpts; queue?: DomainQueueOpts }
-) => consume<Point>({ p: [...pointer.p, id], _: pointer._ } as any, handler, opts)
+) => consume<Point>({ path: [...pointer.path, id] } as any, handler, opts)
 
-export const consume = async <Point extends Pointer<any, any>>(
+export const consume = async <Point extends Pointer<PathTo.AnyLeaf, any, any, any>>(
   pointer: Point,
-  handler: (
-    _: Point extends Pointer<infer P, infer T> ? { t: Last<P>; p: T } : never
-  ) => Ack | Promise<Ack>,
+  handler: (_: Point['payload']) => Ack | Promise<Ack>,
   opts?: { consume?: DomainConsumeOpts; queue?: DomainQueueOpts }
 ) => {
-  const topicArr = pointer.p
-  _log(`consume ${topicArr}`)
+  const topicArr = pointer.path
+  const topic = topicArr.join('.')
+  const domainName = topicArr[0]
+  _log(`consume ${topic}`)
   const ch = await channel
-  const ex = await getDomainExchangeName(topicArr[0])
+  const ex = await getDomainExchangeName(domainName)
   const qname = opts?.consume?.static || newUuid()
   const rejectStrategy = opts?.consume?.rejectStrategy || 'reject'
   await ch.assertQueue(qname, {
     ...opts?.queue,
     exclusive: true,
   })
-  await ch.bindQueue(qname, ex, topicArr.join('.'))
+  await ch.bindQueue(qname, ex, topic)
 
   const cons = await ch.consume(
     qname,
@@ -112,7 +107,14 @@ export const consume = async <Point extends Pointer<any, any>>(
         return
       }
       try {
-        const ack = await handler(buffer2Json(msg.content))
+        _log(`got msg `, msg.fields)
+        const routingKeyArr = msg.fields.routingKey.split('.')
+        const payloadTypeRevIndex =
+          routingKeyArr[3] === 'ev' ? 1 : routingKeyArr[3] === 'wf' ? 2 : 0
+
+        const payloadType = routingKeyArr[routingKeyArr.length - payloadTypeRevIndex]
+        const jsonContent = buffer2Json(msg.content)
+        const ack = await handler({ p: jsonContent, t: payloadType })
         ch[ack](msg)
       } catch (err) {
         ch[rejectStrategy](msg)
