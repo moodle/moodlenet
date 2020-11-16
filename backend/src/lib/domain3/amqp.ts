@@ -1,9 +1,17 @@
 // import { delay } from 'bluebird'
-import { Options } from 'amqplib'
+import { Message, Options } from 'amqplib'
 import { newUuid } from '../helpers/misc'
+import {
+  eventMsgRoutingInfo,
+  EventMsgRoutingInfo,
+  wfLifeMsgRoutingInfo,
+  WfLifeMsgRoutingInfo,
+  wfStartMsgRoutingInfo,
+  WfStartMsgRoutingInfo,
+} from './domain'
 import { channelPromise as channel } from './domain.env'
 import { mockDomainPersistence as persistence } from './persistence/mock'
-import { Domain, PathTo, Pointer } from './types'
+import { NoWildPointer, Domain, PathTo, Pointer } from './types'
 
 const assertedExchanges = {} as any
 const getDomainExchangeName = async (domainName: string) => {
@@ -13,6 +21,7 @@ const getDomainExchangeName = async (domainName: string) => {
   }
   return exName
 }
+// FIXME: ALL mono arguments
 
 const stateGetter = <
   D extends Domain,
@@ -33,11 +42,12 @@ export type DomainPublishOpts = Options.Publish & {
 export type AckKO = 'nack' | 'reject'
 export type Ack = 'ack' | AckKO
 
-export const publish = async <Point extends Pointer<PathTo.AnyLeaf, any, any, any>>(
-  pointer: Point,
-  payload: Point['type'],
+export const publish = async <Point extends Pointer<PathTo.AnyLeaf, any, any, any, any>>(_: {
+  pointer: Point
+  payload: Point['type']
   opts?: DomainPublishOpts
-) => {
+}) => {
+  const { pointer, payload, opts } = _
   const topicArr = pointer.path
   const topic = topicArr.join('.')
   _log(`publish ${topic}`, payload)
@@ -46,46 +56,84 @@ export const publish = async <Point extends Pointer<PathTo.AnyLeaf, any, any, an
   return pub
 }
 
-export const publishEv = async <Point extends Pointer<PathTo.Event, any, any, any>>(
-  pointer: Point,
-  payload: Point['type'],
+export const publishEv = async <Point extends Pointer<PathTo.Event, any, any, any, any>>(_: {
+  pointer: NoWildPointer<Point>
+  payload: Point['type']
   opts?: DomainPublishOpts
-) => publish(pointer, payload, opts)
-
-export const publishWf = async <Point extends Pointer<PathTo.WF, any, any, any>>(
-  pointer: Point,
-  id: string,
-  payload: Point['type'],
-  opts?: DomainPublishOpts
-) => publish<Point>(({ path: [...pointer.path, id] } as any) as Point, payload, opts)
-
-export const publishWfStart = async <Point extends Pointer<PathTo.WFStart, any, any, any>>(
-  pointer: Point,
-  payload: Point['type'],
-  opts?: DomainPublishOpts
-) => {
-  const id = newUuid()
-  ;(await publishWf(pointer, id, payload, opts)) && id
+}) => {
+  const { pointer, payload, opts } = _
+  return publish({ pointer, payload, opts })
 }
 
-export const consumeEv = async <Point extends Pointer<PathTo.Event, any, any, any>>(
-  pointer: Point,
-  handler: (_: Point['payload']) => Ack | Promise<Ack>,
-  opts?: { consume?: DomainConsumeOpts; queue?: DomainQueueOpts }
-) => consume<Point>(pointer, handler, opts)
+export const publishWf = async <Point extends Pointer<PathTo.WF, any, any, any, any>>(_: {
+  pointer: NoWildPointer<Point>
+  id: string
+  payload: Point['type']
+  opts?: DomainPublishOpts
+}) => {
+  const { pointer: _pointer, id, payload, opts } = _
+  const pointer = ({ path: [..._pointer.path, id] } as any) as Point
+  return publish<Point>({ pointer, payload, opts })
+}
 
-export const consumeWf = async <Point extends Pointer<PathTo.WF, any, any, any>>(
-  pointer: Point,
-  id: string,
-  handler: (_: Point['payload']) => Ack | Promise<Ack>,
-  opts?: { consume?: DomainConsumeOpts; queue?: DomainQueueOpts }
-) => consume<Point>({ path: [...pointer.path, id] } as any, handler, opts)
+export const publishWfStart = async <Point extends Pointer<PathTo.WFStart, any, any, any, any>>(_: {
+  pointer: NoWildPointer<Point>
+  payload: Point['type']
+  opts?: DomainPublishOpts
+}) => {
+  const { pointer, payload, opts } = _
+  const id = newUuid()
+  return (await publishWf({ pointer, id, payload, opts })) && id
+}
 
-export const consume = async <Point extends Pointer<PathTo.AnyLeaf, any, any, any>>(
-  pointer: Point,
-  handler: (_: Point['payload']) => Ack | Promise<Ack>,
+export const consumeEv = async <Point extends Pointer<PathTo.Event, any, any, any, any>>(_: {
+  pointer: Point
+  handler: (_: { payload: Point['payload']; info: EventMsgRoutingInfo }) => Ack | Promise<Ack>
   opts?: { consume?: DomainConsumeOpts; queue?: DomainQueueOpts }
-) => {
+}) => {
+  const { pointer, handler, opts } = _
+  return consume<Point>({
+    pointer,
+    handler: ({ payload, msg }) => {
+      const info = eventMsgRoutingInfo(msg)
+      return handler({ payload, info })
+    },
+    opts,
+  })
+}
+export const consumeWf = async <Point extends Pointer<PathTo.WF, any, any, any, any>>(_: {
+  pointer: Point
+  id: string
+  // TODO:
+  // FIXME: handler: (_: Point['payload'], id , ecc..)
+  handler: (_: {
+    payload: Point['payload']
+    info: PathTo.WF extends PathTo.WFLife ? WfLifeMsgRoutingInfo : WfStartMsgRoutingInfo
+  }) => Ack | Promise<Ack>
+  opts?: { consume?: DomainConsumeOpts; queue?: DomainQueueOpts }
+}) => {
+  const { pointer: _pointer, id, handler, opts } = _
+  const pointer = { path: [..._pointer.path, id] } as any
+
+  return consume<Point>({
+    pointer,
+    handler: ({ payload, msg }) => {
+      const info =
+        pointer.path.length === 6 ? wfStartMsgRoutingInfo(msg) : wfLifeMsgRoutingInfo(msg)
+      return handler({ payload, info })
+    },
+    opts,
+  })
+}
+
+export const consume = async <Point extends Pointer<PathTo.AnyLeaf, any, any, any, any>>(_: {
+  pointer: Point
+  // TODO:
+  // FIXME: handler: (_: Point['type'], msg: amqpMessage)
+  handler: (_: { payload: Point['payload']; msg: Message }) => Ack | Promise<Ack>
+  opts?: { consume?: DomainConsumeOpts; queue?: DomainQueueOpts }
+}) => {
+  const { pointer, handler, opts } = _
   const topicArr = pointer.path
   const topic = topicArr.join('.')
   const domainName = topicArr[0]
@@ -114,7 +162,8 @@ export const consume = async <Point extends Pointer<PathTo.AnyLeaf, any, any, an
 
         const payloadType = routingKeyArr[routingKeyArr.length - payloadTypeRevIndex]
         const jsonContent = buffer2Json(msg.content)
-        const ack = await handler({ p: jsonContent, t: payloadType })
+        const payload = { p: jsonContent, t: payloadType }
+        const ack = await handler({ payload, msg })
         ch[ack](msg)
       } catch (err) {
         ch[rejectStrategy](msg)
@@ -128,15 +177,6 @@ export const consume = async <Point extends Pointer<PathTo.AnyLeaf, any, any, an
     ch.cancel(cons.consumerTag)
     ch.deleteQueue(qname)
   }
-}
-
-export const splitWfProgressTopic = (topic: string) => {
-  const [domain, service, , wfname, action, type, wfid] = topic.split('.')
-  return { domain, service, wfname, action, type, wfid }
-}
-export const splitWfStartTopic = (topic: string) => {
-  const [domain, service, , wfname, , wfid] = topic.split('.')
-  return { domain, service, wfname, wfid }
 }
 
 const json2Buffer = <T>(json: T) => Buffer.from(JSON.stringify(json))

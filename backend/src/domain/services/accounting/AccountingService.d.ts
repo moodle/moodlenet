@@ -1,4 +1,4 @@
-import { WorkflowEndProgress } from '../../../lib/domain/types'
+import { WFLifeType } from '../../../lib/domain3/types'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
 import { EmailObj } from '../email/EmailService'
 
@@ -16,7 +16,7 @@ export type AccountingService = {
         Rejected: { reason: string }
       }
       signal: {
-        EmailConfirmResult: WorkflowEndProgress<MoodleNetDomain, 'Email', 'SendOne'>
+        EmailConfirmResult: WFLifeType<MoodleNetDomain, 'Email', 'SendOne', 'end'>
         aEmailConfirmResult: { a: string }
       }
     }
