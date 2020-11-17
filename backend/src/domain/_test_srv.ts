@@ -1,8 +1,9 @@
-import { consumeWf, consumeWfStart, publishWf, publishWfStart } from '../lib/domain3/amqp'
+import { consumeWf, consumeWfStart, publishWf } from '../lib/domain3/amqp'
 import { point } from '../lib/domain3/domain'
-import { newUuid } from '../lib/helpers/misc'
-import { MoodleNetDomain } from './/MoodleNetDomain'
+import { MoodleNetDomain } from './MoodleNetDomain'
+const __LOG = false
 const l = (...args: any[]) =>
+  __LOG &&
   console.log('APP----------\n', ...args.reduce((r, _) => [...r, _, '\n'], []), '----------\n\n')
 
 const acc = point<MoodleNetDomain>('MoodleNet')('srv')('Accounting')
@@ -18,6 +19,7 @@ const g = acc('ev')('*')
         pointer: accReg('progress')('WaitingConfirmEmail'),
         id: info.id,
         payload: {
+          email: payload.p.email,
           WaitingConfirmEmail: 'WaitingConfirmEmail',
         },
       })
@@ -28,7 +30,7 @@ const g = acc('ev')('*')
   await consumeWf({
     pointer: accReg('progress')('WaitingConfirmEmail'),
     id: '*',
-    handler: ({ info, payload: payload }) => {
+    handler: ({ info, payload }) => {
       l('consume Progress WF', info, payload)
       const rej = Math.random() > 0.5
       const { WaitingConfirmEmail } = payload.p
@@ -36,40 +38,15 @@ const g = acc('ev')('*')
         ? publishWf({
             pointer: accReg('end')('Rejected'),
             id: info.id,
-            payload: { reason: ` because  ${WaitingConfirmEmail}` },
+            payload: { email: payload.p.email, reason: ` because  ${WaitingConfirmEmail}` },
           })
         : publishWf({
             pointer: accReg('end')('AccountActivated'),
             id: info.id,
-            payload: { AccountActivated: 'AccountActivated' },
+            payload: { email: payload.p.email, AccountActivated: 'AccountActivated' },
           })
       return 'ack'
     },
   })
   l('**')
-
-  for (let i = 0; i < 100; i++) {
-    const id = newUuid()
-    l(id)
-    const x = await consumeWf({
-      pointer: accReg('end')('*'),
-      id: '*',
-      handler: ({ info, payload }) => {
-        l(
-          `*** *********************************************************************RESP ${i}zz`,
-          info,
-          payload
-        )
-        // x.then((_) => _())
-        return 'ack'
-      },
-    })
-    publishWfStart({
-      pointer: accReg('start'),
-      payload: {
-        email: `${i}zz`,
-        username: 'ww',
-      },
-    })
-  }
 })()

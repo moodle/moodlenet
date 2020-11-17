@@ -8,12 +8,12 @@ export type AccountingService = {
       ctx: { ctx: string; email: string; username: string }
       start: { email: string; username: string }
       progress: {
-        WaitingConfirmEmail: { WaitingConfirmEmail: 'WaitingConfirmEmail' }
+        WaitingConfirmEmail: { email: string; WaitingConfirmEmail: 'WaitingConfirmEmail' }
         aWaitingConfirmEmail: { aWaitingConfirmEmail: 'aWaitingConfirmEmail' }
       }
       end: {
-        AccountActivated: { AccountActivated: 'AccountActivated' }
-        Rejected: { reason: string }
+        AccountActivated: { email: string; AccountActivated: 'AccountActivated' }
+        Rejected: { email: string; reason: string }
       }
       signal: {
         EmailConfirmResult: WFLifePayload<MoodleNetDomain, 'Email', 'SendOne', 'end'>
