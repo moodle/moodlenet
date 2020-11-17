@@ -8,10 +8,10 @@ import {
   WfLifeMsgRoutingInfo,
   wfStartMsgRoutingInfo,
   WfStartMsgRoutingInfo,
+  wfStartPointerInfo,
 } from './domain'
-import { channelPromise as channel } from './domain.env'
-import { mockDomainPersistence as persistence } from './persistence/mock'
-import { NoWildPointer, Domain, PathTo, Pointer } from './types'
+import { channelPromise as channel, persistence } from './domain.env'
+import { NoWildPointer, PathTo, Pointer } from './types'
 
 const assertedExchanges = {} as any
 const getDomainExchangeName = async (domainName: string) => {
@@ -21,15 +21,6 @@ const getDomainExchangeName = async (domainName: string) => {
   }
   return exName
 }
-// FIXME: ALL mono arguments
-
-const stateGetter = <
-  D extends Domain,
-  S extends keyof D['srv'],
-  W extends keyof D['srv'][S]['wf']
->(_: {
-  id: string
-}) => () => persistence.getWFState<D, S, W>(_)
 
 export type DomainQueueOpts = Options.AssertQueue & {}
 export type DomainConsumeOpts = Options.Consume & {
@@ -83,6 +74,8 @@ export const publishWfStart = async <Point extends Pointer<PathTo.WFStart, any, 
 }) => {
   const { pointer, payload, opts } = _
   const id = newUuid()
+  const { domain, service: srv, wfname: wf } = wfStartPointerInfo(pointer)
+  persistence.enqueueWF({ id, startParams: payload, domain, srv, wf })
   return (await publishWf({ pointer, id, payload, opts })) && id
 }
 
@@ -101,15 +94,10 @@ export const consumeEv = async <Point extends Pointer<PathTo.Event, any, any, an
     opts,
   })
 }
-export const consumeWf = async <Point extends Pointer<PathTo.WF, any, any, any, any>>(_: {
+export const consumeWf = async <Point extends Pointer<PathTo.WFLife, any, any, any, any>>(_: {
   pointer: Point
   id: string
-  // TODO:
-  // FIXME: handler: (_: Point['payload'], id , ecc..)
-  handler: (_: {
-    payload: Point['payload']
-    info: PathTo.WF extends PathTo.WFLife ? WfLifeMsgRoutingInfo : WfStartMsgRoutingInfo
-  }) => Ack | Promise<Ack>
+  handler: (_: { payload: Point['payload']; info: WfLifeMsgRoutingInfo }) => Ack | Promise<Ack>
   opts?: { consume?: DomainConsumeOpts; queue?: DomainQueueOpts }
 }) => {
   const { pointer: _pointer, id, handler, opts } = _
@@ -118,8 +106,25 @@ export const consumeWf = async <Point extends Pointer<PathTo.WF, any, any, any, 
   return consume<Point>({
     pointer,
     handler: ({ payload, msg }) => {
-      const info =
-        pointer.path.length === 6 ? wfStartMsgRoutingInfo(msg) : wfLifeMsgRoutingInfo(msg)
+      const info = wfLifeMsgRoutingInfo(msg)
+      return handler({ payload, info })
+    },
+    opts,
+  })
+}
+export const consumeWfStart = async <Point extends Pointer<PathTo.WFStart, any, any, any, any>>(_: {
+  pointer: Point
+  id: string
+  handler: (_: { payload: Point['payload']; info: WfStartMsgRoutingInfo }) => Ack | Promise<Ack>
+  opts?: { consume?: DomainConsumeOpts; queue?: DomainQueueOpts }
+}) => {
+  const { pointer: _pointer, id, handler, opts } = _
+  const pointer = { path: [..._pointer.path, id] } as any
+
+  return consume<Point>({
+    pointer,
+    handler: ({ payload, msg }) => {
+      const info = wfStartMsgRoutingInfo(msg)
       return handler({ payload, info })
     },
     opts,

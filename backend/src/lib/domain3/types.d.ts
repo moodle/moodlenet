@@ -125,53 +125,100 @@ export namespace PathTo {
    // | AnyLeaf
 }
 
-export type WFStatus = 'progress' | 'end' | 'enqueued'
+export type WFStatus = 'progress' | 'end' | 'enqueued' //| 'enrolled'
 
-export type WFState<
+export interface WFStateEnqueueParams<
   D extends Domain,
   S extends keyof D['srv'],
-  W extends keyof D['srv'][S]['wf'],
-  Status extends WFStatus = WFStatus
-> = {
+  W extends keyof D['srv'][S]['wf']
+> {
   id: string
   domain: DomainName<D>
   srv: S
   wf: W
+  startParams: WFStartType<D, S, W>
+}
+
+export interface WFStateBase<
+  D extends Domain,
+  S extends keyof D['srv'],
+  W extends keyof D['srv'][S]['wf'],
+  Status extends WFStatus
+> extends WFStateEnqueueParams<D, S, W> {
   status: Status
   updated: Date
   started: Date
-  startParams: WFStartType<D, S, W>
-} & (Status extends 'progress' | 'end'
-  ? {
-      ctx: WFCtxType<D, S, W>
-      progress: WFLifePayload<D, S, W, Status>
-    }
-  : {})
+}
+export interface WFStateBaseWithCtx<
+  D extends Domain,
+  S extends keyof D['srv'],
+  W extends keyof D['srv'][S]['wf'],
+  Status extends Exclude<WFStatus, 'enqueued'>
+> extends WFStateBase<D, S, W, Status> {
+  ctx: WFCtxType<D, S, W>
+}
+
+export interface WFStateBaseWithProgress<
+  D extends Domain,
+  S extends keyof D['srv'],
+  W extends keyof D['srv'][S]['wf'],
+  Status extends Exclude<WFStatus, 'enqueued'> //| 'enrolled'>
+> extends WFStateBaseWithCtx<D, S, W, Status> {
+  progress: Status extends 'progress'
+    ? WFLifePayload<D, S, W, 'progress'>
+    : WFLifePayload<D, S, W, 'end'>
+}
+
+export interface WFStateEnqueued<
+  D extends Domain,
+  S extends keyof D['srv'],
+  W extends keyof D['srv'][S]['wf']
+> extends WFStateBase<D, S, W, 'enqueued'> {}
+
+// export interface WFStateEnrolled<
+//   D extends Domain,
+//   S extends keyof D['srv'],
+//   W extends keyof D['srv'][S]['wf']
+// > extends WFStateBaseWithCtx<D, S, W, 'enrolled'> {}
+
+export interface WFStateProgress<
+  D extends Domain,
+  S extends keyof D['srv'],
+  W extends keyof D['srv'][S]['wf']
+> extends WFStateBaseWithProgress<D, S, W, 'progress'> {}
+
+export interface WFStateEnd<
+  D extends Domain,
+  S extends keyof D['srv'],
+  W extends keyof D['srv'][S]['wf']
+> extends WFStateBaseWithProgress<D, S, W, 'end'> {}
+
+export type WFState<
+  D extends Domain,
+  S extends keyof D['srv'],
+  W extends keyof D['srv'][S]['wf']
+> = WFStateEnqueued<D, S, W> | WFStateProgress<D, S, W> | WFStateEnd<D, S, W>
+// | WFStateEnrolled<D, S, W>
 
 // TODO usare Pointer come type-argument
 export type DomainPersistence = {
   getWFState<D extends Domain, S extends keyof D['srv'], W extends keyof D['srv'][S]['wf']>(_: {
     id: string
-  }): Promise<WFState<D, S, W, WFStatus>>
-
-  getWFStateX<D extends Domain, S extends keyof D['srv'], W extends keyof D['srv'][S]['wf']>(_: {
-    id: string
-  }): Promise<WFState<D, S, W, WFStatus>>
+  }): Promise<WFState<D, S, W>>
 
   progressWF<D extends Domain, S extends keyof D['srv'], W extends keyof D['srv'][S]['wf']>(_: {
     id: string
     progress: WFLifePayload<D, S, W, 'progress'>
-    ctx?: WFCtxType<D, S, W>
-  }): Promise<WFState<D, S, W, 'progress'>>
+    ctx: WFCtxType<D, S, W>
+  }): Promise<unknown>
 
-  enqueueWF<D extends Domain, S extends keyof D['srv'], W extends keyof D['srv'][S]['wf']>(_: {
-    id: string
-    startParams: WFStartType<D, S, W>
-  }): Promise<WFState<D, S, W, 'enqueued'>>
+  enqueueWF<D extends Domain, S extends keyof D['srv'], W extends keyof D['srv'][S]['wf']>(
+    _: WFStateEnqueueParams<D, S, W>
+  ): Promise<unknown>
 
   endWF<D extends Domain, S extends keyof D['srv'], W extends keyof D['srv'][S]['wf']>(_: {
     id: string
     endProgress: WFLifePayload<D, S, W, 'end'>
-    ctx?: WFCtxType<D, S, W>
-  }): Promise<WFState<D, S, W, 'end'>>
+    ctx: WFCtxType<D, S, W>
+  }): Promise<unknown>
 }
