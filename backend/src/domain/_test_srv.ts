@@ -1,8 +1,8 @@
-import * as A from '../lib/domain3/amqp'
-import * as D from '../lib/domain3/domain'
-import { persistence } from '../lib/domain3/domain.env'
+import * as A from '../lib/domain/amqp'
+import * as D from '../lib/domain/domain'
+import { persistence } from '../lib/domain/domain.env'
 import { MoodleNetDomain } from './MoodleNetDomain'
-const __LOG = true
+const __LOG = false
 const l = (...args: any[]) =>
   __LOG &&
   console.log('SRV ----------\n', ...args.reduce((r, _) => [...r, _, '\n'], []), '----------\n\n')

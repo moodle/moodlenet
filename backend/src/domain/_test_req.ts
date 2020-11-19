@@ -1,5 +1,5 @@
-import { callSync } from '../lib/domain3/amqp'
-import { point } from '../lib/domain3/domain'
+import { callSync } from '../lib/domain/amqp'
+import { point } from '../lib/domain/domain'
 import { MoodleNetDomain } from './MoodleNetDomain'
 
 const acc = point<MoodleNetDomain>('MoodleNet')('srv')('Accounting')
@@ -13,6 +13,9 @@ export const start = (n: number) =>
         payload: {
           email: `${index}zz`,
           username: 'ww',
+        },
+        opts: {
+          timeout: 120000,
         },
       })
       l(res, index)

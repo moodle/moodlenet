@@ -12,7 +12,7 @@ import {
 } from './domain'
 import { channelPromise as channel, persistence } from './domain.env'
 import { NoWildPointer, PathTo, Pointer, TypeUnion } from './types'
-const __LOG = true
+const __LOG = false
 
 type DomainQueueOpts = Options.AssertQueue & {
   name?: string

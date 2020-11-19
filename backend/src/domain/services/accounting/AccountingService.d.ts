@@ -1,4 +1,4 @@
-import { WFLifePayload } from '../../../lib/domain3/types'
+import { WFLifePayload } from '../../../lib/domain/types'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
 import { EmailObj } from '../email/EmailService'
 
