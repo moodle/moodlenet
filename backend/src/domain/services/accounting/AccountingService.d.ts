@@ -5,43 +5,19 @@ import { EmailObj } from '../email/EmailService'
 export type AccountingService = {
   wf: {
     RegisterNewAccount: {
-      ctx: { ctx: string; email: string; username: string }
+      ctx: {}
       start: { email: string; username: string }
       progress: {
-        WaitingConfirmEmail: { email: string }
-        xWaitingConfirmEmail: { xxx: string }
+        WaitingConfirmEmail: {}
       }
       end: {
-        AccountActivated: { AccountActivated: string }
-        Rejected: { reason: string }
+        NewAccountActivated: {}
+        Rejected: { reason: 'unconfirmed email' }
       }
       signal: {
-        EmailConfirmResult: WFLifePayload<
-          MoodleNetDomain,
-          'Accounting',
-          'VerifyAccountEmail',
-          'end'
-        >
-      }
-    }
-    VerifyAccountEmail: {
-      ctx: { email: string /* EmailObj */; attemptCount: number; token: string }
-      start: { email: string /* EmailObj */ }
-      progress: {
-        EmailSent: { EmailSent: 'EmailSent' }
-      }
-      end: {
-        Confirmed: { email: string }
-        Expired: { x: string }
-        Aborted: { reason: string }
-      }
-      signal: {
-        zz: { a: string }
+        EmailConfirmationResult: WFLifePayload<MoodleNetDomain, 'Email', 'VerifyEmail', 'end'>
       }
     }
   }
-  ev: {
-    XX: { a: number }
-    YY: { b: string }
-  }
+  ev: {}
 }

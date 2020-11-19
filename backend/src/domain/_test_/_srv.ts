@@ -8,8 +8,9 @@ const l = (...args: any[]) =>
   console.log('SRV ----------\n', ...args.reduce((r, _) => [...r, _, '\n'], []), '----------\n\n')
 
 const acc = D.point<MoodleNetDomain>('MoodleNet')('srv')('Accounting')
+const mail = D.point<MoodleNetDomain>('MoodleNet')('srv')('Email')
 const accReg = acc('wf')('RegisterNewAccount')
-const accVer = acc('wf')('VerifyAccountEmail')
+const mailVer = mail('wf')('VerifyEmail')
 ;(async () => {
   await A.consumeWfStart({
     pointer: accReg('start'),
@@ -17,10 +18,10 @@ const accVer = acc('wf')('VerifyAccountEmail')
       l('RegisterNewAccount start', info, payload)
 
       A.spawnWf({
-        spawnPointer: accVer('start'),
-        payload: { email: payload.p.email },
+        spawnPointer: mailVer('start'),
+        payload: { email: { to: payload.p.email }, maxAttempts: 2, tokenReplaceRegEx: '' },
         // endPointer: accVer('end')('*'),
-        sigPointer: accReg('signal')('EmailConfirmResult'),
+        sigPointer: accReg('signal')('EmailConfirmationResult'),
         parentWf: info.id,
       })
 
@@ -34,34 +35,38 @@ const accVer = acc('wf')('VerifyAccountEmail')
       return 'ack' as const
     },
   })
-  const g = accVer('end')('*')
-  g.parentType
+
   await A.consumeWfStart({
-    pointer: accVer('start'),
+    pointer: mailVer('start'),
     handler: async ({ info, payload }) => {
       l('Verify email start', info, payload)
       A.publishWf({
-        pointer: accVer('end')('Expired'),
+        pointer: mailVer('progress')('WaitingConfirmation'),
         id: info.id,
-        payload: {
-          x: `delayed exp ${payload.p.email}`,
-        },
-        opts: { delay: 2000 },
+        payload: { attemptCount: 1 },
       })
-      // A.publishWf({
-      //   pointer: accVer('end')('Confirmed'),
-      //   id: info.id,
-      //   payload: {
-      //     email: payload.p.email,
-      //   },
-      // })
-
+      return 'ack' as const
+    },
+  })
+  await A.consumeWf({
+    pointer: mail('wf')('VerifyEmail')('signal')('ConfirmEmail'),
+    id: '*',
+    handler: async ({ info, payload }) => {
+      l('consume signal ConfirmEmail', info, payload)
+      const state = await persistence.getWFState<MoodleNetDomain, 'Email', 'VerifyEmail'>(info)
+      if (state?.status === 'progress' && state.progress.p.token === payload.p.token) {
+        A.publishWf({
+          pointer: mailVer('end')('Confirmed'),
+          id: info.id,
+          payload: {},
+        })
+      }
       return 'ack' as const
     },
   })
 
   await A.consumeWf({
-    pointer: accReg('signal')('EmailConfirmResult'),
+    pointer: accReg('signal')('EmailConfirmationResult'),
     id: '*',
     handler: async ({ info, payload }) => {
       l('consume signal EmailConfirmResult', info, payload)
@@ -74,16 +79,15 @@ const accVer = acc('wf')('VerifyAccountEmail')
             pointer: accReg('end')('Rejected'),
             id: accRegWfId,
             payload: {
-              reason: ` because  ${payload.p.t == 'Aborted' ? payload.p.p.reason : payload.p.p.x}`,
+              reason: `unconfirmed email`,
             },
           })
         : A.publishWf({
-            pointer: accReg('end')('AccountActivated'),
+            pointer: accReg('end')('NewAccountActivated'),
             id: accRegWfId,
-            payload: { AccountActivated: payload.p.p.email },
+            payload: {},
           })
       return 'ack'
     },
   })
-  l('**')
 })()
