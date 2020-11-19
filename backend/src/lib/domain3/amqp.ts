@@ -11,15 +11,20 @@ import {
   wfStartPointerInfo,
 } from './domain'
 import { channelPromise as channel, persistence } from './domain.env'
-import { NoWildPointer, PathTo, Pointer } from './types'
-const __LOG = false
+import { NoWildPointer, PathTo, Pointer, TypeUnion } from './types'
+const __LOG = true
 
-type DomainQueueOpts = Options.AssertQueue & {}
+type DomainQueueOpts = Options.AssertQueue & {
+  name?: string
+}
 type DomainConsumeOpts = Options.Consume & {
   rejectStrategy?: AckKO
 }
 type DomainPublishOpts = Options.Publish & {
   delay?: number
+}
+type DomainWfStartOpts = DomainPublishOpts & {
+  parentWf?: string
 }
 type DomainExOpts = Options.AssertExchange & {}
 export type AckKO = 'nack' | 'reject'
@@ -35,7 +40,12 @@ export const publish = async <Point extends Pointer<PathTo.AnyLeaf, any, any, an
   const domainName = pathDomainName(pointer.path)
   _log(`publish ${topic}`, payload)
   const ex = await getDomainExchangeName(domainName)
-  const pub = await (await channel).publish(ex, topic, json2Buffer(payload), opts)
+
+  const routingKeyArr = pointer.path
+  const payloadTypeRevIndex = routingKeyArr[3] === 'ev' ? 1 : routingKeyArr[3] === 'wf' ? 2 : 0
+  const payloadType = routingKeyArr[routingKeyArr.length - payloadTypeRevIndex]
+  const payloadBuf = json2Buffer({ p: payload, t: payloadType })
+  const pub = await (await channel).publish(ex, topic, payloadBuf, opts)
   return pub
 }
 
@@ -55,6 +65,11 @@ export const publishWf = async <Point extends Pointer<PathTo.WF, any, any, any, 
   opts?: DomainPublishOpts
 }) => {
   const { pointer: _pointer, id, payload, opts } = _
+  if (_pointer.path[5] === 'end') {
+    persistence.endWF({ id, endProgress: payload })
+  } else if (_pointer.path[5] === 'progress') {
+    persistence.progressWF({ id, progress: payload })
+  }
   const pointer = ({ path: [..._pointer.path, id] } as any) as Point
   return publish<Point>({ pointer, payload, opts })
 }
@@ -62,13 +77,15 @@ export const publishWf = async <Point extends Pointer<PathTo.WF, any, any, any, 
 export const publishWfStart = async <Point extends Pointer<PathTo.WFStart, any, any, any, any>>(_: {
   pointer: NoWildPointer<Point>
   payload: Point['type']
-  opts?: DomainPublishOpts
+  opts?: DomainWfStartOpts
 }) => {
   const { pointer, payload, opts } = _
   const id = newUuid()
   const { domain, service: srv, wfname: wf } = wfStartPointerInfo(pointer)
-  persistence.enqueueWF({ id, startParams: payload, domain, srv, wf })
-  return (await publishWf({ pointer, id, payload, opts })) && id
+  persistence.enqueueWF({ id, startParams: payload, domain, srv, wf, parentWf: opts?.parentWf })
+  // const pointerWithId: NoWildPointer<Point> = { ...pointer, path: [...pointer.path, id] }
+  await publishWf({ pointer, id, payload, opts })
+  return id
 }
 
 export const consumeEv = async <Point extends Pointer<PathTo.Event, any, any, any, any>>(_: {
@@ -86,6 +103,7 @@ export const consumeEv = async <Point extends Pointer<PathTo.Event, any, any, an
     opts,
   })
 }
+
 export const consumeWf = async <Point extends Pointer<PathTo.WFLife, any, any, any, any>>(_: {
   pointer: Point
   id: string
@@ -94,25 +112,34 @@ export const consumeWf = async <Point extends Pointer<PathTo.WFLife, any, any, a
 }) => {
   const { pointer: _pointer, id, handler, opts } = _
   const pointer = { path: [..._pointer.path, id] } as any
-
   return serviceConsume<Point>({
     pointer,
-    handler: ({ payload, msg }) => {
+    handler: async ({ payload, msg }) => {
       const info = wfLifeMsgRoutingInfo(msg)
-      return handler({ payload, info })
+      _log('consumeWf', info, pointer, payload)
+      if (info.wfname !== pointer.path[4] || info.service !== pointer.path[2]) {
+        const p = { t: info.type, p: payload }
+        _log('consumeWf --- ', p)
+        unbindQ({
+          ex: await getDomainExchangeName(info.domain),
+          name: pathTopic(pointer.path),
+          topic: pathTopic(pointer.path),
+        })
+        return handler({ payload: p, info })
+      } else {
+        return handler({ payload, info })
+      }
     },
     opts,
   })
 }
 export const consumeWfStart = async <Point extends Pointer<PathTo.WFStart, any, any, any, any>>(_: {
   pointer: Point
-  id: string
   handler: (_: { payload: Point['payload']; info: WfStartMsgRoutingInfo }) => Ack | Promise<Ack>
   opts?: { consume?: DomainConsumeOpts; queue?: DomainQueueOpts }
 }) => {
-  const { pointer: _pointer, id, handler, opts } = _
-  const pointer = { path: [..._pointer.path, id] } as any
-
+  const { pointer: _pointer, handler, opts } = _
+  const pointer: Point = { ..._pointer, path: [..._pointer.path, '*'] }
   return serviceConsume<Point>({
     pointer,
     handler: ({ payload, msg }) => {
@@ -129,7 +156,7 @@ const serviceConsume = async <Point extends Pointer<PathTo.AnyLeaf, any, any, an
   opts?: { consume?: DomainConsumeOpts }
 }) => {
   const { pointer, handler, opts } = _
-  const { /* domainName,ex, */ qName, topic } = await bindPointer({ dest: pointer })
+  const { /* domainName,ex, */ qName, topic } = await bindPointer({ dest: { point: pointer } })
   _log(`consume ${topic}`)
   const rejectStrategy = opts?.consume?.rejectStrategy || 'reject'
 
@@ -142,16 +169,12 @@ const serviceConsume = async <Point extends Pointer<PathTo.AnyLeaf, any, any, an
       }
       try {
         _log(`got msg `, msg.fields)
-        const routingKeyArr = msg.fields.routingKey.split('.')
-        const payloadTypeRevIndex =
-          routingKeyArr[3] === 'ev' ? 1 : routingKeyArr[3] === 'wf' ? 2 : 0
 
-        const payloadType = routingKeyArr[routingKeyArr.length - payloadTypeRevIndex]
-        const jsonContent = buffer2Json(msg.content)
-        const payload = { p: jsonContent, t: payloadType }
+        const payload = buffer2Json<Point['payload']>(msg.content)
         const ack = await handler({ payload, msg })
         ch[ack](msg)
       } catch (err) {
+        console.error(err)
         ch[rejectStrategy](msg)
       }
     },
@@ -173,22 +196,96 @@ const pathDomainName = (p: PathTo.AnyLeaf) => {
   return p[0]
 }
 
-const bindPointer = async <
-  Dest extends Pointer<any, any, any, any, any>,
-  Src extends Dest extends Pointer<any, infer Type, any, any, any>
-    ? Pointer<any, Type, any, any, any>
+export const callSync = <Point extends Pointer<PathTo.WFStart, any, any, any, any>>(_: {
+  pointer: NoWildPointer<Point>
+  payload: Point['type']
+  opts?: {
+    timeout?: number
+    start?: DomainWfStartOpts
+    consume?: DomainConsumeOpts
+    queue?: DomainQueueOpts
+  }
+}): Promise<TypeUnion<Point['parentType']['end']>> =>
+  new Promise(async (resolve, reject) => {
+    const { payload, pointer, opts } = _
+    const to = setTimeout(() => reject('timeout'), opts?.timeout || 5000)
+    const qname = newUuid()
+    const id = await publishWfStart({
+      pointer,
+      payload,
+      opts: { ...opts?.start },
+    })
+    const unsub = await consumeWf({
+      pointer: { path: [...pointer.path.slice(0, -1), 'end', '*'] } as any,
+      id,
+      handler: (end) => {
+        clearTimeout(to)
+        unsub()
+        resolve(end as any)
+        return 'ack'
+      },
+      opts: {
+        queue: { name: qname, ...opts?.queue },
+        consume: { ...opts?.consume, exclusive: true },
+      },
+    })
+  })
+
+export const spawnWf = async <
+  Spawn extends Pointer<PathTo.WFStart, any, any, any, any>,
+  End extends Pointer<PathTo.WFEnd, any, any, any, any>,
+  Dest extends End extends Pointer<PathTo.WFEnd, any, any, any, any, infer T>
+    ? Pointer<PathTo.WFSignal, T, any, any, any>
     : never
 >(_: {
-  dest: Dest
-  src?: Src
+  parentWf: string
+  spawnPointer: NoWildPointer<Spawn>
+  sigPointer: NoWildPointer<Dest>
+  payload: Spawn['type']
+  opts?: {
+    spawn?: DomainWfStartOpts
+    bind?: DomainQueueOpts
+    args?: any
+  }
+}) => {
+  const { payload, sigPointer, spawnPointer, opts, parentWf } = _
+  const verWfId = await publishWfStart({
+    pointer: spawnPointer,
+    payload: payload,
+    opts: {
+      parentWf,
+    },
+  })
+  const endPointer = { path: [...spawnPointer.path.slice(0, -1), 'end', '*'] }
+  const src = { id: verWfId, point: endPointer } as any
+  const dest = { id: '*', point: sigPointer } as any
+
+  bindPointer({ dest, src, args: opts?.args, opts: opts?.bind })
+  return
+}
+export const bindPointer = async <
+  Dest extends Pointer<any, any, any, any, any>,
+  Src extends Dest extends Pointer<any, infer DestType, any, any, any>
+    ? Pointer<any, any, any, any, any, DestType>
+    : never
+>(_: {
+  dest: { point: Dest; id?: string }
+  src?: { point: Src; id: string }
   args?: any
   opts?: DomainQueueOpts
 }) => {
   const { dest, src, args, opts } = _
-  const qName = pathTopic(dest.path)
-  const topic = src ? pathTopic(src.path) : qName
-  const domainName = pathDomainName((src || dest).path)
+  const destPoint = {
+    ...dest.point,
+    path: dest.id ? [...dest.point.path, dest.id] : dest.point.path,
+  }
+  const qName = pathTopic(destPoint.path)
+  const domainName = pathDomainName((src?.point || destPoint).path)
+  const topic = pathTopic(
+    (src ? { ...src.point, path: [...src.point.path, src.id] } : destPoint).path
+  )
   const ex = await getDomainExchangeName(domainName)
+  _log({ _: 'Binding', qName, topic, ex })
   await assertQ({ name: qName, opts })
   await bindQ({
     name: qName,

@@ -2,14 +2,17 @@ import { DomainPersistence, WFState } from '../../../types'
 import { delay } from 'bluebird'
 const db: Record<string, WFState<any, any, any>> = {}
 
-const progressWF: DomainPersistence['progressWF'] = ({ id, progress, ctx }) => {
+const ldb = (s: string) => console.log(s, ':', db)
+
+const progressWF: DomainPersistence['progressWF'] = ({ id, progress /* ctx */ }) => {
   db[id] = {
     ...db[id],
-    ctx,
+    // ctx,
     updated: new Date(),
     progress,
     status: 'progress',
   }
+  ldb(`progressWF ${id}`)
   return rndDelay(null)
 }
 const enqueueWF: DomainPersistence['enqueueWF'] = (enqueueState) => {
@@ -19,16 +22,18 @@ const enqueueWF: DomainPersistence['enqueueWF'] = (enqueueState) => {
     started: new Date(),
     updated: new Date(),
   }
+  ldb(`enqueueWF ${enqueueState.id}`)
   return rndDelay(null)
 }
-const endWF: DomainPersistence['endWF'] = ({ endProgress, id, ctx }) => {
+const endWF: DomainPersistence['endWF'] = ({ endProgress, id /* ctx */ }) => {
   db[id] = {
     ...db[id],
-    ctx,
+    // ctx,
     status: 'end',
     updated: new Date(),
     progress: endProgress,
   }
+  ldb(`endWF ${id}`)
   return rndDelay(null)
 }
 

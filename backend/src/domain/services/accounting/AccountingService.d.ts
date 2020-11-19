@@ -8,27 +8,31 @@ export type AccountingService = {
       ctx: { ctx: string; email: string; username: string }
       start: { email: string; username: string }
       progress: {
-        WaitingConfirmEmail: { email: string; WaitingConfirmEmail: 'WaitingConfirmEmail' }
-        aWaitingConfirmEmail: { aWaitingConfirmEmail: 'aWaitingConfirmEmail' }
+        WaitingConfirmEmail: { email: string }
+        xWaitingConfirmEmail: { xxx: string }
       }
       end: {
-        AccountActivated: { email: string; AccountActivated: 'AccountActivated' }
-        Rejected: { email: string; reason: string }
+        AccountActivated: { AccountActivated: string }
+        Rejected: { reason: string }
       }
       signal: {
-        EmailConfirmResult: WFLifePayload<MoodleNetDomain, 'Email', 'SendOne', 'end'>
-        aEmailConfirmResult: { a: string }
+        EmailConfirmResult: WFLifePayload<
+          MoodleNetDomain,
+          'Accounting',
+          'VerifyAccountEmail',
+          'end'
+        >
       }
     }
     VerifyAccountEmail: {
-      ctx: { email: EmailObj; attemptCount: number; token: string }
-      start: { email: EmailObj }
+      ctx: { email: string /* EmailObj */; attemptCount: number; token: string }
+      start: { email: string /* EmailObj */ }
       progress: {
         EmailSent: { EmailSent: 'EmailSent' }
       }
       end: {
-        Confirmed: { Confirmed: 'Confirmed' }
-        Expired: { Expired: 'Expired' }
+        Confirmed: { email: string }
+        Expired: { x: string }
         Aborted: { reason: string }
       }
       signal: {

@@ -66,13 +66,14 @@ export type Pointer<
   Type /* extends ParentType[Name] */,
   ParentType,
   KeyName extends keyof ParentType | '*',
-  D extends Domain
+  D extends Domain,
+  Payload = WildTypeUnion<ParentType, KeyName>
 > = {
   path: Path
   keyName: KeyName
   type: Type
   parentType: ParentType
-  payload: WildTypeUnion<ParentType, KeyName>
+  payload: Payload
   domain: D
 }
 export type NoWildPointer<
@@ -137,6 +138,7 @@ export interface WFStateEnqueueParams<
   srv: S
   wf: W
   startParams: WFStartType<D, S, W>
+  parentWf?: string
 }
 
 export interface WFStateBase<
@@ -145,6 +147,7 @@ export interface WFStateBase<
   W extends keyof D['srv'][S]['wf'],
   Status extends WFStatus
 > extends WFStateEnqueueParams<D, S, W> {
+  parentWf?: string
   status: Status
   updated: Date
   started: Date
@@ -155,7 +158,7 @@ export interface WFStateBaseWithCtx<
   W extends keyof D['srv'][S]['wf'],
   Status extends Exclude<WFStatus, 'enqueued'>
 > extends WFStateBase<D, S, W, Status> {
-  ctx: WFCtxType<D, S, W>
+  // ctx: WFCtxType<D, S, W>
 }
 
 export interface WFStateBaseWithProgress<
@@ -204,12 +207,12 @@ export type WFState<
 export type DomainPersistence = {
   getWFState<D extends Domain, S extends keyof D['srv'], W extends keyof D['srv'][S]['wf']>(_: {
     id: string
-  }): Promise<WFState<D, S, W>>
+  }): Promise<WFState<D, S, W> | null>
 
   progressWF<D extends Domain, S extends keyof D['srv'], W extends keyof D['srv'][S]['wf']>(_: {
     id: string
     progress: WFLifePayload<D, S, W, 'progress'>
-    ctx: WFCtxType<D, S, W>
+    // ctx: WFCtxType<D, S, W>
   }): Promise<unknown>
 
   enqueueWF<D extends Domain, S extends keyof D['srv'], W extends keyof D['srv'][S]['wf']>(
@@ -219,6 +222,6 @@ export type DomainPersistence = {
   endWF<D extends Domain, S extends keyof D['srv'], W extends keyof D['srv'][S]['wf']>(_: {
     id: string
     endProgress: WFLifePayload<D, S, W, 'end'>
-    ctx: WFCtxType<D, S, W>
+    // ctx: WFCtxType<D, S, W>
   }): Promise<unknown>
 }
