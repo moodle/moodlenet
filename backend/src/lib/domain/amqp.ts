@@ -11,33 +11,12 @@ import {
   wfStartPointerInfo,
 } from './domain'
 import { channelPromise as channel, persistence } from './domain.env'
-import { NoWildPointer, PathTo, Pointer, TypeUnion } from './types'
-const __LOG = true
 
-type DomainQueueOpts = Options.AssertQueue & {
-  name?: string
-}
-type DomainConsumeOpts = Options.Consume & {
-  rejectStrategy?: AckKO
-}
-type DomainPublishOpts = Options.Publish & {
-  delay?: number
-}
-type DomainWfStartOpts = DomainPublishOpts & {
-  parentWf?: string
-}
-type DomainExOpts = Options.AssertExchange & {}
-export type AckKO = 'nack' | 'reject'
-export type Ack = 'ack' | AckKO
+const log = logger
 
-export const publish = async <Point extends Pointer<PathTo.AnyLeaf, any, any, any, any>>(_: {
-  pointer: Point
-  payload: Point['type']
-  opts?: DomainPublishOpts
-}) => {
-  const { pointer, payload, opts } = _
-  const topic = pathTopic(pointer.path)
-  const domainName = pathDomainName(pointer.path)
+export const publish = async (_: { path: string[]; payload: any; opts?: DomainPublishOpts }) => {
+  const { path, payload, opts } = _
+  const { topic, domainName } = publishPathInfo(path)
   _log(`publish ${topic}`, payload)
   const ex = await getDomainExchangeName(domainName)
 
@@ -66,7 +45,7 @@ export const publishEv = async <Point extends Pointer<PathTo.Event, any, any, an
   opts?: DomainPublishOpts
 }) => {
   const { pointer, payload, opts } = _
-  return publish({ pointer, payload, opts })
+  return publish({ path: pointer, payload, opts })
 }
 
 export const publishWf = async <Point extends Pointer<PathTo.WF, any, any, any, any>>(_: {
@@ -82,7 +61,7 @@ export const publishWf = async <Point extends Pointer<PathTo.WF, any, any, any, 
     persistence.progressWF({ id, progress: payload })
   }
   const pointer = ({ path: [..._pointer.path, id] } as any) as Point
-  return publish<Point>({ pointer, payload, opts })
+  return publish<Point>({ path: pointer, payload, opts })
 }
 
 export const publishWfStart = async <Point extends Pointer<PathTo.WFStart, any, any, any, any>>(_: {
@@ -169,7 +148,7 @@ const serviceConsume = async <Point extends Pointer<PathTo.AnyLeaf, any, any, an
   const { pointer, handler, opts } = _
   const { /* domainName,ex, */ qName, topic } = await bindPointer({ dest: { point: pointer } })
   _log(`consume ${topic}`)
-  const rejectStrategy = opts?.consume?.rejectStrategy || 'reject'
+  const rejectStrategy = opts?.consume?.promiseRejectStrategy || 'reject'
 
   const ch = await channel
   const cons = await ch.consume(
@@ -200,12 +179,12 @@ const serviceConsume = async <Point extends Pointer<PathTo.AnyLeaf, any, any, an
   }
 }
 
-const pathTopic = (p: PathTo.AnyLeaf) => {
-  return p.join('.')
-}
-const pathDomainName = (p: PathTo.AnyLeaf) => {
-  return p[0]
-}
+const publishPathInfo = (path: string[]) => ({
+  topic: path.join('.'),
+  domainName: path[0],
+})
+
+const pathDomainName = (p: PathTo.AnyLeaf) => {}
 
 export const callSync = <Point extends Pointer<PathTo.WFStart, any, any, any, any>>(_: {
   pointer: NoWildPointer<Point>
@@ -394,9 +373,24 @@ const assertDelayQ = async <Point extends Pointer<PathTo.AnyLeaf, any, any, any,
 }
 
 const json2Buffer = <T>(json: T) => Buffer.from(JSON.stringify(json))
-
 const buffer2Json = <T>(buf: Buffer): T => JSON.parse(buf.toString('utf-8'))
 
-const _log = (...args: any[]) =>
-  __LOG &&
-  console.log('DOM----------\n', ...args.reduce((r, _) => [...r, _, '\n'], []), '----------\n\n')
+type DomainQueueOpts = Options.AssertQueue & {
+  name?: string
+}
+type DomainConsumeOpts = Options.Consume & {
+  promiseRejectStrategy?: Acks.Nack | Acks.Reject
+}
+type DomainPublishOpts = Options.Publish & {
+  delay?: number
+}
+type DomainWfStartOpts = DomainPublishOpts & {
+  parentWf?: string
+}
+type DomainExOpts = Options.AssertExchange & {}
+
+export enum Acks {
+  Nack = 'nack',
+  Reject = 'reject',
+  Ack = 'ack',
+}

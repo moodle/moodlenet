@@ -1,7 +1,7 @@
 import amqp, { Options } from 'amqplib'
 import { resolve } from 'path'
 import * as Yup from 'yup'
-import { DomainPersistence } from './types'
+// import { DomainPersistence } from './types'
 
 type AmqpOptsEnv = Pick<Options.Connect, 'hostname' | 'port' | 'password' | 'username'>
 
@@ -36,11 +36,7 @@ export const env = Validator.validateSync({
   persistenceModule: PERSISTENCE_IMPL,
 })!
 const implPathBase = [__dirname, 'impl']
-export const persistence = require(resolve(
-  ...implPathBase,
-  'persistence',
-  env.persistenceModule
-)) as DomainPersistence
+export const persistence = require(resolve(...implPathBase, 'persistence', env.persistenceModule)) // as DomainPersistence
 
 export const channelPromise = amqp
   .connect({ ...env.amqpOpts })
