@@ -18,7 +18,7 @@ export type DomainService = {
 }
 
 export type ServiceWorkflow = {
-  ctx: any
+  // ctx: any
   start: any
   progress: {
     [progressName in string]: any
@@ -45,11 +45,11 @@ type WFStartType<
   W extends keyof D['srv'][S]['wf']
 > = D['srv'][S]['wf'][W]['start']
 
-type WFCtxType<
-  D extends Domain,
-  S extends keyof D['srv'],
-  W extends keyof D['srv'][S]['wf']
-> = D['srv'][S]['wf'][W]['ctx']
+// type WFCtxType<
+//   D extends Domain,
+//   S extends keyof D['srv'],
+//   W extends keyof D['srv'][S]['wf']
+// > = D['srv'][S]['wf'][W]['ctx']
 
 export type TypeUnion<T, K extends keyof T = keyof T> = K extends infer P
   ? P extends K
@@ -104,7 +104,7 @@ export namespace PathTo {
   | WFProgress
   | WFSignal
   
-  export type WFLifeId=Concat<
+  export type WFLifeId = Concat<
   | WFEnd
   | WFProgress
   | WFSignal
@@ -127,6 +127,18 @@ export namespace PathTo {
 }
 
 export type WFStatus = 'progress' | 'end' | 'enqueued' //| 'enrolled'
+
+export interface WFLog<
+  D extends Domain,
+  S extends keyof D['srv'],
+  W extends keyof D['srv'][S]['wf'],
+  Status extends WFStatus
+> extends WFStateEnqueueParams<D, S, W> {
+  parentWf?: string
+  status: Status
+  updated: Date
+  started: Date
+}
 
 export interface WFStateEnqueueParams<
   D extends Domain,
@@ -178,12 +190,6 @@ export interface WFStateEnqueued<
   W extends keyof D['srv'][S]['wf']
 > extends WFStateBase<D, S, W, 'enqueued'> {}
 
-// export interface WFStateEnrolled<
-//   D extends Domain,
-//   S extends keyof D['srv'],
-//   W extends keyof D['srv'][S]['wf']
-// > extends WFStateBaseWithCtx<D, S, W, 'enrolled'> {}
-
 export interface WFStateProgress<
   D extends Domain,
   S extends keyof D['srv'],
@@ -201,7 +207,6 @@ export type WFState<
   S extends keyof D['srv'],
   W extends keyof D['srv'][S]['wf']
 > = WFStateEnqueued<D, S, W> | WFStateProgress<D, S, W> | WFStateEnd<D, S, W>
-// | WFStateEnrolled<D, S, W>
 
 // TODO usare Pointer come type-argument
 export type DomainPersistence = {

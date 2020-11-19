@@ -19,6 +19,7 @@
     "amqplib": "^0.6.0",
     "apollo-server": "^2.18.1",
     "apollo-server-express": "^2.18.1",
+    "arangojs": "^7.1.0",
     "babel-plugin-module-resolver": "^4.0.0",
     "bullmq": "^1.10.0",
     "dotenv-expand": "^5.1.0",

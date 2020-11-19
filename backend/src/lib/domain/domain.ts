@@ -1,7 +1,9 @@
 import { Message } from 'amqplib'
 import { Concat } from 'typescript-tuple/lib/utils'
 import { Domain, DomainName, PathTo, Pointer } from './types'
+import { logger } from './domain.env'
 
+export const domainLog = logger('Domain')('Node')
 type Crawl<Point extends Pointer<PathTo.Any, any, any, string, any>> = (
   point: Point
 ) => Point['path'] extends PathTo.AnyLeaf
