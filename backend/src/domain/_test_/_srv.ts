@@ -1,8 +1,8 @@
-import * as A from '../lib/domain/amqp'
-import * as D from '../lib/domain/domain'
-import { persistence } from '../lib/domain/domain.env'
-import { MoodleNetDomain } from './MoodleNetDomain'
-const __LOG = false
+import * as A from '../../lib/domain/amqp'
+import * as D from '../../lib/domain/domain'
+import { persistence } from '../../lib/domain/domain.env'
+import { MoodleNetDomain } from '../MoodleNetDomain'
+const __LOG = true
 const l = (...args: any[]) =>
   __LOG &&
   console.log('SRV ----------\n', ...args.reduce((r, _) => [...r, _, '\n'], []), '----------\n\n')
@@ -15,18 +15,7 @@ const accVer = acc('wf')('VerifyAccountEmail')
     pointer: accReg('start'),
     handler: async ({ info, payload }) => {
       l('RegisterNewAccount start', info, payload)
-      // const verWfId = await A.publishWfStart({
-      //   pointer: accVer('start'),
-      //   payload: { email: payload.p.email },
-      //   opts: {
-      //     parentWf: info.id,
-      //   },
-      // })
-      // const src = { id: verWfId, point: accVer('end')('*') }
-      // const dest = { id: '*', point: accReg('signal')('EmailConfirmResult') }
-      // // const { type: stype, parentType: sparentType, payload: spayload, keyName: skeyName } = src
-      // // const { type: dtype, parentType: dparentType, payload: dpayload, keyName: dkeyName } = dest
-      // await A.bindPointer({ dest, src })
+
       A.spawnWf({
         spawnPointer: accVer('start'),
         payload: { email: payload.p.email },
@@ -34,6 +23,7 @@ const accVer = acc('wf')('VerifyAccountEmail')
         sigPointer: accReg('signal')('EmailConfirmResult'),
         parentWf: info.id,
       })
+
       await A.publishWf({
         pointer: accReg('progress')('WaitingConfirmEmail'),
         id: info.id,
@@ -50,23 +40,21 @@ const accVer = acc('wf')('VerifyAccountEmail')
     pointer: accVer('start'),
     handler: async ({ info, payload }) => {
       l('Verify email start', info, payload)
-      setTimeout(() => {
-        Math.random() > 0.5
-          ? A.publishWf({
-              pointer: accVer('end')('Confirmed'),
-              id: info.id,
-              payload: {
-                email: payload.p.email,
-              },
-            })
-          : A.publishWf({
-              pointer: accVer('end')('Expired'),
-              id: info.id,
-              payload: {
-                x: payload.p.email,
-              },
-            })
-      }, 2000)
+      A.publishWf({
+        pointer: accVer('end')('Expired'),
+        id: info.id,
+        payload: {
+          x: `delayed exp ${payload.p.email}`,
+        },
+        opts: { delay: 2000 },
+      })
+      // A.publishWf({
+      //   pointer: accVer('end')('Confirmed'),
+      //   id: info.id,
+      //   payload: {
+      //     email: payload.p.email,
+      //   },
+      // })
 
       return 'ack' as const
     },

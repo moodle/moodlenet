@@ -12,7 +12,7 @@ import {
 } from './domain'
 import { channelPromise as channel, persistence } from './domain.env'
 import { NoWildPointer, PathTo, Pointer, TypeUnion } from './types'
-const __LOG = false
+const __LOG = true
 
 type DomainQueueOpts = Options.AssertQueue & {
   name?: string
@@ -45,8 +45,19 @@ export const publish = async <Point extends Pointer<PathTo.AnyLeaf, any, any, an
   const payloadTypeRevIndex = routingKeyArr[3] === 'ev' ? 1 : routingKeyArr[3] === 'wf' ? 2 : 0
   const payloadType = routingKeyArr[routingKeyArr.length - payloadTypeRevIndex]
   const payloadBuf = json2Buffer({ p: payload, t: payloadType })
-  const pub = await (await channel).publish(ex, topic, payloadBuf, opts)
-  return pub
+  const ch = await channel
+  if (opts?.delay) {
+    const { ex } = await assertDelayQ({ pointer })
+    const pub = await ch.publish(ex, topic, payloadBuf, {
+      ...opts,
+      expiration: opts.delay,
+      deliveryMode: 2,
+    })
+    return pub
+  } else {
+    const pub = await ch.publish(ex, topic, payloadBuf, { ...opts, deliveryMode: 2 })
+    return pub
+  }
 }
 
 export const publishEv = async <Point extends Pointer<PathTo.Event, any, any, any, any>>(_: {
@@ -337,6 +348,7 @@ const assertQ = async (_: { name: string; opts?: DomainQueueOpts }) => {
   }
   return asserts.Q[name]
 }
+
 const assertX = async (_: {
   name: string
   type: '' | 'topic' | 'direct' | 'headers' | 'fanout' | 'match'
@@ -354,6 +366,33 @@ const getDomainExchangeName = async (domainName: string) => {
   const exName = `Domain.${domainName}`
   return (await assertX({ name: exName, type: 'topic' })).exchange
 }
+
+const assertDelayQ = async <Point extends Pointer<PathTo.AnyLeaf, any, any, any, any>>(_: {
+  pointer: Point
+}) => {
+  const { pointer } = _
+  const domainEx = await getDomainExchangeName(pointer.path[0])
+  const srvDelayedQName = `${pointer.path[0]}.${pointer.path[2]}:SERVICE_DELAY_Q`
+  const srvDelayedX = `${pointer.path[0]}.${pointer.path[2]}:SERVICE_DELAY_X`
+  await assertX({ name: srvDelayedX, type: 'fanout' })
+  const q = await assertQ({
+    name: srvDelayedQName,
+    opts: {
+      // deadLetterRoutingKey: pathTopic(pointer.path),
+      deadLetterExchange: domainEx,
+    },
+  })
+  await bindQ({ name: srvDelayedQName, ex: srvDelayedX, topic: '' })
+  _log('ass del q', {
+    q: q.queue,
+    ex: srvDelayedX,
+  })
+  return {
+    q: q.queue,
+    ex: srvDelayedX,
+  }
+}
+
 const json2Buffer = <T>(json: T) => Buffer.from(JSON.stringify(json))
 
 const buffer2Json = <T>(buf: Buffer): T => JSON.parse(buf.toString('utf-8'))

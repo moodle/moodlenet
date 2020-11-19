@@ -2,7 +2,7 @@ import { DomainPersistence, WFState } from '../../../types'
 import { delay } from 'bluebird'
 const db: Record<string, WFState<any, any, any>> = {}
 
-const __LOG = false
+const __LOG = true
 const ldb = (s: string) => __LOG && console.log(s, ':', db)
 
 const progressWF: DomainPersistence['progressWF'] = ({ id, progress /* ctx */ }) => {

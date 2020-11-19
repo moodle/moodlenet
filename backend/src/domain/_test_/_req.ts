@@ -1,6 +1,6 @@
-import { callSync } from '../lib/domain/amqp'
-import { point } from '../lib/domain/domain'
-import { MoodleNetDomain } from './MoodleNetDomain'
+import { callSync } from '../../lib/domain/amqp'
+import { point } from '../../lib/domain/domain'
+import { MoodleNetDomain } from '../MoodleNetDomain'
 
 const acc = point<MoodleNetDomain>('MoodleNet')('srv')('Accounting')
 export const accReg = acc('wf')('RegisterNewAccount')
