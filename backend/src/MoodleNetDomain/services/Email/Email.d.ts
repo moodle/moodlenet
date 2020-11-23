@@ -1,4 +1,4 @@
-import { Topic, TopicArg as KeyedTopic } from '../../../lib/domain/types'
+import { Topic, KeyedTopic as KeyedTopic } from '../../../lib/domain/types'
 
 export type Email = {
   Send_One: Topic<{ email: EmailObj; key: string }>

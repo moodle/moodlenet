@@ -1,7 +1,7 @@
 import { DomainTopic } from './impl/persistence/types'
 
 export type Topic<Type, Reply = void> = { type: Type; reply: Reply }
-export type TopicArg<Type, Reply = void> = Topic<Type, Reply> & { _: string }
+export type KeyedTopic<Type, Reply = void> = Topic<Type, Reply> & { _: string }
 
 // prettier-ignore
 type Prev = [never, 0, 1, 2, 3, 4, 5, 6,  7, 8, 9, 10,  11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...0[]]
@@ -83,48 +83,48 @@ export type TopicOf<
   : never
 
 export type ForwardTopicMsg<Domain> = <
-  SrcTopicPath extends TopicLeaves<Domain>,
-  TrgTopicPath extends TopicLeaves<Domain>
+  Source extends TopicLeaves<Domain>,
+  Target extends TopicLeaves<Domain>
 >(_: {
-  source: TopicOf<Domain, SrcTopicPath> extends TopicArg<any, any>
-    ? readonly [SrcTopicPath, string]
-    : readonly [SrcTopicPath]
-  target: TopicOf<Domain, SrcTopicPath> extends Topic<infer SrcT, any>
-    ? TopicOf<Domain, TrgTopicPath> extends Topic<infer TrgT, any>
+  source: TopicOf<Domain, Source> extends KeyedTopic<any, any>
+    ? readonly [Source, string]
+    : readonly [Source]
+  target: TopicOf<Domain, Source> extends Topic<infer SrcT, any>
+    ? TopicOf<Domain, Target> extends Topic<infer TrgT, any>
       ? TrgT extends SrcT
-        ? TopicOf<Domain, TrgTopicPath> extends TopicArg<any, any>
-          ? readonly [TrgTopicPath, string]
-          : readonly [TrgTopicPath]
+        ? TopicOf<Domain, Target> extends KeyedTopic<any, any>
+          ? readonly [Target, string]
+          : readonly [Target]
         : never
       : never
     : never
 }) => unknown
 
-export type Publish<Domain> = <TrgTopicPath extends TopicLeaves<Domain>>(_: {
-  target: TrgTopicPath
-  payload: TopicOf<Domain, TrgTopicPath> extends TopicArg<infer In, any>
+export type Publish<Domain> = <Target extends TopicLeaves<Domain>>(_: {
+  target: Target
+  payload: TopicOf<Domain, Target> extends KeyedTopic<infer In, any>
     ? [string, In]
-    : TopicOf<Domain, TrgTopicPath> extends Topic<infer In, any>
+    : TopicOf<Domain, Target> extends Topic<infer In, any>
     ? In
     : never
   replyCb?(_: {
-    payload: TopicOf<Domain, TrgTopicPath> extends Topic<any, infer Out> ? Out : never
+    payload: TopicOf<Domain, Target> extends Topic<any, infer Out> ? Out : never
     stop(): unknown
   }): unknown
 }) => Promise<void>
 
-export type Consume<Domain> = <TrgTopicPath extends TopicLeaves<Domain>>(_: {
-  trgTopicPath: TrgTopicPath
+export type Consume<Domain> = <Target extends TopicLeaves<Domain>>(_: {
+  target: Target
   qName?: string
   handler(_: {
-    payload: TopicOf<Domain, TrgTopicPath> extends Topic<infer In, any> ? In : never
+    payload: TopicOf<Domain, Target> extends Topic<infer In, any> ? In : never
     forward?:
       | {
           src: DomainTopic
           unforward(): unknown
         }
       | undefined
-  }): Promise<TopicOf<Domain, TrgTopicPath> extends Topic<any, infer Out> ? Out : never>
+  }): Promise<TopicOf<Domain, Target> extends Topic<any, infer Out> ? Out : never>
 }) => unknown
 
 export type ReplyError = { ___ERROR: string }
