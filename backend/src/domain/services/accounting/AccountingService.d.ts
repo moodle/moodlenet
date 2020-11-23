@@ -1,4 +1,3 @@
-import { Workflow } from '../../../lib/domain/types'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
 
 export type AccountingService = {

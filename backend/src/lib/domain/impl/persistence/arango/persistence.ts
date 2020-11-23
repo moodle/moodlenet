@@ -1,69 +1,43 @@
 import { aql } from 'arangojs'
-import { DomainPersistence } from '../../../types'
-import { collections as coll, log } from './'
+import { DomainPersistence, DomainTopic, Forward } from '../types'
+import { log } from './'
+import { Forwards } from './collections'
 import { db } from './domain.arango.env'
 
-const enqueueWF: DomainPersistence['enqueueWF'] = async (enqueueParams) => {
-  log(`enqueueWF ${enqueueParams.id}`, 0)
-  const now = new Date()
-  const enqueueState = {
-    ...enqueueParams,
-    status: 'enqueued',
-    started: now,
-    updated: now,
-  } as const
-  return (
-    await Promise.all([
-      coll.WFLog.save({ ...enqueueParams, at: now }),
-      coll.WFActive.save(enqueueState),
-    ])
-  )[1]
-}
-
-const progressWF: DomainPersistence['progressWF'] = async ({ id, progress /* ctx */ }) => {
-  log(`progressWF ${id}`, 0)
-  log(progress, 0)
-  const now = new Date()
-  await Promise.all([
-    coll.WFLog.save({ ...progress, at: now }),
-    db.query(aql`
-      FOR wf IN WFActive
-        FILTER wf.id == ${id}
-        LIMIT 1
-        UPDATE wf WITH { status:'progress', updated:${now} progress:${progress} } IN WFActive
-    `),
-  ])
-}
-
-const endWF: DomainPersistence['endWF'] = async ({ endProgress, id /* ctx */ }) => {
-  log(`endWF ${id}`, 0)
-  log(endProgress, 0)
-  const now = new Date()
-  await Promise.all([
-    coll.WFLog.save({ ...endProgress, at: now }),
-    db.query(aql`
-      FOR wf IN WFActive
-        FILTER wf.id == ${id}
-        LIMIT 1
-        UPDATE wf WITH { status:'end', updated:${now} progress:${endProgress} } IN WFActive
-    `),
-  ])
-}
-
-const getWFState: DomainPersistence['getWFState'] = async ({ id }) => {
-  const curs = await db.query(aql`
-    FOR wf IN WFActive
-      FILTER wf.id == ${id}
-      LIMIT 1
-      RETURE wf
+const forwardKey = (_: DomainTopic) => `${_.domain}__${_.topic}`
+const addForward: DomainPersistence['addForward'] = async ({ src, trg: trg }) => {
+  log([`addForward`, { src, trg }], 0)
+  const frw: Forward = { src, trg: [trg] }
+  return db.query(aql`
+    UPSERT ${forwardKey(src)}
+        INSERT ${frw} 
+        UPDATE { trg: UNIQUE(PUSH(OLD.trg, ${trg}))}
+    IN ${Forwards.name}
   `)
-  return curs.next()
+}
+
+const removeForward: DomainPersistence['removeForward'] = async ({ src, trg }) => {
+  log([`removeForward`, { src, trg }], 0)
+  return db.query(aql`
+    UPDATE ${forwardKey(src)}
+    WITH { trg: REMOVE_VALUE(OLD.trg, ${trg}, 1)}
+    IN ${Forwards.name}
+  `)
+}
+
+const getForwards: DomainPersistence['getForwards'] = async ({ src }) => {
+  log([`getForwards`, { src }], 0)
+  return Forwards.document({ _key: forwardKey(src) })
+    .then(
+      (doc) => doc.trg,
+      () => []
+    )
+    .then((_) => (log([`Forwards for`, { src }, _], 0), _))
 }
 
 const arangoPersistence: DomainPersistence = {
-  endWF,
-  enqueueWF,
-  getWFState,
-  progressWF,
+  addForward,
+  removeForward,
+  getForwards,
 }
 module.exports = arangoPersistence

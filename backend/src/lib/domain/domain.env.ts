@@ -2,8 +2,7 @@ import amqp, { Options } from 'amqplib'
 import { resolve } from 'path'
 import { inspect } from 'util'
 import * as Yup from 'yup'
-// import { DomainPersistence } from './types'
-import { Domain } from './types'
+import { DomainPersistence } from './impl/persistence/types'
 
 type AmqpOptsEnv = Pick<Options.Connect, 'hostname' | 'port' | 'password' | 'username'>
 
@@ -43,11 +42,16 @@ export const env = Validator.validateSync({
 })!
 
 const implPathBase = [__dirname, 'impl']
-export const persistence = require(resolve(...implPathBase, 'persistence', env.persistenceModule)) // as DomainPersistence
+export const persistence = require(resolve(
+  ...implPathBase,
+  'persistence',
+  env.persistenceModule
+)) as DomainPersistence
 
-export const logger = <D extends Domain>(domain: Domain.Name<D>) => (srv: keyof D['srv']) => (
-  tag: string
-) => (objs: any, level?: 0 | 1 | 2 | 3 | 4) => {
+export const logger = (baseTag: string) => (tag: string) => (
+  objs: any,
+  level?: 0 | 1 | 2 | 3 | 4
+) => {
   const _level = typeof level === 'number' ? level : 2
   if (_level < env.logLevel) {
     return
@@ -63,7 +67,7 @@ export const logger = <D extends Domain>(domain: Domain.Name<D>) => (srv: keyof 
       ? objs
       : [objs].map((obj) => inspect(obj, false, null, true)).join('\n')
     console[fn](`
-[${fnStr}] @${new Date()} ${domain}.${srv}.${tag}
+[${fnStr}] @${new Date()} ${baseTag}.${tag}
 ${objStr}
 --++--
 `)
