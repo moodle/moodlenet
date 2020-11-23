@@ -1,8 +1,7 @@
 import { aql } from 'arangojs'
 import { DomainPersistence, DomainTopic, Forward } from '../types'
-import { log } from './'
 import { Forwards } from './collections'
-import { db } from './domain.arango.env'
+import { db, log } from './domain.arango.env'
 
 const forwardKey = (_: DomainTopic) => `${_.domain}__${_.topic}`
 const addForward: DomainPersistence['addForward'] = async ({ src, trg: trg }) => {
@@ -35,9 +34,8 @@ const getForwards: DomainPersistence['getForwards'] = async ({ src }) => {
     .then((_) => (log([`Forwards for`, { src }, _], 0), _))
 }
 
-const arangoPersistence: DomainPersistence = {
+export const arangoPersistence: DomainPersistence = {
   addForward,
   removeForward,
   getForwards,
 }
-module.exports = arangoPersistence

@@ -42,7 +42,7 @@ export const env = Validator.validateSync({
 })!
 
 const implPathBase = [__dirname, 'impl']
-export const persistence = require(resolve(
+export const mainNodePersistence = require(resolve(
   ...implPathBase,
   'persistence',
   env.persistenceModule

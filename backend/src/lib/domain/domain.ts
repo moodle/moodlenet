@@ -9,22 +9,22 @@ import {
   queueConsume,
   sendToQueue,
 } from './amqp'
-import { persistence } from './domain.env'
+import { mainNodePersistence } from './domain.env'
 import { DomainTopic } from './impl/persistence/types'
 import { Consume, ForwardTopicMsg, Publish, ReplyError } from './types'
 
 type DomainMsgHeaders = Partial<{ forwardedFrom: DomainTopic }>
 const DomainMsgHeaderProp = `x-sys-domain-header`
 
-const mkMsgHeader = (_: DomainMsgHeaders) => ({ [DomainMsgHeaderProp]: _ })
+const mkMsgHeader = (domainHeaders: DomainMsgHeaders) => ({ [DomainMsgHeaderProp]: domainHeaders })
 const getMsgHeader = (msg: Message): DomainMsgHeaders =>
   msg.properties.headers[DomainMsgHeaderProp] || {}
 
 export const domain = <Domain>(domain: string) => {
-  const publish: Publish<Domain> = async ({ trgTopicPath, payload, replyCb }) => {
+  const publish: Publish<Domain> = async ({ target: trgTopicPath, payload, replyCb }) => {
     const opts: DomainPublishOpts = {}
 
-    persistence
+    mainNodePersistence
       .getForwards({
         src: { domain, topic: String(trgTopicPath) },
       })
@@ -62,17 +62,20 @@ export const domain = <Domain>(domain: string) => {
     })
   }
 
-  const forward: ForwardTopicMsg<Domain> = ({ srcTopicPath, trgTopicPath }) => {
-    return persistence.addForward({
+  const forward: ForwardTopicMsg<Domain> = ({ source: srcTopicPath, target: trgTopicPath }) => {
+    return mainNodePersistence.addForward({
       src: { domain, topic: String(srcTopicPath) },
       trg: { domain, topic: String(trgTopicPath) },
     })
   }
 
   const consume: Consume<Domain> = ({ trgTopicPath, handler, qName }) => {
+    const durable = !qName
+    qName = qName || `MAIN_CONSUMER:${String(trgTopicPath)}`
     domainConsume({
       domain,
       qName,
+      opts: { queue: { durable } },
       topic: String(trgTopicPath),
       handler({ msg, msgJsonContent }) {
         const head = getMsgHeader(msg)
@@ -81,12 +84,12 @@ export const domain = <Domain>(domain: string) => {
           if (!head.forwardedFrom) {
             return
           }
-          return persistence.removeForward({
+          return mainNodePersistence.removeForward({
             src: head.forwardedFrom,
             trg: { domain, topic: String(trgTopicPath) },
           })
         }
-        //@ts-expect-error
+
         return handler({
           payload: msgJsonContent,
           forward: head.forwardedFrom && {

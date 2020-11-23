@@ -1,6 +1,7 @@
 import { Database } from 'arangojs'
 import { BasicAuthCredentials, Config } from 'arangojs/connection'
 import * as Yup from 'yup'
+import { nodeLogger } from '../../..'
 
 type ArangoOptsEnv = Pick<Config, 'url' | 'databaseName' | 'auth'>
 
@@ -33,3 +34,4 @@ export const env = Validator.validateSync({
 })!
 
 export const db = new Database(env.arangoOpts)
+export const log = nodeLogger('Arango Persistence')

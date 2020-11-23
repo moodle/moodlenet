@@ -52,7 +52,7 @@ export const domainConsume = async (_: {
   domain: string
   qName: string
   handler: (_: { msgJsonContent: any; msg: Message }) => Acks | Promise<Acks>
-  opts?: { consume?: QConsumeOpts; queue: QConsumeOpts }
+  opts?: { consume?: QConsumeOpts; queue: DomainQueueOpts }
 }) => {
   const { topic, handler, domain, opts, qName } = _
   await bindPath({ topic, domain, qName })
