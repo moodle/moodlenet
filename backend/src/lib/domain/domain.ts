@@ -21,12 +21,12 @@ const getMsgHeader = (msg: Message): DomainMsgHeaders =>
   msg.properties.headers[DomainMsgHeaderProp] || {}
 
 export const domain = <Domain>(domain: string) => {
-  const publish: Publish<Domain> = async ({ target: trgTopicPath, payload, replyCb }) => {
+  const publish: Publish<Domain> = async ({ target, payload, replyCb }) => {
     const opts: DomainPublishOpts = {}
 
     mainNodePersistence
       .getForwards({
-        src: { domain, topic: String(trgTopicPath) },
+        src: { domain, topic: String(target) },
       })
       .then((forwards) =>
         forwards.forEach((fwd) => {
@@ -35,7 +35,7 @@ export const domain = <Domain>(domain: string) => {
             domain: fwd.domain,
             topic: fwd.topic,
             opts: {
-              headers: mkMsgHeader({ forwardedFrom: { domain, topic: String(trgTopicPath) } }),
+              headers: mkMsgHeader({ forwardedFrom: { domain, topic: String(target) } }),
             },
           })
         })
@@ -57,26 +57,26 @@ export const domain = <Domain>(domain: string) => {
     return domainPublish({
       domain,
       payload,
-      topic: String(trgTopicPath),
+      topic: String(target),
       opts: {},
     })
   }
 
-  const forward: ForwardTopicMsg<Domain> = ({ source: srcTopicPath, target: trgTopicPath }) => {
+  const forward: ForwardTopicMsg<Domain> = ({ source, target }) => {
     return mainNodePersistence.addForward({
-      src: { domain, topic: String(srcTopicPath) },
-      trg: { domain, topic: String(trgTopicPath) },
+      src: { domain, topic: String(source) },
+      trg: { domain, topic: String(target) },
     })
   }
 
-  const consume: Consume<Domain> = ({ trgTopicPath, handler, qName }) => {
+  const consume: Consume<Domain> = ({ target, handler, qName }) => {
     const durable = !qName
-    qName = qName || `MAIN_CONSUMER:${String(trgTopicPath)}`
+    qName = qName || `MAIN_CONSUMER:${String(target)}`
     domainConsume({
       domain,
       qName,
       opts: { queue: { durable } },
-      topic: String(trgTopicPath),
+      topic: String(target),
       handler({ msg, msgJsonContent }) {
         const head = getMsgHeader(msg)
 
@@ -86,7 +86,7 @@ export const domain = <Domain>(domain: string) => {
           }
           return mainNodePersistence.removeForward({
             src: head.forwardedFrom,
-            trg: { domain, topic: String(trgTopicPath) },
+            trg: { domain, topic: String(target) },
           })
         }
 
