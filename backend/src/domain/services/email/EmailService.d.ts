@@ -1,14 +1,16 @@
 export type EmailService = {
+  api: {}
+  ev: {}
   wf: {
     SendOne: {
       ctx: {}
       start: { email: EmailObj; username: string }
       progress: {}
-      end: {
-        Success: {}
-        Fail: {}
-      }
       signal: {}
+      end: {
+        Success: void
+        Fail: void
+      }
     }
     VerifyEmail: {
       ctx: {}
@@ -16,17 +18,16 @@ export type EmailService = {
       progress: {
         WaitingConfirmation: { attemptCount: number; token: string }
       }
-      end: {
-        Confirmed: {}
-        Expired: {}
-        Aborted: {}
-      }
       signal: {
         ConfirmEmail: { token: string }
       }
+      end: {
+        Confirmed: { c: number }
+        Expired: { e: number }
+        Aborted: { a: number }
+      }
     }
   }
-  ev: {}
 }
 
 export type EmailObj = {

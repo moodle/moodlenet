@@ -1,23 +1,32 @@
-import { WFLifePayload } from '../../../lib/domain/types'
+import { Workflow } from '../../../lib/domain/types'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
-import { EmailObj } from '../email/EmailService'
 
 export type AccountingService = {
+  api: {}
+  ev: {}
   wf: {
     RegisterNewAccount: {
       ctx: {}
       start: { email: string; username: string }
       progress: {
-        WaitingConfirmEmail: {}
+        WaitingConfirmEmail: { in1: string }
+        aWaitingConfirmEmail: { in2: number }
       }
       end: {
-        NewAccountActivated: {}
+        NewAccountActivated: void
         Rejected: { reason: 'unconfirmed email' }
       }
       signal: {
-        EmailConfirmationResult: WFLifePayload<MoodleNetDomain, 'Email', 'VerifyEmail', 'end'>
+        EmailConfirmationResult: Workflow.LifeTypeUnion<
+          MoodleNetDomain,
+          'Email',
+          'VerifyEmail',
+          'end'
+        >
+        aEmailConfirmationResult: { a: number }
       }
     }
   }
-  ev: {}
 }
+
+declare const c: Workflow.LifeTypeUnion<MoodleNetDomain, 'Email', 'VerifyEmail', 'end'>

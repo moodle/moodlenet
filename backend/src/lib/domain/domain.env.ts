@@ -3,7 +3,7 @@ import { resolve } from 'path'
 import { inspect } from 'util'
 import * as Yup from 'yup'
 // import { DomainPersistence } from './types'
-import { Domain, DomainName } from './types'
+import { Domain } from './types'
 
 type AmqpOptsEnv = Pick<Options.Connect, 'hostname' | 'port' | 'password' | 'username'>
 
@@ -45,9 +45,9 @@ export const env = Validator.validateSync({
 const implPathBase = [__dirname, 'impl']
 export const persistence = require(resolve(...implPathBase, 'persistence', env.persistenceModule)) // as DomainPersistence
 
-export const logger = <D extends Domain>(domain: DomainName<D>) => (srv: keyof D['srv']) => (
+export const logger = <D extends Domain>(domain: Domain.Name<D>) => (srv: keyof D['srv']) => (
   tag: string
-) => (obj: any, level?: 0 | 1 | 2 | 3 | 4) => {
+) => (objs: any, level?: 0 | 1 | 2 | 3 | 4) => {
   const _level = typeof level === 'number' ? level : 2
   if (_level < env.logLevel) {
     return
@@ -59,7 +59,9 @@ export const logger = <D extends Domain>(domain: DomainName<D>) => (srv: keyof D
       .toUpperCase()
       .padStart(fn.length + Math.floor((pad - fn.length) / 2), ' ')
       .padEnd(pad, ' ')
-    const objStr = inspect(obj, false, null, true)
+    const objStr = Array.isArray(objs)
+      ? objs
+      : [objs].map((obj) => inspect(obj, false, null, true)).join('\n')
     console[fn](`
 [${fnStr}] @${new Date()} ${domain}.${srv}.${tag}
 ${objStr}
@@ -70,4 +72,4 @@ ${objStr}
 
 export const channelPromise = amqp
   .connect({ ...env.amqpOpts })
-  .then((connection) => connection.createChannel())
+  .then((connection) => connection.createConfirmChannel())
