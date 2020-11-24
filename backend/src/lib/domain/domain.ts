@@ -21,12 +21,13 @@ const getMsgHeader = (msg: Message): DomainMsgHeaders =>
   msg.properties.headers[DomainMsgHeaderProp] || {}
 
 export const domain = <Domain>(domain: string) => {
-  const publish: Publish<Domain> = async ({ target, payload, replyCb }) => {
-    const opts: DomainPublishOpts = {}
+  const publish: Publish<Domain> = async ({ target, payload, replyCb, opts }) => {
+    const pubOpts: DomainPublishOpts = { ...opts }
 
+    const topic = fullTopic(target)
     mainNodePersistence
       .getForwards({
-        src: { domain, topic: target },
+        src: { domain, topic },
       })
       .then((forwards) =>
         forwards.forEach((fwd) => {
@@ -35,7 +36,7 @@ export const domain = <Domain>(domain: string) => {
             domain: fwd.domain,
             topic: fwd.topic,
             opts: {
-              headers: mkMsgHeader({ forwardedFrom: { domain, topic: target } }),
+              headers: mkMsgHeader({ forwardedFrom: { domain, topic } }),
             },
           })
         })
@@ -43,7 +44,7 @@ export const domain = <Domain>(domain: string) => {
 
     if (replyCb) {
       const qName = newUuid()
-      opts.replyTo = qName
+      pubOpts.replyTo = qName
       assertQ({ name: qName, opts: { exclusive: true } })
       await queueConsume({
         qName,
@@ -57,43 +58,48 @@ export const domain = <Domain>(domain: string) => {
     return domainPublish({
       domain,
       payload,
-      topic: target,
+      topic,
       opts: {},
     })
   }
 
-  const forward: ForwardTopicMsg<Domain> = ({ source, target }) => {
+  const forward: ForwardTopicMsg<Domain> = ({ source, target, key }) => {
     return mainNodePersistence.addForward({
-      src: { domain, topic: topicString(source) },
-      trg: { domain, topic: topicString(target) },
+      key,
+      src: { domain, topic: source },
+      trg: { domain, topic: target },
     })
   }
 
   const consume: Consume<Domain> = ({ target, handler, qName }) => {
+    const topic = fullTopic(target)
+
     const durable = !qName
     qName = qName || `MAIN_CONSUMER:${target}`
     domainConsume({
       domain,
       qName,
       opts: { queue: { durable } },
-      topic: target,
+      topic,
       handler({ msg, msgJsonContent }) {
-        const head = getMsgHeader(msg)
+        const headers = getMsgHeader(msg)
 
         const unforward = () => {
-          if (!head.forwardedFrom) {
+          if (!headers.forwardedFrom) {
             return
           }
           return mainNodePersistence.removeForward({
-            src: head.forwardedFrom,
-            trg: { domain, topic: target },
+            src: headers.forwardedFrom,
+            trg: { domain, topic },
           })
         }
+        const key = headers.forwardedFrom?.topic.split('.').slice(-1)[0]
 
         return handler({
           payload: msgJsonContent,
-          forward: head.forwardedFrom && {
-            src: head.forwardedFrom,
+          key: key as any,
+          forwarded: headers.forwardedFrom && {
+            src: headers.forwardedFrom,
             unforward,
           },
         }).then(
@@ -122,4 +128,4 @@ export const domain = <Domain>(domain: string) => {
   }
 }
 
-const topicString = (_: readonly string[]) => _.reduce((_, s) => `${_}.${s}`, ``)
+const fullTopic = (_: string[]) => _.join('.')

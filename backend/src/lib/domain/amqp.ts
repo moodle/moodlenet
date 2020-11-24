@@ -1,9 +1,9 @@
 // import { delay } from 'bluebird'
 import { Message, Options, Replies } from 'amqplib'
-import { nodeLogger } from '.'
+// import { nodeLogger } from '.'
 import { channelPromise as channel } from './domain.env'
 
-const log = nodeLogger('amqp-transport')
+const log = console.log //nodeLogger('amqp-transport')
 
 export const domainPublish = (_: {
   domain: string

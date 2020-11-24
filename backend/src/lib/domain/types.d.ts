@@ -1,7 +1,8 @@
+import { DomainPublishOpts } from './amqp'
 import { DomainTopic } from './impl/persistence/types'
 
 export type Topic<Type, Reply = void> = { type: Type; reply: Reply }
-export type KeyedTopic<Type, Reply = void> = Topic<Type, Reply> & { _: string }
+export type KeyedTopic<Type, Reply = void> = Topic<Type, Reply> & { keyed: true }
 
 // prettier-ignore
 type Prev = [never, 0, 1, 2, 3, 4, 5, 6,  7, 8, 9, 10,  11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...0[]]
@@ -82,43 +83,84 @@ export type TopicOf<
     T[A]
   : never
 
+// export type ForwardTopicMsg<Domain> = <
+//   Source extends TopicLeaves<Domain>,
+//   Target extends TopicLeaves<Domain>
+// >(_: {
+//   source: TopicOf<Domain, Source> extends KeyedTopic<any, any>
+//     ? readonly [Source, string]
+//     : readonly [Source]
+//   target: TopicOf<Domain, Source> extends Topic<infer SrcT, any>
+//     ? TopicOf<Domain, Target> extends Topic<infer TrgT, any>
+//       ? TrgT extends SrcT
+//         ? TopicOf<Domain, Target> extends KeyedTopic<any, any>
+//           ? readonly [Target, string]
+//           : readonly [Target]
+//         : never
+//       : never
+//     : never
+// }) => unknown
+
+// export type ForwardTopicMsg<Domain> = <
+//   Source extends TopicLeaves<Domain>,
+//   Target extends TopicLeaves<Domain>
+// >(_: {
+//   key: string
+//   source: TopicOf<Domain, Source> extends KeyedTopic<any, any> ? Source : Source
+//   target: TopicOf<Domain, Source> extends Topic<infer SrcT, any>
+//     ? TopicOf<Domain, Target> extends Topic<infer TrgT, any>
+//       ? SrcT extends TrgT //TrgT extends SrcT // ?
+//         ? Target
+//         : never
+//       : never
+//     : never
+// }) => unknown
+
 export type ForwardTopicMsg<Domain> = <
   Source extends TopicLeaves<Domain>,
   Target extends TopicLeaves<Domain>
 >(_: {
-  source: TopicOf<Domain, Source> extends KeyedTopic<any, any>
-    ? readonly [Source, string]
-    : readonly [Source]
+  key: string
+  source: TopicOf<Domain, Source> extends KeyedTopic<any, any> ? Source : Source
   target: TopicOf<Domain, Source> extends Topic<infer SrcT, any>
     ? TopicOf<Domain, Target> extends Topic<infer TrgT, any>
-      ? TrgT extends SrcT
-        ? TopicOf<Domain, Target> extends KeyedTopic<any, any>
-          ? readonly [Target, string]
-          : readonly [Target]
+      ? TopicOf<Domain, Source>['type'] extends TopicOf<Domain, Target>['type']
+        ? Target
         : never
       : never
     : never
 }) => unknown
 
 export type Publish<Domain> = <Target extends TopicLeaves<Domain>>(_: {
-  target: Target
-  payload: TopicOf<Domain, Target> extends KeyedTopic<infer In, any>
-    ? [string, In]
-    : TopicOf<Domain, Target> extends Topic<infer In, any>
-    ? In
-    : never
+  target: TopicOf<Domain, Target> extends KeyedTopic<any, any> ? [Target, string] : [Target]
+  payload: TopicOf<Domain, Target> extends Topic<infer In, any> ? In : never
   replyCb?(_: {
     payload: TopicOf<Domain, Target> extends Topic<any, infer Out> ? Out : never
     stop(): unknown
   }): unknown
+  opts?: DomainPublishOpts
 }) => Promise<void>
+// export type Publish<Domain> = <Target extends TopicLeaves<Domain>>(_: {
+//   target: TopicOf<Domain, Target> extends KeyedTopic<infer In, any> ? [Target, string] : [Target]
+//   payload: TopicOf<Domain, Target> extends KeyedTopic<infer In, any>
+//     ? [string, In]
+//     : TopicOf<Domain, Target> extends Topic<infer In, any>
+//     ? In
+//     : never
+//   replyCb?(_: {
+//     payload: TopicOf<Domain, Target> extends Topic<any, infer Out> ? Out : never
+//     stop(): unknown
+//   }): unknown
+//   opts?: DomainPublishOpts
+// }) => Promise<void>
 
 export type Consume<Domain> = <Target extends TopicLeaves<Domain>>(_: {
-  target: Target
+  target: TopicOf<Domain, Target> extends KeyedTopic<infer In, any> ? [Target, string] : [Target]
   qName?: string
   handler(_: {
     payload: TopicOf<Domain, Target> extends Topic<infer In, any> ? In : never
-    forward?:
+    key: TopicOf<Domain, Target> extends KeyedTopic<infer In, any> ? string : undefined
+    forwarded?:
       | {
           src: DomainTopic
           unforward(): unknown

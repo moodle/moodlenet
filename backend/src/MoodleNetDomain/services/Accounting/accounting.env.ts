@@ -1,5 +1,6 @@
 import { resolve } from 'path'
 import * as Yup from 'yup'
+// import { logger } from '../../../lib/domain/domain.env'
 import { AccountingPersistence } from './persistence/types'
 
 interface QueueEnv {
@@ -21,3 +22,4 @@ export const accountPersistence = require(resolve(
   ...persistenceImplPathBase,
   env.persistenceModule
 )) as AccountingPersistence
+export const accountingLogger = console.log //logger('email')
