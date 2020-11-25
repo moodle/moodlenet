@@ -8,6 +8,9 @@
 		}
 	],
 	"settings": {
-		"typescript.tsdk": "backend/node_modules/typescript/lib"
+		"typescript.tsdk": "backend/node_modules/typescript/lib",
+		"todo-tree.filtering.excludeGlobs": [
+			"**/node_modules"
+		]
 	}
 }
