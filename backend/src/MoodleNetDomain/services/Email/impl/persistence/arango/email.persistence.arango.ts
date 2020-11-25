@@ -6,8 +6,9 @@ export const VerifyEmail = db.collection<VerifyEmailDocument>('VerifyEmail')
 export const SentEmail = db.collection<SentEmailDocument>('SentEmail')
 
 const arangoEmailPersistenceImpl: EmailPersistence = {
-  async storeSentEmail({ email, emailId }) {
+  async storeSentEmail({ email, emailId, flowId }) {
     const document: SentEmailDocument = {
+      ...flowId,
       at: new Date(),
       email,
       emailId,
@@ -22,15 +23,14 @@ const arangoEmailPersistenceImpl: EmailPersistence = {
     ).next()
     return key
   },
-  async getVerifyingEmail({ key }) {
-    const doc = await VerifyEmail.document({ _key: key })
+  async getVerifyingEmail({ flowId }) {
+    const doc = await VerifyEmail.document({ _key: flowId._key })
     return doc
   },
-  async incAttemptVerifyingEmail({ key }) {
-    const x = key
+  async incAttemptVerifyingEmail({ flowId }) {
     const doc = await (
       await db.query(aql`
-        UPDATE ${x}
+        UPDATE ${flowId._key}
         WITH { attempts: 11 }
         IN VerifyEmail
         RETURN NEW
@@ -38,10 +38,12 @@ const arangoEmailPersistenceImpl: EmailPersistence = {
     ).next()
     return doc
   },
-  async storeVerifyingEmail({ req }) {
+  async storeVerifyingEmail({ req, flowId, token }) {
     const document: VerifyEmailDocument = {
+      ...flowId,
       attempts: 0,
       req,
+      token,
     }
     const key = await (
       await db.query(aql`

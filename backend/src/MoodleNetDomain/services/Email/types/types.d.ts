@@ -11,5 +11,4 @@ type VerifyEmailReq = {
   maxAttempts: number
   timeoutHours: number
   tokenReplaceRegEx: string
-  key: string
 }

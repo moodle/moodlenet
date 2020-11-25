@@ -3,43 +3,45 @@ import { newUuid } from '../../../lib/helpers/misc'
 import { emailPersistence } from './email.service.env'
 import { EmailObj } from './types'
 
-MoodleNet.consume({
-  target: ['Email.Verify_Email.Req'],
-  async handler({ payload }) {
-    const { email, tokenReplaceRegEx, timeoutHours } = payload
-    const token = newUuid()
+MoodleNet.api.responder({
+  api: 'Email.Verify_Email.Req',
+  async handler({ req, flowId }) {
+    const { email, tokenReplaceRegEx } = req
+    const token = `${newUuid()}|${flowId._key}`
     const regex = new RegExp(tokenReplaceRegEx, 'g')
     const emailObj: EmailObj = {
       ...email,
       html: email.html?.replace(regex, token),
       text: email.text?.replace(regex, token),
     }
-    const req = {
-      ...payload,
-      emailObj,
-    }
-    const documentKey = await emailPersistence().storeVerifyingEmail({ req })
-    MoodleNet.publish({
-      target: ['Email.Verify_Email.Attempt_Send'],
-      payload: { first: true, documentKey },
-      opts: {
-        delay: timeoutHours * 60 * 60 * 1000,
+    const documentKey = await emailPersistence().storeVerifyingEmail({
+      req: {
+        ...req,
+        email: emailObj,
       },
+      flowId,
+      token,
+    })
+    MoodleNet.api.call({
+      api: 'Email.Verify_Email.Attempt_Send',
+      req: { first: true },
+      flowId: flowId,
     })
     return { id: documentKey }
   },
 })
 
-MoodleNet.consume({
-  target: ['Email.Verify_Email.Attempt_Send'],
-  async handler({ payload: { documentKey, first } }) {
-    const document = await emailPersistence().incAttemptVerifyingEmail({ key: documentKey })
+MoodleNet.api.responder({
+  api: 'Email.Verify_Email.Attempt_Send',
+  async handler({ req: { first }, flowId }) {
+    const document = await emailPersistence().incAttemptVerifyingEmail({ flowId })
     if (!document) {
-      return
+      return { success: false, error: 'Not Found' }
     }
     if (!first && document.req.maxAttempts <= document.attempts) {
-      MoodleNet.publish({
-        target: ['Accounting.Register_New_Account.Email_Confirm_Result', document.req.key],
+      MoodleNet.event.emit({
+        event: 'Email.Verify_Email.Result',
+        flowId,
         payload: {
           email: document.req.email.to,
           error: `Max attempts [${document.req.maxAttempts}] timeout`,
@@ -47,18 +49,21 @@ MoodleNet.consume({
         },
       })
     } else {
-      MoodleNet.publish({
-        target: ['Email.Send_One.Req'],
-        payload: { emailObj: document.req.email },
+      MoodleNet.api.call({
+        api: 'Email.Send_One.Req',
+        req: { emailObj: document.req.email },
+        flowId,
       })
 
-      MoodleNet.publish({
-        target: ['Email.Verify_Email.Attempt_Send'],
-        payload: { first: false, documentKey },
+      MoodleNet.api.call({
+        api: 'Email.Verify_Email.Attempt_Send',
+        flowId,
+        req: { first: false },
         opts: {
           delay: document.req.timeoutHours * 60 * 60 * 1000,
         },
       })
     }
+    return { success: true } as const
   },
 })

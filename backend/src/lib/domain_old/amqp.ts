@@ -1,28 +1,20 @@
 // import { delay } from 'bluebird'
 import { Message, Options, Replies } from 'amqplib'
-import { EventEmitter } from 'events'
-import { newUuid } from '../helpers/misc'
 // import { nodeLogger } from '.'
 import { channelPromise as channel } from './domain.env'
-import { FlowId } from './types/path'
 
 const log = console.log //nodeLogger('amqp-transport')
-
-const defPubOpts: Options.Publish = {
-  deliveryMode: 2,
-}
 
 export const domainPublish = (_: {
   domain: string
   topic: string
-  flowId: FlowId
   payload: any
   opts?: DomainPublishOpts
 }) =>
   new Promise<void>(async (resolve, reject) => {
-    const { topic, flowId, payload, opts, domain } = _
-    log([`publish ${domain} ${topic}`, { payload, flowId }], 0)
-    const taggedTopic = `${topic}.${flowId._tag}`
+    const { topic, payload, opts, domain } = _
+    log([`publish ${domain} ${topic}`, { payload }], 0)
+
     const payloadBuf = json2Buffer(payload)
     const ch = await channel
     const confirmFn = (err: any) => (err ? reject(err) : resolve())
@@ -31,50 +23,57 @@ export const domainPublish = (_: {
       const { delayedX } = await assertDelayQX({ domain })
       await ch.publish(
         delayedX,
-        taggedTopic,
+        topic,
         payloadBuf,
         {
           ...opts,
-          ...defPubOpts,
-          correlationId: flowId._key,
-          replyTo: opts.replyToNodeQ ? mainNodeQName : undefined,
           expiration: opts.delay,
+          deliveryMode: 2,
         },
         confirmFn
       )
     } else {
-      const domEx = await getAssertDomainExchangeName(domain)
+      const domEx = await getDomainExchangeName(domain)
       await ch.publish(
         domEx,
-        taggedTopic,
+        topic,
         payloadBuf,
         {
           ...opts,
-          ...defPubOpts,
-          correlationId: flowId._key,
-          replyTo: opts?.replyToNodeQ ? mainNodeQName : undefined,
+          deliveryMode: 2,
         },
         confirmFn
       )
     }
   })
 
+export const domainConsume = async (_: {
+  topic: string
+  domain: string
+  qName: string
+  handler: (_: { msgJsonContent: any; msg: Message }) => Acks | Promise<Acks>
+  opts?: { consume?: QConsumeOpts; queue: DomainQueueOpts }
+}) => {
+  const { topic, handler, domain, opts, qName } = _
+  await bindPath({ topic, domain, qName })
+  log([`def domainConsume`, { topic, qName }], 0)
+  return queueConsume({
+    handler,
+    qName,
+    opts: opts?.queue,
+  })
+}
+
 export const queueConsume = async (_: {
   qName: string
-  // flowId:FlowId // TODO: needs it ?
-  handler: (_: {
-    msgJsonContent: any
-    msg: Message
-    flowId: FlowId
-    stopConsume(): unknown
-  }) => Acks | Promise<Acks>
+  handler: (_: { msgJsonContent: any; msg: Message; stop(): unknown }) => Acks | Promise<Acks>
   opts?: QConsumeOpts
 }) => {
   const { handler, opts, qName } = _
 
   log([`def queueConsume`, { qName }], 0)
   const ch = await channel
-  const stopConsume = async () => {
+  const stop = async () => {
     ch.cancel((await consumerPr).consumerTag)
     ch.deleteQueue(qName)
   }
@@ -89,12 +88,7 @@ export const queueConsume = async (_: {
       let msgJsonContent: any = `~~~NOT PARSED~~~`
       try {
         msgJsonContent = buffer2Json(msg.content)
-        const flowId = msgFlowId(msg)
-        if (!flowId) {
-          //TODO: figure out possible scenarios manage and log err/warn
-          return
-        }
-        const ack = await handler({ msgJsonContent, msg, stopConsume, flowId })
+        const ack = await handler({ msgJsonContent, msg, stop })
         ch[ack](msg)
       } catch (err) {
         log([`queueConsume handler error ${qName}`, { msgJsonContent, err }], 0)
@@ -104,10 +98,27 @@ export const queueConsume = async (_: {
     },
     { ...opts }
   )
-  return { stopConsume }
+  return stop
 }
 
-export const getAssertDomainExchangeName = async (domainName: string) => {
+export const bindPath = async (_: {
+  qName: string
+  domain: string
+  topic: string
+  opts?: { args?: any }
+}) => {
+  const { domain, qName, topic, opts } = _
+
+  log(['bindPath', { qName, topic }], 0)
+  await bindQ({
+    name: qName,
+    domain,
+    topic,
+    args: opts?.args,
+  })
+}
+
+const getDomainExchangeName = async (domainName: string) => {
   const exName = `Domain.${domainName}`
   return (await assertX({ name: exName, type: 'topic' })).exchange
 }
@@ -117,25 +128,18 @@ const buffer2Json = <T>(buf: Buffer): T => JSON.parse(buf.toString('utf-8'))
 
 export const bindQ = async (_: { name: string; domain: string; topic: string; args?: any }) => {
   const { args, domain, name, topic } = _
-  const ex = await getAssertDomainExchangeName(domain)
+  const ex = await getDomainExchangeName(domain)
   if (!asserts.BQ[name]) {
     const ch = await channel
     asserts.BQ[bindQAssertCachekey({ ex, name, topic })] = await ch.bindQueue(name, ex, topic, args)
   }
-
-  return {
-    unbind,
-  }
-  function unbind() {
-    unbindQ({ domain, name, topic, args })
-  }
+  return asserts.BQ[name]
 }
 const bindQAssertCachekey = (_: { name: string; ex: string; topic: string }) =>
   `${_.name}<-${_.ex}.${_.topic}`
 
-export const unbindQ = async (_: { name: string; domain: string; topic: string; args?: any }) => {
-  const { args, domain, name, topic } = _
-  const ex = await getAssertDomainExchangeName(domain)
+export const unbindQ = async (_: { name: string; ex: string; topic: string; args?: any }) => {
+  const { args, ex, name, topic } = _
   await (await channel).unbindQueue(name, ex, topic, args)
   delete asserts.BQ[bindQAssertCachekey({ ex, name, topic })]
   return asserts.BQ[name]
@@ -146,11 +150,8 @@ export const sendToQueue = async (_: {
   content: any
   opts?: DomainSendToQueueOpts
 }) => {
-  const { name, content, opts } = _
-  return (await channel).sendToQueue(name, json2Buffer(content), {
-    ...defPubOpts,
-    ...opts,
-  })
+  const { name, content } = _
+  return (await channel).sendToQueue(name, json2Buffer(content), {})
 }
 
 // TODO: may remove BQ?
@@ -186,7 +187,7 @@ const assertX = async (_: {
 
 const assertDelayQX = async (_: { domain: string; tag?: string }) => {
   const { domain, tag = '' } = _
-  const domainEx = await getAssertDomainExchangeName(domain)
+  const domainEx = await getDomainExchangeName(domain)
   const prefix = `${domainEx}${tag && `[${tag}]`}:SERVICE_DELAY_`
   const delayedQName = `${prefix}QUEUE`
   const delayedX = `${prefix}EXCH`
@@ -203,69 +204,12 @@ const assertDelayQX = async (_: { domain: string; tag?: string }) => {
   }
 }
 
-const NodeEmitter = new EventEmitter()
-
-const mainNodeQName = newUuid()
-channel.then(async (ch) => {
-  const mainNodeQ = await assertQ({
-    name: mainNodeQName,
-    opts: { exclusive: true, autoDelete: true },
-  })
-  ch.consume(mainNodeQ.queue, (msg) => {
-    const ev = msgEventName(msg)
-    if (!ev) {
-      return
-    }
-    NodeEmitter.emit(ev, msg)
-  })
-})
-const msgEventName = (msg: Message | null) => flowIdEventName(msgFlowId(msg))
-const flowIdEventName = (flowId: FlowId | null) =>
-  flowId && flowId._key && flowId._tag ? `${flowId._key}:${flowId._tag}` : null
-
-export const mainNodeQEmitter = {
-  sub<T>(_: { flowId: FlowId; handler(_: EventEmitterType<T>): unknown }) {
-    const { flowId, handler } = _
-    const ev = flowIdEventName(flowId)
-    if (ev === null) {
-      //TODO: Log Error
-      return
-    }
-    NodeEmitter.addListener(ev, listener)
-    return unsub
-    function unsub() {
-      ev && NodeEmitter.removeListener(ev, listener)
-    }
-    function listener(msg: Message) {
-      handler({
-        jsonContent: buffer2Json(msg.content),
-        msg,
-        unsub,
-      })
-    }
-  },
-}
-
-export const msgFlowId = (msg: Message | null): FlowId | null =>
-  msg && msg.properties.correlationId && msg.fields.routingKey.length
-    ? {
-        _key: msg.properties.correlationId,
-        _tag: msg.fields.routingKey.split('.').slice(-1).pop()!,
-      }
-    : null
-
-export type EventEmitterType<T> = {
-  msg: Message
-  jsonContent: T
-  unsub(): unknown
-}
-
 export type DomainPublishOpts = Options.Publish & {
-  replyToNodeQ?: boolean
   delay?: number
+  replyTo?: string
   messageId?: string
 }
-export type DomainSendToQueueOpts = Options.Publish & {}
+export type DomainSendToQueueOpts = {}
 export type DomainQueueOpts = Options.AssertQueue & {}
 export type QConsumeOpts = Options.Consume & { errorAck?: Acks.nack | Acks.reject }
 

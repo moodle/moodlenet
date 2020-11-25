@@ -5,26 +5,20 @@ import { db /* log */ } from './account.persistence.arango.env'
 export const Account = db.collection<AccountDocument>('Account')
 
 const arangoAccountingPersistenceImpl: AccountingPersistence = {
-  async addNewAccountRequest({ request: { email, username } }) {
+  async addNewAccountRequest({ req: { email, username }, flowId }) {
     const document: AccountDocument = {
+      ...flowId,
       requestAt: new Date(),
       email,
       username,
       activeFrom: null,
     }
-    const key = await (
-      await db.query(aql`
-      INSERT ${document} 
-      INTO Account
-      RETURN NEW._key
-    `)
-    ).next()
-    return key
+    await Account.save(document)
   },
-  async activateNewAccount({ key }) {
+  async activateNewAccount({ flowId }) {
     const doc = await (
       await db.query(aql`
-      UPDATE "${key}"
+      UPDATE "${flowId._key}"
       WITH {activeFrom:DATE_NOW()}
       IN Account
       RETURN NEW
@@ -32,10 +26,10 @@ const arangoAccountingPersistenceImpl: AccountingPersistence = {
     ).next()
     return doc
   },
-  async removeNewAccountRequest({ key }) {
+  async removeNewAccountRequest({ flowId }) {
     const doc = await (
       await db.query(aql`
-      REMOVE "${key}"
+      REMOVE "${flowId._key}"
       IN Account
     `)
     ).next()

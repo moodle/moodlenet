@@ -1,10 +1,11 @@
+import { FlowId } from '../../../../lib/domain/types/path'
 import { AccountRequest } from '../Accounting'
 
 type AccountKey = string
 export interface AccountingPersistence {
-  removeNewAccountRequest(_: { key: string }): Promise<AccountDocument | undefined>
-  addNewAccountRequest(_: { request: AccountRequest }): Promise<AccountKey>
-  activateNewAccount(_: { key: string }): Promise<AccountDocument | undefined>
+  removeNewAccountRequest(_: { flowId: FlowId }): Promise<AccountDocument | undefined>
+  addNewAccountRequest(_: { req: AccountRequest; flowId: FlowId }): Promise<void>
+  activateNewAccount(_: { flowId: FlowId }): Promise<AccountDocument | undefined>
 }
 
 type AccountDocument = {
@@ -12,4 +13,4 @@ type AccountDocument = {
   email: string
   activeFrom: Date | null
   requestAt: Date
-}
+} & FlowId

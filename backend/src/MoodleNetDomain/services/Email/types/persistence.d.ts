@@ -1,13 +1,13 @@
 import { EmailObj } from '.'
+import { FlowId } from '../../../../lib/domain/types/path'
 import { VerifyEmailReq } from './types'
 
-export type DocumentKey = string
 export interface EmailPersistence {
-  storeSentEmail(_: { email: EmailObj; emailId: string }): Promise<DocumentKey>
-  storeVerifyingEmail(_: { req: VerifyEmailReq }): Promise<DocumentKey>
-  getVerifyingEmail(_: { key: string }): Promise<VerifyEmailDocument | undefined>
-  incAttemptVerifyingEmail(_: { key: string }): Promise<VerifyEmailDocument | undefined>
+  storeSentEmail(_: { email: EmailObj; emailId: string; flowId: FlowId }): Promise<void>
+  storeVerifyingEmail(_: { req: VerifyEmailReq; token: string; flowId: FlowId }): Promise<void>
+  getVerifyingEmail(_: { flowId: FlowId }): Promise<VerifyEmailDocument | undefined>
+  incAttemptVerifyingEmail(_: { flowId: FlowId }): Promise<VerifyEmailDocument | undefined>
 }
 
-type VerifyEmailDocument = { req: VerifyEmailReq; attempts: number }
-type SentEmailDocument = { email: EmailObj; at: Date; emailId: string }
+type VerifyEmailDocument = { req: VerifyEmailReq; attempts: number; token: string } & FlowId
+type SentEmailDocument = { email: EmailObj; at: Date; emailId: string } & FlowId
