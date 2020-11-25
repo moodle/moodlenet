@@ -3,7 +3,7 @@ import { newUuid } from '../../../lib/helpers/misc'
 import { emailPersistence } from './email.service.env'
 import { EmailObj } from './types'
 
-MoodleNet.api.responder({
+MoodleNet.api.respond({
   api: 'Email.Verify_Email.Req',
   async handler({ req, flowId }) {
     const { email, tokenReplaceRegEx } = req
@@ -31,10 +31,17 @@ MoodleNet.api.responder({
   },
 })
 
-MoodleNet.api.responder({
+MoodleNet.api.respond({
   api: 'Email.Verify_Email.Attempt_Send',
   async handler({ req: { first }, flowId }) {
     const document = await emailPersistence().incAttemptVerifyingEmail({ flowId })
+    console.log(
+      `Email.Verify_Email.Attempt_Send`,
+      first,
+      flowId._key,
+      flowId._tag,
+      document?.attempts
+    )
     if (!document) {
       return { success: false, error: 'Not Found' }
     }
@@ -49,7 +56,7 @@ MoodleNet.api.responder({
         },
       })
     } else {
-      MoodleNet.api.call({
+      await MoodleNet.api.call({
         api: 'Email.Send_One.Req',
         req: { emailObj: document.req.email },
         flowId,
@@ -60,7 +67,7 @@ MoodleNet.api.responder({
         flowId,
         req: { first: false },
         opts: {
-          delay: document.req.timeoutHours * 60 * 60 * 1000,
+          delay: Math.round(document.req.timeoutHours * 60 * 60 * 1000),
         },
       })
     }

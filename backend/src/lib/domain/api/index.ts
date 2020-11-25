@@ -27,7 +27,8 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
   type ResType = Types.ApiRes<Domain, ApiPath>
   return new Promise<CallResponse<ResType>>((resolve, reject) => {
     const { api, flowId: progress, req, opts } = _
-    const flowId = progress || { _key: newUuid(), _tag: api }
+    const uuid = progress ? '' : newUuid()
+    const flowId: FlowId = progress || { _key: uuid, _tag: uuid }
     const expiration = opts?.timeout || DEF_TIMEOUT
     const localTimeout = expiration + DEF_LAG_TIMEOUT
     const wantsReply = !opts?.noReply
@@ -59,10 +60,13 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
       .then((_) => {
         setTimeout(() => {
           resolve(errResponse(TIMEOUT_REPLY))
+          unsubEmitter()
         }, localTimeout)
       })
-      .catch(reject)
-      .then(unsubEmitter)
+      .catch((err) => {
+        unsubEmitter()
+        reject(err)
+      })
 
     function response(res: ResType): CallResponse<ResType> {
       return { flowId, res: { ...res, ___ERROR: null } }
@@ -104,11 +108,11 @@ export const responder = <Domain>(domain: string) => async <
         disposeThisBinding,
       })
         .then((resp) => {
-          reply(msg, { ___ERROR: null, ...resp })
+          reply({ msg, flowId, resp: { ___ERROR: null, ...resp } })
           return AMQP.Acks.ack
         })
         .catch((err) => {
-          reply(msg, { ___ERROR: { msg: String(err) } })
+          reply({ msg, flowId, resp: { ___ERROR: { msg: String(err) } } })
           return AMQP.Acks.reject
         })
       function disposeThisBinding() {
@@ -123,10 +127,18 @@ export const responder = <Domain>(domain: string) => async <
     stopConsume()
     unbind()
   }
-  function reply<T extends object>(msg: Message, resp: Types.Reply<T>) {
+  function reply<T extends object>(_: { flowId: FlowId; msg: Message; resp: Types.Reply<T> }) {
+    const { flowId, msg, resp } = _
     const replyQ = msg.properties.replyTo
     if (replyQ) {
-      AMQP.sendToQueue({ name: replyQ, content: resp, opts: {} })
+      console.log('Replying', replyQ, flowId._key, flowId._tag)
+      AMQP.sendToQueue({
+        name: replyQ,
+        content: resp,
+        opts: {
+          correlationId: flowId._key,
+        },
+      })
     }
   }
 }

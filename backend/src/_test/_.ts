@@ -7,4 +7,4 @@ MoodleNet.api
     api: 'Accounting.Register_New_Account.Request',
     req: { email: 'alessandro.giansanti@gmail.com', username: 'alec' },
   })
-  .then(console.log)
+  .then((_) => console.log('_TEST_THEN', _))

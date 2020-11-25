@@ -21,11 +21,12 @@ export const domainPublish = (_: {
 }) =>
   new Promise<void>(async (resolve, reject) => {
     const { topic, flowId, payload, opts, domain } = _
-    log([`publish ${domain} ${topic}`, { payload, flowId }], 0)
     const taggedTopic = `${topic}.${flowId._tag}`
     const payloadBuf = json2Buffer(payload)
     const ch = await channel
     const confirmFn = (err: any) => (err ? reject(err) : resolve())
+    log('publish')
+    console.table({ taggedTopic, ...flowId, delay: opts?.delay })
 
     if (opts?.delay) {
       const { delayedX } = await assertDelayQX({ domain })
@@ -72,7 +73,7 @@ export const queueConsume = async (_: {
 }) => {
   const { handler, opts, qName } = _
 
-  log([`def queueConsume`, { qName }], 0)
+  log(`def queueConsume`, qName)
   const ch = await channel
   const stopConsume = async () => {
     ch.cancel((await consumerPr).consumerTag)
@@ -85,7 +86,7 @@ export const queueConsume = async (_: {
         return
       }
 
-      log([`queueConsume got msg `, { qName }, msg.fields, msg.properties])
+      log(`queueConsume got msg `, qName, msg.fields.routingKey, msg.properties.correlationId)
       let msgJsonContent: any = `~~~NOT PARSED~~~`
       try {
         msgJsonContent = buffer2Json(msg.content)
@@ -97,7 +98,7 @@ export const queueConsume = async (_: {
         const ack = await handler({ msgJsonContent, msg, stopConsume, flowId })
         ch[ack](msg)
       } catch (err) {
-        log([`queueConsume handler error ${qName}`, { msgJsonContent, err }], 0)
+        log(`queueConsume handler error ${qName}`, err)
         const errorAck = opts?.errorAck || Acks.reject
         ch[errorAck](msg, false)
       }
@@ -115,9 +116,15 @@ export const getAssertDomainExchangeName = async (domainName: string) => {
 const json2Buffer = <T>(json: T) => Buffer.from(JSON.stringify(json))
 const buffer2Json = <T>(buf: Buffer): T => JSON.parse(buf.toString('utf-8'))
 
-export const bindQ = async (_: { name: string; domain: string; topic: string; args?: any }) => {
-  const { args, domain, name, topic } = _
-  const ex = await getAssertDomainExchangeName(domain)
+export const bindQ = async (
+  _: ({ exchange: string; domain?: undefined } | { exchange?: undefined; domain: string }) & {
+    name: string
+    topic: string
+    args?: any
+  }
+) => {
+  const { args, domain = '', name, topic, exchange = '' } = _
+  const ex = exchange || (await getAssertDomainExchangeName(domain))
   if (!asserts.BQ[name]) {
     const ch = await channel
     asserts.BQ[bindQAssertCachekey({ ex, name, topic })] = await ch.bindQueue(name, ex, topic, args)
@@ -195,8 +202,8 @@ const assertDelayQX = async (_: { domain: string; tag?: string }) => {
     name: delayedQName,
     opts: { deadLetterExchange: domainEx },
   })
-  await bindQ({ name: delayedQName, domain, topic: '' })
-  log(['assert delay q', { q: q.queue, ex: delayedX }], 0)
+  await bindQ({ name: delayedQName, exchange: delayedX, topic: '' })
+  log('assert delay q', q.queue, delayedX)
   return {
     q: q.queue,
     delayedX,
@@ -205,7 +212,7 @@ const assertDelayQX = async (_: { domain: string; tag?: string }) => {
 
 const NodeEmitter = new EventEmitter()
 
-const mainNodeQName = newUuid()
+const mainNodeQName = `MainNode:${newUuid()}`
 channel.then(async (ch) => {
   const mainNodeQ = await assertQ({
     name: mainNodeQName,
@@ -213,20 +220,30 @@ channel.then(async (ch) => {
   })
   ch.consume(mainNodeQ.queue, (msg) => {
     const ev = msgEventName(msg)
+    console.log('Node Emitter Consume', ev, msg?.fields.routingKey, msg?.properties.correlationId)
+    msg && ch.ack(msg)
     if (!ev) {
       return
     }
     NodeEmitter.emit(ev, msg)
   })
 })
-const msgEventName = (msg: Message | null) => flowIdEventName(msgFlowId(msg))
-const flowIdEventName = (flowId: FlowId | null) =>
-  flowId && flowId._key && flowId._tag ? `${flowId._key}:${flowId._tag}` : null
+const msgEventName = (msg: Message | null) => msg?.properties.correlationId || null
+const flowIdEventName = (flowId: FlowId | null) => flowId?._key || null
+export const msgFlowId = (msg: Message | null): FlowId | null =>
+  msg && msg.properties.correlationId && msg.fields.routingKey.length
+    ? {
+        _key: msg.properties.correlationId,
+        _tag: msg.fields.routingKey.split('.').slice(-1).pop()!,
+      }
+    : null
 
 export const mainNodeQEmitter = {
   sub<T>(_: { flowId: FlowId; handler(_: EventEmitterType<T>): unknown }) {
     const { flowId, handler } = _
     const ev = flowIdEventName(flowId)
+    console.log('Node Emitter Sub', ev, flowId._tag, flowId._key)
+
     if (ev === null) {
       //TODO: Log Error
       return
@@ -237,6 +254,14 @@ export const mainNodeQEmitter = {
       ev && NodeEmitter.removeListener(ev, listener)
     }
     function listener(msg: Message) {
+      console.log(
+        'Node Emitter Listener',
+        ev,
+        flowId._tag,
+        flowId._key,
+        msg.properties.correlationId,
+        msg.fields.routingKey
+      )
       handler({
         jsonContent: buffer2Json(msg.content),
         msg,
@@ -245,14 +270,6 @@ export const mainNodeQEmitter = {
     }
   },
 }
-
-export const msgFlowId = (msg: Message | null): FlowId | null =>
-  msg && msg.properties.correlationId && msg.fields.routingKey.length
-    ? {
-        _key: msg.properties.correlationId,
-        _tag: msg.fields.routingKey.split('.').slice(-1).pop()!,
-      }
-    : null
 
 export type EventEmitterType<T> = {
   msg: Message

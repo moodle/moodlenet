@@ -31,7 +31,7 @@ const arangoEmailPersistenceImpl: EmailPersistence = {
     const doc = await (
       await db.query(aql`
         UPDATE ${flowId._key}
-        WITH { attempts: 11 }
+        WITH { attempts: 2 }
         IN VerifyEmail
         RETURN NEW
       `)

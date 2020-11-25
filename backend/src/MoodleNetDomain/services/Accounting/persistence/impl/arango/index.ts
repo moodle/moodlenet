@@ -31,6 +31,7 @@ const arangoAccountingPersistenceImpl: AccountingPersistence = {
       await db.query(aql`
       REMOVE "${flowId._key}"
       IN Account
+      RETURN OLD
     `)
     ).next()
     return doc

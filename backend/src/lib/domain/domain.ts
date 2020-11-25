@@ -6,7 +6,7 @@ export const domain = <Domain extends object>(domain: string) => {
     api: {
       ...api,
       call: api.call<Domain>(domain),
-      responder: api.responder<Domain>(domain),
+      respond: api.responder<Domain>(domain),
     },
     event: {
       ...event,
