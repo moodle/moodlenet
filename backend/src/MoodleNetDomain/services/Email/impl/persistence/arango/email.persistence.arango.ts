@@ -15,7 +15,8 @@ const arangoEmailPersistenceImpl: EmailPersistence = {
 
     const key = await (
       await db.query(aql`
-        INSERT ${document}} INTO ${SentEmail.name}
+        INSERT ${document} 
+        INTO SentEmail
         RETURN NEW._key
       `)
     ).next()
@@ -26,10 +27,12 @@ const arangoEmailPersistenceImpl: EmailPersistence = {
     return doc
   },
   async incAttemptVerifyingEmail({ key }) {
+    const x = key
     const doc = await (
       await db.query(aql`
-        UPDATE DOCUMENT("${VerifyEmail.name}/${key}")
-        WITH { attempts: OLD.attempts + 1 }
+        UPDATE ${x}
+        WITH { attempts: 11 }
+        IN VerifyEmail
         RETURN NEW
       `)
     ).next()
@@ -42,7 +45,8 @@ const arangoEmailPersistenceImpl: EmailPersistence = {
     }
     const key = await (
       await db.query(aql`
-        insert ${document} INTO ${VerifyEmail.name}
+        INSERT ${document} 
+        INTO VerifyEmail
         RETURN NEW._key
       `)
     ).next()

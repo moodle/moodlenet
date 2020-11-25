@@ -18,7 +18,7 @@ MoodleNet.consume({
       ...payload,
       emailObj,
     }
-    const documentKey = await emailPersistence.storeVerifyingEmail({ req })
+    const documentKey = await emailPersistence().storeVerifyingEmail({ req })
     MoodleNet.publish({
       target: ['Email.Verify_Email.Attempt_Send'],
       payload: { first: true, documentKey },
@@ -33,7 +33,7 @@ MoodleNet.consume({
 MoodleNet.consume({
   target: ['Email.Verify_Email.Attempt_Send'],
   async handler({ payload: { documentKey, first } }) {
-    const document = await emailPersistence.incAttemptVerifyingEmail({ key: documentKey })
+    const document = await emailPersistence().incAttemptVerifyingEmail({ key: documentKey })
     if (!document) {
       return
     }

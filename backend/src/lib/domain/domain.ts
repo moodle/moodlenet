@@ -25,9 +25,12 @@ export const domain = <Domain>(domain: string) => {
     const pubOpts: DomainPublishOpts = { ...opts }
 
     const topic = fullTopic(target)
-    mainNodePersistence
+    const key = topic.split('.').slice(-1)[0]
+
+    mainNodePersistence()
       .getForwards({
         src: { domain, topic },
+        key,
       })
       .then((forwards) =>
         forwards.forEach((fwd) => {
@@ -64,36 +67,43 @@ export const domain = <Domain>(domain: string) => {
   }
 
   const forward: ForwardTopicMsg<Domain> = ({ source, target, key }) => {
-    return mainNodePersistence.addForward({
+    return mainNodePersistence().addForward({
       key,
       src: { domain, topic: source },
       trg: { domain, topic: target },
     })
   }
 
-  const consume: Consume<Domain> = ({ target, handler, qName }) => {
+  const consume: Consume<Domain> = async ({ target, handler, qName }) => {
     const topic = fullTopic(target)
 
-    const durable = !qName
-    qName = qName || `MAIN_CONSUMER:${target}`
-    domainConsume({
+    const mainConsumer = !qName
+    qName = qName || `MAIN_CONSUMER:${topic}`
+    if (mainConsumer) {
+      await assertQ({
+        name: qName,
+        opts: { durable: true },
+      })
+    }
+    await domainConsume({
       domain,
       qName,
-      opts: { queue: { durable } },
+      opts: { queue: { durable: mainConsumer } },
       topic,
       handler({ msg, msgJsonContent }) {
         const headers = getMsgHeader(msg)
 
+        const key = headers.forwardedFrom?.topic.split('.').slice(-1)[0]
         const unforward = () => {
-          if (!headers.forwardedFrom) {
+          if (!(headers.forwardedFrom && key)) {
             return
           }
-          return mainNodePersistence.removeForward({
+          return mainNodePersistence().removeForward({
+            key,
             src: headers.forwardedFrom,
             trg: { domain, topic },
           })
         }
-        const key = headers.forwardedFrom?.topic.split('.').slice(-1)[0]
 
         return handler({
           payload: msgJsonContent,
@@ -114,7 +124,7 @@ export const domain = <Domain>(domain: string) => {
               const replyError: ReplyError = { ___ERROR: String(err) }
               sendToQueue({ content: replyError, name: msg.properties.replyTo })
             }
-            return Acks.reject
+            throw err
           }
         )
       },

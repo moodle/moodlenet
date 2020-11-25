@@ -11,7 +11,8 @@ interface ArangoDomainPersistenceEnv {
 
 const Validator = Yup.object<ArangoDomainPersistenceEnv>({
   arangoOpts: Yup.object<ArangoOptsEnv>({
-    url: Yup.array(Yup.string().required().default('localurl')),
+    url: Yup.array(Yup.string().required()),
+    databaseName: Yup.string().required(),
     auth: Yup.object<BasicAuthCredentials>({
       username: Yup.string(),
       password: Yup.string(),
@@ -19,13 +20,15 @@ const Validator = Yup.object<ArangoDomainPersistenceEnv>({
   }).required(),
 })
 
-const ARANGO_URL = process.env.DOMAIN_ARANGO_URL?.split(';')
-const ARANGO_USERNAME = process.env.DOMAIN_ARANGO_USERNAME
-const ARANGO_PASSWORD = process.env.DOMAIN_ARANGO_PASSWORD
+const ARANGO_URL = process.env.EMAIL_ARANGO_URL?.split(';')
+const ARANGO_DB = process.env.EMAIL_ARANGO_DB
+const ARANGO_USERNAME = process.env.EMAIL_ARANGO_USERNAME
+const ARANGO_PASSWORD = process.env.EMAIL_ARANGO_PASSWORD
 
 export const env = Validator.validateSync({
   arangoOpts: {
     url: ARANGO_URL,
+    databaseName: ARANGO_DB,
     auth: {
       username: ARANGO_USERNAME,
       password: ARANGO_PASSWORD,

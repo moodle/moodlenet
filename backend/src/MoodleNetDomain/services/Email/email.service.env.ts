@@ -25,10 +25,7 @@ const implPathBase = [__dirname, 'impl']
 
 export const sender = require(resolve(...implPathBase, 'sender', env.senderImpl)) as EmailSenderImpl
 
-export const emailPersistence = require(resolve(
-  ...implPathBase,
-  'persistence',
-  env.persistenceImpl
-)) as EmailPersistence
+export const emailPersistence = () =>
+  require(resolve(...implPathBase, 'persistence', env.persistenceImpl)) as EmailPersistence
 
 export const emailLogger = console.log /// logger('email')

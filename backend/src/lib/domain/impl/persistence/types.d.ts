@@ -15,7 +15,7 @@ export type Forward = { src: DomainTopic; trg: DomainTopicTarget[] }
  */
 
 export interface DomainPersistence {
-  addForward(_: { key:string, src: DomainTopic; trg: DomainTopicTarget }): Promise<unknown>
-  removeForward(_: { src: DomainTopic; trg: DomainTopicTarget }): Promise<unknown>
-  getForwards(_: { src: DomainTopic }): Promise<Forward['trg']>
+  addForward(_: { key: string; src: DomainTopic; trg: DomainTopicTarget }): Promise<unknown>
+  removeForward(_: { key: string; src: DomainTopic; trg: DomainTopicTarget }): Promise<unknown>
+  getForwards(_: { key: string; src: DomainTopic }): Promise<Forward['trg']>
 }

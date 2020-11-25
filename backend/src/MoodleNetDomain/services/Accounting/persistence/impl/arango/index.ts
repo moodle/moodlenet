@@ -14,7 +14,8 @@ const arangoAccountingPersistenceImpl: AccountingPersistence = {
     }
     const key = await (
       await db.query(aql`
-      INSERT ${document}} INTO ${Account.name}
+      INSERT ${document} 
+      INTO Account
       RETURN NEW._key
     `)
     ).next()
@@ -23,8 +24,9 @@ const arangoAccountingPersistenceImpl: AccountingPersistence = {
   async activateNewAccount({ key }) {
     const doc = await (
       await db.query(aql`
-      UPDATE DOCUMENT("${Account.name}/${key}")
+      UPDATE "${key}"
       WITH {activeFrom:DATE_NOW()}
+      IN Account
       RETURN NEW
     `)
     ).next()
@@ -33,8 +35,8 @@ const arangoAccountingPersistenceImpl: AccountingPersistence = {
   async removeNewAccountRequest({ key }) {
     const doc = await (
       await db.query(aql`
-      REMOVE DOCUMENT("${Account.name}/${key}")
-      RETURN OLD
+      REMOVE "${key}"
+      IN Account
     `)
     ).next()
     return doc

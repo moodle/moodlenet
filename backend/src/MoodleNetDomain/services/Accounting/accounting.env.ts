@@ -18,8 +18,6 @@ export const env = Validator.validateSync({
 })!
 
 const persistenceImplPathBase = [__dirname, 'persistence', 'impl']
-export const accountPersistence = require(resolve(
-  ...persistenceImplPathBase,
-  env.persistenceModule
-)) as AccountingPersistence
+export const accountPersistence = () =>
+  require(resolve(...persistenceImplPathBase, env.persistenceModule)) as AccountingPersistence
 export const accountingLogger = console.log //logger('email')

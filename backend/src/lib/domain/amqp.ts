@@ -93,7 +93,7 @@ export const queueConsume = async (_: {
       } catch (err) {
         log([`queueConsume handler error ${qName}`, { msgJsonContent, err }], 0)
         const errorAck = opts?.errorAck || Acks.reject
-        ch[errorAck](msg)
+        ch[errorAck](msg, false)
       }
     },
     { ...opts }

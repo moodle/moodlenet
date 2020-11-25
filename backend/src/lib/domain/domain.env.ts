@@ -41,11 +41,8 @@ export const env = Validator.validateSync({
 })!
 
 const implPathBase = [__dirname, 'impl']
-export const mainNodePersistence = require(resolve(
-  ...implPathBase,
-  'persistence',
-  env.persistenceModule
-)) as DomainPersistence
+export const mainNodePersistence = () =>
+  require(resolve(...implPathBase, 'persistence', env.persistenceModule)) as DomainPersistence
 
 export const channelPromise = amqp
   .connect({ ...env.amqpOpts })
