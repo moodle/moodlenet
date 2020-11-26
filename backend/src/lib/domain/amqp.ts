@@ -18,7 +18,10 @@ const encodeMsgHeaders = (_: { flow: Flow }): MessageHeaders => ({
   'x-flow-key': _.flow._key,
   'x-flow-route': _.flow._route,
 })
-const decodeMsgHeaders = (msg: Message): null | { flow: Flow } => {
+const decodeMsgHeaders = (msg: Message | null): null | { flow: Flow } => {
+  if (!msg) {
+    return null
+  }
   const flowKey: string | undefined = msg.properties.headers[`x-flow-key`]
   const flowRoute: string | undefined = msg.properties.headers['x-flow-route']
   if (!(flowKey && flowRoute)) {
@@ -26,6 +29,14 @@ const decodeMsgHeaders = (msg: Message): null | { flow: Flow } => {
   }
   return {
     flow: { _key: flowKey, _route: flowRoute },
+  }
+}
+
+const msgFlow = (msg: Message): Flow => {
+  const [_route, _key] = msg.fields.routingKey.split('.').slice(-2)
+  return {
+    _key,
+    _route,
   }
 }
 
@@ -112,13 +123,7 @@ export const queueConsume = async (_: {
       let msgJsonContent: any = `~~~NOT PARSED~~~`
       try {
         msgJsonContent = buffer2Json(msg.content)
-        const domHeaders = decodeMsgHeaders(msg)
-        if (!domHeaders) {
-          console.error(`\nqueueConsume ERRROR got msg with no domHeaders`)
-          //TODO: figure out possible scenarios manage
-          return
-        }
-        const { flow } = domHeaders
+        const flow = msgFlow(msg)
         const ack = await handler({ msgJsonContent, msg, stopConsume, flow })
         ch[ack](msg)
       } catch (err) {
@@ -245,7 +250,13 @@ channel.then(async (ch) => {
     opts: { exclusive: true, autoDelete: true },
   })
   ch.consume(mainNodeQ.queue, (msg) => {
-    const ev = msgEventName(msg)
+    const headers = decodeMsgHeaders(msg)
+    if (!headers) {
+      return
+    }
+    const { flow } = headers
+
+    const ev = flow._key
     console.table({
       _: 'Node Emitter Consume',
       ev,
@@ -259,13 +270,11 @@ channel.then(async (ch) => {
     NodeEmitter.emit(ev, msg)
   })
 })
-const msgEventName = (msg: Message | null) => msg?.properties.correlationId || null
-const flowEventName = (flow: Flow | null) => flow?._key || null
 
 export const mainNodeQEmitter = {
   sub<T>(_: { flow: Flow; handler(_: EventEmitterType<T>): unknown }) {
     const { flow, handler } = _
-    const ev = flowEventName(flow)
+    const ev = flow._key
     console.table({ _: 'Node Emitter Sub', ev, ...flow })
 
     if (ev === null) {

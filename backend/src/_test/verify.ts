@@ -2,7 +2,7 @@ require('../../dotenv.js')
 
 import { MoodleNet } from '../MoodleNetDomain'
 
-const token = '49e69650-9f77-47ca-ba59-42f24690c5d1|48d2170a-9a67-4192-9051-a65b813f5f48'
+const token = '30c9e792-a977-419c-9077-09c4eba4d10b|e3c521aa-f4be-461d-a1d9-6de3bc313cfc'
 MoodleNet.callApi({
   api: 'Email.Verify_Email.Confirm_Email',
   req: { token },

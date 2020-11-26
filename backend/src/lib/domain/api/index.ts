@@ -139,6 +139,7 @@ export const respond = <Domain>(domain: string) => async <
     const replyQ = msg.properties.replyTo
     if (replyQ) {
       console.table({ _: 'Replying', replyQ, ...flow })
+      //TODO: better publishit to exchange ? is it possible ?
       AMQP.sendToQueue({
         name: replyQ,
         content: resp,

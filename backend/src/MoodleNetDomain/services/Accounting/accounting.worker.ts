@@ -10,7 +10,7 @@ MoodleNet.respondApi({
       api: 'Email.Verify_Email.Req',
       flow: detour('Accounting.Register_New_Account.Email_Confirm_Result'),
       req: {
-        timeoutHours: 0.03,
+        timeoutHours: 0.006,
         email: {
           to: req.email,
           from: 'Bob <bob@host.com>',
