@@ -4,7 +4,7 @@ import { EventEmitter } from 'events'
 import { newUuid } from '../helpers/misc'
 // import { nodeconsole.Logger } from '.'
 import { channelPromise as channel } from './domain.env'
-import { FlowId } from './types/path'
+import { Flow } from './types/path'
 
 const defPubOpts: Options.Publish = {
   deliveryMode: 2,
@@ -13,18 +13,18 @@ const defPubOpts: Options.Publish = {
 export const domainPublish = (_: {
   domain: string
   topic: string
-  flowId: FlowId
+  flow: Flow
   payload: any
   opts?: DomainPublishOpts
 }) =>
   new Promise<void>(async (resolve, reject) => {
-    const { topic, flowId, payload, opts, domain } = _
-    const taggedTopic = `${topic}.${flowId._tag}`
+    const { topic, flow, payload, opts, domain } = _
+    const taggedTopic = `${topic}.${flow._route}`
     const payloadBuf = json2Buffer(payload)
     const ch = await channel
     const confirmFn = (err: any) => (err ? reject(err) : resolve())
     console.log('\npublish')
-    console.table({ taggedTopic, ...flowId, delay: opts?.delay })
+    console.table({ taggedTopic, ...flow, delay: opts?.delay })
 
     if (opts?.delay) {
       const { delayedX } = await assertDelayQX({ domain })
@@ -35,7 +35,7 @@ export const domainPublish = (_: {
         {
           ...opts,
           ...defPubOpts,
-          correlationId: flowId._key,
+          correlationId: flow._key,
           replyTo: opts.replyToNodeQ ? mainNodeQName : undefined,
           expiration: opts.delay,
         },
@@ -50,7 +50,7 @@ export const domainPublish = (_: {
         {
           ...opts,
           ...defPubOpts,
-          correlationId: flowId._key,
+          correlationId: flow._key,
           replyTo: opts?.replyToNodeQ ? mainNodeQName : undefined,
         },
         confirmFn
@@ -60,11 +60,11 @@ export const domainPublish = (_: {
 
 export const queueConsume = async (_: {
   qName: string
-  // flowId:FlowId // TODO: needs it ?
+  // flow:Flow // TODO: needs it ?
   handler: (_: {
     msgJsonContent: any
     msg: Message
-    flowId: FlowId
+    flow: Flow
     stopConsume(): unknown
   }) => Acks | Promise<Acks>
   opts?: QConsumeOpts
@@ -98,13 +98,13 @@ export const queueConsume = async (_: {
       let msgJsonContent: any = `~~~NOT PARSED~~~`
       try {
         msgJsonContent = buffer2Json(msg.content)
-        const flowId = msgFlowId(msg)
-        if (!flowId) {
-          console.error(`\nqueueConsume ERRROR got msg with no flowid`)
+        const flow = msgFlow(msg)
+        if (!flow) {
+          console.error(`\nqueueConsume ERRROR got msg with no flow`)
           //TODO: figure out possible scenarios manage
           return
         }
-        const ack = await handler({ msgJsonContent, msg, stopConsume, flowId })
+        const ack = await handler({ msgJsonContent, msg, stopConsume, flow })
         ch[ack](msg)
       } catch (err) {
         console.error(`queueConsume handler error ${qName}`, err)
@@ -160,12 +160,14 @@ export const unbindQ = async (_: { name: string; domain: string; topic: string; 
 export const sendToQueue = async (_: {
   name: string
   content: any
+  flow: Flow
   opts?: DomainSendToQueueOpts
 }) => {
-  const { name, content, opts } = _
+  const { name, content, opts, flow } = _
   return (await channel).sendToQueue(name, json2Buffer(content), {
     ...defPubOpts,
     ...opts,
+    correlationId: flow._key,
   })
 }
 
@@ -243,20 +245,20 @@ channel.then(async (ch) => {
   })
 })
 const msgEventName = (msg: Message | null) => msg?.properties.correlationId || null
-const flowIdEventName = (flowId: FlowId | null) => flowId?._key || null
-export const msgFlowId = (msg: Message | null): FlowId | null =>
+const flowEventName = (flow: Flow | null) => flow?._key || null
+export const msgFlow = (msg: Message | null): Flow | null =>
   msg && msg.properties.correlationId && msg.fields.routingKey.length
     ? {
         _key: msg.properties.correlationId,
-        _tag: msg.fields.routingKey.split('.').slice(-1).pop()!,
+        _route: msg.fields.routingKey.split('.').slice(-1).pop()!,
       }
     : null
 
 export const mainNodeQEmitter = {
-  sub<T>(_: { flowId: FlowId; handler(_: EventEmitterType<T>): unknown }) {
-    const { flowId, handler } = _
-    const ev = flowIdEventName(flowId)
-    console.table({ _: 'Node Emitter Sub', ev, ...flowId })
+  sub<T>(_: { flow: Flow; handler(_: EventEmitterType<T>): unknown }) {
+    const { flow, handler } = _
+    const ev = flowEventName(flow)
+    console.table({ _: 'Node Emitter Sub', ev, ...flow })
 
     if (ev === null) {
       console.error('Node Emitter received no event msg')
@@ -271,7 +273,7 @@ export const mainNodeQEmitter = {
       console.table({
         _: 'Node Emitter Listener',
         ev,
-        ...flowId,
+        ...flow,
         correlationId: msg.properties.correlationId,
         routingKey: msg.fields.routingKey,
       })

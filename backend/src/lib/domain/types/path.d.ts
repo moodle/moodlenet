@@ -1,6 +1,6 @@
-export type FlowId<Key extends string = string, Tag extends string = string> = {
+export type Flow<Key extends string = string, Route extends string = string> = {
   _key: Key
-  _tag: Tag
+  _route: Route
 }
 
 // prettier-ignore

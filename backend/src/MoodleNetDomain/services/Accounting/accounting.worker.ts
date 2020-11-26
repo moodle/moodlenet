@@ -1,67 +1,54 @@
 import { MoodleNet } from '../..'
-import { sender } from '../Email/email.service.env'
 import { accountPersistence } from './accounting.env'
 
-MoodleNet.api.respond({
+MoodleNet.respondApi({
   api: 'Accounting.Register_New_Account.Request',
-  async handler({ flowId, req }) {
-    await accountPersistence().addNewAccountRequest({ req, flowId })
+  async handler({ flow, req, detour }) {
+    await accountPersistence().addNewAccountRequest({ req, flow })
 
-    await MoodleNet.api.call({
+    await MoodleNet.callApi({
       api: 'Email.Verify_Email.Req',
-      flowId,
+      flow: detour('Accounting.Register_New_Account.Email_Confirm_Result'),
       req: {
         timeoutHours: 0.03,
         email: {
           to: req.email,
           from: 'Bob <bob@host.com>',
           subject: 'verify',
-          text: 'amamamam ${token}',
+          text: 'amamamam __TOKEN__',
         },
         maxAttempts: 3,
-        tokenReplaceRegEx: '${token}',
+        tokenReplaceRegEx: '__TOKEN__',
       },
       opts: { noReply: true },
-    })
-    await MoodleNet.event.bindToApi({
-      event: 'Email.Verify_Email.Result',
-      api: 'Accounting.Register_New_Account.Email_Confirm_Result',
-      tag: flowId._tag, //TODO: _key or _tag ?
     })
     return {}
   },
 })
 
-MoodleNet.api.respond({
+MoodleNet.bindApi({
+  event: 'Email.Verify_Email.Result',
   api: 'Accounting.Register_New_Account.Email_Confirm_Result',
-  async handler({ disposeThisBinding, flowId, req }) {
-    console.log(`Accounting.Register_New_Account.Email_Confirm_Result`, flowId._key, flowId._tag)
-    disposeThisBinding()
+})
+
+MoodleNet.respondApi({
+  api: 'Accounting.Register_New_Account.Email_Confirm_Result',
+  async handler({ flow, req }) {
+    console.log(`Accounting.Register_New_Account.Email_Confirm_Result`, flow._key, flow._route)
     if (req.success) {
-      const acc = await accountPersistence().activateNewAccount({ flowId })
+      const acc = await accountPersistence().activateNewAccount({ flow })
       if (!acc) {
         return { done: false }
       }
-      await MoodleNet.event.emit({
+      await MoodleNet.emitEvent({
         event: 'Accounting.Register_New_Account.AccountActivated',
-        payload: { flowId },
-        flowId,
+        payload: { flow },
+        flow,
       })
       return { done: true }
     } else {
-      await accountPersistence().removeNewAccountRequest({ flowId })
+      await accountPersistence().removeNewAccountRequest({ flow })
       return { done: true }
     }
-  },
-})
-
-MoodleNet.api.respond({
-  api: 'Email.Send_One.Req',
-  async handler({ /* flowId, */ req }) {
-    const resp = await sender.sendEmail(req.emailObj)
-    if (resp.success) {
-      //TODO: emit event
-    }
-    return resp
   },
 })

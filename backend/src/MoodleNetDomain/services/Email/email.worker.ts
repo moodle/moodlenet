@@ -1,13 +1,13 @@
 import { MoodleNet } from '../..'
 import { newUuid } from '../../../lib/helpers/misc'
-import { emailPersistence } from './email.service.env'
+import { emailPersistence, sender } from './email.service.env'
 import { EmailObj } from './types'
 
-MoodleNet.api.respond({
+MoodleNet.respondApi({
   api: 'Email.Verify_Email.Req',
-  async handler({ req, flowId }) {
+  async handler({ req, flow }) {
     const { email, tokenReplaceRegEx } = req
-    const token = `${newUuid()}|${flowId._key}`
+    const token = `${newUuid()}|${flow._key}`
     const regex = new RegExp(tokenReplaceRegEx, 'g')
     const emailObj: EmailObj = {
       ...email,
@@ -19,30 +19,30 @@ MoodleNet.api.respond({
         ...req,
         email: emailObj,
       },
-      flowId,
+      flow,
       token,
     })
-    MoodleNet.api.call({
+    MoodleNet.callApi({
       api: 'Email.Verify_Email.Attempt_Send',
       req: {},
-      flowId: flowId,
+      flow: flow,
     })
     return { id: documentKey }
   },
 })
 
-MoodleNet.api.respond({
+MoodleNet.respondApi({
   api: 'Email.Verify_Email.Attempt_Send',
-  async handler({ flowId }) {
-    const document = await emailPersistence().incAttemptVerifyingEmail({ flowId })
-    console.log(`Email.Verify_Email.Attempt_Send`, flowId._key, flowId._tag, document?.attempts)
+  async handler({ flow }) {
+    const document = await emailPersistence().incAttemptVerifyingEmail({ flow })
+    console.log(`Email.Verify_Email.Attempt_Send`, flow._key, flow._route, document?.attempts)
     if (!document) {
       return { success: false, error: 'Not Found' }
     }
     if (document.req.maxAttempts <= document.attempts) {
-      MoodleNet.event.emit({
+      MoodleNet.emitEvent({
         event: 'Email.Verify_Email.Result',
-        flowId,
+        flow,
         payload: {
           email: document.req.email.to,
           error: `Max attempts [${document.req.maxAttempts}] timeout`,
@@ -50,15 +50,15 @@ MoodleNet.api.respond({
         },
       })
     } else {
-      await MoodleNet.api.call({
+      await MoodleNet.callApi({
         api: 'Email.Send_One.Req',
         req: { emailObj: document.req.email },
-        flowId,
+        flow,
       })
 
-      MoodleNet.api.call({
+      MoodleNet.callApi({
         api: 'Email.Verify_Email.Attempt_Send',
-        flowId,
+        flow,
         req: {},
         opts: {
           delay: Math.round(document.req.timeoutHours * 60 * 60 * 1000),
@@ -69,17 +69,30 @@ MoodleNet.api.respond({
   },
 })
 
-MoodleNet.api.respond({
+MoodleNet.respondApi({
   api: 'Email.Verify_Email.Confirm_Email',
   async handler({ req: { token } }) {
     const doc = await emailPersistence().confirmEmail({ token })
     if (doc) {
-      MoodleNet.event.emit({
+      MoodleNet.emitEvent({
         event: 'Email.Verify_Email.Result',
-        flowId: { _tag: doc._tag, _key: doc._key },
+        flow: { _route: doc._route, _key: doc._key },
         payload: { email: doc.req.email.to, success: true },
       })
     }
     return doc ? ({ success: true } as const) : { error: `couldn't find`, success: false }
+  },
+})
+
+MoodleNet.respondApi({
+  api: 'Email.Send_One.Req',
+  async handler({ flow, req }) {
+    const resp = await sender.sendEmail(req.emailObj)
+    MoodleNet.emitEvent({
+      event: 'Email.Send_One.SentEmail',
+      flow,
+      payload: resp,
+    })
+    return resp
   },
 })

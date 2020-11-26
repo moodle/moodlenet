@@ -1,7 +1,8 @@
 import { Message } from 'amqplib'
 import { newUuid } from '../../helpers/misc'
 import * as AMQP from '../amqp'
-import { FlowId } from '../types/path'
+import { Flow } from '../types/path'
+import { getApiBindRoute } from '../bindings'
 import * as Types from './types'
 
 const DEF_TIMEOUT = 5000
@@ -17,18 +18,18 @@ export type CallOpts = {
   delay?: number
 }
 
-export type CallResponse<Res extends object> = { res: Types.Reply<Res>; flowId: FlowId }
+export type CallResponse<Res extends object> = { res: Types.Reply<Res>; flow: Flow }
 export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves<Domain>>(_: {
   api: ApiPath
   req: Types.ApiReq<Domain, ApiPath>
-  flowId?: FlowId
+  flow?: Flow
   opts?: CallOpts
 }) => {
   type ResType = Types.ApiRes<Domain, ApiPath>
   return new Promise<CallResponse<ResType>>((resolve, reject) => {
-    const { api, flowId: progress, req, opts } = _
+    const { api, flow: progress, req, opts } = _
     const uuid = progress ? '' : newUuid()
-    const flowId: FlowId = progress || { _key: uuid, _tag: uuid }
+    const flow: Flow = progress || { _key: uuid, _route: uuid }
     const expiration = opts?.timeout || DEF_TIMEOUT
     const localTimeout = expiration + DEF_LAG_TIMEOUT
     const wantsReply = !opts?.noReply
@@ -36,7 +37,7 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
     if (wantsReply) {
       unsubEmitter =
         AMQP.mainNodeQEmitter.sub<ResType>({
-          flowId,
+          flow,
           handler({ jsonContent, unsub }) {
             unsub()
             resolve(response(jsonContent))
@@ -47,11 +48,11 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
     }
     AMQP.domainPublish({
       domain,
-      flowId,
+      flow,
       topic: api,
       payload: req,
       opts: {
-        correlationId: flowId._key,
+        correlationId: flow._key,
         replyToNodeQ: wantsReply,
         expiration,
         delay: opts?.delay,
@@ -69,10 +70,10 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
       })
 
     function response(res: ResType): CallResponse<ResType> {
-      return { flowId, res: { ...res, ___ERROR: null } }
+      return { flow, res: { ...res, ___ERROR: null } }
     }
     function errResponse(err: Types.ReplyError): CallResponse<ResType> {
-      return { flowId, res: err }
+      return { flow, res: err }
     }
   })
 }
@@ -84,9 +85,10 @@ export const respond = <Domain>(domain: string) => async <
   tag?: string
   handler(_: {
     req: Types.ApiReq<Domain, ApiPath>
-    flowId: FlowId
+    flow: Flow
     disposeResponder(): unknown
-    disposeThisBinding(): unknown
+    unbindThisRoute(): unknown
+    detour(api: Types.ApiLeaves<Domain>): Flow
   }): Promise<Types.ApiRes<Domain, ApiPath>>
 }) => {
   const { api, handler, tag = '*' } = _
@@ -100,22 +102,27 @@ export const respond = <Domain>(domain: string) => async <
 
   const { stopConsume } = await AMQP.queueConsume({
     qName: apiResponderQName,
-    async handler({ msg, msgJsonContent, flowId }) {
+    async handler({ msg, msgJsonContent, flow }) {
+      const detour = (api: Types.ApiLeaves<Domain>): Flow => ({
+        ...flow,
+        _route: getApiBindRoute(api),
+      })
       return handler({
         req: msgJsonContent,
-        flowId,
+        flow,
+        detour,
         disposeResponder,
-        disposeThisBinding,
+        unbindThisRoute,
       })
         .then((resp) => {
-          reply({ msg, flowId, resp: { ___ERROR: null, ...resp } })
+          reply({ msg, flow, resp: { ___ERROR: null, ...resp } })
           return AMQP.Acks.ack
         })
         .catch((err) => {
-          reply({ msg, flowId, resp: { ___ERROR: { msg: String(err) } } })
+          reply({ msg, flow, resp: { ___ERROR: { msg: String(err) } } })
           return AMQP.Acks.reject
         })
-      function disposeThisBinding() {
+      function unbindThisRoute() {
         const thisTopic = msg.fields.routingKey
         AMQP.unbindQ({ domain, name: apiResponderQName, topic: thisTopic })
       }
@@ -127,17 +134,15 @@ export const respond = <Domain>(domain: string) => async <
     stopConsume()
     unbind()
   }
-  function reply<T extends object>(_: { flowId: FlowId; msg: Message; resp: Types.Reply<T> }) {
-    const { flowId, msg, resp } = _
+  function reply<T extends object>(_: { flow: Flow; msg: Message; resp: Types.Reply<T> }) {
+    const { flow, msg, resp } = _
     const replyQ = msg.properties.replyTo
     if (replyQ) {
-      console.table({ _: 'Replying', replyQ, ...flowId })
+      console.table({ _: 'Replying', replyQ, ...flow })
       AMQP.sendToQueue({
         name: replyQ,
         content: resp,
-        opts: {
-          correlationId: flowId._key,
-        },
+        flow,
       })
     }
   }

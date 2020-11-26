@@ -1,17 +1,12 @@
 import * as api from './api'
+import * as bindings from './bindings'
 import * as event from './event'
 
 export const domain = <Domain extends object>(domain: string) => {
   return {
-    api: {
-      ...api,
-      call: api.call<Domain>(domain),
-      respond: api.respond<Domain>(domain),
-    },
-    event: {
-      ...event,
-      emit: event.emit<Domain>(domain),
-      bindToApi: event.bindToApi<Domain>(domain),
-    },
+    callApi: api.call<Domain>(domain),
+    respondApi: api.respond<Domain>(domain),
+    emitEvent: event.emit<Domain>(domain),
+    bindApi: bindings.bindApi<Domain>(domain),
   }
 }

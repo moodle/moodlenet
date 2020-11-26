@@ -4,7 +4,7 @@ export type Event<Type extends object> = { type: Type }
 
 export type EventLeaves<Domain> = D.Path.Leaves<Domain, Event<any>>
 
-export type EventDef<Domain, Path extends string> = D.Path.TypeofPath<
+export type LookupDef<Domain, Path extends string> = D.Path.TypeofPath<
   Domain,
   Path
 > extends infer MaybeEvent
@@ -13,7 +13,7 @@ export type EventDef<Domain, Path extends string> = D.Path.TypeofPath<
     : never
   : never
 
-export type EventType<Domain, Path extends string> = EventDef<Domain, Path> extends Event<
+export type LookupType<Domain, Path extends string> = LookupDef<Domain, Path> extends Event<
   infer Type
 >
   ? Type

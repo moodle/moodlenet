@@ -1,7 +1,7 @@
 import { domain } from '../lib/domain'
 import { Api } from '../lib/domain/api/types'
 import { Event } from '../lib/domain/event/types'
-import { FlowId } from '../lib/domain/types/path'
+import { Flow } from '../lib/domain/types/path'
 
 require('../../dotenv.js')
 
@@ -15,39 +15,36 @@ type TestD = {
 
 const TestD = domain<TestD>('TestDomain')
 ;(async () => {
-  const flowId: FlowId = {
+  const flow: Flow = {
     _key: 'mykey',
-    _tag: 'mytag',
+    _route: 'mytag',
   }
 
-  TestD.api
-    .call({
-      api: 'an.del',
-      req: { c: 3 },
-      opts: { delay: 2000 /* , noReply: true */ },
-      flowId,
-    })
-    .then((_) => console.log('_TEST_THEN', _))
+  TestD.callApi({
+    api: 'an.del',
+    req: { c: 3 },
+    opts: { delay: 2000 /* , noReply: true */ },
+    flow,
+  }).then((_) => console.log('_TEST_THEN', _))
 
-  TestD.event.bindToApi({
+  TestD.bindApi({
     event: 'an.ev',
     api: 'an.api',
-    tag: flowId._tag,
   })
 
-  TestD.api.respond({
+  TestD.respondApi({
     api: 'an.api',
-    async handler({ req: { a }, flowId }) {
-      console.log(`respond 'an.api' ${a}`, flowId)
+    async handler({ req: { a }, flow }) {
+      console.log(`respond 'an.api' ${a}`, flow)
       return { b: `api was ${a}` }
     },
   })
 
-  TestD.api.respond({
+  TestD.respondApi({
     api: 'an.del',
-    async handler({ req: { c }, flowId }) {
-      console.log(`respond 'an.del' ${c}`, flowId)
-      TestD.event.emit({ event: 'an.ev', flowId, payload: { a: c + 100 } })
+    async handler({ req: { c }, flow }) {
+      console.log(`respond 'an.del' ${c}`, flow)
+      TestD.emitEvent({ event: 'an.ev', flow, payload: { a: c + 100 } })
       return { d: `del was ${c}` }
     },
   })
