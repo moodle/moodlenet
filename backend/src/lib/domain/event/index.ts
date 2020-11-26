@@ -28,7 +28,7 @@ export const bindToApi = <Domain>(domain: string) => async <
 >(_: {
   event: EventPath
   api: Types.EventType<Domain, EventPath> extends API.ApiReq<Domain, ApiPath> ? ApiPath : never
-  tag?: string
+  tag?: string //TODO: _key or _tag ?
   unbind?: boolean
 }) => {
   const { unbind, api, tag = '*', event } = _
@@ -39,25 +39,3 @@ export const bindToApi = <Domain>(domain: string) => async <
     ? AMQP.unbindQ({ topic: taggedTopic, domain, name: apiQname })
     : AMQP.bindQ({ topic: taggedTopic, domain, name: apiQname })
 }
-
-// type s = Types.EventRes<MoodleNetDomain, 'Accounting.Register_New_Account.Request'>
-// type q = Types.EventReq<MoodleNetDomain, 'Accounting.Register_New_Account.Request'>
-
-// emit<MoodleNetDomain>('')({
-//   path: 'Accounting.Register_New_Account.Request',
-//   req: { email: '', username: '' },
-// }).then(({ id, res }) => {
-//   if (!res.___ERROR) {
-//     res.ciccio
-//   } else {
-//     res.___ERROR.msg
-//   }
-// })
-
-// responder<MoodleNetDomain>('')({
-//   path: 'Accounting.Register_New_Account.Request',
-//   async handler({ req /* disposeResponder */ }) {
-//     req.email
-//     return { ciccio: 'pallo' } as const
-//   },
-// })

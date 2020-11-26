@@ -2,11 +2,9 @@
 import { Message, Options, Replies } from 'amqplib'
 import { EventEmitter } from 'events'
 import { newUuid } from '../helpers/misc'
-// import { nodeLogger } from '.'
+// import { nodeconsole.Logger } from '.'
 import { channelPromise as channel } from './domain.env'
 import { FlowId } from './types/path'
-
-const log = console.log //nodeLogger('amqp-transport')
 
 const defPubOpts: Options.Publish = {
   deliveryMode: 2,
@@ -25,7 +23,7 @@ export const domainPublish = (_: {
     const payloadBuf = json2Buffer(payload)
     const ch = await channel
     const confirmFn = (err: any) => (err ? reject(err) : resolve())
-    log('publish')
+    console.log('\npublish')
     console.table({ taggedTopic, ...flowId, delay: opts?.delay })
 
     if (opts?.delay) {
@@ -73,7 +71,7 @@ export const queueConsume = async (_: {
 }) => {
   const { handler, opts, qName } = _
 
-  log(`def queueConsume`, qName)
+  console.log(`\ndef queueConsume`, qName)
   const ch = await channel
   const stopConsume = async () => {
     ch.cancel((await consumerPr).consumerTag)
@@ -86,19 +84,30 @@ export const queueConsume = async (_: {
         return
       }
 
-      log(`queueConsume got msg `, qName, msg.fields.routingKey, msg.properties.correlationId)
+      console.log(
+        `\nqueueConsume got msg `,
+        qName,
+        msg.fields.routingKey,
+        msg.properties.correlationId
+      )
+      console.table({
+        qName,
+        routingKey: msg.fields.routingKey,
+        correlationId: msg.properties.correlationId,
+      })
       let msgJsonContent: any = `~~~NOT PARSED~~~`
       try {
         msgJsonContent = buffer2Json(msg.content)
         const flowId = msgFlowId(msg)
         if (!flowId) {
-          //TODO: figure out possible scenarios manage and log err/warn
+          console.error(`\nqueueConsume ERRROR got msg with no flowid`)
+          //TODO: figure out possible scenarios manage
           return
         }
         const ack = await handler({ msgJsonContent, msg, stopConsume, flowId })
         ch[ack](msg)
       } catch (err) {
-        log(`queueConsume handler error ${qName}`, err)
+        console.error(`queueConsume handler error ${qName}`, err)
         const errorAck = opts?.errorAck || Acks.reject
         ch[errorAck](msg, false)
       }
@@ -203,7 +212,7 @@ const assertDelayQX = async (_: { domain: string; tag?: string }) => {
     opts: { deadLetterExchange: domainEx },
   })
   await bindQ({ name: delayedQName, exchange: delayedX, topic: '' })
-  log('assert delay q', q.queue, delayedX)
+  console.log('assert delay q', q.queue, delayedX)
   return {
     q: q.queue,
     delayedX,
@@ -220,7 +229,12 @@ channel.then(async (ch) => {
   })
   ch.consume(mainNodeQ.queue, (msg) => {
     const ev = msgEventName(msg)
-    console.log('Node Emitter Consume', ev, msg?.fields.routingKey, msg?.properties.correlationId)
+    console.table({
+      _: 'Node Emitter Consume',
+      ev,
+      routingKey: msg?.fields.routingKey,
+      correlationId: msg?.properties.correlationId,
+    })
     msg && ch.ack(msg)
     if (!ev) {
       return
@@ -242,10 +256,10 @@ export const mainNodeQEmitter = {
   sub<T>(_: { flowId: FlowId; handler(_: EventEmitterType<T>): unknown }) {
     const { flowId, handler } = _
     const ev = flowIdEventName(flowId)
-    console.log('Node Emitter Sub', ev, flowId._tag, flowId._key)
+    console.table({ _: 'Node Emitter Sub', ev, ...flowId })
 
     if (ev === null) {
-      //TODO: Log Error
+      console.error('Node Emitter received no event msg')
       return
     }
     NodeEmitter.addListener(ev, listener)
@@ -254,14 +268,13 @@ export const mainNodeQEmitter = {
       ev && NodeEmitter.removeListener(ev, listener)
     }
     function listener(msg: Message) {
-      console.log(
-        'Node Emitter Listener',
+      console.table({
+        _: 'Node Emitter Listener',
         ev,
-        flowId._tag,
-        flowId._key,
-        msg.properties.correlationId,
-        msg.fields.routingKey
-      )
+        ...flowId,
+        correlationId: msg.properties.correlationId,
+        routingKey: msg.fields.routingKey,
+      })
       handler({
         jsonContent: buffer2Json(msg.content),
         msg,

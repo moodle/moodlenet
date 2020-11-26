@@ -30,8 +30,9 @@ const arangoEmailPersistenceImpl: EmailPersistence = {
   async incAttemptVerifyingEmail({ flowId }) {
     const doc = await (
       await db.query(aql`
-        UPDATE ${flowId._key}
-        WITH { attempts: 2 }
+        LET doc = DOCUMENT(CONCAT("VerifyEmail/",${flowId._key}))
+        UPDATE doc
+        WITH { attempts: (doc.attempts+1) }
         IN VerifyEmail
         RETURN NEW
       `)
@@ -53,6 +54,17 @@ const arangoEmailPersistenceImpl: EmailPersistence = {
       `)
     ).next()
     return key
+  },
+  async confirmEmail({ token }) {
+    const doc = await (
+      await db.query(aql`
+        FOR doc in VerifyEmail
+        FILTER doc.token==${token}
+        LIMIT 1
+        RETURN doc
+      `)
+    ).next()
+    return doc
   },
 }
 

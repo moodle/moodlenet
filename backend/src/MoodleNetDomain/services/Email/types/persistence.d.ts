@@ -7,6 +7,7 @@ export interface EmailPersistence {
   storeVerifyingEmail(_: { req: VerifyEmailReq; token: string; flowId: FlowId }): Promise<void>
   getVerifyingEmail(_: { flowId: FlowId }): Promise<VerifyEmailDocument | undefined>
   incAttemptVerifyingEmail(_: { flowId: FlowId }): Promise<VerifyEmailDocument | undefined>
+  confirmEmail(_: { token: string }): Promise<VerifyEmailDocument | undefined>
 }
 
 type VerifyEmailDocument = { req: VerifyEmailReq; attempts: number; token: string } & FlowId

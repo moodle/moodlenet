@@ -4,12 +4,16 @@ import { EmailObj, VerifyEmailReq } from './types'
 
 export type Email = {
   Send_One: {
-    Req: Api<{ emailObj: EmailObj }, {}>
+    Req: Api<
+      { emailObj: EmailObj },
+      { success: true; id: string } | { error: string; success: false }
+    >
     SentEmail: Event<{ success: true; id: string } | { error: string; success: false }>
   }
   Verify_Email: {
     Req: Api<VerifyEmailReq, {}>
-    Attempt_Send: Api<{ first: boolean }, { success: true } | { error: string; success: false }>
+    Attempt_Send: Api<{}, { success: true } | { error: string; success: false }>
+    Confirm_Email: Api<{ token: string }, { success: true } | { error: string; success: false }>
     Result: Event<{ email: string } & ({ success: true } | { error: string; success: false })>
   }
 }

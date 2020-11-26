@@ -16,9 +16,11 @@ const arangoAccountingPersistenceImpl: AccountingPersistence = {
     await Account.save(document)
   },
   async activateNewAccount({ flowId }) {
+    console.log('activateNewAccount', flowId)
     const doc = await (
       await db.query(aql`
-      UPDATE "${flowId._key}"
+      LET doc = DOCUMENT(CONCAT("Account/",${flowId._key}))
+      UPDATE doc
       WITH {activeFrom:DATE_NOW()}
       IN Account
       RETURN NEW
@@ -27,14 +29,10 @@ const arangoAccountingPersistenceImpl: AccountingPersistence = {
     return doc
   },
   async removeNewAccountRequest({ flowId }) {
-    const doc = await (
-      await db.query(aql`
-      REMOVE "${flowId._key}"
-      IN Account
-      RETURN OLD
-    `)
-    ).next()
-    return doc
+    return Account.remove({ _key: flowId._key }, { returnOld: true }).then(
+      (resp) => resp.old,
+      () => undefined
+    )
   },
 }
 

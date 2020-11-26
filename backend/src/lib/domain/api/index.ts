@@ -77,7 +77,7 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
   })
 }
 export const getApiResponderQName = <Domain>(api: Types.ApiLeaves<Domain>) => `API_RESPONDER:${api}`
-export const responder = <Domain>(domain: string) => async <
+export const respond = <Domain>(domain: string) => async <
   ApiPath extends Types.ApiLeaves<Domain>
 >(_: {
   api: ApiPath
@@ -131,7 +131,7 @@ export const responder = <Domain>(domain: string) => async <
     const { flowId, msg, resp } = _
     const replyQ = msg.properties.replyTo
     if (replyQ) {
-      console.log('Replying', replyQ, flowId._key, flowId._tag)
+      console.table({ _: 'Replying', replyQ, ...flowId })
       AMQP.sendToQueue({
         name: replyQ,
         content: resp,
