@@ -82,7 +82,7 @@ export const respond = <Domain>(domain: string) => async <
   ApiPath extends Types.ApiLeaves<Domain>
 >(_: {
   api: ApiPath
-  tag?: string
+  pFlow?: Partial<Flow>
   handler(_: {
     req: Types.ApiReq<Domain, ApiPath>
     flow: Flow
@@ -91,9 +91,9 @@ export const respond = <Domain>(domain: string) => async <
     detour(api: Types.ApiLeaves<Domain>): Flow
   }): Promise<Types.ApiRes<Domain, ApiPath>>
 }) => {
-  const { api, handler, tag = '*' } = _
+  const { api, handler, pFlow = {} } = _
   const apiResponderQName = getApiResponderQName<Domain>(api)
-  const topic = `${api}.${tag}`
+  const topic = `${api}.${pFlow._route || '*'}.${pFlow._key || '*'}`
   await AMQP.assertQ({
     name: apiResponderQName,
     opts: { durable: true },

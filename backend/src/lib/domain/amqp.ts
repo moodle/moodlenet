@@ -10,6 +10,25 @@ const defPubOpts: Options.Publish = {
   deliveryMode: 2,
 }
 
+type MessageHeaders = {
+  'x-flow-key': string
+  'x-flow-route': string
+}
+const encodeMsgHeaders = (_: { flow: Flow }): MessageHeaders => ({
+  'x-flow-key': _.flow._key,
+  'x-flow-route': _.flow._route,
+})
+const decodeMsgHeaders = (msg: Message): null | { flow: Flow } => {
+  const flowKey: string | undefined = msg.properties.headers[`x-flow-key`]
+  const flowRoute: string | undefined = msg.properties.headers['x-flow-route']
+  if (!(flowKey && flowRoute)) {
+    return null
+  }
+  return {
+    flow: { _key: flowKey, _route: flowRoute },
+  }
+}
+
 export const domainPublish = (_: {
   domain: string
   topic: string
@@ -19,7 +38,7 @@ export const domainPublish = (_: {
 }) =>
   new Promise<void>(async (resolve, reject) => {
     const { topic, flow, payload, opts, domain } = _
-    const taggedTopic = `${topic}.${flow._route}`
+    const taggedTopic = `${topic}.${flow._route}.${flow._key}`
     const payloadBuf = json2Buffer(payload)
     const ch = await channel
     const confirmFn = (err: any) => (err ? reject(err) : resolve())
@@ -35,7 +54,7 @@ export const domainPublish = (_: {
         {
           ...opts,
           ...defPubOpts,
-          correlationId: flow._key,
+          headers: encodeMsgHeaders({ flow }),
           replyTo: opts.replyToNodeQ ? mainNodeQName : undefined,
           expiration: opts.delay,
         },
@@ -50,7 +69,7 @@ export const domainPublish = (_: {
         {
           ...opts,
           ...defPubOpts,
-          correlationId: flow._key,
+          headers: encodeMsgHeaders({ flow }),
           replyTo: opts?.replyToNodeQ ? mainNodeQName : undefined,
         },
         confirmFn
@@ -84,26 +103,22 @@ export const queueConsume = async (_: {
         return
       }
 
-      console.log(
-        `\nqueueConsume got msg `,
-        qName,
-        msg.fields.routingKey,
-        msg.properties.correlationId
-      )
+      console.log(`\nqueueConsume got msg `, qName, msg.fields.routingKey, msg.properties.headers)
       console.table({
         qName,
         routingKey: msg.fields.routingKey,
-        correlationId: msg.properties.correlationId,
+        headers: msg.properties.headers,
       })
       let msgJsonContent: any = `~~~NOT PARSED~~~`
       try {
         msgJsonContent = buffer2Json(msg.content)
-        const flow = msgFlow(msg)
-        if (!flow) {
-          console.error(`\nqueueConsume ERRROR got msg with no flow`)
+        const domHeaders = decodeMsgHeaders(msg)
+        if (!domHeaders) {
+          console.error(`\nqueueConsume ERRROR got msg with no domHeaders`)
           //TODO: figure out possible scenarios manage
           return
         }
+        const { flow } = domHeaders
         const ack = await handler({ msgJsonContent, msg, stopConsume, flow })
         ch[ack](msg)
       } catch (err) {
@@ -167,7 +182,7 @@ export const sendToQueue = async (_: {
   return (await channel).sendToQueue(name, json2Buffer(content), {
     ...defPubOpts,
     ...opts,
-    correlationId: flow._key,
+    headers: encodeMsgHeaders({ flow }),
   })
 }
 
@@ -235,7 +250,7 @@ channel.then(async (ch) => {
       _: 'Node Emitter Consume',
       ev,
       routingKey: msg?.fields.routingKey,
-      correlationId: msg?.properties.correlationId,
+      headers: msg?.properties.headers,
     })
     msg && ch.ack(msg)
     if (!ev) {
@@ -246,13 +261,6 @@ channel.then(async (ch) => {
 })
 const msgEventName = (msg: Message | null) => msg?.properties.correlationId || null
 const flowEventName = (flow: Flow | null) => flow?._key || null
-export const msgFlow = (msg: Message | null): Flow | null =>
-  msg && msg.properties.correlationId && msg.fields.routingKey.length
-    ? {
-        _key: msg.properties.correlationId,
-        _route: msg.fields.routingKey.split('.').slice(-1).pop()!,
-      }
-    : null
 
 export const mainNodeQEmitter = {
   sub<T>(_: { flow: Flow; handler(_: EventEmitterType<T>): unknown }) {
@@ -274,7 +282,7 @@ export const mainNodeQEmitter = {
         _: 'Node Emitter Listener',
         ev,
         ...flow,
-        correlationId: msg.properties.correlationId,
+        headers: msg.properties.headers,
         routingKey: msg.fields.routingKey,
       })
       handler({
