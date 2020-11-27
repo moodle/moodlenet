@@ -1,5 +1,4 @@
 import { Message } from 'amqplib'
-import { newUuid } from '../../helpers/misc'
 import * as AMQP from '../amqp'
 import { Flow } from '../types/path'
 import { getApiBindRoute } from '../bindings'
@@ -28,7 +27,7 @@ export type CallResponse<Res extends object> = { res: Types.Reply<Res>; flow: Fl
 export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves<Domain>>(_: {
   api: ApiPath
   req: Types.ApiReq<Domain, ApiPath>
-  flow?: Partial<Flow>
+  flow: Flow
   opts?: CallOpts
 }) => {
   type ResType = Types.ApiRes<Domain, ApiPath>
@@ -40,12 +39,7 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
       }) => void,
       reject: (arg0: any) => void
     ) => {
-      const { api, flow: maybePartialflow, req, opts } = _
-
-      const flow: Flow = {
-        _key: maybePartialflow?._key || newUuid(),
-        _route: maybePartialflow?._route || newUuid(),
-      }
+      const { api, flow, req, opts } = _
 
       const expiration = opts?.justEnqueue
         ? opts?.delay || undefined
