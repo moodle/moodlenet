@@ -34,25 +34,24 @@ MoodleNet.respondApi({
 MoodleNet.respondApi({
   api: 'Email.Verify_Email.Attempt_Send',
   async handler({ flow }) {
-    const document = await (await getEmailPersistence()).incAttemptVerifyingEmail({ flow })
-    console.log(`Email.Verify_Email.Attempt_Send`, flow._key, flow._route, document?.attempts)
-    if (!document) {
+    const doc = await (await getEmailPersistence()).incrementAttemptVerifyingEmail({ flow })
+    if (!doc) {
       return { success: false, error: 'Not Found' }
     }
-    if (document.req.maxAttempts <= document.attempts) {
+    if (doc.status === 'Expired') {
       MoodleNet.emitEvent({
         event: 'Email.Verify_Email.Result',
         flow,
         payload: {
-          email: document.req.email.to,
-          error: `Max attempts [${document.req.maxAttempts}] timeout`,
+          email: doc.req.email.to,
+          error: `Max attempts [${doc.req.maxAttempts}] expired`,
           success: false,
         },
       })
     } else {
       await MoodleNet.callApi({
         api: 'Email.Send_One.Req',
-        req: { emailObj: document.req.email },
+        req: { emailObj: doc.req.email },
         flow,
       })
 
@@ -62,7 +61,7 @@ MoodleNet.respondApi({
         req: {},
         opts: {
           justEnqueue: true,
-          delay: Math.round(document.req.timeoutHours * 60 * 60 * 1000),
+          delay: doc.req.timeoutMillis,
         },
       })
     }
@@ -88,12 +87,13 @@ MoodleNet.respondApi({
 MoodleNet.respondApi({
   api: 'Email.Send_One.Req',
   async handler({ flow, req }) {
-    const resp = await (await getSender()).sendEmail(req.emailObj)
+    const response = await (await getSender()).sendEmail(req.emailObj)
+    await (await getEmailPersistence()).storeSentEmail({ email: req.emailObj, flow, response })
     MoodleNet.emitEvent({
       event: 'Email.Send_One.SentEmail',
       flow,
-      payload: resp,
+      payload: response,
     })
-    return resp
+    return response
   },
 })

@@ -9,6 +9,6 @@ export type EmailObj = {
 type VerifyEmailReq = {
   email: EmailObj
   maxAttempts: number
-  timeoutHours: number
+  timeoutMillis: number
   tokenReplaceRegEx: string
 }

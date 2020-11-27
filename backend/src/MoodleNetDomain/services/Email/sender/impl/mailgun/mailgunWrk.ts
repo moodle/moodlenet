@@ -10,12 +10,14 @@ const mailgun = createMailgun({
   ...env,
 })
 
-const sendEmail: EmailSender['sendEmail'] = (req) =>
-  mailgun
-    .messages()
-    .send(req)
-    .then((resp) => ({ success: true, id: resp.id } as const))
-    .catch((err) => ({ success: false, error: String(err) } as const))
+const sendEmail: EmailSender['sendEmail'] = async (req) => {
+  try {
+    const resp = await mailgun.messages().send(req)
+    return { success: true, emailId: resp.id }
+  } catch (err) {
+    return { success: false, error: String(err) }
+  }
+}
 
 export const mailgunImpl: EmailSender = {
   sendEmail,

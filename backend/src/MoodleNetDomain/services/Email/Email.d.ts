@@ -6,9 +6,9 @@ export type Email = {
   Send_One: {
     Req: Api<
       { emailObj: EmailObj },
-      { success: true; id: string } | { error: string; success: false }
+      { success: true; emailId: string } | { error: string; success: false }
     >
-    SentEmail: Event<{ success: true; id: string } | { error: string; success: false }>
+    SentEmail: Event<{ success: true; emailId: string } | { error: string; success: false }>
   }
   Verify_Email: {
     Req: Api<VerifyEmailReq, {}>
