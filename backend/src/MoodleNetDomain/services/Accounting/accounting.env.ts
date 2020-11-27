@@ -17,7 +17,5 @@ export const env = Validator.validateSync({
 })!
 
 const persistenceImplPathBase = [__dirname, 'persistence', 'impl']
-export const accountPersistence: Promise<AccountingPersistence> = require(resolve(
-  ...persistenceImplPathBase,
-  env.persistenceModule
-))
+export const getAccountPersistence = (): Promise<AccountingPersistence> =>
+  require(resolve(...persistenceImplPathBase, env.persistenceModule))

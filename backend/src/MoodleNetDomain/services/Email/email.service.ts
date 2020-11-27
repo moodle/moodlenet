@@ -1,6 +1,6 @@
 import { MoodleNet } from '../..'
 import { newUuid } from '../../../lib/helpers/misc'
-import { emailPersistence, sender } from './email.env'
+import { getEmailPersistence, getSender } from './email.env'
 import { EmailObj } from './types'
 
 MoodleNet.respondApi({
@@ -14,7 +14,7 @@ MoodleNet.respondApi({
       html: email.html?.replace(regex, token),
       text: email.text?.replace(regex, token),
     }
-    const documentKey = await (await emailPersistence).storeVerifyingEmail({
+    const documentKey = await (await getEmailPersistence()).storeVerifyingEmail({
       req: {
         ...req,
         email: emailObj,
@@ -34,7 +34,7 @@ MoodleNet.respondApi({
 MoodleNet.respondApi({
   api: 'Email.Verify_Email.Attempt_Send',
   async handler({ flow }) {
-    const document = await (await emailPersistence).incAttemptVerifyingEmail({ flow })
+    const document = await (await getEmailPersistence()).incAttemptVerifyingEmail({ flow })
     console.log(`Email.Verify_Email.Attempt_Send`, flow._key, flow._route, document?.attempts)
     if (!document) {
       return { success: false, error: 'Not Found' }
@@ -73,7 +73,7 @@ MoodleNet.respondApi({
 MoodleNet.respondApi({
   api: 'Email.Verify_Email.Confirm_Email',
   async handler({ req: { token } }) {
-    const doc = await (await emailPersistence).confirmEmail({ token })
+    const doc = await (await getEmailPersistence()).confirmEmail({ token })
     if (doc) {
       MoodleNet.emitEvent({
         event: 'Email.Verify_Email.Result',
@@ -88,7 +88,7 @@ MoodleNet.respondApi({
 MoodleNet.respondApi({
   api: 'Email.Send_One.Req',
   async handler({ flow, req }) {
-    const resp = await (await sender).sendEmail(req.emailObj)
+    const resp = await (await getSender()).sendEmail(req.emailObj)
     MoodleNet.emitEvent({
       event: 'Email.Send_One.SentEmail',
       flow,

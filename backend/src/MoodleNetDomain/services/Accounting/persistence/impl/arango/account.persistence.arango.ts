@@ -1,7 +1,16 @@
 import { aql } from 'arangojs'
-import { createDocumentCollectionIfNotExists } from '../../../../../../lib/helpers/arango'
+import {
+  createDatabaseIfNotExists,
+  createDocumentCollectionIfNotExists,
+} from '../../../../../../lib/helpers/arango'
 import { AccountingPersistence, AccountDocument } from '../../types'
-import { db /* log */ } from './account.persistence.arango.env'
+import { env } from './account.persistence.arango.env'
+
+export const db = createDatabaseIfNotExists({
+  dbConfig: { url: env.url },
+  name: env.databaseName,
+  dbCreateOpts: {},
+})
 
 export const Account = createDocumentCollectionIfNotExists<AccountDocument>({
   name: 'Account',

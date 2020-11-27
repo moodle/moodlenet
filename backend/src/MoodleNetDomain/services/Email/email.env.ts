@@ -22,14 +22,8 @@ const env = Validator.validateSync({
 
 const implPathBase = [__dirname, 'impl']
 
-export const sender: Promise<EmailSenderImpl> = require(resolve(
-  ...implPathBase,
-  'sender',
-  env.senderImpl
-))
+export const getSender = (): Promise<EmailSenderImpl> =>
+  require(resolve(...implPathBase, 'sender', env.senderImpl))
 
-export const emailPersistence: Promise<EmailPersistence> = require(resolve(
-  ...implPathBase,
-  'persistence',
-  env.persistenceImpl
-))
+export const getEmailPersistence = (): Promise<EmailPersistence> =>
+  require(resolve(...implPathBase, 'persistence', env.persistenceImpl))

@@ -1,7 +1,16 @@
 import { aql } from 'arangojs'
-import { createDocumentCollectionIfNotExists } from '../../../../../../lib/helpers/arango'
+import {
+  createDatabaseIfNotExists,
+  createDocumentCollectionIfNotExists,
+} from '../../../../../../lib/helpers/arango'
 import { EmailPersistence, SentEmailDocument, VerifyEmailDocument } from '../../../types'
-import { db /* log */ } from './email.persistence.arango.env'
+import { env } from './email.persistence.arango.env'
+
+export const db = createDatabaseIfNotExists({
+  dbConfig: { url: env.url },
+  name: env.databaseName,
+  dbCreateOpts: {},
+})
 
 export const VerifyEmail = createDocumentCollectionIfNotExists<VerifyEmailDocument>({
   name: 'VerifyEmail',
