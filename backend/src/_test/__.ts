@@ -24,7 +24,7 @@ const TestD = domain<TestD>('TestDomain')
     api: 'an.del',
     req: { c: 3 },
     opts: { delay: 2000 /* , noReply: true */ },
-    flow,
+    pflow: flow,
   }).then((_) => console.log('_TEST_THEN', _))
 
   TestD.bindApi({

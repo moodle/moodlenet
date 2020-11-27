@@ -14,7 +14,7 @@ const NO_REPLY_CALL: Types.Reply<object> = { ___ERROR: { msg: NO_REPLY_CALL_MSG 
 
 export type CallOpts = {
   timeout?: number
-  noReply?: boolean
+  justEnqueue?: boolean
   delay?: number
 }
 
@@ -22,19 +22,21 @@ export type CallResponse<Res extends object> = { res: Types.Reply<Res>; flow: Fl
 export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves<Domain>>(_: {
   api: ApiPath
   req: Types.ApiReq<Domain, ApiPath>
-  flow?: Flow
+  pflow?: Partial<Flow>
   opts?: CallOpts
 }) => {
   type ResType = Types.ApiRes<Domain, ApiPath>
   return new Promise<CallResponse<ResType>>((resolve, reject) => {
-    const { api, flow: progress, req, opts } = _
-    const uuid = progress ? '' : newUuid()
-    const flow: Flow = progress || { _key: uuid, _route: uuid }
-    const expiration = opts?.timeout || DEF_TIMEOUT
-    const localTimeout = expiration + DEF_LAG_TIMEOUT
-    const wantsReply = !opts?.noReply
+    const { api, pflow, req, opts } = _
+    const { delay, justEnqueue, timeout } = opts || ({} as CallOpts)
+    const flow: Flow = { _key: pflow?._key || newUuid(), _route: pflow?._route || newUuid() }
+
+    const expiration = justEnqueue ? undefined : timeout || DEF_TIMEOUT
+
     let unsubEmitter = () => {}
-    if (wantsReply) {
+    if (justEnqueue) {
+      resolve(errResponse(NO_REPLY_CALL))
+    } else {
       unsubEmitter =
         AMQP.mainNodeQEmitter.sub<ResType>({
           flow,
@@ -43,9 +45,8 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
             resolve(response(jsonContent))
           },
         }) || unsubEmitter
-    } else {
-      resolve(errResponse(NO_REPLY_CALL))
     }
+
     AMQP.domainPublish({
       domain,
       flow,
@@ -53,16 +54,19 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
       payload: req,
       opts: {
         correlationId: flow._key,
-        replyToNodeQ: wantsReply,
+        replyToNodeQ: !justEnqueue,
         expiration,
-        delay: opts?.delay,
+        delay: delay,
       },
     })
       .then((_) => {
-        setTimeout(() => {
-          resolve(errResponse(TIMEOUT_REPLY))
-          unsubEmitter()
-        }, localTimeout)
+        if (expiration) {
+          const localTimeout = expiration + DEF_LAG_TIMEOUT
+          setTimeout(() => {
+            resolve(errResponse(TIMEOUT_REPLY))
+            unsubEmitter()
+          }, localTimeout)
+        }
       })
       .catch((err) => {
         unsubEmitter()

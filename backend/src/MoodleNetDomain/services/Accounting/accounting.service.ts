@@ -20,7 +20,7 @@ MoodleNet.respondApi({
         maxAttempts: 3,
         tokenReplaceRegEx: '__TOKEN__',
       },
-      opts: { noReply: true },
+      opts: { justEnqueue: true },
     })
     return {}
   },
