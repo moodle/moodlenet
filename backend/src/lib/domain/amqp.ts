@@ -40,6 +40,11 @@ const msgFlow = (msg: Message): Flow => {
   }
 }
 
+export type DomainPublishOpts = Options.Publish & {
+  replyToNodeQ?: boolean
+  delay?: number
+  messageId?: string
+}
 export const domainPublish = (_: {
   domain: string
   topic: string
@@ -277,10 +282,6 @@ export const mainNodeQEmitter = {
     const ev = flow._key
     console.table({ _: 'Node Emitter Sub', ev, ...flow })
 
-    if (ev === null) {
-      console.error('Node Emitter received no event msg')
-      return
-    }
     NodeEmitter.addListener(ev, listener)
     return unsub
     function unsub() {
@@ -309,11 +310,6 @@ export type EventEmitterType<T> = {
   unsub(): unknown
 }
 
-export type DomainPublishOpts = Options.Publish & {
-  replyToNodeQ?: boolean
-  delay?: number
-  messageId?: string
-}
 export type DomainSendToQueueOpts = Options.Publish & {}
 export type DomainQueueOpts = Options.AssertQueue & {}
 export type QConsumeOpts = Options.Consume & { errorAck?: Acks.nack | Acks.reject }

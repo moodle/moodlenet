@@ -61,6 +61,7 @@ MoodleNet.respondApi({
         flow,
         req: {},
         opts: {
+          justEnqueue: true,
           delay: Math.round(document.req.timeoutHours * 60 * 60 * 1000),
         },
       })

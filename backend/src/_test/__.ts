@@ -23,8 +23,8 @@ const TestD = domain<TestD>('TestDomain')
   TestD.callApi({
     api: 'an.del',
     req: { c: 3 },
-    opts: { delay: 2000 /* , noReply: true */ },
-    pflow: flow,
+    opts: { delay: 2000, justEnqueue: true /* , noReply: true */ },
+    flow: flow,
   }).then((_) => console.log('_TEST_THEN', _))
 
   TestD.bindApi({

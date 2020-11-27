@@ -1,9 +1,18 @@
 import { aql } from 'arangojs'
+import { createDocumentCollectionIfNotExists } from '../../../../../../lib/helpers/arango'
 import { EmailPersistence, SentEmailDocument, VerifyEmailDocument } from '../../../types'
 import { db /* log */ } from './email.persistence.arango.env'
 
-export const VerifyEmail = db.collection<VerifyEmailDocument>('VerifyEmail')
-export const SentEmail = db.collection<SentEmailDocument>('SentEmail')
+export const VerifyEmail = createDocumentCollectionIfNotExists<VerifyEmailDocument>({
+  name: 'VerifyEmail',
+  db,
+  createOpts: {},
+})
+export const SentEmail = createDocumentCollectionIfNotExists<SentEmailDocument>({
+  name: 'SentEmail',
+  db,
+  createOpts: {},
+})
 
 export const arangoEmailPersistenceImpl: EmailPersistence = {
   async storeSentEmail({ email, emailId, flow }) {
@@ -15,7 +24,7 @@ export const arangoEmailPersistenceImpl: EmailPersistence = {
     }
 
     const key = await (
-      await db.query(aql`
+      await (await db).query(aql`
         INSERT ${document} 
         INTO SentEmail
         RETURN NEW._key
@@ -24,12 +33,12 @@ export const arangoEmailPersistenceImpl: EmailPersistence = {
     return key
   },
   async getVerifyingEmail({ flow }) {
-    const doc = await VerifyEmail.document({ _key: flow._key })
+    const doc = await (await VerifyEmail).document({ _key: flow._key })
     return doc
   },
   async incAttemptVerifyingEmail({ flow }) {
     const doc = await (
-      await db.query(aql`
+      await (await db).query(aql`
         LET doc = DOCUMENT(CONCAT("VerifyEmail/",${flow._key}))
         UPDATE doc
         WITH { attempts: (doc.attempts+1) }
@@ -47,7 +56,7 @@ export const arangoEmailPersistenceImpl: EmailPersistence = {
       token,
     }
     const key = await (
-      await db.query(aql`
+      await (await db).query(aql`
         INSERT ${document} 
         INTO VerifyEmail
         RETURN NEW._key
@@ -57,7 +66,7 @@ export const arangoEmailPersistenceImpl: EmailPersistence = {
   },
   async confirmEmail({ token }) {
     const doc = await (
-      await db.query(aql`
+      await (await db).query(aql`
         FOR doc in VerifyEmail
         FILTER doc.token==${token}
         LIMIT 1

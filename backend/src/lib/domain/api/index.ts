@@ -5,81 +5,100 @@ import { Flow } from '../types/path'
 import { getApiBindRoute } from '../bindings'
 import * as Types from './types'
 
-const DEF_TIMEOUT = 5000
+const DEF_TIMEOUT_EXPIRATION = 5000
 const DEF_LAG_TIMEOUT = 300
-const TIMEOUT_MSG = 'API CALL TIMEOUT'
-const NO_REPLY_CALL_MSG = 'NO REPLY CALL'
-const TIMEOUT_REPLY: Types.ReplyError = { ___ERROR: { msg: TIMEOUT_MSG } }
-const NO_REPLY_CALL: Types.Reply<object> = { ___ERROR: { msg: NO_REPLY_CALL_MSG } }
-
-export type CallOpts = {
-  timeout?: number
-  justEnqueue?: boolean
-  delay?: number
+const REPLY_TIMEOUT_RESPONSE_MSG = 'REPLY TIMEOUT'
+const JUST_ENQUEUED_RESPONSE_MSG = 'JUST ENQUEUED'
+const REPLY_TIMEOUT_RESPONSE: Types.ReplyError = { ___ERROR: { msg: REPLY_TIMEOUT_RESPONSE_MSG } }
+const JUST_ENQUEUED_RESPONSE: Types.Reply<object> = {
+  ___ERROR: { msg: JUST_ENQUEUED_RESPONSE_MSG },
 }
+
+export type CallOpts =
+  | {
+      justEnqueue: true
+      delay?: number
+    }
+  | {
+      justEnqueue?: false | undefined
+      timeout?: number
+    }
 
 export type CallResponse<Res extends object> = { res: Types.Reply<Res>; flow: Flow }
 export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves<Domain>>(_: {
   api: ApiPath
   req: Types.ApiReq<Domain, ApiPath>
-  pflow?: Partial<Flow>
+  flow?: Partial<Flow>
   opts?: CallOpts
 }) => {
   type ResType = Types.ApiRes<Domain, ApiPath>
-  return new Promise<CallResponse<ResType>>((resolve, reject) => {
-    const { api, pflow, req, opts } = _
-    const { delay, justEnqueue, timeout } = opts || ({} as CallOpts)
-    const flow: Flow = { _key: pflow?._key || newUuid(), _route: pflow?._route || newUuid() }
+  return new Promise<CallResponse<ResType>>(
+    (
+      resolve: (arg0: {
+        res: Types.Reply<Types.ApiRes<Domain, ApiPath>>
+        flow: Flow<string, string>
+      }) => void,
+      reject: (arg0: any) => void
+    ) => {
+      const { api, flow: maybePartialflow, req, opts } = _
 
-    const expiration = justEnqueue ? undefined : timeout || DEF_TIMEOUT
+      const flow: Flow = {
+        _key: maybePartialflow?._key || newUuid(),
+        _route: maybePartialflow?._route || newUuid(),
+      }
 
-    let unsubEmitter = () => {}
-    if (justEnqueue) {
-      resolve(errResponse(NO_REPLY_CALL))
-    } else {
-      unsubEmitter =
-        AMQP.mainNodeQEmitter.sub<ResType>({
+      const expiration = opts?.justEnqueue
+        ? opts?.delay || undefined
+        : opts?.timeout || DEF_TIMEOUT_EXPIRATION
+
+      let unsubEmitter = () => {}
+      if (opts?.justEnqueue) {
+        resolve(errResponse(JUST_ENQUEUED_RESPONSE))
+      } else {
+        unsubEmitter = AMQP.mainNodeQEmitter.sub<ResType>({
           flow,
           handler({ jsonContent, unsub }) {
             unsub()
             resolve(response(jsonContent))
           },
-        }) || unsubEmitter
-    }
+        })
+      }
 
-    AMQP.domainPublish({
-      domain,
-      flow,
-      topic: api,
-      payload: req,
-      opts: {
-        correlationId: flow._key,
-        replyToNodeQ: !justEnqueue,
-        expiration,
-        delay: delay,
-      },
-    })
-      .then((_) => {
-        if (expiration) {
-          const localTimeout = expiration + DEF_LAG_TIMEOUT
-          setTimeout(() => {
-            resolve(errResponse(TIMEOUT_REPLY))
-            unsubEmitter()
-          }, localTimeout)
-        }
+      AMQP.domainPublish({
+        domain,
+        flow,
+        topic: api,
+        payload: req,
+        opts: {
+          correlationId: flow._key,
+          replyToNodeQ: !opts?.justEnqueue,
+          expiration,
+          delay: opts?.justEnqueue ? opts?.delay : undefined,
+        },
       })
-      .catch((err) => {
-        unsubEmitter()
-        reject(err)
-      })
+        .then((_) => {
+          if (!opts?.justEnqueue) {
+            const localTimeout = expiration === undefined ? 0 : expiration + DEF_LAG_TIMEOUT
 
-    function response(res: ResType): CallResponse<ResType> {
-      return { flow, res: { ...res, ___ERROR: null } }
+            setTimeout(() => {
+              resolve(errResponse(REPLY_TIMEOUT_RESPONSE))
+              unsubEmitter()
+            }, localTimeout)
+          }
+        })
+        .catch((err) => {
+          unsubEmitter()
+          reject(err)
+        })
+
+      function response(res: ResType): CallResponse<ResType> {
+        return { flow, res: { ...res, ___ERROR: null } }
+      }
+      function errResponse(err: Types.ReplyError): CallResponse<ResType> {
+        return { flow, res: err }
+      }
     }
-    function errResponse(err: Types.ReplyError): CallResponse<ResType> {
-      return { flow, res: err }
-    }
-  })
+  )
 }
 export const getApiResponderQName = <Domain>(api: Types.ApiLeaves<Domain>) => `API_RESPONDER:${api}`
 export const respond = <Domain>(domain: string) => async <
@@ -153,8 +172,10 @@ export const respond = <Domain>(domain: string) => async <
   }
 }
 
-export const isTimeoutReply = (_: Types.Reply<object>) => _.___ERROR?.msg === TIMEOUT_MSG
-export const isNoReplyCall = (_: Types.Reply<object>) => _.___ERROR?.msg === NO_REPLY_CALL_MSG
+export const isTimeoutReply = (_: Types.Reply<object>) =>
+  _.___ERROR?.msg === REPLY_TIMEOUT_RESPONSE_MSG
+export const isNoReplyCall = (_: Types.Reply<object>) =>
+  _.___ERROR?.msg === JUST_ENQUEUED_RESPONSE_MSG
 
 // type s = Types.ApiRes<MoodleNetDomain, 'Accounting.Register_New_Account.Request'>
 // type q = Types.ApiReq<MoodleNetDomain, 'Accounting.Register_New_Account.Request'>
