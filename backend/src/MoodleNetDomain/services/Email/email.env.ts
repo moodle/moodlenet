@@ -1,6 +1,5 @@
 import { resolve } from 'path'
 import * as Yup from 'yup'
-// import { logger } from '../../../lib/domain/domain.env'
 import { EmailPersistence, EmailSenderImpl } from './types'
 
 const SENDER_IMPL_MODULE = process.env.EMAIL_SENDER_IMPL_MODULE // EmailSenderImpl implementatin module (without .js) relative from services/email/impl
@@ -23,9 +22,14 @@ const env = Validator.validateSync({
 
 const implPathBase = [__dirname, 'impl']
 
-export const sender = require(resolve(...implPathBase, 'sender', env.senderImpl)) as EmailSenderImpl
+export const sender: Promise<EmailSenderImpl> = require(resolve(
+  ...implPathBase,
+  'sender',
+  env.senderImpl
+))
 
-export const emailPersistence = () =>
-  require(resolve(...implPathBase, 'persistence', env.persistenceImpl)) as EmailPersistence
-
-export const emailLogger = console.log /// logger('email')
+export const emailPersistence: Promise<EmailPersistence> = require(resolve(
+  ...implPathBase,
+  'persistence',
+  env.persistenceImpl
+))

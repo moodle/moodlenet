@@ -1,6 +1,5 @@
 import { resolve } from 'path'
 import * as Yup from 'yup'
-// import { logger } from '../../../lib/domain/domain.env'
 import { AccountingPersistence } from './persistence/types'
 
 interface QueueEnv {
@@ -18,6 +17,7 @@ export const env = Validator.validateSync({
 })!
 
 const persistenceImplPathBase = [__dirname, 'persistence', 'impl']
-export const accountPersistence = () =>
-  require(resolve(...persistenceImplPathBase, env.persistenceModule)) as AccountingPersistence
-export const accountingLogger = console.log //logger('email')
+export const accountPersistence: Promise<AccountingPersistence> = require(resolve(
+  ...persistenceImplPathBase,
+  env.persistenceModule
+))

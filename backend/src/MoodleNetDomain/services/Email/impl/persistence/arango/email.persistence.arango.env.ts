@@ -1,7 +1,6 @@
 import { Database } from 'arangojs'
 import { BasicAuthCredentials, Config } from 'arangojs/connection'
 import * as Yup from 'yup'
-import { emailLogger } from '../../../email.service.env'
 
 type ArangoOptsEnv = Pick<Config, 'url' | 'databaseName' | 'auth'>
 
@@ -37,4 +36,3 @@ export const env = Validator.validateSync({
 })!
 
 export const db = new Database(env.arangoOpts)
-export const log = emailLogger('Arango Persistence')

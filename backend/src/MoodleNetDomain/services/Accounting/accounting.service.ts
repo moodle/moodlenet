@@ -4,7 +4,7 @@ import { accountPersistence } from './accounting.env'
 MoodleNet.respondApi({
   api: 'Accounting.Register_New_Account.Request',
   async handler({ flow, req, detour }) {
-    await accountPersistence().addNewAccountRequest({ req, flow })
+    await (await accountPersistence).addNewAccountRequest({ req, flow })
 
     await MoodleNet.callApi({
       api: 'Email.Verify_Email.Req',
@@ -36,7 +36,7 @@ MoodleNet.respondApi({
   async handler({ flow, req }) {
     console.log(`Accounting.Register_New_Account.Email_Confirm_Result`, flow._key, flow._route)
     if (req.success) {
-      const acc = await accountPersistence().activateNewAccount({ flow })
+      const acc = await (await accountPersistence).activateNewAccount({ flow })
       if (!acc) {
         return { done: false }
       }
@@ -47,7 +47,7 @@ MoodleNet.respondApi({
       })
       return { done: true }
     } else {
-      await accountPersistence().removeNewAccountRequest({ flow })
+      await (await accountPersistence).removeNewAccountRequest({ flow })
       return { done: true }
     }
   },

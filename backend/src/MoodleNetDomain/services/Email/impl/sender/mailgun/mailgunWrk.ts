@@ -9,6 +9,7 @@ export type Cfg = {
 const mailgun = createMailgun({
   ...env,
 })
+
 const sendEmail: EmailSenderImpl['sendEmail'] = (req) =>
   mailgun
     .messages()
@@ -16,8 +17,6 @@ const sendEmail: EmailSenderImpl['sendEmail'] = (req) =>
     .then((resp) => ({ success: true, id: resp.id } as const))
     .catch((err) => ({ success: false, error: String(err) } as const))
 
-const mailgunImpl: EmailSenderImpl = {
+export const mailgunImpl: EmailSenderImpl = {
   sendEmail,
 }
-
-module.exports = mailgunImpl

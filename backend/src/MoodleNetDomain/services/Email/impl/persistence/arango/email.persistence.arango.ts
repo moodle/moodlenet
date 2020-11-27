@@ -5,7 +5,7 @@ import { db /* log */ } from './email.persistence.arango.env'
 export const VerifyEmail = db.collection<VerifyEmailDocument>('VerifyEmail')
 export const SentEmail = db.collection<SentEmailDocument>('SentEmail')
 
-const arangoEmailPersistenceImpl: EmailPersistence = {
+export const arangoEmailPersistenceImpl: EmailPersistence = {
   async storeSentEmail({ email, emailId, flow }) {
     const document: SentEmailDocument = {
       ...flow,
@@ -67,6 +67,3 @@ const arangoEmailPersistenceImpl: EmailPersistence = {
     return doc
   },
 }
-
-module.exports = arangoEmailPersistenceImpl
-export default arangoEmailPersistenceImpl

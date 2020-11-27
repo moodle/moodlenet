@@ -1,7 +1,6 @@
 import { Database } from 'arangojs'
 import { BasicAuthCredentials, Config } from 'arangojs/connection'
 import * as Yup from 'yup'
-import { accountingLogger } from '../../../accounting.env'
 
 type ArangoOptsEnv = Pick<Config, 'url' | 'databaseName' | 'auth'>
 
@@ -37,4 +36,3 @@ export const env = Validator.validateSync({
 })!
 console.table(env)
 export const db = new Database(env.arangoOpts)
-export const log = accountingLogger('Arango Persistence')
