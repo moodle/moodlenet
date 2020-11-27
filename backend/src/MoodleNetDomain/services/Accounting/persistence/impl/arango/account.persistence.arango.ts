@@ -4,11 +4,13 @@ import {
   createDocumentCollectionIfNotExists,
 } from '../../../../../../lib/helpers/arango'
 import { Maybe } from '../../../../../../lib/helpers/types'
+import { DefaultConfig } from '../../../assets/defaultConfig'
 import {
   AccountingPersistence,
   AccountDocument,
   NewAccountRequestDocument,
   NewAccountRequestDocumentStatus,
+  Config as ConfigType,
 } from '../../types'
 import { env } from './account.persistence.arango.env'
 
@@ -20,6 +22,12 @@ export const db = createDatabaseIfNotExists({
 
 export const Account = createDocumentCollectionIfNotExists<AccountDocument>({
   name: 'Account',
+  db,
+  createOpts: {},
+})
+
+export const Config = createDocumentCollectionIfNotExists<ConfigType>({
+  name: 'Config',
   db,
   createOpts: {},
 })
@@ -39,7 +47,7 @@ const addNewAccountRequest: AccountingPersistence['addNewAccountRequest'] = asyn
     email,
     status: 'Waiting Email Confirmation',
   }
-
+  await NewAccountRequest
   await (
     await (await db).query(aql`
         INSERT MERGE(
@@ -59,6 +67,8 @@ const activateNewAccount: AccountingPersistence['activateNewAccount'] = async ({
   requestFlow,
   username,
 }) => {
+  await Account
+
   const request = await (await NewAccountRequest).document(requestFlow._key)
   if (!request) {
     return 'Request Not Found'
@@ -78,7 +88,7 @@ const activateNewAccount: AccountingPersistence['activateNewAccount'] = async ({
       INSERT MERGE(
         ${accountDoc},
         {
-          createdAt: DATE_NOW()
+          createdAt: DATE_NOW(),
           updatedAt: DATE_NOW()
         }
       )
@@ -91,30 +101,35 @@ const activateNewAccount: AccountingPersistence['activateNewAccount'] = async ({
 const confirmNewAccountRequest: AccountingPersistence['confirmNewAccountRequest'] = async ({
   flow,
 }) => {
+  await NewAccountRequest
+
   const confirmedStatus: NewAccountRequestDocumentStatus = 'Email Confirmed'
   const confirmRes: Maybe<NewAccountRequestDocument | true> = await (
     await (await db).query(aql`
       LET doc = DOCUMENT(CONCAT("NewAccountRequest/",${flow._key}))
+      LET alreadyConfirmed = doc.status == ${confirmedStatus}
       UPDATE doc
-      LET wasConfirmed = doc.status == "${confirmedStatus}"
-      WITH wasConfirmed
-        ? {
-          status:"${confirmedStatus}",
+      WITH (alreadyConfirmed
+        ? {}
+        : {
+          status:${confirmedStatus},
           updatedAt: DATE_NOW()
-        }
-        : {}
+        })
       IN NewAccountRequest
-      RETURN wasConfirmed ? true : NEW
+      RETURN (alreadyConfirmed ? true : NEW)
     `)
   ).next()
   if (!confirmRes) {
     return 'Request Not Found'
-  } else if (confirmRes === true) {
+  }
+  if (confirmRes === true) {
     return 'Already Confirmed'
   }
   return 'Confirmed'
 }
 const isUserNameAvailable: AccountingPersistence['isUserNameAvailable'] = async ({ username }) => {
+  await Account
+
   const available = await (
     await (await db).query(aql`
     FOR doc IN Account
@@ -125,9 +140,37 @@ const isUserNameAvailable: AccountingPersistence['isUserNameAvailable'] = async 
   ).next()
   return available
 }
+
+const config: AccountingPersistence['config'] = async (_) => {
+  const { update = {} } = _ || {}
+  const Cfg = await Config
+
+  const currentConfig = await (
+    await (await db).query(aql`
+      FOR cfg IN Config
+      SORT cfg.createdAt DESC
+      LIMIT 1
+      RETURN cfg
+    `)
+  ).next()
+  if (currentConfig) {
+    if (!update) {
+      return currentConfig
+    } else {
+      await Cfg.update(currentConfig._key, update)
+    }
+  } else {
+    const updatedDefaultConfig = { ...DefaultConfig, ...update }
+    await Cfg.save(updatedDefaultConfig)
+    return updatedDefaultConfig
+  }
+}
+
 const unconfirmedNewAccountRequest: AccountingPersistence['unconfirmedNewAccountRequest'] = async ({
   flow,
 }) => {
+  await NewAccountRequest
+
   const unconfirmedStatus: NewAccountRequestDocumentStatus = 'Confirm Expired'
   const requestDoc = await (
     await (await db).query(aql`
@@ -149,4 +192,5 @@ export const arangoAccountingPersistenceImpl: AccountingPersistence = {
   unconfirmedNewAccountRequest,
   isUserNameAvailable,
   activateNewAccount,
+  config,
 }

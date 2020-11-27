@@ -4,20 +4,22 @@ import { getAccountPersistence } from './accounting.env'
 MoodleNet.respondApi({
   api: 'Accounting.Register_New_Account.Request',
   async handler({ flow, req, detour }) {
-    await (await getAccountPersistence()).addNewAccountRequest({ req, flow })
+    const persistence = await getAccountPersistence()
+    await persistence.addNewAccountRequest({ req, flow })
+    const { newAccountRequestEmail, sendEmailConfirmationAttempts } = await persistence.config()
 
     await MoodleNet.callApi({
       api: 'Email.Verify_Email.Req',
       flow: detour('Accounting.Register_New_Account.Email_Confirm_Result'),
       req: {
-        timeoutMillis: 30000,
+        timeoutMillis: 120000,
         email: {
           to: req.email,
-          from: 'Bob <bob@host.com>',
-          subject: 'verify',
-          text: 'amamamam __TOKEN__',
+          from: newAccountRequestEmail.from,
+          subject: newAccountRequestEmail.subject,
+          text: newAccountRequestEmail.text,
         },
-        maxAttempts: 3,
+        maxAttempts: sendEmailConfirmationAttempts,
         tokenReplaceRegEx: '__TOKEN__',
       },
       opts: { justEnqueue: true },

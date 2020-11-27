@@ -10,6 +10,7 @@ export type Accounting = {
       LookupType<MoodleNetDomain, 'Email.Verify_Email.Result'>,
       { done: boolean }
     >
+    ActivateNewAccount: Api<{ token: string }, {}>
     AccountActivated: Event<{ flow: Flow }>
   }
 }

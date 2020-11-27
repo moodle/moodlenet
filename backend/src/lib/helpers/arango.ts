@@ -1,5 +1,5 @@
 import { Database } from 'arangojs'
-import { CollectionType, CreateCollectionOptions, DocumentCollection } from 'arangojs/collection'
+import { CreateCollectionOptions, DocumentCollection } from 'arangojs/collection'
 import { Config } from 'arangojs/connection'
 import { CreateDatabaseOptions } from 'arangojs/database'
 
@@ -15,9 +15,11 @@ export const createDocumentCollectionIfNotExists = async <DocType extends object
   const db = await _db
   return db.collections().then((collections) => {
     const found = collections.find(
-      async (collection) =>
-        collection.name === name &&
-        (await collection.properties()).type === CollectionType.DOCUMENT_COLLECTION
+      /* async */ (collection) => {
+        // const props = await collection.properties()
+        // const isDocumentCollection = props.type === CollectionType.DOCUMENT_COLLECTION
+        return /*  isDocumentCollection && */ collection.name === name
+      }
     ) as DocumentCollection<DocType>
     return found || db.createCollection<DocType>(name, createOpts)
   })

@@ -1,5 +1,5 @@
 import { Flow } from '../../../../lib/domain/types/path'
-import { Maybe, MutableDocumentBase } from '../../../../lib/helpers/types'
+import { CreatedDocumentBase, Maybe, MutableDocumentBase } from '../../../../lib/helpers/types'
 import { AccountRequest } from '../Accounting'
 
 type AccountKey = string
@@ -16,6 +16,7 @@ export interface AccountingPersistence {
   }): Promise<
     AccountDocument | 'Request Not Found' | 'Unconfirmed Request' | 'Username Not Available'
   >
+  config(_?: { update?: Partial<Config> }): Promise<Config>
 }
 
 // ^ AccountDocument
@@ -38,3 +39,14 @@ type NewAccountRequestDocument = {
 } & Flow &
   MutableDocumentBase
 // $ NewAccountRequestDocument
+
+// ^ Config
+type Config = {
+  sendEmailConfirmationAttempts: number
+  newAccountRequestEmail: {
+    text: string
+    subject: string
+    from: string
+  }
+} & CreatedDocumentBase
+// $ Config

@@ -2,8 +2,12 @@ import { Flow } from '../../../../lib/domain/types/path'
 import { Maybe, CreatedDocumentBase } from '../../../../lib/helpers/types'
 import { EmailObj, VerifyEmailReq } from '../types'
 
-export interface EmailPersistence {
-  storeSentEmail(_: { email: EmailObj; response: SentKO | SentOK; flow: Flow }): Promise<void>
+interface EmailPersistence {
+  storeSentEmail(_: {
+    email: EmailObj
+    response: SentKO | SentOK
+    flow: Flow
+  }): Promise<{ sentEmails: number }>
   storeVerifyingEmail(_: { req: VerifyEmailReq; token: string; flow: Flow }): Promise<void>
   getVerifyingEmail(_: { flow: Flow }): Promise<Maybe<VerifyEmailDocument>>
   incrementAttemptVerifyingEmail(_: { flow: Flow }): Promise<Maybe<VerifyEmailDocument>>
@@ -11,7 +15,7 @@ export interface EmailPersistence {
 }
 
 // ^ VerifyEmailDocument
-export type VerifyEmailDocumentStatus = 'Verifying' | 'Verified' | 'Expired'
+type VerifyEmailDocumentStatus = 'Verifying' | 'Verified' | 'Expired'
 
 type VerifyEmailDocument = {
   req: VerifyEmailReq
@@ -25,8 +29,10 @@ type VerifyEmailDocument = {
 // ^ SentEmailDocument
 type SentKO = { success: false; error: string }
 type SentOK = { success: true; emailId: string }
-type SentEmailDocument = (SentKO | SentOK) & {
+type SentEmailDocument = {
+  sentEmails: SentEmailRecord[]
+} & Flow
+type SentEmailRecord = (SentKO | SentOK) & {
   email: EmailObj
-} & Flow &
-  CreatedDocumentBase
+} & CreatedDocumentBase
 // $ SentEmailDocument

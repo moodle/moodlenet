@@ -1,8 +1,8 @@
 export type CreatedDocumentBase = {
-  createdAt: Date
+  createdAt: number
 }
 export type UpdatedDocumentBase = {
-  updatedAt: Date
+  updatedAt: number
 }
 
 export type MutableDocumentBase = CreatedDocumentBase & UpdatedDocumentBase
