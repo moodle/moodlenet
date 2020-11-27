@@ -34,9 +34,8 @@ MoodleNet.bindApi({
 MoodleNet.respondApi({
   api: 'Accounting.Register_New_Account.Email_Confirm_Result',
   async handler({ flow, req }) {
-    console.log(`Accounting.Register_New_Account.Email_Confirm_Result`, flow._key, flow._route)
     if (req.success) {
-      const acc = await (await getAccountPersistence()).activateNewAccount({ flow })
+      const acc = await (await getAccountPersistence()).confirmNewAccountRequest({ flow })
       if (!acc) {
         return { done: false }
       }
@@ -47,7 +46,7 @@ MoodleNet.respondApi({
       })
       return { done: true }
     } else {
-      await (await getAccountPersistence()).removeNewAccountRequest({ flow })
+      await (await getAccountPersistence()).unconfirmedNewAccountRequest({ flow })
       return { done: true }
     }
   },

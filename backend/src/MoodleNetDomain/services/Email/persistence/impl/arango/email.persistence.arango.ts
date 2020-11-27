@@ -62,8 +62,8 @@ export const arangoEmailPersistenceImpl: EmailPersistence = {
         LET doc = DOCUMENT(CONCAT("VerifyEmail/",${flow._key}))
         UPDATE doc
         WITH doc.attempts < doc.maxAttempts 
-          ? { attempts: (doc.attempts+1) } 
-          : { status: ${ExpiredStatus} }
+          ? { attempts: doc.attempts + 1 } 
+          : { status: "${ExpiredStatus}" }
         IN VerifyEmail
         RETURN NEW
       `)

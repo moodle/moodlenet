@@ -14,4 +14,4 @@ export type Accounting = {
   }
 }
 
-export type AccountRequest = { email: string; username: string }
+export type AccountRequest = { email: string }
