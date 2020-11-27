@@ -1,4 +1,4 @@
-import { EmailObj } from '.'
+import { EmailObj } from '../types'
 
 export interface EmailSenderImpl {
   sendEmail: (

@@ -1,6 +1,5 @@
-import { EmailObj } from '.'
 import { Flow } from '../../../../lib/domain/types/path'
-import { VerifyEmailReq } from './types'
+import { EmailObj, VerifyEmailReq } from '../types'
 
 export interface EmailPersistence {
   storeSentEmail(_: { email: EmailObj; emailId: string; flow: Flow }): Promise<void>

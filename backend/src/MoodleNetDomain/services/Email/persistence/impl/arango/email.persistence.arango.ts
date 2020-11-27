@@ -3,7 +3,7 @@ import {
   createDatabaseIfNotExists,
   createDocumentCollectionIfNotExists,
 } from '../../../../../../lib/helpers/arango'
-import { EmailPersistence, SentEmailDocument, VerifyEmailDocument } from '../../../types'
+import { VerifyEmailDocument, SentEmailDocument, EmailPersistence } from '../../types'
 import { env } from './email.persistence.arango.env'
 
 export const db = createDatabaseIfNotExists({
