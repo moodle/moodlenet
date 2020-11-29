@@ -1,0 +1,13 @@
+overwrite: true
+schema: "../../../../node_modules/@moodlenet/graphql/schema.graphql"
+generates:
+  gql/types.d.ts:
+    plugins:
+      - "typescript"
+      - "typescript-resolvers"
+    config:
+      # contextType: ./#Context
+      # rootValueType: ./#RootValue
+      avoidOptionals: true
+      nonOptionalTypename: false
+      skipTypename: true

@@ -57,6 +57,7 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
           },
         })
       }
+      log(flow, `\n\nAPI call : ${api}`)
 
       AMQP.domainPublish({
         domain,
@@ -120,6 +121,7 @@ export const respond = <Domain>(domain: string) => async <
   const { stopConsume } = await AMQP.queueConsume({
     qName: apiResponderQName,
     async handler({ msg, msgJsonContent, flow }) {
+      log(flow, `\n\nAPI consume : ${api}`)
       const detour = (api: Types.ApiLeaves<Domain>): Flow => ({
         ...flow,
         _route: getApiBindRoute(api),
@@ -136,6 +138,7 @@ export const respond = <Domain>(domain: string) => async <
           return AMQP.Acks.ack
         })
         .catch((err) => {
+          log(flow, `API error`, err)
           reply({ msg, flow, resp: { ___ERROR: { msg: String(err) } } })
           return AMQP.Acks.reject
         })
@@ -154,9 +157,9 @@ export const respond = <Domain>(domain: string) => async <
   function reply<T extends object>(_: { flow: Flow; msg: Message; resp: Types.Reply<T> }) {
     const { flow, msg, resp } = _
     const replyQ = msg.properties.replyTo
+    log(flow, `\n\nAPI reply : ${api}`)
     if (replyQ) {
-      console.table({ _: 'Replying', replyQ, ...flow })
-      //TODO: better publishit to exchange ? is it possible ?
+      //TODO: better publish it to exchange ? is it possible ?
       AMQP.sendToQueue({
         name: replyQ,
         content: resp,
@@ -192,3 +195,9 @@ export const isNoReplyCall = (_: Types.Reply<object>) =>
 //     return { ciccio: 'pallo' } as const
 //   },
 // })
+const log = (flow: Flow, ...args: any[]) =>
+  console.log(
+    `\n\n\n`,
+    args.map((_) => `\n${_}`),
+    `\nflow : ${flow._key} - ${flow._route}`
+  )

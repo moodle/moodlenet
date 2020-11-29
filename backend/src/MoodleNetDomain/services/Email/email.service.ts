@@ -37,8 +37,9 @@ MoodleNet.respondApi({
     const doc = await (await getEmailPersistence()).incrementAttemptVerifyingEmail({ flow })
     if (!doc) {
       return { success: false, error: 'Not Found' }
-    }
-    if (doc.status === 'Expired') {
+    } else if (doc.status === 'Verified') {
+      return { success: true } as const
+    } else if (doc.status === 'Expired') {
       MoodleNet.emitEvent({
         event: 'Email.Verify_Email.Result',
         flow,
@@ -48,7 +49,8 @@ MoodleNet.respondApi({
           success: false,
         },
       })
-    } else {
+      return { success: true } as const
+    } else if (doc.status === 'Verifying') {
       await MoodleNet.callApi({
         api: 'Email.Send_One.Req',
         req: { emailObj: doc.req.email },
@@ -64,8 +66,10 @@ MoodleNet.respondApi({
           delay: doc.req.timeoutMillis,
         },
       })
+      return { success: true } as const
+    } else {
+      return { success: false, error: `Unknown current status ${doc.status}` }
     }
-    return { success: true } as const
   },
 })
 

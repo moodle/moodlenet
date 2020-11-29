@@ -2,7 +2,6 @@
 import { Message, Options, Replies } from 'amqplib'
 import { EventEmitter } from 'events'
 import { newUuid } from '../helpers/misc'
-// import { nodeconsole.Logger } from '.'
 import { channelPromise as channel } from './domain.env'
 import { Flow } from './types/path'
 
@@ -58,8 +57,6 @@ export const domainPublish = (_: {
     const payloadBuf = json2Buffer(payload)
     const ch = await channel
     const confirmFn = (err: any) => (err ? reject(err) : resolve())
-    console.log('\npublish')
-    console.table({ taggedTopic, ...flow, delay: opts?.delay })
 
     if (opts?.delay) {
       const { delayedX } = await assertDelayQX({ domain })
@@ -106,7 +103,6 @@ export const queueConsume = async (_: {
 }) => {
   const { handler, opts, qName } = _
 
-  console.log(`\ndef queueConsume`, qName)
   const ch = await channel
   const stopConsume = async () => {
     ch.cancel((await consumerPr).consumerTag)
@@ -119,12 +115,6 @@ export const queueConsume = async (_: {
         return
       }
 
-      console.log(`\nqueueConsume got msg `, qName, msg.fields.routingKey, msg.properties.headers)
-      console.table({
-        qName,
-        routingKey: msg.fields.routingKey,
-        headers: msg.properties.headers,
-      })
       let msgJsonContent: any = `~~~NOT PARSED~~~`
       try {
         msgJsonContent = buffer2Json(msg.content)
@@ -132,7 +122,6 @@ export const queueConsume = async (_: {
         const ack = await handler({ msgJsonContent, msg, stopConsume, flow })
         ch[ack](msg)
       } catch (err) {
-        console.error(`queueConsume handler error ${qName}`, err)
         const errorAck = opts?.errorAck || Acks.reject
         ch[errorAck](msg, false)
       }
@@ -239,7 +228,6 @@ const assertDelayQX = async (_: { domain: string; tag?: string }) => {
     opts: { deadLetterExchange: domainEx },
   })
   await bindQ({ name: delayedQName, exchange: delayedX, topic: '' })
-  console.log('assert delay q', q.queue, delayedX)
   return {
     q: q.queue,
     delayedX,
@@ -262,12 +250,6 @@ channel.then(async (ch) => {
     const { flow } = headers
 
     const ev = flow._key
-    console.table({
-      _: 'Node Emitter Consume',
-      ev,
-      routingKey: msg?.fields.routingKey,
-      headers: msg?.properties.headers,
-    })
     msg && ch.ack(msg)
     if (!ev) {
       return
@@ -280,7 +262,6 @@ export const mainNodeQEmitter = {
   sub<T>(_: { flow: Flow; handler(_: EventEmitterType<T>): unknown }) {
     const { flow, handler } = _
     const ev = flow._key
-    console.table({ _: 'Node Emitter Sub', ev, ...flow })
 
     NodeEmitter.addListener(ev, listener)
     return unsub
@@ -288,13 +269,6 @@ export const mainNodeQEmitter = {
       ev && NodeEmitter.removeListener(ev, listener)
     }
     function listener(msg: Message) {
-      console.table({
-        _: 'Node Emitter Listener',
-        ev,
-        ...flow,
-        headers: msg.properties.headers,
-        routingKey: msg.fields.routingKey,
-      })
       handler({
         jsonContent: buffer2Json(msg.content),
         msg,

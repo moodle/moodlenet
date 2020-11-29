@@ -1,9 +1,6 @@
 {
   "folders": [
 		{
-			"path": "backend"
-		},
-		{
 			"path": "."
 		}
 	],
@@ -11,6 +8,7 @@
 		"typescript.tsdk": "backend/node_modules/typescript/lib",
 		"todo-tree.filtering.excludeGlobs": [
 			"**/node_modules"
-		]
+		],
+		"git.ignoreLimitWarning": true
 	}
 }

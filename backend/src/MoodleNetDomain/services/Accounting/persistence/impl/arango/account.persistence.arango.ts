@@ -63,6 +63,7 @@ const addNewAccountRequest: AccountingPersistence['addNewAccountRequest'] = asyn
   ).next()
   return
 }
+
 const activateNewAccount: AccountingPersistence['activateNewAccount'] = async ({
   requestFlow,
   username,
@@ -98,6 +99,7 @@ const activateNewAccount: AccountingPersistence['activateNewAccount'] = async ({
   ).next()
   return newAccountDoc
 }
+
 const confirmNewAccountRequest: AccountingPersistence['confirmNewAccountRequest'] = async ({
   flow,
 }) => {
@@ -127,6 +129,7 @@ const confirmNewAccountRequest: AccountingPersistence['confirmNewAccountRequest'
   }
   return 'Confirmed'
 }
+
 const isUserNameAvailable: AccountingPersistence['isUserNameAvailable'] = async ({ username }) => {
   await Account
 
@@ -141,8 +144,7 @@ const isUserNameAvailable: AccountingPersistence['isUserNameAvailable'] = async 
   return available
 }
 
-const config: AccountingPersistence['config'] = async (_) => {
-  const { update = {} } = _ || {}
+const config: AccountingPersistence['config'] = async () => {
   const Cfg = await Config
 
   const currentConfig = await (
@@ -154,42 +156,42 @@ const config: AccountingPersistence['config'] = async (_) => {
     `)
   ).next()
   if (currentConfig) {
-    if (!update) {
-      return currentConfig
-    } else {
-      await Cfg.update(currentConfig._key, update)
-    }
+    return currentConfig
   } else {
-    const updatedDefaultConfig = { ...DefaultConfig, ...update }
-    await Cfg.save(updatedDefaultConfig)
-    return updatedDefaultConfig
+    return await Cfg.save(DefaultConfig, { returnNew: true })
   }
 }
 
-const unconfirmedNewAccountRequest: AccountingPersistence['unconfirmedNewAccountRequest'] = async ({
+const newAccountRequestExpired: AccountingPersistence['newAccountRequestExpired'] = async ({
   flow,
 }) => {
   await NewAccountRequest
 
-  const unconfirmedStatus: NewAccountRequestDocumentStatus = 'Confirm Expired'
+  const expiredStatus: NewAccountRequestDocumentStatus = 'Confirm Expired'
+  const waitingStatus: NewAccountRequestDocumentStatus = 'Waiting Email Confirmation'
   const requestDoc = await (
     await (await db).query(aql`
       LET doc = DOCUMENT(CONCAT("NewAccountRequest/",${flow._key}))
       UPDATE doc
-      WITH {
-        status:${unconfirmedStatus},
-        updatedAt: DATE_NOW()
-      }
+      WITH (
+        doc.status == ${waitingStatus}
+        ? {
+          status:${expiredStatus},
+          updatedAt: DATE_NOW()
+        }
+        : {}
+      )
       IN NewAccountRequest
       RETURN NEW
     `)
   ).next()
   return requestDoc
 }
+
 export const arangoAccountingPersistenceImpl: AccountingPersistence = {
   addNewAccountRequest,
   confirmNewAccountRequest,
-  unconfirmedNewAccountRequest,
+  newAccountRequestExpired,
   isUserNameAvailable,
   activateNewAccount,
   config,

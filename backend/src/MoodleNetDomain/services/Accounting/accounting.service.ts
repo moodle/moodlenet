@@ -5,14 +5,18 @@ MoodleNet.respondApi({
   api: 'Accounting.Register_New_Account.Request',
   async handler({ flow, req, detour }) {
     const persistence = await getAccountPersistence()
+    const config = await persistence.config()
+    const {
+      newAccountRequestEmail,
+      sendEmailConfirmationAttempts,
+      sendEmailConfirmationDelay,
+    } = config
     await persistence.addNewAccountRequest({ req, flow })
-    const { newAccountRequestEmail, sendEmailConfirmationAttempts } = await persistence.config()
-
     await MoodleNet.callApi({
       api: 'Email.Verify_Email.Req',
       flow: detour('Accounting.Register_New_Account.Email_Confirm_Result'),
       req: {
-        timeoutMillis: 120000,
+        timeoutMillis: sendEmailConfirmationDelay,
         email: {
           to: req.email,
           from: newAccountRequestEmail.from,
@@ -48,7 +52,7 @@ MoodleNet.respondApi({
       })
       return { done: true }
     } else {
-      await (await getAccountPersistence()).unconfirmedNewAccountRequest({ flow })
+      await (await getAccountPersistence()).newAccountRequestExpired({ flow })
       return { done: true }
     }
   },

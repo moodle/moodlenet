@@ -11,6 +11,7 @@ export const emit = <Domain>(domain: string) => <EventPath extends Event.EventLe
   opts?: EmitOpts
 }) => {
   const { event, payload, flow /* , opts */ } = _
+  log(flow, `\n\Event emit : ${event}`)
   return AMQP.domainPublish({
     domain,
     flow,
@@ -18,3 +19,9 @@ export const emit = <Domain>(domain: string) => <EventPath extends Event.EventLe
     payload,
   })
 }
+const log = (flow: Flow, ...args: any[]) =>
+  console.log(
+    `\n\n\n`,
+    args.map((_) => `\n${_}`),
+    `\nflow : ${flow._key} - ${flow._route}`
+  )

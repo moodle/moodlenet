@@ -1,0 +1,15 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+type SimpleResponse {
+  success: Boolean!
+  message: String
+}
+type Query {
+  x: Int
+}
+type Mutation {
+  accountSignUp(email: String!): SimpleResponse!
+  accountConfirmEmail(token: String!): SimpleResponse!
+}

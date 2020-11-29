@@ -5,7 +5,7 @@ import { AccountRequest } from '../Accounting'
 type AccountKey = string
 export interface AccountingPersistence {
   isUserNameAvailable(_: { username: string }): Promise<boolean>
-  unconfirmedNewAccountRequest(_: { flow: Flow }): Promise<Maybe<NewAccountRequestDocument>>
+  newAccountRequestExpired(_: { flow: Flow }): Promise<Maybe<NewAccountRequestDocument>>
   addNewAccountRequest(_: { req: AccountRequest; flow: Flow }): Promise<void>
   confirmNewAccountRequest(_: {
     flow: Flow
@@ -16,7 +16,7 @@ export interface AccountingPersistence {
   }): Promise<
     AccountDocument | 'Request Not Found' | 'Unconfirmed Request' | 'Username Not Available'
   >
-  config(_?: { update?: Partial<Config> }): Promise<Config>
+  config(): Promise<Config>
 }
 
 // ^ AccountDocument
@@ -43,6 +43,7 @@ type NewAccountRequestDocument = {
 // ^ Config
 type Config = {
   sendEmailConfirmationAttempts: number
+  sendEmailConfirmationDelay: number
   newAccountRequestEmail: {
     text: string
     subject: string

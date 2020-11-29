@@ -67,13 +67,20 @@ export const arangoEmailPersistenceImpl: EmailPersistence = {
     await VerifyEmail
 
     const expiredStatus: VerifyEmailDocumentStatus = 'Expired'
+    const verifyingStatus: VerifyEmailDocumentStatus = 'Verifying'
     const doc: Maybe<VerifyEmailDocument> = await (
       await (await db).query(aql`
         LET doc = DOCUMENT(CONCAT("VerifyEmail/",${flow._key}))
+        LET status = doc.status
+        LET maxAttemptsReached = doc.attempts >= doc.req.maxAttempts
         UPDATE doc
-        WITH (doc.attempts < doc.req.maxAttempts 
-          ? { attempts: doc.attempts + 1 } 
-          : { status: ${expiredStatus} })
+        WITH (
+          status == ${verifyingStatus} ? 
+            maxAttemptsReached
+            ? { status: ${expiredStatus} }
+            : { attempts: doc.attempts + 1 } 
+          : {}
+        )
         IN VerifyEmail
         RETURN NEW
       `)
@@ -105,11 +112,13 @@ export const arangoEmailPersistenceImpl: EmailPersistence = {
 
   async confirmEmail({ token }) {
     await VerifyEmail
+    const verifiedStatus: VerifyEmailDocumentStatus = 'Verified'
     const doc = await (
       await (await db).query(aql`
         FOR doc in VerifyEmail
-        FILTER doc.token==${token}
-        LIMIT 1
+          FILTER doc.token==${token}
+          LIMIT 1
+          UPDATE doc WITH { status:${verifiedStatus} } IN VerifyEmail
         RETURN doc
       `)
     ).next()
