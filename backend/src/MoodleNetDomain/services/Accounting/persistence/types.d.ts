@@ -12,7 +12,7 @@ export interface AccountingPersistence {
   }): Promise<true | 'account or request with this email already present'>
   confirmNewAccountRequest(_: {
     flow: Flow
-  }): Promise<'Confirmed' | 'Request Not Found' | 'Already Confirmed'>
+  }): Promise<'Confirmed' | 'Request Not Found' | 'Previously Confirmed'>
   activateNewAccount(_: {
     requestFlowKey: string
     password: string

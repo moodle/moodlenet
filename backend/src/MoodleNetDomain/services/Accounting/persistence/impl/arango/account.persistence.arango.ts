@@ -159,7 +159,7 @@ const confirmNewAccountRequest: AccountingPersistence['confirmNewAccountRequest'
     return 'Request Not Found'
   }
   if (confirmRes === true) {
-    return 'Already Confirmed'
+    return 'Previously Confirmed'
   }
   return 'Confirmed'
 }
