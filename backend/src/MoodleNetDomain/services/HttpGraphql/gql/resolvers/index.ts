@@ -6,5 +6,6 @@ import { Query } from './query'
 export const resolvers: Resolvers = {
   Query,
   Mutation,
+  RequestConfirmEmailResponse: defaultTypeResolver as any,
   SimpleResponse: defaultTypeResolver as any,
 }

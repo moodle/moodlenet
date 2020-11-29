@@ -5,14 +5,17 @@ import { MoodleNetDomain } from '../../MoodleNetDomain'
 
 export type Accounting = {
   Register_New_Account: {
-    Request: Api<AccountRequest, {}>
+    Request: Api<AccountRequest, { success: true } | { success: false; reason: string }>
     Email_Confirm_Result: Api<
       LookupType<MoodleNetDomain, 'Email.Verify_Email.Result'>,
       { done: boolean }
     >
-    ActivateNewAccount: Api<{ token: string }, {}>
-    AccountActivated: Event<{ flow: Flow }>
+    ActivateNewAccount: Api<
+      { requestFlowKey: string; password: string; username: string },
+      { success: true } | { success: false; reason: string }
+    >
   }
+  AccountActivated: Event<{ requestFlowKey: string }> //TODO: should be flow obj .. change allaround
 }
 
 export type AccountRequest = { email: string }

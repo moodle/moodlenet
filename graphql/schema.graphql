@@ -9,7 +9,11 @@ type SimpleResponse {
 type Query {
   x: Int
 }
+type RequestConfirmEmailResponse {
+  flowKey: String
+}
 type Mutation {
   accountSignUp(email: String!): SimpleResponse!
-  accountConfirmEmail(token: String!): SimpleResponse!
+  accountRequestConfirmEmail(token: String!): RequestConfirmEmailResponse
+  accountRequestActivateAccount(username: String!, password: String!, flowKey: String!): SimpleResponse!
 }

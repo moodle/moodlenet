@@ -78,7 +78,7 @@ MoodleNet.respondApi({
   async handler({ req: { token } }) {
     const res = await (await getEmailPersistence()).confirmEmail({ token })
     if (!res) {
-      return { error: `couldn't find`, success: false }
+      return { error: `couldn't find`, success: false } as const
     }
     const { current, prevStatus } = res
     if (prevStatus === 'Verifying') {
@@ -88,7 +88,7 @@ MoodleNet.respondApi({
         payload: { email: current.req.email.to, success: true },
       })
     }
-    return { success: true } as const
+    return { success: true, flow: { _key: current._key, _route: current._route } } as const
   },
 })
 

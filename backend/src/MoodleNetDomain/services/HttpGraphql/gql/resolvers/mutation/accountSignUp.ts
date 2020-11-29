@@ -15,9 +15,15 @@ export const accountSignUp: MutationResolvers['accountSignUp'] = async (_parent,
         message: res.___ERROR.msg,
         success: false,
       }
-    : {
+    : res.success
+    ? {
         __typename: 'SimpleResponse',
         message: null,
         success: true,
+      }
+    : {
+        __typename: 'SimpleResponse',
+        message: res.reason,
+        success: false,
       }
 }

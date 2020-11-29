@@ -6,12 +6,16 @@ type AccountKey = string
 export interface AccountingPersistence {
   isUserNameAvailable(_: { username: string }): Promise<boolean>
   newAccountRequestExpired(_: { flow: Flow }): Promise<Maybe<NewAccountRequestDocument>>
-  addNewAccountRequest(_: { req: AccountRequest; flow: Flow }): Promise<void>
+  addNewAccountRequest(_: {
+    req: AccountRequest
+    flow: Flow
+  }): Promise<true | 'account or request with this email already present'>
   confirmNewAccountRequest(_: {
     flow: Flow
   }): Promise<'Confirmed' | 'Request Not Found' | 'Already Confirmed'>
   activateNewAccount(_: {
-    requestFlow: Flow
+    requestFlowKey: string
+    password: string
     username: string
   }): Promise<
     AccountDocument | 'Request Not Found' | 'Unconfirmed Request' | 'Username Not Available'
@@ -21,10 +25,11 @@ export interface AccountingPersistence {
 
 // ^ AccountDocument
 type AccountDocument = {
-  username: string
   email: string
+  password: string
+  username: string
   active: boolean
-  requestFlow: Flow
+  requestFlowKey: string
 } & MutableDocumentBase
 // $ AccountDocument
 

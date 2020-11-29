@@ -42,12 +42,38 @@ const addNewAccountRequest: AccountingPersistence['addNewAccountRequest'] = asyn
   req: { email },
   flow,
 }) => {
+  await NewAccountRequest
+  await Account
+
+  const maybeAccountWithThisEmail = await (
+    await (await db).query(aql`
+      FOR acc in Account
+      FILTER acc.email==${email}
+      LIMIT 1
+      RETURN acc
+    `)
+  ).next()
+  if (maybeAccountWithThisEmail) {
+    return 'account or request with this email already present'
+  }
+
+  const maybeRequestWithThisEmail = await (
+    await (await db).query(aql`
+      FOR req in NewAccountRequest
+      FILTER req.email==${email}
+      LIMIT 1
+      RETURN req
+    `)
+  ).next()
+  if (maybeRequestWithThisEmail) {
+    return 'account or request with this email already present'
+  }
+
   const document: Omit<NewAccountRequestDocument, 'createdAt' | 'updatedAt'> = {
     ...flow,
     email,
     status: 'Waiting Email Confirmation',
   }
-  await NewAccountRequest
   await (
     await (await db).query(aql`
         INSERT MERGE(
@@ -61,18 +87,25 @@ const addNewAccountRequest: AccountingPersistence['addNewAccountRequest'] = asyn
         RETURN null
       `)
   ).next()
-  return
+  return true
 }
 
 const activateNewAccount: AccountingPersistence['activateNewAccount'] = async ({
-  requestFlow,
+  requestFlowKey,
+  password,
   username,
 }) => {
   await Account
 
-  const request = await (await NewAccountRequest).document(requestFlow._key)
+  const request = await (await NewAccountRequest).document(requestFlowKey)
   if (!request) {
     return 'Request Not Found'
+  }
+  if (request.status === 'Confirm Expired') {
+    return 'Request Not Found'
+  }
+  if (request.status === 'Waiting Email Confirmation') {
+    return 'Unconfirmed Request'
   }
   const usernameAvailable = await isUserNameAvailable({ username })
   if (!usernameAvailable) {
@@ -81,7 +114,8 @@ const activateNewAccount: AccountingPersistence['activateNewAccount'] = async ({
   const accountDoc: Omit<AccountDocument, 'createdAt' | 'updatedAt'> = {
     active: true,
     email: request.email,
-    requestFlow,
+    requestFlowKey,
+    password,
     username,
   }
   const newAccountDoc: AccountDocument = await (
@@ -133,15 +167,15 @@ const confirmNewAccountRequest: AccountingPersistence['confirmNewAccountRequest'
 const isUserNameAvailable: AccountingPersistence['isUserNameAvailable'] = async ({ username }) => {
   await Account
 
-  const available = await (
+  const accountWithSameUsername = await (
     await (await db).query(aql`
     FOR doc IN Account
     FILTER doc.username==${username}
     LIMIT 1
-    RETURN doc ? false : true
+    RETURN doc 
   `)
   ).next()
-  return available
+  return !accountWithSameUsername
 }
 
 const config: AccountingPersistence['config'] = async () => {

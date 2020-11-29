@@ -11,24 +11,28 @@ MoodleNet.respondApi({
       sendEmailConfirmationAttempts,
       sendEmailConfirmationDelay,
     } = config
-    await persistence.addNewAccountRequest({ req, flow })
-    await MoodleNet.callApi({
-      api: 'Email.Verify_Email.Req',
-      flow: detour('Accounting.Register_New_Account.Email_Confirm_Result'),
-      req: {
-        timeoutMillis: sendEmailConfirmationDelay,
-        email: {
-          to: req.email,
-          from: newAccountRequestEmail.from,
-          subject: newAccountRequestEmail.subject,
-          text: newAccountRequestEmail.text,
+    const resp = await persistence.addNewAccountRequest({ req, flow })
+    if (resp === true) {
+      await MoodleNet.callApi({
+        api: 'Email.Verify_Email.Req',
+        flow: detour('Accounting.Register_New_Account.Email_Confirm_Result'),
+        req: {
+          timeoutMillis: sendEmailConfirmationDelay,
+          email: {
+            to: req.email,
+            from: newAccountRequestEmail.from,
+            subject: newAccountRequestEmail.subject,
+            text: newAccountRequestEmail.text,
+          },
+          maxAttempts: sendEmailConfirmationAttempts,
+          tokenReplaceRegEx: '__TOKEN__',
         },
-        maxAttempts: sendEmailConfirmationAttempts,
-        tokenReplaceRegEx: '__TOKEN__',
-      },
-      opts: { justEnqueue: true },
-    })
-    return {}
+        opts: { justEnqueue: true },
+      })
+      return { success: true } as const
+    } else {
+      return { success: false, reason: resp } //as const
+    }
   },
 })
 
@@ -45,15 +49,30 @@ MoodleNet.respondApi({
       if (!acc) {
         return { done: false }
       }
-      await MoodleNet.emitEvent({
-        event: 'Accounting.Register_New_Account.AccountActivated',
-        payload: { flow },
-        flow,
-      })
       return { done: true }
     } else {
       await (await getAccountPersistence()).newAccountRequestExpired({ flow })
       return { done: true }
     }
+  },
+})
+
+MoodleNet.respondApi({
+  api: 'Accounting.Register_New_Account.ActivateNewAccount',
+  async handler({ flow, req: { requestFlowKey, password, username } }) {
+    const maybeAccount = await (await getAccountPersistence()).activateNewAccount({
+      requestFlowKey,
+      password,
+      username,
+    })
+    if (typeof maybeAccount === 'string') {
+      return { success: false, reason: maybeAccount } as const
+    }
+    MoodleNet.emitEvent({
+      event: 'Accounting.AccountActivated',
+      flow,
+      payload: { requestFlowKey: maybeAccount.requestFlowKey },
+    })
+    return { success: true } as const
   },
 })

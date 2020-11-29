@@ -1,8 +1,10 @@
 import { MutationResolvers } from '../../types'
-import { accountConfirmEmail } from './accountConfirmEmail'
+import { accountRequestConfirmEmail } from './accountRequestConfirmEmail'
 import { accountSignUp } from './accountSignUp'
+import { accountRequestActivateAccount } from './accountRequestActivateAccount'
 
 export const Mutation: MutationResolvers = {
-  accountConfirmEmail,
+  accountRequestConfirmEmail,
   accountSignUp,
+  accountRequestActivateAccount,
 }
