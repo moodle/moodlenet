@@ -113,15 +113,18 @@ export const arangoEmailPersistenceImpl: EmailPersistence = {
   async confirmEmail({ token }) {
     await VerifyEmail
     const verifiedStatus: VerifyEmailDocumentStatus = 'Verified'
-    const doc = await (
+    const res = await (
       await (await db).query(aql`
         FOR doc in VerifyEmail
           FILTER doc.token==${token}
           LIMIT 1
           UPDATE doc WITH { status:${verifiedStatus} } IN VerifyEmail
-        RETURN doc
+        RETURN {
+          current:NEW,
+          prevStatus:OLD.status
+        }
       `)
     ).next()
-    return doc
+    return res
   },
 }

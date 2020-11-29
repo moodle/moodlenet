@@ -11,7 +11,14 @@ interface EmailPersistence {
   storeVerifyingEmail(_: { req: VerifyEmailReq; token: string; flow: Flow }): Promise<void>
   getVerifyingEmail(_: { flow: Flow }): Promise<Maybe<VerifyEmailDocument>>
   incrementAttemptVerifyingEmail(_: { flow: Flow }): Promise<Maybe<VerifyEmailDocument>>
-  confirmEmail(_: { token: string }): Promise<Maybe<VerifyEmailDocument>>
+  confirmEmail(_: {
+    token: string
+  }): Promise<
+    Maybe<{
+      current: VerifyEmailDocument
+      prevStatus: VerifyEmailDocumentStatus
+    }>
+  >
 }
 
 // ^ VerifyEmailDocument

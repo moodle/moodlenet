@@ -76,15 +76,19 @@ MoodleNet.respondApi({
 MoodleNet.respondApi({
   api: 'Email.Verify_Email.Confirm_Email',
   async handler({ req: { token } }) {
-    const doc = await (await getEmailPersistence()).confirmEmail({ token })
-    if (doc) {
+    const res = await (await getEmailPersistence()).confirmEmail({ token })
+    if (!res) {
+      return { error: `couldn't find`, success: false }
+    }
+    const { current, prevStatus } = res
+    if (prevStatus === 'Verifying') {
       MoodleNet.emitEvent({
         event: 'Email.Verify_Email.Result',
-        flow: { _route: doc._route, _key: doc._key },
-        payload: { email: doc.req.email.to, success: true },
+        flow: { _route: current._route, _key: current._key },
+        payload: { email: current.req.email.to, success: true },
       })
     }
-    return doc ? ({ success: true } as const) : { error: `couldn't find`, success: false }
+    return { success: true } as const
   },
 })
 
