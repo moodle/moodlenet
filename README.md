@@ -19,13 +19,16 @@ cd backend
 cp simple.env.example .env
 ```
 
-create a sandbox in your Mailgun account for receiving test emails     
+create a sandbox in your Mailgun account for receiving test emails
+https://help.mailgun.com/hc/en-us/sections/200437784-Getting-Started     
+pay attention to [Authorized Recipients](https://help.mailgun.com/hc/en-us/articles/217531258-Authorized-Recipients) section
+
 and set mailgun env variables in `.env`
 ```bash
 EMAIL_MAILGUN_API_KEY=key-#############
 EMAIL_MAILGUN_DOMAIN=sandbox################
 ```
-
+x
 start system as a whole     
 ```bash
 yarn start
