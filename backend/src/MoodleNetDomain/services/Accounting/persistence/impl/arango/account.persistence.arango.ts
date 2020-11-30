@@ -38,13 +38,12 @@ export const NewAccountRequest = createDocumentCollectionIfNotExists<NewAccountR
   createOpts: {},
 })
 
+const DBReady = Promise.all([db, Account, Config, NewAccountRequest])
+
 const addNewAccountRequest: AccountingPersistence['addNewAccountRequest'] = async ({
   req: { email },
   flow,
 }) => {
-  await NewAccountRequest
-  await Account
-
   const maybeAccountWithThisEmail = await (
     await (await db).query(aql`
       FOR acc in Account
@@ -56,11 +55,14 @@ const addNewAccountRequest: AccountingPersistence['addNewAccountRequest'] = asyn
   if (maybeAccountWithThisEmail) {
     return 'account or request with this email already present'
   }
-
-  const maybeRequestWithThisEmail = await (
+  const searchRequestStatuses: NewAccountRequestDocumentStatus[] = [
+    'Waiting Email Confirmation',
+    'Email Confirmed',
+  ]
+  let maybeRequestWithThisEmail = await (
     await (await db).query(aql`
       FOR req in NewAccountRequest
-      FILTER req.email==${email}
+      FILTER req.email==${email} && req.status IN ${searchRequestStatuses}
       LIMIT 1
       RETURN req
     `)
@@ -95,8 +97,6 @@ const activateNewAccount: AccountingPersistence['activateNewAccount'] = async ({
   password,
   username,
 }) => {
-  await Account
-
   const request = await (await NewAccountRequest).document(requestFlowKey)
   if (!request) {
     return 'Request Not Found'
@@ -131,14 +131,18 @@ const activateNewAccount: AccountingPersistence['activateNewAccount'] = async ({
       RETURN NEW
     `)
   ).next()
+  if (newAccountDoc) {
+    await (await NewAccountRequest).update(requestFlowKey, {
+      status: 'Account Created',
+    })
+  }
+
   return newAccountDoc
 }
 
 const confirmNewAccountRequest: AccountingPersistence['confirmNewAccountRequest'] = async ({
   flow,
 }) => {
-  await NewAccountRequest
-
   const confirmedStatus: NewAccountRequestDocumentStatus = 'Email Confirmed'
   const confirmRes: Maybe<NewAccountRequestDocument | true> = await (
     await (await db).query(aql`
@@ -165,8 +169,6 @@ const confirmNewAccountRequest: AccountingPersistence['confirmNewAccountRequest'
 }
 
 const isUserNameAvailable: AccountingPersistence['isUserNameAvailable'] = async ({ username }) => {
-  await Account
-
   const accountWithSameUsername = await (
     await (await db).query(aql`
     FOR doc IN Account
@@ -179,8 +181,6 @@ const isUserNameAvailable: AccountingPersistence['isUserNameAvailable'] = async 
 }
 
 const config: AccountingPersistence['config'] = async () => {
-  const Cfg = await Config
-
   const currentConfig = await (
     await (await db).query(aql`
       FOR cfg IN Config
@@ -192,15 +192,14 @@ const config: AccountingPersistence['config'] = async () => {
   if (currentConfig) {
     return currentConfig
   } else {
-    return await Cfg.save(DefaultConfig, { returnNew: true })
+    const savedDefaultConfig = await (await Config).save(DefaultConfig, { returnNew: true })
+    return savedDefaultConfig.new!
   }
 }
 
 const newAccountRequestExpired: AccountingPersistence['newAccountRequestExpired'] = async ({
   flow,
 }) => {
-  await NewAccountRequest
-
   const expiredStatus: NewAccountRequestDocumentStatus = 'Confirm Expired'
   const waitingStatus: NewAccountRequestDocumentStatus = 'Waiting Email Confirmation'
   const requestDoc = await (
@@ -222,11 +221,11 @@ const newAccountRequestExpired: AccountingPersistence['newAccountRequestExpired'
   return requestDoc
 }
 
-export const arangoAccountingPersistenceImpl: AccountingPersistence = {
+export const arangoAccountingPersistenceImpl: Promise<AccountingPersistence> = DBReady.then(() => ({
   addNewAccountRequest,
   confirmNewAccountRequest,
   newAccountRequestExpired,
   isUserNameAvailable,
   activateNewAccount,
   config,
-}
+}))

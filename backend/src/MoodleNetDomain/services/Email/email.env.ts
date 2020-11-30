@@ -12,7 +12,7 @@ interface EmailEnv {
 }
 
 const Validator = Yup.object<EmailEnv>({
-  persistenceModule: Yup.string().required().default('mongo'),
+  persistenceModule: Yup.string().required().default('arango'),
   senderModule: Yup.string().required().default('mailgun'),
 })
 

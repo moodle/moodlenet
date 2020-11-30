@@ -30,10 +30,10 @@ export const SentEmail = createDocumentCollectionIfNotExists<SentEmailDocument>(
   createOpts: {},
 })
 
-export const arangoEmailPersistenceImpl: EmailPersistence = {
-  async storeSentEmail(_) {
-    await SentEmail
+const DBReady = Promise.all([db, VerifyEmail, SentEmail])
 
+export const arangoEmailPersistenceImpl: Promise<EmailPersistence> = DBReady.then(() => ({
+  async storeSentEmail(_) {
     const { email, response, flow } = _
 
     const record: Omit<SentEmailRecord, 'createdAt'> = {
@@ -64,22 +64,21 @@ export const arangoEmailPersistenceImpl: EmailPersistence = {
     return doc
   },
   async incrementAttemptVerifyingEmail({ flow }) {
-    await VerifyEmail
-
     const expiredStatus: VerifyEmailDocumentStatus = 'Expired'
     const verifyingStatus: VerifyEmailDocumentStatus = 'Verifying'
+    const documentId = `VerifyEmail/${flow._key}`
     const doc: Maybe<VerifyEmailDocument> = await (
       await (await db).query(aql`
-        LET doc = DOCUMENT(CONCAT("VerifyEmail/",${flow._key}))
+        LET doc = DOCUMENT(${documentId})
         LET status = doc.status
         LET maxAttemptsReached = doc.attempts >= doc.req.maxAttempts
         UPDATE doc
         WITH (
-          status == ${verifyingStatus} ? 
-            maxAttemptsReached
-            ? { status: ${expiredStatus} }
-            : { attempts: doc.attempts + 1 } 
-          : {}
+          status == ${verifyingStatus}
+            ? maxAttemptsReached
+              ? { status: ${expiredStatus} }
+              : { attempts: doc.attempts + 1 } 
+            : {}
         )
         IN VerifyEmail
         RETURN NEW
@@ -88,10 +87,8 @@ export const arangoEmailPersistenceImpl: EmailPersistence = {
     return doc
   },
   async storeVerifyingEmail({ req, flow, token }) {
-    await VerifyEmail
     const document: Omit<VerifyEmailDocument, 'createdAt'> = {
       ...flow,
-      ...req,
       attempts: 0,
       req,
       token,
@@ -111,7 +108,6 @@ export const arangoEmailPersistenceImpl: EmailPersistence = {
   },
 
   async confirmEmail({ token }) {
-    await VerifyEmail
     const verifiedStatus: VerifyEmailDocumentStatus = 'Verified'
     const res = await (
       await (await db).query(aql`
@@ -127,4 +123,4 @@ export const arangoEmailPersistenceImpl: EmailPersistence = {
     ).next()
     return res
   },
-}
+}))

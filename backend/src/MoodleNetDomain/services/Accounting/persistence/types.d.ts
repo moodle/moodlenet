@@ -29,7 +29,7 @@ type AccountDocument = {
   password: string
   username: string
   active: boolean
-  requestFlowKey: string
+  requestFlowKey: string // TODO: remove this. may use some incoming edge instead
 } & MutableDocumentBase
 // $ AccountDocument
 
@@ -37,11 +37,12 @@ type AccountDocument = {
 type NewAccountRequestDocumentStatus =
   | 'Waiting Email Confirmation'
   | 'Email Confirmed'
+  | 'Account Created'
   | 'Confirm Expired'
 type NewAccountRequestDocument = {
   email: string
   status: NewAccountRequestDocumentStatus
-} & Flow &
+} & Flow & // TODO: would it make sense to use incoming edge for flow relation too (all around ) ?
   MutableDocumentBase
 // $ NewAccountRequestDocument
 
