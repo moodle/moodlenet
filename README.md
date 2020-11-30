@@ -43,7 +43,7 @@ yarn start
 ```
 
 every other time you start system remember to start docker containers first  
-if you didn't deleted them you can just
+if you didn't deleted them you can simply
 
 ```bash
 docker start mnrabbit mnarango
