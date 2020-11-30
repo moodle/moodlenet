@@ -19,8 +19,7 @@ cd backend
 cp simple.env.example .env
 ```
 
-create a sandbox in your Mailgun account for receiving test emails    
-https://help.mailgun.com/hc/en-us/sections/200437784-Getting-Started     
+create a sandbox in your [Mailgun account](https://help.mailgun.com/hc/en-us/sections/200437784-Getting-Started) for receiving test emails         
 pay attention to [Authorized Recipients](https://help.mailgun.com/hc/en-us/articles/217531258-Authorized-Recipients) section
 
 and set mailgun env variables in `.env`
