@@ -41,6 +41,8 @@
   "scripts": {
     "gen:graphql:types": "run-script-os",
     "gen:graphql:types:darwin:linux": "graphql-codegen --config ./codegen.yml",
+    "gen:graphql:types:darwin:default": "graphql-codegen --config ./codegen.yml",
+    "postinstall": "tsc",
     "start": "node index.js"
   }
 }
