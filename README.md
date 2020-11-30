@@ -12,13 +12,9 @@ start an RabbitMQ docker container
 docker run -d --network host  --name mnrabbit rabbitmq:3-management
 ```
 
-cd into backend folder       
+cd into backend folder and create an `.env` file out of example            
 ```bash
 cd backend
-```
-
-create an `.env` file out of example      
-```bash
 cp simple.env.example .env
 ```
 
