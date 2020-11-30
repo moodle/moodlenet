@@ -11,7 +11,6 @@ if (!globPattern) {
     }
     console.log('starting', matches)
     matches.forEach(_ => require(`./js/${_}`))
-
   })
 }
 

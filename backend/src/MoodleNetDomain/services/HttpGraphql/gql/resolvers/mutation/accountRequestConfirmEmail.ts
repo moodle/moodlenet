@@ -1,6 +1,6 @@
-import { MutationResolvers } from '../../types'
 import { MoodleNet } from '../../../../..'
 import { newFlow } from '../../../../../../lib/domain/helpers'
+import { MutationResolvers } from '../../../../../graphql'
 
 export const accountRequestConfirmEmail: MutationResolvers['accountRequestConfirmEmail'] = async (
   _parent,

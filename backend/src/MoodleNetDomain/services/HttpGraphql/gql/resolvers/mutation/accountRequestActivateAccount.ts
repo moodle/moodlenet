@@ -1,6 +1,6 @@
-import { MutationResolvers } from '../../types'
 import { MoodleNet } from '../../../../..'
 import { newFlow } from '../../../../../../lib/domain/helpers'
+import { MutationResolvers } from '../../../../../graphql'
 
 export const accountRequestActivateAccount: MutationResolvers['accountRequestActivateAccount'] = async (
   _parent,

@@ -3,7 +3,7 @@ import { applyMiddleware } from 'graphql-middleware'
 import { resolvers } from './resolvers'
 import { directiveResolvers } from './directives'
 import { middlewares } from './middlewares'
-import typeDefs from '../typeDefs'
+import { typeDefs } from '../../../graphqlTypeDefs'
 
 export type Context = {}
 export type RootValue = {}

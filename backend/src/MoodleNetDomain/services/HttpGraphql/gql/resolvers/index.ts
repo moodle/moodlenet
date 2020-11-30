@@ -1,5 +1,5 @@
 import { defaultTypeResolver } from 'graphql'
-import { Resolvers } from '../types'
+import { Resolvers } from '../../../../graphql'
 import { Mutation } from './mutation'
 import { Query } from './query'
 

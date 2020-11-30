@@ -5,7 +5,8 @@ export type Api<Req extends object, Res extends object> = { req: Req; res: Res }
 export type ApiLeaves<Domain> = D.Path.Leaves<Domain, Api<any, any>>
 
 export type ReplyError = { ___ERROR: { msg: string } }
-export type Reply<Res extends object> = ReplyError | (Res & { ___ERROR: null })
+export type ReplyNoError = { ___ERROR: null }
+export type Reply<Res extends object> = ReplyError | (Res & ReplyNoError)
 
 export type ApiDef<Domain, Path extends string> = D.Path.TypeofPath<
   Domain,
