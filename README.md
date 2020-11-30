@@ -26,7 +26,9 @@ start system as a whole
 
 ## Web UIs
 ArangoDB : http://localhost:8529/
+
 RabbitMQ : http://localhost:15672/ ( guest guest )
+
 GraphQL : http://localhost:8080/graphql/ 
 
 ## Issue some GraphQL requests
