@@ -16,7 +16,7 @@ create an `.env` file out of example
 
 create a sandbox in your Mailgun account for receiving test emails     
 and set mailgun env variables in `.env`
-```
+```bash
 EMAIL_MAILGUN_API_KEY=key-#############
 EMAIL_MAILGUN_DOMAIN=sandbox################
 ```
@@ -31,7 +31,7 @@ GraphQL : http://localhost:8080/graphql/
 
 ## Issue some GraphQL requests
 in GraphQL WebUI issue a signUp requests     
-```
+```graphql
 # Write your query or mutation here
 mutation signup {
   accountSignUp(email:"youremail@yourdomain.com"){  # your email, configured in your mailgun sandbox
