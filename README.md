@@ -28,8 +28,8 @@ and set mailgun env variables in `.env`
 EMAIL_MAILGUN_API_KEY=key-#############
 EMAIL_MAILGUN_DOMAIN=sandbox################
 ```
-x
-start system as a whole     
+
+start all system services (as configured in `.env` `STARTER_GLOB_PATTERN`)      
 ```bash
 yarn start
 ```
