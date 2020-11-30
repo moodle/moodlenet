@@ -2,6 +2,7 @@
 
 ## Dev Quick start 
 
+### Setup
 start an ArangoDB docker container     
 ```bash
 docker run -d --network=host --name=mnarango -e ARANGO_NO_AUTH=true  arangodb/arangodb
@@ -30,12 +31,12 @@ start system as a whole
 yarn start
 ```
 
-## Web UIs
+### Web UIs
 ArangoDB : http://localhost:8529/     
 RabbitMQ : http://localhost:15672/ ( guest guest )      
 GraphQL : http://localhost:8080/graphql/       
 
-## Issue some GraphQL requests
+### Issue some GraphQL requests
 in GraphQL WebUI issue a signUp requests     
 ```graphql
 # Write your query or mutation here
