@@ -13,10 +13,13 @@ start an RabbitMQ docker container
 docker run -d --network host  --name=mnrabbit rabbitmq:3-management
 ```
 
-cd into backend folder and create an `.env` file out of example            
+cd into backend folder    
+create an `.env` file out of example     
+install dependencies    
 ```bash
 cd backend
 cp simple.env.example .env
+yarn
 ```
 
 create a sandbox in your [Mailgun account](https://help.mailgun.com/hc/en-us/sections/200437784-Getting-Started) for sending and receiving test emails         
