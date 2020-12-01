@@ -1,7 +1,7 @@
 import { Message } from 'amqplib'
 import * as AMQP from '../amqp'
+import { Binding } from '../bindings'
 import { Flow } from '../types/path'
-import { getApiBindRoute } from '../bindings'
 import * as Types from './types'
 
 const DEF_TIMEOUT_EXPIRATION = 5000
@@ -106,7 +106,7 @@ export const respond = <Domain>(domain: string) => async <
     flow: Flow
     disposeResponder(): unknown
     unbindThisRoute(): unknown
-    detour(api: Types.ApiLeaves<Domain>): Flow
+    detour(binding: Binding): Flow
   }): Promise<Types.ApiRes<Domain, ApiPath>>
 }) => {
   const { api, handler, pFlow = {} } = _
@@ -122,9 +122,9 @@ export const respond = <Domain>(domain: string) => async <
     qName: apiResponderQName,
     async handler({ msg, msgJsonContent, flow }) {
       log(flow, `\n\nAPI consume : ${api}`)
-      const detour = (api: Types.ApiLeaves<Domain>): Flow => ({
+      const detour = (binding: Binding): Flow => ({
         ...flow,
-        _route: getApiBindRoute(api),
+        _route: binding.apiBindRoute,
       })
       return handler({
         req: msgJsonContent,

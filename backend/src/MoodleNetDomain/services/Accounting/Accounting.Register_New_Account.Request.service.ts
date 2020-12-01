@@ -15,7 +15,7 @@ MoodleNet.respondApi({
     if (resp === true) {
       await MoodleNet.callApi({
         api: 'Email.Verify_Email.Req',
-        flow: detour('Accounting.Register_New_Account.Email_Confirm_Result'),
+        flow: detour(verifyEmailResultBinding),
         req: {
           timeoutMillis: sendEmailConfirmationDelay,
           email: {
@@ -36,7 +36,7 @@ MoodleNet.respondApi({
   },
 })
 
-MoodleNet.bindApi({
+const verifyEmailResultBinding = MoodleNet.bindApi({
   event: 'Email.Verify_Email.Result',
   api: 'Accounting.Register_New_Account.Email_Confirm_Result',
 })
