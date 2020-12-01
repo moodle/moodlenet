@@ -1,11 +1,6 @@
 import { MoodleNet } from '../..'
 import { getAccountPersistence } from './accounting.env'
 
-MoodleNet.bindApi({
-  event: 'Email.Verify_Email.Result',
-  api: 'Accounting.Register_New_Account.Email_Confirm_Result',
-})
-
 MoodleNet.respondApi({
   api: 'Accounting.Register_New_Account.Email_Confirm_Result',
   async handler({ flow, req }) {
