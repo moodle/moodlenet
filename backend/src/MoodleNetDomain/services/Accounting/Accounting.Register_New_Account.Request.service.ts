@@ -1,6 +1,6 @@
 import { MoodleNet } from '../..'
 import { getAccountPersistence } from './accounting.env'
-import { accountingRoutes } from './AcountingRoutes'
+import { accountingRoutes } from './Acounting.routes'
 
 MoodleNet.respondApi({
   api: 'Accounting.Register_New_Account.Request',
