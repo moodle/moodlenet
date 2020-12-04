@@ -3,6 +3,7 @@ import { ApiLeaves } from './api/types'
 import * as Bindings from './bindings'
 import * as Events from './event'
 import { EventLeaves } from './event/types'
+import { newFlow } from './helpers'
 import { Flow } from './types/path'
 
 export type DomainApiResponderOpts<Domain extends object> = {
@@ -58,8 +59,11 @@ export const domain = <Domain extends object>(_: {
       ...flow,
       _route: route,
     })
+
+    const flow = (_route: Route, _key?: string) => newFlow({ _route, _key })
     return {
       bind,
+      flow,
       reflow,
     }
   }

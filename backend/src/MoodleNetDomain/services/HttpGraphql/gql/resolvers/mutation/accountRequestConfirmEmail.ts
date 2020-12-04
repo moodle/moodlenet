@@ -1,6 +1,6 @@
 import { MoodleNet } from '../../../../..'
-import { newFlow } from '../../../../../../lib/domain/helpers'
 import { MutationResolvers } from '../../../../../graphql'
+import { httpGqlServerRoutes } from '../../../http-gql-server.routes'
 
 export const accountRequestConfirmEmail: MutationResolvers['accountRequestConfirmEmail'] = async (
   _parent,
@@ -8,7 +8,7 @@ export const accountRequestConfirmEmail: MutationResolvers['accountRequestConfir
 ) => {
   const { res } = await MoodleNet.callApi({
     api: 'Email.Verify_Email.Confirm_Email',
-    flow: newFlow(),
+    flow: httpGqlServerRoutes.flow('gql-request'),
     req: { token },
   })
   return res.___ERROR ? null : !res.success ? null : { flowKey: res.flow._key }

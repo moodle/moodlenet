@@ -1,11 +1,11 @@
 import { MoodleNet } from '../../../../..'
-import { newFlow } from '../../../../../../lib/domain/helpers'
 import { MutationResolvers } from '../../../../../graphql'
+import { httpGqlServerRoutes } from '../../../http-gql-server.routes'
 
 export const accountSignUp: MutationResolvers['accountSignUp'] = async (_parent, { email }) => {
   const { res } = await MoodleNet.callApi({
     api: 'Accounting.Register_New_Account.Request',
-    flow: newFlow(),
+    flow: httpGqlServerRoutes.flow('gql-request'),
     req: { email },
   })
 
