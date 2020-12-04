@@ -1,6 +1,5 @@
 import { Message } from 'amqplib'
 import * as AMQP from '../amqp'
-import { Binding } from '../bindings'
 import { Flow } from '../types/path'
 import * as Types from './types'
 
@@ -24,12 +23,15 @@ export type CallOpts =
     }
 
 export type CallResponse<Res extends object> = { res: Types.Reply<Res>; flow: Flow }
-export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves<Domain>>(_: {
+export type ApiCallArgs<Domain, ApiPath extends Types.ApiLeaves<Domain>> = {
   api: ApiPath
   req: Types.ApiReq<Domain, ApiPath>
   flow: Flow
   opts?: CallOpts
-}) => {
+}
+export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves<Domain>>(
+  _: ApiCallArgs<Domain, ApiPath>
+) => {
   type ResType = Types.ApiRes<Domain, ApiPath>
   return new Promise<CallResponse<ResType>>(
     (
@@ -95,41 +97,53 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
     }
   )
 }
-export const getApiResponderQName = <Domain>(api: Types.ApiLeaves<Domain>) => `API_RESPONDER:${api}`
-export const respond = <Domain>(domain: string) => async <
-  ApiPath extends Types.ApiLeaves<Domain>
->(_: {
+export type ApiResponderOpts = {
+  partialFlow?: Partial<Flow>
+  consume?: AMQP.DomainConsumeOpts
+  queue?: AMQP.DomainQueueOpts
+}
+
+export type RespondApiArgs<Domain, ApiPath extends Types.ApiLeaves<Domain>> = {
   api: ApiPath
-  pFlow?: Partial<Flow>
   handler(_: {
     req: Types.ApiReq<Domain, ApiPath>
     flow: Flow
     disposeResponder(): unknown
     unbindThisRoute(): unknown
-    detour(binding: Binding): Flow
   }): Promise<Types.ApiRes<Domain, ApiPath>>
+  opts?: ApiResponderOpts
+}
+
+export const assertApiResponderQueue = async <Domain>(_: {
+  api: Types.ApiLeaves<Domain>
+  qOpts?: AMQP.DomainQueueOpts
 }) => {
-  const { api, handler, pFlow = {} } = _
+  const { api, qOpts } = _
   const apiResponderQName = getApiResponderQName<Domain>(api)
-  const topic = `${api}.${pFlow._route || '*'}.${pFlow._key || '*'}`
   await AMQP.assertQ({
     name: apiResponderQName,
-    opts: { durable: true },
+    opts: { ...qOpts, durable: true },
   })
+  return {
+    apiResponderQName,
+  }
+}
+export const getApiResponderQName = <Domain>(api: Types.ApiLeaves<Domain>) => `API_RESPONDER:${api}`
+export const respond = <Domain>(domain: string) => async <ApiPath extends Types.ApiLeaves<Domain>>(
+  _: RespondApiArgs<Domain, ApiPath>
+) => {
+  const { api, handler, opts } = _
+  const topic = `${api}.${opts?.partialFlow?._route || '*'}.${opts?.partialFlow?._key || '*'}`
+  const apiResponderQName = getApiResponderQName<Domain>(api)
   const { unbind } = await AMQP.bindQ({ topic, domain, name: apiResponderQName })
 
   const { stopConsume } = await AMQP.queueConsume({
     qName: apiResponderQName,
     async handler({ msg, msgJsonContent, flow }) {
       log(flow, `\n\nAPI consume : ${api}`)
-      const detour = (binding: Binding): Flow => ({
-        ...flow,
-        _route: binding.apiBindRoute,
-      })
       return handler({
         req: msgJsonContent,
         flow,
-        detour,
         disposeResponder,
         unbindThisRoute,
       })
@@ -147,7 +161,7 @@ export const respond = <Domain>(domain: string) => async <
         AMQP.unbindQ({ domain, name: apiResponderQName, topic: thisTopic })
       }
     },
-    opts: { consumerTag: apiResponderQName },
+    opts: { consumerTag: apiResponderQName, ...opts?.consume },
   })
   return disposeResponder
   function disposeResponder() {

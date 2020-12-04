@@ -99,7 +99,7 @@ export const queueConsume = async (_: {
     flow: Flow
     stopConsume(): unknown
   }) => Acks | Promise<Acks>
-  opts?: QConsumeOpts
+  opts?: DomainConsumeOpts
 }) => {
   const { handler, opts, qName } = _
 
@@ -216,10 +216,10 @@ const assertX = async (_: {
   return asserts.X[name]
 }
 
-const assertDelayQX = async (_: { domain: string; tag?: string }) => {
-  const { domain, tag = '' } = _
+const assertDelayQX = async (_: { domain: string }) => {
+  const { domain } = _
   const domainEx = await getAssertDomainExchangeName(domain)
-  const prefix = `${domainEx}${tag && `[${tag}]`}:SERVICE_DELAY_`
+  const prefix = `${domainEx}:SERVICE_DELAY_`
   const delayedQName = `${prefix}QUEUE`
   const delayedX = `${prefix}EXCH`
   await assertX({ name: delayedX, type: 'fanout' })
@@ -236,7 +236,7 @@ const assertDelayQX = async (_: { domain: string; tag?: string }) => {
 
 const NodeEmitter = new EventEmitter()
 
-const mainNodeQName = `MainNode:${newUuid()}`
+const mainNodeQName = `MachineQueue:${newUuid()}`
 channel.then(async (ch) => {
   const mainNodeQ = await assertQ({
     name: mainNodeQName,
@@ -286,9 +286,9 @@ export type EventEmitterType<T> = {
 
 export type DomainSendToQueueOpts = Options.Publish & {}
 export type DomainQueueOpts = Options.AssertQueue & {}
-export type QConsumeOpts = Options.Consume & { errorAck?: Acks.nack | Acks.reject }
+export type DomainConsumeOpts = Options.Consume & { errorAck?: Acks.nack | Acks.reject }
 
-type DomainExchangeOpts = {}
+export type DomainExchangeOpts = Options.AssertExchange & {}
 
 export enum Acks {
   nack = 'nack',

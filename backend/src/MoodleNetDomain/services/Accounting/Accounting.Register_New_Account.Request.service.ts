@@ -1,9 +1,10 @@
 import { MoodleNet } from '../..'
 import { getAccountPersistence } from './accounting.env'
+import { accountingRoutes } from './AcountingRoutes'
 
 MoodleNet.respondApi({
   api: 'Accounting.Register_New_Account.Request',
-  async handler({ flow, req, detour }) {
+  async handler({ flow, req }) {
     const persistence = await getAccountPersistence()
     const config = await persistence.config()
     const {
@@ -15,7 +16,7 @@ MoodleNet.respondApi({
     if (resp === true) {
       await MoodleNet.callApi({
         api: 'Email.Verify_Email.Req',
-        flow: detour(verifyEmailResultBinding),
+        flow: accountingRoutes.reflow(flow, 'Register_New_Account_Email_Confirmation'),
         req: {
           timeoutMillis: sendEmailConfirmationDelay,
           email: {
@@ -34,9 +35,4 @@ MoodleNet.respondApi({
       return { success: false, reason: resp } //as const
     }
   },
-})
-
-const verifyEmailResultBinding = MoodleNet.bindApi({
-  event: 'Email.Verify_Email.Result',
-  api: 'Accounting.Register_New_Account.Email_Confirm_Result',
 })
