@@ -3,6 +3,7 @@ import { ApiLeaves } from './api/types'
 import * as Bindings from './bindings'
 import * as Events from './event'
 import { EventLeaves } from './event/types'
+import { Flow } from './types/path'
 
 export type DomainApiResponderOpts<Domain extends object> = {
   [api in ApiLeaves<Domain>]?: Apis.ApiResponderOpts
@@ -42,25 +43,31 @@ export const domain = <Domain extends object>(_: {
     })
   }
 
-  const bindApi = <EventPath extends EventLeaves<Domain>, ApiPath extends ApiLeaves<Domain>>(
-    _: Bindings.BindApiArgs<Domain, EventPath, ApiPath>
-  ) => {
-    const { api, event, flowKey } = _
-    assertApiResponderQ({ api }).catch((err) => {
-      console.error(`Error asserting api-responder-queue for ${api} :\n${err}`)
-      throw err
+  const routes = <Route extends string>() => {
+    const bind = async <EventPath extends EventLeaves<Domain>, ApiPath extends ApiLeaves<Domain>>(
+      _: Bindings.BindApiArgs<Domain, EventPath, ApiPath, Route>
+    ) => {
+      const { api } = _
+      await assertApiResponderQ({ api }).catch((err) => {
+        console.error(`Error asserting api-responder-queue for ${api} :\n${err}`)
+        throw err
+      })
+      return Bindings.bindApi<Domain>(name)(_)
+    }
+    const reflow = (flow: Flow, route: Route): Flow => ({
+      ...flow,
+      _route: route,
     })
-    return Bindings.bindApi<Domain>(name)({
-      api,
-      event,
-      flowKey,
-    })
+    return {
+      bind,
+      reflow,
+    }
   }
 
   return {
+    routes,
     callApi,
     respondApi,
     emitEvent,
-    bindApi,
   }
 }

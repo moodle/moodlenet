@@ -216,10 +216,10 @@ const assertX = async (_: {
   return asserts.X[name]
 }
 
-const assertDelayQX = async (_: { domain: string; tag?: string }) => {
-  const { domain, tag = '' } = _
+const assertDelayQX = async (_: { domain: string }) => {
+  const { domain } = _
   const domainEx = await getAssertDomainExchangeName(domain)
-  const prefix = `${domainEx}${tag && `[${tag}]`}:SERVICE_DELAY_`
+  const prefix = `${domainEx}:SERVICE_DELAY_`
   const delayedQName = `${prefix}QUEUE`
   const delayedX = `${prefix}EXCH`
   await assertX({ name: delayedX, type: 'fanout' })

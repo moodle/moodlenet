@@ -1,39 +1,39 @@
 import * as AMQP from '../amqp'
+import { getApiResponderQName } from '../api'
 import * as API from '../api/types'
 import * as Event from '../event/types'
-import { getApiResponderQName } from '../api'
 
 export type Binding = {
   unbind(): void
-  apiBindRoute: string
+  route: string
   routedTopic: string
 }
 export type BindApiArgs<
   Domain,
   EventPath extends Event.EventLeaves<Domain>,
-  ApiPath extends API.ApiLeaves<Domain>
+  ApiPath extends API.ApiLeaves<Domain>,
+  Route extends string
 > = {
   event: EventPath
   api: Event.LookupType<Domain, EventPath> extends API.ApiReq<Domain, ApiPath> ? ApiPath : never
-  flowKey?: string
+  route: Route
 }
-export const bindApi = <Domain>(domain: string) => <
+export const bindApi = <Domain>(domain: string) => async <
   EventPath extends Event.EventLeaves<Domain>,
-  ApiPath extends API.ApiLeaves<Domain>
+  ApiPath extends API.ApiLeaves<Domain>,
+  Route extends string
 >(
-  _: BindApiArgs<Domain, EventPath, ApiPath>
-): Binding => {
-  const { api, event, flowKey = '*' } = _
-  const apiBindRoute = getApiBindRoute(api)
-  const routedTopic = `${event}.${apiBindRoute}.${flowKey}`
+  _: BindApiArgs<Domain, EventPath, ApiPath, Route>
+): Promise<Binding> => {
+  const { api, event, route } = _
+  const routedTopic = `${event}.${route}.*`
   const apiQname = getApiResponderQName<Domain>(api)
 
-  const unbindPromise = AMQP.bindQ({ topic: routedTopic, domain, name: apiQname }) // TODO: should catch and process.exit ?
+  const { unbind } = await AMQP.bindQ({ topic: routedTopic, domain, name: apiQname })
 
-  const unbind = () => unbindPromise.then(({ unbind }) => unbind())
   return {
     unbind,
-    apiBindRoute,
+    route,
     routedTopic,
   }
 }

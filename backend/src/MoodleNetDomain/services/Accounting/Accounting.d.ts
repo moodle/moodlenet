@@ -1,6 +1,5 @@
 import { Api } from '../../../lib/domain/api/types'
 import { Event, LookupType } from '../../../lib/domain/event/types'
-import { Flow } from '../../../lib/domain/types/path'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
 
 export type Accounting = {

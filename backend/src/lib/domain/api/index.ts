@@ -1,6 +1,5 @@
 import { Message } from 'amqplib'
 import * as AMQP from '../amqp'
-import { Binding } from '../bindings'
 import { Flow } from '../types/path'
 import * as Types from './types'
 
@@ -103,6 +102,7 @@ export type ApiResponderOpts = {
   consume?: AMQP.DomainConsumeOpts
   queue?: AMQP.DomainQueueOpts
 }
+
 export type RespondApiArgs<Domain, ApiPath extends Types.ApiLeaves<Domain>> = {
   api: ApiPath
   handler(_: {
@@ -110,7 +110,6 @@ export type RespondApiArgs<Domain, ApiPath extends Types.ApiLeaves<Domain>> = {
     flow: Flow
     disposeResponder(): unknown
     unbindThisRoute(): unknown
-    reroute(binding: Binding): Flow
   }): Promise<Types.ApiRes<Domain, ApiPath>>
   opts?: ApiResponderOpts
 }
@@ -142,14 +141,9 @@ export const respond = <Domain>(domain: string) => async <ApiPath extends Types.
     qName: apiResponderQName,
     async handler({ msg, msgJsonContent, flow }) {
       log(flow, `\n\nAPI consume : ${api}`)
-      const reroute = (binding: Binding): Flow => ({
-        ...flow,
-        _route: binding.apiBindRoute,
-      })
       return handler({
         req: msgJsonContent,
         flow,
-        reroute,
         disposeResponder,
         unbindThisRoute,
       })
