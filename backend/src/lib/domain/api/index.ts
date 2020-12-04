@@ -95,12 +95,13 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
     }
   )
 }
-export const getApiResponderQName = <Domain>(api: Types.ApiLeaves<Domain>) => `API_RESPONDER:${api}`
-export const respond = <Domain>(domain: string) => async <
-  ApiPath extends Types.ApiLeaves<Domain>
->(_: {
+export type ApiResponderOpts = {
+  partialFlow?: Partial<Flow>
+  consume?: AMQP.DomainConsumeOpts
+  queue?: AMQP.DomainQueueOpts
+}
+export type RespondApiArgs<Domain, ApiPath extends Types.ApiLeaves<Domain>> = {
   api: ApiPath
-  pFlow?: Partial<Flow>
   handler(_: {
     req: Types.ApiReq<Domain, ApiPath>
     flow: Flow
@@ -108,13 +109,18 @@ export const respond = <Domain>(domain: string) => async <
     unbindThisRoute(): unknown
     detour(binding: Binding): Flow
   }): Promise<Types.ApiRes<Domain, ApiPath>>
-}) => {
-  const { api, handler, pFlow = {} } = _
+  opts?: ApiResponderOpts
+}
+export const getApiResponderQName = <Domain>(api: Types.ApiLeaves<Domain>) => `API_RESPONDER:${api}`
+export const respond = <Domain>(domain: string) => async <ApiPath extends Types.ApiLeaves<Domain>>(
+  _: RespondApiArgs<Domain, ApiPath>
+) => {
+  const { api, handler, opts } = _
   const apiResponderQName = getApiResponderQName<Domain>(api)
-  const topic = `${api}.${pFlow._route || '*'}.${pFlow._key || '*'}`
+  const topic = `${api}.${opts?.partialFlow?._route || '*'}.${opts?.partialFlow?._key || '*'}`
   await AMQP.assertQ({
     name: apiResponderQName,
-    opts: { durable: true },
+    opts: { ...opts?.queue, durable: true },
   })
   const { unbind } = await AMQP.bindQ({ topic, domain, name: apiResponderQName })
 
@@ -147,7 +153,7 @@ export const respond = <Domain>(domain: string) => async <
         AMQP.unbindQ({ domain, name: apiResponderQName, topic: thisTopic })
       }
     },
-    opts: { consumerTag: apiResponderQName },
+    opts: { consumerTag: apiResponderQName, ...opts?.consume },
   })
   return disposeResponder
   function disposeResponder() {

@@ -1,4 +1,14 @@
-import { domain } from '../lib/domain'
+import { domain, DomainApiResponderOpts } from '../lib/domain'
 import { MoodleNetDomain } from './MoodleNetDomain'
 
-export const MoodleNet = domain<MoodleNetDomain>('MoodleNet')
+const apiRespondersOpts: DomainApiResponderOpts<MoodleNetDomain> = {
+  'Accounting.Register_New_Account.ActivateNewAccount': {
+    consume: {},
+    queue: {},
+  },
+}
+
+export const MoodleNet = domain<MoodleNetDomain>({
+  name: 'MoodleNet',
+  apiRespondersOpts,
+})
