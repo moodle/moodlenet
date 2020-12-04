@@ -13,31 +13,47 @@ export const domain = <Domain extends object>(_: {
   apiRespondersOpts?: DomainApiResponderOpts<Domain>
 }) => {
   const { name, apiRespondersOpts } = _
-  const callApi = Apis.call<Domain>(name)
+  const assertApiResponderQ = async (_: { api: ApiLeaves<Domain> }) => {
+    const { api } = _
+    const thisResponderOpts = apiRespondersOpts ? apiRespondersOpts[api] : undefined
+    await Apis.assertApiResponderQueue<Domain>({
+      api,
+      qOpts: thisResponderOpts && thisResponderOpts.queue,
+    })
+  }
+  const callApi = async <ApiPath extends ApiLeaves<Domain>>(
+    _: Apis.ApiCallArgs<Domain, ApiPath>
+  ) => {
+    const { api } = _
+    await assertApiResponderQ({ api })
+    return Apis.call<Domain>(name)(_)
+  }
   const emitEvent = Events.emit<Domain>(name)
 
-  const respondApi = <ApiPath extends ApiLeaves<Domain>>(
+  const respondApi = async <ApiPath extends ApiLeaves<Domain>>(
     _: Pick<Apis.RespondApiArgs<Domain, ApiPath>, 'api' | 'handler'>
   ) => {
     const { api, handler } = _
+    await assertApiResponderQ({ api })
     return Apis.respond<Domain>(name)({
       api,
       handler,
       opts: apiRespondersOpts ? apiRespondersOpts[api] : undefined,
     })
   }
+
   const bindApi = <EventPath extends EventLeaves<Domain>, ApiPath extends ApiLeaves<Domain>>(
-    _: Pick<Bindings.BindApiArgs<Domain, EventPath, ApiPath>, 'api' | 'event' | 'flowKey'>
+    _: Bindings.BindApiArgs<Domain, EventPath, ApiPath>
   ) => {
     const { api, event, flowKey } = _
-    const apiOpts = apiRespondersOpts && apiRespondersOpts[api]
+    assertApiResponderQ({ api }).catch((err) => {
+      console.error(`Error asserting api-responder-queue for ${api} :\n${err}`)
+      throw err
+    })
     return Bindings.bindApi<Domain>(name)({
       api,
       event,
       flowKey,
-      opts: {
-        apiQueue: apiOpts?.queue,
-      },
     })
   }
 

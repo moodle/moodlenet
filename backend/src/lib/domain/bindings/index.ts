@@ -16,9 +16,6 @@ export type BindApiArgs<
   event: EventPath
   api: Event.LookupType<Domain, EventPath> extends API.ApiReq<Domain, ApiPath> ? ApiPath : never
   flowKey?: string
-  opts?: {
-    apiQueue?: AMQP.DomainQueueOpts
-  }
 }
 export const bindApi = <Domain>(domain: string) => <
   EventPath extends Event.EventLeaves<Domain>,
@@ -26,14 +23,12 @@ export const bindApi = <Domain>(domain: string) => <
 >(
   _: BindApiArgs<Domain, EventPath, ApiPath>
 ): Binding => {
-  const { api, event, flowKey = '*', opts } = _
+  const { api, event, flowKey = '*' } = _
   const apiBindRoute = getApiBindRoute(api)
   const routedTopic = `${event}.${apiBindRoute}.${flowKey}`
   const apiQname = getApiResponderQName<Domain>(api)
 
-  const unbindPromise = AMQP.assertQ({ name: apiQname, opts: opts?.apiQueue }).then(() => {
-    return AMQP.bindQ({ topic: routedTopic, domain, name: apiQname })
-  }) // TODO: should catch and process.exit ?
+  const unbindPromise = AMQP.bindQ({ topic: routedTopic, domain, name: apiQname }) // TODO: should catch and process.exit ?
 
   const unbind = () => unbindPromise.then(({ unbind }) => unbind())
   return {

@@ -13,7 +13,7 @@ type TestD = {
   }
 }
 
-const TestD = domain<TestD>('TestDomain')
+const TestD = domain<TestD>({ name: 'TestDomain' })
 ;(async () => {
   const flow: Flow = {
     _key: 'mykey',
