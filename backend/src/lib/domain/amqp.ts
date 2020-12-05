@@ -1,33 +1,37 @@
 // import { delay } from 'bluebird'
-import { Message, Options, Replies } from 'amqplib'
+import { Message, MessagePropertyHeaders, Options, Replies } from 'amqplib'
 import { EventEmitter } from 'events'
-import { newUuid } from '../helpers/misc'
 import { channelPromise as channel } from './domain.env'
+import { nodeId } from './helpers'
 import { Flow } from './types/path'
 
 const defPubOpts: Options.Publish = {
   deliveryMode: 2,
 }
 
-type MessageHeaders = {
+type DomainMessageHeaders = {
   'x-flow-key': string
   'x-flow-route': string
+  'x-flow-nodeId': string
 }
-const encodeMsgHeaders = (_: { flow: Flow }): MessageHeaders => ({
+const encodeMsgHeaders = (_: { flow: Flow }): DomainMessageHeaders => ({
   'x-flow-key': _.flow._key,
   'x-flow-route': _.flow._route,
+  'x-flow-nodeId': nodeId,
 })
-const decodeMsgHeaders = (msg: Message | null): null | { flow: Flow } => {
+const decodeMsgHeaders = (msg: Message | null) => {
   if (!msg) {
     return null
   }
-  const flowKey: string | undefined = msg.properties.headers[`x-flow-key`]
-  const flowRoute: string | undefined = msg.properties.headers['x-flow-route']
-  if (!(flowKey && flowRoute)) {
-    return null
-  }
+  const headers = msg.properties.headers as MessagePropertyHeaders & Partial<DomainMessageHeaders>
+  const flowKey = headers[`x-flow-key`]
+  const flowRoute = headers['x-flow-route']
+  const nodeId = headers['x-flow-nodeId']
+  const flow: Flow | undefined =
+    flowKey && flowRoute ? { _key: flowKey, _route: flowRoute } : undefined
   return {
-    flow: { _key: flowKey, _route: flowRoute },
+    flow,
+    nodeId,
   }
 }
 
@@ -236,7 +240,7 @@ const assertDelayQX = async (_: { domain: string }) => {
 
 const NodeEmitter = new EventEmitter()
 
-const mainNodeQName = `MachineQueue:${newUuid()}`
+const mainNodeQName = `MachineQueue:${nodeId}`
 channel.then(async (ch) => {
   const mainNodeQ = await assertQ({
     name: mainNodeQName,
@@ -249,7 +253,7 @@ channel.then(async (ch) => {
     }
     const { flow } = headers
 
-    const ev = flow._key
+    const ev = flow?._key
     msg && ch.ack(msg)
     if (!ev) {
       return

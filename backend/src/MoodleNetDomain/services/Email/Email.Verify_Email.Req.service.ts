@@ -1,6 +1,6 @@
 import { MoodleNet } from '../..'
 import { ApiReturn } from '../../../lib/domain/api/types'
-import { newUuid } from '../../../lib/helpers/misc'
+import { v4 } from 'uuid'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
 import { getEmailPersistence } from './email.env'
 import { EmailObj } from './types'
@@ -9,7 +9,7 @@ MoodleNet.respondApi({
   api: 'Email.Verify_Email.Req',
   async handler({ req, flow }): ApiReturn<MoodleNetDomain, 'Email.Verify_Email.Req'> {
     const { email, tokenReplaceRegEx } = req
-    const token = `${newUuid()}|${flow._key}`
+    const token = v4()
     const regex = new RegExp(tokenReplaceRegEx, 'g')
     const emailObj: EmailObj = {
       ...email,
