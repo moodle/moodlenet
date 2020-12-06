@@ -101,6 +101,7 @@ export type ApiResponderOpts = {
   partialFlow?: Partial<Flow>
   consume?: AMQP.DomainConsumeOpts
   queue?: AMQP.DomainQueueOpts
+  // TODO: ApiResponderOpts should have channelOpts too
 }
 
 export type RespondApiArgs<Domain, ApiPath extends Types.ApiLeaves<Domain>> = {
@@ -112,6 +113,7 @@ export type RespondApiArgs<Domain, ApiPath extends Types.ApiLeaves<Domain>> = {
     unbindThisRoute(): unknown
   }): Promise<Types.ApiRes<Domain, ApiPath>>
   opts?: ApiResponderOpts
+  // TODO: should remove this ApiResponderOpts as it should come from responder's `init` method
 }
 
 export const assertApiResponderQueue = async <Domain>(_: {
@@ -129,6 +131,9 @@ export const assertApiResponderQueue = async <Domain>(_: {
   }
 }
 export const getApiResponderQName = <Domain>(api: Types.ApiLeaves<Domain>) => `API_RESPONDER:${api}`
+// TODO: each responder (or each qconsumer?) should use its own channel
+// TODO: ApiResponderOpts should have channelOpts too
+
 export const respond = <Domain>(domain: string) => async <ApiPath extends Types.ApiLeaves<Domain>>(
   _: RespondApiArgs<Domain, ApiPath>
 ) => {

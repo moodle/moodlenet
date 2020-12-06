@@ -26,5 +26,8 @@ export const getSender = (): Promise<EmailSender> =>
   require(resolve(...senderModulePathBase, env.senderModule))
 
 const persistenceModulePathBase = [__dirname, 'persistence', 'impl']
+// TODO: each dependency item should be independently accessed
+// TODO: gets and validate its own process.env and return the dep promise
+// TODO: so, each responder's init will get own needed deps
 export const getEmailPersistence = (): Promise<EmailPersistence> =>
   require(resolve(...persistenceModulePathBase, env.persistenceModule))

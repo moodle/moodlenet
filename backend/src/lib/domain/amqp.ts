@@ -190,6 +190,9 @@ export const sendToQueue = async (_: {
 }
 
 // TODO: may remove BQ?
+// TODO: if fixing the assertion flow at startup (as theese should be static)
+// TODO: there would be no need of many "assure assertion",
+// TODO: thus no need of this assertion-cache
 const asserts = { Q: {}, X: {}, BQ: {} } as {
   Q: Record<string, Replies.AssertQueue>
   X: Record<string, Replies.AssertExchange>

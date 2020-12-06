@@ -12,6 +12,7 @@ export type DomainApiResponderOpts<Domain extends object> = {
 
 export const domain = <Domain extends object>(_: {
   name: string
+  // TODO: remove this DomainApiResponderOpts and let each apiResponder return config from init funcrion
   apiRespondersOpts?: DomainApiResponderOpts<Domain>
 }) => {
   const { name, apiRespondersOpts } = _
@@ -31,6 +32,10 @@ export const domain = <Domain extends object>(_: {
     return Apis.call<Domain>(name)(_)
   }
   const emitEvent = Events.emit<Domain>(name)
+
+  // TODO: implement a `init` method, that returns
+  // TODO: { ctx:T, opts: ApiResponderOpts}
+  // TODO: will use .env to get needed deps, and get env psrams to tweak opts
 
   const respondApi = async <ApiPath extends ApiLeaves<Domain>>(
     _: Pick<Apis.RespondApiArgs<Domain, ApiPath>, 'api' | 'handler'>
