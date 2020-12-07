@@ -1,8 +1,8 @@
 import { MoodleNet } from '../..'
 import { getAccountPersistence } from './accounting.env'
 
-getAccountPersistence().then((accountPersistence) => {
-  MoodleNet.respondApi({
+getAccountPersistence().then(async (accountPersistence) => {
+  await MoodleNet.respondApi({
     api: 'Accounting.Register_New_Account.ActivateNewAccount',
     async handler({ flow, req: { requestFlowKey, password, username } }) {
       const maybeAccount = await accountPersistence.activateNewAccount({

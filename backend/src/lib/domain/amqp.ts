@@ -1,5 +1,5 @@
 // import { delay } from 'bluebird'
-import { Message, MessagePropertyHeaders, Options, Replies } from 'amqplib'
+import { Message, MessagePropertyHeaders, Options } from 'amqplib'
 import { EventEmitter } from 'events'
 import { channelPromise as channel } from './domain.env'
 import { nodeId } from './helpers'
@@ -63,7 +63,7 @@ export const domainPublish = (_: {
     const confirmFn = (err: any) => (err ? reject(err) : resolve())
 
     if (opts?.delay) {
-      const { delayedX } = await assertDelayQX({ domain })
+      const delayedX = getDomainDelayExchangeName(domain)
       await ch.publish(
         delayedX,
         taggedTopic,
@@ -78,7 +78,7 @@ export const domainPublish = (_: {
         confirmFn
       )
     } else {
-      const domEx = await getAssertDomainExchangeName(domain)
+      const domEx = await getDomainExchangeName(domain)
       await ch.publish(
         domEx,
         taggedTopic,
@@ -96,7 +96,6 @@ export const domainPublish = (_: {
 
 export const queueConsume = async (_: {
   qName: string
-  // flow:Flow // TODO: needs it ?
   handler: (_: {
     msgJsonContent: any
     msg: Message
@@ -135,44 +134,34 @@ export const queueConsume = async (_: {
   return { stopConsume }
 }
 
-export const getAssertDomainExchangeName = async (domainName: string) => {
-  const exName = `Domain.${domainName}`
+export const getDomainExchangeName = (domainName: string) => `Domain.${domainName}`
+
+export const assertDomainExchange = async (_: { domain: string }) => {
+  const { domain } = _
+  const exName = getDomainExchangeName(domain)
   return (await assertX({ name: exName, type: 'topic' })).exchange
 }
 
 const json2Buffer = <T>(json: T) => Buffer.from(JSON.stringify(json))
 const buffer2Json = <T>(buf: Buffer): T => JSON.parse(buf.toString('utf-8'))
 
-export const bindQ = async (
-  _: ({ exchange: string; domain?: undefined } | { exchange?: undefined; domain: string }) & {
-    name: string
-    topic: string
-    args?: any
-  }
-) => {
-  const { args, domain = '', name, topic, exchange = '' } = _
-  const ex = exchange || (await getAssertDomainExchangeName(domain))
-  if (!asserts.BQ[name]) {
-    const ch = await channel
-    asserts.BQ[bindQAssertCachekey({ ex, name, topic })] = await ch.bindQueue(name, ex, topic, args)
-  }
+export const bindQ = async (_: { exchange: string; name: string; topic: string; args?: any }) => {
+  const { args, name, topic, exchange } = _
+  const ch = await channel
+  const {} = await ch.bindQueue(name, exchange, topic, args)
 
   return {
     unbind,
   }
   function unbind() {
-    unbindQ({ domain, name, topic, args })
+    unbindQ({ exchange, name, topic, args })
   }
 }
-const bindQAssertCachekey = (_: { name: string; ex: string; topic: string }) =>
-  `${_.name}<-${_.ex}.${_.topic}`
 
-export const unbindQ = async (_: { name: string; domain: string; topic: string; args?: any }) => {
-  const { args, domain, name, topic } = _
-  const ex = await getAssertDomainExchangeName(domain)
-  await (await channel).unbindQueue(name, ex, topic, args)
-  delete asserts.BQ[bindQAssertCachekey({ ex, name, topic })]
-  return asserts.BQ[name]
+export const unbindQ = async (_: { name: string; exchange: string; topic: string; args?: any }) => {
+  const { args, exchange, name, topic } = _
+  const ch = await channel
+  await ch.unbindQueue(name, exchange, topic, args)
 }
 
 export const sendToQueue = async (_: {
@@ -189,25 +178,12 @@ export const sendToQueue = async (_: {
   })
 }
 
-// TODO: may remove BQ?
-// TODO: if fixing the assertion flow at startup (as theese should be static)
-// TODO: there would be no need of many "assure assertion",
-// TODO: thus no need of this assertion-cache
-const asserts = { Q: {}, X: {}, BQ: {} } as {
-  Q: Record<string, Replies.AssertQueue>
-  X: Record<string, Replies.AssertExchange>
-  BQ: Record<string, Replies.Empty>
-}
-
 export const assertQ = async (_: { name: string; opts?: DomainQueueOpts }) => {
   const { opts, name } = _
-  if (!asserts.Q[name]) {
-    const ch = await channel
-    asserts.Q[name] = await ch.assertQueue(name, {
-      ...opts,
-    })
-  }
-  return asserts.Q[name]
+  const ch = await channel
+  return ch.assertQueue(name, {
+    ...opts,
+  })
 }
 
 const assertX = async (_: {
@@ -216,23 +192,26 @@ const assertX = async (_: {
   opts?: DomainExchangeOpts
 }) => {
   const { opts, name, type } = _
-  if (!asserts.X[name]) {
-    const ch = await channel
-    asserts.X[name] = await ch.assertExchange(name, type, opts)
-  }
-  return asserts.X[name]
+  const ch = await channel
+  return await ch.assertExchange(name, type, opts)
 }
 
-const assertDelayQX = async (_: { domain: string }) => {
+const getDomainDelayExchangeAndQueuePrefix = (domain: string) =>
+  `${getDomainExchangeName(domain)}:SERVICE_DELAY_`
+const getDomainDelayExchangeName = (domain: string) =>
+  `${getDomainDelayExchangeAndQueuePrefix(domain)}EXCHANGE`
+const getDomainDelayQueueName = (domain: string) =>
+  `${getDomainDelayExchangeAndQueuePrefix(domain)}QUEUE`
+
+export const assertDomainDelayedQueueAndExchange = async (_: { domain: string }) => {
   const { domain } = _
-  const domainEx = await getAssertDomainExchangeName(domain)
-  const prefix = `${domainEx}:SERVICE_DELAY_`
-  const delayedQName = `${prefix}QUEUE`
-  const delayedX = `${prefix}EXCH`
+  const domainExchangeName = getDomainExchangeName(domain)
+  const delayedQName = getDomainDelayQueueName(domain)
+  const delayedX = getDomainDelayExchangeName(domain)
   await assertX({ name: delayedX, type: 'fanout' })
   const q = await assertQ({
     name: delayedQName,
-    opts: { deadLetterExchange: domainEx },
+    opts: { deadLetterExchange: domainExchangeName },
   })
   await bindQ({ name: delayedQName, exchange: delayedX, topic: '' })
   return {

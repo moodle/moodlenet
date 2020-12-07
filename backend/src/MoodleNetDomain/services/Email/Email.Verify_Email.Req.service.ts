@@ -5,8 +5,8 @@ import { MoodleNetDomain } from '../../MoodleNetDomain'
 import { getEmailPersistence } from './email.env'
 import { EmailObj } from './types'
 
-getEmailPersistence().then((emailPersistence) => {
-  MoodleNet.respondApi({
+getEmailPersistence().then(async (emailPersistence) => {
+  await MoodleNet.respondApi({
     api: 'Email.Verify_Email.Req',
     async handler({ req, flow }): ApiReturn<MoodleNetDomain, 'Email.Verify_Email.Req'> {
       const { email, tokenReplaceRegEx } = req

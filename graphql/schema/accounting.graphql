@@ -16,6 +16,6 @@ type Mutation {
   accountRequestActivateAccount(
     username: String!
     password: String!
-    flowKey: String! # TODO: should be flow obj .. really? why?
+    flowKey: String!
   ): SimpleResponse!
 }

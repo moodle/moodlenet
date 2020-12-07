@@ -130,7 +130,7 @@ export const assertApiResponderQueue = async <Domain>(_: {
   }
 }
 export const getApiResponderQName = <Domain>(api: Types.ApiLeaves<Domain>) => `API_RESPONDER:${api}`
-// TODO: each responder (or each qconsumer?) should use its own channel
+// TODO: each responder (or each queue consumer in general ?) should use its own channel
 // TODO: ApiResponderOpts should have channelOpts too
 
 export const respond = <Domain>(domain: string) => async <ApiPath extends Types.ApiLeaves<Domain>>(
@@ -138,8 +138,12 @@ export const respond = <Domain>(domain: string) => async <ApiPath extends Types.
 ) => {
   const { api, handler, opts } = _
   const topic = `${api}.${opts?.partialFlow?._route || '*'}.${opts?.partialFlow?._key || '*'}`
-  const apiResponderQName = getApiResponderQName<Domain>(api)
-  const { unbind } = await AMQP.bindQ({ topic, domain, name: apiResponderQName })
+  const { apiResponderQName } = await assertApiResponderQueue<Domain>({
+    api,
+    qOpts: opts?.queue,
+  })
+  const exchange = AMQP.getDomainExchangeName(domain)
+  const { unbind } = await AMQP.bindQ({ topic, exchange, name: apiResponderQName })
 
   const { stopConsume } = await AMQP.queueConsume({
     qName: apiResponderQName,
@@ -162,7 +166,7 @@ export const respond = <Domain>(domain: string) => async <ApiPath extends Types.
         })
       function unbindThisRoute() {
         const thisTopic = msg.fields.routingKey
-        AMQP.unbindQ({ domain, name: apiResponderQName, topic: thisTopic })
+        AMQP.unbindQ({ exchange, name: apiResponderQName, topic: thisTopic })
       }
     },
     opts: { consumerTag: apiResponderQName, ...opts?.consume },
@@ -215,7 +219,7 @@ export const isNoReplyCall = (_: Types.Reply<object>) =>
 // })
 const log = (flow: Flow, ...args: any[]) =>
   console.log(
-    `\n\n\n`,
-    args.map((_) => `\n${_}`),
-    `\nflow : ${flow._key} - ${flow._route}`
+    '\n\n\n',
+    args.map((_) => `\\n${_}`),
+    `\\nflow : ${flow._key} - ${flow._route}`
   )

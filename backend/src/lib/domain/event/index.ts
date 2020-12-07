@@ -21,7 +21,7 @@ export const emit = <Domain>(domain: string) => <EventPath extends Event.EventLe
 }
 const log = (flow: Flow, ...args: any[]) =>
   console.log(
-    `\n\n\n`,
-    args.map((_) => `\n${_}`),
-    `\nflow : ${flow._key} - ${flow._route}`
+    '\n\n\n',
+    args.map((_) => `\\n${_}`),
+    `\\nflow : ${flow._key} - ${flow._route}`
   )

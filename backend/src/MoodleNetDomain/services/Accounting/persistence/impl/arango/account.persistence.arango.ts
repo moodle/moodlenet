@@ -86,6 +86,10 @@ export const arangoAccountingPersistence: Promise<AccountingPersistence> = DBRea
         return 'Unconfirmed Request'
       }
 
+      if (request.status === 'Account Created') {
+        return 'Account Already Created'
+      }
+
       const usernameAvailable = await isUserNameAvailable({ username })
       if (!usernameAvailable) {
         return 'Username Not Available'

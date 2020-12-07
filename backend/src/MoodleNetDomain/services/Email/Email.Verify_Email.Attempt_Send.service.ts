@@ -3,8 +3,8 @@ import { ApiReturn } from '../../../lib/domain/api/types'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
 import { getEmailPersistence } from './email.env'
 
-getEmailPersistence().then((emailPersistence) => {
-  MoodleNet.respondApi({
+getEmailPersistence().then(async (emailPersistence) => {
+  await MoodleNet.respondApi({
     api: 'Email.Verify_Email.Attempt_Send',
     async handler({ flow }): ApiReturn<MoodleNetDomain, 'Email.Verify_Email.Attempt_Send'> {
       const doc = await emailPersistence.incrementAttemptVerifyingEmail({ flow })

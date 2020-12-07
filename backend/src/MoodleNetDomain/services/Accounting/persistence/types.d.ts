@@ -18,7 +18,11 @@ export interface AccountingPersistence {
     password: string
     username: string
   }): Promise<
-    AccountDocument | 'Request Not Found' | 'Unconfirmed Request' | 'Username Not Available'
+    | AccountDocument
+    | 'Request Not Found'
+    | 'Unconfirmed Request'
+    | 'Username Not Available'
+    | 'Account Already Created'
   >
   config(): Promise<Config>
 }

@@ -1,8 +1,8 @@
 import { MoodleNet } from '../..'
 import { getEmailPersistence } from './email.env'
 
-getEmailPersistence().then((emailPersistence) => {
-  MoodleNet.respondApi({
+getEmailPersistence().then(async (emailPersistence) => {
+  await MoodleNet.respondApi({
     api: 'Email.Verify_Email.Confirm_Email',
     async handler({ req: { token } }) {
       const res = await emailPersistence.confirmEmail({ token })

@@ -1,8 +1,9 @@
 import { MoodleNet } from '../..'
 import { getAccountPersistence } from './accounting.env'
+import { accountingRoutes } from './Acounting.routes'
 
-getAccountPersistence().then((accountPersistence) => {
-  MoodleNet.respondApi({
+getAccountPersistence().then(async (accountPersistence) => {
+  await MoodleNet.respondApi({
     api: 'Accounting.Register_New_Account.Email_Confirm_Result',
     async handler({ flow, req }) {
       if (req.success) {
@@ -16,5 +17,10 @@ getAccountPersistence().then((accountPersistence) => {
         return { done: true }
       }
     },
+  })
+  await accountingRoutes.bind({
+    event: 'Email.Verify_Email.Result',
+    api: 'Accounting.Register_New_Account.Email_Confirm_Result',
+    route: 'Register_New_Account_Email_Confirmation',
   })
 })

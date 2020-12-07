@@ -2,8 +2,8 @@ import { MoodleNet } from '../..'
 import { getAccountPersistence } from './accounting.env'
 import { accountingRoutes } from './Acounting.routes'
 
-getAccountPersistence().then((accountPersistence) => {
-  MoodleNet.respondApi({
+getAccountPersistence().then(async (accountPersistence) => {
+  await MoodleNet.respondApi({
     api: 'Accounting.Register_New_Account.Request',
     async handler({ flow, req }) {
       const config = await accountPersistence.config()

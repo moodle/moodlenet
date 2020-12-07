@@ -1,4 +1,5 @@
 import * as Apis from './api'
+import * as AMQP from './amqp'
 import { ApiLeaves } from './api/types'
 import * as Bindings from './bindings'
 import * as Events from './event'
@@ -6,41 +7,32 @@ import { EventLeaves } from './event/types'
 import { newFlow } from './helpers'
 import { Flow } from './types/path'
 
-export type DomainApiResponderOpts<Domain extends object> = {
-  [api in ApiLeaves<Domain>]?: Apis.ApiResponderOpts
-}
+export const domain = <Domain extends object>(_: { domain: string }) => {
+  const { domain } = _
 
-export const domain = <Domain extends object>(_: {
-  name: string
-  apiRespondersOpts?: DomainApiResponderOpts<Domain>
-}) => {
-  const { name, apiRespondersOpts } = _
-  const assertApiResponderQ = async (_: { api: ApiLeaves<Domain> }) => {
-    const { api } = _
-    const thisResponderOpts = apiRespondersOpts ? apiRespondersOpts[api] : undefined
-    await Apis.assertApiResponderQueue<Domain>({
-      api,
-      qOpts: thisResponderOpts && thisResponderOpts.queue,
-    })
-  }
+  const asserts = Promise.all([
+    AMQP.assertDomainExchange({ domain }),
+    AMQP.assertDomainDelayedQueueAndExchange({ domain }),
+  ])
+
   const callApi = async <ApiPath extends ApiLeaves<Domain>>(
     _: Apis.ApiCallArgs<Domain, ApiPath>
   ) => {
-    const { api } = _
-    await assertApiResponderQ({ api })
-    return Apis.call<Domain>(name)(_)
+    await asserts
+    return Apis.call<Domain>(domain)(_)
   }
-  const emitEvent = Events.emit<Domain>(name)
+  const emitEvent = Events.emit<Domain>(domain)
 
   const respondApi = async <ApiPath extends ApiLeaves<Domain>>(
-    _: Pick<Apis.RespondApiArgs<Domain, ApiPath>, 'api' | 'handler'>
+    _: Apis.RespondApiArgs<Domain, ApiPath>
   ) => {
-    const { api, handler } = _
-    await assertApiResponderQ({ api })
-    return Apis.respond<Domain>(name)({
+    const { api, handler, opts } = _
+    await asserts
+
+    return Apis.respond<Domain>(domain)({
       api,
       handler,
-      opts: apiRespondersOpts ? apiRespondersOpts[api] : undefined,
+      opts,
     })
   }
 
@@ -48,19 +40,17 @@ export const domain = <Domain extends object>(_: {
     const bind = async <EventPath extends EventLeaves<Domain>, ApiPath extends ApiLeaves<Domain>>(
       _: Bindings.BindApiArgs<Domain, EventPath, ApiPath, Route>
     ) => {
-      const { api } = _
-      await assertApiResponderQ({ api }).catch((err) => {
-        console.error(`Error asserting api-responder-queue for ${api} :\n${err}`)
-        throw err
-      })
-      return Bindings.bindApi<Domain>(name)(_)
+      await asserts
+      return Bindings.bindApi<Domain>(domain)(_)
     }
+
     const reflow = (flow: Flow, route: Route): Flow => ({
       ...flow,
       _route: route,
     })
 
     const flow = (_route: Route, _key?: string) => newFlow({ _route, _key })
+
     return {
       bind,
       flow,
