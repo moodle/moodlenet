@@ -8,7 +8,7 @@ interface EmailPersistence {
     response: SentKO | SentOK
     flow: Flow
   }): Promise<{ sentEmails: number }>
-  storeVerifyingEmail(_: { req: VerifyEmailReq; token: string; flow: Flow }): Promise<void>
+  storeVerifyingEmail(_: { req: VerifyEmailReq; token: string; flow: Flow }): Promise<string>
   getVerifyingEmail(_: { flow: Flow }): Promise<Maybe<VerifyEmailDocument>>
   incrementAttemptVerifyingEmail(_: { flow: Flow }): Promise<Maybe<VerifyEmailDocument>>
   confirmEmail(_: {

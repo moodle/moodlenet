@@ -113,7 +113,6 @@ export type RespondApiArgs<Domain, ApiPath extends Types.ApiLeaves<Domain>> = {
     unbindThisRoute(): unknown
   }): Promise<Types.ApiRes<Domain, ApiPath>>
   opts?: ApiResponderOpts
-  // TODO: should remove this ApiResponderOpts as it should come from responder's `init` method
 }
 
 export const assertApiResponderQueue = async <Domain>(_: {

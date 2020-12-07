@@ -6,9 +6,9 @@ import { CreateDatabaseOptions } from 'arangojs/database'
 export const createDocumentCollectionIfNotExists = async <DocType extends object>({
   name,
   createOpts,
-  db: _db,
+  database: _db,
 }: {
-  db: Database | Promise<Database>
+  database: Database | Promise<Database>
   name: string
   createOpts: CreateCollectionOptions
 }) => {

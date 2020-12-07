@@ -1,3 +1,3 @@
-import { arangoEmailPersistenceImpl } from './email.persistence.arango'
+import { arangoEmailPersistence } from './email.persistence.arango'
 
-module.exports = arangoEmailPersistenceImpl
+module.exports = arangoEmailPersistence

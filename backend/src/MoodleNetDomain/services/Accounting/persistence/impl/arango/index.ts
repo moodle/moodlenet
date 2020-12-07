@@ -1,2 +1,2 @@
-import { arangoAccountingPersistenceImpl } from './account.persistence.arango'
-module.exports = arangoAccountingPersistenceImpl
+import { arangoAccountingPersistence } from './account.persistence.arango'
+module.exports = arangoAccountingPersistence

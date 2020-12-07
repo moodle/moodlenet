@@ -14,7 +14,7 @@ export type Accounting = {
       { success: true } | { success: false; reason: string }
     >
   }
-  AccountActivated: Event<{ requestFlowKey: string }> //TODO: should be flow obj .. change allaround
+  AccountActivated: Event<{ requestFlowKey: string }> //TODO: should be flow obj .. change allaround .. really ? why ?
 }
 
 export type AccountRequest = { email: string }

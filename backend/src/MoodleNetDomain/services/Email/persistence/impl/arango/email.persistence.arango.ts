@@ -1,51 +1,28 @@
 import { aql } from 'arangojs'
-import {
-  createDatabaseIfNotExists,
-  createDocumentCollectionIfNotExists,
-} from '../../../../../../lib/helpers/arango'
 import { Maybe } from '../../../../../../lib/helpers/types'
 import {
-  VerifyEmailDocument,
-  SentEmailDocument,
   EmailPersistence,
-  VerifyEmailDocumentStatus,
+  SentEmailDocument,
   SentEmailRecord,
+  VerifyEmailDocument,
+  VerifyEmailDocumentStatus,
 } from '../../types'
-import { env } from './email.persistence.arango.env'
+import { DBReady } from './email.persistence.arango.env'
 
-export const db = createDatabaseIfNotExists({
-  dbConfig: { url: env.url },
-  name: env.databaseName,
-  dbCreateOpts: {},
-})
+export const arangoEmailPersistence: Promise<EmailPersistence> = DBReady.then(
+  ({ VerifyEmail, db /* ,SentEmail */ }) => {
+    const storeSentEmail: EmailPersistence['storeSentEmail'] = async (_) => {
+      const { email, response, flow } = _
 
-export const VerifyEmail = createDocumentCollectionIfNotExists<VerifyEmailDocument>({
-  name: 'VerifyEmail',
-  db,
-  createOpts: {},
-})
-export const SentEmail = createDocumentCollectionIfNotExists<SentEmailDocument>({
-  name: 'SentEmail',
-  db,
-  createOpts: {},
-})
+      const record: Omit<SentEmailRecord, 'createdAt'> = {
+        ...response,
+        email,
+      }
+      const insertDocument: Omit<SentEmailDocument, 'sentEmails'> = {
+        ...flow,
+      }
 
-const DBReady = Promise.all([db, VerifyEmail, SentEmail])
-
-export const arangoEmailPersistenceImpl: Promise<EmailPersistence> = DBReady.then(() => ({
-  async storeSentEmail(_) {
-    const { email, response, flow } = _
-
-    const record: Omit<SentEmailRecord, 'createdAt'> = {
-      ...response,
-      email,
-    }
-    const insertDocument: Omit<SentEmailDocument, 'sentEmails'> = {
-      ...flow,
-    }
-
-    const sentEmailCount = await (
-      await (await db).query(aql`
+      const cursor = await db.query(aql`
         LET newRecord = MERGE(${record}, { createdAt: DATE_NOW() } )
         UPSERT { _key: ${flow._key} }
         INSERT MERGE(
@@ -56,19 +33,23 @@ export const arangoEmailPersistenceImpl: Promise<EmailPersistence> = DBReady.the
         INTO SentEmail
         RETURN LENGTH(NEW.sentEmails)
       `)
-    ).next()
-    return { sentEmails: sentEmailCount }
-  },
-  async getVerifyingEmail({ flow }) {
-    const doc = await (await VerifyEmail).document({ _key: flow._key })
-    return doc
-  },
-  async incrementAttemptVerifyingEmail({ flow }) {
-    const expiredStatus: VerifyEmailDocumentStatus = 'Expired'
-    const verifyingStatus: VerifyEmailDocumentStatus = 'Verifying'
-    const documentId = `VerifyEmail/${flow._key}`
-    const doc: Maybe<VerifyEmailDocument> = await (
-      await (await db).query(aql`
+
+      const sentEmailCount = await cursor.next()
+      return { sentEmails: sentEmailCount }
+    }
+
+    const getVerifyingEmail: EmailPersistence['getVerifyingEmail'] = async ({ flow }) => {
+      const doc = await VerifyEmail.document({ _key: flow._key })
+      return doc
+    }
+
+    const incrementAttemptVerifyingEmail: EmailPersistence['incrementAttemptVerifyingEmail'] = async ({
+      flow,
+    }) => {
+      const expiredStatus: VerifyEmailDocumentStatus = 'Expired'
+      const verifyingStatus: VerifyEmailDocumentStatus = 'Verifying'
+      const documentId = `VerifyEmail/${flow._key}`
+      const cursor = await db.query(aql`
         LET doc = DOCUMENT(${documentId})
         LET status = doc.status
         LET maxAttemptsReached = doc.attempts >= doc.req.maxAttempts
@@ -83,34 +64,38 @@ export const arangoEmailPersistenceImpl: Promise<EmailPersistence> = DBReady.the
         IN VerifyEmail
         RETURN NEW
       `)
-    ).next()
-    return doc
-  },
-  async storeVerifyingEmail({ req, flow, token }) {
-    const document: Omit<VerifyEmailDocument, 'createdAt'> = {
-      ...flow,
-      attempts: 0,
-      req,
-      token,
-      status: 'Verifying',
+      const doc: Maybe<VerifyEmailDocument> = await cursor.next()
+      return doc
     }
-    const key = await (
-      await (await db).query(aql`
-        INSERT MERGE(
-          ${document},
-          { createdAt: DATE_NOW() } 
+
+    const storeVerifyingEmail: EmailPersistence['storeVerifyingEmail'] = async ({
+      req,
+      flow,
+      token,
+    }) => {
+      const document: Omit<VerifyEmailDocument, 'createdAt'> = {
+        ...flow,
+        attempts: 0,
+        req,
+        token,
+        status: 'Verifying',
+      }
+      const cursor = await db.query(aql`
+      INSERT MERGE(
+        ${document},
+        { createdAt: DATE_NOW() } 
         )
         INTO VerifyEmail
         RETURN NEW._key
-      `)
-    ).next()
-    return key
-  },
+        `)
+      const key: string = await cursor.next()
+      return key
+    }
 
-  async confirmEmail({ token }) {
-    const verifiedStatus: VerifyEmailDocumentStatus = 'Verified'
-    const res = await (
-      await (await db).query(aql`
+    const confirmEmail: EmailPersistence['confirmEmail'] = async ({ token }) => {
+      const verifiedStatus: VerifyEmailDocumentStatus = 'Verified'
+      const res = await (
+        await db.query(aql`
         FOR doc in VerifyEmail
           FILTER doc.token==${token}
           LIMIT 1
@@ -120,7 +105,15 @@ export const arangoEmailPersistenceImpl: Promise<EmailPersistence> = DBReady.the
           prevStatus:OLD.status
         }
       `)
-    ).next()
-    return res
-  },
-}))
+      ).next()
+      return res
+    }
+    return {
+      confirmEmail,
+      getVerifyingEmail,
+      incrementAttemptVerifyingEmail,
+      storeSentEmail,
+      storeVerifyingEmail,
+    }
+  }
+)
