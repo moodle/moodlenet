@@ -30,6 +30,7 @@ export type Mutation = {
   accountSignUp: SimpleResponse;
   accountRequestConfirmEmail: Maybe<RequestConfirmEmailResponse>;
   accountRequestActivateAccount: SimpleResponse;
+  accountLogin: SimpleResponse;
 };
 
 
@@ -47,6 +48,12 @@ export type MutationAccountRequestActivateAccountArgs = {
   username: Scalars['String'];
   password: Scalars['String'];
   flowKey: Scalars['String'];
+};
+
+
+export type MutationAccountLoginArgs = {
+  username: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
@@ -166,6 +173,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   accountSignUp: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationAccountSignUpArgs, 'email'>>;
   accountRequestConfirmEmail: Resolver<Maybe<ResolversTypes['RequestConfirmEmailResponse']>, ParentType, ContextType, RequireFields<MutationAccountRequestConfirmEmailArgs, 'token'>>;
   accountRequestActivateAccount: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationAccountRequestActivateAccountArgs, 'username' | 'password' | 'flowKey'>>;
+  accountLogin: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationAccountLoginArgs, 'username' | 'password'>>;
 };
 
 export type Resolvers<ContextType = any> = {

@@ -16,4 +16,5 @@ type Mutation {
   accountSignUp(email: String!): SimpleResponse!
   accountRequestConfirmEmail(token: String!): RequestConfirmEmailResponse
   accountRequestActivateAccount(username: String!, password: String!, flowKey: String!): SimpleResponse!
+  accountLogin(username: String!, password: String!): SimpleResponse!
 }

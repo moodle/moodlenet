@@ -15,6 +15,10 @@ export type Accounting = {
     >
   }
   AccountActivated: Event<{ requestFlowKey: string }>
+  Session: {
+    Login: Api<{ username: string; password: string }, { success: boolean }>
+    AccountLoggedIn: Event<{ username: string }>
+  }
 }
 
 export type AccountRequest = { email: string }

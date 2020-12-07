@@ -18,4 +18,5 @@ type Mutation {
     password: String!
     flowKey: String!
   ): SimpleResponse!
+  accountLogin(username: String!, password: String!): SimpleResponse! # TODO: return JWT here
 }

@@ -11,7 +11,14 @@ import {
 import { DBReady } from './account.persistence.arango.env'
 
 export const arangoAccountingPersistence: Promise<AccountingPersistence> = DBReady.then(
-  ({ db, Config, NewAccountRequest /*, Account */ }) => {
+  ({ db, Config, NewAccountRequest, Account }) => {
+    const getAccountByUsername: AccountingPersistence['getAccountByUsername'] = async ({
+      username,
+    }) => {
+      const mAccount = await Account.document(username)
+      return mAccount
+    }
+
     const addNewAccountRequest: AccountingPersistence['addNewAccountRequest'] = async ({
       req: { email },
       flow,
@@ -102,26 +109,30 @@ export const arangoAccountingPersistence: Promise<AccountingPersistence> = DBRea
         password,
         username,
       }
-
+      console.log(1)
       const cursor = await db.query(aql`
         INSERT MERGE(
-          ${accountDoc},
-          {
-            createdAt: DATE_NOW(),
-            updatedAt: DATE_NOW()
-          }
+            ${accountDoc},
+            {
+              _key: ${username},
+              createdAt: DATE_NOW(),
+              updatedAt: DATE_NOW()
+            }
           )
           IN Account
           RETURN NEW
       `)
+      console.log(2)
 
       const newAccountDoc: AccountDocument = await cursor.next()
+      console.log(3)
 
       if (newAccountDoc) {
         await NewAccountRequest.update(requestFlowKey, {
           status: 'Account Created',
         })
       }
+      console.log(4)
 
       return newAccountDoc
     }
@@ -220,6 +231,7 @@ export const arangoAccountingPersistence: Promise<AccountingPersistence> = DBRea
       isUserNameAvailable,
       activateNewAccount,
       config,
+      getAccountByUsername,
     }
   }
 )

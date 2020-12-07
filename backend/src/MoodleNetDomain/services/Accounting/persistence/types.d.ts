@@ -4,6 +4,7 @@ import { AccountRequest } from '../Accounting'
 
 type AccountKey = string
 export interface AccountingPersistence {
+  getAccountByUsername(_: { username: string }): Promise<Maybe<AccountDocument>>
   isUserNameAvailable(_: { username: string }): Promise<boolean>
   newAccountRequestExpired(_: { flow: Flow }): Promise<Maybe<NewAccountRequestDocument>>
   addNewAccountRequest(_: {
