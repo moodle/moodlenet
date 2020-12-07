@@ -6,7 +6,7 @@ getEmailPersistence().then(async (emailPersistence) => {
     api: 'Email.Verify_Email.Confirm_Email',
     async handler({ req: { token } }) {
       const res = await emailPersistence.confirmEmail({ token })
-      if (!res) {
+      if (!res || res.current.status === 'Expired') {
         return { error: `couldn't find`, success: false } as const
       }
       const { current, prevStatus } = res
@@ -17,7 +17,8 @@ getEmailPersistence().then(async (emailPersistence) => {
           payload: { email: current.req.email.to, success: true },
         })
       }
-      return { success: true, flow: { _key: current._key, _route: current._route } } as const
+      const flow = { _key: current._key, _route: current._route }
+      return { success: true, flow } as const
     },
   })
 })

@@ -94,12 +94,20 @@ export const arangoEmailPersistence: Promise<EmailPersistence> = DBReady.then(
 
     const confirmEmail: EmailPersistence['confirmEmail'] = async ({ token }) => {
       const verifiedStatus: VerifyEmailDocumentStatus = 'Verified'
-      const res = await (
+      const verifyingStatus: VerifyEmailDocumentStatus = 'Verifying'
+      const res: Maybe<{
+        current: VerifyEmailDocument
+        prevStatus: VerifyEmailDocumentStatus
+      }> = await (
         await db.query(aql`
         FOR doc in VerifyEmail
-          FILTER doc.token==${token}
+          FILTER doc.token == ${token}  
           LIMIT 1
-          UPDATE doc WITH { status:${verifiedStatus} } IN VerifyEmail
+          UPDATE doc WITH (
+            doc.status == ${verifyingStatus}
+            ? { status:${verifiedStatus} }
+            : {}
+          ) IN VerifyEmail
         RETURN {
           current:NEW,
           prevStatus:OLD.status
