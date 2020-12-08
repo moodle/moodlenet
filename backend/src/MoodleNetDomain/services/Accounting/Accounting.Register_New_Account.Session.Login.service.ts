@@ -1,5 +1,6 @@
 import { MoodleNet } from '../..'
-import { getAccountPersistence, verifyPassword } from './accounting.env'
+import { getAccountPersistence } from './accounting.env'
+import { signJwt, verifyPassword } from './accounting.helpers'
 
 getAccountPersistence().then(async (accountPersistence) => {
   await MoodleNet.respondApi({
@@ -9,20 +10,20 @@ getAccountPersistence().then(async (accountPersistence) => {
         username,
       })
       if (!account) {
-        return { success: false }
+        return { jwt: null }
       }
       const paswordMatches = await verifyPassword({ hash: account.password, pwd })
       if (!paswordMatches) {
-        return { success: false }
+        return { jwt: null }
       }
-
+      const jwt = signJwt({ user: account.username })
       MoodleNet.emitEvent({
         event: 'Accounting.Session.AccountLoggedIn',
         flow,
-        payload: { username },
+        payload: { username, jwt },
       })
 
-      return { success: true }
+      return { jwt }
     },
   })
 })

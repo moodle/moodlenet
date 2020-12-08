@@ -8,4 +8,5 @@ export const resolvers: Resolvers = {
   Mutation,
   RequestConfirmEmailResponse: defaultTypeResolver as any,
   SimpleResponse: defaultTypeResolver as any,
+  Session: defaultTypeResolver as any,
 }

@@ -1,10 +1,16 @@
+import Argon from 'argon2'
+import { SignOptions } from 'jsonwebtoken'
 import { resolve } from 'path'
+import sshpk from 'sshpk'
 import * as Yup from 'yup'
 import { once } from '../../../lib/helpers/misc'
 import { AccountingPersistence } from './persistence/types'
-import Argon from 'argon2'
 
 const PERSISTENCE_IMPL = process.env.ACCOUNTING_PERSISTENCE_IMPL
+
+export const JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY!
+sshpk.parseKey(JWT_PRIVATE_KEY!, 'pem')
+export const jwtSignOpts: SignOptions = { algorithm: 'RS256' }
 
 export const getAccountPersistence = once(
   async (): Promise<AccountingPersistence> => {
@@ -16,19 +22,9 @@ export const getAccountPersistence = once(
   }
 )
 
-const argonOpts: (Argon.Options & { raw?: false }) | { raw: true } = {
+export const ArgonPwdHashOpts: Parameters<typeof Argon.hash>[1] = {
   memoryCost: 100000,
   timeCost: 8,
   parallelism: 4,
   type: Argon.argon2id,
-}
-export const hashPassword = (_: { pwd: string }) => {
-  const { pwd } = _
-  const hashedPassword = Argon.hash(pwd, argonOpts)
-  return hashedPassword
-}
-export const verifyPassword = (_: { hash: string; pwd: string | Buffer }) => {
-  const { pwd, hash } = _
-  const hashedPassword = Argon.verify(hash, pwd, argonOpts)
-  return hashedPassword
 }

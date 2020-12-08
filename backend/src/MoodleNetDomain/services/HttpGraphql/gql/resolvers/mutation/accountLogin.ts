@@ -15,15 +15,10 @@ export const accountLogin: MutationResolvers['accountLogin'] = async (
   return res.___ERROR
     ? {
         message: res.___ERROR.msg,
-        success: false,
-      }
-    : res.success
-    ? {
-        message: null,
-        success: true,
+        jwt: null,
       }
     : {
+        jwt: res.jwt,
         message: null,
-        success: false,
       }
 }

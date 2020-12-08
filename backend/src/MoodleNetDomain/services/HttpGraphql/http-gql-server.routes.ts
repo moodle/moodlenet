@@ -1,3 +1,4 @@
 import { MoodleNet } from '../..'
 
-export const httpGqlServerRoutes = MoodleNet.routes<'gql-request'>()
+export type HttpGqlRoutes = 'gql-request'
+export const httpGqlServerRoutes = MoodleNet.routes<HttpGqlRoutes>()

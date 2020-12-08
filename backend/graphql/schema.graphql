@@ -12,9 +12,13 @@ type Query {
 type RequestConfirmEmailResponse {
   flowKey: String
 }
+type Session {
+  jwt: String
+  message: String
+}
 type Mutation {
   accountSignUp(email: String!): SimpleResponse!
   accountRequestConfirmEmail(token: String!): RequestConfirmEmailResponse
   accountRequestActivateAccount(username: String!, password: String!, flowKey: String!): SimpleResponse!
-  accountLogin(username: String!, password: String!): SimpleResponse!
+  accountLogin(username: String!, password: String!): Session
 }

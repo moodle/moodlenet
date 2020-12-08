@@ -16,8 +16,8 @@ export type Accounting = {
   }
   AccountActivated: Event<{ requestFlowKey: string }>
   Session: {
-    Login: Api<{ username: string; password: string }, { success: boolean }>
-    AccountLoggedIn: Event<{ username: string }>
+    Login: Api<{ username: string; password: string }, { jwt: string | null }>
+    AccountLoggedIn: Event<{ username: string; jwt: string }>
   }
 }
 
