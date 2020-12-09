@@ -16,7 +16,7 @@ getAccountPersistence().then(async (accountPersistence) => {
         return { success: false, reason: maybeAccount } as const
       }
       MoodleNet.emitEvent({
-        event: 'Accounting.AccountActivated',
+        event: 'Accounting.Register_New_Account.NewAccountActivated',
         flow,
         payload: { requestFlowKey: maybeAccount.requestFlowKey },
       })

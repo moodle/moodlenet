@@ -13,8 +13,16 @@ export type Accounting = {
       { requestFlowKey: string; password: string; username: string },
       { success: true } | { success: false; reason: string }
     >
+    NewAccountActivated: Event<{ requestFlowKey: string }>
   }
-  AccountActivated: Event<{ requestFlowKey: string }>
+  Change_Main_Email: {
+    Request: Api<ChangeAccountEmailRequest, { success: true } | { success: false; reason: string }>
+    Email_Confirm_Result: Api<
+      LookupType<MoodleNetDomain, 'Email.Verify_Email.Result'>,
+      { done: boolean }
+    >
+    AccountEmailChanged: Event<{ username: string; newEmail: string; oldEmail: string }>
+  }
   Session: {
     Login: Api<{ username: string; password: string }, { jwt: string | null }>
     AccountLoggedIn: Event<{ username: string; jwt: string }>
@@ -22,3 +30,4 @@ export type Accounting = {
 }
 
 export type AccountRequest = { email: string }
+export type ChangeAccountEmailRequest = { username: string; newEmail: string }

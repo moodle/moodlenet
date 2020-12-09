@@ -2,7 +2,7 @@ import { MoodleNet } from '../../../../..'
 import { MutationResolvers } from '../../../../../graphql'
 import { httpGqlServerRoutes } from '../../../http-gql-server.routes'
 
-export const accountRequestConfirmEmail: MutationResolvers['accountRequestConfirmEmail'] = async (
+export const accountChangeEmailConfirm: MutationResolvers['accountChangeEmailConfirm'] = async (
   _parent,
   { token }
 ) => {
@@ -11,5 +11,5 @@ export const accountRequestConfirmEmail: MutationResolvers['accountRequestConfir
     flow: httpGqlServerRoutes.flow('gql-request'),
     req: { token },
   })
-  return res.___ERROR ? null : !res.success ? null : { flowKey: res.flow._key }
+  return res.___ERROR ? false : !res.success ? false : true
 }

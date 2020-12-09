@@ -4,6 +4,8 @@ import { DefaultConfig } from '../../../assets/defaultConfig'
 import {
   AccountDocument,
   AccountingPersistence,
+  ChangeAccountEmailRequestDocument,
+  ChangeAccountEmailRequestDocumentStatus,
   Config,
   NewAccountRequestDocument,
   NewAccountRequestDocumentStatus,
@@ -19,10 +21,95 @@ export const arangoAccountingPersistence: Promise<AccountingPersistence> = DBRea
       return mAccount
     }
 
-    const addNewAccountRequest: AccountingPersistence['addNewAccountRequest'] = async ({
-      req: { email },
+    const addChangeAccountEmailRequest: AccountingPersistence['addChangeAccountEmailRequest'] = async ({
+      flow,
+      req: { newEmail, username },
+    }) => {
+      if (await isAccountOrOpenRequestWithEmailPresent({ email: newEmail })) {
+        return 'account or request with this email already present'
+      }
+
+      const document: Omit<ChangeAccountEmailRequestDocument, 'createdAt' | 'updatedAt'> = {
+        ...flow,
+        newEmail,
+        username,
+        status: 'Waiting Email Confirmation',
+      }
+
+      const insertCursor = await db.query(aql`
+        INSERT MERGE(
+          ${document},
+          { 
+            createdAt: DATE_NOW(),
+            updatedAt: DATE_NOW()
+          } 
+        )
+        INTO ChangeAccountEmailRequest
+        RETURN null
+      `)
+
+      await insertCursor.next()
+      return true
+    }
+
+    const confirmAccountEmailChangeRequest: AccountingPersistence['confirmAccountEmailChangeRequest'] = async ({
       flow,
     }) => {
+      const confirmedStatus: NewAccountRequestDocumentStatus = 'Email Confirmed'
+
+      const cursor = await db.query(aql`
+        LET doc = DOCUMENT(CONCAT("ChangeAccountEmailRequest/",${flow._key}))
+        LET alreadyConfirmed = doc.status == ${confirmedStatus}
+        UPDATE doc
+        WITH (alreadyConfirmed
+          ? {}
+          : {
+            status:${confirmedStatus},
+            updatedAt: DATE_NOW()
+          })
+        IN ChangeAccountEmailRequest
+        RETURN (alreadyConfirmed ? true : NEW)
+      `)
+      const confirmRes: Maybe<ChangeAccountEmailRequestDocument | true> = await cursor.next()
+
+      if (!confirmRes) {
+        return 'Request Not Found'
+      }
+
+      if (confirmRes === true) {
+        return 'Previously Confirmed'
+      }
+
+      await Account.update(confirmRes.username, { email: confirmRes.newEmail })
+
+      return 'Confirmed'
+    }
+
+    const changeAccountEmailRequestExpired: AccountingPersistence['changeAccountEmailRequestExpired'] = async ({
+      flow,
+    }) => {
+      const expiredStatus: ChangeAccountEmailRequestDocumentStatus = 'Confirm Expired'
+      const waitingStatus: ChangeAccountEmailRequestDocumentStatus = 'Waiting Email Confirmation'
+      const cursor = await db.query(aql`
+        LET doc = DOCUMENT(CONCAT("ChangeAccountEmailRequest/",${flow._key}))
+        UPDATE doc
+        WITH (
+          doc.status == ${waitingStatus}
+          ? {
+            status:${expiredStatus},
+            updatedAt: DATE_NOW()
+          }
+          : {}
+        )
+        IN ChangeAccountEmailRequest
+        RETURN NEW
+      `)
+      const requestDoc: Maybe<ChangeAccountEmailRequestDocument> = await cursor.next()
+      return requestDoc
+    }
+
+    // TODO: should it check on change email requests too ?
+    const isAccountOrOpenRequestWithEmailPresent = async ({ email }: { email: string }) => {
       const accountCursor = await db.query(aql`
         FOR acc in Account
         FILTER acc.email==${email}
@@ -32,7 +119,7 @@ export const arangoAccountingPersistence: Promise<AccountingPersistence> = DBRea
 
       const maybeAccountWithThisEmail: Maybe<AccountDocument> = await accountCursor.next()
       if (maybeAccountWithThisEmail) {
-        return 'account or request with this email already present'
+        return true
       }
 
       const searchRequestStatuses: NewAccountRequestDocumentStatus[] = [
@@ -49,6 +136,16 @@ export const arangoAccountingPersistence: Promise<AccountingPersistence> = DBRea
 
       const maybeRequestWithThisEmail: Maybe<NewAccountRequestDocument> = await accountRequestCursor.next()
       if (maybeRequestWithThisEmail) {
+        return true
+      }
+      return false
+    }
+
+    const addNewAccountRequest: AccountingPersistence['addNewAccountRequest'] = async ({
+      req: { email },
+      flow,
+    }) => {
+      if (await isAccountOrOpenRequestWithEmailPresent({ email })) {
         return 'account or request with this email already present'
       }
 
@@ -228,6 +325,9 @@ export const arangoAccountingPersistence: Promise<AccountingPersistence> = DBRea
       activateNewAccount,
       config,
       getAccountByUsername,
+      addChangeAccountEmailRequest,
+      confirmAccountEmailChangeRequest,
+      changeAccountEmailRequestExpired,
     }
   }
 )

@@ -36,6 +36,8 @@ export type Mutation = {
   accountSignUp: SimpleResponse;
   accountRequestConfirmEmail: Maybe<RequestConfirmEmailResponse>;
   accountRequestActivateAccount: SimpleResponse;
+  accountChangeEmailRequest: SimpleResponse;
+  accountChangeEmailConfirm: Maybe<Scalars['Boolean']>;
   accountLogin: Maybe<Session>;
 };
 
@@ -54,6 +56,16 @@ export type MutationAccountRequestActivateAccountArgs = {
   username: Scalars['String'];
   password: Scalars['String'];
   flowKey: Scalars['String'];
+};
+
+
+export type MutationAccountChangeEmailRequestArgs = {
+  newEmail: Scalars['String'];
+};
+
+
+export type MutationAccountChangeEmailConfirmArgs = {
+  token: Scalars['String'];
 };
 
 
@@ -187,6 +199,8 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   accountSignUp: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationAccountSignUpArgs, 'email'>>;
   accountRequestConfirmEmail: Resolver<Maybe<ResolversTypes['RequestConfirmEmailResponse']>, ParentType, ContextType, RequireFields<MutationAccountRequestConfirmEmailArgs, 'token'>>;
   accountRequestActivateAccount: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationAccountRequestActivateAccountArgs, 'username' | 'password' | 'flowKey'>>;
+  accountChangeEmailRequest: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationAccountChangeEmailRequestArgs, 'newEmail'>>;
+  accountChangeEmailConfirm: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationAccountChangeEmailConfirmArgs, 'token'>>;
   accountLogin: Resolver<Maybe<ResolversTypes['Session']>, ParentType, ContextType, RequireFields<MutationAccountLoginArgs, 'username' | 'password'>>;
 };
 
