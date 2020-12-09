@@ -1,6 +1,6 @@
 import { Flow } from '../../../../lib/domain/types/path'
 import { CreatedDocumentBase, Maybe, MutableDocumentBase } from '../../../../lib/helpers/types'
-import { AccountRequest } from '../Accounting'
+import { AccountRequest, ChangeAccountEmailRequest } from '../Accounting'
 
 type AccountKey = string
 export interface AccountingPersistence {
@@ -11,6 +11,16 @@ export interface AccountingPersistence {
     req: AccountRequest
     flow: Flow
   }): Promise<true | 'account or request with this email already present'>
+  addChangeAccountEmailRequest(_: {
+    req: ChangeAccountEmailRequest
+    flow: Flow
+  }): Promise<true | 'account or request with this email already present'>
+  confirmAccountEmailChangeRequest(_: {
+    flow: Flow
+  }): Promise<'Confirmed' | 'Request Not Found' | 'Previously Confirmed'>
+  changeAccountEmailRequestExpired(_: {
+    flow: Flow
+  }): Promise<Maybe<ChangeAccountEmailRequestDocument>>
   confirmNewAccountRequest(_: {
     flow: Flow
   }): Promise<'Confirmed' | 'Request Not Found' | 'Previously Confirmed'>
@@ -51,11 +61,29 @@ type NewAccountRequestDocument = {
   MutableDocumentBase
 // $ NewAccountRequestDocument
 
+// ^ ChangeAccountEmailRequestDocument
+type ChangeAccountEmailRequestDocumentStatus =
+  | 'Waiting Email Confirmation'
+  | 'Email Confirmed'
+  | 'Confirm Expired'
+type ChangeAccountEmailRequestDocument = {
+  newEmail: string
+  username: string
+  status: ChangeAccountEmailRequestDocumentStatus
+} & Flow &
+  MutableDocumentBase
+// $ ChangeAccountEmailRequestDocument
+
 // ^ Config
 type Config = {
   sendEmailConfirmationAttempts: number
   sendEmailConfirmationDelay: number
   newAccountRequestEmail: {
+    text: string
+    subject: string
+    from: string
+  }
+  changeAccountEmailRequestEmail: {
     text: string
     subject: string
     from: string

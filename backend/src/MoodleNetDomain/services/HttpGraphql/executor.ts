@@ -8,11 +8,7 @@ const executor: GraphQLServerOptions['executor'] = async (requestContext) => {
   const jwt = verifyJwt(jwtToken)
   if (jwt === INVALID_TOKEN) {
     return {
-      errors: [
-        new GraphQLError('invalid jwt token', null, null, null, null, null, {
-          code: 'invalid jwt token',
-        }),
-      ],
+      errors: [new GraphQLError('invalid jwt token')],
     }
   }
   const ctx: Context = { jwt }

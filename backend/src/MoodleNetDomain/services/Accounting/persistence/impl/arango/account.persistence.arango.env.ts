@@ -3,7 +3,12 @@ import {
   createDatabaseIfNotExists,
   createDocumentCollectionIfNotExists,
 } from '../../../../../../lib/helpers/arango'
-import { Config, AccountDocument, NewAccountRequestDocument } from '../../types'
+import {
+  Config,
+  AccountDocument,
+  NewAccountRequestDocument,
+  ChangeAccountEmailRequestDocument,
+} from '../../types'
 
 interface ArangoAccountPersistenceEnv {
   url: string[]
@@ -49,14 +54,24 @@ export const NewAccountRequestCollection = createDocumentCollectionIfNotExists<N
   }
 )
 
+export const ChangeAccountEmailRequestCollection = createDocumentCollectionIfNotExists<ChangeAccountEmailRequestDocument>(
+  {
+    name: 'ChangeAccountEmailRequest',
+    database,
+    createOpts: {},
+  }
+)
+
 export const DBReady = Promise.all([
   database,
   AccountCollection,
   ConfigCollection,
   NewAccountRequestCollection,
-]).then(([db, Account, Config, NewAccountRequest]) => ({
+  ChangeAccountEmailRequestCollection,
+]).then(([db, Account, Config, NewAccountRequest, ChangeAccountEmailRequest]) => ({
   db,
   Account,
   Config,
   NewAccountRequest,
+  ChangeAccountEmailRequest,
 }))
