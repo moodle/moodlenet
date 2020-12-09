@@ -4,9 +4,7 @@ import { resolvers } from './resolvers'
 import { directiveResolvers } from './directives'
 import { middlewares } from './middlewares'
 import { typeDefs } from '../../../graphqlTypeDefs'
-
-export type Context = {}
-export type RootValue = {}
+import { Context } from '../../../GQL'
 
 const _schema = makeExecutableSchema<Context>({
   typeDefs: [typeDefs],

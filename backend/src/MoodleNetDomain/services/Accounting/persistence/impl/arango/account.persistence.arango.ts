@@ -109,7 +109,6 @@ export const arangoAccountingPersistence: Promise<AccountingPersistence> = DBRea
         password,
         username,
       }
-      console.log(1)
       const cursor = await db.query(aql`
         INSERT MERGE(
             ${accountDoc},
@@ -122,17 +121,14 @@ export const arangoAccountingPersistence: Promise<AccountingPersistence> = DBRea
           IN Account
           RETURN NEW
       `)
-      console.log(2)
 
       const newAccountDoc: AccountDocument = await cursor.next()
-      console.log(3)
 
       if (newAccountDoc) {
         await NewAccountRequest.update(requestFlowKey, {
           status: 'Account Created',
         })
       }
-      console.log(4)
 
       return newAccountDoc
     }
