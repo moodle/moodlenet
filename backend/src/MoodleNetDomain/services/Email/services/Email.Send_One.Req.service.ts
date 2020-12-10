@@ -1,5 +1,5 @@
-import { MoodleNet } from '../..'
-import { getEmailPersistence, getSender } from './email.env'
+import { MoodleNet } from '../../..'
+import { getEmailPersistence, getSender } from '../email.env'
 
 Promise.all([getEmailPersistence(), getSender()]).then(([emailPersistence, sender]) => {
   MoodleNet.respondApi({

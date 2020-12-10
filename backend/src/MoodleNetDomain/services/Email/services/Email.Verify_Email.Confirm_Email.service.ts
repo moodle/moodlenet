@@ -1,5 +1,5 @@
-import { MoodleNet } from '../..'
-import { getEmailPersistence } from './email.env'
+import { MoodleNet } from '../../..'
+import { getEmailPersistence } from '../email.env'
 
 getEmailPersistence().then(async (emailPersistence) => {
   await MoodleNet.respondApi({

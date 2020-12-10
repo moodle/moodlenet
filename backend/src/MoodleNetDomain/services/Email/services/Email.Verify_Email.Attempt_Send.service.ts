@@ -1,7 +1,7 @@
-import { MoodleNet } from '../..'
-import { ApiReturn } from '../../../lib/domain/api/types'
-import { MoodleNetDomain } from '../../MoodleNetDomain'
-import { getEmailPersistence } from './email.env'
+import { MoodleNet } from '../../..'
+import { ApiReturn } from '../../../../lib/domain/api/types'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { getEmailPersistence } from '../email.env'
 
 getEmailPersistence().then(async (emailPersistence) => {
   await MoodleNet.respondApi({

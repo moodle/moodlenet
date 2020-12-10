@@ -1,6 +1,6 @@
-import { MoodleNet } from '../..'
-import { getAccountPersistence } from './accounting.env'
-import { accountingRoutes } from './Accounting.routes'
+import { MoodleNet } from '../../..'
+import { getAccountPersistence } from '../accounting.env'
+import { accountingRoutes } from '../Accounting.routes'
 
 getAccountPersistence().then(async (accountPersistence) => {
   await MoodleNet.respondApi({

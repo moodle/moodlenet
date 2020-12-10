@@ -1,6 +1,6 @@
-import { MoodleNet } from '../..'
-import { getAccountPersistence } from './accounting.env'
-import { signJwt, verifyPassword } from './accounting.helpers'
+import { MoodleNet } from '../../..'
+import { getAccountPersistence } from '../accounting.env'
+import { signJwt, verifyPassword } from '../accounting.helpers'
 
 getAccountPersistence().then(async (accountPersistence) => {
   await MoodleNet.respondApi({

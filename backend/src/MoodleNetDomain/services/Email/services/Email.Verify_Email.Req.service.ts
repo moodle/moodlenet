@@ -1,9 +1,9 @@
-import { MoodleNet } from '../..'
-import { ApiReturn } from '../../../lib/domain/api/types'
+import { MoodleNet } from '../../..'
+import { ApiReturn } from '../../../../lib/domain/api/types'
 import { v4 } from 'uuid'
-import { MoodleNetDomain } from '../../MoodleNetDomain'
-import { getEmailPersistence } from './email.env'
-import { EmailObj } from './types'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { getEmailPersistence } from '../email.env'
+import { EmailObj } from '../types'
 
 getEmailPersistence().then(async (emailPersistence) => {
   await MoodleNet.respondApi({
