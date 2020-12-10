@@ -1,6 +1,10 @@
 import { Flow } from '../../../../lib/domain/types/path'
 import { CreatedDocumentBase, Maybe, MutableDocumentBase } from '../../../../lib/helpers/types'
+import { EmailObj } from '../../Email/types'
 import { AccountRequest, ChangeAccountEmailRequest } from '../Accounting'
+import { ChangeAccountEmailRequestEmailVars } from '../assets/defaultConfig/changeAccountEmailRequestEmail'
+import { NewAccountRequestEmailVars } from '../assets/defaultConfig/newAccountRequestEmail'
+import { TempSessionEmailVars } from '../assets/defaultConfig/tempSessionEmail'
 
 type AccountKey = string
 export interface AccountingPersistence {
@@ -11,6 +15,7 @@ export interface AccountingPersistence {
     req: AccountRequest
     flow: Flow
   }): Promise<true | 'account or request with this email already present'>
+  changePassword(_: { username: string; newPassword: string }): Promise<true | 'not found'>
   addChangeAccountEmailRequest(_: {
     req: ChangeAccountEmailRequest
     flow: Flow
@@ -77,16 +82,13 @@ type ChangeAccountEmailRequestDocument = {
 // ^ Config
 type Config = {
   sendEmailConfirmationAttempts: number
-  sendEmailConfirmationDelay: number
-  newAccountRequestEmail: {
-    text: string
-    subject: string
-    from: string
-  }
-  changeAccountEmailRequestEmail: {
-    text: string
-    subject: string
-    from: string
-  }
+  sendEmailConfirmationDelaySecs: number
+  newAccountRequestEmail: EmailTemplate<NewAccountRequestEmailVars>
+  changeAccountEmailRequestEmail: EmailTemplate<ChangeAccountEmailRequestEmailVars>
+  tempSessionEmail: EmailTemplate<TempSessionEmailVars>
+  resetPasswordSessionValiditySecs: number
+  sessionValiditySecs: number
 } & CreatedDocumentBase
 // $ Config
+
+type EmailTemplate<Vars> = Pick<EmailObj, 'from' | 'subject' | 'html' | 'text'> & { __?: Vars }

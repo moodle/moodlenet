@@ -1,31 +1,34 @@
 import { MoodleNet } from '../../../../..'
 import { MutationResolvers } from '../../../../../graphql'
+import { hashPassword } from '../../../../Accounting/accounting.helpers'
 import { httpGqlServerRoutes } from '../../../http-gql-server.routes'
 import { loggedUserOnly } from '../../helpers'
 
-export const accountChangeEmailRequest: MutationResolvers['accountChangeEmailRequest'] = async (
+export const accountChangePassword: MutationResolvers['accountChangePassword'] = async (
   _parent,
-  { newEmail },
+  { newPassword: plainNewPawd },
   ctx
 ) => {
   const jwt = loggedUserOnly({ ctx })
+  const newPassword = await hashPassword({ pwd: plainNewPawd })
   const { res } = await MoodleNet.callApi({
-    api: 'Accounting.Change_Main_Email.Request',
+    api: 'Accounting.Change_Password',
     flow: httpGqlServerRoutes.flow('gql-request'),
-    req: { newEmail, username: jwt.username },
+    req: { newPassword, username: jwt.username },
   })
+
   return res.___ERROR
     ? {
-        message: res.___ERROR.msg,
         success: false,
+        message: res.___ERROR.msg,
       }
-    : res.success
+    : !res.success
     ? {
-        success: true,
-        message: null,
-      }
-    : {
         message: res.reason,
         success: false,
+      }
+    : {
+        success: true,
+        message: null,
       }
 }

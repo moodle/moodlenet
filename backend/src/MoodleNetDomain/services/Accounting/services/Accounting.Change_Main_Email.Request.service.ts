@@ -1,5 +1,6 @@
 import { MoodleNet } from '../../..'
 import { getAccountPersistence } from '../accounting.env'
+import { fillEmailTemplate } from '../accounting.helpers'
 import { accountingRoutes } from '../Accounting.routes'
 
 getAccountPersistence().then(async (accountPersistence) => {
@@ -9,24 +10,23 @@ getAccountPersistence().then(async (accountPersistence) => {
       const config = await accountPersistence.config()
       const {
         sendEmailConfirmationAttempts,
-        sendEmailConfirmationDelay,
+        sendEmailConfirmationDelaySecs,
         changeAccountEmailRequestEmail,
       } = config
       const resp = await accountPersistence.addChangeAccountEmailRequest({ req, flow })
       if (resp === true) {
+        const email = fillEmailTemplate({
+          template: changeAccountEmailRequestEmail,
+          to: req.newEmail,
+          vars: { username: req.username, link: `https://xxx.xxx/change-main-email/{{=it.token}}` },
+        })
         await MoodleNet.callApi({
           api: 'Email.Verify_Email.Req',
           flow: accountingRoutes.reflow(flow, 'Change_Account_Email'),
           req: {
-            timeoutMillis: sendEmailConfirmationDelay,
-            email: {
-              to: req.newEmail,
-              from: changeAccountEmailRequestEmail.from,
-              subject: changeAccountEmailRequestEmail.subject,
-              text: changeAccountEmailRequestEmail.text,
-            },
+            timeoutSecs: sendEmailConfirmationDelaySecs,
+            email,
             maxAttempts: sendEmailConfirmationAttempts,
-            tokenReplaceRegEx: '__TOKEN__',
           },
           opts: { justEnqueue: true },
         })

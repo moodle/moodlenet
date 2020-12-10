@@ -4,18 +4,18 @@ import { v4 } from 'uuid'
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { getEmailPersistence } from '../email.env'
 import { EmailObj } from '../types'
+import { fillEmailToken } from '../email.helpers'
 
 getEmailPersistence().then(async (emailPersistence) => {
   await MoodleNet.respondApi({
     api: 'Email.Verify_Email.Req',
     async handler({ req, flow }): ApiReturn<MoodleNetDomain, 'Email.Verify_Email.Req'> {
-      const { email, tokenReplaceRegEx } = req
+      const { email } = req
       const token = v4()
-      const regex = new RegExp(tokenReplaceRegEx, 'g')
       const emailObj: EmailObj = {
         ...email,
-        html: email.html?.replace(regex, token),
-        text: email.text?.replace(regex, token),
+        html: email.html && fillEmailToken({ emailString: email.html, token }),
+        text: email.text && fillEmailToken({ emailString: email.text, token }),
       }
       const documentKey = await emailPersistence.storeVerifyingEmail({
         req: {

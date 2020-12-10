@@ -1,5 +1,5 @@
 export type MoodelNetJwt = {
-  user: string
+  username: string
 }
 //FIXME: implement proper typeguard
 export const isMoodelNetJwt = (_obj: object): _obj is MoodelNetJwt => true

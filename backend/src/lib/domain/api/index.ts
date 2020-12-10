@@ -1,5 +1,6 @@
 import { Message } from 'amqplib'
 import * as AMQP from '../amqp'
+import { nodeId } from '../helpers'
 import { Flow } from '../types/path'
 import * as Types from './types'
 
@@ -15,7 +16,7 @@ const JUST_ENQUEUED_RESPONSE: Types.Reply<object> = {
 export type CallOpts =
   | {
       justEnqueue: true
-      delay?: number
+      delaySecs?: number
     }
   | {
       justEnqueue?: false | undefined
@@ -42,9 +43,9 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
       reject: (arg0: any) => void
     ) => {
       const { api, flow, req, opts } = _
-
+      const delay = opts?.justEnqueue && opts?.delaySecs ? opts.delaySecs * 1000 : undefined
       const expiration = opts?.justEnqueue
-        ? opts?.delay || undefined
+        ? delay || undefined
         : opts?.timeout || DEF_TIMEOUT_EXPIRATION
 
       let unsubEmitter = () => {}
@@ -70,7 +71,7 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
           correlationId: flow._key,
           replyToNodeQ: !opts?.justEnqueue,
           expiration,
-          delay: opts?.justEnqueue ? opts?.delay : undefined,
+          delay,
         },
       })
         .then((_) => {
@@ -169,7 +170,7 @@ export const respond = <Domain>(domain: string) => async <ApiPath extends Types.
         AMQP.unbindQ({ exchange, name: apiResponderQName, topic: thisTopic })
       }
     },
-    opts: { consumerTag: apiResponderQName, ...opts?.consume },
+    opts: { consumerTag: `${apiResponderQName}@${nodeId}`, ...opts?.consume },
   })
   return disposeResponder
   function disposeResponder() {

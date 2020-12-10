@@ -1,5 +1,6 @@
 import { MoodleNet } from '../../..'
 import { getAccountPersistence } from '../accounting.env'
+import { fillEmailTemplate } from '../accounting.helpers'
 import { accountingRoutes } from '../Accounting.routes'
 
 getAccountPersistence().then(async (accountPersistence) => {
@@ -10,23 +11,22 @@ getAccountPersistence().then(async (accountPersistence) => {
       const {
         newAccountRequestEmail,
         sendEmailConfirmationAttempts,
-        sendEmailConfirmationDelay,
+        sendEmailConfirmationDelaySecs,
       } = config
       const resp = await accountPersistence.addNewAccountRequest({ req, flow })
       if (resp === true) {
+        const email = fillEmailTemplate({
+          template: newAccountRequestEmail,
+          to: req.email,
+          vars: { email: req.email, link: `https://xxx.xxx/new-account-confirm/{{=it.token}}` },
+        })
         await MoodleNet.callApi({
           api: 'Email.Verify_Email.Req',
           flow: accountingRoutes.reflow(flow, 'Register_New_Account'),
           req: {
-            timeoutMillis: sendEmailConfirmationDelay,
-            email: {
-              to: req.email,
-              from: newAccountRequestEmail.from,
-              subject: newAccountRequestEmail.subject,
-              text: newAccountRequestEmail.text,
-            },
+            timeoutSecs: sendEmailConfirmationDelaySecs,
+            email,
             maxAttempts: sendEmailConfirmationAttempts,
-            tokenReplaceRegEx: '__TOKEN__',
           },
           opts: { justEnqueue: true },
         })

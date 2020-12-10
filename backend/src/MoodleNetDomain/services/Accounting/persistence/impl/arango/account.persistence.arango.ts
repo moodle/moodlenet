@@ -317,7 +317,16 @@ export const arangoAccountingPersistence: Promise<AccountingPersistence> = DBRea
       return requestDoc
     }
 
+    const changePassword: AccountingPersistence['changePassword'] = async ({
+      newPassword,
+      username,
+    }) => {
+      const resp = await Account.update(username, { password: newPassword }, { returnNew: true })
+      return resp.new ? true : 'not found'
+    }
+
     return {
+      changePassword,
       addNewAccountRequest,
       confirmNewAccountRequest,
       newAccountRequestExpired,

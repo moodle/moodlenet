@@ -16,7 +16,13 @@ getAccountPersistence().then(async (accountPersistence) => {
       if (!paswordMatches) {
         return { jwt: null }
       }
-      const jwt = signJwt({ user: account.username })
+      const cfg = await accountPersistence.config()
+      const jwt = signJwt({
+        payload: { username: account.username },
+        opts: {
+          expiresIn: cfg.sessionValiditySecs,
+        },
+      })
       MoodleNet.emitEvent({
         event: 'Accounting.Session.AccountLoggedIn',
         flow,

@@ -10,7 +10,7 @@ const PERSISTENCE_IMPL = process.env.ACCOUNTING_PERSISTENCE_IMPL
 
 export const JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY!
 sshpk.parseKey(JWT_PRIVATE_KEY!, 'pem')
-export const jwtSignOpts: SignOptions = { algorithm: 'RS256' }
+export const jwtSignBaseOpts: SignOptions = { algorithm: 'RS256' }
 
 export const getAccountPersistence = once(
   async (): Promise<AccountingPersistence> => {

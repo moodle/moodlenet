@@ -21,6 +21,8 @@ type Mutation {
   accountRequestConfirmEmail(token: String!): RequestConfirmEmailResponse
   accountRequestActivateAccount(username: String!, password: String!, flowKey: String!): SimpleResponse!
   accountChangeEmailRequest(newEmail: String!): SimpleResponse!
-  accountChangeEmailConfirm(token: String!): Boolean
+  accountChangeEmailConfirm(token: String!): Boolean!
+  accountChangePassword(newPassword: String!): SimpleResponse!
+  accountTempSessionEmail(username: String!, email: String!): String
   accountLogin(username: String!, password: String!): Session
 }

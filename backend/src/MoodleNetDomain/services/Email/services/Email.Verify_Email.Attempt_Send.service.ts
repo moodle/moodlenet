@@ -37,7 +37,7 @@ getEmailPersistence().then(async (emailPersistence) => {
           req: {},
           opts: {
             justEnqueue: true,
-            delay: doc.req.timeoutMillis,
+            delaySecs: doc.req.timeoutSecs,
           },
         })
 

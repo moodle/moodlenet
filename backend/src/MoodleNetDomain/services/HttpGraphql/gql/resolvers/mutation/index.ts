@@ -5,6 +5,8 @@ import { accountRequestActivateAccount } from './accountRequestActivateAccount'
 import { MutationResolvers } from '../../../../../graphql'
 import { accountChangeEmailRequest } from './accountChangeEmailRequest'
 import { accountChangeEmailConfirm } from './accountChangeEmailConfirm'
+import { accountChangePassword } from './accountChangePassword'
+import { accountTempSessionEmail } from './accountTempSessionEmail'
 
 export const Mutation: MutationResolvers = {
   accountRequestConfirmEmail,
@@ -13,4 +15,6 @@ export const Mutation: MutationResolvers = {
   accountChangeEmailConfirm,
   accountChangeEmailRequest,
   accountLogin,
+  accountChangePassword,
+  accountTempSessionEmail,
 }

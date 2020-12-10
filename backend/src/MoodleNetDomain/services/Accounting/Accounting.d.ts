@@ -23,6 +23,15 @@ export type Accounting = {
     >
     AccountEmailChanged: Event<{ username: string; newEmail: string; oldEmail: string }>
   }
+  Temp_Email_Session: Api<
+    { username: string; email: string },
+    { success: true } | { success: false; reason: string }
+  >
+  Change_Password: Api<
+    { username: string; newPassword: string },
+    { success: true } | { success: false; reason: string }
+  >
+
   Session: {
     Login: Api<{ username: string; password: string }, { jwt: string | null }>
     AccountLoggedIn: Event<{ username: string; jwt: string }>
