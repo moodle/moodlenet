@@ -1,0 +1,11 @@
+type User implements Vertex & WithIcon & WithName & WithSummary {
+  id: ID!
+  icon: String!
+  name: String!
+  summary: String!
+  bio: String!
+}
+
+extend type Query {
+  user(id: ID!): User
+}

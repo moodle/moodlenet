@@ -9,6 +9,8 @@
 		"todo-tree.filtering.excludeGlobs": [
 			"**/node_modules"
 		],
-		"git.ignoreLimitWarning": true
+		"git.ignoreLimitWarning": true,
+		"vscode-graphql.trace.server": "off",
+		"vscode-graphql.debug": false
 	}
 }

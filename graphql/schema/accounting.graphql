@@ -3,10 +3,6 @@ type SimpleResponse {
   message: String
 }
 
-type Query {
-  x: Int
-}
-
 type RequestConfirmEmailResponse {
   flowKey: String
 }

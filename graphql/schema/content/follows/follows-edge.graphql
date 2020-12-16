@@ -1,0 +1,8 @@
+union Follower = User
+union Followed = User | Subject
+
+interface Follows {
+  id: ID!
+  follower: Follower
+  follows: Followed
+}

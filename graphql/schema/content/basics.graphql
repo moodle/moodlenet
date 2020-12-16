@@ -1,0 +1,25 @@
+interface Vertex {
+  id: ID!
+}
+
+interface WithIcon {
+  icon: String!
+}
+
+interface WithName {
+  name: String!
+}
+
+interface WithSummary {
+  summary: String!
+}
+
+interface Edge {
+  id: ID!
+}
+
+input PageInput {
+  limit: Int
+  after: ID
+  before: ID
+}

@@ -6,9 +6,6 @@ type SimpleResponse {
   success: Boolean!
   message: String
 }
-type Query {
-  x: Int
-}
 type RequestConfirmEmailResponse {
   flowKey: String
 }
@@ -25,4 +22,62 @@ type Mutation {
   accountChangePassword(newPassword: String!): SimpleResponse!
   accountTempSessionEmail(username: String!, email: String!): String
   accountLogin(username: String!, password: String!): Session
+}
+interface Vertex {
+  id: ID!
+}
+interface WithIcon {
+  icon: String!
+}
+interface WithName {
+  name: String!
+}
+interface WithSummary {
+  summary: String!
+}
+interface Edge {
+  id: ID!
+}
+input PageInput {
+  limit: Int
+  after: ID
+  before: ID
+}
+union Follower = User
+union Followed = User | Subject
+interface Follows {
+  id: ID!
+  follower: Follower
+  follows: Followed
+}
+type UserFollowsSubject implements Follows {
+  id: ID!
+  follower: User
+  follows: Subject
+}
+type User implements Vertex & WithIcon & WithName & WithSummary {
+  bio: String!
+  followers(page: PageInput): [UserFollowsUser!]!
+  followsSubjects(page: PageInput): [UserFollowsSubject!]!
+  followsUsers(page: PageInput): [UserFollowsUser!]!
+  icon: String!
+  id: ID!
+  name: String!
+  summary: String!
+}
+type Subject implements Vertex & WithIcon & WithName & WithSummary {
+  followers(page: PageInput): [UserFollowsSubject!]!
+  icon: String!
+  id: ID!
+  name: String!
+  summary: String!
+}
+type UserFollowsUser implements Follows {
+  id: ID!
+  follower: User
+  follows: User
+}
+type Query {
+  subject(id: ID!): Subject
+  user(id: ID!): User
 }

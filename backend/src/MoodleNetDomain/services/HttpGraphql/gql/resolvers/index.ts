@@ -1,12 +1,12 @@
-import { defaultTypeResolver } from 'graphql'
+// import { defaultTypeResolver } from 'graphql'
 import { Resolvers } from '../../../../graphql'
 import { Mutation } from './mutation'
 import { Query } from './query'
 
-export const resolvers: Resolvers = {
+export const resolvers: MyResolvers = {
   Query,
   Mutation,
-  RequestConfirmEmailResponse: defaultTypeResolver as any,
-  SimpleResponse: defaultTypeResolver as any,
-  Session: defaultTypeResolver as any,
+  // User: defaultTypeResolver as any,
 }
+
+type MyResolvers = Partial<Resolvers>
