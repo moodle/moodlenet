@@ -1,8 +1,9 @@
-import { GraphQLError } from 'graphql'
-import { MoodelNetJwt } from './JWT'
+import { GraphQLArgs, GraphQLError } from 'graphql'
+import { MoodleNetJwt } from './JWT'
 
 export type Context = {
-  jwt: MoodelNetJwt | undefined
+  jwt: MoodleNetJwt | undefined
+  gqlReq: Pick<GraphQLArgs, 'operationName' | 'source' | 'variableValues'>
 }
 export type RootValue = {}
 

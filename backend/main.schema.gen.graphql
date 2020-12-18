@@ -55,7 +55,7 @@ type UserFollowsSubject implements Follows {
   follower: User
   follows: Subject
 }
-type User implements Vertex & WithIcon & WithName & WithSummary {
+type User implements UserVertex & Vertex & WithIcon & WithName & WithSummary {
   bio: String!
   followers(page: PageInput): [UserFollowsUser!]!
   followsSubjects(page: PageInput): [UserFollowsSubject!]!
@@ -65,7 +65,7 @@ type User implements Vertex & WithIcon & WithName & WithSummary {
   name: String!
   summary: String!
 }
-type Subject implements Vertex & WithIcon & WithName & WithSummary {
+type Subject implements SubjectVertex & Vertex & WithIcon & WithName & WithSummary {
   followers(page: PageInput): [UserFollowsSubject!]!
   icon: String!
   id: ID!
@@ -77,7 +77,23 @@ type UserFollowsUser implements Follows {
   follower: User
   follows: User
 }
+interface SubjectVertex {
+  id: ID!
+  icon: String!
+  name: String!
+  summary: String!
+}
 type Query {
   subject(id: ID!): Subject
   user(id: ID!): User
+}
+interface UserVertex {
+  id: ID!
+  icon: String!
+  name: String!
+  summary: String!
+  bio: String!
+}
+input UserQuery {
+  id: ID
 }

@@ -1,0 +1,23 @@
+interface UserVertex {
+  id: ID!
+  icon: String!
+  name: String!
+  summary: String!
+  bio: String!
+}
+
+type User implements UserVertex & Vertex & WithIcon & WithName & WithSummary {
+  id: ID!
+  icon: String!
+  name: String!
+  summary: String!
+  bio: String!
+}
+
+input UserQuery {
+  id: ID
+}
+
+extend type Query {
+  user(id: ID!): User
+}

@@ -15,8 +15,8 @@
     "run-script-os": "^1.1.3"
   },
   "scripts": {
-    "gen:graphql:types": "run-script-os",
-    "gen:graphql:types:darwin:linux": "graphql-codegen --config ./graphql.config.js",
-    "gen:graphql:types:darwin:default": "graphql-codegen --config ./graphql.config.js"
+    "gen:graphql:types": "run-script-os --config ./graphql.config.js",
+    "gen:graphql:types:darwin:linux": "graphql-codegen",
+    "gen:graphql:types:darwin:default": "graphql-codegen"
   }
 }

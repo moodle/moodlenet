@@ -2,8 +2,6 @@
 import { Resolvers } from '../accounting.graphql.gen'
 import { Mutation } from './mutation'
 
-export const accountingResolvers: MyResolvers = {
+export const accountingResolvers: Resolvers = {
   Mutation,
 }
-
-type MyResolvers = Partial<Resolvers>

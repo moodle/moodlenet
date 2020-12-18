@@ -12,7 +12,7 @@ const srvGenerates = ['accounting', 'content-graph']
         "config": {
           "contextType": "../../../GQL#Context",
           "rootValueType": "../../../GQL#RootValue",
-          "avoidOptionals": true,
+          // "avoidOptionals": true,
           "nonOptionalTypename": false,
           "skipTypename": true
         }
