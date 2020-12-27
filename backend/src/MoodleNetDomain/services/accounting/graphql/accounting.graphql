@@ -13,18 +13,18 @@ type Session {
 }
 
 type Mutation {
-  accountSignUp(email: String!): SimpleResponse!
-  accountRequestConfirmEmail(token: String!): RequestConfirmEmailResponse
-  accountRequestActivateAccount(
+  signUp(email: String!): SimpleResponse!
+  confirmSignUpEmail(token: String!): RequestConfirmEmailResponse
+  activateAccount(
     username: String!
     password: String!
     flowKey: String!
   ): SimpleResponse!
-  accountChangeEmailRequest(newEmail: String!): SimpleResponse!
-  accountChangeEmailConfirm(token: String!): Boolean!
-  accountChangePassword(newPassword: String!): SimpleResponse!
-  accountTempSessionEmail(username: String!, email: String!): String
-  accountLogin(username: String!, password: String!): Session
+  changeEmailRequest(newEmail: String!): SimpleResponse!
+  changeEmailConfirm(token: String!): Boolean!
+  changePassword(newPassword: String!): SimpleResponse!
+  tempSessionByEmail(username: String!, email: String!): String
+  login(username: String!, password: String!): Session
 }
 
 # extend type Query {

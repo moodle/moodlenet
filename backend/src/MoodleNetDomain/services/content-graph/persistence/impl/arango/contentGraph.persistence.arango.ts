@@ -30,7 +30,9 @@ export const arangoContentGraphEngine: Promise<ContentGraphEngine> = DBReady.the
       dir: 'OUTBOUND' | 'INBOUND' | 'ANY'
       depth?: [number, number]
       __typename: T['__typename'] | false
-    }): ResolverFn<any, { _id: string }, any, any> => async (p, a, c, i) => {
+    }): ResolverFn<any, { _id: string }, any, any> => async (
+      p /* , a, c, i */
+    ) => {
       const { __typename, collection, dir, depth = [1, 1] } = _
       const { _id: parentId } = p
       console.log(p)
@@ -58,33 +60,36 @@ export const arangoContentGraphEngine: Promise<ContentGraphEngine> = DBReady.the
     const engine: ContentGraphEngine = {
       graphQLResolvers: {
         Query: {
-          contentUser: vertexResolver,
-          contentSubject: vertexResolver,
+          user: vertexResolver,
+          subject: vertexResolver,
         },
-        ContentUser: {
+        //@ts-ignore
+        User: {
           followers: edgesResolver({
             collection: FollowsEdges,
             dir: 'INBOUND',
-            __typename: 'ContentUserFollowsUser',
+            __typename: 'UserFollowsUser',
           }),
           followsSubjects: edgesResolver({
             collection: FollowsEdges,
             dir: 'OUTBOUND',
-            __typename: 'ContentUserFollowsSubject',
+            __typename: 'UserFollowsSubject',
           }),
           followsUsers: edgesResolver({
             collection: FollowsEdges,
             dir: 'OUTBOUND',
-            __typename: 'ContentUserFollowsUser',
+            __typename: 'UserFollowsUser',
           }),
         },
-        ContentUserFollowsUser: edgeSidesResolver,
+        //@ts-ignore
+        UserFollowsUser: edgeSidesResolver,
 
-        ContentSubject: {
+        //@ts-ignore
+        Subject: {
           followers: edgesResolver({
             collection: FollowsEdges,
             dir: 'INBOUND',
-            __typename: 'ContentUserFollowsSubject',
+            __typename: 'UserFollowsSubject',
           }),
         },
       },

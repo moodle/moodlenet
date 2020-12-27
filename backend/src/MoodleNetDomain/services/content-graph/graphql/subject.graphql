@@ -1,16 +1,16 @@
-type ContentSubject implements Vertex {
+type Subject implements Vertex {
   _id: ID!
   name: String!
 }
 
-input ContentCreateSubjectInput {
+input CreateSubjectInput {
   name: String!
 }
 
 type Query {
-  contentSubject(_id: ID!): ContentSubject
+  subject(_id: ID!): Subject
 }
 
 type Mutation {
-  contentCreateSubject(subjectInput: ContentCreateSubjectInput!): ContentSubject
+  createSubject(subjectInput: CreateSubjectInput!): Subject
 }

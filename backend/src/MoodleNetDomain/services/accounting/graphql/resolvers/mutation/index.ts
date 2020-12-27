@@ -1,20 +1,20 @@
-import { accountRequestConfirmEmail } from './accountRequestConfirmEmail'
-import { accountSignUp } from './accountSignUp'
-import { accountLogin } from './accountLogin'
-import { accountRequestActivateAccount } from './accountRequestActivateAccount'
+import { confirmSignUpEmail } from './confirmSignUpEmail'
+import { signUp } from './signUp'
+import { login } from './login'
+import { activateAccount } from './activateAccount'
 import { MutationResolvers } from '../../accounting.graphql.gen'
-import { accountChangeEmailRequest } from './accountChangeEmailRequest'
-import { accountChangeEmailConfirm } from './accountChangeEmailConfirm'
-import { accountChangePassword } from './accountChangePassword'
-import { accountTempSessionEmail } from './accountTempSessionEmail'
+import { changeEmailRequest } from './changeEmailRequest'
+import { changeEmailConfirm } from './changeEmailConfirm'
+import { changePassword } from './changePassword'
+import { tempSessionByEmail } from './tempSessionByEmail'
 
 export const Mutation: MutationResolvers = {
-  accountRequestConfirmEmail,
-  accountSignUp,
-  accountRequestActivateAccount,
-  accountChangeEmailConfirm,
-  accountChangeEmailRequest,
-  accountLogin,
-  accountChangePassword,
-  accountTempSessionEmail,
+  activateAccount,
+  changeEmailConfirm,
+  changeEmailRequest,
+  changePassword,
+  confirmSignUpEmail,
+  login,
+  signUp,
+  tempSessionByEmail,
 }

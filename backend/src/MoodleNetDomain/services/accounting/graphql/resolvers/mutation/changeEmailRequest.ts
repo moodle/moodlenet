@@ -1,15 +1,18 @@
 import { MoodleNet } from '../../../../..'
 import { accountingRoutes } from '../../../Accounting.routes'
 import { MutationResolvers } from '../../accounting.graphql.gen'
+import { loggedUserOnly } from '../../helpers'
 
-export const accountRequestActivateAccount: MutationResolvers['accountRequestActivateAccount'] = async (
+export const changeEmailRequest: MutationResolvers['changeEmailRequest'] = async (
   _parent,
-  { flowKey, password, username }
+  { newEmail },
+  context
 ) => {
+  const account = loggedUserOnly({ context })
   const { res } = await MoodleNet.callApi({
-    api: 'Accounting.Register_New_Account.ActivateNewAccount',
+    api: 'Accounting.Change_Main_Email.Request',
     flow: accountingRoutes.flow('accounting-graphql-request'),
-    req: { password, requestFlowKey: flowKey, username },
+    req: { newEmail, username: account.username },
   })
   return {
     __typename: 'SimpleResponse',

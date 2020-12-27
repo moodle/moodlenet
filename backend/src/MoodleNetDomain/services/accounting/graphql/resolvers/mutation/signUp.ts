@@ -2,7 +2,7 @@ import { MoodleNet } from '../../../../..'
 import { accountingRoutes } from '../../../Accounting.routes'
 import { MutationResolvers } from '../../accounting.graphql.gen'
 
-export const accountSignUp: MutationResolvers['accountSignUp'] = async (
+export const signUp: MutationResolvers['signUp'] = async (
   _parent,
   { email }
 ) => {

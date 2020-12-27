@@ -5,7 +5,7 @@ import {
   createEdgeCollectionIfNotExists,
 } from '../../../../../../lib/helpers/arango'
 import {} from '../../types'
-import { FollowsEdge, SubjectVertex, UserVertex } from '../../vertex.types'
+import { FollowsEdge, SubjectVertex, UserVertex } from './glyph'
 
 interface ArangoContentGraphPersistenceEnv {
   url: string[]

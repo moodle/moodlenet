@@ -1,12 +1,6 @@
 import { Api } from '../../../lib/domain/api/types'
 import { Event, LookupType } from '../../../lib/domain/event/types'
-import {
-  GQLResolversApis,
-  GraphQLDomainApi,
-  GraphQLDomainMutations,
-} from '../../GQLtypes'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
-import { MutationResolvers } from './graphql/accounting.graphql.gen'
 
 export type Accounting = {
   Register_New_Account: {

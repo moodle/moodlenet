@@ -1,8 +1,12 @@
 import Argon from 'argon2'
 import JWT, { SignOptions } from 'jsonwebtoken'
-import { MoodleNetExecutionAuth } from '../../JWT'
+import { MoodleNetExecutionAuth } from '../graphql-gateway/JWT'
 import { EmailObj } from '../email/types'
-import { ArgonPwdHashOpts, jwtSignBaseOpts, JWT_PRIVATE_KEY } from './Accounting.env'
+import {
+  ArgonPwdHashOpts,
+  jwtSignBaseOpts,
+  JWT_PRIVATE_KEY,
+} from './Accounting.env'
 import { EmailTemplate } from './persistence/types'
 import dot from 'dot'
 
@@ -18,7 +22,10 @@ export const verifyPassword = (_: { hash: string; pwd: string | Buffer }) => {
   return hashedPassword
 }
 
-export const signJwt = (_: { payload: MoodleNetExecutionAuth; opts?: SignOptions }) => {
+export const signJwt = (_: {
+  payload: MoodleNetExecutionAuth
+  opts?: SignOptions
+}) => {
   const { payload, opts } = _
   return JWT.sign(payload, JWT_PRIVATE_KEY, {
     ...jwtSignBaseOpts,

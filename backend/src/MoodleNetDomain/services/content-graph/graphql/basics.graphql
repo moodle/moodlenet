@@ -8,16 +8,16 @@ interface Edge {
   _to: Vertex
 }
 
-enum ContentCursorDir {
+enum CursorDir {
   after
   before
   middle
 }
-input ContentInputCursor {
+input InputCursor {
   _id: ID!
-  dir: ContentCursorDir!
+  dir: CursorDir!
 }
-input ContentPageInput {
+input PageInput {
   limit: Int
-  cursor: ContentInputCursor
+  cursor: InputCursor
 }

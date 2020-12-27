@@ -1,10 +1,7 @@
 import express from 'express'
 import { graphqlHTTP } from 'express-graphql'
-import { INVALID_TOKEN, verifyJwt } from '../../domain.helpers'
-import { Context, RootValue } from '../../GQL'
 import { env } from './Graphql-gateway.env'
 import { schema } from './schema'
-import { graphql, GraphQLError } from 'graphql'
 
 schema().then((schema) => {
   const app = express()

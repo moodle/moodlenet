@@ -131,141 +131,7 @@
         "description": null,
         "fields": [
           {
-            "name": "accountChangeEmailConfirm",
-            "description": null,
-            "args": [
-              {
-                "name": "token",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "accountChangeEmailRequest",
-            "description": null,
-            "args": [
-              {
-                "name": "newEmail",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "SimpleResponse",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "accountChangePassword",
-            "description": null,
-            "args": [
-              {
-                "name": "newPassword",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "SimpleResponse",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "accountLogin",
-            "description": null,
-            "args": [
-              {
-                "name": "username",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              },
-              {
-                "name": "password",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Session",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "accountRequestActivateAccount",
+            "name": "activateAccount",
             "description": null,
             "args": [
               {
@@ -324,7 +190,100 @@
             "deprecationReason": null
           },
           {
-            "name": "accountRequestConfirmEmail",
+            "name": "changeEmailConfirm",
+            "description": null,
+            "args": [
+              {
+                "name": "token",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "changeEmailRequest",
+            "description": null,
+            "args": [
+              {
+                "name": "newEmail",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "SimpleResponse",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "changePassword",
+            "description": null,
+            "args": [
+              {
+                "name": "newPassword",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "SimpleResponse",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "confirmSignUpEmail",
             "description": null,
             "args": [
               {
@@ -351,7 +310,152 @@
             "deprecationReason": null
           },
           {
-            "name": "accountSignUp",
+            "name": "createSubject",
+            "description": null,
+            "args": [
+              {
+                "name": "subjectInput",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "CreateSubjectInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Subject",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createUser",
+            "description": null,
+            "args": [
+              {
+                "name": "user",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "CreateUserInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "User",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "followSubject",
+            "description": null,
+            "args": [
+              {
+                "name": "subjectId",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UserFollowsSubject",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "followUser",
+            "description": null,
+            "args": [
+              {
+                "name": "userId",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UserFollowsUser",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "login",
+            "description": null,
+            "args": [
+              {
+                "name": "username",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "password",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Session",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "signUp",
             "description": null,
             "args": [
               {
@@ -382,7 +486,7 @@
             "deprecationReason": null
           },
           {
-            "name": "accountTempSessionEmail",
+            "name": "tempSessionByEmail",
             "description": null,
             "args": [
               {
@@ -418,110 +522,6 @@
               "kind": "SCALAR",
               "name": "String",
               "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "contentCreateSubject",
-            "description": null,
-            "args": [
-              {
-                "name": "subjectInput",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "ContentCreateSubjectInput",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "ContentSubject",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "contentFollowSubject",
-            "description": null,
-            "args": [
-              {
-                "name": "subjectId",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "ContentUserFollowsSubject",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "contentFollowUser",
-            "description": null,
-            "args": [
-              {
-                "name": "userId",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "ContentUserFollowsUser",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "createContentUser",
-            "description": null,
-            "args": [
-              {
-                "name": "user",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "INPUT_OBJECT",
-                    "name": "ContentCreateUserInput",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "ContentUser",
-                "ofType": null
-              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -570,12 +570,12 @@
         "possibleTypes": [
           {
             "kind": "OBJECT",
-            "name": "ContentUser",
+            "name": "User",
             "ofType": null
           },
           {
             "kind": "OBJECT",
-            "name": "ContentSubject",
+            "name": "Subject",
             "ofType": null
           }
         ]
@@ -632,19 +632,19 @@
         "possibleTypes": [
           {
             "kind": "OBJECT",
-            "name": "ContentUserFollowsSubject",
+            "name": "UserFollowsSubject",
             "ofType": null
           },
           {
             "kind": "OBJECT",
-            "name": "ContentUserFollowsUser",
+            "name": "UserFollowsUser",
             "ofType": null
           }
         ]
       },
       {
         "kind": "ENUM",
-        "name": "ContentCursorDir",
+        "name": "CursorDir",
         "description": null,
         "fields": null,
         "inputFields": null,
@@ -673,7 +673,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "ContentInputCursor",
+        "name": "InputCursor",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -699,7 +699,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "ContentCursorDir",
+                "name": "CursorDir",
                 "ofType": null
               }
             },
@@ -712,7 +712,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "ContentPageInput",
+        "name": "PageInput",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -731,7 +731,7 @@
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "ContentInputCursor",
+              "name": "InputCursor",
               "ofType": null
             },
             "defaultValue": null
@@ -753,7 +753,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "ContentUserFollowsSubject",
+        "name": "UserFollowsSubject",
         "description": null,
         "fields": [
           {
@@ -778,7 +778,7 @@
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "ContentUser",
+              "name": "User",
               "ofType": null
             },
             "isDeprecated": false,
@@ -790,7 +790,7 @@
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "ContentSubject",
+              "name": "Subject",
               "ofType": null
             },
             "isDeprecated": false,
@@ -810,7 +810,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "ContentUser",
+        "name": "User",
         "description": null,
         "fields": [
           {
@@ -838,7 +838,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "ContentPageInput",
+                  "name": "PageInput",
                   "ofType": null
                 },
                 "defaultValue": null
@@ -855,7 +855,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "ContentUserFollowsUser",
+                    "name": "UserFollowsUser",
                     "ofType": null
                   }
                 }
@@ -873,7 +873,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "ContentPageInput",
+                  "name": "PageInput",
                   "ofType": null
                 },
                 "defaultValue": null
@@ -890,7 +890,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "ContentUserFollowsSubject",
+                    "name": "UserFollowsSubject",
                     "ofType": null
                   }
                 }
@@ -908,7 +908,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "ContentPageInput",
+                  "name": "PageInput",
                   "ofType": null
                 },
                 "defaultValue": null
@@ -925,7 +925,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "ContentUserFollowsUser",
+                    "name": "UserFollowsUser",
                     "ofType": null
                   }
                 }
@@ -964,7 +964,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "ContentSubject",
+        "name": "Subject",
         "description": null,
         "fields": [
           {
@@ -992,7 +992,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "ContentPageInput",
+                  "name": "PageInput",
                   "ofType": null
                 },
                 "defaultValue": null
@@ -1009,7 +1009,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "ContentUserFollowsSubject",
+                    "name": "UserFollowsSubject",
                     "ofType": null
                   }
                 }
@@ -1048,7 +1048,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "ContentUserFollowsUser",
+        "name": "UserFollowsUser",
         "description": null,
         "fields": [
           {
@@ -1073,7 +1073,7 @@
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "ContentUser",
+              "name": "User",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1085,7 +1085,7 @@
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "ContentUser",
+              "name": "User",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1105,7 +1105,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "ContentCreateSubjectInput",
+        "name": "CreateSubjectInput",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -1134,7 +1134,7 @@
         "description": null,
         "fields": [
           {
-            "name": "contentSubject",
+            "name": "subject",
             "description": null,
             "args": [
               {
@@ -1154,14 +1154,14 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "ContentSubject",
+              "name": "Subject",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "contentUser",
+            "name": "user",
             "description": null,
             "args": [
               {
@@ -1181,7 +1181,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "ContentUser",
+              "name": "User",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1195,7 +1195,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "ContentCreateUserInput",
+        "name": "CreateUserInput",
         "description": null,
         "fields": null,
         "inputFields": [

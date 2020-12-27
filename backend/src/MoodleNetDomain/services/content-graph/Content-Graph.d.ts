@@ -1,5 +1,6 @@
-import { GraphQLDomainApi } from '../../GQLtypes'
+import { GraphQLDomainApi } from '../../../lib/domain/api/types'
+import { ContentGraphContext } from './graphql/types'
 
 export type ContentGraph = {
-  GQL: GraphQLDomainApi<any, any>
+  GQL: GraphQLDomainApi<ContentGraphContext>
 }

@@ -33,56 +33,56 @@ export type Session = {
 
 export type Mutation = {
   __typename: 'Mutation';
-  accountSignUp: SimpleResponse;
-  accountRequestConfirmEmail: Maybe<RequestConfirmEmailResponse>;
-  accountRequestActivateAccount: SimpleResponse;
-  accountChangeEmailRequest: SimpleResponse;
-  accountChangeEmailConfirm: Scalars['Boolean'];
-  accountChangePassword: SimpleResponse;
-  accountTempSessionEmail: Maybe<Scalars['String']>;
-  accountLogin: Maybe<Session>;
+  signUp: SimpleResponse;
+  confirmSignUpEmail: Maybe<RequestConfirmEmailResponse>;
+  activateAccount: SimpleResponse;
+  changeEmailRequest: SimpleResponse;
+  changeEmailConfirm: Scalars['Boolean'];
+  changePassword: SimpleResponse;
+  tempSessionByEmail: Maybe<Scalars['String']>;
+  login: Maybe<Session>;
 };
 
 
-export type MutationAccountSignUpArgs = {
+export type MutationSignUpArgs = {
   email: Scalars['String'];
 };
 
 
-export type MutationAccountRequestConfirmEmailArgs = {
+export type MutationConfirmSignUpEmailArgs = {
   token: Scalars['String'];
 };
 
 
-export type MutationAccountRequestActivateAccountArgs = {
+export type MutationActivateAccountArgs = {
   username: Scalars['String'];
   password: Scalars['String'];
   flowKey: Scalars['String'];
 };
 
 
-export type MutationAccountChangeEmailRequestArgs = {
+export type MutationChangeEmailRequestArgs = {
   newEmail: Scalars['String'];
 };
 
 
-export type MutationAccountChangeEmailConfirmArgs = {
+export type MutationChangeEmailConfirmArgs = {
   token: Scalars['String'];
 };
 
 
-export type MutationAccountChangePasswordArgs = {
+export type MutationChangePasswordArgs = {
   newPassword: Scalars['String'];
 };
 
 
-export type MutationAccountTempSessionEmailArgs = {
+export type MutationTempSessionByEmailArgs = {
   username: Scalars['String'];
   email: Scalars['String'];
 };
 
 
-export type MutationAccountLoginArgs = {
+export type MutationLoginArgs = {
   username: Scalars['String'];
   password: Scalars['String'];
 };
@@ -201,14 +201,14 @@ export type SessionResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  accountSignUp: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationAccountSignUpArgs, 'email'>>;
-  accountRequestConfirmEmail: Resolver<Maybe<ResolversTypes['RequestConfirmEmailResponse']>, ParentType, ContextType, RequireFields<MutationAccountRequestConfirmEmailArgs, 'token'>>;
-  accountRequestActivateAccount: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationAccountRequestActivateAccountArgs, 'username' | 'password' | 'flowKey'>>;
-  accountChangeEmailRequest: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationAccountChangeEmailRequestArgs, 'newEmail'>>;
-  accountChangeEmailConfirm: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationAccountChangeEmailConfirmArgs, 'token'>>;
-  accountChangePassword: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationAccountChangePasswordArgs, 'newPassword'>>;
-  accountTempSessionEmail: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationAccountTempSessionEmailArgs, 'username' | 'email'>>;
-  accountLogin: Resolver<Maybe<ResolversTypes['Session']>, ParentType, ContextType, RequireFields<MutationAccountLoginArgs, 'username' | 'password'>>;
+  signUp: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'email'>>;
+  confirmSignUpEmail: Resolver<Maybe<ResolversTypes['RequestConfirmEmailResponse']>, ParentType, ContextType, RequireFields<MutationConfirmSignUpEmailArgs, 'token'>>;
+  activateAccount: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationActivateAccountArgs, 'username' | 'password' | 'flowKey'>>;
+  changeEmailRequest: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangeEmailRequestArgs, 'newEmail'>>;
+  changeEmailConfirm: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeEmailConfirmArgs, 'token'>>;
+  changePassword: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword'>>;
+  tempSessionByEmail: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationTempSessionByEmailArgs, 'username' | 'email'>>;
+  login: Resolver<Maybe<ResolversTypes['Session']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'username' | 'password'>>;
 };
 
 export type Resolvers<ContextType = Context> = {

@@ -1,16 +1,16 @@
-type ContentUser implements Vertex {
+type User implements Vertex {
   _id: ID!
   name: String!
 }
 
-input ContentCreateUserInput {
+input CreateUserInput {
   name: String
 }
 
 type Query {
-  contentUser(_id: ID!): ContentUser
+  user(_id: ID!): User
 }
 
 type Mutation {
-  createContentUser(user: ContentCreateUserInput!): ContentUser!
+  createUser(user: CreateUserInput!): User!
 }

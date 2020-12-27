@@ -1,3 +1,4 @@
+import { ExecutionResult } from 'graphql'
 import * as D from '../types'
 
 export type Api<Req extends object, Res extends object> = { req: Req; res: Res }
@@ -17,17 +18,37 @@ export type ApiDef<Domain, Path extends string> = D.Path.TypeofPath<
     : never
   : never
 
-export type ApiReq<Domain, Path extends string> = ApiDef<Domain, Path> extends Api<infer Req, any>
+export type ApiReq<Domain, Path extends string> = ApiDef<
+  Domain,
+  Path
+> extends Api<infer Req, any>
   ? Req
   : never
 
-export type ApiRes<Domain, Path extends string> = ApiDef<Domain, Path> extends Api<any, infer Res>
+export type ApiRes<Domain, Path extends string> = ApiDef<
+  Domain,
+  Path
+> extends Api<any, infer Res>
   ? Res
   : never
 
-export type ApiReturn<Domain, Path extends ApiLeaves<Domain>> = ApiDef<Domain, Path> extends Api<
-  any,
-  infer Res
->
+export type ApiReturn<Domain, Path extends ApiLeaves<Domain>> = ApiDef<
+  Domain,
+  Path
+> extends Api<any, infer Res>
   ? Promise<ApiRes<Domain, Path>>
   : never
+
+type GraphQLDomainApiReq<Context> = {
+  context: Context
+  query: string
+  variables: Record<string, any> | undefined
+}
+type GraphQLDomainApiResp = {
+  [K in keyof Required<ExecutionResult>]: ExecutionResult[K]
+}
+
+type GraphQLDomainApi<Context> = Api<
+  GraphQLDomainApiReq<Context>,
+  GraphQLDomainApiResp
+>

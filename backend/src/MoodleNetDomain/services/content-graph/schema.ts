@@ -1,8 +1,8 @@
-import { makeExecutableSchema } from 'apollo-server-express'
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
-import { Context } from '../../GQL'
+import { ContentGraphContext } from './graphql/types'
 import { getContentGraphEngine } from './Content-Graph.env'
+import { makeExecutableSchema } from '@graphql-tools/schema'
 
 export const typeDefs = readFileSync(
   resolve(__dirname, '../../../../main.schema.gen.graphql'),
@@ -10,7 +10,7 @@ export const typeDefs = readFileSync(
 )
 
 export const getContentGraphExecutableSchema = async () =>
-  makeExecutableSchema<Context>({
+  makeExecutableSchema<ContentGraphContext>({
     typeDefs: [typeDefs],
     resolvers: await (await getContentGraphEngine()).graphQLResolvers,
   })

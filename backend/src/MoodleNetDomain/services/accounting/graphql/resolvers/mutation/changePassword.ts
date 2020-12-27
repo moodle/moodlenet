@@ -1,20 +1,20 @@
 import { MoodleNet } from '../../../../..'
-import { MutationResolvers } from '../../accounting.graphql.gen'
 import { hashPassword } from '../../../Accounting.helpers'
 import { accountingRoutes } from '../../../Accounting.routes'
-import { loggedUserOnly } from '../../../../../GQL'
+import { MutationResolvers } from '../../accounting.graphql.gen'
+import { loggedUserOnly } from '../../helpers'
 
-export const accountChangePassword: MutationResolvers['accountChangePassword'] = async (
+export const changePassword: MutationResolvers['changePassword'] = async (
   _parent,
   { newPassword: plainNewPawd },
-  ctx
+  context
 ) => {
-  const jwt = loggedUserOnly({ ctx })
+  const account = loggedUserOnly({ context })
   const newPassword = await hashPassword({ pwd: plainNewPawd })
   const { res } = await MoodleNet.callApi({
     api: 'Accounting.Change_Password',
     flow: accountingRoutes.flow('accounting-graphql-request'),
-    req: { newPassword, username: jwt.username },
+    req: { newPassword, username: account.username },
   })
 
   return {

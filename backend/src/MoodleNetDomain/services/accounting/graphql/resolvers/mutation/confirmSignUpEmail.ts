@@ -2,7 +2,7 @@ import { MoodleNet } from '../../../../..'
 import { accountingRoutes } from '../../../Accounting.routes'
 import { MutationResolvers } from '../../accounting.graphql.gen'
 
-export const accountRequestConfirmEmail: MutationResolvers['accountRequestConfirmEmail'] = async (
+export const confirmSignUpEmail: MutationResolvers['confirmSignUpEmail'] = async (
   _parent,
   { token }
 ) => {

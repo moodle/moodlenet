@@ -2,7 +2,7 @@ import { MoodleNet } from '../../../../..'
 import { MutationResolvers } from '../../accounting.graphql.gen'
 import { accountingRoutes } from '../../../Accounting.routes'
 
-export const accountTempSessionEmail: MutationResolvers['accountTempSessionEmail'] = async (
+export const tempSessionByEmail: MutationResolvers['tempSessionByEmail'] = async (
   _parent,
   { email, username }
 ) => {
