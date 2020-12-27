@@ -14,86 +14,69 @@ type Session {
   message: String
 }
 type Mutation {
-  accountSignUp(email: String!): SimpleResponse!
-  accountRequestConfirmEmail(token: String!): RequestConfirmEmailResponse
-  accountRequestActivateAccount(username: String!, password: String!, flowKey: String!): SimpleResponse!
-  accountChangeEmailRequest(newEmail: String!): SimpleResponse!
   accountChangeEmailConfirm(token: String!): Boolean!
+  accountChangeEmailRequest(newEmail: String!): SimpleResponse!
   accountChangePassword(newPassword: String!): SimpleResponse!
-  accountTempSessionEmail(username: String!, email: String!): String
   accountLogin(username: String!, password: String!): Session
+  accountRequestActivateAccount(username: String!, password: String!, flowKey: String!): SimpleResponse!
+  accountRequestConfirmEmail(token: String!): RequestConfirmEmailResponse
+  accountSignUp(email: String!): SimpleResponse!
+  accountTempSessionEmail(username: String!, email: String!): String
+  contentCreateSubject(subjectInput: ContentCreateSubjectInput!): ContentSubject
+  contentFollowSubject(subjectId: ID): ContentUserFollowsSubject
+  contentFollowUser(userId: ID): ContentUserFollowsUser
+  createContentUser(user: ContentCreateUserInput!): ContentUser!
 }
 interface Vertex {
-  id: ID!
-}
-interface WithIcon {
-  icon: String!
-}
-interface WithName {
-  name: String!
-}
-interface WithSummary {
-  summary: String!
+  _id: ID!
 }
 interface Edge {
-  id: ID!
+  _id: ID!
+  _from: Vertex
+  _to: Vertex
 }
-input PageInput {
+enum ContentCursorDir {
+  after
+  before
+  middle
+}
+input ContentInputCursor {
+  _id: ID!
+  dir: ContentCursorDir!
+}
+input ContentPageInput {
   limit: Int
-  after: ID
-  before: ID
+  cursor: ContentInputCursor
 }
-union Follower = User
-union Followed = User | Subject
-interface Follows {
-  id: ID!
-  follower: Follower
-  follows: Followed
+type ContentUserFollowsSubject implements Edge {
+  _id: ID!
+  _from: ContentUser
+  _to: ContentSubject
 }
-type UserFollowsSubject implements Follows {
-  id: ID!
-  follower: User
-  follows: Subject
-}
-type User implements UserVertex & Vertex & WithIcon & WithName & WithSummary {
-  bio: String!
-  followers(page: PageInput): [UserFollowsUser!]!
-  followsSubjects(page: PageInput): [UserFollowsSubject!]!
-  followsUsers(page: PageInput): [UserFollowsUser!]!
-  icon: String!
-  id: ID!
+type ContentUser implements Vertex {
+  _id: ID!
+  followers(page: ContentPageInput): [ContentUserFollowsUser!]!
+  followsSubjects(page: ContentPageInput): [ContentUserFollowsSubject!]!
+  followsUsers(page: ContentPageInput): [ContentUserFollowsUser!]!
   name: String!
-  summary: String!
 }
-type Subject implements SubjectVertex & Vertex & WithIcon & WithName & WithSummary {
-  followers(page: PageInput): [UserFollowsSubject!]!
-  icon: String!
-  id: ID!
+type ContentSubject implements Vertex {
+  _id: ID!
+  followers(page: ContentPageInput): [ContentUserFollowsSubject!]!
   name: String!
-  summary: String!
 }
-type UserFollowsUser implements Follows {
-  id: ID!
-  follower: User
-  follows: User
+type ContentUserFollowsUser implements Edge {
+  _id: ID!
+  _from: ContentUser
+  _to: ContentUser
 }
-interface SubjectVertex {
-  id: ID!
-  icon: String!
+input ContentCreateSubjectInput {
   name: String!
-  summary: String!
 }
 type Query {
-  subject(id: ID!): Subject
-  user(id: ID!): User
+  contentSubject(_id: ID!): ContentSubject
+  contentUser(_id: ID!): ContentUser
 }
-interface UserVertex {
-  id: ID!
-  icon: String!
-  name: String!
-  summary: String!
-  bio: String!
-}
-input UserQuery {
-  id: ID
+input ContentCreateUserInput {
+  name: String
 }

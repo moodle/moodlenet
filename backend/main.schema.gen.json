@@ -131,11 +131,42 @@
         "description": null,
         "fields": [
           {
-            "name": "accountSignUp",
+            "name": "accountChangeEmailConfirm",
             "description": null,
             "args": [
               {
-                "name": "email",
+                "name": "token",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "accountChangeEmailRequest",
+            "description": null,
+            "args": [
+              {
+                "name": "newEmail",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -162,11 +193,56 @@
             "deprecationReason": null
           },
           {
-            "name": "accountRequestConfirmEmail",
+            "name": "accountChangePassword",
             "description": null,
             "args": [
               {
-                "name": "token",
+                "name": "newPassword",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "SimpleResponse",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "accountLogin",
+            "description": null,
+            "args": [
+              {
+                "name": "username",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "password",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -182,7 +258,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "RequestConfirmEmailResponse",
+              "name": "Session",
               "ofType": null
             },
             "isDeprecated": false,
@@ -248,38 +324,7 @@
             "deprecationReason": null
           },
           {
-            "name": "accountChangeEmailRequest",
-            "description": null,
-            "args": [
-              {
-                "name": "newEmail",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "SimpleResponse",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "accountChangeEmailConfirm",
+            "name": "accountRequestConfirmEmail",
             "description": null,
             "args": [
               {
@@ -298,23 +343,19 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "RequestConfirmEmailResponse",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "accountChangePassword",
+            "name": "accountSignUp",
             "description": null,
             "args": [
               {
-                "name": "newPassword",
+                "name": "email",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -382,32 +423,18 @@
             "deprecationReason": null
           },
           {
-            "name": "accountLogin",
+            "name": "contentCreateSubject",
             "description": null,
             "args": [
               {
-                "name": "username",
+                "name": "subjectInput",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              },
-              {
-                "name": "password",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
+                    "kind": "INPUT_OBJECT",
+                    "name": "ContentCreateSubjectInput",
                     "ofType": null
                   }
                 },
@@ -416,33 +443,83 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Session",
+              "name": "ContentSubject",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "Vertex",
-        "description": null,
-        "fields": [
+          },
           {
-            "name": "id",
+            "name": "contentFollowSubject",
             "description": null,
-            "args": [],
+            "args": [
+              {
+                "name": "subjectId",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "ContentUserFollowsSubject",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "contentFollowUser",
+            "description": null,
+            "args": [
+              {
+                "name": "userId",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "ContentUserFollowsUser",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createContentUser",
+            "description": null,
+            "args": [
+              {
+                "name": "user",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ContentCreateUserInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
+                "kind": "OBJECT",
+                "name": "ContentUser",
                 "ofType": null
               }
             },
@@ -453,18 +530,7 @@
         "inputFields": null,
         "interfaces": [],
         "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "User",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Subject",
-            "ofType": null
-          }
-        ]
+        "possibleTypes": null
       },
       {
         "kind": "SCALAR",
@@ -478,125 +544,11 @@
       },
       {
         "kind": "INTERFACE",
-        "name": "WithIcon",
+        "name": "Vertex",
         "description": null,
         "fields": [
           {
-            "name": "icon",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "User",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Subject",
-            "ofType": null
-          }
-        ]
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "WithName",
-        "description": null,
-        "fields": [
-          {
-            "name": "name",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "User",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Subject",
-            "ofType": null
-          }
-        ]
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "WithSummary",
-        "description": null,
-        "fields": [
-          {
-            "name": "summary",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "User",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Subject",
-            "ofType": null
-          }
-        ]
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "Edge",
-        "description": null,
-        "fields": [
-          {
-            "name": "id",
+            "name": "_id",
             "description": null,
             "args": [],
             "type": {
@@ -615,11 +567,152 @@
         "inputFields": null,
         "interfaces": [],
         "enumValues": null,
-        "possibleTypes": []
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "ContentUser",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "ContentSubject",
+            "ofType": null
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "Edge",
+        "description": null,
+        "fields": [
+          {
+            "name": "_id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "_from",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "INTERFACE",
+              "name": "Vertex",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "_to",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "INTERFACE",
+              "name": "Vertex",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "ContentUserFollowsSubject",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "ContentUserFollowsUser",
+            "ofType": null
+          }
+        ]
+      },
+      {
+        "kind": "ENUM",
+        "name": "ContentCursorDir",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "after",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "before",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "middle",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "PageInput",
+        "name": "ContentInputCursor",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "_id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "dir",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "ContentCursorDir",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "ContentPageInput",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -634,21 +727,11 @@
             "defaultValue": null
           },
           {
-            "name": "after",
+            "name": "cursor",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "ID",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "before",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "ID",
+              "kind": "INPUT_OBJECT",
+              "name": "ContentInputCursor",
               "ofType": null
             },
             "defaultValue": null
@@ -669,111 +752,12 @@
         "possibleTypes": null
       },
       {
-        "kind": "UNION",
-        "name": "Follower",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "User",
-            "ofType": null
-          }
-        ]
-      },
-      {
-        "kind": "UNION",
-        "name": "Followed",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "User",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Subject",
-            "ofType": null
-          }
-        ]
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "Follows",
-        "description": null,
-        "fields": [
-          {
-            "name": "id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "follower",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "UNION",
-              "name": "Follower",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "follows",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "UNION",
-              "name": "Followed",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "UserFollowsSubject",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "UserFollowsUser",
-            "ofType": null
-          }
-        ]
-      },
-      {
         "kind": "OBJECT",
-        "name": "UserFollowsSubject",
+        "name": "ContentUserFollowsSubject",
         "description": null,
         "fields": [
           {
-            "name": "id",
+            "name": "_id",
             "description": null,
             "args": [],
             "type": {
@@ -789,24 +773,24 @@
             "deprecationReason": null
           },
           {
-            "name": "follower",
+            "name": "_from",
             "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "User",
+              "name": "ContentUser",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "follows",
+            "name": "_to",
             "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "Subject",
+              "name": "ContentSubject",
               "ofType": null
             },
             "isDeprecated": false,
@@ -817,7 +801,7 @@
         "interfaces": [
           {
             "kind": "INTERFACE",
-            "name": "Follows",
+            "name": "Edge",
             "ofType": null
           }
         ],
@@ -826,11 +810,11 @@
       },
       {
         "kind": "OBJECT",
-        "name": "User",
+        "name": "ContentUser",
         "description": null,
         "fields": [
           {
-            "name": "bio",
+            "name": "_id",
             "description": null,
             "args": [],
             "type": {
@@ -838,7 +822,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "ID",
                 "ofType": null
               }
             },
@@ -854,7 +838,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "PageInput",
+                  "name": "ContentPageInput",
                   "ofType": null
                 },
                 "defaultValue": null
@@ -871,7 +855,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "UserFollowsUser",
+                    "name": "ContentUserFollowsUser",
                     "ofType": null
                   }
                 }
@@ -889,7 +873,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "PageInput",
+                  "name": "ContentPageInput",
                   "ofType": null
                 },
                 "defaultValue": null
@@ -906,7 +890,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "UserFollowsSubject",
+                    "name": "ContentUserFollowsSubject",
                     "ofType": null
                   }
                 }
@@ -924,7 +908,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "PageInput",
+                  "name": "ContentPageInput",
                   "ofType": null
                 },
                 "defaultValue": null
@@ -941,42 +925,10 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "UserFollowsUser",
+                    "name": "ContentUserFollowsUser",
                     "ofType": null
                   }
                 }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "icon",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
               }
             },
             "isDeprecated": false,
@@ -997,49 +949,13 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
-          },
-          {
-            "name": "summary",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
           }
         ],
         "inputFields": null,
         "interfaces": [
           {
             "kind": "INTERFACE",
-            "name": "UserVertex",
-            "ofType": null
-          },
-          {
-            "kind": "INTERFACE",
             "name": "Vertex",
-            "ofType": null
-          },
-          {
-            "kind": "INTERFACE",
-            "name": "WithIcon",
-            "ofType": null
-          },
-          {
-            "kind": "INTERFACE",
-            "name": "WithName",
-            "ofType": null
-          },
-          {
-            "kind": "INTERFACE",
-            "name": "WithSummary",
             "ofType": null
           }
         ],
@@ -1048,9 +964,25 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Subject",
+        "name": "ContentSubject",
         "description": null,
         "fields": [
+          {
+            "name": "_id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "followers",
             "description": null,
@@ -1060,7 +992,7 @@
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
-                  "name": "PageInput",
+                  "name": "ContentPageInput",
                   "ofType": null
                 },
                 "defaultValue": null
@@ -1077,7 +1009,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "UserFollowsSubject",
+                    "name": "ContentUserFollowsSubject",
                     "ofType": null
                   }
                 }
@@ -1087,55 +1019,7 @@
             "deprecationReason": null
           },
           {
-            "name": "icon",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "name",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "summary",
             "description": null,
             "args": [],
             "type": {
@@ -1155,27 +1039,7 @@
         "interfaces": [
           {
             "kind": "INTERFACE",
-            "name": "SubjectVertex",
-            "ofType": null
-          },
-          {
-            "kind": "INTERFACE",
             "name": "Vertex",
-            "ofType": null
-          },
-          {
-            "kind": "INTERFACE",
-            "name": "WithIcon",
-            "ofType": null
-          },
-          {
-            "kind": "INTERFACE",
-            "name": "WithName",
-            "ofType": null
-          },
-          {
-            "kind": "INTERFACE",
-            "name": "WithSummary",
             "ofType": null
           }
         ],
@@ -1184,11 +1048,11 @@
       },
       {
         "kind": "OBJECT",
-        "name": "UserFollowsUser",
+        "name": "ContentUserFollowsUser",
         "description": null,
         "fields": [
           {
-            "name": "id",
+            "name": "_id",
             "description": null,
             "args": [],
             "type": {
@@ -1204,24 +1068,24 @@
             "deprecationReason": null
           },
           {
-            "name": "follower",
+            "name": "_from",
             "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "User",
+              "name": "ContentUser",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "follows",
+            "name": "_to",
             "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "User",
+              "name": "ContentUser",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1232,7 +1096,7 @@
         "interfaces": [
           {
             "kind": "INTERFACE",
-            "name": "Follows",
+            "name": "Edge",
             "ofType": null
           }
         ],
@@ -1240,46 +1104,14 @@
         "possibleTypes": null
       },
       {
-        "kind": "INTERFACE",
-        "name": "SubjectVertex",
+        "kind": "INPUT_OBJECT",
+        "name": "ContentCreateSubjectInput",
         "description": null,
-        "fields": [
-          {
-            "name": "id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "icon",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
+        "fields": null,
+        "inputFields": [
           {
             "name": "name",
             "description": null,
-            "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
@@ -1289,36 +1121,12 @@
                 "ofType": null
               }
             },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "summary",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
+            "defaultValue": null
           }
         ],
-        "inputFields": null,
-        "interfaces": [],
+        "interfaces": null,
         "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "Subject",
-            "ofType": null
-          }
-        ]
+        "possibleTypes": null
       },
       {
         "kind": "OBJECT",
@@ -1326,11 +1134,11 @@
         "description": null,
         "fields": [
           {
-            "name": "subject",
+            "name": "contentSubject",
             "description": null,
             "args": [
               {
-                "name": "id",
+                "name": "_id",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -1346,18 +1154,18 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Subject",
+              "name": "ContentSubject",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "user",
+            "name": "contentUser",
             "description": null,
             "args": [
               {
-                "name": "id",
+                "name": "_id",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -1373,7 +1181,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "User",
+              "name": "ContentUser",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1386,114 +1194,17 @@
         "possibleTypes": null
       },
       {
-        "kind": "INTERFACE",
-        "name": "UserVertex",
-        "description": null,
-        "fields": [
-          {
-            "name": "id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "icon",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "name",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "summary",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "bio",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "User",
-            "ofType": null
-          }
-        ]
-      },
-      {
         "kind": "INPUT_OBJECT",
-        "name": "UserQuery",
+        "name": "ContentCreateUserInput",
         "description": null,
         "fields": null,
         "inputFields": [
           {
-            "name": "id",
+            "name": "name",
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "ID",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null

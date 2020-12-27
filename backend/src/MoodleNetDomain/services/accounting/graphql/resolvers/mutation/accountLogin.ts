@@ -15,13 +15,16 @@ export const accountLogin: MutationResolvers['accountLogin'] = async (
       req: { password, username },
     })
 
-    return res.___ERROR
-      ? {
-          message: res.___ERROR.msg,
-          jwt: null,
-        }
-      : {
-          jwt: res.jwt,
-          message: null,
-        }
+    return {
+      __typename: 'Session',
+      ...(res.___ERROR
+        ? {
+            message: res.___ERROR.msg,
+            jwt: null,
+          }
+        : {
+            jwt: res.jwt,
+            message: null,
+          }),
+    }
   }

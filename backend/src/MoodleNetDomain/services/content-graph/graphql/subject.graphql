@@ -1,17 +1,16 @@
-interface SubjectVertex {
-  id: ID!
-  icon: String!
+type ContentSubject implements Vertex {
+  _id: ID!
   name: String!
-  summary: String!
 }
 
-type Subject implements SubjectVertex & Vertex & WithIcon & WithName & WithSummary {
-  id: ID!
-  icon: String!
+input ContentCreateSubjectInput {
   name: String!
-  summary: String!
 }
 
-extend type Query {
-  subject(id: ID!): Subject
+type Query {
+  contentSubject(_id: ID!): ContentSubject
+}
+
+type Mutation {
+  contentCreateSubject(subjectInput: ContentCreateSubjectInput!): ContentSubject
 }

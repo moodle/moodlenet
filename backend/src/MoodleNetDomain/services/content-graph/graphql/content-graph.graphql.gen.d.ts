@@ -15,124 +15,131 @@ export type Scalars = {
 };
 
 export type Vertex = {
-  id: Scalars['ID'];
-};
-
-export type WithIcon = {
-  icon: Scalars['String'];
-};
-
-export type WithName = {
-  name: Scalars['String'];
-};
-
-export type WithSummary = {
-  summary: Scalars['String'];
+  _id: Scalars['ID'];
 };
 
 export type Edge = {
-  id: Scalars['ID'];
+  _id: Scalars['ID'];
+  _from: Maybe<Vertex>;
+  _to: Maybe<Vertex>;
 };
 
-export type PageInput = {
-  limit?: Maybe<Scalars['Int']>;
-  after?: Maybe<Scalars['ID']>;
-  before?: Maybe<Scalars['ID']>;
+export enum ContentCursorDir {
+  After = 'after',
+  Before = 'before',
+  Middle = 'middle'
+}
+
+export type ContentInputCursor = {
+  _id: Scalars['ID'];
+  dir: ContentCursorDir;
 };
 
-export type Follower = User;
-
-export type Followed = User | Subject;
-
-export type Follows = {
-  id: Scalars['ID'];
-  follower?: Maybe<Follower>;
-  follows?: Maybe<Followed>;
+export type ContentPageInput = {
+  limit: Maybe<Scalars['Int']>;
+  cursor: Maybe<ContentInputCursor>;
 };
 
-export type UserFollowsSubject = Follows & {
-  id: Scalars['ID'];
-  follower?: Maybe<User>;
-  follows?: Maybe<Subject>;
+export type ContentUserFollowsSubject = Edge & {
+  __typename: 'ContentUserFollowsSubject';
+  _id: Scalars['ID'];
+  _from: Maybe<ContentUser>;
+  _to: Maybe<ContentSubject>;
 };
 
-export type User = UserVertex & Vertex & WithIcon & WithName & WithSummary & {
-  bio: Scalars['String'];
-  followers: Array<UserFollowsUser>;
-  followsSubjects: Array<UserFollowsSubject>;
-  followsUsers: Array<UserFollowsUser>;
-  icon: Scalars['String'];
-  id: Scalars['ID'];
+export type ContentUser = Vertex & {
+  __typename: 'ContentUser';
+  _id: Scalars['ID'];
+  followers: Array<ContentUserFollowsUser>;
+  followsSubjects: Array<ContentUserFollowsSubject>;
+  followsUsers: Array<ContentUserFollowsUser>;
   name: Scalars['String'];
-  summary: Scalars['String'];
 };
 
 
-export type UserFollowersArgs = {
-  page?: Maybe<PageInput>;
+export type ContentUserFollowersArgs = {
+  page: Maybe<ContentPageInput>;
 };
 
 
-export type UserFollowsSubjectsArgs = {
-  page?: Maybe<PageInput>;
+export type ContentUserFollowsSubjectsArgs = {
+  page: Maybe<ContentPageInput>;
 };
 
 
-export type UserFollowsUsersArgs = {
-  page?: Maybe<PageInput>;
+export type ContentUserFollowsUsersArgs = {
+  page: Maybe<ContentPageInput>;
 };
 
-export type Subject = SubjectVertex & Vertex & WithIcon & WithName & WithSummary & {
-  followers: Array<UserFollowsSubject>;
-  icon: Scalars['String'];
-  id: Scalars['ID'];
+export type ContentSubject = Vertex & {
+  __typename: 'ContentSubject';
+  _id: Scalars['ID'];
+  followers: Array<ContentUserFollowsSubject>;
   name: Scalars['String'];
-  summary: Scalars['String'];
 };
 
 
-export type SubjectFollowersArgs = {
-  page?: Maybe<PageInput>;
+export type ContentSubjectFollowersArgs = {
+  page: Maybe<ContentPageInput>;
 };
 
-export type UserFollowsUser = Follows & {
-  id: Scalars['ID'];
-  follower?: Maybe<User>;
-  follows?: Maybe<User>;
+export type Mutation = {
+  __typename: 'Mutation';
+  contentCreateSubject: Maybe<ContentSubject>;
+  contentFollowSubject: Maybe<ContentUserFollowsSubject>;
+  contentFollowUser: Maybe<ContentUserFollowsUser>;
+  createContentUser: ContentUser;
 };
 
-export type SubjectVertex = {
-  id: Scalars['ID'];
-  icon: Scalars['String'];
+
+export type MutationContentCreateSubjectArgs = {
+  subjectInput: ContentCreateSubjectInput;
+};
+
+
+export type MutationContentFollowSubjectArgs = {
+  subjectId: Maybe<Scalars['ID']>;
+};
+
+
+export type MutationContentFollowUserArgs = {
+  userId: Maybe<Scalars['ID']>;
+};
+
+
+export type MutationCreateContentUserArgs = {
+  user: ContentCreateUserInput;
+};
+
+export type ContentUserFollowsUser = Edge & {
+  __typename: 'ContentUserFollowsUser';
+  _id: Scalars['ID'];
+  _from: Maybe<ContentUser>;
+  _to: Maybe<ContentUser>;
+};
+
+export type ContentCreateSubjectInput = {
   name: Scalars['String'];
-  summary: Scalars['String'];
 };
 
 export type Query = {
-  subject?: Maybe<Subject>;
-  user?: Maybe<User>;
+  __typename: 'Query';
+  contentSubject: Maybe<ContentSubject>;
+  contentUser: Maybe<ContentUser>;
 };
 
 
-export type QuerySubjectArgs = {
-  id: Scalars['ID'];
+export type QueryContentSubjectArgs = {
+  _id: Scalars['ID'];
 };
 
 
-export type QueryUserArgs = {
-  id: Scalars['ID'];
+export type QueryContentUserArgs = {
+  _id: Scalars['ID'];
 };
 
-export type UserVertex = {
-  id: Scalars['ID'];
-  icon: Scalars['String'];
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  bio: Scalars['String'];
-};
-
-export type UserQuery = {
-  id?: Maybe<Scalars['ID']>;
+export type ContentCreateUserInput = {
+  name: Maybe<Scalars['String']>;
 };
 
 
@@ -213,167 +220,108 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Vertex: ResolversTypes['User'] | ResolversTypes['Subject'];
+  Vertex: ResolversTypes['ContentUser'] | ResolversTypes['ContentSubject'];
   ID: ResolverTypeWrapper<Scalars['ID']>;
-  WithIcon: ResolversTypes['User'] | ResolversTypes['Subject'];
-  String: ResolverTypeWrapper<Scalars['String']>;
-  WithName: ResolversTypes['User'] | ResolversTypes['Subject'];
-  WithSummary: ResolversTypes['User'] | ResolversTypes['Subject'];
-  Edge: never;
-  PageInput: PageInput;
+  Edge: ResolversTypes['ContentUserFollowsSubject'] | ResolversTypes['ContentUserFollowsUser'];
+  ContentCursorDir: ContentCursorDir;
+  ContentInputCursor: ContentInputCursor;
+  ContentPageInput: ContentPageInput;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  Follower: ResolversTypes['User'];
-  Followed: ResolversTypes['User'] | ResolversTypes['Subject'];
-  Follows: ResolversTypes['UserFollowsSubject'] | ResolversTypes['UserFollowsUser'];
-  UserFollowsSubject: ResolverTypeWrapper<UserFollowsSubject>;
-  User: ResolverTypeWrapper<User>;
-  Subject: ResolverTypeWrapper<Subject>;
-  UserFollowsUser: ResolverTypeWrapper<UserFollowsUser>;
-  SubjectVertex: ResolversTypes['Subject'];
+  ContentUserFollowsSubject: ResolverTypeWrapper<ContentUserFollowsSubject>;
+  ContentUser: ResolverTypeWrapper<ContentUser>;
+  String: ResolverTypeWrapper<Scalars['String']>;
+  ContentSubject: ResolverTypeWrapper<ContentSubject>;
+  Mutation: ResolverTypeWrapper<RootValue>;
+  ContentUserFollowsUser: ResolverTypeWrapper<ContentUserFollowsUser>;
+  ContentCreateSubjectInput: ContentCreateSubjectInput;
   Query: ResolverTypeWrapper<RootValue>;
-  UserVertex: ResolversTypes['User'];
-  UserQuery: UserQuery;
+  ContentCreateUserInput: ContentCreateUserInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Vertex: ResolversParentTypes['User'] | ResolversParentTypes['Subject'];
+  Vertex: ResolversParentTypes['ContentUser'] | ResolversParentTypes['ContentSubject'];
   ID: Scalars['ID'];
-  WithIcon: ResolversParentTypes['User'] | ResolversParentTypes['Subject'];
-  String: Scalars['String'];
-  WithName: ResolversParentTypes['User'] | ResolversParentTypes['Subject'];
-  WithSummary: ResolversParentTypes['User'] | ResolversParentTypes['Subject'];
-  Edge: never;
-  PageInput: PageInput;
+  Edge: ResolversParentTypes['ContentUserFollowsSubject'] | ResolversParentTypes['ContentUserFollowsUser'];
+  ContentInputCursor: ContentInputCursor;
+  ContentPageInput: ContentPageInput;
   Int: Scalars['Int'];
-  Follower: ResolversParentTypes['User'];
-  Followed: ResolversParentTypes['User'] | ResolversParentTypes['Subject'];
-  Follows: ResolversParentTypes['UserFollowsSubject'] | ResolversParentTypes['UserFollowsUser'];
-  UserFollowsSubject: UserFollowsSubject;
-  User: User;
-  Subject: Subject;
-  UserFollowsUser: UserFollowsUser;
-  SubjectVertex: ResolversParentTypes['Subject'];
+  ContentUserFollowsSubject: ContentUserFollowsSubject;
+  ContentUser: ContentUser;
+  String: Scalars['String'];
+  ContentSubject: ContentSubject;
+  Mutation: RootValue;
+  ContentUserFollowsUser: ContentUserFollowsUser;
+  ContentCreateSubjectInput: ContentCreateSubjectInput;
   Query: RootValue;
-  UserVertex: ResolversParentTypes['User'];
-  UserQuery: UserQuery;
+  ContentCreateUserInput: ContentCreateUserInput;
   Boolean: Scalars['Boolean'];
 };
 
 export type VertexResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Vertex'] = ResolversParentTypes['Vertex']> = {
-  __resolveType: TypeResolveFn<'User' | 'Subject', ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-};
-
-export type WithIconResolvers<ContextType = Context, ParentType extends ResolversParentTypes['WithIcon'] = ResolversParentTypes['WithIcon']> = {
-  __resolveType: TypeResolveFn<'User' | 'Subject', ParentType, ContextType>;
-  icon?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-};
-
-export type WithNameResolvers<ContextType = Context, ParentType extends ResolversParentTypes['WithName'] = ResolversParentTypes['WithName']> = {
-  __resolveType: TypeResolveFn<'User' | 'Subject', ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-};
-
-export type WithSummaryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['WithSummary'] = ResolversParentTypes['WithSummary']> = {
-  __resolveType: TypeResolveFn<'User' | 'Subject', ParentType, ContextType>;
-  summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'ContentUser' | 'ContentSubject', ParentType, ContextType>;
+  _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 };
 
 export type EdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Edge'] = ResolversParentTypes['Edge']> = {
-  __resolveType: TypeResolveFn<null, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'ContentUserFollowsSubject' | 'ContentUserFollowsUser', ParentType, ContextType>;
+  _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _from: Resolver<Maybe<ResolversTypes['Vertex']>, ParentType, ContextType>;
+  _to: Resolver<Maybe<ResolversTypes['Vertex']>, ParentType, ContextType>;
 };
 
-export type FollowerResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Follower'] = ResolversParentTypes['Follower']> = {
-  __resolveType: TypeResolveFn<'User', ParentType, ContextType>;
-};
-
-export type FollowedResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Followed'] = ResolversParentTypes['Followed']> = {
-  __resolveType: TypeResolveFn<'User' | 'Subject', ParentType, ContextType>;
-};
-
-export type FollowsResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Follows'] = ResolversParentTypes['Follows']> = {
-  __resolveType: TypeResolveFn<'UserFollowsSubject' | 'UserFollowsUser', ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  follower?: Resolver<Maybe<ResolversTypes['Follower']>, ParentType, ContextType>;
-  follows?: Resolver<Maybe<ResolversTypes['Followed']>, ParentType, ContextType>;
-};
-
-export type UserFollowsSubjectResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserFollowsSubject'] = ResolversParentTypes['UserFollowsSubject']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  follower?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  follows?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
+export type ContentUserFollowsSubjectResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ContentUserFollowsSubject'] = ResolversParentTypes['ContentUserFollowsSubject']> = {
+  _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _from: Resolver<Maybe<ResolversTypes['ContentUser']>, ParentType, ContextType>;
+  _to: Resolver<Maybe<ResolversTypes['ContentSubject']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  bio?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  followers?: Resolver<Array<ResolversTypes['UserFollowsUser']>, ParentType, ContextType, RequireFields<UserFollowersArgs, never>>;
-  followsSubjects?: Resolver<Array<ResolversTypes['UserFollowsSubject']>, ParentType, ContextType, RequireFields<UserFollowsSubjectsArgs, never>>;
-  followsUsers?: Resolver<Array<ResolversTypes['UserFollowsUser']>, ParentType, ContextType, RequireFields<UserFollowsUsersArgs, never>>;
-  icon?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+export type ContentUserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ContentUser'] = ResolversParentTypes['ContentUser']> = {
+  _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  followers: Resolver<Array<ResolversTypes['ContentUserFollowsUser']>, ParentType, ContextType, RequireFields<ContentUserFollowersArgs, never>>;
+  followsSubjects: Resolver<Array<ResolversTypes['ContentUserFollowsSubject']>, ParentType, ContextType, RequireFields<ContentUserFollowsSubjectsArgs, never>>;
+  followsUsers: Resolver<Array<ResolversTypes['ContentUserFollowsUser']>, ParentType, ContextType, RequireFields<ContentUserFollowsUsersArgs, never>>;
+  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type SubjectResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
-  followers?: Resolver<Array<ResolversTypes['UserFollowsSubject']>, ParentType, ContextType, RequireFields<SubjectFollowersArgs, never>>;
-  icon?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+export type ContentSubjectResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ContentSubject'] = ResolversParentTypes['ContentSubject']> = {
+  _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  followers: Resolver<Array<ResolversTypes['ContentUserFollowsSubject']>, ParentType, ContextType, RequireFields<ContentSubjectFollowersArgs, never>>;
+  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserFollowsUserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserFollowsUser'] = ResolversParentTypes['UserFollowsUser']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  follower?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  follows?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  contentCreateSubject: Resolver<Maybe<ResolversTypes['ContentSubject']>, ParentType, ContextType, RequireFields<MutationContentCreateSubjectArgs, 'subjectInput'>>;
+  contentFollowSubject: Resolver<Maybe<ResolversTypes['ContentUserFollowsSubject']>, ParentType, ContextType, RequireFields<MutationContentFollowSubjectArgs, never>>;
+  contentFollowUser: Resolver<Maybe<ResolversTypes['ContentUserFollowsUser']>, ParentType, ContextType, RequireFields<MutationContentFollowUserArgs, never>>;
+  createContentUser: Resolver<ResolversTypes['ContentUser'], ParentType, ContextType, RequireFields<MutationCreateContentUserArgs, 'user'>>;
 };
 
-export type SubjectVertexResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SubjectVertex'] = ResolversParentTypes['SubjectVertex']> = {
-  __resolveType: TypeResolveFn<'Subject', ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  icon?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+export type ContentUserFollowsUserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ContentUserFollowsUser'] = ResolversParentTypes['ContentUserFollowsUser']> = {
+  _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _from: Resolver<Maybe<ResolversTypes['ContentUser']>, ParentType, ContextType>;
+  _to: Resolver<Maybe<ResolversTypes['ContentUser']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QuerySubjectArgs, 'id'>>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
-};
-
-export type UserVertexResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserVertex'] = ResolversParentTypes['UserVertex']> = {
-  __resolveType: TypeResolveFn<'User', ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  icon?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  bio?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  contentSubject: Resolver<Maybe<ResolversTypes['ContentSubject']>, ParentType, ContextType, RequireFields<QueryContentSubjectArgs, '_id'>>;
+  contentUser: Resolver<Maybe<ResolversTypes['ContentUser']>, ParentType, ContextType, RequireFields<QueryContentUserArgs, '_id'>>;
 };
 
 export type Resolvers<ContextType = Context> = {
-  Vertex?: VertexResolvers<ContextType>;
-  WithIcon?: WithIconResolvers<ContextType>;
-  WithName?: WithNameResolvers<ContextType>;
-  WithSummary?: WithSummaryResolvers<ContextType>;
-  Edge?: EdgeResolvers<ContextType>;
-  Follower?: FollowerResolvers<ContextType>;
-  Followed?: FollowedResolvers<ContextType>;
-  Follows?: FollowsResolvers<ContextType>;
-  UserFollowsSubject?: UserFollowsSubjectResolvers<ContextType>;
-  User?: UserResolvers<ContextType>;
-  Subject?: SubjectResolvers<ContextType>;
-  UserFollowsUser?: UserFollowsUserResolvers<ContextType>;
-  SubjectVertex?: SubjectVertexResolvers<ContextType>;
-  Query?: QueryResolvers<ContextType>;
-  UserVertex?: UserVertexResolvers<ContextType>;
+  Vertex: VertexResolvers<ContextType>;
+  Edge: EdgeResolvers<ContextType>;
+  ContentUserFollowsSubject: ContentUserFollowsSubjectResolvers<ContextType>;
+  ContentUser: ContentUserResolvers<ContextType>;
+  ContentSubject: ContentSubjectResolvers<ContextType>;
+  Mutation: MutationResolvers<ContextType>;
+  ContentUserFollowsUser: ContentUserFollowsUserResolvers<ContextType>;
+  Query: QueryResolvers<ContextType>;
 };
 
 

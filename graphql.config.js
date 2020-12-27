@@ -10,11 +10,16 @@ const srvGenerates = ['accounting', 'content-graph']
           "typescript-resolvers"
         ],
         "config": {
+          "scalars": {
+            "DateTime": "Date"
+          },
           "contextType": "../../../GQL#Context",
           "rootValueType": "../../../GQL#RootValue",
-          // "avoidOptionals": true,
-          "nonOptionalTypename": false,
-          "skipTypename": true
+          "includeDirectives": true,
+          "commentDescriptions": true,
+          "avoidOptionals": true,
+          "nonOptionalTypename": true,
+          "skipTypename": false
         }
       }
     }
@@ -44,8 +49,14 @@ const graphqlConfig = {
                 "schema-ast"
               ],
               "config": {
+                "scalars": {
+                  "DateTime": "Date"
+                },
                 "includeDirectives": true,
                 "commentDescriptions": true,
+                "avoidOptionals": true,
+                "nonOptionalTypename": true,
+                "skipTypename": false
               }
             },
             ...srvGenerates

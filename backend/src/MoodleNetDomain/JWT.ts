@@ -1,5 +1,5 @@
-export type MoodleNetJwt = {
+export type MoodleNetExecutionAuth = {
   username: string
 }
 //FIXME: implement proper typeguard
-export const isMoodleNetJwt = (_obj: object): _obj is MoodleNetJwt => true
+export const isMoodleNetJwt = (_obj: object): _obj is MoodleNetExecutionAuth => true

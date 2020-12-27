@@ -1,10 +1,14 @@
-type UserFollowsUser implements Follows {
-  id: ID!
-  follower: User
-  follows: User
+type ContentUserFollowsUser implements Edge {
+  _id: ID!
+  _from: ContentUser
+  _to: ContentUser
 }
 
-extend type User {
-  followsUsers(page: PageInput): [UserFollowsUser!]!
-  followers(page: PageInput): [UserFollowsUser!]!
+type ContentUser {
+  followsUsers(page: ContentPageInput): [ContentUserFollowsUser!]!
+  followers(page: ContentPageInput): [ContentUserFollowsUser!]!
+}
+
+type Mutation {
+  contentFollowUser(userId: ID): ContentUserFollowsUser
 }

@@ -11,21 +11,21 @@ export const accountRequestActivateAccount: MutationResolvers['accountRequestAct
     flow: accountingRoutes.flow('accounting-graphql-request'),
     req: { password, requestFlowKey: flowKey, username },
   })
-  return res.___ERROR
-    ? {
-        __typename: 'SimpleResponse',
-        message: res.___ERROR.msg,
-        success: false,
-      }
-    : res.success
-    ? {
-        __typename: 'SimpleResponse',
-        success: true,
-        message: null,
-      }
-    : {
-        __typename: 'SimpleResponse',
-        message: res.reason,
-        success: false,
-      }
+  return {
+    __typename: 'SimpleResponse',
+    ...(res.___ERROR
+      ? {
+          message: res.___ERROR.msg,
+          success: false,
+        }
+      : res.success
+      ? {
+          success: true,
+          message: null,
+        }
+      : {
+          message: res.reason,
+          success: false,
+        }),
+  }
 }

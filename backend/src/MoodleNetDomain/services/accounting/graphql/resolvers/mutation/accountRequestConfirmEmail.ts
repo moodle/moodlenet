@@ -11,5 +11,12 @@ export const accountRequestConfirmEmail: MutationResolvers['accountRequestConfir
     flow: accountingRoutes.flow('accounting-graphql-request'),
     req: { token },
   })
-  return res.___ERROR ? null : !res.success ? null : { flowKey: res.flow._key }
+  return res.___ERROR
+    ? null
+    : !res.success
+    ? null
+    : {
+        __typename: 'RequestConfirmEmailResponse',
+        ...{ flowKey: res.flow._key },
+      }
 }

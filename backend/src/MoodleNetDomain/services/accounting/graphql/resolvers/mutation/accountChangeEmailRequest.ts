@@ -14,7 +14,9 @@ export const accountChangeEmailRequest: MutationResolvers['accountChangeEmailReq
     flow: accountingRoutes.flow('accounting-graphql-request'),
     req: { newEmail, username: jwt.username },
   })
-  return res.___ERROR
+  return {
+    __typename:'SimpleResponse',
+    ...res.___ERROR
     ? {
         message: res.___ERROR.msg,
         success: false,
@@ -28,4 +30,5 @@ export const accountChangeEmailRequest: MutationResolvers['accountChangeEmailReq
         message: res.reason,
         success: false,
       }
+    }
 }

@@ -1,23 +1,16 @@
-interface UserVertex {
-  id: ID!
-  icon: String!
+type ContentUser implements Vertex {
+  _id: ID!
   name: String!
-  summary: String!
-  bio: String!
 }
 
-type User implements UserVertex & Vertex & WithIcon & WithName & WithSummary {
-  id: ID!
-  icon: String!
-  name: String!
-  summary: String!
-  bio: String!
+input ContentCreateUserInput {
+  name: String
 }
 
-input UserQuery {
-  id: ID
+type Query {
+  contentUser(_id: ID!): ContentUser
 }
 
-extend type Query {
-  user(id: ID!): User
+type Mutation {
+  createContentUser(user: ContentCreateUserInput!): ContentUser!
 }

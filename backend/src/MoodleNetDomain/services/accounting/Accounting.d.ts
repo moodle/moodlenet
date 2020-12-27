@@ -1,10 +1,19 @@
 import { Api } from '../../../lib/domain/api/types'
 import { Event, LookupType } from '../../../lib/domain/event/types'
+import {
+  GQLResolversApis,
+  GraphQLDomainApi,
+  GraphQLDomainMutations,
+} from '../../GQLtypes'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
+import { MutationResolvers } from './graphql/accounting.graphql.gen'
 
 export type Accounting = {
   Register_New_Account: {
-    Request: Api<AccountRequest, { success: true } | { success: false; reason: string }>
+    Request: Api<
+      AccountRequest,
+      { success: true } | { success: false; reason: string }
+    >
     Email_Confirm_Result: Api<
       LookupType<MoodleNetDomain, 'Email.Verify_Email.Result'>,
       { done: boolean }
@@ -16,12 +25,19 @@ export type Accounting = {
     NewAccountActivated: Event<{ requestFlowKey: string }>
   }
   Change_Main_Email: {
-    Request: Api<ChangeAccountEmailRequest, { success: true } | { success: false; reason: string }>
+    Request: Api<
+      ChangeAccountEmailRequest,
+      { success: true } | { success: false; reason: string }
+    >
     Email_Confirm_Result: Api<
       LookupType<MoodleNetDomain, 'Email.Verify_Email.Result'>,
       { done: boolean }
     >
-    AccountEmailChanged: Event<{ username: string; newEmail: string; oldEmail: string }>
+    AccountEmailChanged: Event<{
+      username: string
+      newEmail: string
+      oldEmail: string
+    }>
   }
   Temp_Email_Session: Api<
     { username: string; email: string },

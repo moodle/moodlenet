@@ -17,18 +17,21 @@ export const accountChangePassword: MutationResolvers['accountChangePassword'] =
     req: { newPassword, username: jwt.username },
   })
 
-  return res.___ERROR
-    ? {
-        success: false,
-        message: res.___ERROR.msg,
-      }
-    : !res.success
-    ? {
-        message: res.reason,
-        success: false,
-      }
-    : {
-        success: true,
-        message: null,
-      }
+  return {
+    __typename: 'SimpleResponse',
+    ...(res.___ERROR
+      ? {
+          success: false,
+          message: res.___ERROR.msg,
+        }
+      : !res.success
+      ? {
+          message: res.reason,
+          success: false,
+        }
+      : {
+          success: true,
+          message: null,
+        }),
+  }
 }

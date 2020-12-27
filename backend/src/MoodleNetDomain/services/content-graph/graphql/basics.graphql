@@ -1,25 +1,23 @@
 interface Vertex {
-  id: ID!
-}
-
-interface WithIcon {
-  icon: String!
-}
-
-interface WithName {
-  name: String!
-}
-
-interface WithSummary {
-  summary: String!
+  _id: ID!
 }
 
 interface Edge {
-  id: ID!
+  _id: ID!
+  _from: Vertex
+  _to: Vertex
 }
 
-input PageInput {
+enum ContentCursorDir {
+  after
+  before
+  middle
+}
+input ContentInputCursor {
+  _id: ID!
+  dir: ContentCursorDir!
+}
+input ContentPageInput {
   limit: Int
-  after: ID
-  before: ID
+  cursor: ContentInputCursor
 }

@@ -1,8 +1,8 @@
 import { GraphQLArgs, GraphQLError } from 'graphql'
-import { MoodleNetJwt } from './JWT'
+import { MoodleNetExecutionAuth } from './JWT'
 
 export type Context = {
-  jwt: MoodleNetJwt | undefined
+  jwt: MoodleNetExecutionAuth | undefined
   gqlReq: Pick<GraphQLArgs, 'operationName' | 'source' | 'variableValues'>
 }
 export type RootValue = {}
