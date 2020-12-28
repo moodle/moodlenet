@@ -1,10 +1,10 @@
-import { MoodleNetExecutionAuth } from './services/graphql-gateway/JWT'
-import { Accounting } from './services/accounting/Accounting'
-import { ContentGraph } from './services/content-graph/Content-Graph'
-import { Email } from './services/email/Email'
+import { MoodleNetExecutionAuth } from './services/GraphqlGateway/JWT'
+import { UserAccount } from './services/UserAccount/UserAccount'
+import { ContentGraph } from './services/ContentGraph/Content-Graph'
+import { Email } from './services/Email/Email'
 
 export type MoodleNetDomain = {
-  Accounting: Accounting
+  UserAccount: UserAccount
   Email: Email
   ContentGraph: ContentGraph
 }

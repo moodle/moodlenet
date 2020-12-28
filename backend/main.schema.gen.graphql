@@ -2,31 +2,6 @@ schema {
   query: Query
   mutation: Mutation
 }
-type SimpleResponse {
-  success: Boolean!
-  message: String
-}
-type RequestConfirmEmailResponse {
-  flowKey: String
-}
-type Session {
-  jwt: String
-  message: String
-}
-type Mutation {
-  activateAccount(username: String!, password: String!, flowKey: String!): SimpleResponse!
-  changeEmailConfirm(token: String!): Boolean!
-  changeEmailRequest(newEmail: String!): SimpleResponse!
-  changePassword(newPassword: String!): SimpleResponse!
-  confirmSignUpEmail(token: String!): RequestConfirmEmailResponse
-  createSubject(subjectInput: CreateSubjectInput!): Subject
-  createUser(user: CreateUserInput!): User!
-  followSubject(subjectId: ID): UserFollowsSubject
-  followUser(userId: ID): UserFollowsUser
-  login(username: String!, password: String!): Session
-  signUp(email: String!): SimpleResponse!
-  tempSessionByEmail(username: String!, email: String!): String
-}
 interface Vertex {
   _id: ID!
 }
@@ -65,6 +40,20 @@ type Subject implements Vertex {
   followers(page: PageInput): [UserFollowsSubject!]!
   name: String!
 }
+type Mutation {
+  activateAccount(username: String!, password: String!, flowKey: String!): SimpleResponse!
+  changeEmailConfirm(token: String!): Boolean!
+  changeEmailRequest(newEmail: String!): SimpleResponse!
+  changePassword(newPassword: String!): SimpleResponse!
+  confirmSignUpEmail(token: String!): RequestConfirmEmailResponse
+  createSubject(subjectInput: CreateSubjectInput!): Subject
+  createUser(user: CreateUserInput!): User!
+  followSubject(subjectId: ID): UserFollowsSubject
+  followUser(userId: ID): UserFollowsUser
+  login(username: String!, password: String!): Session
+  signUp(email: String!): SimpleResponse!
+  tempSessionByEmail(username: String!, email: String!): String
+}
 type UserFollowsUser implements Edge {
   _id: ID!
   _from: User
@@ -79,4 +68,15 @@ type Query {
 }
 input CreateUserInput {
   name: String
+}
+type SimpleResponse {
+  success: Boolean!
+  message: String
+}
+type RequestConfirmEmailResponse {
+  flowKey: String
+}
+type Session {
+  jwt: String
+  message: String
 }

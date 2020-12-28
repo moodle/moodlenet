@@ -1,5 +1,5 @@
 
-const srvGenerates = ['accounting', 'content-graph']
+const srvGenerates = ['UserAccount-GraphQL-Request', 'ContentGraph']
   .reduce((generates, srvname) => {
     /** @type {IGraphQLProject} */
     const srvGenerate = {

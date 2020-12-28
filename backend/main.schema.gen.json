@@ -9,12 +9,12 @@
     "subscriptionType": null,
     "types": [
       {
-        "kind": "OBJECT",
-        "name": "SimpleResponse",
+        "kind": "INTERFACE",
+        "name": "Vertex",
         "description": null,
         "fields": [
           {
-            "name": "success",
+            "name": "_id",
             "description": null,
             "args": [],
             "type": {
@@ -22,7 +22,55 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Boolean",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "User",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "Subject",
+            "ofType": null
+          }
+        ]
+      },
+      {
+        "kind": "SCALAR",
+        "name": "ID",
+        "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "Edge",
+        "description": null,
+        "fields": [
+          {
+            "name": "_id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
                 "ofType": null
               }
             },
@@ -30,12 +78,24 @@
             "deprecationReason": null
           },
           {
-            "name": "message",
+            "name": "_from",
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
+              "kind": "INTERFACE",
+              "name": "Vertex",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "_to",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "INTERFACE",
+              "name": "Vertex",
               "ofType": null
             },
             "isDeprecated": false,
@@ -45,15 +105,336 @@
         "inputFields": null,
         "interfaces": [],
         "enumValues": null,
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "UserFollowsSubject",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "UserFollowsUser",
+            "ofType": null
+          }
+        ]
+      },
+      {
+        "kind": "ENUM",
+        "name": "CursorDir",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "after",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "before",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "middle",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "InputCursor",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "_id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "dir",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "CursorDir",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "PageInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "limit",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "cursor",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "InputCursor",
+              "ofType": null
+            },
+            "defaultValue": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
         "possibleTypes": null
       },
       {
         "kind": "SCALAR",
-        "name": "Boolean",
-        "description": "The `Boolean` scalar type represents `true` or `false`.",
+        "name": "Int",
+        "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UserFollowsSubject",
+        "description": null,
+        "fields": [
+          {
+            "name": "_id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "_from",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "User",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "_to",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Subject",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "Edge",
+            "ofType": null
+          }
+        ],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "User",
+        "description": null,
+        "fields": [
+          {
+            "name": "_id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "followers",
+            "description": null,
+            "args": [
+              {
+                "name": "page",
+                "description": null,
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PageInput",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "UserFollowsUser",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "followsSubjects",
+            "description": null,
+            "args": [
+              {
+                "name": "page",
+                "description": null,
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PageInput",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "UserFollowsSubject",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "followsUsers",
+            "description": null,
+            "args": [
+              {
+                "name": "page",
+                "description": null,
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PageInput",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "UserFollowsUser",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "Vertex",
+            "ofType": null
+          }
+        ],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -69,59 +450,85 @@
       },
       {
         "kind": "OBJECT",
-        "name": "RequestConfirmEmailResponse",
+        "name": "Subject",
         "description": null,
         "fields": [
           {
-            "name": "flowKey",
+            "name": "_id",
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "Session",
-        "description": null,
-        "fields": [
-          {
-            "name": "jwt",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "message",
+            "name": "followers",
+            "description": null,
+            "args": [
+              {
+                "name": "page",
+                "description": null,
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "PageInput",
+                  "ofType": null
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "UserFollowsSubject",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
           }
         ],
         "inputFields": null,
-        "interfaces": [],
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "Vertex",
+            "ofType": null
+          }
+        ],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -534,515 +941,11 @@
       },
       {
         "kind": "SCALAR",
-        "name": "ID",
-        "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
+        "name": "Boolean",
+        "description": "The `Boolean` scalar type represents `true` or `false`.",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "Vertex",
-        "description": null,
-        "fields": [
-          {
-            "name": "_id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "User",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "Subject",
-            "ofType": null
-          }
-        ]
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "Edge",
-        "description": null,
-        "fields": [
-          {
-            "name": "_id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "_from",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "INTERFACE",
-              "name": "Vertex",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "_to",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "INTERFACE",
-              "name": "Vertex",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "UserFollowsSubject",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "UserFollowsUser",
-            "ofType": null
-          }
-        ]
-      },
-      {
-        "kind": "ENUM",
-        "name": "CursorDir",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
-          {
-            "name": "after",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "before",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "middle",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "possibleTypes": null
-      },
-      {
-        "kind": "INPUT_OBJECT",
-        "name": "InputCursor",
-        "description": null,
-        "fields": null,
-        "inputFields": [
-          {
-            "name": "_id",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "dir",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "CursorDir",
-                "ofType": null
-              }
-            },
-            "defaultValue": null
-          }
-        ],
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "INPUT_OBJECT",
-        "name": "PageInput",
-        "description": null,
-        "fields": null,
-        "inputFields": [
-          {
-            "name": "limit",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "cursor",
-            "description": null,
-            "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "InputCursor",
-              "ofType": null
-            },
-            "defaultValue": null
-          }
-        ],
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "Int",
-        "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "UserFollowsSubject",
-        "description": null,
-        "fields": [
-          {
-            "name": "_id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "_from",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "User",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "_to",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Subject",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "Edge",
-            "ofType": null
-          }
-        ],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "User",
-        "description": null,
-        "fields": [
-          {
-            "name": "_id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "followers",
-            "description": null,
-            "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "PageInput",
-                  "ofType": null
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "UserFollowsUser",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "followsSubjects",
-            "description": null,
-            "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "PageInput",
-                  "ofType": null
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "UserFollowsSubject",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "followsUsers",
-            "description": null,
-            "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "PageInput",
-                  "ofType": null
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "UserFollowsUser",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "name",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "Vertex",
-            "ofType": null
-          }
-        ],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "Subject",
-        "description": null,
-        "fields": [
-          {
-            "name": "_id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "followers",
-            "description": null,
-            "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "PageInput",
-                  "ofType": null
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "UserFollowsSubject",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "name",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "Vertex",
-            "ofType": null
-          }
-        ],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -1211,6 +1114,103 @@
           }
         ],
         "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "SimpleResponse",
+        "description": null,
+        "fields": [
+          {
+            "name": "success",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "message",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "RequestConfirmEmailResponse",
+        "description": null,
+        "fields": [
+          {
+            "name": "flowKey",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "Session",
+        "description": null,
+        "fields": [
+          {
+            "name": "jwt",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "message",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
       },
