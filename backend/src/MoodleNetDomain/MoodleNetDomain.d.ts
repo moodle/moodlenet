@@ -1,4 +1,4 @@
-import { MoodleNetExecutionAuth } from './services/GraphqQLGateway/JWT'
+import { MoodleNetExecutionAuth } from './services/GraphQLGateway/JWT'
 import { UserAccount } from './services/UserAccount/UserAccount'
 import { ContentGraph } from './services/ContentGraph/Content-Graph'
 import { Email } from './services/Email/Email'

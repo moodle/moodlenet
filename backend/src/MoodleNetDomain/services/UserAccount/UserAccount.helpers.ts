@@ -1,6 +1,6 @@
 import Argon from 'argon2'
 import JWT, { SignOptions } from 'jsonwebtoken'
-import { MoodleNetExecutionAuth } from '../GraphqQLGateway/JWT'
+import { MoodleNetExecutionAuth } from '../GraphQLGateway/JWT'
 import { EmailObj } from '../Email/types'
 import {
   ArgonPwdHashOpts,

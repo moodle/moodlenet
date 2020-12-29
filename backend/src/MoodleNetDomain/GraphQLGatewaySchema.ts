@@ -6,7 +6,7 @@ import { GraphQLError, print } from 'graphql'
 // import { IncomingMessage } from 'http'
 import { resolve } from 'path'
 import { MoodleNet } from '.'
-import { httpGqlServerRoutes } from './services/GraphqQLGateway/GraphQLGateway.routes'
+import { httpGqlServerRoutes } from './services/GraphQLGateway/GraphQLGateway.routes'
 
 const serviceSchema = (srvName: string) =>
   loadSchemaSync(resolve(`${__dirname}/services/${srvName}/**/*.graphql`), {
