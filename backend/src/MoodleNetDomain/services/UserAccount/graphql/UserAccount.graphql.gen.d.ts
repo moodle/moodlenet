@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { MoodleNetGraphQLContext, MoodleNetGraphQLRootValue } from '../../../MoodleNetDomain';
+import { Context, RootValue } from '../../../MoodleNetGraphQL';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -175,8 +175,8 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   RequestConfirmEmailResponse: ResolverTypeWrapper<RequestConfirmEmailResponse>;
   Session: ResolverTypeWrapper<Session>;
-  Mutation: ResolverTypeWrapper<MoodleNetGraphQLRootValue>;
-  Query: ResolverTypeWrapper<MoodleNetGraphQLRootValue>;
+  Mutation: ResolverTypeWrapper<RootValue>;
+  Query: ResolverTypeWrapper<RootValue>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
 };
 
@@ -187,29 +187,29 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   RequestConfirmEmailResponse: RequestConfirmEmailResponse;
   Session: Session;
-  Mutation: MoodleNetGraphQLRootValue;
-  Query: MoodleNetGraphQLRootValue;
+  Mutation: RootValue;
+  Query: RootValue;
   Int: Scalars['Int'];
 };
 
-export type SimpleResponseResolvers<ContextType = MoodleNetGraphQLContext, ParentType extends ResolversParentTypes['SimpleResponse'] = ResolversParentTypes['SimpleResponse']> = {
+export type SimpleResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SimpleResponse'] = ResolversParentTypes['SimpleResponse']> = {
   success: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   message: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type RequestConfirmEmailResponseResolvers<ContextType = MoodleNetGraphQLContext, ParentType extends ResolversParentTypes['RequestConfirmEmailResponse'] = ResolversParentTypes['RequestConfirmEmailResponse']> = {
+export type RequestConfirmEmailResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RequestConfirmEmailResponse'] = ResolversParentTypes['RequestConfirmEmailResponse']> = {
   flowKey: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type SessionResolvers<ContextType = MoodleNetGraphQLContext, ParentType extends ResolversParentTypes['Session'] = ResolversParentTypes['Session']> = {
+export type SessionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Session'] = ResolversParentTypes['Session']> = {
   jwt: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   message: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type MutationResolvers<ContextType = MoodleNetGraphQLContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   signUp: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'email'>>;
   confirmSignUpEmail: Resolver<Maybe<ResolversTypes['RequestConfirmEmailResponse']>, ParentType, ContextType, RequireFields<MutationConfirmSignUpEmailArgs, 'token'>>;
   activateAccount: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationActivateAccountArgs, 'username' | 'password' | 'flowKey'>>;
@@ -220,11 +220,11 @@ export type MutationResolvers<ContextType = MoodleNetGraphQLContext, ParentType 
   login: Resolver<Maybe<ResolversTypes['Session']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'username' | 'password'>>;
 };
 
-export type QueryResolvers<ContextType = MoodleNetGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   _fake: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
 };
 
-export type Resolvers<ContextType = MoodleNetGraphQLContext> = {
+export type Resolvers<ContextType = Context> = {
   SimpleResponse: SimpleResponseResolvers<ContextType>;
   RequestConfirmEmailResponse: RequestConfirmEmailResponseResolvers<ContextType>;
   Session: SessionResolvers<ContextType>;
@@ -237,4 +237,4 @@ export type Resolvers<ContextType = MoodleNetGraphQLContext> = {
  * @deprecated
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
-export type IResolvers<ContextType = MoodleNetGraphQLContext> = Resolvers<ContextType>;
+export type IResolvers<ContextType = Context> = Resolvers<ContextType>;

@@ -1,5 +1,5 @@
-import { MoodleNetGraphQLApi } from '../../MoodleNetDomain'
+import { GraphQLApi } from '../../MoodleNetGraphQL'
 
 export type ContentGraph = {
-  GQL: MoodleNetGraphQLApi
+  GQL: GraphQLApi
 }

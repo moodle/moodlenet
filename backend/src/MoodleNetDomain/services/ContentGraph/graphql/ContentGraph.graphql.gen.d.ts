@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { MoodleNetGraphQLContext, MoodleNetGraphQLRootValue } from '../../../MoodleNetDomain';
+import { Context, RootValue } from '../../../MoodleNetGraphQL';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -231,10 +231,10 @@ export type ResolversTypes = {
   User: ResolverTypeWrapper<User>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Subject: ResolverTypeWrapper<Subject>;
-  Mutation: ResolverTypeWrapper<MoodleNetGraphQLRootValue>;
+  Mutation: ResolverTypeWrapper<RootValue>;
   UserFollowsUser: ResolverTypeWrapper<UserFollowsUser>;
   CreateSubjectInput: CreateSubjectInput;
-  Query: ResolverTypeWrapper<MoodleNetGraphQLRootValue>;
+  Query: ResolverTypeWrapper<RootValue>;
   CreateUserInput: CreateUserInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
@@ -251,34 +251,34 @@ export type ResolversParentTypes = {
   User: User;
   String: Scalars['String'];
   Subject: Subject;
-  Mutation: MoodleNetGraphQLRootValue;
+  Mutation: RootValue;
   UserFollowsUser: UserFollowsUser;
   CreateSubjectInput: CreateSubjectInput;
-  Query: MoodleNetGraphQLRootValue;
+  Query: RootValue;
   CreateUserInput: CreateUserInput;
   Boolean: Scalars['Boolean'];
 };
 
-export type VertexResolvers<ContextType = MoodleNetGraphQLContext, ParentType extends ResolversParentTypes['Vertex'] = ResolversParentTypes['Vertex']> = {
+export type VertexResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Vertex'] = ResolversParentTypes['Vertex']> = {
   __resolveType: TypeResolveFn<'User' | 'Subject', ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 };
 
-export type EdgeResolvers<ContextType = MoodleNetGraphQLContext, ParentType extends ResolversParentTypes['Edge'] = ResolversParentTypes['Edge']> = {
+export type EdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Edge'] = ResolversParentTypes['Edge']> = {
   __resolveType: TypeResolveFn<'UserFollowsSubject' | 'UserFollowsUser', ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _from: Resolver<Maybe<ResolversTypes['Vertex']>, ParentType, ContextType>;
   _to: Resolver<Maybe<ResolversTypes['Vertex']>, ParentType, ContextType>;
 };
 
-export type UserFollowsSubjectResolvers<ContextType = MoodleNetGraphQLContext, ParentType extends ResolversParentTypes['UserFollowsSubject'] = ResolversParentTypes['UserFollowsSubject']> = {
+export type UserFollowsSubjectResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserFollowsSubject'] = ResolversParentTypes['UserFollowsSubject']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _from: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   _to: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserResolvers<ContextType = MoodleNetGraphQLContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   followers: Resolver<Array<ResolversTypes['UserFollowsUser']>, ParentType, ContextType, RequireFields<UserFollowersArgs, never>>;
   followsSubjects: Resolver<Array<ResolversTypes['UserFollowsSubject']>, ParentType, ContextType, RequireFields<UserFollowsSubjectsArgs, never>>;
@@ -287,33 +287,33 @@ export type UserResolvers<ContextType = MoodleNetGraphQLContext, ParentType exte
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type SubjectResolvers<ContextType = MoodleNetGraphQLContext, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
+export type SubjectResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   followers: Resolver<Array<ResolversTypes['UserFollowsSubject']>, ParentType, ContextType, RequireFields<SubjectFollowersArgs, never>>;
   name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type MutationResolvers<ContextType = MoodleNetGraphQLContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createSubject: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<MutationCreateSubjectArgs, 'subjectInput'>>;
   createUser: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'user'>>;
   followSubject: Resolver<Maybe<ResolversTypes['UserFollowsSubject']>, ParentType, ContextType, RequireFields<MutationFollowSubjectArgs, never>>;
   followUser: Resolver<Maybe<ResolversTypes['UserFollowsUser']>, ParentType, ContextType, RequireFields<MutationFollowUserArgs, never>>;
 };
 
-export type UserFollowsUserResolvers<ContextType = MoodleNetGraphQLContext, ParentType extends ResolversParentTypes['UserFollowsUser'] = ResolversParentTypes['UserFollowsUser']> = {
+export type UserFollowsUserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserFollowsUser'] = ResolversParentTypes['UserFollowsUser']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _from: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   _to: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type QueryResolvers<ContextType = MoodleNetGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   subject: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QuerySubjectArgs, '_id'>>;
   user: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, '_id'>>;
 };
 
-export type Resolvers<ContextType = MoodleNetGraphQLContext> = {
+export type Resolvers<ContextType = Context> = {
   Vertex: VertexResolvers<ContextType>;
   Edge: EdgeResolvers<ContextType>;
   UserFollowsSubject: UserFollowsSubjectResolvers<ContextType>;
@@ -329,4 +329,4 @@ export type Resolvers<ContextType = MoodleNetGraphQLContext> = {
  * @deprecated
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
-export type IResolvers<ContextType = MoodleNetGraphQLContext> = Resolvers<ContextType>;
+export type IResolvers<ContextType = Context> = Resolvers<ContextType>;

@@ -1,17 +1,14 @@
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
-import { loadSchema } from '@graphql-tools/load'
 import { makeExecutableSchema } from '@graphql-tools/schema'
-import { printSchema } from 'graphql'
-import { MoodleNetGraphQLContext } from '../../MoodleNetDomain'
+import { loadMoodleNetServiceSchema, Context } from '../../MoodleNetGraphQL'
 import { getContentGraphEngine } from './Content-Graph.env'
 
 export const getContentGraphExecutableSchema = async () => {
-  const schema = await loadSchema(`${__dirname}/graphql/**/*.graphql`, {
-    loaders: [new GraphQLFileLoader()],
+  const { typeDefs } = loadMoodleNetServiceSchema({
+    path: `${__dirname}/graphql/**/*.graphql`,
   })
   const { graphQLResolvers } = await getContentGraphEngine()
-  return makeExecutableSchema<MoodleNetGraphQLContext>({
-    typeDefs: printSchema(schema),
+  return makeExecutableSchema<Context>({
+    typeDefs,
     resolvers: graphQLResolvers,
   })
 }

@@ -19,8 +19,8 @@ const srvGenerates = ['UserAccount', 'ContentGraph']
           "scalars": {
             "DateTime": "Date"
           },
-          "contextType": "../../../MoodleNetDomain#MoodleNetGraphQLContext",
-          "rootValueType": "../../../MoodleNetDomain#MoodleNetGraphQLRootValue",
+          "contextType": "../../../MoodleNetGraphQL#Context",
+          "rootValueType": "../../../MoodleNetGraphQL#RootValue",
           "includeDirectives": true,
           "commentDescriptions": true,
           "avoidOptionals": true,
