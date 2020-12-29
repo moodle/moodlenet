@@ -6,8 +6,12 @@ import { getEmailPersistence } from '../Email.env'
 getEmailPersistence().then(async (emailPersistence) => {
   await MoodleNet.respondApi({
     api: 'Email.Verify_Email.Attempt_Send',
-    async handler({ flow }): ApiReturn<MoodleNetDomain, 'Email.Verify_Email.Attempt_Send'> {
-      const doc = await emailPersistence.incrementAttemptVerifyingEmail({ flow })
+    async handler({
+      flow,
+    }): ApiReturn<MoodleNetDomain, 'Email.Verify_Email.Attempt_Send'> {
+      const doc = await emailPersistence.incrementAttemptVerifyingEmail({
+        flow,
+      })
       if (!doc) {
         return { success: false, error: 'Not Found' }
       } else if (doc.status === 'Verified') {

@@ -27,6 +27,6 @@ type Mutation {
   login(username: String!, password: String!): Session
 }
 
-# extend type Query {
-#   a: Int
-# }
+type Query {
+  _fake: Int
+}

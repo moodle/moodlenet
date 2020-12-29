@@ -5,6 +5,7 @@
     "moduleResolution": "Node",
     "lib": ["ESNext"],
     "target": "ESNext",
-    "outDir": "./js" /* Redirect output structure to the directory. */
+    "noEmit": true,
+    //"outDir": "./js" /* Redirect output structure to the directory. */
   },
 }

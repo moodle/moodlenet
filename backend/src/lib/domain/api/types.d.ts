@@ -39,8 +39,9 @@ export type ApiReturn<Domain, Path extends ApiLeaves<Domain>> = ApiDef<
   ? Promise<ApiRes<Domain, Path>>
   : never
 
-type GraphQLDomainApiReq<Context> = {
+type GraphQLDomainApiReq<Context, RootValue> = {
   context: Context
+  root: RootValue
   query: string
   variables: Record<string, any> | undefined
 }
@@ -48,7 +49,7 @@ type GraphQLDomainApiResp = {
   [K in keyof Required<ExecutionResult>]: ExecutionResult[K]
 }
 
-type GraphQLDomainApi<Context> = Api<
-  GraphQLDomainApiReq<Context>,
+type GraphQLDomainApi<Context, RootValue> = Api<
+  GraphQLDomainApiReq<Context, RootValue>,
   GraphQLDomainApiResp
 >

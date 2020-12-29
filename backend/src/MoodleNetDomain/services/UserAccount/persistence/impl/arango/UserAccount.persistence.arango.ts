@@ -280,6 +280,7 @@ export const arangoUserAccountPersistence: Promise<UserAccountPersistence> = DBR
     const isUserNameAvailable: UserAccountPersistence['isUserNameAvailable'] = async ({
       username,
     }) => {
+      //FIXME : RETURN Documnet(_id)
       const cursor = await db.query(aql`
         FOR doc IN Account
         FILTER doc.username==${username}

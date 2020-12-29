@@ -21,7 +21,12 @@ getAccountPersistence().then(async (accountPersistence) => {
       }
       const cfg = await accountPersistence.config()
       const jwt = signJwt({
-        payload: { username: account.username },
+        //FIXME
+        payload: {
+          username: account.username,
+          accountId: account.username,
+          userId: account.username,
+        },
         opts: {
           expiresIn: cfg.sessionValiditySecs,
         },

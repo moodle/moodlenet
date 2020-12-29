@@ -1,6 +1,5 @@
-import { GraphQLDomainApi } from '../../../lib/domain/api/types'
-import { ContentGraphContext } from './graphql/types'
+import { MoodleNetGraphQLApi } from '../../MoodleNetDomain'
 
 export type ContentGraph = {
-  GQL: GraphQLDomainApi<ContentGraphContext>
+  GQL: MoodleNetGraphQLApi
 }

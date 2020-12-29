@@ -16,7 +16,12 @@ getAccountPersistence().then(async (accountPersistence) => {
         return { success: false, reason: 'not found' }
       }
       const resetPwdJwt = signJwt({
-        payload: { username },
+        //FIXME
+        payload: {
+          username,
+          accountId: account.username,
+          userId: account.username,
+        },
         opts: {
           expiresIn: config.resetPasswordSessionValiditySecs,
         },

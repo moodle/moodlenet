@@ -9,7 +9,10 @@ import { fillEmailToken } from '../Email.helpers'
 getEmailPersistence().then(async (emailPersistence) => {
   await MoodleNet.respondApi({
     api: 'Email.Verify_Email.Req',
-    async handler({ req, flow }): ApiReturn<MoodleNetDomain, 'Email.Verify_Email.Req'> {
+    async handler({
+      req,
+      flow,
+    }): ApiReturn<MoodleNetDomain, 'Email.Verify_Email.Req'> {
       const { email } = req
       const token = v4()
       const emailObj: EmailObj = {

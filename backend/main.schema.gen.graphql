@@ -63,6 +63,7 @@ input CreateSubjectInput {
   name: String!
 }
 type Query {
+  _fake: Int
   subject(_id: ID!): Subject
   user(_id: ID!): User
 }

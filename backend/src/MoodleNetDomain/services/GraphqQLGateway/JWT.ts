@@ -1,5 +1,5 @@
 import JWT from 'jsonwebtoken'
-import { jwtVerifyOpts, JWT_PUBLIC_KEY } from './GraphqlGateway.env'
+import { jwtVerifyOpts, JWT_PUBLIC_KEY } from './GraphQLGateway.env'
 
 export const INVALID_TOKEN = Symbol('INVALID_TOKEN')
 export const verifyJwt = (
@@ -20,6 +20,8 @@ export const verifyJwt = (
 }
 
 export type MoodleNetExecutionAuth = {
+  accountId: string
+  userId: string
   username: string
 }
 //FIXME: implement proper typeguard

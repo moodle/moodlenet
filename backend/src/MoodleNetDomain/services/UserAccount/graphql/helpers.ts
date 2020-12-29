@@ -1,10 +1,10 @@
 import { GraphQLError } from 'graphql'
-import { AccountContext } from './types'
+import { MoodleNetGraphQLContext } from '../../../MoodleNetDomain'
 
-export const loggedUserOnly = (_: { context: AccountContext }) => {
+export const loggedUserOnly = (_: { context: MoodleNetGraphQLContext }) => {
   const { context } = _
-  if (!context.currentAccount) {
+  if (!context.auth) {
     throw new GraphQLError('Logged in users only')
   }
-  return context.currentAccount
+  return context.auth
 }

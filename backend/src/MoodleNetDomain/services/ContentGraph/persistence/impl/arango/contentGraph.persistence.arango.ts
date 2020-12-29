@@ -69,6 +69,8 @@ export const arangoContentGraphEngine: Promise<ContentGraphEngine> = DBReady.the
             collection: FollowsEdges,
             dir: 'INBOUND',
             __typename: 'UserFollowsUser',
+            // FIXME: many
+            // __typenames: ['UserFollowsUser'],
           }),
           followsSubjects: edgesResolver({
             collection: FollowsEdges,
