@@ -1,23 +1,31 @@
-interface Vertex {
+interface GraphVertex {
   _id: ID!
 }
 
-interface Edge {
+interface GraphEdge {
   _id: ID!
-  _from: Vertex
-  _to: Vertex
+  _from: GraphVertex
+  _to: GraphVertex
 }
 
-enum CursorDir {
-  after
-  before
-  middle
+interface RelayPageEdge {
+  cursor: String!
+  node: GraphEdge
 }
-input InputCursor {
-  _id: ID!
-  dir: CursorDir!
+type RelayPageInfo {
+  endCursor: String
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+  startCursor: String
 }
-input PageInput {
-  limit: Int
-  cursor: InputCursor
+interface RelayPage {
+  pageInfo: RelayPageInfo!
+  edges: [RelayPageEdge!]!
+}
+
+input RelayPageInput {
+  first: Int
+  after: String
+  before: String
+  last: Int
 }

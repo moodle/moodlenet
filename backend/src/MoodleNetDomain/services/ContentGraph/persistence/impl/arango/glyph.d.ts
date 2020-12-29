@@ -3,13 +3,13 @@ import {
   User,
   UserFollowsSubject,
   UserFollowsUser,
-  Vertex,
-  Edge,
+  GraphVertex,
+  GraphEdge,
 } from '../../../graphql/ContentGraph.graphql.gen'
 
 type WithTypename = { __typename: string }
-type GlyphEdge = Edge & WithTypename
-type GlyphVertex = Vertex & WithTypename
+type GlyphEdge = GraphEdge & WithTypename
+type GlyphVertex = GraphVertex & WithTypename
 type Glyph = GlyphVertex | GlyphEdge
 export type GlyphPick<T extends Glyph, K extends keyof T = keyof T> = Pick<T, K>
 export type GlyphOmit<T extends Glyph, K extends keyof T = keyof Glyph> = Pick<

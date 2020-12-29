@@ -1,5 +1,8 @@
 import { EdgeCollection } from 'arangojs/collection'
-import { ResolverFn } from '../../../graphql/ContentGraph.graphql.gen'
+import {
+  RelayPageInfo,
+  ResolverFn,
+} from '../../../graphql/ContentGraph.graphql.gen'
 import { ContentGraphEngine } from '../../types'
 import { DBReady } from './contentGraph.persistence.arango.env'
 
@@ -40,17 +43,31 @@ export const arangoContentGraphEngine: Promise<ContentGraphEngine> = DBReady.the
       const q = `
         FOR v, e IN ${depth.join('..')}  ${dir} "${vertexId}" ${collection.name}
           ${__typename ? `FILTER e.__typename == "${__typename}"` : ''}
-          RETURN MERGE(e, {
+          LET node = MERGE(e, {
             _from: ${getFrom ? 'DOCUMENT(e._from)' : '{ _id: e._from }'},
             _to : ${getTo ? 'DOCUMENT(e._to)' : '{ _id: e._to }'}
           })
+          RETURN {
+            cursor: 'xx',
+            node
+          }
       `
       console.log(q)
       const cursor = await db.query(q)
       const edges = await cursor.all()
       cursor.kill()
       console.log(edges)
-      return edges
+      const pageInfo: RelayPageInfo = {
+        endCursor: 'endCursor',
+        hasNextPage: true,
+        hasPreviousPage: false,
+        startCursor: 'startCursor',
+        __typename: 'RelayPageInfo',
+      }
+      return {
+        pageInfo,
+        edges,
+      }
     }
 
     const engine: ContentGraphEngine = {

@@ -1,4 +1,4 @@
-type User implements Vertex {
+type User implements GraphVertex {
   _id: ID!
   name: String!
 }

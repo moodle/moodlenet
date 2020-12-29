@@ -19,29 +19,33 @@ input InputCursor {
   _id: ID!
   dir: CursorDir!
 }
-input PageInput {
+input RelayPageInput {
   limit: Int
   cursor: InputCursor
 }
-type UserFollowsSubject implements Edge {
+type UserFollowsSubject implements GraphEdge {
   _id: ID!
   _from: User
   _to: Subject
 }
-type User implements Vertex {
+type User implements GraphVertex {
   _id: ID!
-  followers(page: PageInput): [UserFollowsUser!]!
-  followsSubjects(page: PageInput): [UserFollowsSubject!]!
-  followsUsers(page: PageInput): [UserFollowsUser!]!
+  followers(page: RelayPageInput): [UserFollowsUser!]!
+  followsSubjects(page: RelayPageInput): [UserFollowsSubject!]!
+  followsUsers(page: RelayPageInput): [UserFollowsUser!]!
   name: String!
 }
-type Subject implements Vertex {
+type Subject implements GraphVertex {
   _id: ID!
-  followers(page: PageInput): [UserFollowsSubject!]!
+  followers(page: RelayPageInput): [UserFollowsSubject!]!
   name: String!
 }
 type Mutation {
-  activateAccount(username: String!, password: String!, flowKey: String!): SimpleResponse!
+  activateAccount(
+    username: String!
+    password: String!
+    flowKey: String!
+  ): SimpleResponse!
   changeEmailConfirm(token: String!): Boolean!
   changeEmailRequest(newEmail: String!): SimpleResponse!
   changePassword(newPassword: String!): SimpleResponse!
@@ -54,7 +58,7 @@ type Mutation {
   signUp(email: String!): SimpleResponse!
   tempSessionByEmail(username: String!, email: String!): String
 }
-type UserFollowsUser implements Edge {
+type UserFollowsUser implements GraphEdge {
   _id: ID!
   _from: User
   _to: User

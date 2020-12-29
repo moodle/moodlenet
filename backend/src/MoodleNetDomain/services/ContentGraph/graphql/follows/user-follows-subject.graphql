@@ -1,15 +1,24 @@
-type UserFollowsSubject implements Edge {
+type UserFollowsSubject implements GraphEdge {
   _id: ID!
   _from: User
   _to: Subject
 }
 
+type UserFollowsSubjectRelayEdge implements RelayPageEdge {
+  cursor: String!
+  node: UserFollowsSubject
+}
+type UserFollowsSubjectRelayPage implements RelayPage {
+  pageInfo: RelayPageInfo!
+  edges: [UserFollowsSubjectRelayEdge!]!
+}
+
 type User {
-  followsSubjects(page: PageInput): [UserFollowsSubject!]!
+  followsSubjects(page: RelayPageInput): [UserFollowsSubject!]!
 }
 
 type Subject {
-  followers(page: PageInput): [UserFollowsSubject!]!
+  followers(page: RelayPageInput): [UserFollowsSubject!]!
 }
 
 type Mutation {

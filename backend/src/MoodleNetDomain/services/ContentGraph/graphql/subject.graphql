@@ -1,4 +1,4 @@
-type Subject implements Vertex {
+type Subject implements GraphVertex {
   _id: ID!
   name: String!
 }

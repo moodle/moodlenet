@@ -14,64 +14,85 @@ export type Scalars = {
   Float: number;
 };
 
-export type Vertex = {
+export type GraphVertex = {
   _id: Scalars['ID'];
 };
 
-export type Edge = {
+export type GraphEdge = {
   _id: Scalars['ID'];
-  _from: Maybe<Vertex>;
-  _to: Maybe<Vertex>;
+  _from: Maybe<GraphVertex>;
+  _to: Maybe<GraphVertex>;
 };
 
-export enum CursorDir {
-  After = 'after',
-  Before = 'before',
-  Middle = 'middle'
-}
-
-export type InputCursor = {
-  _id: Scalars['ID'];
-  dir: CursorDir;
+export type RelayPageEdge = {
+  cursor: Scalars['String'];
+  node: Maybe<GraphEdge>;
 };
 
-export type PageInput = {
-  limit: Maybe<Scalars['Int']>;
-  cursor: Maybe<InputCursor>;
+export type RelayPageInfo = {
+  __typename: 'RelayPageInfo';
+  endCursor: Maybe<Scalars['String']>;
+  hasNextPage: Maybe<Scalars['Boolean']>;
+  hasPreviousPage: Maybe<Scalars['Boolean']>;
+  startCursor: Maybe<Scalars['String']>;
 };
 
-export type UserFollowsSubject = Edge & {
+export type RelayPage = {
+  pageInfo: RelayPageInfo;
+  edges: Array<RelayPageEdge>;
+};
+
+export type RelayPageInput = {
+  first: Maybe<Scalars['Int']>;
+  after: Maybe<Scalars['String']>;
+  before: Maybe<Scalars['String']>;
+  last: Maybe<Scalars['Int']>;
+};
+
+export type UserFollowsSubject = GraphEdge & {
   __typename: 'UserFollowsSubject';
   _id: Scalars['ID'];
   _from: Maybe<User>;
   _to: Maybe<Subject>;
 };
 
-export type User = Vertex & {
+export type UserFollowsSubjectRelayEdge = RelayPageEdge & {
+  __typename: 'UserFollowsSubjectRelayEdge';
+  cursor: Scalars['String'];
+  node: Maybe<UserFollowsSubject>;
+};
+
+export type UserFollowsSubjectRelayPage = RelayPage & {
+  __typename: 'UserFollowsSubjectRelayPage';
+  pageInfo: RelayPageInfo;
+  edges: Array<UserFollowsSubjectRelayEdge>;
+};
+
+export type User = GraphVertex & {
   __typename: 'User';
   _id: Scalars['ID'];
-  followers: Array<UserFollowsUser>;
+  followers: UserFollowsUserRelayPage;
   followsSubjects: Array<UserFollowsSubject>;
-  followsUsers: Array<UserFollowsUser>;
+  followsUsers: UserFollowsUserRelayPage;
   name: Scalars['String'];
 };
 
 
 export type UserFollowersArgs = {
-  page: Maybe<PageInput>;
+  page: Maybe<RelayPageInput>;
 };
 
 
 export type UserFollowsSubjectsArgs = {
-  page: Maybe<PageInput>;
+  page: Maybe<RelayPageInput>;
 };
 
 
 export type UserFollowsUsersArgs = {
-  page: Maybe<PageInput>;
+  page: Maybe<RelayPageInput>;
 };
 
-export type Subject = Vertex & {
+export type Subject = GraphVertex & {
   __typename: 'Subject';
   _id: Scalars['ID'];
   followers: Array<UserFollowsSubject>;
@@ -80,7 +101,7 @@ export type Subject = Vertex & {
 
 
 export type SubjectFollowersArgs = {
-  page: Maybe<PageInput>;
+  page: Maybe<RelayPageInput>;
 };
 
 export type Mutation = {
@@ -111,11 +132,23 @@ export type MutationFollowUserArgs = {
   userId: Maybe<Scalars['ID']>;
 };
 
-export type UserFollowsUser = Edge & {
+export type UserFollowsUser = GraphEdge & {
   __typename: 'UserFollowsUser';
   _id: Scalars['ID'];
   _from: Maybe<User>;
   _to: Maybe<User>;
+};
+
+export type UserFollowsUserRelayEdge = RelayPageEdge & {
+  __typename: 'UserFollowsUserRelayEdge';
+  cursor: Scalars['String'];
+  node: Maybe<UserFollowsUser>;
+};
+
+export type UserFollowsUserRelayPage = RelayPage & {
+  __typename: 'UserFollowsUserRelayPage';
+  pageInfo: RelayPageInfo;
+  edges: Array<UserFollowsUserRelayEdge>;
 };
 
 export type CreateSubjectInput = {
@@ -220,55 +253,86 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Vertex: ResolversTypes['User'] | ResolversTypes['Subject'];
+  GraphVertex: ResolversTypes['User'] | ResolversTypes['Subject'];
   ID: ResolverTypeWrapper<Scalars['ID']>;
-  Edge: ResolversTypes['UserFollowsSubject'] | ResolversTypes['UserFollowsUser'];
-  CursorDir: CursorDir;
-  InputCursor: InputCursor;
-  PageInput: PageInput;
+  GraphEdge: ResolversTypes['UserFollowsSubject'] | ResolversTypes['UserFollowsUser'];
+  RelayPageEdge: ResolversTypes['UserFollowsSubjectRelayEdge'] | ResolversTypes['UserFollowsUserRelayEdge'];
+  String: ResolverTypeWrapper<Scalars['String']>;
+  RelayPageInfo: ResolverTypeWrapper<RelayPageInfo>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  RelayPage: ResolversTypes['UserFollowsSubjectRelayPage'] | ResolversTypes['UserFollowsUserRelayPage'];
+  RelayPageInput: RelayPageInput;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   UserFollowsSubject: ResolverTypeWrapper<UserFollowsSubject>;
+  UserFollowsSubjectRelayEdge: ResolverTypeWrapper<UserFollowsSubjectRelayEdge>;
+  UserFollowsSubjectRelayPage: ResolverTypeWrapper<UserFollowsSubjectRelayPage>;
   User: ResolverTypeWrapper<User>;
-  String: ResolverTypeWrapper<Scalars['String']>;
   Subject: ResolverTypeWrapper<Subject>;
   Mutation: ResolverTypeWrapper<RootValue>;
   UserFollowsUser: ResolverTypeWrapper<UserFollowsUser>;
+  UserFollowsUserRelayEdge: ResolverTypeWrapper<UserFollowsUserRelayEdge>;
+  UserFollowsUserRelayPage: ResolverTypeWrapper<UserFollowsUserRelayPage>;
   CreateSubjectInput: CreateSubjectInput;
   Query: ResolverTypeWrapper<RootValue>;
   CreateUserInput: CreateUserInput;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Vertex: ResolversParentTypes['User'] | ResolversParentTypes['Subject'];
+  GraphVertex: ResolversParentTypes['User'] | ResolversParentTypes['Subject'];
   ID: Scalars['ID'];
-  Edge: ResolversParentTypes['UserFollowsSubject'] | ResolversParentTypes['UserFollowsUser'];
-  InputCursor: InputCursor;
-  PageInput: PageInput;
+  GraphEdge: ResolversParentTypes['UserFollowsSubject'] | ResolversParentTypes['UserFollowsUser'];
+  RelayPageEdge: ResolversParentTypes['UserFollowsSubjectRelayEdge'] | ResolversParentTypes['UserFollowsUserRelayEdge'];
+  String: Scalars['String'];
+  RelayPageInfo: RelayPageInfo;
+  Boolean: Scalars['Boolean'];
+  RelayPage: ResolversParentTypes['UserFollowsSubjectRelayPage'] | ResolversParentTypes['UserFollowsUserRelayPage'];
+  RelayPageInput: RelayPageInput;
   Int: Scalars['Int'];
   UserFollowsSubject: UserFollowsSubject;
+  UserFollowsSubjectRelayEdge: UserFollowsSubjectRelayEdge;
+  UserFollowsSubjectRelayPage: UserFollowsSubjectRelayPage;
   User: User;
-  String: Scalars['String'];
   Subject: Subject;
   Mutation: RootValue;
   UserFollowsUser: UserFollowsUser;
+  UserFollowsUserRelayEdge: UserFollowsUserRelayEdge;
+  UserFollowsUserRelayPage: UserFollowsUserRelayPage;
   CreateSubjectInput: CreateSubjectInput;
   Query: RootValue;
   CreateUserInput: CreateUserInput;
-  Boolean: Scalars['Boolean'];
 };
 
-export type VertexResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Vertex'] = ResolversParentTypes['Vertex']> = {
+export type GraphVertexResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GraphVertex'] = ResolversParentTypes['GraphVertex']> = {
   __resolveType: TypeResolveFn<'User' | 'Subject', ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
 };
 
-export type EdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Edge'] = ResolversParentTypes['Edge']> = {
+export type GraphEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GraphEdge'] = ResolversParentTypes['GraphEdge']> = {
   __resolveType: TypeResolveFn<'UserFollowsSubject' | 'UserFollowsUser', ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _from: Resolver<Maybe<ResolversTypes['Vertex']>, ParentType, ContextType>;
-  _to: Resolver<Maybe<ResolversTypes['Vertex']>, ParentType, ContextType>;
+  _from: Resolver<Maybe<ResolversTypes['GraphVertex']>, ParentType, ContextType>;
+  _to: Resolver<Maybe<ResolversTypes['GraphVertex']>, ParentType, ContextType>;
+};
+
+export type RelayPageEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RelayPageEdge'] = ResolversParentTypes['RelayPageEdge']> = {
+  __resolveType: TypeResolveFn<'UserFollowsSubjectRelayEdge' | 'UserFollowsUserRelayEdge', ParentType, ContextType>;
+  cursor: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node: Resolver<Maybe<ResolversTypes['GraphEdge']>, ParentType, ContextType>;
+};
+
+export type RelayPageInfoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RelayPageInfo'] = ResolversParentTypes['RelayPageInfo']> = {
+  endCursor: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  hasNextPage: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  hasPreviousPage: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  startCursor: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type RelayPageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RelayPage'] = ResolversParentTypes['RelayPage']> = {
+  __resolveType: TypeResolveFn<'UserFollowsSubjectRelayPage' | 'UserFollowsUserRelayPage', ParentType, ContextType>;
+  pageInfo: Resolver<ResolversTypes['RelayPageInfo'], ParentType, ContextType>;
+  edges: Resolver<Array<ResolversTypes['RelayPageEdge']>, ParentType, ContextType>;
 };
 
 export type UserFollowsSubjectResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserFollowsSubject'] = ResolversParentTypes['UserFollowsSubject']> = {
@@ -278,11 +342,23 @@ export type UserFollowsSubjectResolvers<ContextType = Context, ParentType extend
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UserFollowsSubjectRelayEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserFollowsSubjectRelayEdge'] = ResolversParentTypes['UserFollowsSubjectRelayEdge']> = {
+  cursor: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node: Resolver<Maybe<ResolversTypes['UserFollowsSubject']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserFollowsSubjectRelayPageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserFollowsSubjectRelayPage'] = ResolversParentTypes['UserFollowsSubjectRelayPage']> = {
+  pageInfo: Resolver<ResolversTypes['RelayPageInfo'], ParentType, ContextType>;
+  edges: Resolver<Array<ResolversTypes['UserFollowsSubjectRelayEdge']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  followers: Resolver<Array<ResolversTypes['UserFollowsUser']>, ParentType, ContextType, RequireFields<UserFollowersArgs, never>>;
+  followers: Resolver<ResolversTypes['UserFollowsUserRelayPage'], ParentType, ContextType, RequireFields<UserFollowersArgs, never>>;
   followsSubjects: Resolver<Array<ResolversTypes['UserFollowsSubject']>, ParentType, ContextType, RequireFields<UserFollowsSubjectsArgs, never>>;
-  followsUsers: Resolver<Array<ResolversTypes['UserFollowsUser']>, ParentType, ContextType, RequireFields<UserFollowsUsersArgs, never>>;
+  followsUsers: Resolver<ResolversTypes['UserFollowsUserRelayPage'], ParentType, ContextType, RequireFields<UserFollowsUsersArgs, never>>;
   name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -308,19 +384,38 @@ export type UserFollowsUserResolvers<ContextType = Context, ParentType extends R
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type UserFollowsUserRelayEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserFollowsUserRelayEdge'] = ResolversParentTypes['UserFollowsUserRelayEdge']> = {
+  cursor: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  node: Resolver<Maybe<ResolversTypes['UserFollowsUser']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserFollowsUserRelayPageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserFollowsUserRelayPage'] = ResolversParentTypes['UserFollowsUserRelayPage']> = {
+  pageInfo: Resolver<ResolversTypes['RelayPageInfo'], ParentType, ContextType>;
+  edges: Resolver<Array<ResolversTypes['UserFollowsUserRelayEdge']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   subject: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QuerySubjectArgs, '_id'>>;
   user: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, '_id'>>;
 };
 
 export type Resolvers<ContextType = Context> = {
-  Vertex: VertexResolvers<ContextType>;
-  Edge: EdgeResolvers<ContextType>;
+  GraphVertex: GraphVertexResolvers<ContextType>;
+  GraphEdge: GraphEdgeResolvers<ContextType>;
+  RelayPageEdge: RelayPageEdgeResolvers<ContextType>;
+  RelayPageInfo: RelayPageInfoResolvers<ContextType>;
+  RelayPage: RelayPageResolvers<ContextType>;
   UserFollowsSubject: UserFollowsSubjectResolvers<ContextType>;
+  UserFollowsSubjectRelayEdge: UserFollowsSubjectRelayEdgeResolvers<ContextType>;
+  UserFollowsSubjectRelayPage: UserFollowsSubjectRelayPageResolvers<ContextType>;
   User: UserResolvers<ContextType>;
   Subject: SubjectResolvers<ContextType>;
   Mutation: MutationResolvers<ContextType>;
   UserFollowsUser: UserFollowsUserResolvers<ContextType>;
+  UserFollowsUserRelayEdge: UserFollowsUserRelayEdgeResolvers<ContextType>;
+  UserFollowsUserRelayPage: UserFollowsUserRelayPageResolvers<ContextType>;
   Query: QueryResolvers<ContextType>;
 };
 
