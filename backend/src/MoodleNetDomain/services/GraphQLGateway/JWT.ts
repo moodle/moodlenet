@@ -9,11 +9,11 @@ export const verifyJwt = (
     return undefined
   }
   try {
-    const jwt = JWT.verify(token, JWT_PUBLIC_KEY, jwtVerifyOpts)
-    if (typeof jwt !== 'object' || !isMoodleNetJwt(jwt)) {
+    const executionAuth = JWT.verify(token, JWT_PUBLIC_KEY, jwtVerifyOpts)
+    if (typeof executionAuth !== 'object' || !isMoodleNetJwt(executionAuth)) {
       return undefined
     }
-    return jwt
+    return executionAuth
   } catch {
     return INVALID_TOKEN
   }

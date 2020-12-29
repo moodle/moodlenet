@@ -1,16 +1,11 @@
 
 const srvGenerates = ['UserAccount', 'ContentGraph']
-  .reduce((generates, srvname) => {
-    /** @type {IGraphQLProject} */
-    const srvGenerate = {
-      // [`backend/src/MoodleNetDomain/services/${srvname}/graphql/${srvname}.graphql.gen.json`]: {
-      //   "schema": `backend/src/MoodleNetDomain/services/${srvname}/**/*.graphql`,
-      //   "plugins": [
-      //     "introspection"
-      //   ]
-      // },
-      [`backend/src/MoodleNetDomain/services/${srvname}/graphql/${srvname}.graphql.gen.d.ts`]: {
-        "schema": `backend/src/MoodleNetDomain/services/${srvname}/graphql/**/*.graphql`,
+  .reduce((collect, srvname) => {
+    const srvBase = `backend/src/MoodleNetDomain/services/${srvname}/graphql`
+    const tsDefsFilename = `${srvBase}/${srvname}.graphql.gen.d.ts`
+    const tsDefsConfig = {
+      [tsDefsFilename]: {
+        "schema": `${srvBase}/**/*.graphql`,
         "plugins": [
           "typescript",
           "typescript-resolvers"
@@ -30,12 +25,11 @@ const srvGenerates = ['UserAccount', 'ContentGraph']
       }
     }
     return {
-      ...generates,
-      ...srvGenerate
+      ...tsDefsConfig,
+      ...collect
     }
   }, {})
 
-/** @type {IGraphQLConfig} */
 const graphqlConfig = {
   "projects": {
     "default": {
@@ -43,28 +37,6 @@ const graphqlConfig = {
         "codegen": {
           "overwrite": true,
           "generates": {
-            "backend/main.schema.gen.json": {
-              "schema": "backend/src/MoodleNetDomain/services/**/*.graphql",
-              "plugins": [
-                "introspection"
-              ]
-            },
-            "backend/main.schema.gen.graphql": {
-              "schema": "backend/src/MoodleNetDomain/services/**/*.graphql",
-              "plugins": [
-                "schema-ast"
-              ],
-              "config": {
-                "scalars": {
-                  "DateTime": "Date"
-                },
-                "includeDirectives": true,
-                "commentDescriptions": true,
-                "avoidOptionals": true,
-                "nonOptionalTypename": true,
-                "skipTypename": false
-              }
-            },
             ...srvGenerates
           }
         }
