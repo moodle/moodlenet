@@ -10,29 +10,29 @@ const contentGraph = loadServiceSchema({ srvName: 'ContentGraph' })
 
 export const schema = stitchSchemas({
   subschemas: [
-    // { schema: userAccount },
+    // { schema: userAccountSchema },
     {
       schema: contentGraph.schema,
       async executor({ document, variables /*, context, info */ }) {
         // const incomingMessage = context as IncomingMessage | undefined
         const query = print(document)
-        console.log('xxx', query, variables)
+        console.log('Xecutor : contentGraph', query, variables)
 
         const { res } = await MoodleNet.callApi({
           api: 'ContentGraph.GQL',
           flow: httpGqlServerRoutes.flow('gql-request'),
           req: {
-            //FIXME: use incomingMessage context to fill context ( and root )
+            //FIXME
             context: { auth: null },
             root: {},
             query,
             variables,
           },
         })
+        console.log({ res })
         if (res.___ERROR) {
           throw new GraphQLError(res.___ERROR.msg)
         }
-        console.log({ res })
         return res
       },
     } as SubschemaConfig,

@@ -28,30 +28,50 @@ export const arangoContentGraphEngine: Promise<ContentGraphEngine> = DBReady.the
       collection: EdgeCollection<T>
       reverse?: boolean
       depth?: [number, number]
-      __typename: T['__typename'] | false
+      typenames: T['__typename'][]
     }): ResolverFn<any, { _id: string }, any, any> => async (
       parent /* ,variables, ctx, info */
     ) => {
-      const { __typename, collection, reverse, depth = [1, 1] } = _
-      const { _id: vertexId } = parent
+      const {
+        typenames,
+        collection: edgeCollection,
+        reverse,
+        depth = [1, 1],
+      } = _
+      const typenamesFilter = typenames.reduce(
+        (filter, typename) =>
+          `${filter}${
+            filter ? ` ||` : `FILTER`
+          } edge.__typename == "${typename}"`,
+        ``
+      )
+      const { _id: parentVertexId } = parent
       console.log(parent)
-      const dir = reverse ? 'INBOUND' : 'OUTBOUND'
       const q = `
-        FOR v, e IN ${depth.join('..')}  ${dir} "${vertexId}" ${collection.name}
-          ${__typename ? `FILTER e.__typename == "${__typename}"` : ''}
-          RETURN  MERGE (e, {
-            node: ${reverse ? '{ _id: e._to }' : 'DOCUMENT(e._to)'}
-          })
+        FOR v, edge 
+          IN ${depth.join('..')} 
+          ${reverse ? 'INBOUND' : 'OUTBOUND'} 
+          "${parentVertexId}" 
+          ${edgeCollection.name}
+          ${typenamesFilter}
+          
+            LET node = DOCUMENT(edge.${reverse ? '_from' : '_to'})
+
+            RETURN  {
+              edge,
+              node
+            }
       `
       console.log(q)
       const cursor = await db.query(q)
 
-      const edges = await cursor.map((edge) => ({
+      const edges = await cursor.map(({ edge, node }) => ({
         ...edge,
+        node,
         cursor: '#',
       }))
 
-      console.log(edges, cursor)
+      console.log(edges)
       const pageInfo: PageInfo = {
         endCursor: 'endCursor',
         hasNextPage: true,
@@ -75,18 +95,16 @@ export const arangoContentGraphEngine: Promise<ContentGraphEngine> = DBReady.the
         User: {
           followers: edgesResolver({
             collection: FollowsEdges,
+            typenames: ['UserFollowsUser'],
             reverse: true,
-            __typename: 'UserFollowsUser',
-            // FIXME: many
-            // __typenames: ['UserFollowsUser'],
           }),
           followsSubjects: edgesResolver({
             collection: FollowsEdges,
-            __typename: 'UserFollowsSubject',
+            typenames: ['UserFollowsSubject'],
           }),
           followsUsers: edgesResolver({
             collection: FollowsEdges,
-            __typename: 'UserFollowsUser',
+            typenames: ['UserFollowsUser'],
           }),
         },
 
@@ -94,8 +112,8 @@ export const arangoContentGraphEngine: Promise<ContentGraphEngine> = DBReady.the
         Subject: {
           followers: edgesResolver({
             collection: FollowsEdges,
+            typenames: ['UserFollowsSubject'],
             reverse: true,
-            __typename: 'UserFollowsSubject',
           }),
         },
       },
