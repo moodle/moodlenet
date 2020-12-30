@@ -2,28 +2,28 @@ interface GraphVertex {
   _id: ID!
 }
 
+# interface GraphEdge {
+# }
+
 interface GraphEdge {
   _id: ID!
-  _from: GraphVertex
-  _to: GraphVertex
-}
-
-interface RelayPageEdge {
+  # _from: GraphVertex!
+  # _to: GraphVertex!
   cursor: String!
-  node: GraphEdge
+  node: GraphVertex!
 }
-type RelayPageInfo {
+type PageInfo {
   endCursor: String
   hasNextPage: Boolean
   hasPreviousPage: Boolean
   startCursor: String
 }
-interface RelayPage {
-  pageInfo: RelayPageInfo!
-  edges: [RelayPageEdge!]!
+interface Page {
+  pageInfo: PageInfo!
+  edges: [GraphEdge!]!
 }
 
-input RelayPageInput {
+input PageInput {
   first: Int
   after: String
   before: String
