@@ -1,18 +1,18 @@
 import { MoodleNet } from '../../../../..'
 import { userAccountRoutes } from '../../../UserAccount.routes'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { loggedUserOnly } from '../../helpers'
+import { loggedUserOnly } from '../../../../../MoodleNetGraphQL'
 
 export const changeEmailRequest: MutationResolvers['changeEmailRequest'] = async (
   _parent,
   { newEmail },
   context
 ) => {
-  const account = loggedUserOnly({ context })
+  const executionAuth = loggedUserOnly({ context })
   const { res } = await MoodleNet.callApi({
     api: 'UserAccount.Change_Main_Email.Request',
     flow: userAccountRoutes.flow('UserAccount-GraphQL-Request'),
-    req: { newEmail, username: account.username },
+    req: { newEmail, username: executionAuth.username },
   })
   return {
     __typename: 'SimpleResponse',

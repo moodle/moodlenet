@@ -1,6 +1,6 @@
 import { graphql } from 'graphql'
 import { MoodleNet } from '../../..'
-import { getContentGraphExecutableSchema } from '../schema'
+import { getContentGraphExecutableSchema } from '../graphql/schema'
 
 getContentGraphExecutableSchema().then((schema) => {
   MoodleNet.respondApi({

@@ -1,6 +1,6 @@
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { loadSchemaSync } from '@graphql-tools/load'
-import { printSchema } from 'graphql'
+import { GraphQLError, printSchema } from 'graphql'
 // import { IncomingMessage } from 'http'
 import { resolve } from 'path'
 import { GraphQLDomainApi } from '../../lib/domain/api/types'
@@ -15,6 +15,14 @@ export type RootValue = {}
 export type GraphQLApi = GraphQLDomainApi<Context, RootValue>
 
 type ServiceNames = 'ContentGraph' | 'UserAccount'
+
+export const loggedUserOnly = (_: { context: Context }) => {
+  const { context } = _
+  if (!context.auth) {
+    throw new GraphQLError('Logged in users only')
+  }
+  return context.auth
+}
 
 export const loadServiceSchema = (_: { srvName: ServiceNames }) => {
   const { srvName } = _

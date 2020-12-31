@@ -2,19 +2,19 @@ import { MoodleNet } from '../../../../..'
 import { hashPassword } from '../../../UserAccount.helpers'
 import { userAccountRoutes } from '../../../UserAccount.routes'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { loggedUserOnly } from '../../helpers'
+import { loggedUserOnly } from '../../../../../MoodleNetGraphQL'
 
 export const changePassword: MutationResolvers['changePassword'] = async (
   _parent,
   { newPassword: plainNewPawd },
   context
 ) => {
-  const account = loggedUserOnly({ context })
+  const executionAuth = loggedUserOnly({ context })
   const newPassword = await hashPassword({ pwd: plainNewPawd })
   const { res } = await MoodleNet.callApi({
     api: 'UserAccount.Change_Password',
     flow: userAccountRoutes.flow('UserAccount-GraphQL-Request'),
-    req: { newPassword, username: account.username },
+    req: { newPassword, username: executionAuth.username },
   })
 
   return {

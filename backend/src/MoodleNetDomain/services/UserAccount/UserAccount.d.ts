@@ -1,6 +1,7 @@
 import { Api } from '../../../lib/domain/api/types'
 import { Event, LookupType } from '../../../lib/domain/event/types'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
+import { GraphQLApi } from '../../MoodleNetGraphQL'
 
 export type UserAccount = {
   Register_New_Account: {
@@ -46,6 +47,7 @@ export type UserAccount = {
     Login: Api<{ username: string; password: string }, { jwt: string | null }>
     AccountLoggedIn: Event<{ username: string; jwt: string }>
   }
+  GQL: GraphQLApi
 }
 
 export type AccountRequest = { email: string }
