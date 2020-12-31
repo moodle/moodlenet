@@ -3,8 +3,9 @@
   "compilerOptions": {
     "rootDir": "src",
     "moduleResolution": "Node",
-    "lib": ["ES2020"],
-    "target": "ES6",
-    "outDir": "./js" /* Redirect output structure to the directory. */
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "noEmit": true,
+    //"outDir": "./js" /* Redirect output structure to the directory. */
   },
 }

@@ -1,0 +1,16 @@
+type Subject implements GraphVertex {
+  _id: ID!
+  name: String!
+}
+
+input CreateSubjectInput {
+  name: String!
+}
+
+type Query {
+  subject(_id: ID!): Subject
+}
+
+type Mutation {
+  createSubject(subjectInput: CreateSubjectInput!): Subject
+}

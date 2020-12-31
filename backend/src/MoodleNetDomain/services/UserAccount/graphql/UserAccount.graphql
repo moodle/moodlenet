@@ -1,0 +1,32 @@
+type SimpleResponse {
+  success: Boolean!
+  message: String
+}
+
+type RequestConfirmEmailResponse {
+  flowKey: String
+}
+
+type Session {
+  jwt: String
+  message: String
+}
+
+type Mutation {
+  signUp(email: String!): SimpleResponse!
+  confirmSignUpEmail(token: String!): RequestConfirmEmailResponse
+  activateAccount(
+    username: String!
+    password: String!
+    flowKey: String!
+  ): SimpleResponse!
+  changeEmailRequest(newEmail: String!): SimpleResponse!
+  changeEmailConfirm(token: String!): Boolean!
+  changePassword(newPassword: String!): SimpleResponse!
+  tempSessionByEmail(username: String!, email: String!): String
+  login(username: String!, password: String!): Session
+}
+
+type Query {
+  _fake: Int
+}

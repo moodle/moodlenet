@@ -1,30 +1,35 @@
 
-const srvGenerates = ['accounting', 'content-graph']
-  .reduce((generates, srvname) => {
-    /** @type {IGraphQLProject} */
-    const srvGenerate = {
-      [`backend/src/MoodleNetDomain/services/${srvname}/graphql/${srvname}.graphql.gen.d.ts`]: {
-        "schema": `backend/src/MoodleNetDomain/services/${srvname}/**/*.graphql`,
+const srvGenerates = ['UserAccount', 'ContentGraph']
+  .reduce((collect, srvname) => {
+    const srvBase = `backend/src/MoodleNetDomain/services/${srvname}`
+    const tsDefsFilename = `${srvBase}/${srvname}.graphql.gen.d.ts`
+    const tsDefsConfig = {
+      [tsDefsFilename]: {
+        "schema": `${srvBase}/graphql/**/*.graphql`,
         "plugins": [
           "typescript",
           "typescript-resolvers"
         ],
         "config": {
-          "contextType": "../../../GQL#Context",
-          "rootValueType": "../../../GQL#RootValue",
+          "scalars": {
+            "DateTime": "Date"
+          },
+          "contextType": "../../MoodleNetGraphQL#Context",
+          "rootValueType": "../../MoodleNetGraphQL#RootValue",
+          "includeDirectives": true,
+          "commentDescriptions": true,
           "avoidOptionals": true,
-          "nonOptionalTypename": false,
-          "skipTypename": true
+          "nonOptionalTypename": true,
+          "skipTypename": false
         }
       }
     }
     return {
-      ...generates,
-      ...srvGenerate
+      ...tsDefsConfig,
+      ...collect
     }
   }, {})
 
-/** @type {IGraphQLConfig} */
 const graphqlConfig = {
   "projects": {
     "default": {
@@ -32,22 +37,6 @@ const graphqlConfig = {
         "codegen": {
           "overwrite": true,
           "generates": {
-            "backend/main.schema.gen.json": {
-              "schema": "backend/src/MoodleNetDomain/services/**/*.graphql",
-              "plugins": [
-                "introspection"
-              ]
-            },
-            "backend/main.schema.gen.graphql": {
-              "schema": "backend/src/MoodleNetDomain/services/**/*.graphql",
-              "plugins": [
-                "schema-ast"
-              ],
-              "config": {
-                "includeDirectives": true,
-                "commentDescriptions": true,
-              }
-            },
             ...srvGenerates
           }
         }

@@ -1,0 +1,27 @@
+interface IUserFollowsUser {
+  ufu: String!
+}
+
+type UserFollowsUser implements GraphEdge & IUserFollowsUser & Follows {
+  _id: ID!
+  # _from: User!
+  # _to: User!
+  cursor: String!
+  node: User!
+  since: Int!
+  ufu: String!
+}
+
+type UserFollowsUserPage implements Page {
+  pageInfo: PageInfo!
+  edges: [UserFollowsUser!]!
+}
+
+type User {
+  followsUsers(page: PageInput): UserFollowsUserPage!
+  followers(page: PageInput): UserFollowsUserPage!
+}
+
+type Mutation {
+  followUser(userId: ID): UserFollowsUser
+}

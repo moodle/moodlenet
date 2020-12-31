@@ -1,0 +1,16 @@
+type User implements GraphVertex {
+  _id: ID!
+  name: String!
+}
+
+input CreateUserInput {
+  name: String
+}
+
+type Query {
+  user(_id: ID!): User
+}
+
+type Mutation {
+  createUser(user: CreateUserInput!): User!
+}

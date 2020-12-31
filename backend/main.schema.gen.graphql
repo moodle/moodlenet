@@ -2,6 +2,78 @@ schema {
   query: Query
   mutation: Mutation
 }
+interface Vertex {
+  _id: ID!
+}
+interface Edge {
+  _id: ID!
+  _from: Vertex
+  _to: Vertex
+}
+enum CursorDir {
+  after
+  before
+  middle
+}
+input InputCursor {
+  _id: ID!
+  dir: CursorDir!
+}
+input RelayPageInput {
+  limit: Int
+  cursor: InputCursor
+}
+type UserFollowsSubject implements GraphEdge {
+  _id: ID!
+  _from: User
+  _to: Subject
+}
+type User implements GraphVertex {
+  _id: ID!
+  followers(page: RelayPageInput): [UserFollowsUser!]!
+  followsSubjects(page: RelayPageInput): [UserFollowsSubject!]!
+  followsUsers(page: RelayPageInput): [UserFollowsUser!]!
+  name: String!
+}
+type Subject implements GraphVertex {
+  _id: ID!
+  followers(page: RelayPageInput): [UserFollowsSubject!]!
+  name: String!
+}
+type Mutation {
+  activateAccount(
+    username: String!
+    password: String!
+    flowKey: String!
+  ): SimpleResponse!
+  changeEmailConfirm(token: String!): Boolean!
+  changeEmailRequest(newEmail: String!): SimpleResponse!
+  changePassword(newPassword: String!): SimpleResponse!
+  confirmSignUpEmail(token: String!): RequestConfirmEmailResponse
+  createSubject(subjectInput: CreateSubjectInput!): Subject
+  createUser(user: CreateUserInput!): User!
+  followSubject(subjectId: ID): UserFollowsSubject
+  followUser(userId: ID): UserFollowsUser
+  login(username: String!, password: String!): Session
+  signUp(email: String!): SimpleResponse!
+  tempSessionByEmail(username: String!, email: String!): String
+}
+type UserFollowsUser implements GraphEdge {
+  _id: ID!
+  _from: User
+  _to: User
+}
+input CreateSubjectInput {
+  name: String!
+}
+type Query {
+  _fake: Int
+  subject(_id: ID!): Subject
+  user(_id: ID!): User
+}
+input CreateUserInput {
+  name: String
+}
 type SimpleResponse {
   success: Boolean!
   message: String
@@ -12,72 +84,4 @@ type RequestConfirmEmailResponse {
 type Session {
   jwt: String
   message: String
-}
-type Mutation {
-  accountSignUp(email: String!): SimpleResponse!
-  accountRequestConfirmEmail(token: String!): RequestConfirmEmailResponse
-  accountRequestActivateAccount(username: String!, password: String!, flowKey: String!): SimpleResponse!
-  accountChangeEmailRequest(newEmail: String!): SimpleResponse!
-  accountChangeEmailConfirm(token: String!): Boolean!
-  accountChangePassword(newPassword: String!): SimpleResponse!
-  accountTempSessionEmail(username: String!, email: String!): String
-  accountLogin(username: String!, password: String!): Session
-}
-interface Vertex {
-  id: ID!
-}
-interface WithIcon {
-  icon: String!
-}
-interface WithName {
-  name: String!
-}
-interface WithSummary {
-  summary: String!
-}
-interface Edge {
-  id: ID!
-}
-input PageInput {
-  limit: Int
-  after: ID
-  before: ID
-}
-union Follower = User
-union Followed = User | Subject
-interface Follows {
-  id: ID!
-  follower: Follower
-  follows: Followed
-}
-type UserFollowsSubject implements Follows {
-  id: ID!
-  follower: User
-  follows: Subject
-}
-type User implements Vertex & WithIcon & WithName & WithSummary {
-  bio: String!
-  followers(page: PageInput): [UserFollowsUser!]!
-  followsSubjects(page: PageInput): [UserFollowsSubject!]!
-  followsUsers(page: PageInput): [UserFollowsUser!]!
-  icon: String!
-  id: ID!
-  name: String!
-  summary: String!
-}
-type Subject implements Vertex & WithIcon & WithName & WithSummary {
-  followers(page: PageInput): [UserFollowsSubject!]!
-  icon: String!
-  id: ID!
-  name: String!
-  summary: String!
-}
-type UserFollowsUser implements Follows {
-  id: ID!
-  follower: User
-  follows: User
-}
-type Query {
-  subject(id: ID!): Subject
-  user(id: ID!): User
 }

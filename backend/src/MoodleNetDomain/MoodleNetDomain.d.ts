@@ -1,7 +1,9 @@
-import { Accounting } from './services/accounting/Accounting'
-import { Email } from './services/email/Email'
+import { ContentGraph } from './services/ContentGraph/ContentGraph'
+import { Email } from './services/Email/Email'
+import { UserAccount } from './services/UserAccount/UserAccount'
 
 export type MoodleNetDomain = {
-  Accounting: Accounting
+  UserAccount: UserAccount
   Email: Email
+  ContentGraph: ContentGraph
 }

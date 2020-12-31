@@ -1,0 +1,31 @@
+interface GraphVertex {
+  _id: ID!
+}
+
+# interface GraphEdge {
+# }
+
+interface GraphEdge {
+  _id: ID!
+  # _from: GraphVertex!
+  # _to: GraphVertex!
+  cursor: String!
+  node: GraphVertex!
+}
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+  startCursor: String
+}
+interface Page {
+  pageInfo: PageInfo!
+  edges: [GraphEdge!]!
+}
+
+input PageInput {
+  first: Int
+  after: String
+  before: String
+  last: Int
+}
