@@ -1,5 +1,5 @@
 import { EdgeCollection } from 'arangojs/collection'
-import { PageInfo, ResolverFn } from '../../../graphql/ContentGraph.graphql.gen'
+import { PageInfo, ResolverFn } from '../../../ContentGraph.graphql.gen'
 import { ContentGraphEngine } from '../../types'
 import { DBReady } from './contentGraph.persistence.arango.env'
 

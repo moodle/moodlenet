@@ -1,11 +1,11 @@
 
 const srvGenerates = ['UserAccount', 'ContentGraph']
   .reduce((collect, srvname) => {
-    const srvBase = `backend/src/MoodleNetDomain/services/${srvname}/graphql`
+    const srvBase = `backend/src/MoodleNetDomain/services/${srvname}`
     const tsDefsFilename = `${srvBase}/${srvname}.graphql.gen.d.ts`
     const tsDefsConfig = {
       [tsDefsFilename]: {
-        "schema": `${srvBase}/**/*.graphql`,
+        "schema": `${srvBase}/graphql/**/*.graphql`,
         "plugins": [
           "typescript",
           "typescript-resolvers"
@@ -14,8 +14,8 @@ const srvGenerates = ['UserAccount', 'ContentGraph']
           "scalars": {
             "DateTime": "Date"
           },
-          "contextType": "../../../MoodleNetGraphQL#Context",
-          "rootValueType": "../../../MoodleNetGraphQL#RootValue",
+          "contextType": "../../MoodleNetGraphQL#Context",
+          "rootValueType": "../../MoodleNetGraphQL#RootValue",
           "includeDirectives": true,
           "commentDescriptions": true,
           "avoidOptionals": true,

@@ -1,6 +1,6 @@
 import { MoodleNet } from '../../../../..'
 import { userAccountRoutes } from '../../../UserAccount.routes'
-import { MutationResolvers } from '../../UserAccount.graphql.gen'
+import { MutationResolvers } from '../../../UserAccount.graphql.gen'
 import { loggedUserOnly } from '../../helpers'
 
 export const changeEmailRequest: MutationResolvers['changeEmailRequest'] = async (

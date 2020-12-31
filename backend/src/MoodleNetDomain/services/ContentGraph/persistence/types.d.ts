@@ -1,4 +1,4 @@
-import { Resolvers } from '../graphql/ContentGraph.graphql.gen'
+import { Resolvers } from '../ContentGraph.graphql.gen'
 
 export interface ContentGraphEngine {
   graphQLResolvers: Resolvers

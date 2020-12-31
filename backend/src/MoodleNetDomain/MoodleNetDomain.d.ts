@@ -1,4 +1,4 @@
-import { ContentGraph } from './services/ContentGraph/Content-Graph'
+import { ContentGraph } from './services/ContentGraph/ContentGraph'
 import { Email } from './services/Email/Email'
 import { UserAccount } from './services/UserAccount/UserAccount'
 

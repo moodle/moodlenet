@@ -1,5 +1,5 @@
 import { MoodleNet } from '../../../../..'
-import { MutationResolvers } from '../../UserAccount.graphql.gen'
+import { MutationResolvers } from '../../../UserAccount.graphql.gen'
 import { userAccountRoutes } from '../../../UserAccount.routes'
 
 export const tempSessionByEmail: MutationResolvers['tempSessionByEmail'] = async (

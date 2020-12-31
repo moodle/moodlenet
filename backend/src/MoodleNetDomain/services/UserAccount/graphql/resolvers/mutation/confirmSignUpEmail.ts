@@ -1,6 +1,6 @@
 import { MoodleNet } from '../../../../..'
 import { userAccountRoutes } from '../../../UserAccount.routes'
-import { MutationResolvers } from '../../UserAccount.graphql.gen'
+import { MutationResolvers } from '../../../UserAccount.graphql.gen'
 
 export const confirmSignUpEmail: MutationResolvers['confirmSignUpEmail'] = async (
   _parent,
