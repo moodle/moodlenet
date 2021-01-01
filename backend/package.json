@@ -56,6 +56,6 @@
   "scripts": {
     "postinstall": "tsc",
     "start": "ts-node index.js",
-    "start-dev": "ts-node-dev --watch .env  --unhandled-rejections=strict index.js" 
+    "start-dev": "ts-node-dev --watch .env,src  --unhandled-rejections=strict index.js" 
   }
 }
