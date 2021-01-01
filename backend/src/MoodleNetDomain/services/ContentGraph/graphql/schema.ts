@@ -1,9 +1,11 @@
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { Context, loadServiceSchema } from '../../../MoodleNetGraphQL'
-import { getContentGraphEngine } from '../ContentGraph.env'
+import { getContentGraphPersistence } from '../ContentGraph.env'
 
 export const getContentGraphExecutableSchema = async () => {
-  const { graphQLResolvers } = await getContentGraphEngine()
+  const {
+    graphQLTypeResolvers: graphQLResolvers,
+  } = await getContentGraphPersistence()
 
   const { typeDefs } = loadServiceSchema({ srvName: 'ContentGraph' })
 

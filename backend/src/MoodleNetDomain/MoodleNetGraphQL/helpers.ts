@@ -27,7 +27,7 @@ export const loggedUserOnly = (_: { context: Context }) => {
 export const loadServiceSchema = (_: { srvName: ServiceNames }) => {
   const { srvName } = _
   const schema = loadSchemaSync(
-    resolve(`${__dirname}/../services/${srvName}/**/*.graphql`),
+    resolve(`${__dirname}/../services/${srvName}/graphql/sdl/**/*.graphql`),
     {
       loaders: [new GraphQLFileLoader()],
     }

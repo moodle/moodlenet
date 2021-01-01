@@ -5,7 +5,7 @@ const srvGenerates = ['UserAccount', 'ContentGraph']
     const tsDefsFilename = `${srvBase}/${srvname}.graphql.gen.d.ts`
     const tsDefsConfig = {
       [tsDefsFilename]: {
-        "schema": `${srvBase}/graphql/**/*.graphql`,
+        "schema": `${srvBase}/graphql/sdl/**/*.graphql`,
         "plugins": [
           "typescript",
           "typescript-resolvers"
