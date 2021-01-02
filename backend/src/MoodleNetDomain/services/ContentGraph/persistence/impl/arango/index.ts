@@ -1,2 +1,2 @@
-import { arangoContentGraphEngine } from './contentGraph.persistence.arango'
-module.exports = arangoContentGraphEngine
+import { getArangoContentGraphEngine } from './contentGraph.persistence.arango'
+module.exports = getArangoContentGraphEngine()

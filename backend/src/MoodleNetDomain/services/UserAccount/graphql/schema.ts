@@ -1,9 +1,23 @@
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { Context, loadServiceSchema } from '../../../MoodleNetGraphQL'
-import { userAccountResolvers } from './resolvers'
+import { getAccountPersistence } from '../UserAccount.env'
+import { Resolvers } from '../UserAccount.graphql.gen'
+import { Mutation } from './mutationResolvers'
 
-const { typeDefs } = loadServiceSchema({ srvName: 'UserAccount' })
-export const schema = makeExecutableSchema<Context>({
-  typeDefs,
-  resolvers: userAccountResolvers,
-})
+export const getUserAccountSchema = async () => {
+  const { graphQLTypeResolvers } = await getAccountPersistence()
+
+  const { typeDefs } = loadServiceSchema({ srvName: 'UserAccount' })
+
+  const resolvers: Resolvers = {
+    ...graphQLTypeResolvers,
+    Mutation,
+  }
+
+  const schema = makeExecutableSchema<Context>({
+    typeDefs,
+    resolvers,
+  })
+
+  return schema
+}

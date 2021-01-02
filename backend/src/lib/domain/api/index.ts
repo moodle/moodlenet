@@ -1,4 +1,5 @@
 import { Message } from 'amqplib'
+import { graphql, GraphQLSchema } from 'graphql'
 import * as AMQP from '../amqp'
 import { nodeId } from '../helpers'
 import { Flow } from '../types/path'
@@ -225,3 +226,17 @@ const log = (flow: Flow, ...args: any[]) =>
     args.map((_) => `\\n${_}`),
     `\\nflow : ${flow._key} - ${flow._route}`
   )
+
+export const getGQLApiResponder = ({
+  schema,
+}: {
+  schema: GraphQLSchema
+}) => async ({ req }: any) => {
+  const { query, root, context, variables } = req
+  const resp = await graphql(schema, query, root, context, variables)
+  return {
+    data: resp.data,
+    errors: resp.errors,
+    extensions: resp.extensions,
+  }
+}

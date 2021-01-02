@@ -3,17 +3,18 @@ import { Query } from './Query'
 import { Subject } from './Subject'
 import { User } from './User'
 
-export const resolvers = Promise.all([User, Subject, Query]).then<Resolvers>(
-  ([User, Subject, Query]) => ({
-    User,
-    Subject,
-    Query,
+export const getGraphQLTypeResolvers = async (): Promise<
+  Omit<Resolvers, 'Mutation'>
+> => {
+  return {
+    User: await User,
+    Subject: await Subject,
+    Query: await Query,
     Follows: {} as any,
     GraphEdge: {} as any,
     GraphVertex: {} as any,
     IUserFollowsSubject: {} as any,
     IUserFollowsUser: {} as any,
-    Mutation: {} as any,
     Page: {} as any,
     PageInfo: {} as any,
     SubjectFollower: {} as any,
@@ -22,5 +23,5 @@ export const resolvers = Promise.all([User, Subject, Query]).then<Resolvers>(
     UserFollowsSubjectPage: {} as any,
     UserFollowsUser: {} as any,
     UserFollowsUserPage: {} as any,
-  })
-)
+  }
+}

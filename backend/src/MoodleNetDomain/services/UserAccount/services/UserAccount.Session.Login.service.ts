@@ -19,7 +19,7 @@ getAccountPersistence().then(async (accountPersistence) => {
       if (!paswordMatches) {
         return { jwt: null }
       }
-      const cfg = await accountPersistence.config()
+      const cfg = await accountPersistence.getConfig()
       const jwt = signJwt({
         //FIXME
         payload: {

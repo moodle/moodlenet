@@ -7,7 +7,7 @@ getAccountPersistence().then(async (accountPersistence) => {
   await MoodleNet.respondApi({
     api: 'UserAccount.Temp_Email_Session',
     async handler({ flow, req: { email, username } }) {
-      const config = await accountPersistence.config()
+      const config = await accountPersistence.getConfig()
       const { tempSessionEmail: resetAccountPasswordRequestEmail } = config
       const account = await accountPersistence.getAccountByUsername({
         username,

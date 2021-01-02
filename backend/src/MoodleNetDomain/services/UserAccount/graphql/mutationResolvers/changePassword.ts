@@ -1,8 +1,8 @@
-import { MoodleNet } from '../../../../..'
-import { hashPassword } from '../../../UserAccount.helpers'
-import { userAccountRoutes } from '../../../UserAccount.routes'
-import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { loggedUserOnly } from '../../../../../MoodleNetGraphQL'
+import { MoodleNet } from '../../../..'
+import { hashPassword } from '../../UserAccount.helpers'
+import { userAccountRoutes } from '../../UserAccount.routes'
+import { MutationResolvers } from '../../UserAccount.graphql.gen'
+import { loggedUserOnly } from '../../../../MoodleNetGraphQL'
 
 export const changePassword: MutationResolvers['changePassword'] = async (
   _parent,

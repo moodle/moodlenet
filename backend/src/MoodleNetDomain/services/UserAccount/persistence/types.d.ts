@@ -9,9 +9,11 @@ import { AccountRequest, ChangeAccountEmailRequest } from '../UserAccount'
 import { ChangeAccountEmailRequestEmailVars } from '../assets/defaultConfig/changeAccountEmailRequestEmail'
 import { NewAccountRequestEmailVars } from '../assets/defaultConfig/newAccountRequestEmail'
 import { TempSessionEmailVars } from '../assets/defaultConfig/tempSessionEmail'
+import { Resolvers } from '../UserAccount.graphql.gen'
 
 type AccountKey = string
 export interface UserAccountPersistence {
+  graphQLTypeResolvers: Omit<Resolvers, 'Mutation'>
   getAccountByUsername(_: { username: string }): Promise<Maybe<AccountDocument>>
   isUserNameAvailable(_: { username: string }): Promise<boolean>
   newAccountRequestExpired(_: {
@@ -49,7 +51,7 @@ export interface UserAccountPersistence {
     | 'Username Not Available'
     | 'Account Already Created'
   >
-  config(): Promise<Config>
+  getConfig(): Promise<Config>
 }
 
 // ^ AccountDocument

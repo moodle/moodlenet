@@ -1,11 +1,9 @@
 import { ContentGraphPersistence } from '../../types'
-import { resolvers } from './graphqlResolvers'
+import { getGraphQLTypeResolvers } from './graphqlTypeResolvers'
 
-export const arangoContentGraphEngine: Promise<ContentGraphPersistence> = resolvers.then(
-  (graphQLResolvers) => {
-    const engine: ContentGraphPersistence = {
-      graphQLTypeResolvers: graphQLResolvers,
-    }
-    return engine
+export const getArangoContentGraphEngine = async (): Promise<ContentGraphPersistence> => {
+  const engine: ContentGraphPersistence = {
+    graphQLTypeResolvers: await getGraphQLTypeResolvers(),
   }
-)
+  return engine
+}

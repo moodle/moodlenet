@@ -7,7 +7,7 @@ getAccountPersistence().then(async (accountPersistence) => {
   await MoodleNet.respondApi({
     api: 'UserAccount.Register_New_Account.Request',
     async handler({ flow, req }) {
-      const config = await accountPersistence.config()
+      const config = await accountPersistence.getConfig()
       const {
         newAccountRequestEmail,
         sendEmailConfirmationAttempts,

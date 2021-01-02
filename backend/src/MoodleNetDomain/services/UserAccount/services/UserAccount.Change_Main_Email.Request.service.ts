@@ -7,7 +7,7 @@ getAccountPersistence().then(async (accountPersistence) => {
   await MoodleNet.respondApi({
     api: 'UserAccount.Change_Main_Email.Request',
     async handler({ flow, req }) {
-      const config = await accountPersistence.config()
+      const config = await accountPersistence.getConfig()
       const {
         sendEmailConfirmationAttempts,
         sendEmailConfirmationDelaySecs,
