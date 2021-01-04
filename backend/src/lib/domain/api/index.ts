@@ -179,9 +179,10 @@ export const respond = <Domain>(domain: string) => async <
           reply({ msg, flow, resp: { ___ERROR: null, ...resp } })
           return AMQP.Acks.ack
         })
-        .catch((err) => {
-          log(flow, `API error`, err)
-          reply({ msg, flow, resp: { ___ERROR: { msg: String(err) } } })
+        .catch((exc) => {
+          log(flow, `API error`, exc)
+          err(exc)
+          reply({ msg, flow, resp: { ___ERROR: { msg: String(exc) } } })
           return AMQP.Acks.reject
         })
       function unbindThisRoute() {
@@ -220,13 +221,16 @@ export const isTimeoutReply = (_: Types.Reply<object>) =>
 export const isNoReplyCall = (_: Types.Reply<object>) =>
   _.___ERROR?.msg === JUST_ENQUEUED_RESPONSE_MSG
 
-const log = (flow: Flow, ...args: any[]) =>
+function log(flow: Flow, ...args: any[]) {
   console.log(
     '\n\n\n',
-    args.map((_) => `\\n${_}`),
-    `\\nflow : ${flow._key} - ${flow._route}`
+    ...args.map((_) => `\n${_}`),
+    `\nflow : ${flow._key} - ${flow._route}`
   )
-
+}
+function err(err: any) {
+  console.error(err instanceof Error ? err.stack : String(err))
+}
 export const getGQLApiResponder = ({
   schema,
 }: {

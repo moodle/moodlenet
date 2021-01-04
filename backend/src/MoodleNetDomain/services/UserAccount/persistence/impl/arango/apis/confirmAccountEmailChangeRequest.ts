@@ -8,19 +8,17 @@ import {
 import { DBReady } from '../UserAccount.persistence.arango.env'
 
 export const confirmAccountEmailChangeRequest: UserAccountPersistence['confirmAccountEmailChangeRequest'] = async ({
-  password,
   token,
 }) => {
-  const { db, UserAccount } = await DBReady
+  const { db } = await DBReady
   const cursor = await db.query(aql`
-    FOR userAccount IN ${UserAccount.name}
+    FOR userAccount IN UserAccount
       FILTER userAccount.changeEmailRequest.token == ${token}
-              && userAccount.password == ${password}
       LIMIT 1
         UPDATE userAccount WITH {
           email: userAccount.changeEmailRequest.email,
           changeEmailRequest: null
-        } IN ${UserAccount.name}
+        } IN UserAccount
       RETURN userAccount
   `)
   const mAccount: Maybe<UserAccountRecord> = await cursor.next()

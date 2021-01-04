@@ -6,9 +6,9 @@ import { DBReady } from '../UserAccount.persistence.arango.env'
 export const isUsernameAvailable: UserAccountPersistence['isUsernameAvailable'] = async ({
   username,
 }) => {
-  const { db, UserAccount } = await DBReady
+  const { db } = await DBReady
   const cursor = await db.query(aql`
-    FOR userAccount IN ${UserAccount.name}
+    FOR userAccount IN UserAccount
     FILTER userAccount.username == ${username}
     LIMIT 1
     RETURN userAccount

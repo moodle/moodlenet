@@ -1,26 +1,21 @@
 import { MoodleNet } from '../../..'
 import { getAccountPersistence } from '../UserAccount.env'
-import { hashPassword, verifyPassword } from '../UserAccount.helpers'
+import {
+  getVerifiedAccountByUsername,
+  hashPassword,
+} from '../UserAccount.helpers'
 
 getAccountPersistence().then(async (accountPersistence) => {
   await MoodleNet.respondApi({
     api: 'UserAccount.Change_Password',
     async handler({ req: { newPassword, username, currentPassword } }) {
-      const account = await accountPersistence.getActiveAccountByUsername({
+      const account = await getVerifiedAccountByUsername({
         username,
+        password: currentPassword,
       })
 
       if (!account) {
-        return { success: false, reason: 'not found' }
-      }
-
-      const pwdVerified = await verifyPassword({
-        hash: account.password,
-        pwd: currentPassword,
-      })
-
-      if (!pwdVerified) {
-        return { success: false, reason: 'wrong pwd' }
+        return { success: false, reason: 'not found or wrong password' }
       }
 
       const currentPasswordHash = await hashPassword({ pwd: currentPassword })

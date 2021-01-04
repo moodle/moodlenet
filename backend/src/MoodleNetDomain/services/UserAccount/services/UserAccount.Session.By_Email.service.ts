@@ -15,7 +15,7 @@ getAccountPersistence().then(async (accountPersistence) => {
       if (!account || account.email !== email) {
         return { success: false, reason: 'not found' }
       }
-      const jwt = signJwt({ account })
+      const jwt = await signJwt({ account })
       const emailObj = fillEmailTemplate({
         template: resetAccountPasswordRequestEmail,
         to: account.email,

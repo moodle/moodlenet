@@ -5,12 +5,12 @@ import { DBReady } from '../UserAccount.persistence.arango.env'
 export const removeNewAccountRequest: UserAccountPersistence['removeNewAccountRequest'] = async ({
   token,
 }) => {
-  const { db, UserAccount } = await DBReady
+  const { db } = await DBReady
   const cursor = await db.query(aql`
-    FOR userAccount IN ${UserAccount.name}
+    FOR userAccount IN UserAccount
     FILTER userAccount.firstActivationToken == ${token}
     LIMIT 1
-    REMOVE userAccount IN ${UserAccount.name}
+    REMOVE userAccount IN UserAccount
     RETURN null
   `)
   await cursor.next()

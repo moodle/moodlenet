@@ -11,6 +11,19 @@ export const sessionByEmail: MutationResolvers['sessionByEmail'] = async (
     flow: userAccountRoutes.flow('UserAccount-GraphQL-Request'),
     req: { email, username },
   })
-
-  return res.___ERROR ? res.___ERROR.msg : null
+  if (res.___ERROR) {
+    return {
+      __typename: 'SimpleResponse',
+      message: res.___ERROR.msg,
+      success: false,
+    }
+  } else if (!res.success) {
+    return {
+      __typename: 'SimpleResponse',
+      message: res.reason,
+      success: false,
+    }
+  } else {
+    return { __typename: 'SimpleResponse', message: null, success: true }
+  }
 }

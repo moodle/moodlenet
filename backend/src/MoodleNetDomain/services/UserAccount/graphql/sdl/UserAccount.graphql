@@ -31,12 +31,16 @@ type Mutation {
     token: String!
   ): SimpleResponse!
   changeEmailRequest(newEmail: String!): SimpleResponse!
-  changeEmailConfirm(token: String!, password: String!): Boolean!
+  changeEmailConfirm(
+    token: String!
+    password: String!
+    username: String!
+  ): Boolean!
   changePassword(
     newPassword: String!
     currentPassword: String!
   ): SimpleResponse!
-  sessionByEmail(username: String!, email: String!): String
+  sessionByEmail(username: String!, email: String!): SimpleResponse!
   createSession(username: String!, password: String!): Session
 }
 

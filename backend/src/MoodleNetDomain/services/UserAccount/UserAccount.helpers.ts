@@ -68,3 +68,26 @@ export const fillEmailTemplate = <Vars>(_: {
     to,
   }
 }
+
+export async function getVerifiedAccountByUsername({
+  password,
+  username,
+}: {
+  username: string
+  password: string
+}) {
+  const accountPersistence = await getAccountPersistence()
+  const account = await accountPersistence.getActiveAccountByUsername({
+    username,
+  })
+
+  if (!account) {
+    return false
+  }
+
+  const pwdVerified = await verifyPassword({
+    hash: account.password,
+    pwd: password,
+  })
+  return pwdVerified && account
+}

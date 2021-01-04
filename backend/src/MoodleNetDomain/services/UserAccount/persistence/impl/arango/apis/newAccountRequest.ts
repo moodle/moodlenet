@@ -12,7 +12,7 @@ export const newAccountRequest: UserAccountPersistence['newAccountRequest'] = as
   token,
   flow,
 }) => {
-  const { db, UserAccount } = await DBReady
+  const { db } = await DBReady
   const emailAvailable = await isEmailAvailable({ email })
   if (!emailAvailable) {
     return Messages.EmailNotAvailable
@@ -35,7 +35,7 @@ export const newAccountRequest: UserAccountPersistence['newAccountRequest'] = as
         updatedAt: DATE_NOW()
       } 
     )
-    INTO ${UserAccount.name}
+    INTO UserAccount
     RETURN null
   `)
 

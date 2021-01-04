@@ -52,7 +52,7 @@ export type Mutation = {
   changeEmailRequest: SimpleResponse;
   changeEmailConfirm: Scalars['Boolean'];
   changePassword: SimpleResponse;
-  sessionByEmail: Maybe<Scalars['String']>;
+  sessionByEmail: SimpleResponse;
   createSession: Maybe<Session>;
 };
 
@@ -77,6 +77,7 @@ export type MutationChangeEmailRequestArgs = {
 export type MutationChangeEmailConfirmArgs = {
   token: Scalars['String'];
   password: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
@@ -241,9 +242,9 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   signUp: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'email'>>;
   activateAccount: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationActivateAccountArgs, 'username' | 'password' | 'token'>>;
   changeEmailRequest: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangeEmailRequestArgs, 'newEmail'>>;
-  changeEmailConfirm: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeEmailConfirmArgs, 'token' | 'password'>>;
+  changeEmailConfirm: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeEmailConfirmArgs, 'token' | 'password' | 'username'>>;
   changePassword: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'currentPassword'>>;
-  sessionByEmail: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationSessionByEmailArgs, 'username' | 'email'>>;
+  sessionByEmail: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationSessionByEmailArgs, 'username' | 'email'>>;
   createSession: Resolver<Maybe<ResolversTypes['Session']>, ParentType, ContextType, RequireFields<MutationCreateSessionArgs, 'username' | 'password'>>;
 };
 

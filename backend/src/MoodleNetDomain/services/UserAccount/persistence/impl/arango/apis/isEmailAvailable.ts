@@ -6,9 +6,9 @@ import { DBReady } from '../UserAccount.persistence.arango.env'
 export const isEmailAvailable: UserAccountPersistence['isEmailAvailable'] = async ({
   email,
 }) => {
-  const { db, UserAccount } = await DBReady
+  const { db } = await DBReady
   const cursor = await db.query(aql`
-    FOR userAccount IN ${UserAccount.name}
+    FOR userAccount IN UserAccount
     FILTER userAccount.email == ${email}
             || userAccount.changeEmailRequest.email == ${email}
     LIMIT 1

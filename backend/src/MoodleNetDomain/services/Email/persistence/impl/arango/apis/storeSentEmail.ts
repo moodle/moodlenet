@@ -4,27 +4,24 @@ import { DBReady } from '../Email.persistence.arango.env'
 import { SentEmailDocument } from '../types'
 
 export const storeSentEmail: EmailPersistence['storeSentEmail'] = async (_) => {
-  const { db, SentEmail } = await DBReady
+  const { db } = await DBReady
 
   const { email, flow, result } = _
 
-  const record: Omit<SentEmailDocument, 'createdAt' | '_id' | 'attempts'> = {
+  const record: Omit<SentEmailDocument, 'createdAt' | '_id'> = {
     email,
-    flow,
+    _flow: flow,
+    result,
   }
   const cursor = await db.query(aql`
         LET now = DATE_NOW()
         INSERT MERGE(
           ${record},
           { 
-            createdAt: now 
-            attempts: [ { 
-              result: ${result},
-              datetime: now 
-            } ]
+            createdAt: now
           }
         )
-        INTO ${SentEmail.name}
+        INTO SentEmail
         RETURN NEW
       `)
   const doc = (await cursor.next()) as SentEmailDocument

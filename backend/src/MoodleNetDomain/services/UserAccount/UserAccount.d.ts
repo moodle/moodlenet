@@ -21,7 +21,7 @@ export type UserAccount = {
       { success: true } | { success: false; reason: string }
     >
     Confirm_And_Change_Account_Email: Api<
-      { token: string; password: string },
+      { token: string; password: string; username: string },
       { done: boolean }
     >
     Cancel_Change_Account_Email_Request: Api<{ accountId: string }, {}>

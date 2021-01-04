@@ -13,8 +13,9 @@ export const changeAccountEmailRequest: UserAccountPersistence['changeAccountEma
   newEmail,
   token,
 }) => {
-  const { db, UserAccount } = await DBReady
-  if (await isEmailAvailable({ email: newEmail })) {
+  const { db } = await DBReady
+  const emailAvailable = await isEmailAvailable({ email: newEmail })
+  if (!emailAvailable) {
     return Messages.EmailNotAvailable
   }
 
@@ -26,14 +27,14 @@ export const changeAccountEmailRequest: UserAccountPersistence['changeAccountEma
   }
 
   const cursor = await db.query(aql`
-    FOR userAccount IN ${UserAccount.name}
-    FILTER userAccount._id == ${accountId}
-    LIMIT 1
-    UPDATE WITH { 
-      changeEmailRequest: MERGE({
-        createdAt: DATE_NOW(),
-      }, ${changeEmailRequest}) 
-    }
+    FOR account IN UserAccount
+      FILTER account._id == ${accountId}
+      LIMIT 1
+      UPDATE account WITH { 
+        changeEmailRequest: MERGE({
+          createdAt: DATE_NOW(),
+        }, ${changeEmailRequest})
+      } IN UserAccount
     RETURN NEW
   `)
 

@@ -36,15 +36,12 @@ getAccountPersistence().then(async (accountPersistence) => {
           },
         })
 
-        const { res } = await MoodleNet.callApi({
+        await MoodleNet.callApi({
           api: 'Email.Send_One.Send_Now',
           flow: userAccountRoutes.setRoute(flow, 'Change-Account-Email'),
           req: { emailObj },
           opts: { justEnqueue: true },
         })
-        if (res.___ERROR) {
-          return { success: false, reason: res.___ERROR.msg } as const
-        }
 
         return { success: true } as const
       } else {

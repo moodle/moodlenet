@@ -47,7 +47,6 @@ export interface UserAccountPersistence {
 
   confirmAccountEmailChangeRequest(_: {
     token: string
-    password: string
   }): Promise<null | Messages.NotFound>
 
   removeChangeAccountEmailRequest(_: { token: string }): Promise<unknown>
@@ -79,6 +78,7 @@ type UserAccountRecordBase = WithId &
   WithFlow &
   WithMutable & {
     email: string
+    firstActivationToken: string
   }
 export type ActiveUserAccount = UserAccountRecordBase & {
   status: Exclude<UserAccountStatus, UserAccountStatus.WaitingFirstActivation>
@@ -88,7 +88,6 @@ export type ActiveUserAccount = UserAccountRecordBase & {
 }
 export type WaitingFirstActivationUserAccount = UserAccountRecordBase & {
   status: UserAccountStatus.WaitingFirstActivation
-  firstActivationToken: string
 }
 export type UserAccountRecord =
   | ActiveUserAccount

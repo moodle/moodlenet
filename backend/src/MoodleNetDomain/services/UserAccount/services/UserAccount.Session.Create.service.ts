@@ -1,29 +1,20 @@
 import { MoodleNet } from '../../..'
-import { getAccountPersistence } from '../UserAccount.env'
-import { signJwt, verifyPassword } from '../UserAccount.helpers'
+import { getVerifiedAccountByUsername, signJwt } from '../UserAccount.helpers'
 
-getAccountPersistence().then(async (accountPersistence) => {
-  await MoodleNet.respondApi({
-    api: 'UserAccount.Session.Create',
-    async handler({ /* flow, */ req: { username, password } }) {
-      const account = await accountPersistence.getActiveAccountByUsername({
-        username,
-      })
-      if (!account) {
-        return { auth: null }
-      }
-      const paswordMatches = await verifyPassword({
-        hash: account.password,
-        pwd: password,
-      })
+MoodleNet.respondApi({
+  api: 'UserAccount.Session.Create',
+  async handler({ /* flow, */ req: { username, password } }) {
+    const account = await getVerifiedAccountByUsername({
+      username,
+      password,
+    })
 
-      if (!paswordMatches) {
-        return { auth: null }
-      }
+    if (!account) {
+      return { auth: null }
+    }
 
-      const jwt = await signJwt({ account })
+    const jwt = await signJwt({ account })
 
-      return { auth: { userAccount: account, jwt } }
-    },
-  })
+    return { auth: { userAccount: account, jwt } }
+  },
 })
