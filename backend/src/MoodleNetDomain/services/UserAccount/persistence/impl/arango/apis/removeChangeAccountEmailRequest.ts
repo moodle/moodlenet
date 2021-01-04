@@ -6,8 +6,7 @@ import {
   UserAccountRecord,
 } from '../../../types'
 import { DBReady } from '../UserAccount.persistence.arango.env'
-
-export const confirmAccountEmailChangeRequest: UserAccountPersistence['confirmAccountEmailChangeRequest'] = async ({
+export const removeChangeAccountEmailRequest: UserAccountPersistence['removeChangeAccountEmailRequest'] = async ({
   token,
 }) => {
   const { db } = await DBReady
@@ -16,7 +15,6 @@ export const confirmAccountEmailChangeRequest: UserAccountPersistence['confirmAc
       FILTER userAccount.changeEmailRequest.token == ${token}
       LIMIT 1
         UPDATE userAccount WITH {
-          email: userAccount.changeEmailRequest.email,
           changeEmailRequest: null
         } IN UserAccount
       RETURN userAccount

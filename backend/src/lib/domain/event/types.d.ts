@@ -13,8 +13,7 @@ export type LookupDef<Domain, Path extends string> = D.Path.TypeofPath<
     : never
   : never
 
-export type LookupType<Domain, Path extends string> = LookupDef<Domain, Path> extends Event<
-  infer Type
->
-  ? Type
-  : never
+export type LookupEventType<
+  Domain,
+  Path extends EventLeaves<Domain>
+> = LookupDef<Domain, Path> extends Event<infer Type> ? Type : never

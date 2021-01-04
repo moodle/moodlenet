@@ -6,9 +6,10 @@ import {
 } from 'arangojs/collection'
 import { Config } from 'arangojs/connection'
 import { CreateDatabaseOptions } from 'arangojs/database'
+import { Maybe } from './types'
 
-export const createDocumentCollectionIfNotExists = async <
-  DocType extends object,
+export const createVertexCollectionIfNotExists = async <
+  VertexDocumentType extends object,
   CollName extends string = string
 >({
   name,
@@ -27,13 +28,13 @@ export const createDocumentCollectionIfNotExists = async <
         // const isDocumentCollection = props.type === CollectionType.DOCUMENT_COLLECTION
         return /*  isDocumentCollection && */ collection.name === name
       }
-    ) as DocumentCollection<DocType>
-    return found || db.createCollection<DocType>(name, createOpts)
+    ) as DocumentCollection<VertexDocumentType>
+    return found || db.createCollection<VertexDocumentType>(name, createOpts)
   })
 }
 
 export const createEdgeCollectionIfNotExists = async <
-  EdgeType extends object,
+  EdgeDocumentType extends object,
   CollName extends string = string
 >({
   name,
@@ -52,8 +53,8 @@ export const createEdgeCollectionIfNotExists = async <
         // const isEdgeCollection = props.type === CollectionType.EDGE_COLLECTION
         return /*  isEdgeCollection && */ collection.name === name
       }
-    ) as EdgeCollection<EdgeType>
-    return found || db.createEdgeCollection<EdgeType>(name, createOpts)
+    ) as EdgeCollection<EdgeDocumentType>
+    return found || db.createEdgeCollection<EdgeDocumentType>(name, createOpts)
   })
 }
 
@@ -71,4 +72,18 @@ export const createDatabaseIfNotExists = ({
     const found = databases.find((_db) => _db.name === name)
     return found || db.createDatabase(name, dbCreateOpts)
   })
+}
+
+export const getDocumentById = async <Type>({
+  db,
+  sel,
+}: {
+  db: Database
+  sel: string | { _id: string }
+}): Promise<Maybe<Type>> => {
+  const _id = typeof sel == 'string' ? sel : sel._id
+  const q = `RETURN DOCUMENT("${_id}")`
+  const cursor = await db.query(q)
+  const resp = await cursor.next()
+  return resp
 }

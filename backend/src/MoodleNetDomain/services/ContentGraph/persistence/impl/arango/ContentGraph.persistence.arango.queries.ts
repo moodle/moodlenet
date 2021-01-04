@@ -1,5 +1,6 @@
 import { Database } from 'arangojs'
 import { EdgeCollection } from 'arangojs/collection'
+import { getDocumentById } from '../../../../../../lib/helpers/arango'
 import { PageInfo, ResolverFn } from '../../../ContentGraph.graphql.gen'
 
 export const vertexResolver = ({
@@ -13,17 +14,7 @@ export const vertexResolver = ({
       ctx,
       info
       */
-) => {
-  const { _id } = variables
-  const q = `
-        RETURN DOCUMENT("${_id}")
-      `
-  console.log(q)
-  const cursor = await db.query(q)
-  const resp = await cursor.next()
-  cursor.kill()
-  return resp
-}
+) => getDocumentById({ sel: variables, db })
 
 export const edgesResolver = <T extends { __typename: string }>(_: {
   db: Database

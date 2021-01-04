@@ -5,35 +5,25 @@ import { userAccountRoutes } from '../UserAccount.routes'
 
 getAccountPersistence().then(async (accountPersistence) => {
   await MoodleNet.respondApi({
-    api: 'UserAccount.Temp_Email_Session',
+    api: 'UserAccount.Session.By_Email',
     async handler({ flow, req: { email, username } }) {
       const config = await accountPersistence.getConfig()
       const { tempSessionEmail: resetAccountPasswordRequestEmail } = config
-      const account = await accountPersistence.getAccountByUsername({
+      const account = await accountPersistence.getActiveAccountByUsername({
         username,
       })
       if (!account || account.email !== email) {
         return { success: false, reason: 'not found' }
       }
-      const resetPwdJwt = signJwt({
-        //FIXME
-        payload: {
-          username,
-          accountId: account.username,
-          userId: account.username,
-        },
-        opts: {
-          expiresIn: config.resetPasswordSessionValiditySecs,
-        },
-      })
+      const jwt = await signJwt({ account })
       const emailObj = fillEmailTemplate({
         template: resetAccountPasswordRequestEmail,
         to: account.email,
-        vars: { username, link: `https://xxx.xxx/temp-session/${resetPwdJwt}` },
+        vars: { username, link: `https://xxx.xxx/temp-session/${jwt}` },
       })
       await MoodleNet.callApi({
-        api: 'Email.Send_One.Req',
-        flow: userAccountRoutes.reflow(flow, 'Temp-Email-Session'),
+        api: 'Email.Send_One.Send_Now',
+        flow: userAccountRoutes.setRoute(flow, 'Temp-Email-Session'),
         req: {
           emailObj,
         },

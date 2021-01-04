@@ -1,14 +1,9 @@
 import * as Yup from 'yup'
 import {
   createDatabaseIfNotExists,
-  createDocumentCollectionIfNotExists,
+  createVertexCollectionIfNotExists,
 } from '../../../../../../lib/helpers/arango'
-import {
-  Config,
-  AccountDocument,
-  NewAccountRequestDocument,
-  ChangeAccountEmailRequestDocument,
-} from '../../types'
+import { Config, UserAccountRecord } from '../../types'
 
 interface ArangoAccountPersistenceEnv {
   url: string[]
@@ -34,44 +29,26 @@ export const database = createDatabaseIfNotExists({
   dbCreateOpts: {},
 })
 
-export const AccountCollection = createDocumentCollectionIfNotExists<AccountDocument>({
-  name: 'Account',
-  database,
-  createOpts: {},
-})
+export const UserAccountCollection = createVertexCollectionIfNotExists<UserAccountRecord>(
+  {
+    name: 'UserAccount',
+    database,
+    createOpts: {},
+  }
+)
 
-export const ConfigCollection = createDocumentCollectionIfNotExists<Config>({
+export const ConfigCollection = createVertexCollectionIfNotExists<Config>({
   name: 'Config',
   database,
   createOpts: {},
 })
 
-export const NewAccountRequestCollection = createDocumentCollectionIfNotExists<NewAccountRequestDocument>(
-  {
-    name: 'NewAccountRequest',
-    database,
-    createOpts: {},
-  }
-)
-
-export const ChangeAccountEmailRequestCollection = createDocumentCollectionIfNotExists<ChangeAccountEmailRequestDocument>(
-  {
-    name: 'ChangeAccountEmailRequest',
-    database,
-    createOpts: {},
-  }
-)
-
 export const DBReady = Promise.all([
   database,
-  AccountCollection,
+  UserAccountCollection,
   ConfigCollection,
-  NewAccountRequestCollection,
-  ChangeAccountEmailRequestCollection,
-]).then(([db, Account, Config, NewAccountRequest, ChangeAccountEmailRequest]) => ({
+]).then(([db, UserAccount, Config]) => ({
   db,
-  Account,
+  UserAccount,
   Config,
-  NewAccountRequest,
-  ChangeAccountEmailRequest,
 }))

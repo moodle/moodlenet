@@ -1,4 +1,6 @@
+import { v4 as uuidV4 } from 'uuid'
 import { MoodleNet } from '../../..'
+import { UserAccountStatus } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import { fillEmailTemplate } from '../UserAccount.helpers'
 import { userAccountRoutes } from '../UserAccount.routes'
@@ -6,39 +8,46 @@ import { userAccountRoutes } from '../UserAccount.routes'
 getAccountPersistence().then(async (accountPersistence) => {
   await MoodleNet.respondApi({
     api: 'UserAccount.Change_Main_Email.Request',
-    async handler({ flow, req }) {
-      const config = await accountPersistence.getConfig()
-      const {
-        sendEmailConfirmationAttempts,
-        sendEmailConfirmationDelaySecs,
-        changeAccountEmailRequestEmail,
-      } = config
-      const resp = await accountPersistence.addChangeAccountEmailRequest({
-        req,
-        flow,
-      })
-      if (resp === true) {
-        const email = fillEmailTemplate({
+    async handler({ flow, req: { accountId, newEmail } }) {
+      const token = uuidV4()
+      const mAccountOrError = await accountPersistence.changeAccountEmailRequest(
+        {
+          accountId,
+          flow,
+          newEmail,
+          token,
+        }
+      )
+
+      if (
+        typeof mAccountOrError === 'object' &&
+        mAccountOrError.status === UserAccountStatus.Active
+      ) {
+        const { username } = mAccountOrError
+        const {
+          changeAccountEmailRequestEmail,
+        } = await accountPersistence.getConfig()
+        const emailObj = fillEmailTemplate({
           template: changeAccountEmailRequestEmail,
-          to: req.newEmail,
+          to: newEmail,
           vars: {
-            username: req.username,
-            link: `https://xxx.xxx/change-main-email/{{=it.token}}`,
+            username,
+            link: `https://xxx.xxx/change-account-email/${token}`,
           },
         })
+
         await MoodleNet.callApi({
-          api: 'Email.Verify_Email.Req',
-          flow: userAccountRoutes.reflow(flow, 'Change-Account-Email'),
-          req: {
-            timeoutSecs: sendEmailConfirmationDelaySecs,
-            email,
-            maxAttempts: sendEmailConfirmationAttempts,
-          },
+          api: 'Email.Send_One.Send_Now',
+          flow: userAccountRoutes.setRoute(flow, 'Change-Account-Email'),
+          req: { emailObj },
           opts: { justEnqueue: true },
         })
+
         return { success: true } as const
       } else {
-        return { success: false, reason: resp }
+        const reason =
+          typeof mAccountOrError === 'string' ? mAccountOrError : 'not found'
+        return { success: false, reason }
       }
     },
   })

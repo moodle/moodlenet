@@ -37,14 +37,17 @@ export const domain = <Domain extends object>(_: { domain: string }) => {
   }
 
   const routes = <Route extends string>() => {
-    const bind = async <EventPath extends EventLeaves<Domain>, ApiPath extends ApiLeaves<Domain>>(
+    const bind = async <
+      EventPath extends EventLeaves<Domain>,
+      ApiPath extends ApiLeaves<Domain>
+    >(
       _: Bindings.BindApiArgs<Domain, EventPath, ApiPath, Route>
     ) => {
       await asserts
       return Bindings.bindApi<Domain>(domain)(_)
     }
 
-    const reflow = (flow: Flow, route: Route): Flow => ({
+    const setRoute = (flow: Flow, route: Route): Flow => ({
       ...flow,
       _route: route,
     })
@@ -54,7 +57,7 @@ export const domain = <Domain extends object>(_: { domain: string }) => {
     return {
       bind,
       flow,
-      reflow,
+      setRoute,
     }
   }
 
