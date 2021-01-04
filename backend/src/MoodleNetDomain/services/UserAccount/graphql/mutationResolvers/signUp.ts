@@ -11,22 +11,23 @@ export const signUp: MutationResolvers['signUp'] = async (
     flow: userAccountRoutes.flow('UserAccount-GraphQL-Request'),
     req: { email },
   })
-
-  return {
-    __typename: 'SimpleResponse',
-    ...(res.___ERROR
-      ? {
-          message: res.___ERROR.msg,
-          success: false,
-        }
-      : res.success
-      ? {
-          message: null,
-          success: true,
-        }
-      : {
-          message: res.reason,
-          success: false,
-        }),
+  if (res.___ERROR) {
+    return {
+      __typename: 'SimpleResponse',
+      message: res.___ERROR.msg,
+      success: false,
+    }
+  } else if (!res.success) {
+    return {
+      __typename: 'SimpleResponse',
+      message: res.reason,
+      success: false,
+    }
+  } else {
+    return {
+      __typename: 'SimpleResponse',
+      message: null,
+      success: true,
+    }
   }
 }

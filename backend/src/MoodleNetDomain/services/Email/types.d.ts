@@ -5,9 +5,3 @@ export type EmailObj = {
   text?: string
   html?: string
 }
-
-type VerifyEmailReq = {
-  email: EmailObj
-  maxAttempts: number
-  timeoutSecs: number
-}

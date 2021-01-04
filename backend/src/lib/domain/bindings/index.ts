@@ -17,7 +17,12 @@ export type BindApiArgs<
   Route extends string
 > = {
   event: EventPath
-  api: Event.LookupType<Domain, EventPath> extends API.ApiReq<Domain, ApiPath> ? ApiPath : never
+  api: Event.LookupEventType<Domain, EventPath> extends API.ApiReq<
+    Domain,
+    ApiPath
+  >
+    ? ApiPath
+    : never
   route: Route
 }
 export const bindApi = <Domain>(domain: string) => async <

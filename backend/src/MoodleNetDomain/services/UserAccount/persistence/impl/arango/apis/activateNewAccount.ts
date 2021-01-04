@@ -1,62 +1,37 @@
 import { aql } from 'arangojs'
-import { AccountDocument, UserAccountPersistence } from '../../../types'
+import { Maybe } from 'graphql/jsutils/Maybe'
+import {
+  Messages,
+  UserAccountPersistence,
+  UserAccountRecord,
+  UserAccountStatus,
+} from '../../../types'
 import { DBReady } from '../UserAccount.persistence.arango.env'
-import { isUserNameAvailable } from './isUserNameAvailable'
 export const activateNewAccount: UserAccountPersistence['activateNewAccount'] = async ({
-  requestFlowKey,
+  token,
   password,
   username,
 }) => {
-  const { NewAccountRequest, db } = await DBReady
-  const request = await NewAccountRequest.document(requestFlowKey)
+  const { UserAccount, db } = await DBReady
 
-  if (!request) {
-    return 'Request Not Found'
-  }
-
-  if (request.status === 'Confirm Expired') {
-    return 'Request Not Found'
-  }
-
-  if (request.status === 'Waiting Email Confirmation') {
-    return 'Unconfirmed Request'
-  }
-
-  if (request.status === 'Account Created') {
-    return 'Account Already Created'
-  }
-
-  const usernameAvailable = await isUserNameAvailable({ username })
-  if (!usernameAvailable) {
-    return 'Username Not Available'
-  }
-
-  const accountDoc: Omit<AccountDocument, 'createdAt' | 'updatedAt'> = {
-    active: true,
-    email: request.email,
-    requestFlowKey,
-    password,
-    username,
-  }
   const cursor = await db.query(aql`
-    INSERT MERGE(
-        ${accountDoc},
-        {
-          _key: ${username},
-          createdAt: DATE_NOW(),
-          updatedAt: DATE_NOW()
-        }
-      )
-      IN Account
-      RETURN NEW
+    FOR userAccount IN ${UserAccount.name}
+    FILTER userAccount.firstActivationToken == ${token}
+    LIMIT 1
+    UPDATE WITH UNSET({
+      updatedAt: DATE_NOW(),
+      password: ${password},
+      username: ${username},
+      status: ${UserAccountStatus.Active}
+      changeEmailRequest: null,
+    }, "firstActivationToken")
+    RETURN NEW
   `)
 
-  const newAccountDoc: AccountDocument = await cursor.next()
+  const newAccountDoc: Maybe<UserAccountRecord> = await cursor.next()
 
-  if (newAccountDoc) {
-    await NewAccountRequest.update(requestFlowKey, {
-      status: 'Account Created',
-    })
+  if (!newAccountDoc) {
+    return Messages.NotFound
   }
 
   return newAccountDoc

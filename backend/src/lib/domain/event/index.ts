@@ -4,10 +4,12 @@ import * as Event from './types'
 
 export type EmitOpts = {}
 
-export const emit = <Domain>(domain: string) => <EventPath extends Event.EventLeaves<Domain>>(_: {
+export const emit = <Domain>(domain: string) => <
+  EventPath extends Event.EventLeaves<Domain>
+>(_: {
   event: EventPath
   flow: Flow
-  payload: Event.LookupType<Domain, EventPath>
+  payload: Event.LookupEventType<Domain, EventPath>
   opts?: EmitOpts
 }) => {
   const { event, payload, flow /* , opts */ } = _

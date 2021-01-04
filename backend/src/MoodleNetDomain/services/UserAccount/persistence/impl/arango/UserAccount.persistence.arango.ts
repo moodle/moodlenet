@@ -1,28 +1,28 @@
 import { UserAccountPersistence } from '../../types'
 import { activateNewAccount } from './apis/activateNewAccount'
-import { addChangeAccountEmailRequest } from './apis/addChangeAccountEmailRequest'
-import { addNewAccountRequest } from './apis/addNewAccountRequest'
-import { changeAccountEmailRequestExpired } from './apis/changeAccountEmailRequestExpired'
+import { changeAccountEmailRequest } from './apis/changeAccountEmailRequest'
+import { newAccountRequest } from './apis/newAccountRequest'
 import { changePassword } from './apis/changePassword'
 import { confirmAccountEmailChangeRequest } from './apis/confirmAccountEmailChangeRequest'
-import { confirmNewAccountRequest } from './apis/confirmNewAccountRequest'
-import { getAccountByUsername } from './apis/getAccountByUsername'
 import { getConfig } from './apis/getConfig'
-import { isUserNameAvailable } from './apis/isUserNameAvailable'
-import { newAccountRequestExpired } from './apis/newAccountRequestExpired'
+import { getActiveAccountByUsername } from './apis/getActiveAccountByUsername'
+import { removeChangeAccountEmailRequest } from './apis/removeChangeAccountEmailRequest'
+import { removeNewAccountRequest } from './apis/removeNewAccountRequest'
 import { userAccountTypeResolvers } from './graphqlTypeResolvers'
+import { isEmailAvailable } from './apis/isEmailAvailable'
+import { isUsernameAvailable } from './apis/isUsernameAvailable'
 
 export const arangoUserAccountPersistence: UserAccountPersistence = {
-  graphQLTypeResolvers: userAccountTypeResolvers,
-  changePassword,
-  addNewAccountRequest,
-  confirmNewAccountRequest,
-  newAccountRequestExpired,
-  isUserNameAvailable,
   activateNewAccount,
-  getConfig,
-  getAccountByUsername,
-  addChangeAccountEmailRequest,
+  changeAccountEmailRequest,
+  changePassword,
   confirmAccountEmailChangeRequest,
-  changeAccountEmailRequestExpired,
+  getActiveAccountByUsername,
+  isUsernameAvailable,
+  getConfig,
+  isEmailAvailable,
+  newAccountRequest,
+  removeChangeAccountEmailRequest,
+  removeNewAccountRequest,
+  graphQLTypeResolvers: userAccountTypeResolvers,
 }

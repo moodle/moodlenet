@@ -4,12 +4,12 @@ import { MutationResolvers } from '../../UserAccount.graphql.gen'
 
 export const changeEmailConfirm: MutationResolvers['changeEmailConfirm'] = async (
   _parent,
-  { token }
+  { token, password }
 ) => {
   const { res } = await MoodleNet.callApi({
-    api: 'Email.Verify_Email.Confirm_Email',
+    api: 'UserAccount.Change_Main_Email.Confirm_And_Change_Account_Email',
     flow: userAccountRoutes.flow('UserAccount-GraphQL-Request'),
-    req: { token },
+    req: { password, token },
   })
-  return res.___ERROR ? false : !res.success ? false : true
+  return res.___ERROR ? false : res.done
 }

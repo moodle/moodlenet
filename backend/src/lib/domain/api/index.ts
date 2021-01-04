@@ -18,8 +18,8 @@ const JUST_ENQUEUED_RESPONSE: Types.Reply<object> = {
 
 export type CallOpts =
   | {
-      justEnqueue: true
-      delaySecs?: number
+      justEnqueue: true // FIXME: remove this and make a specific method "enqueueApi"
+      delaySecs?: number // that doesn't return the actual Api Reply<Response>
     }
   | {
       justEnqueue?: false | undefined

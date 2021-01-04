@@ -1,7 +1,7 @@
 import * as Yup from 'yup'
 import {
   createDatabaseIfNotExists,
-  createDocumentCollectionIfNotExists,
+  createVertexCollectionIfNotExists,
   createEdgeCollectionIfNotExists,
 } from '../../../../../../lib/helpers/arango'
 import {} from '../../types'
@@ -31,13 +31,13 @@ export const database = createDatabaseIfNotExists({
   dbCreateOpts: {},
 })
 
-export const UserVertices = createDocumentCollectionIfNotExists<UserVertex>({
+export const UserVertices = createVertexCollectionIfNotExists<UserVertex>({
   name: 'User',
   database,
   createOpts: {},
 })
 
-export const SubjectVertices = createDocumentCollectionIfNotExists<SubjectVertex>(
+export const SubjectVertices = createVertexCollectionIfNotExists<SubjectVertex>(
   {
     name: 'Subject',
     database,

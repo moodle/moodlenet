@@ -8,23 +8,36 @@ type RequestConfirmEmailResponse {
 }
 
 type Session {
-  jwt: String
+  auth: Auth
   message: String
+}
+type Auth {
+  jwt: String
+  sessionAccount: SessionAccount
+}
+
+type SessionAccount {
+  username: String!
+  email: String!
+  changeEmailRequest: String
+  accountId: String!
 }
 
 type Mutation {
   signUp(email: String!): SimpleResponse!
-  confirmSignUpEmail(token: String!): RequestConfirmEmailResponse
   activateAccount(
     username: String!
     password: String!
-    flowKey: String!
+    token: String!
   ): SimpleResponse!
   changeEmailRequest(newEmail: String!): SimpleResponse!
-  changeEmailConfirm(token: String!): Boolean!
-  changePassword(newPassword: String!): SimpleResponse!
-  tempSessionByEmail(username: String!, email: String!): String
-  login(username: String!, password: String!): Session
+  changeEmailConfirm(token: String!, password: String!): Boolean!
+  changePassword(
+    newPassword: String!
+    currentPassword: String!
+  ): SimpleResponse!
+  sessionByEmail(username: String!, email: String!): String
+  createSession(username: String!, password: String!): Session
 }
 
 type Query {

@@ -1,14 +1,8 @@
 interface GraphVertex {
   _id: ID!
 }
-
-# interface GraphEdge {
-# }
-
 interface GraphEdge {
   _id: ID!
-  # _from: GraphVertex!
-  # _to: GraphVertex!
   cursor: String!
   node: GraphVertex!
 }

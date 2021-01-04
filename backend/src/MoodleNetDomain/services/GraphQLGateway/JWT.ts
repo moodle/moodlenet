@@ -1,17 +1,23 @@
 import JWT from 'jsonwebtoken'
+import { SessionAccount } from '../UserAccount/UserAccount.graphql.gen'
 import { jwtVerifyOpts, JWT_PUBLIC_KEY } from './GraphQLGateway.env'
 
 export const INVALID_TOKEN = Symbol('INVALID_TOKEN')
+export type INVALID_TOKEN = typeof INVALID_TOKEN
 export const verifyJwt = (
-  token: string | undefined
-): MoodleNetExecutionAuth | undefined | typeof INVALID_TOKEN => {
+  token: any
+): MoodleNetExecutionAuth | null | INVALID_TOKEN => {
   if (!token) {
-    return undefined
+    return null
   }
   try {
-    const executionAuth = JWT.verify(token, JWT_PUBLIC_KEY, jwtVerifyOpts)
+    const executionAuth = JWT.verify(
+      String(token),
+      JWT_PUBLIC_KEY,
+      jwtVerifyOpts
+    )
     if (typeof executionAuth !== 'object' || !isMoodleNetJwt(executionAuth)) {
-      return undefined
+      return null
     }
     return executionAuth
   } catch {
@@ -20,9 +26,7 @@ export const verifyJwt = (
 }
 
 export type MoodleNetExecutionAuth = {
-  accountId: string
-  userId: string
-  username: string
+  sessionAccount: SessionAccount
 }
 //FIXME: implement proper typeguard
 export const isMoodleNetJwt = (_obj: object): _obj is MoodleNetExecutionAuth =>

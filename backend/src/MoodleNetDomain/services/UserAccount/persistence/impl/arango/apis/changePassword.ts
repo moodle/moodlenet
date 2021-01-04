@@ -1,16 +1,24 @@
-import { UserAccountPersistence } from '../../../types'
+import { aql } from 'arangojs'
+import { Messages, UserAccountPersistence } from '../../../types'
 import { DBReady } from '../UserAccount.persistence.arango.env'
 
 export const changePassword: UserAccountPersistence['changePassword'] = async ({
+  accountId,
   newPassword,
-  username,
 }) => {
-  const { Account } = await DBReady
-
-  const resp = await Account.update(
-    username,
-    { password: newPassword },
-    { returnNew: true }
-  )
-  return resp.new ? true : 'not found'
+  const { db } = await DBReady
+  const cursor = await db.query(aql`
+    FOR userAccount IN UserAccount
+    FILTER userAccount._id == ${accountId} 
+    LIMIT 1
+    UPDATE userAccount WITH { 
+      password: ${newPassword}
+    } IN UserAccount
+    RETURN NEW
+  `)
+  const doc = await cursor.next()
+  if (!doc) {
+    return Messages.NotFound
+  }
+  return null
 }

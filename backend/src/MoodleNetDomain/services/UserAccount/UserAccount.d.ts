@@ -1,7 +1,7 @@
 import { Api } from '../../../lib/domain/api/types'
-import { Event, LookupType } from '../../../lib/domain/event/types'
-import { MoodleNetDomain } from '../../MoodleNetDomain'
+import { Event } from '../../../lib/domain/event/types'
 import { GraphQLApi } from '../../MoodleNetGraphQL'
+import { UserAccountRecord } from './persistence/types'
 
 export type UserAccount = {
   Register_New_Account: {
@@ -9,46 +9,45 @@ export type UserAccount = {
       AccountRequest,
       { success: true } | { success: false; reason: string }
     >
-    Email_Confirm_Result: Api<
-      LookupType<MoodleNetDomain, 'Email.Verify_Email.Result'>,
-      { done: boolean }
-    >
-    ActivateNewAccount: Api<
-      { requestFlowKey: string; password: string; username: string },
+    Confirm_Email_Activate_Account: Api<
+      { token: string; password: string; username: string },
       { success: true } | { success: false; reason: string }
     >
-    NewAccountActivated: Event<{ requestFlowKey: string }>
+    NewAccountActivated: Event<{ accountId: string }>
   }
   Change_Main_Email: {
     Request: Api<
       ChangeAccountEmailRequest,
       { success: true } | { success: false; reason: string }
     >
-    Email_Confirm_Result: Api<
-      LookupType<MoodleNetDomain, 'Email.Verify_Email.Result'>,
+    Confirm_And_Change_Account_Email: Api<
+      { token: string; password: string },
       { done: boolean }
     >
+    Cancel_Change_Account_Email_Request: Api<{ accountId: string }, {}>
     AccountEmailChanged: Event<{
-      username: string
+      accountId: string
       newEmail: string
       oldEmail: string
     }>
   }
-  Temp_Email_Session: Api<
-    { username: string; email: string },
-    { success: true } | { success: false; reason: string }
-  >
   Change_Password: Api<
-    { username: string; newPassword: string },
+    { username: string; currentPassword: string; newPassword: string },
     { success: true } | { success: false; reason: string }
   >
 
   Session: {
-    Login: Api<{ username: string; password: string }, { jwt: string | null }>
-    AccountLoggedIn: Event<{ username: string; jwt: string }>
+    By_Email: Api<
+      { email: string; username: string },
+      { success: true } | { success: false; reason: string }
+    >
+    Create: Api<
+      { username: string; password: string },
+      { auth: { jwt: string; userAccount: UserAccountRecord } | null }
+    >
   }
   GQL: GraphQLApi
 }
 
 export type AccountRequest = { email: string }
-export type ChangeAccountEmailRequest = { username: string; newEmail: string }
+export type ChangeAccountEmailRequest = { accountId: string; newEmail: string }

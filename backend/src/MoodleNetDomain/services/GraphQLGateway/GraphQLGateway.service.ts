@@ -12,7 +12,7 @@ app.use(
   '/graphql',
   graphqlHTTP({
     schema,
-    graphiql: true,
+    graphiql: { headerEditorEnabled: true },
   })
 )
 
