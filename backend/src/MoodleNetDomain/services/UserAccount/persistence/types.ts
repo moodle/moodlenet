@@ -56,7 +56,7 @@ export interface UserAccountPersistence {
     username: string
     password: string
   }): Promise<
-    UserAccountRecord | Messages.NotFound | Messages.UsernameNotAvailable
+    ActiveUserAccount | Messages.NotFound | Messages.UsernameNotAvailable
   >
 
   getConfig(): Promise<Config>

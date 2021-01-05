@@ -86,10 +86,10 @@ export type SubjectFollowersPage = Page & {
 export type User = GraphVertex & {
   __typename: 'User';
   _id: Scalars['ID'];
+  displayName: Scalars['String'];
   followers: UserFollowsUserPage;
   followsSubjects: UserFollowsSubjectPage;
   followsUsers: UserFollowsUserPage;
-  name: Scalars['String'];
 };
 
 
@@ -391,10 +391,10 @@ export type SubjectFollowersPageResolvers<ContextType = Context, ParentType exte
 
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  displayName: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   followers: Resolver<ResolversTypes['UserFollowsUserPage'], ParentType, ContextType, RequireFields<UserFollowersArgs, never>>;
   followsSubjects: Resolver<ResolversTypes['UserFollowsSubjectPage'], ParentType, ContextType, RequireFields<UserFollowsSubjectsArgs, never>>;
   followsUsers: Resolver<ResolversTypes['UserFollowsUserPage'], ParentType, ContextType, RequireFields<UserFollowsUsersArgs, never>>;
-  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

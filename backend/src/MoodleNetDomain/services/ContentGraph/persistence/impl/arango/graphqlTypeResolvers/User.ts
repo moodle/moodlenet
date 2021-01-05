@@ -21,5 +21,5 @@ export const User = DBReady.then<Resolvers['User']>(({ FollowsEdges, db }) => ({
     typenames: ['UserFollowsUser'],
   }),
   _id: defaultFieldResolver,
-  name: defaultFieldResolver,
+  displayName: defaultFieldResolver,
 }))

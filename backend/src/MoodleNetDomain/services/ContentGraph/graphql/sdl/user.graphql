@@ -1,6 +1,6 @@
 type User implements GraphVertex {
   _id: ID!
-  name: String!
+  displayName: String!
 }
 
 input CreateUserInput {

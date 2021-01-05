@@ -1,7 +1,7 @@
 import { Api } from '../../../lib/domain/api/types'
 import { Event } from '../../../lib/domain/event/types'
 import { GraphQLApi } from '../../MoodleNetGraphQL'
-import { UserAccountRecord } from './persistence/types'
+import { ActiveUserAccount } from './persistence/types'
 
 export type UserAccount = {
   Register_New_Account: {
@@ -11,9 +11,9 @@ export type UserAccount = {
     >
     Confirm_Email_Activate_Account: Api<
       { token: string; password: string; username: string },
-      { success: true } | { success: false; reason: string }
+      MaybeSessionAuth
     >
-    NewAccountActivated: Event<{ accountId: string }>
+    NewAccountActivated: Event<{ accountId: string; username: string }>
   }
   Change_Main_Email: {
     Request: Api<
@@ -41,13 +41,13 @@ export type UserAccount = {
       { email: string; username: string },
       { success: true } | { success: false; reason: string }
     >
-    Create: Api<
-      { username: string; password: string },
-      { auth: { jwt: string; userAccount: UserAccountRecord } | null }
-    >
+    Create: Api<{ username: string; password: string }, MaybeSessionAuth>
   }
   GQL: GraphQLApi
 }
 
+export type MaybeSessionAuth = {
+  auth: { jwt: string; userAccount: ActiveUserAccount } | null
+}
 export type AccountRequest = { email: string }
 export type ChangeAccountEmailRequest = { accountId: string; newEmail: string }

@@ -1,9 +1,9 @@
 import { aql } from 'arangojs'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import {
+  ActiveUserAccount,
   Messages,
   UserAccountPersistence,
-  UserAccountRecord,
   UserAccountStatus,
 } from '../../../types'
 import { DBReady } from '../UserAccount.persistence.arango.env'
@@ -34,7 +34,7 @@ export const activateNewAccount: UserAccountPersistence['activateNewAccount'] = 
     RETURN NEW
   `)
 
-  const newAccountDoc: Maybe<UserAccountRecord> = await cursor.next()
+  const newAccountDoc: Maybe<ActiveUserAccount> = await cursor.next()
 
   if (!newAccountDoc) {
     return Messages.NotFound

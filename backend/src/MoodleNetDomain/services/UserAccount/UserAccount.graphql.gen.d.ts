@@ -48,7 +48,7 @@ export type SessionAccount = {
 export type Mutation = {
   __typename: 'Mutation';
   signUp: SimpleResponse;
-  activateAccount: SimpleResponse;
+  activateAccount: Session;
   changeEmailRequest: SimpleResponse;
   changeEmailConfirm: Scalars['Boolean'];
   changePassword: SimpleResponse;
@@ -240,7 +240,7 @@ export type SessionAccountResolvers<ContextType = Context, ParentType extends Re
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   signUp: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'email'>>;
-  activateAccount: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationActivateAccountArgs, 'username' | 'password' | 'token'>>;
+  activateAccount: Resolver<ResolversTypes['Session'], ParentType, ContextType, RequireFields<MutationActivateAccountArgs, 'username' | 'password' | 'token'>>;
   changeEmailRequest: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangeEmailRequestArgs, 'newEmail'>>;
   changeEmailConfirm: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeEmailConfirmArgs, 'token' | 'password' | 'username'>>;
   changePassword: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'currentPassword'>>;
