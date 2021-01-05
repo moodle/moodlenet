@@ -41,7 +41,7 @@ export const domain = <Domain extends object>(_: { domain: string }) => {
       EventPath extends EventLeaves<Domain>,
       ApiPath extends ApiLeaves<Domain>
     >(
-      _: Bindings.BindApiArgs<Domain, EventPath, ApiPath, Route>
+      _: Bindings.BindApiArgs<Domain, EventPath, ApiPath, Route | '*'>
     ) => {
       await asserts
       return Bindings.bindApi<Domain>(domain)(_)

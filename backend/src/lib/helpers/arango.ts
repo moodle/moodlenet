@@ -35,7 +35,9 @@ export const createVertexCollectionIfNotExists = async <
 
 export const createEdgeCollectionIfNotExists = async <
   EdgeDocumentType extends object,
-  CollName extends string = string
+  CollName extends string = EdgeDocumentType extends { __typename: string }
+    ? EdgeDocumentType['__typename']
+    : string
 >({
   name,
   createOpts,

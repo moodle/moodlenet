@@ -5,7 +5,7 @@ import {
   createEdgeCollectionIfNotExists,
 } from '../../../../../../lib/helpers/arango'
 import {} from '../../types'
-import { FollowsEdge, SubjectVertex, UserVertex } from './glyph'
+import { FollowsEdge, SubjectVertex, UserVertex } from '../../glyph'
 
 interface ArangoContentGraphPersistenceEnv {
   url: string[]
@@ -45,7 +45,10 @@ export const SubjectVertices = createVertexCollectionIfNotExists<SubjectVertex>(
   }
 )
 
-export const FollowsEdges = createEdgeCollectionIfNotExists<FollowsEdge>({
+export const FollowsEdges = createEdgeCollectionIfNotExists<
+  FollowsEdge,
+  'Follows'
+>({
   name: 'Follows',
   database,
   createOpts: {},

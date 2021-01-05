@@ -29,7 +29,7 @@ type Mutation {
     username: String!
     password: String!
     token: String!
-  ): SimpleResponse!
+  ): Session!
   changeEmailRequest(newEmail: String!): SimpleResponse!
   changeEmailConfirm(
     token: String!

@@ -13,20 +13,34 @@ export const activateAccount: MutationResolvers['activateAccount'] = async (
   })
   if (res.___ERROR) {
     return {
-      __typename: 'SimpleResponse',
+      __typename: 'Session',
       message: res.___ERROR.msg,
-      success: false,
+      auth: null,
     }
-  } else if (!res.success) {
+  } else if (!res.auth) {
     return {
-      __typename: 'SimpleResponse',
-      success: false,
-      message: res.reason,
+      __typename: 'Session',
+      auth: null,
+      message: 'not found',
     }
   } else {
+    const {
+      jwt,
+      userAccount: { changeEmailRequest, username, email, _id },
+    } = res.auth
     return {
-      __typename: 'SimpleResponse',
-      success: true,
+      __typename: 'Session',
+      auth: {
+        __typename: 'Auth',
+        jwt,
+        sessionAccount: {
+          __typename: 'SessionAccount',
+          accountId: _id,
+          changeEmailRequest: changeEmailRequest?.email || null,
+          email,
+          username,
+        },
+      },
       message: null,
     }
   }

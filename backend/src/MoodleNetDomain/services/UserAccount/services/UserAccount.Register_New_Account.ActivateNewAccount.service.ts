@@ -1,6 +1,6 @@
 import { MoodleNet } from '../../..'
 import { getAccountPersistence } from '../UserAccount.env'
-import { hashPassword } from '../UserAccount.helpers'
+import { hashPassword, signJwt } from '../UserAccount.helpers'
 
 getAccountPersistence().then(async (accountPersistence) => {
   await MoodleNet.respondApi({
@@ -13,14 +13,17 @@ getAccountPersistence().then(async (accountPersistence) => {
         password: hashedPassword,
       })
       if (typeof maybeAccount === 'string') {
-        return { success: false, reason: maybeAccount } as const
+        return { auth: null }
       } else {
+        const { username, _id } = maybeAccount
+        const jwt = await signJwt({ account: maybeAccount })
         MoodleNet.emitEvent({
           event: 'UserAccount.Register_New_Account.NewAccountActivated',
           flow,
-          payload: { accountId: maybeAccount._id },
+          payload: { accountId: _id, username },
         })
-        return { success: true } as const
+
+        return { auth: { jwt, userAccount: maybeAccount } }
       }
     },
   })

@@ -5,7 +5,7 @@ import {
   UserFollowsUser,
   GraphVertex,
   GraphEdge,
-} from '../../../ContentGraph.graphql.gen'
+} from '../ContentGraph.graphql.gen'
 
 type WithTypename = { __typename: string }
 type GlyphEdge = GraphEdge & WithTypename
