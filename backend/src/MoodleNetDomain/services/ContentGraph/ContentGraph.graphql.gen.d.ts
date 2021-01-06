@@ -172,8 +172,14 @@ export type CreateSubjectInput = {
 
 export type Query = {
   __typename: 'Query';
+  getSessionAccountUser: Maybe<SessionAccount>;
   subject: Maybe<Subject>;
   user: Maybe<User>;
+};
+
+
+export type QueryGetSessionAccountUserArgs = {
+  username: Scalars['String'];
 };
 
 
@@ -188,6 +194,12 @@ export type QueryUserArgs = {
 
 export type CreateUserInput = {
   name: Maybe<Scalars['String']>;
+};
+
+export type SessionAccount = {
+  __typename: 'SessionAccount';
+  username: Scalars['String'];
+  user: User;
 };
 
 
@@ -292,6 +304,7 @@ export type ResolversTypes = {
   CreateSubjectInput: CreateSubjectInput;
   Query: ResolverTypeWrapper<RootValue>;
   CreateUserInput: CreateUserInput;
+  SessionAccount: ResolverTypeWrapper<SessionAccount>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -320,6 +333,7 @@ export type ResolversParentTypes = {
   CreateSubjectInput: CreateSubjectInput;
   Query: RootValue;
   CreateUserInput: CreateUserInput;
+  SessionAccount: SessionAccount;
 };
 
 export type GraphVertexResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GraphVertex'] = ResolversParentTypes['GraphVertex']> = {
@@ -433,8 +447,15 @@ export type UserFollowsUserPageResolvers<ContextType = Context, ParentType exten
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getSessionAccountUser: Resolver<Maybe<ResolversTypes['SessionAccount']>, ParentType, ContextType, RequireFields<QueryGetSessionAccountUserArgs, 'username'>>;
   subject: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<QuerySubjectArgs, '_id'>>;
   user: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, '_id'>>;
+};
+
+export type SessionAccountResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SessionAccount'] = ResolversParentTypes['SessionAccount']> = {
+  username: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = Context> = {
@@ -455,6 +476,7 @@ export type Resolvers<ContextType = Context> = {
   UserFollowsUser: UserFollowsUserResolvers<ContextType>;
   UserFollowsUserPage: UserFollowsUserPageResolvers<ContextType>;
   Query: QueryResolvers<ContextType>;
+  SessionAccount: SessionAccountResolvers<ContextType>;
 };
 
 

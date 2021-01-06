@@ -1,7 +1,8 @@
+import { Executor } from '@graphql-tools/delegate/types'
 import { Message } from 'amqplib'
-import { graphql, GraphQLSchema } from 'graphql'
+import { graphql, GraphQLError, GraphQLSchema, print } from 'graphql'
 import * as AMQP from '../amqp'
-import { nodeId } from '../helpers'
+import { newFlow, nodeId } from '../helpers'
 import { Flow } from '../types/path'
 import * as Types from './types'
 
@@ -238,9 +239,44 @@ export const getGQLApiResponder = ({
 }) => async ({ req }: any) => {
   const { query, root, context, variables } = req
   const resp = await graphql(schema, query, root, context, variables)
+  // console.log(`getGQLApiResponder data`, inspect(resp.data, false, 9))
+  // console.log(`getGQLApiResponder err`, inspect(resp.errors, false, 9))
   return {
     data: resp.data,
     errors: resp.errors,
     extensions: resp.extensions,
   }
+}
+
+export const getGQLApiCallerExecutor = <DomainDef extends object>({
+  getContext,
+  api,
+  domain,
+  flow,
+}: {
+  getContext(..._: Parameters<Executor>): { context: any; root: any }
+  api: Types.ApiLeaves<DomainDef>
+  domain: any
+  flow?: Flow
+}): Executor => async (_) => {
+  const { context, root } = getContext(_)
+  const { document, variables /*,context, extensions, info */ } = _
+  const query = print(document)
+  console.log(`GQLApiCallerExecutor : ${api}`, query, variables)
+
+  const { res } = await domain.callApi({
+    api,
+    flow: flow || newFlow({ _route: 'gql-request' }),
+    req: {
+      context,
+      root,
+      query,
+      variables,
+    },
+  })
+  console.log({ res })
+  if (res.___ERROR) {
+    throw new GraphQLError(res.___ERROR.msg)
+  }
+  return res
 }

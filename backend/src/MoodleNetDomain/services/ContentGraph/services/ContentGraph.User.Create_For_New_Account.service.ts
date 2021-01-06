@@ -7,7 +7,7 @@ getContentGraphPersistence().then(({ createUser }) => {
     api: 'ContentGraph.User.Create_For_New_Account',
     async handler({ req: { username } }) {
       const user = await createUser({ username })
-      return { newUser: user ?? null }
+      return { newUser: user }
     },
   })
   contentGraphRoutes.bind({

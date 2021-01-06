@@ -76,7 +76,7 @@ export const createDatabaseIfNotExists = ({
   })
 }
 
-export const getDocumentById = async <Type>({
+export const getDocumentById = async <Type = any>({
   db,
   sel,
 }: {

@@ -16,7 +16,7 @@ type Auth {
   sessionAccount: SessionAccount
 }
 
-type SessionAccount {
+type SessionAccount @key(selectionSet: "{ username }") {
   username: String!
   email: String!
   changeEmailRequest: String

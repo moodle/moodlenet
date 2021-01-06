@@ -16,7 +16,10 @@ export const verifyJwt = (
       JWT_PUBLIC_KEY,
       jwtVerifyOpts
     )
-    if (typeof executionAuth !== 'object' || !isMoodleNetJwt(executionAuth)) {
+    if (
+      typeof executionAuth !== 'object' ||
+      !isMoodleNetExecutionAuth(executionAuth)
+    ) {
       return null
     }
     return executionAuth
@@ -29,5 +32,6 @@ export type MoodleNetExecutionAuth = {
   sessionAccount: SessionAccount
 }
 //FIXME: implement proper typeguard
-export const isMoodleNetJwt = (_obj: object): _obj is MoodleNetExecutionAuth =>
-  true
+export const isMoodleNetExecutionAuth = (
+  _obj: object
+): _obj is MoodleNetExecutionAuth => true

@@ -23,5 +23,6 @@ export const getGraphQLTypeResolvers = async (): Promise<
     UserFollowsSubjectPage: {} as any,
     UserFollowsUser: {} as any,
     UserFollowsUserPage: {} as any,
+    SessionAccount: {} as any,
   }
 }

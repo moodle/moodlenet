@@ -11,6 +11,7 @@
     "@graphql-tools/load": "^6.2.5",
     "@graphql-tools/schema": "^7.1.2",
     "@graphql-tools/stitch": "^7.1.6",
+    "@graphql-tools/stitching-directives": "^1.1.1",
     "@types/amqplib": "^0.5.15",
     "@types/argon2": "^0.15.0",
     "@types/dot": "^1.1.4",
@@ -56,6 +57,6 @@
   "scripts": {
     "postinstall": "tsc",
     "start": "ts-node index.js",
-    "start-dev": "ts-node-dev --watch .env,src  --unhandled-rejections=strict index.js" 
+    "start-dev": "ts-node-dev --watch .env,src  --respawn --unhandled-rejections=strict --rs --clear --transpile-only index.js"
   }
 }

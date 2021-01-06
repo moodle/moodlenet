@@ -7,7 +7,9 @@ import { EventLeaves } from './event/types'
 import { newFlow } from './helpers'
 import { Flow } from './types/path'
 
-export const domain = <Domain extends object>(_: { domain: string }) => {
+export type Domain = ReturnType<typeof domain>
+
+export const domain = <DomainDef extends object>(_: { domain: string }) => {
   const { domain } = _
 
   const asserts = Promise.all([
@@ -15,21 +17,21 @@ export const domain = <Domain extends object>(_: { domain: string }) => {
     AMQP.assertDomainDelayedQueueAndExchange({ domain }),
   ])
 
-  const callApi = async <ApiPath extends ApiLeaves<Domain>>(
-    _: Apis.ApiCallArgs<Domain, ApiPath>
+  const callApi = async <ApiPath extends ApiLeaves<DomainDef>>(
+    _: Apis.ApiCallArgs<DomainDef, ApiPath>
   ) => {
     await asserts
-    return Apis.call<Domain>(domain)(_)
+    return Apis.call<DomainDef>(domain)(_)
   }
-  const emitEvent = Events.emit<Domain>(domain)
+  const emitEvent = Events.emit<DomainDef>(domain)
 
-  const respondApi = async <ApiPath extends ApiLeaves<Domain>>(
-    _: Apis.RespondApiArgs<Domain, ApiPath>
+  const respondApi = async <ApiPath extends ApiLeaves<DomainDef>>(
+    _: Apis.RespondApiArgs<DomainDef, ApiPath>
   ) => {
     const { api, handler, opts } = _
     await asserts
 
-    return Apis.respond<Domain>(domain)({
+    return Apis.respond<DomainDef>(domain)({
       api,
       handler,
       opts,
@@ -38,13 +40,13 @@ export const domain = <Domain extends object>(_: { domain: string }) => {
 
   const routes = <Route extends string>() => {
     const bind = async <
-      EventPath extends EventLeaves<Domain>,
-      ApiPath extends ApiLeaves<Domain>
+      EventPath extends EventLeaves<DomainDef>,
+      ApiPath extends ApiLeaves<DomainDef>
     >(
-      _: Bindings.BindApiArgs<Domain, EventPath, ApiPath, Route | '*'>
+      _: Bindings.BindApiArgs<DomainDef, EventPath, ApiPath, Route | '*'>
     ) => {
       await asserts
-      return Bindings.bindApi<Domain>(domain)(_)
+      return Bindings.bindApi<DomainDef>(domain)(_)
     }
 
     const setRoute = (flow: Flow, route: Route): Flow => ({

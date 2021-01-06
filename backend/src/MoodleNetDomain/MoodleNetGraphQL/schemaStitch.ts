@@ -1,81 +1,61 @@
 import { SubschemaConfig } from '@graphql-tools/delegate'
+import { Executor } from '@graphql-tools/delegate/types'
 import { stitchSchemas } from '@graphql-tools/stitch'
-import { GraphQLError, print } from 'graphql'
+import { stitchingDirectives } from '@graphql-tools/stitching-directives'
 import { IncomingMessage } from 'http'
 import { MoodleNet } from '..'
-import { httpGqlServerRoutes } from '../services/GraphQLGateway/GraphQLGateway.routes'
-import {
-  INVALID_TOKEN,
-  MoodleNetExecutionAuth,
-  verifyJwt,
-} from '../services/GraphQLGateway/JWT'
-import { loadServiceSchema } from './helpers'
+import { getGQLApiCallerExecutor } from '../../lib/domain'
+import { MoodleNetDomain } from '../MoodleNetDomain'
+import { INVALID_TOKEN, verifyJwt } from '../services/GraphQLGateway/JWT'
+import { Context, loadServiceSchema, RootValue } from './helpers'
 
 const contentGraph = loadServiceSchema({ srvName: 'ContentGraph' })
 const userAccount = loadServiceSchema({ srvName: 'UserAccount' })
 
-const getExecutionContext = ({
-  context,
-}: {
-  context: any
-}): MoodleNetExecutionAuth | null => {
+const getExecutionContext = (
+  ...args: Parameters<Executor>
+): {
+  context: Context
+  root: RootValue
+} => {
+  const { context } = args[0]
   const jwtHeader = (context as IncomingMessage)?.headers?.bearer
   const jwtToken =
     jwtHeader && (typeof jwtHeader === 'string' ? jwtHeader : jwtHeader[0])
   const auth = verifyJwt(jwtToken)
-  return auth === INVALID_TOKEN ? null : auth
+  return {
+    context: {
+      auth: auth === INVALID_TOKEN ? null : auth,
+    },
+    root: {},
+  }
 }
+
+const {
+  stitchingDirectivesValidator,
+  allStitchingDirectivesTypeDefs,
+  stitchingDirectivesTransformer,
+} = stitchingDirectives()
 export const schema = stitchSchemas({
+  schemaTransforms: [stitchingDirectivesValidator],
+  typeDefs: allStitchingDirectivesTypeDefs,
   subschemas: [
     {
       schema: userAccount.schema,
-      async executor({ document, variables, context /* , info */ }) {
-        const auth = getExecutionContext({ context })
-        const query = print(document)
-        console.log('Xecutor : userAccount', query, variables)
 
-        const { res } = await MoodleNet.callApi({
-          api: 'UserAccount.GQL',
-          flow: httpGqlServerRoutes.flow('gql-request'),
-          req: {
-            //FIXME
-            context: { auth },
-            root: {},
-            query,
-            variables,
-          },
-        })
-        console.log({ res })
-        if (res.___ERROR) {
-          throw new GraphQLError(res.___ERROR.msg)
-        }
-        return res
-      },
+      executor: getGQLApiCallerExecutor<MoodleNetDomain>({
+        api: 'UserAccount.GQL',
+        getContext: getExecutionContext,
+        domain: MoodleNet,
+      }),
     } as SubschemaConfig,
     {
       schema: contentGraph.schema,
-      async executor({ document, variables, context /* , info */ }) {
-        const auth = getExecutionContext({ context })
-        const query = print(document)
-        console.log('Xecutor : contentGraph', query, variables)
-
-        const { res } = await MoodleNet.callApi({
-          api: 'ContentGraph.GQL',
-          flow: httpGqlServerRoutes.flow('gql-request'),
-          req: {
-            //FIXME
-            context: { auth },
-            root: {},
-            query,
-            variables,
-          },
-        })
-        console.log({ res })
-        if (res.___ERROR) {
-          throw new GraphQLError(res.___ERROR.msg)
-        }
-        return res
-      },
+      executor: getGQLApiCallerExecutor<MoodleNetDomain>({
+        api: 'ContentGraph.GQL',
+        getContext: getExecutionContext,
+        domain: MoodleNet,
+      }),
     } as SubschemaConfig,
-  ],
+  ].map(stitchingDirectivesTransformer),
 })
