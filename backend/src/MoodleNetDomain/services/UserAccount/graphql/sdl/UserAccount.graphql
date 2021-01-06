@@ -45,5 +45,5 @@ type Mutation {
 }
 
 type Query {
-  _fake: Int
+  _null: Boolean
 }

@@ -2,6 +2,7 @@ import { SubschemaConfig } from '@graphql-tools/delegate'
 import { Executor } from '@graphql-tools/delegate/types'
 import { stitchSchemas } from '@graphql-tools/stitch'
 import { stitchingDirectives } from '@graphql-tools/stitching-directives'
+import { FilterRootFields } from '@graphql-tools/wrap'
 import { IncomingMessage } from 'http'
 import { MoodleNet } from '..'
 import { getGQLApiCallerExecutor } from '../../lib/domain'
@@ -56,6 +57,12 @@ export const schema = stitchSchemas({
         getContext: getExecutionContext,
         domain: MoodleNet,
       }),
+      transforms: [
+        new FilterRootFields(
+          (operation, rootField) =>
+            operation !== 'Query' || rootField !== 'getSessionAccountUser'
+        ),
+      ],
     } as SubschemaConfig,
   ].map(stitchingDirectivesTransformer),
 })

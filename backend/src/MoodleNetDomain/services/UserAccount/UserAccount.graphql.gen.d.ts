@@ -100,7 +100,7 @@ export type MutationCreateSessionArgs = {
 
 export type Query = {
   __typename: 'Query';
-  _fake: Maybe<Scalars['Int']>;
+  _null: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -190,7 +190,6 @@ export type ResolversTypes = {
   SessionAccount: ResolverTypeWrapper<SessionAccount>;
   Mutation: ResolverTypeWrapper<RootValue>;
   Query: ResolverTypeWrapper<RootValue>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -204,7 +203,6 @@ export type ResolversParentTypes = {
   SessionAccount: SessionAccount;
   Mutation: RootValue;
   Query: RootValue;
-  Int: Scalars['Int'];
 };
 
 export type SimpleResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SimpleResponse'] = ResolversParentTypes['SimpleResponse']> = {
@@ -249,7 +247,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  _fake: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  _null: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = Context> = {
