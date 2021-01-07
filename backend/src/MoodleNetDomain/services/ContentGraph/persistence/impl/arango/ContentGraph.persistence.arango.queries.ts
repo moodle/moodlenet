@@ -1,7 +1,15 @@
 import { Database } from 'arangojs'
 import { EdgeCollection } from 'arangojs/collection'
 import { getDocumentById } from '../../../../../../lib/helpers/arango'
-import { PageInfo, ResolverFn } from '../../../ContentGraph.graphql.gen'
+import { Maybe } from '../../../../../../lib/helpers/types'
+import {
+  GraphEdge,
+  PageInfo,
+  PageInput,
+  ResolverFn,
+} from '../../../ContentGraph.graphql.gen'
+
+const DEFAULT_PAGE_LENGTH = 10
 
 export const vertexResolver = ({
   db,
@@ -22,24 +30,56 @@ export const edgesResolver = <T extends { __typename: string }>(_: {
   reverse?: boolean
   depth?: [number, number]
   typenames: T['__typename'][]
-}): ResolverFn<any, { _id: string }, any, any> => async (
-  parent /* ,variables, ctx, info */
-) => {
+  mainSortProp?: string
+}): ResolverFn<
+  any,
+  { _id: string },
+  any,
+  { page?: Maybe<PageInput> }
+> => async (parent, { page } /*, ctx, info */) => {
+  console.log(parent)
   const {
     db,
     typenames,
     collection: edgeCollection,
     reverse,
     depth = [1, 1],
+    mainSortProp = '_id',
   } = _
+
   const typenamesFilter = typenames.reduce(
     (filter, typename) =>
       `${filter}${filter ? ` ||` : `FILTER`} edge.__typename == "${typename}"`,
     ``
   )
   const { _id: parentVertexId } = parent
-  console.log(parent)
-  const q = `
+  const { after, first, last, before } = {
+    last: 0,
+    first: DEFAULT_PAGE_LENGTH,
+    before: page?.after,
+    ...page,
+  }
+  const afterPage = `${after ? `FILTER node.${mainSortProp} > "${after}"` : ``}
+    SORT node.${mainSortProp}
+    LIMIT ${Math.min(first || 0, DEFAULT_PAGE_LENGTH)}`
+
+  const beforeCurs = before || after
+  const getCursorToo = beforeCurs === after
+  const comparison = getCursorToo ? '<=' : '<'
+  const beforePage =
+    last && beforeCurs
+      ? `${
+          beforeCurs
+            ? `FILTER node.${mainSortProp} ${comparison} "${beforeCurs}"`
+            : ``
+        }
+        SORT node.${mainSortProp} DESC
+        LIMIT ${Math.min(last, DEFAULT_PAGE_LENGTH) + (getCursorToo ? 1 : 0)}`
+      : ``
+  return Promise.all(
+    [afterPage, beforePage].map((page) => {
+      const q = page
+        ? `
         FOR v, edge 
           IN ${depth.join('..')} 
           ${reverse ? 'INBOUND' : 'OUTBOUND'} 
@@ -47,32 +87,39 @@ export const edgesResolver = <T extends { __typename: string }>(_: {
           ${edgeCollection.name}
           ${typenamesFilter}
           
-            LET node = DOCUMENT(edge.${reverse ? '_from' : '_to'})
+          LET node = DOCUMENT(edge.${reverse ? '_from' : '_to'})
+          ${page}
 
             RETURN  {
               edge,
               node
             }
       `
-  console.log(q)
-  const cursor = await db.query(q)
+        : null
 
-  const edges = await cursor.map(({ edge, node }) => ({
-    ...edge,
-    node,
-    cursor: '#',
-  }))
-
-  console.log(edges)
-  const pageInfo: PageInfo = {
-    endCursor: 'endCursor',
-    hasNextPage: true,
-    hasPreviousPage: false,
-    startCursor: 'startCursor',
-    __typename: 'PageInfo',
-  }
-  return {
-    pageInfo,
-    edges,
-  }
+      console.log(q)
+      return q
+        ? db.query(q).then((cursor) =>
+            cursor.map<GraphEdge>(({ edge, node }) => ({
+              ...edge,
+              node,
+              cursor: node[mainSortProp],
+            }))
+          )
+        : []
+    })
+  ).then(([afterEdges, beforeEdges]) => {
+    const edges = beforeEdges.reverse().concat(afterEdges)
+    const pageInfo: PageInfo = {
+      endCursor: edges[edges.length - 1]?.node._id,
+      hasNextPage: true,
+      hasPreviousPage: false,
+      startCursor: edges[0]?.node._id,
+      __typename: 'PageInfo',
+    }
+    return {
+      pageInfo,
+      edges,
+    }
+  })
 }
