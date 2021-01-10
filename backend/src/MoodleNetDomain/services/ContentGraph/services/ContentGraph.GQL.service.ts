@@ -1,10 +1,7 @@
-import { MoodleNet } from '../../..'
-import { getGQLApiResponder } from '../../../../lib/domain'
+import { startMoodleNetGQLApiResponder } from '../../../MoodleNetGraphQL'
 import { getContentGraphExecutableSchema } from '../graphql/schema'
 
-getContentGraphExecutableSchema().then((schema) => {
-  MoodleNet.respondApi({
-    api: 'ContentGraph.GQL',
-    handler: getGQLApiResponder({ schema }),
-  })
+startMoodleNetGQLApiResponder({
+  schema: getContentGraphExecutableSchema(),
+  srvName: 'ContentGraph',
 })

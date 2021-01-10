@@ -19,7 +19,7 @@ const JUST_ENQUEUED_RESPONSE: Types.Reply<object> = {
 
 export type CallOpts =
   | {
-      justEnqueue: true // FIXME: remove this and make a specific method "enqueueApi"
+      justEnqueue: true // FIXME: remove this and implement an explicit method "enqueueApi"
       delaySecs?: number // that doesn't return the actual Api Reply<Response>
     }
   | {
@@ -222,44 +222,20 @@ export const isTimeoutReply = (_: Types.Reply<object>) =>
 export const isNoReplyCall = (_: Types.Reply<object>) =>
   _.___ERROR?.msg === JUST_ENQUEUED_RESPONSE_MSG
 
-function log(flow: Flow, ...args: any[]) {
-  console.log(
-    '\n\n\n',
-    ...args.map((_) => `\n${_}`),
-    `\nflow : ${flow._key} - ${flow._route}`
-  )
-}
-function err(err: any) {
-  console.error(err instanceof Error ? err.stack : String(err))
-}
-export const getGQLApiResponder = ({
-  schema,
-}: {
-  schema: GraphQLSchema
-}) => async ({ req }: any) => {
-  const { query, root, context, variables } = req
-  const resp = await graphql(schema, query, root, context, variables)
-  // console.log(`getGQLApiResponder data`, inspect(resp.data, false, 9))
-  // console.log(`getGQLApiResponder err`, inspect(resp.errors, false, 9))
-  return {
-    data: resp.data,
-    errors: resp.errors,
-    extensions: resp.extensions,
-  }
-}
-
 export const getGQLApiCallerExecutor = <DomainDef extends object>({
-  getContext,
+  getExecutionGlobalValues,
   api,
   domain,
   flow,
 }: {
-  getContext(..._: Parameters<Executor>): { context: any; root: any }
+  getExecutionGlobalValues(
+    ..._: Parameters<Executor>
+  ): { context: any; root: any }
   api: Types.ApiLeaves<DomainDef>
   domain: any
   flow?: Flow
 }): Executor => async (_) => {
-  const { context, root } = getContext(_)
+  const { context, root } = getExecutionGlobalValues(_)
   const { document, variables /*,context, extensions, info */ } = _
   const query = print(document)
   console.log(`GQLApiCallerExecutor : ${api}`, query, variables)
@@ -279,4 +255,38 @@ export const getGQLApiCallerExecutor = <DomainDef extends object>({
     throw new GraphQLError(res.___ERROR.msg)
   }
   return res
+}
+
+function log(flow: Flow, ...args: any[]) {
+  console.log(
+    '\n\n\n',
+    ...args.map((_) => `\n${_}`),
+    `\nflow : ${flow._key} - ${flow._route}`
+  )
+}
+function err(err: any) {
+  console.error(err instanceof Error ? err.stack : String(err))
+}
+
+export async function startGQLApiResponder<DomainDef>({
+  schema,
+  domain,
+  api,
+}: {
+  schema: GraphQLSchema | Promise<GraphQLSchema>
+  api: Types.ApiLeaves<DomainDef>
+  domain: any // don't have an explicit type for a DomainDef instance yet
+}) {
+  return domain.respondApi({
+    api,
+    handler: async ({ req }: any) => {
+      const { query, root, context, variables } = req
+      const resp = await graphql(await schema, query, root, context, variables)
+      return {
+        data: resp.data,
+        errors: resp.errors,
+        extensions: resp.extensions,
+      }
+    },
+  })
 }

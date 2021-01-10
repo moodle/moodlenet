@@ -1,12 +1,22 @@
+import { Executor } from '@graphql-tools/delegate/types'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { loadSchemaSync } from '@graphql-tools/load'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { stitchingDirectives } from '@graphql-tools/stitching-directives'
-import { GraphQLError, printSchema } from 'graphql'
-// import { IncomingMessage } from 'http'
+import { FilterRootFields } from '@graphql-tools/wrap'
+import { GraphQLError, GraphQLSchema, printSchema } from 'graphql'
+import { IncomingMessage } from 'http'
 import { resolve } from 'path'
+import { MoodleNet } from '..'
+import { getGQLApiCallerExecutor, startGQLApiResponder } from '../../lib/domain'
 import { GraphQLDomainApi } from '../../lib/domain/api/types'
-import { MoodleNetExecutionAuth } from '../services/GraphQLGateway/JWT'
+import { MoodleNetDomain } from '../MoodleNetDomain'
+import {
+  INVALID_TOKEN,
+  MoodleNetExecutionAuth,
+  verifyJwt,
+} from '../services/GraphQLGateway/JWT'
+
 export type Context = {
   auth: MoodleNetExecutionAuth | null
 }
@@ -15,9 +25,9 @@ export type RootValue = {}
 
 export type GraphQLApi = GraphQLDomainApi<Context, RootValue>
 
-type ServiceNames = 'ContentGraph' | 'UserAccount'
+export type ServiceNames = 'ContentGraph' | 'UserAccount'
 
-export const loggedUserOnly = (_: { context: Context }) => {
+export function loggedUserOnly(_: { context: Context }) {
   const { context } = _
   if (!context.auth) {
     throw new GraphQLError('Logged in users only')
@@ -25,7 +35,7 @@ export const loggedUserOnly = (_: { context: Context }) => {
   return context.auth
 }
 
-export const loadServiceSchema = (_: { srvName: ServiceNames }) => {
+export function loadServiceSchema(_: { srvName: ServiceNames }) {
   const { srvName } = _
   const {
     stitchingDirectivesTypeDefs,
@@ -35,7 +45,6 @@ export const loadServiceSchema = (_: { srvName: ServiceNames }) => {
     resolve(`${__dirname}/../services/${srvName}/graphql/sdl/**/*.graphql`),
     {
       loaders: [new GraphQLFileLoader()],
-      //typeDefs: [stitchingDirectivesTypeDefs],
       schemas: [
         makeExecutableSchema({
           typeDefs: stitchingDirectivesTypeDefs,
@@ -45,10 +54,76 @@ export const loadServiceSchema = (_: { srvName: ServiceNames }) => {
     }
   )
 
-  // console.log('->', printSchema(schema))
-
   return {
     schema,
     typeDefs: printSchema(schema),
+  }
+}
+
+export async function startMoodleNetGQLApiResponder({
+  schema,
+  srvName,
+}: {
+  schema: GraphQLSchema | Promise<GraphQLSchema>
+  srvName: ServiceNames
+}) {
+  const api = MNGQLApi(srvName)
+  return startGQLApiResponder<MoodleNetDomain>({
+    api,
+    domain: MoodleNet,
+    schema,
+  })
+}
+
+export function getServiceSubschemaConfig({
+  srvName,
+}: {
+  srvName: ServiceNames
+}) {
+  const { stitchingDirectivesTransformer } = stitchingDirectives()
+  const { schema } = loadServiceSchema({ srvName })
+  const api = MNGQLApi(srvName)
+  return stitchingDirectivesTransformer({
+    schema,
+    executor: getGQLApiCallerExecutor<MoodleNetDomain>({
+      api,
+      getExecutionGlobalValues,
+      domain: MoodleNet,
+    }),
+    transforms: [atMergeQueryRootFieldsRemover({})],
+  })
+}
+
+function MNGQLApi(srvName: ServiceNames) {
+  return `${srvName}.GQL` as const
+}
+
+export function atMergeQueryRootFieldsRemover({}: {}) {
+  return new FilterRootFields(
+    (operation, _rootField, rootFieldConfig) =>
+      operation !== 'Query' ||
+      !rootFieldConfig?.astNode?.directives ||
+      !rootFieldConfig.astNode.directives.find(
+        (dir) => dir.name.value === 'merge'
+      )
+  )
+}
+
+export function getExecutionGlobalValues(
+  ...args: Parameters<Executor>
+): {
+  context: Context
+  root: RootValue
+} {
+  const { context } = args[0]
+  const jwtHeader = (context as IncomingMessage)?.headers?.bearer
+  const jwtToken =
+    jwtHeader && (typeof jwtHeader === 'string' ? jwtHeader : jwtHeader[0])
+  const auth = verifyJwt(jwtToken)
+  return {
+    context: {
+      auth: auth === INVALID_TOKEN ? null : auth,
+    },
+    root: {},
   }
 }
