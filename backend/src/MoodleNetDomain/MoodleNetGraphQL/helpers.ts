@@ -15,7 +15,7 @@ import {
   INVALID_TOKEN,
   MoodleNetExecutionAuth,
   verifyJwt,
-} from '../services/GraphQLGateway/JWT'
+} from '../services/GraphQLHTTPGateway/JWT'
 
 export type Context = {
   auth: MoodleNetExecutionAuth | null

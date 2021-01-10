@@ -1,6 +1,6 @@
 import express from 'express'
 import { graphqlHTTP } from 'express-graphql'
-import { env } from './GraphQLGateway.env'
+import { env } from './GraphQLHTTPGateway.env'
 import { schema } from '../../MoodleNetGraphQL'
 
 const app = express()
