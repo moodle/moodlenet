@@ -1,0 +1,30 @@
+interface IResourceReferencesSubject {
+  node: Subject!
+}
+
+type ResourceReferencesSubject implements GraphEdge & References & IResourceReferencesSubject {
+  _id: ID!
+  node: Subject!
+}
+
+type ResourceReferencesSubjectEdge implements GraphPageEdge & References & IResourceReferencesSubject {
+  _id: ID!
+  cursor: String!
+  node: Subject!
+}
+
+type ResourceReferencesSubjectPage implements Page {
+  pageInfo: PageInfo!
+  edges: [ResourceReferencesSubjectEdge!]!
+}
+
+type Resource {
+  subjectReferences(page: PageInput): ResourceReferencesSubjectPage!
+}
+
+type Mutation {
+  resourceReferencesSubject(
+    resourceId: ID
+    subjectId: ID
+  ): ResourceReferencesSubject
+}

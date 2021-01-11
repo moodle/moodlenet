@@ -1,0 +1,23 @@
+interface ISubjectFollower {
+  node: User!
+}
+
+type SubjectFollower implements GraphEdge & ISubjectFollower & Follows {
+  _id: ID!
+  node: User!
+}
+
+type SubjectFollowerEdge implements GraphPageEdge & ISubjectFollower & Follows {
+  _id: ID!
+  cursor: String!
+  node: User!
+}
+
+type SubjectFollowersPage implements Page {
+  pageInfo: PageInfo!
+  edges: [SubjectFollowerEdge!]!
+}
+
+type Subject {
+  followers(page: PageInput): SubjectFollowersPage!
+}

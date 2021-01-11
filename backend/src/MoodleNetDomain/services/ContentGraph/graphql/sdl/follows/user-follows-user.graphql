@@ -1,27 +1,23 @@
 interface IUserFollowsUser {
-  ufu: String!
+  node: User!
 }
 
-type UserFollowsUser implements GraphEdge & IUserFollowsUser & Follows {
+type UserFollowsUser implements GraphEdge & Follows & IUserFollowsUser {
   _id: ID!
-  # _from: User!
-  # _to: User!
+  node: User!
+}
+
+type UserFollowsUserEdge implements GraphPageEdge & Follows & IUserFollowsUser {
+  _id: ID!
   cursor: String!
   node: User!
-  since: Int!
-  ufu: String!
 }
 
-type UserFollowsUserPage implements Page @access(level: [OWNER]) {
+type UserFollowsUserPage implements Page {
   pageInfo: PageInfo!
-  edges: [UserFollowsUser!]!
+  edges: [UserFollowsUserEdge!]!
 }
 
 type User {
-  followsUsers(page: PageInput): UserFollowsUserPage! @access(level: [OWNER])
-  followers(page: PageInput): UserFollowsUserPage!
-}
-
-type Mutation {
-  followUser(userId: ID): UserFollowsUser
+  followsUsers(page: PageInput): UserFollowsUserPage!
 }

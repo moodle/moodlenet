@@ -1,0 +1,16 @@
+type Resource implements GraphVertex {
+  _id: ID!
+  name: String!
+}
+
+type Query {
+  resource(_id: ID!): Resource
+}
+
+input CreateResourceInput {
+  name: String!
+}
+
+type Mutation {
+  createResource(resource: CreateResourceInput): Resource!
+}

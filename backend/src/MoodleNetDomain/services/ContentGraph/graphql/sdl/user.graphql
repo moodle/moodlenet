@@ -3,14 +3,9 @@ type User implements GraphVertex {
   displayName: String!
 }
 
-input CreateUserInput {
-  name: String
-}
-
 type Query {
   user(_id: ID!): User
 }
 
-type Mutation {
-  createUser(user: CreateUserInput!): User!
-}
+# type Mutation {
+# }

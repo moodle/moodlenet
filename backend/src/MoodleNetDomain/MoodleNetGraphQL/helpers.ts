@@ -6,7 +6,6 @@ import { stitchingDirectives } from '@graphql-tools/stitching-directives'
 import { FilterRootFields } from '@graphql-tools/wrap'
 import { GraphQLError, GraphQLSchema } from 'graphql'
 import { IncomingMessage } from 'http'
-import { resolve } from 'path'
 import { MoodleNet } from '..'
 import { getGQLApiCallerExecutor, startGQLApiResponder } from '../../lib/domain'
 import { GraphQLDomainApi } from '../../lib/domain/api/types'
@@ -37,17 +36,17 @@ export function loggedUserOnly(_: { context: Context }) {
 }
 
 export function loadServiceSchema(_: { srvName: ServiceNames }) {
+  //FIXME: can't apply directives resolvers
   const { srvName } = _
   const {
     stitchingDirectivesTypeDefs,
     stitchingDirectivesValidator,
   } = stitchingDirectives()
+
   const schema = loadSchemaSync(
-    [
-      resolve(`${__dirname}/../services/${srvName}/graphql/sdl/**/*.graphql`),
-      resolve(`${__dirname}/sdl/**/*.graphql`),
-    ],
+    [`../services/${srvName}/graphql/sdl/**/*.graphql`, `sdl/**/*.graphql`],
     {
+      cwd: __dirname,
       loaders: [new GraphQLFileLoader()],
       schemas: [
         makeExecutableSchema({
@@ -78,6 +77,7 @@ export async function startMoodleNetGQLApiResponder({
 }
 
 export function getServiceSubschemaConfig({
+  //FIXME: can't apply directives resolvers
   srvName,
 }: {
   srvName: ServiceNames

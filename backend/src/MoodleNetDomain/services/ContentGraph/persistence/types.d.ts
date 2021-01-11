@@ -4,6 +4,6 @@ import { UserVertex } from './glyph'
 
 export interface ContentGraphPersistence {
   graphQLTypeResolvers: Omit<Resolvers, 'Mutation'>
-  createUser(_: { username: string }): Promise<Maybe<UserVertex>>
+  createUser(_: { username: string }): Promise<UserVertex>
   //config():Promise<Config>
 }

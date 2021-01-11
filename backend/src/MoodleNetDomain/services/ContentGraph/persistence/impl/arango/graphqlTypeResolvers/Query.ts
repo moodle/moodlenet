@@ -6,6 +6,8 @@ export const Query = DBReady.then<Resolvers['Query']>(
   ({ db, UserVertices }) => ({
     user: vertexResolver({ db }),
     subject: vertexResolver({ db }),
+    collection: vertexResolver({ db }),
+    resource: vertexResolver({ db }),
     async getSessionAccountUser(_parent, { username }) {
       const mUser = await UserVertices.document(username)
       if (!mUser) {

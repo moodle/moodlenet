@@ -3,6 +3,10 @@ interface GraphVertex {
 }
 interface GraphEdge {
   _id: ID!
+  node: GraphVertex!
+}
+interface GraphPageEdge {
+  _id: ID!
   cursor: String!
   node: GraphVertex!
 }
@@ -14,7 +18,7 @@ type PageInfo {
 }
 interface Page {
   pageInfo: PageInfo!
-  edges: [GraphEdge!]!
+  edges: [GraphPageEdge!]!
 }
 
 input PageInput {

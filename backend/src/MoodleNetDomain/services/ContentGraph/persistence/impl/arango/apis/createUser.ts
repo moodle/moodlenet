@@ -1,5 +1,4 @@
 import { aql } from 'arangojs'
-import { Maybe } from '../../../../../../../lib/helpers/types'
 import { UserVertex } from '../../../glyph'
 import { ContentGraphPersistence } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
@@ -21,7 +20,7 @@ export const createUser = DBReady.then(
       RETURN NEW
     `)
 
-    const user: Maybe<UserVertex> = await cursor.next()
+    const user: UserVertex = await cursor.next()
 
     return user
   }

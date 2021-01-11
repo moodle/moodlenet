@@ -1,43 +1,25 @@
 interface IUserFollowsSubject {
-  ufs: String!
+  node: Subject!
 }
 
-type UserFollowsSubject implements GraphEdge & IUserFollowsSubject & Follows {
+type UserFollowsSubject implements GraphEdge & Follows & IUserFollowsSubject {
   _id: ID!
-  # _from: User!
-  # _to: Subject!
+  node: Subject!
+}
+
+type UserFollowsSubjectEdge implements GraphPageEdge & Follows & IUserFollowsSubject {
+  _id: ID!
   cursor: String!
-  ufs: String!
-  since: Int!
   node: Subject!
 }
 
 type UserFollowsSubjectPage implements Page {
   pageInfo: PageInfo!
-  edges: [UserFollowsSubject!]!
-}
-
-type SubjectFollower implements GraphEdge & IUserFollowsSubject & Follows {
-  _id: ID!
-  # _from: User!
-  # _to: Subject!
-  cursor: String!
-  ufs: String!
-  since: Int!
-  node: User!
-}
-
-type SubjectFollowersPage implements Page {
-  pageInfo: PageInfo!
-  edges: [SubjectFollower!]!
+  edges: [UserFollowsSubjectEdge!]!
 }
 
 type User {
   followsSubjects(page: PageInput): UserFollowsSubjectPage!
-}
-
-type Subject {
-  followers(page: PageInput): SubjectFollowersPage!
 }
 
 type Mutation {

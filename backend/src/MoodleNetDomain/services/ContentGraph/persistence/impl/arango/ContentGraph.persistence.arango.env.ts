@@ -1,11 +1,20 @@
 import * as Yup from 'yup'
 import {
   createDatabaseIfNotExists,
-  createVertexCollectionIfNotExists,
   createEdgeCollectionIfNotExists,
+  createVertexCollectionIfNotExists,
 } from '../../../../../../lib/helpers/arango'
+import {
+  CollectionVertex,
+  ContainsEdge,
+  FollowsEdge,
+  LikesEdge,
+  ReferencesEdge,
+  ResourceVertex,
+  SubjectVertex,
+  UserVertex,
+} from '../../glyph'
 import {} from '../../types'
-import { FollowsEdge, SubjectVertex, UserVertex } from '../../glyph'
 
 interface ArangoContentGraphPersistenceEnv {
   url: string[]
@@ -45,6 +54,31 @@ export const SubjectVertices = createVertexCollectionIfNotExists<SubjectVertex>(
   }
 )
 
+export const CollectionVertices = createVertexCollectionIfNotExists<CollectionVertex>(
+  {
+    name: 'Collection',
+    database,
+    createOpts: {},
+  }
+)
+
+export const ResourceVertices = createVertexCollectionIfNotExists<ResourceVertex>(
+  {
+    name: 'Resource',
+    database,
+    createOpts: {},
+  }
+)
+
+export const ContainsEdges = createEdgeCollectionIfNotExists<
+  ContainsEdge,
+  'Contains'
+>({
+  name: 'Contains',
+  database,
+  createOpts: {},
+})
+
 export const FollowsEdges = createEdgeCollectionIfNotExists<
   FollowsEdge,
   'Follows'
@@ -54,14 +88,51 @@ export const FollowsEdges = createEdgeCollectionIfNotExists<
   createOpts: {},
 })
 
+export const ReferencesEdges = createEdgeCollectionIfNotExists<
+  ReferencesEdge,
+  'References'
+>({
+  name: 'References',
+  database,
+  createOpts: {},
+})
+
+export const LikesEdges = createEdgeCollectionIfNotExists<LikesEdge, 'Likes'>({
+  name: 'Likes',
+  database,
+  createOpts: {},
+})
+
 export const DBReady = Promise.all([
   database,
   UserVertices,
   SubjectVertices,
   FollowsEdges,
-]).then(([db, UserVertices, SubjectVertices, FollowsEdges]) => ({
-  db,
-  UserVertices,
-  SubjectVertices,
-  FollowsEdges,
-}))
+  CollectionVertices,
+  ResourceVertices,
+  ContainsEdges,
+  LikesEdges,
+  ReferencesEdges,
+]).then(
+  ([
+    db,
+    UserVertices,
+    SubjectVertices,
+    FollowsEdges,
+    CollectionVertices,
+    ResourceVertices,
+    ContainsEdges,
+    LikesEdges,
+    ReferencesEdges,
+  ]) => ({
+    db,
+    UserVertices,
+    SubjectVertices,
+    FollowsEdges,
+    CollectionVertices,
+    ResourceVertices,
+    ContainsEdges,
+    LikesEdges,
+    ReferencesEdges,
+  })
+)

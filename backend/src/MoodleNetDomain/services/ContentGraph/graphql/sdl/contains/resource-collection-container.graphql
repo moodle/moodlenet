@@ -1,0 +1,23 @@
+interface IResourceContainer {
+  node: Collection!
+}
+
+type ResourceContainer implements GraphEdge & IResourceContainer & Contains {
+  _id: ID!
+  node: Collection!
+}
+
+type ResourceContainerEdge implements GraphPageEdge & IResourceContainer & Contains {
+  _id: ID!
+  cursor: String!
+  node: Collection!
+}
+
+type ResourceContainersPage implements Page {
+  pageInfo: PageInfo!
+  edges: [ResourceContainerEdge!]!
+}
+
+type Resource {
+  containers(page: PageInput): ResourceContainersPage!
+}

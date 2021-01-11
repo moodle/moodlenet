@@ -1,4 +1,3 @@
 interface Follows {
   _id: ID!
-  since: Int!
 }

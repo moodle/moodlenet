@@ -3,25 +3,24 @@ import { Resolvers } from '../../../../ContentGraph.graphql.gen'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 import { edgesResolver } from '../ContentGraph.persistence.arango.queries'
 
-export const Subject = DBReady.then<Resolvers['Subject']>(
-  ({ FollowsEdges, ReferencesEdges, db }) => ({
-    followers: edgesResolver({
+export const Resource = DBReady.then<Resolvers['Resource']>(
+  ({ ContainsEdges, LikesEdges, ReferencesEdges, db }) => ({
+    containers: edgesResolver({
       db,
-      collection: FollowsEdges,
-      typenames: ['UserFollowsSubject'],
+      collection: ContainsEdges,
+      typenames: ['CollectionContainsResource'],
       reverse: true,
     }),
-    collectionReferences: edgesResolver({
+    likers: edgesResolver({
       db,
-      collection: ReferencesEdges,
-      typenames: ['CollectionReferencesSubject'],
+      collection: LikesEdges,
+      typenames: ['UserLikesResource'],
       reverse: true,
     }),
-    resourceReferences: edgesResolver({
+    subjectReferences: edgesResolver({
       db,
       collection: ReferencesEdges,
       typenames: ['ResourceReferencesSubject'],
-      reverse: true,
     }),
     _id: defaultFieldResolver,
     name: defaultFieldResolver,

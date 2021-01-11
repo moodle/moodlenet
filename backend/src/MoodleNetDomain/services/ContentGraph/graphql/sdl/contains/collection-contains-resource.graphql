@@ -1,0 +1,27 @@
+interface ICollectionContainsResource {
+  node: Resource!
+}
+
+type CollectionContainsResource implements GraphEdge & Contains & ICollectionContainsResource {
+  _id: ID!
+  node: Resource!
+}
+
+type CollectionContainsResourceEdge implements GraphPageEdge & Contains & ICollectionContainsResource {
+  _id: ID!
+  cursor: String!
+  node: Resource!
+}
+
+type CollectionContainsResourcePage implements Page {
+  pageInfo: PageInfo!
+  edges: [CollectionContainsResourceEdge!]!
+}
+
+type Collection {
+  containsResources(page: PageInput): CollectionContainsResourcePage!
+}
+
+type Mutation {
+  containResource(resourceId: ID): CollectionContainsResource
+}
