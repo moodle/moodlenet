@@ -4,7 +4,7 @@ import { loadSchemaSync } from '@graphql-tools/load'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { stitchingDirectives } from '@graphql-tools/stitching-directives'
 import { FilterRootFields } from '@graphql-tools/wrap'
-import { GraphQLError, GraphQLSchema, printSchema } from 'graphql'
+import { GraphQLError, GraphQLSchema } from 'graphql'
 import { IncomingMessage } from 'http'
 import { resolve } from 'path'
 import { MoodleNet } from '..'
@@ -16,6 +16,7 @@ import {
   MoodleNetExecutionAuth,
   verifyJwt,
 } from '../services/GraphQLHTTPGateway/JWT'
+import directiveResolvers from './directives'
 
 export type Context = {
   auth: MoodleNetExecutionAuth | null
@@ -42,22 +43,23 @@ export function loadServiceSchema(_: { srvName: ServiceNames }) {
     stitchingDirectivesValidator,
   } = stitchingDirectives()
   const schema = loadSchemaSync(
-    resolve(`${__dirname}/../services/${srvName}/graphql/sdl/**/*.graphql`),
+    [
+      resolve(`${__dirname}/../services/${srvName}/graphql/sdl/**/*.graphql`),
+      resolve(`${__dirname}/sdl/**/*.graphql`),
+    ],
     {
       loaders: [new GraphQLFileLoader()],
       schemas: [
         makeExecutableSchema({
           typeDefs: stitchingDirectivesTypeDefs,
           schemaTransforms: [stitchingDirectivesValidator],
+          directiveResolvers: directiveResolvers,
         }),
       ],
     }
   )
 
-  return {
-    schema,
-    typeDefs: printSchema(schema),
-  }
+  return schema
 }
 
 export async function startMoodleNetGQLApiResponder({
@@ -81,7 +83,7 @@ export function getServiceSubschemaConfig({
   srvName: ServiceNames
 }) {
   const { stitchingDirectivesTransformer } = stitchingDirectives()
-  const { schema } = loadServiceSchema({ srvName })
+  const schema = loadServiceSchema({ srvName })
   const api = MNGQLApi(srvName)
   return stitchingDirectivesTransformer({
     schema,

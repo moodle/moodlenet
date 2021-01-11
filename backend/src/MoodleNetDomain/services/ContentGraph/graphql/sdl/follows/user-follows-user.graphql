@@ -12,13 +12,13 @@ type UserFollowsUser implements GraphEdge & IUserFollowsUser & Follows {
   ufu: String!
 }
 
-type UserFollowsUserPage implements Page {
+type UserFollowsUserPage implements Page @access(level: [OWNER]) {
   pageInfo: PageInfo!
   edges: [UserFollowsUser!]!
 }
 
 type User {
-  followsUsers(page: PageInput): UserFollowsUserPage!
+  followsUsers(page: PageInput): UserFollowsUserPage! @access(level: [OWNER])
   followers(page: PageInput): UserFollowsUserPage!
 }
 

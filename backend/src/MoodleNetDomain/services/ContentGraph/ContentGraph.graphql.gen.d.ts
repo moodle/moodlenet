@@ -14,6 +14,13 @@ export type Scalars = {
   Float: number;
 };
 
+
+export enum AccessLevel {
+  Admin = 'ADMIN',
+  User = 'USER',
+  Owner = 'OWNER'
+}
+
 export type GraphVertex = {
   _id: Scalars['ID'];
 };
@@ -280,6 +287,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AccessLevel: AccessLevel;
   GraphVertex: ResolversTypes['User'] | ResolversTypes['Subject'];
   ID: ResolverTypeWrapper<Scalars['ID']>;
   GraphEdge: ResolversTypes['UserFollowsSubject'] | ResolversTypes['SubjectFollower'] | ResolversTypes['UserFollowsUser'];
@@ -335,6 +343,10 @@ export type ResolversParentTypes = {
   CreateUserInput: CreateUserInput;
   SessionAccount: SessionAccount;
 };
+
+export type AccessDirectiveArgs = {   level: Array<AccessLevel>; };
+
+export type AccessDirectiveResolver<Result, Parent, ContextType = Context, Args = AccessDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type GraphVertexResolvers<ContextType = Context, ParentType extends ResolversParentTypes['GraphVertex'] = ResolversParentTypes['GraphVertex']> = {
   __resolveType: TypeResolveFn<'User' | 'Subject', ParentType, ContextType>;
@@ -485,3 +497,13 @@ export type Resolvers<ContextType = Context> = {
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = Context> = Resolvers<ContextType>;
+export type DirectiveResolvers<ContextType = Context> = {
+  access: AccessDirectiveResolver<any, any, ContextType>;
+};
+
+
+/**
+ * @deprecated
+ * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
+ */
+export type IDirectiveResolvers<ContextType = Context> = DirectiveResolvers<ContextType>;

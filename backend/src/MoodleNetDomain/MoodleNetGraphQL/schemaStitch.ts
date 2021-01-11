@@ -1,15 +1,13 @@
 import { stitchSchemas } from '@graphql-tools/stitch'
-import { stitchingDirectives } from '@graphql-tools/stitching-directives'
+// import { stitchingDirectives } from '@graphql-tools/stitching-directives'
 import { getServiceSubschemaConfig } from './helpers'
+import directiveResolvers from './directives'
 
-const {
-  stitchingDirectivesValidator,
-  allStitchingDirectivesTypeDefs,
-} = stitchingDirectives()
+// const { stitchingDirectivesValidator } = stitchingDirectives() // keep these commented as a reminder casue I'm not sure if useful
 
 export const schema = stitchSchemas({
-  schemaTransforms: [stitchingDirectivesValidator],
-  typeDefs: allStitchingDirectivesTypeDefs,
+  // schemaTransforms: [stitchingDirectivesValidator], // keep these commented as a reminder casue I'm not sure if useful
+  directiveResolvers,
   subschemas: [
     getServiceSubschemaConfig({ srvName: 'UserAccount' }),
     getServiceSubschemaConfig({ srvName: 'ContentGraph' }),

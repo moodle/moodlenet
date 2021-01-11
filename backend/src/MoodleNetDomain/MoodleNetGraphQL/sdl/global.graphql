@@ -1,0 +1,7 @@
+directive @access(level: [AccessLevel!]!) on OBJECT | FIELD_DEFINITION
+
+enum AccessLevel {
+  ADMIN
+  USER
+  OWNER
+}
