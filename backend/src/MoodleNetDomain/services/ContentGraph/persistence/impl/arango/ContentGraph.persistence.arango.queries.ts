@@ -8,6 +8,7 @@ import {
   PageInput,
   ResolverFn,
 } from '../../../ContentGraph.graphql.gen'
+import { GlyphEdge } from '../../glyph'
 
 const DEFAULT_PAGE_LENGTH = 10
 
@@ -123,3 +124,96 @@ export const edgesResolver = <T extends { __typename: string }>(_: {
     }
   })
 }
+
+export const createRelationEdge = async <Data extends GlyphEdge>({
+  db,
+  _from,
+  _to,
+  edgeCollectionName,
+  graphName,
+  data,
+  reverse,
+  allowMultiple,
+}: {
+  db: Database
+  graphName: string
+  _from: string
+  _to: string
+  edgeCollectionName: string
+  data: Omit<Data, '_id' | 'node'>
+  reverse: boolean
+  allowMultiple: boolean
+}) => {
+  if (!allowMultiple) {
+    const existingRelation = await getExistingRelation()
+
+    if (existingRelation) {
+      return {
+        ...existingRelation,
+        node: reverse ? existingRelation.from : existingRelation.to,
+      }
+    } else {
+      return createNewRelationEdge()
+    }
+  } else {
+    return createNewRelationEdge()
+  }
+
+  async function createNewRelationEdge() {
+    const coll = db.graph(graphName).edgeCollection(edgeCollectionName)
+
+    const [{ new: newEdge }, node] = await Promise.all([
+      coll.save(data, { returnNew: true }),
+
+      db
+        .query(`RETURN DOCUMENT("${reverse ? _from : _to}")`)
+        .then((c) => c.next()),
+    ])
+
+    return {
+      ...newEdge,
+      node,
+    }
+  }
+  function getExistingRelation() {
+    return getRelationEdge({
+      db,
+      edgeCollectionName,
+      _from,
+      _to,
+      fetchNodes: reverse ? 'from' : 'to',
+    })
+  }
+}
+export const getRelationEdge = async ({
+  db,
+  _from,
+  _to,
+  edgeCollectionName,
+  fetchNodes,
+}: {
+  db: Database
+  _from: string
+  _to: string
+  edgeCollectionName: string
+  fetchNodes: 'to' | 'from' | 'both' | 'none'
+}) =>
+  (
+    await db.query(`
+          FOR e in ${edgeCollectionName} 
+            FILTER e._to=="${_to}"
+              && e._from=="${_from}"
+            LIMIT 1 
+            RETURN MERGE(e, {
+              from: ${
+                fetchNodes === 'both' || fetchNodes === 'from'
+                  ? `DOCUMENT(e._from)`
+                  : '{_id: e._from}'
+              },
+              to: ${
+                fetchNodes === 'both' || fetchNodes === 'to'
+                  ? `DOCUMENT(e._to)`
+                  : '{_id: e._to}'
+              } 
+            })`)
+  ).next()

@@ -21,3 +21,7 @@ type UserFollowsUserPage implements Page {
 type User {
   followsUsers(page: PageInput): UserFollowsUserPage!
 }
+
+type Mutation {
+  followUser(userId: ID!): UserFollowsUser
+}
