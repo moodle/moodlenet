@@ -147,7 +147,7 @@ export const createRelationEdge = async <Edge extends GlyphEdge>({
   allowMultipleOnSameVertex?: boolean
   allowSelf?: boolean
 }): Promise<Edge | CreateRelationEdgeErrorMsg> => {
-  console.log({
+  console.log('createRelationEdge', {
     _from,
     _to,
     edgeCollectionName,
@@ -155,7 +155,7 @@ export const createRelationEdge = async <Edge extends GlyphEdge>({
   })
 
   if (!allowSelf && _from === _to) {
-    return 'no-self'
+    return CreateRelationEdgeErrorMsg.NO_SELF
   } else if (!allowMultipleOnSameVertex) {
     const existingRelation = await getExistingRelation()
 
@@ -175,7 +175,7 @@ export const createRelationEdge = async <Edge extends GlyphEdge>({
     const coll = db.graph(graphName).edgeCollection(edgeCollectionName)
 
     return Promise.all([
-      coll.save(data, { returnNew: true }),
+      coll.save({ data, _from, _to }, { returnNew: true }),
       db
         .query(`RETURN DOCUMENT("${reverse ? _from : _to}")`)
         .then((c) => c.next()),
@@ -187,7 +187,7 @@ export const createRelationEdge = async <Edge extends GlyphEdge>({
       .catch<CreateRelationEdgeErrorMsg>((_err) => {
         console.log(String(_err))
         // TODO: parse error and return correct msg
-        return 'some-vertex-not-found'
+        return CreateRelationEdgeErrorMsg.SOME_VERTEX_NOT_FOUND
       })
   }
   function getExistingRelation() {

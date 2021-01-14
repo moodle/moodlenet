@@ -1,3 +1,5 @@
+export type ValueOf<T extends object, K extends keyof T = keyof T> = T[K]
+
 export const never = (more = '') => {
   throw new Error(`never ${more}`)
 }

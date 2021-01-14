@@ -1,4 +1,3 @@
-import { Maybe } from '../../../../lib/helpers/types'
 import { Resolvers } from '../ContentGraph.graphql.gen'
 import { UserFollowsUserEdge, UserVertex } from './glyph'
 
@@ -12,4 +11,7 @@ export interface ContentGraphPersistence {
   //config():Promise<Config>
 }
 
-export type CreateRelationEdgeErrorMsg = 'no-self' | 'some-vertex-not-found'
+export enum CreateRelationEdgeErrorMsg {
+  NO_SELF = 'no-self',
+  SOME_VERTEX_NOT_FOUND = 'some-vertex-not-found',
+}
