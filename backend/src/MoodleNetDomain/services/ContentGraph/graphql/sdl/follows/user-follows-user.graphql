@@ -23,5 +23,5 @@ type User {
 }
 
 type Mutation {
-  followUser(userId: ID!): UserFollowsUser
+  followUser(userId: ID!): UserFollowsUser!
 }

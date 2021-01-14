@@ -7,7 +7,7 @@ export const getArangoContentGraphPersistence = async (): Promise<ContentGraphPe
   const persistence: ContentGraphPersistence = {
     graphQLTypeResolvers: await getGraphQLTypeResolvers(),
     createUser: await createUser,
-    createUserFollowUser: await createUserFollowUser,
+    createUserFollowsUser: await createUserFollowUser,
   }
   return persistence
 }

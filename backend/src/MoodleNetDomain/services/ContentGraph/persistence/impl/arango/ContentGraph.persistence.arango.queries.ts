@@ -9,6 +9,7 @@ import {
   ResolverFn,
 } from '../../../ContentGraph.graphql.gen'
 import { GlyphEdge } from '../../glyph'
+import { CreateRelationEdgeErrorMsg } from '../../types'
 
 const DEFAULT_PAGE_LENGTH = 10
 
@@ -125,26 +126,37 @@ export const edgesResolver = <T extends { __typename: string }>(_: {
   })
 }
 
-export const createRelationEdge = async <Data extends GlyphEdge>({
+export const createRelationEdge = async <Edge extends GlyphEdge>({
   db,
   _from,
   _to,
   edgeCollectionName,
   graphName,
   data,
-  reverse,
-  allowMultiple,
+  reverse = false,
+  allowMultipleOnSameVertex = false,
+  allowSelf = false,
 }: {
   db: Database
   graphName: string
   _from: string
   _to: string
   edgeCollectionName: string
-  data: Omit<Data, '_id' | 'node'>
-  reverse: boolean
-  allowMultiple: boolean
-}) => {
-  if (!allowMultiple) {
+  data: Omit<Edge, '_id' | 'node'>
+  reverse?: boolean
+  allowMultipleOnSameVertex?: boolean
+  allowSelf?: boolean
+}): Promise<Edge | CreateRelationEdgeErrorMsg> => {
+  console.log({
+    _from,
+    _to,
+    edgeCollectionName,
+    data,
+  })
+
+  if (!allowSelf && _from === _to) {
+    return 'no-self'
+  } else if (!allowMultipleOnSameVertex) {
     const existingRelation = await getExistingRelation()
 
     if (existingRelation) {
@@ -159,21 +171,24 @@ export const createRelationEdge = async <Data extends GlyphEdge>({
     return createNewRelationEdge()
   }
 
-  async function createNewRelationEdge() {
+  function createNewRelationEdge(): Promise<Edge> {
     const coll = db.graph(graphName).edgeCollection(edgeCollectionName)
 
-    const [{ new: newEdge }, node] = await Promise.all([
+    return Promise.all([
       coll.save(data, { returnNew: true }),
-
       db
         .query(`RETURN DOCUMENT("${reverse ? _from : _to}")`)
         .then((c) => c.next()),
     ])
-
-    return {
-      ...newEdge,
-      node,
-    }
+      .then(([{ new: newEdge }, node]) => ({
+        ...newEdge,
+        node,
+      }))
+      .catch<CreateRelationEdgeErrorMsg>((_err) => {
+        console.log(String(_err))
+        // TODO: parse error and return correct msg
+        return 'some-vertex-not-found'
+      })
   }
   function getExistingRelation() {
     return getRelationEdge({

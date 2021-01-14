@@ -1,5 +1,8 @@
 import JWT from 'jsonwebtoken'
-import { SessionAccount } from '../UserAccount/UserAccount.graphql.gen'
+import {
+  isMoodleNetExecutionAuth,
+  MoodleNetExecutionAuth,
+} from '../../MoodleNetGraphQL'
 import { jwtVerifyOpts, JWT_PUBLIC_KEY } from './GraphQLHTTPGateway.env'
 
 export const INVALID_TOKEN = Symbol('INVALID_TOKEN')
@@ -27,11 +30,3 @@ export const verifyJwt = (
     return INVALID_TOKEN
   }
 }
-
-export type MoodleNetExecutionAuth = {
-  sessionAccount: SessionAccount // TODO: May prefer to define an independent type for this, mapped from UserAccount#SessionAccount, instead of direct usage
-}
-//FIXME: implement proper typeguard
-export const isMoodleNetExecutionAuth = (
-  _obj: object
-): _obj is MoodleNetExecutionAuth => true

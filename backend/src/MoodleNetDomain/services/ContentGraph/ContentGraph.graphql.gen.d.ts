@@ -127,7 +127,7 @@ export type Mutation = {
   createSubject: Maybe<Subject>;
   followCollection: Maybe<UserFollowsCollection>;
   followSubject: Maybe<UserFollowsSubject>;
-  followUser: Maybe<UserFollowsUser>;
+  followUser: UserFollowsUser;
   likeResource: Maybe<UserLikesResource>;
   resourceReferencesSubject: Maybe<ResourceReferencesSubject>;
 };
@@ -926,7 +926,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   createSubject: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<MutationCreateSubjectArgs, 'subjectInput'>>;
   followCollection: Resolver<Maybe<ResolversTypes['UserFollowsCollection']>, ParentType, ContextType, RequireFields<MutationFollowCollectionArgs, never>>;
   followSubject: Resolver<Maybe<ResolversTypes['UserFollowsSubject']>, ParentType, ContextType, RequireFields<MutationFollowSubjectArgs, never>>;
-  followUser: Resolver<Maybe<ResolversTypes['UserFollowsUser']>, ParentType, ContextType, RequireFields<MutationFollowUserArgs, 'userId'>>;
+  followUser: Resolver<ResolversTypes['UserFollowsUser'], ParentType, ContextType, RequireFields<MutationFollowUserArgs, 'userId'>>;
   likeResource: Resolver<Maybe<ResolversTypes['UserLikesResource']>, ParentType, ContextType, RequireFields<MutationLikeResourceArgs, never>>;
   resourceReferencesSubject: Resolver<Maybe<ResolversTypes['ResourceReferencesSubject']>, ParentType, ContextType, RequireFields<MutationResourceReferencesSubjectArgs, never>>;
 };

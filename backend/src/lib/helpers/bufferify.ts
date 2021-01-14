@@ -1,57 +1,4 @@
-import cloneDeep from 'lodash/cloneDeep'
-import isEqual from 'lodash/isEqual'
-import { inspect } from 'util'
-
-let file1: FileBag = {
-  data: Buffer.concat([Buffer.alloc(1000000).fill(255), Buffer.from('123')]),
-  mimetype: 'mime1',
-  name: 'file1',
-}
-let file2: FileBag = {
-  data: Buffer.concat([Buffer.alloc(1000000).fill(255), Buffer.from('2345')]),
-  mimetype: 'mime2',
-  name: 'file2',
-}
-
-let obj = {
-  a: 1,
-  f1: file1,
-  f11: /* { ... */ file1 /* , data: file1.data.slice(0)  */ /* } */,
-  f12: /* { ... */ file1 /* , data: file1.data.slice(0)  */ /* } */,
-  f13: /* { ... */ file1 /* , data: file1.data.slice(0)  */ /* } */,
-  f14: /* { ... */ file1 /* , data: file1.data.slice(0)  */ /* } */,
-  f15: /* { ... */ file1 /* , data: file1.data.slice(0)  */ /* } */,
-  f16: /* { ... */ file1 /* , data: file1.data.slice(0)  */ /* } */,
-  x: [
-    {
-      f2: file2,
-      z: 'zz',
-      nof: {
-        data: '2345',
-        mimetype: 'nofmime2',
-        name: 'noffile2',
-      },
-    },
-  ],
-}
-
-log('obj', obj)
-const enc = bufferify(
-  obj,
-  '212132321-312312312dd45d34452s-2s25-423243-s43-2243--243'
-)
-log('enc', enc)
-log(enc.length, JSON.stringify(obj).length /* , JSON.stringify(obj) */)
-const dec = unbufferify(enc)
-log('dec', dec)
-log('obj', obj)
-
-log('dec eq obj', isEqual(obj, dec))
-
-function log(...args: any[]) {
-  console.log(...args.map((_) => inspect(_, false, 10, true)), '\n\n')
-}
-
+import { cloneDeep } from 'lodash'
 type FileBag = {
   name: string
   data: Buffer
@@ -62,10 +9,10 @@ type BufferifyMeta = {
   files: Buffer[]
 }
 
-function bufferify(object: any, fileDataKeyPlaceholder: string) {
+export function bufferify(object: any, fileDataKeyPlaceholder: string) {
   const meta: BufferifyMeta = { files: [], key: fileDataKeyPlaceholder }
   const clonedObject = cloneDeep(object)
-  log('cloneeq', isEqual(object, clonedObject))
+  // log('cloneeq', isEqual(object, clonedObject))
   const valueWithPlaceholders = bufferifyTraverse(meta)(clonedObject)
   const keyLenghtBuffer = Uint8Array.of(fileDataKeyPlaceholder.length)
   const keyBuffer = Buffer.from(fileDataKeyPlaceholder)
@@ -101,7 +48,7 @@ function bufferifyTraverse(meta: BufferifyMeta) {
   }
 }
 
-function unbufferify(buffer: Buffer) {
+export function unbufferify(buffer: Buffer) {
   let _offset = 0
 
   const fileDataKeyPlaceholderLength = buffer.readUInt8(_offset)
@@ -153,3 +100,56 @@ function isFileBag(_: any): _ is FileBag {
     _['data'] instanceof Buffer
   )
 }
+
+// import isEqual from 'lodash/isEqual'
+// import { inspect } from 'util'
+
+// let file1: FileBag = {
+//   data: Buffer.concat([Buffer.alloc(1000000).fill(255), Buffer.from('123')]),
+//   mimetype: 'mime1',
+//   name: 'file1',
+// }
+// let file2: FileBag = {
+//   data: Buffer.concat([Buffer.alloc(1000000).fill(255), Buffer.from('2345')]),
+//   mimetype: 'mime2',
+//   name: 'file2',
+// }
+
+// let obj = {
+//   a: 1,
+//   f1: file1,
+//   f11: /* { ... */ file1 /* , data: file1.data.slice(0)  */ /* } */,
+//   f12: /* { ... */ file1 /* , data: file1.data.slice(0)  */ /* } */,
+//   f13: /* { ... */ file1 /* , data: file1.data.slice(0)  */ /* } */,
+//   f14: /* { ... */ file1 /* , data: file1.data.slice(0)  */ /* } */,
+//   f15: /* { ... */ file1 /* , data: file1.data.slice(0)  */ /* } */,
+//   f16: /* { ... */ file1 /* , data: file1.data.slice(0)  */ /* } */,
+//   x: [
+//     {
+//       f2: file2,
+//       z: 'zz',
+//       nof: {
+//         data: '2345',
+//         mimetype: 'nofmime2',
+//         name: 'noffile2',
+//       },
+//     },
+//   ],
+// }
+
+// log('obj', obj)
+// const enc = bufferify(
+//   obj,
+//   '212132321-312312312dd45d34452s-2s25-423243-s43-2243--243'
+// )
+// log('enc', enc)
+// log(enc.length, JSON.stringify(obj).length /* , JSON.stringify(obj) */)
+// const dec = unbufferify(enc)
+// log('dec', dec)
+// log('obj', obj)
+
+// log('dec eq obj', isEqual(obj, dec))
+
+// function log(...args: any[]) {
+//   console.log(...args.map((_) => inspect(_, false, 10, true)), '\n\n')
+// }

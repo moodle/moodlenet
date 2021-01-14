@@ -4,7 +4,7 @@ import { DBReady } from '../ContentGraph.persistence.arango.env'
 import { createRelationEdge } from '../ContentGraph.persistence.arango.queries'
 
 export const createUserFollowUser = DBReady.then(
-  ({ db }): ContentGraphPersistence['createUserFollowUser'] => async ({
+  ({ db }): ContentGraphPersistence['createUserFollowsUser'] => async ({
     followed,
     follower,
   }) => {
@@ -15,8 +15,6 @@ export const createUserFollowUser = DBReady.then(
       db,
       edgeCollectionName: 'Follows',
       graphName: 'Follows',
-      allowMultiple: false,
-      reverse: false,
     })
   }
 )
