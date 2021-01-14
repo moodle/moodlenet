@@ -8,6 +8,8 @@ import {
   PageInput,
   ResolverFn,
 } from '../../../ContentGraph.graphql.gen'
+import { GlyphEdge } from '../../glyph'
+import { CreateRelationEdgeErrorMsg } from '../../types'
 
 const DEFAULT_PAGE_LENGTH = 10
 
@@ -123,3 +125,110 @@ export const edgesResolver = <T extends { __typename: string }>(_: {
     }
   })
 }
+
+export const createRelationEdge = async <Edge extends GlyphEdge>({
+  db,
+  _from,
+  _to,
+  edgeCollectionName,
+  graphName,
+  data,
+  reverse = false,
+  allowMultipleOnSameVertex = false,
+  allowSelf = false,
+}: {
+  db: Database
+  graphName: string
+  _from: string
+  _to: string
+  edgeCollectionName: string
+  data: Omit<Edge, '_id' | 'node'>
+  reverse?: boolean
+  allowMultipleOnSameVertex?: boolean
+  allowSelf?: boolean
+}): Promise<Edge | CreateRelationEdgeErrorMsg> => {
+  console.log({
+    _from,
+    _to,
+    edgeCollectionName,
+    data,
+  })
+
+  if (!allowSelf && _from === _to) {
+    return 'no-self'
+  } else if (!allowMultipleOnSameVertex) {
+    const existingRelation = await getExistingRelation()
+
+    if (existingRelation) {
+      return {
+        ...existingRelation,
+        node: reverse ? existingRelation.from : existingRelation.to,
+      }
+    } else {
+      return createNewRelationEdge()
+    }
+  } else {
+    return createNewRelationEdge()
+  }
+
+  function createNewRelationEdge(): Promise<Edge> {
+    const coll = db.graph(graphName).edgeCollection(edgeCollectionName)
+
+    return Promise.all([
+      coll.save(data, { returnNew: true }),
+      db
+        .query(`RETURN DOCUMENT("${reverse ? _from : _to}")`)
+        .then((c) => c.next()),
+    ])
+      .then(([{ new: newEdge }, node]) => ({
+        ...newEdge,
+        node,
+      }))
+      .catch<CreateRelationEdgeErrorMsg>((_err) => {
+        console.log(String(_err))
+        // TODO: parse error and return correct msg
+        return 'some-vertex-not-found'
+      })
+  }
+  function getExistingRelation() {
+    return getRelationEdge({
+      db,
+      edgeCollectionName,
+      _from,
+      _to,
+      fetchNodes: reverse ? 'from' : 'to',
+    })
+  }
+}
+export const getRelationEdge = async ({
+  db,
+  _from,
+  _to,
+  edgeCollectionName,
+  fetchNodes,
+}: {
+  db: Database
+  _from: string
+  _to: string
+  edgeCollectionName: string
+  fetchNodes: 'to' | 'from' | 'both' | 'none'
+}) =>
+  (
+    await db.query(`
+          FOR e in ${edgeCollectionName} 
+            FILTER e._to=="${_to}"
+              && e._from=="${_from}"
+            LIMIT 1 
+            RETURN MERGE(e, {
+              from: ${
+                fetchNodes === 'both' || fetchNodes === 'from'
+                  ? `DOCUMENT(e._from)`
+                  : '{_id: e._from}'
+              },
+              to: ${
+                fetchNodes === 'both' || fetchNodes === 'to'
+                  ? `DOCUMENT(e._to)`
+                  : '{_id: e._to}'
+              } 
+            })`)
+  ).next()

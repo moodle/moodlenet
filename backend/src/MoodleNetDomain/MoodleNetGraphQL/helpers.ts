@@ -10,11 +10,8 @@ import { MoodleNet } from '..'
 import { getGQLApiCallerExecutor, startGQLApiResponder } from '../../lib/domain'
 import { GraphQLDomainApi } from '../../lib/domain/api/types'
 import { MoodleNetDomain } from '../MoodleNetDomain'
-import {
-  INVALID_TOKEN,
-  MoodleNetExecutionAuth,
-  verifyJwt,
-} from '../services/GraphQLHTTPGateway/JWT'
+import { INVALID_TOKEN, verifyJwt } from '../services/GraphQLHTTPGateway/JWT'
+import { SessionAccount } from '../services/UserAccount/UserAccount.graphql.gen'
 import directiveResolvers from './directives'
 
 export type Context = {
@@ -68,7 +65,7 @@ export async function startMoodleNetGQLApiResponder({
   schema: GraphQLSchema | Promise<GraphQLSchema>
   srvName: ServiceNames
 }) {
-  const api = MNGQLApi(srvName)
+  const api = MNServiceGQLApiName(srvName)
   return startGQLApiResponder<MoodleNetDomain>({
     api,
     domain: MoodleNet,
@@ -84,7 +81,7 @@ export function getServiceSubschemaConfig({
 }) {
   const { stitchingDirectivesTransformer } = stitchingDirectives()
   const schema = loadServiceSchema({ srvName })
-  const api = MNGQLApi(srvName)
+  const api = MNServiceGQLApiName(srvName)
   return stitchingDirectivesTransformer({
     schema,
     executor: getGQLApiCallerExecutor<MoodleNetDomain>({
@@ -96,9 +93,7 @@ export function getServiceSubschemaConfig({
   })
 }
 
-function MNGQLApi(srvName: ServiceNames) {
-  return `${srvName}.GQL` as const
-}
+const MNServiceGQLApiName = (srvName: ServiceNames) => `${srvName}.GQL` as const
 
 export function atMergeQueryRootFieldsRemover({}: {}) {
   return new FilterRootFields(
@@ -129,3 +124,16 @@ export function getExecutionGlobalValues(
     root: {},
   }
 }
+
+export type MoodleNetExecutionAuth = {
+  // TODO: May prefer to define an independent type for this, mapped from UserAccount#SessionAccount, instead of direct usage
+  sessionAccount: SessionAccount
+}
+
+//FIXME: implement proper typeguard
+export const isMoodleNetExecutionAuth = (
+  _obj: object
+): _obj is MoodleNetExecutionAuth => true
+
+export const getUserId = ({ sessionAccount }: MoodleNetExecutionAuth) =>
+  `User/${sessionAccount.username}` // BEWARE: hardcoded userId generation

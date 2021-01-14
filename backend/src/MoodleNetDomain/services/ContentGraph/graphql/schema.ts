@@ -4,6 +4,7 @@ import { getContentGraphPersistence } from '../ContentGraph.env'
 import { Resolvers } from '../ContentGraph.graphql.gen'
 import { stitchingDirectives } from '@graphql-tools/stitching-directives'
 import { printSchema } from 'graphql'
+import { Mutation } from './mutationResolvers'
 
 export const getContentGraphExecutableSchema = async () => {
   const { graphQLTypeResolvers } = await getContentGraphPersistence()
@@ -12,7 +13,7 @@ export const getContentGraphExecutableSchema = async () => {
 
   const resolvers: Resolvers = {
     ...graphQLTypeResolvers,
-    Mutation: {} as any,
+    Mutation,
   }
 
   const { stitchingDirectivesValidator } = stitchingDirectives()
