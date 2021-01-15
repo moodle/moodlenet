@@ -1,4 +1,3 @@
-import { Flow } from '../../../../lib/domain/types/path'
 import {
   Maybe,
   WithCreated,
@@ -7,6 +6,13 @@ import {
   WithMutable,
 } from '../../../../lib/helpers/types'
 import { EmailObj } from '../../Email/types'
+import { ConfirmAccountEmailChangeRequestPersistence } from '../apis/UserAccount.Change_Main_Email.Confirm_And_Change_Account_Email'
+import { ChangeAccountEmailRequestDeletePersistence } from '../apis/UserAccount.Change_Main_Email.Delete_Request'
+import { ChangeAccountEmailRequestPersistence } from '../apis/UserAccount.Change_Main_Email.Request.'
+import { ChangePasswordPersistence } from '../apis/UserAccount.Change_Password'
+import { ActivateNewAccountPersistence } from '../apis/UserAccount.Register_New_Account.Activate_New_Account'
+import { NewAccountRequestDeletePersistence } from '../apis/UserAccount.Register_New_Account.Delete_Request'
+import { NewAccountRequestPersistence } from '../apis/UserAccount.Register_New_Account.Request'
 import { ChangeAccountEmailRequestEmailVars } from '../assets/defaultConfig/changeAccountEmailRequestEmail'
 import { NewAccountRequestEmailVars } from '../assets/defaultConfig/newAccountRequestEmail'
 import { TempSessionEmailVars } from '../assets/defaultConfig/tempSessionEmail'
@@ -18,47 +24,15 @@ export interface UserAccountPersistence {
   getActiveAccountByUsername(_: {
     username: string
   }): Promise<Maybe<ActiveUserAccount>>
-
-  removeNewAccountRequest(_: { token: string }): Promise<unknown>
-
+  deleteChangeAccountEmailRequest: ChangeAccountEmailRequestDeletePersistence
+  deleteNewAccountRequest: NewAccountRequestDeletePersistence
   isEmailAvailable(_: { email: string }): Promise<boolean>
   isUsernameAvailable(_: { username: string }): Promise<boolean>
-
-  newAccountRequest(_: {
-    email: string
-    token: string
-    flow: Flow
-  }): Promise<null | Messages.EmailNotAvailable>
-
-  changePassword(_: {
-    currentPassword: string
-    newPassword: string
-    accountId: string
-  }): Promise<null | Messages.NotFound>
-
-  changeAccountEmailRequest(_: {
-    flow: Flow
-    token: string
-    accountId: string
-    newEmail: string
-  }): Promise<
-    UserAccountRecord | Messages.EmailNotAvailable | Messages.NotFound
-  >
-
-  confirmAccountEmailChangeRequest(_: {
-    token: string
-  }): Promise<null | Messages.NotFound>
-
-  removeChangeAccountEmailRequest(_: { token: string }): Promise<unknown>
-
-  activateNewAccount(_: {
-    token: string
-    username: string
-    password: string
-  }): Promise<
-    ActiveUserAccount | Messages.NotFound | Messages.UsernameNotAvailable
-  >
-
+  newAccountRequest: NewAccountRequestPersistence
+  changePassword: ChangePasswordPersistence
+  changeAccountEmailRequest: ChangeAccountEmailRequestPersistence
+  confirmAccountEmailChangeRequest: ConfirmAccountEmailChangeRequestPersistence
+  activateNewAccount: ActivateNewAccountPersistence
   getConfig(): Promise<Config>
 }
 
@@ -106,6 +80,8 @@ export type Config = WithCreated & {
   changeAccountEmailRequestEmail: EmailTemplate<ChangeAccountEmailRequestEmailVars>
   tempSessionEmail: EmailTemplate<TempSessionEmailVars>
   sessionValiditySecs: number
+  newAccountVerificationWaitSecs: number
+  changeAccountEmailVerificationWaitSecs: number
 }
 // $ Config
 

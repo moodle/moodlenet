@@ -1,11 +1,8 @@
-import { Api } from '../../../lib/domain/api/types'
-import { Event } from '../../../lib/domain/event/types'
-import { SendResult } from './persistence/types'
-import { EmailObj } from './types'
+import { Email_Sent_Event, Send_Now_Api } from './apis/Email.Send_One.Req'
 
 export type Email = {
   Send_One: {
-    Send_Now: Api<{ emailObj: EmailObj }, SendResult>
-    Email_Sent: Event<SendResult>
+    Send_Now: Send_Now_Api
+    Email_Sent: Email_Sent_Event
   }
 }

@@ -1,26 +1,13 @@
-import { Api } from '../../../lib/domain/api/types'
-import { LookupEventType } from '../../../lib/domain/event/types'
-import { Maybe } from '../../../lib/helpers/types'
-import { MoodleNetDomain } from '../../MoodleNetDomain'
 import { GraphQLApi } from '../../MoodleNetGraphQL'
-import { UserFollowsUserEdge, UserVertex } from './persistence/glyph'
-import { CreateRelationEdgeErrorMsg } from './persistence/types'
+import { Create_User_Follows_User_Api } from './apis/ContentGraph.Follows.Create_User_Follows_User'
+import { User_Create_For_New_Account_Api } from './apis/ContentGraph.User.Create_For_New_Account.api'
 
 export type ContentGraph = {
   GQL: GraphQLApi
   User: {
-    Create_For_New_Account: Api<
-      LookupEventType<
-        MoodleNetDomain,
-        'UserAccount.Register_New_Account.NewAccountActivated'
-      >,
-      { newUser: UserVertex | null }
-    >
+    Create_For_New_Account: User_Create_For_New_Account_Api
   }
   Follows: {
-    Create_User_Follows_User: Api<
-      { follower: string; followed: string },
-      { edge: UserFollowsUserEdge | CreateRelationEdgeErrorMsg }
-    >
+    Create_User_Follows_User: Create_User_Follows_User_Api
   }
 }

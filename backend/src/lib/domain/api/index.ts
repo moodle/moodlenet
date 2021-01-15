@@ -2,7 +2,7 @@ import { Executor } from '@graphql-tools/delegate/types'
 import { Message } from 'amqplib'
 import { graphql, GraphQLError, GraphQLSchema, print } from 'graphql'
 import * as AMQP from '../amqp'
-import { newFlow, nodeId } from '../helpers'
+import { nodeId } from '../helpers'
 import { Flow } from '../types/path'
 import * as Types from './types'
 
@@ -115,6 +115,15 @@ export type ApiResponderOpts = {
   queue?: AMQP.DomainQueueOpts
   // TODO: ApiResponderOpts should have channelOpts too
 }
+
+export type RespondApiHandler<A> = A extends Types.Api<infer Req, infer Res>
+  ? (_: {
+      req: Req
+      flow: Flow
+      disposeResponder(): unknown
+      unbindThisRoute(): unknown
+    }) => Promise<Res>
+  : never
 
 export type RespondApiArgs<Domain, ApiPath extends Types.ApiLeaves<Domain>> = {
   api: ApiPath
@@ -233,7 +242,7 @@ export const getGQLApiCallerExecutor = <DomainDef extends object>({
   ): { context: any; root: any }
   api: Types.ApiLeaves<DomainDef>
   domain: any
-  flow?: Flow
+  flow: Flow
 }): Executor => async (_) => {
   const { context, root } = getExecutionGlobalValues(_)
   const { document, variables /*,context, extensions, info */ } = _
@@ -242,7 +251,7 @@ export const getGQLApiCallerExecutor = <DomainDef extends object>({
 
   const { res } = await domain.callApi({
     api,
-    flow: flow || newFlow({ _route: 'gql-request' }),
+    flow,
     req: {
       context,
       root,

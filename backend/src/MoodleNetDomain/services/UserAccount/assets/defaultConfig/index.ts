@@ -20,5 +20,7 @@ export const DefaultConfig: Config = {
     from: 'Bob <bob@example.com>',
     subject: 'reset password',
   },
-  sessionValiditySecs: 120, // 2 * 24 * 60 * 60 ,
+  sessionValiditySecs: 10 * 60,
+  newAccountVerificationWaitSecs: 2 * 24 * 60 * 60,
+  changeAccountEmailVerificationWaitSecs: 2 * 24 * 60 * 60,
 }

@@ -27,7 +27,7 @@ const srvGenerates = ['UserAccount', 'ContentGraph']
     const srvBase = `${mooRoot}/services/${srvname}`
     const tsDefsFilename = `${srvBase}/${srvname}.graphql.gen.d.ts`
     const tsDefsConfig = {
-      [tsDefsFilename]: defConfig([globSdl, `${srvBase}/graphql/sdl/**/*.graphql`], '../../MoodleNetGraphQL')
+      [tsDefsFilename]: defConfig([globSdl, `${srvBase}/graphql/**/*.graphql`], '../../MoodleNetGraphQL')
     }
     return {
       ...tsDefsConfig,

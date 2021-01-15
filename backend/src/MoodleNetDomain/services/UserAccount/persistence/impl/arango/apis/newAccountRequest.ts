@@ -12,7 +12,7 @@ export const newAccountRequest: UserAccountPersistence['newAccountRequest'] = as
   token,
   flow,
 }) => {
-  const { db } = await DBReady
+  const { db, UserAccount } = await DBReady
   const emailAvailable = await isEmailAvailable({ email })
   if (!emailAvailable) {
     return Messages.EmailNotAvailable
@@ -35,9 +35,10 @@ export const newAccountRequest: UserAccountPersistence['newAccountRequest'] = as
         updatedAt: DATE_NOW()
       } 
     )
-    INTO UserAccount
-    RETURN null
+    INTO ${UserAccount}
+    RETURN NEW
   `)
 
-  return await insertCursor.next()
+  await insertCursor.next()
+  return null
 }

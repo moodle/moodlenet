@@ -1,14 +1,18 @@
 import { Executor } from '@graphql-tools/delegate/types'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { loadSchemaSync } from '@graphql-tools/load'
-import { makeExecutableSchema } from '@graphql-tools/schema'
+import {
+  IExecutableSchemaDefinition,
+  makeExecutableSchema,
+} from '@graphql-tools/schema'
 import { stitchingDirectives } from '@graphql-tools/stitching-directives'
 import { FilterRootFields } from '@graphql-tools/wrap'
-import { GraphQLError, GraphQLSchema } from 'graphql'
+import { GraphQLError, printSchema } from 'graphql'
 import { IncomingMessage } from 'http'
 import { MoodleNet } from '..'
 import { getGQLApiCallerExecutor, startGQLApiResponder } from '../../lib/domain'
-import { GraphQLDomainApi } from '../../lib/domain/api/types'
+import { ApiLeaves, ApiReq, GraphQLDomainApi } from '../../lib/domain/api/types'
+import { newFlow } from '../../lib/domain/helpers'
 import { MoodleNetDomain } from '../MoodleNetDomain'
 import { INVALID_TOKEN, verifyJwt } from '../services/GraphQLHTTPGateway/JWT'
 import { SessionAccount } from '../services/UserAccount/UserAccount.graphql.gen'
@@ -41,7 +45,7 @@ export function loadServiceSchema(_: { srvName: ServiceNames }) {
   } = stitchingDirectives()
 
   const schema = loadSchemaSync(
-    [`../services/${srvName}/graphql/sdl/**/*.graphql`, `sdl/**/*.graphql`],
+    [`../services/${srvName}/graphql/**/*.graphql`, `global/**/*.graphql`],
     {
       cwd: __dirname,
       loaders: [new GraphQLFileLoader()],
@@ -58,14 +62,38 @@ export function loadServiceSchema(_: { srvName: ServiceNames }) {
   return schema
 }
 
+export type ServiceExecutableSchemaDefinition = Omit<
+  IExecutableSchemaDefinition<Context>,
+  'typeDefs'
+>
+export const executableServiceSchema = (_: {
+  srvName: ServiceNames
+  schemaDef: Omit<IExecutableSchemaDefinition<Context>, 'typeDefs'>
+}) => {
+  const { schemaDef, srvName } = _
+  const srvSchema = loadServiceSchema({ srvName })
+  const { stitchingDirectivesValidator } = stitchingDirectives()
+  const schema = makeExecutableSchema<Context>({
+    schemaTransforms: [stitchingDirectivesValidator],
+    typeDefs: printSchema(srvSchema),
+    ...schemaDef,
+  })
+  return schema
+}
 export async function startMoodleNetGQLApiResponder({
-  schema,
   srvName,
+  executableSchemaDef,
 }: {
-  schema: GraphQLSchema | Promise<GraphQLSchema>
+  executableSchemaDef:
+    | ServiceExecutableSchemaDefinition
+    | Promise<ServiceExecutableSchemaDefinition>
   srvName: ServiceNames
 }) {
   const api = MNServiceGQLApiName(srvName)
+  const schema = executableServiceSchema({
+    schemaDef: await executableSchemaDef,
+    srvName,
+  })
   return startGQLApiResponder<MoodleNetDomain>({
     api,
     domain: MoodleNet,
@@ -74,7 +102,6 @@ export async function startMoodleNetGQLApiResponder({
 }
 
 export function getServiceSubschemaConfig({
-  //FIXME: can't apply directives resolvers
   srvName,
 }: {
   srvName: ServiceNames
@@ -86,16 +113,35 @@ export function getServiceSubschemaConfig({
     schema,
     executor: getGQLApiCallerExecutor<MoodleNetDomain>({
       api,
+      flow: graphQLRequestFlow(),
       getExecutionGlobalValues,
       domain: MoodleNet,
     }),
-    transforms: [atMergeQueryRootFieldsRemover({})],
+    transforms: [atMergeQueryRootFieldsRemover()],
+    //FIXME: can't apply directives resolvers
   })
 }
 
+export const graphQLRequestFlow = () => newFlow({ _route: 'gql-request' })
+
+export const graphQLRequestApiCaller = <
+  ApiPath extends ApiLeaves<MoodleNetDomain>
+>({
+  api,
+  req,
+}: {
+  api: ApiPath
+  req: ApiReq<MoodleNetDomain, ApiPath>
+}) =>
+  MoodleNet.callApi({
+    api,
+    flow: graphQLRequestFlow(),
+    req,
+  })
+
 const MNServiceGQLApiName = (srvName: ServiceNames) => `${srvName}.GQL` as const
 
-export function atMergeQueryRootFieldsRemover({}: {}) {
+export function atMergeQueryRootFieldsRemover() {
   return new FilterRootFields(
     (operation, _rootField, rootFieldConfig) =>
       operation !== 'Query' ||
@@ -135,5 +181,5 @@ export const isMoodleNetExecutionAuth = (
   _obj: object
 ): _obj is MoodleNetExecutionAuth => true
 
-export const getUserId = ({ sessionAccount }: MoodleNetExecutionAuth) =>
+export const getAuthUserId = ({ sessionAccount }: MoodleNetExecutionAuth) =>
   `User/${sessionAccount.username}` // BEWARE: hardcoded userId generation

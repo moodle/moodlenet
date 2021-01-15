@@ -1,14 +1,5 @@
-import { Flow } from '../../../../lib/domain/types/path'
-import { EmailObj } from '../types'
+import { StoreSentEmailPersistence } from '../apis/Email.Send_One.Req'
 
 interface EmailPersistence {
-  storeSentEmail(_: {
-    email: EmailObj
-    flow: Flow
-    result: SendResult
-  }): Promise<unknown>
+  storeSentEmail: StoreSentEmailPersistence
 }
-
-export type SendResult =
-  | { success: false; error: string }
-  | { success: true; emailId: string }
