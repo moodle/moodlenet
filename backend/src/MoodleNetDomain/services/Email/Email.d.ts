@@ -1,8 +1,8 @@
-import { Email_Sent_Event, Send_Now_Api } from './apis/Email.Send_One.Req'
+import { EmailSentEvent, SendNowApi } from './apis/Email.SendOne.Req'
 
 export type Email = {
-  Send_One: {
-    Send_Now: Send_Now_Api
-    Email_Sent: Email_Sent_Event
+  SendOne: {
+    SendNow: SendNowApi
+    EmailSent: EmailSentEvent
   }
 }

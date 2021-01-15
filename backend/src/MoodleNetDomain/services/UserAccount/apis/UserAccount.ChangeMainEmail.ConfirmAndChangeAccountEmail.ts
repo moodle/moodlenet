@@ -11,21 +11,21 @@ export type ConfirmAccountEmailChangeRequestPersistence = (_: {
   token: string
 }) => Promise<null | Messages.NotFound>
 
-export type Account_Email_Changed_Event = Event<{
+export type AccountEmailChangedEvent = Event<{
   accountId: string
   newEmail: string
   oldEmail: string
 }>
 
-export type Confirm_And_Change_Account_Email_Api = Api<
+export type ConfirmAndChangeAccountEmailApi = Api<
   { token: string; password: string; username: string },
   { done: boolean }
 >
 
-export const Confirm_And_Change_Account_Email_Handler = async () => {
+export const ConfirmAndChangeAccountEmailHandler = async () => {
   const { confirmAccountEmailChangeRequest } = await getAccountPersistence()
 
-  const handler: RespondApiHandler<Confirm_And_Change_Account_Email_Api> = async ({
+  const handler: RespondApiHandler<ConfirmAndChangeAccountEmailApi> = async ({
     req: { token, password, username },
   }) => {
     const account = await getVerifiedAccountByUsername({
@@ -54,7 +54,7 @@ export const changeEmailConfirm: MutationResolvers['changeEmailConfirm'] = async
   { token, password, username }
 ) => {
   const { res } = await graphQLRequestApiCaller({
-    api: 'UserAccount.Change_Main_Email.Confirm_And_Change_Account_Email',
+    api: 'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail',
     req: { password, token, username },
   })
   return res.___ERROR ? false : res.done

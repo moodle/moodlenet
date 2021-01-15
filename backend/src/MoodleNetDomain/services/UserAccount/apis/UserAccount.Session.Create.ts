@@ -10,13 +10,13 @@ import {
 } from '../UserAccount.graphql.gen'
 import { getVerifiedAccountByUsername, signJwt } from '../UserAccount.helpers'
 
-export type Session_Create_Api = Api<
+export type SessionCreateApi = Api<
   { username: string; password: string },
   MaybeSessionAuth
 >
 
-export const Session_Create_Api_Handler = async () => {
-  const handler: RespondApiHandler<Session_Create_Api> = async ({
+export const SessionCreateApiHandler = async () => {
+  const handler: RespondApiHandler<SessionCreateApi> = async ({
     /* flow, */ req: { username, password },
   }) => {
     const account = await getVerifiedAccountByUsername({

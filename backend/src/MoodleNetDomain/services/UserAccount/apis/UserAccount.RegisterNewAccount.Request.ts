@@ -16,15 +16,15 @@ export type NewAccountRequestPersistence = (_: {
   flow: Flow
 }) => Promise<null | Messages.EmailNotAvailable>
 
-export type Register_New_Account_Request_Api = Api<
+export type RegisterNewAccountRequestApi = Api<
   { email: string },
   { success: true } | { success: false; reason: string }
 >
 
-export const Register_New_Account_Request_Api_Handler = async () => {
+export const RegisterNewAccountRequestApiHandler = async () => {
   const { getConfig, newAccountRequest } = await getAccountPersistence()
 
-  const handler: RespondApiHandler<Register_New_Account_Request_Api> = async ({
+  const handler: RespondApiHandler<RegisterNewAccountRequestApi> = async ({
     flow,
     req: { email },
   }) => {
@@ -50,13 +50,13 @@ export const Register_New_Account_Request_Api_Handler = async () => {
       })
       await Promise.all([
         MoodleNet.callApi({
-          api: 'Email.Send_One.Send_Now',
+          api: 'Email.SendOne.SendNow',
           flow: userAccountRoutes.setRoute(flow, 'Register-New-Account'),
           req: { emailObj },
           opts: { justEnqueue: true },
         }),
         MoodleNet.callApi({
-          api: 'UserAccount.Register_New_Account.Delete_Request',
+          api: 'UserAccount.RegisterNewAccount.DeleteRequest',
           flow,
           req: { token },
           opts: {
@@ -77,7 +77,7 @@ export const signUp: MutationResolvers['signUp'] = async (
   { email }
 ) => {
   const { res } = await graphQLRequestApiCaller({
-    api: 'UserAccount.Register_New_Account.Request',
+    api: 'UserAccount.RegisterNewAccount.Request',
     req: { email },
   })
   if (res.___ERROR) {

@@ -7,17 +7,17 @@ import { userAccountRoutes } from '../UserAccount.routes'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
 import { graphQLRequestApiCaller } from '../../../MoodleNetGraphQL'
 
-export type Session_By_Email_Api = Api<
+export type SessionByEmailApi = Api<
   { email: string; username: string },
   { success: true } | { success: false; reason: string }
 >
 
-export const Session_By_Email_Api_Handler = async () => {
+export const SessionByEmailApiHandler = async () => {
   const {
     getConfig,
     getActiveAccountByUsername,
   } = await getAccountPersistence()
-  const handler: RespondApiHandler<Session_By_Email_Api> = async ({
+  const handler: RespondApiHandler<SessionByEmailApi> = async ({
     flow,
     req: { email, username },
   }) => {
@@ -36,7 +36,7 @@ export const Session_By_Email_Api_Handler = async () => {
       vars: { username, link: `https://xxx.xxx/temp-session/${jwt}` },
     })
     await MoodleNet.callApi({
-      api: 'Email.Send_One.Send_Now',
+      api: 'Email.SendOne.SendNow',
       flow: userAccountRoutes.setRoute(flow, 'Temp-Email-Session'),
       req: {
         emailObj,
@@ -53,7 +53,7 @@ export const sessionByEmail: MutationResolvers['sessionByEmail'] = async (
   { email, username }
 ) => {
   const { res } = await graphQLRequestApiCaller({
-    api: 'UserAccount.Session.By_Email',
+    api: 'UserAccount.Session.ByEmail',
     req: { email, username },
   })
 

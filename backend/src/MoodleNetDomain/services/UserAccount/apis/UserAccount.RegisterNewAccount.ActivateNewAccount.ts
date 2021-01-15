@@ -22,14 +22,14 @@ export type ActivateNewAccountPersistence = (_: {
   ActiveUserAccount | Messages.NotFound | Messages.UsernameNotAvailable
 >
 
-export type Confirm_Email_Activate_Account_Api = Api<
+export type ConfirmEmailActivateAccountApi = Api<
   { token: string; password: string; username: string },
   MaybeSessionAuth
 >
 
-export const Confirm_Email_Activate_Account_Api_Handler = async () => {
+export const ConfirmEmailActivateAccountApiHandler = async () => {
   const { activateNewAccount } = await getAccountPersistence()
-  const handler: RespondApiHandler<Confirm_Email_Activate_Account_Api> = async ({
+  const handler: RespondApiHandler<ConfirmEmailActivateAccountApi> = async ({
     flow,
     req: { token, password, username },
   }) => {
@@ -45,7 +45,7 @@ export const Confirm_Email_Activate_Account_Api_Handler = async () => {
       const { username, _id } = maybeAccount
       const jwt = await signJwt({ account: maybeAccount })
       MoodleNet.emitEvent({
-        event: 'UserAccount.Register_New_Account.New_Account_Activated',
+        event: 'UserAccount.RegisterNewAccount.NewAccountActivated',
         flow,
         payload: { accountId: _id, username },
       })
@@ -61,7 +61,7 @@ export const activateAccount: MutationResolvers['activateAccount'] = async (
   { password, username, token }
 ) => {
   const { res } = await graphQLRequestApiCaller({
-    api: 'UserAccount.Register_New_Account.Confirm_Email_Activate_Account',
+    api: 'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount',
     req: { password, token, username },
   })
   if (res.___ERROR) {

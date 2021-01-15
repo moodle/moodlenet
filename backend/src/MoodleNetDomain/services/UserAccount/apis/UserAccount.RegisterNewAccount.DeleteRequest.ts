@@ -6,12 +6,12 @@ export type NewAccountRequestDeletePersistence = (_: {
   token: string
 }) => Promise<unknown>
 
-export type Register_New_Account_Delete_Request_Api = Api<{ token: string }, {}>
+export type RegisterNewAccountDeleteRequestApi = Api<{ token: string }, {}>
 
-export const Register_New_Account_Delete_Request_Api_Handler = async () => {
+export const RegisterNewAccountDeleteRequestApiHandler = async () => {
   const { deleteNewAccountRequest } = await getAccountPersistence()
 
-  const handler: RespondApiHandler<Register_New_Account_Delete_Request_Api> = async ({
+  const handler: RespondApiHandler<RegisterNewAccountDeleteRequestApi> = async ({
     req: { token },
   }) => {
     await deleteNewAccountRequest({

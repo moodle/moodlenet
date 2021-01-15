@@ -18,14 +18,14 @@ export type ChangePasswordPersistence = (_: {
   accountId: string
 }) => Promise<null | Messages.NotFound>
 
-export type Change_Password_Api = Api<
+export type ChangePasswordApi = Api<
   { username: string; currentPassword: string; newPassword: string },
   { success: true } | { success: false; reason: string }
 >
 
-export const Change_Password_Api_Handler = async () => {
+export const ChangePasswordApiHandler = async () => {
   const { changePassword } = await getAccountPersistence()
-  const handler: RespondApiHandler<Change_Password_Api> = async ({
+  const handler: RespondApiHandler<ChangePasswordApi> = async ({
     req: { newPassword, username, currentPassword },
   }) => {
     const account = await getVerifiedAccountByUsername({
@@ -64,7 +64,7 @@ export const changePassword: MutationResolvers['changePassword'] = async (
   } = loggedUserOnly({ context })
 
   const { res } = await graphQLRequestApiCaller({
-    api: 'UserAccount.Change_Password',
+    api: 'UserAccount.ChangePassword',
     req: {
       newPassword,
       currentPassword,

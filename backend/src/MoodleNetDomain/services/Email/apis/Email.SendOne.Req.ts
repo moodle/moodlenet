@@ -16,16 +16,13 @@ export type StoreSentEmailPersistence = (_: {
   result: SendResult
 }) => Promise<unknown>
 
-export type Send_Now_Api = Api<{ emailObj: EmailObj }, SendResult>
-export type Email_Sent_Event = Event<SendResult>
+export type SendNowApi = Api<{ emailObj: EmailObj }, SendResult>
+export type EmailSentEvent = Event<SendResult>
 
-export const Send_One_Now = () =>
+export const SendOneNow = () =>
   Promise.all([getEmailPersistence(), getSender()]).then(
     ([{ storeSentEmail }, { sendEmail }]) => {
-      const handler: RespondApiHandler<Send_Now_Api> = async ({
-        flow,
-        req,
-      }) => {
+      const handler: RespondApiHandler<SendNowApi> = async ({ flow, req }) => {
         const response = await sendEmail(req.emailObj)
         await storeSentEmail({
           email: req.emailObj,
@@ -33,7 +30,7 @@ export const Send_One_Now = () =>
           result: response,
         })
         MoodleNet.emitEvent({
-          event: 'Email.Send_One.Email_Sent',
+          event: 'Email.SendOne.EmailSent',
           flow,
           payload: response,
         })

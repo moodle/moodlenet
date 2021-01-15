@@ -9,18 +9,18 @@ export type CreateUserPersistence = (_: {
   username: string
 }) => Promise<UserVertex>
 
-export type User_Create_For_New_Account_Api = Api<
+export type UserCreateForNewAccountApi = Api<
   LookupEventType<
     MoodleNetDomain,
-    'UserAccount.Register_New_Account.New_Account_Activated'
+    'UserAccount.RegisterNewAccount.NewAccountActivated'
   >,
   { newUser: UserVertex | null }
 >
 
-export const User_Create_For_New_Account_Api_Handler = async () => {
+export const UserCreateForNewAccountApiHandler = async () => {
   const { createUser } = await getContentGraphPersistence()
 
-  const handler: RespondApiHandler<User_Create_For_New_Account_Api> = async ({
+  const handler: RespondApiHandler<UserCreateForNewAccountApi> = async ({
     req: { username },
   }) => {
     const user = await createUser({ username })

@@ -16,15 +16,15 @@ export type CreateUserFollowsUserPersistence = (_: {
   followed: string
 }) => Promise<UserFollowsUserEdge | CreateRelationEdgeErrorMsg>
 
-export type Create_User_Follows_User_Api = Api<
+export type CreateUserFollowsUserApi = Api<
   { follower: string; followed: string },
   { edge: UserFollowsUserEdge | CreateRelationEdgeErrorMsg }
 >
 
-export const getRespondApiHandler = async () => {
+export const CreateUserFollowsUserApiHandler = async () => {
   const { createUserFollowsUser } = await getContentGraphPersistence()
 
-  const handler: RespondApiHandler<Create_User_Follows_User_Api> = async ({
+  const handler: RespondApiHandler<CreateUserFollowsUserApi> = async ({
     req: { followed, follower },
   }) => {
     const edge = await createUserFollowsUser({ followed, follower })
@@ -42,7 +42,7 @@ export const followUserResolver: MutationResolvers['followUser'] = async (
   const auth = loggedUserOnly({ context })
   const follower = getAuthUserId(auth)
   const { res } = await graphQLRequestApiCaller({
-    api: 'ContentGraph.Follows.Create_User_Follows_User',
+    api: 'ContentGraph.Follows.CreateUserFollowsUser',
     req: { followed, follower },
   })
   if (res.___ERROR) {

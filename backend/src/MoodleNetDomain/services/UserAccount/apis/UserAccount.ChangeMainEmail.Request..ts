@@ -27,14 +27,14 @@ export type ChangeAccountEmailRequestPersistence = (_: {
 >
 
 export type ChangeAccountEmailRequest = { accountId: string; newEmail: string }
-export type Change_Account_Email_Request_Api = Api<
+export type ChangeAccountEmailRequestApi = Api<
   ChangeAccountEmailRequest,
   { success: true } | { success: false; reason: string }
 >
 
-export const Change_Account_Email_Request_Api_Handler = async () => {
+export const ChangeAccountEmailRequestApiHandler = async () => {
   const { changeAccountEmailRequest, getConfig } = await getAccountPersistence()
-  const handler: RespondApiHandler<Change_Account_Email_Request_Api> = async ({
+  const handler: RespondApiHandler<ChangeAccountEmailRequestApi> = async ({
     flow,
     req: { accountId, newEmail },
   }) => {
@@ -66,13 +66,13 @@ export const Change_Account_Email_Request_Api_Handler = async () => {
 
       await Promise.all([
         MoodleNet.callApi({
-          api: 'Email.Send_One.Send_Now',
+          api: 'Email.SendOne.SendNow',
           flow: userAccountRoutes.setRoute(flow, 'Change-Account-Email'),
           req: { emailObj },
           opts: { justEnqueue: true },
         }),
         MoodleNet.callApi({
-          api: 'UserAccount.Change_Main_Email.Delete_Request',
+          api: 'UserAccount.ChangeMainEmail.DeleteRequest',
           flow,
           req: { token },
           opts: {
@@ -103,7 +103,7 @@ export const changeEmailRequest: MutationResolvers['changeEmailRequest'] = async
   } = loggedUserOnly({ context })
 
   const { res } = await graphQLRequestApiCaller({
-    api: 'UserAccount.Change_Main_Email.Request',
+    api: 'UserAccount.ChangeMainEmail.Request',
     req: { newEmail, accountId },
   })
 

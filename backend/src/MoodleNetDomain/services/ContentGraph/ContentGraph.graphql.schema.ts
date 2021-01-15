@@ -1,5 +1,5 @@
 import { ServiceExecutableSchemaDefinition } from '../../MoodleNetGraphQL'
-import { followUserResolver as followUser } from './apis/ContentGraph.Follows.Create_User_Follows_User'
+import { followUserResolver as followUser } from './apis/ContentGraph.Follows.CreateUserFollowsUser'
 import { getContentGraphPersistence } from './ContentGraph.env'
 import { Resolvers } from './ContentGraph.graphql.gen'
 

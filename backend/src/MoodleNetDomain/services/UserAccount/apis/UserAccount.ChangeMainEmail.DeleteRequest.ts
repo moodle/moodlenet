@@ -6,12 +6,12 @@ export type ChangeAccountEmailRequestDeletePersistence = (_: {
   token: string
 }) => Promise<unknown>
 
-export type Change_Account_Email_Delete_Request_Api = Api<{ token: string }, {}>
+export type ChangeAccountEmailDeleteRequestApi = Api<{ token: string }, {}>
 
-export const Change_Account_Email_Delete_Request_Api_Handler = async () => {
+export const ChangeAccountEmailDeleteRequestApiHandler = async () => {
   const { deleteChangeAccountEmailRequest } = await getAccountPersistence()
 
-  const handler: RespondApiHandler<Change_Account_Email_Delete_Request_Api> = async ({
+  const handler: RespondApiHandler<ChangeAccountEmailDeleteRequestApi> = async ({
     req: { token },
   }) => {
     await deleteChangeAccountEmailRequest({

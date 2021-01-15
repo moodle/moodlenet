@@ -1,5 +1,5 @@
-import { CreateUserFollowsUserPersistence } from '../apis/ContentGraph.Follows.Create_User_Follows_User'
-import { CreateUserPersistence } from '../apis/ContentGraph.User.Create_For_New_Account.api'
+import { CreateUserFollowsUserPersistence } from '../apis/ContentGraph.Follows.CreateUserFollowsUser'
+import { CreateUserPersistence } from '../apis/ContentGraph.User.CreateForNewAccount.api'
 import { Resolvers } from '../ContentGraph.graphql.gen'
 
 export interface ContentGraphPersistence {
