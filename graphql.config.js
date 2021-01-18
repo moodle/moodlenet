@@ -1,6 +1,6 @@
 const mooRoot = `backend/src/MoodleNetDomain`
 const globGqlRoot = `${mooRoot}/MoodleNetGraphQL`
-const globSdl = `${globGqlRoot}/sdl/**/*.graphql`
+const globSdl = `${globGqlRoot}/global/**/*.graphql`
 
 const defConfig = (schema, rootValuesLoc) => ({
   "schema": schema,

@@ -1,4 +1,5 @@
 import { GraphQLApi } from '../../MoodleNetGraphQL'
+import { CreateCollectionContainsResourceApi } from './apis/ContentGraph.Contains.CreateCollectionContainsResource'
 import { CreateUserFollowsUserApi } from './apis/ContentGraph.Follows.CreateUserFollowsUser'
 import { UserCreateForNewAccountApi } from './apis/ContentGraph.User.CreateForNewAccount.api'
 
@@ -9,5 +10,8 @@ export type ContentGraph = {
   }
   Follows: {
     CreateUserFollowsUser: CreateUserFollowsUserApi
+  }
+  Contains: {
+    CreateCollectionContainsResource: CreateCollectionContainsResourceApi
   }
 }

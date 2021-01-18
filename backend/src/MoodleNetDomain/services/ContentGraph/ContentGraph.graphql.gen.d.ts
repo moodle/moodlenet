@@ -120,8 +120,8 @@ export type CreateCollectionInput = {
 
 export type Mutation = {
   __typename: 'Mutation';
+  addResourceToCollection: Maybe<CollectionContainsResource>;
   collectionReferencesSubject: Maybe<CollectionReferencesSubject>;
-  containResource: Maybe<CollectionContainsResource>;
   createCollection: Collection;
   createResource: Resource;
   createSubject: Maybe<Subject>;
@@ -133,14 +133,15 @@ export type Mutation = {
 };
 
 
-export type MutationCollectionReferencesSubjectArgs = {
-  collectionId: Maybe<Scalars['ID']>;
-  subjectId: Maybe<Scalars['ID']>;
+export type MutationAddResourceToCollectionArgs = {
+  resourceId: Scalars['ID'];
+  collectionId: Scalars['ID'];
 };
 
 
-export type MutationContainResourceArgs = {
-  resourceId: Maybe<Scalars['ID']>;
+export type MutationCollectionReferencesSubjectArgs = {
+  collectionId: Maybe<Scalars['ID']>;
+  subjectId: Maybe<Scalars['ID']>;
 };
 
 
@@ -919,8 +920,8 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
 };
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  addResourceToCollection: Resolver<Maybe<ResolversTypes['CollectionContainsResource']>, ParentType, ContextType, RequireFields<MutationAddResourceToCollectionArgs, 'resourceId' | 'collectionId'>>;
   collectionReferencesSubject: Resolver<Maybe<ResolversTypes['CollectionReferencesSubject']>, ParentType, ContextType, RequireFields<MutationCollectionReferencesSubjectArgs, never>>;
-  containResource: Resolver<Maybe<ResolversTypes['CollectionContainsResource']>, ParentType, ContextType, RequireFields<MutationContainResourceArgs, never>>;
   createCollection: Resolver<ResolversTypes['Collection'], ParentType, ContextType, RequireFields<MutationCreateCollectionArgs, never>>;
   createResource: Resolver<ResolversTypes['Resource'], ParentType, ContextType, RequireFields<MutationCreateResourceArgs, never>>;
   createSubject: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<MutationCreateSubjectArgs, 'subjectInput'>>;

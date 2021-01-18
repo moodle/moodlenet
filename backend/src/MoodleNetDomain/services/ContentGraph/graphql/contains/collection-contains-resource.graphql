@@ -23,5 +23,8 @@ type Collection {
 }
 
 type Mutation {
-  containResource(resourceId: ID): CollectionContainsResource
+  addResourceToCollection(
+    resourceId: ID!
+    collectionId: ID!
+  ): CollectionContainsResource
 }
