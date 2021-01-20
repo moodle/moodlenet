@@ -1,0 +1,19 @@
+type Follows implements IEdge {
+  _id: ID!
+  _meta: Meta!
+  _from: INode!
+  _to: INode!
+}
+
+union EdgeMutationPayload = Follows
+enum EdgeName {
+  Follows
+}
+
+input CreateEdgeInput {
+  Follows: Empty
+}
+
+# input UpdateEdgeInput {
+#   Follows: ##
+# }

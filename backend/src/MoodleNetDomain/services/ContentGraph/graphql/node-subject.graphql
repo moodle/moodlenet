@@ -1,0 +1,26 @@
+type Subject implements INode {
+  _id: ID!
+  _meta: Meta!
+  _edges(type: [EdgeTypeInput!]!, page: PageInput): Page
+  name: String!
+}
+
+union NodeQueryPayload = Subject
+union NodeMutationPayload = Subject
+enum NodeName {
+  Subject
+}
+
+input CreateNodeInput {
+  Subject: CreateSubjectInput
+}
+input CreateSubjectInput {
+  name: String!
+}
+
+input UpdateNodeInput {
+  Subject: UpdateSubjectInput
+}
+input UpdateSubjectInput {
+  name: String
+}

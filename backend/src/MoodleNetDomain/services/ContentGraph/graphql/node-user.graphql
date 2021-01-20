@@ -1,0 +1,19 @@
+type User implements INode {
+  _id: ID!
+  _meta: Meta!
+  _edges(type: [EdgeTypeInput!]!, page: PageInput): Page
+  displayName: String!
+}
+
+union NodeQueryPayload = User
+union NodeMutationPayload = User
+enum NodeName {
+  User
+}
+
+input UpdateNodeInput {
+  User: UpdateUserInput
+}
+input UpdateUserInput {
+  displayName: String
+}

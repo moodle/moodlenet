@@ -1,3 +1,0 @@
-interface Contains {
-  _id: ID!
-}

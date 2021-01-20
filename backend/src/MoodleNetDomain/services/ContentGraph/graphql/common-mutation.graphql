@@ -1,0 +1,58 @@
+union NodeMutationPayload = NodeMutationError
+enum NodeMutationErrorType {
+  NotFound
+  NotAuthorized
+  UnexpectedInput
+}
+type NodeMutationError {
+  error: NodeMutationErrorType!
+  details: String
+}
+
+union EdgeMutationPayload = EdgeMutationError
+enum EdgeMutationErrorType {
+  NotFound
+  NotAuthorized
+  UnexpectedInput
+}
+type EdgeMutationError {
+  error: EdgeMutationErrorType!
+  details: String
+}
+
+enum DeleteErrorType {
+  NotFound
+  NotAuthorized
+}
+type DeletePayload {
+  error: DeleteErrorType
+  details: String
+}
+
+type Mutation {
+  createEdge(edge: CreateEdgeInput!): EdgeMutationPayload!
+  createNode(node: CreateNodeInput!): NodeMutationPayload!
+  updateEdge(edge: UpdateEdgeInput!): EdgeMutationPayload!
+  updateNode(node: UpdateNodeInput!): NodeMutationPayload!
+  delete(_id: ID!): DeletePayload!
+}
+
+input CreateNodeInput {
+  _: Empty
+}
+
+input CreateEdgeInput {
+  _from: ID!
+  _to: ID!
+  # type: EdgeName!
+}
+
+input UpdateNodeInput {
+  _id: ID!
+  # type: NodeName!
+}
+
+input UpdateEdgeInput {
+  _id: ID!
+  # type: EdgeName!
+}

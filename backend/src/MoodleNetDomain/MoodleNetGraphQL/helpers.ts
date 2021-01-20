@@ -49,8 +49,13 @@ export function loadServiceSchema(_: { srvName: ServiceNames }) {
     {
       cwd: __dirname,
       loaders: [new GraphQLFileLoader()],
+      assumeValid: true,
       schemas: [
         makeExecutableSchema({
+          resolverValidationOptions: {
+            requireResolversToMatchSchema: 'ignore',
+          },
+
           typeDefs: stitchingDirectivesTypeDefs,
           schemaTransforms: [stitchingDirectivesValidator],
           directiveResolvers: directiveResolvers,
@@ -74,6 +79,9 @@ export const executableServiceSchema = (_: {
   const srvSchema = loadServiceSchema({ srvName })
   const { stitchingDirectivesValidator } = stitchingDirectives()
   const schema = makeExecutableSchema<Context>({
+    resolverValidationOptions: {
+      requireResolversToMatchSchema: 'ignore',
+    },
     schemaTransforms: [stitchingDirectivesValidator],
     typeDefs: printSchema(srvSchema),
     ...schemaDef,

@@ -1,0 +1,36 @@
+interface INode {
+  _id: ID
+  _meta: Meta!
+  _edges(type: [EdgeTypeInput!]!, page: PageInput): Page
+}
+
+interface IEdge {
+  _id: ID
+  _meta: Meta!
+  _from: INode!
+  _to: INode!
+}
+
+input EdgeTypeInput {
+  name: EdgeName!
+  node: NodeName!
+  rev: Boolean
+}
+
+enum NodeName {
+  _none
+}
+
+enum EdgeName {
+  _none
+}
+
+union Author = User
+type Meta {
+  created: ByAt!
+  lastUpdate: ByAt!
+}
+type ByAt {
+  by: Author!
+  at: Int!
+}
