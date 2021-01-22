@@ -5,16 +5,15 @@ import {
   createVertexCollectionIfNotExists,
 } from '../../../../../../lib/helpers/arango'
 import {
-  CollectionVertex,
-  ContainsEdge,
-  FollowsEdge,
-  LikesEdge,
-  ReferencesEdge,
-  ResourceVertex,
-  SubjectVertex,
-  UserVertex,
-} from '../../glyph'
-import {} from '../../types'
+  EdgeType,
+  Follows as FollowsP,
+  NodeType,
+  Subject as SubjectP,
+  User as UserP,
+} from '../../../ContentGraph.graphql.gen'
+import { edgeConstraints } from '../../graphDefs/edge-constraints'
+import { nodeConstraints } from '../../graphDefs/node-constraints'
+import { ShallowEdge, ShallowNode } from '../../types'
 
 interface ArangoContentGraphPersistenceEnv {
   url: string[]
@@ -40,99 +39,32 @@ export const database = createDatabaseIfNotExists({
   dbCreateOpts: {},
 })
 
-export const UserVertices = createVertexCollectionIfNotExists<UserVertex>({
-  name: 'User',
-  database,
-  createOpts: {},
-})
-
-export const SubjectVertices = createVertexCollectionIfNotExists<SubjectVertex>(
-  {
-    name: 'Subject',
+const createGraphNodeCollection = <Type extends NodeType>(nodeType: Type) => {
+  const _constraints = nodeConstraints[nodeType]
+  return createVertexCollectionIfNotExists<ShallowNode, Type>({
+    name: nodeType,
     database,
     createOpts: {},
-  }
-)
-
-export const CollectionVertices = createVertexCollectionIfNotExists<CollectionVertex>(
-  {
-    name: 'Collection',
+  })
+}
+const createGraphEdgeCollection = <Type extends EdgeType>(edgeType: Type) => {
+  const _constraints = edgeConstraints[edgeType]
+  return createEdgeCollectionIfNotExists<ShallowEdge, Type>({
+    name: edgeType,
     database,
     createOpts: {},
-  }
-)
+  })
+}
 
-export const ResourceVertices = createVertexCollectionIfNotExists<ResourceVertex>(
-  {
-    name: 'Resource',
-    database,
-    createOpts: {},
-  }
-)
+const UserP = createGraphNodeCollection(NodeType.User)
+const SubjectP = createGraphNodeCollection(NodeType.Subject)
+const FollowsP = createGraphEdgeCollection<EdgeType.Follows>(EdgeType.Follows)
 
-export const ContainsEdges = createEdgeCollectionIfNotExists<
-  ContainsEdge,
-  'Contains'
->({
-  name: 'Contains',
-  database,
-  createOpts: {},
-})
-
-export const FollowsEdges = createEdgeCollectionIfNotExists<
-  FollowsEdge,
-  'Follows'
->({
-  name: 'Follows',
-  database,
-  createOpts: {},
-})
-
-export const ReferencesEdges = createEdgeCollectionIfNotExists<
-  ReferencesEdge,
-  'References'
->({
-  name: 'References',
-  database,
-  createOpts: {},
-})
-
-export const LikesEdges = createEdgeCollectionIfNotExists<LikesEdge, 'Likes'>({
-  name: 'Likes',
-  database,
-  createOpts: {},
-})
-
-export const DBReady = Promise.all([
-  database,
-  UserVertices,
-  SubjectVertices,
-  FollowsEdges,
-  CollectionVertices,
-  ResourceVertices,
-  ContainsEdges,
-  LikesEdges,
-  ReferencesEdges,
-]).then(
-  ([
+export const DBReady = Promise.all([database, UserP, SubjectP, FollowsP]).then(
+  ([db, User, Subject, Follows]) => ({
     db,
-    UserVertices,
-    SubjectVertices,
-    FollowsEdges,
-    CollectionVertices,
-    ResourceVertices,
-    ContainsEdges,
-    LikesEdges,
-    ReferencesEdges,
-  ]) => ({
-    db,
-    UserVertices,
-    SubjectVertices,
-    FollowsEdges,
-    CollectionVertices,
-    ResourceVertices,
-    ContainsEdges,
-    LikesEdges,
-    ReferencesEdges,
+    User,
+    Subject,
+    Follows,
   })
 )

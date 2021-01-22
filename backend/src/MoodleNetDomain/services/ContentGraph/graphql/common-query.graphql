@@ -1,13 +1,17 @@
-union NodeQueryPayload = NodeQueryError
-enum NodeQueryErrorType {
-  NotFound
-  NotAuthorized
+union QueryNodePayload = QueryNodeSuccess | QueryNodeError
+type QueryNodeSuccess {
+  node: Node
 }
-type NodeQueryError {
-  error: NodeQueryErrorType!
+type QueryNodeError {
+  type: QueryNodeErrorType!
   details: String
 }
 
+enum QueryNodeErrorType {
+  NotFound
+  NotAuthorized
+}
+
 type Query {
-  node(_id: ID): NodeQueryPayload!
+  node(_id: ID!, nodeType: NodeType!): QueryNodePayload!
 }

@@ -1,16 +1,42 @@
-import { CreateCollectionContainsResourcePersistence } from '../apis/ContentGraph.Contains.CreateCollectionContainsResource'
-import { CreateUserFollowsUserPersistence } from '../apis/ContentGraph.Follows.CreateUserFollowsUser'
 import { CreateUserPersistence } from '../apis/ContentGraph.User.CreateForNewAccount.api'
-import { Resolvers } from '../ContentGraph.graphql.gen'
+import * as GQL from '../ContentGraph.graphql.gen'
+export * as Types from '../ContentGraph.graphql.gen'
+
+export const ROOTUserId = 'User/ROOT'
 
 export interface ContentGraphPersistence {
-  graphQLTypeResolvers: Omit<Resolvers, 'Mutation'>
+  graphQLTypeResolvers: Omit<GQL.Resolvers, 'Mutation' | 'Query'>
+  findNode(_: {
+    _id: string
+    nodeType?: GQL.NodeType | null
+  }): Promise<ShallowNode | null>
   createUser: CreateUserPersistence
-  createUserFollowsUser: CreateUserFollowsUserPersistence
-  createCollectionContainsResource: CreateCollectionContainsResourcePersistence
-  //config():Promise<Config>
+  // createEdge(_: { edge: CreateEdgeInput }): EdgeMutationPayload
+  // createNode(_: {
+  //   ctx: Context
+  //   nodeType: GQL.NodeType
+  //   data: CreateNodeData
+  // }): Promise<ShallowNode | null>
+  // updateEdge(_: { edge: UpdateEdgeInput }): EdgeMutationPayload
+  // updateNode(_: { node: UpdateNodeInput }): NodeMutationPayload
+  // deleteGlyph(_: { _id: string }): DeletePayload //config():Promise<Config>
 }
-export enum CreateRelationEdgeErrorMsg {
-  NO_SELF = 'no-self',
-  SOME_VERTEX_NOT_FOUND = 'some-vertex-not-found',
-}
+
+export type ShallowNode<N extends GQL.Node = GQL.Node> = Omit<N, '_edges'>
+export type ShallowEdge<E extends GQL.Edge = GQL.Edge> = Omit<
+  E,
+  '_from' | '_to'
+>
+
+export type CreateNodeData = Exclude<
+  GQL.CreateNodeInput[keyof GQL.CreateNodeInput],
+  null
+>
+export type QueryNodeShallowPayload = ShallowNode | GQL.QueryNodeError
+export type CreateNodeShallowPayload = ShallowNode | GQL.CreateNodeMutationError
+export type UpdateNodeShallowPayload = ShallowNode | GQL.UpdateNodeMutationError
+export type DeleteNodeShallowPayload = ShallowNode | GQL.DeleteNodeMutationError
+// export type QueryEdgeShallowPayload = ShallowNode | GQL.QueryEdgeError
+export type CreateEdgeShallowPayload = ShallowNode | GQL.CreateEdgeMutationError
+export type UpdateEdgeShallowPayload = ShallowNode | GQL.UpdateEdgeMutationError
+export type DeleteEdgeShallowPayload = ShallowNode | GQL.DeleteEdgeMutationError

@@ -5,8 +5,8 @@ type Follows implements IEdge {
   _to: INode!
 }
 
-union EdgeMutationPayload = Follows
-enum EdgeName {
+union Edge = Follows
+enum EdgeType {
   Follows
 }
 
@@ -14,6 +14,6 @@ input CreateEdgeInput {
   Follows: Empty
 }
 
-# input UpdateEdgeInput {
-#   Follows: ##
-# }
+input UpdateEdgeInput {
+  Follows: Empty
+}

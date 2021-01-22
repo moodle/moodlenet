@@ -10,7 +10,8 @@ const defConfig = (schema, rootValuesLoc) => ({
   ],
   "config": {
     "scalars": {
-      "DateTime": "Date"
+      "DateTime": "Date",
+      "Empty": "{}"
     },
     "contextType": `${rootValuesLoc}#Context`,
     "rootValueType": `${rootValuesLoc}#RootValue`,
@@ -25,7 +26,7 @@ const defConfig = (schema, rootValuesLoc) => ({
 const srvGenerates = ['UserAccount', 'ContentGraph']
   .reduce((collect, srvname) => {
     const srvBase = `${mooRoot}/services/${srvname}`
-    const tsDefsFilename = `${srvBase}/${srvname}.graphql.gen.d.ts`
+    const tsDefsFilename = `${srvBase}/${srvname}.graphql.gen.ts`
     const tsDefsConfig = {
       [tsDefsFilename]: defConfig([globSdl, `${srvBase}/graphql/**/*.graphql`], '../../MoodleNetGraphQL')
     }
@@ -36,7 +37,7 @@ const srvGenerates = ['UserAccount', 'ContentGraph']
   }, {})
 
 const globTypesConfig = {
-  [`${globGqlRoot}/global.graphql.gen.d.ts`]: defConfig([globSdl], '.')
+  [`${globGqlRoot}/global.graphql.gen.ts`]: defConfig([globSdl], '.')
 }
 const graphqlConfig = {
   "projects": {

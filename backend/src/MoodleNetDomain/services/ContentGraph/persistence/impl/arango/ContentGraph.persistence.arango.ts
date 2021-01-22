@@ -1,15 +1,13 @@
 import { ContentGraphPersistence } from '../../types'
-import { createCollectionContainsResource } from './apis/createCollectionContainsResource'
 import { createUser } from './apis/createUser'
-import { createUserFollowUser } from './apis/createUserFollowUser'
+import { findNode } from './apis/findNode'
 import { getGraphQLTypeResolvers } from './graphqlTypeResolvers'
 
-export const getArangoContentGraphPersistence = async (): Promise<ContentGraphPersistence> => {
+export const getArangoContentGraphPersistence = (): ContentGraphPersistence => {
   const persistence: ContentGraphPersistence = {
-    graphQLTypeResolvers: await getGraphQLTypeResolvers(),
-    createUser: await createUser,
-    createUserFollowsUser: await createUserFollowUser,
-    createCollectionContainsResource: await createCollectionContainsResource,
+    findNode: findNode,
+    createUser: createUser,
+    graphQLTypeResolvers: getGraphQLTypeResolvers(),
   }
   return persistence
 }

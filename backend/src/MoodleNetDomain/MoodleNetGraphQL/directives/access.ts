@@ -1,4 +1,4 @@
-import GQL from '../global.graphql.gen'
+import * as GQL from '../global.graphql.gen'
 
 export const access: GQL.DirectiveResolvers['access'] = async (
   _next, //: NextResolverFn<TResult>,

@@ -1,87 +1,139 @@
-import { Resolvers } from '../../../../ContentGraph.graphql.gen'
-import { Query } from './Query'
-import { Collection } from './Collection'
-import { Resource } from './Resource'
-import { Subject } from './Subject'
-import { User } from './User'
+import { Context } from '../../../../../../MoodleNetGraphQL'
+import { ShallowNode, Types } from '../../../types'
+import { DBReady } from '../ContentGraph.persistence.arango.env'
 
-export const getGraphQLTypeResolvers = async (): Promise<
-  Omit<Resolvers, 'Mutation'>
+export const getGraphQLTypeResolvers = (): Omit<
+  Types.Resolvers,
+  'Mutation' | 'Query'
 > => {
   return {
-    User: await User,
-    Subject: await Subject,
-    Query: await Query,
-    Collection: await Collection,
-    Resource: await Resource,
-    //
-    // default resolvers
-    //
-    Likes: {} as any,
+    User: NodeResolver as any,
+    Subject: NodeResolver as any,
     Follows: {} as any,
-    GraphEdge: {} as any,
-    GraphVertex: {} as any,
-    IUserFollowsSubject: {} as any,
-    IUserFollowsUser: {} as any,
+    ByAt: {} as any,
+    CreateEdgeMutationError: {} as any,
+    CreateEdgeMutationPayload: {} as any,
+    CreateEdgeMutationSuccess: {} as any,
+    CreateNodeMutationError: {} as any,
+    CreateNodeMutationPayload: {} as any,
+    CreateNodeMutationSuccess: {} as any,
+    DateTime: {} as any,
+    DeleteEdgeMutationError: {} as any,
+    DeleteEdgeMutationPayload: {} as any,
+    DeleteEdgeMutationSuccess: {} as any,
+    DeleteNodeMutationError: {} as any,
+    DeleteNodeMutationPayload: {} as any,
+    DeleteNodeMutationSuccess: {} as any,
+    Edge: {} as any,
+    Empty: {} as any,
+    IEdge: {} as any,
+    INode: {} as any,
+    Meta: {} as any,
+    Node: {} as any,
     Page: {} as any,
+    PageEdge: {} as any,
     PageInfo: {} as any,
-    SubjectFollower: {} as any,
-    SubjectFollowersPage: {} as any,
-    UserFollowsSubject: {} as any,
-    UserFollowsSubjectPage: {} as any,
-    UserFollowsUser: {} as any,
-    UserFollowsUserPage: {} as any,
-    SessionAccount: {} as any,
-    GraphPageEdge: {} as any,
-    ISubjectFollower: {} as any,
-    IUserFollower: {} as any,
-    SubjectFollowerEdge: {} as any,
-    UserFollower: {} as any,
-    UserFollowerEdge: {} as any,
-    UserFollowerPage: {} as any,
-    UserFollowsSubjectEdge: {} as any,
-    UserFollowsUserEdge: {} as any,
-    CollectionFollower: {} as any,
-    CollectionFollowerEdge: {} as any,
-    CollectionFollowersPage: {} as any,
-    ICollectionFollower: {} as any,
-    IUserFollowsCollection: {} as any,
-    UserFollowsCollection: {} as any,
-    UserFollowsCollectionEdge: {} as any,
-    UserFollowsCollectionPage: {} as any,
-    CollectionContainsResource: {} as any,
-    CollectionContainsResourceEdge: {} as any,
-    CollectionContainsResourcePage: {} as any,
-    Contains: {} as any,
-    ICollectionContainsResource: {} as any,
-    IResourceContainer: {} as any,
-    ResourceContainer: {} as any,
-    ResourceContainerEdge: {} as any,
-    ResourceContainersPage: {} as any,
-    IResourceLiker: {} as any,
-    IUserLikesResource: {} as any,
-    ResourceLiker: {} as any,
-    ResourceLikerEdge: {} as any,
-    ResourceLikersPage: {} as any,
-    UserLikesResource: {} as any,
-    UserLikesResourceEdge: {} as any,
-    UserLikesResourcePage: {} as any,
-    CollectionReferencesSubject: {} as any,
-    CollectionReferencesSubjectEdge: {} as any,
-    CollectionReferencesSubjectPage: {} as any,
-    ICollectionReferencesSubject: {} as any,
-    IResourceReferencesSubject: {} as any,
-    ISubjectCollectionReference: {} as any,
-    ISubjectResourceReference: {} as any,
-    References: {} as any,
-    ResourceReferencesSubject: {} as any,
-    ResourceReferencesSubjectEdge: {} as any,
-    ResourceReferencesSubjectPage: {} as any,
-    SubjectCollectionReference: {} as any,
-    SubjectCollectionReferenceEdge: {} as any,
-    SubjectCollectionReferencesPage: {} as any,
-    SubjectResourceReference: {} as any,
-    SubjectResourceReferenceEdge: {} as any,
-    SubjectResourceReferencesPage: {} as any,
+    UpdateEdgeMutationError: {} as any,
+    UpdateEdgeMutationPayload: {} as any,
+    UpdateEdgeMutationSuccess: {} as any,
+    UpdateNodeMutationError: {} as any,
+    UpdateNodeMutationPayload: {} as any,
+    UpdateNodeMutationSuccess: {} as any,
+    QueryNodeError: {} as any,
+    QueryNodePayload: {} as any,
+    QueryNodeSuccess: {} as any,
   }
+}
+
+const DEFAULT_PAGE_LENGTH = 10
+const NodeResolver: {
+  _edges: Types.ResolverFn<
+    Types.ResolversTypes['Page'],
+    ShallowNode,
+    Context,
+    Types.RequireFields<Types.INode_EdgesArgs, 'type'>
+  >
+} = {
+  async _edges(
+    { _id: parentId, _meta, __typename: parentNodeType },
+    { type: { name: edgeType, node: targetNodeType, rev }, page },
+    { auth: _auth },
+    _info
+  ) {
+    const mainSortProp = '_id'
+    const depth = [1, 1]
+
+    const { db } = await DBReady
+    const { after, first, last, before } = {
+      last: 0,
+      first: DEFAULT_PAGE_LENGTH,
+      before: page?.after,
+      ...page,
+    }
+    const afterPage = `${
+      after ? `FILTER edge.${mainSortProp} > "${after}"` : ``
+    }
+    SORT edge.${mainSortProp}
+    LIMIT ${Math.min(first || 0, DEFAULT_PAGE_LENGTH)}`
+
+    const beforeCurs = before || after
+    const getCursorToo = beforeCurs === after
+    const comparison = getCursorToo ? '<=' : '<'
+    const beforePage =
+      last && beforeCurs
+        ? `${
+            beforeCurs
+              ? `FILTER edge.${mainSortProp} ${comparison} "${beforeCurs}"`
+              : ``
+          }
+        SORT edge.${mainSortProp} DESC
+        LIMIT ${Math.min(last, DEFAULT_PAGE_LENGTH) + (getCursorToo ? 1 : 0)}`
+        : ``
+    const edgeTypeFrom = rev ? targetNodeType : parentNodeType
+    const edgeTypeTo = rev ? parentNodeType : targetNodeType
+    return Promise.all(
+      [afterPage, beforePage].map((page) => {
+        const q = page
+          ? `
+          FOR parentNode, edge 
+            IN ${depth.join('..')} 
+            ${rev ? 'INBOUND' : 'OUTBOUND'} 
+            "${parentId}" 
+            ${edgeType}
+            FILTER edge.from == '${edgeTypeFrom}' && edge.to == '${edgeTypeTo}'
+            
+            LET node = DOCUMENT(edge.${rev ? '_from' : '_to'})
+            
+            ${page}
+
+            RETURN  {
+              cursor: edge['${mainSortProp}'],
+              edge,
+              node
+            }
+          `
+          : null
+
+        console.log(q)
+        return q ? db.query(q).then((cursor) => cursor.all()) : []
+      })
+    ).then(([afterEdges, beforeEdges]) => {
+      const edges = beforeEdges
+        .reverse()
+        .concat(afterEdges)
+        .map((_) => ({ ..._, __typename: 'PageEdge' }))
+      const pageInfo: Types.PageInfo = {
+        startCursor: edges[0]?.cursor,
+        endCursor: edges[edges.length - 1]?.cursor,
+        hasNextPage: true,
+        hasPreviousPage: false,
+        __typename: 'PageInfo',
+      }
+      return {
+        __typename: 'Page',
+        pageInfo,
+        edges,
+      }
+    })
+  },
 }

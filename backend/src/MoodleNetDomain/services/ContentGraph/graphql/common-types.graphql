@@ -1,2 +1,36 @@
 scalar Empty
-scalar Date
+scalar DateTime
+
+interface INode {
+  _id: ID
+  _meta: Meta!
+  _edges(type: EdgeTypeInput!, page: PageInput): Page!
+}
+
+interface IEdge {
+  _id: ID
+  _meta: Meta!
+  _from: INode!
+  _to: INode!
+}
+
+input EdgeTypeInput {
+  name: EdgeType!
+  node: NodeType!
+  rev: Boolean
+}
+
+type Meta {
+  created: ByAt!
+  lastUpdate: ByAt!
+}
+type ByAt {
+  by: User!
+  at: DateTime!
+}
+
+enum Role {
+  User
+  Admin
+  Root
+}

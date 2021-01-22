@@ -76,7 +76,7 @@ export const createDatabaseIfNotExists = ({
   })
 }
 
-export const getDocumentById = async <Type = any>({
+export const getDocumentById = async <Type extends object = object>({
   db,
   sel,
 }: {
@@ -87,5 +87,6 @@ export const getDocumentById = async <Type = any>({
   const q = `RETURN DOCUMENT("${_id}")`
   const cursor = await db.query(q)
   const resp = await cursor.next()
+  cursor.kill()
   return resp
 }

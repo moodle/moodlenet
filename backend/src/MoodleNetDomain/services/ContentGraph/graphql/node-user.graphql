@@ -1,13 +1,13 @@
 type User implements INode {
   _id: ID!
   _meta: Meta!
-  _edges(type: [EdgeTypeInput!]!, page: PageInput): Page
+  _edges(type: EdgeTypeInput!, page: PageInput): Page!
+  role: Role!
   displayName: String!
 }
 
-union NodeQueryPayload = User
-union NodeMutationPayload = User
-enum NodeName {
+union Node = User
+enum NodeType {
   User
 }
 

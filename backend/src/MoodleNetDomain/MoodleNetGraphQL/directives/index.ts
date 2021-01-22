@@ -1,4 +1,4 @@
-import GQL from '../global.graphql.gen'
+import * as GQL from '../global.graphql.gen'
 import { access } from './access'
 
 const directiveResolvers: GQL.DirectiveResolvers = {

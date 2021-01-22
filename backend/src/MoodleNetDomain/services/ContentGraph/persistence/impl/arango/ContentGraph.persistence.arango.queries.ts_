@@ -3,13 +3,10 @@ import { EdgeCollection } from 'arangojs/collection'
 import { getDocumentById } from '../../../../../../lib/helpers/arango'
 import { Maybe } from '../../../../../../lib/helpers/types'
 import {
-  GraphEdge,
   PageInfo,
   PageInput,
   ResolverFn,
 } from '../../../ContentGraph.graphql.gen'
-import { GlyphEdge } from '../../glyph'
-import { CreateRelationEdgeErrorMsg } from '../../types'
 
 const DEFAULT_PAGE_LENGTH = 10
 
@@ -54,7 +51,7 @@ export const edgesResolver = <T extends { __typename: string }>(_: {
       `${filter}${filter ? ` ||` : `FILTER`} edge.__typename == "${typename}"`,
     ``
   )
-  const { _id: parentVertexId } = parent
+  const { _id: parentId } = parent
   const { after, first, last, before } = {
     last: 0,
     first: DEFAULT_PAGE_LENGTH,
@@ -85,7 +82,7 @@ export const edgesResolver = <T extends { __typename: string }>(_: {
         FOR v, edge 
           IN ${depth.join('..')} 
           ${reverse ? 'INBOUND' : 'OUTBOUND'} 
-          "${parentVertexId}" 
+          "${parentId}" 
           ${edgeCollection.name}
           ${typenamesFilter}
           
@@ -102,7 +99,7 @@ export const edgesResolver = <T extends { __typename: string }>(_: {
       console.log(q)
       return q
         ? db.query(q).then((cursor) =>
-            cursor.map<GraphEdge>(({ edge, node }) => ({
+            cursor.map<any>(({ edge, node }) => ({
               ...edge,
               node,
               cursor: node[mainSortProp],
@@ -125,7 +122,7 @@ export const edgesResolver = <T extends { __typename: string }>(_: {
     }
   })
 }
-
+/*
 export const createRelationEdge = async <Edge extends GlyphEdge>({
   db,
   _from,
@@ -232,3 +229,4 @@ export const getRelationEdge = async ({
               } 
             })`)
   ).next()
+*/

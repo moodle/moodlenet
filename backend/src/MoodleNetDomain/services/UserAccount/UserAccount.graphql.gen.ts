@@ -107,7 +107,7 @@ export type MutationCreateSessionArgs = {
 
 export type Query = {
   __typename: 'Query';
-  _null: Maybe<Scalars['Boolean']>;
+  _null_placeholder_for_useraccount: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -259,7 +259,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  _null: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  _null_placeholder_for_useraccount: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = Context> = {

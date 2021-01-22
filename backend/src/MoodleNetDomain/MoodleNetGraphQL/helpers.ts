@@ -11,22 +11,17 @@ import { GraphQLError, printSchema } from 'graphql'
 import { IncomingMessage } from 'http'
 import { MoodleNet } from '..'
 import { getGQLApiCallerExecutor, startGQLApiResponder } from '../../lib/domain'
-import { ApiLeaves, ApiReq, GraphQLDomainApi } from '../../lib/domain/api/types'
+import { ApiLeaves, ApiReq } from '../../lib/domain/api/types'
 import { newFlow } from '../../lib/domain/helpers'
 import { MoodleNetDomain } from '../MoodleNetDomain'
 import { INVALID_TOKEN, verifyJwt } from '../services/GraphQLHTTPGateway/JWT'
-import { SessionAccount } from '../services/UserAccount/UserAccount.graphql.gen'
 import directiveResolvers from './directives'
-
-export type Context = {
-  auth: MoodleNetExecutionAuth | null
-}
-
-export type RootValue = {}
-
-export type GraphQLApi = GraphQLDomainApi<Context, RootValue>
-
-export type ServiceNames = 'ContentGraph' | 'UserAccount'
+import {
+  Context,
+  MoodleNetExecutionAuth,
+  RootValue,
+  GQLServiceName,
+} from './types'
 
 export function loggedUserOnly(_: { context: Context }) {
   const { context } = _
@@ -36,7 +31,7 @@ export function loggedUserOnly(_: { context: Context }) {
   return context.auth
 }
 
-export function loadServiceSchema(_: { srvName: ServiceNames }) {
+export function loadServiceSchema(_: { srvName: GQLServiceName }) {
   //FIXME: can't apply directives resolvers
   const { srvName } = _
   const {
@@ -67,12 +62,8 @@ export function loadServiceSchema(_: { srvName: ServiceNames }) {
   return schema
 }
 
-export type ServiceExecutableSchemaDefinition = Omit<
-  IExecutableSchemaDefinition<Context>,
-  'typeDefs'
->
 export const executableServiceSchema = (_: {
-  srvName: ServiceNames
+  srvName: GQLServiceName
   schemaDef: Omit<IExecutableSchemaDefinition<Context>, 'typeDefs'>
 }) => {
   const { schemaDef, srvName } = _
@@ -88,6 +79,11 @@ export const executableServiceSchema = (_: {
   })
   return schema
 }
+
+export type ServiceExecutableSchemaDefinition = Omit<
+  IExecutableSchemaDefinition<Context>,
+  'typeDefs'
+>
 export async function startMoodleNetGQLApiResponder({
   srvName,
   executableSchemaDef,
@@ -95,7 +91,7 @@ export async function startMoodleNetGQLApiResponder({
   executableSchemaDef:
     | ServiceExecutableSchemaDefinition
     | Promise<ServiceExecutableSchemaDefinition>
-  srvName: ServiceNames
+  srvName: GQLServiceName
 }) {
   const api = MNServiceGQLApiName(srvName)
   const schema = executableServiceSchema({
@@ -112,7 +108,7 @@ export async function startMoodleNetGQLApiResponder({
 export function getServiceSubschemaConfig({
   srvName,
 }: {
-  srvName: ServiceNames
+  srvName: GQLServiceName
 }) {
   const { stitchingDirectivesTransformer } = stitchingDirectives()
   const schema = loadServiceSchema({ srvName })
@@ -147,7 +143,8 @@ export const graphQLRequestApiCaller = <
     req,
   })
 
-const MNServiceGQLApiName = (srvName: ServiceNames) => `${srvName}.GQL` as const
+const MNServiceGQLApiName = (srvName: GQLServiceName) =>
+  `${srvName}.GQL` as const
 
 export function atMergeQueryRootFieldsRemover() {
   return new FilterRootFields(
@@ -177,11 +174,6 @@ export function getExecutionGlobalValues(
     },
     root: {},
   }
-}
-
-export type MoodleNetExecutionAuth = {
-  // TODO: May prefer to define an independent type for this, mapped from UserAccount#SessionAccount, instead of direct usage
-  sessionAccount: SessionAccount
 }
 
 //FIXME: implement proper typeguard
