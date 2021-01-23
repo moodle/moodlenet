@@ -15,7 +15,6 @@ import { ApiLeaves, ApiReq } from '../../lib/domain/api/types'
 import { newFlow } from '../../lib/domain/helpers'
 import { MoodleNetDomain } from '../MoodleNetDomain'
 import { INVALID_TOKEN, verifyJwt } from '../services/GraphQLHTTPGateway/JWT'
-import directiveResolvers from './directives'
 import {
   Context,
   MoodleNetExecutionAuth,
@@ -47,13 +46,13 @@ export function loadServiceSchema(_: { srvName: GQLServiceName }) {
       assumeValid: true,
       schemas: [
         makeExecutableSchema({
-          resolverValidationOptions: {
-            requireResolversToMatchSchema: 'ignore',
-          },
+          // resolverValidationOptions: {
+          //   requireResolversToMatchSchema: 'ignore',
+          // },
 
           typeDefs: stitchingDirectivesTypeDefs,
           schemaTransforms: [stitchingDirectivesValidator],
-          directiveResolvers: directiveResolvers,
+          directiveResolvers: {}, // directiveResolvers,
         }),
       ],
     }
@@ -70,9 +69,9 @@ export const executableServiceSchema = (_: {
   const srvSchema = loadServiceSchema({ srvName })
   const { stitchingDirectivesValidator } = stitchingDirectives()
   const schema = makeExecutableSchema<Context>({
-    resolverValidationOptions: {
-      requireResolversToMatchSchema: 'ignore',
-    },
+    // resolverValidationOptions: {
+    //   requireResolversToMatchSchema: 'ignore',
+    // },
     schemaTransforms: [stitchingDirectivesValidator],
     typeDefs: printSchema(srvSchema),
     ...schemaDef,
