@@ -39,11 +39,11 @@ export const getContentGraphServiceExecutableSchemaDefinition = async (): Promis
           return accessRead.nodeQueryErrorNotAuthorized(null)
         }
 
-        const result: QueryNodeSuccess = {
-          node: shallowNode as Node,
+        const queryNodeSuccess: QueryNodeSuccess = {
+          result: shallowNode as Node,
           __typename: 'QueryNodeSuccess',
         }
-        return result
+        return queryNodeSuccess
       },
     },
     Mutation: {} as any,

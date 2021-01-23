@@ -5,7 +5,7 @@ export * as Types from '../ContentGraph.graphql.gen'
 export const ROOTUserId = 'User/ROOT'
 
 export interface ContentGraphPersistence {
-  graphQLTypeResolvers: Omit<GQL.Resolvers, 'Mutation' | 'Query'>
+  graphQLTypeResolvers: GQL.Resolvers
   findNode(_: {
     _id: string
     nodeType?: GQL.NodeType | null
@@ -22,10 +22,10 @@ export interface ContentGraphPersistence {
   // deleteGlyph(_: { _id: string }): DeletePayload //config():Promise<Config>
 }
 
-export type ShallowNode<N extends GQL.Node = GQL.Node> = Omit<N, '_edges'>
+export type ShallowNode<N extends GQL.Node = GQL.Node> = Omit<N, '_rel'>
 export type ShallowEdge<E extends GQL.Edge = GQL.Edge> = Omit<
   E,
-  '_from' | '_to'
+  '___ nothing to omit ___'
 >
 
 export type CreateNodeData = Exclude<

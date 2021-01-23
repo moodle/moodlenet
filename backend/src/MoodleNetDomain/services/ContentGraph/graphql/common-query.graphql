@@ -1,6 +1,6 @@
 union QueryNodePayload = QueryNodeSuccess | QueryNodeError
 type QueryNodeSuccess {
-  node: Node
+  result: Node
 }
 type QueryNodeError {
   type: QueryNodeErrorType!

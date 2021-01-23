@@ -37,6 +37,8 @@ export type Mutation = {
 
 export type MutationCreateEdgeArgs = {
   edgeType: EdgeType;
+  from: Scalars['ID'];
+  to: Scalars['ID'];
   edge: CreateEdgeInput;
 };
 
@@ -88,17 +90,13 @@ export enum CreateNodeMutationErrorType {
   UnexpectedInput = 'UnexpectedInput'
 }
 
-export type CreateEdgeInput = {
-  Follows: Maybe<Scalars['Empty']>;
-  _from: Scalars['ID'];
-  _to: Scalars['ID'];
-};
-
 export type CreateEdgeMutationPayload = CreateEdgeMutationSuccess | CreateEdgeMutationError;
 
 export type CreateEdgeMutationSuccess = {
   __typename: 'CreateEdgeMutationSuccess';
   edge: Maybe<Edge>;
+  from: Maybe<Node>;
+  to: Maybe<Node>;
 };
 
 export type CreateEdgeMutationError = {
@@ -148,6 +146,8 @@ export type UpdateEdgeMutationPayload = UpdateEdgeMutationSuccess | UpdateEdgeMu
 export type UpdateEdgeMutationSuccess = {
   __typename: 'UpdateEdgeMutationSuccess';
   edge: Maybe<Edge>;
+  from: Maybe<Node>;
+  to: Maybe<Node>;
 };
 
 export type UpdateEdgeMutationError = {
@@ -171,6 +171,8 @@ export type DeleteEdgeMutationPayload = DeleteEdgeMutationSuccess | DeleteEdgeMu
 export type DeleteEdgeMutationSuccess = {
   __typename: 'DeleteEdgeMutationSuccess';
   edge: Maybe<Edge>;
+  from: Maybe<Node>;
+  to: Maybe<Node>;
 };
 
 export type DeleteEdgeMutationError = {
@@ -238,7 +240,7 @@ export type QueryNodePayload = QueryNodeSuccess | QueryNodeError;
 
 export type QueryNodeSuccess = {
   __typename: 'QueryNodeSuccess';
-  node: Maybe<Node>;
+  result: Maybe<Node>;
 };
 
 export type QueryNodeError = {
@@ -268,24 +270,22 @@ export type QueryNodeArgs = {
 export type INode = {
   _id: Maybe<Scalars['ID']>;
   _meta: Meta;
-  _edges: Page;
+  _rel: Page;
 };
 
 
-export type INode_EdgesArgs = {
-  type: EdgeTypeInput;
+export type INode_RelArgs = {
+  edge: EdgeTypeInput;
   page: Maybe<PageInput>;
 };
 
 export type IEdge = {
   _id: Maybe<Scalars['ID']>;
   _meta: Meta;
-  _from: INode;
-  _to: INode;
 };
 
 export type EdgeTypeInput = {
-  name: EdgeType;
+  type: EdgeType;
   node: NodeType;
   rev: Maybe<Scalars['Boolean']>;
 };
@@ -312,8 +312,6 @@ export type Follows = IEdge & {
   __typename: 'Follows';
   _id: Scalars['ID'];
   _meta: Meta;
-  _from: INode;
-  _to: INode;
 };
 
 export type Edge = Follows;
@@ -322,17 +320,21 @@ export enum EdgeType {
   Follows = 'Follows'
 }
 
+export type CreateEdgeInput = {
+  Follows: Maybe<Scalars['Empty']>;
+};
+
 export type Subject = INode & {
   __typename: 'Subject';
   _id: Scalars['ID'];
   _meta: Meta;
-  _edges: Page;
+  _rel: Page;
   name: Scalars['String'];
 };
 
 
-export type Subject_EdgesArgs = {
-  type: EdgeTypeInput;
+export type Subject_RelArgs = {
+  edge: EdgeTypeInput;
   page: Maybe<PageInput>;
 };
 
@@ -359,14 +361,14 @@ export type User = INode & {
   __typename: 'User';
   _id: Scalars['ID'];
   _meta: Meta;
-  _edges: Page;
+  _rel: Page;
   role: Role;
   displayName: Scalars['String'];
 };
 
 
-export type User_EdgesArgs = {
-  type: EdgeTypeInput;
+export type User_RelArgs = {
+  edge: EdgeTypeInput;
   page: Maybe<PageInput>;
 };
 
@@ -454,15 +456,14 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   AccessLevel: AccessLevel;
   Mutation: ResolverTypeWrapper<RootValue>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   CreateNodeMutationPayload: ResolversTypes['CreateNodeMutationSuccess'] | ResolversTypes['CreateNodeMutationError'];
   CreateNodeMutationSuccess: ResolverTypeWrapper<Omit<CreateNodeMutationSuccess, 'node'> & { node: Maybe<ResolversTypes['Node']> }>;
   CreateNodeMutationError: ResolverTypeWrapper<CreateNodeMutationError>;
   String: ResolverTypeWrapper<Scalars['String']>;
   CreateNodeMutationErrorType: CreateNodeMutationErrorType;
-  CreateEdgeInput: CreateEdgeInput;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
   CreateEdgeMutationPayload: ResolversTypes['CreateEdgeMutationSuccess'] | ResolversTypes['CreateEdgeMutationError'];
-  CreateEdgeMutationSuccess: ResolverTypeWrapper<Omit<CreateEdgeMutationSuccess, 'edge'> & { edge: Maybe<ResolversTypes['Edge']> }>;
+  CreateEdgeMutationSuccess: ResolverTypeWrapper<Omit<CreateEdgeMutationSuccess, 'edge' | 'from' | 'to'> & { edge: Maybe<ResolversTypes['Edge']>, from: Maybe<ResolversTypes['Node']>, to: Maybe<ResolversTypes['Node']> }>;
   CreateEdgeMutationError: ResolverTypeWrapper<CreateEdgeMutationError>;
   CreateEdgeMutationErrorType: CreateEdgeMutationErrorType;
   UpdateNodeInput: UpdateNodeInput;
@@ -472,12 +473,12 @@ export type ResolversTypes = {
   UpdateNodeMutationErrorType: UpdateNodeMutationErrorType;
   UpdateEdgeInput: UpdateEdgeInput;
   UpdateEdgeMutationPayload: ResolversTypes['UpdateEdgeMutationSuccess'] | ResolversTypes['UpdateEdgeMutationError'];
-  UpdateEdgeMutationSuccess: ResolverTypeWrapper<Omit<UpdateEdgeMutationSuccess, 'edge'> & { edge: Maybe<ResolversTypes['Edge']> }>;
+  UpdateEdgeMutationSuccess: ResolverTypeWrapper<Omit<UpdateEdgeMutationSuccess, 'edge' | 'from' | 'to'> & { edge: Maybe<ResolversTypes['Edge']>, from: Maybe<ResolversTypes['Node']>, to: Maybe<ResolversTypes['Node']> }>;
   UpdateEdgeMutationError: ResolverTypeWrapper<UpdateEdgeMutationError>;
   UpdateEdgeMutationErrorType: UpdateEdgeMutationErrorType;
   DeleteEdgeInput: DeleteEdgeInput;
   DeleteEdgeMutationPayload: ResolversTypes['DeleteEdgeMutationSuccess'] | ResolversTypes['DeleteEdgeMutationError'];
-  DeleteEdgeMutationSuccess: ResolverTypeWrapper<Omit<DeleteEdgeMutationSuccess, 'edge'> & { edge: Maybe<ResolversTypes['Edge']> }>;
+  DeleteEdgeMutationSuccess: ResolverTypeWrapper<Omit<DeleteEdgeMutationSuccess, 'edge' | 'from' | 'to'> & { edge: Maybe<ResolversTypes['Edge']>, from: Maybe<ResolversTypes['Node']>, to: Maybe<ResolversTypes['Node']> }>;
   DeleteEdgeMutationError: ResolverTypeWrapper<DeleteEdgeMutationError>;
   DeleteEdgeMutationErrorType: DeleteEdgeMutationErrorType;
   DeleteNodeInput: DeleteNodeInput;
@@ -492,7 +493,7 @@ export type ResolversTypes = {
   PageInput: PageInput;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   QueryNodePayload: ResolversTypes['QueryNodeSuccess'] | ResolversTypes['QueryNodeError'];
-  QueryNodeSuccess: ResolverTypeWrapper<Omit<QueryNodeSuccess, 'node'> & { node: Maybe<ResolversTypes['Node']> }>;
+  QueryNodeSuccess: ResolverTypeWrapper<Omit<QueryNodeSuccess, 'result'> & { result: Maybe<ResolversTypes['Node']> }>;
   QueryNodeError: ResolverTypeWrapper<QueryNodeError>;
   QueryNodeErrorType: QueryNodeErrorType;
   Query: ResolverTypeWrapper<RootValue>;
@@ -507,6 +508,7 @@ export type ResolversTypes = {
   Follows: ResolverTypeWrapper<Follows>;
   Edge: ResolversTypes['Follows'];
   EdgeType: EdgeType;
+  CreateEdgeInput: CreateEdgeInput;
   Subject: ResolverTypeWrapper<Subject>;
   Node: ResolversTypes['Subject'] | ResolversTypes['User'];
   NodeType: NodeType;
@@ -520,14 +522,13 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Mutation: RootValue;
+  ID: Scalars['ID'];
   CreateNodeMutationPayload: ResolversParentTypes['CreateNodeMutationSuccess'] | ResolversParentTypes['CreateNodeMutationError'];
   CreateNodeMutationSuccess: Omit<CreateNodeMutationSuccess, 'node'> & { node: Maybe<ResolversParentTypes['Node']> };
   CreateNodeMutationError: CreateNodeMutationError;
   String: Scalars['String'];
-  CreateEdgeInput: CreateEdgeInput;
-  ID: Scalars['ID'];
   CreateEdgeMutationPayload: ResolversParentTypes['CreateEdgeMutationSuccess'] | ResolversParentTypes['CreateEdgeMutationError'];
-  CreateEdgeMutationSuccess: Omit<CreateEdgeMutationSuccess, 'edge'> & { edge: Maybe<ResolversParentTypes['Edge']> };
+  CreateEdgeMutationSuccess: Omit<CreateEdgeMutationSuccess, 'edge' | 'from' | 'to'> & { edge: Maybe<ResolversParentTypes['Edge']>, from: Maybe<ResolversParentTypes['Node']>, to: Maybe<ResolversParentTypes['Node']> };
   CreateEdgeMutationError: CreateEdgeMutationError;
   UpdateNodeInput: UpdateNodeInput;
   UpdateNodeMutationPayload: ResolversParentTypes['UpdateNodeMutationSuccess'] | ResolversParentTypes['UpdateNodeMutationError'];
@@ -535,11 +536,11 @@ export type ResolversParentTypes = {
   UpdateNodeMutationError: UpdateNodeMutationError;
   UpdateEdgeInput: UpdateEdgeInput;
   UpdateEdgeMutationPayload: ResolversParentTypes['UpdateEdgeMutationSuccess'] | ResolversParentTypes['UpdateEdgeMutationError'];
-  UpdateEdgeMutationSuccess: Omit<UpdateEdgeMutationSuccess, 'edge'> & { edge: Maybe<ResolversParentTypes['Edge']> };
+  UpdateEdgeMutationSuccess: Omit<UpdateEdgeMutationSuccess, 'edge' | 'from' | 'to'> & { edge: Maybe<ResolversParentTypes['Edge']>, from: Maybe<ResolversParentTypes['Node']>, to: Maybe<ResolversParentTypes['Node']> };
   UpdateEdgeMutationError: UpdateEdgeMutationError;
   DeleteEdgeInput: DeleteEdgeInput;
   DeleteEdgeMutationPayload: ResolversParentTypes['DeleteEdgeMutationSuccess'] | ResolversParentTypes['DeleteEdgeMutationError'];
-  DeleteEdgeMutationSuccess: Omit<DeleteEdgeMutationSuccess, 'edge'> & { edge: Maybe<ResolversParentTypes['Edge']> };
+  DeleteEdgeMutationSuccess: Omit<DeleteEdgeMutationSuccess, 'edge' | 'from' | 'to'> & { edge: Maybe<ResolversParentTypes['Edge']>, from: Maybe<ResolversParentTypes['Node']>, to: Maybe<ResolversParentTypes['Node']> };
   DeleteEdgeMutationError: DeleteEdgeMutationError;
   DeleteNodeInput: DeleteNodeInput;
   DeleteNodeMutationPayload: ResolversParentTypes['DeleteNodeMutationSuccess'] | ResolversParentTypes['DeleteNodeMutationError'];
@@ -552,7 +553,7 @@ export type ResolversParentTypes = {
   PageInput: PageInput;
   Int: Scalars['Int'];
   QueryNodePayload: ResolversParentTypes['QueryNodeSuccess'] | ResolversParentTypes['QueryNodeError'];
-  QueryNodeSuccess: Omit<QueryNodeSuccess, 'node'> & { node: Maybe<ResolversParentTypes['Node']> };
+  QueryNodeSuccess: Omit<QueryNodeSuccess, 'result'> & { result: Maybe<ResolversParentTypes['Node']> };
   QueryNodeError: QueryNodeError;
   Query: RootValue;
   Empty: Scalars['Empty'];
@@ -564,6 +565,7 @@ export type ResolversParentTypes = {
   ByAt: ByAt;
   Follows: Follows;
   Edge: ResolversParentTypes['Follows'];
+  CreateEdgeInput: CreateEdgeInput;
   Subject: Subject;
   Node: ResolversParentTypes['Subject'] | ResolversParentTypes['User'];
   CreateNodeInput: CreateNodeInput;
@@ -578,7 +580,7 @@ export type AccessDirectiveArgs = {   level: Array<AccessLevel>; };
 export type AccessDirectiveResolver<Result, Parent, ContextType = Context, Args = AccessDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createEdge: Resolver<ResolversTypes['CreateEdgeMutationPayload'], ParentType, ContextType, RequireFields<MutationCreateEdgeArgs, 'edgeType' | 'edge'>>;
+  createEdge: Resolver<ResolversTypes['CreateEdgeMutationPayload'], ParentType, ContextType, RequireFields<MutationCreateEdgeArgs, 'edgeType' | 'from' | 'to' | 'edge'>>;
   createNode: Resolver<ResolversTypes['CreateNodeMutationPayload'], ParentType, ContextType, RequireFields<MutationCreateNodeArgs, 'nodeType' | 'node'>>;
   updateEdge: Resolver<ResolversTypes['UpdateEdgeMutationPayload'], ParentType, ContextType, RequireFields<MutationUpdateEdgeArgs, 'edgeType' | 'edge'>>;
   updateNode: Resolver<ResolversTypes['UpdateNodeMutationPayload'], ParentType, ContextType, RequireFields<MutationUpdateNodeArgs, 'nodeType' | 'node'>>;
@@ -607,6 +609,8 @@ export type CreateEdgeMutationPayloadResolvers<ContextType = Context, ParentType
 
 export type CreateEdgeMutationSuccessResolvers<ContextType = Context, ParentType extends ResolversParentTypes['CreateEdgeMutationSuccess'] = ResolversParentTypes['CreateEdgeMutationSuccess']> = {
   edge: Resolver<Maybe<ResolversTypes['Edge']>, ParentType, ContextType>;
+  from: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType>;
+  to: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -637,6 +641,8 @@ export type UpdateEdgeMutationPayloadResolvers<ContextType = Context, ParentType
 
 export type UpdateEdgeMutationSuccessResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UpdateEdgeMutationSuccess'] = ResolversParentTypes['UpdateEdgeMutationSuccess']> = {
   edge: Resolver<Maybe<ResolversTypes['Edge']>, ParentType, ContextType>;
+  from: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType>;
+  to: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -652,6 +658,8 @@ export type DeleteEdgeMutationPayloadResolvers<ContextType = Context, ParentType
 
 export type DeleteEdgeMutationSuccessResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeleteEdgeMutationSuccess'] = ResolversParentTypes['DeleteEdgeMutationSuccess']> = {
   edge: Resolver<Maybe<ResolversTypes['Edge']>, ParentType, ContextType>;
+  from: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType>;
+  to: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -702,7 +710,7 @@ export type QueryNodePayloadResolvers<ContextType = Context, ParentType extends 
 };
 
 export type QueryNodeSuccessResolvers<ContextType = Context, ParentType extends ResolversParentTypes['QueryNodeSuccess'] = ResolversParentTypes['QueryNodeSuccess']> = {
-  node: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType>;
+  result: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -728,15 +736,13 @@ export type INodeResolvers<ContextType = Context, ParentType extends ResolversPa
   __resolveType: TypeResolveFn<'Subject' | 'User', ParentType, ContextType>;
   _id: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
-  _edges: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<INode_EdgesArgs, 'type'>>;
+  _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<INode_RelArgs, 'edge'>>;
 };
 
 export type IEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['IEdge'] = ResolversParentTypes['IEdge']> = {
   __resolveType: TypeResolveFn<'Follows', ParentType, ContextType>;
   _id: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
-  _from: Resolver<ResolversTypes['INode'], ParentType, ContextType>;
-  _to: Resolver<ResolversTypes['INode'], ParentType, ContextType>;
 };
 
 export type MetaResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Meta'] = ResolversParentTypes['Meta']> = {
@@ -754,8 +760,6 @@ export type ByAtResolvers<ContextType = Context, ParentType extends ResolversPar
 export type FollowsResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Follows'] = ResolversParentTypes['Follows']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
-  _from: Resolver<ResolversTypes['INode'], ParentType, ContextType>;
-  _to: Resolver<ResolversTypes['INode'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -766,7 +770,7 @@ export type EdgeResolvers<ContextType = Context, ParentType extends ResolversPar
 export type SubjectResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
-  _edges: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Subject_EdgesArgs, 'type'>>;
+  _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Subject_RelArgs, 'edge'>>;
   name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -778,7 +782,7 @@ export type NodeResolvers<ContextType = Context, ParentType extends ResolversPar
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
-  _edges: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<User_EdgesArgs, 'type'>>;
+  _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<User_RelArgs, 'edge'>>;
   role: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
   displayName: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

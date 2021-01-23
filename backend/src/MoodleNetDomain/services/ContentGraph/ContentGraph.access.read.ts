@@ -17,6 +17,7 @@ export const firstStageCheckPublicAccess = (_: {
   }
   return [auth.sessionAccount, allow] as const
 }
+
 export const secondStageCheckAccessByDocMeta = (_: {
   ctx: Context
   meta: Types.Meta

@@ -1,6 +1,8 @@
 type Mutation {
   createEdge(
     edgeType: EdgeType!
+    from: ID!
+    to: ID!
     edge: CreateEdgeInput!
   ): CreateEdgeMutationPayload!
 
@@ -50,15 +52,14 @@ enum CreateNodeMutationErrorType {
 # $ CreateNode
 
 # ^ CreateEdge
-input CreateEdgeInput {
-  _from: ID!
-  _to: ID!
-}
+# input CreateEdgeInput {}
 union CreateEdgeMutationPayload =
     CreateEdgeMutationSuccess
   | CreateEdgeMutationError
 type CreateEdgeMutationSuccess {
   edge: Edge
+  from: Node
+  to: Node
 }
 type CreateEdgeMutationError {
   type: CreateEdgeMutationErrorType!
@@ -101,6 +102,8 @@ union UpdateEdgeMutationPayload =
   | UpdateEdgeMutationError
 type UpdateEdgeMutationSuccess {
   edge: Edge
+  from: Node
+  to: Node
 }
 type UpdateEdgeMutationError {
   type: UpdateEdgeMutationErrorType!
@@ -122,6 +125,8 @@ union DeleteEdgeMutationPayload =
   | DeleteEdgeMutationError
 type DeleteEdgeMutationSuccess {
   edge: Edge
+  from: Node
+  to: Node
 }
 type DeleteEdgeMutationError {
   type: DeleteEdgeMutationErrorType

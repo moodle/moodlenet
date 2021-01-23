@@ -1,7 +1,7 @@
 type Subject implements INode {
   _id: ID!
   _meta: Meta!
-  _edges(type: EdgeTypeInput!, page: PageInput): Page!
+  _rel(edge: EdgeTypeInput!, page: PageInput): Page!
   name: String!
 }
 
