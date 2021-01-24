@@ -4,10 +4,10 @@ import { Api } from '../../../../lib/domain/api/types'
 import { Event } from '../../../../lib/domain/event/types'
 import { graphQLRequestApiCaller } from '../../../MoodleNetGraphQL'
 import { ActiveUserAccount, Messages } from '../persistence/types'
-import { MaybeSessionAuth } from '../UserAccount'
+import { SessionAuth } from '../UserAccount'
 import { getAccountPersistence } from '../UserAccount.env'
-import { MutationResolvers } from '../UserAccount.graphql.gen'
-import { hashPassword, signJwt } from '../UserAccount.helpers'
+import { MutationResolvers, Session } from '../UserAccount.graphql.gen'
+import { hashPassword } from '../UserAccount.helpers'
 
 export type NewAccountActivatedEvent = Event<{
   accountId: string
@@ -24,7 +24,7 @@ export type ActivateNewAccountPersistence = (_: {
 
 export type ConfirmEmailActivateAccountApi = Api<
   { token: string; password: string; username: string },
-  MaybeSessionAuth
+  SessionAuth
 >
 
 export const ConfirmEmailActivateAccountApiHandler = async () => {
@@ -40,17 +40,16 @@ export const ConfirmEmailActivateAccountApiHandler = async () => {
       password: hashedPassword,
     })
     if (typeof maybeAccount === 'string') {
-      return { auth: null }
+      return { userAccount: null }
     } else {
       const { username, _id } = maybeAccount
-      const jwt = await signJwt({ account: maybeAccount })
       MoodleNet.emitEvent({
         event: 'UserAccount.RegisterNewAccount.NewAccountActivated',
         flow,
         payload: { accountId: _id, username },
       })
 
-      return { auth: { jwt, userAccount: maybeAccount } }
+      return { userAccount: maybeAccount }
     }
   }
   return handler
@@ -70,22 +69,21 @@ export const activateAccount: MutationResolvers['activateAccount'] = async (
       message: res.___ERROR.msg,
       auth: null,
     }
-  } else if (!res.auth) {
-    return {
+  } else if (!res.userAccount) {
+    const session: Session = {
       __typename: 'Session',
       auth: null,
       message: 'not found',
     }
+    return session
   } else {
     const {
-      jwt,
       userAccount: { changeEmailRequest, username, email, _id },
-    } = res.auth
-    return {
+    } = res
+    const session: Session = {
       __typename: 'Session',
       auth: {
         __typename: 'Auth',
-        jwt,
         sessionAccount: {
           __typename: 'SessionAccount',
           accountId: _id,
@@ -96,5 +94,6 @@ export const activateAccount: MutationResolvers['activateAccount'] = async (
       },
       message: null,
     }
+    return session
   }
 }

@@ -2,17 +2,17 @@ import { RespondApiHandler } from '../../../../lib/domain'
 import { Api } from '../../../../lib/domain/api/types'
 import { graphQLRequestApiCaller } from '../../../MoodleNetGraphQL'
 import { UserAccountStatus } from '../persistence/types'
-import { MaybeSessionAuth } from '../UserAccount'
+import { SessionAuth } from '../UserAccount'
 import {
   Auth,
   MutationResolvers,
   SessionAccount,
 } from '../UserAccount.graphql.gen'
-import { getVerifiedAccountByUsername, signJwt } from '../UserAccount.helpers'
+import { getVerifiedAccountByUsername } from '../UserAccount.helpers'
 
 export type SessionCreateApi = Api<
   { username: string; password: string },
-  MaybeSessionAuth
+  SessionAuth
 >
 
 export const SessionCreateApiHandler = async () => {
@@ -25,12 +25,10 @@ export const SessionCreateApiHandler = async () => {
     })
 
     if (!account) {
-      return { auth: null }
+      return { userAccount: null }
     }
 
-    const jwt = await signJwt({ account })
-
-    return { auth: { userAccount: account, jwt } }
+    return { userAccount: account }
   }
 
   return handler
@@ -44,13 +42,13 @@ export const createSession: MutationResolvers['createSession'] = async (
     api: 'UserAccount.Session.Create',
     req: { password, username },
   })
-  if (res.___ERROR || !res.auth) {
+  if (res.___ERROR || !res.userAccount) {
     return {
       __typename: 'Session',
       message: res.___ERROR?.msg || 'not found',
       auth: null,
     } as const
-  } else if (res.auth.userAccount.status !== UserAccountStatus.Active) {
+  } else if (res.userAccount.status !== UserAccountStatus.Active) {
     return {
       __typename: 'Session',
       message: 'not active',
@@ -58,9 +56,8 @@ export const createSession: MutationResolvers['createSession'] = async (
     } as const
   } else {
     const {
-      jwt,
       userAccount: { email, _id, changeEmailRequest },
-    } = res.auth
+    } = res
 
     const sessionAccount: SessionAccount = {
       __typename: 'SessionAccount',
@@ -72,7 +69,6 @@ export const createSession: MutationResolvers['createSession'] = async (
 
     const auth: Auth = {
       __typename: 'Auth',
-      jwt,
       sessionAccount,
     }
 

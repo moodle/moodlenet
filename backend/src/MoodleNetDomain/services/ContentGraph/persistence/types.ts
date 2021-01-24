@@ -32,7 +32,7 @@ export type CreateNodeData = Exclude<
   GQL.CreateNodeInput[keyof GQL.CreateNodeInput],
   null
 >
-export type QueryNodeShallowPayload = ShallowNode | GQL.QueryNodeError
+// export type QueryNodeShallowPayload = ShallowNode | GQL.QueryNodeError
 export type CreateNodeShallowPayload = ShallowNode | GQL.CreateNodeMutationError
 export type UpdateNodeShallowPayload = ShallowNode | GQL.UpdateNodeMutationError
 export type DeleteNodeShallowPayload = ShallowNode | GQL.DeleteNodeMutationError

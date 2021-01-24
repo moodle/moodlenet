@@ -1,6 +1,5 @@
 const mooRoot = `backend/src/MoodleNetDomain`
 const globGqlRoot = `${mooRoot}/MoodleNetGraphQL`
-const globSdl = `${globGqlRoot}/global/**/*.graphql`
 
 const defConfig = (schema, rootValuesLoc) => ({
   "schema": schema,
@@ -28,7 +27,7 @@ const srvGenerates = ['UserAccount', 'ContentGraph']
     const srvBase = `${mooRoot}/services/${srvname}`
     const tsDefsFilename = `${srvBase}/${srvname}.graphql.gen.ts`
     const tsDefsConfig = {
-      [tsDefsFilename]: defConfig([globSdl, `${srvBase}/graphql/**/*.graphql`], '../../MoodleNetGraphQL')
+      [tsDefsFilename]: defConfig([/* globSdl, */ `${srvBase}/graphql/**/*.graphql`], '../../MoodleNetGraphQL')
     }
     return {
       ...tsDefsConfig,
@@ -36,9 +35,10 @@ const srvGenerates = ['UserAccount', 'ContentGraph']
     }
   }, {})
 
-const globTypesConfig = {
-  [`${globGqlRoot}/global.graphql.gen.ts`]: defConfig([globSdl], '.')
-}
+// const globSdl = `${globGqlRoot}/global/**/*.graphql`
+// const globTypesConfig = {
+//   [`${globGqlRoot}/global.graphql.gen.ts`]: defConfig([globSdl], '.')
+// }
 const graphqlConfig = {
   "projects": {
     "default": {
@@ -47,7 +47,7 @@ const graphqlConfig = {
           "overwrite": true,
           "generates": {
             ...srvGenerates,
-            ...globTypesConfig
+            // ...globTypesConfig
           }
         }
       }

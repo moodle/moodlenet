@@ -29,7 +29,9 @@ export const secondStageCheckAccessByDocMeta = (_: {
     return firstStage
   }
   const [sessionAccount, nonPublicAllow] = firstStage
-  const sessionUserId = getAuthUserId({ sessionAccount })
+  const sessionUserId = getAuthUserId({
+    accountUsername: sessionAccount.username,
+  })
   const author = meta.created.by
   const isOwnDoc = author._id === sessionUserId
   if (isOwnDoc) {
@@ -44,18 +46,18 @@ export const secondStageCheckAccessByDocMeta = (_: {
   }
 }
 
-export const nodeQueryErrorNotAuthorized = (
-  details: string | null
-): Types.QueryNodeError => ({
-  __typename: 'QueryNodeError',
-  details,
-  type: Types.QueryNodeErrorType.NotAuthorized,
-})
+// export const nodeQueryErrorNotAuthorized = (
+//   details: string | null
+// ): Types.QueryNodeError => ({
+//   __typename: 'QueryNodeError',
+//   details,
+//   type: Types.QueryNodeErrorType.NotAuthorized,
+// })
 
-export const nodeQueryErrorNotFound = (
-  details: string | null
-): Types.QueryNodeError => ({
-  __typename: 'QueryNodeError',
-  details,
-  type: Types.QueryNodeErrorType.NotFound,
-})
+// export const nodeQueryErrorNotFound = (
+//   details: string | null
+// ): Types.QueryNodeError => ({
+//   __typename: 'QueryNodeError',
+//   details,
+//   type: Types.QueryNodeErrorType.NotFound,
+// })

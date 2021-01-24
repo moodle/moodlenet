@@ -43,6 +43,6 @@ export type UserAccount = {
   GQL: GraphQLApi
 }
 
-export type MaybeSessionAuth = {
-  auth: { jwt: string; userAccount: ActiveUserAccount } | null
+export type SessionAuth = {
+  userAccount: ActiveUserAccount | null
 }

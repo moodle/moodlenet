@@ -180,5 +180,8 @@ export const isMoodleNetExecutionAuth = (
   _obj: object
 ): _obj is MoodleNetExecutionAuth => true
 
-export const getAuthUserId = ({ sessionAccount }: MoodleNetExecutionAuth) =>
-  `User/${sessionAccount.username}` // BEWARE: hardcoded userId generation
+export const getAuthUserId = ({
+  accountUsername,
+}: {
+  accountUsername: string
+}) => `User/${accountUsername}` // BEWARE: hardcoded userId generation

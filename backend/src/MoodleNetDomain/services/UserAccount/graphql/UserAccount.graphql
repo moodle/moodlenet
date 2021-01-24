@@ -12,7 +12,6 @@ type Session {
   message: String
 }
 type Auth {
-  jwt: String
   sessionAccount: SessionAccount
 }
 

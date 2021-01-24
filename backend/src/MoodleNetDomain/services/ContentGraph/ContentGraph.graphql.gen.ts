@@ -17,13 +17,6 @@ export type Scalars = {
   DateTime: Date;
 };
 
-
-export enum AccessLevel {
-  Admin = 'ADMIN',
-  User = 'USER',
-  Owner = 'OWNER'
-}
-
 export type Mutation = {
   __typename: 'Mutation';
   createEdge: CreateEdgeMutationPayload;
@@ -236,27 +229,9 @@ export type PageInput = {
   last: Maybe<Scalars['Int']>;
 };
 
-export type QueryNodePayload = QueryNodeSuccess | QueryNodeError;
-
-export type QueryNodeSuccess = {
-  __typename: 'QueryNodeSuccess';
-  result: Maybe<Node>;
-};
-
-export type QueryNodeError = {
-  __typename: 'QueryNodeError';
-  type: QueryNodeErrorType;
-  details: Maybe<Scalars['String']>;
-};
-
-export enum QueryNodeErrorType {
-  NotFound = 'NotFound',
-  NotAuthorized = 'NotAuthorized'
-}
-
 export type Query = {
   __typename: 'Query';
-  node: QueryNodePayload;
+  node: Maybe<Node>;
 };
 
 
@@ -454,7 +429,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  AccessLevel: AccessLevel;
   Mutation: ResolverTypeWrapper<RootValue>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   CreateNodeMutationPayload: ResolversTypes['CreateNodeMutationSuccess'] | ResolversTypes['CreateNodeMutationError'];
@@ -492,10 +466,6 @@ export type ResolversTypes = {
   PageEdge: ResolverTypeWrapper<PageEdge>;
   PageInput: PageInput;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  QueryNodePayload: ResolversTypes['QueryNodeSuccess'] | ResolversTypes['QueryNodeError'];
-  QueryNodeSuccess: ResolverTypeWrapper<Omit<QueryNodeSuccess, 'result'> & { result: Maybe<ResolversTypes['Node']> }>;
-  QueryNodeError: ResolverTypeWrapper<QueryNodeError>;
-  QueryNodeErrorType: QueryNodeErrorType;
   Query: ResolverTypeWrapper<RootValue>;
   Empty: ResolverTypeWrapper<Scalars['Empty']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
@@ -552,9 +522,6 @@ export type ResolversParentTypes = {
   PageEdge: PageEdge;
   PageInput: PageInput;
   Int: Scalars['Int'];
-  QueryNodePayload: ResolversParentTypes['QueryNodeSuccess'] | ResolversParentTypes['QueryNodeError'];
-  QueryNodeSuccess: Omit<QueryNodeSuccess, 'result'> & { result: Maybe<ResolversParentTypes['Node']> };
-  QueryNodeError: QueryNodeError;
   Query: RootValue;
   Empty: Scalars['Empty'];
   DateTime: Scalars['DateTime'];
@@ -574,10 +541,6 @@ export type ResolversParentTypes = {
   User: User;
   UpdateUserInput: UpdateUserInput;
 };
-
-export type AccessDirectiveArgs = {   level: Array<AccessLevel>; };
-
-export type AccessDirectiveResolver<Result, Parent, ContextType = Context, Args = AccessDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createEdge: Resolver<ResolversTypes['CreateEdgeMutationPayload'], ParentType, ContextType, RequireFields<MutationCreateEdgeArgs, 'edgeType' | 'from' | 'to' | 'edge'>>;
@@ -705,23 +668,8 @@ export type PageEdgeResolvers<ContextType = Context, ParentType extends Resolver
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type QueryNodePayloadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['QueryNodePayload'] = ResolversParentTypes['QueryNodePayload']> = {
-  __resolveType: TypeResolveFn<'QueryNodeSuccess' | 'QueryNodeError', ParentType, ContextType>;
-};
-
-export type QueryNodeSuccessResolvers<ContextType = Context, ParentType extends ResolversParentTypes['QueryNodeSuccess'] = ResolversParentTypes['QueryNodeSuccess']> = {
-  result: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type QueryNodeErrorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['QueryNodeError'] = ResolversParentTypes['QueryNodeError']> = {
-  type: Resolver<ResolversTypes['QueryNodeErrorType'], ParentType, ContextType>;
-  details: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  node: Resolver<ResolversTypes['QueryNodePayload'], ParentType, ContextType, RequireFields<QueryNodeArgs, '_id' | 'nodeType'>>;
+  node: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryNodeArgs, '_id' | 'nodeType'>>;
 };
 
 export interface EmptyScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Empty'], any> {
@@ -811,9 +759,6 @@ export type Resolvers<ContextType = Context> = {
   Page: PageResolvers<ContextType>;
   PageInfo: PageInfoResolvers<ContextType>;
   PageEdge: PageEdgeResolvers<ContextType>;
-  QueryNodePayload: QueryNodePayloadResolvers<ContextType>;
-  QueryNodeSuccess: QueryNodeSuccessResolvers<ContextType>;
-  QueryNodeError: QueryNodeErrorResolvers<ContextType>;
   Query: QueryResolvers<ContextType>;
   Empty: GraphQLScalarType;
   DateTime: GraphQLScalarType;
@@ -834,13 +779,3 @@ export type Resolvers<ContextType = Context> = {
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = Context> = Resolvers<ContextType>;
-export type DirectiveResolvers<ContextType = Context> = {
-  access: AccessDirectiveResolver<any, any, ContextType>;
-};
-
-
-/**
- * @deprecated
- * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
- */
-export type IDirectiveResolvers<ContextType = Context> = DirectiveResolvers<ContextType>;

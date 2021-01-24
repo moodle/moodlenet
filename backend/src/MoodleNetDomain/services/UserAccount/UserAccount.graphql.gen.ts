@@ -14,13 +14,6 @@ export type Scalars = {
   Float: number;
 };
 
-
-export enum AccessLevel {
-  Admin = 'ADMIN',
-  User = 'USER',
-  Owner = 'OWNER'
-}
-
 export type SimpleResponse = {
   __typename: 'SimpleResponse';
   success: Scalars['Boolean'];
@@ -40,7 +33,6 @@ export type Session = {
 
 export type Auth = {
   __typename: 'Auth';
-  jwt: Maybe<Scalars['String']>;
   sessionAccount: Maybe<SessionAccount>;
 };
 
@@ -188,7 +180,6 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  AccessLevel: AccessLevel;
   SimpleResponse: ResolverTypeWrapper<SimpleResponse>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -213,10 +204,6 @@ export type ResolversParentTypes = {
   Query: RootValue;
 };
 
-export type AccessDirectiveArgs = {   level: Array<AccessLevel>; };
-
-export type AccessDirectiveResolver<Result, Parent, ContextType = Context, Args = AccessDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
-
 export type SimpleResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SimpleResponse'] = ResolversParentTypes['SimpleResponse']> = {
   success: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   message: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -235,7 +222,6 @@ export type SessionResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 export type AuthResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Auth'] = ResolversParentTypes['Auth']> = {
-  jwt: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   sessionAccount: Resolver<Maybe<ResolversTypes['SessionAccount']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -278,13 +264,3 @@ export type Resolvers<ContextType = Context> = {
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = Context> = Resolvers<ContextType>;
-export type DirectiveResolvers<ContextType = Context> = {
-  access: AccessDirectiveResolver<any, any, ContextType>;
-};
-
-
-/**
- * @deprecated
- * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
- */
-export type IDirectiveResolvers<ContextType = Context> = DirectiveResolvers<ContextType>;
