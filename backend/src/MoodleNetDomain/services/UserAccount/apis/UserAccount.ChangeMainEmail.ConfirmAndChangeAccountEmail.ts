@@ -5,7 +5,7 @@ import { graphQLRequestApiCaller } from '../../../MoodleNetGraphQL'
 import { Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
-import { getVerifiedAccountByUsername } from '../UserAccount.helpers'
+import { getVerifiedAccountByUsernameAndPassword } from '../UserAccount.helpers'
 
 export type ConfirmAccountEmailChangeRequestPersistence = (_: {
   token: string
@@ -28,7 +28,7 @@ export const ConfirmAndChangeAccountEmailHandler = async () => {
   const handler: RespondApiHandler<ConfirmAndChangeAccountEmailApi> = async ({
     req: { token, password, username },
   }) => {
-    const account = await getVerifiedAccountByUsername({
+    const account = await getVerifiedAccountByUsernameAndPassword({
       username,
       password,
     })

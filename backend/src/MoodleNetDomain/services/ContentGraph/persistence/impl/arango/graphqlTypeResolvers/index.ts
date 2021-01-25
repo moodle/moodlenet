@@ -1,4 +1,5 @@
 import { Types } from '../../../types'
+import { getSessionAccountUser } from './merge.getSessionAccountUser'
 import { createEdge } from './mutation.createEdge'
 import { createNode } from './mutation.createNode'
 import { deleteEdge } from './mutation.deleteEdge'
@@ -20,16 +21,19 @@ export const getGraphQLTypeResolvers = (): Types.Resolvers => {
     },
     Query: {
       node,
+      getSessionAccountUser,
     },
     User: NodeResolver,
     Subject: NodeResolver,
     Empty: {} as any,
     DateTime: {} as any,
-    // others are fine as default resolvers Node: {} as any,
+
+    // others are fine with default resolvers :  {} as any,
     Follows: {} as any,
     Node: {} as any,
     Edge: {} as any,
     ByAt: {} as any,
+    UserSession: {} as any,
     CreateEdgeMutationError: {} as any,
     CreateEdgeMutationPayload: {} as any,
     CreateEdgeMutationSuccess: {} as any,
@@ -54,8 +58,8 @@ export const getGraphQLTypeResolvers = (): Types.Resolvers => {
     UpdateNodeMutationError: {} as any,
     UpdateNodeMutationPayload: {} as any,
     UpdateNodeMutationSuccess: {} as any,
-    QueryNodeError: {} as any,
-    QueryNodePayload: {} as any,
-    QueryNodeSuccess: {} as any,
+    // QueryNodeError: {} as any,
+    // QueryNodePayload: {} as any,
+    // QueryNodeSuccess: {} as any,
   }
 }

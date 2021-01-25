@@ -1,5 +1,3 @@
-import { Api } from '../../../lib/domain/api/types'
-import { Event } from '../../../lib/domain/event/types'
 import { GraphQLApi } from '../../MoodleNetGraphQL'
 import {
   AccountEmailChangedEvent,
@@ -16,7 +14,6 @@ import { RegisterNewAccountDeleteRequestApi } from './apis/UserAccount.RegisterN
 import { RegisterNewAccountRequestApi } from './apis/UserAccount.RegisterNewAccount.Request'
 import { SessionByEmailApi } from './apis/UserAccount.Session.ByEmail'
 import { SessionCreateApi } from './apis/UserAccount.Session.Create'
-import { ActiveUserAccount } from './persistence/types'
 
 export type UserAccount = {
   RegisterNewAccount: {
@@ -41,8 +38,4 @@ export type UserAccount = {
   }
 
   GQL: GraphQLApi
-}
-
-export type SessionAuth = {
-  userAccount: ActiveUserAccount | null
 }

@@ -1,4 +1,3 @@
-import { Executor } from '@graphql-tools/delegate/types'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { loadSchemaSync } from '@graphql-tools/load'
 import {
@@ -7,28 +6,14 @@ import {
 } from '@graphql-tools/schema'
 import { stitchingDirectives } from '@graphql-tools/stitching-directives'
 import { FilterRootFields } from '@graphql-tools/wrap'
-import { GraphQLError, printSchema } from 'graphql'
-import { IncomingMessage } from 'http'
+import { printSchema } from 'graphql'
 import { MoodleNet } from '..'
 import { getGQLApiCallerExecutor, startGQLApiResponder } from '../../lib/domain'
 import { ApiLeaves, ApiReq } from '../../lib/domain/api/types'
 import { newFlow } from '../../lib/domain/helpers'
 import { MoodleNetDomain } from '../MoodleNetDomain'
-import { INVALID_TOKEN, verifyJwt } from '../services/GraphQLHTTPGateway/JWT'
-import {
-  Context,
-  MoodleNetExecutionAuth,
-  RootValue,
-  GQLServiceName,
-} from './types'
-
-export function loggedUserOnly(_: { context: Context }) {
-  const { context } = _
-  if (!context.auth) {
-    throw new GraphQLError('Logged in users only')
-  }
-  return context.auth
-}
+import { getExecutionGlobalValues } from './executionContext'
+import { Context, GQLServiceName } from './types'
 
 export function loadServiceSchema(_: { srvName: GQLServiceName }) {
   //FIXME: can't apply directives resolvers
@@ -155,33 +140,3 @@ export function atMergeQueryRootFieldsRemover() {
       )
   )
 }
-
-export function getExecutionGlobalValues(
-  ...args: Parameters<Executor>
-): {
-  context: Context
-  root: RootValue
-} {
-  const { context } = args[0]
-  const jwtHeader = (context as IncomingMessage)?.headers?.bearer
-  const jwtToken =
-    jwtHeader && (typeof jwtHeader === 'string' ? jwtHeader : jwtHeader[0])
-  const auth = verifyJwt(jwtToken)
-  return {
-    context: {
-      auth: auth === INVALID_TOKEN ? null : auth,
-    },
-    root: {},
-  }
-}
-
-//FIXME: implement proper typeguard
-export const isMoodleNetExecutionAuth = (
-  _obj: object
-): _obj is MoodleNetExecutionAuth => true
-
-export const getAuthUserId = ({
-  accountUsername,
-}: {
-  accountUsername: string
-}) => `User/${accountUsername}` // BEWARE: hardcoded userId generation

@@ -1,34 +1,35 @@
 import { RespondApiHandler } from '../../../../lib/domain'
 import { Api } from '../../../../lib/domain/api/types'
 import { graphQLRequestApiCaller } from '../../../MoodleNetGraphQL'
-import { UserAccountStatus } from '../persistence/types'
-import { SessionAuth } from '../UserAccount'
+import { MutationResolvers, UserSession } from '../UserAccount.graphql.gen'
 import {
-  Auth,
-  MutationResolvers,
-  SessionAccount,
-} from '../UserAccount.graphql.gen'
-import { getVerifiedAccountByUsername } from '../UserAccount.helpers'
+  userSessionByActiveUserAccount,
+  getVerifiedAccountByUsernameAndPassword,
+} from '../UserAccount.helpers'
 
 export type SessionCreateApi = Api<
   { username: string; password: string },
-  SessionAuth
+  { session: UserSession | null }
 >
 
 export const SessionCreateApiHandler = async () => {
   const handler: RespondApiHandler<SessionCreateApi> = async ({
     /* flow, */ req: { username, password },
   }) => {
-    const account = await getVerifiedAccountByUsername({
+    const account = await getVerifiedAccountByUsernameAndPassword({
       username,
       password,
     })
 
     if (!account) {
-      return { userAccount: null }
+      return { session: null }
     }
 
-    return { userAccount: account }
+    const session = await userSessionByActiveUserAccount({
+      activeUserAccount: account,
+    })
+
+    return { session }
   }
 
   return handler
@@ -42,40 +43,9 @@ export const createSession: MutationResolvers['createSession'] = async (
     api: 'UserAccount.Session.Create',
     req: { password, username },
   })
-  if (res.___ERROR || !res.userAccount) {
-    return {
-      __typename: 'Session',
-      message: res.___ERROR?.msg || 'not found',
-      auth: null,
-    } as const
-  } else if (res.userAccount.status !== UserAccountStatus.Active) {
-    return {
-      __typename: 'Session',
-      message: 'not active',
-      auth: null,
-    } as const
+  if (res.___ERROR || !res.session) {
+    return null
   } else {
-    const {
-      userAccount: { email, _id, changeEmailRequest },
-    } = res
-
-    const sessionAccount: SessionAccount = {
-      __typename: 'SessionAccount',
-      accountId: _id,
-      email,
-      username,
-      changeEmailRequest: changeEmailRequest?.email ?? null,
-    }
-
-    const auth: Auth = {
-      __typename: 'Auth',
-      sessionAccount,
-    }
-
-    return {
-      __typename: 'Session',
-      message: null,
-      auth,
-    } as const
+    return res.session
   }
 }

@@ -4,27 +4,36 @@ import { Api } from '../../../../lib/domain/api/types'
 import { Event } from '../../../../lib/domain/event/types'
 import { graphQLRequestApiCaller } from '../../../MoodleNetGraphQL'
 import { ActiveUserAccount, Messages } from '../persistence/types'
-import { SessionAuth } from '../UserAccount'
 import { getAccountPersistence } from '../UserAccount.env'
-import { MutationResolvers, Session } from '../UserAccount.graphql.gen'
-import { hashPassword } from '../UserAccount.helpers'
+import {
+  ActivationOutcome,
+  MutationResolvers,
+  UserSession,
+} from '../UserAccount.graphql.gen'
+import {
+  userSessionByActiveUserAccount,
+  hashPassword,
+} from '../UserAccount.helpers'
 
 export type NewAccountActivatedEvent = Event<{
   accountId: string
   username: string
 }>
 
+type ActivationResult =
+  | ActiveUserAccount
+  | Messages.NotFound
+  | Messages.UsernameNotAvailable
+
 export type ActivateNewAccountPersistence = (_: {
   token: string
   username: string
   password: string
-}) => Promise<
-  ActiveUserAccount | Messages.NotFound | Messages.UsernameNotAvailable
->
+}) => Promise<ActivationResult>
 
 export type ConfirmEmailActivateAccountApi = Api<
   { token: string; password: string; username: string },
-  SessionAuth
+  { activation: ActivationResult }
 >
 
 export const ConfirmEmailActivateAccountApiHandler = async () => {
@@ -34,23 +43,19 @@ export const ConfirmEmailActivateAccountApiHandler = async () => {
     req: { token, password, username },
   }) => {
     const hashedPassword = await hashPassword({ pwd: password })
-    const maybeAccount = await activateNewAccount({
+    const activation = await activateNewAccount({
       token,
       username,
       password: hashedPassword,
     })
-    if (typeof maybeAccount === 'string') {
-      return { userAccount: null }
-    } else {
-      const { username, _id } = maybeAccount
+    if (typeof activation !== 'string') {
       MoodleNet.emitEvent({
         event: 'UserAccount.RegisterNewAccount.NewAccountActivated',
         flow,
-        payload: { accountId: _id, username },
+        payload: { accountId: activation._id, username: activation.username },
       })
-
-      return { userAccount: maybeAccount }
     }
+    return { activation }
   }
   return handler
 }
@@ -64,36 +69,34 @@ export const activateAccount: MutationResolvers['activateAccount'] = async (
     req: { password, token, username },
   })
   if (res.___ERROR) {
-    return {
-      __typename: 'Session',
+    return getActivatinOutcome({
+      session: null,
       message: res.___ERROR.msg,
-      auth: null,
-    }
-  } else if (!res.userAccount) {
-    const session: Session = {
-      __typename: 'Session',
-      auth: null,
-      message: 'not found',
-    }
-    return session
+    })
+  } else if (typeof res.activation === 'string') {
+    return getActivatinOutcome({
+      session: null,
+      message: res.activation,
+    })
   } else {
-    const {
-      userAccount: { changeEmailRequest, username, email, _id },
-    } = res
-    const session: Session = {
-      __typename: 'Session',
-      auth: {
-        __typename: 'Auth',
-        sessionAccount: {
-          __typename: 'SessionAccount',
-          accountId: _id,
-          changeEmailRequest: changeEmailRequest?.email || null,
-          email,
-          username,
-        },
-      },
+    const session = await userSessionByActiveUserAccount({
+      activeUserAccount: res.activation,
+    })
+
+    return getActivatinOutcome({
+      session,
       message: null,
-    }
-    return session
+    })
   }
 }
+const getActivatinOutcome = ({
+  session,
+  message,
+}: {
+  session: UserSession | null
+  message: string | null
+}): ActivationOutcome => ({
+  __typename: 'ActivationOutcome',
+  session,
+  message,
+})

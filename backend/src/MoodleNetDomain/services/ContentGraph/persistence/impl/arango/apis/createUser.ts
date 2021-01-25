@@ -1,15 +1,12 @@
 import { User } from '../../../../ContentGraph.graphql.gen'
-import {
-  ContentGraphPersistence,
-  ROOTUserId,
-  ShallowNode,
-} from '../../../types'
+import { ContentGraphPersistence, ShallowNode } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
-import { createMeta } from './helpers'
+import { createMeta } from '../ContentGraph.persistence.arango.helpers'
 
 export const createUser: ContentGraphPersistence['createUser'] = async ({
   username,
   role,
+  creatorId,
 }) => {
   const { db } = await DBReady
   const newUser: Omit<ShallowNode<User>, '_id' | '_meta'> = {
@@ -23,7 +20,7 @@ export const createUser: ContentGraphPersistence['createUser'] = async ({
         ${newUser},
         {
           _key: ${username},
-          ${createMeta({ creatorUserId: ROOTUserId })}
+          _meta: ${createMeta({ userId: creatorId })}
         }
       ) INTO User
       RETURN NEW

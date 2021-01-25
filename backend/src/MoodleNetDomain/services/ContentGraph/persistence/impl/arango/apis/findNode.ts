@@ -4,21 +4,21 @@ import { DBReady } from '../ContentGraph.persistence.arango.env'
 
 export const findNode: ContentGraphPersistence['findNode'] = async ({
   _id,
-  nodeType,
+  nodeType = null,
 }) => {
   const { db } = await DBReady
   const checkNodeType = !!nodeType
   const cursor = await db.query(aql`
-    LET doc = DOCUMENT(${_id})
-    RETURN (${checkNodeType} && doc.__typename != ${nodeType})
+    LET node = DOCUMENT(${_id})
+    RETURN ( ${checkNodeType} && node.__typename != ${nodeType} )
       ? null 
-      : MERGE(doc, {
-          _meta: MERGE(doc._meta, {
-            created: MERGE(doc._meta.created,{
-              by: DOCUMENT(doc._meta.created.by._id)
+      : MERGE(node, {
+          _meta: MERGE(node._meta, {
+            created: MERGE(node._meta.created,{
+              by: DOCUMENT(node._meta.created.by._id)
             }),
-            lastUpdate: MERGE(doc._meta.lastUpdate,{
-              by: DOCUMENT(doc._meta.lastUpdate.by._id)
+            lastUpdate: MERGE(node._meta.lastUpdate,{
+              by: DOCUMENT(node._meta.lastUpdate.by._id)
             })
           })
         })

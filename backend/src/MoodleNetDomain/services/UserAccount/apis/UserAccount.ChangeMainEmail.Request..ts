@@ -98,9 +98,7 @@ export const changeEmailRequest: MutationResolvers['changeEmailRequest'] = async
   { newEmail },
   context
 ) => {
-  const {
-    sessionAccount: { accountId },
-  } = loggedUserOnly({ context })
+  const { accountId } = loggedUserOnly({ context })
 
   const { res } = await graphQLRequestApiCaller({
     api: 'UserAccount.ChangeMainEmail.Request',

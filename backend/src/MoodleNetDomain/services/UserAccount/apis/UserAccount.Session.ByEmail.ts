@@ -1,11 +1,15 @@
 import { MoodleNet } from '../../..'
 import { RespondApiHandler } from '../../../../lib/domain'
 import { Api } from '../../../../lib/domain/api/types'
-import { getAccountPersistence } from '../UserAccount.env'
-import { fillEmailTemplate, signJwt } from '../UserAccount.helpers'
-import { userAccountRoutes } from '../UserAccount.routes'
-import { MutationResolvers } from '../UserAccount.graphql.gen'
 import { graphQLRequestApiCaller } from '../../../MoodleNetGraphQL'
+import { getAccountPersistence } from '../UserAccount.env'
+import { MutationResolvers } from '../UserAccount.graphql.gen'
+import { userAccountRoutes } from '../UserAccount.routes'
+import {
+  getSimpleResponse,
+  userAndJwtByActiveUserAccount,
+  fillEmailTemplate,
+} from '../UserAccount.helpers'
 
 export type SessionByEmailApi = Api<
   { email: string; username: string },
@@ -26,15 +30,20 @@ export const SessionByEmailApiHandler = async () => {
     const account = await getActiveAccountByUsername({
       username,
     })
+
     if (!account || account.email !== email) {
       return { success: false, reason: 'not found' }
     }
-    const jwt = await signJwt({ account })
+    const { jwt } = await userAndJwtByActiveUserAccount({
+      activeUserAccount: account,
+    })
+
     const emailObj = fillEmailTemplate({
       template: resetAccountPasswordRequestEmail,
       to: account.email,
       vars: { username, link: `https://xxx.xxx/temp-session/${jwt}` },
     })
+
     await MoodleNet.callApi({
       api: 'Email.SendOne.SendNow',
       flow: userAccountRoutes.setRoute(flow, 'Temp-Email-Session'),
@@ -58,18 +67,14 @@ export const sessionByEmail: MutationResolvers['sessionByEmail'] = async (
   })
 
   if (res.___ERROR) {
-    return {
-      __typename: 'SimpleResponse',
+    return getSimpleResponse({
       message: res.___ERROR.msg,
-      success: false,
-    }
+    })
   } else if (!res.success) {
-    return {
-      __typename: 'SimpleResponse',
+    return getSimpleResponse({
       message: res.reason,
-      success: false,
-    }
+    })
   } else {
-    return { __typename: 'SimpleResponse', message: null, success: true }
+    return getSimpleResponse({ success: true })
   }
 }

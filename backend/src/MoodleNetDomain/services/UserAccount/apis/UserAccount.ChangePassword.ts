@@ -8,7 +8,7 @@ import { Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
 import {
-  getVerifiedAccountByUsername,
+  getVerifiedAccountByUsernameAndPassword,
   hashPassword,
 } from '../UserAccount.helpers'
 
@@ -28,7 +28,7 @@ export const ChangePasswordApiHandler = async () => {
   const handler: RespondApiHandler<ChangePasswordApi> = async ({
     req: { newPassword, username, currentPassword },
   }) => {
-    const account = await getVerifiedAccountByUsername({
+    const account = await getVerifiedAccountByUsernameAndPassword({
       username,
       password: currentPassword,
     })
@@ -59,9 +59,7 @@ export const changePassword: MutationResolvers['changePassword'] = async (
   { newPassword, currentPassword },
   context
 ) => {
-  const {
-    sessionAccount: { username },
-  } = loggedUserOnly({ context })
+  const { username } = loggedUserOnly({ context })
 
   const { res } = await graphQLRequestApiCaller({
     api: 'UserAccount.ChangePassword',

@@ -1,6 +1,11 @@
 import { Context } from '../../../../../../MoodleNetGraphQL'
+import { nodeConstraints } from '../../../graphDefs/node-constraints'
 import { ShallowNode, Types } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
+import {
+  getNodeAccessFilter,
+  stringify,
+} from '../ContentGraph.persistence.arango.helpers'
 
 const DEFAULT_PAGE_LENGTH = 10
 const _rel: Types.ResolverFn<
@@ -9,13 +14,13 @@ const _rel: Types.ResolverFn<
   Context,
   Types.RequireFields<Types.INode_RelArgs, 'edge'>
 > = async (
-  { _id: parentId, _meta, __typename: parentNodeType },
+  { _id: parentId, __typename: parentNodeType },
   { edge: { type: edgeType, node: targetNodeType, rev }, page },
-  { auth: _auth },
+  ctx,
   _info
 ) => {
   const mainSortProp = '_key'
-  const depth = [1, 1]
+  const queryDepth = [1, 1]
 
   const { db } = await DBReady
   const { after, first, last, before } = {
@@ -45,19 +50,31 @@ const _rel: Types.ResolverFn<
       : ``
   const edgeTypeFrom = rev ? targetNodeType : parentNodeType
   const edgeTypeTo = rev ? parentNodeType : targetNodeType
+
+  const depth = queryDepth.join('..')
+  const direction = rev ? 'INBOUND' : 'OUTBOUND'
+
+  const {
+    access: { read: nodeRead },
+  } = nodeConstraints[targetNodeType]
+  const nodeAccessFilter = getNodeAccessFilter({
+    ctx,
+    nodeRead,
+    nodeVar: 'node',
+  })
   return Promise.all(
     [afterPage, beforePage].map((page) => {
       const q = page
         ? `
           FOR parentNode, edge 
-            IN ${depth.join('..')} 
-            ${rev ? 'INBOUND' : 'OUTBOUND'} 
-            "${parentId}" 
-            ${edgeType}
+            IN ${depth} ${direction} ${stringify(parentId)} ${edgeType}
+
             FILTER edge.from == '${edgeTypeFrom}' && edge.to == '${edgeTypeTo}'
             
             LET node = DOCUMENT(edge.${rev ? '_from' : '_to'})
             
+            FILTER ${nodeAccessFilter}
+
             ${page}
 
             RETURN  {

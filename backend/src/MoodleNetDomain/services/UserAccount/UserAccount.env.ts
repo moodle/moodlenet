@@ -1,16 +1,10 @@
 import Argon from 'argon2'
-import { SignOptions } from 'jsonwebtoken'
 import { resolve } from 'path'
-import sshpk from 'sshpk'
 import * as Yup from 'yup'
 import { once } from '../../../lib/helpers/misc'
 import { UserAccountPersistence } from './persistence/types'
 
 const PERSISTENCE_IMPL = process.env.USERACCOUNT_PERSISTENCE_IMPL
-
-export const JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY!
-sshpk.parseKey(JWT_PRIVATE_KEY!, 'pem')
-export const jwtSignBaseOpts: SignOptions = { algorithm: 'RS256' }
 
 export const getAccountPersistence = once(
   async (): Promise<UserAccountPersistence> => {

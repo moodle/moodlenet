@@ -79,7 +79,6 @@ export type Config = WithCreated & {
   newAccountRequestEmail: EmailTemplate<NewAccountRequestEmailVars>
   changeAccountEmailRequestEmail: EmailTemplate<ChangeAccountEmailRequestEmailVars>
   tempSessionEmail: EmailTemplate<TempSessionEmailVars>
-  sessionValiditySecs: number
   newAccountVerificationWaitSecs: number
   changeAccountEmailVerificationWaitSecs: number
 }

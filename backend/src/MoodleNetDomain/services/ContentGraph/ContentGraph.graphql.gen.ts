@@ -231,7 +231,13 @@ export type PageInput = {
 
 export type Query = {
   __typename: 'Query';
+  getSessionAccountUser: Maybe<UserSession>;
   node: Maybe<Node>;
+};
+
+
+export type QueryGetSessionAccountUserArgs = {
+  username: Scalars['String'];
 };
 
 
@@ -297,6 +303,11 @@ export enum EdgeType {
 
 export type CreateEdgeInput = {
   Follows: Maybe<Scalars['Empty']>;
+};
+
+export type UserSession = {
+  __typename: 'UserSession';
+  user: User;
 };
 
 export type Subject = INode & {
@@ -479,6 +490,7 @@ export type ResolversTypes = {
   Edge: ResolversTypes['Follows'];
   EdgeType: EdgeType;
   CreateEdgeInput: CreateEdgeInput;
+  UserSession: ResolverTypeWrapper<UserSession>;
   Subject: ResolverTypeWrapper<Subject>;
   Node: ResolversTypes['Subject'] | ResolversTypes['User'];
   NodeType: NodeType;
@@ -533,6 +545,7 @@ export type ResolversParentTypes = {
   Follows: Follows;
   Edge: ResolversParentTypes['Follows'];
   CreateEdgeInput: CreateEdgeInput;
+  UserSession: UserSession;
   Subject: Subject;
   Node: ResolversParentTypes['Subject'] | ResolversParentTypes['User'];
   CreateNodeInput: CreateNodeInput;
@@ -669,6 +682,7 @@ export type PageEdgeResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getSessionAccountUser: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType, RequireFields<QueryGetSessionAccountUserArgs, 'username'>>;
   node: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryNodeArgs, '_id' | 'nodeType'>>;
 };
 
@@ -713,6 +727,11 @@ export type FollowsResolvers<ContextType = Context, ParentType extends Resolvers
 
 export type EdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Edge'] = ResolversParentTypes['Edge']> = {
   __resolveType: TypeResolveFn<'Follows', ParentType, ContextType>;
+};
+
+export type UserSessionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserSession'] = ResolversParentTypes['UserSession']> = {
+  user: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SubjectResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
@@ -768,6 +787,7 @@ export type Resolvers<ContextType = Context> = {
   ByAt: ByAtResolvers<ContextType>;
   Follows: FollowsResolvers<ContextType>;
   Edge: EdgeResolvers<ContextType>;
+  UserSession: UserSessionResolvers<ContextType>;
   Subject: SubjectResolvers<ContextType>;
   Node: NodeResolvers<ContextType>;
   User: UserResolvers<ContextType>;

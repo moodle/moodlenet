@@ -15,7 +15,7 @@ export const firstStageCheckPublicAccess = (_: {
   if (!auth) {
     return false
   }
-  return [auth.sessionAccount, allow] as const
+  return [auth, allow] as const
 }
 
 export const secondStageCheckAccessByDocMeta = (_: {
@@ -28,9 +28,9 @@ export const secondStageCheckAccessByDocMeta = (_: {
   if (typeof firstStage === 'boolean') {
     return firstStage
   }
-  const [sessionAccount, nonPublicAllow] = firstStage
+  const [auth, nonPublicAllow] = firstStage
   const sessionUserId = getAuthUserId({
-    accountUsername: sessionAccount.username,
+    accountUsername: auth.username,
   })
   const author = meta.created.by
   const isOwnDoc = author._id === sessionUserId
