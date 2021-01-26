@@ -79,6 +79,7 @@ export const getGlyphBasicAccessFilter = ({
   glyphTag: GlyphTag
   ctx: Context
 }): string => {
+  console.log({ policy })
   if (typeof policy === 'string') {
     return basicAccessPolicyTypeFilters[policy]({ ctx, glyphTag })
   }

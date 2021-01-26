@@ -89,7 +89,7 @@ const _rel: Types.ResolverFn<
                 && edge.to   == '${edgeTypeTo}'
                 && ${targetEdgeAccessFilter}
             
-            LET node = DOCUMENT(edge.${rev ? '_from' : '_to'})
+            LET node = DOCUMENT(edge.${rev ? '_from' : '_to'})            
             FILTER ${targetNodeAccessFilter}
 
             ${page}

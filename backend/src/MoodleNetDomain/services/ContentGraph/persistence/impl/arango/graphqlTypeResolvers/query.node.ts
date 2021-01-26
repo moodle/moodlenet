@@ -12,14 +12,13 @@ export const node: Types.Resolvers['Query']['node'] = async (
   ctx /* ,_info */
 ) => {
   const { db } = await DBReady
-  const accessPolicy = getNodeBasicAccessPolicy({
-    accessType: 'read',
-    nodeType,
-  })
   const nodeAccessFilter = getGlyphBasicAccessFilter({
     ctx,
     glyphTag: 'node',
-    policy: accessPolicy,
+    policy: getNodeBasicAccessPolicy({
+      accessType: 'read',
+      nodeType,
+    }),
   })
 
   const cursor = await db.query(`

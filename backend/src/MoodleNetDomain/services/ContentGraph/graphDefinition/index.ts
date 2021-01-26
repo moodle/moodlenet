@@ -7,10 +7,14 @@ import {
 } from './types'
 
 const _P = BasicAccessPolicyType
-export const StandardPolicies: Record<string, BasicAccessPolicy> = {
+type StandardPoliciesGroupTypes = 'Protected'
+export const StandardPoliciesGroup: Record<
+  StandardPoliciesGroupTypes,
+  BasicAccessPolicy
+> = {
   Protected: { or: [_P.Admins, _P.Creator, _P.Moderator] },
 }
-const _S = StandardPolicies
+const _S = StandardPoliciesGroup
 
 export const basicAccessPolicies: BasicAccessPolicies = {
   node: {
@@ -29,7 +33,7 @@ export const basicAccessPolicies: BasicAccessPolicies = {
   },
   edge: {
     Follows: {
-      read: _S.Protected,
+      read: _P.Public,
       create: _P.AnyUser,
       update: _S.Protected,
       delete: _S.Protected,
