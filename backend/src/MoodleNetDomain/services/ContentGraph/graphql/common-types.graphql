@@ -31,4 +31,5 @@ enum Role {
   User
   Admin
   Root
+  Moderator
 }

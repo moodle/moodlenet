@@ -1,12 +1,15 @@
-import { Context } from '../../../../../MoodleNetGraphQL'
-import { NodeRead } from '../../../ContentGraph.access.types'
-import { Role } from '../../../ContentGraph.graphql.gen'
-
-export const isTypename = <Type extends { __typename: string }>(
-  maybeSome: any,
-  __typename: Type['__typename']
-): maybeSome is Type =>
-  !maybeSome ? false : maybeSome.__typename === __typename
+import {
+  Context,
+  MoodleNetExecutionAuth,
+} from '../../../../../MoodleNetGraphQL'
+import { EdgeType, Role, NodeType } from '../../../ContentGraph.graphql.gen'
+import { basicAccessPolicies } from '../../../graphDefinition'
+import {
+  AccessType,
+  BasicAccessPolicy,
+  BasicAccessPolicyType,
+  GlyphTag,
+} from '../../../graphDefinition/types'
 
 export const createMeta = ({ userId }: { userId: string }) => {
   return `{
@@ -17,14 +20,14 @@ export const createMeta = ({ userId }: { userId: string }) => {
 }
 
 export const mergeLastUpdateMeta = ({
-  nodeVar,
+  glyphTag,
   userId,
 }: {
   userId: string
-  nodeVar: string
+  glyphTag: GlyphTag
 }) => {
-  return `MERGE( ${nodeVar}._meta, {
-      lastUpdate: MERGE( ${nodeVar}._meta.lastUpdate,
+  return `MERGE( ${glyphTag}._meta, {
+      lastUpdate: MERGE( ${glyphTag}._meta.lastUpdate,
         ${byAtNow({ userId })}
       )
     })`
@@ -34,37 +37,75 @@ export const byAtNow = ({ userId }: { userId: string }) => {
   return `{
         __typename: 'ByAt',
         at: DATE_NOW(),
-        by: { _id: ${stringify(userId)} }
+        by: { _id: ${aqlstr(userId)} }
       }`
 }
 
-export const getNodeAccessFilter = ({
-  nodeRead,
-  ctx,
-  nodeVar,
-}: {
-  nodeRead: NodeRead
+export const needsAuthFilter = (
+  filterWithAuth: (_: {
+    ctx: Context
+    auth: MoodleNetExecutionAuth
+    glyphTag: GlyphTag
+  }) => string
+): BasicAccessPolicyTypeFilterFn => ({ ctx, glyphTag }) =>
+  ctx.auth ? filterWithAuth({ ctx, auth: ctx.auth, glyphTag }) : 'false'
+type BasicAccessPolicyTypeFilterFn = (_: {
   ctx: Context
-  nodeVar: string
-}) => {
-  if (nodeRead === NodeRead.Public) {
-    return ` true `
-  } else if (!ctx.auth) {
-    return ` false `
-  } else {
-    const iAmCreator = ` ${nodeVar}._meta.created.by._id == "${ctx.auth.userId}" `
-    const iAmAdmin = ctx.auth.role === Role.Admin
-    if (nodeRead === NodeRead.User) {
-      return ` true `
-    } else if (nodeRead === NodeRead.Protected) {
-      return ` ( ${iAmAdmin} || ${iAmCreator} ) `
-    } else if (nodeRead === NodeRead.Private) {
-      return ` ${iAmCreator} `
-    } else {
-      // nodeRead : never
-      throw new Error(`unknown NodeRead: ${nodeRead}`)
-    }
-  }
+  glyphTag: GlyphTag
+}) => string
+const basicAccessPolicyTypeFilters: {
+  [t in BasicAccessPolicyType]: BasicAccessPolicyTypeFilterFn
+} = {
+  Admins: needsAuthFilter(({ auth }) =>
+    auth.role === Role.Admin ? 'true' : 'false'
+  ),
+  AnyUser: needsAuthFilter(() => 'true'),
+  Creator: needsAuthFilter(
+    ({ auth, glyphTag }) =>
+      `${glyphTag}._meta.created.by._id == "${auth.userId}"`
+  ),
+  Moderator: needsAuthFilter(({ auth }) =>
+    auth.role === Role.Moderator ? 'true' : 'false'
+  ),
+  Public: () => 'true',
 }
 
-export const stringify = (_: any) => JSON.stringify(_)
+export const getGlyphBasicAccessFilter = ({
+  glyphTag,
+  policy,
+  ctx,
+}: {
+  policy: BasicAccessPolicy
+  glyphTag: GlyphTag
+  ctx: Context
+}): string => {
+  if (typeof policy === 'string') {
+    return basicAccessPolicyTypeFilters[policy]({ ctx, glyphTag })
+  }
+  const [policies, filterConjunction] =
+    'and' in policy ? [policy.and, '&&'] : [policy.or, '||']
+  const policiesGroupFilter = policies
+    .map((innerPolicy) =>
+      getGlyphBasicAccessFilter({ ctx, glyphTag, policy: innerPolicy })
+    )
+    .join(` ${filterConjunction} `)
+  return ` ( ${policiesGroupFilter} ) `
+}
+
+export const getEdgeBasicAccessPolicy = ({
+  accessType,
+  edgeType,
+}: {
+  edgeType: EdgeType
+  accessType: AccessType
+}) => basicAccessPolicies.edge[edgeType][accessType]
+
+export const getNodeBasicAccessPolicy = ({
+  accessType,
+  nodeType,
+}: {
+  nodeType: NodeType
+  accessType: AccessType
+}) => basicAccessPolicies.node[nodeType][accessType]
+
+export const aqlstr = (_: any) => JSON.stringify(_)

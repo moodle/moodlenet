@@ -100,6 +100,7 @@ export type CreateEdgeMutationError = {
 
 export enum CreateEdgeMutationErrorType {
   NotAuthorized = 'NotAuthorized',
+  NotAllowed = 'NotAllowed',
   NoSelfReference = 'NoSelfReference',
   UnexpectedInput = 'UnexpectedInput'
 }
@@ -286,7 +287,8 @@ export type ByAt = {
 export enum Role {
   User = 'User',
   Admin = 'Admin',
-  Root = 'Root'
+  Root = 'Root',
+  Moderator = 'Moderator'
 }
 
 export type Follows = IEdge & {

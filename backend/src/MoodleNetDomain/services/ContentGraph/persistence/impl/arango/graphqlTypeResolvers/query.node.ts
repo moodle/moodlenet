@@ -1,9 +1,9 @@
-import { nodeConstraints } from '../../../graphDefs/node-constraints'
 import { Types } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 import {
-  getNodeAccessFilter,
-  stringify,
+  aqlstr,
+  getGlyphBasicAccessFilter,
+  getNodeBasicAccessPolicy,
 } from '../ContentGraph.persistence.arango.helpers'
 
 export const node: Types.Resolvers['Query']['node'] = async (
@@ -11,19 +11,20 @@ export const node: Types.Resolvers['Query']['node'] = async (
   { _id, nodeType },
   ctx /* ,_info */
 ) => {
-  const {
-    access: { read: nodeRead },
-  } = nodeConstraints[nodeType]
-
   const { db } = await DBReady
-  const nodeAccessFilter = getNodeAccessFilter({
-    ctx,
-    nodeRead,
-    nodeVar: 'node',
+  const accessPolicy = getNodeBasicAccessPolicy({
+    accessType: 'read',
+    nodeType,
   })
+  const nodeAccessFilter = getGlyphBasicAccessFilter({
+    ctx,
+    glyphTag: 'node',
+    policy: accessPolicy,
+  })
+
   const cursor = await db.query(`
     FOR node in ${nodeType}
-      FILTER node._id == ${stringify(_id)} && ${nodeAccessFilter}
+      FILTER node._id == ${aqlstr(_id)} && ${nodeAccessFilter}
 
       LIMIT 1
       

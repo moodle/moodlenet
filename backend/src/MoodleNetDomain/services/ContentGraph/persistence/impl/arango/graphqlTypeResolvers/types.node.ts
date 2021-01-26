@@ -1,10 +1,11 @@
 import { Context } from '../../../../../../MoodleNetGraphQL'
-import { nodeConstraints } from '../../../graphDefs/node-constraints'
 import { ShallowNode, Types } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 import {
-  getNodeAccessFilter,
-  stringify,
+  aqlstr,
+  getEdgeBasicAccessPolicy,
+  getGlyphBasicAccessFilter,
+  getNodeBasicAccessPolicy,
 } from '../ContentGraph.persistence.arango.helpers'
 
 const DEFAULT_PAGE_LENGTH = 10
@@ -28,25 +29,30 @@ const _rel: Types.ResolverFn<
     first: DEFAULT_PAGE_LENGTH,
     ...page,
   }
+  const beforeCursor = before || after
+  const getCursorToo = beforeCursor === after
+
+  const pageLimit = (_: number | null, includeCursor: boolean) =>
+    Math.min(_ || Infinity, DEFAULT_PAGE_LENGTH) +
+    (includeCursor && getCursorToo ? 1 : 0)
+
   const afterPage =
     !after && !!before
       ? null
       : `${after ? `FILTER edge.${mainSortProp} > "${after}"` : ``}
     SORT edge.${mainSortProp}
-    LIMIT ${Math.min(first || 0, DEFAULT_PAGE_LENGTH)}`
+    LIMIT ${pageLimit(first, false)}`
 
-  const beforeCurs = before || after
-  const getCursorToo = beforeCurs === after
   const comparison = getCursorToo ? '<=' : '<'
   const beforePage =
-    last && beforeCurs
+    last && beforeCursor
       ? `${
-          beforeCurs
-            ? `FILTER edge.${mainSortProp} ${comparison} "${beforeCurs}"`
+          beforeCursor
+            ? `FILTER edge.${mainSortProp} ${comparison} "${beforeCursor}"`
             : ``
         }
         SORT edge.${mainSortProp} DESC
-        LIMIT ${Math.min(last, DEFAULT_PAGE_LENGTH) + (getCursorToo ? 1 : 0)}`
+        LIMIT ${pageLimit(last, true)}`
       : ``
   const edgeTypeFrom = rev ? targetNodeType : parentNodeType
   const edgeTypeTo = rev ? parentNodeType : targetNodeType
@@ -54,26 +60,37 @@ const _rel: Types.ResolverFn<
   const depth = queryDepth.join('..')
   const direction = rev ? 'INBOUND' : 'OUTBOUND'
 
-  const {
-    access: { read: nodeRead },
-  } = nodeConstraints[targetNodeType]
-  const nodeAccessFilter = getNodeAccessFilter({
+  const targetEdgeAccessFilter = getGlyphBasicAccessFilter({
     ctx,
-    nodeRead,
-    nodeVar: 'node',
+    glyphTag: 'edge',
+    policy: getEdgeBasicAccessPolicy({
+      accessType: 'read',
+      edgeType,
+    }),
   })
+
+  const targetNodeAccessFilter = getGlyphBasicAccessFilter({
+    ctx,
+    glyphTag: 'node',
+    policy: getNodeBasicAccessPolicy({
+      accessType: 'read',
+      nodeType: targetNodeType,
+    }),
+  })
+
   return Promise.all(
     [afterPage, beforePage].map((page) => {
       const q = page
         ? `
           FOR parentNode, edge 
-            IN ${depth} ${direction} ${stringify(parentId)} ${edgeType}
+            IN ${depth} ${direction} ${aqlstr(parentId)} ${edgeType}
 
-            FILTER edge.from == '${edgeTypeFrom}' && edge.to == '${edgeTypeTo}'
+            FILTER edge.from == '${edgeTypeFrom}' 
+                && edge.to   == '${edgeTypeTo}'
+                && ${targetEdgeAccessFilter}
             
             LET node = DOCUMENT(edge.${rev ? '_from' : '_to'})
-            
-            FILTER ${nodeAccessFilter}
+            FILTER ${targetNodeAccessFilter}
 
             ${page}
 

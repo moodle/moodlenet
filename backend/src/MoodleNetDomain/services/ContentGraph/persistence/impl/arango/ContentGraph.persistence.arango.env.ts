@@ -1,19 +1,9 @@
+import { EdgeDefinitionOptions } from 'arangojs/graph'
 import * as Yup from 'yup'
-import {
-  createDatabaseIfNotExists,
-  createEdgeCollectionIfNotExists,
-  createVertexCollectionIfNotExists,
-} from '../../../../../../lib/helpers/arango'
-import {
-  EdgeType,
-  Follows as FollowsP,
-  NodeType,
-  Subject as SubjectP,
-  User as UserP,
-} from '../../../ContentGraph.graphql.gen'
-import { edgeConstraints } from '../../graphDefs/edge-constraints'
-import { nodeConstraints } from '../../graphDefs/node-constraints'
-import { ShallowEdge, ShallowNode } from '../../types'
+import { createDatabaseIfNotExists } from '../../../../../../lib/helpers/arango'
+import { EdgeType, NodeType } from '../../../ContentGraph.graphql.gen'
+import { contentGraph } from '../../../graphDefinition'
+import { EdgeOptions } from '../../../graphDefinition/types'
 
 interface ArangoContentGraphPersistenceEnv {
   url: string[]
@@ -39,32 +29,48 @@ export const database = createDatabaseIfNotExists({
   dbCreateOpts: {},
 })
 
-const createGraphNodeCollection = <Type extends NodeType>(nodeType: Type) => {
-  const _constraints = nodeConstraints[nodeType]
-  return createVertexCollectionIfNotExists<ShallowNode, Type>({
-    name: nodeType,
-    database,
-    createOpts: {},
-  })
+const getEdgeDefinition = (
+  edgeType: EdgeType,
+  edgeOptions: EdgeOptions
+): EdgeDefinitionOptions => {
+  const [from, to] = edgeOptions.connections
+    .reduce(
+      (_from_to, opt) => {
+        const [_from, _to] = _from_to
+        _from.add(opt.from)
+        _to.add(opt.to)
+        return _from_to
+      },
+      [new Set<NodeType>(), new Set<NodeType>()]
+    )
+    .map((_) => [..._])
+  return {
+    collection: edgeType,
+    from,
+    to,
+  }
 }
-const createGraphEdgeCollection = <Type extends EdgeType>(edgeType: Type) => {
-  const _constraints = edgeConstraints[edgeType]
-  return createEdgeCollectionIfNotExists<ShallowEdge, Type>({
-    name: edgeType,
-    database,
-    createOpts: {},
-  })
-}
+const contentGraphName = 'contentGraph'
+const graphP = database.then(async (db) => {
+  const edgeDefinitionOptions = Object.entries(
+    contentGraph
+  ).map(([edgeType, edgeOpts]) =>
+    getEdgeDefinition(edgeType as EdgeType, edgeOpts)
+  )
+  const graph =
+    (await db.graphs()).find((_) => _.name == contentGraphName) ||
+    (await db.createGraph(contentGraphName, []))
+  await Promise.all(
+    edgeDefinitionOptions.map((_) => {
+      graph.replaceEdgeDefinition(_)
+    })
+  )
+  return graph
+})
 
-const UserP = createGraphNodeCollection(NodeType.User)
-const SubjectP = createGraphNodeCollection(NodeType.Subject)
-const FollowsP = createGraphEdgeCollection<EdgeType.Follows>(EdgeType.Follows)
-
-export const DBReady = Promise.all([database, UserP, SubjectP, FollowsP]).then(
-  ([db, User, Subject, Follows]) => ({
+export const DBReady = Promise.all([database, graphP]).then(([db, graph]) => {
+  return {
     db,
-    User,
-    Subject,
-    Follows,
-  })
-)
+    graph,
+  }
+})
