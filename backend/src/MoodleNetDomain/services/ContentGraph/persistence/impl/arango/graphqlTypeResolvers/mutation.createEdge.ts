@@ -1,19 +1,20 @@
 import { CreateEdgeMutationErrorType } from '../../../../ContentGraph.graphql.gen'
-import { Types } from '../../../types'
+import { getConnectionDef } from '../../../../graphDefinition'
 import {
-  bindString,
   cantBindMessage,
   edgeDataMustBePresentMessage,
-  getBindingGraph,
-} from '../ContentGraph.persistence.arango.helpers'
+} from '../../../../graphDefinition/strings'
+import { Types } from '../../../types'
+import { DBReady } from '../ContentGraph.persistence.arango.env'
 export const createEdge: Types.Resolvers['Mutation']['createEdge'] = async (
   _root,
   { edge, edgeType, from, to },
   ctx /* ,
   _info */
 ) => {
-  const graph = await getBindingGraph({ edgeType, from, to })
-  if (!graph) {
+  const { graph } = await DBReady
+  const connection = getConnectionDef({ edge: edgeType, from, to })
+  if (!connection) {
     return {
       __typename: 'CreateEdgeMutationError',
       type: CreateEdgeMutationErrorType.NotAllowed,

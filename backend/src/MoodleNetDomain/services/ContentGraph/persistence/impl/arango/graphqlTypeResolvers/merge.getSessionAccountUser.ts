@@ -7,6 +7,6 @@ export const getSessionAccountUser: Types.Resolvers['Query']['getSessionAccountU
 ) => {
   const _id = getAuthUserId({ accountUsername: username })
   return {
-    user: await findNode({ _id }),
+    user: await findNode({ _id, nodeType: Types.NodeType.User }),
   } as any
 }

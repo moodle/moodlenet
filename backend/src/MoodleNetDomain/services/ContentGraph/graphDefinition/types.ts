@@ -55,3 +55,10 @@ export type BasicAccessPolicies = {
   edge: TypeBasicAccessPolicies<E>
   node: TypeBasicAccessPolicies<N>
 }
+
+export const isEdgeType = (_: string): _ is E => _ in E
+export const isNodeType = (_: string): _ is N => _ in N
+
+// export type NodeDef ={
+
+// }

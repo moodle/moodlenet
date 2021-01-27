@@ -16,45 +16,24 @@ export const isId = (_: string): _ is Id => {
 
 export const edgeTypeFromId = (_: string) => {
   const [edgeType] = _.split('/')
-  return edgeType in Object.values(EdgeType) ? (edgeType as EdgeType) : null
+  return isId(_) && edgeType in Object.values(EdgeType)
+    ? (edgeType as EdgeType)
+    : null
 }
 
 export const nodeTypeFromId = (_: string) => {
   const [nodeType] = _.split('/')
-  return nodeType in Object.values(NodeType) ? (nodeType as NodeType) : null
+  return isId(_) && nodeType in Object.values(NodeType)
+    ? (nodeType as NodeType)
+    : null
 }
 
-export const fromToByIds = ({
-  from,
-  to,
-}: {
+export const fromToByIds = (_: {
   from: string
   to: string
 }): [NodeType, NodeType] | null => {
+  const { from, to } = _
   const _from = nodeTypeFromId(from)
   const _to = nodeTypeFromId(to)
   return _from && _to && [_from, _to]
 }
-
-export const bindString = ({
-  edgeType,
-  from,
-  to,
-}: {
-  edgeType: EdgeType
-  from: string
-  to: string
-}) => `${nodeTypeFromId(from)} ${edgeType} ${nodeTypeFromId(to)}`
-
-export const edgeDataMustBePresentMessage = (edgeType: EdgeType) =>
-  `"${edgeType}" must be present in "edge" argument`
-
-export const cantBindMessage = ({
-  edgeType,
-  from,
-  to,
-}: {
-  edgeType: EdgeType
-  from: string
-  to: string
-}) => `can't bind ${bindString({ edgeType, from, to })}`

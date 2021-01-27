@@ -4,6 +4,8 @@ import {
   BasicAccessPolicy,
   BasicAccessPolicyType,
   ContentGraph,
+  isEdgeType,
+  isNodeType,
 } from './types'
 
 const _P = BasicAccessPolicyType
@@ -57,3 +59,23 @@ export const contentGraph: ContentGraph = {
     ],
   },
 }
+
+export const getConnectionDef = (_: {
+  edge: string
+  from: string
+  to: string
+}) => {
+  const { from, to, edge } = _
+  if (!(isEdgeType(edge) && isNodeType(from) && isNodeType(to))) {
+    return undefined
+  }
+  return contentGraph[edge]?.connections.find(
+    ({ from: _from, to: _to }) => _from == from && _to === to
+  )
+}
+
+// export const nodeDef = {
+//   User:{
+
+//   }
+// }
