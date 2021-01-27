@@ -1,10 +1,10 @@
-import { Types } from '../../../types'
-import { DBReady } from '../ContentGraph.persistence.arango.env'
 import {
-  aqlstr,
   getGlyphBasicAccessFilter,
   getNodeBasicAccessPolicy,
-} from '../ContentGraph.persistence.arango.helpers'
+} from '../../../../graphDefinition/helpers'
+import { Types } from '../../../types'
+import { DBReady } from '../ContentGraph.persistence.arango.env'
+import { aqlstr } from '../ContentGraph.persistence.arango.helpers'
 
 export const node: Types.Resolvers['Query']['node'] = async (
   _root,

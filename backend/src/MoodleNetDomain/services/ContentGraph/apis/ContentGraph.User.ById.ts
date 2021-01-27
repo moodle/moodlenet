@@ -2,10 +2,11 @@ import { RespondApiHandler } from '../../../../lib/domain'
 import { Api } from '../../../../lib/domain/api/types'
 import { getContentGraphPersistence } from '../ContentGraph.env'
 import { NodeType, User } from '../ContentGraph.graphql.gen'
+import { Id } from '../graphDefinition/types'
 import { ShallowNode } from '../persistence/types'
 
 export type UserByIdApi = Api<
-  { userId: string },
+  { userId: Id },
   { user: ShallowNode<User> | null }
 >
 

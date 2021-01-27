@@ -1,11 +1,10 @@
 import { NodeType as N } from '../ContentGraph.graphql.gen'
+import { isEdgeType, isNodeType } from './helpers'
 import {
   BasicAccessPolicies,
   BasicAccessPolicy,
   BasicAccessPolicyType,
   ContentGraph,
-  isEdgeType,
-  isNodeType,
 } from './types'
 
 const _P = BasicAccessPolicyType

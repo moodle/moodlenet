@@ -1,11 +1,10 @@
 import { ServiceExecutableSchemaDefinition } from '../../MoodleNetGraphQL'
-import { getContentGraphPersistence } from './ContentGraph.env'
+// import { getContentGraphPersistence } from './ContentGraph.env'
 import { Resolvers } from './ContentGraph.graphql.gen'
+import { getGraphQLTypeResolvers } from './graphql.resolvers'
 
 export const getContentGraphServiceExecutableSchemaDefinition = async (): Promise<ServiceExecutableSchemaDefinition> => {
-  const {
-    /* findNode, */ graphQLTypeResolvers,
-  } = await getContentGraphPersistence()
+  const graphQLTypeResolvers = getGraphQLTypeResolvers()
 
   const resolvers: Resolvers = {
     ...graphQLTypeResolvers,

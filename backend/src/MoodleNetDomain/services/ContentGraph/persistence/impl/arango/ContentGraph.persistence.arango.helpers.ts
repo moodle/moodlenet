@@ -1,15 +1,10 @@
 import {
-  Context,
-  MoodleNetExecutionAuth,
-} from '../../../../../MoodleNetGraphQL'
-import { EdgeType, Role, NodeType } from '../../../ContentGraph.graphql.gen'
-import { basicAccessPolicies } from '../../../graphDefinition'
-import {
-  AccessType,
-  BasicAccessPolicy,
-  BasicAccessPolicyType,
-  GlyphTag,
-} from '../../../graphDefinition/types'
+  BasicAccessFilterEngine,
+  BasicAccessPolicyTypeFilters,
+  NeedsAuthFilter,
+} from '../../../graphDefinition/helpers'
+import { GlyphTag } from '../../../graphDefinition/types'
+import { Types } from '../../types'
 
 export const createMeta = ({ userId }: { userId: string }) => {
   return `{
@@ -41,23 +36,14 @@ export const byAtNow = ({ userId }: { userId: string }) => {
       }`
 }
 
-export const needsAuthFilter = (
-  filterWithAuth: (_: {
-    ctx: Context
-    auth: MoodleNetExecutionAuth
-    glyphTag: GlyphTag
-  }) => string
-): BasicAccessPolicyTypeFilterFn => ({ ctx, glyphTag }) =>
-  ctx.auth ? filterWithAuth({ ctx, auth: ctx.auth, glyphTag }) : 'false'
-type BasicAccessPolicyTypeFilterFn = (_: {
-  ctx: Context
-  glyphTag: GlyphTag
-}) => string
-const basicAccessPolicyTypeFilters: {
-  [t in BasicAccessPolicyType]: BasicAccessPolicyTypeFilterFn
-} = {
+export const needsAuthFilter: NeedsAuthFilter<string> = (filterWithAuth) => ({
+  ctx,
+  glyphTag,
+}) => (ctx.auth ? filterWithAuth({ ctx, auth: ctx.auth, glyphTag }) : 'false')
+
+export const basicAccessPolicyTypeFilters: BasicAccessPolicyTypeFilters<string> = {
   Admins: needsAuthFilter(({ auth }) =>
-    auth.role === Role.Admin ? 'true' : 'false'
+    auth.role === Types.Role.Admin ? 'true' : 'false'
   ),
   AnyUser: needsAuthFilter(() => 'true'),
   Creator: needsAuthFilter(
@@ -65,48 +51,15 @@ const basicAccessPolicyTypeFilters: {
       `${glyphTag}._meta.created.by._id == "${auth.userId}"`
   ),
   Moderator: needsAuthFilter(({ auth }) =>
-    auth.role === Role.Moderator ? 'true' : 'false'
+    auth.role === Types.Role.Moderator ? 'true' : 'false'
   ),
   Public: () => 'true',
 }
 
-export const getGlyphBasicAccessFilter = ({
-  glyphTag,
-  policy,
-  ctx,
-}: {
-  policy: BasicAccessPolicy
-  glyphTag: GlyphTag
-  ctx: Context
-}): string => {
-  console.log({ policy })
-  if (typeof policy === 'string') {
-    return basicAccessPolicyTypeFilters[policy]({ ctx, glyphTag })
-  }
-  const [policies, filterConjunction] =
-    'and' in policy ? [policy.and, '&&'] : [policy.or, '||']
-  const policiesGroupFilter = policies
-    .map((innerPolicy) =>
-      getGlyphBasicAccessFilter({ ctx, glyphTag, policy: innerPolicy })
-    )
-    .join(` ${filterConjunction} `)
-  return ` ( ${policiesGroupFilter} ) `
+export const basicAccessFilterEngine: BasicAccessFilterEngine<string> = {
+  andReducer: (a, b) => (a === undefined ? ` ${b} ` : ` ${a} && ${b} `),
+  orReducer: (a, b) => (a === undefined ? ` ${b} ` : ` ${a} || ${b} `),
+  basicAccessPolicyTypeFilters,
 }
-
-export const getEdgeBasicAccessPolicy = ({
-  accessType,
-  edgeType,
-}: {
-  edgeType: EdgeType
-  accessType: AccessType
-}) => basicAccessPolicies.edge[edgeType][accessType]
-
-export const getNodeBasicAccessPolicy = ({
-  accessType,
-  nodeType,
-}: {
-  nodeType: NodeType
-  accessType: AccessType
-}) => basicAccessPolicies.node[nodeType][accessType]
 
 export const aqlstr = (_: any) => JSON.stringify(_)

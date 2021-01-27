@@ -1,23 +1,23 @@
-import { Types } from '../../../types'
+import * as GQL from '../ContentGraph.graphql.gen'
 import { getSessionAccountUser } from './merge.getSessionAccountUser'
-import { createEdge } from './mutation.createEdge'
-import { createNode } from './mutation.createNode'
-import { deleteEdge } from './mutation.deleteEdge'
-import { deleteNode } from './mutation.deleteNode'
-import { updateEdge } from './mutation.updateEdge'
-import { updateNode } from './mutation.updateNode'
+// import { createEdge } from './mutation.createEdge'
+// import { createNode } from './mutation.createNode'
+// import { deleteEdge } from './mutation.deleteEdge'
+// import { deleteNode } from './mutation.deleteNode'
+// import { updateEdge } from './mutation.updateEdge'
+// import { updateNode } from './mutation.updateNode'
 import { node } from './query.node'
 import { NodeResolver } from './types.node'
 
-export const getGraphQLTypeResolvers = (): Types.Resolvers => {
+export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
   return {
     Mutation: {
-      createEdge,
-      createNode,
-      deleteEdge,
-      deleteNode,
-      updateEdge,
-      updateNode,
+      createEdge: (() => {}) as any,
+      createNode: (() => {}) as any,
+      deleteEdge: (() => {}) as any,
+      deleteNode: (() => {}) as any,
+      updateEdge: (() => {}) as any,
+      updateNode: (() => {}) as any,
     },
     Query: {
       node,

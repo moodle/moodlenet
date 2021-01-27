@@ -1,6 +1,7 @@
 import { Executor } from '@graphql-tools/delegate/types'
 import { GraphQLError } from 'graphql'
 import { IncomingMessage } from 'http'
+import { Id } from '../services/ContentGraph/graphDefinition/types'
 import { INVALID_TOKEN } from './JWT'
 import { getJwtVerifier } from './MoodleNetGraphQL.env'
 import { Context, MoodleNetExecutionAuth, RootValue } from './types'
@@ -42,4 +43,4 @@ export const getAuthUserId = ({
   accountUsername,
 }: {
   accountUsername: string
-}) => `User/${accountUsername}` // BEWARE: hardcoded userId generation
+}) => `User/${accountUsername}` as Id // BEWARE: hardcoded userId generation

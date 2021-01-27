@@ -1,25 +1,24 @@
-import { Context } from '../../../../../../MoodleNetGraphQL'
-import { ShallowNode, Types } from '../../../types'
+import { getGlyphBasicAccessFilter } from '../../../../graphDefinition/helpers'
+import { ContentGraphPersistence, Types } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 import {
   aqlstr,
-  getEdgeBasicAccessPolicy,
-  getGlyphBasicAccessFilter,
-  getNodeBasicAccessPolicy,
+  basicAccessFilterEngine,
 } from '../ContentGraph.persistence.arango.helpers'
 
 const DEFAULT_PAGE_LENGTH = 10
-const _rel: Types.ResolverFn<
-  Types.ResolversTypes['Page'],
-  ShallowNode,
-  Context,
-  Types.RequireFields<Types.INode_RelArgs, 'edge'>
-> = async (
-  { _id: parentId, __typename: parentNodeType },
-  { edge: { type: edgeType, node: targetNodeType, rev }, page },
+
+export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
   ctx,
-  _info
-) => {
+  edgeType,
+  page,
+  parentId,
+  parentNodeType,
+  rev,
+  targetNodeType,
+  edgePolicy,
+  targetNodePolicy,
+}): Promise<Types.Page> => {
   const mainSortProp = '_key'
   const queryDepth = [1, 1]
 
@@ -63,19 +62,15 @@ const _rel: Types.ResolverFn<
   const targetEdgeAccessFilter = getGlyphBasicAccessFilter({
     ctx,
     glyphTag: 'edge',
-    policy: getEdgeBasicAccessPolicy({
-      accessType: 'read',
-      edgeType,
-    }),
+    policy: edgePolicy,
+    engine: basicAccessFilterEngine,
   })
 
   const targetNodeAccessFilter = getGlyphBasicAccessFilter({
     ctx,
     glyphTag: 'node',
-    policy: getNodeBasicAccessPolicy({
-      accessType: 'read',
-      nodeType: targetNodeType,
-    }),
+    policy: targetNodePolicy,
+    engine: basicAccessFilterEngine,
   })
 
   return Promise.all(
@@ -117,14 +112,11 @@ const _rel: Types.ResolverFn<
       hasPreviousPage: false,
       __typename: 'PageInfo',
     }
-    return {
+    const page: Types.Page = {
       __typename: 'Page',
       pageInfo,
       edges,
     }
+    return page
   })
 }
-
-export const NodeResolver = {
-  _rel,
-} as any

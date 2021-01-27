@@ -1,15 +1,36 @@
+import { Maybe } from 'graphql/jsutils/Maybe'
+import { Context } from '../../../MoodleNetGraphQL'
 import { CreateUserPersistence } from '../apis/ContentGraph.User.CreateForNewAccount.api'
 import * as GQL from '../ContentGraph.graphql.gen'
+import { BasicAccessPolicy, Id } from '../graphDefinition/types'
 export * as Types from '../ContentGraph.graphql.gen'
 
 export const ROOTUserId = 'User/ROOT'
 
 export interface ContentGraphPersistence {
-  graphQLTypeResolvers: GQL.Resolvers
+  // graphQLTypeResolvers: GQL.Resolvers
   findNode(_: {
-    _id: string
+    _id: Id
     nodeType?: GQL.NodeType | null
+    filter?: string
   }): Promise<ShallowNode | null>
+  findNodeWithPolicy(_: {
+    _id: Id
+    nodeType: GQL.NodeType
+    policy: BasicAccessPolicy
+    ctx: Context
+  }): Promise<ShallowNode | null>
+  traverseEdges(_: {
+    parentId: Id
+    parentNodeType: GQL.NodeType
+    edgeType: GQL.EdgeType
+    edgePolicy: BasicAccessPolicy
+    targetNodeType: GQL.NodeType
+    targetNodePolicy: BasicAccessPolicy
+    rev: boolean
+    page: Maybe<GQL.PageInput>
+    ctx: Context
+  }): Promise<GQL.Page>
   createUser: CreateUserPersistence
   // createEdge(_: { edge: CreateEdgeInput }): EdgeMutationPayload
   // createNode(_: {
