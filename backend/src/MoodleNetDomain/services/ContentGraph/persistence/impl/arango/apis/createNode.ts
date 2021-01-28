@@ -1,7 +1,17 @@
-import { ShallowNode } from '../../../types'
+import { ContentGraphPersistence, ShallowNode } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 
-export const createNode = async (_: { data: ShallowNode }) => {
+export const createNode: ContentGraphPersistence['createNode'] = async (_: {
+  data: ShallowNode
+}) => {
   const { graph } = await DBReady
-  graph.vertexCollection(_.data.__typename)
+  const nodeType = _.data.__typename
+  const collection = graph.vertexCollection(nodeType)
+  const nodeAccessFilter = getGlyphBasicAccessFilter({
+    glyphTag: 'node',
+    policy,
+    ctx,
+    engine: basicAccessFilterEngine,
+  })
+  collection.save({})
 }

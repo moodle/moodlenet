@@ -8,6 +8,7 @@ export type MoodleNetExecutionAuth = {
   role: Role
   userId: string
 }
+
 export type MoodleNetExecutionContext = {
   auth: MoodleNetExecutionAuth | null
 }

@@ -5,7 +5,7 @@ import * as GQL from '../ContentGraph.graphql.gen'
 import { BasicAccessPolicy, Id } from '../graphDefinition/types'
 export * as Types from '../ContentGraph.graphql.gen'
 
-export const ROOTUserId = 'User/ROOT'
+export const SystemUserId = 'User/_System_'
 
 export interface ContentGraphPersistence {
   // graphQLTypeResolvers: GQL.Resolvers
@@ -31,12 +31,12 @@ export interface ContentGraphPersistence {
     ctx: MoodleNetExecutionContext
   }): Promise<GQL.Page>
   createUser: CreateUserPersistence
+  createNode(_: {
+    ctx: MoodleNetExecutionContext
+    nodeType: GQL.NodeType
+    data: CreateNodeData
+  }): Promise<ShallowNode | null>
   // createEdge(_: { edge: CreateEdgeInput }): EdgeMutationPayload
-  // createNode(_: {
-  //   ctx: Context
-  //   nodeType: GQL.NodeType
-  //   data: CreateNodeData
-  // }): Promise<ShallowNode | null>
   // updateEdge(_: { edge: UpdateEdgeInput }): EdgeMutationPayload
   // updateNode(_: { node: UpdateNodeInput }): NodeMutationPayload
   // deleteGlyph(_: { _id: string }): DeletePayload //config():Promise<Config>

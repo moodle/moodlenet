@@ -4,7 +4,7 @@ import { LookupEventType } from '../../../../lib/domain/event/types'
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { getContentGraphPersistence } from '../ContentGraph.env'
 import { Role, User } from '../ContentGraph.graphql.gen'
-import { ROOTUserId, ShallowNode } from '../persistence/types'
+import { SystemUserId, ShallowNode } from '../persistence/types'
 
 export type CreateUserPersistence = (_: {
   username: string
@@ -29,7 +29,7 @@ export const UserCreateForNewAccountApiHandler = async () => {
     const newUser = await createUser({
       username,
       role: Role.User,
-      creatorId: ROOTUserId,
+      creatorId: SystemUserId,
     })
     return { newUser }
   }
