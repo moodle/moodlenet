@@ -1,10 +1,10 @@
-import { Context } from '../../../MoodleNetGraphQL'
+import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
 import { EdgeType as E, NodeType as N } from '../ContentGraph.graphql.gen'
 
 export type IdKey = string & { readonly __: unique symbol }
 export type Id = string & { readonly __: unique symbol }
 
-export type PersistenceExecutionContext = Context
+export type PersistenceExecutionContext = MoodleNetExecutionContext
 
 export type AccessType = 'read' | 'create' | 'update' | 'delete'
 export enum BasicAccessPolicyType {

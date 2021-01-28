@@ -1,5 +1,5 @@
-import { Types } from '../../../types'
-export const createNode: Types.Resolvers['Mutation']['createNode'] = (
+import { Resolvers } from '../ContentGraph.graphql.gen'
+export const createNode: Resolvers['Mutation']['createNode'] = (
   root,
   args,
   ctx,

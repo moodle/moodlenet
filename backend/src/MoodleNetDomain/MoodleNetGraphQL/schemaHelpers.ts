@@ -13,7 +13,7 @@ import { ApiLeaves, ApiReq } from '../../lib/domain/api/types'
 import { newFlow } from '../../lib/domain/helpers'
 import { MoodleNetDomain } from '../MoodleNetDomain'
 import { getExecutionGlobalValues } from './executionContext'
-import { Context, GQLServiceName } from './types'
+import { MoodleNetExecutionContext, GQLServiceName } from './types'
 
 export function loadServiceSchema(_: { srvName: GQLServiceName }) {
   //FIXME: can't apply directives resolvers
@@ -48,12 +48,15 @@ export function loadServiceSchema(_: { srvName: GQLServiceName }) {
 
 export const executableServiceSchema = (_: {
   srvName: GQLServiceName
-  schemaDef: Omit<IExecutableSchemaDefinition<Context>, 'typeDefs'>
+  schemaDef: Omit<
+    IExecutableSchemaDefinition<MoodleNetExecutionContext>,
+    'typeDefs'
+  >
 }) => {
   const { schemaDef, srvName } = _
   const srvSchema = loadServiceSchema({ srvName })
   const { stitchingDirectivesValidator } = stitchingDirectives()
-  const schema = makeExecutableSchema<Context>({
+  const schema = makeExecutableSchema<MoodleNetExecutionContext>({
     // resolverValidationOptions: {
     //   requireResolversToMatchSchema: 'ignore',
     // },
@@ -65,7 +68,7 @@ export const executableServiceSchema = (_: {
 }
 
 export type ServiceExecutableSchemaDefinition = Omit<
-  IExecutableSchemaDefinition<Context>,
+  IExecutableSchemaDefinition<MoodleNetExecutionContext>,
   'typeDefs'
 >
 export async function startMoodleNetGQLApiResponder({

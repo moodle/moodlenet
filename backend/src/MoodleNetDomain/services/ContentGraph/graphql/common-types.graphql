@@ -15,7 +15,7 @@ interface IEdge {
 input EdgeTypeInput {
   type: EdgeType!
   node: NodeType!
-  rev: Boolean
+  inverse: Boolean
 }
 
 type Meta {

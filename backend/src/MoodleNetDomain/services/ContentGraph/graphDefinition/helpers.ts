@@ -1,5 +1,8 @@
 import { basicAccessPolicies } from '.'
-import { Context, MoodleNetExecutionAuth } from '../../../MoodleNetGraphQL'
+import {
+  MoodleNetExecutionContext,
+  MoodleNetExecutionAuth,
+} from '../../../MoodleNetGraphQL'
 import { EdgeType, NodeType, Role } from '../ContentGraph.graphql.gen'
 import {
   AccessType,
@@ -73,7 +76,7 @@ export const getStaticFilteredNodeBasicAccessPolicy = ({
 }: {
   nodeType: NodeType
   accessType: AccessType
-  ctx: Context
+  ctx: MoodleNetExecutionContext
 }) => {
   const policy = getNodeBasicAccessPolicy({ accessType, nodeType })
   const allowed = getStaticGlyphBasicAccessFilter({
@@ -91,7 +94,7 @@ export const getStaticFilteredEdgeBasicAccessPolicy = ({
 }: {
   edgeType: EdgeType
   accessType: AccessType
-  ctx: Context
+  ctx: MoodleNetExecutionContext
 }) => {
   const policy = getEdgeBasicAccessPolicy({ accessType, edgeType })
   const allowed = getStaticGlyphBasicAccessFilter({
@@ -104,7 +107,7 @@ export const getStaticFilteredEdgeBasicAccessPolicy = ({
 
 export const getStaticGlyphBasicAccessFilter = (_: {
   policy: BasicAccessPolicy
-  ctx: Context
+  ctx: MoodleNetExecutionContext
   glyphTag: GlyphTag
 }) => getGlyphBasicAccessFilter({ ..._, engine: staticEngine })
 
@@ -115,7 +118,7 @@ export type BasicAccessFilterEngine<ResType> = {
 }
 export const getGlyphBasicAccessFilter = <ResType>(_: {
   policy: BasicAccessPolicy
-  ctx: Context
+  ctx: MoodleNetExecutionContext
   glyphTag: GlyphTag
   engine: BasicAccessFilterEngine<ResType>
 }): ResType => {
@@ -137,7 +140,7 @@ export const getGlyphBasicAccessFilter = <ResType>(_: {
 }
 
 type BasicAccessPolicyTypeFilterFn<ResType> = (_: {
-  ctx: Context
+  ctx: MoodleNetExecutionContext
   glyphTag: GlyphTag
 }) => ResType
 export type BasicAccessPolicyTypeFilters<ResType> = {
@@ -145,7 +148,7 @@ export type BasicAccessPolicyTypeFilters<ResType> = {
 }
 export type NeedsAuthFilter<ResType> = (
   filterWithAuth: (_: {
-    ctx: Context
+    ctx: MoodleNetExecutionContext
     auth: MoodleNetExecutionAuth
     glyphTag: GlyphTag
   }) => ResType

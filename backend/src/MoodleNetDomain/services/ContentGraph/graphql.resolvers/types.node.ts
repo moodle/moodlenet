@@ -1,4 +1,4 @@
-import { Context } from '../../../MoodleNetGraphQL'
+import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
 import { ShallowNode } from '../persistence/types'
 import * as GQL from '../ContentGraph.graphql.gen'
 import { getContentGraphPersistence } from '../ContentGraph.env'
@@ -13,11 +13,11 @@ import {
 const _rel: GQL.ResolverFn<
   GQL.ResolversTypes['Page'],
   ShallowNode,
-  Context,
+  MoodleNetExecutionContext,
   GQL.RequireFields<GQL.INode_RelArgs, 'edge'>
 > = async (
   { _id: parentId, __typename: parentNodeType },
-  { edge: { type: edgeType, node: targetNodeType, rev }, page },
+  { edge: { type: edgeType, node: targetNodeType, inverse }, page },
   ctx,
   _info
 ) => {
@@ -59,9 +59,9 @@ const _rel: GQL.ResolverFn<
     ctx,
     edgePolicy,
     edgeType,
-    parentId,
+    parentNodeId: parentId,
     parentNodeType,
-    rev: !!rev,
+    inverse: !!inverse,
     targetNodePolicy,
     targetNodeType,
     page,

@@ -1,6 +1,6 @@
-import { aql } from 'arangojs'
 import { getGlyphBasicAccessFilter } from '../../../../graphDefinition/helpers'
-import { ContentGraphPersistence } from '../../../types'
+import { Id } from '../../../../graphDefinition/types'
+import { ContentGraphPersistence, Types } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 import { basicAccessFilterEngine } from '../ContentGraph.persistence.arango.helpers'
 
@@ -16,18 +16,24 @@ export const findNodeWithPolicy: ContentGraphPersistence['findNodeWithPolicy'] =
     ctx,
     engine: basicAccessFilterEngine,
   })
-  return findNode({ _id, filter: nodeAccessFilter, nodeType })
+  return _findNode({ _id, filterMore: nodeAccessFilter, nodeType })
 }
 
 export const findNode: ContentGraphPersistence['findNode'] = async ({
   _id,
-  nodeType = null,
-  filter = null,
+  nodeType,
+}) => _findNode({ _id, nodeType })
+
+export const _findNode = async (_: {
+  _id: Id
+  nodeType?: Types.NodeType | null
+  filterMore?: string
 }) => {
+  const { _id, nodeType = null, filterMore = null } = _
   const { db } = await DBReady
   const checkNodeTypeFilter = nodeType && `node.__typename == "${nodeType}"`
   const withFilters =
-    [checkNodeTypeFilter, filter].filter(Boolean).join(' && ') || 'true'
+    [checkNodeTypeFilter, filterMore].filter(Boolean).join(' && ') || 'true'
 
   const query = `
     LET node = DOCUMENT("${_id}")

@@ -12,7 +12,7 @@ const defConfig = (schema, rootValuesLoc) => ({
       "DateTime": "Date",
       "Empty": "{}"
     },
-    "contextType": `${rootValuesLoc}#Context`,
+    "contextType": `${rootValuesLoc}#MoodleNetExecutionContext`,
     "rootValueType": `${rootValuesLoc}#RootValue`,
     "includeDirectives": true,
     "commentDescriptions": true,

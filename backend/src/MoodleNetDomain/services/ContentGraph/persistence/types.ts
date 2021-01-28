@@ -1,5 +1,5 @@
 import { Maybe } from 'graphql/jsutils/Maybe'
-import { Context } from '../../../MoodleNetGraphQL'
+import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
 import { CreateUserPersistence } from '../apis/ContentGraph.User.CreateForNewAccount.api'
 import * as GQL from '../ContentGraph.graphql.gen'
 import { BasicAccessPolicy, Id } from '../graphDefinition/types'
@@ -12,24 +12,23 @@ export interface ContentGraphPersistence {
   findNode(_: {
     _id: Id
     nodeType?: GQL.NodeType | null
-    filter?: string
   }): Promise<ShallowNode | null>
   findNodeWithPolicy(_: {
     _id: Id
     nodeType: GQL.NodeType
     policy: BasicAccessPolicy
-    ctx: Context
+    ctx: MoodleNetExecutionContext
   }): Promise<ShallowNode | null>
   traverseEdges(_: {
-    parentId: Id
+    parentNodeId: Id
     parentNodeType: GQL.NodeType
     edgeType: GQL.EdgeType
     edgePolicy: BasicAccessPolicy
     targetNodeType: GQL.NodeType
     targetNodePolicy: BasicAccessPolicy
-    rev: boolean
+    inverse: boolean
     page: Maybe<GQL.PageInput>
-    ctx: Context
+    ctx: MoodleNetExecutionContext
   }): Promise<GQL.Page>
   createUser: CreateUserPersistence
   // createEdge(_: { edge: CreateEdgeInput }): EdgeMutationPayload

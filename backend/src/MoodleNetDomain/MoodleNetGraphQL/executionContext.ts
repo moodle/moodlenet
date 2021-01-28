@@ -4,9 +4,13 @@ import { IncomingMessage } from 'http'
 import { Id } from '../services/ContentGraph/graphDefinition/types'
 import { INVALID_TOKEN } from './JWT'
 import { getJwtVerifier } from './MoodleNetGraphQL.env'
-import { Context, MoodleNetExecutionAuth, RootValue } from './types'
+import {
+  MoodleNetExecutionContext,
+  MoodleNetExecutionAuth,
+  RootValue,
+} from './types'
 
-export function loggedUserOnly(_: { context: Context }) {
+export function loggedUserOnly(_: { context: MoodleNetExecutionContext }) {
   const { context } = _
   if (!context.auth) {
     throw new GraphQLError('Logged in users only')
@@ -17,7 +21,7 @@ export function loggedUserOnly(_: { context: Context }) {
 export function getExecutionGlobalValues(
   ...args: Parameters<Executor>
 ): {
-  context: Context
+  context: MoodleNetExecutionContext
   root: RootValue
 } {
   const verifyJwt = getJwtVerifier()

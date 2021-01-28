@@ -12,9 +12,9 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
   ctx,
   edgeType,
   page,
-  parentId,
+  parentNodeId,
   parentNodeType,
-  rev,
+  inverse,
   targetNodeType,
   edgePolicy,
   targetNodePolicy,
@@ -53,11 +53,11 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
         SORT edge.${mainSortProp} DESC
         LIMIT ${pageLimit(last, true)}`
       : ``
-  const edgeTypeFrom = rev ? targetNodeType : parentNodeType
-  const edgeTypeTo = rev ? parentNodeType : targetNodeType
+  const fromNodeType = inverse ? targetNodeType : parentNodeType
+  const toNodeType = inverse ? parentNodeType : targetNodeType
 
   const depth = queryDepth.join('..')
-  const direction = rev ? 'INBOUND' : 'OUTBOUND'
+  const direction = inverse ? 'INBOUND' : 'OUTBOUND'
 
   const targetEdgeAccessFilter = getGlyphBasicAccessFilter({
     ctx,
@@ -78,13 +78,13 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
       const q = page
         ? `
           FOR parentNode, edge 
-            IN ${depth} ${direction} ${aqlstr(parentId)} ${edgeType}
+            IN ${depth} ${direction} ${aqlstr(parentNodeId)} ${edgeType}
 
-            FILTER edge.from == '${edgeTypeFrom}' 
-                && edge.to   == '${edgeTypeTo}'
+            FILTER edge.from == '${fromNodeType}' 
+                && edge.to   == '${toNodeType}'
                 && ${targetEdgeAccessFilter}
             
-            LET node = DOCUMENT(edge.${rev ? '_from' : '_to'})            
+            LET node = DOCUMENT(edge.${inverse ? '_from' : '_to'})            
             FILTER ${targetNodeAccessFilter}
 
             ${page}
