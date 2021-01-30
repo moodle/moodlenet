@@ -1,23 +1,25 @@
-import {
-  getAuthUserId,
-  graphQLRequestApiCaller,
-} from '../../../MoodleNetGraphQL'
+import { MoodleNet } from '../../..'
+import { getAuthUserId } from '../../../MoodleNetGraphQL'
 import { Resolvers, User } from '../ContentGraph.graphql.gen'
+import { unshallowForResolver } from './helpers'
 export const getSessionAccountUser: Resolvers['Query']['getSessionAccountUser'] = async (
   _root,
-  { username } /* , _ctx, _info */
+  { username },
+  ctx /*_info */
 ) => {
   const _id = getAuthUserId({ accountUsername: username })
-  const { res } = await graphQLRequestApiCaller({
-    api: 'ContentGraph.Node.ById',
-    req: { _id },
-  })
-  if (res.___ERROR || !res.node) {
-    throw new Error(res.___ERROR?.msg || 'User not found')
+  const { node: shallowUser } = await MoodleNet.api(
+    'ContentGraph.Node.ById'
+  ).call(
+    (nodeById) => nodeById<User>({ _id }),
+    ctx.flow
+  )
+
+  if (!shallowUser) {
+    throw new Error('User not found')
   }
-  const { node } = res
   return {
     __typename: 'UserSession',
-    user: node as User,
+    user: unshallowForResolver(shallowUser),
   }
 }

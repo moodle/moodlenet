@@ -1,76 +1,69 @@
 import { MoodleNet } from '../../..'
-import { RespondApiHandler } from '../../../../lib/domain'
-import { Api } from '../../../../lib/domain/api/types'
-import { graphQLRequestApiCaller } from '../../../MoodleNetGraphQL'
+import { Flow } from '../../../../lib/domain/types/path'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
-import { userAccountRoutes } from '../UserAccount.routes'
 import {
+  fillEmailTemplate,
   getSimpleResponse,
   userAndJwtByActiveUserAccount,
-  fillEmailTemplate,
 } from '../UserAccount.helpers'
+import { userAccountRoutes } from '../UserAccount.routes'
 
-export type SessionByEmailApi = Api<
-  { email: string; username: string },
-  { success: true } | { success: false; reason: string }
->
+export type SessionByEmailApiReq = {
+  email: string
+  username: string
+  flow: Flow
+}
+export type SessionByEmailApiRes =
+  | { success: true }
+  | { success: false; reason: string }
 
-export const SessionByEmailApiHandler = async () => {
+export const SessionByEmailApiHandler = async ({
+  email,
+  username,
+  flow,
+}: SessionByEmailApiReq) => {
   const {
     getConfig,
     getActiveAccountByUsername,
   } = await getAccountPersistence()
-  const handler: RespondApiHandler<SessionByEmailApi> = async ({
-    flow,
-    req: { email, username },
-  }) => {
-    const config = await getConfig()
-    const { tempSessionEmail: resetAccountPasswordRequestEmail } = config
-    const account = await getActiveAccountByUsername({
-      username,
-    })
+  const config = await getConfig()
+  const { tempSessionEmail: resetAccountPasswordRequestEmail } = config
+  const account = await getActiveAccountByUsername({
+    username,
+  })
 
-    if (!account || account.email !== email) {
-      return { success: false, reason: 'not found' }
-    }
-    const { jwt } = await userAndJwtByActiveUserAccount({
-      activeUserAccount: account,
-    })
-
-    const emailObj = fillEmailTemplate({
-      template: resetAccountPasswordRequestEmail,
-      to: account.email,
-      vars: { username, link: `https://xxx.xxx/temp-session/${jwt}` },
-    })
-
-    await MoodleNet.callApi({
-      api: 'Email.SendOne.SendNow',
-      flow: userAccountRoutes.setRoute(flow, 'Temp-Email-Session'),
-      req: {
-        emailObj,
-      },
-      opts: { justEnqueue: true },
-    })
-    return { success: true } as const
+  if (!account || account.email !== email) {
+    return { success: false, reason: 'not found' }
   }
-  return handler
+  const { jwt } = await userAndJwtByActiveUserAccount({
+    activeUserAccount: account,
+  })
+
+  const emailObj = fillEmailTemplate({
+    template: resetAccountPasswordRequestEmail,
+    to: account.email,
+    vars: { username, link: `https://xxx.xxx/temp-session/${jwt}` },
+  })
+
+  await MoodleNet.api('Email.SendOne.SendNow').enqueue(
+    (sendOne, flow) => sendOne({ emailObj, flow }),
+    userAccountRoutes.setRoute(flow, 'Temp-Email-Session')
+  )
+  return { success: true }
 }
 
 export const sessionByEmail: MutationResolvers['sessionByEmail'] = async (
   _parent,
-  { email, username }
+  { email, username },
+  context
 ) => {
-  const { res } = await graphQLRequestApiCaller({
-    api: 'UserAccount.Session.ByEmail',
-    req: { email, username },
-  })
+  const res = await MoodleNet.api('UserAccount.Session.ByEmail').call(
+    (sessionByEmail, flow) => sessionByEmail({ email, username, flow }),
+    context.flow
+  )
 
-  if (res.___ERROR) {
-    return getSimpleResponse({
-      message: res.___ERROR.msg,
-    })
-  } else if (!res.success) {
+  if (!res.success) {
     return getSimpleResponse({
       message: res.reason,
     })

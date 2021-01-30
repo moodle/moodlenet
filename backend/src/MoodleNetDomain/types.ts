@@ -1,3 +1,4 @@
+import { Flow } from '../lib/domain/types/path'
 import { Role } from './services/ContentGraph/ContentGraph.graphql.gen'
 
 export type MoodleNetExecutionAuth = {
@@ -11,4 +12,5 @@ export type MoodleNetExecutionAuth = {
 
 export type MoodleNetExecutionContext = {
   auth: MoodleNetExecutionAuth | null
+  flow: Flow
 }

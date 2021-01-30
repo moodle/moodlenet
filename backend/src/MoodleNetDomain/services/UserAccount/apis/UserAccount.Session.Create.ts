@@ -1,51 +1,41 @@
-import { RespondApiHandler } from '../../../../lib/domain'
-import { Api } from '../../../../lib/domain/api/types'
-import { graphQLRequestApiCaller } from '../../../MoodleNetGraphQL'
+import { MoodleNet } from '../../..'
 import { MutationResolvers, UserSession } from '../UserAccount.graphql.gen'
 import {
-  userSessionByActiveUserAccount,
   getVerifiedAccountByUsernameAndPassword,
+  userSessionByActiveUserAccount,
 } from '../UserAccount.helpers'
 
-export type SessionCreateApi = Api<
-  { username: string; password: string },
-  { session: UserSession | null }
->
+export type SessionCreateReq = { username: string; password: string }
+export type SessionCreateRes = { session: UserSession | null }
 
-export const SessionCreateApiHandler = async () => {
-  const handler: RespondApiHandler<SessionCreateApi> = async ({
-    /* flow, */ req: { username, password },
-  }) => {
-    const account = await getVerifiedAccountByUsernameAndPassword({
-      username,
-      password,
-    })
+export async function SessionCreateApiHandler({
+  username,
+  password,
+}: SessionCreateReq): Promise<SessionCreateRes> {
+  const account = await getVerifiedAccountByUsernameAndPassword({
+    username,
+    password,
+  })
 
-    if (!account) {
-      return { session: null }
-    }
-
-    const session = await userSessionByActiveUserAccount({
-      activeUserAccount: account,
-    })
-
-    return { session }
+  if (!account) {
+    return { session: null }
   }
 
-  return handler
+  const session = await userSessionByActiveUserAccount({
+    activeUserAccount: account,
+  })
+
+  return { session }
 }
 
 export const createSession: MutationResolvers['createSession'] = async (
   _parent,
-  { password, username }
+  { password, username },
+  context
 ) => {
-  const { res } = await graphQLRequestApiCaller({
-    api: 'UserAccount.Session.Create',
-    req: { password, username },
-  })
-  if (res.___ERROR || !res.session) {
-    return null
-  } else {
-    return res.session
-  }
+  const res = await MoodleNet.api('UserAccount.Session.Create').call(
+    (createSession) => createSession({ password, username }),
+    context.flow
+  )
+  return res.session
 }

@@ -1,14 +1,21 @@
-import * as Apis from './api'
 import * as AMQP from './amqp'
-import { ApiLeaves } from './api/types'
+import * as Apis from './api'
+import { ApiDef, ApiLeaves } from './api/types'
 import * as Bindings from './bindings'
 import * as Events from './event'
 import { EventLeaves } from './event/types'
-import { newFlow } from './helpers'
-import { Flow } from './types/path'
+import { flowId, newFlow } from './helpers'
+import { Flow, PFlow } from './types/path'
 
 export type Domain = ReturnType<typeof domain>
-
+export type ApiLookupOpts = {}
+export type ApiRespondOpts = {}
+export type ApiCallOpts = {
+  timeout?: number
+}
+export type ApiEnqueueOpts = {
+  delaySecs?: number
+}
 export const domain = <DomainDef extends object>(_: { domain: string }) => {
   const { domain } = _
 
@@ -17,25 +24,53 @@ export const domain = <DomainDef extends object>(_: { domain: string }) => {
     AMQP.assertDomainDelayedQueueAndExchange({ domain }),
   ])
 
-  const callApi = async <ApiPath extends ApiLeaves<DomainDef>>(
-    _: Apis.ApiCallArgs<DomainDef, ApiPath>
-  ) => {
-    await asserts
-    return Apis.call<DomainDef>(domain)(_)
+  const api = <ApiPath extends ApiLeaves<DomainDef>>(api: ApiPath) => {
+    type ApiFn = ApiDef<DomainDef, ApiPath>
+    type ApiCaller<Ret> = (apiFn: ApiFn, flow: Flow) => Ret
+    //  type AfterCallRet<Ret> = Ret extends Promise<any> ? Ret : Promise<Ret>
+    const getFn = (flow: Flow, opts?: Apis.CallOpts) =>
+      Apis.call<DomainDef>(domain)({
+        api,
+        flow,
+        opts,
+      })
+
+    return {
+      async call<Ret>(
+        caller: ApiCaller<Ret>,
+        pflow?: PFlow,
+        opts?: ApiCallOpts
+      ): Promise<Ret> {
+        const flow = newFlow(pflow)
+        return caller(getFn(flow, { timeout: opts?.timeout }), flow)
+      },
+      async enqueue(
+        enqueuer: ApiCaller<any>,
+        pflow?: PFlow,
+        opts?: ApiEnqueueOpts
+      ): Promise<void> {
+        const flow = newFlow(pflow)
+        return enqueuer(
+          getFn(flow, { delaySecs: opts?.delaySecs, justEnqueue: true }),
+          flow
+        ).then(() => {})
+      },
+      async respond(handler: ApiFn, _opts?: ApiRespondOpts) {
+        await asserts
+        return Apis.respond<DomainDef>(domain)({
+          api,
+          handler,
+          opts: {},
+        })
+      },
+    }
   }
-  const emitEvent = Events.emit<DomainDef>(domain)
 
-  const respondApi = async <ApiPath extends ApiLeaves<DomainDef>>(
-    _: Apis.RespondApiArgs<DomainDef, ApiPath>
+  const event = <EventPath extends EventLeaves<DomainDef>>(
+    eventPath: EventPath
   ) => {
-    const { api, handler, opts } = _
-    await asserts
-
-    return Apis.respond<DomainDef>(domain)({
-      api,
-      handler,
-      opts,
-    })
+    const emit = Events.emit<DomainDef>(domain)(eventPath)
+    return { emit }
   }
 
   const routes = <Route extends string>() => {
@@ -49,12 +84,9 @@ export const domain = <DomainDef extends object>(_: { domain: string }) => {
       return Bindings.bindApi<DomainDef>(domain)(_)
     }
 
-    const setRoute = (flow: Flow, route: Route): Flow => ({
-      ...flow,
-      _route: route,
-    })
+    const setRoute = (flow: Flow, route: Route): Flow => [route, flowId(flow)]
 
-    const flow = (_route: Route, _key?: string) => newFlow({ _route, _key })
+    const flow = (route: Route, id?: string) => newFlow([route, id])
 
     return {
       bind,
@@ -64,9 +96,8 @@ export const domain = <DomainDef extends object>(_: { domain: string }) => {
   }
 
   return {
+    api,
+    event,
     routes,
-    callApi,
-    respondApi,
-    emitEvent,
   }
 }

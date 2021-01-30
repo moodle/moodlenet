@@ -9,11 +9,10 @@ import { FilterRootFields } from '@graphql-tools/wrap'
 import { printSchema } from 'graphql'
 import { MoodleNet } from '..'
 import { getGQLApiCallerExecutor, startGQLApiResponder } from '../../lib/domain'
-import { ApiLeaves, ApiReq } from '../../lib/domain/api/types'
 import { newFlow } from '../../lib/domain/helpers'
 import { MoodleNetDomain } from '../MoodleNetDomain'
 import { getExecutionGlobalValues } from './executionContext'
-import { MoodleNetExecutionContext, GQLServiceName } from './types'
+import { GQLServiceName, MoodleNetExecutionContext } from './types'
 
 export function loadServiceSchema(_: { srvName: GQLServiceName }) {
   //FIXME: can't apply directives resolvers
@@ -113,22 +112,7 @@ export function getServiceSubschemaConfig({
   })
 }
 
-export const graphQLRequestFlow = () => newFlow({ _route: 'gql-request' })
-
-export const graphQLRequestApiCaller = <
-  ApiPath extends ApiLeaves<MoodleNetDomain>
->({
-  api,
-  req,
-}: {
-  api: ApiPath
-  req: ApiReq<MoodleNetDomain, ApiPath>
-}) =>
-  MoodleNet.callApi({
-    api,
-    flow: graphQLRequestFlow(),
-    req,
-  })
+export const graphQLRequestFlow = () => newFlow(['gql-request'])
 
 const MNServiceGQLApiName = (srvName: GQLServiceName) =>
   `${srvName}.GQL` as const

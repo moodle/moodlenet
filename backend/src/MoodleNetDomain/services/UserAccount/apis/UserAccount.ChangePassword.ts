@@ -1,9 +1,5 @@
-import { RespondApiHandler } from '../../../../lib/domain'
-import { Api } from '../../../../lib/domain/api/types'
-import {
-  graphQLRequestApiCaller,
-  loggedUserOnly,
-} from '../../../MoodleNetGraphQL'
+import { MoodleNet } from '../../..'
+import { loggedUserOnly } from '../../../MoodleNetGraphQL'
 import { Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
@@ -18,40 +14,43 @@ export type ChangePasswordPersistence = (_: {
   accountId: string
 }) => Promise<null | Messages.NotFound>
 
-export type ChangePasswordApi = Api<
-  { username: string; currentPassword: string; newPassword: string },
-  { success: true } | { success: false; reason: string }
->
+export type ChangePasswordApiReq = {
+  username: string
+  currentPassword: string
+  newPassword: string
+}
+export type ChangePasswordApiRes =
+  | { success: true }
+  | { success: false; reason: string }
 
-export const ChangePasswordApiHandler = async () => {
+export const ChangePasswordApiHandler = async ({
+  newPassword,
+  username,
+  currentPassword,
+}: ChangePasswordApiReq): Promise<ChangePasswordApiRes> => {
   const { changePassword } = await getAccountPersistence()
-  const handler: RespondApiHandler<ChangePasswordApi> = async ({
-    req: { newPassword, username, currentPassword },
-  }) => {
-    const account = await getVerifiedAccountByUsernameAndPassword({
-      username,
-      password: currentPassword,
-    })
+  const account = await getVerifiedAccountByUsernameAndPassword({
+    username,
+    password: currentPassword,
+  })
 
-    if (!account) {
-      return { success: false, reason: 'not found or wrong password' }
-    }
-
-    const currentPasswordHash = await hashPassword({ pwd: currentPassword })
-    const newPasswordHash = await hashPassword({ pwd: newPassword })
-
-    const changePwdError = await changePassword({
-      accountId: account._id,
-      currentPassword: currentPasswordHash,
-      newPassword: newPasswordHash,
-    })
-    if (changePwdError) {
-      return { success: false, reason: changePwdError }
-    } else {
-      return { success: true } as const
-    }
+  if (!account) {
+    return { success: false, reason: 'not found or wrong password' }
   }
-  return handler
+
+  const currentPasswordHash = await hashPassword({ pwd: currentPassword })
+  const newPasswordHash = await hashPassword({ pwd: newPassword })
+
+  const changePwdError = await changePassword({
+    accountId: account._id,
+    currentPassword: currentPasswordHash,
+    newPassword: newPasswordHash,
+  })
+  if (changePwdError) {
+    return { success: false, reason: changePwdError }
+  } else {
+    return { success: true } as const
+  }
 }
 
 export const changePassword: MutationResolvers['changePassword'] = async (
@@ -61,22 +60,17 @@ export const changePassword: MutationResolvers['changePassword'] = async (
 ) => {
   const { username } = loggedUserOnly({ context })
 
-  const { res } = await graphQLRequestApiCaller({
-    api: 'UserAccount.ChangePassword',
-    req: {
-      newPassword,
-      currentPassword,
-      username,
-    },
-  })
+  const res = await MoodleNet.api('UserAccount.ChangePassword').call(
+    (changePassword) =>
+      changePassword({
+        newPassword,
+        currentPassword,
+        username,
+      }),
+    context.flow
+  )
 
-  if (res.___ERROR) {
-    return {
-      __typename: 'SimpleResponse',
-      success: false,
-      message: res.___ERROR.msg,
-    }
-  } else if (!res.success) {
+  if (!res.success) {
     return {
       __typename: 'SimpleResponse',
       message: res.reason,

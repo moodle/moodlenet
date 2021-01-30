@@ -2,7 +2,7 @@
 import { Message, MessagePropertyHeaders, Options } from 'amqplib'
 import { EventEmitter } from 'events'
 import { channelPromise as channel } from './domain.env'
-import { nodeId } from './helpers'
+import { flowId, flowRoute, nodeId } from './helpers'
 import { Flow } from './types/path'
 
 const defPubOpts: Options.Publish = {
@@ -10,25 +10,26 @@ const defPubOpts: Options.Publish = {
 }
 
 type DomainMessageHeaders = {
-  'x-flow-key': string
+  'x-flow-id': string
   'x-flow-route': string
   'x-flow-nodeId': string
 }
 const encodeMsgHeaders = (_: { flow: Flow }): DomainMessageHeaders => ({
-  'x-flow-key': _.flow._key,
-  'x-flow-route': _.flow._route,
+  'x-flow-id': flowId(_.flow),
+  'x-flow-route': flowRoute(_.flow),
   'x-flow-nodeId': nodeId,
 })
 const decodeMsgHeaders = (msg: Message | null) => {
   if (!msg) {
     return null
   }
-  const headers = msg.properties.headers as MessagePropertyHeaders & Partial<DomainMessageHeaders>
-  const flowKey = headers[`x-flow-key`]
+  const headers = msg.properties.headers as MessagePropertyHeaders &
+    Partial<DomainMessageHeaders>
+  const flowId = headers[`x-flow-id`]
   const flowRoute = headers['x-flow-route']
   const nodeId = headers['x-flow-nodeId']
   const flow: Flow | undefined =
-    flowKey && flowRoute ? { _key: flowKey, _route: flowRoute } : undefined
+    flowId && flowRoute ? [flowRoute, flowId] : undefined
   return {
     flow,
     nodeId,
@@ -36,11 +37,8 @@ const decodeMsgHeaders = (msg: Message | null) => {
 }
 
 const msgFlow = (msg: Message): Flow => {
-  const [_route, _key] = msg.fields.routingKey.split('.').slice(-2)
-  return {
-    _key,
-    _route,
-  }
+  const [route, id] = msg.fields.routingKey.split('.').slice(-2)
+  return [route, id]
 }
 
 export type DomainPublishOpts = Options.Publish & {
@@ -57,7 +55,7 @@ export const domainPublish = (_: {
 }) =>
   new Promise<void>(async (resolve, reject) => {
     const { topic, flow, payload, opts, domain } = _
-    const taggedTopic = `${topic}.${flow._route}.${flow._key}`
+    const taggedTopic = `${topic}.${flowRoute(flow)}.${flowId(flow)}`
     const payloadBuf = json2Buffer(payload)
     const ch = await channel
     const confirmFn = (err: any) => (err ? reject(err) : resolve())
@@ -134,7 +132,8 @@ export const queueConsume = async (_: {
   return { stopConsume }
 }
 
-export const getDomainExchangeName = (domainName: string) => `Domain.${domainName}`
+export const getDomainExchangeName = (domainName: string) =>
+  `Domain.${domainName}`
 
 export const assertDomainExchange = async (_: { domain: string }) => {
   const { domain } = _
@@ -145,7 +144,12 @@ export const assertDomainExchange = async (_: { domain: string }) => {
 const json2Buffer = <T>(json: T) => Buffer.from(JSON.stringify(json))
 const buffer2Json = <T>(buf: Buffer): T => JSON.parse(buf.toString('utf-8'))
 
-export const bindQ = async (_: { exchange: string; name: string; topic: string; args?: any }) => {
+export const bindQ = async (_: {
+  exchange: string
+  name: string
+  topic: string
+  args?: any
+}) => {
   const { args, name, topic, exchange } = _
   const ch = await channel
   const {} = await ch.bindQueue(name, exchange, topic, args)
@@ -158,7 +162,12 @@ export const bindQ = async (_: { exchange: string; name: string; topic: string; 
   }
 }
 
-export const unbindQ = async (_: { name: string; exchange: string; topic: string; args?: any }) => {
+export const unbindQ = async (_: {
+  name: string
+  exchange: string
+  topic: string
+  args?: any
+}) => {
   const { args, exchange, name, topic } = _
   const ch = await channel
   await ch.unbindQueue(name, exchange, topic, args)
@@ -203,7 +212,9 @@ const getDomainDelayExchangeName = (domain: string) =>
 const getDomainDelayQueueName = (domain: string) =>
   `${getDomainDelayExchangeAndQueuePrefix(domain)}QUEUE`
 
-export const assertDomainDelayedQueueAndExchange = async (_: { domain: string }) => {
+export const assertDomainDelayedQueueAndExchange = async (_: {
+  domain: string
+}) => {
   const { domain } = _
   const domainExchangeName = getDomainExchangeName(domain)
   const delayedQName = getDomainDelayQueueName(domain)
@@ -229,25 +240,27 @@ channel.then(async (ch) => {
     opts: { exclusive: true, autoDelete: true },
   })
   ch.consume(mainNodeQ.queue, (msg) => {
+    msg && ch.ack(msg)
     const headers = decodeMsgHeaders(msg)
     if (!headers) {
       return
     }
     const { flow } = headers
-
-    const ev = flow?._key
-    msg && ch.ack(msg)
-    if (!ev) {
+    if (!flow) {
       return
     }
+    const ev = flowId(flow)
     NodeEmitter.emit(ev, msg)
   })
 })
 
 export const mainNodeQEmitter = {
-  sub<T>(_: { flow: Flow; handler(_: EventEmitterType<T>): unknown }) {
+  sub<T>(_: {
+    flow: Flow
+    handler(_: EventEmitterHandlerArgType<T>): unknown
+  }) {
     const { flow, handler } = _
-    const ev = flow._key
+    const ev = flowId(flow)
 
     NodeEmitter.addListener(ev, listener)
     return unsub
@@ -264,15 +277,17 @@ export const mainNodeQEmitter = {
   },
 }
 
-export type EventEmitterType<T> = {
+export type EventEmitterHandlerArgType<T> = {
   msg: Message
   jsonContent: T
-  unsub(): unknown
+  unsub(): void
 }
 
 export type DomainSendToQueueOpts = Options.Publish & {}
 export type DomainQueueOpts = Options.AssertQueue & {}
-export type DomainConsumeOpts = Options.Consume & { errorAck?: Acks.nack | Acks.reject }
+export type DomainConsumeOpts = Options.Consume & {
+  errorAck?: Acks.nack | Acks.reject
+}
 
 export type DomainExchangeOpts = Options.AssertExchange & {}
 

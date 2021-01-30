@@ -4,6 +4,7 @@ import { IncomingMessage } from 'http'
 import { Id } from '../services/ContentGraph/graphDefinition/types'
 import { INVALID_TOKEN } from './JWT'
 import { getJwtVerifier } from './MoodleNetGraphQL.env'
+import { graphQLRequestFlow } from './schemaHelpers'
 import {
   MoodleNetExecutionContext,
   MoodleNetExecutionAuth,
@@ -33,6 +34,7 @@ export function getExecutionGlobalValues(
   return {
     context: {
       auth: auth === INVALID_TOKEN ? null : auth,
+      flow: graphQLRequestFlow(),
     },
     root: {},
   }
