@@ -1,14 +1,12 @@
 import Argon from 'argon2'
 import dot from 'dot'
+import { api } from '../../../lib/domain'
+import { MoodleNetDomain } from '../../MoodleNetDomain'
+import { getAuthUserId, getJwtSigner } from '../../MoodleNetGraphQL'
+import { User } from '../ContentGraph/ContentGraph.graphql.gen'
 import { EmailObj } from '../Email/types'
-import { EmailTemplate } from './persistence/types'
+import { ActiveUserAccount, EmailTemplate } from './persistence/types'
 import { ArgonPwdHashOpts, getAccountPersistence } from './UserAccount.env'
-import {
-  getAuthUserId,
-  getJwtSigner,
-  graphQLRequestApiCaller,
-} from '../../MoodleNetGraphQL'
-import { ActiveUserAccount } from './persistence/types'
 import { SimpleResponse, UserSession } from './UserAccount.graphql.gen'
 
 export const userSessionByActiveUserAccount = async ({
@@ -34,24 +32,23 @@ export const userAndJwtByActiveUserAccount = async ({
   activeUserAccount: ActiveUserAccount
 }) => {
   const signJwt = getJwtSigner()
-  const { res } = await graphQLRequestApiCaller({
-    api: 'ContentGraph.User.ById',
-    req: {
-      userId: getAuthUserId({ accountUsername: activeUserAccount.username }),
-    },
-  })
-  if (res.___ERROR) {
-    throw new Error(res.___ERROR.msg)
-  } else if (!res.user) {
+  const { node: maybeUser } = await api<MoodleNetDomain>()(
+    'ContentGraph.Node.ById'
+  ).call((nodeById) =>
+    nodeById<User>({
+      _id: getAuthUserId({ accountUsername: activeUserAccount.username }),
+    })
+  )
+  if (!maybeUser) {
     throw new Error(
       `can't find User for Account Username: ${activeUserAccount.username}`
     )
   }
   const jwt = await signJwt({
     account: activeUserAccount,
-    user: res.user,
+    user: maybeUser,
   })
-  return { jwt, user: res.user }
+  return { jwt, user: maybeUser }
 }
 
 export const getSimpleResponse = ({
@@ -60,7 +57,7 @@ export const getSimpleResponse = ({
 }:
   | {
       success?: false
-      message: string | null
+      message: string | null | undefined
     }
   | {
       success: true
@@ -68,7 +65,7 @@ export const getSimpleResponse = ({
     }): SimpleResponse => ({
   __typename: 'SimpleResponse',
   success: !!success,
-  message: message ?? null,
+  message: message || null,
 })
 
 export const hashPassword = (_: { pwd: string }) => {
@@ -113,10 +110,10 @@ export async function getVerifiedAccountByUsernameAndPassword({
   if (!account) {
     return null
   }
-
   const pwdVerified = await verifyPassword({
     hash: account.password,
     pwd: password,
   })
+
   return pwdVerified ? account : null
 }

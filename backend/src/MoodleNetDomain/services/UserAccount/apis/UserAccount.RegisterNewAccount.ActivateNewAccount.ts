@@ -1,8 +1,7 @@
-import { MoodleNet } from '../../..'
-import { RespondApiHandler } from '../../../../lib/domain'
-import { Api } from '../../../../lib/domain/api/types'
+import { api, event } from '../../../../lib/domain'
 import { Event } from '../../../../lib/domain/event/types'
-import { graphQLRequestApiCaller } from '../../../MoodleNetGraphQL'
+import { Flow } from '../../../../lib/domain/types/path'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { ActiveUserAccount, Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import {
@@ -11,8 +10,8 @@ import {
   UserSession,
 } from '../UserAccount.graphql.gen'
 import {
-  userSessionByActiveUserAccount,
   hashPassword,
+  userSessionByActiveUserAccount,
 } from '../UserAccount.helpers'
 
 export type NewAccountActivatedEvent = Event<{
@@ -31,49 +30,49 @@ export type ActivateNewAccountPersistence = (_: {
   password: string
 }) => Promise<ActivationResult>
 
-export type ConfirmEmailActivateAccountApi = Api<
-  { token: string; password: string; username: string },
-  { activation: ActivationResult }
->
+export type ConfirmEmailActivateAccountReq = {
+  token: string
+  password: string
+  username: string
+  flow: Flow
+}
+export type ConfirmEmailActivateAccountRes = { activation: ActivationResult }
 
-export const ConfirmEmailActivateAccountApiHandler = async () => {
+export const ConfirmEmailActivateAccountApiHandler = async ({
+  flow,
+  token,
+  password,
+  username,
+}: ConfirmEmailActivateAccountReq): Promise<ConfirmEmailActivateAccountRes> => {
   const { activateNewAccount } = await getAccountPersistence()
-  const handler: RespondApiHandler<ConfirmEmailActivateAccountApi> = async ({
-    flow,
-    req: { token, password, username },
-  }) => {
-    const hashedPassword = await hashPassword({ pwd: password })
-    const activation = await activateNewAccount({
-      token,
-      username,
-      password: hashedPassword,
+  const hashedPassword = await hashPassword({ pwd: password })
+  const activation = await activateNewAccount({
+    token,
+    username,
+    password: hashedPassword,
+  })
+  if (typeof activation !== 'string') {
+    event<MoodleNetDomain>(flow)(
+      'UserAccount.RegisterNewAccount.NewAccountActivated'
+    ).emit({
+      payload: { accountId: activation._id, username: activation.username },
     })
-    if (typeof activation !== 'string') {
-      MoodleNet.emitEvent({
-        event: 'UserAccount.RegisterNewAccount.NewAccountActivated',
-        flow,
-        payload: { accountId: activation._id, username: activation.username },
-      })
-    }
-    return { activation }
   }
-  return handler
+  return { activation }
 }
 
 export const activateAccount: MutationResolvers['activateAccount'] = async (
   _parent,
-  { password, username, token }
+  { password, username, token },
+  context
 ) => {
-  const { res } = await graphQLRequestApiCaller({
-    api: 'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount',
-    req: { password, token, username },
-  })
-  if (res.___ERROR) {
-    return getActivatinOutcome({
-      session: null,
-      message: res.___ERROR.msg,
-    })
-  } else if (typeof res.activation === 'string') {
+  const res = await api<MoodleNetDomain>(context.flow)(
+    'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount'
+  ).call((confirmEmailActivateAccount, flow) =>
+    confirmEmailActivateAccount({ password, token, username, flow })
+  )
+
+  if (typeof res.activation === 'string') {
     return getActivatinOutcome({
       session: null,
       message: res.activation,

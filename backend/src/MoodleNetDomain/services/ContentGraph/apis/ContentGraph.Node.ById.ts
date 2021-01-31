@@ -1,20 +1,15 @@
-import { RespondApiHandler } from '../../../../lib/domain'
-import { Api } from '../../../../lib/domain/api/types'
 import { getContentGraphPersistence } from '../ContentGraph.env'
+import { Node } from '../ContentGraph.graphql.gen'
 import { Id } from '../graphDefinition/types'
-import { ShallowNode } from '../persistence/types'
 
-export type NodeByIdApi = Api<{ _id: Id }, { node: ShallowNode | null }>
-
-export const NodeByIdApiHandler = async () => {
+export const NodeByIdApiHandler = async <N extends Node>({
+  _id,
+}: {
+  _id: Id
+}) => {
   const { findNode } = await getContentGraphPersistence()
-
-  const handler: RespondApiHandler<NodeByIdApi> = async ({ req: { _id } }) => {
-    const node = await findNode({
-      _id,
-    })
-    return { node }
-  }
-
-  return handler
+  const node = await findNode<N>({
+    _id,
+  })
+  return { node }
 }

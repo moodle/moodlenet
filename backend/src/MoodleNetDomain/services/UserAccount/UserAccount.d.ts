@@ -1,40 +1,40 @@
 import { GraphQLApi } from '../../MoodleNetGraphQL'
 import {
   AccountEmailChangedEvent,
-  ConfirmAndChangeAccountEmailApi,
+  ConfirmAndChangeAccountEmailHandler,
 } from './apis/UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail'
-import { ChangeAccountEmailDeleteRequestApi } from './apis/UserAccount.ChangeMainEmail.DeleteRequest'
-import { ChangeAccountEmailRequestApi } from './apis/UserAccount.ChangeMainEmail.Request.'
-import { ChangePasswordApi } from './apis/UserAccount.ChangePassword'
+import { ChangeAccountEmailDeleteRequestApiHandler } from './apis/UserAccount.ChangeMainEmail.DeleteRequest'
+import { ChangeAccountEmailRequestHandler } from './apis/UserAccount.ChangeMainEmail.Request.'
+import { ChangePasswordApiHandler } from './apis/UserAccount.ChangePassword'
 import {
-  ConfirmEmailActivateAccountApi,
+  ConfirmEmailActivateAccountApiHandler,
   NewAccountActivatedEvent,
 } from './apis/UserAccount.RegisterNewAccount.ActivateNewAccount'
-import { RegisterNewAccountDeleteRequestApi } from './apis/UserAccount.RegisterNewAccount.DeleteRequest'
-import { RegisterNewAccountRequestApi } from './apis/UserAccount.RegisterNewAccount.Request'
-import { SessionByEmailApi } from './apis/UserAccount.Session.ByEmail'
-import { SessionCreateApi } from './apis/UserAccount.Session.Create'
+import { RegisterNewAccountDeleteRequestApiHandler } from './apis/UserAccount.RegisterNewAccount.DeleteRequest'
+import { RegisterNewAccountRequestApiHandler } from './apis/UserAccount.RegisterNewAccount.Request'
+import { SessionByEmailApiHandler } from './apis/UserAccount.Session.ByEmail'
+import { SessionCreateApiHandler } from './apis/UserAccount.Session.Create'
 
 export type UserAccount = {
   RegisterNewAccount: {
-    Request: RegisterNewAccountRequestApi
-    DeleteRequest: RegisterNewAccountDeleteRequestApi
-    ConfirmEmailActivateAccount: ConfirmEmailActivateAccountApi
+    Request: typeof RegisterNewAccountRequestApiHandler
+    DeleteRequest: typeof RegisterNewAccountDeleteRequestApiHandler
+    ConfirmEmailActivateAccount: typeof ConfirmEmailActivateAccountApiHandler
     NewAccountActivated: NewAccountActivatedEvent
   }
 
   ChangeMainEmail: {
-    Request: ChangeAccountEmailRequestApi
-    ConfirmAndChangeAccountEmail: ConfirmAndChangeAccountEmailApi
-    DeleteRequest: ChangeAccountEmailDeleteRequestApi
+    Request: typeof ChangeAccountEmailRequestHandler
+    ConfirmAndChangeAccountEmail: typeof ConfirmAndChangeAccountEmailHandler
+    DeleteRequest: typeof ChangeAccountEmailDeleteRequestApiHandler
     AccountEmailChanged: AccountEmailChangedEvent
   }
 
-  ChangePassword: ChangePasswordApi
+  ChangePassword: typeof ChangePasswordApiHandler
 
   Session: {
-    ByEmail: SessionByEmailApi
-    Create: SessionCreateApi
+    ByEmail: typeof SessionByEmailApiHandler
+    Create: typeof SessionCreateApiHandler
   }
 
   GQL: GraphQLApi

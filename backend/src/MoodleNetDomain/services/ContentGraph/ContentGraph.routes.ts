@@ -1,4 +1,5 @@
-import { MoodleNet } from '../..'
+import { routes } from '../../../lib/domain'
+import { MoodleNetDomain } from '../../MoodleNetDomain'
 
-export type ContentGraphRoutes = never
-export const contentGraphRoutes = MoodleNet.routes<ContentGraphRoutes>()
+export type ContentGraphRoutes = '*'
+export const contentGraphRoutes = routes<MoodleNetDomain, ContentGraphRoutes>()

@@ -9,10 +9,10 @@ export const SystemUserId = 'User/_System_'
 
 export interface ContentGraphPersistence {
   // graphQLTypeResolvers: GQL.Resolvers
-  findNode(_: {
+  findNode<N extends GQL.Node = GQL.Node>(_: {
     _id: Id
     nodeType?: GQL.NodeType | null
-  }): Promise<ShallowNode | null>
+  }): Promise<ShallowNode<N> | null>
   findNodeWithPolicy(_: {
     _id: Id
     nodeType: GQL.NodeType

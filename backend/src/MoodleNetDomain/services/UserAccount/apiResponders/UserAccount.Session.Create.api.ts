@@ -1,9 +1,7 @@
-import { MoodleNet } from '../../..'
 import { SessionCreateApiHandler } from '../apis/UserAccount.Session.Create'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { api } from '../../../../lib/domain'
 
-SessionCreateApiHandler().then((handler) => {
-  MoodleNet.respondApi({
-    api: 'UserAccount.Session.Create',
-    handler,
-  })
-})
+api<MoodleNetDomain>()('UserAccount.Session.Create').respond(
+  SessionCreateApiHandler
+)
