@@ -1,6 +1,7 @@
-import { MoodleNet } from '../../..'
 import { ConfirmEmailActivateAccountApiHandler } from '../apis/UserAccount.RegisterNewAccount.ActivateNewAccount'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { api } from '../../../../lib/domain'
 
-MoodleNet.api(
+api<MoodleNetDomain>()(
   'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount'
 ).respond(ConfirmEmailActivateAccountApiHandler)

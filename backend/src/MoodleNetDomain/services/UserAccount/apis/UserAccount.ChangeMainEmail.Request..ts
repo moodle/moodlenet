@@ -1,6 +1,7 @@
 import { v4 as uuidV4 } from 'uuid'
-import { MoodleNet } from '../../..'
+import { api } from '../../../../lib/domain'
 import { Flow } from '../../../../lib/domain/types/path'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { loggedUserOnly } from '../../../MoodleNetGraphQL'
 import {
   Messages,
@@ -63,17 +64,16 @@ export const ChangeAccountEmailRequestHandler = async ({
     })
 
     await Promise.all([
-      MoodleNet.api('Email.SendOne.SendNow').enqueue(
-        (sendOne, flow) => sendOne({ emailObj, flow }),
+      api<MoodleNetDomain>(
         userAccountRoutes.setRoute(flow, 'Change-Account-Email')
+      )('Email.SendOne.SendNow').enqueue((sendOne, flow) =>
+        sendOne({ emailObj, flow })
       ),
-      MoodleNet.api('UserAccount.ChangeMainEmail.DeleteRequest').enqueue(
-        (deleteRequest) => deleteRequest({ token }),
-        flow,
-        {
-          delaySecs: changeAccountEmailVerificationWaitSecs,
-        }
-      ),
+      api<MoodleNetDomain>(flow)(
+        'UserAccount.ChangeMainEmail.DeleteRequest'
+      ).enqueue((deleteRequest) => deleteRequest({ token }), {
+        delaySecs: changeAccountEmailVerificationWaitSecs,
+      }),
     ])
 
     return { success: true }
@@ -91,10 +91,10 @@ export const changeEmailRequest: MutationResolvers['changeEmailRequest'] = async
 ) => {
   const { accountId } = loggedUserOnly({ context })
 
-  const res = await MoodleNet.api(
+  const res = await api<MoodleNetDomain>(context.flow)(
     'UserAccount.ChangeMainEmail.Request'
-  ).call((changeMainEmailReq) =>
-    changeMainEmailReq({ newEmail, accountId, flow: context.flow })
+  ).call((changeMainEmailReq, flow) =>
+    changeMainEmailReq({ newEmail, accountId, flow })
   )
 
   if (!res.success) {

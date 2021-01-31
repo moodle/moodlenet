@@ -1,6 +1,7 @@
-import { MoodleNet } from '../../..'
 import { ChangeAccountEmailDeleteRequestApiHandler } from '../apis/UserAccount.ChangeMainEmail.DeleteRequest'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { api } from '../../../../lib/domain'
 
-MoodleNet.api('UserAccount.ChangeMainEmail.DeleteRequest').respond(
+api<MoodleNetDomain>()('UserAccount.ChangeMainEmail.DeleteRequest').respond(
   ChangeAccountEmailDeleteRequestApiHandler
 )

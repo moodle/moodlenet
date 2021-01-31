@@ -1,4 +1,5 @@
-import { MoodleNet } from '../..'
+import { routes } from '../../../lib/domain'
+import { MoodleNetDomain } from '../../MoodleNetDomain'
 
 export type HttpGqlRoutes = 'gql-request'
-export const httpGqlServerRoutes = MoodleNet.routes<HttpGqlRoutes>()
+export const httpGqlServerRoutes = routes<MoodleNetDomain, HttpGqlRoutes>()

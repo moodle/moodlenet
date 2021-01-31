@@ -1,6 +1,7 @@
-import { MoodleNet } from '../../..'
+import { api, event } from '../../../../lib/domain'
 import { Event } from '../../../../lib/domain/event/types'
 import { Flow } from '../../../../lib/domain/types/path'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { ActiveUserAccount, Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import {
@@ -51,8 +52,9 @@ export const ConfirmEmailActivateAccountApiHandler = async ({
     password: hashedPassword,
   })
   if (typeof activation !== 'string') {
-    MoodleNet.event('UserAccount.RegisterNewAccount.NewAccountActivated').emit({
-      flow,
+    event<MoodleNetDomain>(flow)(
+      'UserAccount.RegisterNewAccount.NewAccountActivated'
+    ).emit({
       payload: { accountId: activation._id, username: activation.username },
     })
   }
@@ -64,12 +66,10 @@ export const activateAccount: MutationResolvers['activateAccount'] = async (
   { password, username, token },
   context
 ) => {
-  const res = await MoodleNet.api(
+  const res = await api<MoodleNetDomain>(context.flow)(
     'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount'
-  ).call(
-    (confirmEmailActivateAccount, flow) =>
-      confirmEmailActivateAccount({ password, token, username, flow }),
-    context.flow
+  ).call((confirmEmailActivateAccount, flow) =>
+    confirmEmailActivateAccount({ password, token, username, flow })
   )
 
   if (typeof res.activation === 'string') {

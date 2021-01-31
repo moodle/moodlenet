@@ -1,8 +1,9 @@
-import { MoodleNet } from '../../..'
 import { UserCreateForNewAccountApiHandler } from '../apis/ContentGraph.User.CreateForNewAccount.api'
 import { contentGraphRoutes } from '../ContentGraph.routes'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { api } from '../../../../lib/domain'
 
-MoodleNet.api('ContentGraph.User.CreateForNewAccount').respond(
+api<MoodleNetDomain>()('ContentGraph.User.CreateForNewAccount').respond(
   UserCreateForNewAccountApiHandler
 )
 contentGraphRoutes.bind({

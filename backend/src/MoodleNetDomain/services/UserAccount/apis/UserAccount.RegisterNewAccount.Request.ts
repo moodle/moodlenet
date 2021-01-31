@@ -1,6 +1,7 @@
 import { v4 as uuidV4 } from 'uuid'
-import { MoodleNet } from '../../..'
+import { api } from '../../../../lib/domain'
 import { Flow } from '../../../../lib/domain/types/path'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
@@ -33,7 +34,7 @@ export const RegisterNewAccountRequestApiHandler = async ({
     token,
   })
   if (typeof resp === 'string') {
-    return { success: false, reason: resp } as const
+    return { success: false, reason: resp }
   } else {
     const emailObj = fillEmailTemplate({
       template: newAccountRequestEmail,
@@ -44,19 +45,18 @@ export const RegisterNewAccountRequestApiHandler = async ({
       },
     })
     await Promise.all([
-      MoodleNet.api('Email.SendOne.SendNow').enqueue(
-        (sendOne, flow) => sendOne({ emailObj, flow }),
+      api<MoodleNetDomain>(
         userAccountRoutes.setRoute(flow, 'Register-New-Account')
+      )('Email.SendOne.SendNow').enqueue((sendOne, flow) =>
+        sendOne({ emailObj, flow })
       ),
-      MoodleNet.api('UserAccount.RegisterNewAccount.DeleteRequest').enqueue(
-        (deleteRequest) => deleteRequest({ token }),
-        flow,
-        {
-          delaySecs: newAccountVerificationWaitSecs,
-        }
-      ),
+      api<MoodleNetDomain>(flow)(
+        'UserAccount.RegisterNewAccount.DeleteRequest'
+      ).enqueue((deleteRequest) => deleteRequest({ token }), {
+        delaySecs: newAccountVerificationWaitSecs,
+      }),
     ])
-    return { success: true } as const
+    return { success: true }
   }
 }
 
@@ -65,11 +65,10 @@ export const signUp: MutationResolvers['signUp'] = async (
   { email },
   context
 ) => {
-  const res = await MoodleNet.api(
+  const res = await api<MoodleNetDomain>(context.flow)(
     'UserAccount.RegisterNewAccount.Request'
-  ).call(
-    (registerNewAccountReq, flow) => registerNewAccountReq({ email, flow }),
-    context.flow
+  ).call((registerNewAccountReq, flow) =>
+    registerNewAccountReq({ email, flow })
   )
 
   if (!res.success) {

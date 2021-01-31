@@ -1,5 +1,6 @@
-import { MoodleNet } from '../../..'
+import { api } from '../../../../lib/domain'
 import { Event } from '../../../../lib/domain/event/types'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
@@ -46,7 +47,7 @@ export const changeEmailConfirm: MutationResolvers['changeEmailConfirm'] = async
   { token, password, username },
   ctx
 ) => {
-  return MoodleNet.api(
+  return api<MoodleNetDomain>(ctx.flow)(
     'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail'
-  ).call((confirm) => confirm({ password, token, username }), ctx.flow)
+  ).call((confirm) => confirm({ password, token, username }))
 }

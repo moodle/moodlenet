@@ -1,5 +1,6 @@
-import { MoodleNet } from '../../..'
+import { api } from '../../../../lib/domain'
 import { Flow } from '../../../../lib/domain/types/path'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
 import {
@@ -46,9 +47,10 @@ export const SessionByEmailApiHandler = async ({
     vars: { username, link: `https://xxx.xxx/temp-session/${jwt}` },
   })
 
-  await MoodleNet.api('Email.SendOne.SendNow').enqueue(
-    (sendOne, flow) => sendOne({ emailObj, flow }),
+  await api<MoodleNetDomain>(
     userAccountRoutes.setRoute(flow, 'Temp-Email-Session')
+  )('Email.SendOne.SendNow').enqueue((sendOne, flow) =>
+    sendOne({ emailObj, flow })
   )
   return { success: true }
 }
@@ -58,10 +60,9 @@ export const sessionByEmail: MutationResolvers['sessionByEmail'] = async (
   { email, username },
   context
 ) => {
-  const res = await MoodleNet.api('UserAccount.Session.ByEmail').call(
-    (sessionByEmail, flow) => sessionByEmail({ email, username, flow }),
-    context.flow
-  )
+  const res = await api<MoodleNetDomain>(context.flow)(
+    'UserAccount.Session.ByEmail'
+  ).call((sessionByEmail, flow) => sessionByEmail({ email, username, flow }))
 
   if (!res.success) {
     return getSimpleResponse({

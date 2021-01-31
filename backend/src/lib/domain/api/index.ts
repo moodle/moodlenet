@@ -2,6 +2,7 @@ import { Executor } from '@graphql-tools/delegate/types'
 import { Message } from 'amqplib'
 import { graphql /* , GraphQLError */, GraphQLSchema, print } from 'graphql'
 import * as AMQP from '../amqp'
+import { api } from '../domain'
 import { flowId, nodeId, flowIdElse, flowRouteElse } from '../helpers'
 import { Flow /* , TypeofPath */, PFlow } from '../types/path'
 import * as Types from './types'
@@ -226,31 +227,29 @@ export const respond = <Domain>(domain: string) => async <
 
 export const getGQLApiCallerExecutor = <DomainDef extends object>({
   getExecutionGlobalValues,
-  api,
-  domain,
+  api: apiPath,
   flow,
 }: {
   getExecutionGlobalValues(
     ..._: Parameters<Executor>
   ): { context: any; root: any }
   api: Types.ApiLeaves<DomainDef>
-  domain: any
   flow: Flow
 }): Executor => async (_) => {
   const { context, root } = getExecutionGlobalValues(_)
   const { document, variables /*,context, extensions, info */ } = _
   const query = print(document)
-  log(`GQLApiCallerExecutor : ${api}`, query, variables)
+  log(`GQLApiCallerExecutor : ${apiPath}`, query, variables)
 
-  const res = await domain.api(api).call(
-    (gqlCall: any) =>
-      gqlCall({
-        context,
-        root,
-        query,
-        variables,
-      }),
-    flow
+  const res = await api<DomainDef>(flow)<Types.ApiLeaves<DomainDef>>(
+    apiPath
+  ).call((gqlCall: any) =>
+    gqlCall({
+      context,
+      root,
+      query,
+      variables,
+    })
   )
   log({ res })
   return res
@@ -262,14 +261,12 @@ function log(...args: any[]) {
 
 export async function startGQLApiResponder<DomainDef>({
   schema,
-  domain,
-  api,
+  api: apiPath,
 }: {
   schema: GraphQLSchema | Promise<GraphQLSchema>
   api: Types.ApiLeaves<DomainDef>
-  domain: any // don't have an explicit type for a DomainDef instance yet
 }) {
-  return domain.api(api).respond(async (req: any) => {
+  return api<any>()<any>(apiPath).respond(async (req: any) => {
     const { query, root, context, variables } = req
     const resp = await graphql(await schema, query, root, context, variables)
     return {

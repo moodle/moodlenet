@@ -1,6 +1,7 @@
 import Argon from 'argon2'
 import dot from 'dot'
-import { MoodleNet } from '../..'
+import { api } from '../../../lib/domain'
+import { MoodleNetDomain } from '../../MoodleNetDomain'
 import { getAuthUserId, getJwtSigner } from '../../MoodleNetGraphQL'
 import { User } from '../ContentGraph/ContentGraph.graphql.gen'
 import { EmailObj } from '../Email/types'
@@ -31,7 +32,7 @@ export const userAndJwtByActiveUserAccount = async ({
   activeUserAccount: ActiveUserAccount
 }) => {
   const signJwt = getJwtSigner()
-  const { node: maybeUser } = await MoodleNet.api(
+  const { node: maybeUser } = await api<MoodleNetDomain>()(
     'ContentGraph.Node.ById'
   ).call((nodeById) =>
     nodeById<User>({
@@ -109,10 +110,10 @@ export async function getVerifiedAccountByUsernameAndPassword({
   if (!account) {
     return null
   }
-
   const pwdVerified = await verifyPassword({
     hash: account.password,
     pwd: password,
   })
+
   return pwdVerified ? account : null
 }

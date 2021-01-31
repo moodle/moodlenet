@@ -1,4 +1,5 @@
-import { MoodleNet } from '../../..'
+import { api } from '../../../../lib/domain'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { MutationResolvers, UserSession } from '../UserAccount.graphql.gen'
 import {
   getVerifiedAccountByUsernameAndPassword,
@@ -33,9 +34,8 @@ export const createSession: MutationResolvers['createSession'] = async (
   { password, username },
   context
 ) => {
-  const res = await MoodleNet.api('UserAccount.Session.Create').call(
-    (createSession) => createSession({ password, username }),
-    context.flow
-  )
+  const res = await api<MoodleNetDomain>(context.flow)(
+    'UserAccount.Session.Create'
+  ).call((createSession) => createSession({ password, username }))
   return res.session
 }

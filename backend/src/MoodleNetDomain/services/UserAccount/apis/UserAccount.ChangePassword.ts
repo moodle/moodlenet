@@ -1,4 +1,5 @@
-import { MoodleNet } from '../../..'
+import { api } from '../../../../lib/domain'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { loggedUserOnly } from '../../../MoodleNetGraphQL'
 import { Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
@@ -49,7 +50,7 @@ export const ChangePasswordApiHandler = async ({
   if (changePwdError) {
     return { success: false, reason: changePwdError }
   } else {
-    return { success: true } as const
+    return { success: true }
   }
 }
 
@@ -60,14 +61,14 @@ export const changePassword: MutationResolvers['changePassword'] = async (
 ) => {
   const { username } = loggedUserOnly({ context })
 
-  const res = await MoodleNet.api('UserAccount.ChangePassword').call(
-    (changePassword) =>
-      changePassword({
-        newPassword,
-        currentPassword,
-        username,
-      }),
-    context.flow
+  const res = await api<MoodleNetDomain>(context.flow)(
+    'UserAccount.ChangePassword'
+  ).call((changePassword) =>
+    changePassword({
+      newPassword,
+      currentPassword,
+      username,
+    })
   )
 
   if (!res.success) {

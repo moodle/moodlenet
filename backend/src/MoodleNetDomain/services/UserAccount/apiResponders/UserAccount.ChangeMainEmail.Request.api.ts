@@ -1,6 +1,7 @@
-import { MoodleNet } from '../../..'
 import { ChangeAccountEmailRequestHandler } from '../apis/UserAccount.ChangeMainEmail.Request.'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { api } from '../../../../lib/domain'
 
-MoodleNet.api('UserAccount.ChangeMainEmail.Request').respond(
+api<MoodleNetDomain>()('UserAccount.ChangeMainEmail.Request').respond(
   ChangeAccountEmailRequestHandler
 )

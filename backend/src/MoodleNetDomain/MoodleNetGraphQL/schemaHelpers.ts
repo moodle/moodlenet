@@ -7,7 +7,6 @@ import {
 import { stitchingDirectives } from '@graphql-tools/stitching-directives'
 import { FilterRootFields } from '@graphql-tools/wrap'
 import { printSchema } from 'graphql'
-import { MoodleNet } from '..'
 import { getGQLApiCallerExecutor, startGQLApiResponder } from '../../lib/domain'
 import { newFlow } from '../../lib/domain/helpers'
 import { MoodleNetDomain } from '../MoodleNetDomain'
@@ -86,7 +85,6 @@ export async function startMoodleNetGQLApiResponder({
   })
   return startGQLApiResponder<MoodleNetDomain>({
     api,
-    domain: MoodleNet,
     schema,
   })
 }
@@ -105,7 +103,6 @@ export function getServiceSubschemaConfig({
       api,
       flow: graphQLRequestFlow(),
       getExecutionGlobalValues,
-      domain: MoodleNet,
     }),
     transforms: [atMergeQueryRootFieldsRemover()],
     //FIXME: can't apply directives resolvers

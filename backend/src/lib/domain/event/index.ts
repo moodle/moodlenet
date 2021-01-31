@@ -4,16 +4,15 @@ import * as Event from './types'
 
 export type EmitOpts = {}
 
-export const emit = <Domain>(domain: string) => <
-  EventPath extends Event.EventLeaves<Domain>
->(
+export const emit = <Domain, EventPath extends Event.EventLeaves<Domain>>(
+  domain: string,
+  flow: Flow,
   event: EventPath
 ) => (_: {
-  flow: Flow
   payload: Event.LookupEventType<Domain, EventPath>
   opts?: EmitOpts
 }) => {
-  const { payload, flow /* , opts */ } = _
+  const { payload /* , opts */ } = _
   log(flow, `\n\Event emit : ${event}`)
   return AMQP.domainPublish({
     domain,

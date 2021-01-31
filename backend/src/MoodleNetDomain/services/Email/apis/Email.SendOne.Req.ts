@@ -1,6 +1,7 @@
-import { MoodleNet } from '../../..'
+import { event } from '../../../../lib/domain'
 import { Event } from '../../../../lib/domain/event/types'
 import { Flow } from '../../../../lib/domain/types/path'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { getEmailPersistence, getSender } from '../Email.env'
 import { EmailObj } from '../types'
 
@@ -28,9 +29,9 @@ export const SendOneNow = async ({ emailObj, flow }: SendReq) => {
     flow,
     result: response,
   })
-  MoodleNet.event('Email.SendOne.EmailSent').emit({
-    flow,
+  event<MoodleNetDomain>(flow)('Email.SendOne.EmailSent').emit({
     payload: response,
   })
+
   return response
 }

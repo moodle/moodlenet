@@ -14,7 +14,8 @@ export const signJwt = async ({
   jwtPrivateKey: string
   opts: JWT.SignOptions
 }) => {
-  return JWT.sign(executionAuth, jwtPrivateKey, opts)
+  const jwt = JWT.sign(executionAuth, jwtPrivateKey, opts)
+  return jwt
 }
 
 export type JWTTokenVerification = MoodleNetExecutionAuth | null | INVALID_TOKEN

@@ -1,4 +1,5 @@
-import { MoodleNet } from '../../..'
+import { api } from '../../../../lib/domain'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { getAuthUserId } from '../../../MoodleNetGraphQL'
 import { Resolvers, User } from '../ContentGraph.graphql.gen'
 import { unshallowForResolver } from './helpers'
@@ -8,12 +9,9 @@ export const getSessionAccountUser: Resolvers['Query']['getSessionAccountUser'] 
   ctx /*_info */
 ) => {
   const _id = getAuthUserId({ accountUsername: username })
-  const { node: shallowUser } = await MoodleNet.api(
+  const { node: shallowUser } = await api<MoodleNetDomain>(ctx.flow)(
     'ContentGraph.Node.ById'
-  ).call(
-    (nodeById) => nodeById<User>({ _id }),
-    ctx.flow
-  )
+  ).call((nodeById) => nodeById<User>({ _id }))
 
   if (!shallowUser) {
     throw new Error('User not found')

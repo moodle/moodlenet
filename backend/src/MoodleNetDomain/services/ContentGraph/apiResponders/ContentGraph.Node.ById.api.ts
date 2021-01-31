@@ -1,3 +1,4 @@
-import { MoodleNet } from '../../..'
+import { api } from '../../../../lib/domain'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { NodeByIdApiHandler } from '../apis/ContentGraph.Node.ById'
-MoodleNet.api('ContentGraph.Node.ById').respond(NodeByIdApiHandler)
+api<MoodleNetDomain>()('ContentGraph.Node.ById').respond(NodeByIdApiHandler)

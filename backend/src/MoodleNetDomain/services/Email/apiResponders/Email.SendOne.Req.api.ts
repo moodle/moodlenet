@@ -1,4 +1,5 @@
-import { MoodleNet } from '../../..'
 import { SendOneNow } from '../apis/Email.SendOne.Req'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { api } from '../../../../lib/domain'
 
-MoodleNet.api('Email.SendOne.SendNow').respond(SendOneNow)
+api<MoodleNetDomain>()('Email.SendOne.SendNow').respond(SendOneNow)
