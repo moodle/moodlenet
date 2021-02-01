@@ -1,9 +1,7 @@
-import { MoodleNet } from '../../..'
 import { SessionByEmailApiHandler } from '../apis/UserAccount.Session.ByEmail'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { api } from '../../../../lib/domain'
 
-SessionByEmailApiHandler().then((handler) => {
-  MoodleNet.respondApi({
-    api: 'UserAccount.Session.ByEmail',
-    handler,
-  })
-})
+api<MoodleNetDomain>()('UserAccount.Session.ByEmail').respond(
+  SessionByEmailApiHandler
+)

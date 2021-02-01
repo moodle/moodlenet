@@ -1,9 +1,7 @@
-import { MoodleNet } from '../../..'
 import { RegisterNewAccountDeleteRequestApiHandler } from '../apis/UserAccount.RegisterNewAccount.DeleteRequest'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { api } from '../../../../lib/domain'
 
-RegisterNewAccountDeleteRequestApiHandler().then((handler) => {
-  MoodleNet.respondApi({
-    api: 'UserAccount.RegisterNewAccount.DeleteRequest',
-    handler,
-  })
-})
+api<MoodleNetDomain>()('UserAccount.RegisterNewAccount.DeleteRequest').respond(
+  RegisterNewAccountDeleteRequestApiHandler
+)

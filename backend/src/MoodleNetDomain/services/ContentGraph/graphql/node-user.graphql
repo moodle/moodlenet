@@ -1,0 +1,19 @@
+type User implements INode {
+  _id: ID!
+  _meta: Meta!
+  _rel(edge: EdgeTypeInput!, page: PageInput): Page!
+  role: Role!
+  displayName: String!
+}
+
+union Node = User
+enum NodeType {
+  User
+}
+
+input UpdateNodeInput {
+  User: UpdateUserInput
+}
+input UpdateUserInput {
+  displayName: String
+}

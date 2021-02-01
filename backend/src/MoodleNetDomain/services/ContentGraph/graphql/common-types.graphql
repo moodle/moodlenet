@@ -1,0 +1,35 @@
+scalar Empty
+scalar DateTime
+
+interface INode {
+  _id: ID
+  _meta: Meta!
+  _rel(edge: EdgeTypeInput!, page: PageInput): Page!
+}
+
+interface IEdge {
+  _id: ID
+  _meta: Meta!
+}
+
+input EdgeTypeInput {
+  type: EdgeType!
+  node: NodeType!
+  inverse: Boolean
+}
+
+type Meta {
+  created: ByAt!
+  lastUpdate: ByAt!
+}
+type ByAt {
+  by: User!
+  at: DateTime!
+}
+
+enum Role {
+  User
+  Admin
+  Root
+  Moderator
+}

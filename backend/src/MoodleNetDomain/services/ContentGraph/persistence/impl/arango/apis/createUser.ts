@@ -1,27 +1,32 @@
-import { aql } from 'arangojs'
-import { UserVertex } from '../../../glyph'
-import { ContentGraphPersistence } from '../../../types'
+import { User } from '../../../../ContentGraph.graphql.gen'
+import { ContentGraphPersistence, ShallowNode } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
+import { createMeta } from '../ContentGraph.persistence.arango.helpers'
 
-export const createUser = DBReady.then(
-  ({ db }): ContentGraphPersistence['createUser'] => async ({ username }) => {
-    const newUser: Omit<UserVertex, '_id'> = {
-      __typename: 'User',
-      displayName: username,
-    }
+export const createUser: ContentGraphPersistence['createUser'] = async ({
+  username,
+  role,
+  creatorId,
+}) => {
+  const { db } = await DBReady
+  const newUser: Omit<ShallowNode<User>, '_id' | '_meta'> = {
+    __typename: 'User',
+    role,
+    displayName: username,
+  }
 
-    const cursor = await db.query(aql`
+  const cursor = await db.query(`
       INSERT MERGE(
         ${newUser},
         {
           _key: ${username},
+          _meta: ${createMeta({ userId: creatorId })}
         }
       ) INTO User
       RETURN NEW
     `)
 
-    const user: UserVertex = await cursor.next()
-
-    return user
-  }
-)
+  const user: ShallowNode<User> = await cursor.next()
+  cursor.kill()
+  return user
+}

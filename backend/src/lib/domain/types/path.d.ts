@@ -1,7 +1,5 @@
-export type Flow<Key extends string = string, Route extends string = string> = {
-  _key: Key
-  _route: Route
-}
+export type Flow = [route: string, id: string]
+export type PFlow = [route?: string, id?: string]
 
 // prettier-ignore
 type Prev = [never, 0, 1, 2, 3, 4, 5, 6,  7, 8, 9, 10,  11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...0[]]
@@ -12,7 +10,9 @@ type Join<K, P> = K extends string /* | number */
     : never
   : never
 
-export type Paths<Type, LeaveType, Depth extends number = 6> = [Depth] extends [never]
+export type Paths<Type, LeaveType, Depth extends number = 6> = [Depth] extends [
+  never
+]
   ? never
   : Type extends LeaveType
   ? ''
@@ -26,19 +26,28 @@ export type Paths<Type, LeaveType, Depth extends number = 6> = [Depth] extends [
     }[keyof Type]
   : never
 
-export type Leaves<Type, LeaveType, Depth extends number = 6> = [Depth] extends [never]
+export type Leaves<Type, LeaveType, Depth extends number = 6> = [
+  Depth
+] extends [never]
   ? never
   : Type extends LeaveType
   ? ''
   : Type extends object
   ? {
-      [K in keyof Type]-?: Leaves<Type[K], LeaveType, Prev[Depth]> extends infer R
+      [K in keyof Type]-?: Leaves<
+        Type[K],
+        LeaveType,
+        Prev[Depth]
+      > extends infer R
         ? Join<K, R>
         : never
     }[keyof Type]
   : never
 
-export type TypeUnion<Hash, Prop extends keyof Hash = keyof Hash> = Prop extends infer Type
+export type TypeUnion<
+  Hash,
+  Prop extends keyof Hash = keyof Hash
+> = Prop extends infer Type
   ? Type extends Prop
     ? { t: Type; p: Hash[Type] }
     : never
@@ -47,7 +56,9 @@ export type TypeUnion<Hash, Prop extends keyof Hash = keyof Hash> = Prop extends
 export type WildTypeUnion<
   Hash,
   Prop extends '*' | keyof Hash = keyof Hash
-> = Prop extends keyof Hash ? TypeUnion<Hash, Prop> : TypeUnion<Hash, keyof Hash>
+> = Prop extends keyof Hash
+  ? TypeUnion<Hash, Prop>
+  : TypeUnion<Hash, keyof Hash>
 
 // export type TopicType<T, P extends Leaves<T>> = TopicOf<T, P> extends Topic<infer Type, any>
 //   ? Type
@@ -56,7 +67,7 @@ export type WildTypeUnion<
 export type TypeofPath<
   T,
   L extends string
-> = L extends `${infer A}.${infer B}.${infer C}.${infer D}.${infer E}.${infer F}.${infer G}.${infer H}.${infer I}.${infer J}.${infer K}`
+> = /* L extends `${infer A}.${infer B}.${infer C}.${infer D}.${infer E}.${infer F}.${infer G}.${infer H}.${infer I}.${infer J}.${infer K}`
   ? //@ts-expect-error
     T[A][B][C][D][E][F][G][H][I][J][K]
   : L extends `${infer A}.${infer B}.${infer C}.${infer D}.${infer E}.${infer F}.${infer G}.${infer H}.${infer I}.${infer J}`
@@ -74,7 +85,7 @@ export type TypeofPath<
   : L extends `${infer A}.${infer B}.${infer C}.${infer D}.${infer E}.${infer F}`
   ? //@ts-expect-error
     T[A][B][C][D][E][F]
-  : L extends `${infer A}.${infer B}.${infer C}.${infer D}.${infer E}`
+  :  */ L extends `${infer A}.${infer B}.${infer C}.${infer D}.${infer E}`
   ? //@ts-expect-error
     T[A][B][C][D][E]
   : L extends `${infer A}.${infer B}.${infer C}.${infer D}`

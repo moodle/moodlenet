@@ -1,9 +1,7 @@
-import { MoodleNet } from '../../..'
 import { ConfirmAndChangeAccountEmailHandler } from '../apis/UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { api } from '../../../../lib/domain'
 
-ConfirmAndChangeAccountEmailHandler().then((handler) => {
-  MoodleNet.respondApi({
-    api: 'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail',
-    handler,
-  })
-})
+api<MoodleNetDomain>()(
+  'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail'
+).respond(ConfirmAndChangeAccountEmailHandler)

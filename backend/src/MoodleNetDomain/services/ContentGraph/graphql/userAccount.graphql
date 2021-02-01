@@ -1,8 +1,0 @@
-type SessionAccount @key(selectionSet: "{ username }") {
-  username: String!
-  user: User!
-}
-type Query {
-  getSessionAccountUser(username: String!): SessionAccount
-    @merge(keyField: "username")
-}

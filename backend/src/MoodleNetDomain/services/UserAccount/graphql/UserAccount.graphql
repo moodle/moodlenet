@@ -1,35 +1,5 @@
-type SimpleResponse {
-  success: Boolean!
-  message: String
-}
-
-type RequestConfirmEmailResponse {
-  flowKey: String
-}
-
-type Session {
-  auth: Auth
-  message: String
-}
-type Auth {
-  jwt: String
-  sessionAccount: SessionAccount
-}
-
-type SessionAccount @key(selectionSet: "{ username }") {
-  username: String!
-  email: String!
-  changeEmailRequest: String
-  accountId: String!
-}
-
 type Mutation {
   signUp(email: String!): SimpleResponse!
-  activateAccount(
-    username: String!
-    password: String!
-    token: String!
-  ): Session!
   changeEmailRequest(newEmail: String!): SimpleResponse!
   changeEmailConfirm(
     token: String!
@@ -40,10 +10,33 @@ type Mutation {
     newPassword: String!
     currentPassword: String!
   ): SimpleResponse!
+  activateAccount(
+    username: String!
+    password: String!
+    token: String!
+  ): ActivationOutcome!
   sessionByEmail(username: String!, email: String!): SimpleResponse!
-  createSession(username: String!, password: String!): Session
+  createSession(username: String!, password: String!): UserSession
 }
 
 type Query {
-  _null: Boolean
+  _null_placeholder: Boolean
+}
+
+type SimpleResponse {
+  success: Boolean!
+  message: String
+}
+
+type UserSession {
+  username: String!
+  email: String!
+  changeEmailRequest: String
+  accountId: String!
+  jwt: String!
+}
+
+type ActivationOutcome {
+  session: UserSession
+  message: String
 }

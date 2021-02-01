@@ -1,20 +1,9 @@
+import { EdgeDefinitionOptions } from 'arangojs/graph'
 import * as Yup from 'yup'
-import {
-  createDatabaseIfNotExists,
-  createEdgeCollectionIfNotExists,
-  createVertexCollectionIfNotExists,
-} from '../../../../../../lib/helpers/arango'
-import {
-  CollectionVertex,
-  ContainsEdge,
-  FollowsEdge,
-  LikesEdge,
-  ReferencesEdge,
-  ResourceVertex,
-  SubjectVertex,
-  UserVertex,
-} from '../../glyph'
-import {} from '../../types'
+import { createDatabaseIfNotExists } from '../../../../../../lib/helpers/arango'
+import { EdgeType, NodeType } from '../../../ContentGraph.graphql.gen'
+import { contentGraph } from '../../../graphDefinition'
+import { EdgeOptions } from '../../../graphDefinition/types'
 
 interface ArangoContentGraphPersistenceEnv {
   url: string[]
@@ -40,99 +29,48 @@ export const database = createDatabaseIfNotExists({
   dbCreateOpts: {},
 })
 
-export const UserVertices = createVertexCollectionIfNotExists<UserVertex>({
-  name: 'User',
-  database,
-  createOpts: {},
-})
-
-export const SubjectVertices = createVertexCollectionIfNotExists<SubjectVertex>(
-  {
-    name: 'Subject',
-    database,
-    createOpts: {},
+const getEdgeDefinition = (
+  edgeType: EdgeType,
+  edgeOptions: EdgeOptions
+): EdgeDefinitionOptions => {
+  const [from, to] = edgeOptions.connections
+    .reduce(
+      (_from_to, opt) => {
+        const [_from, _to] = _from_to
+        _from.add(opt.from)
+        _to.add(opt.to)
+        return _from_to
+      },
+      [new Set<NodeType>(), new Set<NodeType>()]
+    )
+    .map((_) => [..._])
+  return {
+    collection: edgeType,
+    from,
+    to,
   }
-)
-
-export const CollectionVertices = createVertexCollectionIfNotExists<CollectionVertex>(
-  {
-    name: 'Collection',
-    database,
-    createOpts: {},
-  }
-)
-
-export const ResourceVertices = createVertexCollectionIfNotExists<ResourceVertex>(
-  {
-    name: 'Resource',
-    database,
-    createOpts: {},
-  }
-)
-
-export const ContainsEdges = createEdgeCollectionIfNotExists<
-  ContainsEdge,
-  'Contains'
->({
-  name: 'Contains',
-  database,
-  createOpts: {},
+}
+const contentGraphName = 'contentGraph'
+const graphP = database.then(async (db) => {
+  const edgeDefinitionOptions = Object.entries(
+    contentGraph
+  ).map(([edgeType, edgeOpts]) =>
+    getEdgeDefinition(edgeType as EdgeType, edgeOpts)
+  )
+  const graph =
+    (await db.graphs()).find((_) => _.name == contentGraphName) ||
+    (await db.createGraph(contentGraphName, []))
+  await Promise.all(
+    edgeDefinitionOptions.map((_) => {
+      graph.replaceEdgeDefinition(_)
+    })
+  )
+  return graph
 })
 
-export const FollowsEdges = createEdgeCollectionIfNotExists<
-  FollowsEdge,
-  'Follows'
->({
-  name: 'Follows',
-  database,
-  createOpts: {},
-})
-
-export const ReferencesEdges = createEdgeCollectionIfNotExists<
-  ReferencesEdge,
-  'References'
->({
-  name: 'References',
-  database,
-  createOpts: {},
-})
-
-export const LikesEdges = createEdgeCollectionIfNotExists<LikesEdge, 'Likes'>({
-  name: 'Likes',
-  database,
-  createOpts: {},
-})
-
-export const DBReady = Promise.all([
-  database,
-  UserVertices,
-  SubjectVertices,
-  FollowsEdges,
-  CollectionVertices,
-  ResourceVertices,
-  ContainsEdges,
-  LikesEdges,
-  ReferencesEdges,
-]).then(
-  ([
+export const DBReady = Promise.all([database, graphP]).then(([db, graph]) => {
+  return {
     db,
-    UserVertices,
-    SubjectVertices,
-    FollowsEdges,
-    CollectionVertices,
-    ResourceVertices,
-    ContainsEdges,
-    LikesEdges,
-    ReferencesEdges,
-  ]) => ({
-    db,
-    UserVertices,
-    SubjectVertices,
-    FollowsEdges,
-    CollectionVertices,
-    ResourceVertices,
-    ContainsEdges,
-    LikesEdges,
-    ReferencesEdges,
-  })
-)
+    graph,
+  }
+})

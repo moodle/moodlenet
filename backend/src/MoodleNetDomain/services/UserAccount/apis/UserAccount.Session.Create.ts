@@ -1,85 +1,41 @@
-import { RespondApiHandler } from '../../../../lib/domain'
-import { Api } from '../../../../lib/domain/api/types'
-import { graphQLRequestApiCaller } from '../../../MoodleNetGraphQL'
-import { UserAccountStatus } from '../persistence/types'
-import { MaybeSessionAuth } from '../UserAccount'
+import { api } from '../../../../lib/domain'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { MutationResolvers, UserSession } from '../UserAccount.graphql.gen'
 import {
-  Auth,
-  MutationResolvers,
-  SessionAccount,
-} from '../UserAccount.graphql.gen'
-import { getVerifiedAccountByUsername, signJwt } from '../UserAccount.helpers'
+  getVerifiedAccountByUsernameAndPassword,
+  userSessionByActiveUserAccount,
+} from '../UserAccount.helpers'
 
-export type SessionCreateApi = Api<
-  { username: string; password: string },
-  MaybeSessionAuth
->
+export type SessionCreateReq = { username: string; password: string }
+export type SessionCreateRes = { session: UserSession | null }
 
-export const SessionCreateApiHandler = async () => {
-  const handler: RespondApiHandler<SessionCreateApi> = async ({
-    /* flow, */ req: { username, password },
-  }) => {
-    const account = await getVerifiedAccountByUsername({
-      username,
-      password,
-    })
+export async function SessionCreateApiHandler({
+  username,
+  password,
+}: SessionCreateReq): Promise<SessionCreateRes> {
+  const account = await getVerifiedAccountByUsernameAndPassword({
+    username,
+    password,
+  })
 
-    if (!account) {
-      return { auth: null }
-    }
-
-    const jwt = await signJwt({ account })
-
-    return { auth: { userAccount: account, jwt } }
+  if (!account) {
+    return { session: null }
   }
 
-  return handler
+  const session = await userSessionByActiveUserAccount({
+    activeUserAccount: account,
+  })
+
+  return { session }
 }
 
 export const createSession: MutationResolvers['createSession'] = async (
   _parent,
-  { password, username }
+  { password, username },
+  context
 ) => {
-  const { res } = await graphQLRequestApiCaller({
-    api: 'UserAccount.Session.Create',
-    req: { password, username },
-  })
-  if (res.___ERROR || !res.auth) {
-    return {
-      __typename: 'Session',
-      message: res.___ERROR?.msg || 'not found',
-      auth: null,
-    } as const
-  } else if (res.auth.userAccount.status !== UserAccountStatus.Active) {
-    return {
-      __typename: 'Session',
-      message: 'not active',
-      auth: null,
-    } as const
-  } else {
-    const {
-      jwt,
-      userAccount: { email, _id, changeEmailRequest },
-    } = res.auth
-
-    const sessionAccount: SessionAccount = {
-      __typename: 'SessionAccount',
-      accountId: _id,
-      email,
-      username,
-      changeEmailRequest: changeEmailRequest?.email ?? null,
-    }
-
-    const auth: Auth = {
-      __typename: 'Auth',
-      jwt,
-      sessionAccount,
-    }
-
-    return {
-      __typename: 'Session',
-      message: null,
-      auth,
-    } as const
-  }
+  const res = await api<MoodleNetDomain>(context.flow)(
+    'UserAccount.Session.Create'
+  ).call((createSession) => createSession({ password, username }))
+  return res.session
 }

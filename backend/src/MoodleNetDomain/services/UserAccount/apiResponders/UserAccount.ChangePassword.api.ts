@@ -1,9 +1,7 @@
-import { MoodleNet } from '../../..'
 import { ChangePasswordApiHandler } from '../apis/UserAccount.ChangePassword'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { api } from '../../../../lib/domain'
 
-ChangePasswordApiHandler().then(async (handler) => {
-  MoodleNet.respondApi({
-    api: 'UserAccount.ChangePassword',
-    handler,
-  })
-})
+api<MoodleNetDomain>()('UserAccount.ChangePassword').respond(
+  ChangePasswordApiHandler
+)

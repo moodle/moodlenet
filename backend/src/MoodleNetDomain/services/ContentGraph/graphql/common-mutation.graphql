@@ -1,0 +1,160 @@
+type Mutation {
+  createEdge(
+    edgeType: EdgeType!
+    from: ID!
+    to: ID!
+    edge: CreateEdgeInput!
+  ): CreateEdgeMutationPayload!
+
+  createNode(
+    nodeType: NodeType!
+    node: CreateNodeInput!
+  ): CreateNodeMutationPayload!
+
+  updateEdge(
+    edgeType: EdgeType!
+    edge: UpdateEdgeInput!
+  ): UpdateEdgeMutationPayload!
+
+  updateNode(
+    nodeType: NodeType!
+    node: UpdateNodeInput!
+  ): UpdateNodeMutationPayload!
+
+  deleteEdge(
+    edgeType: EdgeType!
+    edge: DeleteEdgeInput!
+  ): DeleteEdgeMutationPayload!
+
+  deleteNode(
+    nodeType: NodeType!
+    node: DeleteNodeInput!
+  ): DeleteNodeMutationPayload!
+}
+
+# ^ CreateNode
+# input CreateNodeInput {
+# }
+union CreateNodeMutationPayload =
+    CreateNodeMutationSuccess
+  | CreateNodeMutationError
+type CreateNodeMutationSuccess {
+  node: Node
+}
+type CreateNodeMutationError {
+  type: CreateNodeMutationErrorType!
+  details: String
+}
+enum CreateNodeMutationErrorType {
+  NotAuthorized
+  UnexpectedInput
+}
+# $ CreateNode
+
+# ^ CreateEdge
+# input CreateEdgeInput {}
+union CreateEdgeMutationPayload =
+    CreateEdgeMutationSuccess
+  | CreateEdgeMutationError
+type CreateEdgeMutationSuccess {
+  edge: Edge
+  from: Node
+  to: Node
+}
+type CreateEdgeMutationError {
+  type: CreateEdgeMutationErrorType!
+  details: String
+}
+enum CreateEdgeMutationErrorType {
+  NotAuthorized
+  NotAllowed
+  NoSelfReference
+  UnexpectedInput
+}
+# $ CreateEdge
+
+# ^ UpdateNode
+input UpdateNodeInput {
+  _id: ID!
+}
+union UpdateNodeMutationPayload =
+    UpdateNodeMutationSuccess
+  | UpdateNodeMutationError
+type UpdateNodeMutationSuccess {
+  node: Node
+}
+type UpdateNodeMutationError {
+  type: UpdateNodeMutationErrorType!
+  details: String
+}
+enum UpdateNodeMutationErrorType {
+  NotFound
+  NotAuthorized
+  UnexpectedInput
+}
+# $ UpdateNode
+
+# ^ UpdateEdge
+input UpdateEdgeInput {
+  _id: ID!
+}
+union UpdateEdgeMutationPayload =
+    UpdateEdgeMutationSuccess
+  | UpdateEdgeMutationError
+type UpdateEdgeMutationSuccess {
+  edge: Edge
+  from: Node
+  to: Node
+}
+type UpdateEdgeMutationError {
+  type: UpdateEdgeMutationErrorType!
+  details: String
+}
+enum UpdateEdgeMutationErrorType {
+  NotFound
+  NotAuthorized
+  UnexpectedInput
+}
+# $ UpdateEdge
+
+# ^ DeleteEdge
+input DeleteEdgeInput {
+  _id: ID!
+}
+union DeleteEdgeMutationPayload =
+    DeleteEdgeMutationSuccess
+  | DeleteEdgeMutationError
+type DeleteEdgeMutationSuccess {
+  edge: Edge
+  from: Node
+  to: Node
+}
+type DeleteEdgeMutationError {
+  type: DeleteEdgeMutationErrorType
+  details: String
+}
+enum DeleteEdgeMutationErrorType {
+  NotFound
+  NotAuthorized
+}
+# $ DeleteEdge
+
+# ^ DeleteNode
+input DeleteNodeInput {
+  _id: ID!
+}
+union DeleteNodeMutationPayload =
+    DeleteNodeMutationSuccess
+  | DeleteNodeMutationError
+type DeleteNodeMutationSuccess {
+  node: Node
+}
+type DeleteNodeMutationError {
+  type: DeleteNodeMutationErrorType
+  details: String
+}
+enum DeleteNodeMutationErrorType {
+  NotFound
+  NotAuthorized
+}
+# $ DeleteNode

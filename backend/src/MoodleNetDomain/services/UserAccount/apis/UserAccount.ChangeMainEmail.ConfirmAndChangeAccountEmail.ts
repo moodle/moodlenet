@@ -1,11 +1,10 @@
-import { RespondApiHandler } from '../../../../lib/domain'
-import { Api } from '../../../../lib/domain/api/types'
+import { api } from '../../../../lib/domain'
 import { Event } from '../../../../lib/domain/event/types'
-import { graphQLRequestApiCaller } from '../../../MoodleNetGraphQL'
+import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
-import { getVerifiedAccountByUsername } from '../UserAccount.helpers'
+import { getVerifiedAccountByUsernameAndPassword } from '../UserAccount.helpers'
 
 export type ConfirmAccountEmailChangeRequestPersistence = (_: {
   token: string
@@ -17,45 +16,38 @@ export type AccountEmailChangedEvent = Event<{
   oldEmail: string
 }>
 
-export type ConfirmAndChangeAccountEmailApi = Api<
-  { token: string; password: string; username: string },
-  { done: boolean }
->
+export type Req = { token: string; password: string; username: string }
 
-export const ConfirmAndChangeAccountEmailHandler = async () => {
+export const ConfirmAndChangeAccountEmailHandler = async ({
+  token,
+  password,
+  username,
+}: Req): Promise<boolean> => {
   const { confirmAccountEmailChangeRequest } = await getAccountPersistence()
+  const account = await getVerifiedAccountByUsernameAndPassword({
+    username,
+    password,
+  })
 
-  const handler: RespondApiHandler<ConfirmAndChangeAccountEmailApi> = async ({
-    req: { token, password, username },
-  }) => {
-    const account = await getVerifiedAccountByUsername({
-      username,
-      password,
-    })
-
-    if (!account) {
-      return { done: false }
-    }
-
-    const confirmError = await confirmAccountEmailChangeRequest({ token })
-
-    if (confirmError) {
-      return { done: false }
-    } else {
-      return { done: true }
-    }
+  if (!account) {
+    return false
   }
 
-  return handler
+  const confirmError = await confirmAccountEmailChangeRequest({ token })
+  if (confirmError) {
+    return false
+  }
+
+  //TODO: emit AccountEmailChangedEvent
+  return true
 }
 
 export const changeEmailConfirm: MutationResolvers['changeEmailConfirm'] = async (
   _parent,
-  { token, password, username }
+  { token, password, username },
+  ctx
 ) => {
-  const { res } = await graphQLRequestApiCaller({
-    api: 'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail',
-    req: { password, token, username },
-  })
-  return res.___ERROR ? false : res.done
+  return api<MoodleNetDomain>(ctx.flow)(
+    'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail'
+  ).call((confirm) => confirm({ password, token, username }))
 }

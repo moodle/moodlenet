@@ -1,16 +1,72 @@
 import Argon from 'argon2'
 import dot from 'dot'
-import JWT, { SignOptions } from 'jsonwebtoken'
-import { MoodleNetExecutionAuth } from '../../MoodleNetGraphQL'
+import { api } from '../../../lib/domain'
+import { MoodleNetDomain } from '../../MoodleNetDomain'
+import { getAuthUserId, getJwtSigner } from '../../MoodleNetGraphQL'
+import { User } from '../ContentGraph/ContentGraph.graphql.gen'
 import { EmailObj } from '../Email/types'
 import { ActiveUserAccount, EmailTemplate } from './persistence/types'
-import {
-  ArgonPwdHashOpts,
-  getAccountPersistence,
-  jwtSignBaseOpts,
-  JWT_PRIVATE_KEY,
-} from './UserAccount.env'
-import { SessionAccount } from './UserAccount.graphql.gen'
+import { ArgonPwdHashOpts, getAccountPersistence } from './UserAccount.env'
+import { SimpleResponse, UserSession } from './UserAccount.graphql.gen'
+
+export const userSessionByActiveUserAccount = async ({
+  activeUserAccount,
+}: {
+  activeUserAccount: ActiveUserAccount
+}): Promise<UserSession> => {
+  const { jwt } = await userAndJwtByActiveUserAccount({ activeUserAccount })
+  const session: UserSession = {
+    __typename: 'UserSession',
+    jwt,
+    accountId: activeUserAccount._id,
+    changeEmailRequest: activeUserAccount.changeEmailRequest?.email ?? null,
+    email: activeUserAccount.email,
+    username: activeUserAccount.username,
+  }
+  return session
+}
+
+export const userAndJwtByActiveUserAccount = async ({
+  activeUserAccount,
+}: {
+  activeUserAccount: ActiveUserAccount
+}) => {
+  const signJwt = getJwtSigner()
+  const { node: maybeUser } = await api<MoodleNetDomain>()(
+    'ContentGraph.Node.ById'
+  ).call((nodeById) =>
+    nodeById<User>({
+      _id: getAuthUserId({ accountUsername: activeUserAccount.username }),
+    })
+  )
+  if (!maybeUser) {
+    throw new Error(
+      `can't find User for Account Username: ${activeUserAccount.username}`
+    )
+  }
+  const jwt = await signJwt({
+    account: activeUserAccount,
+    user: maybeUser,
+  })
+  return { jwt, user: maybeUser }
+}
+
+export const getSimpleResponse = ({
+  success,
+  message,
+}:
+  | {
+      success?: false
+      message: string | null | undefined
+    }
+  | {
+      success: true
+      message?: null
+    }): SimpleResponse => ({
+  __typename: 'SimpleResponse',
+  success: !!success,
+  message: message || null,
+})
 
 export const hashPassword = (_: { pwd: string }) => {
   const { pwd } = _
@@ -21,36 +77,6 @@ export const hashPassword = (_: { pwd: string }) => {
 export const verifyPassword = (_: { hash: string; pwd: string | Buffer }) => {
   const { pwd, hash } = _
   return Argon.verify(hash, pwd, ArgonPwdHashOpts)
-}
-
-export const signJwt = async (_: {
-  account: ActiveUserAccount
-  opts?: SignOptions
-}) => {
-  const {
-    account: { email, _id, username, changeEmailRequest },
-    opts,
-  } = _
-  const sessionAccount: SessionAccount = {
-    __typename: 'SessionAccount',
-    accountId: _id,
-    changeEmailRequest: changeEmailRequest?.email ?? null,
-    email,
-    username,
-  }
-  const moodleNetExecutionAuth: MoodleNetExecutionAuth = {
-    sessionAccount,
-  }
-
-  const persistence = await getAccountPersistence()
-
-  const cfg = await persistence.getConfig()
-
-  return JWT.sign(moodleNetExecutionAuth, JWT_PRIVATE_KEY, {
-    expiresIn: cfg.sessionValiditySecs,
-    ...jwtSignBaseOpts,
-    ...opts,
-  })
 }
 
 export const fillEmailTemplate = <Vars>(_: {
@@ -69,7 +95,7 @@ export const fillEmailTemplate = <Vars>(_: {
   }
 }
 
-export async function getVerifiedAccountByUsername({
+export async function getVerifiedAccountByUsernameAndPassword({
   password,
   username,
 }: {
@@ -82,12 +108,12 @@ export async function getVerifiedAccountByUsername({
   })
 
   if (!account) {
-    return false
+    return null
   }
-
   const pwdVerified = await verifyPassword({
     hash: account.password,
     pwd: password,
   })
-  return pwdVerified && account
+
+  return pwdVerified ? account : null
 }

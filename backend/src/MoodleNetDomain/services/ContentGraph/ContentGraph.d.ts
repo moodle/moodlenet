@@ -1,13 +1,13 @@
 import { GraphQLApi } from '../../MoodleNetGraphQL'
-import { CreateUserFollowsUserApi } from './apis/ContentGraph.Follows.CreateUserFollowsUser'
-import { UserCreateForNewAccountApi } from './apis/ContentGraph.User.CreateForNewAccount.api'
+import { UserCreateForNewAccountApiHandler } from './apis/ContentGraph.User.CreateForNewAccount.api'
+import { NodeByIdApiHandler } from './apis/ContentGraph.Node.ById'
 
 export type ContentGraph = {
   GQL: GraphQLApi
   User: {
-    CreateForNewAccount: UserCreateForNewAccountApi
+    CreateForNewAccount: typeof UserCreateForNewAccountApiHandler
   }
-  Follows: {
-    CreateUserFollowsUser: CreateUserFollowsUserApi
+  Node: {
+    ById: typeof NodeByIdApiHandler
   }
 }

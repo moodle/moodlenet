@@ -21,7 +21,6 @@ export const getUserAccountServiceExecutableSchemaDefinition = async (): Promise
       changePassword,
       createSession,
       signUp,
-      
       sessionByEmail,
     },
   }

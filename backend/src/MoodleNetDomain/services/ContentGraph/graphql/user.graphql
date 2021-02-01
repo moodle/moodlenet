@@ -1,8 +1,0 @@
-type User implements GraphVertex {
-  _id: ID!
-  displayName: String!
-}
-
-type Query {
-  user(_id: ID!): User
-}

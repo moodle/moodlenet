@@ -1,0 +1,24 @@
+type Page {
+  pageInfo: PageInfo!
+  edges: [PageEdge!]!
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
+type PageEdge {
+  cursor: String!
+  edge: IEdge!
+  node: INode!
+}
+
+input PageInput {
+  first: Int
+  after: String
+  before: String
+  last: Int
+}

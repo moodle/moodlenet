@@ -1,3 +1,0 @@
-interface References {
-  _id: ID!
-}

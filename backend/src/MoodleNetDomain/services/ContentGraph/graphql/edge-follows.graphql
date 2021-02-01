@@ -1,0 +1,17 @@
+type Follows implements IEdge {
+  _id: ID!
+  _meta: Meta!
+}
+
+union Edge = Follows
+enum EdgeType {
+  Follows
+}
+
+input CreateEdgeInput {
+  Follows: Empty
+}
+
+input UpdateEdgeInput {
+  Follows: Empty
+}
