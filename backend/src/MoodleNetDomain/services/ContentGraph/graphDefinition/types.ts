@@ -1,5 +1,11 @@
 import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
-import { EdgeType as E, NodeType as N } from '../ContentGraph.graphql.gen'
+import {
+  EdgeType,
+  Node,
+  NodeType,
+  ResolversParentTypes,
+} from '../ContentGraph.graphql.gen'
+import { ShallowEdge, ShallowNode } from '../persistence/types'
 
 export type IdKey = string & { readonly __: unique symbol }
 export type Id = string & { readonly __: unique symbol }
@@ -15,15 +21,15 @@ export enum BasicAccessPolicyType {
   Moderator = 'Moderator',
 }
 
-export type ContentGraph = Record<E, EdgeOptions>
+export type ContentGraph = Record<EdgeType, EdgeOptions>
 
 export type EdgeOptions = {
   connections: Connection[]
 }
 
 export type Connection = {
-  from: N
-  to: N
+  from: NodeType
+  to: NodeType
   toMyselfOnly?: boolean
   fromMyselfOnly?: boolean
   nodeCreatorPolicy?: {
@@ -46,16 +52,22 @@ export type BasicAccessPolicyGroup =
 
 export type BasicAccessPolicy = BasicAccessPolicyType | BasicAccessPolicyGroup
 
-export type TypeBasicAccessPolicies<T extends N | E> = {
+export type TypeBasicAccessPolicies<T extends NodeType | EdgeType> = {
   [glyphType in T]: Record<AccessType, BasicAccessPolicy>
 }
 
 export type GlyphTag = 'node' | 'edge'
 export type BasicAccessPolicies = {
-  edge: TypeBasicAccessPolicies<E>
-  node: TypeBasicAccessPolicies<N>
+  edge: TypeBasicAccessPolicies<EdgeType>
+  node: TypeBasicAccessPolicies<NodeType>
 }
 
 // export type NodeDef ={
 
 // }
+export type NodeByType<
+  T extends NodeType
+> = ResolversParentTypes[T] extends Node ? ResolversParentTypes[T] : never
+export type EdgeByType<T extends EdgeType> = ResolversParentTypes[T]
+export type ShallowNodeByType<T extends NodeType> = ShallowNode<NodeByType<T>>
+export type ShallowEdgeByType<T extends EdgeType> = ShallowEdge<EdgeByType<T>>

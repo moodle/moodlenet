@@ -17,3 +17,6 @@ input UpdateNodeInput {
 input UpdateUserInput {
   displayName: String
 }
+input CreateNodeInput {
+  User: Never
+}

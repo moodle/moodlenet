@@ -10,7 +10,8 @@ const defConfig = (schema, rootValuesLoc) => ({
   "config": {
     "scalars": {
       "DateTime": "Date",
-      "Empty": "{}"
+      "Empty": "{}",
+      "Never": "never"
     },
     "contextType": `${rootValuesLoc}#MoodleNetExecutionContext`,
     "rootValueType": `${rootValuesLoc}#RootValue`,

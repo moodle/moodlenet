@@ -2,8 +2,12 @@ import { getGlyphBasicAccessFilter } from '../../../../graphDefinition/helpers'
 import { Id } from '../../../../graphDefinition/types'
 import { ContentGraphPersistence, Types } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
-import { basicAccessFilterEngine } from '../ContentGraph.persistence.arango.helpers'
+import { basicArangoAccessFilterEngine } from '../ContentGraph.persistence.arango.helpers'
 
+// TODO: we need just a "findNode" function :
+// TODO: should not get nodeType, it should infer it from _id instead
+// TODO: gets ctx, lookups policy and prepares filter.
+// TODO: ctx.auth&policy shall include "System" option
 export const findNodeWithPolicy: ContentGraphPersistence['findNodeWithPolicy'] = async ({
   _id,
   nodeType,
@@ -14,7 +18,7 @@ export const findNodeWithPolicy: ContentGraphPersistence['findNodeWithPolicy'] =
     glyphTag: 'node',
     policy,
     ctx,
-    engine: basicAccessFilterEngine,
+    engine: basicArangoAccessFilterEngine,
   })
   return _findNode({ _id, filterMore: nodeAccessFilter, nodeType })
 }

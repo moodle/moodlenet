@@ -41,7 +41,7 @@ export const needsAuthFilter: NeedsAuthFilter<string> = (filterWithAuth) => ({
   glyphTag,
 }) => (ctx.auth ? filterWithAuth({ ctx, auth: ctx.auth, glyphTag }) : 'false')
 
-export const basicAccessPolicyTypeFilters: BasicAccessPolicyTypeFilters<string> = {
+export const basicArangoAccessPolicyTypeFilters: BasicAccessPolicyTypeFilters<string> = {
   Admins: needsAuthFilter(({ auth }) =>
     auth.role === Types.Role.Admin ? 'true' : 'false'
   ),
@@ -56,10 +56,10 @@ export const basicAccessPolicyTypeFilters: BasicAccessPolicyTypeFilters<string> 
   Public: () => 'true',
 }
 
-export const basicAccessFilterEngine: BasicAccessFilterEngine<string> = {
+export const basicArangoAccessFilterEngine: BasicAccessFilterEngine<string> = {
   andReducer: (a, b) => (a === undefined ? ` ${b} ` : ` ${a} && ${b} `),
   orReducer: (a, b) => (a === undefined ? ` ${b} ` : ` ${a} || ${b} `),
-  basicAccessPolicyTypeFilters,
+  basicAccessPolicyTypeFilters: basicArangoAccessPolicyTypeFilters,
 }
 
 export const aqlstr = (_: any) => JSON.stringify(_)

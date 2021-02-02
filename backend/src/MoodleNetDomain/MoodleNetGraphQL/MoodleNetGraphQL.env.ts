@@ -7,6 +7,7 @@ import { ActiveUserAccount } from '../services/UserAccount/persistence/types'
 import { signJwt } from './JWT'
 import memo from 'lodash/memoize'
 import { MoodleNetExecutionAuth } from './types'
+import { Id } from '../services/ContentGraph/graphDefinition/types'
 
 export const getJwtVerifier = memo(() => {
   const jwtPublicKey = process.env.JWT_PUBLIC_KEY!
@@ -59,7 +60,7 @@ export const getJwtSigner = memo(() => {
       email: account.email,
       username: account.username,
       displayName: user.displayName,
-      userId: user._id,
+      userId: user._id as Id,
       role: user.role,
     }
 

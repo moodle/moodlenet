@@ -1,3 +1,4 @@
+scalar Never
 scalar Empty
 scalar DateTime
 
@@ -10,6 +11,8 @@ interface INode {
 interface IEdge {
   _id: ID
   _meta: Meta!
+  # _from: Node!
+  # _to: Node!
 }
 
 input EdgeTypeInput {

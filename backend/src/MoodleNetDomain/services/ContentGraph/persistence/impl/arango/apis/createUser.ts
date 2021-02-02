@@ -1,7 +1,7 @@
 import { User } from '../../../../ContentGraph.graphql.gen'
 import { ContentGraphPersistence, ShallowNode } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
-import { createMeta } from '../ContentGraph.persistence.arango.helpers'
+import { aqlstr, createMeta } from '../ContentGraph.persistence.arango.helpers'
 
 export const createUser: ContentGraphPersistence['createUser'] = async ({
   username,
@@ -17,9 +17,9 @@ export const createUser: ContentGraphPersistence['createUser'] = async ({
 
   const cursor = await db.query(`
       INSERT MERGE(
-        ${newUser},
+        ${aqlstr(newUser)},
         {
-          _key: ${username},
+          _key: ${aqlstr(username)},
           _meta: ${createMeta({ userId: creatorId })}
         }
       ) INTO User

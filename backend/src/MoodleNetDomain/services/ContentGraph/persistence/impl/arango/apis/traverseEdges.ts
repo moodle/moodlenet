@@ -3,7 +3,7 @@ import { ContentGraphPersistence, Types } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 import {
   aqlstr,
-  basicAccessFilterEngine,
+  basicArangoAccessFilterEngine,
 } from '../ContentGraph.persistence.arango.helpers'
 
 const DEFAULT_PAGE_LENGTH = 10
@@ -63,14 +63,14 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
     ctx,
     glyphTag: 'edge',
     policy: edgePolicy,
-    engine: basicAccessFilterEngine,
+    engine: basicArangoAccessFilterEngine,
   })
 
   const targetNodeAccessFilter = getGlyphBasicAccessFilter({
     ctx,
     glyphTag: 'node',
     policy: targetNodePolicy,
-    engine: basicAccessFilterEngine,
+    engine: basicArangoAccessFilterEngine,
   })
 
   return Promise.all(

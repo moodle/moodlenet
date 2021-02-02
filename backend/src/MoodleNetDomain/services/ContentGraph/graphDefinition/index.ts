@@ -1,4 +1,4 @@
-import { NodeType as N } from '../ContentGraph.graphql.gen'
+import { EdgeType, NodeType as N, NodeType } from '../ContentGraph.graphql.gen'
 import { isEdgeType, isNodeType } from './helpers'
 import {
   BasicAccessPolicies,
@@ -60,9 +60,9 @@ export const contentGraph: ContentGraph = {
 }
 
 export const getConnectionDef = (_: {
-  edge: string
-  from: string
-  to: string
+  edge: EdgeType
+  from: NodeType
+  to: NodeType
 }) => {
   const { from, to, edge } = _
   if (!(isEdgeType(edge) && isNodeType(from) && isNodeType(to))) {

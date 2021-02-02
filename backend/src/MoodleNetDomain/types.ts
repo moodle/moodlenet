@@ -1,5 +1,6 @@
 import { Flow } from '../lib/domain/types/path'
 import { Role } from './services/ContentGraph/ContentGraph.graphql.gen'
+import { Id } from './services/ContentGraph/graphDefinition/types'
 
 export type MoodleNetExecutionAuth = {
   accountId: string
@@ -7,7 +8,7 @@ export type MoodleNetExecutionAuth = {
   email: string
   displayName: string
   role: Role
-  userId: string
+  userId: Id
 }
 
 export type MoodleNetExecutionContext = {

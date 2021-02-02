@@ -7,9 +7,6 @@ export const bindString = (_: {
   to: string
 }) => `${nodeTypeFromId(_.from)} ${_.edgeType} ${nodeTypeFromId(_.to)}`
 
-export const edgeDataMustBePresentMessage = (edgeType: EdgeType) =>
-  `"${edgeType}" must be present in "edge" argument`
-
 export const cantBindMessage = ({
   edgeType,
   from,

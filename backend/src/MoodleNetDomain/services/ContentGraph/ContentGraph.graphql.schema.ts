@@ -45,8 +45,6 @@ export const getContentGraphServiceExecutableSchemaDefinition = async (): Promis
     //     return queryNodeSuccess
     //   },
     // },
-    Mutation: {} as any,
-    ...({} as any),
   }
 
   return { resolvers }

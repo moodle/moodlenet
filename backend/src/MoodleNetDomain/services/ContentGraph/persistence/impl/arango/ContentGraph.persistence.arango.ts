@@ -1,4 +1,5 @@
 import { ContentGraphPersistence } from '../../types'
+import { createEdge } from './apis/createEdge'
 import { createNode } from './apis/createNode'
 import { createUser } from './apis/createUser'
 import { findNode, findNodeWithPolicy } from './apis/findNode'
@@ -12,6 +13,7 @@ export const getArangoContentGraphPersistence = (): ContentGraphPersistence => {
     createUser,
     traverseEdges,
     createNode,
+    createEdge,
     // graphQLTypeResolvers: getGraphQLTypeResolvers(),
   }
   return persistence

@@ -2,7 +2,7 @@ import { api } from '../../../../lib/domain'
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { getAuthUserId } from '../../../MoodleNetGraphQL'
 import { Resolvers, User } from '../ContentGraph.graphql.gen'
-import { unshallowForResolver } from './helpers'
+import { fakeUnshallowNodeForResolverReturnType } from './helpers'
 export const getSessionAccountUser: Resolvers['Query']['getSessionAccountUser'] = async (
   _root,
   { username },
@@ -18,6 +18,6 @@ export const getSessionAccountUser: Resolvers['Query']['getSessionAccountUser'] 
   }
   return {
     __typename: 'UserSession',
-    user: unshallowForResolver(shallowUser),
+    user: fakeUnshallowNodeForResolverReturnType(shallowUser),
   }
 }

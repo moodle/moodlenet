@@ -38,9 +38,8 @@ export const edgeTypeFromId = (_: string) => {
 
 export const nodeTypeFromId = (_: string) => {
   const [nodeType] = _.split('/')
-  return isId(_) && nodeType in Object.values(NodeType)
-    ? (nodeType as NodeType)
-    : null
+  console.log(isId(_), { nodeType }, NodeType, Object.values(NodeType))
+  return isId(_) && nodeType in NodeType ? (nodeType as NodeType) : null
 }
 
 export const fromToByIds = (_: {
