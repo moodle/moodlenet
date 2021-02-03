@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { MoodleNetExecutionContext, RootValue } from '../../MoodleNetGraphQL';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -12,7 +12,13 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Never: never;
+  Empty: {};
+  DateTime: Date;
 };
+
+
+
 
 export type Mutation = {
   __typename: 'Mutation';
@@ -171,6 +177,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  Never: ResolverTypeWrapper<Scalars['Never']>;
+  Empty: ResolverTypeWrapper<Scalars['Empty']>;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Mutation: ResolverTypeWrapper<RootValue>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -182,6 +191,9 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  Never: Scalars['Never'];
+  Empty: Scalars['Empty'];
+  DateTime: Scalars['DateTime'];
   Mutation: RootValue;
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
@@ -190,6 +202,18 @@ export type ResolversParentTypes = {
   UserSession: UserSession;
   ActivationOutcome: ActivationOutcome;
 };
+
+export interface NeverScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Never'], any> {
+  name: 'Never';
+}
+
+export interface EmptyScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Empty'], any> {
+  name: 'Empty';
+}
+
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
 
 export type MutationResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   signUp: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'email'>>;
@@ -227,6 +251,9 @@ export type ActivationOutcomeResolvers<ContextType = MoodleNetExecutionContext, 
 };
 
 export type Resolvers<ContextType = MoodleNetExecutionContext> = {
+  Never: GraphQLScalarType;
+  Empty: GraphQLScalarType;
+  DateTime: GraphQLScalarType;
   Mutation: MutationResolvers<ContextType>;
   Query: QueryResolvers<ContextType>;
   SimpleResponse: SimpleResponseResolvers<ContextType>;

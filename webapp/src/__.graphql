@@ -1,0 +1,29 @@
+query ax {
+  node(_id: "User/alec", nodeType: User) {
+    __typename
+    ... on User {
+      _id
+      role
+      displayName
+      _meta {
+        __typename
+        lastUpdate {
+          by {
+            _id
+            role
+            displayName
+          }
+          at
+        }
+        created {
+          by {
+            _id
+            role
+            displayName
+          }
+          at
+        }
+      }
+    }
+  }
+}

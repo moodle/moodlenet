@@ -1,0 +1,12 @@
+{
+  "schema": [
+    "./backend/src/MoodleNetDomain/**/*.graphql"
+  ],
+  "documents": [
+    "./webapp/src/**/*.graphql"
+  ],
+  "exclude": [
+    "**/*.ts",
+    "**/*.tsx"
+  ]
+}

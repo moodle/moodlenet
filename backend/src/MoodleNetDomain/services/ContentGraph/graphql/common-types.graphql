@@ -1,6 +1,4 @@
-scalar Never
-scalar Empty
-scalar DateTime
+scalar Cursor
 
 interface INode {
   _id: ID

@@ -1,5 +1,4 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { MoodleNetExecutionContext, RootValue } from '../../MoodleNetGraphQL';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -24,12 +23,44 @@ export type Scalars = {
 
 export type Mutation = {
   __typename: 'Mutation';
+  activateAccount: ActivationOutcome;
+  changeEmailConfirm: Scalars['Boolean'];
+  changeEmailRequest: SimpleResponse;
+  changePassword: SimpleResponse;
   createEdge: CreateEdgeMutationPayload;
   createNode: CreateNodeMutationPayload;
-  updateEdge: UpdateEdgeMutationPayload;
-  updateNode: UpdateNodeMutationPayload;
+  createSession: Maybe<UserSession>;
   deleteEdge: DeleteEdgeMutationPayload;
   deleteNode: DeleteNodeMutationPayload;
+  sessionByEmail: SimpleResponse;
+  signUp: SimpleResponse;
+  updateEdge: UpdateEdgeMutationPayload;
+  updateNode: UpdateNodeMutationPayload;
+};
+
+
+export type MutationActivateAccountArgs = {
+  username: Scalars['String'];
+  password: Scalars['String'];
+  token: Scalars['String'];
+};
+
+
+export type MutationChangeEmailConfirmArgs = {
+  token: Scalars['String'];
+  password: Scalars['String'];
+  username: Scalars['String'];
+};
+
+
+export type MutationChangeEmailRequestArgs = {
+  newEmail: Scalars['String'];
+};
+
+
+export type MutationChangePasswordArgs = {
+  newPassword: Scalars['String'];
+  currentPassword: Scalars['String'];
 };
 
 
@@ -43,13 +74,9 @@ export type MutationCreateNodeArgs = {
 };
 
 
-export type MutationUpdateEdgeArgs = {
-  input: UpdateEdgeInput;
-};
-
-
-export type MutationUpdateNodeArgs = {
-  input: UpdateNodeInput;
+export type MutationCreateSessionArgs = {
+  username: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
@@ -60,6 +87,27 @@ export type MutationDeleteEdgeArgs = {
 
 export type MutationDeleteNodeArgs = {
   input: DeleteNodeInput;
+};
+
+
+export type MutationSessionByEmailArgs = {
+  username: Scalars['String'];
+  email: Scalars['String'];
+};
+
+
+export type MutationSignUpArgs = {
+  email: Scalars['String'];
+};
+
+
+export type MutationUpdateEdgeArgs = {
+  input: UpdateEdgeInput;
+};
+
+
+export type MutationUpdateNodeArgs = {
+  input: UpdateNodeInput;
 };
 
 export type CreateNodeInput = {
@@ -240,6 +288,7 @@ export type PageInput = {
 
 export type Query = {
   __typename: 'Query';
+  _null_placeholder: Maybe<Scalars['Boolean']>;
   getSessionAccountUser: Maybe<UserSession>;
   node: Maybe<Node>;
 };
@@ -312,7 +361,12 @@ export enum EdgeType {
 
 export type UserSession = {
   __typename: 'UserSession';
+  accountId: Scalars['String'];
+  changeEmailRequest: Maybe<Scalars['String']>;
+  email: Scalars['String'];
+  jwt: Scalars['String'];
   user: User;
+  username: Scalars['String'];
 };
 
 export type Subject = INode & {
@@ -363,6 +417,68 @@ export type UpdateUserInput = {
   displayName: Maybe<Scalars['String']>;
 };
 
+export type SimpleResponse = {
+  __typename: 'SimpleResponse';
+  success: Scalars['Boolean'];
+  message: Maybe<Scalars['String']>;
+};
+
+export type ActivationOutcome = {
+  __typename: 'ActivationOutcome';
+  session: Maybe<UserSession>;
+  message: Maybe<Scalars['String']>;
+};
+
+
+      export interface PossibleTypesResultData {
+        possibleTypes: {
+          [key: string]: string[]
+        }
+      }
+      const result: PossibleTypesResultData = {
+  "possibleTypes": {
+    "CreateNodeMutationPayload": [
+      "CreateNodeMutationSuccess",
+      "CreateNodeMutationError"
+    ],
+    "CreateEdgeMutationPayload": [
+      "CreateEdgeMutationSuccess",
+      "CreateEdgeMutationError"
+    ],
+    "UpdateNodeMutationPayload": [
+      "UpdateNodeMutationSuccess",
+      "UpdateNodeMutationError"
+    ],
+    "UpdateEdgeMutationPayload": [
+      "UpdateEdgeMutationSuccess",
+      "UpdateEdgeMutationError"
+    ],
+    "DeleteEdgeMutationPayload": [
+      "DeleteEdgeMutationSuccess",
+      "DeleteEdgeMutationError"
+    ],
+    "DeleteNodeMutationPayload": [
+      "DeleteNodeMutationSuccess",
+      "DeleteNodeMutationError"
+    ],
+    "INode": [
+      "Subject",
+      "User"
+    ],
+    "IEdge": [
+      "Follows"
+    ],
+    "Edge": [
+      "Follows"
+    ],
+    "Node": [
+      "Subject",
+      "User"
+    ]
+  }
+};
+      export default result;
+    
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -444,12 +560,13 @@ export type ResolversTypes = {
   Never: ResolverTypeWrapper<Scalars['Never']>;
   Empty: ResolverTypeWrapper<Scalars['Empty']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
-  Mutation: ResolverTypeWrapper<RootValue>;
+  Mutation: ResolverTypeWrapper<any>;
+  String: ResolverTypeWrapper<Scalars['String']>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CreateNodeInput: CreateNodeInput;
   CreateNodeMutationPayload: ResolversTypes['CreateNodeMutationSuccess'] | ResolversTypes['CreateNodeMutationError'];
   CreateNodeMutationSuccess: ResolverTypeWrapper<Omit<CreateNodeMutationSuccess, 'node'> & { node: Maybe<ResolversTypes['Node']> }>;
   CreateNodeMutationError: ResolverTypeWrapper<CreateNodeMutationError>;
-  String: ResolverTypeWrapper<Scalars['String']>;
   CreateNodeMutationErrorType: CreateNodeMutationErrorType;
   CreateEdgeInput: CreateEdgeInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
@@ -479,11 +596,10 @@ export type ResolversTypes = {
   DeleteNodeMutationErrorType: DeleteNodeMutationErrorType;
   Page: ResolverTypeWrapper<Page>;
   PageInfo: ResolverTypeWrapper<PageInfo>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   PageEdge: ResolverTypeWrapper<PageEdge>;
   PageInput: PageInput;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  Query: ResolverTypeWrapper<RootValue>;
+  Query: ResolverTypeWrapper<any>;
   Cursor: ResolverTypeWrapper<Scalars['Cursor']>;
   INode: ResolversTypes['Subject'] | ResolversTypes['User'];
   IEdge: ResolversTypes['Follows'];
@@ -502,6 +618,8 @@ export type ResolversTypes = {
   UpdateSubjectInput: UpdateSubjectInput;
   User: ResolverTypeWrapper<User>;
   UpdateUserInput: UpdateUserInput;
+  SimpleResponse: ResolverTypeWrapper<SimpleResponse>;
+  ActivationOutcome: ResolverTypeWrapper<ActivationOutcome>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -509,12 +627,13 @@ export type ResolversParentTypes = {
   Never: Scalars['Never'];
   Empty: Scalars['Empty'];
   DateTime: Scalars['DateTime'];
-  Mutation: RootValue;
+  Mutation: any;
+  String: Scalars['String'];
+  Boolean: Scalars['Boolean'];
   CreateNodeInput: CreateNodeInput;
   CreateNodeMutationPayload: ResolversParentTypes['CreateNodeMutationSuccess'] | ResolversParentTypes['CreateNodeMutationError'];
   CreateNodeMutationSuccess: Omit<CreateNodeMutationSuccess, 'node'> & { node: Maybe<ResolversParentTypes['Node']> };
   CreateNodeMutationError: CreateNodeMutationError;
-  String: Scalars['String'];
   CreateEdgeInput: CreateEdgeInput;
   ID: Scalars['ID'];
   CreateEdgeMutationPayload: ResolversParentTypes['CreateEdgeMutationSuccess'] | ResolversParentTypes['CreateEdgeMutationError'];
@@ -538,11 +657,10 @@ export type ResolversParentTypes = {
   DeleteNodeMutationError: DeleteNodeMutationError;
   Page: Page;
   PageInfo: PageInfo;
-  Boolean: Scalars['Boolean'];
   PageEdge: PageEdge;
   PageInput: PageInput;
   Int: Scalars['Int'];
-  Query: RootValue;
+  Query: any;
   Cursor: Scalars['Cursor'];
   INode: ResolversParentTypes['Subject'] | ResolversParentTypes['User'];
   IEdge: ResolversParentTypes['Follows'];
@@ -558,6 +676,8 @@ export type ResolversParentTypes = {
   UpdateSubjectInput: UpdateSubjectInput;
   User: User;
   UpdateUserInput: UpdateUserInput;
+  SimpleResponse: SimpleResponse;
+  ActivationOutcome: ActivationOutcome;
 };
 
 export interface NeverScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Never'], any> {
@@ -572,112 +692,119 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'DateTime';
 }
 
-export type MutationResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  activateAccount: Resolver<ResolversTypes['ActivationOutcome'], ParentType, ContextType, RequireFields<MutationActivateAccountArgs, 'username' | 'password' | 'token'>>;
+  changeEmailConfirm: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeEmailConfirmArgs, 'token' | 'password' | 'username'>>;
+  changeEmailRequest: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangeEmailRequestArgs, 'newEmail'>>;
+  changePassword: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'currentPassword'>>;
   createEdge: Resolver<ResolversTypes['CreateEdgeMutationPayload'], ParentType, ContextType, RequireFields<MutationCreateEdgeArgs, 'input'>>;
   createNode: Resolver<ResolversTypes['CreateNodeMutationPayload'], ParentType, ContextType, RequireFields<MutationCreateNodeArgs, 'input'>>;
-  updateEdge: Resolver<ResolversTypes['UpdateEdgeMutationPayload'], ParentType, ContextType, RequireFields<MutationUpdateEdgeArgs, 'input'>>;
-  updateNode: Resolver<ResolversTypes['UpdateNodeMutationPayload'], ParentType, ContextType, RequireFields<MutationUpdateNodeArgs, 'input'>>;
+  createSession: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType, RequireFields<MutationCreateSessionArgs, 'username' | 'password'>>;
   deleteEdge: Resolver<ResolversTypes['DeleteEdgeMutationPayload'], ParentType, ContextType, RequireFields<MutationDeleteEdgeArgs, 'input'>>;
   deleteNode: Resolver<ResolversTypes['DeleteNodeMutationPayload'], ParentType, ContextType, RequireFields<MutationDeleteNodeArgs, 'input'>>;
+  sessionByEmail: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationSessionByEmailArgs, 'username' | 'email'>>;
+  signUp: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'email'>>;
+  updateEdge: Resolver<ResolversTypes['UpdateEdgeMutationPayload'], ParentType, ContextType, RequireFields<MutationUpdateEdgeArgs, 'input'>>;
+  updateNode: Resolver<ResolversTypes['UpdateNodeMutationPayload'], ParentType, ContextType, RequireFields<MutationUpdateNodeArgs, 'input'>>;
 };
 
-export type CreateNodeMutationPayloadResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['CreateNodeMutationPayload'] = ResolversParentTypes['CreateNodeMutationPayload']> = {
+export type CreateNodeMutationPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateNodeMutationPayload'] = ResolversParentTypes['CreateNodeMutationPayload']> = {
   __resolveType: TypeResolveFn<'CreateNodeMutationSuccess' | 'CreateNodeMutationError', ParentType, ContextType>;
 };
 
-export type CreateNodeMutationSuccessResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['CreateNodeMutationSuccess'] = ResolversParentTypes['CreateNodeMutationSuccess']> = {
+export type CreateNodeMutationSuccessResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateNodeMutationSuccess'] = ResolversParentTypes['CreateNodeMutationSuccess']> = {
   node: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type CreateNodeMutationErrorResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['CreateNodeMutationError'] = ResolversParentTypes['CreateNodeMutationError']> = {
+export type CreateNodeMutationErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateNodeMutationError'] = ResolversParentTypes['CreateNodeMutationError']> = {
   type: Resolver<ResolversTypes['CreateNodeMutationErrorType'], ParentType, ContextType>;
   details: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type CreateEdgeMutationPayloadResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['CreateEdgeMutationPayload'] = ResolversParentTypes['CreateEdgeMutationPayload']> = {
+export type CreateEdgeMutationPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateEdgeMutationPayload'] = ResolversParentTypes['CreateEdgeMutationPayload']> = {
   __resolveType: TypeResolveFn<'CreateEdgeMutationSuccess' | 'CreateEdgeMutationError', ParentType, ContextType>;
 };
 
-export type CreateEdgeMutationSuccessResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['CreateEdgeMutationSuccess'] = ResolversParentTypes['CreateEdgeMutationSuccess']> = {
+export type CreateEdgeMutationSuccessResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateEdgeMutationSuccess'] = ResolversParentTypes['CreateEdgeMutationSuccess']> = {
   edge: Resolver<Maybe<ResolversTypes['Edge']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type CreateEdgeMutationErrorResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['CreateEdgeMutationError'] = ResolversParentTypes['CreateEdgeMutationError']> = {
+export type CreateEdgeMutationErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateEdgeMutationError'] = ResolversParentTypes['CreateEdgeMutationError']> = {
   type: Resolver<ResolversTypes['CreateEdgeMutationErrorType'], ParentType, ContextType>;
   details: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UpdateNodeMutationPayloadResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['UpdateNodeMutationPayload'] = ResolversParentTypes['UpdateNodeMutationPayload']> = {
+export type UpdateNodeMutationPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['UpdateNodeMutationPayload'] = ResolversParentTypes['UpdateNodeMutationPayload']> = {
   __resolveType: TypeResolveFn<'UpdateNodeMutationSuccess' | 'UpdateNodeMutationError', ParentType, ContextType>;
 };
 
-export type UpdateNodeMutationSuccessResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['UpdateNodeMutationSuccess'] = ResolversParentTypes['UpdateNodeMutationSuccess']> = {
+export type UpdateNodeMutationSuccessResolvers<ContextType = any, ParentType extends ResolversParentTypes['UpdateNodeMutationSuccess'] = ResolversParentTypes['UpdateNodeMutationSuccess']> = {
   node: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UpdateNodeMutationErrorResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['UpdateNodeMutationError'] = ResolversParentTypes['UpdateNodeMutationError']> = {
+export type UpdateNodeMutationErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['UpdateNodeMutationError'] = ResolversParentTypes['UpdateNodeMutationError']> = {
   type: Resolver<ResolversTypes['UpdateNodeMutationErrorType'], ParentType, ContextType>;
   details: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UpdateEdgeMutationPayloadResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['UpdateEdgeMutationPayload'] = ResolversParentTypes['UpdateEdgeMutationPayload']> = {
+export type UpdateEdgeMutationPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['UpdateEdgeMutationPayload'] = ResolversParentTypes['UpdateEdgeMutationPayload']> = {
   __resolveType: TypeResolveFn<'UpdateEdgeMutationSuccess' | 'UpdateEdgeMutationError', ParentType, ContextType>;
 };
 
-export type UpdateEdgeMutationSuccessResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['UpdateEdgeMutationSuccess'] = ResolversParentTypes['UpdateEdgeMutationSuccess']> = {
+export type UpdateEdgeMutationSuccessResolvers<ContextType = any, ParentType extends ResolversParentTypes['UpdateEdgeMutationSuccess'] = ResolversParentTypes['UpdateEdgeMutationSuccess']> = {
   edge: Resolver<Maybe<ResolversTypes['Edge']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UpdateEdgeMutationErrorResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['UpdateEdgeMutationError'] = ResolversParentTypes['UpdateEdgeMutationError']> = {
+export type UpdateEdgeMutationErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['UpdateEdgeMutationError'] = ResolversParentTypes['UpdateEdgeMutationError']> = {
   type: Resolver<ResolversTypes['UpdateEdgeMutationErrorType'], ParentType, ContextType>;
   details: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DeleteEdgeMutationPayloadResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['DeleteEdgeMutationPayload'] = ResolversParentTypes['DeleteEdgeMutationPayload']> = {
+export type DeleteEdgeMutationPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeleteEdgeMutationPayload'] = ResolversParentTypes['DeleteEdgeMutationPayload']> = {
   __resolveType: TypeResolveFn<'DeleteEdgeMutationSuccess' | 'DeleteEdgeMutationError', ParentType, ContextType>;
 };
 
-export type DeleteEdgeMutationSuccessResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['DeleteEdgeMutationSuccess'] = ResolversParentTypes['DeleteEdgeMutationSuccess']> = {
+export type DeleteEdgeMutationSuccessResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeleteEdgeMutationSuccess'] = ResolversParentTypes['DeleteEdgeMutationSuccess']> = {
   edge: Resolver<Maybe<ResolversTypes['Edge']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DeleteEdgeMutationErrorResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['DeleteEdgeMutationError'] = ResolversParentTypes['DeleteEdgeMutationError']> = {
+export type DeleteEdgeMutationErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeleteEdgeMutationError'] = ResolversParentTypes['DeleteEdgeMutationError']> = {
   type: Resolver<Maybe<ResolversTypes['DeleteEdgeMutationErrorType']>, ParentType, ContextType>;
   details: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DeleteNodeMutationPayloadResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['DeleteNodeMutationPayload'] = ResolversParentTypes['DeleteNodeMutationPayload']> = {
+export type DeleteNodeMutationPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeleteNodeMutationPayload'] = ResolversParentTypes['DeleteNodeMutationPayload']> = {
   __resolveType: TypeResolveFn<'DeleteNodeMutationSuccess' | 'DeleteNodeMutationError', ParentType, ContextType>;
 };
 
-export type DeleteNodeMutationSuccessResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['DeleteNodeMutationSuccess'] = ResolversParentTypes['DeleteNodeMutationSuccess']> = {
+export type DeleteNodeMutationSuccessResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeleteNodeMutationSuccess'] = ResolversParentTypes['DeleteNodeMutationSuccess']> = {
   node: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DeleteNodeMutationErrorResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['DeleteNodeMutationError'] = ResolversParentTypes['DeleteNodeMutationError']> = {
+export type DeleteNodeMutationErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['DeleteNodeMutationError'] = ResolversParentTypes['DeleteNodeMutationError']> = {
   type: Resolver<Maybe<ResolversTypes['DeleteNodeMutationErrorType']>, ParentType, ContextType>;
   details: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PageResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']> = {
+export type PageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']> = {
   pageInfo: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   edges: Resolver<Array<ResolversTypes['PageEdge']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PageInfoResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
+export type PageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
   endCursor: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   hasNextPage: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   hasPreviousPage: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -685,14 +812,15 @@ export type PageInfoResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PageEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['PageEdge'] = ResolversParentTypes['PageEdge']> = {
+export type PageEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageEdge'] = ResolversParentTypes['PageEdge']> = {
   cursor: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   edge: Resolver<ResolversTypes['IEdge'], ParentType, ContextType>;
   node: Resolver<ResolversTypes['INode'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type QueryResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  _null_placeholder: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   getSessionAccountUser: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType, RequireFields<QueryGetSessionAccountUserArgs, 'username'>>;
   node: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryNodeArgs, '_id' | 'nodeType'>>;
 };
@@ -701,47 +829,52 @@ export interface CursorScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
   name: 'Cursor';
 }
 
-export type INodeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['INode'] = ResolversParentTypes['INode']> = {
+export type INodeResolvers<ContextType = any, ParentType extends ResolversParentTypes['INode'] = ResolversParentTypes['INode']> = {
   __resolveType: TypeResolveFn<'Subject' | 'User', ParentType, ContextType>;
   _id: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<INode_RelArgs, 'edge'>>;
 };
 
-export type IEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['IEdge'] = ResolversParentTypes['IEdge']> = {
+export type IEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['IEdge'] = ResolversParentTypes['IEdge']> = {
   __resolveType: TypeResolveFn<'Follows', ParentType, ContextType>;
   _id: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
 };
 
-export type MetaResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Meta'] = ResolversParentTypes['Meta']> = {
+export type MetaResolvers<ContextType = any, ParentType extends ResolversParentTypes['Meta'] = ResolversParentTypes['Meta']> = {
   created: Resolver<ResolversTypes['ByAt'], ParentType, ContextType>;
   lastUpdate: Resolver<ResolversTypes['ByAt'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ByAtResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['ByAt'] = ResolversParentTypes['ByAt']> = {
+export type ByAtResolvers<ContextType = any, ParentType extends ResolversParentTypes['ByAt'] = ResolversParentTypes['ByAt']> = {
   by: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   at: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type FollowsResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Follows'] = ResolversParentTypes['Follows']> = {
+export type FollowsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Follows'] = ResolversParentTypes['Follows']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type EdgeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Edge'] = ResolversParentTypes['Edge']> = {
+export type EdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Edge'] = ResolversParentTypes['Edge']> = {
   __resolveType: TypeResolveFn<'Follows', ParentType, ContextType>;
 };
 
-export type UserSessionResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['UserSession'] = ResolversParentTypes['UserSession']> = {
+export type UserSessionResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserSession'] = ResolversParentTypes['UserSession']> = {
+  accountId: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  changeEmailRequest: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  jwt: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  username: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type SubjectResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
+export type SubjectResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Subject_RelArgs, 'edge'>>;
@@ -749,11 +882,11 @@ export type SubjectResolvers<ContextType = MoodleNetExecutionContext, ParentType
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type NodeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = {
+export type NodeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = {
   __resolveType: TypeResolveFn<'Subject' | 'User', ParentType, ContextType>;
 };
 
-export type UserResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<User_RelArgs, 'edge'>>;
@@ -762,7 +895,19 @@ export type UserResolvers<ContextType = MoodleNetExecutionContext, ParentType ex
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Resolvers<ContextType = MoodleNetExecutionContext> = {
+export type SimpleResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['SimpleResponse'] = ResolversParentTypes['SimpleResponse']> = {
+  success: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  message: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ActivationOutcomeResolvers<ContextType = any, ParentType extends ResolversParentTypes['ActivationOutcome'] = ResolversParentTypes['ActivationOutcome']> = {
+  session: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType>;
+  message: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Resolvers<ContextType = any> = {
   Never: GraphQLScalarType;
   Empty: GraphQLScalarType;
   DateTime: GraphQLScalarType;
@@ -800,6 +945,8 @@ export type Resolvers<ContextType = MoodleNetExecutionContext> = {
   Subject: SubjectResolvers<ContextType>;
   Node: NodeResolvers<ContextType>;
   User: UserResolvers<ContextType>;
+  SimpleResponse: SimpleResponseResolvers<ContextType>;
+  ActivationOutcome: ActivationOutcomeResolvers<ContextType>;
 };
 
 
@@ -807,4 +954,4 @@ export type Resolvers<ContextType = MoodleNetExecutionContext> = {
  * @deprecated
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
-export type IResolvers<ContextType = MoodleNetExecutionContext> = Resolvers<ContextType>;
+export type IResolvers<ContextType = any> = Resolvers<ContextType>;

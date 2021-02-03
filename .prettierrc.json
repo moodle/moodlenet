@@ -1,0 +1,14 @@
+{
+  "arrowParens": "avoid",
+  "singleQuote": true,
+  "eslintIntegration": true,
+  "tslintIntegration": true,
+  "printWidth": 100,
+  "trailingComma": "none",
+  "semi": true,
+  "bracketSpacing": true,
+  "useTabs": false,
+  "tabWidth": 2,
+  "quoteProps": "consistent",
+  "proseWrap": "always"
+}
