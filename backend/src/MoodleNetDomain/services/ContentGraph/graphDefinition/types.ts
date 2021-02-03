@@ -13,6 +13,11 @@ export type Id = string & { readonly __: unique symbol }
 export type PersistenceExecutionContext = MoodleNetExecutionContext
 
 export type AccessType = 'read' | 'create' | 'update' | 'delete'
+
+//TODO: define different specific Policy types:
+//TODO: GlyphRead, GlyphUpdate, GlyphCreate, GlyphDelete, EdgeNode
+//TODO: Make generic<PolicyType> on BasicAccessPolicy, BasicAccessPolicyType, BasicAccessPolicyGroup, BasicAccessFilterEngine,
+
 export enum BasicAccessPolicyType {
   Creator = 'Creator',
   AnyUser = 'AnyUser',

@@ -59,8 +59,12 @@ export const createEdge: ContentGraphPersistence['createEdge'] = async ({
 
   if (!(edgePolicy && auth && toPolicy && fromPolicy)) {
     return createEdgeMutationError(
-      CreateEdgeMutationErrorType.NotAuthorized,
-      `missing one of edgePolicy:${edgePolicy} auth.userId:${auth?.userId} toPolicy:${toPolicy} fromPolicy:${fromPolicy}`
+      CreateEdgeMutationErrorType.UnexpectedInput,
+      `missing one of:
+edgePolicy:${edgePolicy} 
+auth.userId:${auth?.userId} 
+toPolicy:${toPolicy} 
+fromPolicy:${fromPolicy}`
     )
   }
 
@@ -77,13 +81,13 @@ export const createEdge: ContentGraphPersistence['createEdge'] = async ({
   if (!(fromNode && toNode)) {
     return createEdgeMutationError(
       CreateEdgeMutationErrorType.NotAuthorized,
-      `cannot find or access both nodes`
+      `cannot find or access both nodes, found: fromNode[${from}]:${!!fromNode} toNode[${to}]:${!!toNode}`
     )
   }
 
   const _meta = createMeta(auth)
 
-  const collection = graph.vertexCollection(edgeType)
+  const collection = graph.edgeCollection(edgeType)
   const { new: edge } = await collection.save(
     { ...data, _meta, _from: from, _to: to },
     { returnNew: true }

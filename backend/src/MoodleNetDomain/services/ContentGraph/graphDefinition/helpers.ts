@@ -111,8 +111,8 @@ export const getStaticGlyphBasicAccessFilter = (_: {
 }) => getGlyphBasicAccessFilter({ ..._, engine: staticEngine })
 
 export type BasicAccessFilterEngine<ResType> = {
-  andReducer(a: ResType | undefined, b: ResType): ResType
-  orReducer(a: ResType | undefined, b: ResType): ResType
+  andReducer(collect: ResType | undefined, current: ResType): ResType
+  orReducer(collect: ResType | undefined, current: ResType): ResType
   basicAccessPolicyTypeFilters: BasicAccessPolicyTypeFilters<ResType>
 }
 export const getGlyphBasicAccessFilter = <ResType>(_: {
