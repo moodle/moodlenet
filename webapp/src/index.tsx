@@ -3,17 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client';
-const apolloClient = new ApolloClient({
-  cache: new InMemoryCache({}),
-  link: new HttpLink({ uri: 'http://localhost:8080/graphql' })
-});
+import { GlobalContexts } from './contexts/global';
 
 ReactDOM.render(
   <React.StrictMode>
-    <ApolloProvider client={apolloClient}>
+    <GlobalContexts>
       <App />
-    </ApolloProvider>
+    </GlobalContexts>
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -4,10 +4,11 @@ import { useAxQuery } from './__.gen';
 
 function App() {
   const x = useAxQuery();
+
   return (
     <div className="App">
       <pre>
-        ++++
+        ++++ ---------
         {JSON.stringify(x.data, null, 4)}
         ++++
       </pre>
