@@ -1,21 +1,15 @@
-import { FC } from 'react';
+import { FC, ReactElement } from 'react';
 import { EmptyPageTemplate } from '../../templates/page/EmptyPageTemplate';
-import { LoginPanel } from './LoginPanel';
+export * from '../../components/LoginPanelBig';
 
-export const defaultComponents = {
-  LoginPanel
+export type LoginPageProps = {
+  LoginPanel: ReactElement;
 };
 
 export const LoginPage: FC<LoginPageProps> = ({ LoginPanel }) => {
   return (
     <EmptyPageTemplate>
-      <div>
-        <LoginPanel />
-      </div>
+      <div>{LoginPanel}</div>
     </EmptyPageTemplate>
   );
-};
-
-export type LoginPageProps = {
-  LoginPanel: FC;
 };

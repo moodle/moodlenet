@@ -1,0 +1,5 @@
+mutation login($username: String!, $password: String!) {
+  createSession(username: $username, password: $password) {
+    username
+  }
+}

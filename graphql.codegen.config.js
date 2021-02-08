@@ -48,7 +48,7 @@ const srvGenerates = services
 const webAppRoot = `webapp`
 const webAppRootGqlRoot = `webapp/src/graphql`
 const webAppSchema = [globCommonSdl, ...services.map(srvSchemaGlob)]
-const webAppDocuments = `${webAppRoot}/src/**/!(*.client).graphql`
+const webAppDocuments = [`${webAppRoot}/src/**/!(*.client).graphql`]
 const webAppContextType = `any`
 const webAppRootValueType = `any`
 
