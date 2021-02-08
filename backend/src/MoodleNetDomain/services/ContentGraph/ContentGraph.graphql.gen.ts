@@ -16,7 +16,11 @@ export type Scalars = {
   Never: never;
   Empty: {};
   DateTime: Date;
+  Cursor: any;
 };
+
+
+
 
 export type Mutation = {
   __typename: 'Mutation';
@@ -252,8 +256,6 @@ export type QueryNodeArgs = {
 };
 
 
-
-
 export type INode = {
   _id: Maybe<Scalars['ID']>;
   _meta: Meta;
@@ -439,6 +441,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  Never: ResolverTypeWrapper<Scalars['Never']>;
+  Empty: ResolverTypeWrapper<Scalars['Empty']>;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Mutation: ResolverTypeWrapper<RootValue>;
   CreateNodeInput: CreateNodeInput;
   CreateNodeMutationPayload: ResolversTypes['CreateNodeMutationSuccess'] | ResolversTypes['CreateNodeMutationError'];
@@ -479,9 +484,7 @@ export type ResolversTypes = {
   PageInput: PageInput;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<RootValue>;
-  Never: ResolverTypeWrapper<Scalars['Never']>;
-  Empty: ResolverTypeWrapper<Scalars['Empty']>;
-  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  Cursor: ResolverTypeWrapper<Scalars['Cursor']>;
   INode: ResolversTypes['Subject'] | ResolversTypes['User'];
   IEdge: ResolversTypes['Follows'];
   EdgeTypeInput: EdgeTypeInput;
@@ -503,6 +506,9 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  Never: Scalars['Never'];
+  Empty: Scalars['Empty'];
+  DateTime: Scalars['DateTime'];
   Mutation: RootValue;
   CreateNodeInput: CreateNodeInput;
   CreateNodeMutationPayload: ResolversParentTypes['CreateNodeMutationSuccess'] | ResolversParentTypes['CreateNodeMutationError'];
@@ -537,9 +543,7 @@ export type ResolversParentTypes = {
   PageInput: PageInput;
   Int: Scalars['Int'];
   Query: RootValue;
-  Never: Scalars['Never'];
-  Empty: Scalars['Empty'];
-  DateTime: Scalars['DateTime'];
+  Cursor: Scalars['Cursor'];
   INode: ResolversParentTypes['Subject'] | ResolversParentTypes['User'];
   IEdge: ResolversParentTypes['Follows'];
   EdgeTypeInput: EdgeTypeInput;
@@ -555,6 +559,18 @@ export type ResolversParentTypes = {
   User: User;
   UpdateUserInput: UpdateUserInput;
 };
+
+export interface NeverScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Never'], any> {
+  name: 'Never';
+}
+
+export interface EmptyScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Empty'], any> {
+  name: 'Empty';
+}
+
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
 
 export type MutationResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createEdge: Resolver<ResolversTypes['CreateEdgeMutationPayload'], ParentType, ContextType, RequireFields<MutationCreateEdgeArgs, 'input'>>;
@@ -681,16 +697,8 @@ export type QueryResolvers<ContextType = MoodleNetExecutionContext, ParentType e
   node: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryNodeArgs, '_id' | 'nodeType'>>;
 };
 
-export interface NeverScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Never'], any> {
-  name: 'Never';
-}
-
-export interface EmptyScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Empty'], any> {
-  name: 'Empty';
-}
-
-export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
-  name: 'DateTime';
+export interface CursorScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Cursor'], any> {
+  name: 'Cursor';
 }
 
 export type INodeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['INode'] = ResolversParentTypes['INode']> = {
@@ -755,6 +763,9 @@ export type UserResolvers<ContextType = MoodleNetExecutionContext, ParentType ex
 };
 
 export type Resolvers<ContextType = MoodleNetExecutionContext> = {
+  Never: GraphQLScalarType;
+  Empty: GraphQLScalarType;
+  DateTime: GraphQLScalarType;
   Mutation: MutationResolvers<ContextType>;
   CreateNodeMutationPayload: CreateNodeMutationPayloadResolvers<ContextType>;
   CreateNodeMutationSuccess: CreateNodeMutationSuccessResolvers<ContextType>;
@@ -778,9 +789,7 @@ export type Resolvers<ContextType = MoodleNetExecutionContext> = {
   PageInfo: PageInfoResolvers<ContextType>;
   PageEdge: PageEdgeResolvers<ContextType>;
   Query: QueryResolvers<ContextType>;
-  Never: GraphQLScalarType;
-  Empty: GraphQLScalarType;
-  DateTime: GraphQLScalarType;
+  Cursor: GraphQLScalarType;
   INode: INodeResolvers<ContextType>;
   IEdge: IEdgeResolvers<ContextType>;
   Meta: MetaResolvers<ContextType>;
