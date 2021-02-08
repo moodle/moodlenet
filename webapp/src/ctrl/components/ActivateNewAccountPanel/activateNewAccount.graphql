@@ -1,0 +1,15 @@
+mutation activateNewAccount($token: String!, $username: String!, $password: String!) {
+  activateAccount(username: $username, password: $password, token: $token) {
+    message
+    session {
+      username
+      email
+      accountId
+      jwt
+      user {
+        _id
+        displayName
+      }
+    }
+  }
+}

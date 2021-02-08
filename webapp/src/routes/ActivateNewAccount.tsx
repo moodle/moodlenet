@@ -1,3 +1,4 @@
+import { ActivateNewAccountPageCtrl } from '../ctrl/pages/ActivateNewAccountPageCtrl';
 import { ActivateNewAccountRouteDef } from '../sitemap';
 import { MNRouteProps, RouteFC } from '../sitemap/lib';
 
@@ -6,7 +7,7 @@ export const ActivateNewAccountComponent: RouteFC<ActivateNewAccountRouteDef> = 
     params: { token }
   }
 }) => {
-  return <div>ActivateNewAccount {token}</div>;
+  return <ActivateNewAccountPageCtrl token={token} />;
 };
 
 export const ActivateNewAccountRoute: MNRouteProps<ActivateNewAccountRouteDef> = {

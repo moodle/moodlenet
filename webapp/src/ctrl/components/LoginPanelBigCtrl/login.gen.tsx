@@ -12,7 +12,11 @@ export type LoginMutation = (
   { __typename: 'Mutation' }
   & { createSession?: Types.Maybe<(
     { __typename: 'UserSession' }
-    & Pick<Types.UserSession, 'username'>
+    & Pick<Types.UserSession, 'username' | 'email' | 'accountId' | 'jwt'>
+    & { user: (
+      { __typename: 'User' }
+      & Pick<Types.User, '_id' | 'displayName'>
+    ) }
   )> }
 );
 
@@ -21,6 +25,13 @@ export const LoginDocument = gql`
     mutation login($username: String!, $password: String!) {
   createSession(username: $username, password: $password) {
     username
+    email
+    accountId
+    jwt
+    user {
+      _id
+      displayName
+    }
   }
 }
     `;

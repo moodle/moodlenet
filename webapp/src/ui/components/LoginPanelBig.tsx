@@ -2,9 +2,9 @@ import { Trans, t } from '@lingui/macro';
 import { FC } from 'react';
 import { FormBag } from '../../@types/types';
 
-export type FormValues = { username: string; password: string };
+export type LoginFormValues = { username: string; password: string };
 export type LoginPanelProps = {
-  form: FormBag<FormValues>;
+  form: FormBag<LoginFormValues>;
   message: string | null;
 };
 
