@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "moduleResolution": "Node",
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "noEmit": true,
+    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
+    //"outDir": "./js" /* Redirect output structure to the directory. */
+  }
+}
