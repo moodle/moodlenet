@@ -33,15 +33,12 @@ export type ApiCallArgs<Domain, ApiPath extends Types.ApiLeaves<Domain>> = {
   flow: Flow
   opts?: CallOpts
 }
+let callCount = 0
 
-export const call = <Domain>(domain: string) => <
-  ApiPath extends Types.ApiLeaves<Domain>
->(
+export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves<Domain>>(
   _: ApiCallArgs<Domain, ApiPath>
 ) => {
-  type ResType = Types.ApiRes<Domain, ApiPath> extends Promise<infer T>
-    ? T
-    : never
+  type ResType = Types.ApiRes<Domain, ApiPath> extends Promise<infer T> ? T : never
   // return (req: Types.ApiReq<Domain, ApiPath>): Promise<ResType> => {
   return ((req: any) => {
     return new Promise(
@@ -50,18 +47,16 @@ export const call = <Domain>(domain: string) => <
         rejectCall: (arg0: any) => void
       ) => {
         const { api, flow, /* req, */ opts } = _
-        const delay =
-          opts?.justEnqueue && opts?.delaySecs
-            ? opts.delaySecs * 1000
-            : undefined
+        const delay = opts?.justEnqueue && opts?.delaySecs ? opts.delaySecs * 1000 : undefined
         const expiration = opts?.justEnqueue
           ? delay || undefined
           : opts?.timeout || DEF_TIMEOUT_EXPIRATION
+        const messageId = `${nodeId}.${Number(new Date())}.${callCount++}`
 
         let unsubFromReplyEmitter = () => {}
         if (!opts?.justEnqueue) {
           unsubFromReplyEmitter = AMQP.mainNodeQEmitter.sub<ResType>({
-            flow,
+            messageId,
             handler({ jsonContent, unsub }) {
               unsub()
               const response = getResponse(jsonContent)
@@ -83,16 +78,16 @@ export const call = <Domain>(domain: string) => <
           topic: api,
           payload: req,
           opts: {
+            messageId,
             correlationId: flowId(flow),
             replyToNodeQ: !opts?.justEnqueue,
             expiration,
             delay,
           },
         })
-          .then((_) => {
+          .then(() => {
             if (!opts?.justEnqueue) {
-              const localTimeout =
-                expiration === undefined ? 0 : expiration + DEF_LAG_TIMEOUT
+              const localTimeout = expiration === undefined ? 0 : expiration + DEF_LAG_TIMEOUT
 
               setTimeout(() => {
                 rejectCall(REPLY_TIMEOUT_RESPONSE)
@@ -102,7 +97,7 @@ export const call = <Domain>(domain: string) => <
               resolveCall({} as any)
             }
           })
-          .catch((err) => {
+          .catch(err => {
             unsubFromReplyEmitter()
             Types.apiCallError(err)
           })
@@ -154,21 +149,15 @@ export const assertApiResponderQueue = async <Domain>(_: {
     apiResponderQName,
   }
 }
-export const getApiResponderQName = <Domain>(api: Types.ApiLeaves<Domain>) =>
-  `API_RESPONDER:${api}`
+export const getApiResponderQName = <Domain>(api: Types.ApiLeaves<Domain>) => `API_RESPONDER:${api}`
 // TODO: each responder (or each queue consumer in general ?) should use its own channel
 // TODO: ApiResponderOpts should have channelOpts too
 
-export const respond = <Domain>(domain: string) => async <
-  ApiPath extends Types.ApiLeaves<Domain>
->(
+export const respond = <Domain>(domain: string) => async <ApiPath extends Types.ApiLeaves<Domain>>(
   _: RespondApiArgs<Domain, ApiPath>
 ) => {
   const { api, handler, opts } = _
-  const [route, id] = [
-    flowRouteElse(opts?.pFlow, '*'),
-    flowIdElse(opts?.pFlow, '*'),
-  ]
+  const [route, id] = [flowRouteElse(opts?.pFlow, '*'), flowIdElse(opts?.pFlow, '*')]
   const topic = `${api}.${route}.${id}`
   const { apiResponderQName } = await assertApiResponderQueue<Domain>({
     api,
@@ -186,11 +175,11 @@ export const respond = <Domain>(domain: string) => async <
     async handler({ msg, msgJsonContent, flow }) {
       log(flow, `\n\nAPI consume : ${api}`)
       return Promise.resolve(handler(msgJsonContent))
-        .then((resp) => {
+        .then(resp => {
           reply({ msg, flow, resp })
           return AMQP.Acks.ack
         })
-        .catch((exc) => {
+        .catch(exc => {
           log(flow, `API error`, exc)
           reply({ msg, flow, resp: Types.apiReplyError(exc) })
           return AMQP.Acks.reject
@@ -220,6 +209,9 @@ export const respond = <Domain>(domain: string) => async <
         name: replyQ,
         content: resp,
         flow,
+        opts: {
+          correlationId: msg.properties.messageId,
+        },
       })
     }
   }
@@ -230,20 +222,16 @@ export const getGQLApiCallerExecutor = <DomainDef extends object>({
   api: apiPath,
   flow,
 }: {
-  getExecutionGlobalValues(
-    ..._: Parameters<Executor>
-  ): { context: any; root: any }
+  getExecutionGlobalValues(..._: Parameters<Executor>): { context: any; root: any }
   api: Types.ApiLeaves<DomainDef>
   flow: Flow
-}): Executor => async (_) => {
+}): Executor => async _ => {
   const { context, root } = getExecutionGlobalValues(_)
   const { document, variables /*,context, extensions, info */ } = _
   const query = print(document)
   log(`GQLApiCallerExecutor : ${apiPath}`, query, variables)
 
-  const res = await api<DomainDef>(flow)<Types.ApiLeaves<DomainDef>>(
-    apiPath
-  ).call((gqlCall: any) =>
+  const res = await api<DomainDef>(flow)<Types.ApiLeaves<DomainDef>>(apiPath).call((gqlCall: any) =>
     gqlCall({
       context,
       root,
@@ -256,7 +244,7 @@ export const getGQLApiCallerExecutor = <DomainDef extends object>({
 }
 
 function log(...args: any[]) {
-  console.log('\n\n\n', ...args.map((_) => (_ instanceof Error ? _.stack : _)))
+  console.log('\n\n\n', ...args.map(_ => (_ instanceof Error ? _.stack : _)))
 }
 
 export async function startGQLApiResponder<DomainDef>({

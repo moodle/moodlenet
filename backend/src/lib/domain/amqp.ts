@@ -1,5 +1,5 @@
 // import { delay } from 'bluebird'
-import { Message, MessagePropertyHeaders, Options } from 'amqplib'
+import { Message, /* MessagePropertyHeaders, */ Options } from 'amqplib'
 import { EventEmitter } from 'events'
 import { channelPromise as channel } from './domain.env'
 import { flowId, flowRoute, nodeId } from './helpers'
@@ -19,22 +19,20 @@ const encodeMsgHeaders = (_: { flow: Flow }): DomainMessageHeaders => ({
   'x-flow-route': flowRoute(_.flow),
   'x-flow-nodeId': nodeId,
 })
-const decodeMsgHeaders = (msg: Message | null) => {
-  if (!msg) {
-    return null
-  }
-  const headers = msg.properties.headers as MessagePropertyHeaders &
-    Partial<DomainMessageHeaders>
-  const flowId = headers[`x-flow-id`]
-  const flowRoute = headers['x-flow-route']
-  const nodeId = headers['x-flow-nodeId']
-  const flow: Flow | undefined =
-    flowId && flowRoute ? [flowRoute, flowId] : undefined
-  return {
-    flow,
-    nodeId,
-  }
-}
+// const decodeMsgHeaders = (msg: Message | null) => {
+//   if (!msg) {
+//     return null;
+//   }
+//   const headers = msg.properties.headers as MessagePropertyHeaders & Partial<DomainMessageHeaders>;
+//   const flowId = headers[`x-flow-id`];
+//   const flowRoute = headers['x-flow-route'];
+//   const nodeId = headers['x-flow-nodeId'];
+//   const flow: Flow | undefined = flowId && flowRoute ? [flowRoute, flowId] : undefined;
+//   return {
+//     flow,
+//     nodeId
+//   };
+// };
 
 const msgFlow = (msg: Message): Flow => {
   const [route, id] = msg.fields.routingKey.split('.').slice(-2)
@@ -111,7 +109,7 @@ export const queueConsume = async (_: {
   }
   const consumerPr = ch.consume(
     qName,
-    async (msg) => {
+    async msg => {
       if (!msg) {
         return
       }
@@ -132,8 +130,7 @@ export const queueConsume = async (_: {
   return { stopConsume }
 }
 
-export const getDomainExchangeName = (domainName: string) =>
-  `Domain.${domainName}`
+export const getDomainExchangeName = (domainName: string) => `Domain.${domainName}`
 
 export const assertDomainExchange = async (_: { domain: string }) => {
   const { domain } = _
@@ -144,12 +141,7 @@ export const assertDomainExchange = async (_: { domain: string }) => {
 const json2Buffer = <T>(json: T) => Buffer.from(JSON.stringify(json))
 const buffer2Json = <T>(buf: Buffer): T => JSON.parse(buf.toString('utf-8'))
 
-export const bindQ = async (_: {
-  exchange: string
-  name: string
-  topic: string
-  args?: any
-}) => {
+export const bindQ = async (_: { exchange: string; name: string; topic: string; args?: any }) => {
   const { args, name, topic, exchange } = _
   const ch = await channel
   const {} = await ch.bindQueue(name, exchange, topic, args)
@@ -162,12 +154,7 @@ export const bindQ = async (_: {
   }
 }
 
-export const unbindQ = async (_: {
-  name: string
-  exchange: string
-  topic: string
-  args?: any
-}) => {
+export const unbindQ = async (_: { name: string; exchange: string; topic: string; args?: any }) => {
   const { args, exchange, name, topic } = _
   const ch = await channel
   await ch.unbindQueue(name, exchange, topic, args)
@@ -212,9 +199,7 @@ const getDomainDelayExchangeName = (domain: string) =>
 const getDomainDelayQueueName = (domain: string) =>
   `${getDomainDelayExchangeAndQueuePrefix(domain)}QUEUE`
 
-export const assertDomainDelayedQueueAndExchange = async (_: {
-  domain: string
-}) => {
+export const assertDomainDelayedQueueAndExchange = async (_: { domain: string }) => {
   const { domain } = _
   const domainExchangeName = getDomainExchangeName(domain)
   const delayedQName = getDomainDelayQueueName(domain)
@@ -234,38 +219,40 @@ export const assertDomainDelayedQueueAndExchange = async (_: {
 const NodeEmitter = new EventEmitter()
 
 const mainNodeQName = `MachineQueue:${nodeId}`
-channel.then(async (ch) => {
+channel.then(async ch => {
   const mainNodeQ = await assertQ({
     name: mainNodeQName,
     opts: { exclusive: true, autoDelete: true },
   })
-  ch.consume(mainNodeQ.queue, (msg) => {
+  ch.consume(mainNodeQ.queue, msg => {
     msg && ch.ack(msg)
-    const headers = decodeMsgHeaders(msg)
-    if (!headers) {
+    // const headers = decodeMsgHeaders(msg)
+    // if (!headers) {
+    //   return
+    // }
+    // const { flow } = headers
+    // if (!flow) {
+    //   return
+    // }
+    // const ev = flowId(flow)
+    const messageId = msg?.properties.correlationId
+    console.log(`MachineQ : mid:${messageId}`, msg?.properties)
+    if (!messageId) {
       return
     }
-    const { flow } = headers
-    if (!flow) {
-      return
-    }
-    const ev = flowId(flow)
-    NodeEmitter.emit(ev, msg)
+
+    NodeEmitter.emit(messageId, msg)
   })
 })
 
 export const mainNodeQEmitter = {
-  sub<T>(_: {
-    flow: Flow
-    handler(_: EventEmitterHandlerArgType<T>): unknown
-  }) {
-    const { flow, handler } = _
-    const ev = flowId(flow)
+  sub<T>(_: { messageId: string; handler(_: EventEmitterHandlerArgType<T>): unknown }) {
+    const { messageId, handler } = _
 
-    NodeEmitter.addListener(ev, listener)
+    NodeEmitter.addListener(messageId, listener)
     return unsub
     function unsub() {
-      ev && NodeEmitter.removeListener(ev, listener)
+      NodeEmitter.removeListener(messageId, listener)
     }
     function listener(msg: Message) {
       handler({
