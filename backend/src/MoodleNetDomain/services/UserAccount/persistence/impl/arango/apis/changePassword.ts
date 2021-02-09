@@ -2,10 +2,7 @@ import { aql } from 'arangojs'
 import { Messages, UserAccountPersistence } from '../../../types'
 import { DBReady } from '../UserAccount.persistence.arango.env'
 
-export const changePassword: UserAccountPersistence['changePassword'] = async ({
-  accountId,
-  newPassword,
-}) => {
+export const changePassword: UserAccountPersistence['changePassword'] = async ({ accountId, newPassword }) => {
   const { db } = await DBReady
   const cursor = await db.query(aql`
     FOR userAccount IN UserAccount

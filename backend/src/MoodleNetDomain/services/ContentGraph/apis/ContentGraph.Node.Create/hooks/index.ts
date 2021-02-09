@@ -15,8 +15,7 @@ export type AllowedCreationType = Exclude<NodeType, NotAllowedCreationType>
 const notAllowedTypesMap: { [t in NotAllowedCreationType]: null } = {
   User: null,
 }
-export const isAllowedCreationType = (_: NodeType): _ is AllowedCreationType =>
-  !(_ in notAllowedTypesMap)
+export const isAllowedCreationType = (_: NodeType): _ is AllowedCreationType => !(_ in notAllowedTypesMap)
 export const createHooks: {
   [T in AllowedCreationType]: CreateHook<T>
 } = {

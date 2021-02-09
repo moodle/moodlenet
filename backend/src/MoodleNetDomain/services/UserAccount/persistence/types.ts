@@ -1,10 +1,4 @@
-import {
-  Maybe,
-  WithCreated,
-  WithFlow,
-  WithId,
-  WithMutable,
-} from '../../../../lib/helpers/types'
+import { Maybe, WithCreated, WithFlow, WithId, WithMutable } from '../../../../lib/helpers/types'
 import { EmailObj } from '../../Email/types'
 import { ConfirmAccountEmailChangeRequestPersistence } from '../apis/UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail'
 import { ChangeAccountEmailRequestDeletePersistence } from '../apis/UserAccount.ChangeMainEmail.DeleteRequest'
@@ -21,9 +15,7 @@ import { Resolvers } from '../UserAccount.graphql.gen'
 export interface UserAccountPersistence {
   graphQLTypeResolvers: Omit<Resolvers, 'Mutation'>
 
-  getActiveAccountByUsername(_: {
-    username: string
-  }): Promise<Maybe<ActiveUserAccount>>
+  getActiveAccountByUsername(_: { username: string }): Promise<Maybe<ActiveUserAccount>>
   deleteChangeAccountEmailRequest: ChangeAccountEmailRequestDeletePersistence
   deleteNewAccountRequest: NewAccountRequestDeletePersistence
   isEmailAvailable(_: { email: string }): Promise<boolean>
@@ -63,9 +55,7 @@ export type ActiveUserAccount = UserAccountRecordBase & {
 export type WaitingFirstActivationUserAccount = UserAccountRecordBase & {
   status: UserAccountStatus.WaitingFirstActivation
 }
-export type UserAccountRecord =
-  | ActiveUserAccount
-  | WaitingFirstActivationUserAccount
+export type UserAccountRecord = ActiveUserAccount | WaitingFirstActivationUserAccount
 
 export type ChangeEmailRequest = WithFlow &
   WithCreated & {
@@ -84,7 +74,6 @@ export type Config = WithCreated & {
 }
 // $ Config
 
-export type EmailTemplate<Vars> = Pick<
-  EmailObj,
-  'from' | 'subject' | 'html' | 'text'
-> & { $fake?: Vars }
+export type EmailTemplate<Vars> = Pick<EmailObj, 'from' | 'subject' | 'html' | 'text'> & {
+  $fake?: Vars
+}

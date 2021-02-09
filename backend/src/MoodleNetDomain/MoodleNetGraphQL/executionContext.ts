@@ -5,11 +5,7 @@ import { Id } from '../services/ContentGraph/graphDefinition/types'
 import { INVALID_TOKEN } from './JWT'
 import { getJwtVerifier } from './MoodleNetGraphQL.env'
 import { graphQLRequestFlow } from './schemaHelpers'
-import {
-  MoodleNetExecutionContext,
-  MoodleNetExecutionAuth,
-  RootValue,
-} from './types'
+import { MoodleNetExecutionContext, MoodleNetExecutionAuth, RootValue } from './types'
 
 export function loggedUserOnly(_: { context: MoodleNetExecutionContext }) {
   const { context } = _
@@ -28,8 +24,7 @@ export function getExecutionGlobalValues(
   const verifyJwt = getJwtVerifier()
   const { context } = args[0]
   const jwtHeader = (context as IncomingMessage)?.headers?.bearer
-  const jwtToken =
-    jwtHeader && (typeof jwtHeader === 'string' ? jwtHeader : jwtHeader[0])
+  const jwtToken = jwtHeader && (typeof jwtHeader === 'string' ? jwtHeader : jwtHeader[0])
   const auth = verifyJwt(jwtToken)
   return {
     context: {
@@ -41,12 +36,6 @@ export function getExecutionGlobalValues(
 }
 
 //FIXME: implement proper typeguard
-export const isMoodleNetExecutionAuth = (
-  _obj: object
-): _obj is MoodleNetExecutionAuth => true
+export const isMoodleNetExecutionAuth = (_obj: object): _obj is MoodleNetExecutionAuth => true
 
-export const getAuthUserId = ({
-  accountUsername,
-}: {
-  accountUsername: string
-}) => `User/${accountUsername}` as Id // BEWARE: hardcoded userId generation
+export const getAuthUserId = ({ accountUsername }: { accountUsername: string }) => `User/${accountUsername}` as Id // BEWARE: hardcoded userId generation

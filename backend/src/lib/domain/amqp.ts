@@ -71,7 +71,7 @@ export const domainPublish = (_: {
           replyTo: opts.replyToNodeQ ? mainNodeQName : undefined,
           expiration: opts.delay,
         },
-        confirmFn
+        confirmFn,
       )
     } else {
       const domEx = await getDomainExchangeName(domain)
@@ -85,19 +85,14 @@ export const domainPublish = (_: {
           headers: encodeMsgHeaders({ flow }),
           replyTo: opts?.replyToNodeQ ? mainNodeQName : undefined,
         },
-        confirmFn
+        confirmFn,
       )
     }
   })
 
 export const queueConsume = async (_: {
   qName: string
-  handler: (_: {
-    msgJsonContent: any
-    msg: Message
-    flow: Flow
-    stopConsume(): unknown
-  }) => Acks | Promise<Acks>
+  handler: (_: { msgJsonContent: any; msg: Message; flow: Flow; stopConsume(): unknown }) => Acks | Promise<Acks>
   opts?: DomainConsumeOpts
 }) => {
   const { handler, opts, qName } = _
@@ -125,7 +120,7 @@ export const queueConsume = async (_: {
         ch[errorAck](msg, false)
       }
     },
-    { ...opts }
+    { ...opts },
   )
   return { stopConsume }
 }
@@ -160,12 +155,7 @@ export const unbindQ = async (_: { name: string; exchange: string; topic: string
   await ch.unbindQueue(name, exchange, topic, args)
 }
 
-export const sendToQueue = async (_: {
-  name: string
-  content: any
-  flow: Flow
-  opts?: DomainSendToQueueOpts
-}) => {
+export const sendToQueue = async (_: { name: string; content: any; flow: Flow; opts?: DomainSendToQueueOpts }) => {
   const { name, content, opts, flow } = _
   return (await channel).sendToQueue(name, json2Buffer(content), {
     ...defPubOpts,
@@ -192,12 +182,9 @@ const assertX = async (_: {
   return await ch.assertExchange(name, type, opts)
 }
 
-const getDomainDelayExchangeAndQueuePrefix = (domain: string) =>
-  `${getDomainExchangeName(domain)}:SERVICE_DELAY_`
-const getDomainDelayExchangeName = (domain: string) =>
-  `${getDomainDelayExchangeAndQueuePrefix(domain)}EXCHANGE`
-const getDomainDelayQueueName = (domain: string) =>
-  `${getDomainDelayExchangeAndQueuePrefix(domain)}QUEUE`
+const getDomainDelayExchangeAndQueuePrefix = (domain: string) => `${getDomainExchangeName(domain)}:SERVICE_DELAY_`
+const getDomainDelayExchangeName = (domain: string) => `${getDomainDelayExchangeAndQueuePrefix(domain)}EXCHANGE`
+const getDomainDelayQueueName = (domain: string) => `${getDomainDelayExchangeAndQueuePrefix(domain)}QUEUE`
 
 export const assertDomainDelayedQueueAndExchange = async (_: { domain: string }) => {
   const { domain } = _

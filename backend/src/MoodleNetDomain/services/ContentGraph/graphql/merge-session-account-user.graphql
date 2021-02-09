@@ -2,6 +2,5 @@ type UserSession @key(selectionSet: "{ username }") {
   user: User!
 }
 type Query {
-  getSessionAccountUser(username: String!): UserSession
-    @merge(keyField: "username")
+  getSessionAccountUser(username: String!): UserSession @merge(keyField: "username")
 }

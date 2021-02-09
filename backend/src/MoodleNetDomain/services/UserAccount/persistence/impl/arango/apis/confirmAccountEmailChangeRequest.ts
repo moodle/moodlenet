@@ -1,10 +1,6 @@
 import { aql } from 'arangojs'
 import { Maybe } from '../../../../../../../lib/helpers/types'
-import {
-  Messages,
-  UserAccountPersistence,
-  UserAccountRecord,
-} from '../../../types'
+import { Messages, UserAccountPersistence, UserAccountRecord } from '../../../types'
 import { DBReady } from '../UserAccount.persistence.arango.env'
 
 export const confirmAccountEmailChangeRequest: UserAccountPersistence['confirmAccountEmailChangeRequest'] = async ({

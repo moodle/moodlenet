@@ -17,20 +17,14 @@ export function bufferify(object: any, fileDataKeyPlaceholder: string) {
   const keyLenghtBuffer = Uint8Array.of(fileDataKeyPlaceholder.length)
   const keyBuffer = Buffer.from(fileDataKeyPlaceholder)
   const filesMaxIndexBuffer = Uint8Array.of(meta.files.length - 1)
-  const filesBuffers = meta.files.flatMap((fileBuffer) => {
+  const filesBuffers = meta.files.flatMap(fileBuffer => {
     const lengthBuffer = Buffer.alloc(4)
     lengthBuffer.writeInt32BE(fileBuffer.length)
     return [lengthBuffer, fileBuffer]
   })
   const jsonBuffer = Buffer.from(JSON.stringify(valueWithPlaceholders))
 
-  return Buffer.concat([
-    keyLenghtBuffer,
-    keyBuffer,
-    filesMaxIndexBuffer,
-    ...filesBuffers,
-    jsonBuffer,
-  ])
+  return Buffer.concat([keyLenghtBuffer, keyBuffer, filesMaxIndexBuffer, ...filesBuffers, jsonBuffer])
 }
 
 function bufferifyTraverse(meta: BufferifyMeta) {
@@ -54,9 +48,7 @@ export function unbufferify(buffer: Buffer) {
   const fileDataKeyPlaceholderLength = buffer.readUInt8(_offset)
   _offset += 1
 
-  const fileDataKeyPlaceholder = buffer
-    .slice(_offset, _offset + fileDataKeyPlaceholderLength)
-    .toString()
+  const fileDataKeyPlaceholder = buffer.slice(_offset, _offset + fileDataKeyPlaceholderLength).toString()
   _offset += fileDataKeyPlaceholderLength
 
   const filesMaxIndex = buffer.readUInt8(_offset)
@@ -75,13 +67,9 @@ export function unbufferify(buffer: Buffer) {
 
   ;(function replaceBufs(o: any) {
     if ('object' === typeof o) {
-      Object.keys(o || {}).forEach((prop) => {
+      Object.keys(o || {}).forEach(prop => {
         const propVal = o[prop]
-        if (
-          prop === 'data' &&
-          'string' === typeof propVal &&
-          propVal.startsWith(fileDataKeyPlaceholder)
-        ) {
+        if (prop === 'data' && 'string' === typeof propVal && propVal.startsWith(fileDataKeyPlaceholder)) {
           const [, fileBufferIndex] = propVal.split('@')
           o[prop] = fileBuffers[Number(fileBufferIndex)]
         } else if ('object' === typeof propVal) {
@@ -94,11 +82,7 @@ export function unbufferify(buffer: Buffer) {
 }
 
 function isFileBag(_: any): _ is FileBag {
-  return (
-    typeof _ === 'object' &&
-    ['name', 'data', 'mimetype'].every((p) => p in _) &&
-    _['data'] instanceof Buffer
-  )
+  return typeof _ === 'object' && ['name', 'data', 'mimetype'].every(p => p in _) && _['data'] instanceof Buffer
 }
 
 // import isEqual from 'lodash/isEqual'

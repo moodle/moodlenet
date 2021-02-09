@@ -12,13 +12,7 @@ import { ContentGraphPersistence } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 import { findNodeWithPolicy } from './findNode'
 
-export const createEdge: ContentGraphPersistence['createEdge'] = async ({
-  ctx,
-  data,
-  to,
-  from,
-  edgeType,
-}) => {
+export const createEdge: ContentGraphPersistence['createEdge'] = async ({ ctx, data, to, from, edgeType }) => {
   const { graph } = await DBReady
   const { auth } = ctx
   const fromType = nodeTypeFromId(from)
@@ -40,10 +34,7 @@ export const createEdge: ContentGraphPersistence['createEdge'] = async ({
     to: toType,
   })
   if (!connection) {
-    return createEdgeMutationError(
-      CreateEdgeMutationErrorType.NotAllowed,
-      cantBindMessage({ edgeType, from, to })
-    )
+    return createEdgeMutationError(CreateEdgeMutationErrorType.NotAllowed, cantBindMessage({ edgeType, from, to }))
   }
 
   const fromPolicy = getStaticFilteredNodeBasicAccessPolicy({
@@ -64,7 +55,7 @@ export const createEdge: ContentGraphPersistence['createEdge'] = async ({
 edgePolicy:${edgePolicy} 
 auth.userId:${auth?.userId} 
 toPolicy:${toPolicy} 
-fromPolicy:${fromPolicy}`
+fromPolicy:${fromPolicy}`,
     )
   }
 
@@ -81,17 +72,14 @@ fromPolicy:${fromPolicy}`
   if (!(fromNode && toNode)) {
     return createEdgeMutationError(
       CreateEdgeMutationErrorType.NotAuthorized,
-      `cannot find or access both nodes, found: fromNode[${from}]:${!!fromNode} toNode[${to}]:${!!toNode}`
+      `cannot find or access both nodes, found: fromNode[${from}]:${!!fromNode} toNode[${to}]:${!!toNode}`,
     )
   }
 
   const _meta = createMeta(auth)
 
   const collection = graph.edgeCollection(edgeType)
-  const { new: edge } = await collection.save(
-    { ...data, _meta, _from: from, _to: to },
-    { returnNew: true }
-  )
+  const { new: edge } = await collection.save({ ...data, _meta, _from: from, _to: to }, { returnNew: true })
   console.log('created edge', edge)
   return edge
 }

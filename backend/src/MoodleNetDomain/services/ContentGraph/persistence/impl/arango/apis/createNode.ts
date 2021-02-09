@@ -4,11 +4,7 @@ import { getStaticFilteredNodeBasicAccessPolicy } from '../../../../graphDefinit
 import { ContentGraphPersistence } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 
-export const createNode: ContentGraphPersistence['createNode'] = async ({
-  ctx,
-  data,
-  nodeType,
-}) => {
+export const createNode: ContentGraphPersistence['createNode'] = async ({ ctx, data, nodeType }) => {
   const { graph } = await DBReady
   const { auth } = ctx
   const policy = getStaticFilteredNodeBasicAccessPolicy({
@@ -31,9 +27,6 @@ export const createNode: ContentGraphPersistence['createNode'] = async ({
   const _meta = createMeta(auth)
 
   const collection = graph.vertexCollection(nodeType)
-  const { new: node } = await collection.save(
-    { ...data, _meta },
-    { returnNew: true }
-  )
+  const { new: node } = await collection.save({ ...data, _meta }, { returnNew: true })
   return node
 }

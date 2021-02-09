@@ -1,13 +1,11 @@
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   rules: [
     {
       test: /\.ts$/,
       exclude: /(node_modules)/,
-      include: [
-        path.resolve(__dirname, '../backend')
-      ],
+      include: [path.resolve(__dirname, '../backend')],
       loader: 'babel-loader',
       //   use: {
       //   loader: 'babel-loader',
@@ -15,11 +13,11 @@ module.exports = {
       //     //  presets: ['@babel/preset-env']
       //   }
       // }
-    }
+    },
   ],
   resolve: {
     alias: {
-      "mn-sys": path.resolve(__dirname, '../backend'),
-    }
-  }
-};
+      'mn-sys': path.resolve(__dirname, '../backend'),
+    },
+  },
+}

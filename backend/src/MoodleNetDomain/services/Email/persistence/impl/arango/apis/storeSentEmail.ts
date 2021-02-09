@@ -3,7 +3,7 @@ import { EmailPersistence } from '../../../types'
 import { DBReady } from '../Email.persistence.arango.env'
 import { SentEmailDocument } from '../types'
 
-export const storeSentEmail: EmailPersistence['storeSentEmail'] = async (_) => {
+export const storeSentEmail: EmailPersistence['storeSentEmail'] = async _ => {
   const { db } = await DBReady
 
   const { email, flow, result } = _

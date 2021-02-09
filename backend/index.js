@@ -5,7 +5,7 @@ const globPattern = process.env.STARTER_GLOB_PATTERN
 if (!globPattern) {
   throw new Error('needs STARTER_GLOB_PATTERN environment var')
 } else {
-  glob(globPattern, { cwd: 'src', dot: true, }, (err, matches) => {
+  glob(globPattern, { cwd: 'src', dot: true }, (err, matches) => {
     if (err) {
       throw new Error(String(err))
     }
@@ -13,4 +13,3 @@ if (!globPattern) {
     matches.forEach(_ => require(`./src/${_}`))
   })
 }
-

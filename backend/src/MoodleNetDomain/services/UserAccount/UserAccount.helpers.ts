@@ -32,17 +32,13 @@ export const userAndJwtByActiveUserAccount = async ({
   activeUserAccount: ActiveUserAccount
 }) => {
   const signJwt = getJwtSigner()
-  const { node: maybeUser } = await api<MoodleNetDomain>()(
-    'ContentGraph.Node.ById'
-  ).call((nodeById) =>
+  const { node: maybeUser } = await api<MoodleNetDomain>()('ContentGraph.Node.ById').call(nodeById =>
     nodeById<User>({
       _id: getAuthUserId({ accountUsername: activeUserAccount.username }),
-    })
+    }),
   )
   if (!maybeUser) {
-    throw new Error(
-      `can't find User for Account Username: ${activeUserAccount.username}`
-    )
+    throw new Error(`can't find User for Account Username: ${activeUserAccount.username}`)
   }
   const jwt = await signJwt({
     account: activeUserAccount,

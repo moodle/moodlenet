@@ -4,10 +4,7 @@ import { loggedUserOnly } from '../../../MoodleNetGraphQL'
 import { Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
-import {
-  getVerifiedAccountByUsernameAndPassword,
-  hashPassword,
-} from '../UserAccount.helpers'
+import { getVerifiedAccountByUsernameAndPassword, hashPassword } from '../UserAccount.helpers'
 
 export type ChangePasswordPersistence = (_: {
   currentPassword: string
@@ -20,9 +17,7 @@ export type ChangePasswordApiReq = {
   currentPassword: string
   newPassword: string
 }
-export type ChangePasswordApiRes =
-  | { success: true }
-  | { success: false; reason: string }
+export type ChangePasswordApiRes = { success: true } | { success: false; reason: string }
 
 export const ChangePasswordApiHandler = async ({
   newPassword,
@@ -57,18 +52,16 @@ export const ChangePasswordApiHandler = async ({
 export const changePassword: MutationResolvers['changePassword'] = async (
   _parent,
   { newPassword, currentPassword },
-  context
+  context,
 ) => {
   const { username } = loggedUserOnly({ context })
 
-  const res = await api<MoodleNetDomain>(context.flow)(
-    'UserAccount.ChangePassword'
-  ).call((changePassword) =>
+  const res = await api<MoodleNetDomain>(context.flow)('UserAccount.ChangePassword').call(changePassword =>
     changePassword({
       newPassword,
       currentPassword,
       username,
-    })
+    }),
   )
 
   if (!res.success) {

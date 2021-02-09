@@ -19,20 +19,13 @@ const _rel: GQL.ResolverFn<
   { _id: parentId, __typename: parentNodeType },
   { edge: { type: edgeType, node: targetNodeType, inverse }, page },
   ctx,
-  _info
+  _info,
 ) => {
   const { traverseEdges } = await getContentGraphPersistence()
-  if (
-    !(
-      isId(parentId) &&
-      isNodeType(parentNodeType) &&
-      isNodeType(targetNodeType) &&
-      isEdgeType(edgeType)
-    )
-  ) {
+  if (!(isId(parentId) && isNodeType(parentNodeType) && isNodeType(targetNodeType) && isEdgeType(edgeType))) {
     // should never happen
     throw new Error(
-      `Id[${parentId}] or node type[${parentNodeType} | ${targetNodeType}] or edge type [${edgeType}] are not valid`
+      `Id[${parentId}] or node type[${parentNodeType} | ${targetNodeType}] or edge type [${edgeType}] are not valid`,
     ) //FIXME
   }
 
@@ -48,11 +41,7 @@ const _rel: GQL.ResolverFn<
   })
   if (!(targetNodePolicy && edgePolicy)) {
     // probably not allowed (may want to split in policy lookups in 2 steps, to check if found and then if auth applies )
-    throw new Error(
-      `${
-        ctx.auth?.role || 'Anonymous'
-      } are not allowed to query ${edgeType}->${targetNodeType}`
-    ) //FIXME
+    throw new Error(`${ctx.auth?.role || 'Anonymous'} are not allowed to query ${edgeType}->${targetNodeType}`) //FIXME
   }
 
   const pageResult = await traverseEdges({

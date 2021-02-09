@@ -1,9 +1,5 @@
 import { Database } from 'arangojs'
-import {
-  CreateCollectionOptions,
-  DocumentCollection,
-  EdgeCollection,
-} from 'arangojs/collection'
+import { CreateCollectionOptions, DocumentCollection, EdgeCollection } from 'arangojs/collection'
 import { Config } from 'arangojs/connection'
 import { CreateDatabaseOptions } from 'arangojs/database'
 import { Maybe } from './types'
@@ -21,13 +17,13 @@ export const createVertexCollectionIfNotExists = async <
   createOpts: CreateCollectionOptions
 }) => {
   const db = await _db
-  return db.collections().then((collections) => {
+  return db.collections().then(collections => {
     const found = collections.find(
-      /* async */ (collection) => {
+      /* async */ collection => {
         // const props = await collection.properties()
         // const isDocumentCollection = props.type === CollectionType.DOCUMENT_COLLECTION
         return /*  isDocumentCollection && */ collection.name === name
-      }
+      },
     ) as DocumentCollection<VertexDocumentType>
     return found || db.createCollection<VertexDocumentType>(name, createOpts)
   })
@@ -35,9 +31,7 @@ export const createVertexCollectionIfNotExists = async <
 
 export const createEdgeCollectionIfNotExists = async <
   EdgeDocumentType extends object,
-  CollName extends string = EdgeDocumentType extends { __typename: string }
-    ? EdgeDocumentType['__typename']
-    : string
+  CollName extends string = EdgeDocumentType extends { __typename: string } ? EdgeDocumentType['__typename'] : string
 >({
   name,
   createOpts,
@@ -48,13 +42,13 @@ export const createEdgeCollectionIfNotExists = async <
   createOpts: CreateCollectionOptions
 }) => {
   const db = await _db
-  return db.collections().then((collections) => {
+  return db.collections().then(collections => {
     const found = collections.find(
-      /* async */ (collection) => {
+      /* async */ collection => {
         // const props = await collection.properties()
         // const isEdgeCollection = props.type === CollectionType.EDGE_COLLECTION
         return /*  isEdgeCollection && */ collection.name === name
-      }
+      },
     ) as EdgeCollection<EdgeDocumentType>
     return found || db.createEdgeCollection<EdgeDocumentType>(name, createOpts)
   })
@@ -70,8 +64,8 @@ export const createDatabaseIfNotExists = ({
   dbCreateOpts: CreateDatabaseOptions
 }) => {
   const db = new Database({ ...dbConfig })
-  return db.databases().then((databases) => {
-    const found = databases.find((_db) => _db.name === name)
+  return db.databases().then(databases => {
+    const found = databases.find(_db => _db.name === name)
     return found || db.createDatabase(name, dbCreateOpts)
   })
 }

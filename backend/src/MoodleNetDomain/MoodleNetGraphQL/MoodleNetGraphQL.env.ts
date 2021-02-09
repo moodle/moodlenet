@@ -20,8 +20,7 @@ export const getJwtVerifier = memo(() => {
     // complete: true,
   }
 
-  const jwtVerifier = (token: any) =>
-    verifyJwt({ jwtPublicKey, jwtVerifyOpts, token })
+  const jwtVerifier = (token: any) => verifyJwt({ jwtPublicKey, jwtVerifyOpts, token })
 
   return jwtVerifier
 })
@@ -33,7 +32,7 @@ export const getJwtSigner = memo(() => {
   const jwtExpirationSecs = parseInt(String(process.env.JWT_EXPIRATION_SECS))
   if (!isFinite(jwtExpirationSecs)) {
     throw new Error(
-      `JWT_EXPIRATION_SECS env var must represent an integer, found "${process.env.JWT_EXPIRATION_SECS}" instead`
+      `JWT_EXPIRATION_SECS env var must represent an integer, found "${process.env.JWT_EXPIRATION_SECS}" instead`,
     )
   }
 

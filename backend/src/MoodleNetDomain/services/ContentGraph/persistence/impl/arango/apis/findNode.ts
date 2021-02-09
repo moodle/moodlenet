@@ -23,21 +23,13 @@ export const findNodeWithPolicy: ContentGraphPersistence['findNodeWithPolicy'] =
   return _findNode({ _id, filterMore: nodeAccessFilter, nodeType })
 }
 
-export const findNode: ContentGraphPersistence['findNode'] = async ({
-  _id,
-  nodeType,
-}) => _findNode({ _id, nodeType })
+export const findNode: ContentGraphPersistence['findNode'] = async ({ _id, nodeType }) => _findNode({ _id, nodeType })
 
-export const _findNode = async (_: {
-  _id: Id
-  nodeType?: Types.NodeType | null
-  filterMore?: string
-}) => {
+export const _findNode = async (_: { _id: Id; nodeType?: Types.NodeType | null; filterMore?: string }) => {
   const { _id, nodeType = null, filterMore = null } = _
   const { db } = await DBReady
   const checkNodeTypeFilter = nodeType && `node.__typename == "${nodeType}"`
-  const withFilters =
-    [checkNodeTypeFilter, filterMore].filter(Boolean).join(' && ') || 'true'
+  const withFilters = [checkNodeTypeFilter, filterMore].filter(Boolean).join(' && ') || 'true'
 
   const query = `
     LET node = DOCUMENT("${_id}")

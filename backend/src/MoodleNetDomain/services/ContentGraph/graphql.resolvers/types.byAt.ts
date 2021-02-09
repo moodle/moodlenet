@@ -5,7 +5,7 @@ import { fakeUnshallowNodeForResolverReturnType } from './helpers'
 
 export const ByAt: GQL.Resolvers['ByAt'] = {
   at: null as any,
-  by: async (byAt) => {
+  by: async byAt => {
     const { findNode } = await getContentGraphPersistence()
     const _id = byAt.by._id as Id
     const mShallowUser = await findNode<GQL.User>({

@@ -1,10 +1,6 @@
 import { aql } from 'arangojs'
 import { Maybe } from '../../../../../../../lib/helpers/types'
-import {
-  ActiveUserAccount,
-  UserAccountPersistence,
-  UserAccountStatus,
-} from '../../../types'
+import { ActiveUserAccount, UserAccountPersistence, UserAccountStatus } from '../../../types'
 import { DBReady } from '../UserAccount.persistence.arango.env'
 
 export const getActiveAccountByUsername: UserAccountPersistence['getActiveAccountByUsername'] = async ({

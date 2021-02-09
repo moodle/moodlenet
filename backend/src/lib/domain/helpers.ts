@@ -10,7 +10,5 @@ export const newFlow = (pflow?: PFlow): Flow => {
 
 export const flowId = (flow: Flow) => flow[1]
 export const flowRoute = (flow: Flow) => flow[0]
-export const flowIdElse = (pflow: PFlow | null | undefined, _else: string) =>
-  (pflow && pflow[1]) || _else
-export const flowRouteElse = (pflow: PFlow | null | undefined, _else: string) =>
-  (pflow && pflow[0]) || _else
+export const flowIdElse = (pflow: PFlow | null | undefined, _else: string) => (pflow && pflow[1]) || _else
+export const flowRouteElse = (pflow: PFlow | null | undefined, _else: string) => (pflow && pflow[0]) || _else

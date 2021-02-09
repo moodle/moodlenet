@@ -2,12 +2,7 @@ import { Maybe } from 'graphql/jsutils/Maybe'
 import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
 import { CreateUserPersistence } from '../apis/ContentGraph.User.CreateForNewAccount.api'
 import * as GQL from '../ContentGraph.graphql.gen'
-import {
-  BasicAccessPolicy,
-  Id,
-  ShallowEdgeByType,
-  ShallowNodeByType,
-} from '../graphDefinition/types'
+import { BasicAccessPolicy, Id, ShallowEdgeByType, ShallowNodeByType } from '../graphDefinition/types'
 export * as Types from '../ContentGraph.graphql.gen'
 
 export const SystemUserId = 'User/_System_'
@@ -59,29 +54,16 @@ export type ShallowMeta = Omit<GQL.Meta, 'created' | 'lastUpdate'> & {
   lastUpdate: ShallowByAt
 }
 export type ShallowNode<N extends GQL.Node = GQL.Node> = Omit<N, '_rel'>
-export type ShallowEdge<E extends GQL.Edge = GQL.Edge> = Omit<
-  E,
-  '___ nothing to omit ___'
->
+export type ShallowEdge<E extends GQL.Edge = GQL.Edge> = Omit<E, '___ nothing to omit ___'>
 
-export type CreateNodeData<Type extends GQL.NodeType> = Omit<
-  ShallowNodeByType<Type>,
-  '_id' | '_meta'
->
+export type CreateNodeData<Type extends GQL.NodeType> = Omit<ShallowNodeByType<Type>, '_id' | '_meta'>
 // export type QueryNodeShallowPayload = ShallowNode | GQL.QueryNodeError
-export type CreateNodeShallowPayload<Type extends GQL.NodeType> =
-  | ShallowNodeByType<Type>
-  | GQL.CreateNodeMutationError
+export type CreateNodeShallowPayload<Type extends GQL.NodeType> = ShallowNodeByType<Type> | GQL.CreateNodeMutationError
 
 export type UpdateNodeShallowPayload = ShallowNode | GQL.UpdateNodeMutationError
 export type DeleteNodeShallowPayload = ShallowNode | GQL.DeleteNodeMutationError
 // export type QueryEdgeShallowPayload = ShallowNode | GQL.QueryEdgeError
-export type CreateEdgeData<Type extends GQL.EdgeType> = Omit<
-  ShallowEdgeByType<Type>,
-  '_id' | '_meta'
->
-export type CreateEdgeShallowPayload<Type extends GQL.EdgeType> =
-  | ShallowEdgeByType<Type>
-  | GQL.CreateEdgeMutationError
+export type CreateEdgeData<Type extends GQL.EdgeType> = Omit<ShallowEdgeByType<Type>, '_id' | '_meta'>
+export type CreateEdgeShallowPayload<Type extends GQL.EdgeType> = ShallowEdgeByType<Type> | GQL.CreateEdgeMutationError
 export type UpdateEdgeShallowPayload = ShallowNode | GQL.UpdateEdgeMutationError
 export type DeleteEdgeShallowPayload = ShallowNode | GQL.DeleteEdgeMutationError

@@ -1,17 +1,8 @@
 import { aql } from 'arangojs'
-import {
-  Messages,
-  UserAccountPersistence,
-  UserAccountRecord,
-  UserAccountStatus,
-} from '../../../types'
+import { Messages, UserAccountPersistence, UserAccountRecord, UserAccountStatus } from '../../../types'
 import { DBReady } from '../UserAccount.persistence.arango.env'
 import { isEmailAvailable } from './isEmailAvailable'
-export const newAccountRequest: UserAccountPersistence['newAccountRequest'] = async ({
-  email,
-  token,
-  flow,
-}) => {
+export const newAccountRequest: UserAccountPersistence['newAccountRequest'] = async ({ email, token, flow }) => {
   const { db, UserAccount } = await DBReady
   const emailAvailable = await isEmailAvailable({ email })
   if (!emailAvailable) {

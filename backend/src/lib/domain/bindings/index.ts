@@ -17,12 +17,7 @@ export type BindApiArgs<
   Route extends string
 > = {
   event: EventPath
-  api: Event.LookupEventType<Domain, EventPath> extends API.ApiReq<
-    Domain,
-    ApiPath
-  >
-    ? ApiPath
-    : never
+  api: Event.LookupEventType<Domain, EventPath> extends API.ApiReq<Domain, ApiPath> ? ApiPath : never
   route: Route
 }
 export const bindApi = <Domain>(domain: string) => async <
@@ -30,7 +25,7 @@ export const bindApi = <Domain>(domain: string) => async <
   ApiPath extends API.ApiLeaves<Domain>,
   Route extends string
 >(
-  _: BindApiArgs<Domain, EventPath, ApiPath, Route>
+  _: BindApiArgs<Domain, EventPath, ApiPath, Route>,
 ): Promise<Binding> => {
   const { api, event, route } = _
   const topic = `${event}.${route}.*`

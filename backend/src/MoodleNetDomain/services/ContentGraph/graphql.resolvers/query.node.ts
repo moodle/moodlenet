@@ -1,16 +1,8 @@
 import { getContentGraphPersistence } from '../ContentGraph.env'
 import * as GQL from '../ContentGraph.graphql.gen'
-import {
-  getStaticFilteredNodeBasicAccessPolicy,
-  isId,
-  isNodeType,
-} from '../graphDefinition/helpers'
+import { getStaticFilteredNodeBasicAccessPolicy, isId, isNodeType } from '../graphDefinition/helpers'
 
-export const node: GQL.Resolvers['Query']['node'] = async (
-  _root,
-  { _id, nodeType },
-  ctx /* ,_info */
-) => {
+export const node: GQL.Resolvers['Query']['node'] = async (_root, { _id, nodeType }, ctx /* ,_info */) => {
   if (!(isId(_id) && isNodeType(nodeType))) {
     throw new Error(`Id[${_id}] or node type[${nodeType}] are not valid`) //FIXME
   }

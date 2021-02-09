@@ -2,6 +2,4 @@ import { ChangeAccountEmailDeleteRequestApiHandler } from '../apis/UserAccount.C
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { api } from '../../../../lib/domain'
 
-api<MoodleNetDomain>()('UserAccount.ChangeMainEmail.DeleteRequest').respond(
-  ChangeAccountEmailDeleteRequestApiHandler
-)
+api<MoodleNetDomain>()('UserAccount.ChangeMainEmail.DeleteRequest').respond(ChangeAccountEmailDeleteRequestApiHandler)

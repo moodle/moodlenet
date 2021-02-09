@@ -4,25 +4,15 @@ import { Flow } from '../../../../lib/domain/types/path'
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { ActiveUserAccount, Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
-import {
-  ActivationOutcome,
-  MutationResolvers,
-  UserSession,
-} from '../UserAccount.graphql.gen'
-import {
-  hashPassword,
-  userSessionByActiveUserAccount,
-} from '../UserAccount.helpers'
+import { ActivationOutcome, MutationResolvers, UserSession } from '../UserAccount.graphql.gen'
+import { hashPassword, userSessionByActiveUserAccount } from '../UserAccount.helpers'
 
 export type NewAccountActivatedEvent = Event<{
   accountId: string
   username: string
 }>
 
-type ActivationResult =
-  | ActiveUserAccount
-  | Messages.NotFound
-  | Messages.UsernameNotAvailable
+type ActivationResult = ActiveUserAccount | Messages.NotFound | Messages.UsernameNotAvailable
 
 export type ActivateNewAccountPersistence = (_: {
   token: string
@@ -52,26 +42,31 @@ export const ConfirmEmailActivateAccountApiHandler = async ({
     password: hashedPassword,
   })
   if (typeof activation !== 'string') {
-    event<MoodleNetDomain>(flow)(
-      'UserAccount.RegisterNewAccount.NewAccountActivated'
-    ).emit({
+    const user = await api<MoodleNetDomain>(flow)('ContentGraph.User.CreateForNewAccount').call(createUser =>
+      createUser({ accountId: activation._id, username: activation.username }),
+    )
+    if (!user) {
+      //TODO: manage this eventuality (rollback?)
+      const errorMsg = `couldn't create user for username:${activation.username}, accountId: ${activation._id}`
+      throw new Error(errorMsg)
+    }
+    event<MoodleNetDomain>(flow)('UserAccount.RegisterNewAccount.NewAccountActivated').emit({
       payload: { accountId: activation._id, username: activation.username },
     })
   }
+  console.log('RESP -- activation', activation)
   return { activation }
 }
 
 export const activateAccount: MutationResolvers['activateAccount'] = async (
   _parent,
   { password, username, token },
-  context
+  context,
 ) => {
   const res = await api<MoodleNetDomain>(context.flow)(
-    'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount'
-  ).call((confirmEmailActivateAccount, flow) =>
-    confirmEmailActivateAccount({ password, token, username, flow })
-  )
-
+    'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount',
+  ).call((confirmEmailActivateAccount, flow) => confirmEmailActivateAccount({ password, token, username, flow }))
+  console.log('RESP -- UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount ', res)
   if (typeof res.activation === 'string') {
     return getActivatinOutcome({
       session: null,

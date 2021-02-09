@@ -11,9 +11,7 @@ type Mutation {
 input CreateNodeInput {
   nodeType: NodeType!
 }
-union CreateNodeMutationPayload =
-    CreateNodeMutationSuccess
-  | CreateNodeMutationError
+union CreateNodeMutationPayload = CreateNodeMutationSuccess | CreateNodeMutationError
 type CreateNodeMutationSuccess {
   node: Node
 }
@@ -33,9 +31,7 @@ input CreateEdgeInput {
   from: ID!
   to: ID!
 }
-union CreateEdgeMutationPayload =
-    CreateEdgeMutationSuccess
-  | CreateEdgeMutationError
+union CreateEdgeMutationPayload = CreateEdgeMutationSuccess | CreateEdgeMutationError
 type CreateEdgeMutationSuccess {
   edge: Edge
 }
@@ -56,9 +52,7 @@ input UpdateNodeInput {
   _id: ID!
   nodeType: NodeType!
 }
-union UpdateNodeMutationPayload =
-    UpdateNodeMutationSuccess
-  | UpdateNodeMutationError
+union UpdateNodeMutationPayload = UpdateNodeMutationSuccess | UpdateNodeMutationError
 type UpdateNodeMutationSuccess {
   node: Node
 }
@@ -78,9 +72,7 @@ input UpdateEdgeInput {
   id: ID!
   edgeType: EdgeType!
 }
-union UpdateEdgeMutationPayload =
-    UpdateEdgeMutationSuccess
-  | UpdateEdgeMutationError
+union UpdateEdgeMutationPayload = UpdateEdgeMutationSuccess | UpdateEdgeMutationError
 type UpdateEdgeMutationSuccess {
   edge: Edge
 }
@@ -100,9 +92,7 @@ input DeleteEdgeInput {
   _id: ID!
   edgeType: EdgeType!
 }
-union DeleteEdgeMutationPayload =
-    DeleteEdgeMutationSuccess
-  | DeleteEdgeMutationError
+union DeleteEdgeMutationPayload = DeleteEdgeMutationSuccess | DeleteEdgeMutationError
 type DeleteEdgeMutationSuccess {
   edge: Edge
 }
@@ -121,9 +111,7 @@ input DeleteNodeInput {
   _id: ID!
   nodeType: NodeType!
 }
-union DeleteNodeMutationPayload =
-    DeleteNodeMutationSuccess
-  | DeleteNodeMutationError
+union DeleteNodeMutationPayload = DeleteNodeMutationSuccess | DeleteNodeMutationError
 type DeleteNodeMutationSuccess {
   node: Node
 }

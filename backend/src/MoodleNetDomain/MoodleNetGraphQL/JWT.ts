@@ -38,10 +38,7 @@ export const verifyJwt = ({
   }
   try {
     const executionAuth = JWT.verify(String(token), jwtPublicKey, jwtVerifyOpts)
-    if (
-      typeof executionAuth !== 'object' ||
-      !isMoodleNetExecutionAuth(executionAuth)
-    ) {
+    if (typeof executionAuth !== 'object' || !isMoodleNetExecutionAuth(executionAuth)) {
       return null
     }
     return executionAuth

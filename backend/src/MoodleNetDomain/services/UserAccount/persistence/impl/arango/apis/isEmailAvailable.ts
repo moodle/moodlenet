@@ -3,9 +3,7 @@ import { Maybe } from '../../../../../../../lib/helpers/types'
 import { UserAccountPersistence, UserAccountRecord } from '../../../types'
 import { DBReady } from '../UserAccount.persistence.arango.env'
 
-export const isEmailAvailable: UserAccountPersistence['isEmailAvailable'] = async ({
-  email,
-}) => {
+export const isEmailAvailable: UserAccountPersistence['isEmailAvailable'] = async ({ email }) => {
   const { db } = await DBReady
   const cursor = await db.query(aql`
     FOR userAccount IN UserAccount

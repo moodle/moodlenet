@@ -1,9 +1,5 @@
 import { aql } from 'arangojs'
-import {
-  ChangeEmailRequest,
-  Messages,
-  UserAccountPersistence,
-} from '../../../types'
+import { ChangeEmailRequest, Messages, UserAccountPersistence } from '../../../types'
 import { DBReady } from '../UserAccount.persistence.arango.env'
 import { isEmailAvailable } from './isEmailAvailable'
 

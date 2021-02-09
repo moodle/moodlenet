@@ -1,4 +1,4 @@
-import { Resolvers } from '../../../../UserAccount.graphql.gen';
+import { Resolvers } from '../../../../UserAccount.graphql.gen'
 
 export const userAccountTypeResolvers: Omit<Resolvers, 'Mutation'> = {
   Query: {} as any,
@@ -7,5 +7,5 @@ export const userAccountTypeResolvers: Omit<Resolvers, 'Mutation'> = {
   UserSession: {} as any,
   DateTime: {} as any,
   Empty: {} as any,
-  Never: {} as any
-};
+  Never: {} as any,
+}

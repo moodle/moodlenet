@@ -10,9 +10,7 @@ type Join<K, P> = K extends string /* | number */
     : never
   : never
 
-export type Paths<Type, LeaveType, Depth extends number = 6> = [Depth] extends [
-  never
-]
+export type Paths<Type, LeaveType, Depth extends number = 6> = [Depth] extends [never]
   ? never
   : Type extends LeaveType
   ? ''
@@ -26,37 +24,23 @@ export type Paths<Type, LeaveType, Depth extends number = 6> = [Depth] extends [
     }[keyof Type]
   : never
 
-export type Leaves<Type, LeaveType, Depth extends number = 6> = [
-  Depth
-] extends [never]
+export type Leaves<Type, LeaveType, Depth extends number = 6> = [Depth] extends [never]
   ? never
   : Type extends LeaveType
   ? ''
   : Type extends object
   ? {
-      [K in keyof Type]-?: Leaves<
-        Type[K],
-        LeaveType,
-        Prev[Depth]
-      > extends infer R
-        ? Join<K, R>
-        : never
+      [K in keyof Type]-?: Leaves<Type[K], LeaveType, Prev[Depth]> extends infer R ? Join<K, R> : never
     }[keyof Type]
   : never
 
-export type TypeUnion<
-  Hash,
-  Prop extends keyof Hash = keyof Hash
-> = Prop extends infer Type
+export type TypeUnion<Hash, Prop extends keyof Hash = keyof Hash> = Prop extends infer Type
   ? Type extends Prop
     ? { t: Type; p: Hash[Type] }
     : never
   : never
 
-export type WildTypeUnion<
-  Hash,
-  Prop extends '*' | keyof Hash = keyof Hash
-> = Prop extends keyof Hash
+export type WildTypeUnion<Hash, Prop extends '*' | keyof Hash = keyof Hash> = Prop extends keyof Hash
   ? TypeUnion<Hash, Prop>
   : TypeUnion<Hash, keyof Hash>
 

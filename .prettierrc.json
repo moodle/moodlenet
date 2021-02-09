@@ -3,12 +3,12 @@
   "singleQuote": true,
   "eslintIntegration": true,
   "tslintIntegration": true,
-  "printWidth": 100,
-  "trailingComma": "none",
-  "semi": true,
+  "printWidth": 120,
+  "trailingComma": "all",
+  "semi": false,
   "bracketSpacing": true,
   "useTabs": false,
   "tabWidth": 2,
   "quoteProps": "consistent",
-  "proseWrap": "always"
+  "proseWrap": "never"
 }

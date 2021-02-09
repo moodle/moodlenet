@@ -22,11 +22,7 @@ const asserts = Promise.all([
   AMQP.assertDomainDelayedQueueAndExchange({ domain }),
 ])
 
-export const api = <DomainDef>(pflow?: PFlow) => <
-  ApiPath extends ApiLeaves<DomainDef>
->(
-  api: ApiPath
-) => {
+export const api = <DomainDef>(pflow?: PFlow) => <ApiPath extends ApiLeaves<DomainDef>>(api: ApiPath) => {
   type ApiFn = ApiDef<DomainDef, ApiPath>
   type ApiCaller<Ret> = (apiFn: ApiFn, flow: Flow) => Ret
   //  type AfterCallRet<Ret> = Ret extends Promise<any> ? Ret : Promise<Ret>
@@ -42,15 +38,9 @@ export const api = <DomainDef>(pflow?: PFlow) => <
       const flow = newFlow(pflow)
       return caller(getFn(flow, { timeout: opts?.timeout }), flow)
     },
-    async enqueue(
-      enqueuer: ApiCaller<any>,
-      opts?: ApiEnqueueOpts
-    ): Promise<void> {
+    async enqueue(enqueuer: ApiCaller<any>, opts?: ApiEnqueueOpts): Promise<void> {
       const flow = newFlow(pflow)
-      return enqueuer(
-        getFn(flow, { delaySecs: opts?.delaySecs, justEnqueue: true }),
-        flow
-      ).then(() => {})
+      return enqueuer(getFn(flow, { delaySecs: opts?.delaySecs, justEnqueue: true }), flow).then(() => {})
     },
     async respond(handler: ApiFn, _opts?: ApiRespondOpts) {
       await asserts
@@ -63,21 +53,14 @@ export const api = <DomainDef>(pflow?: PFlow) => <
   }
 }
 
-export const event = <DomainDef>(flow: Flow) => <
-  EventPath extends EventLeaves<DomainDef>
->(
-  eventPath: EventPath
-) => {
+export const event = <DomainDef>(flow: Flow) => <EventPath extends EventLeaves<DomainDef>>(eventPath: EventPath) => {
   const emit = Events.emit<DomainDef, EventPath>(domain, flow, eventPath)
   return { emit }
 }
 
 export const routes = <DomainDef, Route extends string>() => {
-  const bind = async <
-    EventPath extends EventLeaves<DomainDef>,
-    ApiPath extends ApiLeaves<DomainDef>
-  >(
-    _: Bindings.BindApiArgs<DomainDef, EventPath, ApiPath, Route | '*'>
+  const bind = async <EventPath extends EventLeaves<DomainDef>, ApiPath extends ApiLeaves<DomainDef>>(
+    _: Bindings.BindApiArgs<DomainDef, EventPath, ApiPath, Route | '*'>,
   ) => {
     await asserts
     return Bindings.bindApi<DomainDef>(domain)(_)

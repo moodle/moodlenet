@@ -2,6 +2,6 @@ import { ConfirmAndChangeAccountEmailHandler } from '../apis/UserAccount.ChangeM
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { api } from '../../../../lib/domain'
 
-api<MoodleNetDomain>()(
-  'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail'
-).respond(ConfirmAndChangeAccountEmailHandler)
+api<MoodleNetDomain>()('UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail').respond(
+  ConfirmAndChangeAccountEmailHandler,
+)

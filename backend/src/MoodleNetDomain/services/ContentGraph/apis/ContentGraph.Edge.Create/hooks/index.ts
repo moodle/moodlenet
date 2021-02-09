@@ -16,8 +16,7 @@ export type CreateHook<T extends EdgeType> = (_: {
 type NotAllowedCreationType = never
 export type AllowedCreationType = Exclude<EdgeType, NotAllowedCreationType>
 const notAllowedTypesMap: { [t in NotAllowedCreationType]: null } = {}
-export const isAllowedCreationType = (_: EdgeType): _ is AllowedCreationType =>
-  !(_ in notAllowedTypesMap)
+export const isAllowedCreationType = (_: EdgeType): _ is AllowedCreationType => !(_ in notAllowedTypesMap)
 export const createHooks: {
   [T in AllowedCreationType]: CreateHook<T>
 } = {

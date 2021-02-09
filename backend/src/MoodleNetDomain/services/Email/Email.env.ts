@@ -11,15 +11,12 @@ export const getSender = once(
   async (): Promise<EmailSender> => {
     const senderModule = Yup.string().required().default('mailgun').validateSync(SENDER_IMPL_MODULE)
     return require(resolve(__dirname, 'sender', 'impl', senderModule))
-  }
+  },
 )
 
 export const getEmailPersistence = once(
   async (): Promise<EmailPersistence> => {
-    const persistenceModule = Yup.string()
-      .required()
-      .default('arango')
-      .validateSync(PERSISTENCE_IMPL_MODULE)
+    const persistenceModule = Yup.string().required().default('arango').validateSync(PERSISTENCE_IMPL_MODULE)
     return require(resolve(__dirname, 'persistence', 'impl', persistenceModule))
-  }
+  },
 )

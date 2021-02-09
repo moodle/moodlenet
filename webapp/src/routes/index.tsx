@@ -1,8 +1,8 @@
-import { FC } from 'react';
-import { Route, Switch } from 'react-router-dom';
-import { ActivateNewAccountRoute } from './ActivateNewAccount';
-import { ContentNodeRoute } from './ContentNode';
-import { LoginRoute } from './Login';
+import { FC } from 'react'
+import { Route, Switch } from 'react-router-dom'
+import { ActivateNewAccountRoute } from './ActivateNewAccount'
+import { ContentNodeRoute } from './ContentNode'
+import { LoginRoute } from './Login'
 
 export const MNRouter: FC = (/* { children } */) => {
   return (
@@ -11,5 +11,5 @@ export const MNRouter: FC = (/* { children } */) => {
       <Route {...ActivateNewAccountRoute} />
       <Route {...ContentNodeRoute} />
     </Switch>
-  );
-};
+  )
+}

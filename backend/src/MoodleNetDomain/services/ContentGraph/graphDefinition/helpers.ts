@@ -1,17 +1,7 @@
 import { basicAccessPolicies } from '.'
-import {
-  MoodleNetExecutionContext,
-  MoodleNetExecutionAuth,
-} from '../../../MoodleNetGraphQL'
+import { MoodleNetExecutionContext, MoodleNetExecutionAuth } from '../../../MoodleNetGraphQL'
 import { EdgeType, NodeType, Role } from '../ContentGraph.graphql.gen'
-import {
-  AccessType,
-  BasicAccessPolicy,
-  BasicAccessPolicyType,
-  GlyphTag,
-  Id,
-  IdKey,
-} from './types'
+import { AccessType, BasicAccessPolicy, BasicAccessPolicyType, GlyphTag, Id, IdKey } from './types'
 
 export const isIdKey = (_: string): _ is IdKey => true //FIXME: check is ULID
 export const isId = (_: string): _ is Id => {
@@ -31,9 +21,7 @@ export const isNodeType = (_: string): _ is NodeType => _ in NodeType
 
 export const edgeTypeFromId = (_: string) => {
   const [edgeType] = _.split('/')
-  return isId(_) && edgeType in Object.values(EdgeType)
-    ? (edgeType as EdgeType)
-    : null
+  return isId(_) && edgeType in Object.values(EdgeType) ? (edgeType as EdgeType) : null
 }
 
 export const nodeTypeFromId = (_: string) => {
@@ -42,31 +30,18 @@ export const nodeTypeFromId = (_: string) => {
   return isId(_) && nodeType in NodeType ? (nodeType as NodeType) : null
 }
 
-export const fromToByIds = (_: {
-  from: string
-  to: string
-}): [NodeType, NodeType] | null => {
+export const fromToByIds = (_: { from: string; to: string }): [NodeType, NodeType] | null => {
   const { from, to } = _
   const _from = nodeTypeFromId(from)
   const _to = nodeTypeFromId(to)
   return _from && _to && [_from, _to]
 }
 
-export const getEdgeBasicAccessPolicy = ({
-  accessType,
-  edgeType,
-}: {
-  edgeType: EdgeType
-  accessType: AccessType
-}) => basicAccessPolicies.edge[edgeType][accessType]
+export const getEdgeBasicAccessPolicy = ({ accessType, edgeType }: { edgeType: EdgeType; accessType: AccessType }) =>
+  basicAccessPolicies.edge[edgeType][accessType]
 
-export const getNodeBasicAccessPolicy = ({
-  accessType,
-  nodeType,
-}: {
-  nodeType: NodeType
-  accessType: AccessType
-}) => basicAccessPolicies.node[nodeType][accessType]
+export const getNodeBasicAccessPolicy = ({ accessType, nodeType }: { nodeType: NodeType; accessType: AccessType }) =>
+  basicAccessPolicies.node[nodeType][accessType]
 
 export const getStaticFilteredNodeBasicAccessPolicy = ({
   accessType,
@@ -124,38 +99,23 @@ export const getGlyphBasicAccessFilter = <ResType>(_: {
   const { ctx, engine, glyphTag, policy } = _
   const { andReducer, orReducer, basicAccessPolicyTypeFilters } = engine
   if (typeof policy === 'string') {
-    return andReducer(
-      undefined,
-      basicAccessPolicyTypeFilters[policy]({ ctx, glyphTag })
-    )
+    return andReducer(undefined, basicAccessPolicyTypeFilters[policy]({ ctx, glyphTag }))
   }
-  const [policies, accessReducer] =
-    'and' in policy ? [policy.and, andReducer] : [policy.or, orReducer]
+  const [policies, accessReducer] = 'and' in policy ? [policy.and, andReducer] : [policy.or, orReducer]
   return policies
-    .map((innerPolicy) =>
-      getGlyphBasicAccessFilter({ ..._, policy: innerPolicy })
-    )
+    .map(innerPolicy => getGlyphBasicAccessFilter({ ..._, policy: innerPolicy }))
     .reduce((a, b) => accessReducer(a, b))
 }
 
-type BasicAccessPolicyTypeFilterFn<ResType> = (_: {
-  ctx: MoodleNetExecutionContext
-  glyphTag: GlyphTag
-}) => ResType
+type BasicAccessPolicyTypeFilterFn<ResType> = (_: { ctx: MoodleNetExecutionContext; glyphTag: GlyphTag }) => ResType
 export type BasicAccessPolicyTypeFilters<ResType> = {
   [t in BasicAccessPolicyType]: BasicAccessPolicyTypeFilterFn<ResType>
 }
 export type NeedsAuthFilter<ResType> = (
-  filterWithAuth: (_: {
-    ctx: MoodleNetExecutionContext
-    auth: MoodleNetExecutionAuth
-    glyphTag: GlyphTag
-  }) => ResType
+  filterWithAuth: (_: { ctx: MoodleNetExecutionContext; auth: MoodleNetExecutionAuth; glyphTag: GlyphTag }) => ResType,
 ) => BasicAccessPolicyTypeFilterFn<ResType>
-export const needsAuthFilter: NeedsAuthFilter<boolean> = (filterWithAuth) => ({
-  ctx,
-  glyphTag,
-}) => (ctx.auth ? filterWithAuth({ ctx, auth: ctx.auth, glyphTag }) : false)
+export const needsAuthFilter: NeedsAuthFilter<boolean> = filterWithAuth => ({ ctx, glyphTag }) =>
+  ctx.auth ? filterWithAuth({ ctx, auth: ctx.auth, glyphTag }) : false
 
 const staticBasicAccessPolicyTypeFilters: BasicAccessPolicyTypeFilters<boolean> = {
   Admins: needsAuthFilter(({ auth }) => auth.role === Role.Admin),

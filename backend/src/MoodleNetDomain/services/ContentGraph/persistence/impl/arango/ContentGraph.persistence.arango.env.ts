@@ -29,10 +29,7 @@ export const database = createDatabaseIfNotExists({
   dbCreateOpts: {},
 })
 
-const getEdgeDefinition = (
-  edgeType: EdgeType,
-  edgeOptions: EdgeOptions
-): EdgeDefinitionOptions => {
+const getEdgeDefinition = (edgeType: EdgeType, edgeOptions: EdgeOptions): EdgeDefinitionOptions => {
   const [from, to] = edgeOptions.connections
     .reduce(
       (_from_to, opt) => {
@@ -41,9 +38,9 @@ const getEdgeDefinition = (
         _to.add(opt.to)
         return _from_to
       },
-      [new Set<NodeType>(), new Set<NodeType>()]
+      [new Set<NodeType>(), new Set<NodeType>()],
     )
-    .map((_) => [..._])
+    .map(_ => [..._])
   return {
     collection: edgeType,
     from,
@@ -51,19 +48,16 @@ const getEdgeDefinition = (
   }
 }
 const contentGraphName = 'contentGraph'
-const graphP = database.then(async (db) => {
-  const edgeDefinitionOptions = Object.entries(
-    contentGraph
-  ).map(([edgeType, edgeOpts]) =>
-    getEdgeDefinition(edgeType as EdgeType, edgeOpts)
+const graphP = database.then(async db => {
+  const edgeDefinitionOptions = Object.entries(contentGraph).map(([edgeType, edgeOpts]) =>
+    getEdgeDefinition(edgeType as EdgeType, edgeOpts),
   )
   const graph =
-    (await db.graphs()).find((_) => _.name == contentGraphName) ||
-    (await db.createGraph(contentGraphName, []))
+    (await db.graphs()).find(_ => _.name == contentGraphName) || (await db.createGraph(contentGraphName, []))
   await Promise.all(
-    edgeDefinitionOptions.map((_) => {
+    edgeDefinitionOptions.map(_ => {
       graph.replaceEdgeDefinition(_)
-    })
+    }),
   )
   return graph
 })

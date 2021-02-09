@@ -1,10 +1,5 @@
 import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
-import {
-  EdgeType,
-  Node,
-  NodeType,
-  ResolversParentTypes,
-} from '../ContentGraph.graphql.gen'
+import { EdgeType, Node, NodeType, ResolversParentTypes } from '../ContentGraph.graphql.gen'
 import { ShallowEdge, ShallowNode } from '../persistence/types'
 
 export type IdKey = string & { readonly __: unique symbol }
@@ -70,9 +65,7 @@ export type BasicAccessPolicies = {
 // export type NodeDef ={
 
 // }
-export type NodeByType<
-  T extends NodeType
-> = ResolversParentTypes[T] extends Node ? ResolversParentTypes[T] : never
+export type NodeByType<T extends NodeType> = ResolversParentTypes[T] extends Node ? ResolversParentTypes[T] : never
 export type EdgeByType<T extends EdgeType> = ResolversParentTypes[T]
 export type ShallowNodeByType<T extends NodeType> = ShallowNode<NodeByType<T>>
 export type ShallowEdgeByType<T extends EdgeType> = ShallowEdge<EdgeByType<T>>

@@ -10,7 +10,7 @@ const mailgun = createMailgun({
   ...env,
 })
 
-const sendEmail: EmailSender['sendEmail'] = async (req) => {
+const sendEmail: EmailSender['sendEmail'] = async req => {
   try {
     const resp = await mailgun.messages().send(req)
     return { success: true, emailId: resp.id }

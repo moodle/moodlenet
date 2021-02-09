@@ -2,6 +2,4 @@ import { RegisterNewAccountRequestApiHandler } from '../apis/UserAccount.Registe
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { api } from '../../../../lib/domain'
 
-api<MoodleNetDomain>()('UserAccount.RegisterNewAccount.Request').respond(
-  RegisterNewAccountRequestApiHandler
-)
+api<MoodleNetDomain>()('UserAccount.RegisterNewAccount.Request').respond(RegisterNewAccountRequestApiHandler)

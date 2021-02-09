@@ -1,12 +1,8 @@
 mutation login($username: String!, $password: String!) {
   createSession(username: $username, password: $password) {
-    username
-    email
-    accountId
-    jwt
+    ...ShallowSession
     user {
-      _id
-      displayName
+      ...ShallowUser
     }
   }
 }

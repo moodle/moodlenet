@@ -2,13 +2,9 @@ mutation activateNewAccount($token: String!, $username: String!, $password: Stri
   activateAccount(username: $username, password: $password, token: $token) {
     message
     session {
-      username
-      email
-      accountId
-      jwt
+      ...ShallowSession
       user {
-        _id
-        displayName
+        ...ShallowUser
       }
     }
   }

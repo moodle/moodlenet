@@ -6,12 +6,12 @@ import { fakeUnshallowNodeForResolverReturnType } from './helpers'
 export const getSessionAccountUser: Resolvers['Query']['getSessionAccountUser'] = async (
   _root,
   { username },
-  ctx /*_info */
+  ctx /*_info */,
 ) => {
   const _id = getAuthUserId({ accountUsername: username })
-  const { node: shallowUser } = await api<MoodleNetDomain>(ctx.flow)(
-    'ContentGraph.Node.ById'
-  ).call((nodeById) => nodeById<User>({ _id }))
+  const { node: shallowUser } = await api<MoodleNetDomain>(ctx.flow)('ContentGraph.Node.ById').call(nodeById =>
+    nodeById<User>({ _id }),
+  )
 
   if (!shallowUser) {
     throw new Error('User not found')

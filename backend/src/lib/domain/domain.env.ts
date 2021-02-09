@@ -19,6 +19,4 @@ export const env = Validator.validateSync({
   logLevel: LOG_LEVEL,
 })!
 
-export const channelPromise = amqp
-  .connect(env.amqpUrl)
-  .then((connection) => connection.createConfirmChannel())
+export const channelPromise = amqp.connect(env.amqpUrl).then(connection => connection.createConfirmChannel())

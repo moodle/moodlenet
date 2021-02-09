@@ -1,10 +1,7 @@
 import { getGlyphBasicAccessFilter } from '../../../../graphDefinition/helpers'
 import { ContentGraphPersistence, Types } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
-import {
-  aqlstr,
-  basicArangoAccessFilterEngine,
-} from '../ContentGraph.persistence.arango.helpers'
+import { aqlstr, basicArangoAccessFilterEngine } from '../ContentGraph.persistence.arango.helpers'
 
 const DEFAULT_PAGE_LENGTH = 10
 
@@ -32,8 +29,7 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
   const getCursorToo = beforeCursor === after
 
   const pageLimit = (_: number | null, includeCursor: boolean) =>
-    Math.min(_ || Infinity, DEFAULT_PAGE_LENGTH) +
-    (includeCursor && getCursorToo ? 1 : 0)
+    Math.min(_ || Infinity, DEFAULT_PAGE_LENGTH) + (includeCursor && getCursorToo ? 1 : 0)
 
   const afterPage =
     !after && !!before
@@ -45,11 +41,7 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
   const comparison = getCursorToo ? '<=' : '<'
   const beforePage =
     last && beforeCursor
-      ? `${
-          beforeCursor
-            ? `FILTER edge.${mainSortProp} ${comparison} "${beforeCursor}"`
-            : ``
-        }
+      ? `${beforeCursor ? `FILTER edge.${mainSortProp} ${comparison} "${beforeCursor}"` : ``}
         SORT edge.${mainSortProp} DESC
         LIMIT ${pageLimit(last, true)}`
       : ``
@@ -74,7 +66,7 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
   })
 
   return Promise.all(
-    [afterPage, beforePage].map((page) => {
+    [afterPage, beforePage].map(page => {
       const q = page
         ? `
           FOR parentNode, edge 
@@ -98,13 +90,13 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
         : null
 
       console.log(q)
-      return q ? db.query(q).then((cursor) => cursor.all()) : []
-    })
+      return q ? db.query(q).then(cursor => cursor.all()) : []
+    }),
   ).then(([afterEdges, beforeEdges]) => {
     const edges = beforeEdges
       .reverse()
       .concat(afterEdges)
-      .map((_) => ({ ..._, __typename: 'PageEdge' }))
+      .map(_ => ({ ..._, __typename: 'PageEdge' }))
     const pageInfo: Types.PageInfo = {
       startCursor: edges[0]?.cursor,
       endCursor: edges[edges.length - 1]?.cursor,

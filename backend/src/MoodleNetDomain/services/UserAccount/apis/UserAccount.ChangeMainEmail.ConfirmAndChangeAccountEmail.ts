@@ -6,9 +6,7 @@ import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
 import { getVerifiedAccountByUsernameAndPassword } from '../UserAccount.helpers'
 
-export type ConfirmAccountEmailChangeRequestPersistence = (_: {
-  token: string
-}) => Promise<null | Messages.NotFound>
+export type ConfirmAccountEmailChangeRequestPersistence = (_: { token: string }) => Promise<null | Messages.NotFound>
 
 export type AccountEmailChangedEvent = Event<{
   accountId: string
@@ -18,11 +16,7 @@ export type AccountEmailChangedEvent = Event<{
 
 export type Req = { token: string; password: string; username: string }
 
-export const ConfirmAndChangeAccountEmailHandler = async ({
-  token,
-  password,
-  username,
-}: Req): Promise<boolean> => {
+export const ConfirmAndChangeAccountEmailHandler = async ({ token, password, username }: Req): Promise<boolean> => {
   const { confirmAccountEmailChangeRequest } = await getAccountPersistence()
   const account = await getVerifiedAccountByUsernameAndPassword({
     username,
@@ -45,9 +39,9 @@ export const ConfirmAndChangeAccountEmailHandler = async ({
 export const changeEmailConfirm: MutationResolvers['changeEmailConfirm'] = async (
   _parent,
   { token, password, username },
-  ctx
+  ctx,
 ) => {
-  return api<MoodleNetDomain>(ctx.flow)(
-    'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail'
-  ).call((confirm) => confirm({ password, token, username }))
+  return api<MoodleNetDomain>(ctx.flow)('UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail').call(confirm =>
+    confirm({ password, token, username }),
+  )
 }

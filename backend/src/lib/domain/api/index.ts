@@ -12,8 +12,7 @@ const DEF_LAG_TIMEOUT = 300
 
 const REPLY_TIMEOUT_RESPONSE_MSG = 'REPLY_TIMEOUT_RESPONSE_MSG'
 const REPLY_TIMEOUT_RESPONSE = Types.apiReplyError(REPLY_TIMEOUT_RESPONSE_MSG)
-export const isReplyTimeout = (_: any) =>
-  Types.isReplyError(_) && _.___API_REPLY_ERROR === REPLY_TIMEOUT_RESPONSE_MSG
+export const isReplyTimeout = (_: any) => Types.isReplyError(_) && _.___API_REPLY_ERROR === REPLY_TIMEOUT_RESPONSE_MSG
 
 export type CallOpts =
   | {
@@ -36,21 +35,16 @@ export type ApiCallArgs<Domain, ApiPath extends Types.ApiLeaves<Domain>> = {
 let callCount = 0
 
 export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves<Domain>>(
-  _: ApiCallArgs<Domain, ApiPath>
+  _: ApiCallArgs<Domain, ApiPath>,
 ) => {
   type ResType = Types.ApiRes<Domain, ApiPath> extends Promise<infer T> ? T : never
   // return (req: Types.ApiReq<Domain, ApiPath>): Promise<ResType> => {
   return ((req: any) => {
     return new Promise(
-      /* <CallResponse<ResType>> */ (
-        resolveCall: (arg0: ResType) => void,
-        rejectCall: (arg0: any) => void
-      ) => {
+      /* <CallResponse<ResType>> */ (resolveCall: (arg0: ResType) => void, rejectCall: (arg0: any) => void) => {
         const { api, flow, /* req, */ opts } = _
         const delay = opts?.justEnqueue && opts?.delaySecs ? opts.delaySecs * 1000 : undefined
-        const expiration = opts?.justEnqueue
-          ? delay || undefined
-          : opts?.timeout || DEF_TIMEOUT_EXPIRATION
+        const expiration = opts?.justEnqueue ? delay || undefined : opts?.timeout || DEF_TIMEOUT_EXPIRATION
         const messageId = `${nodeId}.${Number(new Date())}.${callCount++}`
 
         let unsubFromReplyEmitter = () => {}
@@ -105,7 +99,7 @@ export const call = <Domain>(domain: string) => <ApiPath extends Types.ApiLeaves
         function getResponse(res: ResType): CallResponse<ResType> {
           return res
         }
-      }
+      },
     )
   }) as Types.ApiDef<Domain, ApiPath> //as _OmitThisParameterForCall<Types.ApiDef<Domain, ApiPath>>
 }
@@ -117,12 +111,7 @@ export type ApiResponderOpts = {
 }
 
 export type RespondApiHandler<A> = A extends Types.Api<infer Req, infer Res>
-  ? (_: {
-      req: Req
-      flow: Flow
-      disposeResponder(): unknown
-      unbindThisRoute(): unknown
-    }) => Promise<Res>
+  ? (_: { req: Req; flow: Flow; disposeResponder(): unknown; unbindThisRoute(): unknown }) => Promise<Res>
   : never
 
 export type RespondApiArgs<Domain, ApiPath extends Types.ApiLeaves<Domain>> = {
@@ -154,7 +143,7 @@ export const getApiResponderQName = <Domain>(api: Types.ApiLeaves<Domain>) => `A
 // TODO: ApiResponderOpts should have channelOpts too
 
 export const respond = <Domain>(domain: string) => async <ApiPath extends Types.ApiLeaves<Domain>>(
-  _: RespondApiArgs<Domain, ApiPath>
+  _: RespondApiArgs<Domain, ApiPath>,
 ) => {
   const { api, handler, opts } = _
   const [route, id] = [flowRouteElse(opts?.pFlow, '*'), flowIdElse(opts?.pFlow, '*')]
@@ -237,7 +226,7 @@ export const getGQLApiCallerExecutor = <DomainDef extends object>({
       root,
       query,
       variables,
-    })
+    }),
   )
   log({ res })
   return res

@@ -1,11 +1,6 @@
 import { aql } from 'arangojs'
 import { Maybe } from 'graphql/jsutils/Maybe'
-import {
-  ActiveUserAccount,
-  Messages,
-  UserAccountPersistence,
-  UserAccountStatus,
-} from '../../../types'
+import { ActiveUserAccount, Messages, UserAccountPersistence, UserAccountStatus } from '../../../types'
 import { DBReady } from '../UserAccount.persistence.arango.env'
 import { isUsernameAvailable } from './isUsernameAvailable'
 export const activateNewAccount: UserAccountPersistence['activateNewAccount'] = async ({

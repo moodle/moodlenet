@@ -1,32 +1,30 @@
-import * as Yup from 'yup'
+import { string, object, ObjectSchema, ValidationError } from 'yup'
 import { CreateNodeInput, NodeType } from '../../../ContentGraph.graphql.gen'
 import { neverCreate } from '../helpers'
 
 type Just<T> = Exclude<T, null | undefined>
 const inputObjectValidators: {
-  [T in NodeType]: Yup.ObjectSchema<Just<CreateNodeInput[T]>>
+  [T in NodeType]: ObjectSchema<Just<CreateNodeInput[T]>>
 } = {
-  Subject: Yup.object<Just<CreateNodeInput['Subject']>>({
-    name: Yup.string().required(),
+  Subject: object<Just<CreateNodeInput['Subject']>>({
+    name: string().required(),
   }).required(),
   User: neverCreate(NodeType.User),
 }
 
-export function validateCreateNodeInput(
-  input: CreateNodeInput
-): Just<CreateNodeInput[NodeType]> | Error {
+export function validateCreateNodeInput(input: CreateNodeInput): Just<CreateNodeInput[NodeType]> | Error {
   const { nodeType } = input
   if (!(nodeType in input)) {
-    return new Yup.ValidationError(
+    return new ValidationError(
       `wants to create ${nodeType} but no data provided in ${nodeType} prop`,
       undefined,
-      nodeType
+      nodeType,
     )
   }
   const validator = inputObjectValidators[nodeType]
   try {
     return validator.validateSync(input[nodeType])
   } catch (err) {
-    return err as Yup.ValidationError
+    return err as ValidationError
   }
 }

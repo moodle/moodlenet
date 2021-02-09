@@ -1,30 +1,24 @@
-import * as Types from '../../../graphql/types.graphql.gen';
+import * as Types from '../../../graphql/types.graphql.gen'
 
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client'
+import * as Apollo from '@apollo/client'
 export type SignUpMutationVariables = Types.Exact<{
-  email: Types.Scalars['String'];
-}>;
+  email: Types.Scalars['String']
+}>
 
-
-export type SignUpMutation = (
-  { __typename: 'Mutation' }
-  & { signUp: (
-    { __typename: 'SimpleResponse' }
-    & Pick<Types.SimpleResponse, 'success' | 'message'>
-  ) }
-);
-
+export type SignUpMutation = { __typename: 'Mutation' } & {
+  signUp: { __typename: 'SimpleResponse' } & Pick<Types.SimpleResponse, 'success' | 'message'>
+}
 
 export const SignUpDocument = gql`
-    mutation signUp($email: String!) {
-  signUp(email: $email) {
-    success
-    message
+  mutation signUp($email: String!) {
+    signUp(email: $email) {
+      success
+      message
+    }
   }
-}
-    `;
-export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMutationVariables>;
+`
+export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMutationVariables>
 
 /**
  * __useSignUpMutation__
@@ -44,8 +38,8 @@ export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMut
  * });
  */
 export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignUpMutation, SignUpMutationVariables>) {
-        return Apollo.useMutation<SignUpMutation, SignUpMutationVariables>(SignUpDocument, baseOptions);
-      }
-export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
-export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
-export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
+  return Apollo.useMutation<SignUpMutation, SignUpMutationVariables>(SignUpDocument, baseOptions)
+}
+export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>
+export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>
+export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>

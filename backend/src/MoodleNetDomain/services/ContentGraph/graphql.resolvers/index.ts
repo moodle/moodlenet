@@ -1,16 +1,16 @@
-import * as GQL from '../ContentGraph.graphql.gen';
-import { getSessionAccountUser } from './merge.getSessionAccountUser';
-import { createEdge } from './mutation/createEdge';
-import { createNode } from './mutation/createNode';
+import * as GQL from '../ContentGraph.graphql.gen'
+import { getSessionAccountUser } from './merge.getSessionAccountUser'
+import { createEdge } from './mutation/createEdge'
+import { createNode } from './mutation/createNode'
 // import { createEdge } from './mutation.createEdge'
 // import { createNode } from './mutation.createNode'
 // import { deleteEdge } from './mutation.deleteEdge'
 // import { deleteNode } from './mutation.deleteNode'
 // import { updateEdge } from './mutation.updateEdge'
 // import { updateNode } from './mutation.updateNode'
-import { node } from './query.node';
-import { ByAt } from './types.byAt';
-import { NodeResolver } from './types.node';
+import { node } from './query.node'
+import { ByAt } from './types.byAt'
+import { NodeResolver } from './types.node'
 
 export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
   return {
@@ -20,11 +20,11 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
       deleteEdge: (() => {}) as any,
       deleteNode: (() => {}) as any,
       updateEdge: (() => {}) as any,
-      updateNode: (() => {}) as any
+      updateNode: (() => {}) as any,
     },
     Query: {
       node,
-      getSessionAccountUser
+      getSessionAccountUser,
     },
     ByAt,
     Meta: {} as any,
@@ -61,9 +61,9 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
     UpdateEdgeMutationSuccess: {} as any,
     UpdateNodeMutationError: {} as any,
     UpdateNodeMutationPayload: {} as any,
-    UpdateNodeMutationSuccess: {} as any
+    UpdateNodeMutationSuccess: {} as any,
     // QueryNodeError: {} as any,
     // QueryNodePayload: {} as any,
     // QueryNodeSuccess: {} as any,
-  };
-};
+  }
+}

@@ -1,20 +1,9 @@
 type Mutation {
   signUp(email: String!): SimpleResponse!
   changeEmailRequest(newEmail: String!): SimpleResponse!
-  changeEmailConfirm(
-    token: String!
-    password: String!
-    username: String!
-  ): Boolean!
-  changePassword(
-    newPassword: String!
-    currentPassword: String!
-  ): SimpleResponse!
-  activateAccount(
-    username: String!
-    password: String!
-    token: String!
-  ): ActivationOutcome!
+  changeEmailConfirm(token: String!, password: String!, username: String!): Boolean!
+  changePassword(newPassword: String!, currentPassword: String!): SimpleResponse!
+  activateAccount(username: String!, password: String!, token: String!): ActivationOutcome!
   sessionByEmail(username: String!, email: String!): SimpleResponse!
   createSession(username: String!, password: String!): UserSession
 }

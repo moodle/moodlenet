@@ -1,8 +1,5 @@
 import * as Yup from 'yup'
-import {
-  createDatabaseIfNotExists,
-  createVertexCollectionIfNotExists,
-} from '../../../../../../lib/helpers/arango'
+import { createDatabaseIfNotExists, createVertexCollectionIfNotExists } from '../../../../../../lib/helpers/arango'
 import { Config, UserAccountRecord } from '../../types'
 
 interface ArangoAccountPersistenceEnv {
@@ -29,13 +26,11 @@ export const database = createDatabaseIfNotExists({
   dbCreateOpts: {},
 })
 
-export const UserAccountCollection = createVertexCollectionIfNotExists<UserAccountRecord>(
-  {
-    name: 'UserAccount',
-    database,
-    createOpts: {},
-  }
-)
+export const UserAccountCollection = createVertexCollectionIfNotExists<UserAccountRecord>({
+  name: 'UserAccount',
+  database,
+  createOpts: {},
+})
 
 export const ConfigCollection = createVertexCollectionIfNotExists<Config>({
   name: 'Config',
@@ -43,12 +38,10 @@ export const ConfigCollection = createVertexCollectionIfNotExists<Config>({
   createOpts: {},
 })
 
-export const DBReady = Promise.all([
-  database,
-  UserAccountCollection,
-  ConfigCollection,
-]).then(([db, UserAccount, Config]) => ({
-  db,
-  UserAccount,
-  Config,
-}))
+export const DBReady = Promise.all([database, UserAccountCollection, ConfigCollection]).then(
+  ([db, UserAccount, Config]) => ({
+    db,
+    UserAccount,
+    Config,
+  }),
+)

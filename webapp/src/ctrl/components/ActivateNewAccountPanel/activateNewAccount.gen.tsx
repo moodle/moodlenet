@@ -1,49 +1,44 @@
-import * as Types from '../../../graphql/types.graphql.gen';
+import * as Types from '../../../graphql/types.graphql.gen'
 
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client'
+import * as Apollo from '@apollo/client'
 export type ActivateNewAccountMutationVariables = Types.Exact<{
-  token: Types.Scalars['String'];
-  username: Types.Scalars['String'];
-  password: Types.Scalars['String'];
-}>;
+  token: Types.Scalars['String']
+  username: Types.Scalars['String']
+  password: Types.Scalars['String']
+}>
 
-
-export type ActivateNewAccountMutation = (
-  { __typename: 'Mutation' }
-  & { activateAccount: (
-    { __typename: 'ActivationOutcome' }
-    & Pick<Types.ActivationOutcome, 'message'>
-    & { session?: Types.Maybe<(
-      { __typename: 'UserSession' }
-      & Pick<Types.UserSession, 'username' | 'email' | 'accountId' | 'jwt'>
-      & { user: (
-        { __typename: 'User' }
-        & Pick<Types.User, '_id' | 'displayName'>
-      ) }
-    )> }
-  ) }
-);
-
+export type ActivateNewAccountMutation = { __typename: 'Mutation' } & {
+  activateAccount: { __typename: 'ActivationOutcome' } & Pick<Types.ActivationOutcome, 'message'> & {
+      session?: Types.Maybe<
+        { __typename: 'UserSession' } & Pick<Types.UserSession, 'username' | 'email' | 'accountId' | 'jwt'> & {
+            user: { __typename: 'User' } & Pick<Types.User, '_id' | 'displayName'>
+          }
+      >
+    }
+}
 
 export const ActivateNewAccountDocument = gql`
-    mutation activateNewAccount($token: String!, $username: String!, $password: String!) {
-  activateAccount(username: $username, password: $password, token: $token) {
-    message
-    session {
-      username
-      email
-      accountId
-      jwt
-      user {
-        _id
-        displayName
+  mutation activateNewAccount($token: String!, $username: String!, $password: String!) {
+    activateAccount(username: $username, password: $password, token: $token) {
+      message
+      session {
+        username
+        email
+        accountId
+        jwt
+        user {
+          _id
+          displayName
+        }
       }
     }
   }
-}
-    `;
-export type ActivateNewAccountMutationFn = Apollo.MutationFunction<ActivateNewAccountMutation, ActivateNewAccountMutationVariables>;
+`
+export type ActivateNewAccountMutationFn = Apollo.MutationFunction<
+  ActivateNewAccountMutation,
+  ActivateNewAccountMutationVariables
+>
 
 /**
  * __useActivateNewAccountMutation__
@@ -64,9 +59,17 @@ export type ActivateNewAccountMutationFn = Apollo.MutationFunction<ActivateNewAc
  *   },
  * });
  */
-export function useActivateNewAccountMutation(baseOptions?: Apollo.MutationHookOptions<ActivateNewAccountMutation, ActivateNewAccountMutationVariables>) {
-        return Apollo.useMutation<ActivateNewAccountMutation, ActivateNewAccountMutationVariables>(ActivateNewAccountDocument, baseOptions);
-      }
-export type ActivateNewAccountMutationHookResult = ReturnType<typeof useActivateNewAccountMutation>;
-export type ActivateNewAccountMutationResult = Apollo.MutationResult<ActivateNewAccountMutation>;
-export type ActivateNewAccountMutationOptions = Apollo.BaseMutationOptions<ActivateNewAccountMutation, ActivateNewAccountMutationVariables>;
+export function useActivateNewAccountMutation(
+  baseOptions?: Apollo.MutationHookOptions<ActivateNewAccountMutation, ActivateNewAccountMutationVariables>,
+) {
+  return Apollo.useMutation<ActivateNewAccountMutation, ActivateNewAccountMutationVariables>(
+    ActivateNewAccountDocument,
+    baseOptions,
+  )
+}
+export type ActivateNewAccountMutationHookResult = ReturnType<typeof useActivateNewAccountMutation>
+export type ActivateNewAccountMutationResult = Apollo.MutationResult<ActivateNewAccountMutation>
+export type ActivateNewAccountMutationOptions = Apollo.BaseMutationOptions<
+  ActivateNewAccountMutation,
+  ActivateNewAccountMutationVariables
+>

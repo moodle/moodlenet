@@ -1,17 +1,17 @@
-import { Trans, t } from '@lingui/macro';
-import { FC } from 'react';
-import { FormBag } from '../../@types/types';
+import { Trans, t } from '@lingui/macro'
+import { FC } from 'react'
+import { FormBag } from '../../@types/types'
 
 export type ActivateAccountFormValues = {
-  username: string;
-  password: string;
-  acceptTerms: boolean;
-  confirmPassword: string;
-};
+  username: string
+  password: string
+  acceptTerms: boolean
+  confirmPassword: string
+}
 export type ActivateAccountPanelProps = {
-  form: FormBag<ActivateAccountFormValues>;
-  message: string | undefined;
-};
+  form: FormBag<ActivateAccountFormValues>
+  message: string | undefined
+}
 
 export const ActivateAccountPanel: FC<ActivateAccountPanelProps> = ({ form, message }) => {
   return (
@@ -62,5 +62,5 @@ export const ActivateAccountPanel: FC<ActivateAccountPanelProps> = ({ form, mess
         </button>
       </form>
     </div>
-  );
-};
+  )
+}

@@ -1,7 +1,7 @@
-import { FC } from 'react';
-import { ApolloClientProvider } from './apollo';
-import { LocalizationProvider } from './localization';
-import { RouterProvider } from './router';
+import { FC } from 'react'
+import { ApolloClientProvider } from './apollo'
+import { LocalizationProvider } from './localization'
+import { RouterProvider } from './router'
 
 export const GlobalContexts: FC = ({ children }) => {
   return (
@@ -10,5 +10,5 @@ export const GlobalContexts: FC = ({ children }) => {
         <RouterProvider>{children}</RouterProvider>
       </ApolloClientProvider>
     </LocalizationProvider>
-  );
-};
+  )
+}

@@ -1,18 +1,10 @@
 import { EdgeType, NodeType as N, NodeType } from '../ContentGraph.graphql.gen'
 import { isEdgeType, isNodeType } from './helpers'
-import {
-  BasicAccessPolicies,
-  BasicAccessPolicy,
-  BasicAccessPolicyType,
-  ContentGraph,
-} from './types'
+import { BasicAccessPolicies, BasicAccessPolicy, BasicAccessPolicyType, ContentGraph } from './types'
 
 const _P = BasicAccessPolicyType
 type StandardPoliciesGroupTypes = 'Protected'
-export const StandardPoliciesGroup: Record<
-  StandardPoliciesGroupTypes,
-  BasicAccessPolicy
-> = {
+export const StandardPoliciesGroup: Record<StandardPoliciesGroupTypes, BasicAccessPolicy> = {
   Protected: { or: [_P.Admins, _P.Creator, _P.Moderator] },
 }
 const _S = StandardPoliciesGroup
@@ -59,18 +51,12 @@ export const contentGraph: ContentGraph = {
   },
 }
 
-export const getConnectionDef = (_: {
-  edge: EdgeType
-  from: NodeType
-  to: NodeType
-}) => {
+export const getConnectionDef = (_: { edge: EdgeType; from: NodeType; to: NodeType }) => {
   const { from, to, edge } = _
   if (!(isEdgeType(edge) && isNodeType(from) && isNodeType(to))) {
     return undefined
   }
-  return contentGraph[edge]?.connections.find(
-    ({ from: _from, to: _to }) => _from == from && _to === to
-  )
+  return contentGraph[edge]?.connections.find(({ from: _from, to: _to }) => _from == from && _to === to)
 }
 
 // export const nodeDef = {

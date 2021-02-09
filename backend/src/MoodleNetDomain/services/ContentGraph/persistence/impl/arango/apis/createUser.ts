@@ -3,11 +3,7 @@ import { ContentGraphPersistence, ShallowNode } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 import { aqlstr, createMeta } from '../ContentGraph.persistence.arango.helpers'
 
-export const createUser: ContentGraphPersistence['createUser'] = async ({
-  username,
-  role,
-  creatorId,
-}) => {
+export const createUser: ContentGraphPersistence['createUser'] = async ({ username, role, creatorId }) => {
   const { db } = await DBReady
   const newUser: Omit<ShallowNode<User>, '_id' | '_meta'> = {
     __typename: 'User',

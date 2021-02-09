@@ -1,8 +1,5 @@
 import * as Yup from 'yup'
-import {
-  createDatabaseIfNotExists,
-  createVertexCollectionIfNotExists,
-} from '../../../../../../lib/helpers/arango'
+import { createDatabaseIfNotExists, createVertexCollectionIfNotExists } from '../../../../../../lib/helpers/arango'
 import { SentEmailDocument } from './types'
 
 interface ArangoEmailPersistenceEnv {
@@ -29,17 +26,13 @@ const database = createDatabaseIfNotExists({
   dbCreateOpts: {},
 })
 
-const SentEmailCollection = createVertexCollectionIfNotExists<SentEmailDocument>(
-  {
-    name: 'SentEmail',
-    database,
-    createOpts: {},
-  }
-)
+const SentEmailCollection = createVertexCollectionIfNotExists<SentEmailDocument>({
+  name: 'SentEmail',
+  database,
+  createOpts: {},
+})
 
-export const DBReady = Promise.all([database, SentEmailCollection]).then(
-  ([db, SentEmail]) => ({
-    db,
-    SentEmail,
-  })
-)
+export const DBReady = Promise.all([database, SentEmailCollection]).then(([db, SentEmail]) => ({
+  db,
+  SentEmail,
+}))

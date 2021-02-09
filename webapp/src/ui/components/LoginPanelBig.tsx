@@ -1,12 +1,12 @@
-import { Trans, t } from '@lingui/macro';
-import { FC } from 'react';
-import { FormBag } from '../../@types/types';
+import { Trans, t } from '@lingui/macro'
+import { FC } from 'react'
+import { FormBag } from '../../@types/types'
 
-export type LoginFormValues = { username: string; password: string };
+export type LoginFormValues = { username: string; password: string }
 export type LoginPanelProps = {
-  form: FormBag<LoginFormValues>;
-  message: string | null;
-};
+  form: FormBag<LoginFormValues>
+  message: string | null
+}
 
 export const LoginPanelBig: FC<LoginPanelProps> = ({ form, message }) => {
   return (
@@ -34,5 +34,5 @@ export const LoginPanelBig: FC<LoginPanelProps> = ({ form, message }) => {
         </button>
       </form>
     </div>
-  );
-};
+  )
+}
