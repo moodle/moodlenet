@@ -2,28 +2,9 @@
   "name": "@moodlenet/moodlenet",
   "version": "0.0.1",
   "license": "AGPL",
-  "description": "MoodleNet",
+  "description": "MoodleNet monorepo system",
   "author": "https://github.com/aleclofabbro",
-  "dependencies": {
-    "@graphql-codegen/fragment-matcher": "^2.0.1",
-    "@graphql-codegen/near-operation-file-preset": "^1.17.13",
-    "@graphql-codegen/typescript-operations": "^1.17.14",
-    "@graphql-codegen/typescript-react-apollo": "^2.2.1",
-    "@playlyfe/gql": "^2.6.2",
-    "graphql-cli": "^4.1.0"
-  },
   "devDependencies": {
-    "@graphql-codegen/cli": "^1.19.3",
-    "@graphql-codegen/introspection": "^1.18.1",
-    "@graphql-codegen/schema-ast": "^1.18.1",
-    "@graphql-codegen/typescript": "^1.20.2",
-    "@graphql-codegen/typescript-resolvers": "^1.18.1",
-    "graphql": "^15.4.0",
-    "run-script-os": "^1.1.5"
-  },
-  "scripts": {
-    "gen:graphql:types": "run-script-os --config ./graphql.codegen.config.js",
-    "gen:graphql:types:darwin:linux": "graphql-codegen",
-    "gen:graphql:types:darwin:default": "graphql-codegen"
+    "lerna": "^3.22.1"
   }
 }
