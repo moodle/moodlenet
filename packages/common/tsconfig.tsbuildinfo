@@ -257,6 +257,7 @@
       ],
       "target": 1,
       "composite": true,
+      "declarationMap": true,
       "esModuleInterop": true,
       "outDir": "./lib",
       "project": "./tsconfig.json",
