@@ -5,10 +5,8 @@ import { getContentGraphPersistence } from '../ContentGraph.env'
 import {
   getStaticFilteredEdgeBasicAccessPolicy,
   getStaticFilteredNodeBasicAccessPolicy,
-  isEdgeType,
-  isId,
-  isNodeType,
 } from '../graphDefinition/helpers'
+import { isEdgeType, isId, isNodeType } from '@moodlenet/common/lib/utils/content-graph'
 
 const _rel: GQL.ResolverFn<
   GQL.ResolversTypes['Page'],

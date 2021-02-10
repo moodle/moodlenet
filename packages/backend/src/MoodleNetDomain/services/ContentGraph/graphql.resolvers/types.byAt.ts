@@ -1,6 +1,6 @@
+import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { getContentGraphPersistence } from '../ContentGraph.env'
 import * as GQL from '../ContentGraph.graphql.gen'
-import { Id } from '../graphDefinition/types'
 import { fakeUnshallowNodeForResolverReturnType } from './helpers'
 
 export const ByAt: GQL.Resolvers['ByAt'] = {

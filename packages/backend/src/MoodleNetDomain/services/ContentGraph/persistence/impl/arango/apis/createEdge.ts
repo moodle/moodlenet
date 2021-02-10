@@ -1,10 +1,10 @@
+import { nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { createMeta } from '../../../../apis/helpers'
 import { CreateEdgeMutationErrorType } from '../../../../ContentGraph.graphql.gen'
 import { getConnectionDef } from '../../../../graphDefinition'
 import {
   getStaticFilteredEdgeBasicAccessPolicy,
   getStaticFilteredNodeBasicAccessPolicy,
-  nodeTypeFromId,
 } from '../../../../graphDefinition/helpers'
 import { cantBindMessage } from '../../../../graphDefinition/strings'
 import { createEdgeMutationError } from '../../../../graphql.resolvers/helpers'

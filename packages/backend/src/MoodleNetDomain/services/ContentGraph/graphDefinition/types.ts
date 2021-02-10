@@ -2,9 +2,6 @@ import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
 import { EdgeType, Node, NodeType, ResolversParentTypes } from '../ContentGraph.graphql.gen'
 import { ShallowEdge, ShallowNode } from '../persistence/types'
 
-export type IdKey = string & { readonly __: unique symbol }
-export type Id = string & { readonly __: unique symbol }
-
 export type PersistenceExecutionContext = MoodleNetExecutionContext
 
 export type AccessType = 'read' | 'create' | 'update' | 'delete'

@@ -1,7 +1,7 @@
+import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { MoodleNetExecutionContext } from '../../../../../types'
 import { getContentGraphPersistence } from '../../../ContentGraph.env'
 import { CreateEdgeInput, EdgeType } from '../../../ContentGraph.graphql.gen'
-import { Id } from '../../../graphDefinition/types'
 import { CreateEdgeShallowPayload } from '../../../persistence/types'
 
 type Just<T> = Exclude<T, null | undefined>

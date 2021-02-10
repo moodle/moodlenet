@@ -1,6 +1,7 @@
+import { isId, isNodeType } from '@moodlenet/common/lib/utils/content-graph'
 import { getContentGraphPersistence } from '../ContentGraph.env'
 import * as GQL from '../ContentGraph.graphql.gen'
-import { getStaticFilteredNodeBasicAccessPolicy, isId, isNodeType } from '../graphDefinition/helpers'
+import { getStaticFilteredNodeBasicAccessPolicy } from '../graphDefinition/helpers'
 
 export const node: GQL.Resolvers['Query']['node'] = async (_root, { _id, nodeType }, ctx /* ,_info */) => {
   if (!(isId(_id) && isNodeType(nodeType))) {

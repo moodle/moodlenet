@@ -3,10 +3,11 @@ import { signUp } from '@moodlenet/common/lib/graphql/validation/input/user-acco
 import { useFormikWithBag } from '../../../helpers/forms'
 import { SignupFormValues, SignupPanelBig } from '../../../ui/components/SignupPanelBig'
 import { useSignUpMutation } from './signup.gen'
+import { MutationSignUpArgs } from '../../../graphql/pub.graphql.link'
 
 export const SignupPanelBigCtrl: FC = () => {
   const [signup, result] = useSignUpMutation()
-  const [, /* formik*/ bag] = useFormikWithBag<SignupFormValues>({
+  const [, /* formik*/ bag] = useFormikWithBag<SignupFormValues & MutationSignUpArgs>({
     initialValues: { email: '' },
     validationSchema: signUp,
     onSubmit({ email } /* , helpers */) {

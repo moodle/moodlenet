@@ -4,10 +4,11 @@ import { createSession } from '@moodlenet/common/lib/graphql/validation/input/us
 import { useFormikWithBag } from '../../../helpers/forms'
 import { LoginFormValues, LoginPanelBig } from '../../../ui/pages/Login'
 import { useLoginMutation } from './login.gen'
+import { MutationCreateSessionArgs } from '../../../graphql/pub.graphql.link'
 
 export const LoginPanelBigCtrl: FC = () => {
   const [login, result] = useLoginMutation()
-  const [formik, bag] = useFormikWithBag<LoginFormValues>({
+  const [formik, bag] = useFormikWithBag<LoginFormValues & MutationCreateSessionArgs>({
     initialValues: { password: '', username: '' },
     validationSchema: createSession,
     onSubmit({ password, username } /* , helpers */) {

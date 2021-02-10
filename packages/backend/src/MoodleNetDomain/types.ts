@@ -1,6 +1,6 @@
+import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { Flow } from '../lib/domain/types/path'
 import { Role } from './services/ContentGraph/ContentGraph.graphql.gen'
-import { Id } from './services/ContentGraph/graphDefinition/types'
 
 export type MoodleNetExecutionAuth = {
   accountId: string

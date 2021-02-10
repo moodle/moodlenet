@@ -1,8 +1,9 @@
+import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
 import { CreateUserPersistence } from '../apis/ContentGraph.User.CreateForNewAccount.api'
 import * as GQL from '../ContentGraph.graphql.gen'
-import { BasicAccessPolicy, Id, ShallowEdgeByType, ShallowNodeByType } from '../graphDefinition/types'
+import { BasicAccessPolicy, ShallowEdgeByType, ShallowNodeByType } from '../graphDefinition/types'
 export * as Types from '../ContentGraph.graphql.gen'
 
 export const SystemUserId = 'User/_System_'

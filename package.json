@@ -13,5 +13,8 @@
   ],
   "devDependencies": {
     "lerna": "^3.22.1"
+  },
+  "scripts": {
+    "bs": "lerna bootstrap --nohoist=babel-* --nohoist=*react*"
   }
 }

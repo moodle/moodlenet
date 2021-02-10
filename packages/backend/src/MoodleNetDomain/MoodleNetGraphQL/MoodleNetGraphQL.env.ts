@@ -7,7 +7,7 @@ import { ActiveUserAccount } from '../services/UserAccount/persistence/types'
 import { signJwt } from './JWT'
 import memo from 'lodash/memoize'
 import { MoodleNetExecutionAuth } from './types'
-import { Id } from '../services/ContentGraph/graphDefinition/types'
+import { Id } from '@moodlenet/common/lib/utils/content-graph'
 
 export const getJwtVerifier = memo(() => {
   const jwtPublicKey = process.env.JWT_PUBLIC_KEY!

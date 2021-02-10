@@ -1,6 +1,6 @@
+import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { MoodleNetExecutionContext } from '../../../../types'
 import { CreateEdgeInput, CreateEdgeMutationErrorType, EdgeType } from '../../ContentGraph.graphql.gen'
-import { Id } from '../../graphDefinition/types'
 import { createEdgeMutationError } from '../../graphql.resolvers/helpers'
 import { createHooks, isAllowedCreationType } from './hooks'
 

@@ -1,7 +1,7 @@
 import { Executor } from '@graphql-tools/delegate/types'
+import { makeId, NodeType } from '@moodlenet/common/lib/utils/content-graph'
 import { GraphQLError } from 'graphql'
 import { IncomingMessage } from 'http'
-import { Id } from '../services/ContentGraph/graphDefinition/types'
 import { INVALID_TOKEN } from './JWT'
 import { getJwtVerifier } from './MoodleNetGraphQL.env'
 import { graphQLRequestFlow } from './schemaHelpers'
@@ -38,4 +38,5 @@ export function getExecutionGlobalValues(
 //FIXME: implement proper typeguard
 export const isMoodleNetExecutionAuth = (_obj: object): _obj is MoodleNetExecutionAuth => true
 
-export const getAuthUserId = ({ accountUsername }: { accountUsername: string }) => `User/${accountUsername}` as Id // BEWARE: hardcoded userId generation
+export const getAuthUserId = ({ accountUsername }: { accountUsername: string }) =>
+  makeId(NodeType.User, accountUsername) // BEWARE: hardcoded userId generation

@@ -1,5 +1,5 @@
+import { isEdgeType, isNodeType } from '@moodlenet/common/lib/utils/content-graph'
 import { EdgeType, NodeType as N, NodeType } from '../ContentGraph.graphql.gen'
-import { isEdgeType, isNodeType } from './helpers'
 import { BasicAccessPolicies, BasicAccessPolicy, BasicAccessPolicyType, ContentGraph } from './types'
 
 const _P = BasicAccessPolicyType

@@ -1,8 +1,9 @@
+import { isId, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { api } from '../../../../../lib/domain'
 import { MoodleNetDomain } from '../../../../MoodleNetDomain'
 import { CreateEdgeMutationErrorType, CreateEdgeMutationSuccess, Resolvers } from '../../ContentGraph.graphql.gen'
 import { getConnectionDef } from '../../graphDefinition'
-import { getStaticFilteredEdgeBasicAccessPolicy, isId, nodeTypeFromId } from '../../graphDefinition/helpers'
+import { getStaticFilteredEdgeBasicAccessPolicy } from '../../graphDefinition/helpers'
 import { cantBindMessage } from '../../graphDefinition/strings'
 import { createEdgeMutationError, fakeUnshallowEdgeForResolverReturnType } from '../helpers'
 import { validateCreateEdgeInput } from '../inputStaticValidation/createEdge'
@@ -14,11 +15,13 @@ export const createEdge: Resolvers['Mutation']['createEdge'] = async (_root, { i
     // probably not allowed (may want to split in policy lookup in 2 steps, to check if found and then if auth applies )
     return createEdgeMutationError(CreateEdgeMutationErrorType.NotAuthorized, `Anonymous can't create`)
   }
-  const fromType = nodeTypeFromId(from)
-  const toType = nodeTypeFromId(to)
-  if (!(isId(from) && isId(to) && fromType && toType)) {
+  if (!(isId(from) && isId(to))) {
     return createEdgeMutationError(CreateEdgeMutationErrorType.UnexpectedInput, `${from} or ${to} are not valid ids`)
   }
+
+  const fromType = nodeTypeFromId(from)
+  const toType = nodeTypeFromId(to)
+
   const policy = getStaticFilteredEdgeBasicAccessPolicy({
     accessType: 'create',
     edgeType,

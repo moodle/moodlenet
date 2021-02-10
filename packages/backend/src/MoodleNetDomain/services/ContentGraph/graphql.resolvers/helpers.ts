@@ -12,10 +12,6 @@ export const fakeUnshallowNodeForResolverReturnType = <N extends Node>(
 ): N => shallow as N
 export const fakeUnshallowEdgeForResolverReturnType = <E extends Edge>(shallow: Pick<E, '_id'>): E => shallow as E
 
-export function unreachable(shouldBeNever: never): never {
-  throw new Error(`Didn't expect to get here assertUnreachable ${shouldBeNever}`)
-}
-
 export const createNodeMutationError = (
   type: CreateNodeMutationErrorType,
   details: string | null = null,

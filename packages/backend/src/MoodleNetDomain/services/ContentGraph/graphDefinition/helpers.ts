@@ -1,41 +1,7 @@
 import { basicAccessPolicies } from '.'
 import { MoodleNetExecutionContext, MoodleNetExecutionAuth } from '../../../MoodleNetGraphQL'
 import { EdgeType, NodeType, Role } from '../ContentGraph.graphql.gen'
-import { AccessType, BasicAccessPolicy, BasicAccessPolicyType, GlyphTag, Id, IdKey } from './types'
-
-export const isIdKey = (_: string): _ is IdKey => true //FIXME: check is ULID
-export const isId = (_: string): _ is Id => {
-  const split = _.split('/')
-  const [type, key] = split
-  if (split.length !== 2) {
-    return false
-  }
-  if (!(isEdgeType(type) || isNodeType(type))) {
-    return false
-  }
-  return isIdKey(key)
-}
-
-export const isEdgeType = (_: string): _ is EdgeType => _ in EdgeType
-export const isNodeType = (_: string): _ is NodeType => _ in NodeType
-
-export const edgeTypeFromId = (_: string) => {
-  const [edgeType] = _.split('/')
-  return isId(_) && edgeType in Object.values(EdgeType) ? (edgeType as EdgeType) : null
-}
-
-export const nodeTypeFromId = (_: string) => {
-  const [nodeType] = _.split('/')
-  console.log(isId(_), { nodeType }, NodeType, Object.values(NodeType))
-  return isId(_) && nodeType in NodeType ? (nodeType as NodeType) : null
-}
-
-export const fromToByIds = (_: { from: string; to: string }): [NodeType, NodeType] | null => {
-  const { from, to } = _
-  const _from = nodeTypeFromId(from)
-  const _to = nodeTypeFromId(to)
-  return _from && _to && [_from, _to]
-}
+import { AccessType, BasicAccessPolicy, BasicAccessPolicyType, GlyphTag } from './types'
 
 export const getEdgeBasicAccessPolicy = ({ accessType, edgeType }: { edgeType: EdgeType; accessType: AccessType }) =>
   basicAccessPolicies.edge[edgeType][accessType]

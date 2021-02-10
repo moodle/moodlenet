@@ -1,5 +1,5 @@
+import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { getGlyphBasicAccessFilter } from '../../../../graphDefinition/helpers'
-import { Id } from '../../../../graphDefinition/types'
 import { ContentGraphPersistence, Types } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 import { basicArangoAccessFilterEngine } from '../ContentGraph.persistence.arango.helpers'
