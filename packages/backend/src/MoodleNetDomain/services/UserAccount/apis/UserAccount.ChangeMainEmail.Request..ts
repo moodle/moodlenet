@@ -8,7 +8,7 @@ import { loggedUserOnly } from '../../../MoodleNetGraphQL'
 import { Messages, UserAccountRecord, UserAccountStatus } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
-import { fillEmailTemplate } from '../UserAccount.helpers'
+import { fillEmailTemplate, getSimpleResponse } from '../UserAccount.helpers'
 import { userAccountRoutes } from '../UserAccount.routes'
 
 export type ChangeAccountEmailRequestPersistence = (_: {
@@ -79,16 +79,8 @@ export const changeEmailRequest: MutationResolvers['changeEmailRequest'] = async
   ).call((changeMainEmailReq, flow) => changeMainEmailReq({ newEmail, accountId, flow }))
 
   if (!res.success) {
-    return {
-      __typename: 'SimpleResponse',
-      message: res.reason,
-      success: false,
-    }
+    return getSimpleResponse({ message: res.reason })
   } else {
-    return {
-      __typename: 'SimpleResponse',
-      success: true,
-      message: null,
-    }
+    return getSimpleResponse({ success: true })
   }
 }

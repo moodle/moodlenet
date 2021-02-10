@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro'
 import { FC, useState } from 'react'
+import { activateAccount } from '@moodlenet/common/lib/graphql/validation/input/user-account'
 import { boolean, object, ref, SchemaOf, string } from 'yup'
 import { useFormikWithBag } from '../../../helpers/forms'
 import { ActivateAccountFormValues, ActivateAccountPanel } from '../../../ui/pages/ActivateNewAccount'
@@ -22,12 +23,8 @@ export const ActivateNewAccountPanelCtrl: FC<ActivateNewAccountPanelProps> = ({ 
   return <ActivateAccountPanel form={bag} message={result.data?.activateAccount.message || message} />
 }
 const validationSchema: SchemaOf<ActivateAccountFormValues> = object({
-  username: string()
-    .min(3)
-    .max(16)
-    //    .matches(USERNAME_REGEX)
-    .required(),
-  password: string().min(6).max(50).required(),
+  username: activateAccount.fields.username,
+  password: activateAccount.fields.password,
   confirmPassword: string()
     .oneOf([ref('password'), null], t`Passwords must match`)
     .required(),

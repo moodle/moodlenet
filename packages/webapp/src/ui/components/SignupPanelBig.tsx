@@ -16,6 +16,7 @@ export const SignupPanelBig: FC<SignupPanelProps> = ({ form, message }) => {
         <Trans>Hey, signup here !</Trans>
       </span>
       <form onSubmit={form.handleSubmit}>
+        {form.errors.email && <span>!! {form.errors.email} !!</span>}
         <input
           {...form.valueName.email}
           placeholder={t`your email`}

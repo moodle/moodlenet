@@ -16,12 +16,15 @@ export const LoginPanelBig: FC<LoginPanelProps> = ({ form, message }) => {
         <Trans>Hey, login here !</Trans>
       </span>
       <form onSubmit={form.handleSubmit}>
+        {form.errors.username && <span>!! {form.errors.username} !!</span>}
         <input
           {...form.valueName.username}
           placeholder={t`your user name`}
           disabled={form.isSubmitting}
           onChange={form.handleChange}
         />
+        <br />
+        {form.errors.password && <span>!! {form.errors.password} !!</span>}
         <input
           {...form.valueName.password}
           type="password"

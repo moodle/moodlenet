@@ -4,7 +4,7 @@ import { loggedUserOnly } from '../../../MoodleNetGraphQL'
 import { Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
-import { getVerifiedAccountByUsernameAndPassword, hashPassword } from '../UserAccount.helpers'
+import { getSimpleResponse, getVerifiedAccountByUsernameAndPassword, hashPassword } from '../UserAccount.helpers'
 
 export type ChangePasswordPersistence = (_: {
   currentPassword: string
@@ -65,16 +65,8 @@ export const changePassword: MutationResolvers['changePassword'] = async (
   )
 
   if (!res.success) {
-    return {
-      __typename: 'SimpleResponse',
-      message: res.reason,
-      success: false,
-    }
+    return getSimpleResponse({ message: res.reason })
   } else {
-    return {
-      __typename: 'SimpleResponse',
-      success: true,
-      message: null,
-    }
+    return getSimpleResponse({ success: true })
   }
 }
