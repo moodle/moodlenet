@@ -4,20 +4,32 @@
     {
       "label": "start dev env",
       "command": "lerna",
-      "args": ["run", "start-dev", "--stream"],
+      "args": [
+        "run",
+        "start-dev",
+        "--stream"
+      ],
       "group": "build",
       "problemMatcher": []
     },
     {
       "label": "dev-tasks",
       "group": "build",
-      "dependsOn": ["common dev-build", "webapp dev-build", "backend dev-build", "graphql types generation"]
+      "dependsOn": [
+        "common dev-build",
+        "webapp dev-build",
+        "backend dev-build",
+        "graphql types generation"
+      ],
+      "problemMatcher": []
     },
     {
       "type": "typescript",
       "tsconfig": "packages/common/tsconfig.json",
       "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
+      "problemMatcher": [
+        "$tsc-watch"
+      ],
       "group": "build",
       "label": "common dev-build"
     },
@@ -25,7 +37,9 @@
       "type": "typescript",
       "tsconfig": "packages/webapp/tsconfig.json",
       "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
+      "problemMatcher": [
+        "$tsc-watch"
+      ],
       "group": "build",
       "label": "webapp dev-build"
     },
@@ -33,13 +47,18 @@
       "type": "typescript",
       "tsconfig": "packages/backend/tsconfig.json",
       "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
+      "problemMatcher": [
+        "$tsc-watch"
+      ],
       "group": "build",
       "label": "backend dev-build"
     },
     {
       "command": "yarn",
-      "args": ["gen:graphql:types", "-w"],
+      "args": [
+        "gen:graphql:types",
+        "-w"
+      ],
       "options": {
         "cwd": "packages/graphql-gen"
       },

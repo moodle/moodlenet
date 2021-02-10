@@ -1,9 +1,16 @@
 {
-  "name": "@moodlenet/moodlenet",
+  "name": "moodlenet",
   "version": "0.0.1",
   "license": "AGPL",
   "description": "MoodleNet monorepo system",
   "author": "https://github.com/aleclofabbro",
+  "_private": true,
+  "_workspaces": [
+    "packages/common",
+    "packages/backend",
+    "packages/webapp",
+    "packages/graphql-gen"
+  ],
   "devDependencies": {
     "lerna": "^3.22.1"
   }

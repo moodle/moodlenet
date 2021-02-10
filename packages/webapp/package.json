@@ -4,6 +4,9 @@
   "license": "AGPL",
   "description": "MoodleNet Webapp",
   "author": "https://github.com/aleclofabbro",
+  "peerDependencies": {
+    "@types/react": "^16.9.53"
+  },
   "dependencies": {
     "@apollo/client": "^3.3.7",
     "@lingui/macro": "^3.5.0",
@@ -16,7 +19,6 @@
     "@types/lingui__macro": "^2.7.4",
     "@types/lingui__react": "^2.8.3",
     "@types/node": "^12.0.0",
-    "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "@types/react-router": "^5.1.11",
     "@types/react-router-dom": "^5.1.7",
