@@ -1,4 +1,4 @@
-import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { Routes } from '../../../common/lib/webapp/sitemap'
 // import { NodeType } from '../graphql/types.graphql.gen'
 import { NodeType } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
 import { NeverPage } from '../helpers/navigation'

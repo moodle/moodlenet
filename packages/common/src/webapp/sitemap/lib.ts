@@ -33,7 +33,7 @@ function compilePath(path: string) {
  * Public API for generating a URL pathname from a path and parameters.
  */
 
-export function generatePath<Path extends string>(path: Path, params: ExtractRouteParams<Path>) {
+export function generatePath<Path extends string>(path: Path, params: ExtractRouteParams<Path>): string {
   return path === '/'
     ? path
     : compilePath(path)(params, {

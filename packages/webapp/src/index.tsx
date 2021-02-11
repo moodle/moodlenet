@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { GlobalContexts } from './contexts/global'
+import { GlobalContexts } from './contexts/Global'
 import './index.css'
 import reportWebVitals from './reportWebVitals'
-import { MNRouter } from './routes'
+import { MNRouter } from './routes/MNRouter'
 
 ReactDOM.render(
   <React.StrictMode>

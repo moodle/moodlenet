@@ -1,4 +1,4 @@
-import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { Routes } from '../../../common/lib/webapp/sitemap'
 import { ActivateNewAccountPageCtrl } from '../ctrl/pages/ActivateNewAccountPageCtrl'
 import { MNRouteProps, RouteFC } from './lib'
 

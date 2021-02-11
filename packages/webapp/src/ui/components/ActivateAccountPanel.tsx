@@ -1,6 +1,8 @@
-import { Trans, t } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import { FC } from 'react'
-import { FormBag } from '../../@types/types'
+import { Button, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
+import { LinkDef, useLink } from '../context'
+import { FormBag } from '../types/types'
 
 export type ActivateAccountFormValues = {
   username: string
@@ -10,57 +12,88 @@ export type ActivateAccountFormValues = {
 }
 export type ActivateAccountPanelProps = {
   form: FormBag<ActivateAccountFormValues>
+  termsAndConditionsLink: LinkDef
   message: string | undefined
 }
 
-export const ActivateAccountPanel: FC<ActivateAccountPanelProps> = ({ form, message }) => {
+export const ActivateAccountPanel: FC<ActivateAccountPanelProps> = ({ form, message, termsAndConditionsLink }) => {
+  const Link = useLink()
   return (
-    <div>
-      <span>
-        <Trans>Activate your new account</Trans>
-      </span>
-      <br />
-      <span>{message}</span>
-      <form onSubmit={form.handleSubmit}>
-        <br />
-        <span>username err:{form.errors.username}</span>
-        <input
-          {...form.valueName.username}
-          placeholder={t`username`}
-          disabled={form.isSubmitting}
-          onChange={form.handleChange}
-        />
-        <br />
-        <span>password err:{form.errors.password}</span>
-        <input
-          {...form.valueName.password}
-          type="password"
-          placeholder={t`your password`}
-          disabled={form.isSubmitting}
-          onChange={form.handleChange}
-        />
-        <br />
-        <span>confirmPassword err:{form.errors.confirmPassword}</span>
-        <input
-          {...form.valueName.confirmPassword}
-          type="password"
-          placeholder={t`confirm your password`}
-          disabled={form.isSubmitting}
-          onChange={form.handleChange}
-        />
-        <br />
-        <span>acceptTerms err:{form.errors.acceptTerms}</span>
-        <input
-          name={form.valueName.acceptTerms.name}
-          placeholder={t`accept terms`}
-          checked={form.valueName.acceptTerms.value}
-          type="checkbox"
-          onChange={form.handleChange}
-        />
-        <button disabled={form.isSubmitting} type="submit">
-          <Trans>activate</Trans>
-        </button>
-      </form>
-    </div>
+    <Grid textAlign="center" verticalAlign="middle">
+      <Grid.Column style={{ maxWidth: 450 }}>
+        <Header as="h2" textAlign="center">
+          <Trans>Please complete your subsription</Trans>
+        </Header>
+        <Form size="large" disabled={form.isSubmitting} onSubmit={form.submitForm}>
+          <Segment stacked>
+            <Form.Input
+              fluid
+              {...form.valueName.username}
+              placeholder={t`your user name`}
+              onChange={form.handleChange}
+              icon="user"
+              iconPosition="left"
+              error={
+                form.errors.username && {
+                  content: form.errors.username,
+                  pointing: 'above',
+                }
+              }
+            />
+            <Form.Input
+              fluid
+              {...form.valueName.password}
+              placeholder={t`your password`}
+              onChange={form.handleChange}
+              icon="lock"
+              iconPosition="left"
+              type="password"
+              error={
+                form.errors.password && {
+                  content: form.errors.password,
+                  pointing: 'above',
+                }
+              }
+            />
+            <Form.Input
+              fluid
+              {...form.valueName.confirmPassword}
+              placeholder={t`confirm your password`}
+              onChange={form.handleChange}
+              icon="lock"
+              iconPosition="left"
+              type="password"
+              error={
+                form.errors.confirmPassword && {
+                  content: form.errors.confirmPassword,
+                  pointing: 'above',
+                }
+              }
+            />
+            <Form.Field
+              label={
+                <Trans>
+                  I have read and agreed to the <Link href={termsAndConditionsLink}>Terms and Conditions</Link>
+                </Trans>
+              }
+              {...form.valueName.acceptTerms}
+              onChange={form.handleChange}
+              control="input"
+              type="checkbox"
+              error={
+                form.errors.acceptTerms && {
+                  content: form.errors.acceptTerms,
+                  pointing: 'above',
+                }
+              }
+            />
+            <Button color="orange" fluid size="large" type="submit">
+              <Trans>Activate your account</Trans>
+            </Button>
+            {message && <Message negative header={t`Warning`} content={message} />}
+          </Segment>
+        </Form>
+      </Grid.Column>
+    </Grid>
   )
 }
