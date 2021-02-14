@@ -37,7 +37,7 @@
   },
   "scripts": {
     "start-dev": "cross-env NODE_ENV=development react-scripts start --incremental",
-    "start": "react-scripts start",
+    "start": "NODE_ENV=production serve -s build -l 3000",
     "build": "react-scripts build",
     "clean-build": "rm -rf build && yarn build",
     "test": "react-scripts test",

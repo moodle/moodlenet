@@ -15,6 +15,9 @@
     "lerna": "^3.22.1"
   },
   "scripts": {
-    "bs": "lerna bootstrap --nohoist=babel-* --nohoist=*react*"
+    "bs": "lerna bootstrap --nohoist=babel-* --nohoist=*react*",
+    "start-dev": "lerna run start-dev --stream",
+    "build": "lerna run build --stream",
+    "start": "lerna run start --stream"
   }
 }

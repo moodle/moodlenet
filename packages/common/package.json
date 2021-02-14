@@ -13,7 +13,7 @@
     "yup": "^0.32.8"
   },
   "scripts": {
-    "postinstall": "tsc",
-    "clean-build": "rm -rf lib && tsc"
+    "clean-build": "rm -rf lib && tsc",
+    "build": "tsc"
   }
 }

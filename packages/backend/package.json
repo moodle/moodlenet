@@ -61,8 +61,8 @@
     "ts-node-dev": "^1.1.1"
   },
   "scripts": {
-    "postinstall": "tsc",
-    "start": "ts-node index.js",
+    "build": "tsc",
+    "start": "NODE_ENV=production ts-node index.js",
     "start-dev": "ts-node-dev --watch .env,src  --respawn --rs --clear --transpile-only index.js"
   }
 }
