@@ -1,10 +1,10 @@
 import * as Yup from 'yup'
 import { once } from '../lib/helpers/misc'
 
-const MN_PUBLIC_BASE_URL = process.env.MN_PUBLIC_BASE_URL
+const PUBLIC_URL = process.env.PUBLIC_URL
 
 export const getMNEnv = once(() => {
-  const publicBaseUrl = Yup.string().required().validateSync(MN_PUBLIC_BASE_URL)
+  const publicBaseUrl = Yup.string().required().validateSync(PUBLIC_URL)
   return {
     publicBaseUrl,
   }

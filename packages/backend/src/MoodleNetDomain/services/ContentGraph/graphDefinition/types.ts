@@ -18,7 +18,7 @@ export enum BasicAccessPolicyType {
   Moderator = 'Moderator',
 }
 
-export type ContentGraph = Record<EdgeType, EdgeOptions>
+export type ContentGraph = { [edgeName in EdgeType]: EdgeOptions }
 
 export type EdgeOptions = {
   connections: Connection[]
