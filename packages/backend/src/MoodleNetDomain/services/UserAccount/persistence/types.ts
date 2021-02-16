@@ -13,7 +13,7 @@ import { TempSessionEmailVars } from '../assets/defaultConfig/tempSessionEmail'
 import { Resolvers } from '../UserAccount.graphql.gen'
 
 export interface UserAccountPersistence {
-  graphQLTypeResolvers: Omit<Resolvers, 'Mutation'>
+  graphQLTypeResolvers: Omit<Resolvers, 'Mutation' | 'Query'>
 
   getActiveAccountByUsername(_: { username: string }): Promise<Maybe<ActiveUserAccount>>
   deleteChangeAccountEmailRequest: ChangeAccountEmailRequestDeletePersistence

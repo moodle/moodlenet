@@ -14,7 +14,7 @@ export type ApiReplyError = { ___API_REPLY_ERROR: string }
 export const apiReplyError = (msg: any): ApiReplyError => ({
   ___API_REPLY_ERROR: String(msg),
 })
-export const isReplyError = (_: any): _ is ApiReplyError => !!_ && '___API_REPLY_ERROR' in _
+export const isReplyError = (_: any): _ is ApiReplyError => !!_ && typeof _ === 'object' && '___API_REPLY_ERROR' in _
 export const getReplyError = (_: ApiReplyError) => _.___API_REPLY_ERROR
 
 export const API_CALL_ERROR_TAG: unique symbol = Symbol('API_CALL_ERROR_TAG')

@@ -14,6 +14,7 @@ import { RegisterNewAccountDeleteRequestApiHandler } from './apis/UserAccount.Re
 import { RegisterNewAccountRequestApiHandler } from './apis/UserAccount.RegisterNewAccount.Request'
 import { SessionByEmailApiHandler } from './apis/UserAccount.Session.ByEmail'
 import { SessionCreateApiHandler } from './apis/UserAccount.Session.Create'
+import { SessionGetApiHandler } from './apis/UserAccount.Session.Get'
 
 export type UserAccount = {
   RegisterNewAccount: {
@@ -35,6 +36,7 @@ export type UserAccount = {
   Session: {
     ByEmail: typeof SessionByEmailApiHandler
     Create: typeof SessionCreateApiHandler
+    Get: typeof SessionGetApiHandler
   }
 
   GQL: GraphQLApi

@@ -20,13 +20,13 @@ export type Scalars = {
 
 export type Mutation = {
   __typename: 'Mutation';
-  activateAccount: ActivationOutcome;
+  activateAccount: CreateSession;
   changeEmailConfirm: Scalars['Boolean'];
   changeEmailRequest: SimpleResponse;
   changePassword: SimpleResponse;
   createEdge: CreateEdgeMutationPayload;
   createNode: CreateNodeMutationPayload;
-  createSession: Maybe<UserSession>;
+  createSession: CreateSession;
   deleteEdge: DeleteEdgeMutationPayload;
   deleteNode: DeleteNodeMutationPayload;
   sessionByEmail: SimpleResponse;
@@ -285,7 +285,7 @@ export type PageInput = {
 
 export type Query = {
   __typename: 'Query';
-  _null_placeholder: Maybe<Scalars['Boolean']>;
+  getSession: Maybe<UserSession>;
   getSessionAccountUser: Maybe<UserSession>;
   node: Maybe<Node>;
 };
@@ -361,7 +361,6 @@ export type UserSession = {
   accountId: Scalars['String'];
   changeEmailRequest: Maybe<Scalars['String']>;
   email: Scalars['String'];
-  jwt: Scalars['String'];
   user: User;
   username: Scalars['String'];
 };
@@ -420,9 +419,9 @@ export type SimpleResponse = {
   message: Maybe<Scalars['String']>;
 };
 
-export type ActivationOutcome = {
-  __typename: 'ActivationOutcome';
-  session: Maybe<UserSession>;
+export type CreateSession = {
+  __typename: 'CreateSession';
+  jwt: Maybe<Scalars['String']>;
   message: Maybe<Scalars['String']>;
 };
 

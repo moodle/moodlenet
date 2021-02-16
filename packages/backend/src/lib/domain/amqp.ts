@@ -108,16 +108,22 @@ export const queueConsume = async (_: {
       if (!msg) {
         return
       }
-
-      let msgJsonContent: any = `~~~NOT PARSED~~~`
+      const NOT_PARSED = Symbol()
+      let msgJsonContent: any = NOT_PARSED
       try {
+        msgFlow(msg)
         msgJsonContent = buffer2Json(msg.content)
+      } catch (err) {}
+      if (msgJsonContent === NOT_PARSED) {
+        ch.reject(msg, false)
+      } else {
         const flow = msgFlow(msg)
         const ack = await handler({ msgJsonContent, msg, stopConsume, flow })
-        ch[ack](msg)
-      } catch (err) {
-        const errorAck = opts?.errorAck || Acks.reject
-        ch[errorAck](msg, false)
+        if (ack === Acks.Done) {
+          ch.ack(msg)
+        } else {
+          ch.reject(msg, ack === Acks.Requeue)
+        }
       }
     },
     { ...opts },
@@ -259,14 +265,12 @@ export type EventEmitterHandlerArgType<T> = {
 
 export type DomainSendToQueueOpts = Options.Publish & {}
 export type DomainQueueOpts = Options.AssertQueue & {}
-export type DomainConsumeOpts = Options.Consume & {
-  errorAck?: Acks.nack | Acks.reject
-}
+export type DomainConsumeOpts = Options.Consume & {}
 
 export type DomainExchangeOpts = Options.AssertExchange & {}
 
 export enum Acks {
-  nack = 'nack',
-  reject = 'reject',
-  ack = 'ack',
+  Requeue,
+  Done,
+  Reject,
 }

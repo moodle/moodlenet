@@ -2,23 +2,26 @@ import { api, event } from '../../../../lib/domain'
 import { Event } from '../../../../lib/domain/event/types'
 import { Flow } from '../../../../lib/domain/types/path'
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { User } from '../../ContentGraph/ContentGraph.graphql.gen'
 import { ActiveUserAccount, Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
-import { ActivationOutcome, MutationResolvers, UserSession } from '../UserAccount.graphql.gen'
-import { hashPassword, userSessionByActiveUserAccount } from '../UserAccount.helpers'
+import { MutationResolvers } from '../UserAccount.graphql.gen'
+import { hashPassword } from '../UserAccount.helpers'
+import { ShallowNode } from './../../ContentGraph/persistence/types'
+import { jwtByActiveUserAccountAndUser } from './../UserAccount.helpers'
 
 export type NewAccountActivatedEvent = Event<{
   accountId: string
   username: string
 }>
 
-type ActivationResult = ActiveUserAccount | Messages.NotFound | Messages.UsernameNotAvailable
+type ActivationMessage = Messages.NotFound | Messages.UsernameNotAvailable
 
 export type ActivateNewAccountPersistence = (_: {
   token: string
   username: string
   password: string
-}) => Promise<ActivationResult>
+}) => Promise<ActiveUserAccount | ActivationMessage>
 
 export type ConfirmEmailActivateAccountReq = {
   token: string
@@ -26,7 +29,7 @@ export type ConfirmEmailActivateAccountReq = {
   username: string
   flow: Flow
 }
-export type ConfirmEmailActivateAccountRes = { activation: ActivationResult }
+export type ConfirmEmailActivateAccountRes = ActivationMessage | { account: ActiveUserAccount; user: ShallowNode<User> }
 
 export const ConfirmEmailActivateAccountApiHandler = async ({
   flow,
@@ -36,26 +39,27 @@ export const ConfirmEmailActivateAccountApiHandler = async ({
 }: ConfirmEmailActivateAccountReq): Promise<ConfirmEmailActivateAccountRes> => {
   const { activateNewAccount } = await getAccountPersistence()
   const hashedPassword = await hashPassword({ pwd: password })
-  const activation = await activateNewAccount({
+  const activationResult = await activateNewAccount({
     token,
     username,
     password: hashedPassword,
   })
-  if (typeof activation !== 'string') {
+  if (typeof activationResult !== 'string') {
     const user = await api<MoodleNetDomain>(flow)('ContentGraph.User.CreateForNewAccount').call(createUser =>
-      createUser({ accountId: activation._id, username: activation.username }),
+      createUser({ accountId: activationResult._id, username: activationResult.username }),
     )
     if (!user) {
       //TODO: manage this eventuality (rollback?)
-      const errorMsg = `couldn't create user for username:${activation.username}, accountId: ${activation._id}`
+      const errorMsg = `couldn't create user for username:${activationResult.username}, accountId: ${activationResult._id}`
       throw new Error(errorMsg)
     }
     event<MoodleNetDomain>(flow)('UserAccount.RegisterNewAccount.NewAccountActivated').emit({
-      payload: { accountId: activation._id, username: activation.username },
+      payload: { accountId: activationResult._id, username: activationResult.username },
     })
+    return { account: activationResult, user }
+  } else {
+    return activationResult
   }
-  console.log('RESP -- activation', activation)
-  return { activation }
 }
 
 export const activateAccount: MutationResolvers['activateAccount'] = async (
@@ -67,30 +71,22 @@ export const activateAccount: MutationResolvers['activateAccount'] = async (
     'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount',
   ).call((confirmEmailActivateAccount, flow) => confirmEmailActivateAccount({ password, token, username, flow }))
   console.log('RESP -- UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount ', res)
-  if (typeof res.activation === 'string') {
-    return getActivatinOutcome({
-      session: null,
-      message: res.activation,
-    })
+  if (typeof res === 'string') {
+    return {
+      __typename: 'CreateSession',
+      jwt: null,
+      message: res,
+    }
   } else {
-    const session = await userSessionByActiveUserAccount({
-      activeUserAccount: res.activation,
+    const jwt = await jwtByActiveUserAccountAndUser({
+      activeUserAccount: res.account,
+      user: res.user,
     })
 
-    return getActivatinOutcome({
-      session,
+    return {
+      __typename: 'CreateSession',
+      jwt,
       message: null,
-    })
+    }
   }
 }
-const getActivatinOutcome = ({
-  session,
-  message,
-}: {
-  session: UserSession | null
-  message: string | null
-}): ActivationOutcome => ({
-  __typename: 'ActivationOutcome',
-  session,
-  message,
-})

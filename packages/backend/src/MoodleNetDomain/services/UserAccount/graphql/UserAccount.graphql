@@ -3,17 +3,22 @@ type Mutation {
   changeEmailRequest(newEmail: String!): SimpleResponse!
   changeEmailConfirm(token: String!, password: String!, username: String!): Boolean!
   changePassword(newPassword: String!, currentPassword: String!): SimpleResponse!
-  activateAccount(username: String!, password: String!, token: String!): ActivationOutcome!
+  activateAccount(username: String!, password: String!, token: String!): CreateSession!
   sessionByEmail(username: String!, email: String!): SimpleResponse!
-  createSession(username: String!, password: String!): UserSession
+  createSession(username: String!, password: String!): CreateSession!
 }
 
 type Query {
-  _null_placeholder: Boolean
+  getSession: UserSession
 }
 
 type SimpleResponse {
   success: Boolean!
+  message: String
+}
+
+type CreateSession {
+  jwt: String
   message: String
 }
 
@@ -22,10 +27,4 @@ type UserSession {
   email: String!
   changeEmailRequest: String
   accountId: String!
-  jwt: String!
-}
-
-type ActivationOutcome {
-  session: UserSession
-  message: String
 }

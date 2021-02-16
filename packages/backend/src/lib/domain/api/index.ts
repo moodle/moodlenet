@@ -166,12 +166,15 @@ export const respond = <Domain>(domain: string) => async <ApiPath extends Types.
       return Promise.resolve(handler(msgJsonContent))
         .then(resp => {
           reply({ msg, flow, resp })
-          return AMQP.Acks.ack
+          return AMQP.Acks.Done
         })
         .catch(exc => {
           log(flow, `API error`, exc)
-          reply({ msg, flow, resp: Types.apiReplyError(exc) })
-          return AMQP.Acks.reject
+          if (reply({ msg, flow, resp: Types.apiReplyError(exc) })) {
+            return AMQP.Acks.Reject
+          } else {
+            return AMQP.Acks.Requeue
+          }
         })
       // function unbindThisRoute() {
       //   const thisTopic = msg.fields.routingKey
@@ -202,6 +205,9 @@ export const respond = <Domain>(domain: string) => async <ApiPath extends Types.
           correlationId: msg.properties.messageId,
         },
       })
+      return true
+    } else {
+      return false
     }
   }
 }

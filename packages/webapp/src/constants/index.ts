@@ -3,4 +3,4 @@ export const PUBLIC_URL = process.env.PUBLIC_URL
 
 export const GRAPHQL_ENDPOINT = process.env.REACT_APP_GRAPHQL_ENDPOINT
 
-export const env = process.env.NODE_ENV
+export const isProduction = process.env.NODE_ENV !== 'production'

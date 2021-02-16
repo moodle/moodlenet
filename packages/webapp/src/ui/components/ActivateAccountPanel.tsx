@@ -13,7 +13,7 @@ export type ActivateAccountFormValues = {
 export type ActivateAccountPanelProps = {
   form: FormBag<ActivateAccountFormValues>
   termsAndConditionsLink: LinkDef
-  message: string | undefined
+  message: string | null
 }
 
 export const ActivateAccountPanel: FC<ActivateAccountPanelProps> = ({ form, message, termsAndConditionsLink }) => {

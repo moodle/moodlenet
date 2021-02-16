@@ -1,3 +1,4 @@
+import { ShallowNode } from './../ContentGraph/persistence/types'
 import Argon from 'argon2'
 import dot from 'dot'
 import { api } from '../../../lib/domain'
@@ -14,10 +15,8 @@ export const userSessionByActiveUserAccount = async ({
 }: {
   activeUserAccount: ActiveUserAccount
 }): Promise<UserSession> => {
-  const { jwt } = await userAndJwtByActiveUserAccount({ activeUserAccount })
   const session: UserSession = {
     __typename: 'UserSession',
-    jwt,
     accountId: activeUserAccount._id,
     changeEmailRequest: activeUserAccount.changeEmailRequest?.email ?? null,
     email: activeUserAccount.email,
@@ -26,27 +25,51 @@ export const userSessionByActiveUserAccount = async ({
   return session
 }
 
+export const createSessionByActiveUserAccount = async ({
+  activeUserAccount,
+}: {
+  activeUserAccount: ActiveUserAccount
+}): Promise<{ jwt: string | null }> => {
+  const { jwt } = await userAndJwtByActiveUserAccount({ activeUserAccount })
+  return {
+    jwt,
+  }
+}
+
 export const userAndJwtByActiveUserAccount = async ({
   activeUserAccount,
 }: {
   activeUserAccount: ActiveUserAccount
 }) => {
-  const signJwt = getJwtSigner()
-  const { node: maybeUser } = await api<MoodleNetDomain>()('ContentGraph.Node.ById').call(nodeById =>
+  const { node: user } = await api<MoodleNetDomain>()('ContentGraph.Node.ById').call(nodeById =>
     nodeById<User>({
       _id: getAuthUserId({ accountUsername: activeUserAccount.username }),
     }),
   )
-  if (!maybeUser) {
+  if (!user) {
     throw new Error(`can't find User for Account Username: ${activeUserAccount.username}`)
   }
-  const jwt = await signJwt({
-    account: activeUserAccount,
-    user: maybeUser,
+  const jwt = await jwtByActiveUserAccountAndUser({
+    activeUserAccount,
+    user,
   })
-  return { jwt, user: maybeUser }
+  return { jwt, user: user }
 }
 
+export const jwtByActiveUserAccountAndUser = async ({
+  activeUserAccount,
+  user,
+}: {
+  activeUserAccount: ActiveUserAccount
+  user: ShallowNode<User>
+}) => {
+  const signJwt = getJwtSigner()
+  const jwt = await signJwt({
+    account: activeUserAccount,
+    user,
+  })
+  return jwt
+}
 export const getSimpleResponse = ({
   success,
   message,

@@ -101,7 +101,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "ActivationOutcome",
+                "name": "CreateSession",
                 "ofType": null
               }
             },
@@ -359,9 +359,13 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "UserSession",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "CreateSession",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1850,12 +1854,12 @@
         "description": null,
         "fields": [
           {
-            "name": "_null_placeholder",
+            "name": "getSession",
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
+              "kind": "OBJECT",
+              "name": "UserSession",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2399,22 +2403,6 @@
             "deprecationReason": null
           },
           {
-            "name": "jwt",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "user",
             "description": null,
             "args": [],
@@ -2846,16 +2834,16 @@
       },
       {
         "kind": "OBJECT",
-        "name": "ActivationOutcome",
+        "name": "CreateSession",
         "description": null,
         "fields": [
           {
-            "name": "session",
+            "name": "jwt",
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
-              "name": "UserSession",
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "isDeprecated": false,
