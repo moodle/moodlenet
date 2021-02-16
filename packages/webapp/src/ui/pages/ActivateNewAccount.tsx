@@ -1,5 +1,5 @@
 import { FC, ReactElement } from 'react'
-import { EmptyPageTemplate } from '../templates/page/EmptyPageTemplate'
+import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
 export * from '../components/ActivateAccountPanel'
 
 export type ActivateNewAccountPageProps = {
@@ -7,5 +7,5 @@ export type ActivateNewAccountPageProps = {
 }
 
 export const ActivateNewAccountPage: FC<ActivateNewAccountPageProps> = ({ ActivateNewAccountPanel }) => {
-  return <EmptyPageTemplate>{ActivateNewAccountPanel}</EmptyPageTemplate>
+  return <HeaderPageTemplate>{ActivateNewAccountPanel}</HeaderPageTemplate>
 }

@@ -14,6 +14,9 @@
   "devDependencies": {
     "lerna": "^3.22.1"
   },
+  "dependencies": {
+    "typescript": "~4.1.5"
+  },
   "scripts": {
     "bs": "lerna bootstrap --nohoist=babel-* --nohoist=*react*",
     "start-dev": "PUBLIC_URL=http://localhost:3000 REACT_APP_GRAPHQL_ENDPOINT=http://localhost:8080/graphql lerna run start-dev --parallel --stream -- -- -r ./dotenv",

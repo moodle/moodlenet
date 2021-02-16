@@ -10,9 +10,10 @@ export type LoginPanelProps = {
   form: FormBag<LoginFormValues>
   message: string | null
   signupLink: LinkDef
+  homeLink: LinkDef
 }
 
-export const LoginPanelBig: FC<LoginPanelProps> = ({ form, message, signupLink }) => {
+export const LoginPanelBig: FC<LoginPanelProps> = ({ form, message, signupLink, homeLink }) => {
   const Link = useLink()
   return (
     <Grid textAlign="center" verticalAlign="middle">
@@ -20,7 +21,9 @@ export const LoginPanelBig: FC<LoginPanelProps> = ({ form, message, signupLink }
         <Header as="h2" textAlign="center">
           <Trans>Login to</Trans>
           <Header.Subheader>
-            <Image src={logo} />
+            <Link href={homeLink}>
+              <Image src={logo} size="big" centered />
+            </Link>
           </Header.Subheader>
         </Header>
         <Form size="large" disabled={form.isSubmitting} onSubmit={form.submitForm}>

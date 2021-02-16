@@ -8,3 +8,5 @@ lerna-debug.log*
 lerna-error.log*
 
 .eslintcache
+
+.ignore-dir/

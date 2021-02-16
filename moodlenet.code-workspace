@@ -5,7 +5,7 @@
     }
   ],
   "settings": {
-    "typescript.tsdk": "backend/node_modules/typescript/lib",
+    "typescript.tsdk": "node_modules/typescript/lib",
     "todo-tree.filtering.excludeGlobs": ["**/node_modules/**/*"],
     "git.ignoreLimitWarning": true,
     "vscode-graphql.debug": true
