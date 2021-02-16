@@ -1,7 +1,17 @@
 import { FC } from 'react'
-import { EmptyPageTemplate } from '../templates/page/EmptyPageTemplate'
+import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
+import logo from '../static/img/moodlenet-logo.png'
+import { Header, Image } from 'semantic-ui-react'
+import { Trans } from '@lingui/macro'
 
 export type HomePageProps = {}
 export const HomePage: FC<HomePageProps> = () => {
-  return <EmptyPageTemplate>Home</EmptyPageTemplate>
+  return (
+    <HeaderPageTemplate>
+      <Header>
+        <Trans>Welcome to Moodlenet!</Trans>
+      </Header>
+      <Image src={logo} size="huge" centered />
+    </HeaderPageTemplate>
+  )
 }

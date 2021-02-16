@@ -4,7 +4,10 @@ import { SignupFormValues, SignupPanelBig } from '../../ui/components/SignupPane
 import { useSignUpMutation } from './SignupPanelBigCtrl/signup.gen'
 import { MutationSignUpArgs } from '../../graphql/pub.graphql.link'
 import { signUp } from '@moodlenet/common/lib/graphql/validation/input/user-account'
+import { webappLinkDef } from '../../helpers/navigation'
+import { Home } from '@moodlenet/common/lib/webapp/sitemap/routes'
 
+const homeLink = webappLinkDef<Home>('/', {})
 export const SignupPanelBigCtrl: FC = () => {
   const [signup, result] = useSignUpMutation()
   const [, /* formik*/ bag] = useFormikWithBag<SignupFormValues & MutationSignUpArgs>({
@@ -15,6 +18,7 @@ export const SignupPanelBigCtrl: FC = () => {
       return signup({ variables: { email } })
     },
   })
-  const message = result.data?.signUp.message ?? ''
-  return <SignupPanelBig form={bag} message={message} />
+  const warnMessage = result.data?.signUp.message ?? ''
+  const signUpSucceded = !!result.data?.signUp.success
+  return <SignupPanelBig form={bag} warnMessage={warnMessage} homeLink={homeLink} signUpSucceded={signUpSucceded} />
 }

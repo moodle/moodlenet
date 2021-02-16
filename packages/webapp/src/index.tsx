@@ -1,4 +1,4 @@
-import React from 'react'
+import {StrictMode} from 'react'
 import ReactDOM from 'react-dom'
 import { GlobalContexts } from './contexts/Global'
 import './index.css'
@@ -6,11 +6,11 @@ import reportWebVitals from './reportWebVitals'
 import { MNRouter } from './routes/MNRouter'
 
 ReactDOM.render(
-  <React.StrictMode>
+  <StrictMode>
     <GlobalContexts>
       <MNRouter />
     </GlobalContexts>
-  </React.StrictMode>,
+  </StrictMode>,
   document.getElementById('root'),
 )
 
