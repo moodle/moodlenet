@@ -9,7 +9,7 @@ export const HomePage: FC<HomePageProps> = () => {
   return (
     <HeaderPageTemplate>
       <Header>
-        <Trans>Welcome to Moodlenet!</Trans>
+        <Trans>Welcome to</Trans>
       </Header>
       <Image src={logo} size="huge" centered />
     </HeaderPageTemplate>
