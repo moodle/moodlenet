@@ -66,7 +66,7 @@ export type CreateNodeInput = {
   Collection: Maybe<CreateCollectionInput>;
   Resource: Maybe<CreateResourceInput>;
   Subject: Maybe<CreateSubjectInput>;
-  User: Maybe<Scalars['Never']>;
+  User: Maybe<CreateSubjectInput>;
   nodeType: NodeType;
 };
 
@@ -258,7 +258,7 @@ export type Query = {
 
 
 export type QueryGetSessionAccountUserArgs = {
-  username: Scalars['String'];
+  userId: Scalars['ID'];
 };
 
 
@@ -288,13 +288,6 @@ export type EdgeTypeInput = {
   node: NodeType;
   inverse: Maybe<Scalars['Boolean']>;
 };
-
-export enum Role {
-  User = 'User',
-  Admin = 'Admin',
-  Root = 'Root',
-  Moderator = 'Moderator'
-}
 
 export type AppliesTo = IEdge & {
   __typename: 'AppliesTo';
@@ -412,8 +405,7 @@ export type User = INode & {
   __typename: 'User';
   _id: Scalars['ID'];
   _rel: Page;
-  role: Role;
-  displayName: Scalars['String'];
+  name: Scalars['String'];
 };
 
 
@@ -423,7 +415,7 @@ export type User_RelArgs = {
 };
 
 export type UpdateUserInput = {
-  displayName: Maybe<Scalars['String']>;
+  name: Maybe<Scalars['String']>;
 };
 
 
@@ -551,7 +543,6 @@ export type ResolversTypes = {
   INode: ResolversTypes['Collection'] | ResolversTypes['Resource'] | ResolversTypes['Subject'] | ResolversTypes['User'];
   IEdge: ResolversTypes['AppliesTo'] | ResolversTypes['Contains'] | ResolversTypes['Created'] | ResolversTypes['Follows'] | ResolversTypes['Likes'];
   EdgeTypeInput: EdgeTypeInput;
-  Role: Role;
   AppliesTo: ResolverTypeWrapper<AppliesTo>;
   Edge: ResolversTypes['AppliesTo'] | ResolversTypes['Contains'] | ResolversTypes['Created'] | ResolversTypes['Follows'] | ResolversTypes['Likes'];
   EdgeType: EdgeType;
@@ -772,7 +763,7 @@ export type PageEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
 };
 
 export type QueryResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  getSessionAccountUser: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType, RequireFields<QueryGetSessionAccountUserArgs, 'username'>>;
+  getSessionAccountUser: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType, RequireFields<QueryGetSessionAccountUserArgs, 'userId'>>;
   node: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryNodeArgs, '_id' | 'nodeType'>>;
 };
 
@@ -853,8 +844,7 @@ export type SubjectResolvers<ContextType = MoodleNetExecutionContext, ParentType
 export type UserResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<User_RelArgs, 'edge'>>;
-  role: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
-  displayName: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

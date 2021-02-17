@@ -1,6 +1,7 @@
 import { EdgeType, NodeType } from '../../pub-graphql/types.graphql.gen'
 export type IdKey = string //& { readonly __: unique symbol }
-export type Id = `${NodeType}/${IdKey}` & { readonly __: unique symbol }
+// export type Id<N extends NodeType = NodeType> = `${N}/${IdKey}` & { readonly __: unique symbol }
+export type Id = string & { readonly __: unique symbol }
 
 // export const isIdKey = (_: string): _ is IdKey => true //FIXME: check is ULID
 export const isId = (_: string): _ is Id => {

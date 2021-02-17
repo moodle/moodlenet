@@ -1,6 +1,6 @@
 fragment ShallowUser on User {
   _id
-  displayName
+  name
 }
 
 fragment ShallowSubject on Subject {

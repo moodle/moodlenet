@@ -14,10 +14,3 @@ input EdgeTypeInput {
   node: NodeType!
   inverse: Boolean
 }
-
-enum Role {
-  User
-  Admin
-  Root
-  Moderator
-}

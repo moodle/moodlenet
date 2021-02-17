@@ -1,7 +1,9 @@
+import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { Database } from 'arangojs'
 import { CreateCollectionOptions, DocumentCollection, EdgeCollection } from 'arangojs/collection'
 import { Config } from 'arangojs/connection'
 import { CreateDatabaseOptions } from 'arangojs/database'
+import { ulid } from 'ulid'
 import { Maybe } from './types'
 
 export const createVertexCollectionIfNotExists = async <
@@ -84,3 +86,7 @@ export const getDocumentById = async <Type extends object = object>({
   cursor.kill()
   return resp
 }
+
+export const aqlstr = (_: any) => JSON.stringify(_)
+
+export const ulidKey = (): IdKey => ulid()

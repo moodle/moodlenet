@@ -1,18 +1,16 @@
+import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { MoodleNetExecutionContext } from '../../../../types'
-import { CreateNodeInput, CreateNodeMutationErrorType, NodeType } from '../../ContentGraph.graphql.gen'
-import { createNodeMutationError } from '../../graphql.resolvers/helpers'
-import { createHooks, isAllowedCreationType } from './hooks'
+import { CreateNodeInput, NodeType } from '../../ContentGraph.graphql.gen'
+import { getCreateHook } from './hooks'
 
 export type CreateNodeReq<Type extends NodeType> = {
   nodeType: Type
-  input: Exclude<CreateNodeInput[Type], null>
+  input: Exclude<CreateNodeInput[Type], null | undefined>
+  key: IdKey
   ctx: MoodleNetExecutionContext
 }
 
-export const CreateNodeHandler = async <Type extends NodeType>({ ctx, input, nodeType }: CreateNodeReq<Type>) => {
-  if (!isAllowedCreationType(nodeType)) {
-    return createNodeMutationError(CreateNodeMutationErrorType.NotAuthorized)
-  }
-  const hook = createHooks[nodeType]
-  return await hook({ input, ctx })
+export const CreateNodeHandler = async <Type extends NodeType>({ ctx, input, nodeType, key }: CreateNodeReq<Type>) => {
+  const hook = getCreateHook(nodeType)
+  return await hook({ input, ctx, key })
 }

@@ -1,11 +1,12 @@
-import { ShallowNode } from './../ContentGraph/persistence/types'
+import { makeId, NodeType } from '@moodlenet/common/lib/utils/content-graph'
 import Argon from 'argon2'
 import dot from 'dot'
 import { api } from '../../../lib/domain'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
-import { getAuthUserId, getJwtSigner } from '../../MoodleNetGraphQL'
+import { getJwtSigner } from '../../MoodleNetGraphQL'
 import { User } from '../ContentGraph/ContentGraph.graphql.gen'
 import { EmailObj } from '../Email/types'
+import { ShallowNode } from './../ContentGraph/persistence/types'
 import { ActiveUserAccount, EmailTemplate } from './persistence/types'
 import { ArgonPwdHashOpts, getAccountPersistence } from './UserAccount.env'
 import { SimpleResponse, UserSession } from './UserAccount.graphql.gen'
@@ -21,6 +22,7 @@ export const userSessionByActiveUserAccount = async ({
     changeEmailRequest: activeUserAccount.changeEmailRequest?.email ?? null,
     email: activeUserAccount.email,
     username: activeUserAccount.username,
+    userId: activeUserAccount.userId,
   }
   return session
 }
@@ -43,7 +45,7 @@ export const userAndJwtByActiveUserAccount = async ({
 }) => {
   const { node: user } = await api<MoodleNetDomain>()('ContentGraph.Node.ById').call(nodeById =>
     nodeById<User>({
-      _id: getAuthUserId({ accountUsername: activeUserAccount.username }),
+      _id: makeId(NodeType.User, activeUserAccount.userId),
     }),
   )
   if (!user) {

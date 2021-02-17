@@ -1,22 +1,22 @@
-import { CreateNodeMutationErrorType } from '../../../../ContentGraph.graphql.gen'
-import { getStaticFilteredNodeBasicAccessPolicy } from '../../../../graphDefinition/helpers'
+// import { CreateNodeMutationErrorType } from '../../../../ContentGraph.graphql.gen'
+// import { getStaticFilteredNodeBasicAccessPolicy } from '../../../../graphDefinition/helpers'
 import { ContentGraphPersistence } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 
-export const createNode: ContentGraphPersistence['createNode'] = async ({ ctx, data, nodeType }) => {
+export const createNode: ContentGraphPersistence['createNode'] = async ({ /* ctx, */ data, nodeType, key }) => {
   const { graph } = await DBReady
-  const { auth } = ctx
-  const policy = getStaticFilteredNodeBasicAccessPolicy({
-    accessType: 'create',
-    nodeType,
-    ctx,
-  })
-  if (!(policy && auth)) {
-    return {
-      __typename: 'CreateNodeMutationError',
-      type: CreateNodeMutationErrorType.NotAuthorized,
-    }
-  }
+  //FIXME: ! check policy
+  // const policy = getStaticFilteredNodeBasicAccessPolicy({
+  //   accessType: 'create',
+  //   nodeType,
+  //   ctx,
+  // })
+  // if (!(policy)) {
+  //   return {
+  //     __typename: 'CreateNodeMutationError',
+  //     type: CreateNodeMutationErrorType.NotAuthorized,
+  //   }
+  // }
   // const nodeAccessFilter = getGlyphBasicAccessFilter({
   //   glyphTag: 'node',
   //   policy,
@@ -25,6 +25,6 @@ export const createNode: ContentGraphPersistence['createNode'] = async ({ ctx, d
   // })
 
   const collection = graph.vertexCollection(nodeType)
-  const { new: node } = await collection.save(data, { returnNew: true })
+  const { new: node } = await collection.save({ ...data, _key: key }, { returnNew: true })
   return node
 }

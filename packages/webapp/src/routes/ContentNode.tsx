@@ -8,20 +8,20 @@ const camelCaseType = (_: string) => (_ && _[0].toUpperCase() + _.substr(1)) as 
 
 export const ContentNodeComponent: RouteFC<Routes.ContentNode> = ({
   match: {
-    params: { id, nodeType },
+    params: { key, nodeType },
   },
 }) => {
-  // TODO: check isId(id)
+  // TODO: check isKey(key)
   nodeType = camelCaseType(nodeType)
   switch (nodeType) {
     case NodeType.User:
-      return <div>ContentNode User/{id}</div>
+      return <div>Content Page User/{key}</div>
     case NodeType.Subject:
-      return <div>ContentNode Subject/{id}</div>
+      return <div>Content Page Subject/{key}</div>
     case NodeType.Collection:
-      return <div>ContentNode Collection/{id}</div>
+      return <div>Content Page Collection/{key}</div>
     case NodeType.Resource:
-      return <div>ContentNode Resource/{id}</div>
+      return <div>Content Page Resource/{key}</div>
     default:
       return NeverPage(nodeType)
   }
@@ -29,6 +29,6 @@ export const ContentNodeComponent: RouteFC<Routes.ContentNode> = ({
 
 export const ContentNodeRoute: MNRouteProps<Routes.ContentNode> = {
   component: ContentNodeComponent,
-  path: '/content/:nodeType/:id',
-  exact: true,
+  path: '/content/:nodeType/:key',
+  exact: false,
 }

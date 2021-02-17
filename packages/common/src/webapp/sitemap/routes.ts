@@ -1,4 +1,5 @@
-import { NodeType, Scalars } from '../../pub-graphql/types.graphql.gen'
+import { NodeType } from '../../pub-graphql/types.graphql.gen'
+import { IdKey } from '../../utils/content-graph'
 import { RouteDef } from './types'
 
 export type Home = RouteDef<'/', {}>
@@ -8,9 +9,9 @@ export type Signup = RouteDef<'/signup', {}>
 export type TermsAndConditions = RouteDef<'/terms', {}>
 
 export type ContentNode = RouteDef<
-  `/content/:nodeType/:id`,
+  `/content/:nodeType/:key`,
   {
-    id: Scalars['ID']
+    key: IdKey
     nodeType: NodeType
   }
 >

@@ -1,4 +1,5 @@
 import { api } from '../../../../../lib/domain'
+import { ulidKey } from '../../../../../lib/helpers/arango'
 import { MoodleNetDomain } from '../../../../MoodleNetDomain'
 import { CreateNodeMutationErrorType, CreateNodeMutationSuccess, Resolvers } from '../../ContentGraph.graphql.gen'
 import { getStaticFilteredNodeBasicAccessPolicy } from '../../graphDefinition/helpers'
@@ -27,7 +28,7 @@ export const createNode: Resolvers['Mutation']['createNode'] = async (_root, { i
     return createNodeMutationError(CreateNodeMutationErrorType.UnexpectedInput, nodeInput.message)
   }
   const shallowNodeOrError = await api<MoodleNetDomain>(ctx.flow)('ContentGraph.Node.Create').call(createNode =>
-    createNode<CreatingType>({ ctx, input: nodeInput, nodeType }),
+    createNode<CreatingType>({ ctx, input: nodeInput, nodeType, key: ulidKey() }),
   )
 
   if (shallowNodeOrError.__typename === 'CreateNodeMutationError') {

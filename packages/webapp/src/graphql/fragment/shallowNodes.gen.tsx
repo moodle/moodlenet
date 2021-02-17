@@ -3,7 +3,7 @@ import * as Types from '../pub.graphql.link';
 import { gql } from '@apollo/client';
 export type ShallowUserFragment = (
   { __typename: 'User' }
-  & Pick<Types.User, '_id' | 'displayName'>
+  & Pick<Types.User, '_id' | 'name'>
 );
 
 export type ShallowSubjectFragment = (
@@ -14,7 +14,7 @@ export type ShallowSubjectFragment = (
 export const ShallowUserFragmentDoc = gql`
     fragment ShallowUser on User {
   _id
-  displayName
+  name
 }
     `;
 export const ShallowSubjectFragmentDoc = gql`

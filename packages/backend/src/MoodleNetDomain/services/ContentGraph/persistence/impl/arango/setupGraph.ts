@@ -1,5 +1,6 @@
 import { Database } from 'arangojs'
 import { EdgeDefinitionOptions } from 'arangojs/graph'
+import { inspect } from 'util'
 import { EdgeType, NodeType } from '../../../ContentGraph.graphql.gen'
 import { contentGraph } from '../../../graphDefinition'
 import { EdgeOptions } from '../../../graphDefinition/types'
@@ -20,9 +21,10 @@ const getEdgeDefinition = (edgeType: EdgeType, edgeOptions: EdgeOptions): EdgeDe
   }
 }
 export const setupGraph = async ({ db }: { db: Database }) => {
-  const edgeDefinitionOptions = Object.entries(contentGraph).map(([edgeType, edgeOpts]) =>
-    getEdgeDefinition(edgeType as EdgeType, edgeOpts),
-  )
+  const edgeDefinitionOptions = Object.entries(contentGraph).map(([edgeType, edgeOpts]) => {
+    return getEdgeDefinition(edgeType as EdgeType, edgeOpts)
+  })
+  console.log(inspect(edgeDefinitionOptions, false, 10, true))
   const graph =
     (await db.graphs()).find(_graph => _graph.name == CONTENT_GRAPH_NAME) ||
     (await db.createGraph(CONTENT_GRAPH_NAME, edgeDefinitionOptions))

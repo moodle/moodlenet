@@ -1,6 +1,6 @@
 import { basicAccessPolicies } from '.'
-import { MoodleNetExecutionContext, MoodleNetExecutionAuth } from '../../../MoodleNetGraphQL'
-import { EdgeType, NodeType, Role } from '../ContentGraph.graphql.gen'
+import { MoodleNetExecutionAuth, MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
+import { EdgeType, NodeType } from '../ContentGraph.graphql.gen'
 import { AccessType, BasicAccessPolicy, BasicAccessPolicyType, GlyphTag } from './types'
 
 export const getEdgeBasicAccessPolicy = ({ accessType, edgeType }: { edgeType: EdgeType; accessType: AccessType }) =>
@@ -84,8 +84,8 @@ export const needsAuthFilter: NeedsAuthFilter<boolean> = filterWithAuth => ({ ct
   ctx.auth ? filterWithAuth({ ctx, auth: ctx.auth, glyphTag }) : false
 
 const staticBasicAccessPolicyTypeFilters: BasicAccessPolicyTypeFilters<boolean> = {
-  Admins: needsAuthFilter(({ auth }) => auth.role === Role.Admin),
-  Moderator: needsAuthFilter(({ auth }) => auth.role === Role.Moderator),
+  Admins: needsAuthFilter(() => true),
+  Moderator: needsAuthFilter(() => true),
   AnyUser: needsAuthFilter(() => true),
   Creator: needsAuthFilter(() => true),
   Public: () => true,

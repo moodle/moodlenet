@@ -1,4 +1,6 @@
+import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { Maybe, WithCreated, WithFlow, WithId, WithMutable } from '../../../../lib/helpers/types'
+import { Role } from '../../../types'
 import { EmailObj } from '../../Email/types'
 import { ConfirmAccountEmailChangeRequestPersistence } from '../apis/UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail'
 import { ChangeAccountEmailRequestDeletePersistence } from '../apis/UserAccount.ChangeMainEmail.DeleteRequest'
@@ -51,6 +53,8 @@ export type ActiveUserAccount = UserAccountRecordBase & {
   username: string
   password: string
   changeEmailRequest: null | ChangeEmailRequest
+  role: Role
+  userId: Id
 }
 export type WaitingFirstActivationUserAccount = UserAccountRecordBase & {
   status: UserAccountStatus.WaitingFirstActivation

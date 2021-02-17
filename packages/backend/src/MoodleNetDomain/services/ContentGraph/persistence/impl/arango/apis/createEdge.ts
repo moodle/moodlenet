@@ -11,7 +11,7 @@ import { ContentGraphPersistence } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 import { findNodeWithPolicy } from './findNode'
 
-export const createEdge: ContentGraphPersistence['createEdge'] = async ({ ctx, data, to, from, edgeType }) => {
+export const createEdge: ContentGraphPersistence['createEdge'] = async ({ ctx, data, to, from, edgeType, key }) => {
   const { graph } = await DBReady
   const { auth } = ctx
   const fromType = nodeTypeFromId(from)
@@ -76,7 +76,7 @@ fromPolicy:${fromPolicy}`,
   }
 
   const collection = graph.edgeCollection(edgeType)
-  const { new: edge } = await collection.save({ ...data, _from: from, _to: to }, { returnNew: true })
+  const { new: edge } = await collection.save({ ...data, _from: from, _to: to, _key: key }, { returnNew: true })
   console.log('created edge', edge)
   return edge
 }

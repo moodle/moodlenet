@@ -111,7 +111,7 @@ export type CreateNodeInput = {
   Collection: Maybe<CreateCollectionInput>;
   Resource: Maybe<CreateResourceInput>;
   Subject: Maybe<CreateSubjectInput>;
-  User: Maybe<Scalars['Never']>;
+  User: Maybe<CreateSubjectInput>;
   nodeType: NodeType;
 };
 
@@ -304,7 +304,7 @@ export type Query = {
 
 
 export type QueryGetSessionAccountUserArgs = {
-  username: Scalars['String'];
+  userId: Scalars['ID'];
 };
 
 
@@ -334,13 +334,6 @@ export type EdgeTypeInput = {
   node: NodeType;
   inverse: Maybe<Scalars['Boolean']>;
 };
-
-export enum Role {
-  User = 'User',
-  Admin = 'Admin',
-  Root = 'Root',
-  Moderator = 'Moderator'
-}
 
 export type AppliesTo = IEdge & {
   __typename: 'AppliesTo';
@@ -383,6 +376,7 @@ export type UserSession = {
   changeEmailRequest: Maybe<Scalars['String']>;
   email: Scalars['String'];
   user: User;
+  userId: Scalars['ID'];
   username: Scalars['String'];
 };
 
@@ -462,8 +456,7 @@ export type User = INode & {
   __typename: 'User';
   _id: Scalars['ID'];
   _rel: Page;
-  role: Role;
-  displayName: Scalars['String'];
+  name: Scalars['String'];
 };
 
 
@@ -473,7 +466,7 @@ export type User_RelArgs = {
 };
 
 export type UpdateUserInput = {
-  displayName: Maybe<Scalars['String']>;
+  name: Maybe<Scalars['String']>;
 };
 
 export type SimpleResponse = {

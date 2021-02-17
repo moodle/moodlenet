@@ -1,7 +1,8 @@
+import { aqlstr } from '../../../../../../../lib/helpers/arango'
 import { getGlyphBasicAccessFilter } from '../../../../graphDefinition/helpers'
 import { ContentGraphPersistence, Types } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
-import { aqlstr, basicArangoAccessFilterEngine } from '../ContentGraph.persistence.arango.helpers'
+import { basicArangoAccessFilterEngine } from '../ContentGraph.persistence.arango.helpers'
 
 const DEFAULT_PAGE_LENGTH = 10
 

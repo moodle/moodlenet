@@ -3,41 +3,15 @@ import {
   BasicAccessPolicyTypeFilters,
   NeedsAuthFilter,
 } from '../../../graphDefinition/helpers'
-import { GlyphTag } from '../../../graphDefinition/types'
-import { Types } from '../../types'
-
-export const createMeta = ({ userId }: { userId: string }) => {
-  return `{
-      __typename: 'Meta',
-      created: ${byAtNow({ userId })},
-      lastUpdate: ${byAtNow({ userId })}
-    }`
-}
-
-export const mergeLastUpdateMeta = ({ glyphTag, userId }: { userId: string; glyphTag: GlyphTag }) => {
-  return `MERGE( ${glyphTag}._meta, {
-      lastUpdate: MERGE( ${glyphTag}._meta.lastUpdate,
-        ${byAtNow({ userId })}
-      )
-    })`
-}
-
-export const byAtNow = ({ userId }: { userId: string }) => {
-  return `{
-        __typename: 'ByAt',
-        at: DATE_NOW(),
-        by: { _id: ${aqlstr(userId)} }
-      }`
-}
 
 export const needsAuthFilter: NeedsAuthFilter<string> = filterWithAuth => ({ ctx, glyphTag }) =>
   ctx.auth ? filterWithAuth({ ctx, auth: ctx.auth, glyphTag }) : 'false'
 
 export const basicArangoAccessPolicyTypeFilters: BasicAccessPolicyTypeFilters<string> = {
-  Admins: needsAuthFilter(({ auth }) => (auth.role === Types.Role.Admin ? 'true' : 'false')),
+  Admins: needsAuthFilter(() => 'true'),
   AnyUser: needsAuthFilter(() => 'true'),
-  Creator: needsAuthFilter(({ auth, glyphTag }) => `${glyphTag}._meta.created.by._id == "${auth.userId}"`),
-  Moderator: needsAuthFilter(({ auth }) => (auth.role === Types.Role.Moderator ? 'true' : 'false')),
+  Creator: needsAuthFilter(() => 'true'),
+  Moderator: needsAuthFilter(() => 'true'),
   Public: () => 'true',
 }
 
@@ -46,5 +20,3 @@ export const basicArangoAccessFilterEngine: BasicAccessFilterEngine<string> = {
   orReducer: (a, b) => (a === undefined ? ` ${b} ` : ` ${a} || ${b} `),
   basicAccessPolicyTypeFilters: basicArangoAccessPolicyTypeFilters,
 }
-
-export const aqlstr = (_: any) => JSON.stringify(_)

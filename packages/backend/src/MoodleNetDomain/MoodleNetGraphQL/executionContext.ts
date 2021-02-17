@@ -1,11 +1,10 @@
 import { Executor } from '@graphql-tools/delegate/types'
-import { makeId, NodeType } from '@moodlenet/common/lib/utils/content-graph'
 import { GraphQLError } from 'graphql'
 import { IncomingMessage } from 'http'
 import { INVALID_TOKEN } from './JWT'
 import { getJwtVerifier } from './MoodleNetGraphQL.env'
 import { graphQLRequestFlow } from './schemaHelpers'
-import { MoodleNetExecutionContext, MoodleNetExecutionAuth, RootValue } from './types'
+import { MoodleNetExecutionAuth, MoodleNetExecutionContext, RootValue } from './types'
 
 export function loggedUserOnly(_: { context: MoodleNetExecutionContext }) {
   const { context } = _
@@ -29,6 +28,7 @@ export function getExecutionGlobalValues(
   return {
     context: {
       auth: auth === INVALID_TOKEN ? null : auth,
+      system: false,
       flow: graphQLRequestFlow(),
     },
     root: {},
@@ -37,6 +37,3 @@ export function getExecutionGlobalValues(
 
 //FIXME: implement proper typeguard
 export const isMoodleNetExecutionAuth = (_obj: object): _obj is MoodleNetExecutionAuth => true
-
-export const getAuthUserId = ({ accountUsername }: { accountUsername: string }) =>
-  makeId(NodeType.User, accountUsername) // BEWARE: hardcoded userId generation

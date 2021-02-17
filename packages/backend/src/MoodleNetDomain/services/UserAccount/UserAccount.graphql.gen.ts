@@ -96,6 +96,7 @@ export type UserSession = {
   email: Scalars['String'];
   changeEmailRequest: Maybe<Scalars['String']>;
   accountId: Scalars['String'];
+  userId: Scalars['ID'];
 };
 
 
@@ -186,6 +187,7 @@ export type ResolversTypes = {
   SimpleResponse: ResolverTypeWrapper<SimpleResponse>;
   CreateSession: ResolverTypeWrapper<CreateSession>;
   UserSession: ResolverTypeWrapper<UserSession>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -200,6 +202,7 @@ export type ResolversParentTypes = {
   SimpleResponse: SimpleResponse;
   CreateSession: CreateSession;
   UserSession: UserSession;
+  ID: Scalars['ID'];
 };
 
 export interface NeverScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Never'], any> {
@@ -245,6 +248,7 @@ export type UserSessionResolvers<ContextType = MoodleNetExecutionContext, Parent
   email: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   changeEmailRequest: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   accountId: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  userId: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
