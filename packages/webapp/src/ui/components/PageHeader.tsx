@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { FC } from 'react'
-import { Icon, Image, Menu } from 'semantic-ui-react'
+import { Dropdown, Icon, Image, Menu } from 'semantic-ui-react'
 import { LinkDef, useLink } from '../context'
 import logo from '../static/img/logo.jpg'
 
@@ -25,10 +25,13 @@ export const PageHeader: FC<PageHeaderProps> = ({ homeLink, loginLink, logout, u
         {username ? (
           <>
             <Icon circular name="user circle" size="large" color="orange" />
-            <span>{username}</span>
-            <span onClick={logout}>
-              <Trans>Logout</Trans>
-            </span>
+            <Dropdown item text={username} header simple icon={false}>
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={logout}>
+                  <Trans>Logout</Trans>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </>
         ) : (
           <Link href={loginLink}>
