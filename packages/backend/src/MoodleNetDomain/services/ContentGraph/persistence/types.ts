@@ -49,11 +49,6 @@ export interface ContentGraphPersistence {
   // deleteGlyph(_: { _id: string }): DeletePayload //config():Promise<Config>
 }
 
-export type ShallowByAt = Omit<GQL.ByAt, 'by'> & { by: { _id: Id } }
-export type ShallowMeta = Omit<GQL.Meta, 'created' | 'lastUpdate'> & {
-  created: ShallowByAt
-  lastUpdate: ShallowByAt
-}
 export type ShallowNode<N extends GQL.Node = GQL.Node> = Omit<N, '_rel'>
 export type ShallowEdge<E extends GQL.Edge = GQL.Edge> = Omit<E, '___ nothing to omit ___'>
 

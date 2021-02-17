@@ -1,5 +1,4 @@
 import { nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
-import { createMeta } from '../../../../apis/helpers'
 import { CreateEdgeMutationErrorType } from '../../../../ContentGraph.graphql.gen'
 import { getConnectionDef } from '../../../../graphDefinition'
 import {
@@ -76,10 +75,8 @@ fromPolicy:${fromPolicy}`,
     )
   }
 
-  const _meta = createMeta(auth)
-
   const collection = graph.edgeCollection(edgeType)
-  const { new: edge } = await collection.save({ ...data, _meta, _from: from, _to: to }, { returnNew: true })
+  const { new: edge } = await collection.save({ ...data, _from: from, _to: to }, { returnNew: true })
   console.log('created edge', edge)
   return edge
 }

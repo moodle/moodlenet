@@ -108,6 +108,8 @@ export type MutationUpdateNodeArgs = {
 };
 
 export type CreateNodeInput = {
+  Collection: Maybe<CreateCollectionInput>;
+  Resource: Maybe<CreateResourceInput>;
   Subject: Maybe<CreateSubjectInput>;
   User: Maybe<Scalars['Never']>;
   nodeType: NodeType;
@@ -132,7 +134,11 @@ export enum CreateNodeMutationErrorType {
 }
 
 export type CreateEdgeInput = {
+  AppliesTo: Maybe<Scalars['Empty']>;
+  Contains: Maybe<Scalars['Empty']>;
+  Created: Maybe<Scalars['Empty']>;
   Follows: Maybe<Scalars['Empty']>;
+  Likes: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   from: Scalars['ID'];
   to: Scalars['ID'];
@@ -159,6 +165,8 @@ export enum CreateEdgeMutationErrorType {
 }
 
 export type UpdateNodeInput = {
+  Collection: Maybe<UpdateCollectionInput>;
+  Resource: Maybe<UpdateResourceInput>;
   Subject: Maybe<UpdateSubjectInput>;
   User: Maybe<UpdateUserInput>;
   _id: Scalars['ID'];
@@ -185,7 +193,11 @@ export enum UpdateNodeMutationErrorType {
 }
 
 export type UpdateEdgeInput = {
+  AppliesTo: Maybe<Scalars['Empty']>;
+  Contains: Maybe<Scalars['Empty']>;
+  Created: Maybe<Scalars['Empty']>;
   Follows: Maybe<Scalars['Empty']>;
+  Likes: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   id: Scalars['ID'];
 };
@@ -304,7 +316,6 @@ export type QueryNodeArgs = {
 
 export type INode = {
   _id: Maybe<Scalars['ID']>;
-  _meta: Meta;
   _rel: Page;
 };
 
@@ -316,25 +327,12 @@ export type INode_RelArgs = {
 
 export type IEdge = {
   _id: Maybe<Scalars['ID']>;
-  _meta: Meta;
 };
 
 export type EdgeTypeInput = {
   type: EdgeType;
   node: NodeType;
   inverse: Maybe<Scalars['Boolean']>;
-};
-
-export type Meta = {
-  __typename: 'Meta';
-  created: ByAt;
-  lastUpdate: ByAt;
-};
-
-export type ByAt = {
-  __typename: 'ByAt';
-  by: User;
-  at: Scalars['DateTime'];
 };
 
 export enum Role {
@@ -344,17 +342,40 @@ export enum Role {
   Moderator = 'Moderator'
 }
 
+export type AppliesTo = IEdge & {
+  __typename: 'AppliesTo';
+  _id: Scalars['ID'];
+};
+
+export type Edge = AppliesTo | Contains | Created | Follows | Likes;
+
+export enum EdgeType {
+  AppliesTo = 'AppliesTo',
+  Contains = 'Contains',
+  Created = 'Created',
+  Follows = 'Follows',
+  Likes = 'Likes'
+}
+
+export type Contains = IEdge & {
+  __typename: 'Contains';
+  _id: Scalars['ID'];
+};
+
+export type Created = IEdge & {
+  __typename: 'Created';
+  _id: Scalars['ID'];
+};
+
 export type Follows = IEdge & {
   __typename: 'Follows';
   _id: Scalars['ID'];
-  _meta: Meta;
 };
 
-export type Edge = Follows;
-
-export enum EdgeType {
-  Follows = 'Follows'
-}
+export type Likes = IEdge & {
+  __typename: 'Likes';
+  _id: Scalars['ID'];
+};
 
 export type UserSession = {
   __typename: 'UserSession';
@@ -365,10 +386,60 @@ export type UserSession = {
   username: Scalars['String'];
 };
 
+export type Collection = INode & {
+  __typename: 'Collection';
+  _id: Scalars['ID'];
+  _rel: Page;
+  name: Scalars['String'];
+};
+
+
+export type Collection_RelArgs = {
+  edge: EdgeTypeInput;
+  page: Maybe<PageInput>;
+};
+
+export type Node = Collection | Resource | Subject | User;
+
+export enum NodeType {
+  Collection = 'Collection',
+  Resource = 'Resource',
+  Subject = 'Subject',
+  User = 'User'
+}
+
+export type CreateCollectionInput = {
+  name: Scalars['String'];
+};
+
+export type UpdateCollectionInput = {
+  name: Maybe<Scalars['String']>;
+};
+
+export type Resource = INode & {
+  __typename: 'Resource';
+  _id: Scalars['ID'];
+  _rel: Page;
+  name: Scalars['String'];
+};
+
+
+export type Resource_RelArgs = {
+  edge: EdgeTypeInput;
+  page: Maybe<PageInput>;
+};
+
+export type CreateResourceInput = {
+  name: Scalars['String'];
+};
+
+export type UpdateResourceInput = {
+  name: Maybe<Scalars['String']>;
+};
+
 export type Subject = INode & {
   __typename: 'Subject';
   _id: Scalars['ID'];
-  _meta: Meta;
   _rel: Page;
   name: Scalars['String'];
 };
@@ -378,13 +449,6 @@ export type Subject_RelArgs = {
   edge: EdgeTypeInput;
   page: Maybe<PageInput>;
 };
-
-export type Node = Subject | User;
-
-export enum NodeType {
-  Subject = 'Subject',
-  User = 'User'
-}
 
 export type CreateSubjectInput = {
   name: Scalars['String'];
@@ -397,7 +461,6 @@ export type UpdateSubjectInput = {
 export type User = INode & {
   __typename: 'User';
   _id: Scalars['ID'];
-  _meta: Meta;
   _rel: Page;
   role: Role;
   displayName: Scalars['String'];
@@ -458,16 +521,28 @@ export type CreateSession = {
       "DeleteNodeMutationError"
     ],
     "INode": [
+      "Collection",
+      "Resource",
       "Subject",
       "User"
     ],
     "IEdge": [
-      "Follows"
+      "AppliesTo",
+      "Contains",
+      "Created",
+      "Follows",
+      "Likes"
     ],
     "Edge": [
-      "Follows"
+      "AppliesTo",
+      "Contains",
+      "Created",
+      "Follows",
+      "Likes"
     ],
     "Node": [
+      "Collection",
+      "Resource",
       "Subject",
       "User"
     ]

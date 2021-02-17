@@ -27,12 +27,6 @@ export type EdgeOptions = {
 export type Connection = {
   from: NodeType
   to: NodeType
-  toMyselfOnly?: boolean
-  fromMyselfOnly?: boolean
-  nodeCreatorPolicy?: {
-    to?: BasicAccessPolicy
-    from?: BasicAccessPolicy
-  }
   maxSelfConnection?: number
   maxOverlaps?: number
   maxOutbounds?: number

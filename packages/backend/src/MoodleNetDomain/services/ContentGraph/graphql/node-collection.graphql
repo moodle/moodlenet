@@ -1,0 +1,24 @@
+type Collection implements INode {
+  _id: ID!
+  _rel(edge: EdgeTypeInput!, page: PageInput): Page!
+  name: String!
+}
+
+union Node = Collection
+enum NodeType {
+  Collection
+}
+
+input CreateNodeInput {
+  Collection: CreateCollectionInput
+}
+input CreateCollectionInput {
+  name: String!
+}
+
+input UpdateNodeInput {
+  Collection: UpdateCollectionInput
+}
+input UpdateCollectionInput {
+  name: String
+}

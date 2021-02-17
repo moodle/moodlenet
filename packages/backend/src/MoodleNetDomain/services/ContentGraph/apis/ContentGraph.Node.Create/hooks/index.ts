@@ -31,4 +31,28 @@ export const createHooks: {
     })
     return createResult
   },
+  Collection: async ({ input, ctx }) => {
+    const { createNode } = await getContentGraphPersistence()
+    const createResult = await createNode<NodeType.Collection>({
+      ctx,
+      nodeType: NodeType.Collection,
+      data: {
+        __typename: 'Collection',
+        name: input.name,
+      },
+    })
+    return createResult
+  },
+  Resource: async ({ input, ctx }) => {
+    const { createNode } = await getContentGraphPersistence()
+    const createResult = await createNode<NodeType.Resource>({
+      ctx,
+      nodeType: NodeType.Resource,
+      data: {
+        __typename: 'Resource',
+        name: input.name,
+      },
+    })
+    return createResult
+  },
 }

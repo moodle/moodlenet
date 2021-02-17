@@ -1,4 +1,3 @@
-import { createMeta } from '../../../../apis/helpers'
 import { CreateNodeMutationErrorType } from '../../../../ContentGraph.graphql.gen'
 import { getStaticFilteredNodeBasicAccessPolicy } from '../../../../graphDefinition/helpers'
 import { ContentGraphPersistence } from '../../../types'
@@ -24,9 +23,8 @@ export const createNode: ContentGraphPersistence['createNode'] = async ({ ctx, d
   //   ctx,
   //   engine: basicAccessFilterEngine,
   // })
-  const _meta = createMeta(auth)
 
   const collection = graph.vertexCollection(nodeType)
-  const { new: node } = await collection.save({ ...data, _meta }, { returnNew: true })
+  const { new: node } = await collection.save(data, { returnNew: true })
   return node
 }

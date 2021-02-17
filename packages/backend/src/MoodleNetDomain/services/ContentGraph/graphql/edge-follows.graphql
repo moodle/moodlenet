@@ -1,6 +1,5 @@
 type Follows implements IEdge {
   _id: ID!
-  _meta: Meta!
 }
 
 union Edge = Follows

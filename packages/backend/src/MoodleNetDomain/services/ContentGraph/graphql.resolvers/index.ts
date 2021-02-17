@@ -9,7 +9,6 @@ import { createNode } from './mutation/createNode'
 // import { updateEdge } from './mutation.updateEdge'
 // import { updateNode } from './mutation.updateNode'
 import { node } from './query.node'
-import { ByAt } from './types.byAt'
 import { NodeResolver } from './types.node'
 
 export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
@@ -17,27 +16,33 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
     Mutation: {
       createEdge,
       createNode,
-      deleteEdge: (() => {}) as any,
-      deleteNode: (() => {}) as any,
-      updateEdge: (() => {}) as any,
-      updateNode: (() => {}) as any,
+      deleteEdge: (() => {}) as any, //TODO: define resolver
+      deleteNode: (() => {}) as any, //TODO: define resolver
+      updateEdge: (() => {}) as any, //TODO: define resolver
+      updateNode: (() => {}) as any, //TODO: define resolver
     },
     Query: {
       node,
       getSessionAccountUser,
     },
-    ByAt,
-    Meta: {} as any,
     User: NodeResolver,
     Subject: NodeResolver,
-    Empty: {} as any,
-    DateTime: {} as any,
-    Never: null as never,
-    Cursor: null as never,
+    Empty: {} as any, //TODO: define resolver
+    DateTime: {} as any, //TODO: define resolver
+    Never: null as never, //TODO: define resolver
+    Cursor: null as never, //TODO: define resolver
+    //
+    //
     // others are fine with default resolvers :  {} as any,
     Follows: {} as any,
     Node: {} as any,
     Edge: {} as any,
+    AppliesTo: {} as any,
+    Collection: {} as any,
+    Contains: {} as any,
+    Created: {} as any,
+    Likes: {} as any,
+    Resource: {} as any,
     UserSession: {} as any,
     CreateEdgeMutationError: {} as any,
     CreateEdgeMutationPayload: {} as any,
@@ -62,8 +67,5 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
     UpdateNodeMutationError: {} as any,
     UpdateNodeMutationPayload: {} as any,
     UpdateNodeMutationSuccess: {} as any,
-    // QueryNodeError: {} as any,
-    // QueryNodePayload: {} as any,
-    // QueryNodeSuccess: {} as any,
   }
 }

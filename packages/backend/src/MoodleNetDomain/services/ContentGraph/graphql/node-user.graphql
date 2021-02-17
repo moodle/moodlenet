@@ -1,6 +1,5 @@
 type User implements INode {
   _id: ID!
-  _meta: Meta!
   _rel(edge: EdgeTypeInput!, page: PageInput): Page!
   role: Role!
   displayName: String!

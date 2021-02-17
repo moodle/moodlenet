@@ -63,6 +63,8 @@ export type MutationDeleteNodeArgs = {
 };
 
 export type CreateNodeInput = {
+  Collection: Maybe<CreateCollectionInput>;
+  Resource: Maybe<CreateResourceInput>;
   Subject: Maybe<CreateSubjectInput>;
   User: Maybe<Scalars['Never']>;
   nodeType: NodeType;
@@ -87,7 +89,11 @@ export enum CreateNodeMutationErrorType {
 }
 
 export type CreateEdgeInput = {
+  AppliesTo: Maybe<Scalars['Empty']>;
+  Contains: Maybe<Scalars['Empty']>;
+  Created: Maybe<Scalars['Empty']>;
   Follows: Maybe<Scalars['Empty']>;
+  Likes: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   from: Scalars['ID'];
   to: Scalars['ID'];
@@ -114,6 +120,8 @@ export enum CreateEdgeMutationErrorType {
 }
 
 export type UpdateNodeInput = {
+  Collection: Maybe<UpdateCollectionInput>;
+  Resource: Maybe<UpdateResourceInput>;
   Subject: Maybe<UpdateSubjectInput>;
   User: Maybe<UpdateUserInput>;
   _id: Scalars['ID'];
@@ -140,7 +148,11 @@ export enum UpdateNodeMutationErrorType {
 }
 
 export type UpdateEdgeInput = {
+  AppliesTo: Maybe<Scalars['Empty']>;
+  Contains: Maybe<Scalars['Empty']>;
+  Created: Maybe<Scalars['Empty']>;
   Follows: Maybe<Scalars['Empty']>;
+  Likes: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   id: Scalars['ID'];
 };
@@ -258,7 +270,6 @@ export type QueryNodeArgs = {
 
 export type INode = {
   _id: Maybe<Scalars['ID']>;
-  _meta: Meta;
   _rel: Page;
 };
 
@@ -270,25 +281,12 @@ export type INode_RelArgs = {
 
 export type IEdge = {
   _id: Maybe<Scalars['ID']>;
-  _meta: Meta;
 };
 
 export type EdgeTypeInput = {
   type: EdgeType;
   node: NodeType;
   inverse: Maybe<Scalars['Boolean']>;
-};
-
-export type Meta = {
-  __typename: 'Meta';
-  created: ByAt;
-  lastUpdate: ByAt;
-};
-
-export type ByAt = {
-  __typename: 'ByAt';
-  by: User;
-  at: Scalars['DateTime'];
 };
 
 export enum Role {
@@ -298,27 +296,100 @@ export enum Role {
   Moderator = 'Moderator'
 }
 
+export type AppliesTo = IEdge & {
+  __typename: 'AppliesTo';
+  _id: Scalars['ID'];
+};
+
+export type Edge = AppliesTo | Contains | Created | Follows | Likes;
+
+export enum EdgeType {
+  AppliesTo = 'AppliesTo',
+  Contains = 'Contains',
+  Created = 'Created',
+  Follows = 'Follows',
+  Likes = 'Likes'
+}
+
+export type Contains = IEdge & {
+  __typename: 'Contains';
+  _id: Scalars['ID'];
+};
+
+export type Created = IEdge & {
+  __typename: 'Created';
+  _id: Scalars['ID'];
+};
+
 export type Follows = IEdge & {
   __typename: 'Follows';
   _id: Scalars['ID'];
-  _meta: Meta;
 };
 
-export type Edge = Follows;
-
-export enum EdgeType {
-  Follows = 'Follows'
-}
+export type Likes = IEdge & {
+  __typename: 'Likes';
+  _id: Scalars['ID'];
+};
 
 export type UserSession = {
   __typename: 'UserSession';
   user: User;
 };
 
+export type Collection = INode & {
+  __typename: 'Collection';
+  _id: Scalars['ID'];
+  _rel: Page;
+  name: Scalars['String'];
+};
+
+
+export type Collection_RelArgs = {
+  edge: EdgeTypeInput;
+  page: Maybe<PageInput>;
+};
+
+export type Node = Collection | Resource | Subject | User;
+
+export enum NodeType {
+  Collection = 'Collection',
+  Resource = 'Resource',
+  Subject = 'Subject',
+  User = 'User'
+}
+
+export type CreateCollectionInput = {
+  name: Scalars['String'];
+};
+
+export type UpdateCollectionInput = {
+  name: Maybe<Scalars['String']>;
+};
+
+export type Resource = INode & {
+  __typename: 'Resource';
+  _id: Scalars['ID'];
+  _rel: Page;
+  name: Scalars['String'];
+};
+
+
+export type Resource_RelArgs = {
+  edge: EdgeTypeInput;
+  page: Maybe<PageInput>;
+};
+
+export type CreateResourceInput = {
+  name: Scalars['String'];
+};
+
+export type UpdateResourceInput = {
+  name: Maybe<Scalars['String']>;
+};
+
 export type Subject = INode & {
   __typename: 'Subject';
   _id: Scalars['ID'];
-  _meta: Meta;
   _rel: Page;
   name: Scalars['String'];
 };
@@ -328,13 +399,6 @@ export type Subject_RelArgs = {
   edge: EdgeTypeInput;
   page: Maybe<PageInput>;
 };
-
-export type Node = Subject | User;
-
-export enum NodeType {
-  Subject = 'Subject',
-  User = 'User'
-}
 
 export type CreateSubjectInput = {
   name: Scalars['String'];
@@ -347,7 +411,6 @@ export type UpdateSubjectInput = {
 export type User = INode & {
   __typename: 'User';
   _id: Scalars['ID'];
-  _meta: Meta;
   _rel: Page;
   role: Role;
   displayName: Scalars['String'];
@@ -485,19 +548,27 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<RootValue>;
   Cursor: ResolverTypeWrapper<Scalars['Cursor']>;
-  INode: ResolversTypes['Subject'] | ResolversTypes['User'];
-  IEdge: ResolversTypes['Follows'];
+  INode: ResolversTypes['Collection'] | ResolversTypes['Resource'] | ResolversTypes['Subject'] | ResolversTypes['User'];
+  IEdge: ResolversTypes['AppliesTo'] | ResolversTypes['Contains'] | ResolversTypes['Created'] | ResolversTypes['Follows'] | ResolversTypes['Likes'];
   EdgeTypeInput: EdgeTypeInput;
-  Meta: ResolverTypeWrapper<Meta>;
-  ByAt: ResolverTypeWrapper<ByAt>;
   Role: Role;
-  Follows: ResolverTypeWrapper<Follows>;
-  Edge: ResolversTypes['Follows'];
+  AppliesTo: ResolverTypeWrapper<AppliesTo>;
+  Edge: ResolversTypes['AppliesTo'] | ResolversTypes['Contains'] | ResolversTypes['Created'] | ResolversTypes['Follows'] | ResolversTypes['Likes'];
   EdgeType: EdgeType;
+  Contains: ResolverTypeWrapper<Contains>;
+  Created: ResolverTypeWrapper<Created>;
+  Follows: ResolverTypeWrapper<Follows>;
+  Likes: ResolverTypeWrapper<Likes>;
   UserSession: ResolverTypeWrapper<UserSession>;
-  Subject: ResolverTypeWrapper<Subject>;
-  Node: ResolversTypes['Subject'] | ResolversTypes['User'];
+  Collection: ResolverTypeWrapper<Collection>;
+  Node: ResolversTypes['Collection'] | ResolversTypes['Resource'] | ResolversTypes['Subject'] | ResolversTypes['User'];
   NodeType: NodeType;
+  CreateCollectionInput: CreateCollectionInput;
+  UpdateCollectionInput: UpdateCollectionInput;
+  Resource: ResolverTypeWrapper<Resource>;
+  CreateResourceInput: CreateResourceInput;
+  UpdateResourceInput: UpdateResourceInput;
+  Subject: ResolverTypeWrapper<Subject>;
   CreateSubjectInput: CreateSubjectInput;
   UpdateSubjectInput: UpdateSubjectInput;
   User: ResolverTypeWrapper<User>;
@@ -544,16 +615,24 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   Query: RootValue;
   Cursor: Scalars['Cursor'];
-  INode: ResolversParentTypes['Subject'] | ResolversParentTypes['User'];
-  IEdge: ResolversParentTypes['Follows'];
+  INode: ResolversParentTypes['Collection'] | ResolversParentTypes['Resource'] | ResolversParentTypes['Subject'] | ResolversParentTypes['User'];
+  IEdge: ResolversParentTypes['AppliesTo'] | ResolversParentTypes['Contains'] | ResolversParentTypes['Created'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'];
   EdgeTypeInput: EdgeTypeInput;
-  Meta: Meta;
-  ByAt: ByAt;
+  AppliesTo: AppliesTo;
+  Edge: ResolversParentTypes['AppliesTo'] | ResolversParentTypes['Contains'] | ResolversParentTypes['Created'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'];
+  Contains: Contains;
+  Created: Created;
   Follows: Follows;
-  Edge: ResolversParentTypes['Follows'];
+  Likes: Likes;
   UserSession: UserSession;
+  Collection: Collection;
+  Node: ResolversParentTypes['Collection'] | ResolversParentTypes['Resource'] | ResolversParentTypes['Subject'] | ResolversParentTypes['User'];
+  CreateCollectionInput: CreateCollectionInput;
+  UpdateCollectionInput: UpdateCollectionInput;
+  Resource: Resource;
+  CreateResourceInput: CreateResourceInput;
+  UpdateResourceInput: UpdateResourceInput;
   Subject: Subject;
-  Node: ResolversParentTypes['Subject'] | ResolversParentTypes['User'];
   CreateSubjectInput: CreateSubjectInput;
   UpdateSubjectInput: UpdateSubjectInput;
   User: User;
@@ -702,38 +781,43 @@ export interface CursorScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 }
 
 export type INodeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['INode'] = ResolversParentTypes['INode']> = {
-  __resolveType: TypeResolveFn<'Subject' | 'User', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Collection' | 'Resource' | 'Subject' | 'User', ParentType, ContextType>;
   _id: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<INode_RelArgs, 'edge'>>;
 };
 
 export type IEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['IEdge'] = ResolversParentTypes['IEdge']> = {
-  __resolveType: TypeResolveFn<'Follows', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'AppliesTo' | 'Contains' | 'Created' | 'Follows' | 'Likes', ParentType, ContextType>;
   _id: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
 };
 
-export type MetaResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Meta'] = ResolversParentTypes['Meta']> = {
-  created: Resolver<ResolversTypes['ByAt'], ParentType, ContextType>;
-  lastUpdate: Resolver<ResolversTypes['ByAt'], ParentType, ContextType>;
+export type AppliesToResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['AppliesTo'] = ResolversParentTypes['AppliesTo']> = {
+  _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ByAtResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['ByAt'] = ResolversParentTypes['ByAt']> = {
-  by: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  at: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+export type EdgeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Edge'] = ResolversParentTypes['Edge']> = {
+  __resolveType: TypeResolveFn<'AppliesTo' | 'Contains' | 'Created' | 'Follows' | 'Likes', ParentType, ContextType>;
+};
+
+export type ContainsResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Contains'] = ResolversParentTypes['Contains']> = {
+  _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CreatedResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Created'] = ResolversParentTypes['Created']> = {
+  _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type FollowsResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Follows'] = ResolversParentTypes['Follows']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type EdgeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Edge'] = ResolversParentTypes['Edge']> = {
-  __resolveType: TypeResolveFn<'Follows', ParentType, ContextType>;
+export type LikesResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Likes'] = ResolversParentTypes['Likes']> = {
+  _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserSessionResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['UserSession'] = ResolversParentTypes['UserSession']> = {
@@ -741,21 +825,33 @@ export type UserSessionResolvers<ContextType = MoodleNetExecutionContext, Parent
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type SubjectResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
+export type CollectionResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Collection'] = ResolversParentTypes['Collection']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
-  _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Subject_RelArgs, 'edge'>>;
+  _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Collection_RelArgs, 'edge'>>;
   name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type NodeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = {
-  __resolveType: TypeResolveFn<'Subject' | 'User', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Collection' | 'Resource' | 'Subject' | 'User', ParentType, ContextType>;
+};
+
+export type ResourceResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Resource'] = ResolversParentTypes['Resource']> = {
+  _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Resource_RelArgs, 'edge'>>;
+  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SubjectResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
+  _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Subject_RelArgs, 'edge'>>;
+  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _meta: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<User_RelArgs, 'edge'>>;
   role: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
   displayName: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -792,13 +888,17 @@ export type Resolvers<ContextType = MoodleNetExecutionContext> = {
   Cursor: GraphQLScalarType;
   INode: INodeResolvers<ContextType>;
   IEdge: IEdgeResolvers<ContextType>;
-  Meta: MetaResolvers<ContextType>;
-  ByAt: ByAtResolvers<ContextType>;
-  Follows: FollowsResolvers<ContextType>;
+  AppliesTo: AppliesToResolvers<ContextType>;
   Edge: EdgeResolvers<ContextType>;
+  Contains: ContainsResolvers<ContextType>;
+  Created: CreatedResolvers<ContextType>;
+  Follows: FollowsResolvers<ContextType>;
+  Likes: LikesResolvers<ContextType>;
   UserSession: UserSessionResolvers<ContextType>;
-  Subject: SubjectResolvers<ContextType>;
+  Collection: CollectionResolvers<ContextType>;
   Node: NodeResolvers<ContextType>;
+  Resource: ResourceResolvers<ContextType>;
+  Subject: SubjectResolvers<ContextType>;
   User: UserResolvers<ContextType>;
 };
 

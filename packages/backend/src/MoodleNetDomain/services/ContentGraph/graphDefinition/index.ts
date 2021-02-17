@@ -23,9 +23,45 @@ export const basicAccessPolicies: BasicAccessPolicies = {
       update: _S.Protected,
       delete: _S.Protected,
     },
+    Collection: {
+      read: _P.Public,
+      create: _P.AnyUser,
+      update: _S.Protected,
+      delete: _S.Protected,
+    },
+    Resource: {
+      read: _P.Public,
+      create: _P.AnyUser,
+      update: _S.Protected,
+      delete: _S.Protected,
+    },
   },
   edge: {
     Follows: {
+      read: _P.Public,
+      create: _P.AnyUser,
+      update: _S.Protected,
+      delete: _S.Protected,
+    },
+    AppliesTo: {
+      read: _P.Public,
+      create: _P.AnyUser,
+      update: _S.Protected,
+      delete: _S.Protected,
+    },
+    Contains: {
+      read: _P.Public,
+      create: _P.AnyUser,
+      update: _S.Protected,
+      delete: _S.Protected,
+    },
+    Likes: {
+      read: _P.Public,
+      create: _P.AnyUser,
+      update: _S.Protected,
+      delete: _S.Protected,
+    },
+    Created: {
       read: _P.Public,
       create: _P.AnyUser,
       update: _S.Protected,
@@ -40,12 +76,54 @@ export const contentGraph: ContentGraph = {
       {
         from: N.User,
         to: N.User,
-        fromMyselfOnly: true,
       },
       {
         from: N.User,
         to: N.Subject,
-        fromMyselfOnly: true,
+      },
+      {
+        from: N.User,
+        to: N.Collection,
+      },
+    ],
+  },
+  AppliesTo: {
+    connections: [
+      {
+        from: N.Subject,
+        to: N.Resource,
+      },
+      {
+        from: N.Subject,
+        to: N.Collection,
+      },
+    ],
+  },
+  Contains: {
+    connections: [
+      {
+        from: N.Collection,
+        to: N.Resource,
+      },
+    ],
+  },
+  Created: {
+    connections: [
+      {
+        from: N.User,
+        to: N.Resource,
+      },
+      {
+        from: N.User,
+        to: N.Collection,
+      },
+    ],
+  },
+  Likes: {
+    connections: [
+      {
+        from: N.User,
+        to: N.Resource,
       },
     ],
   },

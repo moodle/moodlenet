@@ -1,24 +1,24 @@
-type Subject implements INode {
+type Resource implements INode {
   _id: ID!
   _rel(edge: EdgeTypeInput!, page: PageInput): Page!
   name: String!
 }
 
-union Node = Subject
+union Node = Resource
 enum NodeType {
-  Subject
+  Resource
 }
 
 input CreateNodeInput {
-  Subject: CreateSubjectInput
+  Resource: CreateResourceInput
 }
-input CreateSubjectInput {
+input CreateResourceInput {
   name: String!
 }
 
 input UpdateNodeInput {
-  Subject: UpdateSubjectInput
+  Resource: UpdateResourceInput
 }
-input UpdateSubjectInput {
+input UpdateResourceInput {
   name: String
 }
