@@ -10,12 +10,12 @@ import { TermsAndConditionsRoute } from './TermsAndConditions'
 export const MNRouter: FC = (/* { children } */) => {
   return (
     <Switch>
-      <Route {...HomeRoute} />
       <Route {...LoginRoute} />
       <Route {...SignupRoute} />
       <Route {...TermsAndConditionsRoute} />
       <Route {...ActivateNewAccountRoute} />
       <Route {...ContentNodeRoute} />
+      <Route {...HomeRoute} />
     </Switch>
   )
 }

@@ -6,17 +6,14 @@ import { MutationCreateSessionArgs } from '../../graphql/pub.graphql.link'
 import { useFormikWithBag } from '../../helpers/forms'
 import { webappLinkDef } from '../../helpers/navigation'
 import { LoginFormValues, LoginPanelBig } from '../../ui/pages/Login'
-import { useRedirectHomeIfLoggedIn } from '../helpers/nav'
 
 const signupLink = webappLinkDef<Signup>('/signup', {})
 const homeLink = webappLinkDef<Home>('/', {})
 export const LoginPanelBigCtrl: FC = () => {
-  useRedirectHomeIfLoggedIn()
-  const { login } = useSession()
+  const { login, lastSessionUsername } = useSession()
   const [message, setMessage] = useState<string | null>(null)
-
   const [, bag] = useFormikWithBag<LoginFormValues & MutationCreateSessionArgs>({
-    initialValues: { password: '', username: '' },
+    initialValues: { password: '', username: lastSessionUsername || '' },
     validationSchema: createSession,
     validateOnChange: false,
     onSubmit({ password, username } /* , helpers */) {

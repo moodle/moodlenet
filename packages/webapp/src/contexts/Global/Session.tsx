@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro'
-import { createContext, FC, useCallback, useContext, useEffect, useMemo } from 'react'
+import { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { setToken } from './Apollo/client'
 import {
   SessionFragment,
@@ -8,10 +8,35 @@ import {
   useLoginMutation,
 } from './Session/session.gen'
 
+const LAST_SESSION_USERNAME_STORAGE_KEY = 'LAST_SESSION_USERNAME'
+const LAST_SESSION_TOKEN_STORAGE_KEY = 'LAST_SESSION_TOKEN'
+const getLastSession = (): LastSession => {
+  const jwt = localStorage.getItem(LAST_SESSION_TOKEN_STORAGE_KEY)
+  const username = localStorage.getItem(LAST_SESSION_USERNAME_STORAGE_KEY)
+  return { jwt, username }
+}
+const storeLastSession = ({ jwt, username }: Partial<LastSession>) => {
+  jwt !== undefined &&
+    (jwt
+      ? localStorage.setItem(LAST_SESSION_TOKEN_STORAGE_KEY, jwt)
+      : localStorage.removeItem(LAST_SESSION_TOKEN_STORAGE_KEY))
+  username !== undefined &&
+    (username
+      ? localStorage.setItem(LAST_SESSION_USERNAME_STORAGE_KEY, username)
+      : localStorage.removeItem(LAST_SESSION_USERNAME_STORAGE_KEY))
+}
+
 type LoginWarnMessage = string
 type ActivateWarnMessage = string
+
+type LastSession = {
+  jwt: string | null
+  username: string | null
+}
+
 export type SessionContextType = {
   session: SessionFragment | null
+  lastSessionUsername: string | null
   logout(): unknown
   activateNewAccount(_: { password: string; token: string; username: string }): Promise<ActivateWarnMessage | null>
   login(_: { username: string; password: string }): Promise<LoginWarnMessage | null>
@@ -19,46 +44,48 @@ export type SessionContextType = {
 
 const SessionContext = createContext<SessionContextType>(null as any)
 export const useSession = () => useContext(SessionContext)
+
 const WRONG_CREDS_MGG = t`wrong credentials`
+
 export const SessionProvider: FC = ({ children }) => {
   const [activateAccountMut /* , activateResult */] = useActivateNewAccountMutation()
-
-  const [getSessionQ, sessionResult] = useGetCurrentSessionLazyQuery({ fetchPolicy: 'network-only' })
+  const [lastSession, setLastSession] = useState<Partial<LastSession>>(getLastSession())
+  const [getSessionQ, sessionQResult] = useGetCurrentSessionLazyQuery({ fetchPolicy: 'network-only' })
   const [loginMut /* , loginResult */] = useLoginMutation()
 
-  const setSession = useCallback(
-    (jwt: string | null) => {
-      setToken(jwt)
-      getSessionQ()
-    },
-    [getSessionQ],
-  )
   const login = useCallback<SessionContextType['login']>(
     ({ username, password }) => {
       return loginMut({ variables: { password, username } }).then(res => {
         const jwt = res.data?.createSession.jwt ?? null
-        setSession(jwt)
+        setLastSession({ jwt, username })
         return res.data?.createSession.message ?? ((!jwt && WRONG_CREDS_MGG) || null)
       })
     },
-    [loginMut, setSession],
+    [loginMut],
   )
 
   const activateNewAccount = useCallback<SessionContextType['activateNewAccount']>(
     ({ password, token, username }) => {
       return activateAccountMut({ variables: { password, token, username } }).then(res => {
         const jwt = res.data?.activateAccount.jwt ?? null
-        jwt && setSession(jwt)
+        setLastSession({ username, jwt })
         return res.data?.activateAccount.message ?? null
       })
     },
-    [activateAccountMut, setSession],
+    [activateAccountMut],
   )
 
-  useEffect(() => setSession(null), [setSession])
+  const logout = useCallback<SessionContextType['logout']>(() => {
+    setLastSession({ ...lastSession, jwt: null })
+  }, [lastSession])
 
-  const logout = useCallback<SessionContextType['logout']>(() => setSession(null), [setSession])
-  const session = sessionResult.data?.getSession ?? null
+  const session = sessionQResult.data?.getSession ?? null
+
+  useEffect(() => {
+    setToken(lastSession.jwt ?? null)
+    storeLastSession(lastSession)
+    getSessionQ()
+  }, [getSessionQ, lastSession])
 
   const ctx = useMemo<SessionContextType>(
     () => ({
@@ -66,8 +93,13 @@ export const SessionProvider: FC = ({ children }) => {
       login,
       activateNewAccount,
       session,
+      lastSessionUsername: lastSession.username ?? null,
     }),
-    [activateNewAccount, login, logout, session],
+    [activateNewAccount, lastSession, login, logout, session],
   )
-  return <SessionContext.Provider value={ctx}>{children}</SessionContext.Provider>
+  return (
+    <SessionContext.Provider value={ctx}>
+      {sessionQResult.loading || !sessionQResult.called ? null : children}
+    </SessionContext.Provider>
+  )
 }
