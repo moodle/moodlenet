@@ -1,7 +1,9 @@
-type Subject implements INode {
+type Subject implements INode & IContentNode {
+  name: String!
+  # summary: String!
+  # icon: String
   _id: ID!
   _rel(edge: EdgeTypeInput!, page: PageInput): Page!
-  name: String!
 }
 
 union Node = Subject

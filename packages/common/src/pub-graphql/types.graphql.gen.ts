@@ -325,6 +325,10 @@ export type INode_RelArgs = {
   page: Maybe<PageInput>;
 };
 
+export type IContentNode = {
+  name: Scalars['String'];
+};
+
 export type IEdge = {
   _id: Maybe<Scalars['ID']>;
 };
@@ -380,11 +384,11 @@ export type UserSession = {
   username: Scalars['String'];
 };
 
-export type Collection = INode & {
+export type Collection = INode & IContentNode & {
   __typename: 'Collection';
+  name: Scalars['String'];
   _id: Scalars['ID'];
   _rel: Page;
-  name: Scalars['String'];
 };
 
 
@@ -410,11 +414,11 @@ export type UpdateCollectionInput = {
   name: Maybe<Scalars['String']>;
 };
 
-export type Resource = INode & {
+export type Resource = INode & IContentNode & {
   __typename: 'Resource';
+  name: Scalars['String'];
   _id: Scalars['ID'];
   _rel: Page;
-  name: Scalars['String'];
 };
 
 
@@ -431,11 +435,11 @@ export type UpdateResourceInput = {
   name: Maybe<Scalars['String']>;
 };
 
-export type Subject = INode & {
+export type Subject = INode & IContentNode & {
   __typename: 'Subject';
+  name: Scalars['String'];
   _id: Scalars['ID'];
   _rel: Page;
-  name: Scalars['String'];
 };
 
 
@@ -452,11 +456,11 @@ export type UpdateSubjectInput = {
   name: Maybe<Scalars['String']>;
 };
 
-export type User = INode & {
+export type User = INode & IContentNode & {
   __typename: 'User';
+  name: Scalars['String'];
   _id: Scalars['ID'];
   _rel: Page;
-  name: Scalars['String'];
 };
 
 
@@ -514,6 +518,12 @@ export type CreateSession = {
       "DeleteNodeMutationError"
     ],
     "INode": [
+      "Collection",
+      "Resource",
+      "Subject",
+      "User"
+    ],
+    "IContentNode": [
       "Collection",
       "Resource",
       "Subject",

@@ -1,4 +1,5 @@
-import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
+import { EdgeType, Id, IdKey } from '@moodlenet/common/lib/utils/content-graph'
+import { ulidKey } from '../../../../../../lib/helpers/arango'
 import { MoodleNetExecutionContext } from '../../../../../types'
 import { getContentGraphPersistence } from '../../../ContentGraph.env'
 import { CreateNodeInput, NodeType } from '../../../ContentGraph.graphql.gen'
@@ -12,12 +13,14 @@ export type CreateHook<T extends NodeType> = (_: {
   key: IdKey
 }) => Promise<CreateNodeShallowPayload<T>>
 
+const persistence = getContentGraphPersistence()
+
 export const getCreateHook = <T extends NodeType>(type: T): CreateHook<T> => createHooks[type] as CreateHook<T>
 export const createHooks: {
   [T in NodeType]: CreateHook<T>
 } = {
   User: async ({ input, ctx, key }) => {
-    const { createNode } = await getContentGraphPersistence()
+    const { createNode } = await persistence
     const createResult = await createNode<NodeType.User>({
       ctx,
       key,
@@ -29,7 +32,7 @@ export const createHooks: {
     return createResult
   },
   Subject: async ({ input, ctx, key }) => {
-    const { createNode } = await getContentGraphPersistence()
+    const { createNode } = await persistence
     const createResult = await createNode<NodeType.Subject>({
       ctx,
       key,
@@ -41,7 +44,7 @@ export const createHooks: {
     return createResult
   },
   Collection: async ({ input, ctx, key }) => {
-    const { createNode } = await getContentGraphPersistence()
+    const { createNode } = await persistence
     const createResult = await createNode<NodeType.Collection>({
       ctx,
       key,
@@ -53,7 +56,7 @@ export const createHooks: {
     return createResult
   },
   Resource: async ({ input, ctx, key }) => {
-    const { createNode } = await getContentGraphPersistence()
+    const { createNode } = await persistence
     const createResult = await createNode<NodeType.Resource>({
       ctx,
       key,
@@ -64,4 +67,18 @@ export const createHooks: {
     })
     return createResult
   },
+}
+export const createCreatedEdge = async ({
+  nodeId,
+  userId,
+  ctx,
+}: {
+  nodeId: Id
+  nodeType: NodeType
+  userId: Id
+  ctx: MoodleNetExecutionContext
+}) => {
+  const { createEdge } = await persistence
+  const key = ulidKey()
+  return createEdge<EdgeType.Created>({ ctx, data: {}, edgeType: EdgeType.Created, from: userId, key, to: nodeId })
 }

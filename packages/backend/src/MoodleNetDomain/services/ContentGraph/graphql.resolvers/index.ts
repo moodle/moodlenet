@@ -1,3 +1,4 @@
+import { edgeTypeFromId, Id, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import * as GQL from '../ContentGraph.graphql.gen'
 import { getSessionAccountUser } from './merge.getSessionAccountUser'
 import { createEdge } from './mutation/createEdge'
@@ -31,6 +32,21 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
     DateTime: {} as any, //TODO: define resolver
     Never: null as never, //TODO: define resolver
     Cursor: null as never, //TODO: define resolver
+
+    IEdge: {
+      __resolveType: obj => {
+        return edgeTypeFromId(obj._id as Id) || null
+      },
+      _id: obj => obj._id,
+    },
+    INode: {
+      __resolveType: obj => {
+        return nodeTypeFromId(obj._id as Id) || null
+      },
+      _id: obj => obj._id,
+      _rel: obj => obj._rel,
+    },
+
     //
     //
     // others are fine with default resolvers :  {} as any,
@@ -56,8 +72,7 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
     DeleteNodeMutationError: {} as any,
     DeleteNodeMutationPayload: {} as any,
     DeleteNodeMutationSuccess: {} as any,
-    IEdge: {} as any,
-    INode: {} as any,
+    IContentNode: {} as any,
     Page: {} as any,
     PageEdge: {} as any,
     PageInfo: {} as any,

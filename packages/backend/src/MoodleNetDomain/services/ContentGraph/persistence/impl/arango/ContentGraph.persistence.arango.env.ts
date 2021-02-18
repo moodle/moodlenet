@@ -1,6 +1,7 @@
+import memo from 'lodash/memoize'
 import * as Yup from 'yup'
 import { createDatabaseIfNotExists } from '../../../../../../lib/helpers/arango'
-import { setupGraph } from './setupGraph'
+import { getGraph } from './setupGraph'
 
 interface ArangoContentGraphPersistenceEnv {
   url: string[]
@@ -20,12 +21,18 @@ export const env = Validator.validateSync({
   databaseName: ARANGO_DB,
 })!
 
-export const DBReady = createDatabaseIfNotExists({
-  dbConfig: { url: env.url },
-  name: env.databaseName,
-  dbCreateOpts: {},
-}).then(async db => {
-  const graph = await setupGraph({ db })
+export const getDB = memo(() =>
+  createDatabaseIfNotExists({
+    dbConfig: { url: env.url },
+    name: env.databaseName,
+    dbCreateOpts: {},
+  }),
+)
+
+export const DBReady = memo(async () => {
+  const db = await getDB()
+  //const graph = await setupGraph({ db })
+  const graph = await getGraph({ db })
   return {
     db,
     graph,

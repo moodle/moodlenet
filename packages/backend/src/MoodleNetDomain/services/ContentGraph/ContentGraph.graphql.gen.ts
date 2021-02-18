@@ -279,6 +279,10 @@ export type INode_RelArgs = {
   page: Maybe<PageInput>;
 };
 
+export type IContentNode = {
+  name: Scalars['String'];
+};
+
 export type IEdge = {
   _id: Maybe<Scalars['ID']>;
 };
@@ -329,11 +333,11 @@ export type UserSession = {
   user: User;
 };
 
-export type Collection = INode & {
+export type Collection = INode & IContentNode & {
   __typename: 'Collection';
+  name: Scalars['String'];
   _id: Scalars['ID'];
   _rel: Page;
-  name: Scalars['String'];
 };
 
 
@@ -359,11 +363,11 @@ export type UpdateCollectionInput = {
   name: Maybe<Scalars['String']>;
 };
 
-export type Resource = INode & {
+export type Resource = INode & IContentNode & {
   __typename: 'Resource';
+  name: Scalars['String'];
   _id: Scalars['ID'];
   _rel: Page;
-  name: Scalars['String'];
 };
 
 
@@ -380,11 +384,11 @@ export type UpdateResourceInput = {
   name: Maybe<Scalars['String']>;
 };
 
-export type Subject = INode & {
+export type Subject = INode & IContentNode & {
   __typename: 'Subject';
+  name: Scalars['String'];
   _id: Scalars['ID'];
   _rel: Page;
-  name: Scalars['String'];
 };
 
 
@@ -401,11 +405,11 @@ export type UpdateSubjectInput = {
   name: Maybe<Scalars['String']>;
 };
 
-export type User = INode & {
+export type User = INode & IContentNode & {
   __typename: 'User';
+  name: Scalars['String'];
   _id: Scalars['ID'];
   _rel: Page;
-  name: Scalars['String'];
 };
 
 
@@ -541,6 +545,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<RootValue>;
   Cursor: ResolverTypeWrapper<Scalars['Cursor']>;
   INode: ResolversTypes['Collection'] | ResolversTypes['Resource'] | ResolversTypes['Subject'] | ResolversTypes['User'];
+  IContentNode: ResolversTypes['Collection'] | ResolversTypes['Resource'] | ResolversTypes['Subject'] | ResolversTypes['User'];
   IEdge: ResolversTypes['AppliesTo'] | ResolversTypes['Contains'] | ResolversTypes['Created'] | ResolversTypes['Follows'] | ResolversTypes['Likes'];
   EdgeTypeInput: EdgeTypeInput;
   AppliesTo: ResolverTypeWrapper<AppliesTo>;
@@ -607,6 +612,7 @@ export type ResolversParentTypes = {
   Query: RootValue;
   Cursor: Scalars['Cursor'];
   INode: ResolversParentTypes['Collection'] | ResolversParentTypes['Resource'] | ResolversParentTypes['Subject'] | ResolversParentTypes['User'];
+  IContentNode: ResolversParentTypes['Collection'] | ResolversParentTypes['Resource'] | ResolversParentTypes['Subject'] | ResolversParentTypes['User'];
   IEdge: ResolversParentTypes['AppliesTo'] | ResolversParentTypes['Contains'] | ResolversParentTypes['Created'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'];
   EdgeTypeInput: EdgeTypeInput;
   AppliesTo: AppliesTo;
@@ -777,6 +783,11 @@ export type INodeResolvers<ContextType = MoodleNetExecutionContext, ParentType e
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<INode_RelArgs, 'edge'>>;
 };
 
+export type IContentNodeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['IContentNode'] = ResolversParentTypes['IContentNode']> = {
+  __resolveType: TypeResolveFn<'Collection' | 'Resource' | 'Subject' | 'User', ParentType, ContextType>;
+  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
 export type IEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['IEdge'] = ResolversParentTypes['IEdge']> = {
   __resolveType: TypeResolveFn<'AppliesTo' | 'Contains' | 'Created' | 'Follows' | 'Likes', ParentType, ContextType>;
   _id: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
@@ -817,9 +828,9 @@ export type UserSessionResolvers<ContextType = MoodleNetExecutionContext, Parent
 };
 
 export type CollectionResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Collection'] = ResolversParentTypes['Collection']> = {
+  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Collection_RelArgs, 'edge'>>;
-  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -828,23 +839,23 @@ export type NodeResolvers<ContextType = MoodleNetExecutionContext, ParentType ex
 };
 
 export type ResourceResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Resource'] = ResolversParentTypes['Resource']> = {
+  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Resource_RelArgs, 'edge'>>;
-  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type SubjectResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
+  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Subject_RelArgs, 'edge'>>;
-  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<User_RelArgs, 'edge'>>;
-  name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -877,6 +888,7 @@ export type Resolvers<ContextType = MoodleNetExecutionContext> = {
   Query: QueryResolvers<ContextType>;
   Cursor: GraphQLScalarType;
   INode: INodeResolvers<ContextType>;
+  IContentNode: IContentNodeResolvers<ContextType>;
   IEdge: IEdgeResolvers<ContextType>;
   AppliesTo: AppliesToResolvers<ContextType>;
   Edge: EdgeResolvers<ContextType>;

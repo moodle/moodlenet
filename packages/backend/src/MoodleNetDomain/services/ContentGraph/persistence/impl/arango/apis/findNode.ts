@@ -27,7 +27,7 @@ export const findNode: ContentGraphPersistence['findNode'] = async ({ _id, nodeT
 
 export const _findNode = async (_: { _id: Id; nodeType?: Types.NodeType | null; filterMore?: string }) => {
   const { _id, nodeType = null, filterMore = null } = _
-  const { db } = await DBReady
+  const { db } = await DBReady()
   const checkNodeTypeFilter = nodeType && `node.__typename == "${nodeType}"`
   const withFilters = [checkNodeTypeFilter, filterMore].filter(Boolean).join(' && ') || 'true'
 

@@ -4,7 +4,7 @@ import { ContentGraphPersistence } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 
 export const createNode: ContentGraphPersistence['createNode'] = async ({ /* ctx, */ data, nodeType, key }) => {
-  const { graph } = await DBReady
+  const { graph } = await DBReady()
   //FIXME: ! check policy
   // const policy = getStaticFilteredNodeBasicAccessPolicy({
   //   accessType: 'create',

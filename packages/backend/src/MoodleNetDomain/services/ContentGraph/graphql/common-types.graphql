@@ -5,6 +5,12 @@ interface INode {
   _rel(edge: EdgeTypeInput!, page: PageInput): Page!
 }
 
+interface IContentNode {
+  name: String!
+  # summary: String!
+  # icon: String
+}
+
 interface IEdge {
   _id: ID
 }

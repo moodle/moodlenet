@@ -61,3 +61,7 @@ export type CreateEdgeData<Type extends GQL.EdgeType> = Omit<ShallowEdgeByType<T
 export type CreateEdgeShallowPayload<Type extends GQL.EdgeType> = ShallowEdgeByType<Type> | GQL.CreateEdgeMutationError
 export type UpdateEdgeShallowPayload = ShallowNode | GQL.UpdateEdgeMutationError
 export type DeleteEdgeShallowPayload = ShallowNode | GQL.DeleteEdgeMutationError
+
+// export type X<Type extends GQL.NodeType> = ShallowNodeByType<Type> | GQL.CreateNodeMutationError
+// declare const x:X<NodeType>
+// x.__typename!=='CreateNodeMutationError'&&x.__typename

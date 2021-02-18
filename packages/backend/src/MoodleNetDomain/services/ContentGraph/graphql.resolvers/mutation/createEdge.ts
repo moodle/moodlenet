@@ -58,7 +58,7 @@ export const createEdge: Resolvers['Mutation']['createEdge'] = async (_root, { i
     edge: fakeUnshallowEdgeForResolverReturnType(shallowEdgeOrError),
   }
 
-  console.log('created edge ', successResult)
+  //console.log('created edge ', successResult)
 
   return successResult
 }

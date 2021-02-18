@@ -20,7 +20,7 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
   const mainSortProp = '_key'
   const queryDepth = [1, 1]
 
-  const { db } = await DBReady
+  const { db } = await DBReady()
   const { after, first, last, before } = {
     last: 0,
     first: DEFAULT_PAGE_LENGTH,
