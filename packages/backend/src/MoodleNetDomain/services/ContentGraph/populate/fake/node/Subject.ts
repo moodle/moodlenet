@@ -4,6 +4,6 @@ import { Just } from '../types'
 
 export const Subject = (): Just<CreateNodeInput[NodeType.Subject]> => {
   return {
-    name: fk.name.jobArea(),
+    name: `${fk.random.word()} ${fk.name.jobArea()}`,
   }
 }

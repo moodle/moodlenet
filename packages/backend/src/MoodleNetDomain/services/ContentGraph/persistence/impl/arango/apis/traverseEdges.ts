@@ -85,7 +85,12 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
             RETURN  {
               cursor: edge['${mainSortProp}'],
               edge,
-              node
+              node: MERGE( 
+                node,
+                {
+                  __typename: PARSE_IDENTIFIER(node._id).collection
+                }
+              )
             }
           `
         : null

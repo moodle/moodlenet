@@ -28,37 +28,45 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
     },
     User: NodeResolver,
     Subject: NodeResolver,
+    Resource: NodeResolver,
+    Collection: NodeResolver,
     Empty: {} as any, //TODO: define resolver
     DateTime: {} as any, //TODO: define resolver
     Never: null as never, //TODO: define resolver
     Cursor: null as never, //TODO: define resolver
 
-    IEdge: {
+    Edge: {
       __resolveType: obj => {
         return edgeTypeFromId(obj._id as Id) || null
       },
-      _id: obj => obj._id,
+    },
+    Node: {
+      __resolveType: obj => {
+        return nodeTypeFromId(obj._id as Id) || null
+      },
     },
     INode: {
       __resolveType: obj => {
         return nodeTypeFromId(obj._id as Id) || null
       },
-      _id: obj => obj._id,
-      _rel: obj => obj._rel,
+      _id: null as any,
+      _rel: null as any,
+    },
+    IEdge: {
+      __resolveType: obj => {
+        return edgeTypeFromId(obj._id as Id) || null
+      },
+      _id: null as any,
     },
 
     //
     //
     // others are fine with default resolvers :  {} as any,
     Follows: {} as any,
-    Node: {} as any,
-    Edge: {} as any,
     AppliesTo: {} as any,
-    Collection: {} as any,
     Contains: {} as any,
     Created: {} as any,
     Likes: {} as any,
-    Resource: {} as any,
     UserSession: {} as any,
     CreateEdgeMutationError: {} as any,
     CreateEdgeMutationPayload: {} as any,

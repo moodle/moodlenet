@@ -229,7 +229,7 @@ channel.then(async ch => {
     // }
     // const ev = flowId(flow)
     const messageId = msg?.properties.correlationId
-    console.log(`MachineQ : mid:${messageId}`, msg?.properties)
+    console.log(`MachineQ : mid:${messageId}`) //, msg?.properties)
     if (!messageId) {
       return
     }

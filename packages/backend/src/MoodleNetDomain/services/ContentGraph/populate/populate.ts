@@ -6,7 +6,7 @@ import { CreateEdgeHandler } from '../apis/ContentGraph.Edge.Create'
 import { CreateNodeHandler } from '../apis/ContentGraph.Node.Create'
 import { CreateNodeInput, EdgeType, NodeType } from '../ContentGraph.graphql.gen'
 import { contentGraph } from '../graphDefinition'
-import { ShallowNodeByType } from '../graphDefinition/types'
+import { ShallowEdgeByType, ShallowNodeByType } from '../graphDefinition/types'
 import * as fakeEdge from './fake/edge'
 import * as fakeNode from './fake/node'
 import { Just } from './fake/types'
@@ -22,6 +22,13 @@ const ctx = ({ userId, system = false }: { userId?: Id; system?: boolean }): { c
   }
 }
 const genKeys: { [name in NodeType | EdgeType]: IdKey[] } = {} as any
+process.on('exit', () => {
+  const stat = Object.keys(genKeys).reduce((_stat, name) => {
+    return { ..._stat, [name]: genKeys[name as NodeType | EdgeType].length }
+  }, {})
+  console.log(stat)
+})
+
 const addKey = (name: NodeType | EdgeType) => {
   const key = ulidKey()
   genKeys[name] = genKeys[name] || []
@@ -91,6 +98,7 @@ export const createEdge = <E extends EdgeType>({
       if (res.__typename === 'CreateEdgeMutationError') {
         throw `${res.type}:${res.details}`
       }
+      return res as ShallowEdgeByType<E>
     })
     .catch(e => console.error({ _: `createEdge Err`, e, edgeType, from, input, to }))
 }
@@ -131,15 +139,17 @@ export const createSomeRandomEdges = async ({ edgeType, amount }: { amount: numb
 
 const SUBJECTS_AMOUNT = 100
 
-const USERS_AMOUNT = 1000
-const EACH_USER_RESOURCES_AMOUNT = 20
-const EACH_USER_COLLECTIONS_AMOUNT = 3
-const EACH_USER_FOLLOWS_USER_AMOUNT = 8
-const EACH_USER_FOLLOWS_SUBJECT_AMOUNT = 20
-const EACH_USER_FOLLOWS_COLLECTION_AMOUNT = 10
-const EACH_USER_LIKES_RESOURCE_AMOUNT = 10
-const EACH_COLLECTION_CONTAINS_RESOURCE_AMOUNT = 20
-const EACH_SUBJECT_APPLIESTO_RESOURCE_AMOUNT = 100
+const USERS_AMOUNT = 15000
+
+const EACH_USER_RESOURCES_AMOUNT = 15
+const EACH_USER_COLLECTIONS_AMOUNT = 4
+const EACH_USER_FOLLOWS_USER_AMOUNT = 10
+const EACH_USER_FOLLOWS_SUBJECT_AMOUNT = 5
+const EACH_USER_FOLLOWS_COLLECTION_AMOUNT = 6
+const EACH_USER_LIKES_RESOURCE_AMOUNT = 15
+const EACH_COLLECTION_CONTAINS_RESOURCE_AMOUNT = 12
+const EACH_COLLECTION_HAS_APPLIED_SUBJECTS_AMOUNT = 4
+const EACH_RESOURCE_HAS_APPLIED_SUBJECTS_AMOUNT = 2
 
 export const populate = async () => {
   console.log(`create some Subjects`)
@@ -213,22 +223,20 @@ export const populate = async () => {
       const to = randomId(NodeType.Resource)
       /* await */ createNewFakeEdge({ edgeType: EdgeType.Contains, from: collectionId, to })
     }
+
+    for (let e = 0; e < EACH_COLLECTION_HAS_APPLIED_SUBJECTS_AMOUNT; e++) {
+      const from = randomId(NodeType.Subject)
+      /* await */ createNewFakeEdge({ edgeType: EdgeType.AppliesTo, to: collectionId, from })
+    }
   }
 
-  console.log(`create  Edges from Subjects`)
-  for (const subjectKey of genKeys[NodeType.Subject]) {
-    const subjectId = makeId(NodeType.Subject, subjectKey)
+  console.log(`create  Edges from Resources`)
+  for (const resourceKey of genKeys[NodeType.Resource]) {
+    const resourceId = makeId(NodeType.Resource, resourceKey)
 
-    // console.log(`create some Subject AppliesTo Resource`)
-    for (let e = 0; e < EACH_SUBJECT_APPLIESTO_RESOURCE_AMOUNT; e++) {
-      const to = randomId(NodeType.Resource)
-      /* await */ createNewFakeEdge({ edgeType: EdgeType.AppliesTo, from: subjectId, to })
-    }
-
-    // console.log(`create some Subject AppliesTo Collection`)
-    for (let e = 0; e < EACH_SUBJECT_APPLIESTO_RESOURCE_AMOUNT; e++) {
-      const to = randomId(NodeType.Collection)
-      /* await */ createNewFakeEdge({ edgeType: EdgeType.AppliesTo, from: subjectId, to })
+    for (let e = 0; e < EACH_RESOURCE_HAS_APPLIED_SUBJECTS_AMOUNT; e++) {
+      const from = randomId(NodeType.Subject)
+      /* await */ createNewFakeEdge({ edgeType: EdgeType.AppliesTo, to: resourceId, from })
     }
   }
 }

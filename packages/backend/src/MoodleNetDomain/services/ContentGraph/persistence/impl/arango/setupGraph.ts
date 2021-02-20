@@ -21,7 +21,8 @@ const getEdgeDefinition = (edgeType: EdgeType, edgeOptions: EdgeOptions): EdgeDe
   }
 }
 export const getGraph = async ({ db }: { db: Database }) => {
-  const edgeDefinitionOptions = Object.entries(contentGraph).map(([edgeType, edgeOpts]) => {
+  const graphEntries = Object.entries(contentGraph)
+  const edgeDefinitionOptions = graphEntries.map(([edgeType, edgeOpts]) => {
     return getEdgeDefinition(edgeType as EdgeType, edgeOpts)
   })
 
@@ -29,6 +30,13 @@ export const getGraph = async ({ db }: { db: Database }) => {
   const graph =
     (await db.graphs()).find(_graph => _graph.name == CONTENT_GRAPH_NAME) ||
     (await db.createGraph(CONTENT_GRAPH_NAME, edgeDefinitionOptions))
+
+  await Promise.all(
+    graphEntries.map(([edgeType]) => {
+      const coll = db.collection(edgeType as EdgeType)
+      return coll.ensureIndex({ type: 'persistent', fields: ['from', 'to'], name: 'from_to_types' })
+    }),
+  )
 
   return graph
 }

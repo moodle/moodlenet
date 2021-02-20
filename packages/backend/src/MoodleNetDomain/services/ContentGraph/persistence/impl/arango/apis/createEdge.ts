@@ -82,7 +82,10 @@ export const createEdge: ContentGraphPersistence['createEdge'] = async ({
   // }
 
   const collection = graph.edgeCollection(edgeType)
-  const { new: edge } = await collection.save({ ...data, _from: from, _to: to, _key: key }, { returnNew: true })
+  const { new: edge } = await collection.save(
+    { ...data, _from: from, _to: to, _key: key, from: fromType, to: toType },
+    { returnNew: true },
+  )
   //console.log('created edge', edge)
   return edge
 }
