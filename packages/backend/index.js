@@ -13,3 +13,4 @@ if (!globPattern) {
     matches.forEach(_ => require(`./src/${_}`))
   })
 }
+//console.log = () => { }
