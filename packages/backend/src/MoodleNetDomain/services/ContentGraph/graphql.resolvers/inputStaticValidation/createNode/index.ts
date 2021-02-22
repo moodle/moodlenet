@@ -1,4 +1,4 @@
-import { object, ObjectSchema, string, ValidationError } from 'yup'
+import { object, ObjectSchema, ValidationError } from 'yup'
 import { CreateNodeInput, NodeType } from '../../../ContentGraph.graphql.gen'
 import { neverCreate } from '../helpers'
 
@@ -6,9 +6,7 @@ type Just<T> = Exclude<T, null | undefined>
 const inputObjectValidators: {
   [T in NodeType]: ObjectSchema<Just<CreateNodeInput[T]>>
 } = {
-  Subject: object<Just<CreateNodeInput['Subject']>>({
-    name: string().required(),
-  }).required(),
+  Subject: object<Just<CreateNodeInput['Subject']>>().required(),
   Collection: object<Just<CreateNodeInput['Collection']>>().required(),
   Resource: object<Just<CreateNodeInput['Resource']>>().required(),
   User: neverCreate(NodeType.User),

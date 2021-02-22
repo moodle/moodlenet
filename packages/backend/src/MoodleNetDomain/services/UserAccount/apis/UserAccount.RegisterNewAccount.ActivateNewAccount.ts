@@ -56,7 +56,11 @@ export const ConfirmEmailActivateAccountApiHandler = async ({
         ctx: getSystemExecutionContextFor(),
         nodeType: NodeType.User,
         key: userKey,
-        input: { name: activationResult.username },
+        input: {
+          name: activationResult.username,
+          icon: '',
+          summary: '',
+        },
       }),
     )
     if (user.__typename === 'CreateNodeMutationError') {

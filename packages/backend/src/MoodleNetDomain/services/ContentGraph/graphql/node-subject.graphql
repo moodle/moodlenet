@@ -1,7 +1,7 @@
 type Subject implements INode & IContentNode {
   name: String!
-  # summary: String!
-  # icon: String
+  summary: String!
+  icon: String
   _id: ID!
   _rel(edge: EdgeTypeInput!, page: PageInput): Page!
 }
@@ -16,6 +16,8 @@ input CreateNodeInput {
 }
 input CreateSubjectInput {
   name: String!
+  summary: String!
+  icon: String
 }
 
 input UpdateNodeInput {

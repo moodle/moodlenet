@@ -7,6 +7,7 @@ import { getGraph } from '../setupGraph'
 export const dropGraphAndBulkInsertDir = async (path: string) => {
   const db = await getDB()
   const graph = await getGraph({ db })
+  console.log('dropping graph...')
   await graph.drop(true)
   await getGraph({ db })
 

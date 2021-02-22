@@ -1,9 +1,11 @@
 import fk from 'faker'
-import { CreateNodeInput, NodeType } from '../../../../../../ContentGraph.graphql.gen'
-import { Just } from '../types'
+import * as GQL from '../../../../../../ContentGraph.graphql.gen'
+import { Fake } from '../types'
 
-export const Collection = (): Just<CreateNodeInput[NodeType.Collection]> => {
+export const Collection = (): Fake<GQL.Collection> => {
   return {
-    name: fk.random.words(4),
+    name: fk.random.words(3),
+    icon: fk.image.imageUrl(200, 200),
+    summary: fk.lorem.paragraphs(2),
   }
 }

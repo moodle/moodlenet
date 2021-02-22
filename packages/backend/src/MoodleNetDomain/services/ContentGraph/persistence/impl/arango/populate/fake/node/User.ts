@@ -1,9 +1,11 @@
 import fk from 'faker'
-import { CreateNodeInput, NodeType } from '../../../../../../ContentGraph.graphql.gen'
-import { Just } from '../types'
+import * as GQL from '../../../../../../ContentGraph.graphql.gen'
+import { Fake } from '../types'
 
-export const User = (): Just<CreateNodeInput[NodeType.User]> => {
+export const User = (): Fake<GQL.User> => {
   return {
+    icon: fk.image.abstract(200, 200),
     name: fk.internet.userName(),
+    summary: fk.lorem.paragraphs(3),
   }
 }

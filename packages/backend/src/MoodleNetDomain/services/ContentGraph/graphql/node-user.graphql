@@ -1,7 +1,7 @@
 type User implements INode & IContentNode {
   name: String!
-  # summary: String!
-  # icon: String
+  summary: String!
+  icon: String
   _id: ID!
   _rel(edge: EdgeTypeInput!, page: PageInput): Page!
 }
@@ -18,8 +18,10 @@ input UpdateUserInput {
   name: String
 }
 input CreateNodeInput {
-  User: CreateSubjectInput
+  User: CreateUserInput
 }
-input CreateSubjectInput {
+input CreateUserInput {
   name: String!
+  summary: String!
+  icon: String
 }

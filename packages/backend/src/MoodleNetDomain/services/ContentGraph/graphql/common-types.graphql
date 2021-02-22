@@ -7,8 +7,8 @@ interface INode {
 
 interface IContentNode {
   name: String!
-  # summary: String!
-  # icon: String
+  summary: String!
+  icon: String
 }
 
 interface IEdge {

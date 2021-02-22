@@ -27,6 +27,8 @@ export const createHooks: {
       nodeType: NodeType.User,
       data: {
         name: input.name,
+        icon: input.icon,
+        summary: input.summary,
       },
     })
     return createResult
@@ -39,6 +41,8 @@ export const createHooks: {
       nodeType: NodeType.Subject,
       data: {
         name: input.name,
+        icon: input.icon,
+        summary: input.summary,
       },
     })
     return createResult
@@ -51,6 +55,8 @@ export const createHooks: {
       nodeType: NodeType.Collection,
       data: {
         name: input.name,
+        icon: input.icon,
+        summary: input.summary,
       },
     })
     return createResult
@@ -63,6 +69,8 @@ export const createHooks: {
       nodeType: NodeType.Resource,
       data: {
         name: input.name,
+        icon: input.icon,
+        summary: input.summary,
       },
     })
     return createResult

@@ -1,1 +1,3 @@
-export type Just<T> = Exclude<T, null | undefined>
+import { Edge, Node } from '../../../../../ContentGraph.graphql.gen'
+
+export type Fake<T extends Node | Edge> = Omit<T, '_id' | '_rel' | '__typename'>

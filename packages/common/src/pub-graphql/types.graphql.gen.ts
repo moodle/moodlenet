@@ -111,7 +111,7 @@ export type CreateNodeInput = {
   Collection: Maybe<CreateCollectionInput>;
   Resource: Maybe<CreateResourceInput>;
   Subject: Maybe<CreateSubjectInput>;
-  User: Maybe<CreateSubjectInput>;
+  User: Maybe<CreateUserInput>;
   nodeType: NodeType;
 };
 
@@ -327,6 +327,8 @@ export type INode_RelArgs = {
 
 export type IContentNode = {
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
 };
 
 export type IEdge = {
@@ -387,6 +389,8 @@ export type UserSession = {
 export type Collection = INode & IContentNode & {
   __typename: 'Collection';
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
   _rel: Page;
 };
@@ -408,6 +412,8 @@ export enum NodeType {
 
 export type CreateCollectionInput = {
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
 };
 
 export type UpdateCollectionInput = {
@@ -417,6 +423,8 @@ export type UpdateCollectionInput = {
 export type Resource = INode & IContentNode & {
   __typename: 'Resource';
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
   _rel: Page;
 };
@@ -429,6 +437,8 @@ export type Resource_RelArgs = {
 
 export type CreateResourceInput = {
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
 };
 
 export type UpdateResourceInput = {
@@ -438,6 +448,8 @@ export type UpdateResourceInput = {
 export type Subject = INode & IContentNode & {
   __typename: 'Subject';
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
   _rel: Page;
 };
@@ -450,6 +462,8 @@ export type Subject_RelArgs = {
 
 export type CreateSubjectInput = {
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
 };
 
 export type UpdateSubjectInput = {
@@ -459,6 +473,8 @@ export type UpdateSubjectInput = {
 export type User = INode & IContentNode & {
   __typename: 'User';
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
   _rel: Page;
 };
@@ -471,6 +487,12 @@ export type User_RelArgs = {
 
 export type UpdateUserInput = {
   name: Maybe<Scalars['String']>;
+};
+
+export type CreateUserInput = {
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
 };
 
 export type SimpleResponse = {

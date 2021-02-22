@@ -66,7 +66,7 @@ export type CreateNodeInput = {
   Collection: Maybe<CreateCollectionInput>;
   Resource: Maybe<CreateResourceInput>;
   Subject: Maybe<CreateSubjectInput>;
-  User: Maybe<CreateSubjectInput>;
+  User: Maybe<CreateUserInput>;
   nodeType: NodeType;
 };
 
@@ -281,6 +281,8 @@ export type INode_RelArgs = {
 
 export type IContentNode = {
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
 };
 
 export type IEdge = {
@@ -336,6 +338,8 @@ export type UserSession = {
 export type Collection = INode & IContentNode & {
   __typename: 'Collection';
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
   _rel: Page;
 };
@@ -357,6 +361,8 @@ export enum NodeType {
 
 export type CreateCollectionInput = {
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
 };
 
 export type UpdateCollectionInput = {
@@ -366,6 +372,8 @@ export type UpdateCollectionInput = {
 export type Resource = INode & IContentNode & {
   __typename: 'Resource';
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
   _rel: Page;
 };
@@ -378,6 +386,8 @@ export type Resource_RelArgs = {
 
 export type CreateResourceInput = {
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
 };
 
 export type UpdateResourceInput = {
@@ -387,6 +397,8 @@ export type UpdateResourceInput = {
 export type Subject = INode & IContentNode & {
   __typename: 'Subject';
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
   _rel: Page;
 };
@@ -399,6 +411,8 @@ export type Subject_RelArgs = {
 
 export type CreateSubjectInput = {
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
 };
 
 export type UpdateSubjectInput = {
@@ -408,6 +422,8 @@ export type UpdateSubjectInput = {
 export type User = INode & IContentNode & {
   __typename: 'User';
   name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
   _rel: Page;
 };
@@ -420,6 +436,12 @@ export type User_RelArgs = {
 
 export type UpdateUserInput = {
   name: Maybe<Scalars['String']>;
+};
+
+export type CreateUserInput = {
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon: Maybe<Scalars['String']>;
 };
 
 
@@ -569,6 +591,7 @@ export type ResolversTypes = {
   UpdateSubjectInput: UpdateSubjectInput;
   User: ResolverTypeWrapper<User>;
   UpdateUserInput: UpdateUserInput;
+  CreateUserInput: CreateUserInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -634,6 +657,7 @@ export type ResolversParentTypes = {
   UpdateSubjectInput: UpdateSubjectInput;
   User: User;
   UpdateUserInput: UpdateUserInput;
+  CreateUserInput: CreateUserInput;
 };
 
 export interface NeverScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Never'], any> {
@@ -786,6 +810,8 @@ export type INodeResolvers<ContextType = MoodleNetExecutionContext, ParentType e
 export type IContentNodeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['IContentNode'] = ResolversParentTypes['IContentNode']> = {
   __resolveType: TypeResolveFn<'Collection' | 'Resource' | 'Subject' | 'User', ParentType, ContextType>;
   name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  summary: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  icon: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
 
 export type IEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['IEdge'] = ResolversParentTypes['IEdge']> = {
@@ -829,6 +855,8 @@ export type UserSessionResolvers<ContextType = MoodleNetExecutionContext, Parent
 
 export type CollectionResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Collection'] = ResolversParentTypes['Collection']> = {
   name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  summary: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  icon: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Collection_RelArgs, 'edge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -840,6 +868,8 @@ export type NodeResolvers<ContextType = MoodleNetExecutionContext, ParentType ex
 
 export type ResourceResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Resource'] = ResolversParentTypes['Resource']> = {
   name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  summary: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  icon: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Resource_RelArgs, 'edge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -847,6 +877,8 @@ export type ResourceResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
 
 export type SubjectResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
   name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  summary: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  icon: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<Subject_RelArgs, 'edge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -854,6 +886,8 @@ export type SubjectResolvers<ContextType = MoodleNetExecutionContext, ParentType
 
 export type UserResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   name: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  summary: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  icon: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['Page'], ParentType, ContextType, RequireFields<User_RelArgs, 'edge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

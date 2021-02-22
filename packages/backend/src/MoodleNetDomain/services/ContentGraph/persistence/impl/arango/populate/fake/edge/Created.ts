@@ -1,7 +1,7 @@
 // import fk from 'faker'
-import { CreateEdgeInput, EdgeType } from '../../../../../../ContentGraph.graphql.gen'
-import { Just } from '../types'
+import * as GQL from '../../../../../../ContentGraph.graphql.gen'
+import { Fake } from '../types'
 
-export const Created = (): Just<CreateEdgeInput[EdgeType.Created]> => {
+export const Created = (): Fake<GQL.Created> => {
   return {}
 }

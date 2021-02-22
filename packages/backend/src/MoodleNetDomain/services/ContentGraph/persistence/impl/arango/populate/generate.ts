@@ -79,7 +79,7 @@ const doMany = async <T>(tag: string, amount: number, fn: (i: number) => Promise
 
 const SUBJECTS_AMOUNT = 100
 
-const USERS_AMOUNT = 10000
+const USERS_AMOUNT = 1000
 
 const EACH_USER_RESOURCES_AMOUNT = 50
 const EACH_USER_COLLECTIONS_AMOUNT = 15
@@ -166,7 +166,7 @@ export const generate = async () => {
 
     Promise.all(
       getList(NodeType.Resource).map(async resourceKey => {
-        const resourceId = makeId(NodeType.Collection, resourceKey)
+        const resourceId = makeId(NodeType.Resource, resourceKey)
         return Promise.all([
           await doMany('EACH_RESOURCE_HAS_APPLIED_SUBJECTS', EACH_RESOURCE_HAS_APPLIED_SUBJECTS_AMOUNT, () => {
             return createNewFakeEdge({
