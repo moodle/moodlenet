@@ -1,17 +1,20 @@
 import { aqlstr } from '../../../../../../../lib/helpers/arango'
+import { SearchPage } from '../../../../ContentGraph.graphql.gen'
 import { ContentGraphPersistence } from '../../../types'
-import { DBReady } from '../ContentGraph.persistence.arango.env'
+import { aqlMergeTypenameById, paginatedQuery } from './helpers'
 
 // TODO: we need just a "findNode" function :
 // TODO: should not get nodeType, it should infer it from _id instead
 // TODO: gets ctx, lookups policy and prepares filter.
 // TODO: ctx.auth&policy shall include "System" option
-export const globalSearch: ContentGraphPersistence['globalSearch'] = async ({ text }) => {
-  const { db } = await DBReady()
-  if (!text) {
-    return []
-  }
-  const query = `
+export const globalSearch: ContentGraphPersistence['globalSearch'] = async ({ text, page }) => {
+  return paginatedQuery<SearchPage>({
+    pageTypename: 'SearchPage',
+    pageEdgeTypename: 'SearchPageEdge',
+    cursorProp: `node._key`,
+    page,
+    mapQuery: page => `
+  
     FOR node IN SearchView
       SEARCH ANALYZER(
         BOOST(node.name IN TOKENS(${aqlstr(text)} ,"text_en"), 5)
@@ -21,15 +24,12 @@ export const globalSearch: ContentGraphPersistence['globalSearch'] = async ({ te
     
       SORT TFIDF(node) desc
         
-    LIMIT 10
-    RETURN node
-    `
-  // console.log(query)
+      ${page}
 
-  const cursor = await db.query(query)
-
-  const docs = await cursor.all()
-  cursor.kill()
-
-  return docs
+      RETURN {
+        cursor,
+        node: ${aqlMergeTypenameById('node')}
+      }
+    `,
+  })
 }

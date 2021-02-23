@@ -1,24 +1,22 @@
-type Page {
+interface Page {
   pageInfo: PageInfo!
   edges: [PageEdge!]!
 }
 
 type PageInfo {
-  endCursor: String
+  endCursor: Cursor
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
-  startCursor: String
+  startCursor: Cursor
 }
 
-type PageEdge {
-  cursor: String!
-  edge: IEdge!
-  node: INode!
+interface PageEdge {
+  cursor: Cursor!
 }
 
-input PageInput {
+input PaginationInput {
   first: Int
-  after: String
-  before: String
+  after: Cursor
+  before: Cursor
   last: Int
 }

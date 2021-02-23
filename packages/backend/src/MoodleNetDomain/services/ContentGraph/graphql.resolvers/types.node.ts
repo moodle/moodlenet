@@ -9,7 +9,7 @@ import {
 import { ShallowNode } from '../persistence/types'
 
 const _rel: GQL.ResolverFn<
-  GQL.ResolversTypes['Page'],
+  GQL.ResolversTypes['RelPage'],
   ShallowNode,
   MoodleNetExecutionContext,
   GQL.RequireFields<GQL.INode_RelArgs, 'edge'>

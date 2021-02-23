@@ -1,4 +1,14 @@
 type Query {
   node(_id: ID!, nodeType: NodeType!): Node
-  globalSearch(text: String!): [Node!]!
+  globalSearch(text: String!, page: PaginationInput): SearchPage!
+}
+
+type SearchPage implements Page {
+  pageInfo: PageInfo!
+  edges: [SearchPageEdge!]!
+}
+
+type SearchPageEdge implements PageEdge {
+  cursor: Cursor!
+  node: IContentNode!
 }

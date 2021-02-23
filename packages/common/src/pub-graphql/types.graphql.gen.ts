@@ -12,7 +12,7 @@ export type Scalars = {
   Never: never;
   Empty: {};
   DateTime: Date;
-  Cursor: any;
+  Cursor: string;
 };
 
 
@@ -268,30 +268,26 @@ export enum DeleteNodeMutationErrorType {
 }
 
 export type Page = {
-  __typename: 'Page';
   pageInfo: PageInfo;
   edges: Array<PageEdge>;
 };
 
 export type PageInfo = {
   __typename: 'PageInfo';
-  endCursor: Maybe<Scalars['String']>;
+  endCursor: Maybe<Scalars['Cursor']>;
   hasNextPage: Scalars['Boolean'];
   hasPreviousPage: Scalars['Boolean'];
-  startCursor: Maybe<Scalars['String']>;
+  startCursor: Maybe<Scalars['Cursor']>;
 };
 
 export type PageEdge = {
-  __typename: 'PageEdge';
-  cursor: Scalars['String'];
-  edge: IEdge;
-  node: INode;
+  cursor: Scalars['Cursor'];
 };
 
-export type PageInput = {
+export type PaginationInput = {
   first: Maybe<Scalars['Int']>;
-  after: Maybe<Scalars['String']>;
-  before: Maybe<Scalars['String']>;
+  after: Maybe<Scalars['Cursor']>;
+  before: Maybe<Scalars['Cursor']>;
   last: Maybe<Scalars['Int']>;
 };
 
@@ -299,7 +295,7 @@ export type Query = {
   __typename: 'Query';
   getSession: Maybe<UserSession>;
   getSessionAccountUser: Maybe<UserSession>;
-  globalSearch: Array<Node>;
+  globalSearch: SearchPage;
   node: Maybe<Node>;
 };
 
@@ -311,6 +307,7 @@ export type QueryGetSessionAccountUserArgs = {
 
 export type QueryGlobalSearchArgs = {
   text: Scalars['String'];
+  page: Maybe<PaginationInput>;
 };
 
 
@@ -319,16 +316,28 @@ export type QueryNodeArgs = {
   nodeType: NodeType;
 };
 
+export type SearchPage = Page & {
+  __typename: 'SearchPage';
+  pageInfo: PageInfo;
+  edges: Array<SearchPageEdge>;
+};
+
+export type SearchPageEdge = PageEdge & {
+  __typename: 'SearchPageEdge';
+  cursor: Scalars['Cursor'];
+  node: IContentNode;
+};
+
 
 export type INode = {
   _id: Maybe<Scalars['ID']>;
-  _rel: Page;
+  _rel: RelPage;
 };
 
 
 export type INode_RelArgs = {
   edge: EdgeTypeInput;
-  page: Maybe<PageInput>;
+  page: Maybe<PaginationInput>;
 };
 
 export type IContentNode = {
@@ -345,6 +354,19 @@ export type EdgeTypeInput = {
   type: EdgeType;
   node: NodeType;
   inverse: Maybe<Scalars['Boolean']>;
+};
+
+export type RelPage = Page & {
+  __typename: 'RelPage';
+  pageInfo: PageInfo;
+  edges: Array<RelPageEdge>;
+};
+
+export type RelPageEdge = PageEdge & {
+  __typename: 'RelPageEdge';
+  cursor: Scalars['Cursor'];
+  edge: IEdge;
+  node: INode;
 };
 
 export type AppliesTo = IEdge & {
@@ -398,13 +420,13 @@ export type Collection = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _rel: Page;
+  _rel: RelPage;
 };
 
 
 export type Collection_RelArgs = {
   edge: EdgeTypeInput;
-  page: Maybe<PageInput>;
+  page: Maybe<PaginationInput>;
 };
 
 export type Node = Collection | Resource | Subject | User;
@@ -432,13 +454,13 @@ export type Resource = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _rel: Page;
+  _rel: RelPage;
 };
 
 
 export type Resource_RelArgs = {
   edge: EdgeTypeInput;
-  page: Maybe<PageInput>;
+  page: Maybe<PaginationInput>;
 };
 
 export type CreateResourceInput = {
@@ -457,13 +479,13 @@ export type Subject = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _rel: Page;
+  _rel: RelPage;
 };
 
 
 export type Subject_RelArgs = {
   edge: EdgeTypeInput;
-  page: Maybe<PageInput>;
+  page: Maybe<PaginationInput>;
 };
 
 export type CreateSubjectInput = {
@@ -482,13 +504,13 @@ export type User = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _rel: Page;
+  _rel: RelPage;
 };
 
 
 export type User_RelArgs = {
   edge: EdgeTypeInput;
-  page: Maybe<PageInput>;
+  page: Maybe<PaginationInput>;
 };
 
 export type UpdateUserInput = {
@@ -544,6 +566,14 @@ export type CreateSession = {
     "DeleteNodeMutationPayload": [
       "DeleteNodeMutationSuccess",
       "DeleteNodeMutationError"
+    ],
+    "Page": [
+      "SearchPage",
+      "RelPage"
+    ],
+    "PageEdge": [
+      "SearchPageEdge",
+      "RelPageEdge"
     ],
     "INode": [
       "Collection",

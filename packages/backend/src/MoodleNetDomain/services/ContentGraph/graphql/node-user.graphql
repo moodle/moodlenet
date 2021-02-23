@@ -3,7 +3,7 @@ type User implements INode & IContentNode {
   summary: String!
   icon: String
   _id: ID!
-  _rel(edge: EdgeTypeInput!, page: PageInput): Page!
+  _rel(edge: EdgeTypeInput!, page: PaginationInput): RelPage!
 }
 
 union Node = User

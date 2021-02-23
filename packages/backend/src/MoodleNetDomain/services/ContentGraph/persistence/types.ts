@@ -7,7 +7,7 @@ export * as Types from '../ContentGraph.graphql.gen'
 
 export interface ContentGraphPersistence {
   // graphQLTypeResolvers: GQL.Resolvers
-  globalSearch(_: { text: string }): Promise<ShallowNode[]>
+  globalSearch(_: { text: string; page: Maybe<GQL.PaginationInput> }): Promise<GQL.SearchPage>
   findNode<N extends GQL.Node = GQL.Node>(_: {
     _id: Id
     nodeType?: GQL.NodeType | null
@@ -26,9 +26,9 @@ export interface ContentGraphPersistence {
     targetNodeType: GQL.NodeType
     targetNodePolicy: BasicAccessPolicy
     inverse: boolean
-    page: Maybe<GQL.PageInput>
+    page: Maybe<GQL.PaginationInput>
     ctx: MoodleNetExecutionContext
-  }): Promise<GQL.Page>
+  }): Promise<GQL.RelPage>
   createNode<Type extends GQL.NodeType>(_: {
     ctx: MoodleNetExecutionContext
     key: IdKey

@@ -35,7 +35,7 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
     Empty: {} as any, //TODO: define resolver
     DateTime: {} as any, //TODO: define resolver
     Never: null as never, //TODO: define resolver
-    Cursor: null as never, //TODO: define resolver
+    Cursor: {} as any, //TODO: define resolver
 
     Edge: {
       __resolveType: obj => {
@@ -64,6 +64,10 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
     //
     //
     // others are fine with default resolvers :  {} as any,
+    SearchPage: {} as any,
+    SearchPageEdge: {} as any,
+    Page: {} as any,
+    PageEdge: {} as any,
     Follows: {} as any,
     AppliesTo: {} as any,
     Contains: {} as any,
@@ -83,8 +87,8 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
     DeleteNodeMutationPayload: {} as any,
     DeleteNodeMutationSuccess: {} as any,
     IContentNode: {} as any,
-    Page: {} as any,
-    PageEdge: {} as any,
+    RelPage: {} as any,
+    RelPageEdge: {} as any,
     PageInfo: {} as any,
     UpdateEdgeMutationError: {} as any,
     UpdateEdgeMutationPayload: {} as any,

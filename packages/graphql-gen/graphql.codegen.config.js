@@ -8,7 +8,7 @@ const scalars = {
   //  "ID": "string & { readonly __: unique symbol }",
   DateTime: 'Date',
   Empty: '{}',
-  Cursor: 'any',
+  Cursor: 'string',
   Never: 'never',
 }
 
