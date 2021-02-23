@@ -33,7 +33,7 @@ export const _findNode = async (_: { _id: Id; filterMore?: string }) => {
       } )
       : null
   `
-  console.log(query)
+  // console.log(query)
 
   const cursor = await db.query(query)
 

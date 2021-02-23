@@ -253,12 +253,18 @@ export type PageInput = {
 export type Query = {
   __typename: 'Query';
   getSessionAccountUser: Maybe<UserSession>;
+  globalSearch: Array<Node>;
   node: Maybe<Node>;
 };
 
 
 export type QueryGetSessionAccountUserArgs = {
   userId: Scalars['ID'];
+};
+
+
+export type QueryGlobalSearchArgs = {
+  text: Scalars['String'];
 };
 
 
@@ -794,6 +800,7 @@ export type PageEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
 
 export type QueryResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getSessionAccountUser: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType, RequireFields<QueryGetSessionAccountUserArgs, 'userId'>>;
+  globalSearch: Resolver<Array<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryGlobalSearchArgs, 'text'>>;
   node: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryNodeArgs, '_id' | 'nodeType'>>;
 };
 

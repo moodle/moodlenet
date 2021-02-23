@@ -58,14 +58,14 @@ export const createNewFakeEdge = ({ type, _from, _to }: { type: EdgeType; _from:
 }
 
 const doMany = async <T>(tag: string, amount: number, fn: (i: number) => Promise<T>): Promise<(T | null)[]> => {
-  const log_at = Math.ceil(amount / 100)
+  const log_at = amount < 2000 ? 20 : Math.floor(amount / 100)
   let log_cnt = 0
   const results: (T | null)[] = []
   for (let i = 0; i < amount; i++) {
     if (log_cnt >= log_at) {
       log_cnt = 0
 
-      const linelog = `${i + log_at}/${amount} : ${tag}`
+      const linelog = `${i}/${amount} : ${tag}`
       process.stdout.clearLine(0)
       process.stdout.cursorTo(0)
       process.stdout.write(linelog)
@@ -79,7 +79,7 @@ const doMany = async <T>(tag: string, amount: number, fn: (i: number) => Promise
 
 const SUBJECTS_AMOUNT = 100
 
-const USERS_AMOUNT = 1000
+const USERS_AMOUNT = 100
 
 const EACH_USER_RESOURCES_AMOUNT = 50
 const EACH_USER_COLLECTIONS_AMOUNT = 15

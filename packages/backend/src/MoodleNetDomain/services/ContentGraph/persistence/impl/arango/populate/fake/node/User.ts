@@ -6,6 +6,6 @@ export const User = (): Fake<GQL.User> => {
   return {
     icon: fk.image.abstract(200, 200),
     name: fk.internet.userName(),
-    summary: fk.lorem.paragraphs(3),
+    summary: fk.random.words(5),
   }
 }

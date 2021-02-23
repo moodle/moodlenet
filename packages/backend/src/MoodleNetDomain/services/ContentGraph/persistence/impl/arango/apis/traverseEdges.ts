@@ -95,7 +95,7 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
           `
         : null
 
-      console.log(q)
+      // console.log(q)
       return q ? db.query(q).then(cursor => cursor.all()) : []
     }),
   ).then(([afterEdges, beforeEdges]) => {

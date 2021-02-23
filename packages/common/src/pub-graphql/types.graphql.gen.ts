@@ -299,12 +299,18 @@ export type Query = {
   __typename: 'Query';
   getSession: Maybe<UserSession>;
   getSessionAccountUser: Maybe<UserSession>;
+  globalSearch: Array<Node>;
   node: Maybe<Node>;
 };
 
 
 export type QueryGetSessionAccountUserArgs = {
   userId: Scalars['ID'];
+};
+
+
+export type QueryGlobalSearchArgs = {
+  text: Scalars['String'];
 };
 
 

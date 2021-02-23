@@ -6,6 +6,6 @@ export const Collection = (): Fake<GQL.Collection> => {
   return {
     name: fk.random.words(3),
     icon: fk.image.imageUrl(200, 200),
-    summary: fk.lorem.paragraphs(2),
+    summary: fk.random.words(5),
   }
 }

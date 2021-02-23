@@ -7,6 +7,7 @@ export * as Types from '../ContentGraph.graphql.gen'
 
 export interface ContentGraphPersistence {
   // graphQLTypeResolvers: GQL.Resolvers
+  globalSearch(_: { text: string }): Promise<ShallowNode[]>
   findNode<N extends GQL.Node = GQL.Node>(_: {
     _id: Id
     nodeType?: GQL.NodeType | null

@@ -1,3 +1,5 @@
+import { Database } from 'arangojs'
+import { ArangoSearchViewLink } from 'arangojs/view'
 import memo from 'lodash/memoize'
 import * as Yup from 'yup'
 import { createDatabaseIfNotExists } from '../../../../../../lib/helpers/arango'
@@ -33,8 +35,35 @@ export const DBReady = memo(async () => {
   const db = await getDB()
   //const graph = await setupGraph({ db })
   const graph = await getGraph({ db })
+  const searchView = await setupSearchView({ db })
   return {
     db,
     graph,
+    searchView,
   }
 })
+
+const contentAnalyzer: ArangoSearchViewLink = {
+  analyzers: ['text_en'],
+  fields: { summary: {}, name: {} },
+  includeAllFields: false,
+  storeValues: 'none',
+  trackListPositions: false,
+}
+const setupSearchView = async ({ db }: { db: Database }) => {
+  const viewName = 'SearchView'
+  let searchView = db.view(viewName)
+  // const props = await searchView.properties()
+  // console.log(inspect(props, false, 10))
+  // await searchView.drop()
+  if (!(await searchView.exists())) {
+    searchView = await db.createView(viewName, {
+      links: {
+        Resource: contentAnalyzer,
+        Collection: contentAnalyzer,
+      },
+    })
+  }
+
+  return searchView
+}

@@ -6,6 +6,6 @@ export const Resource = (): Fake<GQL.Resource> => {
   return {
     name: fk.random.words(4),
     icon: fk.image.imageUrl(200, 200),
-    summary: fk.lorem.paragraphs(3),
+    summary: fk.random.words(5),
   }
 }
