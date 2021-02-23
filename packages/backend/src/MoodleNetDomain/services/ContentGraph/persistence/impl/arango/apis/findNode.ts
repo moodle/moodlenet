@@ -3,6 +3,7 @@ import { getGlyphBasicAccessFilter } from '../../../../graphDefinition/helpers'
 import { ContentGraphPersistence } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 import { basicArangoAccessFilterEngine } from '../ContentGraph.persistence.arango.helpers'
+import { aqlMergeTypenameById } from './helpers'
 
 // TODO: we need just a "findNode" function :
 // TODO: should not get nodeType, it should infer it from _id instead
@@ -28,9 +29,7 @@ export const _findNode = async (_: { _id: Id; filterMore?: string }) => {
   const query = `
     LET node = DOCUMENT("${_id}")
     RETURN ( ${withFilters} )
-      ? MERGE( node, {
-        __typename: PARSE_IDENTIFIER(node._id).collection
-      } )
+      ? ${aqlMergeTypenameById('node')}
       : null
   `
   // console.log(query)

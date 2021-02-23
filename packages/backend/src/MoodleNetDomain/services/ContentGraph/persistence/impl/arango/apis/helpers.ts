@@ -4,6 +4,7 @@ import { Page, PaginationInput } from '../../../../ContentGraph.graphql.gen'
 import { Types } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 const DEFAULT_PAGE_LENGTH = 10
+const MAX_PAGE_LENGTH = 25
 
 export const paginatedQuery = async <P extends Page>({
   page,
@@ -23,15 +24,15 @@ export const paginatedQuery = async <P extends Page>({
   const { db } = await DBReady()
 
   const { after, first, last, before } = {
-    last: 0,
-    first: DEFAULT_PAGE_LENGTH,
     ...page,
+    last: page?.last ?? 0,
+    first: page?.first ?? DEFAULT_PAGE_LENGTH,
   }
   const beforeCursor = before || after
   const getCursorToo = beforeCursor === after
 
-  const pageLimit = (_: number | null, includeCursor: boolean) =>
-    Math.min(_ || Infinity, DEFAULT_PAGE_LENGTH) + (includeCursor && getCursorToo ? 1 : 0)
+  const pageLimit = (_: number, includeCursor: boolean) =>
+    Math.min(_ || Infinity, MAX_PAGE_LENGTH) + (includeCursor && getCursorToo ? 1 : 0)
 
   const afterPage =
     !after && !!before
@@ -55,7 +56,7 @@ export const paginatedQuery = async <P extends Page>({
     [afterPage, beforePage].map(page => {
       const q = page ? mapQuery(page) : null
 
-      // console.log(q)
+      console.log(q)
       return q ? db.query(q).then(cursor => cursor.all()) : []
     }),
   ).then(([afterEdges, beforeEdges]) => {
@@ -79,11 +80,5 @@ export const paginatedQuery = async <P extends Page>({
   })
 }
 
-export const aqlMergeTypenameById = (varname: string) => `
-MERGE( 
-  ${varname},
-  {
-    __typename: PARSE_IDENTIFIER(${varname}._id).collection
-  }
-  )
-`
+export const aqlMergeTypenameById = (varname: string) =>
+  `MERGE( ${varname}, { __typename: PARSE_IDENTIFIER(${varname}._id).collection } )`
