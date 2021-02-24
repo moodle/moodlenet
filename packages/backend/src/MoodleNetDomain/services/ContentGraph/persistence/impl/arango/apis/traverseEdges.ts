@@ -3,7 +3,7 @@ import { RelPage } from '../../../../ContentGraph.graphql.gen'
 import { getGlyphBasicAccessFilter } from '../../../../graphDefinition/helpers'
 import { ContentGraphPersistence, Types } from '../../../types'
 import { basicArangoAccessFilterEngine } from '../ContentGraph.persistence.arango.helpers'
-import { aqlMergeTypenameById, paginatedQuery } from './helpers'
+import { aqlMergeTypenameById, cursorPaginatedQuery } from './helpers'
 
 export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
   ctx,
@@ -38,12 +38,12 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
     engine: basicArangoAccessFilterEngine,
   })
 
-  return paginatedQuery<RelPage>({
+  return cursorPaginatedQuery<RelPage>({
     pageTypename: 'RelPage',
     pageEdgeTypename: 'RelPageEdge',
     cursorProp: `edge._key`,
     page,
-    mapQuery: page => `
+    mapQuery: pageFilterSort => `
     FOR parentNode, edge 
       IN ${depth} ${direction} ${aqlstr(parentNodeId)} ${edgeType}
 
@@ -54,7 +54,7 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
       LET node = DOCUMENT(edge.${inverse ? '_from' : '_to'})            
       FILTER ${targetNodeAccessFilter}
 
-      ${page}
+      ${pageFilterSort}
 
       RETURN  {
         cursor,

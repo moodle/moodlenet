@@ -79,7 +79,7 @@ const doMany = async <T>(tag: string, amount: number, fn: (i: number) => Promise
 
 const SUBJECTS_AMOUNT = 100
 
-const USERS_AMOUNT = 100
+const USERS_AMOUNT = 10000
 
 const EACH_USER_RESOURCES_AMOUNT = 50
 const EACH_USER_COLLECTIONS_AMOUNT = 15
