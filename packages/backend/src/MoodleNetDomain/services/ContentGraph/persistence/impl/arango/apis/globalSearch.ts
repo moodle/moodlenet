@@ -9,17 +9,16 @@ export const globalSearch: ContentGraphPersistence['globalSearch'] = async ({ te
   const { limit, skip } = skipLimitPagination({ page })
 
   const query = `
-      LET analyzer = "text_en"
-      
         FOR node IN SearchView
         SEARCH ANALYZER(
-          BOOST(node.name IN TOKENS(${aqlstr(text)} , analyzer), 5)
-          ||
-          node.summary IN TOKENS(${aqlstr(text)} , analyzer)
-          ||
-          BOOST(NGRAM_MATCH(node.name, ${aqlstr(text)}, 0.2, "global-search-ngram"), 1.5)
-          ||
-          BOOST(NGRAM_MATCH(node.summary, ${aqlstr(text)}, 0.2, "global-search-ngram"), 0.5)         , analyzer)
+            BOOST(node.name IN TOKENS(${aqlstr(text)}, "text_en"), 30)
+            ||
+            BOOST(node.summary IN TOKENS(${aqlstr(text)}, "text_en"), 10)
+            ||
+            BOOST(NGRAM_MATCH(node.name, ${aqlstr(text)}, 0.05, "global-search-ngram"), 1)
+            ||
+            BOOST(NGRAM_MATCH(node.summary, ${aqlstr(text)}, 0.05, "global-search-ngram"), 0.5)
+          , "text_en")
       SORT TFIDF(node) desc, node._key
       
       LIMIT ${skip}, ${limit}

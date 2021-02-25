@@ -11,20 +11,25 @@ export const dropGraphAndBulkInsertDir = async (path: string) => {
   await graph.drop(true)
   await getGraph({ db })
 
-  return Promise.all(
-    readdirSync(path)
-      .sort()
-      .reverse()
-
-      .map(async base => {
-        const [, collection] = base.split('_')
-        if (!collection) {
-          return
-        }
-        const filename = join(path, base)
-        console.log(`insert ${filename} in ${collection}`)
+  console.log(`
+    from ${path} ...
+  `)
+  return readdirSync(path)
+    .filter(base => !!base.split('_')[1])
+    .map(base => {
+      const [, collection] = base.split('_')
+      const filename = join(path, base)
+      return { filename, base, collection }
+    })
+    .map(_ => {
+      const { size } = statSync(_.filename)
+      return { ..._, size }
+    })
+    .sort((a, b) => b.size - a.size)
+    .map(({ filename, base, collection, size }) => {
+      return () => {
         const stream = createReadStream(filename)
-        const { size } = statSync(filename)
+        console.log(`\n-insert ${base} in ${collection} [${(size / 1024 / 1024).toFixed(1)}MB]`)
         return Axios.request({
           method: 'POST',
           url: `${env.url}/_db/${env.databaseName}/_api/import?type=documents&collection=${collection}`,
@@ -43,8 +48,16 @@ export const dropGraphAndBulkInsertDir = async (path: string) => {
           e => {
             const err = e as AxiosError
             console.error({ status: err.response?.status, msg: err.message, data: err.response?.data })
+            return err
           },
         )
-      }),
-  )
+      }
+    })
+    .reduce(
+      (prev, curr) => () => prev().then(curr),
+      async (): Promise<any> => null,
+    )()
+    .then(() => {
+      console.log('done')
+    })
 }
