@@ -22,15 +22,14 @@ export const useRedirectToBySession = ({
   const history = useHistory()
   const { session } = useSession()
 
-  console.log({ ifLogged, session }, !!ifLogged === !!session)
-
+  const shouldRedirect = !!ifLogged === !!session
   useLayoutEffect(() => {
-    if (!!ifLogged === !!session) {
+    if (shouldRedirect) {
       setImmediate(() => {
         history[replace ? 'replace' : 'push'](to)
       })
     }
-  }, [history, ifLogged, replace, session, to])
+  }, [history, replace, shouldRedirect, to])
 }
 
 export const useRedirectHomeIfLoggedIn = () => {

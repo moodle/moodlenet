@@ -45,7 +45,7 @@ export type SessionContextType = {
 const SessionContext = createContext<SessionContextType>(null as any)
 export const useSession = () => useContext(SessionContext)
 
-const WRONG_CREDS_MGG = t`wrong credentials`
+const WRONG_CREDS_MSG = t`wrong credentials`
 
 export const SessionProvider: FC = ({ children }) => {
   const [activateAccountMut /* , activateResult */] = useActivateNewAccountMutation()
@@ -58,7 +58,7 @@ export const SessionProvider: FC = ({ children }) => {
       return loginMut({ variables: { password, username } }).then(res => {
         const jwt = res.data?.createSession.jwt ?? null
         setLastSession({ jwt, username })
-        return res.data?.createSession.message ?? ((!jwt && WRONG_CREDS_MGG) || null)
+        return res.data?.createSession.message ?? ((!jwt && WRONG_CREDS_MSG) || null)
       })
     },
     [loginMut],
@@ -97,9 +97,5 @@ export const SessionProvider: FC = ({ children }) => {
     }),
     [activateNewAccount, lastSession, login, logout, session],
   )
-  return (
-    <SessionContext.Provider value={ctx}>
-      {sessionQResult.loading || !sessionQResult.called ? null : children}
-    </SessionContext.Provider>
-  )
+  return <SessionContext.Provider value={ctx}>{!sessionQResult.called ? null : children}</SessionContext.Provider>
 }
