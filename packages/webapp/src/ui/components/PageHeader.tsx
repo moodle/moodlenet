@@ -9,9 +9,11 @@ export type PageHeaderProps = {
   loginLink: LinkDef
   logout(): unknown
   username: null | string
+  search(text: string): unknown
+  searchValue: string
 }
 
-export const PageHeader: FC<PageHeaderProps> = ({ homeLink, loginLink, logout, username }) => {
+export const PageHeader: FC<PageHeaderProps> = ({ searchValue, search, homeLink, loginLink, logout, username }) => {
   const Link = useLink()
   return (
     <Menu fixed="top">
@@ -21,6 +23,25 @@ export const PageHeader: FC<PageHeaderProps> = ({ homeLink, loginLink, logout, u
           MoodleNet
         </Menu.Item>
       </Link>
+      <Menu.Item header>
+        <div className="ui search">
+          <div className="ui icon search input">
+            <input
+              autoFocus={!!searchValue}
+              className="prompt"
+              type="text"
+              value={searchValue}
+              placeholder="Search..."
+              onInput={e => {
+                //if (e.key === 'Enter') {
+                search(e.currentTarget.value)
+                //}
+              }}
+            />
+            <i aria-hidden="true" className="search circular link icon"></i>
+          </div>
+        </div>
+      </Menu.Item>
       <Menu.Item header position="right">
         {username ? (
           <>

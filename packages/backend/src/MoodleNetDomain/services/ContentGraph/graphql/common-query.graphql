@@ -1,5 +1,5 @@
 type Query {
-  node(_id: ID!, nodeType: NodeType!): Node
+  node(_id: ID!): Node
   globalSearch(text: String!, page: PaginationInput): SearchPage!
 }
 

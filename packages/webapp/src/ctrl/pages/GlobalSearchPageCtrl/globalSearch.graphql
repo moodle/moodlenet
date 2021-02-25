@@ -1,0 +1,22 @@
+query globalSearch($text: String!) {
+  globalSearch(text: $text) {
+    edges {
+      cursor
+      node {
+        ... on INode {
+          _id
+        }
+        __typename
+        ... on IContentNode {
+          name
+          summary
+          icon
+        }
+      }
+    }
+    pageInfo {
+      startCursor
+      endCursor
+    }
+  }
+}

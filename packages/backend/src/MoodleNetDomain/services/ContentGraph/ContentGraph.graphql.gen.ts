@@ -1,3 +1,4 @@
+import { Id } from './types';
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { MoodleNetExecutionContext, RootValue } from '../../MoodleNetGraphQL';
 export type Maybe<T> = T | null;
@@ -8,7 +9,7 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
+  ID: Id;
   String: string;
   Boolean: boolean;
   Int: number;
@@ -267,7 +268,6 @@ export type QueryGlobalSearchArgs = {
 
 export type QueryNodeArgs = {
   _id: Scalars['ID'];
-  nodeType: NodeType;
 };
 
 export type SearchPage = Page & {
@@ -829,7 +829,7 @@ export type PageEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
 export type QueryResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getSessionAccountUser: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType, RequireFields<QueryGetSessionAccountUserArgs, 'userId'>>;
   globalSearch: Resolver<ResolversTypes['SearchPage'], ParentType, ContextType, RequireFields<QueryGlobalSearchArgs, 'text'>>;
-  node: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryNodeArgs, '_id' | 'nodeType'>>;
+  node: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryNodeArgs, '_id'>>;
 };
 
 export type SearchPageResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['SearchPage'] = ResolversParentTypes['SearchPage']> = {

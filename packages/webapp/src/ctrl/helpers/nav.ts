@@ -1,5 +1,5 @@
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
-import { Home, Login } from '@moodlenet/common/lib/webapp/sitemap/routes'
+import { GlobalSearch, Home, Login } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useLayoutEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useSession } from '../../contexts/Global/Session'
@@ -7,6 +7,7 @@ import { useSession } from '../../contexts/Global/Session'
 export const mainPath = {
   login: webappPath<Login>('/login', {}),
   home: webappPath<Home>('/', {}),
+  search: webappPath<GlobalSearch>('/search', {}),
 }
 
 export const useRedirectToBySession = ({

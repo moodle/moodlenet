@@ -1,4 +1,4 @@
-import { edgeTypeFromId, Id, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
+import { edgeTypeFromId, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import * as GQL from '../ContentGraph.graphql.gen'
 import { getSessionAccountUser } from './merge.getSessionAccountUser'
 import { createEdge } from './mutation/createEdge'
@@ -39,24 +39,24 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
 
     Edge: {
       __resolveType: obj => {
-        return edgeTypeFromId(obj._id as Id) || null
+        return edgeTypeFromId(obj._id) || null
       },
     },
     Node: {
       __resolveType: obj => {
-        return nodeTypeFromId(obj._id as Id) || null
+        return nodeTypeFromId(obj._id) || null
       },
     },
     INode: {
       __resolveType: obj => {
-        return nodeTypeFromId(obj._id as Id) || null
+        return nodeTypeFromId(obj._id) || null
       },
       _id: null as any,
       _rel: null as any,
     },
     IEdge: {
       __resolveType: obj => {
-        return edgeTypeFromId(obj._id as Id) || null
+        return edgeTypeFromId(obj._id) || null
       },
       _id: null as any,
     },

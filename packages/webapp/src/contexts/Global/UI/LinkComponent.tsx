@@ -5,6 +5,7 @@ import { DefaultLinkComponent, LinkComponent, LinkComponentType } from '../../..
 export const LinkComponentProvider: FC = ({ children }) => {
   return <LinkComponent.Provider value={LinkComp}>{children}</LinkComponent.Provider>
 }
+
 const LinkComp: LinkComponentType = props =>
   props.href.external ? (
     <DefaultLinkComponent {...props} />

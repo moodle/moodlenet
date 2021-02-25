@@ -3,7 +3,8 @@ fragment ShallowUser on User {
   name
 }
 
-fragment ShallowSubject on Subject {
-  _id
+fragment BaseContentNode on IContentNode {
   name
+  icon
+  summary
 }

@@ -1,0 +1,10 @@
+query baseContentNode($id: ID!) {
+  node(_id: $id) {
+    ... on INode {
+      _id
+    }
+    ... on IContentNode {
+      ...BaseContentNode
+    }
+  }
+}

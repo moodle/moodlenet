@@ -1,3 +1,4 @@
+import { Id } from './types';
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { MoodleNetExecutionContext, RootValue } from '../../MoodleNetGraphQL';
 export type Maybe<T> = T | null;
@@ -7,7 +8,7 @@ export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Mayb
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
+  ID: Id;
   String: string;
   Boolean: boolean;
   Int: number;

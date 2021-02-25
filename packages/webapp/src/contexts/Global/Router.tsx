@@ -1,6 +1,17 @@
 import { History } from 'history'
-import { FC, useEffect } from 'react'
-import { BrowserRouter, useHistory } from 'react-router-dom'
+import { FC, useEffect, useMemo, useState } from 'react'
+import { BrowserRouter, useHistory, useLocation } from 'react-router-dom'
+
+//TODO : move those hooks into nav.ts
+export const useGlobalSearchText = () => {
+  const urlQuery = useUrlQuery()
+  const qs = useMemo(() => urlQuery.get('q') ?? '', [urlQuery])
+  const _state = useState(qs)
+  const [, setSearchText] = _state
+  useEffect(() => setSearchText(qs), [qs, setSearchText])
+  return _state
+}
+export const useUrlQuery = () => new URLSearchParams(useLocation().search)
 
 export const RouterProvider: FC = ({ children }) => {
   return (

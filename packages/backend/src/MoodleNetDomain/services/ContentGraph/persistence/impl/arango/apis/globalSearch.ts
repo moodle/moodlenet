@@ -16,7 +16,10 @@ export const globalSearch: ContentGraphPersistence['globalSearch'] = async ({ te
           BOOST(node.name IN TOKENS(${aqlstr(text)} , analyzer), 5)
           ||
           node.summary IN TOKENS(${aqlstr(text)} , analyzer)
-          , analyzer)
+          ||
+          BOOST(NGRAM_MATCH(node.name, ${aqlstr(text)}, 0.2, "global-search-ngram"), 1.5)
+          ||
+          BOOST(NGRAM_MATCH(node.summary, ${aqlstr(text)}, 0.2, "global-search-ngram"), 0.5)         , analyzer)
       SORT TFIDF(node) desc, node._key
       
       LIMIT ${skip}, ${limit}

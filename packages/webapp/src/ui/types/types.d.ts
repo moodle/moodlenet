@@ -1,8 +1,6 @@
-import {
-  FormikErrors,
-  FormikTouched,
-  // FormikState, FieldInputProps, FieldMetaProps
-} from 'formik'
+import { Node } from '@moodlenet/common/lib/utils/content-graph'
+import { FormikErrors, FormikTouched } from 'formik'
+import React from 'react'
 
 export interface FormBag<Values = {}> {
   initialValues: Values
@@ -26,3 +24,5 @@ export interface FormBag<Values = {}> {
   isValidating: boolean
   submitCount: number
 }
+
+type ContentNode = Omit<Node, '_rel'>

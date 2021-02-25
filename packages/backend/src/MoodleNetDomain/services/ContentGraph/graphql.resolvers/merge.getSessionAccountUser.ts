@@ -1,4 +1,3 @@
-import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { api } from '../../../../lib/domain'
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { Resolvers, User } from '../ContentGraph.graphql.gen'
@@ -9,7 +8,7 @@ export const getSessionAccountUser: Resolvers['Query']['getSessionAccountUser'] 
   ctx /*_info */,
 ) => {
   const { node: shallowUser } = await api<MoodleNetDomain>(ctx.flow)('ContentGraph.Node.ById').call(
-    nodeById => nodeById<User>({ _id: userId as Id }), // BEWARE: manual cast of Id
+    nodeById => nodeById<User>({ _id: userId }), // BEWARE: manual cast of Id
   )
 
   if (!shallowUser) {

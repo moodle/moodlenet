@@ -1,4 +1,4 @@
-import { Id, IdKey } from '@moodlenet/common/lib/utils/content-graph'
+import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { MoodleNetExecutionContext } from '../../../../types'
 import { CreateNodeInput, CreateNodeMutationErrorType, NodeType } from '../../ContentGraph.graphql.gen'
 import { CreateNodeShallowPayload, ShallowNode } from '../../persistence/types'
@@ -30,7 +30,7 @@ export const CreateNodeHandler = async <Type extends NodeType>({
     const shallowNode = createNodeResult as ShallowNode //ByType<Type>
     return createCreatedEdge({
       ctx,
-      nodeId: shallowNode._id as Id,
+      nodeId: shallowNode._id,
       nodeType,
       userId: ctx.auth.userId,
     }).then(edgeRes => {

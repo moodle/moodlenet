@@ -5,7 +5,7 @@ const backendMooRoot = `../backend/src/MoodleNetDomain`
 const globCommonSdl = `${backendMooRoot}/MoodleNetGraphQL/graphql/**/*.graphql`
 
 const scalars = {
-  //  "ID": "string & { readonly __: unique symbol }",
+  ID: './types#Id',
   DateTime: 'Date',
   Empty: '{}',
   Cursor: 'string',

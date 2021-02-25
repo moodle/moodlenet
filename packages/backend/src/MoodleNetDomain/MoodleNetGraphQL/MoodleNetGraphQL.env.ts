@@ -1,4 +1,3 @@
-import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import JWT from 'jsonwebtoken'
 import memo from 'lodash/memoize'
 import sshpk from 'sshpk'
@@ -57,7 +56,7 @@ export const getJwtSigner = memo(() => {
       accountId: account._id,
       email: account.email,
       username: account.username,
-      userId: user._id as Id,
+      userId: user._id,
       role: account.role,
     }
 
