@@ -27,7 +27,6 @@ export interface ContentGraphPersistence {
   }): Promise<ShallowNode | null>
   traverseEdges(_: {
     parentNodeId: Id
-    parentNodeType: GQL.NodeType
     edgeType: GQL.EdgeType
     edgePolicy: BasicAccessPolicy
     targetNodeType: GQL.NodeType

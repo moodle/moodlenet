@@ -1,4 +1,3 @@
-import { nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
 import { getContentGraphPersistence } from '../ContentGraph.env'
 import * as GQL from '../ContentGraph.graphql.gen'
@@ -15,7 +14,6 @@ const _rel: GQL.ResolverFn<
   GQL.RequireFields<GQL.INode_RelArgs, 'edge'>
 > = async (parent, node, ctx, _info) => {
   const { _id: parentId } = parent
-  const parentNodeType = nodeTypeFromId(parentId)
   const {
     edge: { type: edgeType, node: targetNodeType, inverse },
     page,
@@ -41,7 +39,6 @@ const _rel: GQL.ResolverFn<
     edgePolicy,
     edgeType,
     parentNodeId: parentId,
-    parentNodeType,
     inverse: !!inverse,
     targetNodePolicy,
     targetNodeType,

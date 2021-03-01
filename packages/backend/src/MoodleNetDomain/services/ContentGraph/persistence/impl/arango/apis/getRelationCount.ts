@@ -1,4 +1,3 @@
-import { nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { aqlstr } from '../../../../../../../lib/helpers/arango'
 import { ContentGraphPersistence } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
@@ -11,24 +10,14 @@ export const getRelationCount: ContentGraphPersistence['getRelationCount'] = asy
 }): Promise<number> => {
   const { db } = await DBReady()
 
-  const queryDepth = [1, 1]
-  const depth = queryDepth.join('..')
-
-  const sourceNodeType = nodeTypeFromId(nodeId)
-  const fromNodeType = inverse ? targetNodeType : sourceNodeType
-  const toNodeType = inverse ? sourceNodeType : targetNodeType
-
+  const filterOnSideType = inverse ? 'from' : 'to'
   const direction = inverse ? 'INBOUND' : 'OUTBOUND'
 
   const q = `FOR parentNode, edge 
-      IN ${depth} ${direction} ${aqlstr(nodeId)} ${edgeType}
-
-      FILTER edge.from == '${fromNodeType}' 
-          && edge.to   == '${toNodeType}'
-      
+      IN 1..1 ${direction} ${aqlstr(nodeId)} ${edgeType}
+      FILTER edge.${filterOnSideType} == '${targetNodeType}' 
       COLLECT WITH COUNT INTO count
-      
-      RETURN  count
+      RETURN count
     `
   console.log(q)
   const cursor = await db.query(q)

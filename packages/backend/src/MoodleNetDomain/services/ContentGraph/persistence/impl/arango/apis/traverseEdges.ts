@@ -10,18 +10,13 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
   edgeType,
   page,
   parentNodeId,
-  parentNodeType,
   inverse,
   targetNodeType,
   edgePolicy,
   targetNodePolicy,
 }): Promise<Types.RelPage> => {
-  const queryDepth = [1, 1]
+  const filterOnSideType = inverse ? 'from' : 'to'
 
-  const fromNodeType = inverse ? targetNodeType : parentNodeType
-  const toNodeType = inverse ? parentNodeType : targetNodeType
-
-  const depth = queryDepth.join('..')
   const direction = inverse ? 'INBOUND' : 'OUTBOUND'
 
   const targetEdgeAccessFilter = getGlyphBasicAccessFilter({
@@ -44,14 +39,12 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
     cursorProp: `edge._key`,
     page,
     mapQuery: pageFilterSort => `
-    FOR parentNode, edge 
-      IN ${depth} ${direction} ${aqlstr(parentNodeId)} ${edgeType}
+    FOR targetNode, edge 
+      IN 1..1 ${direction} ${aqlstr(parentNodeId)} ${edgeType}
 
-      FILTER edge.from == '${fromNodeType}' 
-          && edge.to   == '${toNodeType}'
+      FILTER edge.${filterOnSideType} == '${targetNodeType}' 
           && ${targetEdgeAccessFilter}
       
-      LET node = DOCUMENT(edge.${inverse ? '_from' : '_to'})            
       FILTER ${targetNodeAccessFilter}
 
       ${pageFilterSort}
@@ -59,7 +52,7 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
       RETURN  {
         cursor,
         edge,
-        node: ${aqlMergeTypenameById('node')}
+        node: ${aqlMergeTypenameById('targetNode')}
       }
     `,
   })

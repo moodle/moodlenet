@@ -7,18 +7,22 @@ import { aqlMergeTypenameById, makePage, skipLimitPagination } from './helpers'
 export const globalSearch: ContentGraphPersistence['globalSearch'] = async ({ text, page }) => {
   const { db } = await DBReady()
   const { limit, skip } = skipLimitPagination({ page })
-
+  const aql_txt = aqlstr(text)
   const query = `
         FOR node IN SearchView
         SEARCH ANALYZER(
-            BOOST(node.name IN TOKENS(${aqlstr(text)}, "text_en"), 30)
-            ||
-            BOOST(node.summary IN TOKENS(${aqlstr(text)}, "text_en"), 10)
-            ||
-            BOOST(NGRAM_MATCH(node.name, ${aqlstr(text)}, 0.05, "global-search-ngram"), 1)
-            ||
-            BOOST(NGRAM_MATCH(node.summary, ${aqlstr(text)}, 0.05, "global-search-ngram"), 0.5)
-          , "text_en")
+          BOOST( PHRASE(node.name,${aql_txt}), 10 )
+          ||
+          BOOST( PHRASE(node.description,${aql_txt}), 5 )
+          ||
+          BOOST( node.name IN TOKENS(${aql_txt}), 3 )
+          ||
+          BOOST( node.summary IN TOKENS(${aql_txt}), 1 )
+          ||
+          BOOST(  NGRAM_MATCH(node.name, ${aql_txt}, 0.05, "global-search-ngram"), 0.2 )
+          ||
+          BOOST( NGRAM_MATCH(node.summary, ${aql_txt}, 0.05, "global-search-ngram"), 0.1 )
+        , "text_en")
       SORT TFIDF(node) desc, node._key
       
       LIMIT ${skip}, ${limit}
