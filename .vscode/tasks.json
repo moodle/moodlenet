@@ -5,7 +5,7 @@
       "label": "start dev env",
       "command": "yarn",
       "args": ["start-dev"],
-      "group": "build",
+      "group": "none",
       "problemMatcher": []
     },
     {

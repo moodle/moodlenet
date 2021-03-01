@@ -10,6 +10,7 @@ try {
   mkdirSync(GEN_DIR)
 } catch {}
 
+console.log(`bulk dir :${GEN_DIR}`)
 const writers: { [type in NodeType | EdgeType]: WriteStream } = {} as any
 const getOutFilename = (type: NodeType | EdgeType) => {
   const prefix = type in NodeType ? 'nodes' : 'edges'
