@@ -25,4 +25,4 @@ export interface FormBag<Values = {}> {
   submitCount: number
 }
 
-type ContentNode = Omit<Node, '_rel'>
+type ContentNode = Omit<Node, '_rel' | '_relCount'>

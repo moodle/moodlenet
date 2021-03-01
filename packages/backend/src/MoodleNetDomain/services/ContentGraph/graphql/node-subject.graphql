@@ -3,6 +3,7 @@ type Subject implements INode & IContentNode {
   summary: String!
   icon: String
   _id: ID!
+  _relCount(edge: EdgeTypeInput!): Int!
   _rel(edge: EdgeTypeInput!, page: PaginationInput): RelPage!
 }
 

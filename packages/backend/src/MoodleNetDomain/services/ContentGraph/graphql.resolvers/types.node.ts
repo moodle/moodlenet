@@ -60,6 +60,17 @@ const _rel: GQL.ResolverFn<
   return pageResult
 }
 
+const _relCount: GQL.ResolverFn<
+  GQL.ResolversTypes['Int'],
+  ShallowNode,
+  MoodleNetExecutionContext,
+  GQL.RequireFields<GQL.INode_RelCountArgs, 'edge'>
+> = async (parent, { edge: { inverse, node, type } }, ctx, _info) => {
+  const { getRelationCount } = await getContentGraphPersistence()
+  return getRelationCount({ ctx, nodeId: parent._id, edgeType: type, inverse: !!inverse, targetNodeType: node })
+}
+
 export const NodeResolver = {
   _rel,
+  _relCount,
 } as any

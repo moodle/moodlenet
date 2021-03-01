@@ -1,4 +1,4 @@
-import { Id, IdKey } from '@moodlenet/common/lib/utils/content-graph'
+import { EdgeType, Id, IdKey, NodeType } from '@moodlenet/common/lib/utils/content-graph'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
 import * as GQL from '../ContentGraph.graphql.gen'
@@ -12,6 +12,13 @@ export interface ContentGraphPersistence {
     _id: Id
     nodeType?: GQL.NodeType | null
   }): Promise<ShallowNode<N> | null>
+  getRelationCount(_: {
+    ctx: MoodleNetExecutionContext
+    nodeId: Id
+    edgeType: EdgeType
+    inverse: boolean
+    targetNodeType: NodeType
+  }): Promise<number>
   findNodeWithPolicy(_: {
     _id: Id
     nodeType: GQL.NodeType
@@ -48,7 +55,7 @@ export interface ContentGraphPersistence {
   // deleteGlyph(_: { _id: string }): DeletePayload //config():Promise<Config>
 }
 
-export type ShallowNode<N extends GQL.Node = GQL.Node> = Omit<N, '_rel'>
+export type ShallowNode<N extends GQL.Node = GQL.Node> = Omit<N, '_rel' | '_relCount'>
 export type ShallowEdge<E extends GQL.Edge = GQL.Edge> = Omit<E, '___ nothing to omit ___'>
 
 export type CreateNodeData<Type extends GQL.NodeType> = Omit<ShallowNodeByType<Type>, '_id' | '__typename'>

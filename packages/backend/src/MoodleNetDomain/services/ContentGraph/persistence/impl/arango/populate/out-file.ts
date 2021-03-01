@@ -4,7 +4,7 @@ import { join } from 'path'
 import { EdgeType, NodeType } from '../../../../ContentGraph.graphql.gen'
 import { ShallowEdge, ShallowNode } from '../../../types'
 
-export const GEN_DIR = join(__dirname, '_gen')
+export const GEN_DIR = process.env.GEN_DIR || join(__dirname, '_gen')
 
 try {
   mkdirSync(GEN_DIR)

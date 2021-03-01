@@ -332,12 +332,18 @@ export type SearchPageEdge = PageEdge & {
 export type INode = {
   _id: Maybe<Scalars['ID']>;
   _rel: RelPage;
+  _relCount: Scalars['Int'];
 };
 
 
 export type INode_RelArgs = {
   edge: EdgeTypeInput;
   page: Maybe<PaginationInput>;
+};
+
+
+export type INode_RelCountArgs = {
+  edge: EdgeTypeInput;
 };
 
 export type IContentNode = {
@@ -420,7 +426,13 @@ export type Collection = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
+  _relCount: Scalars['Int'];
   _rel: RelPage;
+};
+
+
+export type Collection_RelCountArgs = {
+  edge: EdgeTypeInput;
 };
 
 
@@ -454,7 +466,13 @@ export type Resource = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
+  _relCount: Scalars['Int'];
   _rel: RelPage;
+};
+
+
+export type Resource_RelCountArgs = {
+  edge: EdgeTypeInput;
 };
 
 
@@ -479,7 +497,13 @@ export type Subject = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
+  _relCount: Scalars['Int'];
   _rel: RelPage;
+};
+
+
+export type Subject_RelCountArgs = {
+  edge: EdgeTypeInput;
 };
 
 
@@ -504,7 +528,13 @@ export type User = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
+  _relCount: Scalars['Int'];
   _rel: RelPage;
+};
+
+
+export type User_RelCountArgs = {
+  edge: EdgeTypeInput;
 };
 
 

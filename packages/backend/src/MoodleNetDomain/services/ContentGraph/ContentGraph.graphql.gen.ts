@@ -286,12 +286,18 @@ export type SearchPageEdge = PageEdge & {
 export type INode = {
   _id: Maybe<Scalars['ID']>;
   _rel: RelPage;
+  _relCount: Scalars['Int'];
 };
 
 
 export type INode_RelArgs = {
   edge: EdgeTypeInput;
   page: Maybe<PaginationInput>;
+};
+
+
+export type INode_RelCountArgs = {
+  edge: EdgeTypeInput;
 };
 
 export type IContentNode = {
@@ -369,7 +375,13 @@ export type Collection = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
+  _relCount: Scalars['Int'];
   _rel: RelPage;
+};
+
+
+export type Collection_RelCountArgs = {
+  edge: EdgeTypeInput;
 };
 
 
@@ -403,7 +415,13 @@ export type Resource = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
+  _relCount: Scalars['Int'];
   _rel: RelPage;
+};
+
+
+export type Resource_RelCountArgs = {
+  edge: EdgeTypeInput;
 };
 
 
@@ -428,7 +446,13 @@ export type Subject = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
+  _relCount: Scalars['Int'];
   _rel: RelPage;
+};
+
+
+export type Subject_RelCountArgs = {
+  edge: EdgeTypeInput;
 };
 
 
@@ -453,7 +477,13 @@ export type User = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
+  _relCount: Scalars['Int'];
   _rel: RelPage;
+};
+
+
+export type User_RelCountArgs = {
+  edge: EdgeTypeInput;
 };
 
 
@@ -852,6 +882,7 @@ export type INodeResolvers<ContextType = MoodleNetExecutionContext, ParentType e
   __resolveType: TypeResolveFn<'Collection' | 'Resource' | 'Subject' | 'User', ParentType, ContextType>;
   _id: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   _rel: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<INode_RelArgs, 'edge'>>;
+  _relCount: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<INode_RelCountArgs, 'edge'>>;
 };
 
 export type IContentNodeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['IContentNode'] = ResolversParentTypes['IContentNode']> = {
@@ -918,6 +949,7 @@ export type CollectionResolvers<ContextType = MoodleNetExecutionContext, ParentT
   summary: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _relCount: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Collection_RelCountArgs, 'edge'>>;
   _rel: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Collection_RelArgs, 'edge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -931,6 +963,7 @@ export type ResourceResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
   summary: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _relCount: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Resource_RelCountArgs, 'edge'>>;
   _rel: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Resource_RelArgs, 'edge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -940,6 +973,7 @@ export type SubjectResolvers<ContextType = MoodleNetExecutionContext, ParentType
   summary: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _relCount: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Subject_RelCountArgs, 'edge'>>;
   _rel: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Subject_RelArgs, 'edge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -949,6 +983,7 @@ export type UserResolvers<ContextType = MoodleNetExecutionContext, ParentType ex
   summary: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   _id: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _relCount: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<User_RelCountArgs, 'edge'>>;
   _rel: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<User_RelArgs, 'edge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
