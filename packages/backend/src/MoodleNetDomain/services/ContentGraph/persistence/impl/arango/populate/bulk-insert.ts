@@ -1,6 +1,7 @@
 import Axios, { AxiosError } from 'axios'
 import { createReadStream, readdirSync, statSync } from 'fs'
 import { join } from 'path'
+import { sequencePromiseCalls } from '../../../../../../../lib/helpers/misc'
 import { env, getDB } from '../ContentGraph.persistence.arango.env'
 import { getGraph } from '../setupGraph'
 
@@ -14,7 +15,7 @@ export const dropGraphAndBulkInsertDir = async (path: string) => {
   console.log(`
     from ${path} ...
   `)
-  return readdirSync(path)
+  const thunks = readdirSync(path)
     .filter(base => !!base.split('_')[1])
     .map(base => {
       const [, collection] = base.split('_')
@@ -53,11 +54,7 @@ export const dropGraphAndBulkInsertDir = async (path: string) => {
         )
       }
     })
-    .reduce(
-      (prev, curr) => () => prev().then(curr),
-      async (): Promise<any> => null,
-    )()
-    .then(() => {
-      console.log('done')
-    })
+  return sequencePromiseCalls(thunks).then(_ => {
+    console.log('done')
+  })
 }

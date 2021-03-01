@@ -8,13 +8,14 @@ import * as fakeNode from './fake/node'
 import { finishWrite, writeGlyph } from './out-file'
 
 const genKeys: { [type in NodeType | EdgeType]: IdKey[] } = {} as any
-const getList = (type: NodeType | EdgeType) => {
+const getKeyIdList = (type: NodeType | EdgeType) => getKeyList(type).map(key => ({ key, id: makeId(type, key) }))
+const getKeyList = (type: NodeType | EdgeType) => {
   const list = (genKeys[type] = genKeys[type] || [])
   return list
 }
 const genKey = (type: NodeType | EdgeType) => {
   const key = ulidKey()
-  getList(type).push(key)
+  getKeyList(type).push(key)
   return key
 }
 
@@ -62,7 +63,7 @@ const doMany = async <T>(tag: string, amount: number, fn: (i: number) => Promise
   let log_cnt = 0
   const results: (T | null)[] = []
   for (let i = 0; i < amount; i++) {
-    if (log_cnt >= log_at) {
+    if (log_cnt >= log_at || log_cnt === amount - 1) {
       log_cnt = 0
 
       const linelog = `${i}/${amount} : ${tag}`
@@ -79,7 +80,7 @@ const doMany = async <T>(tag: string, amount: number, fn: (i: number) => Promise
 
 const SUBJECTS_AMOUNT = 10
 
-const USERS_AMOUNT = 3000
+const USERS_AMOUNT = 100000
 
 const EACH_USER_RESOURCES_AMOUNT = 50
 const EACH_USER_COLLECTIONS_AMOUNT = 15
@@ -92,94 +93,85 @@ const EACH_COLLECTION_HAS_APPLIED_SUBJECTS_AMOUNT = 4
 const EACH_RESOURCE_HAS_APPLIED_SUBJECTS_AMOUNT = 2
 
 export const generate = async () => {
-  console.log(`\n\nCreate Nodes`)
-  await Promise.all([
-    doMany('SUBJECTS', SUBJECTS_AMOUNT, () => {
-      return createNewFakeNode({ type: NodeType.Subject })
-    }),
-    doMany('USERS', USERS_AMOUNT, () => {
-      return createNewFakeNode({ type: NodeType.User })
-    }),
-  ])
+  await doMany('SUBJECTS', SUBJECTS_AMOUNT, () => {
+    return createNewFakeNode({ type: NodeType.Subject })
+  })
+  await doMany('USERS', USERS_AMOUNT, () => {
+    return createNewFakeNode({ type: NodeType.User })
+  })
 
-  console.log(`\n\nCreate User created content Nodes`)
-  await Promise.all(
-    getList(NodeType.User).map(async userKey => {
-      return Promise.all([
-        doMany(`USER ${userKey} RESOURCES`, EACH_USER_RESOURCES_AMOUNT, () => {
-          return createNewFakeNode({ type: NodeType.Resource, creatorKey: userKey })
-        }),
+  const users = getKeyIdList(NodeType.User)
+  const usersL = users.length
+  for (let i = 0; i < usersL; i++) {
+    const { key: userKey, id: userId } = users[i]
 
-        doMany(`USER ${userKey} COLLECTIONS`, EACH_USER_COLLECTIONS_AMOUNT, () => {
-          return createNewFakeNode({ type: NodeType.Collection, creatorKey: userKey })
-        }),
-      ])
-    }),
-  )
+    await doMany(`${i}/${usersL} : ${userId} RESOURCES`, EACH_USER_RESOURCES_AMOUNT, () => {
+      return createNewFakeNode({ type: NodeType.Resource, creatorKey: userKey })
+    })
+    await doMany(`${i}/${usersL} : ${userId} COLLECTIONS`, EACH_USER_COLLECTIONS_AMOUNT, () => {
+      return createNewFakeNode({ type: NodeType.Collection, creatorKey: userKey })
+    })
 
-  console.log(`\n\nCreate Edges`)
-  await Promise.all([
-    Promise.all(
-      getList(NodeType.User).map(async userKey => {
-        const userId = makeId(NodeType.User, userKey)
-        return Promise.all([
-          doMany(`USER ${userKey} FOLLOWS_USER`, EACH_USER_FOLLOWS_USER_AMOUNT, () => {
-            return createNewFakeEdge({ type: EdgeType.Follows, _from: userId, _to: getRndGenId(NodeType.User) })
-          }),
+    await doMany(`${i}/${usersL} : ${userId} FOLLOWS_USER`, EACH_USER_FOLLOWS_USER_AMOUNT, () => {
+      return createNewFakeEdge({ type: EdgeType.Follows, _from: userId, _to: getRndGenId(NodeType.User) })
+    })
+    await doMany(`${i}/${usersL} : ${userId} FOLLOWS_SUBJECT`, EACH_USER_FOLLOWS_SUBJECT_AMOUNT, () => {
+      return createNewFakeEdge({ type: EdgeType.Follows, _from: userId, _to: getRndGenId(NodeType.Subject) })
+    })
+    await doMany(`${i}/${usersL} : ${userId} FOLLOWS_COLLECTION`, EACH_USER_FOLLOWS_COLLECTION_AMOUNT, () => {
+      return createNewFakeEdge({ type: EdgeType.Follows, _from: userId, _to: getRndGenId(NodeType.Collection) })
+    })
+    await doMany(`${i}/${usersL} : ${userId} LIKES_RESOURCE`, EACH_USER_LIKES_RESOURCE_AMOUNT, () => {
+      return createNewFakeEdge({ type: EdgeType.Likes, _from: userId, _to: getRndGenId(NodeType.Resource) })
+    })
+  }
 
-          doMany(`USER ${userKey} FOLLOWS_SUBJECT`, EACH_USER_FOLLOWS_SUBJECT_AMOUNT, () => {
-            return createNewFakeEdge({ type: EdgeType.Follows, _from: userId, _to: getRndGenId(NodeType.Subject) })
-          }),
+  console.log(`COLLECTION EDGES`)
+  const collections = getKeyIdList(NodeType.Collection)
+  const collectionsL = collections.length
+  for (let i = 0; i < collectionsL; i++) {
+    const { id: collectionId } = collections[i]
+    await doMany(
+      `${i}/${collectionsL} : ${collectionId} CONTAINS_RESOURCE`,
+      EACH_COLLECTION_CONTAINS_RESOURCE_AMOUNT,
+      () => {
+        return createNewFakeEdge({
+          type: EdgeType.Contains,
+          _from: collectionId,
+          _to: getRndGenId(NodeType.Resource),
+        })
+      },
+    )
+    await doMany(
+      `${i}/${collectionsL} : ${collectionId} HAS_APPLIED_SUBJECTS`,
+      EACH_COLLECTION_HAS_APPLIED_SUBJECTS_AMOUNT,
+      () => {
+        return createNewFakeEdge({
+          type: EdgeType.AppliesTo,
+          _to: collectionId,
+          _from: getRndGenId(NodeType.Subject),
+        })
+      },
+    )
+  }
 
-          doMany(`USER ${userKey} FOLLOWS_COLLECTION`, EACH_USER_FOLLOWS_COLLECTION_AMOUNT, () => {
-            return createNewFakeEdge({ type: EdgeType.Follows, _from: userId, _to: getRndGenId(NodeType.Collection) })
-          }),
-
-          doMany(`USER ${userKey} LIKES_RESOURCE`, EACH_USER_LIKES_RESOURCE_AMOUNT, () => {
-            return createNewFakeEdge({ type: EdgeType.Likes, _from: userId, _to: getRndGenId(NodeType.Resource) })
-          }),
-        ])
-      }),
-    ),
-
-    Promise.all(
-      getList(NodeType.Collection).map(async collectionKey => {
-        const collectionId = makeId(NodeType.Collection, collectionKey)
-        return Promise.all([
-          doMany('EACH_COLLECTION_CONTAINS_RESOURCE', EACH_COLLECTION_CONTAINS_RESOURCE_AMOUNT, () => {
-            return createNewFakeEdge({
-              type: EdgeType.Contains,
-              _from: collectionId,
-              _to: getRndGenId(NodeType.Resource),
-            })
-          }),
-          doMany('EACH_COLLECTION_HAS_APPLIED_SUBJECTS', EACH_COLLECTION_HAS_APPLIED_SUBJECTS_AMOUNT, () => {
-            return createNewFakeEdge({
-              type: EdgeType.AppliesTo,
-              _to: collectionId,
-              _from: getRndGenId(NodeType.Subject),
-            })
-          }),
-        ])
-      }),
-    ),
-
-    Promise.all(
-      getList(NodeType.Resource).map(async resourceKey => {
-        const resourceId = makeId(NodeType.Resource, resourceKey)
-        return Promise.all([
-          await doMany('EACH_RESOURCE_HAS_APPLIED_SUBJECTS', EACH_RESOURCE_HAS_APPLIED_SUBJECTS_AMOUNT, () => {
-            return createNewFakeEdge({
-              type: EdgeType.AppliesTo,
-              _to: resourceId,
-              _from: getRndGenId(NodeType.Subject),
-            })
-          }),
-        ])
-      }),
-    ),
-  ])
-
+  console.log(`RESOURCE EDGES`)
+  const resources = getKeyIdList(NodeType.Resource)
+  const resourcesL = resources.length
+  for (let i = 0; i < resourcesL; i++) {
+    const { id: resourceId } = resources[i]
+    await doMany(
+      `${i}/${resourcesL} : ${resourceId} HAS_APPLIED_SUBJECTS`,
+      EACH_RESOURCE_HAS_APPLIED_SUBJECTS_AMOUNT,
+      () => {
+        return createNewFakeEdge({
+          type: EdgeType.AppliesTo,
+          _to: resourceId,
+          _from: getRndGenId(NodeType.Subject),
+        })
+      },
+    )
+  }
   const stat = Object.keys(genKeys).reduce((_stat, type) => {
     return { ..._stat, [type]: genKeys[type as NodeType | EdgeType].length }
   }, {})

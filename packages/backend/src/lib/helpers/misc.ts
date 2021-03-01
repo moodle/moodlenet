@@ -15,3 +15,16 @@ export const once = <F extends Function>(f: F): F => {
   }) as any) as F
   return fOnce
 }
+
+export const sequencePromiseCalls = <T>(thunks: (() => Promise<T>)[]) => {
+  const results: ({ resolved: true; value: T } | { resolved: false; err: any })[] = []
+  return thunks
+    .map(thunk => () =>
+      thunk().then(
+        (value: T) => results.push({ resolved: true, value }),
+        (err: any) => results.push({ resolved: false, err }),
+      ),
+    )
+    .reduce((prev, curr) => () => prev().then(curr))()
+    .then(() => results)
+}
