@@ -1,4 +1,4 @@
-import { isEdgeType, isId, isNodeType } from '@moodlenet/common/lib/utils/content-graph'
+import { nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
 import { getContentGraphPersistence } from '../ContentGraph.env'
 import * as GQL from '../ContentGraph.graphql.gen'
@@ -14,23 +14,13 @@ const _rel: GQL.ResolverFn<
   MoodleNetExecutionContext,
   GQL.RequireFields<GQL.INode_RelArgs, 'edge'>
 > = async (parent, node, ctx, _info) => {
-  const { _id: parentId, __typename: parentNodeType } = parent
+  const { _id: parentId } = parent
+  const parentNodeType = nodeTypeFromId(parentId)
   const {
     edge: { type: edgeType, node: targetNodeType, inverse },
     page,
   } = node
   const { traverseEdges } = await getContentGraphPersistence()
-  if (!(isId(parentId) && isNodeType(parentNodeType) && isNodeType(targetNodeType) && isEdgeType(edgeType))) {
-    // should never happen
-    const errorMsg = `Id[${parentId}] or node type[parent:${parentNodeType} | target:${targetNodeType}] or edge type [${edgeType}] are not valid`
-    console.error({
-      node,
-      parent,
-      errorMsg,
-    })
-    throw new Error(errorMsg) //FIXME
-  }
-
   const targetNodePolicy = getStaticFilteredNodeBasicAccessPolicy({
     accessType: 'read',
     nodeType: targetNodeType,

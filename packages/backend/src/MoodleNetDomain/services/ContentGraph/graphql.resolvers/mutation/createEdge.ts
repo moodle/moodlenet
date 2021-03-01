@@ -1,4 +1,4 @@
-import { isId, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
+import { nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { api } from '../../../../../lib/domain'
 import { ulidKey } from '../../../../../lib/helpers/arango'
 import { MoodleNetDomain } from '../../../../MoodleNetDomain'
@@ -15,9 +15,6 @@ export const createEdge: Resolvers['Mutation']['createEdge'] = async (_root, { i
   if (!ctx.auth) {
     // probably not allowed (may want to split in policy lookup in 2 steps, to check if found and then if auth applies )
     return createEdgeMutationError(CreateEdgeMutationErrorType.NotAuthorized, `Anonymous can't create`)
-  }
-  if (!(isId(from) && isId(to))) {
-    return createEdgeMutationError(CreateEdgeMutationErrorType.UnexpectedInput, `${from} or ${to} are not valid ids`)
   }
 
   const fromType = nodeTypeFromId(from)

@@ -1,13 +1,9 @@
-import { isId, parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
+import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
 import { getContentGraphPersistence } from '../../ContentGraph.env'
 import * as GQL from '../../ContentGraph.graphql.gen'
 import { getStaticFilteredNodeBasicAccessPolicy } from '../../graphDefinition/helpers'
 
 export const node: GQL.Resolvers['Query']['node'] = async (_root, { _id }, ctx /* ,_info */) => {
-  if (!isId(_id)) {
-    throw new Error(`Id[${_id}] is not valid`) //FIXME
-  }
-
   const { findNodeWithPolicy } = await getContentGraphPersistence()
   const { nodeType } = parseNodeId(_id)
   const policy = getStaticFilteredNodeBasicAccessPolicy({

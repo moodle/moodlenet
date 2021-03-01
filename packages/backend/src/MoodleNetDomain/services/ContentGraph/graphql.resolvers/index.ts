@@ -1,4 +1,5 @@
-import { edgeTypeFromId, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
+import { edgeTypeFromId, isId, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
+import { GraphQLScalarType } from 'graphql'
 import * as GQL from '../ContentGraph.graphql.gen'
 import { getSessionAccountUser } from './merge.getSessionAccountUser'
 import { createEdge } from './mutation/createEdge'
@@ -13,6 +14,19 @@ import { NodeResolver } from './types.node'
 // import { updateEdge } from './mutation.updateEdge'
 // import { updateNode } from './mutation.updateNode'
 
+const checkIDOrError = (_?: string) => {
+  if (isId(_)) {
+    return _
+  } else {
+    throw 'invalid ID'
+  }
+}
+const ID = new GraphQLScalarType({
+  name: 'ID',
+  serialize: v => v,
+  parseValue: v => checkIDOrError(v),
+  parseLiteral: vnode => (vnode.kind === 'StringValue' ? checkIDOrError(vnode.value) : null),
+})
 export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
   return {
     Mutation: {
@@ -36,6 +50,8 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
     DateTime: {} as any, //TODO: define resolver
     Never: null as never, //TODO: define resolver
     Cursor: {} as any, //TODO: define resolver
+    //@ts-expect-error
+    ID,
 
     Edge: {
       __resolveType: obj => {
