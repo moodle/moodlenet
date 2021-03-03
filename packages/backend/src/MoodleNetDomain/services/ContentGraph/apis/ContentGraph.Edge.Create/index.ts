@@ -1,6 +1,6 @@
 import { Id, IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { MoodleNetExecutionContext } from '../../../../types'
-import { CreateEdgeInput, CreateEdgeMutationErrorType, EdgeType } from '../../ContentGraph.graphql.gen'
+import { CreateEdgeInput, /* CreateEdgeMutationErrorType, */ EdgeType } from '../../ContentGraph.graphql.gen'
 import { CreateEdgeShallowPayload } from '../../persistence/types'
 import { getCreateHook } from './hooks'
 // import { CreateEdgeInput, CreateEdgeMutationErrorType, EdgeType } from '../../ContentGraph.graphql.gen'
@@ -27,13 +27,13 @@ export const CreateEdgeHandler = async <Type extends EdgeType>({
   // if (!isAllowedCreationType(edgeType)) {
   //   return createEdgeMutationError(CreateEdgeMutationErrorType.NotAuthorized, 'not Allowed Creation Type')
   // }
-  if (!(ctx.type === 'anon')) {
-    return {
-      __typename: 'CreateEdgeMutationError',
-      details: `anonymous can't create relations`,
-      type: CreateEdgeMutationErrorType.NotAuthorized,
-    }
-  }
+  // if (!(ctx.type === 'anon')) {
+  //   return {
+  //     __typename: 'CreateEdgeMutationError',
+  //     details: `anonymous can't create relations`,
+  //     type: CreateEdgeMutationErrorType.NotAuthorized,
+  //   }
+  // }
   const hook = getCreateHook(edgeType)
   const createEdgeResult = await hook({ input, ctx, from, to, key })
   return createEdgeResult

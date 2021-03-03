@@ -1,6 +1,6 @@
 import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { MoodleNetExecutionContext } from '../../../../types'
-import { CreateNodeInput, CreateNodeMutationErrorType, NodeType } from '../../ContentGraph.graphql.gen'
+import { CreateNodeInput, /* CreateNodeMutationErrorType, */ NodeType } from '../../ContentGraph.graphql.gen'
 import { CreateNodeShallowPayload } from '../../persistence/types'
 import { getCreateHook } from './hooks'
 
@@ -18,13 +18,13 @@ export const CreateNodeHandler = async <Type extends NodeType>({
   key,
 }: CreateNodeReq<Type>): Promise<CreateNodeShallowPayload<Type>> => {
   const hook = getCreateHook<Type>(nodeType)
-  if (!(ctx.type === 'anon')) {
-    return {
-      __typename: 'CreateNodeMutationError',
-      details: `anonymous can't create nodes`,
-      type: CreateNodeMutationErrorType.NotAuthorized,
-    }
-  }
+  // if (!(ctx.type === 'anon')) {
+  //   return {
+  //     __typename: 'CreateNodeMutationError',
+  //     details: `anonymous can't create nodes`,
+  //     type: CreateNodeMutationErrorType.NotAuthorized,
+  //   }
+  // }
   const createNodeResult = await hook({ input, ctx, key })
 
   return createNodeResult
