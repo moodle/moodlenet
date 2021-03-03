@@ -1,11 +1,14 @@
 import JWT from 'jsonwebtoken'
 import memo from 'lodash/memoize'
 import sshpk from 'sshpk'
+import { newFlow } from '../../lib/domain/helpers'
 import { User } from '../services/ContentGraph/ContentGraph.graphql.gen'
 import { ShallowNode } from '../services/ContentGraph/persistence/types'
 import { ActiveUserAccount } from '../services/UserAccount/persistence/types'
 import { signJwt, verifyJwt } from './JWT'
-import { MoodleNetExecutionAuth } from './types'
+import { MoodleNetExecutionContext } from './types'
+
+export type GQLExecutionContext = MoodleNetExecutionContext<'anon' | 'session'>
 
 export const getJwtVerifier = memo(() => {
   const jwtPublicKey = process.env.JWT_PUBLIC_KEY!
@@ -52,7 +55,9 @@ export const getJwtSigner = memo(() => {
       ...jwtSignBaseOpts,
       ...opts,
     }
-    const executionAuth: MoodleNetExecutionAuth = {
+    const sessionCtx: GQLExecutionContext = {
+      type: 'session',
+      flow: newFlow(['JWT']),
       accountId: account._id,
       email: account.email,
       username: account.username,
@@ -61,7 +66,7 @@ export const getJwtSigner = memo(() => {
     }
 
     return signJwt({
-      executionAuth,
+      sessionCtx,
       jwtPrivateKey,
       opts: signOpts,
     })

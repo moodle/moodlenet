@@ -1,24 +1,23 @@
 import JWT from 'jsonwebtoken'
-import { isMoodleNetExecutionAuth } from './executionContext'
-import { MoodleNetExecutionAuth } from './types'
+import { MoodleNetExecutionContext } from './types'
 
 export const INVALID_TOKEN = Symbol('INVALID_TOKEN')
 export type INVALID_TOKEN = typeof INVALID_TOKEN
 
 export const signJwt = async ({
-  executionAuth,
+  sessionCtx,
   opts,
   jwtPrivateKey,
 }: {
-  executionAuth: MoodleNetExecutionAuth
+  sessionCtx: MoodleNetExecutionContext<'session'>
   jwtPrivateKey: string
   opts: JWT.SignOptions
 }) => {
-  const jwt = JWT.sign(executionAuth, jwtPrivateKey, opts)
+  const jwt = JWT.sign(sessionCtx, jwtPrivateKey, opts)
   return jwt
 }
 
-export type JWTTokenVerification = MoodleNetExecutionAuth | null | INVALID_TOKEN
+export type JWTTokenVerification = MoodleNetExecutionContext<'session'> | null | INVALID_TOKEN
 export const verifyJwt = ({
   jwtPublicKey,
   jwtVerifyOpts,
@@ -37,11 +36,11 @@ export const verifyJwt = ({
     return null
   }
   try {
-    const executionAuth = JWT.verify(String(token), jwtPublicKey, jwtVerifyOpts)
-    if (typeof executionAuth !== 'object' || !isMoodleNetExecutionAuth(executionAuth)) {
+    const sessionCtx = JWT.verify(String(token), jwtPublicKey, jwtVerifyOpts)
+    if (typeof sessionCtx !== 'object' /* TODO: implement checks */) {
       return null
     }
-    return executionAuth
+    return sessionCtx as MoodleNetExecutionContext<'session'>
   } catch {
     return INVALID_TOKEN
   }

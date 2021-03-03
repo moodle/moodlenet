@@ -1,6 +1,6 @@
 import { api } from '../../../../lib/domain'
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
-import { loggedUserOnly } from '../../../MoodleNetGraphQL'
+import { throwLoggedUserOnly } from '../../../MoodleNetGraphQL'
 import { Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
@@ -54,7 +54,7 @@ export const changePassword: MutationResolvers['changePassword'] = async (
   { newPassword, currentPassword },
   context,
 ) => {
-  const { username } = loggedUserOnly({ context })
+  const { username } = throwLoggedUserOnly({ context })
 
   const res = await api<MoodleNetDomain>(context.flow)('UserAccount.ChangePassword').call(changePassword =>
     changePassword({

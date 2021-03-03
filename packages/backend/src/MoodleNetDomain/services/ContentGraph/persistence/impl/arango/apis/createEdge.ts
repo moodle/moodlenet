@@ -84,7 +84,15 @@ export const createEdge: ContentGraphPersistence['createEdge'] = async ({
 
   const collection = graph.edgeCollection(edgeType)
   const { new: edge } = await collection.save(
-    { ...data, _from: from, _to: to, _key: key, from: fromType, to: toType },
+    {
+      ...data,
+      _from: from,
+      _fromType: fromType,
+      _to: to,
+      _toType: toType,
+      _key: key,
+      __typename: edgeType,
+    },
     { returnNew: true },
   )
   updateRelationCountsOnEdgeLife({ edgeType, from, to, life: 'create' })

@@ -4,7 +4,7 @@ import { Event } from '../../../../lib/domain/event/types'
 import { Flow } from '../../../../lib/domain/types/path'
 import { ulidKey } from '../../../../lib/helpers/arango'
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
-import { getSystemExecutionContextFor } from '../../../types'
+import { getSystemExecutionContext } from '../../../types'
 import { NodeType, User } from '../../ContentGraph/ContentGraph.graphql.gen'
 import { ActiveUserAccount, Messages } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
@@ -53,7 +53,7 @@ export const ConfirmEmailActivateAccountApiHandler = async ({
   if (typeof activationResult !== 'string') {
     const user = await api<MoodleNetDomain>(flow)('ContentGraph.Node.Create').call(createNode =>
       createNode<NodeType.User>({
-        ctx: getSystemExecutionContextFor(),
+        ctx: getSystemExecutionContext(),
         nodeType: NodeType.User,
         key: userKey,
         input: {

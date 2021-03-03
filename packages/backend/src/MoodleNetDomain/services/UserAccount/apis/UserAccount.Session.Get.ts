@@ -1,8 +1,8 @@
-import { UserSession, QueryResolvers } from './../UserAccount.graphql.gen'
 import { api } from '../../../../lib/domain'
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
 import { userSessionByActiveUserAccount } from '../UserAccount.helpers'
 import { getAccountPersistence } from './../UserAccount.env'
+import { QueryResolvers, UserSession } from './../UserAccount.graphql.gen'
 
 export type SessionGetReq = { username: string }
 export type SessionGetRes = UserSession | null
@@ -25,7 +25,7 @@ export async function SessionGetApiHandler({ username }: SessionGetReq): Promise
 }
 
 export const getSession: QueryResolvers['getSession'] = async (_parent, {}, context) => {
-  const username = context.auth?.username
+  const username = context.type === 'session' && context.username
   if (!username) {
     return null
   }

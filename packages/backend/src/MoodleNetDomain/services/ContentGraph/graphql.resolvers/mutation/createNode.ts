@@ -7,7 +7,7 @@ import { createNodeMutationError, fakeUnshallowNodeForResolverReturnType } from 
 import { validateCreateNodeInput } from '../inputStaticValidation/createNode'
 export const createNode: Resolvers['Mutation']['createNode'] = async (_root, { input }, ctx, _info) => {
   const { nodeType } = input
-  if (!ctx.auth) {
+  if (ctx.type === 'anon') {
     // probably not allowed (may want to split in policy lookup in 2 steps, to check if found and then if auth applies )
     return createNodeMutationError(CreateNodeMutationErrorType.NotAuthorized)
   }

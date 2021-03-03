@@ -15,7 +15,7 @@
     "lerna": "^3.22.1"
   },
   "dependencies": {
-    "typescript": "~4.1.5"
+    "typescript": "~4.2.2"
   },
   "scripts": {
     "bs": "lerna bootstrap --nohoist=babel-* --nohoist=*react*",

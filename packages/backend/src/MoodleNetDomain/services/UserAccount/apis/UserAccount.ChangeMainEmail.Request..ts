@@ -1,10 +1,10 @@
+import { Routes, webappPath } from '@moodlenet/common/src/webapp/sitemap'
 import { v4 as uuidV4 } from 'uuid'
-import { webappPath, Routes } from '@moodlenet/common/src/webapp/sitemap'
 import { api } from '../../../../lib/domain'
 import { Flow } from '../../../../lib/domain/types/path'
 import { getMNEnv } from '../../../MoodleNet.env'
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
-import { loggedUserOnly } from '../../../MoodleNetGraphQL'
+import { throwLoggedUserOnly } from '../../../MoodleNetGraphQL'
 import { Messages, UserAccountRecord, UserAccountStatus } from '../persistence/types'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
@@ -72,7 +72,7 @@ export const ChangeAccountEmailRequestHandler = async ({
 }
 
 export const changeEmailRequest: MutationResolvers['changeEmailRequest'] = async (_parent, { newEmail }, context) => {
-  const { accountId } = loggedUserOnly({ context })
+  const { accountId } = throwLoggedUserOnly({ context })
 
   const res = await api<MoodleNetDomain>(context.flow)(
     'UserAccount.ChangeMainEmail.Request',

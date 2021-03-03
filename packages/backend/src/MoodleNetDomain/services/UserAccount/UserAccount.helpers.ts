@@ -3,7 +3,7 @@ import Argon from 'argon2'
 import dot from 'dot'
 import { api } from '../../../lib/domain'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
-import { getJwtSigner } from '../../MoodleNetGraphQL'
+import { getJwtSigner, MoodleNetExecutionContext } from '../../MoodleNetGraphQL'
 import { User } from '../ContentGraph/ContentGraph.graphql.gen'
 import { EmailObj } from '../Email/types'
 import { ShallowNode } from './../ContentGraph/persistence/types'
@@ -29,10 +29,12 @@ export const userSessionByActiveUserAccount = async ({
 
 export const createSessionByActiveUserAccount = async ({
   activeUserAccount,
+  ctx,
 }: {
+  ctx: MoodleNetExecutionContext
   activeUserAccount: ActiveUserAccount
 }): Promise<{ jwt: string | null }> => {
-  const { jwt } = await userAndJwtByActiveUserAccount({ activeUserAccount })
+  const { jwt } = await userAndJwtByActiveUserAccount({ activeUserAccount, ctx })
   return {
     jwt,
   }
@@ -40,12 +42,15 @@ export const createSessionByActiveUserAccount = async ({
 
 export const userAndJwtByActiveUserAccount = async ({
   activeUserAccount,
+  ctx,
 }: {
   activeUserAccount: ActiveUserAccount
+  ctx: MoodleNetExecutionContext
 }) => {
   const { node: user } = await api<MoodleNetDomain>()('ContentGraph.Node.ById').call(nodeById =>
     nodeById<User>({
       _id: makeId(NodeType.User, activeUserAccount.userId),
+      ctx,
     }),
   )
   if (!user) {

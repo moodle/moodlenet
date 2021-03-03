@@ -1,4 +1,4 @@
-import { EdgeType, Id, IdKey, NodeType } from '@moodlenet/common/lib/utils/content-graph'
+import { Id, IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
 import * as GQL from '../ContentGraph.graphql.gen'
@@ -8,23 +8,7 @@ export * as Types from '../ContentGraph.graphql.gen'
 export interface ContentGraphPersistence {
   // graphQLTypeResolvers: GQL.Resolvers
   globalSearch(_: { text: string; page: Maybe<GQL.PaginationInput> }): Promise<GQL.SearchPage>
-  findNode<N extends GQL.Node = GQL.Node>(_: {
-    _id: Id
-    nodeType?: GQL.NodeType | null
-  }): Promise<ShallowNode<N> | null>
-  getRelationCount(_: {
-    ctx: MoodleNetExecutionContext
-    nodeId: Id
-    edgeType: EdgeType
-    inverse: boolean
-    targetNodeType: NodeType
-  }): Promise<number>
-  findNodeWithPolicy(_: {
-    _id: Id
-    nodeType: GQL.NodeType
-    policy: BasicAccessPolicy
-    ctx: MoodleNetExecutionContext
-  }): Promise<ShallowNode | null>
+  getNode<N extends GQL.Node = GQL.Node>(_: { _id: Id; ctx: MoodleNetExecutionContext }): Promise<ShallowNode<N> | null>
   traverseEdges(_: {
     parentNodeId: Id
     edgeType: GQL.EdgeType
@@ -53,6 +37,14 @@ export interface ContentGraphPersistence {
   // updateEdge(_: { edge: UpdateEdgeInput }): EdgeMutationPayload
   // updateNode(_: { node: UpdateNodeInput }): NodeMutationPayload
   // deleteGlyph(_: { _id: string }): DeletePayload //config():Promise<Config>
+  //---
+  // getRelationCount(_: {
+  //   ctx: MoodleNetExecutionContext
+  //   nodeId: Id
+  //   edgeType: EdgeType
+  //   inverse: boolean
+  //   targetNodeType: NodeType
+  // }): Promise<number>
 }
 
 export type ShallowNode<N extends GQL.Node = GQL.Node> = Omit<N, '_rel' | '_relCount'>

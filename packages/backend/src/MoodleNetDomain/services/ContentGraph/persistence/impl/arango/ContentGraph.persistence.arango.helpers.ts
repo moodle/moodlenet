@@ -5,7 +5,7 @@ import {
 } from '../../../graphDefinition/helpers'
 
 export const needsAuthFilter: NeedsAuthFilter<string> = filterWithAuth => ({ ctx, glyphTag }) =>
-  ctx.auth ? filterWithAuth({ ctx, auth: ctx.auth, glyphTag }) : 'false'
+  ctx.type === 'session' ? filterWithAuth({ ctx, glyphTag }) : 'false'
 
 export const basicArangoAccessPolicyTypeFilters: BasicAccessPolicyTypeFilters<string> = {
   Admins: needsAuthFilter(() => 'true'),

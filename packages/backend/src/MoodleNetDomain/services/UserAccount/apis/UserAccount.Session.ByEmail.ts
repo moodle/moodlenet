@@ -1,8 +1,9 @@
-import { webappPath, Routes } from '@moodlenet/common/src/webapp/sitemap'
+import { Routes, webappPath } from '@moodlenet/common/src/webapp/sitemap'
 import { api } from '../../../../lib/domain'
 import { Flow } from '../../../../lib/domain/types/path'
 import { getMNEnv } from '../../../MoodleNet.env'
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
+import { MoodleNetExecutionContext } from '../../../types'
 import { getAccountPersistence } from '../UserAccount.env'
 import { MutationResolvers } from '../UserAccount.graphql.gen'
 import { fillEmailTemplate, getSimpleResponse, userAndJwtByActiveUserAccount } from '../UserAccount.helpers'
@@ -12,10 +13,11 @@ export type SessionByEmailApiReq = {
   email: string
   username: string
   flow: Flow
+  ctx: MoodleNetExecutionContext
 }
 export type SessionByEmailApiRes = { success: true } | { success: false; reason: string }
 
-export const SessionByEmailApiHandler = async ({ email, username, flow }: SessionByEmailApiReq) => {
+export const SessionByEmailApiHandler = async ({ email, username, flow, ctx }: SessionByEmailApiReq) => {
   const { publicBaseUrl } = getMNEnv()
   const { getConfig, getActiveAccountByUsername } = await getAccountPersistence()
   const config = await getConfig()
@@ -29,6 +31,7 @@ export const SessionByEmailApiHandler = async ({ email, username, flow }: Sessio
   }
   const { jwt } = await userAndJwtByActiveUserAccount({
     activeUserAccount: account,
+    ctx,
   })
 
   const emailObj = fillEmailTemplate({
@@ -48,9 +51,9 @@ export const SessionByEmailApiHandler = async ({ email, username, flow }: Sessio
   return { success: true }
 }
 
-export const sessionByEmail: MutationResolvers['sessionByEmail'] = async (_parent, { email, username }, context) => {
-  const res = await api<MoodleNetDomain>(context.flow)('UserAccount.Session.ByEmail').call((sessionByEmail, flow) =>
-    sessionByEmail({ email, username, flow }),
+export const sessionByEmail: MutationResolvers['sessionByEmail'] = async (_parent, { email, username }, ctx) => {
+  const res = await api<MoodleNetDomain>(ctx.flow)('UserAccount.Session.ByEmail').call((sessionByEmail, flow) =>
+    sessionByEmail({ email, username, flow, ctx }),
   )
 
   if (!res.success) {

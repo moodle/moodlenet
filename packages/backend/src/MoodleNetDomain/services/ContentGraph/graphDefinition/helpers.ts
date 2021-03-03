@@ -1,5 +1,5 @@
 import { basicAccessPolicies } from '.'
-import { MoodleNetExecutionAuth, MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
+import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
 import { EdgeType, NodeType } from '../ContentGraph.graphql.gen'
 import { AccessType, BasicAccessPolicy, BasicAccessPolicyType, GlyphTag } from './types'
 
@@ -78,10 +78,10 @@ export type BasicAccessPolicyTypeFilters<ResType> = {
   [t in BasicAccessPolicyType]: BasicAccessPolicyTypeFilterFn<ResType>
 }
 export type NeedsAuthFilter<ResType> = (
-  filterWithAuth: (_: { ctx: MoodleNetExecutionContext; auth: MoodleNetExecutionAuth; glyphTag: GlyphTag }) => ResType,
+  filterWithAuth: (_: { ctx: MoodleNetExecutionContext; glyphTag: GlyphTag }) => ResType,
 ) => BasicAccessPolicyTypeFilterFn<ResType>
 export const needsAuthFilter: NeedsAuthFilter<boolean> = filterWithAuth => ({ ctx, glyphTag }) =>
-  ctx.auth ? filterWithAuth({ ctx, auth: ctx.auth, glyphTag }) : false
+  ctx.type === 'session' ? filterWithAuth({ ctx, glyphTag }) : false
 
 const staticBasicAccessPolicyTypeFilters: BasicAccessPolicyTypeFilters<boolean> = {
   Admins: needsAuthFilter(() => true),

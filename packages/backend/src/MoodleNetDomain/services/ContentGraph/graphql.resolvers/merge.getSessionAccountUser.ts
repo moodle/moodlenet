@@ -8,7 +8,7 @@ export const getSessionAccountUser: Resolvers['Query']['getSessionAccountUser'] 
   ctx /*_info */,
 ) => {
   const { node: shallowUser } = await api<MoodleNetDomain>(ctx.flow)('ContentGraph.Node.ById').call(
-    nodeById => nodeById<User>({ _id: userId }), // BEWARE: manual cast of Id
+    nodeById => nodeById<User>({ _id: userId, ctx }), // BEWARE: manual cast of Id
   )
 
   if (!shallowUser) {

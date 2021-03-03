@@ -32,7 +32,7 @@ const _rel: GQL.ResolverFn<
   })
   if (!(targetNodePolicy && edgePolicy)) {
     // probably not allowed (may want to split in policy lookups in 2 steps, to check if found and then if auth applies )
-    throw new Error(`${ctx.auth?.role || 'Anonymous'} are not allowed to query ${edgeType}->${targetNodeType}`) //FIXME
+    throw new Error(`you are not allowed to query ${edgeType}->${targetNodeType}`) //FIXME
   }
 
   const pageResult = await traverseEdges({
