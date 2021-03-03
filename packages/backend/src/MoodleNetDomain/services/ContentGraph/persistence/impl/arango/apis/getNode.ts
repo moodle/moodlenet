@@ -6,6 +6,6 @@ export const getNode: ContentGraphPersistence['getNode'] = async (_: { _id: Id }
   const { graph } = await DBReady()
   const { nodeType, _key } = parseNodeId(_._id)
   const collection = graph.vertexCollection(nodeType)
-  const { new: node } = await collection.vertex({ _key })
+  const node = await collection.vertex({ _key })
   return node
 }

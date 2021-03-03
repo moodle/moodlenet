@@ -7,9 +7,14 @@ interface INode {
 }
 
 type NodeMeta {
-  created: DateTime
-  updated: DateTime
+  created: DateTime!
+  updated: DateTime!
   relCount: RelCountMap
+}
+
+type EdgeMeta {
+  created: DateTime!
+  updated: DateTime!
 }
 
 #type RelCountMap{}
@@ -32,6 +37,7 @@ interface IContentNode {
 
 interface IEdge {
   _id: ID
+  _meta: EdgeMeta
 }
 
 input EdgeTypeInput {

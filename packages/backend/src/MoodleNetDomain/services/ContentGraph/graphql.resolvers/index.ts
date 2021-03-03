@@ -46,10 +46,10 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
     Subject: NodeResolver,
     Resource: NodeResolver,
     Collection: NodeResolver,
-    Empty: {} as any, //TODO: define resolver
-    DateTime: {} as any, //TODO: define resolver
-    Never: null as never, //TODO: define resolver
-    Cursor: {} as any, //TODO: define resolver
+    // Empty: {} as any, //TODO: define resolver
+    // DateTime: {} as any, //TODO: define resolver
+    // Never: null as never, //TODO: define resolver
+    // Cursor: {} as any, //TODO: define resolver
     //@ts-expect-error
     ID,
 
@@ -67,51 +67,11 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
       __resolveType: obj => {
         return nodeTypeFromId(obj._id) || null
       },
-      _meta: null as any,
-      _id: null as any,
-      _rel: null as any,
     },
     IEdge: {
       __resolveType: obj => {
         return edgeTypeFromId(obj._id) || null
       },
-      _id: null as any,
     },
-
-    //
-    //
-    // others are fine with default resolvers :  {} as any,
-    SearchPage: {} as any,
-    SearchPageEdge: {} as any,
-    Page: {} as any,
-    PageEdge: {} as any,
-    Follows: {} as any,
-    AppliesTo: {} as any,
-    Contains: {} as any,
-    Created: {} as any,
-    Likes: {} as any,
-    UserSession: {} as any,
-    CreateEdgeMutationError: {} as any,
-    CreateEdgeMutationPayload: {} as any,
-    CreateEdgeMutationSuccess: {} as any,
-    CreateNodeMutationError: {} as any,
-    CreateNodeMutationPayload: {} as any,
-    CreateNodeMutationSuccess: {} as any,
-    DeleteEdgeMutationError: {} as any,
-    DeleteEdgeMutationPayload: {} as any,
-    DeleteEdgeMutationSuccess: {} as any,
-    DeleteNodeMutationError: {} as any,
-    DeleteNodeMutationPayload: {} as any,
-    DeleteNodeMutationSuccess: {} as any,
-    IContentNode: {} as any,
-    RelPage: {} as any,
-    RelPageEdge: {} as any,
-    PageInfo: {} as any,
-    UpdateEdgeMutationError: {} as any,
-    UpdateEdgeMutationPayload: {} as any,
-    UpdateEdgeMutationSuccess: {} as any,
-    UpdateNodeMutationError: {} as any,
-    UpdateNodeMutationPayload: {} as any,
-    UpdateNodeMutationSuccess: {} as any,
   }
 }

@@ -1,5 +1,6 @@
 type Contains implements IEdge {
   _id: ID!
+  _meta: EdgeMeta
 }
 
 type RelCountMap {

@@ -1,42 +1,39 @@
 import { aqlstr } from '../../../../../../../lib/helpers/arango'
 import { RelPage } from '../../../../ContentGraph.graphql.gen'
-import { getGlyphBasicAccessFilter } from '../../../../graphDefinition/helpers'
+// import { getGlyphBasicAccessFilter } from '../../../../graphDefinition/helpers'
 import { ContentGraphPersistence, Types } from '../../../types'
-import { basicArangoAccessFilterEngine } from '../ContentGraph.persistence.arango.helpers'
-import { aqlMergeTypenameById, cursorPaginatedQuery } from './helpers'
+// import { basicArangoAccessFilterEngine } from '../ContentGraph.persistence.arango.helpers'
+import { cursorPaginatedQuery } from './helpers'
 
 export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
-  ctx,
+  /* ctx, */
   edgeType,
   page,
   parentNodeId,
   inverse,
   targetNodeType,
-  edgePolicy,
-  targetNodePolicy,
-  sort,
+  // edgePolicy,
+  // targetNodePolicy,
+  sort: _sort,
 }): Promise<Types.RelPage> => {
   const targetSide = inverse ? 'from' : 'to'
-  const sourceSide = inverse ? 'to' : 'from'
+  const parentSide = inverse ? 'to' : 'from'
 
   // TODO: define and implement sorting
-  const aqlSort = (sort ?? [])
-    .map(({ desc = false, edge = false, prop }) => `${edge ? 'edge' : 'node'}.${prop} ${desc ? 'DESC' : 'ASC'}`)
-    .join(',')
 
-  const targetEdgeAccessFilter = getGlyphBasicAccessFilter({
-    ctx,
-    glyphTag: 'edge',
-    policy: edgePolicy,
-    engine: basicArangoAccessFilterEngine,
-  })
+  // const targetEdgeAccessFilter = getGlyphBasicAccessFilter({
+  //   ctx,
+  //   glyphTag: 'edge',
+  //   policy: edgePolicy,
+  //   engine: basicArangoAccessFilterEngine,
+  // })
 
-  const targetNodeAccessFilter = getGlyphBasicAccessFilter({
-    ctx,
-    glyphTag: 'node',
-    policy: targetNodePolicy,
-    engine: basicArangoAccessFilterEngine,
-  })
+  // const targetNodeAccessFilter = getGlyphBasicAccessFilter({
+  //   ctx,
+  //   glyphTag: 'node',
+  //   policy: targetNodePolicy,
+  //   engine: basicArangoAccessFilterEngine,
+  // })
 
   return cursorPaginatedQuery<RelPage>({
     pageTypename: 'RelPage',
@@ -45,12 +42,12 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
     page,
     mapQuery: pageFilterSortLimit => `
       FOR edge IN ${edgeType}
-        FILTER edge.${targetSide} == '${targetNodeType}' 
-          && edge._${sourceSide} == ${aqlstr(parentNodeId)}
-          && ${targetEdgeAccessFilter}
+        FILTER edge.${targetSide}Type == '${targetNodeType}' 
+          && edge._${parentSide} == ${aqlstr(parentNodeId)}
+          // && $_{targetEdgeAccessFilter}
+
         LET targetNode=Document(edge._${targetSide})
-        
-        FILTER ${targetNodeAccessFilter}
+        // FILTER $_{targetNodeAccessFilter}
       
 
       ${pageFilterSortLimit}
@@ -58,7 +55,7 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
       RETURN  {
         cursor,
         edge,
-        node: ${aqlMergeTypenameById('targetNode')}
+        node: targetNode
       }
     `,
   })

@@ -1,6 +1,8 @@
 import * as D from '../types'
 
-export type Event<Type extends object> = { type: Type }
+export type Event<Type> = { ___EVENT_TYPE: Type }
+declare const evt: unique symbol
+export type Event_<Type> = { [evt]: Type }
 
 export type EventLeaves<Domain> = D.Path.Leaves<Domain, Event<any>>
 

@@ -76,26 +76,26 @@ export type MutationCreateSessionArgs = {
 
 export type Query = {
   __typename: 'Query';
-  getSession: Maybe<UserSession>;
+  getSession?: Maybe<UserSession>;
 };
 
 export type SimpleResponse = {
   __typename: 'SimpleResponse';
   success: Scalars['Boolean'];
-  message: Maybe<Scalars['String']>;
+  message?: Maybe<Scalars['String']>;
 };
 
 export type CreateSession = {
   __typename: 'CreateSession';
-  jwt: Maybe<Scalars['String']>;
-  message: Maybe<Scalars['String']>;
+  jwt?: Maybe<Scalars['String']>;
+  message?: Maybe<Scalars['String']>;
 };
 
 export type UserSession = {
   __typename: 'UserSession';
   username: Scalars['String'];
   email: Scalars['String'];
-  changeEmailRequest: Maybe<Scalars['String']>;
+  changeEmailRequest?: Maybe<Scalars['String']>;
   accountId: Scalars['String'];
   userId: Scalars['ID'];
 };
@@ -219,49 +219,49 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 }
 
 export type MutationResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  signUp: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'email'>>;
-  changeEmailRequest: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangeEmailRequestArgs, 'newEmail'>>;
-  changeEmailConfirm: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeEmailConfirmArgs, 'token' | 'password' | 'username'>>;
-  changePassword: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'currentPassword'>>;
-  activateAccount: Resolver<ResolversTypes['CreateSession'], ParentType, ContextType, RequireFields<MutationActivateAccountArgs, 'username' | 'password' | 'token'>>;
-  sessionByEmail: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationSessionByEmailArgs, 'username' | 'email'>>;
-  createSession: Resolver<ResolversTypes['CreateSession'], ParentType, ContextType, RequireFields<MutationCreateSessionArgs, 'username' | 'password'>>;
+  signUp?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'email'>>;
+  changeEmailRequest?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangeEmailRequestArgs, 'newEmail'>>;
+  changeEmailConfirm?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeEmailConfirmArgs, 'token' | 'password' | 'username'>>;
+  changePassword?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'currentPassword'>>;
+  activateAccount?: Resolver<ResolversTypes['CreateSession'], ParentType, ContextType, RequireFields<MutationActivateAccountArgs, 'username' | 'password' | 'token'>>;
+  sessionByEmail?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationSessionByEmailArgs, 'username' | 'email'>>;
+  createSession?: Resolver<ResolversTypes['CreateSession'], ParentType, ContextType, RequireFields<MutationCreateSessionArgs, 'username' | 'password'>>;
 };
 
 export type QueryResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  getSession: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType>;
+  getSession?: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType>;
 };
 
 export type SimpleResponseResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['SimpleResponse'] = ResolversParentTypes['SimpleResponse']> = {
-  success: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  message: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type CreateSessionResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['CreateSession'] = ResolversParentTypes['CreateSession']> = {
-  jwt: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  message: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  jwt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserSessionResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['UserSession'] = ResolversParentTypes['UserSession']> = {
-  username: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  changeEmailRequest: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  accountId: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  userId: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  changeEmailRequest?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  accountId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = MoodleNetExecutionContext> = {
-  Never: GraphQLScalarType;
-  Empty: GraphQLScalarType;
-  DateTime: GraphQLScalarType;
-  Mutation: MutationResolvers<ContextType>;
-  Query: QueryResolvers<ContextType>;
-  SimpleResponse: SimpleResponseResolvers<ContextType>;
-  CreateSession: CreateSessionResolvers<ContextType>;
-  UserSession: UserSessionResolvers<ContextType>;
+  Never?: GraphQLScalarType;
+  Empty?: GraphQLScalarType;
+  DateTime?: GraphQLScalarType;
+  Mutation?: MutationResolvers<ContextType>;
+  Query?: QueryResolvers<ContextType>;
+  SimpleResponse?: SimpleResponseResolvers<ContextType>;
+  CreateSession?: CreateSessionResolvers<ContextType>;
+  UserSession?: UserSessionResolvers<ContextType>;
 };
 
 

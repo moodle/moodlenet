@@ -1,8 +1,8 @@
 import { api } from '../../../../lib/domain'
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
-import { Resolvers, User } from '../ContentGraph.graphql.gen'
+import { QueryResolvers, User } from '../ContentGraph.graphql.gen'
 import { fakeUnshallowNodeForResolverReturnType } from './helpers'
-export const getSessionAccountUser: Resolvers['Query']['getSessionAccountUser'] = async (
+export const getSessionAccountUser: QueryResolvers['getSessionAccountUser'] = async (
   _root,
   { userId },
   ctx /*_info */,

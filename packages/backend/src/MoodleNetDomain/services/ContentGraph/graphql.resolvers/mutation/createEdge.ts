@@ -2,13 +2,17 @@ import { nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { api } from '../../../../../lib/domain'
 import { ulidKey } from '../../../../../lib/helpers/arango'
 import { MoodleNetDomain } from '../../../../MoodleNetDomain'
-import { CreateEdgeMutationErrorType, CreateEdgeMutationSuccess, Resolvers } from '../../ContentGraph.graphql.gen'
+import {
+  CreateEdgeMutationErrorType,
+  CreateEdgeMutationSuccess,
+  MutationResolvers,
+} from '../../ContentGraph.graphql.gen'
 import { getConnectionDef } from '../../graphDefinition'
-import { getStaticFilteredEdgeBasicAccessPolicy } from '../../graphDefinition/helpers'
+// import { getStaticFilteredEdgeBasicAccessPolicy } from '../../graphDefinition/helpers'
 import { cantBindMessage } from '../../graphDefinition/strings'
 import { createEdgeMutationError, fakeUnshallowEdgeForResolverReturnType } from '../helpers'
 import { validateCreateEdgeInput } from '../inputStaticValidation/createEdge'
-export const createEdge: Resolvers['Mutation']['createEdge'] = async (_root, { input }, ctx /* ,
+export const createEdge: MutationResolvers['createEdge'] = async (_root, { input }, ctx /* ,
   _info */) => {
   console.log('createEdge', input)
   const { edgeType, from, to } = input
@@ -20,15 +24,15 @@ export const createEdge: Resolvers['Mutation']['createEdge'] = async (_root, { i
   const fromType = nodeTypeFromId(from)
   const toType = nodeTypeFromId(to)
 
-  const policy = getStaticFilteredEdgeBasicAccessPolicy({
-    accessType: 'create',
-    edgeType,
-    ctx,
-  })
-  if (!policy) {
-    // probably not allowed (may want to split in policy lookup in 2 steps, to check if found and then if auth applies )
-    return createEdgeMutationError(CreateEdgeMutationErrorType.NotAuthorized, 'No Policy')
-  }
+  // const policy = getStaticFilteredEdgeBasicAccessPolicy({
+  //   accessType: 'create',
+  //   edgeType,
+  //   ctx,
+  // })
+  // if (!policy) {
+  //   // probably not allowed (may want to split in policy lookup in 2 steps, to check if found and then if auth applies )
+  //   return createEdgeMutationError(CreateEdgeMutationErrorType.NotAuthorized, 'No Policy')
+  // }
   const connection = getConnectionDef({
     edge: edgeType,
     from: fromType,
@@ -38,13 +42,12 @@ export const createEdge: Resolvers['Mutation']['createEdge'] = async (_root, { i
     return createEdgeMutationError(CreateEdgeMutationErrorType.NotAllowed, cantBindMessage({ edgeType, from, to }))
   }
 
-  type CreatingType = typeof edgeType
   const edgeInput = validateCreateEdgeInput(input)
   if (edgeInput instanceof Error) {
     return createEdgeMutationError(CreateEdgeMutationErrorType.UnexpectedInput, edgeInput.message)
   }
   const shallowEdgeOrError = await api<MoodleNetDomain>(ctx.flow)('ContentGraph.Edge.Create').call(createEdge =>
-    createEdge<CreatingType>({ ctx, input: edgeInput, edgeType, from, to, key: ulidKey() }),
+    createEdge({ ctx, input: edgeInput, edgeType, from, to, key: ulidKey() }),
   )
 
   if (shallowEdgeOrError.__typename === 'CreateEdgeMutationError') {

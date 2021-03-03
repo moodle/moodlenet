@@ -47,9 +47,13 @@ export const userAndJwtByActiveUserAccount = async ({
   activeUserAccount: ActiveUserAccount
   ctx: MoodleNetExecutionContext
 }) => {
+  console.log(`*************\n*************\n*************\n*************\n*************\nContentGraph.Node.ById`, {
+    ...activeUserAccount,
+    ___id: makeId(NodeType.User, activeUserAccount.userId),
+  })
   const { node: user } = await api<MoodleNetDomain>()('ContentGraph.Node.ById').call(nodeById =>
     nodeById<User>({
-      _id: makeId(NodeType.User, activeUserAccount.userId),
+      _id: activeUserAccount.userId,
       ctx,
     }),
   )

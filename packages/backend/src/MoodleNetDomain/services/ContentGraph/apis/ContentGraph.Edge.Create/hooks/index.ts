@@ -14,15 +14,15 @@ export type CreateHook<T extends EdgeType> = (_: {
   ctx: MoodleNetExecutionContext
 }) => Promise<CreateEdgeShallowPayload<T>>
 
-type NotAllowedCreationType = never
-export type AllowedCreationType = Exclude<EdgeType, NotAllowedCreationType>
-const notAllowedTypesMap: { [t in NotAllowedCreationType]: null } = {}
-export const isAllowedCreationType = (_: EdgeType): _ is AllowedCreationType => !(_ in notAllowedTypesMap)
+const persistence = getContentGraphPersistence()
+
+export const getCreateHook = <T extends EdgeType>(type: T): CreateHook<T> => createHooks[type] as CreateHook<T>
+
 export const createHooks: {
-  [T in AllowedCreationType]: CreateHook<T>
+  [T in EdgeType]: CreateHook<T>
 } = {
   Follows: async ({ ctx, from, to, key }) => {
-    const { createEdge } = await getContentGraphPersistence()
+    const { createEdge } = await persistence
     const createResult = await createEdge<EdgeType.Follows>({
       ctx,
       key,
@@ -34,7 +34,7 @@ export const createHooks: {
     return createResult
   },
   AppliesTo: async ({ ctx, from, to, key }) => {
-    const { createEdge } = await getContentGraphPersistence()
+    const { createEdge } = await persistence
     const createResult = await createEdge<EdgeType.AppliesTo>({
       ctx,
       key,
@@ -46,7 +46,7 @@ export const createHooks: {
     return createResult
   },
   Contains: async ({ ctx, from, to, key }) => {
-    const { createEdge } = await getContentGraphPersistence()
+    const { createEdge } = await persistence
     const createResult = await createEdge<EdgeType.Contains>({
       ctx,
       key,
@@ -58,7 +58,7 @@ export const createHooks: {
     return createResult
   },
   Created: async ({ ctx, from, to, key }) => {
-    const { createEdge } = await getContentGraphPersistence()
+    const { createEdge } = await persistence
     const createResult = await createEdge<EdgeType.Created>({
       ctx,
       key,
@@ -70,7 +70,7 @@ export const createHooks: {
     return createResult
   },
   Likes: async ({ ctx, from, to, key }) => {
-    const { createEdge } = await getContentGraphPersistence()
+    const { createEdge } = await persistence
     const createResult = await createEdge<EdgeType.Likes>({
       ctx,
       key,

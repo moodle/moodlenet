@@ -1,5 +1,6 @@
 type Created implements IEdge {
   _id: ID!
+  _meta: EdgeMeta
 }
 
 type RelCountMap {

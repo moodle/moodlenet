@@ -109,10 +109,10 @@ export type MutationUpdateNodeArgs = {
 };
 
 export type CreateNodeInput = {
-  Collection: Maybe<CreateCollectionInput>;
-  Resource: Maybe<CreateResourceInput>;
-  Subject: Maybe<CreateSubjectInput>;
-  User: Maybe<CreateUserInput>;
+  Collection?: Maybe<CreateCollectionInput>;
+  Resource?: Maybe<CreateResourceInput>;
+  Subject?: Maybe<CreateSubjectInput>;
+  User?: Maybe<CreateUserInput>;
   nodeType: NodeType;
 };
 
@@ -120,13 +120,13 @@ export type CreateNodeMutationPayload = CreateNodeMutationSuccess | CreateNodeMu
 
 export type CreateNodeMutationSuccess = {
   __typename: 'CreateNodeMutationSuccess';
-  node: Maybe<Node>;
+  node?: Maybe<Node>;
 };
 
 export type CreateNodeMutationError = {
   __typename: 'CreateNodeMutationError';
   type: CreateNodeMutationErrorType;
-  details: Maybe<Scalars['String']>;
+  details?: Maybe<Scalars['String']>;
 };
 
 export enum CreateNodeMutationErrorType {
@@ -135,11 +135,11 @@ export enum CreateNodeMutationErrorType {
 }
 
 export type CreateEdgeInput = {
-  AppliesTo: Maybe<Scalars['Empty']>;
-  Contains: Maybe<Scalars['Empty']>;
-  Created: Maybe<Scalars['Empty']>;
-  Follows: Maybe<Scalars['Empty']>;
-  Likes: Maybe<Scalars['Empty']>;
+  AppliesTo?: Maybe<Scalars['Empty']>;
+  Contains?: Maybe<Scalars['Empty']>;
+  Created?: Maybe<Scalars['Empty']>;
+  Follows?: Maybe<Scalars['Empty']>;
+  Likes?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   from: Scalars['ID'];
   to: Scalars['ID'];
@@ -149,13 +149,13 @@ export type CreateEdgeMutationPayload = CreateEdgeMutationSuccess | CreateEdgeMu
 
 export type CreateEdgeMutationSuccess = {
   __typename: 'CreateEdgeMutationSuccess';
-  edge: Maybe<Edge>;
+  edge?: Maybe<Edge>;
 };
 
 export type CreateEdgeMutationError = {
   __typename: 'CreateEdgeMutationError';
   type: CreateEdgeMutationErrorType;
-  details: Maybe<Scalars['String']>;
+  details?: Maybe<Scalars['String']>;
 };
 
 export enum CreateEdgeMutationErrorType {
@@ -166,10 +166,10 @@ export enum CreateEdgeMutationErrorType {
 }
 
 export type UpdateNodeInput = {
-  Collection: Maybe<UpdateCollectionInput>;
-  Resource: Maybe<UpdateResourceInput>;
-  Subject: Maybe<UpdateSubjectInput>;
-  User: Maybe<UpdateUserInput>;
+  Collection?: Maybe<UpdateCollectionInput>;
+  Resource?: Maybe<UpdateResourceInput>;
+  Subject?: Maybe<UpdateSubjectInput>;
+  User?: Maybe<UpdateUserInput>;
   _id: Scalars['ID'];
   nodeType: NodeType;
 };
@@ -178,13 +178,13 @@ export type UpdateNodeMutationPayload = UpdateNodeMutationSuccess | UpdateNodeMu
 
 export type UpdateNodeMutationSuccess = {
   __typename: 'UpdateNodeMutationSuccess';
-  node: Maybe<Node>;
+  node?: Maybe<Node>;
 };
 
 export type UpdateNodeMutationError = {
   __typename: 'UpdateNodeMutationError';
   type: UpdateNodeMutationErrorType;
-  details: Maybe<Scalars['String']>;
+  details?: Maybe<Scalars['String']>;
 };
 
 export enum UpdateNodeMutationErrorType {
@@ -194,11 +194,11 @@ export enum UpdateNodeMutationErrorType {
 }
 
 export type UpdateEdgeInput = {
-  AppliesTo: Maybe<Scalars['Empty']>;
-  Contains: Maybe<Scalars['Empty']>;
-  Created: Maybe<Scalars['Empty']>;
-  Follows: Maybe<Scalars['Empty']>;
-  Likes: Maybe<Scalars['Empty']>;
+  AppliesTo?: Maybe<Scalars['Empty']>;
+  Contains?: Maybe<Scalars['Empty']>;
+  Created?: Maybe<Scalars['Empty']>;
+  Follows?: Maybe<Scalars['Empty']>;
+  Likes?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   id: Scalars['ID'];
 };
@@ -207,13 +207,13 @@ export type UpdateEdgeMutationPayload = UpdateEdgeMutationSuccess | UpdateEdgeMu
 
 export type UpdateEdgeMutationSuccess = {
   __typename: 'UpdateEdgeMutationSuccess';
-  edge: Maybe<Edge>;
+  edge?: Maybe<Edge>;
 };
 
 export type UpdateEdgeMutationError = {
   __typename: 'UpdateEdgeMutationError';
   type: UpdateEdgeMutationErrorType;
-  details: Maybe<Scalars['String']>;
+  details?: Maybe<Scalars['String']>;
 };
 
 export enum UpdateEdgeMutationErrorType {
@@ -231,13 +231,13 @@ export type DeleteEdgeMutationPayload = DeleteEdgeMutationSuccess | DeleteEdgeMu
 
 export type DeleteEdgeMutationSuccess = {
   __typename: 'DeleteEdgeMutationSuccess';
-  edge: Maybe<Edge>;
+  edge?: Maybe<Edge>;
 };
 
 export type DeleteEdgeMutationError = {
   __typename: 'DeleteEdgeMutationError';
-  type: Maybe<DeleteEdgeMutationErrorType>;
-  details: Maybe<Scalars['String']>;
+  type?: Maybe<DeleteEdgeMutationErrorType>;
+  details?: Maybe<Scalars['String']>;
 };
 
 export enum DeleteEdgeMutationErrorType {
@@ -254,13 +254,13 @@ export type DeleteNodeMutationPayload = DeleteNodeMutationSuccess | DeleteNodeMu
 
 export type DeleteNodeMutationSuccess = {
   __typename: 'DeleteNodeMutationSuccess';
-  node: Maybe<Node>;
+  node?: Maybe<Node>;
 };
 
 export type DeleteNodeMutationError = {
   __typename: 'DeleteNodeMutationError';
-  type: Maybe<DeleteNodeMutationErrorType>;
-  details: Maybe<Scalars['String']>;
+  type?: Maybe<DeleteNodeMutationErrorType>;
+  details?: Maybe<Scalars['String']>;
 };
 
 export enum DeleteNodeMutationErrorType {
@@ -275,10 +275,10 @@ export type Page = {
 
 export type PageInfo = {
   __typename: 'PageInfo';
-  endCursor: Maybe<Scalars['Cursor']>;
+  endCursor?: Maybe<Scalars['Cursor']>;
   hasNextPage: Scalars['Boolean'];
   hasPreviousPage: Scalars['Boolean'];
-  startCursor: Maybe<Scalars['Cursor']>;
+  startCursor?: Maybe<Scalars['Cursor']>;
 };
 
 export type PageEdge = {
@@ -286,18 +286,18 @@ export type PageEdge = {
 };
 
 export type PaginationInput = {
-  first: Maybe<Scalars['Int']>;
-  after: Maybe<Scalars['Cursor']>;
-  before: Maybe<Scalars['Cursor']>;
-  last: Maybe<Scalars['Int']>;
+  first?: Maybe<Scalars['Int']>;
+  after?: Maybe<Scalars['Cursor']>;
+  before?: Maybe<Scalars['Cursor']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type Query = {
   __typename: 'Query';
-  getSession: Maybe<UserSession>;
-  getSessionAccountUser: Maybe<UserSession>;
+  getSession?: Maybe<UserSession>;
+  getSessionAccountUser?: Maybe<UserSession>;
   globalSearch: SearchPage;
-  node: Maybe<Node>;
+  node?: Maybe<Node>;
 };
 
 
@@ -308,7 +308,7 @@ export type QueryGetSessionAccountUserArgs = {
 
 export type QueryGlobalSearchArgs = {
   text: Scalars['String'];
-  page: Maybe<PaginationInput>;
+  page?: Maybe<PaginationInput>;
 };
 
 
@@ -330,51 +330,58 @@ export type SearchPageEdge = PageEdge & {
 
 
 export type INode = {
-  _id: Maybe<Scalars['ID']>;
+  _id?: Maybe<Scalars['ID']>;
   _rel: RelPage;
-  _meta: Maybe<NodeMeta>;
+  _meta?: Maybe<NodeMeta>;
 };
 
 
 export type INode_RelArgs = {
   edge: EdgeTypeInput;
-  page: Maybe<PaginationInput>;
-  sort: Maybe<Array<NodeRelSort>>;
+  page?: Maybe<PaginationInput>;
+  sort?: Maybe<Array<NodeRelSort>>;
 };
 
 export type NodeMeta = {
   __typename: 'NodeMeta';
-  created: Maybe<Scalars['DateTime']>;
-  updated: Maybe<Scalars['DateTime']>;
-  relCount: Maybe<RelCountMap>;
+  created: Scalars['DateTime'];
+  updated: Scalars['DateTime'];
+  relCount?: Maybe<RelCountMap>;
+};
+
+export type EdgeMeta = {
+  __typename: 'EdgeMeta';
+  created: Scalars['DateTime'];
+  updated: Scalars['DateTime'];
 };
 
 export type RelCount = {
   __typename: 'RelCount';
-  i: Maybe<Scalars['Int']>;
-  o: Maybe<Scalars['Int']>;
+  i?: Maybe<Scalars['Int']>;
+  o?: Maybe<Scalars['Int']>;
 };
 
 export type NodeRelSort = {
   prop: Scalars['String'];
-  desc: Maybe<Scalars['Boolean']>;
-  edge: Maybe<Scalars['Boolean']>;
+  desc?: Maybe<Scalars['Boolean']>;
+  edge?: Maybe<Scalars['Boolean']>;
 };
 
 export type IContentNode = {
   name: Scalars['String'];
   summary: Scalars['String'];
-  icon: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
 };
 
 export type IEdge = {
-  _id: Maybe<Scalars['ID']>;
+  _id?: Maybe<Scalars['ID']>;
+  _meta?: Maybe<EdgeMeta>;
 };
 
 export type EdgeTypeInput = {
   type: EdgeType;
   node: NodeType;
-  inverse: Maybe<Scalars['Boolean']>;
+  inverse?: Maybe<Scalars['Boolean']>;
 };
 
 export type RelPage = Page & {
@@ -393,15 +400,16 @@ export type RelPageEdge = PageEdge & {
 export type AppliesTo = IEdge & {
   __typename: 'AppliesTo';
   _id: Scalars['ID'];
+  _meta?: Maybe<EdgeMeta>;
 };
 
 export type RelCountMap = {
   __typename: 'RelCountMap';
-  AppliesTo: Maybe<RelCount>;
-  Contains: Maybe<RelCount>;
-  Created: Maybe<RelCount>;
-  Follows: Maybe<RelCount>;
-  Likes: Maybe<RelCount>;
+  AppliesTo?: Maybe<RelCount>;
+  Contains?: Maybe<RelCount>;
+  Created?: Maybe<RelCount>;
+  Follows?: Maybe<RelCount>;
+  Likes?: Maybe<RelCount>;
 };
 
 export type Edge = AppliesTo | Contains | Created | Follows | Likes;
@@ -417,27 +425,31 @@ export enum EdgeType {
 export type Contains = IEdge & {
   __typename: 'Contains';
   _id: Scalars['ID'];
+  _meta?: Maybe<EdgeMeta>;
 };
 
 export type Created = IEdge & {
   __typename: 'Created';
   _id: Scalars['ID'];
+  _meta?: Maybe<EdgeMeta>;
 };
 
 export type Follows = IEdge & {
   __typename: 'Follows';
   _id: Scalars['ID'];
+  _meta?: Maybe<EdgeMeta>;
 };
 
 export type Likes = IEdge & {
   __typename: 'Likes';
   _id: Scalars['ID'];
+  _meta?: Maybe<EdgeMeta>;
 };
 
 export type UserSession = {
   __typename: 'UserSession';
   accountId: Scalars['String'];
-  changeEmailRequest: Maybe<Scalars['String']>;
+  changeEmailRequest?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   user: User;
   userId: Scalars['ID'];
@@ -448,17 +460,17 @@ export type Collection = INode & IContentNode & {
   __typename: 'Collection';
   name: Scalars['String'];
   summary: Scalars['String'];
-  icon: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _meta: Maybe<NodeMeta>;
+  _meta?: Maybe<NodeMeta>;
   _rel: RelPage;
 };
 
 
 export type Collection_RelArgs = {
   edge: EdgeTypeInput;
-  page: Maybe<PaginationInput>;
-  sort: Maybe<Array<NodeRelSort>>;
+  page?: Maybe<PaginationInput>;
+  sort?: Maybe<Array<NodeRelSort>>;
 };
 
 export type Node = Collection | Resource | Subject | User;
@@ -473,104 +485,104 @@ export enum NodeType {
 export type CreateCollectionInput = {
   name: Scalars['String'];
   summary: Scalars['String'];
-  icon: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
 };
 
 export type UpdateCollectionInput = {
-  name: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type Resource = INode & IContentNode & {
   __typename: 'Resource';
   name: Scalars['String'];
   summary: Scalars['String'];
-  icon: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _meta: Maybe<NodeMeta>;
+  _meta?: Maybe<NodeMeta>;
   _rel: RelPage;
 };
 
 
 export type Resource_RelArgs = {
   edge: EdgeTypeInput;
-  page: Maybe<PaginationInput>;
-  sort: Maybe<Array<NodeRelSort>>;
+  page?: Maybe<PaginationInput>;
+  sort?: Maybe<Array<NodeRelSort>>;
 };
 
 export type CreateResourceInput = {
   name: Scalars['String'];
   summary: Scalars['String'];
-  icon: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
 };
 
 export type UpdateResourceInput = {
-  name: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type Subject = INode & IContentNode & {
   __typename: 'Subject';
   name: Scalars['String'];
   summary: Scalars['String'];
-  icon: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _meta: Maybe<NodeMeta>;
+  _meta?: Maybe<NodeMeta>;
   _rel: RelPage;
 };
 
 
 export type Subject_RelArgs = {
   edge: EdgeTypeInput;
-  page: Maybe<PaginationInput>;
-  sort: Maybe<Array<NodeRelSort>>;
+  page?: Maybe<PaginationInput>;
+  sort?: Maybe<Array<NodeRelSort>>;
 };
 
 export type CreateSubjectInput = {
   name: Scalars['String'];
   summary: Scalars['String'];
-  icon: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
 };
 
 export type UpdateSubjectInput = {
-  name: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type User = INode & IContentNode & {
   __typename: 'User';
   name: Scalars['String'];
   summary: Scalars['String'];
-  icon: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _meta: Maybe<NodeMeta>;
+  _meta?: Maybe<NodeMeta>;
   _rel: RelPage;
 };
 
 
 export type User_RelArgs = {
   edge: EdgeTypeInput;
-  page: Maybe<PaginationInput>;
-  sort: Maybe<Array<NodeRelSort>>;
+  page?: Maybe<PaginationInput>;
+  sort?: Maybe<Array<NodeRelSort>>;
 };
 
 export type UpdateUserInput = {
-  name: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type CreateUserInput = {
   name: Scalars['String'];
   summary: Scalars['String'];
-  icon: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
 };
 
 export type SimpleResponse = {
   __typename: 'SimpleResponse';
   success: Scalars['Boolean'];
-  message: Maybe<Scalars['String']>;
+  message?: Maybe<Scalars['String']>;
 };
 
 export type CreateSession = {
   __typename: 'CreateSession';
-  jwt: Maybe<Scalars['String']>;
-  message: Maybe<Scalars['String']>;
+  jwt?: Maybe<Scalars['String']>;
+  message?: Maybe<Scalars['String']>;
 };
 
 

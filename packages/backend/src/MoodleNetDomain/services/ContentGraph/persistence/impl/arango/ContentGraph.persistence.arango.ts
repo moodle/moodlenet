@@ -1,7 +1,7 @@
 import { ContentGraphPersistence } from '../../types'
 import { createEdge } from './apis/createEdge'
 import { createNode } from './apis/createNode'
-import { getNode } from './apis/findNode'
+import { getNode } from './apis/getNode'
 //import { getRelationCount } from './apis/getRelationCount'
 import { globalSearch } from './apis/globalSearch'
 import { traverseEdges } from './apis/traverseEdges'
