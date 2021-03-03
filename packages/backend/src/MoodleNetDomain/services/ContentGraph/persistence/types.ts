@@ -34,6 +34,7 @@ export interface ContentGraphPersistence {
     inverse: boolean
     page: Maybe<GQL.PaginationInput>
     ctx: MoodleNetExecutionContext
+    sort: Maybe<GQL.NodeRelSort[]>
   }): Promise<GQL.RelPage>
   createNode<Type extends GQL.NodeType>(_: {
     ctx: MoodleNetExecutionContext
@@ -57,7 +58,7 @@ export interface ContentGraphPersistence {
 export type ShallowNode<N extends GQL.Node = GQL.Node> = Omit<N, '_rel' | '_relCount'>
 export type ShallowEdge<E extends GQL.Edge = GQL.Edge> = Omit<E, '___ nothing to omit ___'>
 
-export type CreateNodeData<Type extends GQL.NodeType> = Omit<ShallowNodeByType<Type>, '_id' | '__typename'>
+export type CreateNodeData<Type extends GQL.NodeType> = Omit<ShallowNodeByType<Type>, '_id' | '__typename' | '_meta'>
 // export type QueryNodeShallowPayload = ShallowNode | GQL.QueryNodeError
 export type CreateNodeShallowPayload<Type extends GQL.NodeType> = ShallowNodeByType<Type> | GQL.CreateNodeMutationError
 

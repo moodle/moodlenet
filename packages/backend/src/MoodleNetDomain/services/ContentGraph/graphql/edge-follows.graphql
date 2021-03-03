@@ -2,6 +2,9 @@ type Follows implements IEdge {
   _id: ID!
 }
 
+type RelCountMap {
+  Follows: RelCount
+}
 union Edge = Follows
 enum EdgeType {
   Follows

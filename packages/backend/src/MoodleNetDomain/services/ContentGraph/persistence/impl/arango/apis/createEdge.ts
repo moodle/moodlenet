@@ -9,6 +9,7 @@ import { cantBindMessage } from '../../../../graphDefinition/strings'
 import { createEdgeMutationError } from '../../../../graphql.resolvers/helpers'
 import { ContentGraphPersistence } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
+import { updateRelationCountsOnEdgeLife } from './helpers'
 // import { findNodeWithPolicy } from './findNode'
 
 export const createEdge: ContentGraphPersistence['createEdge'] = async ({
@@ -86,6 +87,7 @@ export const createEdge: ContentGraphPersistence['createEdge'] = async ({
     { ...data, _from: from, _to: to, _key: key, from: fromType, to: toType },
     { returnNew: true },
   )
+  updateRelationCountsOnEdgeLife({ edgeType, from, to, life: 'create' })
   //console.log('created edge', edge)
   return edge
 }

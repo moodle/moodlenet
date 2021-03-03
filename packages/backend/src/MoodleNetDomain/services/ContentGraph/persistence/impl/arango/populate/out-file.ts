@@ -37,4 +37,4 @@ type WriteGlyph = WriteEdge | WriteNode
 type WriteEdge = Omit<ShallowEdge & { from: NodeType; to: NodeType; _from: Id; _to: Id }, '_id' | '__typename'> & {
   _key: IdKey
 }
-type WriteNode = Omit<ShallowNode, '_id' | '__typename'> & { _key: IdKey }
+type WriteNode = Omit<ShallowNode, '_id' | '__typename' | '_meta'> & { _key: IdKey }

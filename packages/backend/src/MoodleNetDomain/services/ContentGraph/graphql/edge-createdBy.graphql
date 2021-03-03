@@ -2,6 +2,9 @@ type Created implements IEdge {
   _id: ID!
 }
 
+type RelCountMap {
+  Created: RelCount
+}
 union Edge = Created
 enum EdgeType {
   Created

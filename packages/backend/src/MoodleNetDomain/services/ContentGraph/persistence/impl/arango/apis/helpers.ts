@@ -1,6 +1,8 @@
+import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { aqlstr } from '../../../../../../../lib/helpers/arango'
-import { Page, PaginationInput } from '../../../../ContentGraph.graphql.gen'
+import { Id } from '../../../../../UserAccount/types'
+import { EdgeType, Page, PaginationInput } from '../../../../ContentGraph.graphql.gen'
 import { Types } from '../../../types'
 import { DBReady } from '../ContentGraph.persistence.arango.env'
 const DEFAULT_PAGE_LENGTH = 10
@@ -17,7 +19,7 @@ export const cursorPaginatedQuery = async <P extends Page>({
   page: Maybe<PaginationInput>
   cursorProp: string
   inverseSort?: boolean
-  mapQuery(pageFilterSort: string): string
+  mapQuery(pageFilterSortLimit: string): string
   //@ts-expect-error
   pageTypename: P['__typename']
   //@ts-expect-error
@@ -33,30 +35,34 @@ export const cursorPaginatedQuery = async <P extends Page>({
   const beforeCursor = before || after
   const getCursorToo = beforeCursor === after
 
-  const pageLimit = (_: number, includeCursor: boolean) =>
-    Math.min(_ || Infinity, MAX_PAGE_LENGTH) + (includeCursor && getCursorToo ? 1 : 0)
+  const pageLimit = (_: number, pageType: 'after' | 'before') =>
+    Math.min(_ || Infinity, MAX_PAGE_LENGTH) + (pageType === 'before' && getCursorToo ? 1 : 0)
 
   const afterPage =
     !after && !!before
       ? null
       : `${after ? `FILTER ${cursorProp} > ${aqlstr(after)}` : ``}
     SORT ${cursorProp} ${inverseSort ? 'DESC' : 'ASC'}
-    LIMIT ${pageLimit(first, false)}
-    LET cursor = ${cursorProp}
+    LIMIT ${pageLimit(first, 'after')}
     `
 
-  const comparison = getCursorToo ? '<=' : '<'
+  const beforeComparison = getCursorToo ? '<=' : '<'
   const beforePage =
     last && beforeCursor
-      ? `${beforeCursor ? `FILTER ${cursorProp} ${comparison} ${aqlstr(beforeCursor)}"` : ``}
+      ? `${beforeCursor ? `FILTER ${cursorProp} ${beforeComparison} ${aqlstr(beforeCursor)}` : ``}
         SORT ${cursorProp} ${inverseSort ? 'ASC' : 'DESC'}
-        LIMIT ${pageLimit(last, true)}
-        LET cursor = ${cursorProp}
+        LIMIT ${pageLimit(last, 'before')}
       `
-      : ``
+      : null
+
   return Promise.all(
-    [afterPage, beforePage].map(pageFilterSort => {
-      const q = pageFilterSort ? mapQuery(pageFilterSort) : null
+    [afterPage, beforePage].map(pageFilterSortLimit => {
+      const q = pageFilterSortLimit
+        ? mapQuery(`
+        ${pageFilterSortLimit}
+        LET cursor = ${cursorProp}
+      `)
+        : null
 
       console.log(q)
       return q ? db.query(q).then(cursor => cursor.all()) : []
@@ -96,13 +102,14 @@ export const makePage = <P extends Page>({
   return page
 }
 
+// TODO: Make it like cursorPaginatedQuery
 export const skipLimitPagination = ({ page }: { page: Maybe<PaginationInput> }) => {
   const { after, first } = {
     ...page,
     first: page?.first ?? DEFAULT_PAGE_LENGTH,
   }
   const limit = Math.min(first, MAX_PAGE_LENGTH)
-  const skip = Number(after || -1) + 1
+  const skip = Math.max((typeof after === 'number' ? after : -1) + 1, 0)
   return {
     limit,
     skip,
@@ -111,3 +118,73 @@ export const skipLimitPagination = ({ page }: { page: Maybe<PaginationInput> }) 
 
 export const aqlMergeTypenameById = (varname: string) =>
   `MERGE( ${varname}, { __typename: PARSE_IDENTIFIER(${varname}._id).collection } )`
+
+export const createNodeMetaString = ({}: {}) => `{
+    created: DATE_NOW(),
+    updated: DATE_NOW()
+  }
+`
+export const updateNodeMetaString = ({}: {}) => `{
+  updated: DATE_NOW()
+}
+`
+
+export const updateRelationCountQuery = async ({
+  edgeType,
+  nodeId,
+  side,
+  amount,
+}: {
+  edgeType: EdgeType
+  nodeId: Id
+  side: 'i' | 'o' //FIXME: use GQL Type
+  amount: number
+}) => {
+  const { db } = await DBReady()
+  const { nodeType } = parseNodeId(nodeId)
+  const q = `
+    LET v = Document( ${aqlstr(nodeId)} )
+      LET currRelCount = v.${NODE_META_PROP}.relCount.${edgeType}.${side} || 0
+      UPDATE v WITH ${mergeNodeMeta({
+        nodeProp: 'v',
+        mergeMeta: `{
+          relCount: {
+            ${edgeType} : {
+              ${side}: currRelCount + (${Math.floor(amount)})
+            }
+          }
+        }`,
+      })}
+
+      IN ${nodeType} 
+      
+      RETURN NEW
+  `
+  // console.log(q)
+  const cursor = await db.query(q)
+  const res = await cursor.next()
+  cursor.kill()
+  return res
+}
+
+export const mergeNodeMeta = ({ mergeMeta, nodeProp }: { mergeMeta: string; nodeProp: string }) =>
+  `MERGE_RECURSIVE(${nodeProp},{ ${NODE_META_PROP}: ${mergeMeta} })`
+
+export const updateRelationCountsOnEdgeLife = async ({
+  life,
+  edgeType,
+  from,
+  to,
+}: {
+  life: 'create' | 'delete'
+  from: Id
+  to: Id
+  edgeType: EdgeType
+}) => {
+  const amount = life === 'create' ? 1 : -1
+  const qout = updateRelationCountQuery({ edgeType, nodeId: from, side: 'o', amount })
+  const qin = updateRelationCountQuery({ edgeType, nodeId: to, side: 'i', amount })
+  return Promise.all([qin, qout])
+}
+
+const NODE_META_PROP = '_meta'

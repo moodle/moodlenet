@@ -16,8 +16,9 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
   targetNodePolicy,
   sort,
 }): Promise<Types.RelPage> => {
-  const targetSide = inverse ? 'from' : 'to'
-  const sourceSide = inverse ? 'to' : 'from'
+  const filterOnSideType = inverse ? 'from' : 'to'
+
+  const direction = inverse ? 'INBOUND' : 'OUTBOUND'
 
   // TODO: define and implement sorting
   const aqlSort = (sort ?? [])
@@ -44,14 +45,13 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
     cursorProp: `edge._key`,
     page,
     mapQuery: pageFilterSortLimit => `
-      FOR edge IN ${edgeType}
-        FILTER edge.${targetSide} == '${targetNodeType}' 
-          && edge._${sourceSide} == ${aqlstr(parentNodeId)}
+    FOR targetNode, edge 
+      IN 1..1 ${direction} ${aqlstr(parentNodeId)} ${edgeType}
+
+      FILTER edge.${filterOnSideType} == '${targetNodeType}' 
           && ${targetEdgeAccessFilter}
-        LET targetNode=Document(edge._${targetSide})
-        
-        FILTER ${targetNodeAccessFilter}
       
+      FILTER ${targetNodeAccessFilter}
 
       ${pageFilterSortLimit}
 

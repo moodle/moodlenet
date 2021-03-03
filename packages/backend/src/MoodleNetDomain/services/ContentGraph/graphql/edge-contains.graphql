@@ -2,6 +2,9 @@ type Contains implements IEdge {
   _id: ID!
 }
 
+type RelCountMap {
+  Contains: RelCount
+}
 union Edge = Contains
 enum EdgeType {
   Contains

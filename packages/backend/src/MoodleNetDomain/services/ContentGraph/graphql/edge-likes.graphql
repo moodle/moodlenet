@@ -2,6 +2,9 @@ type Likes implements IEdge {
   _id: ID!
 }
 
+type RelCountMap {
+  Likes: RelCount
+}
 union Edge = Likes
 enum EdgeType {
   Likes

@@ -2,6 +2,9 @@ type AppliesTo implements IEdge {
   _id: ID!
 }
 
+type RelCountMap {
+  AppliesTo: RelCount
+}
 union Edge = AppliesTo
 enum EdgeType {
   AppliesTo

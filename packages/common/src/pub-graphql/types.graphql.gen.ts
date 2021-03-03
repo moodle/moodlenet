@@ -332,18 +332,33 @@ export type SearchPageEdge = PageEdge & {
 export type INode = {
   _id: Maybe<Scalars['ID']>;
   _rel: RelPage;
-  _relCount: Scalars['Int'];
+  _meta: Maybe<NodeMeta>;
 };
 
 
 export type INode_RelArgs = {
   edge: EdgeTypeInput;
   page: Maybe<PaginationInput>;
+  sort: Maybe<Array<NodeRelSort>>;
 };
 
+export type NodeMeta = {
+  __typename: 'NodeMeta';
+  created: Maybe<Scalars['DateTime']>;
+  updated: Maybe<Scalars['DateTime']>;
+  relCount: Maybe<RelCountMap>;
+};
 
-export type INode_RelCountArgs = {
-  edge: EdgeTypeInput;
+export type RelCount = {
+  __typename: 'RelCount';
+  i: Maybe<Scalars['Int']>;
+  o: Maybe<Scalars['Int']>;
+};
+
+export type NodeRelSort = {
+  prop: Scalars['String'];
+  desc: Maybe<Scalars['Boolean']>;
+  edge: Maybe<Scalars['Boolean']>;
 };
 
 export type IContentNode = {
@@ -378,6 +393,15 @@ export type RelPageEdge = PageEdge & {
 export type AppliesTo = IEdge & {
   __typename: 'AppliesTo';
   _id: Scalars['ID'];
+};
+
+export type RelCountMap = {
+  __typename: 'RelCountMap';
+  AppliesTo: Maybe<RelCount>;
+  Contains: Maybe<RelCount>;
+  Created: Maybe<RelCount>;
+  Follows: Maybe<RelCount>;
+  Likes: Maybe<RelCount>;
 };
 
 export type Edge = AppliesTo | Contains | Created | Follows | Likes;
@@ -426,19 +450,15 @@ export type Collection = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _relCount: Scalars['Int'];
+  _meta: Maybe<NodeMeta>;
   _rel: RelPage;
-};
-
-
-export type Collection_RelCountArgs = {
-  edge: EdgeTypeInput;
 };
 
 
 export type Collection_RelArgs = {
   edge: EdgeTypeInput;
   page: Maybe<PaginationInput>;
+  sort: Maybe<Array<NodeRelSort>>;
 };
 
 export type Node = Collection | Resource | Subject | User;
@@ -466,19 +486,15 @@ export type Resource = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _relCount: Scalars['Int'];
+  _meta: Maybe<NodeMeta>;
   _rel: RelPage;
-};
-
-
-export type Resource_RelCountArgs = {
-  edge: EdgeTypeInput;
 };
 
 
 export type Resource_RelArgs = {
   edge: EdgeTypeInput;
   page: Maybe<PaginationInput>;
+  sort: Maybe<Array<NodeRelSort>>;
 };
 
 export type CreateResourceInput = {
@@ -497,19 +513,15 @@ export type Subject = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _relCount: Scalars['Int'];
+  _meta: Maybe<NodeMeta>;
   _rel: RelPage;
-};
-
-
-export type Subject_RelCountArgs = {
-  edge: EdgeTypeInput;
 };
 
 
 export type Subject_RelArgs = {
   edge: EdgeTypeInput;
   page: Maybe<PaginationInput>;
+  sort: Maybe<Array<NodeRelSort>>;
 };
 
 export type CreateSubjectInput = {
@@ -528,19 +540,15 @@ export type User = INode & IContentNode & {
   summary: Scalars['String'];
   icon: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _relCount: Scalars['Int'];
+  _meta: Maybe<NodeMeta>;
   _rel: RelPage;
-};
-
-
-export type User_RelCountArgs = {
-  edge: EdgeTypeInput;
 };
 
 
 export type User_RelArgs = {
   edge: EdgeTypeInput;
   page: Maybe<PaginationInput>;
+  sort: Maybe<Array<NodeRelSort>>;
 };
 
 export type UpdateUserInput = {

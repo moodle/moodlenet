@@ -67,7 +67,7 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
       __resolveType: obj => {
         return nodeTypeFromId(obj._id) || null
       },
-      _relCount: null as any,
+      _meta: null as any,
       _id: null as any,
       _rel: null as any,
     },
