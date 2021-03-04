@@ -1,3 +1,4 @@
+import { Api } from '../api/types'
 import * as D from '../types'
 
 export type Event<Type> = { ___EVENT_TYPE: Type }
@@ -17,3 +18,5 @@ export type LookupEventType<Domain, Path extends EventLeaves<Domain>> = LookupDe
 >
   ? Type
   : never
+
+export type Binder<Domain, Path extends EventLeaves<Domain>> = Api<LookupEventType<Domain, Path>, unknown>

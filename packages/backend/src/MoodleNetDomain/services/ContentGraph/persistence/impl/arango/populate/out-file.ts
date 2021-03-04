@@ -1,14 +1,9 @@
 import { Id, IdKey } from '@moodlenet/common/lib/utils/content-graph'
-import { createWriteStream, mkdirSync, WriteStream } from 'fs'
+import { createWriteStream, WriteStream } from 'fs'
 import { join } from 'path'
 import { EdgeType, NodeType } from '../../../../ContentGraph.graphql.gen'
 import { ShallowEdge, ShallowNode } from '../../../types'
-
-export const GEN_DIR = process.env.GEN_DIR || join(__dirname, '_gen')
-
-try {
-  mkdirSync(GEN_DIR)
-} catch {}
+import { GEN_DIR } from './env'
 
 console.log(`bulk dir :${GEN_DIR}`)
 const writers: { [type in NodeType | EdgeType]: WriteStream } = {} as any
@@ -40,4 +35,4 @@ type WriteEdge = Omit<
 > & {
   _key: IdKey
 }
-type WriteNode = Omit<ShallowNode, '_id' | '__typename' | '_meta'> & { _key: IdKey }
+type WriteNode = Omit<ShallowNode, '_id' | '__typename' | '_meta' | '_rel'> & { _key: IdKey }

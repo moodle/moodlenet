@@ -1,4 +1,5 @@
 import { nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
+import { ulidKey } from '../../../../../../../lib/helpers/arango'
 import { CreateEdgeMutationErrorType } from '../../../../ContentGraph.graphql.gen'
 import { getConnectionDef } from '../../../../graphDefinition'
 // import {
@@ -19,6 +20,7 @@ export const createEdge: ContentGraphPersistence['createEdge'] = async ({
   edgeType,
   key,
 }) => {
+  key = key ?? ulidKey()
   const { graph } = await DBReady()
   // const { auth } = ctx
   const fromType = nodeTypeFromId(from)

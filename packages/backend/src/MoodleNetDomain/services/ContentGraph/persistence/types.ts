@@ -2,7 +2,6 @@ import { Id, IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { MoodleNetExecutionContext } from '../../../MoodleNetGraphQL'
 import * as GQL from '../ContentGraph.graphql.gen'
-import { /* BasicAccessPolicy, */ ShallowEdgeByType, ShallowNodeByType } from '../graphDefinition/types'
 export * as Types from '../ContentGraph.graphql.gen'
 
 export interface ContentGraphPersistence {
@@ -22,14 +21,14 @@ export interface ContentGraphPersistence {
   }): Promise<GQL.RelPage>
   createNode<Type extends GQL.NodeType>(_: {
     ctx: MoodleNetExecutionContext
-    key: IdKey
+    key?: IdKey // remove this .. it was only necessary for user creation on accuont activation, change the flow and disjoint the two
     nodeType: Type
     data: CreateNodeData<Type>
   }): Promise<CreateNodeShallowPayload<Type>>
   createEdge<Type extends GQL.EdgeType>(_: {
     ctx: MoodleNetExecutionContext
     edgeType: Type
-    key: IdKey
+    key?: IdKey // remove this .. it was only necessary for user creation on accuont activation, change the flow and disjoint the two
     data: CreateEdgeData<Type>
     from: Id
     to: Id
@@ -47,12 +46,25 @@ export interface ContentGraphPersistence {
   // }): Promise<number>
 }
 
-export type ShallowNode<N extends GQL.Node = GQL.Node> = Omit<N, '_rel'>
-export type ShallowEdge<E extends GQL.Edge = GQL.Edge> = Omit<E, '___ nothing to omit ___'>
+export type ShallowNode<N extends GQL.Node = GQL.Node> = N //Omit<N, '_rel'>
+export type ShallowEdge<E extends GQL.Edge = GQL.Edge> = E //Omit<E, '___ nothing to omit ___'>
+
+export type NodeByType<T extends GQL.NodeType> = GQL.ResolversParentTypes[T] extends GQL.Node
+  ? GQL.ResolversParentTypes[T]
+  : never
+export type EdgeByType<T extends GQL.EdgeType> = GQL.ResolversParentTypes[T] extends GQL.Edge
+  ? GQL.ResolversParentTypes[T]
+  : never
+
+export type ShallowNodeByType<T extends GQL.NodeType> = ShallowNode<NodeByType<T>>
+export type ShallowEdgeByType<T extends GQL.EdgeType> = ShallowEdge<EdgeByType<T>>
 
 // export type QueryNodeShallowPayload = ShallowNode | GQL.QueryNodeError
 // export type QueryEdgeShallowPayload = ShallowNode | GQL.QueryEdgeError
-export type CreateNodeData<Type extends GQL.NodeType> = Omit<ShallowNodeByType<Type>, '_id' | '__typename' | '_meta'>
+export type CreateNodeData<Type extends GQL.NodeType> = Omit<
+  ShallowNodeByType<Type>,
+  '_id' | '__typename' | '_meta' | '_rel'
+>
 export type CreateNodeShallowPayload<Type extends GQL.NodeType> = ShallowNodeByType<Type> | GQL.CreateNodeMutationError
 export type CreateEdgeData<Type extends GQL.EdgeType> = Omit<ShallowEdgeByType<Type>, '_id' | '__typename' | '_meta'>
 export type CreateEdgeShallowPayload<Type extends GQL.EdgeType> = ShallowEdgeByType<Type> | GQL.CreateEdgeMutationError

@@ -1,6 +1,5 @@
 import { nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { api } from '../../../../../lib/domain'
-import { ulidKey } from '../../../../../lib/helpers/arango'
 import { MoodleNetDomain } from '../../../../MoodleNetDomain'
 import {
   CreateEdgeMutationErrorType,
@@ -47,7 +46,7 @@ export const createEdge: MutationResolvers['createEdge'] = async (_root, { input
     return createEdgeMutationError(CreateEdgeMutationErrorType.UnexpectedInput, edgeInput.message)
   }
   const shallowEdgeOrError = await api<MoodleNetDomain>(ctx.flow)('ContentGraph.Edge.Create').call(createEdge =>
-    createEdge({ ctx, input: edgeInput, edgeType, from, to, key: ulidKey() }),
+    createEdge({ ctx, input: edgeInput, edgeType, from, to }),
   )
 
   if (shallowEdgeOrError.__typename === 'CreateEdgeMutationError') {

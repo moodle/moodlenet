@@ -1,5 +1,4 @@
 import { api } from '../../../../../lib/domain'
-import { ulidKey } from '../../../../../lib/helpers/arango'
 import { MoodleNetDomain } from '../../../../MoodleNetDomain'
 import {
   CreateNodeMutationErrorType,
@@ -31,7 +30,7 @@ export const createNode: MutationResolvers['createNode'] = async (_root, { input
     return createNodeMutationError(CreateNodeMutationErrorType.UnexpectedInput, nodeInput.message)
   }
   const shallowNodeOrError = await api<MoodleNetDomain>(ctx.flow)('ContentGraph.Node.Create').call(createNode =>
-    createNode({ ctx, input: nodeInput, nodeType, key: ulidKey() }),
+    createNode({ ctx, input: nodeInput, nodeType }),
   )
 
   if (shallowNodeOrError.__typename === 'CreateNodeMutationError') {

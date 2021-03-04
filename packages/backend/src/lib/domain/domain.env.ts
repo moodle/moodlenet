@@ -19,4 +19,8 @@ export const env = Validator.validateSync({
   logLevel: LOG_LEVEL,
 })!
 
-export const channelPromise = amqp.connect(env.amqpUrl).then(connection => connection.createConfirmChannel())
+export const channelPromise = amqp.connect(env.amqpUrl).then(async connection => {
+  const channel = await connection.createConfirmChannel()
+  channel.prefetch(50)
+  return channel
+})

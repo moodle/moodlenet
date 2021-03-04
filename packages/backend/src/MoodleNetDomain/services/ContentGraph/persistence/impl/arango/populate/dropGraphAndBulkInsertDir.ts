@@ -1,3 +1,4 @@
+import { GEN_DIR } from './env'
 import Axios, { AxiosError } from 'axios'
 import { createReadStream, readdirSync, statSync } from 'fs'
 import { join } from 'path'
@@ -5,21 +6,20 @@ import { sequencePromiseCalls } from '../../../../../../../lib/helpers/misc'
 import { env, getDB } from '../ContentGraph.persistence.arango.env'
 import { getGraph } from '../setupGraph'
 
-export const dropGraphAndBulkInsertDir = async (path: string) => {
-  const db = await getDB()
+getDB().then(async db => {
   const graph = await getGraph({ db })
   console.log('dropping graph...')
   await graph.drop(true)
   await getGraph({ db })
 
   console.log(`
-    from ${path} ...
+    from ${GEN_DIR} ...
   `)
-  const thunks = readdirSync(path)
+  const thunks = readdirSync(GEN_DIR)
     .filter(base => !!base.split('_')[1])
     .map(base => {
       const [, collection] = base.split('_')
-      const filename = join(path, base)
+      const filename = join(GEN_DIR, base)
       return { filename, base, collection }
     })
     .map(_ => {
@@ -57,4 +57,4 @@ export const dropGraphAndBulkInsertDir = async (path: string) => {
   return sequencePromiseCalls(thunks).then(_ => {
     console.log('done')
   })
-}
+})

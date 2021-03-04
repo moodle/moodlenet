@@ -10,13 +10,13 @@ export type CreateHook<T extends EdgeType> = (_: {
   input: Just<CreateEdgeInput[T]>
   from: Id
   to: Id
-  key: IdKey
+  key?: IdKey
   ctx: MoodleNetExecutionContext
 }) => Promise<CreateEdgeShallowPayload<T>>
 
 const persistence = getContentGraphPersistence()
 
-export const getCreateHook = <T extends EdgeType>(type: T): CreateHook<T> => createHooks[type] as CreateHook<T>
+export const getCreateHook = <T extends EdgeType>(type: T): CreateHook<T> => (createHooks[type] as any) as CreateHook<T>
 
 export const createHooks: {
   [T in EdgeType]: CreateHook<T>

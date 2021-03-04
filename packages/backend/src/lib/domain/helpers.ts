@@ -8,6 +8,8 @@ export const newFlow = (pflow?: PFlow): Flow => {
   return [route, id]
 }
 
+export const mergeFlow = (flow: Flow, pflow: PFlow): Flow => [pflow[0] || flow[0], pflow[1] || flow[1]]
+
 export const flowId = (flow: Flow) => flow[1]
 export const flowRoute = (flow: Flow) => flow[0]
 export const flowIdElse = (pflow: PFlow | null | undefined, _else: string) => (pflow && pflow[1]) || _else

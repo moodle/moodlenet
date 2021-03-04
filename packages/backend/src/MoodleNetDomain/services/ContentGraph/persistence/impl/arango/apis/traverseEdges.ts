@@ -42,7 +42,7 @@ export const traverseEdges: ContentGraphPersistence['traverseEdges'] = async ({
     page,
     mapQuery: pageFilterSortLimit => `
       FOR edge IN ${edgeType}
-        FILTER edge.${targetSide}Type == '${targetNodeType}' 
+        FILTER edge._${targetSide}Type == '${targetNodeType}' 
           && edge._${parentSide} == ${aqlstr(parentNodeId)}
           // && $_{targetEdgeAccessFilter}
 

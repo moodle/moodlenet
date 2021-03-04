@@ -3,7 +3,7 @@ import { Message } from 'amqplib'
 import { graphql /* , GraphQLError */, GraphQLSchema, print } from 'graphql'
 import * as AMQP from '../amqp'
 import { api } from '../domain'
-import { flowId, nodeId, flowIdElse, flowRouteElse } from '../helpers'
+import { flowId, flowIdElse, flowRouteElse, nodeId } from '../helpers'
 import { Flow /* , TypeofPath */, PFlow } from '../types/path'
 import * as Types from './types'
 
@@ -141,7 +141,7 @@ export const assertApiResponderQueue = async <Domain>(_: {
 export const getApiResponderQName = <Domain>(api: Types.ApiLeaves<Domain>) => `API_RESPONDER:${api}`
 // TODO: each responder (or each queue consumer in general ?) should use its own channel
 // TODO: ApiResponderOpts should have channelOpts too
-
+const defaultConsumeOpts: AMQP.DomainConsumeOpts = {}
 export const respond = <Domain>(domain: string) => async <ApiPath extends Types.ApiLeaves<Domain>>(
   _: RespondApiArgs<Domain, ApiPath>,
 ) => {
@@ -181,7 +181,7 @@ export const respond = <Domain>(domain: string) => async <ApiPath extends Types.
       //   AMQP.unbindQ({ exchange, name: apiResponderQName, topic: thisTopic })
       // }
     },
-    opts: { consumerTag: `${apiResponderQName}@${nodeId}`, ...opts?.consume },
+    opts: { consumerTag: `${apiResponderQName}@${nodeId}`, ...defaultConsumeOpts, ...opts?.consume },
   })
   return disposeResponder
 

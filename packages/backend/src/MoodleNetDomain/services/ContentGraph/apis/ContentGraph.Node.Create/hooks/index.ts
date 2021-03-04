@@ -10,12 +10,12 @@ type Just<T> = Exclude<T, null | undefined>
 export type CreateHook<T extends NodeType> = (_: {
   input: Just<CreateNodeInput[T]>
   ctx: MoodleNetExecutionContext
-  key: IdKey
+  key?: IdKey
 }) => Promise<CreateNodeShallowPayload<T>>
 
 const persistence = getContentGraphPersistence()
 
-export const getCreateHook = <T extends NodeType>(type: T): CreateHook<T> => createHooks[type] as CreateHook<T>
+export const getCreateHook = <T extends NodeType>(type: T): CreateHook<T> => (createHooks[type] as any) as CreateHook<T>
 export const createHooks: {
   [T in NodeType]: CreateHook<T>
 } = {

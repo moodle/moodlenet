@@ -33,9 +33,13 @@ export type ApiDef<Domain, Path extends string> = D.Path.TypeofPath<Domain, Path
     : never
   : never
 
-export type ApiReq<Domain, Path extends string> = ApiDef<Domain, Path> extends Api<infer Req, any> ? Req : never
+export type ApiReq<Domain, Path extends ApiLeaves<Domain>> = ApiDef<Domain, Path> extends Api<infer Req, any>
+  ? Req
+  : never
 
-export type ApiRes<Domain, Path extends string> = ApiDef<Domain, Path> extends Api<any, infer Res> ? Res : never
+export type ApiRes<Domain, Path extends ApiLeaves<Domain>> = ApiDef<Domain, Path> extends Api<any, infer Res>
+  ? Res
+  : never
 
 type GraphQLDomainApiReq<Context, RootValue> = {
   context: Context
