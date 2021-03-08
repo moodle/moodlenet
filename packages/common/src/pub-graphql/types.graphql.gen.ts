@@ -270,7 +270,7 @@ export enum DeleteNodeMutationErrorType {
 
 export type Page = {
   pageInfo: PageInfo;
-  edges: Array<PageEdge>;
+  edges: Array<SearchPageEdge | RelPageEdge>;
 };
 
 export type PageInfo = {
@@ -325,7 +325,7 @@ export type SearchPage = Page & {
 export type SearchPageEdge = PageEdge & {
   __typename: 'SearchPageEdge';
   cursor: Scalars['Cursor'];
-  node: IContentNode;
+  node: Collection | Resource | Subject | User;
 };
 
 
@@ -343,7 +343,6 @@ export type INode_RelArgs = {
 };
 
 export type NodeMeta = {
-  __typename: 'NodeMeta';
   created: Scalars['DateTime'];
   updated: Scalars['DateTime'];
   relCount?: Maybe<RelCountMap>;
@@ -356,9 +355,8 @@ export type EdgeMeta = {
 };
 
 export type RelCount = {
-  __typename: 'RelCount';
-  i?: Maybe<Scalars['Int']>;
-  o?: Maybe<Scalars['Int']>;
+  to?: Maybe<RelCountTargetMap>;
+  from?: Maybe<RelCountTargetMap>;
 };
 
 export type NodeRelSort = {
@@ -393,8 +391,8 @@ export type RelPage = Page & {
 export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
-  edge: IEdge;
-  node: INode;
+  edge: AppliesTo | Contains | Created | Follows | Likes;
+  node: Collection | Resource | Subject | User;
 };
 
 export type AppliesTo = IEdge & {
@@ -482,6 +480,14 @@ export enum NodeType {
   User = 'User'
 }
 
+export type RelCountTargetMap = {
+  __typename: 'RelCountTargetMap';
+  Collection?: Maybe<Scalars['Int']>;
+  Resource?: Maybe<Scalars['Int']>;
+  Subject?: Maybe<Scalars['Int']>;
+  User?: Maybe<Scalars['Int']>;
+};
+
 export type CreateCollectionInput = {
   name: Scalars['String'];
   summary: Scalars['String'];
@@ -564,7 +570,9 @@ export type User_RelArgs = {
 };
 
 export type UpdateUserInput = {
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
 };
 
 export type CreateUserInput = {
@@ -631,6 +639,8 @@ export type CreateSession = {
       "Subject",
       "User"
     ],
+    "NodeMeta": [],
+    "RelCount": [],
     "IContentNode": [
       "Collection",
       "Resource",

@@ -1,3 +1,4 @@
+import { isEdgeType, isNodeType } from '@moodlenet/common/lib/utils/content-graph'
 import { EdgeType, NodeType as N, NodeType } from '../ContentGraph.graphql.gen'
 import { BasicAccessPolicies, BasicAccessPolicy, BasicAccessPolicyType, ContentGraph } from './types'
 
@@ -62,9 +63,9 @@ export const contentGraph: ContentGraph = {
 
 export const getConnectionDef = (_: { edge: EdgeType; from: NodeType; to: NodeType }) => {
   const { from, to, edge } = _
-  // if (!(isEdgeType(edge) && isNodeType(from) && isNodeType(to))) {
-  //   return undefined
-  // }
+  if (!(isEdgeType(edge) && isNodeType(from) && isNodeType(to))) {
+    return undefined
+  }
   return contentGraph[edge]?.connections.find(({ from: _from, to: _to }) => _from == from && _to === to)
 }
 

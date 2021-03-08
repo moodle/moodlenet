@@ -11,7 +11,9 @@ union Node = Collection
 enum NodeType {
   Collection
 }
-
+type RelCountTargetMap {
+  Collection: Int
+}
 input CreateNodeInput {
   Collection: CreateCollectionInput
 }

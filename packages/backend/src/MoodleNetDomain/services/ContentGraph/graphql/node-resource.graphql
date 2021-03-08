@@ -11,6 +11,9 @@ union Node = Resource
 enum NodeType {
   Resource
 }
+type RelCountTargetMap {
+  Resource: Int
+}
 
 input CreateNodeInput {
   Resource: CreateResourceInput

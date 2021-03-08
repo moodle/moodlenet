@@ -6,7 +6,7 @@ interface INode {
   _meta: NodeMeta
 }
 
-type NodeMeta {
+interface NodeMeta {
   created: DateTime!
   updated: DateTime!
   relCount: RelCountMap
@@ -17,10 +17,9 @@ type EdgeMeta {
   updated: DateTime!
 }
 
-#type RelCountMap{}
-type RelCount {
-  i: Int
-  o: Int
+interface RelCount {
+  to: RelCountTargetMap
+  from: RelCountTargetMap
 }
 
 input NodeRelSort {

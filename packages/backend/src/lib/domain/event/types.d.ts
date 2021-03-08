@@ -1,3 +1,4 @@
+import { Acks } from '../amqp'
 import { Api } from '../api/types'
 import * as D from '../types'
 
@@ -19,4 +20,4 @@ export type LookupEventType<Domain, Path extends EventLeaves<Domain>> = LookupDe
   ? Type
   : never
 
-export type Binder<Domain, Path extends EventLeaves<Domain>> = Api<LookupEventType<Domain, Path>, unknown>
+export type Binder<Domain, Path extends EventLeaves<Domain>> = Api<LookupEventType<Domain, Path>, Acks>

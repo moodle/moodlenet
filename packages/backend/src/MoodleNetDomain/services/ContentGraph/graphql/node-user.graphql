@@ -11,12 +11,16 @@ union Node = User
 enum NodeType {
   User
 }
-
+type RelCountTargetMap {
+  User: Int
+}
 input UpdateNodeInput {
   User: UpdateUserInput
 }
 input UpdateUserInput {
-  name: String
+  name: String!
+  summary: String!
+  icon: String
 }
 input CreateNodeInput {
   User: CreateUserInput

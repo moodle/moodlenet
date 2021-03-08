@@ -49,12 +49,8 @@ export interface ContentGraphPersistence {
 export type ShallowNode<N extends GQL.Node = GQL.Node> = N //Omit<N, '_rel'>
 export type ShallowEdge<E extends GQL.Edge = GQL.Edge> = E //Omit<E, '___ nothing to omit ___'>
 
-export type NodeByType<T extends GQL.NodeType> = GQL.ResolversParentTypes[T] extends GQL.Node
-  ? GQL.ResolversParentTypes[T]
-  : never
-export type EdgeByType<T extends GQL.EdgeType> = GQL.ResolversParentTypes[T] extends GQL.Edge
-  ? GQL.ResolversParentTypes[T]
-  : never
+export type NodeByType<T extends GQL.NodeType> = GQL.ResolversParentTypes[T]
+export type EdgeByType<T extends GQL.EdgeType> = GQL.ResolversParentTypes[T]
 
 export type ShallowNodeByType<T extends GQL.NodeType> = ShallowNode<NodeByType<T>>
 export type ShallowEdgeByType<T extends GQL.EdgeType> = ShallowEdge<EdgeByType<T>>

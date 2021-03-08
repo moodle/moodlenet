@@ -22,7 +22,6 @@ export const cursorPaginatedQuery = async <P extends Page>({
   mapQuery(pageFilterSortLimit: string): string
   //@ts-expect-error
   pageTypename: P['__typename']
-  //@ts-expect-error
   pageEdgeTypename: P['edges'][number]['__typename']
 }): Promise<P> => {
   const { db } = await DBReady()
@@ -80,7 +79,6 @@ export const makePage = <P extends Page>({
   beforeEdges: P['edges'][number][]
   //@ts-expect-error
   pageTypename: P['__typename']
-  //@ts-expect-error
   pageEdgeTypename: P['edges'][number]['__typename']
 }): P => {
   const edges: P['edges'] = beforeEdges

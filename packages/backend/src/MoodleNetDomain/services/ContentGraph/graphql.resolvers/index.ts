@@ -50,6 +50,7 @@ export const getGraphQLTypeResolvers = (): GQL.Resolvers => {
     // DateTime: {} as any, //TODO: define resolver
     // Never: null as never, //TODO: define resolver
     // Cursor: {} as any, //TODO: define resolver
+
     //@ts-expect-error
     ID,
 

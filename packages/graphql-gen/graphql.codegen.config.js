@@ -24,10 +24,13 @@ const srvGenerates = services.reduce((collect, srvname) => {
       plugins: ['typescript', 'typescript-resolvers'],
       config: {
         scalars: scalars,
+        // enumsAsTypes: true,
+        useImplementingTypes: true,
         contextType: `../../MoodleNetGraphQL#MoodleNetExecutionContext`,
         rootValueType: `../../MoodleNetGraphQL#RootValue`,
         includeDirectives: true,
         commentDescriptions: true,
+        // constEnums: true,
         //avoidOptionals: true,
         nonOptionalTypename: true,
         skipTypename: false,
@@ -50,6 +53,9 @@ const pubGqlTypesConfig = {
     plugins: ['typescript', 'fragment-matcher'],
     config: {
       scalars: scalars,
+      // constEnums: true,
+      useImplementingTypes: true,
+      //enumsAsTypes: true,
       includeDirectives: true,
       commentDescriptions: true,
       //avoidOptionals: true,
@@ -105,6 +111,9 @@ const webAppTypesConfig = {
       // skipDocumentsValidation: true, // TEST those 2
       // flattenGeneratedTypes: true, // https://graphql-code-generator.com/docs/plugins/relay-operation-optimizer
       scalars: scalars,
+      // constEnums: true,
+      useImplementingTypes: true,
+      // enumsAsTypes: true,
       exportFragmentSpreadSubTypes: true,
       preResolveTypes: false,
       avoidOptionals: false,

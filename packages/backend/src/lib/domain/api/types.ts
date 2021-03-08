@@ -6,7 +6,7 @@ import { Flow } from '../types/path'
 export type ApiBag = {
   flow: Flow
 }
-export type Api<Req, Res> = (req: Req) => Res
+export type Api<Req, Res> = (req: Req) => Promise<Res>
 
 export type ApiLeaves<Domain> = D.Path.Leaves<Domain, Api<any, any>>
 

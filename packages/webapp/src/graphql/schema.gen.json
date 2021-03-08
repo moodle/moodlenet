@@ -2311,7 +2311,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
+              "kind": "INTERFACE",
               "name": "NodeMeta",
               "ofType": null
             },
@@ -2346,7 +2346,7 @@
         ]
       },
       {
-        "kind": "OBJECT",
+        "kind": "INTERFACE",
         "name": "NodeMeta",
         "description": null,
         "fields": [
@@ -2398,7 +2398,7 @@
         "inputFields": null,
         "interfaces": [],
         "enumValues": null,
-        "possibleTypes": null
+        "possibleTypes": []
       },
       {
         "kind": "OBJECT",
@@ -2444,29 +2444,29 @@
         "possibleTypes": null
       },
       {
-        "kind": "OBJECT",
+        "kind": "INTERFACE",
         "name": "RelCount",
         "description": null,
         "fields": [
           {
-            "name": "i",
+            "name": "to",
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "Int",
+              "kind": "OBJECT",
+              "name": "RelCountTargetMap",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "o",
+            "name": "from",
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "Int",
+              "kind": "OBJECT",
+              "name": "RelCountTargetMap",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2476,7 +2476,7 @@
         "inputFields": null,
         "interfaces": [],
         "enumValues": null,
-        "possibleTypes": null
+        "possibleTypes": []
       },
       {
         "kind": "INPUT_OBJECT",
@@ -2898,7 +2898,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
+              "kind": "INTERFACE",
               "name": "RelCount",
               "ofType": null
             },
@@ -2910,7 +2910,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
+              "kind": "INTERFACE",
               "name": "RelCount",
               "ofType": null
             },
@@ -2922,7 +2922,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
+              "kind": "INTERFACE",
               "name": "RelCount",
               "ofType": null
             },
@@ -2934,7 +2934,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
+              "kind": "INTERFACE",
               "name": "RelCount",
               "ofType": null
             },
@@ -2946,7 +2946,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
+              "kind": "INTERFACE",
               "name": "RelCount",
               "ofType": null
             },
@@ -3389,7 +3389,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
+              "kind": "INTERFACE",
               "name": "NodeMeta",
               "ofType": null
             },
@@ -3545,6 +3545,65 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "RelCountTargetMap",
+        "description": null,
+        "fields": [
+          {
+            "name": "Collection",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Resource",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Subject",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "User",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "INPUT_OBJECT",
         "name": "CreateCollectionInput",
         "description": null,
@@ -3692,7 +3751,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
+              "kind": "INTERFACE",
               "name": "NodeMeta",
               "ofType": null
             },
@@ -3929,7 +3988,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
+              "kind": "INTERFACE",
               "name": "NodeMeta",
               "ofType": null
             },
@@ -4166,7 +4225,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
+              "kind": "INTERFACE",
               "name": "NodeMeta",
               "ofType": null
             },
@@ -4263,6 +4322,38 @@
         "inputFields": [
           {
             "name": "name",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "summary",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "icon",
             "description": null,
             "type": {
               "kind": "SCALAR",

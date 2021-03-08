@@ -1,8 +1,8 @@
-import { EdgeType, Id, IdKey } from '@moodlenet/common/lib/utils/content-graph'
+import { Id, IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { ulidKey } from '../../../../../../lib/helpers/arango'
 import { MoodleNetExecutionContext } from '../../../../../types'
 import { getContentGraphPersistence } from '../../../ContentGraph.env'
-import { CreateNodeInput, NodeType } from '../../../ContentGraph.graphql.gen'
+import { CreateNodeInput, EdgeType, NodeType } from '../../../ContentGraph.graphql.gen'
 import { CreateNodeShallowPayload } from '../../../persistence/types'
 
 type Just<T> = Exclude<T, null | undefined>

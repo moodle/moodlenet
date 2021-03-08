@@ -11,6 +11,9 @@ union Node = Subject
 enum NodeType {
   Subject
 }
+type RelCountTargetMap {
+  Subject: Int
+}
 
 input CreateNodeInput {
   Subject: CreateSubjectInput
