@@ -1,10 +1,10 @@
 import JWT from 'jsonwebtoken'
 import memo from 'lodash/memoize'
 import sshpk from 'sshpk'
-import { newFlow } from '../../lib/domain/helpers'
+import { newFlow } from '../../lib/domain/flow'
 import { User } from '../services/ContentGraph/ContentGraph.graphql.gen'
-import { ShallowNode } from '../services/ContentGraph/persistence/types'
-import { ActiveUserAccount } from '../services/UserAccount/persistence/types'
+import { ShallowNode } from '../services/ContentGraph/types.node'
+import { ActiveUserAccount } from '../services/UserAccount/impl/arango/types'
 import { signJwt, verifyJwt } from './JWT'
 import { MoodleNetExecutionContext } from './types'
 

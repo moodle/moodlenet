@@ -1,6 +1,5 @@
 import { Id } from '@moodlenet/common/lib/utils/content-graph'
-import { newFlow } from '../lib/domain/helpers'
-import { Flow, PFlow } from '../lib/domain/types/path'
+import { Flow, newFlow, PFlow } from '../lib/domain/flow'
 
 export type CtxTypes = keyof MoodleNetExecutionContextMap
 export type MoodleNetExecutionContextMap = {

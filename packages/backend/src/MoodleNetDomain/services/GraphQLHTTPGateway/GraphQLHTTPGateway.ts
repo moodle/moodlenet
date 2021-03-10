@@ -1,10 +1,11 @@
+import cors from 'cors'
 import express from 'express'
 import { graphqlHTTP } from 'express-graphql'
-import { httpCfg } from './GraphQLHTTPGateway.env'
 import { schema } from '../../MoodleNetGraphQL'
-import cors from 'cors'
+import { httpCfg } from './GraphQLHTTPGateway.env'
 
 const env = httpCfg()
+console.log(`starting on ${env.port}`)
 
 const app = express()
 app.use(cors())
@@ -20,4 +21,4 @@ app.use(
   }),
 )
 
-app.listen(env.port)
+app.listen(env.port, () => console.log(`listening on ${env.port}`))

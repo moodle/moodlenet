@@ -4,11 +4,11 @@ import { IExecutableSchemaDefinition, makeExecutableSchema } from '@graphql-tool
 import { stitchingDirectives } from '@graphql-tools/stitching-directives'
 import { FilterRootFields } from '@graphql-tools/wrap'
 import { printSchema } from 'graphql'
-import { getGQLApiCallerExecutor, startGQLApiResponder } from '../../lib/domain'
-import { newFlow } from '../../lib/domain/helpers'
+import { newFlow } from '../../lib/domain/flow'
+import { getGQLApiCallerExecutor, getGQLWrkService } from '../../lib/domain/gqlWrk'
 import { MoodleNetDomain } from '../MoodleNetDomain'
 import { getExecutionGlobalValues } from './executionContext'
-import { GQLServiceName, MoodleNetExecutionContext } from './types'
+import { GQLServiceName, MoodleNetExecutionContext, RootValue } from './types'
 
 export function loadServiceSchema(_: { srvName: GQLServiceName }) {
   //FIXME: can't apply directives resolvers
@@ -54,20 +54,20 @@ export const executableServiceSchema = (_: {
 }
 
 export type ServiceExecutableSchemaDefinition = Omit<IExecutableSchemaDefinition<MoodleNetExecutionContext>, 'typeDefs'>
-export async function startMoodleNetGQLApiResponder({
+export function initMoodleNetGQLWrkService<Name extends GQLServiceName>({
   srvName,
   executableSchemaDef,
 }: {
-  executableSchemaDef: ServiceExecutableSchemaDefinition | Promise<ServiceExecutableSchemaDefinition>
-  srvName: GQLServiceName
+  executableSchemaDef: ServiceExecutableSchemaDefinition
+  srvName: Name
 }) {
-  const api = MNServiceGQLApiName(srvName)
   const schema = executableServiceSchema({
-    schemaDef: await executableSchemaDef,
+    schemaDef: executableSchemaDef,
     srvName,
   })
-  return startGQLApiResponder<MoodleNetDomain>({
-    api,
+  // const name = MNServiceGQLApiName(srvName)
+
+  return getGQLWrkService({
     schema,
   })
 }
@@ -75,13 +75,12 @@ export async function startMoodleNetGQLApiResponder({
 export function getServiceSubschemaConfig({ srvName }: { srvName: GQLServiceName }) {
   const { stitchingDirectivesTransformer } = stitchingDirectives()
   const schema = loadServiceSchema({ srvName })
-  const api = MNServiceGQLApiName(srvName)
+  // console.log(`getServiceSubschemaConfig`, { srvName })
   return stitchingDirectivesTransformer({
     schema,
-    executor: getGQLApiCallerExecutor<MoodleNetDomain>({
-      api,
-      flow: graphQLRequestFlow(),
+    executor: getGQLApiCallerExecutor<MoodleNetDomain, MoodleNetExecutionContext<'anon' | 'session'>, RootValue>({
       getExecutionGlobalValues,
+      path: MNServiceGQLApiName(srvName),
     }),
     transforms: [atMergeQueryRootFieldsRemover()],
     //FIXME: can't apply directives resolvers
@@ -90,7 +89,7 @@ export function getServiceSubschemaConfig({ srvName }: { srvName: GQLServiceName
 
 export const graphQLRequestFlow = () => newFlow(['gql-request'])
 
-const MNServiceGQLApiName = (srvName: GQLServiceName) => `${srvName}.GQL` as const
+const MNServiceGQLApiName = <Name extends GQLServiceName>(srvName: Name): `${Name}.GQL` => `${srvName}.GQL` as const
 
 export function atMergeQueryRootFieldsRemover() {
   return new FilterRootFields(

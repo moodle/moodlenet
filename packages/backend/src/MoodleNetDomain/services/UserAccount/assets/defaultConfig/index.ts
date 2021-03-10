@@ -1,4 +1,4 @@
-import { Config } from '../../persistence/types'
+import { Config } from '../../impl/arango/types'
 import { changeAccountEmailRequestEmail } from './changeAccountEmailRequestEmail'
 import { newAccountRequestEmail } from './newAccountRequestEmail'
 import { tempSessionEmail } from './tempSessionEmail'

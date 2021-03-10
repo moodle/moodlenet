@@ -1,28 +1,16 @@
-import { event } from '../../../../lib/domain'
-import { Event } from '../../../../lib/domain/event/types'
-import { Flow } from '../../../../lib/domain/types/path'
+import { emit } from '../../../../lib/domain/amqp/emit'
+import { WorkerInitImpl } from '../../../../lib/domain/wrk'
 import { MoodleNetDomain } from '../../../MoodleNetDomain'
-import { getEmailPersistence, getSender } from '../Email.env'
-import { EmailObj } from '../types'
+import { getSender } from '../Email.env'
 
-export type SendResult = { success: false; error: string } | { success: true; emailId: string }
-export type SendReq = { emailObj: EmailObj; flow: Flow }
+export const SendOneNow: WorkerInitImpl<MoodleNetDomain, 'Email.SendOne.SendNow'> = () => {
+  return [
+    async ({ emailObj, flow }) => {
+      const { sendEmail } = await getSender()
 
-export type StoreSentEmailPersistence = (_: { email: EmailObj; flow: Flow; result: SendResult }) => Promise<unknown>
-
-export type EmailSentEvent = Event<SendResult>
-export const SendOneNow = async ({ emailObj, flow }: SendReq) => {
-  const [{ storeSentEmail }, { sendEmail }] = await Promise.all([getEmailPersistence(), getSender()])
-
-  const response = await sendEmail(emailObj)
-  await storeSentEmail({
-    email: emailObj,
-    flow,
-    result: response,
-  })
-  event<MoodleNetDomain>(flow)('Email.SendOne.EmailSent').emit({
-    payload: response,
-  })
-
-  return response
+      const result = await sendEmail(emailObj)
+      emit<MoodleNetDomain>()('Email.SendOne.EmailSent', { result, emailObj }, flow)
+      return result
+    },
+  ]
 }

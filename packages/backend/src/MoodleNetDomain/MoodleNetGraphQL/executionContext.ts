@@ -1,6 +1,7 @@
 import { Executor } from '@graphql-tools/delegate/types'
 import { GraphQLError } from 'graphql'
 import { IncomingMessage } from 'http'
+import { Flow } from '../../lib/domain/flow'
 import { INVALID_TOKEN } from './JWT'
 import { getJwtVerifier } from './MoodleNetGraphQL.env'
 import { graphQLRequestFlow } from './schemaHelpers'
@@ -19,6 +20,7 @@ export function getExecutionGlobalValues(
 ): {
   context: MoodleNetExecutionContext<'anon' | 'session'>
   root: RootValue
+  flow: Flow
 } {
   const verifyJwt = getJwtVerifier()
   const { context } = args[0]
@@ -30,5 +32,6 @@ export function getExecutionGlobalValues(
   return {
     context: tokenVerification === INVALID_TOKEN || !tokenVerification ? { type: 'anon', flow } : tokenVerification,
     root: {},
+    flow,
   }
 }
