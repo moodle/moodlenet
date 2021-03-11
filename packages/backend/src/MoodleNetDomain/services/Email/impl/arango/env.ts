@@ -1,5 +1,5 @@
 import * as Yup from 'yup'
-import { createDatabaseIfNotExists, createVertexCollectionIfNotExists } from '../../../../../../lib/helpers/arango'
+import { createDatabaseIfNotExists, createVertexCollectionIfNotExists } from '../../../../../lib/helpers/arango'
 import { SentEmailDocument } from './types'
 
 interface ArangoEmailPersistenceEnv {
@@ -36,3 +36,5 @@ export const DBReady = Promise.all([database, SentEmailCollection]).then(([db, S
   db,
   SentEmail,
 }))
+
+export type ArangoEmailDB = typeof DBReady extends Promise<infer T> ? T : never

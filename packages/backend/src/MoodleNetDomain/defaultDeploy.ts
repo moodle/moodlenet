@@ -7,8 +7,10 @@ import { createNode } from './services/ContentGraph/impl/arango/apis/createNode'
 import { getNode } from './services/ContentGraph/impl/arango/apis/getNode'
 import { glyphCreateCounter } from './services/ContentGraph/impl/arango/apis/glyphCreateCounters'
 import { getContentGraphResolvers } from './services/ContentGraph/impl/arango/graphql.resolvers'
-import { SendOneNow } from './services/Email/apis/Email.SendOne.Req'
-import { StoreSentEmail } from './services/Email/apis/Email.SendOne.Store'
+import {
+  defaulArangoMailgunImpl,
+  defaultArangoMailgunImplStartServices,
+} from './services/Email/impl/arango/defaultDeploy'
 import {
   defaultArangoUserAccountImpl,
   defaultArangoUserAccountStartServices,
@@ -33,19 +35,12 @@ export const defaultMoodlenetImpl: DomainImpl<MoodleNetDomain> = {
     kind: 'wrk',
     init: getNode,
   },
+
   'ContentGraph.GQL': initMoodleNetGQLWrkService({
     srvName: 'ContentGraph',
     executableSchemaDef: { resolvers: getContentGraphResolvers() },
   }),
-  'Email.SendOne.Store': {
-    events: ['Email.SendOne.EmailSent'],
-    kind: 'sub',
-    init: StoreSentEmail,
-  },
-  'Email.SendOne.SendNow': {
-    kind: 'wrk',
-    init: SendOneNow,
-  },
+  ...defaulArangoMailgunImpl,
   ...defaultArangoUserAccountImpl,
 }
 
@@ -55,7 +50,6 @@ export const defaultMoodlenetStartServices: StartServices<MoodleNetDomain> = {
   'ContentGraph.GQL': {},
   'ContentGraph.Node.ById': {},
   'ContentGraph.Node.Create': {},
-  'Email.SendOne.SendNow': {},
-  'Email.SendOne.Store': {},
+  ...defaultArangoMailgunImplStartServices,
   ...defaultArangoUserAccountStartServices,
 }

@@ -9,7 +9,7 @@ import { ShallowNode } from '../../../ContentGraph/types.node'
 import { UserSession } from '../../UserAccount.graphql.gen'
 import { ActivationMessage, ActiveUserAccount } from './types'
 
-export type ArangoUserAccountSubDomain = SubDomain<
+export type MoodleNetArangoUserAccountSubDomain = SubDomain<
   MoodleNetDomain,
   'UserAccount',
   {

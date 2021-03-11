@@ -3,10 +3,10 @@ import { WrkTypes } from '../../../../../../lib/domain/wrk'
 import { throwLoggedUserOnly } from '../../../../../MoodleNetGraphQL'
 import { getSimpleResponse, hashPassword } from '../../../helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { ArangoUserAccountSubDomain } from '../ArangoUserAccountDomain'
 import { DBReady, UserAccountDB } from '../env'
 import { changeAccountPassword } from '../functions/changePassword'
 import { getVerifiedAccountByUsernameAndPassword } from '../functions/getVerifiedAccountByUsernameAndPassword'
+import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
 import { Messages } from '../types'
 
 export type ChangePasswordPersistence = (_: {
@@ -15,7 +15,7 @@ export type ChangePasswordPersistence = (_: {
   accountId: string
 }) => Promise<null | Messages.NotFound>
 
-export type T = WrkTypes<ArangoUserAccountSubDomain, 'UserAccount.ChangePassword'>
+export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.ChangePassword'>
 
 export const ChangePasswordApiWorker = ({ db }: { db: UserAccountDB }) => {
   const worker: T['Worker'] = async ({ newPassword, username, currentPassword }) => {
@@ -59,7 +59,7 @@ export const changePassword: MutationResolvers['changePassword'] = async (
 ) => {
   const { username } = throwLoggedUserOnly({ context })
 
-  const res = await call<ArangoUserAccountSubDomain>()('UserAccount.ChangePassword', context.flow)({
+  const res = await call<MoodleNetArangoUserAccountSubDomain>()('UserAccount.ChangePassword', context.flow)({
     newPassword,
     currentPassword,
     username,

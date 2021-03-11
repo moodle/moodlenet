@@ -1,9 +1,9 @@
 import { WrkTypes } from '../../../../../../lib/domain/wrk'
-import { ArangoUserAccountSubDomain } from '../ArangoUserAccountDomain'
 import { DBReady, UserAccountDB } from '../env'
 import { deleteChangeAccountEmailRequest } from '../functions/deleteChangeAccountEmailRequest'
+import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
 
-export type T = WrkTypes<ArangoUserAccountSubDomain, 'UserAccount.ChangeMainEmail.DeleteRequest'>
+export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.ChangeMainEmail.DeleteRequest'>
 
 export const ChangeAccountEmailDeleteRequestApiWrkInit: T['Init'] = async () => {
   const db = await DBReady

@@ -1,12 +1,15 @@
 import { call } from '../../../../../../lib/domain/amqp/call'
 import { WrkTypes } from '../../../../../../lib/domain/wrk'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { ArangoUserAccountSubDomain } from '../ArangoUserAccountDomain'
 import { DBReady, UserAccountDB } from '../env'
 import { confirmAccountEmailChangeRequest } from '../functions/confirmAccountEmailChangeRequest'
 import { getVerifiedAccountByUsernameAndPassword } from '../functions/getVerifiedAccountByUsernameAndPassword'
+import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
 
-export type T = WrkTypes<ArangoUserAccountSubDomain, 'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail'>
+export type T = WrkTypes<
+  MoodleNetArangoUserAccountSubDomain,
+  'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail'
+>
 
 export const ConfirmAndChangeAccountEmailWorker = ({ db }: { db: UserAccountDB }) => {
   const worker: T['Worker'] = async ({ token, password, username }) => {
@@ -41,7 +44,7 @@ export const changeEmailConfirm: MutationResolvers['changeEmailConfirm'] = async
   { token, password, username },
   ctx,
 ) => {
-  return call<ArangoUserAccountSubDomain>()<T['Api']>(
+  return call<MoodleNetArangoUserAccountSubDomain>()<T['Api']>(
     'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail',
     ctx.flow,
   )({

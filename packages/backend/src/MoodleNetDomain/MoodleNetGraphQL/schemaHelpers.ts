@@ -6,6 +6,7 @@ import { FilterRootFields } from '@graphql-tools/wrap'
 import { printSchema } from 'graphql'
 import { newFlow } from '../../lib/domain/flow'
 import { getGQLApiCallerExecutor, getGQLWrkService } from '../../lib/domain/gqlWrk'
+import { WrkConfig } from '../../lib/domain/wrk'
 import { MoodleNetDomain } from '../MoodleNetDomain'
 import { getExecutionGlobalValues } from './executionContext'
 import { GQLServiceName, MoodleNetExecutionContext, RootValue } from './types'
@@ -57,9 +58,11 @@ export type ServiceExecutableSchemaDefinition = Omit<IExecutableSchemaDefinition
 export function initMoodleNetGQLWrkService<Name extends GQLServiceName>({
   srvName,
   executableSchemaDef,
+  cfg,
 }: {
   executableSchemaDef: ServiceExecutableSchemaDefinition
   srvName: Name
+  cfg?: WrkConfig
 }) {
   const schema = executableServiceSchema({
     schemaDef: executableSchemaDef,
@@ -69,6 +72,7 @@ export function initMoodleNetGQLWrkService<Name extends GQLServiceName>({
 
   return getGQLWrkService({
     schema,
+    cfg,
   })
 }
 

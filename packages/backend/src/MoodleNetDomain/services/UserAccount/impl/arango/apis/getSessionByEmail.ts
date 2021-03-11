@@ -4,15 +4,15 @@ import { enqueue } from '../../../../../../lib/domain/amqp/enqueue'
 import { WrkTypes } from '../../../../../../lib/domain/wrk'
 import { getMNEnv } from '../../../../../MoodleNet.env'
 import { MoodleNetDomain } from '../../../../../MoodleNetDomain'
-import { fillEmailTemplate } from '../../../../Email/Email.helpers'
+import { fillEmailTemplate } from '../../../../Email/helpers'
 import { userAndJwtByActiveUserAccount } from '../../../helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { ArangoUserAccountSubDomain } from '../ArangoUserAccountDomain'
 import { DBReady, UserAccountDB } from '../env'
 import { getActiveAccountByUsername } from '../functions/getActiveAccountByUsername'
 import { getConfig } from '../functions/getConfig'
+import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
 
-export type T = WrkTypes<ArangoUserAccountSubDomain, 'UserAccount.Session.ByEmail'>
+export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.Session.ByEmail'>
 
 export const SessionByEmailWrkInit: T['Init'] = async () => {
   const db = await DBReady
@@ -44,7 +44,7 @@ export const SessionByEmailWorker = ({ db }: { db: UserAccountDB }) => {
       },
     })
 
-    enqueue<MoodleNetDomain>()('Email.SendOne.SendNow', ctx.flow)({ emailObj, flow: ctx.flow })
+    enqueue<MoodleNetDomain>()('Email.SendOne', ctx.flow)({ emailObj, flow: ctx.flow })
 
     return { success: true }
   }
@@ -52,7 +52,7 @@ export const SessionByEmailWorker = ({ db }: { db: UserAccountDB }) => {
 }
 
 export const sessionByEmail: MutationResolvers['sessionByEmail'] = async (_parent, { email, username }, context) => {
-  const res = await call<ArangoUserAccountSubDomain>()('UserAccount.Session.ByEmail', context.flow)({
+  const res = await call<MoodleNetArangoUserAccountSubDomain>()('UserAccount.Session.ByEmail', context.flow)({
     ctx: context,
     email,
     flow: context.flow, //FIXME: has already flow in context

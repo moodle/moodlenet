@@ -5,14 +5,14 @@ import { enqueue } from '../../../../../../lib/domain/amqp/enqueue'
 import { WrkTypes } from '../../../../../../lib/domain/wrk'
 import { getMNEnv } from '../../../../../MoodleNet.env'
 import { MoodleNetDomain } from '../../../../../MoodleNetDomain'
-import { fillEmailTemplate } from '../../../../Email/Email.helpers'
+import { fillEmailTemplate } from '../../../../Email/helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { ArangoUserAccountSubDomain } from '../ArangoUserAccountDomain'
 import { DBReady, UserAccountDB } from '../env'
 import { getConfig } from '../functions/getConfig'
 import { newAccountRequest } from '../functions/newAccountRequest'
+import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
 
-export type T = WrkTypes<ArangoUserAccountSubDomain, 'UserAccount.RegisterNewAccount.Request'>
+export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.RegisterNewAccount.Request'>
 
 export const RegisterNewAccountRequestWorker = ({ db }: { db: UserAccountDB }) => {
   const worker: T['Worker'] = async ({ email, flow }) => {
@@ -41,8 +41,8 @@ export const RegisterNewAccountRequestWorker = ({ db }: { db: UserAccountDB }) =
           })}`,
         },
       })
-      enqueue<MoodleNetDomain>()('Email.SendOne.SendNow', flow)({ emailObj, flow })
-      enqueue<ArangoUserAccountSubDomain>()('UserAccount.RegisterNewAccount.DeleteRequest', flow, {
+      enqueue<MoodleNetDomain>()('Email.SendOne', flow)({ emailObj, flow })
+      enqueue<MoodleNetArangoUserAccountSubDomain>()('UserAccount.RegisterNewAccount.DeleteRequest', flow, {
         delayDeliverSecs: newAccountVerificationWaitSecs,
       })({ token })
 
@@ -57,10 +57,12 @@ export const RegisterNewAccountRequestWrkInit: T['Init'] = async () => {
 }
 
 export const signUp: MutationResolvers['signUp'] = async (_parent, { email }, context) => {
-  const res = await call<ArangoUserAccountSubDomain>()('UserAccount.RegisterNewAccount.Request', context.flow)({
-    email,
-    flow: context.flow,
-  })
+  const res = await call<MoodleNetArangoUserAccountSubDomain>()('UserAccount.RegisterNewAccount.Request', context.flow)(
+    {
+      email,
+      flow: context.flow,
+    },
+  )
 
   if (!res.success) {
     return {

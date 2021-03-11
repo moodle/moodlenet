@@ -6,16 +6,16 @@ import { WrkTypes } from '../../../../../../lib/domain/wrk'
 import { getMNEnv } from '../../../../../MoodleNet.env'
 import { MoodleNetDomain } from '../../../../../MoodleNetDomain'
 import { throwLoggedUserOnly } from '../../../../../MoodleNetGraphQL'
-import { fillEmailTemplate } from '../../../../Email/Email.helpers'
+import { fillEmailTemplate } from '../../../../Email/helpers'
 import { getSimpleResponse } from '../../../helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { ArangoUserAccountSubDomain } from '../ArangoUserAccountDomain'
 import { DBReady, UserAccountDB } from '../env'
 import { changeAccountEmailRequest } from '../functions/changeAccountEmailRequest'
 import { getConfig } from '../functions/getConfig'
+import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
 import { UserAccountStatus } from '../types'
 
-export type T = WrkTypes<ArangoUserAccountSubDomain, 'UserAccount.ChangeMainEmail.Request'>
+export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.ChangeMainEmail.Request'>
 
 export const ChangeAccountEmailRequestHandler: T['Init'] = async () => {
   const db = await DBReady
@@ -46,9 +46,9 @@ export const ChangeAccountEmailRequestWorker = ({ db }: { db: UserAccountDB }) =
         },
       })
 
-      enqueue<MoodleNetDomain>()('Email.SendOne.SendNow', flow)({ emailObj, flow })
+      enqueue<MoodleNetDomain>()('Email.SendOne', flow)({ emailObj, flow })
 
-      enqueue<ArangoUserAccountSubDomain>()('UserAccount.ChangeMainEmail.DeleteRequest', flow, {
+      enqueue<MoodleNetArangoUserAccountSubDomain>()('UserAccount.ChangeMainEmail.DeleteRequest', flow, {
         delayDeliverSecs: changeAccountEmailVerificationWaitSecs,
       })({ token })
 
@@ -64,7 +64,10 @@ export const ChangeAccountEmailRequestWorker = ({ db }: { db: UserAccountDB }) =
 export const changeEmailRequest: MutationResolvers['changeEmailRequest'] = async (_parent, { newEmail }, context) => {
   const { accountId } = throwLoggedUserOnly({ context })
 
-  const res = await call<ArangoUserAccountSubDomain>()<T['Api']>('UserAccount.ChangeMainEmail.Request', context.flow)({
+  const res = await call<MoodleNetArangoUserAccountSubDomain>()<T['Api']>(
+    'UserAccount.ChangeMainEmail.Request',
+    context.flow,
+  )({
     newEmail,
     accountId,
     flow: context.flow,

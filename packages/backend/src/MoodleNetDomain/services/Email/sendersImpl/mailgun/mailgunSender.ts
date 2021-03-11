@@ -1,6 +1,6 @@
-import env from './Email.sender.mailgun.env'
 import createMailgun from 'mailgun-js'
-import { EmailSender } from '../../types'
+import { EmailSender } from '../types'
+import env from './env'
 
 export type Cfg = {
   mailgunCfg: createMailgun.ConstructorParams

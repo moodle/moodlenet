@@ -2,11 +2,11 @@ import { call } from '../../../../../../lib/domain/amqp/call'
 import { WrkTypes } from '../../../../../../lib/domain/wrk'
 import { userSessionByActiveUserAccount } from '../../../helpers'
 import { QueryResolvers } from '../../../UserAccount.graphql.gen'
-import { ArangoUserAccountSubDomain } from '../ArangoUserAccountDomain'
 import { DBReady, UserAccountDB } from '../env'
 import { getActiveAccountByUsername } from '../functions/getActiveAccountByUsername'
+import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
 
-export type T = WrkTypes<ArangoUserAccountSubDomain, 'UserAccount.Session.Get'>
+export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.Session.Get'>
 
 export const SessionGetWrkInit: T['Init'] = async () => {
   const db = await DBReady
@@ -36,7 +36,9 @@ export const getSession: QueryResolvers['getSession'] = async (_parent, {}, cont
     return null
   }
 
-  const maybeSession = await call<ArangoUserAccountSubDomain>()('UserAccount.Session.Get', context.flow)({ username })
+  const maybeSession = await call<MoodleNetArangoUserAccountSubDomain>()('UserAccount.Session.Get', context.flow)({
+    username,
+  })
 
   return maybeSession
 }

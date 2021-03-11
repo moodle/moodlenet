@@ -21,6 +21,11 @@ export type Sub<D, EventPath extends EventLeaves<D>> = {
   init: SubscriberInit<D, EventPath>
   cfg?: SubConfig
 }
+export type SubTypes<D, Path extends EventLeaves<D>> = {
+  Event: Path
+  Subscriber: Subscriber<D, Path>
+  Init: SubscriberInit<D, Path>
+}
 export type SubscriberInit<D, EventPath extends EventLeaves<D>> = (_: {
   cfg: SubConfig
 }) => SubscriberService<D, EventPath> | Promise<SubscriberService<D, EventPath>>

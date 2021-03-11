@@ -11,10 +11,10 @@ import { RegisterNewAccountDeleteRequestApiWrkInit } from './apis/deleteRegister
 import { SessionGetWrkInit } from './apis/getSession'
 import { SessionByEmailWrkInit } from './apis/getSessionByEmail'
 import { RegisterNewAccountRequestWrkInit } from './apis/registerNewAccountRequest'
-import { ArangoUserAccountSubDomain } from './ArangoUserAccountDomain'
 import { userAccountGraphQLResolvers } from './graphql-resolvers'
+import { MoodleNetArangoUserAccountSubDomain } from './MoodleNetArangoUserAccountSubDomain'
 
-export const defaultArangoUserAccountImpl: DomainImpl<ArangoUserAccountSubDomain> = {
+export const defaultArangoUserAccountImpl: DomainImpl<MoodleNetArangoUserAccountSubDomain> = {
   'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail': {
     kind: 'wrk',
     init: ConfirmAndChangeAccountEmailWrkInit,
@@ -61,7 +61,7 @@ export const defaultArangoUserAccountImpl: DomainImpl<ArangoUserAccountSubDomain
   }),
 }
 
-export const defaultArangoUserAccountStartServices: StartServices<ArangoUserAccountSubDomain> = {
+export const defaultArangoUserAccountStartServices: StartServices<MoodleNetArangoUserAccountSubDomain> = {
   'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail': {},
   'UserAccount.ChangeMainEmail.DeleteRequest': {},
   'UserAccount.ChangeMainEmail.Request': {},

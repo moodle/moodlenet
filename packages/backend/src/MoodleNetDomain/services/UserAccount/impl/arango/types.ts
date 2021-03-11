@@ -1,7 +1,7 @@
 import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { WithCreated, WithFlow, WithId, WithMutable } from '../../../../../lib/helpers/types'
 import { Role } from '../../../../types'
-import { EmailTemplate } from '../../../Email/Email.helpers'
+import { EmailTemplate } from '../../../Email/helpers'
 import { ChangeAccountEmailRequestEmailVars } from '../../assets/defaultConfig/changeAccountEmailRequestEmail'
 import { NewAccountRequestEmailVars } from '../../assets/defaultConfig/newAccountRequestEmail'
 import { TempSessionEmailVars } from '../../assets/defaultConfig/tempSessionEmail'

@@ -2,11 +2,11 @@ import { call } from '../../../../../../lib/domain/amqp/call'
 import { WrkTypes } from '../../../../../../lib/domain/wrk'
 import { createSessionByActiveUserAccount } from '../../../helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { ArangoUserAccountSubDomain } from '../ArangoUserAccountDomain'
 import { DBReady, UserAccountDB } from '../env'
 import { getVerifiedAccountByUsernameAndPassword } from '../functions/getVerifiedAccountByUsernameAndPassword'
+import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
 
-export type T = WrkTypes<ArangoUserAccountSubDomain, 'UserAccount.Session.Create'>
+export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.Session.Create'>
 export const SessionCreateWorker = ({ db }: { db: UserAccountDB }) => {
   const worker: T['Worker'] = async ({ username, password, ctx }) => {
     const account = await getVerifiedAccountByUsernameAndPassword({ db, username, password })
@@ -30,7 +30,7 @@ export const SessionCreateWrkInit: T['Init'] = async () => {
 }
 
 export const createSession: MutationResolvers['createSession'] = async (_parent, { password, username }, ctx) => {
-  const session = await call<ArangoUserAccountSubDomain>()('UserAccount.Session.Create', ctx.flow)({
+  const session = await call<MoodleNetArangoUserAccountSubDomain>()('UserAccount.Session.Create', ctx.flow)({
     password,
     username,
     ctx,

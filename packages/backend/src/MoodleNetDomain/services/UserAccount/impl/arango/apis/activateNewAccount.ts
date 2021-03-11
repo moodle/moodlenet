@@ -8,11 +8,14 @@ import { getSystemExecutionContext } from '../../../../../types'
 import { NodeType } from '../../../../ContentGraph/ContentGraph.graphql.gen'
 import { hashPassword, jwtByActiveUserAccountAndUser } from '../../../helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { ArangoUserAccountSubDomain } from '../ArangoUserAccountDomain'
 import { DBReady, UserAccountDB } from '../env'
 import { activateNewAccount } from '../functions/activateNewAccount'
+import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
 
-export type T = WrkTypes<ArangoUserAccountSubDomain, 'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount'>
+export type T = WrkTypes<
+  MoodleNetArangoUserAccountSubDomain,
+  'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount'
+>
 
 export const ConfirmEmailActivateAccountApiWorker = ({ db }: { db: UserAccountDB }) => {
   const worker: T['Worker'] = async ({ flow, token, password, username }) => {
@@ -43,7 +46,7 @@ export const ConfirmEmailActivateAccountApiWorker = ({ db }: { db: UserAccountDB
         throw new Error(`${errorMsg} : ${user.type} ${user.details} `)
       }
 
-      emit<ArangoUserAccountSubDomain>()(
+      emit<MoodleNetArangoUserAccountSubDomain>()(
         'UserAccount.RegisterNewAccount.NewAccountActivated',
         { accountId: activationResult._id, username: activationResult.username },
         flow,
@@ -67,7 +70,7 @@ export const activateAccount: MutationResolvers['activateAccount'] = async (
   { password, username, token },
   context,
 ) => {
-  const res = await call<ArangoUserAccountSubDomain>()(
+  const res = await call<MoodleNetArangoUserAccountSubDomain>()(
     'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount',
     context.flow,
   )({ password, token, username, flow: context.flow })
