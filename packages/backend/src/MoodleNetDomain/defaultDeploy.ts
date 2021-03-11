@@ -1,55 +1,60 @@
-import { StartServices } from '../lib/domain/amqp/start'
-import { DomainSetup } from '../lib/domain/types'
+import { Config } from 'arangojs/connection'
+import { setup } from '../lib/domain/amqp/setup'
+import { start } from '../lib/domain/amqp/start'
+import { DomainSetup, DomainStart } from '../lib/domain/types'
 import { MoodleNetDomain } from './MoodleNetDomain'
-import { initMoodleNetGQLWrkService } from './MoodleNetGraphQL'
-import { createEdge } from './services/ContentGraph/impl/arango/apis/createEdge'
-import { createNode } from './services/ContentGraph/impl/arango/apis/createNode'
-import { getNode } from './services/ContentGraph/impl/arango/apis/getNode'
-import { glyphCreateCounter } from './services/ContentGraph/impl/arango/apis/glyphCreateCounters'
-import { getContentGraphResolvers } from './services/ContentGraph/impl/arango/graphql.resolvers'
 import {
-  defaulArangoMailgunImpl,
-  defaultArangoMailgunImplStartServices,
-} from './services/Email/impl/arango/defaultDeploy'
+  defaultArangoContentGraphSetup,
+  defaultArangoContentGraphStartServices,
+} from './services/ContentGraph/impl/arango/defaultDeploy'
+import { defaultArangoEmailSetup, defaultArangoEmailStartServices } from './services/Email/impl/arango/defaultDeploy'
+import { createMailgunSender } from './services/Email/sendersImpl/mailgun/mailgunSender'
 import {
   defaultArangoUserAccountImpl,
   defaultArangoUserAccountStartServices,
 } from './services/UserAccount/impl/arango/defaultDeploy'
-import {} from './services/UserAccount/impl/arango/graphql-resolvers'
 
-export const defaultMoodlenetImpl: DomainSetup<MoodleNetDomain> = {
-  'ContentGraph.Counters.GlyphCreate': {
-    events: ['ContentGraph.Edge.Created', 'ContentGraph.Node.Created'],
-    kind: 'sub',
-    init: glyphCreateCounter,
-  },
-  'ContentGraph.Edge.Create': {
-    kind: 'wrk',
-    init: createEdge,
-  },
-  'ContentGraph.Node.Create': {
-    kind: 'wrk',
-    init: createNode,
-  },
-  'ContentGraph.Node.ById': {
-    kind: 'wrk',
-    init: getNode,
-  },
+export const startDefaultMoodlenet = async ({
+  arangoUrl,
+  mailgunApiKey,
+  mailgunDomain,
+}: {
+  arangoUrl: string
+  mailgunApiKey: string
+  mailgunDomain: string
+}) => {
+  const baseDbCfg: Config = {
+    url: arangoUrl,
+  }
+  const mailgunSender = createMailgunSender({ apiKey: mailgunApiKey, domain: mailgunDomain })
+  const defaultMoodlenetSetup: DomainSetup<MoodleNetDomain> = {
+    ...defaultArangoContentGraphSetup,
+    ...defaultArangoEmailSetup,
+    ...defaultArangoUserAccountImpl,
+  }
 
-  'ContentGraph.GQL': initMoodleNetGQLWrkService({
-    srvName: 'ContentGraph',
-    executableSchemaDef: { resolvers: getContentGraphResolvers() },
-  }),
-  ...defaulArangoMailgunImpl,
-  ...defaultArangoUserAccountImpl,
-}
+  const defaultMoodlenetStartServices: DomainStart<MoodleNetDomain> = {
+    ...defaultArangoContentGraphStartServices({
+      dbCfg: {
+        ...baseDbCfg,
+        databaseName: 'ContentGraph',
+      },
+    }),
+    ...defaultArangoEmailStartServices({
+      dbCfg: {
+        ...baseDbCfg,
+        databaseName: 'Email',
+      },
+      sender: mailgunSender,
+    }),
+    ...defaultArangoUserAccountStartServices({
+      dbCfg: {
+        ...baseDbCfg,
+        databaseName: 'UserAccount',
+      },
+    }),
+  }
 
-export const defaultMoodlenetStartServices: StartServices<MoodleNetDomain> = {
-  'ContentGraph.Counters.GlyphCreate': {},
-  'ContentGraph.Edge.Create': {},
-  'ContentGraph.GQL': {},
-  'ContentGraph.Node.ById': {},
-  'ContentGraph.Node.Create': {},
-  ...defaultArangoMailgunImplStartServices,
-  ...defaultArangoUserAccountStartServices,
+  await setup(defaultMoodlenetSetup)
+  await start(defaultMoodlenetStartServices)
 }

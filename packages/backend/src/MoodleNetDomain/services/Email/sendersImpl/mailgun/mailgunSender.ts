@@ -1,24 +1,19 @@
 import createMailgun from 'mailgun-js'
 import { EmailSender } from '../types'
-import env from './env'
 
-export type Cfg = {
-  mailgunCfg: createMailgun.ConstructorParams
-}
+export const createMailgunSender = (cfg: createMailgun.ConstructorParams) => {
+  const mailgun = createMailgun(cfg)
 
-const mailgun = createMailgun({
-  ...env,
-})
+  const sendEmail: EmailSender['sendEmail'] = req =>
+    mailgun
+      .messages()
+      .send(req)
+      .then(resp => ({ success: true, emailId: resp.id } as const))
+      .catch(err => ({ success: false, error: String(err) } as const))
 
-const sendEmail: EmailSender['sendEmail'] = async req => {
-  try {
-    const resp = await mailgun.messages().send(req)
-    return { success: true, emailId: resp.id }
-  } catch (err) {
-    return { success: false, error: String(err) }
+  const mailgunImpl: EmailSender = {
+    sendEmail,
   }
-}
 
-export const mailgunImpl: EmailSender = {
-  sendEmail,
+  return mailgunImpl
 }

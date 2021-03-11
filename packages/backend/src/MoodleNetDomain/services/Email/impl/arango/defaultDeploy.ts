@@ -6,7 +6,7 @@ import { StoreSentEmailSubscriber } from './apis/storeSentEmail'
 import { MoodleNetArangoEmailDomain } from './MoodleNetArangoEmailDomain'
 import { getPersistence } from './persistence'
 
-export const defaulArangoMailgunImpl: DomainSetup<MoodleNetArangoEmailDomain> = {
+export const defaultArangoEmailSetup: DomainSetup<MoodleNetArangoEmailDomain> = {
   'Email.SendOne': { kind: 'wrk' },
   'Email.StoreSentEmail': {
     kind: 'sub',
@@ -14,7 +14,7 @@ export const defaulArangoMailgunImpl: DomainSetup<MoodleNetArangoEmailDomain> = 
   },
 }
 
-export const defaultArangoMailgunImplStartServices = ({ dbCfg, sender }: { dbCfg: Config; sender: EmailSender }) => {
+export const defaultArangoEmailStartServices = ({ dbCfg, sender }: { dbCfg: Config; sender: EmailSender }) => {
   const moodleNetArangoEmailDomainStart: DomainStart<MoodleNetArangoEmailDomain> = {
     'Email.SendOne': {
       init: () => [SendOneWorker({ sender })],

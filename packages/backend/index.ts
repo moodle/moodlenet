@@ -1,16 +1,11 @@
 require('./env')
-import { setup } from './src/lib/domain/amqp/setup'
-import { start, StartServices } from './src/lib/domain/amqp/start'
-import { DomainSetup } from './src/lib/domain/types'
-import { defaultMoodlenetImpl, defaultMoodlenetStartServices } from './src/MoodleNetDomain/defaultDeploy'
-import { MoodleNetDomain } from './src/MoodleNetDomain/MoodleNetDomain'
+import { startDefaultMoodlenet } from './src/MoodleNetDomain/defaultDeploy'
 
-const implModule = process.env.MOODLENET_IMPL_MODULE
-const impl: DomainSetup<MoodleNetDomain> = implModule ? require(implModule) : defaultMoodlenetImpl
+const mailgunApiKey = process.env.MAILGUN_API_KEY
+const mailgunDomain = process.env.MAILGUN_DOMAIN
+const arangoUrl = process.env.ARANGO_HOST
+if (!(arangoUrl && mailgunApiKey && mailgunDomain)) {
+  throw new Error(`missing env`)
+}
 
-const startServicesModule = process.env.MOODLENET_START_SERVICES_MODULE
-const services: StartServices<MoodleNetDomain> = startServicesModule
-  ? require(startServicesModule)
-  : defaultMoodlenetStartServices
-
-setup(impl).then(() => start(services))
+startDefaultMoodlenet({ arangoUrl, mailgunApiKey, mailgunDomain })

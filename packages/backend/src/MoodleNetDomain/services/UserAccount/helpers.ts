@@ -5,7 +5,7 @@ import { MoodleNetDomain } from '../../MoodleNetDomain'
 import { getJwtSigner, MoodleNetExecutionContext } from '../../MoodleNetGraphQL'
 import { User } from '../ContentGraph/ContentGraph.graphql.gen'
 import { ShallowNode } from '../ContentGraph/types.node'
-import { ArgonPwdHashOpts } from './env'
+import { ArgonPwdHashOpts } from './argon'
 import { ActiveUserAccount } from './impl/arango/types'
 import { SimpleResponse, UserSession } from './UserAccount.graphql.gen'
 

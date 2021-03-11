@@ -29,7 +29,7 @@ export const defaultArangoUserAccountImpl: DomainSetup<MoodleNetArangoUserAccoun
   'UserAccount.GQL': { kind: 'wrk' },
 }
 
-export const defaultArangoMailgunImplStartServices = ({ dbCfg }: { dbCfg: Config }) => {
+export const defaultArangoUserAccountStartServices = ({ dbCfg }: { dbCfg: Config }) => {
   const _getPersistence = () => getPersistence({ cfg: dbCfg })
   const moodleNetArangoUserAccountSubDomainStart: DomainStart<MoodleNetArangoUserAccountSubDomain> = {
     'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail': {
