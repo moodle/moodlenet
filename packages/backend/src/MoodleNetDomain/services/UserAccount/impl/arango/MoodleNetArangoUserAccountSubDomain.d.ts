@@ -1,7 +1,7 @@
 import { Event } from '../../../../../lib/domain/event'
 import { Flow } from '../../../../../lib/domain/flow'
-import { SubDomain } from '../../../../../lib/domain/impl'
-import { Wrk } from '../../../../../lib/domain/wrk'
+import { SubDomain } from '../../../../../lib/domain/types'
+import { WrkDef } from '../../../../../lib/domain/wrk'
 import { MoodleNetDomain } from '../../../../MoodleNetDomain'
 import { MoodleNetExecutionContext } from '../../../../MoodleNetGraphQL'
 import { User } from '../../../ContentGraph/ContentGraph.graphql.gen'
@@ -14,11 +14,11 @@ export type MoodleNetArangoUserAccountSubDomain = SubDomain<
   'UserAccount',
   {
     RegisterNewAccount: {
-      Request: Wrk<
+      Request: WrkDef<
         (_: { email: string; flow: Flow }) => Promise<{ success: true } | { success: false; reason: string }>
       >
-      DeleteRequest: Wrk<(_: { token: string }) => Promise<unknown>>
-      ConfirmEmailActivateAccount: Wrk<
+      DeleteRequest: WrkDef<(_: { token: string }) => Promise<unknown>>
+      ConfirmEmailActivateAccount: WrkDef<
         (_: {
           token: string
           password: string
@@ -33,23 +33,25 @@ export type MoodleNetArangoUserAccountSubDomain = SubDomain<
     }
 
     ChangeMainEmail: {
-      Request: Wrk<
+      Request: WrkDef<
         (_: {
           accountId: string
           newEmail: string
           flow: Flow
         }) => Promise<{ success: true } | { success: false; reason: string }>
       >
-      DeleteRequest: Wrk<({ token }: { token: string }) => Promise<unknown>>
+      DeleteRequest: WrkDef<({ token }: { token: string }) => Promise<unknown>>
       AccountEmailChanged: Event<{
         accountId: string
         newEmail: string
         oldEmail: string
       }>
-      ConfirmAndChangeAccountEmail: Wrk<(_: { token: string; password: string; username: string }) => Promise<boolean>>
+      ConfirmAndChangeAccountEmail: WrkDef<
+        (_: { token: string; password: string; username: string }) => Promise<boolean>
+      >
     }
 
-    ChangePassword: Wrk<
+    ChangePassword: WrkDef<
       (_: {
         username: string
         currentPassword: string
@@ -58,7 +60,7 @@ export type MoodleNetArangoUserAccountSubDomain = SubDomain<
     >
 
     Session: {
-      ByEmail: Wrk<
+      ByEmail: WrkDef<
         (_: {
           email: string
           username: string
@@ -66,10 +68,10 @@ export type MoodleNetArangoUserAccountSubDomain = SubDomain<
           ctx: MoodleNetExecutionContext
         }) => Promise<{ success: true } | { success: false; reason: string }>
       >
-      Create: Wrk<
+      Create: WrkDef<
         (_: { username: string; password: string; ctx: MoodleNetExecutionContext }) => Promise<{ jwt: string | null }>
       >
-      Get: Wrk<(_: { username: string }) => Promise<UserSession | null>>
+      Get: WrkDef<(_: { username: string }) => Promise<UserSession | null>>
     }
   }
 >

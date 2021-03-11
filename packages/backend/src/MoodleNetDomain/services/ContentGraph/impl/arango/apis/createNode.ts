@@ -1,12 +1,11 @@
 import { emit } from '../../../../../../lib/domain/amqp/emit'
 import { mergeFlow } from '../../../../../../lib/domain/flow'
-import { WorkerInitImpl } from '../../../../../../lib/domain/wrk'
+import { LookupWorkerInit } from '../../../../../../lib/domain/wrk'
 import { ulidKey } from '../../../../../../lib/helpers/arango'
 import { MoodleNetDomain } from '../../../../../MoodleNetDomain'
 import { ShallowNodeMeta } from '../../../types.node'
-import { DBReady } from '../ContentGraph.persistence.arango.env'
 
-export const createNode: WorkerInitImpl<MoodleNetDomain, 'ContentGraph.Node.Create'> = () => {
+export const createNode: LookupWorkerInit<MoodleNetDomain, 'ContentGraph.Node.Create'> = () => {
   return [
     async ({ ctx, data, nodeType, key }) => {
       key = key ?? ulidKey()

@@ -8,21 +8,21 @@ import { getSystemExecutionContext } from '../../../../../types'
 import { NodeType } from '../../../../ContentGraph/ContentGraph.graphql.gen'
 import { hashPassword, jwtByActiveUserAccountAndUser } from '../../../helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { DBReady, UserAccountDB } from '../env'
 import { activateNewAccount } from '../functions/activateNewAccount'
 import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
+import { Persistence } from '../types'
 
 export type T = WrkTypes<
   MoodleNetArangoUserAccountSubDomain,
   'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount'
 >
 
-export const ConfirmEmailActivateAccountApiWorker = ({ db }: { db: UserAccountDB }) => {
+export const ConfirmEmailActivateAccountWorker = ({ persistence }: { persistence: Persistence }) => {
   const worker: T['Worker'] = async ({ flow, token, password, username }) => {
     const hashedPassword = await hashPassword({ pwd: password })
     const userKey = ulidKey()
     const activationResult = await activateNewAccount({
-      db,
+      persistence,
       token,
       username,
       password: hashedPassword,
@@ -58,11 +58,6 @@ export const ConfirmEmailActivateAccountApiWorker = ({ db }: { db: UserAccountDB
     }
   }
   return worker
-}
-
-export const ConfirmEmailActivateAccountApiWrkInit: T['Init'] = async () => {
-  const db = await DBReady
-  return [ConfirmEmailActivateAccountApiWorker({ db })]
 }
 
 export const activateAccount: MutationResolvers['activateAccount'] = async (

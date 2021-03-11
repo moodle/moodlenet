@@ -9,25 +9,19 @@ import { throwLoggedUserOnly } from '../../../../../MoodleNetGraphQL'
 import { fillEmailTemplate } from '../../../../Email/helpers'
 import { getSimpleResponse } from '../../../helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { DBReady, UserAccountDB } from '../env'
 import { changeAccountEmailRequest } from '../functions/changeAccountEmailRequest'
 import { getConfig } from '../functions/getConfig'
 import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
-import { UserAccountStatus } from '../types'
+import { Persistence, UserAccountStatus } from '../types'
 
 export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.ChangeMainEmail.Request'>
 
-export const ChangeAccountEmailRequestHandler: T['Init'] = async () => {
-  const db = await DBReady
-  return [ChangeAccountEmailRequestWorker({ db })]
-}
-
-export const ChangeAccountEmailRequestWorker = ({ db }: { db: UserAccountDB }) => {
+export const ChangeAccountEmailRequestWorker = ({ persistence }: { persistence: Persistence }) => {
   const worker: T['Worker'] = async ({ flow, accountId, newEmail }) => {
     const { publicBaseUrl } = getMNEnv()
     const token = uuidV4()
     const mAccountOrError = await changeAccountEmailRequest({
-      db,
+      persistence,
       accountId,
       flow,
       newEmail,

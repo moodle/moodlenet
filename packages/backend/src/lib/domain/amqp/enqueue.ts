@@ -2,7 +2,7 @@
 // import { MoodleNetDomain } from '../../../MoodleNetDomain/MoodleNetDomain'
 import { Flow /* , newFlow */ } from '../flow'
 import { publishError } from '../misc'
-import { defaultEnqueueConfig, EnqueueConfig, LookupWorker, WrkLeaves } from '../wrk'
+import { defaultEnqueueConfig, EnqueueConfig, LookupWorker, WrkPaths } from '../wrk'
 import {
   DEFAULT_DOMAIN_NAME,
   getDomainDelayExchangeName,
@@ -12,7 +12,7 @@ import {
   routingKeyFor,
 } from './helpers'
 
-export const enqueue = <D>(domainName = DEFAULT_DOMAIN_NAME) => <WrkPath extends WrkLeaves<D>>(
+export const enqueue = <D>(domainName = DEFAULT_DOMAIN_NAME) => <WrkPath extends WrkPaths<D>>(
   path: WrkPath,
   flow: Flow,
   _cfg?: Partial<EnqueueConfig>,

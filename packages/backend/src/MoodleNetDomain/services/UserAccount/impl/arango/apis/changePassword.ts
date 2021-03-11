@@ -3,11 +3,10 @@ import { WrkTypes } from '../../../../../../lib/domain/wrk'
 import { throwLoggedUserOnly } from '../../../../../MoodleNetGraphQL'
 import { getSimpleResponse, hashPassword } from '../../../helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { DBReady, UserAccountDB } from '../env'
 import { changeAccountPassword } from '../functions/changePassword'
 import { getVerifiedAccountByUsernameAndPassword } from '../functions/getVerifiedAccountByUsernameAndPassword'
 import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
-import { Messages } from '../types'
+import { Messages, Persistence } from '../types'
 
 export type ChangePasswordPersistence = (_: {
   currentPassword: string
@@ -17,10 +16,10 @@ export type ChangePasswordPersistence = (_: {
 
 export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.ChangePassword'>
 
-export const ChangePasswordApiWorker = ({ db }: { db: UserAccountDB }) => {
+export const ChangePasswordWorker = ({ persistence }: { persistence: Persistence }) => {
   const worker: T['Worker'] = async ({ newPassword, username, currentPassword }) => {
     const account = await getVerifiedAccountByUsernameAndPassword({
-      db,
+      persistence,
       username,
       password: currentPassword,
     })
@@ -33,7 +32,7 @@ export const ChangePasswordApiWorker = ({ db }: { db: UserAccountDB }) => {
     const newPasswordHash = await hashPassword({ pwd: newPassword })
 
     const changePwdError = await changeAccountPassword({
-      db,
+      persistence,
       accountId: account._id,
       currentPassword: currentPasswordHash,
       newPassword: newPasswordHash,
@@ -45,11 +44,6 @@ export const ChangePasswordApiWorker = ({ db }: { db: UserAccountDB }) => {
     }
   }
   return worker
-}
-
-export const ChangePasswordApiWrkInit: T['Init'] = async () => {
-  const db = await DBReady
-  return [ChangePasswordApiWorker({ db })]
 }
 
 export const changePassword: MutationResolvers['changePassword'] = async (

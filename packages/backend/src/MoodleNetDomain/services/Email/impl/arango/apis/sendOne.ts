@@ -8,11 +8,8 @@ type T = WrkTypes<MoodleNetDomain, 'Email.SendOne'>
 export const SendOneWrkInit = ({ sender }: { sender: EmailSender }): T['Init'] => () => {
   return [SendOneWorker({ sender })]
 }
-export const SendOneWorker = ({ sender }: { sender: EmailSender }) => {
-  const worker: T['Worker'] = async ({ emailObj, flow }) => {
-    const result = await sender.sendEmail(emailObj)
-    emit<MoodleNetArangoEmailDomain>()('Email.EmailSent', { result, emailObj }, flow)
-    return result
-  }
-  return worker
+export const SendOneWorker = ({ sender }: { sender: EmailSender }): T['Worker'] => async ({ emailObj, flow }) => {
+  const result = await sender.sendEmail(emailObj)
+  emit<MoodleNetArangoEmailDomain>()('Email.EmailSent', { result, emailObj }, flow)
+  return result
 }

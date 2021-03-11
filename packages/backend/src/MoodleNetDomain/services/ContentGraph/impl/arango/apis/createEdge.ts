@@ -1,7 +1,7 @@
 import { nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { emit } from '../../../../../../lib/domain/amqp/emit'
 import { mergeFlow } from '../../../../../../lib/domain/flow'
-import { WorkerInitImpl } from '../../../../../../lib/domain/wrk'
+import { LookupWorkerInit } from '../../../../../../lib/domain/wrk'
 import { ulidKey } from '../../../../../../lib/helpers/arango'
 import { MoodleNetDomain } from '../../../../../MoodleNetDomain'
 import * as GQL from '../../../ContentGraph.graphql.gen'
@@ -12,11 +12,10 @@ import { getConnectionDef } from '../../../graphDefinition'
 // } from '../../../../graphDefinition/helpers'
 import { cantBindMessage } from '../../../graphDefinition/strings'
 import { ShallowEdgeMeta } from '../../../types.node'
-import { DBReady } from '../ContentGraph.persistence.arango.env'
 import { createEdgeMutationError } from '../graphql.resolvers/helpers'
 // import { findNodeWithPolicy } from './findNode'
 
-export const createEdge: WorkerInitImpl<MoodleNetDomain, 'ContentGraph.Edge.Create'> = () => {
+export const createEdge: LookupWorkerInit<MoodleNetDomain, 'ContentGraph.Edge.Create'> = () => {
   return [
     async ({ ctx, data, edgeType, from, to, key }) => {
       key = key ?? ulidKey()

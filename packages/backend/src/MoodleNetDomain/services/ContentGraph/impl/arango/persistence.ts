@@ -1,47 +1,25 @@
 import { Database } from 'arangojs'
+import { Config } from 'arangojs/connection'
 import { ArangoSearchViewLink } from 'arangojs/view'
-import memo from 'lodash/memoize'
-import * as Yup from 'yup'
-import { createDatabaseIfNotExists } from '../../../../../lib/helpers/arango'
+import { Teardown } from '../../../../../lib/domain/types'
 import { getGraph } from './setupGraph'
+import { Persistence } from './types'
 
-interface ArangoContentGraphPersistenceEnv {
-  url: string[]
-  databaseName: string
-}
+export const getPersistence = async ({ cfg }: { cfg: Config }): Promise<[Persistence, Teardown]> => {
+  const db = new Database(cfg)
 
-const Validator = Yup.object<ArangoContentGraphPersistenceEnv>({
-  url: Yup.array(Yup.string().required()).required(),
-  databaseName: Yup.string().required().default('ContentGraph'),
-})
-
-const ARANGO_URL = process.env.CONTENTGRAPH_ARANGO_URL?.split(';')
-const ARANGO_DB = process.env.CONTENTGRAPH_ARANGO_DB
-
-export const env = Validator.validateSync({
-  url: ARANGO_URL,
-  databaseName: ARANGO_DB,
-})!
-
-export const getDB = memo(() =>
-  createDatabaseIfNotExists({
-    dbConfig: { url: env.url },
-    name: env.databaseName,
-    dbCreateOpts: {},
-  }),
-)
-
-export const DBReady = memo(async () => {
-  const db = await getDB()
-  //const graph = await setupGraph({ db })
   const graph = await getGraph({ db })
+
   const searchView = await setupSearchView({ db })
-  return {
-    db,
-    graph,
-    searchView,
-  }
-})
+  return [
+    {
+      db,
+      graph,
+      searchView,
+    },
+    () => db.close(),
+  ]
+}
 
 const setupSearchView = async ({ db }: { db: Database }) => {
   const viewName = 'SearchView'

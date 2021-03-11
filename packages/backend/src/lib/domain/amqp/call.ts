@@ -7,7 +7,7 @@ import {
   defaultCallConfig,
   isReplyError,
   LookupWorker,
-  WrkLeaves,
+  WrkPaths,
   wrkReplyError,
   wrkTimeoutError,
 } from '../wrk'
@@ -25,7 +25,7 @@ let callCount = 0
 const makeCallMessageId = () => `${machineId}.${Number(new Date())}.${(callCount = callCount++ & 65535)}`
 const DEF_LAG_TIMEOUT = 300
 
-export const call = <D>(domainName = DEFAULT_DOMAIN_NAME) => <WrkPath extends WrkLeaves<D>>(
+export const call = <D>(domainName = DEFAULT_DOMAIN_NAME) => <WrkPath extends WrkPaths<D>>(
   path: WrkPath,
   flow: Flow,
   _cfg?: Partial<CallConfig>,

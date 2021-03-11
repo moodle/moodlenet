@@ -5,10 +5,10 @@ import { ActiveUserAccount, UserAccountStatus } from '../types'
 
 export const getActiveAccountByUsername = async ({
   username,
-  db: { UserAccount, db },
+  persistence: { UserAccount, db },
 }: {
   username: string
-  db: UserAccountDB
+  persistence: UserAccountDB
 }) => {
   const cursor = await db.query(aql`
     FOR userAccount IN ${UserAccount}

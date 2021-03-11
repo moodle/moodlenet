@@ -1,5 +1,5 @@
 import { StartServices } from '../lib/domain/amqp/start'
-import { DomainImpl } from '../lib/domain/impl'
+import { DomainSetup } from '../lib/domain/types'
 import { MoodleNetDomain } from './MoodleNetDomain'
 import { initMoodleNetGQLWrkService } from './MoodleNetGraphQL'
 import { createEdge } from './services/ContentGraph/impl/arango/apis/createEdge'
@@ -17,7 +17,7 @@ import {
 } from './services/UserAccount/impl/arango/defaultDeploy'
 import {} from './services/UserAccount/impl/arango/graphql-resolvers'
 
-export const defaultMoodlenetImpl: DomainImpl<MoodleNetDomain> = {
+export const defaultMoodlenetImpl: DomainSetup<MoodleNetDomain> = {
   'ContentGraph.Counters.GlyphCreate': {
     events: ['ContentGraph.Edge.Created', 'ContentGraph.Node.Created'],
     kind: 'sub',

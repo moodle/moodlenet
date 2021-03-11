@@ -2,7 +2,7 @@ import { Message } from 'amqplib'
 import { EventEmitter } from 'events'
 import { memoize } from 'lodash'
 import { Flow } from '../flow'
-import { DomainImpl } from '../impl'
+import { DomainSetup } from '../types'
 import { getConnection, machineId } from './env'
 
 export const DEFAULT_DOMAIN_NAME = 'MoodleNet'
@@ -25,9 +25,9 @@ export const msgFlow = (msg: Message): Flow => {
   const [route, id] = msg.fields.routingKey.split('.').slice(-2)
   return [route, id]
 }
-export const registeredImpl: Record<string, DomainImpl<any>> = {}
-export const registerImpl = (domainName: string, impl: DomainImpl<any>) => (registeredImpl[domainName] = impl)
-export const getRegisteredImpl = (domainName: string): DomainImpl<any> | undefined => registeredImpl[domainName]
+export const registeredImpl: Record<string, DomainSetup<any>> = {}
+export const registerImpl = (domainName: string, impl: DomainSetup<any>) => (registeredImpl[domainName] = impl)
+export const getRegisteredImpl = (domainName: string): DomainSetup<any> | undefined => registeredImpl[domainName]
 
 export const getTopicChannel = memoize(async (domainName: string, topic: string, prefetch: number) => {
   const [connection] = await getConnection({ domainName })

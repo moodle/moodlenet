@@ -1,24 +1,23 @@
 import { aql } from 'arangojs'
 import { Flow } from '../../../../../../lib/domain/flow'
-import { UserAccountDB } from '../env'
-import { ChangeEmailRequest, Messages } from '../types'
+import { ChangeEmailRequest, Messages, Persistence } from '../types'
 import { isEmailAvailable } from './isEmailAvailable'
 
 export const changeAccountEmailRequest = async ({
-  db: uadb,
+  persistence,
   flow,
   accountId,
   newEmail,
   token,
 }: {
-  db: UserAccountDB
+  persistence: Persistence
   flow: Flow
   token: string
   accountId: string
   newEmail: string
 }) => {
-  const { UserAccount, db } = uadb
-  const emailAvailable = await isEmailAvailable({ email: newEmail, db: uadb })
+  const { UserAccount, db } = persistence
+  const emailAvailable = await isEmailAvailable({ email: newEmail, db: persistence })
   if (!emailAvailable) {
     return Messages.EmailNotAvailable
   }

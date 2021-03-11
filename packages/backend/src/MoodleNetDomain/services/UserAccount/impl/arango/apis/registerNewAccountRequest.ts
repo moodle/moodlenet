@@ -7,23 +7,24 @@ import { getMNEnv } from '../../../../../MoodleNet.env'
 import { MoodleNetDomain } from '../../../../../MoodleNetDomain'
 import { fillEmailTemplate } from '../../../../Email/helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { DBReady, UserAccountDB } from '../env'
+import { DBReady } from '../env'
 import { getConfig } from '../functions/getConfig'
 import { newAccountRequest } from '../functions/newAccountRequest'
 import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
+import { Persistence } from '../types'
 
 export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.RegisterNewAccount.Request'>
 
-export const RegisterNewAccountRequestWorker = ({ db }: { db: UserAccountDB }) => {
+export const RegisterNewAccountRequestWorker = ({ persistence }: { persistence: Persistence }) => {
   const worker: T['Worker'] = async ({ email, flow }) => {
     const { publicBaseUrl } = getMNEnv()
 
-    const config = await getConfig({ db })
+    const config = await getConfig({ persistence })
     const { newAccountRequestEmail, newAccountVerificationWaitSecs } = config
     const token = uuidV4()
 
     const resp = await newAccountRequest({
-      db,
+      persistence,
       email,
       flow,
       token,

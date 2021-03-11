@@ -1,7 +1,6 @@
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { aqlstr } from '../../../../../../lib/helpers/arango'
 import * as GQL from '../../../ContentGraph.graphql.gen'
-import { DBReady } from '../ContentGraph.persistence.arango.env'
 import { aqlMergeTypenameById, makePage, skipLimitPagination } from './helpers'
 
 export const globalSearch = async ({

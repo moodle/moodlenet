@@ -2,14 +2,14 @@ import { call } from '../../../../../../lib/domain/amqp/call'
 import { WrkTypes } from '../../../../../../lib/domain/wrk'
 import { createSessionByActiveUserAccount } from '../../../helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { DBReady, UserAccountDB } from '../env'
 import { getVerifiedAccountByUsernameAndPassword } from '../functions/getVerifiedAccountByUsernameAndPassword'
 import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
+import { Persistence } from '../types'
 
 export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.Session.Create'>
-export const SessionCreateWorker = ({ db }: { db: UserAccountDB }) => {
+export const SessionCreateWorker = ({ persistence }: { persistence: Persistence }) => {
   const worker: T['Worker'] = async ({ username, password, ctx }) => {
-    const account = await getVerifiedAccountByUsernameAndPassword({ db, username, password })
+    const account = await getVerifiedAccountByUsernameAndPassword({ persistence, username, password })
     if (!account) {
       return { jwt: null }
     }
@@ -22,11 +22,6 @@ export const SessionCreateWorker = ({ db }: { db: UserAccountDB }) => {
     return session
   }
   return worker
-}
-
-export const SessionCreateWrkInit: T['Init'] = async () => {
-  const db = await DBReady
-  return [SessionCreateWorker({ db })]
 }
 
 export const createSession: MutationResolvers['createSession'] = async (_parent, { password, username }, ctx) => {

@@ -1,14 +1,13 @@
 import { aql } from 'arangojs'
-import { UserAccountDB } from '../env'
-import { Messages } from '../types'
+import { Messages, Persistence } from '../types'
 
 export const changeAccountPassword = async ({
-  db: { UserAccount, db },
+  persistence: { UserAccount, db },
   accountId,
   currentPassword,
   newPassword,
 }: {
-  db: UserAccountDB
+  persistence: Persistence
   currentPassword: string
   newPassword: string
   accountId: string

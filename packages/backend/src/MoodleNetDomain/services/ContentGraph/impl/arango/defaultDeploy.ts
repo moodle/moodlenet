@@ -12,7 +12,7 @@ import { SessionGetWorker } from './apis/getSession'
 import { SessionByEmailWorker } from './apis/getSessionByEmail'
 import { RegisterNewAccountRequestWorker } from './apis/registerNewAccountRequest'
 import { userAccountGraphQLResolvers } from './graphql-resolvers'
-import { MoodleNetArangoUserAccountSubDomain } from './MoodleNetArangoUserAccountSubDomain'
+import { MoodleNetArangoUserAccountSubDomain } from './MoodleNetArangoContentGraphSubDomain'
 import { getPersistence } from './persistence'
 
 export const defaultArangoUserAccountImpl: DomainSetup<MoodleNetArangoUserAccountSubDomain> = {

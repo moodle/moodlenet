@@ -1,47 +1,57 @@
-import { EventLeaves, LookupEventType } from './event'
+import { EventPaths, LookupEventType } from './event'
 import { Flow } from './flow'
 import { Acks } from './misc'
 import { Leaves, LookupPath } from './path'
-import { EnqueueConfig, WrkConfig } from './wrk'
+import { Teardown } from './types'
 
-type SubscriberUnionArg<D, EventPath extends EventLeaves<D>> = EventPath extends infer Event
+type SubscriberUnionArg<D, EventPath extends EventPaths<D>> = EventPath extends infer Event
   ? Event extends EventPath
     ? { t: Event; p: LookupEventType<D, Event>; flow: Flow }
     : never
   : never
 
-export type Subscriber<D, EventPath extends EventLeaves<D>> = (a: SubscriberUnionArg<D, EventPath>) => Promise<Acks>
-export type SubscriberService<D, EventPath extends EventLeaves<D>> = [
+export type Subscriber<D, EventPath extends EventPaths<D>> = (a: SubscriberUnionArg<D, EventPath>) => Promise<Acks>
+export type SubscriberService<D, EventPath extends EventPaths<D>> = readonly [
   subscriber: Subscriber<D, EventPath>,
-  teardown?: () => void,
+  teardown?: Teardown,
 ]
-export type Sub<D, EventPath extends EventLeaves<D>> = {
+export type SubDef<D, EventPath extends EventPaths<D>> = {
   kind: 'sub'
   events: EventPath[]
-  init: SubscriberInit<D, EventPath>
-  cfg?: SubConfig
+  cfg?: Partial<SubConfig>
 }
-export type SubTypes<D, Path extends EventLeaves<D>> = {
-  Event: Path
-  Subscriber: Subscriber<D, Path>
-  Init: SubscriberInit<D, Path>
+export type SubTypes<D, EventPath extends EventPaths<D>> = {
+  Event: EventPath
+  Subscriber: Subscriber<D, EventPath>
+  Init: SubscriberInit<D, EventPath>
 }
-export type SubscriberInit<D, EventPath extends EventLeaves<D>> = (_: {
+export type SubscriberInit<D, EventPath extends EventPaths<D>> = (_: {
   cfg: SubConfig
 }) => SubscriberService<D, EventPath> | Promise<SubscriberService<D, EventPath>>
-export type SubscriberInitImpl<D, EventPath extends EventLeaves<D>> = SubscriberInit<D, EventPath>
-export type SubLeaves<Domain> = Leaves<Domain, Sub<any, any>>
 
-export type SubConfig = WrkConfig & EnqueueConfig
+export type LookupSubInit<D, SubPath extends SubPaths<D>> = LookupSubDef<D, SubPath> extends SubDef<
+  any,
+  infer EventPath
+>
+  ? EventPath extends EventPaths<D>
+    ? SubscriberInit<D, EventPath>
+    : never
+  : never
 
-export const defaultSubscriberConfig = (cfg?: Partial<SubConfig>): SubConfig => ({
+export type SubPaths<Domain> = Leaves<Domain, SubDef<any, any>>
+
+export type SubConfig = {
+  rejectionAck: Acks
+  parallelism: number
+}
+export const defaultSubSetupConfig = (cfg?: Partial<SubConfig>): SubConfig => ({
   rejectionAck: Acks.Reject,
   parallelism: 10,
   ...cfg,
 })
 
-export type LookupSub<Domain, Path extends string> = LookupPath<Domain, Path> extends infer MaybeSubscriber
-  ? MaybeSubscriber extends Sub<any, any>
-    ? MaybeSubscriber
+export type LookupSubDef<Domain, Path extends string> = LookupPath<Domain, Path> extends infer MaybeSubDef
+  ? MaybeSubDef extends SubDef<any, any>
+    ? MaybeSubDef
     : never
   : never

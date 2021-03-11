@@ -1,11 +1,10 @@
 import { aql } from 'arangojs'
-import { UserAccountDB } from '../env'
-import { UserAccountStatus } from '../types'
+import { Persistence, UserAccountStatus } from '../types'
 export const deleteNewAccountRequest = async ({
   token,
-  db: { db, UserAccount },
+  persistence: { db, UserAccount },
 }: {
-  db: UserAccountDB
+  persistence: Persistence
   token: string
 }) => {
   const cursor = await db.query(aql`

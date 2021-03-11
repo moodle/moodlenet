@@ -2,20 +2,15 @@ import { call } from '../../../../../../lib/domain/amqp/call'
 import { WrkTypes } from '../../../../../../lib/domain/wrk'
 import { userSessionByActiveUserAccount } from '../../../helpers'
 import { QueryResolvers } from '../../../UserAccount.graphql.gen'
-import { DBReady, UserAccountDB } from '../env'
 import { getActiveAccountByUsername } from '../functions/getActiveAccountByUsername'
 import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
+import { Persistence } from '../types'
 
 export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.Session.Get'>
 
-export const SessionGetWrkInit: T['Init'] = async () => {
-  const db = await DBReady
-  return [SessionGetWorker({ db })]
-}
-
-export const SessionGetWorker = ({ db }: { db: UserAccountDB }) => {
+export const SessionGetWorker = ({ persistence }: { persistence: Persistence }) => {
   const worker: T['Worker'] = async ({ username }) => {
-    const account = await getActiveAccountByUsername({ db, username })
+    const account = await getActiveAccountByUsername({ persistence, username })
 
     if (!account) {
       return null

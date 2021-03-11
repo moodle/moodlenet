@@ -7,23 +7,19 @@ import { MoodleNetDomain } from '../../../../../MoodleNetDomain'
 import { fillEmailTemplate } from '../../../../Email/helpers'
 import { userAndJwtByActiveUserAccount } from '../../../helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { DBReady, UserAccountDB } from '../env'
 import { getActiveAccountByUsername } from '../functions/getActiveAccountByUsername'
 import { getConfig } from '../functions/getConfig'
 import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
+import { Persistence } from '../types'
 
 export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.Session.ByEmail'>
 
-export const SessionByEmailWrkInit: T['Init'] = async () => {
-  const db = await DBReady
-  return [SessionByEmailWorker({ db })]
-}
-export const SessionByEmailWorker = ({ db }: { db: UserAccountDB }) => {
+export const SessionByEmailWorker = ({ persistence }: { persistence: Persistence }) => {
   const worker: T['Worker'] = async ({ email, username, ctx }) => {
     const { publicBaseUrl } = getMNEnv()
-    const config = await getConfig({ db })
+    const config = await getConfig({ persistence })
     const { tempSessionEmail: resetAccountPasswordRequestEmail } = config
-    const account = await getActiveAccountByUsername({ db, username })
+    const account = await getActiveAccountByUsername({ persistence, username })
 
     if (!account || account.email !== email) {
       return { success: false, reason: 'not found' }

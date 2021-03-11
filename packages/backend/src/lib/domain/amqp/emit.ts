@@ -1,11 +1,11 @@
 // import { Id } from '@moodlenet/common/lib/pub-graphql/types'
 // import { MoodleNetDomain } from '../../../MoodleNetDomain/MoodleNetDomain'
-import { EventLeaves, LookupEventType } from '../event'
+import { EventPaths, LookupEventType } from '../event'
 import { Flow /* , newFlow */ } from '../flow'
 import { publishError } from '../misc'
 import { DEFAULT_DOMAIN_NAME, getDomainExchangeName, getMachineChannel, json2Buffer, routingKeyFor } from './helpers'
 
-export const emit = <D>(domainName = DEFAULT_DOMAIN_NAME) => <EventPath extends EventLeaves<D>>(
+export const emit = <D>(domainName = DEFAULT_DOMAIN_NAME) => <EventPath extends EventPaths<D>>(
   path: EventPath,
   payload: LookupEventType<D, EventPath>,
   flow: Flow,

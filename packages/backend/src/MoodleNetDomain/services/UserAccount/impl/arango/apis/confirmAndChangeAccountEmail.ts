@@ -1,20 +1,20 @@
 import { call } from '../../../../../../lib/domain/amqp/call'
 import { WrkTypes } from '../../../../../../lib/domain/wrk'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
-import { DBReady, UserAccountDB } from '../env'
 import { confirmAccountEmailChangeRequest } from '../functions/confirmAccountEmailChangeRequest'
 import { getVerifiedAccountByUsernameAndPassword } from '../functions/getVerifiedAccountByUsernameAndPassword'
 import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
+import { Persistence } from '../types'
 
 export type T = WrkTypes<
   MoodleNetArangoUserAccountSubDomain,
   'UserAccount.ChangeMainEmail.ConfirmAndChangeAccountEmail'
 >
 
-export const ConfirmAndChangeAccountEmailWorker = ({ db }: { db: UserAccountDB }) => {
+export const ConfirmAndChangeAccountEmailWorker = ({ persistence }: { persistence: Persistence }) => {
   const worker: T['Worker'] = async ({ token, password, username }) => {
     const account = await getVerifiedAccountByUsernameAndPassword({
-      db,
+      persistence,
       username,
       password,
     })
@@ -23,7 +23,7 @@ export const ConfirmAndChangeAccountEmailWorker = ({ db }: { db: UserAccountDB }
       return false
     }
 
-    const confirmError = await confirmAccountEmailChangeRequest({ token, db })
+    const confirmError = await confirmAccountEmailChangeRequest({ token, db: persistence })
     if (confirmError) {
       return false
     }
@@ -32,11 +32,6 @@ export const ConfirmAndChangeAccountEmailWorker = ({ db }: { db: UserAccountDB }
     return true
   }
   return worker
-}
-
-export const ConfirmAndChangeAccountEmailWrkInit: T['Init'] = async () => {
-  const db = await DBReady
-  return [ConfirmAndChangeAccountEmailWorker({ db })]
 }
 
 export const changeEmailConfirm: MutationResolvers['changeEmailConfirm'] = async (

@@ -1,16 +1,15 @@
 import { aql } from 'arangojs'
 import { Maybe } from '../../../../../../lib/helpers/types'
 import { DefaultConfig } from '../../../assets/defaultConfig'
-import { UserAccountDB } from '../env'
-import { Config } from '../types'
-export const getConfig = async ({ db: { db, Config } }: { db: UserAccountDB }) => {
+import { Persistence, UserAccountConfig } from '../types'
+export const getConfig = async ({ persistence: { db, Config } }: { persistence: Persistence }) => {
   const cursor = await db.query(aql`
     FOR cfg IN ${Config}
     SORT cfg.createdAt DESC
     LIMIT 1
     RETURN cfg
   `)
-  const currentConfig: Maybe<Config> = await cursor.next()
+  const currentConfig: Maybe<UserAccountConfig> = await cursor.next()
   if (currentConfig) {
     return currentConfig
   } else {

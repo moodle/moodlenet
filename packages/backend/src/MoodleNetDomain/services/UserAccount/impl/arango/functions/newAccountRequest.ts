@@ -1,20 +1,19 @@
 import { aql } from 'arangojs'
 import { Flow } from '../../../../../../lib/domain/flow'
-import { UserAccountDB } from '../env'
-import { Messages, UserAccountRecord, UserAccountStatus } from '../types'
+import { Messages, Persistence, UserAccountRecord, UserAccountStatus } from '../types'
 import { isEmailAvailable } from './isEmailAvailable'
 export const newAccountRequest = async ({
-  db: uadb,
+  persistence,
   email,
   token,
   flow,
 }: {
-  db: UserAccountDB
+  persistence: Persistence
   email: string
   token: string
   flow: Flow
 }) => {
-  const emailAvailable = await isEmailAvailable({ email, db: uadb })
+  const emailAvailable = await isEmailAvailable({ email, db: persistence })
   if (!emailAvailable) {
     return Messages.EmailNotAvailable
   }
@@ -28,7 +27,7 @@ export const newAccountRequest = async ({
     firstActivationToken: token,
   }
 
-  const insertCursor = await uadb.db.query(aql`
+  const insertCursor = await persistence.db.query(aql`
     INSERT MERGE(
       ${document},
       { 
@@ -36,7 +35,7 @@ export const newAccountRequest = async ({
         updatedAt: DATE_NOW()
       } 
     )
-    INTO ${uadb.UserAccount}
+    INTO ${persistence.UserAccount}
     RETURN NEW
   `)
 

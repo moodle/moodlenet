@@ -2,40 +2,41 @@
 import { ExecutionResult } from 'graphql'
 import { Acks } from './misc'
 import { Leaves, LookupPath } from './path'
+import { Teardown } from './types'
 
 const DEFAULT_WRK_TIMEOUT = 3000
 
 type AnyWorker = (...args: any[]) => Promise<any>
-export type WorkerService<Worker extends AnyWorker> = [worker: Worker, teardown?: () => void]
-export type Wrk<Worker extends AnyWorker> = {
+export type WorkerService<Worker extends AnyWorker> = readonly [worker: Worker, teardown?: Teardown]
+export type WrkDef<Worker extends AnyWorker> = {
   kind: 'wrk'
-  init: WorkerInit<Worker>
   cfg?: Partial<WrkConfig>
+  __$do_not_set_me_Worker_Type_placeholder?: Worker
 }
 
-export type WrkTypes<D, Path extends WrkLeaves<D>> = {
+export type WrkTypes<D, Path extends WrkPaths<D>> = {
   Api: Path
   Worker: LookupWorker<D, Path>
-  Init: WorkerInitImpl<D, Path>
+  Init: LookupWorkerInit<D, Path>
 }
 
 export type WorkerInit<Worker extends AnyWorker> = (_: {
   cfg: WrkConfig
 }) => WorkerService<Worker> | Promise<WorkerService<Worker>>
 //export type WorkerInitImpl<D, Path extends string> = WorkerInit<LookupWorker<D, Path>>
-export type WorkerInitImpl<D, Path extends WrkLeaves<D>> = WorkerInit<LookupWorker<D, Path>>
+export type LookupWorkerInit<D, Path extends WrkPaths<D>> = WorkerInit<LookupWorker<D, Path>>
 
-export type WrkLeaves<Domain> = Leaves<Domain, Wrk<any>>
+export type WrkPaths<Domain> = Leaves<Domain, WrkDef<AnyWorker>>
 
-export type LookupWorker<Domain, Path extends string> = LookupPath<Domain, Path> extends infer MaybeWrk
-  ? MaybeWrk extends Wrk<infer Worker>
+export type LookupWorker<Domain, Path extends string> = LookupPath<Domain, Path> extends infer MaybeWrkDef
+  ? MaybeWrkDef extends WrkDef<infer Worker>
     ? Worker
     : never
   : never
 
-export type LookupWrk<Domain, Path extends string> = LookupPath<Domain, Path> extends infer MaybeWrk
-  ? MaybeWrk extends Wrk<infer Worker>
-    ? Wrk<Worker>
+export type LookupWrkDef<Domain, Path extends string> = LookupPath<Domain, Path> extends infer MaybeWrkDef
+  ? MaybeWrkDef extends WrkDef<infer Worker>
+    ? WrkDef<Worker>
     : never
   : never
 
@@ -66,12 +67,12 @@ export const defaultEnqueueConfig = (cfg?: Partial<EnqueueConfig>): EnqueueConfi
 })
 
 export type WrkConfig = {
-  parallelism: number
   rejectionAck: Acks
+  parallelism: number
 }
 export const defaultWrkConfig = (cfg?: Partial<WrkConfig>): WrkConfig => ({
-  parallelism: 10,
   rejectionAck: Acks.Reject,
+  parallelism: 10,
   ...cfg,
 })
 
@@ -107,6 +108,6 @@ type GraphQLDomainWrkResp = {
   [K in keyof Required<ExecutionResult>]: ExecutionResult[K]
 }
 
-export type GraphQLDomainWrk<Context, RootValue> = Wrk<
+export type GraphQLDomainWrk<Context, RootValue> = WrkDef<
   (_: GraphQLDomainWrkReq<Context, RootValue>) => Promise<GraphQLDomainWrkResp>
 >

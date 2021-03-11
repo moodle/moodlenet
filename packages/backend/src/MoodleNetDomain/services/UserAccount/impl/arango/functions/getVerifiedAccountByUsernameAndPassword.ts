@@ -3,16 +3,16 @@ import { UserAccountDB } from '../env'
 import { getActiveAccountByUsername } from './getActiveAccountByUsername'
 
 export const getVerifiedAccountByUsernameAndPassword = async ({
-  db,
+  persistence,
   password,
   username,
 }: {
-  db: UserAccountDB
+  persistence: UserAccountDB
   username: string
   password: string
 }) => {
   const account = await getActiveAccountByUsername({
-    db,
+    persistence,
     username,
   })
 

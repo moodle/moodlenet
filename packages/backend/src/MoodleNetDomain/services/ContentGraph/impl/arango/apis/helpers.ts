@@ -4,7 +4,6 @@ import { aqlstr } from '../../../../../../lib/helpers/arango'
 import { Id } from '../../../../UserAccount/types'
 import { EdgeType, Page, PaginationInput } from '../../../ContentGraph.graphql.gen'
 import { Types } from '../../../types.node'
-import { DBReady } from '../ContentGraph.persistence.arango.env'
 const DEFAULT_PAGE_LENGTH = 10
 const MAX_PAGE_LENGTH = 25
 

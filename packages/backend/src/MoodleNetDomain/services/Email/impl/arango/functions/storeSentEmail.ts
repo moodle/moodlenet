@@ -2,19 +2,18 @@ import { aql } from 'arangojs'
 import { Flow } from '../../../../../../lib/domain/flow'
 import { SendResult } from '../../../EmailDomain'
 import { EmailObj } from '../../../types'
-import { ArangoEmailDB } from '../env'
-import { SentEmailDocument } from '../types'
+import { Persistence, SentEmailDocument } from '../types'
 
 export const storeSentEmail = async ({
   email,
   flow,
   result,
-  db: { db, SentEmail },
+  db: { db, SentEmailCollection },
 }: {
   email: EmailObj
   flow: Flow
   result: SendResult
-  db: ArangoEmailDB
+  db: Persistence
 }) => {
   const record: Omit<SentEmailDocument, 'createdAt' | '_id'> = {
     email,
@@ -29,7 +28,7 @@ export const storeSentEmail = async ({
             createdAt: now
           }
         )
-        INTO ${SentEmail}
+        INTO ${SentEmailCollection}
         RETURN NEW
   `)
   // const doc = (await cursor.next()) as SentEmailDocument

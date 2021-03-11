@@ -1,9 +1,8 @@
 import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
-import { WorkerInitImpl } from '../../../../../../lib/domain/wrk'
+import { LookupWorkerInit } from '../../../../../../lib/domain/wrk'
 import { MoodleNetDomain } from '../../../../../MoodleNetDomain'
-import { DBReady } from '../ContentGraph.persistence.arango.env'
 
-export const getNode: WorkerInitImpl<MoodleNetDomain, 'ContentGraph.Node.ById'> = () => {
+export const getNode: LookupWorkerInit<MoodleNetDomain, 'ContentGraph.Node.ById'> = () => {
   return [
     async ({
       // ctx,

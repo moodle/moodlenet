@@ -1,4 +1,6 @@
 import { Id } from '@moodlenet/common/lib/utils/content-graph'
+import { Database } from 'arangojs'
+import { DocumentCollection } from 'arangojs/collection'
 import { WithCreated, WithFlow, WithId, WithMutable } from '../../../../../lib/helpers/types'
 import { Role } from '../../../../types'
 import { EmailTemplate } from '../../../Email/helpers'
@@ -46,7 +48,7 @@ export type ChangeEmailRequest = WithFlow &
 // $ UserAccount
 
 // ^ Config
-export type Config = WithCreated & {
+export type UserAccountConfig = WithCreated & {
   newAccountRequestEmail: EmailTemplate<NewAccountRequestEmailVars>
   changeAccountEmailRequestEmail: EmailTemplate<ChangeAccountEmailRequestEmailVars>
   tempSessionEmail: EmailTemplate<TempSessionEmailVars>
@@ -54,3 +56,9 @@ export type Config = WithCreated & {
   changeAccountEmailVerificationWaitSecs: number
 }
 // $ Config
+
+export type Persistence = {
+  db: Database
+  UserAccount: DocumentCollection<UserAccountRecord>
+  Config: DocumentCollection<UserAccountConfig>
+}

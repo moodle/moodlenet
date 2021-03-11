@@ -1,8 +1,7 @@
 import { Acks } from '../../../../../../lib/domain/misc'
-import { SubscriberInitImpl } from '../../../../../../lib/domain/sub'
 import { MoodleNetDomain } from '../../../../../MoodleNetDomain'
 
-export const glyphCreateCounter: SubscriberInitImpl<
+export const glyphCreateCounter: __LookupSubInit<
   MoodleNetDomain,
   'ContentGraph.Node.Created' | 'ContentGraph.Edge.Created'
 > = () => {

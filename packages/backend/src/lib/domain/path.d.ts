@@ -7,19 +7,19 @@ type Join<K, P> = K extends string /* | number */
     : never
   : never
 
-export type Paths<Type, LeaveType, Depth extends number = 6> = [Depth] extends [never]
-  ? never
-  : Type extends LeaveType
-  ? ''
-  : Type extends object
-  ? {
-      [K in keyof Type]-?: K extends string | number
-        ? `${K}` | Paths<Type[K], LeaveType, Prev[Depth]> extends infer R
-          ? Join<K, R>
-          : never
-        : never
-    }[keyof Type]
-  : never
+// export type Leaves<Type, LeaveType, Depth extends number = 6> = [Depth] extends [never]
+//   ? never
+//   : Type extends LeaveType
+//   ? ''
+//   : Type extends object
+//   ? {
+//       [K in keyof Type]-?: K extends string | number
+//         ? `${K}` | Leaves<Type[K], LeaveType, Prev[Depth]> extends infer R
+//           ? Join<K, R>
+//           : never
+//         : never
+//     }[keyof Type]
+//   : never
 
 export type Leaves<Type, LeaveType, Depth extends number = 6> = [Depth] extends [never]
   ? never

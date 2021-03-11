@@ -5,7 +5,7 @@ import { stitchingDirectives } from '@graphql-tools/stitching-directives'
 import { FilterRootFields } from '@graphql-tools/wrap'
 import { printSchema } from 'graphql'
 import { newFlow } from '../../lib/domain/flow'
-import { getGQLApiCallerExecutor, getGQLWrkService } from '../../lib/domain/gqlWrk'
+import { getGQLApiCallerExecutor, getGQLWrkStartInit } from '../../lib/domain/gqlWrk'
 import { WrkConfig } from '../../lib/domain/wrk'
 import { MoodleNetDomain } from '../MoodleNetDomain'
 import { getExecutionGlobalValues } from './executionContext'
@@ -58,7 +58,6 @@ export type ServiceExecutableSchemaDefinition = Omit<IExecutableSchemaDefinition
 export function initMoodleNetGQLWrkService<Name extends GQLServiceName>({
   srvName,
   executableSchemaDef,
-  cfg,
 }: {
   executableSchemaDef: ServiceExecutableSchemaDefinition
   srvName: Name
@@ -70,9 +69,8 @@ export function initMoodleNetGQLWrkService<Name extends GQLServiceName>({
   })
   // const name = MNServiceGQLApiName(srvName)
 
-  return getGQLWrkService({
+  return getGQLWrkStartInit({
     schema,
-    cfg,
   })
 }
 
