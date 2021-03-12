@@ -28,13 +28,15 @@ export type LookupWorkerInit<D, Path extends WrkPaths<D>> = WorkerInit<LookupWor
 
 export type WrkPaths<Domain> = Leaves<Domain, WrkDef<AnyWorker>>
 
-export type LookupWorker<Domain, Path extends string> = LookupPath<Domain, Path> extends infer MaybeWrkDef
+// export type LookupWorker<Domain, Path extends string> = LookupPath<Domain, Path> extends infer MaybeWrkDef
+export type LookupWorker<Domain, Path extends WrkPaths<Domain>> = LookupPath<Domain, Path> extends infer MaybeWrkDef
   ? MaybeWrkDef extends WrkDef<infer Worker>
     ? Worker
     : never
   : never
 
-export type LookupWrkDef<Domain, Path extends string> = LookupPath<Domain, Path> extends infer MaybeWrkDef
+// export type LookupWrkDef<Domain, Path extends string> = LookupPath<Domain, Path> extends infer MaybeWrkDef
+export type LookupWrkDef<Domain, Path extends WrkPaths<Domain>> = LookupPath<Domain, Path> extends infer MaybeWrkDef
   ? MaybeWrkDef extends WrkDef<infer Worker>
     ? WrkDef<Worker>
     : never

@@ -1,7 +1,14 @@
+import { Config } from 'arangojs/connection'
 import { mkdirSync } from 'fs'
 import { join } from 'path'
 import '../../../../../../../env'
 
+export const ARANGO_URL = process.env.ARANGO_URL
+export const DB_NAME = process.env.DB_NAME
+export const cfg: Config = {
+  url: ARANGO_URL,
+  databaseName: DB_NAME,
+}
 export const SUBJECTS_AMOUNT = Number(process.env.SUBJECTS_AMOUNT) || 30
 export const USERS_AMOUNT = Number(process.env.USERS_AMOUNT) || 1000
 

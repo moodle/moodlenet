@@ -51,10 +51,10 @@ export type ActivateNewAccountMutation = (
 export type UserSessionSimpleFragment = (
   { __typename: 'UserSession' }
   & Pick<Types.UserSession, 'username' | 'email' | 'accountId'>
-  & { user: (
+  & { user?: Types.Maybe<(
     { __typename: 'User' }
     & ShallowUserFragment
-  ) }
+  )> }
 );
 
 export const UserSessionSimpleFragmentDoc = gql`

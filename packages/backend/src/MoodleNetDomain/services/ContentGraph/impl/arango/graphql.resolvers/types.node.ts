@@ -2,10 +2,11 @@
 //   getStaticFilteredEdgeBasicAccessPolicy,
 //   getStaticFilteredNodeBasicAccessPolicy,
 // } from '../graphDefinition/helpers'
+import { call } from '../../../../../../lib/domain/amqp/call'
 import { MoodleNetExecutionContext } from '../../../../../types'
 import * as GQL from '../../../ContentGraph.graphql.gen'
 import { ShallowNode } from '../../../types.node'
-import { traverseEdges } from '../apis/traverseEdges'
+import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentGraphSubDomain'
 
 const _rel: GQL.ResolverFn<
   GQL.ResolversTypes['RelPage'],
@@ -19,28 +20,12 @@ const _rel: GQL.ResolverFn<
     page,
     sort,
   } = node
-  // const targetNodePolicy = getStaticFilteredNodeBasicAccessPolicy({
-  //   accessType: 'read',
-  //   nodeType: targetNodeType,
-  //   ctx,
-  // })
-  // const edgePolicy = getStaticFilteredEdgeBasicAccessPolicy({
-  //   accessType: 'read',
-  //   edgeType,
-  //   ctx,
-  // })
-  // if (!(targetNodePolicy && edgePolicy)) {
-  //   // probably not allowed (may want to split in policy lookups in 2 steps, to check if found and then if auth applies )
-  //   throw new Error(`you are not allowed to query ${edgeType}->${targetNodeType}`) //FIXME
-  // }
 
-  const pageResult = await traverseEdges({
+  const pageResult = await call<MoodleNetArangoContentGraphSubDomain>()('ContentGraph.Edge.Traverse', ctx.flow)({
     ctx,
     edgeType,
     parentNodeId: parentId,
     inverse: !!inverse,
-    // edgePolicy,
-    // targetNodePolicy,
     targetNodeType,
     page,
     sort,

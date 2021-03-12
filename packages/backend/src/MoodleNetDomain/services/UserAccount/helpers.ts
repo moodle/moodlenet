@@ -49,9 +49,8 @@ export const userAndJwtByActiveUserAccount = async ({
     ...activeUserAccount,
     ___id: makeId(NodeType.User, activeUserAccount.userId),
   })
-  const user = await call<MoodleNetDomain>()('ContentGraph.Node.ById', ctx.flow)<User>({
-    _id: activeUserAccount.userId,
-    ctx,
+  const user = await call<MoodleNetDomain>()('ContentGraph.CreateNewRegisteredUser', ctx.flow)({
+    username: activeUserAccount.username,
   })
   if (!user) {
     throw new Error(`can't find User for Account Username: ${activeUserAccount.username}`)

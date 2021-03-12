@@ -256,7 +256,7 @@ export type Query = {
 
 
 export type QueryGetSessionAccountUserArgs = {
-  userId: Scalars['ID'];
+  userId?: Maybe<Scalars['ID']>;
 };
 
 
@@ -400,7 +400,7 @@ export type Likes = IEdge & {
 
 export type UserSession = {
   __typename: 'UserSession';
-  user: User;
+  user?: Maybe<User>;
 };
 
 export type Collection = INode & IContentNode & {
@@ -897,7 +897,7 @@ export type PageEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
 };
 
 export type QueryResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  getSessionAccountUser?: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType, RequireFields<QueryGetSessionAccountUserArgs, 'userId'>>;
+  getSessionAccountUser?: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType, RequireFields<QueryGetSessionAccountUserArgs, never>>;
   globalSearch?: Resolver<ResolversTypes['SearchPage'], ParentType, ContextType, RequireFields<QueryGlobalSearchArgs, 'text'>>;
   node?: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryNodeArgs, '_id'>>;
 };
@@ -1014,7 +1014,7 @@ export type LikesResolvers<ContextType = MoodleNetExecutionContext, ParentType e
 };
 
 export type UserSessionResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['UserSession'] = ResolversParentTypes['UserSession']> = {
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

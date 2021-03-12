@@ -2,11 +2,11 @@ import Axios, { AxiosError } from 'axios'
 import { createReadStream, readdirSync, statSync } from 'fs'
 import { join } from 'path'
 import { sequencePromiseCalls } from '../../../../../../lib/helpers/misc'
-import { env, getDB } from '../ContentGraph.persistence.arango.env'
+import { getPersistence } from '../persistence'
 import { getGraph } from '../setupGraph'
-import { GEN_DIR } from './env'
+import { ARANGO_URL, cfg, DB_NAME, GEN_DIR } from './env'
 
-getDB().then(async db => {
+getPersistence({ cfg }).then(async ({ db }) => {
   const graph = await getGraph({ db })
   console.log('dropping graph...')
   await graph.drop(true)
@@ -33,7 +33,7 @@ getDB().then(async db => {
         console.log(`\n-insert ${base} in ${collection} [${(size / 1024 / 1024).toFixed(1)}MB]`)
         return Axios.request({
           method: 'POST',
-          url: `${env.url}/_db/${env.databaseName}/_api/import?type=documents&collection=${collection}`,
+          url: `${ARANGO_URL}/_db/${DB_NAME}/_api/import?type=documents&collection=${collection}`,
           maxContentLength: Infinity,
           maxBodyLength: Infinity,
           data: stream,

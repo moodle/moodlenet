@@ -1,9 +1,13 @@
 import { Config } from 'arangojs/connection'
 import { DomainSetup, DomainStart } from '../../../../../lib/domain/types'
 import { initMoodleNetGQLWrkService } from '../../../../MoodleNetGraphQL'
+import { createEdgeWorker } from './apis/createEdge'
+import { createNodeWorker } from './apis/createNode'
+import { getNodeWorker } from './apis/getNode'
+import { GlyphCreateCounterSubscriber } from './apis/glyphCreateCounters'
 import { getContentGraphResolvers } from './graphql.resolvers'
 import { MoodleNetArangoContentGraphSubDomain } from './MoodleNetArangoContentGraphSubDomain'
-import { getPersistence } from './persistence'
+import { getPersistenceWTeardown } from './persistence'
 
 export const defaultArangoContentGraphSetup: DomainSetup<MoodleNetArangoContentGraphSubDomain> = {
   'ContentGraph.Node.ById': { kind: 'wrk' },
@@ -14,33 +18,36 @@ export const defaultArangoContentGraphSetup: DomainSetup<MoodleNetArangoContentG
     kind: 'sub',
     events: ['ContentGraph.Edge.Created', 'ContentGraph.Node.Created'],
   },
+  'ContentGraph.CreateNewRegisteredUser': { kind: 'wrk' },
+  'ContentGraph.Edge.Traverse': { kind: 'wrk' },
+  'ContentGraph.GetAccountUser': { kind: 'wrk' },
+  'ContentGraph.GlobalSearch': { kind: 'wrk' },
 }
 
 export const defaultArangoContentGraphStartServices = ({ dbCfg }: { dbCfg: Config }) => {
-  const _getPersistence = () => getPersistence({ cfg: dbCfg })
+  const _getPersistence = () => getPersistenceWTeardown({ cfg: dbCfg })
   const moodleNetArangoContentGraphSubDomainStart: DomainStart<MoodleNetArangoContentGraphSubDomain> = {
     'ContentGraph.Counters.GlyphCreate': {
       init: async () => {
-        const [persistence, teardown] = await _getPersistence()
-        return [XXX({ persistence }), teardown]
+        return [GlyphCreateCounterSubscriber, () => {}]
       },
     },
     'ContentGraph.Node.Create': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
-        return [XXX({ persistence }), teardown]
+        return [createNodeWorker({ persistence }), teardown]
       },
     },
     'ContentGraph.Edge.Create': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
-        return [XXX({ persistence }), teardown]
+        return [createEdgeWorker({ persistence }), teardown]
       },
     },
     'ContentGraph.Node.ById': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
-        return [XXX({ persistence }), teardown]
+        return [getNodeWorker({ persistence }), teardown]
       },
     },
     'ContentGraph.GQL': {

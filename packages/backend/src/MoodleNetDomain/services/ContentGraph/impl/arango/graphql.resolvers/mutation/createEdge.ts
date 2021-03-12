@@ -1,51 +1,24 @@
-import { nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { call } from '../../../../../../../lib/domain/amqp/call'
-import { MoodleNetDomain } from '../../../../../../MoodleNetDomain'
 import {
   CreateEdgeMutationErrorType,
   CreateEdgeMutationSuccess,
   MutationResolvers,
 } from '../../../../ContentGraph.graphql.gen'
-import { getConnectionDef } from '../../../../graphDefinition'
 import { cantBindMessage } from '../../../../graphDefinition/strings'
 import { validateCreateEdgeInput } from '../../../../graphql/inputStaticValidation/createEdge'
-// import { getStaticFilteredEdgeBasicAccessPolicy } from '../../graphDefinition/helpers'
+import { MoodleNetArangoContentGraphSubDomain } from '../../MoodleNetArangoContentGraphSubDomain'
 import { createEdgeMutationError, fakeUnshallowEdgeForResolverReturnType } from '../helpers'
-export const createEdge: MutationResolvers['createEdge'] = async (_root, { input }, ctx /* ,
-  _info */) => {
+export const createEdge: MutationResolvers['createEdge'] = async (_root, { input }, ctx /*,  _info */) => {
   console.log('createEdge', input)
   const { edgeType, from, to } = input
   if (ctx.type === 'anon') {
-    // probably not allowed (may want to split in policy lookup in 2 steps, to check if found and then if auth applies )
     return createEdgeMutationError(CreateEdgeMutationErrorType.NotAuthorized, `Anonymous can't create`)
   }
-
-  const fromType = nodeTypeFromId(from)
-  const toType = nodeTypeFromId(to)
-
-  // const policy = getStaticFilteredEdgeBasicAccessPolicy({
-  //   accessType: 'create',
-  //   edgeType,
-  //   ctx,
-  // })
-  // if (!policy) {
-  //   // probably not allowed (may want to split in policy lookup in 2 steps, to check if found and then if auth applies )
-  //   return createEdgeMutationError(CreateEdgeMutationErrorType.NotAuthorized, 'No Policy')
-  // }
-  const connection = getConnectionDef({
-    edge: edgeType,
-    from: fromType,
-    to: toType,
-  })
-  if (!connection) {
-    return createEdgeMutationError(CreateEdgeMutationErrorType.NotAllowed, cantBindMessage({ edgeType, from, to }))
-  }
-
   const edgeInput = validateCreateEdgeInput(input)
   if (edgeInput instanceof Error) {
     return createEdgeMutationError(CreateEdgeMutationErrorType.UnexpectedInput, edgeInput.message)
   }
-  const shallowEdgeOrError = await call<MoodleNetDomain>()('ContentGraph.Edge.Create', ctx.flow)({
+  const shallowEdgeOrError = await call<MoodleNetArangoContentGraphSubDomain>()('ContentGraph.Edge.Create', ctx.flow)({
     ctx,
     data: edgeInput,
     edgeType,
@@ -53,15 +26,13 @@ export const createEdge: MutationResolvers['createEdge'] = async (_root, { input
     to,
   })
 
-  if (shallowEdgeOrError.__typename === 'CreateEdgeMutationError') {
-    return shallowEdgeOrError
+  if (typeof shallowEdgeOrError === 'string') {
+    return createEdgeMutationError(shallowEdgeOrError, cantBindMessage({ edgeType, from, to }))
   }
   const successResult: CreateEdgeMutationSuccess = {
     __typename: 'CreateEdgeMutationSuccess',
     edge: fakeUnshallowEdgeForResolverReturnType(shallowEdgeOrError),
   }
-
-  //console.log('created edge ', successResult)
 
   return successResult
 }

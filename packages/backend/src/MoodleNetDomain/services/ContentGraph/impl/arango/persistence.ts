@@ -5,20 +5,21 @@ import { Teardown } from '../../../../../lib/domain/types'
 import { getGraph } from './setupGraph'
 import { Persistence } from './types'
 
-export const getPersistence = async ({ cfg }: { cfg: Config }): Promise<[Persistence, Teardown]> => {
+export const getPersistenceWTeardown = async ({ cfg }: { cfg: Config }): Promise<[Persistence, Teardown]> => {
+  const persistence = await getPersistence({ cfg })
+  return [persistence, () => persistence.db.close()]
+}
+export const getPersistence = async ({ cfg }: { cfg: Config }): Promise<Persistence> => {
   const db = new Database(cfg)
 
   const graph = await getGraph({ db })
 
   const searchView = await setupSearchView({ db })
-  return [
-    {
-      db,
-      graph,
-      searchView,
-    },
-    () => db.close(),
-  ]
+  return {
+    db,
+    graph,
+    searchView,
+  }
 }
 
 const setupSearchView = async ({ db }: { db: Database }) => {

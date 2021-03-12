@@ -7,8 +7,12 @@ import {
   Node,
 } from '../../../ContentGraph.graphql.gen'
 
-export const fakeUnshallowNodeForResolverReturnType = <N extends Node>(shallow: Pick<N, '_id'>): N => shallow as N
-export const fakeUnshallowEdgeForResolverReturnType = <E extends Edge>(shallow: Pick<E, '_id'>): E => shallow as E
+export const fakeUnshallowNodeForResolverReturnType = <N extends Node>(
+  shallow: Pick<N, '_id'> & { __typename?: N['__typename'] },
+): N => shallow as N
+export const fakeUnshallowEdgeForResolverReturnType = <E extends Edge>(
+  shallow: Pick<E, '_id'> & { __typename?: E['__typename'] },
+): E => shallow as E
 
 export const createNodeMutationError = (
   type: CreateNodeMutationErrorType,

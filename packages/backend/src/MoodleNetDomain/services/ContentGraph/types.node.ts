@@ -1,8 +1,8 @@
 import * as GQL from './ContentGraph.graphql.gen'
 export * as Types from './ContentGraph.graphql.gen'
 
-export type ShallowNode<N extends GQL.Node = GQL.Node> = N //Omit<N, '_rel'>
-export type ShallowEdge<E extends GQL.Edge = GQL.Edge> = E //Omit<E, '___ nothing to omit ___'>
+export type ShallowNode<N extends GQL.Node = GQL.Node> = Omit<N, '_rel'>
+export type ShallowEdge<E extends GQL.Edge = GQL.Edge> = Omit<E, '___ nothing to omit ___'>
 
 export type NodeByType<T extends GQL.NodeType> = GQL.ResolversParentTypes[T]
 export type EdgeByType<T extends GQL.EdgeType> = GQL.ResolversParentTypes[T]

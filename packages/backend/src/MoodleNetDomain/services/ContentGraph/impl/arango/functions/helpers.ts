@@ -4,6 +4,7 @@ import { aqlstr } from '../../../../../../lib/helpers/arango'
 import { Id } from '../../../../UserAccount/types'
 import { EdgeType, Page, PaginationInput } from '../../../ContentGraph.graphql.gen'
 import { Types } from '../../../types.node'
+import { Persistence } from '../types'
 const DEFAULT_PAGE_LENGTH = 10
 const MAX_PAGE_LENGTH = 25
 
@@ -13,8 +14,10 @@ export const cursorPaginatedQuery = async <P extends Page>({
   mapQuery,
   pageEdgeTypename,
   pageTypename,
+  persistence: { db },
   inverseSort = false,
 }: {
+  persistence: Persistence
   page: Maybe<PaginationInput>
   cursorProp: string
   inverseSort?: boolean
@@ -23,8 +26,6 @@ export const cursorPaginatedQuery = async <P extends Page>({
   pageTypename: P['__typename']
   pageEdgeTypename: P['edges'][number]['__typename']
 }): Promise<P> => {
-  const { db } = await DBReady()
-
   const { after, first, last, before } = {
     ...page,
     last: page?.last ?? 0,
@@ -127,17 +128,18 @@ export const updateNodeMetaString = ({}: {}) => `{
 `
 
 export const updateRelationCountQuery = async ({
+  persistence: { db },
   edgeType,
   nodeId,
   side,
   amount,
 }: {
+  persistence: Persistence
   edgeType: EdgeType
   nodeId: Id
   side: 'i' | 'o' //FIXME: use GQL Type
   amount: number
 }) => {
-  const { db } = await DBReady()
   const { nodeType } = parseNodeId(nodeId)
   const q = `
     LET v = Document( ${aqlstr(nodeId)} )
@@ -168,19 +170,21 @@ export const mergeNodeMeta = ({ mergeMeta, nodeProp }: { mergeMeta: string; node
   `MERGE_RECURSIVE(${nodeProp},{ ${NODE_META_PROP}: ${mergeMeta} })`
 
 export const updateRelationCountsOnEdgeLife = async ({
+  persistence,
   life,
   edgeType,
   from,
   to,
 }: {
+  persistence: Persistence
   life: 'create' | 'delete'
   from: Id
   to: Id
   edgeType: EdgeType
 }) => {
   const amount = life === 'create' ? 1 : -1
-  const qout = updateRelationCountQuery({ edgeType, nodeId: from, side: 'o', amount })
-  const qin = updateRelationCountQuery({ edgeType, nodeId: to, side: 'i', amount })
+  const qout = updateRelationCountQuery({ persistence, edgeType, nodeId: from, side: 'o', amount })
+  const qin = updateRelationCountQuery({ persistence, edgeType, nodeId: to, side: 'i', amount })
   return Promise.all([qin, qout])
 }
 

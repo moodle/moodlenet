@@ -302,7 +302,7 @@ export type Query = {
 
 
 export type QueryGetSessionAccountUserArgs = {
-  userId: Scalars['ID'];
+  userId?: Maybe<Scalars['ID']>;
 };
 
 
@@ -449,7 +449,7 @@ export type UserSession = {
   accountId: Scalars['String'];
   changeEmailRequest?: Maybe<Scalars['String']>;
   email: Scalars['String'];
-  user: User;
+  user?: Maybe<User>;
   userId?: Maybe<Scalars['ID']>;
   username: Scalars['String'];
 };
