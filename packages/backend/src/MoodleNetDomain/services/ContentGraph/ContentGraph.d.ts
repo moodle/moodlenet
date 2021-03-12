@@ -17,4 +17,5 @@ export type ContentGraph = {
       }) => Promise<ShallowNode<N> | null>
     >
   }
+  CreateNewRegisteredUser: WrkDef<(_: { username: string }) => Promise<>>
 }

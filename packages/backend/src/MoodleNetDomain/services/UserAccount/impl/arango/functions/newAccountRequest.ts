@@ -13,7 +13,7 @@ export const newAccountRequest = async ({
   token: string
   flow: Flow
 }) => {
-  const emailAvailable = await isEmailAvailable({ email, db: persistence })
+  const emailAvailable = await isEmailAvailable({ email, persistence })
   if (!emailAvailable) {
     return Messages.EmailNotAvailable
   }

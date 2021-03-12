@@ -1,67 +1,58 @@
 import { call } from '../../../../../../lib/domain/amqp/call'
-import { WrkTypes } from '../../../../../../lib/domain/wrk'
+import { LookupWorker } from '../../../../../../lib/domain/wrk'
 import { throwLoggedUserOnly } from '../../../../../MoodleNetGraphQL'
-import { getSimpleResponse, hashPassword } from '../../../helpers'
+import { hashPassword } from '../../../helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
 import { changeAccountPassword } from '../functions/changePassword'
 import { getVerifiedAccountByUsernameAndPassword } from '../functions/getVerifiedAccountByUsernameAndPassword'
 import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
 import { Messages, Persistence } from '../types'
 
-export type ChangePasswordPersistence = (_: {
-  currentPassword: string
-  newPassword: string
-  accountId: string
-}) => Promise<null | Messages.NotFound>
+export const ChangePasswordWorker = ({
+  persistence,
+}: {
+  persistence: Persistence
+}): LookupWorker<MoodleNetArangoUserAccountSubDomain, 'UserAccount.ChangePassword'> => async ({
+  newPassword,
+  username,
+  currentPassword,
+}) => {
+  const account = await getVerifiedAccountByUsernameAndPassword({
+    persistence,
+    username,
+    password: currentPassword,
+  })
 
-export type T = WrkTypes<MoodleNetArangoUserAccountSubDomain, 'UserAccount.ChangePassword'>
-
-export const ChangePasswordWorker = ({ persistence }: { persistence: Persistence }) => {
-  const worker: T['Worker'] = async ({ newPassword, username, currentPassword }) => {
-    const account = await getVerifiedAccountByUsernameAndPassword({
-      persistence,
-      username,
-      password: currentPassword,
-    })
-
-    if (!account) {
-      return { success: false, reason: 'not found or wrong password' }
-    }
-
-    const currentPasswordHash = await hashPassword({ pwd: currentPassword })
-    const newPasswordHash = await hashPassword({ pwd: newPassword })
-
-    const changePwdError = await changeAccountPassword({
-      persistence,
-      accountId: account._id,
-      currentPassword: currentPasswordHash,
-      newPassword: newPasswordHash,
-    })
-    if (changePwdError) {
-      return { success: false, reason: changePwdError }
-    } else {
-      return { success: true }
-    }
+  if (!account) {
+    return Messages.NotFound
   }
-  return worker
+
+  const currentPasswordHash = await hashPassword({ pwd: currentPassword })
+  const newPasswordHash = await hashPassword({ pwd: newPassword })
+
+  return changeAccountPassword({
+    persistence,
+    accountId: account._id,
+    currentPassword: currentPasswordHash,
+    newPassword: newPasswordHash,
+  })
 }
 
 export const changePassword: MutationResolvers['changePassword'] = async (
   _parent,
-  { newPassword, currentPassword },
+  { currentPassword, newPassword },
   context,
 ) => {
   const { username } = throwLoggedUserOnly({ context })
-
-  const res = await call<MoodleNetArangoUserAccountSubDomain>()('UserAccount.ChangePassword', context.flow)({
-    newPassword,
+  const result = await call<MoodleNetArangoUserAccountSubDomain>()('UserAccount.ChangePassword', context.flow)({
     currentPassword,
+    newPassword,
     username,
   })
 
-  if (!res.success) {
-    return getSimpleResponse({ message: res.reason })
+  if (result !== null) {
+    return { __typename: 'SimpleResponse', success: false, message: 'not found or wrong password' }
   } else {
-    return getSimpleResponse({ success: true })
+    return { __typename: 'SimpleResponse', success: true, message: null }
   }
 }

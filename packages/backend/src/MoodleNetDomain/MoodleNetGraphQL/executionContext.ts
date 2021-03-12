@@ -8,11 +8,21 @@ import { graphQLRequestFlow } from './schemaHelpers'
 import { MoodleNetExecutionContext, RootValue } from './types'
 
 export function throwLoggedUserOnly(_: { context: MoodleNetExecutionContext }): MoodleNetExecutionContext<'session'> {
-  const { context } = _
-  if (context.type !== 'session') {
+  const mSessionContext = getSessionContext(_)
+  if (!mSessionContext) {
     throw new GraphQLError('Logged in users only')
   }
-  return context
+  return mSessionContext
+}
+
+export function getSessionContext(_: {
+  context: MoodleNetExecutionContext
+}): MoodleNetExecutionContext<'session'> | null {
+  const { context } = _
+  if (context.type === 'session') {
+    return context
+  }
+  return null
 }
 
 export function getExecutionGlobalValues(

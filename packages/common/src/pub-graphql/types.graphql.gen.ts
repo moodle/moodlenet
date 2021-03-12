@@ -21,7 +21,7 @@ export type Scalars = {
 
 export type Mutation = {
   __typename: 'Mutation';
-  activateAccount: CreateSession;
+  activateAccount: ActivateNewAccountResponse;
   changeEmailConfirm: Scalars['Boolean'];
   changeEmailRequest: SimpleResponse;
   changePassword: SimpleResponse;
@@ -450,7 +450,7 @@ export type UserSession = {
   changeEmailRequest?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   user: User;
-  userId: Scalars['ID'];
+  userId?: Maybe<Scalars['ID']>;
   username: Scalars['String'];
 };
 
@@ -584,6 +584,12 @@ export type CreateUserInput = {
 export type SimpleResponse = {
   __typename: 'SimpleResponse';
   success: Scalars['Boolean'];
+  message?: Maybe<Scalars['String']>;
+};
+
+export type ActivateNewAccountResponse = {
+  __typename: 'ActivateNewAccountResponse';
+  session?: Maybe<UserSession>;
   message?: Maybe<Scalars['String']>;
 };
 

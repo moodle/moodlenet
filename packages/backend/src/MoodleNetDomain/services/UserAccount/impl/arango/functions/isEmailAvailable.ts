@@ -1,9 +1,8 @@
 import { aql } from 'arangojs'
 import { Maybe } from '../../../../../../lib/helpers/types'
-import { UserAccountDB } from '../env'
-import { UserAccountRecord } from '../types'
+import { Persistence, UserAccountRecord } from '../types'
 
-export const isEmailAvailable = async ({ email, db: { db } }: { db: UserAccountDB; email: string }) => {
+export const isEmailAvailable = async ({ email, persistence: { db } }: { persistence: Persistence; email: string }) => {
   const cursor = await db.query(aql`
     FOR userAccount IN UserAccount
     FILTER userAccount.email == ${email}

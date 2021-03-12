@@ -1,8 +1,7 @@
-import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { aql } from 'arangojs'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { Role } from '../../../../../types'
-import { ActivationMessage, ActiveUserAccount, Messages, Persistence, UserAccountStatus } from '../types'
+import { ActiveUserAccount, Messages, Persistence, UserAccountStatus } from '../types'
 import { isUsernameAvailable } from './isUsernameAvailable'
 
 export const activateNewAccount = async ({
@@ -10,22 +9,21 @@ export const activateNewAccount = async ({
   token,
   password,
   username,
-  userId,
 }: {
   persistence: Persistence
   token: string
   username: string
   password: string
-  userId: Id
 }) => {
+  const { db, UserAccount } = persistence
   const usernameAvailable = await isUsernameAvailable({ username, persistence })
 
   if (!usernameAvailable) {
-    return Messages.UsernameNotAvailable as ActivationMessage
+    return Messages.UsernameNotAvailable
   }
 
-  const cursor = await persistence.db.query(aql`
-    FOR userAccount IN UserAccount
+  const cursor = await db.query(aql`
+    FOR userAccount IN ${UserAccount}
     FILTER userAccount.firstActivationToken == ${token}
     LIMIT 1
     UPDATE userAccount WITH {
@@ -35,16 +33,15 @@ export const activateNewAccount = async ({
       status: ${UserAccountStatus.Active},
       changeEmailRequest: null,
       role: ${Role.User},
-      userId: ${userId}
-    } IN UserAccount
+    } IN ${UserAccount}
     RETURN NEW
   `)
 
-  const newAccountDoc: Maybe<ActiveUserAccount> = await cursor.next()
+  const mNewActiveUserAccount: Maybe<ActiveUserAccount> = await cursor.next()
 
-  if (!newAccountDoc) {
-    return Messages.NotFound as ActivationMessage
+  if (!mNewActiveUserAccount) {
+    return Messages.NotFound
   }
 
-  return newAccountDoc as ActiveUserAccount
+  return mNewActiveUserAccount
 }

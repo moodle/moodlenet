@@ -17,7 +17,7 @@ export const changeAccountEmailRequest = async ({
   newEmail: string
 }) => {
   const { UserAccount, db } = persistence
-  const emailAvailable = await isEmailAvailable({ email: newEmail, db: persistence })
+  const emailAvailable = await isEmailAvailable({ email: newEmail, persistence })
   if (!emailAvailable) {
     return Messages.EmailNotAvailable
   }

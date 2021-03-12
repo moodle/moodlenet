@@ -1,14 +1,13 @@
 import { aql } from 'arangojs'
 import { Maybe } from '../../../../../../lib/helpers/types'
-import { UserAccountDB } from '../env'
-import { ActiveUserAccount, UserAccountStatus } from '../types'
+import { ActiveUserAccount, Persistence, UserAccountStatus } from '../types'
 
 export const getActiveAccountByUsername = async ({
   username,
   persistence: { UserAccount, db },
 }: {
   username: string
-  persistence: UserAccountDB
+  persistence: Persistence
 }) => {
   const cursor = await db.query(aql`
     FOR userAccount IN ${UserAccount}

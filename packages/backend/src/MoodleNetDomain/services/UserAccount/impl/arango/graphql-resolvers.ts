@@ -26,5 +26,6 @@ export const userAccountGraphQLResolvers: Resolvers = {
   DateTime: {} as any,
   Empty: {} as any,
   Never: {} as any,
+  ActivateNewAccountResponse: {} as any,
   CreateSession: {} as any,
 }

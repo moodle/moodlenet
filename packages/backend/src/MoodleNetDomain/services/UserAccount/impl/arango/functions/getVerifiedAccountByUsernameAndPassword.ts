@@ -1,5 +1,5 @@
 import { verifyPassword } from '../../../helpers'
-import { UserAccountDB } from '../env'
+import { Persistence } from '../types'
 import { getActiveAccountByUsername } from './getActiveAccountByUsername'
 
 export const getVerifiedAccountByUsernameAndPassword = async ({
@@ -7,7 +7,7 @@ export const getVerifiedAccountByUsernameAndPassword = async ({
   password,
   username,
 }: {
-  persistence: UserAccountDB
+  persistence: Persistence
   username: string
   password: string
 }) => {

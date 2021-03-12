@@ -4,10 +4,8 @@ import { SubDomain } from '../../../../../lib/domain/types'
 import { WrkDef } from '../../../../../lib/domain/wrk'
 import { MoodleNetDomain } from '../../../../MoodleNetDomain'
 import { MoodleNetExecutionContext } from '../../../../MoodleNetGraphQL'
-import { User } from '../../../ContentGraph/ContentGraph.graphql.gen'
-import { ShallowNode } from '../../../ContentGraph/types.node'
 import { UserSession } from '../../UserAccount.graphql.gen'
-import { ActivationMessage, ActiveUserAccount } from './types'
+import { ActivationMessage, Messages } from './types'
 
 export type MoodleNetArangoUserAccountSubDomain = SubDomain<
   MoodleNetDomain,
@@ -24,7 +22,7 @@ export type MoodleNetArangoUserAccountSubDomain = SubDomain<
           password: string
           username: string
           flow: Flow
-        }) => Promise<ActivationMessage | { account: ActiveUserAccount; user: ShallowNode<User> }>
+        }) => Promise<ActivationMessage | UserSession>
       >
       NewAccountActivated: Event<{
         accountId: string
@@ -52,11 +50,7 @@ export type MoodleNetArangoUserAccountSubDomain = SubDomain<
     }
 
     ChangePassword: WrkDef<
-      (_: {
-        username: string
-        currentPassword: string
-        newPassword: string
-      }) => Promise<{ success: true } | { success: false; reason: string }>
+      (_: { username: string; currentPassword: string; newPassword: string }) => Promise<Messages.NotFound | null>
     >
 
     Session: {

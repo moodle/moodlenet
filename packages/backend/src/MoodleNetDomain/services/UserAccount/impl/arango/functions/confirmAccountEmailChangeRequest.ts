@@ -1,14 +1,13 @@
 import { aql } from 'arangojs'
 import { Maybe } from '../../../../../../lib/helpers/types'
-import { UserAccountDB } from '../env'
-import { Messages, UserAccountRecord } from '../types'
+import { Messages, Persistence, UserAccountRecord } from '../types'
 
 export const confirmAccountEmailChangeRequest = async ({
   token,
-  db: { UserAccount, db },
+  persistence: { UserAccount, db },
 }: {
   token: string
-  db: UserAccountDB
+  persistence: Persistence
 }) => {
   const cursor = await db.query(aql`
     FOR userAccount IN ${UserAccount}
