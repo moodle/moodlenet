@@ -7,5 +7,5 @@ import { ShallowNode } from './types.node'
 export type ContentGraph = {
   GQL: GraphQLApi
   CreateNewRegisteredUser: WrkDef<(_: { username: string }) => Promise<ShallowNode<User>>>
-  GetAccountUser: WrkDef<(_: { userId: Id }) => Promise<ShallowNode<User>>>
+  GetAccountUser: WrkDef<(_: { userId: Id }) => Promise<ShallowNode<User> | null>>
 }

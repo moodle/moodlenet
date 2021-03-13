@@ -26,10 +26,11 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
   {
     Node: {
       ById: WrkDef<
-        <Type extends GQL.Node = GQL.Node>(_: {
-          _id: Id
+        <Type extends GQL.NodeType = GQL.NodeType>(_: {
+          _key: IdKey
+          nodeType: Type
           ctx: MoodleNetExecutionContext
-        }) => Promise<ShallowNode<Type> | null>
+        }) => Promise<ShallowNodeByType<Type> | null>
       >
       Create: WrkDef<
         <Type extends GQL.NodeType>(_: {

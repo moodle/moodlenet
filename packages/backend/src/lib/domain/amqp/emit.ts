@@ -3,7 +3,8 @@
 import { EventPaths, LookupEventType } from '../event'
 import { Flow /* , newFlow */ } from '../flow'
 import { publishError } from '../misc'
-import { DEFAULT_DOMAIN_NAME, getDomainExchangeName, getMachineChannel, json2Buffer, routingKeyFor } from './helpers'
+import { DEFAULT_DOMAIN_NAME } from './env'
+import { getDomainExchangeName, getMachineChannel, json2Buffer, routingKeyFor } from './helpers'
 
 export const emit = <D>(domainName = DEFAULT_DOMAIN_NAME) => <EventPath extends EventPaths<D>>(
   path: EventPath,

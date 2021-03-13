@@ -20,9 +20,7 @@ export type WrkTypes<D, Path extends WrkPaths<D>> = {
   Init: LookupWorkerInit<D, Path>
 }
 
-export type WorkerInit<Worker extends AnyWorker> = (_: {
-  cfg: WrkConfig
-}) => WorkerService<Worker> | Promise<WorkerService<Worker>>
+export type WorkerInit<Worker extends AnyWorker> = (_: { cfg: WrkConfig }) => Promise<WorkerService<Worker>>
 //export type WorkerInitImpl<D, Path extends string> = WorkerInit<LookupWorker<D, Path>>
 export type LookupWorkerInit<D, Path extends WrkPaths<D>> = WorkerInit<LookupWorker<D, Path>>
 
@@ -50,21 +48,17 @@ export type LookupWrkDef<Domain, Path extends WrkPaths<Domain>> = LookupPath<Dom
 //
 // Configs
 export type CallConfig = {
-  rejectionAck: Acks
   timeout: number
 }
 export const defaultCallConfig = (cfg?: Partial<CallConfig>): CallConfig => ({
-  rejectionAck: Acks.Reject,
   timeout: DEFAULT_WRK_TIMEOUT,
   ...cfg,
 })
 
 export type EnqueueConfig = {
-  rejectionAck: Acks
   delayDeliverSecs?: number
 }
 export const defaultEnqueueConfig = (cfg?: Partial<EnqueueConfig>): EnqueueConfig => ({
-  rejectionAck: Acks.Requeue,
   ...cfg,
 })
 
@@ -92,8 +86,8 @@ export const getTimeoutError = (_: WrkTimeoutError) => _[WRK_TIMEOUT_ERROR_TAG]
 
 //Reply
 export type WrkReplyError = { ___WRK_REPLY_ERROR: string }
-export const wrkReplyError = (msg: any): WrkReplyError => ({
-  ___WRK_REPLY_ERROR: String(msg),
+export const wrkReplyError = ({ err, wrk }: { wrk: string; err: any }): WrkReplyError => ({
+  ___WRK_REPLY_ERROR: `${wrk}: ${err}`,
 })
 export const isReplyError = (_: any): _ is WrkReplyError => !!_ && typeof _ === 'object' && '___WRK_REPLY_ERROR' in _
 export const getReplyError = (_: WrkReplyError) => _.___WRK_REPLY_ERROR

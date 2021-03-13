@@ -36,7 +36,7 @@ export function getGQLWrkStartInit<C, R>({
 }: {
   schema: GraphQLSchema | Promise<GraphQLSchema>
 }): WorkerInit<GQLWorker<C, R>> {
-  return () => [
+  return async () => [
     async (req: any) => {
       // console.log(`getGQLWrkService#req`, req)
       const { query, root, context, variables } = req

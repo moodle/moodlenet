@@ -3,8 +3,8 @@
 import { Flow /* , newFlow */ } from '../flow'
 import { publishError } from '../misc'
 import { defaultEnqueueConfig, EnqueueConfig, LookupWorker, WrkPaths } from '../wrk'
+import { DEFAULT_DOMAIN_NAME } from './env'
 import {
-  DEFAULT_DOMAIN_NAME,
   getDomainDelayExchangeName,
   getDomainExchangeName,
   getMachineChannel,

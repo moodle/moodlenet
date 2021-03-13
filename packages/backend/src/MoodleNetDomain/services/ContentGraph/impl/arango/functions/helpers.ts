@@ -63,7 +63,7 @@ export const cursorPaginatedQuery = async <P extends Page>({
       `)
         : null
 
-      console.log(q)
+      // console.log(q)
       return q ? db.query(q).then(cursor => cursor.all()) : []
     }),
   ).then(([afterEdges, beforeEdges]) => makePage<P>({ afterEdges, beforeEdges, pageEdgeTypename, pageTypename }))

@@ -1,17 +1,18 @@
-import { Id, parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
+import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import * as GQL from '../../../ContentGraph.graphql.gen'
-import { ShallowNode } from '../../../types.node'
+import { ShallowNodeByType } from '../../../types.node'
 import { Persistence } from '../types'
 
-export const getNode = async <Type extends GQL.Node = GQL.Node>({
+export const getNode = async <Type extends GQL.NodeType = GQL.NodeType>({
   persistence: { graph },
-  _id,
+  nodeType,
+  _key,
 }: {
   persistence: Persistence
-  _id: Id
+  _key: IdKey
+  nodeType: Type
 }) => {
-  const { nodeType, _key } = parseNodeId(_id)
   const collection = graph.vertexCollection(nodeType)
-  const node = await collection.vertex({ _key })
-  return node as ShallowNode<Type> | null
+  const node = await collection.vertex({ _key }).catch(() => null)
+  return node as ShallowNodeByType<Type> | null
 }

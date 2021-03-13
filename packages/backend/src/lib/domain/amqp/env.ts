@@ -22,3 +22,5 @@ export const env = Validator.validateSync({
 export const getConnection = memoize(
   async ({ domainName }: { domainName: string }) => [await amqp.connect(env.amqpUrl), domainName] as const,
 )
+
+export const DEFAULT_DOMAIN_NAME = process.env.DEFAULT_DOMAIN_NAME || 'DEFAULT'

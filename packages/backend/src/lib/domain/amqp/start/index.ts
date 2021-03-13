@@ -2,7 +2,8 @@
 import { SubDef, SubscriberService } from '../../sub'
 import { DomainStart, DomainStartSub, DomainStartWrk } from '../../types'
 import { defaultWrkConfig, WorkerService, WrkDef } from '../../wrk'
-import { DEFAULT_DOMAIN_NAME, getRegisteredImpl } from '../helpers'
+import { DEFAULT_DOMAIN_NAME } from '../env'
+import { getRegisteredImpl } from '../helpers'
 import { bindSubscriber } from './bindSubscriber'
 import { bindWorker } from './bindWorker'
 
@@ -17,31 +18,34 @@ type RunningServices = Record<
 const runningDomains: Record<string, RunningServices> = {}
 
 export const start = async (domainStart: DomainStart<any>, domainName = DEFAULT_DOMAIN_NAME) => {
+  console.log(`\n\n start ${domainName}\n`)
   const impl = getRegisteredImpl(domainName)
   if (!impl) {
     throw new Error(`no impl:'${domainName}' registered !`)
   }
   const thisRunningDomain = runningDomains[domainName] || (runningDomains[domainName] = {})
-  await Promise.all(
-    Object.keys(domainStart).map(async path => {
-      console.log(`starting ${path} worker`)
+  await Object.keys(domainStart).reduce<Promise<void>>(
+    (last, path) =>
+      last.then(async () => {
+        console.log(`starting ${path} worker`)
 
-      const def = impl[path] as WrkDef<any> | SubDef<any, any> | undefined
-      const start = domainStart[path]!
+        const def = impl[path] as WrkDef<any> | SubDef<any, any> | undefined
+        const start = domainStart[path]!
 
-      if (!def) {
-        throw new Error(`impl[${path}] not implemented !`)
-      }
+        if (!def) {
+          throw new Error(`impl[${path}] not implemented !`)
+        }
 
-      const { unbind, srv } = await bind(domainName, path, def, start)
-      thisRunningDomain[path] = {
-        item: def,
-        srv,
-        unbind,
-      }
-      console.log(`* ${path} started`)
-      return thisRunningDomain[path]
-    }),
+        const { unbind, srv } = await bind(domainName, path, def, start)
+        thisRunningDomain[path] = {
+          item: def,
+          srv,
+          unbind,
+        }
+        console.log(`* ${path} started\n`)
+        // return thisRunningDomain[path]
+      }),
+    Promise.resolve(),
   )
 }
 
@@ -53,16 +57,18 @@ const bind = async (
 ) => {
   const cfg = defaultWrkConfig(def.cfg)
   if (def.kind === 'wrk') {
-    const srv = await start.init({ cfg })
+    const srv = await start.init({ cfg }).catch(manageInit(path, domainName))
     const unbind = await bindWorker(domainName, srv, path, cfg)
     return { unbind, srv }
   } else if (def.kind === 'sub') {
-    const srv = await start.init({ cfg })
-    const unbind = (
-      await Promise.all([...new Set(def.events)].map(srcTopic => bindSubscriber(domainName, srv, srcTopic, path, cfg)))
-    ).reduce((composed, unbind) => () => (composed(), unbind()))
+    const srv = await start.init({ cfg }).catch(manageInit(path, domainName))
+    const unbind = await bindSubscriber(domainName, srv, path, cfg)
     return { unbind, srv }
   } else {
     throw new Error(`can't digest start item kind: ${((def || {}) as any).kind}`)
   }
+}
+const manageInit = (path: string, domainName: string) => (err: any) => {
+  console.error(`Error initializing ${domainName}#${path}`)
+  throw err
 }

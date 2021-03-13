@@ -1,4 +1,3 @@
-import { makeId, NodeType } from '@moodlenet/common/lib/utils/content-graph'
 import Argon from 'argon2'
 import { call } from '../../../lib/domain/amqp/call'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
@@ -45,15 +44,22 @@ export const userAndJwtByActiveUserAccount = async ({
   activeUserAccount: ActiveUserAccount
   ctx: MoodleNetExecutionContext
 }) => {
-  console.log(`*************\n*************\n*************\n*************\n*************\nContentGraph.Node.ById`, {
-    ...activeUserAccount,
-    ___id: makeId(NodeType.User, activeUserAccount.userId),
+  // console.log(
+  //   `*************\n*************\n*************\n*************\n*************\n userAndJwtByActiveUserAccount`,
+  //   {
+  //     ...activeUserAccount,
+  //     ___id: activeUserAccount.userId,
+  //   },
+  // )
+  const user = await call<MoodleNetDomain>()('ContentGraph.GetAccountUser', ctx.flow)({
+    userId: activeUserAccount.userId,
   })
-  const user = await call<MoodleNetDomain>()('ContentGraph.CreateNewRegisteredUser', ctx.flow)({
-    username: activeUserAccount.username,
-  })
+  // console.log(
+  //   `*************\n*************\n*************\n*************\n*************\n userAndJwtByActiveUserAccount->ContentGraph.Node.ById`,
+  //   user,
+  // )
   if (!user) {
-    throw new Error(`can't find User for Account Username: ${activeUserAccount.username}`)
+    throw new Error(`can't find User for Account  userId:${activeUserAccount.userId} `)
   }
   const jwt = await jwtByActiveUserAccountAndUser({
     activeUserAccount,

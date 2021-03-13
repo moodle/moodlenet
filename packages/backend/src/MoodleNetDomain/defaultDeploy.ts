@@ -50,7 +50,7 @@ export const startDefaultMoodlenet = async ({
     ...defaultArangoUserAccountStartServices({
       dbCfg: {
         ...baseDbCfg,
-        databaseName: 'UserAccount',
+        databaseName: 'Account',
       },
     }),
   }

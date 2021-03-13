@@ -27,9 +27,10 @@ export const bindWorker = async (domainName: string, wrkSrv: WorkerService<any>,
         } else {
           channel.ack(msg)
         }
-        return wrkReplyError(err)
+        return wrkReplyError({ err, wrk: topic })
       })
       .then((replyWith: any) => {
+        channel.ack(msg)
         const replyQ = msg.properties.replyTo
         if (replyQ) {
           channel.sendToQueue(replyQ, json2Buffer(replyWith), {

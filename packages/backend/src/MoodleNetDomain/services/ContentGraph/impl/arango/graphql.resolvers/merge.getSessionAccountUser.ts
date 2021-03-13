@@ -1,5 +1,5 @@
 import { call } from '../../../../../../lib/domain/amqp/call'
-import { QueryResolvers, User } from '../../../ContentGraph.graphql.gen'
+import { NodeType, QueryResolvers, User } from '../../../ContentGraph.graphql.gen'
 import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentGraphSubDomain'
 import { fakeUnshallowNodeForResolverReturnType } from './helpers'
 export const getSessionAccountUser: QueryResolvers['getSessionAccountUser'] = async (
@@ -13,7 +13,10 @@ export const getSessionAccountUser: QueryResolvers['getSessionAccountUser'] = as
       user: null,
     }
   }
-  const shallowUser = await call<MoodleNetArangoContentGraphSubDomain>()('ContentGraph.Node.ById', ctx.flow)<User>({
+  const shallowUser = await call<MoodleNetArangoContentGraphSubDomain>()(
+    'ContentGraph.Node.ById',
+    ctx.flow,
+  )<NodeType.User>({
     _id: userId,
     ctx,
   })

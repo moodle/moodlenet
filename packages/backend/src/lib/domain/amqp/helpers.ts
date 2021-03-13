@@ -5,7 +5,6 @@ import { Flow } from '../flow'
 import { DomainSetup } from '../types'
 import { getConnection, machineId } from './env'
 
-export const DEFAULT_DOMAIN_NAME = 'MoodleNet'
 export const json2Buffer = <T>(json: T) => Buffer.from(JSON.stringify(json))
 export const buffer2Json = <T>(buf: Buffer): T => JSON.parse(buf.toString('utf-8'))
 
@@ -42,7 +41,7 @@ export const getMachineChannel = memoize(async (domainName: string) => {
 })
 
 export const downStream = memoize(async (domainName: string) => {
-  const downstreamQName = `MachineDownStreamQueue:${machineId}`
+  const downstreamQName = `${domainName}:MachineDownStreamQueue:${machineId}`
   const downStreamEmitter = new EventEmitter()
 
   const machineChannel = await getMachineChannel(domainName)
@@ -93,9 +92,7 @@ export const delayedTopology = memoize(async (domainName: string) => {
   const machineChannel = await getMachineChannel(domainName)
 
   await machineChannel.assertQueue(delayedQName, {
-    durable: false,
-    exclusive: true,
-    autoDelete: true,
+    durable: true,
   })
 
   await machineChannel.assertExchange(delayedExchangeName, 'fanout', { durable: true })
@@ -108,16 +105,15 @@ export const mainSetup = async ({ domainName }: { domainName: string }) => {
   await channel.assertExchange(domainExchange, 'topic', { durable: true })
 }
 
-export const getDomainExchangeName = ({ domainName }: { domainName: string }) => `${domainName}.Exchange`
+export const getDomainExchangeName = ({ domainName }: { domainName: string }) => `${domainName}.MainExchange`
 export const getDomainDelayExchangeName = ({ domainName }: { domainName: string }) =>
-  `${getDomainDelayExchangeAndQueuePrefix({ domainName })}EXCHANGE`
+  `${getDomainDelayExchangeAndQueuePrefix({ domainName })}Exchange`
 export const getDomainDelayQueueName = ({ domainName }: { domainName: string }) =>
-  `${getDomainDelayExchangeAndQueuePrefix({ domainName })}QUEUE`
-export const getDomainDelayExchangeAndQueuePrefix = ({ domainName }: { domainName: string }) =>
-  `${domainName}:SERVICE_DELAY_`
+  `${getDomainDelayExchangeAndQueuePrefix({ domainName })}Queue`
+export const getDomainDelayExchangeAndQueuePrefix = ({ domainName }: { domainName: string }) => `${domainName}:Delay`
 export const getWorkerQName = ({ domainName, topic }: { domainName: string; topic: string }) =>
-  `WORKER_QUEUE:${domainName}:${topic}`
+  `${domainName}:${topic}:WorkerQueue`
 export const getSubscriberQName = ({ domainName, topic }: { domainName: string; topic: string }) =>
-  `SUBSCRIBER_QUEUE:${domainName}:${topic}`
+  `${domainName}:${topic}:SubscriberQueue`
 
 export const routingKeyFor = (path: string, [route, id]: Flow) => `${path}.${route}.${id}`

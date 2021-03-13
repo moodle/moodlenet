@@ -38,7 +38,7 @@ export const globalSearch = async ({
         node: ${aqlMergeTypenameById('node')}
       }
     `
-  console.log(query)
+  // console.log(query)
   const cursor = await db.query(query)
   const results = (await cursor.all()).map((edge, i) => {
     return {

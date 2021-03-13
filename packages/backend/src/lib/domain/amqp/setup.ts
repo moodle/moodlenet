@@ -4,8 +4,8 @@
 import { SubDef } from '../sub'
 import { DomainSetup } from '../types'
 import { WrkDef } from '../wrk'
+import { DEFAULT_DOMAIN_NAME } from './env'
 import {
-  DEFAULT_DOMAIN_NAME,
   delayedTopology,
   downStream,
   getDomainExchangeName,
@@ -17,17 +17,27 @@ import {
 } from './helpers'
 
 export const setup = async <D>(impl: DomainSetup<D>, domainName = DEFAULT_DOMAIN_NAME) => {
+  console.log(`\n\n setup ${domainName}\n`)
   await mainSetup({ domainName })
   await downStream(domainName)
   await delayedTopology(domainName)
 
-  await Promise.all(Object.keys(impl).map(() => setupWorkerOrSubscriber({ domainName, impl })))
+  await Object.keys(impl).reduce<Promise<void>>(
+    (last, topic) => last.then(() => setupWorkerOrSubscriber({ domainName, impl, topic })),
+    Promise.resolve(),
+  )
   registerImpl(domainName, impl)
 }
 
-const setupWorkerOrSubscriber = <D>({ domainName, impl }: { impl: DomainSetup<D>; domainName: string }) => async (
-  topic: string,
-) => {
+const setupWorkerOrSubscriber = async <D>({
+  domainName,
+  impl,
+  topic,
+}: {
+  impl: DomainSetup<D>
+  domainName: string
+  topic: string
+}) => {
   console.log(`setting up ${topic} worker`)
   const domainExchange = getDomainExchangeName({ domainName })
 
@@ -35,9 +45,10 @@ const setupWorkerOrSubscriber = <D>({ domainName, impl }: { impl: DomainSetup<D>
 
   //const cfg = defaultWrkSetupConfig(item.setupCfg)
   const queue = item.kind === 'wrk' ? getWorkerQName({ domainName, topic }) : getSubscriberQName({ domainName, topic })
+  const bindTopic = item.kind === 'wrk' ? topic : item.event
 
   const channel = await getMachineChannel(domainName)
   await channel.assertQueue(queue, { durable: true })
-  await channel.bindQueue(queue, domainExchange, `${topic}.*.*`)
-  console.log(`* ${topic} worker done`)
+  await channel.bindQueue(queue, domainExchange, `${bindTopic}.*.*`)
+  console.log(`* ${topic} worker setup done\n`)
 }

@@ -6,13 +6,12 @@ import { getMessagePayload, getSubscriberQName, getTopicChannel, msgFlow, NOT_PA
 export const bindSubscriber = async (
   domainName: string,
   subSrv: SubscriberService<any, any>,
-  src: string,
-  targetTopic: string,
+  topic: string,
   cfg: SubConfig,
 ) => {
   const [handler] = subSrv
-  const [channel] = await getTopicChannel(domainName, targetTopic, cfg.parallelism)
-  const queue = getSubscriberQName({ domainName, topic: targetTopic })
+  const [channel] = await getTopicChannel(domainName, topic, cfg.parallelism)
+  const queue = getSubscriberQName({ domainName, topic })
   const { consumerTag } = await channel.consume(queue, async msg => {
     if (!msg) {
       return
@@ -22,7 +21,7 @@ export const bindSubscriber = async (
       return channel.reject(msg, false)
     }
     const flow = msgFlow(msg)
-    handler({ t: src, p: payload, flow })
+    handler(payload, flow)
       .then(resp => {
         if (isReplyError(resp)) {
           return Promise.reject(resp)

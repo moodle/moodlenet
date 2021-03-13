@@ -5,7 +5,7 @@ import { EmailSender } from '../../../sendersImpl/types'
 import { MoodleNetArangoEmailDomain } from '../MoodleNetArangoEmailDomain'
 
 type T = WrkTypes<MoodleNetDomain, 'Email.SendOne'>
-export const SendOneWrkInit = ({ sender }: { sender: EmailSender }): T['Init'] => () => {
+export const SendOneWrkInit = ({ sender }: { sender: EmailSender }): T['Init'] => async () => {
   return [SendOneWorker({ sender })]
 }
 export const SendOneWorker = ({ sender }: { sender: EmailSender }): T['Worker'] => async ({ emailObj, flow }) => {

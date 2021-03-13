@@ -8,7 +8,7 @@ export const StoreSentEmailSubscriber = ({
   persistence,
 }: {
   persistence: Persistence
-}): Subscriber<MoodleNetArangoEmailDomain, 'Email.EmailSent'> => async ({ p: { emailObj, result }, flow }) => {
+}): Subscriber<MoodleNetArangoEmailDomain, 'Email.EmailSent'> => async ({ emailObj, result }, flow) => {
   await storeSentEmail({
     email: emailObj,
     flow,

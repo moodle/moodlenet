@@ -2,24 +2,9 @@
 // import { MoodleNetDomain } from '../../../MoodleNetDomain/MoodleNetDomain'
 import { Flow } from '../flow'
 import { publishError } from '../misc'
-import {
-  CallConfig,
-  defaultCallConfig,
-  isReplyError,
-  LookupWorker,
-  WrkPaths,
-  wrkReplyError,
-  wrkTimeoutError,
-} from '../wrk'
-import { machineId } from './env'
-import {
-  DEFAULT_DOMAIN_NAME,
-  downStream,
-  getDomainExchangeName,
-  getMachineChannel,
-  json2Buffer,
-  routingKeyFor,
-} from './helpers'
+import { CallConfig, defaultCallConfig, isReplyError, LookupWorker, WrkPaths, wrkTimeoutError } from '../wrk'
+import { DEFAULT_DOMAIN_NAME, machineId } from './env'
+import { downStream, getDomainExchangeName, getMachineChannel, json2Buffer, routingKeyFor } from './helpers'
 
 let callCount = 0
 const makeCallMessageId = () => `${machineId}.${Number(new Date())}.${(callCount = callCount++ & 65535)}`
@@ -52,7 +37,7 @@ export const call = <D>(domainName = DEFAULT_DOMAIN_NAME) => <WrkPath extends Wr
           // console.log(`reply`, jsonContent)
 
           if (isReplyError(jsonContent)) {
-            rej(wrkReplyError(jsonContent))
+            rej(jsonContent)
           } else {
             res(jsonContent)
           }

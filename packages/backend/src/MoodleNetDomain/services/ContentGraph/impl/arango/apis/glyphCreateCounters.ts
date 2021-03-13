@@ -4,8 +4,8 @@ import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentG
 
 export const GlyphCreateCounterSubscriber: Subscriber<
   MoodleNetArangoContentGraphSubDomain,
-  'ContentGraph.Node.Created' | 'ContentGraph.Edge.Created'
-> = async event => {
-  console.log(`**************************************** GlyphCreateCounterHandler:`, event)
+  'ContentGraph.Edge.Created'
+> = async (event, flow) => {
+  console.log(`**************************************** GlyphCreateCounterHandler:`, event, flow)
   return Acks.Done
 }

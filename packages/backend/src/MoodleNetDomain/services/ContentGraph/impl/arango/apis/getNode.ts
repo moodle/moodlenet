@@ -1,4 +1,4 @@
-import { Id } from '@moodlenet/common/lib/utils/content-graph'
+import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { LookupWorker } from '../../../../../../lib/domain/wrk'
 import * as GQL from '../../../ContentGraph.graphql.gen'
 import { getNode } from '../functions/getNode'
@@ -10,14 +10,16 @@ export const getNodeWorker = ({
 }: {
   persistence: Persistence
 }): LookupWorker<MoodleNetArangoContentGraphSubDomain, 'ContentGraph.Node.ById'> => async <
-  Type extends GQL.Node = GQL.Node
+  Type extends GQL.NodeType = GQL.NodeType
 >({
   // ctx,
-  _id,
+  _key,
+  nodeType,
 }: {
   // ctx,
-  _id: Id
+  _key: IdKey
+  nodeType: Type
 }) => {
-  const node = await getNode<Type>({ _id, persistence })
+  const node = await getNode<Type>({ _key, nodeType, persistence })
   return node
 }
