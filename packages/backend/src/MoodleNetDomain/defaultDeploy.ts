@@ -37,21 +37,21 @@ export const startDefaultMoodlenet = async ({
     ...defaultArangoContentGraphStartServices({
       dbCfg: {
         ...baseDbCfg,
-        databaseName: 'ContentGraph',
       },
+      databaseName: 'ContentGraph',
     }),
     ...defaultArangoEmailStartServices({
       dbCfg: {
         ...baseDbCfg,
-        databaseName: 'Email',
       },
+      databaseName: 'Email',
       sender: mailgunSender,
     }),
     ...defaultArangoUserAccountStartServices({
       dbCfg: {
         ...baseDbCfg,
-        databaseName: 'Account',
       },
+      databaseName: 'Account',
     }),
   }
 

@@ -4,7 +4,7 @@
 import { SubDef } from '../sub'
 import { DomainSetup } from '../types'
 import { WrkDef } from '../wrk'
-import { DEFAULT_DOMAIN_NAME } from './env'
+import { getDefaultDomainName } from './env'
 import {
   delayedTopology,
   downStream,
@@ -16,7 +16,7 @@ import {
   registerImpl,
 } from './helpers'
 
-export const setup = async <D>(impl: DomainSetup<D>, domainName = DEFAULT_DOMAIN_NAME) => {
+export const setup = async <D>(impl: DomainSetup<D>, domainName = getDefaultDomainName()) => {
   console.log(`\n\n setup ${domainName}\n`)
   await mainSetup({ domainName })
   await downStream(domainName)

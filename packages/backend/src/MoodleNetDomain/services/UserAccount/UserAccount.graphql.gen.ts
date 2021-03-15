@@ -27,7 +27,7 @@ export type Mutation = {
   changeEmailRequest: SimpleResponse;
   changeEmailConfirm: Scalars['Boolean'];
   changePassword: SimpleResponse;
-  activateAccount: ActivateNewAccountResponse;
+  activateAccount: CreateSession;
   sessionByEmail: SimpleResponse;
   createSession: CreateSession;
 };
@@ -82,12 +82,6 @@ export type Query = {
 export type SimpleResponse = {
   __typename: 'SimpleResponse';
   success: Scalars['Boolean'];
-  message?: Maybe<Scalars['String']>;
-};
-
-export type ActivateNewAccountResponse = {
-  __typename: 'ActivateNewAccountResponse';
-  session?: Maybe<UserSession>;
   message?: Maybe<Scalars['String']>;
 };
 
@@ -192,7 +186,6 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Query: ResolverTypeWrapper<RootValue>;
   SimpleResponse: ResolverTypeWrapper<SimpleResponse>;
-  ActivateNewAccountResponse: ResolverTypeWrapper<ActivateNewAccountResponse>;
   CreateSession: ResolverTypeWrapper<CreateSession>;
   UserSession: ResolverTypeWrapper<UserSession>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
@@ -208,7 +201,6 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   Query: RootValue;
   SimpleResponse: SimpleResponse;
-  ActivateNewAccountResponse: ActivateNewAccountResponse;
   CreateSession: CreateSession;
   UserSession: UserSession;
   ID: Scalars['ID'];
@@ -231,7 +223,7 @@ export type MutationResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
   changeEmailRequest?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangeEmailRequestArgs, 'newEmail'>>;
   changeEmailConfirm?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationChangeEmailConfirmArgs, 'token' | 'password' | 'username'>>;
   changePassword?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'newPassword' | 'currentPassword'>>;
-  activateAccount?: Resolver<ResolversTypes['ActivateNewAccountResponse'], ParentType, ContextType, RequireFields<MutationActivateAccountArgs, 'username' | 'password' | 'token'>>;
+  activateAccount?: Resolver<ResolversTypes['CreateSession'], ParentType, ContextType, RequireFields<MutationActivateAccountArgs, 'username' | 'password' | 'token'>>;
   sessionByEmail?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<MutationSessionByEmailArgs, 'username' | 'email'>>;
   createSession?: Resolver<ResolversTypes['CreateSession'], ParentType, ContextType, RequireFields<MutationCreateSessionArgs, 'username' | 'password'>>;
 };
@@ -242,12 +234,6 @@ export type QueryResolvers<ContextType = MoodleNetExecutionContext, ParentType e
 
 export type SimpleResponseResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['SimpleResponse'] = ResolversParentTypes['SimpleResponse']> = {
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ActivateNewAccountResponseResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['ActivateNewAccountResponse'] = ResolversParentTypes['ActivateNewAccountResponse']> = {
-  session?: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType>;
   message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -274,7 +260,6 @@ export type Resolvers<ContextType = MoodleNetExecutionContext> = {
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   SimpleResponse?: SimpleResponseResolvers<ContextType>;
-  ActivateNewAccountResponse?: ActivateNewAccountResponseResolvers<ContextType>;
   CreateSession?: CreateSessionResolvers<ContextType>;
   UserSession?: UserSessionResolvers<ContextType>;
 };

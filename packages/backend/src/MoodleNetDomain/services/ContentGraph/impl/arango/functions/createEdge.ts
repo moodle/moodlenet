@@ -40,13 +40,14 @@ export const createEdge = async <Type extends GQL.EdgeType>({
   const { new: edge } = await collection.save(
     {
       ...data,
-      _from: from,
       _fromType: fromType,
-      _to: to,
-      _toType: toType,
-      _key: key,
       __typename: edgeType,
+      _toType: toType,
       _meta,
+      //
+      _from: from,
+      _to: to,
+      _key: key,
     },
     { returnNew: true },
   )

@@ -1,8 +1,8 @@
-import { Id, IdKey } from '@moodlenet/common/lib/utils/content-graph'
+import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { createWriteStream, WriteStream } from 'fs'
 import { join } from 'path'
-import { EdgeType, NodeType } from '../../../ContentGraph.graphql.gen'
-import { ShallowEdge, ShallowNode } from '../../../types.node'
+import { EdgeType, NodeMeta, NodeType } from '../../../ContentGraph.graphql.gen'
+import { ShallowNode } from '../../../types.node'
 import { GEN_DIR } from './env'
 
 console.log(`bulk dir :${GEN_DIR}`)
@@ -14,10 +14,10 @@ const getOutFilename = (type: NodeType | EdgeType) => {
 const getWriter = (type: NodeType | EdgeType) =>
   (writers[type] = writers[type] || createWriteStream(getOutFilename(type), { encoding: 'utf-8' }))
 
-export const writeGlyph = (type: NodeType | EdgeType, glyph: WriteGlyph) =>
+export const writeNode = (type: NodeType, node: WriteNode) =>
   new Promise<void>((res, rej) => {
     const writer = getWriter(type)
-    const data = JSON.stringify(glyph) + '\n'
+    const data = JSON.stringify(node) + '\n'
     writer.write(data, err => (err ? res() : rej(err)))
   })
 
@@ -28,11 +28,7 @@ export const finishWrite = () => {
   })
 }
 
-type WriteGlyph = WriteEdge | WriteNode
-type WriteEdge = Omit<
-  ShallowEdge & { from: NodeType; to: NodeType; _from: Id; _to: Id },
-  '_id' | '__typename' | '_meta'
-> & {
+type WriteNode = Omit<ShallowNode, '_id' | '__typename' | '_meta' | '_rel'> & {
   _key: IdKey
+  _meta: Omit<NodeMeta, '__typename'>
 }
-type WriteNode = Omit<ShallowNode, '_id' | '__typename' | '_meta' | '_rel'> & { _key: IdKey }

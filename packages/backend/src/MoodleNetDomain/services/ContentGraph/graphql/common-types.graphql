@@ -3,10 +3,11 @@ scalar Cursor
 interface INode {
   _id: ID
   _rel(edge: EdgeTypeInput!, page: PaginationInput, sort: [NodeRelSort!]): RelPage!
-  _meta: NodeMeta
+  _meta: NodeMeta!
 }
 
-interface NodeMeta {
+type NodeMeta {
+  creator: User!
   created: DateTime!
   updated: DateTime!
   relCount: RelCountMap
@@ -17,7 +18,7 @@ type EdgeMeta {
   updated: DateTime!
 }
 
-interface RelCount {
+type RelCount {
   to: RelCountTargetMap
   from: RelCountTargetMap
 }

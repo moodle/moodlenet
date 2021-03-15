@@ -21,7 +21,7 @@ export type Scalars = {
 
 export type Mutation = {
   __typename: 'Mutation';
-  activateAccount: ActivateNewAccountResponse;
+  activateAccount: CreateSession;
   changeEmailConfirm: Scalars['Boolean'];
   changeEmailRequest: SimpleResponse;
   changePassword: SimpleResponse;
@@ -332,7 +332,7 @@ export type SearchPageEdge = PageEdge & {
 export type INode = {
   _id?: Maybe<Scalars['ID']>;
   _rel: RelPage;
-  _meta?: Maybe<NodeMeta>;
+  _meta: NodeMeta;
 };
 
 
@@ -343,6 +343,8 @@ export type INode_RelArgs = {
 };
 
 export type NodeMeta = {
+  __typename: 'NodeMeta';
+  creator: User;
   created: Scalars['DateTime'];
   updated: Scalars['DateTime'];
   relCount?: Maybe<RelCountMap>;
@@ -355,6 +357,7 @@ export type EdgeMeta = {
 };
 
 export type RelCount = {
+  __typename: 'RelCount';
   to?: Maybe<RelCountTargetMap>;
   from?: Maybe<RelCountTargetMap>;
 };
@@ -460,7 +463,7 @@ export type Collection = INode & IContentNode & {
   summary: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _meta?: Maybe<NodeMeta>;
+  _meta: NodeMeta;
   _rel: RelPage;
 };
 
@@ -504,7 +507,7 @@ export type Resource = INode & IContentNode & {
   summary: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _meta?: Maybe<NodeMeta>;
+  _meta: NodeMeta;
   _rel: RelPage;
 };
 
@@ -531,7 +534,7 @@ export type Subject = INode & IContentNode & {
   summary: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _meta?: Maybe<NodeMeta>;
+  _meta: NodeMeta;
   _rel: RelPage;
 };
 
@@ -558,7 +561,7 @@ export type User = INode & IContentNode & {
   summary: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _meta?: Maybe<NodeMeta>;
+  _meta: NodeMeta;
   _rel: RelPage;
 };
 
@@ -584,12 +587,6 @@ export type CreateUserInput = {
 export type SimpleResponse = {
   __typename: 'SimpleResponse';
   success: Scalars['Boolean'];
-  message?: Maybe<Scalars['String']>;
-};
-
-export type ActivateNewAccountResponse = {
-  __typename: 'ActivateNewAccountResponse';
-  session?: Maybe<UserSession>;
   message?: Maybe<Scalars['String']>;
 };
 
@@ -645,8 +642,6 @@ export type CreateSession = {
       "Subject",
       "User"
     ],
-    "NodeMeta": [],
-    "RelCount": [],
     "IContentNode": [
       "Collection",
       "Resource",

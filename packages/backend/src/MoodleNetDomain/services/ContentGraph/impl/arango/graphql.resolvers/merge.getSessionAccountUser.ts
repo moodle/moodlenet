@@ -1,3 +1,4 @@
+import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
 import { call } from '../../../../../../lib/domain/amqp/call'
 import { NodeType, QueryResolvers, User } from '../../../ContentGraph.graphql.gen'
 import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentGraphSubDomain'
@@ -13,11 +14,13 @@ export const getSessionAccountUser: QueryResolvers['getSessionAccountUser'] = as
       user: null,
     }
   }
-  const shallowUser = await call<MoodleNetArangoContentGraphSubDomain>()(
-    'ContentGraph.Node.ById',
-    ctx.flow,
-  )<NodeType.User>({
-    _id: userId,
+  const { _key, nodeType } = parseNodeId(userId)
+  if (nodeType !== NodeType.User) {
+    return null
+  }
+  const shallowUser = await call<MoodleNetArangoContentGraphSubDomain>()('ContentGraph.Node.ById', ctx.flow)({
+    _key,
+    nodeType,
     ctx,
   })
   if (!shallowUser) {

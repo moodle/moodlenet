@@ -3,14 +3,14 @@
 import { Flow } from '../flow'
 import { publishError } from '../misc'
 import { CallConfig, defaultCallConfig, isReplyError, LookupWorker, WrkPaths, wrkTimeoutError } from '../wrk'
-import { DEFAULT_DOMAIN_NAME, machineId } from './env'
+import { getDefaultDomainName, machineId } from './env'
 import { downStream, getDomainExchangeName, getMachineChannel, json2Buffer, routingKeyFor } from './helpers'
 
 let callCount = 0
-const makeCallMessageId = () => `${machineId}.${Number(new Date())}.${(callCount = callCount++ & 65535)}`
+const makeCallMessageId = () => `${machineId}.${Number(new Date())}.${(callCount = ++callCount & 65535)}`
 const DEF_LAG_TIMEOUT = 300
 
-export const call = <D>(domainName = DEFAULT_DOMAIN_NAME) => <WrkPath extends WrkPaths<D>>(
+export const call = <D>(domainName = getDefaultDomainName()) => <WrkPath extends WrkPaths<D>>(
   path: WrkPath,
   flow: Flow,
   _cfg?: Partial<CallConfig>,
@@ -57,7 +57,6 @@ export const call = <D>(domainName = DEFAULT_DOMAIN_NAME) => <WrkPath extends Wr
         { messageId, replyTo, expiration: cfg.timeout, persistent: true },
         (err: any) => {
           if (err) {
-            console.log(`err`, err)
             rej(publishError(err))
           }
         },

@@ -4,6 +4,7 @@ import * as GQL from '../../../ContentGraph.graphql.gen'
 import { getSessionAccountUser } from './merge.getSessionAccountUser'
 import { createEdge } from './mutation/createEdge'
 import { createNode } from './mutation/createNode'
+import { nodePropResolver } from './nodePropResolver'
 import { gqlGlobalSearch } from './query/globalSearch'
 import { node } from './query/node'
 import { NodeResolver } from './types.node'
@@ -46,6 +47,9 @@ export const getContentGraphResolvers = (): GQL.Resolvers => {
     Subject: NodeResolver,
     Resource: NodeResolver,
     Collection: NodeResolver,
+    NodeMeta: {
+      creator: nodePropResolver<GQL.NodeMeta>('creator') as any,
+    },
     // Empty: {} as any, //TODO: define resolver
     // DateTime: {} as any, //TODO: define resolver
     // Never: null as never, //TODO: define resolver

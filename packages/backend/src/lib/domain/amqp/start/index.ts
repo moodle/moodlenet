@@ -2,7 +2,7 @@
 import { SubDef, SubscriberService } from '../../sub'
 import { DomainStart, DomainStartSub, DomainStartWrk } from '../../types'
 import { defaultWrkConfig, WorkerService, WrkDef } from '../../wrk'
-import { DEFAULT_DOMAIN_NAME } from '../env'
+import { getDefaultDomainName } from '../env'
 import { getRegisteredImpl } from '../helpers'
 import { bindSubscriber } from './bindSubscriber'
 import { bindWorker } from './bindWorker'
@@ -17,7 +17,7 @@ type RunningServices = Record<
 >
 const runningDomains: Record<string, RunningServices> = {}
 
-export const start = async (domainStart: DomainStart<any>, domainName = DEFAULT_DOMAIN_NAME) => {
+export const start = async (domainStart: DomainStart<any>, domainName = getDefaultDomainName()) => {
   console.log(`\n\n start ${domainName}\n`)
   const impl = getRegisteredImpl(domainName)
   if (!impl) {

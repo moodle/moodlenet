@@ -10,7 +10,7 @@ import { SubDef } from '../../../../../lib/domain/sub'
 import { SubDomain } from '../../../../../lib/domain/types'
 import { WrkDef } from '../../../../../lib/domain/wrk'
 import { MoodleNetDomain } from '../../../../MoodleNetDomain'
-import { MoodleNetExecutionContext } from '../../../../MoodleNetGraphQL'
+import { MoodleNetAuthenticatedExecutionContext, MoodleNetExecutionContext } from '../../../../MoodleNetGraphQL'
 import * as GQL from '../../ContentGraph.graphql.gen'
 import {
   CreateEdgeData,
@@ -34,7 +34,7 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
       >
       Create: WrkDef<
         <Type extends GQL.NodeType>(_: {
-          ctx: MoodleNetExecutionContext
+          ctx: MoodleNetAuthenticatedExecutionContext
           key?: IdKey // remove this .. it was only necessary for user creation on accuont activation, change the flow and disjoint the two
           nodeType: Type
           data: CreateNodeData<Type>
@@ -45,7 +45,7 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
     Edge: {
       Create: WrkDef<
         <Type extends GQL.EdgeType>(_: {
-          ctx: MoodleNetExecutionContext
+          ctx: MoodleNetAuthenticatedExecutionContext
           edgeType: Type
           key?: IdKey // remove this .. it was only necessary for user creation on accuont activation, change the flow and disjoint the two
           data: CreateEdgeData<Type>
@@ -55,31 +55,19 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
       >
       Created: Event<{ edge: ShallowEdge }>
       Traverse: WrkDef<
-        ({
-          edgeType,
-          page,
-          parentNodeId,
-          inverse,
-          targetNodeType,
-        }: {
+        (_: {
           parentNodeId: Id
           edgeType: GQL.EdgeType
           targetNodeType: GQL.NodeType
           inverse: boolean
           page: Maybe<GQL.PaginationInput>
-          ctx: MoodleNetExecutionContext
           sort: Maybe<GQL.NodeRelSort[]>
         }) => Promise<GQL.RelPage>
       >
     }
-    GlobalSearch: WrkDef<
-      ({ page, text }: { text: string; page: Maybe<GQL.PaginationInput> }) => Promise<GQL.SearchPage>
-    >
-    Counters: {
-      GlyphCreate: SubDef<
-        MoodleNetArangoContentGraphSubDomain,
-        'ContentGraph.Edge.Created' | 'ContentGraph.Node.Created'
-      >
+    GlobalSearch: WrkDef<(_: { text: string; page: Maybe<GQL.PaginationInput> }) => Promise<GQL.SearchPage>>
+    Stats: {
+      MaintainEdgeCounters: SubDef<MoodleNetArangoContentGraphSubDomain, 'ContentGraph.Edge.Created'>
     }
   }
 >

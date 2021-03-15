@@ -14,14 +14,22 @@ export const defaultArangoEmailSetup: DomainSetup<MoodleNetArangoEmailDomain> = 
   },
 }
 
-export const defaultArangoEmailStartServices = ({ dbCfg, sender }: { dbCfg: Config; sender: EmailSender }) => {
+export const defaultArangoEmailStartServices = ({
+  dbCfg,
+  sender,
+  databaseName,
+}: {
+  dbCfg: Config
+  sender: EmailSender
+  databaseName: string
+}) => {
   const moodleNetArangoEmailDomainStart: DomainStart<MoodleNetArangoEmailDomain> = {
     'Email.SendOne': {
       init: async () => [SendOneWorker({ sender })],
     },
     'Email.StoreSentEmail': {
       init: async () => {
-        const [persistence, teardown] = await getPersistence({ cfg: dbCfg })
+        const [persistence, teardown] = await getPersistence({ cfg: dbCfg, databaseName })
         //  const s:SubscriberInit<MoodleNetArangoEmailDomain,'Email.EmailSent'>=[StoreSentEmailSubscriber({ persistence }), teardown]
         return [StoreSentEmailSubscriber({ persistence }), teardown]
       },

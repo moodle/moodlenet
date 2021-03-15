@@ -13,14 +13,14 @@ const Validator = Yup.object<AMQPEnv>({
   amqpUrl: Yup.string().required(),
 })
 
-const AMQP_URL = process.env.DOMAIN_AMQP_URL
+export const getConnection = memoize(async ({ domainName }: { domainName: string }) => {
+  const AMQP_URL = process.env.DOMAIN_AMQP_URL
 
-export const env = Validator.validateSync({
-  amqpUrl: AMQP_URL,
-})!
+  const env = Validator.validateSync({
+    amqpUrl: AMQP_URL,
+  })!
 
-export const getConnection = memoize(
-  async ({ domainName }: { domainName: string }) => [await amqp.connect(env.amqpUrl), domainName] as const,
-)
+  return [await amqp.connect(env.amqpUrl), domainName] as const
+})
 
-export const DEFAULT_DOMAIN_NAME = process.env.DEFAULT_DOMAIN_NAME || 'DEFAULT'
+export const getDefaultDomainName = () => process.env.DEFAULT_DOMAIN_NAME || 'DEFAULT'

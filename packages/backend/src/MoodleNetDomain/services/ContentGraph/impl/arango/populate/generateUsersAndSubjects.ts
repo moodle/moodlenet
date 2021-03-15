@@ -1,13 +1,13 @@
-import { Id, IdKey, makeId, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
+import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { writeFileSync } from 'fs'
 import { join } from 'path'
 import { ulidKey } from '../../../../../../lib/helpers/arango'
-import { EdgeType, NodeType } from '../../../ContentGraph.graphql.gen'
+import { SYSTEM_USER_ID } from '../../../../../MoodleNetGraphQL'
+import { EdgeType, NodeType, User } from '../../../ContentGraph.graphql.gen'
 import './env'
 import { SUBJECTS_AMOUNT, USERS_AMOUNT } from './env'
-import * as fakeEdge from './fake/edge'
 import * as fakeNode from './fake/node'
-import { finishWrite, writeGlyph } from './out-file'
+import { finishWrite, writeNode } from './out-file'
 
 const genKeys: { [type in NodeType | EdgeType]: IdKey[] } = {} as any
 // const getKeyIdList = (type: NodeType | EdgeType) => getKeyList(type).map(key => ({ key, id: makeId(type, key) }))
@@ -21,42 +21,16 @@ const genKey = (type: NodeType | EdgeType) => {
   return key
 }
 
-// const getRndGenKey = (type: EdgeType | NodeType) => {
-//   const list = genKeys[type] || []
-//   const len = list.length
-//   const index = Math.floor(Math.random() * len)
-//   return list[index]
-// }
-// const getRndGenId = (type: EdgeType | NodeType) => makeId(type, getRndGenKey(type))
-
-export const createNewFakeNode = ({ type, creatorKey }: { type: NodeType; creatorKey?: IdKey }) => {
+export const createNewFakeNode = ({ type }: { type: NodeType }) => {
   const _key = genKey(type)
-  return Promise.all([
-    writeGlyph(type, {
-      _key,
-      ...fakeNode[type](),
-    }),
-    ...(creatorKey
-      ? [
-          createNewFakeEdge({
-            type: EdgeType.Created,
-            _from: makeId(NodeType.User, creatorKey),
-            _to: makeId(type, _key),
-          }),
-        ]
-      : []),
-  ])
-}
-
-export const createNewFakeEdge = ({ type, _from, _to }: { type: EdgeType; _from: Id; _to: Id }) => {
-  const _key = genKey(type)
-  return writeGlyph(type, {
+  return writeNode(type, {
     _key,
-    _from,
-    _to,
-    from: nodeTypeFromId(_from),
-    to: nodeTypeFromId(_to),
-    ...fakeEdge[type](),
+    ...fakeNode[type](),
+    _meta: {
+      created: new Date(),
+      updated: new Date(),
+      creator: { _id: SYSTEM_USER_ID } as User,
+    },
   })
 }
 

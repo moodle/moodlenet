@@ -2,8 +2,6 @@ import JWT from 'jsonwebtoken'
 import memo from 'lodash/memoize'
 import sshpk from 'sshpk'
 import { newFlow } from '../../lib/domain/flow'
-import { User } from '../services/ContentGraph/ContentGraph.graphql.gen'
-import { ShallowNode } from '../services/ContentGraph/types.node'
 import { ActiveUserAccount } from '../services/UserAccount/impl/arango/types'
 import { signJwt, verifyJwt } from './JWT'
 import { MoodleNetExecutionContext } from './types'
@@ -42,15 +40,7 @@ export const getJwtSigner = memo(() => {
     expiresIn: jwtExpirationSecs,
   }
 
-  const jwtSigner = ({
-    account,
-    opts,
-    user,
-  }: {
-    account: ActiveUserAccount
-    user: ShallowNode<User>
-    opts?: JWT.SignOptions
-  }) => {
+  const jwtSigner = ({ account, opts }: { account: ActiveUserAccount; opts?: JWT.SignOptions }) => {
     const signOpts: JWT.SignOptions = {
       ...jwtSignBaseOpts,
       ...opts,
@@ -61,7 +51,7 @@ export const getJwtSigner = memo(() => {
       accountId: account._id,
       email: account.email,
       username: account.username,
-      userId: user._id,
+      userId: account.userId,
       role: account.role,
     }
 

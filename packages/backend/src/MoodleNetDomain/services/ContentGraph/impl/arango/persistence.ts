@@ -2,24 +2,27 @@ import { Database } from 'arangojs'
 import { Config } from 'arangojs/connection'
 import { ArangoSearchViewLink } from 'arangojs/view'
 import { Teardown } from '../../../../../lib/domain/types'
+import { createDatabaseIfNotExists } from '../../../../../lib/helpers/arango'
 import { getGraph } from './setupGraph'
 import { Persistence } from './types'
 
-export const getPersistenceWTeardown = async ({ cfg }: { cfg: Config }): Promise<[Persistence, Teardown]> => {
-  const persistence = await getPersistence({ cfg })
-  return [persistence, () => persistence.db.close()]
-}
-export const getPersistence = async ({ cfg }: { cfg: Config }): Promise<Persistence> => {
-  const db = new Database(cfg)
-
+export const getPersistence = async ({
+  cfg,
+  databaseName,
+}: {
+  cfg: Config
+  databaseName: string
+}): Promise<[Persistence, Teardown]> => {
+  const db = await createDatabaseIfNotExists({ dbConfig: cfg, dbCreateOpts: {}, name: databaseName })
   const graph = await getGraph({ db })
 
   const searchView = await setupSearchView({ db })
-  return {
+  const persistence: Persistence = {
     db,
     graph,
     searchView,
   }
+  return [persistence, () => persistence.db.close()]
 }
 
 const setupSearchView = async ({ db }: { db: Database }) => {

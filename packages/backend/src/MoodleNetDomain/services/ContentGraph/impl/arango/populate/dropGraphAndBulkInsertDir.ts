@@ -4,9 +4,9 @@ import { join } from 'path'
 import { sequencePromiseCalls } from '../../../../../../lib/helpers/misc'
 import { getPersistence } from '../persistence'
 import { getGraph } from '../setupGraph'
-import { ARANGO_URL, cfg, DB_NAME, GEN_DIR } from './env'
+import { ARANGO_HOST, cfg, databaseName, DB_NAME, GEN_DIR } from './env'
 
-getPersistence({ cfg }).then(async ({ db }) => {
+getPersistence({ cfg, databaseName }).then(async ([{ db }]) => {
   const graph = await getGraph({ db })
   console.log('dropping graph...')
   await graph.drop(true)
@@ -33,7 +33,7 @@ getPersistence({ cfg }).then(async ({ db }) => {
         console.log(`\n-insert ${base} in ${collection} [${(size / 1024 / 1024).toFixed(1)}MB]`)
         return Axios.request({
           method: 'POST',
-          url: `${ARANGO_URL}/_db/${DB_NAME}/_api/import?type=documents&collection=${collection}`,
+          url: `${ARANGO_HOST}/_db/${DB_NAME}/_api/import?type=documents&collection=${collection}`,
           maxContentLength: Infinity,
           maxBodyLength: Infinity,
           data: stream,

@@ -15,6 +15,7 @@ export type Subscriber<D, EventPath extends EventPaths<D>> = (
   payload: LookupEventType<D, EventPath>,
   flow: Flow,
 ) => Promise<Acks>
+
 export type SubscriberService<D, EventPath extends EventPaths<D>> = readonly [
   subscriber: Subscriber<D, EventPath>,
   teardown?: Teardown,
@@ -46,5 +47,11 @@ export const defaultSubSetupConfig = (cfg?: Partial<SubConfig>): SubConfig => ({
 export type LookupSubDef<D, Path extends SubPaths<D>> = LookupPath<D, Path> extends infer MaybeSubDef
   ? MaybeSubDef extends SubDef<D, any>
     ? MaybeSubDef
+    : never
+  : never
+
+export type LookupSubscriber<D, Path extends SubPaths<D>> = LookupPath<D, Path> extends infer MaybeSubDef
+  ? MaybeSubDef extends SubDef<D, any>
+    ? Subscriber<D, MaybeSubDef['event']>
     : never
   : never

@@ -101,7 +101,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "ActivateNewAccountResponse",
+                "name": "CreateSession",
                 "ofType": null
               }
             },
@@ -2307,9 +2307,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "INTERFACE",
-              "name": "NodeMeta",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "NodeMeta",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2342,10 +2346,26 @@
         ]
       },
       {
-        "kind": "INTERFACE",
+        "kind": "OBJECT",
         "name": "NodeMeta",
         "description": null,
         "fields": [
+          {
+            "name": "creator",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "User",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
           {
             "name": "created",
             "description": null,
@@ -2394,7 +2414,7 @@
         "inputFields": null,
         "interfaces": [],
         "enumValues": null,
-        "possibleTypes": []
+        "possibleTypes": null
       },
       {
         "kind": "OBJECT",
@@ -2440,7 +2460,7 @@
         "possibleTypes": null
       },
       {
-        "kind": "INTERFACE",
+        "kind": "OBJECT",
         "name": "RelCount",
         "description": null,
         "fields": [
@@ -2472,7 +2492,7 @@
         "inputFields": null,
         "interfaces": [],
         "enumValues": null,
-        "possibleTypes": []
+        "possibleTypes": null
       },
       {
         "kind": "INPUT_OBJECT",
@@ -2894,7 +2914,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "INTERFACE",
+              "kind": "OBJECT",
               "name": "RelCount",
               "ofType": null
             },
@@ -2906,7 +2926,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "INTERFACE",
+              "kind": "OBJECT",
               "name": "RelCount",
               "ofType": null
             },
@@ -2918,7 +2938,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "INTERFACE",
+              "kind": "OBJECT",
               "name": "RelCount",
               "ofType": null
             },
@@ -2930,7 +2950,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "INTERFACE",
+              "kind": "OBJECT",
               "name": "RelCount",
               "ofType": null
             },
@@ -2942,7 +2962,7 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "INTERFACE",
+              "kind": "OBJECT",
               "name": "RelCount",
               "ofType": null
             },
@@ -3377,9 +3397,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "INTERFACE",
-              "name": "NodeMeta",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "NodeMeta",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3739,9 +3763,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "INTERFACE",
-              "name": "NodeMeta",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "NodeMeta",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3976,9 +4004,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "INTERFACE",
-              "name": "NodeMeta",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "NodeMeta",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4213,9 +4245,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "INTERFACE",
-              "name": "NodeMeta",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "NodeMeta",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4429,41 +4465,6 @@
                 "name": "Boolean",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "message",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "ActivateNewAccountResponse",
-        "description": null,
-        "fields": [
-          {
-            "name": "session",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "UserSession",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

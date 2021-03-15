@@ -2,8 +2,6 @@ import Argon from 'argon2'
 import { call } from '../../../lib/domain/amqp/call'
 import { MoodleNetDomain } from '../../MoodleNetDomain'
 import { getJwtSigner, MoodleNetExecutionContext } from '../../MoodleNetGraphQL'
-import { User } from '../ContentGraph/ContentGraph.graphql.gen'
-import { ShallowNode } from '../ContentGraph/types.node'
 import { ArgonPwdHashOpts } from './argon'
 import { ActiveUserAccount } from './impl/arango/types'
 import { SimpleResponse, UserSession } from './UserAccount.graphql.gen'
@@ -61,24 +59,16 @@ export const userAndJwtByActiveUserAccount = async ({
   if (!user) {
     throw new Error(`can't find User for Account  userId:${activeUserAccount.userId} `)
   }
-  const jwt = await jwtByActiveUserAccountAndUser({
+  const jwt = await jwtByActiveUserAccount({
     activeUserAccount,
-    user,
   })
   return { jwt, user: user }
 }
 
-export const jwtByActiveUserAccountAndUser = async ({
-  activeUserAccount,
-  user,
-}: {
-  activeUserAccount: ActiveUserAccount
-  user: ShallowNode<User>
-}) => {
+export const jwtByActiveUserAccount = async ({ activeUserAccount }: { activeUserAccount: ActiveUserAccount }) => {
   const signJwt = getJwtSigner()
   const jwt = await signJwt({
     account: activeUserAccount,
-    user,
   })
   return jwt
 }

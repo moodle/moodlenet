@@ -67,6 +67,8 @@ export const SessionProvider: FC = ({ children }) => {
   const activateNewAccount = useCallback<SessionContextType['activateNewAccount']>(
     ({ password, token, username }) => {
       return activateAccountMut({ variables: { password, token, username } }).then(res => {
+        const jwt = res.data?.activateAccount.jwt ?? null
+        setLastSession({ username, jwt })
         return res.data?.activateAccount.message ?? null
       })
     },

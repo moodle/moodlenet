@@ -39,12 +39,8 @@ export type ActivateNewAccountMutationVariables = Types.Exact<{
 export type ActivateNewAccountMutation = (
   { __typename: 'Mutation' }
   & { activateAccount: (
-    { __typename: 'ActivateNewAccountResponse' }
-    & Pick<Types.ActivateNewAccountResponse, 'message'>
-    & { session?: Types.Maybe<(
-      { __typename: 'UserSession' }
-      & UserSessionSimpleFragment
-    )> }
+    { __typename: 'CreateSession' }
+    & Pick<Types.CreateSession, 'jwt' | 'message'>
   ) }
 );
 
@@ -136,13 +132,11 @@ export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, Log
 export const ActivateNewAccountDocument = gql`
     mutation activateNewAccount($token: String!, $username: String!, $password: String!) {
   activateAccount(username: $username, password: $password, token: $token) {
+    jwt
     message
-    session {
-      ...UserSessionSimple
-    }
   }
 }
-    ${UserSessionSimpleFragmentDoc}`;
+    `;
 export type ActivateNewAccountMutationFn = Apollo.MutationFunction<ActivateNewAccountMutation, ActivateNewAccountMutationVariables>;
 
 /**

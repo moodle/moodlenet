@@ -2,28 +2,31 @@ import { Executor } from '@graphql-tools/delegate/types'
 import { GraphQLError } from 'graphql'
 import { IncomingMessage } from 'http'
 import { Flow } from '../../lib/domain/flow'
+import { Id } from '../services/UserAccount/types'
+import { MoodleNetAuthenticatedExecutionContext } from '../types'
 import { INVALID_TOKEN } from './JWT'
 import { getJwtVerifier } from './MoodleNetGraphQL.env'
 import { graphQLRequestFlow } from './schemaHelpers'
 import { MoodleNetExecutionContext, RootValue } from './types'
 
 export function throwLoggedUserOnly(_: { context: MoodleNetExecutionContext }): MoodleNetExecutionContext<'session'> {
-  const mSessionContext = getSessionContext(_)
-  if (!mSessionContext) {
+  if (_.context.type !== 'session') {
     throw new GraphQLError('Logged in users only')
   }
-  return mSessionContext
+  return _.context
 }
 
-export function getSessionContext(_: {
-  context: MoodleNetExecutionContext
-}): MoodleNetExecutionContext<'session'> | null {
-  const { context } = _
+export function getSessionContext(
+  context: MoodleNetAuthenticatedExecutionContext,
+): MoodleNetExecutionContext<'session'> {
   if (context.type === 'session') {
     return context
+  } else {
+    return context.as
   }
-  return null
 }
+
+export const SYSTEM_USER_ID = 'User/SYSTEM' as Id
 
 export function getExecutionGlobalValues(
   ...args: Parameters<Executor>

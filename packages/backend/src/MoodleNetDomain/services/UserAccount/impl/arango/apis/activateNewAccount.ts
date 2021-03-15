@@ -1,7 +1,9 @@
+import { makeId, NodeType } from '@moodlenet/common/lib/utils/content-graph'
 import { call } from '../../../../../../lib/domain/amqp/call'
-import { emit } from '../../../../../../lib/domain/amqp/emit'
 import { LookupWorker } from '../../../../../../lib/domain/wrk'
-import { hashPassword, userSessionByActiveUserAccount } from '../../../helpers'
+import { ulidKey } from '../../../../../../lib/helpers/arango'
+import { MoodleNetDomain } from '../../../../../MoodleNetDomain'
+import { hashPassword, jwtByActiveUserAccount } from '../../../helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
 import { activateNewAccount } from '../functions/activateNewAccount'
 import { MoodleNetArangoUserAccountSubDomain } from '../MoodleNetArangoUserAccountSubDomain'
@@ -16,22 +18,19 @@ export const ConfirmEmailActivateAccountWorker = ({
   'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount'
 > => async ({ flow, token, password, username }) => {
   const hashedPassword = await hashPassword({ pwd: password })
+  const userKey = ulidKey()
+  const userId = makeId(NodeType.User, userKey)
   const activationResult = await activateNewAccount({
     persistence,
     token,
     username,
     password: hashedPassword,
+    userId,
   })
   if (typeof activationResult !== 'string') {
-    emit<MoodleNetArangoUserAccountSubDomain>()(
-      'UserAccount.RegisterNewAccount.NewAccountActivated',
-      { accountId: activationResult._id, username: activationResult.username },
-      flow,
-    )
-    const session = await userSessionByActiveUserAccount({
-      activeUserAccount: activationResult,
-    })
-    return session
+    await call<MoodleNetDomain>()('ContentGraph.CreateNewRegisteredUser', flow)({ username, key: userKey })
+
+    return activationResult
   } else {
     return activationResult
   }
@@ -42,20 +41,25 @@ export const activateAccount: MutationResolvers['activateAccount'] = async (
   { password, username, token },
   context,
 ) => {
-  const sessionOrMsg = await call<MoodleNetArangoUserAccountSubDomain>()(
+  const activeUserAccountOrErrString = await call<MoodleNetArangoUserAccountSubDomain>()(
     'UserAccount.RegisterNewAccount.ConfirmEmailActivateAccount',
     context.flow,
   )({ password, token, username, flow: context.flow })
 
-  if (typeof sessionOrMsg === 'string') {
+  if (typeof activeUserAccountOrErrString === 'string') {
     return {
-      __typename: 'ActivateNewAccountResponse',
-      message: sessionOrMsg,
+      __typename: 'CreateSession',
+      jwt: null,
+      message: activeUserAccountOrErrString,
     }
   } else {
+    const activeUserAccount = activeUserAccountOrErrString
+    const jwt = await jwtByActiveUserAccount({ activeUserAccount })
+
     return {
-      __typename: 'ActivateNewAccountResponse',
-      session: sessionOrMsg,
+      __typename: 'CreateSession',
+      jwt,
+      message: null,
     }
   }
 }

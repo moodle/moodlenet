@@ -1,11 +1,10 @@
-import { Event } from '../../../../../lib/domain/event'
 import { Flow } from '../../../../../lib/domain/flow'
 import { SubDomain } from '../../../../../lib/domain/types'
 import { WrkDef } from '../../../../../lib/domain/wrk'
 import { MoodleNetDomain } from '../../../../MoodleNetDomain'
 import { MoodleNetExecutionContext } from '../../../../MoodleNetGraphQL'
 import { UserSession } from '../../UserAccount.graphql.gen'
-import { ActivationMessage, Messages } from './types'
+import { ActivationMessage, ActiveUserAccount, Messages } from './types'
 
 export type MoodleNetArangoUserAccountSubDomain = SubDomain<
   MoodleNetDomain,
@@ -22,12 +21,8 @@ export type MoodleNetArangoUserAccountSubDomain = SubDomain<
           password: string
           username: string
           flow: Flow
-        }) => Promise<ActivationMessage | UserSession>
+        }) => Promise<ActivationMessage | ActiveUserAccount>
       >
-      NewAccountActivated: Event<{
-        accountId: string
-        username: string
-      }>
     }
 
     ChangeMainEmail: {
@@ -39,11 +34,6 @@ export type MoodleNetArangoUserAccountSubDomain = SubDomain<
         }) => Promise<{ success: true } | { success: false; reason: string }>
       >
       DeleteRequest: WrkDef<({ token }: { token: string }) => Promise<unknown>>
-      AccountEmailChanged: Event<{
-        accountId: string
-        newEmail: string
-        oldEmail: string
-      }>
       ConfirmAndChangeAccountEmail: WrkDef<
         (_: { token: string; password: string; username: string }) => Promise<boolean>
       >

@@ -12,6 +12,7 @@ export const getNode = async <Type extends GQL.NodeType = GQL.NodeType>({
   _key: IdKey
   nodeType: Type
 }) => {
+  // console.log(`getNode`, { _key, nodeType })
   const collection = graph.vertexCollection(nodeType)
   const node = await collection.vertex({ _key }).catch(() => null)
   return node as ShallowNodeByType<Type> | null
