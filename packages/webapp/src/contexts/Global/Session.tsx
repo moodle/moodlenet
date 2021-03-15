@@ -2,10 +2,10 @@ import { t } from '@lingui/macro'
 import { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { setToken } from './Apollo/client'
 import {
-  SessionFragment,
   useActivateNewAccountMutation,
   useGetCurrentSessionLazyQuery,
   useLoginMutation,
+  UserSessionSimpleFragment,
 } from './Session/session.gen'
 
 const LAST_SESSION_USERNAME_STORAGE_KEY = 'LAST_SESSION_USERNAME'
@@ -35,7 +35,7 @@ type LastSession = {
 }
 
 export type SessionContextType = {
-  session: SessionFragment | null
+  session: UserSessionSimpleFragment | null
   lastSessionUsername: string | null
   logout(): unknown
   activateNewAccount(_: { password: string; token: string; username: string }): Promise<ActivateWarnMessage | null>

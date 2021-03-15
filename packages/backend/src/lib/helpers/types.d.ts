@@ -1,4 +1,4 @@
-import { Flow } from '../domain/types/path'
+import { Flow } from '../domain/flow'
 
 export type WithCreated = {
   createdAt: number

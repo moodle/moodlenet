@@ -1,6 +1,6 @@
 query getCurrentSession {
   getSession {
-    ...Session
+    ...UserSessionSimple
   }
 }
 
@@ -18,14 +18,10 @@ mutation activateNewAccount($token: String!, $username: String!, $password: Stri
   }
 }
 
-fragment ShallowSession on UserSession {
+fragment UserSessionSimple on UserSession {
   username
   email
   accountId
-}
-
-fragment Session on UserSession {
-  ...ShallowSession
   user {
     ...ShallowUser
   }

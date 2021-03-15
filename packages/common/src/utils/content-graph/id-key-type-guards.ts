@@ -37,14 +37,6 @@ export const idKeyFromId = (_: Id): IdKey => {
   const [, key] = _.split('/')
   return key as IdKey
 }
-export const parseNodeIdString = (_: string): { nodeType: NodeType; _key: IdKey; id: Id } | null => {
-  const [type, _key] = _.split('/')
-  const nodeType = capitalizeNodeType(type)
-  if (!(nodeType && isIdKey(_key))) {
-    return null
-  }
-  return { nodeType, _key, id: `${nodeType}/${_key}` as Id }
-}
 
 export const capitalizeNodeType = (_: string): NodeType | null => {
   const type = _ && _[0].toUpperCase() + _.substr(1)
@@ -56,5 +48,18 @@ export const capitalizeNodeType = (_: string): NodeType | null => {
 
 export const parseNodeId = (_: Id): { nodeType: NodeType; _key: IdKey } => ({
   nodeType: nodeTypeFromId(_),
+  _key: idKeyFromId(_),
+})
+export const parseNodeIdString = (_: string): { nodeType: NodeType; _key: IdKey; id: Id } | null => {
+  const [type, _key] = _.split('/')
+  const nodeType = capitalizeNodeType(type)
+  if (!(nodeType && isIdKey(_key))) {
+    return null
+  }
+  return { nodeType, _key, id: `${nodeType}/${_key}` as Id }
+}
+
+export const parseEdgeId = (_: Id): { edgeType: EdgeType; _key: IdKey } => ({
+  edgeType: edgeTypeFromId(_),
   _key: idKeyFromId(_),
 })

@@ -256,7 +256,7 @@ export type Query = {
 
 
 export type QueryGetSessionAccountUserArgs = {
-  userId: Scalars['ID'];
+  userId?: Maybe<Scalars['ID']>;
 };
 
 
@@ -286,7 +286,7 @@ export type SearchPageEdge = PageEdge & {
 export type INode = {
   _id?: Maybe<Scalars['ID']>;
   _rel: RelPage;
-  _meta?: Maybe<NodeMeta>;
+  _meta: NodeMeta;
 };
 
 
@@ -297,6 +297,8 @@ export type INode_RelArgs = {
 };
 
 export type NodeMeta = {
+  __typename: 'NodeMeta';
+  creator: User;
   created: Scalars['DateTime'];
   updated: Scalars['DateTime'];
   relCount?: Maybe<RelCountMap>;
@@ -309,6 +311,7 @@ export type EdgeMeta = {
 };
 
 export type RelCount = {
+  __typename: 'RelCount';
   to?: Maybe<RelCountTargetMap>;
   from?: Maybe<RelCountTargetMap>;
 };
@@ -400,7 +403,7 @@ export type Likes = IEdge & {
 
 export type UserSession = {
   __typename: 'UserSession';
-  user: User;
+  user?: Maybe<User>;
 };
 
 export type Collection = INode & IContentNode & {
@@ -409,7 +412,7 @@ export type Collection = INode & IContentNode & {
   summary: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _meta?: Maybe<NodeMeta>;
+  _meta: NodeMeta;
   _rel: RelPage;
 };
 
@@ -453,7 +456,7 @@ export type Resource = INode & IContentNode & {
   summary: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _meta?: Maybe<NodeMeta>;
+  _meta: NodeMeta;
   _rel: RelPage;
 };
 
@@ -480,7 +483,7 @@ export type Subject = INode & IContentNode & {
   summary: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _meta?: Maybe<NodeMeta>;
+  _meta: NodeMeta;
   _rel: RelPage;
 };
 
@@ -507,7 +510,7 @@ export type User = INode & IContentNode & {
   summary: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
   _id: Scalars['ID'];
-  _meta?: Maybe<NodeMeta>;
+  _meta: NodeMeta;
   _rel: RelPage;
 };
 
@@ -655,9 +658,9 @@ export type ResolversTypes = {
   SearchPageEdge: ResolverTypeWrapper<SearchPageEdge>;
   Cursor: ResolverTypeWrapper<Scalars['Cursor']>;
   INode: ResolversTypes['Collection'] | ResolversTypes['Resource'] | ResolversTypes['Subject'] | ResolversTypes['User'];
-  NodeMeta: never;
+  NodeMeta: ResolverTypeWrapper<NodeMeta>;
   EdgeMeta: ResolverTypeWrapper<EdgeMeta>;
-  RelCount: never;
+  RelCount: ResolverTypeWrapper<RelCount>;
   NodeRelSort: NodeRelSort;
   IContentNode: ResolversTypes['Collection'] | ResolversTypes['Resource'] | ResolversTypes['Subject'] | ResolversTypes['User'];
   IEdge: ResolversTypes['AppliesTo'] | ResolversTypes['Contains'] | ResolversTypes['Created'] | ResolversTypes['Follows'] | ResolversTypes['Likes'];
@@ -733,9 +736,9 @@ export type ResolversParentTypes = {
   SearchPageEdge: SearchPageEdge;
   Cursor: Scalars['Cursor'];
   INode: ResolversParentTypes['Collection'] | ResolversParentTypes['Resource'] | ResolversParentTypes['Subject'] | ResolversParentTypes['User'];
-  NodeMeta: never;
+  NodeMeta: NodeMeta;
   EdgeMeta: EdgeMeta;
-  RelCount: never;
+  RelCount: RelCount;
   NodeRelSort: NodeRelSort;
   IContentNode: ResolversParentTypes['Collection'] | ResolversParentTypes['Resource'] | ResolversParentTypes['Subject'] | ResolversParentTypes['User'];
   IEdge: ResolversParentTypes['AppliesTo'] | ResolversParentTypes['Contains'] | ResolversParentTypes['Created'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'];
@@ -897,7 +900,7 @@ export type PageEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
 };
 
 export type QueryResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  getSessionAccountUser?: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType, RequireFields<QueryGetSessionAccountUserArgs, 'userId'>>;
+  getSessionAccountUser?: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType, RequireFields<QueryGetSessionAccountUserArgs, never>>;
   globalSearch?: Resolver<ResolversTypes['SearchPage'], ParentType, ContextType, RequireFields<QueryGlobalSearchArgs, 'text'>>;
   node?: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryNodeArgs, '_id'>>;
 };
@@ -922,14 +925,15 @@ export type INodeResolvers<ContextType = MoodleNetExecutionContext, ParentType e
   __resolveType: TypeResolveFn<'Collection' | 'Resource' | 'Subject' | 'User', ParentType, ContextType>;
   _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<INode_RelArgs, 'edge'>>;
-  _meta?: Resolver<Maybe<ResolversTypes['NodeMeta']>, ParentType, ContextType>;
+  _meta?: Resolver<ResolversTypes['NodeMeta'], ParentType, ContextType>;
 };
 
 export type NodeMetaResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['NodeMeta'] = ResolversParentTypes['NodeMeta']> = {
-  __resolveType: TypeResolveFn<null, ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updated?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   relCount?: Resolver<Maybe<ResolversTypes['RelCountMap']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type EdgeMetaResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['EdgeMeta'] = ResolversParentTypes['EdgeMeta']> = {
@@ -939,9 +943,9 @@ export type EdgeMetaResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
 };
 
 export type RelCountResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['RelCount'] = ResolversParentTypes['RelCount']> = {
-  __resolveType: TypeResolveFn<null, ParentType, ContextType>;
   to?: Resolver<Maybe<ResolversTypes['RelCountTargetMap']>, ParentType, ContextType>;
   from?: Resolver<Maybe<ResolversTypes['RelCountTargetMap']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type IContentNodeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['IContentNode'] = ResolversParentTypes['IContentNode']> = {
@@ -1014,7 +1018,7 @@ export type LikesResolvers<ContextType = MoodleNetExecutionContext, ParentType e
 };
 
 export type UserSessionResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['UserSession'] = ResolversParentTypes['UserSession']> = {
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1023,7 +1027,7 @@ export type CollectionResolvers<ContextType = MoodleNetExecutionContext, ParentT
   summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _meta?: Resolver<Maybe<ResolversTypes['NodeMeta']>, ParentType, ContextType>;
+  _meta?: Resolver<ResolversTypes['NodeMeta'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Collection_RelArgs, 'edge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1045,7 +1049,7 @@ export type ResourceResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
   summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _meta?: Resolver<Maybe<ResolversTypes['NodeMeta']>, ParentType, ContextType>;
+  _meta?: Resolver<ResolversTypes['NodeMeta'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Resource_RelArgs, 'edge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1055,7 +1059,7 @@ export type SubjectResolvers<ContextType = MoodleNetExecutionContext, ParentType
   summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _meta?: Resolver<Maybe<ResolversTypes['NodeMeta']>, ParentType, ContextType>;
+  _meta?: Resolver<ResolversTypes['NodeMeta'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Subject_RelArgs, 'edge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1065,7 +1069,7 @@ export type UserResolvers<ContextType = MoodleNetExecutionContext, ParentType ex
   summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _meta?: Resolver<Maybe<ResolversTypes['NodeMeta']>, ParentType, ContextType>;
+  _meta?: Resolver<ResolversTypes['NodeMeta'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<User_RelArgs, 'edge'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

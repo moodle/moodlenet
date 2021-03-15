@@ -3,7 +3,7 @@ type Collection implements INode & IContentNode {
   summary: String!
   icon: String
   _id: ID!
-  _meta: NodeMeta
+  _meta: NodeMeta!
   _rel(edge: EdgeTypeInput!, page: PaginationInput, sort: [NodeRelSort!]): RelPage!
 }
 

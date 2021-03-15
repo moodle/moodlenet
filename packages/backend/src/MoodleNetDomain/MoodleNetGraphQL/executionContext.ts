@@ -1,24 +1,39 @@
 import { Executor } from '@graphql-tools/delegate/types'
 import { GraphQLError } from 'graphql'
 import { IncomingMessage } from 'http'
+import { Flow } from '../../lib/domain/flow'
+import { Id } from '../services/UserAccount/types'
+import { MoodleNetAuthenticatedExecutionContext } from '../types'
 import { INVALID_TOKEN } from './JWT'
 import { getJwtVerifier } from './MoodleNetGraphQL.env'
 import { graphQLRequestFlow } from './schemaHelpers'
 import { MoodleNetExecutionContext, RootValue } from './types'
 
 export function throwLoggedUserOnly(_: { context: MoodleNetExecutionContext }): MoodleNetExecutionContext<'session'> {
-  const { context } = _
-  if (context.type !== 'session') {
+  if (_.context.type !== 'session') {
     throw new GraphQLError('Logged in users only')
   }
-  return context
+  return _.context
 }
+
+export function getSessionContext(
+  context: MoodleNetAuthenticatedExecutionContext,
+): MoodleNetExecutionContext<'session'> {
+  if (context.type === 'session') {
+    return context
+  } else {
+    return context.as
+  }
+}
+
+export const SYSTEM_USER_ID = 'User/SYSTEM' as Id
 
 export function getExecutionGlobalValues(
   ...args: Parameters<Executor>
 ): {
   context: MoodleNetExecutionContext<'anon' | 'session'>
   root: RootValue
+  flow: Flow
 } {
   const verifyJwt = getJwtVerifier()
   const { context } = args[0]
@@ -30,5 +45,6 @@ export function getExecutionGlobalValues(
   return {
     context: tokenVerification === INVALID_TOKEN || !tokenVerification ? { type: 'anon', flow } : tokenVerification,
     root: {},
+    flow,
   }
 }

@@ -1,6 +1,5 @@
 import { Id } from '@moodlenet/common/lib/utils/content-graph'
-import { newFlow } from '../lib/domain/helpers'
-import { Flow, PFlow } from '../lib/domain/types/path'
+import { Flow, newFlow, PFlow } from '../lib/domain/flow'
 
 export type CtxTypes = keyof MoodleNetExecutionContextMap
 export type MoodleNetExecutionContextMap = {
@@ -12,10 +11,11 @@ export type MoodleNetExecutionContextMap = {
     userId: Id
   }
   system: {
-    as?: MoodleNetExecutionContext<'session'>
+    as: MoodleNetExecutionContext<'session'>
   }
   anon: {}
 }
+export type MoodleNetAuthenticatedExecutionContext = MoodleNetExecutionContext<'session' | 'system'>
 
 type TypeUnion<T> = keyof T extends infer P
   ? P extends keyof T // Introduce an extra type parameter P to distribute over
@@ -31,9 +31,10 @@ export type MoodleNetExecutionContext<T extends CtxTypes = CtxTypes> = TypeUnion
   flow: Flow
 }
 
-export const getSystemExecutionContext = (
-  _: { as?: MoodleNetExecutionContext<'session'>; flow?: PFlow } = {},
-): MoodleNetExecutionContext<'system'> => ({
+export const getSystemExecutionContext = (_: {
+  as: MoodleNetExecutionContext<'session'>
+  flow?: PFlow
+}): MoodleNetExecutionContext<'system'> => ({
   type: 'system',
   as: _.as,
   flow: newFlow(_.flow),

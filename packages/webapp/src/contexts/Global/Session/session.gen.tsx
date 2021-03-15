@@ -11,7 +11,7 @@ export type GetCurrentSessionQuery = (
   { __typename: 'Query' }
   & { getSession?: Types.Maybe<(
     { __typename: 'UserSession' }
-    & SessionFragment
+    & UserSessionSimpleFragment
   )> }
 );
 
@@ -44,43 +44,32 @@ export type ActivateNewAccountMutation = (
   ) }
 );
 
-export type ShallowSessionFragment = (
+export type UserSessionSimpleFragment = (
   { __typename: 'UserSession' }
   & Pick<Types.UserSession, 'username' | 'email' | 'accountId'>
-);
-
-export type SessionFragment = (
-  { __typename: 'UserSession' }
-  & { user: (
+  & { user?: Types.Maybe<(
     { __typename: 'User' }
     & ShallowUserFragment
-  ) }
-  & ShallowSessionFragment
+  )> }
 );
 
-export const ShallowSessionFragmentDoc = gql`
-    fragment ShallowSession on UserSession {
+export const UserSessionSimpleFragmentDoc = gql`
+    fragment UserSessionSimple on UserSession {
   username
   email
   accountId
-}
-    `;
-export const SessionFragmentDoc = gql`
-    fragment Session on UserSession {
-  ...ShallowSession
   user {
     ...ShallowUser
   }
 }
-    ${ShallowSessionFragmentDoc}
-${ShallowUserFragmentDoc}`;
+    ${ShallowUserFragmentDoc}`;
 export const GetCurrentSessionDocument = gql`
     query getCurrentSession {
   getSession {
-    ...Session
+    ...UserSessionSimple
   }
 }
-    ${SessionFragmentDoc}`;
+    ${UserSessionSimpleFragmentDoc}`;
 
 /**
  * __useGetCurrentSessionQuery__
