@@ -5,7 +5,7 @@ import { LookupWorker } from '../../../../../../lib/domain/wrk'
 import { getMNEnv } from '../../../../../MoodleNet.env'
 import { MoodleNetDomain } from '../../../../../MoodleNetDomain'
 import { fillEmailTemplate } from '../../../../Email/helpers'
-import { userAndJwtByActiveUserAccount } from '../../../helpers'
+import { createSessionByActiveUserAccount } from '../../../helpers'
 import { MutationResolvers } from '../../../UserAccount.graphql.gen'
 import { getActiveAccountByUsername } from '../functions/getActiveAccountByUsername'
 import { getConfig } from '../functions/getConfig'
@@ -19,7 +19,7 @@ export const SessionByEmailWorker = ({
 }): LookupWorker<MoodleNetArangoUserAccountSubDomain, 'UserAccount.Session.ByEmail'> => async ({
   email,
   username,
-  ctx,
+  flow,
 }) => {
   const { publicBaseUrl } = getMNEnv()
   const config = await getConfig({ persistence })
@@ -29,10 +29,7 @@ export const SessionByEmailWorker = ({
   if (!account || account.email !== email) {
     return { success: false, reason: 'not found' }
   }
-  const { jwt } = await userAndJwtByActiveUserAccount({
-    activeUserAccount: account,
-    ctx,
-  })
+  const { jwt } = await createSessionByActiveUserAccount({ activeUserAccount: account })
 
   const emailObj = fillEmailTemplate({
     template: resetAccountPasswordRequestEmail,
@@ -45,14 +42,13 @@ export const SessionByEmailWorker = ({
     },
   })
 
-  enqueue<MoodleNetDomain>()('Email.SendOne', ctx.flow)({ emailObj, flow: ctx.flow })
+  enqueue<MoodleNetDomain>()('Email.SendOne', flow)({ emailObj, flow })
 
   return { success: true }
 }
 
 export const sessionByEmail: MutationResolvers['sessionByEmail'] = async (_parent, { email, username }, context) => {
   const res = await call<MoodleNetArangoUserAccountSubDomain>()('UserAccount.Session.ByEmail', context.flow)({
-    ctx: context,
     email,
     flow: context.flow, //FIXME: has already flow in context
     username,

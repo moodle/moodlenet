@@ -1,5 +1,5 @@
 // import { MoodleNetDomain } from '../../../../MoodleNetDomain/MoodleNetDomain'
-import { SubDef, SubscriberService } from '../../sub'
+import { defaultSubConfig, SubDef, SubscriberService } from '../../sub'
 import { DomainStart, DomainStartSub, DomainStartWrk } from '../../types'
 import { defaultWrkConfig, WorkerService, WrkDef } from '../../wrk'
 import { getDefaultDomainName } from '../env'
@@ -55,12 +55,13 @@ const bind = async (
   def: WrkDef<any> | SubDef<any, any>,
   start: DomainStartWrk<any, any> | DomainStartSub<any, any>,
 ) => {
-  const cfg = defaultWrkConfig(def.cfg)
   if (def.kind === 'wrk') {
+    const cfg = defaultWrkConfig(def.cfg)
     const srv = await start.init({ cfg }).catch(manageInit(path, domainName))
     const unbind = await bindWorker(domainName, srv, path, cfg)
     return { unbind, srv }
   } else if (def.kind === 'sub') {
+    const cfg = defaultSubConfig(def.cfg)
     const srv = await start.init({ cfg }).catch(manageInit(path, domainName))
     const unbind = await bindSubscriber(domainName, srv, path, cfg)
     return { unbind, srv }

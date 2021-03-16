@@ -1,6 +1,6 @@
 import { Message } from 'amqplib'
 import { EventEmitter } from 'events'
-import { memoize } from 'lodash'
+import { memo } from '../../helpers/misc'
 import { Flow } from '../flow'
 import { DomainSetup } from '../types'
 import { getConnection, machineId } from './env'
@@ -28,19 +28,20 @@ export const registeredImpl: Record<string, DomainSetup<any>> = {}
 export const registerImpl = (domainName: string, impl: DomainSetup<any>) => (registeredImpl[domainName] = impl)
 export const getRegisteredImpl = (domainName: string): DomainSetup<any> | undefined => registeredImpl[domainName]
 
-export const getTopicChannel = memoize(async (domainName: string, topic: string, prefetch: number) => {
+export const getTopicChannel = memo(async (domainName: string, topic: string, prefetch: number) => {
   const [connection] = await getConnection({ domainName })
   const channel = await connection.createConfirmChannel()
   channel.prefetch(prefetch, false)
   return [channel, topic, domainName, prefetch] as const
 })
 
-export const getMachineChannel = memoize(async (domainName: string) => {
+export const getMachineChannel = memo(async (domainName: string) => {
   const [connection] = await getConnection({ domainName })
-  return connection.createConfirmChannel()
+  const channel = await connection.createConfirmChannel()
+  return channel
 })
 
-export const downStream = memoize(async (domainName: string) => {
+export const downStream = memo(async (domainName: string) => {
   const downstreamQName = `${domainName}:MachineDownStreamQueue:${machineId}`
   const downStreamEmitter = new EventEmitter()
 
@@ -52,12 +53,11 @@ export const downStream = memoize(async (domainName: string) => {
     autoDelete: true,
   })
   machineChannel.consume(downstreamQName, msg => {
-    msg && machineChannel.ack(msg)
-    const messageId = msg?.properties.correlationId
-    if (!messageId) {
+    if (!msg) {
       return
     }
-
+    machineChannel.ack(msg)
+    const messageId = msg.properties.correlationId
     downStreamEmitter.emit(messageId, msg)
   })
 
@@ -85,7 +85,7 @@ export type EventEmitterHandlerArgType = {
   messageId: string
 }
 
-export const delayedTopology = memoize(async (domainName: string) => {
+export const delayedTopology = memo(async (domainName: string) => {
   const delayedQName = getDomainDelayQueueName({ domainName })
   const delayedExchangeName = getDomainDelayExchangeName({ domainName })
 

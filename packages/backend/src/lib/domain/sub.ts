@@ -38,7 +38,7 @@ export type SubConfig = {
   rejectionAck: Acks
   parallelism: number
 }
-export const defaultSubSetupConfig = (cfg?: Partial<SubConfig>): SubConfig => ({
+export const defaultSubConfig = (cfg?: Partial<SubConfig>): SubConfig => ({
   rejectionAck: Acks.Reject,
   parallelism: 10,
   ...cfg,

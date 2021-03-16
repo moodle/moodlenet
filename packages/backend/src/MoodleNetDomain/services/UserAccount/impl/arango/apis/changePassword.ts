@@ -52,7 +52,7 @@ export const changePassword: MutationResolvers['changePassword'] = async (
 
   if (result !== null) {
     return { __typename: 'SimpleResponse', success: false, message: 'not found or wrong password' }
-  } else {
-    return { __typename: 'SimpleResponse', success: true, message: null }
   }
+
+  return { __typename: 'SimpleResponse', success: true, message: null }
 }

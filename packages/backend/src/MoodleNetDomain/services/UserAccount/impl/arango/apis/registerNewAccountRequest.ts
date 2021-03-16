@@ -34,24 +34,24 @@ export const RegisterNewAccountRequestWorker = ({
   })
   if (typeof resp === 'string') {
     return { success: false, reason: resp }
-  } else {
-    const emailObj = fillEmailTemplate({
-      template: newAccountRequestEmail,
-      to: email,
-      vars: {
-        email,
-        link: `${publicBaseUrl}${webappPath<Routes.ActivateNewAccount>('/activate-new-account/:token', {
-          token,
-        })}`,
-      },
-    })
-    enqueue<MoodleNetDomain>()('Email.SendOne', flow)({ emailObj, flow })
-    enqueue<MoodleNetArangoUserAccountSubDomain>()('UserAccount.RegisterNewAccount.DeleteRequest', flow, {
-      delayDeliverSecs: newAccountVerificationWaitSecs,
-    })({ token })
-
-    return { success: true }
   }
+
+  const emailObj = fillEmailTemplate({
+    template: newAccountRequestEmail,
+    to: email,
+    vars: {
+      email,
+      link: `${publicBaseUrl}${webappPath<Routes.ActivateNewAccount>('/activate-new-account/:token', {
+        token,
+      })}`,
+    },
+  })
+  enqueue<MoodleNetDomain>()('Email.SendOne', flow)({ emailObj, flow })
+  enqueue<MoodleNetArangoUserAccountSubDomain>()('UserAccount.RegisterNewAccount.DeleteRequest', flow, {
+    delayDeliverSecs: newAccountVerificationWaitSecs,
+  })({ token })
+
+  return { success: true }
 }
 
 export const signUp: MutationResolvers['signUp'] = async (_parent, { email }, context) => {
@@ -68,11 +68,11 @@ export const signUp: MutationResolvers['signUp'] = async (_parent, { email }, co
       message: res.reason,
       success: false,
     }
-  } else {
-    return {
-      __typename: 'SimpleResponse',
-      message: null,
-      success: true,
-    }
+  }
+
+  return {
+    __typename: 'SimpleResponse',
+    message: null,
+    success: true,
   }
 }

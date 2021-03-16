@@ -1,7 +1,5 @@
 import Argon from 'argon2'
-import { call } from '../../../lib/domain/amqp/call'
-import { MoodleNetDomain } from '../../MoodleNetDomain'
-import { getJwtSigner, MoodleNetExecutionContext } from '../../MoodleNetGraphQL'
+import { getJwtSigner } from '../../MoodleNetGraphQL'
 import { ArgonPwdHashOpts } from './argon'
 import { ActiveUserAccount } from './impl/arango/types'
 import { SimpleResponse, UserSession } from './UserAccount.graphql.gen'
@@ -24,45 +22,15 @@ export const userSessionByActiveUserAccount = async ({
 
 export const createSessionByActiveUserAccount = async ({
   activeUserAccount,
-  ctx,
 }: {
-  ctx: MoodleNetExecutionContext
   activeUserAccount: ActiveUserAccount
-}): Promise<{ jwt: string | null }> => {
-  const { jwt } = await userAndJwtByActiveUserAccount({ activeUserAccount, ctx })
+}): Promise<{ jwt: string }> => {
+  const jwt = await await jwtByActiveUserAccount({
+    activeUserAccount,
+  })
   return {
     jwt,
   }
-}
-
-export const userAndJwtByActiveUserAccount = async ({
-  activeUserAccount,
-  ctx,
-}: {
-  activeUserAccount: ActiveUserAccount
-  ctx: MoodleNetExecutionContext
-}) => {
-  // console.log(
-  //   `*************\n*************\n*************\n*************\n*************\n userAndJwtByActiveUserAccount`,
-  //   {
-  //     ...activeUserAccount,
-  //     ___id: activeUserAccount.userId,
-  //   },
-  // )
-  const user = await call<MoodleNetDomain>()('ContentGraph.GetAccountUser', ctx.flow)({
-    userId: activeUserAccount.userId,
-  })
-  // console.log(
-  //   `*************\n*************\n*************\n*************\n*************\n userAndJwtByActiveUserAccount->ContentGraph.Node.ById`,
-  //   user,
-  // )
-  if (!user) {
-    throw new Error(`can't find User for Account  userId:${activeUserAccount.userId} `)
-  }
-  const jwt = await jwtByActiveUserAccount({
-    activeUserAccount,
-  })
-  return { jwt, user: user }
 }
 
 export const jwtByActiveUserAccount = async ({ activeUserAccount }: { activeUserAccount: ActiveUserAccount }) => {

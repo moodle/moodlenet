@@ -27,11 +27,11 @@ export const verifyJwt = ({
   jwtPublicKey: string
   jwtVerifyOpts: JWT.VerifyOptions
 }): JWTTokenVerification => {
-  console.log({
-    jwtPublicKey,
-    jwtVerifyOpts,
-    token,
-  })
+  // console.log({
+  //   jwtPublicKey,
+  //   jwtVerifyOpts,
+  //   token,
+  // })
   if (!token) {
     return null
   }

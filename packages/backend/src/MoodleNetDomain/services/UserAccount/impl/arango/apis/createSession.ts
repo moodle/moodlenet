@@ -13,17 +13,13 @@ export const SessionCreateWorker = ({
 }): LookupWorker<MoodleNetArangoUserAccountSubDomain, 'UserAccount.Session.Create'> => async ({
   username,
   password,
-  ctx,
 }) => {
   const account = await getVerifiedAccountByUsernameAndPassword({ persistence, username, password })
   if (!account) {
     return { jwt: null }
   }
 
-  const session = await createSessionByActiveUserAccount({
-    activeUserAccount: account,
-    ctx,
-  })
+  const session = await createSessionByActiveUserAccount({ activeUserAccount: account })
 
   return session
 }
@@ -32,7 +28,6 @@ export const createSession: MutationResolvers['createSession'] = async (_parent,
   const session = await call<MoodleNetArangoUserAccountSubDomain>()('UserAccount.Session.Create', ctx.flow)({
     password,
     username,
-    ctx,
   })
   return {
     __typename: 'CreateSession',

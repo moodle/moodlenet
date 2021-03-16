@@ -12,14 +12,14 @@ export const getConfig = async ({ persistence: { db, Config } }: { persistence: 
   const currentConfig: Maybe<UserAccountConfig> = await cursor.next()
   if (currentConfig) {
     return currentConfig
-  } else {
-    const savedDefaultConfig = await Config.save(DefaultConfig, {
-      returnNew: true,
-    })
-    const config = savedDefaultConfig.new
-    if (!config) {
-      throw new Error(`couldn't save default config`)
-    }
-    return config
   }
+
+  const savedDefaultConfig = await Config.save(DefaultConfig, {
+    returnNew: true,
+  })
+  const config = savedDefaultConfig.new
+  if (!config) {
+    throw new Error(`couldn't save default config`)
+  }
+  return config
 }

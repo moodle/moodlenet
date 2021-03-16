@@ -17,6 +17,7 @@ export const newAccountRequest = async ({
   if (!emailAvailable) {
     return Messages.EmailNotAvailable
   }
+
   const document: UserAccountRecord = {
     _id: undefined as never,
     createdAt: undefined as never,

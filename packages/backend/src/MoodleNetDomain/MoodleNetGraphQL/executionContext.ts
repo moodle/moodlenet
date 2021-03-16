@@ -21,9 +21,8 @@ export function getSessionContext(
 ): MoodleNetExecutionContext<'session'> {
   if (context.type === 'session') {
     return context
-  } else {
-    return context.as
   }
+  return context.as
 }
 
 export const SYSTEM_USER_ID = 'User/SYSTEM' as Id

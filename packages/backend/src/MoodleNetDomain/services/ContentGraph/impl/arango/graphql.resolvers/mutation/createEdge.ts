@@ -9,7 +9,7 @@ import { validateCreateEdgeInput } from '../../../../graphql/inputStaticValidati
 import { MoodleNetArangoContentGraphSubDomain } from '../../MoodleNetArangoContentGraphSubDomain'
 import { createEdgeMutationError, fakeUnshallowEdgeForResolverReturnType } from '../helpers'
 export const createEdge: MutationResolvers['createEdge'] = async (_root, { input }, ctx /*,  _info */) => {
-  console.log('createEdge', input)
+  // console.log('createEdge', input)
   const { edgeType, from, to } = input
   if (ctx.type === 'anon') {
     return createEdgeMutationError(CreateEdgeMutationErrorType.NotAuthorized, `Anonymous can't create`)

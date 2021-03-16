@@ -54,10 +54,10 @@ export const ChangeAccountEmailRequestWorker = ({
     })({ token })
 
     return { success: true }
-  } else {
-    const reason = typeof mAccountOrError === 'string' ? mAccountOrError : 'not found'
-    return { success: false, reason }
   }
+
+  const reason = typeof mAccountOrError === 'string' ? mAccountOrError : 'not found'
+  return { success: false, reason }
 }
 
 export const changeEmailRequest: MutationResolvers['changeEmailRequest'] = async (_parent, { newEmail }, context) => {
@@ -71,7 +71,6 @@ export const changeEmailRequest: MutationResolvers['changeEmailRequest'] = async
 
   if (!res.success) {
     return getSimpleResponse({ message: res.reason })
-  } else {
-    return getSimpleResponse({ success: true })
   }
+  return getSimpleResponse({ success: true })
 }

@@ -16,11 +16,10 @@ import { NodeResolver } from './types.node'
 // import { updateNode } from './mutation.updateNode'
 
 const checkIDOrError = (_?: string) => {
-  if (isId(_)) {
-    return _
-  } else {
+  if (!isId(_)) {
     throw 'invalid ID'
   }
+  return _
 }
 const ID = new GraphQLScalarType({
   name: 'ID',

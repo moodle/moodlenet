@@ -1,7 +1,7 @@
 import JWT from 'jsonwebtoken'
-import memo from 'lodash/memoize'
 import sshpk from 'sshpk'
 import { newFlow } from '../../lib/domain/flow'
+import { memo } from '../../lib/helpers/misc'
 import { ActiveUserAccount } from '../services/UserAccount/impl/arango/types'
 import { signJwt, verifyJwt } from './JWT'
 import { MoodleNetExecutionContext } from './types'
@@ -11,9 +11,9 @@ export type GQLExecutionContext = MoodleNetExecutionContext<'anon' | 'session'>
 export const getJwtVerifier = memo(() => {
   const jwtPublicKey = process.env.JWT_PUBLIC_KEY!
   sshpk.parseKey(jwtPublicKey, 'pem')
-  console.log({
-    jwtPublicKey,
-  })
+  // console.log({
+  //   jwtPublicKey,
+  // })
   const jwtVerifyOpts = {
     // algorithms: ['RS256'],
     // complete: true,

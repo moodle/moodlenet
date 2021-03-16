@@ -18,7 +18,8 @@ export const bindSubscriber = async (
     }
     const payload = getMessagePayload(msg)
     if (payload === NOT_PARSED) {
-      return channel.reject(msg, false)
+      channel.reject(msg, false)
+      return
     }
     const flow = msgFlow(msg)
     handler(payload, flow)
