@@ -11,31 +11,44 @@ export const bindWorker = async (domainName: string, wrkSrv: WorkerService<any>,
       return
     }
     const args = getMessagePayload(msg)
-    if (args === NOT_PARSED || !isArray(args)) {
+    if (args === NOT_PARSED) {
       channel.reject(msg, false)
-      if (args !== NOT_PARSED) {
-        throw new Error(`args should be array : ${args}`)
-      }
+      console.error(
+        `Rejecting amqp message[${msg.properties.messageId}] for ${domainName}:${topic}: cannot JSON.parse content`,
+      )
+      return
+    }
+    if (!isArray(args)) {
+      channel.reject(msg, false)
+      console.error(
+        `Rejecting amqp message[${msg.properties.messageId}] for ${domainName}:${topic}: args should be an array : ${args}`,
+      )
       return
     }
 
     // const flow = msgFlow(msg)
     handler(...args)
-      .catch((err: any) => {
-        if (cfg.rejectionAck !== Acks.Done) {
-          channel.reject(msg, cfg.rejectionAck === Acks.Requeue)
-        } else {
+      .then(
+        (resp: any) => {
           channel.ack(msg)
-        }
-        return wrkReplyError({ err, wrk: topic })
-      })
+          return resp
+        },
+        (err: any) => {
+          if (cfg.rejectionAck !== Acks.Done) {
+            channel.reject(msg, cfg.rejectionAck === Acks.Requeue)
+          } else {
+            channel.ack(msg)
+          }
+          return wrkReplyError({ err, wrk: topic })
+        },
+      )
       .then((replyWith: any) => {
-        channel.ack(msg)
         const replyQ = msg.properties.replyTo
         if (replyQ) {
           channel.sendToQueue(replyQ, json2Buffer(replyWith), {
             correlationId: msg.properties.messageId,
           })
+          return
         }
       })
   })
