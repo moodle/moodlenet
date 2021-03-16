@@ -1,0 +1,6 @@
+type UserSession @key(selectionSet: "{ profileId }") {
+  profile: Profile
+}
+type Query {
+  getUserSessionProfile(profileId: ID): UserSession @merge(keyField: "profileId")
+}

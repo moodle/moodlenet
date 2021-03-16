@@ -15,7 +15,7 @@ export const createEdge = async <Type extends GQL.EdgeType>({
 }: {
   persistence: Persistence
   edgeType: Type
-  key?: IdKey // remove this .. it was only necessary for user creation on accuont activation, change the flow and disjoint the two
+  key?: IdKey // remove this .. it was only necessary for profile creation on accuont activation, change the flow and disjoint the two
   data: CreateEdgeData<Type>
   from: Id
   to: Id

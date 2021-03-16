@@ -86,7 +86,7 @@ export const needsAuthFilter: NeedsAuthFilter<boolean> = filterWithAuth => ({ ct
 const staticBasicAccessPolicyTypeFilters: BasicAccessPolicyTypeFilters<boolean> = {
   Admins: needsAuthFilter(() => true),
   Moderator: needsAuthFilter(() => true),
-  AnyUser: needsAuthFilter(() => true),
+  AnyProfile: needsAuthFilter(() => true),
   Creator: needsAuthFilter(() => true),
   Public: () => true,
 }

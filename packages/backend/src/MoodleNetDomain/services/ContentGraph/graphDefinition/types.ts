@@ -11,7 +11,7 @@ export type AccessType = 'read' | 'create' | 'update' | 'delete'
 
 export enum BasicAccessPolicyType {
   Creator = 'Creator',
-  AnyUser = 'AnyUser',
+  AnyProfile = 'AnyProfile',
   Admins = 'Admins',
   Public = 'Public',
   Moderator = 'Moderator',

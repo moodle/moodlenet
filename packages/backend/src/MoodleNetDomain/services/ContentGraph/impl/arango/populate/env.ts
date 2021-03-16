@@ -14,7 +14,7 @@ export const cfg: Config = {
   url: ARANGO_HOST,
 }
 export const SUBJECTS_AMOUNT = Number(process.env.SUBJECTS_AMOUNT) || 30
-export const USERS_AMOUNT = Number(process.env.USERS_AMOUNT) || 100
+export const PROFILES_AMOUNT = Number(process.env.PROFILES_AMOUNT) || 100
 
 export const PARALLEL_MONKEYS = Number(process.env.PARALLEL_MONKEYS) || 100
 export const MONKEYS_WAIT = Number(process.env.MONKEYS_WAIT) || 10

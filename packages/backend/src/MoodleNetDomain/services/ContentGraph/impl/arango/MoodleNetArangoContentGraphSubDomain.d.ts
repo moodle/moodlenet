@@ -35,7 +35,7 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
       Create: WrkDef<
         <Type extends GQL.NodeType>(_: {
           ctx: MoodleNetAuthenticatedExecutionContext
-          key?: IdKey // remove this .. it was only necessary for user creation on accuont activation, change the flow and disjoint the two
+          key?: IdKey // remove this .. it was only necessary for profile creation on accuont activation, change the flow and disjoint the two
           nodeType: Type
           data: CreateNodeData<Type>
         }) => Promise<ShallowNodeByType<Type> | CreateNodeMutationErrorType>
@@ -47,7 +47,7 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
         <Type extends GQL.EdgeType>(_: {
           ctx: MoodleNetAuthenticatedExecutionContext
           edgeType: Type
-          key?: IdKey // remove this .. it was only necessary for user creation on accuont activation, change the flow and disjoint the two
+          key?: IdKey // remove this .. it was only necessary for profile creation on accuont activation, change the flow and disjoint the two
           data: CreateEdgeData<Type>
           from: Id
           to: Id

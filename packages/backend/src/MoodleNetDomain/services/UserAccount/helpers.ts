@@ -15,7 +15,7 @@ export const userSessionByActiveUserAccount = async ({
     changeEmailRequest: activeUserAccount.changeEmailRequest?.email ?? null,
     email: activeUserAccount.email,
     username: activeUserAccount.username,
-    userId: activeUserAccount.userId,
+    profileId: activeUserAccount.profileId,
   }
   return session
 }

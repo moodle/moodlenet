@@ -1,8 +1,8 @@
 import * as Types from '../../../graphql/pub.graphql.link';
 
-import { ShallowUserFragment } from '../../../graphql/fragment/shallowNodes.gen';
+import { ShallowProfileFragment } from '../../../graphql/fragment/shallowNodes.gen';
 import { gql } from '@apollo/client';
-import { ShallowUserFragmentDoc } from '../../../graphql/fragment/shallowNodes.gen';
+import { ShallowProfileFragmentDoc } from '../../../graphql/fragment/shallowNodes.gen';
 import * as Apollo from '@apollo/client';
 export type GetCurrentSessionQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
@@ -47,9 +47,9 @@ export type ActivateNewAccountMutation = (
 export type UserSessionSimpleFragment = (
   { __typename: 'UserSession' }
   & Pick<Types.UserSession, 'username' | 'email' | 'accountId'>
-  & { user?: Types.Maybe<(
-    { __typename: 'User' }
-    & ShallowUserFragment
+  & { profile?: Types.Maybe<(
+    { __typename: 'Profile' }
+    & ShallowProfileFragment
   )> }
 );
 
@@ -58,11 +58,11 @@ export const UserSessionSimpleFragmentDoc = gql`
   username
   email
   accountId
-  user {
-    ...ShallowUser
+  profile {
+    ...ShallowProfile
   }
 }
-    ${ShallowUserFragmentDoc}`;
+    ${ShallowProfileFragmentDoc}`;
 export const GetCurrentSessionDocument = gql`
     query getCurrentSession {
   getSession {

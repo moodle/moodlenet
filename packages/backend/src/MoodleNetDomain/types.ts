@@ -8,7 +8,7 @@ export type MoodleNetExecutionContextMap = {
     username: string
     email: string
     role: Role
-    userId: Id
+    profileId: Id
   }
   system: {
     as: MoodleNetExecutionContext<'session'>

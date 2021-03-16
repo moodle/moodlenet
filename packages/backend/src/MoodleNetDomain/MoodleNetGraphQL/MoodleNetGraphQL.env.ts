@@ -51,7 +51,7 @@ export const getJwtSigner = memo(() => {
       accountId: account._id,
       email: account.email,
       username: account.username,
-      userId: account.userId,
+      profileId: account.profileId,
       role: account.role,
     }
 

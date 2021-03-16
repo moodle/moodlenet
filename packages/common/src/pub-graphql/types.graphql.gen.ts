@@ -110,9 +110,9 @@ export type MutationUpdateNodeArgs = {
 
 export type CreateNodeInput = {
   Collection?: Maybe<CreateCollectionInput>;
+  Profile?: Maybe<CreateProfileInput>;
   Resource?: Maybe<CreateResourceInput>;
   Subject?: Maybe<CreateSubjectInput>;
-  User?: Maybe<CreateUserInput>;
   nodeType: NodeType;
 };
 
@@ -167,9 +167,9 @@ export enum CreateEdgeMutationErrorType {
 
 export type UpdateNodeInput = {
   Collection?: Maybe<UpdateCollectionInput>;
+  Profile?: Maybe<UpdateProfileInput>;
   Resource?: Maybe<UpdateResourceInput>;
   Subject?: Maybe<UpdateSubjectInput>;
-  User?: Maybe<UpdateUserInput>;
   _id: Scalars['ID'];
   nodeType: NodeType;
 };
@@ -295,14 +295,14 @@ export type PaginationInput = {
 export type Query = {
   __typename: 'Query';
   getSession?: Maybe<UserSession>;
-  getSessionAccountUser?: Maybe<UserSession>;
+  getUserSessionProfile?: Maybe<UserSession>;
   globalSearch: SearchPage;
   node?: Maybe<Node>;
 };
 
 
-export type QueryGetSessionAccountUserArgs = {
-  userId?: Maybe<Scalars['ID']>;
+export type QueryGetUserSessionProfileArgs = {
+  profileId?: Maybe<Scalars['ID']>;
 };
 
 
@@ -325,7 +325,7 @@ export type SearchPage = Page & {
 export type SearchPageEdge = PageEdge & {
   __typename: 'SearchPageEdge';
   cursor: Scalars['Cursor'];
-  node: Collection | Resource | Subject | User;
+  node: Collection | Profile | Resource | Subject;
 };
 
 
@@ -344,7 +344,7 @@ export type INode_RelArgs = {
 
 export type NodeMeta = {
   __typename: 'NodeMeta';
-  creator: User;
+  creator: Profile;
   created: Scalars['DateTime'];
   updated: Scalars['DateTime'];
   relCount?: Maybe<RelCountMap>;
@@ -395,7 +395,7 @@ export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
   edge: AppliesTo | Contains | Created | Follows | Likes;
-  node: Collection | Resource | Subject | User;
+  node: Collection | Profile | Resource | Subject;
 };
 
 export type AppliesTo = IEdge & {
@@ -452,8 +452,8 @@ export type UserSession = {
   accountId: Scalars['String'];
   changeEmailRequest?: Maybe<Scalars['String']>;
   email: Scalars['String'];
-  user?: Maybe<User>;
-  userId?: Maybe<Scalars['ID']>;
+  profile?: Maybe<Profile>;
+  profileId?: Maybe<Scalars['ID']>;
   username: Scalars['String'];
 };
 
@@ -474,21 +474,21 @@ export type Collection_RelArgs = {
   sort?: Maybe<Array<NodeRelSort>>;
 };
 
-export type Node = Collection | Resource | Subject | User;
+export type Node = Collection | Profile | Resource | Subject;
 
 export enum NodeType {
   Collection = 'Collection',
+  Profile = 'Profile',
   Resource = 'Resource',
-  Subject = 'Subject',
-  User = 'User'
+  Subject = 'Subject'
 }
 
 export type RelCountTargetMap = {
   __typename: 'RelCountTargetMap';
   Collection?: Maybe<Scalars['Int']>;
+  Profile?: Maybe<Scalars['Int']>;
   Resource?: Maybe<Scalars['Int']>;
   Subject?: Maybe<Scalars['Int']>;
-  User?: Maybe<Scalars['Int']>;
 };
 
 export type CreateCollectionInput = {
@@ -499,6 +499,35 @@ export type CreateCollectionInput = {
 
 export type UpdateCollectionInput = {
   name?: Maybe<Scalars['String']>;
+};
+
+export type Profile = INode & IContentNode & {
+  __typename: 'Profile';
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
+  _id: Scalars['ID'];
+  _meta: NodeMeta;
+  _rel: RelPage;
+};
+
+
+export type Profile_RelArgs = {
+  edge: EdgeTypeInput;
+  page?: Maybe<PaginationInput>;
+  sort?: Maybe<Array<NodeRelSort>>;
+};
+
+export type UpdateProfileInput = {
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
+};
+
+export type CreateProfileInput = {
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
 };
 
 export type Resource = INode & IContentNode & {
@@ -555,35 +584,6 @@ export type UpdateSubjectInput = {
   name?: Maybe<Scalars['String']>;
 };
 
-export type User = INode & IContentNode & {
-  __typename: 'User';
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['String']>;
-  _id: Scalars['ID'];
-  _meta: NodeMeta;
-  _rel: RelPage;
-};
-
-
-export type User_RelArgs = {
-  edge: EdgeTypeInput;
-  page?: Maybe<PaginationInput>;
-  sort?: Maybe<Array<NodeRelSort>>;
-};
-
-export type UpdateUserInput = {
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['String']>;
-};
-
-export type CreateUserInput = {
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['String']>;
-};
-
 export type SimpleResponse = {
   __typename: 'SimpleResponse';
   success: Scalars['Boolean'];
@@ -638,15 +638,15 @@ export type CreateSession = {
     ],
     "INode": [
       "Collection",
+      "Profile",
       "Resource",
-      "Subject",
-      "User"
+      "Subject"
     ],
     "IContentNode": [
       "Collection",
+      "Profile",
       "Resource",
-      "Subject",
-      "User"
+      "Subject"
     ],
     "IEdge": [
       "AppliesTo",
@@ -664,9 +664,9 @@ export type CreateSession = {
     ],
     "Node": [
       "Collection",
+      "Profile",
       "Resource",
-      "Subject",
-      "User"
+      "Subject"
     ]
   }
 };

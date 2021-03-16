@@ -7,7 +7,7 @@ interface INode {
 }
 
 type NodeMeta {
-  creator: User!
+  creator: Profile!
   created: DateTime!
   updated: DateTime!
   relCount: RelCountMap

@@ -18,14 +18,14 @@ export type GlobalSearchQuery = (
         { __typename: 'Collection' }
         & Pick<Types.Collection, '_id' | 'name' | 'summary' | 'icon'>
       ) | (
+        { __typename: 'Profile' }
+        & Pick<Types.Profile, '_id' | 'name' | 'summary' | 'icon'>
+      ) | (
         { __typename: 'Resource' }
         & Pick<Types.Resource, '_id' | 'name' | 'summary' | 'icon'>
       ) | (
         { __typename: 'Subject' }
         & Pick<Types.Subject, '_id' | 'name' | 'summary' | 'icon'>
-      ) | (
-        { __typename: 'User' }
-        & Pick<Types.User, '_id' | 'name' | 'summary' | 'icon'>
       ) }
     )>, pageInfo: (
       { __typename: 'PageInfo' }

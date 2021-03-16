@@ -12,7 +12,7 @@ export const createNode = async <Type extends GQL.NodeType>({
   creatorId,
 }: {
   persistence: Persistence
-  key?: IdKey // remove this .. it was only necessary for user creation on accuont activation, change the flow and disjoint the two
+  key?: IdKey // remove this .. it was only necessary for profile creation on accuont activation, change the flow and disjoint the two
   nodeType: Type
   data: CreateNodeData<Type>
   creatorId: Id
@@ -23,7 +23,7 @@ export const createNode = async <Type extends GQL.NodeType>({
   const _meta: ShallowNodeMeta = {
     created: new Date(),
     updated: new Date(),
-    creator: { _id: creatorId } as GQL.User,
+    creator: { _id: creatorId } as GQL.Profile,
   }
   const { new: node } = await collection.save({ ...data, _key: key, __typename: nodeType, _meta }, { returnNew: true })
   return node as ShallowNodeByType<Type>

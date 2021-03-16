@@ -1,7 +1,7 @@
 import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
 import { Config } from 'arangojs/connection'
 import { DomainSetup, DomainStart } from '../../../../../lib/domain/types'
-import { initMoodleNetGQLWrkService, SYSTEM_USER_ID } from '../../../../MoodleNetGraphQL'
+import { initMoodleNetGQLWrkService, SYSTEM_PROFILE_ID } from '../../../../MoodleNetGraphQL'
 import { NodeType } from '../../ContentGraph.graphql.gen'
 import { createEdgeWorker } from './apis/createEdge'
 import { createNodeWorker } from './apis/createNode'
@@ -24,9 +24,9 @@ export const defaultArangoContentGraphSetup: DomainSetup<MoodleNetArangoContentG
     kind: 'sub',
     event: 'ContentGraph.Edge.Created',
   },
-  'ContentGraph.CreateNewRegisteredUser': { kind: 'wrk' },
+  'ContentGraph.CreateProfileForNewUser': { kind: 'wrk' },
   'ContentGraph.Edge.Traverse': { kind: 'wrk' },
-  'ContentGraph.GetAccountUser': { kind: 'wrk' },
+  'ContentGraph.GetUserProfile': { kind: 'wrk' },
   'ContentGraph.GlobalSearch': { kind: 'wrk', cfg: { parallelism: 50 } },
 }
 
@@ -69,32 +69,33 @@ export const defaultArangoContentGraphStartServices = ({
         return [traverseEdgesWorker({ persistence }), teardown]
       },
     },
-    'ContentGraph.CreateNewRegisteredUser': {
+    'ContentGraph.CreateProfileForNewUser': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
         return [
           ({ username, key }) =>
             createNode({
               data: { name: username, summary: '' },
-              nodeType: NodeType.User,
+              nodeType: NodeType.Profile,
               persistence,
               key,
-              creatorId: SYSTEM_USER_ID,
+              creatorId: SYSTEM_PROFILE_ID,
             }),
           teardown,
         ]
       },
     },
-    'ContentGraph.GetAccountUser': {
+    'ContentGraph.GetUserProfile': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
         return [
-          async ({ userId }) => {
-            const { _key, nodeType } = parseNodeId(userId)
-            if (nodeType !== NodeType.User) {
+          async ({ profileId }) => {
+            const { _key, nodeType } = parseNodeId(profileId)
+
+            if (nodeType !== NodeType.Profile) {
               return null
             }
-            return getNode<NodeType.User>({ _key, nodeType: NodeType.User, persistence })
+            return getNode<NodeType.Profile>({ _key, nodeType: NodeType.Profile, persistence })
           },
           teardown,
         ]

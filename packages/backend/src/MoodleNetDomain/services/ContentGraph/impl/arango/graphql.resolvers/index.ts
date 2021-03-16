@@ -1,7 +1,7 @@
 import { edgeTypeFromId, isId, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { GraphQLScalarType } from 'graphql'
 import * as GQL from '../../../ContentGraph.graphql.gen'
-import { getSessionAccountUser } from './merge.getSessionAccountUser'
+import { getUserSessionProfile } from './merge.getUserSessionProfile'
 import { createEdge } from './mutation/createEdge'
 import { createNode } from './mutation/createNode'
 import { nodePropResolver } from './nodePropResolver'
@@ -39,10 +39,10 @@ export const getContentGraphResolvers = (): GQL.Resolvers => {
     },
     Query: {
       node,
-      getSessionAccountUser,
+      getUserSessionProfile,
       globalSearch: gqlGlobalSearch,
     },
-    User: NodeResolver,
+    Profile: NodeResolver,
     Subject: NodeResolver,
     Resource: NodeResolver,
     Collection: NodeResolver,

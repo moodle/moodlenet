@@ -19,16 +19,16 @@ export const ConfirmEmailActivateAccountWorker = ({
 > => async ({ flow, token, password, username }) => {
   const hashedPassword = await hashPassword({ pwd: password })
   const userKey = ulidKey()
-  const userId = makeId(NodeType.User, userKey)
+  const profileId = makeId(NodeType.Profile, userKey)
   const activationResult = await activateNewAccount({
     persistence,
     token,
     username,
     password: hashedPassword,
-    userId,
+    profileId,
   })
   if (typeof activationResult !== 'string') {
-    await call<MoodleNetDomain>()('ContentGraph.CreateNewRegisteredUser', flow)({ username, key: userKey })
+    await call<MoodleNetDomain>()('ContentGraph.CreateProfileForNewUser', flow)({ username, key: userKey })
 
     return activationResult
   } else {

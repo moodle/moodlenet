@@ -33,7 +33,7 @@ export type ActiveUserAccount = UserAccountRecordBase & {
   password: string
   changeEmailRequest: null | ChangeEmailRequest
   role: Role
-  userId: Id
+  profileId: Id
 }
 export type WaitingFirstActivationUserAccount = UserAccountRecordBase & {
   status: UserAccountStatus.WaitingFirstActivation

@@ -25,7 +25,7 @@ export function getSessionContext(
   return context.as
 }
 
-export const SYSTEM_USER_ID = 'User/SYSTEM' as Id
+export const SYSTEM_PROFILE_ID = 'Profile/SYSTEM' as Id
 
 export function getExecutionGlobalValues(
   ...args: Parameters<Executor>

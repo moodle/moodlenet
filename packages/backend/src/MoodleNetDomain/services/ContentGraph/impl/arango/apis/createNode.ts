@@ -24,7 +24,7 @@ export const createNodeWorker = ({
     nodeType,
     persistence,
     key,
-    creatorId: sessionCtx.userId,
+    creatorId: sessionCtx.profileId,
   })
   emit<MoodleNetArangoContentGraphSubDomain>()(
     `ContentGraph.Node.Created`,
@@ -35,7 +35,7 @@ export const createNodeWorker = ({
     ctx,
     data: {},
     edgeType: EdgeType.Created,
-    from: sessionCtx.userId,
+    from: sessionCtx.profileId,
     to: mNode._id,
   })
 

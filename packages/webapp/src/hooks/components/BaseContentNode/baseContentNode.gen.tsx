@@ -1,6 +1,6 @@
 import * as Types from '../../../graphql/pub.graphql.link';
 
-import { BaseContentNode_Collection_Fragment, BaseContentNode_Resource_Fragment, BaseContentNode_Subject_Fragment, BaseContentNode_User_Fragment } from '../../../graphql/fragment/shallowNodes.gen';
+import { BaseContentNode_Collection_Fragment, BaseContentNode_Profile_Fragment, BaseContentNode_Resource_Fragment, BaseContentNode_Subject_Fragment } from '../../../graphql/fragment/shallowNodes.gen';
 import { gql } from '@apollo/client';
 import { BaseContentNodeFragmentDoc } from '../../../graphql/fragment/shallowNodes.gen';
 import * as Apollo from '@apollo/client';
@@ -16,6 +16,10 @@ export type BaseContentNodeQuery = (
     & Pick<Types.Collection, '_id'>
     & BaseContentNode_Collection_Fragment
   ) | (
+    { __typename: 'Profile' }
+    & Pick<Types.Profile, '_id'>
+    & BaseContentNode_Profile_Fragment
+  ) | (
     { __typename: 'Resource' }
     & Pick<Types.Resource, '_id'>
     & BaseContentNode_Resource_Fragment
@@ -23,10 +27,6 @@ export type BaseContentNodeQuery = (
     { __typename: 'Subject' }
     & Pick<Types.Subject, '_id'>
     & BaseContentNode_Subject_Fragment
-  ) | (
-    { __typename: 'User' }
-    & Pick<Types.User, '_id'>
-    & BaseContentNode_User_Fragment
   )> }
 );
 

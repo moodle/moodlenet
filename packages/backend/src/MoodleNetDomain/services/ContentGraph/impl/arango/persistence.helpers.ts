@@ -5,7 +5,7 @@ export const needsAuthFilter: NeedsAuthFilter<string> = filterWithAuth => ({ ctx
 
 export const basicArangoAccessPolicyTypeFilters: BasicAccessPolicyTypeFilters<string> = {
   Admins: needsAuthFilter(() => 'true'),
-  AnyUser: needsAuthFilter(() => 'true'),
+  AnyProfile: needsAuthFilter(() => 'true'),
   Creator: needsAuthFilter(() => 'true'),
   Moderator: needsAuthFilter(() => 'true'),
   Public: () => 'true',

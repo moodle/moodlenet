@@ -10,13 +10,13 @@ export const activateNewAccount = async ({
   token,
   password,
   username,
-  userId,
+  profileId,
 }: {
   persistence: Persistence
   token: string
   username: string
   password: string
-  userId: Id
+  profileId: Id
 }) => {
   const { db, UserAccount } = persistence
   const usernameAvailable = await isUsernameAvailable({ username, persistence })
@@ -36,7 +36,7 @@ export const activateNewAccount = async ({
       status: ${UserAccountStatus.Active},
       changeEmailRequest: null,
       role: ${Role.User},
-      userId: ${userId}
+      profileId: ${profileId}
     } IN ${UserAccount}
     RETURN NEW
   `)

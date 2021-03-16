@@ -22,7 +22,7 @@ fragment UserSessionSimple on UserSession {
   username
   email
   accountId
-  user {
-    ...ShallowUser
+  profile {
+    ...ShallowProfile
   }
 }

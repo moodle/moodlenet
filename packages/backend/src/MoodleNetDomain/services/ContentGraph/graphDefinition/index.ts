@@ -6,15 +6,15 @@ export const contentGraph: ContentGraph = {
   Follows: {
     connections: [
       {
-        from: N.User,
-        to: N.User,
+        from: N.Profile,
+        to: N.Profile,
       },
       {
-        from: N.User,
+        from: N.Profile,
         to: N.Subject,
       },
       {
-        from: N.User,
+        from: N.Profile,
         to: N.Collection,
       },
     ],
@@ -42,11 +42,11 @@ export const contentGraph: ContentGraph = {
   Created: {
     connections: [
       {
-        from: N.User,
+        from: N.Profile,
         to: N.Resource,
       },
       {
-        from: N.User,
+        from: N.Profile,
         to: N.Collection,
       },
     ],
@@ -54,7 +54,7 @@ export const contentGraph: ContentGraph = {
   Likes: {
     connections: [
       {
-        from: N.User,
+        from: N.Profile,
         to: N.Resource,
       },
     ],
@@ -70,7 +70,7 @@ export const getConnectionDef = (_: { edge: EdgeType; from: NodeType; to: NodeTy
 }
 
 // export const nodeDef = {
-//   User:{
+//   Profile:{
 
 //   }
 // }
@@ -84,27 +84,27 @@ const _S = StandardPoliciesGroup
 
 export const basicAccessPolicies: BasicAccessPolicies = {
   node: {
-    User: {
+    Profile: {
       read: _P.Public,
-      create: _P.AnyUser,
+      create: _P.AnyProfile,
       update: _S.Protected,
       delete: _S.Protected,
     },
     Subject: {
       read: _P.Public,
-      create: _P.AnyUser,
+      create: _P.AnyProfile,
       update: _S.Protected,
       delete: _S.Protected,
     },
     Collection: {
       read: _P.Public,
-      create: _P.AnyUser,
+      create: _P.AnyProfile,
       update: _S.Protected,
       delete: _S.Protected,
     },
     Resource: {
       read: _P.Public,
-      create: _P.AnyUser,
+      create: _P.AnyProfile,
       update: _S.Protected,
       delete: _S.Protected,
     },
@@ -112,31 +112,31 @@ export const basicAccessPolicies: BasicAccessPolicies = {
   edge: {
     Follows: {
       read: _P.Public,
-      create: _P.AnyUser,
+      create: _P.AnyProfile,
       update: _S.Protected,
       delete: _S.Protected,
     },
     AppliesTo: {
       read: _P.Public,
-      create: _P.AnyUser,
+      create: _P.AnyProfile,
       update: _S.Protected,
       delete: _S.Protected,
     },
     Contains: {
       read: _P.Public,
-      create: _P.AnyUser,
+      create: _P.AnyProfile,
       update: _S.Protected,
       delete: _S.Protected,
     },
     Likes: {
       read: _P.Public,
-      create: _P.AnyUser,
+      create: _P.AnyProfile,
       update: _S.Protected,
       delete: _S.Protected,
     },
     Created: {
       read: _P.Public,
-      create: _P.AnyUser,
+      create: _P.AnyProfile,
       update: _S.Protected,
       delete: _S.Protected,
     },

@@ -1,6 +1,0 @@
-type UserSession @key(selectionSet: "{ userId }") {
-  user: User
-}
-type Query {
-  getSessionAccountUser(userId: ID): UserSession @merge(keyField: "userId")
-}

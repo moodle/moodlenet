@@ -1,4 +1,4 @@
-type User implements INode & IContentNode {
+type Profile implements INode & IContentNode {
   name: String!
   summary: String!
   icon: String
@@ -7,25 +7,25 @@ type User implements INode & IContentNode {
   _rel(edge: EdgeTypeInput!, page: PaginationInput, sort: [NodeRelSort!]): RelPage!
 }
 
-union Node = User
+union Node = Profile
 enum NodeType {
-  User
+  Profile
 }
 type RelCountTargetMap {
-  User: Int
+  Profile: Int
 }
 input UpdateNodeInput {
-  User: UpdateUserInput
+  Profile: UpdateProfileInput
 }
-input UpdateUserInput {
+input UpdateProfileInput {
   name: String!
   summary: String!
   icon: String
 }
 input CreateNodeInput {
-  User: CreateUserInput
+  Profile: CreateProfileInput
 }
-input CreateUserInput {
+input CreateProfileInput {
   name: String!
   summary: String!
   icon: String

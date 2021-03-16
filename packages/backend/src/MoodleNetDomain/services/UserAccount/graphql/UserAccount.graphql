@@ -27,5 +27,5 @@ type UserSession {
   email: String!
   changeEmailRequest: String
   accountId: String!
-  userId: ID
+  profileId: ID
 }

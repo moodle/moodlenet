@@ -1,4 +1,4 @@
-fragment ShallowUser on User {
+fragment ShallowProfile on Profile {
   _id
   name
 }

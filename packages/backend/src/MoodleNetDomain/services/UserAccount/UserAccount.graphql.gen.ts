@@ -97,7 +97,7 @@ export type UserSession = {
   email: Scalars['String'];
   changeEmailRequest?: Maybe<Scalars['String']>;
   accountId: Scalars['String'];
-  userId?: Maybe<Scalars['ID']>;
+  profileId?: Maybe<Scalars['ID']>;
 };
 
 
@@ -249,7 +249,7 @@ export type UserSessionResolvers<ContextType = MoodleNetExecutionContext, Parent
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   changeEmailRequest?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   accountId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  userId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  profileId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
