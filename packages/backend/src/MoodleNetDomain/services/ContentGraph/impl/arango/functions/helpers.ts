@@ -1,7 +1,7 @@
 import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { aqlstr } from '../../../../../../lib/helpers/arango'
-import { Id } from '../../../../UserAccount/types'
+import { Id } from '../../../../UserAuth/types'
 import { EdgeType, Page, PaginationInput } from '../../../ContentGraph.graphql.gen'
 import { Types } from '../../../types.node'
 import { Persistence } from '../types'

@@ -82,6 +82,6 @@ const makeCtx = async (db: Database): Promise<MoodleNetExecutionContext<'session
     flow: newFlow(['monkey-populate']),
     username: monkeyTag,
     email: monkeyTag,
-    accountId: monkeyTag,
+    userId: monkeyTag,
   }
 }

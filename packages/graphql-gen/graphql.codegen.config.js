@@ -12,7 +12,7 @@ const scalars = {
   Never: 'never',
 }
 
-const services = ['UserAccount', 'ContentGraph']
+const services = ['UserAuth', 'ContentGraph']
 const srvBasePath = srvname => `${backendMooRoot}/services/${srvname}`
 const srvSchemaGlob = srvname => `${srvBasePath(srvname)}/graphql/**/*.graphql`
 const srvGenerates = services.reduce((collect, srvname) => {

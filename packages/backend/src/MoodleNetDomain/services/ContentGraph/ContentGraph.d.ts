@@ -1,7 +1,7 @@
 import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { WrkDef } from '../../../lib/domain/wrk'
 import { GraphQLApi } from '../../MoodleNetGraphQL'
-import { Id } from '../UserAccount/types'
+import { Id } from '../UserAuth/types'
 import { Profile } from './ContentGraph.graphql.gen'
 import { ShallowNode } from './types.node'
 

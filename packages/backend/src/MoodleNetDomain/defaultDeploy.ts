@@ -10,9 +10,9 @@ import {
 import { defaultArangoEmailSetup, defaultArangoEmailStartServices } from './services/Email/impl/arango/defaultDeploy'
 import { createMailgunSender } from './services/Email/sendersImpl/mailgun/mailgunSender'
 import {
-  defaultArangoUserAccountImpl,
-  defaultArangoUserAccountStartServices,
-} from './services/UserAccount/impl/arango/defaultDeploy'
+  defaultArangoUserAuthImpl,
+  defaultArangoUserAuthStartServices,
+} from './services/UserAuth/impl/arango/defaultDeploy'
 
 export const startDefaultMoodlenet = async ({
   arangoUrl,
@@ -30,7 +30,7 @@ export const startDefaultMoodlenet = async ({
   const defaultMoodlenetSetup: DomainSetup<MoodleNetDomain> = {
     ...defaultArangoContentGraphSetup,
     ...defaultArangoEmailSetup,
-    ...defaultArangoUserAccountImpl,
+    ...defaultArangoUserAuthImpl,
   }
 
   const defaultMoodlenetStartServices: DomainStart<MoodleNetDomain> = {
@@ -47,11 +47,11 @@ export const startDefaultMoodlenet = async ({
       databaseName: 'Email',
       sender: mailgunSender,
     }),
-    ...defaultArangoUserAccountStartServices({
+    ...defaultArangoUserAuthStartServices({
       dbCfg: {
         ...baseDbCfg,
       },
-      databaseName: 'Account',
+      databaseName: 'UserAuth',
     }),
   }
 

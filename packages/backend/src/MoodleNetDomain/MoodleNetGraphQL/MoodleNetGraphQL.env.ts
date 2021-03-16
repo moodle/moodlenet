@@ -2,7 +2,7 @@ import JWT from 'jsonwebtoken'
 import sshpk from 'sshpk'
 import { newFlow } from '../../lib/domain/flow'
 import { memo } from '../../lib/helpers/misc'
-import { ActiveUserAccount } from '../services/UserAccount/impl/arango/types'
+import { ActiveUser } from '../services/UserAuth/impl/arango/types'
 import { signJwt, verifyJwt } from './JWT'
 import { MoodleNetExecutionContext } from './types'
 
@@ -40,7 +40,7 @@ export const getJwtSigner = memo(() => {
     expiresIn: jwtExpirationSecs,
   }
 
-  const jwtSigner = ({ account, opts }: { account: ActiveUserAccount; opts?: JWT.SignOptions }) => {
+  const jwtSigner = ({ user, opts }: { user: ActiveUser; opts?: JWT.SignOptions }) => {
     const signOpts: JWT.SignOptions = {
       ...jwtSignBaseOpts,
       ...opts,
@@ -48,11 +48,11 @@ export const getJwtSigner = memo(() => {
     const sessionCtx: GQLExecutionContext = {
       type: 'session',
       flow: newFlow(['JWT']),
-      accountId: account._id,
-      email: account.email,
-      username: account.username,
-      profileId: account.profileId,
-      role: account.role,
+      userId: user._id,
+      email: user.email,
+      username: user.username,
+      profileId: user.profileId,
+      role: user.role,
     }
 
     return signJwt({

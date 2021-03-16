@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { Route, Switch } from 'react-router-dom'
-import { ActivateNewAccountRoute } from './ActivateNewAccount'
+import { ActivateNewUserRoute } from './ActivateNewUser'
 import { ContentNodeRoute } from './ContentNode'
 import { GlobalSearchRoute } from './GlobalSearch'
 import { HomeRoute } from './Home'
@@ -14,7 +14,7 @@ export const MNRouter: FC = (/* { children } */) => {
       <Route {...LoginRoute} />
       <Route {...SignupRoute} />
       <Route {...TermsAndConditionsRoute} />
-      <Route {...ActivateNewAccountRoute} />
+      <Route {...ActivateNewUserRoute} />
       <Route {...ContentNodeRoute} />
       <Route {...HomeRoute} />
       <Route {...GlobalSearchRoute} />

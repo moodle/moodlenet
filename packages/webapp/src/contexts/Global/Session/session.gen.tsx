@@ -29,16 +29,16 @@ export type LoginMutation = (
   ) }
 );
 
-export type ActivateNewAccountMutationVariables = Types.Exact<{
+export type ActivateNewUserMutationVariables = Types.Exact<{
   token: Types.Scalars['String'];
   username: Types.Scalars['String'];
   password: Types.Scalars['String'];
 }>;
 
 
-export type ActivateNewAccountMutation = (
+export type ActivateNewUserMutation = (
   { __typename: 'Mutation' }
-  & { activateAccount: (
+  & { activateUser: (
     { __typename: 'CreateSession' }
     & Pick<Types.CreateSession, 'jwt' | 'message'>
   ) }
@@ -46,7 +46,7 @@ export type ActivateNewAccountMutation = (
 
 export type UserSessionSimpleFragment = (
   { __typename: 'UserSession' }
-  & Pick<Types.UserSession, 'username' | 'email' | 'accountId'>
+  & Pick<Types.UserSession, 'username' | 'email' | 'userId'>
   & { profile?: Types.Maybe<(
     { __typename: 'Profile' }
     & ShallowProfileFragment
@@ -57,7 +57,7 @@ export const UserSessionSimpleFragmentDoc = gql`
     fragment UserSessionSimple on UserSession {
   username
   email
-  accountId
+  userId
   profile {
     ...ShallowProfile
   }
@@ -129,28 +129,28 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
-export const ActivateNewAccountDocument = gql`
-    mutation activateNewAccount($token: String!, $username: String!, $password: String!) {
-  activateAccount(username: $username, password: $password, token: $token) {
+export const ActivateNewUserDocument = gql`
+    mutation activateNewUser($token: String!, $username: String!, $password: String!) {
+  activateUser(username: $username, password: $password, token: $token) {
     jwt
     message
   }
 }
     `;
-export type ActivateNewAccountMutationFn = Apollo.MutationFunction<ActivateNewAccountMutation, ActivateNewAccountMutationVariables>;
+export type ActivateNewUserMutationFn = Apollo.MutationFunction<ActivateNewUserMutation, ActivateNewUserMutationVariables>;
 
 /**
- * __useActivateNewAccountMutation__
+ * __useActivateNewUserMutation__
  *
- * To run a mutation, you first call `useActivateNewAccountMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useActivateNewAccountMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useActivateNewUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useActivateNewUserMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [activateNewAccountMutation, { data, loading, error }] = useActivateNewAccountMutation({
+ * const [activateNewUserMutation, { data, loading, error }] = useActivateNewUserMutation({
  *   variables: {
  *      token: // value for 'token'
  *      username: // value for 'username'
@@ -158,9 +158,9 @@ export type ActivateNewAccountMutationFn = Apollo.MutationFunction<ActivateNewAc
  *   },
  * });
  */
-export function useActivateNewAccountMutation(baseOptions?: Apollo.MutationHookOptions<ActivateNewAccountMutation, ActivateNewAccountMutationVariables>) {
-        return Apollo.useMutation<ActivateNewAccountMutation, ActivateNewAccountMutationVariables>(ActivateNewAccountDocument, baseOptions);
+export function useActivateNewUserMutation(baseOptions?: Apollo.MutationHookOptions<ActivateNewUserMutation, ActivateNewUserMutationVariables>) {
+        return Apollo.useMutation<ActivateNewUserMutation, ActivateNewUserMutationVariables>(ActivateNewUserDocument, baseOptions);
       }
-export type ActivateNewAccountMutationHookResult = ReturnType<typeof useActivateNewAccountMutation>;
-export type ActivateNewAccountMutationResult = Apollo.MutationResult<ActivateNewAccountMutation>;
-export type ActivateNewAccountMutationOptions = Apollo.BaseMutationOptions<ActivateNewAccountMutation, ActivateNewAccountMutationVariables>;
+export type ActivateNewUserMutationHookResult = ReturnType<typeof useActivateNewUserMutation>;
+export type ActivateNewUserMutationResult = Apollo.MutationResult<ActivateNewUserMutation>;
+export type ActivateNewUserMutationOptions = Apollo.BaseMutationOptions<ActivateNewUserMutation, ActivateNewUserMutationVariables>;

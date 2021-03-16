@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro'
 import { FC } from 'react'
 import { Header, Image, Message, Segment } from 'semantic-ui-react'
 import logo from '../static/img/moodlenet-logo.png'
-export * from '../components/ActivateAccountPanel'
+export * from '../components/ActivateUserPanel'
 
 export type TermsAndConditionsPageProps = {}
 
@@ -500,7 +500,7 @@ const rawHTMLTerms = `
   What forms of ID will I need to provide in order to access this?
 </h3>
 <p>
-  Moodle Pty Ltd accepts a request made through a Moodle account while the
+  Moodle Pty Ltd accepts a request made through a Moodle user while the
   person making the request is logged in. In certain circumstances Moodle
   Pty Ltd could ask for additional information and the following forms of ID
   when information on your personal data is requested:
@@ -603,7 +603,7 @@ const rawHTMLTerms = `
   Moodle Pty Ltd will process different forms of personal data for as long
   as is necessary and proportionate for the purpose for which it has been
   supplied and will store the personal data for the shortest amount of time
-  possible, taking into account legal and service requirements. For further
+  possible, taking into user legal and service requirements. For further
   details on the retention period for any particular type of data, please
   contact <a href="mailto:privacy@moodle.com">privacy@moodle.com</a>
 </p>

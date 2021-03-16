@@ -4,7 +4,7 @@ import { Flow, newFlow, PFlow } from '../lib/domain/flow'
 export type CtxTypes = keyof MoodleNetExecutionContextMap
 export type MoodleNetExecutionContextMap = {
   session: {
-    accountId: string
+    userId: string
     username: string
     email: string
     role: Role

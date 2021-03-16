@@ -21,7 +21,7 @@ export type Scalars = {
 
 export type Mutation = {
   __typename: 'Mutation';
-  activateAccount: CreateSession;
+  activateUser: CreateSession;
   changeEmailConfirm: Scalars['Boolean'];
   changeEmailRequest: SimpleResponse;
   changePassword: SimpleResponse;
@@ -37,7 +37,7 @@ export type Mutation = {
 };
 
 
-export type MutationActivateAccountArgs = {
+export type MutationActivateUserArgs = {
   username: Scalars['String'];
   password: Scalars['String'];
   token: Scalars['String'];
@@ -449,11 +449,11 @@ export type Likes = IEdge & {
 
 export type UserSession = {
   __typename: 'UserSession';
-  accountId: Scalars['String'];
   changeEmailRequest?: Maybe<Scalars['String']>;
   email: Scalars['String'];
   profile?: Maybe<Profile>;
   profileId?: Maybe<Scalars['ID']>;
+  userId: Scalars['String'];
   username: Scalars['String'];
 };
 

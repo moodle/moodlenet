@@ -8,7 +8,7 @@ export const schema = stitchSchemas({
   // schemaTransforms: [stitchingDirectivesValidator], // keep these commented as a reminder casue I'm not sure if useful
   directiveResolvers: {},
   subschemas: [
-    getServiceSubschemaConfig({ srvName: 'UserAccount' }),
+    getServiceSubschemaConfig({ srvName: 'UserAuth' }),
     getServiceSubschemaConfig({ srvName: 'ContentGraph' }),
   ],
 })

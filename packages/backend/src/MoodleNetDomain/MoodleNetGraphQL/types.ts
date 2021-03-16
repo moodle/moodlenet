@@ -6,4 +6,4 @@ export type RootValue = {}
 
 export type GraphQLApi = GraphQLDomainWrk<MoodleNetExecutionContext, RootValue>
 
-export type GQLServiceName = 'ContentGraph' | 'UserAccount'
+export type GQLServiceName = 'ContentGraph' | 'UserAuth'

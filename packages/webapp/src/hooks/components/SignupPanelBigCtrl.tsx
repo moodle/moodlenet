@@ -1,4 +1,4 @@
-import { signUp } from '@moodlenet/common/lib/graphql/validation/input/user-account'
+import { signUp } from '@moodlenet/common/lib/graphql/validation/input/userAuth'
 import { Home } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { MutationSignUpArgs } from '../../graphql/pub.graphql.link'
 import { useFormikWithBag } from '../../helpers/forms'

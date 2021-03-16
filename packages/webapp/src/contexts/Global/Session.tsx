@@ -2,7 +2,7 @@ import { t } from '@lingui/macro'
 import { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { setToken } from './Apollo/client'
 import {
-  useActivateNewAccountMutation,
+  useActivateNewUserMutation,
   useGetCurrentSessionLazyQuery,
   useLoginMutation,
   UserSessionSimpleFragment,
@@ -38,7 +38,7 @@ export type SessionContextType = {
   session: UserSessionSimpleFragment | null
   lastSessionUsername: string | null
   logout(): unknown
-  activateNewAccount(_: { password: string; token: string; username: string }): Promise<ActivateWarnMessage | null>
+  activateNewUser(_: { password: string; token: string; username: string }): Promise<ActivateWarnMessage | null>
   login(_: { username: string; password: string }): Promise<LoginWarnMessage | null>
 }
 
@@ -48,7 +48,7 @@ export const useSession = () => useContext(SessionContext)
 const WRONG_CREDS_MSG = t`wrong credentials`
 
 export const SessionProvider: FC = ({ children }) => {
-  const [activateAccountMut /* , activateResult */] = useActivateNewAccountMutation()
+  const [activateUserMut /* , activateResult */] = useActivateNewUserMutation()
   const [lastSession, setLastSession] = useState<Partial<LastSession>>(getLastSession())
   const [getSessionQ, sessionQResult] = useGetCurrentSessionLazyQuery({ fetchPolicy: 'network-only' })
   const [loginMut /* , loginResult */] = useLoginMutation()
@@ -64,15 +64,15 @@ export const SessionProvider: FC = ({ children }) => {
     [loginMut],
   )
 
-  const activateNewAccount = useCallback<SessionContextType['activateNewAccount']>(
+  const activateNewUser = useCallback<SessionContextType['activateNewUser']>(
     ({ password, token, username }) => {
-      return activateAccountMut({ variables: { password, token, username } }).then(res => {
-        const jwt = res.data?.activateAccount.jwt ?? null
+      return activateUserMut({ variables: { password, token, username } }).then(res => {
+        const jwt = res.data?.activateUser.jwt ?? null
         setLastSession({ username, jwt })
-        return res.data?.activateAccount.message ?? null
+        return res.data?.activateUser.message ?? null
       })
     },
-    [activateAccountMut],
+    [activateUserMut],
   )
 
   const logout = useCallback<SessionContextType['logout']>(() => {
@@ -91,11 +91,11 @@ export const SessionProvider: FC = ({ children }) => {
     () => ({
       logout,
       login,
-      activateNewAccount,
+      activateNewUser,
       session,
       lastSessionUsername: lastSession.username ?? null,
     }),
-    [activateNewAccount, lastSession, login, logout, session],
+    [activateNewUser, lastSession, login, logout, session],
   )
   return <SessionContext.Provider value={ctx}>{!sessionQResult.called ? null : children}</SessionContext.Provider>
 }

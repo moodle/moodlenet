@@ -1,9 +1,9 @@
 import { ContentGraph } from './services/ContentGraph/ContentGraph'
 import { Email } from './services/Email/EmailDomain'
-import { UserAccount } from './services/UserAccount/UserAccountDomain'
+import { UserAuth } from './services/UserAuth/UserAuthDomain'
 
 export type MoodleNetDomain = {
-  UserAccount: UserAccount
+  UserAuth: UserAuth
   Email: Email
   ContentGraph: ContentGraph
 }
