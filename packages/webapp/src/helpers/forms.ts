@@ -1,6 +1,6 @@
 import { FormikConfig, useFormik } from 'formik'
 import { useMemo } from 'react'
-import { FormBag } from '../ui/types/types'
+import { FormBag } from '../ui/types'
 
 export const useFormikWithBag = <Values>(cfg: FormikConfig<Values>) => {
   const formik = useFormik<Values>(cfg)

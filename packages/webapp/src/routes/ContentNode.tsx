@@ -2,8 +2,9 @@
 // import { BaseContentNodeFeed } from '../ui/components/BaseContentNodeFeed'
 import { parseNodeIdString } from '@moodlenet/common/lib/utils/content-graph'
 import { Routes } from '../../../common/lib/webapp/sitemap'
-import { BaseContentNodePanelCtrl } from '../ctrl/pages/BaseContentNodePageCtrl'
 import { NeverPage } from '../helpers/navigation'
+import { getUseBaseContentNodePanelProps } from '../hooks/components/BaseContentNodePanel'
+import { BaseContentNodePanel } from '../ui/components/BaseContentNodePanel'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const ContentNodeComponent: RouteFC<Routes.ContentNode> = ({ match: { params } }) => {
@@ -23,7 +24,8 @@ export const ContentNodeComponent: RouteFC<Routes.ContentNode> = ({ match: { par
   // } else {
   //   return NeverPage(nodeType)
   // }
-  return <BaseContentNodePanelCtrl id={id}></BaseContentNodePanelCtrl>
+  const useBaseContentNodePanelProps = getUseBaseContentNodePanelProps({ id })
+  return <BaseContentNodePanel useProps={useBaseContentNodePanelProps} />
 }
 
 export const ContentNodeRoute: MNRouteProps<Routes.ContentNode> = {

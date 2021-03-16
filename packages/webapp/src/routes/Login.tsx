@@ -1,9 +1,13 @@
 import { Routes } from '../../../common/lib/webapp/sitemap'
-import { LoginPageCtrl } from '../ctrl/pages/LoginPageCtrl'
+import { getUseLoginPanelProps } from '../hooks/components/LoginPanelBigCtrl'
+import { useRedirectHomeIfLoggedIn } from '../hooks/glob/nav'
+import { LoginPage } from '../ui/pages/Login'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const LoginRouteComponent: RouteFC<Routes.Login> = (/* { match } */) => {
-  return <LoginPageCtrl />
+  useRedirectHomeIfLoggedIn()
+  const useLoginPanelProps = getUseLoginPanelProps()
+  return <LoginPage useLoginPanelProps={useLoginPanelProps} />
 }
 
 export const LoginRoute: MNRouteProps<Routes.Login> = {

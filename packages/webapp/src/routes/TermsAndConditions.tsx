@@ -1,9 +1,9 @@
 import { Routes } from '../../../common/lib/webapp/sitemap'
-import { TermsAndConditionsPageCtrl } from '../ctrl/pages/TermsAndConditionsPageCtrl'
+import { TermsAndConditionsPage } from '../ui/pages/TermsAndConditions'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const TermsAndConditionsRouteComponent: RouteFC<Routes.TermsAndConditions> = (/* { match } */) => {
-  return <TermsAndConditionsPageCtrl />
+  return <TermsAndConditionsPage />
 }
 
 export const TermsAndConditionsRoute: MNRouteProps<Routes.TermsAndConditions> = {

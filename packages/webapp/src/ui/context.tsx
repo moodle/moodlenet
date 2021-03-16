@@ -1,7 +1,4 @@
-import { AnchorHTMLAttributes, ComponentType, createContext, DetailedHTMLProps, ReactElement, useContext } from 'react'
-
-export const HeaderElement = createContext<ReactElement>(<></>)
-export const useHeader = () => useContext(HeaderElement)
+import { AnchorHTMLAttributes, ComponentType, createContext, DetailedHTMLProps, useContext } from 'react'
 
 // ^Link
 export type LinkDef = {

@@ -1,20 +1,24 @@
-import { Trans, t } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import { FC } from 'react'
-import { FormBag } from '../types/types'
 import { Button, Form, Grid, Header, Icon, Image, Message, Segment } from 'semantic-ui-react'
-import logo from '../static/img/moodlenet-logo.png'
 import { LinkDef, useLink } from '../context'
+import logo from '../static/img/moodlenet-logo.png'
+import { FormBag, UseProps } from '../types'
 
 export type SignupFormValues = { email: string }
 export type SignupPanelProps = {
+  useProps: UseSignupPanelProps
+}
+export type UseSignupPanelProps = UseProps<{
   form: FormBag<SignupFormValues>
   warnMessage: string | null
   homeLink: LinkDef
   signUpSucceded: boolean
-}
+}>
 
-export const SignupPanelBig: FC<SignupPanelProps> = ({ form, warnMessage, homeLink, signUpSucceded }) => {
+export const SignupPanelBig: FC<SignupPanelProps> = ({ useProps }) => {
   const Link = useLink()
+  const { form, warnMessage, homeLink, signUpSucceded } = useProps()
   return (
     <Grid textAlign="center" verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>

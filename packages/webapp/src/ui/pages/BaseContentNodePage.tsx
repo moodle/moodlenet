@@ -1,15 +1,19 @@
 import { FC } from 'react'
-import { BaseContentNodePanel } from '../components/BaseContentNodePanel'
+import { BaseContentNodePanel, UseBaseContentNodePanelProps } from '../components/BaseContentNodePanel'
+import { UsePageHeaderProps } from '../components/PageHeader'
 import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
-import { ContentNode } from '../types/types'
 
 export type BaseContentPropsNodePage = {
-  item: ContentNode
+  usePageHeaderProps: UsePageHeaderProps
+  useBaseContentNodePanelProps: UseBaseContentNodePanelProps
 }
-export const BaseContentNodePage: FC<BaseContentPropsNodePage> = ({ item }) => {
+export const BaseContentNodePage: FC<BaseContentPropsNodePage> = ({
+  usePageHeaderProps,
+  useBaseContentNodePanelProps,
+}) => {
   return (
-    <HeaderPageTemplate>
-      <BaseContentNodePanel item={item} />
+    <HeaderPageTemplate useProps={usePageHeaderProps}>
+      <BaseContentNodePanel useProps={useBaseContentNodePanelProps} />
     </HeaderPageTemplate>
   )
 }

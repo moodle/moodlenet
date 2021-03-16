@@ -1,18 +1,23 @@
 import { FC } from 'react'
 import { Item } from 'semantic-ui-react'
-import { BaseContentNodeFeed } from '../components/BaseContentNodeFeed'
+import { BaseContentNodeFeed, UseBaseContentNodeFeedProps } from '../components/BaseContentNodeFeed'
+import { UsePageHeaderProps } from '../components/PageHeader'
 import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
-import { ContentNode } from '../types/types'
+import { UsePropsList } from '../types'
 
 export type GlobalSearchPageProps = {
-  items: ContentNode[]
+  usePageHeaderProps: UsePageHeaderProps
+  useBaseContentNodeFeedPropsList: UsePropsList<UseBaseContentNodeFeedProps>
 }
-export const GlobalSearchPage: FC<GlobalSearchPageProps> = ({ items }) => {
+export const GlobalSearchPage: FC<GlobalSearchPageProps> = ({
+  usePageHeaderProps,
+  useBaseContentNodeFeedPropsList,
+}) => {
   return (
-    <HeaderPageTemplate>
+    <HeaderPageTemplate useProps={usePageHeaderProps}>
       <Item.Group>
-        {items.map(item => (
-          <BaseContentNodeFeed key={item._id} item={item} />
+        {useBaseContentNodeFeedPropsList.map(([useBaseContentNodeFeedProps, key]) => (
+          <BaseContentNodeFeed key={key} useProps={useBaseContentNodeFeedProps} />
         ))}
       </Item.Group>
     </HeaderPageTemplate>

@@ -1,9 +1,11 @@
 import { Routes } from '../../../common/lib/webapp/sitemap'
-import { SignupPageCtrl } from '../ctrl/pages/SignupPageCtrl'
+import { getUseSignupPanelProps } from '../hooks/components/SignupPanelBigCtrl'
+import { SignUpPage } from '../ui/pages/SignUp'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const SignupRouteComponent: RouteFC<Routes.Signup> = (/* { match } */) => {
-  return <SignupPageCtrl />
+  const useSignupPanelProps = getUseSignupPanelProps()
+  return <SignUpPage useSignupPanelProps={useSignupPanelProps} />
 }
 
 export const SignupRoute: MNRouteProps<Routes.Signup> = {

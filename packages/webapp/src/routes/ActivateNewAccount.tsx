@@ -1,5 +1,8 @@
 import { Routes } from '../../../common/lib/webapp/sitemap'
-import { ActivateNewAccountPageCtrl } from '../ctrl/pages/ActivateNewAccountPageCtrl'
+import { getUseActivateNewAccountPanelProps } from '../hooks/components/ActivateNewAccountPanel'
+import { getUsePageHeaderProps } from '../hooks/components/HeaderElement'
+import { useRedirectHomeIfLoggedIn } from '../hooks/glob/nav'
+import { ActivateNewAccountPage } from '../ui/pages/ActivateNewAccount'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const ActivateNewAccountComponent: RouteFC<Routes.ActivateNewAccount> = ({
@@ -7,7 +10,16 @@ export const ActivateNewAccountComponent: RouteFC<Routes.ActivateNewAccount> = (
     params: { token },
   },
 }) => {
-  return <ActivateNewAccountPageCtrl token={token} />
+  useRedirectHomeIfLoggedIn()
+
+  const usePageHeaderProps = getUsePageHeaderProps()
+  const useActivateNewAccountPanelProps = getUseActivateNewAccountPanelProps({ token })
+  return (
+    <ActivateNewAccountPage
+      useActivateNewAccountPanelProps={useActivateNewAccountPanelProps}
+      usePageHeaderProps={usePageHeaderProps}
+    />
+  )
 }
 
 export const ActivateNewAccountRoute: MNRouteProps<Routes.ActivateNewAccount> = {

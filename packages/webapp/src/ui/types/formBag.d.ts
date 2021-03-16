@@ -1,4 +1,3 @@
-import { Node } from '@moodlenet/common/lib/utils/content-graph'
 import { FormikErrors, FormikTouched } from 'formik'
 import React from 'react'
 
@@ -24,5 +23,3 @@ export interface FormBag<Values = {}> {
   isValidating: boolean
   submitCount: number
 }
-
-type ContentNode = Omit<Node, '_rel' | '_relCount' | '_meta'>

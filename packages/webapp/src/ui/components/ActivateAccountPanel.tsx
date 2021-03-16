@@ -2,22 +2,26 @@ import { t, Trans } from '@lingui/macro'
 import { FC } from 'react'
 import { Button, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 import { LinkDef, useLink } from '../context'
-import { FormBag } from '../types/types'
+import { FormBag, UseProps } from '../types'
 
-export type ActivateAccountFormValues = {
+export type ActivateNewAccountPanelProps = {
+  useProps: UseActivateNewAccountPanelProps
+}
+export type UseActivateNewAccountPanelProps = UseProps<{
+  form: FormBag<ActivateNewAccountFormValues>
+  termsAndConditionsLink: LinkDef
+  message: string | null
+}>
+export type ActivateNewAccountFormValues = {
   username: string
   password: string
   acceptTerms: boolean
   confirmPassword: string
 }
-export type ActivateAccountPanelProps = {
-  form: FormBag<ActivateAccountFormValues>
-  termsAndConditionsLink: LinkDef
-  message: string | null
-}
 
-export const ActivateAccountPanel: FC<ActivateAccountPanelProps> = ({ form, message, termsAndConditionsLink }) => {
+export const ActivateNewAccountPanel: FC<ActivateNewAccountPanelProps> = ({ useProps }) => {
   const Link = useLink()
+  const { form, message, termsAndConditionsLink } = useProps()
   return (
     <Grid textAlign="center" verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
