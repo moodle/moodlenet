@@ -1,7 +1,7 @@
 import { t, Trans } from '@lingui/macro'
 import { FC } from 'react'
 import { Button, Form, Grid, Header, Icon, Image, Message, Segment } from 'semantic-ui-react'
-import { LinkDef, useLink } from '../context'
+import { Link } from '../elements/link'
 import logo from '../static/img/moodlenet-logo.png'
 import { FormBag, UseProps } from '../types'
 
@@ -12,12 +12,11 @@ export type SignupPanelProps = {
 export type UseSignupPanelProps = UseProps<{
   form: FormBag<SignupFormValues>
   warnMessage: string | null
-  homeLink: LinkDef
+  homeLink: string
   signUpSucceded: boolean
 }>
 
 export const SignupPanelBig: FC<SignupPanelProps> = ({ useProps }) => {
-  const Link = useLink()
   const { form, warnMessage, homeLink, signUpSucceded } = useProps()
   return (
     <Grid textAlign="center" verticalAlign="middle">

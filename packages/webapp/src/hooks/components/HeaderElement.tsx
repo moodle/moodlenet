@@ -1,14 +1,14 @@
+import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { Home, Login } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useEffect } from 'react'
 import { useHistory } from 'react-router'
 import { useSession } from '../../contexts/Global/Session'
-import { webappLinkDef } from '../../helpers/navigation'
 import { UsePageHeaderProps } from '../../ui/components/PageHeader'
 import { mainPath } from '../glob/nav'
 import { useGlobalSearch } from '../glob/useGlobalSearch'
 
-const homeLink = webappLinkDef<Home>('/', {})
-const loginLink = webappLinkDef<Login>('/login', {})
+const homeLink = webappPath<Home>('/', {})
+const loginLink = webappPath<Login>('/login', {})
 
 export const getUsePageHeaderProps = (): UsePageHeaderProps =>
   function usePageHeaderProps() {

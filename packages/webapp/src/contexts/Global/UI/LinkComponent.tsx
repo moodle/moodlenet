@@ -1,14 +1,25 @@
 import { FC } from 'react'
-import { Link } from 'react-router-dom'
-import { DefaultLinkComponent, LinkComponent, LinkComponentType } from '../../../ui/context'
+import { Link, NavLink } from 'react-router-dom'
+import { PUBLIC_URL } from '../../../constants'
+import { LinkComponentCtx, LinkComponentType } from '../../../ui/elements/link'
 
 export const LinkComponentProvider: FC = ({ children }) => {
-  return <LinkComponent.Provider value={LinkComp}>{children}</LinkComponent.Provider>
+  return <LinkComponentCtx.Provider value={LinkComponent}>{children}</LinkComponentCtx.Provider>
 }
 
-const LinkComp: LinkComponentType = props =>
-  props.href.external ? (
-    <DefaultLinkComponent {...props} />
-  ) : (
-    <Link {...{ ...props, to: props.href.dest, href: props.href.dest, ref: null }} />
+const LinkComponent: LinkComponentType = props => {
+  const isExternal = !((PUBLIC_URL && props.href?.startsWith(PUBLIC_URL)) || props.href?.startsWith('/'))
+  if (isExternal || !props.href) {
+    return (
+      <a {...props} target="_blank" rel="noopener noreferrer">
+        {props.children}
+      </a>
+    )
+  }
+  const LinkComp = props.activeClassName || props.activeStyle ? NavLink : Link
+  return (
+    <LinkComp {...props} to={props.href} ref={null}>
+      {props.children}
+    </LinkComp>
   )
+}

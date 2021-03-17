@@ -1,6 +1,6 @@
 import { Id } from '@moodlenet/common/lib/utils/content-graph'
+import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { UseBaseContentNodePanelProps } from '../../ui/components/BaseContentNodePanel'
-import { contentNodeLink } from '../../ui/lib'
 import { useBaseContentNodeQuery } from './BaseContentNode/baseContentNode.gen'
 
 export const getUseBaseContentNodePanelProps = ({ id }: { id: Id }): UseBaseContentNodePanelProps =>

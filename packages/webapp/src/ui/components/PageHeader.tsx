@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
 import { FC } from 'react'
 import { Dropdown, Icon, Image, Menu } from 'semantic-ui-react'
-import { LinkDef, useLink } from '../context'
+import { Link } from '../elements/link'
 import logo from '../static/img/logo.jpg'
 import { UseProps } from '../types'
 
@@ -10,8 +10,8 @@ export type PageHeaderProps = {
 }
 
 export type UsePageHeaderProps = UseProps<{
-  homeLink: LinkDef
-  loginLink: LinkDef
+  homeLink: string
+  loginLink: string
 
   logout(): unknown
   username: null | string
@@ -21,7 +21,6 @@ export type UsePageHeaderProps = UseProps<{
 }>
 
 export const PageHeader: FC<PageHeaderProps> = ({ useProps }) => {
-  const Link = useLink()
   const { searchValue, search, homeLink, loginLink, logout, username } = useProps()
   return (
     <Menu fixed="top">

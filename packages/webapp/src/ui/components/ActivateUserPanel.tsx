@@ -1,7 +1,7 @@
 import { t, Trans } from '@lingui/macro'
 import { FC } from 'react'
 import { Button, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
-import { LinkDef, useLink } from '../context'
+import { Link } from '../elements/link'
 import { FormBag, UseProps } from '../types'
 
 export type ActivateNewUserPanelProps = {
@@ -9,7 +9,7 @@ export type ActivateNewUserPanelProps = {
 }
 export type UseActivateNewUserPanelProps = UseProps<{
   form: FormBag<ActivateNewUserFormValues>
-  termsAndConditionsLink: LinkDef
+  termsAndConditionsLink: string
   message: string | null
 }>
 export type ActivateNewUserFormValues = {
@@ -20,7 +20,6 @@ export type ActivateNewUserFormValues = {
 }
 
 export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({ useProps }) => {
-  const Link = useLink()
   const { form, message, termsAndConditionsLink } = useProps()
   return (
     <Grid textAlign="center" verticalAlign="middle">

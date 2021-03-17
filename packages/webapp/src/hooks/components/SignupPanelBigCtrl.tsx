@@ -1,12 +1,12 @@
 import { signUp } from '@moodlenet/common/lib/graphql/validation/input/userAuth'
+import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { Home } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { MutationSignUpArgs } from '../../graphql/pub.graphql.link'
 import { useFormikWithBag } from '../../helpers/forms'
-import { webappLinkDef } from '../../helpers/navigation'
 import { SignupFormValues, UseSignupPanelProps } from '../../ui/components/SignupPanelBig'
 import { useSignUpMutation } from './SignupPanelBigCtrl/signup.gen'
 
-const homeLink = webappLinkDef<Home>('/', {})
+const homeLink = webappPath<Home>('/', {})
 
 export const getUseSignupPanelProps = (): UseSignupPanelProps =>
   function useSignupPanelProps() {

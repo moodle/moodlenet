@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { Card, Image } from 'semantic-ui-react'
-import { LinkDef, useLink } from '../context'
+import { Link } from '../elements/link'
 import { UseProps } from '../types'
 
 export type BaseContentNodePanelProps = {
@@ -11,10 +11,9 @@ export type UseBaseContentNodePanelProps = UseProps<{
   name: string
   summary: string
   type: string
-  link: LinkDef
+  link: string
 } | null>
 export const BaseContentNodePanel: FC<BaseContentNodePanelProps> = ({ useProps }) => {
-  const Link = useLink()
   const props = useProps()
   if (!props) {
     return null

@@ -1,14 +1,14 @@
 import { createSession } from '@moodlenet/common/lib/graphql/validation/input/userAuth'
+import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { Home, Signup } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useState } from 'react'
 import { useSession } from '../../contexts/Global/Session'
 import { MutationCreateSessionArgs } from '../../graphql/pub.graphql.link'
 import { useFormikWithBag } from '../../helpers/forms'
-import { webappLinkDef } from '../../helpers/navigation'
 import { LoginFormValues, UseLoginPanelProps } from '../../ui/pages/Login'
 
-const signupLink = webappLinkDef<Signup>('/signup', {})
-const homeLink = webappLinkDef<Home>('/', {})
+const signupLink = webappPath<Signup>('/signup', {})
+const homeLink = webappPath<Home>('/', {})
 
 export const getUseLoginPanelProps = (): UseLoginPanelProps =>
   function useLoginPanelProps() {

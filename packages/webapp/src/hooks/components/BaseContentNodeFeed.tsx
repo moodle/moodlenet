@@ -1,6 +1,6 @@
 import { Id } from '@moodlenet/common/lib/utils/content-graph'
+import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { UseBaseContentNodeFeedProps } from '../../ui/components/BaseContentNodeFeed'
-import { contentNodeLink } from '../../ui/lib'
 import { useBaseContentNodeQuery } from './BaseContentNode/baseContentNode.gen'
 
 export const getUseBaseContentNodeFeedProps = ({ id }: { id: Id }): UseBaseContentNodeFeedProps =>
