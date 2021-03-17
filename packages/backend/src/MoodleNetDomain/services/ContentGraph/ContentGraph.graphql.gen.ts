@@ -225,7 +225,7 @@ export enum DeleteNodeMutationErrorType {
 
 export type Page = {
   pageInfo: PageInfo;
-  edges: Array<SearchPageEdge | RelPageEdge>;
+  edges: Array<RelPageEdge | SearchPageEdge>;
 };
 
 export type PageInfo = {
@@ -263,24 +263,13 @@ export type QueryGetUserSessionProfileArgs = {
 export type QueryGlobalSearchArgs = {
   text: Scalars['String'];
   nodeTypes?: Maybe<Array<NodeType>>;
+  sortBy: GlobalSearchSort;
   page?: Maybe<PaginationInput>;
 };
 
 
 export type QueryNodeArgs = {
   _id: Scalars['ID'];
-};
-
-export type SearchPage = Page & {
-  __typename: 'SearchPage';
-  pageInfo: PageInfo;
-  edges: Array<SearchPageEdge>;
-};
-
-export type SearchPageEdge = PageEdge & {
-  __typename: 'SearchPageEdge';
-  cursor: Scalars['Cursor'];
-  node: Collection | Profile | Resource | Subject;
 };
 
 
@@ -534,6 +523,23 @@ export type UpdateSubjectInput = {
   name?: Maybe<Scalars['String']>;
 };
 
+export type SearchPage = Page & {
+  __typename: 'SearchPage';
+  pageInfo: PageInfo;
+  edges: Array<SearchPageEdge>;
+};
+
+export type SearchPageEdge = PageEdge & {
+  __typename: 'SearchPageEdge';
+  cursor: Scalars['Cursor'];
+  node: Collection | Profile | Resource | Subject;
+};
+
+export enum GlobalSearchSort {
+  Pertinence = 'Pertinence',
+  Popularity = 'Popularity'
+}
+
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -648,15 +654,13 @@ export type ResolversTypes = {
   DeleteNodeMutationSuccess: ResolverTypeWrapper<Omit<DeleteNodeMutationSuccess, 'node'> & { node?: Maybe<ResolversTypes['Node']> }>;
   DeleteNodeMutationError: ResolverTypeWrapper<DeleteNodeMutationError>;
   DeleteNodeMutationErrorType: DeleteNodeMutationErrorType;
-  Page: ResolversTypes['SearchPage'] | ResolversTypes['RelPage'];
+  Page: ResolversTypes['RelPage'] | ResolversTypes['SearchPage'];
   PageInfo: ResolverTypeWrapper<PageInfo>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  PageEdge: ResolversTypes['SearchPageEdge'] | ResolversTypes['RelPageEdge'];
+  PageEdge: ResolversTypes['RelPageEdge'] | ResolversTypes['SearchPageEdge'];
   PaginationInput: PaginationInput;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<RootValue>;
-  SearchPage: ResolverTypeWrapper<SearchPage>;
-  SearchPageEdge: ResolverTypeWrapper<SearchPageEdge>;
   Cursor: ResolverTypeWrapper<Scalars['Cursor']>;
   INode: ResolversTypes['Collection'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['Subject'];
   NodeMeta: ResolverTypeWrapper<NodeMeta>;
@@ -692,6 +696,9 @@ export type ResolversTypes = {
   Subject: ResolverTypeWrapper<Subject>;
   CreateSubjectInput: CreateSubjectInput;
   UpdateSubjectInput: UpdateSubjectInput;
+  SearchPage: ResolverTypeWrapper<SearchPage>;
+  SearchPageEdge: ResolverTypeWrapper<SearchPageEdge>;
+  GlobalSearchSort: GlobalSearchSort;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -726,15 +733,13 @@ export type ResolversParentTypes = {
   DeleteNodeMutationPayload: ResolversParentTypes['DeleteNodeMutationSuccess'] | ResolversParentTypes['DeleteNodeMutationError'];
   DeleteNodeMutationSuccess: Omit<DeleteNodeMutationSuccess, 'node'> & { node?: Maybe<ResolversParentTypes['Node']> };
   DeleteNodeMutationError: DeleteNodeMutationError;
-  Page: ResolversParentTypes['SearchPage'] | ResolversParentTypes['RelPage'];
+  Page: ResolversParentTypes['RelPage'] | ResolversParentTypes['SearchPage'];
   PageInfo: PageInfo;
   Boolean: Scalars['Boolean'];
-  PageEdge: ResolversParentTypes['SearchPageEdge'] | ResolversParentTypes['RelPageEdge'];
+  PageEdge: ResolversParentTypes['RelPageEdge'] | ResolversParentTypes['SearchPageEdge'];
   PaginationInput: PaginationInput;
   Int: Scalars['Int'];
   Query: RootValue;
-  SearchPage: SearchPage;
-  SearchPageEdge: SearchPageEdge;
   Cursor: Scalars['Cursor'];
   INode: ResolversParentTypes['Collection'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['Subject'];
   NodeMeta: NodeMeta;
@@ -768,6 +773,8 @@ export type ResolversParentTypes = {
   Subject: Subject;
   CreateSubjectInput: CreateSubjectInput;
   UpdateSubjectInput: UpdateSubjectInput;
+  SearchPage: SearchPage;
+  SearchPageEdge: SearchPageEdge;
 };
 
 export interface NeverScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Never'], any> {
@@ -882,7 +889,7 @@ export type DeleteNodeMutationErrorResolvers<ContextType = MoodleNetExecutionCon
 };
 
 export type PageResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']> = {
-  __resolveType: TypeResolveFn<'SearchPage' | 'RelPage', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'RelPage' | 'SearchPage', ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   edges?: Resolver<Array<ResolversTypes['PageEdge']>, ParentType, ContextType>;
 };
@@ -896,26 +903,14 @@ export type PageInfoResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
 };
 
 export type PageEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['PageEdge'] = ResolversParentTypes['PageEdge']> = {
-  __resolveType: TypeResolveFn<'SearchPageEdge' | 'RelPageEdge', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'RelPageEdge' | 'SearchPageEdge', ParentType, ContextType>;
   cursor?: Resolver<ResolversTypes['Cursor'], ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getUserSessionProfile?: Resolver<Maybe<ResolversTypes['UserSession']>, ParentType, ContextType, RequireFields<QueryGetUserSessionProfileArgs, never>>;
-  globalSearch?: Resolver<ResolversTypes['SearchPage'], ParentType, ContextType, RequireFields<QueryGlobalSearchArgs, 'text'>>;
+  globalSearch?: Resolver<ResolversTypes['SearchPage'], ParentType, ContextType, RequireFields<QueryGlobalSearchArgs, 'text' | 'sortBy'>>;
   node?: Resolver<Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<QueryNodeArgs, '_id'>>;
-};
-
-export type SearchPageResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['SearchPage'] = ResolversParentTypes['SearchPage']> = {
-  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
-  edges?: Resolver<Array<ResolversTypes['SearchPageEdge']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type SearchPageEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['SearchPageEdge'] = ResolversParentTypes['SearchPageEdge']> = {
-  cursor?: Resolver<ResolversTypes['Cursor'], ParentType, ContextType>;
-  node?: Resolver<ResolversTypes['IContentNode'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export interface CursorScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Cursor'], any> {
@@ -1075,6 +1070,18 @@ export type SubjectResolvers<ContextType = MoodleNetExecutionContext, ParentType
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type SearchPageResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['SearchPage'] = ResolversParentTypes['SearchPage']> = {
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
+  edges?: Resolver<Array<ResolversTypes['SearchPageEdge']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SearchPageEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['SearchPageEdge'] = ResolversParentTypes['SearchPageEdge']> = {
+  cursor?: Resolver<ResolversTypes['Cursor'], ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['IContentNode'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = MoodleNetExecutionContext> = {
   Never?: GraphQLScalarType;
   Empty?: GraphQLScalarType;
@@ -1102,8 +1109,6 @@ export type Resolvers<ContextType = MoodleNetExecutionContext> = {
   PageInfo?: PageInfoResolvers<ContextType>;
   PageEdge?: PageEdgeResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  SearchPage?: SearchPageResolvers<ContextType>;
-  SearchPageEdge?: SearchPageEdgeResolvers<ContextType>;
   Cursor?: GraphQLScalarType;
   INode?: INodeResolvers<ContextType>;
   NodeMeta?: NodeMetaResolvers<ContextType>;
@@ -1127,6 +1132,8 @@ export type Resolvers<ContextType = MoodleNetExecutionContext> = {
   Profile?: ProfileResolvers<ContextType>;
   Resource?: ResourceResolvers<ContextType>;
   Subject?: SubjectResolvers<ContextType>;
+  SearchPage?: SearchPageResolvers<ContextType>;
+  SearchPageEdge?: SearchPageEdgeResolvers<ContextType>;
 };
 
 

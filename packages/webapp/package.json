@@ -27,6 +27,7 @@
     "cross-env": "^7.0.3",
     "formik": "^2.2.6",
     "graphql": "^15.5.0",
+    "lodash": "^4.17.21",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router": "^5.2.0",

@@ -9,11 +9,13 @@ export const globalSearch = async ({
   page,
   text,
   nodeTypes,
+  sortBy = GQL.GlobalSearchSort.Pertinence,
 }: {
   persistence: Persistence
   text: string
   page: Maybe<GQL.PaginationInput>
   nodeTypes: Maybe<GQL.NodeType[]>
+  sortBy: Maybe<GQL.GlobalSearchSort>
 }): Promise<GQL.SearchPage> => {
   const { limit, skip } = skipLimitPagination({ page })
   const aql_txt = aqlstr(text)
@@ -24,12 +26,17 @@ export const globalSearch = async ({
 
   const filterString = filterConditions && `FILTER ${filterConditions}`
 
+  const sortFactor =
+    sortBy === GQL.GlobalSearchSort.Pertinence
+      ? '1'
+      : '(1 + (node._meta.relCount.Likes.from.Profile||0) + (node._meta.relCount.Follows.from.Profile||0))'
+
   const query = `
       FOR node IN SearchView
         SEARCH ANALYZER(
-          BOOST( PHRASE(node.name,${aql_txt}), 10 )
+          BOOST( PHRASE(node.name, ${aql_txt}), 10 )
           ||
-          BOOST( PHRASE(node.description,${aql_txt}), 5 )
+          BOOST( PHRASE(node.description, ${aql_txt}), 5 )
           ||
           BOOST( node.name IN TOKENS(${aql_txt}), 3 )
           ||
@@ -42,7 +49,7 @@ export const globalSearch = async ({
       
         ${filterString}
 
-      SORT TFIDF(node) desc, node._key
+      SORT ( TFIDF(node) * ${sortFactor}) desc, node._key 
       
       LIMIT ${skip}, ${limit}
       

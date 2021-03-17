@@ -1,9 +1,13 @@
 import * as Types from '../../../graphql/pub.graphql.link';
 
+import { BaseINode_Collection_Fragment, BaseINode_Profile_Fragment, BaseINode_Resource_Fragment, BaseINode_Subject_Fragment, BaseIContentNode_Collection_Fragment, BaseIContentNode_Profile_Fragment, BaseIContentNode_Resource_Fragment, BaseIContentNode_Subject_Fragment } from '../../../graphql/fragment/nodes.gen';
 import { gql } from '@apollo/client';
+import { BaseINodeFragmentDoc, BaseIContentNodeFragmentDoc } from '../../../graphql/fragment/nodes.gen';
 import * as Apollo from '@apollo/client';
 export type GlobalSearchQueryVariables = Types.Exact<{
   text: Types.Scalars['String'];
+  sortBy: Types.GlobalSearchSort;
+  nodeTypes?: Types.Maybe<Array<Types.NodeType> | Types.NodeType>;
 }>;
 
 
@@ -16,16 +20,20 @@ export type GlobalSearchQuery = (
       & Pick<Types.SearchPageEdge, 'cursor'>
       & { node: (
         { __typename: 'Collection' }
-        & Pick<Types.Collection, '_id' | 'name' | 'summary' | 'icon'>
+        & BaseINode_Collection_Fragment
+        & BaseIContentNode_Collection_Fragment
       ) | (
         { __typename: 'Profile' }
-        & Pick<Types.Profile, '_id' | 'name' | 'summary' | 'icon'>
+        & BaseINode_Profile_Fragment
+        & BaseIContentNode_Profile_Fragment
       ) | (
         { __typename: 'Resource' }
-        & Pick<Types.Resource, '_id' | 'name' | 'summary' | 'icon'>
+        & BaseINode_Resource_Fragment
+        & BaseIContentNode_Resource_Fragment
       ) | (
         { __typename: 'Subject' }
-        & Pick<Types.Subject, '_id' | 'name' | 'summary' | 'icon'>
+        & BaseINode_Subject_Fragment
+        & BaseIContentNode_Subject_Fragment
       ) }
     )>, pageInfo: (
       { __typename: 'PageInfo' }
@@ -36,19 +44,17 @@ export type GlobalSearchQuery = (
 
 
 export const GlobalSearchDocument = gql`
-    query globalSearch($text: String!) {
-  globalSearch(text: $text) {
+    query globalSearch($text: String!, $sortBy: GlobalSearchSort!, $nodeTypes: [NodeType!]) {
+  globalSearch(text: $text, sortBy: $sortBy, nodeTypes: $nodeTypes) {
     edges {
       cursor
       node {
         ... on INode {
-          _id
+          ...BaseINode
         }
         __typename
         ... on IContentNode {
-          name
-          summary
-          icon
+          ...BaseIContentNode
         }
       }
     }
@@ -58,7 +64,8 @@ export const GlobalSearchDocument = gql`
     }
   }
 }
-    `;
+    ${BaseINodeFragmentDoc}
+${BaseIContentNodeFragmentDoc}`;
 
 /**
  * __useGlobalSearchQuery__
@@ -73,6 +80,8 @@ export const GlobalSearchDocument = gql`
  * const { data, loading, error } = useGlobalSearchQuery({
  *   variables: {
  *      text: // value for 'text'
+ *      sortBy: // value for 'sortBy'
+ *      nodeTypes: // value for 'nodeTypes'
  *   },
  * });
  */

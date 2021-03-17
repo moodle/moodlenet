@@ -4,13 +4,14 @@ import { MoodleNetArangoContentGraphSubDomain } from '../../MoodleNetArangoConte
 
 export const gqlGlobalSearch: GQL.QueryResolvers['globalSearch'] = async (
   _root,
-  { text, page, nodeTypes },
+  { text, page, nodeTypes, sortBy },
   ctx /* ,_info */,
 ) => {
   const searchPage = await call<MoodleNetArangoContentGraphSubDomain>()('ContentGraph.GlobalSearch', ctx.flow)({
     page,
     text,
     nodeTypes,
+    sortBy,
   })
   return searchPage
 }

@@ -1,8 +1,8 @@
 import * as Types from '../../../graphql/pub.graphql.link';
 
-import { ShallowProfileFragment } from '../../../graphql/fragment/shallowNodes.gen';
+import { ShallowProfileFragment } from '../../../graphql/fragment/nodes.gen';
 import { gql } from '@apollo/client';
-import { ShallowProfileFragmentDoc } from '../../../graphql/fragment/shallowNodes.gen';
+import { ShallowProfileFragmentDoc } from '../../../graphql/fragment/nodes.gen';
 import * as Apollo from '@apollo/client';
 export type GetCurrentSessionQueryVariables = Types.Exact<{ [key: string]: never; }>;
 

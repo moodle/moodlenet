@@ -11,6 +11,7 @@ export const globalSearchWorker = ({
   page,
   text,
   nodeTypes,
+  sortBy,
 }) => {
-  return globalSearch({ page, persistence, text, nodeTypes })
+  return globalSearch({ page, persistence, text, nodeTypes, sortBy })
 }

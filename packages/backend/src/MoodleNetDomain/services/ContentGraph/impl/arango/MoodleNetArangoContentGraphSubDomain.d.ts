@@ -70,6 +70,7 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
         text: string
         page: Maybe<GQL.PaginationInput>
         nodeTypes: Maybe<GQL.NodeType[]>
+        sortBy: Maybe<GQL.GlobalSearchSort>
       }) => Promise<GQL.SearchPage>
     >
     Stats: {

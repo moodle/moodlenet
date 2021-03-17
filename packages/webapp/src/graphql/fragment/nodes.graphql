@@ -1,0 +1,28 @@
+fragment ShallowProfile on Profile {
+  _id
+  name
+}
+
+fragment BaseIContentNode on IContentNode {
+  name
+  icon
+  summary
+}
+
+fragment BaseINode on INode {
+  _id
+  _meta {
+    relCount {
+      Follows {
+        from {
+          Profile
+        }
+      }
+      Likes {
+        from {
+          Profile
+        }
+      }
+    }
+  }
+}

@@ -1,24 +1,10 @@
-query baseContentNode($id: ID!) {
+query BaseContentNode($id: ID!) {
   node(_id: $id) {
     ... on INode {
-      _id
-      _meta {
-        relCount {
-          Follows {
-            from {
-              Profile
-            }
-          }
-          Likes {
-            from {
-              Profile
-            }
-          }
-        }
-      }
+      ...BaseINode
     }
     ... on IContentNode {
-      ...BaseContentNode
+      ...BaseIContentNode
     }
   }
 }

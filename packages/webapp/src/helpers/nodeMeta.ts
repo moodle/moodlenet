@@ -1,5 +1,6 @@
-import { DeepPartial } from '@moodlenet/common/src/utils/types'
-import { EdgeType, Maybe, NodeMeta, NodeType } from '../graphql/pub.graphql.link'
+import { DeepPartial } from '@moodlenet/common/lib/utils/types'
+import { Maybe } from 'graphql/jsutils/Maybe'
+import { EdgeType, NodeMeta, NodeType } from '../graphql/pub.graphql.link'
 
 export const getRelCount = (
   _meta: Maybe<DeepPartial<NodeMeta>>,

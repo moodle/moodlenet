@@ -1,16 +1,14 @@
-query globalSearch($text: String!) {
-  globalSearch(text: $text) {
+query globalSearch($text: String!, $sortBy: GlobalSearchSort!, $nodeTypes: [NodeType!]) {
+  globalSearch(text: $text, sortBy: $sortBy, nodeTypes: $nodeTypes) {
     edges {
       cursor
       node {
         ... on INode {
-          _id
+          ...BaseINode
         }
         __typename
         ... on IContentNode {
-          name
-          summary
-          icon
+          ...BaseIContentNode
         }
       }
     }

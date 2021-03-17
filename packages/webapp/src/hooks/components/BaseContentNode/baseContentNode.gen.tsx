@@ -1,8 +1,8 @@
 import * as Types from '../../../graphql/pub.graphql.link';
 
-import { BaseContentNode_Collection_Fragment, BaseContentNode_Profile_Fragment, BaseContentNode_Resource_Fragment, BaseContentNode_Subject_Fragment } from '../../../graphql/fragment/shallowNodes.gen';
+import { BaseINode_Collection_Fragment, BaseINode_Profile_Fragment, BaseINode_Resource_Fragment, BaseINode_Subject_Fragment, BaseIContentNode_Collection_Fragment, BaseIContentNode_Profile_Fragment, BaseIContentNode_Resource_Fragment, BaseIContentNode_Subject_Fragment } from '../../../graphql/fragment/nodes.gen';
 import { gql } from '@apollo/client';
-import { BaseContentNodeFragmentDoc } from '../../../graphql/fragment/shallowNodes.gen';
+import { BaseINodeFragmentDoc, BaseIContentNodeFragmentDoc } from '../../../graphql/fragment/nodes.gen';
 import * as Apollo from '@apollo/client';
 export type BaseContentNodeQueryVariables = Types.Exact<{
   id: Types.Scalars['ID'];
@@ -13,126 +13,37 @@ export type BaseContentNodeQuery = (
   { __typename: 'Query' }
   & { node?: Types.Maybe<(
     { __typename: 'Collection' }
-    & Pick<Types.Collection, '_id'>
-    & { _meta: (
-      { __typename: 'NodeMeta' }
-      & { relCount?: Types.Maybe<(
-        { __typename: 'RelCountMap' }
-        & { Follows?: Types.Maybe<(
-          { __typename: 'RelCount' }
-          & { from?: Types.Maybe<(
-            { __typename: 'RelCountTargetMap' }
-            & Pick<Types.RelCountTargetMap, 'Profile'>
-          )> }
-        )>, Likes?: Types.Maybe<(
-          { __typename: 'RelCount' }
-          & { from?: Types.Maybe<(
-            { __typename: 'RelCountTargetMap' }
-            & Pick<Types.RelCountTargetMap, 'Profile'>
-          )> }
-        )> }
-      )> }
-    ) }
-    & BaseContentNode_Collection_Fragment
+    & BaseINode_Collection_Fragment
+    & BaseIContentNode_Collection_Fragment
   ) | (
     { __typename: 'Profile' }
-    & Pick<Types.Profile, '_id'>
-    & { _meta: (
-      { __typename: 'NodeMeta' }
-      & { relCount?: Types.Maybe<(
-        { __typename: 'RelCountMap' }
-        & { Follows?: Types.Maybe<(
-          { __typename: 'RelCount' }
-          & { from?: Types.Maybe<(
-            { __typename: 'RelCountTargetMap' }
-            & Pick<Types.RelCountTargetMap, 'Profile'>
-          )> }
-        )>, Likes?: Types.Maybe<(
-          { __typename: 'RelCount' }
-          & { from?: Types.Maybe<(
-            { __typename: 'RelCountTargetMap' }
-            & Pick<Types.RelCountTargetMap, 'Profile'>
-          )> }
-        )> }
-      )> }
-    ) }
-    & BaseContentNode_Profile_Fragment
+    & BaseINode_Profile_Fragment
+    & BaseIContentNode_Profile_Fragment
   ) | (
     { __typename: 'Resource' }
-    & Pick<Types.Resource, '_id'>
-    & { _meta: (
-      { __typename: 'NodeMeta' }
-      & { relCount?: Types.Maybe<(
-        { __typename: 'RelCountMap' }
-        & { Follows?: Types.Maybe<(
-          { __typename: 'RelCount' }
-          & { from?: Types.Maybe<(
-            { __typename: 'RelCountTargetMap' }
-            & Pick<Types.RelCountTargetMap, 'Profile'>
-          )> }
-        )>, Likes?: Types.Maybe<(
-          { __typename: 'RelCount' }
-          & { from?: Types.Maybe<(
-            { __typename: 'RelCountTargetMap' }
-            & Pick<Types.RelCountTargetMap, 'Profile'>
-          )> }
-        )> }
-      )> }
-    ) }
-    & BaseContentNode_Resource_Fragment
+    & BaseINode_Resource_Fragment
+    & BaseIContentNode_Resource_Fragment
   ) | (
     { __typename: 'Subject' }
-    & Pick<Types.Subject, '_id'>
-    & { _meta: (
-      { __typename: 'NodeMeta' }
-      & { relCount?: Types.Maybe<(
-        { __typename: 'RelCountMap' }
-        & { Follows?: Types.Maybe<(
-          { __typename: 'RelCount' }
-          & { from?: Types.Maybe<(
-            { __typename: 'RelCountTargetMap' }
-            & Pick<Types.RelCountTargetMap, 'Profile'>
-          )> }
-        )>, Likes?: Types.Maybe<(
-          { __typename: 'RelCount' }
-          & { from?: Types.Maybe<(
-            { __typename: 'RelCountTargetMap' }
-            & Pick<Types.RelCountTargetMap, 'Profile'>
-          )> }
-        )> }
-      )> }
-    ) }
-    & BaseContentNode_Subject_Fragment
+    & BaseINode_Subject_Fragment
+    & BaseIContentNode_Subject_Fragment
   )> }
 );
 
 
 export const BaseContentNodeDocument = gql`
-    query baseContentNode($id: ID!) {
+    query BaseContentNode($id: ID!) {
   node(_id: $id) {
     ... on INode {
-      _id
-      _meta {
-        relCount {
-          Follows {
-            from {
-              Profile
-            }
-          }
-          Likes {
-            from {
-              Profile
-            }
-          }
-        }
-      }
+      ...BaseINode
     }
     ... on IContentNode {
-      ...BaseContentNode
+      ...BaseIContentNode
     }
   }
 }
-    ${BaseContentNodeFragmentDoc}`;
+    ${BaseINodeFragmentDoc}
+${BaseIContentNodeFragmentDoc}`;
 
 /**
  * __useBaseContentNodeQuery__
