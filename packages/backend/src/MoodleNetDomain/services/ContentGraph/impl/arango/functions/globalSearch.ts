@@ -8,15 +8,24 @@ export const globalSearch = async ({
   persistence: { db },
   page,
   text,
+  nodeTypes,
 }: {
   persistence: Persistence
   text: string
   page: Maybe<GQL.PaginationInput>
+  nodeTypes: Maybe<GQL.NodeType[]>
 }): Promise<GQL.SearchPage> => {
   const { limit, skip } = skipLimitPagination({ page })
   const aql_txt = aqlstr(text)
+
+  const nodeTypeConditions = (nodeTypes ?? []).map(nodeType => `node.__typename == ${aqlstr(nodeType)}`).join(' || ')
+
+  const filterConditions = [nodeTypeConditions].filter(Boolean).join(' && ')
+
+  const filterString = filterConditions && `FILTER ${filterConditions}`
+
   const query = `
-        FOR node IN SearchView
+      FOR node IN SearchView
         SEARCH ANALYZER(
           BOOST( PHRASE(node.name,${aql_txt}), 10 )
           ||
@@ -30,6 +39,9 @@ export const globalSearch = async ({
           ||
           BOOST( NGRAM_MATCH(node.summary, ${aql_txt}, 0.05, "global-search-ngram"), 0.1 )
         , "text_en")
+      
+        ${filterString}
+
       SORT TFIDF(node) desc, node._key
       
       LIMIT ${skip}, ${limit}

@@ -1,6 +1,6 @@
 type Query {
   node(_id: ID!): Node
-  globalSearch(text: String!, page: PaginationInput): SearchPage!
+  globalSearch(text: String!, nodeTypes: [NodeType!], page: PaginationInput): SearchPage!
 }
 
 type SearchPage implements Page {

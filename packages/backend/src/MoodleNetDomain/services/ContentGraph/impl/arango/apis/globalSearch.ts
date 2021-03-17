@@ -7,6 +7,10 @@ export const globalSearchWorker = ({
   persistence,
 }: {
   persistence: Persistence
-}): LookupWorker<MoodleNetArangoContentGraphSubDomain, 'ContentGraph.GlobalSearch'> => async ({ page, text }) => {
-  return globalSearch({ page, persistence, text })
+}): LookupWorker<MoodleNetArangoContentGraphSubDomain, 'ContentGraph.GlobalSearch'> => async ({
+  page,
+  text,
+  nodeTypes,
+}) => {
+  return globalSearch({ page, persistence, text, nodeTypes })
 }

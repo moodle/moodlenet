@@ -308,6 +308,7 @@ export type QueryGetUserSessionProfileArgs = {
 
 export type QueryGlobalSearchArgs = {
   text: Scalars['String'];
+  nodeTypes?: Maybe<Array<NodeType>>;
   page?: Maybe<PaginationInput>;
 };
 

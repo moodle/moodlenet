@@ -65,7 +65,13 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
         }) => Promise<GQL.RelPage>
       >
     }
-    GlobalSearch: WrkDef<(_: { text: string; page: Maybe<GQL.PaginationInput> }) => Promise<GQL.SearchPage>>
+    GlobalSearch: WrkDef<
+      (_: {
+        text: string
+        page: Maybe<GQL.PaginationInput>
+        nodeTypes: Maybe<GQL.NodeType[]>
+      }) => Promise<GQL.SearchPage>
+    >
     Stats: {
       MaintainEdgeCounters: SubDef<MoodleNetArangoContentGraphSubDomain, 'ContentGraph.Edge.Created'>
     }
