@@ -4,7 +4,7 @@ import { Home } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { MutationSignUpArgs } from '../../graphql/pub.graphql.link'
 import { useFormikWithBag } from '../../helpers/forms'
 import { SignupFormValues, UseSignupPanelProps } from '../../ui/components/SignupPanelBig'
-import { useSignUpMutation } from './SignupPanelBigCtrl/signup.gen'
+import { useSignUpMutation } from './SignupPanel/signup.gen'
 
 const homeLink = webappPath<Home>('/', {})
 

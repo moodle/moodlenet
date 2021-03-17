@@ -1,5 +1,5 @@
 import { Routes } from '../../../common/lib/webapp/sitemap'
-import { getUseSignupPanelProps } from '../hooks/components/SignupPanelBigCtrl'
+import { getUseSignupPanelProps } from '../hooks/components/SignupPanel'
 import { SignUpPage } from '../ui/pages/SignUp'
 import { MNRouteProps, RouteFC } from './lib'
 
