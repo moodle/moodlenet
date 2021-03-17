@@ -1,5 +1,6 @@
-import { Id } from '@moodlenet/common/lib/utils/content-graph'
+import { EdgeType, Id, NodeType } from '@moodlenet/common/lib/utils/content-graph'
 import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
+import { getRelCount } from '../../helpers/nodeMeta'
 import { UseBaseContentNodeFeedProps } from '../../ui/components/BaseContentNodeFeed'
 import { useBaseContentNodeQuery } from './BaseContentNode/baseContentNode.gen'
 
@@ -14,6 +15,8 @@ export const getUseBaseContentNodeFeedProps = ({ id }: { id: Id }): UseBaseConte
           name: node.name,
           summary: node.summary,
           type: node.__typename,
+          followers: getRelCount(data?.node?._meta, EdgeType.Follows, 'from', NodeType.Profile),
+          likers: getRelCount(data?.node?._meta, EdgeType.Likes, 'from', NodeType.Profile),
         }
       : null
   }

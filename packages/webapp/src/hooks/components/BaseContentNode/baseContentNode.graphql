@@ -2,6 +2,20 @@ query baseContentNode($id: ID!) {
   node(_id: $id) {
     ... on INode {
       _id
+      _meta {
+        relCount {
+          Follows {
+            from {
+              Profile
+            }
+          }
+          Likes {
+            from {
+              Profile
+            }
+          }
+        }
+      }
     }
     ... on IContentNode {
       ...BaseContentNode

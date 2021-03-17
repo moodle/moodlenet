@@ -14,18 +14,94 @@ export type BaseContentNodeQuery = (
   & { node?: Types.Maybe<(
     { __typename: 'Collection' }
     & Pick<Types.Collection, '_id'>
+    & { _meta: (
+      { __typename: 'NodeMeta' }
+      & { relCount?: Types.Maybe<(
+        { __typename: 'RelCountMap' }
+        & { Follows?: Types.Maybe<(
+          { __typename: 'RelCount' }
+          & { from?: Types.Maybe<(
+            { __typename: 'RelCountTargetMap' }
+            & Pick<Types.RelCountTargetMap, 'Profile'>
+          )> }
+        )>, Likes?: Types.Maybe<(
+          { __typename: 'RelCount' }
+          & { from?: Types.Maybe<(
+            { __typename: 'RelCountTargetMap' }
+            & Pick<Types.RelCountTargetMap, 'Profile'>
+          )> }
+        )> }
+      )> }
+    ) }
     & BaseContentNode_Collection_Fragment
   ) | (
     { __typename: 'Profile' }
     & Pick<Types.Profile, '_id'>
+    & { _meta: (
+      { __typename: 'NodeMeta' }
+      & { relCount?: Types.Maybe<(
+        { __typename: 'RelCountMap' }
+        & { Follows?: Types.Maybe<(
+          { __typename: 'RelCount' }
+          & { from?: Types.Maybe<(
+            { __typename: 'RelCountTargetMap' }
+            & Pick<Types.RelCountTargetMap, 'Profile'>
+          )> }
+        )>, Likes?: Types.Maybe<(
+          { __typename: 'RelCount' }
+          & { from?: Types.Maybe<(
+            { __typename: 'RelCountTargetMap' }
+            & Pick<Types.RelCountTargetMap, 'Profile'>
+          )> }
+        )> }
+      )> }
+    ) }
     & BaseContentNode_Profile_Fragment
   ) | (
     { __typename: 'Resource' }
     & Pick<Types.Resource, '_id'>
+    & { _meta: (
+      { __typename: 'NodeMeta' }
+      & { relCount?: Types.Maybe<(
+        { __typename: 'RelCountMap' }
+        & { Follows?: Types.Maybe<(
+          { __typename: 'RelCount' }
+          & { from?: Types.Maybe<(
+            { __typename: 'RelCountTargetMap' }
+            & Pick<Types.RelCountTargetMap, 'Profile'>
+          )> }
+        )>, Likes?: Types.Maybe<(
+          { __typename: 'RelCount' }
+          & { from?: Types.Maybe<(
+            { __typename: 'RelCountTargetMap' }
+            & Pick<Types.RelCountTargetMap, 'Profile'>
+          )> }
+        )> }
+      )> }
+    ) }
     & BaseContentNode_Resource_Fragment
   ) | (
     { __typename: 'Subject' }
     & Pick<Types.Subject, '_id'>
+    & { _meta: (
+      { __typename: 'NodeMeta' }
+      & { relCount?: Types.Maybe<(
+        { __typename: 'RelCountMap' }
+        & { Follows?: Types.Maybe<(
+          { __typename: 'RelCount' }
+          & { from?: Types.Maybe<(
+            { __typename: 'RelCountTargetMap' }
+            & Pick<Types.RelCountTargetMap, 'Profile'>
+          )> }
+        )>, Likes?: Types.Maybe<(
+          { __typename: 'RelCount' }
+          & { from?: Types.Maybe<(
+            { __typename: 'RelCountTargetMap' }
+            & Pick<Types.RelCountTargetMap, 'Profile'>
+          )> }
+        )> }
+      )> }
+    ) }
     & BaseContentNode_Subject_Fragment
   )> }
 );
@@ -36,6 +112,20 @@ export const BaseContentNodeDocument = gql`
   node(_id: $id) {
     ... on INode {
       _id
+      _meta {
+        relCount {
+          Follows {
+            from {
+              Profile
+            }
+          }
+          Likes {
+            from {
+              Profile
+            }
+          }
+        }
+      }
     }
     ... on IContentNode {
       ...BaseContentNode
