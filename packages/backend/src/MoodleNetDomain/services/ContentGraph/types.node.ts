@@ -28,6 +28,3 @@ export type DeleteEdgeShallowPayload = ShallowEdge | GQL.DeleteEdgeMutationError
 
 export type ShallowNodeMeta = Omit<GQL.NodeMeta, '__typename'>
 export type ShallowEdgeMeta = Omit<GQL.EdgeMeta, '__typename'>
-// export type X<Type extends GQL.NodeType> = ShallowNodeByType<Type> | GQL.CreateNodeMutationError
-// declare const x:X<NodeType>
-// x.__typename!=='CreateNodeMutationError'&&x.__typename

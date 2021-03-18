@@ -2,7 +2,7 @@ import { Maybe } from 'graphql/jsutils/Maybe'
 import { aqlstr } from '../../../../../../lib/helpers/arango'
 import * as GQL from '../../../ContentGraph.graphql.gen'
 import { Persistence } from '../types'
-import { aqlMergeTypenameById, makePage, skipLimitPagination } from './helpers'
+import { makePage, skipLimitPagination } from './helpers'
 
 export const globalSearch = async ({
   persistence: { db },
@@ -54,7 +54,7 @@ export const globalSearch = async ({
       LIMIT ${skip}, ${limit}
       
       RETURN {
-        node: ${aqlMergeTypenameById('node')}
+        node
       }
     `
   // console.log(query)

@@ -114,9 +114,6 @@ export const skipLimitPagination = ({ page }: { page: Maybe<PaginationInput> }) 
   }
 }
 
-export const aqlMergeTypenameById = (varname: string) =>
-  `MERGE( ${varname}, { __typename: PARSE_IDENTIFIER(${varname}._id).collection } )`
-
 export const createNodeMetaString = ({}: {}) => `{
     created: DATE_NOW(),
     updated: DATE_NOW()

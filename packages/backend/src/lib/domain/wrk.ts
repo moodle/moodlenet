@@ -14,12 +14,6 @@ export type WrkDef<Worker extends AnyWorker> = {
   __$do_not_set_me_Worker_Type_placeholder?: Worker
 }
 
-export type WrkTypes<D, Path extends WrkPaths<D>> = {
-  Api: Path
-  Worker: LookupWorker<D, Path>
-  Init: LookupWorkerInit<D, Path>
-}
-
 export type WorkerInit<Worker extends AnyWorker> = (_: { cfg: WrkConfig }) => Promise<WorkerService<Worker>>
 //export type WorkerInitImpl<D, Path extends string> = WorkerInit<LookupWorker<D, Path>>
 export type LookupWorkerInit<D, Path extends WrkPaths<D>> = WorkerInit<LookupWorker<D, Path>>

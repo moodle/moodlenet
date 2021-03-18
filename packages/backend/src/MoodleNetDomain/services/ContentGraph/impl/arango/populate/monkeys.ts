@@ -1,6 +1,5 @@
 import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { Database } from 'arangojs'
-import { call } from '../../../../../../lib/domain/amqp/call'
 import { enqueue } from '../../../../../../lib/domain/amqp/enqueue'
 import { newFlow } from '../../../../../../lib/domain/flow'
 import { MoodleNetExecutionContext, Role } from '../../../../../types'
@@ -49,14 +48,14 @@ const monkeyCreateEdge = (db: Database) => async (ctx: MoodleNetExecutionContext
   if (!(from && to)) {
     return `didn't find both nodes for ${info}`
   }
-  return call<MoodleNetArangoContentGraphSubDomain>()(
+  return enqueue<MoodleNetArangoContentGraphSubDomain>()(
     'ContentGraph.Edge.Create',
     newFlow(),
   )({ ctx, data: fakeEdge[edgeType](), edgeType, from, to }).then(() => `EDGE: ${info}`)
 }
 
 const actions = [monkeyCreateEdge, monkeyCreateNode]
-const getRndAction = (db: Database) => actions[Math.round(Math.max(Math.random() - 0.3, 0))](db)
+const getRndAction = (db: Database) => actions[Math.round(Math.max(Math.random() - 0.1618, 0))](db)
 const getRndType = <T extends object>(_: T, ...x: (keyof T)[]) =>
   _[
     Object.keys(_)

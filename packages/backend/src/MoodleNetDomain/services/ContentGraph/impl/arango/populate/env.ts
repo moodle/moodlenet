@@ -16,8 +16,8 @@ export const cfg: Config = {
 export const SUBJECTS_AMOUNT = Number(process.env.SUBJECTS_AMOUNT) || 30
 export const PROFILES_AMOUNT = Number(process.env.PROFILES_AMOUNT) || 100
 
-export const PARALLEL_MONKEYS = Number(process.env.PARALLEL_MONKEYS) || 20
-export const MONKEYS_WAIT = Number(process.env.MONKEYS_WAIT) || 50
+export const PARALLEL_MONKEYS = Number(process.env.PARALLEL_MONKEYS) || 30
+export const MONKEYS_WAIT = Number(process.env.MONKEYS_WAIT) || 20
 
 export const GEN_DIR = process.env.GEN_DIR || join(__dirname, '_gen')
 

@@ -28,7 +28,7 @@ export const finishWrite = () => {
   })
 }
 
-type WriteNode = Omit<ShallowNode, '_id' | '__typename' | '_meta' | '_rel'> & {
+type WriteNode = Omit<ShallowNode, '_id' | '_meta' | '_rel'> & {
   _key: IdKey
   _meta: Omit<NodeMeta, '__typename'>
 }

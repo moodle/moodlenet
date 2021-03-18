@@ -25,6 +25,7 @@ export const createNewFakeNode = ({ type }: { type: NodeType }) => {
   const _key = genKey(type)
   return writeNode(type, {
     _key,
+    __typename: type,
     ...fakeNode[type](),
     _meta: {
       created: new Date(),
