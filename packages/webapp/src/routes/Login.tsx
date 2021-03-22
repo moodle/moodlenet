@@ -1,6 +1,6 @@
 import { Routes } from '../../../common/lib/webapp/sitemap'
-import { getUseLoginPanelProps } from '../hooks/components/LoginPanelBig'
 import { useRedirectHomeIfLoggedIn } from '../hooks/glob/nav'
+import { getUseLoginPanelProps } from '../hooks/useProps/LoginPanelBig'
 import { LoginPage } from '../ui/pages/Login'
 import { MNRouteProps, RouteFC } from './lib'
 

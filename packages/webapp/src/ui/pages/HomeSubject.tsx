@@ -3,11 +3,11 @@ import { BaseContentNodePanel, UseBaseContentNodePanelProps } from '../component
 import { UsePageHeaderProps } from '../components/PageHeader'
 import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
 
-export type BaseContentNodePageProps = {
+export type BaseContentPropsNodePage = {
   usePageHeaderProps: UsePageHeaderProps
   useBaseContentNodePanelProps: UseBaseContentNodePanelProps
 }
-export const BaseContentNodePage: FC<BaseContentNodePageProps> = ({
+export const BaseContentNodePage: FC<BaseContentPropsNodePage> = ({
   usePageHeaderProps,
   useBaseContentNodePanelProps,
 }) => {

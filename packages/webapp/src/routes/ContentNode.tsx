@@ -3,7 +3,7 @@
 import { parseNodeIdString } from '@moodlenet/common/lib/utils/content-graph'
 import { Routes } from '../../../common/lib/webapp/sitemap'
 import { NeverPage } from '../helpers/navigation'
-import { getUseBaseContentNodePanelProps } from '../hooks/components/BaseContentNodePanel'
+import { getUseBaseContentNodePanelProps } from '../hooks/useProps/BaseContentNodePanel'
 import { BaseContentNodePanel } from '../ui/components/BaseContentNodePanel'
 import { MNRouteProps, RouteFC } from './lib'
 

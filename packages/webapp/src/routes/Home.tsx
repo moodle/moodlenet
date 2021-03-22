@@ -1,5 +1,5 @@
 import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
-import { getUsePageHeaderProps } from '../hooks/components/HeaderElement'
+import { getUsePageHeaderProps } from '../hooks/useProps/HeaderElement'
 import { HomePage } from '../ui/pages/Home'
 import { MNRouteProps, RouteFC } from './lib'
 

@@ -18,14 +18,14 @@ export const useGlobalSearch = () => {
   useEffect(() => setSearchText(qs), [qs, setSearchText])
 
   useEffect(() => {
-    let i: any = null
-    if (searchText) {
-      i = setTimeout(() => {
-        console.log(`query`, { searchText, sortBy, typeFilters })
-        query({ variables: { text: searchText, sortBy, nodeTypes: typeFilters } })
-      }, 500)
+    if (!searchText) {
+      return
     }
-    return () => clearTimeout(i)
+    const toId = setTimeout(() => {
+      console.log(`query`, { searchText, sortBy, typeFilters })
+      query({ variables: { text: searchText, sortBy, nodeTypes: typeFilters } })
+    }, 500)
+    return () => clearTimeout(toId)
   }, [typeFilters, query, searchText, sortBy])
 
   const items = useMemo(() => res.data?.globalSearch.edges.map(edge => edge.node) || [], [res.data?.globalSearch.edges])
