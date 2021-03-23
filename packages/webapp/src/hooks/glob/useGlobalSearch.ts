@@ -12,13 +12,26 @@ export const useGlobalSearch = () => {
   const urlQuery = useUrlQuery()
   const history = useHistory()
 
-  const qs = useMemo(() => urlQuery.get('q') ?? '', [urlQuery])
+  const initialParams = useMemo(() => {
+    const q = urlQuery.get('q') ?? ''
+    const sort = urlQuery.get('sort') ?? ''
+    const filter = (urlQuery.get('filter') ?? '')
+      .split(',')
+      .filter(
+        (_): _ is NodeTypeFilter => _ === NodeType.Resource || _ === NodeType.Collection || _ === NodeType.Subject,
+      )
 
-  const [searchText, setSearchText] = useState(qs)
-  const [sortBy, setSortBy] = useState<GlobalSearchSort>(GlobalSearchSort.Relevance)
-  const [typeFilters, setTypeFilter] = useState<NodeTypeFilter[]>([])
+    return {
+      q,
+      filter,
+      sort:
+        sort === GlobalSearchSort.Popularity || sort === GlobalSearchSort.Relevance ? sort : GlobalSearchSort.Relevance,
+    }
+  }, [urlQuery])
 
-  useEffect(() => setSearchText(qs), [qs, setSearchText])
+  const [searchText, setSearchText] = useState(initialParams.q)
+  const [sortBy, setSortBy] = useState<GlobalSearchSort>(initialParams.sort)
+  const [typeFilters, setTypeFilter] = useState<NodeTypeFilter[]>(initialParams.filter)
 
   useEffect(() => {
     if (!searchText) {
@@ -26,7 +39,14 @@ export const useGlobalSearch = () => {
       return
     }
     const toId = setTimeout(() => {
-      history[firstIn ? 'push' : 'replace'](`${mainPath.search}?q=${searchText}`)
+      let params = new URLSearchParams()
+
+      //Add a second foo parameter.
+      params.append('q', searchText)
+      params.append('sort', sortBy)
+      params.append('filter', typeFilters.join(','))
+
+      history[firstIn ? 'push' : 'replace'](`${mainPath.search}?${params.toString()}`)
       firstIn = false
       console.log(`query`, { searchText, sortBy, typeFilters })
       query({ variables: { text: searchText, sortBy, nodeTypes: typeFilters } })
