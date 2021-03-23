@@ -13,6 +13,6 @@ type SearchPageEdge implements PageEdge {
 }
 
 enum GlobalSearchSort {
-  Pertinence
+  Relevance
   Popularity
 }

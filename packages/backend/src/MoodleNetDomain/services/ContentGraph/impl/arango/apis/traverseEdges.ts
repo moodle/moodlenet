@@ -13,6 +13,7 @@ export const traverseEdgesWorker = ({
   parentNodeId,
   inverse,
   targetNodeType,
+  targetNodeIds,
 }) => {
-  return traverseEdges({ edgeType, inverse, page, parentNodeId, persistence, targetNodeType })
+  return traverseEdges({ targetNodeIds, edgeType, inverse, page, parentNodeId, persistence, targetNodeType })
 }

@@ -329,7 +329,6 @@ export type INode = {
 export type INode_RelArgs = {
   edge: EdgeTypeInput;
   page?: Maybe<PaginationInput>;
-  sort?: Maybe<Array<NodeRelSort>>;
 };
 
 export type NodeMeta = {
@@ -352,12 +351,6 @@ export type RelCount = {
   from?: Maybe<RelCountTargetMap>;
 };
 
-export type NodeRelSort = {
-  prop: Scalars['String'];
-  desc?: Maybe<Scalars['Boolean']>;
-  edge?: Maybe<Scalars['Boolean']>;
-};
-
 export type IContentNode = {
   name: Scalars['String'];
   summary: Scalars['String'];
@@ -373,6 +366,7 @@ export type EdgeTypeInput = {
   type: EdgeType;
   node: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
+  targetMe?: Maybe<Scalars['Boolean']>;
 };
 
 export type RelPage = Page & {
@@ -461,7 +455,6 @@ export type Collection = INode & IContentNode & {
 export type Collection_RelArgs = {
   edge: EdgeTypeInput;
   page?: Maybe<PaginationInput>;
-  sort?: Maybe<Array<NodeRelSort>>;
 };
 
 export type Node = Collection | Profile | Resource | Subject;
@@ -505,7 +498,6 @@ export type Profile = INode & IContentNode & {
 export type Profile_RelArgs = {
   edge: EdgeTypeInput;
   page?: Maybe<PaginationInput>;
-  sort?: Maybe<Array<NodeRelSort>>;
 };
 
 export type UpdateProfileInput = {
@@ -534,7 +526,6 @@ export type Resource = INode & IContentNode & {
 export type Resource_RelArgs = {
   edge: EdgeTypeInput;
   page?: Maybe<PaginationInput>;
-  sort?: Maybe<Array<NodeRelSort>>;
 };
 
 export type CreateResourceInput = {
@@ -561,7 +552,6 @@ export type Subject = INode & IContentNode & {
 export type Subject_RelArgs = {
   edge: EdgeTypeInput;
   page?: Maybe<PaginationInput>;
-  sort?: Maybe<Array<NodeRelSort>>;
 };
 
 export type CreateSubjectInput = {
@@ -587,7 +577,7 @@ export type SearchPageEdge = PageEdge & {
 };
 
 export enum GlobalSearchSort {
-  Pertinence = 'Pertinence',
+  Relevance = 'Relevance',
   Popularity = 'Popularity'
 }
 

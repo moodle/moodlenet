@@ -1,9 +1,9 @@
-import { AnchorHTMLAttributes, ComponentType, createContext, DetailedHTMLProps, useContext } from 'react'
+import { AnchorHTMLAttributes, ComponentType, createContext, CSSProperties, DetailedHTMLProps, useContext } from 'react'
 
 export type LinkComponentElementProps = DetailedHTMLProps<
   AnchorHTMLAttributes<HTMLAnchorElement>,
   HTMLAnchorElement
-> & { activeClassName?: string; activeStyle?: object }
+> & { activeClassName?: string; activeStyle?: CSSProperties }
 export type LinkComponentType = ComponentType<LinkComponentElementProps>
 
 export const Link: LinkComponentType = props => {

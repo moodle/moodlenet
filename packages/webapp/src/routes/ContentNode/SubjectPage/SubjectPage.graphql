@@ -1,0 +1,134 @@
+query SubjectPageNode($id: ID!) {
+  node(_id: $id) {
+    ... on Subject {
+      _id
+      name
+      myFollow: _rel(edge: { type: Follows, node: Profile, inverse: true, targetMe: true }, page: { first: 1 }) {
+        edges {
+          edge {
+            ... on IEdge {
+              _id
+            }
+          }
+        }
+      }
+      _meta {
+        relCount {
+          Follows {
+            from {
+              Profile
+            }
+          }
+          AppliesTo {
+            to {
+              Collection
+              Resource
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+query SubjectPageCollections($id: ID!) {
+  node(_id: $id) {
+    ... on INode {
+      _id
+      collectionList: _rel(edge: { type: AppliesTo, node: Collection }, page: { first: 10 }) {
+        edges {
+          node {
+            ... on Collection {
+              _id
+              name
+              icon
+              _meta {
+                relCount {
+                  Follows {
+                    from {
+                      Profile
+                    }
+                  }
+                  Contains {
+                    to {
+                      Resource
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+query SubjectPageResources($id: ID!) {
+  node(_id: $id) {
+    ... on INode {
+      _id
+      resourceList: _rel(edge: { type: AppliesTo, node: Resource }, page: { first: 10 }) {
+        edges {
+          node {
+            ... on Resource {
+              _id
+              name
+              icon
+              collections: _rel(edge: { type: Contains, node: Collection, inverse: true }, page: { first: 2 }) {
+                edges {
+                  node {
+                    ... on Collection {
+                      _id
+                      name
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation SubjectPageFollow($currentProfileId: ID!, $subjectId: ID!) {
+  createEdge(input: { edgeType: Follows, from: $currentProfileId, to: $subjectId, Follows: {} }) {
+    ...BasicCreateEdgeMutationPayload
+  }
+}
+
+fragment BasicCreateEdgeMutationPayload on CreateEdgeMutationPayload {
+  ... on CreateEdgeMutationSuccess {
+    edge {
+      ... on IEdge {
+        _id
+      }
+    }
+  }
+  ... on CreateEdgeMutationError {
+    type
+    details
+  }
+}
+
+mutation SubjectPageUnfollow($edgeId: ID!) {
+  deleteEdge(input: { _id: $edgeId, edgeType: Follows }) {
+    ...BasicDeleteEdgeMutationPayload
+  }
+}
+
+fragment BasicDeleteEdgeMutationPayload on DeleteEdgeMutationPayload {
+  ... on DeleteEdgeMutationSuccess {
+    edge {
+      ... on IEdge {
+        _id
+      }
+    }
+  }
+  ... on DeleteEdgeMutationError {
+    type
+    details
+  }
+}

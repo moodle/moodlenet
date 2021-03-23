@@ -12,6 +12,7 @@ export const traverseEdges = async ({
   parentNodeId,
   targetNodeType,
   inverse,
+  targetNodeIds,
 }: {
   persistence: Persistence
   parentNodeId: Id
@@ -19,11 +20,15 @@ export const traverseEdges = async ({
   targetNodeType: GQL.NodeType
   inverse: boolean
   page: Maybe<GQL.PaginationInput>
+  targetNodeIds: Maybe<Id[]>
 }): Promise<GQL.RelPage> => {
   const targetSide = inverse ? 'from' : 'to'
   const parentSide = inverse ? 'to' : 'from'
 
-  // TODO: define and implement sorting & policies
+  // TODO: auth&policies !
+
+  const targetIdsFilter =
+    targetNodeIds && targetNodeIds.length ? `&& edge._${targetSide} IN [${targetNodeIds.map(aqlstr).join(',')}]` : ''
 
   return cursorPaginatedQuery<GQL.RelPage>({
     persistence,
@@ -33,9 +38,9 @@ export const traverseEdges = async ({
     page,
     mapQuery: pageFilterSortLimit => `
       FOR edge IN ${edgeType}
-        FILTER edge._${targetSide}Type == '${targetNodeType}' 
+        FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
           && edge._${parentSide} == ${aqlstr(parentNodeId)}
-          // && $_{targetEdgeAccessFilter}
+          ${targetIdsFilter}
 
         LET targetNode=Document(edge._${targetSide})
         // FILTER $_{targetNodeAccessFilter}

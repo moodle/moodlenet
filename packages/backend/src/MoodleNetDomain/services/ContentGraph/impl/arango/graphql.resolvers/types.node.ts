@@ -1,5 +1,5 @@
 import { call } from '../../../../../../lib/domain/amqp/call'
-import { MoodleNetExecutionContext } from '../../../../../types'
+import { getSessionExecutionContext, MoodleNetExecutionContext } from '../../../../../types'
 import * as GQL from '../../../ContentGraph.graphql.gen'
 import { ShallowNode } from '../../../types.node'
 import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentGraphSubDomain'
@@ -12,17 +12,24 @@ const _rel: GQL.ResolverFn<
 > = async (parent, node, ctx, _info) => {
   const { _id: parentId } = parent
   const {
-    edge: { type: edgeType, node: targetNodeType, inverse },
+    edge: { type: edgeType, node: targetNodeType, inverse, targetMe },
     page,
-    sort,
   } = node
+  const session = getSessionExecutionContext(ctx)
+  if (targetMe && !session) {
+    return {
+      __typename: 'RelPage',
+      edges: [],
+      pageInfo: { __typename: 'PageInfo', hasNextPage: false, hasPreviousPage: false },
+    }
+  }
   const pageResult = await call<MoodleNetArangoContentGraphSubDomain>()('ContentGraph.Edge.Traverse', ctx.flow)({
     edgeType,
     parentNodeId: parentId,
     inverse: !!inverse,
     targetNodeType,
     page,
-    sort,
+    targetNodeIds: targetMe && session ? [session.profileId] : null,
   })
   return pageResult
 }

@@ -61,7 +61,7 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
           targetNodeType: GQL.NodeType
           inverse: boolean
           page: Maybe<GQL.PaginationInput>
-          sort: Maybe<GQL.NodeRelSort[]>
+          targetNodeIds: Maybe<Id[]>
         }) => Promise<GQL.RelPage>
       >
     }

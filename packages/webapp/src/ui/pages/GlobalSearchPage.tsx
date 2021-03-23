@@ -7,7 +7,7 @@ import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
 import { UseProps, UsePropsList } from '../types'
 
 type ContentType = 'Resource' | 'Collection' | 'Subject'
-type SortType = 'Pertinence' | 'Popularity'
+type SortType = 'Relevance' | 'Popularity'
 export type GlobalSearchPageProps = {
   usePageHeaderProps: UsePageHeaderProps
   useBaseContentNodeFeedPropsList: UsePropsList<UseBaseContentNodeFeedProps>
@@ -56,10 +56,10 @@ export const GlobalSearchPage: FC<GlobalSearchPageProps> = ({
           <span>Sort By</span>
           <Checkbox
             radio
-            checked={sortBy === 'Pertinence'}
+            checked={sortBy === 'Relevance'}
             name="sortBy"
-            onChange={() => setSortBy('Pertinence')}
-            label={t`Pertinence`}
+            onChange={() => setSortBy('Relevance')}
+            label={t`Relevance`}
           />
           <Checkbox
             radio

@@ -37,7 +37,7 @@ export const PageHeader: FC<PageHeaderProps> = ({ useProps }) => {
               autoFocus={!!searchValue}
               className="prompt"
               type="text"
-              value={searchValue}
+              defaultValue={searchValue}
               placeholder="Search..."
               onInput={e => {
                 //if (e.key === 'Enter') {

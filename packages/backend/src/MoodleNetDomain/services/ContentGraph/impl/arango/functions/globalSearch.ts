@@ -9,7 +9,7 @@ export const globalSearch = async ({
   page,
   text,
   nodeTypes,
-  sortBy = GQL.GlobalSearchSort.Pertinence,
+  sortBy = GQL.GlobalSearchSort.Relevance,
 }: {
   persistence: Persistence
   text: string
@@ -27,7 +27,7 @@ export const globalSearch = async ({
   const filterString = filterConditions && `FILTER ${filterConditions}`
 
   const sortFactor =
-    sortBy === GQL.GlobalSearchSort.Pertinence
+    sortBy === GQL.GlobalSearchSort.Relevance
       ? '1'
       : '(1 + (node._meta.relCount.Likes.from.Profile||0) + (node._meta.relCount.Follows.from.Profile||0))'
 

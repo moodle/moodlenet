@@ -1,0 +1,75 @@
+query ProfilePageNode($id: ID!, $followable: Boolean!) {
+  node(_id: $id) {
+    ... on Profile {
+      _id
+      name
+      icon
+      myFollow: _rel(edge: { type: Follows, node: Profile, inverse: true, targetMe: true }, page: { first: 1 })
+        @include(if: $followable) {
+        edges {
+          edge {
+            ... on IEdge {
+              _id
+            }
+          }
+        }
+      }
+      _meta {
+        created
+        relCount {
+          Follows {
+            from {
+              Profile
+            }
+          }
+          Created {
+            to {
+              Resource
+              Collection
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation ProfilePageFollow($currentProfileId: ID!, $profileId: ID!) {
+  createEdge(input: { edgeType: Follows, from: $currentProfileId, to: $profileId, Follows: {} }) {
+    ...BasicCreateEdgeMutationPayload
+  }
+}
+
+fragment BasicCreateEdgeMutationPayload on CreateEdgeMutationPayload {
+  ... on CreateEdgeMutationSuccess {
+    edge {
+      ... on IEdge {
+        _id
+      }
+    }
+  }
+  ... on CreateEdgeMutationError {
+    type
+    details
+  }
+}
+
+mutation ProfilePageUnfollow($edgeId: ID!) {
+  deleteEdge(input: { _id: $edgeId, edgeType: Follows }) {
+    ...BasicDeleteEdgeMutationPayload
+  }
+}
+
+fragment BasicDeleteEdgeMutationPayload on DeleteEdgeMutationPayload {
+  ... on DeleteEdgeMutationSuccess {
+    edge {
+      ... on IEdge {
+        _id
+      }
+    }
+  }
+  ... on DeleteEdgeMutationError {
+    type
+    details
+  }
+}

@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 import { GlobalSearchSort } from '../graphql/pub.graphql.link'
 import { useGlobalSearch } from '../hooks/glob/useGlobalSearch'
 import { getUseBaseContentNodeFeedProps } from '../hooks/useProps/BaseContentNodeFeed'
-import { getUsePageHeaderProps } from '../hooks/useProps/HeaderElement'
+import { getUsePageHeaderProps } from '../hooks/useProps/PageHeader'
 import { UseBaseContentNodeFeedProps } from '../ui/components/BaseContentNodeFeed'
 import { GlobalSearchPage, UseGlobalSearchPageProps } from '../ui/pages/GlobalSearchPage'
 import { UsePropsList } from '../ui/types'
@@ -23,7 +23,7 @@ export const GlobalSearchRouteComponent: RouteFC<Routes.GlobalSearch> = (/* { ma
     () => (): UseGlobalSearchPageProps => {
       const _setSortBy: UseGlobalSearchPageProps['setSortBy'] = by => {
         const _sort_by =
-          by === 'Pertinence' ? GlobalSearchSort.Pertinence : by === 'Popularity' ? GlobalSearchSort.Popularity : null
+          by === 'Relevance' ? GlobalSearchSort.Relevance : by === 'Popularity' ? GlobalSearchSort.Popularity : null
         _sort_by && setSortBy(_sort_by)
       }
 

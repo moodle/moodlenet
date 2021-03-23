@@ -1,7 +1,7 @@
 import { Routes } from '../../../common/lib/webapp/sitemap'
 import { useRedirectHomeIfLoggedIn } from '../hooks/glob/nav'
 import { getUseActivateNewUserPanelProps } from '../hooks/useProps/ActivateNewUserPanel'
-import { getUsePageHeaderProps } from '../hooks/useProps/HeaderElement'
+import { getUsePageHeaderProps } from '../hooks/useProps/PageHeader'
 import { ActivateNewUserPage } from '../ui/pages/ActivateNewUser'
 import { MNRouteProps, RouteFC } from './lib'
 

@@ -12,7 +12,7 @@ export const useGlobalSearch = () => {
   const qs = useMemo(() => urlQuery.get('q') ?? '', [urlQuery])
 
   const [searchText, setSearchText] = useState(qs)
-  const [sortBy, setSortBy] = useState<GlobalSearchSort>(GlobalSearchSort.Pertinence)
+  const [sortBy, setSortBy] = useState<GlobalSearchSort>(GlobalSearchSort.Relevance)
   const [typeFilters, setTypeFilter] = useState<NodeTypeFilter[]>([])
 
   useEffect(() => setSearchText(qs), [qs, setSearchText])
