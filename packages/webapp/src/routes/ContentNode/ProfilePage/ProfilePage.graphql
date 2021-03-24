@@ -4,6 +4,7 @@ query ProfilePageNode($id: ID!, $followable: Boolean!) {
       _id
       name
       icon
+      summary
       myFollow: _rel(edge: { type: Follows, node: Profile, inverse: true, targetMe: true }, page: { first: 1 })
         @include(if: $followable) {
         edges {
@@ -26,6 +27,67 @@ query ProfilePageNode($id: ID!, $followable: Boolean!) {
             to {
               Resource
               Collection
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+query ProfilePageOwnCollections($id: ID!) {
+  node(_id: $id) {
+    ... on INode {
+      _id
+      ownCollections: _rel(edge: { type: Created, node: Collection }, page: { first: 5 }) {
+        edges {
+          node {
+            ... on Collection {
+              _id
+              name
+              icon
+              _meta {
+                relCount {
+                  Contains {
+                    to {
+                      Resource
+                    }
+                  }
+                  Follows {
+                    from {
+                      Profile
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+query ProfilePageOwnResources($id: ID!) {
+  node(_id: $id) {
+    ... on INode {
+      _id
+      ownResources: _rel(edge: { type: Created, node: Resource }, page: { first: 5 }) {
+        edges {
+          node {
+            ... on Resource {
+              _id
+              name
+              icon
+              collections: _rel(edge: { type: Contains, node: Collection, inverse: true }, page: { first: 2 }) {
+                edges {
+                  node {
+                    ... on Collection {
+                      _id
+                      name
+                    }
+                  }
+                }
+              }
             }
           }
         }

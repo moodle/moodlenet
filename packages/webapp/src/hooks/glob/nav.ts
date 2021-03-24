@@ -35,7 +35,7 @@ export const useRedirectToBySession = ({
 export const useRedirectHomeIfLoggedIn = () => {
   useRedirectToBySession({
     ifLogged: true,
-    replace: false,
+    replace: true,
     to: mainPath.home,
   })
 }
