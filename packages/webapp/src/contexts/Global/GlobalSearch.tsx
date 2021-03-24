@@ -1,13 +1,27 @@
 import { GlobalSearchSort, NodeType } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
-import { useEffect, useMemo, useState } from 'react'
+import { createContext, FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useHistory, useLocation } from 'react-router'
-import { mainPath } from '../glob/nav'
-import { useGlobalSearchLazyQuery } from './useGlobalSearch/globalSearch.gen'
+import { mainPath } from '../../hooks/glob/nav'
+import { useGlobalSearchLazyQuery } from './GlobalSearch/globalSearch.gen'
 
-let firstIn = true
 type NodeTypeFilter = NodeType.Resource | NodeType.Collection | NodeType.Subject
-export const useUrlQuery = () => new URLSearchParams(useLocation().search)
-export const useGlobalSearch = () => {
+export const useUrlQuery = () => {
+  const search = useLocation().search
+  return useMemo(() => new URLSearchParams(search), [search])
+}
+
+type GlobalSearchCtx = ReturnType<typeof _useGlobalSearch>
+export const GlobalSearchContext = createContext<GlobalSearchCtx>(null as any)
+export const useGlobalSearch = () => useContext(GlobalSearchContext)
+
+export const GlobalSearchProvider: FC = ({ children }) => {
+  const ctx = _useGlobalSearch()
+  return <GlobalSearchContext.Provider value={ctx}>{children}</GlobalSearchContext.Provider>
+}
+
+export const _useGlobalSearch = () => {
+  const firstIn = useRef(true)
+
   const [query, res] = useGlobalSearchLazyQuery()
   const urlQuery = useUrlQuery()
   const history = useHistory()
@@ -35,7 +49,7 @@ export const useGlobalSearch = () => {
 
   useEffect(() => {
     if (!searchText) {
-      firstIn = true
+      firstIn.current = true
       return
     }
     const toId = setTimeout(() => {
@@ -46,19 +60,15 @@ export const useGlobalSearch = () => {
       params.append('sort', sortBy)
       params.append('filter', typeFilters.join(','))
 
-      history[firstIn ? 'push' : 'replace'](`${mainPath.search}?${params.toString()}`)
-      firstIn = false
-      console.log(`query`, { searchText, sortBy, typeFilters })
+      history[firstIn.current ? 'push' : 'replace'](`${mainPath.search}?${params.toString()}`)
+      firstIn.current = false
       query({ variables: { text: searchText, sortBy, nodeTypes: typeFilters } })
     }, 500)
     return () => clearTimeout(toId)
   }, [typeFilters, query, searchText, sortBy, history])
-
-  const items = useMemo(() => res.data?.globalSearch.edges.map(edge => edge.node) || [], [res.data?.globalSearch.edges])
-
-  return useMemo(
+  const globSearch = useMemo(
     () => ({
-      items,
+      items: (searchText && res.data?.globalSearch.edges.map(edge => edge.node)) || [],
       searchText,
       setSearchText,
       setSortBy,
@@ -66,6 +76,7 @@ export const useGlobalSearch = () => {
       typeFilters,
       setTypeFilter,
     }),
-    [items, typeFilters, searchText, sortBy],
+    [searchText, res, sortBy, typeFilters],
   )
+  return globSearch
 }

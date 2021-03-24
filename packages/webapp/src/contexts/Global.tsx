@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import { ApolloClientProvider } from './Global/Apollo'
+import { GlobalSearchProvider } from './Global/GlobalSearch'
 import { LocalizationProvider } from './Global/Localization'
 import { RouterProvider } from './Global/Router'
 import { SessionProvider } from './Global/Session'
@@ -11,7 +12,9 @@ export const GlobalContexts: FC = ({ children }) => {
       <ApolloClientProvider>
         <SessionProvider>
           <RouterProvider>
-            <UICtxProviders>{children}</UICtxProviders>
+            <GlobalSearchProvider>
+              <UICtxProviders>{children}</UICtxProviders>
+            </GlobalSearchProvider>
           </RouterProvider>
         </SessionProvider>
       </ApolloClientProvider>

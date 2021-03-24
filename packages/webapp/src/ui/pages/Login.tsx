@@ -1,16 +1,16 @@
 import { FC } from 'react'
-import { LoginPanelBig, UseLoginPanelProps } from '../components/LoginPanelBig'
+import { LoginPanelBig, LoginPanelProps } from '../components/LoginPanelBig'
 import { EmptyPageTemplate } from '../templates/page/EmptyPageTemplate'
 export * from '../components/LoginPanelBig'
 
 export type LoginPageProps = {
-  useLoginPanelProps: UseLoginPanelProps
+  loginPanelProps: LoginPanelProps
 }
 
-export const LoginPage: FC<LoginPageProps> = ({ useLoginPanelProps }) => {
+export const LoginPage: FC<LoginPageProps> = ({ loginPanelProps }) => {
   return (
     <EmptyPageTemplate>
-      <LoginPanelBig useProps={useLoginPanelProps} />
+      <LoginPanelBig {...loginPanelProps} />
     </EmptyPageTemplate>
   )
 }

@@ -2,7 +2,7 @@ import { EdgeType, Id, NodeType } from '@moodlenet/common/lib/utils/content-grap
 import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
 import { getRelCount } from '../../helpers/nodeMeta'
-import { getUsePageHeaderProps } from '../../hooks/useProps/PageHeader'
+import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { ResourcePage, ResourcePageProps } from '../../ui/pages/Resource'
 import {
   // useResourcePageFollowMutation,
@@ -20,7 +20,7 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
 
   // const [follow /* , followResp */] = useResourcePageFollowMutation()
   // const [unfollow /* , unfollowResp */] = useResourcePageUnfollowMutation()
-  const usePageHeaderProps = getUsePageHeaderProps()
+  const pageHeaderProps = usePageHeaderProps()
   const props = useMemo<ResourcePageProps | null>(() => {
     // const myFollowId = resource?.myFollow.edges[0]?.edge._id
 
@@ -49,9 +49,9 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
               }
             : */ null,
           name: resource.name,
-          usePageHeaderProps,
+          pageHeaderProps,
         }
       : null
-  }, [resource, usePageHeaderProps])
+  }, [resource, pageHeaderProps])
   return props && <ResourcePage {...props} />
 }

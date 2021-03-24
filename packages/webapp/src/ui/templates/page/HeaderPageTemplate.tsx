@@ -1,15 +1,15 @@
 import { FC } from 'react'
-import { PageHeader, UsePageHeaderProps } from '../../components/PageHeader'
+import { PageHeader, PageHeaderProps } from '../../components/PageHeader'
 import { MainPageWrapper } from './MainPageWrapper'
 
 export type HeaderPageTemplateProps = {
-  useProps: UsePageHeaderProps
+  pageHeaderProps: PageHeaderProps
 }
 
-export const HeaderPageTemplate: FC<HeaderPageTemplateProps> = ({ useProps: headerUseProps, children }) => {
+export const HeaderPageTemplate: FC<HeaderPageTemplateProps> = ({ pageHeaderProps, children }) => {
   return (
     <MainPageWrapper>
-      <PageHeader useProps={headerUseProps} />
+      <PageHeader {...pageHeaderProps} />
       {children}
     </MainPageWrapper>
   )

@@ -1,16 +1,16 @@
 import { FC } from 'react'
-import { SignupPanelBig, UseSignupPanelProps } from '../components/SignupPanelBig'
+import { SignupPanelBig, SignupPanelProps } from '../components/SignupPanelBig'
 import { EmptyPageTemplate } from '../templates/page/EmptyPageTemplate'
 export * from '../components/SignupPanelBig'
 
 export type SignupPageProps = {
-  useSignupPanelProps: UseSignupPanelProps
+  signupPanelProps: SignupPanelProps
 }
 
-export const SignUpPage: FC<SignupPageProps> = ({ useSignupPanelProps }) => {
+export const SignUpPage: FC<SignupPageProps> = ({ signupPanelProps }) => {
   return (
     <EmptyPageTemplate>
-      <SignupPanelBig useProps={useSignupPanelProps} />
+      <SignupPanelBig {...signupPanelProps} />
     </EmptyPageTemplate>
   )
 }

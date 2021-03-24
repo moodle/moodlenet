@@ -3,7 +3,7 @@ import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
 import { isJust } from '../../helpers/data'
 import { getRelCount } from '../../helpers/nodeMeta'
-import { getUsePageHeaderProps } from '../../hooks/useProps/PageHeader'
+import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { CollectionCardProps } from '../../ui/components/cards/Collection'
 import { ResourceCardProps } from '../../ui/components/cards/Resource'
 import { SubjectPage, SubjectPageProps } from '../../ui/pages/Subject'
@@ -84,7 +84,7 @@ export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
 
   // const [follow /* , followResp */] = useSubjectPageFollowMutation()
   // const [unfollow /* , unfollowResp */] = useSubjectPageUnfollowMutation()
-  const usePageHeaderProps = getUsePageHeaderProps()
+  const pageHeaderProps = usePageHeaderProps()
   const props = useMemo<SubjectPageProps | null>(() => {
     // const myFollowId = subject?.myFollow.edges[0]?.edge._id
 
@@ -109,9 +109,9 @@ export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
           name: subject.name,
           collectionList,
           resourceList,
-          usePageHeaderProps,
+          pageHeaderProps,
         }
       : null
-  }, [subject, collectionList, resourceList, usePageHeaderProps])
+  }, [subject, collectionList, resourceList, pageHeaderProps])
   return props && <SubjectPage {...props} />
 }

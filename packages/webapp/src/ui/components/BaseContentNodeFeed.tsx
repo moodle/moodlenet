@@ -1,12 +1,8 @@
 import { FC } from 'react'
 import { Icon, Item } from 'semantic-ui-react'
 import { Link } from '../elements/link'
-import { UseProps } from '../types'
 
 export type BaseContentNodeFeedProps = {
-  useProps: UseBaseContentNodeFeedProps
-}
-export type UseBaseContentNodeFeedProps = UseProps<{
   icon: string | null
   name: string
   summary: string
@@ -14,13 +10,8 @@ export type UseBaseContentNodeFeedProps = UseProps<{
   followers: number
   type: string
   link: string
-} | null>
-export const BaseContentNodeFeed: FC<BaseContentNodeFeedProps> = ({ useProps }) => {
-  const props = useProps()
-  if (!props) {
-    return null
-  }
-  const { icon, name, summary, type, link, followers, likers } = props
+}
+export const BaseContentNodeFeed: FC<BaseContentNodeFeedProps> = ({ icon, name, summary, type, link, followers, likers } ) => {
   return (
     <Item>
       <Item.Image size="tiny" src={icon} />

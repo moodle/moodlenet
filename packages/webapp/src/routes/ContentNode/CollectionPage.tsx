@@ -3,7 +3,7 @@ import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
 import { isJust } from '../../helpers/data'
 import { getRelCount } from '../../helpers/nodeMeta'
-import { getUsePageHeaderProps } from '../../hooks/useProps/PageHeader'
+import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { ResourceCardProps } from '../../ui/components/cards/Resource'
 import { CollectionPage, CollectionPageProps } from '../../ui/pages/Collection'
 import {
@@ -58,7 +58,7 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
 
   // const [follow /* , followResp */] = useCollectionPageFollowMutation()
   // const [unfollow /* , unfollowResp */] = useCollectionPageUnfollowMutation()
-  const usePageHeaderProps = getUsePageHeaderProps()
+  const pageHeaderProps = usePageHeaderProps()
   const props = useMemo<CollectionPageProps | null>(() => {
     // const myFollowId = collection?.myFollow.edges[0]?.edge._id
     return collection
@@ -87,9 +87,9 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
             : */ null,
           name: collection.name,
           resourceList,
-          usePageHeaderProps,
+          pageHeaderProps,
         }
       : null
-  }, [collection, resourceList, usePageHeaderProps])
+  }, [collection, resourceList, pageHeaderProps])
   return props && <CollectionPage {...props} />
 }

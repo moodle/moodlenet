@@ -1,38 +1,35 @@
 import { t } from '@lingui/macro'
 import { FC } from 'react'
 import { Checkbox, Divider, Grid, Item } from 'semantic-ui-react'
-import { BaseContentNodeFeed, UseBaseContentNodeFeedProps } from '../components/BaseContentNodeFeed'
-import { UsePageHeaderProps } from '../components/PageHeader'
+import { BaseContentNodeFeed, BaseContentNodeFeedProps } from '../components/BaseContentNodeFeed'
+import { PageHeaderProps } from '../components/PageHeader'
 import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
-import { UseProps, UsePropsList } from '../types'
 
 type ContentType = 'Resource' | 'Collection' | 'Subject'
 type SortType = 'Relevance' | 'Popularity'
 export type GlobalSearchPageProps = {
-  usePageHeaderProps: UsePageHeaderProps
-  useBaseContentNodeFeedPropsList: UsePropsList<UseBaseContentNodeFeedProps>
-  useProps: UseProps<UseGlobalSearchPageProps>
-}
-export type UseGlobalSearchPageProps = {
+  pageHeaderProps: PageHeaderProps
+  baseContentNodeFeedPropsList: BaseContentNodeFeedProps[]
   setTypeFilter(type: ContentType, include: boolean): unknown
   typeFilters: ContentType[]
   setSortBy(type: SortType): unknown
   sortBy: SortType
 }
 export const GlobalSearchPage: FC<GlobalSearchPageProps> = ({
-  usePageHeaderProps,
-  useBaseContentNodeFeedPropsList,
-  useProps,
+  pageHeaderProps,
+  baseContentNodeFeedPropsList,
+  setSortBy,
+  setTypeFilter,
+  sortBy,
+  typeFilters,
 }) => {
-  const { setTypeFilter, typeFilters, setSortBy, sortBy } = useProps()
-
   return (
-    <HeaderPageTemplate useProps={usePageHeaderProps}>
+    <HeaderPageTemplate pageHeaderProps={pageHeaderProps}>
       <Grid>
         <Grid.Column width={10}>
           <Item.Group>
-            {useBaseContentNodeFeedPropsList.map(([useBaseContentNodeFeedProps, key]) => (
-              <BaseContentNodeFeed key={key} useProps={useBaseContentNodeFeedProps} />
+            {baseContentNodeFeedPropsList.map(baseContentNodeFeedProps => (
+              <BaseContentNodeFeed key={baseContentNodeFeedProps.link} {...baseContentNodeFeedProps} />
             ))}
           </Item.Group>
         </Grid.Column>

@@ -3,21 +3,17 @@ import { FC } from 'react'
 import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react'
 import { Link } from '../elements/link'
 import logo from '../static/img/moodlenet-logo.png'
-import { FormBag, UseProps } from '../types'
+import { FormBag } from '../types'
 
 export type LoginPanelProps = {
-  useProps: UseLoginPanelProps
-}
-export type UseLoginPanelProps = UseProps<{
   form: FormBag<LoginFormValues>
   message: string | null
   signupLink: string
   homeLink: string
-}>
+}
 export type LoginFormValues = { username: string; password: string }
 
-export const LoginPanelBig: FC<LoginPanelProps> = ({ useProps }) => {
-  const { form, message, signupLink, homeLink } = useProps()
+export const LoginPanelBig: FC<LoginPanelProps> = ({ form, message, signupLink, homeLink }) => {
   return (
     <Grid textAlign="center" verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>

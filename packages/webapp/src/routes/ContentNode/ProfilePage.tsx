@@ -4,7 +4,7 @@ import { FC, useMemo } from 'react'
 import { useSession } from '../../contexts/Global/Session'
 import { isJust } from '../../helpers/data'
 import { getRelCount } from '../../helpers/nodeMeta'
-import { getUsePageHeaderProps } from '../../hooks/useProps/PageHeader'
+import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { CollectionCardProps } from '../../ui/components/cards/Collection'
 import { ResourceCardProps } from '../../ui/components/cards/Resource'
 import { ProfilePage, ProfilePageProps } from '../../ui/pages/Profile'
@@ -29,7 +29,7 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
 
   // const [follow /* , followResp */] = useProfilePageFollowMutation()
   // const [unfollow /* , unfollowResp */] = useProfilePageUnfollowMutation()
-  const usePageHeaderProps = getUsePageHeaderProps()
+  const pageHeaderProps = usePageHeaderProps()
 
   const resourcesRes = useProfilePageOwnResourcesQuery({ variables: { id } })
   const resourceEdges = resourcesRes.data?.node?.ownResources.edges
@@ -114,10 +114,9 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
               }
             : */ null,
           name: profile.name,
-          usePageHeaderProps,
+          pageHeaderProps,
         }
       : null
-  }, [collections, profile, resources, usePageHeaderProps])
-  console.log({ props, collectionsRes, resourcesRes })
+  }, [collections, profile, resources, pageHeaderProps])
   return props && <ProfilePage {...props} />
 }

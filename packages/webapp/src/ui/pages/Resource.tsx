@@ -1,12 +1,12 @@
 import { Trans } from '@lingui/macro'
 import { FC } from 'react'
 import { Button, Grid, Icon, Image, Segment } from 'semantic-ui-react'
-import { UsePageHeaderProps } from '../components/PageHeader'
+import { PageHeaderProps } from '../components/PageHeader'
 import { Link } from '../elements/link'
 import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
 
 export type ResourcePageProps = {
-  usePageHeaderProps: UsePageHeaderProps
+  pageHeaderProps: PageHeaderProps
   name: string
   type: string
   me: null | {
@@ -24,7 +24,7 @@ export type ResourcePageProps = {
 }
 
 export const ResourcePage: FC<ResourcePageProps> = ({
-  usePageHeaderProps,
+  pageHeaderProps,
   created,
   likers,
   type,
@@ -34,7 +34,7 @@ export const ResourcePage: FC<ResourcePageProps> = ({
   icon,
 }) => {
   return (
-    <HeaderPageTemplate useProps={usePageHeaderProps}>
+    <HeaderPageTemplate pageHeaderProps={pageHeaderProps}>
       <Grid columns={2} divided>
         <Grid.Row columns={2}>
           <Grid.Column width={8}>

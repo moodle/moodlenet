@@ -1,21 +1,16 @@
 import { FC } from 'react'
-import { ActivateNewUserPanel, UseActivateNewUserPanelProps } from '../components/ActivateUserPanel'
-import { UsePageHeaderProps } from '../components/PageHeader'
-import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
+import { ActivateNewUserPanel, ActivateNewUserPanelProps } from '../components/ActivateUserPanel'
+import { EmptyPageTemplate } from '../templates/page/EmptyPageTemplate'
 export * from '../components/ActivateUserPanel'
 
 export type ActivateNewUserPageProps = {
-  useActivateNewUserPanelProps: UseActivateNewUserPanelProps
-  usePageHeaderProps: UsePageHeaderProps
+  activateNewUserPanelProps: ActivateNewUserPanelProps
 }
 
-export const ActivateNewUserPage: FC<ActivateNewUserPageProps> = ({
-  usePageHeaderProps,
-  useActivateNewUserPanelProps,
-}) => {
+export const ActivateNewUserPage: FC<ActivateNewUserPageProps> = ({ activateNewUserPanelProps }) => {
   return (
-    <HeaderPageTemplate useProps={usePageHeaderProps}>
-      <ActivateNewUserPanel useProps={useActivateNewUserPanelProps} />
-    </HeaderPageTemplate>
+    <EmptyPageTemplate>
+      <ActivateNewUserPanel {...activateNewUserPanelProps} />
+    </EmptyPageTemplate>
   )
 }

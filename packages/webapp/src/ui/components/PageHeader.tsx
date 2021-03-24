@@ -3,13 +3,8 @@ import { FC } from 'react'
 import { Dropdown, Icon, Image, Menu } from 'semantic-ui-react'
 import { Link } from '../elements/link'
 import logo from '../static/img/logo.jpg'
-import { UseProps } from '../types'
 
 export type PageHeaderProps = {
-  useProps: UsePageHeaderProps
-}
-
-export type UsePageHeaderProps = UseProps<{
   homeLink: string
   loginLink: string
 
@@ -18,10 +13,9 @@ export type UsePageHeaderProps = UseProps<{
 
   search(text: string): unknown
   searchValue: string
-}>
+}
 
-export const PageHeader: FC<PageHeaderProps> = ({ useProps }) => {
-  const { searchValue, search, homeLink, loginLink, logout, username } = useProps()
+export const PageHeader: FC<PageHeaderProps> = ({ searchValue, search, homeLink, loginLink, logout, username }) => {
   return (
     <Menu fixed="top">
       <Link href={homeLink}>

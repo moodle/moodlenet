@@ -2,16 +2,13 @@ import { t, Trans } from '@lingui/macro'
 import { FC } from 'react'
 import { Button, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 import { Link } from '../elements/link'
-import { FormBag, UseProps } from '../types'
+import { FormBag } from '../types'
 
 export type ActivateNewUserPanelProps = {
-  useProps: UseActivateNewUserPanelProps
-}
-export type UseActivateNewUserPanelProps = UseProps<{
   form: FormBag<ActivateNewUserFormValues>
   termsAndConditionsLink: string
   message: string | null
-}>
+}
 export type ActivateNewUserFormValues = {
   username: string
   password: string
@@ -19,8 +16,7 @@ export type ActivateNewUserFormValues = {
   confirmPassword: string
 }
 
-export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({ useProps }) => {
-  const { form, message, termsAndConditionsLink } = useProps()
+export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({ form, message, termsAndConditionsLink }) => {
   return (
     <Grid textAlign="center" verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>

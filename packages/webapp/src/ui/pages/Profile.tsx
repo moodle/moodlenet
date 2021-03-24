@@ -3,11 +3,11 @@ import { FC } from 'react'
 import { Button, Grid, Icon, Image, Segment } from 'semantic-ui-react'
 import { CollectionCard, CollectionCardProps } from '../components/cards/Collection'
 import { ResourceCard, ResourceCardProps } from '../components/cards/Resource'
-import { UsePageHeaderProps } from '../components/PageHeader'
+import { PageHeaderProps } from '../components/PageHeader'
 import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
 
 export type ProfilePageProps = {
-  usePageHeaderProps: UsePageHeaderProps
+  pageHeaderProps: PageHeaderProps
   name: string
   summary: string
   me: null | {
@@ -21,7 +21,7 @@ export type ProfilePageProps = {
 }
 
 export const ProfilePage: FC<ProfilePageProps> = ({
-  usePageHeaderProps,
+  pageHeaderProps,
   followers,
   me,
   name,
@@ -31,7 +31,7 @@ export const ProfilePage: FC<ProfilePageProps> = ({
   resources,
 }) => {
   return (
-    <HeaderPageTemplate useProps={usePageHeaderProps}>
+    <HeaderPageTemplate pageHeaderProps={pageHeaderProps}>
       <Grid columns={2} divided>
         <Grid.Row>
           <Grid.Column width={10}>

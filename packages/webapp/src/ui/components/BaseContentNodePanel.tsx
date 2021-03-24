@@ -1,12 +1,8 @@
 import { FC } from 'react'
 import { Card, Icon, Image } from 'semantic-ui-react'
 import { Link } from '../elements/link'
-import { UseProps } from '../types'
 
 export type BaseContentNodePanelProps = {
-  useProps: UseBaseContentNodePanelProps
-}
-export type UseBaseContentNodePanelProps = UseProps<{
   icon: string | null
   name: string
   summary: string
@@ -14,13 +10,16 @@ export type UseBaseContentNodePanelProps = UseProps<{
   link: string
   likers: number
   followers: number
-} | null>
-export const BaseContentNodePanel: FC<BaseContentNodePanelProps> = ({ useProps }) => {
-  const props = useProps()
-  if (!props) {
-    return null
-  }
-  const { icon, link, name, summary, type, followers, likers } = props
+}
+export const BaseContentNodePanel: FC<BaseContentNodePanelProps> = ({
+  icon,
+  link,
+  name,
+  summary,
+  type,
+  followers,
+  likers,
+}) => {
   return (
     <Card>
       <Image src={icon} wrapped ui={false} />
