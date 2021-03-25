@@ -12,27 +12,29 @@ import { MNRouteProps, RouteFC } from './lib'
 
 export const GlobalSearchRouteComponent: RouteFC<Routes.GlobalSearch> = (/* { match, history } */) => {
   const glob = useGlobalSearch()
-  const { items, typeFilters, setTypeFilter, setSortBy, sortBy } = glob
+  const { edges, typeFilters, setTypeFilter, setSortBy, sortBy } = glob
 
-  const baseContentNodeFeedPropsList: BaseContentNodeFeedProps[] = items.map(item => ({
-    icon: item.icon ?? null,
-    link: contentNodeLink(item),
-    name: item.name,
-    summary: item.summary,
-    type: item.__typename,
-    followers: getRelCount(item._meta, EdgeType.Follows, 'from', NodeType.Profile),
-    likers: getRelCount(item._meta, EdgeType.Likes, 'from', NodeType.Profile),
-  }))
+  const baseContentNodeFeedPropsList: BaseContentNodeFeedProps[] = edges
+    .map(edge => edge.node)
+    .map(node => ({
+      icon: node.icon ?? null,
+      link: contentNodeLink(node),
+      name: node.name,
+      summary: node.summary,
+      type: node.__typename,
+      followers: getRelCount(node._meta, EdgeType.Follows, 'from', NodeType.Profile),
+      likers: getRelCount(node._meta, EdgeType.Likes, 'from', NodeType.Profile),
+    }))
   const pageHeaderProps = usePageHeaderProps()
 
   const globalSearchPageProps = useMemo<GlobalSearchPageProps>(() => {
-    const _setSortBy: GlobalSearchPageProps['setSortBy'] = by => {
+    const downstream_setSortBy: GlobalSearchPageProps['setSortBy'] = by => {
       const _sort_by =
         by === 'Relevance' ? GlobalSearchSort.Relevance : by === 'Popularity' ? GlobalSearchSort.Popularity : null
       _sort_by && setSortBy(_sort_by)
     }
 
-    const _setTypeFilter: GlobalSearchPageProps['setTypeFilter'] = (type, include) => {
+    const toggleTypeFilter: GlobalSearchPageProps['toggleTypeFilter'] = type => {
       const _add_or_rm_type =
         type === 'Collection'
           ? NodeType.Collection
@@ -46,15 +48,15 @@ export const GlobalSearchRouteComponent: RouteFC<Routes.GlobalSearch> = (/* { ma
       }
 
       setTypeFilter(
-        include
-          ? uniq([...typeFilters, _add_or_rm_type])
-          : typeFilters.filter(present_type => present_type !== _add_or_rm_type),
+        typeFilters.includes(_add_or_rm_type)
+          ? typeFilters.filter(present_type => present_type !== _add_or_rm_type)
+          : uniq([...typeFilters, _add_or_rm_type]),
       )
     }
 
     return {
-      setSortBy: _setSortBy,
-      setTypeFilter: _setTypeFilter,
+      setSortBy: downstream_setSortBy,
+      toggleTypeFilter,
       sortBy,
       typeFilters,
       baseContentNodeFeedPropsList,

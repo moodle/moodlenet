@@ -1,6 +1,16 @@
 query globalSearch($text: String!, $sortBy: GlobalSearchSort!, $nodeTypes: [NodeType!]) {
   globalSearch(text: $text, sortBy: $sortBy, nodeTypes: $nodeTypes) {
     edges {
+      ...GlobalSearchEdge
+    }
+    pageInfo {
+      startCursor
+      endCursor
+    }
+  }
+}
+
+fragment GlobalSearchEdge on SearchPageEdge{
       cursor
       node {
         ... on INode {
@@ -12,9 +22,3 @@ query globalSearch($text: String!, $sortBy: GlobalSearchSort!, $nodeTypes: [Node
         }
       }
     }
-    pageInfo {
-      startCursor
-      endCursor
-    }
-  }
-}

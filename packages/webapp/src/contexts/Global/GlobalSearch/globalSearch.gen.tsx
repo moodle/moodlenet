@@ -17,24 +17,7 @@ export type GlobalSearchQuery = (
     { __typename: 'SearchPage' }
     & { edges: Array<(
       { __typename: 'SearchPageEdge' }
-      & Pick<Types.SearchPageEdge, 'cursor'>
-      & { node: (
-        { __typename: 'Collection' }
-        & BaseINode_Collection_Fragment
-        & BaseIContentNode_Collection_Fragment
-      ) | (
-        { __typename: 'Profile' }
-        & BaseINode_Profile_Fragment
-        & BaseIContentNode_Profile_Fragment
-      ) | (
-        { __typename: 'Resource' }
-        & BaseINode_Resource_Fragment
-        & BaseIContentNode_Resource_Fragment
-      ) | (
-        { __typename: 'Subject' }
-        & BaseINode_Subject_Fragment
-        & BaseIContentNode_Subject_Fragment
-      ) }
+      & GlobalSearchEdgeFragment
     )>, pageInfo: (
       { __typename: 'PageInfo' }
       & Pick<Types.PageInfo, 'startCursor' | 'endCursor'>
@@ -42,21 +25,48 @@ export type GlobalSearchQuery = (
   ) }
 );
 
+export type GlobalSearchEdgeFragment = (
+  { __typename: 'SearchPageEdge' }
+  & Pick<Types.SearchPageEdge, 'cursor'>
+  & { node: (
+    { __typename: 'Collection' }
+    & BaseINode_Collection_Fragment
+    & BaseIContentNode_Collection_Fragment
+  ) | (
+    { __typename: 'Profile' }
+    & BaseINode_Profile_Fragment
+    & BaseIContentNode_Profile_Fragment
+  ) | (
+    { __typename: 'Resource' }
+    & BaseINode_Resource_Fragment
+    & BaseIContentNode_Resource_Fragment
+  ) | (
+    { __typename: 'Subject' }
+    & BaseINode_Subject_Fragment
+    & BaseIContentNode_Subject_Fragment
+  ) }
+);
 
+export const GlobalSearchEdgeFragmentDoc = gql`
+    fragment GlobalSearchEdge on SearchPageEdge {
+  cursor
+  node {
+    ... on INode {
+      ...BaseINode
+    }
+    __typename
+    ... on IContentNode {
+      ...BaseIContentNode
+    }
+  }
+}
+    ${BaseINodeFragmentDoc}
+${BaseIContentNodeFragmentDoc}`;
 export const GlobalSearchDocument = gql`
     query globalSearch($text: String!, $sortBy: GlobalSearchSort!, $nodeTypes: [NodeType!]) {
   globalSearch(text: $text, sortBy: $sortBy, nodeTypes: $nodeTypes) {
     edges {
-      cursor
-      node {
-        ... on INode {
-          ...BaseINode
-        }
-        __typename
-        ... on IContentNode {
-          ...BaseIContentNode
-        }
-      }
+      ...GlobalSearchEdge
     }
     pageInfo {
       startCursor
@@ -64,8 +74,7 @@ export const GlobalSearchDocument = gql`
     }
   }
 }
-    ${BaseINodeFragmentDoc}
-${BaseIContentNodeFragmentDoc}`;
+    ${GlobalSearchEdgeFragmentDoc}`;
 
 /**
  * __useGlobalSearchQuery__

@@ -2,7 +2,7 @@ import { GlobalSearchSort, NodeType } from '@moodlenet/common/lib/pub-graphql/ty
 import { createContext, FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useHistory, useLocation } from 'react-router'
 import { mainPath } from '../../hooks/glob/nav'
-import { useGlobalSearchLazyQuery } from './GlobalSearch/globalSearch.gen'
+import { GlobalSearchEdgeFragment, useGlobalSearchLazyQuery } from './GlobalSearch/globalSearch.gen'
 
 type NodeTypeFilter = NodeType.Resource | NodeType.Collection | NodeType.Subject
 export const useUrlQuery = () => {
@@ -10,16 +10,20 @@ export const useUrlQuery = () => {
   return useMemo(() => new URLSearchParams(search), [search])
 }
 
-type GlobalSearchCtx = ReturnType<typeof _useGlobalSearch>
+type GlobalSearchCtx = {
+  searchText: string
+  setSearchText(searchText: string): void
+  setSortBy(sortBy: GlobalSearchSort): void
+  sortBy: GlobalSearchSort
+  typeFilters: NodeTypeFilter[]
+  setTypeFilter(nodeTypeFilters: NodeTypeFilter[]): void
+  edges: GlobalSearchEdgeFragment[]
+}
+
 export const GlobalSearchContext = createContext<GlobalSearchCtx>(null as any)
 export const useGlobalSearch = () => useContext(GlobalSearchContext)
 
 export const GlobalSearchProvider: FC = ({ children }) => {
-  const ctx = _useGlobalSearch()
-  return <GlobalSearchContext.Provider value={ctx}>{children}</GlobalSearchContext.Provider>
-}
-
-export const _useGlobalSearch = () => {
   const firstIn = useRef(true)
 
   const [query, res] = useGlobalSearchLazyQuery()
@@ -68,7 +72,7 @@ export const _useGlobalSearch = () => {
   }, [typeFilters, query, searchText, sortBy, history])
   const globSearch = useMemo(
     () => ({
-      items: (searchText && res.data?.globalSearch.edges.map(edge => edge.node)) || [],
+      edges: (searchText && res.data?.globalSearch.edges) || [],
       searchText,
       setSearchText,
       setSortBy,
@@ -78,5 +82,6 @@ export const _useGlobalSearch = () => {
     }),
     [searchText, res, sortBy, typeFilters],
   )
-  return globSearch
+
+  return <GlobalSearchContext.Provider value={globSearch}>{children}</GlobalSearchContext.Provider>
 }

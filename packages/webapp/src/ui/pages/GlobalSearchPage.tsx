@@ -10,7 +10,7 @@ type SortType = 'Relevance' | 'Popularity'
 export type GlobalSearchPageProps = {
   pageHeaderProps: PageHeaderProps
   baseContentNodeFeedPropsList: BaseContentNodeFeedProps[]
-  setTypeFilter(type: ContentType, include: boolean): unknown
+  toggleTypeFilter(type: ContentType): unknown
   typeFilters: ContentType[]
   setSortBy(type: SortType): unknown
   sortBy: SortType
@@ -19,7 +19,7 @@ export const GlobalSearchPage: FC<GlobalSearchPageProps> = ({
   pageHeaderProps,
   baseContentNodeFeedPropsList,
   setSortBy,
-  setTypeFilter,
+  toggleTypeFilter,
   sortBy,
   typeFilters,
 }) => {
@@ -36,17 +36,17 @@ export const GlobalSearchPage: FC<GlobalSearchPageProps> = ({
         <Grid.Column width={2}>
           <Checkbox
             checked={typeFilters.includes('Resource')}
-            onChange={(_ev, data) => setTypeFilter('Resource', !!data.checked)}
+            onChange={() => toggleTypeFilter('Resource')}
             label={t`Include Resources`}
           />
           <Checkbox
             checked={typeFilters.includes('Collection')}
-            onChange={(_ev, data) => setTypeFilter('Collection', !!data.checked)}
+            onChange={() => toggleTypeFilter('Collection')}
             label={t`Include Collections`}
           />
           <Checkbox
             checked={typeFilters.includes('Subject')}
-            onChange={(_ev, data) => setTypeFilter('Subject', !!data.checked)}
+            onChange={() => toggleTypeFilter('Subject')}
             label={t`Include Subjects`}
           />
           <Divider />
