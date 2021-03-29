@@ -1,4 +1,4 @@
-import { Executor } from '@graphql-tools/delegate/types'
+import { ExecutionParams } from '@graphql-tools/delegate/types'
 import { GraphQLError } from 'graphql'
 import { IncomingMessage } from 'http'
 import { Flow } from '../../lib/domain/flow'
@@ -27,15 +27,14 @@ export function getSessionContext(
 
 export const SYSTEM_PROFILE_ID = 'Profile/SYSTEM' as Id
 
-export function getExecutionGlobalValues(
-  ...args: Parameters<Executor>
-): {
+export function getExecutionGlobalValues({
+  context,
+}: ExecutionParams): {
   context: MoodleNetExecutionContext<'anon' | 'session'>
   root: RootValue
   flow: Flow
 } {
   const verifyJwt = getJwtVerifier()
-  const { context } = args[0]
   const jwtHeader = (context as IncomingMessage)?.headers?.bearer
   const jwtToken = jwtHeader && (typeof jwtHeader === 'string' ? jwtHeader : jwtHeader[0])
   const tokenVerification = verifyJwt(jwtToken)

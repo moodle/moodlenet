@@ -147,9 +147,12 @@ export const getAssertions = ({
     return false
   }
   const { conn, from, to } = edgeOpAssertions
-  const assertions = [conn, from, to]
-    .map((expr, assertions_index) => {
-      const nodeVar = (['', 'from', 'to'] as const)[assertions_index]
+  const assertions = ([
+    [conn, ''],
+    [from, 'from'],
+    [to, 'to'],
+  ] as const)
+    .map(([expr, nodeVar]) => {
       if (typeof expr === 'boolean') {
         return {
           insertFilter: `/*${nodeVar}*/(${expr})`,
@@ -167,7 +170,7 @@ export const getAssertions = ({
               `
 
               /*${nodeVar}-${exprVarName}*/(${assertion.insertFilter}) 
-             
+
               `,
             ),
           }

@@ -55,8 +55,8 @@ const monkeyCreateEdge = (db: Database) => async (ctx: MoodleNetExecutionContext
 }
 
 const actions = [monkeyCreateEdge, monkeyCreateNode]
-const getRndAction = (db: Database) => actions[Math.round(Math.max(Math.random() - 0.1618, 0))](db)
-const getRndType = <T extends NodeType | EdgeType>(t: T, ...ts: T[]) => [t, ...ts].sort(() => Math.random() - 0.5)[0]
+const getRndAction = (db: Database) => actions[Math.round(Math.max(Math.random() - 0.1618, 0))]!(db)
+const getRndType = <T extends NodeType | EdgeType>(t: T, ...ts: T[]) => [t, ...ts].sort(() => Math.random() - 0.5)[0]!
 
 const getRndId = async (db: Database, t: NodeType | EdgeType): Promise<Id | null> => {
   const c = await db.query(`FOR v IN ${t} SORT RAND() LIMIT ${Math.floor(Math.random() * 10)},1 RETURN v._id`)
@@ -66,8 +66,8 @@ const getRndId = async (db: Database, t: NodeType | EdgeType): Promise<Id | null
 }
 
 const getRndConnection = (edgeType: EdgeType) => ({
-  from: contentGraphDef.edges[edgeType][0].sort(() => Math.random() - 0.5)[0],
-  to: contentGraphDef.edges[edgeType][1].sort(() => Math.random() - 0.5)[0],
+  from: contentGraphDef.edges[edgeType][0].sort(() => Math.random() - 0.5)[0]!,
+  to: contentGraphDef.edges[edgeType][1].sort(() => Math.random() - 0.5)[0]!,
 })
 
 const makeCtx = async (db: Database): Promise<MoodleNetExecutionContext<'session'>> => {

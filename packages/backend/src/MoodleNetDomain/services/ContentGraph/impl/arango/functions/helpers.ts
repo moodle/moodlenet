@@ -55,7 +55,7 @@ export const cursorPaginatedQuery = async <P extends Page>({
       : null
 
   return Promise.all(
-    [afterPage, beforePage].map(pageFilterSortLimit => {
+    ([afterPage, beforePage] as const).map(pageFilterSortLimit => {
       const q = pageFilterSortLimit
         ? mapQuery(`
         ${pageFilterSortLimit}
@@ -64,9 +64,14 @@ export const cursorPaginatedQuery = async <P extends Page>({
         : null
 
       // console.log(q)
-      return q ? db.query(q).then(cursor => cursor.all()) : []
+      return q ? db.query(q).then(cursor => cursor.all()) : ([] as any[])
     }),
-  ).then(([afterEdges, beforeEdges]) => makePage<P>({ afterEdges, beforeEdges, pageEdgeTypename, pageTypename }))
+  ).then(([afterEdges, beforeEdges]) => {
+    if (!(afterEdges && beforeEdges)) {
+      throw new Error('should never happen')
+    }
+    return makePage<P>({ afterEdges, beforeEdges, pageEdgeTypename, pageTypename })
+  })
 }
 
 export const makePage = <P extends Page>({

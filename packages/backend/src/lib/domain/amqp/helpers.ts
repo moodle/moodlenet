@@ -22,6 +22,9 @@ export const getMessagePayload = (msg: Message) => {
 
 export const msgFlow = (msg: Message): Flow => {
   const [route, id] = msg.fields.routingKey.split('.').slice(-2)
+  if (!(route && id)) {
+    throw new Error('should never happen')
+  }
   return [route, id]
 }
 export const registeredImpl: Record<string, DomainSetup<any>> = {}
