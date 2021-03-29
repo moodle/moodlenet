@@ -1,4 +1,4 @@
-import { EdgeType, Id, NodeType } from '@moodlenet/common/lib/utils/content-graph'
+import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
 import { isJust } from '../../helpers/data'
@@ -37,8 +37,8 @@ export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
             name,
             icon: icon ?? '',
             homeLink: contentNodeLink({ _id }),
-            followers: getRelCount(_meta, EdgeType.Follows, 'from', NodeType.Profile),
-            resources: getRelCount(_meta, EdgeType.Contains, 'to', NodeType.Resource),
+            followers: getRelCount(_meta, 'Follows', 'from', 'Profile'),
+            resources: getRelCount(_meta, 'Contains', 'to', 'Resource'),
           }
 
           return props
@@ -90,9 +90,9 @@ export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
 
     return subject
       ? {
-          collections: getRelCount(subject._meta, EdgeType.AppliesTo, 'to', NodeType.Collection),
-          followers: getRelCount(subject._meta, EdgeType.Follows, 'from', NodeType.Profile),
-          resources: getRelCount(subject._meta, EdgeType.Follows, 'from', NodeType.Profile),
+          collections: getRelCount(subject._meta, 'AppliesTo', 'to', 'Collection'),
+          followers: getRelCount(subject._meta, 'Follows', 'from', 'Profile'),
+          resources: getRelCount(subject._meta, 'Follows', 'from', 'Profile'),
           me: /* session?.profile
             ? {
                 toggleFollow() {

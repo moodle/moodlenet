@@ -1,4 +1,4 @@
-import { Routes, webappPath } from '@moodlenet/common/src/webapp/sitemap'
+import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { v4 as uuidV4 } from 'uuid'
 import { call } from '../../../../../../lib/domain/amqp/call'
 import { enqueue } from '../../../../../../lib/domain/amqp/enqueue'

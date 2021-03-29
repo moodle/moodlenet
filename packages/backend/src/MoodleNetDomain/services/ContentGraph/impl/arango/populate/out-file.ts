@@ -1,4 +1,4 @@
-import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
+import { IdKey, isNodeType } from '@moodlenet/common/lib/utils/content-graph'
 import { createWriteStream, WriteStream } from 'fs'
 import { join } from 'path'
 import { EdgeType, NodeMeta, NodeType } from '../../../ContentGraph.graphql.gen'
@@ -8,7 +8,7 @@ import { GEN_DIR } from './env'
 console.log(`bulk dir :${GEN_DIR}`)
 const writers: { [type in NodeType | EdgeType]: WriteStream } = {} as any
 const getOutFilename = (type: NodeType | EdgeType) => {
-  const prefix = type in NodeType ? 'nodes' : 'edges'
+  const prefix = isNodeType(type) ? 'nodes' : 'edges'
   return join(GEN_DIR, `${prefix}_${type}`)
 }
 const getWriter = (type: NodeType | EdgeType) =>

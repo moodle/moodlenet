@@ -30,7 +30,7 @@ getPersistence({ cfg, databaseName }).then(async ([{ db }]) => {
   }
 })
 const monkeyCreateNode = (_db: Database) => async (ctx: MoodleNetExecutionContext<'session'>) => {
-  const nodeType = getRndType(NodeType, 'Profile', 'Subject')
+  const nodeType = getRndType('Profile', 'Subject')
   return enqueue<MoodleNetArangoContentGraphSubDomain>()(
     'ContentGraph.Node.Create',
     newFlow(),
@@ -38,10 +38,10 @@ const monkeyCreateNode = (_db: Database) => async (ctx: MoodleNetExecutionContex
 }
 
 const monkeyCreateEdge = (db: Database) => async (ctx: MoodleNetExecutionContext<'session'>) => {
-  const edgeType = getRndType(EdgeType, 'Created')
+  const edgeType = getRndType('Created')
   const conn = getRndConnection(edgeType)
   const [from, to] = await Promise.all([
-    [EdgeType.Follows, EdgeType.Likes, EdgeType].includes(edgeType) ? ctx.profileId : getRndId(db, conn.from),
+    ['Follows', 'Likes'].includes(edgeType) ? ctx.profileId : getRndId(db, conn.from),
     getRndId(db, conn.to),
   ])
   const info = `${conn.from}:${from} -> ${edgeType} -> ${conn.to}:${to}`
@@ -56,12 +56,8 @@ const monkeyCreateEdge = (db: Database) => async (ctx: MoodleNetExecutionContext
 
 const actions = [monkeyCreateEdge, monkeyCreateNode]
 const getRndAction = (db: Database) => actions[Math.round(Math.max(Math.random() - 0.1618, 0))](db)
-const getRndType = <T extends object>(_: T, ...x: (keyof T)[]) =>
-  _[
-    Object.keys(_)
-      .filter(_ => !x.includes(_ as keyof T))
-      .sort(() => Math.random() - 0.5)[0] as keyof T
-  ]
+const getRndType = <T extends NodeType | EdgeType>(t: T, ...ts: T[]) => [t, ...ts].sort(() => Math.random() - 0.5)[0]
+
 const getRndId = async (db: Database, t: NodeType | EdgeType): Promise<Id | null> => {
   const c = await db.query(`FOR v IN ${t} SORT RAND() LIMIT ${Math.floor(Math.random() * 10)},1 RETURN v._id`)
   const id = await c.next()
@@ -75,7 +71,7 @@ const getRndConnection = (edgeType: EdgeType) => ({
 })
 
 const makeCtx = async (db: Database): Promise<MoodleNetExecutionContext<'session'>> => {
-  const profileId = (await getRndId(db, NodeType.Profile))! // profile must be
+  const profileId = (await getRndId(db, 'Profile'))! // profile must be
   const monkeyTag = `monkeyFor[${profileId}]`
   return {
     type: 'session',

@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro'
 import { activateUser } from '@moodlenet/common/lib/graphql/validation/input/userAuth'
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
-import { TermsAndConditions } from '@moodlenet/common/src/webapp/sitemap/routes'
+import { TermsAndConditions } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useEffect, useState } from 'react'
 import { boolean, object, ref, SchemaOf, string } from 'yup'
 import { useSession } from '../../contexts/Global/Session'

@@ -1,13 +1,12 @@
+import { getEdgeOpAssertions } from '@moodlenet/common/lib/content-graph'
 import { contentGraphDef } from '@moodlenet/common/lib/content-graph/def'
 import { CtxAssertion } from '@moodlenet/common/lib/content-graph/types'
 import { EdgeType, NodeType, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
-import { getEdgeOpAssertions } from '@moodlenet/common/src/content-graph'
 import BoolExpr from 'boolean-expressions'
 import { emit } from '../../../../../../lib/domain/amqp/emit'
 import { mergeFlow } from '../../../../../../lib/domain/flow'
 import { LookupWorker } from '../../../../../../lib/domain/wrk'
 import { MoodleNetExecutionContext, Role } from '../../../../../types'
-import * as GQL from '../../../ContentGraph.graphql.gen'
 import { createEdge } from '../functions/createEdge'
 import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentGraphSubDomain'
 import { Persistence } from '../types'
@@ -34,7 +33,7 @@ export const createEdgeWorker = ({
 
   const mEdge = await createEdge({ ctx, data, edgeType, from, persistence, to, key })
   if (!mEdge) {
-    return GQL.CreateEdgeMutationErrorType.NotAllowed
+    return 'NotAllowed'
   }
 
   emit<MoodleNetArangoContentGraphSubDomain>()(
@@ -73,15 +72,15 @@ export const assertCtx = ({
     op: 'create',
   })
   if (!assertions) {
-    return GQL.CreateEdgeMutationErrorType.UnexpectedInput
+    return 'UnexpectedInput'
   }
   if (typeof assertions.ctx === 'boolean') {
-    return assertions.ctx ? null : GQL.CreateEdgeMutationErrorType.NotAllowed
+    return assertions.ctx ? null : 'NotAllowed'
   }
   const boolExpr = new BoolExpr(assertions.ctx)
   const exprVars = boolExpr.getVariableNames() as CtxAssertion[]
 
   const truthyVars = exprVars.filter(exprVar => ctxAssertionMap[exprVar](ctx))
 
-  return boolExpr.evaluate(truthyVars) ? null : GQL.CreateEdgeMutationErrorType.NotAuthorized
+  return boolExpr.evaluate(truthyVars) ? null : 'NotAuthorized'
 }

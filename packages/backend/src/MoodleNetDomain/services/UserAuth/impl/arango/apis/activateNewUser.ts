@@ -1,4 +1,4 @@
-import { makeId, NodeType } from '@moodlenet/common/lib/utils/content-graph'
+import { makeId } from '@moodlenet/common/lib/utils/content-graph'
 import { call } from '../../../../../../lib/domain/amqp/call'
 import { LookupWorker } from '../../../../../../lib/domain/wrk'
 import { ulidKey } from '../../../../../../lib/helpers/arango'
@@ -21,7 +21,7 @@ export const ConfirmEmailActivateUserWorker = ({
 }) => {
   const hashedPassword = await hashPassword({ pwd: password })
   const userKey = ulidKey()
-  const profileId = makeId(NodeType.Profile, userKey)
+  const profileId = makeId('Profile', userKey)
   const activationResult = await activateNewUser({
     persistence,
     token,

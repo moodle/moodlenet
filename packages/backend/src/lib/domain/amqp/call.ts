@@ -65,7 +65,7 @@ export const call = <D>(domainName = getDefaultDomainName()) => <WrkPath extends
 }
 
 // const create = call<MoodleNetDomain>()('ContentGraph.Node.Create',newFlow(),2000)
-// create<NodeType.Collection>({input:{name,summary,icon}})
+// create<'Collection'>({input:{name,summary,icon}})
 // .then(_=>{
 //   if(_.__typename=='CreateNodeMutationError'){
 

@@ -1,9 +1,5 @@
 import { call } from '../../../../../../../lib/domain/amqp/call'
-import {
-  CreateEdgeMutationErrorType,
-  CreateEdgeMutationSuccess,
-  MutationResolvers,
-} from '../../../../ContentGraph.graphql.gen'
+import { CreateEdgeMutationSuccess, MutationResolvers } from '../../../../ContentGraph.graphql.gen'
 import { cantBindMessage } from '../../../../graphDefinition/strings'
 import { validateCreateEdgeInput } from '../../../../graphql/inputStaticValidation/createEdge'
 import { MoodleNetArangoContentGraphSubDomain } from '../../MoodleNetArangoContentGraphSubDomain'
@@ -12,11 +8,11 @@ export const createEdge: MutationResolvers['createEdge'] = async (_root, { input
   // console.log('createEdge', input)
   const { edgeType, from, to } = input
   if (ctx.type === 'anon') {
-    return createEdgeMutationError(CreateEdgeMutationErrorType.NotAuthorized, `Anonymous can't create`)
+    return createEdgeMutationError('NotAuthorized', `Anonymous can't create`)
   }
   const edgeInput = validateCreateEdgeInput(input)
   if (edgeInput instanceof Error) {
-    return createEdgeMutationError(CreateEdgeMutationErrorType.UnexpectedInput, edgeInput.message)
+    return createEdgeMutationError('UnexpectedInput', edgeInput.message)
   }
   const shallowEdgeOrError = await call<MoodleNetArangoContentGraphSubDomain>()('ContentGraph.Edge.Create', ctx.flow)({
     ctx,

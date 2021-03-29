@@ -1,6 +1,6 @@
 import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
 import { call } from '../../../../../../lib/domain/amqp/call'
-import { NodeType, Profile, QueryResolvers } from '../../../ContentGraph.graphql.gen'
+import { Profile, QueryResolvers } from '../../../ContentGraph.graphql.gen'
 import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentGraphSubDomain'
 import { fakeUnshallowNodeForResolverReturnType } from './helpers'
 export const getUserSessionProfile: QueryResolvers['getUserSessionProfile'] = async (
@@ -15,7 +15,7 @@ export const getUserSessionProfile: QueryResolvers['getUserSessionProfile'] = as
     }
   }
   const { _key, nodeType } = parseNodeId(profileId)
-  if (nodeType !== NodeType.Profile) {
+  if (nodeType !== 'Profile') {
     return null
   }
   const shallowProfile = await call<MoodleNetArangoContentGraphSubDomain>()('ContentGraph.Node.ById', ctx.flow)({

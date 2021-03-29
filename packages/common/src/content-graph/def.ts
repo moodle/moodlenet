@@ -1,4 +1,3 @@
-import { NodeType as N } from '../pub-graphql/types.graphql.gen'
 import { GraphDef, _, __ } from './types'
 
 export const contentGraphDef: GraphDef = {
@@ -30,8 +29,8 @@ export const contentGraphDef: GraphDef = {
   },
   edges: {
     Contains: [
-      [N.Collection],
-      [N.Resource],
+      ['Collection'],
+      ['Resource'],
       {
         create: {
           ctx: `${__('CtxExecutorIsAuthenticated')}`,
@@ -54,8 +53,8 @@ export const contentGraphDef: GraphDef = {
       },
     ],
     AppliesTo: [
-      [N.Subject],
-      [N.Resource, N.Collection],
+      ['Subject'],
+      ['Resource', 'Collection'],
       {
         create: {
           ctx: `${__('CtxExecutorIsAuthenticated')}`,
@@ -79,8 +78,8 @@ export const contentGraphDef: GraphDef = {
     ],
 
     Follows: [
-      [N.Profile],
-      [N.Collection, N.Profile, N.Subject],
+      ['Profile'],
+      ['Collection', 'Profile', 'Subject'],
       {
         create: {
           ctx: `${__('CtxExecutorIsAuthenticated')}`,
@@ -104,8 +103,8 @@ export const contentGraphDef: GraphDef = {
     ],
 
     Likes: [
-      [N.Profile],
-      [N.Resource],
+      ['Profile'],
+      ['Resource'],
       {
         create: {
           ctx: `${__('CtxExecutorIsAuthenticated')}`,
@@ -128,8 +127,8 @@ export const contentGraphDef: GraphDef = {
       },
     ],
     Created: [
-      [N.Profile],
-      [N.Resource, N.Collection],
+      ['Profile'],
+      ['Resource', 'Collection'],
       {
         create: {
           ctx: `${__('CtxExecutorIsAuthenticated')}`,

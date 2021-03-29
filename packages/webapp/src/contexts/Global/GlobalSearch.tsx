@@ -1,10 +1,13 @@
-import { GlobalSearchSort, NodeType } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
+import { GlobalSearchSort } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
+import { isGlobalSearchSort } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { createContext, FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useHistory, useLocation } from 'react-router'
 import { mainPath } from '../../hooks/glob/nav'
 import { GlobalSearchEdgeFragment, useGlobalSearchLazyQuery } from './GlobalSearch/globalSearch.gen'
 
-type NodeTypeFilter = NodeType.Resource | NodeType.Collection | NodeType.Subject
+type NodeTypeFilter = 'Resource' | 'Collection' | 'Subject'
+const nodeTypeFilters: NodeTypeFilter[] = ['Resource', 'Collection', 'Subject']
+const isNodeTypeFilter = (_: any): _ is NodeTypeFilter => !!_ && nodeTypeFilters.includes(_)
 export const useUrlQuery = () => {
   const search = useLocation().search
   return useMemo(() => new URLSearchParams(search), [search])
@@ -33,17 +36,12 @@ export const GlobalSearchProvider: FC = ({ children }) => {
   const initialParams = useMemo(() => {
     const q = urlQuery.get('q') ?? ''
     const sort = urlQuery.get('sort') ?? ''
-    const filter = (urlQuery.get('filter') ?? '')
-      .split(',')
-      .filter(
-        (_): _ is NodeTypeFilter => _ === NodeType.Resource || _ === NodeType.Collection || _ === NodeType.Subject,
-      )
+    const filter = (urlQuery.get('filter') ?? '').split(',').filter(isNodeTypeFilter)
 
     return {
       q,
       filter,
-      sort:
-        sort === GlobalSearchSort.Popularity || sort === GlobalSearchSort.Relevance ? sort : GlobalSearchSort.Relevance,
+      sort: isGlobalSearchSort(sort) ? sort : 'Relevance',
     }
   }, [urlQuery])
 

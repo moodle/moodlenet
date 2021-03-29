@@ -3,7 +3,6 @@ import { enqueue } from '../../../../../../lib/domain/amqp/enqueue'
 import { mergeFlow } from '../../../../../../lib/domain/flow'
 import { LookupWorker } from '../../../../../../lib/domain/wrk'
 import { getSessionContext } from '../../../../../MoodleNetGraphQL'
-import { EdgeType } from '../../../ContentGraph.graphql.gen'
 import { createNode } from '../functions/createNode'
 import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentGraphSubDomain'
 import { Persistence } from '../types'
@@ -34,7 +33,7 @@ export const createNodeWorker = ({
   enqueue<MoodleNetArangoContentGraphSubDomain>()(`ContentGraph.Edge.Create`, ctx.flow)({
     ctx,
     data: {},
-    edgeType: EdgeType.Created,
+    edgeType: 'Created',
     from: sessionCtx.profileId,
     to: mNode._id,
   })

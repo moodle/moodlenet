@@ -1,4 +1,4 @@
-import { EdgeType, Id, NodeType } from '@moodlenet/common/lib/utils/content-graph'
+import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
 import { isJust } from '../../helpers/data'
@@ -70,8 +70,8 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
           },
           icon: collection.icon || '',
           lastUpdated: collection._meta.created,
-          followers: getRelCount(collection._meta, EdgeType.Follows, 'from', NodeType.Profile),
-          resources: getRelCount(collection._meta, EdgeType.Contains, 'to', NodeType.Resource),
+          followers: getRelCount(collection._meta, 'Follows', 'from', 'Profile'),
+          resources: getRelCount(collection._meta, 'Contains', 'to', 'Resource'),
           me: /* session?.profile
             ? {
                 toggleFollow() {

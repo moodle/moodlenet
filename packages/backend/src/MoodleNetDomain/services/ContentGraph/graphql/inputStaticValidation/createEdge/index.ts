@@ -7,7 +7,7 @@ const inputObjectValidators: {
   [T in EdgeType]: ObjectSchema<Just<CreateEdgeInput[T]>>
 } = {
   Follows: object<Just<CreateEdgeInput['Follows']>>().required(),
-  Created: neverCreate(EdgeType.Created),
+  Created: neverCreate('Created'),
   AppliesTo: object<Just<CreateEdgeInput['AppliesTo']>>().required(),
   Contains: object<Just<CreateEdgeInput['Contains']>>().required(),
   Likes: object<Just<CreateEdgeInput['Likes']>>().required(),

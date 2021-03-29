@@ -1,4 +1,4 @@
-import { Routes, webappPath } from '@moodlenet/common/src/webapp/sitemap'
+import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { call } from '../../../../../../lib/domain/amqp/call'
 import { enqueue } from '../../../../../../lib/domain/amqp/enqueue'
 import { LookupWorker } from '../../../../../../lib/domain/wrk'

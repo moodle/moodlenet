@@ -129,10 +129,9 @@ export type CreateNodeMutationError = {
   details?: Maybe<Scalars['String']>;
 };
 
-export enum CreateNodeMutationErrorType {
-  NotAuthorized = 'NotAuthorized',
-  UnexpectedInput = 'UnexpectedInput'
-}
+export type CreateNodeMutationErrorType =
+  | 'NotAuthorized'
+  | 'UnexpectedInput';
 
 export type CreateEdgeInput = {
   AppliesTo?: Maybe<Scalars['Empty']>;
@@ -158,12 +157,11 @@ export type CreateEdgeMutationError = {
   details?: Maybe<Scalars['String']>;
 };
 
-export enum CreateEdgeMutationErrorType {
-  NotAuthorized = 'NotAuthorized',
-  NotAllowed = 'NotAllowed',
-  NoSelfReference = 'NoSelfReference',
-  UnexpectedInput = 'UnexpectedInput'
-}
+export type CreateEdgeMutationErrorType =
+  | 'NotAuthorized'
+  | 'NotAllowed'
+  | 'NoSelfReference'
+  | 'UnexpectedInput';
 
 export type UpdateNodeInput = {
   Collection?: Maybe<UpdateCollectionInput>;
@@ -187,11 +185,10 @@ export type UpdateNodeMutationError = {
   details?: Maybe<Scalars['String']>;
 };
 
-export enum UpdateNodeMutationErrorType {
-  NotFound = 'NotFound',
-  NotAuthorized = 'NotAuthorized',
-  UnexpectedInput = 'UnexpectedInput'
-}
+export type UpdateNodeMutationErrorType =
+  | 'NotFound'
+  | 'NotAuthorized'
+  | 'UnexpectedInput';
 
 export type UpdateEdgeInput = {
   AppliesTo?: Maybe<Scalars['Empty']>;
@@ -216,11 +213,10 @@ export type UpdateEdgeMutationError = {
   details?: Maybe<Scalars['String']>;
 };
 
-export enum UpdateEdgeMutationErrorType {
-  NotFound = 'NotFound',
-  NotAuthorized = 'NotAuthorized',
-  UnexpectedInput = 'UnexpectedInput'
-}
+export type UpdateEdgeMutationErrorType =
+  | 'NotFound'
+  | 'NotAuthorized'
+  | 'UnexpectedInput';
 
 export type DeleteEdgeInput = {
   _id: Scalars['ID'];
@@ -240,10 +236,9 @@ export type DeleteEdgeMutationError = {
   details?: Maybe<Scalars['String']>;
 };
 
-export enum DeleteEdgeMutationErrorType {
-  NotFound = 'NotFound',
-  NotAuthorized = 'NotAuthorized'
-}
+export type DeleteEdgeMutationErrorType =
+  | 'NotFound'
+  | 'NotAuthorized';
 
 export type DeleteNodeInput = {
   _id: Scalars['ID'];
@@ -263,10 +258,9 @@ export type DeleteNodeMutationError = {
   details?: Maybe<Scalars['String']>;
 };
 
-export enum DeleteNodeMutationErrorType {
-  NotFound = 'NotFound',
-  NotAuthorized = 'NotAuthorized'
-}
+export type DeleteNodeMutationErrorType =
+  | 'NotFound'
+  | 'NotAuthorized';
 
 export type Page = {
   pageInfo: PageInfo;
@@ -319,6 +313,12 @@ export type QueryNodeArgs = {
 };
 
 
+export type IContentNode = {
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
+};
+
 export type INode = {
   _id?: Maybe<Scalars['ID']>;
   _rel: RelPage;
@@ -349,12 +349,6 @@ export type RelCount = {
   __typename: 'RelCount';
   to?: Maybe<RelCountTargetMap>;
   from?: Maybe<RelCountTargetMap>;
-};
-
-export type IContentNode = {
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['String']>;
 };
 
 export type IEdge = {
@@ -399,13 +393,12 @@ export type RelCountMap = {
 
 export type Edge = AppliesTo | Contains | Created | Follows | Likes;
 
-export enum EdgeType {
-  AppliesTo = 'AppliesTo',
-  Contains = 'Contains',
-  Created = 'Created',
-  Follows = 'Follows',
-  Likes = 'Likes'
-}
+export type EdgeType =
+  | 'AppliesTo'
+  | 'Contains'
+  | 'Created'
+  | 'Follows'
+  | 'Likes';
 
 export type Contains = IEdge & {
   __typename: 'Contains';
@@ -459,12 +452,11 @@ export type Collection_RelArgs = {
 
 export type Node = Collection | Profile | Resource | Subject;
 
-export enum NodeType {
-  Collection = 'Collection',
-  Profile = 'Profile',
-  Resource = 'Resource',
-  Subject = 'Subject'
-}
+export type NodeType =
+  | 'Collection'
+  | 'Profile'
+  | 'Resource'
+  | 'Subject';
 
 export type RelCountTargetMap = {
   __typename: 'RelCountTargetMap';
@@ -576,10 +568,9 @@ export type SearchPageEdge = PageEdge & {
   node: Collection | Profile | Resource | Subject;
 };
 
-export enum GlobalSearchSort {
-  Relevance = 'Relevance',
-  Popularity = 'Popularity'
-}
+export type GlobalSearchSort =
+  | 'Relevance'
+  | 'Popularity';
 
 export type SimpleResponse = {
   __typename: 'SimpleResponse';
@@ -633,13 +624,13 @@ export type CreateSession = {
       "RelPageEdge",
       "SearchPageEdge"
     ],
-    "INode": [
+    "IContentNode": [
       "Collection",
       "Profile",
       "Resource",
       "Subject"
     ],
-    "IContentNode": [
+    "INode": [
       "Collection",
       "Profile",
       "Resource",

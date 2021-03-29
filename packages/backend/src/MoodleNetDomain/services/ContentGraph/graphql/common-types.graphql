@@ -1,5 +1,11 @@
 scalar Cursor
 
+interface IContentNode {
+  name: String!
+  summary: String!
+  icon: String
+}
+
 interface INode {
   _id: ID
   _rel(edge: EdgeTypeInput!, page: PaginationInput): RelPage!
@@ -21,12 +27,6 @@ type EdgeMeta {
 type RelCount {
   to: RelCountTargetMap
   from: RelCountTargetMap
-}
-
-interface IContentNode {
-  name: String!
-  summary: String!
-  icon: String
 }
 
 interface IEdge {

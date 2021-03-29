@@ -57,10 +57,10 @@ const doMany = async <T>(tag: string, amount: number, fn: (i: number) => Promise
 
 ;(async function () {
   await doMany('SUBJECTS', SUBJECTS_AMOUNT, () => {
-    return createNewFakeNode({ type: NodeType.Subject })
+    return createNewFakeNode({ type: 'Subject' })
   })
   await doMany('PROFILES', PROFILES_AMOUNT, () => {
-    return createNewFakeNode({ type: NodeType.Profile })
+    return createNewFakeNode({ type: 'Profile' })
   })
 
   const stat = Object.keys(genKeys).reduce((_stat, type) => {

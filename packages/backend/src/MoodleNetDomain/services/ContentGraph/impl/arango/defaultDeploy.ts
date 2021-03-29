@@ -2,7 +2,6 @@ import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
 import { Config } from 'arangojs/connection'
 import { DomainSetup, DomainStart } from '../../../../../lib/domain/types'
 import { initMoodleNetGQLWrkService, SYSTEM_PROFILE_ID } from '../../../../MoodleNetGraphQL'
-import { NodeType } from '../../ContentGraph.graphql.gen'
 import { createEdgeWorker } from './apis/createEdge'
 import { createNodeWorker } from './apis/createNode'
 import { getNodeWorker } from './apis/getNode'
@@ -76,7 +75,7 @@ export const defaultArangoContentGraphStartServices = ({
           ({ username, key }) =>
             createNode({
               data: { name: username, summary: '' },
-              nodeType: NodeType.Profile,
+              nodeType: 'Profile',
               persistence,
               key,
               creatorId: SYSTEM_PROFILE_ID,
@@ -92,10 +91,10 @@ export const defaultArangoContentGraphStartServices = ({
           async ({ profileId }) => {
             const { _key, nodeType } = parseNodeId(profileId)
 
-            if (nodeType !== NodeType.Profile) {
+            if (nodeType !== 'Profile') {
               return null
             }
-            return getNode<NodeType.Profile>({ _key, nodeType: NodeType.Profile, persistence })
+            return getNode<'Profile'>({ _key, nodeType: 'Profile', persistence })
           },
           teardown,
         ]

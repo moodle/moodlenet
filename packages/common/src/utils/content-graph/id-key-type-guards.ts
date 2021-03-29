@@ -1,4 +1,4 @@
-import { EdgeType, NodeType } from '../../pub-graphql/types.graphql.gen'
+import { EdgeType, GlobalSearchSort, NodeType } from '../../pub-graphql/types.graphql.gen'
 export type IdKey = string //& { readonly __: unique symbol }
 // export type Id<N extends NodeType = NodeType> = `${N}/${IdKey}` & { readonly __: unique symbol }
 export type Id = string & { readonly __: unique symbol }
@@ -21,13 +21,18 @@ export const isId = (_: string | undefined): _ is Id => {
 
 export const makeId = (type: NodeType | EdgeType, key: IdKey): Id => `${type}/${key}` as Id
 
-export const isEdgeType = (_: string | undefined): _ is EdgeType => !!_ && _ in EdgeType
+export const globalSearchSort: GlobalSearchSort[] = ['Popularity', 'Relevance', 'Relevance']
+export const isGlobalSearchSort = (_: any): _ is GlobalSearchSort => !!_ && globalSearchSort.includes(_)
+
+const edgeTypes: EdgeType[] = ['AppliesTo', 'Contains', 'Created', 'Follows', 'Likes']
+export const isEdgeType = (_: any): _ is EdgeType => !!_ && edgeTypes.includes(_)
 export const edgeTypeFromId = (_: Id): EdgeType => {
   const [edgeType] = _.split('/')
   return edgeType as EdgeType
 }
 
-export const isNodeType = (_: string | undefined): _ is NodeType => !!_ && _ in NodeType
+const nodeTypes: NodeType[] = ['Collection', 'Profile', 'Resource', 'Subject']
+export const isNodeType = (_: any): _ is NodeType => !!_ && nodeTypes.includes(_)
 export const nodeTypeFromId = (_: Id): NodeType => {
   const [nodeType] = _.split('/')
   return nodeType as NodeType

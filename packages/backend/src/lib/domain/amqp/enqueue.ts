@@ -48,7 +48,7 @@ export const enqueue = <D>(domainName = getDefaultDomainName()) => <WrkPath exte
 }
 
 // const create = enqueue<MoodleNetDomain>()('ContentGraph.Node.Create',newFlow(),{})
-// create<NodeType.Subject>({input:{name:'',summary:'',icon:''},ctx,nodeType:NodeType.Subject})
+// create<'Subject'>({input:{name:'',summary:'',icon:''},ctx,nodeType:'Subject'})
 // .then(_=>{
 //   if(_.__typename=='CreateNodeMutationError'){
 

@@ -9,7 +9,7 @@ const inputObjectValidators: {
   Subject: object<Just<CreateNodeInput['Subject']>>().required(),
   Collection: object<Just<CreateNodeInput['Collection']>>().required(),
   Resource: object<Just<CreateNodeInput['Resource']>>().required(),
-  Profile: neverCreate(NodeType.Profile),
+  Profile: neverCreate('Profile'),
 }
 
 export function validateCreateNodeInput(input: CreateNodeInput): Just<CreateNodeInput[NodeType]> | Error {

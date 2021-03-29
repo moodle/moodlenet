@@ -1,4 +1,4 @@
-import { EdgeType, Id, NodeType } from '@moodlenet/common/lib/utils/content-graph'
+import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
 import { getRelCount } from '../../helpers/nodeMeta'
@@ -34,7 +34,7 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
             name: resource._meta.creator.name,
           },
           created: resource._meta.created,
-          likers: getRelCount(resource._meta, EdgeType.Likes, 'from', NodeType.Profile),
+          likers: getRelCount(resource._meta, 'Likes', 'from', 'Profile'),
           me: /* session?.profile
             ? {
                 toggleFollow() {

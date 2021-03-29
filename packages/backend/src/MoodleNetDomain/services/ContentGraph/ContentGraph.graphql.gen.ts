@@ -84,10 +84,9 @@ export type CreateNodeMutationError = {
   details?: Maybe<Scalars['String']>;
 };
 
-export enum CreateNodeMutationErrorType {
-  NotAuthorized = 'NotAuthorized',
-  UnexpectedInput = 'UnexpectedInput'
-}
+export type CreateNodeMutationErrorType =
+  | 'NotAuthorized'
+  | 'UnexpectedInput';
 
 export type CreateEdgeInput = {
   AppliesTo?: Maybe<Scalars['Empty']>;
@@ -113,12 +112,11 @@ export type CreateEdgeMutationError = {
   details?: Maybe<Scalars['String']>;
 };
 
-export enum CreateEdgeMutationErrorType {
-  NotAuthorized = 'NotAuthorized',
-  NotAllowed = 'NotAllowed',
-  NoSelfReference = 'NoSelfReference',
-  UnexpectedInput = 'UnexpectedInput'
-}
+export type CreateEdgeMutationErrorType =
+  | 'NotAuthorized'
+  | 'NotAllowed'
+  | 'NoSelfReference'
+  | 'UnexpectedInput';
 
 export type UpdateNodeInput = {
   Collection?: Maybe<UpdateCollectionInput>;
@@ -142,11 +140,10 @@ export type UpdateNodeMutationError = {
   details?: Maybe<Scalars['String']>;
 };
 
-export enum UpdateNodeMutationErrorType {
-  NotFound = 'NotFound',
-  NotAuthorized = 'NotAuthorized',
-  UnexpectedInput = 'UnexpectedInput'
-}
+export type UpdateNodeMutationErrorType =
+  | 'NotFound'
+  | 'NotAuthorized'
+  | 'UnexpectedInput';
 
 export type UpdateEdgeInput = {
   AppliesTo?: Maybe<Scalars['Empty']>;
@@ -171,11 +168,10 @@ export type UpdateEdgeMutationError = {
   details?: Maybe<Scalars['String']>;
 };
 
-export enum UpdateEdgeMutationErrorType {
-  NotFound = 'NotFound',
-  NotAuthorized = 'NotAuthorized',
-  UnexpectedInput = 'UnexpectedInput'
-}
+export type UpdateEdgeMutationErrorType =
+  | 'NotFound'
+  | 'NotAuthorized'
+  | 'UnexpectedInput';
 
 export type DeleteEdgeInput = {
   _id: Scalars['ID'];
@@ -195,10 +191,9 @@ export type DeleteEdgeMutationError = {
   details?: Maybe<Scalars['String']>;
 };
 
-export enum DeleteEdgeMutationErrorType {
-  NotFound = 'NotFound',
-  NotAuthorized = 'NotAuthorized'
-}
+export type DeleteEdgeMutationErrorType =
+  | 'NotFound'
+  | 'NotAuthorized';
 
 export type DeleteNodeInput = {
   _id: Scalars['ID'];
@@ -218,10 +213,9 @@ export type DeleteNodeMutationError = {
   details?: Maybe<Scalars['String']>;
 };
 
-export enum DeleteNodeMutationErrorType {
-  NotFound = 'NotFound',
-  NotAuthorized = 'NotAuthorized'
-}
+export type DeleteNodeMutationErrorType =
+  | 'NotFound'
+  | 'NotAuthorized';
 
 export type Page = {
   pageInfo: PageInfo;
@@ -273,6 +267,12 @@ export type QueryNodeArgs = {
 };
 
 
+export type IContentNode = {
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
+};
+
 export type INode = {
   _id?: Maybe<Scalars['ID']>;
   _rel: RelPage;
@@ -303,12 +303,6 @@ export type RelCount = {
   __typename: 'RelCount';
   to?: Maybe<RelCountTargetMap>;
   from?: Maybe<RelCountTargetMap>;
-};
-
-export type IContentNode = {
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['String']>;
 };
 
 export type IEdge = {
@@ -353,13 +347,12 @@ export type RelCountMap = {
 
 export type Edge = AppliesTo | Contains | Created | Follows | Likes;
 
-export enum EdgeType {
-  AppliesTo = 'AppliesTo',
-  Contains = 'Contains',
-  Created = 'Created',
-  Follows = 'Follows',
-  Likes = 'Likes'
-}
+export type EdgeType =
+  | 'AppliesTo'
+  | 'Contains'
+  | 'Created'
+  | 'Follows'
+  | 'Likes';
 
 export type Contains = IEdge & {
   __typename: 'Contains';
@@ -408,12 +401,11 @@ export type Collection_RelArgs = {
 
 export type Node = Collection | Profile | Resource | Subject;
 
-export enum NodeType {
-  Collection = 'Collection',
-  Profile = 'Profile',
-  Resource = 'Resource',
-  Subject = 'Subject'
-}
+export type NodeType =
+  | 'Collection'
+  | 'Profile'
+  | 'Resource'
+  | 'Subject';
 
 export type RelCountTargetMap = {
   __typename: 'RelCountTargetMap';
@@ -525,10 +517,9 @@ export type SearchPageEdge = PageEdge & {
   node: Collection | Profile | Resource | Subject;
 };
 
-export enum GlobalSearchSort {
-  Relevance = 'Relevance',
-  Popularity = 'Popularity'
-}
+export type GlobalSearchSort =
+  | 'Relevance'
+  | 'Popularity';
 
 
 
@@ -652,11 +643,11 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<RootValue>;
   Cursor: ResolverTypeWrapper<Scalars['Cursor']>;
+  IContentNode: ResolversTypes['Collection'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['Subject'];
   INode: ResolversTypes['Collection'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['Subject'];
   NodeMeta: ResolverTypeWrapper<NodeMeta>;
   EdgeMeta: ResolverTypeWrapper<EdgeMeta>;
   RelCount: ResolverTypeWrapper<RelCount>;
-  IContentNode: ResolversTypes['Collection'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['Subject'];
   IEdge: ResolversTypes['AppliesTo'] | ResolversTypes['Contains'] | ResolversTypes['Created'] | ResolversTypes['Follows'] | ResolversTypes['Likes'];
   EdgeTypeInput: EdgeTypeInput;
   RelPage: ResolverTypeWrapper<RelPage>;
@@ -730,11 +721,11 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   Query: RootValue;
   Cursor: Scalars['Cursor'];
+  IContentNode: ResolversParentTypes['Collection'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['Subject'];
   INode: ResolversParentTypes['Collection'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['Subject'];
   NodeMeta: NodeMeta;
   EdgeMeta: EdgeMeta;
   RelCount: RelCount;
-  IContentNode: ResolversParentTypes['Collection'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['Subject'];
   IEdge: ResolversParentTypes['AppliesTo'] | ResolversParentTypes['Contains'] | ResolversParentTypes['Created'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'];
   EdgeTypeInput: EdgeTypeInput;
   RelPage: RelPage;
@@ -905,6 +896,13 @@ export interface CursorScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
   name: 'Cursor';
 }
 
+export type IContentNodeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['IContentNode'] = ResolversParentTypes['IContentNode']> = {
+  __resolveType: TypeResolveFn<'Collection' | 'Profile' | 'Resource' | 'Subject', ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+};
+
 export type INodeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['INode'] = ResolversParentTypes['INode']> = {
   __resolveType: TypeResolveFn<'Collection' | 'Profile' | 'Resource' | 'Subject', ParentType, ContextType>;
   _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
@@ -930,13 +928,6 @@ export type RelCountResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
   to?: Resolver<Maybe<ResolversTypes['RelCountTargetMap']>, ParentType, ContextType>;
   from?: Resolver<Maybe<ResolversTypes['RelCountTargetMap']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type IContentNodeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['IContentNode'] = ResolversParentTypes['IContentNode']> = {
-  __resolveType: TypeResolveFn<'Collection' | 'Profile' | 'Resource' | 'Subject', ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 };
 
 export type IEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['IEdge'] = ResolversParentTypes['IEdge']> = {
@@ -1098,11 +1089,11 @@ export type Resolvers<ContextType = MoodleNetExecutionContext> = {
   PageEdge?: PageEdgeResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Cursor?: GraphQLScalarType;
+  IContentNode?: IContentNodeResolvers<ContextType>;
   INode?: INodeResolvers<ContextType>;
   NodeMeta?: NodeMetaResolvers<ContextType>;
   EdgeMeta?: EdgeMetaResolvers<ContextType>;
   RelCount?: RelCountResolvers<ContextType>;
-  IContentNode?: IContentNodeResolvers<ContextType>;
   IEdge?: IEdgeResolvers<ContextType>;
   RelPage?: RelPageResolvers<ContextType>;
   RelPageEdge?: RelPageEdgeResolvers<ContextType>;
