@@ -1,29 +1,17 @@
+import { contentGraphDef } from '@moodlenet/common/lib/content-graph/def'
 import { Database } from 'arangojs'
 import { EdgeDefinitionOptions } from 'arangojs/graph'
-import { EdgeType, NodeType } from '../../ContentGraph.graphql.gen'
-import { contentGraph } from '../../graphDefinition'
-import { EdgeOptions } from '../../graphDefinition/types'
+import { EdgeType } from '../../ContentGraph.graphql.gen'
 
 const CONTENT_GRAPH_NAME = 'contentGraph'
 
-const getEdgeDefinition = (edgeType: EdgeType, edgeOptions: EdgeOptions): EdgeDefinitionOptions => {
-  const fromSet = new Set<NodeType>()
-  const toSet = new Set<NodeType>()
-  edgeOptions.connections.forEach(opt => {
-    fromSet.add(opt.from)
-    toSet.add(opt.to)
-  })
-  return {
-    collection: edgeType,
-    from: [...fromSet],
-    to: [...toSet],
-  }
-}
 export const getGraph = async ({ db }: { db: Database }) => {
-  const graphEntries = Object.entries(contentGraph)
-  const edgeDefinitionOptions = graphEntries.map(([edgeType, edgeOpts]) => {
-    return getEdgeDefinition(edgeType as EdgeType, edgeOpts)
-  })
+  const graphEntries = Object.entries(contentGraphDef.edges)
+  const edgeDefinitionOptions: EdgeDefinitionOptions[] = graphEntries.map(([edgeType, [from, to]]) => ({
+    collection: edgeType,
+    from,
+    to,
+  }))
 
   // console.log(inspect(edgeDefinitionOptions, false, 10, true))
   const graph =

@@ -1,10 +1,10 @@
+import { contentGraphDef } from '@moodlenet/common/lib/content-graph/def'
 import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { Database } from 'arangojs'
 import { enqueue } from '../../../../../../lib/domain/amqp/enqueue'
 import { newFlow } from '../../../../../../lib/domain/flow'
 import { MoodleNetExecutionContext, Role } from '../../../../../types'
 import { EdgeType, NodeType } from '../../../ContentGraph.graphql.gen'
-import { contentGraph } from '../../../graphDefinition'
 import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentGraphSubDomain'
 import { getPersistence } from '../persistence'
 import { cfg, databaseName, MONKEYS_WAIT, PARALLEL_MONKEYS } from './env'
@@ -69,7 +69,10 @@ const getRndId = async (db: Database, t: NodeType | EdgeType): Promise<Id | null
   return id
 }
 
-const getRndConnection = (edgeType: EdgeType) => contentGraph[edgeType].connections.sort(() => Math.random() - 0.5)[0]
+const getRndConnection = (edgeType: EdgeType) => ({
+  from: contentGraphDef.edges[edgeType][0].sort(() => Math.random() - 0.5)[0],
+  to: contentGraphDef.edges[edgeType][1].sort(() => Math.random() - 0.5)[0],
+})
 
 const makeCtx = async (db: Database): Promise<MoodleNetExecutionContext<'session'>> => {
   const profileId = (await getRndId(db, NodeType.Profile))! // profile must be
