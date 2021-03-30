@@ -1,7 +1,7 @@
 import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
 import { Config } from 'arangojs/connection'
 import { DomainSetup, DomainStart } from '../../../../../lib/domain/types'
-import { initMoodleNetGQLWrkService, SYSTEM_PROFILE_ID } from '../../../../MoodleNetGraphQL'
+import { getSystemExecutionContext, initMoodleNetGQLWrkService } from '../../../../MoodleNetGraphQL'
 import { createEdgeWorker } from './apis/createEdge'
 import { createNodeWorker } from './apis/createNode'
 import { getNodeWorker } from './apis/getNode'
@@ -72,14 +72,23 @@ export const defaultArangoContentGraphStartServices = ({
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
         return [
-          ({ username, key }) =>
-            createNode({
+          async ({ username, key }) => {
+            const createResult = await createNode({
               data: { name: username, summary: '' },
               nodeType: 'Profile',
               persistence,
               key,
-              creatorId: SYSTEM_PROFILE_ID,
-            }),
+              ctx: getSystemExecutionContext({}),
+            })
+            if (typeof createResult === 'string') {
+              throw new Error(createResult)
+            }
+            if ('CreateNodeAssertionsFailed' in createResult) {
+              throw new Error('CreateNodeAssertionsFailed')
+            }
+
+            return createResult
+          },
           teardown,
         ]
       },
@@ -94,7 +103,7 @@ export const defaultArangoContentGraphStartServices = ({
             if (nodeType !== 'Profile') {
               return null
             }
-            return getNode<'Profile'>({ _key, nodeType: 'Profile', persistence })
+            return getNode<'Profile'>({ _key, nodeType: 'Profile', persistence, ctx: getSystemExecutionContext({}) })
           },
           teardown,
         ]

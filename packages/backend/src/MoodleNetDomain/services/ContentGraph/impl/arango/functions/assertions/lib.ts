@@ -1,4 +1,10 @@
-import { Assertion, AssertionExpr, ConnAssertion, NodeAssertion } from '@moodlenet/common/lib/content-graph'
+import {
+  Assertion,
+  AssertionExpr,
+  ConnAssertion,
+  CtxAssertion,
+  NodeAssertion,
+} from '@moodlenet/common/lib/content-graph'
 import { EdgeType } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
 import BoolExpr from 'boolean-expressions'
 import { ctxAssertionMap } from '../../../../../../assertCtx'
@@ -88,7 +94,7 @@ export const toAqlAssertionExprMap = ({
         : exprVarName in connAssertionMap
         ? connAssertionMap[exprVarName as ConnAssertion]
         : exprVarName in ctxAssertionMap
-        ? connAssertionMap[exprVarName as ConnAssertion]
+        ? ctxAssertionMap[exprVarName as CtxAssertion]
         : null
     if (!assertionFn) {
       throw new Error(`No assertion implementation for expression name: "${exprVarName}"`)

@@ -31,18 +31,36 @@ export type MoodleNetExecutionContext<T extends CtxTypes = CtxTypes> = TypeUnion
   flow: Flow
 }
 
-export const getSystemExecutionContext = (_: {
-  as: MoodleNetExecutionContext<'session'>
+export const getSystemExecutionContext = ({
+  as = getSystemSession({}),
+  flow,
+}: {
+  as?: MoodleNetExecutionContext<'session'>
   flow?: PFlow
 }): MoodleNetExecutionContext<'system'> => ({
   type: 'system',
-  as: _.as,
-  flow: newFlow(_.flow),
+  as,
+  flow: newFlow(flow),
 })
+
+//FIXME ASAP
+export const SystemUsername = 'SYSTEM' as Id
+export const SystemProfileId = `Profile/${SystemUsername}` as Id
+export const SystemUserId = `User/${SystemUsername}` as Id
+export const getSystemSession = (_: { flow?: PFlow }): MoodleNetExecutionContext<'session'> => ({
+  email: 'system_email@system_email.system_email',
+  flow: newFlow(_.flow),
+  profileId: SystemProfileId,
+  role: 'System',
+  type: 'session',
+  userId: SystemUserId,
+  username: SystemUsername,
+})
+//FIXME ASAP
 
 export const getSessionExecutionContext = (ctx: MoodleNetExecutionContext) =>
   ctx.type === 'system' ? ctx.as : ctx.type === 'anon' ? undefined : ctx
 
 // export const isSystemExecutionContext = (ctx: MoodleNetExecutionContext) => ctx.system
 
-export type Role = 'User' | 'Admin'
+export type Role = 'User' | 'Admin' | 'System'

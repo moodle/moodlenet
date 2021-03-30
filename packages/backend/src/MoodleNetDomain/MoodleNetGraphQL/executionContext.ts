@@ -2,7 +2,6 @@ import { ExecutionParams } from '@graphql-tools/delegate/types'
 import { GraphQLError } from 'graphql'
 import { IncomingMessage } from 'http'
 import { Flow } from '../../lib/domain/flow'
-import { Id } from '../services/UserAuth/types'
 import { MoodleNetAuthenticatedExecutionContext } from '../types'
 import { INVALID_TOKEN } from './JWT'
 import { getJwtVerifier } from './MoodleNetGraphQL.env'
@@ -24,8 +23,6 @@ export function getSessionContext(
   }
   return context.as
 }
-
-export const SYSTEM_PROFILE_ID = 'Profile/SYSTEM' as Id
 
 export function getExecutionGlobalValues({
   context,

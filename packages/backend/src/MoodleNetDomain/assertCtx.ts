@@ -3,13 +3,13 @@ import BoolExpr from 'boolean-expressions'
 import { MoodleNetExecutionContext } from './types'
 
 type CtxAssertionMap = {
-  [t in CtxAssertion]: (ctx: MoodleNetExecutionContext) => boolean
+  [t in CtxAssertion]: (_: { ctx: MoodleNetExecutionContext }) => boolean
 }
 export const ctxAssertionMap: CtxAssertionMap = {
-  ExecutorIsAdmin: ctx => ctx.type === 'session' && ctx.role === 'Admin',
-  ExecutorIsAuthenticated: ctx => ctx.type === 'session',
-  ExecutorIsAnonymous: ctx => ctx.type === 'anon',
-  ExecutorIsSystem: ctx => ctx.type === 'system',
+  ExecutorIsAdmin: ({ ctx }) => ctx.type === 'session' && ctx.role === 'Admin',
+  ExecutorIsAuthenticated: ({ ctx }) => ctx.type === 'session',
+  ExecutorIsAnonymous: ({ ctx }) => ctx.type === 'anon',
+  ExecutorIsSystem: ({ ctx }) => ctx.type === 'system',
 }
 export const assertCtx = ({
   ctxAssertion,
@@ -28,7 +28,7 @@ export const assertCtx = ({
     if (!(exprVar in ctxAssertionMap)) {
       throw new Error(`no ctx assertion impl for: "${exprVar}"`)
     }
-    return ctxAssertionMap[exprVar as CtxAssertion](ctx)
+    return ctxAssertionMap[exprVar as CtxAssertion]({ ctx })
   })
   console.log({ ctxAssertion, ctx, exprVars, truthyVars })
 

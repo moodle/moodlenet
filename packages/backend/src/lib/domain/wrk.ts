@@ -80,9 +80,16 @@ export const getTimeoutError = (_: WrkTimeoutError) => _[WRK_TIMEOUT_ERROR_TAG]
 
 //Reply
 export type WrkReplyError = { ___WRK_REPLY_ERROR: string }
-export const wrkReplyError = ({ err, wrk }: { wrk: string; err: any }): WrkReplyError => ({
-  ___WRK_REPLY_ERROR: `${wrk}: ${err}`,
-})
+export const wrkReplyError = ({ err, wrk }: { wrk: string; err: any }): WrkReplyError => {
+  let errorDetails = ''
+  if (err instanceof Error) {
+    errorDetails = `Error<${err.name}>:${err.stack ?? ''}`
+    console.log(errorDetails)
+  }
+  return {
+    ___WRK_REPLY_ERROR: `${wrk}: ${err} ${errorDetails}`,
+  }
+}
 export const isReplyError = (_: any): _ is WrkReplyError => !!_ && typeof _ === 'object' && '___WRK_REPLY_ERROR' in _
 export const getReplyError = (_: WrkReplyError) => _.___WRK_REPLY_ERROR
 
