@@ -1,6 +1,6 @@
+import { cantBindMessage } from '@moodlenet/common/lib/content-graph/strings'
 import { call } from '../../../../../../../lib/domain/amqp/call'
 import { CreateEdgeMutationSuccess, MutationResolvers } from '../../../../ContentGraph.graphql.gen'
-import { cantBindMessage } from '../../../../graphDefinition/strings'
 import { validateCreateEdgeInput } from '../../../../graphql/inputStaticValidation/createEdge'
 import { MoodleNetArangoContentGraphSubDomain } from '../../MoodleNetArangoContentGraphSubDomain'
 import { createEdgeMutationError, fakeUnshallowEdgeForResolverReturnType } from '../helpers'

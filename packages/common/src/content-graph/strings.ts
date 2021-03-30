@@ -1,5 +1,5 @@
-import { Id, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
-import { EdgeType } from '../ContentGraph.graphql.gen'
+import { EdgeType } from '../pub-graphql/types.graphql.gen'
+import { Id, nodeTypeFromId } from '../utils/content-graph'
 
 export const bindString = (_: { edgeType: EdgeType; from: Id; to: Id }) =>
   `${nodeTypeFromId(_.from)} ${_.edgeType} ${nodeTypeFromId(_.to)}`

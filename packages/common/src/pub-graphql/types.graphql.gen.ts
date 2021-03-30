@@ -19,6 +19,20 @@ export type Scalars = {
 
 
 
+export type CtxAssertion =
+  | 'ExecutorIsAuthenticated'
+  | 'ExecutorIsSystem'
+  | 'ExecutorIsAdmin'
+  | 'ExecutorIsAnonymous';
+
+export type NodeAssertion =
+  | 'ExecutorCreatedThisNode'
+  | 'ThisNodeIsExecutorProfile';
+
+export type ConnAssertion =
+  | 'NoExistingSameEdgeBetweenTheTwoNodesInSameDirection'
+  | 'NoExistingSameEdgeTypeToThisNode';
+
 export type Mutation = {
   __typename: 'Mutation';
   activateUser: CreateSession;
@@ -160,6 +174,7 @@ export type CreateEdgeMutationError = {
 export type CreateEdgeMutationErrorType =
   | 'NotAuthorized'
   | 'NotAllowed'
+  | 'AssertionFailed'
   | 'NoSelfReference'
   | 'UnexpectedInput';
 

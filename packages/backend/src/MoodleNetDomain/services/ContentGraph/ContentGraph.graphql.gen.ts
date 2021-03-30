@@ -23,6 +23,20 @@ export type Scalars = {
 
 
 
+export type CtxAssertion =
+  | 'ExecutorIsAuthenticated'
+  | 'ExecutorIsSystem'
+  | 'ExecutorIsAdmin'
+  | 'ExecutorIsAnonymous';
+
+export type NodeAssertion =
+  | 'ExecutorCreatedThisNode'
+  | 'ThisNodeIsExecutorProfile';
+
+export type ConnAssertion =
+  | 'NoExistingSameEdgeBetweenTheTwoNodesInSameDirection'
+  | 'NoExistingSameEdgeTypeToThisNode';
+
 export type Mutation = {
   __typename: 'Mutation';
   createEdge: CreateEdgeMutationPayload;
@@ -115,6 +129,7 @@ export type CreateEdgeMutationError = {
 export type CreateEdgeMutationErrorType =
   | 'NotAuthorized'
   | 'NotAllowed'
+  | 'AssertionFailed'
   | 'NoSelfReference'
   | 'UnexpectedInput';
 
@@ -602,6 +617,9 @@ export type ResolversTypes = {
   Never: ResolverTypeWrapper<Scalars['Never']>;
   Empty: ResolverTypeWrapper<Scalars['Empty']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  CtxAssertion: CtxAssertion;
+  NodeAssertion: NodeAssertion;
+  ConnAssertion: ConnAssertion;
   Mutation: ResolverTypeWrapper<RootValue>;
   CreateNodeInput: CreateNodeInput;
   CreateNodeMutationPayload: ResolversTypes['CreateNodeMutationSuccess'] | ResolversTypes['CreateNodeMutationError'];

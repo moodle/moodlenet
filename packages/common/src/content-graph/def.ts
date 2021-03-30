@@ -1,29 +1,29 @@
-import { GraphDef, _, __ } from './types'
+import { conn, ctx, GraphDef, node } from './types'
 
 export const contentGraphDef: GraphDef = {
   nodes: {
     Profile: {
-      create: { ctx: `${__('CtxExecutorIsSystem')}`, node: true },
-      delete: { ctx: `${__('CtxExecutorIsSystem')}`, node: true },
-      update: { ctx: `${__('CtxExecutorIsAuthenticated')}`, node: `${_('NodeThisNodeIsExecutorProfile')}` },
+      create: { ctx: `${ctx('ExecutorIsSystem')}`, node: true },
+      delete: { ctx: `${ctx('ExecutorIsSystem')}`, node: true },
+      update: { ctx: `${ctx('ExecutorIsAuthenticated')}`, node: `${node('ThisNodeIsExecutorProfile')}` },
       read: { ctx: true, node: true },
     },
     Collection: {
-      create: { ctx: `${__('CtxExecutorIsAuthenticated')}`, node: true },
-      delete: { ctx: `${__('CtxExecutorIsAuthenticated')}`, node: `${_('NodeExecutorCreatedThisNode')}` },
-      update: { ctx: `${__('CtxExecutorIsAuthenticated')}`, node: `${_('NodeExecutorCreatedThisNode')}` },
+      create: { ctx: `${ctx('ExecutorIsAuthenticated')}`, node: true },
+      delete: { ctx: `${ctx('ExecutorIsAuthenticated')}`, node: `${node('ExecutorCreatedThisNode')}` },
+      update: { ctx: `${ctx('ExecutorIsAuthenticated')}`, node: `${node('ExecutorCreatedThisNode')}` },
       read: { ctx: true, node: true },
     },
     Resource: {
-      create: { ctx: `${__('CtxExecutorIsAuthenticated')}`, node: true },
-      delete: { ctx: `${__('CtxExecutorIsAuthenticated')}`, node: `${_('NodeExecutorCreatedThisNode')}` },
-      update: { ctx: `${__('CtxExecutorIsAuthenticated')}`, node: `${_('NodeExecutorCreatedThisNode')}` },
+      create: { ctx: `${ctx('ExecutorIsAuthenticated')}`, node: true },
+      delete: { ctx: `${ctx('ExecutorIsAuthenticated')}`, node: `${node('ExecutorCreatedThisNode')}` },
+      update: { ctx: `${ctx('ExecutorIsAuthenticated')}`, node: `${node('ExecutorCreatedThisNode')}` },
       read: { ctx: true, node: true },
     },
     Subject: {
-      create: { ctx: `${__('CtxExecutorIsSystem')}`, node: true },
-      delete: { ctx: `${__('CtxExecutorIsSystem')}`, node: true },
-      update: { ctx: `${__('CtxExecutorIsSystem')}`, node: true },
+      create: { ctx: `${ctx('ExecutorIsAdmin')}`, node: true },
+      delete: { ctx: `${ctx('ExecutorIsAdmin')}`, node: true },
+      update: { ctx: `${ctx('ExecutorIsAdmin')}`, node: true },
       read: { ctx: true, node: true },
     },
   },
@@ -33,15 +33,15 @@ export const contentGraphDef: GraphDef = {
       ['Resource'],
       {
         create: {
-          ctx: `${__('CtxExecutorIsAuthenticated')}`,
-          conn: `${_('ConnNoExistingSameEdgeBetweenTheTwoNodesInSameDirection')} `,
-          from: `${_('NodeExecutorCreatedThisNode')}`,
+          ctx: `${ctx('ExecutorIsAuthenticated')}`,
+          conn: `${conn('NoExistingSameEdgeBetweenTheTwoNodesInSameDirection')} `,
+          from: `${node('ExecutorCreatedThisNode')}`,
           to: true,
         },
         delete: {
-          ctx: `${__('CtxExecutorIsAuthenticated')}`,
+          ctx: `${ctx('ExecutorIsAuthenticated')}`,
           conn: true,
-          from: `${_('NodeExecutorCreatedThisNode')}`,
+          from: `${node('ExecutorCreatedThisNode')}`,
           to: true,
         },
         traverse: {
@@ -57,16 +57,16 @@ export const contentGraphDef: GraphDef = {
       ['Resource', 'Collection'],
       {
         create: {
-          ctx: `${__('CtxExecutorIsAuthenticated')}`,
-          conn: `${_('ConnNoExistingSameEdgeBetweenTheTwoNodesInSameDirection')} `,
+          ctx: `${ctx('ExecutorIsAuthenticated')}`,
+          conn: `${conn('NoExistingSameEdgeBetweenTheTwoNodesInSameDirection')} `,
           from: true,
-          to: `${_('NodeExecutorCreatedThisNode')}`,
+          to: `${node('ExecutorCreatedThisNode')}`,
         },
         delete: {
-          ctx: `${__('CtxExecutorIsAuthenticated')}`,
+          ctx: `${ctx('ExecutorIsAuthenticated')}`,
           conn: true,
           from: true,
-          to: `${_('NodeExecutorCreatedThisNode')}`,
+          to: `${node('ExecutorCreatedThisNode')}`,
         },
         traverse: {
           ctx: true,
@@ -82,15 +82,15 @@ export const contentGraphDef: GraphDef = {
       ['Collection', 'Profile', 'Subject'],
       {
         create: {
-          ctx: `${__('CtxExecutorIsAuthenticated')}`,
-          conn: `${_('ConnNoExistingSameEdgeBetweenTheTwoNodesInSameDirection')} `,
-          from: `${_('NodeThisNodeIsExecutorProfile')}`,
+          ctx: `${ctx('ExecutorIsAuthenticated')}`,
+          conn: `${conn('NoExistingSameEdgeBetweenTheTwoNodesInSameDirection')} `,
+          from: `${node('ThisNodeIsExecutorProfile')}`,
           to: true,
         },
         delete: {
-          ctx: `${__('CtxExecutorIsAuthenticated')}`,
+          ctx: `${ctx('ExecutorIsAuthenticated')}`,
           conn: true,
-          from: `${_('NodeThisNodeIsExecutorProfile')}`,
+          from: `${node('ThisNodeIsExecutorProfile')}`,
           to: true,
         },
         traverse: {
@@ -107,15 +107,15 @@ export const contentGraphDef: GraphDef = {
       ['Resource'],
       {
         create: {
-          ctx: `${__('CtxExecutorIsAuthenticated')}`,
-          conn: `${_('ConnNoExistingSameEdgeBetweenTheTwoNodesInSameDirection')} `,
-          from: `${_('NodeThisNodeIsExecutorProfile')}`,
+          ctx: `${ctx('ExecutorIsAuthenticated')}`,
+          conn: `${conn('NoExistingSameEdgeBetweenTheTwoNodesInSameDirection')} `,
+          from: `${node('ThisNodeIsExecutorProfile')}`,
           to: true,
         },
         delete: {
-          ctx: `${__('CtxExecutorIsAuthenticated')}`,
+          ctx: `${ctx('ExecutorIsAuthenticated')}`,
           conn: true,
-          from: `${_('NodeThisNodeIsExecutorProfile')}`,
+          from: `${node('ThisNodeIsExecutorProfile')}`,
           to: true,
         },
         traverse: {
@@ -131,10 +131,10 @@ export const contentGraphDef: GraphDef = {
       ['Resource', 'Collection'],
       {
         create: {
-          ctx: `${__('CtxExecutorIsAuthenticated')}`,
-          conn: `${_('ConnNoExistingSameEdgeTypeToNode')} `,
-          from: `${_('NodeThisNodeIsExecutorProfile')}`,
-          to: true,
+          ctx: `${ctx('ExecutorIsAuthenticated')}`,
+          conn: `${conn('NoExistingSameEdgeTypeToThisNode')} `,
+          from: `${node('ThisNodeIsExecutorProfile')}`,
+          to: `${node('ExecutorCreatedThisNode')}`,
         },
         delete: {
           ctx: false,

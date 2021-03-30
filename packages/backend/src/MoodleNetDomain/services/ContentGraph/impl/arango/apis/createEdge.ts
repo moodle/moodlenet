@@ -35,12 +35,16 @@ export const createEdgeWorker = ({
   if (!mEdge) {
     return 'NotAllowed'
   }
+  if ('CreateEdgeAssertionsFailed' in mEdge) {
+    return 'AssertionFailed'
+  }
 
   emit<MoodleNetArangoContentGraphSubDomain>()(
     'ContentGraph.Edge.Created',
     { edge: mEdge },
     mergeFlow(ctx.flow, [edgeType]),
   )
+
   return mEdge
 }
 
@@ -48,10 +52,10 @@ type CtxAssertionMap = {
   [t in CtxAssertion]: (ctx: MoodleNetExecutionContext) => boolean
 }
 export const ctxAssertionMap: CtxAssertionMap = {
-  CtxExecutorIsAdmin: ctx => ctx.type === 'session' && ctx.role === Role.Admin,
-  CtxExecutorIsAuthenticated: ctx => ctx.type === 'session',
-  CtxExecutorIsAnonymous: ctx => ctx.type === 'anon',
-  CtxExecutorIsSystem: ctx => ctx.type === 'system',
+  ExecutorIsAdmin: ctx => ctx.type === 'session' && ctx.role === Role.Admin,
+  ExecutorIsAuthenticated: ctx => ctx.type === 'session',
+  ExecutorIsAnonymous: ctx => ctx.type === 'anon',
+  ExecutorIsSystem: ctx => ctx.type === 'system',
 }
 export const assertCtx = ({
   edgeType,

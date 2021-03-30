@@ -1,0 +1,15 @@
+enum CtxAssertion {
+  ExecutorIsAuthenticated
+  ExecutorIsSystem
+  ExecutorIsAdmin
+  ExecutorIsAnonymous
+}
+
+enum NodeAssertion {
+  ExecutorCreatedThisNode
+  ThisNodeIsExecutorProfile
+}
+enum ConnAssertion {
+  NoExistingSameEdgeBetweenTheTwoNodesInSameDirection
+  NoExistingSameEdgeTypeToThisNode
+}

@@ -1,4 +1,15 @@
-import { EdgeType as E, NodeType as N } from '../pub-graphql/types.graphql.gen'
+export { ConnAssertion, CtxAssertion, NodeAssertion } from '../pub-graphql/types.graphql.gen'
+import {
+  ConnAssertion,
+  CtxAssertion,
+  EdgeType as E,
+  NodeAssertion,
+  NodeType as N,
+} from '../pub-graphql/types.graphql.gen'
+
+export type GlyphAssertion = NodeAssertion | ConnAssertion
+export type Assertion = CtxAssertion | GlyphAssertion
+
 export type AssertionExpr = string | boolean
 
 export type EdgeOpAssertion = {
@@ -33,18 +44,6 @@ export type GraphDef = {
 }
 
 //Assertions
-export const __ = (_: CtxAssertion) => _
-export const _ = (_: Assertion) => _
-export type CtxAssertion =
-  | 'CtxExecutorIsSystem'
-  | 'CtxExecutorIsAuthenticated'
-  | 'CtxExecutorIsAdmin'
-  | 'CtxExecutorIsAnonymous'
-
-export type Assertion =
-  //NODE
-  | 'NodeExecutorCreatedThisNode'
-  | 'NodeThisNodeIsExecutorProfile'
-  //CONNECTION
-  | 'ConnNoExistingSameEdgeBetweenTheTwoNodesInSameDirection'
-  | 'ConnNoExistingSameEdgeTypeToNode'
+export const ctx = (_: CtxAssertion) => _
+export const node = (_: NodeAssertion) => _
+export const conn = (_: ConnAssertion) => _
