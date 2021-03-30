@@ -10,6 +10,6 @@ enum NodeAssertion {
   ThisNodeIsExecutorProfile
 }
 enum ConnAssertion {
-  NoExistingSameEdgeBetweenTheTwoNodesInSameDirection
+  NoExistingSameEdgeTypeInSameDirectionBetweenTheSameTwoNodes
   NoExistingSameEdgeTypeToThisNode
 }

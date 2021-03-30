@@ -1,13 +1,14 @@
 import { Assertion, AssertionExpr, ConnAssertion, NodeAssertion } from '@moodlenet/common/lib/content-graph'
 import { EdgeType } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
 import BoolExpr from 'boolean-expressions'
+import { ctxAssertionMap } from '../../../../../../assertCtx'
 import { MoodleNetExecutionContext } from '../../../../../../types'
 import { connAssertionMap } from './edge'
 import { nodeAssertionMap } from './node'
 
 export type AssertionArg = {
   ctx: MoodleNetExecutionContext
-  edgeType: EdgeType
+  edgeType: EdgeType | null
   thisNodeVar: string | null
   edgeVar: string | null
 }
@@ -22,7 +23,7 @@ export const toAqlAssertionExprMapAndAqlString = ({
   expr: AssertionExpr
   thisNodeVar: string | null
   edgeVar: string | null
-  edgeType: EdgeType
+  edgeType: EdgeType | null
   ctx: MoodleNetExecutionContext
 }) => {
   const assertionMapResult = toAqlAssertionExprMap({
@@ -72,29 +73,31 @@ export const toAqlAssertionExprMap = ({
   expr: AssertionExpr
   thisNodeVar: string | null
   edgeVar: string | null
-  edgeType: EdgeType
+  edgeType: EdgeType | null
   ctx: MoodleNetExecutionContext
 }) => {
   if (typeof expr === 'boolean') {
-    return `${expr}`
+    return `( ${expr} )`
   }
   const boolExpr = new BoolExpr(expr)
   const exprVarNames = boolExpr.getVariableNames() as Assertion[]
-  const aqlExprMap = exprVarNames.reduce((expression, exprVarName) => {
+  const aqlExprMap = exprVarNames.reduce((expressionsMap, exprVarName) => {
     const assertionFn =
       exprVarName in nodeAssertionMap
         ? nodeAssertionMap[exprVarName as NodeAssertion]
         : exprVarName in connAssertionMap
+        ? connAssertionMap[exprVarName as ConnAssertion]
+        : exprVarName in ctxAssertionMap
         ? connAssertionMap[exprVarName as ConnAssertion]
         : null
     if (!assertionFn) {
       throw new Error(`No assertion implementation for expression name: "${exprVarName}"`)
     }
     const assertion = assertionFn({ ctx, edgeType, thisNodeVar, edgeVar })
-    const comment = `/* ${thisNodeVar || ''}${exprVarName} -> */`
+    const comment = `/* ${thisNodeVar || ''} ${exprVarName} :*/`
     return {
-      ...expression,
-      [exprVarName]: `( ${comment} ${assertion})`,
+      ...expressionsMap,
+      [exprVarName]: `( ${comment} ${assertion} )`,
     }
   }, {} as { [assertion in Assertion]?: string })
 

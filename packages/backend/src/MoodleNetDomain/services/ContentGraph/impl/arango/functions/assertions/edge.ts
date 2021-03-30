@@ -10,7 +10,10 @@ export type ConnAssertionMap = {
 }
 
 export const connAssertionMap: ConnAssertionMap = {
-  NoExistingSameEdgeBetweenTheTwoNodesInSameDirection: ({ edgeType }) => {
+  NoExistingSameEdgeTypeInSameDirectionBetweenTheSameTwoNodes: ({ edgeType }) => {
+    if (!edgeType) {
+      return `(false /*NoExistingSameEdgeTypeInSameDirectionBetweenTheSameTwoNodes edgeType:${edgeType}*/)`
+    }
     return `LENGTH(
       FOR edge  IN ${edgeType}  
         FILTER edge._from == from._id and edge._to == to._id
@@ -19,8 +22,8 @@ export const connAssertionMap: ConnAssertionMap = {
       ) < 1`
   },
   NoExistingSameEdgeTypeToThisNode: ({ edgeType, thisNodeVar }) => {
-    if (!thisNodeVar) {
-      return `(false /*NoExistingSameEdgeTypeToThisNode thisNodeVar:${thisNodeVar}*/)`
+    if (!(thisNodeVar && edgeType)) {
+      return `(false /*NoExistingSameEdgeTypeToThisNode thisNodeVar:${thisNodeVar} edgeType:${edgeType}*/)`
     }
     return `LENGTH(
       FOR edge IN ${edgeType}  

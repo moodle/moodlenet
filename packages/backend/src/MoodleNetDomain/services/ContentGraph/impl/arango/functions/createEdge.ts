@@ -1,5 +1,5 @@
-import { GlyphAssertion } from '@moodlenet/common/lib/content-graph'
-import { ConnAssertion, EdgeType } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
+import { Assertion } from '@moodlenet/common/lib/content-graph'
+import { EdgeType } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
 import { Id, IdKey, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { aqlstr, ulidKey } from '../../../../../../lib/helpers/arango'
 import { getSessionContext } from '../../../../../MoodleNetGraphQL'
@@ -28,7 +28,7 @@ export const createEdge = async <Type extends EdgeType>({
 }) => {
   key = key ?? ulidKey()
 
-  const { profileId } = getSessionContext(ctx)
+  const { profileId: creatorId } = getSessionContext(ctx)
   const fromType = nodeTypeFromId(from)
   const toType = nodeTypeFromId(to)
 
@@ -38,7 +38,7 @@ export const createEdge = async <Type extends EdgeType>({
   }
 
   const _meta: ShallowEdgeMeta = {
-    creator: { _id: profileId } as GQL.Profile,
+    creator: { _id: creatorId } as GQL.Profile,
     created: new Date(),
     updated: new Date(),
   }
@@ -57,10 +57,11 @@ export const createEdge = async <Type extends EdgeType>({
   const q = `
     let from = DOCUMENT(${aqlstr(from)})
     let to = DOCUMENT(${aqlstr(to)})
+    let newedge = ${aqlstr(newedge)}
 
     FILTER !!from AND !!to AND ( ${aqlAssertionMaps.filter} )
 
-    INSERT ${aqlstr(newedge)} into ${edgeType}
+    INSERT newedge into ${edgeType}
 
     return NEW
   `
@@ -86,7 +87,7 @@ export const createEdge = async <Type extends EdgeType>({
   const assertionCursor = await db.query(assertionFailedQ)
   const assertionResult = await assertionCursor.next()
   const assetionMapValues: {
-    [a in ConnAssertion | GlyphAssertion | 'fromExists' | 'toExists']: boolean
+    [a in Assertion | 'fromExists' | 'toExists']?: boolean
   } = assertionResult
 
   const assertionFailedQResult = {

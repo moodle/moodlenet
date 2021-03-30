@@ -105,7 +105,7 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "NoExistingSameEdgeBetweenTheTwoNodesInSameDirection",
+            "name": "NoExistingSameEdgeTypeInSameDirectionBetweenTheSameTwoNodes",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -868,6 +868,12 @@
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "AssertionFailed",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "possibleTypes": null
@@ -1324,6 +1330,12 @@
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "AssertionFailed",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "possibleTypes": null
@@ -1539,6 +1551,12 @@
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "AssertionFailed",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "possibleTypes": null
@@ -1684,6 +1702,12 @@
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "AssertionFailed",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "possibleTypes": null
@@ -1826,6 +1850,12 @@
           },
           {
             "name": "NotAuthorized",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "AssertionFailed",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

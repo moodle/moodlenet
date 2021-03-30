@@ -22,6 +22,7 @@ type CreateNodeMutationError {
 enum CreateNodeMutationErrorType {
   NotAuthorized
   UnexpectedInput
+  AssertionFailed
 }
 # $ CreateNode
 
@@ -65,6 +66,7 @@ enum UpdateNodeMutationErrorType {
   NotFound
   NotAuthorized
   UnexpectedInput
+  AssertionFailed
 }
 # $ UpdateNode
 
@@ -85,6 +87,7 @@ enum UpdateEdgeMutationErrorType {
   NotFound
   NotAuthorized
   UnexpectedInput
+  AssertionFailed
 }
 # $ UpdateEdge
 
@@ -104,6 +107,7 @@ type DeleteEdgeMutationError {
 enum DeleteEdgeMutationErrorType {
   NotFound
   NotAuthorized
+  AssertionFailed
 }
 # $ DeleteEdge
 
@@ -123,5 +127,6 @@ type DeleteNodeMutationError {
 enum DeleteNodeMutationErrorType {
   NotFound
   NotAuthorized
+  AssertionFailed
 }
 # $ DeleteNode

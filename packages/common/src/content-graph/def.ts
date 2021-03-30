@@ -34,7 +34,7 @@ export const contentGraphDef: GraphDef = {
       {
         create: {
           ctx: `${ctx('ExecutorIsAuthenticated')}`,
-          conn: `${conn('NoExistingSameEdgeBetweenTheTwoNodesInSameDirection')} `,
+          conn: `${conn('NoExistingSameEdgeTypeInSameDirectionBetweenTheSameTwoNodes')} `,
           from: `${node('ExecutorCreatedThisNode')}`,
           to: true,
         },
@@ -58,7 +58,7 @@ export const contentGraphDef: GraphDef = {
       {
         create: {
           ctx: `${ctx('ExecutorIsAuthenticated')}`,
-          conn: `${conn('NoExistingSameEdgeBetweenTheTwoNodesInSameDirection')} `,
+          conn: `${conn('NoExistingSameEdgeTypeInSameDirectionBetweenTheSameTwoNodes')} `,
           from: true,
           to: `${node('ExecutorCreatedThisNode')}`,
         },
@@ -83,7 +83,7 @@ export const contentGraphDef: GraphDef = {
       {
         create: {
           ctx: `${ctx('ExecutorIsAuthenticated')}`,
-          conn: `${conn('NoExistingSameEdgeBetweenTheTwoNodesInSameDirection')} `,
+          conn: `${conn('NoExistingSameEdgeTypeInSameDirectionBetweenTheSameTwoNodes')} `,
           from: `${node('ThisNodeIsExecutorProfile')}`,
           to: true,
         },
@@ -108,7 +108,7 @@ export const contentGraphDef: GraphDef = {
       {
         create: {
           ctx: `${ctx('ExecutorIsAuthenticated')}`,
-          conn: `${conn('NoExistingSameEdgeBetweenTheTwoNodesInSameDirection')} `,
+          conn: `${conn('NoExistingSameEdgeTypeInSameDirectionBetweenTheSameTwoNodes')} `,
           from: `${node('ThisNodeIsExecutorProfile')}`,
           to: true,
         },

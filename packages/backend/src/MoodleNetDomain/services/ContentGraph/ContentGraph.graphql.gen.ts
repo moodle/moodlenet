@@ -34,7 +34,7 @@ export type NodeAssertion =
   | 'ThisNodeIsExecutorProfile';
 
 export type ConnAssertion =
-  | 'NoExistingSameEdgeBetweenTheTwoNodesInSameDirection'
+  | 'NoExistingSameEdgeTypeInSameDirectionBetweenTheSameTwoNodes'
   | 'NoExistingSameEdgeTypeToThisNode';
 
 export type Mutation = {
@@ -100,7 +100,8 @@ export type CreateNodeMutationError = {
 
 export type CreateNodeMutationErrorType =
   | 'NotAuthorized'
-  | 'UnexpectedInput';
+  | 'UnexpectedInput'
+  | 'AssertionFailed';
 
 export type CreateEdgeInput = {
   AppliesTo?: Maybe<Scalars['Empty']>;
@@ -158,7 +159,8 @@ export type UpdateNodeMutationError = {
 export type UpdateNodeMutationErrorType =
   | 'NotFound'
   | 'NotAuthorized'
-  | 'UnexpectedInput';
+  | 'UnexpectedInput'
+  | 'AssertionFailed';
 
 export type UpdateEdgeInput = {
   AppliesTo?: Maybe<Scalars['Empty']>;
@@ -186,7 +188,8 @@ export type UpdateEdgeMutationError = {
 export type UpdateEdgeMutationErrorType =
   | 'NotFound'
   | 'NotAuthorized'
-  | 'UnexpectedInput';
+  | 'UnexpectedInput'
+  | 'AssertionFailed';
 
 export type DeleteEdgeInput = {
   _id: Scalars['ID'];
@@ -208,7 +211,8 @@ export type DeleteEdgeMutationError = {
 
 export type DeleteEdgeMutationErrorType =
   | 'NotFound'
-  | 'NotAuthorized';
+  | 'NotAuthorized'
+  | 'AssertionFailed';
 
 export type DeleteNodeInput = {
   _id: Scalars['ID'];
@@ -230,7 +234,8 @@ export type DeleteNodeMutationError = {
 
 export type DeleteNodeMutationErrorType =
   | 'NotFound'
-  | 'NotAuthorized';
+  | 'NotAuthorized'
+  | 'AssertionFailed';
 
 export type Page = {
   pageInfo: PageInfo;
