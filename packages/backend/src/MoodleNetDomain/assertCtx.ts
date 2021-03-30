@@ -30,7 +30,7 @@ export const assertCtx = ({
     }
     return ctxAssertionMap[exprVar as CtxAssertion]({ ctx })
   })
-  console.log({ ctxAssertion, ctx, exprVars, truthyVars })
+  // console.log({ ctxAssertion, ctx, exprVars, truthyVars })
 
   return boolExpr.evaluate(truthyVars) ? true : false
 }

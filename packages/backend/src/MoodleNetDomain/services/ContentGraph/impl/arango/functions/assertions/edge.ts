@@ -80,11 +80,11 @@ export const getEdgeOpAqlAssertions = ({
     from: ${fromExprMap.aqlExprMapString},
     to: ${toExprMap.aqlExprMapString}
   }`
-  const filter = `( ${connExprMap.aqlFilter} AND ${fromExprMap.aqlFilter} AND ${toExprMap.aqlFilter} )`
+  const renderedAqlFilterExpr = `( ${connExprMap.aqlFilter} AND ${fromExprMap.aqlFilter} AND ${toExprMap.aqlFilter} )`
   return {
     varAssignment,
     assertionMapVarName,
-    filter,
+    renderedAqlFilterExpr,
     edgeOpAssertions,
   }
 }

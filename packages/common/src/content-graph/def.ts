@@ -47,8 +47,12 @@ export const contentGraphDef: GraphDef = {
         traverse: {
           ctx: true,
           conn: true,
+          /* the following *MUST* be true at the moment 
+            from|to node assertions can't run in traverse scope with curr impl
+          */
           from: true,
           to: true,
+          /* will use the main target-node read-access assertions */
         },
       },
     ],
@@ -71,8 +75,12 @@ export const contentGraphDef: GraphDef = {
         traverse: {
           ctx: true,
           conn: true,
+          /* the following *MUST* be true at the moment 
+            from|to node assertions can't run in traverse scope with curr impl
+          */
           from: true,
           to: true,
+          /* will use the main target-node read-access assertions */
         },
       },
     ],
@@ -96,8 +104,12 @@ export const contentGraphDef: GraphDef = {
         traverse: {
           ctx: true,
           conn: true,
+          /* the following *MUST* be true at the moment 
+            from|to node assertions can't run in traverse scope with curr impl
+          */
           from: true,
           to: true,
+          /* will use the main target-node read-access assertions */
         },
       },
     ],
@@ -121,8 +133,12 @@ export const contentGraphDef: GraphDef = {
         traverse: {
           ctx: true,
           conn: true,
+          /* the following *MUST* be true at the moment 
+            from|to node assertions can't run in traverse scope with curr impl
+          */
           from: true,
           to: true,
+          /* will use the main target-node read-access assertions */
         },
       },
     ],
@@ -145,8 +161,12 @@ export const contentGraphDef: GraphDef = {
         traverse: {
           ctx: true,
           conn: true,
+          /* the following *MUST* be true at the moment 
+            from|to node assertions can't run in traverse scope with curr impl
+          */
           from: true,
           to: true,
+          /* will use the main target-node read-access assertions */
         },
       },
     ],

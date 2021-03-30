@@ -1,8 +1,11 @@
-import { Id } from '@moodlenet/common/lib/utils/content-graph'
+import { Id, parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { aqlstr } from '../../../../../../lib/helpers/arango'
+import { MoodleNetExecutionContext } from '../../../../../types'
 import * as GQL from '../../../ContentGraph.graphql.gen'
 import { Persistence } from '../types'
+import { getEdgeOpAqlAssertions } from './assertions/edge'
+import { getNodeOpAqlAssertions } from './assertions/node'
 import { cursorPaginatedQuery } from './helpers'
 
 export const traverseEdges = async ({
@@ -13,6 +16,7 @@ export const traverseEdges = async ({
   targetNodeType,
   inverse,
   targetNodeIds,
+  ctx,
 }: {
   persistence: Persistence
   parentNodeId: Id
@@ -21,11 +25,36 @@ export const traverseEdges = async ({
   inverse: boolean
   page: Maybe<GQL.PaginationInput>
   targetNodeIds: Maybe<Id[]>
+  ctx: MoodleNetExecutionContext
 }): Promise<GQL.RelPage> => {
+  const { nodeType: parentNodeType } = parseNodeId(parentNodeId)
   const targetSide = inverse ? 'from' : 'to'
   const parentSide = inverse ? 'to' : 'from'
 
-  // TODO: auth&policies !
+  const aqlTargetNodeAssertionMaps = getNodeOpAqlAssertions({
+    ctx,
+    op: 'read',
+    nodeType: targetNodeType,
+    nodeVar: 'targetNode',
+  })
+  if (typeof aqlTargetNodeAssertionMaps === 'string') {
+    throw new Error(`aqlTargetNodeAssertionMaps->${aqlTargetNodeAssertionMaps}`)
+  }
+  const fromType = inverse ? targetNodeType : parentNodeType
+  const toType = !inverse ? targetNodeType : parentNodeType
+  const aqlEdgeAssertionMaps = getEdgeOpAqlAssertions({
+    ctx,
+    edgeType,
+    edgeVar: 'edge',
+    op: 'traverse',
+    fromType,
+    toType,
+  })
+  if (typeof aqlEdgeAssertionMaps === 'string') {
+    throw new Error(`aqlEdgeAssertionMaps->${aqlEdgeAssertionMaps}`)
+  }
+
+  const edgeAndNodeAssertionFilters = `( ${aqlEdgeAssertionMaps.renderedAqlFilterExpr} AND ${aqlTargetNodeAssertionMaps.renderedAqlFilterExpr} )`
 
   const targetIdsFilter =
     targetNodeIds && targetNodeIds.length ? `&& edge._${targetSide} IN [${targetNodeIds.map(aqlstr).join(',')}]` : ''
@@ -43,7 +72,7 @@ export const traverseEdges = async ({
           ${targetIdsFilter}
 
         LET targetNode=Document(edge._${targetSide})
-        // FILTER $_{targetNodeAccessFilter}
+        FILTER ${edgeAndNodeAssertionFilters}
       
 
       ${pageFilterSortLimit}

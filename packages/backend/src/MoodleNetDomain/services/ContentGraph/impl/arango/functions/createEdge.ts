@@ -59,13 +59,13 @@ export const createEdge = async <Type extends EdgeType>({
     let to = DOCUMENT(${aqlstr(to)})
     let newedge = ${aqlstr(newedge)}
 
-    FILTER !!from AND !!to AND ( ${aqlAssertionMaps.filter} )
+    FILTER !!from AND !!to AND ( ${aqlAssertionMaps.renderedAqlFilterExpr} )
 
     INSERT newedge into ${edgeType}
 
     return NEW
   `
-  console.log(q)
+  // console.log(q)
   const cursor = await db.query(q)
   const result = await cursor.next()
   if (result) {
@@ -83,7 +83,7 @@ export const createEdge = async <Type extends EdgeType>({
       toExists: !!to,
     })
   `
-  console.log({ assertionFailedQ })
+  // console.log({ assertionFailedQ })
   const assertionCursor = await db.query(assertionFailedQ)
   const assertionResult = await assertionCursor.next()
   const assetionMapValues: {
@@ -96,7 +96,7 @@ export const createEdge = async <Type extends EdgeType>({
     edgeOpAssertions: aqlAssertionMaps.edgeOpAssertions,
   } as const
 
-  console.log({ assertionFailedQResult })
+  // console.log({ assertionFailedQResult })
 
   return assertionFailedQResult
 }

@@ -17,7 +17,7 @@ export const getNode = async <Type extends GQL.NodeType = GQL.NodeType>({
   _key: IdKey
   nodeType: Type
 }) => {
-  console.log({ getNode: { ctx } })
+  // console.log({ getNode: { ctx } })
   const aqlAssertionMaps = getNodeOpAqlAssertions({ ctx, op: 'read', nodeType, nodeVar: 'node' })
   if (typeof aqlAssertionMaps === 'string') {
     return null
@@ -26,11 +26,11 @@ export const getNode = async <Type extends GQL.NodeType = GQL.NodeType>({
   const q = `
     let node = Document(${aqlstr(`${nodeType}/${_key}`)})
 
-    FILTER ( ${aqlAssertionMaps.filter} )
+    FILTER ( ${aqlAssertionMaps.renderedAqlFilterExpr} )
 
     return node
   `
-  console.log(q)
+  // console.log(q)
   const cursor = await db.query(q)
   const node = await cursor.next()
   cursor.kill()

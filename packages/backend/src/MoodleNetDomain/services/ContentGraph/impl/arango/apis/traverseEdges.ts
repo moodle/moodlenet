@@ -14,6 +14,7 @@ export const traverseEdgesWorker = ({
   inverse,
   targetNodeType,
   targetNodeIds,
+  ctx,
 }) => {
-  return traverseEdges({ targetNodeIds, edgeType, inverse, page, parentNodeId, persistence, targetNodeType })
+  return traverseEdges({ ctx, targetNodeIds, edgeType, inverse, page, parentNodeId, persistence, targetNodeType })
 }

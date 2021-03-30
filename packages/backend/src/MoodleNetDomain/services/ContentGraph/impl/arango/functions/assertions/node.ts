@@ -58,11 +58,11 @@ export const getNodeOpAqlAssertions = ({
   const varAssignment = `let ${assertionMapVarName} = {
     node: ${nodeExprMap.aqlExprMapString},
   }`
-  const filter = `( ${nodeExprMap.aqlFilter} )`
+  const renderedAqlFilterExpr = `( ${nodeExprMap.aqlFilter} )`
   return {
     varAssignment,
     assertionMapVarName,
-    filter,
+    renderedAqlFilterExpr,
     nodeOpAssertions,
   }
 }

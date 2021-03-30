@@ -83,7 +83,7 @@ export const toAqlAssertionExprMap = ({
   ctx: MoodleNetExecutionContext
 }) => {
   if (typeof expr === 'boolean') {
-    return `( ${expr} )`
+    return `( /* ${thisNodeVar || ''} ${edgeVar || ''} ${edgeType || ''} */ ${expr}  )`
   }
   const boolExpr = new BoolExpr(expr)
   const exprVarNames = boolExpr.getVariableNames() as Assertion[]

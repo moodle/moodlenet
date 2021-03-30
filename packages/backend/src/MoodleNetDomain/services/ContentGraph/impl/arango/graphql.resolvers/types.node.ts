@@ -30,6 +30,7 @@ const _rel: GQL.ResolverFn<
     targetNodeType,
     page,
     targetNodeIds: targetMe && session ? [session.profileId] : null,
+    ctx,
   })
   return pageResult
 }

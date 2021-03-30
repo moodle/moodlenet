@@ -39,13 +39,13 @@ export const createNode = async <Type extends GQL.NodeType>({
   const q = `
     let newnode = ${aqlstr(newnode)}
 
-    FILTER ( ${aqlAssertionMaps.filter} )
+    FILTER ( ${aqlAssertionMaps.renderedAqlFilterExpr} )
 
     INSERT newnode into ${nodeType}
 
     return NEW
   `
-  console.log(q)
+  // console.log(q)
   const cursor = await db.query(q)
   const result = await cursor.next()
   if (result) {
@@ -58,7 +58,7 @@ export const createNode = async <Type extends GQL.NodeType>({
 
     return ${aqlAssertionMaps.assertionMapVarName}
   `
-  console.log({ assertionFailedQ })
+  // console.log({ assertionFailedQ })
   const assertionCursor = await db.query(assertionFailedQ)
   const assertionResult = await assertionCursor.next()
   const assetionMapValues: {
@@ -71,7 +71,7 @@ export const createNode = async <Type extends GQL.NodeType>({
     nodeOpAssertions: aqlAssertionMaps.nodeOpAssertions,
   } as const
 
-  console.log({ assertionFailedQResult })
+  // console.log({ assertionFailedQResult })
 
   return assertionFailedQResult
 }

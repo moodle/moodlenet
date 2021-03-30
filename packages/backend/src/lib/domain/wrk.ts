@@ -84,7 +84,7 @@ export const wrkReplyError = ({ err, wrk }: { wrk: string; err: any }): WrkReply
   let errorDetails = ''
   if (err instanceof Error) {
     errorDetails = `Error<${err.name}>:${err.stack ?? ''}`
-    console.log(errorDetails)
+    console.error(`${wrk}: ${err} ${errorDetails}`)
   }
   return {
     ___WRK_REPLY_ERROR: `${wrk}: ${err} ${errorDetails}`,

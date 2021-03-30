@@ -34,7 +34,7 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
       >
       Create: WrkDef<
         <Type extends GQL.NodeType>(_: {
-          ctx: MoodleNetAuthenticatedExecutionContext
+          ctx: MoodleNetAuthenticatedExecutionContext //TODO try make them MoodleNetExecutionContext
           key?: IdKey // remove this .. it was only necessary for profile creation on accuont activation, change the flow and disjoint the two
           nodeType: Type
           data: CreateNodeData<Type>
@@ -45,7 +45,7 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
     Edge: {
       Create: WrkDef<
         <Type extends GQL.EdgeType>(_: {
-          ctx: MoodleNetAuthenticatedExecutionContext
+          ctx: MoodleNetAuthenticatedExecutionContext //TODO try make them MoodleNetExecutionContext
           data: CreateEdgeData<Type>
           edgeType: Type
           from: Id
@@ -56,6 +56,7 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
       Created: Event<{ edge: ShallowEdge }>
       Traverse: WrkDef<
         (_: {
+          ctx: MoodleNetExecutionContext
           parentNodeId: Id
           edgeType: GQL.EdgeType
           targetNodeType: GQL.NodeType
