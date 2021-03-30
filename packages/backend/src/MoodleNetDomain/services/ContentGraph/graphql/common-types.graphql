@@ -20,6 +20,7 @@ type NodeMeta {
 }
 
 type EdgeMeta {
+  creator: Profile!
   created: DateTime!
   updated: DateTime!
 }

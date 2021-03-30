@@ -310,6 +310,7 @@ export type NodeMeta = {
 
 export type EdgeMeta = {
   __typename: 'EdgeMeta';
+  creator: Profile;
   created: Scalars['DateTime'];
   updated: Scalars['DateTime'];
 };
@@ -937,6 +938,7 @@ export type NodeMetaResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
 };
 
 export type EdgeMetaResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['EdgeMeta'] = ResolversParentTypes['EdgeMeta']> = {
+  creator?: Resolver<ResolversTypes['Profile'], ParentType, ContextType>;
   created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updated?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

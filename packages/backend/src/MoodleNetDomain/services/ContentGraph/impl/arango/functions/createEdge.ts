@@ -2,7 +2,9 @@ import { GlyphAssertion } from '@moodlenet/common/lib/content-graph'
 import { ConnAssertion, EdgeType } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
 import { Id, IdKey, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { aqlstr, ulidKey } from '../../../../../../lib/helpers/arango'
-import { MoodleNetExecutionContext } from '../../../../../types'
+import { getSessionContext } from '../../../../../MoodleNetGraphQL'
+import { MoodleNetAuthenticatedExecutionContext } from '../../../../../types'
+import * as GQL from '../../../ContentGraph.graphql.gen'
 import { CreateEdgeData, ShallowEdgeByType, ShallowEdgeMeta } from '../../../types.node'
 import { Persistence } from '../types'
 import { getEdgeOpAqlAssertions } from './assertions/edge'
@@ -17,7 +19,7 @@ export const createEdge = async <Type extends EdgeType>({
   ctx,
 }: {
   persistence: Persistence
-  ctx: MoodleNetExecutionContext
+  ctx: MoodleNetAuthenticatedExecutionContext
   edgeType: Type
   key?: IdKey // remove this .. it was only necessary for profile creation on accuont activation, change the flow and disjoint the two
   data: CreateEdgeData<Type>
@@ -26,16 +28,20 @@ export const createEdge = async <Type extends EdgeType>({
 }) => {
   key = key ?? ulidKey()
 
-  // const { auth } = ctx
+  const { profileId } = getSessionContext(ctx)
   const fromType = nodeTypeFromId(from)
   const toType = nodeTypeFromId(to)
 
-  const assertions = getEdgeOpAqlAssertions({ ctx, edgeType, fromType, toType, edgeVar: null, op: 'create' })
-  if (!assertions) {
-    return null
+  const aqlAssertionMaps = getEdgeOpAqlAssertions({ ctx, edgeType, edgeVar: null, op: 'create', fromType, toType })
+  if (typeof aqlAssertionMaps === 'string') {
+    return aqlAssertionMaps
   }
 
-  const _meta: ShallowEdgeMeta = { created: new Date(), updated: new Date() }
+  const _meta: ShallowEdgeMeta = {
+    creator: { _id: profileId } as GQL.Profile,
+    created: new Date(),
+    updated: new Date(),
+  }
   const newedge = {
     ...data,
     __typename: edgeType,
@@ -47,7 +53,6 @@ export const createEdge = async <Type extends EdgeType>({
     _to: to,
     _key: key,
   }
-  const aqlAssertionMaps = getEdgeOpAqlAssertions({ ctx, edgeType, edgeVar: null, op: 'create', fromType, toType })
 
   const q = `
     let from = DOCUMENT(${aqlstr(from)})
@@ -65,7 +70,9 @@ export const createEdge = async <Type extends EdgeType>({
   if (result) {
     return result as ShallowEdgeByType<Type>
   }
-  const assertionQ = `
+
+  // Assertions failed
+  const assertionFailedQ = `
     let from = DOCUMENT(${aqlstr(from)})
     let to = DOCUMENT(${aqlstr(to)})
     ${aqlAssertionMaps.varAssignment} 
@@ -75,20 +82,20 @@ export const createEdge = async <Type extends EdgeType>({
       toExists: !!to,
     })
   `
-  console.log(assertionQ)
-  const assertionCursor = await db.query(assertionQ)
+  console.log({ assertionFailedQ })
+  const assertionCursor = await db.query(assertionFailedQ)
   const assertionResult = await assertionCursor.next()
   const assetionMapValues: {
     [a in ConnAssertion | GlyphAssertion | 'fromExists' | 'toExists']: boolean
   } = assertionResult
 
-  const assertionFailedResult = {
+  const assertionFailedQResult = {
     ...assetionMapValues,
     CreateEdgeAssertionsFailed: 'CreateEdgeAssertionsFailed',
     edgeOpAssertions: aqlAssertionMaps.edgeOpAssertions,
   } as const
 
-  console.log({ assertionFailedResult })
+  console.log({ assertionFailedQResult })
 
-  return assertionFailedResult
+  return assertionFailedQResult
 }

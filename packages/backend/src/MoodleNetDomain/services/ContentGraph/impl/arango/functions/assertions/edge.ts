@@ -1,6 +1,7 @@
 import { ConnAssertion, EdgeOp, getEdgeOpAssertions } from '@moodlenet/common/lib/content-graph'
 import { contentGraphDef } from '@moodlenet/common/lib/content-graph/def'
 import { EdgeType, NodeType } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
+import { assertCtx } from '../../../../../../assertCtx'
 import { MoodleNetExecutionContext } from '../../../../../../types'
 import { AssertionArg, toAqlAssertionExprMapAndAqlString } from './lib'
 
@@ -52,14 +53,15 @@ export const getEdgeOpAqlAssertions = ({
     to: toType,
     op,
   })
-  const assertionMapVarName = 'assertionMaps'
   if (!edgeOpAssertions) {
-    return {
-      varAssignment: `let ${assertionMapVarName} = {}`,
-      assertionMapVarName,
-      filter: `( false )`,
-    }
+    return 'no assertions found' // as const
   }
+
+  const m_ctxAssertionFailType = assertCtx({ ctx, ctxAssertion: edgeOpAssertions.ctx })
+  if (!m_ctxAssertionFailType) {
+    return 'unauthorized' // as const
+  }
+
   const baseArg = { ctx, edgeType, edgeVar }
   const connExprMap = toAqlAssertionExprMapAndAqlString({ thisNodeVar: null, expr: edgeOpAssertions.conn, ...baseArg })
   const fromExprMap = toAqlAssertionExprMapAndAqlString({
@@ -69,6 +71,7 @@ export const getEdgeOpAqlAssertions = ({
   })
   const toExprMap = toAqlAssertionExprMapAndAqlString({ thisNodeVar: 'to', expr: edgeOpAssertions.to, ...baseArg })
 
+  const assertionMapVarName = 'assertionMaps'
   const varAssignment = `let ${assertionMapVarName} = {
     conn: ${connExprMap.aqlExprMapString},
     from: ${fromExprMap.aqlExprMapString},

@@ -24,7 +24,7 @@ export const activateNewUser = async ({
   if (!usernameAvailable) {
     return Messages.UsernameNotAvailable
   }
-
+  const userRole: Role = 'User'
   const cursor = await db.query(aql`
     FOR user IN ${User}
     FILTER user.firstActivationToken == ${token}
@@ -35,7 +35,7 @@ export const activateNewUser = async ({
       username: ${username},
       status: ${UserStatus.Active},
       changeEmailRequest: null,
-      role: ${Role.User},
+      role: ${userRole},
       profileId: ${profileId}
     } IN ${User}
     RETURN NEW

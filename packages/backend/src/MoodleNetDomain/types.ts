@@ -45,7 +45,4 @@ export const getSessionExecutionContext = (ctx: MoodleNetExecutionContext) =>
 
 // export const isSystemExecutionContext = (ctx: MoodleNetExecutionContext) => ctx.system
 
-export enum Role {
-  User = 'User',
-  Admin = 'Admin',
-}
+export type Role = 'User' | 'Admin'

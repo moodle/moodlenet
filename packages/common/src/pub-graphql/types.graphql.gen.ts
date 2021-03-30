@@ -356,6 +356,7 @@ export type NodeMeta = {
 
 export type EdgeMeta = {
   __typename: 'EdgeMeta';
+  creator: Profile;
   created: Scalars['DateTime'];
   updated: Scalars['DateTime'];
 };

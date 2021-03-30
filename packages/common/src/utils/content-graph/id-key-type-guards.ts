@@ -43,8 +43,8 @@ export const idKeyFromId = (_: Id): IdKey => {
   return key as IdKey
 }
 
-export const capitalizeNodeType = (_: string): NodeType | null => {
-  const type = _ && _[0].toUpperCase() + _.substr(1)
+export const capitalizeNodeType = (_: string | null | undefined): NodeType | null => {
+  const type = _ && _[0] ? _[0].toUpperCase() + _.substr(1) : null
   if (!(type && isNodeType(type))) {
     return null
   }

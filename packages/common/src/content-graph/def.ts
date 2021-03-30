@@ -132,9 +132,9 @@ export const contentGraphDef: GraphDef = {
       {
         create: {
           ctx: `${ctx('ExecutorIsAuthenticated')}`,
-          conn: `${conn('NoExistingSameEdgeTypeToThisNode')} `,
+          conn: true,
           from: `${node('ThisNodeIsExecutorProfile')}`,
-          to: `${node('ExecutorCreatedThisNode')}`,
+          to: `${conn('NoExistingSameEdgeTypeToThisNode')} `,
         },
         delete: {
           ctx: false,

@@ -3,7 +3,7 @@ import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { Database } from 'arangojs'
 import { enqueue } from '../../../../../../lib/domain/amqp/enqueue'
 import { newFlow } from '../../../../../../lib/domain/flow'
-import { MoodleNetExecutionContext, Role } from '../../../../../types'
+import { MoodleNetExecutionContext } from '../../../../../types'
 import { EdgeType, NodeType } from '../../../ContentGraph.graphql.gen'
 import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentGraphSubDomain'
 import { getPersistence } from '../persistence'
@@ -76,7 +76,7 @@ const makeCtx = async (db: Database): Promise<MoodleNetExecutionContext<'session
   return {
     type: 'session',
     profileId,
-    role: Role.User,
+    role: 'User',
     flow: newFlow(['monkey-populate']),
     username: monkeyTag,
     email: monkeyTag,
