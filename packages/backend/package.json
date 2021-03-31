@@ -35,7 +35,7 @@
     "arangojs": "^7.1.0",
     "argon2": "^0.27.0",
     "axios": "^0.21.1",
-    "boolean-expression": "^2.0.0",
+    "boolean-expressions": "^1.1.1",
     "cors": "^2.8.5",
     "dot": "^1.1.3",
     "dotenv": "^8.2.0",
