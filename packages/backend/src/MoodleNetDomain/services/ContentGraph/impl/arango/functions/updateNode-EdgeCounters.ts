@@ -50,7 +50,7 @@ export const updateNodeEdgeCounters = async ({
         IN ${nodeType}
         RETURN null
       `
-      console.log(`${del ? 'decr' : 'incr'} `)
+      // console.log(`${del ? 'decr' : 'incr'} `)
 
       const cursor = await db.query(qUpd, {}, { count: true })
       await cursor.next()

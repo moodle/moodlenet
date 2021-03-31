@@ -45,7 +45,7 @@ export const globalSearch = async ({
           BOOST( NGRAM_MATCH(node.summary, ${aql_txt}, 0.05, "global-search-ngram"), 0.1 )
         , "text_en")
       
-        FILTER !${isMarkDeleted('node')} ${filterConditions || 'true'}
+        FILTER !${isMarkDeleted('node')} AND ${filterConditions || 'true'}
 
       SORT ( TFIDF(node) * ${sortFactor}) desc, node._key 
       

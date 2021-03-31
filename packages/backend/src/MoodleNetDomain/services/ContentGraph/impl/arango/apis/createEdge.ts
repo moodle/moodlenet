@@ -24,7 +24,7 @@ export const createEdgeWorker = ({
   if ('CreateEdgeAssertionsFailed' in mEdge) {
     return 'AssertionFailed'
   }
-  console.log(`emit create edge`, mEdge._id)
+  // console.log(`emit create edge`, mEdge._id)
 
   emit<MoodleNetArangoContentGraphSubDomain>()(
     'ContentGraph.Edge.Created',

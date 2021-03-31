@@ -26,7 +26,7 @@ export const deleteEdgeWorker = ({
   if ('DeleteEdgeAssertionsFailed' in delEdgeResult) {
     return 'AssertionFailed'
   }
-  console.log(`emit delete edge`, delEdgeResult._id)
+  // console.log(`emit delete edge`, delEdgeResult._id)
   emit<MoodleNetArangoContentGraphSubDomain>()(
     'ContentGraph.Edge.Deleted',
     { edge: delEdgeResult },
