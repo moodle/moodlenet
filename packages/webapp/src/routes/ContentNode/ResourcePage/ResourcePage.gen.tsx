@@ -223,22 +223,7 @@ export type ResourcePageUnfollowMutation = (
 
 export type BasicDeleteEdgeMutationPayload_DeleteEdgeMutationSuccess_Fragment = (
   { __typename: 'DeleteEdgeMutationSuccess' }
-  & { edge?: Types.Maybe<(
-    { __typename: 'AppliesTo' }
-    & Pick<Types.AppliesTo, '_id'>
-  ) | (
-    { __typename: 'Contains' }
-    & Pick<Types.Contains, '_id'>
-  ) | (
-    { __typename: 'Created' }
-    & Pick<Types.Created, '_id'>
-  ) | (
-    { __typename: 'Follows' }
-    & Pick<Types.Follows, '_id'>
-  ) | (
-    { __typename: 'Likes' }
-    & Pick<Types.Likes, '_id'>
-  )> }
+  & Pick<Types.DeleteEdgeMutationSuccess, 'edgeId'>
 );
 
 export type BasicDeleteEdgeMutationPayload_DeleteEdgeMutationError_Fragment = (
@@ -266,11 +251,7 @@ export const BasicCreateEdgeMutationPayloadFragmentDoc = gql`
 export const BasicDeleteEdgeMutationPayloadFragmentDoc = gql`
     fragment BasicDeleteEdgeMutationPayload on DeleteEdgeMutationPayload {
   ... on DeleteEdgeMutationSuccess {
-    edge {
-      ... on IEdge {
-        _id
-      }
-    }
+    edgeId
   }
   ... on DeleteEdgeMutationError {
     type

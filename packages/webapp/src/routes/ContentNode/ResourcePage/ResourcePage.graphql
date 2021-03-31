@@ -94,11 +94,7 @@ mutation ResourcePageUnfollow($edgeId: ID!) {
 
 fragment BasicDeleteEdgeMutationPayload on DeleteEdgeMutationPayload {
   ... on DeleteEdgeMutationSuccess {
-    edge {
-      ... on IEdge {
-        _id
-      }
-    }
+    edgeId
   }
   ... on DeleteEdgeMutationError {
     type

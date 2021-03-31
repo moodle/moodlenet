@@ -1,6 +1,7 @@
 import {
   CreateEdgeMutationErrorType,
   CreateNodeMutationErrorType,
+  DeleteEdgeMutationErrorType,
   Id,
   IdKey,
 } from '@moodlenet/common/lib/utils/content-graph'
@@ -53,7 +54,15 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
           key?: IdKey // remove this .. it was only necessary for profile creation on accuont activation, change the flow and disjoint the two
         }) => Promise<ShallowEdgeByType<Type> | CreateEdgeMutationErrorType>
       >
+      Delete: WrkDef<
+        <Type extends GQL.EdgeType>(_: {
+          ctx: MoodleNetAuthenticatedExecutionContext //TODO try make them MoodleNetExecutionContext
+          edgeType: Type
+          edgeId: Id
+        }) => Promise<ShallowEdge | DeleteEdgeMutationErrorType>
+      >
       Created: Event<{ edge: ShallowEdge }>
+      Deleted: Event<{ edge: ShallowEdge }>
       Traverse: WrkDef<
         (_: {
           ctx: MoodleNetExecutionContext
@@ -75,7 +84,10 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
       }) => Promise<GQL.SearchPage>
     >
     Stats: {
-      MaintainEdgeCounters: SubDef<MoodleNetArangoContentGraphSubDomain, 'ContentGraph.Edge.Created'>
+      MaintainEdgeCounters: {
+        Created: SubDef<MoodleNetArangoContentGraphSubDomain, 'ContentGraph.Edge.Created'>
+        Deleted: SubDef<MoodleNetArangoContentGraphSubDomain, 'ContentGraph.Edge.Deleted'>
+      }
     }
   }
 >

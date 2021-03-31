@@ -98,7 +98,7 @@ input DeleteEdgeInput {
 }
 union DeleteEdgeMutationPayload = DeleteEdgeMutationSuccess | DeleteEdgeMutationError
 type DeleteEdgeMutationSuccess {
-  edge: Edge
+  edgeId: ID
 }
 type DeleteEdgeMutationError {
   type: DeleteEdgeMutationErrorType
@@ -107,6 +107,7 @@ type DeleteEdgeMutationError {
 enum DeleteEdgeMutationErrorType {
   NotFound
   NotAuthorized
+  UnexpectedInput
   AssertionFailed
 }
 # $ DeleteEdge

@@ -8,6 +8,7 @@ import * as GQL from '../../../ContentGraph.graphql.gen'
 import { CreateEdgeData, ShallowEdgeByType, ShallowEdgeMeta } from '../../../types.node'
 import { Persistence } from '../types'
 import { getEdgeOpAqlAssertions } from './assertions/edge'
+import { isMarkDeleted } from './helpers'
 
 export const createEdge = async <Type extends EdgeType>({
   persistence: { db },
@@ -59,7 +60,11 @@ export const createEdge = async <Type extends EdgeType>({
     let to = DOCUMENT(${aqlstr(to)})
     let newedge = ${aqlstr(newedge)}
 
-    FILTER !!from AND !!to AND ( ${aqlAssertionMaps.renderedAqlFilterExpr} )
+    FILTER !!from 
+      AND !!to 
+      AND !${isMarkDeleted('from')}
+      AND !${isMarkDeleted('to')} 
+      AND ( ${aqlAssertionMaps.renderedAqlFilterExpr} )
 
     INSERT newedge into ${edgeType}
 
@@ -81,17 +86,20 @@ export const createEdge = async <Type extends EdgeType>({
     return MERGE(${aqlAssertionMaps.assertionMapVarName},{
       fromExists: !!from,
       toExists: !!to,
+      fromDeleted: ${isMarkDeleted('from')},
+      toDeleted: ${isMarkDeleted('to')},
     })
   `
   // console.log({ assertionFailedQ })
   const assertionCursor = await db.query(assertionFailedQ)
   const assertionResult = await assertionCursor.next()
-  const assetionMapValues: {
-    [a in Assertion | 'fromExists' | 'toExists']?: boolean
+  // console.log({ assertionResult })
+  const assertionMapValues: {
+    [a in Assertion | 'fromExists' | 'toExists' | 'fromDeleted' | 'toDeleted']?: boolean
   } = assertionResult
 
   const assertionFailedQResult = {
-    ...assetionMapValues,
+    ...assertionMapValues,
     CreateEdgeAssertionsFailed: 'CreateEdgeAssertionsFailed',
     edgeOpAssertions: aqlAssertionMaps.edgeOpAssertions,
   } as const

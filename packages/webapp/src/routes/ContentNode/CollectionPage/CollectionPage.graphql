@@ -86,19 +86,15 @@ fragment BasicCreateEdgeMutationPayload on CreateEdgeMutationPayload {
   }
 }
 
-mutation CollectionPageUnfollow($edgeId: ID!) {
-  deleteEdge(input: { _id: $edgeId, edgeType: Follows }) {
+mutation CollectionPageUnfollow($myFollowEdgeId: ID!) {
+  deleteEdge(input: { _id: $myFollowEdgeId, edgeType: Follows }) {
     ...BasicDeleteEdgeMutationPayload
   }
 }
 
 fragment BasicDeleteEdgeMutationPayload on DeleteEdgeMutationPayload {
   ... on DeleteEdgeMutationSuccess {
-    edge {
-      ... on IEdge {
-        _id
-      }
-    }
+    edgeId
   }
   ... on DeleteEdgeMutationError {
     type

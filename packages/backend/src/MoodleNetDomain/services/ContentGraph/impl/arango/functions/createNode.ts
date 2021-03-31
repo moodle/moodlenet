@@ -61,12 +61,12 @@ export const createNode = async <Type extends GQL.NodeType>({
   // console.log({ assertionFailedQ })
   const assertionCursor = await db.query(assertionFailedQ)
   const assertionResult = await assertionCursor.next()
-  const assetionMapValues: {
+  const assertionMapValues: {
     [a in Assertion]?: boolean
   } = assertionResult
 
   const assertionFailedQResult = {
-    ...assetionMapValues,
+    ...assertionMapValues,
     CreateNodeAssertionsFailed: 'CreateNodeAssertionsFailed',
     nodeOpAssertions: aqlAssertionMaps.nodeOpAssertions,
   } as const

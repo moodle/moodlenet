@@ -3,6 +3,8 @@ import {
   CreateEdgeMutationErrorType,
   CreateNodeMutationError,
   CreateNodeMutationErrorType,
+  DeleteEdgeMutationError,
+  DeleteEdgeMutationErrorType,
   Edge,
   Node,
 } from '../../../ContentGraph.graphql.gen'
@@ -28,6 +30,15 @@ export const createEdgeMutationError = (
   details: string | null = null,
 ): CreateEdgeMutationError => ({
   __typename: 'CreateEdgeMutationError',
+  type,
+  details,
+})
+
+export const deleteEdgeMutationError = (
+  type: DeleteEdgeMutationErrorType,
+  details: string | null = null,
+): DeleteEdgeMutationError => ({
+  __typename: 'DeleteEdgeMutationError',
   type,
   details,
 })

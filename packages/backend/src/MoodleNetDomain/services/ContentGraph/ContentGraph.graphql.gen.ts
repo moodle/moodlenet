@@ -200,7 +200,7 @@ export type DeleteEdgeMutationPayload = DeleteEdgeMutationSuccess | DeleteEdgeMu
 
 export type DeleteEdgeMutationSuccess = {
   __typename: 'DeleteEdgeMutationSuccess';
-  edge?: Maybe<Edge>;
+  edgeId?: Maybe<Scalars['ID']>;
 };
 
 export type DeleteEdgeMutationError = {
@@ -212,6 +212,7 @@ export type DeleteEdgeMutationError = {
 export type DeleteEdgeMutationErrorType =
   | 'NotFound'
   | 'NotAuthorized'
+  | 'UnexpectedInput'
   | 'AssertionFailed';
 
 export type DeleteNodeInput = {
@@ -651,7 +652,7 @@ export type ResolversTypes = {
   UpdateEdgeMutationErrorType: UpdateEdgeMutationErrorType;
   DeleteEdgeInput: DeleteEdgeInput;
   DeleteEdgeMutationPayload: ResolversTypes['DeleteEdgeMutationSuccess'] | ResolversTypes['DeleteEdgeMutationError'];
-  DeleteEdgeMutationSuccess: ResolverTypeWrapper<Omit<DeleteEdgeMutationSuccess, 'edge'> & { edge?: Maybe<ResolversTypes['Edge']> }>;
+  DeleteEdgeMutationSuccess: ResolverTypeWrapper<DeleteEdgeMutationSuccess>;
   DeleteEdgeMutationError: ResolverTypeWrapper<DeleteEdgeMutationError>;
   DeleteEdgeMutationErrorType: DeleteEdgeMutationErrorType;
   DeleteNodeInput: DeleteNodeInput;
@@ -731,7 +732,7 @@ export type ResolversParentTypes = {
   UpdateEdgeMutationError: UpdateEdgeMutationError;
   DeleteEdgeInput: DeleteEdgeInput;
   DeleteEdgeMutationPayload: ResolversParentTypes['DeleteEdgeMutationSuccess'] | ResolversParentTypes['DeleteEdgeMutationError'];
-  DeleteEdgeMutationSuccess: Omit<DeleteEdgeMutationSuccess, 'edge'> & { edge?: Maybe<ResolversParentTypes['Edge']> };
+  DeleteEdgeMutationSuccess: DeleteEdgeMutationSuccess;
   DeleteEdgeMutationError: DeleteEdgeMutationError;
   DeleteNodeInput: DeleteNodeInput;
   DeleteNodeMutationPayload: ResolversParentTypes['DeleteNodeMutationSuccess'] | ResolversParentTypes['DeleteNodeMutationError'];
@@ -866,7 +867,7 @@ export type DeleteEdgeMutationPayloadResolvers<ContextType = MoodleNetExecutionC
 };
 
 export type DeleteEdgeMutationSuccessResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['DeleteEdgeMutationSuccess'] = ResolversParentTypes['DeleteEdgeMutationSuccess']> = {
-  edge?: Resolver<Maybe<ResolversTypes['Edge']>, ParentType, ContextType>;
+  edgeId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

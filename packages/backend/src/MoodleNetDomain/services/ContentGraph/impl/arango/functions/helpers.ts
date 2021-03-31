@@ -191,3 +191,7 @@ export const updateRelationCountsOnEdgeLife = async ({
 }
 
 const NODE_META_PROP = '_meta'
+
+const MARK_DELETED_PROP = '__mark_deleted'
+export const isMarkDeleted = (varname: string) => `HAS(${varname}, "${MARK_DELETED_PROP}")`
+export const markDeletedPatch = () => `{ ${MARK_DELETED_PROP}: DATE_NOW() }`

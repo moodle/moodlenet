@@ -4,13 +4,13 @@ import * as GQL from '../../../ContentGraph.graphql.gen'
 import { getUserSessionProfile } from './merge.getUserSessionProfile'
 import { createEdge } from './mutation/createEdge'
 import { createNode } from './mutation/createNode'
+// import { createEdge } from './mutation.createEdge'
+// import { createNode } from './mutation.createNode'
+import { deleteEdge } from './mutation/deleteEdge'
 import { nodePropResolver } from './nodePropResolver'
 import { gqlGlobalSearch } from './query/globalSearch'
 import { node } from './query/node'
 import { NodeResolver } from './types.node'
-// import { createEdge } from './mutation.createEdge'
-// import { createNode } from './mutation.createNode'
-// import { deleteEdge } from './mutation.deleteEdge'
 // import { deleteNode } from './mutation.deleteNode'
 // import { updateEdge } from './mutation.updateEdge'
 // import { updateNode } from './mutation.updateNode'
@@ -32,7 +32,7 @@ export const getContentGraphResolvers = (): GQL.Resolvers => {
     Mutation: {
       createEdge,
       createNode,
-      deleteEdge: (() => {}) as any, //TODO: define resolver
+      deleteEdge,
       deleteNode: (() => {}) as any, //TODO: define resolver
       updateEdge: (() => {}) as any, //TODO: define resolver
       updateNode: (() => {}) as any, //TODO: define resolver

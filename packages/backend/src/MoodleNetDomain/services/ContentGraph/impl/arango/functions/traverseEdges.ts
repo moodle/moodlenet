@@ -6,7 +6,7 @@ import * as GQL from '../../../ContentGraph.graphql.gen'
 import { Persistence } from '../types'
 import { getEdgeOpAqlAssertions } from './assertions/edge'
 import { getNodeOpAqlAssertions } from './assertions/node'
-import { cursorPaginatedQuery } from './helpers'
+import { cursorPaginatedQuery, isMarkDeleted } from './helpers'
 
 export const traverseEdges = async ({
   persistence,
@@ -51,6 +51,7 @@ export const traverseEdges = async ({
     toType,
   })
   if (typeof aqlEdgeAssertionMaps === 'string') {
+    //TODO : decide if keep throwing or return empty page ?
     throw new Error(`aqlEdgeAssertionMaps->${aqlEdgeAssertionMaps}`)
   }
 
@@ -67,7 +68,8 @@ export const traverseEdges = async ({
     page,
     mapQuery: pageFilterSortLimit => `
       FOR edge IN ${edgeType}
-        FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
+        FILTER !${isMarkDeleted('edge')}
+          && edge._${targetSide}Type == ${aqlstr(targetNodeType)}
           && edge._${parentSide} == ${aqlstr(parentNodeId)}
           ${targetIdsFilter}
 

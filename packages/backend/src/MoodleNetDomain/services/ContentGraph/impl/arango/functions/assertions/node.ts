@@ -43,7 +43,7 @@ export const getNodeOpAqlAssertions = ({
     op,
   })
   if (!nodeOpAssertions) {
-    console.error(`no assertions found for Node`, { nodeType, op })
+    console.warn(`no assertions found for Node`, { nodeType, op })
     return 'no assertions found' // as const
   }
 

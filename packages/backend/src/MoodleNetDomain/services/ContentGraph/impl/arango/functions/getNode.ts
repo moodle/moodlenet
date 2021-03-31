@@ -5,6 +5,7 @@ import * as GQL from '../../../ContentGraph.graphql.gen'
 import { ShallowNodeByType } from '../../../types.node'
 import { Persistence } from '../types'
 import { getNodeOpAqlAssertions } from './assertions/node'
+import { isMarkDeleted } from './helpers'
 
 export const getNode = async <Type extends GQL.NodeType = GQL.NodeType>({
   persistence: { db },
@@ -26,7 +27,8 @@ export const getNode = async <Type extends GQL.NodeType = GQL.NodeType>({
   const q = `
     let node = Document(${aqlstr(`${nodeType}/${_key}`)})
 
-    FILTER ( ${aqlAssertionMaps.renderedAqlFilterExpr} )
+    FILTER !${isMarkDeleted('node')}
+      AND ( ${aqlAssertionMaps.renderedAqlFilterExpr} )
 
     return node
   `

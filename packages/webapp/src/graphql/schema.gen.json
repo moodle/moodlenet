@@ -1631,12 +1631,12 @@
         "description": null,
         "fields": [
           {
-            "name": "edge",
+            "name": "edgeId",
             "description": null,
             "args": [],
             "type": {
-              "kind": "UNION",
-              "name": "Edge",
+              "kind": "SCALAR",
+              "name": "ID",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1699,6 +1699,12 @@
           },
           {
             "name": "NotAuthorized",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UnexpectedInput",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

@@ -3,6 +3,7 @@ import { contentGraphDef } from '@moodlenet/common/lib/content-graph/def'
 import { EdgeType, NodeType } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
 import { assertCtx } from '../../../../../../assertCtx'
 import { MoodleNetExecutionContext } from '../../../../../../types'
+import { isMarkDeleted } from '../helpers'
 import { AssertionArg, toAqlAssertionExprMapAndAqlString } from './lib'
 
 export type ConnAssertionMap = {
@@ -16,7 +17,11 @@ export const connAssertionMap: ConnAssertionMap = {
     }
     return `LENGTH(
       FOR edge  IN ${edgeType}  
-        FILTER edge._from == from._id and edge._to == to._id
+        
+        FILTER !${isMarkDeleted('edge')}
+          AND edge._from == from._id 
+          AND edge._to == to._id
+
         limit 1
         return edge 
       ) < 1`
@@ -27,7 +32,10 @@ export const connAssertionMap: ConnAssertionMap = {
     }
     return `LENGTH(
       FOR edge IN ${edgeType}  
-        FILTER edge._to == ${thisNodeVar}._id
+        
+        FILTER !${isMarkDeleted('edge')}
+          AND edge._to == ${thisNodeVar}._id
+        
         limit 1
         return edge
       ) < 1`
@@ -57,7 +65,7 @@ export const getEdgeOpAqlAssertions = ({
     op,
   })
   if (!edgeOpAssertions) {
-    console.error(`no assertions found for Edge`, { edgeType, fromType, toType, op })
+    console.warn(`no assertions found for Edge`, { edgeType, fromType, toType, op })
     return 'no assertions found' // as const
   }
 
@@ -76,7 +84,7 @@ export const getEdgeOpAqlAssertions = ({
   const toExprMap = toAqlAssertionExprMapAndAqlString({ thisNodeVar: 'to', expr: edgeOpAssertions.to, ...baseArg })
 
   const assertionMapVarName = 'assertionMaps'
-  const varAssignment = `let ${assertionMapVarName} = {
+  const varAssignment = `LET ${assertionMapVarName} = {
     conn: ${connExprMap.aqlExprMapString},
     from: ${fromExprMap.aqlExprMapString},
     to: ${toExprMap.aqlExprMapString}

@@ -245,7 +245,7 @@ export type DeleteEdgeMutationPayload = DeleteEdgeMutationSuccess | DeleteEdgeMu
 
 export type DeleteEdgeMutationSuccess = {
   __typename: 'DeleteEdgeMutationSuccess';
-  edge?: Maybe<Edge>;
+  edgeId?: Maybe<Scalars['ID']>;
 };
 
 export type DeleteEdgeMutationError = {
@@ -257,6 +257,7 @@ export type DeleteEdgeMutationError = {
 export type DeleteEdgeMutationErrorType =
   | 'NotFound'
   | 'NotAuthorized'
+  | 'UnexpectedInput'
   | 'AssertionFailed';
 
 export type DeleteNodeInput = {
