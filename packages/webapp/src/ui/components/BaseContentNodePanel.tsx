@@ -11,6 +11,8 @@ export type BaseContentNodePanelProps = {
   likers: number
   followers: number
 }
+
+//FIXME unused comp
 export const BaseContentNodePanel: FC<BaseContentNodePanelProps> = ({
   icon,
   link,

@@ -3,7 +3,7 @@ export type IdKey = string //& { readonly __: unique symbol }
 // export type Id<N extends NodeType = NodeType> = `${N}/${IdKey}` & { readonly __: unique symbol }
 export type Id = string & { readonly __: unique symbol }
 
-export const isIdKey = (_: string | undefined): _ is IdKey => !!_ && true //FIXME: check is ULID
+export const isIdKey = (_: string | undefined): _ is IdKey => !!_ && true //FIXME: proper guard
 export const isId = (_: string | undefined): _ is Id => {
   if (!_) {
     return false

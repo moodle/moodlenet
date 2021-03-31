@@ -37,7 +37,7 @@ export const verifyJwt = ({
   }
   try {
     const sessionCtx = JWT.verify(String(token), jwtPublicKey, jwtVerifyOpts)
-    if (typeof sessionCtx !== 'object' /* TODO: implement checks */) {
+    if (typeof sessionCtx !== 'object' /* TODO: implement proper checks */) {
       return null
     }
     return sessionCtx as MoodleNetExecutionContext<'session'>

@@ -4,7 +4,7 @@ query ResourcePageNode($id: ID!) {
       _id
       name
       icon
-      myFollow: _rel(edge: { type: Follows, node: Profile, inverse: true, targetMe: true }, page: { first: 1 }) {
+      myLike: _rel(edge: { type: Likes, node: Profile, inverse: true, targetMe: true }, page: { first: 1 }) {
         edges {
           edge {
             ... on IEdge {

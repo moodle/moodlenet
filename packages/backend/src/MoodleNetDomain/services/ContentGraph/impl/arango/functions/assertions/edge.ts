@@ -57,6 +57,7 @@ export const getEdgeOpAqlAssertions = ({
     op,
   })
   if (!edgeOpAssertions) {
+    console.error(`no assertions found for Edge`, { edgeType, fromType, toType, op })
     return 'no assertions found' // as const
   }
 

@@ -46,19 +46,24 @@ export const PageHeader: FC<PageHeaderProps> = ({ searchValue, search, homeLink,
       <Menu.Item header position="right">
         {username ? (
           <>
-            <Icon circular name="user circle" size="large" color="orange" />
-            <Dropdown item text={username} header simple icon={false}>
+            <Dropdown item text={username} simple icon={<Icon fitted name="user circle" size="big" color="orange" />}>
               <Dropdown.Menu>
                 <Dropdown.Item onClick={logout}>
                   <Trans>Logout</Trans>
+                </Dropdown.Item>
+                <Dropdown.Item>
+                  <Trans>Add Resource</Trans>
+                </Dropdown.Item>
+                <Dropdown.Item>
+                  <Trans>Add Collection</Trans>
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </>
         ) : (
           <Link href={loginLink}>
-            <Icon circular name="user circle outline" size="large" color="orange" />
             <Trans>Sign in</Trans>
+            <Icon fitted name="user circle outline" size="big" color="orange" />
           </Link>
         )}
       </Menu.Item>
