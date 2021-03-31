@@ -26,6 +26,11 @@
   resolved "https://registry.yarnpkg.com/@types/yup/-/yup-0.29.11.tgz#d654a112973f5e004bf8438122bd7e56a8e5cd7e"
   integrity sha512-9cwk3c87qQKZrT251EDoibiYRILjCmxBvvcb4meofCmx1vdnNcR9gyildy5vOHASpOKMsn42CugxUvcwK5eu1g==
 
+boolean-expression@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/boolean-expression/-/boolean-expression-2.0.0.tgz#711df8d561647a3bc620ea84b7b6d1a0cf0f5dde"
+  integrity sha1-cR341WFkejvGIOqEt7bRoM8PXd4=
+
 lodash-es@^4.17.11:
   version "4.17.20"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.20.tgz#29f6332eefc60e849f869c264bc71126ad61e8f7"

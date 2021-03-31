@@ -20,10 +20,10 @@ export const updateNodeEdgeCounters = async ({
   `
   const cursor = await db.query(q)
   const { from, to } = await cursor.next()
-  await cursor.kill()
+  cursor.kill()
 
   if (!(from && to)) {
-    return false
+    return `nodes not found`
   }
   const { nodeType: fromType } = parseNodeId(from._id)
   const { nodeType: toType } = parseNodeId(to._id)
@@ -53,9 +53,8 @@ export const updateNodeEdgeCounters = async ({
       // console.log(`${del ? 'decr' : 'incr'} `)
 
       const cursor = await db.query(qUpd, {}, { count: true })
-      await cursor.next()
-      await cursor.kill()
-      return !!cursor.count
+      cursor.kill()
+      return cursor.count
     }),
   )
 

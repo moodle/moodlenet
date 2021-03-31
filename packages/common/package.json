@@ -7,6 +7,7 @@
   "dependencies": {
     "@types/path-to-regexp": "^1.7.0",
     "@types/yup": "^0.29.11",
+    "boolean-expression": "^2.0.0",
     "path-to-regexp": "^6.2.0",
     "run-script-os": "^1.1.5",
     "yup": "^0.32.8"
