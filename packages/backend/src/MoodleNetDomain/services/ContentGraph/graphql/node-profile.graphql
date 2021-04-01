@@ -7,6 +7,19 @@ type Profile implements INode & IContentNode {
   _rel(edge: EdgeTypeInput!, page: PaginationInput): RelPage!
 }
 
+input UpdateProfileInput {
+  name: String!
+  summary: String!
+  icon: String
+}
+
+input CreateProfileInput {
+  name: String!
+  summary: String!
+  icon: String
+}
+
+# integrations
 union Node = Profile
 enum NodeType {
   Profile
@@ -17,16 +30,6 @@ type RelCountTargetMap {
 input UpdateNodeInput {
   Profile: UpdateProfileInput
 }
-input UpdateProfileInput {
-  name: String!
-  summary: String!
-  icon: String
-}
 input CreateNodeInput {
   Profile: CreateProfileInput
-}
-input CreateProfileInput {
-  name: String!
-  summary: String!
-  icon: String
 }

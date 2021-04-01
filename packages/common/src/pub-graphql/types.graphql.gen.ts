@@ -335,13 +335,14 @@ export type QueryNodeArgs = {
 
 
 export type IContentNode = {
+  _id: Scalars['ID'];
   name: Scalars['String'];
   summary: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
 };
 
 export type INode = {
-  _id?: Maybe<Scalars['ID']>;
+  _id: Scalars['ID'];
   _rel: RelPage;
   _meta: NodeMeta;
 };
@@ -404,15 +405,6 @@ export type AppliesTo = IEdge & {
   _meta?: Maybe<EdgeMeta>;
 };
 
-export type RelCountMap = {
-  __typename: 'RelCountMap';
-  AppliesTo?: Maybe<RelCount>;
-  Contains?: Maybe<RelCount>;
-  Created?: Maybe<RelCount>;
-  Follows?: Maybe<RelCount>;
-  Likes?: Maybe<RelCount>;
-};
-
 export type Edge = AppliesTo | Contains | Created | Follows | Likes;
 
 export type EdgeType =
@@ -421,6 +413,15 @@ export type EdgeType =
   | 'Created'
   | 'Follows'
   | 'Likes';
+
+export type RelCountMap = {
+  __typename: 'RelCountMap';
+  AppliesTo?: Maybe<RelCount>;
+  Contains?: Maybe<RelCount>;
+  Created?: Maybe<RelCount>;
+  Follows?: Maybe<RelCount>;
+  Likes?: Maybe<RelCount>;
+};
 
 export type Contains = IEdge & {
   __typename: 'Contains';
@@ -456,12 +457,12 @@ export type UserSession = {
   username: Scalars['String'];
 };
 
-export type Collection = INode & IContentNode & {
+export type Collection = IContentNode & INode & {
   __typename: 'Collection';
+  _id: Scalars['ID'];
   name: Scalars['String'];
   summary: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
-  _id: Scalars['ID'];
   _meta: NodeMeta;
   _rel: RelPage;
 };
@@ -470,6 +471,18 @@ export type Collection = INode & IContentNode & {
 export type Collection_RelArgs = {
   edge: EdgeTypeInput;
   page?: Maybe<PaginationInput>;
+};
+
+export type CreateCollectionInput = {
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
+};
+
+export type UpdateCollectionInput = {
+  name?: Maybe<Scalars['String']>;
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
 };
 
 export type Node = Collection | Profile | Resource | Subject;
@@ -486,16 +499,6 @@ export type RelCountTargetMap = {
   Profile?: Maybe<Scalars['Int']>;
   Resource?: Maybe<Scalars['Int']>;
   Subject?: Maybe<Scalars['Int']>;
-};
-
-export type CreateCollectionInput = {
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['String']>;
-};
-
-export type UpdateCollectionInput = {
-  name?: Maybe<Scalars['String']>;
 };
 
 export type Profile = INode & IContentNode & {
@@ -550,6 +553,8 @@ export type CreateResourceInput = {
 
 export type UpdateResourceInput = {
   name?: Maybe<Scalars['String']>;
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
 };
 
 export type Subject = INode & IContentNode & {
@@ -576,6 +581,8 @@ export type CreateSubjectInput = {
 
 export type UpdateSubjectInput = {
   name?: Maybe<Scalars['String']>;
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['String']>;
 };
 
 export type SearchPage = Page & {

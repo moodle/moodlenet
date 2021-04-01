@@ -3,18 +3,17 @@ type Created implements IEdge {
   _meta: EdgeMeta
 }
 
-type RelCountMap {
-  Created: RelCount
-}
+## integrations
 union Edge = Created
 enum EdgeType {
   Created
 }
-
+type RelCountMap {
+  Created: RelCount
+}
 input CreateEdgeInput {
   Created: Empty
 }
-
 input UpdateEdgeInput {
   Created: Empty
 }

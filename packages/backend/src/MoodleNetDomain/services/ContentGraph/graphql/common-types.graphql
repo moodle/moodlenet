@@ -1,13 +1,14 @@
 scalar Cursor
 
 interface IContentNode {
+  _id: ID!
   name: String!
   summary: String!
   icon: String
 }
 
 interface INode {
-  _id: ID
+  _id: ID!
   _rel(edge: EdgeTypeInput!, page: PaginationInput): RelPage!
   _meta: NodeMeta!
 }

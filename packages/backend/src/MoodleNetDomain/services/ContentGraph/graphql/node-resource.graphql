@@ -7,6 +7,19 @@ type Resource implements INode & IContentNode {
   _rel(edge: EdgeTypeInput!, page: PaginationInput): RelPage!
 }
 
+input CreateResourceInput {
+  name: String!
+  summary: String!
+  icon: String
+}
+
+input UpdateResourceInput {
+  name: String
+  summary: String!
+  icon: String
+}
+
+# integrations
 union Node = Resource
 enum NodeType {
   Resource
@@ -14,19 +27,9 @@ enum NodeType {
 type RelCountTargetMap {
   Resource: Int
 }
-
 input CreateNodeInput {
   Resource: CreateResourceInput
 }
-input CreateResourceInput {
-  name: String!
-  summary: String!
-  icon: String
-}
-
 input UpdateNodeInput {
   Resource: UpdateResourceInput
-}
-input UpdateResourceInput {
-  name: String
 }

@@ -3,18 +3,17 @@ type AppliesTo implements IEdge {
   _meta: EdgeMeta
 }
 
-type RelCountMap {
-  AppliesTo: RelCount
-}
+## integrations
 union Edge = AppliesTo
 enum EdgeType {
   AppliesTo
 }
-
+type RelCountMap {
+  AppliesTo: RelCount
+}
 input CreateEdgeInput {
   AppliesTo: Empty
 }
-
 input UpdateEdgeInput {
   AppliesTo: Empty
 }

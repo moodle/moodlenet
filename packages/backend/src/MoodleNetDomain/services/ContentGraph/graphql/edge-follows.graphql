@@ -3,18 +3,17 @@ type Follows implements IEdge {
   _meta: EdgeMeta
 }
 
-type RelCountMap {
-  Follows: RelCount
-}
+## integrations
 union Edge = Follows
 enum EdgeType {
   Follows
 }
-
+type RelCountMap {
+  Follows: RelCount
+}
 input CreateEdgeInput {
   Follows: Empty
 }
-
 input UpdateEdgeInput {
   Follows: Empty
 }

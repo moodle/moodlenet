@@ -1,12 +1,25 @@
-type Collection implements INode & IContentNode {
+type Collection implements IContentNode & INode {
+  _id: ID!
   name: String!
   summary: String!
   icon: String
-  _id: ID!
   _meta: NodeMeta!
   _rel(edge: EdgeTypeInput!, page: PaginationInput): RelPage!
 }
 
+input CreateCollectionInput {
+  name: String!
+  summary: String!
+  icon: String
+}
+
+input UpdateCollectionInput {
+  name: String
+  summary: String!
+  icon: String
+}
+
+# integrations
 union Node = Collection
 enum NodeType {
   Collection
@@ -17,15 +30,6 @@ type RelCountTargetMap {
 input CreateNodeInput {
   Collection: CreateCollectionInput
 }
-input CreateCollectionInput {
-  name: String!
-  summary: String!
-  icon: String
-}
-
 input UpdateNodeInput {
   Collection: UpdateCollectionInput
-}
-input UpdateCollectionInput {
-  name: String
 }

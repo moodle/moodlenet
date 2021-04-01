@@ -7,6 +7,19 @@ type Subject implements INode & IContentNode {
   _rel(edge: EdgeTypeInput!, page: PaginationInput): RelPage!
 }
 
+input CreateSubjectInput {
+  name: String!
+  summary: String!
+  icon: String
+}
+
+input UpdateSubjectInput {
+  name: String
+  summary: String!
+  icon: String
+}
+
+# integrations
 union Node = Subject
 enum NodeType {
   Subject
@@ -14,19 +27,9 @@ enum NodeType {
 type RelCountTargetMap {
   Subject: Int
 }
-
 input CreateNodeInput {
   Subject: CreateSubjectInput
 }
-input CreateSubjectInput {
-  name: String!
-  summary: String!
-  icon: String
-}
-
 input UpdateNodeInput {
   Subject: UpdateSubjectInput
-}
-input UpdateSubjectInput {
-  name: String
 }
