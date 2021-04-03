@@ -1,307 +1,278 @@
-import * as Types from '../../../graphql/pub.graphql.link';
+import * as Apollo from '@apollo/client'
+import { gql } from '@apollo/client'
+import * as Types from '../../../graphql/pub.graphql.link'
 
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
 export type CollectionPageNodeQueryVariables = Types.Exact<{
-  id: Types.Scalars['ID'];
-}>;
+  id: Types.Scalars['ID']
+}>
 
-
-export type CollectionPageNodeQuery = (
-  { __typename: 'Query' }
-  & { node?: Types.Maybe<(
-    { __typename: 'Collection' }
-    & Pick<Types.Collection, '_id' | 'name' | 'icon'>
-    & { myFollow: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { edge: (
-          { __typename: 'AppliesTo' }
-          & Pick<Types.AppliesTo, '_id'>
-        ) | (
-          { __typename: 'Contains' }
-          & Pick<Types.Contains, '_id'>
-        ) | (
-          { __typename: 'Created' }
-          & Pick<Types.Created, '_id'>
-        ) | (
-          { __typename: 'Follows' }
-          & Pick<Types.Follows, '_id'>
-        ) | (
-          { __typename: 'Likes' }
-          & Pick<Types.Likes, '_id'>
-        ) }
-      )> }
-    ), _meta: (
-      { __typename: 'NodeMeta' }
-      & Pick<Types.NodeMeta, 'created'>
-      & { creator: (
-        { __typename: 'Profile' }
-        & Pick<Types.Profile, '_id' | 'name' | 'icon'>
-      ), relCount?: Types.Maybe<(
-        { __typename: 'RelCountMap' }
-        & { Follows?: Types.Maybe<(
-          { __typename: 'RelCount' }
-          & { from?: Types.Maybe<(
-            { __typename: 'RelCountTargetMap' }
-            & Pick<Types.RelCountTargetMap, 'Profile'>
-          )> }
-        )>, Contains?: Types.Maybe<(
-          { __typename: 'RelCount' }
-          & { to?: Types.Maybe<(
-            { __typename: 'RelCountTargetMap' }
-            & Pick<Types.RelCountTargetMap, 'Resource'>
-          )> }
-        )> }
-      )> }
-    ) }
-  ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' }> }
-);
+export type CollectionPageNodeQuery = { __typename: 'Query' } & {
+  node?: Types.Maybe<
+    | ({ __typename: 'Collection' } & Pick<Types.Collection, '_id' | 'name' | 'icon'> & {
+          myFollow: { __typename: 'RelPage' } & {
+            edges: Array<
+              { __typename: 'RelPageEdge' } & {
+                edge:
+                  | ({ __typename: 'AppliesTo' } & Pick<Types.AppliesTo, '_id'>)
+                  | ({ __typename: 'Contains' } & Pick<Types.Contains, '_id'>)
+                  | ({ __typename: 'Created' } & Pick<Types.Created, '_id'>)
+                  | ({ __typename: 'Follows' } & Pick<Types.Follows, '_id'>)
+                  | ({ __typename: 'Likes' } & Pick<Types.Likes, '_id'>)
+              }
+            >
+          }
+          _meta: { __typename: 'NodeMeta' } & Pick<Types.NodeMeta, 'created'> & {
+              creator: { __typename: 'Profile' } & Pick<Types.Profile, '_id' | 'name' | 'icon'>
+              relCount?: Types.Maybe<
+                { __typename: 'RelCountMap' } & {
+                  Follows?: Types.Maybe<
+                    { __typename: 'RelCount' } & {
+                      from?: Types.Maybe<{ __typename: 'RelCountTargetMap' } & Pick<Types.RelCountTargetMap, 'Profile'>>
+                    }
+                  >
+                  Contains?: Types.Maybe<
+                    { __typename: 'RelCount' } & {
+                      to?: Types.Maybe<{ __typename: 'RelCountTargetMap' } & Pick<Types.RelCountTargetMap, 'Resource'>>
+                    }
+                  >
+                }
+              >
+            }
+        })
+    | { __typename: 'Profile' }
+    | { __typename: 'Resource' }
+    | { __typename: 'Subject' }
+  >
+}
 
 export type CollectionPageResourcesQueryVariables = Types.Exact<{
-  id: Types.Scalars['ID'];
-}>;
+  id: Types.Scalars['ID']
+}>
 
-
-export type CollectionPageResourcesQuery = (
-  { __typename: 'Query' }
-  & { node?: Types.Maybe<(
-    { __typename: 'Collection' }
-    & Pick<Types.Collection, '_id'>
-    & { resourceList: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
-          { __typename: 'Resource' }
-          & Pick<Types.Resource, '_id' | 'name' | 'icon'>
-          & { collections: (
-            { __typename: 'RelPage' }
-            & { edges: Array<(
-              { __typename: 'RelPageEdge' }
-              & { node: (
-                { __typename: 'Collection' }
-                & Pick<Types.Collection, '_id' | 'name'>
-              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
-            )> }
-          ) }
-        ) | { __typename: 'Subject' } }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'Profile' }
-    & Pick<Types.Profile, '_id'>
-    & { resourceList: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
-          { __typename: 'Resource' }
-          & Pick<Types.Resource, '_id' | 'name' | 'icon'>
-          & { collections: (
-            { __typename: 'RelPage' }
-            & { edges: Array<(
-              { __typename: 'RelPageEdge' }
-              & { node: (
-                { __typename: 'Collection' }
-                & Pick<Types.Collection, '_id' | 'name'>
-              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
-            )> }
-          ) }
-        ) | { __typename: 'Subject' } }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'Resource' }
-    & Pick<Types.Resource, '_id'>
-    & { resourceList: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
-          { __typename: 'Resource' }
-          & Pick<Types.Resource, '_id' | 'name' | 'icon'>
-          & { collections: (
-            { __typename: 'RelPage' }
-            & { edges: Array<(
-              { __typename: 'RelPageEdge' }
-              & { node: (
-                { __typename: 'Collection' }
-                & Pick<Types.Collection, '_id' | 'name'>
-              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
-            )> }
-          ) }
-        ) | { __typename: 'Subject' } }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'Subject' }
-    & Pick<Types.Subject, '_id'>
-    & { resourceList: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
-          { __typename: 'Resource' }
-          & Pick<Types.Resource, '_id' | 'name' | 'icon'>
-          & { collections: (
-            { __typename: 'RelPage' }
-            & { edges: Array<(
-              { __typename: 'RelPageEdge' }
-              & { node: (
-                { __typename: 'Collection' }
-                & Pick<Types.Collection, '_id' | 'name'>
-              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
-            )> }
-          ) }
-        ) | { __typename: 'Subject' } }
-      )> }
-    ) }
-  )> }
-);
+export type CollectionPageResourcesQuery = { __typename: 'Query' } & {
+  node?: Types.Maybe<
+    | ({ __typename: 'Collection' } & Pick<Types.Collection, '_id'> & {
+          resourceList: { __typename: 'RelPage' } & {
+            edges: Array<
+              { __typename: 'RelPageEdge' } & {
+                node:
+                  | { __typename: 'Collection' }
+                  | { __typename: 'Profile' }
+                  | ({ __typename: 'Resource' } & Pick<Types.Resource, '_id' | 'name' | 'icon'> & {
+                        collections: { __typename: 'RelPage' } & {
+                          edges: Array<
+                            { __typename: 'RelPageEdge' } & {
+                              node:
+                                | ({ __typename: 'Collection' } & Pick<Types.Collection, '_id' | 'name'>)
+                                | { __typename: 'Profile' }
+                                | { __typename: 'Resource' }
+                                | { __typename: 'Subject' }
+                            }
+                          >
+                        }
+                      })
+                  | { __typename: 'Subject' }
+              }
+            >
+          }
+        })
+    | ({ __typename: 'Profile' } & Pick<Types.Profile, '_id'> & {
+          resourceList: { __typename: 'RelPage' } & {
+            edges: Array<
+              { __typename: 'RelPageEdge' } & {
+                node:
+                  | { __typename: 'Collection' }
+                  | { __typename: 'Profile' }
+                  | ({ __typename: 'Resource' } & Pick<Types.Resource, '_id' | 'name' | 'icon'> & {
+                        collections: { __typename: 'RelPage' } & {
+                          edges: Array<
+                            { __typename: 'RelPageEdge' } & {
+                              node:
+                                | ({ __typename: 'Collection' } & Pick<Types.Collection, '_id' | 'name'>)
+                                | { __typename: 'Profile' }
+                                | { __typename: 'Resource' }
+                                | { __typename: 'Subject' }
+                            }
+                          >
+                        }
+                      })
+                  | { __typename: 'Subject' }
+              }
+            >
+          }
+        })
+    | ({ __typename: 'Resource' } & Pick<Types.Resource, '_id'> & {
+          resourceList: { __typename: 'RelPage' } & {
+            edges: Array<
+              { __typename: 'RelPageEdge' } & {
+                node:
+                  | { __typename: 'Collection' }
+                  | { __typename: 'Profile' }
+                  | ({ __typename: 'Resource' } & Pick<Types.Resource, '_id' | 'name' | 'icon'> & {
+                        collections: { __typename: 'RelPage' } & {
+                          edges: Array<
+                            { __typename: 'RelPageEdge' } & {
+                              node:
+                                | ({ __typename: 'Collection' } & Pick<Types.Collection, '_id' | 'name'>)
+                                | { __typename: 'Profile' }
+                                | { __typename: 'Resource' }
+                                | { __typename: 'Subject' }
+                            }
+                          >
+                        }
+                      })
+                  | { __typename: 'Subject' }
+              }
+            >
+          }
+        })
+    | ({ __typename: 'Subject' } & Pick<Types.Subject, '_id'> & {
+          resourceList: { __typename: 'RelPage' } & {
+            edges: Array<
+              { __typename: 'RelPageEdge' } & {
+                node:
+                  | { __typename: 'Collection' }
+                  | { __typename: 'Profile' }
+                  | ({ __typename: 'Resource' } & Pick<Types.Resource, '_id' | 'name' | 'icon'> & {
+                        collections: { __typename: 'RelPage' } & {
+                          edges: Array<
+                            { __typename: 'RelPageEdge' } & {
+                              node:
+                                | ({ __typename: 'Collection' } & Pick<Types.Collection, '_id' | 'name'>)
+                                | { __typename: 'Profile' }
+                                | { __typename: 'Resource' }
+                                | { __typename: 'Subject' }
+                            }
+                          >
+                        }
+                      })
+                  | { __typename: 'Subject' }
+              }
+            >
+          }
+        })
+  >
+}
 
 export type CollectionPageFollowMutationVariables = Types.Exact<{
-  currentProfileId: Types.Scalars['ID'];
-  collectionId: Types.Scalars['ID'];
-}>;
+  currentProfileId: Types.Scalars['ID']
+  collectionId: Types.Scalars['ID']
+}>
 
+export type CollectionPageFollowMutation = { __typename: 'Mutation' } & {
+  createEdge:
+    | ({ __typename: 'CreateEdgeMutationSuccess' } & BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment)
+    | ({ __typename: 'CreateEdgeMutationError' } & BasicCreateEdgeMutationPayload_CreateEdgeMutationError_Fragment)
+}
 
-export type CollectionPageFollowMutation = (
-  { __typename: 'Mutation' }
-  & { createEdge: (
-    { __typename: 'CreateEdgeMutationSuccess' }
-    & BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment
-  ) | (
-    { __typename: 'CreateEdgeMutationError' }
-    & BasicCreateEdgeMutationPayload_CreateEdgeMutationError_Fragment
-  ) }
-);
+export type BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment = {
+  __typename: 'CreateEdgeMutationSuccess'
+} & {
+  edge?: Types.Maybe<
+    | ({ __typename: 'AppliesTo' } & Pick<Types.AppliesTo, '_id'>)
+    | ({ __typename: 'Contains' } & Pick<Types.Contains, '_id'>)
+    | ({ __typename: 'Created' } & Pick<Types.Created, '_id'>)
+    | ({ __typename: 'Follows' } & Pick<Types.Follows, '_id'>)
+    | ({ __typename: 'Likes' } & Pick<Types.Likes, '_id'>)
+  >
+}
 
-export type BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment = (
-  { __typename: 'CreateEdgeMutationSuccess' }
-  & { edge?: Types.Maybe<(
-    { __typename: 'AppliesTo' }
-    & Pick<Types.AppliesTo, '_id'>
-  ) | (
-    { __typename: 'Contains' }
-    & Pick<Types.Contains, '_id'>
-  ) | (
-    { __typename: 'Created' }
-    & Pick<Types.Created, '_id'>
-  ) | (
-    { __typename: 'Follows' }
-    & Pick<Types.Follows, '_id'>
-  ) | (
-    { __typename: 'Likes' }
-    & Pick<Types.Likes, '_id'>
-  )> }
-);
+export type BasicCreateEdgeMutationPayload_CreateEdgeMutationError_Fragment = {
+  __typename: 'CreateEdgeMutationError'
+} & Pick<Types.CreateEdgeMutationError, 'type' | 'details'>
 
-export type BasicCreateEdgeMutationPayload_CreateEdgeMutationError_Fragment = (
-  { __typename: 'CreateEdgeMutationError' }
-  & Pick<Types.CreateEdgeMutationError, 'type' | 'details'>
-);
-
-export type BasicCreateEdgeMutationPayloadFragment = BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment | BasicCreateEdgeMutationPayload_CreateEdgeMutationError_Fragment;
+export type BasicCreateEdgeMutationPayloadFragment =
+  | BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment
+  | BasicCreateEdgeMutationPayload_CreateEdgeMutationError_Fragment
 
 export type CollectionPageUnfollowMutationVariables = Types.Exact<{
-  myFollowEdgeId: Types.Scalars['ID'];
-}>;
+  myFollowEdgeId: Types.Scalars['ID']
+}>
 
+export type CollectionPageUnfollowMutation = { __typename: 'Mutation' } & {
+  deleteEdge:
+    | ({ __typename: 'DeleteEdgeMutationSuccess' } & BasicDeleteEdgeMutationPayload_DeleteEdgeMutationSuccess_Fragment)
+    | ({ __typename: 'DeleteEdgeMutationError' } & BasicDeleteEdgeMutationPayload_DeleteEdgeMutationError_Fragment)
+}
 
-export type CollectionPageUnfollowMutation = (
-  { __typename: 'Mutation' }
-  & { deleteEdge: (
-    { __typename: 'DeleteEdgeMutationSuccess' }
-    & BasicDeleteEdgeMutationPayload_DeleteEdgeMutationSuccess_Fragment
-  ) | (
-    { __typename: 'DeleteEdgeMutationError' }
-    & BasicDeleteEdgeMutationPayload_DeleteEdgeMutationError_Fragment
-  ) }
-);
+export type BasicDeleteEdgeMutationPayload_DeleteEdgeMutationSuccess_Fragment = {
+  __typename: 'DeleteEdgeMutationSuccess'
+} & Pick<Types.DeleteEdgeMutationSuccess, 'edgeId'>
 
-export type BasicDeleteEdgeMutationPayload_DeleteEdgeMutationSuccess_Fragment = (
-  { __typename: 'DeleteEdgeMutationSuccess' }
-  & Pick<Types.DeleteEdgeMutationSuccess, 'edgeId'>
-);
+export type BasicDeleteEdgeMutationPayload_DeleteEdgeMutationError_Fragment = {
+  __typename: 'DeleteEdgeMutationError'
+} & Pick<Types.DeleteEdgeMutationError, 'type' | 'details'>
 
-export type BasicDeleteEdgeMutationPayload_DeleteEdgeMutationError_Fragment = (
-  { __typename: 'DeleteEdgeMutationError' }
-  & Pick<Types.DeleteEdgeMutationError, 'type' | 'details'>
-);
-
-export type BasicDeleteEdgeMutationPayloadFragment = BasicDeleteEdgeMutationPayload_DeleteEdgeMutationSuccess_Fragment | BasicDeleteEdgeMutationPayload_DeleteEdgeMutationError_Fragment;
+export type BasicDeleteEdgeMutationPayloadFragment =
+  | BasicDeleteEdgeMutationPayload_DeleteEdgeMutationSuccess_Fragment
+  | BasicDeleteEdgeMutationPayload_DeleteEdgeMutationError_Fragment
 
 export const BasicCreateEdgeMutationPayloadFragmentDoc = gql`
-    fragment BasicCreateEdgeMutationPayload on CreateEdgeMutationPayload {
-  ... on CreateEdgeMutationSuccess {
-    edge {
-      ... on IEdge {
-        _id
-      }
-    }
-  }
-  ... on CreateEdgeMutationError {
-    type
-    details
-  }
-}
-    `;
-export const BasicDeleteEdgeMutationPayloadFragmentDoc = gql`
-    fragment BasicDeleteEdgeMutationPayload on DeleteEdgeMutationPayload {
-  ... on DeleteEdgeMutationSuccess {
-    edgeId
-  }
-  ... on DeleteEdgeMutationError {
-    type
-    details
-  }
-}
-    `;
-export const CollectionPageNodeDocument = gql`
-    query CollectionPageNode($id: ID!) {
-  node(_id: $id) {
-    ... on Collection {
-      _id
-      name
-      icon
-      myFollow: _rel(
-        edge: {type: Follows, node: Profile, inverse: true, targetMe: true}
-        page: {first: 1}
-      ) {
-        edges {
-          edge {
-            ... on IEdge {
-              _id
-            }
-          }
-        }
-      }
-      _meta {
-        created
-        creator {
+  fragment BasicCreateEdgeMutationPayload on CreateEdgeMutationPayload {
+    ... on CreateEdgeMutationSuccess {
+      edge {
+        ... on IEdge {
           _id
-          name
-          icon
         }
-        relCount {
-          Follows {
-            from {
-              Profile
+      }
+    }
+    ... on CreateEdgeMutationError {
+      type
+      details
+    }
+  }
+`
+export const BasicDeleteEdgeMutationPayloadFragmentDoc = gql`
+  fragment BasicDeleteEdgeMutationPayload on DeleteEdgeMutationPayload {
+    ... on DeleteEdgeMutationSuccess {
+      edgeId
+    }
+    ... on DeleteEdgeMutationError {
+      type
+      details
+    }
+  }
+`
+export const CollectionPageNodeDocument = gql`
+  query CollectionPageNode($id: ID!) {
+    node(_id: $id) {
+      ... on Collection {
+        _id
+        name
+        icon
+        myFollow: _rel(edge: { type: Follows, node: Profile, inverse: true, targetMe: true }, page: { first: 1 }) {
+          edges {
+            edge {
+              ... on IEdge {
+                _id
+              }
             }
           }
-          Contains {
-            to {
-              Resource
+        }
+        _meta {
+          created
+          creator {
+            _id
+            name
+            icon
+          }
+          relCount {
+            Follows {
+              from {
+                Profile
+              }
+            }
+            Contains {
+              to {
+                Resource
+              }
             }
           }
         }
       }
     }
   }
-}
-    `;
+`
 
 /**
  * __useCollectionPageNodeQuery__
@@ -319,36 +290,47 @@ export const CollectionPageNodeDocument = gql`
  *   },
  * });
  */
-export function useCollectionPageNodeQuery(baseOptions: Apollo.QueryHookOptions<CollectionPageNodeQuery, CollectionPageNodeQueryVariables>) {
-        return Apollo.useQuery<CollectionPageNodeQuery, CollectionPageNodeQueryVariables>(CollectionPageNodeDocument, baseOptions);
-      }
-export function useCollectionPageNodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CollectionPageNodeQuery, CollectionPageNodeQueryVariables>) {
-          return Apollo.useLazyQuery<CollectionPageNodeQuery, CollectionPageNodeQueryVariables>(CollectionPageNodeDocument, baseOptions);
-        }
-export type CollectionPageNodeQueryHookResult = ReturnType<typeof useCollectionPageNodeQuery>;
-export type CollectionPageNodeLazyQueryHookResult = ReturnType<typeof useCollectionPageNodeLazyQuery>;
-export type CollectionPageNodeQueryResult = Apollo.QueryResult<CollectionPageNodeQuery, CollectionPageNodeQueryVariables>;
+export function useCollectionPageNodeQuery(
+  baseOptions: Apollo.QueryHookOptions<CollectionPageNodeQuery, CollectionPageNodeQueryVariables>,
+) {
+  return Apollo.useQuery<CollectionPageNodeQuery, CollectionPageNodeQueryVariables>(
+    CollectionPageNodeDocument,
+    baseOptions,
+  )
+}
+export function useCollectionPageNodeLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<CollectionPageNodeQuery, CollectionPageNodeQueryVariables>,
+) {
+  return Apollo.useLazyQuery<CollectionPageNodeQuery, CollectionPageNodeQueryVariables>(
+    CollectionPageNodeDocument,
+    baseOptions,
+  )
+}
+export type CollectionPageNodeQueryHookResult = ReturnType<typeof useCollectionPageNodeQuery>
+export type CollectionPageNodeLazyQueryHookResult = ReturnType<typeof useCollectionPageNodeLazyQuery>
+export type CollectionPageNodeQueryResult = Apollo.QueryResult<
+  CollectionPageNodeQuery,
+  CollectionPageNodeQueryVariables
+>
 export const CollectionPageResourcesDocument = gql`
-    query CollectionPageResources($id: ID!) {
-  node(_id: $id) {
-    ... on INode {
-      _id
-      resourceList: _rel(edge: {type: Contains, node: Resource}, page: {first: 10}) {
-        edges {
-          node {
-            ... on Resource {
-              _id
-              name
-              icon
-              collections: _rel(
-                edge: {type: Contains, node: Collection, inverse: true}
-                page: {first: 2}
-              ) {
-                edges {
-                  node {
-                    ... on Collection {
-                      _id
-                      name
+  query CollectionPageResources($id: ID!) {
+    node(_id: $id) {
+      ... on INode {
+        _id
+        resourceList: _rel(edge: { type: Contains, node: Resource }, page: { first: 10 }) {
+          edges {
+            node {
+              ... on Resource {
+                _id
+                name
+                icon
+                collections: _rel(edge: { type: Contains, node: Collection, inverse: true }, page: { first: 2 }) {
+                  edges {
+                    node {
+                      ... on Collection {
+                        _id
+                        name
+                      }
                     }
                   }
                 }
@@ -359,8 +341,7 @@ export const CollectionPageResourcesDocument = gql`
       }
     }
   }
-}
-    `;
+`
 
 /**
  * __useCollectionPageResourcesQuery__
@@ -378,25 +359,40 @@ export const CollectionPageResourcesDocument = gql`
  *   },
  * });
  */
-export function useCollectionPageResourcesQuery(baseOptions: Apollo.QueryHookOptions<CollectionPageResourcesQuery, CollectionPageResourcesQueryVariables>) {
-        return Apollo.useQuery<CollectionPageResourcesQuery, CollectionPageResourcesQueryVariables>(CollectionPageResourcesDocument, baseOptions);
-      }
-export function useCollectionPageResourcesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CollectionPageResourcesQuery, CollectionPageResourcesQueryVariables>) {
-          return Apollo.useLazyQuery<CollectionPageResourcesQuery, CollectionPageResourcesQueryVariables>(CollectionPageResourcesDocument, baseOptions);
-        }
-export type CollectionPageResourcesQueryHookResult = ReturnType<typeof useCollectionPageResourcesQuery>;
-export type CollectionPageResourcesLazyQueryHookResult = ReturnType<typeof useCollectionPageResourcesLazyQuery>;
-export type CollectionPageResourcesQueryResult = Apollo.QueryResult<CollectionPageResourcesQuery, CollectionPageResourcesQueryVariables>;
-export const CollectionPageFollowDocument = gql`
-    mutation CollectionPageFollow($currentProfileId: ID!, $collectionId: ID!) {
-  createEdge(
-    input: {edgeType: Follows, from: $currentProfileId, to: $collectionId, Follows: {}}
-  ) {
-    ...BasicCreateEdgeMutationPayload
-  }
+export function useCollectionPageResourcesQuery(
+  baseOptions: Apollo.QueryHookOptions<CollectionPageResourcesQuery, CollectionPageResourcesQueryVariables>,
+) {
+  return Apollo.useQuery<CollectionPageResourcesQuery, CollectionPageResourcesQueryVariables>(
+    CollectionPageResourcesDocument,
+    baseOptions,
+  )
 }
-    ${BasicCreateEdgeMutationPayloadFragmentDoc}`;
-export type CollectionPageFollowMutationFn = Apollo.MutationFunction<CollectionPageFollowMutation, CollectionPageFollowMutationVariables>;
+export function useCollectionPageResourcesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<CollectionPageResourcesQuery, CollectionPageResourcesQueryVariables>,
+) {
+  return Apollo.useLazyQuery<CollectionPageResourcesQuery, CollectionPageResourcesQueryVariables>(
+    CollectionPageResourcesDocument,
+    baseOptions,
+  )
+}
+export type CollectionPageResourcesQueryHookResult = ReturnType<typeof useCollectionPageResourcesQuery>
+export type CollectionPageResourcesLazyQueryHookResult = ReturnType<typeof useCollectionPageResourcesLazyQuery>
+export type CollectionPageResourcesQueryResult = Apollo.QueryResult<
+  CollectionPageResourcesQuery,
+  CollectionPageResourcesQueryVariables
+>
+export const CollectionPageFollowDocument = gql`
+  mutation CollectionPageFollow($currentProfileId: ID!, $collectionId: ID!) {
+    createEdge(input: { edgeType: Follows, from: $currentProfileId, to: $collectionId, Follows: {} }) {
+      ...BasicCreateEdgeMutationPayload
+    }
+  }
+  ${BasicCreateEdgeMutationPayloadFragmentDoc}
+`
+export type CollectionPageFollowMutationFn = Apollo.MutationFunction<
+  CollectionPageFollowMutation,
+  CollectionPageFollowMutationVariables
+>
 
 /**
  * __useCollectionPageFollowMutation__
@@ -416,20 +412,32 @@ export type CollectionPageFollowMutationFn = Apollo.MutationFunction<CollectionP
  *   },
  * });
  */
-export function useCollectionPageFollowMutation(baseOptions?: Apollo.MutationHookOptions<CollectionPageFollowMutation, CollectionPageFollowMutationVariables>) {
-        return Apollo.useMutation<CollectionPageFollowMutation, CollectionPageFollowMutationVariables>(CollectionPageFollowDocument, baseOptions);
-      }
-export type CollectionPageFollowMutationHookResult = ReturnType<typeof useCollectionPageFollowMutation>;
-export type CollectionPageFollowMutationResult = Apollo.MutationResult<CollectionPageFollowMutation>;
-export type CollectionPageFollowMutationOptions = Apollo.BaseMutationOptions<CollectionPageFollowMutation, CollectionPageFollowMutationVariables>;
-export const CollectionPageUnfollowDocument = gql`
-    mutation CollectionPageUnfollow($myFollowEdgeId: ID!) {
-  deleteEdge(input: {_id: $myFollowEdgeId, edgeType: Follows}) {
-    ...BasicDeleteEdgeMutationPayload
-  }
+export function useCollectionPageFollowMutation(
+  baseOptions?: Apollo.MutationHookOptions<CollectionPageFollowMutation, CollectionPageFollowMutationVariables>,
+) {
+  return Apollo.useMutation<CollectionPageFollowMutation, CollectionPageFollowMutationVariables>(
+    CollectionPageFollowDocument,
+    baseOptions,
+  )
 }
-    ${BasicDeleteEdgeMutationPayloadFragmentDoc}`;
-export type CollectionPageUnfollowMutationFn = Apollo.MutationFunction<CollectionPageUnfollowMutation, CollectionPageUnfollowMutationVariables>;
+export type CollectionPageFollowMutationHookResult = ReturnType<typeof useCollectionPageFollowMutation>
+export type CollectionPageFollowMutationResult = Apollo.MutationResult<CollectionPageFollowMutation>
+export type CollectionPageFollowMutationOptions = Apollo.BaseMutationOptions<
+  CollectionPageFollowMutation,
+  CollectionPageFollowMutationVariables
+>
+export const CollectionPageUnfollowDocument = gql`
+  mutation CollectionPageUnfollow($myFollowEdgeId: ID!) {
+    deleteEdge(input: { _id: $myFollowEdgeId, edgeType: Follows }) {
+      ...BasicDeleteEdgeMutationPayload
+    }
+  }
+  ${BasicDeleteEdgeMutationPayloadFragmentDoc}
+`
+export type CollectionPageUnfollowMutationFn = Apollo.MutationFunction<
+  CollectionPageUnfollowMutation,
+  CollectionPageUnfollowMutationVariables
+>
 
 /**
  * __useCollectionPageUnfollowMutation__
@@ -448,9 +456,17 @@ export type CollectionPageUnfollowMutationFn = Apollo.MutationFunction<Collectio
  *   },
  * });
  */
-export function useCollectionPageUnfollowMutation(baseOptions?: Apollo.MutationHookOptions<CollectionPageUnfollowMutation, CollectionPageUnfollowMutationVariables>) {
-        return Apollo.useMutation<CollectionPageUnfollowMutation, CollectionPageUnfollowMutationVariables>(CollectionPageUnfollowDocument, baseOptions);
-      }
-export type CollectionPageUnfollowMutationHookResult = ReturnType<typeof useCollectionPageUnfollowMutation>;
-export type CollectionPageUnfollowMutationResult = Apollo.MutationResult<CollectionPageUnfollowMutation>;
-export type CollectionPageUnfollowMutationOptions = Apollo.BaseMutationOptions<CollectionPageUnfollowMutation, CollectionPageUnfollowMutationVariables>;
+export function useCollectionPageUnfollowMutation(
+  baseOptions?: Apollo.MutationHookOptions<CollectionPageUnfollowMutation, CollectionPageUnfollowMutationVariables>,
+) {
+  return Apollo.useMutation<CollectionPageUnfollowMutation, CollectionPageUnfollowMutationVariables>(
+    CollectionPageUnfollowDocument,
+    baseOptions,
+  )
+}
+export type CollectionPageUnfollowMutationHookResult = ReturnType<typeof useCollectionPageUnfollowMutation>
+export type CollectionPageUnfollowMutationResult = Apollo.MutationResult<CollectionPageUnfollowMutation>
+export type CollectionPageUnfollowMutationOptions = Apollo.BaseMutationOptions<
+  CollectionPageUnfollowMutation,
+  CollectionPageUnfollowMutationVariables
+>

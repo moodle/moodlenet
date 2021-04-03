@@ -119,7 +119,7 @@ input DeleteNodeInput {
 }
 union DeleteNodeMutationPayload = DeleteNodeMutationSuccess | DeleteNodeMutationError
 type DeleteNodeMutationSuccess {
-  node: Node
+  nodeId: ID
 }
 type DeleteNodeMutationError {
   type: DeleteNodeMutationErrorType

@@ -1,0 +1,34 @@
+mutation CreateEdge($input: CreateEdgeInput!) {
+  createEdge(input: $input) {
+    ...BasicCreateEdgeMutationPayload
+  }
+}
+mutation DeleteEdge($input: DeleteEdgeInput!) {
+  deleteEdge(input: $input) {
+    ...BasicDeleteEdgeMutationPayload
+  }
+}
+
+fragment BasicCreateEdgeMutationPayload on CreateEdgeMutationPayload {
+  ... on CreateEdgeMutationSuccess {
+    edge {
+      ... on IEdge {
+        _id
+      }
+    }
+  }
+  ... on CreateEdgeMutationError {
+    type
+    details
+  }
+}
+
+fragment BasicDeleteEdgeMutationPayload on DeleteEdgeMutationPayload {
+  ... on DeleteEdgeMutationSuccess {
+    edgeId
+  }
+  ... on DeleteEdgeMutationError {
+    type
+    details
+  }
+}
