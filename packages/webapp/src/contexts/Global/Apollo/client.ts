@@ -46,4 +46,15 @@ export const apolloClient = new ApolloClient({
   cache,
   link,
   connectToDevTools: !isProduction,
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'no-cache',
+    },
+    mutate: {
+      fetchPolicy: 'no-cache',
+    },
+    watchQuery: {
+      fetchPolicy: 'no-cache',
+    },
+  },
 })
