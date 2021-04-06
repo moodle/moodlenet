@@ -13,7 +13,7 @@ export type CollectionPageNodeQuery = (
   { __typename: 'Query' }
   & { node?: Types.Maybe<(
     { __typename: 'Collection' }
-    & Pick<Types.Collection, '_id' | 'name' | 'icon'>
+    & Pick<Types.Collection, '_id' | 'name' | 'summary' | 'icon'>
     & { myFollow: (
       { __typename: 'RelPage' }
       & JustEdgeIdRelPageFragment
@@ -164,7 +164,7 @@ export type CollectionPageFollowMutation = (
 
 export type BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment = (
   { __typename: 'CreateEdgeMutationSuccess' }
-  & { edge?: Types.Maybe<(
+  & { edge: (
     { __typename: 'AppliesTo' }
     & Pick<Types.AppliesTo, '_id'>
   ) | (
@@ -179,7 +179,7 @@ export type BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment = 
   ) | (
     { __typename: 'Likes' }
     & Pick<Types.Likes, '_id'>
-  )> }
+  ) }
 );
 
 export type BasicCreateEdgeMutationPayload_CreateEdgeMutationError_Fragment = (
@@ -249,6 +249,7 @@ export const CollectionPageNodeDocument = gql`
     ... on Collection {
       _id
       name
+      summary
       icon
       myFollow: _rel(
         edge: {type: Follows, node: Profile, inverse: true, targetMe: true}

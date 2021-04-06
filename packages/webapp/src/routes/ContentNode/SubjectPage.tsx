@@ -112,6 +112,7 @@ export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
           resources: getRelCount(subject._meta, 'Follows', 'from', 'Profile'),
           me,
           name: subject.name,
+          summary: subject.summary,
           collectionList,
           resourceList,
           pageHeaderProps,

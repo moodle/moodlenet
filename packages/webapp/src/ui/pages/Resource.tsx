@@ -16,6 +16,7 @@ export type ResourcePageProps = {
   likers: number
   created: Date
   icon: string
+  summary: string
   creator: {
     icon: string
     name: string
@@ -32,6 +33,7 @@ export const ResourcePage: FC<ResourcePageProps> = ({
   name,
   creator,
   icon,
+  summary,
 }) => {
   return (
     <HeaderPageTemplate pageHeaderProps={pageHeaderProps}>
@@ -41,6 +43,7 @@ export const ResourcePage: FC<ResourcePageProps> = ({
             <Segment>
               <h3>{name}</h3>
               <Image src={icon} size="large" fluid rounded />
+              <span>{summary}</span>
             </Segment>
           </Grid.Column>
           <Grid.Column width={8}>

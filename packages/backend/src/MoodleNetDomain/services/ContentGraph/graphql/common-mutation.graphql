@@ -13,7 +13,7 @@ input CreateNodeInput {
 }
 union CreateNodeMutationPayload = CreateNodeMutationSuccess | CreateNodeMutationError
 type CreateNodeMutationSuccess {
-  node: Node
+  node: Node!
 }
 type CreateNodeMutationError {
   type: CreateNodeMutationErrorType!
@@ -34,7 +34,7 @@ input CreateEdgeInput {
 }
 union CreateEdgeMutationPayload = CreateEdgeMutationSuccess | CreateEdgeMutationError
 type CreateEdgeMutationSuccess {
-  edge: Edge
+  edge: Edge!
 }
 type CreateEdgeMutationError {
   type: CreateEdgeMutationErrorType!

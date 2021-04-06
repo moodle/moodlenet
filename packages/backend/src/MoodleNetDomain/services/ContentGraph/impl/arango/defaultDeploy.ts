@@ -3,6 +3,7 @@ import { Config } from 'arangojs/connection'
 import { DomainSetup, DomainStart } from '../../../../../lib/domain/types'
 import { getSystemExecutionContext, initMoodleNetGQLWrkService } from '../../../../MoodleNetGraphQL'
 import { createEdgeWorker } from './apis/createEdge'
+import { createNodeWorker } from './apis/createNode'
 import { deleteEdgeWorker } from './apis/deleteEdge'
 import { getNodeWorker } from './apis/getNode'
 import { globalSearchWorker } from './apis/globalSearch'
@@ -59,6 +60,12 @@ export const defaultArangoContentGraphStartServices = ({
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
         return [createEdgeWorker({ persistence }), teardown]
+      },
+    },
+    'ContentGraph.Node.Create': {
+      init: async () => {
+        const [persistence, teardown] = await _getPersistence()
+        return [createNodeWorker({ persistence }), teardown]
       },
     },
     'ContentGraph.Edge.Delete': {

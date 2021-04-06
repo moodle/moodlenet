@@ -300,7 +300,7 @@ export type ProfilePageFollowMutation = (
 
 export type BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment = (
   { __typename: 'CreateEdgeMutationSuccess' }
-  & { edge?: Types.Maybe<(
+  & { edge: (
     { __typename: 'AppliesTo' }
     & Pick<Types.AppliesTo, '_id'>
   ) | (
@@ -315,7 +315,7 @@ export type BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment = 
   ) | (
     { __typename: 'Likes' }
     & Pick<Types.Likes, '_id'>
-  )> }
+  ) }
 );
 
 export type BasicCreateEdgeMutationPayload_CreateEdgeMutationError_Fragment = (

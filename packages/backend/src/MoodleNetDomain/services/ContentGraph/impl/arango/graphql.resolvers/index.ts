@@ -4,16 +4,11 @@ import * as GQL from '../../../ContentGraph.graphql.gen'
 import { getUserSessionProfile } from './merge.getUserSessionProfile'
 import { createEdge } from './mutation/createEdge'
 import { createNode } from './mutation/createNode'
-// import { createEdge } from './mutation.createEdge'
-// import { createNode } from './mutation.createNode'
 import { deleteEdge } from './mutation/deleteEdge'
 import { nodePropResolver } from './nodePropResolver'
 import { gqlGlobalSearch } from './query/globalSearch'
 import { node } from './query/node'
 import { NodeResolver } from './types.node'
-// import { deleteNode } from './mutation.deleteNode'
-// import { updateEdge } from './mutation.updateEdge'
-// import { updateNode } from './mutation.updateNode'
 
 const checkIDOrError = (_?: string) => {
   if (!isId(_)) {

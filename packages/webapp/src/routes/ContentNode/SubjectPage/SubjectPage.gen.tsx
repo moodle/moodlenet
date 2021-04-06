@@ -13,7 +13,7 @@ export type SubjectPageNodeQuery = (
   { __typename: 'Query' }
   & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
     { __typename: 'Subject' }
-    & Pick<Types.Subject, '_id' | 'name'>
+    & Pick<Types.Subject, '_id' | 'name' | 'summary'>
     & { myFollow: (
       { __typename: 'RelPage' }
       & JustEdgeIdRelPageFragment
@@ -298,7 +298,7 @@ export type SubjectPageFollowMutation = (
 
 export type BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment = (
   { __typename: 'CreateEdgeMutationSuccess' }
-  & { edge?: Types.Maybe<(
+  & { edge: (
     { __typename: 'AppliesTo' }
     & Pick<Types.AppliesTo, '_id'>
   ) | (
@@ -313,7 +313,7 @@ export type BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment = 
   ) | (
     { __typename: 'Likes' }
     & Pick<Types.Likes, '_id'>
-  )> }
+  ) }
 );
 
 export type BasicCreateEdgeMutationPayload_CreateEdgeMutationError_Fragment = (
@@ -383,6 +383,7 @@ export const SubjectPageNodeDocument = gql`
     ... on Subject {
       _id
       name
+      summary
       myFollow: _rel(
         edge: {type: Follows, node: Profile, inverse: true, targetMe: true}
         page: {first: 1}

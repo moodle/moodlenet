@@ -11,6 +11,7 @@ export type SubjectPageProps = {
   collectionList: CollectionCardProps[]
   resourceList: ResourceCardProps[]
   name: string
+  summary: string
   me: null | {
     toggleFollow(): unknown
     following: boolean
@@ -27,6 +28,7 @@ export const SubjectPage: FC<SubjectPageProps> = ({
   followers,
   me,
   name,
+  summary,
   resourceList,
   resources,
 }) => {
@@ -41,6 +43,7 @@ export const SubjectPage: FC<SubjectPageProps> = ({
                   <Trans>Subject:</Trans>
                 </h3>
                 <h1>{name}</h1>
+                <h5>{summary}</h5>
                 {me ? (
                   <Button basic onClick={me?.toggleFollow}>
                     {me.following ? <Trans>Unfollow</Trans> : <Trans>Follow</Trans>}

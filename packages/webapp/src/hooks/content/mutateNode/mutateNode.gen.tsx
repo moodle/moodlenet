@@ -36,7 +36,7 @@ export type DeleteNodeMutation = (
 
 export type BasicCreateNodeMutationPayload_CreateNodeMutationSuccess_Fragment = (
   { __typename: 'CreateNodeMutationSuccess' }
-  & { node?: Types.Maybe<(
+  & { node: (
     { __typename: 'Collection' }
     & Pick<Types.Collection, '_id'>
   ) | (
@@ -48,7 +48,7 @@ export type BasicCreateNodeMutationPayload_CreateNodeMutationSuccess_Fragment = 
   ) | (
     { __typename: 'Subject' }
     & Pick<Types.Subject, '_id'>
-  )> }
+  ) }
 );
 
 export type BasicCreateNodeMutationPayload_CreateNodeMutationError_Fragment = (

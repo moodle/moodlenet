@@ -55,6 +55,7 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
           likers: getRelCount(resource._meta, 'Likes', 'from', 'Profile'),
           me,
           name: resource.name,
+          summary: resource.summary,
           pageHeaderProps,
         }
       : null

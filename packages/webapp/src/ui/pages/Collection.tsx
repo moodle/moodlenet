@@ -23,6 +23,7 @@ export type CollectionPageProps = {
     name: string
     homeLink: string
   }
+  summary: string
 }
 
 export const CollectionPage: FC<CollectionPageProps> = ({
@@ -35,6 +36,7 @@ export const CollectionPage: FC<CollectionPageProps> = ({
   resources,
   creator,
   icon,
+  summary,
 }) => {
   return (
     <HeaderPageTemplate pageHeaderProps={pageHeaderProps}>
@@ -50,13 +52,15 @@ export const CollectionPage: FC<CollectionPageProps> = ({
                   <Trans>Collection:</Trans>
                 </h3>
                 <h1>{name}</h1>
+                {summary}
+              </Segment>
+              <Segment floated="right">
                 {me ? (
                   <Button basic onClick={me?.toggleFollow}>
                     {me.following ? <Trans>Unfollow</Trans> : <Trans>Follow</Trans>}
                   </Button>
                 ) : null}
-              </Segment>
-              <Segment floated="right">
+
                 <span style={{ color: 'blue' }}>{followers}</span>
                 <Icon name="users" color="blue" size="large" />
               </Segment>

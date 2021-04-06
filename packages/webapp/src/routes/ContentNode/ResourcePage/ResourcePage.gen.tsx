@@ -13,7 +13,7 @@ export type ResourcePageNodeQuery = (
   { __typename: 'Query' }
   & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'Profile' } | (
     { __typename: 'Resource' }
-    & Pick<Types.Resource, '_id' | 'name' | 'icon'>
+    & Pick<Types.Resource, '_id' | 'name' | 'icon' | 'summary'>
     & { myLike: (
       { __typename: 'RelPage' }
       & JustEdgeIdRelPageFragment
@@ -164,7 +164,7 @@ export type ResourcePageFollowMutation = (
 
 export type BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment = (
   { __typename: 'CreateEdgeMutationSuccess' }
-  & { edge?: Types.Maybe<(
+  & { edge: (
     { __typename: 'AppliesTo' }
     & Pick<Types.AppliesTo, '_id'>
   ) | (
@@ -179,7 +179,7 @@ export type BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment = 
   ) | (
     { __typename: 'Likes' }
     & Pick<Types.Likes, '_id'>
-  )> }
+  ) }
 );
 
 export type BasicCreateEdgeMutationPayload_CreateEdgeMutationError_Fragment = (
@@ -250,6 +250,7 @@ export const ResourcePageNodeDocument = gql`
       _id
       name
       icon
+      summary
       myLike: _rel(
         edge: {type: Likes, node: Profile, inverse: true, targetMe: true}
         page: {first: 1}

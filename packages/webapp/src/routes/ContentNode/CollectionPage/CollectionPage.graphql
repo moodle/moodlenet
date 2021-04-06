@@ -3,6 +3,7 @@ query CollectionPageNode($id: ID!) {
     ... on Collection {
       _id
       name
+      summary
       icon
       myFollow: _rel(edge: { type: Follows, node: Profile, inverse: true, targetMe: true }, page: { first: 1 }) {
         ...JustEdgeIdRelPage

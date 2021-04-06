@@ -88,6 +88,7 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
           resources: getRelCount(collection._meta, 'Contains', 'to', 'Resource'),
           me,
           name: collection.name,
+          summary: collection.summary,
           resourceList,
           pageHeaderProps,
         }
