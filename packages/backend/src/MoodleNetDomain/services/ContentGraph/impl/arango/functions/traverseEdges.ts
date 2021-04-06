@@ -66,6 +66,7 @@ export const traverseEdges = async ({
     pageEdgeTypename: 'RelPageEdge',
     cursorProp: `edge._key`,
     page,
+    inverseSort: true,
     mapQuery: pageFilterSortLimit => `
       FOR edge IN ${edgeType}
         FILTER !${isMarkDeleted('edge')}
