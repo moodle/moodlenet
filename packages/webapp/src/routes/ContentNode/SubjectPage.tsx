@@ -1,8 +1,10 @@
 import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
+import { useSession } from '../../contexts/Global/Session'
 import { isJust } from '../../helpers/data'
 import { getRelCount } from '../../helpers/nodeMeta'
+import { useMutateEdge } from '../../hooks/content/mutateEdge'
 import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { CollectionCardProps } from '../../ui/components/cards/Collection'
 import { ResourceCardProps } from '../../ui/components/cards/Resource'
@@ -15,7 +17,7 @@ import {
 } from './SubjectPage/SubjectPage.gen'
 
 export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
-  // const { session } = useSession()
+  const { session } = useSession()
 
   const nodeRes = useSubjectPageNodeQuery({ variables: { id } })
   const subject = nodeRes.data?.node
@@ -82,36 +84,39 @@ export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
     [resourceEdges],
   )
 
-  // const [follow /* , followResp */] = useSubjectPageFollowMutation()
-  // const [unfollow /* , unfollowResp */] = useSubjectPageUnfollowMutation()
+  const followMut = useMutateEdge()
+  const myFollowId = subject?.myFollow.edges[0]?.edge._id
+  const myProfile = session?.profile
+  const me = useMemo(() => {
+    return myProfile
+      ? {
+          toggleFollow() {
+            if (!myProfile || followMut.createResult.loading || followMut.deleteResult.loading) {
+              return
+            }
+            const toggleFollowPromise = myFollowId
+              ? followMut.deleteEdge({ edgeId: myFollowId })
+              : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: myProfile._id, to: id })
+            toggleFollowPromise.then(() => nodeRes.refetch())
+          },
+          following: !!myFollowId,
+        }
+      : null
+  }, [followMut, id, myFollowId, nodeRes, myProfile])
   const pageHeaderProps = usePageHeaderProps()
   const props = useMemo<SubjectPageProps | null>(() => {
-    // const myFollowId = subject?.myFollow.edges[0]?.edge._id
-
     return subject
       ? {
           collections: getRelCount(subject._meta, 'AppliesTo', 'to', 'Collection'),
           followers: getRelCount(subject._meta, 'Follows', 'from', 'Profile'),
           resources: getRelCount(subject._meta, 'Follows', 'from', 'Profile'),
-          me: /* session?.profile
-            ? {
-                toggleFollow() {
-                  if (!session?.profile) {
-                    return
-                  }
-                  myFollowId
-                    ? unfollow({ variables: { edgeId: myFollowId } })
-                    : follow({ variables: { subjectId: id, currentProfileId: session.profile._id } })
-                },
-                following: !!myFollowId,
-              }
-            : */ null,
+          me,
           name: subject.name,
           collectionList,
           resourceList,
           pageHeaderProps,
         }
       : null
-  }, [subject, collectionList, resourceList, pageHeaderProps])
+  }, [subject, me, collectionList, resourceList, pageHeaderProps])
   return props && <SubjectPage {...props} />
 }

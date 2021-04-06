@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { FC } from 'react'
-import { Button, Grid, Icon, Image, Segment } from 'semantic-ui-react'
+import { Grid, Icon, Image, Segment } from 'semantic-ui-react'
 import { PageHeaderProps } from '../components/PageHeader'
 import { Link } from '../elements/link'
 import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
@@ -51,16 +51,18 @@ export const ResourcePage: FC<ResourcePageProps> = ({
                 </h3>
                 <h3>{name}</h3>
                 {type}
-                {me ? (
-                  <Button basic onClick={me?.toggleLike}>
-                    {me.liking ? <Trans>Unlike</Trans> : <Trans>Like</Trans>}
-                  </Button>
-                ) : null}
               </Segment>
               <Segment>
                 <Segment.Inline>
                   <span style={{ color: 'red' }}>{likers}</span>
-                  <Icon name="heart outline" color="red" size="large" />
+                  {me ? (
+                    <Icon.Group size="large" onClick={me?.toggleLike} style={{ cursor: 'pointer' }}>
+                      <Icon color="red" name={me.liking ? 'heart' : 'heart outline'} />
+                      <Icon color="red" corner="bottom right" name={me.liking ? 'minus' : 'add'} />
+                    </Icon.Group>
+                  ) : (
+                    <Icon name="heart outline" color="red" size="large" />
+                  )}
                 </Segment.Inline>
               </Segment>
             </Segment.Group>

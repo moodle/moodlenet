@@ -5,13 +5,7 @@ query CollectionPageNode($id: ID!) {
       name
       icon
       myFollow: _rel(edge: { type: Follows, node: Profile, inverse: true, targetMe: true }, page: { first: 1 }) {
-        edges {
-          edge {
-            ... on IEdge {
-              _id
-            }
-          }
-        }
+        ...JustEdgeIdRelPage
       }
       _meta {
         created

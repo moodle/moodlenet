@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { FC } from 'react'
-import { Button, Card, Grid, Image, Segment } from 'semantic-ui-react'
+import { Button, Card, Grid, Icon, Image, Segment } from 'semantic-ui-react'
 import { ResourceCard, ResourceCardProps } from '../components/cards/Resource'
 import { PageHeaderProps } from '../components/PageHeader'
 import { Link } from '../elements/link'
@@ -55,6 +55,10 @@ export const CollectionPage: FC<CollectionPageProps> = ({
                     {me.following ? <Trans>Unfollow</Trans> : <Trans>Follow</Trans>}
                   </Button>
                 ) : null}
+              </Segment>
+              <Segment floated="right">
+                <span style={{ color: 'blue' }}>{followers}</span>
+                <Icon name="users" color="blue" size="large" />
               </Segment>
             </Segment.Group>
           </Grid.Column>

@@ -5,13 +5,7 @@ query ResourcePageNode($id: ID!) {
       name
       icon
       myLike: _rel(edge: { type: Likes, node: Profile, inverse: true, targetMe: true }, page: { first: 1 }) {
-        edges {
-          edge {
-            ... on IEdge {
-              _id
-            }
-          }
-        }
+        ...JustEdgeIdRelPage
       }
       _meta {
         created

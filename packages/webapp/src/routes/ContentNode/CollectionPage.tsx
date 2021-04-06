@@ -4,15 +4,11 @@ import { FC, useMemo } from 'react'
 import { useSession } from '../../contexts/Global/Session'
 import { isJust } from '../../helpers/data'
 import { getRelCount } from '../../helpers/nodeMeta'
+import { useMutateEdge } from '../../hooks/content/mutateEdge'
 import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { ResourceCardProps } from '../../ui/components/cards/Resource'
 import { CollectionPage, CollectionPageProps } from '../../ui/pages/Collection'
-import {
-  useCollectionPageFollowMutation,
-  useCollectionPageNodeQuery,
-  useCollectionPageResourcesQuery,
-  useCollectionPageUnfollowMutation,
-} from './CollectionPage/CollectionPage.gen'
+import { useCollectionPageNodeQuery, useCollectionPageResourcesQuery } from './CollectionPage/CollectionPage.gen'
 
 export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
   const { session } = useSession()
@@ -58,27 +54,26 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
     [resourceEdges],
   )
 
-  const [follow, followResp] = useCollectionPageFollowMutation()
-  const [unfollow, unfollowResp] = useCollectionPageUnfollowMutation()
   const pageHeaderProps = usePageHeaderProps()
+  const followMut = useMutateEdge()
   const myFollowId = collection?.myFollow.edges[0]?.edge._id
-  const profile = session?.profile
+  const myProfile = session?.profile
   const me = useMemo(() => {
-    return profile
+    return myProfile
       ? {
           toggleFollow() {
-            if (!profile || followResp.loading || unfollowResp.loading) {
+            if (!myProfile || followMut.createResult.loading || followMut.deleteResult.loading) {
               return
             }
             const toggleFollowPromise = myFollowId
-              ? unfollow({ variables: { myFollowEdgeId: myFollowId } })
-              : follow({ variables: { collectionId: id, currentProfileId: profile._id } })
+              ? followMut.deleteEdge({ edgeId: myFollowId })
+              : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: myProfile._id, to: id })
             toggleFollowPromise.then(() => nodeRes.refetch())
           },
           following: !!myFollowId,
         }
       : null
-  }, [follow, followResp.loading, id, myFollowId, nodeRes, profile, unfollow, unfollowResp.loading])
+  }, [followMut, id, myFollowId, nodeRes, myProfile])
   const props = useMemo<CollectionPageProps | null>(() => {
     return collection
       ? {

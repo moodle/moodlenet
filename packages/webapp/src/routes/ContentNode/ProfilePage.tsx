@@ -4,6 +4,7 @@ import { FC, useMemo } from 'react'
 import { useSession } from '../../contexts/Global/Session'
 import { isJust } from '../../helpers/data'
 import { getRelCount } from '../../helpers/nodeMeta'
+import { useMutateEdge } from '../../hooks/content/mutateEdge'
 import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { CollectionCardProps } from '../../ui/components/cards/Collection'
 import { ResourceCardProps } from '../../ui/components/cards/Resource'
@@ -18,8 +19,10 @@ import {
 export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
   const { session } = useSession()
 
+  const isMyProfilePage = !!session?.profile && id === session.profile._id
+
   const nodeRes = useProfilePageNodeQuery({
-    variables: { id, followable: !!session?.profile && id !== session.profile._id },
+    variables: { id, skipMyRel: isMyProfilePage },
   })
 
   const profile = nodeRes.data?.node
@@ -27,8 +30,6 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
     throw new Error('never')
   }
 
-  // const [follow /* , followResp */] = useProfilePageFollowMutation()
-  // const [unfollow /* , unfollowResp */] = useProfilePageUnfollowMutation()
   const pageHeaderProps = usePageHeaderProps()
 
   const resourcesRes = useProfilePageOwnResourcesQuery({ variables: { id } })
@@ -90,9 +91,26 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
     [collectionEdges],
   )
 
+  const followMut = useMutateEdge()
+  const myFollowId = profile?.myFollow?.edges[0]?.edge._id
+  const myProfile = session?.profile
+  const me = useMemo(() => {
+    return myProfile
+      ? {
+          toggleFollow() {
+            if (!myProfile || isMyProfilePage || followMut.createResult.loading || followMut.deleteResult.loading) {
+              return
+            }
+            const toggleFollowPromise = myFollowId
+              ? followMut.deleteEdge({ edgeId: myFollowId })
+              : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: myProfile._id, to: id })
+            toggleFollowPromise.then(() => nodeRes.refetch())
+          },
+          following: !!myFollowId,
+        }
+      : null
+  }, [myProfile, myFollowId, isMyProfilePage, followMut, id, nodeRes])
   const props = useMemo<ProfilePageProps | null>(() => {
-    // const myFollowId = profile?.myFollow.edges[0]?.edge._id
-
     return profile
       ? {
           resources,
@@ -100,23 +118,11 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
           summary: profile.summary,
           icon: profile.icon || '',
           followers: getRelCount(profile._meta, 'Follows', 'from', 'Profile'),
-          me: /* session?.profile
-            ? {
-                toggleFollow() {
-                  if (!session?.profile) {
-                    return
-                  }
-                  myFollowId
-                    ? unfollow({ variables: { edgeId: myFollowId } })
-                    : follow({ variables: { profileId: id, currentProfileId: session.profile._id } })
-                },
-                following: !!myFollowId,
-              }
-            : */ null,
+          me,
           name: profile.name,
           pageHeaderProps,
         }
       : null
-  }, [collections, profile, resources, pageHeaderProps])
+  }, [profile, resources, collections, me, pageHeaderProps])
   return props && <ProfilePage {...props} />
 }

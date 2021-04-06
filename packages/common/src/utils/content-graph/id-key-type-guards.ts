@@ -1,10 +1,12 @@
+//TODO: review all parse|extraction return types to make them stricter
+
 import { EdgeType, GlobalSearchSort, NodeType } from '../../pub-graphql/types.graphql.gen'
 export type IdKey = string //& { readonly __: unique symbol }
 // export type Id<N extends NodeType = NodeType> = `${N}/${IdKey}` & { readonly __: unique symbol }
 export type Id = string & { readonly __: unique symbol }
 
-export const isIdKey = (_: string | undefined): _ is IdKey => !!_ && true //FIXME: proper guard
-export const isId = (_: string | undefined): _ is Id => {
+export const isIdKey = (_: string | undefined | null): _ is IdKey => !!_ && true //FIXME: proper guard
+export const isId = (_: string | undefined | null): _ is Id => {
   if (!_) {
     return false
   }
@@ -45,7 +47,7 @@ export const idKeyFromId = (_: Id): IdKey => {
 
 export const capitalizeNodeType = (_: string | null | undefined): NodeType | null => {
   const type = _ && _[0] ? _[0].toUpperCase() + _.substr(1) : null
-  if (!(type && isNodeType(type))) {
+  if (!isNodeType(type)) {
     return null
   }
   return type

@@ -1,4 +1,4 @@
-query ProfilePageNode($id: ID!, $followable: Boolean!) {
+query ProfilePageNode($id: ID!, $skipMyRel: Boolean!) {
   node(_id: $id) {
     ... on Profile {
       _id
@@ -6,14 +6,8 @@ query ProfilePageNode($id: ID!, $followable: Boolean!) {
       icon
       summary
       myFollow: _rel(edge: { type: Follows, node: Profile, inverse: true, targetMe: true }, page: { first: 1 })
-        @include(if: $followable) {
-        edges {
-          edge {
-            ... on IEdge {
-              _id
-            }
-          }
-        }
+        @skip(if: $skipMyRel) {
+        ...JustEdgeIdRelPage
       }
       _meta {
         created
