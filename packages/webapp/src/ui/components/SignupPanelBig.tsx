@@ -52,7 +52,7 @@ export const SignupPanelBig: FC<SignupPanelProps> = ({ form, warnMessage, homeLi
                   }
                 }
               />
-              <Button color="orange" fluid size="large" type="submit">
+              <Button color="orange" size="large" type="submit">
                 <Trans>Signup</Trans>
               </Button>
               {warnMessage && <Message negative header={t`Warning`} content={warnMessage} />}

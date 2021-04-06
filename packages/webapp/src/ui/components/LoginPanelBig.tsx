@@ -44,7 +44,7 @@ export const LoginPanelBig: FC<LoginPanelProps> = ({ form, message, signupLink, 
               iconPosition="left"
               type="password"
             />
-            <Button color="orange" fluid size="large" type="submit">
+            <Button color="orange" size="large" type="submit">
               <Trans>Login</Trans>
             </Button>
             {message && <Message negative header={t`Warning`} content={message} />}

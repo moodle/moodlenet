@@ -86,7 +86,7 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({ form, mess
                 }
               }
             />
-            <Button color="orange" fluid size="large" type="submit">
+            <Button color="orange" size="large" type="submit">
               <Trans>Activate your user</Trans>
             </Button>
             {message && <Message negative header={t`Warning`} content={message} />}

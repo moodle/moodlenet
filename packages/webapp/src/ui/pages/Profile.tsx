@@ -61,7 +61,7 @@ export const ProfilePage: FC<ProfilePageProps> = ({
                 <Trans>Collections I maintain</Trans>
               </h3>
               {collections.map(collProps => (
-                <CollectionCard {...collProps} />
+                <CollectionCard {...collProps} key={collProps.homeLink} />
               ))}
             </Segment>
             <Segment>
@@ -69,13 +69,13 @@ export const ProfilePage: FC<ProfilePageProps> = ({
                 <Trans>Resources I've added</Trans>
               </h3>
               {resources.map(resProps => (
-                <ResourceCard {...resProps} />
+                <ResourceCard {...resProps} key={resProps.homeLink} />
               ))}
             </Segment>
           </Grid.Column>
           <Grid.Column width={6}>
             <Segment>
-              <Image src={icon} size="large" fluid rounded />
+              <Image src={icon} size="large" rounded />
             </Segment>
           </Grid.Column>
         </Grid.Row>

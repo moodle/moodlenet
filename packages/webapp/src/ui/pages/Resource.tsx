@@ -42,7 +42,7 @@ export const ResourcePage: FC<ResourcePageProps> = ({
           <Grid.Column width={8}>
             <Segment>
               <h3>{name}</h3>
-              <Image src={icon} size="large" fluid rounded />
+              <Image src={icon} size="large" rounded />
               <span>{summary}</span>
             </Segment>
           </Grid.Column>
@@ -79,9 +79,9 @@ export const ResourcePage: FC<ResourcePageProps> = ({
                   <h5>
                     <Trans>
                       Uploaded on <br />
-                      {created} <br />
-                      by
                     </Trans>
+                    {created} <br />
+                    <Trans>by</Trans>
                   </h5>
                   <h3>{creator.name}</h3>
                 </Segment>
