@@ -338,6 +338,7 @@ export type EdgeTypeInput = {
   node: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
   targetMe?: Maybe<Scalars['Boolean']>;
+  targetIDs?: Maybe<Array<Scalars['ID']>>;
 };
 
 export type RelPage = Page & {

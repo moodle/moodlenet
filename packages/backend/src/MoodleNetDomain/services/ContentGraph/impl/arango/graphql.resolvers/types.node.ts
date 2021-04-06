@@ -12,24 +12,33 @@ const _rel: GQL.ResolverFn<
 > = async (parent, node, ctx, _info) => {
   const { _id: parentId } = parent
   const {
-    edge: { type: edgeType, node: targetNodeType, inverse, targetMe },
+    edge: { type: edgeType, node: targetNodeType, inverse, targetMe, targetIDs },
     page,
   } = node
+
   const session = getSessionExecutionContext(ctx)
-  if (targetMe && !session) {
+  const isOnlyTargetingMe = targetMe && !targetIDs
+
+  if (isOnlyTargetingMe && !session) {
     return {
       __typename: 'RelPage',
       edges: [],
       pageInfo: { __typename: 'PageInfo', hasNextPage: false, hasPreviousPage: false },
     }
   }
+
+  const executorProfileIDs = session ? [session.profileId] : []
+  const isTargetingIds = !!targetIDs || targetMe
+
+  const targetNodeIds = isTargetingIds ? executorProfileIDs.concat(targetIDs || []) : null
+
   const pageResult = await call<MoodleNetArangoContentGraphSubDomain>()('ContentGraph.Edge.Traverse', ctx.flow)({
     edgeType,
     parentNodeId: parentId,
     inverse: !!inverse,
     targetNodeType,
     page,
-    targetNodeIds: targetMe && session ? [session.profileId] : null,
+    targetNodeIds,
     ctx,
   })
   return pageResult
