@@ -18,6 +18,7 @@ export const usePageHeaderProps = (): PageHeaderProps => {
   const hist = useHistory()
 
   const mutateNode = useMutateNode()
+  // const mutateEdge = useMutateEdge()
   const { searchText, setSearchText } = useGlobalSearch()
   //add collection
   const [showAddCollection, toggleShowAddCollection] = useReducer(_ => !_, false)
@@ -31,6 +32,7 @@ export const usePageHeaderProps = (): PageHeaderProps => {
       }),
   })
 
+  // const nodeContext = useContentNodeContext()
   const addCollectionFormProps = useMemo<AddCollectionFormProps>(
     () => ({
       form: addCollectionFormBag,
@@ -41,12 +43,35 @@ export const usePageHeaderProps = (): PageHeaderProps => {
   const [showAddResource, toggleShowAddResource] = useReducer(_ => !_, false)
   const [, /* _addResourceFormik */ addResourceFormBag] = useFormikWithBag<AddResourceFormData>({
     initialValues: { name: '', summary: '' },
-    onSubmit: ({ name, summary }) =>
-      mutateNode.createNode({ nodeType: 'Resource', data: { name, summary } }).then(res => {
-        res.data?.createNode.__typename === 'CreateNodeMutationSuccess'
-          ? hist.push(contentNodeLink(res.data.createNode.node))
-          : alert(res.data?.createNode.type)
-      }),
+    onSubmit: async ({ name, summary }) => {
+      const res = await mutateNode.createNode({ nodeType: 'Resource', data: { name, summary } })
+
+      if (!res.data || res.data.createNode.__typename === 'CreateNodeMutationError') {
+        return //FIXME: Manage Error
+      }
+      const newResourceNode = res.data.createNode.node
+
+      // if (
+      //   nodeContext &&
+      //   nodeContext.type === 'Collection' &&
+      //   //FIXME: && nodeContext is mine
+      //   newResourceNode.__typename === 'Resource' &&
+      //   // eslint-disable-next-line no-restricted-globals
+      //   confirm('add to this collection?')
+      // ) {
+      //   const addToCollectionRes = await mutateEdge.createEdge({
+      //     data: {},
+      //     edgeType: 'Contains',
+      //     from: nodeContext._id,
+      //     to: newResourceNode._id,
+      //   })
+
+      //   if (addToCollectionRes.data?.createEdge.__typename === 'CreateEdgeMutationError') {
+      //     alert(`couldn't add to this collection`)
+      //   }
+      // }
+      hist.push(contentNodeLink(newResourceNode))
+    },
   })
 
   const addResourceFormProps = useMemo<AddResourceFormProps>(

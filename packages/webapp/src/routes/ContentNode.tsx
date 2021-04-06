@@ -1,7 +1,9 @@
 // import { NodeType } from '../graphql/types.graphql.gen'
 // import { BaseContentNodeFeed } from '../ui/components/BaseContentNodeFeed'
-import { parseNodeIdString } from '@moodlenet/common/lib/utils/content-graph'
+import { Id, NodeType, parseNodeIdString } from '@moodlenet/common/lib/utils/content-graph'
+import { FC } from 'react'
 import { Routes } from '../../../common/lib/webapp/sitemap'
+import { ProvideContentNodeContext } from '../contexts/ContentNodeContext'
 import { NeverPage } from '../helpers/navigation'
 import { CollectionPageComponent } from './ContentNode/CollectionPage'
 import { ProfilePageComponent } from './ContentNode/ProfilePage'
@@ -15,6 +17,14 @@ export const ContentNodeComponent: RouteFC<Routes.ContentNode> = ({ match: { par
     return NeverPage(null as never)
   }
   const { id, nodeType } = parsedId
+
+  return (
+    <ProvideContentNodeContext _id={id} type={nodeType}>
+      <ContentNodeComponentSwitch id={id} nodeType={nodeType} />
+    </ProvideContentNodeContext>
+  )
+}
+export const ContentNodeComponentSwitch: FC<{ nodeType: NodeType; id: Id }> = ({ id, nodeType }) => {
   if (nodeType === 'Profile') {
     return <ProfilePageComponent id={id} />
   } else if (nodeType === 'Subject') {
