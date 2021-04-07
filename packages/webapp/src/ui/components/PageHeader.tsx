@@ -93,9 +93,7 @@ export const PageHeader: FC<PageHeaderProps> = ({ searchValue, search, homeLink,
             open={me.showAddCollection}
             header={t`Add Collection`}
             content={<AddCollectionForm {...me.addCollectionFormProps} />}
-            actions={[{ key: 'cancel', content: t`Cancel` }]}
             onClose={me.toggleShowAddCollection}
-            onActionClick={me.toggleShowAddCollection}
           />
           <Modal
             closeOnEscape
@@ -103,9 +101,7 @@ export const PageHeader: FC<PageHeaderProps> = ({ searchValue, search, homeLink,
             open={me.showAddResource}
             header={t`Add Resource`}
             content={<AddResourceForm {...me.addResourceFormProps} />}
-            actions={[{ key: 'cancel', content: t`Cancel` }]}
             onClose={me.toggleShowAddResource}
-            onActionClick={me.toggleShowAddResource}
           />
         </>
       )}

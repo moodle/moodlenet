@@ -1,6 +1,7 @@
 import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
+import { useContentNodeContext } from '../../contexts/ContentNodeContext'
 import { useSession } from '../../contexts/Global/Session'
 import { isJust } from '../../helpers/data'
 import { getRelCount } from '../../helpers/nodeMeta'
@@ -12,9 +13,11 @@ import { useCollectionPageNodeQuery, useCollectionPageResourcesQuery } from './C
 
 export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
   const { session } = useSession()
+  const collectionContext = useContentNodeContext()
+  const removeResourceMut = useMutateEdge()
 
-  const nodeRes = useCollectionPageNodeQuery({ variables: { id } })
-  const collection = nodeRes.data?.node
+  const collectionRes = useCollectionPageNodeQuery({ variables: { id } })
+  const collection = collectionRes.data?.node
   if (collection && collection.__typename !== 'Collection') {
     throw new Error('never')
   }
@@ -48,10 +51,19 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
               .filter(isJust),
           }
 
-          return props
+          return props && ([props, edge] as const)
         })
-        .filter(isJust),
-    [resourceEdges],
+        .filter(isJust)
+        .map(([cardProps, edge]) => ({
+          ...cardProps,
+          removeResource: collectionContext?.imMaintainer
+            ? async () => {
+                await removeResourceMut.deleteEdge({ edgeId: edge.edge._id })
+                return resourcesRes.refetch()
+              }
+            : null,
+        })),
+    [collectionContext?.imMaintainer, removeResourceMut, resourceEdges, resourcesRes],
   )
 
   const pageHeaderProps = usePageHeaderProps()
@@ -68,12 +80,13 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
             const toggleFollowPromise = myFollowId
               ? followMut.deleteEdge({ edgeId: myFollowId })
               : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: myProfile._id, to: id })
-            toggleFollowPromise.then(() => nodeRes.refetch())
+            toggleFollowPromise.then(() => collectionRes.refetch())
           },
           following: !!myFollowId,
         }
       : null
-  }, [followMut, id, myFollowId, nodeRes, myProfile])
+  }, [followMut, id, myFollowId, collectionRes, myProfile])
+
   const props = useMemo<CollectionPageProps | null>(() => {
     return collection
       ? {
@@ -94,5 +107,6 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
         }
       : null
   }, [collection, me, resourceList, pageHeaderProps])
+
   return props && <CollectionPage {...props} />
 }

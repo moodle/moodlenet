@@ -11,7 +11,7 @@ export type GetCurrentSessionQuery = (
   { __typename: 'Query' }
   & { getSession?: Types.Maybe<(
     { __typename: 'UserSession' }
-    & UserSessionSimpleFragment
+    & UserSessionWithProfileInfoFragment
   )> }
 );
 
@@ -44,32 +44,56 @@ export type ActivateNewUserMutation = (
   ) }
 );
 
-export type UserSessionSimpleFragment = (
+export type UserSessionWithProfileInfoFragment = (
   { __typename: 'UserSession' }
   & Pick<Types.UserSession, 'username' | 'email' | 'userId'>
   & { profile?: Types.Maybe<(
     { __typename: 'Profile' }
+    & { myOwnCollections: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: (
+          { __typename: 'Collection' }
+          & Pick<Types.Collection, '_id' | 'name' | 'icon'>
+        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+      )> }
+    ) }
     & ShallowProfileFragment
   )> }
 );
 
-export const UserSessionSimpleFragmentDoc = gql`
-    fragment UserSessionSimple on UserSession {
+export const UserSessionWithProfileInfoFragmentDoc = gql`
+    fragment UserSessionWithProfileInfo on UserSession {
   username
   email
   userId
   profile {
     ...ShallowProfile
+    myOwnCollections: _rel(
+      edge: {type: Created, node: Collection}
+      page: {first: 100}
+    ) {
+      edges {
+        node {
+          ... on Collection {
+            _id
+            name
+            icon
+          }
+        }
+      }
+    }
   }
 }
     ${ShallowProfileFragmentDoc}`;
 export const GetCurrentSessionDocument = gql`
     query getCurrentSession {
   getSession {
-    ...UserSessionSimple
+    ...UserSessionWithProfileInfo
   }
 }
-    ${UserSessionSimpleFragmentDoc}`;
+    ${UserSessionWithProfileInfoFragmentDoc}`;
 
 /**
  * __useGetCurrentSessionQuery__

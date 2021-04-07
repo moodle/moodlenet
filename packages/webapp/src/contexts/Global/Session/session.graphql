@@ -1,6 +1,6 @@
 query getCurrentSession {
   getSession {
-    ...UserSessionSimple
+    ...UserSessionWithProfileInfo
   }
 }
 
@@ -18,11 +18,22 @@ mutation activateNewUser($token: String!, $username: String!, $password: String!
   }
 }
 
-fragment UserSessionSimple on UserSession {
+fragment UserSessionWithProfileInfo on UserSession {
   username
   email
   userId
   profile {
     ...ShallowProfile
+    myOwnCollections: _rel(edge: { type: Created, node: Collection }, page: { first: 100 }) {
+      edges {
+        node {
+          ... on Collection {
+            _id
+            name
+            icon
+          }
+        }
+      }
+    }
   }
 }

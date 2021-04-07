@@ -38,6 +38,9 @@ query CollectionPageResources($id: ID!) {
       _id
       resourceList: _rel(edge: { type: Contains, node: Resource }, page: { first: 10 }) {
         edges {
+          edge {
+            _id
+          }
           node {
             ... on Resource {
               _id

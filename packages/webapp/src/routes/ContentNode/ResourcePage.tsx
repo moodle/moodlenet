@@ -2,6 +2,7 @@ import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
 import { useSession } from '../../contexts/Global/Session'
+import { isJust } from '../../helpers/data'
 import { getRelCount } from '../../helpers/nodeMeta'
 import { useMutateEdge } from '../../hooks/content/mutateEdge'
 import { usePageHeaderProps } from '../../hooks/props/PageHeader'
@@ -23,9 +24,10 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
   const pageHeaderProps = usePageHeaderProps()
 
   const likeMut = useMutateEdge()
+  const addToCollectionMut = useMutateEdge()
   const myLikeId = resource?.myLike.edges[0]?.edge._id
   const myProfile = session?.profile
-  const me = useMemo(() => {
+  const me = useMemo<ResourcePageProps['me']>(() => {
     return myProfile
       ? {
           toggleLike() {
@@ -38,9 +40,20 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
             toggleLikePromise.then(() => nodeRes.refetch())
           },
           liking: !!myLikeId,
+          myCollections: myProfile.myOwnCollections.edges
+            .map(edge => (edge.node.__typename === 'Collection' ? edge.node : null))
+            .filter(isJust)
+            .map(coll => ({
+              icon: coll.icon ?? null,
+              name: coll.name,
+              homeLink: contentNodeLink(coll),
+              addToThisCollection: () => {
+                addToCollectionMut.createEdge({ edgeType: 'Contains', data: {}, from: coll._id, to: id })
+              },
+            })),
         }
       : null
-  }, [likeMut, id, myLikeId, nodeRes, myProfile])
+  }, [myProfile, myLikeId, likeMut, id, nodeRes, addToCollectionMut])
   const props = useMemo<ResourcePageProps | null>(() => {
     return resource
       ? {

@@ -8,7 +8,7 @@ import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
 
 export type CollectionPageProps = {
   pageHeaderProps: PageHeaderProps
-  resourceList: ResourceCardProps[]
+  resourceList: (ResourceCardProps & { removeResource: null | (() => unknown) })[]
   name: string
   me: null | {
     toggleFollow(): unknown
@@ -74,7 +74,13 @@ export const CollectionPage: FC<CollectionPageProps> = ({
             </h3>
             <Card.Group>
               {resourceList.map(resourceCardProps => (
-                <ResourceCard {...resourceCardProps} key={resourceCardProps.homeLink} />
+                <ResourceCard {...resourceCardProps} key={resourceCardProps.homeLink}>
+                  {resourceCardProps.removeResource ? (
+                    <Button floated="right" onClick={resourceCardProps.removeResource}>
+                      <Trans>Remove</Trans>
+                    </Button>
+                  ) : null}
+                </ResourceCard>
               ))}
             </Card.Group>
           </Grid.Column>

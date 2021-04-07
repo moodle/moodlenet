@@ -5,7 +5,7 @@ import {
   useActivateNewUserMutation,
   useGetCurrentSessionLazyQuery,
   useLoginMutation,
-  UserSessionSimpleFragment,
+  UserSessionWithProfileInfoFragment,
 } from './Session/session.gen'
 
 const LAST_SESSION_USERNAME_STORAGE_KEY = 'LAST_SESSION_USERNAME'
@@ -35,7 +35,7 @@ type LastSession = {
 }
 
 export type SessionContextType = {
-  session: UserSessionSimpleFragment | null
+  session: UserSessionWithProfileInfoFragment | null
   lastSessionUsername: string | null
   logout(): unknown
   activateNewUser(_: { password: string; token: string; username: string }): Promise<ActivateWarnMessage | null>

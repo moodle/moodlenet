@@ -10,7 +10,7 @@ export type ResourceCardProps = {
   collections: { name: string; homeLink: string }[]
 }
 export const ResourceCard: FC<ResourceCardProps> = props => {
-  const { icon, name, type, homeLink, collections } = props
+  const { icon, name, type, homeLink, collections, children } = props
   return (
     <Card fluid>
       <Card.Content>
@@ -28,6 +28,7 @@ export const ResourceCard: FC<ResourceCardProps> = props => {
             </Label>
           </Link>
         ))}
+        {children}
       </Card.Content>
     </Card>
   )

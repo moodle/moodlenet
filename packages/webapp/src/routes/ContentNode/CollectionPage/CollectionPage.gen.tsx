@@ -57,7 +57,22 @@ export type CollectionPageResourcesQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+        & { edge: (
+          { __typename: 'AppliesTo' }
+          & Pick<Types.AppliesTo, '_id'>
+        ) | (
+          { __typename: 'Contains' }
+          & Pick<Types.Contains, '_id'>
+        ) | (
+          { __typename: 'Created' }
+          & Pick<Types.Created, '_id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, '_id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, '_id'>
+        ), node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, '_id' | 'name' | 'icon'>
           & { collections: (
@@ -80,7 +95,22 @@ export type CollectionPageResourcesQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+        & { edge: (
+          { __typename: 'AppliesTo' }
+          & Pick<Types.AppliesTo, '_id'>
+        ) | (
+          { __typename: 'Contains' }
+          & Pick<Types.Contains, '_id'>
+        ) | (
+          { __typename: 'Created' }
+          & Pick<Types.Created, '_id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, '_id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, '_id'>
+        ), node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, '_id' | 'name' | 'icon'>
           & { collections: (
@@ -103,7 +133,22 @@ export type CollectionPageResourcesQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+        & { edge: (
+          { __typename: 'AppliesTo' }
+          & Pick<Types.AppliesTo, '_id'>
+        ) | (
+          { __typename: 'Contains' }
+          & Pick<Types.Contains, '_id'>
+        ) | (
+          { __typename: 'Created' }
+          & Pick<Types.Created, '_id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, '_id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, '_id'>
+        ), node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, '_id' | 'name' | 'icon'>
           & { collections: (
@@ -126,7 +171,22 @@ export type CollectionPageResourcesQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+        & { edge: (
+          { __typename: 'AppliesTo' }
+          & Pick<Types.AppliesTo, '_id'>
+        ) | (
+          { __typename: 'Contains' }
+          & Pick<Types.Contains, '_id'>
+        ) | (
+          { __typename: 'Created' }
+          & Pick<Types.Created, '_id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, '_id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, '_id'>
+        ), node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, '_id' | 'name' | 'icon'>
           & { collections: (
@@ -314,6 +374,9 @@ export const CollectionPageResourcesDocument = gql`
       _id
       resourceList: _rel(edge: {type: Contains, node: Resource}, page: {first: 10}) {
         edges {
+          edge {
+            _id
+          }
           node {
             ... on Resource {
               _id

@@ -1,6 +1,6 @@
-import { Trans } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import { FC } from 'react'
-import { Grid, Icon, Image, Segment } from 'semantic-ui-react'
+import { Button, Card, Dropdown, Grid, Icon, Image, Segment } from 'semantic-ui-react'
 import { PageHeaderProps } from '../components/PageHeader'
 import { Link } from '../elements/link'
 import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
@@ -12,6 +12,12 @@ export type ResourcePageProps = {
   me: null | {
     toggleLike(): unknown
     liking: boolean
+    myCollections: {
+      homeLink: string
+      name: string
+      icon: string | null
+      addToThisCollection: () => unknown
+    }[]
   }
   likers: number
   created: Date
@@ -54,6 +60,37 @@ export const ResourcePage: FC<ResourcePageProps> = ({
                 </h3>
                 <h3>{name}</h3>
                 {type}
+                {!me?.myCollections.length ? null : (
+                  <>
+                    <hr />
+                    <Dropdown
+                      item
+                      text={t`add to my collection`}
+                      simple
+                      icon={<Icon fitted name="folder open outline" size="large" color="orange" />}
+                    >
+                      <Dropdown.Menu>
+                        {me.myCollections.map(coll => (
+                          <Dropdown.Item key={coll.homeLink}>
+                            <Card fluid>
+                              <Card.Content>
+                                <Image floated="left" size="mini" src={coll.icon} />
+                                <Card.Header>
+                                  <Link href={coll.homeLink}>{coll.name}</Link>
+                                </Card.Header>
+                              </Card.Content>
+                              <Card.Content extra>
+                                <Button onClick={coll.addToThisCollection}>
+                                  <Trans>Add</Trans>
+                                </Button>
+                              </Card.Content>
+                            </Card>
+                          </Dropdown.Item>
+                        ))}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </>
+                )}
               </Segment>
               <Segment>
                 <Segment.Inline>

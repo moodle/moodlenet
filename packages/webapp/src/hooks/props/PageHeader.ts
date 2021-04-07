@@ -2,12 +2,14 @@ import { contentNodeLink, webappPath } from '@moodlenet/common/lib/webapp/sitema
 import { Home, Login } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useMemo, useReducer } from 'react'
 import { useHistory } from 'react-router'
+import { useContentNodeContext } from '../../contexts/ContentNodeContext'
 import { useGlobalSearch } from '../../contexts/Global/GlobalSearch'
 import { useSession } from '../../contexts/Global/Session'
 import { useFormikWithBag } from '../../helpers/forms'
 import { PageHeaderProps } from '../../ui/components/PageHeader'
 import { AddCollectionFormData, AddCollectionFormProps } from '../../ui/forms/collection/AddCollectionForm'
 import { AddResourceFormData, AddResourceFormProps } from '../../ui/forms/resource/AddResourceForm'
+import { useMutateEdge } from '../content/mutateEdge'
 import { useMutateNode } from '../content/mutateNode'
 
 const homeLink = webappPath<Home>('/', {})
@@ -18,24 +20,47 @@ export const usePageHeaderProps = (): PageHeaderProps => {
   const hist = useHistory()
 
   const mutateNode = useMutateNode()
-  // const mutateEdge = useMutateEdge()
+  const mutateEdge = useMutateEdge()
   const { searchText, setSearchText } = useGlobalSearch()
   //add collection
   const [showAddCollection, toggleShowAddCollection] = useReducer(_ => !_, false)
   const [, /* _addCollectionFormik */ addCollectionFormBag] = useFormikWithBag<AddCollectionFormData>({
     initialValues: { name: '', summary: '' },
-    onSubmit: ({ name, summary }) =>
-      mutateNode.createNode({ nodeType: 'Collection', data: { name, summary } }).then(res => {
-        res.data?.createNode.__typename === 'CreateNodeMutationSuccess'
-          ? hist.push(contentNodeLink(res.data.createNode.node))
-          : alert(res.data?.createNode.type)
-      }),
+    onSubmit: async ({ name, summary }, { resetForm }) => {
+      const res = await mutateNode.createNode({ nodeType: 'Collection', data: { name, summary } })
+
+      if (!res.data || res.data.createNode.__typename === 'CreateNodeMutationError') {
+        return //FIXME: Manage Error
+      }
+      const newCollectionNode = res.data.createNode.node
+
+      if (
+        nodeContext?.type === 'Resource' &&
+        newCollectionNode.__typename === 'Collection' &&
+        window.confirm(`add resource ${nodeContext.name} to new collection?`)
+      ) {
+        const addToCollectionRes = await mutateEdge.createEdge({
+          data: {},
+          edgeType: 'Contains',
+          to: nodeContext.id,
+          from: newCollectionNode._id,
+        })
+
+        if (addToCollectionRes.data?.createEdge.__typename === 'CreateEdgeMutationError') {
+          alert(`couldn't add this resource`)
+        }
+      }
+      resetForm()
+      toggleShowAddCollection()
+      hist.push(contentNodeLink(newCollectionNode))
+    },
   })
 
-  // const nodeContext = useContentNodeContext()
+  const nodeContext = useContentNodeContext()
   const addCollectionFormProps = useMemo<AddCollectionFormProps>(
     () => ({
       form: addCollectionFormBag,
+      cancel: toggleShowAddCollection,
     }),
     [addCollectionFormBag],
   )
@@ -43,7 +68,10 @@ export const usePageHeaderProps = (): PageHeaderProps => {
   const [showAddResource, toggleShowAddResource] = useReducer(_ => !_, false)
   const [, /* _addResourceFormik */ addResourceFormBag] = useFormikWithBag<AddResourceFormData>({
     initialValues: { name: '', summary: '' },
-    onSubmit: async ({ name, summary }) => {
+    onSubmit: async ({ name, summary }, { resetForm }) => {
+      if (!session?.profile) {
+        return
+      }
       const res = await mutateNode.createNode({ nodeType: 'Resource', data: { name, summary } })
 
       if (!res.data || res.data.createNode.__typename === 'CreateNodeMutationError') {
@@ -51,25 +79,26 @@ export const usePageHeaderProps = (): PageHeaderProps => {
       }
       const newResourceNode = res.data.createNode.node
 
-      // if (
-      //   nodeContext &&
-      //   nodeContext.type === 'Collection' &&
-      //   //FIXME: && nodeContext is mine
-      //   newResourceNode.__typename === 'Resource' &&
-      //   // eslint-disable-next-line no-restricted-globals
-      //   confirm('add to this collection?')
-      // ) {
-      //   const addToCollectionRes = await mutateEdge.createEdge({
-      //     data: {},
-      //     edgeType: 'Contains',
-      //     from: nodeContext._id,
-      //     to: newResourceNode._id,
-      //   })
+      if (
+        nodeContext &&
+        nodeContext.type === 'Collection' &&
+        nodeContext.creatorId === session.profile._id &&
+        newResourceNode.__typename === 'Resource' &&
+        window.confirm(`add to ${nodeContext.name} collection?`)
+      ) {
+        const addToCollectionRes = await mutateEdge.createEdge({
+          data: {},
+          edgeType: 'Contains',
+          from: nodeContext.id,
+          to: newResourceNode._id,
+        })
 
-      //   if (addToCollectionRes.data?.createEdge.__typename === 'CreateEdgeMutationError') {
-      //     alert(`couldn't add to this collection`)
-      //   }
-      // }
+        if (addToCollectionRes.data?.createEdge.__typename === 'CreateEdgeMutationError') {
+          alert(`couldn't add to this collection`)
+        }
+      }
+      resetForm()
+      toggleShowAddResource()
       hist.push(contentNodeLink(newResourceNode))
     },
   })
@@ -77,6 +106,7 @@ export const usePageHeaderProps = (): PageHeaderProps => {
   const addResourceFormProps = useMemo<AddResourceFormProps>(
     () => ({
       form: addResourceFormBag,
+      cancel: toggleShowAddResource,
     }),
     [addResourceFormBag],
   )

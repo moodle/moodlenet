@@ -48,13 +48,13 @@ export const apolloClient = new ApolloClient({
   connectToDevTools: !isProduction,
   defaultOptions: {
     query: {
-      fetchPolicy: 'no-cache',
+      fetchPolicy: 'cache-first',
     },
     mutate: {
       fetchPolicy: 'no-cache',
     },
     watchQuery: {
-      fetchPolicy: 'no-cache',
+      fetchPolicy: 'cache-and-network',
     },
   },
 })
