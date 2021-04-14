@@ -63,39 +63,3 @@ query CollectionPageResources($id: ID!) {
     }
   }
 }
-
-mutation CollectionPageFollow($currentProfileId: ID!, $collectionId: ID!) {
-  createEdge(input: { edgeType: Follows, from: $currentProfileId, to: $collectionId, Follows: {} }) {
-    ...BasicCreateEdgeMutationPayload
-  }
-}
-
-fragment BasicCreateEdgeMutationPayload on CreateEdgeMutationPayload {
-  ... on CreateEdgeMutationSuccess {
-    edge {
-      ... on IEdge {
-        _id
-      }
-    }
-  }
-  ... on CreateEdgeMutationError {
-    type
-    details
-  }
-}
-
-mutation CollectionPageUnfollow($myFollowEdgeId: ID!) {
-  deleteEdge(input: { _id: $myFollowEdgeId, edgeType: Follows }) {
-    ...BasicDeleteEdgeMutationPayload
-  }
-}
-
-fragment BasicDeleteEdgeMutationPayload on DeleteEdgeMutationPayload {
-  ... on DeleteEdgeMutationSuccess {
-    edgeId
-  }
-  ... on DeleteEdgeMutationError {
-    type
-    details
-  }
-}

@@ -89,39 +89,3 @@ query ProfilePageOwnResources($id: ID!) {
     }
   }
 }
-
-mutation ProfilePageFollow($currentProfileId: ID!, $profileId: ID!) {
-  createEdge(input: { edgeType: Follows, from: $currentProfileId, to: $profileId, Follows: {} }) {
-    ...BasicCreateEdgeMutationPayload
-  }
-}
-
-fragment BasicCreateEdgeMutationPayload on CreateEdgeMutationPayload {
-  ... on CreateEdgeMutationSuccess {
-    edge {
-      ... on IEdge {
-        _id
-      }
-    }
-  }
-  ... on CreateEdgeMutationError {
-    type
-    details
-  }
-}
-
-mutation ProfilePageUnfollow($edgeId: ID!) {
-  deleteEdge(input: { _id: $edgeId, edgeType: Follows }) {
-    ...BasicDeleteEdgeMutationPayload
-  }
-}
-
-fragment BasicDeleteEdgeMutationPayload on DeleteEdgeMutationPayload {
-  ... on DeleteEdgeMutationSuccess {
-    edgeId
-  }
-  ... on DeleteEdgeMutationError {
-    type
-    details
-  }
-}

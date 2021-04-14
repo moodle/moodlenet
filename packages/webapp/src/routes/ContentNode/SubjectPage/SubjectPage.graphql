@@ -87,39 +87,3 @@ query SubjectPageResources($id: ID!) {
     }
   }
 }
-
-mutation SubjectPageFollow($currentProfileId: ID!, $subjectId: ID!) {
-  createEdge(input: { edgeType: Follows, from: $currentProfileId, to: $subjectId, Follows: {} }) {
-    ...BasicCreateEdgeMutationPayload
-  }
-}
-
-fragment BasicCreateEdgeMutationPayload on CreateEdgeMutationPayload {
-  ... on CreateEdgeMutationSuccess {
-    edge {
-      ... on IEdge {
-        _id
-      }
-    }
-  }
-  ... on CreateEdgeMutationError {
-    type
-    details
-  }
-}
-
-mutation SubjectPageUnfollow($edgeId: ID!) {
-  deleteEdge(input: { _id: $edgeId, edgeType: Follows }) {
-    ...BasicDeleteEdgeMutationPayload
-  }
-}
-
-fragment BasicDeleteEdgeMutationPayload on DeleteEdgeMutationPayload {
-  ... on DeleteEdgeMutationSuccess {
-    edgeId
-  }
-  ... on DeleteEdgeMutationError {
-    type
-    details
-  }
-}
