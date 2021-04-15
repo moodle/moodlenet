@@ -1,15 +1,11 @@
 type Created implements IEdge {
-  _id: ID!
-  _meta: EdgeMeta
+  id: ID!
 }
 
 ## integrations
 union Edge = Created
 enum EdgeType {
   Created
-}
-type RelCountMap {
-  Created: RelCount
 }
 input CreateEdgeInput {
   Created: Empty

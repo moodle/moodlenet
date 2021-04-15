@@ -2,11 +2,13 @@ import { Assertion } from '@moodlenet/common/lib/content-graph'
 import { EdgeType } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
 import { edgeTypeFromId, Id, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { aqlstr } from '../../../../../../lib/helpers/arango'
+import { getSessionContext } from '../../../../../MoodleNetGraphQL'
 import { MoodleNetAuthenticatedExecutionContext } from '../../../../../types'
 import { ShallowEdgeByType } from '../../../types.node'
 import { Persistence } from '../types'
 import { getEdgeOpAqlAssertions } from './assertions/edge'
 import { isMarkDeleted, markDeletedPatch } from './helpers'
+import { DocumentEdgeByType } from './types'
 
 export const deleteEdge = async ({
   persistence: { db, graph },
@@ -18,6 +20,7 @@ export const deleteEdge = async ({
   ctx: MoodleNetAuthenticatedExecutionContext
   edgeId: Id
 }) => {
+  const { profileId: byId } = getSessionContext(ctx)
   const edgeType = edgeTypeFromId(edgeId)
   const edgeCollection = graph.edgeCollection<ShallowEdgeByType<EdgeType>>(edgeType)
   const edge = await edgeCollection.edge(edgeId).catch(() => null)
@@ -39,7 +42,7 @@ export const deleteEdge = async ({
     FILTER !!edge AND !${isMarkDeleted('edge')}
       AND( ${aqlAssertionMaps.renderedAqlFilterExpr} )
 
-    UPDATE edge with ${markDeletedPatch()} IN ${edgeType}
+    UPDATE edge with ${markDeletedPatch({ byId })} IN ${edgeType}
 
     RETURN NEW
   `
@@ -47,7 +50,7 @@ export const deleteEdge = async ({
   const cursor = await db.query(q, {}, { count: true })
   // console.log({ c: cursor.count })
   if (cursor.count === 1) {
-    return edge as ShallowEdgeByType<EdgeType>
+    return edge as DocumentEdgeByType<EdgeType>
   }
 
   // Assertions failed

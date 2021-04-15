@@ -2,7 +2,7 @@ fragment JustEdgeIdRelPage on RelPage {
   edges {
     edge {
       ... on IEdge {
-        _id
+        id
       }
     }
   }

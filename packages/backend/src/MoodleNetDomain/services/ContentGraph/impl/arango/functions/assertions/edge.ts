@@ -15,6 +15,7 @@ export const connAssertionMap: ConnAssertionMap = {
     if (!edgeType) {
       return `(false /*NoExistingSameEdgeTypeInSameDirectionBetweenTheSameTwoNodes edgeType:${edgeType}*/)`
     }
+    // BEWARE: this assertion assumes to be used in "createNode" where `from` and `to` variables are defined
     return `LENGTH(
       FOR edge  IN ${edgeType}  
         

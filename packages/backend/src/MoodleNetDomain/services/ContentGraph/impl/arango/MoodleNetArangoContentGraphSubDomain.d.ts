@@ -13,14 +13,8 @@ import { WrkDef } from '../../../../../lib/domain/wrk'
 import { MoodleNetDomain } from '../../../../MoodleNetDomain'
 import { MoodleNetAuthenticatedExecutionContext, MoodleNetExecutionContext } from '../../../../MoodleNetGraphQL'
 import * as GQL from '../../ContentGraph.graphql.gen'
-import {
-  CreateEdgeData,
-  CreateNodeData,
-  ShallowEdge,
-  ShallowEdgeByType,
-  ShallowNode,
-  ShallowNodeByType,
-} from '../../types.node'
+import { ShallowEdge, ShallowEdgeByType, ShallowNodeByType } from '../../types.node'
+import { DocumentEdge, DocumentEdgeDataByType, DocumentNode, DocumentNodeDataByType } from './functions/types'
 export type MoodleNetArangoContentGraphSubDomain = SubDomain<
   MoodleNetDomain,
   'ContentGraph',
@@ -38,16 +32,16 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
           ctx: MoodleNetAuthenticatedExecutionContext //TODO try make them MoodleNetExecutionContext
           key?: IdKey // remove this .. it was only necessary for profile creation on accuont activation, change the flow and disjoint the two
           nodeType: Type
-          data: CreateNodeData<Type>
+          data: DocumentNodeDataByType<Type>
         }) => Promise<ShallowNodeByType<Type> | CreateNodeMutationErrorType>
       >
-      Created: Event<{ node: ShallowNode }>
+      Created: Event<{ node: DocumentNode; creatorProfileId: Id }>
     }
     Edge: {
       Create: WrkDef<
         <Type extends GQL.EdgeType>(_: {
           ctx: MoodleNetAuthenticatedExecutionContext //TODO try make them MoodleNetExecutionContext
-          data: CreateEdgeData<Type>
+          data: DocumentEdgeDataByType<Type>
           edgeType: Type
           from: Id
           to: Id
@@ -61,8 +55,8 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
           edgeId: Id
         }) => Promise<ShallowEdge | DeleteEdgeMutationErrorType>
       >
-      Created: Event<{ edge: ShallowEdge }>
-      Deleted: Event<{ edge: ShallowEdge }>
+      Created: Event<{ edge: DocumentEdge; creatorProfileId: Id }>
+      Deleted: Event<{ edge: DocumentEdge; deleterProfileId: Id }>
       Traverse: WrkDef<
         (_: {
           ctx: MoodleNetExecutionContext

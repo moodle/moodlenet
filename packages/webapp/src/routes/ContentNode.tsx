@@ -19,7 +19,7 @@ export const ContentNodeComponent: RouteFC<Routes.ContentNode> = ({ match: { par
   const { id, nodeType } = parsedId
 
   return (
-    <ProvideContentNodeContext _id={id} type={nodeType}>
+    <ProvideContentNodeContext id={id} type={nodeType}>
       <ContentNodeComponentSwitch id={id} nodeType={nodeType} />
     </ProvideContentNodeContext>
   )

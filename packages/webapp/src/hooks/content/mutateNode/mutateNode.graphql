@@ -13,7 +13,7 @@ fragment BasicCreateNodeMutationPayload on CreateNodeMutationPayload {
   ... on CreateNodeMutationSuccess {
     node {
       ... on INode {
-        _id
+        id
       }
     }
   }

@@ -3,7 +3,6 @@ import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
 import { useSession } from '../../contexts/Global/Session'
 import { isJust } from '../../helpers/data'
-import { getRelCount } from '../../helpers/nodeMeta'
 import { useMutateEdge } from '../../hooks/content/mutateEdge'
 import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { CollectionCardProps } from '../../ui/components/cards/Collection'
@@ -19,7 +18,7 @@ import {
 export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
   const { session } = useSession()
 
-  const isMyProfilePage = !!session?.profile && id === session.profile._id
+  const isMyProfilePage = !!session?.profile && id === session.profile.id
 
   const nodeRes = useProfilePageNodeQuery({
     variables: { id, skipMyRel: isMyProfilePage },
@@ -41,20 +40,20 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
           if (edge.node.__typename !== 'Resource') {
             return null
           }
-          const { collections, name, icon, _id } = edge.node
+          const { collections, name, icon, id } = edge.node
           const props: ResourceCardProps = {
             name,
             icon: icon ?? '',
-            homeLink: contentNodeLink({ _id }),
+            homeLink: contentNodeLink({ id }),
             type: 'pdf',
             collections: collections.edges
               .map(edge => {
                 if (edge.node.__typename !== 'Collection') {
                   return null
                 }
-                const { _id, name } = edge.node
+                const { id, name } = edge.node
                 return {
-                  homeLink: contentNodeLink({ _id }),
+                  homeLink: contentNodeLink({ id }),
                   name,
                 }
               })
@@ -76,13 +75,13 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
           if (edge.node.__typename !== 'Collection') {
             return null
           }
-          const { name, icon, _id, _meta } = edge.node
+          const { name, icon, id, followersCount, resourcesCount } = edge.node
           const props: CollectionCardProps = {
             name,
             icon: icon ?? '',
-            homeLink: contentNodeLink({ _id }),
-            followers: getRelCount(_meta, 'Follows', 'from', 'Profile'),
-            resources: getRelCount(_meta, 'Contains', 'to', 'Resource'),
+            homeLink: contentNodeLink({ id }),
+            followers: followersCount,
+            resources: resourcesCount,
           }
 
           return props
@@ -92,7 +91,7 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
   )
 
   const followMut = useMutateEdge()
-  const myFollowId = profile?.myFollow?.edges[0]?.edge._id
+  const myFollowId = profile?.myFollow?.edges[0]?.edge.id
   const myProfile = session?.profile
   const me = useMemo(() => {
     return myProfile
@@ -103,7 +102,7 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
             }
             const toggleFollowPromise = myFollowId
               ? followMut.deleteEdge({ edgeId: myFollowId })
-              : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: myProfile._id, to: id })
+              : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: myProfile.id, to: id })
             toggleFollowPromise.then(() => nodeRes.refetch())
           },
           following: !!myFollowId,
@@ -117,7 +116,7 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
           collections,
           summary: profile.summary,
           icon: profile.icon || '',
-          followers: getRelCount(profile._meta, 'Follows', 'from', 'Profile'),
+          followers: profile.followersCount,
           me,
           name: profile.name,
           pageHeaderProps,

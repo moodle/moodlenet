@@ -4,7 +4,7 @@ import { MoodleNetArangoContentGraphSubDomain } from '../../MoodleNetArangoConte
 import { deleteEdgeMutationError } from '../helpers'
 export const deleteEdge: MutationResolvers['deleteEdge'] = async (_root, { input }, ctx /*,  _info */) => {
   // console.log('deleteEdge', input)
-  const { edgeType, _id } = input
+  const { edgeType, id } = input
   if (ctx.type === 'anon') {
     return deleteEdgeMutationError('NotAuthorized', `Anonymous can't delete`)
   }
@@ -12,7 +12,7 @@ export const deleteEdge: MutationResolvers['deleteEdge'] = async (_root, { input
   const deleteResult = await call<MoodleNetArangoContentGraphSubDomain>()('ContentGraph.Edge.Delete', ctx.flow)({
     ctx,
     edgeType,
-    edgeId: _id,
+    edgeId: id,
   })
 
   if (typeof deleteResult === 'string') {
@@ -20,7 +20,7 @@ export const deleteEdge: MutationResolvers['deleteEdge'] = async (_root, { input
   }
   const successResult: DeleteEdgeMutationSuccess = {
     __typename: 'DeleteEdgeMutationSuccess',
-    edgeId: _id,
+    edgeId: id,
   }
 
   return successResult

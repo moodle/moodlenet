@@ -18,8 +18,11 @@ export const updateNodeEdgeCounters = async ({
     LET to = DOCUMENT(edge._to)
     return {from, to}
   `
+  // console.log({ q })
   const cursor = await db.query(q)
+
   const { from, to } = await cursor.next()
+  // console.log({ from, to })
   cursor.kill()
 
   if (!(from && to)) {
@@ -32,17 +35,15 @@ export const updateNodeEdgeCounters = async ({
       const relCountSide = node === from ? 'to' : 'from'
       const relTargetType = node === from ? toType : fromType
       const { nodeType } = parseNodeId(node._id)
-      const incExpr = `node._meta.relCount.${edgeType}.${relCountSide}.${relTargetType} + (${del ? -1 : 1}) `
+      const incExpr = `(node._relCount.${edgeType}.${relCountSide}.${relTargetType} || 0 ) + (${del ? -1 : 1}) `
       const qUpd = `
         LET node = DOCUMENT(${aqlstr(node._id)})
         UPDATE node
         WITH {
-          _meta: {
-            relCount:{
-              ${aqlstr(edgeType)}: {
-                ${aqlstr(relCountSide)}: {
-                  ${aqlstr(relTargetType)}: ${incExpr}
-                }
+          _relCount:{
+            ${aqlstr(edgeType)}: {
+              ${aqlstr(relCountSide)}: {
+                ${aqlstr(relTargetType)}: ${incExpr}
               }
             }
           }
@@ -50,7 +51,7 @@ export const updateNodeEdgeCounters = async ({
         IN ${nodeType}
         RETURN null
       `
-      // console.log(`${del ? 'decr' : 'incr'} `)
+      // console.log({ del, qUpd })
 
       const cursor = await db.query(qUpd, {}, { count: true })
       cursor.kill()

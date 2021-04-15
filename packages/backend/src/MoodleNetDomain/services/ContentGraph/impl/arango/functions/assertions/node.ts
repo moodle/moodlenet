@@ -15,7 +15,7 @@ export const nodeAssertionMap: NodeAssertionMap = {
     if (!(sessionCtx && thisNodeVar)) {
       return `(false /*ExecutorCreatedThisNode thisNodeVar:${thisNodeVar}*/)`
     }
-    return `${thisNodeVar}._meta.creator._id == ${aqlstr(sessionCtx.profileId)}`
+    return `${thisNodeVar}._created.by._id == ${aqlstr(sessionCtx.profileId)}`
   },
   ThisNodeIsExecutorProfile: ({ ctx, thisNodeVar }) => {
     const sessionCtx = getSessionExecutionContext(ctx)

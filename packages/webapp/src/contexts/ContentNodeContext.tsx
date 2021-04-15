@@ -14,21 +14,21 @@ export type ContentNodeContextType = null | {
 
 export const ContentNodeContext = createContext<ContentNodeContextType>(null)
 export const useContentNodeContext = () => useContext(ContentNodeContext)
-export const ProvideContentNodeContext: FC<{ type: NodeType; _id: Id }> = ({ _id, type, children }) => {
-  const myProfileId = useSession().session?.profile?._id
+export const ProvideContentNodeContext: FC<{ type: NodeType; id: Id }> = ({ id, type, children }) => {
+  const myProfileId = useSession().session?.profile?.id
   const res = useContentNodeContextQuery({
-    variables: { id: _id },
+    variables: { id: id },
     fetchPolicy: 'cache-only',
     nextFetchPolicy: 'cache-only',
   })
   const value: ContentNodeContextType = !res.data?.node
     ? null
     : (() => {
-        const creatorId = res.data.node._meta.creator._id
+        const creatorId = res.data.node._created.by.id
         const name = res.data.node.name
         const imMaintainer = myProfileId === creatorId
         return {
-          id: _id,
+          id: id,
           type,
           creatorId,
           name,

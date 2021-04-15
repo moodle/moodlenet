@@ -10,7 +10,7 @@ export const webappPath = <Route extends RouteDef<string, any>>(
   params: GetRouteDefParams<Route>,
 ) => generatePath(path, params)
 
-export const contentNodeLink = <N extends { _id: Id }>(_: N) => {
-  const { nodeType, _key: key } = parseNodeId(_._id)
+export const contentNodeLink = <N extends { id: Id }>(_: N) => {
+  const { nodeType, _key: key } = parseNodeId(_.id)
   return webappPath<ContentNode>('/content/:nodeType/:key', { key, nodeType: nodeType.toLowerCase() })
 }

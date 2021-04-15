@@ -38,19 +38,19 @@ export type BasicCreateEdgeMutationPayload_CreateEdgeMutationSuccess_Fragment = 
   { __typename: 'CreateEdgeMutationSuccess' }
   & { edge: (
     { __typename: 'AppliesTo' }
-    & Pick<Types.AppliesTo, '_id'>
+    & Pick<Types.AppliesTo, 'id'>
   ) | (
     { __typename: 'Contains' }
-    & Pick<Types.Contains, '_id'>
+    & Pick<Types.Contains, 'id'>
   ) | (
     { __typename: 'Created' }
-    & Pick<Types.Created, '_id'>
+    & Pick<Types.Created, 'id'>
   ) | (
     { __typename: 'Follows' }
-    & Pick<Types.Follows, '_id'>
+    & Pick<Types.Follows, 'id'>
   ) | (
     { __typename: 'Likes' }
-    & Pick<Types.Likes, '_id'>
+    & Pick<Types.Likes, 'id'>
   ) }
 );
 
@@ -78,7 +78,7 @@ export const BasicCreateEdgeMutationPayloadFragmentDoc = gql`
   ... on CreateEdgeMutationSuccess {
     edge {
       ... on IEdge {
-        _id
+        id
       }
     }
   }

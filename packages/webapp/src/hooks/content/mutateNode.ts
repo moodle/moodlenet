@@ -9,7 +9,7 @@ export const useMutateNode = () => {
   const deleteNode = useCallback(
     ({ nodeId }: { nodeId: Id }) => {
       const { nodeType } = parseNodeId(nodeId)
-      return _deleteNode({ variables: { input: { _id: nodeId, nodeType } } })
+      return _deleteNode({ variables: { input: { id: nodeId, nodeType } } })
     },
     [_deleteNode],
   )

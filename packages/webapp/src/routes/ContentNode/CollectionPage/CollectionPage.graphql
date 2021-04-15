@@ -1,56 +1,46 @@
 query CollectionPageNode($id: ID!) {
-  node(_id: $id) {
+  node(id: $id) {
     ... on Collection {
-      _id
+      id
       name
       summary
       icon
       myFollow: _rel(edge: { type: Follows, node: Profile, inverse: true, targetMe: true }, page: { first: 1 }) {
         ...JustEdgeIdRelPage
       }
-      _meta {
-        created
-        creator {
-          _id
+      _created {
+        at
+        by {
+          id
           name
           icon
         }
-        relCount {
-          Follows {
-            from {
-              Profile
-            }
-          }
-          Contains {
-            to {
-              Resource
-            }
-          }
-        }
       }
+      followersCount: _relCount(type: Follows, target: Profile, inverse: true)
+      resourcesCount: _relCount(type: Contains, target: Resource)
     }
   }
 }
 
 query CollectionPageResources($id: ID!) {
-  node(_id: $id) {
+  node(id: $id) {
     ... on INode {
-      _id
+      id
       resourceList: _rel(edge: { type: Contains, node: Resource }, page: { first: 10 }) {
         edges {
           edge {
-            _id
+            id
           }
           node {
             ... on Resource {
-              _id
+              id
               name
               icon
               collections: _rel(edge: { type: Contains, node: Collection, inverse: true }, page: { first: 2 }) {
                 edges {
                   node {
                     ... on Collection {
-                      _id
+                      id
                       name
                     }
                   }

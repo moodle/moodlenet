@@ -1,13 +1,13 @@
 query ContentNodeContext($id: ID!) {
-  node(_id: $id) {
+  node(id: $id) {
     ... on IContentNode {
       name
     }
     ... on INode {
-      _id
-      _meta {
-        creator {
-          _id
+      id
+      _created {
+        by {
+          id
         }
       }
     }

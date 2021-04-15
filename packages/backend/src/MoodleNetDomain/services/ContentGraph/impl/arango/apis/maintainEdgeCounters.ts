@@ -1,3 +1,4 @@
+import { Id } from '@moodlenet/common/lib/pub-graphql/types'
 import { Acks } from '../../../../../../lib/domain/misc'
 import { LookupSubscriber } from '../../../../../../lib/domain/sub'
 import { updateNodeEdgeCounters } from '../functions/updateNode-EdgeCounters'
@@ -12,7 +13,8 @@ export const statsMaintainEdgeCountersOnCreate = ({
   MoodleNetArangoContentGraphSubDomain,
   'ContentGraph.Stats.MaintainEdgeCounters.Created'
 > => async ({ edge }) => {
-  await updateNodeEdgeCounters({ edgeId: edge._id, persistence, del: false })
+  // console.log({ edge })
+  await updateNodeEdgeCounters({ edgeId: edge._id as Id, persistence, del: false })
   return Acks.Done
 }
 
@@ -24,6 +26,7 @@ export const statsMaintainEdgeCountersOnDelete = ({
   MoodleNetArangoContentGraphSubDomain,
   'ContentGraph.Stats.MaintainEdgeCounters.Deleted'
 > => async ({ edge }) => {
-  await updateNodeEdgeCounters({ edgeId: edge._id, persistence, del: true })
+  // console.log({ edge })
+  await updateNodeEdgeCounters({ edgeId: edge._id as Id, persistence, del: true })
   return Acks.Done
 }

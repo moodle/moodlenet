@@ -1,31 +1,21 @@
 query ResourcePageNode($id: ID!) {
-  node(_id: $id) {
+  node(id: $id) {
     ... on Resource {
-      _id
+      id
       name
       icon
       summary
       myLike: _rel(edge: { type: Likes, node: Profile, inverse: true, targetMe: true }, page: { first: 1 }) {
         ...JustEdgeIdRelPage
       }
-      _meta {
-        created
-        creator {
-          _id
+      likersCount: _relCount(type: Likes, target: Profile, inverse: true)
+      inCollectionCount: _relCount(type: Contains, target: Resource, inverse: true)
+      _created {
+        at
+        by {
+          id
           name
           icon
-        }
-        relCount {
-          Likes {
-            from {
-              Profile
-            }
-          }
-          Contains {
-            to {
-              Resource
-            }
-          }
         }
       }
     }
@@ -33,21 +23,21 @@ query ResourcePageNode($id: ID!) {
 }
 
 query ResourcePageResources($id: ID!) {
-  node(_id: $id) {
+  node(id: $id) {
     ... on INode {
-      _id
+      id
       resourceList: _rel(edge: { type: Contains, node: Resource }, page: { first: 10 }) {
         edges {
           node {
             ... on Resource {
-              _id
+              id
               name
               icon
               resources: _rel(edge: { type: Contains, node: Resource, inverse: true }, page: { first: 2 }) {
                 edges {
                   node {
                     ... on Resource {
-                      _id
+                      id
                       name
                     }
                   }

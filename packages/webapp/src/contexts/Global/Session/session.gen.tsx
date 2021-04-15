@@ -53,10 +53,10 @@ export type UserSessionWithProfileInfoFragment = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: (
+        & { node: { __typename: 'Profile' } | (
           { __typename: 'Collection' }
-          & Pick<Types.Collection, '_id' | 'name' | 'icon'>
-        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+          & Pick<Types.Collection, 'id' | 'name' | 'icon'>
+        ) | { __typename: 'Resource' } | { __typename: 'Subject' } }
       )> }
     ) }
     & ShallowProfileFragment
@@ -77,7 +77,7 @@ export const UserSessionWithProfileInfoFragmentDoc = gql`
       edges {
         node {
           ... on Collection {
-            _id
+            id
             name
             icon
           }

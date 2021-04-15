@@ -11,7 +11,7 @@ const cache = new InMemoryCache({
     Query: {
       fields: {
         node(_, { args, toReference }) {
-          const parsedId = parseNodeIdString(args?._id)
+          const parsedId = parseNodeIdString(args?.id)
           if (parsedId) {
             const { id, nodeType } = parsedId
             return toReference({

@@ -1,15 +1,11 @@
 type Contains implements IEdge {
-  _id: ID!
-  _meta: EdgeMeta
+  id: ID!
 }
 
 ## integrations
 union Edge = Contains
 enum EdgeType {
   Contains
-}
-type RelCountMap {
-  Contains: RelCount
 }
 input CreateEdgeInput {
   Contains: Empty

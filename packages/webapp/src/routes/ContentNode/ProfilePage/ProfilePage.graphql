@@ -1,7 +1,7 @@
 query ProfilePageNode($id: ID!, $skipMyRel: Boolean!) {
-  node(_id: $id) {
+  node(id: $id) {
     ... on Profile {
-      _id
+      id
       name
       icon
       summary
@@ -9,51 +9,24 @@ query ProfilePageNode($id: ID!, $skipMyRel: Boolean!) {
         @skip(if: $skipMyRel) {
         ...JustEdgeIdRelPage
       }
-      _meta {
-        created
-        relCount {
-          Follows {
-            from {
-              Profile
-            }
-          }
-          Created {
-            to {
-              Resource
-              Collection
-            }
-          }
-        }
-      }
+      followersCount: _relCount(type: Follows, target: Profile, inverse: true)
     }
   }
 }
 
 query ProfilePageOwnCollections($id: ID!) {
-  node(_id: $id) {
+  node(id: $id) {
     ... on INode {
-      _id
+      id
       ownCollections: _rel(edge: { type: Created, node: Collection }, page: { first: 5 }) {
         edges {
           node {
             ... on Collection {
-              _id
+              id
               name
               icon
-              _meta {
-                relCount {
-                  Contains {
-                    to {
-                      Resource
-                    }
-                  }
-                  Follows {
-                    from {
-                      Profile
-                    }
-                  }
-                }
-              }
+              followersCount: _relCount(type: Follows, target: Profile, inverse: true)
+              resourcesCount: _relCount(type: Contains, target: Resource)
             }
           }
         }
@@ -62,21 +35,21 @@ query ProfilePageOwnCollections($id: ID!) {
   }
 }
 query ProfilePageOwnResources($id: ID!) {
-  node(_id: $id) {
+  node(id: $id) {
     ... on INode {
-      _id
+      id
       ownResources: _rel(edge: { type: Created, node: Resource }, page: { first: 5 }) {
         edges {
           node {
             ... on Resource {
-              _id
+              id
               name
               icon
               collections: _rel(edge: { type: Contains, node: Collection, inverse: true }, page: { first: 2 }) {
                 edges {
                   node {
                     ... on Collection {
-                      _id
+                      id
                       name
                     }
                   }

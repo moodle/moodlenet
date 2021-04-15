@@ -27,7 +27,7 @@ export const globalSearch = async ({
   const sortFactor =
     sortBy === 'Relevance'
       ? '1'
-      : '(1 + (node._meta.relCount.Likes.from.Profile || 0) + (node._meta.relCount.Follows.from.Profile || 0))'
+      : '(1 + (node._relCount.Likes.from.Profile || 0) + (node._relCount.Follows.from.Profile || 0))'
 
   const query = `
       FOR node IN SearchView

@@ -15,7 +15,7 @@ export const storeSentEmail = async ({
   result: SendResult
   db: Persistence
 }) => {
-  const record: Omit<SentEmailDocument, 'createdAt' | '_id'> = {
+  const record: Omit<SentEmailDocument, 'createdAt' | 'id'> = {
     email,
     _flow: flow,
     result,

@@ -9,7 +9,7 @@ export const useMutateEdge = () => {
   const deleteEdge = useCallback(
     ({ edgeId }: { edgeId: Id }) => {
       const { edgeType } = parseEdgeId(edgeId)
-      return _deleteEdge({ variables: { input: { _id: edgeId, edgeType } } })
+      return _deleteEdge({ variables: { input: { id: edgeId, edgeType } } })
     },
     [_deleteEdge],
   )

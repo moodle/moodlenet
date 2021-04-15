@@ -2,8 +2,7 @@ import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { writeFileSync } from 'fs'
 import { join } from 'path'
 import { ulidKey } from '../../../../../../lib/helpers/arango'
-import { SystemProfileId } from '../../../../../MoodleNetGraphQL'
-import { EdgeType, NodeType, Profile } from '../../../ContentGraph.graphql.gen'
+import { EdgeType, NodeType } from '../../../ContentGraph.graphql.gen'
 import './env'
 import { PROFILES_AMOUNT, SUBJECTS_AMOUNT } from './env'
 import * as fakeNode from './fake/node'
@@ -27,11 +26,6 @@ export const createNewFakeNode = ({ type }: { type: NodeType }) => {
     _key,
     __typename: type,
     ...fakeNode[type](),
-    _meta: {
-      created: new Date(),
-      updated: new Date(),
-      creator: { _id: SystemProfileId } as Profile,
-    },
   })
 }
 

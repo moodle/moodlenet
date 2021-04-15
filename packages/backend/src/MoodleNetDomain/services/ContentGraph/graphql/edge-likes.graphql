@@ -1,15 +1,11 @@
 type Likes implements IEdge {
-  _id: ID!
-  _meta: EdgeMeta
+  id: ID!
 }
 
 ## integrations
 union Edge = Likes
 enum EdgeType {
   Likes
-}
-type RelCountMap {
-  Likes: RelCount
 }
 input CreateEdgeInput {
   Likes: Empty

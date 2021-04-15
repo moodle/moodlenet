@@ -1,5 +1,5 @@
 fragment ShallowProfile on Profile {
-  _id
+  id
   name
 }
 
@@ -10,19 +10,7 @@ fragment BaseIContentNode on IContentNode {
 }
 
 fragment BaseINode on INode {
-  _id
-  _meta {
-    relCount {
-      Follows {
-        from {
-          Profile
-        }
-      }
-      Likes {
-        from {
-          Profile
-        }
-      }
-    }
-  }
+  id
+  followersCount: _relCount(type: Follows, target: Profile, inverse: true)
+  likersCount: _relCount(type: Likes, target: Profile, inverse: true)
 }

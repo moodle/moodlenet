@@ -1,56 +1,15 @@
 scalar Cursor
 
 interface IContentNode {
-  _id: ID!
-  name: String!
-  summary: String!
+  name: String! # TODO: rename to title
+  summary: String! # TODO: rename to excerpt
   icon: String
 }
 
 interface INode {
-  _id: ID!
-  _rel(edge: EdgeTypeInput!, page: PaginationInput): RelPage!
-  _meta: NodeMeta!
-}
-
-type NodeMeta {
-  creator: Profile!
-  created: DateTime!
-  updated: DateTime!
-  relCount: RelCountMap
-}
-
-type EdgeMeta {
-  creator: Profile!
-  created: DateTime!
-  updated: DateTime!
-}
-
-type RelCount {
-  to: RelCountTargetMap
-  from: RelCountTargetMap
+  id: ID!
 }
 
 interface IEdge {
-  _id: ID
-  _meta: EdgeMeta
-}
-
-input EdgeTypeInput {
-  type: EdgeType!
-  node: NodeType!
-  inverse: Boolean
-  targetMe: Boolean
-  targetIDs: [ID!]
-}
-
-type RelPage implements Page {
-  pageInfo: PageInfo!
-  edges: [RelPageEdge!]!
-}
-
-type RelPageEdge implements PageEdge {
-  cursor: Cursor!
-  edge: IEdge!
-  node: INode!
+  id: ID
 }

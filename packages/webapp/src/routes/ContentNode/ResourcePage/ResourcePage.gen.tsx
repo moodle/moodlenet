@@ -13,32 +13,18 @@ export type ResourcePageNodeQuery = (
   { __typename: 'Query' }
   & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'Profile' } | (
     { __typename: 'Resource' }
-    & Pick<Types.Resource, '_id' | 'name' | 'icon' | 'summary'>
+    & Pick<Types.Resource, 'id' | 'name' | 'icon' | 'summary'>
+    & { likersCount: Types.Resource['_relCount'], inCollectionCount: Types.Resource['_relCount'] }
     & { myLike: (
       { __typename: 'RelPage' }
       & JustEdgeIdRelPageFragment
-    ), _meta: (
-      { __typename: 'NodeMeta' }
-      & Pick<Types.NodeMeta, 'created'>
-      & { creator: (
+    ), _created: (
+      { __typename: 'GlyphByAt' }
+      & Pick<Types.GlyphByAt, 'at'>
+      & { by: (
         { __typename: 'Profile' }
-        & Pick<Types.Profile, '_id' | 'name' | 'icon'>
-      ), relCount?: Types.Maybe<(
-        { __typename: 'RelCountMap' }
-        & { Likes?: Types.Maybe<(
-          { __typename: 'RelCount' }
-          & { from?: Types.Maybe<(
-            { __typename: 'RelCountTargetMap' }
-            & Pick<Types.RelCountTargetMap, 'Profile'>
-          )> }
-        )>, Contains?: Types.Maybe<(
-          { __typename: 'RelCount' }
-          & { to?: Types.Maybe<(
-            { __typename: 'RelCountTargetMap' }
-            & Pick<Types.RelCountTargetMap, 'Resource'>
-          )> }
-        )> }
-      )> }
+        & Pick<Types.Profile, 'id' | 'name' | 'icon'>
+      ) }
     ) }
   ) | { __typename: 'Subject' }> }
 );
@@ -52,21 +38,21 @@ export type ResourcePageResourcesQuery = (
   { __typename: 'Query' }
   & { node?: Types.Maybe<(
     { __typename: 'Collection' }
-    & Pick<Types.Collection, '_id'>
+    & Pick<Types.Collection, 'id'>
     & { resourceList: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+        & { node: { __typename: 'Profile' } | { __typename: 'Collection' } | (
           { __typename: 'Resource' }
-          & Pick<Types.Resource, '_id' | 'name' | 'icon'>
+          & Pick<Types.Resource, 'id' | 'name' | 'icon'>
           & { resources: (
             { __typename: 'RelPage' }
             & { edges: Array<(
               { __typename: 'RelPageEdge' }
-              & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+              & { node: { __typename: 'Profile' } | { __typename: 'Collection' } | (
                 { __typename: 'Resource' }
-                & Pick<Types.Resource, '_id' | 'name'>
+                & Pick<Types.Resource, 'id' | 'name'>
               ) | { __typename: 'Subject' } }
             )> }
           ) }
@@ -75,21 +61,21 @@ export type ResourcePageResourcesQuery = (
     ) }
   ) | (
     { __typename: 'Profile' }
-    & Pick<Types.Profile, '_id'>
+    & Pick<Types.Profile, 'id'>
     & { resourceList: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+        & { node: { __typename: 'Profile' } | { __typename: 'Collection' } | (
           { __typename: 'Resource' }
-          & Pick<Types.Resource, '_id' | 'name' | 'icon'>
+          & Pick<Types.Resource, 'id' | 'name' | 'icon'>
           & { resources: (
             { __typename: 'RelPage' }
             & { edges: Array<(
               { __typename: 'RelPageEdge' }
-              & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+              & { node: { __typename: 'Profile' } | { __typename: 'Collection' } | (
                 { __typename: 'Resource' }
-                & Pick<Types.Resource, '_id' | 'name'>
+                & Pick<Types.Resource, 'id' | 'name'>
               ) | { __typename: 'Subject' } }
             )> }
           ) }
@@ -98,21 +84,21 @@ export type ResourcePageResourcesQuery = (
     ) }
   ) | (
     { __typename: 'Resource' }
-    & Pick<Types.Resource, '_id'>
+    & Pick<Types.Resource, 'id'>
     & { resourceList: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+        & { node: { __typename: 'Profile' } | { __typename: 'Collection' } | (
           { __typename: 'Resource' }
-          & Pick<Types.Resource, '_id' | 'name' | 'icon'>
+          & Pick<Types.Resource, 'id' | 'name' | 'icon'>
           & { resources: (
             { __typename: 'RelPage' }
             & { edges: Array<(
               { __typename: 'RelPageEdge' }
-              & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+              & { node: { __typename: 'Profile' } | { __typename: 'Collection' } | (
                 { __typename: 'Resource' }
-                & Pick<Types.Resource, '_id' | 'name'>
+                & Pick<Types.Resource, 'id' | 'name'>
               ) | { __typename: 'Subject' } }
             )> }
           ) }
@@ -121,21 +107,21 @@ export type ResourcePageResourcesQuery = (
     ) }
   ) | (
     { __typename: 'Subject' }
-    & Pick<Types.Subject, '_id'>
+    & Pick<Types.Subject, 'id'>
     & { resourceList: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+        & { node: { __typename: 'Profile' } | { __typename: 'Collection' } | (
           { __typename: 'Resource' }
-          & Pick<Types.Resource, '_id' | 'name' | 'icon'>
+          & Pick<Types.Resource, 'id' | 'name' | 'icon'>
           & { resources: (
             { __typename: 'RelPage' }
             & { edges: Array<(
               { __typename: 'RelPageEdge' }
-              & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+              & { node: { __typename: 'Profile' } | { __typename: 'Collection' } | (
                 { __typename: 'Resource' }
-                & Pick<Types.Resource, '_id' | 'name'>
+                & Pick<Types.Resource, 'id' | 'name'>
               ) | { __typename: 'Subject' } }
             )> }
           ) }
@@ -148,9 +134,9 @@ export type ResourcePageResourcesQuery = (
 
 export const ResourcePageNodeDocument = gql`
     query ResourcePageNode($id: ID!) {
-  node(_id: $id) {
+  node(id: $id) {
     ... on Resource {
-      _id
+      id
       name
       icon
       summary
@@ -160,24 +146,14 @@ export const ResourcePageNodeDocument = gql`
       ) {
         ...JustEdgeIdRelPage
       }
-      _meta {
-        created
-        creator {
-          _id
+      likersCount: _relCount(type: Likes, target: Profile, inverse: true)
+      inCollectionCount: _relCount(type: Contains, target: Resource, inverse: true)
+      _created {
+        at
+        by {
+          id
           name
           icon
-        }
-        relCount {
-          Likes {
-            from {
-              Profile
-            }
-          }
-          Contains {
-            to {
-              Resource
-            }
-          }
         }
       }
     }
@@ -212,14 +188,14 @@ export type ResourcePageNodeLazyQueryHookResult = ReturnType<typeof useResourceP
 export type ResourcePageNodeQueryResult = Apollo.QueryResult<ResourcePageNodeQuery, ResourcePageNodeQueryVariables>;
 export const ResourcePageResourcesDocument = gql`
     query ResourcePageResources($id: ID!) {
-  node(_id: $id) {
+  node(id: $id) {
     ... on INode {
-      _id
+      id
       resourceList: _rel(edge: {type: Contains, node: Resource}, page: {first: 10}) {
         edges {
           node {
             ... on Resource {
-              _id
+              id
               name
               icon
               resources: _rel(
@@ -229,7 +205,7 @@ export const ResourcePageResourcesDocument = gql`
                 edges {
                   node {
                     ... on Resource {
-                      _id
+                      id
                       name
                     }
                   }

@@ -1,3 +1,5 @@
+import { Id } from '@moodlenet/common/lib/pub-graphql/types'
+import { Document } from 'arangojs/documents'
 import { call } from '../../../../../../lib/domain/amqp/call'
 import { getSessionExecutionContext, MoodleNetExecutionContext } from '../../../../../types'
 import * as GQL from '../../../ContentGraph.graphql.gen'
@@ -6,7 +8,7 @@ import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentG
 
 const _rel: GQL.ResolverFn<
   GQL.ResolversTypes['RelPage'],
-  ShallowNode,
+  Document<ShallowNode>,
   MoodleNetExecutionContext,
   GQL.RequireFields<GQL.INode_RelArgs, 'edge'>
 > = async (parent, node, ctx, _info) => {
@@ -34,7 +36,7 @@ const _rel: GQL.ResolverFn<
 
   const pageResult = await call<MoodleNetArangoContentGraphSubDomain>()('ContentGraph.Edge.Traverse', ctx.flow)({
     edgeType,
-    parentNodeId: parentId,
+    parentNodeId: parentId as Id,
     inverse: !!inverse,
     targetNodeType,
     page,
@@ -44,6 +46,27 @@ const _rel: GQL.ResolverFn<
   return pageResult
 }
 
+type RelCount = {
+  [e in GQL.EdgeType]?: {
+    [dir in 'from' | 'to']: {
+      [t in GQL.NodeType]?: number
+    }
+  }
+}
+
+type NodeDocumentWithRelCount = Document<ShallowNode> & { _relCount?: RelCount | null }
+export const _relCount: GQL.ResolverFn<
+  GQL.ResolversTypes['Int'],
+  NodeDocumentWithRelCount,
+  MoodleNetExecutionContext,
+  GQL.RequireFields<GQL.INode_RelCountArgs, 'type' | 'target'>
+> = async (parent, { target, type, inverse }, _ctx, _info) => {
+  const count = parent?._relCount?.[type]?.[inverse ? 'from' : 'to']?.[target] ?? 0
+  return Math.round(count)
+}
+
 export const NodeResolver = {
   _rel,
+  _relCount,
+  id: (parent: Document<ShallowNode>) => parent._id,
 } as any

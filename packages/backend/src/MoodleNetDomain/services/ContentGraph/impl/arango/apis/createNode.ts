@@ -2,6 +2,7 @@ import { emit } from '../../../../../../lib/domain/amqp/emit'
 import { enqueue } from '../../../../../../lib/domain/amqp/enqueue'
 import { mergeFlow } from '../../../../../../lib/domain/flow'
 import { LookupWorker } from '../../../../../../lib/domain/wrk'
+import { getSessionContext } from '../../../../../MoodleNetGraphQL'
 import { createNode } from '../functions/createNode'
 import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentGraphSubDomain'
 import { Persistence } from '../types'
@@ -16,6 +17,8 @@ export const createNodeWorker = ({
   nodeType,
   key,
 }) => {
+  const { profileId: creatorProfileId } = getSessionContext(ctx)
+
   const mNode = await createNode({
     data,
     nodeType,
@@ -32,15 +35,15 @@ export const createNodeWorker = ({
 
   emit<MoodleNetArangoContentGraphSubDomain>()(
     `ContentGraph.Node.Created`,
-    { node: mNode },
+    { node: mNode, creatorProfileId },
     mergeFlow(ctx.flow, [nodeType]),
   )
   enqueue<MoodleNetArangoContentGraphSubDomain>()(`ContentGraph.Edge.Create`, ctx.flow)({
     ctx,
     data: {},
     edgeType: 'Created',
-    from: mNode._meta.creator._id,
-    to: mNode._id,
+    from: creatorProfileId,
+    to: mNode.id,
   })
 
   return mNode

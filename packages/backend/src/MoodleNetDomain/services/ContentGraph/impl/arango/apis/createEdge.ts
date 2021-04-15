@@ -1,6 +1,7 @@
 import { emit } from '../../../../../../lib/domain/amqp/emit'
 import { mergeFlow } from '../../../../../../lib/domain/flow'
 import { LookupWorker } from '../../../../../../lib/domain/wrk'
+import { getSessionContext } from '../../../../../MoodleNetGraphQL'
 import { createEdge } from '../functions/createEdge'
 import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentGraphSubDomain'
 import { Persistence } from '../types'
@@ -17,6 +18,7 @@ export const createEdgeWorker = ({
   to,
   key,
 }) => {
+  const { profileId: creatorProfileId } = getSessionContext(ctx)
   const mEdge = await createEdge({ ctx, data, edgeType, from, persistence, to, key })
   if (typeof mEdge === 'string') {
     return mEdge === 'no assertions found' ? 'UnexpectedInput' : 'NotAuthorized'
@@ -24,11 +26,11 @@ export const createEdgeWorker = ({
   if ('CreateEdgeAssertionsFailed' in mEdge) {
     return 'AssertionFailed'
   }
-  // console.log(`emit create edge`, mEdge._id)
+  // console.log(`emit create edge`, mEdge.id)
 
   emit<MoodleNetArangoContentGraphSubDomain>()(
     'ContentGraph.Edge.Created',
-    { edge: mEdge },
+    { edge: mEdge, creatorProfileId },
     mergeFlow(ctx.flow, [edgeType]),
   )
 

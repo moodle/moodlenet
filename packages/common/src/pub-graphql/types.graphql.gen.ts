@@ -184,7 +184,7 @@ export type UpdateNodeInput = {
   Profile?: Maybe<UpdateProfileInput>;
   Resource?: Maybe<UpdateResourceInput>;
   Subject?: Maybe<UpdateSubjectInput>;
-  _id: Scalars['ID'];
+  id: Scalars['ID'];
   nodeType: NodeType;
 };
 
@@ -237,7 +237,7 @@ export type UpdateEdgeMutationErrorType =
   | 'AssertionFailed';
 
 export type DeleteEdgeInput = {
-  _id: Scalars['ID'];
+  id: Scalars['ID'];
   edgeType: EdgeType;
 };
 
@@ -261,7 +261,7 @@ export type DeleteEdgeMutationErrorType =
   | 'AssertionFailed';
 
 export type DeleteNodeInput = {
-  _id: Scalars['ID'];
+  id: Scalars['ID'];
   nodeType: NodeType;
 };
 
@@ -330,21 +330,22 @@ export type QueryGlobalSearchArgs = {
 
 
 export type QueryNodeArgs = {
-  _id: Scalars['ID'];
+  id: Scalars['ID'];
 };
 
 
 export type IContentNode = {
-  _id: Scalars['ID'];
   name: Scalars['String'];
   summary: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
 };
 
 export type INode = {
-  _id: Scalars['ID'];
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
-  _meta: NodeMeta;
+  _relCount: Scalars['Int'];
+  id: Scalars['ID'];
 };
 
 
@@ -353,30 +354,167 @@ export type INode_RelArgs = {
   page?: Maybe<PaginationInput>;
 };
 
-export type NodeMeta = {
-  __typename: 'NodeMeta';
-  creator: Profile;
-  created: Scalars['DateTime'];
-  updated: Scalars['DateTime'];
-  relCount?: Maybe<RelCountMap>;
-};
 
-export type EdgeMeta = {
-  __typename: 'EdgeMeta';
-  creator: Profile;
-  created: Scalars['DateTime'];
-  updated: Scalars['DateTime'];
-};
-
-export type RelCount = {
-  __typename: 'RelCount';
-  to?: Maybe<RelCountTargetMap>;
-  from?: Maybe<RelCountTargetMap>;
+export type INode_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
 };
 
 export type IEdge = {
-  _id?: Maybe<Scalars['ID']>;
-  _meta?: Maybe<EdgeMeta>;
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  id?: Maybe<Scalars['ID']>;
+};
+
+export type AppliesTo = IEdge & {
+  __typename: 'AppliesTo';
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  id: Scalars['ID'];
+};
+
+export type Edge = AppliesTo | Contains | Created | Follows | Likes;
+
+export type EdgeType =
+  | 'AppliesTo'
+  | 'Contains'
+  | 'Created'
+  | 'Follows'
+  | 'Likes';
+
+export type Contains = IEdge & {
+  __typename: 'Contains';
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  id: Scalars['ID'];
+};
+
+export type Created = IEdge & {
+  __typename: 'Created';
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  id: Scalars['ID'];
+};
+
+export type Follows = IEdge & {
+  __typename: 'Follows';
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  id: Scalars['ID'];
+};
+
+export type Likes = IEdge & {
+  __typename: 'Likes';
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  id: Scalars['ID'];
+};
+
+export type GlyphByAt = {
+  __typename: 'GlyphByAt';
+  by: Profile;
+  at: Scalars['DateTime'];
+};
+
+export type Profile = IContentNode & INode & {
+  __typename: 'Profile';
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  summary: Scalars['String'];
+};
+
+
+export type Profile_RelArgs = {
+  edge: EdgeTypeInput;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type Profile_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+};
+
+export type Collection = IContentNode & INode & {
+  __typename: 'Collection';
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  summary: Scalars['String'];
+};
+
+
+export type Collection_RelArgs = {
+  edge: EdgeTypeInput;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type Collection_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+};
+
+export type Resource = IContentNode & INode & {
+  __typename: 'Resource';
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  summary: Scalars['String'];
+};
+
+
+export type Resource_RelArgs = {
+  edge: EdgeTypeInput;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type Resource_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+};
+
+export type Subject = IContentNode & INode & {
+  __typename: 'Subject';
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+  icon?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  summary: Scalars['String'];
+};
+
+
+export type Subject_RelArgs = {
+  edge: EdgeTypeInput;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type Subject_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
 };
 
 export type EdgeTypeInput = {
@@ -397,55 +535,7 @@ export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
   edge: AppliesTo | Contains | Created | Follows | Likes;
-  node: Collection | Profile | Resource | Subject;
-};
-
-export type AppliesTo = IEdge & {
-  __typename: 'AppliesTo';
-  _id: Scalars['ID'];
-  _meta?: Maybe<EdgeMeta>;
-};
-
-export type Edge = AppliesTo | Contains | Created | Follows | Likes;
-
-export type EdgeType =
-  | 'AppliesTo'
-  | 'Contains'
-  | 'Created'
-  | 'Follows'
-  | 'Likes';
-
-export type RelCountMap = {
-  __typename: 'RelCountMap';
-  AppliesTo?: Maybe<RelCount>;
-  Contains?: Maybe<RelCount>;
-  Created?: Maybe<RelCount>;
-  Follows?: Maybe<RelCount>;
-  Likes?: Maybe<RelCount>;
-};
-
-export type Contains = IEdge & {
-  __typename: 'Contains';
-  _id: Scalars['ID'];
-  _meta?: Maybe<EdgeMeta>;
-};
-
-export type Created = IEdge & {
-  __typename: 'Created';
-  _id: Scalars['ID'];
-  _meta?: Maybe<EdgeMeta>;
-};
-
-export type Follows = IEdge & {
-  __typename: 'Follows';
-  _id: Scalars['ID'];
-  _meta?: Maybe<EdgeMeta>;
-};
-
-export type Likes = IEdge & {
-  __typename: 'Likes';
-  _id: Scalars['ID'];
-  _meta?: Maybe<EdgeMeta>;
+  node: Profile | Collection | Resource | Subject;
 };
 
 export type UserSession = {
@@ -456,22 +546,6 @@ export type UserSession = {
   profileId?: Maybe<Scalars['ID']>;
   userId: Scalars['String'];
   username: Scalars['String'];
-};
-
-export type Collection = IContentNode & INode & {
-  __typename: 'Collection';
-  _id: Scalars['ID'];
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['String']>;
-  _meta: NodeMeta;
-  _rel: RelPage;
-};
-
-
-export type Collection_RelArgs = {
-  edge: EdgeTypeInput;
-  page?: Maybe<PaginationInput>;
 };
 
 export type CreateCollectionInput = {
@@ -494,30 +568,6 @@ export type NodeType =
   | 'Resource'
   | 'Subject';
 
-export type RelCountTargetMap = {
-  __typename: 'RelCountTargetMap';
-  Collection?: Maybe<Scalars['Int']>;
-  Profile?: Maybe<Scalars['Int']>;
-  Resource?: Maybe<Scalars['Int']>;
-  Subject?: Maybe<Scalars['Int']>;
-};
-
-export type Profile = INode & IContentNode & {
-  __typename: 'Profile';
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['String']>;
-  _id: Scalars['ID'];
-  _meta: NodeMeta;
-  _rel: RelPage;
-};
-
-
-export type Profile_RelArgs = {
-  edge: EdgeTypeInput;
-  page?: Maybe<PaginationInput>;
-};
-
 export type UpdateProfileInput = {
   name: Scalars['String'];
   summary: Scalars['String'];
@@ -530,22 +580,6 @@ export type CreateProfileInput = {
   icon?: Maybe<Scalars['String']>;
 };
 
-export type Resource = INode & IContentNode & {
-  __typename: 'Resource';
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['String']>;
-  _id: Scalars['ID'];
-  _meta: NodeMeta;
-  _rel: RelPage;
-};
-
-
-export type Resource_RelArgs = {
-  edge: EdgeTypeInput;
-  page?: Maybe<PaginationInput>;
-};
-
 export type CreateResourceInput = {
   name: Scalars['String'];
   summary: Scalars['String'];
@@ -556,22 +590,6 @@ export type UpdateResourceInput = {
   name?: Maybe<Scalars['String']>;
   summary: Scalars['String'];
   icon?: Maybe<Scalars['String']>;
-};
-
-export type Subject = INode & IContentNode & {
-  __typename: 'Subject';
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['String']>;
-  _id: Scalars['ID'];
-  _meta: NodeMeta;
-  _rel: RelPage;
-};
-
-
-export type Subject_RelArgs = {
-  edge: EdgeTypeInput;
-  page?: Maybe<PaginationInput>;
 };
 
 export type CreateSubjectInput = {
@@ -595,7 +613,7 @@ export type SearchPage = Page & {
 export type SearchPageEdge = PageEdge & {
   __typename: 'SearchPageEdge';
   cursor: Scalars['Cursor'];
-  node: Collection | Profile | Resource | Subject;
+  node: Profile | Collection | Resource | Subject;
 };
 
 export type GlobalSearchSort =
@@ -655,14 +673,14 @@ export type CreateSession = {
       "SearchPageEdge"
     ],
     "IContentNode": [
-      "Collection",
       "Profile",
+      "Collection",
       "Resource",
       "Subject"
     ],
     "INode": [
-      "Collection",
       "Profile",
+      "Collection",
       "Resource",
       "Subject"
     ],

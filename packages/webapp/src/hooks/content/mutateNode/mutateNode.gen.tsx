@@ -38,16 +38,16 @@ export type BasicCreateNodeMutationPayload_CreateNodeMutationSuccess_Fragment = 
   { __typename: 'CreateNodeMutationSuccess' }
   & { node: (
     { __typename: 'Collection' }
-    & Pick<Types.Collection, '_id'>
+    & Pick<Types.Collection, 'id'>
   ) | (
     { __typename: 'Profile' }
-    & Pick<Types.Profile, '_id'>
+    & Pick<Types.Profile, 'id'>
   ) | (
     { __typename: 'Resource' }
-    & Pick<Types.Resource, '_id'>
+    & Pick<Types.Resource, 'id'>
   ) | (
     { __typename: 'Subject' }
-    & Pick<Types.Subject, '_id'>
+    & Pick<Types.Subject, 'id'>
   ) }
 );
 
@@ -75,7 +75,7 @@ export const BasicCreateNodeMutationPayloadFragmentDoc = gql`
   ... on CreateNodeMutationSuccess {
     node {
       ... on INode {
-        _id
+        id
       }
     }
   }

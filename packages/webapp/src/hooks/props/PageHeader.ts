@@ -43,7 +43,7 @@ export const usePageHeaderProps = (): PageHeaderProps => {
           data: {},
           edgeType: 'Contains',
           to: nodeContext.id,
-          from: newCollectionNode._id,
+          from: newCollectionNode.id,
         })
 
         if (addToCollectionRes.data?.createEdge.__typename === 'CreateEdgeMutationError') {
@@ -82,7 +82,7 @@ export const usePageHeaderProps = (): PageHeaderProps => {
       if (
         nodeContext &&
         nodeContext.type === 'Collection' &&
-        nodeContext.creatorId === session.profile._id &&
+        nodeContext.creatorId === session.profile.id &&
         newResourceNode.__typename === 'Resource' &&
         window.confirm(`add to ${nodeContext.name} collection?`)
       ) {
@@ -90,7 +90,7 @@ export const usePageHeaderProps = (): PageHeaderProps => {
           data: {},
           edgeType: 'Contains',
           from: nodeContext.id,
-          to: newResourceNode._id,
+          to: newResourceNode.id,
         })
 
         if (addToCollectionRes.data?.createEdge.__typename === 'CreateEdgeMutationError') {

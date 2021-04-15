@@ -9,11 +9,11 @@ import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentG
 export const nodePropResolver = <Parent>(
   prop: keyof Parent,
 ): GQL.Resolver<Maybe<ShallowNode>, Parent, MoodleNetExecutionContext> => async (par, _x, ctx /* ,_info */) => {
-  const _id = (par[prop] as any)?._id
-  if (!_id) {
+  const id = (par[prop] as any)?._id
+  if (!id) {
     return null
   }
-  const { nodeType, _key } = parseNodeId(_id)
+  const { nodeType, _key } = parseNodeId(id)
   const maybeNode = await call<MoodleNetArangoContentGraphSubDomain>()('ContentGraph.Node.ById', ctx.flow)({
     _key,
     nodeType,

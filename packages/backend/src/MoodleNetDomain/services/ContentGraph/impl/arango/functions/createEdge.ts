@@ -2,13 +2,11 @@ import { Assertion } from '@moodlenet/common/lib/content-graph'
 import { EdgeType } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
 import { Id, IdKey, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph'
 import { aqlstr, ulidKey } from '../../../../../../lib/helpers/arango'
-import { getSessionContext } from '../../../../../MoodleNetGraphQL'
 import { MoodleNetAuthenticatedExecutionContext } from '../../../../../types'
-import * as GQL from '../../../ContentGraph.graphql.gen'
-import { CreateEdgeData, ShallowEdgeByType, ShallowEdgeMeta } from '../../../types.node'
 import { Persistence } from '../types'
 import { getEdgeOpAqlAssertions } from './assertions/edge'
 import { isMarkDeleted } from './helpers'
+import { DocumentEdgeByType, DocumentEdgeDataByType } from './types'
 
 export const createEdge = async <Type extends EdgeType>({
   persistence: { db },
@@ -23,13 +21,12 @@ export const createEdge = async <Type extends EdgeType>({
   ctx: MoodleNetAuthenticatedExecutionContext
   edgeType: Type
   key?: IdKey // remove this .. it was only necessary for profile creation on accuont activation, change the flow and disjoint the two
-  data: CreateEdgeData<Type>
+  data: DocumentEdgeDataByType<Type>
   from: Id
   to: Id
 }) => {
   key = key ?? ulidKey()
 
-  const { profileId: creatorId } = getSessionContext(ctx)
   const fromType = nodeTypeFromId(from)
   const toType = nodeTypeFromId(to)
 
@@ -38,17 +35,11 @@ export const createEdge = async <Type extends EdgeType>({
     return aqlAssertionMaps
   }
 
-  const _meta: ShallowEdgeMeta = {
-    creator: { _id: creatorId } as GQL.Profile,
-    created: new Date(),
-    updated: new Date(),
-  }
   const newedge = {
     ...data,
     __typename: edgeType,
     _fromType: fromType,
     _toType: toType,
-    _meta,
     //
     _from: from,
     _to: to,
@@ -74,7 +65,7 @@ export const createEdge = async <Type extends EdgeType>({
   const cursor = await db.query(q)
   const result = await cursor.next()
   if (result) {
-    return result as ShallowEdgeByType<Type>
+    return result as DocumentEdgeByType<Type>
   }
 
   // Assertions failed

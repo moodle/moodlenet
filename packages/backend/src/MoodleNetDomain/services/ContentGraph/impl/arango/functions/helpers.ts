@@ -119,16 +119,6 @@ export const skipLimitPagination = ({ page }: { page: Maybe<PaginationInput> }) 
   }
 }
 
-export const createNodeMetaString = ({}: {}) => `{
-    created: DATE_NOW(),
-    updated: DATE_NOW()
-  }
-`
-export const updateNodeMetaString = ({}: {}) => `{
-  updated: DATE_NOW()
-}
-`
-
 export const updateRelationCountQuery = async ({
   persistence: { db },
   edgeType,
@@ -145,17 +135,14 @@ export const updateRelationCountQuery = async ({
   const { nodeType } = parseNodeId(nodeId)
   const q = `
     LET v = Document( ${aqlstr(nodeId)} )
-      LET currRelCount = v.${NODE_META_PROP}.relCount.${edgeType}.${side} || 0
-      UPDATE v WITH ${mergeNodeMeta({
-        nodeProp: 'v',
-        mergeMeta: `{
-          relCount: {
-            ${edgeType} : {
-              ${side}: currRelCount + (${Math.floor(amount)})
-            }
+      LET currRelCount = v._relCount.${edgeType}.${side} || 0
+      UPDATE v WITH MERGE_RECURSIVE(v,{
+        _relCount: {
+          ${edgeType} : {
+            ${side}: currRelCount + (${Math.floor(amount)})
           }
-        }`,
-      })}
+        }
+      })
 
       IN ${nodeType} 
       
@@ -168,8 +155,8 @@ export const updateRelationCountQuery = async ({
   return res
 }
 
-export const mergeNodeMeta = ({ mergeMeta, nodeProp }: { mergeMeta: string; nodeProp: string }) =>
-  `MERGE_RECURSIVE(${nodeProp},{ ${NODE_META_PROP}: ${mergeMeta} })`
+// export const mergeNodeMeta = ({ mergeMeta, nodeProp }: { mergeMeta: string; nodeProp: string }) =>
+//   `MERGE_RECURSIVE(${nodeProp},{ ${NODE_META_PROP}: ${mergeMeta} })`
 
 export const updateRelationCountsOnEdgeLife = async ({
   persistence,
@@ -190,8 +177,10 @@ export const updateRelationCountsOnEdgeLife = async ({
   return Promise.all([qin, qout])
 }
 
-const NODE_META_PROP = '_meta'
-
-const MARK_DELETED_PROP = '__mark_deleted'
+const MARK_DELETED_PROP = '_deleted'
 export const isMarkDeleted = (varname: string) => `HAS(${varname}, "${MARK_DELETED_PROP}")`
-export const markDeletedPatch = () => `{ ${MARK_DELETED_PROP}: DATE_NOW() }`
+export const markDeletedPatch = ({ byId }: { byId: Id }) => `{ ${MARK_DELETED_PROP}: {
+    by: { _id: ${aqlstr(byId)} },
+    at: DATE_NOW() 
+  }
+}`

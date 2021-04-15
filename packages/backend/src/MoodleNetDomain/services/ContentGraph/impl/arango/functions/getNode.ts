@@ -2,10 +2,10 @@ import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
 import { aqlstr } from '../../../../../../lib/helpers/arango'
 import { MoodleNetExecutionContext } from '../../../../../types'
 import * as GQL from '../../../ContentGraph.graphql.gen'
-import { ShallowNodeByType } from '../../../types.node'
 import { Persistence } from '../types'
 import { getNodeOpAqlAssertions } from './assertions/node'
 import { isMarkDeleted } from './helpers'
+import { DocumentNodeByType } from './types'
 
 export const getNode = async <Type extends GQL.NodeType = GQL.NodeType>({
   persistence: { db },
@@ -36,5 +36,5 @@ export const getNode = async <Type extends GQL.NodeType = GQL.NodeType>({
   const cursor = await db.query(q)
   const node = await cursor.next()
   cursor.kill()
-  return (node as ShallowNodeByType<Type>) || null
+  return (node as DocumentNodeByType<Type>) || null
 }

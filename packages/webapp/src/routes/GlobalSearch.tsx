@@ -2,7 +2,6 @@ import { contentNodeLink, Routes } from '@moodlenet/common/lib/webapp/sitemap'
 import { uniq } from 'lodash'
 import { useMemo } from 'react'
 import { useGlobalSearch } from '../contexts/Global/GlobalSearch'
-import { getRelCount } from '../helpers/nodeMeta'
 import { usePageHeaderProps } from '../hooks/props/PageHeader'
 import { BaseContentNodeFeedProps } from '../ui/components/BaseContentNodeFeed'
 import { GlobalSearchPage, GlobalSearchPageProps } from '../ui/pages/GlobalSearchPage'
@@ -19,8 +18,8 @@ export const GlobalSearchRouteComponent: RouteFC<Routes.GlobalSearch> = (/* { ma
       name: node.name,
       summary: node.summary,
       type: node.__typename,
-      followers: getRelCount(node._meta, 'Follows', 'from', 'Profile'),
-      likers: getRelCount(node._meta, 'Likes', 'from', 'Profile'),
+      followers: node.followersCount,
+      likers: node.likersCount,
     }))
   const pageHeaderProps = usePageHeaderProps()
 

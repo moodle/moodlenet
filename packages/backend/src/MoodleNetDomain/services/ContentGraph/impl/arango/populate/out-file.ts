@@ -1,7 +1,7 @@
 import { IdKey, isNodeType } from '@moodlenet/common/lib/utils/content-graph'
 import { createWriteStream, WriteStream } from 'fs'
 import { join } from 'path'
-import { EdgeType, NodeMeta, NodeType } from '../../../ContentGraph.graphql.gen'
+import { EdgeType, NodeType } from '../../../ContentGraph.graphql.gen'
 import { ShallowNode } from '../../../types.node'
 import { GEN_DIR } from './env'
 
@@ -28,7 +28,7 @@ export const finishWrite = () => {
   })
 }
 
-type WriteNode = Omit<ShallowNode, '_id' | '_meta' | '_rel'> & {
+type WriteNode = Omit<ShallowNode, 'id' | `_${string}`> & {
   _key: IdKey
-  _meta: Omit<NodeMeta, '__typename'>
+  __typename: NodeType
 }

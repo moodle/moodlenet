@@ -28,7 +28,7 @@ fragment UserSessionWithProfileInfo on UserSession {
       edges {
         node {
           ... on Collection {
-            _id
+            id
             name
             icon
           }

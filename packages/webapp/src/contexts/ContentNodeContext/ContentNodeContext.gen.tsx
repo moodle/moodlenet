@@ -11,42 +11,42 @@ export type ContentNodeContextQuery = (
   { __typename: 'Query' }
   & { node?: Types.Maybe<(
     { __typename: 'Collection' }
-    & Pick<Types.Collection, 'name' | '_id'>
-    & { _meta: (
-      { __typename: 'NodeMeta' }
-      & { creator: (
+    & Pick<Types.Collection, 'name' | 'id'>
+    & { _created: (
+      { __typename: 'GlyphByAt' }
+      & { by: (
         { __typename: 'Profile' }
-        & Pick<Types.Profile, '_id'>
+        & Pick<Types.Profile, 'id'>
       ) }
     ) }
   ) | (
     { __typename: 'Profile' }
-    & Pick<Types.Profile, 'name' | '_id'>
-    & { _meta: (
-      { __typename: 'NodeMeta' }
-      & { creator: (
+    & Pick<Types.Profile, 'name' | 'id'>
+    & { _created: (
+      { __typename: 'GlyphByAt' }
+      & { by: (
         { __typename: 'Profile' }
-        & Pick<Types.Profile, '_id'>
+        & Pick<Types.Profile, 'id'>
       ) }
     ) }
   ) | (
     { __typename: 'Resource' }
-    & Pick<Types.Resource, 'name' | '_id'>
-    & { _meta: (
-      { __typename: 'NodeMeta' }
-      & { creator: (
+    & Pick<Types.Resource, 'name' | 'id'>
+    & { _created: (
+      { __typename: 'GlyphByAt' }
+      & { by: (
         { __typename: 'Profile' }
-        & Pick<Types.Profile, '_id'>
+        & Pick<Types.Profile, 'id'>
       ) }
     ) }
   ) | (
     { __typename: 'Subject' }
-    & Pick<Types.Subject, 'name' | '_id'>
-    & { _meta: (
-      { __typename: 'NodeMeta' }
-      & { creator: (
+    & Pick<Types.Subject, 'name' | 'id'>
+    & { _created: (
+      { __typename: 'GlyphByAt' }
+      & { by: (
         { __typename: 'Profile' }
-        & Pick<Types.Profile, '_id'>
+        & Pick<Types.Profile, 'id'>
       ) }
     ) }
   )> }
@@ -55,15 +55,15 @@ export type ContentNodeContextQuery = (
 
 export const ContentNodeContextDocument = gql`
     query ContentNodeContext($id: ID!) {
-  node(_id: $id) {
+  node(id: $id) {
     ... on IContentNode {
       name
     }
     ... on INode {
-      _id
-      _meta {
-        creator {
-          _id
+      id
+      _created {
+        by {
+          id
         }
       }
     }

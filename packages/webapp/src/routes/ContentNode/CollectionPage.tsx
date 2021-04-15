@@ -4,7 +4,6 @@ import { FC, useMemo } from 'react'
 import { useContentNodeContext } from '../../contexts/ContentNodeContext'
 import { useSession } from '../../contexts/Global/Session'
 import { isJust } from '../../helpers/data'
-import { getRelCount } from '../../helpers/nodeMeta'
 import { useMutateEdge } from '../../hooks/content/mutateEdge'
 import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { ResourceCardProps } from '../../ui/components/cards/Resource'
@@ -31,20 +30,20 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
           if (edge.node.__typename !== 'Resource') {
             return null
           }
-          const { collections, name, icon, _id } = edge.node
+          const { collections, name, icon, id } = edge.node
           const props: ResourceCardProps = {
             name,
             icon: icon ?? '',
-            homeLink: contentNodeLink({ _id }),
+            homeLink: contentNodeLink({ id }),
             type: 'pdf',
             collections: collections.edges
               .map(edge => {
                 if (edge.node.__typename !== 'Collection') {
                   return null
                 }
-                const { _id, name } = edge.node
+                const { id, name } = edge.node
                 return {
-                  homeLink: contentNodeLink({ _id }),
+                  homeLink: contentNodeLink({ id }),
                   name,
                 }
               })
@@ -58,7 +57,7 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
           ...cardProps,
           removeResource: collectionContext?.imMaintainer
             ? async () => {
-                await removeResourceMut.deleteEdge({ edgeId: edge.edge._id })
+                await removeResourceMut.deleteEdge({ edgeId: edge.edge.id })
                 return resourcesRes.refetch()
               }
             : null,
@@ -68,7 +67,7 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
 
   const pageHeaderProps = usePageHeaderProps()
   const followMut = useMutateEdge()
-  const myFollowId = collection?.myFollow.edges[0]?.edge._id
+  const myFollowId = collection?.myFollow.edges[0]?.edge.id
   const myProfile = session?.profile
   const me = useMemo(() => {
     return myProfile
@@ -79,7 +78,7 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
             }
             const toggleFollowPromise = myFollowId
               ? followMut.deleteEdge({ edgeId: myFollowId })
-              : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: myProfile._id, to: id })
+              : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: myProfile.id, to: id })
             toggleFollowPromise.then(() => collectionRes.refetch())
           },
           following: !!myFollowId,
@@ -91,14 +90,14 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
     return collection
       ? {
           creator: {
-            homeLink: contentNodeLink({ _id: collection._meta.creator._id }),
-            icon: collection._meta.creator.icon || '',
-            name: collection._meta.creator.name,
+            homeLink: contentNodeLink({ id: collection._created.by.id }),
+            icon: collection._created.by.icon || '',
+            name: collection._created.by.name,
           },
           icon: collection.icon || '',
-          lastUpdated: collection._meta.created,
-          followers: getRelCount(collection._meta, 'Follows', 'from', 'Profile'),
-          resources: getRelCount(collection._meta, 'Contains', 'to', 'Resource'),
+          lastUpdated: collection._created.at,
+          followers: collection.followersCount,
+          resources: collection.resourcesCount,
           me,
           name: collection.name,
           summary: collection.summary,

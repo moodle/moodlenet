@@ -13,7 +13,7 @@ fragment BasicCreateEdgeMutationPayload on CreateEdgeMutationPayload {
   ... on CreateEdgeMutationSuccess {
     edge {
       ... on IEdge {
-        _id
+        id
       }
     }
   }

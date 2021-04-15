@@ -3,7 +3,6 @@ import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
 import { useSession } from '../../contexts/Global/Session'
 import { isJust } from '../../helpers/data'
-import { getRelCount } from '../../helpers/nodeMeta'
 import { useMutateEdge } from '../../hooks/content/mutateEdge'
 import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { ResourcePage, ResourcePageProps } from '../../ui/pages/Resource'
@@ -25,7 +24,7 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
 
   const likeMut = useMutateEdge()
   const addToCollectionMut = useMutateEdge()
-  const myLikeId = resource?.myLike.edges[0]?.edge._id
+  const myLikeId = resource?.myLike.edges[0]?.edge.id
   const myProfile = session?.profile
   const me = useMemo<ResourcePageProps['me']>(() => {
     return myProfile
@@ -36,7 +35,7 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
             }
             const toggleLikePromise = myLikeId
               ? likeMut.deleteEdge({ edgeId: myLikeId })
-              : likeMut.createEdge<'Likes'>({ data: {}, edgeType: 'Likes', from: myProfile._id, to: id })
+              : likeMut.createEdge<'Likes'>({ data: {}, edgeType: 'Likes', from: myProfile.id, to: id })
             toggleLikePromise.then(() => nodeRes.refetch())
           },
           liking: !!myLikeId,
@@ -48,7 +47,7 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
               name: coll.name,
               homeLink: contentNodeLink(coll),
               addToThisCollection: () => {
-                addToCollectionMut.createEdge({ edgeType: 'Contains', data: {}, from: coll._id, to: id })
+                addToCollectionMut.createEdge({ edgeType: 'Contains', data: {}, from: coll.id, to: id })
               },
             })),
         }
@@ -60,12 +59,12 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
           icon: resource.icon || '',
           type: 'pdf',
           creator: {
-            homeLink: contentNodeLink({ _id: resource._meta.creator._id }),
-            icon: resource._meta.creator.icon || '',
-            name: resource._meta.creator.name,
+            homeLink: contentNodeLink({ id: resource._created.by.id }),
+            icon: resource._created.by.icon || '',
+            name: resource._created.by.name,
           },
-          created: resource._meta.created,
-          likers: getRelCount(resource._meta, 'Likes', 'from', 'Profile'),
+          created: resource._created.at,
+          likers: resource.likersCount,
           me,
           name: resource.name,
           summary: resource.summary,

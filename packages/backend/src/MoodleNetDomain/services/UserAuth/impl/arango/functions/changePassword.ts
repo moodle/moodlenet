@@ -14,7 +14,7 @@ export const changeUserPassword = async ({
 }) => {
   const cursor = await db.query(aql`
     FOR user IN ${User}
-    FILTER user._id == ${userId} 
+    FILTER user.id == ${userId} 
         && user.password == ${currentPassword}
     LIMIT 1
     UPDATE user WITH { 
