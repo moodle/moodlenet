@@ -1,20 +1,11 @@
-import cors from 'cors'
-import express from 'express'
+import { Application } from 'express'
 import { graphqlHTTP } from 'express-graphql'
 import { schema } from '../../MoodleNetGraphQL'
 
 interface HttpGatewayCfg {
-  port: number
+  app: Application
 }
-export const starthttpGateway = ({ port }: HttpGatewayCfg) => {
-  console.log(`starting on ${port}`)
-
-  const app = express()
-  app.use(cors())
-
-  app.use((_req, _res, next) => {
-    next()
-  })
+export const startGraphQLHTTPGateway = ({ app }: HttpGatewayCfg) => {
   app.use(
     '/graphql',
     graphqlHTTP({
@@ -22,6 +13,4 @@ export const starthttpGateway = ({ port }: HttpGatewayCfg) => {
       graphiql: { headerEditorEnabled: true },
     }),
   )
-
-  app.listen(port, () => console.log(`listening on ${port}`))
 }

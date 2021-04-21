@@ -3,8 +3,8 @@ import sshpk from 'sshpk'
 import { newFlow } from '../../lib/domain/flow'
 import { memo } from '../../lib/helpers/misc'
 import { ActiveUser } from '../services/UserAuth/impl/arango/types'
+import { MoodleNetExecutionContext } from '../types'
 import { signJwt, verifyJwt } from './JWT'
-import { MoodleNetExecutionContext } from './types'
 
 export type GQLExecutionContext = MoodleNetExecutionContext<'anon' | 'session'>
 
@@ -63,3 +63,5 @@ export const getJwtSigner = memo(() => {
   }
   return jwtSigner
 })
+
+export const newAnonCtx = (): MoodleNetExecutionContext<'anon'> => ({ type: 'anon', flow: newFlow() })

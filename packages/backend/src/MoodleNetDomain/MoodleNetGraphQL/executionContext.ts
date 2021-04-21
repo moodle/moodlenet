@@ -1,10 +1,9 @@
 import { ExecutionParams } from '@graphql-tools/delegate/types'
+import { Request } from 'express'
 import { GraphQLError } from 'graphql'
-import { IncomingMessage } from 'http'
 import { Flow } from '../../lib/domain/flow'
+import { newAnonCtx } from '../executionContext'
 import { MoodleNetAuthenticatedExecutionContext } from '../types'
-import { INVALID_TOKEN } from './JWT'
-import { getJwtVerifier } from './MoodleNetGraphQL.env'
 import { graphQLRequestFlow } from './schemaHelpers'
 import { MoodleNetExecutionContext, RootValue } from './types'
 
@@ -26,19 +25,15 @@ export function getSessionContext(
 
 export function getExecutionGlobalValues({
   context,
-}: ExecutionParams): {
+}: ExecutionParams<Record<string, any>, Request>): {
   context: MoodleNetExecutionContext<'anon' | 'session'>
   root: RootValue
   flow: Flow
 } {
-  const verifyJwt = getJwtVerifier()
-  const jwtHeader = (context as IncomingMessage)?.headers?.bearer
-  const jwtToken = jwtHeader && (typeof jwtHeader === 'string' ? jwtHeader : jwtHeader[0])
-  const tokenVerification = verifyJwt(jwtToken)
+  const mnHttpSessionCtx: MoodleNetExecutionContext<'anon' | 'session'> = context?.mnHttpSessionCtx ?? newAnonCtx()
   const flow = graphQLRequestFlow()
-
   return {
-    context: tokenVerification === INVALID_TOKEN || !tokenVerification ? { type: 'anon', flow } : tokenVerification,
+    context: { ...mnHttpSessionCtx, flow },
     root: {},
     flow,
   }

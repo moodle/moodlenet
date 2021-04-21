@@ -1,5 +1,5 @@
 import JWT from 'jsonwebtoken'
-import { MoodleNetExecutionContext } from './types'
+import { MoodleNetExecutionContext } from '../types'
 
 export const INVALID_TOKEN = Symbol('INVALID_TOKEN')
 export type INVALID_TOKEN = typeof INVALID_TOKEN
@@ -37,9 +37,10 @@ export const verifyJwt = ({
   }
   try {
     const sessionCtx = JWT.verify(String(token), jwtPublicKey, jwtVerifyOpts)
-    if (typeof sessionCtx !== 'object' /* TODO: implement proper checks */) {
+    if (typeof sessionCtx !== 'object') {
       return null
     }
+    /* FIXME: implement proper checks */
     return sessionCtx as MoodleNetExecutionContext<'session'>
   } catch {
     return INVALID_TOKEN

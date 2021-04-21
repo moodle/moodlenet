@@ -1,5 +1,5 @@
 import Argon from 'argon2'
-import { getJwtSigner } from '../../MoodleNetGraphQL'
+import { getJwtSigner } from '../../executionContext'
 import { ArgonPwdHashOpts } from './argon'
 import { ActiveUser } from './impl/arango/types'
 import { SimpleResponse, UserSession } from './UserAuth.graphql.gen'
