@@ -11,15 +11,12 @@ export type DomainSetup<D> = {
     : never
 }
 
-export type DomainStart<D> = Partial<
-  {
-    [Path in SubPaths<D> | WrkPaths<D>]: Path extends WrkPaths<D>
-      ? DomainStartWrk<D, Path>
-      : Path extends SubPaths<D>
-      ? DomainStartSub<D, Path>
-      : never
-  }
->
+export type DomainStart<D> = {
+  [Path in SubPaths<D> | WrkPaths<D>]:
+    | (Path extends WrkPaths<D> ? DomainStartWrk<D, Path> : Path extends SubPaths<D> ? DomainStartSub<D, Path> : never)
+    | null
+}
+
 export type DomainStartSub<D, SubPath extends SubPaths<D>> = { init: LookupSubInit<D, SubPath> }
 export type DomainStartWrk<D, WrkPath extends WrkPaths<D>> = { init: LookupWorkerInit<D, WrkPath> }
 
