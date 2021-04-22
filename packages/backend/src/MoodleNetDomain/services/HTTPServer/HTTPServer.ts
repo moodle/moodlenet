@@ -11,19 +11,25 @@ declare module 'express-serve-static-core' {
 interface HttpServerCfg {
   port: number
 }
-export const startHttpServer = ({ port }: HttpServerCfg) => {
-  console.log(`starting HttpServer on ${port}`)
-
+export const prepareHttpServer = ({ port }: HttpServerCfg) => {
   const root = express()
   root.use(cors())
   root.use(MNExecCtxMiddleware)
+  const serviceRouter = root //Router().connect('/_/*', root) // FIXME: create a partition for services ( e.g. root.use('/_/') )
 
-  root.listen(port, () => console.log(`HttpServer listening on ${port}`))
-
-  const serviceRoot = root // FIXME: create a partition for services ( e.g. root.use('/_/') )
+  const start = () =>
+    new Promise<void>((res, rej) => {
+      root.on('error', e => rej(e))
+      console.log(`starting HttpServer on ${port}`)
+      root.listen(port, () => {
+        console.log(`HttpServer listening on ${port}`)
+        res()
+      })
+    })
 
   return {
     root,
-    serviceRoot,
+    serviceRouter,
+    start,
   }
 }

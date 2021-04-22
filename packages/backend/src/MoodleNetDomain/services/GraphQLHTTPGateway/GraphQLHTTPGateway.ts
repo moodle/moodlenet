@@ -1,12 +1,12 @@
-import { Application } from 'express'
+import { Router } from 'express'
 import { graphqlHTTP } from 'express-graphql'
 import { schema } from '../../MoodleNetGraphQL'
 
 interface HttpGatewayCfg {
-  app: Application
+  router: Router
 }
-export const startGraphQLHTTPGateway = ({ app }: HttpGatewayCfg) => {
-  app.use(
+export const attachGraphQLHTTPGateway = ({ router }: HttpGatewayCfg) => {
+  router.use(
     '/graphql',
     graphqlHTTP({
       schema,

@@ -1,4 +1,5 @@
 import { Config } from 'arangojs/connection'
+import { resolve } from 'path'
 import { setup } from '../lib/domain/amqp/setup'
 import { start } from '../lib/domain/amqp/start'
 import { DomainSetup, DomainStart } from '../lib/domain/types'
@@ -9,8 +10,10 @@ import {
 } from './services/ContentGraph/impl/arango/defaultDeploy'
 import { defaultArangoEmailSetup, defaultArangoEmailStartServices } from './services/Email/impl/arango/defaultDeploy'
 import { createMailgunSender } from './services/Email/sendersImpl/mailgun/mailgunSender'
-import { startGraphQLHTTPGateway } from './services/GraphQLHTTPGateway/GraphQLHTTPGateway'
-import { startHttpServer } from './services/HTTPServer/HTTPServer'
+import { attachGraphQLHTTPGateway } from './services/GraphQLHTTPGateway/GraphQLHTTPGateway'
+import { prepareHttpServer } from './services/HTTPServer/HTTPServer'
+import { createFSStaticAssets } from './services/StaticAssets/impl/fs/fsStaticAssets'
+import { attachStaticAssetsHTTPGateway } from './services/StaticAssets/StaticAssetsHTTPGateway'
 import {
   defaultArangoUserAuthImpl,
   defaultArangoUserAuthStartServices,
@@ -24,8 +27,11 @@ export const startDefaultMoodlenet = async () => {
   if (!(arangoUrl && mailgunApiKey && mailgunDomain)) {
     throw new Error(`missing env`)
   }
-  const expressApp = startHttpServer({ port: httpGqlPort })
-  startGraphQLHTTPGateway({ app: expressApp.serviceRoot })
+  const expressApp = await prepareHttpServer({ port: httpGqlPort })
+  attachGraphQLHTTPGateway({ router: expressApp.serviceRouter })
+  const staticAssetIo = createFSStaticAssets({ rootFolder: resolve(process.cwd(), '.staticAssetFs') })
+  attachStaticAssetsHTTPGateway({ router: expressApp.serviceRouter, io: staticAssetIo })
+  expressApp.start()
   const baseDbCfg: Config = {
     url: arangoUrl,
   }

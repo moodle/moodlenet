@@ -6,4 +6,5 @@ export type MoodleNetDomain = {
   UserAuth: UserAuth
   Email: Email
   ContentGraph: ContentGraph
+  // StaticAssets: StaticAssets
 }
