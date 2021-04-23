@@ -1,19 +1,19 @@
-import { Request, Response, Router } from 'express'
+import express, { Request, Response } from 'express'
 import Formidable, { File } from 'formidable'
 import { createReadStream } from 'fs'
 import { rm } from 'fs/promises'
 import sharp from 'sharp'
-import { FileDesc, StaticAssetsIO, TempFileId } from './impl/types'
+import { StaticAssetsIO, TempFileDesc, TempFileId } from './impl/types'
 
 interface HttpGatewayCfg {
-  router: Router
   io: StaticAssetsIO
 }
 
 const sendErrorResponse = (res: Response, [status, err]: RespError) => res.status(status).send(err)
 
-export const attachStaticAssetsHTTPGateway = ({ router, io }: HttpGatewayCfg) => {
-  router.post('/upload/:type(icon|image|resource)', async (req, res) => {
+export const attachStaticAssetsHTTPGateway = ({ io }: HttpGatewayCfg) => {
+  const app = express()
+  app.post('/:type(icon|image|resource)', async (req, res) => {
     const procRes = await processUploadedFile(req, io)
     if (isRespError(procRes)) {
       sendErrorResponse(res, procRes)
@@ -22,16 +22,18 @@ export const attachStaticAssetsHTTPGateway = ({ router, io }: HttpGatewayCfg) =>
     res.send(procRes)
   })
 
-  router.get('/get/*', async (req, res) => {
-    const path = req.url.split('/').slice(2).join('/')
-    console.log({ path })
-    const stream = await io.getAsset(path)
+  app.get('/*', async (req, res) => {
+    const assetId = decodeURI(req.url.substr(1))
+    console.log({ assetId })
+    const stream = await io.getAsset(assetId)
     if (!stream) {
       sendErrorResponse(res, respError(404, ''))
       return
     }
     stream.pipe(res)
   })
+
+  return app
 }
 
 const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
@@ -48,10 +50,19 @@ const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
 
   const rmUploaded = () => rm(file.path, { force: true })
   const readStream = createReadStream(file.path)
-  const fileDesc: FileDesc = {
-    originalName: file.name,
-    originalSize: file.size,
-    type: file.type,
+  const _splitname = !file.name ? null : file.name.split('.')
+  const ext = (_splitname && _splitname.pop()) || null
+  const originalBaseName = _splitname && _splitname.join('.')
+  const fileDesc: TempFileDesc = {
+    filename: originalBaseName
+      ? {
+          base: originalBaseName,
+          ext,
+        }
+      : null,
+    resizedWebImageExt: null,
+    size: file.size,
+    mimetype: file.type,
   }
   if (uploadType === 'resource') {
     return io
@@ -67,7 +78,13 @@ const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
       rmUploaded()
       resolve(respError(400, String(err)))
     })
-    const saveRes = await io.createTemp({ stream: imagePipeline, fileDesc }).catch(err => respError(500, err))
+    const jpgFileDesc: TempFileDesc = {
+      ...fileDesc,
+      resizedWebImageExt: 'jpg',
+    }
+    const saveRes = await io
+      .createTemp({ stream: imagePipeline, fileDesc: jpgFileDesc })
+      .catch(err => respError(500, err))
     rmUploaded()
     resolve(saveRes)
   })

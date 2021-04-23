@@ -1,22 +1,25 @@
 import { Readable } from 'stream'
 
-type AssetFileFullPath = {
-  path: string[]
-  name: string
-  ulid: Ulid | null
-}
-type Ulid = string
 export interface StaticAssetsIO {
-  getAsset: (path: AssetFileFullPath | string) => Promise<Readable | null>
-  createTemp: (_: { stream: Readable; fileDesc: FileDesc }) => Promise<TempFileId>
-  persistTemp: (tempFileId: string, path: AssetFileFullPath) => Promise<FileDesc | null>
-  delTemp: (tempFileId: string) => Promise<void>
+  getAsset: (assetId: AssetId) => Promise<Readable | null>
+  createTemp: (_: { stream: Readable; fileDesc: TempFileDesc }) => Promise<TempFileId>
+  persistTemp: (_: {
+    tempFileId: TempFileId
+    rebaseName?: string
+  }) => Promise<{ originalDesc: TempFileDesc; id: AssetId } | null>
+  delTemp: (tempFileId: TempFileId) => Promise<void>
   delOldTemps: (_: { olderThanSecs: number }) => Promise<number>
 }
 
+type Ulid = string
+type AssetId = string
 type TempFileId = string
-export type FileDesc = {
-  originalSize: number
-  originalName: string | null
-  type: string | null
-}
+
+export type TempFileDesc = {
+  resizedWebImageExt: string | null
+  size: number
+  filename: { base: string; ext: string | null } | null
+  mimetype: string | null
+  lastModifiedDate?: Date | null
+  //hash: {type: 'sha1' | 'md5' | 'sha256',digest:string}
+} //as from Formidable.File

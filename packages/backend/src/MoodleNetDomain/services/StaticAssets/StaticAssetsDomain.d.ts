@@ -1,9 +1,11 @@
-// import { Flow } from '../../../lib/domain/flow'
-// import { WrkDef } from '../../../lib/domain/wrk'
-
 import { WrkDef } from '../../../lib/domain/wrk'
-import { AssetFileFullPath, FileDesc } from './impl/types'
+import { AssetId, TempFileDesc } from './impl/types'
 
 export type StaticAssets = {
-  PersistTempFile: WrkDef<(tempFileId: string, path: AssetFileFullPath) => Promise<FileDesc | null>>
+  PersistTempFile: WrkDef<
+    (_: {
+      tempFileId: string
+      rebaseName?: string
+    }) => Promise<{ assetId: AssetId; fileDesc: TempFileDesc; done: true } | { reason: string; done: false }>
+  >
 }

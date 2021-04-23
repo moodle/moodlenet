@@ -11,8 +11,12 @@ import {
 import { defaultArangoEmailSetup, defaultArangoEmailStartServices } from './services/Email/impl/arango/defaultDeploy'
 import { createMailgunSender } from './services/Email/sendersImpl/mailgun/mailgunSender'
 import { attachGraphQLHTTPGateway } from './services/GraphQLHTTPGateway/GraphQLHTTPGateway'
-import { prepareHttpServer } from './services/HTTPServer/HTTPServer'
+import { startMNHttpServer } from './services/MNHTTPServer/MNHTTPServer'
 import { createFSStaticAssets } from './services/StaticAssets/impl/fs/fsStaticAssets'
+import {
+  defaultFSStaticAssetSetup,
+  defaultFSStaticAssetStartServices,
+} from './services/StaticAssets/impl/fs/MoodleNetFSStaticAssetsDomain'
 import { attachStaticAssetsHTTPGateway } from './services/StaticAssets/StaticAssetsHTTPGateway'
 import {
   defaultArangoUserAuthImpl,
@@ -27,11 +31,17 @@ export const startDefaultMoodlenet = async () => {
   if (!(arangoUrl && mailgunApiKey && mailgunDomain)) {
     throw new Error(`missing env`)
   }
-  const expressApp = await prepareHttpServer({ port: httpGqlPort })
-  attachGraphQLHTTPGateway({ router: expressApp.serviceRouter })
   const staticAssetIo = createFSStaticAssets({ rootFolder: resolve(process.cwd(), '.staticAssetFs') })
-  attachStaticAssetsHTTPGateway({ router: expressApp.serviceRouter, io: staticAssetIo })
-  expressApp.start()
+  const assetsHttpService = attachStaticAssetsHTTPGateway({ io: staticAssetIo })
+  const graphqlHttpService = attachGraphQLHTTPGateway({})
+  /* const expressApp = */ await startMNHttpServer({
+    port: httpGqlPort,
+    services: {
+      static: assetsHttpService,
+      graphql: graphqlHttpService,
+    },
+  })
+
   const baseDbCfg: Config = {
     url: arangoUrl,
   }
@@ -40,9 +50,11 @@ export const startDefaultMoodlenet = async () => {
     ...defaultArangoContentGraphSetup,
     ...defaultArangoEmailSetup,
     ...defaultArangoUserAuthImpl,
+    ...defaultFSStaticAssetSetup,
   }
 
   const defaultMoodlenetStartServices: DomainStart<MoodleNetDomain> = {
+    ...defaultFSStaticAssetStartServices({ io: staticAssetIo }),
     ...defaultArangoContentGraphStartServices({
       dbCfg: {
         ...baseDbCfg,

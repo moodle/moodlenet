@@ -1,22 +1,22 @@
 import { writeFile } from 'fs/promises'
 import { ulid } from 'ulid'
 import { StaticAssetsIO } from '../../types'
-import { forceRmTemp, getTempFileDescPath, getTempFileFullPath, pipeToFile } from './helpers'
+import { fn_getTempFileFSPaths, io_forceRmTemp, io_pipeToFile } from './helpers'
 
 export const createTemp = ({ tempDir }: { tempDir: string }): StaticAssetsIO['createTemp'] => async ({
   stream,
   fileDesc,
 }) => {
   const tempFileId = ulid()
-  const tempFileFullPath = getTempFileFullPath({ tempDir, tempFileId })
-  const tempFileDescFullPath = getTempFileDescPath(tempFileFullPath)
+  const [tempFileFullPath, tempFileDescFullPath] = fn_getTempFileFSPaths({ tempDir, tempFileId })
+  console.log({ tempFileFullPath, tempFileDescFullPath })
   return Promise.all([
-    pipeToFile({ filePath: tempFileFullPath, stream }),
+    io_pipeToFile({ destFilePath: tempFileFullPath, stream }),
     writeFile(tempFileDescFullPath, JSON.stringify(fileDesc)),
   ]).then(
     () => tempFileId,
     err => {
-      forceRmTemp(tempFileFullPath)
+      io_forceRmTemp({ tempDir, tempFileId })
       return Promise.reject(err)
     },
   )
