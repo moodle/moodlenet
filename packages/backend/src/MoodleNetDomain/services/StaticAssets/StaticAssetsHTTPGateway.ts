@@ -37,6 +37,7 @@ export const attachStaticAssetsHTTPGateway = ({ io }: HttpGatewayCfg) => {
 }
 
 const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
+  //TODO brakdown this fn
   const uploadType = req.params.type as 'icon' | 'image' | 'resource'
 
   if (!(uploadType && (['icon', 'image', 'resource'] as const).includes(uploadType))) {
@@ -48,7 +49,7 @@ const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
     return file // err
   }
 
-  const rmUploaded = () => rm(file.path, { force: true })
+  const _cleanup = (a?: any) => (rm(file.path, { force: true }), a)
   const readStream = createReadStream(file.path)
   const _splitname = !file.name ? null : file.name.split('.')
   const ext = (_splitname && _splitname.pop()) || null
@@ -68,14 +69,14 @@ const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
     return io
       .createTemp({ stream: readStream, fileDesc })
       .catch(err => respError(500, err))
-      .then(_ => (rmUploaded(), _))
+      .finally(_cleanup)
   }
 
   return new Promise<RespError | TempFileId>(async resolve => {
     const imagePipeline = sharpImagePipeline[uploadType]()
     readStream.pipe(imagePipeline)
     imagePipeline.on('error', err => {
-      rmUploaded()
+      _cleanup()
       resolve(respError(400, String(err)))
     })
     const jpgFileDesc: TempFileDesc = {
@@ -85,7 +86,8 @@ const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
     const saveRes = await io
       .createTemp({ stream: imagePipeline, fileDesc: jpgFileDesc })
       .catch(err => respError(500, err))
-    rmUploaded()
+      .finally(_cleanup)
+    _cleanup()
     resolve(saveRes)
   })
 }

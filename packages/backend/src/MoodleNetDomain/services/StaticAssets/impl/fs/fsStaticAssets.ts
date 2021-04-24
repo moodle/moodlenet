@@ -2,10 +2,9 @@ import { mkdirSync } from 'fs'
 import { resolve } from 'path'
 import { StaticAssetsIO } from '../types'
 import { createTemp } from './io/createTemp'
-import { delOldTemps } from './io/delOldTemps'
-import { delTemp } from './io/delTemp'
-import { fn_makeGetAsset } from './io/getAsset'
-import { fn_makePersistTemp } from './io/persistTemp'
+import { delOldTemps, delTemp } from './io/delTemp'
+import { makeGetAsset } from './io/getAsset'
+import { makePersistTemp } from './io/persistTemp'
 type Cfg = {
   rootFolder: string
 }
@@ -20,7 +19,7 @@ export const createFSStaticAssets = ({ rootFolder }: Cfg): StaticAssetsIO => {
     createTemp: createTemp({ tempDir }),
     delTemp: delTemp({ tempDir }),
     delOldTemps: delOldTemps({ tempDir }),
-    getAsset: fn_makeGetAsset({ assetDir }),
-    persistTemp: fn_makePersistTemp({ tempDir, assetDir }),
+    getAsset: makeGetAsset({ assetDir }),
+    persistTemp: makePersistTemp({ tempDir, assetDir }),
   }
 }
