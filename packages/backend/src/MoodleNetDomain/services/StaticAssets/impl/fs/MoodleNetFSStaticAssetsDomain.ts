@@ -1,3 +1,4 @@
+import { isJust } from '@moodlenet/common/lib/utils/array'
 import { DomainSetup, DomainStart, SubDomain } from '../../../../../lib/domain/types'
 import { MoodleNetDomain } from '../../../../MoodleNetDomain'
 import { StaticAssetsIO } from '../types'
@@ -5,27 +6,27 @@ import { StaticAssetsIO } from '../types'
 export type MoodleNetFSStaticAssetsDomain = SubDomain<MoodleNetDomain, 'StaticAssets', {}>
 
 export const defaultFSStaticAssetSetup: DomainSetup<MoodleNetFSStaticAssetsDomain> = {
-  'StaticAssets.PersistTemp': { kind: 'wrk' },
+  'StaticAssets.PersistTempFilesAll': { kind: 'wrk' },
   'StaticAssets.DeleteAsset': { kind: 'wrk' },
 }
 
 export const defaultFSStaticAssetStartServices = ({ io }: { io: StaticAssetsIO }) => {
   const moodleNetFSStaticAssetsDomainStart: DomainStart<MoodleNetFSStaticAssetsDomain> = {
-    'StaticAssets.PersistTemp': {
+    'StaticAssets.PersistTempFilesAll': {
       init: async () => [
-        async ({ tempFileId, uploadType }) => {
-          const persistResult = await io.persistTemp({ tempFileId, uploadType })
-          if (!persistResult) {
-            return {
-              done: false,
-              reason: 'not found',
-            }
+        async tempFiles => {
+          if (!tempFiles.length) {
+            return []
           }
-          const { assetFileDesc } = persistResult
-          return {
-            done: true,
-            assetFileDesc,
+          const results = await Promise.all(
+            tempFiles.map(({ tempFileId, uploadType }) => io.persistTemp({ tempFileId, uploadType })),
+          )
+          const dones = results.filter(isJust)
+          if (dones.length < results.length) {
+            dones.forEach(_ => io.delAsset(_.assetId))
+            return null
           }
+          return dones
         },
       ],
     },

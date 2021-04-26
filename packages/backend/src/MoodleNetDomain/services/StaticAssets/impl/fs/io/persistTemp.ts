@@ -2,7 +2,7 @@ import { mkdir, rename, writeFile } from 'fs/promises'
 import { ulid } from 'ulid'
 import { AssetFileDesc } from '../../../types'
 import { StaticAssetsIO } from '../../types'
-import { forceRmTemp, getFileDescName, getTempFileDesc, getTempFileFSPaths, newAssetId } from './helpers'
+import { forceRmAsset, forceRmTemp, getFileDescName, getTempFileDesc, getTempFileFSPaths, newAssetId } from './helpers'
 export const makePersistTemp = ({
   tempDir,
   assetDir,
@@ -31,14 +31,13 @@ export const makePersistTemp = ({
     await mkdir(fullDirFSPath, { recursive: true })
     await rename(tempFilePath, fullAssetFSPath)
 
-    forceRmTemp({ tempDir, tempFileId })
     writeFile(assetDescFilename, JSON.stringify(assetFileDesc))
 
-    return {
-      assetFileDesc,
-      assetId,
-    }
+    forceRmAsset({ assetDir, assetId })
+    return assetFileDesc
   } catch {
+    forceRmTemp({ tempDir, tempFileId })
+    forceRmAsset({ assetDir, assetId })
     return null
   }
 }
