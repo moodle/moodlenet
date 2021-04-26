@@ -1,11 +1,12 @@
 import { WrkDef } from '../../../lib/domain/wrk'
-import { AssetId, TempFileDesc } from './impl/types'
+import { AssetFileDesc, AssetId, TempFileId, UploadType } from './types'
 
 export type StaticAssets = {
-  PersistTempFile: WrkDef<
+  PersistTemp: WrkDef<
     (_: {
-      tempFileId: string
-      rebaseName?: string
-    }) => Promise<{ assetId: AssetId; fileDesc: TempFileDesc; done: true } | { reason: string; done: false }>
+      uploadType: UploadType
+      tempFileId: TempFileId
+    }) => Promise<{ assetFileDesc: AssetFileDesc; done: true } | { reason: string; done: false }>
   >
+  DeleteAsset: WrkDef<(_: { assetId: AssetId }) => Promise<any>>
 }

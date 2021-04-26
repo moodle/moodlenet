@@ -3,7 +3,8 @@ import Formidable, { File } from 'formidable'
 import { createReadStream } from 'fs'
 import { rm } from 'fs/promises'
 import sharp from 'sharp'
-import { StaticAssetsIO, TempFileDesc, TempFileId } from './impl/types'
+import { StaticAssetsIO } from './impl/types'
+import { isUploadType, TempFileDesc, TempFileId } from './types'
 
 interface HttpGatewayCfg {
   io: StaticAssetsIO
@@ -37,10 +38,10 @@ export const attachStaticAssetsHTTPGateway = ({ io }: HttpGatewayCfg) => {
 }
 
 const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
-  //TODO brakdown this fn
-  const uploadType = req.params.type as 'icon' | 'image' | 'resource'
+  //TODO brakdown and import this fn
+  const uploadType = req.params.type
 
-  if (!(uploadType && (['icon', 'image', 'resource'] as const).includes(uploadType))) {
+  if (!isUploadType(uploadType)) {
     return respError(400, `unknown type ${uploadType}`)
   }
   const file = await getUploadedFile(req)
@@ -50,26 +51,27 @@ const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
   }
 
   const _cleanup = (a?: any) => (rm(file.path, { force: true }), a)
+  const _createTemp = ({ tempFileDesc }: { tempFileDesc: TempFileDesc }) =>
+    io
+      .createTemp({ stream: readStream, tempFileDesc })
+      .catch(err => respError(500, err))
+      .finally(_cleanup)
+
   const readStream = createReadStream(file.path)
   const _splitname = !file.name ? null : file.name.split('.')
   const ext = (_splitname && _splitname.pop()) || null
   const originalBaseName = _splitname && _splitname.join('.')
-  const fileDesc: TempFileDesc = {
-    filename: originalBaseName
-      ? {
-          base: originalBaseName,
-          ext,
-        }
-      : null,
-    resizedWebImageExt: null,
+  const tempFileDesc: TempFileDesc = {
+    filename: {
+      base: originalBaseName,
+      ext,
+    },
     size: file.size,
     mimetype: file.type,
+    uploadType,
   }
   if (uploadType === 'resource') {
-    return io
-      .createTemp({ stream: readStream, fileDesc })
-      .catch(err => respError(500, err))
-      .finally(_cleanup)
+    return _createTemp({ tempFileDesc: tempFileDesc })
   }
 
   return new Promise<RespError | TempFileId>(async resolve => {
@@ -80,14 +82,14 @@ const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
       resolve(respError(400, String(err)))
     })
     const jpgFileDesc: TempFileDesc = {
-      ...fileDesc,
-      resizedWebImageExt: 'jpg',
+      ...tempFileDesc,
+      mimetype: 'image/jpeg',
+      filename: {
+        ...tempFileDesc.filename,
+        ext: 'jpg',
+      },
     }
-    const saveRes = await io
-      .createTemp({ stream: imagePipeline, fileDesc: jpgFileDesc })
-      .catch(err => respError(500, err))
-      .finally(_cleanup)
-    _cleanup()
+    const saveRes = await _createTemp({ tempFileDesc: jpgFileDesc })
     resolve(saveRes)
   })
 }

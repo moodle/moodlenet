@@ -3,7 +3,7 @@ import { readFile, rm } from 'fs/promises'
 import { resolve } from 'path'
 import { Readable } from 'stream'
 import { ulid } from 'ulid'
-import { AssetId, TempFileDesc, TempFileId, Ulid } from '../../types'
+import { AssetFileDesc, AssetId, TempFileDesc, TempFileId, Ulid } from '../../../types'
 
 type Path = string[]
 export const getUlidPath = (ulid: Ulid): Path => {
@@ -27,12 +27,19 @@ export const newAssetId = async ({
   return [assetId, fullAssetFSPath, fullDirFSPath]
 }
 
-export const getTempFileDescName = (tempFileId: string) => `${tempFileId}.desc.json`
+export const getFileDescName = (fileName: string) => `${fileName}.desc.json`
 
 export const getTempFileDesc = async (tempDir: string, tempFileId: string) => {
-  const fileDescPath = resolve(tempDir, getTempFileDescName(tempFileId))
+  const fileDescPath = resolve(tempDir, getFileDescName(tempFileId))
   const fileDescString = await readFile(fileDescPath, { encoding: 'utf-8' }).catch(() => null)
-  return fileDescString ? (JSON.parse(fileDescString) as TempFileDesc) : null
+  const tempFileDesc: TempFileDesc | null = fileDescString ? JSON.parse(fileDescString) : null
+  return tempFileDesc
+}
+export const getAssetFileDesc = async (assetDir: string, assetId: string) => {
+  const fileDescPath = resolve(assetDir, getFileDescName(assetId))
+  const fileDescString = await readFile(fileDescPath, { encoding: 'utf-8' }).catch(() => null)
+  const assetFileDesc: AssetFileDesc | null = fileDescString ? JSON.parse(fileDescString) : null
+  return assetFileDesc
 }
 
 export const pipeToFile = async ({ destFilePath, stream }: { stream: Readable; destFilePath: string }): Promise<void> =>
@@ -58,6 +65,12 @@ export const forceRmTemp = async ({ tempDir, tempFileId }: { tempDir: string; te
   await forceRm(tempFileDescFSPath)
 }
 
+export const forceRmAsset = async ({ assetDir, assetId }: { assetDir: string; assetId: AssetId }) => {
+  const [assetFileFSPath, assetFileDescFSPath] = getAssetFileFSPaths({ assetDir, assetId })
+  await forceRm(assetFileFSPath)
+  await forceRm(assetFileDescFSPath)
+}
+
 export const getTempFileFSPaths = ({
   tempDir,
   tempFileId,
@@ -66,5 +79,16 @@ export const getTempFileFSPaths = ({
   tempFileId: string
 }): [tempFileFSPath: string, tempFileDescFSPath: string] => [
   resolve(tempDir, tempFileId),
-  resolve(tempDir, getTempFileDescName(tempFileId)),
+  resolve(tempDir, getFileDescName(tempFileId)),
+]
+
+export const getAssetFileFSPaths = ({
+  assetDir,
+  assetId,
+}: {
+  assetDir: string
+  assetId: string
+}): [assetFileFSPath: string, assetFileDescFSPath: string] => [
+  resolve(assetDir, assetId),
+  resolve(assetDir, getFileDescName(assetId)),
 ]
