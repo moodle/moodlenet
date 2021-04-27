@@ -133,7 +133,7 @@ export const defaultArangoContentGraphStartServices = ({
               data: {},
               edgeType: 'Created',
               from: creatorProfileId,
-              to: mNode.id,
+              to: mNode._id,
             })
 
             return mNode
@@ -148,8 +148,9 @@ export const defaultArangoContentGraphStartServices = ({
         const [persistence, teardown] = await _getPersistence()
         return [
           async ({ ctx, edgeId, edgeType }) => {
+            type E = typeof edgeType
             const { profileId: deleterProfileId } = getSessionContext(ctx)
-            const delEdgeResult = await deleteEdge({ ctx, edgeId, persistence })
+            const delEdgeResult = await deleteEdge<E>({ ctx, edgeId, edgeType, persistence })
             if (typeof delEdgeResult === 'string') {
               return delEdgeResult === 'no assertions found'
                 ? 'UnexpectedInput'
@@ -167,7 +168,6 @@ export const defaultArangoContentGraphStartServices = ({
               { edge: delEdgeResult, deleterProfileId },
               mergeFlow(ctx.flow, [edgeType]),
             )
-
             return delEdgeResult
           },
           teardown,

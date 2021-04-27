@@ -3,6 +3,7 @@ import Formidable, { File } from 'formidable'
 import { createReadStream } from 'fs'
 import { rm } from 'fs/promises'
 import sharp from 'sharp'
+import { Readable } from 'stream'
 import { StaticAssetsIO } from './impl/types'
 import { isUploadType, TempFileDesc, TempFileId } from './types'
 
@@ -51,13 +52,13 @@ const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
   }
 
   const _cleanup = (a?: any) => (rm(file.path, { force: true }), a)
-  const _createTemp = ({ tempFileDesc }: { tempFileDesc: TempFileDesc }) =>
+  const _createTemp = ({ tempFileDesc, stream }: { tempFileDesc: TempFileDesc; stream: Readable }) =>
     io
-      .createTemp({ stream: readStream, tempFileDesc })
+      .createTemp({ stream, tempFileDesc })
       .catch(err => respError(500, err))
       .finally(_cleanup)
 
-  const readStream = createReadStream(file.path)
+  const originalUploadReadStream = createReadStream(file.path)
   const _splitname = !file.name ? null : file.name.split('.')
   const ext = (_splitname && _splitname.pop()) || null
   const originalBaseName = _splitname && _splitname.join('.')
@@ -71,12 +72,12 @@ const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
     uploadType,
   }
   if (uploadType === 'resource') {
-    return _createTemp({ tempFileDesc: tempFileDesc })
+    return _createTemp({ tempFileDesc: tempFileDesc, stream: originalUploadReadStream })
   }
 
   return new Promise<RespError | TempFileId>(async resolve => {
     const imagePipeline = sharpImagePipeline[uploadType]()
-    readStream.pipe(imagePipeline)
+    originalUploadReadStream.pipe(imagePipeline)
     imagePipeline.on('error', err => {
       _cleanup()
       resolve(respError(400, String(err)))
@@ -89,7 +90,7 @@ const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
         ext: 'jpg',
       },
     }
-    const saveRes = await _createTemp({ tempFileDesc: jpgFileDesc })
+    const saveRes = await _createTemp({ tempFileDesc: jpgFileDesc, stream: imagePipeline })
     resolve(saveRes)
   })
 }

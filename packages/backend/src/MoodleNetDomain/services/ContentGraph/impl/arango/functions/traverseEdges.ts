@@ -6,7 +6,7 @@ import * as GQL from '../../../ContentGraph.graphql.gen'
 import { Persistence } from '../types'
 import { getEdgeOpAqlAssertions } from './assertions/edge'
 import { getNodeOpAqlAssertions } from './assertions/node'
-import { cursorPaginatedQuery, isMarkDeleted } from './helpers'
+import { cursorPaginatedQuery, isMarkDeleted, toDocumentEdgeOrNode } from './helpers'
 
 export const traverseEdges = async ({
   persistence,
@@ -82,8 +82,8 @@ export const traverseEdges = async ({
 
       RETURN  {
         cursor,
-        edge,
-        node: targetNode
+        edge:${toDocumentEdgeOrNode('edge')},
+        node: ${toDocumentEdgeOrNode('targetNode')}
       }
     `,
   })

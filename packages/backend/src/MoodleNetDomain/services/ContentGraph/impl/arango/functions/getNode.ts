@@ -4,7 +4,7 @@ import { MoodleNetExecutionContext } from '../../../../../types'
 import * as GQL from '../../../ContentGraph.graphql.gen'
 import { Persistence } from '../types'
 import { getNodeOpAqlAssertions } from './assertions/node'
-import { isMarkDeleted } from './helpers'
+import { isMarkDeleted, toDocumentEdgeOrNode } from './helpers'
 import { DocumentNodeByType } from './types'
 
 export const getNode = async <Type extends GQL.NodeType = GQL.NodeType>({
@@ -30,7 +30,7 @@ export const getNode = async <Type extends GQL.NodeType = GQL.NodeType>({
     FILTER !${isMarkDeleted('node')}
       AND ( ${aqlAssertionMaps.renderedAqlFilterExpr} )
 
-    return node
+    return ${toDocumentEdgeOrNode('node')}
   `
   // console.log(q)
   const cursor = await db.query(q)

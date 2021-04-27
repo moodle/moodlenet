@@ -8,6 +8,7 @@ import { useMutateEdge } from '../../hooks/content/mutateEdge'
 import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { ResourceCardProps } from '../../ui/components/cards/Resource'
 import { CollectionPage, CollectionPageProps } from '../../ui/pages/Collection'
+import { getAssetRefUrl } from '../lib'
 import { useCollectionPageNodeQuery, useCollectionPageResourcesQuery } from './CollectionPage/CollectionPage.gen'
 
 export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
@@ -33,7 +34,7 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
           const { collections, name, icon, id } = edge.node
           const props: ResourceCardProps = {
             name,
-            icon: icon ?? '',
+            icon: getAssetRefUrl(icon),
             homeLink: contentNodeLink({ id }),
             type: 'pdf',
             collections: collections.edges
@@ -91,10 +92,10 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
       ? {
           creator: {
             homeLink: contentNodeLink({ id: collection._created.by.id }),
-            icon: collection._created.by.icon || '',
+            icon: getAssetRefUrl(collection._created.by.icon),
             name: collection._created.by.name,
           },
-          icon: collection.icon || '',
+          icon: getAssetRefUrl(collection.icon),
           lastUpdated: collection._created.at,
           followers: collection.followersCount,
           resources: collection.resourcesCount,

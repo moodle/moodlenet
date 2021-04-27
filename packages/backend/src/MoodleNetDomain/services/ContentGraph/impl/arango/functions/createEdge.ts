@@ -5,7 +5,7 @@ import { aqlstr, ulidKey } from '../../../../../../lib/helpers/arango'
 import { MoodleNetAuthenticatedExecutionContext } from '../../../../../types'
 import { Persistence } from '../types'
 import { getEdgeOpAqlAssertions } from './assertions/edge'
-import { isMarkDeleted } from './helpers'
+import { isMarkDeleted, toDocumentEdgeOrNode } from './helpers'
 import { DocumentEdgeByType, DocumentEdgeDataByType } from './types'
 
 export const createEdge = async <Type extends EdgeType>({
@@ -44,6 +44,7 @@ export const createEdge = async <Type extends EdgeType>({
     _from: from,
     _to: to,
     _key: key,
+    _created: {},
   }
 
   const q = `
@@ -59,7 +60,7 @@ export const createEdge = async <Type extends EdgeType>({
 
     INSERT newedge into ${edgeType}
 
-    return NEW
+    return ${toDocumentEdgeOrNode('NEW')}
   `
   // console.log(q)
   const cursor = await db.query(q)

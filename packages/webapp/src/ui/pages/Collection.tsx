@@ -17,9 +17,9 @@ export type CollectionPageProps = {
   followers: number
   resources: number
   lastUpdated: Date
-  icon: string
+  icon: string | null
   creator: {
-    icon: string
+    icon: string | null
     name: string
     homeLink: string
   }

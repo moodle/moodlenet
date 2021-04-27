@@ -1,3 +1,4 @@
+import { AssetRef } from '@moodlenet/common/lib/pub-graphql/types'
 import { GetRouteDefParams, GetRouteDefPath, RouteDef } from '@moodlenet/common/lib/webapp/sitemap'
 import * as H from 'history'
 import { FC } from 'react'
@@ -12,4 +13,13 @@ export type MNRouteProps<R extends RouteDef<string, any>> = {
   exact?: boolean
   sensitive?: boolean
   strict?: boolean
+}
+
+export const getLocalAssetUrl = (assetId: string): string => `/static/${assetId}` //FIXME: should `/asset/*` be in config ?
+export const getAssetRefUrl = (assetRef: AssetRef | null | undefined): string | null => {
+  if (!assetRef) {
+    return null
+  }
+  const { location, ext } = assetRef
+  return ext ? location : getLocalAssetUrl(location)
 }

@@ -1,20 +1,16 @@
 type Collection implements INode & IContentNode {
   name: String!
   summary: String!
-  icon: String
+  icon: AssetRef
   id: ID!
 }
 
 input CreateCollectionInput {
-  name: String!
-  summary: String!
-  icon: String
+  content: ContentNodeInput!
 }
 
 input UpdateCollectionInput {
-  name: String
-  summary: String!
-  icon: String
+  content: ContentNodeInput!
 }
 
 # integrations

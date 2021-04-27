@@ -13,8 +13,14 @@ import { WrkDef } from '../../../../../lib/domain/wrk'
 import { MoodleNetDomain } from '../../../../MoodleNetDomain'
 import { MoodleNetAuthenticatedExecutionContext, MoodleNetExecutionContext } from '../../../../MoodleNetGraphQL'
 import * as GQL from '../../ContentGraph.graphql.gen'
-import { ShallowEdge, ShallowEdgeByType, ShallowNodeByType } from '../../types.node'
-import { DocumentEdge, DocumentEdgeDataByType, DocumentNode, DocumentNodeDataByType } from './functions/types'
+import {
+  DocumentEdge,
+  DocumentEdgeByType,
+  DocumentEdgeDataByType,
+  DocumentNode,
+  DocumentNodeByType,
+  DocumentNodeDataByType,
+} from './functions/types'
 export type MoodleNetArangoContentGraphSubDomain = SubDomain<
   MoodleNetDomain,
   'ContentGraph',
@@ -25,7 +31,7 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
           _key: IdKey
           nodeType: Type
           ctx: MoodleNetExecutionContext
-        }) => Promise<ShallowNodeByType<Type> | null>
+        }) => Promise<DocumentNodeByType<Type> | null>
       >
       Create: WrkDef<
         <Type extends GQL.NodeType>(_: {
@@ -33,7 +39,7 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
           key?: IdKey // remove this .. it was only necessary for profile creation on accuont activation, change the flow and disjoint the two
           nodeType: Type
           data: DocumentNodeDataByType<Type>
-        }) => Promise<ShallowNodeByType<Type> | CreateNodeMutationErrorType>
+        }) => Promise<DocumentNodeByType<Type> | CreateNodeMutationErrorType>
       >
       Created: Event<{ node: DocumentNode; creatorProfileId: Id }>
     }
@@ -46,14 +52,14 @@ export type MoodleNetArangoContentGraphSubDomain = SubDomain<
           from: Id
           to: Id
           key?: IdKey // remove this .. it was only necessary for profile creation on accuont activation, change the flow and disjoint the two
-        }) => Promise<ShallowEdgeByType<Type> | CreateEdgeMutationErrorType>
+        }) => Promise<DocumentEdgeByType<Type> | CreateEdgeMutationErrorType>
       >
       Delete: WrkDef<
         <Type extends GQL.EdgeType>(_: {
           ctx: MoodleNetAuthenticatedExecutionContext //TODO try make them MoodleNetExecutionContext
           edgeType: Type
           edgeId: Id
-        }) => Promise<ShallowEdge | DeleteEdgeMutationErrorType>
+        }) => Promise<DocumentEdgeByType<Type> | DeleteEdgeMutationErrorType>
       >
       Created: Event<{ edge: DocumentEdge; creatorProfileId: Id }>
       Deleted: Event<{ edge: DocumentEdge; deleterProfileId: Id }>

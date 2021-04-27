@@ -1,8 +1,7 @@
-import { mkdir, rename, writeFile } from 'fs/promises'
-import { ulid } from 'ulid'
+import { mkdir, rename } from 'fs/promises'
 import { AssetFileDesc } from '../../../types'
 import { StaticAssetsIO } from '../../types'
-import { forceRmAsset, forceRmTemp, getFileDescName, getTempFileDesc, getTempFileFSPaths, newAssetId } from './helpers'
+import { forceRmAsset, forceRmTemp, getTempFileDesc, getTempFileFSPaths, newAssetId } from './helpers'
 export const makePersistTemp = ({
   tempDir,
   assetDir,
@@ -14,26 +13,23 @@ export const makePersistTemp = ({
   if (!tempFileDesc || tempFileDesc.uploadType !== uploadType) {
     return null
   }
-  const fileBasename = ulid()
+
   const ext = tempFileDesc.filename.ext
 
-  const name = [fileBasename, ...(ext ? [ext] : [])].join('.')
-  const [assetId, fullAssetFSPath, fullDirFSPath] = await newAssetId({ assetDir, name })
-  const [tempFilePath] = getTempFileFSPaths({ tempDir, tempFileId })
+  const [assetId, fullAssetFSPath, fullDirFSPath, fullAssetDescFSPath] = await newAssetId({ assetDir, ext })
+  const [fullTempFileFSPath, fullTempFileDescFSPath] = getTempFileFSPaths({ tempDir, tempFileId })
   //console.log({ tempFileId, assetPath: fullAssetPath, assetDir, tempFilePath, fileDesc })
   const assetFileDesc: AssetFileDesc = {
     assetId,
     mimetype: tempFileDesc.mimetype,
     tmpFile: tempFileDesc,
   }
-  const assetDescFilename = getFileDescName(fullAssetFSPath)
   try {
     await mkdir(fullDirFSPath, { recursive: true })
-    await rename(tempFilePath, fullAssetFSPath)
+    await rename(fullTempFileFSPath, fullAssetFSPath)
+    await rename(fullTempFileDescFSPath, fullAssetDescFSPath)
 
-    writeFile(assetDescFilename, JSON.stringify(assetFileDesc))
-
-    forceRmAsset({ assetDir, assetId })
+    forceRmTemp({ tempDir, tempFileId })
     return assetFileDesc
   } catch {
     forceRmTemp({ tempDir, tempFileId })

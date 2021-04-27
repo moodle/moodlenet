@@ -1,9 +1,7 @@
 import { WrkDef } from '../../../lib/domain/wrk'
-import { AssetFileDesc, AssetId, TempFileId, UploadType } from './types'
+import { AssetFileDescMap, AssetId, PersistTmpFileReqsMap } from './types'
 
 export type StaticAssets = {
-  PersistTempFilesAll: WrkDef<
-    (_: { uploadType: UploadType; tempFileId: TempFileId }[]) => Promise<null | AssetFileDesc[]>
-  >
+  PersistTempFilesAll: WrkDef<<K extends string>(_: PersistTmpFileReqsMap<K>) => Promise<null | AssetFileDescMap<K>>>
   DeleteAsset: WrkDef<(_: { assetId: AssetId }) => Promise<any>>
 }

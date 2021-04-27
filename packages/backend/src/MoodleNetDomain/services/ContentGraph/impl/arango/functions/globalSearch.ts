@@ -2,7 +2,7 @@ import { Maybe } from 'graphql/jsutils/Maybe'
 import { aqlstr } from '../../../../../../lib/helpers/arango'
 import * as GQL from '../../../ContentGraph.graphql.gen'
 import { Persistence } from '../types'
-import { isMarkDeleted, makePage, skipLimitPagination } from './helpers'
+import { isMarkDeleted, makePage, skipLimitPagination, toDocumentEdgeOrNode } from './helpers'
 
 export const globalSearch = async ({
   persistence: { db },
@@ -52,7 +52,7 @@ export const globalSearch = async ({
       LIMIT ${skip}, ${limit}
       
       RETURN {
-        node
+        node: ${toDocumentEdgeOrNode('node')}
       }
     `
   // console.log(query)

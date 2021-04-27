@@ -1,10 +1,12 @@
 import { Assertion } from '@moodlenet/common/lib/content-graph'
 import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
-import { aqlstr, ulidKey } from '../../../../../../lib/helpers/arango'
+import { ulidKey } from '../../../../../../lib/helpers/arango'
+import { getSessionContext } from '../../../../../MoodleNetGraphQL'
 import { MoodleNetAuthenticatedExecutionContext } from '../../../../../types'
 import * as GQL from '../../../ContentGraph.graphql.gen'
 import { Persistence } from '../types'
 import { getNodeOpAqlAssertions } from './assertions/node'
+import { createdByAtPatch, toDocumentEdgeOrNode } from './helpers'
 import { DocumentNodeByType, DocumentNodeDataByType } from './types'
 
 export const createNode = async <Type extends GQL.NodeType>({
@@ -21,7 +23,7 @@ export const createNode = async <Type extends GQL.NodeType>({
   ctx: MoodleNetAuthenticatedExecutionContext
 }) => {
   key = key ?? ulidKey()
-
+  const { profileId } = getSessionContext(ctx)
   const aqlAssertionMaps = getNodeOpAqlAssertions({ ctx, op: 'create', nodeType, nodeVar: null })
   if (typeof aqlAssertionMaps === 'string') {
     return aqlAssertionMaps
@@ -29,15 +31,15 @@ export const createNode = async <Type extends GQL.NodeType>({
 
   const newnode = { ...data, _key: key, __typename: nodeType }
   const q = `
-    let newnode = ${aqlstr(newnode)}
+    let newnode = ${createdByAtPatch(newnode, profileId)}
 
     FILTER ( ${aqlAssertionMaps.renderedAqlFilterExpr} )
 
     INSERT newnode into ${nodeType}
 
-    return NEW
+    return ${toDocumentEdgeOrNode('NEW')}
   `
-  // console.log(q)
+  console.log(q)
   const cursor = await db.query(q)
   const result = (await cursor.next()) as DocumentNodeByType<Type> | null
   if (result) {

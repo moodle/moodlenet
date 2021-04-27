@@ -75,7 +75,7 @@
   "scripts": {
     "build": "tsc",
     "start": "NODE_ENV=production ts-node index.ts",
-    "start-dev": "ts-node-dev --watch .env,src  --respawn --rs --transpile-only index.ts",
-    "start-http": "ts-node-dev --watch .env,src  --respawn --rs --transpile-only --require ./env src/MoodleNetDomain/services/GraphQLHTTPGateway/GraphQLHTTPGateway.ts"
+    "start-dev": "ts-node-dev --inspect --watch .env,src  --respawn --rs --transpile-only index.ts",
+    "start-http": "ts-node-dev --inspect --watch .env,src  --respawn --rs --transpile-only --require ./env src/MoodleNetDomain/services/GraphQLHTTPGateway/GraphQLHTTPGateway.ts"
   }
 }

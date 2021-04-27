@@ -10,8 +10,9 @@ import {
   createEdgeMutationError,
   createNodeMutationError,
   deleteEdgeMutationError,
-  fakeUnshallowEdgeForResolverReturnType,
-  fakeUnshallowNodeForResolverReturnType,
+  fakeEdgeByShallowOrDoc,
+  fakeNodeByShallowOrDoc,
+  getAssetRefMapFromAssetRefInputMap,
 } from './helpers'
 import { nodePropResolver } from './nodePropResolver'
 import { EdgeResolver } from './types.edge'
@@ -29,6 +30,14 @@ const ID = new GraphQLScalarType({
   parseValue: v => checkIDOrError(v),
   parseLiteral: vnode => (vnode.kind === 'StringValue' ? checkIDOrError(vnode.value) : null),
 })
+// const AssetRef = new GraphQLScalarType({
+//   name: 'AssetRef',
+//   serialize: JSON.stringify,
+//   parseValue: v => {
+//     console.log('--', v)
+//     return v
+//   },
+// })
 export const getContentGraphResolvers = (): GQL.Resolvers => {
   return {
     Mutation: {
@@ -64,7 +73,7 @@ export const getContentGraphResolvers = (): GQL.Resolvers => {
         }
         const successResult: GQL.CreateEdgeMutationSuccess = {
           __typename: 'CreateEdgeMutationSuccess',
-          edge: fakeUnshallowEdgeForResolverReturnType(shallowEdgeOrError),
+          edge: fakeEdgeByShallowOrDoc(shallowEdgeOrError),
         }
 
         return successResult
@@ -80,13 +89,21 @@ export const getContentGraphResolvers = (): GQL.Resolvers => {
         if (nodeInput instanceof Error) {
           return createNodeMutationError('UnexpectedInput', nodeInput.message)
         }
+        const {
+          content: { name, summary, icon },
+        } = nodeInput
+
+        const assetRefMap = await getAssetRefMapFromAssetRefInputMap({ icon }, { icon: 'icon' }, ctx.flow)
+        if (!assetRefMap) {
+          return createNodeMutationError('UnexpectedInput', `couldn't find requested tempFiles`)
+        }
 
         const shallowNodeOrError = await call<MoodleNetArangoContentGraphSubDomain>()(
           'ContentGraph.Node.Create',
           ctx.flow,
         )({
           ctx,
-          data: nodeInput,
+          data: { name, summary, ...assetRefMap },
           nodeType,
         })
 
@@ -95,7 +112,7 @@ export const getContentGraphResolvers = (): GQL.Resolvers => {
         }
         const successResult: GQL.CreateNodeMutationSuccess = {
           __typename: 'CreateNodeMutationSuccess',
-          node: fakeUnshallowNodeForResolverReturnType(shallowNodeOrError),
+          node: fakeNodeByShallowOrDoc(shallowNodeOrError),
         }
 
         return successResult
@@ -134,7 +151,7 @@ export const getContentGraphResolvers = (): GQL.Resolvers => {
           nodeType,
           ctx,
         })
-        return maybeNode && fakeUnshallowNodeForResolverReturnType(maybeNode)
+        return maybeNode && fakeNodeByShallowOrDoc(maybeNode)
       },
 
       async getUserSessionProfile(_root, { profileId }, ctx /*_info */) {
@@ -159,7 +176,7 @@ export const getContentGraphResolvers = (): GQL.Resolvers => {
 
         return {
           __typename: 'UserSession',
-          profile: fakeUnshallowNodeForResolverReturnType<GQL.Profile>(shallowProfile),
+          profile: fakeNodeByShallowOrDoc<'Profile'>(shallowProfile),
         }
       },
 
@@ -198,7 +215,7 @@ export const getContentGraphResolvers = (): GQL.Resolvers => {
 
     //@ts-expect-error
     ID,
-
+    // AssetRef,
     // Edge: {
     //   __resolveType: obj => {
     //     console.log({ Edge: obj })

@@ -13,18 +13,20 @@ export const getUlidPath = (ulid: Ulid): Path => {
 
 export const newAssetId = async ({
   assetDir,
-  name,
+  ext,
 }: {
   assetDir: string
-  name: string
-}): Promise<[assetId: AssetId, fullFSPath: string, fullAssetFSPath: string]> => {
+  ext: string | null
+}): Promise<[assetId: AssetId, fullFSPath: string, fullAssetFSPath: string, fullAssetDescFSPath: string]> => {
   const _ulid = ulid()
+  const filename = [_ulid, ...(ext ? [ext] : [])].join('.')
   const assetDirRelPath = getUlidPath(_ulid)
   const fullDirFSPath = resolve(assetDir, ...assetDirRelPath)
-  const fullAssetFSPath = resolve(fullDirFSPath, name)
+  const fullAssetFSPath = resolve(fullDirFSPath, filename)
+  const fullAssetDescFSPath = resolve(fullDirFSPath, getFileDescName(filename))
 
-  const assetId = [...assetDirRelPath, name].join('/')
-  return [assetId, fullAssetFSPath, fullDirFSPath]
+  const assetId = [...assetDirRelPath, filename].join('/')
+  return [assetId, fullAssetFSPath, fullDirFSPath, fullAssetDescFSPath]
 }
 
 export const getFileDescName = (fileName: string) => `${fileName}.desc.json`
