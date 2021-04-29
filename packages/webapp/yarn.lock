@@ -11410,6 +11410,11 @@ tunnel-agent@^0.6.0:
   dependencies:
     safe-buffer "^5.0.1"
 
+tuple-type@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/tuple-type/-/tuple-type-1.0.3.tgz#b05cce7b70cc419ab255e0e29b4fa7a82e08efa4"
+  integrity sha512-cOGZD1ZmzEQo096tSVMWCXSUpzHfgoRuP1iRnkDoKw5qe+RuTKJVwXctpreDnzEHx+uZk3rb6uLg5MJi85Vqpw==
+
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"

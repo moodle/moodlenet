@@ -45,7 +45,7 @@ export const CollectionPage: FC<CollectionPageProps> = ({
           <Grid.Column>
             <Segment.Group horizontal>
               <Segment>
-                <Image size="tiny" src={icon} />
+                <Image size="medium" src={icon} />
               </Segment>
               <Segment>
                 <h3>

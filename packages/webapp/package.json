@@ -36,6 +36,7 @@
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.3",
     "serve": "^11.3.2",
+    "tuple-type": "^1.0.3",
     "typescript": "~4.2.3",
     "web-vitals": "^0.2.4",
     "yup": "^0.32.8"

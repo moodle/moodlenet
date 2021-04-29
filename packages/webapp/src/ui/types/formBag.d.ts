@@ -11,6 +11,7 @@ export interface FormBag<Values = {}> {
   handleSubmit: (e?: React.FormEvent<HTMLFormElement> | undefined) => void
   submitForm: () => unknown
   setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => any
+
   isValid: boolean
   dirty: boolean
   values: Values

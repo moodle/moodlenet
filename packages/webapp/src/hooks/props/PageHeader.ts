@@ -5,6 +5,7 @@ import { useHistory } from 'react-router'
 import { useContentNodeContext } from '../../contexts/ContentNodeContext'
 import { useGlobalSearch } from '../../contexts/Global/GlobalSearch'
 import { useSession } from '../../contexts/Global/Session'
+import { useMapTupleToAssetRefInput } from '../../helpers/data'
 import { useFormikWithBag } from '../../helpers/forms'
 import { PageHeaderProps } from '../../ui/components/PageHeader'
 import { AddCollectionFormData, AddCollectionFormProps } from '../../ui/forms/collection/AddCollectionForm'
@@ -18,16 +19,24 @@ const loginLink = webappPath<Login>('/login', {})
 export const usePageHeaderProps = (): PageHeaderProps => {
   const { logout, session } = useSession()
   const hist = useHistory()
-
+  const mapTupleToAssetRefInput = useMapTupleToAssetRefInput()
   const mutateNode = useMutateNode()
   const mutateEdge = useMutateEdge()
   const { searchText, setSearchText } = useGlobalSearch()
   //add collection
   const [showAddCollection, toggleShowAddCollection] = useReducer(_ => !_, false)
   const [, /* _addCollectionFormik */ addCollectionFormBag] = useFormikWithBag<AddCollectionFormData>({
-    initialValues: { name: '', summary: '' },
-    onSubmit: async ({ name, summary }, { resetForm }) => {
-      const res = await mutateNode.createNode({ nodeType: 'Collection', data: { name, summary } })
+    initialValues: { name: '', summary: '', icon: null },
+    onSubmit: async (values, { resetForm }) => {
+      if (!mapTupleToAssetRefInput) {
+        return
+      }
+      const { name, summary } = values
+      const [icon] = await mapTupleToAssetRefInput<1>([{ data: values.icon, type: 'icon' }])
+      const res = await mutateNode.createNode({
+        nodeType: 'Collection',
+        data: { content: { name, summary, icon } },
+      })
 
       if (!res.data || res.data.createNode.__typename === 'CreateNodeMutationError') {
         return //FIXME: Manage Error
@@ -55,7 +64,6 @@ export const usePageHeaderProps = (): PageHeaderProps => {
       hist.push(contentNodeLink(newCollectionNode))
     },
   })
-
   const nodeContext = useContentNodeContext()
   const addCollectionFormProps = useMemo<AddCollectionFormProps>(
     () => ({
@@ -72,7 +80,10 @@ export const usePageHeaderProps = (): PageHeaderProps => {
       if (!session?.profile) {
         return
       }
-      const res = await mutateNode.createNode({ nodeType: 'Resource', data: { name, summary } })
+      const res = await mutateNode.createNode({
+        nodeType: 'Resource',
+        data: { content: { name, summary } },
+      })
 
       if (!res.data || res.data.createNode.__typename === 'CreateNodeMutationError') {
         return //FIXME: Manage Error

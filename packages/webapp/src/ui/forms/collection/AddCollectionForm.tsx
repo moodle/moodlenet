@@ -6,6 +6,7 @@ import { FormBag } from '../../types/formBag'
 export type AddCollectionFormData = {
   name: string
   summary: string
+  icon: File | null
 }
 export type AddCollectionFormProps = {
   form: FormBag<AddCollectionFormData>
@@ -28,6 +29,16 @@ export const AddCollectionForm: FC<AddCollectionFormProps> = ({ form, cancel }) 
             label={t`Summary`}
             placeholder={t`Summary ...`}
             {...form.valueName.summary}
+          />
+          <Form.Input
+            type="file"
+            onChange={({ target: { files } }) => {
+              const icon = files?.item(0) ?? null
+              form.setFieldValue('icon', icon)
+            }}
+            label={t`Icon`}
+            placeholder={t`Icon ...`}
+            name={form.valueName.icon.name}
           />
         </Form.Group>
       </Form>
