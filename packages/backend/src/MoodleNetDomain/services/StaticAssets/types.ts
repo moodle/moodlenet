@@ -1,3 +1,5 @@
+import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
+
 export type AssetId = string
 export type TempFileId = string
 export type InterpolateExpression = string
@@ -16,10 +18,6 @@ export type TempFileDesc = {
 }
 
 export type Ulid = string
-
-export type UploadType = 'icon' | 'image' | 'resource'
-export const uploadTypes: UploadType[] = ['icon', 'image', 'resource']
-export const isUploadType = (_: any): _ is UploadType => uploadTypes.includes(_)
 
 export type PersistTmpFileReqsMap<K extends string> = Record<K, PersistTmpFileReq>
 export type PersistTmpFileReq = { uploadType: UploadType; tempFileId: TempFileId }

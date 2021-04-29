@@ -1,3 +1,4 @@
+import { isUploadType } from '@moodlenet/common/lib/staticAsset/lib'
 import express, { Request, Response } from 'express'
 import Formidable, { File } from 'formidable'
 import { createReadStream } from 'fs'
@@ -5,7 +6,7 @@ import { rm } from 'fs/promises'
 import sharp from 'sharp'
 import { Readable } from 'stream'
 import { StaticAssetsIO } from './impl/types'
-import { isUploadType, TempFileDesc, TempFileId } from './types'
+import { TempFileDesc, TempFileId } from './types'
 
 interface HttpGatewayCfg {
   io: StaticAssetsIO
@@ -26,7 +27,7 @@ export const attachStaticAssetsHTTPGateway = ({ io }: HttpGatewayCfg) => {
 
   app.get('/*', async (req, res) => {
     const assetId = decodeURI(req.url.substr(1))
-    console.log({ assetId })
+    // console.log({ assetId })
     const stream = await io.getAsset(assetId)
     if (!stream) {
       sendErrorResponse(res, respError(404, ''))
@@ -51,7 +52,7 @@ const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
     return file // err
   }
 
-  const _cleanup = (a?: any) => (rm(file.path, { force: true }), a)
+  const _cleanup = () => rm(file.path, { force: true })
   const _createTemp = ({ tempFileDesc, stream }: { tempFileDesc: TempFileDesc; stream: Readable }) =>
     io
       .createTemp({ stream, tempFileDesc })

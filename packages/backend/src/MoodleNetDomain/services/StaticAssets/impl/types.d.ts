@@ -1,5 +1,6 @@
+import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
 import { Readable } from 'stream'
-import { AssetFileDesc, AssetId, TempFileDesc, TempFileId, UploadType } from '../types'
+import { AssetFileDesc, AssetId, TempFileDesc, TempFileId } from '../types'
 
 export interface StaticAssetsIO {
   getAsset: (assetId: AssetId) => Promise<Readable | null>

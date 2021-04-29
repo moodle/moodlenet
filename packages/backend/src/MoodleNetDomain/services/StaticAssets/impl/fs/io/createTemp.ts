@@ -9,7 +9,7 @@ export const createTemp = ({ tempDir }: { tempDir: string }): StaticAssetsIO['cr
 }) => {
   const tempFileId = ulid()
   const [tempFileFullPath, tempFileDescFullPath] = getTempFileFSPaths({ tempDir, tempFileId })
-  console.log({ tempFileFullPath, tempFileDescFullPath })
+  // console.log({ tempFileFullPath, tempFileDescFullPath })
   return Promise.all([
     pipeToFile({ destFilePath: tempFileFullPath, stream }),
     writeFile(tempFileDescFullPath, JSON.stringify(tempFileDesc)),

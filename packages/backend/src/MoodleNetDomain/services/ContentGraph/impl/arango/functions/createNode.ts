@@ -39,7 +39,7 @@ export const createNode = async <Type extends GQL.NodeType>({
 
     return ${toDocumentEdgeOrNode('NEW')}
   `
-  console.log(q)
+  // console.log(q)
   const cursor = await db.query(q)
   const result = (await cursor.next()) as DocumentNodeByType<Type> | null
   if (result) {

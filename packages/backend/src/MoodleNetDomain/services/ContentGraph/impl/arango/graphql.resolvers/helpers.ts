@@ -1,9 +1,10 @@
 import { AssetRef } from '@moodlenet/common/lib/pub-graphql/types'
-import { filterNullVoidProps, mapObjProps } from '@moodlenet/common/src/utils/object'
+import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
+import { filterNullVoidProps, mapObjProps } from '@moodlenet/common/lib/utils/object'
 import { call } from '../../../../../../lib/domain/amqp/call'
 import { Flow } from '../../../../../../lib/domain/flow'
 import { MoodleNetDomain } from '../../../../../MoodleNetDomain'
-import { AssetFileDescMap, AssetId, PersistTmpFileReqsMap, UploadType } from '../../../../StaticAssets/types'
+import { AssetFileDescMap, AssetId, PersistTmpFileReqsMap } from '../../../../StaticAssets/types'
 import {
   AssetRefInput,
   CreateEdgeMutationError,
