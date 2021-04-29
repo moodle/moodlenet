@@ -1,16 +1,18 @@
-import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
+import { Id, parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
 import { Config } from 'arangojs/connection'
+import { emit } from '../../../../../lib/domain/amqp/emit'
+import { enqueue } from '../../../../../lib/domain/amqp/enqueue'
+import { mergeFlow } from '../../../../../lib/domain/flow'
+import { Acks } from '../../../../../lib/domain/misc'
 import { DomainSetup, DomainStart } from '../../../../../lib/domain/types'
-import { getSystemExecutionContext, initMoodleNetGQLWrkService } from '../../../../MoodleNetGraphQL'
-import { createEdgeWorker } from './apis/createEdge'
-import { createNodeWorker } from './apis/createNode'
-import { deleteEdgeWorker } from './apis/deleteEdge'
-import { getNodeWorker } from './apis/getNode'
-import { globalSearchWorker } from './apis/globalSearch'
-import { statsMaintainEdgeCountersOnCreate, statsMaintainEdgeCountersOnDelete } from './apis/maintainEdgeCounters'
-import { traverseEdgesWorker } from './apis/traverseEdges'
+import { getSessionContext, getSystemExecutionContext, initMoodleNetGQLWrkService } from '../../../../MoodleNetGraphQL'
+import { createEdge } from './functions/createEdge'
 import { createNode } from './functions/createNode'
+import { deleteEdge } from './functions/deleteEdge'
 import { getNode } from './functions/getNode'
+import { globalSearch } from './functions/globalSearch'
+import { traverseEdges } from './functions/traverseEdges'
+import { updateNodeEdgeCounters } from './functions/updateNode-EdgeCounters'
 import { getContentGraphResolvers } from './graphql.resolvers'
 import { MoodleNetArangoContentGraphSubDomain } from './MoodleNetArangoContentGraphSubDomain'
 import { getPersistence } from './persistence'
@@ -47,45 +49,150 @@ export const defaultArangoContentGraphStartServices = ({
     'ContentGraph.Stats.MaintainEdgeCounters.Created': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
-        return [statsMaintainEdgeCountersOnCreate({ persistence }), teardown]
+        return [
+          async ({ edge }) => {
+            // console.log({ edge })
+            await updateNodeEdgeCounters({ edgeId: edge._id as Id, persistence, del: false })
+            return Acks.Done
+          },
+          teardown,
+        ]
       },
     },
+
     'ContentGraph.Stats.MaintainEdgeCounters.Deleted': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
-        return [statsMaintainEdgeCountersOnDelete({ persistence }), teardown]
+        return [
+          async ({ edge }) => {
+            // console.log({ edge })
+            await updateNodeEdgeCounters({ edgeId: edge._id as Id, persistence, del: true })
+            return Acks.Done
+          },
+          teardown,
+        ]
       },
     },
+
     'ContentGraph.Edge.Create': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
-        return [createEdgeWorker({ persistence }), teardown]
+        return [
+          async ({ ctx, data, edgeType, from, to, key }) => {
+            const { profileId: creatorProfileId } = getSessionContext(ctx)
+            const mEdge = await createEdge({ ctx, data, edgeType, from, persistence, to, key })
+            if (typeof mEdge === 'string') {
+              return mEdge === 'no assertions found' ? 'UnexpectedInput' : 'NotAuthorized'
+            }
+            if ('CreateEdgeAssertionsFailed' in mEdge) {
+              return 'AssertionFailed'
+            }
+            // console.log(`emit create edge`, mEdge.id)
+
+            emit<MoodleNetArangoContentGraphSubDomain>()(
+              'ContentGraph.Edge.Created',
+              { edge: mEdge, creatorProfileId },
+              mergeFlow(ctx.flow, [edgeType]),
+            )
+
+            return mEdge
+          },
+          teardown,
+        ]
       },
     },
+
     'ContentGraph.Node.Create': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
-        return [createNodeWorker({ persistence }), teardown]
+        return [
+          async ({ ctx, data, nodeType, key }) => {
+            const { profileId: creatorProfileId } = getSessionContext(ctx)
+
+            const mNode = await createNode({
+              data,
+              nodeType,
+              persistence,
+              key,
+              ctx,
+            })
+            if (typeof mNode === 'string') {
+              return mNode === 'no assertions found' ? 'UnexpectedInput' : 'NotAuthorized'
+            }
+            if ('CreateNodeAssertionsFailed' in mNode) {
+              return 'AssertionFailed'
+            }
+
+            emit<MoodleNetArangoContentGraphSubDomain>()(
+              `ContentGraph.Node.Created`,
+              { node: mNode, creatorProfileId },
+              mergeFlow(ctx.flow, [nodeType]),
+            )
+            enqueue<MoodleNetArangoContentGraphSubDomain>()(`ContentGraph.Edge.Create`, ctx.flow)({
+              ctx,
+              data: {},
+              edgeType: 'Created',
+              from: creatorProfileId,
+              to: mNode._id,
+            })
+
+            return mNode
+          },
+          teardown,
+        ]
       },
     },
+
     'ContentGraph.Edge.Delete': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
-        return [deleteEdgeWorker({ persistence }), teardown]
+        return [
+          async ({ ctx, edgeId, edgeType }) => {
+            type E = typeof edgeType
+            const { profileId: deleterProfileId } = getSessionContext(ctx)
+            const delEdgeResult = await deleteEdge<E>({ ctx, edgeId, edgeType, persistence })
+            if (typeof delEdgeResult === 'string') {
+              return delEdgeResult === 'no assertions found'
+                ? 'UnexpectedInput'
+                : delEdgeResult === 'edge not found'
+                ? 'NotFound'
+                : 'NotAuthorized'
+            }
+
+            if ('DeleteEdgeAssertionsFailed' in delEdgeResult) {
+              return 'AssertionFailed'
+            }
+            // console.log(`emit delete edge`, delEdgeResult.id)
+            emit<MoodleNetArangoContentGraphSubDomain>()(
+              'ContentGraph.Edge.Deleted',
+              { edge: delEdgeResult, deleterProfileId },
+              mergeFlow(ctx.flow, [edgeType]),
+            )
+            return delEdgeResult
+          },
+          teardown,
+        ]
       },
     },
+
     'ContentGraph.Node.ById': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
-        return [getNodeWorker({ persistence }), teardown]
+        return [({ ctx, _key, nodeType }) => getNode({ _key, ctx, nodeType, persistence }), teardown]
       },
     },
+
     'ContentGraph.Edge.Traverse': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
-        return [traverseEdgesWorker({ persistence }), teardown]
+        return [
+          ({ edgeType, page, parentNodeId, inverse, targetNodeType, targetNodeIds, ctx }) =>
+            traverseEdges({ ctx, targetNodeIds, edgeType, inverse, page, parentNodeId, persistence, targetNodeType }),
+          teardown,
+        ]
       },
     },
+
     'ContentGraph.CreateProfileForNewUser': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
@@ -111,6 +218,7 @@ export const defaultArangoContentGraphStartServices = ({
         ]
       },
     },
+
     'ContentGraph.GetUserProfile': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
@@ -127,12 +235,17 @@ export const defaultArangoContentGraphStartServices = ({
         ]
       },
     },
+
     'ContentGraph.GlobalSearch': {
       init: async () => {
         const [persistence, teardown] = await _getPersistence()
-        return [globalSearchWorker({ persistence }), teardown]
+        return [
+          ({ page, text, nodeTypes, sortBy }) => globalSearch({ page, persistence, text, nodeTypes, sortBy }),
+          teardown,
+        ]
       },
     },
+
     'ContentGraph.GQL': {
       init: initMoodleNetGQLWrkService({
         srvName: 'ContentGraph',

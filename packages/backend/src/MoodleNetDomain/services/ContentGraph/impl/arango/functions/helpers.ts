@@ -184,3 +184,15 @@ export const markDeletedPatch = ({ byId }: { byId: Id }) => `{ ${MARK_DELETED_PR
     at: DATE_NOW() 
   }
 }`
+
+const CREATED_PROP = '_created'
+export const createdByAtPatch = (doc: object, byId: string) => `MERGE(
+  ${aqlstr(doc)}, {
+    ${CREATED_PROP}:{
+      by: { _id: ${aqlstr(byId)}, id: ${aqlstr(byId)} },
+      at: DATE_NOW() 
+    }
+  })`
+
+export const toDocumentEdgeOrNode = (varname: string) => `MERGE(${varname}, ${pickDocumentEdgeOrNodeId(varname)})`
+export const pickDocumentEdgeOrNodeId = (varname: string) => `{id: ${varname}._id}`

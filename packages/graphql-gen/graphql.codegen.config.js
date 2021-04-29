@@ -5,6 +5,7 @@ const backendMooRoot = `../backend/src/MoodleNetDomain`
 const globCommonSdl = `${backendMooRoot}/MoodleNetGraphQL/graphql/**/*.graphql`
 
 const scalars = {
+  AssetRef: './types#AssetRef',
   ID: './types#Id',
   DateTime: 'Date',
   Empty: '{}',

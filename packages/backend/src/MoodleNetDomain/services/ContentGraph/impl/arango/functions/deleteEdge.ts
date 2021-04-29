@@ -7,21 +7,24 @@ import { MoodleNetAuthenticatedExecutionContext } from '../../../../../types'
 import { ShallowEdgeByType } from '../../../types.node'
 import { Persistence } from '../types'
 import { getEdgeOpAqlAssertions } from './assertions/edge'
-import { isMarkDeleted, markDeletedPatch } from './helpers'
+import { isMarkDeleted, markDeletedPatch, toDocumentEdgeOrNode } from './helpers'
 import { DocumentEdgeByType } from './types'
 
-export const deleteEdge = async ({
+export const deleteEdge = async <E extends EdgeType>({
   persistence: { db, graph },
-
+  edgeType,
   ctx,
   edgeId,
 }: {
   persistence: Persistence
   ctx: MoodleNetAuthenticatedExecutionContext
   edgeId: Id
+  edgeType: E
 }) => {
   const { profileId: byId } = getSessionContext(ctx)
-  const edgeType = edgeTypeFromId(edgeId)
+  if (edgeType !== edgeTypeFromId(edgeId)) {
+    return 'edge not found'
+  }
   const edgeCollection = graph.edgeCollection<ShallowEdgeByType<EdgeType>>(edgeType)
   const edge = await edgeCollection.edge(edgeId).catch(() => null)
   if (!edge) {
@@ -44,13 +47,13 @@ export const deleteEdge = async ({
 
     UPDATE edge with ${markDeletedPatch({ byId })} IN ${edgeType}
 
-    RETURN NEW
+    RETURN ${toDocumentEdgeOrNode('NEW')}
   `
   // console.log(q)
   const cursor = await db.query(q, {}, { count: true })
   // console.log({ c: cursor.count })
   if (cursor.count === 1) {
-    return edge as DocumentEdgeByType<EdgeType>
+    return edge as DocumentEdgeByType<E>
   }
 
   // Assertions failed

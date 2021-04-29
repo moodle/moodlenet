@@ -8,6 +8,7 @@ import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { CollectionCardProps } from '../../ui/components/cards/Collection'
 import { ResourceCardProps } from '../../ui/components/cards/Resource'
 import { ProfilePage, ProfilePageProps } from '../../ui/pages/Profile'
+import { getAssetRefUrl } from '../lib'
 import {
   useProfilePageNodeQuery,
   // useProfilePageFollowMutation,
@@ -43,7 +44,7 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
           const { collections, name, icon, id } = edge.node
           const props: ResourceCardProps = {
             name,
-            icon: icon ?? '',
+            icon: getAssetRefUrl(icon),
             homeLink: contentNodeLink({ id }),
             type: 'pdf',
             collections: collections.edges
@@ -78,7 +79,7 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
           const { name, icon, id, followersCount, resourcesCount } = edge.node
           const props: CollectionCardProps = {
             name,
-            icon: icon ?? '',
+            icon: getAssetRefUrl(icon),
             homeLink: contentNodeLink({ id }),
             followers: followersCount,
             resources: resourcesCount,
@@ -115,7 +116,7 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
           resources,
           collections,
           summary: profile.summary,
-          icon: profile.icon || '',
+          icon: getAssetRefUrl(profile.icon),
           followers: profile.followersCount,
           me,
           name: profile.name,

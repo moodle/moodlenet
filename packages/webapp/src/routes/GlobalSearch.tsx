@@ -5,7 +5,7 @@ import { useGlobalSearch } from '../contexts/Global/GlobalSearch'
 import { usePageHeaderProps } from '../hooks/props/PageHeader'
 import { BaseContentNodeFeedProps } from '../ui/components/BaseContentNodeFeed'
 import { GlobalSearchPage, GlobalSearchPageProps } from '../ui/pages/GlobalSearchPage'
-import { MNRouteProps, RouteFC } from './lib'
+import { getAssetRefUrl, MNRouteProps, RouteFC } from './lib'
 
 export const GlobalSearchRouteComponent: RouteFC<Routes.GlobalSearch> = (/* { match, history } */) => {
   const { edges, typeFilters, setTypeFilter, setSortBy, sortBy } = useGlobalSearch()
@@ -13,7 +13,7 @@ export const GlobalSearchRouteComponent: RouteFC<Routes.GlobalSearch> = (/* { ma
   const baseContentNodeFeedPropsList: BaseContentNodeFeedProps[] = edges
     .map(edge => edge.node)
     .map(node => ({
-      icon: node.icon ?? null,
+      icon: getAssetRefUrl(node.icon),
       link: contentNodeLink(node),
       name: node.name,
       summary: node.summary,

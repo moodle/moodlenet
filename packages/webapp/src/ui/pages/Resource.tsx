@@ -21,10 +21,10 @@ export type ResourcePageProps = {
   }
   likers: number
   created: Date
-  icon: string
+  icon: string | null
   summary: string
   creator: {
-    icon: string
+    icon: string | null
     name: string
     homeLink: string
   }

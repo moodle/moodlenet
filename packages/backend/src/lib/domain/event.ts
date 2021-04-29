@@ -2,12 +2,13 @@ import { Leaves, LookupPath } from './path'
 
 export type Event<Type> = {
   kind: 'evt'
-  cfg?: Partial<EventConfig>
-  __$do_not_set_me_Event_Type_placeholder?: Type
+  cfg?: Partial<EventConfig<Type>>
 }
 
-export type EventConfig = {}
-export const defaultEventConfig = (cfg?: Partial<EventConfig>): EventConfig => ({
+export type EventConfig<Type> = {
+  __$do_not_set_me_Event_Type_placeholder?: Type
+}
+export const defaultEventConfig = <T>(cfg?: Partial<EventConfig<T>>): EventConfig<T> => ({
   ...cfg,
 })
 

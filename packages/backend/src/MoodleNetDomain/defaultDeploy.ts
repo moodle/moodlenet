@@ -1,4 +1,5 @@
 import { Config } from 'arangojs/connection'
+import { resolve } from 'path'
 import { setup } from '../lib/domain/amqp/setup'
 import { start } from '../lib/domain/amqp/start'
 import { DomainSetup, DomainStart } from '../lib/domain/types'
@@ -9,8 +10,14 @@ import {
 } from './services/ContentGraph/impl/arango/defaultDeploy'
 import { defaultArangoEmailSetup, defaultArangoEmailStartServices } from './services/Email/impl/arango/defaultDeploy'
 import { createMailgunSender } from './services/Email/sendersImpl/mailgun/mailgunSender'
-import { startGraphQLHTTPGateway } from './services/GraphQLHTTPGateway/GraphQLHTTPGateway'
-import { startHttpServer } from './services/HTTPServer/HTTPServer'
+import { attachGraphQLHTTPGateway } from './services/GraphQLHTTPGateway/GraphQLHTTPGateway'
+import { startMNHttpServer } from './services/MNHTTPServer/MNHTTPServer'
+import { createFSStaticAssets } from './services/StaticAssets/impl/fs/fsStaticAssets'
+import {
+  defaultFSStaticAssetSetup,
+  defaultFSStaticAssetStartServices,
+} from './services/StaticAssets/impl/fs/MoodleNetFSStaticAssetsDomain'
+import { attachStaticAssetsHTTPGateway } from './services/StaticAssets/StaticAssetsHTTPGateway'
 import {
   defaultArangoUserAuthImpl,
   defaultArangoUserAuthStartServices,
@@ -24,8 +31,17 @@ export const startDefaultMoodlenet = async () => {
   if (!(arangoUrl && mailgunApiKey && mailgunDomain)) {
     throw new Error(`missing env`)
   }
-  const expressApp = startHttpServer({ port: httpGqlPort })
-  startGraphQLHTTPGateway({ app: expressApp.serviceRoot })
+  const staticAssetIo = createFSStaticAssets({ rootFolder: resolve(process.cwd(), '.staticAssetFs') })
+  const assetsHttpService = attachStaticAssetsHTTPGateway({ io: staticAssetIo })
+  const graphqlHttpService = attachGraphQLHTTPGateway({})
+  /* const expressApp = */ await startMNHttpServer({
+    port: httpGqlPort,
+    services: {
+      static: assetsHttpService,
+      graphql: graphqlHttpService,
+    },
+  })
+
   const baseDbCfg: Config = {
     url: arangoUrl,
   }
@@ -34,9 +50,11 @@ export const startDefaultMoodlenet = async () => {
     ...defaultArangoContentGraphSetup,
     ...defaultArangoEmailSetup,
     ...defaultArangoUserAuthImpl,
+    ...defaultFSStaticAssetSetup,
   }
 
   const defaultMoodlenetStartServices: DomainStart<MoodleNetDomain> = {
+    ...defaultFSStaticAssetStartServices({ io: staticAssetIo }),
     ...defaultArangoContentGraphStartServices({
       dbCfg: {
         ...baseDbCfg,

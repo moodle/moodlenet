@@ -1,20 +1,16 @@
 type Resource implements INode & IContentNode {
   name: String!
   summary: String!
-  icon: String
+  icon: AssetRef
   id: ID!
 }
 
 input CreateResourceInput {
-  name: String!
-  summary: String!
-  icon: String
+  content: ContentNodeInput!
 }
 
 input UpdateResourceInput {
-  name: String
-  summary: String!
-  icon: String
+  content: ContentNodeInput!
 }
 
 # integrations

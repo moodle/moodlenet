@@ -15,7 +15,7 @@ export type ProfilePageProps = {
     following: boolean
   }
   followers: number
-  icon: string
+  icon: string | null
   collections: CollectionCardProps[]
   resources: ResourceCardProps[]
 }

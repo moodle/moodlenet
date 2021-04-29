@@ -6,6 +6,7 @@ import { isJust } from '../../helpers/data'
 import { useMutateEdge } from '../../hooks/content/mutateEdge'
 import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { ResourcePage, ResourcePageProps } from '../../ui/pages/Resource'
+import { getAssetRefUrl } from '../lib'
 import {
   // useResourcePageLikeMutation,
   useResourcePageNodeQuery,
@@ -43,7 +44,7 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
             .map(edge => (edge.node.__typename === 'Collection' ? edge.node : null))
             .filter(isJust)
             .map(coll => ({
-              icon: coll.icon ?? null,
+              icon: getAssetRefUrl(coll.icon),
               name: coll.name,
               homeLink: contentNodeLink(coll),
               addToThisCollection: () => {
@@ -56,11 +57,11 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
   const props = useMemo<ResourcePageProps | null>(() => {
     return resource
       ? {
-          icon: resource.icon || '',
+          icon: getAssetRefUrl(resource.icon),
           type: 'pdf',
           creator: {
             homeLink: contentNodeLink({ id: resource._created.by.id }),
-            icon: resource._created.by.icon || '',
+            icon: getAssetRefUrl(resource._created.by.icon),
             name: resource._created.by.name,
           },
           created: resource._created.at,

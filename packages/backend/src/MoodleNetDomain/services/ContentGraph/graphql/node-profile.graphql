@@ -1,20 +1,16 @@
 type Profile implements INode & IContentNode {
   name: String!
   summary: String!
-  icon: String
+  icon: AssetRef
   id: ID!
 }
 
 input UpdateProfileInput {
-  name: String!
-  summary: String!
-  icon: String
+  content: ContentNodeInput!
 }
 
 input CreateProfileInput {
-  name: String!
-  summary: String!
-  icon: String
+  content: ContentNodeInput!
 }
 
 # integrations
