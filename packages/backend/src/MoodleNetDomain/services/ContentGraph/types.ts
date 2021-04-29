@@ -1,1 +1,1 @@
-export { Id } from '@moodlenet/common/lib/pub-graphql/types'
+export { AssetRef, Id } from '@moodlenet/common/lib/pub-graphql/types'
