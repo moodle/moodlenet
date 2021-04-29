@@ -37,6 +37,7 @@ type LastSession = {
 export type SessionContextType = {
   session: UserSessionWithProfileInfoFragment | null
   lastSessionUsername: string | null
+  lastSessionJwt: string | null
   logout(): unknown
   activateNewUser(_: { password: string; token: string; username: string }): Promise<ActivateWarnMessage | null>
   login(_: { username: string; password: string }): Promise<LoginWarnMessage | null>
@@ -94,6 +95,7 @@ export const SessionProvider: FC = ({ children }) => {
       activateNewUser,
       session,
       lastSessionUsername: lastSession.username ?? null,
+      lastSessionJwt: lastSession.jwt ?? null,
     }),
     [activateNewUser, lastSession, login, logout, session],
   )

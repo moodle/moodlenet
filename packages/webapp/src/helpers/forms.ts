@@ -12,7 +12,7 @@ export const useFormikWithBag = <Values>(cfg: FormikConfig<Values>) => {
           ...collect,
           [name]: {
             name,
-            value,
+            value: value instanceof File ? '' : value,
           },
         }
       }, {} as any),
