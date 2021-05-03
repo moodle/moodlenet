@@ -19,6 +19,4 @@ export type TempFileDesc = {
 
 export type Ulid = string
 
-export type PersistTmpFileReqsMap<K extends string> = Record<K, PersistTmpFileReq>
 export type PersistTmpFileReq = { uploadType: UploadType; tempFileId: TempFileId }
-export type AssetFileDescMap<K extends string> = Record<K, AssetFileDesc>

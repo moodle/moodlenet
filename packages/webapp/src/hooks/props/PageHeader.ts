@@ -5,7 +5,7 @@ import { useHistory } from 'react-router'
 import { useContentNodeContext } from '../../contexts/ContentNodeContext'
 import { useGlobalSearch } from '../../contexts/Global/GlobalSearch'
 import { useSession } from '../../contexts/Global/Session'
-import { useMapTupleToAssetRefInput } from '../../helpers/data'
+import { useMapTupleUIAssetInputToAssetRefInput } from '../../helpers/data'
 import { useFormikWithBag } from '../../helpers/forms'
 import { PageHeaderProps } from '../../ui/components/PageHeader'
 import { AddCollectionFormData, AddCollectionFormProps } from '../../ui/forms/collection/AddCollectionForm'
@@ -19,7 +19,7 @@ const loginLink = webappPath<Login>('/login', {})
 export const usePageHeaderProps = (): PageHeaderProps => {
   const { logout, session } = useSession()
   const hist = useHistory()
-  const mapTupleToAssetRefInput = useMapTupleToAssetRefInput()
+  const mapTupleToAssetRefInput = useMapTupleUIAssetInputToAssetRefInput()
   const mutateNode = useMutateNode()
   const mutateEdge = useMutateEdge()
   const { searchText, setSearchText } = useGlobalSearch()
@@ -75,14 +75,20 @@ export const usePageHeaderProps = (): PageHeaderProps => {
   //add resource
   const [showAddResource, toggleShowAddResource] = useReducer(_ => !_, false)
   const [, /* _addResourceFormik */ addResourceFormBag] = useFormikWithBag<AddResourceFormData>({
-    initialValues: { name: '', summary: '' },
-    onSubmit: async ({ name, summary }, { resetForm }) => {
-      if (!session?.profile) {
+    initialValues: { name: '', summary: '', icon: null, resource: null },
+    onSubmit: async (values, { resetForm }) => {
+      if (!(session?.profile && mapTupleToAssetRefInput)) {
         return
       }
+      const { name, summary } = values
+      const [icon, resource] = await mapTupleToAssetRefInput<2>([
+        { data: values.icon, type: 'icon' },
+        { data: values.resource, type: 'resource' },
+      ])
+
       const res = await mutateNode.createNode({
         nodeType: 'Resource',
-        data: { content: { name, summary } },
+        data: { content: { name, summary, icon }, resource },
       })
 
       if (!res.data || res.data.createNode.__typename === 'CreateNodeMutationError') {

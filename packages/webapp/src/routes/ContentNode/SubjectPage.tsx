@@ -8,7 +8,7 @@ import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { CollectionCardProps } from '../../ui/components/cards/Collection'
 import { ResourceCardProps } from '../../ui/components/cards/Resource'
 import { SubjectPage, SubjectPageProps } from '../../ui/pages/Subject'
-import { getAssetRefUrl } from '../lib'
+import { getMaybeAssetRefUrl } from '../lib'
 import {
   useSubjectPageCollectionsQuery,
   // useSubjectPageFollowMutation,
@@ -37,7 +37,7 @@ export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
           const { id, name, icon, followersCount, resourcesCount } = edge.node
           const props: CollectionCardProps = {
             name,
-            icon: getAssetRefUrl(icon),
+            icon: getMaybeAssetRefUrl(icon),
             homeLink: contentNodeLink({ id }),
             followers: followersCount,
             resources: resourcesCount,
@@ -61,7 +61,7 @@ export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
           const { collections, name, icon, id } = edge.node
           const props: ResourceCardProps = {
             name,
-            icon: getAssetRefUrl(icon),
+            icon: getMaybeAssetRefUrl(icon),
             homeLink: contentNodeLink({ id }),
             type: 'pdf',
             collections: collections.edges

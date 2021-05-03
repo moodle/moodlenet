@@ -22,13 +22,13 @@ export const AddCollectionForm: FC<AddCollectionFormProps> = ({ form, cancel }) 
             fluid
             label={t`Name`}
             placeholder={t`Name`}
-            {...form.valueName.name}
+            {...form.inputAttrs.name}
           />
           <Form.TextArea
             onChange={form.handleChange}
             label={t`Summary`}
-            placeholder={t`Summary ...`}
-            {...form.valueName.summary}
+            placeholder={t`Summary`}
+            {...form.inputAttrs.summary}
           />
           <Form.Input
             type="file"
@@ -37,8 +37,8 @@ export const AddCollectionForm: FC<AddCollectionFormProps> = ({ form, cancel }) 
               form.setFieldValue('icon', icon)
             }}
             label={t`Icon`}
-            placeholder={t`Icon ...`}
-            name={form.valueName.icon.name}
+            placeholder={t`Icon`}
+            {...form.inputAttrs.icon}
           />
         </Form.Group>
       </Form>

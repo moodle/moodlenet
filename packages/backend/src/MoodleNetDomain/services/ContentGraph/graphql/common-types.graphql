@@ -10,15 +10,16 @@ interface IContentNode {
 input ContentNodeInput {
   name: String! # TODO: rename to title
   summary: String! # TODO: rename to description
-  icon: AssetRefInput
+  icon: AssetRefInput!
 }
 
 enum AssetRefInputType {
   TmpUpload
   ExternalUrl
   NoChange
-  Remove
+  NoAsset
 }
+
 input AssetRefInput {
   type: AssetRefInputType!
   location: String!

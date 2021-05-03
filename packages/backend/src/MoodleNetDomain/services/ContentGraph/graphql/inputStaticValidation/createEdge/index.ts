@@ -13,7 +13,7 @@ const inputObjectValidators: {
   Likes: object<Just<CreateEdgeInput['Likes']>>().required(),
 }
 
-export function validateCreateEdgeInput(input: CreateEdgeInput): Just<CreateEdgeInput[EdgeType]> | Error {
+export const validateCreateEdgeInput = (input: CreateEdgeInput): Just<CreateEdgeInput[EdgeType]> | Error => {
   const { edgeType } = input
   if (!(edgeType in input)) {
     return new Error(`wants to create ${edgeType} but no data provided in ${edgeType} prop`)

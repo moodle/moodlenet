@@ -29,7 +29,7 @@ export const LoginPanelBig: FC<LoginPanelProps> = ({ form, message, signupLink, 
           <Segment stacked>
             <Form.Input
               fluid
-              {...form.valueName.username}
+              {...form.inputAttrs.username}
               placeholder={t`your user name`}
               onChange={form.handleChange}
               icon="user"
@@ -37,7 +37,7 @@ export const LoginPanelBig: FC<LoginPanelProps> = ({ form, message, signupLink, 
             />
             <Form.Input
               fluid
-              {...form.valueName.password}
+              {...form.inputAttrs.password}
               placeholder={t`your password`}
               onChange={form.handleChange}
               icon="lock"

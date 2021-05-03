@@ -13,7 +13,7 @@ export type ResourcePageNodeQuery = (
   { __typename: 'Query' }
   & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'Profile' } | (
     { __typename: 'Resource' }
-    & Pick<Types.Resource, 'id' | 'name' | 'icon' | 'summary'>
+    & Pick<Types.Resource, 'id' | 'name' | 'icon' | 'location' | 'summary'>
     & { likersCount: Types.Resource['_relCount'], inCollectionCount: Types.Resource['_relCount'] }
     & { myLike: (
       { __typename: 'RelPage' }
@@ -139,6 +139,7 @@ export const ResourcePageNodeDocument = gql`
       id
       name
       icon
+      location
       summary
       myLike: _rel(
         edge: {type: Likes, node: Profile, inverse: true, targetMe: true}

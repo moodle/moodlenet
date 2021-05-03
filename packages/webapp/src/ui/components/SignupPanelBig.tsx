@@ -40,7 +40,7 @@ export const SignupPanelBig: FC<SignupPanelProps> = ({ form, warnMessage, homeLi
             <Segment stacked>
               <Form.Input
                 fluid
-                {...form.valueName.email}
+                {...form.inputAttrs.email}
                 placeholder={t`your email`}
                 onChange={form.handleChange}
                 icon="user"

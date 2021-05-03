@@ -8,5 +8,6 @@ export const Resource = (): Fake<GQL.Resource> => {
     name: fk.random.words(4),
     icon: rndImgAssetRef(200, 200),
     summary: fk.random.words(5),
+    location: rndImgAssetRef(1200, 1200),
   }
 }

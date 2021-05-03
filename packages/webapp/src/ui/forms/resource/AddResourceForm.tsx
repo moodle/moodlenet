@@ -6,6 +6,8 @@ import { FormBag } from '../../types/formBag'
 export type AddResourceFormData = {
   name: string
   summary: string
+  icon: File | null
+  resource: File | null
 }
 export type AddResourceFormProps = {
   form: FormBag<AddResourceFormData>
@@ -21,13 +23,33 @@ export const AddResourceForm: FC<AddResourceFormProps> = ({ form, cancel }) => {
             fluid
             label={t`Name`}
             placeholder={t`Name`}
-            {...form.valueName.name}
+            {...form.inputAttrs.name}
           />
           <Form.TextArea
             onChange={form.handleChange}
             label={t`Summary`}
-            placeholder={t`Summary ...`}
-            {...form.valueName.summary}
+            placeholder={t`Summary`}
+            {...form.inputAttrs.summary}
+          />
+          <Form.Input
+            type="file"
+            onChange={({ target: { files } }) => {
+              const icon = files?.item(0) ?? null
+              form.setFieldValue('icon', icon)
+            }}
+            label={t`Icon`}
+            placeholder={t`Icon`}
+            {...form.inputAttrs.icon}
+          />
+          <Form.Input
+            type="file"
+            onChange={({ target: { files } }) => {
+              const resource = files?.item(0) ?? null
+              form.setFieldValue('resource', resource)
+            }}
+            label={t`Resource`}
+            placeholder={t`Resource`}
+            {...form.inputAttrs.resource}
           />
         </Form.Group>
       </Form>

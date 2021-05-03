@@ -13,3 +13,5 @@ export type FilterFlags<Base, Condition> = {
 export type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base]
 export type SubType<Base, Condition> = Pick<Base, AllowedNames<Base, Condition>>
 //
+export type Just<T> = Exclude<T, null | undefined>
+export type Maybe<T> = T | null | undefined

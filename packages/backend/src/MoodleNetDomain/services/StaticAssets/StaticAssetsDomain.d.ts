@@ -1,7 +1,10 @@
+import { Tuple } from 'tuple-type'
 import { WrkDef } from '../../../lib/domain/wrk'
-import { AssetFileDescMap, AssetId, PersistTmpFileReqsMap } from './types'
+import { AssetFileDesc, AssetId, PersistTmpFileReq } from './types'
 
 export type StaticAssets = {
-  PersistTempFilesAll: WrkDef<<K extends string>(_: PersistTmpFileReqsMap<K>) => Promise<null | AssetFileDescMap<K>>>
+  PersistTempFilesAll: WrkDef<
+    <N extends number>(_: Tuple<PersistTmpFileReq, N>) => Promise<null | Tuple<AssetFileDesc, N>>
+  >
   DeleteAsset: WrkDef<(_: { assetId: AssetId }) => Promise<any>>
 }

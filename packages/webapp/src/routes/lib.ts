@@ -1,5 +1,5 @@
 import { AssetRef } from '@moodlenet/common/lib/pub-graphql/types'
-import { getAssetRefUrl as _getAssetRefUrl } from '@moodlenet/common/lib/staticAsset/lib'
+import { getAssetRefUrl } from '@moodlenet/common/lib/staticAsset/lib'
 import { GetRouteDefParams, GetRouteDefPath, RouteDef } from '@moodlenet/common/lib/webapp/sitemap'
 import * as H from 'history'
 import { FC } from 'react'
@@ -17,5 +17,7 @@ export type MNRouteProps<R extends RouteDef<string, any>> = {
   strict?: boolean
 }
 
-export const getAssetRefUrl = (assetRef: AssetRef | null | undefined): string | null =>
-  _getAssetRefUrl({ assetRef, baseStaticcAssetUrl: STATIC_ASSET_BASE })
+export const getJustAssetRefUrl = (assetRef: AssetRef): string =>
+  getAssetRefUrl({ assetRef, baseStaticAssetUrl: STATIC_ASSET_BASE })
+export const getMaybeAssetRefUrl = (assetRef: AssetRef | null | undefined): null | string =>
+  assetRef ? getJustAssetRefUrl(assetRef) : null

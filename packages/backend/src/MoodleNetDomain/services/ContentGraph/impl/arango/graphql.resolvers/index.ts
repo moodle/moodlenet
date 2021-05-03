@@ -5,6 +5,7 @@ import { call } from '../../../../../../lib/domain/amqp/call'
 import * as GQL from '../../../ContentGraph.graphql.gen'
 import { validateCreateEdgeInput } from '../../../graphql/inputStaticValidation/createEdge'
 import { validateCreateNodeInput } from '../../../graphql/inputStaticValidation/createNode'
+import { bakeNodeDoumentData } from '../../../graphql/prepareData/createNode'
 import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentGraphSubDomain'
 import {
   createEdgeMutationError,
@@ -12,7 +13,6 @@ import {
   deleteEdgeMutationError,
   fakeEdgeByShallowOrDoc,
   fakeNodeByShallowOrDoc,
-  getAssetRefMapFromAssetRefInputMap,
 } from './helpers'
 import { nodePropResolver } from './nodePropResolver'
 import { EdgeResolver } from './types.edge'
@@ -89,21 +89,20 @@ export const getContentGraphResolvers = (): GQL.Resolvers => {
         if (nodeInput instanceof Error) {
           return createNodeMutationError('UnexpectedInput', nodeInput.message)
         }
-        const {
-          content: { name, summary, icon },
-        } = nodeInput
 
-        const assetRefMap = await getAssetRefMapFromAssetRefInputMap({ icon }, { icon: 'icon' }, ctx.flow)
-        if (!assetRefMap) {
-          return createNodeMutationError('UnexpectedInput', `couldn't find requested tempFiles`)
+        const data = await bakeNodeDoumentData(nodeInput, nodeType, ctx.flow)
+        //        getAssetRefMapFromAssetRefInputMap({ icon }, { icon: 'icon' }, ctx.flow)
+        if ('__typename' in data) {
+          return data
         }
 
+        // const data = { name, summary, ...assetRefMap }
         const shallowNodeOrError = await call<MoodleNetArangoContentGraphSubDomain>()(
           'ContentGraph.Node.Create',
           ctx.flow,
         )({
           ctx,
-          data: { name, summary, ...assetRefMap },
+          data,
           nodeType,
         })
 

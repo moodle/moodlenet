@@ -24,6 +24,8 @@ export const createNode = async <Type extends GQL.NodeType>({
 }) => {
   key = key ?? ulidKey()
   const { profileId } = getSessionContext(ctx)
+  //TODO: Assertion should be an argument here
+  // and forwarded to getNodeOpAqlAssertions for mapping to AQL
   const aqlAssertionMaps = getNodeOpAqlAssertions({ ctx, op: 'create', nodeType, nodeVar: null })
   if (typeof aqlAssertionMaps === 'string') {
     return aqlAssertionMaps
