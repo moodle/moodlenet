@@ -109,6 +109,9 @@ export const defaultArangoContentGraphStartServices = ({
           async ({ ctx, data, nodeType, key }) => {
             const { profileId: creatorProfileId } = getSessionContext(ctx)
 
+            //TODO: Assertion should be retrieved here
+            // check context assertion here,
+            // and forward the adeqate Assertion to createNode
             const mNode = await createNode({
               data,
               nodeType,
@@ -116,6 +119,7 @@ export const defaultArangoContentGraphStartServices = ({
               key,
               ctx,
             })
+
             if (typeof mNode === 'string') {
               return mNode === 'no assertions found' ? 'UnexpectedInput' : 'NotAuthorized'
             }

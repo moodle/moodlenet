@@ -22,6 +22,7 @@ export type ResourcePageProps = {
   likers: number
   created: Date
   icon: string | null
+  resource: string
   summary: string
   creator: {
     icon: string | null
@@ -40,6 +41,7 @@ export const ResourcePage: FC<ResourcePageProps> = ({
   creator,
   icon,
   summary,
+  resource,
 }) => {
   return (
     <HeaderPageTemplate pageHeaderProps={pageHeaderProps}>
@@ -59,6 +61,9 @@ export const ResourcePage: FC<ResourcePageProps> = ({
                   <Trans>Resource</Trans>
                 </h3>
                 <h3>{name}</h3>
+                <a href={resource} target="_blank" rel="noreferrer">
+                  <Trans>download</Trans>
+                </a>
                 {type}
                 {!me?.myCollections.length ? null : (
                   <>

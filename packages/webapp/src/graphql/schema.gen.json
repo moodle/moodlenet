@@ -2409,9 +2409,13 @@
             "name": "icon",
             "description": null,
             "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "AssetRefInput",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "INPUT_OBJECT",
+                "name": "AssetRefInput",
+                "ofType": null
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -2449,7 +2453,7 @@
             "deprecationReason": null
           },
           {
-            "name": "Remove",
+            "name": "NoAsset",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3784,6 +3788,22 @@
             "deprecationReason": null
           },
           {
+            "name": "location",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "AssetRef",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "name",
             "description": null,
             "args": [],
@@ -4541,6 +4561,22 @@
               "ofType": {
                 "kind": "INPUT_OBJECT",
                 "name": "ContentNodeInput",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "resource",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "INPUT_OBJECT",
+                "name": "AssetRefInput",
                 "ofType": null
               }
             },

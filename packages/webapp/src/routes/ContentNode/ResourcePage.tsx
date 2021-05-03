@@ -6,7 +6,7 @@ import { isJust } from '../../helpers/data'
 import { useMutateEdge } from '../../hooks/content/mutateEdge'
 import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { ResourcePage, ResourcePageProps } from '../../ui/pages/Resource'
-import { getAssetRefUrl } from '../lib'
+import { getJustAssetRefUrl, getMaybeAssetRefUrl } from '../lib'
 import {
   // useResourcePageLikeMutation,
   useResourcePageNodeQuery,
@@ -44,7 +44,7 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
             .map(edge => (edge.node.__typename === 'Collection' ? edge.node : null))
             .filter(isJust)
             .map(coll => ({
-              icon: getAssetRefUrl(coll.icon),
+              icon: getMaybeAssetRefUrl(coll.icon),
               name: coll.name,
               homeLink: contentNodeLink(coll),
               addToThisCollection: () => {
@@ -57,11 +57,12 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
   const props = useMemo<ResourcePageProps | null>(() => {
     return resource
       ? {
-          icon: getAssetRefUrl(resource.icon),
+          icon: getMaybeAssetRefUrl(resource.icon),
+          resource: getJustAssetRefUrl(resource.location),
           type: 'pdf',
           creator: {
             homeLink: contentNodeLink({ id: resource._created.by.id }),
-            icon: getAssetRefUrl(resource._created.by.icon),
+            icon: getMaybeAssetRefUrl(resource._created.by.icon),
             name: resource._created.by.name,
           },
           created: resource._created.at,

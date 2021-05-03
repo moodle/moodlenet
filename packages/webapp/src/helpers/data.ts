@@ -1,6 +1,7 @@
 //FIXME: sssscopied this in common.
 
 import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
+import { useMemo } from 'react'
 import { Tuple } from 'tuple-type'
 import { STATIC_ASSET_BASE } from '../constants'
 import { useSession } from '../contexts/Global/Session'
@@ -14,13 +15,13 @@ type UIAssetInput = {
   type: UploadType
 }
 
-export const mapToAssetRefInput = (apiKey: string) => async (input: UIAssetInput) => {
+export const mapUIAssetInputToAssetRefInput = (apiKey: string) => async (input: UIAssetInput) => {
   const { data, type } = input
   const assetRefInput: AssetRefInput | Promise<AssetRefInput> =
     data === undefined
       ? { type: 'NoChange', location: '' }
       : data === null
-      ? { type: 'Remove', location: '' }
+      ? { type: 'NoAsset', location: '' }
       : uploadTempFile(apiKey)(type, data).then<AssetRefInput>(location => ({
           location,
           type: 'TmpUpload',
@@ -28,10 +29,13 @@ export const mapToAssetRefInput = (apiKey: string) => async (input: UIAssetInput
   return assetRefInput
 }
 
-export const mapTupleToAssetRefInput = (apiKey: string) => async <N extends number>(
+export const mapTupleUIAssetInputToAssetRefInput = (apiKey: string) => async <N extends number>(
   inputs: Tuple<UIAssetInput, N>,
-): Promise<Tuple<AssetRefInput, N>> =>
-  Promise.all(inputs.map(mapToAssetRefInput(apiKey))) as Promise<Tuple<AssetRefInput, N>>
+): Promise<Tuple<AssetRefInput, N>> => (
+  // eslint-disable-next-line no-sequences
+  console.log(inputs),
+  Promise.all(inputs.map(mapUIAssetInputToAssetRefInput(apiKey))) as Promise<Tuple<AssetRefInput, N>>
+)
 
 export const uploadTempFile = (apiKey: string) => async (assetType: UploadType, file: File): Promise<string> => {
   const formData = new FormData()
@@ -52,7 +56,9 @@ export const uploadTempFile = (apiKey: string) => async (assetType: UploadType, 
   )
 }
 
-export const useMapTupleToAssetRefInput = () => {
+export const useMapTupleUIAssetInputToAssetRefInput = () => {
   const { lastSessionJwt } = useSession()
-  return lastSessionJwt && mapTupleToAssetRefInput(lastSessionJwt)
+  return useMemo(() => lastSessionJwt && mapTupleUIAssetInputToAssetRefInput(lastSessionJwt), [lastSessionJwt])
 }
+
+export const hasNoValue = (_: any): _ is null | undefined | void => [null, undefined].includes(_)

@@ -59,6 +59,7 @@
     "sharp": "^0.28.1",
     "sshpk": "^1.16.1",
     "ts-node": "^9.1.1",
+    "tuple-type": "^1.0.3",
     "typescript": "~4.2.3",
     "typescript-compare": "^0.0.2",
     "typescript-conditional-types": "^1.0.0",

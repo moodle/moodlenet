@@ -15,8 +15,8 @@ export interface FormBag<Values = {}> {
   isValid: boolean
   dirty: boolean
   values: Values
-  valueName: {
-    [ValueName in keyof Values]: { name: ValueName; value: Values[ValueName] }
+  inputAttrs: {
+    [ValueName in keyof Values]: { name: ValueName; value?: Values[ValueName] }
   }
   errors: FormikErrors<Values>
   touched: FormikTouched<Values>

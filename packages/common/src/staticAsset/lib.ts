@@ -4,18 +4,16 @@ export type UploadType = 'icon' | 'image' | 'resource'
 export const uploadTypes: UploadType[] = ['icon', 'image', 'resource']
 export const isUploadType = (_: any): _ is UploadType => uploadTypes.includes(_)
 
-export const getLocalAssetUrl = (_: { baseStaticcAssetUrl: string; assetId: string }): string =>
-  `${_.baseStaticcAssetUrl}/${_.assetId}`
+export const getLocalAssetUrl = (_: { baseStaticAssetUrl: string; assetId: string }): string =>
+  `${_.baseStaticAssetUrl}/${_.assetId}`
+
 export const getAssetRefUrl = ({
   assetRef,
-  baseStaticcAssetUrl,
+  baseStaticAssetUrl,
 }: {
-  baseStaticcAssetUrl: string
-  assetRef: AssetRef | null | undefined
-}): string | null => {
-  if (!assetRef) {
-    return null
-  }
+  baseStaticAssetUrl: string
+  assetRef: AssetRef
+}): string => {
   const { location, ext } = assetRef
-  return ext ? location : getLocalAssetUrl({ baseStaticcAssetUrl, assetId: location })
+  return ext ? location : getLocalAssetUrl({ baseStaticAssetUrl, assetId: location })
 }

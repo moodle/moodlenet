@@ -9,6 +9,8 @@ import { AssertionArg, toAqlAssertionExprMapAndAqlString } from './lib'
 type NodeAssertionMap = {
   [a in NodeAssertion]: (_: AssertionArg) => string
 }
+//TODO avoid passing ctx in these assertionMap functions
+// `currentUser{profileId,role}` would be generically enough
 export const nodeAssertionMap: NodeAssertionMap = {
   ExecutorCreatedThisNode: ({ ctx, thisNodeVar }) => {
     const sessionCtx = getSessionExecutionContext(ctx)

@@ -1,12 +1,14 @@
 import { AssetRef } from '@moodlenet/common/lib/pub-graphql/types'
 import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
-import { filterNullVoidProps, mapObjProps } from '@moodlenet/common/lib/utils/object'
+import { Maybe } from '@moodlenet/common/lib/utils/types'
+import { Tuple } from 'tuple-type'
 import { call } from '../../../../../../lib/domain/amqp/call'
 import { Flow } from '../../../../../../lib/domain/flow'
 import { MoodleNetDomain } from '../../../../../MoodleNetDomain'
-import { AssetFileDescMap, AssetId, PersistTmpFileReqsMap } from '../../../../StaticAssets/types'
+import { PersistTmpFileReq } from '../../../../StaticAssets/types'
 import {
   AssetRefInput,
+  ContentNodeInput,
   CreateEdgeMutationError,
   CreateEdgeMutationErrorType,
   CreateNodeMutationError,
@@ -65,68 +67,60 @@ export const deleteEdgeMutationError = (
   details,
 })
 
-export type AssetIdMap<K extends string> = Record<K, AssetId>
-export const getAssetIdMap = <K extends string>(assetFileMap: AssetFileDescMap<K>): AssetIdMap<K> =>
-  mapObjProps(assetFileMap, assetFileDesc => assetFileDesc.assetId)
-
-export const getAssetRefMap = <K extends string>(
-  locationMap: Record<K, string>,
-  locType: 'external' | 'local',
-): AssetRefMap<K> => mapObjProps(locationMap, location => ({ location, ext: locType == 'external' }))
-
-export type UploadTypeMap<K extends string> = Record<K, UploadType>
-export const getPersistTmpFilesMap = <K extends string>(
-  assetRefInputMap: AssetRefInputMap<K>,
-  uploadTypes: UploadTypeMap<K>,
-): PersistTmpFileReqsMap<string> => {
-  const persistTmpFileReqsOrNullMap = mapObjProps(assetRefInputMap, (mAssetRefInput, key) => {
-    if (!mAssetRefInput) {
-      return null
-    }
-    const { location, type } = mAssetRefInput
-    return type === 'TmpUpload' && location
-      ? {
-          tempFileId: location,
-          uploadType: uploadTypes[key],
-        }
-      : null
-  })
-  return filterNullVoidProps(persistTmpFileReqsOrNullMap)
-}
-
-export const getExternalAssetRefMap = <K extends string>(
-  assetRefInputMap: AssetRefInputMap<K>,
-): AssetRefMap<string> => {
-  const filteredAssetRefInputMap = mapObjProps(assetRefInputMap, mAssetRefInput => {
-    if (!mAssetRefInput) {
-      return null
-    }
-    const { location, type } = mAssetRefInput
-    return type === 'ExternalUrl' ? { location, ext: true } : null
-  })
-  return filterNullVoidProps(filteredAssetRefInputMap)
-}
-
-type AssetRefMap<K extends string> = Record<K, AssetRef | null | undefined>
-type AssetRefInputMap<K extends string> = Record<K, AssetRefInput | null | undefined>
-export const getAssetRefMapFromAssetRefInputMap = async <K extends string>(
-  inputMap: AssetRefInputMap<K>,
-  uploadTypes: UploadTypeMap<K>,
+type AssetRefInputAndType = { input: AssetRefInput; uploadType: UploadType }
+export const mapAssetRefInputsToAssetRefs = async <N extends number>(
+  tupleOfAssetRefInputAndType: Tuple<AssetRefInputAndType, N>,
   flow: Flow,
-): Promise<AssetRefMap<K> | null> => {
-  const toPersistFilesMap = getPersistTmpFilesMap(inputMap, uploadTypes)
-  const persistMapHasKeys = Object.keys(toPersistFilesMap).length > 0
-  const assetFileDescMap = persistMapHasKeys
-    ? await call<MoodleNetDomain>()('StaticAssets.PersistTempFilesAll', flow)(toPersistFilesMap)
-    : {}
-  if (!assetFileDescMap) {
+): Promise<Tuple<Maybe<AssetRef>, N> | null> => {
+  type PersistTmpFileReqOrAssetRef = PersistTmpFileReq | AssetRef
+
+  const arrayOfMaybePersistTempFilesReqOrAssetRef = tupleOfAssetRefInputAndType.map<Maybe<PersistTmpFileReqOrAssetRef>>(
+    ({ input, uploadType }) =>
+      input.type === 'TmpUpload'
+        ? { tempFileId: input.location, uploadType }
+        : input.type === 'ExternalUrl'
+        ? { ext: true, location: input.location }
+        : input.type === 'NoAsset'
+        ? null
+        : input.type === 'NoChange'
+        ? undefined
+        : (() => {
+            throw new Error(`Should never happen : input.type === '${input.type}'`)
+          })(),
+  )
+
+  const _isPersistReq = (_: Maybe<PersistTmpFileReqOrAssetRef>): _ is PersistTmpFileReq => !!_ && 'uploadType' in _
+
+  const toPersistReqsTuple = arrayOfMaybePersistTempFilesReqOrAssetRef.filter(_isPersistReq)
+
+  const assetFileDescArray = await call<MoodleNetDomain>()('StaticAssets.PersistTempFilesAll', flow)(toPersistReqsTuple)
+
+  if (!assetFileDescArray) {
     return null
   }
-  const assetIdMap = getAssetIdMap(assetFileDescMap)
-  const localAssetsMap = getAssetRefMap(assetIdMap, 'local')
-  const extAssetMap = getExternalAssetRefMap(inputMap)
-  return {
-    ...localAssetsMap,
-    ...extAssetMap,
-  } as AssetRefMap<K>
+
+  const tupleOfMaybeAssetRef = arrayOfMaybePersistTempFilesReqOrAssetRef.map<Maybe<AssetRef>>(
+    maybePersistTmpFileReqOrAssetRef => {
+      if (!_isPersistReq(maybePersistTmpFileReqOrAssetRef)) {
+        return maybePersistTmpFileReqOrAssetRef
+      }
+      const reqIndex = toPersistReqsTuple.indexOf(maybePersistTmpFileReqOrAssetRef)
+      const { assetId } = assetFileDescArray[reqIndex]!
+      const assetRef: AssetRef = {
+        ext: false,
+        location: assetId,
+      }
+      return assetRef
+    },
+  )
+
+  return tupleOfMaybeAssetRef as Tuple<Maybe<AssetRef>, N>
 }
+
+export const getContentNodeAssetRefInputAndType = (contentInput: ContentNodeInput): AssetRefInputAndType =>
+  getAssetRefInputAndType(contentInput.icon, 'icon')
+
+export const getAssetRefInputAndType = (
+  assetRefInput: AssetRefInput,
+  uploadType: UploadType,
+): AssetRefInputAndType => ({ input: assetRefInput, uploadType })

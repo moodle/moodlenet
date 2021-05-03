@@ -8,7 +8,9 @@ import { MoodleNetArangoContentGraphSubDomain } from '../MoodleNetArangoContentG
 
 export const nodePropResolver = <Parent>(
   prop: keyof Parent,
-): GQL.Resolver<Maybe<ShallowNode>, Parent, MoodleNetExecutionContext> => async (par, _x, ctx /* ,_info */) => {
+): GQL.Resolver<Maybe<ShallowNode>, Parent, MoodleNetExecutionContext> => async (par, _x, ctx /* ,_info  */) => {
+  //TODO: try the following
+  //const prop = _info.fieldName
   const id = (par[prop] as any)?._id
   if (!id) {
     return null

@@ -300,14 +300,14 @@ export type IContentNode = {
 export type ContentNodeInput = {
   name: Scalars['String'];
   summary: Scalars['String'];
-  icon?: Maybe<AssetRefInput>;
+  icon: AssetRefInput;
 };
 
 export type AssetRefInputType =
   | 'TmpUpload'
   | 'ExternalUrl'
   | 'NoChange'
-  | 'Remove';
+  | 'NoAsset';
 
 export type AssetRefInput = {
   type: AssetRefInputType;
@@ -449,6 +449,7 @@ export type Resource = IContentNode & INode & {
   _relCount: Scalars['Int'];
   icon?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
+  location: Scalars['AssetRef'];
   name: Scalars['String'];
   summary: Scalars['String'];
 };
@@ -543,6 +544,7 @@ export type CreateProfileInput = {
 
 export type CreateResourceInput = {
   content: ContentNodeInput;
+  resource: AssetRefInput;
 };
 
 export type UpdateResourceInput = {
@@ -1053,6 +1055,7 @@ export type ResourceResolvers<ContextType = MoodleNetExecutionContext, ParentTyp
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Resource_RelCountArgs, 'type' | 'target'>>;
   icon?: Resolver<Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  location?: Resolver<ResolversTypes['AssetRef'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

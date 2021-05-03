@@ -27,7 +27,7 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({ form, mess
           <Segment stacked>
             <Form.Input
               fluid
-              {...form.valueName.username}
+              {...form.inputAttrs.username}
               placeholder={t`your user name`}
               onChange={form.handleChange}
               icon="user"
@@ -41,7 +41,7 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({ form, mess
             />
             <Form.Input
               fluid
-              {...form.valueName.password}
+              {...form.inputAttrs.password}
               placeholder={t`your password`}
               onChange={form.handleChange}
               icon="lock"
@@ -56,7 +56,7 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({ form, mess
             />
             <Form.Input
               fluid
-              {...form.valueName.confirmPassword}
+              {...form.inputAttrs.confirmPassword}
               placeholder={t`confirm your password`}
               onChange={form.handleChange}
               icon="lock"
@@ -75,7 +75,7 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({ form, mess
                   I have read and agreed to the <Link href={termsAndConditionsLink}>Terms and Conditions</Link>
                 </Trans>
               }
-              {...form.valueName.acceptTerms}
+              {...form.inputAttrs.acceptTerms}
               onChange={form.handleChange}
               control="input"
               type="checkbox"
