@@ -1,6 +1,6 @@
 //TODO: review all parse|extraction return types to make them stricter
 
-import { EdgeType, GlobalSearchSort, NodeType } from '../../pub-graphql/types.graphql.gen'
+import { EdgeType, GlobalSearchSort, NodeType } from '../../graphql/types.graphql.gen'
 export type IdKey = string //& { readonly __: unique symbol }
 // export type Id<N extends NodeType = NodeType> = `${N}/${IdKey}` & { readonly __: unique symbol }
 export type Id = string & { readonly __: unique symbol }

@@ -9,4 +9,4 @@ lerna-error.log*
 
 .eslintcache
 
-.ignore-dir/
+.ignore*

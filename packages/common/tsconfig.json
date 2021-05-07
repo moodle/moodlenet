@@ -5,6 +5,7 @@
     "declarationMap": true,
     "declaration": true,
     "moduleResolution": "Node",
+    "resolveJsonModule": true,
     "lib": ["ESNext"],
     "target": "ES5",
     // "allowSyntheticD   efaultImports": true,

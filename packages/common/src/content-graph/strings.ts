@@ -1,4 +1,4 @@
-import { EdgeType } from '../pub-graphql/types.graphql.gen'
+import { EdgeType } from '../graphql/types.graphql.gen'
 import { Id, nodeTypeFromId } from '../utils/content-graph'
 
 export const bindString = (_: { edgeType: EdgeType; from: Id; to: Id }) =>

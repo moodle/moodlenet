@@ -1,4 +1,4 @@
-import { Executor } from '@graphql-tools/delegate/types'
+import { Executor } from '@graphql-tools/utils'
 import { ExecutionResult, graphql /* , GraphQLError */, GraphQLSchema, print } from 'graphql'
 import { call } from './amqp/call'
 import { Flow } from './flow'

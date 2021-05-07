@@ -1,0 +1,18 @@
+# type Query {
+#   globalSearch(text: String!, nodeTypes: [NodeType!], sortBy: GlobalSearchSort!, page: PaginationInput): SearchPage!
+# }
+
+type SearchPage implements Page {
+  pageInfo: PageInfo!
+  edges: [SearchPageEdge!]!
+}
+
+type SearchPageEdge implements PageEdge {
+  cursor: Cursor!
+  node: IContentNode!
+}
+
+enum GlobalSearchSort {
+  Relevance
+  Popularity
+}

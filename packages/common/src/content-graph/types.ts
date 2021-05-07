@@ -1,11 +1,5 @@
-export { ConnAssertion, CtxAssertion, NodeAssertion } from '../pub-graphql/types.graphql.gen'
-import {
-  ConnAssertion,
-  CtxAssertion,
-  EdgeType as E,
-  NodeAssertion,
-  NodeType as N,
-} from '../pub-graphql/types.graphql.gen'
+export { ConnAssertion, CtxAssertion, NodeAssertion } from '../graphql/types.graphql.gen'
+import { ConnAssertion, CtxAssertion, EdgeType as E, NodeAssertion, NodeType as N } from '../graphql/types.graphql.gen'
 
 export type GlyphAssertion = NodeAssertion | ConnAssertion
 export type Assertion = CtxAssertion | GlyphAssertion

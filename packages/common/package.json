@@ -5,16 +5,28 @@
   "author": "https://github.com/aleclofabbro",
   "description": "backend and webapp shared libs and graphql",
   "dependencies": {
+    "@graphql-codegen/cli": "^1.19.3",
+    "@graphql-codegen/fragment-matcher": "^2.0.1",
+    "@graphql-codegen/introspection": "^1.18.1",
+    "@graphql-codegen/near-operation-file-preset": "^1.17.13",
+    "@graphql-codegen/schema-ast": "^1.18.1",
+    "@graphql-codegen/typescript": "^1.20.2",
+    "@graphql-codegen/typescript-operations": "^1.17.14",
+    "@graphql-codegen/typescript-react-apollo": "^2.2.1",
+    "@graphql-codegen/typescript-resolvers": "^1.18.1",
+    "@playlyfe/gql": "^2.6.2",
     "@types/path-to-regexp": "^1.7.0",
     "@types/yup": "^0.29.11",
     "boolean-expressions": "^1.1.1",
+    "graphql": "^15.4.0",
+    "graphql-cli": "^4.1.0",
     "path-to-regexp": "^6.2.0",
     "run-script-os": "^1.1.5",
     "typescript": "~4.2.3",
     "yup": "^0.32.8"
   },
   "scripts": {
-    "clean-build": "rm -rf lib && tsc",
+    "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
     "build": "tsc"
   }
 }

@@ -1,6 +1,6 @@
+import { memo } from '@moodlenet/common/lib/utils/misc'
 import { Message } from 'amqplib'
 import { EventEmitter } from 'events'
-import { memo } from '../../helpers/misc'
 import { Flow } from '../flow'
 import { DomainSetup } from '../types'
 import { getConnection, machineId } from './env'
