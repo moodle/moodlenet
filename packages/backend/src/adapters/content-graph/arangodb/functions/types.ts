@@ -1,7 +1,7 @@
-import { Id } from '@moodlenet/common/lib/pub-graphql/types'
+import { EdgeType, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { Id } from '@moodlenet/common/lib/utils/content-graph'
 import { Document, Edge as DocEdge } from 'arangojs/documents'
-import { EdgeType, NodeType } from '../../../ContentGraph.graphql.gen'
-import { ShallowEdgeByType, ShallowNodeByType } from '../../../graphql/types.node'
+import { ShallowEdgeByType, ShallowNodeByType } from '../../../../graphql/types.node'
 
 export type DocumentEdgeDataByType<E extends EdgeType> = Omit<ShallowEdgeByType<E>, 'id'>
 export type DocumentNodeDataByType<N extends NodeType> = Omit<ShallowNodeByType<N>, 'id'>

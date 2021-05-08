@@ -1,9 +1,6 @@
-import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
+import { EdgeType, Id, Page, PageInfo, PaginationInput, parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
 import { Maybe } from 'graphql/jsutils/Maybe'
-import { aqlstr } from '../../../../../../lib/helpers/arango'
-import { Id } from '../../../../UserAuth/types'
-import { EdgeType, Page, PaginationInput } from '../../../ContentGraph.graphql.gen'
-import { Types } from '../../../graphql/types.node'
+import { aqlstr } from '../../../../lib/helpers/arango'
 import { Persistence } from '../types'
 const DEFAULT_PAGE_LENGTH = 10
 const MAX_PAGE_LENGTH = 25
@@ -90,7 +87,7 @@ export const makePage = <P extends Page>({
     .reverse()
     .concat(afterEdges)
     .map(_ => ({ ..._, __typename: pageEdgeTypename }))
-  const pageInfo: Types.PageInfo = {
+  const pageInfo: PageInfo = {
     startCursor: edges[0]?.cursor ?? null,
     endCursor: edges[edges.length - 1]?.cursor ?? null,
     hasNextPage: true,

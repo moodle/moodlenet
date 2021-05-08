@@ -1,7 +1,7 @@
 import { isId, parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
 import { GraphQLScalarType } from 'graphql'
 import { resolve } from '../../lib/qmino/root'
-import { getContentNodeById } from '../../ports/content-graph/queries'
+import { byId } from '../../ports/queries/content-graph/get-content-node'
 import * as GQL from '../types.graphql.gen'
 import { fakeNodeByShallowOrDoc } from './helpers'
 
@@ -29,10 +29,8 @@ export const getGQLResolvers = (): GQL.Resolvers => {
   return {
     Query: {
       async node(_root, { id }, ctx /* ,_info */) {
-        console.log({ id })
         const { nodeType, _key } = parseNodeId(id)
-        const maybeNode = await resolve(getContentNodeById({ _key, ctx, nodeType }))()
-        console.log({ maybeNode, _: fakeNodeByShallowOrDoc(maybeNode) })
+        const maybeNode = await resolve(byId({ _key, ctx, nodeType }))()
         return maybeNode && fakeNodeByShallowOrDoc(maybeNode)
       },
     },
