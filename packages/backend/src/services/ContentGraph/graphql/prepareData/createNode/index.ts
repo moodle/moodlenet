@@ -1,12 +1,12 @@
+import { CreateNodeInput, CreateNodeMutationError, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Just } from '@moodlenet/common/lib/utils/types'
-import { DocumentNodeDataByType } from '../../../../../adapters/content-graph/arangodb/functions/types'
+import { DocumentNodeDataByType } from '../../../../../adapters/content-graph/arangodb/lib/types'
 import {
   createNodeMutationError,
   getAssetRefInputAndType,
   getContentNodeAssetRefInputAndType,
   mapAssetRefInputsToAssetRefs,
 } from '../../../../../graphql/resolvers/helpers'
-import { CreateNodeInput, CreateNodeMutationError, NodeType } from '../../../../../graphql/types.graphql.gen'
 
 const noTmpFilesCreateNodeMutationError = () =>
   createNodeMutationError('UnexpectedInput', `couldn't find requested tempFiles`)

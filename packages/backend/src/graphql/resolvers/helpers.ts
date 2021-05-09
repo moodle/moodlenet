@@ -1,9 +1,6 @@
-import { AssetRef } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
-import { Maybe } from '@moodlenet/common/lib/utils/types'
-import { Tuple } from 'tuple-type'
 // import { PersistTmpFileReq } from '../../../services/StaticAssets/types'
 // import { DocumentEdgeByType, DocumentNodeByType } from '../functions/types'
+import { AssetRef } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import {
   AssetRefInput,
   ContentNodeInput,
@@ -15,7 +12,10 @@ import {
   DeleteEdgeMutationErrorType,
   EdgeType,
   NodeType,
-} from '../types.graphql.gen'
+} from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
+import { Maybe } from '@moodlenet/common/lib/utils/types'
+import { Tuple } from 'tuple-type'
 import { EdgeByType, NodeByType, ShallowEdgeByType, ShallowNodeByType } from '../types.node'
 
 type PersistTmpFileReq = any

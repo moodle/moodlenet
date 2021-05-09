@@ -70,3 +70,10 @@ export const parseEdgeId = (_: Id): { edgeType: EdgeType; _key: IdKey } => ({
   edgeType: edgeTypeFromId(_),
   _key: idKeyFromId(_),
 })
+
+export const checkIDOrError = (_?: string) => {
+  if (!isId(_)) {
+    throw 'invalid ID'
+  }
+  return _
+}

@@ -1,4 +1,4 @@
-import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
+import { IdKey } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { Database } from 'arangojs'
 import { CreateCollectionOptions, DocumentCollection, EdgeCollection } from 'arangojs/collection'
 import { Config } from 'arangojs/connection'

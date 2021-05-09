@@ -89,6 +89,6 @@
     "build": "tsc",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
     "start": "NODE_ENV=production node index.js",
-    "start-dev": "node-dev --inspect --deps 4 --respawn index.js"
+    "start-dev": "node-dev --inspect --deps 4 --respawn --notify=false index.js"
   }
 }

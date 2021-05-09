@@ -1,6 +1,6 @@
-# type Query {
-#   globalSearch(text: String!, nodeTypes: [NodeType!], sortBy: GlobalSearchSort!, page: PaginationInput): SearchPage!
-# }
+type Query {
+  globalSearch(text: String!, nodeTypes: [NodeType!], sortBy: GlobalSearchSort!, page: PaginationInput): SearchPage!
+}
 
 type SearchPage implements Page {
   pageInfo: PageInfo!

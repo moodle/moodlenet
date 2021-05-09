@@ -1,14 +1,14 @@
-import { _ctx, _node } from '@moodlenet/common/lib/assertions'
+import { _ctx, _node } from '@moodlenet/common/lib/assertions/op-chains'
+import { assertCtx } from '@moodlenet/common/lib/assertions/static/assertCtx'
 import * as GQL from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { IdKey } from '@moodlenet/common/lib/utils/content-graph'
+import { IdKey } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { AssertionOf } from '@moodlenet/common/lib/utils/op-chain'
-import { DocumentNodeByType } from '../../../adapters/content-graph/arangodb/functions/types'
-import { assertCtx } from '../../../adapters/executionContext/assertCtx'
+import { DocumentNodeByType } from '../../../adapters/content-graph/arangodb/lib/types'
 import { MoodleNetExecutionContext } from '../../../graphql'
-import { QMModule, QMQuery } from '../../../lib/qmino/root'
+import { QMModule, QMQuery } from '../../../lib/qmino'
 
 export type Adapter<Type extends GQL.NodeType> = {
-  getNodeByIdAndAssertions: (_: {
+  getNodeById: (_: {
     nodeType: Type
     _key: IdKey
     assertions: AssertionOf<typeof _node>
@@ -23,13 +23,13 @@ export type Input<Type extends GQL.NodeType = GQL.NodeType> = {
 
 export const byId = QMQuery(
   <Type extends GQL.NodeType = GQL.NodeType>({ _key, ctx, nodeType }: Input<Type>) => async ({
-    getNodeByIdAndAssertions,
+    getNodeById,
   }: Adapter<Type>) => {
-    if (!assertCtx(ctx, _ctx.ExecutorIsAnonymous.AND.ExecutorIsAnonymous)) {
-      console.log() //return null
+    if (!assertCtx(ctx, _ctx.ExecutorIsAnonymous.OR.ExecutorIsAdmin)) {
+      return null
     }
     const assertions = _node.ExecutorCreatedThisNode
-    return getNodeByIdAndAssertions({ _key, assertions, nodeType })
+    return getNodeById({ _key, assertions, nodeType })
   },
 )
 

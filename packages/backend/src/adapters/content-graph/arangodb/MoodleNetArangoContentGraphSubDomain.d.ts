@@ -20,7 +20,7 @@ import {
   DocumentNode,
   DocumentNodeByType,
   DocumentNodeDataByType,
-} from './functions/types'
+} from './lib/types'
 export type MoodleNetArangoContentGraphSubDomain = SubDomain<
   MoodleNetDomain,
   'ContentGraph',

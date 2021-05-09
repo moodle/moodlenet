@@ -1,3 +1,4 @@
+import { GraphQLScalarType } from 'graphql'
 import * as idTypes from '../utils/content-graph/id-key-type-guards'
 export type ID = idTypes.Id
 
@@ -19,3 +20,19 @@ export const getScalarsGql = (root: string) => ({
   Cursor: `${root}/scalars.graphql#Cursor`,
   Never: `${root}/scalars.graphql#Never`,
 })
+
+export const IDScalarType = new GraphQLScalarType({
+  name: 'ID',
+  serialize: String,
+  parseValue: v => idTypes.checkIDOrError(v),
+  parseLiteral: vnode => (vnode.kind === 'StringValue' ? idTypes.checkIDOrError(vnode.value) : null),
+})
+
+// const AssetRefScalarType = new GraphQLScalarType({
+//   name: 'AssetRef',
+//   serialize: JSON.stringify,
+//   parseValue: v => {
+//     console.log('--', v)
+//     return v
+//   },
+// })

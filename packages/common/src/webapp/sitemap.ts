@@ -1,4 +1,4 @@
-import { Id, parseNodeId } from '../utils/content-graph'
+import { Id, parseNodeId } from '../utils/content-graph/id-key-type-guards'
 import { generatePath } from './sitemap/lib'
 import { ContentNode } from './sitemap/routes'
 import { GetRouteDefParams, GetRouteDefPath, RouteDef } from './sitemap/types'

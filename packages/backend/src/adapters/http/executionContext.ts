@@ -1,7 +1,7 @@
+import { MoodleNetExecutionContext } from '@moodlenet/common/lib/executionContext/types'
 import { RequestHandler } from 'express'
-import { getJwtVerifier, newAnonCtx } from '../executionContext'
-import { INVALID_TOKEN } from '../executionContext/JWT'
-import { MoodleNetExecutionContext } from '../executionContext/types'
+import { getJwtVerifier, newAnonCtx } from '../lib/executionContext'
+import { INVALID_TOKEN } from '../lib/executionContext/JWT'
 
 export const MNExecCtxMiddleware: RequestHandler = (req, _res, next) => {
   const headerToken = req.header('bearer')

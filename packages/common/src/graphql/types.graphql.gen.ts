@@ -358,7 +358,16 @@ export type Profile_RelCountArgs = {
 
 export type Query = {
   __typename: 'Query';
+  globalSearch: SearchPage;
   node?: Maybe<Node>;
+};
+
+
+export type QueryGlobalSearchArgs = {
+  text: Scalars['String'];
+  nodeTypes?: Maybe<Array<NodeType>>;
+  sortBy: GlobalSearchSort;
+  page?: Maybe<PaginationInput>;
 };
 
 
