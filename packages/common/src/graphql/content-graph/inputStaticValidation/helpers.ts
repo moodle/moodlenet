@@ -1,5 +1,5 @@
 import * as Yup from 'yup'
-import * as GQL from '../../../graphql/types.graphql.gen'
+import * as GQL from '../../types.graphql.gen'
 
 export function assertUnreachable(shouldBeNever: never): never {
   throw new Error(`Didn't expect to get here assertUnreachable ${shouldBeNever}`)

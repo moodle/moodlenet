@@ -1,7 +1,8 @@
 import cors from 'cors'
 import express, { Application } from 'express'
+import { VerifyOptions } from 'jsonwebtoken'
 import { MoodleNetExecutionContext } from '../../graphql/types'
-import { MNExecCtxMiddleware } from './executionContext'
+import { getMNExecCtxMiddleware } from './executionContext'
 
 declare module 'express-serve-static-core' {
   export interface Request {
@@ -17,13 +18,15 @@ export type MountServices = {
 interface MNHttpServerCfg {
   startServices: MountServices
   httpPort: number
+  jwtPublicKey: string
+  jwtVerifyOpts: VerifyOptions
 }
 
-export const startMNHttpServer = ({ startServices, httpPort: port }: MNHttpServerCfg) => {
+export const startMNHttpServer = ({ startServices, httpPort: port, jwtPublicKey, jwtVerifyOpts }: MNHttpServerCfg) => {
   const app = express()
   const subServicesApp = express()
   app.use(cors())
-  app.use(MNExecCtxMiddleware)
+  app.use(getMNExecCtxMiddleware({ jwtPublicKey, jwtVerifyOpts }))
 
   app.use('/', subServicesApp) //FIXME: should use('/_/'  ...
   Object.entries(startServices).forEach(([mountName, application]) => {

@@ -1,5 +1,5 @@
 import { object, ObjectSchema, ValidationError } from 'yup'
-import { CreateEdgeInput, EdgeType } from '../../../../graphql/types.graphql.gen'
+import { CreateEdgeInput, EdgeType } from '../../../types.graphql.gen'
 import { neverCreate } from '../helpers'
 
 type Just<T> = Exclude<T, null | undefined>

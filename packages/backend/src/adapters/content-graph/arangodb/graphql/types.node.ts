@@ -5,7 +5,7 @@ import { Database } from 'arangojs'
 import { Document } from 'arangojs/documents'
 import * as GQLResolvers from '../../../../graphql/types.graphql.gen'
 import { ShallowNode } from '../../../../graphql/types.node'
-import { getSessionExecutionContext } from '../../../lib/executionContext/types'
+import { getSessionExecutionContext } from '../../../lib/auth/types'
 import { getAllResults, makePage } from '../lib/helpers'
 import { traverseEdges } from '../lib/traverseEdges'
 

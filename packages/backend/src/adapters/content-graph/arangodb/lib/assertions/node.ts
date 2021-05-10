@@ -4,7 +4,7 @@ import { contentGraphDef } from '@moodlenet/common/lib/content-graph/def'
 import { MoodleNetExecutionContext } from '@moodlenet/common/lib/executionContext/types'
 import { NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { aqlstr } from '../../../../../lib/helpers/arango'
-import { getSessionExecutionContext } from '../../../../lib/executionContext/types'
+import { getSessionExecutionContext } from '../../../../lib/auth/types'
 import { AssertionArg, toAqlAssertionExprMapAndAqlString } from './lib'
 
 type NodeAssertionMap = {

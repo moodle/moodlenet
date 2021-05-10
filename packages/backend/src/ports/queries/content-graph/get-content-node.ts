@@ -25,7 +25,7 @@ export const byId = QMQuery(
   <Type extends GQL.NodeType = GQL.NodeType>({ _key, ctx, nodeType }: Input<Type>) => async ({
     getNodeById,
   }: Adapter<Type>) => {
-    if (!assertCtx(ctx, _ctx.ExecutorIsAnonymous.OR.ExecutorIsAdmin)) {
+    if (!assertCtx(ctx, _ctx.ExecutorIsAnonymous.OR.ExecutorIsAuthenticated)) {
       return null
     }
     const assertions = _node.ExecutorCreatedThisNode

@@ -106,6 +106,7 @@ export type ResolversTypes = {
   CreateNodeMutationSuccess: ResolverTypeWrapper<Omit<Types.CreateNodeMutationSuccess, 'node'> & { node: ResolversTypes['Node'] }>;
   CreateProfileInput: Types.CreateProfileInput;
   CreateResourceInput: Types.CreateResourceInput;
+  CreateSession: ResolverTypeWrapper<Types.CreateSession>;
   CreateSubjectInput: Types.CreateSubjectInput;
   Created: ResolverTypeWrapper<Types.Created>;
   CtxAssertion: Types.CtxAssertion;
@@ -132,6 +133,7 @@ export type ResolversTypes = {
   IEdge: ResolversTypes['AppliesTo'] | ResolversTypes['Contains'] | ResolversTypes['Created'] | ResolversTypes['Follows'] | ResolversTypes['Likes'];
   INode: ResolversTypes['Collection'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['Subject'];
   Likes: ResolverTypeWrapper<Types.Likes>;
+  Mutation: ResolverTypeWrapper<RootValue>;
   Never: ResolverTypeWrapper<Types.Scalars['Never']>;
   Node: ResolversTypes['Collection'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['Subject'];
   NodeAssertion: Types.NodeAssertion;
@@ -145,8 +147,10 @@ export type ResolversTypes = {
   RelPage: ResolverTypeWrapper<Types.RelPage>;
   RelPageEdge: ResolverTypeWrapper<Types.RelPageEdge>;
   Resource: ResolverTypeWrapper<Types.Resource>;
+  Role: Types.Role;
   SearchPage: ResolverTypeWrapper<Types.SearchPage>;
   SearchPageEdge: ResolverTypeWrapper<Types.SearchPageEdge>;
+  SimpleResponse: ResolverTypeWrapper<Types.SimpleResponse>;
   Subject: ResolverTypeWrapper<Types.Subject>;
   UpdateCollectionInput: Types.UpdateCollectionInput;
   UpdateEdgeInput: Types.UpdateEdgeInput;
@@ -188,6 +192,7 @@ export type ResolversParentTypes = {
   CreateNodeMutationSuccess: Omit<Types.CreateNodeMutationSuccess, 'node'> & { node: ResolversParentTypes['Node'] };
   CreateProfileInput: Types.CreateProfileInput;
   CreateResourceInput: Types.CreateResourceInput;
+  CreateSession: Types.CreateSession;
   CreateSubjectInput: Types.CreateSubjectInput;
   Created: Types.Created;
   Cursor: Types.Scalars['Cursor'];
@@ -209,6 +214,7 @@ export type ResolversParentTypes = {
   IEdge: ResolversParentTypes['AppliesTo'] | ResolversParentTypes['Contains'] | ResolversParentTypes['Created'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'];
   INode: ResolversParentTypes['Collection'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['Subject'];
   Likes: Types.Likes;
+  Mutation: RootValue;
   Never: Types.Scalars['Never'];
   Node: ResolversParentTypes['Collection'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['Subject'];
   Page: ResolversParentTypes['RelPage'] | ResolversParentTypes['SearchPage'];
@@ -222,6 +228,7 @@ export type ResolversParentTypes = {
   Resource: Types.Resource;
   SearchPage: Types.SearchPage;
   SearchPageEdge: Types.SearchPageEdge;
+  SimpleResponse: Types.SimpleResponse;
   Subject: Types.Subject;
   UpdateCollectionInput: Types.UpdateCollectionInput;
   UpdateEdgeInput: Types.UpdateEdgeInput;
@@ -295,6 +302,12 @@ export type CreateNodeMutationPayloadResolvers<ContextType = MoodleNetExecutionC
 
 export type CreateNodeMutationSuccessResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['CreateNodeMutationSuccess'] = ResolversParentTypes['CreateNodeMutationSuccess']> = {
   node?: Resolver<ResolversTypes['Node'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CreateSessionResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['CreateSession'] = ResolversParentTypes['CreateSession']> = {
+  jwt?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  message?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -394,6 +407,16 @@ export type LikesResolvers<ContextType = MoodleNetExecutionContext, ParentType e
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MutationResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  signUp?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<Types.MutationSignUpArgs, 'email'>>;
+  changePassword?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<Types.MutationChangePasswordArgs, 'newPassword' | 'currentPassword'>>;
+  activateUser?: Resolver<ResolversTypes['CreateSession'], ParentType, ContextType, RequireFields<Types.MutationActivateUserArgs, 'username' | 'password' | 'token'>>;
+  createSession?: Resolver<ResolversTypes['CreateSession'], ParentType, ContextType, RequireFields<Types.MutationCreateSessionArgs, 'username' | 'password'>>;
+  changeEmailRequest?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<Types.MutationChangeEmailRequestArgs, 'newEmail'>>;
+  changeEmailConfirm?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<Types.MutationChangeEmailConfirmArgs, 'token' | 'password' | 'username'>>;
+  sessionByEmail?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<Types.MutationSessionByEmailArgs, 'username' | 'email'>>;
+};
+
 export interface NeverScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Never'], any> {
   name: 'Never';
 }
@@ -434,6 +457,7 @@ export type ProfileResolvers<ContextType = MoodleNetExecutionContext, ParentType
 };
 
 export type QueryResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getSession?: Resolver<Types.Maybe<ResolversTypes['UserSession']>, ParentType, ContextType>;
   globalSearch?: Resolver<ResolversTypes['SearchPage'], ParentType, ContextType, RequireFields<Types.QueryGlobalSearchArgs, 'text' | 'sortBy'>>;
   node?: Resolver<Types.Maybe<ResolversTypes['Node']>, ParentType, ContextType, RequireFields<Types.QueryNodeArgs, 'id'>>;
 };
@@ -473,6 +497,12 @@ export type SearchPageResolvers<ContextType = MoodleNetExecutionContext, ParentT
 export type SearchPageEdgeResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['SearchPageEdge'] = ResolversParentTypes['SearchPageEdge']> = {
   cursor?: Resolver<ResolversTypes['Cursor'], ParentType, ContextType>;
   node?: Resolver<ResolversTypes['IContentNode'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SimpleResponseResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['SimpleResponse'] = ResolversParentTypes['SimpleResponse']> = {
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  message?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -519,7 +549,11 @@ export type UpdateNodeMutationSuccessResolvers<ContextType = MoodleNetExecutionC
 };
 
 export type UserSessionResolvers<ContextType = MoodleNetExecutionContext, ParentType extends ResolversParentTypes['UserSession'] = ResolversParentTypes['UserSession']> = {
-  profile?: Resolver<Types.Maybe<ResolversTypes['Profile']>, ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  changeEmailRequest?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  profileId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -534,6 +568,7 @@ export type Resolvers<ContextType = MoodleNetExecutionContext> = {
   CreateNodeMutationError?: CreateNodeMutationErrorResolvers<ContextType>;
   CreateNodeMutationPayload?: CreateNodeMutationPayloadResolvers<ContextType>;
   CreateNodeMutationSuccess?: CreateNodeMutationSuccessResolvers<ContextType>;
+  CreateSession?: CreateSessionResolvers<ContextType>;
   Created?: CreatedResolvers<ContextType>;
   Cursor?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
@@ -551,6 +586,7 @@ export type Resolvers<ContextType = MoodleNetExecutionContext> = {
   IEdge?: IEdgeResolvers<ContextType>;
   INode?: INodeResolvers<ContextType>;
   Likes?: LikesResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
   Never?: GraphQLScalarType;
   Node?: NodeResolvers<ContextType>;
   Page?: PageResolvers<ContextType>;
@@ -563,6 +599,7 @@ export type Resolvers<ContextType = MoodleNetExecutionContext> = {
   Resource?: ResourceResolvers<ContextType>;
   SearchPage?: SearchPageResolvers<ContextType>;
   SearchPageEdge?: SearchPageEdgeResolvers<ContextType>;
+  SimpleResponse?: SimpleResponseResolvers<ContextType>;
   Subject?: SubjectResolvers<ContextType>;
   UpdateEdgeMutationError?: UpdateEdgeMutationErrorResolvers<ContextType>;
   UpdateEdgeMutationPayload?: UpdateEdgeMutationPayloadResolvers<ContextType>;

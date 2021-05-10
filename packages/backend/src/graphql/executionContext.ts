@@ -1,7 +1,6 @@
 import { ExecutionParams } from '@graphql-tools/utils'
 import { Request } from 'express'
 import { GraphQLError } from 'graphql'
-import { newAnonCtx } from '../adapters/lib/executionContext'
 import { MoodleNetExecutionContext, RootValue } from './types'
 
 export function throwLoggedUserOnly(_: { context: MoodleNetExecutionContext }): MoodleNetExecutionContext<'session'> {
@@ -17,7 +16,7 @@ export function getExecutionGlobalValues({
   context: MoodleNetExecutionContext<'anon' | 'session'>
   root: RootValue
 } {
-  const mnHttpSessionCtx: MoodleNetExecutionContext<'anon' | 'session'> = context?.mnHttpSessionCtx ?? newAnonCtx()
+  const mnHttpSessionCtx: MoodleNetExecutionContext<'anon' | 'session'> = context?.mnHttpSessionCtx ?? { type: 'anon' }
   return {
     context: { ...mnHttpSessionCtx },
     root: {},

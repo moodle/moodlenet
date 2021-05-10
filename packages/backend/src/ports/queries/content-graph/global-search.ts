@@ -31,6 +31,9 @@ export const search = QMQuery(
   <Types extends GQL.NodeType = GQL.NodeType>({ sortBy, text, nodeTypes, page, ctx }: Input<Types>) => async ({
     searchNodes,
   }: Adapter<Types>) => {
+    // FIXME: business logic here please
+    // e.g.: pagination constraints, and high level validation
+    // should happen here, and passed right
     return searchNodes({ sortBy, text, nodeTypes, page, ctx })
   },
 )

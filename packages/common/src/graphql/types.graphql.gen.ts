@@ -153,6 +153,12 @@ export type CreateResourceInput = {
   resource: AssetRefInput;
 };
 
+export type CreateSession = {
+  __typename: 'CreateSession';
+  jwt?: Maybe<Scalars['String']>;
+  message?: Maybe<Scalars['String']>;
+};
+
 export type CreateSubjectInput = {
   content: ContentNodeInput;
 };
@@ -294,6 +300,59 @@ export type Likes = IEdge & {
   id: Scalars['ID'];
 };
 
+export type Mutation = {
+  __typename: 'Mutation';
+  signUp: SimpleResponse;
+  changePassword: SimpleResponse;
+  activateUser: CreateSession;
+  createSession: CreateSession;
+  changeEmailRequest: SimpleResponse;
+  changeEmailConfirm: Scalars['Boolean'];
+  sessionByEmail: SimpleResponse;
+};
+
+
+export type MutationSignUpArgs = {
+  email: Scalars['String'];
+};
+
+
+export type MutationChangePasswordArgs = {
+  newPassword: Scalars['String'];
+  currentPassword: Scalars['String'];
+};
+
+
+export type MutationActivateUserArgs = {
+  username: Scalars['String'];
+  password: Scalars['String'];
+  token: Scalars['String'];
+};
+
+
+export type MutationCreateSessionArgs = {
+  username: Scalars['String'];
+  password: Scalars['String'];
+};
+
+
+export type MutationChangeEmailRequestArgs = {
+  newEmail: Scalars['String'];
+};
+
+
+export type MutationChangeEmailConfirmArgs = {
+  token: Scalars['String'];
+  password: Scalars['String'];
+  username: Scalars['String'];
+};
+
+
+export type MutationSessionByEmailArgs = {
+  username: Scalars['String'];
+  email: Scalars['String'];
+};
+
 
 export type Node = Collection | Profile | Resource | Subject;
 
@@ -358,6 +417,7 @@ export type Profile_RelCountArgs = {
 
 export type Query = {
   __typename: 'Query';
+  getSession?: Maybe<UserSession>;
   globalSearch: SearchPage;
   node?: Maybe<Node>;
 };
@@ -414,6 +474,11 @@ export type Resource_RelCountArgs = {
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
+export type Role =
+  | 'Admin'
+  | 'User'
+  | 'System';
+
 export type SearchPage = Page & {
   __typename: 'SearchPage';
   pageInfo: PageInfo;
@@ -424,6 +489,12 @@ export type SearchPageEdge = PageEdge & {
   __typename: 'SearchPageEdge';
   cursor: Scalars['Cursor'];
   node: Collection | Profile | Resource | Subject;
+};
+
+export type SimpleResponse = {
+  __typename: 'SimpleResponse';
+  success: Scalars['Boolean'];
+  message?: Maybe<Scalars['String']>;
 };
 
 export type Subject = IContentNode & INode & {
@@ -526,5 +597,9 @@ export type UpdateSubjectInput = {
 
 export type UserSession = {
   __typename: 'UserSession';
-  profile?: Maybe<Profile>;
+  username: Scalars['String'];
+  email: Scalars['String'];
+  changeEmailRequest?: Maybe<Scalars['String']>;
+  userId: Scalars['String'];
+  profileId?: Maybe<Scalars['ID']>;
 };
