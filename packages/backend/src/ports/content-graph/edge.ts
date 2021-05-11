@@ -6,7 +6,7 @@ import { AssertionOf } from '@moodlenet/common/lib/utils/op-chain'
 import { DocumentEdgeByType, DocumentEdgeDataByType } from '../../adapters/content-graph/arangodb/functions/types'
 import { MoodleNetExecutionContext } from '../../graphql'
 import { getSessionExecutionContext } from '../../lib/auth/types'
-import { QMModule, QMMutation } from '../../lib/qmino'
+import { QMCommand, QMModule } from '../../lib/qmino'
 
 // create
 
@@ -29,7 +29,7 @@ export type CreateInput<Type extends GQL.EdgeType = GQL.EdgeType> = {
   data: DocumentEdgeDataByType<Type>
 }
 
-export const create = QMMutation(
+export const create = QMCommand(
   <Type extends GQL.EdgeType = GQL.EdgeType>({ data, ctx, edgeType, from, to }: CreateInput<Type>) =>
     async ({ storeEdge }: CreateAdapter): Promise<DocumentEdgeByType<Type> | GQL.CreateEdgeMutationErrorType> => {
       const sessionCtx = getSessionExecutionContext(ctx)
@@ -64,7 +64,7 @@ export type DeleteInput<Type extends GQL.EdgeType = GQL.EdgeType> = {
   edgeType: Type
 }
 
-export const del = QMMutation(
+export const del = QMCommand(
   <Type extends GQL.EdgeType = GQL.EdgeType>({ ctx, edgeType, id: edgeId }: DeleteInput<Type>) =>
     async ({ deleteEdge }: DeleteAdapter): Promise<DocumentEdgeByType<Type> | GQL.DeleteEdgeMutationErrorType> => {
       const sessionCtx = getSessionExecutionContext(ctx)

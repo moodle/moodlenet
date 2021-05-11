@@ -6,7 +6,7 @@ import { AssertionOf } from '@moodlenet/common/lib/utils/op-chain'
 import { DocumentNodeByType, DocumentNodeDataByType } from '../../adapters/content-graph/arangodb/functions/types'
 import { MoodleNetExecutionContext } from '../../graphql'
 import { getSessionExecutionContext } from '../../lib/auth/types'
-import { QMModule, QMMutation, QMQuery } from '../../lib/qmino'
+import { QMCommand, QMModule, QMQuery } from '../../lib/qmino'
 
 // query by id
 export type ByIdAdapter = {
@@ -53,7 +53,7 @@ export type CreateInput<Type extends GQL.NodeType = GQL.NodeType> = {
   data: DocumentNodeDataByType<Type>
 }
 
-export const create = QMMutation(
+export const create = QMCommand(
   <Type extends GQL.NodeType = GQL.NodeType>({ data, key, ctx, nodeType }: CreateInput<Type>) =>
     async ({ storeNode }: CreateAdapter): Promise<DocumentNodeByType<Type> | GQL.CreateNodeMutationErrorType> => {
       const sessionCtx = getSessionExecutionContext(ctx)

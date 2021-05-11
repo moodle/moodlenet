@@ -8,7 +8,7 @@ export type QMPkg = {
   dir: string
   qmino: QMPkgDef
 }
-export type QMPortType = 'mutation' | 'event' | 'query'
+export type QMPortType = 'command' | 'event' | 'query'
 
 export type QMAction<Adapters extends any[], Res> = (...adapters: Adapters) => Promise<Res>
 export type AnyQMAction = QMAction<any[], any>

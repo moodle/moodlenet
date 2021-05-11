@@ -114,15 +114,15 @@ export const wrapQMPort = <A extends QM.AnyQMPort, QMT extends QM.QMPortType>(or
   }
 
   ;(port_wrap as any)[QMPortSymbol] = portDef
-  return (port_wrap as any) as A
+  return port_wrap as any as A
 }
 export const QMQuery = <P extends QM.AnyQMPort>(p: P) => wrapQMPort(p, 'query')
-export const QMMutation = <P extends QM.AnyQMPort>(p: P) => wrapQMPort(p, 'mutation')
+export const QMCommand = <P extends QM.AnyQMPort>(p: P) => wrapQMPort(p, 'command')
 
-export const getQMComandDef = (_: any): QM.AnyQMActionDef | undefined => (_ ? _[QMActionSymbol] : undefined)
+export const getQMActionDef = (_: any): QM.AnyQMActionDef | undefined => (_ ? _[QMActionSymbol] : undefined)
 
 export const extractAction = <C extends QM.AnyQMAction>(action: C): QM.ActionExtract<C> => {
-  const actionDef = getQMComandDef(action)
+  const actionDef = getQMActionDef(action)
   if (!actionDef) {
     console.error(action)
     throw new Error(`not a qm action !`)
@@ -173,7 +173,7 @@ export const queryResolver: QM.ActionResolver = actionExtract => {
 
 const actionResolverDelegates: { [t in QM.QMPortType]: QM.ActionResolver } = {
   query: queryResolver,
-  mutation: queryResolver,
+  command: queryResolver,
   event: (() => {
     throw new Error('event unimplemented')
   }) as any,

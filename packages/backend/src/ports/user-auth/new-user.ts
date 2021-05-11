@@ -2,7 +2,7 @@ import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { ActiveUser } from '../../adapters/user-auth/arangodb/types'
 import { DefaultConfig } from '../../emailTemplates'
-import { QMModule, QMMutation } from '../../lib/qmino'
+import { QMCommand, QMModule } from '../../lib/qmino'
 import { EmailAddr, EmailObj, fillEmailTemplate } from '../../types'
 
 export type SignupIssue = 'email not available'
@@ -12,7 +12,7 @@ export type SignUpAdapter = {
   sendEmail(_: EmailObj): Promise<unknown>
   publicBaseUrl: string
 }
-export const signUp = QMMutation(
+export const signUp = QMCommand(
   ({ email }: { email: EmailAddr }) =>
     async ({ storeNewSignupRequest, generateToken, sendEmail, publicBaseUrl }: SignUpAdapter) => {
       const token = await generateToken()
@@ -47,7 +47,7 @@ export type NewUserConfirmAdapter = {
 
   createNewProfile(_: { profileId: Id; username: string }): Promise<unknown>
 }
-export const confirmSignup = QMMutation(
+export const confirmSignup = QMCommand(
   ({ token, password: plainPwd, username }: { token: string; password: string; username: string }) =>
     async ({ activateUser, hashPassword, generateProfileId, createNewProfile }: NewUserConfirmAdapter) => {
       const [profileId, pwdHash] = await Promise.all([generateProfileId(), hashPassword(plainPwd)])
