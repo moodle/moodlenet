@@ -1,8 +1,6 @@
 import { LookupSubDef, LookupSubInit, SubPaths } from './sub'
 import { LookupWorkerInit, LookupWrkDef, WrkPaths } from './wrk'
 
-export type Teardown = () => void | Promise<void>
-
 export type DomainSetup<D> = {
   [Path in SubPaths<D> | WrkPaths<D>]: Path extends WrkPaths<D>
     ? LookupWrkDef<D, Path>

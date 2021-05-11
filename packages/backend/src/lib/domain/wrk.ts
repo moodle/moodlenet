@@ -2,7 +2,7 @@
 import { ExecutionResult } from 'graphql'
 import { Acks } from './misc'
 import { Leaves, LookupPath } from './path'
-import { Teardown } from './types'
+type Teardown = any
 
 const DEFAULT_WRK_TIMEOUT = 3000
 

@@ -21,8 +21,10 @@ interface MNHttpServerCfg {
   jwtPublicKey: string
   jwtVerifyOpts: VerifyOptions
 }
+const nameTag = `MN-HTTP-Server`
 
 export const startMNHttpServer = ({ startServices, httpPort: port, jwtPublicKey, jwtVerifyOpts }: MNHttpServerCfg) => {
+  console.log(`\n${nameTag}: initializing`)
   const app = express()
   const subServicesApp = express()
   app.use(cors())
@@ -30,16 +32,15 @@ export const startMNHttpServer = ({ startServices, httpPort: port, jwtPublicKey,
 
   app.use('/', subServicesApp) //FIXME: should use('/_/'  ...
   Object.entries(startServices).forEach(([mountName, application]) => {
-    console.log(`prepareMNHttpServer: mounting Sub App ${mountName}`)
+    console.log(`${nameTag}: mounting service [${mountName}]`)
     subServicesApp.use(`/${mountName}`, application)
   })
 
   return new Promise<void>((res, rej) => {
-    const nameTag = `MN-HTTP-Server`
     app.on('error', e => rej(e))
-    console.log(`starting ${nameTag} on ${port}`)
+    console.log(`${nameTag} starting on ${port}`)
     app.listen(port, () => {
-      console.log(`${nameTag} listening on ${port}`)
+      console.log(`${nameTag} listening on ${port}\n`)
       res()
     })
   })

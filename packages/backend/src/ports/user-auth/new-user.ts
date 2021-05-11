@@ -43,20 +43,23 @@ export type NewUserConfirmAdapter = {
     profileId: Id
   }): Promise<ActiveUser | 'username not available' | 'not found'>
   hashPassword(pwd: string): Promise<string>
-  generateProfileId(): Promise<Id>
+  generateNewProfileId(): Promise<Id>
 
   createNewProfile(_: { profileId: Id; username: string }): Promise<unknown>
 }
 export const confirmSignup = QMCommand(
   ({ token, password: plainPwd, username }: { token: string; password: string; username: string }) =>
-    async ({ activateUser, hashPassword, generateProfileId, createNewProfile }: NewUserConfirmAdapter) => {
-      const [profileId, pwdHash] = await Promise.all([generateProfileId(), hashPassword(plainPwd)])
+    async ({ activateUser, hashPassword, generateNewProfileId, createNewProfile }: NewUserConfirmAdapter) => {
+      const [profileId, pwdHash] = await Promise.all([generateNewProfileId(), hashPassword(plainPwd)])
 
       const activateResult = await activateUser({ password: pwdHash, token, username, profileId })
+
       if (typeof activateResult === 'string') {
         return activateResult // error
       }
+
       createNewProfile({ profileId, username })
+
       return activateResult
     },
 )

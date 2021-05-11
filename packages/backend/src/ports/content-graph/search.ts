@@ -8,8 +8,8 @@ import { QMModule, QMQuery } from '../../lib/qmino'
 // see: packages/backend/src/adapters/content-graph/arangodb/graphql/types.node.ts
 // FIXME!!!
 
-export type Adapter<Type extends GQL.NodeType> = {
-  searchNodes: (_: {
+export type Adapter = {
+  searchNodes: <Type extends GQL.NodeType>(_: {
     sortBy: GQL.GlobalSearchSort
     text: string
     nodeTypes: Maybe<Type[]>
@@ -28,14 +28,13 @@ export type Input<Type extends GQL.NodeType = GQL.NodeType> = {
 }
 
 export const byTerm = QMQuery(
-  <Types extends GQL.NodeType = GQL.NodeType>({ sortBy, text, nodeTypes, page, ctx }: Input<Types>) => async ({
-    searchNodes,
-  }: Adapter<Types>) => {
-    // FIXME: business logic here please
-    // e.g.: pagination constraints, and high level validation
-    // should happen here, and passed right
-    return searchNodes({ sortBy, text, nodeTypes, page, ctx })
-  },
+  <Types extends GQL.NodeType = GQL.NodeType>({ sortBy, text, nodeTypes, page, ctx }: Input<Types>) =>
+    async ({ searchNodes }: Adapter) => {
+      // FIXME: business logic here please
+      // e.g.: pagination constraints, and high level validation
+      // should happen here, and passed right
+      return searchNodes({ sortBy, text, nodeTypes, page, ctx })
+    },
 )
 
 QMModule(module)

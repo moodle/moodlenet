@@ -10,10 +10,10 @@ export type QMPkg = {
 }
 export type QMPortType = 'command' | 'event' | 'query'
 
-export type QMAction<Adapters extends any[], Res> = (...adapters: Adapters) => Promise<Res>
-export type AnyQMAction = QMAction<any[], any>
-export type QMPort<Args extends any[], Adapters extends any[], Res> = (...args: Args) => QMAction<Adapters, Res>
-export type AnyQMPort = QMPort<any[], any[], any>
+export type QMAction<Adapter extends Object, Res> = (adapter: Adapter) => Promise<Res>
+export type AnyQMAction = QMAction<any, any>
+export type QMPort<Args extends any[], Adapter extends Object, Res> = (...args: Args) => QMAction<Adapter, Res>
+export type AnyQMPort = QMPort<any[], any, any>
 export type AnyQMPortDef = QMPortDef<QMPortType, AnyQMPort>
 export type QMPortDef<QMT extends QMPortType, Port extends AnyQMPort> = {
   type: QMT
@@ -21,23 +21,17 @@ export type QMPortDef<QMT extends QMPortType, Port extends AnyQMPort> = {
   link?: QMLink<Port>
 }
 
-export type QMDeployer<Port extends AnyQMPort> = [resolver: QMPortResolver<Port>, teardown: BinderTeardown]
 export type QMDeployment<Port extends AnyQMPort> = {
   at: Date
-  //TODO: with resolver pipelines the resolver should get the previous QMActionExecutor<Port> ?
-  resolver: QMPortResolver<Port>
-  teardown: BinderTeardown
+  adapter: QMAdapter<Port>
+  teardown?: Teardown
 }
-export type BinderTeardown = () => Promise<unknown>
+export type Teardown = () => Promise<unknown>
 
 export type QMPortResponse<Port extends AnyQMPort> = ReturnType<QMPortAction<Port>>
 export type QMPortAction<Port extends AnyQMPort> = ReturnType<Port>
 
-export type QMPortResolver<Port extends AnyQMPort> = (
-  action: ReturnType<Port>,
-  args: Parameters<Port>,
-  port: Port,
-) => QMPortResponse<Port>
+export type QMAdapter<Port extends AnyQMPort> = Parameters<QMPortAction<Port>>[0]
 
 export type QMLink<Port extends AnyQMPort> = {
   path: string[]
@@ -48,11 +42,10 @@ export type QMLink<Port extends AnyQMPort> = {
 }
 
 export type AnyQMActionDef = QMActionDef<AnyQMPortDef>
-export type QMActionDef<ActDef extends AnyQMPortDef> = {
-  args: PortArgs<PortDefPort<ActDef>>
-  portDef: ActDef
+export type QMActionDef<PortDef extends AnyQMPortDef> = {
+  args: PortArgs<PortDefPort<PortDef>>
+  portDef: PortDef
 }
-
 export type PortDefPort<PortDef extends AnyQMPortDef> = PortDef extends QMPortDef<any, infer Port> ? Port : never
 export type PortArgs<Port extends AnyQMPort> = Port extends QMPort<infer Args, any, any> ? Args : never
 
@@ -61,13 +54,13 @@ export type QMActionResponse<Action extends AnyQMAction> = Action extends QMActi
 export type ActionExtract<Action extends AnyQMAction> = {
   type: QMPortType
   link: QMLink<AnyQMPort>
-  port: AnyQMPort
   id: string[]
   path: string[]
   pkg: QMPkg
-  args: any[]
   action: Action
   deployment: QMDeployment<AnyQMPort> | undefined
+  // port: AnyQMPort
+  // args: any[]
 }
 
 export type ActionResolver<Action extends AnyQMAction = AnyQMAction> = (

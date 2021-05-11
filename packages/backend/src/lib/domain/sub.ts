@@ -2,7 +2,7 @@ import { EventPaths, LookupEventType } from './event'
 import { Flow } from './flow'
 import { Acks } from './misc'
 import { Leaves, LookupPath } from './path'
-import { Teardown } from './types'
+type Teardown = any
 
 // type SubscriberUnionArg<D, EventPath extends EventPaths<D>> = EventPath extends infer Event
 //   ? Event extends EventPath

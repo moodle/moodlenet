@@ -15,7 +15,7 @@ import { byUsername } from './adapters/user-auth/arangodb/adapters/session'
 import { argonHashPassword, argonVerifyPassword } from './lib/auth/argon'
 import { getSystemExecutionContext } from './lib/auth/types'
 import { ulidKey } from './lib/helpers/arango'
-import { deploy, resolve } from './lib/qmino'
+import { open, resolve } from './lib/qmino'
 import { createMailgunSender } from './lib/sendersImpl/mailgun/mailgunSender'
 import * as edgePorts from './ports/content-graph/edge'
 import * as nodePorts from './ports/content-graph/node'
@@ -73,55 +73,48 @@ export const startDefaultMoodlenet = async () => {
     jwtPublicKey,
     jwtVerifyOpts,
   })
-  const tokenGenerator = async () => ulid()
-  const generateProfileId = async () => {
-    const profileKey = ulidKey()
-    const profileId = makeId('Profile', profileKey)
-    return profileId
-  }
-  const hashPassword = (plain: string) => argonHashPassword({ pwd: plain })
 
   /// deploy
 
-  deploy(nodePorts.byId, getNodeByIdAdapter(contentGraphDatabase))
+  open(nodePorts.byId, getNodeByIdAdapter(contentGraphDatabase))
 
-  deploy(searchPorts.byTerm, globalSearch(contentGraphDatabase))
+  open(searchPorts.byTerm, globalSearch(contentGraphDatabase))
 
-  deploy(userPorts.getActiveByUsername, byUsername(userAuthDatabase, argonVerifyPassword))
+  open(userPorts.getActiveByUsername, {
+    ...byUsername(userAuthDatabase),
+    verifyPassword: argonVerifyPassword(),
+  })
 
-  deploy(
-    newUserports.signUp,
-    storeNewSignupRequest(userAuthDatabase, {
-      publicBaseUrl,
-      generateToken: tokenGenerator,
+  open(newUserports.signUp, {
+    ...storeNewSignupRequest(userAuthDatabase),
+    publicBaseUrl,
+    generateToken: async () => ulid(),
+    sendEmail: emailSender.sendEmail,
+  })
 
-      sendEmail: emailSender.sendEmail,
-    }),
-  )
+  open(newUserports.confirmSignup, {
+    ...activateNewUser(userAuthDatabase),
+    hashPassword: (plain: string) => argonHashPassword({ pwd: plain }),
+    generateNewProfileId: async () => {
+      const profileKey = ulidKey()
+      const profileId = makeId('Profile', profileKey)
+      return profileId
+    },
+    createNewProfile: async ({ profileId, username }) => {
+      const ctx = getSystemExecutionContext({})
+      return resolve(
+        nodePorts.create<'Profile'>({
+          ctx,
+          data: { name: username, summary: '' },
+          nodeType: 'Profile',
+          key: idKeyFromId(profileId),
+        }),
+      )().then(console.log, console.error)
+    },
+  })
 
-  deploy(
-    newUserports.confirmSignup,
-    // TODO: need a `mergeAdapter` function :)
-    activateNewUser(userAuthDatabase, {
-      hashPassword,
-      generateProfileId,
+  open(nodePorts.create, createNodeAdapter(contentGraphDatabase))
 
-      async createNewProfile({ profileId, username }) {
-        const ctx = getSystemExecutionContext({})
-        resolve(
-          nodePorts.create<'Profile'>({
-            ctx,
-            data: { name: username, summary: '' },
-            nodeType: 'Profile',
-            key: idKeyFromId(profileId),
-          }),
-        )().then(console.log, console.error)
-      },
-    }),
-  )
-
-  deploy(nodePorts.create, createNodeAdapter(contentGraphDatabase))
-
-  deploy(edgePorts.create, createEdgeAdapter(contentGraphDatabase))
-  deploy(edgePorts.del, deleteEdgeAdapter(contentGraphDatabase))
+  open(edgePorts.create, createEdgeAdapter(contentGraphDatabase))
+  open(edgePorts.del, deleteEdgeAdapter(contentGraphDatabase))
 }

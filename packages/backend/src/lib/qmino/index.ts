@@ -9,14 +9,13 @@ export const QMModule = (module: NodeModule) => {
   const { dir, name } = path.parse(module.filename)
   const pkg = getQMPkg(dir)
   const qmino_root_mod_rel_path = getModuleRelPath(pkg, dir, name)
-  console.log(`linking module [${module.filename}] ports`)
+  console.log(`\nlinking module [${module.filename}] ports`)
   Object.entries(module.exports).forEach(([export_name, export_member]) => {
     const portDef = getQMPortDef(export_member)
     if (!portDef) {
       return
     }
     if (portDef.link) {
-      // TODO: Yes we can! implement pipeline
       throw new Error(`can't link an port twice (${module.filename}#${export_name})`)
     }
     const { type } = portDef
@@ -97,9 +96,12 @@ export const makeQMId = (path: string[], type: QM.QMPortType, { name, version }:
 ]
 export const getQMPortDef = (_: any): QM.AnyQMPortDef | undefined => (_ ? _[QMPortSymbol] : undefined)
 
-export const wrapQMPort = <A extends QM.AnyQMPort, QMT extends QM.QMPortType>(original_port: A, type: QMT): A => {
+export const wrapQMPort = <Port extends QM.AnyQMPort, PortType extends QM.QMPortType>(
+  original_port: Port,
+  type: PortType,
+): Port => {
   const port_wrap = (...args: any[]) => {
-    const action = (...adapters: any[]) => original_port(...args)(...adapters)
+    const action = (adapter: any) => original_port(...args)(adapter)
     const actionDef: QM.QMActionDef<QM.AnyQMPortDef> = {
       portDef,
       args,
@@ -114,7 +116,7 @@ export const wrapQMPort = <A extends QM.AnyQMPort, QMT extends QM.QMPortType>(or
   }
 
   ;(port_wrap as any)[QMPortSymbol] = portDef
-  return port_wrap as any as A
+  return port_wrap as any as Port
 }
 export const QMQuery = <P extends QM.AnyQMPort>(p: P) => wrapQMPort(p, 'query')
 export const QMCommand = <P extends QM.AnyQMPort>(p: P) => wrapQMPort(p, 'command')
@@ -127,7 +129,7 @@ export const extractAction = <C extends QM.AnyQMAction>(action: C): QM.ActionExt
     console.error(action)
     throw new Error(`not a qm action !`)
   }
-  const { portDef, args } = actionDef
+  const { portDef /* , args */ } = actionDef
   const { type, link, port } = portDef
   if (!link) {
     console.error({ type, port })
@@ -140,13 +142,13 @@ export const extractAction = <C extends QM.AnyQMAction>(action: C): QM.ActionExt
   const actionExtract: QM.ActionExtract<C> = {
     type,
     link,
-    port,
     id,
     deployment,
     path,
     pkg,
-    args,
     action,
+    // port,
+    // args,
   }
   return actionExtract
 }
@@ -154,13 +156,13 @@ export const extractAction = <C extends QM.AnyQMAction>(action: C): QM.ActionExt
 export const attemptLocalResolve = <Action extends QM.AnyQMAction>(
   actionExtract: QM.ActionExtract<Action>,
 ): null | (() => Promise<QM.QMActionResponse<Action>>) => {
-  const { deployment, action, args, port } = actionExtract
+  const { deployment, action /* , args, port */ } = actionExtract
   if (!deployment) {
     return null
   }
-  const { resolver } = deployment
+  const { adapter } = deployment
 
-  return () => resolver(action, args, port)
+  return () => action(adapter)
 }
 
 export const queryResolver: QM.ActionResolver = actionExtract => {
@@ -196,20 +198,19 @@ export const extractDef = (port: any) => {
   return portDef
 }
 
-export const deploy = async <P extends QM.AnyQMPort>(
+export const open = async <P extends QM.AnyQMPort>(
   port: P,
-  [resolver, teardown]: QM.QMDeployer<P>,
+  adapter: QM.QMAdapter<P>,
+  teardown?: QM.Teardown,
   _transport?: any,
 ) => {
   const link = extractLink(port)
-  console.log(`deployed port: ${displayId(link.id)}`)
+  console.log(`open port: ${displayId(link.id)}`)
 
   link.deployment = {
     at: new Date(),
     teardown,
-    //@ts-ignore
-    //FIXME: check this tsc error on `resolver` var type
-    resolver,
+    adapter,
   }
 }
 
