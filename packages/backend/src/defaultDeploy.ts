@@ -1,24 +1,27 @@
-import { makeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { idKeyFromId, makeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { Database } from 'arangojs'
 import { SignOptions, VerifyOptions } from 'jsonwebtoken'
 import SshPK from 'sshpk'
 import { ulid } from 'ulid'
 import * as Yup from 'yup'
+import { createEdgeAdapter, deleteEdgeAdapter } from './adapters/content-graph/arangodb/adapters/edge'
+import { globalSearch } from './adapters/content-graph/arangodb/adapters/globalSearch'
+import { createNodeAdapter, getNodeByIdAdapter } from './adapters/content-graph/arangodb/adapters/node'
 import { graphqlArangoContentGraphResolvers } from './adapters/content-graph/arangodb/graphql/additional-resolvers'
-import { globalSearch } from './adapters/content-graph/arangodb/queries/globalSearch'
-import { getNodeByIdArangoAdapter } from './adapters/content-graph/arangodb/queries/node'
 import { createGraphQLApp } from './adapters/http/graphqlApp'
 import { startMNHttpServer } from './adapters/http/MNHTTPServer'
-import { argonHashPassword, argonVerifyPassword } from './adapters/lib/auth/argon'
-import { activateNewUser, storeNewSignupRequest } from './adapters/user-auth/arangodb/mutations/new-user'
-import { byUsername } from './adapters/user-auth/arangodb/queries/session'
+import { activateNewUser, storeNewSignupRequest } from './adapters/user-auth/arangodb/adapters/new-user'
+import { byUsername } from './adapters/user-auth/arangodb/adapters/session'
+import { argonHashPassword, argonVerifyPassword } from './lib/auth/argon'
+import { getSystemExecutionContext } from './lib/auth/types'
 import { ulidKey } from './lib/helpers/arango'
-import { deploy } from './lib/qmino'
+import { deploy, resolve } from './lib/qmino'
 import { createMailgunSender } from './lib/sendersImpl/mailgun/mailgunSender'
-import { newUserConfirm, signUp } from './ports/mutations/user-auth/new-user'
-import { byId } from './ports/queries/content-graph/get-content-node'
-import { search } from './ports/queries/content-graph/global-search'
-import { getByUsername } from './ports/queries/user-auth/session'
+import * as edgePorts from './ports/content-graph/edge'
+import * as nodePorts from './ports/content-graph/node'
+import * as searchPorts from './ports/content-graph/search'
+import * as newUserports from './ports/user-auth/new-user'
+import * as userPorts from './ports/user-auth/user'
 
 export const startDefaultMoodlenet = async () => {
   const httpPort = Number(process.env.HTTP_GRAPHQL_PORT) || 8080
@@ -80,11 +83,14 @@ export const startDefaultMoodlenet = async () => {
 
   /// deploy
 
-  deploy(byId, getNodeByIdArangoAdapter(contentGraphDatabase))
-  deploy(search, globalSearch(contentGraphDatabase))
-  deploy(getByUsername, byUsername(userAuthDatabase, argonVerifyPassword))
+  deploy(nodePorts.byId, getNodeByIdAdapter(contentGraphDatabase))
+
+  deploy(searchPorts.byTerm, globalSearch(contentGraphDatabase))
+
+  deploy(userPorts.getActiveByUsername, byUsername(userAuthDatabase, argonVerifyPassword))
+
   deploy(
-    signUp,
+    newUserports.signUp,
     storeNewSignupRequest(userAuthDatabase, {
       publicBaseUrl,
       generateToken: tokenGenerator,
@@ -92,11 +98,30 @@ export const startDefaultMoodlenet = async () => {
       sendEmail: emailSender.sendEmail,
     }),
   )
+
   deploy(
-    newUserConfirm,
+    newUserports.confirmSignup,
+    // TODO: need a `mergeAdapter` function :)
     activateNewUser(userAuthDatabase, {
       hashPassword,
       generateProfileId,
+
+      async createNewProfile({ profileId, username }) {
+        const ctx = getSystemExecutionContext({})
+        resolve(
+          nodePorts.create<'Profile'>({
+            ctx,
+            data: { name: username, summary: '' },
+            nodeType: 'Profile',
+            key: idKeyFromId(profileId),
+          }),
+        )().then(console.log, console.error)
+      },
     }),
   )
+
+  deploy(nodePorts.create, createNodeAdapter(contentGraphDatabase))
+
+  deploy(edgePorts.create, createEdgeAdapter(contentGraphDatabase))
+  deploy(edgePorts.del, deleteEdgeAdapter(contentGraphDatabase))
 }

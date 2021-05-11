@@ -24,7 +24,7 @@ export const _op_chain = <Op extends string, T extends string>(str_or_k: string 
     get: (_trg, p) => _op_chain(`${str ? str + ' ' : ''}${String(p)}`),
   }) as K<Op, T>
 }
-export const op_chain = (_op_chain as any) as <Op extends string, T extends string>() => X<Op, T> &
+export const op_chain = _op_chain as any as <Op extends string, T extends string>() => X<Op, T> &
   K<Op, T> & { _?: W<Op, T> }
 
 export type AssertionOf<_> = _ extends K<infer Op, infer T> ? W<Op, T> : never

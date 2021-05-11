@@ -19,7 +19,6 @@ export const QMModule = (module: NodeModule) => {
       // TODO: Yes we can! implement pipeline
       throw new Error(`can't link an port twice (${module.filename}#${export_name})`)
     }
-    console.log(`linking port [${export_name}]`)
     const { type } = portDef
     const link = makeQMLink<QM.AnyQMPort>(qmino_root_mod_rel_path, export_name, type, pkg)
     portDef.link = link
@@ -203,7 +202,7 @@ export const deploy = async <P extends QM.AnyQMPort>(
   _transport?: any,
 ) => {
   const link = extractLink(port)
-  console.log(`${displayId(link.id)} initialized`)
+  console.log(`deployed port: ${displayId(link.id)}`)
 
   link.deployment = {
     at: new Date(),

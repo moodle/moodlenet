@@ -16,6 +16,7 @@
     "moduleResolution": "Node",
     "lib": ["ESNext"],
     "target": "ES5",
-    "outDir": "./lib" /* Redirect output structure to the directory. */
+    "outDir": "./lib" /* Redirect output structure to the directory. */,
+    "resolveJsonModule": true
   }
 }

@@ -302,24 +302,19 @@ export type Likes = IEdge & {
 
 export type Mutation = {
   __typename: 'Mutation';
-  signUp: SimpleResponse;
-  changePassword: SimpleResponse;
   activateUser: CreateSession;
-  createSession: CreateSession;
-  changeEmailRequest: SimpleResponse;
   changeEmailConfirm: Scalars['Boolean'];
+  changeEmailRequest: SimpleResponse;
+  changePassword: SimpleResponse;
+  createEdge: CreateEdgeMutationPayload;
+  createNode: CreateNodeMutationPayload;
+  createSession: CreateSession;
+  deleteEdge: DeleteEdgeMutationPayload;
+  deleteNode: DeleteNodeMutationPayload;
   sessionByEmail: SimpleResponse;
-};
-
-
-export type MutationSignUpArgs = {
-  email: Scalars['String'];
-};
-
-
-export type MutationChangePasswordArgs = {
-  newPassword: Scalars['String'];
-  currentPassword: Scalars['String'];
+  signUp: SimpleResponse;
+  updateEdge: UpdateEdgeMutationPayload;
+  updateNode: UpdateNodeMutationPayload;
 };
 
 
@@ -330,9 +325,10 @@ export type MutationActivateUserArgs = {
 };
 
 
-export type MutationCreateSessionArgs = {
-  username: Scalars['String'];
+export type MutationChangeEmailConfirmArgs = {
+  token: Scalars['String'];
   password: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
@@ -341,16 +337,56 @@ export type MutationChangeEmailRequestArgs = {
 };
 
 
-export type MutationChangeEmailConfirmArgs = {
-  token: Scalars['String'];
-  password: Scalars['String'];
+export type MutationChangePasswordArgs = {
+  newPassword: Scalars['String'];
+  currentPassword: Scalars['String'];
+};
+
+
+export type MutationCreateEdgeArgs = {
+  input: CreateEdgeInput;
+};
+
+
+export type MutationCreateNodeArgs = {
+  input: CreateNodeInput;
+};
+
+
+export type MutationCreateSessionArgs = {
   username: Scalars['String'];
+  password: Scalars['String'];
+};
+
+
+export type MutationDeleteEdgeArgs = {
+  input: DeleteEdgeInput;
+};
+
+
+export type MutationDeleteNodeArgs = {
+  input: DeleteNodeInput;
 };
 
 
 export type MutationSessionByEmailArgs = {
   username: Scalars['String'];
   email: Scalars['String'];
+};
+
+
+export type MutationSignUpArgs = {
+  email: Scalars['String'];
+};
+
+
+export type MutationUpdateEdgeArgs = {
+  input: UpdateEdgeInput;
+};
+
+
+export type MutationUpdateNodeArgs = {
+  input: UpdateNodeInput;
 };
 
 

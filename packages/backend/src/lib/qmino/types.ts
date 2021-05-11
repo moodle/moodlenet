@@ -43,6 +43,7 @@ export type QMLink<Port extends AnyQMPort> = {
   path: string[]
   id: string[]
   pkg: QMPkg
+  // be it an array, for multiple transport deployment
   deployment?: QMDeployment<Port>
 }
 

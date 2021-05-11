@@ -1,6 +1,6 @@
 import { CreateNodeInput, CreateNodeMutationError, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Just } from '@moodlenet/common/lib/utils/types'
-import { DocumentNodeDataByType } from '../../../../adapters/content-graph/arangodb/lib/types'
+import { DocumentNodeDataByType } from '../../../../adapters/content-graph/arangodb/functions/types'
 import {
   createNodeMutationError,
   getAssetRefInputAndType,
