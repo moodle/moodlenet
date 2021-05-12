@@ -1,4 +1,4 @@
-import { AssetRef } from '@moodlenet/common/lib/pub-graphql/types'
+import { AssetRef } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { getAssetRefUrl } from '@moodlenet/common/lib/staticAsset/lib'
 import { GetRouteDefParams, GetRouteDefPath, RouteDef } from '@moodlenet/common/lib/webapp/sitemap'
 import * as H from 'history'

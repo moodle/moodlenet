@@ -1,12 +1,18 @@
 {
   "extends": "../../tsconfig.json",
+  "exclude": [
+    "./lib",
+    //FIXME: remove following after fixed db maintainance and mock-populate
+    "./src/adapters/content-graph/arangodb/db/maintainance"
+  ],
   "compilerOptions": {
+    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
+    "allowSyntheticDefaultImports": true,
     "rootDir": "src",
     "moduleResolution": "Node",
     "lib": ["ESNext"],
-    "target": "ESNext",
-    "noEmit": true,
-    "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
-    //"outDir": "./js" /* Redirect output structure to the directory. */
+    "target": "ES5",
+    "outDir": "./lib" /* Redirect output structure to the directory. */,
+    "resolveJsonModule": true
   }
 }

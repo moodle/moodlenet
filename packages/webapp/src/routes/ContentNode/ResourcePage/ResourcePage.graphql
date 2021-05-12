@@ -4,7 +4,7 @@ query ResourcePageNode($id: ID!) {
       id
       name
       icon
-      location
+      asset
       summary
       myLike: _rel(edge: { type: Likes, node: Profile, inverse: true, targetMe: true }, page: { first: 1 }) {
         ...JustEdgeIdRelPage

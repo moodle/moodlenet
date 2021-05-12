@@ -5,3 +5,4 @@ js
 *.pem
 yarn-error.log
 *.localnote
+/lib

@@ -1,6 +1,6 @@
 export * from './types'
 
-import { EdgeType, NodeType } from '../pub-graphql/types.graphql.gen'
+import { EdgeType, NodeType } from '../graphql/types.graphql.gen'
 import { EdgeOp, GraphDef, NodeOp } from './types'
 
 type EdgeDefType = EdgeType

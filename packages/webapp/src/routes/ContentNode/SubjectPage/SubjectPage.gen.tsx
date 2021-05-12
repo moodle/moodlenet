@@ -4,6 +4,7 @@ import { JustEdgeIdRelPageFragment } from '../../../hooks/content/fragments/relP
 import { gql } from '@apollo/client';
 import { JustEdgeIdRelPageFragmentDoc } from '../../../hooks/content/fragments/relPage.gen';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type SubjectPageNodeQueryVariables = Types.Exact<{
   id: Types.Scalars['ID'];
 }>;
@@ -36,11 +37,11 @@ export type SubjectPageCollectionsQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Profile' } | (
+        & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'icon'>
           & { followersCount: Types.Collection['_relCount'], resourcesCount: Types.Collection['_relCount'] }
-        ) | { __typename: 'Resource' } | { __typename: 'Subject' } }
+        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
       )> }
     ) }
   ) | (
@@ -50,11 +51,11 @@ export type SubjectPageCollectionsQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Profile' } | (
+        & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'icon'>
           & { followersCount: Types.Collection['_relCount'], resourcesCount: Types.Collection['_relCount'] }
-        ) | { __typename: 'Resource' } | { __typename: 'Subject' } }
+        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
       )> }
     ) }
   ) | (
@@ -64,11 +65,11 @@ export type SubjectPageCollectionsQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Profile' } | (
+        & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'icon'>
           & { followersCount: Types.Collection['_relCount'], resourcesCount: Types.Collection['_relCount'] }
-        ) | { __typename: 'Resource' } | { __typename: 'Subject' } }
+        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
       )> }
     ) }
   ) | (
@@ -78,11 +79,11 @@ export type SubjectPageCollectionsQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Profile' } | (
+        & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'icon'>
           & { followersCount: Types.Collection['_relCount'], resourcesCount: Types.Collection['_relCount'] }
-        ) | { __typename: 'Resource' } | { __typename: 'Subject' } }
+        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
       )> }
     ) }
   )> }
@@ -102,17 +103,17 @@ export type SubjectPageResourcesQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Profile' } | { __typename: 'Collection' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, 'id' | 'name' | 'icon'>
           & { collections: (
             { __typename: 'RelPage' }
             & { edges: Array<(
               { __typename: 'RelPageEdge' }
-              & { node: { __typename: 'Profile' } | (
+              & { node: (
                 { __typename: 'Collection' }
                 & Pick<Types.Collection, 'id' | 'name'>
-              ) | { __typename: 'Resource' } | { __typename: 'Subject' } }
+              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
             )> }
           ) }
         ) | { __typename: 'Subject' } }
@@ -125,17 +126,17 @@ export type SubjectPageResourcesQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Profile' } | { __typename: 'Collection' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, 'id' | 'name' | 'icon'>
           & { collections: (
             { __typename: 'RelPage' }
             & { edges: Array<(
               { __typename: 'RelPageEdge' }
-              & { node: { __typename: 'Profile' } | (
+              & { node: (
                 { __typename: 'Collection' }
                 & Pick<Types.Collection, 'id' | 'name'>
-              ) | { __typename: 'Resource' } | { __typename: 'Subject' } }
+              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
             )> }
           ) }
         ) | { __typename: 'Subject' } }
@@ -148,17 +149,17 @@ export type SubjectPageResourcesQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Profile' } | { __typename: 'Collection' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, 'id' | 'name' | 'icon'>
           & { collections: (
             { __typename: 'RelPage' }
             & { edges: Array<(
               { __typename: 'RelPageEdge' }
-              & { node: { __typename: 'Profile' } | (
+              & { node: (
                 { __typename: 'Collection' }
                 & Pick<Types.Collection, 'id' | 'name'>
-              ) | { __typename: 'Resource' } | { __typename: 'Subject' } }
+              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
             )> }
           ) }
         ) | { __typename: 'Subject' } }
@@ -171,17 +172,17 @@ export type SubjectPageResourcesQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Profile' } | { __typename: 'Collection' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, 'id' | 'name' | 'icon'>
           & { collections: (
             { __typename: 'RelPage' }
             & { edges: Array<(
               { __typename: 'RelPageEdge' }
-              & { node: { __typename: 'Profile' } | (
+              & { node: (
                 { __typename: 'Collection' }
                 & Pick<Types.Collection, 'id' | 'name'>
-              ) | { __typename: 'Resource' } | { __typename: 'Subject' } }
+              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
             )> }
           ) }
         ) | { __typename: 'Subject' } }
@@ -230,10 +231,12 @@ export const SubjectPageNodeDocument = gql`
  * });
  */
 export function useSubjectPageNodeQuery(baseOptions: Apollo.QueryHookOptions<SubjectPageNodeQuery, SubjectPageNodeQueryVariables>) {
-        return Apollo.useQuery<SubjectPageNodeQuery, SubjectPageNodeQueryVariables>(SubjectPageNodeDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SubjectPageNodeQuery, SubjectPageNodeQueryVariables>(SubjectPageNodeDocument, options);
       }
 export function useSubjectPageNodeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubjectPageNodeQuery, SubjectPageNodeQueryVariables>) {
-          return Apollo.useLazyQuery<SubjectPageNodeQuery, SubjectPageNodeQueryVariables>(SubjectPageNodeDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SubjectPageNodeQuery, SubjectPageNodeQueryVariables>(SubjectPageNodeDocument, options);
         }
 export type SubjectPageNodeQueryHookResult = ReturnType<typeof useSubjectPageNodeQuery>;
 export type SubjectPageNodeLazyQueryHookResult = ReturnType<typeof useSubjectPageNodeLazyQuery>;
@@ -281,10 +284,12 @@ export const SubjectPageCollectionsDocument = gql`
  * });
  */
 export function useSubjectPageCollectionsQuery(baseOptions: Apollo.QueryHookOptions<SubjectPageCollectionsQuery, SubjectPageCollectionsQueryVariables>) {
-        return Apollo.useQuery<SubjectPageCollectionsQuery, SubjectPageCollectionsQueryVariables>(SubjectPageCollectionsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SubjectPageCollectionsQuery, SubjectPageCollectionsQueryVariables>(SubjectPageCollectionsDocument, options);
       }
 export function useSubjectPageCollectionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubjectPageCollectionsQuery, SubjectPageCollectionsQueryVariables>) {
-          return Apollo.useLazyQuery<SubjectPageCollectionsQuery, SubjectPageCollectionsQueryVariables>(SubjectPageCollectionsDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SubjectPageCollectionsQuery, SubjectPageCollectionsQueryVariables>(SubjectPageCollectionsDocument, options);
         }
 export type SubjectPageCollectionsQueryHookResult = ReturnType<typeof useSubjectPageCollectionsQuery>;
 export type SubjectPageCollectionsLazyQueryHookResult = ReturnType<typeof useSubjectPageCollectionsLazyQuery>;
@@ -340,10 +345,12 @@ export const SubjectPageResourcesDocument = gql`
  * });
  */
 export function useSubjectPageResourcesQuery(baseOptions: Apollo.QueryHookOptions<SubjectPageResourcesQuery, SubjectPageResourcesQueryVariables>) {
-        return Apollo.useQuery<SubjectPageResourcesQuery, SubjectPageResourcesQueryVariables>(SubjectPageResourcesDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SubjectPageResourcesQuery, SubjectPageResourcesQueryVariables>(SubjectPageResourcesDocument, options);
       }
 export function useSubjectPageResourcesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubjectPageResourcesQuery, SubjectPageResourcesQueryVariables>) {
-          return Apollo.useLazyQuery<SubjectPageResourcesQuery, SubjectPageResourcesQueryVariables>(SubjectPageResourcesDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SubjectPageResourcesQuery, SubjectPageResourcesQueryVariables>(SubjectPageResourcesDocument, options);
         }
 export type SubjectPageResourcesQueryHookResult = ReturnType<typeof useSubjectPageResourcesQuery>;
 export type SubjectPageResourcesLazyQueryHookResult = ReturnType<typeof useSubjectPageResourcesLazyQuery>;

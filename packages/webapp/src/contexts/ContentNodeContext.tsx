@@ -1,4 +1,4 @@
-import { Id } from '@moodlenet/common/lib/utils/content-graph'
+import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { createContext, FC, useContext } from 'react'
 import { NodeType } from '../graphql/pub.graphql.link'
 import { useContentNodeContextQuery } from './ContentNodeContext/ContentNodeContext.gen'
@@ -15,7 +15,7 @@ export type ContentNodeContextType = null | {
 export const ContentNodeContext = createContext<ContentNodeContextType>(null)
 export const useContentNodeContext = () => useContext(ContentNodeContext)
 export const ProvideContentNodeContext: FC<{ type: NodeType; id: Id }> = ({ id, type, children }) => {
-  const myProfileId = useSession().session?.profile?.id
+  const myProfileId = useSession().currentProfile?.id
   const res = useContentNodeContextQuery({
     variables: { id: id },
     fetchPolicy: 'cache-only',

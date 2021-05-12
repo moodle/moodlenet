@@ -1,4 +1,4 @@
-import { GlobalSearchSort } from '@moodlenet/common/lib/pub-graphql/types.graphql.gen'
+import { GlobalSearchSort } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { isGlobalSearchSort } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { createContext, FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useHistory, useLocation } from 'react-router'

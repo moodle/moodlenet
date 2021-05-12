@@ -1,11 +1,7 @@
-export { ConnAssertion, CtxAssertion, NodeAssertion } from '../pub-graphql/types.graphql.gen'
-import {
-  ConnAssertion,
-  CtxAssertion,
-  EdgeType as E,
-  NodeAssertion,
-  NodeType as N,
-} from '../pub-graphql/types.graphql.gen'
+export { ConnAssertion, CtxAssertion, NodeAssertion } from '../graphql/types.graphql.gen'
+import { _conn, _ctx, _node } from '../assertions/op-chains'
+import { ConnAssertion, CtxAssertion, EdgeType as E, NodeAssertion, NodeType as N } from '../graphql/types.graphql.gen'
+import { AssertionOf } from '../utils/op-chain'
 
 export type GlyphAssertion = NodeAssertion | ConnAssertion
 export type Assertion = CtxAssertion | GlyphAssertion
@@ -13,10 +9,10 @@ export type Assertion = CtxAssertion | GlyphAssertion
 export type AssertionExpr = string | boolean
 
 export type EdgeOpAssertion = {
-  ctx: AssertionExpr
-  conn: AssertionExpr
-  from: AssertionExpr
-  to: AssertionExpr
+  ctx: AssertionOf<typeof _ctx> | boolean
+  conn: AssertionOf<typeof _conn> | boolean
+  from: AssertionOf<typeof _node> | boolean
+  to: AssertionOf<typeof _node> | boolean
 }
 export type EdgeOp = 'create' | 'delete' | 'traverse'
 export type EdgeOpAssertionMap = {
@@ -25,8 +21,8 @@ export type EdgeOpAssertionMap = {
 export type EdgeDef = [N[], N[], EdgeOpAssertionMap]
 
 export type NodeOpAssertion = {
-  ctx: AssertionExpr
-  node: AssertionExpr
+  ctx: AssertionOf<typeof _ctx> | boolean
+  node: AssertionOf<typeof _node> | boolean
 }
 
 export type NodeOp = 'create' | 'delete' | 'update' | 'read'
@@ -42,8 +38,3 @@ export type GraphDef = {
     [Node in N]: NodeOpAssertionMap
   }
 }
-
-//Assertions
-export const ctx = (_: CtxAssertion) => _
-export const node = (_: NodeAssertion) => _
-export const conn = (_: ConnAssertion) => _

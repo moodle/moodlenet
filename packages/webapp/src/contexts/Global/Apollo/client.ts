@@ -1,5 +1,5 @@
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client'
-import { parseNodeIdString } from '@moodlenet/common/lib/utils/content-graph'
+import { parseNodeIdString } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { setContext } from 'apollo-link-context'
 import apolloLogger from 'apollo-link-logger'
 import { GRAPHQL_ENDPOINT, isProduction } from '../../../constants'

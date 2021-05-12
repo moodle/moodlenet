@@ -1,4 +1,4 @@
-import { AssetRef } from '../pub-graphql/types'
+import { AssetRef } from '../graphql/scalars.graphql'
 
 export type UploadType = 'icon' | 'image' | 'resource'
 export const uploadTypes: UploadType[] = ['icon', 'image', 'resource']

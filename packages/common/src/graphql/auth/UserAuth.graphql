@@ -1,0 +1,38 @@
+type Mutation {
+  signUp(email: String!): SimpleResponse!
+  changePassword(newPassword: String!, currentPassword: String!): SimpleResponse!
+  activateUser(username: String!, password: String!, token: String!): CreateSession!
+  createSession(username: String!, password: String!): CreateSession!
+  #later..
+  changeEmailRequest(newEmail: String!): SimpleResponse!
+  changeEmailConfirm(token: String!, password: String!, username: String!): Boolean!
+  sessionByEmail(username: String!, email: String!): SimpleResponse!
+}
+
+type Query {
+  getSession: UserSession
+}
+
+type SimpleResponse {
+  success: Boolean!
+  message: String
+}
+
+type CreateSession {
+  jwt: String
+  message: String
+}
+
+type UserSession {
+  username: String!
+  email: String!
+  changeEmailRequest: String
+  userId: String!
+  profileId: ID
+}
+
+enum Role {
+  Admin
+  User
+  System
+}

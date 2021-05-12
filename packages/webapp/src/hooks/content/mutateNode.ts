@@ -1,5 +1,6 @@
-import { CreateNodeInput, Id, NodeType, parseNodeId } from '@moodlenet/common/lib/utils/content-graph'
+import { Id, parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { useCallback, useMemo } from 'react'
+import { CreateNodeInput, NodeType } from '../../graphql/pub.graphql.link'
 import { useCreateNodeMutation, useDeleteNodeMutation } from './mutateNode/mutateNode.gen'
 
 export const useMutateNode = () => {
