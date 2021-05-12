@@ -1,15 +1,19 @@
 import { idKeyFromId, makeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { Database } from 'arangojs'
-import { SignOptions, VerifyOptions } from 'jsonwebtoken'
-import SshPK from 'sshpk'
+import { Algorithm, SignOptions, VerifyOptions } from 'jsonwebtoken'
 import { ulid } from 'ulid'
-import * as Yup from 'yup'
 import { createEdgeAdapter, deleteEdgeAdapter } from './adapters/content-graph/arangodb/adapters/edge'
 import { globalSearch } from './adapters/content-graph/arangodb/adapters/globalSearch'
 import { createNodeAdapter, getNodeByIdAdapter } from './adapters/content-graph/arangodb/adapters/node'
 import { graphqlArangoContentGraphResolvers } from './adapters/content-graph/arangodb/graphql/additional-resolvers'
 import { createGraphQLApp } from './adapters/http/graphqlApp'
 import { startMNHttpServer } from './adapters/http/MNHTTPServer'
+import { getStaticAssetsApp as createStaticAssetsApp } from './adapters/http/staticAssets/staticAssetsApp'
+import { createTempAdapter } from './adapters/staticAssets/fs/adapters/createTemp'
+import { delAssetAdapter } from './adapters/staticAssets/fs/adapters/delAsset'
+import { getAssetAdapter } from './adapters/staticAssets/fs/adapters/getAsset'
+import { persistTempAssetsAdapter } from './adapters/staticAssets/fs/adapters/persistTemp'
+import { setupFs } from './adapters/staticAssets/fs/setup'
 import { activateNewUser, storeNewSignupRequest } from './adapters/user-auth/arangodb/adapters/new-user'
 import { byUsername } from './adapters/user-auth/arangodb/adapters/session'
 import { argonHashPassword, argonVerifyPassword } from './lib/auth/argon'
@@ -20,44 +24,44 @@ import { createMailgunSender } from './lib/sendersImpl/mailgun/mailgunSender'
 import * as edgePorts from './ports/content-graph/edge'
 import * as nodePorts from './ports/content-graph/node'
 import * as searchPorts from './ports/content-graph/search'
-import * as newUserports from './ports/user-auth/new-user'
+import * as assetPorts from './ports/static-assets/asset'
+import * as tmpAssetPorts from './ports/static-assets/temp'
+import * as newUserPorts from './ports/user-auth/new-user'
 import * as userPorts from './ports/user-auth/user'
 
-export const startDefaultMoodlenet = async () => {
-  const httpPort = Number(process.env.HTTP_GRAPHQL_PORT) || 8080
-  const mailgunApiKey = process.env.MAILGUN_API_KEY
-  const mailgunDomain = process.env.MAILGUN_DOMAIN
-  const arangoUrl = process.env.ARANGO_HOST
-  const jwtPrivateKey = process.env.JWT_PRIVATE_KEY
-  const jwtPublicKey = process.env.JWT_PUBLIC_KEY
-  const jwtExpirationSecs = parseInt(String(process.env.JWT_EXPIRATION_SECS))
-  const PUBLIC_URL = process.env.PUBLIC_URL
-
-  if (
-    !(arangoUrl && mailgunApiKey && mailgunDomain && jwtPrivateKey && jwtExpirationSecs && jwtPublicKey && PUBLIC_URL)
-  ) {
-    throw new Error(`missing env`)
-  }
-
-  const publicBaseUrl = Yup.string().required().validateSync(PUBLIC_URL) // TODO:  in RootValue ?
-
-  SshPK.parseKey(jwtPrivateKey, 'pem')
-
-  if (!isFinite(jwtExpirationSecs)) {
-    throw new Error(
-      `JWT_EXPIRATION_SECS env var must represent an integer, found "${process.env.JWT_EXPIRATION_SECS}" instead`,
-    )
-  }
+export type Config = {
+  arangoUrl: string
+  mailgunApiKey: string
+  mailgunDomain: string
+  jwtPrivateKey: string
+  jwtExpirationSecs: number
+  jwtPublicKey: string
+  publicBaseUrl: string
+  fsAssetRootFolder: string
+  httpPort: number
+}
+export const startDefaultMoodlenet = async ({
+  arangoUrl,
+  mailgunApiKey,
+  mailgunDomain,
+  jwtPrivateKey,
+  jwtExpirationSecs,
+  jwtPublicKey,
+  publicBaseUrl,
+  fsAssetRootFolder,
+  httpPort,
+}: Config) => {
   const emailSender = createMailgunSender({ apiKey: mailgunApiKey, domain: mailgunDomain })
   const contentGraphDatabase = new Database({ url: arangoUrl, databaseName: 'ContentGraph' })
   const userAuthDatabase = new Database({ url: arangoUrl, databaseName: 'UserAuth' })
   const arangoContentGraphAdditionalGQLResolvers = graphqlArangoContentGraphResolvers(contentGraphDatabase)
 
+  const jwtAlg: Algorithm = 'RS256'
   const jwtVerifyOpts: VerifyOptions = {
-    algorithms: ['RS256'],
+    algorithms: [jwtAlg],
   }
   const jwtSignOptions: SignOptions = {
-    algorithm: 'RS256',
+    algorithm: jwtAlg,
     expiresIn: jwtExpirationSecs,
   }
 
@@ -66,15 +70,15 @@ export const startDefaultMoodlenet = async () => {
     jwtPrivateKey,
     jwtSignOptions,
   })
-
-  /* const expressApp = */ await startMNHttpServer({
+  const assetsApp = createStaticAssetsApp()
+  await startMNHttpServer({
     httpPort,
-    startServices: { graphql: graphqlApp },
+    startServices: { graphql: graphqlApp, assets: assetsApp },
     jwtPublicKey,
     jwtVerifyOpts,
   })
 
-  /// deploy
+  // open ports
 
   open(nodePorts.byId, getNodeByIdAdapter(contentGraphDatabase))
 
@@ -85,14 +89,14 @@ export const startDefaultMoodlenet = async () => {
     verifyPassword: argonVerifyPassword(),
   })
 
-  open(newUserports.signUp, {
+  open(newUserPorts.signUp, {
     ...storeNewSignupRequest(userAuthDatabase),
     publicBaseUrl,
     generateToken: async () => ulid(),
     sendEmail: emailSender.sendEmail,
   })
 
-  open(newUserports.confirmSignup, {
+  open(newUserPorts.confirmSignup, {
     ...activateNewUser(userAuthDatabase),
     hashPassword: (plain: string) => argonHashPassword({ pwd: plain }),
     generateNewProfileId: async () => {
@@ -117,4 +121,12 @@ export const startDefaultMoodlenet = async () => {
 
   open(edgePorts.create, createEdgeAdapter(contentGraphDatabase))
   open(edgePorts.del, deleteEdgeAdapter(contentGraphDatabase))
+
+  //FS asset
+  const rootDir = fsAssetRootFolder
+  setupFs({ rootDir })
+  open(assetPorts.del, delAssetAdapter({ rootDir }))
+  open(assetPorts.get, getAssetAdapter({ rootDir }))
+  open(tmpAssetPorts.createTemp, createTempAdapter({ rootDir }))
+  open(tmpAssetPorts.persistTempAssets, persistTempAssetsAdapter({ rootDir }))
 }

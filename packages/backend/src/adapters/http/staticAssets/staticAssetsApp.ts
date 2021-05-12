@@ -1,135 +1,59 @@
-import { isUploadType } from '@moodlenet/common/lib/staticAsset/lib'
-import express, { Request, Response } from 'express'
-import Formidable, { File } from 'formidable'
+import express, { Response } from 'express'
 import { createReadStream } from 'fs'
 import { rm } from 'fs/promises'
-import sharp from 'sharp'
-import { Readable } from 'stream'
-import { StaticAssetsIO } from './impl/types'
-import { TempFileDesc, TempFileId } from './types'
+import { resolve } from '../../../lib/qmino'
+import { get } from '../../../ports/static-assets/asset'
+import { createTemp } from '../../../ports/static-assets/temp'
+import { TempFileDesc } from '../../../ports/static-assets/types'
+import * as help from './helpers'
 
-const sendErrorResponse = (res: Response, [status, err]: RespError) => res.status(status).send(err)
+const sendErrorResponse = (res: Response, [status, err]: help.RespError) => res.status(status).send(err)
 
 export const getStaticAssetsApp = () => {
   const app = express()
-  app.post('/:type(icon|image|resource)', async (req, res) => {
+  app.post('/upload-temp', async (req, res) => {
+    // this check could get more accurate (context assertions engine)
     if (req.mnHttpSessionCtx.type === 'anon') {
-      return sendErrorResponse(res, respError(401, 'logged users only can upload'))
-    }
-    const uploadType = req.params.type
-
-    if (!isUploadType(uploadType)) {
-      return sendErrorResponse(res, respError(400, `unknown type ${uploadType}`))
+      return sendErrorResponse(res, help.respError(401, 'logged users only can upload'))
     }
 
-    const file = await getUploadedFile(req)
-    if (isRespError(file)) {
-      return sendErrorResponse(res, file)
+    const upload = await help.getUploadedFile(req)
+
+    if (help.isRespError(upload)) {
+      return sendErrorResponse(res, upload)
+    }
+    const [file, uploadType] = upload
+    const uploadReadStream = createReadStream(file.path)
+    const tempFileDesc: TempFileDesc = {
+      name: file.name,
+      mimetype: file.type,
+      size: file.size,
+      lastModifiedDate: file.lastModifiedDate,
+      uploadType,
     }
 
-    const procRes = await processUploadedFile(req, io)
-    if (isRespError(procRes)) {
-      sendErrorResponse(res, procRes)
-      return
+    const response = await resolve(createTemp({ tempFileDesc, stream: uploadReadStream }))().finally(() =>
+      rm(file.path, { force: true }).catch(),
+    )
+
+    if (typeof response === 'string') {
+      return sendErrorResponse(res, help.respError(403, response))
     }
-    res.send(procRes)
+
+    return res.send(response.tempAssetId)
   })
 
   app.get('/*', async (req, res) => {
     const assetId = decodeURI(req.url.substr(1))
     // console.log({ assetId })
-    const stream = await io.getAsset(assetId)
-    if (!stream) {
-      sendErrorResponse(res, respError(404, ''))
+    const getResult = await resolve(get({ assetId }))()
+    if (!getResult) {
+      sendErrorResponse(res, help.respError(404, 'not found'))
       return
     }
+    const [stream] = getResult
     stream.pipe(res)
   })
 
   return app
 }
-
-const processUploadedFile = async (req: Request, io: StaticAssetsIO) => {
-  //TODO brakdown and import this fn
-
-  const _cleanup = () => rm(file.path, { force: true })
-  const _createTemp = ({ tempFileDesc, stream }: { tempFileDesc: TempFileDesc; stream: Readable }) =>
-    io
-      .createTemp({ stream, tempFileDesc })
-      .catch(err => respError(500, err))
-      .finally(_cleanup)
-
-  const originalUploadReadStream = createReadStream(file.path)
-  const _splitname = !file.name ? null : file.name.split('.')
-  const ext = (_splitname && _splitname.pop()) || null
-  const originalBaseName = _splitname && _splitname.join('.')
-  const tempFileDesc: TempFileDesc = {
-    filename: {
-      base: originalBaseName,
-      ext,
-    },
-    size: file.size,
-    mimetype: file.type,
-    uploadType,
-  }
-  if (uploadType === 'resource') {
-    return _createTemp({ tempFileDesc: tempFileDesc, stream: originalUploadReadStream })
-  }
-
-  return new Promise<RespError | TempFileId>(async resolve => {
-    const imagePipeline = sharpImagePipeline[uploadType]()
-    originalUploadReadStream.pipe(imagePipeline)
-    imagePipeline.on('error', err => {
-      _cleanup()
-      resolve(respError(400, String(err)))
-    })
-    const jpgFileDesc: TempFileDesc = {
-      ...tempFileDesc,
-      mimetype: 'image/jpeg',
-      filename: {
-        ...tempFileDesc.filename,
-        ext: 'jpg',
-      },
-    }
-    const saveRes = await { tempFileDesc: jpgFileDesc, stream: imagePipeline }
-    resolve(saveRes)
-  })
-}
-
-const sharpImagePipeline = {
-  icon: () => sharp({ sequentialRead: true }).resize(256, 256, { fit: 'inside' }).jpeg(),
-  image: () => sharp({ sequentialRead: true }).resize(1600, null, { fit: 'cover', withoutEnlargement: true }).jpeg(),
-}
-
-type RespError = [errCode: number, msg: any, _: typeof _RespError]
-const _RespError = Symbol('RespError')
-const respError = (errCode: number, msg: any): RespError => [errCode, msg, _RespError]
-const isRespError = (_: any): _ is RespError => Array.isArray(_) && _.length === 3 && _[2] === _RespError
-
-// type FileWithHash = File & { hash: string }
-type GetUploadFileResp = RespError | File //WithHash
-const getUploadedFile = (req: Request) =>
-  new Promise<GetUploadFileResp>(resolve => {
-    //FIXME: this check could get more accurate (context assertions engine)
-
-    new Formidable({ multiples: false /* , hash: 'md5' */ }).parse(req, (err, _fields, files) => {
-      if (err) {
-        return resolve(respError(400, `cannot accept files: ${String(err)}`))
-      }
-
-      const badReq = (): RespError => respError(400, `post one file`)
-      if (!files) {
-        return resolve(badReq())
-      }
-      const mFile = files.file
-      if (!mFile) {
-        return resolve(badReq())
-      }
-      const file = 'length' in mFile ? mFile[0] : mFile
-      if (!file) {
-        return resolve(badReq())
-      }
-
-      resolve(file) //({ ...file, hash: file.hash! })
-    })
-  })

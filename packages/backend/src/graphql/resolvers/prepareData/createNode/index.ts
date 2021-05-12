@@ -14,14 +14,12 @@ const nodeDocumentDataBaker: {
   [T in NodeType]: (input: Just<CreateNodeInput[T]>) => Promise<DocumentNodeDataByType<T> | CreateNodeMutationError>
 } = {
   async Subject(input) {
-    const contentNodeAssetRefMap = await mapAssetRefInputsToAssetRefs([
-      getContentNodeAssetRefInputAndType(input.content),
-    ])
+    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs([getContentNodeAssetRefInputAndType(input.content)])
 
-    if (!contentNodeAssetRefMap) {
+    if (!contentNodeAssetRefs) {
       return noTmpFilesCreateNodeMutationError()
     }
-    const [icon] = contentNodeAssetRefMap
+    const [icon] = contentNodeAssetRefs
     return {
       name: input.content.name,
       summary: input.content.summary,
@@ -29,14 +27,11 @@ const nodeDocumentDataBaker: {
     }
   },
   async Collection(input) {
-    const contentNodeAssetRefMap = await mapAssetRefInputsToAssetRefs([
-      getContentNodeAssetRefInputAndType(input.content),
-    ])
-
-    if (!contentNodeAssetRefMap) {
+    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs([getContentNodeAssetRefInputAndType(input.content)])
+    if (!contentNodeAssetRefs) {
       return noTmpFilesCreateNodeMutationError()
     }
-    const [icon] = contentNodeAssetRefMap
+    const [icon] = contentNodeAssetRefs
     return {
       name: input.content.name,
       summary: input.content.summary,
@@ -44,15 +39,15 @@ const nodeDocumentDataBaker: {
     }
   },
   async Resource(input) {
-    const contentNodeAssetRefMap = await mapAssetRefInputsToAssetRefs([
+    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs([
       getContentNodeAssetRefInputAndType(input.content),
       getAssetRefInputAndType(input.resource, 'resource'),
     ])
 
-    if (!contentNodeAssetRefMap) {
+    if (!contentNodeAssetRefs) {
       return noTmpFilesCreateNodeMutationError()
     }
-    const [icon, resource] = contentNodeAssetRefMap
+    const [icon, resource] = contentNodeAssetRefs
     if (!resource) {
       return noTmpFilesCreateNodeMutationError()
     }
@@ -64,14 +59,12 @@ const nodeDocumentDataBaker: {
     }
   },
   async Profile(input) {
-    const contentNodeAssetRefMap = await mapAssetRefInputsToAssetRefs([
-      getContentNodeAssetRefInputAndType(input.content),
-    ])
+    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs([getContentNodeAssetRefInputAndType(input.content)])
 
-    if (!contentNodeAssetRefMap) {
+    if (!contentNodeAssetRefs) {
       return noTmpFilesCreateNodeMutationError()
     }
-    const [icon] = contentNodeAssetRefMap
+    const [icon] = contentNodeAssetRefs
     return {
       name: input.content.name,
       summary: input.content.summary,

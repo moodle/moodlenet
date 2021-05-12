@@ -16,12 +16,11 @@ import {
 import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { Tuple } from 'tuple-type'
+import { DocumentEdgeByType, DocumentNodeByType } from '../../adapters/content-graph/arangodb/functions/types'
+import { resolve } from '../../lib/qmino'
+import { persistTempAssets } from '../../ports/static-assets/temp'
+import { PersistTmpFileReq } from '../../ports/static-assets/types'
 import { EdgeByType, NodeByType, ShallowEdgeByType, ShallowNodeByType } from '../types.node'
-
-type PersistTmpFileReq = any
-
-type DocumentEdgeByType<T> = any | T
-type DocumentNodeByType<T> = any | T
 
 export const fakeNodeByShallowOrDoc = <N extends NodeType>(
   shallowOrDoc: ShallowNodeByType<N> | DocumentNodeByType<N>,
@@ -78,7 +77,7 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
   const arrayOfMaybePersistTempFilesReqOrAssetRef = tupleOfAssetRefInputAndType.map<Maybe<PersistTmpFileReqOrAssetRef>>(
     ({ input, uploadType }) =>
       input.type === 'TmpUpload'
-        ? { tempFileId: input.location, uploadType }
+        ? { tempAssetId: input.location, uploadType }
         : input.type === 'ExternalUrl'
         ? { ext: true, location: input.location }
         : input.type === 'NoAsset'
@@ -94,7 +93,7 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
 
   const toPersistReqsTuple = arrayOfMaybePersistTempFilesReqOrAssetRef.filter(_isPersistReq)
 
-  const assetFileDescArray = {} as any //await call(PersistTempFilesAll(toPersistReqsTuple))
+  const assetFileDescArray = await resolve(persistTempAssets({ persistTmpFilesReqs: toPersistReqsTuple }))()
 
   if (!assetFileDescArray) {
     return null

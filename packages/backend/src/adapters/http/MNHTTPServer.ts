@@ -10,9 +10,9 @@ declare module 'express-serve-static-core' {
   }
 }
 
-export type MountServiceName = 'graphql'
+export type MountServiceName = 'graphql' | 'assets'
 export type MountServices = {
-  [name in MountServiceName]: Application
+  [name in MountServiceName]: Application | null
 }
 
 interface MNHttpServerCfg {
@@ -32,6 +32,9 @@ export const startMNHttpServer = ({ startServices, httpPort: port, jwtPublicKey,
 
   app.use('/', subServicesApp) //FIXME: should use('/_/'  ...
   Object.entries(startServices).forEach(([mountName, application]) => {
+    if (!application) {
+      return
+    }
     console.log(`${nameTag}: mounting service [${mountName}]`)
     subServicesApp.use(`/${mountName}`, application)
   })

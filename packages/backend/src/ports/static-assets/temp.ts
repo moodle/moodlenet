@@ -1,32 +1,37 @@
-import { isJust } from '@moodlenet/common/lib/utils/array'
 import { Readable } from 'stream'
-import { StaticAssetsIO } from '../../adapters/http/staticAssets/impl/types'
-import { PersistTmpFileReq, TempFileDesc } from '../../adapters/staticAssets/types'
+import { Tuple } from 'tuple-type'
 import { QMCommand, QMModule } from '../../lib/qmino'
+import { AssetFileDesc, PersistTmpFileReq, TempAssetDesc, TempFileDesc } from './types'
 
-export const persistAll = QMCommand(
+// persist temps
+
+export type PersistTempAssetsAdapter = {
+  persistTemps: <N extends number>(_: {
+    persistTmpFilesReqs: Tuple<PersistTmpFileReq, N>
+  }) => Promise<null | Tuple<AssetFileDesc, N>>
+}
+export const persistTempAssets = QMCommand(
   ({ persistTmpFilesReqs }: { persistTmpFilesReqs: PersistTmpFileReq[] }) =>
-    async ({ persistTemp, delAsset }: Pick<StaticAssetsIO, 'persistTemp' | 'delAsset'>) => {
+    async ({ persistTemps }: PersistTempAssetsAdapter) => {
       if (!persistTmpFilesReqs.length) {
         return []
       }
-      const results = await Promise.all(
-        persistTmpFilesReqs.map(({ tempFileId, uploadType }) => persistTemp({ tempFileId, uploadType })),
-      )
-      const dones = results.filter(isJust)
-      if (dones.length < results.length) {
-        dones.forEach(_ => delAsset(_.assetId))
-        return null
-      }
-      return results as any // FIXME: cannot hook to Tuple type !
+      console.log({ persistTmpFilesReqs })
+      const results = persistTemps({ persistTmpFilesReqs })
+      return results
     },
 )
 
-export const create = QMCommand(
+// create temp
+
+export type CreateTempAdapter = {
+  createTempAsset: (_: { stream: Readable; tempFileDesc: TempFileDesc }) => Promise<string | TempAssetDesc>
+}
+export const createTemp = QMCommand(
   ({ stream, tempFileDesc }: { stream: Readable; tempFileDesc: TempFileDesc }) =>
-    async ({ createTemp }: Pick<StaticAssetsIO, 'createTemp'>) => {
-      const result = await createTemp({ stream, tempFileDesc })
-      return result
+    async ({ createTempAsset }: CreateTempAdapter) => {
+      const tempAssetDescOrError = await createTempAsset({ stream, tempFileDesc })
+      return tempAssetDescOrError
     },
 )
 
