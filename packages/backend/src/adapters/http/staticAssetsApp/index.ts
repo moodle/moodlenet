@@ -9,7 +9,7 @@ import * as help from './helpers'
 
 const sendErrorResponse = (res: Response, [status, err]: help.RespError) => res.status(status).send(err)
 
-export const getStaticAssetsApp = () => {
+export const createStaticAssetsApp = () => {
   const app = express()
   app.post('/upload-temp', async (req, res) => {
     // this check could get more accurate (context assertions engine)

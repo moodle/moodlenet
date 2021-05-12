@@ -8,7 +8,7 @@ import { createNodeAdapter, getNodeByIdAdapter } from './adapters/content-graph/
 import { graphqlArangoContentGraphResolvers } from './adapters/content-graph/arangodb/graphql/additional-resolvers'
 import { createGraphQLApp } from './adapters/http/graphqlApp'
 import { startMNHttpServer } from './adapters/http/MNHTTPServer'
-import { getStaticAssetsApp as createStaticAssetsApp } from './adapters/http/staticAssets/staticAssetsApp'
+import { createStaticAssetsApp } from './adapters/http/staticAssetsApp'
 import { createTempAdapter } from './adapters/staticAssets/fs/adapters/createTemp'
 import { delAssetAdapter } from './adapters/staticAssets/fs/adapters/delAsset'
 import { getAssetAdapter } from './adapters/staticAssets/fs/adapters/getAsset'

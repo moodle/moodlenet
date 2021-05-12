@@ -2,9 +2,7 @@
   "extends": "../../tsconfig.json",
   "exclude": [
     "./lib",
-    //FIXME: remove following after fixed mock-populate
-    "./src/adapters/content-graph/arangodb/db/maintainance/mock-populate",
-    //FIXME: remove following after fixed db maintainance
+    //FIXME: remove following after fixed db maintainance and mock-populate
     "./src/adapters/content-graph/arangodb/db/maintainance"
   ],
   "compilerOptions": {
