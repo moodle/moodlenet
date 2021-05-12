@@ -1,4 +1,4 @@
-import { signUp } from '@moodlenet/common/lib/graphql/validation/input/userAuth'
+import { signUp } from '@moodlenet/common/lib/graphql/auth/validation/input/userAuth'
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { Home } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useMemo } from 'react'

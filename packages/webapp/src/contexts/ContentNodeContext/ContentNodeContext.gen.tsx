@@ -2,6 +2,7 @@ import * as Types from '../../graphql/pub.graphql.link';
 
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type ContentNodeContextQueryVariables = Types.Exact<{
   id: Types.Scalars['ID'];
 }>;
@@ -88,10 +89,12 @@ export const ContentNodeContextDocument = gql`
  * });
  */
 export function useContentNodeContextQuery(baseOptions: Apollo.QueryHookOptions<ContentNodeContextQuery, ContentNodeContextQueryVariables>) {
-        return Apollo.useQuery<ContentNodeContextQuery, ContentNodeContextQueryVariables>(ContentNodeContextDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ContentNodeContextQuery, ContentNodeContextQueryVariables>(ContentNodeContextDocument, options);
       }
 export function useContentNodeContextLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ContentNodeContextQuery, ContentNodeContextQueryVariables>) {
-          return Apollo.useLazyQuery<ContentNodeContextQuery, ContentNodeContextQueryVariables>(ContentNodeContextDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ContentNodeContextQuery, ContentNodeContextQueryVariables>(ContentNodeContextDocument, options);
         }
 export type ContentNodeContextQueryHookResult = ReturnType<typeof useContentNodeContextQuery>;
 export type ContentNodeContextLazyQueryHookResult = ReturnType<typeof useContentNodeContextLazyQuery>;

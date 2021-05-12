@@ -4,6 +4,7 @@ import { ShallowProfileFragment } from '../../../graphql/fragment/nodes.gen';
 import { gql } from '@apollo/client';
 import { ShallowProfileFragmentDoc } from '../../../graphql/fragment/nodes.gen';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GetCurrentSessionQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
@@ -11,8 +12,21 @@ export type GetCurrentSessionQuery = (
   { __typename: 'Query' }
   & { getSession?: Types.Maybe<(
     { __typename: 'UserSession' }
-    & UserSessionWithProfileInfoFragment
+    & UserSessionFragFragment
   )> }
+);
+
+export type GetCurrentProfileQueryVariables = Types.Exact<{
+  id: Types.Scalars['ID'];
+}>;
+
+
+export type GetCurrentProfileQuery = (
+  { __typename: 'Query' }
+  & { node?: Types.Maybe<{ __typename: 'Collection' } | (
+    { __typename: 'Profile' }
+    & CurrentProfileInfoFragment
+  ) | { __typename: 'Resource' } | { __typename: 'Subject' }> }
 );
 
 export type LoginMutationVariables = Types.Exact<{
@@ -44,43 +58,47 @@ export type ActivateNewUserMutation = (
   ) }
 );
 
-export type UserSessionWithProfileInfoFragment = (
+export type UserSessionFragFragment = (
   { __typename: 'UserSession' }
-  & Pick<Types.UserSession, 'username' | 'email' | 'userId'>
-  & { profile?: Types.Maybe<(
-    { __typename: 'Profile' }
-    & { myOwnCollections: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Profile' } | (
-          { __typename: 'Collection' }
-          & Pick<Types.Collection, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'Resource' } | { __typename: 'Subject' } }
-      )> }
-    ) }
-    & ShallowProfileFragment
-  )> }
+  & Pick<Types.UserSession, 'username' | 'email' | 'userId' | 'profileId'>
 );
 
-export const UserSessionWithProfileInfoFragmentDoc = gql`
-    fragment UserSessionWithProfileInfo on UserSession {
+export type CurrentProfileInfoFragment = (
+  { __typename: 'Profile' }
+  & { myOwnCollections: (
+    { __typename: 'RelPage' }
+    & { edges: Array<(
+      { __typename: 'RelPageEdge' }
+      & { node: (
+        { __typename: 'Collection' }
+        & Pick<Types.Collection, 'id' | 'name' | 'icon'>
+      ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+    )> }
+  ) }
+  & ShallowProfileFragment
+);
+
+export const UserSessionFragFragmentDoc = gql`
+    fragment UserSessionFrag on UserSession {
   username
   email
   userId
-  profile {
-    ...ShallowProfile
-    myOwnCollections: _rel(
-      edge: {type: Created, node: Collection}
-      page: {first: 100}
-    ) {
-      edges {
-        node {
-          ... on Collection {
-            id
-            name
-            icon
-          }
+  profileId
+}
+    `;
+export const CurrentProfileInfoFragmentDoc = gql`
+    fragment CurrentProfileInfo on Profile {
+  ...ShallowProfile
+  myOwnCollections: _rel(
+    edge: {type: Created, node: Collection}
+    page: {first: 100}
+  ) {
+    edges {
+      node {
+        ... on Collection {
+          id
+          name
+          icon
         }
       }
     }
@@ -90,10 +108,10 @@ export const UserSessionWithProfileInfoFragmentDoc = gql`
 export const GetCurrentSessionDocument = gql`
     query getCurrentSession {
   getSession {
-    ...UserSessionWithProfileInfo
+    ...UserSessionFrag
   }
 }
-    ${UserSessionWithProfileInfoFragmentDoc}`;
+    ${UserSessionFragFragmentDoc}`;
 
 /**
  * __useGetCurrentSessionQuery__
@@ -111,14 +129,53 @@ export const GetCurrentSessionDocument = gql`
  * });
  */
 export function useGetCurrentSessionQuery(baseOptions?: Apollo.QueryHookOptions<GetCurrentSessionQuery, GetCurrentSessionQueryVariables>) {
-        return Apollo.useQuery<GetCurrentSessionQuery, GetCurrentSessionQueryVariables>(GetCurrentSessionDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCurrentSessionQuery, GetCurrentSessionQueryVariables>(GetCurrentSessionDocument, options);
       }
 export function useGetCurrentSessionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentSessionQuery, GetCurrentSessionQueryVariables>) {
-          return Apollo.useLazyQuery<GetCurrentSessionQuery, GetCurrentSessionQueryVariables>(GetCurrentSessionDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCurrentSessionQuery, GetCurrentSessionQueryVariables>(GetCurrentSessionDocument, options);
         }
 export type GetCurrentSessionQueryHookResult = ReturnType<typeof useGetCurrentSessionQuery>;
 export type GetCurrentSessionLazyQueryHookResult = ReturnType<typeof useGetCurrentSessionLazyQuery>;
 export type GetCurrentSessionQueryResult = Apollo.QueryResult<GetCurrentSessionQuery, GetCurrentSessionQueryVariables>;
+export const GetCurrentProfileDocument = gql`
+    query getCurrentProfile($id: ID!) {
+  node(id: $id) {
+    ... on Profile {
+      ...CurrentProfileInfo
+    }
+  }
+}
+    ${CurrentProfileInfoFragmentDoc}`;
+
+/**
+ * __useGetCurrentProfileQuery__
+ *
+ * To run a query within a React component, call `useGetCurrentProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCurrentProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCurrentProfileQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetCurrentProfileQuery(baseOptions: Apollo.QueryHookOptions<GetCurrentProfileQuery, GetCurrentProfileQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCurrentProfileQuery, GetCurrentProfileQueryVariables>(GetCurrentProfileDocument, options);
+      }
+export function useGetCurrentProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentProfileQuery, GetCurrentProfileQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCurrentProfileQuery, GetCurrentProfileQueryVariables>(GetCurrentProfileDocument, options);
+        }
+export type GetCurrentProfileQueryHookResult = ReturnType<typeof useGetCurrentProfileQuery>;
+export type GetCurrentProfileLazyQueryHookResult = ReturnType<typeof useGetCurrentProfileLazyQuery>;
+export type GetCurrentProfileQueryResult = Apollo.QueryResult<GetCurrentProfileQuery, GetCurrentProfileQueryVariables>;
 export const LoginDocument = gql`
     mutation login($username: String!, $password: String!) {
   createSession(username: $username, password: $password) {
@@ -148,7 +205,8 @@ export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutati
  * });
  */
 export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
-        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
       }
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
@@ -183,7 +241,8 @@ export type ActivateNewUserMutationFn = Apollo.MutationFunction<ActivateNewUserM
  * });
  */
 export function useActivateNewUserMutation(baseOptions?: Apollo.MutationHookOptions<ActivateNewUserMutation, ActivateNewUserMutationVariables>) {
-        return Apollo.useMutation<ActivateNewUserMutation, ActivateNewUserMutationVariables>(ActivateNewUserDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ActivateNewUserMutation, ActivateNewUserMutationVariables>(ActivateNewUserDocument, options);
       }
 export type ActivateNewUserMutationHookResult = ReturnType<typeof useActivateNewUserMutation>;
 export type ActivateNewUserMutationResult = Apollo.MutationResult<ActivateNewUserMutation>;

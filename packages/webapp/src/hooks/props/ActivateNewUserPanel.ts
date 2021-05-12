@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro'
-import { activateUser } from '@moodlenet/common/lib/graphql/validation/input/userAuth'
+import { activateUser } from '@moodlenet/common/lib/graphql/auth/validation/input/userAuth'
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { TermsAndConditions } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useEffect, useState } from 'react'

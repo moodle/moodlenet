@@ -55,7 +55,7 @@ const nodeDocumentDataBaker: {
       name: input.content.name,
       summary: input.content.summary,
       icon,
-      location: resource,
+      asset: resource,
     }
   },
   async Profile(input) {

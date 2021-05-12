@@ -2,6 +2,7 @@ import * as Types from '../../../graphql/pub.graphql.link';
 
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type CreateEdgeMutationVariables = Types.Exact<{
   input: Types.CreateEdgeInput;
 }>;
@@ -126,7 +127,8 @@ export type CreateEdgeMutationFn = Apollo.MutationFunction<CreateEdgeMutation, C
  * });
  */
 export function useCreateEdgeMutation(baseOptions?: Apollo.MutationHookOptions<CreateEdgeMutation, CreateEdgeMutationVariables>) {
-        return Apollo.useMutation<CreateEdgeMutation, CreateEdgeMutationVariables>(CreateEdgeDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateEdgeMutation, CreateEdgeMutationVariables>(CreateEdgeDocument, options);
       }
 export type CreateEdgeMutationHookResult = ReturnType<typeof useCreateEdgeMutation>;
 export type CreateEdgeMutationResult = Apollo.MutationResult<CreateEdgeMutation>;
@@ -158,7 +160,8 @@ export type DeleteEdgeMutationFn = Apollo.MutationFunction<DeleteEdgeMutation, D
  * });
  */
 export function useDeleteEdgeMutation(baseOptions?: Apollo.MutationHookOptions<DeleteEdgeMutation, DeleteEdgeMutationVariables>) {
-        return Apollo.useMutation<DeleteEdgeMutation, DeleteEdgeMutationVariables>(DeleteEdgeDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteEdgeMutation, DeleteEdgeMutationVariables>(DeleteEdgeDocument, options);
       }
 export type DeleteEdgeMutationHookResult = ReturnType<typeof useDeleteEdgeMutation>;
 export type DeleteEdgeMutationResult = Apollo.MutationResult<DeleteEdgeMutation>;

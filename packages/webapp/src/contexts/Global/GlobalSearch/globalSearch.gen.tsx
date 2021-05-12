@@ -1,9 +1,10 @@
 import * as Types from '../../../graphql/pub.graphql.link';
 
-import { BaseINode_Profile_Fragment, BaseINode_Collection_Fragment, BaseINode_Resource_Fragment, BaseINode_Subject_Fragment, BaseIContentNode_Profile_Fragment, BaseIContentNode_Collection_Fragment, BaseIContentNode_Resource_Fragment, BaseIContentNode_Subject_Fragment } from '../../../graphql/fragment/nodes.gen';
+import { BaseINode_Collection_Fragment, BaseINode_Profile_Fragment, BaseINode_Resource_Fragment, BaseINode_Subject_Fragment, BaseIContentNode_Collection_Fragment, BaseIContentNode_Profile_Fragment, BaseIContentNode_Resource_Fragment, BaseIContentNode_Subject_Fragment } from '../../../graphql/fragment/nodes.gen';
 import { gql } from '@apollo/client';
 import { BaseINodeFragmentDoc, BaseIContentNodeFragmentDoc } from '../../../graphql/fragment/nodes.gen';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type GlobalSearchQueryVariables = Types.Exact<{
   text: Types.Scalars['String'];
   sortBy: Types.GlobalSearchSort;
@@ -29,13 +30,13 @@ export type GlobalSearchEdgeFragment = (
   { __typename: 'SearchPageEdge' }
   & Pick<Types.SearchPageEdge, 'cursor'>
   & { node: (
-    { __typename: 'Profile' }
-    & BaseINode_Profile_Fragment
-    & BaseIContentNode_Profile_Fragment
-  ) | (
     { __typename: 'Collection' }
     & BaseINode_Collection_Fragment
     & BaseIContentNode_Collection_Fragment
+  ) | (
+    { __typename: 'Profile' }
+    & BaseINode_Profile_Fragment
+    & BaseIContentNode_Profile_Fragment
   ) | (
     { __typename: 'Resource' }
     & BaseINode_Resource_Fragment
@@ -95,10 +96,12 @@ export const GlobalSearchDocument = gql`
  * });
  */
 export function useGlobalSearchQuery(baseOptions: Apollo.QueryHookOptions<GlobalSearchQuery, GlobalSearchQueryVariables>) {
-        return Apollo.useQuery<GlobalSearchQuery, GlobalSearchQueryVariables>(GlobalSearchDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GlobalSearchQuery, GlobalSearchQueryVariables>(GlobalSearchDocument, options);
       }
 export function useGlobalSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GlobalSearchQuery, GlobalSearchQueryVariables>) {
-          return Apollo.useLazyQuery<GlobalSearchQuery, GlobalSearchQueryVariables>(GlobalSearchDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GlobalSearchQuery, GlobalSearchQueryVariables>(GlobalSearchDocument, options);
         }
 export type GlobalSearchQueryHookResult = ReturnType<typeof useGlobalSearchQuery>;
 export type GlobalSearchLazyQueryHookResult = ReturnType<typeof useGlobalSearchLazyQuery>;

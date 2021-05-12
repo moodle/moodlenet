@@ -1,4 +1,4 @@
-import { createSession } from '@moodlenet/common/lib/graphql/validation/input/userAuth'
+import { createSession } from '@moodlenet/common/lib/graphql/auth/validation/input/userAuth'
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { Home, Signup } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useMemo, useState } from 'react'

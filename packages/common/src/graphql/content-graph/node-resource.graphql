@@ -2,7 +2,7 @@ type Resource implements INode & IContentNode {
   name: String!
   summary: String!
   icon: AssetRef
-  location: AssetRef!
+  asset: AssetRef!
   id: ID!
 }
 

@@ -13,7 +13,7 @@ const graphqlConfig = {
     },
     [typesFilename]: {
       schema: globCommonSdl,
-      plugins: ['typescript'],
+      plugins: ['typescript', 'fragment-matcher'],
       config: {
         scalars,
         // constEnums: true,

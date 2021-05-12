@@ -1,4 +1,4 @@
-import { Id } from '@moodlenet/common/lib/utils/content-graph'
+import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
 import { useSession } from '../../contexts/Global/Session'
@@ -17,7 +17,7 @@ import {
 } from './SubjectPage/SubjectPage.gen'
 
 export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
-  const { session } = useSession()
+  const { currentProfile } = useSession()
 
   const nodeRes = useSubjectPageNodeQuery({ variables: { id } })
   const subject = nodeRes.data?.node
@@ -86,23 +86,22 @@ export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
 
   const followMut = useMutateEdge()
   const myFollowId = subject?.myFollow.edges[0]?.edge.id
-  const myProfile = session?.profile
   const me = useMemo(() => {
-    return myProfile
+    return currentProfile
       ? {
           toggleFollow() {
-            if (!myProfile || followMut.createResult.loading || followMut.deleteResult.loading) {
+            if (!currentProfile || followMut.createResult.loading || followMut.deleteResult.loading) {
               return
             }
             const toggleFollowPromise = myFollowId
               ? followMut.deleteEdge({ edgeId: myFollowId })
-              : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: myProfile.id, to: id })
+              : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: currentProfile.id, to: id })
             toggleFollowPromise.then(() => nodeRes.refetch())
           },
           following: !!myFollowId,
         }
       : null
-  }, [followMut, id, myFollowId, nodeRes, myProfile])
+  }, [followMut, id, myFollowId, nodeRes, currentProfile])
   const pageHeaderProps = usePageHeaderProps()
   const props = useMemo<SubjectPageProps | null>(() => {
     return subject

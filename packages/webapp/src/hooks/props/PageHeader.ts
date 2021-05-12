@@ -17,7 +17,7 @@ const homeLink = webappPath<Home>('/', {})
 const loginLink = webappPath<Login>('/login', {})
 
 export const usePageHeaderProps = (): PageHeaderProps => {
-  const { logout, session } = useSession()
+  const { logout, session, currentProfile } = useSession()
   const hist = useHistory()
   const mapTupleToAssetRefInput = useMapTupleUIAssetInputToAssetRefInput()
   const mutateNode = useMutateNode()
@@ -77,7 +77,7 @@ export const usePageHeaderProps = (): PageHeaderProps => {
   const [, /* _addResourceFormik */ addResourceFormBag] = useFormikWithBag<AddResourceFormData>({
     initialValues: { name: '', summary: '', icon: null, resource: null },
     onSubmit: async (values, { resetForm }) => {
-      if (!(session?.profile && mapTupleToAssetRefInput)) {
+      if (!(currentProfile && mapTupleToAssetRefInput)) {
         return
       }
       const { name, summary } = values
@@ -99,7 +99,7 @@ export const usePageHeaderProps = (): PageHeaderProps => {
       if (
         nodeContext &&
         nodeContext.type === 'Collection' &&
-        nodeContext.creatorId === session.profile.id &&
+        nodeContext.creatorId === currentProfile.id &&
         newResourceNode.__typename === 'Resource' &&
         window.confirm(`add to ${nodeContext.name} collection?`)
       ) {

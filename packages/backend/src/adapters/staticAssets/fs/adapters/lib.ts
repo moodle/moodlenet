@@ -102,14 +102,17 @@ export const getAssetFileFSPaths = ({
 
 export const getAssetStreamAndDesc = async ({ assetId, assetDir }: { assetId: AssetId; assetDir: string }) => {
   const [assetFullPath] = getAssetFileFSPaths({ assetDir, assetId })
-
-  const stream = createReadStream(assetFullPath)
-  const assetFileDesc = await getAssetFileDesc(assetDir, assetId)
-  if (!assetFileDesc) {
+  try {
+    const assetFileDesc = await getAssetFileDesc(assetDir, assetId)
+    if (!assetFileDesc) {
+      return null
+    }
+    const stream = createReadStream(assetFullPath)
+    const response: [ReadStream, AssetFileDesc] = [stream, assetFileDesc]
+    return response
+  } catch {
     return null
   }
-  const response: [ReadStream, AssetFileDesc] = [stream, assetFileDesc]
-  return response
 }
 
 export const persistTemp = async ({

@@ -1,4 +1,4 @@
-import { Id } from '@moodlenet/common/lib/utils/content-graph'
+import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
 import { useContentNodeContext } from '../../contexts/ContentNodeContext'
@@ -12,7 +12,7 @@ import { getMaybeAssetRefUrl } from '../lib'
 import { useCollectionPageNodeQuery, useCollectionPageResourcesQuery } from './CollectionPage/CollectionPage.gen'
 
 export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
-  const { session } = useSession()
+  const { currentProfile } = useSession()
   const collectionContext = useContentNodeContext()
   const removeResourceMut = useMutateEdge()
 
@@ -69,23 +69,22 @@ export const CollectionPageComponent: FC<{ id: Id }> = ({ id }) => {
   const pageHeaderProps = usePageHeaderProps()
   const followMut = useMutateEdge()
   const myFollowId = collection?.myFollow.edges[0]?.edge.id
-  const myProfile = session?.profile
   const me = useMemo(() => {
-    return myProfile
+    return currentProfile
       ? {
           toggleFollow() {
-            if (!myProfile || followMut.createResult.loading || followMut.deleteResult.loading) {
+            if (!currentProfile || followMut.createResult.loading || followMut.deleteResult.loading) {
               return
             }
             const toggleFollowPromise = myFollowId
               ? followMut.deleteEdge({ edgeId: myFollowId })
-              : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: myProfile.id, to: id })
+              : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: currentProfile.id, to: id })
             toggleFollowPromise.then(() => collectionRes.refetch())
           },
           following: !!myFollowId,
         }
       : null
-  }, [followMut, id, myFollowId, collectionRes, myProfile])
+  }, [followMut, id, myFollowId, collectionRes, currentProfile])
 
   const props = useMemo<CollectionPageProps | null>(() => {
     return collection

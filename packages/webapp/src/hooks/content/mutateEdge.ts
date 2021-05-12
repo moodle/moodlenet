@@ -1,5 +1,6 @@
-import { CreateEdgeInput, EdgeType, Id, parseEdgeId } from '@moodlenet/common/lib/utils/content-graph'
+import { Id, parseEdgeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { useCallback, useMemo } from 'react'
+import { CreateEdgeInput, EdgeType } from '../../graphql/pub.graphql.link'
 import { useCreateEdgeMutation, useDeleteEdgeMutation } from './mutateEdge/mutateEdge.gen'
 
 export const useMutateEdge = () => {

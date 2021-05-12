@@ -2,10 +2,12 @@ import { t } from '@lingui/macro'
 import { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { setToken } from './Apollo/client'
 import {
+  CurrentProfileInfoFragment,
   useActivateNewUserMutation,
+  useGetCurrentProfileLazyQuery,
   useGetCurrentSessionLazyQuery,
   useLoginMutation,
-  UserSessionWithProfileInfoFragment,
+  UserSessionFragFragment,
 } from './Session/session.gen'
 
 const LAST_SESSION_USERNAME_STORAGE_KEY = 'LAST_SESSION_USERNAME'
@@ -35,7 +37,8 @@ type LastSession = {
 }
 
 export type SessionContextType = {
-  session: UserSessionWithProfileInfoFragment | null
+  session: UserSessionFragFragment | null
+  currentProfile: CurrentProfileInfoFragment | null
   lastSessionUsername: string | null
   lastSessionJwt: string | null
   logout(): unknown
@@ -53,6 +56,8 @@ export const SessionProvider: FC = ({ children }) => {
   const [lastSession, setLastSession] = useState<Partial<LastSession>>(getLastSession())
   const [getSessionQ, sessionQResult] = useGetCurrentSessionLazyQuery({ fetchPolicy: 'network-only' })
   const [loginMut /* , loginResult */] = useLoginMutation()
+
+  const [getCurrentProfileQ, currentProfileResult] = useGetCurrentProfileLazyQuery()
 
   const login = useCallback<SessionContextType['login']>(
     ({ username, password }) => {
@@ -88,8 +93,18 @@ export const SessionProvider: FC = ({ children }) => {
     getSessionQ()
   }, [getSessionQ, lastSession])
 
+  useEffect(() => {
+    if (session?.profileId) {
+      getCurrentProfileQ({ variables: { id: session?.profileId } })
+    }
+  }, [getCurrentProfileQ, session?.profileId])
+  const currentProfile =
+    session?.profileId && currentProfileResult.data?.node?.__typename === 'Profile'
+      ? currentProfileResult.data.node
+      : null
   const ctx = useMemo<SessionContextType>(
     () => ({
+      currentProfile,
       logout,
       login,
       activateNewUser,
@@ -97,7 +112,7 @@ export const SessionProvider: FC = ({ children }) => {
       lastSessionUsername: lastSession.username ?? null,
       lastSessionJwt: lastSession.jwt ?? null,
     }),
-    [activateNewUser, lastSession, login, logout, session],
+    [activateNewUser, currentProfile, lastSession.jwt, lastSession.username, login, logout, session],
   )
   return <SessionContext.Provider value={ctx}>{!sessionQResult.called ? null : children}</SessionContext.Provider>
 }

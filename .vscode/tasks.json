@@ -12,12 +12,12 @@
       "label": "dev-tasks",
       "group": "build",
       "dependsOn": [
-        "common dev-build",
         "backend dev-build",
         "backend-gql-gen",
-        "common-gql-gen"
-        // "webapp dev-build",
-        // "webapp-gql-gen"
+        "common dev-build",
+        "common-gql-gen",
+        "webapp dev-build",
+        "webapp-gql-gen"
       ],
       "problemMatcher": []
     },
@@ -28,7 +28,7 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "common dev-build"
-      // "dependsOn": ["common-gql-gen"],
+      // "dependsOn": ["common-gql-gen"]
     },
     {
       "type": "typescript",
@@ -37,7 +37,7 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "webapp dev-build"
-      // "dependsOn": ["webapp-gql-gen"]
+      // "dependsOn": ["webapp-gql-gen", "common dev-build"]
     },
     {
       "type": "typescript",
@@ -46,7 +46,7 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "backend dev-build"
-      // "dependsOn": ["backend-gql-gen"]
+      // "dependsOn": ["backend-gql-gen", "common dev-build"]
     },
     {
       "label": "common-gql-gen",
@@ -65,15 +65,15 @@
         "cwd": "packages/backend"
       },
       "group": "build"
+    },
+    {
+      "label": "webapp-gql-gen",
+      "command": "yarn",
+      "args": ["gen:graphql:types", "-w"],
+      "options": {
+        "cwd": "packages/webapp"
+      },
+      "group": "build"
     }
-    // {
-    //   "label": "webapp-gql-gen",
-    //   "command": "yarn",
-    //   "args": ["gen:graphql:types", "-w"],
-    //   "options": {
-    //     "cwd": "packages/webapp"
-    //   },
-    //   "group": "build"
-    // }
   ]
 }

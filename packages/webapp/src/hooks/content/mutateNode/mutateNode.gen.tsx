@@ -2,6 +2,7 @@ import * as Types from '../../../graphql/pub.graphql.link';
 
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type CreateNodeMutationVariables = Types.Exact<{
   input: Types.CreateNodeInput;
 }>;
@@ -123,7 +124,8 @@ export type CreateNodeMutationFn = Apollo.MutationFunction<CreateNodeMutation, C
  * });
  */
 export function useCreateNodeMutation(baseOptions?: Apollo.MutationHookOptions<CreateNodeMutation, CreateNodeMutationVariables>) {
-        return Apollo.useMutation<CreateNodeMutation, CreateNodeMutationVariables>(CreateNodeDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateNodeMutation, CreateNodeMutationVariables>(CreateNodeDocument, options);
       }
 export type CreateNodeMutationHookResult = ReturnType<typeof useCreateNodeMutation>;
 export type CreateNodeMutationResult = Apollo.MutationResult<CreateNodeMutation>;
@@ -155,7 +157,8 @@ export type DeleteNodeMutationFn = Apollo.MutationFunction<DeleteNodeMutation, D
  * });
  */
 export function useDeleteNodeMutation(baseOptions?: Apollo.MutationHookOptions<DeleteNodeMutation, DeleteNodeMutationVariables>) {
-        return Apollo.useMutation<DeleteNodeMutation, DeleteNodeMutationVariables>(DeleteNodeDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteNodeMutation, DeleteNodeMutationVariables>(DeleteNodeDocument, options);
       }
 export type DeleteNodeMutationHookResult = ReturnType<typeof useDeleteNodeMutation>;
 export type DeleteNodeMutationResult = Apollo.MutationResult<DeleteNodeMutation>;

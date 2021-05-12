@@ -490,9 +490,9 @@ export type Resource = IContentNode & INode & {
   _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
   _relCount: Scalars['Int'];
+  asset: Scalars['AssetRef'];
   icon?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
-  location: Scalars['AssetRef'];
   name: Scalars['String'];
   summary: Scalars['String'];
 };
@@ -639,3 +639,80 @@ export type UserSession = {
   userId: Scalars['String'];
   profileId?: Maybe<Scalars['ID']>;
 };
+
+
+      export interface PossibleTypesResultData {
+        possibleTypes: {
+          [key: string]: string[]
+        }
+      }
+      const result: PossibleTypesResultData = {
+  "possibleTypes": {
+    "CreateEdgeMutationPayload": [
+      "CreateEdgeMutationSuccess",
+      "CreateEdgeMutationError"
+    ],
+    "CreateNodeMutationPayload": [
+      "CreateNodeMutationSuccess",
+      "CreateNodeMutationError"
+    ],
+    "DeleteEdgeMutationPayload": [
+      "DeleteEdgeMutationSuccess",
+      "DeleteEdgeMutationError"
+    ],
+    "DeleteNodeMutationPayload": [
+      "DeleteNodeMutationSuccess",
+      "DeleteNodeMutationError"
+    ],
+    "Edge": [
+      "AppliesTo",
+      "Contains",
+      "Created",
+      "Follows",
+      "Likes"
+    ],
+    "IContentNode": [
+      "Collection",
+      "Profile",
+      "Resource",
+      "Subject"
+    ],
+    "IEdge": [
+      "AppliesTo",
+      "Contains",
+      "Created",
+      "Follows",
+      "Likes"
+    ],
+    "INode": [
+      "Collection",
+      "Profile",
+      "Resource",
+      "Subject"
+    ],
+    "Node": [
+      "Collection",
+      "Profile",
+      "Resource",
+      "Subject"
+    ],
+    "Page": [
+      "RelPage",
+      "SearchPage"
+    ],
+    "PageEdge": [
+      "RelPageEdge",
+      "SearchPageEdge"
+    ],
+    "UpdateEdgeMutationPayload": [
+      "UpdateEdgeMutationSuccess",
+      "UpdateEdgeMutationError"
+    ],
+    "UpdateNodeMutationPayload": [
+      "UpdateNodeMutationSuccess",
+      "UpdateNodeMutationError"
+    ]
+  }
+};
+      export default result;
+    

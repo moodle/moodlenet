@@ -1,4 +1,4 @@
-import { Id } from '@moodlenet/common/lib/utils/content-graph'
+import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
 import { useSession } from '../../contexts/Global/Session'
@@ -13,7 +13,7 @@ import {
 } from './ResourcePage/ResourcePage.gen'
 
 export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
-  const { session } = useSession()
+  const { currentProfile } = useSession()
 
   const nodeRes = useResourcePageNodeQuery({ variables: { id } })
   const resource = nodeRes.data?.node
@@ -26,21 +26,20 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
   const likeMut = useMutateEdge()
   const addToCollectionMut = useMutateEdge()
   const myLikeId = resource?.myLike.edges[0]?.edge.id
-  const myProfile = session?.profile
   const me = useMemo<ResourcePageProps['me']>(() => {
-    return myProfile
+    return currentProfile
       ? {
           toggleLike() {
-            if (!myProfile || likeMut.createResult.loading || likeMut.deleteResult.loading) {
+            if (!currentProfile || likeMut.createResult.loading || likeMut.deleteResult.loading) {
               return
             }
             const toggleLikePromise = myLikeId
               ? likeMut.deleteEdge({ edgeId: myLikeId })
-              : likeMut.createEdge<'Likes'>({ data: {}, edgeType: 'Likes', from: myProfile.id, to: id })
+              : likeMut.createEdge<'Likes'>({ data: {}, edgeType: 'Likes', from: currentProfile.id, to: id })
             toggleLikePromise.then(() => nodeRes.refetch())
           },
           liking: !!myLikeId,
-          myCollections: myProfile.myOwnCollections.edges
+          myCollections: currentProfile.myOwnCollections.edges
             .map(edge => (edge.node.__typename === 'Collection' ? edge.node : null))
             .filter(isJust)
             .map(coll => ({
@@ -53,12 +52,12 @@ export const ResourcePageComponent: FC<{ id: Id }> = ({ id }) => {
             })),
         }
       : null
-  }, [myProfile, myLikeId, likeMut, id, nodeRes, addToCollectionMut])
+  }, [currentProfile, myLikeId, likeMut, id, nodeRes, addToCollectionMut])
   const props = useMemo<ResourcePageProps | null>(() => {
     return resource
       ? {
           icon: getMaybeAssetRefUrl(resource.icon),
-          resource: getJustAssetRefUrl(resource.location),
+          resource: getJustAssetRefUrl(resource.asset),
           type: 'pdf',
           creator: {
             homeLink: contentNodeLink({ id: resource._created.by.id }),

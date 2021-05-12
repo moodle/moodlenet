@@ -1,4 +1,4 @@
-import { Id } from '@moodlenet/common/lib/utils/content-graph'
+import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { contentNodeLink } from '@moodlenet/common/lib/webapp/sitemap'
 import { FC, useMemo } from 'react'
 import { useSession } from '../../contexts/Global/Session'
@@ -17,9 +17,9 @@ import {
 } from './ProfilePage/ProfilePage.gen'
 
 export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
-  const { session } = useSession()
+  const { currentProfile } = useSession()
 
-  const isMyProfilePage = !!session?.profile && id === session.profile.id
+  const isMyProfilePage = !!currentProfile && id === currentProfile.id
 
   const nodeRes = useProfilePageNodeQuery({
     variables: { id, skipMyRel: isMyProfilePage },
@@ -93,23 +93,27 @@ export const ProfilePageComponent: FC<{ id: Id }> = ({ id }) => {
 
   const followMut = useMutateEdge()
   const myFollowId = profile?.myFollow?.edges[0]?.edge.id
-  const myProfile = session?.profile
   const me = useMemo(() => {
-    return myProfile
+    return currentProfile
       ? {
           toggleFollow() {
-            if (!myProfile || isMyProfilePage || followMut.createResult.loading || followMut.deleteResult.loading) {
+            if (
+              !currentProfile ||
+              isMyProfilePage ||
+              followMut.createResult.loading ||
+              followMut.deleteResult.loading
+            ) {
               return
             }
             const toggleFollowPromise = myFollowId
               ? followMut.deleteEdge({ edgeId: myFollowId })
-              : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: myProfile.id, to: id })
+              : followMut.createEdge<'Follows'>({ data: {}, edgeType: 'Follows', from: currentProfile.id, to: id })
             toggleFollowPromise.then(() => nodeRes.refetch())
           },
           following: !!myFollowId,
         }
       : null
-  }, [myProfile, myFollowId, isMyProfilePage, followMut, id, nodeRes])
+  }, [currentProfile, myFollowId, isMyProfilePage, followMut, id, nodeRes])
   const props = useMemo<ProfilePageProps | null>(() => {
     return profile
       ? {

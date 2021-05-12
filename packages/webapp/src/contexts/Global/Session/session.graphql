@@ -1,6 +1,14 @@
 query getCurrentSession {
   getSession {
-    ...UserSessionWithProfileInfo
+    ...UserSessionFrag
+  }
+}
+
+query getCurrentProfile($id: ID!) {
+  node(id: $id) {
+    ... on Profile {
+      ...CurrentProfileInfo
+    }
   }
 }
 
@@ -18,20 +26,22 @@ mutation activateNewUser($token: String!, $username: String!, $password: String!
   }
 }
 
-fragment UserSessionWithProfileInfo on UserSession {
+fragment UserSessionFrag on UserSession {
   username
   email
   userId
-  profile {
-    ...ShallowProfile
-    myOwnCollections: _rel(edge: { type: Created, node: Collection }, page: { first: 100 }) {
-      edges {
-        node {
-          ... on Collection {
-            id
-            name
-            icon
-          }
+  profileId
+}
+
+fragment CurrentProfileInfo on Profile {
+  ...ShallowProfile
+  myOwnCollections: _rel(edge: { type: Created, node: Collection }, page: { first: 100 }) {
+    edges {
+      node {
+        ... on Collection {
+          id
+          name
+          icon
         }
       }
     }
