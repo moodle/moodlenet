@@ -1,14 +1,9 @@
-//FIXME: sssscopied this in common.
-
 import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
 import { useMemo } from 'react'
 import { Tuple } from 'tuple-type'
 import { STATIC_ASSET_BASE } from '../constants'
 import { useSession } from '../contexts/Global/Session'
 import { AssetRefInput } from '../graphql/pub.graphql.link'
-
-// remove this and point to common
-export const isJust = <J>(_: J | null | undefined): _ is J => (_ !== null && _ !== void 0 ? true : false)
 
 type UIAssetInput = {
   data: File | null | undefined

@@ -20,8 +20,6 @@ export const createNodeQ = <Type extends NodeType>({
   creatorProfileId: Id
   assertions: Maybe<AssertionOf<typeof _node>>
 }) => {
-  //TODO: Assertion should be an argument here, and forwarded to getNodeOpAqlAssertions for mapping to AQL
-
   key = key ?? ulidKey()
   // const aqlAssertionMaps = getNodeOpAqlAssertions({ ctx, op: 'create', nodeType, nodeVar: null })
   // if (typeof aqlAssertionMaps === 'string') {

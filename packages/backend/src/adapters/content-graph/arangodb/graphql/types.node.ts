@@ -17,7 +17,7 @@ import { traverseEdges } from '../functions/traverseEdges'
 // ( consider also the monolitic object declaring all graph-access assertions (as before) )
 // point is `db: Database` should not appear here, graphql layer may run in an http-only machine
 // this issue also apply to other node `feature prop`, but not atm
-// see: packages/backend/src/ports/queries/content-graph/global-search.ts
+// see: packages/backend/src/ports/content-graph/search.ts
 // FIXME!!!
 const _rel =
   (
