@@ -511,6 +511,7 @@ export type Resource_RelCountArgs = {
 };
 
 export type Role =
+  | 'Guest'
   | 'Admin'
   | 'User'
   | 'System';

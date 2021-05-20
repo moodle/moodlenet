@@ -32,6 +32,7 @@ type UserSession {
 }
 
 enum Role {
+  Guest
   Admin
   User
   System
