@@ -1,13 +1,11 @@
 import JWT from 'jsonwebtoken'
 import { ActiveUser } from '../../adapters/user-auth/arangodb/types'
-import { MoodleNetExecutionContext } from '../../graphql'
+import { SessionEnv } from './types'
 
 export const INVALID_TOKEN = Symbol('INVALID_TOKEN')
 export type INVALID_TOKEN = typeof INVALID_TOKEN
 
-export type JWTTokenVerification = MoodleNetExecutionContext<'session'> | null | INVALID_TOKEN
-
-export type GQLExecutionContext = MoodleNetExecutionContext<'anon' | 'session'>
+export type JWTTokenVerification = SessionEnv | INVALID_TOKEN
 
 export const verifyJwt = ({
   jwtPublicKey,
@@ -19,12 +17,12 @@ export const verifyJwt = ({
   jwtVerifyOpts: JWT.VerifyOptions
 }): JWTTokenVerification => {
   try {
-    const sessionCtx = JWT.verify(String(token), jwtPublicKey, jwtVerifyOpts)
-    if (typeof sessionCtx !== 'object') {
-      return null
+    const sessionEnv = JWT.verify(String(token), jwtPublicKey, jwtVerifyOpts)
+    if (typeof sessionEnv !== 'object') {
+      return INVALID_TOKEN
     }
     /* FIXME: implement proper checks */
-    return sessionCtx as MoodleNetExecutionContext<'session'>
+    return sessionEnv as SessionEnv
   } catch {
     return INVALID_TOKEN
   }
@@ -39,15 +37,13 @@ export const signJwtActiveUser = ({
   jwtPrivateKey: JwtPrivateKey
   jwtSignOptions: JWT.SignOptions
   user: ActiveUser
-}) => signJwtAny({ jwtSignOptions, jwtPrivateKey, payload: getSessionExecCtxByactiveUser(user) })
+}) => signJwtAny({ jwtSignOptions, jwtPrivateKey, payload: getSessioncEnvByActiveUser(user) })
 
-export const getSessionExecCtxByactiveUser = (user: ActiveUser): MoodleNetExecutionContext<'session'> => ({
-  type: 'session',
-  userId: user._id,
-  email: user.email,
-  username: user.username,
-  profileId: user.profileId,
-  role: user.role,
+export const getSessioncEnvByActiveUser = (user: ActiveUser): SessionEnv => ({
+  user: {
+    name: user.username,
+    role: user.role,
+  },
 })
 
 export const signJwtAny = ({

@@ -1,6 +1,6 @@
 import { Database } from 'arangojs'
+import { getOneResult } from '../../../../lib/helpers/arango'
 import { NewUserConfirmAdapter, SignUpAdapter } from '../../../../ports/user-auth/new-user'
-import { getOneResult } from '../../../content-graph/arangodb/functions/helpers'
 import { activateNewUserQ } from '../functions/activateNewUser'
 import { isUsernameInUseQ } from '../functions/isUsernameInUse'
 import { newUserRequestInsertQ } from '../functions/newUserRequest'
@@ -17,14 +17,14 @@ export const storeNewSignupRequest = (db: Database): Pick<SignUpAdapter, 'storeN
 })
 
 export const activateNewUser = (db: Database): Pick<NewUserConfirmAdapter, 'activateUser'> => ({
-  activateUser: async ({ password, profileId, token, username }) => {
+  activateUser: async ({ password, token, username }) => {
     const userNameInUseQ = isUsernameInUseQ({ username })
     const userNameInUse = (await getOneResult(userNameInUseQ, db)) as true | null
     if (userNameInUse) {
       return 'username not available'
     }
 
-    const activateQ = activateNewUserQ({ password, profileId, token, username })
+    const activateQ = activateNewUserQ({ password, token, username })
     // Queries should be typed kinda  `type QueryType<T> = string & T`
     // so, `getOneResult` returns correct type
     const activeUser = (await getOneResult(activateQ, db)) as ActiveUser | null

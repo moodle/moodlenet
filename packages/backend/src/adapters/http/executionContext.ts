@@ -1,17 +1,18 @@
-import { MoodleNetExecutionContext } from '@moodlenet/common/lib/executionContext/types'
 import { RequestHandler } from 'express'
 import { VerifyOptions } from 'jsonwebtoken'
+import { GuestSessionEnv } from '../../lib/auth/env'
 import { INVALID_TOKEN, verifyJwt } from '../../lib/auth/jwt'
+import { SessionEnv } from '../../lib/auth/types'
 
-export const getMNExecCtxMiddleware =
+export const getMNExecEnvMiddleware =
   ({ jwtPublicKey, jwtVerifyOpts }: { jwtPublicKey: string; jwtVerifyOpts: VerifyOptions }): RequestHandler =>
   (req, _res, next) => {
     const headerToken = req.header('bearer')
-    req.mnHttpSessionCtx = getMoodleNetExecutionContext({ headerToken, jwtPublicKey, jwtVerifyOpts })
+    req.mnHttpSessionEnv = getSessionEnv({ headerToken, jwtPublicKey, jwtVerifyOpts })
     next()
   }
 
-export const getMoodleNetExecutionContext = ({
+export const getSessionEnv = ({
   headerToken,
   jwtPublicKey,
   jwtVerifyOpts,
@@ -19,11 +20,11 @@ export const getMoodleNetExecutionContext = ({
   headerToken: string | null | undefined
   jwtPublicKey: string
   jwtVerifyOpts: VerifyOptions
-}): MoodleNetExecutionContext<'anon' | 'session'> => {
+}): SessionEnv => {
   if (!headerToken) {
-    return { type: 'anon' }
+    return GuestSessionEnv()
   }
   const tokenVerification = verifyJwt({ jwtPublicKey, jwtVerifyOpts, token: headerToken })
 
-  return tokenVerification === INVALID_TOKEN || !tokenVerification ? { type: 'anon' } : tokenVerification
+  return tokenVerification === INVALID_TOKEN ? GuestSessionEnv() : tokenVerification
 }

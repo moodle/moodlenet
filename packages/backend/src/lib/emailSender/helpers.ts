@@ -1,18 +1,6 @@
 import dot from 'dot'
+import { EmailObj, EmailTemplate } from './types'
 
-export type EmailAddr = string
-
-export type EmailObj = {
-  to: EmailAddr
-  from: EmailAddr
-  subject: string
-  text?: string
-  html?: string
-}
-
-export type EmailTemplate<Vars> = Pick<EmailObj, 'from' | 'subject' | 'html' | 'text'> & {
-  $fake?: Vars
-}
 export const fillEmailTemplate = <Vars>(_: {
   template: EmailTemplate<Vars>
   to: string
@@ -28,5 +16,3 @@ export const fillEmailTemplate = <Vars>(_: {
     to,
   }
 }
-
-export type PasswordVerifier = (_: { pwdhash: string; pwd: string }) => Promise<boolean>

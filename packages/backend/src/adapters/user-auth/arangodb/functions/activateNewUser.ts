@@ -1,5 +1,4 @@
 import { Role } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { aqlstr } from '../../../../lib/helpers/arango'
 import { USER, UserStatus } from '../types'
 import { isUsernameInUseQ } from './isUsernameInUse'
@@ -8,12 +7,10 @@ export const activateNewUserQ = ({
   token,
   password,
   username,
-  profileId,
 }: {
   token: string
   username: string
   password: string
-  profileId: Id
 }) => {
   const userRole: Role = 'User'
   return `
@@ -35,7 +32,6 @@ export const activateNewUserQ = ({
       status: ${aqlstr(UserStatus.Active)},
       changeEmailRequest: null,
       role: ${aqlstr(userRole)},
-      profileId: ${aqlstr(profileId)}
     } IN ${USER}
     RETURN NEW
   `

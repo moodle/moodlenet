@@ -1,11 +1,8 @@
-import { _conn, _ctx } from '@moodlenet/common/lib/assertions/op-chains'
-import { assertCtx } from '@moodlenet/common/lib/assertions/static/assertCtx'
 import * as GQL from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { AssertionOf } from '@moodlenet/common/lib/utils/op-chain'
 import { DocumentEdgeByType, DocumentEdgeDataByType } from '../../adapters/content-graph/arangodb/functions/types'
-import { MoodleNetExecutionContext } from '../../graphql'
-import { getSessionExecutionContext } from '../../lib/auth/types'
+import { getProfileId } from '../../lib/auth/env'
+import { SessionEnv } from '../../lib/auth/types'
 import { QMCommand, QMModule } from '../../lib/qmino'
 
 // create
@@ -17,12 +14,11 @@ export type CreateAdapter = {
     from: Id
     to: Id
     creatorProfileId: Id
-    assertions: null | AssertionOf<typeof _conn>
   }) => Promise<DocumentEdgeByType<Type> | null>
 }
 
 export type CreateInput<Type extends GQL.EdgeType = GQL.EdgeType> = {
-  ctx: MoodleNetExecutionContext
+  env: SessionEnv
   from: Id
   to: Id
   edgeType: Type
@@ -30,16 +26,10 @@ export type CreateInput<Type extends GQL.EdgeType = GQL.EdgeType> = {
 }
 
 export const create = QMCommand(
-  <Type extends GQL.EdgeType = GQL.EdgeType>({ data, ctx, edgeType, from, to }: CreateInput<Type>) =>
+  <Type extends GQL.EdgeType = GQL.EdgeType>({ data, env, edgeType, from, to }: CreateInput<Type>) =>
     async ({ storeEdge }: CreateAdapter): Promise<DocumentEdgeByType<Type> | GQL.CreateEdgeMutationErrorType> => {
-      const sessionCtx = getSessionExecutionContext(ctx)
-
-      if (!(sessionCtx && assertCtx(ctx, _ctx.ExecutorIsAuthenticated))) {
-        return 'NotAuthorized'
-      }
-      const creatorProfileId = sessionCtx.profileId
-      const assertions = null //_conn.ExecutorCreatedThisEdge
-      const result = await storeEdge({ from, to, assertions, edgeType, data, creatorProfileId })
+      const creatorProfileId = getProfileId(env)
+      const result = await storeEdge({ from, to, edgeType, data, creatorProfileId })
       if (!result) {
         return 'AssertionFailed'
       }
@@ -54,27 +44,20 @@ export type DeleteAdapter = {
     edgeType: Type
     edgeId: Id
     deleterProfileId: Id
-    assertions: null | AssertionOf<typeof _conn>
   }) => Promise<DocumentEdgeByType<Type> | GQL.DeleteEdgeMutationErrorType>
 }
 
 export type DeleteInput<Type extends GQL.EdgeType = GQL.EdgeType> = {
-  ctx: MoodleNetExecutionContext
+  env: SessionEnv
   id: Id
   edgeType: Type
 }
 
 export const del = QMCommand(
-  <Type extends GQL.EdgeType = GQL.EdgeType>({ ctx, edgeType, id: edgeId }: DeleteInput<Type>) =>
+  <Type extends GQL.EdgeType = GQL.EdgeType>({ env, edgeType, id: edgeId }: DeleteInput<Type>) =>
     async ({ deleteEdge }: DeleteAdapter): Promise<DocumentEdgeByType<Type> | GQL.DeleteEdgeMutationErrorType> => {
-      const sessionCtx = getSessionExecutionContext(ctx)
-
-      if (!(sessionCtx && assertCtx(ctx, _ctx.ExecutorIsAuthenticated))) {
-        return 'NotAuthorized'
-      }
-      const deleterProfileId = sessionCtx.profileId
-      const assertions = null //_conn.ExecutorDeletedThisEdge
-      const result = await deleteEdge({ edgeId, assertions, edgeType, deleterProfileId })
+      const deleterProfileId = getProfileId(env)
+      const result = await deleteEdge({ edgeId, edgeType, deleterProfileId })
       if (!result) {
         return 'AssertionFailed'
       }

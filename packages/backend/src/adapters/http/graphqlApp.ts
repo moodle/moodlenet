@@ -5,7 +5,7 @@ import { graphqlHTTP } from 'express-graphql'
 import { buildClientSchema, graphql, print, printSchema } from 'graphql'
 import { SignOptions } from 'jsonwebtoken'
 import { getGQLResolvers } from '../../graphql/resolvers'
-import { MoodleNetExecutionContext, RootValue } from '../../graphql/types'
+import { Context, RootValue } from '../../graphql/types'
 import { JwtPrivateKey } from '../../lib/auth/jwt'
 
 export type GQLAppConfig = {
@@ -24,7 +24,7 @@ export const createGraphQLApp = ({ additionalResolvers, jwtPrivateKey, jwtSignOp
     schema,
     customExecuteFn(args) {
       const httpReq = args.contextValue as unknown as Request
-      const contextValue: MoodleNetExecutionContext<'anon' | 'session'> = httpReq.mnHttpSessionCtx
+      const contextValue: Context = httpReq.mnHttpSessionEnv
       const rootValue: RootValue = {}
       const source = print(args.document)
       return graphql({

@@ -1,5 +1,5 @@
 import Argon, { argon2id, hash } from 'argon2'
-import { PasswordVerifier } from '../../types'
+import { PasswordVerifier } from './types'
 
 type ArgonPwdHashOpts = Parameters<typeof hash>[1]
 export const defaultArgonPwdHashOpts: ArgonPwdHashOpts = {

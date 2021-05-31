@@ -1,7 +1,6 @@
 //TODO: review all parse|extraction return types to make them stricter
 
 import { EdgeType, GlobalSearchSort, NodeType } from '../../graphql/types.graphql.gen'
-export { EdgeType, NodeType, Role } from '../../graphql/types.graphql.gen'
 export type IdKey = string //& { readonly __: unique symbol }
 export type Id<N extends NodeType = NodeType> = `${N}/${IdKey}` // & { readonly __: unique symbol }
 // export type Id = string // & { readonly __: unique symbol } this leads to tsc errors as it recognizes Id from src/* as different type in respect of from lib/*

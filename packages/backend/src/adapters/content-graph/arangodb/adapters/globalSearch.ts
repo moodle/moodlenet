@@ -1,7 +1,7 @@
 import { Database } from 'arangojs'
+import { getAllResults } from '../../../../lib/helpers/arango'
 import { Adapter } from '../../../../ports/content-graph/search'
 import { globalSearchQuery, makeGlobalSearchGQLSearchPage } from '../functions/globalSearch'
-import { getAllResults } from '../functions/helpers'
 
 export const globalSearch = (db: Database): Adapter => ({
   searchNodes: async ({ nodeTypes, page, sortBy, text }) => {

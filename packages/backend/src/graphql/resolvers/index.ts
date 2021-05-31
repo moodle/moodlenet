@@ -6,7 +6,6 @@ import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-ty
 import { SignOptions } from 'jsonwebtoken'
 import { userSessionByActiveUser } from '../../adapters/user-auth/arangodb/helpers'
 import { JwtPrivateKey, signJwtActiveUser } from '../../lib/auth/jwt'
-import { getSessionExecutionContext } from '../../lib/auth/types'
 import { resolve } from '../../lib/qmino'
 import * as edgePorts from '../../ports/content-graph/edge'
 import * as nodePorts from '../../ports/content-graph/node'
@@ -34,23 +33,20 @@ export const getGQLResolvers = ({
     //@ts-expect-error : Scalar ID is not present in Resolvers
     ID: IDScalarType,
     Query: {
-      async node(_root, { id }, ctx /* ,_info */) {
+      async node(_root, { id } /* ,env ,_info */) {
         const { nodeType, _key } = parseNodeId(id)
-        const maybeNode = await resolve(nodePorts.byId({ _key, ctx, nodeType }))()
+        const maybeNode = await resolve(nodePorts.byId({ _key, nodeType }))()
         return maybeNode && fakeNodeByShallowOrDoc(maybeNode)
       },
 
-      async globalSearch(_root, { sortBy, text, nodeTypes, page }, ctx) {
-        return resolve(searchPorts.byTerm({ sortBy, text, nodeTypes, page, ctx }))()
+      async globalSearch(_root, { sortBy, text, nodeTypes, page }, env) {
+        return resolve(searchPorts.byTerm({ sortBy, text, nodeTypes, page, env }))()
       },
 
-      async getSession(_root, {}, ctx) {
-        const sessionCtx = getSessionExecutionContext(ctx)
-        if (!sessionCtx) {
-          return null
-        }
-        const { username } = sessionCtx
-        const activeUser = await resolve(userPorts.getActiveByUsername({ username, matchPassword: false }))()
+      async getSession(_root, _no_args, env) {
+        const activeUser = await resolve(
+          userPorts.getActiveByUsername({ username: env.user.name, matchPassword: false }),
+        )()
 
         if (!activeUser) {
           return null
@@ -59,7 +55,7 @@ export const getGQLResolvers = ({
       },
     },
     Mutation: {
-      async createSession(_root, { password, username } /* , ctx */) {
+      async createSession(_root, { password, username } /* , env */) {
         const activeUser = await resolve(userPorts.getActiveByUsername({ username, matchPassword: password }))()
 
         if (!activeUser) {
@@ -75,7 +71,7 @@ export const getGQLResolvers = ({
         }
       },
 
-      async signUp(_root, { email } /* ,ctx */) {
+      async signUp(_root, { email } /* ,env */) {
         const res = await resolve(newUserPorts.signUp({ email }))()
         if (typeof res === 'string') {
           return { __typename: 'SimpleResponse', success: false, message: res }
@@ -83,7 +79,7 @@ export const getGQLResolvers = ({
         return { __typename: 'SimpleResponse', success: true }
       },
 
-      async activateUser(_root, { password, token, username } /*, ctx */) {
+      async activateUser(_root, { password, token, username } /*, env */) {
         const activationresult = await resolve(newUserPorts.confirmSignup({ password, token, username }))()
         if ('string' === typeof activationresult) {
           return {
@@ -99,9 +95,9 @@ export const getGQLResolvers = ({
         }
       },
 
-      async createNode(_root, { input }, ctx, _info) {
+      async createNode(_root, { input }, env, _info) {
         const { nodeType } = input
-        // if (ctx.type === 'anon') {
+        // if (env.type === 'anon') {
         //   return createNodeMutationError('NotAuthorized')
         // }
 
@@ -120,7 +116,7 @@ export const getGQLResolvers = ({
           nodePorts.create({
             data,
             nodeType,
-            ctx,
+            env,
           }),
         )()
         if (typeof shallowNodeOrError === 'string') {
@@ -134,8 +130,8 @@ export const getGQLResolvers = ({
         return successResult
       },
 
-      async createEdge(_root, { input }, ctx, _info) {
-        // if (ctx.type === 'anon') {
+      async createEdge(_root, { input }, env, _info) {
+        // if (env.type === 'anon') {
         //   return createEdgeMutationError('NotAuthorized')
         // }
         const { edgeType, from, to } = input
@@ -151,7 +147,7 @@ export const getGQLResolvers = ({
             to,
             data,
             edgeType,
-            ctx,
+            env,
           }),
         )()
         if (typeof edgeCreateResult === 'string') {
@@ -165,16 +161,13 @@ export const getGQLResolvers = ({
         return successResult
       },
 
-      async deleteEdge(_root, { input }, ctx /*,  _info */) {
+      async deleteEdge(_root, { input }, env /*,  _info */) {
         // console.log('deleteEdge', input)
         const { edgeType, id } = input
-        if (ctx.type === 'anon') {
-          return deleteEdgeMutationError('NotAuthorized', `Anonymous can't delete`)
-        }
 
         const deleteResult = await resolve(
           edgePorts.del({
-            ctx,
+            env,
             edgeType,
             id,
           }),

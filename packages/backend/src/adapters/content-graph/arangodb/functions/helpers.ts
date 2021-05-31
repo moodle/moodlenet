@@ -1,6 +1,5 @@
 import { EdgeType, Page, PageInfo, PaginationInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Id, parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { Database } from 'arangojs'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { aqlstr } from '../../../../lib/helpers/arango'
 const DEFAULT_PAGE_LENGTH = 10
@@ -84,11 +83,11 @@ export const makePage = <P extends Page>({
     hasPreviousPage: true,
     __typename: 'PageInfo',
   }
-  const page = ({
+  const page = {
     __typename: pageTypename,
     pageInfo,
     edges,
-  } as any) as P
+  } as any as P
   return page
 }
 
@@ -175,27 +174,3 @@ export const createdByAtPatch = (doc: object, byId: string) => `MERGE(
 
 export const toDocumentEdgeOrNode = (varname: string) => `MERGE(${varname}, ${pickDocumentEdgeOrNodeId(varname)})`
 export const pickDocumentEdgeOrNodeId = (varname: string) => `{id: ${varname}._id}`
-
-export const getOneResult = async (q: string, db: Database) => {
-  const cursor = await db.query(q)
-  const result = await cursor.next()
-  cursor.kill()
-  return result
-}
-
-export const getAllResults = async (q: string, db: Database) => {
-  const cursor = await db.query(q)
-  const results = await cursor.all()
-  cursor.kill()
-  return results
-}
-
-export const justExecute = async (q: string, db: Database) => {
-  const cursor = await db.query(q)
-  cursor.kill()
-  const { count, extra } = cursor
-  return {
-    count,
-    extra,
-  }
-}

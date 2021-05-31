@@ -66,10 +66,6 @@ export type Collection_RelCountArgs = {
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
-export type ConnAssertion =
-  | 'NoExistingSameEdgeTypeInSameDirectionBetweenTheSameTwoNodes'
-  | 'NoExistingSameEdgeTypeToThisNode';
-
 export type Contains = IEdge & {
   __typename: 'Contains';
   _created: GlyphByAt;
@@ -169,12 +165,6 @@ export type Created = IEdge & {
   _lastEdited?: Maybe<GlyphByAt>;
   id: Scalars['ID'];
 };
-
-export type CtxAssertion =
-  | 'ExecutorIsAuthenticated'
-  | 'ExecutorIsSystem'
-  | 'ExecutorIsAdmin'
-  | 'ExecutorIsAnonymous';
 
 
 
@@ -391,10 +381,6 @@ export type MutationUpdateNodeArgs = {
 
 
 export type Node = Collection | Profile | Resource | Subject;
-
-export type NodeAssertion =
-  | 'ExecutorCreatedThisNode'
-  | 'ThisNodeIsExecutorProfile';
 
 export type NodeType =
   | 'Collection'
@@ -635,10 +621,7 @@ export type UpdateSubjectInput = {
 export type UserSession = {
   __typename: 'UserSession';
   username: Scalars['String'];
-  email: Scalars['String'];
-  changeEmailRequest?: Maybe<Scalars['String']>;
-  userId: Scalars['String'];
-  profileId?: Maybe<Scalars['ID']>;
+  role: Role;
 };
 
 

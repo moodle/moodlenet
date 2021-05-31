@@ -1,4 +1,3 @@
-import { idKeyFromId, makeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { Database } from 'arangojs'
 import { Algorithm, SignOptions, VerifyOptions } from 'jsonwebtoken'
 import { ulid } from 'ulid'
@@ -17,10 +16,8 @@ import { setupFs } from './adapters/staticAssets/fs/setup'
 import { activateNewUser, storeNewSignupRequest } from './adapters/user-auth/arangodb/adapters/new-user'
 import { byUsername } from './adapters/user-auth/arangodb/adapters/session'
 import { argonHashPassword, argonVerifyPassword } from './lib/auth/argon'
-import { getSystemExecutionContext } from './lib/auth/types'
-import { ulidKey } from './lib/helpers/arango'
+import { createMailgunSender } from './lib/emailSender/mailgun/mailgunSender'
 import { open, resolve } from './lib/qmino'
-import { createMailgunSender } from './lib/sendersImpl/mailgun/mailgunSender'
 import * as edgePorts from './ports/content-graph/edge'
 import * as nodePorts from './ports/content-graph/node'
 import * as searchPorts from './ports/content-graph/search'
@@ -99,21 +96,15 @@ export const startDefaultMoodlenet = async ({
   open(newUserPorts.confirmSignup, {
     ...activateNewUser(userAuthDatabase),
     hashPassword: (plain: string) => argonHashPassword({ pwd: plain }),
-    generateNewProfileId: async () => {
-      const profileKey = ulidKey()
-      const profileId = makeId('Profile', profileKey)
-      return profileId
-    },
-    createNewProfile: async ({ profileId, username }) => {
-      const ctx = getSystemExecutionContext({})
+    createNewProfile: async ({ username, env }) => {
       return resolve(
         nodePorts.create<'Profile'>({
-          ctx,
+          env,
           data: { name: username, summary: '' },
           nodeType: 'Profile',
-          key: idKeyFromId(profileId),
+          key: username,
         }),
-      )().then(console.log, console.error)
+      )()
     },
   })
 

@@ -1,7 +1,6 @@
 import { Id, parseEdgeId, parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { Database } from 'arangojs'
-import { aqlstr } from '../../../../lib/helpers/arango'
-import { getOneResult, justExecute } from './helpers'
+import { aqlstr, getOneResult, justExecute } from '../../../../lib/helpers/arango'
 
 export const updateNodeEdgeCounters = async ({ edgeId, db, del }: { db: Database; edgeId: Id; del: boolean }) => {
   const { edgeType } = parseEdgeId(edgeId)

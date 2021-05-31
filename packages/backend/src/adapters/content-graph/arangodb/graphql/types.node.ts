@@ -1,12 +1,13 @@
-import { MoodleNetExecutionContext } from '@moodlenet/common/lib/executionContext/types'
 import * as GQLCommon from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { Database } from 'arangojs'
 import { Document } from 'arangojs/documents'
 import * as GQLResolvers from '../../../../graphql/types.graphql.gen'
 import { ShallowNode } from '../../../../graphql/types.node'
-import { getSessionExecutionContext } from '../../../../lib/auth/types'
-import { getAllResults, makePage } from '../functions/helpers'
+import { getProfileId, isGuest } from '../../../../lib/auth/env'
+import { SessionEnv } from '../../../../lib/auth/types'
+import { getAllResults } from '../../../../lib/helpers/arango'
+import { makePage } from '../functions/helpers'
 import { traverseEdges } from '../functions/traverseEdges'
 
 // FIXME!!!: relation query functionalities should be properly modeled
@@ -25,20 +26,19 @@ const _rel =
   ): GQLResolvers.ResolverFn<
     GQLResolvers.ResolversTypes['RelPage'],
     Document<ShallowNode>,
-    MoodleNetExecutionContext,
+    SessionEnv,
     GQLResolvers.RequireFields<GQLCommon.INode_RelArgs, 'edge'>
   > =>
-  async (parent, node, ctx, _info) => {
+  async (parent, node, env, _info) => {
     const { _id: parentId } = parent
     const {
       edge: { type: edgeType, node: targetNodeType, inverse, targetMe, targetIDs },
       page,
     } = node
 
-    const session = getSessionExecutionContext(ctx)
     const isOnlyTargetingMe = targetMe && !targetIDs
 
-    if (isOnlyTargetingMe && !session) {
+    if (isOnlyTargetingMe && !isGuest(env)) {
       return {
         __typename: 'RelPage',
         edges: [],
@@ -46,10 +46,7 @@ const _rel =
       }
     }
 
-    const executorProfileIDs = session ? [session.profileId] : []
-    const isTargetingIds = !!targetIDs || targetMe
-
-    const targetNodeIds = isTargetingIds ? executorProfileIDs.concat(targetIDs || []) : null
+    const targetNodeIds = targetMe ? [getProfileId(env)] : targetIDs ?? []
 
     const { afterPageQuery, beforePageQuery } = traverseEdges({
       edgeType,
@@ -88,9 +85,9 @@ type NodeDocumentWithRelCount = Document<ShallowNode> & { _relCount?: RelCount |
 export const _relCount: GQLResolvers.ResolverFn<
   GQLResolvers.ResolversTypes['Int'],
   NodeDocumentWithRelCount,
-  MoodleNetExecutionContext,
+  SessionEnv,
   GQLResolvers.RequireFields<GQLCommon.INode_RelCountArgs, 'type' | 'target'>
-> = async (parent, { target, type, inverse }, _ctx, _info) => {
+> = async (parent, { target, type, inverse }, _env, _info) => {
   const count = parent?._relCount?.[type]?.[inverse ? 'from' : 'to']?.[target] ?? 0
   return Math.round(count)
 }

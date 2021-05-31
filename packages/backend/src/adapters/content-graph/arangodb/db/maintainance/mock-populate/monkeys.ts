@@ -5,7 +5,7 @@ import { enqueue } from '../../../../../../lib/domain/amqp/enqueue'
 import { newFlow } from '../../../../../../lib/domain/flow'
 import { EdgeType, NodeType } from '../../../ContentGraph.graphql.gen'
 import { MoodleNetArangoContentGraphSubDomain } from '../../../MoodleNetArangoContentGraphSubDomain'
-import { MoodleNetExecutionContext } from '../../executionContext/types'
+import { SessionEnv } from '../../executionContext/types'
 import { getPersistence } from '../persistence'
 import { cfg, databaseName, MONKEYS_WAIT, PARALLEL_MONKEYS } from './env'
 import * as fakeEdge from './fake/edge'
@@ -17,31 +17,31 @@ getPersistence({ cfg, databaseName }).then(async ([{ db }]) => {
   }
 
   async function monkeyRun() {
-    const ctx = await makeCtx(db)
-    getRndAction(db)(ctx)
+    const env = await makeEnv(db)
+    getRndAction(db)(env)
       .then(
         res => console.log(res),
         (err: any) => console.error(`- ERR: `, err),
       )
       .finally(() => {
-        console.log(`For profileId: ${ctx.profileId}\n`)
+        console.log(`For profileId: ${env.profileId}\n`)
         setTimeout(monkeyRun, MONKEYS_WAIT)
       })
   }
 })
-const monkeyCreateNode = (_db: Database) => async (ctx: MoodleNetExecutionContext<'session'>) => {
+const monkeyCreateNode = (_db: Database) => async (env: SessionEnv<'session'>) => {
   const nodeType = getRndType('Profile', 'Subject')
   return enqueue<MoodleNetArangoContentGraphSubDomain>()(
     'ContentGraph.Node.Create',
     newFlow(),
-  )({ ctx, data: fakeNode[nodeType](), nodeType }).then(() => `NODE: [${nodeType}]`)
+  )({ env, data: fakeNode[nodeType](), nodeType }).then(() => `NODE: [${nodeType}]`)
 }
 
-const monkeyCreateEdge = (db: Database) => async (ctx: MoodleNetExecutionContext<'session'>) => {
+const monkeyCreateEdge = (db: Database) => async (env: SessionEnv<'session'>) => {
   const edgeType = getRndType('Created')
   const conn = getRndConnection(edgeType)
   const [from, to] = await Promise.all([
-    ['Follows', 'Likes'].includes(edgeType) ? ctx.profileId : getRndId(db, conn.from),
+    ['Follows', 'Likes'].includes(edgeType) ? env.profileId : getRndId(db, conn.from),
     getRndId(db, conn.to),
   ])
   const info = `${conn.from}:${from} -> ${edgeType} -> ${conn.to}:${to}`
@@ -51,7 +51,7 @@ const monkeyCreateEdge = (db: Database) => async (ctx: MoodleNetExecutionContext
   return enqueue<MoodleNetArangoContentGraphSubDomain>()(
     'ContentGraph.Edge.Create',
     newFlow(),
-  )({ ctx, data: fakeEdge[edgeType](), edgeType, from, to }).then(() => `EDGE: ${info}`)
+  )({ env, data: fakeEdge[edgeType](), edgeType, from, to }).then(() => `EDGE: ${info}`)
 }
 
 const actions = [monkeyCreateEdge, monkeyCreateNode]
@@ -70,7 +70,7 @@ const getRndConnection = (edgeType: EdgeType) => ({
   to: contentGraphDef.edges[edgeType][1].sort(() => Math.random() - 0.5)[0]!,
 })
 
-const makeCtx = async (db: Database): Promise<MoodleNetExecutionContext<'session'>> => {
+const makeEnv = async (db: Database): Promise<SessionEnv<'session'>> => {
   const profileId = (await getRndId(db, 'Profile'))! // profile must be
   const monkeyTag = `monkeyFor[${profileId}]`
   return {

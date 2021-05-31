@@ -414,29 +414,6 @@
         "possibleTypes": null
       },
       {
-        "kind": "ENUM",
-        "name": "ConnAssertion",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
-          {
-            "name": "NoExistingSameEdgeTypeInSameDirectionBetweenTheSameTwoNodes",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "NoExistingSameEdgeTypeToThisNode",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "possibleTypes": null
-      },
-      {
         "kind": "OBJECT",
         "name": "Contains",
         "description": null,
@@ -1212,41 +1189,6 @@
           }
         ],
         "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "ENUM",
-        "name": "CtxAssertion",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
-          {
-            "name": "ExecutorIsAuthenticated",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ExecutorIsSystem",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ExecutorIsAdmin",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ExecutorIsAnonymous",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
         "possibleTypes": null
       },
       {
@@ -2866,29 +2808,6 @@
             "ofType": null
           }
         ]
-      },
-      {
-        "kind": "ENUM",
-        "name": "NodeAssertion",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
-          {
-            "name": "ExecutorCreatedThisNode",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ThisNodeIsExecutorProfile",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "possibleTypes": null
       },
       {
         "kind": "ENUM",
@@ -4810,57 +4729,17 @@
             "deprecationReason": null
           },
           {
-            "name": "email",
+            "name": "role",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "Role",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "changeEmailRequest",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "userId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "profileId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "ID",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

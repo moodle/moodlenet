@@ -1,12 +1,11 @@
 import { Role } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { Database } from 'arangojs'
 import { DocumentCollection } from 'arangojs/collection'
-import { ChangeUserEmailRequestEmailVars } from '../../../emailTemplates/changeUserEmailRequestEmail'
-import { NewUserRequestEmailVars } from '../../../emailTemplates/newUserRequestEmail'
-import { TempSessionEmailVars } from '../../../emailTemplates/tempSessionEmail'
+import { EmailTemplate } from '../../../lib/emailSender/types'
 import { WithCreated, WithId, WithMutable } from '../../../lib/helpers/types'
-import { EmailTemplate } from '../../../types'
+import { ChangeUserEmailRequestEmailVars } from '../emailTemplates/changeUserEmailRequestEmail'
+import { NewUserRequestEmailVars } from '../emailTemplates/newUserRequestEmail'
+import { TempSessionEmailVars } from '../emailTemplates/tempSessionEmail'
 
 export enum Messages {
   EmailNotAvailable = 'email-not-available',
@@ -32,7 +31,6 @@ export type ActiveUser = UserRecordBase & {
   password: string
   changeEmailRequest: null | ChangeEmailRequest
   role: Role
-  profileId: Id
 }
 export type WaitingFirstActivationUser = UserRecordBase & {
   status: UserStatus.WaitingFirstActivation

@@ -1,6 +1,6 @@
 import * as GQL from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
-import { MoodleNetExecutionContext } from '../../graphql'
+import { Context } from '../../graphql/types'
 import { QMModule, QMQuery } from '../../lib/qmino'
 
 // FIXME!!!: is it possible to model this to free it from GQL ?
@@ -14,8 +14,7 @@ export type Adapter = {
     text: string
     nodeTypes: Maybe<Type[]>
     page: Maybe<GQL.PaginationInput>
-    ctx: MoodleNetExecutionContext
-    //FIXME: assertions
+    env: Context
   }) => Promise<GQL.SearchPage>
 }
 
@@ -24,16 +23,13 @@ export type Input<Type extends GQL.NodeType = GQL.NodeType> = {
   text: string
   nodeTypes: Maybe<Type[]>
   page: Maybe<GQL.PaginationInput>
-  ctx: MoodleNetExecutionContext
+  env: Context
 }
 
 export const byTerm = QMQuery(
-  <Types extends GQL.NodeType = GQL.NodeType>({ sortBy, text, nodeTypes, page, ctx }: Input<Types>) =>
+  <Types extends GQL.NodeType = GQL.NodeType>({ sortBy, text, nodeTypes, page, env }: Input<Types>) =>
     async ({ searchNodes }: Adapter) => {
-      // FIXME: business logic here please
-      // e.g.: pagination constraints, and high level validation
-      // should happen here, and passed right
-      return searchNodes({ sortBy, text, nodeTypes, page, ctx })
+      return searchNodes({ sortBy, text, nodeTypes, page, env })
     },
 )
 

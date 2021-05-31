@@ -60,7 +60,7 @@ export type ActivateNewUserMutation = (
 
 export type UserSessionFragFragment = (
   { __typename: 'UserSession' }
-  & Pick<Types.UserSession, 'username' | 'email' | 'userId' | 'profileId'>
+  & Pick<Types.UserSession, 'username'>
 );
 
 export type CurrentProfileInfoFragment = (
@@ -81,9 +81,6 @@ export type CurrentProfileInfoFragment = (
 export const UserSessionFragFragmentDoc = gql`
     fragment UserSessionFrag on UserSession {
   username
-  email
-  userId
-  profileId
 }
     `;
 export const CurrentProfileInfoFragmentDoc = gql`

@@ -28,9 +28,6 @@ mutation activateNewUser($token: String!, $username: String!, $password: String!
 
 fragment UserSessionFrag on UserSession {
   username
-  email
-  userId
-  profileId
 }
 
 fragment CurrentProfileInfo on Profile {

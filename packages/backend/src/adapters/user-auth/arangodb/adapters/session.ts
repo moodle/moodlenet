@@ -1,6 +1,6 @@
 import { Database } from 'arangojs'
+import { getOneResult } from '../../../../lib/helpers/arango'
 import { Adapter } from '../../../../ports/user-auth/user'
-import { getOneResult } from '../../../content-graph/arangodb/functions/helpers'
 import { getActiveUserByUsernameQ } from '../functions/getActiveUserByUsername'
 import { ActiveUser } from '../types'
 export const byUsername = (db: Database): Pick<Adapter, 'getActiveUserByUsername'> => ({

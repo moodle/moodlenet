@@ -1,9 +1,11 @@
-import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { ActiveUser } from '../../adapters/user-auth/arangodb/types'
-import { DefaultConfig } from '../../emailTemplates'
+import { DefaultConfig } from '../../adapters/user-auth/emailTemplates'
+import { makeEnv } from '../../lib/auth/env'
+import { SessionEnv } from '../../lib/auth/types'
+import { fillEmailTemplate } from '../../lib/emailSender/helpers'
+import { EmailAddr, EmailObj } from '../../lib/emailSender/types'
 import { QMCommand, QMModule } from '../../lib/qmino'
-import { EmailAddr, EmailObj, fillEmailTemplate } from '../../types'
 
 export type SignupIssue = 'email not available'
 export type SignUpAdapter = {
@@ -40,25 +42,25 @@ export type NewUserConfirmAdapter = {
     token: string
     password: string
     username: string
-    profileId: Id
   }): Promise<ActiveUser | 'username not available' | 'not found'>
   hashPassword(pwd: string): Promise<string>
-  generateNewProfileId(): Promise<Id>
 
-  createNewProfile(_: { profileId: Id; username: string }): Promise<unknown>
+  createNewProfile(_: { username: string; env: SessionEnv }): Promise<unknown>
 }
+type ConfirmSignup = { token: string; password: string; username: string }
 export const confirmSignup = QMCommand(
-  ({ token, password: plainPwd, username }: { token: string; password: string; username: string }) =>
-    async ({ activateUser, hashPassword, generateNewProfileId, createNewProfile }: NewUserConfirmAdapter) => {
-      const [profileId, pwdHash] = await Promise.all([generateNewProfileId(), hashPassword(plainPwd)])
+  ({ token, password: plainPwd, username }: ConfirmSignup) =>
+    async ({ activateUser, hashPassword, createNewProfile }: NewUserConfirmAdapter) => {
+      const pwdHash = await hashPassword(plainPwd)
 
-      const activateResult = await activateUser({ password: pwdHash, token, username, profileId })
+      const activateResult = await activateUser({ password: pwdHash, token, username })
 
       if (typeof activateResult === 'string') {
         return activateResult // error
       }
 
-      createNewProfile({ profileId, username })
+      const env = makeEnv({ user: { name: activateResult.username, role: activateResult.role } })
+      createNewProfile({ username, env })
 
       return activateResult
     },

@@ -8,7 +8,7 @@ import { Maybe } from './types'
 
 export const createVertexCollectionIfNotExists = async <
   VertexDocumentType extends object,
-  CollName extends string = string
+  CollName extends string = string,
 >({
   name,
   createOpts,
@@ -33,7 +33,7 @@ export const createVertexCollectionIfNotExists = async <
 
 export const createEdgeCollectionIfNotExists = async <
   EdgeDocumentType extends object,
-  CollName extends string = EdgeDocumentType extends { __typename: string } ? EdgeDocumentType['__typename'] : string
+  CollName extends string = EdgeDocumentType extends { __typename: string } ? EdgeDocumentType['__typename'] : string,
 >({
   name,
   createOpts,
@@ -90,3 +90,27 @@ export const getDocumentById = async <Type extends object = object>({
 export const aqlstr = (_: any) => JSON.stringify(_)
 
 export const ulidKey = (): IdKey => ulid()
+
+export const getOneResult = async (q: string, db: Database) => {
+  const cursor = await db.query(q)
+  const result = await cursor.next()
+  cursor.kill()
+  return result
+}
+
+export const getAllResults = async (q: string, db: Database) => {
+  const cursor = await db.query(q)
+  const results = await cursor.all()
+  cursor.kill()
+  return results
+}
+
+export const justExecute = async (q: string, db: Database) => {
+  const cursor = await db.query(q)
+  cursor.kill()
+  const { count, extra } = cursor
+  return {
+    count,
+    extra,
+  }
+}

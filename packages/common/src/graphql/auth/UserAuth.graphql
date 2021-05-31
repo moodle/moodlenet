@@ -25,10 +25,7 @@ type CreateSession {
 
 type UserSession {
   username: String!
-  email: String!
-  changeEmailRequest: String
-  userId: String!
-  profileId: ID
+  role: Role!
 }
 
 enum Role {

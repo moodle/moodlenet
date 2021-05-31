@@ -1,3 +1,5 @@
-export { MoodleNetExecutionContext } from '@moodlenet/common/lib/executionContext/types'
+import Auth from '../lib/auth/types'
+
+export type Context = Auth.SessionEnv
 
 export type RootValue = {}

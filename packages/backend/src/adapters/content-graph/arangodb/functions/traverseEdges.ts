@@ -25,7 +25,7 @@ export const traverseEdges = ({
   const parentSide = inverse ? 'to' : 'from'
 
   // const aqlTargetNodeAssertionMaps = getNodeOpAqlAssertions({
-  //   ctx,
+  //   env,
   //   op: 'read',
   //   nodeType: targetNodeType,
   //   nodeVar: 'targetNode',
@@ -33,7 +33,7 @@ export const traverseEdges = ({
   // const fromType = inverse ? targetNodeType : parentNodeType
   // const toType = !inverse ? targetNodeType : parentNodeType
   // const aqlEdgeAssertionMaps = getEdgeOpAqlAssertions({
-  //   ctx,
+  //   env,
   //   edgeType,
   //   edgeVar: 'edge',
   //   op: 'traverse',
@@ -70,23 +70,26 @@ export const traverseEdges = ({
   })
 }
 
-export const traversePaginateMapQuery = ({
-  edgeAndNodeAssertionFilters,
-  edgeType,
-  parentNodeId,
-  parentSide,
-  targetIdsFilter,
-  targetNodeType,
-  targetSide,
-}: {
-  edgeType: string
-  targetSide: string
-  targetNodeType: string
-  parentSide: string
-  parentNodeId: string
-  targetIdsFilter: string
-  edgeAndNodeAssertionFilters: string
-}) => (pageFilterSortLimit: string) => `
+export const traversePaginateMapQuery =
+  ({
+    edgeAndNodeAssertionFilters,
+    edgeType,
+    parentNodeId,
+    parentSide,
+    targetIdsFilter,
+    targetNodeType,
+    targetSide,
+  }: {
+    edgeType: string
+    targetSide: string
+    targetNodeType: string
+    parentSide: string
+    parentNodeId: string
+    targetIdsFilter: string
+    edgeAndNodeAssertionFilters: string
+  }) =>
+  (pageFilterSortLimit: string) =>
+    `
 FOR edge IN ${edgeType}
   FILTER !${isMarkDeleted('edge')}
     && edge._${targetSide}Type == ${aqlstr(targetNodeType)}

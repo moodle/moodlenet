@@ -17,7 +17,7 @@ const graphqlConfig = {
         scalars,
         enumsAsTypes: true,
         useImplementingTypes: true,
-        contextType: `${rootTypesRoot}#MoodleNetExecutionContext`,
+        contextType: `${rootTypesRoot}#Context`,
         rootValueType: `${rootTypesRoot}#RootValue`,
         includeDirectives: true,
         commentDescriptions: true,

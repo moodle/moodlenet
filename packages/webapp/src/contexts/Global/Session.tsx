@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro'
 import { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { getProfileIdByUsername } from '../../../../backend/node_modules/@moodlenet/common/src/utils/auth/helpers'
 import { setToken } from './Apollo/client'
 import {
   CurrentProfileInfoFragment,
@@ -94,14 +95,13 @@ export const SessionProvider: FC = ({ children }) => {
   }, [getSessionQ, lastSession])
 
   useEffect(() => {
-    if (session?.profileId) {
-      getCurrentProfileQ({ variables: { id: session?.profileId } })
+    if (session) {
+      const profileId = getProfileIdByUsername(session.username)
+      getCurrentProfileQ({ variables: { id: profileId } })
     }
-  }, [getCurrentProfileQ, session?.profileId])
+  }, [getCurrentProfileQ, session])
   const currentProfile =
-    session?.profileId && currentProfileResult.data?.node?.__typename === 'Profile'
-      ? currentProfileResult.data.node
-      : null
+    session && currentProfileResult.data?.node?.__typename === 'Profile' ? currentProfileResult.data.node : null
   const ctx = useMemo<SessionContextType>(
     () => ({
       currentProfile,
