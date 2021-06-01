@@ -1,4 +1,4 @@
-import { EdgeType, Page, PageInfo, PaginationInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { EdgeType, NodeType, Page, PageInfo, PaginationInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Id, parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import { aqlstr } from '../../../../lib/helpers/arango'
@@ -107,23 +107,27 @@ export const skipLimitPagination = ({ page }: { page: Maybe<PaginationInput> }) 
 
 export const updateRelationCountQuery = ({
   edgeType,
+  targetNodeType,
   nodeId,
   side,
   amount,
 }: {
   edgeType: EdgeType
-  nodeId: Id
-  side: 'i' | 'o' //FIXME: use GQL Type
+  nodeId: string
+  targetNodeType: NodeType
+  side: 'from' | 'to' //FIXME: use GQL Type
   amount: number
 }) => {
-  const { nodeType } = parseNodeId(nodeId)
+  const { nodeType } = parseNodeId(nodeId as Id)
   const q = `
     LET v = Document( ${aqlstr(nodeId)} )
-      LET currRelCount = v._relCount.${edgeType}.${side} || 0
+      LET currRelCount = v._relCount.${edgeType}.${side}.${targetNodeType} || 0
       UPDATE v WITH MERGE_RECURSIVE(v,{
         _relCount: {
           ${edgeType} : {
-            ${side}: currRelCount + (${Math.floor(amount)})
+            ${side}: {
+              ${targetNodeType}:currRelCount + (${Math.floor(amount)})
+            }
           }
         }
       })
@@ -138,20 +142,35 @@ export const updateRelationCountQuery = ({
 // export const mergeNodeMeta = ({ mergeMeta, nodeProp }: { mergeMeta: string; nodeProp: string }) =>
 //   `MERGE_RECURSIVE(${nodeProp},{ ${NODE_META_PROP}: ${mergeMeta} })`
 
-export const updateRelationCountsOnEdgeLife = ({
+export const updateRelationCountQueries = ({
   life,
   edgeType,
-  from,
-  to,
+  _from,
+  _to,
 }: {
   life: 'create' | 'delete'
-  from: Id
-  to: Id
+  _from: string
+  _to: string
   edgeType: EdgeType
 }) => {
   const amount = life === 'create' ? 1 : -1
-  const relationOut = updateRelationCountQuery({ edgeType, nodeId: from, side: 'o', amount })
-  const relationIn = updateRelationCountQuery({ edgeType, nodeId: to, side: 'i', amount })
+  const { nodeType: fromNodeType } = parseNodeId(_from as Id)
+  const { nodeType: toNodeType } = parseNodeId(_to as Id)
+
+  const relationOut = updateRelationCountQuery({
+    edgeType,
+    nodeId: _from,
+    side: 'to',
+    amount,
+    targetNodeType: toNodeType,
+  })
+  const relationIn = updateRelationCountQuery({
+    edgeType,
+    nodeId: _to,
+    side: 'from',
+    amount,
+    targetNodeType: fromNodeType,
+  })
   return { relationIn, relationOut }
 }
 
