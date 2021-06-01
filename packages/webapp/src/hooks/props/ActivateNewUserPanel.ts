@@ -32,7 +32,7 @@ export const useActivateNewUserPanelProps = ({ token }: { token: string }): Acti
 }
 
 const validationSchema: SchemaOf<FormValues> = object({
-  ...(activateUser.fields as any), // FIXME !
+  ...activateUser.fields,
   confirmPassword: string()
     .oneOf([ref('password'), null], t`Passwords must match`)
     .required(),
