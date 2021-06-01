@@ -29,16 +29,16 @@ const _rel =
     SessionEnv,
     GQLResolvers.RequireFields<GQLCommon.INode_RelArgs, 'edge'>
   > =>
-  async (parent, node, env, _info) => {
+  async (parent, args, env, _info) => {
     const { _id: parentId } = parent
     const {
       edge: { type: edgeType, node: targetNodeType, inverse, targetMe, targetIDs },
       page,
-    } = node
+    } = args
 
     const isOnlyTargetingMe = targetMe && !targetIDs
 
-    if (isOnlyTargetingMe && !isGuest(env)) {
+    if (isOnlyTargetingMe && isGuest(env)) {
       return {
         __typename: 'RelPage',
         edges: [],

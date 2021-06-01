@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro'
+import { getProfileIdByUsername } from '@moodlenet/common/lib/utils/auth/helpers'
 import { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { getProfileIdByUsername } from '../../../../backend/node_modules/@moodlenet/common/src/utils/auth/helpers'
 import { setToken } from './Apollo/client'
 import {
   CurrentProfileInfoFragment,

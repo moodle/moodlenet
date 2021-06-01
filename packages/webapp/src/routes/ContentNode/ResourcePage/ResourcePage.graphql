@@ -22,32 +22,3 @@ query ResourcePageNode($id: ID!) {
     }
   }
 }
-
-query ResourcePageResources($id: ID!) {
-  node(id: $id) {
-    ... on INode {
-      id
-      resourceList: _rel(edge: { type: Contains, node: Resource }, page: { first: 10 }) {
-        edges {
-          node {
-            ... on Resource {
-              id
-              name
-              icon
-              resources: _rel(edge: { type: Contains, node: Resource, inverse: true }, page: { first: 2 }) {
-                edges {
-                  node {
-                    ... on Resource {
-                      id
-                      name
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}

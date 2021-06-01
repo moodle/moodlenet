@@ -20,40 +20,13 @@ export const traverseEdges = ({
   page: Maybe<GQL.PaginationInput>
   targetNodeIds: Maybe<Id[]>
 }) => {
-  // const { nodeType: parentNodeType } = parseNodeId(parentNodeId)
   const targetSide = inverse ? 'from' : 'to'
   const parentSide = inverse ? 'to' : 'from'
-
-  // const aqlTargetNodeAssertionMaps = getNodeOpAqlAssertions({
-  //   env,
-  //   op: 'read',
-  //   nodeType: targetNodeType,
-  //   nodeVar: 'targetNode',
-  // })
-  // const fromType = inverse ? targetNodeType : parentNodeType
-  // const toType = !inverse ? targetNodeType : parentNodeType
-  // const aqlEdgeAssertionMaps = getEdgeOpAqlAssertions({
-  //   env,
-  //   edgeType,
-  //   edgeVar: 'edge',
-  //   op: 'traverse',
-  //   fromType,
-  //   toType,
-  // })
-  // if (typeof aqlEdgeAssertionMaps === 'string') {
-  //   //TODO : decide if keep throwing or return empty page ?
-  //   throw new Error(`aqlEdgeAssertionMaps->${aqlEdgeAssertionMaps}`)
-  // }
-
-  // const edgeAndNodeAssertionFilters = `( ${aqlEdgeAssertionMaps.renderedAqlFilterExpr} AND ${aqlTargetNodeAssertionMaps.renderedAqlFilterExpr} )`
-  // FIXME: with assertions
-  const edgeAndNodeAssertionFilters = `true`
 
   const targetIdsFilter =
     targetNodeIds && targetNodeIds.length ? `&& edge._${targetSide} IN [${targetNodeIds.map(aqlstr).join(',')}]` : ''
 
   const queryMapper = traversePaginateMapQuery({
-    edgeAndNodeAssertionFilters,
     edgeType,
     parentNodeId,
     parentSide,
@@ -72,7 +45,7 @@ export const traverseEdges = ({
 
 export const traversePaginateMapQuery =
   ({
-    edgeAndNodeAssertionFilters,
+    // edgeAndNodeAssertionFilters,
     edgeType,
     parentNodeId,
     parentSide,
@@ -86,7 +59,7 @@ export const traversePaginateMapQuery =
     parentSide: string
     parentNodeId: string
     targetIdsFilter: string
-    edgeAndNodeAssertionFilters: string
+    // edgeAndNodeAssertionFilters: string
   }) =>
   (pageFilterSortLimit: string) =>
     `
@@ -97,7 +70,7 @@ FOR edge IN ${edgeType}
     ${targetIdsFilter}
 
   LET targetNode=Document(edge._${targetSide})
-  FILTER ${edgeAndNodeAssertionFilters}
+  //FILTER $ {edgeAndNodeAssertionFilters}
 
 
 ${pageFilterSortLimit}
