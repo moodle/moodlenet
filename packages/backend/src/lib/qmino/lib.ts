@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { InProcessActionResolverDelegates } from './transports/in-process'
 import * as QM from './types'
 
 const QMPortSymbol = Symbol('QMPort')
@@ -153,34 +154,6 @@ export const extractAction = <C extends QM.AnyQMAction>(action: C): QM.ActionExt
   return actionExtract
 }
 
-export const attemptLocalResolve = <Action extends QM.AnyQMAction>(
-  actionExtract: QM.ActionExtract<Action>,
-): null | (() => Promise<QM.QMActionResponse<Action>>) => {
-  const { deployment, action /* , args, port */ } = actionExtract
-  if (!deployment) {
-    return null
-  }
-  const { adapter } = deployment
-
-  return () => action(adapter)
-}
-
-export const queryResolver: QM.ActionResolver = actionExtract => {
-  const maybeLocalExecutor = attemptLocalResolve(actionExtract)
-  if (!maybeLocalExecutor) {
-    throw new Error(`transport unimplemented yet`)
-  }
-  return maybeLocalExecutor
-}
-
-const actionResolverDelegates: { [t in QM.QMPortType]: QM.ActionResolver } = {
-  query: queryResolver,
-  command: queryResolver,
-  event: (() => {
-    throw new Error('event unimplemented')
-  }) as any,
-}
-
 export const extractLink = (port: any) => {
   const portDef = extractDef(port)
   const link = portDef.link
@@ -202,8 +175,9 @@ export const open = async <P extends QM.AnyQMPort>(
   port: P,
   adapter: QM.QMAdapter<P>,
   teardown?: QM.Teardown,
-  _transport_any?: QM.Transport,
+  _transportName?: string,
 ) => {
+  // const transport = getTransport(transportName)
   const link = extractLink(port)
   console.log(`open port: ${displayId(link.id)}`)
 
@@ -217,5 +191,18 @@ export const open = async <P extends QM.AnyQMPort>(
 export const resolve = <Action extends QM.AnyQMAction>(action: Action): QM.QMActionExecutor<Action> => {
   const actionExtract = extractAction(action)
   console.log(`resolving: [${displayId(actionExtract.id)}]`)
-  return actionResolverDelegates[actionExtract.type](actionExtract)
+  return InProcessActionResolverDelegates[actionExtract.type](actionExtract)
+}
+
+const transportRegistry: Record<string, QM.Transport> = {}
+export const getTransport = (name: string): QM.Transport | null => transportRegistry[name] ?? null
+export const registerTransport = (name: string, transport: QM.Transport) => {
+  const existingRegisteredTransport = getTransport(name)
+  if (existingRegisteredTransport) {
+    if (existingRegisteredTransport !== transport) {
+      throw new Error(`Another Transport [${name}] already registered !`)
+    }
+    return
+  }
+  transportRegistry[name] = transport
 }

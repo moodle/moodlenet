@@ -41,7 +41,12 @@ export type QMLink<Port extends AnyQMPort> = {
   deployment?: QMDeployment<Port>
 }
 
-export type Transport = any
+export type Transport = {
+  enqueue(args: any[]): Promise<unknown>
+  callSync(args: any[]): Promise<unknown>
+  emit(args: any[]): Promise<unknown>
+  query(args: any[]): Promise<unknown>
+}
 
 export type AnyQMActionDef = QMActionDef<AnyQMPortDef>
 export type QMActionDef<PortDef extends AnyQMPortDef> = {
