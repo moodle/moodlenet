@@ -3,7 +3,7 @@
   "exclude": [
     "./lib",
     //FIXME: remove following after fixed db maintainance and mock-populate
-    "./src/adapters/content-graph/arangodb/db/maintainance"
+    "./src/adapters/content-graph/arangodb/db/_maintainance"
   ],
   "compilerOptions": {
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
