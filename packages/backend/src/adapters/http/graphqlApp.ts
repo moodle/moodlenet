@@ -7,14 +7,16 @@ import { SignOptions } from 'jsonwebtoken'
 import { getGQLResolvers } from '../../graphql/resolvers'
 import { Context, RootValue } from '../../graphql/types'
 import { JwtPrivateKey } from '../../lib/auth/jwt'
+import { QMino } from '../../lib/qmino'
 
 export type GQLAppConfig = {
   additionalResolvers: any
   jwtSignOptions: SignOptions
   jwtPrivateKey: JwtPrivateKey
+  qmino: QMino
 }
-export const createGraphQLApp = ({ additionalResolvers, jwtPrivateKey, jwtSignOptions }: GQLAppConfig) => {
-  const mainResolvers = getGQLResolvers({ jwtPrivateKey, jwtSignOptions })
+export const createGraphQLApp = ({ additionalResolvers, jwtPrivateKey, jwtSignOptions, qmino }: GQLAppConfig) => {
+  const mainResolvers = getGQLResolvers({ jwtPrivateKey, jwtSignOptions, qmino })
   const schema = makeExecutableSchema({
     typeDefs: printSchema(buildClientSchema(introspection as any)), // ? don't know why it doesn' accept IntrospectionQuery
     resolvers: { ...mainResolvers, ...additionalResolvers },

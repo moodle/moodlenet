@@ -17,7 +17,7 @@ import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { Tuple } from 'tuple-type'
 import { DocumentEdgeByType, DocumentNodeByType } from '../../adapters/content-graph/arangodb/functions/types'
-import { resolve } from '../../lib/qmino'
+import { QMino } from '../../lib/qmino'
 import { persistTempAssets } from '../../ports/static-assets/temp'
 import { PersistTmpFileReq } from '../../ports/static-assets/types'
 import { EdgeByType, NodeByType, ShallowEdgeByType, ShallowNodeByType } from '../types.node'
@@ -71,6 +71,7 @@ export const deleteEdgeMutationError = (
 type AssetRefInputAndType = { input: AssetRefInput; uploadType: UploadType }
 export const mapAssetRefInputsToAssetRefs = async <N extends number>(
   tupleOfAssetRefInputAndType: Tuple<AssetRefInputAndType, N>,
+  qmino: QMino,
 ): Promise<Tuple<Maybe<AssetRef>, N> | null> => {
   type PersistTmpFileReqOrAssetRef = PersistTmpFileReq | AssetRef
 
@@ -93,7 +94,9 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
 
   const toPersistReqsTuple = arrayOfMaybePersistTempFilesReqOrAssetRef.filter(_isPersistReq)
 
-  const assetFileDescArray = await resolve(persistTempAssets({ persistTmpFilesReqs: toPersistReqsTuple }))()
+  const assetFileDescArray = await qmino.callSync(persistTempAssets({ persistTmpFilesReqs: toPersistReqsTuple }), {
+    timeout: 5000,
+  })
 
   if (!assetFileDescArray) {
     return null

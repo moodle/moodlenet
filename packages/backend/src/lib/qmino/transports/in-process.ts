@@ -1,32 +1,59 @@
-import * as QM from '../types'
+import EventEmitter from 'events'
+import { TIMEOUT } from '../lib'
+import { Transport } from '../types'
 
-const attemptLocalResolve = <Action extends QM.AnyQMAction>(
-  actionExtract: QM.ActionExtract<Action>,
-): null | (() => Promise<QM.QMActionResponse<Action>>) => {
-  const { deployment, action /* , args, port */ } = actionExtract
-  if (!deployment) {
-    return null
+export const createInProcessTransport = (): Transport => {
+  let reqIdCount = 0
+
+  const emitter = new EventEmitter()
+
+  const eventName = (id: string[]) => id.join('::')
+
+  type Evt = { args: any[]; reqId: string }
+  const makeEvent = (args: any[]): Evt => ({ args, reqId: `${reqIdCount++}` })
+  const getEvent = (evt: any): Evt => evt
+
+  type Resp = { err: boolean; payload: any }
+  const makeResp = (err: boolean, payload: any): Resp => ({ err, payload })
+  const getResp = (evt: any): Resp => evt
+
+  const open: Transport['open'] = async (id, handler) => {
+    const portHandler = (evt: any) => {
+      const { args, reqId } = getEvent(evt)
+      handler(...args)
+        .then(resp => emitter.emit(reqId, makeResp(false, resp)))
+        .catch(err => emitter.emit(reqId, makeResp(true, err)))
+    }
+    const _eventName = eventName(id)
+    emitter.on(_eventName, portHandler)
+    return {
+      teardown: async () => emitter.off(_eventName, portHandler),
+    }
   }
-  const { adapter } = deployment
 
-  return () => action(adapter)
-}
-
-const queryResolver: QM.ActionResolver = actionExtract => {
-  const maybeLocalExecutor = attemptLocalResolve(actionExtract)
-  if (!maybeLocalExecutor) {
-    throw new Error(`port not open locally`)
+  const send: Transport['send'] = async (id, args, waitsForResponse) => {
+    const _eventName = eventName(id)
+    const evt = makeEvent(args)
+    emitter.emit(_eventName, evt)
+    console.log(`inProcessTransport: send ${_eventName}`, args)
+    if (waitsForResponse) {
+      return new Promise((resolve, reject) => {
+        const respHandler = (_resp: any) => {
+          const resp = getResp(_resp)
+          const _res_rej = resp.err ? reject : resolve
+          _res_rej(resp.payload)
+        }
+        emitter.once(evt.reqId, respHandler)
+        setTimeout(() => {
+          emitter.off(evt.reqId, respHandler)
+          reject(TIMEOUT)
+        }, waitsForResponse.timeout)
+      })
+    }
   }
-  return maybeLocalExecutor
-}
 
-export const InProcessActionResolverDelegates: { [t in QM.QMPortType]: QM.ActionResolver } = {
-  query: queryResolver,
-  command: actionExtract => {
-    console.warn(`InProcess Transport : \`command\` not implemented properly, will use \`query\``)
-    return queryResolver(actionExtract)
-  },
-  event: (() => {
-    throw new Error('event unimplemented')
-  }) as any,
+  return {
+    send,
+    open,
+  }
 }

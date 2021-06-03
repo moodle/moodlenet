@@ -1,6 +1,7 @@
 import { CreateNodeInput, CreateNodeMutationError, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Just } from '@moodlenet/common/lib/utils/types'
 import { DocumentNodeDataByType } from '../../../../adapters/content-graph/arangodb/functions/types'
+import { QMino } from '../../../../lib/qmino'
 import {
   createNodeMutationError,
   getAssetRefInputAndType,
@@ -11,10 +12,16 @@ import {
 const noTmpFilesCreateNodeMutationError = () =>
   createNodeMutationError('UnexpectedInput', `couldn't find requested tempFiles`)
 const nodeDocumentDataBaker: {
-  [T in NodeType]: (input: Just<CreateNodeInput[T]>) => Promise<DocumentNodeDataByType<T> | CreateNodeMutationError>
+  [T in NodeType]: (
+    input: Just<CreateNodeInput[T]>,
+    qmino: QMino,
+  ) => Promise<DocumentNodeDataByType<T> | CreateNodeMutationError>
 } = {
-  async Subject(input) {
-    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs([getContentNodeAssetRefInputAndType(input.content)])
+  async Subject(input, qmino) {
+    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
+      [getContentNodeAssetRefInputAndType(input.content)],
+      qmino,
+    )
 
     if (!contentNodeAssetRefs) {
       return noTmpFilesCreateNodeMutationError()
@@ -26,8 +33,11 @@ const nodeDocumentDataBaker: {
       icon,
     }
   },
-  async Collection(input) {
-    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs([getContentNodeAssetRefInputAndType(input.content)])
+  async Collection(input, qmino) {
+    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
+      [getContentNodeAssetRefInputAndType(input.content)],
+      qmino,
+    )
     if (!contentNodeAssetRefs) {
       return noTmpFilesCreateNodeMutationError()
     }
@@ -38,11 +48,11 @@ const nodeDocumentDataBaker: {
       icon,
     }
   },
-  async Resource(input) {
-    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs([
-      getContentNodeAssetRefInputAndType(input.content),
-      getAssetRefInputAndType(input.resource, 'resource'),
-    ])
+  async Resource(input, qmino) {
+    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
+      [getContentNodeAssetRefInputAndType(input.content), getAssetRefInputAndType(input.resource, 'resource')],
+      qmino,
+    )
 
     if (!contentNodeAssetRefs) {
       return noTmpFilesCreateNodeMutationError()
@@ -58,8 +68,11 @@ const nodeDocumentDataBaker: {
       asset: resource,
     }
   },
-  async Profile(input) {
-    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs([getContentNodeAssetRefInputAndType(input.content)])
+  async Profile(input, qmino) {
+    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
+      [getContentNodeAssetRefInputAndType(input.content)],
+      qmino,
+    )
 
     if (!contentNodeAssetRefs) {
       return noTmpFilesCreateNodeMutationError()
@@ -76,7 +89,8 @@ const nodeDocumentDataBaker: {
 export const bakeNodeDoumentData = async <T extends NodeType>(
   input: Just<CreateNodeInput[T]>,
   nodeType: T,
+  qmino: QMino,
 ): Promise<DocumentNodeDataByType<T> | CreateNodeMutationError> => {
   const baker = nodeDocumentDataBaker[nodeType as NodeType]
-  return baker(input as any) as any
+  return baker(input as any, qmino) as any
 }
