@@ -6,7 +6,7 @@ import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-ty
 import { SignOptions } from 'jsonwebtoken'
 import { userSessionByActiveUser } from '../../adapters/user-auth/arangodb/helpers'
 import { JwtPrivateKey, signJwtActiveUser } from '../../lib/auth/jwt'
-import { resolve } from '../../lib/qmino'
+import { QMino } from '../../lib/qmino'
 import * as edgePorts from '../../ports/content-graph/edge'
 import * as nodePorts from '../../ports/content-graph/node'
 import * as searchPorts from '../../ports/content-graph/search'
@@ -25,9 +25,11 @@ import { bakeNodeDoumentData } from './prepareData/createNode'
 export const getGQLResolvers = ({
   jwtPrivateKey,
   jwtSignOptions,
+  qmino,
 }: {
   jwtSignOptions: SignOptions
   jwtPrivateKey: JwtPrivateKey
+  qmino: QMino
 }): GQLResolvers.Resolvers => {
   return {
     //@ts-expect-error : Scalar ID is not present in Resolvers
@@ -35,18 +37,19 @@ export const getGQLResolvers = ({
     Query: {
       async node(_root, { id } /* ,env ,_info */) {
         const { nodeType, _key } = parseNodeId(id)
-        const maybeNode = await resolve(nodePorts.byId({ _key, nodeType }))()
+        const maybeNode = await qmino.query(nodePorts.byId({ _key, nodeType }), { timeout: 5000 })
         return maybeNode && fakeNodeByShallowOrDoc(maybeNode)
       },
 
       async globalSearch(_root, { sortBy, text, nodeTypes, page }, env) {
-        return resolve(searchPorts.byTerm({ sortBy, text, nodeTypes, page, env }))()
+        return qmino.query(searchPorts.byTerm({ sortBy, text, nodeTypes, page, env }), { timeout: 5000 })
       },
 
       async getSession(_root, _no_args, env) {
-        const activeUser = await resolve(
+        const activeUser = await qmino.query(
           userPorts.getActiveByUsername({ username: env.user.name, matchPassword: false }),
-        )()
+          { timeout: 5000 },
+        )
 
         if (!activeUser) {
           return null
@@ -56,7 +59,9 @@ export const getGQLResolvers = ({
     },
     Mutation: {
       async createSession(_root, { password, username } /* , env */) {
-        const activeUser = await resolve(userPorts.getActiveByUsername({ username, matchPassword: password }))()
+        const activeUser = await qmino.query(userPorts.getActiveByUsername({ username, matchPassword: password }), {
+          timeout: 5000,
+        })
 
         if (!activeUser) {
           return {
@@ -72,7 +77,7 @@ export const getGQLResolvers = ({
       },
 
       async signUp(_root, { email } /* ,env */) {
-        const res = await resolve(newUserPorts.signUp({ email }))()
+        const res = await qmino.callSync(newUserPorts.signUp({ email }), { timeout: 5000 })
         if (typeof res === 'string') {
           return { __typename: 'SimpleResponse', success: false, message: res }
         }
@@ -80,7 +85,9 @@ export const getGQLResolvers = ({
       },
 
       async activateUser(_root, { password, token, username } /*, env */) {
-        const activationresult = await resolve(newUserPorts.confirmSignup({ password, token, username }))()
+        const activationresult = await qmino.callSync(newUserPorts.confirmSignup({ password, token, username }), {
+          timeout: 5000,
+        })
         if ('string' === typeof activationresult) {
           return {
             __typename: 'CreateSession',
@@ -106,19 +113,20 @@ export const getGQLResolvers = ({
           return createNodeMutationError('UnexpectedInput', nodeInput.message)
         }
 
-        const data = await bakeNodeDoumentData(nodeInput, nodeType)
+        const data = await bakeNodeDoumentData(nodeInput, nodeType, qmino)
         if ('__typename' in data) {
           return data
         }
 
         // const data = { name, summary, ...assetRefMap }
-        const shallowNodeOrError = await resolve(
+        const shallowNodeOrError = await qmino.callSync(
           nodePorts.create({
             data,
             nodeType,
             env,
           }),
-        )()
+          { timeout: 5000 },
+        )
         if (typeof shallowNodeOrError === 'string') {
           return createNodeMutationError(shallowNodeOrError, '')
         }
@@ -141,7 +149,7 @@ export const getGQLResolvers = ({
         }
 
         // const data = { name, summary, ...assetRefMap }
-        const edgeCreateResult = await resolve(
+        const edgeCreateResult = await qmino.callSync(
           edgePorts.create({
             from,
             to,
@@ -149,7 +157,8 @@ export const getGQLResolvers = ({
             edgeType,
             env,
           }),
-        )()
+          { timeout: 5000 },
+        )
         if (typeof edgeCreateResult === 'string') {
           return createEdgeMutationError(edgeCreateResult, '')
         }
@@ -165,13 +174,14 @@ export const getGQLResolvers = ({
         // console.log('deleteEdge', input)
         const { edgeType, id } = input
 
-        const deleteResult = await resolve(
+        const deleteResult = await qmino.callSync(
           edgePorts.del({
             env,
             edgeType,
             id,
           }),
-        )()
+          { timeout: 5000 },
+        )
 
         if (typeof deleteResult === 'string') {
           return deleteEdgeMutationError(deleteResult, null)

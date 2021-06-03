@@ -9,6 +9,7 @@ export type QMPkg = {
   qmino: QMPkgDef
 }
 export type QMPortType = 'command' | 'event' | 'query'
+export type QMPortId = [QMPortType, ...string[]]
 
 export type QMAction<Adapter extends Object, Res> = (adapter: Adapter) => Promise<Res>
 export type AnyQMAction = QMAction<any, any>
@@ -18,13 +19,14 @@ export type AnyQMPortDef = QMPortDef<QMPortType, AnyQMPort>
 export type QMPortDef<QMT extends QMPortType, Port extends AnyQMPort> = {
   type: QMT
   port: Port
-  link?: QMLink<Port>
+  link?: QMLink
 }
 
 export type QMDeployment<Port extends AnyQMPort> = {
   at: Date
   adapter: QMAdapter<Port>
-  teardown?: Teardown
+  port: Port
+  teardown: Teardown
 }
 export type Teardown = () => Promise<unknown>
 
@@ -33,15 +35,24 @@ export type QMPortAction<Port extends AnyQMPort> = ReturnType<Port>
 
 export type QMAdapter<Port extends AnyQMPort> = Parameters<QMPortAction<Port>>[0]
 
-export type QMLink<Port extends AnyQMPort> = {
+export type QMLink = {
   path: string[]
-  id: string[]
+  id: QMPortId
   pkg: QMPkg
-  // be it an array, for multiple transport deployment support
-  deployment?: QMDeployment<Port>
 }
 
-export type Transport = any
+export type TransportPortHandler = (...args: any[]) => Promise<any>
+export type TransportPortDeployment = { teardown: Teardown }
+export type WaitsForResponse = {
+  timeout: number
+}
+export type Transport = {
+  open(id: QMPortId, handler: TransportPortHandler): Promise<TransportPortDeployment>
+  send(id: QMPortId, args: any[], waitsForResponse?: WaitsForResponse): Promise<any>
+  // query(id: PortId, args: any[]): Promise<any>
+  // enqueue(id: PortId, args: any[]): Promise<void>
+  // emit(id: PortId, args: any[]): Promise<void>
+}
 
 export type AnyQMActionDef = QMActionDef<AnyQMPortDef>
 export type QMActionDef<PortDef extends AnyQMPortDef> = {
@@ -55,14 +66,14 @@ export type QMActionResponse<Action extends AnyQMAction> = Action extends QMActi
 
 export type ActionExtract<Action extends AnyQMAction> = {
   type: QMPortType
-  link: QMLink<AnyQMPort>
-  id: string[]
+  link: QMLink
+  id: QMPortId
   path: string[]
   pkg: QMPkg
   action: Action
   deployment: QMDeployment<AnyQMPort> | undefined
-  // port: AnyQMPort
-  // args: any[]
+  transport: Transport
+  args: any[]
 }
 
 export type ActionResolver<Action extends AnyQMAction = AnyQMAction> = (
@@ -71,3 +82,8 @@ export type ActionResolver<Action extends AnyQMAction = AnyQMAction> = (
 
 export type QMPortExecutor<Port extends AnyQMPort> = () => Promise<QMPortResponse<Port>>
 export type QMActionExecutor<Action extends AnyQMAction> = () => Promise<QMActionResponse<Action>>
+export type QMino = {
+  open: <P extends AnyQMPort>(port: P, adapter: QMAdapter<P>, teardown?: Teardown) => Promise<void>
+  callSync: <Res>(action: QMAction<any, Res>, waitsForResponse: WaitsForResponse) => Promise<Res>
+  query: <Res>(action: QMAction<any, Res>, waitsForResponse: WaitsForResponse) => Promise<Res>
+}
