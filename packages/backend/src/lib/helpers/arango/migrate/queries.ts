@@ -5,6 +5,7 @@ export const MIGRATIONS_COLLECTION = 'MIGRATIONS_COLLECTION'
 
 export const getMigrationHistoryQ = () => `
   for migr in ${MIGRATIONS_COLLECTION}
+  sort migr.date desc
   return migr
 `
 

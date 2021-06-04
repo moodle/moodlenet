@@ -14,6 +14,22 @@ const versionLadder: VersionLadder = {
       console.log('done pushDown to 0.0.1')
     },
   },
+  '0.0.3': {
+    async pullUp() {
+      console.log('done pullUp to 0.0.3')
+    },
+    async pushDown() {
+      console.log('done pushDown to 0.0.2')
+    },
+  },
+  '0.0.4': {
+    async pullUp() {
+      console.log('done pullUp to 0.0.4')
+    },
+    async pushDown() {
+      console.log('done pushDown to 0.0.3')
+    },
+  },
 }
 
 module.exports = versionLadder

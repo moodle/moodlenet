@@ -7,7 +7,7 @@ export type MigrationRecord = {
 }
 export const getVersion = (_: string): null | Version => valid(_, {}) as null | Version
 
-export type DBWorker = (db: Database) => Promise<unknown>
+export type DBWorker = (_: { db: Database }) => Promise<unknown>
 export type VersionUpdater =
   | {
       pullUp: DBWorker
