@@ -35,7 +35,6 @@ export const createInProcessTransport = (): Transport => {
     const _eventName = eventName(id)
     const evt = makeEvent(args)
     emitter.emit(_eventName, evt)
-    console.log(`inProcessTransport: send ${_eventName}`, args)
     if (waitsForResponse) {
       return new Promise((resolve, reject) => {
         const respHandler = (_resp: any) => {

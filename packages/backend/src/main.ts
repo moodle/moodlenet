@@ -1,6 +1,5 @@
-require('./env')
-const { startDefaultMoodlenet } = require('./lib/defaultDeploy')
-const SshPK = require('sshpk')
+import SshPK from 'sshpk'
+import { startDefaultMoodlenet } from './defaultDeploy'
 
 const httpPort = Number(process.env.HTTP_PORT) || 8080
 const mailgunApiKey = process.env.MAILGUN_API_KEY
@@ -21,7 +20,8 @@ if (
     jwtExpirationSecs &&
     jwtPublicKey &&
     publicBaseUrl &&
-    fsAssetRootFolder && httpPort
+    fsAssetRootFolder &&
+    httpPort
   )
 ) {
   console.error('Env:')
@@ -34,7 +34,7 @@ if (
     jwtPublicKey,
     publicBaseUrl,
     fsAssetRootFolder,
-    httpPort
+    httpPort,
   })
   throw new Error(`missing some env`)
 }
@@ -57,5 +57,5 @@ startDefaultMoodlenet({
   jwtPublicKey,
   publicBaseUrl,
   fsAssetRootFolder,
-  httpPort
+  httpPort,
 })
