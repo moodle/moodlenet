@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { inspect } from 'util'
 import * as QM from './types'
 export * from './types'
 
@@ -104,7 +105,10 @@ export const wrapQMPort = <Port extends QM.AnyQMPort, PortType extends QM.QMPort
   type: PortType,
 ): Port => {
   const port_wrap = (...args: any[]) => {
-    const action = (adapter: any) => original_port(...args)(adapter)
+    const action = (adapter: any) => {
+      console.log(`accessing port [${displayId(portDef.link?.id)}]( ${inspect(args)} )`)
+      return original_port(...args)(adapter)
+    }
     const actionDef: QM.AnyQMActionDef = {
       portDef,
       args,
