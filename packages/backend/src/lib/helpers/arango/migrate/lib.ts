@@ -6,7 +6,7 @@ import { addMigrationRecordQ, getMigrationHistoryQ, MIGRATIONS_COLLECTION } from
 import { MigrationRecord, Version, VersionLadder } from './types'
 
 export const addMigrationRecord = (version: Version) => async (db: Database) => {
-  const date = String(new Date()) as any as Date
+  const date = new Date().toISOString() as any as Date
   const record: MigrationRecord = {
     version,
     date,
@@ -29,7 +29,7 @@ export const getMigrationHistory = () => async (db: Database) => {
 export const isSetUp = () => async (db: Database) => db.collection(MIGRATIONS_COLLECTION).exists()
 
 export const setUp = () => async (db: Database) => {
-  if (await isSetUp()) {
+  if (await isSetUp()(db)) {
     return
   }
   await db.createCollection(MIGRATIONS_COLLECTION)
@@ -49,7 +49,7 @@ export const isDBAtVersion =
   async (db: Database) =>
     (await getDBVersionCompare({ version })(db)) === 0
 
-export const step =
+export const stepDB =
   ({ ladder, dir }: { ladder: VersionLadder; dir: 'up' | 'down' }) =>
   async ({ db }: { db: Database }) => {
     const latestRecord = await getDBLatestMigrationRecord()(db)
@@ -57,39 +57,49 @@ export const step =
       throw new Error(`No version history present`)
     }
     const latestVersion = latestRecord.version
+    console.log(`latest DB version: ${latestVersion}`)
     const latestUpdater = ladder[latestVersion]
     if (!latestUpdater) {
       throw new Error(`no updater found for latest version ${latestVersion}!`)
     }
 
     const target_version_updater = climbLadder(ladder, latestVersion, dir)
+
     if (!target_version_updater) {
       return false
     }
     const [targetVersion, targetVersionUpdater] = target_version_updater
 
+    console.log(`DB targetVersion: ${targetVersion}`)
+
     if (dir === 'up') {
       if ('initialSetUp' in targetVersionUpdater) {
         throw new Error(`found an "initialSetup" updater for next version ${targetVersion}!`)
       }
-      return targetVersionUpdater.pullUp(db).then(() => {
-        addMigrationRecord(targetVersion)
-      })
+      console.log(`calling updater`)
+      await targetVersionUpdater.pullUp(db)
+      console.log(`add migration record`)
+      await addMigrationRecord(targetVersion)(db)
+      return
     } else {
       if ('initialSetUp' in latestUpdater) {
         return false
       }
 
-      return latestUpdater.pushDown(db).then(() => {
-        addMigrationRecord(targetVersion)
-      })
+      console.log(`calling updater`)
+      await latestUpdater.pushDown(db)
+      console.log(`add migration record`)
+      await addMigrationRecord(targetVersion)(db)
+      return
     }
   }
 
 export const climbLadder = (ladder: VersionLadder, from: Version, dir: 'up' | 'down') => {
   const ladderVersionsSorted = getLadderVersionSorted(ladder)
+  console.log(`ladderVersionsSorted: ${ladderVersionsSorted}`)
+
   const currVersionIndex = ladderVersionsSorted.indexOf(from)
-  const requestedVersion = ladderVersionsSorted[currVersionIndex + dir === 'up' ? 1 : -1] as Version | undefined
+  const requestedVersion = ladderVersionsSorted[currVersionIndex + (dir === 'up' ? -1 : 1)] as Version | undefined
   if (!requestedVersion) {
     return null
   }
@@ -106,21 +116,19 @@ export const getLadderVersionSorted = (ladder: VersionLadder) => {
   return ladderVersionsSorted
 }
 
-export const initialSetUp = (ladder: VersionLadder) => async (db: Database) => {
-  const databaseName = db.name
-  if (process.env.ARANGO_MIGRATE_DROP_SETUP_DATABASE !== databaseName) {
-    throw new Error(`set env var ARANGO_MIGRATE_DROP_SETUP_DATABASE=${databaseName} to perform drop and setup`)
+export const initialSetUp =
+  ({ ladder }: { ladder: VersionLadder }) =>
+  async ({ db }: { db: Database }) => {
+    const firstVersion = getLadderVersionSorted(ladder).reverse()[0]! as Version
+    const firstVersionUpdater = ladder[firstVersion]
+    if (!firstVersionUpdater || !('initialSetUp' in firstVersionUpdater)) {
+      throw new Error(`can't find an "initialSetup" for lowest version ${firstVersion}!`)
+    }
+    console.log(`first version: ${firstVersion}`)
+    console.log(`setup migration collection`)
+    await setUp()(db)
+    console.log(`db initial setup`)
+    await firstVersionUpdater.initialSetUp(db)
+    console.log(`adding migration record`)
+    await addMigrationRecord(firstVersion)(db)
   }
-  const firstVersion = getLadderVersionSorted(ladder).reverse()[0]! as Version
-  const firstVersionUpdater = ladder[firstVersion]
-  if (!firstVersionUpdater || !('initialSetUp' in firstVersionUpdater)) {
-    throw new Error(`can't find an "initialSetup" for lowest version ${firstVersion}!`)
-  }
-  if (await db.exists()) {
-    await db.dropDatabase(databaseName)
-  }
-  await db.createDatabase(databaseName)
-  await setUp()
-  await firstVersionUpdater.initialSetUp(db)
-  addMigrationRecord(firstVersion)(db)
-}
