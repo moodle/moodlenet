@@ -1,22 +1,26 @@
 import { Database } from 'arangojs'
 import { resolve } from 'path'
 import semverValid from 'semver/functions/valid'
+import { require_all_updaters } from './helpers'
 import { initialSetUp, stepDB, stepDBTo } from './lib'
 import { Version } from './types'
 
-const [arangoUrl, dbname, ladderPath, step] = process.argv.slice(2)
+const [arangoUrl, dbname, versionStepsDir, step] = process.argv.slice(2)
 
-console.log(`start\n${[arangoUrl, dbname, ladderPath, step].join('\n')}\n`)
+console.log(
+  `start migration: 
+    arangoUrl: ${arangoUrl}
+    dbname: ${dbname}
+    versionStepsDir: ${versionStepsDir}
+    step: ${step}
+`,
+)
 
-if (!(arangoUrl && dbname && ladderPath && step)) {
-  throw new Error(`missing something:${JSON.stringify({ arangoUrl, dbname, ladderPath, step })}`)
+if (!(arangoUrl && dbname && versionStepsDir && step)) {
+  throw new Error(`missing something:${JSON.stringify({ arangoUrl, dbname, versionStepsDir, step })}`)
 }
 
-const ladderPathResolved = resolve(process.cwd(), ladderPath)
-console.log(`ladderPathResolved ${ladderPathResolved}`)
-
-const ladder = require(ladderPathResolved)
-// console.log('ladder', ladder)
+const ladder = require_all_updaters({ dirname: resolve(process.cwd(), versionStepsDir) })
 
 const db = new Database({ databaseName: dbname, url: arangoUrl })
 if (['up', 'down'].includes(step)) {
@@ -31,8 +35,9 @@ if (['up', 'down'].includes(step)) {
     }
     console.log(`creating db ${dbname}`)
     const db = await sys_db.createDatabase(dbname)
+    console.log(`initializing db ${dbname}`)
     await initialSetUp({ ladder })({ db })
-    exit(db, sys_db)('done')
+    exit(db, sys_db)('init DB done')
   })
 } else if (semverValid(step)) {
   stepDBTo({ ladder, targetVersion: step as Version })({ db }).then(exit(db))

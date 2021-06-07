@@ -67,7 +67,7 @@ export const stepDB =
       throw new Error(`No version history present`)
     }
     const latestVersion = latestRecord.version
-    console.log(`\nstepDB: latest DB version: ${latestVersion}`)
+    console.log(`stepDB: latest DB version: ${latestVersion}`)
     const latestUpdater = ladder[latestVersion]
     if (!latestUpdater) {
       throw new Error(`no updater found for latest version ${latestVersion}!`)
@@ -84,7 +84,7 @@ export const stepDB =
       return [latestVersion, targetVersion, false] as const
     }
 
-    console.log(`\nstepDB: DB targetVersion: ${targetVersion}`)
+    console.log(`stepDB: DB targetVersion: ${targetVersion}`)
 
     let updater: DBWorker
 
@@ -99,9 +99,9 @@ export const stepDB =
       }
       updater = latestUpdater.pushDown
     }
-    console.log(`calling updater`)
+    console.log(`calling [${dir}] updater from version ${latestVersion} to ${targetVersion}`)
     await updater({ db })
-    console.log(`add migration record`)
+    console.log(`addding migration record`)
     await addMigrationRecord(targetVersion)({ db })
     return [latestVersion, targetVersion, true] as const
   }
@@ -124,26 +124,31 @@ export const getLadderVersionSorted = (ladder: VersionLadder) => {
     throw new Error(`Ladder contains invalid semvers : ${invalidSemvers.join(' ; ')}`)
   }
   const ladderVersionsSorted = Object.keys(ladder).sort(semverRCompare)
-  console.log(`ladderVersionsSorted: ${ladderVersionsSorted.join(' <- ')}`)
+  console.log(`ladder versions: ${ladderVersionsSorted.join(' | ')}`)
 
-  return ladderVersionsSorted
+  return ladderVersionsSorted as Version[]
 }
 
 export const initialSetUp =
   ({ ladder }: { ladder: VersionLadder }) =>
   async ({ db }: { db: Database }) => {
-    const firstVersion = getLadderVersionSorted(ladder).reverse()[0]! as Version
+    const versions = getLadderVersionSorted(ladder)
+    const lastVersion = versions[0]!
+    const firstVersion = versions.reverse()[0]!
     const firstVersionUpdater = ladder[firstVersion]
+    console.log(`first version in ladder: ${firstVersion}`)
     if (!firstVersionUpdater || !('initialSetUp' in firstVersionUpdater)) {
       throw new Error(`can't find an "initialSetup" for lowest version ${firstVersion}!`)
     }
-    console.log(`first version: ${firstVersion}`)
     console.log(`setup migration collection`)
     await setUp()({ db })
     console.log(`db initial setup`)
     await firstVersionUpdater.initialSetUp({ db })
     console.log(`adding migration record`)
     await addMigrationRecord(firstVersion)({ db })
+    if (lastVersion !== firstVersion) {
+      await stepDBTo({ ladder, targetVersion: lastVersion })({ db })
+    }
   }
 
 export const stepDBTo =
@@ -160,7 +165,7 @@ export const stepDBTo =
     const versionCompare = semverRCompare(latestVersion, targetVersion)
     console.log(`\nstepDBTo : check versions ${latestVersion}->${targetVersion}`)
     if (versionCompare === 0) {
-      console.log(`stepDBTo: same version exit`)
+      console.log(`stepDBTo: version up to date, exit`)
       return targetVersion
     }
     const dir = versionCompare === 1 ? 'up' : 'down'
@@ -172,7 +177,7 @@ export const stepDBTo =
         return toVersion
       }
       if (semverRCompare(toVersion, targetVersion) === 0) {
-        console.log(`\nstepDBTo: done properly ${targetVersion}`)
+        console.log(`\nstepDBTo: migrate properly to ${targetVersion}`)
         return targetVersion
       }
       return stepDBTo({ ladder, targetVersion })({ db })

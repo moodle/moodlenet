@@ -1,8 +1,8 @@
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { ActiveUser } from '../../adapters/user-auth/arangodb/types'
-import { DefaultConfig } from '../../adapters/user-auth/emailTemplates'
+import { DefaultConfig } from '../../adapters/user-auth/defaultConfig'
 import { makeEnv } from '../../lib/auth/env'
-import { SessionEnv } from '../../lib/auth/types'
+import { Role, SessionEnv } from '../../lib/auth/types'
 import { fillEmailTemplate } from '../../lib/emailSender/helpers'
 import { EmailAddr, EmailObj } from '../../lib/emailSender/types'
 import { QMCommand, QMModule } from '../../lib/qmino'
@@ -33,7 +33,7 @@ export const signUp = QMCommand(
         },
       })
       sendEmail(emailObj)
-      return
+      return token
     },
 )
 
@@ -63,6 +63,35 @@ export const confirmSignup = QMCommand(
       createNewProfile({ username, env })
 
       return activateResult
+    },
+)
+
+export type CreateNewUserAdapter = {
+  createUser(_: {
+    email: EmailAddr
+    password: string
+    username: string
+    role: Role
+  }): Promise<ActiveUser | null | 'username not available' | 'email not available'>
+  hashPassword(pwd: string): Promise<string>
+
+  createNewProfile(_: { username: string; role: Role }): Promise<unknown>
+}
+type CreateNewUser = { email: EmailAddr; password: string; username: string; role: Role }
+export const createNewUser = QMCommand(
+  ({ email, password: plainPwd, username, role }: CreateNewUser) =>
+    async ({ createUser, hashPassword, createNewProfile }: CreateNewUserAdapter) => {
+      const pwdHash = await hashPassword(plainPwd)
+
+      const createResult = await createUser({ password: pwdHash, email, username, role })
+
+      if (typeof createResult === 'string') {
+        return createResult // error
+      }
+
+      createNewProfile({ username, role })
+
+      return createResult
     },
 )
 

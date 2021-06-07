@@ -1168,6 +1168,11 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.3.tgz#7ee330ba7caafb98090bece86a5ee44115904c2c"
   integrity sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
 
+"@types/require-all@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@types/require-all/-/require-all-3.0.2.tgz#7753050a4ddb887214b67399761d9df4bf6de3b3"
+  integrity sha512-FEZ5Y0kMgZNAcxQ89NsBx1H9gC3ZsBMGfk+TJQ5SFhBxj0ZjPiuQEx8Wco99tamVaTnozsHrhoc9XKO8+dH4qw==
+
 "@types/semver@^7.3.6":
   version "7.3.6"
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.3.6.tgz#e9831776f4512a7ba6da53e71c26e5fb67882d63"
@@ -4578,6 +4583,11 @@ replaceall@^0.1.6:
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/replaceall/-/replaceall-0.1.6.tgz#81d81ac7aeb72d7f5c4942adf2697a3220688d8e"
   integrity sha1-gdgax663LX9cSUKt8ml6MiBojY4=
+
+require-all@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/require-all/-/require-all-3.0.0.tgz#473d49704be310115ce124f77383b1ebd8671312"
+  integrity sha1-Rz1JcEvjEBFc4ST3c4Ox69hnExI=
 
 require-directory@^2.1.1:
   version "2.1.1"

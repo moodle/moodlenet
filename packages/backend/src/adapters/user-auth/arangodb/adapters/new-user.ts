@@ -1,7 +1,9 @@
 import { Database } from 'arangojs'
 import { getOneResult } from '../../../../lib/helpers/arango'
-import { NewUserConfirmAdapter, SignUpAdapter } from '../../../../ports/user-auth/new-user'
+import { CreateNewUserAdapter, NewUserConfirmAdapter, SignUpAdapter } from '../../../../ports/user-auth/new-user'
 import { activateNewUserQ } from '../functions/activateNewUser'
+import { createNewUserQ } from '../functions/createNewUser'
+import { isEmailInUseQ } from '../functions/isEmailInUse'
 import { isUsernameInUseQ } from '../functions/isUsernameInUse'
 import { newUserRequestInsertQ } from '../functions/newUserRequest'
 import { ActiveUser, WaitingFirstActivationUser } from '../types'
@@ -30,6 +32,29 @@ export const activateNewUser = (db: Database): Pick<NewUserConfirmAdapter, 'acti
     const activeUser = (await getOneResult(activateQ, db)) as ActiveUser | null
     if (!activeUser) {
       return 'not found'
+    }
+    return activeUser
+  },
+})
+
+export const createNewUser = (db: Database): Pick<CreateNewUserAdapter, 'createUser'> => ({
+  async createUser({ password, email, username, role }) {
+    const userNameInUseQ = isUsernameInUseQ({ username })
+    const userNameInUse = (await getOneResult(userNameInUseQ, db)) as true | null
+    if (userNameInUse) {
+      return 'username not available'
+    }
+    const isEmailInUse = (await getOneResult(isEmailInUseQ({ email }), db)) as true | null
+    if (isEmailInUse) {
+      return 'email not available'
+    }
+
+    const createQ = createNewUserQ({ password, username, email, role })
+    // Queries should be typed kinda  `type QueryType<T> = string & T`
+    // so, `getOneResult` returns correct type
+    const activeUser = (await getOneResult(createQ, db)) as ActiveUser | null
+    if (!activeUser) {
+      return null
     }
     return activeUser
   },

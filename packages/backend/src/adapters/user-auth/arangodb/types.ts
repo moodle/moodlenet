@@ -3,9 +3,9 @@ import { Database } from 'arangojs'
 import { DocumentCollection } from 'arangojs/collection'
 import { EmailTemplate } from '../../../lib/emailSender/types'
 import { WithCreated, WithId, WithMutable } from '../../../lib/helpers/types'
-import { ChangeUserEmailRequestEmailVars } from '../emailTemplates/changeUserEmailRequestEmail'
-import { NewUserRequestEmailVars } from '../emailTemplates/newUserRequestEmail'
-import { TempSessionEmailVars } from '../emailTemplates/tempSessionEmail'
+import { ChangeUserEmailRequestEmailVars } from '../defaultConfig/changeUserEmailRequestEmail'
+import { NewUserRequestEmailVars } from '../defaultConfig/newUserRequestEmail'
+import { TempSessionEmailVars } from '../defaultConfig/tempSessionEmail'
 
 export enum Messages {
   EmailNotAvailable = 'email-not-available',
