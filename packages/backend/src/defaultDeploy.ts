@@ -13,9 +13,10 @@ import { delAssetAdapter } from './adapters/staticAssets/fs/adapters/delAsset'
 import { getAssetAdapter } from './adapters/staticAssets/fs/adapters/getAsset'
 import { persistTempAssetsAdapter } from './adapters/staticAssets/fs/adapters/persistTemp'
 import { setupFs } from './adapters/staticAssets/fs/setup'
-import { activateNewUser, storeNewSignupRequest } from './adapters/user-auth/arangodb/adapters/new-user'
+import { activateNewUser, createNewUser, storeNewSignupRequest } from './adapters/user-auth/arangodb/adapters/new-user'
 import { byUsername } from './adapters/user-auth/arangodb/adapters/session'
 import { argonHashPassword, argonVerifyPassword } from './lib/auth/argon'
+import { SystemSessionEnv } from './lib/auth/env'
 import { createMailgunSender } from './lib/emailSender/mailgun/mailgunSender'
 import { Qmino } from './lib/qmino'
 import { createInProcessTransport } from './lib/qmino/transports/in-process'
@@ -104,6 +105,21 @@ export const startDefaultMoodlenet = async ({
       return qminoInProcess.callSync(
         nodePorts.create<'Profile'>({
           env,
+          data: { name: username, summary: '' },
+          nodeType: 'Profile',
+          key: username,
+        }),
+        { timeout: 5000 },
+      )
+    },
+  })
+  qminoInProcess.open(newUserPorts.createNewUser, {
+    ...createNewUser(userAuthDatabase),
+    hashPassword: (plain: string) => argonHashPassword({ pwd: plain }),
+    createNewProfile: async ({ username }) => {
+      return qminoInProcess.callSync(
+        nodePorts.create<'Profile'>({
+          env: SystemSessionEnv(),
           data: { name: username, summary: '' },
           nodeType: 'Profile',
           key: username,
