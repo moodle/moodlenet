@@ -22,7 +22,7 @@ export const createNewUserQ = ({
     updatedAt: undefined as never,
     status: UserStatus.Active,
     email,
-    firstActivationToken: 'no-token',
+    firstActivationToken: undefined,
     changeEmailRequest: null,
     password,
     username,

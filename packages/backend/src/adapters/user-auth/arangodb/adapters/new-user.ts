@@ -50,7 +50,7 @@ export const createNewUser = (db: Database): Pick<CreateNewUserAdapter, 'createU
     }
 
     const createQ = createNewUserQ({ password, username, email, role })
-    // Queries should be typed kinda  `type QueryType<T> = string & T`
+    // TODO: Queries should be typed kinda  `type QueryType<T> = string & T`
     // so, `getOneResult` returns correct type
     const activeUser = (await getOneResult(createQ, db)) as ActiveUser | null
     if (!activeUser) {

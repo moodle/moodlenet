@@ -23,7 +23,7 @@ export enum UserStatus {
 type UserRecordBase = WithId &
   WithMutable & {
     email: string
-    firstActivationToken: string
+    firstActivationToken: string | undefined
   }
 export type ActiveUser = UserRecordBase & {
   status: Exclude<UserStatus, UserStatus.WaitingFirstActivation>
