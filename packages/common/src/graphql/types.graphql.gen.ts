@@ -87,6 +87,7 @@ export type CreateEdgeInput = {
   AppliesTo?: Maybe<Scalars['Empty']>;
   Contains?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
+  Edited?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
   Likes?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
@@ -118,7 +119,7 @@ export type CreateNodeInput = {
   Collection?: Maybe<CreateCollectionInput>;
   Profile?: Maybe<CreateProfileInput>;
   Resource?: Maybe<CreateResourceInput>;
-  Subject?: Maybe<CreateSubjectInput>;
+  SubjectField?: Maybe<CreateSubjectInput>;
   nodeType: NodeType;
 };
 
@@ -215,12 +216,13 @@ export type DeleteNodeMutationSuccess = {
   nodeId?: Maybe<Scalars['ID']>;
 };
 
-export type Edge = AppliesTo | Contains | Created | Follows | Likes;
+export type Edge = AppliesTo | Contains | Created | Edited | Follows | Likes;
 
 export type EdgeType =
   | 'AppliesTo'
   | 'Contains'
   | 'Created'
+  | 'Edited'
   | 'Follows'
   | 'Likes';
 
@@ -230,6 +232,13 @@ export type EdgeTypeInput = {
   inverse?: Maybe<Scalars['Boolean']>;
   targetMe?: Maybe<Scalars['Boolean']>;
   targetIDs?: Maybe<Array<Scalars['ID']>>;
+};
+
+export type Edited = IEdge & {
+  __typename: 'Edited';
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  id: Scalars['ID'];
 };
 
 
@@ -380,13 +389,13 @@ export type MutationUpdateNodeArgs = {
 };
 
 
-export type Node = Collection | Profile | Resource | Subject;
+export type Node = Collection | Profile | Resource | SubjectField;
 
 export type NodeType =
   | 'Collection'
   | 'Profile'
   | 'Resource'
-  | 'Subject';
+  | 'SubjectField';
 
 export type Page = {
   pageInfo: PageInfo;
@@ -466,8 +475,8 @@ export type RelPage = Page & {
 export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
-  edge: AppliesTo | Contains | Created | Follows | Likes;
-  node: Collection | Profile | Resource | Subject;
+  edge: AppliesTo | Contains | Created | Edited | Follows | Likes;
+  node: Collection | Profile | Resource | SubjectField;
 };
 
 export type Resource = IContentNode & INode & {
@@ -511,7 +520,7 @@ export type SearchPage = Page & {
 export type SearchPageEdge = PageEdge & {
   __typename: 'SearchPageEdge';
   cursor: Scalars['Cursor'];
-  node: Collection | Profile | Resource | Subject;
+  node: Collection | Profile | Resource | SubjectField;
 };
 
 export type SimpleResponse = {
@@ -520,8 +529,8 @@ export type SimpleResponse = {
   message?: Maybe<Scalars['String']>;
 };
 
-export type Subject = IContentNode & INode & {
-  __typename: 'Subject';
+export type SubjectField = IContentNode & INode & {
+  __typename: 'SubjectField';
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
@@ -529,17 +538,18 @@ export type Subject = IContentNode & INode & {
   icon?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
   name: Scalars['String'];
+  path: Array<Scalars['String']>;
   summary: Scalars['String'];
 };
 
 
-export type Subject_RelArgs = {
+export type SubjectField_RelArgs = {
   edge: EdgeTypeInput;
   page?: Maybe<PaginationInput>;
 };
 
 
-export type Subject_RelCountArgs = {
+export type SubjectField_RelCountArgs = {
   type: EdgeType;
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
@@ -553,6 +563,7 @@ export type UpdateEdgeInput = {
   AppliesTo?: Maybe<Scalars['Empty']>;
   Contains?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
+  Edited?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
   Likes?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
@@ -582,7 +593,7 @@ export type UpdateNodeInput = {
   Collection?: Maybe<UpdateCollectionInput>;
   Profile?: Maybe<UpdateProfileInput>;
   Resource?: Maybe<UpdateResourceInput>;
-  Subject?: Maybe<UpdateSubjectInput>;
+  SubjectField?: Maybe<UpdateSubjectInput>;
   id: Scalars['ID'];
   nodeType: NodeType;
 };
@@ -652,6 +663,7 @@ export type UserSession = {
       "AppliesTo",
       "Contains",
       "Created",
+      "Edited",
       "Follows",
       "Likes"
     ],
@@ -659,12 +671,13 @@ export type UserSession = {
       "Collection",
       "Profile",
       "Resource",
-      "Subject"
+      "SubjectField"
     ],
     "IEdge": [
       "AppliesTo",
       "Contains",
       "Created",
+      "Edited",
       "Follows",
       "Likes"
     ],
@@ -672,13 +685,13 @@ export type UserSession = {
       "Collection",
       "Profile",
       "Resource",
-      "Subject"
+      "SubjectField"
     ],
     "Node": [
       "Collection",
       "Profile",
       "Resource",
-      "Subject"
+      "SubjectField"
     ],
     "Page": [
       "RelPage",

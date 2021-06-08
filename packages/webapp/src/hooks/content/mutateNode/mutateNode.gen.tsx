@@ -47,8 +47,8 @@ export type BasicCreateNodeMutationPayload_CreateNodeMutationSuccess_Fragment = 
     { __typename: 'Resource' }
     & Pick<Types.Resource, 'id'>
   ) | (
-    { __typename: 'Subject' }
-    & Pick<Types.Subject, 'id'>
+    { __typename: 'SubjectField' }
+    & Pick<Types.SubjectField, 'id'>
   ) }
 );
 

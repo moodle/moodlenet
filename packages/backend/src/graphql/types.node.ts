@@ -4,6 +4,8 @@ import * as GQLResolvers from './types.graphql.gen'
 export type ShallowNode<N extends GQLTypes.Node = GQLTypes.Node> = Omit<N, `_${string}`>
 export type ShallowEdge<E extends GQLTypes.Edge = GQLTypes.Edge> = Omit<E, `_${string}`>
 
+export type NodeType = GQLTypes.NodeType
+export type EdgeType = GQLTypes.EdgeType
 export type NodeByType<T extends GQLTypes.NodeType> = GQLResolvers.ResolversParentTypes[T]
 export type EdgeByType<T extends GQLTypes.EdgeType> = GQLResolvers.ResolversParentTypes[T]
 

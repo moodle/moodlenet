@@ -26,7 +26,7 @@ export type GetCurrentProfileQuery = (
   & { node?: Types.Maybe<{ __typename: 'Collection' } | (
     { __typename: 'Profile' }
     & CurrentProfileInfoFragment
-  ) | { __typename: 'Resource' } | { __typename: 'Subject' }> }
+  ) | { __typename: 'Resource' } | { __typename: 'SubjectField' }> }
 );
 
 export type LoginMutationVariables = Types.Exact<{
@@ -72,7 +72,7 @@ export type CurrentProfileInfoFragment = (
       & { node: (
         { __typename: 'Collection' }
         & Pick<Types.Collection, 'id' | 'name' | 'icon'>
-      ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+      ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
     )> }
   ) }
   & ShallowProfileFragment

@@ -7,27 +7,27 @@ import { useMutateEdge } from '../../hooks/content/mutateEdge'
 import { usePageHeaderProps } from '../../hooks/props/PageHeader'
 import { CollectionCardProps } from '../../ui/components/cards/Collection'
 import { ResourceCardProps } from '../../ui/components/cards/Resource'
-import { SubjectPage, SubjectPageProps } from '../../ui/pages/Subject'
+import { SubjectFieldPage, SubjectFieldPageProps } from '../../ui/pages/SubjectField'
 import { getMaybeAssetRefUrl } from '../lib'
 import {
   useSubjectPageCollectionsQuery,
   // useSubjectPageFollowMutation,
   useSubjectPageNodeQuery,
   useSubjectPageResourcesQuery,
-} from './SubjectPage/SubjectPage.gen'
+} from './SubjectFieldPage/SubjectFieldPage.gen'
 
 export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
   const { currentProfile } = useSession()
 
   const nodeRes = useSubjectPageNodeQuery({ variables: { id } })
   const subject = nodeRes.data?.node
-  if (subject && subject.__typename !== 'Subject') {
+  if (subject && subject.__typename !== 'SubjectField') {
     throw new Error('never')
   }
 
   const collectionsRes = useSubjectPageCollectionsQuery({ variables: { id } })
   const collectionEdges = collectionsRes.data?.node?.collectionList.edges
-  const collectionList = useMemo<SubjectPageProps['collectionList']>(
+  const collectionList = useMemo<SubjectFieldPageProps['collectionList']>(
     () =>
       (collectionEdges ?? [])
         .map(edge => {
@@ -51,7 +51,7 @@ export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
 
   const resourcesRes = useSubjectPageResourcesQuery({ variables: { id } })
   const resourceEdges = resourcesRes.data?.node?.resourceList.edges
-  const resourceList = useMemo<SubjectPageProps['resourceList']>(
+  const resourceList = useMemo<SubjectFieldPageProps['resourceList']>(
     () =>
       (resourceEdges ?? [])
         .map(edge => {
@@ -103,7 +103,7 @@ export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
       : null
   }, [followMut, id, myFollowId, nodeRes, currentProfile])
   const pageHeaderProps = usePageHeaderProps()
-  const props = useMemo<SubjectPageProps | null>(() => {
+  const props = useMemo<SubjectFieldPageProps | null>(() => {
     return subject
       ? {
           collections: subject.appliesToCollectionsCount,
@@ -118,5 +118,5 @@ export const SubjectPageComponent: FC<{ id: Id }> = ({ id }) => {
         }
       : null
   }, [subject, me, collectionList, resourceList, pageHeaderProps])
-  return props && <SubjectPage {...props} />
+  return props && <SubjectFieldPage {...props} />
 }
