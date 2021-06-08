@@ -526,6 +526,7 @@ export type SubjectFieldResolvers<ContextType = Context, ParentType extends Reso
   icon?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  path?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

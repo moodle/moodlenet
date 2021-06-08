@@ -1,6 +1,7 @@
 type SubjectField implements INode & IContentNode {
   name: String!
   summary: String!
+  path: [String!]!
   icon: AssetRef
   id: ID!
 }

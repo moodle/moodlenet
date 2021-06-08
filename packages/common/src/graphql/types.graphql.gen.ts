@@ -538,6 +538,7 @@ export type SubjectField = IContentNode & INode & {
   icon?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
   name: Scalars['String'];
+  path: Array<Scalars['String']>;
   summary: Scalars['String'];
 };
 
