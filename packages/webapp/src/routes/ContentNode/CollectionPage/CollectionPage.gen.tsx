@@ -54,6 +54,9 @@ export type CollectionPageResourcesQuery = (
           { __typename: 'Created' }
           & Pick<Types.Created, 'id'>
         ) | (
+          { __typename: 'Edited' }
+          & Pick<Types.Edited, 'id'>
+        ) | (
           { __typename: 'Follows' }
           & Pick<Types.Follows, 'id'>
         ) | (
@@ -91,6 +94,9 @@ export type CollectionPageResourcesQuery = (
         ) | (
           { __typename: 'Created' }
           & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Edited' }
+          & Pick<Types.Edited, 'id'>
         ) | (
           { __typename: 'Follows' }
           & Pick<Types.Follows, 'id'>
@@ -130,6 +136,9 @@ export type CollectionPageResourcesQuery = (
           { __typename: 'Created' }
           & Pick<Types.Created, 'id'>
         ) | (
+          { __typename: 'Edited' }
+          & Pick<Types.Edited, 'id'>
+        ) | (
           { __typename: 'Follows' }
           & Pick<Types.Follows, 'id'>
         ) | (
@@ -167,6 +176,9 @@ export type CollectionPageResourcesQuery = (
         ) | (
           { __typename: 'Created' }
           & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Edited' }
+          & Pick<Types.Edited, 'id'>
         ) | (
           { __typename: 'Follows' }
           & Pick<Types.Follows, 'id'>

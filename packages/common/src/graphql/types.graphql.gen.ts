@@ -87,6 +87,7 @@ export type CreateEdgeInput = {
   AppliesTo?: Maybe<Scalars['Empty']>;
   Contains?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
+  Edited?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
   Likes?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
@@ -215,12 +216,13 @@ export type DeleteNodeMutationSuccess = {
   nodeId?: Maybe<Scalars['ID']>;
 };
 
-export type Edge = AppliesTo | Contains | Created | Follows | Likes;
+export type Edge = AppliesTo | Contains | Created | Edited | Follows | Likes;
 
 export type EdgeType =
   | 'AppliesTo'
   | 'Contains'
   | 'Created'
+  | 'Edited'
   | 'Follows'
   | 'Likes';
 
@@ -230,6 +232,13 @@ export type EdgeTypeInput = {
   inverse?: Maybe<Scalars['Boolean']>;
   targetMe?: Maybe<Scalars['Boolean']>;
   targetIDs?: Maybe<Array<Scalars['ID']>>;
+};
+
+export type Edited = IEdge & {
+  __typename: 'Edited';
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  id: Scalars['ID'];
 };
 
 
@@ -466,7 +475,7 @@ export type RelPage = Page & {
 export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
-  edge: AppliesTo | Contains | Created | Follows | Likes;
+  edge: AppliesTo | Contains | Created | Edited | Follows | Likes;
   node: Collection | Profile | Resource | Subject;
 };
 
@@ -553,6 +562,7 @@ export type UpdateEdgeInput = {
   AppliesTo?: Maybe<Scalars['Empty']>;
   Contains?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
+  Edited?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
   Likes?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
@@ -652,6 +662,7 @@ export type UserSession = {
       "AppliesTo",
       "Contains",
       "Created",
+      "Edited",
       "Follows",
       "Likes"
     ],
@@ -665,6 +676,7 @@ export type UserSession = {
       "AppliesTo",
       "Contains",
       "Created",
+      "Edited",
       "Follows",
       "Likes"
     ],

@@ -1,7 +1,8 @@
+import { EdgeType, NodeType } from '../../../../../../graphql/types.node'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
 
-const nodes = ['Profile', 'Collection', 'Resource', 'Subject']
-const edges = ['Contains', 'Likes', 'Follows', 'Created', 'Updated', 'AppliesTo']
+const nodes: NodeType[] = ['Profile', 'Collection', 'Resource', 'Subject']
+const edges: EdgeType[] = ['Contains', 'Likes', 'Follows', 'Created', 'Edited', 'AppliesTo']
 
 const init_0_0_1: VersionUpdater = {
   async initialSetUp({ db }) {

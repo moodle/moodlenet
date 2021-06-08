@@ -603,6 +603,18 @@
             "deprecationReason": null
           },
           {
+            "name": "Edited",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Empty",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "Follows",
             "description": null,
             "type": {
@@ -1545,6 +1557,11 @@
           },
           {
             "kind": "OBJECT",
+            "name": "Edited",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
             "name": "Follows",
             "ofType": null
           },
@@ -1577,6 +1594,12 @@
           },
           {
             "name": "Created",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Edited",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -1680,6 +1703,67 @@
           }
         ],
         "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "Edited",
+        "description": null,
+        "fields": [
+          {
+            "name": "_created",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "GlyphByAt",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "_lastEdited",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "GlyphByAt",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "IEdge",
+            "ofType": null
+          }
+        ],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -1959,6 +2043,11 @@
           {
             "kind": "OBJECT",
             "name": "Created",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "Edited",
             "ofType": null
           },
           {
@@ -4228,6 +4317,18 @@
           },
           {
             "name": "Created",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Empty",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Edited",
             "description": null,
             "type": {
               "kind": "SCALAR",

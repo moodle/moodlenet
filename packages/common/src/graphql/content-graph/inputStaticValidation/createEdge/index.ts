@@ -11,6 +11,7 @@ const inputObjectValidators: {
   AppliesTo: object<Just<CreateEdgeInput['AppliesTo']>>().required(),
   Contains: object<Just<CreateEdgeInput['Contains']>>().required(),
   Likes: object<Just<CreateEdgeInput['Likes']>>().required(),
+  Edited: object<Just<CreateEdgeInput['Edited']>>().required(),
 }
 
 export const validateCreateEdgeInput = (input: CreateEdgeInput): Just<CreateEdgeInput[EdgeType]> | Error => {

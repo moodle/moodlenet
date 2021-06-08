@@ -62,3 +62,8 @@ type Likes {
   _created: GlyphByAt!
   _lastEdited: GlyphByAt
 }
+
+type Edited {
+  _created: GlyphByAt!
+  _lastEdited: GlyphByAt
+}
