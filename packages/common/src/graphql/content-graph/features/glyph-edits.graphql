@@ -31,7 +31,7 @@ type Resource {
   _lastEdited: GlyphByAt
 }
 
-type Subject {
+type SubjectField {
   _created: GlyphByAt!
   _lastEdited: GlyphByAt
 }

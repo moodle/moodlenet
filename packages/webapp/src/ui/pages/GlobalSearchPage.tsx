@@ -5,7 +5,7 @@ import { BaseContentNodeFeed, BaseContentNodeFeedProps } from '../components/Bas
 import { PageHeaderProps } from '../components/PageHeader'
 import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
 
-type ContentType = 'Resource' | 'Collection' | 'Subject'
+type ContentType = 'Resource' | 'Collection' | 'SubjectField'
 type SortType = 'Relevance' | 'Popularity'
 export type GlobalSearchPageProps = {
   pageHeaderProps: PageHeaderProps
@@ -45,8 +45,8 @@ export const GlobalSearchPage: FC<GlobalSearchPageProps> = ({
             label={t`Include Collections`}
           />
           <Checkbox
-            checked={typeFilters.includes('Subject')}
-            onChange={() => toggleTypeFilter('Subject')}
+            checked={typeFilters.includes('SubjectField')}
+            onChange={() => toggleTypeFilter('SubjectField')}
             label={t`Include Subjects`}
           />
           <Divider />

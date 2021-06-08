@@ -1,4 +1,4 @@
-type Subject implements INode & IContentNode {
+type SubjectField implements INode & IContentNode {
   name: String!
   summary: String!
   icon: AssetRef
@@ -14,13 +14,13 @@ input UpdateSubjectInput {
 }
 
 # integrations
-union Node = Subject
+union Node = SubjectField
 enum NodeType {
-  Subject
+  SubjectField
 }
 input CreateNodeInput {
-  Subject: CreateSubjectInput
+  SubjectField: CreateSubjectInput
 }
 input UpdateNodeInput {
-  Subject: UpdateSubjectInput
+  SubjectField: UpdateSubjectInput
 }

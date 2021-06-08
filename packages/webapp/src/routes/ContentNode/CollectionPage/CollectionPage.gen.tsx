@@ -27,7 +27,7 @@ export type CollectionPageNodeQuery = (
         & Pick<Types.Profile, 'id' | 'name' | 'icon'>
       ) }
     ) }
-  ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' }> }
+  ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' }> }
 );
 
 export type CollectionPageResourcesQueryVariables = Types.Exact<{
@@ -72,10 +72,10 @@ export type CollectionPageResourcesQuery = (
               & { node: (
                 { __typename: 'Collection' }
                 & Pick<Types.Collection, 'id' | 'name'>
-              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
             )> }
           ) }
-        ) | { __typename: 'Subject' } }
+        ) | { __typename: 'SubjectField' } }
       )> }
     ) }
   ) | (
@@ -113,10 +113,10 @@ export type CollectionPageResourcesQuery = (
               & { node: (
                 { __typename: 'Collection' }
                 & Pick<Types.Collection, 'id' | 'name'>
-              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
             )> }
           ) }
-        ) | { __typename: 'Subject' } }
+        ) | { __typename: 'SubjectField' } }
       )> }
     ) }
   ) | (
@@ -154,15 +154,15 @@ export type CollectionPageResourcesQuery = (
               & { node: (
                 { __typename: 'Collection' }
                 & Pick<Types.Collection, 'id' | 'name'>
-              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
             )> }
           ) }
-        ) | { __typename: 'Subject' } }
+        ) | { __typename: 'SubjectField' } }
       )> }
     ) }
   ) | (
-    { __typename: 'Subject' }
-    & Pick<Types.Subject, 'id'>
+    { __typename: 'SubjectField' }
+    & Pick<Types.SubjectField, 'id'>
     & { resourceList: (
       { __typename: 'RelPage' }
       & { edges: Array<(
@@ -195,10 +195,10 @@ export type CollectionPageResourcesQuery = (
               & { node: (
                 { __typename: 'Collection' }
                 & Pick<Types.Collection, 'id' | 'name'>
-              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
             )> }
           ) }
-        ) | { __typename: 'Subject' } }
+        ) | { __typename: 'SubjectField' } }
       )> }
     ) }
   )> }

@@ -33,7 +33,7 @@ export const edgeTypeFromId = (_: Id): EdgeType => {
   return edgeType as EdgeType
 }
 
-const nodeTypes: NodeType[] = ['Collection', 'Profile', 'Resource', 'Subject']
+const nodeTypes: NodeType[] = ['Collection', 'Profile', 'Resource', 'SubjectField']
 export const isNodeType = (_: any): _ is NodeType => !!_ && nodeTypes.includes(_)
 export const nodeTypeFromId = (_: Id): NodeType => {
   const [nodeType] = _.split('/')

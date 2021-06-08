@@ -7,7 +7,7 @@ import { NeverPage } from '../helpers/navigation'
 import { CollectionPageComponent } from './ContentNode/CollectionPage'
 import { ProfilePageComponent } from './ContentNode/ProfilePage'
 import { ResourcePageComponent } from './ContentNode/ResourcePage'
-import { SubjectPageComponent } from './ContentNode/SubjectPage'
+import { SubjectPageComponent } from './ContentNode/SubjectFieldPage'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const ContentNodeComponent: RouteFC<Routes.ContentNode> = ({ match: { params } }) => {
@@ -26,7 +26,7 @@ export const ContentNodeComponent: RouteFC<Routes.ContentNode> = ({ match: { par
 export const ContentNodeComponentSwitch: FC<{ nodeType: NodeType; id: Id }> = ({ id, nodeType }) => {
   if (nodeType === 'Profile') {
     return <ProfilePageComponent id={id} />
-  } else if (nodeType === 'Subject') {
+  } else if (nodeType === 'SubjectField') {
     return <SubjectPageComponent id={id} />
   } else if (nodeType === 'Collection') {
     return <CollectionPageComponent id={id} />

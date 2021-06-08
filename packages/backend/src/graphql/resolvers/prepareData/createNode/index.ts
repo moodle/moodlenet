@@ -17,7 +17,7 @@ const nodeDocumentDataBaker: {
     qmino: QMino,
   ) => Promise<DocumentNodeDataByType<T> | CreateNodeMutationError>
 } = {
-  async Subject(input, qmino) {
+  async SubjectField(input, qmino) {
     const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
       [getContentNodeAssetRefInputAndType(input.content)],
       qmino,

@@ -862,7 +862,7 @@
             "deprecationReason": null
           },
           {
-            "name": "Subject",
+            "name": "SubjectField",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
@@ -1975,7 +1975,7 @@
           },
           {
             "kind": "OBJECT",
-            "name": "Subject",
+            "name": "SubjectField",
             "ofType": null
           }
         ]
@@ -2239,7 +2239,7 @@
           },
           {
             "kind": "OBJECT",
-            "name": "Subject",
+            "name": "SubjectField",
             "ofType": null
           }
         ]
@@ -2893,7 +2893,7 @@
           },
           {
             "kind": "OBJECT",
-            "name": "Subject",
+            "name": "SubjectField",
             "ofType": null
           }
         ]
@@ -2925,7 +2925,7 @@
             "deprecationReason": null
           },
           {
-            "name": "Subject",
+            "name": "SubjectField",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -4044,7 +4044,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Subject",
+        "name": "SubjectField",
         "description": null,
         "fields": [
           {
@@ -4561,7 +4561,7 @@
             "deprecationReason": null
           },
           {
-            "name": "Subject",
+            "name": "SubjectField",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
