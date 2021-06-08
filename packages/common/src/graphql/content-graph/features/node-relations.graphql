@@ -39,7 +39,7 @@ type Resource {
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }
 
-type Subject {
+type SubjectField {
   _rel(edge: EdgeTypeInput!, page: PaginationInput): RelPage!
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }

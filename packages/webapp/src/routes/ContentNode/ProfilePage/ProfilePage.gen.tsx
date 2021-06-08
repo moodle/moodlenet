@@ -21,7 +21,7 @@ export type ProfilePageNodeQuery = (
       { __typename: 'RelPage' }
       & JustEdgeIdRelPageFragment
     )> }
-  ) | { __typename: 'Resource' } | { __typename: 'Subject' }> }
+  ) | { __typename: 'Resource' } | { __typename: 'SubjectField' }> }
 );
 
 export type ProfilePageOwnCollectionsQueryVariables = Types.Exact<{
@@ -42,7 +42,7 @@ export type ProfilePageOwnCollectionsQuery = (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'icon'>
           & { followersCount: Types.Collection['_relCount'], resourcesCount: Types.Collection['_relCount'] }
-        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
       )> }
     ) }
   ) | (
@@ -56,7 +56,7 @@ export type ProfilePageOwnCollectionsQuery = (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'icon'>
           & { followersCount: Types.Collection['_relCount'], resourcesCount: Types.Collection['_relCount'] }
-        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
       )> }
     ) }
   ) | (
@@ -70,12 +70,12 @@ export type ProfilePageOwnCollectionsQuery = (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'icon'>
           & { followersCount: Types.Collection['_relCount'], resourcesCount: Types.Collection['_relCount'] }
-        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
       )> }
     ) }
   ) | (
-    { __typename: 'Subject' }
-    & Pick<Types.Subject, 'id'>
+    { __typename: 'SubjectField' }
+    & Pick<Types.SubjectField, 'id'>
     & { ownCollections: (
       { __typename: 'RelPage' }
       & { edges: Array<(
@@ -84,7 +84,7 @@ export type ProfilePageOwnCollectionsQuery = (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'icon'>
           & { followersCount: Types.Collection['_relCount'], resourcesCount: Types.Collection['_relCount'] }
-        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
       )> }
     ) }
   )> }
@@ -114,10 +114,10 @@ export type ProfilePageOwnResourcesQuery = (
               & { node: (
                 { __typename: 'Collection' }
                 & Pick<Types.Collection, 'id' | 'name'>
-              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
             )> }
           ) }
-        ) | { __typename: 'Subject' } }
+        ) | { __typename: 'SubjectField' } }
       )> }
     ) }
   ) | (
@@ -137,10 +137,10 @@ export type ProfilePageOwnResourcesQuery = (
               & { node: (
                 { __typename: 'Collection' }
                 & Pick<Types.Collection, 'id' | 'name'>
-              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
             )> }
           ) }
-        ) | { __typename: 'Subject' } }
+        ) | { __typename: 'SubjectField' } }
       )> }
     ) }
   ) | (
@@ -160,15 +160,15 @@ export type ProfilePageOwnResourcesQuery = (
               & { node: (
                 { __typename: 'Collection' }
                 & Pick<Types.Collection, 'id' | 'name'>
-              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
             )> }
           ) }
-        ) | { __typename: 'Subject' } }
+        ) | { __typename: 'SubjectField' } }
       )> }
     ) }
   ) | (
-    { __typename: 'Subject' }
-    & Pick<Types.Subject, 'id'>
+    { __typename: 'SubjectField' }
+    & Pick<Types.SubjectField, 'id'>
     & { ownResources: (
       { __typename: 'RelPage' }
       & { edges: Array<(
@@ -183,10 +183,10 @@ export type ProfilePageOwnResourcesQuery = (
               & { node: (
                 { __typename: 'Collection' }
                 & Pick<Types.Collection, 'id' | 'name'>
-              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'Subject' } }
+              ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
             )> }
           ) }
-        ) | { __typename: 'Subject' } }
+        ) | { __typename: 'SubjectField' } }
       )> }
     ) }
   )> }

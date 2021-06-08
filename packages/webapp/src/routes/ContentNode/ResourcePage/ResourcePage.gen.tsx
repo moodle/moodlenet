@@ -27,7 +27,7 @@ export type ResourcePageNodeQuery = (
         & Pick<Types.Profile, 'id' | 'name' | 'icon'>
       ) }
     ) }
-  ) | { __typename: 'Subject' }> }
+  ) | { __typename: 'SubjectField' }> }
 );
 
 

@@ -6,7 +6,7 @@ import { ResourceCard, ResourceCardProps } from '../components/cards/Resource'
 import { PageHeaderProps } from '../components/PageHeader'
 import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
 
-export type SubjectPageProps = {
+export type SubjectFieldPageProps = {
   pageHeaderProps: PageHeaderProps
   collectionList: CollectionCardProps[]
   resourceList: ResourceCardProps[]
@@ -21,7 +21,7 @@ export type SubjectPageProps = {
   resources: number
 }
 
-export const SubjectPage: FC<SubjectPageProps> = ({
+export const SubjectFieldPage: FC<SubjectFieldPageProps> = ({
   pageHeaderProps,
   collectionList,
   collections,
@@ -40,7 +40,7 @@ export const SubjectPage: FC<SubjectPageProps> = ({
             <Segment.Group horizontal>
               <Segment>
                 <h3>
-                  <Trans>Subject:</Trans>
+                  <Trans>SubjectField:</Trans>
                 </h3>
                 <h1>{name}</h1>
                 <h5>{summary}</h5>

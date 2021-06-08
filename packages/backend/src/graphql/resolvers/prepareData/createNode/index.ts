@@ -17,21 +17,22 @@ const nodeDocumentDataBaker: {
     qmino: QMino,
   ) => Promise<DocumentNodeDataByType<T> | CreateNodeMutationError>
 } = {
-  async Subject(input, qmino) {
-    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
-      [getContentNodeAssetRefInputAndType(input.content)],
-      qmino,
-    )
+  async SubjectField(/* input, qmino */) {
+    throw new Error('GQL create SubjectField not implemented')
+    // const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
+    //   [getContentNodeAssetRefInputAndType(input.content)],
+    //   qmino,
+    // )
 
-    if (!contentNodeAssetRefs) {
-      return noTmpFilesCreateNodeMutationError()
-    }
-    const [icon] = contentNodeAssetRefs
-    return {
-      name: input.content.name,
-      summary: input.content.summary,
-      icon,
-    }
+    // if (!contentNodeAssetRefs) {
+    //   return noTmpFilesCreateNodeMutationError()
+    // }
+    // const [icon] = contentNodeAssetRefs
+    // return {
+    //   name: input.content.name,
+    //   summary: input.content.summary,
+    //   icon,
+    // }
   },
   async Collection(input, qmino) {
     const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(

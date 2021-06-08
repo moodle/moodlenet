@@ -9,7 +9,7 @@ export const graphqlArangoContentGraphResolvers = (db: Database): GQLResolvers.R
   return {
     //Nodes
     Profile: NodeResolver,
-    Subject: NodeResolver,
+    SubjectField: NodeResolver,
     Resource: NodeResolver,
     Collection: NodeResolver,
 

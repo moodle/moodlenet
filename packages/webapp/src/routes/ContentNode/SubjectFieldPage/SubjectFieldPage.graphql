@@ -1,6 +1,6 @@
 query SubjectPageNode($id: ID!) {
   node(id: $id) {
-    ... on Subject {
+    ... on SubjectField {
       id
       name
       summary

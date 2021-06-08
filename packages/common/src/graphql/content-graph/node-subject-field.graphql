@@ -1,6 +1,7 @@
-type Subject implements INode & IContentNode {
+type SubjectField implements INode & IContentNode {
   name: String!
   summary: String!
+  path: [String!]!
   icon: AssetRef
   id: ID!
 }
@@ -14,13 +15,13 @@ input UpdateSubjectInput {
 }
 
 # integrations
-union Node = Subject
+union Node = SubjectField
 enum NodeType {
-  Subject
+  SubjectField
 }
 input CreateNodeInput {
-  Subject: CreateSubjectInput
+  SubjectField: CreateSubjectInput
 }
 input UpdateNodeInput {
-  Subject: UpdateSubjectInput
+  SubjectField: UpdateSubjectInput
 }

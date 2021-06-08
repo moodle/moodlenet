@@ -31,7 +31,7 @@ type Resource {
   _lastEdited: GlyphByAt
 }
 
-type Subject {
+type SubjectField {
   _created: GlyphByAt!
   _lastEdited: GlyphByAt
 }
@@ -59,6 +59,11 @@ type Follows {
 }
 
 type Likes {
+  _created: GlyphByAt!
+  _lastEdited: GlyphByAt
+}
+
+type Edited {
   _created: GlyphByAt!
   _lastEdited: GlyphByAt
 }

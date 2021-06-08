@@ -41,8 +41,8 @@ export type ContentNodeContextQuery = (
       ) }
     ) }
   ) | (
-    { __typename: 'Subject' }
-    & Pick<Types.Subject, 'name' | 'id'>
+    { __typename: 'SubjectField' }
+    & Pick<Types.SubjectField, 'name' | 'id'>
     & { _created: (
       { __typename: 'GlyphByAt' }
       & { by: (
