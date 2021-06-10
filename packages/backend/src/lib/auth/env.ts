@@ -17,6 +17,7 @@ export const GuestSessionEnvUser: SessionEnvUser = {
   role: 'Guest',
   name: '__GUEST__',
 }
+
 export const GuestSessionEnv = () => makeEnv({ user: GuestSessionEnvUser })
 
 export const getProfileId = (env: SessionEnv) => getProfileIdByUsername(env.user.name)

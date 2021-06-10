@@ -1,10 +1,10 @@
-export type SubjectFieldPath = [top: string, mid: string, low: string]
+import { isJust } from '../array'
 
-export const getSubjectFieldPathByCode = (code: string): SubjectFieldPath | null => {
+export const getSubjectFieldPathByCode = (code: string): string[] | null => {
   const [F, top_a, top_b, mid, low] = Array.from(code)
-  if (!(F && top_a && top_b && mid && low)) {
+  if (!(F && top_a && top_b)) {
     return null
   }
   const top = F + top_a + top_b
-  return [top, mid, low]
+  return [top, mid, low].filter(isJust)
 }

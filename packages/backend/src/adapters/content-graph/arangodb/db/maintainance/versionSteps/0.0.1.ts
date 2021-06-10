@@ -1,5 +1,6 @@
 import { EdgeType, NodeType } from '../../../../../../graphql/types.node'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
+import { setupSearchView } from './0.0.1/setupSearchView'
 
 const nodes: NodeType[] = ['Profile', 'Collection', 'Resource', 'SubjectField']
 const edges: EdgeType[] = ['Contains', 'Likes', 'Follows', 'Created', 'Edited', 'AppliesTo']
@@ -16,6 +17,7 @@ const init_0_0_1: VersionUpdater = {
       const edgeCollection = await db.createEdgeCollection(edgeCollName)
       return edgeCollection
     })
+    await setupSearchView({ db })
   },
 }
 

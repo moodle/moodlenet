@@ -93,7 +93,7 @@
     "build": "tsc",
     "migrate-arangodb": "node lib/lib/helpers/arango/migrate/main",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
-    "start": "NODE_ENV=production node -r ./env.js lib/main.js",
-    "start-dev": "node-dev -r ./env.js --inspect --deps 4 --respawn --notify=false lib/main.js"
+    "start": "NODE_ENV=production node -r ./env.js lib/defaultDeploy/main.js",
+    "start-dev": "node-dev -r ./env.js --inspect --deps 4 --respawn --notify=false lib/defaultDeploy/main.js"
   }
 }

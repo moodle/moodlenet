@@ -1,11 +1,12 @@
 import { Role } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { Database } from 'arangojs'
-import { DocumentCollection } from 'arangojs/collection'
+import { ChangeUserEmailRequestEmailVars } from '../../../initialData/user-auth/defaultConfig/changeUserEmailRequestEmail'
+import { NewUserRequestEmailVars } from '../../../initialData/user-auth/defaultConfig/newUserRequestEmail'
+import { TempSessionEmailVars } from '../../../initialData/user-auth/defaultConfig/tempSessionEmail'
 import { EmailTemplate } from '../../../lib/emailSender/types'
+import { VersionedDB } from '../../../lib/helpers/arango/migrate/types'
 import { WithCreated, WithId, WithMutable } from '../../../lib/helpers/types'
-import { ChangeUserEmailRequestEmailVars } from '../defaultConfig/changeUserEmailRequestEmail'
-import { NewUserRequestEmailVars } from '../defaultConfig/newUserRequestEmail'
-import { TempSessionEmailVars } from '../defaultConfig/tempSessionEmail'
+
+export type UserAuthDB = VersionedDB<'0.0.1'>
 
 export enum Messages {
   EmailNotAvailable = 'email-not-available',
@@ -23,7 +24,7 @@ export enum UserStatus {
 type UserRecordBase = WithId &
   WithMutable & {
     email: string
-    firstActivationToken: string
+    firstActivationToken: string | undefined
   }
 export type ActiveUser = UserRecordBase & {
   status: Exclude<UserStatus, UserStatus.WaitingFirstActivation>
@@ -52,12 +53,6 @@ export type UserAuthConfig = WithCreated & {
   changeUserEmailVerificationWaitSecs: number
 }
 // $ Config
-
-export type Persistence = {
-  db: Database
-  User: DocumentCollection<UserRecord>
-  Config: DocumentCollection<UserAuthConfig>
-}
 
 // ^ Document Collections
 export const USER = 'User'

@@ -1,8 +1,6 @@
 //TODO: review all parse|extraction return types to make them stricter
 
 import { EdgeType, GlobalSearchSort, NodeType } from '../../graphql/types.graphql.gen'
-export type IdKey = string //& { readonly __: unique symbol }
-export type Id<N extends NodeType = NodeType> = `${N}/${IdKey}` // & { readonly __: unique symbol }
 // export type Id = string // & { readonly __: unique symbol } this leads to tsc errors as it recognizes Id from src/* as different type in respect of from lib/*
 
 export const isIdKey = (_: string | undefined | null): _ is IdKey => !!_ && true //FIXME: proper guard
@@ -35,6 +33,19 @@ export const edgeTypeFromId = (_: Id): EdgeType => {
 
 const nodeTypes: NodeType[] = ['Collection', 'Profile', 'Resource', 'SubjectField']
 export const isNodeType = (_: any): _ is NodeType => !!_ && nodeTypes.includes(_)
+const caseInsensitiveNodeTypesMap = nodeTypes.reduce(
+  (_map, NodeType) => ({
+    ..._map,
+    [NodeType.toLowerCase()]: NodeType,
+  }),
+  {},
+) as {
+  [lowertype in Lowercase<NodeType>]: NodeType
+}
+console.log({ caseInsensitiveNodeTypesMap })
+export const getNodeTypeByCaseinsensitive = (caseInsensitiveNodeType: string) =>
+  (caseInsensitiveNodeTypesMap as any)[caseInsensitiveNodeType.toLowerCase()] as NodeType | undefined
+
 export const nodeTypeFromId = (_: Id): NodeType => {
   const [nodeType] = _.split('/')
   return nodeType as NodeType
@@ -45,21 +56,17 @@ export const idKeyFromId = (_: Id): IdKey => {
   return key as IdKey
 }
 
-export const capitalizeNodeType = (_: string | null | undefined): NodeType | null => {
-  const type = _ && _[0] ? _[0].toUpperCase() + _.substr(1) : null
-  if (!isNodeType(type)) {
-    return null
-  }
-  return type
-}
-
 export const parseNodeId = (_: Id): { nodeType: NodeType; _key: IdKey } => ({
   nodeType: nodeTypeFromId(_),
   _key: idKeyFromId(_),
 })
+
 export const parseNodeIdString = (_: string): { nodeType: NodeType; _key: IdKey; id: Id } | null => {
   const [type, _key] = _.split('/')
-  const nodeType = capitalizeNodeType(type)
+  if (!(type && _key)) {
+    return null
+  }
+  const nodeType = getNodeTypeByCaseinsensitive(type)
   if (!(nodeType && isIdKey(_key))) {
     return null
   }
@@ -77,3 +84,6 @@ export const checkIDOrError = (_?: string) => {
   }
   return _
 }
+
+export type IdKey = string //& { readonly __: unique symbol }
+export type Id<N extends NodeType = NodeType> = `${N}/${IdKey}` // & { readonly __: unique symbol }

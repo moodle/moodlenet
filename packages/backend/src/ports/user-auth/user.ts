@@ -1,4 +1,5 @@
 import { ActiveUser } from '../../adapters/user-auth/arangodb/types'
+import { GuestSessionEnvUser, SystemSessionEnvUser } from '../../lib/auth/env'
 import { PasswordVerifier } from '../../lib/auth/types'
 import { QMModule, QMQuery } from '../../lib/qmino'
 
@@ -10,6 +11,9 @@ export type Input = { username: string; matchPassword: string | false }
 export const getActiveByUsername = QMQuery(
   ({ username, matchPassword }: Input) =>
     async ({ getActiveUserByUsername, verifyPassword }: Adapter) => {
+      if (username === GuestSessionEnvUser.name || username === SystemSessionEnvUser.name) {
+        return null
+      }
       const activeUser = await getActiveUserByUsername({ username })
       if (!activeUser) {
         return null

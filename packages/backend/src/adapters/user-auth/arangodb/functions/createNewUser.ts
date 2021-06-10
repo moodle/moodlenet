@@ -22,18 +22,15 @@ export const createNewUserQ = ({
     updatedAt: undefined as never,
     status: UserStatus.Active,
     email,
-    firstActivationToken: 'no-token',
+    firstActivationToken: undefined,
     changeEmailRequest: null,
     password,
     username,
     role,
   }
   return `
-  
     LET emailInUse = (${isEmailInUseQ({ email })})[0]
     LET usernameInUse = (${isUsernameInUseQ({ username })})[0]
-  
-  FOR user IN ${USER}
     
     FILTER !usernameInUse && !emailInUse
     

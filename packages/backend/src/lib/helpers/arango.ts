@@ -94,6 +94,7 @@ export const ulidKey = (): IdKey => ulid()
 export const getOneResult = async (q: string, db: Database) => {
   const cursor = await db.query(q)
   const result = await cursor.next()
+  // console.log({ getOneResult: q, result })
   cursor.kill()
   return result
 }

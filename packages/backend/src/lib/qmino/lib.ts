@@ -105,9 +105,11 @@ export const wrapQMPort = <Port extends QM.AnyQMPort, PortType extends QM.QMPort
   type: PortType,
 ): Port => {
   const port_wrap = (...args: any[]) => {
-    const action = (adapter: any) => {
+    const action = async (adapter: any) => {
       console.log(`accessing port [${displayId(portDef.link?.id)}]( ${inspect(args)} )`)
-      return original_port(...args)(adapter)
+      const resp = await original_port(...args)(adapter)
+      console.log(`RESP:port [${displayId(portDef.link?.id)}]\nRESP:args:${inspect(args)}\nRESP:${inspect(resp)}`)
+      return resp
     }
     const actionDef: QM.AnyQMActionDef = {
       portDef,
@@ -175,7 +177,9 @@ export const extractLink = (port: any) => {
 export const extractDef = (port: any) => {
   const portDef = LinkedPorts.get(port)
   if (!portDef) {
-    throw new Error(`not an port`)
+    throw new Error(
+      `this port has not been linked!\ndid you forget to call \`QMModule(module)\` in this port module file?`,
+    )
   }
   return portDef
 }

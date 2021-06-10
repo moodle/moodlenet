@@ -1,15 +1,15 @@
 import { Database } from 'arangojs'
 import semverRCompare from 'semver/functions/rcompare'
-import semverValid from 'semver/functions/valid'
 import { getAllResults, getOneResult } from '../../arango'
+import { climbLadder, getLadderVersionSorted } from './ladder'
 import { addMigrationRecordQ, getMigrationHistoryQ, MIGRATIONS_COLLECTION } from './queries'
-import { DBWorker, MigrationRecord, Version, VersionLadder } from './types'
+import { DBWorker, MigrationRecord, Version, VersionedDB, VersionLadder } from './types'
 
 export const addMigrationRecord =
-  (version: Version) =>
+  <V extends string>(version: Version<V>) =>
   async ({ db }: { db: Database }) => {
     const date = new Date().toISOString() as any as Date
-    const record: MigrationRecord = {
+    const record: MigrationRecord<V> = {
       version,
       date,
     }
@@ -17,56 +17,81 @@ export const addMigrationRecord =
     return getOneResult(q, db)
   }
 
-export const getMigrationHistory =
-  () =>
-  async ({ db }: { db: Database }) => {
-    const q = getMigrationHistoryQ()
-    const migrations = (await getAllResults(q, db)) as MigrationRecord[]
-    return migrations.map<MigrationRecord>(migr => ({
-      date: new Date(migr.date),
-      version: migr.version,
-    }))
+export const getMigrationHistory = async ({ db }: { db: Database }) => {
+  if (!(await isMigrationCollectionSetUp({ db }))) {
+    return null
   }
+  const q = getMigrationHistoryQ()
+  const migrations = (await getAllResults(q, db)) as MigrationRecord<Version>[]
+  return migrations.map<MigrationRecord<Version>>(migr => ({
+    date: new Date(migr.date),
+    version: migr.version,
+  }))
+}
 
-export const isSetUp =
-  () =>
-  async ({ db }: { db: Database }) =>
-    db.collection(MIGRATIONS_COLLECTION).exists()
+export const isMigrationCollectionSetUp = async ({ db }: { db: Database }) =>
+  db.collection(MIGRATIONS_COLLECTION).exists()
 
-export const setUp =
-  () =>
-  async ({ db }: { db: Database }) => {
-    if (await isSetUp()({ db })) {
-      return
-    }
-    await db.createCollection(MIGRATIONS_COLLECTION)
+export const setUpMigrationCollection = async ({ db }: { db: Database }) => {
+  if (await isMigrationCollectionSetUp({ db })) {
+    return
   }
+  await db.createCollection(MIGRATIONS_COLLECTION)
+}
 
-export const getDBLatestMigrationRecord =
-  () =>
-  async ({ db }: { db: Database }) =>
-    (await getMigrationHistory()({ db }))[0]
+export const getDBLatestMigrationRecord = async ({ db }: { db: Database }) => {
+  const m_hist = await getMigrationHistory({ db })
+  return m_hist ? m_hist[0] : null
+}
 
 export const getDBVersionCompare =
   ({ version }: { version: Version }) =>
   async ({ db }: { db: Database }) => {
-    const latestMigration = await getDBLatestMigrationRecord()({ db })
+    const latestMigration = await getDBLatestMigrationRecord({ db })
     return latestMigration ? semverRCompare(version, latestMigration.version) : null
   }
 
 export const isDBAtVersion =
   ({ version }: { version: Version }) =>
-  async (db: Database) =>
+  async ({ db }: { db: Database }) =>
     (await getDBVersionCompare({ version })({ db })) === 0
 
+export const isDBAtLatestVersion = async ({ db }: { db: Database }) => {
+  const latestVersion = await getDBLatestVersion({ db })
+  return isDBAtVersion({ version: latestVersion })({ db })
+}
+
+export const getVersionedDB =
+  <V extends Version>({ version }: { version: V }) =>
+  async ({ db }: { db: Database }) => {
+    const isAtV = await isDBAtVersion({ version })({ db })
+    if (!isAtV) {
+      return null
+    }
+    ;(db as any).__v__ = version
+    return db as VersionedDB<V>
+  }
+export const getVersionedDBOrThrow =
+  <V extends Version>({ version }: { version: V }) =>
+  async ({ db }: { db: Database }) => {
+    const vdb = await getVersionedDB({ version })({ db })
+    if (!vdb) {
+      throw new Error(`db [${db.name}] should be at version ${version}`)
+    }
+    return vdb
+  }
+
+export const getDBLatestVersion = async ({ db }: { db: Database }) => {
+  const latestRecord = await getDBLatestMigrationRecord({ db })
+  if (!latestRecord) {
+    throw new Error(`No version history present`)
+  }
+  return latestRecord.version
+}
 export const stepDB =
   ({ ladder, dir }: { ladder: VersionLadder; dir: 'up' | 'down' }) =>
   async ({ db }: { db: Database }) => {
-    const latestRecord = await getDBLatestMigrationRecord()({ db })
-    if (!latestRecord) {
-      throw new Error(`No version history present`)
-    }
-    const latestVersion = latestRecord.version
+    const latestVersion = await getDBLatestVersion({ db })
     console.log(`stepDB: latest DB version: ${latestVersion}`)
     const latestUpdater = ladder[latestVersion]
     if (!latestUpdater) {
@@ -90,12 +115,12 @@ export const stepDB =
 
     if (dir === 'up') {
       if ('initialSetUp' in targetVersionUpdater) {
-        throw new Error(`found an "initialSetup" updater for next version ${targetVersion}!`)
+        throw new Error(`next version ${targetVersion} updater is an initilizer ! can't pull up !`)
       }
       updater = targetVersionUpdater.pullUp
     } else {
       if ('initialSetUp' in latestUpdater) {
-        throw new Error(`found an "initialSetup" updater for next version ${targetVersion}!`)
+        throw new Error(`current version ${targetVersion} updater is an initializer ! can't push down !`)
       }
       updater = latestUpdater.pushDown
     }
@@ -106,49 +131,12 @@ export const stepDB =
     return [latestVersion, targetVersion, true] as const
   }
 
-export const climbLadder = (ladder: VersionLadder, from: Version, dir: 'up' | 'down') => {
-  const ladderVersionsSorted = getLadderVersionSorted(ladder)
-
-  const currVersionIndex = ladderVersionsSorted.indexOf(from)
-  const requestedVersion = ladderVersionsSorted[currVersionIndex + (dir === 'up' ? -1 : 1)] as Version | undefined
-  if (!requestedVersion) {
-    return null
-  }
-  return [requestedVersion, ladder[requestedVersion]!] as const
-}
-
-export const getLadderVersionSorted = (ladder: VersionLadder) => {
-  const ladderVersionsStrs = Object.keys(ladder)
-  const invalidSemvers = ladderVersionsStrs.filter(_ => !semverValid(_))
-  if (invalidSemvers.length) {
-    throw new Error(`Ladder contains invalid semvers : ${invalidSemvers.join(' ; ')}`)
-  }
-  const ladderVersionsSorted = Object.keys(ladder).sort(semverRCompare)
-  console.log(`ladder versions: ${ladderVersionsSorted.join(' | ')}`)
-
-  return ladderVersionsSorted as Version[]
-}
-
-export const initialSetUp =
+export const upgradeToLatest =
   ({ ladder }: { ladder: VersionLadder }) =>
   async ({ db }: { db: Database }) => {
     const versions = getLadderVersionSorted(ladder)
     const lastVersion = versions[0]!
-    const firstVersion = versions.reverse()[0]!
-    const firstVersionUpdater = ladder[firstVersion]
-    console.log(`first version in ladder: ${firstVersion}`)
-    if (!firstVersionUpdater || !('initialSetUp' in firstVersionUpdater)) {
-      throw new Error(`can't find an "initialSetup" for lowest version ${firstVersion}!`)
-    }
-    console.log(`setup migration collection`)
-    await setUp()({ db })
-    console.log(`db initial setup`)
-    await firstVersionUpdater.initialSetUp({ db })
-    console.log(`adding migration record`)
-    await addMigrationRecord(firstVersion)({ db })
-    if (lastVersion !== firstVersion) {
-      await stepDBTo({ ladder, targetVersion: lastVersion })({ db })
-    }
+    return stepDBTo({ ladder, targetVersion: lastVersion })({ db })
   }
 
 export const stepDBTo =
@@ -157,11 +145,8 @@ export const stepDBTo =
     if (!(targetVersion in ladder)) {
       throw new Error(`no [${targetVersion}] version in ladder`)
     }
-    const latestRecord = await getDBLatestMigrationRecord()({ db })
-    if (!latestRecord) {
-      throw new Error(`no existing version history`)
-    }
-    const { version: latestVersion } = latestRecord
+    const latestVersion = await getDBLatestVersion({ db })
+
     const versionCompare = semverRCompare(latestVersion, targetVersion)
     console.log(`\nstepDBTo : check versions ${latestVersion}->${targetVersion}`)
     if (versionCompare === 0) {
@@ -182,4 +167,43 @@ export const stepDBTo =
       }
       return stepDBTo({ ladder, targetVersion })({ db })
     })
+  }
+
+export const initializeDB =
+  ({ dbname, ladder, forceDrop }: { dbname: string; ladder: VersionLadder; forceDrop: boolean }) =>
+  async ({ sys_db }: { sys_db: Database }) => {
+    const exists = await sys_db.database(dbname).exists()
+    if (exists) {
+      if (forceDrop !== true) {
+        throw new Error(`db ${dbname} exists, but can't drop: forceDrop !== true`)
+      }
+      console.log(`db ${dbname} exists, dropping`)
+      await sys_db.dropDatabase(dbname)
+    }
+
+    const versions = getLadderVersionSorted(ladder)
+    const firstVersion = versions.reverse()[0]!
+    const firstVersionUpdater = ladder[firstVersion]
+
+    console.log(`first version in ladder: ${firstVersion}`)
+    if (!firstVersionUpdater || !('initialSetUp' in firstVersionUpdater)) {
+      throw new Error(`can't find an "initialSetup" for lowest version ${firstVersion}!`)
+    }
+
+    console.log(`creating db ${dbname}`)
+    const db = await sys_db.createDatabase(dbname)
+    console.log(`initializing db ${dbname}`)
+
+    console.log(`setup migration collection`)
+    await setUpMigrationCollection({ db })
+
+    console.log(`db initial version`)
+    await firstVersionUpdater.initialSetUp({ db })
+
+    console.log(`adding migration record`)
+    await addMigrationRecord(firstVersion)({ db })
+
+    const version = await upgradeToLatest({ ladder })({ db })
+    await db.close()
+    return version
   }
