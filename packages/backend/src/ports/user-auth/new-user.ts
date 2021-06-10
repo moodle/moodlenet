@@ -1,6 +1,6 @@
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { ActiveUser } from '../../adapters/user-auth/arangodb/types'
-import { DefaultConfig } from '../../adapters/user-auth/defaultConfig'
+import { DefaultConfig } from '../../initialData/user-auth/defaultConfig'
 import { makeEnv } from '../../lib/auth/env'
 import { Role, SessionEnv } from '../../lib/auth/types'
 import { fillEmailTemplate } from '../../lib/emailSender/helpers'
@@ -89,7 +89,7 @@ export const createNewUser = QMCommand(
         return createResult // error
       }
 
-      createNewProfile({ username, role })
+      await createNewProfile({ username, role })
 
       return createResult
     },

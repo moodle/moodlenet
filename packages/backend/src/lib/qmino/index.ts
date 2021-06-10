@@ -29,8 +29,8 @@ export const Qmino = (transport: QM.Transport): QM.QMino => {
   }
 }
 
-export * from './types'
 export const TIMEOUT = QM.TIMEOUT
 export const QMCommand = QM.QMCommand
 export const QMQuery = QM.QMQuery
 export const QMModule = QM.QMModule
+export * from './types'

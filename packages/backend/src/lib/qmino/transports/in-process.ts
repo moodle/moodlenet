@@ -1,6 +1,7 @@
 import EventEmitter from 'events'
+import { inspect } from 'util'
 import { TIMEOUT } from '../lib'
-import { Transport } from '../types'
+import { QMPortId, Transport } from '../types'
 
 export const createInProcessTransport = (): Transport => {
   let reqIdCount = 0
@@ -51,8 +52,34 @@ export const createInProcessTransport = (): Transport => {
     }
   }
 
+  process.stdin.on('data', processStdinCmd(send))
+
   return {
     send,
     open,
+  }
+}
+const STDIN_TAG = 'qmino:'
+const processStdinCmd = (send: Transport['send']) => async (buff: Buffer) => {
+  const str_in = buff.toString().trim()
+  if (!str_in.startsWith(STDIN_TAG)) {
+    return
+  }
+  const [id_str, ...rest] = str_in.replace(STDIN_TAG, '').trim().split('##')
+  if (!id_str) {
+    return
+  }
+  console.log({ id_str })
+  const args_str = rest.join('##')
+  console.log({ args_str })
+  try {
+    const args = args_str ? args_str.split('|&|').map(_ => JSON.parse(_)) : []
+    console.log('Args:\n', inspect(args))
+    console.log('sending...')
+
+    const resp = await send(id_str.split('::') as QMPortId, args, { timeout: 5000 })
+    console.log('RESP:\n', inspect(resp))
+  } catch (err) {
+    console.error('ERR:\n', inspect(err))
   }
 }

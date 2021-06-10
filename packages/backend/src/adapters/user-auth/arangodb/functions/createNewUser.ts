@@ -29,11 +29,8 @@ export const createNewUserQ = ({
     role,
   }
   return `
-  
     LET emailInUse = (${isEmailInUseQ({ email })})[0]
     LET usernameInUse = (${isUsernameInUseQ({ username })})[0]
-  
-  FOR user IN ${USER}
     
     FILTER !usernameInUse && !emailInUse
     

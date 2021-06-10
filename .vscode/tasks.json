@@ -12,12 +12,12 @@
       "label": "dev-tasks",
       "group": "build",
       "dependsOn": [
-        "backend dev-build",
-        "backend-gql-gen",
         "common dev-build",
         "common-gql-gen",
-        "webapp dev-build",
-        "webapp-gql-gen"
+        "webapp-gql-gen",
+        "backend-gql-gen",
+        "backend dev-build",
+        "webapp dev-build"
       ],
       "problemMatcher": []
     },
@@ -28,7 +28,6 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "common dev-build"
-      // "dependsOn": ["common-gql-gen"]
     },
     {
       "type": "typescript",
@@ -37,7 +36,6 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "webapp dev-build"
-      // "dependsOn": ["webapp-gql-gen", "common dev-build"]
     },
     {
       "type": "typescript",
@@ -46,7 +44,6 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "backend dev-build"
-      // "dependsOn": ["backend-gql-gen", "common dev-build"]
     },
     {
       "label": "common-gql-gen",

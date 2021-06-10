@@ -1,4 +1,4 @@
-import { UserAuthConfig } from '../arangodb/types'
+import { UserAuthConfig } from '../../../adapters/user-auth/arangodb/types'
 import { changeUserEmailRequestEmail } from './changeUserEmailRequestEmail'
 import { newUserRequestEmail } from './newUserRequestEmail'
 import { tempSessionEmail } from './tempSessionEmail'

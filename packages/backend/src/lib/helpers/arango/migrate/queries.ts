@@ -1,5 +1,5 @@
 import { aqlstr } from '../../arango'
-import { MigrationRecord } from './types'
+import { MigrationRecord, Version } from './types'
 
 export const MIGRATIONS_COLLECTION = 'DB_MIGRATIONS'
 
@@ -9,7 +9,7 @@ export const getMigrationHistoryQ = () => `
   return migr
 `
 
-export const addMigrationRecordQ = (record: MigrationRecord) => `
+export const addMigrationRecordQ = (record: MigrationRecord<Version>) => `
   insert ${aqlstr(record)} in ${MIGRATIONS_COLLECTION}
   return NEW
 `

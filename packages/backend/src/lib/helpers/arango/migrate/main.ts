@@ -2,7 +2,7 @@ import { Database } from 'arangojs'
 import { resolve } from 'path'
 import semverValid from 'semver/functions/valid'
 import { require_all_updaters } from './helpers'
-import { initialSetUp, stepDB, stepDBTo } from './lib'
+import { initializeDB, stepDB, stepDBTo } from './lib'
 import { Version } from './types'
 
 const [arangoUrl, dbname, versionStepsDir, step] = process.argv.slice(2)
@@ -25,22 +25,13 @@ const ladder = require_all_updaters({ dirname: resolve(process.cwd(), versionSte
 const db = new Database({ databaseName: dbname, url: arangoUrl })
 if (['up', 'down'].includes(step)) {
   stepDB({ ladder, dir: step as 'up' | 'down' })({ db }).then(exit(db))
-} else if (['init'].includes(step)) {
-  const sys_db = new Database({ url: arangoUrl })
-  db.exists().then(async exists => {
-    if (exists) {
-      console.log(`db ${dbname} exists, dropping`)
-      //TODO: add a special check for dropping, e.g. an env var DROP_DB=dbmane
-      await sys_db.dropDatabase(dbname)
-    }
-    console.log(`creating db ${dbname}`)
-    const db = await sys_db.createDatabase(dbname)
-    console.log(`initializing db ${dbname}`)
-    await initialSetUp({ ladder })({ db })
-    exit(db, sys_db)('init DB done')
-  })
 } else if (semverValid(step)) {
   stepDBTo({ ladder, targetVersion: step as Version })({ db }).then(exit(db))
+} else if ('init' === step) {
+  const sys_db = new Database({ url: arangoUrl })
+  //TODO: add a special check for dropping, e.g. an env var DROP_DB=dbmane
+  const forceDrop = true
+  initializeDB({ dbname, forceDrop, ladder })({ sys_db }).then(exit(db, sys_db))
 } else {
   exit(db)(`step shall be one of [up|down|init|targetVersion] found "${step}"`)
 }
