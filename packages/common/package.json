@@ -26,7 +26,7 @@
     "yup": "^0.32.8"
   },
   "scripts": {
-    "build": "yarn gen:graphql:types ; tsc",
+    "build": "tsc ; yarn gen:graphql:types ; tsc",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js"
   }
 }
