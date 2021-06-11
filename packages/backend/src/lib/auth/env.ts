@@ -7,6 +7,11 @@ export const makeEnv = ({ user }: { user: SessionEnvUser }): SessionEnv => {
   }
 }
 
+export const UnavailableUserEnvUser: SessionEnvUser = {
+  role: 'Guest',
+  name: '__UNAVAILABLE_USER__',
+}
+
 export const SystemSessionEnvUser: SessionEnvUser = {
   role: 'System',
   name: '__SYSTEM__',
