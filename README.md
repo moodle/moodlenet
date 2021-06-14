@@ -13,6 +13,16 @@ the easiest way is using docker:
 docker run -e ARANGO_NO_AUTH=1 --name mnarango -p 8529:8529 -d arangodb
 ```
 
+#### Clone project
+
+```sh
+# clone repo
+git clone https://gitlab.com/moodlenet/moodlenet.git
+
+# step in root dir
+cd moodlenet/
+```
+
 #### An .env file for backend
 
 should be positioned in `./packages/backend/` and contain following env vars:
@@ -53,7 +63,7 @@ STATICASSETS_FS_ROOT_FOLDER=$HOME/MN-FS-STATIC-ASSET
 
 ### Setup
 
-#### Clone, build, setup project DBs
+#### Build and setup
 
 ```sh
 # clone repo
