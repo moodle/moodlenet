@@ -6,6 +6,16 @@
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
     "@apollo/client": "^3.3.7",
+    "@graphql-codegen/cli": "^1.19.3",
+    "@graphql-codegen/fragment-matcher": "^2.0.1",
+    "@graphql-codegen/introspection": "^1.18.1",
+    "@graphql-codegen/near-operation-file-preset": "^1.17.13",
+    "@graphql-codegen/schema-ast": "^1.18.1",
+    "@graphql-codegen/typescript": "^1.20.2",
+    "@graphql-codegen/typescript-operations": "^1.17.14",
+    "@graphql-codegen/typescript-react-apollo": "^2.2.1",
+    "@graphql-codegen/typescript-resolvers": "^1.18.1",
+    "@playlyfe/gql": "^2.6.2",
     "@lingui/macro": "^3.5.0",
     "@lingui/react": "^3.5.0",
     "@moodlenet/common": "^0.0.1",
@@ -21,9 +31,14 @@
     "@types/react-router": "^5.1.11",
     "@types/react-router-dom": "^5.1.7",
     "@types/yup": "^0.29.11",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-link-context": "^1.0.20",
+    "apollo-link-logger": "^2.0.0",
     "cross-env": "^7.0.3",
     "formik": "^2.2.6",
     "graphql": "^15.5.0",
+    "graphql-cli": "^4.1.0",
+    "lodash": "^4.17.21",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router": "^5.2.0",
@@ -32,13 +47,16 @@
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.3",
     "serve": "^11.3.2",
+    "tuple-type": "^1.0.3",
+    "typescript": "~4.2.3",
     "web-vitals": "^0.2.4",
     "yup": "^0.32.8"
   },
   "scripts": {
+    "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
     "start-dev": "cross-env NODE_ENV=development react-scripts start --incremental",
     "start": "cross-env NODE_ENV=production serve -s -l 3000 build",
-    "build": "react-scripts build",
+    "build": "yarn gen:graphql:types ; react-scripts build",
     "clean-build": "rm -rf build && yarn build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -46,8 +64,13 @@
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
-    ]
+      "eslint:recommended",
+      "plugin:react-hooks/recommended"
+    ],
+    "rules": {
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "error"
+    }
   },
   "browserslist": {
     "production": [

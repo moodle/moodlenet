@@ -1,20 +1,19 @@
 import { t, Trans } from '@lingui/macro'
 import { FC } from 'react'
 import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react'
-import { LinkDef, useLink } from '../context'
+import { Link } from '../elements/link'
 import logo from '../static/img/moodlenet-logo.png'
-import { FormBag } from '../types/types'
+import { FormBag } from '../types'
 
-export type LoginFormValues = { username: string; password: string }
 export type LoginPanelProps = {
   form: FormBag<LoginFormValues>
   message: string | null
-  signupLink: LinkDef
-  homeLink: LinkDef
+  signupLink: string
+  homeLink: string
 }
+export type LoginFormValues = { username: string; password: string }
 
 export const LoginPanelBig: FC<LoginPanelProps> = ({ form, message, signupLink, homeLink }) => {
-  const Link = useLink()
   return (
     <Grid textAlign="center" verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
@@ -30,7 +29,7 @@ export const LoginPanelBig: FC<LoginPanelProps> = ({ form, message, signupLink, 
           <Segment stacked>
             <Form.Input
               fluid
-              {...form.valueName.username}
+              {...form.inputAttrs.username}
               placeholder={t`your user name`}
               onChange={form.handleChange}
               icon="user"
@@ -38,14 +37,14 @@ export const LoginPanelBig: FC<LoginPanelProps> = ({ form, message, signupLink, 
             />
             <Form.Input
               fluid
-              {...form.valueName.password}
+              {...form.inputAttrs.password}
               placeholder={t`your password`}
               onChange={form.handleChange}
               icon="lock"
               iconPosition="left"
               type="password"
             />
-            <Button color="orange" fluid size="large" type="submit">
+            <Button color="orange" size="large" type="submit">
               <Trans>Login</Trans>
             </Button>
             {message && <Message negative header={t`Warning`} content={message} />}

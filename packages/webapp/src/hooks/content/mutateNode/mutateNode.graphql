@@ -1,0 +1,34 @@
+mutation CreateNode($input: CreateNodeInput!) {
+  createNode(input: $input) {
+    ...BasicCreateNodeMutationPayload
+  }
+}
+mutation DeleteNode($input: DeleteNodeInput!) {
+  deleteNode(input: $input) {
+    ...BasicDeleteNodeMutationPayload
+  }
+}
+
+fragment BasicCreateNodeMutationPayload on CreateNodeMutationPayload {
+  ... on CreateNodeMutationSuccess {
+    node {
+      ... on INode {
+        id
+      }
+    }
+  }
+  ... on CreateNodeMutationError {
+    type
+    details
+  }
+}
+
+fragment BasicDeleteNodeMutationPayload on DeleteNodeMutationPayload {
+  ... on DeleteNodeMutationSuccess {
+    nodeId
+  }
+  ... on DeleteNodeMutationError {
+    type
+    details
+  }
+}

@@ -1,0 +1,28 @@
+type Resource implements INode & IContentNode {
+  name: String!
+  summary: String!
+  icon: AssetRef
+  asset: AssetRef!
+  id: ID!
+}
+
+input CreateResourceInput {
+  content: ContentNodeInput!
+  resource: AssetRefInput!
+}
+
+input UpdateResourceInput {
+  content: ContentNodeInput!
+}
+
+# integrations
+union Node = Resource
+enum NodeType {
+  Resource
+}
+input CreateNodeInput {
+  Resource: CreateResourceInput
+}
+input UpdateNodeInput {
+  Resource: UpdateResourceInput
+}

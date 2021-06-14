@@ -1,0 +1,15 @@
+type Contains implements IEdge {
+  id: ID!
+}
+
+## integrations
+union Edge = Contains
+enum EdgeType {
+  Contains
+}
+input CreateEdgeInput {
+  Contains: Empty
+}
+input UpdateEdgeInput {
+  Contains: Empty
+}

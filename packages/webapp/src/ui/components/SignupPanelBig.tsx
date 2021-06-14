@@ -1,20 +1,19 @@
-import { Trans, t } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import { FC } from 'react'
-import { FormBag } from '../types/types'
 import { Button, Form, Grid, Header, Icon, Image, Message, Segment } from 'semantic-ui-react'
+import { Link } from '../elements/link'
 import logo from '../static/img/moodlenet-logo.png'
-import { LinkDef, useLink } from '../context'
+import { FormBag } from '../types'
 
 export type SignupFormValues = { email: string }
 export type SignupPanelProps = {
   form: FormBag<SignupFormValues>
   warnMessage: string | null
-  homeLink: LinkDef
+  homeLink: string
   signUpSucceded: boolean
 }
 
 export const SignupPanelBig: FC<SignupPanelProps> = ({ form, warnMessage, homeLink, signUpSucceded }) => {
-  const Link = useLink()
   return (
     <Grid textAlign="center" verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
@@ -41,7 +40,7 @@ export const SignupPanelBig: FC<SignupPanelProps> = ({ form, warnMessage, homeLi
             <Segment stacked>
               <Form.Input
                 fluid
-                {...form.valueName.email}
+                {...form.inputAttrs.email}
                 placeholder={t`your email`}
                 onChange={form.handleChange}
                 icon="user"
@@ -53,7 +52,7 @@ export const SignupPanelBig: FC<SignupPanelProps> = ({ form, warnMessage, homeLi
                   }
                 }
               />
-              <Button color="orange" fluid size="large" type="submit">
+              <Button color="orange" size="large" type="submit">
                 <Trans>Signup</Trans>
               </Button>
               {warnMessage && <Message negative header={t`Warning`} content={warnMessage} />}

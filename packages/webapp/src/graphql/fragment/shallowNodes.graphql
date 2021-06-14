@@ -1,9 +1,0 @@
-fragment ShallowUser on User {
-  _id
-  displayName
-}
-
-fragment ShallowSubject on Subject {
-  _id
-  name
-}

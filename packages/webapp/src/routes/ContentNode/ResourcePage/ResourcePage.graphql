@@ -1,0 +1,24 @@
+query ResourcePageNode($id: ID!) {
+  node(id: $id) {
+    ... on Resource {
+      id
+      name
+      icon
+      asset
+      summary
+      myLike: _rel(edge: { type: Likes, node: Profile, inverse: true, targetMe: true }, page: { first: 1 }) {
+        ...JustEdgeIdRelPage
+      }
+      likersCount: _relCount(type: Likes, target: Profile, inverse: true)
+      inCollectionCount: _relCount(type: Contains, target: Resource, inverse: true)
+      _created {
+        at
+        by {
+          id
+          name
+          icon
+        }
+      }
+    }
+  }
+}

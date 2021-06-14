@@ -1,9 +1,11 @@
 import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
-import { HomePageCtrl } from '../ctrl/pages/HomePageCtrl'
+import { usePageHeaderProps } from '../hooks/props/PageHeader'
+import { HomePage } from '../ui/pages/Home'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const HomeRouteComponent: RouteFC<Routes.Home> = (/* { match } */) => {
-  return <HomePageCtrl />
+  const pageHeaderProps = usePageHeaderProps()
+  return <HomePage pageHeaderProps={pageHeaderProps} />
 }
 
 export const HomeRoute: MNRouteProps<Routes.Home> = {

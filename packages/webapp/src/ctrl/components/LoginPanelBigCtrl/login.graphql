@@ -1,8 +1,0 @@
-mutation login($username: String!, $password: String!) {
-  createSession(username: $username, password: $password) {
-    ...ShallowSession
-    user {
-      ...ShallowUser
-    }
-  }
-}

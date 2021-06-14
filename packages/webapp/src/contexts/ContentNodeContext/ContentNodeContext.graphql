@@ -1,0 +1,15 @@
+query ContentNodeContext($id: ID!) {
+  node(id: $id) {
+    ... on IContentNode {
+      name
+    }
+    ... on INode {
+      id
+      _created {
+        by {
+          id
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+type AppliesTo implements IEdge {
+  id: ID!
+}
+
+## integrations
+union Edge = AppliesTo
+enum EdgeType {
+  AppliesTo
+}
+input CreateEdgeInput {
+  AppliesTo: Empty
+}
+input UpdateEdgeInput {
+  AppliesTo: Empty
+}

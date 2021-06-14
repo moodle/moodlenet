@@ -1,0 +1,34 @@
+scalar Cursor
+scalar AssetRef
+
+interface IContentNode {
+  name: String! # TODO: rename to title
+  summary: String! # TODO: rename to description
+  icon: AssetRef
+}
+
+input ContentNodeInput {
+  name: String! # TODO: rename to title
+  summary: String! # TODO: rename to description
+  icon: AssetRefInput!
+}
+
+enum AssetRefInputType {
+  TmpUpload
+  ExternalUrl
+  NoChange
+  NoAsset
+}
+
+input AssetRefInput {
+  type: AssetRefInputType!
+  location: String!
+}
+
+interface INode {
+  id: ID!
+}
+
+interface IEdge {
+  id: ID
+}

@@ -1,0 +1,15 @@
+type Likes implements IEdge {
+  id: ID!
+}
+
+## integrations
+union Edge = Likes
+enum EdgeType {
+  Likes
+}
+input CreateEdgeInput {
+  Likes: Empty
+}
+input UpdateEdgeInput {
+  Likes: Empty
+}

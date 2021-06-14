@@ -3,13 +3,9 @@
   "tasks": [
     {
       "label": "start dev env",
-      "command": "lerna",
-      "args": [
-        "run",
-        "start-dev",
-        "--stream"
-      ],
-      "group": "build",
+      "command": "yarn",
+      "args": ["start-dev"],
+      "group": "none",
       "problemMatcher": []
     },
     {
@@ -17,9 +13,11 @@
       "group": "build",
       "dependsOn": [
         "common dev-build",
-        "webapp dev-build",
+        "common-gql-gen",
+        "webapp-gql-gen",
+        "backend-gql-gen",
         "backend dev-build",
-        "graphql types generation"
+        "webapp dev-build"
       ],
       "problemMatcher": []
     },
@@ -27,9 +25,7 @@
       "type": "typescript",
       "tsconfig": "packages/common/tsconfig.json",
       "option": "watch",
-      "problemMatcher": [
-        "$tsc-watch"
-      ],
+      "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "common dev-build"
     },
@@ -37,9 +33,7 @@
       "type": "typescript",
       "tsconfig": "packages/webapp/tsconfig.json",
       "option": "watch",
-      "problemMatcher": [
-        "$tsc-watch"
-      ],
+      "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "webapp dev-build"
     },
@@ -47,23 +41,36 @@
       "type": "typescript",
       "tsconfig": "packages/backend/tsconfig.json",
       "option": "watch",
-      "problemMatcher": [
-        "$tsc-watch"
-      ],
+      "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "backend dev-build"
     },
     {
+      "label": "common-gql-gen",
       "command": "yarn",
-      "args": [
-        "gen:graphql:types",
-        "-w"
-      ],
+      "args": ["gen:graphql:types", "-w"],
       "options": {
-        "cwd": "packages/graphql-gen"
+        "cwd": "packages/common"
       },
-      "group": "build",
-      "label": "graphql types generation"
+      "group": "build"
+    },
+    {
+      "label": "backend-gql-gen",
+      "command": "yarn",
+      "args": ["gen:graphql:types", "-w"],
+      "options": {
+        "cwd": "packages/backend"
+      },
+      "group": "build"
+    },
+    {
+      "label": "webapp-gql-gen",
+      "command": "yarn",
+      "args": ["gen:graphql:types", "-w"],
+      "options": {
+        "cwd": "packages/webapp"
+      },
+      "group": "build"
     }
   ]
 }

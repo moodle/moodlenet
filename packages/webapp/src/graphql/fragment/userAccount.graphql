@@ -1,6 +1,0 @@
-fragment ShallowSession on UserSession {
-  username
-  email
-  accountId
-  jwt
-}

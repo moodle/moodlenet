@@ -1,0 +1,26 @@
+type Collection implements INode & IContentNode {
+  name: String!
+  summary: String!
+  icon: AssetRef
+  id: ID!
+}
+
+input CreateCollectionInput {
+  content: ContentNodeInput!
+}
+
+input UpdateCollectionInput {
+  content: ContentNodeInput!
+}
+
+# integrations
+union Node = Collection
+enum NodeType {
+  Collection
+}
+input CreateNodeInput {
+  Collection: CreateCollectionInput
+}
+input UpdateNodeInput {
+  Collection: UpdateCollectionInput
+}

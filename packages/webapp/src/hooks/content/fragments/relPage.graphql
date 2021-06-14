@@ -1,0 +1,9 @@
+fragment JustEdgeIdRelPage on RelPage {
+  edges {
+    edge {
+      ... on IEdge {
+        id
+      }
+    }
+  }
+}
