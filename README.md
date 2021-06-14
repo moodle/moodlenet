@@ -18,6 +18,7 @@ docker run -e ARANGO_NO_AUTH=1 --name mnarango -p 8529:8529 -d arangodb
 should be positioned in `./packages/backend/` and contain following env vars:
 
 ```sh
+# this .env is ok for development env
 
 NODE_ENV=development
 
@@ -70,7 +71,7 @@ yarn bs
 # build packages
 yarn build
 
-# setup packages (sets up dbs)
+# setup packages and dbs
 yarn setup
 # note you can set the env var flag `FORCE_DROP_DBS=true` to allow the script to drop system DBs if they already exist
 ```
