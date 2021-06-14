@@ -33,7 +33,7 @@ export const signUp = QMCommand(
         },
       })
       sendEmail(emailObj)
-      return token
+      return { token }
     },
 )
 

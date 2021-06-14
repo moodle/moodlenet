@@ -2,14 +2,14 @@ import db from './db'
 import fsAsset from './fs'
 import http from './http'
 import jwt from './jwt'
-import mailgun from './mailgun'
+import nodemailer from './nodemailer'
 
 const env = {
   db,
   fsAsset,
   http,
   jwt,
-  mailgun,
+  nodemailer,
 }
 export type DefaultDeployEnv = typeof env
 

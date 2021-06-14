@@ -47,6 +47,7 @@
     "@types/lodash": "ts4.0",
     "@types/mailgun-js": "^0.22.11",
     "@types/node": "^14.14.3",
+    "@types/nodemailer": "^6.4.2",
     "@types/require-all": "^3.0.2",
     "@types/semver": "^7.3.6",
     "@types/sharp": "^0.28.0",
@@ -73,6 +74,7 @@
     "lodash": "^4.17.20",
     "mailgun-js": "^0.22.0",
     "node-dev": "^7.0.0",
+    "nodemailer": "^6.6.1",
     "require-all": "^3.0.0",
     "run-script-os": "^1.1.3",
     "semver": "^7.3.5",
@@ -90,7 +92,8 @@
     "yup": "^0.32.8"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "yarn gen:graphql:types ; tsc",
+    "setup": "node -r ./env.js lib/defaultDeploy/setup/main.js",
     "migrate-arangodb": "node lib/lib/helpers/arango/migrate/main",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
     "start": "NODE_ENV=production node -r ./env.js lib/defaultDeploy/main.js",
