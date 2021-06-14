@@ -66,12 +66,6 @@ STATICASSETS_FS_ROOT_FOLDER=$HOME/MN-FS-STATIC-ASSET
 #### Build and setup
 
 ```sh
-# clone repo
-git clone https://gitlab.com/moodlenet/moodlenet.git
-
-# step in root dir
-cd moodlenet/
-
 # root deps
 yarn
 
