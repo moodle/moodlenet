@@ -5,7 +5,7 @@ type InitialUser = Pick<ActiveUser, 'username' | 'email' | 'role' | 'password'>
 const rndPass = () => (Math.random() * 10e15).toString(36).replace('.', '')
 
 const DefaultAdminUser = ({ domain }: { domain: string }): InitialUser => ({
-  username: `Admin`,
+  username: `admin`,
   password: `admin`,
   email: `info@${domain}`,
   role: `Admin`,
