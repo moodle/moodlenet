@@ -10,3 +10,6 @@ lerna-error.log*
 .eslintcache
 
 .ignore*
+
+gql-introspection.json
+*.gen.ts
