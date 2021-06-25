@@ -1,11 +1,11 @@
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-
+import * as HeaderStories from '../Header/Header.stories';
 import { Page } from './Page';
-import * as HeaderStories from './Header.stories';
+
 
 export default {
-  title: 'Example/Page',
+  title: 'MoodleNet/Page',
   component: Page,
 } as ComponentMeta<typeof Page>;
 
