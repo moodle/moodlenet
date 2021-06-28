@@ -119,6 +119,7 @@ cd ../..
 yarn start-dev
 
 # start storybook (optional)
+cd packages/webapp/
 yarn storybook
 ```
 

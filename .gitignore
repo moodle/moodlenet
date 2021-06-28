@@ -10,9 +10,3 @@ lerna-error.log*
 .eslintcache
 
 .ignore*
-
-*.gen.ts
-*.gen.tsx
-packages/backend/src/graphql/types.graphql.gen.d.ts
-packages/common/src/graphql/types.graphql.gen.ts
-packages/common/src/graphql/gql-introspection.json
