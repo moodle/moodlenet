@@ -1,13 +1,11 @@
-import React from 'react';
-import { Header } from '../Header/Header';
-import './page.css';
-
+import { Header } from '../Header/Header'
+import './page.css'
 
 interface PageProps {
-  user?: {};
-  onLogin: () => void;
-  onLogout: () => void;
-  onCreateAccount: () => void;
+  user?: {}
+  onLogin: () => void
+  onLogout: () => void
+  onCreateAccount: () => void
 }
 
 export const Page = ({ user, onLogin, onLogout, onCreateAccount }: PageProps) => (
@@ -24,18 +22,16 @@ export const Page = ({ user, onLogin, onLogout, onCreateAccount }: PageProps) =>
         process starting with atomic components and ending with pages.
       </p>
       <p>
-        Render pages with mock data. This makes it easy to build and review page states without
-        needing to navigate to them in your app. Here are some handy patterns for managing page data
-        in Storybook:
+        Render pages with mock data. This makes it easy to build and review page states without needing to navigate to
+        them in your app. Here are some handy patterns for managing page data in Storybook:
       </p>
       <ul>
         <li>
-          Use a higher-level connected component. Storybook helps you compose such data from the
-          "args" of child component stories
+          Use a higher-level connected component. Storybook helps you compose such data from the "args" of child
+          component stories
         </li>
         <li>
-          Assemble data in the page component from your services. You can mock these services out
-          using Storybook.
+          Assemble data in the page component from your services. You can mock these services out using Storybook.
         </li>
       </ul>
       <p>
@@ -64,4 +60,4 @@ export const Page = ({ user, onLogin, onLogout, onCreateAccount }: PageProps) =>
       </div>
     </section>
   </article>
-);
+)

@@ -1,22 +1,19 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
-import * as HeaderStories from '../Header/Header.stories';
-import { Page } from './Page';
-
-
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import * as HeaderStories from '../Header/Header.stories'
+import { Page } from './Page'
 export default {
   title: 'MoodleNet/Page',
   component: Page,
-} as ComponentMeta<typeof Page>;
+} as ComponentMeta<typeof Page>
 
-const Template: ComponentStory<typeof Page> = (args) => <Page {...args} />;
+const Template: ComponentStory<typeof Page> = args => <Page {...args} />
 
-export const LoggedIn = Template.bind({});
+export const LoggedIn = Template.bind({})
 LoggedIn.args = {
   ...HeaderStories.LoggedIn.args,
-};
+}
 
-export const LoggedOut = Template.bind({});
+export const LoggedOut = Template.bind({})
 LoggedOut.args = {
   ...HeaderStories.LoggedOut.args,
-};
+}

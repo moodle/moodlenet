@@ -1,14 +1,14 @@
 import { FormikErrors, FormikTouched } from 'formik'
-import React from 'react'
+import { ChangeEvent, FormEvent } from 'react'
 
 export interface FormBag<Values = {}> {
   initialValues: Values
   handleBlur: (eventOrString: any) => void | ((e: any) => void)
   handleChange: (
-    eventOrPath: string | React.ChangeEvent<any>,
-  ) => void | ((eventOrTextValue: string | React.ChangeEvent<any>) => void)
+    eventOrPath: string | ChangeEvent<any>,
+  ) => void | ((eventOrTextValue: string | ChangeEvent<any>) => void)
   handleReset: (e: any) => void
-  handleSubmit: (e?: React.FormEvent<HTMLFormElement> | undefined) => void
+  handleSubmit: (e?: FormEvent<HTMLFormElement> | undefined) => void
   submitForm: () => unknown
   setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => any
 
