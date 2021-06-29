@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import * as HeaderStories from '../Header/Header.stories'
 import { Page } from './Page'
 export default {
-  title: 'MoodleNet/Page',
+  title: 'Test/Page',
   component: Page,
 } as ComponentMeta<typeof Page>
 
