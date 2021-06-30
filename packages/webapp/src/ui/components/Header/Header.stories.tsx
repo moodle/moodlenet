@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Header } from './Header'
 export default {
-  title: 'MoodleNet/Header',
+  title: 'Test/Header',
   component: Header,
 } as ComponentMeta<typeof Header>
 

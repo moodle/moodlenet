@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Button } from './Button'
 export default {
-  title: 'MoodleNet/Button',
+  title: 'Test/Button',
   component: Button,
   argTypes: {
     backgroundColor: { control: 'color' },
