@@ -6,7 +6,7 @@ export type Submit<Values> = FormikConfig<Values>['onSubmit']
 type FormikInputAttrs<Values> = {
   [ValueName in keyof Values]: { name: ValueName; value?: Values[ValueName] }
 }
-export const formikInputAttrs = <Values>(bag: _Formik<Values>) =>
+export const formikInputAttrs = <Values>(bag: SimplifiedFormikBag<Values>) =>
   Object.entries(bag.values).reduce<FormikInputAttrs<Values>>(
     (collect, [name, value]) => ({
       ...collect,
@@ -21,7 +21,8 @@ export const formikInputAttrs = <Values>(bag: _Formik<Values>) =>
     }),
     {} as any,
   )
-export const useFormikInputAttrs = <Values>(bag: _Formik<Values>) => useMemo(() => formikInputAttrs(bag), [bag])
+export const useFormikInputAttrs = <Values>(formik: SimplifiedFormikBag<Values>) =>
+  useMemo(() => formikInputAttrs(formik), [formik])
 
 export const useFormikPlus = <Values>(config: FormikConfig<Values>) => {
   const formik = useFormik(config)
@@ -29,7 +30,7 @@ export const useFormikPlus = <Values>(config: FormikConfig<Values>) => {
   return [formik, inputAttrs] as const
 }
 
-export interface _Formik<Values = {}> {
+export interface SimplifiedFormikBag<Values = {}> {
   initialValues: Values
   handleBlur: (eventOrString: any) => void | ((e: any) => void)
   handleChange: (

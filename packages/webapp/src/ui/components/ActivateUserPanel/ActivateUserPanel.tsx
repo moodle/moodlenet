@@ -1,10 +1,10 @@
 import { t, Trans } from '@lingui/macro'
-import { activateUserSchema } from '@moodlenet/common/lib/graphql/auth/validation/input/userAuth'
+import { useFormik } from 'formik'
 import { FC } from 'react'
 import { Button, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 import { boolean, object, ref, SchemaOf, string } from 'yup'
 import { Href, Link } from '../../elements/link'
-import { Submit, useFormikPlus } from '../../lib/formik'
+import { Submit, useFormikInputAttrs } from '../../lib/formik'
 
 export type ActivateNewUserPanelProps = {
   submit: Submit<ActivateNewUserFormValues>
@@ -25,11 +25,17 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({
   termsAndConditionsLink,
   uiProp,
 }) => {
-  const [form, inputAttrs] = useFormikPlus<ActivateNewUserFormValues>({
+  // const [form, inputAttrs] = useFormikPlus<ActivateNewUserFormValues>({
+  //   initialValues: { acceptTerms: false, confirmPassword: '', password: '', username: '' },
+  //   onSubmit: submit,
+  //   validationSchema,
+  // })
+  const form = useFormik<ActivateNewUserFormValues>({
     initialValues: { acceptTerms: false, confirmPassword: '', password: '', username: '' },
     onSubmit: submit,
     validationSchema,
   })
+  const inputAttrs = useFormikInputAttrs(form)
 
   return (
     <Grid textAlign="center" verticalAlign="middle">
@@ -114,7 +120,8 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({
 }
 
 const validationSchema: SchemaOf<ActivateNewUserFormValues> = object({
-  ...activateUserSchema.fields,
+  username: string().required(),
+  password: string().required(),
   confirmPassword: string()
     .oneOf([ref('password'), null], t`Passwords must match`)
     .required(),
