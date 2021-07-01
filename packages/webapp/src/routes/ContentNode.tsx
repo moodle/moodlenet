@@ -1,7 +1,7 @@
 import { Id, parseNodeIdString } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { FC } from 'react'
 import { Routes } from '../../../common/lib/webapp/sitemap'
-import { ProvideContentNodeContext } from '../contexts/ContentNodeContext'
+import { ProvideContentNodeContext } from '../context/ContentNodeContext'
 import { NodeType } from '../graphql/pub.graphql.link'
 import { NeverPage } from '../helpers/navigation'
 import { CollectionPageComponent } from './ContentNode/CollectionPage'

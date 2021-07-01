@@ -2,7 +2,7 @@ import { createSession } from '@moodlenet/common/lib/graphql/auth/validation/inp
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { Home, Signup } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useMemo, useState } from 'react'
-import { useSession } from '../../contexts/Global/Session'
+import { useSession } from '../../context/Global/Session'
 import { MutationCreateSessionArgs } from '../../graphql/pub.graphql.link'
 import { useFormikWithBag } from '../../helpers/forms'
 import { LoginFormValues, LoginPanelProps } from '../../ui/pages/Login'
