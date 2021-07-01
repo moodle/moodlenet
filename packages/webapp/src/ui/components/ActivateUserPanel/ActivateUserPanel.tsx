@@ -1,13 +1,16 @@
 import { t, Trans } from '@lingui/macro'
+import { activateUserSchema } from '@moodlenet/common/lib/graphql/auth/validation/input/userAuth'
 import { FC } from 'react'
 import { Button, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
-import { Link } from '../elements/link'
-import { FormBag } from '../types'
+import { boolean, object, ref, SchemaOf, string } from 'yup'
+import { Href, Link } from '../../elements/link'
+import { Submit, useFormikPlus } from '../../lib/formik'
 
 export type ActivateNewUserPanelProps = {
-  form: FormBag<ActivateNewUserFormValues>
-  termsAndConditionsLink: string
+  submit: Submit<ActivateNewUserFormValues>
+  termsAndConditionsLink: Href
   message: string | null
+  uiProp: 'red' | 'blue'
 }
 export type ActivateNewUserFormValues = {
   username: string
@@ -16,18 +19,31 @@ export type ActivateNewUserFormValues = {
   confirmPassword: string
 }
 
-export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({ form, message, termsAndConditionsLink }) => {
+export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({
+  submit,
+  message,
+  termsAndConditionsLink,
+  uiProp,
+}) => {
+  const [form, inputAttrs] = useFormikPlus<ActivateNewUserFormValues>({
+    initialValues: { acceptTerms: false, confirmPassword: '', password: '', username: '' },
+    onSubmit: submit,
+    validationSchema,
+  })
+
   return (
     <Grid textAlign="center" verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
         <Header as="h2" textAlign="center">
+          uiProp="{uiProp}"
+          <br />
           <Trans>Please complete your subsription</Trans>
         </Header>
         <Form size="large" disabled={form.isSubmitting} onSubmit={form.submitForm}>
           <Segment stacked>
             <Form.Input
+              {...inputAttrs.username}
               fluid
-              {...form.inputAttrs.username}
               placeholder={t`your user name`}
               onChange={form.handleChange}
               icon="user"
@@ -40,8 +56,8 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({ form, mess
               }
             />
             <Form.Input
+              {...inputAttrs.password}
               fluid
-              {...form.inputAttrs.password}
               placeholder={t`your password`}
               onChange={form.handleChange}
               icon="lock"
@@ -55,8 +71,8 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({ form, mess
               }
             />
             <Form.Input
+              {...inputAttrs.confirmPassword}
               fluid
-              {...form.inputAttrs.confirmPassword}
               placeholder={t`confirm your password`}
               onChange={form.handleChange}
               icon="lock"
@@ -70,12 +86,12 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({ form, mess
               }
             />
             <Form.Field
+              {...inputAttrs.acceptTerms}
               label={
                 <Trans>
                   I have read and agreed to the <Link href={termsAndConditionsLink}>Terms and Conditions</Link>
                 </Trans>
               }
-              {...form.inputAttrs.acceptTerms}
               onChange={form.handleChange}
               control="input"
               type="checkbox"
@@ -96,3 +112,13 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({ form, mess
     </Grid>
   )
 }
+
+const validationSchema: SchemaOf<ActivateNewUserFormValues> = object({
+  ...activateUserSchema.fields,
+  confirmPassword: string()
+    .oneOf([ref('password'), null], t`Passwords must match`)
+    .required(),
+  acceptTerms: boolean()
+    .oneOf([true], t`Must Accept Terms and Conditions`)
+    .required(),
+})

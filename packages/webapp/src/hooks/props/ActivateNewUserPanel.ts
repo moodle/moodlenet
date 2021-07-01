@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro'
-import { activateUser } from '@moodlenet/common/lib/graphql/auth/validation/input/userAuth'
+import { activateUserSchema } from '@moodlenet/common/lib/graphql/auth/validation/input/userAuth'
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { TermsAndConditions } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useEffect, useState } from 'react'
@@ -7,7 +7,7 @@ import { boolean, object, ref, SchemaOf, string } from 'yup'
 import { useSession } from '../../context/Global/Session'
 import { MutationActivateUserArgs } from '../../graphql/pub.graphql.link'
 import { useFormikWithBag } from '../../helpers/forms'
-import { ActivateNewUserFormValues, ActivateNewUserPanelProps } from '../../ui/pages/ActivateNewUser'
+import { ActivateNewUserFormValues, ActivateNewUserPanelProps } from '../../ui/pages/ActivateNewUser/ActivateNewUser'
 
 const termsAndConditionsLink = webappPath<TermsAndConditions>('/terms', {})
 type FormValues = ActivateNewUserFormValues & MutationActivateUserArgs
@@ -25,14 +25,14 @@ export const useActivateNewUserPanelProps = ({ token }: { token: string }): Acti
   })
 
   useEffect(() => {
-    activateUser.fields.token.validate(token).catch(() => setMessage('invalid page url'))
+    activateUserSchema.fields.token.validate(token).catch(() => setMessage('invalid page url'))
   }, [token])
 
   return { termsAndConditionsLink, form, message }
 }
 
 const validationSchema: SchemaOf<FormValues> = object({
-  ...activateUser.fields,
+  ...activateUserSchema.fields,
   confirmPassword: string()
     .oneOf([ref('password'), null], t`Passwords must match`)
     .required(),

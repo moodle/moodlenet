@@ -1,25 +1,35 @@
 import { FC } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { PUBLIC_URL } from '../../../constants'
 import { LinkComponentCtx, LinkComponentType } from '../../../ui/elements/link'
 
-export const LinkComponentProvider: FC = ({ children }) => {
-  return <LinkComponentCtx.Provider value={LinkComponent}>{children}</LinkComponentCtx.Provider>
+export const ProvideGlobalLinkComponent: FC = ({ children }) => {
+  return <LinkComponentCtx.Provider value={LinkComp}>{children}</LinkComponentCtx.Provider>
 }
 
-const LinkComponent: LinkComponentType = props => {
-  const isExternal = !((PUBLIC_URL && props.href?.startsWith(PUBLIC_URL)) || props.href?.startsWith('/'))
-  if (isExternal || !props.href) {
+const LinkComp: LinkComponentType = props => {
+  const isExternal = props.href.ext
+  const asExternal = props.asExt
+  if (isExternal || asExternal) {
+    const { href, externalClassName, externalStyle, activeClassName, activeStyle, ...restProps } = props
     return (
-      <a {...props} target="_blank" rel="noopener noreferrer">
+      <a
+        {...restProps}
+        href={href.url}
+        className={externalClassName}
+        style={externalStyle}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         {props.children}
       </a>
     )
+  } else {
+    const { href, externalClassName, externalStyle, ...restProps } = props
+    const LinkComp = props.activeClassName || props.activeStyle ? NavLink : Link
+    return (
+      <LinkComp {...restProps} to={href.url} ref={null}>
+        {props.children}
+      </LinkComp>
+    )
   }
-  const LinkComp = props.activeClassName || props.activeStyle ? NavLink : Link
-  return (
-    <LinkComp {...props} to={props.href} ref={null}>
-      {props.children}
-    </LinkComp>
-  )
 }
