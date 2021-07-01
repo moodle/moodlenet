@@ -1,7 +1,7 @@
 import { contentNodeLink, Routes } from '@moodlenet/common/lib/webapp/sitemap'
 import { uniq } from 'lodash'
 import { useMemo } from 'react'
-import { useGlobalSearch } from '../contexts/Global/GlobalSearch'
+import { useGlobalSearch } from '../context/Global/GlobalSearch'
 import { usePageHeaderProps } from '../hooks/props/PageHeader'
 import { BaseContentNodeFeedProps } from '../ui/components/BaseContentNodeFeed'
 import { GlobalSearchPage, GlobalSearchPageProps } from '../ui/pages/GlobalSearchPage'

@@ -2,7 +2,7 @@ import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { GlobalSearch, Home, Login } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useLayoutEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useSession } from '../../contexts/Global/Session'
+import { useSession } from '../../context/Global/Session'
 
 export const mainPath = {
   login: webappPath<Login>('/login', {}),

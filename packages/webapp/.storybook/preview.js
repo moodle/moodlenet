@@ -1,4 +1,5 @@
-import '../src/index.css';
+import { LocalizationProvider } from '../src/context/Global/Localization';
+// import '../src/index.css';
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -9,3 +10,10 @@ export const parameters = {
     },
   },
 }
+export const decorators = [
+  (Story) => (
+    <LocalizationProvider>
+      <Story />
+    </LocalizationProvider>
+  ),
+];
