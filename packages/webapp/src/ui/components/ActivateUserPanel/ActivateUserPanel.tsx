@@ -10,7 +10,7 @@ export type ActivateNewUserPanelProps = {
   submit: Submit<ActivateNewUserFormValues>
   termsAndConditionsLink: Href
   message: string | null
-  uiProp: 'red' | 'blue'
+  mycss: 'red' | 'blue'
 }
 export type ActivateNewUserFormValues = {
   username: string
@@ -23,7 +23,7 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({
   submit,
   message,
   termsAndConditionsLink,
-  uiProp,
+  mycss: uiProp,
 }) => {
   // const [form, inputAttrs] = useFormikPlus<ActivateNewUserFormValues>({
   //   initialValues: { acceptTerms: false, confirmPassword: '', password: '', username: '' },
@@ -35,6 +35,7 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({
     onSubmit: submit,
     validationSchema,
   })
+
   const inputAttrs = useFormikInputAttrs(form)
 
   return (

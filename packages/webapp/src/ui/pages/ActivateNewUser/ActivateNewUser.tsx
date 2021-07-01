@@ -5,13 +5,13 @@ import { EmptyPageTemplate } from '../../templates/page/EmptyPageTemplate'
 export * from '../../components/ActivateUserPanel/ActivateUserPanel'
 
 export type ActivateNewUserPageProps = {
-  ActivateNewUserPanelCtrl: CtrlBag<ActivateNewUserPanelProps, 'uiProp'>
+  ActivateNewUserPanelCtrl: CtrlBag<ActivateNewUserPanelProps, 'mycss'>
 }
 
 export const ActivateNewUserPage: FC<ActivateNewUserPageProps> = ({ ActivateNewUserPanelCtrl }) => {
   return (
     <EmptyPageTemplate>
-      <ActivateNewUserPanelCtrl.Cmp {...ActivateNewUserPanelCtrl} _={ActivateNewUserPanel} uiProp={'blue'} />
+      <ActivateNewUserPanelCtrl.Cmp _={ActivateNewUserPanel} {...ActivateNewUserPanelCtrl} mycss={'blue'} />
     </EmptyPageTemplate>
   )
 }
