@@ -25,26 +25,23 @@ const storyprops: StoryProps = {
   onPinTask: action('onPinTask'),
 }
 
-export const Default = TaskStory.bind({}, storyprops)
+export const Default = TaskStory.bind({})
+Default.args = storyprops
 
-export const Pinned = TaskStory.bind(
-  {},
-  {
-    ...storyprops,
-    task: {
-      ...task,
-      state: 'TASK_PINNED',
-    },
+export const Pinned = TaskStory.bind({})
+Pinned.args = {
+  ...storyprops,
+  task: {
+    ...task,
+    state: 'TASK_PINNED',
   },
-)
+}
 
-export const Archived = TaskStory.bind(
-  {},
-  {
-    ...storyprops,
-    task: {
-      ...task,
-      state: 'TASK_ARCHIVED',
-    },
+export const Archived = TaskStory.bind({})
+Archived.args = {
+  ...storyprops,
+  task: {
+    ...task,
+    state: 'TASK_ARCHIVED',
   },
-)
+}
