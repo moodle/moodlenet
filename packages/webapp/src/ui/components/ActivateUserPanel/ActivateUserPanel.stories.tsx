@@ -13,7 +13,7 @@ const meta: ComponentMeta<typeof ActivateNewUserPanel> = {
 }
 
 export const activateNewUserPanelStoryProps: ActivateNewUserPanelProps = {
-  uiProp: 'red',
+  mycss: 'red',
   message: null,
   submit: action('submitted form'),
   termsAndConditionsLink: href(''),
