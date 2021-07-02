@@ -5,7 +5,8 @@ import { Button, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 import { boolean, object, ref, SchemaOf, string } from 'yup'
 import { Href, Link } from '../../elements/link'
 import { Submit, useFormikInputAttrs } from '../../lib/formik'
-
+import styles from './styles.module.css'
+ 
 export type ActivateNewUserPanelProps = {
   submit: Submit<ActivateNewUserFormValues>
   termsAndConditionsLink: Href
@@ -44,7 +45,7 @@ export const ActivateNewUserPanel: FC<ActivateNewUserPanelProps> = ({
         <Header as="h2" textAlign="center">
           uiProp="{uiProp}"
           <br />
-          <Trans>Please complete your subsription</Trans>
+          <Trans><span className={styles.tet}>Please complete your subsription</span></Trans>
         </Header>
         <Form size="large" disabled={form.isSubmitting} onSubmit={form.submitForm}>
           <Segment stacked>
