@@ -1,4 +1,5 @@
 import { LocalizationProvider } from '../src/context/Global/Localization';
+import { ProvideGlobalSBLinkComponent } from '../src/ui/lib/SBLinkComponent';
 // import '../src/index.css';
 
 export const parameters = {
@@ -13,7 +14,9 @@ export const parameters = {
 export const decorators = [
   (Story) => (
     <LocalizationProvider>
-      <Story />
+      <ProvideGlobalSBLinkComponent>
+        <Story />
+      </ProvideGlobalSBLinkComponent>
     </LocalizationProvider>
   ),
 ];
