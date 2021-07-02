@@ -5,7 +5,7 @@ import { sbCtrlBagOf } from '../../lib/ctrl'
 import { ActivateNewUserPage, ActivateNewUserPageProps } from './ActivateNewUser'
 
 const meta: ComponentMeta<typeof ActivateNewUserPage> = {
-  title: 'Test/ActivateNewUserPage',
+  title: 'Pages/ActivateNewUserPage',
   component: ActivateNewUserPage,
   argTypes: {
     // backgroundColor: { control: 'color' },

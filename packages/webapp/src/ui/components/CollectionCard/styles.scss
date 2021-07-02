@@ -1,0 +1,21 @@
+.collection-card {
+    cursor: pointer;
+    width: 100%;
+    height: 50px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 6px #dedede;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .title {
+        margin-left: 10px;
+        color: white;
+        background-color: #b6bacb;
+        border-radius: 15px;
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+}
