@@ -16,7 +16,7 @@ export const activateNewUserPanelStoryProps: ActivateNewUserPanelProps = {
   mycss: 'red',
   message: null,
   submit: action('submitted form'),
-  termsAndConditionsLink: href(''),
+  termsAndConditionsLink: href('Test/ActivateUserPanel'),
 }
 
 const ActivateUserPanelStory: ComponentStory<typeof ActivateNewUserPanel> = args => <ActivateNewUserPanel {...args} />
