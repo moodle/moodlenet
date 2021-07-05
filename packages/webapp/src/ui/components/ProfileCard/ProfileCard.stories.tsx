@@ -9,7 +9,7 @@ const meta: ComponentMeta<typeof ProfileCard> = {
   },
   excludeStories: ['ProfileCardStoryProps'],
   decorators:[
-    (Story)=>(<div style={{height:100,maxWidth:'500'}}><Story/></div>)
+    (Story)=>(<div style={{maxWidth:500}}><Story/></div>)
   ]
 }
 

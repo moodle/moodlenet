@@ -1,23 +1,25 @@
 
 import { FC } from 'react';
+import { ListCard, ListCardProps } from '../../components/ListCard/ListCard';
 import { OverallCard, OverallCardProps } from '../../components/OverallCard/OverallCard';
 import { ProfileCard, ProfileCardProps } from '../../components/ProfileCard/ProfileCard';
 //import ListCard from '../../components/ListCard/ListCard';
 //import ResourceCard from 'components/ResourceCard/index';
 import { ScoreCard, ScoreCardProps } from '../../components/ScoreCard/ScoreCard';
 import "./styles.scss";
-//import CollectionCard from 'components/CollectionCard/index';
 
 export type ProfileProps =   {
   overallCardProps: OverallCardProps,
   scoreCardProps: ScoreCardProps,
-  profileCardProps: ProfileCardProps
+  profileCardProps: ProfileCardProps,
+  listCardProps: ListCardProps
 }
 
 export const Profile: FC <ProfileProps> = ({
   overallCardProps,
   profileCardProps,
-  scoreCardProps
+  scoreCardProps,
+  listCardProps
 }) => {
   /*
   let resources = user.resources.map((value, index) => {
@@ -42,13 +44,14 @@ export const Profile: FC <ProfileProps> = ({
       <div className="content">
         <div className="main-column">
           <ProfileCard {...profileCardProps}/>
+          <ListCard {...listCardProps}/>
           {/* <ListCard title= {"Latest Resources"} content={resources}/> */}
           {/* <ListCard className="collection" title={'Collections Curated by ' + user.first_name} content={collections}/> */}
         </div>
         <div className="side-column">
           <ScoreCard {...scoreCardProps}/>
           <OverallCard {...overallCardProps} />
-          {/* <ListCard title={'Collections Curated by ' + user.first_name} content={collections}/> */}
+          <ListCard {...listCardProps}/>
         </div>
       </div>
     </div>
