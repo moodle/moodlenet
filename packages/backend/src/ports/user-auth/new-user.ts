@@ -42,6 +42,7 @@ export type NewUserConfirmAdapter = {
     token: string
     password: string
     username: string
+    role: Role
   }): Promise<ActiveUser | 'username not available' | 'not found'>
   hashPassword(pwd: string): Promise<string>
 
@@ -52,8 +53,9 @@ export const confirmSignup = QMCommand(
   ({ token, password: plainPwd, username }: ConfirmSignup) =>
     async ({ activateUser, hashPassword, createNewProfile }: NewUserConfirmAdapter) => {
       const pwdHash = await hashPassword(plainPwd)
+      const role: Role = 'Editor'
 
-      const activateResult = await activateUser({ password: pwdHash, token, username })
+      const activateResult = await activateUser({ password: pwdHash, token, username, role })
 
       if (typeof activateResult === 'string') {
         return activateResult // error

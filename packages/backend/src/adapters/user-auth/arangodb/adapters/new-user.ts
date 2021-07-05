@@ -18,14 +18,13 @@ export const storeNewSignupRequest = (db: UserAuthDB): Pick<SignUpAdapter, 'stor
 })
 
 export const activateNewUser = (db: UserAuthDB): Pick<NewUserConfirmAdapter, 'activateUser'> => ({
-  activateUser: async ({ password, token, username }) => {
+  activateUser: async ({ password, token, username, role }) => {
     const userNameInUseQ = isUsernameInUseQ({ username })
     const userNameInUse = (await getOneResult(userNameInUseQ, db)) as true | null
     if (userNameInUse) {
       return 'username not available'
     }
-
-    const activateQ = activateNewUserQ({ password, token, username })
+    const activateQ = activateNewUserQ({ role, password, token, username })
     // Queries should be typed kinda  `type QueryType<T> = string & T`
     // so, `getOneResult` returns correct type
     const activeUser = (await getOneResult(activateQ, db)) as ActiveUser | null
