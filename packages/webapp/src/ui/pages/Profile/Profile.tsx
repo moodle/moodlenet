@@ -12,14 +12,16 @@ export type ProfileProps =   {
   overallCardProps: OverallCardProps,
   scoreCardProps: ScoreCardProps,
   profileCardProps: ProfileCardProps,
-  listCardProps: ListCardProps
+  collectionListCardProps: ListCardProps,
+  resourcesListCardProps: ListCardProps,
 }
 
 export const Profile: FC <ProfileProps> = ({
   overallCardProps,
   profileCardProps,
   scoreCardProps,
-  listCardProps
+  collectionListCardProps,
+  resourcesListCardProps
 }) => {
   /*
   let resources = user.resources.map((value, index) => {
@@ -44,14 +46,14 @@ export const Profile: FC <ProfileProps> = ({
       <div className="content">
         <div className="main-column">
           <ProfileCard {...profileCardProps}/>
-          <ListCard {...listCardProps}/>
+          <ListCard {...resourcesListCardProps}/>
           {/* <ListCard title= {"Latest Resources"} content={resources}/> */}
           {/* <ListCard className="collection" title={'Collections Curated by ' + user.first_name} content={collections}/> */}
         </div>
         <div className="side-column">
           <ScoreCard {...scoreCardProps}/>
           <OverallCard {...overallCardProps} />
-          <ListCard {...listCardProps}/>
+          <ListCard {...collectionListCardProps}/>
         </div>
       </div>
     </div>

@@ -1,6 +1,8 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CollectionCard } from '../CollectionCard/CollectionCard'
 import { CollectionCardStoryProps } from '../CollectionCard/CollectionCard.stories'
+import ResourceCard from '../ResourceCard/ResourceCard'
+import { ResourceCardStoryProps } from '../ResourceCard/ResourceCard.stories'
 import { ListCard, ListCardProps } from './ListCard'
 const meta: ComponentMeta<typeof ListCard> = {
   title: 'Components/ListCard',
@@ -8,24 +10,35 @@ const meta: ComponentMeta<typeof ListCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['ListCardStoryProps'],
+  excludeStories: ['CollectionListCardStoryProps', 'ResourceListCardStoryProps'],
   decorators:[
-    (Story)=>(<div style={{height:100,width:300}}><Story/></div>)
+    (Story)=>(<div style={{height:100,width:500}}><Story/></div>)
   ]
 }
 
-export const ListCardStoryProps: ListCardProps = {
-  className: 'sdfdf',
-  preTitle:'Collection curated by ',
+
+const ListCardStory: ComponentStory<typeof ListCard> = args => <ListCard {...args} />
+
+export const CollectionListCardStoryProps: ListCardProps = {
+  className: 'colection',
   title: 'Juanito',
   content: [1,2,3].map(()=>(
     <CollectionCard {...CollectionCardStoryProps} />
   ))
 }
 
-const ListCardStory: ComponentStory<typeof ListCard> = args => <ListCard {...args} />
+export const Collection = ListCardStory.bind({})
+Collection.args = CollectionListCardStoryProps
 
-export const Default = ListCardStory.bind({})
-Default.args = ListCardStoryProps
+export const ResourceListCardStoryProps: ListCardProps = {
+  className: 'resources',
+  title: 'Lastest Resources',
+  content: [1,2,3].map(()=>(
+    <ResourceCard {...ResourceCardStoryProps} />
+  ))
+}
+
+export const Resource = ListCardStory.bind({})
+Resource.args = ResourceListCardStoryProps
 
 export default meta
