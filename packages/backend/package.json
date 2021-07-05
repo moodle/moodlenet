@@ -93,7 +93,8 @@
   },
   "scripts": {
     "build": "yarn gen:graphql:types && tsc",
-    "setup": "node -r ./env.js lib/defaultDeploy/setup/main.js",
+    "setup": "node -r ./env.js lib/defaultDeploy/setup/setup.js",
+    "upgrade-version": "node -r ./env.js lib/defaultDeploy/setup/upgrade.js",
     "migrate-arangodb": "node lib/lib/helpers/arango/migrate/main",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
     "start": "NODE_ENV=production node -r ./env.js lib/defaultDeploy/main.js",
