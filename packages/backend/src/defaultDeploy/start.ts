@@ -38,7 +38,7 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
   const inProcessTransport = createInProcessTransport()
   const qminoInProcess = Qmino(inProcessTransport)
   const emailSender = createTransport(nodemailer.smtp)
-  const userAuthDatabase = await getVersionedDBOrThrow({ version: '0.0.1' })({
+  const userAuthDatabase = await getVersionedDBOrThrow({ version: '0.0.2' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.userAuthDBName }),
   })
   const contentGraphDatabase = await getVersionedDBOrThrow({ version: '0.0.1' })({
