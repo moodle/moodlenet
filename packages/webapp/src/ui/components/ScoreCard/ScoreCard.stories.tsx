@@ -1,20 +1,17 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { ScoreCard, ScoreCardProps as ScoreCardProps } from './ScoreCard'
+import { ScoreCard, ScoreCardProps } from './ScoreCard'
+import './styles.scss'
 
 const meta: ComponentMeta<typeof ScoreCard> = {
-  title: 'MoodleNet/ScoreCard',
+  title: 'Components/ScoreCard',
   component: ScoreCard,
   argTypes: {
-    backgroundColor: { control: 'color' },
+    // backgroundColor: { control: 'color' },
   },
-  decorators: [
-    Story => (
-      <div style={{ width: 200, height: 80 }}>
-        <Story />
-      </div>
-    ),
+  decorators:[
+    (Story)=>(<div style={{height:100,width:300}}><Story/></div>)
   ],
-  excludeStories:['ScoreCardProps']
+  excludeStories:['ScoreCardStoryProps']
 }
 
 export const ScoreCardStoryProps: ScoreCardProps = {
@@ -22,9 +19,9 @@ export const ScoreCardStoryProps: ScoreCardProps = {
   points: 2,
 }
 
-const Template: ComponentStory<typeof ScoreCard> = args => <ScoreCard {...args} />
+const ScoreCardStory: ComponentStory<typeof ScoreCard> = args => <ScoreCard {...args} />
 
-export const Primary = Template.bind(null)
-Primary.args = ScoreCardStoryProps
+export const Default = ScoreCardStory.bind({})
+Default.args = ScoreCardStoryProps
 
 export default meta

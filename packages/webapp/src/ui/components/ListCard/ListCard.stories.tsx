@@ -16,7 +16,8 @@ const meta: ComponentMeta<typeof ListCard> = {
 
 export const ListCardStoryProps: ListCardProps = {
   className: 'sdfdf',
-  title: 'adasd',
+  preTitle:'Collection curated by ',
+  title: 'Juanito',
   content: [1,2,3].map(()=>(
     <CollectionCard {...CollectionCardStoryProps} />
   ))
