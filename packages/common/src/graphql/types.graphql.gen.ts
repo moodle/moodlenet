@@ -509,6 +509,7 @@ export type Role =
   | 'Guest'
   | 'Admin'
   | 'User'
+  | 'Editor'
   | 'System';
 
 export type SearchPage = Page & {

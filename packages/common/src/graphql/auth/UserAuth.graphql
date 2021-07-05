@@ -32,5 +32,6 @@ enum Role {
   Guest
   Admin
   User
+  Editor
   System
 }
