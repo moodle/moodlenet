@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { ListCardStoryProps } from '../../components/ListCard/ListCard.stories'
+import { CollectionListCardStoryProps, ResourceListCardStoryProps } from '../../components/ListCard/ListCard.stories'
 import { OverallCardStoryProps } from '../../components/OverallCard/OverallCard.stories'
 import { ProfileCardStoryProps } from '../../components/ProfileCard/ProfileCard.stories'
 import { ScoreCardStoryProps } from '../../components/ScoreCard/ScoreCard.stories'
@@ -19,7 +19,8 @@ const ProfileStoryProps: ProfileProps = {
   overallCardProps:OverallCardStoryProps,
   profileCardProps:ProfileCardStoryProps,
   scoreCardProps: ScoreCardStoryProps,
-  listCardProps: ListCardStoryProps
+  collectionListCardProps: CollectionListCardStoryProps,
+  resourcesListCardProps: ResourceListCardStoryProps
 }
 
 export const Default = ProfileStory.bind({})

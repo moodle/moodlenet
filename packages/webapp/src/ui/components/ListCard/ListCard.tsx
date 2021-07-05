@@ -1,9 +1,9 @@
+import { Trans } from '@lingui/macro';
 import { FC, ReactNode } from "react";
 import "./styles.scss";
 
 export type ListCardProps = {
     className: string,
-    preTitle: string,
     title: string,
     content: ReactNode[]
 }
@@ -11,12 +11,12 @@ export type ListCardProps = {
 export const ListCard: FC <ListCardProps> = ({
     className,
     content,
-    preTitle,
-    title
+    title,
 }) => {
+
   return (
     <div className={"list-card " + className}>
-        <div className="title">{preTitle + title}</div>
+        <div className="title"><Trans>{title}</Trans></div>
         <div className="content">{content}</div>
     </div>
   );
