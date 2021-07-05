@@ -1,6 +1,6 @@
 import { getOneResult } from '../../../../lib/helpers/arango'
 import { Adapter } from '../../../../ports/user-auth/user'
-import { getActiveUserByUsernameQ } from '../functions/getActiveUserByUsername'
+import { getActiveUserByUsernameQ } from '../queries/getActiveUserByUsername'
 import { ActiveUser, UserAuthDB } from '../types'
 export const byUsername = (db: UserAuthDB): Pick<Adapter, 'getActiveUserByUsername'> => ({
   getActiveUserByUsername: async ({ username }) => {

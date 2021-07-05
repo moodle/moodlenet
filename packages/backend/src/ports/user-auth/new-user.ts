@@ -1,6 +1,5 @@
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
-import { ActiveUser } from '../../adapters/user-auth/arangodb/types'
-import { DefaultConfig } from '../../initialData/user-auth/defaultConfig'
+import { ActiveUser, UserAuthConfig } from '../../adapters/user-auth/arangodb/types'
 import { makeEnv } from '../../lib/auth/env'
 import { Role, SessionEnv } from '../../lib/auth/types'
 import { fillEmailTemplate } from '../../lib/emailSender/helpers'
@@ -11,19 +10,22 @@ export type SignupIssue = 'email not available'
 export type SignUpAdapter = {
   storeNewSignupRequest(_: { email: string; token: string }): Promise<void | SignupIssue>
   generateToken(): Promise<string>
+  getConfig(): Promise<UserAuthConfig>
   sendEmail(_: EmailObj): Promise<unknown>
   publicBaseUrl: string
 }
 export const signUp = QMCommand(
   ({ email }: { email: EmailAddr }) =>
-    async ({ storeNewSignupRequest, generateToken, sendEmail, publicBaseUrl }: SignUpAdapter) => {
+    async ({ storeNewSignupRequest, generateToken, sendEmail, publicBaseUrl, getConfig }: SignUpAdapter) => {
       const token = await generateToken()
       const insertIssue = await storeNewSignupRequest({ email, token })
       if (insertIssue) {
         return insertIssue
       }
+      const { newUserRequestEmail } = await getConfig()
+
       const emailObj = fillEmailTemplate({
-        template: DefaultConfig.newUserRequestEmail,
+        template: newUserRequestEmail,
         to: email,
         vars: {
           email,
