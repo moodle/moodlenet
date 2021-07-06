@@ -12,11 +12,12 @@ const meta: ComponentMeta<typeof Profile> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
+  excludeStories: ['ProfileStoryProps'],
 }
 
 const ProfileStory: ComponentStory<typeof Profile> = args => <Profile {...args} />
 
-const ProfileStoryProps: ProfileProps = {
+export const ProfileStoryProps: ProfileProps = {
   overallCardProps: OverallCardStoryProps,
   profileCardProps: ProfileCardStoryProps,
   scoreCardProps: ScoreCardStoryProps,

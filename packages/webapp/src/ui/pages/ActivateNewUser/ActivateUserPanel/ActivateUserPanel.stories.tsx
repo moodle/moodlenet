@@ -4,7 +4,7 @@ import { href } from '../../../elements/link'
 import { ActivateNewUserPanel, ActivateNewUserPanelProps } from './ActivateUserPanel'
 
 const meta: ComponentMeta<typeof ActivateNewUserPanel> = {
-  title: 'Components/ActivateUserPanel',
+  title: 'Pages/ActivateNewUserPage/Components/ActivateUserPanel',
   component: ActivateNewUserPanel,
   argTypes: {
     // backgroundColor: { control: 'color' },

@@ -5,7 +5,7 @@ import { ActivateNewUserPanelProps } from './ActivateUserPanel/ActivateUserPanel
 import { activateNewUserPanelStoryProps } from './ActivateUserPanel/ActivateUserPanel.stories'
 
 const meta: ComponentMeta<typeof ActivateNewUserPage> = {
-  title: 'Pages/ActivateNewUserPage',
+  title: 'Pages/ActivateNewUserPage/ActivateNewUserPage',
   component: ActivateNewUserPage,
   argTypes: {
     // backgroundColor: { control: 'color' },
