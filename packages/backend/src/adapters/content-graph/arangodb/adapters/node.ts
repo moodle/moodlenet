@@ -24,6 +24,7 @@ export const createNodeAdapter = (db: ContentGraphDB): CreateAdapter => ({
         edgeType: 'Created',
         from: creatorProfileId,
         to: result._id,
+        rule: true,
       })
     }
     return result
