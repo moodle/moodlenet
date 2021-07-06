@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import { ActivateNewUserPanel, ActivateNewUserPanelProps } from '../../components/ActivateUserPanel/ActivateUserPanel'
 import { CtrlBag } from '../../lib/ctrl'
 import { EmptyPageTemplate } from '../../templates/page/EmptyPageTemplate'
-export * from '../../components/ActivateUserPanel/ActivateUserPanel'
+import { ActivateNewUserPanel, ActivateNewUserPanelProps } from './ActivateUserPanel/ActivateUserPanel'
+export * from './ActivateUserPanel/ActivateUserPanel'
 
 export type ActivateNewUserPageProps = {
   ActivateNewUserPanelCtrl: CtrlBag<ActivateNewUserPanelProps, 'mycss'>

@@ -1,8 +1,8 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { ActivateNewUserPanelProps } from '../../components/ActivateUserPanel/ActivateUserPanel'
-import { activateNewUserPanelStoryProps } from '../../components/ActivateUserPanel/ActivateUserPanel.stories'
 import { sbCtrlBagOf } from '../../lib/ctrl'
 import { ActivateNewUserPage, ActivateNewUserPageProps } from './ActivateNewUser'
+import { ActivateNewUserPanelProps } from './ActivateUserPanel/ActivateUserPanel'
+import { activateNewUserPanelStoryProps } from './ActivateUserPanel/ActivateUserPanel.stories'
 
 const meta: ComponentMeta<typeof ActivateNewUserPage> = {
   title: 'Pages/ActivateNewUserPage',

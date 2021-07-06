@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro'
 import { FC } from 'react'
 import { Header, Image, Message, Segment } from 'semantic-ui-react'
 import logo from '../static/img/moodlenet-logo.png'
-export * from '../components/ActivateUserPanel/ActivateUserPanel'
+export * from './ActivateNewUser/ActivateUserPanel/ActivateUserPanel'
 
 export type TermsAndConditionsPageProps = {}
 
