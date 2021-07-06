@@ -1,21 +1,20 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Header, HeaderProps } from '../../components/Header/Header';
 import { SubHeader, SubHeaderProps } from '../../components/SubHeader/SubHeader';
-import { Profile, ProfileProps } from '../Profile/Profile';
 import './styles.scss';
 
 export type LoggedInProps = {
-  profileProps: ProfileProps
   headerProps: HeaderProps
   subheaderProps: SubHeaderProps
+  view: React.ReactNode
 }
 
-export const LoggedIn: FC<LoggedInProps> = ({headerProps, subheaderProps, profileProps}) => {
+export const LoggedIn: FC<LoggedInProps> = ({headerProps, subheaderProps, view}) => {
   return (
     <div className="app">
       <Header {...headerProps}/>
       <SubHeader {...subheaderProps}/>
-      <Profile {...profileProps}/>
+      {view}
     </div>
   );
 }
