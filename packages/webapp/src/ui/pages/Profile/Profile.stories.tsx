@@ -23,7 +23,7 @@ export const ProfileStoryProps: ProfileProps = {
   scoreCardProps: ScoreCardStoryProps,
   collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
   resourceCardPropsList: [ResourceCardStoryProps],
-  username: 'Juanito !',
+  username: 'Juanito',
 }
 
 export const Default = ProfileStory.bind({})

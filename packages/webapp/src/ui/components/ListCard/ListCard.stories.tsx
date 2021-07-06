@@ -20,7 +20,7 @@ const meta: ComponentMeta<typeof ListCard> = {
 const ListCardStory: ComponentStory<typeof ListCard> = args => <ListCard {...args} />
 
 export const CollectionListCardStoryProps: ListCardProps = {
-  className: 'colection',
+  className: 'collection',
   title: 'Juanito',
   content: [1,2,3].map(()=>(
     <CollectionCard {...CollectionCardStoryProps} />
