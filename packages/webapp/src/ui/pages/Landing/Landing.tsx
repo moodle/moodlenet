@@ -2,31 +2,33 @@ import { t } from '@lingui/macro'
 import { FC } from 'react'
 import { CollectionCard, CollectionCardProps } from '../../components/CollectionCard/CollectionCard'
 import { ListCard } from '../../components/ListCard/ListCard'
-import { OverallCard, OverallCardProps } from '../../components/OverallCard/OverallCard'
 import { ProfileCard, ProfileCardProps } from '../../components/ProfileCard/ProfileCard'
 import { ResourceCard, ResourceCardProps } from '../../components/ResourceCard/ResourceCard'
 import { ScoreCard, ScoreCardProps } from '../../components/ScoreCard/ScoreCard'
+import { Organization } from '../../types'
 import './styles.scss'
 
-export type ProfileProps = {
-  overallCardProps: OverallCardProps
+export type LandingProps = {
   scoreCardProps: ScoreCardProps
   profileCardProps: ProfileCardProps
   collectionCardPropsList: CollectionCardProps[]
   resourceCardPropsList: ResourceCardProps[]
-  username: string
+  organization: Pick<Organization,  "name">
 }
 
-export const Profile: FC<ProfileProps> = ({
-  overallCardProps,
+export const Landing: FC<LandingProps> = ({
   profileCardProps,
   scoreCardProps,
   collectionCardPropsList,
   resourceCardPropsList,
-  username,
+  organization,
 }) => {
   return (
-    <div className="profile">
+    <div className="landing">
+      <div className="landing-title">
+        <div className="moodle-title">Welcome to MoodleNet</div>
+        <div className="organization-title">{organization.name}</div>
+      </div>
       <div className="content">
         <div className="main-column">
           <ProfileCard {...profileCardProps} />
@@ -40,9 +42,8 @@ export const Profile: FC<ProfileProps> = ({
         </div>
         <div className="side-column">
           <ScoreCard {...scoreCardProps} />
-          <OverallCard {...overallCardProps} />
           <ListCard
-            title={t`Collections curated by ${username}`}
+            title={t`Collections curated by`}
             content={collectionCardPropsList.map(collectionCardProps => (
               <CollectionCard {...collectionCardProps} />
             ))}
