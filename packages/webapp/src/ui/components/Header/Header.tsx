@@ -5,7 +5,7 @@ import { Organization } from '../../types';
 import './styles.scss';
 
 export type HeaderProps = {
-    organization: Organization
+    organization: Pick<Organization, "logo"|"name"|"url">
     avatar: string
 }
 

@@ -1,28 +1,19 @@
-import { t } from '@lingui/macro'
 import { FC } from 'react'
-import { CollectionCard, CollectionCardProps } from '../../components/CollectionCard/CollectionCard'
-import { ListCard } from '../../components/ListCard/ListCard'
-import { ProfileCard, ProfileCardProps } from '../../components/ProfileCard/ProfileCard'
-import { ResourceCard, ResourceCardProps } from '../../components/ResourceCard/ResourceCard'
-import { ScoreCard, ScoreCardProps } from '../../components/ScoreCard/ScoreCard'
-import TextCard from '../../components/TextCard/TextCard'
+import { TextCard } from '../../components/TextCard/TextCard'
+import { TrendCard, TrendCardProps } from '../../components/TrendCard/TrendCard'
 import { Organization } from '../../types'
 import './styles.scss'
 
 export type LandingProps = {
-  scoreCardProps: ScoreCardProps
-  profileCardProps: ProfileCardProps
-  collectionCardPropsList: CollectionCardProps[]
-  resourceCardPropsList: ResourceCardProps[]
+  trendCardProps: TrendCardProps
   organization: Pick<Organization,  "name" | "intro">
+  image: string
 }
 
 export const Landing: FC<LandingProps> = ({
-  profileCardProps,
-  scoreCardProps,
-  collectionCardPropsList,
-  resourceCardPropsList,
+  trendCardProps,
   organization,
+  image
 }) => {
   return (
     <div className="landing">
@@ -33,27 +24,15 @@ export const Landing: FC<LandingProps> = ({
       <div className="content">
         <div className="main-column">
           <TextCard>
-            {organization.intro}
-            <span style={{color: '#b6bacb'}}>Welcome!</span>
+            <div>
+              {organization.intro}
+              <span style={{color: '#b6bacb'}}>Welcome!</span>
+            </div>
+            <img className="text-image" src={image} alt="Background"/>
           </TextCard>
-          <ProfileCard {...profileCardProps} />
-          <ListCard
-            content={resourceCardPropsList.map(resourcesCardProps => (
-              <ResourceCard {...resourcesCardProps} />
-            ))}
-            title={t`Latest Resources`}
-            className="resources"
-          />
         </div>
         <div className="side-column">
-          <ScoreCard {...scoreCardProps} />
-          <ListCard
-            title={t`Collections curated by`}
-            content={collectionCardPropsList.map(collectionCardProps => (
-              <CollectionCard {...collectionCardProps} />
-            ))}
-            className="collections"
-          />
+          <TrendCard {...trendCardProps}></TrendCard>
         </div>
       </div>
     </div>

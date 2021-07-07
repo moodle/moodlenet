@@ -12,7 +12,7 @@ export const SubHeader: FC<SubHeaderProps> = ({tags}) => {
   const tagList = tags.map((value, index) => {
     return <div 
       key={index}
-      className={'tag tag-' + value.type}
+      className={'tag tag' + value.type}
     >{value.name}</div>
   })
 
