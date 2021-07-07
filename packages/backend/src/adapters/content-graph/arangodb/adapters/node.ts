@@ -17,6 +17,7 @@ export const createNodeAdapter = (db: ContentGraphDB): CreateAdapter => ({
   storeNode: async ({ data, nodeType, key, creatorProfileId }) => {
     const q = createNodeQ({ creatorProfileId, data, nodeType, key })
     const result = (await getOneResult(q, db)) as null | DocumentNodeByType<typeof nodeType>
+    // FIXME: use events!
     if (result) {
       createEdgeAdapter(db).storeEdge({
         creatorProfileId,
