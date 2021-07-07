@@ -1,0 +1,21 @@
+.text-card {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 0 6px #dedede;
+    margin-bottom: 16px;
+    padding: 24px;
+
+    .text {
+        margin-top: -2px;
+        font-weight: bold;
+        font-size: 13px;
+    }
+
+    @media (max-width:450px) {
+        padding: 0 24px 14px;
+        background-color: #fff;
+        box-shadow: none;
+        border-radius: 0;
+    }
+}

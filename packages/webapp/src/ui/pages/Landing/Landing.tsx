@@ -5,6 +5,7 @@ import { ListCard } from '../../components/ListCard/ListCard'
 import { ProfileCard, ProfileCardProps } from '../../components/ProfileCard/ProfileCard'
 import { ResourceCard, ResourceCardProps } from '../../components/ResourceCard/ResourceCard'
 import { ScoreCard, ScoreCardProps } from '../../components/ScoreCard/ScoreCard'
+import TextCard from '../../components/TextCard/TextCard'
 import { Organization } from '../../types'
 import './styles.scss'
 
@@ -13,7 +14,7 @@ export type LandingProps = {
   profileCardProps: ProfileCardProps
   collectionCardPropsList: CollectionCardProps[]
   resourceCardPropsList: ResourceCardProps[]
-  organization: Pick<Organization,  "name">
+  organization: Pick<Organization,  "name" | "intro">
 }
 
 export const Landing: FC<LandingProps> = ({
@@ -31,6 +32,10 @@ export const Landing: FC<LandingProps> = ({
       </div>
       <div className="content">
         <div className="main-column">
+          <TextCard>
+            {organization.intro}
+            <span style={{color: '#b6bacb'}}>Welcome!</span>
+          </TextCard>
           <ProfileCard {...profileCardProps} />
           <ListCard
             content={resourceCardPropsList.map(resourcesCardProps => (
