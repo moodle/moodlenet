@@ -14,6 +14,7 @@ import { delAssetAdapter } from '../adapters/staticAssets/fs/adapters/delAsset'
 import { getAssetAdapter } from '../adapters/staticAssets/fs/adapters/getAsset'
 import { persistTempAssetsAdapter } from '../adapters/staticAssets/fs/adapters/persistTemp'
 import { setupFs } from '../adapters/staticAssets/fs/setup'
+import { getConfigAdapter } from '../adapters/user-auth/arangodb/adapters/config'
 import { activateNewUser, createNewUser, storeNewSignupRequest } from '../adapters/user-auth/arangodb/adapters/new-user'
 import { byUsername } from '../adapters/user-auth/arangodb/adapters/session'
 import { argonHashPassword, argonVerifyPassword } from '../lib/auth/argon'
@@ -27,6 +28,7 @@ import * as searchPorts from '../ports/content-graph/search'
 import * as setupPorts from '../ports/setup'
 import * as assetPorts from '../ports/static-assets/asset'
 import * as tmpAssetPorts from '../ports/static-assets/temp'
+import * as userAuthConfigPorts from '../ports/user-auth/config'
 import * as newUserPorts from '../ports/user-auth/new-user'
 import * as userPorts from '../ports/user-auth/user'
 import { DefaultDeployEnv } from './env'
@@ -38,7 +40,7 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
   const inProcessTransport = createInProcessTransport()
   const qminoInProcess = Qmino(inProcessTransport)
   const emailSender = createTransport(nodemailer.smtp)
-  const userAuthDatabase = await getVersionedDBOrThrow({ version: '0.0.2' })({
+  const userAuthDatabase = await getVersionedDBOrThrow({ version: '0.0.1' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.userAuthDBName }),
   })
   const contentGraphDatabase = await getVersionedDBOrThrow({ version: '0.0.1' })({
@@ -71,9 +73,20 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
 
   // open ports
 
+  // userAuth Config
+  qminoInProcess.open(userAuthConfigPorts.getLatest, getConfigAdapter({ db: userAuthDatabase }))
+  qminoInProcess.open(userAuthConfigPorts.save, getConfigAdapter({ db: userAuthDatabase }))
+
+  //
+
   qminoInProcess.open(nodePorts.byId, getNodeByIdAdapter(contentGraphDatabase))
 
   qminoInProcess.open(searchPorts.byTerm, globalSearch(contentGraphDatabase))
+
+  qminoInProcess.open(userPorts.getActiveByUsername, {
+    ...byUsername(userAuthDatabase),
+    verifyPassword: argonVerifyPassword(),
+  })
 
   qminoInProcess.open(userPorts.getActiveByUsername, {
     ...byUsername(userAuthDatabase),

@@ -1,6 +1,6 @@
 import { UserAuthConfig } from '../../adapters/user-auth/arangodb/types'
 import { SessionEnv } from '../../lib/auth/types'
-import { QMModule, QMQuery } from '../../lib/qmino'
+import { QMCommand, QMModule, QMQuery } from '../../lib/qmino'
 
 export type Adapter = {
   getLatestConfig(): Promise<UserAuthConfig>
@@ -17,7 +17,7 @@ export const getLatest = QMQuery(
     },
 )
 
-export const save = QMQuery(
+export const save = QMCommand(
   ({ cfg, sessionEnv: { user } }: { cfg: UserAuthConfig; sessionEnv: SessionEnv }) =>
     async ({ saveConfig }: Adapter) => {
       if (!(user.role === 'Admin' || user.role === 'System')) {

@@ -6,7 +6,7 @@ import { EmailTemplate } from '../../../lib/emailSender/types'
 import { VersionedDB } from '../../../lib/helpers/arango/migrate/types'
 import { WithCreated, WithId, WithMutable } from '../../../lib/helpers/types'
 
-export type UserAuthDB = VersionedDB<'0.0.2'>
+export type UserAuthDB = VersionedDB<'0.0.1'>
 
 export enum Messages {
   EmailNotAvailable = 'email-not-available',
