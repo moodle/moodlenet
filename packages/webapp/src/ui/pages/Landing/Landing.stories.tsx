@@ -1,8 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { CollectionCardStoryProps } from '../../components/CollectionCard/CollectionCard.stories'
-import { ProfileCardStoryProps } from '../../components/ProfileCard/ProfileCard.stories'
-import { ResourceCardStoryProps } from '../../components/ResourceCard/ResourceCard.stories'
-import { ScoreCardStoryProps } from '../../components/ScoreCard/ScoreCard.stories'
+import { TrendCardStoryProps } from '../../components/TrendCard/TrendCard.stories'
 import { Landing, LandingProps } from './Landing'
 
 const meta: ComponentMeta<typeof Landing> = {
@@ -17,14 +14,12 @@ const meta: ComponentMeta<typeof Landing> = {
 const LandingStory: ComponentStory<typeof Landing> = args => <Landing {...args} />
 
 export const LandingStoryProps: LandingProps = {
-  profileCardProps: ProfileCardStoryProps,
-  scoreCardProps: ScoreCardStoryProps,
-  collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
-  resourceCardPropsList: [ResourceCardStoryProps],
+  trendCardProps: TrendCardStoryProps,
   organization: {
     name: "Bern University of Applied Sciences",
     intro: "Diverse, sound, dynamic – these are the values that define BFH. And this is our MoodleNet server. "
-  }
+  },
+  image: 'https://picsum.photos/200/100'
 }
 
 export const Default = LandingStory.bind({})
