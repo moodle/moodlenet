@@ -1,4 +1,7 @@
+import { createEdgeRule } from '@moodlenet/common/lib/bl/content-graph/edge/create/rules'
+import { CreateEdgeBLOps } from '@moodlenet/common/lib/bl/content-graph/edge/create/types'
 import * as GQL from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { BLRule } from '@moodlenet/common/lib/lib/bl/common'
 import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { DocumentEdgeByType, DocumentEdgeDataByType } from '../../adapters/content-graph/arangodb/functions/types'
 import { getProfileId } from '../../lib/auth/env'
@@ -14,7 +17,9 @@ export type CreateAdapter = {
     from: Id
     to: Id
     creatorProfileId: Id
+    rule: BLRule
   }) => Promise<DocumentEdgeByType<Type> | null>
+  ops: CreateEdgeBLOps
 }
 
 export type CreateInput<Type extends GQL.EdgeType = GQL.EdgeType> = {
@@ -27,9 +32,17 @@ export type CreateInput<Type extends GQL.EdgeType = GQL.EdgeType> = {
 
 export const create = QMCommand(
   <Type extends GQL.EdgeType = GQL.EdgeType>({ data, env, edgeType, from, to }: CreateInput<Type>) =>
-    async ({ storeEdge }: CreateAdapter): Promise<DocumentEdgeByType<Type> | GQL.CreateEdgeMutationErrorType> => {
+    async ({ storeEdge, ops }: CreateAdapter): Promise<DocumentEdgeByType<Type> | GQL.CreateEdgeMutationErrorType> => {
+      const rule = createEdgeRule({
+        edgeType,
+        from,
+        profileId: getProfileId(env),
+        ops,
+        to,
+        userRole: env.user.role,
+      })
       const creatorProfileId = getProfileId(env)
-      const result = await storeEdge({ from, to, edgeType, data, creatorProfileId })
+      const result = await storeEdge({ from, to, edgeType, data, creatorProfileId, rule })
       if (!result) {
         return 'AssertionFailed'
       }
