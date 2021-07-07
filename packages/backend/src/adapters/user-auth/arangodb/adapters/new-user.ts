@@ -1,12 +1,12 @@
 import { getOneResult } from '../../../../lib/helpers/arango'
 import { CreateNewUserAdapter, NewUserConfirmAdapter, SignUpAdapter } from '../../../../ports/user-auth/new-user'
-import { getLatestConfig } from '../helpers/config'
 import { activateNewUserQ } from '../queries/activateNewUser'
 import { createNewUserQ } from '../queries/createNewUser'
 import { isEmailInUseQ } from '../queries/isEmailInUse'
 import { isUsernameInUseQ } from '../queries/isUsernameInUse'
 import { newUserRequestInsertQ } from '../queries/newUserRequest'
 import { ActiveUser, UserAuthDB, WaitingFirstActivationUser } from '../types'
+import { configAdapter } from './config'
 export const storeNewSignupRequest = (db: UserAuthDB): Pick<SignUpAdapter, 'storeNewSignupRequest' | 'getConfig'> => ({
   storeNewSignupRequest: async ({ email, token }) => {
     const insertQ = newUserRequestInsertQ({ email, token })
@@ -16,7 +16,7 @@ export const storeNewSignupRequest = (db: UserAuthDB): Pick<SignUpAdapter, 'stor
     }
     return // newWaitingFirstActivationUser
   },
-  getConfig: () => getLatestConfig({ db }),
+  getConfig: configAdapter({ db }).getLatestConfig,
 })
 
 export const activateNewUser = (db: UserAuthDB): Pick<NewUserConfirmAdapter, 'activateUser'> => ({
