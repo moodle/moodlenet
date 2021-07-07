@@ -3,10 +3,10 @@ import { CONFIG, USER } from '../../../types'
 
 const init_0_0_1: VersionUpdater = {
   async initialSetUp({ db }) {
-    console.log(`creating node collection ${USER}`)
+    console.log(`creating user-auth collection ${USER}`)
     await db.createCollection(USER)
 
-    console.log(`creating node collection ${CONFIG}`)
+    console.log(`creating user-auth collection ${CONFIG}`)
     await db.createCollection(CONFIG)
   },
 }

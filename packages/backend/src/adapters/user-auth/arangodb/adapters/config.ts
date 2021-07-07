@@ -2,7 +2,7 @@ import { getOneResult } from '../../../../lib/helpers/arango'
 import { Adapter } from '../../../../ports/user-auth/config'
 import { getLatestConfigQ, saveConfigQ } from '../queries/config'
 import { UserAuthConfig, UserAuthDB } from '../types'
-export const configAdapter = ({ db }: { db: UserAuthDB }): Adapter => ({
+export const getConfigAdapter = ({ db }: { db: UserAuthDB }): Adapter => ({
   getLatestConfig: async () => {
     const q = getLatestConfigQ()
     const cfg = await getOneResult(q, db)

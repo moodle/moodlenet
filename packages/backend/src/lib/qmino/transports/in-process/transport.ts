@@ -1,5 +1,5 @@
 import { createSocket } from 'dgram'
-import EventEmitter from 'events'
+import { EventEmitter } from 'events'
 import { inspect } from 'util'
 import { TIMEOUT } from '../../lib'
 import { QMPortId, Transport } from '../../types'
@@ -97,7 +97,7 @@ const processBufferCmd = (send: Transport['send']) => async (buff: Buffer) => {
   const args_str = rest.join('##')
   console.log({ args_str })
   try {
-    const args = args_str ? args_str.split('|&|').map(_ => JSON.parse(_)) : []
+    const args = args_str ? JSON.parse(args_str) : []
     console.log('Args:\n', inspect(args))
     console.log('sending...')
 
