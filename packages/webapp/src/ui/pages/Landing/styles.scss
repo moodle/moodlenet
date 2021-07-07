@@ -11,15 +11,7 @@
     background-size: cover;
     overflow-x: hidden;
     bottom: 0;
-
-    @media (max-width:450px) {
-        padding: 120px 0 0 0;
-    }
-
-    @media screen and (max-width:675px) and (min-width:450px) {
-        padding: 120px 25px;
-    }
-
+    
     .landing-title {
         margin: 58px 0;
         font-weight: bold;
@@ -28,10 +20,48 @@
             font-size: 25px;
         }
         .organization-title {
+            line-height: 34px;
             margin-top: 25px;
             color: black;
             font-size: 35px;
         }
+    }
+
+    @media (max-width:450px) {
+        padding: 120px 0 0 0;
+        background-color: #fff;
+
+        .landing-title {
+            margin: 38px 24px;
+            .moodle-title {
+                color: #b6bacb;
+                font-size: 25px;
+            }
+            .organization-title {
+                line-height: 34px;
+                margin-top: 25px;
+                color: black;
+                font-size: 35px;
+            }
+        }
+    }
+
+    @media screen and (max-width:675px) and (min-width:450px) {
+        .landing-title {
+            margin: 36px 0;
+            font-weight: bold;
+            .moodle-title {
+                color: #b6bacb;
+                font-size: 22px;
+            }
+            .organization-title {
+                line-height: 34px;
+                margin-top: 15px;
+                color: black;
+                font-size: 33px;
+            }
+        }
+        padding: 120px 25px;
     }
 
     .content {
@@ -43,12 +73,12 @@
     }
 
     .main-column {
-        width: 650px;
+        width: 485px;
         height: 100%;
     }
 
     .side-column {
-        width: 325px;
+        width: 485px;
         height: 100%;
     }
 
@@ -57,13 +87,17 @@
     }
 
     @media (max-width:1200px) and (min-width:800px) {
+        .landing-title {
+            margin: 38px 0;
+        }
+
         .main-column {
-            width: 65%;
+            width: 48.5%;
             height: 100%;
         }
 
         .side-column {
-            width: 32%;
+            width: 48.5%;
             height: 100%;
         }
     }

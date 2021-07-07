@@ -22,7 +22,8 @@ export const LandingStoryProps: LandingProps = {
   collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
   resourceCardPropsList: [ResourceCardStoryProps],
   organization: {
-    name: "Bern University of Applied Sciences"
+    name: "Bern University of Applied Sciences",
+    intro: "Diverse, sound, dynamic – these are the values that define BFH. And this is our MoodleNet server. "
   }
 }
 

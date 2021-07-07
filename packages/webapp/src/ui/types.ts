@@ -3,6 +3,7 @@ export type Organization = {
     shortName: string
     url: string
     logo: string
+    intro: string
 }
 
 export type FollowTag = {
