@@ -9,12 +9,13 @@ export const getLatestConfigQ = () => `
 `
 
 export const saveConfigQ = (cfg: UserAuthConfig) => `
-  INSERT INTO ${CONFIG}
-    MERGE(
+  INSERT MERGE(
       ${aqlstr(cfg)},
       { 
-        _key:${aqlstr(new Date().valueOf())} 
+        _key:${aqlstr(newKey())} 
       }
-    }
+    ) INTO ${CONFIG}
   RETURN null
 `
+
+const newKey = () => `${new Date().valueOf()}`

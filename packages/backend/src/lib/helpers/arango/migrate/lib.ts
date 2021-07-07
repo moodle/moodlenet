@@ -193,7 +193,7 @@ export const initializeDB =
 
     const db = sys_db.database(dbname)
 
-    if (!exists) {
+    if (!exists || actionOnDBExists === 'drop') {
       const versions = getLadderVersionSorted(ladder)
       const firstVersion = versions.reverse()[0]!
       const firstVersionUpdater = ladder[firstVersion]

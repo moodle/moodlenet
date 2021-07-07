@@ -6,7 +6,7 @@ import { isEmailInUseQ } from '../queries/isEmailInUse'
 import { isUsernameInUseQ } from '../queries/isUsernameInUse'
 import { newUserRequestInsertQ } from '../queries/newUserRequest'
 import { ActiveUser, UserAuthDB, WaitingFirstActivationUser } from '../types'
-import { configAdapter } from './config'
+import { getConfigAdapter } from './config'
 export const storeNewSignupRequest = (db: UserAuthDB): Pick<SignUpAdapter, 'storeNewSignupRequest' | 'getConfig'> => ({
   storeNewSignupRequest: async ({ email, token }) => {
     const insertQ = newUserRequestInsertQ({ email, token })
@@ -16,7 +16,7 @@ export const storeNewSignupRequest = (db: UserAuthDB): Pick<SignUpAdapter, 'stor
     }
     return // newWaitingFirstActivationUser
   },
-  getConfig: configAdapter({ db }).getLatestConfig,
+  getConfig: getConfigAdapter({ db }).getLatestConfig,
 })
 
 export const activateNewUser = (db: UserAuthDB): Pick<NewUserConfirmAdapter, 'activateUser'> => ({

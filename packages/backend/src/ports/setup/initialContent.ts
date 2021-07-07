@@ -11,7 +11,16 @@ import * as userAuthConfigPorts from '../user-auth/config'
 import { createNewUser } from '../user-auth/new-user'
 
 export const initialContent = QMCommand(({ domain }: { domain: string }) => async ({ qmino }: { qmino: QMino }) => {
-  console.log(`creating psudo users`)
+  console.log(`initialContent for domain:${domain}`)
+
+  console.log(`inserting default UserAuth Config`)
+  const saveDefaultConfigAction = userAuthConfigPorts.save({ cfg: DefaultConfig, sessionEnv: SystemSessionEnv() })
+  const saveCfgRes = await qmino.callSync(saveDefaultConfigAction, { timeout: 5000 })
+  if (!saveCfgRes) {
+    throw new Error('could not save default UserAuth Config')
+  }
+
+  console.log(`creating pseudo users`)
   /* const initialUsers = */ await Promise.all(
     getInitialUsers({ domain }).map(async userData => {
       const createUserAction = createNewUser(userData)
@@ -26,13 +35,6 @@ export const initialContent = QMCommand(({ domain }: { domain: string }) => asyn
 
   console.log(`creating subjectFields`)
   /* const subjFields = */ await Promise.all(subjectFields.map(insertSubjectField))
-
-  console.log(`inserting default UserAuth Config`)
-  const saveDefaultConfigAction = userAuthConfigPorts.save({ cfg: DefaultConfig, sessionEnv: SystemSessionEnv() })
-  const saveCfgRes = await qmino.callSync(saveDefaultConfigAction, { timeout: 5000 })
-  if (!saveCfgRes) {
-    throw new Error('could not save default UserAuth Config')
-  }
 
   return null //{ subjFields, initialUsers /*,userAuthCfg */ }
 
