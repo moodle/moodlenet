@@ -5,19 +5,19 @@ import { initializeDB, upgradeToLatest } from '../../lib/helpers/arango/migrate/
 import { DBEnv } from '../env/db'
 
 export const setupDb = async ({
-  forceDrop,
+  actionOnDBExists,
   env: { arangoUrl, contentGraphDBName, userAuthDBName },
 }: {
-  forceDrop: boolean
+  actionOnDBExists: 'drop' | 'abort' | 'upgrade'
   env: DBEnv
 }) => {
   const sys_db = new Database({ url: arangoUrl })
 
   console.log(`initializing ContentGraphDB`)
-  await initializeDB({ dbname: contentGraphDBName, ladder: contentGraphLadder, forceDrop })({ sys_db })
+  await initializeDB({ dbname: contentGraphDBName, ladder: contentGraphLadder, actionOnDBExists })({ sys_db })
 
   console.log(`initializing UserAuthDB`)
-  await initializeDB({ dbname: userAuthDBName, ladder: userAuthLadder, forceDrop })({ sys_db })
+  await initializeDB({ dbname: userAuthDBName, ladder: userAuthLadder, actionOnDBExists })({ sys_db })
 }
 
 export const upgradeToLatestDb = async ({ env: { arangoUrl, contentGraphDBName, userAuthDBName } }: { env: DBEnv }) => {
