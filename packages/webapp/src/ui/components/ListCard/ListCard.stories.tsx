@@ -12,7 +12,7 @@ const meta: ComponentMeta<typeof ListCard> = {
   },
   excludeStories: ['CollectionListCardStoryProps', 'ResourceListCardStoryProps'],
   decorators:[
-    (Story)=>(<div style={{height:100,width:500}}><Story/></div>)
+    (Story)=>(<div style={{width: 300}}><Story/></div>)
   ]
 }
 

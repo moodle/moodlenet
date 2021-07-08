@@ -11,7 +11,7 @@ export type LoggedInProps = {
 
 export const LoggedIn: FC<LoggedInProps> = ({headerProps, subheaderProps, view}) => {
   return (
-    <div className="app">
+    <div className="loggedin-page">
       <Header {...headerProps}/>
       <SubHeader {...subheaderProps}/>
       <div className="view">{view}</div>

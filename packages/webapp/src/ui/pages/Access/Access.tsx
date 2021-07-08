@@ -9,9 +9,9 @@ export type AccessProps = {
 
 export const Access: FC<AccessProps> = ({accessHeaderProps, view}) => {
   return (
-    <div className="app">
+    <div className="access-page">
       <AccessHeader {...accessHeaderProps}/>
-      {view}
+      <div className="view">{view}</div>
     </div>
   );
 }

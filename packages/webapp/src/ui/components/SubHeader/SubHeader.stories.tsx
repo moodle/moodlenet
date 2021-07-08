@@ -9,7 +9,7 @@ const meta: ComponentMeta<typeof SubHeader> = {
   },
   excludeStories: ['SubHeaderStoryProps'],
   decorators:[
-    (Story)=>(<div style={{height:100, width:300}}><Story/></div>)
+    (Story)=>(<div style={{position: 'relative', top:-60}}><Story/></div>)
   ]
 }
 
@@ -74,5 +74,6 @@ const SubHeaderStory: ComponentStory<typeof SubHeader> = args => <SubHeader {...
 
 export const Default = SubHeaderStory.bind({})
 Default.args = SubHeaderStoryProps
+Default.parameters = {layout: 'fullscreen'}
 
 export default meta

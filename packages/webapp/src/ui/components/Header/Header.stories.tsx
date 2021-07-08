@@ -8,9 +8,6 @@ const meta: ComponentMeta<typeof Header> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: ['HeaderStoryProps'],
-  decorators:[
-    (Story)=>(<div style={{height:100,width:300}}><Story/></div>)
-  ]
 }
 
 export const HeaderStoryProps: HeaderProps = {
@@ -26,5 +23,6 @@ const HeaderStory: ComponentStory<typeof Header> = args => <Header {...args} />
 
 export const Default = HeaderStory.bind({})
 Default.args = HeaderStoryProps
+Default.parameters = {layout: 'fullscreen'}
 
 export default meta

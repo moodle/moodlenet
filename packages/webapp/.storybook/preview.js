@@ -10,6 +10,7 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  layout: 'centered'
 }
 export const decorators = [
   (Story) => (

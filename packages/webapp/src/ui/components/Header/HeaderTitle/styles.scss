@@ -1,8 +1,7 @@
-  .header-title {
-    display: flex;
-    align-items: center;
-  }
-
+.header-title {
+  display: flex;
+  align-items: center;
+  
   a {
     text-decoration: none;
   }
@@ -17,3 +16,4 @@
     font-size: 25px;
     margin-left: 10px;
   }
+}

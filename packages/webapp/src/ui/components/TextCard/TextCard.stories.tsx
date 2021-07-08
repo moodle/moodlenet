@@ -16,7 +16,7 @@ const meta: ComponentMeta<typeof TextCard> = {
 export const TextCardStoryProps: TextCardProps = {}
 
 const TextCardStory: ComponentStory<typeof TextCard> = args => <TextCard {...args}>
-  Diverse, sound, dynamic – these are the values that define BFH. And this is our MoodleNet server. 
+  Diverse, sound, dynamic – these are the values that define BFH. And this is our MoodleNet server.&nbsp;
   <span style={{color: '#b6bacb'}}>Welcome!</span>
 </TextCard>
 
