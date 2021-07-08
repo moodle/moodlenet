@@ -1,24 +1,4 @@
 .profile {
-    z-index: 0;
-    position: absolute;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 120px 100px 50px 100px;
-    height: 100%;
-    background-color: #f4f5f7;
-    background-size: cover;
-    overflow-x: hidden;
-    bottom: 0;
-
-    @media (max-width:450px) {
-        padding: 120px 0 0 0;
-    }
-
-    @media screen and (max-width:675px) and (min-width:450px) {
-        padding: 120px 25px;
-    }
-
     .content {
         width: 100%;
         max-width: 1000px;
@@ -28,29 +8,17 @@
     }
 
     .main-column {
-        width: 650px;
+        width: 65%;
         height: 100%;
     }
 
     .side-column {
-        width: 325px;
+        width: 32%;
         height: 100%;
     }
 
     .collection {
         display: none;
-    }
-
-    @media (max-width:1200px) and (min-width:800px) {
-        .main-column {
-            width: 65%;
-            height: 100%;
-        }
-
-        .side-column {
-            width: 32%;
-            height: 100%;
-        }
     }
 
     @media screen and (max-width: 800px) {

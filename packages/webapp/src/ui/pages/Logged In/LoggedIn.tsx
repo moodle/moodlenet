@@ -14,7 +14,7 @@ export const LoggedIn: FC<LoggedInProps> = ({headerProps, subheaderProps, view})
     <div className="app">
       <Header {...headerProps}/>
       <SubHeader {...subheaderProps}/>
-      {view}
+      <div className="view">{view}</div>
     </div>
   );
 }

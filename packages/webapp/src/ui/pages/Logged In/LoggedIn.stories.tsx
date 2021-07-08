@@ -26,6 +26,7 @@ export const LoggedInProfileStoryProps: LoggedInProps = {
 
 export const ProfilePage = LoggedInStory.bind({})
 ProfilePage.args = LoggedInProfileStoryProps
+ProfilePage.parameters = {layout: 'fullscreen'}
 
 export const LoggedInLandingStoryProps: LoggedInProps = {
   headerProps: HeaderStoryProps,
@@ -35,6 +36,7 @@ export const LoggedInLandingStoryProps: LoggedInProps = {
 
 export const LandingPage = LoggedInStory.bind({})
 LandingPage.args = LoggedInLandingStoryProps
+LandingPage.parameters = {layout: 'fullscreen'}
 
 
 export default meta
