@@ -25,5 +25,6 @@ const AccessHeaderStory: ComponentStory<typeof AccessHeader> = args => <AccessHe
 
 export const Default = AccessHeaderStory.bind({})
 Default.args = AccessHeaderStoryProps
+Default.parameters = {layout: 'fullscreen'}
 
 export default meta

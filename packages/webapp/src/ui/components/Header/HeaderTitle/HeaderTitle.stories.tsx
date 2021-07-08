@@ -8,9 +8,6 @@ const meta: ComponentMeta<typeof HeaderTitle> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: ['HeaderTitleStoryProps'],
-  decorators:[
-    (Story)=>(<div style={{height:100,width:300}}><Story/></div>)
-  ]
 }
 
 export const HeaderTitleStoryProps: HeaderTitleProps = {
