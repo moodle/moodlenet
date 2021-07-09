@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { HeaderTitle, HeaderTitleProps } from './HeaderTitle'
 
 const meta: ComponentMeta<typeof HeaderTitle> = {
-  title: 'Components/HeaderTitle',
+  title: 'Components/Headers/HeaderTitle',
   component: HeaderTitle,
   argTypes: {
     // backgroundColor: { control: 'color' },

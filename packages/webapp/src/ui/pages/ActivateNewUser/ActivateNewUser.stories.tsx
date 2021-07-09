@@ -10,6 +10,7 @@ const meta: ComponentMeta<typeof ActivateNewUserPage> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
+  excludeStories: ['ActivateUserPageStory', 'ValuedWithWarnMessage', 'Empty'],
 }
 
 const ActivateUserPageStory: ComponentStory<typeof ActivateNewUserPage> = args => <ActivateNewUserPage {...args} />

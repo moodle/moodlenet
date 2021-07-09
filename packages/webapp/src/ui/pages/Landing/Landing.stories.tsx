@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { TrendCardStoryProps } from '../../components/cards/TrendCard/TrendCard.stories'
 import { HeaderStoryProps } from '../../components/Header/Header.stories'
-import { PageHeaderStoryProps } from '../PageHeader/PageHeader.stories'
+import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Landing, LandingProps } from './Landing'
 
 const meta: ComponentMeta<typeof Landing> = {
@@ -17,7 +17,7 @@ const meta: ComponentMeta<typeof Landing> = {
 const LandingStory: ComponentStory<typeof Landing> = args => <Landing {...args} />
 
 export const LandingStoryProps: LandingProps = {
-  pageHeaderProps: PageHeaderStoryProps,
+  pageHeaderProps: HeaderPageStoryProps,
   trendCardProps: TrendCardStoryProps,
   organization: {
     name: "Bern University of Applied Sciences",
@@ -28,8 +28,8 @@ export const LandingStoryProps: LandingProps = {
 
 export const LandingLoggedOutStoryProps: LandingProps = {
   ...LandingStoryProps, 
-  pageHeaderProps: {
-    ...PageHeaderStoryProps, 
+  headerPageProps: {
+    ...HeaderPageStoryProps, 
     headerProps: {
       ...HeaderStoryProps, 
       me: null
@@ -39,8 +39,8 @@ export const LandingLoggedOutStoryProps: LandingProps = {
 
 export const LandingLoggedInStoryProps: LandingProps = {
   ...LandingStoryProps, 
-  pageHeaderProps: {
-    ...PageHeaderStoryProps, 
+  headerPageProps: {
+    ...HeaderPageStoryProps, 
     headerProps: {
       ...HeaderStoryProps, 
       me: {username: 'Juanito'}

@@ -1,17 +1,17 @@
 import { FC } from 'react'
-import PageHeader, { PageHeaderProps } from '../../pages/PageHeader/PageHeader'
+import HeaderPage, { HeaderPageProps } from '../../pages/HeaderPage/HeaderPage'
 import '../../styles/view.scss'
 import { MainPageWrapper } from './MainPageWrapper'
 
 export type HeaderPageTemplateProps = {
-  pageHeaderProps: PageHeaderProps
+  headerPageProps: HeaderPageProps
 }
 
-export const HeaderPageTemplate: FC<HeaderPageTemplateProps> = ({ pageHeaderProps, children }) => {
+export const HeaderPageTemplate: FC<HeaderPageTemplateProps> = ({ headerPageProps, children }) => {
   return (
     <MainPageWrapper>
-      <PageHeader {...pageHeaderProps} />
-      <div className={`view ${pageHeaderProps.headerProps.me ? "logged-in" : "logged-out"}`}>{children}</div>
+      <HeaderPage {...headerPageProps} />
+      <div className={`view ${headerPageProps.headerProps.me ? "logged-in" : "logged-out"}`}>{children}</div>
     </MainPageWrapper>
   )
 }

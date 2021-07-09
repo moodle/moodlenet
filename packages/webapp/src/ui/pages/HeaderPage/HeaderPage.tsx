@@ -3,12 +3,12 @@ import Header, { HeaderProps } from '../../components/Header/Header';
 import SubHeader, { SubHeaderProps } from '../../components/SubHeader/SubHeader';
 import './styles.scss';
 
-export type PageHeaderProps = {
+export type HeaderPageProps = {
   headerProps: HeaderProps
   subHeaderProps: SubHeaderProps
 }
 
-export const PageHeader: FC<PageHeaderProps> = ({
+export const HeaderPage: FC<HeaderPageProps> = ({
   headerProps,
   subHeaderProps
 }) => {
@@ -22,4 +22,4 @@ export const PageHeader: FC<PageHeaderProps> = ({
   )
 }
 
-export default PageHeader;
+export default HeaderPage;

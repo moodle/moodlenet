@@ -5,7 +5,7 @@ import { ProfileCardStoryProps } from '../../components/cards/ProfileCard/Profil
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { ScoreCardStoryProps } from '../../components/cards/ScoreCard/ScoreCard.stories'
 import { HeaderStoryProps } from '../../components/Header/Header.stories'
-import { PageHeaderStoryProps } from '../PageHeader/PageHeader.stories'
+import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Profile, ProfileProps } from './Profile'
 
 const meta: ComponentMeta<typeof Profile> = {
@@ -21,7 +21,7 @@ const meta: ComponentMeta<typeof Profile> = {
 const ProfileStory: ComponentStory<typeof Profile> = args => <Profile {...args} />
 
 export const ProfileStoryProps: ProfileProps = {
-  pageHeaderProps: PageHeaderStoryProps,
+  headerPageProps: HeaderPageStoryProps,
   overallCardProps: OverallCardStoryProps,
   profileCardProps: ProfileCardStoryProps,
   scoreCardProps: ScoreCardStoryProps,
@@ -32,8 +32,8 @@ export const ProfileStoryProps: ProfileProps = {
 
 export const ProfileLoggedOutStoryProps: ProfileProps = {
   ...ProfileStoryProps, 
-  pageHeaderProps: {
-    ...PageHeaderStoryProps, 
+  headerPageProps: {
+    ...HeaderPageStoryProps, 
     headerProps: {
       ...HeaderStoryProps, 
       me: null
@@ -43,8 +43,8 @@ export const ProfileLoggedOutStoryProps: ProfileProps = {
 
 export const ProfileLoggedInStoryProps: ProfileProps = {
   ...ProfileStoryProps, 
-  pageHeaderProps: {
-    ...PageHeaderStoryProps, 
+  headerPageProps: {
+    ...HeaderPageStoryProps, 
     headerProps: {
       ...HeaderStoryProps, 
       me: {username: 'Juanito'}
