@@ -3,6 +3,7 @@ import { Database } from 'arangojs'
 import { CreateCollectionOptions, DocumentCollection, EdgeCollection } from 'arangojs/collection'
 import { Config } from 'arangojs/connection'
 import { CreateDatabaseOptions } from 'arangojs/database'
+import promiseRetry, { PromiseRetryOpts } from 'promise-retry'
 import { ulid } from 'ulid'
 import { Maybe } from './types'
 
@@ -115,3 +116,10 @@ export const justExecute = async (q: string, db: Database) => {
     extra,
   }
 }
+
+// TODO: hook this in helper funcs
+export const queryRetry = async (q: string, db: Database, opts?: Partial<PromiseRetryOpts>) =>
+  promiseRetry(
+    retry => db.query(q).catch(err => (String(err?.errorNum) === '1200' ? retry(err) : Promise.reject(err))),
+    opts,
+  )
