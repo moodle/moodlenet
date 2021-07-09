@@ -12,7 +12,7 @@ const meta: ComponentMeta<typeof Access> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['AccessProfileStoryProps', 'AccessLandingStoryProps'],
+  excludeStories: ['AccessProfileStoryProps', 'AccessLandingStoryProps', 'ProfilePage', 'LandingPage'],
 }
 
 const AccessStory: ComponentStory<typeof Access> = args => <Access {...args} />

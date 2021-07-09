@@ -7,11 +7,11 @@ import { ProfileCard, ProfileCardProps } from '../../components/cards/ProfileCar
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
 import { ScoreCard, ScoreCardProps } from '../../components/cards/ScoreCard/ScoreCard'
 import { HeaderPageTemplate } from '../../templates/page/HeaderPageTemplate'
-import { PageHeaderProps } from '../PageHeader/PageHeader'
+import { HeaderPageProps } from '../HeaderPage/HeaderPage'
 import './styles.scss'
 
 export type ProfileProps = {
-  pageHeaderProps: PageHeaderProps
+  headerPageProps: HeaderPageProps
   overallCardProps: OverallCardProps
   scoreCardProps: ScoreCardProps
   profileCardProps: ProfileCardProps
@@ -21,7 +21,7 @@ export type ProfileProps = {
 }
 
 export const Profile: FC<ProfileProps> = ({
-  pageHeaderProps,
+  headerPageProps,
   overallCardProps,
   profileCardProps,
   scoreCardProps,
@@ -30,7 +30,7 @@ export const Profile: FC<ProfileProps> = ({
   username,
 }) => {
   return (
-    <HeaderPageTemplate pageHeaderProps={pageHeaderProps}>
+    <HeaderPageTemplate headerPageProps={headerPageProps}>
       <div className="profile">
         <div className="content">
           <div className="main-column">

@@ -9,7 +9,7 @@ const meta: ComponentMeta<typeof ActivateNewUserPanel> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['activateNewUserPanelStoryProps'],
+  excludeStories: ['activateNewUserPanelStoryProps', 'ActivateUserPanelStory', 'ValuedWithMessage', 'Default'],
 }
 
 export const activateNewUserPanelStoryProps: ActivateNewUserPanelProps = {

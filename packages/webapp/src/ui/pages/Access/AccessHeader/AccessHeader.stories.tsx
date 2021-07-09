@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { AccessHeader, AccessHeaderProps } from './AccessHeader'
 
 const meta: ComponentMeta<typeof AccessHeader> = {
-  title: 'Components/AccessHeader',
+  title: 'Components/Headers/AccessHeader',
   component: AccessHeader,
   argTypes: {
     // backgroundColor: { control: 'color' },

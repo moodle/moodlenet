@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SubHeader, SubHeaderProps } from './SubHeader'
 
 const meta: ComponentMeta<typeof SubHeader> = {
-  title: 'Components/SubHeader',
+  title: 'Components/Headers/SubHeader',
   component: SubHeader,
   argTypes: {
     // backgroundColor: { control: 'color' },

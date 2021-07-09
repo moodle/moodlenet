@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Header, HeaderProps } from './Header'
 
 const meta: ComponentMeta<typeof Header> = {
-  title: 'Components/Header',
+  title: 'Components/Headers/Header',
   component: Header,
   argTypes: {
     // backgroundColor: { control: 'color' },
@@ -20,7 +20,8 @@ export const HeaderStoryProps: HeaderProps = {
   homeLink: 'https://moodle.com/moodlenet/',
   me: {
     username: 'string,'
-  }
+  },
+  loginLink: ''
 }
 
 const HeaderStory: ComponentStory<typeof Header> = args => <Header {...args} />
