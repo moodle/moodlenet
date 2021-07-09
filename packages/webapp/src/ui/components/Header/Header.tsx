@@ -1,6 +1,8 @@
 import { FC } from 'react';
 import addIcon from '../../assets/icons/add.svg';
 import searchIcon from '../../assets/icons/search.svg';
+import { AddCollectionFormProps } from '../../forms/collection/AddCollectionForm';
+import { AddResourceFormProps } from '../../forms/resource/AddResourceForm';
 import { Organization } from '../../types';
 import PrimaryButton from '../atoms/PrimaryButton/PrimaryButton';
 import TertiaryButton from '../atoms/TertiaryButton/TertiaryButton';
@@ -9,8 +11,22 @@ import './styles.scss';
 export type HeaderProps = {
     organization: Pick<Organization, "logo"|"name"|"url">
     avatar: string
-    me: boolean
     homeLink: string
+    loginLink: string
+    me: null | {
+      logout?:()=>unknown
+      username: string
+
+      toggleShowAddCollection?:()=>unknown
+      showAddCollection?: boolean
+      addCollectionFormProps?: AddCollectionFormProps
+
+      toggleShowAddResource?:()=>unknown
+      showAddResource?: boolean
+      addResourceFormProps?: AddResourceFormProps
+    }
+    search?:(text: string)=>unknown
+    searchValue?: string
 }
 
 export const Header: FC<HeaderProps> = ({me, organization, avatar, homeLink}) => {

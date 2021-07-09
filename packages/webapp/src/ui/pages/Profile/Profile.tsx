@@ -6,9 +6,12 @@ import { OverallCard, OverallCardProps } from '../../components/cards/OverallCar
 import { ProfileCard, ProfileCardProps } from '../../components/cards/ProfileCard/ProfileCard'
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
 import { ScoreCard, ScoreCardProps } from '../../components/cards/ScoreCard/ScoreCard'
+import { HeaderPageTemplate } from '../../templates/page/HeaderPageTemplate'
+import { PageHeaderProps } from '../PageHeader/PageHeader'
 import './styles.scss'
 
 export type ProfileProps = {
+  pageHeaderProps: PageHeaderProps
   overallCardProps: OverallCardProps
   scoreCardProps: ScoreCardProps
   profileCardProps: ProfileCardProps
@@ -18,6 +21,7 @@ export type ProfileProps = {
 }
 
 export const Profile: FC<ProfileProps> = ({
+  pageHeaderProps,
   overallCardProps,
   profileCardProps,
   scoreCardProps,
@@ -26,30 +30,32 @@ export const Profile: FC<ProfileProps> = ({
   username,
 }) => {
   return (
-    <div className="profile">
-      <div className="content">
-        <div className="main-column">
-          <ProfileCard {...profileCardProps} />
-          <ListCard
-            content={resourceCardPropsList.map(resourcesCardProps => (
-              <ResourceCard {...resourcesCardProps} />
-            ))}
-            title={t`Latest Resources`}
-            className="resources"
-          />
-        </div>
-        <div className="side-column">
-          <ScoreCard {...scoreCardProps} />
-          <OverallCard {...overallCardProps} />
-          <ListCard
-            title={t`Collections curated by ${username}`}
-            content={collectionCardPropsList.map(collectionCardProps => (
-              <CollectionCard {...collectionCardProps} />
-            ))}
-            className="collections"
-          />
+    <HeaderPageTemplate pageHeaderProps={pageHeaderProps}>
+      <div className="profile">
+        <div className="content">
+          <div className="main-column">
+            <ProfileCard {...profileCardProps} />
+            <ListCard
+              content={resourceCardPropsList.map(resourcesCardProps => (
+                <ResourceCard {...resourcesCardProps} />
+              ))}
+              title={t`Latest Resources`}
+              className="resources"
+            />
+          </div>
+          <div className="side-column">
+            <ScoreCard {...scoreCardProps} />
+            <OverallCard {...overallCardProps} />
+            <ListCard
+              title={t`Collections curated by ${username}`}
+              content={collectionCardPropsList.map(collectionCardProps => (
+                <CollectionCard {...collectionCardProps} />
+              ))}
+              className="collections"
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </HeaderPageTemplate>
   )
 }

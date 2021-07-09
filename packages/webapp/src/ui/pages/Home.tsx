@@ -3,7 +3,7 @@ import { FC } from 'react'
 import { Header, Image } from 'semantic-ui-react'
 import { PageHeaderProps } from '../components/PageHeader'
 import logo from '../static/img/moodlenet-logo.png'
-import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
+import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate_Legacy'
 
 export type HomePageProps = {
   pageHeaderProps: PageHeaderProps

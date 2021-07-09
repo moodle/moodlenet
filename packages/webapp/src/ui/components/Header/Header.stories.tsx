@@ -18,7 +18,9 @@ export const HeaderStoryProps: HeaderProps = {
   },
   avatar: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
   homeLink: 'https://moodle.com/moodlenet/',
-  me: false
+  me: {
+    username: 'string,'
+  }
 }
 
 const HeaderStory: ComponentStory<typeof Header> = args => <Header {...args} />

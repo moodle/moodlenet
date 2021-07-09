@@ -3,7 +3,7 @@ import { FC } from 'react'
 import { Checkbox, Divider, Grid, Item } from 'semantic-ui-react'
 import { BaseContentNodeFeed, BaseContentNodeFeedProps } from '../components/BaseContentNodeFeed'
 import { PageHeaderProps } from '../components/PageHeader'
-import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
+import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate_Legacy'
 
 type ContentType = 'Resource' | 'Collection' | 'SubjectField'
 type SortType = 'Relevance' | 'Popularity'

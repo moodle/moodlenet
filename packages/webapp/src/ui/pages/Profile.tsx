@@ -4,7 +4,7 @@ import { Button, Grid, Icon, Image, Segment } from 'semantic-ui-react'
 import { CollectionCard, CollectionCardProps } from '../components/cards/Collection'
 import { ResourceCard, ResourceCardProps } from '../components/cards/Resource'
 import { PageHeaderProps } from '../components/PageHeader'
-import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
+import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate_Legacy'
 
 export type ProfilePageProps = {
   pageHeaderProps: PageHeaderProps
