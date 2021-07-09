@@ -1,11 +1,11 @@
 import { t } from '@lingui/macro'
 import { FC } from 'react'
-import { CollectionCard, CollectionCardProps } from '../../components/CollectionCard/CollectionCard'
-import { ListCard } from '../../components/ListCard/ListCard'
-import { OverallCard, OverallCardProps } from '../../components/OverallCard/OverallCard'
-import { ProfileCard, ProfileCardProps } from '../../components/ProfileCard/ProfileCard'
-import { ResourceCard, ResourceCardProps } from '../../components/ResourceCard/ResourceCard'
-import { ScoreCard, ScoreCardProps } from '../../components/ScoreCard/ScoreCard'
+import { CollectionCard, CollectionCardProps } from '../../components/cards/CollectionCard/CollectionCard'
+import { ListCard } from '../../components/cards/ListCard/ListCard'
+import { OverallCard, OverallCardProps } from '../../components/cards/OverallCard/OverallCard'
+import { ProfileCard, ProfileCardProps } from '../../components/cards/ProfileCard/ProfileCard'
+import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
+import { ScoreCard, ScoreCardProps } from '../../components/cards/ScoreCard/ScoreCard'
 import './styles.scss'
 
 export type ProfileProps = {

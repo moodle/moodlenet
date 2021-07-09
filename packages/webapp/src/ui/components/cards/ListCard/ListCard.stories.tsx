@@ -5,7 +5,7 @@ import ResourceCard from '../ResourceCard/ResourceCard'
 import { ResourceCardStoryProps } from '../ResourceCard/ResourceCard.stories'
 import { ListCard, ListCardProps } from './ListCard'
 const meta: ComponentMeta<typeof ListCard> = {
-  title: 'Components/ListCard',
+  title: 'Components/Cards/ListCard',
   component: ListCard,
   argTypes: {
     // backgroundColor: { control: 'color' },

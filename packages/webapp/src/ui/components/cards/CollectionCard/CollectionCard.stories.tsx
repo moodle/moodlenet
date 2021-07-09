@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CollectionCard, CollectionCardProps } from './CollectionCard'
 
 const meta: ComponentMeta<typeof CollectionCard> = {
-  title: 'Components/CollectionCard',
+  title: 'Components/Cards/CollectionCard',
   component: CollectionCard,
   argTypes: {
     // backgroundColor: { control: 'color' },

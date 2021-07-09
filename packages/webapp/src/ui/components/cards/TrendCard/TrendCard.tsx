@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 import { FC } from "react";
-import { FollowTag } from '../../types';
+import { FollowTag } from '../../../types';
 import "./styles.scss";
 
 export type TrendCardProps = {

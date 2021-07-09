@@ -1,9 +1,9 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { CollectionCardStoryProps } from '../../components/CollectionCard/CollectionCard.stories'
-import { OverallCardStoryProps } from '../../components/OverallCard/OverallCard.stories'
-import { ProfileCardStoryProps } from '../../components/ProfileCard/ProfileCard.stories'
-import { ResourceCardStoryProps } from '../../components/ResourceCard/ResourceCard.stories'
-import { ScoreCardStoryProps } from '../../components/ScoreCard/ScoreCard.stories'
+import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
+import { OverallCardStoryProps } from '../../components/cards/OverallCard/OverallCard.stories'
+import { ProfileCardStoryProps } from '../../components/cards/ProfileCard/ProfileCard.stories'
+import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
+import { ScoreCardStoryProps } from '../../components/cards/ScoreCard/ScoreCard.stories'
 import { Profile, ProfileProps } from './Profile'
 
 const meta: ComponentMeta<typeof Profile> = {

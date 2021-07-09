@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import { TextCard } from '../../components/TextCard/TextCard'
-import { TrendCard, TrendCardProps } from '../../components/TrendCard/TrendCard'
+import { TextCard } from '../../components/cards/TextCard/TextCard'
+import { TrendCard, TrendCardProps } from '../../components/cards/TrendCard/TrendCard'
 import { Organization } from '../../types'
 import './styles.scss'
 
