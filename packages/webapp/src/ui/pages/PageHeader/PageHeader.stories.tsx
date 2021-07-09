@@ -20,11 +20,11 @@ export const PageHeaderStoryProps: PageHeaderProps = {
 const PageHeaderStory: ComponentStory<typeof PageHeader> = args => <PageHeader {...args} />
 
 export const SignedOut = PageHeaderStory.bind({})
-SignedOut.args = {...PageHeaderStoryProps, headerProps: {...HeaderStoryProps, me: false}}
+SignedOut.args = {...PageHeaderStoryProps, headerProps: {...HeaderStoryProps, me: null}}
 SignedOut.parameters = {layout: 'fullscreen'}
 
 export const SignedIn = PageHeaderStory.bind({})
-SignedIn.args = {...PageHeaderStoryProps, headerProps: {...HeaderStoryProps, me: true}}
+SignedIn.args = {...PageHeaderStoryProps, headerProps: {...HeaderStoryProps, me: {username: 'Juanito'}}}
 SignedIn.parameters = {layout: 'fullscreen'}
 
 export default meta

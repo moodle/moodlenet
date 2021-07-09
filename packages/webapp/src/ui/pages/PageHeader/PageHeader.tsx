@@ -13,13 +13,12 @@ export const PageHeader: FC<PageHeaderProps> = ({
   subHeaderProps
 }) => {
   return (
-    <div>
+    <div className="page-header">
       <Header {...headerProps} />
       {headerProps.me && 
         <SubHeader {...subHeaderProps} />
       }
     </div>
-    
   )
 }
 

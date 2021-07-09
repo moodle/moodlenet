@@ -3,7 +3,7 @@ import { FC } from 'react'
 import { Button, Card, Dropdown, Grid, Icon, Image, Segment } from 'semantic-ui-react'
 import { PageHeaderProps } from '../components/PageHeader'
 import { Link } from '../elements/link'
-import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate'
+import { HeaderPageTemplate } from '../templates/page/HeaderPageTemplate_Legacy'
 
 export type ResourcePageProps = {
   pageHeaderProps: PageHeaderProps
