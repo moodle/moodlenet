@@ -10,3 +10,5 @@ lerna-error.log*
 .eslintcache
 
 .ignore*
+
+.env
