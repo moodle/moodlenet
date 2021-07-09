@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { TrendCard, TrendCardProps } from './TrendCard'
 const meta: ComponentMeta<typeof TrendCard> = {
-  title: 'Components/TrendCard',
+  title: 'Components/Cards/TrendCard',
   component: TrendCard,
   argTypes: {
     // backgroundColor: { control: 'color' },

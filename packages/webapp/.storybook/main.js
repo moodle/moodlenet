@@ -5,6 +5,7 @@ module.exports = {
     "../src/ui/**/*.stories.mdx",
     "../src/ui/**/*.stories.tsx",
     "../src/ui/**/**/*.stories.tsx",
+    "../src/ui/**/**/**/*.stories.tsx",
   ],
   "addons": [
     "@storybook/addon-actions",

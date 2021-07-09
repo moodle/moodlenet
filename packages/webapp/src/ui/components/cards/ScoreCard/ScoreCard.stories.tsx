@@ -3,7 +3,7 @@ import { ScoreCard, ScoreCardProps } from './ScoreCard'
 import './styles.scss'
 
 const meta: ComponentMeta<typeof ScoreCard> = {
-  title: 'Components/ScoreCard',
+  title: 'Components/Cards/ScoreCard',
   component: ScoreCard,
   argTypes: {
     // backgroundColor: { control: 'color' },

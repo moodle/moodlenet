@@ -6,7 +6,7 @@ export { PageHeader } from '../../components/PageHeader'
 export type MainPageWrapperProps = {}
 export const MainPageWrapper: FC<MainPageWrapperProps> = ({ children }) => {
   return (
-    <Container text fluid style={{ paddingTop: '4.5em' }}>
+    <Container text fluid>
       {children}
     </Container>
   )

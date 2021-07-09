@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { TrendCardStoryProps } from '../../components/TrendCard/TrendCard.stories'
+import { TrendCardStoryProps } from '../../components/cards/TrendCard/TrendCard.stories'
 import { Landing, LandingProps } from './Landing'
 
 const meta: ComponentMeta<typeof Landing> = {

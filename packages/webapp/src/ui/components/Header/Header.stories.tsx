@@ -17,6 +17,8 @@ export const HeaderStoryProps: HeaderProps = {
     logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg'
   },
   avatar: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
+  homeLink: 'https://moodle.com/moodlenet/',
+  me: false
 }
 
 const HeaderStory: ComponentStory<typeof Header> = args => <Header {...args} />

@@ -2,14 +2,18 @@ import { FC } from 'react';
 import addIcon from '../../assets/icons/add.svg';
 import searchIcon from '../../assets/icons/search.svg';
 import { Organization } from '../../types';
+import PrimaryButton from '../atoms/PrimaryButton/PrimaryButton';
+import TertiaryButton from '../atoms/TertiaryButton/TertiaryButton';
 import './styles.scss';
 
 export type HeaderProps = {
     organization: Pick<Organization, "logo"|"name"|"url">
     avatar: string
+    me: boolean
+    homeLink: string
 }
 
-export const Header: FC<HeaderProps> = ({organization, avatar}) => {
+export const Header: FC<HeaderProps> = ({me, organization, avatar, homeLink}) => {
   return (
     <div className="header">
       <div className="content">
@@ -17,7 +21,7 @@ export const Header: FC<HeaderProps> = ({organization, avatar}) => {
           <a href={organization.url} rel="noopener noreferrer" target="_blank">
             <img className="logo" src={organization.logo} alt="Logo"/>
           </a>
-          <a href="https://moodle.com/moodlenet/" rel="noopener noreferrer" target="_blank">
+          <a href={homeLink} rel="noopener noreferrer" target="_blank">
             <div className="text">MoodleNet</div>
           </a>
         </div>
@@ -27,9 +31,14 @@ export const Header: FC<HeaderProps> = ({organization, avatar}) => {
             <img className="search-icon" src={searchIcon} alt="Search"/>
             <input className="search-text" placeholder="Search for anything!"/>
           </div>
-          <img className="add-icon" src={addIcon} alt="Add"/>
-          <img className="avatar" src={avatar} alt="Avatar"/>
-        </div>
+          {me ? (<>
+            <img className="add-icon" src={addIcon} alt="Add"/>
+            <img className="avatar" src={avatar} alt="Avatar"/>            
+          </>): (<>
+            <PrimaryButton>Sign In</PrimaryButton>
+            <TertiaryButton>Sign Up</TertiaryButton>
+          </>)}
+          </div>
         </div>
     </div>
   )

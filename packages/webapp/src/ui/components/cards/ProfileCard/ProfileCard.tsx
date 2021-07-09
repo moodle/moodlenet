@@ -1,5 +1,6 @@
 import { FC } from 'react';
-import verifiedIcon from '../../assets/icons/verified.svg';
+import verifiedIcon from '../../../assets/icons/verified.svg';
+import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton';
 import "./styles.scss";
 
 export type ProfileCardProps = {
@@ -44,8 +45,8 @@ export const ProfileCard: FC<ProfileCardProps> = ({
                 {description} 
             </div>
             <div className="buttons">
-                <div className="edit button">Edit Profile</div>
-                <div className="settings button">Go to Setting</div>
+                <SecondaryButton>Edit Profile</SecondaryButton>
+                <SecondaryButton>Go to Setting</SecondaryButton>
             </div>
         </div>
     </div>

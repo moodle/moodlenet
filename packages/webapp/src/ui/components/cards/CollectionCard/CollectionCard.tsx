@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import '../../styles/tags.css';
+import '../../../styles/tags.css';
 import "./styles.scss";
 
 export type CollectionCardProps = {
