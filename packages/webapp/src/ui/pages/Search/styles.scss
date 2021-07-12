@@ -1,0 +1,37 @@
+.search {
+    .content {
+        width: 100%;
+        max-width: 1000px;
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .main-column {
+        width: 72%;
+        height: 100%;
+    }
+
+    .side-column {
+        width: 25%;
+        height: 100%;
+    }
+
+    .collection {
+        display: none;
+    }
+
+    @media screen and (max-width: 800px) {
+        .main-column {
+            width: 100%;
+            height: 100%;
+        }
+
+        .side-column {
+            display: none;
+            width: 325px;
+            height: 100%;
+            background-color: yellow;
+        }
+    }
+}

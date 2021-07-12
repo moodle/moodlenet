@@ -11,14 +11,15 @@
   background-color: white;
   box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%);
 
-  @media (max-width:675px) and (min-width:300px) {
+  @media screen and (max-width:675px) {
     padding: 0 25px;
   }
+
 
   .content {
     height: 100%;
     width: 100%;
-    max-width: 1000px;
+    max-width: 1100px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -75,7 +76,6 @@
     }
   }
 
-
   .search-icon {
     max-height: 16px;
     margin: 10px;
@@ -91,6 +91,18 @@
   .search-text:focus-visible {
     outline:none;
     border: none;
+  }
+
+  .signin-btn {
+    @media screen and (max-width:450px) {
+      display: none;
+    }
+  }
+
+  .signup-btn {
+    @media screen and (max-width:550px) {
+      display: none;
+    }
   }
 
   .add-icon {
