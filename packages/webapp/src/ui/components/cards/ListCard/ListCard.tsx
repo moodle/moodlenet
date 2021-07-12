@@ -4,7 +4,7 @@ import "./styles.scss";
 
 export type ListCardProps = {
     className: string,
-    title: string,
+    title?: string | undefined,
     content: ReactNode[]
     noCard?: boolean,
     maxColumns?: number
@@ -14,13 +14,17 @@ export const ListCard: FC <ListCardProps> = ({
     className,
     content,
     title,
-    noCard
+    noCard,
+    children
 }) => {
 
   return (
     <div className={`list-card ${className} ${noCard ? "no-card" : ""}`}>
-        <div className="title"><Trans>{title}</Trans></div>
-        <div className="content">{content}</div>
+      <div className="title">{ title
+        ? (<Trans>{title}</Trans>) 
+        : (<div>{children}</div>)
+      }</div>
+      <div className="content">{content}</div>
     </div>
   );
 }
