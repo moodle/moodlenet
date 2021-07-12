@@ -1,0 +1,25 @@
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Card, CardProps } from './Card'
+
+const meta: ComponentMeta<typeof Card> = {
+  title: 'Components/Atoms/Card',
+  component: Card,
+  argTypes: {
+    // backgroundColor: { control: 'color' },
+  },
+  excludeStories: ['TextCardStoryProps'],
+  decorators:[
+    (Story)=>(<div style={{height:100,width:300}}><Story/></div>)
+  ]
+}
+
+export const TextCardStoryProps: CardProps = {}
+
+const TextCardStory: ComponentStory<typeof Card> = args => <Card {...args}>
+  Diverse, vibrant, dynamic. The cornerstone values that define our amazing <span style={{color: '#b6bacb'}}>Cards</span>  
+</Card>
+
+export const Default = TextCardStory.bind({})
+Default.args = TextCardStoryProps
+
+export default meta

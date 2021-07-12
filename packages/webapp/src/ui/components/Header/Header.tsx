@@ -51,8 +51,8 @@ export const Header: FC<HeaderProps> = ({me, organization, avatar, homeLink}) =>
             <img className="add-icon" src={addIcon} alt="Add"/>
             <img className="avatar" src={avatar} alt="Avatar"/>            
           </>): (<>
-            <PrimaryButton>Sign In</PrimaryButton>
-            <TertiaryButton>Sign Up</TertiaryButton>
+            <div className="signin-btn"><PrimaryButton >Sign In</PrimaryButton></div>
+            <div className="signup-btn"><TertiaryButton>Sign Up</TertiaryButton></div>
           </>)}
           </div>
         </div>

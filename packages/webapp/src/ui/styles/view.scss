@@ -9,10 +9,18 @@
     background-size: cover;
     overflow-x: hidden;
     bottom: 0;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.view::-webkit-scrollbar {
+  display: none;
 }
 
 .view > * {
   height: max-content;
+  width: 100%;
+  max-width: 1100px;
 }
 
 .logged-in {

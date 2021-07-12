@@ -11,9 +11,6 @@ const meta: ComponentMeta<typeof ListCard> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: ['CollectionListCardStoryProps', 'ResourceListCardStoryProps'],
-  decorators:[
-    (Story)=>(<div style={{width: 300}}><Story/></div>)
-  ]
 }
 
 
@@ -24,11 +21,12 @@ export const CollectionListCardStoryProps: ListCardProps = {
   title: 'Juanito',
   content: [1,2,3].map(()=>(
     <CollectionCard {...CollectionCardStoryProps} />
-  ))
+  )),
 }
 
 export const Collection = ListCardStory.bind({})
 Collection.args = CollectionListCardStoryProps
+Collection.decorators = [(Story)=>(<div style={{width: 300}}><Story/></div>)]
 
 export const ResourceListCardStoryProps: ListCardProps = {
   className: 'resources',
@@ -40,5 +38,6 @@ export const ResourceListCardStoryProps: ListCardProps = {
 
 export const Resource = ListCardStory.bind({})
 Resource.args = ResourceListCardStoryProps
+Resource.decorators = [(Story)=>(<div style={{width: 450}}><Story/></div>)]
 
 export default meta
