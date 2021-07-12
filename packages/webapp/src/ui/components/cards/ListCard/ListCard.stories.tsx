@@ -33,7 +33,8 @@ export const ResourceListCardStoryProps: ListCardProps = {
   title: 'Lastest Resources',
   content: [1,2,3].map(()=>(
     <ResourceCard {...ResourceCardStoryProps} />
-  ))
+  )),
+  noCard: true
 }
 
 export const Resource = ListCardStory.bind({})
