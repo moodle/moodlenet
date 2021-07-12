@@ -1,11 +1,11 @@
 import { FC } from "react";
 import "./styles.scss";
 
-export type CheckInputProps = {
+export type CheckboxProps = {
   label: string
 }
 
-export const CheckInput: FC<CheckInputProps> = ({label}) => {
+export const Checkbox: FC<CheckboxProps> = ({label}) => {
   
 
   return (
@@ -17,4 +17,4 @@ export const CheckInput: FC<CheckInputProps> = ({label}) => {
   );
 }
 
-export default CheckInput;
+export default Checkbox;

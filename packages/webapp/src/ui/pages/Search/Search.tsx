@@ -1,6 +1,9 @@
+import { t } from '@lingui/macro'
 import { FC } from 'react'
+import { CollectionCard, CollectionCardProps } from '../../components/cards/CollectionCard/CollectionCard'
 import { FilterCard, FilterCardProps } from '../../components/cards/FilterCard/FilterCard'
-import { ProfileCard, ProfileCardProps } from '../../components/cards/ProfileCard/ProfileCard'
+import ListCard from '../../components/cards/ListCard/ListCard'
+import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
 import { HeaderPageTemplate } from '../../templates/page/HeaderPageTemplate'
 import { HeaderPageProps } from '../HeaderPage/HeaderPage'
 import './styles.scss'
@@ -8,13 +11,15 @@ import './styles.scss'
 export type SearchProps = {
   headerPageProps: HeaderPageProps
   filterCardProps: FilterCardProps
-  profileCardProps: ProfileCardProps
+  collectionCardPropsList: CollectionCardProps[]
+  resourceCardPropsList: ResourceCardProps[]
 }
 
 export const Search: FC<SearchProps> = ({
   headerPageProps,
-  profileCardProps,
   filterCardProps,
+  collectionCardPropsList,
+  resourceCardPropsList
 }) => {
   return (
     <HeaderPageTemplate headerPageProps={headerPageProps}>
@@ -24,7 +29,22 @@ export const Search: FC<SearchProps> = ({
               <FilterCard {...filterCardProps} />
           </div>
           <div className="main-column">
-            <ProfileCard {...profileCardProps} />
+            <ListCard
+              title={t`Collection`}
+              content={collectionCardPropsList.map(collectionCardProps => (
+                <CollectionCard {...collectionCardProps} />
+              ))}
+              className="collections"
+              noCard={true}
+            />
+            <ListCard
+              content={resourceCardPropsList.map(resourcesCardProps => (
+                <ResourceCard {...resourcesCardProps} />
+              ))}
+              title={t`Latest Resources`}
+              className="resources"
+              noCard={true}
+            />
           </div>
         </div>
       </div>
