@@ -1,4 +1,4 @@
-.list-card {
+.filter-card {
     width: 100%;
     background-color: #fff;
     border-radius: 16px;
@@ -12,7 +12,7 @@
     }
 
     > .title {
-        font-size: 12px;
+        font-size: 14px;
         font-weight: bold;
         padding-top: 22px;
         padding-left: 20px;
@@ -21,6 +21,6 @@
     > .content {
         display: flex;
         flex-direction: column;
-        padding: 18px 20px;
+        padding: 16px 20px;
     }
 }
