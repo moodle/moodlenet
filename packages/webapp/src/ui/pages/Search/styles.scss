@@ -1,19 +1,22 @@
 .search {
     .content {
         width: 100%;
-        max-width: 1000px;
+        max-width: 1100px;
         height: 100%;
         display: flex;
         justify-content: space-between;
     }
 
     .main-column {
-        width: 72%;
+        width: 100%;
+        margin-left: 20px;
         height: 100%;
     }
 
     .side-column {
         width: 25%;
+        min-width: 165px;
+        max-width: 180px;
         height: 100%;
     }
 

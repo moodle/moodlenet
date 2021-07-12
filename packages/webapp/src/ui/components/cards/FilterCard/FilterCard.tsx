@@ -15,7 +15,7 @@ export const FilterCard: FC <FilterCardProps> = ({
 }) => {
 
   return (
-    <div className={"list-card " + className}>
+    <div className={"filter-card " + className}>
         <div className="title"><Trans>{title}</Trans></div>
         <div className="content">{content}</div>
     </div>

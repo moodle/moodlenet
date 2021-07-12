@@ -1,4 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import CheckInput from '../../atoms/CheckInput/CheckInput'
 import { FilterCard, FilterCardProps } from './FilterCard'
 const meta: ComponentMeta<typeof FilterCard> = {
   title: 'Components/Cards/FilterCard',
@@ -16,10 +17,10 @@ const meta: ComponentMeta<typeof FilterCard> = {
 const FilterCardStory: ComponentStory<typeof FilterCard> = args => <FilterCard {...args} />
 
 export const FilterCardStoryProps: FilterCardProps = {
-  className: 'collection',
+  className: 'filter',
   title: 'Filters',
   content: [1,2,3].map((x)=>(
-    <div>Filter {x}</div>
+    <CheckInput label={`CheckBox ${x}`} />
   ))
 }
 
