@@ -52,9 +52,14 @@
     .main-column {
         width: 48.5%;
         height: 100%;
+
         .trend-card {
             display: none;
         }
+        
+        > :not(:last-child) {
+            margin-bottom: 16px;
+        }  
     }
 
     .side-column {

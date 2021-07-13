@@ -10,6 +10,14 @@
     .main-column {
         width: 65%;
         height: 100%;
+
+        .collections {
+            display: none;
+        }
+
+        > :not(:last-child) {
+            margin-bottom: 16px;
+        }  
     }
 
     .side-column {
@@ -17,14 +25,14 @@
         height: 100%;
     }
 
-    .collection {
-        display: none;
-    }
-
     @media screen and (max-width: 800px) {
         .main-column {
             width: 100%;
             height: 100%;
+
+            > .collections {
+                display: block;
+            }
         }
 
         .side-column {
@@ -32,10 +40,7 @@
             width: 325px;
             height: 100%;
             background-color: yellow;
-        }
 
-        .collection {
-            display: block;
         }
     }
 }
