@@ -9,7 +9,7 @@
     }
 
     .main-column {
-        width: 85%;
+        width: 75%;
         margin-left: 25px;
         height: 100%;
         > :not(:last-child) {
@@ -54,7 +54,7 @@
         }
     }
     .subjects > .content > .card {
-        margin-bottom: 0; 
+        margin-bottom: 7px;
         width: '30%';
     }
 }

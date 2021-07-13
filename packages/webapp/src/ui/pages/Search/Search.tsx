@@ -34,7 +34,7 @@ export const Search: FC<SearchProps> = ({
           </div>
           <div className="main-column">
             <ListCard
-              content={subjectCardPropsList.map(subjectCardProps => (
+              content={subjectCardPropsList.slice(0,4).map(subjectCardProps => (
                 <SubjectCard {...subjectCardProps} />
               ))}
               className="subjects"
@@ -47,7 +47,7 @@ export const Search: FC<SearchProps> = ({
               </div>
             </ListCard>
             <ListCard
-              content={collectionCardPropsList.map(collectionCardProps => (
+              content={collectionCardPropsList.slice(0,3).map(collectionCardProps => (
                 <CollectionCard {...collectionCardProps} />
               ))}
               className="collections"
@@ -59,7 +59,7 @@ export const Search: FC<SearchProps> = ({
               </div>
             </ListCard>
             <ListCard
-              content={resourceCardPropsList.map(resourcesCardProps => (
+              content={resourceCardPropsList.slice(0,5).map(resourcesCardProps => (
                 <ResourceCard {...resourcesCardProps} />
               ))}
               className="resources"
