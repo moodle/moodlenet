@@ -8,9 +8,11 @@ export const TextCard: FC<TextCardProps> = ({children}) => {
   
 
   return (
-    <Card>
-      <div className="text">{children}</div>
-    </Card>
+    <div className="text-card">
+      <Card>
+        <div className="text">{children}</div>
+      </Card>
+    </div>
   );
 }
 
