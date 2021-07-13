@@ -9,10 +9,10 @@ const meta: ComponentMeta<typeof ActivateNewUserPanel> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['activateNewUserPanelStoryProps', 'ActivateUserPanelStory', 'ValuedWithMessage', 'Default'],
+  excludeStories: /_.+/,
 }
 
-export const activateNewUserPanelStoryProps: ActivateNewUserPanelProps = {
+export const _activateNewUserPanelStoryProps: ActivateNewUserPanelProps = {
   mycss: 'red',
   message: null,
   submit: action('submitted form'),
@@ -22,11 +22,11 @@ export const activateNewUserPanelStoryProps: ActivateNewUserPanelProps = {
 const ActivateUserPanelStory: ComponentStory<typeof ActivateNewUserPanel> = args => <ActivateNewUserPanel {...args} />
 
 export const Default = ActivateUserPanelStory.bind({})
-Default.args = activateNewUserPanelStoryProps
+Default.args = _activateNewUserPanelStoryProps
 
 export const ValuedWithMessage = ActivateUserPanelStory.bind({})
 ValuedWithMessage.args = {
-  ...activateNewUserPanelStoryProps,
+  ..._activateNewUserPanelStoryProps,
   message: 'Error message',
 }
 

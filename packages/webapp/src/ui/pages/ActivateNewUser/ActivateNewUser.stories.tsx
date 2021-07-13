@@ -1,8 +1,8 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { sbCtrlBagOf } from '../../lib/ctrl'
+import { sbWithPropsListOf } from '../../lib/ctrl'
 import { ActivateNewUserPage, ActivateNewUserPageProps } from './ActivateNewUser'
 import { ActivateNewUserPanelProps } from './ActivateUserPanel/ActivateUserPanel'
-import { activateNewUserPanelStoryProps } from './ActivateUserPanel/ActivateUserPanel.stories'
+import { _activateNewUserPanelStoryProps } from './ActivateUserPanel/ActivateUserPanel.stories'
 
 const meta: ComponentMeta<typeof ActivateNewUserPage> = {
   title: 'Pages/ActivateNewUserPage/ActivateNewUserPage',
@@ -10,26 +10,29 @@ const meta: ComponentMeta<typeof ActivateNewUserPage> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['ActivateUserPageStory', 'ValuedWithWarnMessage', 'Empty'],
+  excludeStories: /_.+/,
 }
 
 const ActivateUserPageStory: ComponentStory<typeof ActivateNewUserPage> = args => <ActivateNewUserPage {...args} />
 
-const activateNewUserPageStoryProps: ActivateNewUserPageProps = {
-  ActivateNewUserPanelCtrl: sbCtrlBagOf<ActivateNewUserPanelProps>({
-    ...activateNewUserPanelStoryProps,
-  }),
+const _activateNewUserPageStoryProps: ActivateNewUserPageProps = {
+  withNewUserPanelWithProps: sbWithPropsListOf<ActivateNewUserPanelProps, 'mycss'>([
+    _activateNewUserPanelStoryProps,
+    _activateNewUserPanelStoryProps,
+  ]),
 }
 
 export const Empty = ActivateUserPageStory.bind({})
-Empty.args = activateNewUserPageStoryProps
+Empty.args = _activateNewUserPageStoryProps
 
 export const ValuedWithWarnMessage = ActivateUserPageStory.bind({})
 ValuedWithWarnMessage.args = {
-  ActivateNewUserPanelCtrl: sbCtrlBagOf<ActivateNewUserPanelProps>({
-    ...activateNewUserPanelStoryProps,
-    message: 'error from page story',
-  }),
+  withNewUserPanelWithProps: sbWithPropsListOf<ActivateNewUserPanelProps, 'mycss'>([
+    {
+      ..._activateNewUserPanelStoryProps,
+      message: 'error from page story',
+    },
+  ]),
 }
 
 export default meta
