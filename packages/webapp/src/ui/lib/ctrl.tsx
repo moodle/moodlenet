@@ -37,7 +37,7 @@ export type WithProps<
   IntrinsicCtrlProps extends InternalCtrlProps<UIProps> = UnknownIntrinsicCtrlProps<UIProps>
 > = (
   UICmp: ComponentType<UIProps>,
-) => [UICtrl: UICtrl<UIProps, ExclKeys, IntrinsicCtrlProps>, intrinsicCtrlProps: IntrinsicCtrlProps]
+) => readonly [UICtrl: UICtrl<UIProps, ExclKeys, IntrinsicCtrlProps>, intrinsicCtrlProps: IntrinsicCtrlProps]
 
 export type WithPropsList<
   UIProps extends object,
@@ -45,7 +45,7 @@ export type WithPropsList<
   IntrinsicCtrlProps extends InternalCtrlProps<UIProps> = UnknownIntrinsicCtrlProps<UIProps>
 > = (
   UICmp: ComponentType<UIProps>,
-) => [UICtrl: UICtrl<UIProps, ExclKeys, IntrinsicCtrlProps>, intrinsicCtrlProps: Array<IntrinsicCtrlProps>]
+) => readonly [UICtrl: UICtrl<UIProps, ExclKeys, IntrinsicCtrlProps>, intrinsicCtrlProps: readonly IntrinsicCtrlProps[]]
 
 type BaseIntrinsicCtrlProps = { key: string }
 
@@ -66,7 +66,12 @@ export const createWithProps = <
       return __uiComp => {
         // ): WithProps<UIProps, ExclKeys, IntrinsicCtrlProps & InternalCtrlProps<UIProps>> => __uiComp => {
         type ActualType = ReturnType<WithProps<UIProps, ExclKeys, IntrinsicCtrlProps & InternalCtrlProps<UIProps>>>
-        const _: ActualType = [UICtrlCmp, { ...intrinsicCtrlProps, __uiComp, __key: intrinsicCtrlProps.key }]
+        const ctrlProps: IntrinsicCtrlProps & InternalCtrlProps<UIProps> = {
+          ...intrinsicCtrlProps,
+          __uiComp,
+          __key: intrinsicCtrlProps.key,
+        }
+        const _: ActualType = [UICtrlCmp, ctrlProps]
         return _ as any
       }
     },
@@ -77,21 +82,21 @@ export const createWithProps = <
         // ): WithPropsList<UIProps, ExclKeys, IntrinsicCtrlProps & InternalCtrlProps<UIProps>> => __uiComp => {
         type ActualType = ReturnType<WithPropsList<UIProps, ExclKeys, IntrinsicCtrlProps & InternalCtrlProps<UIProps>>>
 
-        const intrinsicCtrlProps = intrinsicCtrlPropsList.map<IntrinsicCtrlProps & InternalCtrlProps<UIProps>>(
+        const ctrlPropsList = intrinsicCtrlPropsList.map<IntrinsicCtrlProps & InternalCtrlProps<UIProps>>(
           intrinsicCtrlProps => ({
             ...intrinsicCtrlProps,
             __uiComp,
             __key: intrinsicCtrlProps.key,
           }),
         )
-        const _: ActualType = [UICtrlCmp, intrinsicCtrlProps]
+        const _: ActualType = [UICtrlCmp, ctrlPropsList]
         return _ as any
       }
     },
   ] as const
 }
 
-export const sbWithPropsOf = <UIProps extends object, ExclKeys extends keyof UIProps = never>(
+export const withPropsStatic = <UIProps extends object, ExclKeys extends keyof UIProps = never>(
   uiProps: UIProps & { key?: string },
 ): WithProps<UIProps, ExclKeys> => {
   const UICtrlCmp: UICtrl<UIProps, ExclKeys, any> = ctrlProps => {
@@ -106,7 +111,7 @@ export const sbWithPropsOf = <UIProps extends object, ExclKeys extends keyof UIP
   return withProps({ ...uiProps, key: uiProps.key ?? `${Math.random()}` })
 }
 
-export const sbWithPropsListOf = <UIProps extends object, ExclKeys extends keyof UIProps = never>(
+export const withPropsListStatic = <UIProps extends object, ExclKeys extends keyof UIProps = never>(
   uiProps: (UIProps & { key?: string })[],
 ): WithPropsList<UIProps, ExclKeys> => {
   const UICtrlCmp: UICtrl<UIProps, ExclKeys, any> = ctrlProps => {

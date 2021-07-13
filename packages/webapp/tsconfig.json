@@ -18,5 +18,5 @@
     "jsx": "react-jsx"
   },
   "include": ["src"],
-  "exclude": ["./src/hooks/"]
+  "exclude": ["./src/hooks/_props"]
 }
