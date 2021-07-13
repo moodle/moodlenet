@@ -1,6 +1,6 @@
 import { RouteDef } from './types'
 
-export type Home = RouteDef<'/', {}>
+export type Landing = RouteDef<'/', {}>
 export type ActivateNewUser = RouteDef<'/activate-new-user/:token', { token: string }>
 export type Login = RouteDef<'/login', {}>
 export type Signup = RouteDef<'/signup', {}>

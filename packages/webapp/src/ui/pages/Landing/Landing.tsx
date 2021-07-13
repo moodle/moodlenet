@@ -1,26 +1,24 @@
 import { FC } from 'react'
 import { TextCard } from '../../components/cards/TextCard/TextCard'
 import { TrendCard, TrendCardProps } from '../../components/cards/TrendCard/TrendCard'
-import { HeaderPageTemplate } from '../../templates/page/HeaderPageTemplate'
+import { WithProps } from '../../lib/ctrl'
+import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import { Organization } from '../../types'
-import { HeaderPageProps } from '../HeaderPage/HeaderPage'
 import './styles.scss'
 
 export type LandingProps = {
-  headerPageProps: HeaderPageProps
-  trendCardProps: TrendCardProps
-  organization: Pick<Organization,  "name" | "intro">
+  withHeaderPageTemplateProps: WithProps<HeaderPageTemplateProps>
+  withTrendCardProps: WithProps<TrendCardProps>
+  organization: Pick<Organization, 'name' | 'intro'>
   image: string
 }
 
-export const Landing: FC<LandingProps> = ({
-  headerPageProps,
-  trendCardProps,
-  organization,
-  image
-}) => {
+export const Landing: FC<LandingProps> = ({ withHeaderPageTemplateProps, withTrendCardProps, organization, image }) => {
+  const [HeaderPageTemplateWithProps, headerPageTemplateProps] = withHeaderPageTemplateProps(HeaderPageTemplate)
+  const [TrendCardWithProps, trendCardProps] = withTrendCardProps(TrendCard)
+
   return (
-    <HeaderPageTemplate headerPageProps={headerPageProps}>
+    <HeaderPageTemplateWithProps {...headerPageTemplateProps}>
       <div className="landing">
         <div className="landing-title">
           <div className="moodle-title">Welcome to MoodleNet</div>
@@ -31,17 +29,17 @@ export const Landing: FC<LandingProps> = ({
             <TextCard>
               <div>
                 {organization.intro}
-                <span style={{color: '#b6bacb'}}>Welcome!</span>
+                <span style={{ color: '#b6bacb' }}>Welcome!</span>
               </div>
-              <img className="text-image" src={image} alt="Background"/>
+              <img className="text-image" src={image} alt="Background" />
             </TextCard>
-            <TrendCard {...trendCardProps}></TrendCard>
+            <TrendCardWithProps {...trendCardProps} />
           </div>
           <div className="side-column">
-            <TrendCard {...trendCardProps}></TrendCard>
+            <TrendCardWithProps {...trendCardProps} />
           </div>
         </div>
       </div>
-    </HeaderPageTemplate>
+    </HeaderPageTemplateWithProps>
   )
 }
