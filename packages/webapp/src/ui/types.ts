@@ -4,6 +4,7 @@ export type Organization = {
     url: string
     logo: string
     intro: string
+    color: string
 }
 
 export type FollowTag = {

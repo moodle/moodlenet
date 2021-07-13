@@ -1,0 +1,55 @@
+.subject-card {
+    cursor: pointer;
+    width: 100%;
+    height: 100px;
+    background-color: #7F8393;
+    border-radius: 16px;
+    box-shadow: 0 0 6px #dedede;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    padding: 16px;
+    color: white;
+
+    @media (max-width:450px) {
+        box-shadow: none;
+        border-radius: 0;
+        margin-top: 0;
+    }
+
+    > .title {
+        width: 100%;
+        font-weight: bold;
+        font-size: 24px;
+        line-height: 27px;
+        white-space: nowrap;
+        overflow-x: scroll;
+        /* Hide scrollbar for IE, Edge and Firefox */
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    > .title::-webkit-scrollbar {
+        display: none;
+    }
+
+    .subtitle {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+
+        > .url {
+            font-weight: normal;
+            font-size: 17px;    
+        }
+
+        > .color {
+            width: 26px;
+            height: 13px;
+            margin-left: 17px;
+            border-radius: 7px;
+        }
+    }
+}
