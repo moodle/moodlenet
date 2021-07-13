@@ -1,11 +1,11 @@
 import { Trans } from '@lingui/macro'
 import { FC } from 'react'
-import Card from '../../components/atoms/Card/Card'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
 import { CollectionCard, CollectionCardProps } from '../../components/cards/CollectionCard/CollectionCard'
 import { FilterCard, FilterCardProps } from '../../components/cards/FilterCard/FilterCard'
 import ListCard from '../../components/cards/ListCard/ListCard'
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
+import SubjectCard, { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { HeaderPageTemplate } from '../../templates/page/HeaderPageTemplate'
 import { HeaderPageProps } from '../HeaderPage/HeaderPage'
 import './styles.scss'
@@ -13,6 +13,7 @@ import './styles.scss'
 export type SearchProps = {
   headerPageProps: HeaderPageProps
   filterCardProps: FilterCardProps
+  subjectCardPropsList: SubjectCardProps[]
   collectionCardPropsList: CollectionCardProps[]
   resourceCardPropsList: ResourceCardProps[]
 }
@@ -20,6 +21,7 @@ export type SearchProps = {
 export const Search: FC<SearchProps> = ({
   headerPageProps,
   filterCardProps,
+  subjectCardPropsList,
   collectionCardPropsList,
   resourceCardPropsList,
 }) => {
@@ -32,10 +34,10 @@ export const Search: FC<SearchProps> = ({
           </div>
           <div className="main-column">
             <ListCard
-              content={['Archeology', 'Forestry', 'Education'].map((subject) => (
-                <Card>{subject}</Card>
+              content={subjectCardPropsList.map(subjectCardProps => (
+                <SubjectCard {...subjectCardProps} />
               ))}
-              className="collections"
+              className="subjects"
               noCard={true}
               maxColumns={5}
             > 

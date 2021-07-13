@@ -2,6 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
 import { FilterCardStoryProps } from '../../components/cards/FilterCard/FilterCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
+import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
 import { HeaderStoryProps } from '../../components/Header/Header.stories'
 import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Search, SearchProps as SearchProps } from './Search'
@@ -21,6 +22,7 @@ const SearchStory: ComponentStory<typeof Search> = args => <Search {...args} />
 export const SearchStoryProps: SearchProps = {
   headerPageProps: HeaderPageStoryProps,
   filterCardProps: FilterCardStoryProps,
+  subjectCardPropsList: [SubjectCardStoryProps, SubjectCardStoryProps, SubjectCardStoryProps],
   collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
   resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps]
 }
