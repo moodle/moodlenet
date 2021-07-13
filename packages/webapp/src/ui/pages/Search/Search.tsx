@@ -11,26 +11,26 @@ import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/pag
 import './styles.scss'
 
 export type SearchProps = {
-  withHeaderPageTemplateProps: WithProps<HeaderPageTemplateProps>
+  headerPageTemplateWithProps: WithProps<HeaderPageTemplateProps>
   filterCardProps: FilterCardProps
-  withSubjectCardPropsList: WithPropsList<SubjectCardProps>
-  withCollectionCardPropsList: WithPropsList<CollectionCardProps>
-  withResourceCardPropsList: WithPropsList<ResourceCardProps>
+  subjectCardWithPropsList: WithPropsList<SubjectCardProps>
+  collectionCardWithPropsList: WithPropsList<CollectionCardProps>
+  resourceCardWithPropsList: WithPropsList<ResourceCardProps>
 }
 
 export const Search: FC<SearchProps> = ({
-  withHeaderPageTemplateProps,
+  headerPageTemplateWithProps,
   filterCardProps,
-  withSubjectCardPropsList,
-  withCollectionCardPropsList,
-  withResourceCardPropsList,
+  subjectCardWithPropsList,
+  collectionCardWithPropsList,
+  resourceCardWithPropsList,
 }) => {
-  const [HeaderPageTemplateWithProps, headerPageTemplateProps] = withHeaderPageTemplateProps(HeaderPageTemplate)
-  const [SubjectCardWithProps, subjectCardPropsList] = withSubjectCardPropsList(SubjectCard)
-  const [CollectionCardWithProps, collectionCardPropsList] = withCollectionCardPropsList(CollectionCard)
-  const [ResourceCardWithProps, resourceCardPropsList] = withResourceCardPropsList(ResourceCard)
+  const [HeaderPageTemplateCtrl, headerPageTemplateProps] = headerPageTemplateWithProps(HeaderPageTemplate)
+  const [SubjectCardCtrl, subjectCardPropsList] = subjectCardWithPropsList(SubjectCard)
+  const [CollectionCardCtrl, collectionCardPropsList] = collectionCardWithPropsList(CollectionCard)
+  const [ResourceCardCtrl, resourceCardPropsList] = resourceCardWithPropsList(ResourceCard)
   return (
-    <HeaderPageTemplateWithProps {...headerPageTemplateProps}>
+    <HeaderPageTemplateCtrl {...headerPageTemplateProps}>
       <div className="search">
         <div className="content">
           <div className="side-column">
@@ -39,7 +39,7 @@ export const Search: FC<SearchProps> = ({
           <div className="main-column">
             <ListCard
               content={subjectCardPropsList.slice(0, 4).map(subjectCardProps => (
-                <SubjectCardWithProps {...subjectCardProps} />
+                <SubjectCardCtrl {...subjectCardProps} />
               ))}
               className="subjects"
               noCard={true}
@@ -56,7 +56,7 @@ export const Search: FC<SearchProps> = ({
             </ListCard>
             <ListCard
               content={collectionCardPropsList.slice(0, 3).map(collectionCardProps => (
-                <CollectionCardWithProps {...collectionCardProps} />
+                <CollectionCardCtrl {...collectionCardProps} />
               ))}
               className="collections"
               noCard={true}
@@ -72,7 +72,7 @@ export const Search: FC<SearchProps> = ({
             </ListCard>
             <ListCard
               content={resourceCardPropsList.slice(0, 5).map(resourcesCardProps => (
-                <ResourceCardWithProps {...resourcesCardProps} />
+                <ResourceCardCtrl {...resourcesCardProps} />
               ))}
               className="resources"
               noCard={true}
@@ -86,6 +86,6 @@ export const Search: FC<SearchProps> = ({
           </div>
         </div>
       </div>
-    </HeaderPageTemplateWithProps>
+    </HeaderPageTemplateCtrl>
   )
 }

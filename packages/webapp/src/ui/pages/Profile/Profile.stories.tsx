@@ -26,45 +26,45 @@ const meta: ComponentMeta<typeof Profile> = {
 const ProfileStory: ComponentStory<typeof Profile> = args => <Profile {...args} />
 
 export const ProfileStoryProps: ProfileProps = {
-  withHeaderPageTemplateProps: withPropsStatic<HeaderPageTemplateProps>({
-    withHeaderPageProps: withPropsStatic(HeaderPageStoryProps),
+  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+    headerPageWithProps: withPropsStatic(HeaderPageStoryProps),
     isAuthenticated: true,
   }),
   overallCardProps: OverallCardStoryProps,
   profileCardProps: ProfileCardStoryProps,
   scoreCardProps: ScoreCardStoryProps,
-  withCollectionCardPropsList: withPropsListStatic([CollectionCardStoryProps, CollectionCardStoryProps]),
-  withResourceCardPropsList: withPropsListStatic([ResourceCardStoryProps]),
+  collectionCardWithPropsList: withPropsListStatic([CollectionCardStoryProps, CollectionCardStoryProps]),
+  resourceCardWithPropsList: withPropsListStatic([ResourceCardStoryProps]),
   username: 'Juanito',
 }
 
 export const ProfileLoggedOutStoryProps: ProfileProps = {
   ...ProfileStoryProps,
-  withHeaderPageTemplateProps: withPropsStatic<HeaderPageTemplateProps>({
+  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
     isAuthenticated: false,
-    withHeaderPageProps: withPropsStatic<HeaderPageProps>({
+    headerPageWithProps: withPropsStatic<HeaderPageProps>({
       // isAuthenticated: false,
-      withHeaderProps: withPropsStatic<HeaderProps>({
+      headerWithProps: withPropsStatic<HeaderProps>({
         ...HeaderStoryProps,
         me: null,
       }),
-      withSubHeaderProps: withPropsStatic(SubHeaderStoryProps),
+      subHeaderWithProps: withPropsStatic(SubHeaderStoryProps),
     }),
   }),
 }
 
 export const ProfileLoggedInStoryProps: ProfileProps = {
   ...ProfileStoryProps,
-  withHeaderPageTemplateProps: withPropsStatic<HeaderPageTemplateProps>({
+  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
     ...HeaderPageStoryProps,
     isAuthenticated: true,
-    withHeaderPageProps: withPropsStatic<HeaderPageProps>({
+    headerPageWithProps: withPropsStatic<HeaderPageProps>({
       // isAuthenticated: true,
-      withHeaderProps: withPropsStatic<HeaderProps>({
+      headerWithProps: withPropsStatic<HeaderProps>({
         ...HeaderStoryProps,
         me: { username: 'Juanito' },
       }),
-      withSubHeaderProps: withPropsStatic(SubHeaderStoryProps),
+      subHeaderWithProps: withPropsStatic(SubHeaderStoryProps),
     }),
   }),
 }

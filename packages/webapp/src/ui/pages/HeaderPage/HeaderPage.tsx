@@ -5,18 +5,18 @@ import { WithProps } from '../../lib/ctrl'
 import './styles.scss'
 
 export type HeaderPageProps = {
-  withHeaderProps: WithProps<HeaderProps>
-  withSubHeaderProps: WithProps<SubHeaderProps>
+  headerWithProps: WithProps<HeaderProps>
+  subHeaderWithProps: WithProps<SubHeaderProps>
   // isAuthenticated: boolean
 }
 
-export const HeaderPage: FC<HeaderPageProps> = ({ withHeaderProps, withSubHeaderProps /* , isAuthenticated  */ }) => {
-  const [HeaderWithProps, headerProps] = withHeaderProps(Header)
-  const [SubHeaderWithProps, subHeaderProps] = withSubHeaderProps(SubHeader)
+export const HeaderPage: FC<HeaderPageProps> = ({ headerWithProps, subHeaderWithProps /* , isAuthenticated  */ }) => {
+  const [HeaderCtrl, headerProps] = headerWithProps(Header)
+  const [SubHeaderCtrl, subHeaderProps] = subHeaderWithProps(SubHeader)
   return (
     <div className="page-header">
-      <HeaderWithProps {...headerProps} />
-      <SubHeaderWithProps {...subHeaderProps} />
+      <HeaderCtrl {...headerProps} />
+      <SubHeaderCtrl {...subHeaderProps} />
     </div>
   )
 }

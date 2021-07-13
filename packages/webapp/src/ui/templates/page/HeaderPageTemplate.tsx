@@ -5,15 +5,15 @@ import '../../styles/view.scss'
 import { MainPageWrapper } from './MainPageWrapper'
 
 export type HeaderPageTemplateProps = {
-  withHeaderPageProps: WithProps<HeaderPageProps>
+  headerPageWithProps: WithProps<HeaderPageProps>
   isAuthenticated: boolean
 }
 
-export const HeaderPageTemplate: FC<HeaderPageTemplateProps> = ({ withHeaderPageProps, isAuthenticated, children }) => {
-  const [HeaderPageWithProps, headerPageProps] = withHeaderPageProps(HeaderPage)
+export const HeaderPageTemplate: FC<HeaderPageTemplateProps> = ({ headerPageWithProps, isAuthenticated, children }) => {
+  const [HeaderPageCtrl, headerPageProps] = headerPageWithProps(HeaderPage)
   return (
     <MainPageWrapper>
-      <HeaderPageWithProps {...headerPageProps} />
+      <HeaderPageCtrl {...headerPageProps} />
       <div className={`view ${isAuthenticated ? 'logged-in' : 'logged-out'}`}>{children}</div>
     </MainPageWrapper>
   )
