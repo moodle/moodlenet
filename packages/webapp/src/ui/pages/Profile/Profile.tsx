@@ -42,6 +42,13 @@ export const Profile: FC<ProfileProps> = ({
               title={t`Latest Resources`}
               className="resources"
             />
+            <ListCard
+              title={t`Collections curated by ${username}`}
+              content={collectionCardPropsList.map(collectionCardProps => (
+                <CollectionCard {...collectionCardProps} />
+              ))}
+              className="collections"
+            />
           </div>
           <div className="side-column">
             <ScoreCard {...scoreCardProps} />
