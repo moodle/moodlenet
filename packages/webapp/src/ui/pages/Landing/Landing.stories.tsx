@@ -21,11 +21,11 @@ const meta: ComponentMeta<typeof Landing> = {
 const LandingStory: ComponentStory<typeof Landing> = args => <Landing {...args} />
 
 export const LandingStoryProps: LandingProps = {
-  withHeaderPageTemplateProps: withPropsStatic<HeaderPageTemplateProps>({
-    withHeaderPageProps: withPropsStatic(HeaderPageStoryProps),
+  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+    headerPageWithProps: withPropsStatic(HeaderPageStoryProps),
     isAuthenticated: true,
   }),
-  withTrendCardProps: withPropsStatic(TrendCardStoryProps),
+  trendCardWithProps: withPropsStatic(TrendCardStoryProps),
   organization: {
     name: 'Bern University of Applied Sciences',
     intro: 'Diverse, sound, dynamic – these are the values that define BFH. And this is our MoodleNet server. ',
@@ -35,12 +35,12 @@ export const LandingStoryProps: LandingProps = {
 
 export const LandingLoggedOutStoryProps: LandingProps = {
   ...LandingStoryProps,
-  withHeaderPageTemplateProps: withPropsStatic<HeaderPageTemplateProps>({
+  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
     isAuthenticated: false,
-    withHeaderPageProps: withPropsStatic<HeaderPageProps>({
+    headerPageWithProps: withPropsStatic<HeaderPageProps>({
       ...HeaderPageStoryProps,
       // isAuthenticated: false,
-      withHeaderProps: withPropsStatic<HeaderProps>({
+      headerWithProps: withPropsStatic<HeaderProps>({
         ...HeaderStoryProps,
         me: null,
       }),
@@ -50,12 +50,12 @@ export const LandingLoggedOutStoryProps: LandingProps = {
 
 export const LandingLoggedInStoryProps: LandingProps = {
   ...LandingStoryProps,
-  withHeaderPageTemplateProps: withPropsStatic<HeaderPageTemplateProps>({
+  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
     isAuthenticated: true,
-    withHeaderPageProps: withPropsStatic<HeaderPageProps>({
+    headerPageWithProps: withPropsStatic<HeaderPageProps>({
       ...HeaderPageStoryProps,
       // isAuthenticated: true,
-      withHeaderProps: withPropsStatic<HeaderProps>({
+      headerWithProps: withPropsStatic<HeaderProps>({
         ...HeaderStoryProps,
         me: { username: 'Juanito' },
       }),

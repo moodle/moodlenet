@@ -31,16 +31,16 @@ const subjectCardPropsList: SubjectCardProps[] = [
 export const SearchStoryProps: SearchProps = {
   headerPageProps: HeaderPageStoryProps,
   filterCardProps: FilterCardStoryProps,
-  withSubjectCardPropsList: subjectCardPropsList,
-  withCollectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
-  withResourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
+  subjectCardWithPropsList: subjectCardPropsList,
+  collectionCardWithPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
+  resourceCardWithPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
 }
 
 export const SearchLoggedOutStoryProps: SearchProps = {
   ...SearchStoryProps,
   headerPageProps: {
     ...HeaderPageStoryProps,
-    withHeaderProps: {
+    headerWithProps: {
       ...HeaderStoryProps,
       me: null,
     },
@@ -51,7 +51,7 @@ export const SearchLoggedInStoryProps: SearchProps = {
   ...SearchStoryProps,
   headerPageProps: {
     ...HeaderPageStoryProps,
-    withHeaderProps: {
+    headerWithProps: {
       ...HeaderStoryProps,
       me: { username: 'Juanito' },
     },

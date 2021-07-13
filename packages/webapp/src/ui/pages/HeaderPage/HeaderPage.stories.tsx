@@ -16,8 +16,8 @@ const meta: ComponentMeta<typeof HeaderPage> = {
 
 export const HeaderPageStoryProps: HeaderPageProps = {
   // isAuthenticated: true,
-  withHeaderProps: withPropsStatic(HeaderStoryProps),
-  withSubHeaderProps: withPropsStatic(SubHeaderStoryProps),
+  headerWithProps: withPropsStatic(HeaderStoryProps),
+  subHeaderWithProps: withPropsStatic(SubHeaderStoryProps),
 }
 
 const HeaderPageStory: ComponentStory<typeof HeaderPage> = args => <HeaderPage {...args} />
@@ -26,7 +26,7 @@ export const SignedOut = HeaderPageStory.bind({})
 SignedOut.args = {
   ...HeaderPageStoryProps,
   // isAuthenticated: false,
-  withHeaderProps: withPropsStatic<HeaderProps>({
+  headerWithProps: withPropsStatic<HeaderProps>({
     ...HeaderStoryProps,
     me: null,
   }),
@@ -36,7 +36,7 @@ SignedOut.parameters = { layout: 'fullscreen' }
 export const SignedIn = HeaderPageStory.bind({})
 SignedIn.args = {
   ...HeaderPageStoryProps,
-  withHeaderProps: withPropsStatic<HeaderProps>({
+  headerWithProps: withPropsStatic<HeaderProps>({
     ...HeaderStoryProps,
     me: {
       username: 'Juanito',

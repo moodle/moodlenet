@@ -7,18 +7,18 @@ import { Organization } from '../../types'
 import './styles.scss'
 
 export type LandingProps = {
-  withHeaderPageTemplateProps: WithProps<HeaderPageTemplateProps>
-  withTrendCardProps: WithProps<TrendCardProps>
+  headerPageTemplateWithProps: WithProps<HeaderPageTemplateProps>
+  trendCardWithProps: WithProps<TrendCardProps>
   organization: Pick<Organization, 'name' | 'intro'>
   image: string
 }
 
-export const Landing: FC<LandingProps> = ({ withHeaderPageTemplateProps, withTrendCardProps, organization, image }) => {
-  const [HeaderPageTemplateWithProps, headerPageTemplateProps] = withHeaderPageTemplateProps(HeaderPageTemplate)
-  const [TrendCardWithProps, trendCardProps] = withTrendCardProps(TrendCard)
+export const Landing: FC<LandingProps> = ({ headerPageTemplateWithProps, trendCardWithProps, organization, image }) => {
+  const [HeaderPageTemplateCtrl, headerPageTemplateProps] = headerPageTemplateWithProps(HeaderPageTemplate)
+  const [TrendCardCtrl, trendCardProps] = trendCardWithProps(TrendCard)
 
   return (
-    <HeaderPageTemplateWithProps {...headerPageTemplateProps}>
+    <HeaderPageTemplateCtrl {...headerPageTemplateProps}>
       <div className="landing">
         <div className="landing-title">
           <div className="moodle-title">Welcome to MoodleNet</div>
@@ -33,13 +33,13 @@ export const Landing: FC<LandingProps> = ({ withHeaderPageTemplateProps, withTre
               </div>
               <img className="text-image" src={image} alt="Background" />
             </TextCard>
-            <TrendCardWithProps {...trendCardProps} />
+            <TrendCardCtrl {...trendCardProps} />
           </div>
           <div className="side-column">
-            <TrendCardWithProps {...trendCardProps} />
+            <TrendCardCtrl {...trendCardProps} />
           </div>
         </div>
       </div>
-    </HeaderPageTemplateWithProps>
+    </HeaderPageTemplateCtrl>
   )
 }
