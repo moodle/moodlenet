@@ -19,8 +19,20 @@
     }
 
     > .title {
+        width: 100%;
         font-weight: bold;
-        font-size: 27px;
+        font-size: 24px;
+        line-height: 27px;
+        white-space: nowrap;
+        overflow-x: scroll;
+        /* Hide scrollbar for IE, Edge and Firefox */
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    > .title::-webkit-scrollbar {
+        display: none;
     }
 
     .subtitle {

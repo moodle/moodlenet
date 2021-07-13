@@ -20,7 +20,7 @@ const meta: ComponentMeta<typeof Search> = {
 
 const SearchStory: ComponentStory<typeof Search> = args => <Search {...args} />
 
-const subjectCardPropsList: SubjectCardProps[] = ['#Education', '#Forestry', 'Enviromental Science'].map((x)=>(
+const subjectCardPropsList: SubjectCardProps[] = ['#Education', '#Forestry', 'Enviromental Science', 'Sailing Principles', 'NoShow'].map((x)=>(
   {organization: {...SubjectCardStoryProps}.organization,
    title: x}
 ))

@@ -13,7 +13,8 @@ export const SubjectCard: FC <SubjectCardProps> = ({title, organization}) => {
   
   return (
     <Card style={{
-      width: 'auto'
+      width: 'auto',
+      maxWidth: '100%'
     }}>
       <div className="subject-card">
         <div className="title">
