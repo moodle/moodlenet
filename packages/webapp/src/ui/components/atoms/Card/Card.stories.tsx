@@ -16,7 +16,9 @@ const meta: ComponentMeta<typeof Card> = {
 export const TextCardStoryProps: CardProps = {}
 
 const TextCardStory: ComponentStory<typeof Card> = args => <Card {...args}>
-  Diverse, vibrant, dynamic. The cornerstone values that define our amazing <span style={{color: '#b6bacb'}}>Cards</span>  
+  <div style={{padding: 24}}>
+    Diverse, vibrant, dynamic. The cornerstone values that define our amazing <span style={{color: '#b6bacb'}}>Cards</span> 
+  </div> 
 </Card>
 
 export const Default = TextCardStory.bind({})
