@@ -2,6 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
 import { FilterCardStoryProps } from '../../components/cards/FilterCard/FilterCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
+import { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
 import { HeaderStoryProps } from '../../components/Header/Header.stories'
 import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
@@ -19,10 +20,15 @@ const meta: ComponentMeta<typeof Search> = {
 
 const SearchStory: ComponentStory<typeof Search> = args => <Search {...args} />
 
+const subjectCardPropsList: SubjectCardProps[] = ['#Education', '#Forestry', 'Enviromental Science'].map((x)=>(
+  {organization: {...SubjectCardStoryProps}.organization,
+   title: x}
+))
+
 export const SearchStoryProps: SearchProps = {
   headerPageProps: HeaderPageStoryProps,
   filterCardProps: FilterCardStoryProps,
-  subjectCardPropsList: [SubjectCardStoryProps, SubjectCardStoryProps, SubjectCardStoryProps],
+  subjectCardPropsList: subjectCardPropsList,
   collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
   resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps]
 }

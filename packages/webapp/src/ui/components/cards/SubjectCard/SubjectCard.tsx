@@ -12,7 +12,9 @@ export type SubjectCardProps = {
 export const SubjectCard: FC <SubjectCardProps> = ({title, organization}) => {
   
   return (
-    <Card style={{}}>
+    <Card style={{
+      width: 'auto'
+    }}>
       <div className="subject-card">
         <div className="title">
             {title}

@@ -9,7 +9,7 @@ const meta: ComponentMeta<typeof SubjectCard> = {
   },
   excludeStories: ['SubjectCardStoryProps'],
   decorators:[
-    (Story)=>(<div style={{height:100,width:300}}><Story/></div>)
+    (Story)=>(<div style={{height:100,width:'auto'}}><Story/></div>)
   ]
 }
 
