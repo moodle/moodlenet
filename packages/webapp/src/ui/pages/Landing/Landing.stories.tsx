@@ -22,7 +22,6 @@ const LandingStory: ComponentStory<typeof Landing> = args => <Landing {...args} 
 
 export const LandingStoryProps: LandingProps = {
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
-    status: 'idle',
     headerPageWithProps: withPropsStatic(HeaderPageStoryProps),
     isAuthenticated: true,
   }),
@@ -37,7 +36,6 @@ export const LandingStoryProps: LandingProps = {
 export const LandingLoggedOutStoryProps: LandingProps = {
   ...LandingStoryProps,
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
-    status: 'idle',
     isAuthenticated: false,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
       ...HeaderPageStoryProps,
@@ -52,7 +50,6 @@ export const LandingLoggedOutStoryProps: LandingProps = {
 export const LandingLoggedInStoryProps: LandingProps = {
   ...LandingStoryProps,
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
-    status: 'idle',
     isAuthenticated: true,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
       ...HeaderPageStoryProps,
