@@ -16,7 +16,9 @@ export const CollectionCard:FC<CollectionCardProps>=({ imageUrl, title, fontSize
   
   return (
     <div className="collection-card" style={background}>
-      <div className="title" style={{fontSize: fontSize}}>{title}</div>
+      <div className="title" style={{fontSize: fontSize}}>
+      <abbr title={title}>{title}</abbr>
+      </div>
     </div>
   );
 }
