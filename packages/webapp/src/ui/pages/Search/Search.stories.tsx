@@ -4,7 +4,11 @@ import { FilterCardStoryProps } from '../../components/cards/FilterCard/FilterCa
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
+import { HeaderProps } from '../../components/Header/Header'
 import { HeaderStoryProps } from '../../components/Header/Header.stories'
+import { withPropsListStatic, withPropsStatic } from '../../lib/ctrl'
+import { HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
+import { HeaderPageProps } from '../HeaderPage/HeaderPage'
 import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Search, SearchProps } from './Search'
 
@@ -29,33 +33,46 @@ const subjectCardPropsList: SubjectCardProps[] = [
 ].map(x => ({ organization: { ...SubjectCardStoryProps }.organization, title: x }))
 
 export const SearchStoryProps: SearchProps = {
-  headerPageProps: HeaderPageStoryProps,
+  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+    headerPageWithProps: withPropsStatic(HeaderPageStoryProps),
+    isAuthenticated: true,
+  }),
   filterCardProps: FilterCardStoryProps,
-  subjectCardWithPropsList: subjectCardPropsList,
-  collectionCardWithPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
-  resourceCardWithPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
+  subjectCardWithPropsList: withPropsListStatic(subjectCardPropsList),
+  collectionCardWithPropsList: withPropsListStatic([CollectionCardStoryProps, CollectionCardStoryProps]),
+  resourceCardWithPropsList: withPropsListStatic([
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+  ]),
 }
 
 export const SearchLoggedOutStoryProps: SearchProps = {
   ...SearchStoryProps,
-  headerPageProps: {
-    ...HeaderPageStoryProps,
-    headerWithProps: {
-      ...HeaderStoryProps,
-      me: null,
-    },
-  },
+  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+    isAuthenticated: false,
+    headerPageWithProps: withPropsStatic<HeaderPageProps>({
+      headerWithProps: withPropsStatic<HeaderProps>({
+        ...HeaderStoryProps,
+        me: null,
+      }),
+      subHeaderProps: null,
+    }),
+  }),
 }
 
 export const SearchLoggedInStoryProps: SearchProps = {
   ...SearchStoryProps,
-  headerPageProps: {
-    ...HeaderPageStoryProps,
-    headerWithProps: {
-      ...HeaderStoryProps,
-      me: { username: 'Juanito' },
-    },
-  },
+  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+    isAuthenticated: false,
+    headerPageWithProps: withPropsStatic<HeaderPageProps>({
+      headerWithProps: withPropsStatic<HeaderProps>({
+        ...HeaderStoryProps,
+        me: { username: 'Juanito' },
+      }),
+      subHeaderProps: null,
+    }),
+  }),
 }
 
 export const LoggedOut = SearchStory.bind({})

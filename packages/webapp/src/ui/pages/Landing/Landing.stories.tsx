@@ -25,7 +25,7 @@ export const LandingStoryProps: LandingProps = {
     headerPageWithProps: withPropsStatic(HeaderPageStoryProps),
     isAuthenticated: true,
   }),
-  trendCardWithProps: withPropsStatic(TrendCardStoryProps),
+  trendCardProps: TrendCardStoryProps,
   organization: {
     name: 'Bern University of Applied Sciences',
     intro: 'Diverse, sound, dynamic – these are the values that define BFH. And this is our MoodleNet server. ',
@@ -39,7 +39,6 @@ export const LandingLoggedOutStoryProps: LandingProps = {
     isAuthenticated: false,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
       ...HeaderPageStoryProps,
-      // isAuthenticated: false,
       headerWithProps: withPropsStatic<HeaderProps>({
         ...HeaderStoryProps,
         me: null,
@@ -54,7 +53,6 @@ export const LandingLoggedInStoryProps: LandingProps = {
     isAuthenticated: true,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
       ...HeaderPageStoryProps,
-      // isAuthenticated: true,
       headerWithProps: withPropsStatic<HeaderProps>({
         ...HeaderStoryProps,
         me: { username: 'Juanito' },
