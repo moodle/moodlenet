@@ -2,10 +2,10 @@ import { createSession } from '@moodlenet/common/lib/graphql/auth/validation/inp
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { Home, Signup } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useMemo, useState } from 'react'
-import { useSession } from '../../context/Global/Session'
-import { MutationCreateSessionArgs } from '../../graphql/pub.graphql.link'
-import { useFormikWithBag } from '../../helpers/forms'
-import { LoginFormValues, LoginPanelProps } from '../../ui/pages/Login'
+import { useSession } from '../../packages/webapp/src/context/Global/Session'
+import { MutationCreateSessionArgs } from '../../packages/webapp/src/graphql/pub.graphql.link'
+import { useFormikWithBag } from '../../packages/webapp/src/helpers/forms'
+import { LoginFormValues, LoginPanelProps } from '../../packages/webapp/src/ui/pages/Login'
 
 const signupLink = webappPath<Signup>('/signup', {})
 const homeLink = webappPath<Home>('/', {})
