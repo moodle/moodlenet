@@ -6,23 +6,23 @@ import PrimaryButton from '../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../atoms/TertiaryButton/TertiaryButton'
 import './styles.scss'
 
-export type HeaderProps =
-  | {
-      status: 'idle'
-      organization: Pick<Organization, 'logo' | 'name' | 'url'>
-      avatar: string
-      homeLink: string
-      loginLink: string
-      me: null | {
-        logout?: () => unknown
-        username: string
-      }
-      search?: (text: string) => unknown
-      searchValue?: string
-    }
-  | {
-      status: 'loading'
-    }
+export type HeaderPropsIdle = {
+  status: 'idle'
+  organization: Pick<Organization, 'logo' | 'name' | 'url'>
+  avatar: string
+  homeLink: string
+  loginLink: string
+  me: null | {
+    logout?: () => unknown
+    username: string
+  }
+  search?: (text: string) => unknown
+  searchValue?: string
+}
+export type HeaderPropsLoading = {
+  status: 'loading'
+}
+export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
 
 export const Header: FC<HeaderProps> = props => {
   if (props.status === 'loading') {

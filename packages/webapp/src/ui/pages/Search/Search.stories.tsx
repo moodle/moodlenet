@@ -34,7 +34,6 @@ const subjectCardPropsList: SubjectCardProps[] = [
 
 export const SearchStoryProps: SearchProps = {
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
-    status: 'idle',
     headerPageWithProps: withPropsStatic(HeaderPageStoryProps),
     isAuthenticated: true,
   }),
@@ -51,7 +50,6 @@ export const SearchStoryProps: SearchProps = {
 export const SearchLoggedOutStoryProps: SearchProps = {
   ...SearchStoryProps,
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
-    status: 'idle',
     isAuthenticated: false,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
       headerWithProps: withPropsStatic<HeaderProps>({
@@ -66,7 +64,6 @@ export const SearchLoggedOutStoryProps: SearchProps = {
 export const SearchLoggedInStoryProps: SearchProps = {
   ...SearchStoryProps,
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
-    status: 'idle',
     isAuthenticated: false,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
       headerWithProps: withPropsStatic<HeaderProps>({
