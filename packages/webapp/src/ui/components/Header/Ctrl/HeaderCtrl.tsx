@@ -5,7 +5,7 @@ import { href } from '../../../elements/link'
 import { createWithProps } from '../../../lib/ctrl'
 import { HeaderProps, HeaderPropsIdle } from '../Header'
 
-export const [HeaderCtrl, headerCtrlWithProps] = createWithProps<HeaderProps, {}>(props => {
+export const [HeaderCtrl, headerWithProps] = createWithProps<HeaderProps, {}>(props => {
   const { session, logout } = useSession()
   const { __uiComp: HeaderUI } = props
 
