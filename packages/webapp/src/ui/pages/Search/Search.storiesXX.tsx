@@ -2,12 +2,11 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
 import { FilterCardStoryProps } from '../../components/cards/FilterCard/FilterCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
-import { SortCardStoryProps } from '../../components/cards/SortCard/SortCard.stories'
 import { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
 import { HeaderStoryProps } from '../../components/Header/Header.stories'
 import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
-import { Search, SearchProps as SearchProps } from './Search'
+import { Search, SearchProps } from './Search'
 
 const meta: ComponentMeta<typeof Search> = {
   title: 'Pages/Search',
@@ -15,46 +14,48 @@ const meta: ComponentMeta<typeof Search> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  parameters: {layout: 'fullscreen'},
+  parameters: { layout: 'fullscreen' },
   excludeStories: ['SearchStoryProps', 'SearchLoggedOutStoryProps', 'SearchLoggedInStoryProps'],
 }
 
 const SearchStory: ComponentStory<typeof Search> = args => <Search {...args} />
 
-const subjectCardPropsList: SubjectCardProps[] = ['#Education', '#Forestry', 'Enviromental Science', 'Sailing Principles', 'NoShow'].map((x)=>(
-  {organization: {...SubjectCardStoryProps}.organization,
-   title: x}
-))
+const subjectCardPropsList: SubjectCardProps[] = [
+  '#Education',
+  '#Forestry',
+  'Enviromental Science',
+  'Sailing Principles',
+  'NoShow',
+].map(x => ({ organization: { ...SubjectCardStoryProps }.organization, title: x }))
 
 export const SearchStoryProps: SearchProps = {
   headerPageProps: HeaderPageStoryProps,
   filterCardProps: FilterCardStoryProps,
-  sortCardProps: SortCardStoryProps,
-  subjectCardPropsList: subjectCardPropsList,
-  collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps, CollectionCardStoryProps, CollectionCardStoryProps],
-  resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps]
+  subjectCardWithPropsList: subjectCardPropsList,
+  collectionCardWithPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
+  resourceCardWithPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
 }
 
 export const SearchLoggedOutStoryProps: SearchProps = {
-  ...SearchStoryProps, 
+  ...SearchStoryProps,
   headerPageProps: {
-    ...HeaderPageStoryProps, 
-    headerProps: {
-      ...HeaderStoryProps, 
-      me: null
-    }
-  }
+    ...HeaderPageStoryProps,
+    headerWithProps: {
+      ...HeaderStoryProps,
+      me: null,
+    },
+  },
 }
 
 export const SearchLoggedInStoryProps: SearchProps = {
-  ...SearchStoryProps, 
+  ...SearchStoryProps,
   headerPageProps: {
-    ...HeaderPageStoryProps, 
-    headerProps: {
-      ...HeaderStoryProps, 
-      me: {username: 'Juanito'}
-    }
-  }
+    ...HeaderPageStoryProps,
+    headerWithProps: {
+      ...HeaderStoryProps,
+      me: { username: 'Juanito' },
+    },
+  },
 }
 
 export const LoggedOut = SearchStory.bind({})
