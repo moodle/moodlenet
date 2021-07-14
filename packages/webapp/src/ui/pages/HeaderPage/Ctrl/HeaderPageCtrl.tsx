@@ -1,13 +1,13 @@
 import { isJust } from '@moodlenet/common/lib/utils/array'
 import { useEffect, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
-import { headerCtrlWithProps } from '../../../components/Header/HeaderCtrl/HeaderCtrl'
+import { headerWithProps } from '../../../components/Header/Ctrl/HeaderCtrl'
 import { createWithProps } from '../../../lib/ctrl'
 import { FollowTag } from '../../../types'
 import { HeaderPageProps } from '../HeaderPage'
 import { useHeaderPagePinnedLazyQuery } from './HeaderPageCtrl.gen'
 
-export const [HeaderPageCtrl, headerPageCtrlwithProps] = createWithProps<HeaderPageProps, {}>(props => {
+export const [HeaderPageCtrl, headerPageWithProps] = createWithProps<HeaderPageProps, {}>(props => {
   const { currentProfile } = useSession()
   const [queryPinned, pinned] = useHeaderPagePinnedLazyQuery()
 
@@ -38,7 +38,7 @@ export const [HeaderPageCtrl, headerPageCtrlwithProps] = createWithProps<HeaderP
     const headerPageProps: HeaderPageProps = {
       ...rest,
       subHeaderProps,
-      headerWithProps: headerCtrlWithProps({ key: 'Header' }),
+      headerWithProps: headerWithProps({ key: 'Header' }),
     }
     return headerPageProps
   }, [props, subHeaderProps])
