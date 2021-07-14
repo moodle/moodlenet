@@ -43,7 +43,6 @@ export const Search: FC<SearchProps> = ({
               ))}
               className="subjects"
               noCard={true}
-              maxColumns={5}
             >
               <div className="card-header">
                 <div className="title">

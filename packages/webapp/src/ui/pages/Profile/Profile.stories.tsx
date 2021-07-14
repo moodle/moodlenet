@@ -27,6 +27,7 @@ const ProfileStory: ComponentStory<typeof Profile> = args => <Profile {...args} 
 
 export const ProfileStoryProps: ProfileProps = {
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+    status: 'idle',
     headerPageWithProps: withPropsStatic(HeaderPageStoryProps),
     isAuthenticated: true,
   }),
@@ -41,14 +42,14 @@ export const ProfileStoryProps: ProfileProps = {
 export const ProfileLoggedOutStoryProps: ProfileProps = {
   ...ProfileStoryProps,
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+    status: 'idle',
     isAuthenticated: false,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
-      // isAuthenticated: false,
       headerWithProps: withPropsStatic<HeaderProps>({
         ...HeaderStoryProps,
         me: null,
       }),
-      subHeaderWithProps: withPropsStatic(SubHeaderStoryProps),
+      subHeaderProps: null,
     }),
   }),
 }
@@ -56,15 +57,14 @@ export const ProfileLoggedOutStoryProps: ProfileProps = {
 export const ProfileLoggedInStoryProps: ProfileProps = {
   ...ProfileStoryProps,
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
-    ...HeaderPageStoryProps,
+    status: 'idle',
     isAuthenticated: true,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
-      // isAuthenticated: true,
       headerWithProps: withPropsStatic<HeaderProps>({
         ...HeaderStoryProps,
         me: { username: 'Juanito' },
       }),
-      subHeaderWithProps: withPropsStatic(SubHeaderStoryProps),
+      subHeaderProps: SubHeaderStoryProps,
     }),
   }),
 }

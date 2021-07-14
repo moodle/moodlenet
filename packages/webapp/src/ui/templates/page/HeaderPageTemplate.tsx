@@ -4,12 +4,21 @@ import HeaderPage, { HeaderPageProps } from '../../pages/HeaderPage/HeaderPage'
 import '../../styles/view.scss'
 import { MainPageWrapper } from './MainPageWrapper'
 
-export type HeaderPageTemplateProps = {
-  headerPageWithProps: WithProps<HeaderPageProps>
-  isAuthenticated: boolean
-}
+export type HeaderPageTemplateProps =
+  | {
+      status: 'idle'
+      headerPageWithProps: WithProps<HeaderPageProps>
+      isAuthenticated: boolean
+    }
+  | {
+      status: 'loading'
+    }
 
-export const HeaderPageTemplate: FC<HeaderPageTemplateProps> = ({ headerPageWithProps, isAuthenticated, children }) => {
+export const HeaderPageTemplate: FC<HeaderPageTemplateProps> = props => {
+  if (props.status === 'loading') {
+    return null
+  }
+  const { headerPageWithProps, isAuthenticated, children } = props
   const [HeaderPageCtrl, headerPageProps] = headerPageWithProps(HeaderPage)
   return (
     <MainPageWrapper>
