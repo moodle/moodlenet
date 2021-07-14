@@ -1,0 +1,13 @@
+.secondary-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border: 2px solid black;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 12px;
+    height: 30px;
+    padding: 12px;
+    margin: 0 5px;
+    cursor: pointer;
+}

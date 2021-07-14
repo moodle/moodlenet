@@ -28,19 +28,21 @@ export const globalSearchQuery = ({
       : '(1 + (node._relCount.Likes.from.Profile || 0) + (node._relCount.Follows.from.Profile || 0))'
 
   const query = `
+      let searchTerm = ${aql_txt}
       FOR node IN SearchView
         SEARCH ANALYZER(
-          BOOST( PHRASE(node.name, ${aql_txt}), 10 )
+          !searchTerm ? 1 : 
+          BOOST( PHRASE(node.name, searchTerm), 10 )
           OR
-          BOOST( PHRASE(node.description, ${aql_txt}), 5 )
+          BOOST( PHRASE(node.description, searchTerm), 5 )
           OR
-          BOOST( node.name IN TOKENS(${aql_txt}), 3 )
+          BOOST( node.name IN TOKENS(searchTerm), 3 )
           OR
-          BOOST( node.summary IN TOKENS(${aql_txt}), 1 )
+          BOOST( node.summary IN TOKENS(searchTerm), 1 )
           OR
-          BOOST(  NGRAM_MATCH(node.name, ${aql_txt}, 0.05, "global-search-ngram"), 0.2 )
+          BOOST(  NGRAM_MATCH(node.name, searchTerm, 0.05, "global-search-ngram"), 0.2 )
           OR
-          BOOST( NGRAM_MATCH(node.summary, ${aql_txt}, 0.05, "global-search-ngram"), 0.1 )
+          BOOST( NGRAM_MATCH(node.summary, searchTerm, 0.05, "global-search-ngram"), 0.1 )
         , "text_en")
       
         FILTER !${isMarkDeleted('node')} AND ${filterConditions || 'true'}
@@ -53,6 +55,7 @@ export const globalSearchQuery = ({
         node: ${toDocumentEdgeOrNode('node')}
       }
     `
+  // console.log(query)
   return { limit, skip, query }
 }
 
