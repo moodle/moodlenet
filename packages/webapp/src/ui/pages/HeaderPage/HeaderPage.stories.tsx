@@ -15,7 +15,7 @@ const meta: ComponentMeta<typeof HeaderPage> = {
 }
 
 export const HeaderPageStoryProps: HeaderPageProps = {
-  headerWithProps: withPropsStatic(HeaderStoryProps),
+  headerWithProps: withPropsStatic<HeaderProps>(HeaderStoryProps),
   subHeaderProps: SubHeaderStoryProps,
 }
 

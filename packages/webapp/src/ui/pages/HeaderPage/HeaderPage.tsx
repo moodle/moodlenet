@@ -6,10 +6,21 @@ import './styles.scss'
 
 export type HeaderPageProps = {
   headerWithProps: WithProps<HeaderProps>
-  subHeaderProps: SubHeaderProps | null
-}
+} & (
+  | {
+      status: 'idle'
+      subHeaderProps: SubHeaderProps | null
+    }
+  | {
+      status: 'loading'
+    }
+)
 
-export const HeaderPage: FC<HeaderPageProps> = ({ headerWithProps, subHeaderProps }) => {
+export const HeaderPage: FC<HeaderPageProps> = props => {
+  if (props.status === 'loading') {
+    return null
+  }
+  const { headerWithProps, subHeaderProps } = props
   const [HeaderCtrl, headerProps] = headerWithProps(Header)
   return (
     <div className="page-header">
