@@ -2,6 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
 import { FilterCardStoryProps } from '../../components/cards/FilterCard/FilterCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
+import { SortCardStoryProps } from '../../components/cards/SortCard/SortCard.stories'
 import { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
 import { HeaderStoryProps } from '../../components/Header/Header.stories'
@@ -28,8 +29,9 @@ const subjectCardPropsList: SubjectCardProps[] = ['#Education', '#Forestry', 'En
 export const SearchStoryProps: SearchProps = {
   headerPageProps: HeaderPageStoryProps,
   filterCardProps: FilterCardStoryProps,
+  sortCardProps: SortCardStoryProps,
   subjectCardPropsList: subjectCardPropsList,
-  collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
+  collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps, CollectionCardStoryProps, CollectionCardStoryProps],
   resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps]
 }
 

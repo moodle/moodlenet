@@ -7,7 +7,7 @@ export type ListCardProps = {
     title?: string | undefined,
     content: ReactNode[]
     noCard?: boolean,
-    maxColumns?: number
+    maxWidth?: string | undefined | 'auto'
 }
 
 export const ListCard: FC <ListCardProps> = ({
@@ -15,9 +15,8 @@ export const ListCard: FC <ListCardProps> = ({
     content,
     title,
     noCard,
-    children
+    children,
 }) => {
-
   return (
     <div className={`list-card ${className} ${noCard ? "no-card" : ""}`}>
       <div className="title">{ title
@@ -30,8 +29,7 @@ export const ListCard: FC <ListCardProps> = ({
 }
 
 ListCard.defaultProps = {
-  noCard: false,
-  maxColumns: 1
+  noCard: false
 }
 
 export default ListCard;

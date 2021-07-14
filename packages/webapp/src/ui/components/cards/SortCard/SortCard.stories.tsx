@@ -1,34 +1,34 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import Checkbox from '../../atoms/Checkbox/CheckInput'
-import { FilterCard, FilterCardProps } from './FilterCard'
+import { SortCard, SortCardProps } from './SortCard'
 
-const meta: ComponentMeta<typeof FilterCard> = {
-  title: 'Components/Cards/FilterCard',
-  component: FilterCard,
+const meta: ComponentMeta<typeof SortCard> = {
+  title: 'Components/Cards/SortCard',
+  component: SortCard,
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['FilterCardStoryProps'],
+  excludeStories: ['SortCardStoryProps'],
   decorators:[
     (Story)=>(<div style={{width: 200}}><Story/></div>)
   ]
 }
 
 
-const FilterCardStory: ComponentStory<typeof FilterCard> = args => <FilterCard {...args} />
+const SortCardStory: ComponentStory<typeof SortCard> = args => <SortCard {...args} />
 
 const content: [string, boolean][] = [['Subjects', true], ['Collections', true], ['Resources', true], ['Level', false], ['Type', false], ['Format', false], ['License', false]]
 
 
-export const FilterCardStoryProps: FilterCardProps = {
-  className: 'filter',
-  title: 'Filters',
+export const SortCardStoryProps: SortCardProps = {
+  className: 'sort',
+  title: 'Sort',
   content: content.map(([label, checked])=>(
     <Checkbox label={label} checked={checked}/>
   ))
 }
 
-export const Default = FilterCardStory.bind({})
-Default.args = FilterCardStoryProps
+export const Default = SortCardStory.bind({})
+Default.args = SortCardStoryProps
 
 export default meta

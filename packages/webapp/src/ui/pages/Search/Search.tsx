@@ -2,9 +2,10 @@ import { Trans } from '@lingui/macro'
 import { FC } from 'react'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
 import { CollectionCard, CollectionCardProps } from '../../components/cards/CollectionCard/CollectionCard'
-import { FilterCard, FilterCardProps } from '../../components/cards/FilterCard/FilterCard'
+import FilterCard, { FilterCardProps } from '../../components/cards/FilterCard/FilterCard'
 import ListCard from '../../components/cards/ListCard/ListCard'
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
+import { SortCardProps } from '../../components/cards/SortCard/SortCard'
 import SubjectCard, { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { HeaderPageTemplate } from '../../templates/page/HeaderPageTemplate'
 import { HeaderPageProps } from '../HeaderPage/HeaderPage'
@@ -12,7 +13,8 @@ import './styles.scss'
 
 export type SearchProps = {
   headerPageProps: HeaderPageProps
-  filterCardProps: FilterCardProps
+  filterCardProps: FilterCardProps 
+  sortCardProps: SortCardProps  
   subjectCardPropsList: SubjectCardProps[]
   collectionCardPropsList: CollectionCardProps[]
   resourceCardPropsList: ResourceCardProps[]
@@ -21,6 +23,7 @@ export type SearchProps = {
 export const Search: FC<SearchProps> = ({
   headerPageProps,
   filterCardProps,
+  sortCardProps,
   subjectCardPropsList,
   collectionCardPropsList,
   resourceCardPropsList,
@@ -39,7 +42,6 @@ export const Search: FC<SearchProps> = ({
               ))}
               className="subjects"
               noCard={true}
-              maxColumns={5}
             > 
               <div className="card-header">
                 <div className="title"><Trans>Subjects</Trans></div>
@@ -47,11 +49,12 @@ export const Search: FC<SearchProps> = ({
               </div>
             </ListCard>
             <ListCard
-              content={collectionCardPropsList.slice(0,3).map(collectionCardProps => (
+              content={collectionCardPropsList.slice(0,4).map(collectionCardProps => (
                 <CollectionCard {...collectionCardProps} />
               ))}
               className="collections"
               noCard={true}
+              maxWidth='200px'
             > 
               <div className="card-header">
                 <div className="title"><Trans>Collections</Trans></div>
