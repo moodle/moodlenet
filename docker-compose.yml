@@ -1,0 +1,37 @@
+version: '3'
+volumes:
+  rabbitmq-data:
+  arango-data:
+services:
+  arango:
+    image: arangodb/arangodb
+    environment:
+      ARANGO_NO_AUTH: 1
+    # volumes:
+    #   - ./ARANGO-DATA:/var/lib/arangodb3
+    healthcheck:
+      test: ['CMD', 'arangoinspect', '--server.ask-jwt-secret', 'false']
+      interval: 2s
+      timeout: 60s
+      start_period: 2s
+      #retries: 12
+  nodejs:
+    build: .
+    image: moodlenet:mvp-dev-preview
+    links:
+      - arango
+    depends_on:
+      arango:
+        condition: service_healthy
+    restart: on-failure
+
+  http:
+    image: nginx
+    links:
+      - nodejs
+    depends_on:
+      - nodejs
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - '80:80'

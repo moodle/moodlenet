@@ -1,12 +1,13 @@
 import { getOneResult } from '../../../../lib/helpers/arango'
 import { CreateNewUserAdapter, NewUserConfirmAdapter, SignUpAdapter } from '../../../../ports/user-auth/new-user'
-import { activateNewUserQ } from '../functions/activateNewUser'
-import { createNewUserQ } from '../functions/createNewUser'
-import { isEmailInUseQ } from '../functions/isEmailInUse'
-import { isUsernameInUseQ } from '../functions/isUsernameInUse'
-import { newUserRequestInsertQ } from '../functions/newUserRequest'
+import { activateNewUserQ } from '../queries/activateNewUser'
+import { createNewUserQ } from '../queries/createNewUser'
+import { isEmailInUseQ } from '../queries/isEmailInUse'
+import { isUsernameInUseQ } from '../queries/isUsernameInUse'
+import { newUserRequestInsertQ } from '../queries/newUserRequest'
 import { ActiveUser, UserAuthDB, WaitingFirstActivationUser } from '../types'
-export const storeNewSignupRequest = (db: UserAuthDB): Pick<SignUpAdapter, 'storeNewSignupRequest'> => ({
+import { getConfigAdapter } from './config'
+export const storeNewSignupRequest = (db: UserAuthDB): Pick<SignUpAdapter, 'storeNewSignupRequest' | 'getConfig'> => ({
   storeNewSignupRequest: async ({ email, token }) => {
     const insertQ = newUserRequestInsertQ({ email, token })
     const newWaitingFirstActivationUser = (await getOneResult(insertQ, db)) as WaitingFirstActivationUser | null
@@ -15,17 +16,17 @@ export const storeNewSignupRequest = (db: UserAuthDB): Pick<SignUpAdapter, 'stor
     }
     return // newWaitingFirstActivationUser
   },
+  getConfig: getConfigAdapter({ db }).getLatestConfig,
 })
 
 export const activateNewUser = (db: UserAuthDB): Pick<NewUserConfirmAdapter, 'activateUser'> => ({
-  activateUser: async ({ password, token, username }) => {
+  activateUser: async ({ password, token, username, role }) => {
     const userNameInUseQ = isUsernameInUseQ({ username })
     const userNameInUse = (await getOneResult(userNameInUseQ, db)) as true | null
     if (userNameInUse) {
       return 'username not available'
     }
-
-    const activateQ = activateNewUserQ({ password, token, username })
+    const activateQ = activateNewUserQ({ role, password, token, username })
     // Queries should be typed kinda  `type QueryType<T> = string & T`
     // so, `getOneResult` returns correct type
     const activeUser = (await getOneResult(activateQ, db)) as ActiveUser | null

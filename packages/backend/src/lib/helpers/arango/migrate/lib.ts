@@ -170,39 +170,52 @@ export const stepDBTo =
   }
 
 export const initializeDB =
-  ({ dbname, ladder, forceDrop }: { dbname: string; ladder: VersionLadder; forceDrop: boolean }) =>
+  ({
+    dbname,
+    ladder,
+    actionOnDBExists,
+  }: {
+    dbname: string
+    ladder: VersionLadder
+    actionOnDBExists: 'drop' | 'abort' | 'upgrade'
+  }) =>
   async ({ sys_db }: { sys_db: Database }) => {
     const exists = await sys_db.database(dbname).exists()
     if (exists) {
-      if (forceDrop !== true) {
-        throw new Error(`db ${dbname} exists, but can't drop: forceDrop !== true`)
+      if (actionOnDBExists === 'abort') {
+        throw new Error(`db ${dbname} exists, abort`)
       }
-      console.log(`db ${dbname} exists, dropping`)
-      await sys_db.dropDatabase(dbname)
+      if (actionOnDBExists === 'drop') {
+        console.log(`db ${dbname} exists, dropping`)
+        await sys_db.dropDatabase(dbname)
+      }
     }
 
-    const versions = getLadderVersionSorted(ladder)
-    const firstVersion = versions.reverse()[0]!
-    const firstVersionUpdater = ladder[firstVersion]
+    const db = sys_db.database(dbname)
 
-    console.log(`first version in ladder: ${firstVersion}`)
-    if (!firstVersionUpdater || !('initialSetUp' in firstVersionUpdater)) {
-      throw new Error(`can't find an "initialSetup" for lowest version ${firstVersion}!`)
+    if (!exists || actionOnDBExists === 'drop') {
+      const versions = getLadderVersionSorted(ladder)
+      const firstVersion = versions.reverse()[0]!
+      const firstVersionUpdater = ladder[firstVersion]
+
+      console.log(`first version in ladder: ${firstVersion}`)
+      if (!firstVersionUpdater || !('initialSetUp' in firstVersionUpdater)) {
+        throw new Error(`can't find an "initialSetup" for lowest version ${firstVersion}!`)
+      }
+
+      console.log(`creating db ${dbname}`)
+      await sys_db.createDatabase(dbname)
+      console.log(`initializing db ${dbname}`)
+
+      console.log(`setup migration collection`)
+      await setUpMigrationCollection({ db })
+
+      console.log(`db initial version`)
+      await firstVersionUpdater.initialSetUp({ db })
+
+      console.log(`adding migration record`)
+      await addMigrationRecord(firstVersion)({ db })
     }
-
-    console.log(`creating db ${dbname}`)
-    const db = await sys_db.createDatabase(dbname)
-    console.log(`initializing db ${dbname}`)
-
-    console.log(`setup migration collection`)
-    await setUpMigrationCollection({ db })
-
-    console.log(`db initial version`)
-    await firstVersionUpdater.initialSetUp({ db })
-
-    console.log(`adding migration record`)
-    await addMigrationRecord(firstVersion)({ db })
-
     const version = await upgradeToLatest({ ladder })({ db })
     await db.close()
     return version

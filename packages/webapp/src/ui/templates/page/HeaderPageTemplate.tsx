@@ -1,7 +1,6 @@
 import { FC } from 'react'
 import { WithProps } from '../../lib/ctrl'
 import HeaderPage, { HeaderPageProps } from '../../pages/HeaderPage/HeaderPage'
-import '../../styles/view.scss'
 import { MainPageWrapper } from './MainPageWrapper'
 
 export type HeaderPageTemplateProps = {

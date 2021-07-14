@@ -1,16 +1,27 @@
 import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { ShallowNodeByType } from '../../graphql/types.node'
 import { subjectFields } from '../../initialData/ISCED/Fields/SubjectFields'
+import { DefaultConfig } from '../../initialData/user-auth/defaultConfig'
 import getInitialUsers from '../../initialData/user-auth/initialUsers'
 // import { DefaultConfig } from '../../initialData/user-auth/defaultConfig'
 import { SystemSessionEnv } from '../../lib/auth/env'
 import { QMCommand, QMino } from '../../lib/qmino/lib'
 import { create } from '../content-graph/node'
+import * as userAuthConfigPorts from '../user-auth/config'
 import { createNewUser } from '../user-auth/new-user'
 
 export const initialContent = QMCommand(({ domain }: { domain: string }) => async ({ qmino }: { qmino: QMino }) => {
-  console.log(`creating psudo users`)
-  const initialUsers = await Promise.all(
+  console.log(`initialContent for domain:${domain}`)
+
+  console.log(`inserting default UserAuth Config`)
+  const saveDefaultConfigAction = userAuthConfigPorts.save({ cfg: DefaultConfig, sessionEnv: SystemSessionEnv() })
+  const saveCfgRes = await qmino.callSync(saveDefaultConfigAction, { timeout: 5000 })
+  if (!saveCfgRes) {
+    throw new Error('could not save default UserAuth Config')
+  }
+
+  console.log(`creating pseudo users`)
+  /* const initialUsers = */ await Promise.all(
     getInitialUsers({ domain }).map(async userData => {
       const createUserAction = createNewUser(userData)
       const user_or_err = await qmino.callSync(createUserAction, { timeout: 5000 })
@@ -23,14 +34,9 @@ export const initialContent = QMCommand(({ domain }: { domain: string }) => asyn
   )
 
   console.log(`creating subjectFields`)
-  const subjFields = await Promise.all(subjectFields.map(insertSubjectField))
+  /* const subjFields = */ await Promise.all(subjectFields.map(insertSubjectField))
 
-  // TODO:
-  // console.log(`inserting default config`)
-  // const saveDefaultConfigAction = saveConfig({ config: DefaultConfig })
-  // const userAuthCfg = await qmino.callSync(saveConfig, { timeout: 5000 })
-
-  return { subjFields, initialUsers /*,userAuthCfg */ }
+  return null //{ subjFields, initialUsers /*,userAuthCfg */ }
 
   function insertSubjectField(subj_field: ShallowNodeByType<'SubjectField'>) {
     const { _key } = parseNodeId(subj_field.id)
