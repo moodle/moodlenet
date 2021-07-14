@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import addIcon from '../../assets/icons/add.svg'
 import searchIcon from '../../assets/icons/search.svg'
+import { Href, Link } from '../../elements/link'
 import { Organization } from '../../types'
 import PrimaryButton from '../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../atoms/TertiaryButton/TertiaryButton'
@@ -9,15 +10,13 @@ import './styles.scss'
 export type HeaderPropsIdle = {
   status: 'idle'
   organization: Pick<Organization, 'logo' | 'name' | 'url'>
-  avatar: string
-  homeLink: string
-  loginLink: string
+  homeHref: Href
+  loginHref: Href
   me: null | {
+    avatar: string
     logout?: () => unknown
     username: string
   }
-  search?: (text: string) => unknown
-  searchValue?: string
 }
 export type HeaderPropsLoading = {
   status: 'loading'
@@ -28,7 +27,7 @@ export const Header: FC<HeaderProps> = props => {
   if (props.status === 'loading') {
     return null
   }
-  const { me, organization, avatar, homeLink } = props
+  const { me, organization, homeHref } = props
   return (
     <div className="header">
       <div className="content">
@@ -36,9 +35,9 @@ export const Header: FC<HeaderProps> = props => {
           <a href={organization.url} rel="noopener noreferrer" target="_blank">
             <img className="logo" src={organization.logo} alt="Logo" />
           </a>
-          <a href={homeLink} rel="noopener noreferrer" target="_blank">
+          <Link href={homeHref} rel="noopener noreferrer" target="_blank">
             <div className="text">MoodleNet</div>
-          </a>
+          </Link>
         </div>
         <div className="right">
           <img className="big-search-icon" src={searchIcon} alt="Search" />
@@ -49,7 +48,7 @@ export const Header: FC<HeaderProps> = props => {
           {me ? (
             <>
               <img className="add-icon" src={addIcon} alt="Add" />
-              <img className="avatar" src={avatar} alt="Avatar" />
+              <img className="avatar" src={me.avatar} alt="Avatar" />
             </>
           ) : (
             <>

@@ -10,7 +10,8 @@ export const LandingRouteComponent: RouteFC<Routes.Landing> = (/* { match } */) 
 
 export const [Ctrl, withProps, withPropsList] = createWithProps<LandingProps, {}>(
   ({ __key, __uiComp: LandingUI, ...rest }) => {
-    return <LandingUI {...({} as LandingProps)} {...rest} key={__key} />
+    const landingProps: LandingProps = {} as any
+    return <LandingUI {...landingProps} {...rest} key={__key} />
   },
 )
 

@@ -34,12 +34,7 @@ SignedOut.parameters = { layout: 'fullscreen' }
 export const SignedIn = HeaderPageStory.bind({})
 SignedIn.args = {
   ...HeaderPageStoryProps,
-  headerWithProps: withPropsStatic<HeaderProps>({
-    ...HeaderStoryProps,
-    me: {
-      username: 'Juanito',
-    },
-  }),
+  headerWithProps: withPropsStatic<HeaderProps>(HeaderStoryProps),
 }
 SignedIn.parameters = { layout: 'fullscreen' }
 
