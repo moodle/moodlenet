@@ -5,10 +5,9 @@ import "./styles.scss";
 export type CollectionCardProps = {
   imageUrl: string
   title:string
-  fontSize?: string
 }
 
-export const CollectionCard:FC<CollectionCardProps>=({ imageUrl, title, fontSize }) =>{
+export const CollectionCard:FC<CollectionCardProps>=({ imageUrl, title }) =>{
   const background = {
     backgroundImage: "url(" + imageUrl + ")",
     backgroundSize: "cover"
@@ -16,7 +15,7 @@ export const CollectionCard:FC<CollectionCardProps>=({ imageUrl, title, fontSize
   
   return (
     <div className="collection-card" style={background}>
-      <div className="title" style={{fontSize: fontSize}}>
+      <div className="title">
       <abbr title={title}>{title}</abbr>
       </div>
     </div>
@@ -24,6 +23,5 @@ export const CollectionCard:FC<CollectionCardProps>=({ imageUrl, title, fontSize
 }
 
 CollectionCard.defaultProps = {
-  fontSize: '12px'
 }
 

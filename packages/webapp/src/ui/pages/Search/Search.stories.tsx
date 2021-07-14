@@ -39,7 +39,12 @@ export const SearchStoryProps: SearchProps = {
   }),
   filterCardProps: FilterCardStoryProps,
   subjectCardWithPropsList: withPropsListStatic(subjectCardPropsList),
-  collectionCardWithPropsList: withPropsListStatic([CollectionCardStoryProps, CollectionCardStoryProps]),
+  collectionCardWithPropsList: withPropsListStatic([
+    CollectionCardStoryProps, 
+    CollectionCardStoryProps, 
+    CollectionCardStoryProps, 
+    CollectionCardStoryProps
+  ]),
   resourceCardWithPropsList: withPropsListStatic([
     ResourceCardStoryProps,
     ResourceCardStoryProps,
