@@ -14,7 +14,7 @@ const meta: ComponentMeta<typeof CollectionCard> = {
 }
 
 export const CollectionCardStoryProps: CollectionCardProps = {
-  title: 'collection nameasdasdasdasdasdasdasdasdsaassadasdaddasdasdasdsa',
+  title: 'collection title',
   imageUrl: 'https://picsum.photos/200/100'
 }
 
