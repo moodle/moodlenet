@@ -4,7 +4,8 @@ import { Landing } from '../ui/pages/Landing/Landing'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const LandingRouteComponent: RouteFC<Routes.Landing> = (/* { match } */) => {
-  const [LandingCtrl, landingProps] = landingWithProps({ key: 'Landing Page' })(Landing)
+  const [LandingCtrl, landingProps] = landingWithProps({ key: `Landing Page` })(Landing)
+
   return <LandingCtrl {...landingProps} />
 }
 

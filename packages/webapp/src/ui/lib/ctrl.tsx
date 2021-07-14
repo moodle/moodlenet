@@ -55,10 +55,10 @@ export const createWithProps = <
 >(
   CtrlCmp: Ctrl<UIProps, IntrinsicCtrlProps & InternalCtrlProps<UIProps>, ExclKeys>,
 ) => {
-  const UICtrlCmp: UICtrl<UIProps, ExclKeys, IntrinsicCtrlProps & InternalCtrlProps<UIProps>> = uiCtrlProps => (
-    <CtrlCmp {...uiCtrlProps} />
-  )
-
+  // const UICtrlCmp: UICtrl<UIProps, ExclKeys, IntrinsicCtrlProps & InternalCtrlProps<UIProps>> = uiCtrlProps => (
+  //   <CtrlCmp {...uiCtrlProps} />
+  // )
+  const UICtrlCmp = CtrlCmp
   return [
     UICtrlCmp,
     function withProps(intrinsicCtrlProps: IntrinsicCtrlProps & BaseIntrinsicCtrlProps): WithProps<UIProps, ExclKeys> {
@@ -70,7 +70,7 @@ export const createWithProps = <
           __uiComp,
           __key: intrinsicCtrlProps.key,
         }
-        const _: ActualType = [UICtrlCmp, ctrlProps]
+        const _: ActualType = [CtrlCmp, ctrlProps]
         return _ as any
       }
     },
@@ -88,7 +88,7 @@ export const createWithProps = <
             __key: intrinsicCtrlProps.key,
           }),
         )
-        const _: ActualType = [UICtrlCmp, ctrlPropsList]
+        const _: ActualType = [CtrlCmp, ctrlPropsList]
         return _ as any
       }
     },

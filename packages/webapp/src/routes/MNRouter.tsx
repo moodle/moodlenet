@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { Route, Switch } from 'react-router-dom'
-import { LandingRoute } from './Landing'
+import { LandingRoute } from './LandingRoute'
 
 export const MNRouter: FC = (/* { children } */) => {
   return (
