@@ -39,10 +39,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
     isAuthenticated: false,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
       ...HeaderPageStoryProps,
-      headerWithProps: withPropsStatic<HeaderProps>({
-        ...HeaderStoryProps,
-        me: null,
-      }),
+      headerWithProps: withPropsStatic<HeaderProps>(HeaderStoryProps),
     }),
   }),
 }
@@ -53,10 +50,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
     isAuthenticated: true,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
       ...HeaderPageStoryProps,
-      headerWithProps: withPropsStatic<HeaderProps>({
-        ...HeaderStoryProps,
-        me: { username: 'Juanito' },
-      }),
+      headerWithProps: withPropsStatic<HeaderProps>(HeaderStoryProps),
     }),
   }),
 }

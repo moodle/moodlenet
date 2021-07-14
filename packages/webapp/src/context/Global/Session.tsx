@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro'
 import { getProfileIdByUsername } from '@moodlenet/common/lib/utils/auth/helpers'
-import { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { createCtx } from '../../lib/context'
 import { setToken } from './Apollo/client'
 import {
   CurrentProfileInfoFragment,
@@ -47,8 +48,7 @@ export type SessionContextType = {
   login(_: { username: string; password: string }): Promise<LoginWarnMessage | null>
 }
 
-const SessionContext = createContext<SessionContextType>(null as any)
-export const useSession = () => useContext(SessionContext)
+export const [useSession, ProvideSession] = createCtx<SessionContextType>('Session')
 
 const WRONG_CREDS_MSG = t`wrong credentials`
 
@@ -114,5 +114,5 @@ export const SessionProvider: FC = ({ children }) => {
     }),
     [activateNewUser, currentProfile, lastSession.jwt, lastSession.username, login, logout, session],
   )
-  return <SessionContext.Provider value={ctx}>{!sessionQResult.called ? null : children}</SessionContext.Provider>
+  return <ProvideSession value={ctx}>{!sessionQResult.called ? null : children}</ProvideSession>
 }

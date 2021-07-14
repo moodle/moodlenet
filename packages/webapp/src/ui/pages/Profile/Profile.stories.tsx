@@ -57,10 +57,7 @@ export const ProfileLoggedInStoryProps: ProfileProps = {
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
     isAuthenticated: true,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
-      headerWithProps: withPropsStatic<HeaderProps>({
-        ...HeaderStoryProps,
-        me: { username: 'Juanito' },
-      }),
+      headerWithProps: withPropsStatic<HeaderProps>(HeaderStoryProps),
       subHeaderProps: SubHeaderStoryProps,
     }),
   }),

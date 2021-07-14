@@ -1,4 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { href } from '../../elements/link'
 import { Header, HeaderPropsIdle } from './Header'
 
 const meta: ComponentMeta<typeof Header> = {
@@ -17,12 +18,12 @@ export const HeaderStoryProps: HeaderPropsIdle = {
     url: 'https://www.bfh.ch/',
     logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
   },
-  avatar: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
-  homeLink: 'https://moodle.com/moodlenet/',
+  homeHref: href('Landing/Logged In'),
   me: {
-    username: 'string,',
+    avatar: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
+    username: 'username',
   },
-  loginLink: '',
+  loginHref: href('Login/Default'),
 } as const
 
 const HeaderStory: ComponentStory<typeof Header> = args => <Header {...args} />

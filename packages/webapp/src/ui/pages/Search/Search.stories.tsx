@@ -66,10 +66,7 @@ export const SearchLoggedInStoryProps: SearchProps = {
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
     isAuthenticated: false,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
-      headerWithProps: withPropsStatic<HeaderProps>({
-        ...HeaderStoryProps,
-        me: { username: 'Juanito' },
-      }),
+      headerWithProps: withPropsStatic<HeaderProps>(HeaderStoryProps),
       subHeaderProps: null,
     }),
   }),
