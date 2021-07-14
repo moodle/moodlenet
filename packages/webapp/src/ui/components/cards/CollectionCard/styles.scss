@@ -1,0 +1,39 @@
+.collection-card {
+    cursor: pointer;
+    width: 100%;
+    height: 65px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 6px #dedede;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .title {
+        color: white;
+        background-color: #b6bacb;
+        border-radius: 35px;
+        padding: 7px 12px;
+        margin: 0 15px;
+        white-space: nowrap;
+        overflow: hidden;
+        
+        &:not(:hover) {
+            text-overflow: ellipsis;
+        }
+        
+        /* animate on either hover or focus */
+        &:hover, &:focus {
+            overflow: scroll;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    > .title::-webkit-scrollbar {
+        display: none;
+    }
+}

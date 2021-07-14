@@ -1,16 +1,19 @@
 import { FC } from 'react'
-import { PageHeader, PageHeaderProps } from '../../components/PageHeader'
+import { WithProps } from '../../lib/ctrl'
+import HeaderPage, { HeaderPageProps } from '../../pages/HeaderPage/HeaderPage'
 import { MainPageWrapper } from './MainPageWrapper'
 
 export type HeaderPageTemplateProps = {
-  pageHeaderProps: PageHeaderProps
+  headerPageWithProps: WithProps<HeaderPageProps>
+  isAuthenticated: boolean
 }
 
-export const HeaderPageTemplate: FC<HeaderPageTemplateProps> = ({ pageHeaderProps, children }) => {
+export const HeaderPageTemplate: FC<HeaderPageTemplateProps> = ({ headerPageWithProps, isAuthenticated, children }) => {
+  const [HeaderPageCtrl, headerPageProps] = headerPageWithProps(HeaderPage)
   return (
     <MainPageWrapper>
-      <PageHeader {...pageHeaderProps} />
-      {children}
+      <HeaderPageCtrl {...headerPageProps} />
+      <div className={`view ${isAuthenticated ? 'logged-in' : 'logged-out'}`}>{children}</div>
     </MainPageWrapper>
   )
 }

@@ -1,6 +1,6 @@
-import {StrictMode} from 'react'
+import { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
-import { GlobalContexts } from './contexts/Global'
+import { GlobalContexts } from './context/Global'
 import './index.css'
 import reportWebVitals from './reportWebVitals'
 import { MNRouter } from './routes/MNRouter'

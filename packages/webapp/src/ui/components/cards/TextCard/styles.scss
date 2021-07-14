@@ -1,0 +1,16 @@
+.text-card {
+    > .card {
+        > .text {
+            padding: 20px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+    
+        @media (max-width:450px) {
+            padding: 0 24px 14px;
+            background-color: #fff;
+            box-shadow: none;
+            border-radius: 0;
+        }
+    }
+}

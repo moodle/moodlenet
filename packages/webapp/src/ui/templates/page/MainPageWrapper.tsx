@@ -1,13 +1,8 @@
 import { FC } from 'react'
-import 'semantic-ui-css/semantic.min.css'
-import { Container } from 'semantic-ui-react'
-export { PageHeader } from '../../components/PageHeader'
+import '../../styles/main.css'
+import '../../styles/view.scss'
 
 export type MainPageWrapperProps = {}
 export const MainPageWrapper: FC<MainPageWrapperProps> = ({ children }) => {
-  return (
-    <Container text fluid style={{ paddingTop: '4.5em' }}>
-      {children}
-    </Container>
-  )
+  return <div className="main-page-wrapper">{children}</div>
 }

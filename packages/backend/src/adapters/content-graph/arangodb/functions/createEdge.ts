@@ -49,7 +49,7 @@ export const createEdgeQ = <Type extends EdgeType>({
     return ${toDocumentEdgeOrNode('NEW')}
   `
 
-  console.log(q)
+  // console.log(q)
 
   return q
 }
