@@ -43,12 +43,11 @@ export const ProfileLoggedOutStoryProps: ProfileProps = {
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
     isAuthenticated: false,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
-      // isAuthenticated: false,
       headerWithProps: withPropsStatic<HeaderProps>({
         ...HeaderStoryProps,
         me: null,
       }),
-      subHeaderWithProps: withPropsStatic(SubHeaderStoryProps),
+      subHeaderProps: null,
     }),
   }),
 }
@@ -56,15 +55,13 @@ export const ProfileLoggedOutStoryProps: ProfileProps = {
 export const ProfileLoggedInStoryProps: ProfileProps = {
   ...ProfileStoryProps,
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
-    ...HeaderPageStoryProps,
     isAuthenticated: true,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
-      // isAuthenticated: true,
       headerWithProps: withPropsStatic<HeaderProps>({
         ...HeaderStoryProps,
         me: { username: 'Juanito' },
       }),
-      subHeaderWithProps: withPropsStatic(SubHeaderStoryProps),
+      subHeaderProps: SubHeaderStoryProps,
     }),
   }),
 }
