@@ -8,14 +8,13 @@ import './styles.scss'
 
 export type LandingProps = {
   headerPageTemplateWithProps: WithProps<HeaderPageTemplateProps>
-  trendCardWithProps: WithProps<TrendCardProps>
+  trendCardProps: TrendCardProps
   organization: Pick<Organization, 'name' | 'intro'>
   image: string
 }
 
-export const Landing: FC<LandingProps> = ({ headerPageTemplateWithProps, trendCardWithProps, organization, image }) => {
+export const Landing: FC<LandingProps> = ({ headerPageTemplateWithProps, trendCardProps, organization, image }) => {
   const [HeaderPageTemplateCtrl, headerPageTemplateProps] = headerPageTemplateWithProps(HeaderPageTemplate)
-  const [TrendCardCtrl, trendCardProps] = trendCardWithProps(TrendCard)
 
   return (
     <HeaderPageTemplateCtrl {...headerPageTemplateProps}>
@@ -33,10 +32,10 @@ export const Landing: FC<LandingProps> = ({ headerPageTemplateWithProps, trendCa
               </div>
               <img className="text-image" src={image} alt="Background" />
             </TextCard>
-            <TrendCardCtrl {...trendCardProps} />
+            <TrendCard {...trendCardProps} />
           </div>
           <div className="side-column">
-            <TrendCardCtrl {...trendCardProps} />
+            <TrendCard {...trendCardProps} />
           </div>
         </div>
       </div>

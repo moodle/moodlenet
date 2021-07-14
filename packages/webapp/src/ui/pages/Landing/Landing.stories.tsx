@@ -22,10 +22,11 @@ const LandingStory: ComponentStory<typeof Landing> = args => <Landing {...args} 
 
 export const LandingStoryProps: LandingProps = {
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+    status: 'idle',
     headerPageWithProps: withPropsStatic(HeaderPageStoryProps),
     isAuthenticated: true,
   }),
-  trendCardWithProps: withPropsStatic(TrendCardStoryProps),
+  trendCardProps: TrendCardStoryProps,
   organization: {
     name: 'Bern University of Applied Sciences',
     intro: 'Diverse, sound, dynamic – these are the values that define BFH. And this is our MoodleNet server. ',
@@ -36,10 +37,10 @@ export const LandingStoryProps: LandingProps = {
 export const LandingLoggedOutStoryProps: LandingProps = {
   ...LandingStoryProps,
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+    status: 'idle',
     isAuthenticated: false,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
       ...HeaderPageStoryProps,
-      // isAuthenticated: false,
       headerWithProps: withPropsStatic<HeaderProps>({
         ...HeaderStoryProps,
         me: null,
@@ -51,10 +52,10 @@ export const LandingLoggedOutStoryProps: LandingProps = {
 export const LandingLoggedInStoryProps: LandingProps = {
   ...LandingStoryProps,
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+    status: 'idle',
     isAuthenticated: true,
     headerPageWithProps: withPropsStatic<HeaderPageProps>({
       ...HeaderPageStoryProps,
-      // isAuthenticated: true,
       headerWithProps: withPropsStatic<HeaderProps>({
         ...HeaderStoryProps,
         me: { username: 'Juanito' },
