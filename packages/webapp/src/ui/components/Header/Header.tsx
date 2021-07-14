@@ -6,7 +6,8 @@ import PrimaryButton from '../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../atoms/TertiaryButton/TertiaryButton'
 import './styles.scss'
 
-export type HeaderProps = {
+export type HeaderPropsIdle = {
+  status: 'idle'
   organization: Pick<Organization, 'logo' | 'name' | 'url'>
   avatar: string
   homeLink: string
@@ -18,8 +19,16 @@ export type HeaderProps = {
   search?: (text: string) => unknown
   searchValue?: string
 }
+export type HeaderPropsLoading = {
+  status: 'loading'
+}
+export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
 
-export const Header: FC<HeaderProps> = ({ me, organization, avatar, homeLink }) => {
+export const Header: FC<HeaderProps> = props => {
+  if (props.status === 'loading') {
+    return null
+  }
+  const { me, organization, avatar, homeLink } = props
   return (
     <div className="header">
       <div className="content">
