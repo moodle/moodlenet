@@ -35,7 +35,7 @@ export const Header: FC<HeaderProps> = props => {
           <a href={organization.url} rel="noopener noreferrer" target="_blank">
             <img className="logo" src={organization.logo} alt="Logo" />
           </a>
-          <Link href={homeHref} rel="noopener noreferrer" target="_blank">
+          <Link href={homeHref}>
             <div className="text">MoodleNet</div>
           </Link>
         </div>
