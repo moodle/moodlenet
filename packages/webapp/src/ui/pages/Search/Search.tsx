@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro'
 import { FC } from 'react'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
 import { CollectionCard, CollectionCardProps } from '../../components/cards/CollectionCard/CollectionCard'
-import { FilterCard, FilterCardProps } from '../../components/cards/FilterCard/FilterCard'
+import FilterCard, { FilterCardProps } from '../../components/cards/FilterCard/FilterCard'
 import ListCard from '../../components/cards/ListCard/ListCard'
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
 import SubjectCard, { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
@@ -43,7 +43,6 @@ export const Search: FC<SearchProps> = ({
               ))}
               className="subjects"
               noCard={true}
-              maxColumns={5}
             >
               <div className="card-header">
                 <div className="title">

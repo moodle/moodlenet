@@ -17,6 +17,7 @@ export type ProfileProps = {
   profileCardProps: ProfileCardProps
   collectionCardWithPropsList: WithPropsList<CollectionCardProps>
   resourceCardWithPropsList: WithPropsList<ResourceCardProps>
+  username: string
 }
 
 export const Profile: FC<ProfileProps> = ({
@@ -26,6 +27,7 @@ export const Profile: FC<ProfileProps> = ({
   scoreCardProps,
   collectionCardWithPropsList,
   resourceCardWithPropsList,
+  username,
 }) => {
   const [HeaderPageTemplateCtrl, headerPageTemplateProps] = headerPageTemplateWithProps(HeaderPageTemplate)
   const [CollectionCardCtrl, collectionCardPropsList] = collectionCardWithPropsList(CollectionCard)
@@ -44,7 +46,7 @@ export const Profile: FC<ProfileProps> = ({
               className="resources"
             />
             <ListCard
-              title={t`Collections curated by ${profileCardProps.username}`}
+              title={t`Collections curated by ${username}`}
               content={collectionCardPropsList.map(collectionCardProps => (
                 <CollectionCardCtrl {...collectionCardProps} />
               ))}
@@ -55,7 +57,7 @@ export const Profile: FC<ProfileProps> = ({
             <ScoreCard {...scoreCardProps} />
             <OverallCard {...overallCardProps} />
             <ListCard
-              title={t`Collections curated by ${profileCardProps.username}`}
+              title={t`Collections curated by ${username}`}
               content={collectionCardPropsList.map(collectionCardProps => (
                 <CollectionCardCtrl {...collectionCardProps} />
               ))}
