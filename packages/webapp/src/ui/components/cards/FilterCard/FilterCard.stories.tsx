@@ -17,7 +17,15 @@ const meta: ComponentMeta<typeof FilterCard> = {
 
 const FilterCardStory: ComponentStory<typeof FilterCard> = args => <FilterCard {...args} />
 
-const content: [string, boolean][] = [['Subjects', true], ['Collections', true], ['Resources', true], ['Level', false], ['Type', false], ['Format', false], ['License', false]]
+const content: [string, boolean][] = [
+  ['Subjects', true], 
+  ['Collections', true], 
+  ['Resources', true]
+  /*['Level', false], 
+  ['Type', false], 
+  ['Format', false], 
+  ['License', false]*/
+]
 
 
 export const FilterCardStoryProps: FilterCardProps = {

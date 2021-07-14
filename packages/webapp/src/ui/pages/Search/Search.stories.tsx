@@ -2,6 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
 import { FilterCardStoryProps } from '../../components/cards/FilterCard/FilterCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
+import { SortCardStoryProps } from '../../components/cards/SortCard/SortCard.stories'
 import { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
 import { HeaderProps } from '../../components/Header/Header'
@@ -37,6 +38,7 @@ export const SearchStoryProps: SearchProps = {
     headerPageWithProps: withPropsStatic(HeaderPageStoryProps),
     isAuthenticated: true,
   }),
+  sortCardProps: SortCardStoryProps,
   filterCardProps: FilterCardStoryProps,
   subjectCardWithPropsList: withPropsListStatic(subjectCardPropsList),
   collectionCardWithPropsList: withPropsListStatic([
