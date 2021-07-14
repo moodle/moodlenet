@@ -6,7 +6,6 @@ import { createWithProps } from '../../../lib/ctrl'
 import { FollowTag } from '../../../types'
 import { HeaderPageProps } from '../HeaderPage'
 import { useHeaderPagePinnedLazyQuery } from './HeaderPageCtrl.gen'
-import './styles.scss'
 
 export const [HeaderPageCtrl, headerPageCtrlwithProps] = createWithProps<HeaderPageProps, {}>(props => {
   const { currentProfile } = useSession()

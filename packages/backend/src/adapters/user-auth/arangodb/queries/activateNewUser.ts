@@ -7,12 +7,13 @@ export const activateNewUserQ = ({
   token,
   password,
   username,
+  role,
 }: {
   token: string
+  role: Role
   username: string
   password: string
 }) => {
-  const userRole: Role = 'User'
   return `
   
   LET usernameInUse = (${isUsernameInUseQ({ username })})[0]
@@ -31,7 +32,7 @@ export const activateNewUserQ = ({
       username: ${aqlstr(username)},
       status: ${aqlstr(UserStatus.Active)},
       changeEmailRequest: null,
-      role: ${aqlstr(userRole)},
+      role: ${aqlstr(role)},
     } IN ${USER}
     RETURN NEW
   `

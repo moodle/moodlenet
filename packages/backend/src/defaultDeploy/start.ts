@@ -14,19 +14,21 @@ import { delAssetAdapter } from '../adapters/staticAssets/fs/adapters/delAsset'
 import { getAssetAdapter } from '../adapters/staticAssets/fs/adapters/getAsset'
 import { persistTempAssetsAdapter } from '../adapters/staticAssets/fs/adapters/persistTemp'
 import { setupFs } from '../adapters/staticAssets/fs/setup'
+import { getConfigAdapter } from '../adapters/user-auth/arangodb/adapters/config'
 import { activateNewUser, createNewUser, storeNewSignupRequest } from '../adapters/user-auth/arangodb/adapters/new-user'
 import { byUsername } from '../adapters/user-auth/arangodb/adapters/session'
 import { argonHashPassword, argonVerifyPassword } from '../lib/auth/argon'
 import { SystemSessionEnv } from '../lib/auth/env'
 import { getVersionedDBOrThrow } from '../lib/helpers/arango/migrate/lib'
 import { Qmino } from '../lib/qmino'
-import { createInProcessTransport } from '../lib/qmino/transports/in-process'
+import { createInProcessTransport } from '../lib/qmino/transports/in-process/transport'
 import * as edgePorts from '../ports/content-graph/edge'
 import * as nodePorts from '../ports/content-graph/node'
 import * as searchPorts from '../ports/content-graph/search'
 import * as setupPorts from '../ports/setup'
 import * as assetPorts from '../ports/static-assets/asset'
 import * as tmpAssetPorts from '../ports/static-assets/temp'
+import * as userAuthConfigPorts from '../ports/user-auth/config'
 import * as newUserPorts from '../ports/user-auth/new-user'
 import * as userPorts from '../ports/user-auth/user'
 import { DefaultDeployEnv } from './env'
@@ -71,9 +73,20 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
 
   // open ports
 
+  // userAuth Config
+  qminoInProcess.open(userAuthConfigPorts.getLatest, getConfigAdapter({ db: userAuthDatabase }))
+  qminoInProcess.open(userAuthConfigPorts.save, getConfigAdapter({ db: userAuthDatabase }))
+
+  //
+
   qminoInProcess.open(nodePorts.byId, getNodeByIdAdapter(contentGraphDatabase))
 
   qminoInProcess.open(searchPorts.byTerm, globalSearch(contentGraphDatabase))
+
+  qminoInProcess.open(userPorts.getActiveByUsername, {
+    ...byUsername(userAuthDatabase),
+    verifyPassword: argonVerifyPassword(),
+  })
 
   qminoInProcess.open(userPorts.getActiveByUsername, {
     ...byUsername(userAuthDatabase),

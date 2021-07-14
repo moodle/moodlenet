@@ -1,7 +1,8 @@
-import EventEmitter from 'events'
+import { createSocket } from 'dgram'
+import { EventEmitter } from 'events'
 import { inspect } from 'util'
-import { TIMEOUT } from '../lib'
-import { QMPortId, Transport } from '../types'
+import { TIMEOUT } from '../../lib'
+import { QMPortId, Transport } from '../../types'
 
 export const createInProcessTransport = (): Transport => {
   let reqIdCount = 0
@@ -52,15 +53,38 @@ export const createInProcessTransport = (): Transport => {
     }
   }
 
-  process.stdin.on('data', processStdinCmd(send))
+  process.stdin.on('data', processBufferCmd(send))
+  openDgramSocket(send)
 
   return {
     send,
     open,
   }
 }
+
+const openDgramSocket = (send: Transport['send']) => {
+  const server = createSocket('udp4')
+
+  server.on('error', err => {
+    console.log(`Qmino in-process Transport UDP error: \n${err.stack}`)
+    server.close()
+  })
+
+  server.on('message', (msg, rinfo) => {
+    console.log(`Qmino in-process Transport UDP got: ${msg} from ${rinfo.address}:${rinfo.port}`)
+    processBufferCmd(send)(msg)
+  })
+
+  server.on('listening', () => {
+    const address = server.address()
+    console.log(`Qmino in-process Transport UDP listening ${address.address}:${address.port}`)
+  })
+
+  server.bind(36715)
+}
+
 const STDIN_TAG = 'qmino:'
-const processStdinCmd = (send: Transport['send']) => async (buff: Buffer) => {
+const processBufferCmd = (send: Transport['send']) => async (buff: Buffer) => {
   const str_in = buff.toString().trim()
   if (!str_in.startsWith(STDIN_TAG)) {
     return
@@ -73,13 +97,15 @@ const processStdinCmd = (send: Transport['send']) => async (buff: Buffer) => {
   const args_str = rest.join('##')
   console.log({ args_str })
   try {
-    const args = args_str ? args_str.split('|&|').map(_ => JSON.parse(_)) : []
+    const args = args_str ? JSON.parse(args_str) : []
     console.log('Args:\n', inspect(args))
     console.log('sending...')
 
     const resp = await send(id_str.split('::') as QMPortId, args, { timeout: 5000 })
     console.log('RESP:\n', inspect(resp))
+    return resp
   } catch (err) {
     console.error('ERR:\n', inspect(err))
+    throw err
   }
 }
