@@ -3,10 +3,10 @@ import Checkbox from './Checkbox'
 
 const meta: ComponentMeta<typeof Checkbox> = {
   title: 'Components/Atoms/Checkbox',
-  component: Checkbox
+  component: Checkbox,
 }
 
-const CheckboxStory: ComponentStory<typeof Checkbox> = () => <Checkbox label="Resources"></Checkbox>
+const CheckboxStory: ComponentStory<typeof Checkbox> = () => <Checkbox label="Resources" name="Resources"></Checkbox>
 
 export const Default = CheckboxStory.bind({})
 

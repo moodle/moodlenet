@@ -1,36 +1,35 @@
-import { Trans } from '@lingui/macro';
-import { FC, useState } from "react";
-import SortButton, { SortState } from './SortButton/SortButton';
-import "./styles.scss";
+import { FC, useCallback, useState } from 'react'
+import SortButton, { SortState } from './SortButton/SortButton'
+import './styles.scss'
 
 export type SortCardProps = {
-    className: string,
-    title: string,
-    content: [string, SortState][]
+  className: string
+  title: string
+  content: [name: string, label: string, state: SortState][]
+  onChange(sortby: string): unknown
 }
 
-export const SortCard: FC <SortCardProps> = ({
-    className,
-    content,
-    title,
-}) => {
+export const SortCard: FC<SortCardProps> = ({ className, content, title, onChange }) => {
+  const [currentSort, setCurrentSort] = useState(content[1] ? content[1][0] : 'none')
 
-  const [currentSort, setCurrentSort] = useState(content[1] ? content[1][0] : 'none') 
+  const onClick = useCallback(
+    (name: string) => {
+      onChange(name)
+      setCurrentSort(name)
+    },
+    [onChange],
+  )
 
-  const onClick: (label: string) => void = (label) => {
-    setCurrentSort(label)
-  }
-
-  const inContent = content.map(([label, state])=>(
-  <SortButton label={label} state={state} active={currentSort===label ? true : false} clicked={onClick}/>
+  const inContent = content.map(([name, label, state]) => (
+    <SortButton key={name} label={label} state={state} active={currentSort === name ? true : false} clicked={onClick} />
   ))
 
   return (
-    <div className={"sort-card " + className}>
-        <div className="title"><Trans>{title}</Trans></div>
-        <div className="content">{inContent}</div>
+    <div className={'sort-card ' + className}>
+      <div className="title">{title}</div>
+      <div className="content">{inContent}</div>
     </div>
-  );
+  )
 }
 
-export default SortCard;
+export default SortCard

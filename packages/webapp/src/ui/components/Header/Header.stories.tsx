@@ -1,3 +1,4 @@
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../elements/link'
 import { Header, HeaderPropsIdle } from './Header'
@@ -24,6 +25,8 @@ export const HeaderStoryProps: HeaderPropsIdle = {
     username: 'username',
   },
   loginHref: href('Login/Default'),
+  searchText: '',
+  setSearchText: action('setSearchText'),
 } as const
 
 const HeaderStory: ComponentStory<typeof Header> = args => <Header {...args} />

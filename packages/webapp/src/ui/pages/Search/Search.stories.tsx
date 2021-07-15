@@ -1,8 +1,7 @@
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
-import { FilterCardStoryProps } from '../../components/cards/FilterCard/FilterCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
-import { SortCardStoryProps } from '../../components/cards/SortCard/SortCard.stories'
 import { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
 import { HeaderProps } from '../../components/Header/Header'
@@ -27,25 +26,24 @@ const SearchStory: ComponentStory<typeof Search> = args => <Search {...args} />
 
 const subjectCardPropsList: SubjectCardProps[] = [
   '#Education',
-  '#Forestry',
-  'Enviromental Science',
-  'Sailing Principles',
-  'NoShow',
+  // '#Forestry',
+  // 'Enviromental Science',
+  // 'Sailing Principles',
+  // 'NoShow',
 ].map(x => ({ organization: { ...SubjectCardStoryProps }.organization, title: x }))
 
 export const SearchStoryProps: SearchProps = {
+  setSortBy: action(`set sort by`),
   headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
     headerPageWithProps: withPropsStatic(HeaderPageStoryProps),
     isAuthenticated: true,
   }),
-  sortCardProps: SortCardStoryProps,
-  filterCardProps: FilterCardStoryProps,
   subjectCardWithPropsList: withPropsListStatic(subjectCardPropsList),
   collectionCardWithPropsList: withPropsListStatic([
-    CollectionCardStoryProps, 
-    CollectionCardStoryProps, 
-    CollectionCardStoryProps, 
-    CollectionCardStoryProps
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
   ]),
   resourceCardWithPropsList: withPropsListStatic([
     ResourceCardStoryProps,

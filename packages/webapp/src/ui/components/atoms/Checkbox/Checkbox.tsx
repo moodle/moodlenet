@@ -1,25 +1,25 @@
-import { FC } from "react";
-import "./styles.scss";
+import { ChangeEventHandler, FC } from 'react'
+import './styles.scss'
 
 export type CheckboxProps = {
   label: string
   checked?: boolean
+  name: string
+  onChange?: ChangeEventHandler<HTMLInputElement>
 }
 
-export const Checkbox: FC<CheckboxProps> = ({label, checked}) => {
-  
-
+export const Checkbox: FC<CheckboxProps> = ({ label, checked, name, onChange }) => {
   return (
     <label className="container">
-      <input onClick={() => checked=!checked} type="checkbox" defaultChecked={checked}/>
+      <input name={name || label} onChange={onChange} type="checkbox" checked={checked} />
       <span className="checkmark"></span>
       <span className="label">{label}</span>
-    </label> 
-  );
+    </label>
+  )
 }
 
 Checkbox.defaultProps = {
-  checked: false
+  checked: false,
 }
 
-export default Checkbox;
+export default Checkbox
