@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import Checkbox from '../../atoms/Checkbox/CheckInput'
+import Checkbox from '../../atoms/Checkbox/Checkbox'
 import { FilterCard, FilterCardProps } from './FilterCard'
 
 const meta: ComponentMeta<typeof FilterCard> = {

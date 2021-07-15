@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/macro'
 import { FC } from 'react'
 import addIcon from '../../assets/icons/add.svg'
 import searchIcon from '../../assets/icons/search.svg'
@@ -54,10 +55,10 @@ export const Header: FC<HeaderProps> = props => {
           ) : (
             <>
               <div className="signin-btn">
-                <PrimaryButton>Sign In</PrimaryButton>
+                <PrimaryButton><Trans>Sign in</Trans></PrimaryButton>
               </div>
               <div className="signup-btn">
-                <TertiaryButton>Sign Up</TertiaryButton>
+                <TertiaryButton><Trans>Join now</Trans></TertiaryButton>
               </div>
             </>
           )}

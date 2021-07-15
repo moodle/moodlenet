@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import Checkbox from './CheckInput'
+import Checkbox from './Checkbox'
 
 const meta: ComponentMeta<typeof Checkbox> = {
   title: 'Components/Atoms/Checkbox',
