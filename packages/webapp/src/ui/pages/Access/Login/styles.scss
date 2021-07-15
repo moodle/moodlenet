@@ -1,0 +1,178 @@
+.login-page {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: #f4f5f7;
+
+  > .separator {
+    height: 68px;
+
+    @media (max-height: 600px) {
+      height: 5%;
+      height: calc(5% - 10px);
+    }
+  }
+
+  > .content {
+    display: flex;
+    margin-left: 130px;
+    height: 340px;
+    margin-bottom: 130px;
+    @media (max-height: 750px) {
+      margin-bottom: 5%;
+    }
+    > .card {
+      height: 100%;
+    }
+    > .card:first-child {
+      width: 100%;
+      > .content {
+        flex-direction: column;
+        justify-content: space-between;
+        display: flex;
+        padding: 53px 65px;
+        width: 100%;
+        height: 100%;
+        > .title {
+          color: #B6BACB;
+          font-size: 28px;
+        }
+        > form {
+          display: flex;
+          flex-direction: column;
+          justify-content: start;
+          > input {
+            height: 46px;
+            border-style: solid;
+            border-width: 0.5px;
+            border-radius: 45px;
+
+            &:focus {
+              border:0 solid white;
+            }
+
+            &:focus, &:not(:focus) {
+              outline: none;
+              padding-left: 25px;
+              font-weight: 500;
+              font-size: 17px;
+              color: #606169;
+            }
+
+            &:not(:focus) {
+              color: #B6BACB;
+            }
+
+            &::placeholder {
+              font-weight: 500;
+              font-size: 17px;
+              color: #B6BACB;
+              opacity: 1;
+            }
+            &::-ms-input-placeholder {
+              font-weight: 500;
+              font-size: 17px;
+              color: #B6BACB;
+            }
+            &:-ms-input-placeholder {
+              font-weight: 500;
+              font-size: 17px;
+              color: #B6BACB;
+            }
+          }
+          > .email {
+            border-color:#F88012;
+            margin-bottom: 14px;
+            max-width: 335px;
+            &:focus {
+              border:0 solid white;
+              box-shadow: 0 0 5px #F88012;
+            }
+          }
+          > .password {
+            border-color: #B6BACB;
+            max-width: 250px;
+            &:focus {
+              border:0 solid white;
+              box-shadow: 0 0 5px #B6BACB;
+            }
+          }
+        }
+        > .bottom {
+          display: flex;
+          justify-content: space-between;
+          >.left {
+            display: flex;
+          }
+          > .right {
+            display: flex;
+            > .icon {
+              cursor: pointer;
+              height: 33px;
+              width: 33px;
+              padding: 3px;
+              border-radius: 50px;
+              background-color: #fff;
+              box-shadow: 0 0 6px #dedede;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              > img {
+                height: 55%;
+              }
+            }
+
+            > .icon:first-child {
+              margin-right: 10px;
+            }
+          }
+        }
+      }
+    }
+    > .card:last-child {
+      margin-left: 30px;
+      width: 30%;
+      min-width: 185px;
+      border-radius: 16px 0 0 16px;
+      color: white;
+      background-color: #b6bacb;
+      justify-content: center;
+      display: flex;
+      align-items: start;
+      flex-direction: column;
+      padding-left: 30px;
+      font-size: 36px;
+      > svg {
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+        margin-top: 20px;
+        width: 43px;
+      }
+    }
+  }
+
+  .view {
+    z-index: 0;
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 200px 100px 50px 100px;
+    height: 100%;
+    background-color: #f4f5f7;
+    background-size: cover;
+    overflow-x: hidden;
+    bottom: 0;
+
+    @media (max-width: 450px) {
+      padding: 200px 0 0 0;
+    }
+
+    @media screen and (max-width: 675px) and (min-width: 450px) {
+      padding: 200px 25px;
+    }
+  }
+}

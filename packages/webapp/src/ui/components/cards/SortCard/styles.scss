@@ -1,22 +1,22 @@
 .sort-card {
-    width: 100%;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 16px;
-    box-shadow: 0 0 6px #dedede;
+  width: 100%;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 0 6px #dedede;
 
-    > .title {
-        font-size: 14px;
-        font-weight: bold;
-    }
+  > .title {
+    font-size: 14px;
+    font-weight: bold;
+  }
 
-    > .content {
-        display: flex;
-        flex-direction: column;
-        margin-top: 16px;
-        
-        > :not(:last-child) {
-            margin-bottom: 10px;
-        }
+  > .content {
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
+
+    > :not(:last-child) {
+      margin-bottom: 10px;
     }
+  }
 }
