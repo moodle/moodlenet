@@ -26,8 +26,14 @@ export const Login: FC<LoginProps> = ({accessHeaderProps}) => {
                 <input className="password" type="password" id="fname" placeholder="Password" name="fname"/>
               </form>
               <div className="bottom">
-                <PrimaryButton>Next</PrimaryButton>
-                <TertiaryButton>or browse now!</TertiaryButton>
+                <div className="left">
+                  <PrimaryButton>Next</PrimaryButton>
+                  <TertiaryButton>or browse now!</TertiaryButton>
+                </div>
+                <div className="right">
+                  <div className="icon"><img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" /></div>
+                  <div className="icon"><img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" /></div>
+                </div>
               </div>
             </div>
             
