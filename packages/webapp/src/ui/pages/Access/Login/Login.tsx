@@ -20,8 +20,8 @@ export const Login: FC<LoginProps> = ({accessHeaderProps}) => {
             <div className="content">
               <div className="title">Login</div>
               <form>
-                <input type="text" id="fname" placeholder="username" name="fname"/>
-                <input type="password" id="fname" placeholder="password" name="fname"/>
+                <input className="email" type="text" id="fname" placeholder="Email" name="fname"/>
+                <input className="password" type="password" id="fname" placeholder="Password" name="fname"/>
               </form>
               <div className="bottom">
                 <PrimaryButton>Next</PrimaryButton>
