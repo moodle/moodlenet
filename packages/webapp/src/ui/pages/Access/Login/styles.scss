@@ -98,6 +98,31 @@
         }
         > .bottom {
           display: flex;
+          justify-content: space-between;
+          >.left {
+            display: flex;
+          }
+          > .right {
+            display: flex;
+            > .icon {
+              height: 33px;
+              width: 33px;
+              padding: 3px;
+              border-radius: 50px;
+              background-color: #fff;
+              box-shadow: 0 0 6px #dedede;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              > img {
+                height: 55%;
+              }
+            }
+
+            > .icon:first-child {
+              margin-right: 10px;
+            }
+          }
         }
       }
     }
