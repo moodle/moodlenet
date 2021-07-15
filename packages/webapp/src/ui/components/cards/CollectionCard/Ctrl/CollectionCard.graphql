@@ -1,15 +1,11 @@
-query ContentNodeContext($id: ID!) {
+query CollectionCard($id: ID!) {
   node(id: $id) {
     ... on IContentNode {
       name
+      icon
     }
     ... on INode {
       id
-      _created {
-        by {
-          id
-        }
-      }
     }
   }
 }

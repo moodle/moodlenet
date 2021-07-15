@@ -9,7 +9,7 @@ export const [HeaderPageTemplateCtrl, headerPageTemplateWithProps] = createWithP
     const headerPageTemplateProps: HeaderPageTemplateProps = {
       ...rest,
       isAuthenticated: !!session,
-      headerPageWithProps: headerPageWithProps({ key: 'HeaderPage' }),
+      headerPageWithProps: headerPageWithProps({ key: 'Header Page' }),
     }
     return <HeaderPageTemplateUI {...headerPageTemplateProps} />
   },

@@ -1,27 +1,25 @@
-import { FC } from 'react';
-import '../../../styles/tags.css';
-import "./styles.scss";
+import { FC } from 'react'
+import '../../../styles/tags.css'
+import './styles.scss'
 
 export type CollectionCardProps = {
   imageUrl: string
-  title:string
+  title: string
 }
 
-export const CollectionCard:FC<CollectionCardProps>=({ imageUrl, title }) =>{
+export const CollectionCard: FC<CollectionCardProps> = ({ imageUrl, title }) => {
   const background = {
-    backgroundImage: "url(" + imageUrl + ")",
-    backgroundSize: "cover"
+    backgroundImage: 'url(' + imageUrl + ')',
+    backgroundSize: 'cover',
   }
-  
+
   return (
     <div className="collection-card" style={background}>
       <div className="title">
-      <abbr title={title}>{title}</abbr>
+        <abbr title={title}>{title}</abbr>
       </div>
     </div>
-  );
+  )
 }
 
-CollectionCard.defaultProps = {
-}
-
+CollectionCard.defaultProps = {}
