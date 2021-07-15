@@ -1,34 +1,41 @@
+import { Trans } from '@lingui/macro';
 import ArrowAltIcon from '@material-ui/icons/ArrowRightAltRounded';
 import SwapVertIcon from '@material-ui/icons/SwapVertRounded';
 import { FC, useState } from "react";
 import "./styles.scss";
 
+export type SortState = 'inactive' | 'more' | 'less'
+
 export type CheckButtonProps = {
   label: string
-  state?: 'inactive' | 'more' | 'less'
+  state?: SortState
+  active?: boolean
+  clicked: (label: string) => void
 }
 
-export const CheckButton: FC<CheckButtonProps> = ({label, state}) => {
+export const CheckButton: FC<CheckButtonProps> = ({label, state, clicked, active}) => {
   const [inState, setInState] = useState(state);
   
   const onClick = () => {
-    if (inState === 'inactive') { setInState('more')}
-    else if (inState === 'more') { setInState('less') }
+    if (inState === 'inactive') { setInState('more'); console.log('more')}
+    else if (inState === 'more') { setInState('less'); console.log('less') }
     else { setInState('inactive') }
+    clicked(label)
   }
 
   return (
-    <div className={`check-button ${inState}`} onClick={onClick}>
+    <div className={`check-button ${active ? inState : 'inactive'}`} onClick={onClick}>
         <div className="icon inactive-icon"><SwapVertIcon /></div>
         <div className="icon more-icon"><ArrowAltIcon /></div>
         <div className="icon less-icon"><ArrowAltIcon /></div>
-        <span className="label">{label}</span>
+        <span className="label"><Trans>{label}</Trans></span>
     </div>
   );
 }
 
 CheckButton.defaultProps = {
-  state: 'inactive'
+  state: 'inactive',
+  active: false
 }
 
 export default CheckButton;
