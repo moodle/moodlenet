@@ -30,7 +30,7 @@ export const [LandingCtrl, landingWithProps] = createWithProps<LandingProps, {}>
     )
     const landingProps = useMemo<LandingProps>(
       () => ({
-        headerPageTemplateWithProps: headerPageTemplateWithProps({ key: 'Header Page Template' }),
+        headerPageTemplateWithProps: headerPageTemplateWithProps({ key: 'Landing Header Page Template' }),
         organization: {
           name: 'Bern University of Applied Sciences',
           intro: 'Diverse, sound, dynamic – these are the values that define BFH. And this is our MoodleNet server. ',
