@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton';
 import HeaderTitle from '../../../components/Header/HeaderTitle/HeaderTitle';
 import { Organization } from '../../../types';
 import './styles.scss';
@@ -11,12 +12,9 @@ export const AccessHeader: FC<AccessHeaderProps> = ({organization}) => {
   return (
     <div className="access-header">
       <div className="content">
-        <div className="left">
-          <HeaderTitle organization={organization}/>
-        </div>
-        <div className="right">
-        </div>
-        </div>
+        <HeaderTitle organization={organization}/>
+        <PrimaryButton>Learn more</PrimaryButton>
+      </div>
     </div>
   )
 }
