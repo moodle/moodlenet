@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 import { FC, useState } from "react";
-import CheckButton, { SortState } from '../../atoms/CheckButton/CheckButton';
+import SortButton, { SortState } from './SortButton/SortButton';
 import "./styles.scss";
 
 export type SortCardProps = {
@@ -22,7 +22,7 @@ export const SortCard: FC <SortCardProps> = ({
   }
 
   const inContent = content.map(([label, state])=>(
-  <CheckButton label={label} state={state} active={currentSort===label ? true : false} clicked={onClick}/>
+  <SortButton label={label} state={state} active={currentSort===label ? true : false} clicked={onClick}/>
   ))
 
   return (
