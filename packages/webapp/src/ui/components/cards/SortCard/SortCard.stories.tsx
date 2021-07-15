@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { SortState } from '../../atoms/CheckButton/CheckButton'
+import { SortState } from './SortButton/SortButton'
 import { SortCard, SortCardProps } from './SortCard'
 
 const meta: ComponentMeta<typeof SortCard> = {

@@ -34,7 +34,8 @@ export const ProfileStoryProps: ProfileProps = {
   profileCardProps: ProfileCardStoryProps,
   scoreCardProps: ScoreCardStoryProps,
   collectionCardWithPropsList: withPropsListStatic([CollectionCardStoryProps, CollectionCardStoryProps]),
-  resourceCardWithPropsList: withPropsListStatic([ResourceCardStoryProps])
+  resourceCardWithPropsList: withPropsListStatic([ResourceCardStoryProps]),
+  username: 'Juanito',
 }
 
 export const ProfileLoggedOutStoryProps: ProfileProps = {
