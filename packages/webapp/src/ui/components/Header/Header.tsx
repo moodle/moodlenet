@@ -1,5 +1,5 @@
-import { Trans } from '@lingui/macro'
-import { FC } from 'react'
+import { t, Trans } from '@lingui/macro'
+import { ChangeEventHandler, FC, useCallback } from 'react'
 import addIcon from '../../assets/icons/add.svg'
 import searchIcon from '../../assets/icons/search.svg'
 import { Href, Link } from '../../elements/link'
@@ -8,7 +8,7 @@ import PrimaryButton from '../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../atoms/TertiaryButton/TertiaryButton'
 import './styles.scss'
 
-export type HeaderPropsIdle = {
+export type HeaderPropsIdle = HeaderPropsBase & {
   status: 'idle'
   organization: Pick<Organization, 'logo' | 'name' | 'url'>
   homeHref: Href
@@ -19,16 +19,25 @@ export type HeaderPropsIdle = {
     username: string
   }
 }
-export type HeaderPropsLoading = {
+export type HeaderPropsLoading = HeaderPropsBase & {
   status: 'loading'
+}
+
+export type HeaderPropsBase = {
+  setSearchText(text: string): unknown
+  searchText: string
 }
 export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
 
 export const Header: FC<HeaderProps> = props => {
+  const setSearchTextCB = useCallback<ChangeEventHandler<HTMLInputElement>>(
+    ev => props.setSearchText(ev.currentTarget.value),
+    [props],
+  )
   if (props.status === 'loading') {
     return null
   }
-  const { me, organization, homeHref } = props
+  const { me, organization, homeHref, searchText } = props
   return (
     <div className="header">
       <div className="content">
@@ -44,7 +53,13 @@ export const Header: FC<HeaderProps> = props => {
           <img className="big-search-icon" src={searchIcon} alt="Search" />
           <div className="search-box">
             <img className="search-icon" src={searchIcon} alt="Search" />
-            <input className="search-text" placeholder="Search for anything!" />
+            <input
+              className="search-text"
+              placeholder={t`Search for anything!`}
+              autoFocus={!!searchText}
+              defaultValue={searchText}
+              onChange={setSearchTextCB}
+            />
           </div>
           {me ? (
             <>
@@ -54,10 +69,14 @@ export const Header: FC<HeaderProps> = props => {
           ) : (
             <>
               <div className="signin-btn">
-                <PrimaryButton><Trans>Sign in</Trans></PrimaryButton>
+                <PrimaryButton>
+                  <Trans>Sign in</Trans>
+                </PrimaryButton>
               </div>
               <div className="signup-btn">
-                <TertiaryButton><Trans>Join now</Trans></TertiaryButton>
+                <TertiaryButton>
+                  <Trans>Join now</Trans>
+                </TertiaryButton>
               </div>
             </>
           )}

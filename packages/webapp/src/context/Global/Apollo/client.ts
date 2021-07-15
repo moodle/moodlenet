@@ -54,7 +54,7 @@ export const apolloClient = new ApolloClient({
       fetchPolicy: 'no-cache',
     },
     watchQuery: {
-      fetchPolicy: 'cache-and-network',
+      fetchPolicy: 'cache-first',
     },
   },
 })

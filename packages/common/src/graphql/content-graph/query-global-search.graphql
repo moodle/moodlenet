@@ -15,4 +15,5 @@ type SearchPageEdge implements PageEdge {
 enum GlobalSearchSort {
   Relevance
   Popularity
+  Recent
 }

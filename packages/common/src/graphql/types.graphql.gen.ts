@@ -251,7 +251,8 @@ export type Follows = IEdge & {
 
 export type GlobalSearchSort =
   | 'Relevance'
-  | 'Popularity';
+  | 'Popularity'
+  | 'Recent';
 
 export type GlyphByAt = {
   __typename: 'GlyphByAt';

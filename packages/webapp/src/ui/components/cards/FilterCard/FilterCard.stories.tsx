@@ -9,31 +9,31 @@ const meta: ComponentMeta<typeof FilterCard> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: ['FilterCardStoryProps'],
-  decorators:[
-    (Story)=>(<div style={{width: 200}}><Story/></div>)
-  ]
+  decorators: [
+    Story => (
+      <div style={{ width: 200 }}>
+        <Story />
+      </div>
+    ),
+  ],
 }
-
 
 const FilterCardStory: ComponentStory<typeof FilterCard> = args => <FilterCard {...args} />
 
 const content: [string, boolean][] = [
-  ['Subjects', true], 
-  ['Collections', true], 
-  ['Resources', true]
+  ['Subjects', true],
+  ['Collections', true],
+  ['Resources', true],
   /*['Level', false], 
   ['Type', false], 
   ['Format', false], 
   ['License', false]*/
 ]
 
-
 export const FilterCardStoryProps: FilterCardProps = {
   className: 'filter',
   title: 'Filters',
-  content: content.map(([label, checked])=>(
-    <Checkbox label={label} checked={checked}/>
-  ))
+  content: content.map(([label, checked]) => <Checkbox name={label} label={label} checked={checked} />),
 }
 
 export const Default = FilterCardStory.bind({})
