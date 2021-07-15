@@ -1,4 +1,5 @@
-import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
+import { AssetRef } from '@moodlenet/common/lib/graphql/scalars.graphql'
+import { getAssetRefUrl, UploadType } from '@moodlenet/common/lib/staticAsset/lib'
 import { useMemo } from 'react'
 import { Tuple } from 'tuple-type'
 import { STATIC_ASSET_BASE } from '../constants'
@@ -55,3 +56,8 @@ export const useMapTupleUIAssetInputToAssetRefInput = () => {
 }
 
 export const hasNoValue = (_: any): _ is null | undefined | void => [null, undefined].includes(_)
+
+export const getJustAssetRefUrl = (assetRef: AssetRef): string =>
+  getAssetRefUrl({ assetRef, baseStaticAssetUrl: STATIC_ASSET_BASE })
+export const getMaybeAssetRefUrl = (assetRef: AssetRef | null | undefined): null | string =>
+  assetRef ? getJustAssetRefUrl(assetRef) : null
