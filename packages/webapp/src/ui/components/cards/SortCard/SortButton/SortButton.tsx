@@ -6,14 +6,14 @@ import "./styles.scss";
 
 export type SortState = 'inactive' | 'more' | 'less'
 
-export type CheckButtonProps = {
+export type SortButtonProps = {
   label: string
   state?: SortState
   active?: boolean
   clicked: (label: string) => void
 }
 
-export const CheckButton: FC<CheckButtonProps> = ({label, state, clicked, active}) => {
+export const SortButton: FC<SortButtonProps> = ({label, state, clicked, active}) => {
   const [inState, setInState] = useState(state);
   
   const onClick = () => {
@@ -33,9 +33,9 @@ export const CheckButton: FC<CheckButtonProps> = ({label, state, clicked, active
   );
 }
 
-CheckButton.defaultProps = {
+SortButton.defaultProps = {
   state: 'inactive',
   active: false
 }
 
-export default CheckButton;
+export default SortButton;
