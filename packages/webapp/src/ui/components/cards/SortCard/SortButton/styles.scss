@@ -1,0 +1,59 @@
+.check-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  font-family: Helvetica;
+  font-size: 14px;
+  height: 26px;
+  padding: 6px 13px 6px 4px;
+  border-radius: 15px;
+  width: fit-content;
+
+  >.icon, &.inactive:hover>.inactive-icon, &.more:hover>.more-icon, &.less:hover>.less-icon {
+    display: none;
+  }
+
+  >.more-icon>* {
+    -webkit-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
+  }
+  >.less-icon>* {
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+  }
+
+  &.inactive>.inactive-icon, &.less:hover>.inactive-icon,
+  &.more>.more-icon, &.inactive:hover>.more-icon,
+  &.less>.less-icon, &.more:hover>.less-icon {
+    display: contents;
+  }
+
+  &.inactive, &.more:hover, &.less:hover {
+    border: none;
+    background-color: white;
+    border: 1px solid #B6BACB;
+    color: #B6BACB;
+  }
+
+  &.more:hover, &.less:hover {
+    border: none;
+    background-color: #B6BACB;
+    border: 1px solid #B6BACB;
+    color: white;
+  }
+
+  &.inactive:hover, &.more, &.less {
+    border: none;
+    background-color: #3366ff;
+    border: 1px solid #3366ff;
+    color: white;
+  }
+}

@@ -5,6 +5,7 @@ import { CollectionCard, CollectionCardProps } from '../../components/cards/Coll
 import FilterCard, { FilterCardProps } from '../../components/cards/FilterCard/FilterCard'
 import ListCard from '../../components/cards/ListCard/ListCard'
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
+import SortCard, { SortCardProps } from '../../components/cards/SortCard/SortCard'
 import SubjectCard, { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { WithProps, WithPropsList } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
@@ -12,6 +13,7 @@ import './styles.scss'
 
 export type SearchProps = {
   headerPageTemplateWithProps: WithProps<HeaderPageTemplateProps>
+  sortCardProps: SortCardProps
   filterCardProps: FilterCardProps
   subjectCardWithPropsList: WithPropsList<SubjectCardProps>
   collectionCardWithPropsList: WithPropsList<CollectionCardProps>
@@ -20,6 +22,7 @@ export type SearchProps = {
 
 export const Search: FC<SearchProps> = ({
   headerPageTemplateWithProps,
+  sortCardProps,
   filterCardProps,
   subjectCardWithPropsList,
   collectionCardWithPropsList,
@@ -35,6 +38,7 @@ export const Search: FC<SearchProps> = ({
         <div className="content">
           <div className="side-column">
             <FilterCard {...filterCardProps} />
+            <SortCard {...sortCardProps} />
           </div>
           <div className="main-column">
             <ListCard
