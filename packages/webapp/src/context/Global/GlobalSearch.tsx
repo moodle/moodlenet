@@ -57,7 +57,6 @@ export const GlobalSearchProvider: FC = ({ children }) => {
     const toId = setTimeout(() => {
       let params = new URLSearchParams()
 
-      //Add a second foo parameter.
       params.append('q', searchText)
       params.append('sort', sortBy)
       params.append('filter', typeFilters.join(','))
@@ -68,9 +67,9 @@ export const GlobalSearchProvider: FC = ({ children }) => {
     }, 500)
     return () => clearTimeout(toId)
   }, [typeFilters, query, searchText, sortBy, history])
-  const globSearch = useMemo(
+  const globSearch = useMemo<GlobalSearchCtx>(
     () => ({
-      edges: (searchText && res.data?.globalSearch.edges) || [],
+      edges: res.data?.globalSearch.edges ?? [],
       searchText,
       setSearchText,
       setSortBy,

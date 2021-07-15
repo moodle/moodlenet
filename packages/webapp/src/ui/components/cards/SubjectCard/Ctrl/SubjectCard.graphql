@@ -1,0 +1,11 @@
+query SubjectCard($id: ID!) {
+  node(id: $id) {
+    ... on IContentNode {
+      name
+      icon
+    }
+    ... on INode {
+      id
+    }
+  }
+}
