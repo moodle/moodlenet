@@ -6,9 +6,17 @@
   height: 100%;
   background: #f4f5f7;
 
+  > .separator {
+    height: 68px;
+
+    @media (max-height: 600px) {
+      height: 5%;
+      height: calc(5% - 10px);
+    }
+  }
+
   > .content {
     display: flex;
-    margin-top: 68px;
     margin-left: 130px;
     height: 340px;
     > .card {
@@ -87,6 +95,9 @@
               box-shadow: 0 0 5px #B6BACB;
             }
           }
+        }
+        > .bottom {
+          display: flex;
         }
       }
     }

@@ -2,6 +2,7 @@ import CallMadeIcon from '@material-ui/icons/CallMade';
 import { FC } from 'react';
 import Card from '../../../components/atoms/Card/Card';
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton';
+import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryButton';
 import { MainPageWrapper } from '../../../templates/page/MainPageWrapper';
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader';
 import './styles.scss';
@@ -15,6 +16,7 @@ export const Login: FC<LoginProps> = ({accessHeaderProps}) => {
     <MainPageWrapper>
       <div className="login-page">
         <AccessHeader {...accessHeaderProps}/>
+        <div className="separator" />
         <div className="content">
           <Card>
             <div className="content">
@@ -25,6 +27,7 @@ export const Login: FC<LoginProps> = ({accessHeaderProps}) => {
               </form>
               <div className="bottom">
                 <PrimaryButton>Next</PrimaryButton>
+                <TertiaryButton>or browse now!</TertiaryButton>
               </div>
             </div>
             
