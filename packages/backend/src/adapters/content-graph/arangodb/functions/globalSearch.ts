@@ -25,6 +25,8 @@ export const globalSearchQuery = ({
   const sortFactor =
     sortBy === 'Relevance'
       ? '1'
+      : sortBy === 'Recent'
+      ? '0'
       : '(1 + (node._relCount.Likes.from.Profile || 0) + (node._relCount.Follows.from.Profile || 0))'
 
   const query = `
@@ -47,7 +49,7 @@ export const globalSearchQuery = ({
       
         FILTER !${isMarkDeleted('node')} AND ${filterConditions || 'true'}
 
-      SORT ( TFIDF(node) * ${sortFactor}) desc, node._key 
+      SORT ( TFIDF(node) * ${sortFactor}) desc, node._key desc
       
       LIMIT ${skip}, ${limit}
       

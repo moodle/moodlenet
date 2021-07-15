@@ -14,7 +14,7 @@ export const [SubjectCardCtrl, subjectCardWithProps, subjectCardWithPropList] = 
     () =>
       subjectNode
         ? {
-            organization: { url: 'moodle.com', color: '' },
+            organization: { url: 'bfh.ch', color: '' },
             title: subjectNode.name,
             ...rest,
           }

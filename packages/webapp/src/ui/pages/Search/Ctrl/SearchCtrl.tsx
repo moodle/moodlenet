@@ -1,5 +1,6 @@
+import { GlobalSearchSort } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { isJust } from '@moodlenet/common/lib/utils/array'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useGlobalSearchQuery } from '../../../../context/Global/GlobalSearch/globalSearch.gen'
 import { collectionCardWithPropList } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { resourceCardWithPropList } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
@@ -12,10 +13,10 @@ import { useSearchUrlQuery } from './useSearchUrlQuery'
 export const [SearchCtrl, searchWithProps] = createWithProps<SearchProps, {}>(
   ({ __key, __uiComp: SearchUI, ...rest }) => {
     const { /* setText, */ text } = useSearchUrlQuery()
-
+    const [sortBy, setSortBy] = useState<GlobalSearchSort>('Popularity')
     const collectionsQ = useGlobalSearchQuery({
       variables: {
-        sortBy: 'Popularity',
+        sortBy,
         nodeTypes: ['Collection'],
         text,
       },
@@ -23,7 +24,7 @@ export const [SearchCtrl, searchWithProps] = createWithProps<SearchProps, {}>(
 
     const resourcesQ = useGlobalSearchQuery({
       variables: {
-        sortBy: 'Popularity',
+        sortBy,
         nodeTypes: ['Resource'],
         text,
       },
@@ -31,7 +32,7 @@ export const [SearchCtrl, searchWithProps] = createWithProps<SearchProps, {}>(
 
     const subjectsQ = useGlobalSearchQuery({
       variables: {
-        sortBy: 'Popularity',
+        sortBy,
         nodeTypes: ['SubjectField'],
         text,
       },
@@ -66,13 +67,13 @@ export const [SearchCtrl, searchWithProps] = createWithProps<SearchProps, {}>(
       collectionCardWithPropsList: collectionCardWithPropList(
         collections.map(collection => ({ id: collection.id, key: `Search Collection ${collection.id} Card` })),
       ),
-      filterCardProps: { className: '', content: [], title: 'title' },
       resourceCardWithPropsList: resourceCardWithPropList(
         resources.map(resource => ({ id: resource.id, key: `Search Resource ${resource.id} Card` })),
       ),
       subjectCardWithPropsList: subjectCardWithPropList(
         subjects.map(subject => ({ id: subject.id, key: `Search SubjectField ${subject.id} Card` })),
       ),
+      setSortBy,
       ...rest,
     }
 
