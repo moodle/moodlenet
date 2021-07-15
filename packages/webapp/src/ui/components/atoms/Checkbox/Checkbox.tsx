@@ -11,11 +11,15 @@ export const Checkbox: FC<CheckboxProps> = ({label, checked}) => {
 
   return (
     <label className="container">
-      <input type="checkbox" {...(checked ? {checked} : '')}/>
+      <input onClick={() => checked=!checked} type="checkbox" defaultChecked={checked}/>
       <span className="checkmark"></span>
       <span className="label">{label}</span>
-    </label>
+    </label> 
   );
+}
+
+Checkbox.defaultProps = {
+  checked: false
 }
 
 export default Checkbox;
