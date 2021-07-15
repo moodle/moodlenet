@@ -68,12 +68,13 @@
             background-color: yellow;
         }
     }
+
     .subjects > .content > .card {
         margin-bottom: 7px;
         width: '30%';
     }
 
-    .collections > .content > .card {
+    .collections > .content > .collection-card {
         font-size: 15px;
     }
 }

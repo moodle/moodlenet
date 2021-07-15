@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import Checkbox from '../../atoms/Checkbox/CheckInput'
+import CheckButton from '../../atoms/CheckButton/CheckButton'
 import { SortCard, SortCardProps } from './SortCard'
 
 const meta: ComponentMeta<typeof SortCard> = {
@@ -17,14 +17,18 @@ const meta: ComponentMeta<typeof SortCard> = {
 
 const SortCardStory: ComponentStory<typeof SortCard> = args => <SortCard {...args} />
 
-const content: [string, boolean][] = [['Subjects', true], ['Collections', true], ['Resources', true], ['Level', false], ['Type', false], ['Format', false], ['License', false]]
+const content: [string, boolean][] = [
+  ['Relevance', true], 
+  ['Recent', true], 
+  ['Popularity', true]
+]
 
 
 export const SortCardStoryProps: SortCardProps = {
   className: 'sort',
   title: 'Sort',
-  content: content.map(([label, checked])=>(
-    <Checkbox label={label} checked={checked}/>
+  content: content.map(([label])=>(
+    <CheckButton label={label}/>
   ))
 }
 
