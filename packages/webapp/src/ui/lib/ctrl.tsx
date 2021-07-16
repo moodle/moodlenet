@@ -48,6 +48,7 @@ export type WithPropsList<
 ) => readonly [UICtrl: UICtrl<UIProps, ExclKeys, IntrinsicCtrlProps>, intrinsicCtrlProps: readonly IntrinsicCtrlProps[]]
 
 type BaseIntrinsicCtrlProps = { key: string }
+export type CtrlProps<IntrinsicProps> = IntrinsicProps & BaseIntrinsicCtrlProps
 export const createWithProps = <
   UIProps extends object,
   IntrinsicCtrlProps extends object,
