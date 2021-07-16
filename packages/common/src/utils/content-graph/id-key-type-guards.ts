@@ -50,6 +50,7 @@ export const nodeTypeFromId = (_: Id): NodeType => {
   const [nodeType] = _.split('/')
   return nodeType as NodeType
 }
+export const glyphId = (type: EdgeType | NodeType, key: string): Id => `${type}/${key}` as Id
 
 export const idKeyFromId = (_: Id): IdKey => {
   const [, key] = _.split('/')
