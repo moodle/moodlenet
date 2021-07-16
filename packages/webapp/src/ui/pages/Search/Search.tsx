@@ -90,10 +90,10 @@ export const Search: FC<SearchProps> = ({
               onChange={setSortBy}
             />
           </div>
-          <div className="main-columns">
+          <div className="main-column">
             {filters.Subjects && (
               <ListCard
-                content={subjectCardPropsList.slice(0, 4).map(subjectCardProps => (
+                content={subjectCardPropsList.slice(0, 8).map(subjectCardProps => (
                   <SubjectCardCtrl {...subjectCardProps} />
                 ))}
                 className="subjects"
@@ -111,7 +111,7 @@ export const Search: FC<SearchProps> = ({
             )}
             {filters.Collections && (
               <ListCard
-                content={collectionCardPropsList.slice(0, 3).map(collectionCardProps => (
+                content={collectionCardPropsList.slice(0, 4).map(collectionCardProps => (
                   <CollectionCardCtrl {...collectionCardProps} />
                 ))}
                 className="collections"
@@ -129,7 +129,7 @@ export const Search: FC<SearchProps> = ({
             )}
             {filters.Resources && (
               <ListCard
-                content={resourceCardPropsList.slice(0, 5).map(resourcesCardProps => (
+                content={resourceCardPropsList.slice(0, 8).map(resourcesCardProps => (
                   <ResourceCardCtrl {...resourcesCardProps} />
                 ))}
                 className="resources"
