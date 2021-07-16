@@ -6,9 +6,10 @@ import { createWithProps } from '../../../../lib/ctrl'
 import { ResourceCardProps } from '../ResourceCard'
 import { useResourceCardQuery } from './ResourceCard.gen'
 
+export type ResourceCardCtrlProps = { id: Id }
 export const [ResourceCardCtrl, resourceCardWithProps, resourceCardWithPropList] = createWithProps<
   ResourceCardProps,
-  { id: Id }
+  ResourceCardCtrlProps
 >(({ id, __key, __uiComp: ResourceCardUI, ...rest }) => {
   const resourceNode = useResourceCardQuery({ variables: { id } }).data?.node
 
