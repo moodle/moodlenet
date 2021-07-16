@@ -11,8 +11,6 @@ import './styles.scss'
 export type HeaderPropsIdle = HeaderPropsBase & {
   status: 'idle'
   organization: Pick<Organization, 'logo' | 'name' | 'url'>
-  homeHref: Href
-  loginHref: Href
   me: null | {
     avatar: string
     logout?: () => unknown
@@ -24,20 +22,23 @@ export type HeaderPropsLoading = HeaderPropsBase & {
 }
 
 export type HeaderPropsBase = {
+  homeHref: Href
+  loginHref: Href
   setSearchText(text: string): unknown
   searchText: string
 }
 export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
 
 export const Header: FC<HeaderProps> = props => {
+  const { homeHref, loginHref, searchText, setSearchText } = props
   const setSearchTextCB = useCallback<ChangeEventHandler<HTMLInputElement>>(
-    ev => props.setSearchText(ev.currentTarget.value),
-    [props],
+    ev => setSearchText(ev.currentTarget.value),
+    [setSearchText],
   )
   if (props.status === 'loading') {
     return null
   }
-  const { me, organization, homeHref, searchText } = props
+  const { me, organization } = props
   return (
     <div className="header">
       <div className="content">
@@ -68,11 +69,13 @@ export const Header: FC<HeaderProps> = props => {
             </>
           ) : (
             <>
-              <div className="signin-btn">
-                <PrimaryButton>
-                  <Trans>Sign in</Trans>
-                </PrimaryButton>
-              </div>
+              <Link href={loginHref}>
+                <div className="signin-btn">
+                  <PrimaryButton>
+                    <Trans>Sign in</Trans>
+                  </PrimaryButton>
+                </div>
+              </Link>
               <div className="signup-btn">
                 <TertiaryButton>
                   <Trans>Join now</Trans>

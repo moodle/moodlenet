@@ -1,6 +1,7 @@
 fragment ShallowProfile on Profile {
   id
   name
+  icon
 }
 
 fragment BaseIContentNode on IContentNode {
