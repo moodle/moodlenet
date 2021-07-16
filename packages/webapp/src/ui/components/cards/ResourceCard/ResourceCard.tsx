@@ -38,7 +38,7 @@ export const ResourceCard: FC <ResourceCardProps> = ({tags,  image, type, title}
                 {type}
             </div>
             <div className="title">
-                {title}
+              <abbr title={title}>{title}</abbr>
             </div>
             <div className="tags">
                 {tagSet} 
