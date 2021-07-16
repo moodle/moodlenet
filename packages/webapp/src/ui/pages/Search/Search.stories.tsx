@@ -26,10 +26,12 @@ const SearchStory: ComponentStory<typeof Search> = args => <Search {...args} />
 
 const subjectCardPropsList: SubjectCardProps[] = [
   '#Education',
-  // '#Forestry',
-  // 'Enviromental Science',
-  // 'Sailing Principles',
-  // 'NoShow',
+  '#Forestry',
+  'Enviromental Science with a lot of Mathematics and Physics',
+  'Sailing Principles',
+  'Latin',
+  'Hebrew',
+  'NoShow',
 ].map(x => ({ organization: { ...SubjectCardStoryProps }.organization, title: x }))
 
 export const SearchStoryProps: SearchProps = {
@@ -40,6 +42,7 @@ export const SearchStoryProps: SearchProps = {
   }),
   subjectCardWithPropsList: withPropsListStatic(subjectCardPropsList),
   collectionCardWithPropsList: withPropsListStatic([
+    CollectionCardStoryProps,
     CollectionCardStoryProps,
     CollectionCardStoryProps,
     CollectionCardStoryProps,

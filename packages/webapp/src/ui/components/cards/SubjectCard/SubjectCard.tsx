@@ -18,7 +18,7 @@ export const SubjectCard: FC <SubjectCardProps> = ({title, organization}) => {
     }}>
       <div className="subject-card">
         <div className="title">
-            {title}
+          <abbr title={title}>{title}</abbr>
         </div>
         <div className="subtitle">
           <div className="url">{organization.url}</div>
