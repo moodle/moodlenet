@@ -35,7 +35,7 @@ export const [LandingCtrl, landingWithProps] = createWithProps<LandingProps, {}>
           name: 'Bern University of Applied Sciences',
           intro: 'Diverse, sound, dynamic – these are the values that define BFH. And this is our MoodleNet server. ',
         },
-        image: 'https://picsum.photos/200/100',
+        image: 'https://picsum.photos/seed/bern/200/100',
         trendCardProps: { tags: tags || [] },
       }),
       [tags],
