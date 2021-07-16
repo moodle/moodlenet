@@ -1,19 +1,19 @@
-import React, { FC } from 'react';
-import { MainPageWrapper } from '../../templates/page/MainPageWrapper';
-import AccessHeader, { AccessHeaderProps } from './AccessHeader/AccessHeader';
-import './styles.scss';
+import { FC, ReactNode } from 'react'
+import { MainPageWrapper } from '../../templates/page/MainPageWrapper'
+import AccessHeader, { AccessHeaderProps } from './AccessHeader/AccessHeader'
+import './styles.scss'
 
 export type AccessProps = {
   accessHeaderProps: AccessHeaderProps
-  view: React.ReactNode
+  view: ReactNode
 }
 
-export const Access: FC<AccessProps> = ({accessHeaderProps}) => {
+export const Access: FC<AccessProps> = ({ accessHeaderProps }) => {
   return (
     <MainPageWrapper>
       <div className="access-page">
-        <AccessHeader {...accessHeaderProps}/>
+        <AccessHeader {...accessHeaderProps} />
       </div>
     </MainPageWrapper>
-  );
+  )
 }

@@ -2,12 +2,12 @@ import { FormikConfig, FormikErrors, FormikTouched, useFormik } from 'formik'
 import { ChangeEvent, FormEvent, useMemo } from 'react'
 import { hasNoValue } from '../../helpers/data'
 
-export type Submit<Values> = FormikConfig<Values>['onSubmit']
+export type SubmitForm<Values> = FormikConfig<Values>['onSubmit']
 type FormikInputAttrs<Values> = {
   [ValueName in keyof Values]: { name: ValueName; value?: Values[ValueName] }
 }
-export const formikInputAttrs = <Values>(bag: SimplifiedFormikBag<Values>) =>
-  Object.entries(bag.values).reduce<FormikInputAttrs<Values>>(
+export const formikInputAttrs = <Values>(values: Values) =>
+  Object.entries(values).reduce<FormikInputAttrs<Values>>(
     (collect, [name, value]) => ({
       ...collect,
       [name]: {
@@ -23,12 +23,13 @@ export const formikInputAttrs = <Values>(bag: SimplifiedFormikBag<Values>) =>
   )
 
 export const useFormikInputAttrs = <Values>(formik: SimplifiedFormikBag<Values>) =>
-  useMemo(() => formikInputAttrs(formik), [formik])
+  useMemo(() => formikInputAttrs(formik.values), [formik.values])
 
-export const useFormikPlus = <Values>(config: FormikConfig<Values>) => {
+export type FormikBag<Values = {}> = [SimplifiedFormikBag<Values>, FormikInputAttrs<Values>]
+export const useFormikBag = <Values>(config: FormikConfig<Values>): FormikBag<Values> => {
   const formik = useFormik(config)
   const inputAttrs = useFormikInputAttrs(formik)
-  return [formik, inputAttrs] as const
+  return [formik, inputAttrs]
 }
 
 export interface SimplifiedFormikBag<Values = {}> {
