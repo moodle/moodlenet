@@ -51,9 +51,10 @@ export const [ProfileCtrl, profileWithProps] = createWithProps<ProfileProps, Pro
                 years: 1,
               },
               profileCardProps: {
-                avatarUrl: getMaybeAssetRefUrl(profile.icon) ?? 'https://picsum.photos/id/509/200/300',
+                avatarUrl:
+                  getMaybeAssetRefUrl(profile.icon) ?? `https://picsum.photos/seed/${id.split('/')[1]}_avatar/200/300`,
 
-                backgroundUrl: 'https://picsum.photos/id/501/600/400',
+                backgroundUrl: `https://picsum.photos/seed/${id.split('/')[1]}_bg/600/400`,
                 description: profile.summary,
                 firstName: profile.name,
                 lastName: profile.name,
@@ -69,7 +70,7 @@ export const [ProfileCtrl, profileWithProps] = createWithProps<ProfileProps, Pro
               username: profile.name,
             }
           : null,
-      [collectionCardPropsList, profile, resourceCardPropsList],
+      [collectionCardPropsList, id, profile, resourceCardPropsList],
     )
     return profileProps && <ProfileUI {...profileProps} {...rest} key={__key} />
   },
