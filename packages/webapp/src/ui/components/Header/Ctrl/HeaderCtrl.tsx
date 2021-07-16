@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
+import { getMaybeAssetRefUrl } from '../../../../helpers/data'
 import { mainPath } from '../../../../hooks/glob/nav'
 import { href } from '../../../elements/link'
 import { createWithProps } from '../../../lib/ctrl'
@@ -7,18 +8,19 @@ import { useSearchUrlQuery } from '../../../pages/Search/Ctrl/useSearchUrlQuery'
 import { HeaderProps, HeaderPropsIdle } from '../Header'
 
 export const [HeaderCtrl, headerWithProps] = createWithProps<HeaderProps, {}>(props => {
-  const { session, logout } = useSession()
+  const { session, logout, currentProfile } = useSession()
   const { __uiComp: HeaderUI } = props
   const { setText: setSearchText, text: searchText } = useSearchUrlQuery()
   const headerProps = useMemo<HeaderProps>(() => {
     const { __key, __uiComp, ...rest } = props
-    const me: HeaderPropsIdle['me'] = session
-      ? {
-          avatar: session.username,
-          username: session.username,
-          logout,
-        }
-      : null
+    const me: HeaderPropsIdle['me'] =
+      currentProfile && session
+        ? {
+            avatar: getMaybeAssetRefUrl(currentProfile.icon) ?? '',
+            username: session.username,
+            logout,
+          }
+        : null
     return {
       status: 'idle',
       ...rest,
@@ -33,6 +35,6 @@ export const [HeaderCtrl, headerWithProps] = createWithProps<HeaderProps, {}>(pr
       searchText,
       setSearchText,
     }
-  }, [logout, props, searchText, session, setSearchText])
+  }, [currentProfile, logout, props, searchText, session, setSearchText])
   return <HeaderUI {...headerProps} />
 })

@@ -101,7 +101,7 @@ export const SessionProvider: FC = ({ children }) => {
     }
   }, [getCurrentProfileQ, session])
   const currentProfile =
-    session && currentProfileResult.data?.node?.__typename === 'Profile' ? currentProfileResult.data.node : null
+    currentProfileResult.data?.node?.__typename === 'Profile' ? currentProfileResult.data.node : null
   const ctx = useMemo<SessionContextType>(
     () => ({
       currentProfile,
