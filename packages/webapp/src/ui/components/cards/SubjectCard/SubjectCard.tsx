@@ -22,7 +22,7 @@ export const SubjectCard: FC <SubjectCardProps> = ({title, organization}) => {
         </div>
         <div className="subtitle">
           <div className="url">{organization.url}</div>
-          <div className="color" style={{backgroundColor: organization.color}}></div>
+          <div className="color" style={{backgroundImage: `linear-gradient(to right, ${organization.color}, ${organization.color}65)`}}></div>
         </div>
       </div>
     </Card>
