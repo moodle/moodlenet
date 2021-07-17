@@ -9,9 +9,7 @@ export type ResourceCardProps = {
   title: string
 }
 
-export const ResourceCard = withProps<ResourceCardProps>(function ResourceCard(...args) {
-  console.log({ args })
-  const { tags, image, type, title } = args[0]
+export const ResourceCard = withProps<ResourceCardProps>(({ tags, image, type, title }) => {
   const tagSet = tags.map((value: string, index: number) => {
     return (
       <div key={index} className="tag">

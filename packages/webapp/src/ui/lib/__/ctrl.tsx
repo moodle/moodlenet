@@ -1,8 +1,8 @@
-import { ComponentType, FC, PropsWithChildren } from 'react'
+import { ComponentType, FC, PropsWithChildren, ReactElement } from 'react'
 
 export type UIPropsOf<UIProps, XK extends keyof UIProps = never> = Pick<UIProps, XK>
 const rnd = Number(`${Math.random()}`.substring(2)).toString(36)
-const CTRL_SYMB = (`___CTRL_SYMBOL___${rnd}` as any) as `CTRL_SYMB`
+const CTRL_SYMB = (`___CTRL_SYMBOL___${rnd}` as any) as `___CTRL_SYMBOL___`
 
 export type CtrlHookOf<UIProps, HookArg, XK extends keyof UIProps = never> = (_: HookArg) => CtrlHookRetOf<UIProps, XK>
 
@@ -10,7 +10,7 @@ export type Wrapper<C = ComponentType<any>> = C extends ComponentType<infer T> ?
 export type CtrlHookRetOf<UIProps, XK extends keyof UIProps = never> = [
   Omit<UIProps, XK>,
   {
-    wrappers: Wrapper[]
+    wrap(ui: ReactElement): ReactElement
   },
 ]
 
@@ -42,14 +42,8 @@ export type StrictWithProps<UIProps, XK extends keyof UIProps = never, HookArg =
 
 const RenderWithHook = (wp: PropsWithChildren<StrictWithProps<any>>, UIComp: ComponentType<any>, uiProps: any) => {
   const { useCtrlHook, hookArg } = wp[CTRL_SYMB]
-  const [feedProps, { wrappers }] = useCtrlHook(hookArg)
-  console.log({ feedProps, wrappers, useCtrlHook, hookArg })
-
-  const ret = wrappers.reduce((children, [WrCmp, wrProps]) => {
-    return <WrCmp {...wrProps}>{children}</WrCmp>
-  }, <UIComp {...feedProps} {...uiProps} />)
-  console.log({ ret, _: 'x' })
-  return ret
+  const [feedProps, { wrap }] = useCtrlHook(hookArg)
+  return wrap(<UIComp {...feedProps} {...uiProps} />)
 }
 
 export const withProps = <UIProps, XK extends keyof UIProps = never>(
@@ -57,7 +51,7 @@ export const withProps = <UIProps, XK extends keyof UIProps = never>(
 ): FC<UIPropsOf<UIProps, XK> & WithProps<UIProps, XK>> => {
   const Render = (props: PropsWithChildren<WithProps<UIProps, XK>>) => {
     if (CTRL_SYMB in props && (props as any)[CTRL_SYMB]) {
-      console.log('RenderWithHook', props)
+      // console.log('RenderWithHook', props)
       return RenderWithHook(props as PropsWithChildren<StrictWithProps<UIProps>>, UIComp, props)
     } else {
       return UIComp(props as PropsWithChildren<UIProps>)
@@ -65,19 +59,5 @@ export const withProps = <UIProps, XK extends keyof UIProps = never>(
   }
   return Render
 }
-
-// export const __withProps = <UIProps, XK extends keyof UIProps = never>(
-//   UIComp: ComponentType<UIProps>,
-//   wp: WithProps<UIProps, XK>,
-// ): readonly [CtrlComp: ComponentType<UIPropsOf<UIProps, XK> & Opaque<UIProps, XK>>, opaque: Opaque<UIProps, XK>] => {
-//   return [
-//     Render as any,
-//     ({
-//       wp,
-//       UIComp,
-//       ...wp,
-//     } as any) as Opaque<UIProps, XK>,
-//   ] as const
-// }
 
 type CKey = string | number | null | undefined

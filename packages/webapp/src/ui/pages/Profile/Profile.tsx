@@ -20,53 +20,55 @@ export type ProfileProps = {
   username: string
 }
 
-export const Profile = withProps<ProfileProps>(function Profile({
-  headerPageTemplateWithProps,
-  overallCardProps,
-  profileCardProps,
-  scoreCardProps,
-  collectionCardWithPropsList,
-  resourceCardWithPropsList,
-  username,
-}) {
-  console.log({ headerPageTemplateWithProps })
-  const [HeaderPageTemplateCtrl, headerPageTemplateProps] = headerPageTemplateWithProps(HeaderPageTemplate)
-  console.log({ HeaderPageTemplateCtrl, headerPageTemplateProps })
-  const [CollectionCardCtrl, collectionCardPropsList] = collectionCardWithPropsList(CollectionCard)
-  return (
-    <HeaderPageTemplateCtrl {...headerPageTemplateProps}>
-      <div className="profile">
-        <div className="content">
-          <div className="main-column">
-            <ProfileCard {...profileCardProps} />
-            <ListCard
-              content={resourceCardWithPropsList.map(resourcesCardProps => {
-                return <ResourceCard {...resourcesCardProps} />
-              })}
-              title={t`Latest Resources`}
-              className="resources"
-            />
-            <ListCard
-              title={t`Collections curated by ${username}`}
-              content={collectionCardPropsList.map(collectionCardProps => (
-                <CollectionCardCtrl {...collectionCardProps} />
-              ))}
-              className="collections"
-            />
-          </div>
-          <div className="side-column">
-            <ScoreCard {...scoreCardProps} />
-            <OverallCard {...overallCardProps} />
-            <ListCard
-              title={t`Collections curated by ${username}`}
-              content={collectionCardPropsList.map(collectionCardProps => (
-                <CollectionCardCtrl {...collectionCardProps} />
-              ))}
-              className="collections"
-            />
+export const Profile = withProps<ProfileProps>(
+  ({
+    headerPageTemplateWithProps,
+    overallCardProps,
+    profileCardProps,
+    scoreCardProps,
+    collectionCardWithPropsList,
+    resourceCardWithPropsList,
+    username,
+  }) => {
+    // console.log({ headerPageTemplateWithProps })
+    const [HeaderPageTemplateCtrl, headerPageTemplateProps] = headerPageTemplateWithProps(HeaderPageTemplate)
+    // console.log({ HeaderPageTemplateCtrl, headerPageTemplateProps })
+    const [CollectionCardCtrl, collectionCardPropsList] = collectionCardWithPropsList(CollectionCard)
+    return (
+      <HeaderPageTemplateCtrl {...headerPageTemplateProps}>
+        <div className="profile">
+          <div className="content">
+            <div className="main-column">
+              <ProfileCard {...profileCardProps} />
+              <ListCard
+                content={resourceCardWithPropsList.map(resourcesCardProps => {
+                  return <ResourceCard {...resourcesCardProps} />
+                })}
+                title={t`Latest Resources`}
+                className="resources"
+              />
+              <ListCard
+                title={t`Collections curated by ${username}`}
+                content={collectionCardPropsList.map(collectionCardProps => (
+                  <CollectionCardCtrl {...collectionCardProps} />
+                ))}
+                className="collections"
+              />
+            </div>
+            <div className="side-column">
+              <ScoreCard {...scoreCardProps} />
+              <OverallCard {...overallCardProps} />
+              <ListCard
+                title={t`Collections curated by ${username}`}
+                content={collectionCardPropsList.map(collectionCardProps => (
+                  <CollectionCardCtrl {...collectionCardProps} />
+                ))}
+                className="collections"
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </HeaderPageTemplateCtrl>
-  )
-})
+      </HeaderPageTemplateCtrl>
+    )
+  },
+)

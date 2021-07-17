@@ -10,7 +10,7 @@ import { HeaderProps } from '../../components/Header/Header'
 import { HeaderStoryProps } from '../../components/Header/Header.stories'
 import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
 import { withPropsListStatic, withPropsStatic } from '../../lib/ctrl'
-import { withPropsFor, Wrapper } from '../../lib/__/ctrl'
+import { withPropsFor } from '../../lib/__/ctrl'
 import { HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import { HeaderPageProps } from '../HeaderPage/HeaderPage'
 import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
@@ -50,8 +50,7 @@ export const ProfileStoryProps: ProfileProps = {
         }, [])
         // return [p, { wrappers: [], n }]
         const color = ['red', 'green', 'blue'][n % 3]!
-        const w: Wrapper = [W, { color }]
-        return [p, { wrappers: [w] }]
+        return [p, { wrap: ui => <W color={color}>{ui}</W> }]
       },
       hookArg: null,
       key: i,
