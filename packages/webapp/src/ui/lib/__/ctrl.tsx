@@ -1,27 +1,28 @@
-import { ComponentType, FC } from 'react'
+import { ComponentType, FC, PropsWithChildren } from 'react'
 
 export type UIPropsOf<UIProps, XK extends keyof UIProps = never> = Pick<UIProps, XK>
-const CTRL_SYMB = Symbol('CTRL_SYMB')
+const rnd = Number(`${Math.random()}`.substring(2)).toString(36)
+const CTRL_SYMB = (`___CTRL_SYMBOL___${rnd}` as any) as `CTRL_SYMB`
 
 export type CtrlHookOf<UIProps, HookArg, XK extends keyof UIProps = never> = (_: HookArg) => CtrlHookRetOf<UIProps, XK>
 
-type Wrapper<T> = [ComponentType<T>, T]
+export type Wrapper<C = ComponentType<any>> = C extends ComponentType<infer T> ? [ComponentType<T>, T] : never
 export type CtrlHookRetOf<UIProps, XK extends keyof UIProps = never> = [
   Omit<UIProps, XK>,
   {
-    wrappers: Wrapper<any>[]
+    wrappers: Wrapper[]
   },
 ]
 
 export const withPropsFor = <UIProps, HookArg = unknown, XK extends keyof UIProps = never>({
-  useCtrlHook: ctrlHook,
+  useCtrlHook,
   hookArg,
   key,
 }: { key?: CKey } & StrictWithProps<UIProps, XK, HookArg>[typeof CTRL_SYMB]): WithProps<UIProps, XK, HookArg> => {
   return {
     key,
     [CTRL_SYMB]: {
-      useCtrlHook: ctrlHook,
+      useCtrlHook,
       hookArg,
     },
   }
@@ -39,50 +40,44 @@ export type StrictWithProps<UIProps, XK extends keyof UIProps = never, HookArg =
   }
 }
 
-const RenderWithHook: FC<{
-  wp: StrictWithProps<any>
-  UIComp: ComponentType<any>
-  uiProps: any
-}> = ({ wp, UIComp, uiProps, children }) => {
+const RenderWithHook = (wp: PropsWithChildren<StrictWithProps<any>>, UIComp: ComponentType<any>, uiProps: any) => {
   const { useCtrlHook, hookArg } = wp[CTRL_SYMB]
   const [feedProps, { wrappers }] = useCtrlHook(hookArg)
+  console.log({ feedProps, wrappers, useCtrlHook, hookArg })
 
-  return wrappers.reduce(
-    (children, [WrCmp, wrProps]) => {
-      return <WrCmp {...wrProps}>{children}</WrCmp>
-    },
-    <UIComp {...feedProps} {...uiProps}>
-      {children}
-    </UIComp>,
-  )
+  const ret = wrappers.reduce((children, [WrCmp, wrProps]) => {
+    return <WrCmp {...wrProps}>{children}</WrCmp>
+  }, <UIComp {...feedProps} {...uiProps} />)
+  console.log({ ret, _: 'x' })
+  return ret
 }
 
 export const withProps = <UIProps, XK extends keyof UIProps = never>(
-  UIComp: ComponentType<UIProps>,
-  wp: WithProps<UIProps, XK>,
-): readonly [CtrlComp: ComponentType<UIPropsOf<UIProps, XK> & Opaque<UIProps, XK>>, opaque: Opaque<UIProps, XK>] => {
-  return [
-    Render as any,
-    ({
-      wp,
-      UIComp,
-      ...wp,
-    } as any) as Opaque<UIProps, XK>,
-  ] as const
+  UIComp: FC<UIProps>,
+): FC<UIPropsOf<UIProps, XK> & WithProps<UIProps, XK>> => {
+  const Render = (props: PropsWithChildren<WithProps<UIProps, XK>>) => {
+    if (CTRL_SYMB in props && (props as any)[CTRL_SYMB]) {
+      console.log('RenderWithHook', props)
+      return RenderWithHook(props as PropsWithChildren<StrictWithProps<UIProps>>, UIComp, props)
+    } else {
+      return UIComp(props as PropsWithChildren<UIProps>)
+    }
+  }
+  return Render
 }
 
-type Opaque<UIProps, XK> = {
-  [CTRL_SYMB]: {
-    UIProps: UIProps
-    XK: XK
-  }
-  key?: CKey
-}
+// export const __withProps = <UIProps, XK extends keyof UIProps = never>(
+//   UIComp: ComponentType<UIProps>,
+//   wp: WithProps<UIProps, XK>,
+// ): readonly [CtrlComp: ComponentType<UIPropsOf<UIProps, XK> & Opaque<UIProps, XK>>, opaque: Opaque<UIProps, XK>] => {
+//   return [
+//     Render as any,
+//     ({
+//       wp,
+//       UIComp,
+//       ...wp,
+//     } as any) as Opaque<UIProps, XK>,
+//   ] as const
+// }
+
 type CKey = string | number | null | undefined
-const Render: FC<{ wp: WithProps<any>; UIComp: ComponentType<any> }> = ({ UIComp, wp, children, ...uiProps }) => {
-  if (CTRL_SYMB in wp) {
-    return <RenderWithHook {...{ wp: wp as StrictWithProps<any>, UIComp, uiProps }}>{children}</RenderWithHook>
-  } else {
-    return <UIComp {...{ ...wp, ...uiProps }} />
-  }
-}
