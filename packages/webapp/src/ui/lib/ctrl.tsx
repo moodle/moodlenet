@@ -1,4 +1,4 @@
-import { ComponentType } from 'react'
+import { ComponentType, FC } from 'react'
 
 export type Ctrl<
   UIProps extends object,
@@ -96,32 +96,81 @@ export const createWithProps = <
   ] as const
 }
 
+const IdCtrl: FC<{ __uiComp: FC }> = ({ __uiComp: Cmp, ...rest }) => <Cmp {...rest} />
+
 export const withPropsStatic = <UIProps extends object, ExclKeys extends keyof UIProps = never>(
   uiProps: UIProps & { key?: string },
-): WithProps<UIProps, ExclKeys> => {
-  const UICtrlCmp: UICtrl<UIProps, ExclKeys, any> = ctrlProps => {
-    const { children, __key, __uiComp: UICmp, ...restProps } = ctrlProps
-    return (
-      <UICmp {...uiProps} key={__key} {...restProps}>
-        {ctrlProps.children}
-      </UICmp>
-    )
+): WithProps<UIProps, ExclKeys> => __uiComp => [IdCtrl, { ...uiProps, __uiComp }] as any
+
+// new Proxy(() => {}, {
+//   apply(target, _th, args) {
+//     const [__uiComp] = args
+//     console.log({ __uiComp, target })
+//     return [IdCtrl, { ...uiProps, __uiComp }]
+//   },
+//   getOwnPropertyDescriptor(_target, prop) {
+//     return {
+//       configurable: true,
+//       enumerable: true,
+//       value: (uiProps as any)[prop],
+//       writable: false,
+//     }
+//   },
+//   get(_tgt, p) {
+//     return (uiProps as any)[p]
+//   },
+//   getPrototypeOf() {
+//     return Object
+//   },
+//   ownKeys() {
+//     return Object.keys(uiProps)
+//   },
+// }) as any
+
+/* {
+  const it = function* () {
+    yield IdCtrl
+    yield uiProps
   }
-  const [, withProps] = createWithProps<UIProps, any, ExclKeys>(UICtrlCmp)
-  return withProps({ ...uiProps, key: uiProps.key ?? `${Math.random()}` })
-}
+  ;(uiProps as any)[Symbol.iterator] = it
+  return ()=>({
+    [Symbol.iterator]:function* () {
+      yield IdCtrl
+      yield uiProps
+    }
+  }) as any
+} */
+// export const withPropsStatic = <UIProps extends object, ExclKeys extends keyof UIProps = never>(
+//   uiProps: UIProps & { key?: string },
+// ): WithProps<UIProps, ExclKeys> => {
+//   const UICtrlCmp: UICtrl<UIProps, ExclKeys, any> = ctrlProps => {
+//     const { children, __key, __uiComp: UICmp, ...restProps } = ctrlProps
+//     return (
+//       <UICmp {...uiProps} key={__key} {...restProps}>
+//         {ctrlProps.children}
+//       </UICmp>
+//     )
+//       }
+//   const [, withProps] = createWithProps<UIProps, any, ExclKeys>(UICtrlCmp)
+//   return withProps({ ...uiProps, key: uiProps.key ?? `${Math.random()}` })
+// }
+
+// export const withPropsListStatic = <UIProps extends object, ExclKeys extends keyof UIProps = never>(
+//   uiProps: (UIProps & { key?: string })[],
+// ): WithPropsList<UIProps, ExclKeys> => {
+//   const UICtrlCmp: UICtrl<UIProps, ExclKeys, any> = ctrlProps => {
+//     const { children, __key, __uiComp: UICmp, ...restProps } = ctrlProps
+//     return (
+//       <UICmp {...uiProps} key={__key} {...restProps}>
+//         {ctrlProps.children}
+//       </UICmp>
+//     )
+//   }
+//   const [, , withPropsList] = createWithProps<UIProps, any, ExclKeys>(UICtrlCmp)
+//   return withPropsList(uiProps.map((_, index) => ({ ..._, key: _.key ?? `${index}` })))
+// }
 
 export const withPropsListStatic = <UIProps extends object, ExclKeys extends keyof UIProps = never>(
-  uiProps: (UIProps & { key?: string })[],
-): WithPropsList<UIProps, ExclKeys> => {
-  const UICtrlCmp: UICtrl<UIProps, ExclKeys, any> = ctrlProps => {
-    const { children, __key, __uiComp: UICmp, ...restProps } = ctrlProps
-    return (
-      <UICmp {...uiProps} key={__key} {...restProps}>
-        {ctrlProps.children}
-      </UICmp>
-    )
-  }
-  const [, , withPropsList] = createWithProps<UIProps, any, ExclKeys>(UICtrlCmp)
-  return withPropsList(uiProps.map((_, index) => ({ ..._, key: _.key ?? `${index}` })))
-}
+  uiPropsList: (UIProps & { key?: string })[],
+): WithPropsList<UIProps, ExclKeys> => __uiComp =>
+  [IdCtrl, uiPropsList.map(uiProps => ({ ...uiProps, __uiComp }))] as any

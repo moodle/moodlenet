@@ -7,6 +7,7 @@ import { ProfileCard, ProfileCardProps } from '../../components/cards/ProfileCar
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
 import { ScoreCard, ScoreCardProps } from '../../components/cards/ScoreCard/ScoreCard'
 import { WithProps, WithPropsList } from '../../lib/ctrl'
+import { withProps, WithProps as WP } from '../../lib/__/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import './styles.scss'
 
@@ -16,7 +17,7 @@ export type ProfileProps = {
   scoreCardProps: ScoreCardProps
   profileCardProps: ProfileCardProps
   collectionCardWithPropsList: WithPropsList<CollectionCardProps>
-  resourceCardWithPropsList: WithPropsList<ResourceCardProps>
+  resourceCardWithPropsList: WP<ResourceCardProps>[]
   username: string
 }
 
@@ -29,9 +30,10 @@ export const Profile: FC<ProfileProps> = ({
   resourceCardWithPropsList,
   username,
 }) => {
+  console.log({ headerPageTemplateWithProps })
   const [HeaderPageTemplateCtrl, headerPageTemplateProps] = headerPageTemplateWithProps(HeaderPageTemplate)
+  console.log({ HeaderPageTemplateCtrl, headerPageTemplateProps })
   const [CollectionCardCtrl, collectionCardPropsList] = collectionCardWithPropsList(CollectionCard)
-  const [ResourceCardCtrl, resourceCardPropsList] = resourceCardWithPropsList(ResourceCard)
   return (
     <HeaderPageTemplateCtrl {...headerPageTemplateProps}>
       <div className="profile">
@@ -39,9 +41,10 @@ export const Profile: FC<ProfileProps> = ({
           <div className="main-column">
             <ProfileCard {...profileCardProps} />
             <ListCard
-              content={resourceCardPropsList.map(resourcesCardProps => (
-                <ResourceCardCtrl {...resourcesCardProps} />
-              ))}
+              content={resourceCardWithPropsList.map(__ => {
+                const [ResourceCardCtrl, resourcesCardProps] = withProps(ResourceCard, __)
+                return <ResourceCardCtrl {...resourcesCardProps} />
+              })}
               title={t`Latest Resources`}
               className="resources"
             />
