@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro'
-import { FC } from 'react'
 import { CollectionCard, CollectionCardProps } from '../../components/cards/CollectionCard/CollectionCard'
 import { ListCard } from '../../components/cards/ListCard/ListCard'
 import { OverallCard, OverallCardProps } from '../../components/cards/OverallCard/OverallCard'
@@ -21,7 +20,7 @@ export type ProfileProps = {
   username: string
 }
 
-export const Profile: FC<ProfileProps> = ({
+export const Profile = withProps<ProfileProps>(function Profile({
   headerPageTemplateWithProps,
   overallCardProps,
   profileCardProps,
@@ -29,7 +28,7 @@ export const Profile: FC<ProfileProps> = ({
   collectionCardWithPropsList,
   resourceCardWithPropsList,
   username,
-}) => {
+}) {
   console.log({ headerPageTemplateWithProps })
   const [HeaderPageTemplateCtrl, headerPageTemplateProps] = headerPageTemplateWithProps(HeaderPageTemplate)
   console.log({ HeaderPageTemplateCtrl, headerPageTemplateProps })
@@ -41,9 +40,8 @@ export const Profile: FC<ProfileProps> = ({
           <div className="main-column">
             <ProfileCard {...profileCardProps} />
             <ListCard
-              content={resourceCardWithPropsList.map(__ => {
-                const [ResourceCardCtrl, resourcesCardProps] = withProps(ResourceCard, __)
-                return <ResourceCardCtrl {...resourcesCardProps} />
+              content={resourceCardWithPropsList.map(resourcesCardProps => {
+                return <ResourceCard {...resourcesCardProps} />
               })}
               title={t`Latest Resources`}
               className="resources"
@@ -71,4 +69,4 @@ export const Profile: FC<ProfileProps> = ({
       </div>
     </HeaderPageTemplateCtrl>
   )
-}
+})

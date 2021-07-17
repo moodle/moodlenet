@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useEffect, useReducer } from 'react'
+import { FC, useEffect, useReducer } from 'react'
 import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
 import { OverallCardStoryProps } from '../../components/cards/OverallCard/OverallCard.stories'
 import { ProfileCardStoryProps } from '../../components/cards/ProfileCard/ProfileCard.stories'
@@ -10,7 +10,7 @@ import { HeaderProps } from '../../components/Header/Header'
 import { HeaderStoryProps } from '../../components/Header/Header.stories'
 import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
 import { withPropsListStatic, withPropsStatic } from '../../lib/ctrl'
-import { withPropsFor } from '../../lib/__/ctrl'
+import { withPropsFor, Wrapper } from '../../lib/__/ctrl'
 import { HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import { HeaderPageProps } from '../HeaderPage/HeaderPage'
 import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
@@ -48,8 +48,10 @@ export const ProfileStoryProps: ProfileProps = {
             clearInterval(i)
           }
         }, [])
-        const color = ['red', 'green', 'blue'][n % 3]
-        return [p, { wrappers: [[({ children }) => <div style={{ color }}>{children}</div>, {}]] }]
+        // return [p, { wrappers: [], n }]
+        const color = ['red', 'green', 'blue'][n % 3]!
+        const w: Wrapper = [W, { color }]
+        return [p, { wrappers: [w] }]
       },
       hookArg: null,
       key: i,
@@ -57,6 +59,7 @@ export const ProfileStoryProps: ProfileProps = {
   }),
   username: 'Juanito',
 }
+const W: FC<{ color: string }> = ({ children, color }) => <div style={{ color }}>{children}</div>
 
 export const ProfileLoggedOutStoryProps: ProfileProps = {
   ...ProfileStoryProps,
