@@ -1,8 +1,9 @@
 import { t, Trans } from '@lingui/macro'
-import { ChangeEventHandler, FC, useCallback } from 'react'
+import { ChangeEventHandler, useCallback } from 'react'
 import addIcon from '../../assets/icons/add.svg'
 import searchIcon from '../../assets/icons/search.svg'
 import { Href, Link } from '../../elements/link'
+import { withCtrl } from '../../lib/ctrl'
 import { Organization } from '../../types'
 import PrimaryButton from '../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../atoms/TertiaryButton/TertiaryButton'
@@ -29,7 +30,7 @@ export type HeaderPropsBase = {
 }
 export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
 
-export const Header: FC<HeaderProps> = props => {
+export const Header = withCtrl<HeaderProps>(props => {
   const { homeHref, loginHref, searchText, setSearchText } = props
   const setSearchTextCB = useCallback<ChangeEventHandler<HTMLInputElement>>(
     ev => setSearchText(ev.currentTarget.value),
@@ -87,6 +88,5 @@ export const Header: FC<HeaderProps> = props => {
       </div>
     </div>
   )
-}
-
+})
 export default Header

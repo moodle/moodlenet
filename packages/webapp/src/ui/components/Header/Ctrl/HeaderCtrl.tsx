@@ -3,16 +3,14 @@ import { useSession } from '../../../../context/Global/Session'
 import { getMaybeAssetRefUrl } from '../../../../helpers/data'
 import { mainPath } from '../../../../hooks/glob/nav'
 import { href } from '../../../elements/link'
-import { createWithProps } from '../../../lib/ctrl'
+import { CtrlHook } from '../../../lib/ctrl'
 import { useSearchUrlQuery } from '../../../pages/Search/Ctrl/useSearchUrlQuery'
 import { HeaderProps, HeaderPropsIdle } from '../Header'
 
-export const [HeaderCtrl, headerWithProps] = createWithProps<HeaderProps, {}>(props => {
+export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
   const { session, logout, currentProfile } = useSession()
-  const { __uiComp: HeaderUI } = props
   const { setText: setSearchText, text: searchText } = useSearchUrlQuery()
   const headerProps = useMemo<HeaderProps>(() => {
-    const { __key, __uiComp, ...rest } = props
     const me: HeaderPropsIdle['me'] =
       currentProfile && session
         ? {
@@ -23,7 +21,6 @@ export const [HeaderCtrl, headerWithProps] = createWithProps<HeaderProps, {}>(pr
         : null
     return {
       status: 'idle',
-      ...rest,
       me,
       homeHref: href(mainPath.landing),
       loginHref: href(mainPath.login),
@@ -35,6 +32,6 @@ export const [HeaderCtrl, headerWithProps] = createWithProps<HeaderProps, {}>(pr
       searchText,
       setSearchText,
     }
-  }, [currentProfile, logout, props, searchText, session, setSearchText])
-  return <HeaderUI {...headerProps} />
-})
+  }, [currentProfile, logout, searchText, session, setSearchText])
+  return [headerProps]
+}

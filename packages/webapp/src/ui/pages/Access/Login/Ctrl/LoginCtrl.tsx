@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
 import { useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
-import { createWithProps } from '../../../../lib/ctrl'
+import { CtrlHook } from '../../../../lib/ctrl'
 import { SubmitForm } from '../../../../lib/formik'
 import { LoginFormValues, LoginProps } from '../Login'
 
-export const [LoginCtrl, loginWithProps] = createWithProps<LoginProps, {}>(props => {
+export const useLoginCtrl: CtrlHook<LoginProps, {}> = () => {
   useRedirectHomeIfLoggedIn()
   const { login } = useSession()
   const [loginErrorMessage, setLoginErrorMessage] = useState<string | null>(null)
@@ -18,10 +18,7 @@ export const [LoginCtrl, loginWithProps] = createWithProps<LoginProps, {}>(props
   )
 
   const loginProps = useMemo<LoginProps>(() => {
-    const { __key, __uiComp, ...rest } = props
-
     const loginProps: LoginProps = {
-      ...rest,
       accessHeaderProps: {
         organization: {
           name: 'BFH',
@@ -33,9 +30,7 @@ export const [LoginCtrl, loginWithProps] = createWithProps<LoginProps, {}>(props
       loginErrorMessage,
     }
     return loginProps
-  }, [loginErrorMessage, onSubmit, props])
+  }, [loginErrorMessage, onSubmit])
 
-  const { __uiComp: LoginUI } = props
-
-  return <LoginUI {...loginProps} />
-})
+  return loginProps && [loginProps]
+}

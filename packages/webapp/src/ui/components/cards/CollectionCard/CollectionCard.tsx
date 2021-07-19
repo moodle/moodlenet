@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { withCtrl } from '../../../lib/ctrl'
 import '../../../styles/tags.css'
 import './styles.scss'
 
@@ -7,7 +7,7 @@ export type CollectionCardProps = {
   title: string
 }
 
-export const CollectionCard: FC<CollectionCardProps> = ({ imageUrl, title }) => {
+export const CollectionCard = withCtrl<CollectionCardProps>(({ imageUrl, title }) => {
   const background = {
     backgroundImage: 'url(' + imageUrl + ')',
     backgroundSize: 'cover',
@@ -20,6 +20,6 @@ export const CollectionCard: FC<CollectionCardProps> = ({ imageUrl, title }) => 
       </div>
     </div>
   )
-}
-
+})
+CollectionCard.displayName = 'CollectionCard'
 CollectionCard.defaultProps = {}

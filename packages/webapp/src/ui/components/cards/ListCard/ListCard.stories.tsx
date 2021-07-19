@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CollectionCard } from '../CollectionCard/CollectionCard'
 import { CollectionCardStoryProps } from '../CollectionCard/CollectionCard.stories'
-import ResourceCard from '../ResourceCard/ResourceCard'
+import { ResourceCard } from '../ResourceCard/ResourceCard'
 import { ResourceCardStoryProps } from '../ResourceCard/ResourceCard.stories'
 import SubjectCard from '../SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../SubjectCard/SubjectCard.stories'

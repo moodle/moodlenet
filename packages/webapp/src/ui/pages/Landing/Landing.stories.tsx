@@ -1,10 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { TrendCardStoryProps } from '../../components/cards/TrendCard/TrendCard.stories'
-import { HeaderProps } from '../../components/Header/Header'
 import { HeaderStoryProps } from '../../components/Header/Header.stories'
-import { withPropsStatic } from '../../lib/ctrl'
-import { HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
-import { HeaderPageProps } from '../HeaderPage/HeaderPage'
 import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Landing, LandingProps } from './Landing'
 
@@ -21,10 +17,10 @@ const meta: ComponentMeta<typeof Landing> = {
 const LandingStory: ComponentStory<typeof Landing> = args => <Landing {...args} />
 
 export const LandingStoryProps: LandingProps = {
-  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
-    headerPageWithProps: withPropsStatic(HeaderPageStoryProps),
+  headerPageTemplateProps: {
+    headerPageProps: HeaderPageStoryProps,
     isAuthenticated: true,
-  }),
+  },
   trendCardProps: TrendCardStoryProps,
   organization: {
     name: 'Bern University of Applied Sciences',
@@ -35,24 +31,24 @@ export const LandingStoryProps: LandingProps = {
 
 export const LandingLoggedOutStoryProps: LandingProps = {
   ...LandingStoryProps,
-  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+  headerPageTemplateProps: {
     isAuthenticated: false,
-    headerPageWithProps: withPropsStatic<HeaderPageProps>({
+    headerPageProps: {
       ...HeaderPageStoryProps,
-      headerWithProps: withPropsStatic<HeaderProps>(HeaderStoryProps),
-    }),
-  }),
+      headerProps: HeaderStoryProps,
+    },
+  },
 }
 
 export const LandingLoggedInStoryProps: LandingProps = {
   ...LandingStoryProps,
-  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+  headerPageTemplateProps: {
     isAuthenticated: true,
-    headerPageWithProps: withPropsStatic<HeaderPageProps>({
+    headerPageProps: {
       ...HeaderPageStoryProps,
-      headerWithProps: withPropsStatic<HeaderProps>(HeaderStoryProps),
-    }),
-  }),
+      headerProps: HeaderStoryProps,
+    },
+  },
 }
 
 export const LoggedOut = LandingStory.bind({})
