@@ -17,3 +17,4 @@ export const Access: FC<AccessProps> = ({ accessHeaderProps }) => {
     </MainPageWrapper>
   )
 }
+Access.displayName = 'Access'

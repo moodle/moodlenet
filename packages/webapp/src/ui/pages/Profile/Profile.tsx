@@ -5,43 +5,38 @@ import { OverallCard, OverallCardProps } from '../../components/cards/OverallCar
 import { ProfileCard, ProfileCardProps } from '../../components/cards/ProfileCard/ProfileCard'
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
 import { ScoreCard, ScoreCardProps } from '../../components/cards/ScoreCard/ScoreCard'
-import { WithProps, WithPropsList } from '../../lib/ctrl'
-import { CP, withCtrl } from '../../lib/__/ctrl'
+import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import './styles.scss'
 
 export type ProfileProps = {
-  headerPageTemplateWithProps: WithProps<HeaderPageTemplateProps>
+  headerPageTemplateProps: CP<HeaderPageTemplateProps>
   overallCardProps: OverallCardProps
   scoreCardProps: ScoreCardProps
   profileCardProps: ProfileCardProps
-  collectionCardWithPropsList: WithPropsList<CollectionCardProps>
-  resourceCardWithPropsList: CP<ResourceCardProps>[]
+  collectionCardPropsList: CP<CollectionCardProps>[]
+  resourceCardPropsList: CP<ResourceCardProps>[]
   username: string
 }
 
 export const Profile = withCtrl<ProfileProps>(
   ({
-    headerPageTemplateWithProps,
+    headerPageTemplateProps,
     overallCardProps,
     profileCardProps,
     scoreCardProps,
-    collectionCardWithPropsList,
-    resourceCardWithPropsList,
+    collectionCardPropsList,
+    resourceCardPropsList,
     username,
   }) => {
-    // console.log({ headerPageTemplateWithProps })
-    const [HeaderPageTemplateCtrl, headerPageTemplateProps] = headerPageTemplateWithProps(HeaderPageTemplate)
-    // console.log({ HeaderPageTemplateCtrl, headerPageTemplateProps })
-    const [CollectionCardCtrl, collectionCardPropsList] = collectionCardWithPropsList(CollectionCard)
     return (
-      <HeaderPageTemplateCtrl {...headerPageTemplateProps}>
+      <HeaderPageTemplate {...headerPageTemplateProps}>
         <div className="profile">
           <div className="content">
             <div className="main-column">
               <ProfileCard {...profileCardProps} />
               <ListCard
-                content={resourceCardWithPropsList.map(resourcesCardProps => {
+                content={resourceCardPropsList.map(resourcesCardProps => {
                   return <ResourceCard {...resourcesCardProps} />
                 })}
                 title={t`Latest Resources`}
@@ -50,7 +45,7 @@ export const Profile = withCtrl<ProfileProps>(
               <ListCard
                 title={t`Collections curated by ${username}`}
                 content={collectionCardPropsList.map(collectionCardProps => (
-                  <CollectionCardCtrl {...collectionCardProps} />
+                  <CollectionCard {...collectionCardProps} />
                 ))}
                 className="collections"
               />
@@ -61,14 +56,15 @@ export const Profile = withCtrl<ProfileProps>(
               <ListCard
                 title={t`Collections curated by ${username}`}
                 content={collectionCardPropsList.map(collectionCardProps => (
-                  <CollectionCardCtrl {...collectionCardProps} />
+                  <CollectionCard {...collectionCardProps} />
                 ))}
                 className="collections"
               />
             </div>
           </div>
         </div>
-      </HeaderPageTemplateCtrl>
+      </HeaderPageTemplate>
     )
   },
 )
+Profile.displayName = 'ProfilePage'

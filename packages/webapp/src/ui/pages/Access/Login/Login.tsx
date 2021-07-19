@@ -1,9 +1,9 @@
 import { t, Trans } from '@lingui/macro'
 import CallMadeIcon from '@material-ui/icons/CallMade'
-import { FC } from 'react'
 import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryButton'
+import { withCtrl } from '../../../lib/ctrl'
 import { SubmitForm, useFormikBag } from '../../../lib/formik'
 import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
@@ -16,7 +16,7 @@ export type LoginProps = {
   loginErrorMessage: string | null
 }
 
-export const Login: FC<LoginProps> = ({ accessHeaderProps, onSubmit }) => {
+export const Login = withCtrl<LoginProps>(({ accessHeaderProps, onSubmit }) => {
   const [form, attrs] = useFormikBag({ initialValues: { username: '', password: '' }, onSubmit })
   return (
     <MainPageWrapper>
@@ -79,4 +79,5 @@ export const Login: FC<LoginProps> = ({ accessHeaderProps, onSubmit }) => {
       </div>
     </MainPageWrapper>
   )
-}
+})
+Login.displayName = 'LoginPage'

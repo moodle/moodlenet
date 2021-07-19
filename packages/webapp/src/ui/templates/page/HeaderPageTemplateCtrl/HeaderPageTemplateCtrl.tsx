@@ -1,16 +1,13 @@
 import { useSession } from '../../../../context/Global/Session'
-import { createWithProps } from '../../../lib/ctrl'
-import { headerPageWithProps } from '../../../pages/HeaderPage/Ctrl/HeaderPageCtrl'
+import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
+import { useHeaderPageCtrl } from '../../../pages/HeaderPage/Ctrl/HeaderPageCtrl'
 import { HeaderPageTemplateProps } from '../HeaderPageTemplate'
 
-export const [HeaderPageTemplateCtrl, headerPageTemplateWithProps] = createWithProps<HeaderPageTemplateProps, {}>(
-  ({ __key, __uiComp: HeaderPageTemplateUI, ...rest }) => {
-    const { session } = useSession()
-    const headerPageTemplateProps: HeaderPageTemplateProps = {
-      ...rest,
-      isAuthenticated: !!session,
-      headerPageWithProps: headerPageWithProps({ key: 'Header Page' }),
-    }
-    return <HeaderPageTemplateUI {...headerPageTemplateProps} />
-  },
-)
+export const useHeaderPageTemplateCtrl: CtrlHook<HeaderPageTemplateProps, {}> = () => {
+  const { session } = useSession()
+  const headerPageTemplateProps: HeaderPageTemplateProps = {
+    isAuthenticated: !!session,
+    headerPageProps: ctrlHook(useHeaderPageCtrl, {}),
+  }
+  return [headerPageTemplateProps]
+}
