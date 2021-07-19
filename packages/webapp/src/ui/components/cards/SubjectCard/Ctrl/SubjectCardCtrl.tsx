@@ -11,7 +11,7 @@ export const useSubjectCardCtrl: CtrlHook<SubjectCardProps, { id: Id }> = ({ id 
     () =>
       subjectNode
         ? {
-            organization: { url: 'bfh.ch', color: '' },
+            organization: { url: 'bfh.ch', color: '#37556e' },
             title: subjectNode.name,
           }
         : null,
