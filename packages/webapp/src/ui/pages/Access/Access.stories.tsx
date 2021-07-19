@@ -19,21 +19,20 @@ const AccessStory: ComponentStory<typeof Access> = args => <Access {...args} />
 
 export const AccessProfileStoryProps: AccessProps = {
   accessHeaderProps: AccessHeaderStoryProps,
-  view: Profile({...ProfileStoryProps})
+  view: Profile({ ...ProfileStoryProps }),
 }
 
 export const ProfilePage = AccessStory.bind({})
 ProfilePage.args = AccessProfileStoryProps
-ProfilePage.parameters = {layout: 'fullscreen'}
+ProfilePage.parameters = { layout: 'fullscreen' }
 
 export const AccessLandingStoryProps: AccessProps = {
   accessHeaderProps: AccessHeaderStoryProps,
-  view: Landing({...LandingStoryProps})
+  view: Landing({ ...LandingStoryProps }),
 }
 
 export const LandingPage = AccessStory.bind({})
 LandingPage.args = AccessLandingStoryProps
-LandingPage.parameters = {layout: 'fullscreen'}
-
+LandingPage.parameters = { layout: 'fullscreen' }
 
 export default meta

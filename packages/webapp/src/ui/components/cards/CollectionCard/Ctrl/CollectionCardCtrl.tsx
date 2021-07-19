@@ -1,15 +1,12 @@
 import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { useMemo } from 'react'
 import { getMaybeAssetRefUrl } from '../../../../../helpers/data'
-import { createWithProps } from '../../../../lib/ctrl'
+import { CtrlHook } from '../../../../lib/ctrl'
 import { CollectionCardProps } from '../CollectionCard'
 import { useCollectionCardQuery } from './CollectionCard.gen'
 
-export type CollectionCardCtrlProps = { id: Id }
-export const [CollectionCardCtrl, collectionCardWithProps, collectionCardWithPropList] = createWithProps<
-  CollectionCardProps,
-  CollectionCardCtrlProps
->(({ id, __key, __uiComp: CollectionCardUI, ...rest }) => {
+export type CollectionCardCtrlArg = { id: Id }
+export const useCollectionCardCtrl: CtrlHook<CollectionCardProps, CollectionCardCtrlArg> = ({ id }) => {
   const collectionNode = useCollectionCardQuery({ variables: { id } }).data?.node
 
   const collectionCardUIProps = useMemo<CollectionCardProps | null>(
@@ -19,10 +16,10 @@ export const [CollectionCardCtrl, collectionCardWithProps, collectionCardWithPro
             organization: 'abc',
             title: collectionNode.name,
             imageUrl: getMaybeAssetRefUrl(collectionNode.icon) ?? '',
-            ...rest,
           }
         : null,
-    [collectionNode, rest],
+    [collectionNode],
   )
-  return collectionCardUIProps && <CollectionCardUI {...collectionCardUIProps} />
-})
+
+  return collectionCardUIProps && [collectionCardUIProps]
+}

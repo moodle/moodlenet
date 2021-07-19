@@ -1,176 +1,107 @@
-import { ComponentType, FC } from 'react'
+import { ComponentType, FC, PropsWithChildren, ReactElement } from 'react'
 
-export type Ctrl<
-  UIProps extends object,
-  IntrinsicCtrlProps extends InternalCtrlProps<UIProps>,
-  ExclKeys extends keyof UIProps = never
-> = ComponentType<CtrlPropsFor<UIProps, IntrinsicCtrlProps, ExclKeys>>
+export type UIPropsOf<UIProps, ExcludeKeys extends keyof UIProps = never> = Pick<UIProps, ExcludeKeys>
+const rnd = Number(`${Math.random()}`.substring(2)).toString(36)
+const s = Symbol()
+const CTRL_SYMB: typeof s = `___CTRL_SYMBOL___${rnd}` as any
 
-export type UICtrl<
-  UIProps extends object,
-  ExclKeys extends keyof UIProps = never,
-  IntrinsicCtrlProps extends InternalCtrlProps<UIProps> = UnknownIntrinsicCtrlProps<UIProps>
-> = ComponentType<UICtrlPropsFor<UIProps, ExclKeys, IntrinsicCtrlProps> & InternalCtrlProps<UIProps>>
+export type CtrlHook<UIProps, HookArg, ExcludeKeys extends keyof UIProps = never> = (
+  hookArg: HookArg,
+) => CtrlHookRetOf<UIProps, ExcludeKeys>
 
-export type CtrlPropsFor<
-  UIProps extends object,
-  IntrinsicCtrlProps extends InternalCtrlProps<UIProps>,
-  ExclKeys extends keyof UIProps = never
-> = UICtrlPropsFor<UIProps, ExclKeys, IntrinsicCtrlProps>
+export type Wrapper<C = ComponentType<any>> = C extends ComponentType<infer T> ? [ComponentType<T>, T] : never
+export type CtrlHookRetOf<UIProps, ExcludeKeys extends keyof UIProps = never> =
+  | [feedProps: Omit<UIProps, ExcludeKeys>, opts?: Partial<CtrlHookRetOpts>]
+  | null
+  | undefined
 
-export type InternalCtrlProps<UIProps> = { __uiComp: ComponentType<UIProps>; __key: string }
-
-export type UICtrlPropsFor<
-  UIProps extends object,
-  ExclKeys extends keyof UIProps = never,
-  IntrinsicCtrlProps extends InternalCtrlProps<UIProps> = UnknownIntrinsicCtrlProps<UIProps>
-> = Pick<UIProps, ExclKeys> & InternalCtrlProps<UIProps> & IntrinsicCtrlProps
-
-const UnknownIntrinsicCtrlProp = Symbol()
-type UnknownIntrinsicCtrlProps<UIProps extends object> = {
-  readonly [UnknownIntrinsicCtrlProp]: unique symbol
-} & InternalCtrlProps<UIProps>
-
-export type WithProps<
-  UIProps extends object,
-  ExclKeys extends keyof UIProps = never,
-  IntrinsicCtrlProps extends InternalCtrlProps<UIProps> = UnknownIntrinsicCtrlProps<UIProps>
-> = (
-  UICmp: ComponentType<UIProps>,
-) => readonly [UICtrl: UICtrl<UIProps, ExclKeys, IntrinsicCtrlProps>, intrinsicCtrlProps: IntrinsicCtrlProps]
-
-export type WithPropsList<
-  UIProps extends object,
-  ExclKeys extends keyof UIProps = never,
-  IntrinsicCtrlProps extends InternalCtrlProps<UIProps> = UnknownIntrinsicCtrlProps<UIProps>
-> = (
-  UICmp: ComponentType<UIProps>,
-) => readonly [UICtrl: UICtrl<UIProps, ExclKeys, IntrinsicCtrlProps>, intrinsicCtrlProps: readonly IntrinsicCtrlProps[]]
-
-type BaseIntrinsicCtrlProps = { key: string }
-export type CtrlProps<IntrinsicProps> = IntrinsicProps & BaseIntrinsicCtrlProps
-export const createWithProps = <
-  UIProps extends object,
-  IntrinsicCtrlProps extends object,
-  ExclKeys extends keyof UIProps = never
->(
-  CtrlCmp: Ctrl<UIProps, IntrinsicCtrlProps & InternalCtrlProps<UIProps>, ExclKeys>,
-) => {
-  // const UICtrlCmp: UICtrl<UIProps, ExclKeys, IntrinsicCtrlProps & InternalCtrlProps<UIProps>> = uiCtrlProps => (
-  //   <CtrlCmp {...uiCtrlProps} />
-  // )
-  const UICtrlCmp = CtrlCmp
-  return [
-    UICtrlCmp,
-    function withProps(intrinsicCtrlProps: IntrinsicCtrlProps & BaseIntrinsicCtrlProps): WithProps<UIProps, ExclKeys> {
-      return __uiComp => {
-        // ): WithProps<UIProps, ExclKeys, IntrinsicCtrlProps & InternalCtrlProps<UIProps>> => __uiComp => {
-        type ActualType = ReturnType<WithProps<UIProps, ExclKeys, IntrinsicCtrlProps & InternalCtrlProps<UIProps>>>
-        const ctrlProps: IntrinsicCtrlProps & InternalCtrlProps<UIProps> = {
-          ...intrinsicCtrlProps,
-          __uiComp,
-          __key: intrinsicCtrlProps.key,
-        }
-        const _: ActualType = [CtrlCmp, ctrlProps]
-        return _ as any
-      }
-    },
-    function withPropsList(
-      intrinsicCtrlPropsList: (IntrinsicCtrlProps & BaseIntrinsicCtrlProps)[],
-    ): WithPropsList<UIProps, ExclKeys> {
-      return __uiComp => {
-        // ): WithPropsList<UIProps, ExclKeys, IntrinsicCtrlProps & InternalCtrlProps<UIProps>> => __uiComp => {
-        type ActualType = ReturnType<WithPropsList<UIProps, ExclKeys, IntrinsicCtrlProps & InternalCtrlProps<UIProps>>>
-
-        const ctrlPropsList = intrinsicCtrlPropsList.map<IntrinsicCtrlProps & InternalCtrlProps<UIProps>>(
-          intrinsicCtrlProps => ({
-            ...intrinsicCtrlProps,
-            __uiComp,
-            __key: intrinsicCtrlProps.key,
-          }),
-        )
-        const _: ActualType = [CtrlCmp, ctrlPropsList]
-        return _ as any
-      }
-    },
-  ] as const
+export type CtrlHookRetOpts = {
+  wrap(ui: ReactElement): ReactElement
 }
 
-const IdCtrl: FC<{ __uiComp: FC }> = ({ __uiComp: Cmp, ...rest }) => <Cmp {...rest} />
-
-export const withPropsStatic = <UIProps extends object, ExclKeys extends keyof UIProps = never>(
-  uiProps: UIProps & { key?: string },
-): WithProps<UIProps, ExclKeys> => __uiComp => [IdCtrl, { ...uiProps, __uiComp }] as any
-
-// new Proxy(() => {}, {
-//   apply(target, _th, args) {
-//     const [__uiComp] = args
-//     console.log({ __uiComp, target })
-//     return [IdCtrl, { ...uiProps, __uiComp }]
-//   },
-//   getOwnPropertyDescriptor(_target, prop) {
-//     return {
-//       configurable: true,
-//       enumerable: true,
-//       value: (uiProps as any)[prop],
-//       writable: false,
-//     }
-//   },
-//   get(_tgt, p) {
-//     return (uiProps as any)[p]
-//   },
-//   getPrototypeOf() {
-//     return Object
-//   },
-//   ownKeys() {
-//     return Object.keys(uiProps)
-//   },
-// }) as any
-
-/* {
-  const it = function* () {
-    yield IdCtrl
-    yield uiProps
+export const ctrlHook = <UIProps, HookArg, ExcludeKeys extends keyof UIProps = never>(
+  useCtrlHook: CtrlHook<UIProps, HookArg, ExcludeKeys>,
+  hookArg: HookArg,
+  key?: CKey,
+): ControlledProps<UIProps, ExcludeKeys, HookArg> => {
+  return {
+    key,
+    [CTRL_SYMB]: {
+      useCtrlHook,
+      hookArg,
+    },
   }
-  ;(uiProps as any)[Symbol.iterator] = it
-  return ()=>({
-    [Symbol.iterator]:function* () {
-      yield IdCtrl
-      yield uiProps
+}
+
+export type CP<UIProps, ExcludeKeys extends keyof UIProps = never, HookArg = any> = ControlledProps<
+  UIProps,
+  ExcludeKeys,
+  HookArg
+>
+export type ControlledProps<UIProps, ExcludeKeys extends keyof UIProps = never, HookArg = any> = { key?: CKey } & (
+  | CtrlHookWrap<UIProps, ExcludeKeys, HookArg>
+  | UIProps
+)
+
+export type CtrlHookWrap<UIProps, ExcludeKeys extends keyof UIProps = never, HookArg = unknown> = {
+  [s]: CtrlHookBag<UIProps, ExcludeKeys, HookArg>
+}
+export type CtrlHookBag<UIProps, ExcludeKeys extends keyof UIProps = never, HookArg = unknown> = {
+  useCtrlHook: CtrlHook<UIProps, HookArg, ExcludeKeys>
+  hookArg: HookArg
+}
+
+const defaultCtrlHookRetOpts: CtrlHookRetOpts = {
+  wrap: _ => _,
+}
+export const RenderWithHook: FC<{
+  chw: CtrlHookWrap<any>
+  UIComp: ComponentType<any>
+  displayName: string
+}> = ({ UIComp, chw, displayName, ...rest }) => {
+  const { useCtrlHook, hookArg } = chw[CTRL_SYMB]
+  const hookRet = useCtrlHook(hookArg)
+  if (!hookRet) {
+    return null
+  }
+  const [feedProps, opts] = hookRet
+  const { wrap } = { ...defaultCtrlHookRetOpts, ...opts }
+  UIComp.displayName = `${displayName}_UI`
+  return wrap(<UIComp {...feedProps} {...rest} />)
+}
+
+export const withCtrl = <UIProps, ExcludeKeys extends keyof UIProps = never>(
+  UIComp: ComponentType<UIProps>,
+): FC<ControlledProps<UIProps, ExcludeKeys>> => {
+  // eslint-disable-next-line no-eval
+  const Render = ({ children, ...props }: PropsWithChildren<ControlledProps<UIProps, ExcludeKeys>>) => {
+    if (CTRL_SYMB in props && (props as any)[CTRL_SYMB]) {
+      // console.log('RenderWithHook', props)
+      return (
+        <RenderWithHook
+          {...{
+            chw: props as PropsWithChildren<CtrlHookWrap<UIProps>>,
+            displayName: Render.displayName,
+            UIComp,
+            children,
+          }}
+        />
+      )
+    } else {
+      return <UIComp {...(props as PropsWithChildren<UIProps>)} />
     }
-  }) as any
-} */
-// export const withPropsStatic = <UIProps extends object, ExclKeys extends keyof UIProps = never>(
-//   uiProps: UIProps & { key?: string },
-// ): WithProps<UIProps, ExclKeys> => {
-//   const UICtrlCmp: UICtrl<UIProps, ExclKeys, any> = ctrlProps => {
-//     const { children, __key, __uiComp: UICmp, ...restProps } = ctrlProps
-//     return (
-//       <UICmp {...uiProps} key={__key} {...restProps}>
-//         {ctrlProps.children}
-//       </UICmp>
-//     )
-//       }
-//   const [, withProps] = createWithProps<UIProps, any, ExclKeys>(UICtrlCmp)
-//   return withProps({ ...uiProps, key: uiProps.key ?? `${Math.random()}` })
-// }
+  }
+  Render.displayName = ''
+  return Render
+}
+type CKey = string | number | null | undefined
 
-// export const withPropsListStatic = <UIProps extends object, ExclKeys extends keyof UIProps = never>(
-//   uiProps: (UIProps & { key?: string })[],
-// ): WithPropsList<UIProps, ExclKeys> => {
-//   const UICtrlCmp: UICtrl<UIProps, ExclKeys, any> = ctrlProps => {
-//     const { children, __key, __uiComp: UICmp, ...restProps } = ctrlProps
-//     return (
-//       <UICmp {...uiProps} key={__key} {...restProps}>
-//         {ctrlProps.children}
-//       </UICmp>
-//     )
-//   }
-//   const [, , withPropsList] = createWithProps<UIProps, any, ExclKeys>(UICtrlCmp)
-//   return withPropsList(uiProps.map((_, index) => ({ ..._, key: _.key ?? `${index}` })))
-// }
-
-export const withPropsListStatic = <UIProps extends object, ExclKeys extends keyof UIProps = never>(
-  uiPropsList: (UIProps & { key?: string })[],
-): WithPropsList<UIProps, ExclKeys> => __uiComp =>
-  [IdCtrl, uiPropsList.map(uiProps => ({ ...uiProps, __uiComp }))] as any
+// // eslint-disable-next-line no-eval
+// const evalRender =(name:string)=> eval(
+//   `function ${name}_Ctrl}({ children, ...props })  {
+//     if (CTRL_SYMB in props && props[CTRL_SYMB]) {
+//       return <RenderWithHook {...{ chw: props as PropsWithChildren<CtrlHookWrap<UIProps>>, UIComp, children }} />
+//     } else {
+//       return <UIComp {...(props as PropsWithChildren<UIProps>)} />
+//     }
+//   }`)

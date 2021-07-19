@@ -4,12 +4,8 @@ import { OverallCardStoryProps } from '../../components/cards/OverallCard/Overal
 import { ProfileCardStoryProps } from '../../components/cards/ProfileCard/ProfileCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { ScoreCardStoryProps } from '../../components/cards/ScoreCard/ScoreCard.stories'
-import { HeaderProps } from '../../components/Header/Header'
 import { HeaderStoryProps } from '../../components/Header/Header.stories'
 import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
-import { withPropsListStatic, withPropsStatic } from '../../lib/ctrl'
-import { HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
-import { HeaderPageProps } from '../HeaderPage/HeaderPage'
 import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Profile, ProfileProps } from './Profile'
 
@@ -26,41 +22,41 @@ const meta: ComponentMeta<typeof Profile> = {
 const ProfileStory: ComponentStory<typeof Profile> = args => <Profile {...args} />
 
 export const ProfileStoryProps: ProfileProps = {
-  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
-    headerPageWithProps: withPropsStatic(HeaderPageStoryProps),
+  headerPageTemplateProps: {
+    headerPageProps: HeaderPageStoryProps,
     isAuthenticated: true,
-  }),
+  },
   overallCardProps: OverallCardStoryProps,
   profileCardProps: ProfileCardStoryProps,
   scoreCardProps: ScoreCardStoryProps,
-  collectionCardWithPropsList: withPropsListStatic([CollectionCardStoryProps, CollectionCardStoryProps]),
-  resourceCardWithPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
+  collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
+  resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
   username: 'Juanito',
 }
 
 export const ProfileLoggedOutStoryProps: ProfileProps = {
   ...ProfileStoryProps,
-  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+  headerPageTemplateProps: {
     isAuthenticated: false,
-    headerPageWithProps: withPropsStatic<HeaderPageProps>({
-      headerWithProps: withPropsStatic<HeaderProps>({
+    headerPageProps: {
+      headerProps: {
         ...HeaderStoryProps,
         me: null,
-      }),
+      },
       subHeaderProps: null,
-    }),
-  }),
+    },
+  },
 }
 
 export const ProfileLoggedInStoryProps: ProfileProps = {
   ...ProfileStoryProps,
-  headerPageTemplateWithProps: withPropsStatic<HeaderPageTemplateProps>({
+  headerPageTemplateProps: {
     isAuthenticated: true,
-    headerPageWithProps: withPropsStatic<HeaderPageProps>({
-      headerWithProps: withPropsStatic<HeaderProps>(HeaderStoryProps),
+    headerPageProps: {
+      headerProps: HeaderStoryProps,
       subHeaderProps: SubHeaderStoryProps,
-    }),
-  }),
+    },
+  },
 }
 
 export const LoggedOut = ProfileStory.bind({})

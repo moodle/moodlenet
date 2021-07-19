@@ -1,23 +1,20 @@
-import { FC } from 'react'
 import { TextCard } from '../../components/cards/TextCard/TextCard'
 import { TrendCard, TrendCardProps } from '../../components/cards/TrendCard/TrendCard'
-import { WithProps } from '../../lib/ctrl'
+import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import { Organization } from '../../types'
 import './styles.scss'
 
 export type LandingProps = {
-  headerPageTemplateWithProps: WithProps<HeaderPageTemplateProps>
+  headerPageTemplateProps: CP<HeaderPageTemplateProps>
   trendCardProps: TrendCardProps
   organization: Pick<Organization, 'name' | 'intro'>
   image: string
 }
 
-export const Landing: FC<LandingProps> = ({ headerPageTemplateWithProps, trendCardProps, organization, image }) => {
-  const [HeaderPageTemplateCtrl, headerPageTemplateProps] = headerPageTemplateWithProps(HeaderPageTemplate)
-
+export const Landing = withCtrl<LandingProps>(({ headerPageTemplateProps, trendCardProps, organization, image }) => {
   return (
-    <HeaderPageTemplateCtrl {...headerPageTemplateProps}>
+    <HeaderPageTemplate {...headerPageTemplateProps}>
       <div className="landing">
         <div className="landing-title">
           <div className="moodle-title">Welcome to MoodleNet</div>
@@ -39,6 +36,8 @@ export const Landing: FC<LandingProps> = ({ headerPageTemplateWithProps, trendCa
           </div>
         </div>
       </div>
-    </HeaderPageTemplateCtrl>
+    </HeaderPageTemplate>
   )
-}
+})
+
+Landing.displayName = 'LandingPage'

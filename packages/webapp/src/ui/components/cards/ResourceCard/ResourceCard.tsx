@@ -1,4 +1,4 @@
-import { withCtrl } from '../../../lib/__/ctrl'
+import { withCtrl } from '../../../lib/ctrl'
 import '../../../styles/tags.css'
 import './styles.scss'
 
@@ -9,7 +9,7 @@ export type ResourceCardProps = {
   title: string
 }
 
-export const ResourceCard = withCtrl<ResourceCardProps>(function ResourceCard({ tags, image, type, title }) {
+export const ResourceCard = withCtrl<ResourceCardProps>(({ tags, image, type, title }) => {
   const tagSet = tags.map((value: string, index: number) => {
     return (
       <div key={index} className="tag">
