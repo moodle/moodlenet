@@ -1,13 +1,10 @@
 import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { useMemo } from 'react'
-import { createWithProps } from '../../../../lib/ctrl'
+import { CtrlHook } from '../../../../lib/ctrl'
 import { SubjectCardProps } from '../SubjectCard'
 import { useSubjectCardQuery } from './SubjectCard.gen'
 
-export const [SubjectCardCtrl, subjectCardWithProps, subjectCardWithPropList] = createWithProps<
-  SubjectCardProps,
-  { id: Id }
->(({ id, __key, __uiComp: SubjectCardUI, ...rest }) => {
+export const useSubjectCardCtrl: CtrlHook<SubjectCardProps, { id: Id }> = ({ id }) => {
   const subjectNode = useSubjectCardQuery({ variables: { id } }).data?.node
 
   const subjectCardUIProps = useMemo<SubjectCardProps | null>(
@@ -16,10 +13,9 @@ export const [SubjectCardCtrl, subjectCardWithProps, subjectCardWithPropList] = 
         ? {
             organization: { url: 'bfh.ch', color: '' },
             title: subjectNode.name,
-            ...rest,
           }
         : null,
-    [subjectNode, rest],
+    [subjectNode],
   )
-  return subjectCardUIProps && <SubjectCardUI {...subjectCardUIProps} />
-})
+  return subjectCardUIProps && [subjectCardUIProps]
+}
