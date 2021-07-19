@@ -83,12 +83,13 @@ export const withCtrl = <UIProps, ExcludeKeys extends keyof UIProps = never>(
             chw: props as PropsWithChildren<CtrlHookWrap<UIProps>>,
             displayName: Render.displayName,
             UIComp,
-            children,
           }}
-        />
+        >
+          {children}
+        </RenderWithHook>
       )
     } else {
-      return <UIComp {...(props as PropsWithChildren<UIProps>)} />
+      return <UIComp {...(props as PropsWithChildren<UIProps>)}>{children}</UIComp>
     }
   }
   Render.displayName = ''
