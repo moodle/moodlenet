@@ -1,7 +1,7 @@
 import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { BLRule } from '@moodlenet/common/lib/lib/bl/common'
 import { Id, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { aqlstr, ulidKey } from '../../../../lib/helpers/arango'
+import { aqlstr, newGlyphKey } from '../../../../lib/helpers/arango'
 import { createdByAtPatch, isMarkDeleted, toDocumentEdgeOrNode } from './helpers'
 import { DocumentEdgeDataByType } from './types'
 
@@ -30,7 +30,7 @@ export const createEdgeQ = <Type extends EdgeType>({
     _toType: toType,
     _from: from,
     _to: to,
-    _key: ulidKey(),
+    _key: newGlyphKey(),
   }
 
   const q = `

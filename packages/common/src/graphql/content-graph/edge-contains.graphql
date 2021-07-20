@@ -1,5 +1,7 @@
 type Contains implements IEdge {
   id: ID!
+  _created: GlyphByAt!
+  _lastEdited: GlyphByAt
 }
 
 ## integrations

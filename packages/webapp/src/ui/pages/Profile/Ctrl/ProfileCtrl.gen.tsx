@@ -21,13 +21,36 @@ export type ProfilePageUserDataQuery = (
         & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
+        ) | { __typename: 'Domain' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
       )> }
     ), resources: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Domain' } | { __typename: 'Profile' } | (
+          { __typename: 'Resource' }
+          & Pick<Types.Resource, 'id' | 'name' | 'icon'>
+        ) | { __typename: 'SubjectField' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'Domain' }
+    & Pick<Types.Domain, 'id'>
+    & { followersCount: Types.Domain['_relCount'], resourcesCount: Types.Domain['_relCount'] }
+    & { collections: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: (
+          { __typename: 'Collection' }
+          & Pick<Types.Collection, 'id' | 'name' | 'icon'>
+        ) | { __typename: 'Domain' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
+      )> }
+    ), resources: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | { __typename: 'Domain' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, 'id' | 'name' | 'icon'>
         ) | { __typename: 'SubjectField' } }
@@ -44,13 +67,13 @@ export type ProfilePageUserDataQuery = (
         & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
+        ) | { __typename: 'Domain' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
       )> }
     ), resources: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Domain' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, 'id' | 'name' | 'icon'>
         ) | { __typename: 'SubjectField' } }
@@ -67,13 +90,13 @@ export type ProfilePageUserDataQuery = (
         & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
+        ) | { __typename: 'Domain' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
       )> }
     ), resources: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Domain' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, 'id' | 'name' | 'icon'>
         ) | { __typename: 'SubjectField' } }
@@ -90,13 +113,13 @@ export type ProfilePageUserDataQuery = (
         & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
+        ) | { __typename: 'Domain' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
       )> }
     ), resources: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Profile' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Domain' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, 'id' | 'name' | 'icon'>
         ) | { __typename: 'SubjectField' } }

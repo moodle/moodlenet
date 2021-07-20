@@ -14,6 +14,9 @@ export type CollectionCardQuery = (
     { __typename: 'Collection' }
     & Pick<Types.Collection, 'name' | 'icon' | 'id'>
   ) | (
+    { __typename: 'Domain' }
+    & Pick<Types.Domain, 'name' | 'icon' | 'id'>
+  ) | (
     { __typename: 'Profile' }
     & Pick<Types.Profile, 'name' | 'icon' | 'id'>
   ) | (
