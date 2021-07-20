@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro'
 import Searchbox from '../../components/atoms/Searchbox/Searchbox'
 import { TextCard } from '../../components/cards/TextCard/TextCard'
 import { TrendCard, TrendCardProps } from '../../components/cards/TrendCard/TrendCard'
@@ -14,36 +15,41 @@ export type LandingProps = {
   setSearchText(text: string): unknown
 }
 
-export const Landing = withCtrl<LandingProps>(({ headerPageTemplateProps, trendCardProps, organization, image, setSearchText }) => {
-  return (
-    <HeaderPageTemplate {...headerPageTemplateProps}>
-      <div className="landing">
-        <div className="landing-title">
-          { organization.name === "MoodleNet" ? <div>
-              <div className="organization-title">Welcome to MoodleNet</div>
-              <div className="moodle-title">Our global network to share and curate open educational resources</div>
-            </div> : <div> 
-              <div className="moodle-title">Welome to MoodleNet</div>
-              <div className="organization-title">{organization.name}</div>
-            </div> 
-          }
-        </div>
-        <Searchbox setSearchText={setSearchText} searchText='' placeholder='Start searching now'></Searchbox>
-        <div className="content">
-          <div className="main-column">
-            <TextCard>
-              <div>{organization.intro}</div>
-              { organization.name === "MoodleNet" ? '' : <img className="text-image" src={image} alt="Background" />}
-            </TextCard>
-            <TrendCard {...trendCardProps} />
+export const Landing = withCtrl<LandingProps>(
+  ({ headerPageTemplateProps, trendCardProps, organization, image, setSearchText }) => {
+    return (
+      <HeaderPageTemplate {...headerPageTemplateProps}>
+        <div className="landing">
+          <div className="landing-title">
+            {organization.name === 'MoodleNet' ? (
+              <div>
+                <div className="organization-title">Welcome to MoodleNet</div>
+                <div className="moodle-title">Our global network to share and curate open educational resources</div>
+              </div>
+            ) : (
+              <div>
+                <div className="moodle-title">Welome to MoodleNet</div>
+                <div className="organization-title">{organization.name}</div>
+              </div>
+            )}
           </div>
-          <div className="side-column">
-            <TrendCard {...trendCardProps} />
+          <Searchbox setSearchText={setSearchText} searchText="" placeholder={t`Start searching now`}></Searchbox>
+          <div className="content">
+            <div className="main-column">
+              <TextCard>
+                <div>{organization.intro}</div>
+                {organization.name === 'MoodleNet' ? '' : <img className="text-image" src={image} alt="Background" />}
+              </TextCard>
+              <TrendCard {...trendCardProps} />
+            </div>
+            <div className="side-column">
+              <TrendCard {...trendCardProps} />
+            </div>
           </div>
         </div>
-      </div>
-    </HeaderPageTemplate>
-  )
-})
+      </HeaderPageTemplate>
+    )
+  },
+)
 
 Landing.displayName = 'LandingPage'

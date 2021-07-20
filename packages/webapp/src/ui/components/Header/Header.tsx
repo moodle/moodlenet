@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import addIcon from '../../assets/icons/add.svg'
 import { Href, Link } from '../../elements/link'
 import { withCtrl } from '../../lib/ctrl'
@@ -40,10 +40,10 @@ export const Header = withCtrl<HeaderProps>(props => {
     <div className="header">
       <div className="content">
         <div className="left">
-          <HeaderTitle organization = {organization} homeHref = {homeHref}/>
+          <HeaderTitle organization={organization} homeHref={homeHref} />
         </div>
         <div className="right">
-          <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder='Search for anything!'/>
+          <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for anything!`} />
           {me ? (
             <>
               <img className="add-icon" src={addIcon} alt="Add" />
