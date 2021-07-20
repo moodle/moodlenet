@@ -4,8 +4,8 @@ import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
-import { HeaderMoodleStoryProps } from '../../components/Header/Header.stories'
-import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
+import { HeaderLoggedInStoryProps, HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
+import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Search, SearchProps } from './Search'
 
 const meta: ComponentMeta<typeof Search> = {
@@ -33,7 +33,7 @@ const subjectCardPropsList: SubjectCardProps[] = [
 export const SearchStoryProps: SearchProps = {
   setSortBy: action(`set sort by`),
   headerPageTemplateProps: {
-    headerPageProps: HeaderPageStoryProps,
+    headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
   },
   subjectCardPropsList: subjectCardPropsList,
@@ -52,10 +52,7 @@ export const SearchLoggedOutStoryProps: SearchProps = {
   headerPageTemplateProps: {
     isAuthenticated: false,
     headerPageProps: {
-      headerProps: {
-        ...HeaderMoodleStoryProps,
-        me: null,
-      },
+      headerProps: HeaderLoggedOutStoryProps,
       subHeaderProps: null,
     },
   },
@@ -66,7 +63,7 @@ export const SearchLoggedInStoryProps: SearchProps = {
   headerPageTemplateProps: {
     isAuthenticated: false,
     headerPageProps: {
-      headerProps: HeaderMoodleStoryProps,
+      headerProps: HeaderLoggedInStoryProps,
       subHeaderProps: null,
     },
   },

@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { TrendCardStoryProps } from '../../components/cards/TrendCard/TrendCard.stories'
-import { HeaderMoodleStoryProps, HeaderStoryProps } from '../../components/Header/Header.stories'
-import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
+import { HeaderLoggedInStoryProps, HeaderLoggedOutOrganizationStoryProps } from '../../components/Header/Header.stories'
+import { HeaderPageLoggedInOrganizationStoryProps, HeaderPageLoggedInStoryProps, HeaderPageLoggedOutStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Landing, LandingProps } from './Landing'
 
 const meta: ComponentMeta<typeof Landing> = {
@@ -12,19 +12,18 @@ const meta: ComponentMeta<typeof Landing> = {
   },
   parameters: { layout: 'fullscreen' },
   excludeStories: [
-    'LandingStoryProps', 
     'LandingLoggedOutStoryProps', 
-    'LandingLoggedOutOrganizationtStoryProps', 
     'LandingLoggedInStoryProps',
-    'LandingMoodleStoryProps'
+    'LandingOrganizationLoggedOutStoryProps',
+    'LandingOrganizationLoggedInStoryProps'
   ],
 }
 
 const LandingStory: ComponentStory<typeof Landing> = args => <Landing {...args} />
 
-export const LandingMoodleStoryProps: LandingProps = {
+export const LandingLoggedInStoryProps: LandingProps = {
   headerPageTemplateProps: {
-    headerPageProps: HeaderPageStoryProps,
+    headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
   },
   trendCardProps: TrendCardStoryProps,
@@ -37,9 +36,20 @@ export const LandingMoodleStoryProps: LandingProps = {
   image: 'https://picsum.photos/200/100',
 }
 
-export const LandingStoryProps: LandingProps = {
+export const LandingLoggedOutStoryProps: LandingProps = {
+  ...LandingLoggedInStoryProps,
   headerPageTemplateProps: {
-    headerPageProps: HeaderPageStoryProps,
+    isAuthenticated: false,
+    headerPageProps: {
+      ...HeaderPageLoggedOutStoryProps,
+      headerProps: HeaderLoggedInStoryProps,
+    },
+  },
+}
+
+export const LandingOrganizationLoggedInStoryProps: LandingProps = {
+  headerPageTemplateProps: {
+    headerPageProps: HeaderPageLoggedInOrganizationStoryProps,
     isAuthenticated: true,
   },
   trendCardProps: TrendCardStoryProps,
@@ -50,41 +60,13 @@ export const LandingStoryProps: LandingProps = {
   image: 'https://picsum.photos/200/100',
 }
 
-export const LandingLoggedOutStoryProps: LandingProps = {
-  ...LandingMoodleStoryProps,
+export const LandingOrganizationLoggedOutStoryProps: LandingProps = {
+  ...LandingOrganizationLoggedInStoryProps,
   headerPageTemplateProps: {
     isAuthenticated: false,
     headerPageProps: {
-      headerProps: {
-        ...HeaderMoodleStoryProps,
-        me: null,
-      },
-      subHeaderProps: null,
-    },
-  },
-}
-
-export const LandingLoggedInStoryProps: LandingProps = {
-  ...LandingStoryProps,
-  headerPageTemplateProps: {
-    isAuthenticated: true,
-    headerPageProps: {
-      ...HeaderPageStoryProps,
-      headerProps: HeaderMoodleStoryProps,
-    },
-  },
-}
-
-export const LandingLoggedOutOrganizationtStoryProps: LandingProps = {
-  ...LandingStoryProps,
-  headerPageTemplateProps: {
-    isAuthenticated: false,
-    headerPageProps: {
-      headerProps: {
-        ...HeaderStoryProps,
-        me: null,
-      },
-      subHeaderProps: null,
+      ...HeaderPageLoggedInStoryProps,
+      headerProps: HeaderLoggedOutOrganizationStoryProps,
     },
   },
 }
@@ -92,10 +74,13 @@ export const LandingLoggedOutOrganizationtStoryProps: LandingProps = {
 export const LoggedOut = LandingStory.bind({})
 LoggedOut.args = LandingLoggedOutStoryProps
 
-export const OrganizationLoggedOut = LandingStory.bind({})
-OrganizationLoggedOut.args = LandingLoggedOutOrganizationtStoryProps
-
 export const LoggedIn = LandingStory.bind({})
 LoggedIn.args = LandingLoggedInStoryProps
+
+export const OrganizationLoggedOut = LandingStory.bind({})
+OrganizationLoggedOut.args = LandingOrganizationLoggedOutStoryProps
+
+export const OrganizationLoggedIn = LandingStory.bind({})
+OrganizationLoggedIn.args = LandingOrganizationLoggedInStoryProps
 
 export default meta
