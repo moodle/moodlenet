@@ -25,7 +25,6 @@ import { createInProcessTransport } from '../lib/qmino/transports/in-process/tra
 import * as edgePorts from '../ports/content-graph/edge'
 import * as nodePorts from '../ports/content-graph/node'
 import * as searchPorts from '../ports/content-graph/search'
-import * as setupPorts from '../ports/setup'
 import * as assetPorts from '../ports/static-assets/asset'
 import * as tmpAssetPorts from '../ports/static-assets/temp'
 import * as userAuthConfigPorts from '../ports/user-auth/config'
@@ -113,7 +112,6 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
           env,
           data: { name: username, summary: '' },
           nodeType: 'Profile',
-          key: username,
         }),
         { timeout: 5000 },
       )
@@ -128,7 +126,6 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
           env: SystemSessionEnv(),
           data: { name: username, summary: '' },
           nodeType: 'Profile',
-          key: username,
         }),
         { timeout: 5000 },
       )
@@ -147,7 +144,4 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
   qminoInProcess.open(assetPorts.get, getAssetAdapter({ rootDir }))
   qminoInProcess.open(tmpAssetPorts.createTemp, createTempAdapter({ rootDir }))
   qminoInProcess.open(tmpAssetPorts.persistTempAssets, persistTempAssetsAdapter({ rootDir }))
-
-  //Setup
-  qminoInProcess.open(setupPorts.initialContent, { qmino: qminoInProcess })
 }

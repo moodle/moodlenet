@@ -3,6 +3,7 @@ import { Id, IdKey } from '@moodlenet/common/lib/utils/content-graph/id-key-type
 import { DocumentNodeByType, DocumentNodeDataByType } from '../../adapters/content-graph/arangodb/functions/types'
 import { getProfileId } from '../../lib/auth/env'
 import { SessionEnv } from '../../lib/auth/types'
+import { newGlyphKey } from '../../lib/helpers/arango'
 import { QMCommand, QMModule, QMQuery } from '../../lib/qmino'
 
 // query by id
@@ -30,29 +31,30 @@ export const byId = QMQuery(
 export type CreateAdapter = {
   storeNode: <Type extends GQL.NodeType>(_: {
     nodeType: Type
-    key?: IdKey
     data: DocumentNodeDataByType<Type>
     creatorProfileId: Id
+    key: string
   }) => Promise<DocumentNodeByType<Type> | null>
 }
 
 export type CreateInput<Type extends GQL.NodeType = GQL.NodeType> = {
   env: SessionEnv
-  key?: IdKey // remove this .. it was only necessary for profile creation on accuont activation, change the flow and disjoint the two
   nodeType: Type
   data: DocumentNodeDataByType<Type>
 }
 
 export const create = QMCommand(
-  <Type extends GQL.NodeType = GQL.NodeType>({ data, key, env, nodeType }: CreateInput<Type>) =>
+  <Type extends GQL.NodeType = GQL.NodeType>({ data, env, nodeType }: CreateInput<Type>) =>
     async ({ storeNode }: CreateAdapter): Promise<DocumentNodeByType<Type> | GQL.CreateNodeMutationErrorType> => {
       const creatorProfileId = getProfileId(env)
-      const result = await storeNode({ key, nodeType, data, creatorProfileId })
+      const key = NamedKeysOnNodeTypes.includes(nodeType) ? data.name : newGlyphKey()
+
+      const result = await storeNode({ nodeType, data, key, creatorProfileId })
       if (!result) {
         return 'AssertionFailed'
       }
       return result
     },
 )
-
+const NamedKeysOnNodeTypes: GQL.NodeType[] = ['Domain', 'Profile', 'SubjectField']
 QMModule(module)

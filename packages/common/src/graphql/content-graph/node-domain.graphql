@@ -1,4 +1,4 @@
-type Collection implements INode & IContentNode {
+type Domain implements INode & IContentNode {
   name: String!
   summary: String!
   icon: AssetRef
@@ -10,22 +10,22 @@ type Collection implements INode & IContentNode {
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }
 
-input CreateCollectionInput {
+input CreateDomainInput {
   content: ContentNodeInput!
 }
 
-input UpdateCollectionInput {
+input UpdateDomainInput {
   content: ContentNodeInput!
 }
 
 # integrations
-union Node = Collection
+union Node = Domain
 enum NodeType {
-  Collection
+  Domain
 }
 input CreateNodeInput {
-  Collection: CreateCollectionInput
+  Domain: CreateDomainInput
 }
 input UpdateNodeInput {
-  Collection: UpdateCollectionInput
+  Domain: UpdateDomainInput
 }

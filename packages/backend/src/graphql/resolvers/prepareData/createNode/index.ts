@@ -19,20 +19,9 @@ const nodeDocumentDataBaker: {
 } = {
   async SubjectField(/* input, qmino */) {
     throw new Error('GQL create SubjectField not implemented')
-    // const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
-    //   [getContentNodeAssetRefInputAndType(input.content)],
-    //   qmino,
-    // )
-
-    // if (!contentNodeAssetRefs) {
-    //   return noTmpFilesCreateNodeMutationError()
-    // }
-    // const [icon] = contentNodeAssetRefs
-    // return {
-    //   name: input.content.name,
-    //   summary: input.content.summary,
-    //   icon,
-    // }
+  },
+  async Domain(/* input, qmino */) {
+    throw new Error('GQL create SubjectField not implemented')
   },
   async Collection(input, qmino) {
     const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
