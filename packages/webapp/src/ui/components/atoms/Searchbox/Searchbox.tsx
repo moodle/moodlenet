@@ -1,4 +1,3 @@
-import { t } from '@lingui/macro'
 import { ChangeEventHandler, FC, useCallback } from 'react'
 import searchIcon from '../../../assets/icons/search.svg'
 import './styles.scss'
@@ -17,16 +16,16 @@ export const Searchbox: FC<SearchboxProps> = ({ searchText, placeholder, setSear
   return (
     <div className="searchbox">
       <img className="big-search-icon" src={searchIcon} alt="Search" />
-        <div className="search-box">
-          <img className="search-icon" src={searchIcon} alt="Search" />
-          <input
-            className="search-text"
-            placeholder={t`${placeholder}`}
-            autoFocus
-            defaultValue={searchText}
-            onChange={setSearchTextCB}
-          />
-        </div>
+      <div className="search-box">
+        <img className="search-icon" src={searchIcon} alt="Search" />
+        <input
+          className="search-text"
+          placeholder={placeholder}
+          autoFocus
+          defaultValue={searchText}
+          onChange={setSearchTextCB}
+        />
+      </div>
     </div>
   )
 }
