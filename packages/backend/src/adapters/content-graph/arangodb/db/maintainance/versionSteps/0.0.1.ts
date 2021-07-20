@@ -31,7 +31,8 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
 
     await Promise.all(
       initialProfiles({ domain }).map(async profileData => {
-        return justExecute(
+        console.log(`creating profile ${profileData.name}`)
+        await justExecute(
           createNodeQ({
             creatorProfileId,
             nodeType: 'Profile',
@@ -39,16 +40,23 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
             key: profileData.name,
           }),
           db,
-        )
+        ).catch(e => {
+          console.log({ e, name: profileData.name })
+          throw e
+        })
       }),
     )
 
     await Promise.all(
       subjectFields.map(async subj_field_data => {
+        console.log(`creating subject ${subj_field_data.name} ${subj_field_data.code}`)
         await justExecute(
           createNodeQ({ nodeType: 'SubjectField', key: subj_field_data.code, data: subj_field_data, creatorProfileId }),
           db,
-        )
+        ).catch(e => {
+          console.log({ e, name: subj_field_data.name })
+          throw e
+        })
       }),
     )
 
