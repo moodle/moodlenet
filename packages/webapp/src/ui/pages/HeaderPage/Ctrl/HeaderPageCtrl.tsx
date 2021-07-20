@@ -9,7 +9,7 @@ import { HeaderPageProps } from '../HeaderPage'
 import { useHeaderPagePinnedLazyQuery } from './HeaderPageCtrl.gen'
 
 export const useHeaderPageCtrl: CtrlHook<HeaderPageProps, {}> = () => {
-  const { currentProfile } = useSession()
+  const { isAuthenticated, currentProfile } = useSession()
   const [queryPinned, pinned] = useHeaderPagePinnedLazyQuery()
 
   useEffect(() => {
@@ -18,28 +18,28 @@ export const useHeaderPageCtrl: CtrlHook<HeaderPageProps, {}> = () => {
     }
   }, [currentProfile, queryPinned])
 
-  const subHeaderProps = useMemo<SubHeaderProps | null>(() => {
-    const tags = pinned.data?.node?.pinnedList.edges
-      .map(edge => (edge.node.__typename === 'SubjectField' ? edge.node : null))
-      .filter(isJust)
-      .map<FollowTag>(({ name }) => ({
-        name,
-        type: 'General',
-      }))
-    return tags
-      ? {
-          tags,
-        }
-      : null
+  const subHeaderProps = useMemo<SubHeaderProps>(() => {
+    const tags =
+      pinned.data?.node?.pinnedList.edges
+        .map(edge => (edge.node.__typename === 'SubjectField' ? edge.node : null))
+        .filter(isJust)
+        .map<FollowTag>(({ name }) => ({
+          name,
+          type: 'General',
+        })) ?? []
+    return {
+      tags,
+    }
   }, [pinned.data?.node?.pinnedList.edges])
 
   const headerPageProps = useMemo<HeaderPageProps>(() => {
     const headerPageProps: HeaderPageProps = {
       subHeaderProps,
+      isAuthenticated,
       headerProps: ctrlHook(useHeaderCtrl, {}, 'Header'),
     }
     return headerPageProps
-  }, [subHeaderProps])
+  }, [isAuthenticated, subHeaderProps])
 
   return [headerPageProps]
 }

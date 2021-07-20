@@ -4,13 +4,16 @@
             padding: 20px;
             font-weight: bold;
             font-size: 13px;
+            white-space: pre-line;
         }
     
         @media (max-width:450px) {
-            padding: 0 24px 14px;
-            background-color: #fff;
+            padding: 0 24px 0;
             box-shadow: none;
             border-radius: 0;
+            > .text {
+                padding: 0;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { href } from '../../../elements/link'
 import { HeaderTitle, HeaderTitleProps } from './HeaderTitle'
 
 const meta: ComponentMeta<typeof HeaderTitle> = {
@@ -7,10 +8,20 @@ const meta: ComponentMeta<typeof HeaderTitle> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['HeaderTitleStoryProps'],
+  excludeStories: ['HeaderTitleStoryProps', 'HeaderTitleOrganizationStoryProps'],
 }
 
 export const HeaderTitleStoryProps: HeaderTitleProps = {
+  homeHref: href('Landing/Logged In'),
+  organization: {
+    name: 'MoodleNet',
+    url: 'https://www.moodle.com/',
+    logo: ''
+  },
+}
+
+export const HeaderTitleOrganizationStoryProps: HeaderTitleProps = {
+  homeHref: href('Landing/Logged In'),
   organization: {
     name: 'BFH',
     url: 'https://www.bfh.ch/',
@@ -22,5 +33,8 @@ const HeaderTitleStory: ComponentStory<typeof HeaderTitle> = args => <HeaderTitl
 
 export const Default = HeaderTitleStory.bind({})
 Default.args = HeaderTitleStoryProps
+
+export const Organization = HeaderTitleStory.bind({})
+Organization.args = HeaderTitleOrganizationStoryProps
 
 export default meta

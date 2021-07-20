@@ -9,15 +9,20 @@ const meta: ComponentMeta<typeof Header> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['HeaderStoryProps'],
+  excludeStories: [
+    'HeaderLoggedInStoryProps', 
+    'HeaderLoggedOutStoryProps', 
+    'HeaderLoggedInOrganizationStoryProps',
+    'HeaderLoggedOutOrganizationStoryProps'
+  ],
 }
 
-export const HeaderStoryProps: HeaderPropsIdle = {
+export const HeaderLoggedInStoryProps: HeaderPropsIdle = {
   status: 'idle',
   organization: {
-    name: 'BFH',
-    url: 'https://www.bfh.ch/',
-    logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
+    name: 'MoodleNet',
+    url: 'https://www.moodle.com/',
+    logo: '',
   },
   homeHref: href('Landing/Logged In'),
   me: {
@@ -27,12 +32,41 @@ export const HeaderStoryProps: HeaderPropsIdle = {
   loginHref: href('Login/Default'),
   searchText: '',
   setSearchText: action('setSearchText'),
-} as const
+}
+
+export const HeaderLoggedOutStoryProps: HeaderPropsIdle = {
+  ...HeaderLoggedInStoryProps, me: null
+}
+
+export const HeaderLoggedInOrganizationStoryProps: HeaderPropsIdle = {
+  ...HeaderLoggedInStoryProps, organization: {
+    ...HeaderLoggedInStoryProps.organization,
+    name: 'BFH',
+    url: 'https://www.bfh.ch/',
+    logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
+  }
+}
+
+export const HeaderLoggedOutOrganizationStoryProps: HeaderPropsIdle = {
+  ...HeaderLoggedInOrganizationStoryProps, me: null
+}
 
 const HeaderStory: ComponentStory<typeof Header> = args => <Header {...args} />
 
-export const Default = HeaderStory.bind({})
-Default.args = HeaderStoryProps
-Default.parameters = { layout: 'fullscreen' }
+export const LoggedIn = HeaderStory.bind({})
+LoggedIn.args = HeaderLoggedInStoryProps
+LoggedIn.parameters = { layout: 'fullscreen' }
+
+export const LoggedOut = HeaderStory.bind({})
+LoggedOut.args = HeaderLoggedOutStoryProps
+LoggedOut.parameters = { layout: 'fullscreen' }
+
+export const LoggedInOrganization = HeaderStory.bind({})
+LoggedInOrganization.args = HeaderLoggedInOrganizationStoryProps
+LoggedInOrganization.parameters = { layout: 'fullscreen' }
+
+export const LoggedOutOrganization = HeaderStory.bind({})
+LoggedOutOrganization.args = HeaderLoggedOutOrganizationStoryProps
+LoggedOutOrganization.parameters = { layout: 'fullscreen' }
 
 export default meta
