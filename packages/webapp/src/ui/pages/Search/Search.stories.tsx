@@ -4,7 +4,7 @@ import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
-import { HeaderStoryProps } from '../../components/Header/Header.stories'
+import { HeaderMoodleStoryProps } from '../../components/Header/Header.stories'
 import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Search, SearchProps } from './Search'
 
@@ -53,7 +53,7 @@ export const SearchLoggedOutStoryProps: SearchProps = {
     isAuthenticated: false,
     headerPageProps: {
       headerProps: {
-        ...HeaderStoryProps,
+        ...HeaderMoodleStoryProps,
         me: null,
       },
       subHeaderProps: null,
@@ -66,7 +66,7 @@ export const SearchLoggedInStoryProps: SearchProps = {
   headerPageTemplateProps: {
     isAuthenticated: false,
     headerPageProps: {
-      headerProps: HeaderStoryProps,
+      headerProps: HeaderMoodleStoryProps,
       subHeaderProps: null,
     },
   },

@@ -3,39 +3,34 @@
 }
 
 .landing {   
-    .landing-title {
+    > .landing-title > div {
         margin: 58px 0;
         font-weight: bold;
-        .moodle-title {
+        display: inline-flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        gap: 10px;
+        > .moodle-title {
             color: #b6bacb;
             font-size: 25px;
         }
-        .organization-title {
+        > .organization-title {
             line-height: 34px;
-            margin-top: 25px;
             color: black;
             font-size: 35px;
         }
-    }
 
-    @media (max-width:450px) {
-        padding: 120px 0 0 0;
-        background-color: #fff;
-
-        .landing-title {
-            margin: 38px 24px;
+        @media (max-width:450px) {
+            margin: 28px 24px;
         }
-    }
 
-    @media screen and (max-width:675px) and (min-width:450px) {
-        .landing-title {
+        @media screen and (max-width:675px) and (min-width:450px) {
             margin: 36px 0;
             font-weight: bold;
-            .moodle-title {
+            > .moodle-title {
                 font-size: 22px;
             }
-            .organization-title {
-                margin-top: 15px;
+            > .organization-title {
                 font-size: 33px;
             }
         }
@@ -58,7 +53,7 @@
         }
         
         > :not(:last-child) {
-            margin-bottom: 16px;
+            margin-bottom: 24px;
         }  
     }
 
@@ -72,7 +67,7 @@
     }
 
     @media (max-width:1200px) and (min-width:800px) {
-        .landing-title {
+        .landing-title > div {
             margin: 38px 0;
         }
     }

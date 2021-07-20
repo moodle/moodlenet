@@ -17,17 +17,20 @@ export const Landing = withCtrl<LandingProps>(({ headerPageTemplateProps, trendC
     <HeaderPageTemplate {...headerPageTemplateProps}>
       <div className="landing">
         <div className="landing-title">
-          <div className="moodle-title">Welcome to MoodleNet</div>
-          <div className="organization-title">{organization.name}</div>
+          { organization.name === "MoodleNet" ? <div>
+              <div className="organization-title">Welcome to MoodleNet</div>
+              <div className="moodle-title">Our global network to share and curate open educational resources</div>
+            </div> : <div> 
+              <div className="moodle-title">Welome to MoodleNet</div>
+              <div className="organization-title">{organization.name}</div>
+            </div> 
+          }
         </div>
         <div className="content">
           <div className="main-column">
             <TextCard>
-              <div>
-                {organization.intro}
-                <span style={{ color: '#b6bacb' }}>Welcome!</span>
-              </div>
-              <img className="text-image" src={image} alt="Background" />
+              <div>{organization.intro}</div>
+              { organization.name === "MoodleNet" ? '' : <img className="text-image" src={image} alt="Background" />}
             </TextCard>
             <TrendCard {...trendCardProps} />
           </div>
