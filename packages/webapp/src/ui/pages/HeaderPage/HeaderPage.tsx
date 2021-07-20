@@ -5,14 +5,15 @@ import './styles.scss'
 
 export type HeaderPageProps = {
   headerProps: CP<HeaderProps>
-  subHeaderProps: SubHeaderProps | null
+  subHeaderProps: SubHeaderProps,
+  isAuthenticated: boolean
 }
 
-export const HeaderPage = withCtrl<HeaderPageProps>(({ headerProps, subHeaderProps }) => {
+export const HeaderPage = withCtrl<HeaderPageProps>(({ headerProps, subHeaderProps, isAuthenticated }) => {
   return (
     <div className="page-header">
       <Header {...headerProps} />
-      {subHeaderProps && <SubHeader {...subHeaderProps} />}
+      { isAuthenticated && <SubHeader {...subHeaderProps} />}
     </div>
   )
 })

@@ -1,12 +1,12 @@
-import { t, Trans } from '@lingui/macro'
-import { ChangeEventHandler, useCallback } from 'react'
+import { Trans } from '@lingui/macro'
 import addIcon from '../../assets/icons/add.svg'
-import searchIcon from '../../assets/icons/search.svg'
 import { Href, Link } from '../../elements/link'
 import { withCtrl } from '../../lib/ctrl'
 import { Organization } from '../../types'
 import PrimaryButton from '../atoms/PrimaryButton/PrimaryButton'
+import Searchbox from '../atoms/Searchbox/Searchbox'
 import TertiaryButton from '../atoms/TertiaryButton/TertiaryButton'
+import HeaderTitle from './HeaderTitle/HeaderTitle'
 import './styles.scss'
 
 export type HeaderPropsIdle = HeaderPropsBase & {
@@ -32,10 +32,6 @@ export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
 
 export const Header = withCtrl<HeaderProps>(props => {
   const { homeHref, loginHref, searchText, setSearchText } = props
-  const setSearchTextCB = useCallback<ChangeEventHandler<HTMLInputElement>>(
-    ev => setSearchText(ev.currentTarget.value),
-    [setSearchText],
-  )
   if (props.status === 'loading') {
     return null
   }
@@ -44,25 +40,10 @@ export const Header = withCtrl<HeaderProps>(props => {
     <div className="header">
       <div className="content">
         <div className="left">
-          <a href={organization.url} rel="noopener noreferrer" target="_blank">
-            <img className="logo" src={organization.logo} alt="Logo" />
-          </a>
-          <Link href={homeHref}>
-            <div className="text">MoodleNet</div>
-          </Link>
+          <HeaderTitle organization = {organization} homeHref = {homeHref}/>
         </div>
         <div className="right">
-          <img className="big-search-icon" src={searchIcon} alt="Search" />
-          <div className="search-box">
-            <img className="search-icon" src={searchIcon} alt="Search" />
-            <input
-              className="search-text"
-              placeholder={t`Search for anything!`}
-              autoFocus={!!searchText}
-              defaultValue={searchText}
-              onChange={setSearchTextCB}
-            />
-          </div>
+          <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder='Search for anything!'/>
           {me ? (
             <>
               <img className="add-icon" src={addIcon} alt="Add" />

@@ -1,13 +1,14 @@
 .header-title {
   display: flex;
   align-items: center;
+  text-decoration: inherit;
   
   a {
     text-decoration: none;
   }
 
   .logo {
-    height: 36px;
+    height: 28px;
   }
 
   .text {
@@ -15,5 +16,20 @@
     font-weight: bold;
     font-size: 25px;
     margin-left: 10px;
+    text-decoration: none;
+  }
+
+  > .small {
+    display: none;
+    height: 38px;
+  }
+
+  @media screen and (max-width:525px) {
+    > .big {
+      display: none;
+    }
+    > .small {
+      display: block;
+    }
   }
 }
