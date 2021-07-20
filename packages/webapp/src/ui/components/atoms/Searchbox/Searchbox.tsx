@@ -22,7 +22,7 @@ export const Searchbox: FC<SearchboxProps> = ({ searchText, placeholder, setSear
           <input
             className="search-text"
             placeholder={t`${placeholder}`}
-            autoFocus={!!searchText}
+            autoFocus
             defaultValue={searchText}
             onChange={setSearchTextCB}
           />

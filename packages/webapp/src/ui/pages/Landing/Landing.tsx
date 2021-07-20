@@ -1,3 +1,4 @@
+import Searchbox from '../../components/atoms/Searchbox/Searchbox'
 import { TextCard } from '../../components/cards/TextCard/TextCard'
 import { TrendCard, TrendCardProps } from '../../components/cards/TrendCard/TrendCard'
 import { CP, withCtrl } from '../../lib/ctrl'
@@ -10,9 +11,10 @@ export type LandingProps = {
   trendCardProps: TrendCardProps
   organization: Pick<Organization, 'name' | 'intro'>
   image: string
+  setSearchText(text: string): unknown
 }
 
-export const Landing = withCtrl<LandingProps>(({ headerPageTemplateProps, trendCardProps, organization, image }) => {
+export const Landing = withCtrl<LandingProps>(({ headerPageTemplateProps, trendCardProps, organization, image, setSearchText }) => {
   return (
     <HeaderPageTemplate {...headerPageTemplateProps}>
       <div className="landing">
@@ -26,6 +28,7 @@ export const Landing = withCtrl<LandingProps>(({ headerPageTemplateProps, trendC
             </div> 
           }
         </div>
+        <Searchbox setSearchText={setSearchText} searchText='' placeholder='Start searching now'></Searchbox>
         <div className="content">
           <div className="main-column">
             <TextCard>

@@ -30,9 +30,12 @@
 
   .search-text {
     font-size: 11px;
-    color: #888888;
     border: none;
     width: 70%;
+    color: #b6bacb;
+    &::placeholder {
+      color: #b6bacb;
+    }
   }
 
   .search-text:focus-visible {
