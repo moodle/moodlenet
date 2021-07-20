@@ -9,15 +9,15 @@ const meta: ComponentMeta<typeof Header> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['HeaderStoryProps'],
+  excludeStories: ['HeaderStoryProps', 'HeaderMoodleStoryProps'],
 }
 
-export const HeaderStoryProps: HeaderPropsIdle = {
+export const HeaderMoodleStoryProps: HeaderPropsIdle = {
   status: 'idle',
   organization: {
-    name: 'BFH',
-    url: 'https://www.bfh.ch/',
-    logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
+    name: 'MoodleNet',
+    url: 'https://www.moodle.com/',
+    logo: '',
   },
   homeHref: href('Landing/Logged In'),
   me: {
@@ -29,10 +29,23 @@ export const HeaderStoryProps: HeaderPropsIdle = {
   setSearchText: action('setSearchText'),
 } as const
 
+export const HeaderStoryProps: HeaderPropsIdle = {
+  ...HeaderMoodleStoryProps, organization: {
+    ...HeaderMoodleStoryProps.organization,
+    name: 'BFH',
+    url: 'https://www.bfh.ch/',
+    logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
+  }
+}
+
 const HeaderStory: ComponentStory<typeof Header> = args => <Header {...args} />
 
-export const Default = HeaderStory.bind({})
-Default.args = HeaderStoryProps
-Default.parameters = { layout: 'fullscreen' }
+export const Moodle = HeaderStory.bind({})
+Moodle.args = HeaderMoodleStoryProps
+Moodle.parameters = { layout: 'fullscreen' }
+
+export const Organization = HeaderStory.bind({})
+Organization.args = HeaderStoryProps
+Organization.parameters = { layout: 'fullscreen' }
 
 export default meta

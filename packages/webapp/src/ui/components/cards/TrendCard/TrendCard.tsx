@@ -20,7 +20,7 @@ export const TrendCard = withCtrl<TrendCardProps>(({ tags }) => {
     <div className="trend-card">
       <div className="title">
         <Trans>
-          Trending <span className="light-font">Subjects</span> &<span className="light-font">Collections</span>
+          Trending Subjects Collections
         </Trans>
       </div>
       <div className="content">

@@ -7,6 +7,7 @@ import { withCtrl } from '../../lib/ctrl'
 import { Organization } from '../../types'
 import PrimaryButton from '../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../atoms/TertiaryButton/TertiaryButton'
+import HeaderTitle from './HeaderTitle/HeaderTitle'
 import './styles.scss'
 
 export type HeaderPropsIdle = HeaderPropsBase & {
@@ -44,12 +45,7 @@ export const Header = withCtrl<HeaderProps>(props => {
     <div className="header">
       <div className="content">
         <div className="left">
-          <a href={organization.url} rel="noopener noreferrer" target="_blank">
-            <img className="logo" src={organization.logo} alt="Logo" />
-          </a>
-          <Link href={homeHref}>
-            <div className="text">MoodleNet</div>
-          </Link>
+          <HeaderTitle organization = {organization} homeHref = {homeHref}/>
         </div>
         <div className="right">
           <img className="big-search-icon" src={searchIcon} alt="Search" />

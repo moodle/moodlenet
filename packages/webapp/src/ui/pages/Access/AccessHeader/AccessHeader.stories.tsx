@@ -1,4 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { HeaderMoodleStoryProps } from '../../../components/Header/Header.stories'
+import { href } from '../../../elements/link'
 import { AccessHeader, AccessHeaderProps } from './AccessHeader'
 
 const meta: ComponentMeta<typeof AccessHeader> = {
@@ -14,11 +16,8 @@ const meta: ComponentMeta<typeof AccessHeader> = {
 }
 
 export const AccessHeaderStoryProps: AccessHeaderProps = {
-  organization: {
-    name: 'BFH',
-    url: 'https://www.bfh.ch/',
-    logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg'
-  },
+  organization: HeaderMoodleStoryProps.organization,
+  homeHref: href('Landing/Logged Out'),
 }
 
 const AccessHeaderStory: ComponentStory<typeof AccessHeader> = args => <AccessHeader {...args} />
