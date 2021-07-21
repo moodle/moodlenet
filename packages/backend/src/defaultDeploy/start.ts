@@ -42,7 +42,7 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
   const userAuthDatabase = await getVersionedDBOrThrow({ version: '0.0.1' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.userAuthDBName }),
   })
-  const contentGraphDatabase = await getVersionedDBOrThrow({ version: '0.0.2' })({
+  const contentGraphDatabase = await getVersionedDBOrThrow({ version: '0.0.3' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.contentGraphDBName }),
   })
   const arangoContentGraphAdditionalGQLResolvers = graphqlArangoContentGraphResolvers(contentGraphDatabase)
