@@ -4,7 +4,7 @@ type Resource implements INode & IContentNode {
   icon: AssetRef
   asset: AssetRef!
   id: ID!
-  _domain: Domain
+  _organization: Organization
   _created: GlyphByAt!
   _lastEdited: GlyphByAt
   _rel(edge: EdgeTypeInput!, page: PaginationInput): RelPage!

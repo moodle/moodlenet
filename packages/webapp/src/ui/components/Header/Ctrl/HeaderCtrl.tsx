@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../context/Global/Session'
 import { getMaybeAssetRefUrl } from '../../../../helpers/data'
 import { mainPath } from '../../../../hooks/glob/nav'
@@ -10,6 +11,7 @@ import { HeaderProps, HeaderPropsIdle } from '../Header'
 export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
   const { session, logout, currentProfile } = useSession()
   const { setText: setSearchText, text: searchText } = useSearchUrlQuery()
+  const { org: localOrg } = useLocalInstance()
   const headerProps = useMemo<HeaderProps>(() => {
     const me: HeaderPropsIdle['me'] =
       currentProfile && session
@@ -25,13 +27,13 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
       homeHref: href(mainPath.landing),
       loginHref: href(mainPath.login),
       organization: {
-        name: 'BFH',
-        url: 'https://www.bfh.ch/',
-        logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
+        name: localOrg.name,
+        url: `//${localOrg.domain}`,
+        logo: localOrg.icon,
       },
       searchText,
       setSearchText,
     }
-  }, [currentProfile, logout, searchText, session, setSearchText])
+  }, [currentProfile, localOrg.domain, localOrg.icon, localOrg.name, logout, searchText, session, setSearchText])
   return [headerProps]
 }

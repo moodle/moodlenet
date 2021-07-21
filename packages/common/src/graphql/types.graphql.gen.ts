@@ -47,7 +47,7 @@ export type Collection = INode & IContentNode & {
   summary: Scalars['String'];
   icon?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
-  _domain?: Maybe<Domain>;
+  _organization?: Maybe<Organization>;
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
@@ -81,10 +81,6 @@ export type ContentNodeInput = {
 };
 
 export type CreateCollectionInput = {
-  content: ContentNodeInput;
-};
-
-export type CreateDomainInput = {
   content: ContentNodeInput;
 };
 
@@ -122,7 +118,7 @@ export type CreateEdgeMutationSuccess = {
 
 export type CreateNodeInput = {
   Collection?: Maybe<CreateCollectionInput>;
-  Domain?: Maybe<CreateDomainInput>;
+  Organization?: Maybe<CreateOrganizationInput>;
   Profile?: Maybe<CreateProfileInput>;
   Resource?: Maybe<CreateResourceInput>;
   SubjectField?: Maybe<CreateSubjectInput>;
@@ -145,6 +141,10 @@ export type CreateNodeMutationPayload = CreateNodeMutationSuccess | CreateNodeMu
 export type CreateNodeMutationSuccess = {
   __typename: 'CreateNodeMutationSuccess';
   node: Node;
+};
+
+export type CreateOrganizationInput = {
+  content: ContentNodeInput;
 };
 
 export type CreateProfileInput = {
@@ -222,32 +222,6 @@ export type DeleteNodeMutationSuccess = {
   nodeId?: Maybe<Scalars['ID']>;
 };
 
-export type Domain = INode & IContentNode & {
-  __typename: 'Domain';
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['AssetRef']>;
-  id: Scalars['ID'];
-  _domain?: Maybe<Domain>;
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
-  _rel: RelPage;
-  _relCount: Scalars['Int'];
-};
-
-
-export type Domain_RelArgs = {
-  edge: EdgeTypeInput;
-  page?: Maybe<PaginationInput>;
-};
-
-
-export type Domain_RelCountArgs = {
-  type: EdgeType;
-  target: NodeType;
-  inverse?: Maybe<Scalars['Boolean']>;
-};
-
 export type Edge = AppliesTo | Contains | Created | Edited | Follows | Likes;
 
 export type EdgeType =
@@ -306,7 +280,7 @@ export type IEdge = {
 
 export type INode = {
   id: Scalars['ID'];
-  _domain?: Maybe<Domain>;
+  _organization?: Maybe<Organization>;
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
@@ -423,14 +397,42 @@ export type MutationUpdateNodeArgs = {
 };
 
 
-export type Node = Collection | Domain | Profile | Resource | SubjectField;
+export type Node = Collection | Organization | Profile | Resource | SubjectField;
 
 export type NodeType =
   | 'Collection'
-  | 'Domain'
+  | 'Organization'
   | 'Profile'
   | 'Resource'
   | 'SubjectField';
+
+export type Organization = INode & IContentNode & {
+  __typename: 'Organization';
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['AssetRef']>;
+  color: Scalars['String'];
+  domain: Scalars['String'];
+  id: Scalars['ID'];
+  _organization?: Maybe<Organization>;
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+};
+
+
+export type Organization_RelArgs = {
+  edge: EdgeTypeInput;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type Organization_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+};
 
 export type Page = {
   pageInfo: PageInfo;
@@ -462,7 +464,7 @@ export type Profile = INode & IContentNode & {
   summary: Scalars['String'];
   icon?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
-  _domain?: Maybe<Domain>;
+  _organization?: Maybe<Organization>;
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
@@ -512,7 +514,7 @@ export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
   edge: AppliesTo | Contains | Created | Edited | Follows | Likes;
-  node: Collection | Domain | Profile | Resource | SubjectField;
+  node: Collection | Organization | Profile | Resource | SubjectField;
 };
 
 export type Resource = INode & IContentNode & {
@@ -522,7 +524,7 @@ export type Resource = INode & IContentNode & {
   icon?: Maybe<Scalars['AssetRef']>;
   asset: Scalars['AssetRef'];
   id: Scalars['ID'];
-  _domain?: Maybe<Domain>;
+  _organization?: Maybe<Organization>;
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
@@ -558,7 +560,7 @@ export type SearchPage = Page & {
 export type SearchPageEdge = PageEdge & {
   __typename: 'SearchPageEdge';
   cursor: Scalars['Cursor'];
-  node: Collection | Domain | Profile | Resource | SubjectField;
+  node: Collection | Organization | Profile | Resource | SubjectField;
 };
 
 export type SimpleResponse = {
@@ -575,7 +577,7 @@ export type SubjectField = INode & IContentNode & {
   code: Scalars['String'];
   icon?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
-  _domain?: Maybe<Domain>;
+  _organization?: Maybe<Organization>;
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
@@ -596,10 +598,6 @@ export type SubjectField_RelCountArgs = {
 };
 
 export type UpdateCollectionInput = {
-  content: ContentNodeInput;
-};
-
-export type UpdateDomainInput = {
   content: ContentNodeInput;
 };
 
@@ -635,7 +633,7 @@ export type UpdateEdgeMutationSuccess = {
 
 export type UpdateNodeInput = {
   Collection?: Maybe<UpdateCollectionInput>;
-  Domain?: Maybe<UpdateDomainInput>;
+  Organization?: Maybe<UpdateOrganizationInput>;
   Profile?: Maybe<UpdateProfileInput>;
   Resource?: Maybe<UpdateResourceInput>;
   SubjectField?: Maybe<UpdateSubjectInput>;
@@ -660,6 +658,10 @@ export type UpdateNodeMutationPayload = UpdateNodeMutationSuccess | UpdateNodeMu
 export type UpdateNodeMutationSuccess = {
   __typename: 'UpdateNodeMutationSuccess';
   node?: Maybe<Node>;
+};
+
+export type UpdateOrganizationInput = {
+  content: ContentNodeInput;
 };
 
 export type UpdateProfileInput = {
@@ -714,7 +716,7 @@ export type UserSession = {
     ],
     "IContentNode": [
       "Collection",
-      "Domain",
+      "Organization",
       "Profile",
       "Resource",
       "SubjectField"
@@ -729,14 +731,14 @@ export type UserSession = {
     ],
     "INode": [
       "Collection",
-      "Domain",
+      "Organization",
       "Profile",
       "Resource",
       "SubjectField"
     ],
     "Node": [
       "Collection",
-      "Domain",
+      "Organization",
       "Profile",
       "Resource",
       "SubjectField"

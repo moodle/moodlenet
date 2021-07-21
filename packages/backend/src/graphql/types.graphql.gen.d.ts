@@ -93,7 +93,6 @@ export type ResolversTypes = {
   Contains: ResolverTypeWrapper<Types.Contains>;
   ContentNodeInput: Types.ContentNodeInput;
   CreateCollectionInput: Types.CreateCollectionInput;
-  CreateDomainInput: Types.CreateDomainInput;
   CreateEdgeInput: Types.CreateEdgeInput;
   CreateEdgeMutationError: ResolverTypeWrapper<Types.CreateEdgeMutationError>;
   CreateEdgeMutationErrorType: Types.CreateEdgeMutationErrorType;
@@ -104,6 +103,7 @@ export type ResolversTypes = {
   CreateNodeMutationErrorType: Types.CreateNodeMutationErrorType;
   CreateNodeMutationPayload: ResolversTypes['CreateNodeMutationSuccess'] | ResolversTypes['CreateNodeMutationError'];
   CreateNodeMutationSuccess: ResolverTypeWrapper<Omit<Types.CreateNodeMutationSuccess, 'node'> & { node: ResolversTypes['Node'] }>;
+  CreateOrganizationInput: Types.CreateOrganizationInput;
   CreateProfileInput: Types.CreateProfileInput;
   CreateResourceInput: Types.CreateResourceInput;
   CreateSession: ResolverTypeWrapper<Types.CreateSession>;
@@ -121,7 +121,6 @@ export type ResolversTypes = {
   DeleteNodeMutationErrorType: Types.DeleteNodeMutationErrorType;
   DeleteNodeMutationPayload: ResolversTypes['DeleteNodeMutationSuccess'] | ResolversTypes['DeleteNodeMutationError'];
   DeleteNodeMutationSuccess: ResolverTypeWrapper<Types.DeleteNodeMutationSuccess>;
-  Domain: ResolverTypeWrapper<Types.Domain>;
   Edge: ResolversTypes['AppliesTo'] | ResolversTypes['Contains'] | ResolversTypes['Created'] | ResolversTypes['Edited'] | ResolversTypes['Follows'] | ResolversTypes['Likes'];
   EdgeType: Types.EdgeType;
   EdgeTypeInput: Types.EdgeTypeInput;
@@ -130,14 +129,15 @@ export type ResolversTypes = {
   Follows: ResolverTypeWrapper<Types.Follows>;
   GlobalSearchSort: Types.GlobalSearchSort;
   GlyphByAt: ResolverTypeWrapper<Types.GlyphByAt>;
-  IContentNode: ResolversTypes['Collection'] | ResolversTypes['Domain'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['SubjectField'];
+  IContentNode: ResolversTypes['Collection'] | ResolversTypes['Organization'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['SubjectField'];
   IEdge: ResolversTypes['AppliesTo'] | ResolversTypes['Contains'] | ResolversTypes['Created'] | ResolversTypes['Edited'] | ResolversTypes['Follows'] | ResolversTypes['Likes'];
-  INode: ResolversTypes['Collection'] | ResolversTypes['Domain'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['SubjectField'];
+  INode: ResolversTypes['Collection'] | ResolversTypes['Organization'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['SubjectField'];
   Likes: ResolverTypeWrapper<Types.Likes>;
   Mutation: ResolverTypeWrapper<RootValue>;
   Never: ResolverTypeWrapper<Types.Scalars['Never']>;
-  Node: ResolversTypes['Collection'] | ResolversTypes['Domain'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['SubjectField'];
+  Node: ResolversTypes['Collection'] | ResolversTypes['Organization'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['SubjectField'];
   NodeType: Types.NodeType;
+  Organization: ResolverTypeWrapper<Types.Organization>;
   Page: ResolversTypes['RelPage'] | ResolversTypes['SearchPage'];
   PageEdge: ResolversTypes['RelPageEdge'] | ResolversTypes['SearchPageEdge'];
   PageInfo: ResolverTypeWrapper<Types.PageInfo>;
@@ -153,7 +153,6 @@ export type ResolversTypes = {
   SimpleResponse: ResolverTypeWrapper<Types.SimpleResponse>;
   SubjectField: ResolverTypeWrapper<Types.SubjectField>;
   UpdateCollectionInput: Types.UpdateCollectionInput;
-  UpdateDomainInput: Types.UpdateDomainInput;
   UpdateEdgeInput: Types.UpdateEdgeInput;
   UpdateEdgeMutationError: ResolverTypeWrapper<Types.UpdateEdgeMutationError>;
   UpdateEdgeMutationErrorType: Types.UpdateEdgeMutationErrorType;
@@ -164,6 +163,7 @@ export type ResolversTypes = {
   UpdateNodeMutationErrorType: Types.UpdateNodeMutationErrorType;
   UpdateNodeMutationPayload: ResolversTypes['UpdateNodeMutationSuccess'] | ResolversTypes['UpdateNodeMutationError'];
   UpdateNodeMutationSuccess: ResolverTypeWrapper<Omit<Types.UpdateNodeMutationSuccess, 'node'> & { node?: Types.Maybe<ResolversTypes['Node']> }>;
+  UpdateOrganizationInput: Types.UpdateOrganizationInput;
   UpdateProfileInput: Types.UpdateProfileInput;
   UpdateResourceInput: Types.UpdateResourceInput;
   UpdateSubjectInput: Types.UpdateSubjectInput;
@@ -183,7 +183,6 @@ export type ResolversParentTypes = {
   Contains: Types.Contains;
   ContentNodeInput: Types.ContentNodeInput;
   CreateCollectionInput: Types.CreateCollectionInput;
-  CreateDomainInput: Types.CreateDomainInput;
   CreateEdgeInput: Types.CreateEdgeInput;
   CreateEdgeMutationError: Types.CreateEdgeMutationError;
   CreateEdgeMutationPayload: ResolversParentTypes['CreateEdgeMutationSuccess'] | ResolversParentTypes['CreateEdgeMutationError'];
@@ -192,6 +191,7 @@ export type ResolversParentTypes = {
   CreateNodeMutationError: Types.CreateNodeMutationError;
   CreateNodeMutationPayload: ResolversParentTypes['CreateNodeMutationSuccess'] | ResolversParentTypes['CreateNodeMutationError'];
   CreateNodeMutationSuccess: Omit<Types.CreateNodeMutationSuccess, 'node'> & { node: ResolversParentTypes['Node'] };
+  CreateOrganizationInput: Types.CreateOrganizationInput;
   CreateProfileInput: Types.CreateProfileInput;
   CreateResourceInput: Types.CreateResourceInput;
   CreateSession: Types.CreateSession;
@@ -207,20 +207,20 @@ export type ResolversParentTypes = {
   DeleteNodeMutationError: Types.DeleteNodeMutationError;
   DeleteNodeMutationPayload: ResolversParentTypes['DeleteNodeMutationSuccess'] | ResolversParentTypes['DeleteNodeMutationError'];
   DeleteNodeMutationSuccess: Types.DeleteNodeMutationSuccess;
-  Domain: Types.Domain;
   Edge: ResolversParentTypes['AppliesTo'] | ResolversParentTypes['Contains'] | ResolversParentTypes['Created'] | ResolversParentTypes['Edited'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'];
   EdgeTypeInput: Types.EdgeTypeInput;
   Edited: Types.Edited;
   Empty: Types.Scalars['Empty'];
   Follows: Types.Follows;
   GlyphByAt: Types.GlyphByAt;
-  IContentNode: ResolversParentTypes['Collection'] | ResolversParentTypes['Domain'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['SubjectField'];
+  IContentNode: ResolversParentTypes['Collection'] | ResolversParentTypes['Organization'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['SubjectField'];
   IEdge: ResolversParentTypes['AppliesTo'] | ResolversParentTypes['Contains'] | ResolversParentTypes['Created'] | ResolversParentTypes['Edited'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'];
-  INode: ResolversParentTypes['Collection'] | ResolversParentTypes['Domain'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['SubjectField'];
+  INode: ResolversParentTypes['Collection'] | ResolversParentTypes['Organization'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['SubjectField'];
   Likes: Types.Likes;
   Mutation: RootValue;
   Never: Types.Scalars['Never'];
-  Node: ResolversParentTypes['Collection'] | ResolversParentTypes['Domain'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['SubjectField'];
+  Node: ResolversParentTypes['Collection'] | ResolversParentTypes['Organization'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['SubjectField'];
+  Organization: Types.Organization;
   Page: ResolversParentTypes['RelPage'] | ResolversParentTypes['SearchPage'];
   PageEdge: ResolversParentTypes['RelPageEdge'] | ResolversParentTypes['SearchPageEdge'];
   PageInfo: Types.PageInfo;
@@ -235,7 +235,6 @@ export type ResolversParentTypes = {
   SimpleResponse: Types.SimpleResponse;
   SubjectField: Types.SubjectField;
   UpdateCollectionInput: Types.UpdateCollectionInput;
-  UpdateDomainInput: Types.UpdateDomainInput;
   UpdateEdgeInput: Types.UpdateEdgeInput;
   UpdateEdgeMutationError: Types.UpdateEdgeMutationError;
   UpdateEdgeMutationPayload: ResolversParentTypes['UpdateEdgeMutationSuccess'] | ResolversParentTypes['UpdateEdgeMutationError'];
@@ -244,6 +243,7 @@ export type ResolversParentTypes = {
   UpdateNodeMutationError: Types.UpdateNodeMutationError;
   UpdateNodeMutationPayload: ResolversParentTypes['UpdateNodeMutationSuccess'] | ResolversParentTypes['UpdateNodeMutationError'];
   UpdateNodeMutationSuccess: Omit<Types.UpdateNodeMutationSuccess, 'node'> & { node?: Types.Maybe<ResolversParentTypes['Node']> };
+  UpdateOrganizationInput: Types.UpdateOrganizationInput;
   UpdateProfileInput: Types.UpdateProfileInput;
   UpdateResourceInput: Types.UpdateResourceInput;
   UpdateSubjectInput: Types.UpdateSubjectInput;
@@ -266,7 +266,7 @@ export type CollectionResolvers<ContextType = Context, ParentType extends Resolv
   summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _domain?: Resolver<Types.Maybe<ResolversTypes['Domain']>, ParentType, ContextType>;
+  _organization?: Resolver<Types.Maybe<ResolversTypes['Organization']>, ParentType, ContextType>;
   _created?: Resolver<ResolversTypes['GlyphByAt'], ParentType, ContextType>;
   _lastEdited?: Resolver<Types.Maybe<ResolversTypes['GlyphByAt']>, ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.Collection_RelArgs, 'edge'>>;
@@ -362,19 +362,6 @@ export type DeleteNodeMutationSuccessResolvers<ContextType = Context, ParentType
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type DomainResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Domain'] = ResolversParentTypes['Domain']> = {
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  icon?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _domain?: Resolver<Types.Maybe<ResolversTypes['Domain']>, ParentType, ContextType>;
-  _created?: Resolver<ResolversTypes['GlyphByAt'], ParentType, ContextType>;
-  _lastEdited?: Resolver<Types.Maybe<ResolversTypes['GlyphByAt']>, ParentType, ContextType>;
-  _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.Domain_RelArgs, 'edge'>>;
-  _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.Domain_RelCountArgs, 'type' | 'target'>>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type EdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Edge'] = ResolversParentTypes['Edge']> = {
   __resolveType: TypeResolveFn<'AppliesTo' | 'Contains' | 'Created' | 'Edited' | 'Follows' | 'Likes', ParentType, ContextType>;
 };
@@ -404,7 +391,7 @@ export type GlyphByAtResolvers<ContextType = Context, ParentType extends Resolve
 };
 
 export type IContentNodeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['IContentNode'] = ResolversParentTypes['IContentNode']> = {
-  __resolveType: TypeResolveFn<'Collection' | 'Domain' | 'Profile' | 'Resource' | 'SubjectField', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Collection' | 'Organization' | 'Profile' | 'Resource' | 'SubjectField', ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
@@ -418,9 +405,9 @@ export type IEdgeResolvers<ContextType = Context, ParentType extends ResolversPa
 };
 
 export type INodeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['INode'] = ResolversParentTypes['INode']> = {
-  __resolveType: TypeResolveFn<'Collection' | 'Domain' | 'Profile' | 'Resource' | 'SubjectField', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Collection' | 'Organization' | 'Profile' | 'Resource' | 'SubjectField', ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _domain?: Resolver<Types.Maybe<ResolversTypes['Domain']>, ParentType, ContextType>;
+  _organization?: Resolver<Types.Maybe<ResolversTypes['Organization']>, ParentType, ContextType>;
   _created?: Resolver<ResolversTypes['GlyphByAt'], ParentType, ContextType>;
   _lastEdited?: Resolver<Types.Maybe<ResolversTypes['GlyphByAt']>, ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.INode_RelArgs, 'edge'>>;
@@ -455,7 +442,22 @@ export interface NeverScalarConfig extends GraphQLScalarTypeConfig<ResolversType
 }
 
 export type NodeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = {
-  __resolveType: TypeResolveFn<'Collection' | 'Domain' | 'Profile' | 'Resource' | 'SubjectField', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'Collection' | 'Organization' | 'Profile' | 'Resource' | 'SubjectField', ParentType, ContextType>;
+};
+
+export type OrganizationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = {
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  icon?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
+  color?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  domain?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _organization?: Resolver<Types.Maybe<ResolversTypes['Organization']>, ParentType, ContextType>;
+  _created?: Resolver<ResolversTypes['GlyphByAt'], ParentType, ContextType>;
+  _lastEdited?: Resolver<Types.Maybe<ResolversTypes['GlyphByAt']>, ParentType, ContextType>;
+  _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.Organization_RelArgs, 'edge'>>;
+  _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.Organization_RelCountArgs, 'type' | 'target'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type PageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']> = {
@@ -482,7 +484,7 @@ export type ProfileResolvers<ContextType = Context, ParentType extends Resolvers
   summary?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _domain?: Resolver<Types.Maybe<ResolversTypes['Domain']>, ParentType, ContextType>;
+  _organization?: Resolver<Types.Maybe<ResolversTypes['Organization']>, ParentType, ContextType>;
   _created?: Resolver<ResolversTypes['GlyphByAt'], ParentType, ContextType>;
   _lastEdited?: Resolver<Types.Maybe<ResolversTypes['GlyphByAt']>, ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.Profile_RelArgs, 'edge'>>;
@@ -515,7 +517,7 @@ export type ResourceResolvers<ContextType = Context, ParentType extends Resolver
   icon?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   asset?: Resolver<ResolversTypes['AssetRef'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _domain?: Resolver<Types.Maybe<ResolversTypes['Domain']>, ParentType, ContextType>;
+  _organization?: Resolver<Types.Maybe<ResolversTypes['Organization']>, ParentType, ContextType>;
   _created?: Resolver<ResolversTypes['GlyphByAt'], ParentType, ContextType>;
   _lastEdited?: Resolver<Types.Maybe<ResolversTypes['GlyphByAt']>, ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.Resource_RelArgs, 'edge'>>;
@@ -548,7 +550,7 @@ export type SubjectFieldResolvers<ContextType = Context, ParentType extends Reso
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   icon?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _domain?: Resolver<Types.Maybe<ResolversTypes['Domain']>, ParentType, ContextType>;
+  _organization?: Resolver<Types.Maybe<ResolversTypes['Organization']>, ParentType, ContextType>;
   _created?: Resolver<ResolversTypes['GlyphByAt'], ParentType, ContextType>;
   _lastEdited?: Resolver<Types.Maybe<ResolversTypes['GlyphByAt']>, ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.SubjectField_RelArgs, 'edge'>>;
@@ -613,7 +615,6 @@ export type Resolvers<ContextType = Context> = {
   DeleteNodeMutationError?: DeleteNodeMutationErrorResolvers<ContextType>;
   DeleteNodeMutationPayload?: DeleteNodeMutationPayloadResolvers<ContextType>;
   DeleteNodeMutationSuccess?: DeleteNodeMutationSuccessResolvers<ContextType>;
-  Domain?: DomainResolvers<ContextType>;
   Edge?: EdgeResolvers<ContextType>;
   Edited?: EditedResolvers<ContextType>;
   Empty?: GraphQLScalarType;
@@ -626,6 +627,7 @@ export type Resolvers<ContextType = Context> = {
   Mutation?: MutationResolvers<ContextType>;
   Never?: GraphQLScalarType;
   Node?: NodeResolvers<ContextType>;
+  Organization?: OrganizationResolvers<ContextType>;
   Page?: PageResolvers<ContextType>;
   PageEdge?: PageEdgeResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;

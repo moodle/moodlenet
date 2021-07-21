@@ -2,7 +2,7 @@ import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { BLRule } from '@moodlenet/common/lib/lib/bl/common'
 import { Id, nodeTypeFromId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { aqlstr, newGlyphKey } from '../../../../lib/helpers/arango'
-import { createdByAtPatch, isMarkDeleted, toDocumentEdgeOrNode } from './helpers'
+import { createEdgeMergePatch, isMarkDeleted, toDocumentEdgeOrNode } from './helpers'
 import { DocumentEdgeDataByType } from './types'
 
 export const createEdgeQ = <Type extends EdgeType>({
@@ -36,7 +36,7 @@ export const createEdgeQ = <Type extends EdgeType>({
   const q = `
     let from = DOCUMENT(${aqlstr(from)})
     let to = DOCUMENT(${aqlstr(to)})
-    let newedge = ${createdByAtPatch(newedge, creatorProfileId)}
+    let newedge = ${createEdgeMergePatch({ doc: newedge, byId: creatorProfileId })}
 
     FILTER !!from 
       AND !!to 

@@ -11,9 +11,9 @@ export type BaseIContentNode_Collection_Fragment = (
   & Pick<Types.Collection, 'name' | 'icon' | 'summary'>
 );
 
-export type BaseIContentNode_Domain_Fragment = (
-  { __typename: 'Domain' }
-  & Pick<Types.Domain, 'name' | 'icon' | 'summary'>
+export type BaseIContentNode_Organization_Fragment = (
+  { __typename: 'Organization' }
+  & Pick<Types.Organization, 'name' | 'icon' | 'summary'>
 );
 
 export type BaseIContentNode_Profile_Fragment = (
@@ -31,7 +31,7 @@ export type BaseIContentNode_SubjectField_Fragment = (
   & Pick<Types.SubjectField, 'name' | 'icon' | 'summary'>
 );
 
-export type BaseIContentNodeFragment = BaseIContentNode_Collection_Fragment | BaseIContentNode_Domain_Fragment | BaseIContentNode_Profile_Fragment | BaseIContentNode_Resource_Fragment | BaseIContentNode_SubjectField_Fragment;
+export type BaseIContentNodeFragment = BaseIContentNode_Collection_Fragment | BaseIContentNode_Organization_Fragment | BaseIContentNode_Profile_Fragment | BaseIContentNode_Resource_Fragment | BaseIContentNode_SubjectField_Fragment;
 
 export type BaseINode_Collection_Fragment = (
   { __typename: 'Collection' }
@@ -39,10 +39,10 @@ export type BaseINode_Collection_Fragment = (
   & { followersCount: Types.Collection['_relCount'], likersCount: Types.Collection['_relCount'] }
 );
 
-export type BaseINode_Domain_Fragment = (
-  { __typename: 'Domain' }
-  & Pick<Types.Domain, 'id'>
-  & { followersCount: Types.Domain['_relCount'], likersCount: Types.Domain['_relCount'] }
+export type BaseINode_Organization_Fragment = (
+  { __typename: 'Organization' }
+  & Pick<Types.Organization, 'id'>
+  & { followersCount: Types.Organization['_relCount'], likersCount: Types.Organization['_relCount'] }
 );
 
 export type BaseINode_Profile_Fragment = (
@@ -63,7 +63,7 @@ export type BaseINode_SubjectField_Fragment = (
   & { followersCount: Types.SubjectField['_relCount'], likersCount: Types.SubjectField['_relCount'] }
 );
 
-export type BaseINodeFragment = BaseINode_Collection_Fragment | BaseINode_Domain_Fragment | BaseINode_Profile_Fragment | BaseINode_Resource_Fragment | BaseINode_SubjectField_Fragment;
+export type BaseINodeFragment = BaseINode_Collection_Fragment | BaseINode_Organization_Fragment | BaseINode_Profile_Fragment | BaseINode_Resource_Fragment | BaseINode_SubjectField_Fragment;
 
 export const ShallowProfileFragmentDoc = gql`
     fragment ShallowProfile on Profile {

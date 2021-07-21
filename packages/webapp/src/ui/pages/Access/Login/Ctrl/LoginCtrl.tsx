@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
+import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../../context/Global/Session'
 import { useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
 import { CtrlHook } from '../../../../lib/ctrl'
@@ -16,21 +17,22 @@ export const useLoginCtrl: CtrlHook<LoginProps, {}> = () => {
       }),
     [login],
   )
+  const { org: localOrg } = useLocalInstance()
 
   const loginProps = useMemo<LoginProps>(() => {
     const loginProps: LoginProps = {
       accessHeaderProps: {
         organization: {
-          name: 'BFH',
-          url: 'https://www.bfh.ch/',
-          logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
+          name: localOrg.name,
+          url: `//${localOrg.domain}`,
+          logo: localOrg.icon,
         },
       },
       onSubmit,
       loginErrorMessage,
     }
     return loginProps
-  }, [loginErrorMessage, onSubmit])
+  }, [loginErrorMessage, onSubmit, localOrg])
 
   return loginProps && [loginProps]
 }

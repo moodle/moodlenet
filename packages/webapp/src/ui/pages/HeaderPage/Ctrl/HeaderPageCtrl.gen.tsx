@@ -17,20 +17,20 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Domain' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
           { __typename: 'SubjectField' }
           & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
         ) }
       )> }
     ) }
   ) | (
-    { __typename: 'Domain' }
-    & Pick<Types.Domain, 'id'>
+    { __typename: 'Organization' }
+    & Pick<Types.Organization, 'id'>
     & { pinnedList: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Domain' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
           { __typename: 'SubjectField' }
           & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
         ) }
@@ -43,7 +43,7 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Domain' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
           { __typename: 'SubjectField' }
           & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
         ) }
@@ -56,7 +56,7 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Domain' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
           { __typename: 'SubjectField' }
           & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
         ) }
@@ -69,7 +69,7 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Domain' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
           { __typename: 'SubjectField' }
           & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
         ) }
