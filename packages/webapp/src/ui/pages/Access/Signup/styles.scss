@@ -1,4 +1,4 @@
-.login-page {
+.signup-page {
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -17,20 +17,21 @@
 
   > .content {
     display: flex;
-    margin-left: 130px;
+    margin-right: 130px;
     height: 340px;
     margin-bottom: 130px;
     @media (max-height: 750px) {
       margin-bottom: 5%;
     }
     @media (min-width: 1320px) {
-      margin-left: calc( (100vw - 1100px) / 2);
+      margin-right: calc( (100vw - 1100px) / 2);
     }
     > .card {
       height: 100%;
     }
-    > .card:first-child {
+    > .card:last-child {
       width: 100%;
+      background-color: #B6BACB;
       > .content {
         flex-direction: column;
         justify-content: space-between;
@@ -38,29 +39,35 @@
         padding: 53px 65px;
         width: 100%;
         height: 100%;
+        
         > .title {
-          color: #B6BACB;
+          color: white;
           font-size: 28px;
         }
         > form {
           display: flex;
           flex-direction: column;
           justify-content: start;
+          border-color: transparent;
+            
           > input {
             height: 46px;
             border-style: solid;
             border-width: 0.5px;
             border-radius: 45px;
-
-            &:focus {
-              border:0 solid white;
-            }
+            max-width: 250px;
+            border:none;
 
             &:focus, &:not(:focus) {
               outline: none;
               padding: 0 25px;
               font-weight: 500;
               font-size: 17px;
+            }
+
+            &:focus {
+              box-shadow: 0 0 5px white;
+              border: 0.5px solid #B6BACB;
               color: #9598a7;
             }
 
@@ -86,29 +93,19 @@
             }
           }
           > .email {
-            border-color:#F88012;
             margin-bottom: 14px;
             max-width: 335px;
-            &:focus {
-              border:0 solid white;
-              box-shadow: 0 0 5px #F88012;
-            }
-          }
-          > .password {
-            border-color: #B6BACB;
-            max-width: 250px;
-            &:focus {
-              border:0 solid white;
-              box-shadow: 0 0 5px #B6BACB;
-            }
           }
         }
         > .bottom {
           display: flex;
           justify-content: space-between;
-          align-items: center;   
+          align-items: center;     
           >.left {
             display: flex;
+            > .tertiary-button {
+              color: white;
+            }
           }
           > .right {
             display: flex;
@@ -135,14 +132,14 @@
         }
       }
     }
-    > .card:last-child {
+    > .card:first-child {
       cursor: pointer;
-      margin-left: 30px;
+      margin-right: 30px;
       width: 30%;
       min-width: 185px;
-      border-radius: 16px 0 0 16px;
-      color: white;
-      background-color: #b6bacb;
+      border-radius: 0 16px 16px 0;
+      color: #b6bacb;
+      background-color: white;
       justify-content: center;
       display: flex;
       align-items: start;
@@ -150,9 +147,9 @@
       padding-left: 30px;
       font-size: 36px;
       > svg {
-        -webkit-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-        transform: rotate(45deg);
+        -webkit-transform: rotate(225deg);
+        -ms-transform: rotate(225deg);
+        transform: rotate(225deg);
         margin-top: 20px;
         width: 43px;
       }
