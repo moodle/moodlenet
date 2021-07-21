@@ -11,7 +11,7 @@ export const HeaderPageTemplate = withCtrl<HeaderPageTemplateProps>(
   ({ headerPageProps, isAuthenticated, children }) => {
     return (
       <MainPageWrapper>
-        <HeaderPage {...headerPageProps} />
+        <HeaderPage {...headerPageProps} isAuthenticated={isAuthenticated} />
         <div className={`view ${isAuthenticated ? 'logged-in' : 'logged-out'}`}>{children}</div>
       </MainPageWrapper>
     )
