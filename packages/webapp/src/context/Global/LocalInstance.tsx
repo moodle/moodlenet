@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react'
 import { getMaybeAssetRefUrl } from '../../helpers/data'
 import { createCtx } from '../../lib/context'
 import moodlenet_front_image from '../../ui/static/img/moodlenet-front-image_full.jpg'
-import moodlenet_logo from '../../ui/static/img/moodlenet-logo.png'
+import moodlenet_logo from '../../ui/static/img/moodlenet-logo.svg'
 import { useLocalInstanceQuery } from './LocalInstance/localInstance.gen'
 
 export type LocalInstanceContextType = {
