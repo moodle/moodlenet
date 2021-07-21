@@ -12,13 +12,21 @@ export type LandingProps = {
   organization: Pick<Organization, 'name' | 'intro'>
   image: string
   setSearchText(text: string): unknown
+  isAuthenticated: boolean
 }
 
-export const Landing = withCtrl<LandingProps>(({ headerPageTemplateProps, trendCardProps, organization, image, setSearchText }) => {
+export const Landing = withCtrl<LandingProps>(({ 
+  headerPageTemplateProps,
+  trendCardProps, 
+  organization, 
+  image, 
+  setSearchText, 
+  isAuthenticated 
+}) => {
   return (
     <HeaderPageTemplate {...headerPageTemplateProps}>
       <div className="landing">
-        <div className="landing-title">
+        { !isAuthenticated ? <div className="landing-title">
           { organization.name === "MoodleNet" ? <div>
               <div className="organization-title">Welcome to MoodleNet</div>
               <div className="moodle-title">Our global network to share and curate open educational resources</div>
@@ -27,7 +35,7 @@ export const Landing = withCtrl<LandingProps>(({ headerPageTemplateProps, trendC
               <div className="organization-title">{organization.name}</div>
             </div> 
           }
-        </div>
+        </div> : <></>}
         <Searchbox setSearchText={setSearchText} searchText='' placeholder='Start searching now'></Searchbox>
         <div className="content">
           <div className="main-column">
