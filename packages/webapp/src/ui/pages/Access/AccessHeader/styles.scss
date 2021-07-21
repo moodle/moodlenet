@@ -21,14 +21,14 @@
 
     > .buttons {
       display: flex;
-      > .primary-button:first-child {
+      > .secondary-button:first-child {
         display: none;
       }
       > .primary-button:last-child {
         background-color: #7F8393;
       }
       @media (max-width:650px) {
-        > .primary-button:first-child {
+        > .secondary-button:first-child {
           display: flex;
         }
       }

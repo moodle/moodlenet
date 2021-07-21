@@ -36,6 +36,7 @@
     }
     > .card:first-child {
       width: 100%;
+      background-color: white;
       > .content {
         flex-direction: column;
         justify-content: space-between;
@@ -119,16 +120,14 @@
           align-items: center;   
           >.left {
             display: flex;
-          }
-          > .right {
-            display: flex;
             > .tertiary-button {
-              color: white;
               @media (max-width: 450px) {
                 display: none;
               }
-
             }
+          }
+          > .right {
+            display: flex;
             > .icon {
               cursor: pointer;
               height: 33px;
