@@ -1,3 +1,4 @@
+import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { useMemo } from 'react'
 import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../context/Global/Session'
@@ -16,6 +17,7 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
     const me: HeaderPropsIdle['me'] =
       currentProfile && session
         ? {
+            myProfileHref: href(`/profile/${parseNodeId(currentProfile.id)._key}`), //FIXME: make it less eror prone
             avatar: getMaybeAssetRefUrl(currentProfile.icon) ?? '',
             username: session.username,
             logout,
