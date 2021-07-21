@@ -5,18 +5,19 @@ export const SearchViewName = 'SearchView'
 export const setupSearchView = async ({ db }: { db: Database }) => {
   let searchView = db.view(SearchViewName)
   const contentAnalyzer: ArangoSearchViewLink = {
-    analyzers: ['text_en', 'global-search-ngram'],
+    analyzers: ['text_en', 'global-text-search'],
     fields: { summary: {}, name: {} },
     includeAllFields: false,
     storeValues: 'none',
     trackListPositions: false,
   }
-  const ngramAnalyzer = db.analyzer('global-search-ngram')
-  await ngramAnalyzer.create({
-    type: 'ngram',
-    properties: { max: 6, min: 3, preserveOriginal: true },
+  const textAnalyzer = db.analyzer('global-text-search')
+  await textAnalyzer.create({
+    type: 'text',
+    properties: { case: 'upper', locale: 'en', stemming: true, edgeNgram: { max: 6, min: 2, preserveOriginal: true } },
     features: ['frequency', 'norm', 'position'],
   })
+
   searchView = await db.createView(SearchViewName, {
     links: {
       Resource: contentAnalyzer,

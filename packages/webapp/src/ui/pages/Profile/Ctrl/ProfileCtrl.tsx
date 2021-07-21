@@ -43,6 +43,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
               followers: profile.followersCount,
               resources: profile.resourcesCount,
               years: 1,
+              kudos: 10,
             },
             profileCardProps: {
               avatarUrl:
@@ -56,10 +57,6 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
               organizationName: defaultOrganization.name,
               siteUrl: 'www.juanito.example',
               username: profile.name,
-            },
-            scoreCardProps: {
-              kudos: 10,
-              points: 20,
             },
             username: profile.name,
           }

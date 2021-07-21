@@ -42,9 +42,9 @@ export const globalSearchQuery = ({
           OR
           BOOST( node.summary IN TOKENS(searchTerm), 1 )
           OR
-          BOOST(  NGRAM_MATCH(node.name, searchTerm, 0.05, "global-search-ngram"), 0.2 )
+          BOOST(  NGRAM_MATCH(node.name, searchTerm, 0.05, "global-text-search"), 0.2 )
           OR
-          BOOST( NGRAM_MATCH(node.summary, searchTerm, 0.05, "global-search-ngram"), 0.1 )
+          BOOST( NGRAM_MATCH(node.summary, searchTerm, 0.05, "global-text-search"), 0.1 )
         , "text_en")
       
         FILTER !${isMarkDeleted('node')} AND ${filterConditions || 'true'}

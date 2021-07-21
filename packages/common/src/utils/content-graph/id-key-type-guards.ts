@@ -31,7 +31,7 @@ export const edgeTypeFromId = (_: Id): EdgeType => {
   return edgeType as EdgeType
 }
 
-const nodeTypes: NodeType[] = ['Collection', 'Profile', 'Resource', 'SubjectField']
+const nodeTypes: NodeType[] = ['Collection', 'Profile', 'Resource', 'SubjectField', 'Organization']
 export const isNodeType = (_: any): _ is NodeType => !!_ && nodeTypes.includes(_)
 const caseInsensitiveNodeTypesMap = nodeTypes.reduce(
   (_map, NodeType) => ({

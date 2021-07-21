@@ -6,6 +6,10 @@ query SubjectCard($id: ID!) {
     }
     ... on INode {
       id
+      _organization {
+        domain
+        color
+      }
     }
   }
 }

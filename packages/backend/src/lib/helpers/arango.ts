@@ -90,7 +90,7 @@ export const getDocumentById = async <Type extends object = object>({
 
 export const aqlstr = (_: any) => JSON.stringify(_)
 
-export const ulidKey = (): IdKey => ulid()
+export const newGlyphKey = (): IdKey => ulid()
 
 export const getOneResult = async (q: string, db: Database) => {
   const cursor = await db.query(q)
