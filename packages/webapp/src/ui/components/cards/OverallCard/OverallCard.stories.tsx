@@ -16,6 +16,7 @@ const meta: ComponentMeta<typeof OverallCard> = {
 export const OverallCardStoryProps: OverallCardProps = {
   followers: 0,
   resources: 23,
+  kudos: 121,
   years: 20
 }
 
