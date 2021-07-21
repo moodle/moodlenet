@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
+import SecondaryButton from '../../../components/atoms/SecondaryButton/SecondaryButton'
 import HeaderTitle from '../../../components/Header/HeaderTitle/HeaderTitle'
 import { Href } from '../../../elements/link'
 import { Organization } from '../../../types'
@@ -18,9 +19,9 @@ export const AccessHeader: FC<AccessHeaderProps> = ({ organization, homeHref, pa
         <HeaderTitle organization={organization} homeHref = {homeHref} />
         <div className="buttons">
           { page === 'login' ? (
-            <PrimaryButton>Sign up</PrimaryButton>
+            <SecondaryButton type='orange'>Sign up</SecondaryButton>
           ) : (
-            <PrimaryButton>Login</PrimaryButton>
+            <SecondaryButton type='orange'>Login</SecondaryButton>
           )}
           <PrimaryButton>Learn more</PrimaryButton>
         </div>
