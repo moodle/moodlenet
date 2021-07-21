@@ -1,5 +1,5 @@
 .overall-card {
-    margin-top: 15px;
+    margin-top: 30px;
     margin-bottom: 15px;
     width: 100%;
     height: 70px;
@@ -24,7 +24,7 @@
             color: #b6bacb;
         }
 
-        &.followers {
+        &.followers, &.kudos {
             font-size: 14px;
 
             @media (max-width:900px) {
@@ -36,9 +36,4 @@
             font-size: 9px;
         }
     }
-
-    .separator {
-        border-left: 0.5px solid #b6bacb;
-        height: 70%;
-      }
 }
