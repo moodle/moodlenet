@@ -4,9 +4,9 @@ import { useHeaderPageCtrl } from '../../../pages/HeaderPage/Ctrl/HeaderPageCtrl
 import { HeaderPageTemplateProps } from '../HeaderPageTemplate'
 
 export const useHeaderPageTemplateCtrl: CtrlHook<HeaderPageTemplateProps, {}> = () => {
-  const { session } = useSession()
+  const { isAuthenticated } = useSession()
   const headerPageTemplateProps: HeaderPageTemplateProps = {
-    isAuthenticated: !!session,
+    isAuthenticated,
     headerPageProps: ctrlHook(useHeaderPageCtrl, {}),
   }
   return [headerPageTemplateProps]

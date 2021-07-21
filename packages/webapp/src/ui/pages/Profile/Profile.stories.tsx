@@ -4,9 +4,9 @@ import { OverallCardStoryProps } from '../../components/cards/OverallCard/Overal
 import { ProfileCardStoryProps } from '../../components/cards/ProfileCard/ProfileCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { ScoreCardStoryProps } from '../../components/cards/ScoreCard/ScoreCard.stories'
-import { HeaderStoryProps } from '../../components/Header/Header.stories'
+import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
-import { HeaderPageStoryProps } from '../HeaderPage/HeaderPage.stories'
+import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Profile, ProfileProps } from './Profile'
 
 const meta: ComponentMeta<typeof Profile> = {
@@ -23,7 +23,7 @@ const ProfileStory: ComponentStory<typeof Profile> = args => <Profile {...args} 
 
 export const ProfileStoryProps: ProfileProps = {
   headerPageTemplateProps: {
-    headerPageProps: HeaderPageStoryProps,
+    headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
   },
   overallCardProps: OverallCardStoryProps,
@@ -39,11 +39,14 @@ export const ProfileLoggedOutStoryProps: ProfileProps = {
   headerPageTemplateProps: {
     isAuthenticated: false,
     headerPageProps: {
+      isAuthenticated: false,
       headerProps: {
-        ...HeaderStoryProps,
+        ...HeaderLoggedOutStoryProps,
         me: null,
       },
-      subHeaderProps: null,
+      subHeaderProps: {
+        tags: [],
+      },
     },
   },
 }
@@ -53,7 +56,8 @@ export const ProfileLoggedInStoryProps: ProfileProps = {
   headerPageTemplateProps: {
     isAuthenticated: true,
     headerPageProps: {
-      headerProps: HeaderStoryProps,
+      isAuthenticated: true,
+      headerProps: HeaderLoggedOutStoryProps,
       subHeaderProps: SubHeaderStoryProps,
     },
   },
