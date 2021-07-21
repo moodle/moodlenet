@@ -5,6 +5,7 @@ import { getMaybeAssetRefUrl } from '../../../../helpers/data'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
+import { defaultOrganization } from '../../../lib/static-data'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { ProfileProps } from '../Profile'
 import { useProfilePageUserDataQuery } from './ProfileCtrl.gen'
@@ -52,7 +53,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
               firstName: profile.name,
               lastName: profile.name,
               location: 'Barcelona',
-              organizationName: 'juanito.co',
+              organizationName: defaultOrganization.name,
               siteUrl: 'www.juanito.example',
               username: profile.name,
             },
