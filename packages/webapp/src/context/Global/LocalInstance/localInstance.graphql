@@ -1,0 +1,12 @@
+query localInstance {
+  node(id: "Organization/local") {
+    ... on Organization {
+      id
+      name
+      summary
+      icon
+      color
+      domain
+    }
+  }
+}

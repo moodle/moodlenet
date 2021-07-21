@@ -1,6 +1,6 @@
 import * as Types from '../../../graphql/pub.graphql.link';
 
-import { BaseINode_Collection_Fragment, BaseINode_Profile_Fragment, BaseINode_Resource_Fragment, BaseINode_SubjectField_Fragment, BaseIContentNode_Collection_Fragment, BaseIContentNode_Profile_Fragment, BaseIContentNode_Resource_Fragment, BaseIContentNode_SubjectField_Fragment } from '../../../graphql/fragment/nodes.gen';
+import { BaseINode_Collection_Fragment, BaseINode_Organization_Fragment, BaseINode_Profile_Fragment, BaseINode_Resource_Fragment, BaseINode_SubjectField_Fragment, BaseIContentNode_Collection_Fragment, BaseIContentNode_Organization_Fragment, BaseIContentNode_Profile_Fragment, BaseIContentNode_Resource_Fragment, BaseIContentNode_SubjectField_Fragment } from '../../../graphql/fragment/nodes.gen';
 import { gql } from '@apollo/client';
 import { BaseINodeFragmentDoc, BaseIContentNodeFragmentDoc } from '../../../graphql/fragment/nodes.gen';
 import * as Apollo from '@apollo/client';
@@ -33,6 +33,10 @@ export type GlobalSearchEdgeFragment = (
     { __typename: 'Collection' }
     & BaseINode_Collection_Fragment
     & BaseIContentNode_Collection_Fragment
+  ) | (
+    { __typename: 'Organization' }
+    & BaseINode_Organization_Fragment
+    & BaseIContentNode_Organization_Fragment
   ) | (
     { __typename: 'Profile' }
     & BaseINode_Profile_Fragment

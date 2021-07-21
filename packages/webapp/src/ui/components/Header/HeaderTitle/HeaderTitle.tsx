@@ -13,7 +13,7 @@ export type HeaderTitleProps = {
 export const HeaderTitle: FC<HeaderTitleProps> = ({ organization, homeHref }) => {
   return (
     <Link href={homeHref} style={{ textDecoration: 'none' }}>
-      {!organization.logo ? (
+      {organization.name === 'MoodleNet' ? (
         <div className="header-title">
           <img className="logo big" src={Logo} alt="Logo" />
           <img className="logo small" src={smallLogo} alt="small Logo" />

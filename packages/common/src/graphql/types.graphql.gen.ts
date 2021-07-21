@@ -24,9 +24,9 @@ export type Scalars = {
 
 export type AppliesTo = IEdge & {
   __typename: 'AppliesTo';
+  id: Scalars['ID'];
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
-  id: Scalars['ID'];
 };
 
 
@@ -41,16 +41,17 @@ export type AssetRefInputType =
   | 'NoChange'
   | 'NoAsset';
 
-export type Collection = IContentNode & INode & {
+export type Collection = INode & IContentNode & {
   __typename: 'Collection';
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['AssetRef']>;
+  id: Scalars['ID'];
+  _organization?: Maybe<Organization>;
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
   _relCount: Scalars['Int'];
-  icon?: Maybe<Scalars['AssetRef']>;
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  summary: Scalars['String'];
 };
 
 
@@ -68,9 +69,9 @@ export type Collection_RelCountArgs = {
 
 export type Contains = IEdge & {
   __typename: 'Contains';
+  id: Scalars['ID'];
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
-  id: Scalars['ID'];
 };
 
 export type ContentNodeInput = {
@@ -117,6 +118,7 @@ export type CreateEdgeMutationSuccess = {
 
 export type CreateNodeInput = {
   Collection?: Maybe<CreateCollectionInput>;
+  Organization?: Maybe<CreateOrganizationInput>;
   Profile?: Maybe<CreateProfileInput>;
   Resource?: Maybe<CreateResourceInput>;
   SubjectField?: Maybe<CreateSubjectInput>;
@@ -141,6 +143,10 @@ export type CreateNodeMutationSuccess = {
   node: Node;
 };
 
+export type CreateOrganizationInput = {
+  content: ContentNodeInput;
+};
+
 export type CreateProfileInput = {
   content: ContentNodeInput;
 };
@@ -162,9 +168,9 @@ export type CreateSubjectInput = {
 
 export type Created = IEdge & {
   __typename: 'Created';
+  id: Scalars['ID'];
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
-  id: Scalars['ID'];
 };
 
 
@@ -236,17 +242,17 @@ export type EdgeTypeInput = {
 
 export type Edited = IEdge & {
   __typename: 'Edited';
+  id: Scalars['ID'];
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
-  id: Scalars['ID'];
 };
 
 
 export type Follows = IEdge & {
   __typename: 'Follows';
+  id: Scalars['ID'];
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
-  id: Scalars['ID'];
 };
 
 export type GlobalSearchSort =
@@ -267,17 +273,18 @@ export type IContentNode = {
 };
 
 export type IEdge = {
+  id?: Maybe<Scalars['ID']>;
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
-  id?: Maybe<Scalars['ID']>;
 };
 
 export type INode = {
+  id: Scalars['ID'];
+  _organization?: Maybe<Organization>;
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
   _relCount: Scalars['Int'];
-  id: Scalars['ID'];
 };
 
 
@@ -295,9 +302,9 @@ export type INode_RelCountArgs = {
 
 export type Likes = IEdge & {
   __typename: 'Likes';
+  id: Scalars['ID'];
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
-  id: Scalars['ID'];
 };
 
 export type Mutation = {
@@ -390,13 +397,42 @@ export type MutationUpdateNodeArgs = {
 };
 
 
-export type Node = Collection | Profile | Resource | SubjectField;
+export type Node = Collection | Organization | Profile | Resource | SubjectField;
 
 export type NodeType =
   | 'Collection'
+  | 'Organization'
   | 'Profile'
   | 'Resource'
   | 'SubjectField';
+
+export type Organization = INode & IContentNode & {
+  __typename: 'Organization';
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['AssetRef']>;
+  color: Scalars['String'];
+  domain: Scalars['String'];
+  id: Scalars['ID'];
+  _organization?: Maybe<Organization>;
+  _created: GlyphByAt;
+  _lastEdited?: Maybe<GlyphByAt>;
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+};
+
+
+export type Organization_RelArgs = {
+  edge: EdgeTypeInput;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type Organization_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+};
 
 export type Page = {
   pageInfo: PageInfo;
@@ -422,16 +458,17 @@ export type PaginationInput = {
   last?: Maybe<Scalars['Int']>;
 };
 
-export type Profile = IContentNode & INode & {
+export type Profile = INode & IContentNode & {
   __typename: 'Profile';
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['AssetRef']>;
+  id: Scalars['ID'];
+  _organization?: Maybe<Organization>;
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
   _relCount: Scalars['Int'];
-  icon?: Maybe<Scalars['AssetRef']>;
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  summary: Scalars['String'];
 };
 
 
@@ -477,20 +514,21 @@ export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
   edge: AppliesTo | Contains | Created | Edited | Follows | Likes;
-  node: Collection | Profile | Resource | SubjectField;
+  node: Collection | Organization | Profile | Resource | SubjectField;
 };
 
-export type Resource = IContentNode & INode & {
+export type Resource = INode & IContentNode & {
   __typename: 'Resource';
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  icon?: Maybe<Scalars['AssetRef']>;
+  asset: Scalars['AssetRef'];
+  id: Scalars['ID'];
+  _organization?: Maybe<Organization>;
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
   _relCount: Scalars['Int'];
-  asset: Scalars['AssetRef'];
-  icon?: Maybe<Scalars['AssetRef']>;
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  summary: Scalars['String'];
 };
 
 
@@ -522,7 +560,7 @@ export type SearchPage = Page & {
 export type SearchPageEdge = PageEdge & {
   __typename: 'SearchPageEdge';
   cursor: Scalars['Cursor'];
-  node: Collection | Profile | Resource | SubjectField;
+  node: Collection | Organization | Profile | Resource | SubjectField;
 };
 
 export type SimpleResponse = {
@@ -531,17 +569,19 @@ export type SimpleResponse = {
   message?: Maybe<Scalars['String']>;
 };
 
-export type SubjectField = IContentNode & INode & {
+export type SubjectField = INode & IContentNode & {
   __typename: 'SubjectField';
+  name: Scalars['String'];
+  summary: Scalars['String'];
+  codePath: Array<Scalars['String']>;
+  code: Scalars['String'];
+  icon?: Maybe<Scalars['AssetRef']>;
+  id: Scalars['ID'];
+  _organization?: Maybe<Organization>;
   _created: GlyphByAt;
   _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
   _relCount: Scalars['Int'];
-  icon?: Maybe<Scalars['AssetRef']>;
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  path: Array<Scalars['String']>;
-  summary: Scalars['String'];
 };
 
 
@@ -593,6 +633,7 @@ export type UpdateEdgeMutationSuccess = {
 
 export type UpdateNodeInput = {
   Collection?: Maybe<UpdateCollectionInput>;
+  Organization?: Maybe<UpdateOrganizationInput>;
   Profile?: Maybe<UpdateProfileInput>;
   Resource?: Maybe<UpdateResourceInput>;
   SubjectField?: Maybe<UpdateSubjectInput>;
@@ -617,6 +658,10 @@ export type UpdateNodeMutationPayload = UpdateNodeMutationSuccess | UpdateNodeMu
 export type UpdateNodeMutationSuccess = {
   __typename: 'UpdateNodeMutationSuccess';
   node?: Maybe<Node>;
+};
+
+export type UpdateOrganizationInput = {
+  content: ContentNodeInput;
 };
 
 export type UpdateProfileInput = {
@@ -671,6 +716,7 @@ export type UserSession = {
     ],
     "IContentNode": [
       "Collection",
+      "Organization",
       "Profile",
       "Resource",
       "SubjectField"
@@ -685,12 +731,14 @@ export type UserSession = {
     ],
     "INode": [
       "Collection",
+      "Organization",
       "Profile",
       "Resource",
       "SubjectField"
     ],
     "Node": [
       "Collection",
+      "Organization",
       "Profile",
       "Resource",
       "SubjectField"

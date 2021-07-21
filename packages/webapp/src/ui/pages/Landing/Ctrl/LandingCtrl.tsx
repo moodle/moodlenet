@@ -1,8 +1,8 @@
 import { isJust } from '@moodlenet/common/lib/utils/array'
 import { useMemo } from 'react'
 import { useGlobalSearchQuery } from '../../../../context/Global/GlobalSearch/globalSearch.gen'
+import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
-import { defaultOrganization } from '../../../lib/static-data'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { FollowTag } from '../../../types'
 import { useSearchUrlQuery } from '../../Search/Ctrl/useSearchUrlQuery'
@@ -30,15 +30,20 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
         })),
     [trendingQ.data?.globalSearch.edges],
   )
+  const { org: localOrg } = useLocalInstance()
+
   const landingProps = useMemo<LandingProps>(
     () => ({
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
-      organization: defaultOrganization,
-      image: `https://picsum.photos/${defaultOrganization.name}/moodle/200/100`,
+      organization: {
+        name: localOrg.name,
+        intro: localOrg.summary,
+      },
+      image: localOrg.icon ?? null,
       trendCardProps: { tags: tags || [] },
       setSearchText,
     }),
-    [tags, setSearchText],
+    [localOrg.icon, localOrg.name, localOrg.summary, setSearchText, tags],
   )
   // console.log({ landingProps })
   return [landingProps]
