@@ -2,6 +2,7 @@ import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards
 import { useMemo } from 'react'
 import { getMaybeAssetRefUrl } from '../../../../../helpers/data'
 import { CtrlHook } from '../../../../lib/ctrl'
+import { defaultOrganization } from '../../../../lib/static-data'
 import { CollectionCardProps } from '../CollectionCard'
 import { useCollectionCardQuery } from './CollectionCard.gen'
 
@@ -13,7 +14,7 @@ export const useCollectionCardCtrl: CtrlHook<CollectionCardProps, CollectionCard
     () =>
       collectionNode
         ? {
-            organization: 'abc',
+            organization: defaultOrganization.name,
             title: collectionNode.name,
             imageUrl: getMaybeAssetRefUrl(collectionNode.icon) ?? '',
           }
