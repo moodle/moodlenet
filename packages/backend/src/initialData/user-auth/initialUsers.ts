@@ -2,7 +2,7 @@ import { ActiveUser } from '../../adapters/user-auth/arangodb/types'
 import { GuestSessionEnvUser, SystemSessionEnvUser, UnavailableUserEnvUser } from '../../lib/auth/env'
 type InitialUser = Pick<ActiveUser, 'username' | 'email' | 'role' | 'password'>
 
-const rndPass = () => (Math.random() * 10e15).toString(36).replace('.', '')
+const rndPass = () => String(Number(`${Math.random()}`.substring(2)).toString(36))
 
 const DefaultAdminUser = ({ domain }: { domain: string }): InitialUser => ({
   username: `admin`,

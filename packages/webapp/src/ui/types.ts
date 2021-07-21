@@ -2,7 +2,7 @@ export type Organization = {
   name: string
   shortName: string
   url: string
-  logo?: string
+  logo: string
   intro: string
   color: string
 }
