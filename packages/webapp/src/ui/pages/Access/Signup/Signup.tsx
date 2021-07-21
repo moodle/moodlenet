@@ -9,39 +9,44 @@ import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
-export type LoginFormValues = { username: string; password: string }
-export type LoginProps = {
+export type SignupFormValues = { email: string; username: string }
+export type SignupProps = {
   accessHeaderProps: AccessHeaderProps
-  onSubmit: SubmitForm<LoginFormValues>
-  loginErrorMessage: string | null
+  onSubmit: SubmitForm<SignupFormValues>
+  signupErrorMessage: string | null
+  requestSent: boolean
 }
 
-export const Login = withCtrl<LoginProps>(({ accessHeaderProps, onSubmit }) => {
-  const [form, attrs] = useFormikBag({ initialValues: { username: '', password: '' }, onSubmit })
+export const Signup = withCtrl<SignupProps>(({ accessHeaderProps, onSubmit }) => {
+  const [form, attrs] = useFormikBag({ initialValues: { email: '', username: '' }, onSubmit })
   return (
     <MainPageWrapper>
-      <div className="login-page">
+      <div className="signup-page">
         <AccessHeader {...accessHeaderProps} />
         <div className="separator" />
         <div className="content">
           <Card>
+            Sign in
+            <CallMadeIcon />
+          </Card>
+          <Card>
             <div className="content">
               <div className="title">
-                <Trans>Login</Trans>
+                <Trans>Sign up</Trans>
               </div>
               <form>
                 <input
                   className="email"
                   type="text"
                   placeholder={t`Email`}
-                  {...attrs.username}
+                  {...attrs.email}
                   onChange={form.handleChange}
                 />
                 <input
-                  className="password"
-                  type="password"
-                  placeholder={t`Password`}
-                  {...attrs.password}
+                  className="username"
+                  type="text"
+                  placeholder={t`Username`}
+                  {...attrs.username}
                   onChange={form.handleChange}
                 />
               </form>
@@ -71,13 +76,9 @@ export const Login = withCtrl<LoginProps>(({ accessHeaderProps, onSubmit }) => {
               </div>
             </div>
           </Card>
-          <Card>
-            Sign up
-            <CallMadeIcon />
-          </Card>
         </div>
       </div>
     </MainPageWrapper>
   )
 })
-Login.displayName = 'LoginPage'
+Signup.displayName = 'SignUpPage'
