@@ -8,14 +8,22 @@ import './styles.scss'
 export type AccessHeaderProps = {
   organization: Pick<Organization, 'logo' | 'name' | 'url'>,
   homeHref: Href
+  page: 'login' | 'signup'
 }
 
-export const AccessHeader: FC<AccessHeaderProps> = ({ organization, homeHref }) => {
+export const AccessHeader: FC<AccessHeaderProps> = ({ organization, homeHref, page }) => {
   return (
     <div className="access-header">
       <div className="content">
         <HeaderTitle organization={organization} homeHref = {homeHref} />
-        <PrimaryButton>Learn more</PrimaryButton>
+        <div className="buttons">
+          { page === 'login' ? (
+            <PrimaryButton>Sign up</PrimaryButton>
+          ) : (
+            <PrimaryButton>Login</PrimaryButton>
+          )}
+          <PrimaryButton>Learn more</PrimaryButton>
+        </div>
       </div>
     </div>
   )

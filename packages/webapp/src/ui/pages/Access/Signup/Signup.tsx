@@ -22,7 +22,7 @@ export const Signup = withCtrl<SignupProps>(({ accessHeaderProps, onSubmit }) =>
   return (
     <MainPageWrapper>
       <div className="signup-page">
-        <AccessHeader {...accessHeaderProps} />
+        <AccessHeader {...accessHeaderProps} page={'signup'} />
         <div className="separator" />
         <div className="content">
           <Card>
