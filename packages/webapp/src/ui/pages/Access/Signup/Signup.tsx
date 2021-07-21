@@ -1,5 +1,6 @@
 import { t, Trans } from '@lingui/macro'
 import CallMadeIcon from '@material-ui/icons/CallMade'
+import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryButton'
@@ -17,14 +18,14 @@ export type SignupProps = {
   requestSent: boolean
 }
 
-export const Signup = withCtrl<SignupProps>(({ accessHeaderProps, onSubmit }) => {
+export const Signup = withCtrl<SignupProps>(({ accessHeaderProps, onSubmit, requestSent=true }) => {
   const [form, attrs] = useFormikBag({ initialValues: { email: '', username: '' }, onSubmit })
   return (
     <MainPageWrapper>
-      <div className="signup-page">
+      <div className={`signup-page ${requestSent ? 'success' : ''}`}>
         <AccessHeader {...accessHeaderProps} page={'signup'} />
         <div className="separator" />
-        <div className="content">
+        <div className={`signup-content ${requestSent ? 'success' : ''}`}>
           <Card>
             Sign in
             <CallMadeIcon />
@@ -73,6 +74,19 @@ export const Signup = withCtrl<SignupProps>(({ accessHeaderProps, onSubmit }) =>
                     />
                   </div>
                 </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+        <div className={`success-content ${requestSent ? 'success' : ''}`}>
+        <Card>
+            <div className="content">
+              <div className="title">
+                <Trans>Email sent!</Trans>
+              </div>
+              <MailOutlineIcon className="icon" />
+              <div className="subtitle">
+                <Trans>Check out your inbox and activate your account</Trans>
               </div>
             </div>
           </Card>

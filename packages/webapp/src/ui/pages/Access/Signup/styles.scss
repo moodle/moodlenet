@@ -6,6 +6,10 @@
   height: 100%;
   background: #f4f5f7;
 
+  &.success {
+    align-items: center;
+  }
+
   > .separator {
     height: 68px;
 
@@ -15,14 +19,23 @@
     }
   }
 
-  > .content {
+  > .success {
+    &.signup-content {
+      display: none;
+    }
+    &.success-content {
+      display: block;
+    }
+  }
+
+  > .signup-content {
     display: flex;
     margin-right: 130px;
     height: 340px;
     margin-bottom: 130px;
 
     @media (max-width: 650px) {
-      margin: 0 25px;
+      padding: 0 25px;
     }
 
     @media (max-height: 750px) {
@@ -34,7 +47,7 @@
     > .card {
       height: 100%;
     }
-    > .card:last-child {
+    > .card:last-child, .card:only-child {
       width: 100%;
       background-color: #B6BACB;
 
@@ -175,25 +188,43 @@
     }
   }
 
-  .view {
-    z-index: 0;
-    position: relative;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 200px 100px 50px 100px;
-    height: 100%;
-    background-color: #f4f5f7;
-    background-size: cover;
-    overflow-x: hidden;
-    bottom: 0;
-
-    @media (max-width: 450px) {
-      padding: 200px 0 0 0;
+  > .success-content {
+    display: none;
+    margin-right: 0;
+    @media (max-width: 650px) {
+      padding: 0 25px;
     }
+    
+    > .card {
+      max-width: 390px;
+      background-color: #B6BACB;
+      flex-direction: column;
+      justify-content: space-between;
+      display: flex;
+      padding: 53px 65px;
 
-    @media screen and (max-width: 675px) and (min-width: 450px) {
-      padding: 200px 25px;
+      > .content {
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        text-align: center;
+          
+        > .title {
+          color: white;
+          font-size: 28px;
+        }
+
+        > .icon {
+          color: white;
+          height: 120px;
+          width: auto;
+        }
+
+        > .subtitle {
+          color: white;
+          font-size: 20px;
+        }
+      }
     }
   }
 }
