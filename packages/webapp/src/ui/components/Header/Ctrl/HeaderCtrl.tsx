@@ -4,6 +4,7 @@ import { getMaybeAssetRefUrl } from '../../../../helpers/data'
 import { mainPath } from '../../../../hooks/glob/nav'
 import { href } from '../../../elements/link'
 import { CtrlHook } from '../../../lib/ctrl'
+import { defaultOrganization } from '../../../lib/static-data'
 import { useSearchUrlQuery } from '../../../pages/Search/Ctrl/useSearchUrlQuery'
 import { HeaderProps, HeaderPropsIdle } from '../Header'
 
@@ -24,11 +25,7 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
       me,
       homeHref: href(mainPath.landing),
       loginHref: href(mainPath.login),
-      organization: {
-        name: 'BFH',
-        url: 'https://www.bfh.ch/',
-        logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
-      },
+      organization: defaultOrganization,
       searchText,
       setSearchText,
     }
