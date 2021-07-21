@@ -6,6 +6,9 @@ query CollectionCard($id: ID!) {
     }
     ... on INode {
       id
+      _organization {
+        name
+      }
     }
   }
 }

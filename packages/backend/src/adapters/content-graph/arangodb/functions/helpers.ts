@@ -183,13 +183,26 @@ export const markDeletedPatch = ({ byId }: { byId: Id }) => `{ ${MARK_DELETED_PR
 }`
 
 const CREATED_PROP = '_created'
-export const createdByAtPatch = (doc: object, byId: string) => `MERGE(
-  ${aqlstr(doc)}, {
+export const createdByAtPatch = ({ byId }: { byId: string }) => `{
     ${CREATED_PROP}:{
       by: { _id: ${aqlstr(byId)}, id: ${aqlstr(byId)} },
       at: DATE_NOW() 
     }
-  })`
+  }`
+
+const ORGANIZATION_PROP = '_organization'
+export const createdOrganizationPatch = ({ orgId }: { orgId?: string }) =>
+  orgId
+    ? `{
+      ${ORGANIZATION_PROP}: { _id: ${aqlstr(orgId)}, id: ${aqlstr(orgId)} }
+    }`
+    : `{}`
+
+export const createNodeMergePatch = ({ byId, doc, orgId }: { doc: object; byId: string; orgId?: string }) => `
+  MERGE( ${aqlstr(doc)}, ${createdOrganizationPatch({ orgId })}, ${createdByAtPatch({ byId })}  )`
+
+export const createEdgeMergePatch = ({ byId, doc }: { doc: object; byId: string }) => `
+  MERGE( ${aqlstr(doc)}, ${createdByAtPatch({ byId })},  )`
 
 export const toDocumentEdgeOrNode = (varname: string) => `MERGE(${varname}, ${pickDocumentEdgeOrNodeId(varname)})`
 export const pickDocumentEdgeOrNodeId = (varname: string) => `{id: ${varname}._id}`

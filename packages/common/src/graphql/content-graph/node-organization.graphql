@@ -1,8 +1,9 @@
-type Resource implements INode & IContentNode {
+type Organization implements INode & IContentNode {
   name: String!
   summary: String!
   icon: AssetRef
-  asset: AssetRef!
+  color: String!
+  domain: String!
   id: ID!
   _organization: Organization
   _created: GlyphByAt!
@@ -11,23 +12,22 @@ type Resource implements INode & IContentNode {
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }
 
-input CreateResourceInput {
+input CreateOrganizationInput {
   content: ContentNodeInput!
-  resource: AssetRefInput!
 }
 
-input UpdateResourceInput {
+input UpdateOrganizationInput {
   content: ContentNodeInput!
 }
 
 # integrations
-union Node = Resource
+union Node = Organization
 enum NodeType {
-  Resource
+  Organization
 }
 input CreateNodeInput {
-  Resource: CreateResourceInput
+  Organization: CreateOrganizationInput
 }
 input UpdateNodeInput {
-  Resource: UpdateResourceInput
+  Organization: UpdateOrganizationInput
 }
