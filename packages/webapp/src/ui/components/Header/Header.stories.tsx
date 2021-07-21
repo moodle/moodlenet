@@ -10,10 +10,10 @@ const meta: ComponentMeta<typeof Header> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: [
-    'HeaderLoggedInStoryProps', 
-    'HeaderLoggedOutStoryProps', 
+    'HeaderLoggedInStoryProps',
+    'HeaderLoggedOutStoryProps',
     'HeaderLoggedInOrganizationStoryProps',
-    'HeaderLoggedOutOrganizationStoryProps'
+    'HeaderLoggedOutOrganizationStoryProps',
   ],
 }
 
@@ -26,6 +26,7 @@ export const HeaderLoggedInStoryProps: HeaderPropsIdle = {
   },
   homeHref: href('Landing/Logged In'),
   me: {
+    myProfileHref: href('Pages/Profile/LoggedIn'),
     avatar: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
     username: 'username',
   },
@@ -35,20 +36,23 @@ export const HeaderLoggedInStoryProps: HeaderPropsIdle = {
 }
 
 export const HeaderLoggedOutStoryProps: HeaderPropsIdle = {
-  ...HeaderLoggedInStoryProps, me: null
+  ...HeaderLoggedInStoryProps,
+  me: null,
 }
 
 export const HeaderLoggedInOrganizationStoryProps: HeaderPropsIdle = {
-  ...HeaderLoggedInStoryProps, organization: {
+  ...HeaderLoggedInStoryProps,
+  organization: {
     ...HeaderLoggedInStoryProps.organization,
     name: 'BFH',
     url: 'https://www.bfh.ch/',
     logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
-  }
+  },
 }
 
 export const HeaderLoggedOutOrganizationStoryProps: HeaderPropsIdle = {
-  ...HeaderLoggedInOrganizationStoryProps, me: null
+  ...HeaderLoggedInOrganizationStoryProps,
+  me: null,
 }
 
 const HeaderStory: ComponentStory<typeof Header> = args => <Header {...args} />
