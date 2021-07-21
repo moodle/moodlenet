@@ -18,7 +18,7 @@ export type SignupProps = {
   requestSent: boolean
 }
 
-export const Signup = withCtrl<SignupProps>(({ accessHeaderProps, onSubmit, requestSent=true }) => {
+export const Signup = withCtrl<SignupProps>(({ accessHeaderProps, onSubmit, requestSent }) => {
   const [form, attrs] = useFormikBag({ initialValues: { email: '', username: '' }, onSubmit })
   return (
     <MainPageWrapper>

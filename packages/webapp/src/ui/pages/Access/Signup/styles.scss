@@ -40,6 +40,7 @@
 
     @media (max-height: 750px) {
       margin-bottom: 5%;
+      margin-right: 0;
     }
     @media (min-width: 1320px) {
       margin-right: calc( (100vw - 1100px) / 2);
@@ -191,8 +192,16 @@
   > .success-content {
     display: none;
     margin-right: 0;
+    height: 340px;
+    margin-bottom: 130px;
+
     @media (max-width: 650px) {
       padding: 0 25px;
+    }
+
+    @media (max-height: 750px) {
+      margin-bottom: 5%;
+      margin-right: 0;
     }
     
     > .card {
