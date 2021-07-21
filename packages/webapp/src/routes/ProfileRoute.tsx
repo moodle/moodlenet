@@ -16,6 +16,6 @@ export const ProfileRouteComponent: RouteFC<Routes.Profile> = ({
 
 export const ProfileRoute: MNRouteProps<Routes.Profile> = {
   component: ProfileRouteComponent,
-  path: '/profile/:id',
+  path: '/profile/:id/:name?',
   exact: true,
 }
