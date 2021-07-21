@@ -20,7 +20,7 @@ const nodeDocumentDataBaker: {
   async SubjectField(/* input, qmino */) {
     throw new Error('GQL create SubjectField not implemented')
   },
-  async Domain(/* input, qmino */) {
+  async Organization(/* input, qmino */) {
     throw new Error('GQL create SubjectField not implemented')
   },
   async Collection(input, qmino) {

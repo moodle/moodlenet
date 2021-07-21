@@ -13,18 +13,38 @@ export type CollectionCardQuery = (
   & { node?: Types.Maybe<(
     { __typename: 'Collection' }
     & Pick<Types.Collection, 'name' | 'icon' | 'id'>
+    & { _organization?: Types.Maybe<(
+      { __typename: 'Organization' }
+      & Pick<Types.Organization, 'name'>
+    )> }
   ) | (
-    { __typename: 'Domain' }
-    & Pick<Types.Domain, 'name' | 'icon' | 'id'>
+    { __typename: 'Organization' }
+    & Pick<Types.Organization, 'name' | 'icon' | 'id'>
+    & { _organization?: Types.Maybe<(
+      { __typename: 'Organization' }
+      & Pick<Types.Organization, 'name'>
+    )> }
   ) | (
     { __typename: 'Profile' }
     & Pick<Types.Profile, 'name' | 'icon' | 'id'>
+    & { _organization?: Types.Maybe<(
+      { __typename: 'Organization' }
+      & Pick<Types.Organization, 'name'>
+    )> }
   ) | (
     { __typename: 'Resource' }
     & Pick<Types.Resource, 'name' | 'icon' | 'id'>
+    & { _organization?: Types.Maybe<(
+      { __typename: 'Organization' }
+      & Pick<Types.Organization, 'name'>
+    )> }
   ) | (
     { __typename: 'SubjectField' }
     & Pick<Types.SubjectField, 'name' | 'icon' | 'id'>
+    & { _organization?: Types.Maybe<(
+      { __typename: 'Organization' }
+      & Pick<Types.Organization, 'name'>
+    )> }
   )> }
 );
 
@@ -38,6 +58,9 @@ export const CollectionCardDocument = gql`
     }
     ... on INode {
       id
+      _organization {
+        name
+      }
     }
   }
 }

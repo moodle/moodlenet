@@ -23,7 +23,7 @@ export type GetCurrentProfileQueryVariables = Types.Exact<{
 
 export type GetCurrentProfileQuery = (
   { __typename: 'Query' }
-  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'Domain' } | (
+  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'Organization' } | (
     { __typename: 'Profile' }
     & CurrentProfileInfoFragment
   ) | { __typename: 'Resource' } | { __typename: 'SubjectField' }> }
@@ -72,7 +72,7 @@ export type CurrentProfileInfoFragment = (
       & { node: (
         { __typename: 'Collection' }
         & Pick<Types.Collection, 'id' | 'name' | 'icon'>
-      ) | { __typename: 'Domain' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
+      ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
     )> }
   ) }
   & ShallowProfileFragment

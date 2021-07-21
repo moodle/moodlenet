@@ -10,7 +10,7 @@ const inputObjectStaticValidators: {
   Collection: object<any /* Just<CreateNodeInput['Collection']> */>().required(),
   Resource: object<any /* Just<CreateNodeInput['Resource']> */>().required(),
   Profile: neverCreate('Profile'),
-  Domain: neverCreate('Domain'),
+  Organization: neverCreate('Organization'),
 }
 
 export const validateCreateNodeInput = (input: CreateNodeInput): Just<CreateNodeInput[NodeType]> | ValidationError => {

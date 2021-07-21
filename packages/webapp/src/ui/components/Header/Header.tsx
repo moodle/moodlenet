@@ -40,6 +40,7 @@ export const Header = withCtrl<HeaderProps>(props => {
     return null
   }
   const { me, organization } = props
+
   return (
     <div className="header">
       <div className="content">

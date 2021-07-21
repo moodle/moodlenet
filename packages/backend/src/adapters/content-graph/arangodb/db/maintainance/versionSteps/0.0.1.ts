@@ -1,6 +1,6 @@
 import { getProfileIdByUsername } from '@moodlenet/common/lib/utils/auth/helpers'
 import { EdgeType, NodeType } from '../../../../../../graphql/types.node'
-import { initialProfiles, localDomainData } from '../../../../../../initialData/content-graph/content'
+import { initialProfiles } from '../../../../../../initialData/content-graph/content'
 import { subjectFields } from '../../../../../../initialData/ISCED/Fields/SubjectFields'
 import { SystemSessionEnvUser } from '../../../../../../lib/auth/env'
 import { justExecute } from '../../../../../../lib/helpers/arango'
@@ -9,7 +9,7 @@ import { MNStaticEnv } from '../../../../../../lib/types'
 import { createNodeQ } from '../../../functions/createNode'
 import { setupSearchView } from './0.0.1/setupSearchView'
 
-const nodes: NodeType[] = ['Profile', 'Collection', 'Resource', 'SubjectField', 'Domain']
+const nodes: NodeType[] = ['Profile', 'Collection', 'Resource', 'SubjectField']
 const edges: EdgeType[] = ['Contains', 'Likes', 'Follows', 'Created', 'Edited', 'AppliesTo']
 
 const init_0_0_1: VersionUpdater<MNStaticEnv> = {
@@ -26,8 +26,6 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
     })
 
     const creatorProfileId = getProfileIdByUsername(SystemSessionEnvUser.name)
-
-    await justExecute(createNodeQ({ nodeType: 'Domain', key: domain, data: localDomainData, creatorProfileId }), db)
 
     await Promise.all(
       initialProfiles({ domain }).map(async profileData => {
