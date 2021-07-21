@@ -21,7 +21,7 @@ export const Login = withCtrl<LoginProps>(({ accessHeaderProps, onSubmit }) => {
   return (
     <MainPageWrapper>
       <div className="login-page">
-        <AccessHeader {...accessHeaderProps} />
+        <AccessHeader {...accessHeaderProps} page={'login'}/>
         <div className="separator" />
         <div className="content">
           <Card>

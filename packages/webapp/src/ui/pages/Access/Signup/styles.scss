@@ -20,6 +20,11 @@
     margin-right: 130px;
     height: 340px;
     margin-bottom: 130px;
+
+    @media (max-width: 650px) {
+      margin: 0 25px;
+    }
+
     @media (max-height: 750px) {
       margin-bottom: 5%;
     }
@@ -32,6 +37,7 @@
     > .card:last-child {
       width: 100%;
       background-color: #B6BACB;
+
       > .content {
         flex-direction: column;
         justify-content: space-between;
@@ -39,6 +45,10 @@
         padding: 53px 65px;
         width: 100%;
         height: 100%;
+
+        @media (max-width: 450px) {
+          padding: 53px calc(25px + 5%);
+        }
         
         > .title {
           color: white;
@@ -105,6 +115,10 @@
             display: flex;
             > .tertiary-button {
               color: white;
+              @media (max-width: 450px) {
+                display: none;
+              }
+
             }
           }
           > .right {
@@ -146,6 +160,11 @@
       flex-direction: column;
       padding-left: 30px;
       font-size: 36px;
+
+      @media (max-width: 650px) {
+        display: none;
+      }
+
       > svg {
         -webkit-transform: rotate(225deg);
         -ms-transform: rotate(225deg);
