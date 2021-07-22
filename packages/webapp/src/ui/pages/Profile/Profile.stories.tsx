@@ -3,7 +3,6 @@ import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/
 import { OverallCardStoryProps } from '../../components/cards/OverallCard/OverallCard.stories'
 import { ProfileCardStoryProps } from '../../components/cards/ProfileCard/ProfileCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
-import { ScoreCardStoryProps } from '../../components/cards/ScoreCard/ScoreCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
@@ -28,7 +27,7 @@ export const ProfileStoryProps: ProfileProps = {
   },
   overallCardProps: OverallCardStoryProps,
   profileCardProps: ProfileCardStoryProps,
-  scoreCardProps: ScoreCardStoryProps,
+  // scoreCardProps: ScoreCardStoryProps,
   collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
   resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
   username: 'Juanito',
@@ -39,11 +38,14 @@ export const ProfileLoggedOutStoryProps: ProfileProps = {
   headerPageTemplateProps: {
     isAuthenticated: false,
     headerPageProps: {
+      isAuthenticated: false,
       headerProps: {
         ...HeaderLoggedOutStoryProps,
         me: null,
       },
-      subHeaderProps: null,
+      subHeaderProps: {
+        tags: [],
+      },
     },
   },
 }
@@ -53,6 +55,7 @@ export const ProfileLoggedInStoryProps: ProfileProps = {
   headerPageTemplateProps: {
     isAuthenticated: true,
     headerPageProps: {
+      isAuthenticated: true,
       headerProps: HeaderLoggedOutStoryProps,
       subHeaderProps: SubHeaderStoryProps,
     },

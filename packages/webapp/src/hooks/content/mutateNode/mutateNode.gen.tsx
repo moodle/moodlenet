@@ -41,6 +41,9 @@ export type BasicCreateNodeMutationPayload_CreateNodeMutationSuccess_Fragment = 
     { __typename: 'Collection' }
     & Pick<Types.Collection, 'id'>
   ) | (
+    { __typename: 'Organization' }
+    & Pick<Types.Organization, 'id'>
+  ) | (
     { __typename: 'Profile' }
     & Pick<Types.Profile, 'id'>
   ) | (

@@ -16,6 +16,7 @@ export type HeaderPropsIdle = HeaderPropsBase & {
     avatar: string
     logout?: () => unknown
     username: string
+    myProfileHref: Href
   }
 }
 export type HeaderPropsLoading = HeaderPropsBase & {
@@ -36,6 +37,7 @@ export const Header = withCtrl<HeaderProps>(props => {
     return null
   }
   const { me, organization } = props
+
   return (
     <div className="header">
       <div className="content">
@@ -47,7 +49,9 @@ export const Header = withCtrl<HeaderProps>(props => {
           {me ? (
             <>
               <img className="add-icon" src={addIcon} alt="Add" />
-              <img className="avatar" src={me.avatar} alt="Avatar" />
+              <Link href={me.myProfileHref}>
+                <img className="avatar" src={me.avatar} alt="Avatar" />
+              </Link>
             </>
           ) : (
             <>

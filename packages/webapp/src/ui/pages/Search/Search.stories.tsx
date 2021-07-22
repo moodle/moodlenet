@@ -52,8 +52,9 @@ export const SearchLoggedOutStoryProps: SearchProps = {
   headerPageTemplateProps: {
     isAuthenticated: false,
     headerPageProps: {
+      isAuthenticated: false,
       headerProps: HeaderLoggedOutStoryProps,
-      subHeaderProps: null,
+      subHeaderProps: { tags: [] },
     },
   },
 }
@@ -63,8 +64,9 @@ export const SearchLoggedInStoryProps: SearchProps = {
   headerPageTemplateProps: {
     isAuthenticated: false,
     headerPageProps: {
+      isAuthenticated: false,
       headerProps: HeaderLoggedInStoryProps,
-      subHeaderProps: null,
+      subHeaderProps: { tags: [] },
     },
   },
 }

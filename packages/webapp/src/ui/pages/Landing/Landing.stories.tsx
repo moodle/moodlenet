@@ -2,7 +2,11 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { TrendCardStoryProps } from '../../components/cards/TrendCard/TrendCard.stories'
 import { HeaderLoggedInStoryProps, HeaderLoggedOutOrganizationStoryProps } from '../../components/Header/Header.stories'
-import { HeaderPageLoggedInOrganizationStoryProps, HeaderPageLoggedInStoryProps, HeaderPageLoggedOutStoryProps } from '../HeaderPage/HeaderPage.stories'
+import {
+  HeaderPageLoggedInOrganizationStoryProps,
+  HeaderPageLoggedInStoryProps,
+  HeaderPageLoggedOutStoryProps,
+} from '../HeaderPage/HeaderPage.stories'
 import { Landing, LandingProps } from './Landing'
 
 const meta: ComponentMeta<typeof Landing> = {
@@ -13,10 +17,10 @@ const meta: ComponentMeta<typeof Landing> = {
   },
   parameters: { layout: 'fullscreen' },
   excludeStories: [
-    'LandingLoggedOutStoryProps', 
+    'LandingLoggedOutStoryProps',
     'LandingLoggedInStoryProps',
     'LandingOrganizationLoggedOutStoryProps',
-    'LandingOrganizationLoggedInStoryProps'
+    'LandingOrganizationLoggedInStoryProps',
   ],
 }
 
@@ -32,7 +36,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
     name: 'MoodleNet',
     intro: `Join our social network to share and curate open educational resources with educators world-wide.\n
             Integrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.\n
-            Build your profile as an educator.`
+            Build your profile as an educator.`,
   },
   image: 'https://picsum.photos/200/100',
   setSearchText: action('setSearchText'),
@@ -48,7 +52,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       headerProps: HeaderLoggedInStoryProps,
     },
   },
-  isAuthenticated: false
+  isAuthenticated: false,
 }
 
 export const LandingOrganizationLoggedInStoryProps: LandingProps = {
@@ -75,7 +79,7 @@ export const LandingOrganizationLoggedOutStoryProps: LandingProps = {
       headerProps: HeaderLoggedOutOrganizationStoryProps,
     },
   },
-  isAuthenticated: false
+  isAuthenticated: false,
 }
 
 export const LoggedOut = LandingStory.bind({})
