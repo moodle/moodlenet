@@ -43,6 +43,7 @@ export type SessionContextType = {
   currentProfile: CurrentProfileInfoFragment | null
   lastSessionUsername: string | null
   lastSessionJwt: string | null
+  isAuthenticated: boolean
   logout(): unknown
   activateNewUser(_: { password: string; token: string; username: string }): Promise<ActivateWarnMessage | null>
   login(_: { username: string; password: string }): Promise<LoginWarnMessage | null>
@@ -109,6 +110,7 @@ export const SessionProvider: FC = ({ children }) => {
       login,
       activateNewUser,
       session,
+      isAuthenticated: !!session,
       lastSessionUsername: lastSession.username ?? null,
       lastSessionJwt: lastSession.jwt ?? null,
     }),

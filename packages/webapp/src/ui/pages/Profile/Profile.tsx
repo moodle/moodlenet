@@ -4,7 +4,6 @@ import { ListCard } from '../../components/cards/ListCard/ListCard'
 import { OverallCard, OverallCardProps } from '../../components/cards/OverallCard/OverallCard'
 import { ProfileCard, ProfileCardProps } from '../../components/cards/ProfileCard/ProfileCard'
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
-import { ScoreCard, ScoreCardProps } from '../../components/cards/ScoreCard/ScoreCard'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import './styles.scss'
@@ -12,7 +11,6 @@ import './styles.scss'
 export type ProfileProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   overallCardProps: OverallCardProps
-  scoreCardProps: ScoreCardProps
   profileCardProps: ProfileCardProps
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
@@ -24,7 +22,6 @@ export const Profile = withCtrl<ProfileProps>(
     headerPageTemplateProps,
     overallCardProps,
     profileCardProps,
-    scoreCardProps,
     collectionCardPropsList,
     resourceCardPropsList,
     username,
@@ -43,7 +40,7 @@ export const Profile = withCtrl<ProfileProps>(
                 className="resources"
               />
               <ListCard
-                title={t`Collections curated by ${username}`}
+                title={`${t`Collections curated by`} ${username}`}
                 content={collectionCardPropsList.map(collectionCardProps => (
                   <CollectionCard {...collectionCardProps} />
                 ))}
@@ -51,10 +48,9 @@ export const Profile = withCtrl<ProfileProps>(
               />
             </div>
             <div className="side-column">
-              <ScoreCard {...scoreCardProps} />
               <OverallCard {...overallCardProps} />
               <ListCard
-                title={t`Collections curated by ${username}`}
+                title={`${t`Collections curated by`} ${username}`}
                 content={collectionCardPropsList.map(collectionCardProps => (
                   <CollectionCard {...collectionCardProps} />
                 ))}

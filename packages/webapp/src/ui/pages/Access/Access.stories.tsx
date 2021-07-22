@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Landing } from '../Landing/Landing'
-import { LandingStoryProps } from '../Landing/Landing.stories'
+import { LandingLoggedInStoryProps } from '../Landing/Landing.stories'
 import { Profile } from '../Profile/Profile'
 import { ProfileStoryProps } from '../Profile/Profile.stories'
 import { Access, AccessProps } from './Access'
@@ -28,7 +28,7 @@ ProfilePage.parameters = { layout: 'fullscreen' }
 
 export const AccessLandingStoryProps: AccessProps = {
   accessHeaderProps: AccessHeaderStoryProps,
-  view: Landing({ ...LandingStoryProps }),
+  view: Landing({ ...LandingLoggedInStoryProps }),
 }
 
 export const LandingPage = AccessStory.bind({})
