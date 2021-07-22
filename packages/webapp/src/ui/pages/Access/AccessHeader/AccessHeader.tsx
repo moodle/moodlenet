@@ -9,7 +9,7 @@ import './styles.scss'
 export type AccessHeaderProps = {
   organization: Pick<Organization, 'logo' | 'name' | 'url'>,
   homeHref: Href
-  page: 'login' | 'signup'
+  page: 'login' | 'signup' | 'activation'
 }
 
 export const AccessHeader: FC<AccessHeaderProps> = ({ organization, homeHref, page }) => {
@@ -17,15 +17,18 @@ export const AccessHeader: FC<AccessHeaderProps> = ({ organization, homeHref, pa
     <div className="access-header">
       <div className="content">
         <HeaderTitle organization={organization} homeHref = {homeHref} />
-        <div className="buttons">
-          { page === 'login' ? (
-            <SecondaryButton type='orange'>Sign up</SecondaryButton>
-          ) : (
-            <SecondaryButton type='orange'>Login</SecondaryButton>
-          )}
-          <PrimaryButton>Learn more</PrimaryButton>
+        { page !== 'activation' ? (
+          <div className="buttons">
+            { page === 'login' ? (
+              <SecondaryButton type='orange'>Sign up</SecondaryButton>
+            ) : (
+              <SecondaryButton type='orange'>Login</SecondaryButton>
+            )}
+            <PrimaryButton>Learn more</PrimaryButton>
+          </div>
+          ) : (<></>)
+        }      
         </div>
-      </div>
     </div>
   )
 }

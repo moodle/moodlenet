@@ -115,10 +115,6 @@
               color: #B6BACB;
             }
           }
-          > .email {
-            margin-bottom: 14px;
-            max-width: 335px;
-          }
         }
         > .bottom {
           display: flex;
@@ -205,6 +201,7 @@
     
     > .card {
       max-width: 390px;
+      height: 100%;
       background-color: #B6BACB;
       flex-direction: column;
       justify-content: space-between;
@@ -216,6 +213,9 @@
         height: 100%;
         align-items: center;
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
           
         > .title {
           color: white;
