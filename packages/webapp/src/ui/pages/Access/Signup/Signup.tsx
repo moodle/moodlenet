@@ -19,7 +19,7 @@ export type SignupProps = {
 }
 
 export const Signup = withCtrl<SignupProps>(({ accessHeaderProps, onSubmit, requestSent }) => {
-  const [form, attrs] = useFormikBag({ initialValues: { email: '', username: '' }, onSubmit })
+  const [form, attrs] = useFormikBag({ initialValues: { email: '' }, onSubmit })
   return (
     <MainPageWrapper>
       <div className={`signup-page ${requestSent ? 'success' : ''}`}>
@@ -41,13 +41,6 @@ export const Signup = withCtrl<SignupProps>(({ accessHeaderProps, onSubmit, requ
                   type="text"
                   placeholder={t`Email`}
                   {...attrs.email}
-                  onChange={form.handleChange}
-                />
-                <input
-                  className="username"
-                  type="text"
-                  placeholder={t`Username`}
-                  {...attrs.username}
                   onChange={form.handleChange}
                 />
               </form>

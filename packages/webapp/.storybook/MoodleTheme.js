@@ -1,5 +1,5 @@
 import { create } from '@storybook/theming';
-import logo from '/src/ui/static/img/moodlenet-logo.png';
+import logo from '/src/ui/static/img/moodlenet-logo.svg';
 
 export default create({
   base: 'light',
