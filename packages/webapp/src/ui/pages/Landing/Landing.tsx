@@ -1,4 +1,3 @@
-import { t } from '@lingui/macro'
 import Searchbox from '../../components/atoms/Searchbox/Searchbox'
 import { TextCard } from '../../components/cards/TextCard/TextCard'
 import { TrendCard, TrendCardProps } from '../../components/cards/TrendCard/TrendCard'
@@ -41,15 +40,6 @@ export const Landing = withCtrl<LandingProps>(({
           )}
         </div> : <></>}
         <Searchbox setSearchText={setSearchText} searchText='' placeholder='Start searching now' />
-        <div className="content">
-          <div className="main-column">
-            <TextCard>
-              <div>{organization.intro}</div>
-              { organization.name === "MoodleNet" ? '' : <img className="text-image" src={image} alt="Background" />}
-            </TextCard>
-            <TrendCard {...trendCardProps} />
-          </div>
-          <Searchbox setSearchText={setSearchText} searchText="" placeholder={t`Start searching now`} />
           <div className="content">
             <div className="main-column">
               <TextCard>
@@ -62,7 +52,6 @@ export const Landing = withCtrl<LandingProps>(({
               <TrendCard {...trendCardProps} />
             </div>
           </div>
-        </div>
       </div>
     </HeaderPageTemplate>
   )},
