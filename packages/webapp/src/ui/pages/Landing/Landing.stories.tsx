@@ -39,7 +39,8 @@ export const LandingLoggedInStoryProps: LandingProps = {
             Build your profile as an educator.`,
   },
   image: 'https://picsum.photos/200/100',
-  setSearchText: action('search'),
+  setSearchText: action('setSearchText'),
+  isAuthenticated: true,
 }
 
 export const LandingLoggedOutStoryProps: LandingProps = {
@@ -51,6 +52,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
       headerProps: HeaderLoggedInStoryProps,
     },
   },
+  isAuthenticated: false,
 }
 
 export const LandingOrganizationLoggedInStoryProps: LandingProps = {
@@ -64,7 +66,8 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
     intro: 'Diverse, sound, dynamic – these are the values that define BFH. And this is our MoodleNet server. ',
   },
   image: 'https://picsum.photos/200/100',
-  setSearchText: action('search'),
+  setSearchText: action('setSearchText'),
+  isAuthenticated: true,
 }
 
 export const LandingOrganizationLoggedOutStoryProps: LandingProps = {
@@ -76,6 +79,7 @@ export const LandingOrganizationLoggedOutStoryProps: LandingProps = {
       headerProps: HeaderLoggedOutOrganizationStoryProps,
     },
   },
+  isAuthenticated: false,
 }
 
 export const LoggedOut = LandingStory.bind({})
