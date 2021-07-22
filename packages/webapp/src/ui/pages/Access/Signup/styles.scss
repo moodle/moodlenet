@@ -36,6 +36,7 @@
 
     @media (max-width: 650px) {
       padding: 0 25px;
+      margin-right: 0;
     }
 
     @media (max-height: 750px) {
@@ -78,7 +79,7 @@
             border-style: solid;
             border-width: 0.5px;
             border-radius: 45px;
-            max-width: 250px;
+            max-width: 300px;
             border:none;
 
             &:focus, &:not(:focus) {
