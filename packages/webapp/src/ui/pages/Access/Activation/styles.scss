@@ -24,7 +24,7 @@
     display: inline-flex;
     gap: 20px;
     width: 100%;
-    max-width: 385px;
+    max-width: 410px;
     max-height: 380px;
     height: 100%;
     margin-bottom: 130px;
@@ -63,7 +63,7 @@
         height: 100%;
 
         @media (max-width: 450px) {
-          padding: 53px calc(25px + 5%);
+          padding: 38px calc(25px + 5%);
         }
         
         > .title {
@@ -84,7 +84,6 @@
             border-style: solid;
             border-width: 0.5px;
             border-radius: 45px;
-            max-width: 250px;
             border:none;
 
             &:focus, &:not(:focus) {

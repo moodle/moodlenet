@@ -7,7 +7,7 @@ import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
-export type ActivationFormValues = { username: string, password: string }
+export type ActivationFormValues = { displayName: string, password: string }
 export type ActivationProps = {
   accessHeaderProps: AccessHeaderProps
   onSubmit: SubmitForm<ActivationFormValues>
@@ -16,7 +16,7 @@ export type ActivationProps = {
 }
 
 export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, onSubmit, requestSent }) => {
-  const [form, attrs] = useFormikBag({ initialValues: { username: '', password: '' }, onSubmit })
+  const [form, attrs] = useFormikBag({ initialValues: { displayName: '', password: '' }, onSubmit })
   return (
     <MainPageWrapper>
       <div className="activation-page" >
@@ -31,10 +31,10 @@ export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, onSubm
               </div>
               <form>
                 <input
-                  className="username"
+                  className="diplay-name"
                   type="text"
-                  placeholder={t`Username`}
-                  {...attrs.username}
+                  placeholder={t`Display name`}
+                  {...attrs.displayName}
                   onChange={form.handleChange}
                 />
                 <input
