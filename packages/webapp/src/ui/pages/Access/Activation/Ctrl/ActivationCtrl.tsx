@@ -1,10 +1,9 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
 import { useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
-import { href } from '../../../../elements/link'
-import { CtrlHook } from '../../../../lib/ctrl'
+import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { SubmitForm } from '../../../../lib/formik'
-import { defaultOrganization } from '../../../../lib/static-data'
+import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { ActivationFormValues, ActivationProps } from '../Activation'
 
 export const useActivationCtrl: CtrlHook<ActivationProps, {}> = () => {
@@ -12,8 +11,8 @@ export const useActivationCtrl: CtrlHook<ActivationProps, {}> = () => {
   const { activation } = useSession()
   const [activationErrorMessage, setActivationErrorMessage] = useState<string | null>(null)
   const onSubmit = useCallback<SubmitForm<ActivationFormValues>>(
-    ({ email, username }) =>
-    activation({ email, username }).then(resp => {
+    ({ password, displayName }) =>
+      activation({ password, displayName }).then(resp => {
         setActivationErrorMessage(resp)
       }),
     [activation],
@@ -21,13 +20,9 @@ export const useActivationCtrl: CtrlHook<ActivationProps, {}> = () => {
 
   const activationProps = useMemo<ActivationProps>(() => {
     const activationProps: ActivationProps = {
-      accessHeaderProps: {
-        homeHref: href('Landing/Logged In'),
-        organization: defaultOrganization,
-      },
+      accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Activate User Access Header'),
       onSubmit,
       activationErrorMessage,
-      requestSent
     }
     return activationProps
   }, [activationErrorMessage, onSubmit])

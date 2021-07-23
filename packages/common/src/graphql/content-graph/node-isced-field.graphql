@@ -1,9 +1,10 @@
-type Organization implements INode {
+type Iscedfield implements INode {
   name: String!
-  intro: String!
-  logo: AssetRef
-  color: String!
-  domain: String!
+  description: String!
+  codePath: [String!]!
+  iscedCode: String!
+  thumbnail: AssetRef
+  image: AssetRef
   # INode
   id: ID!
   slug: String!
@@ -15,15 +16,15 @@ type Organization implements INode {
 }
 
 # integrations
-union Node = Organization
+union Node = Iscedfield
 enum NodeType {
-  Organization
+  Iscedfield
 }
 
 input CreateNodeInput {
-  Organization: Never
+  Iscedfield: Never
 }
 
 input EditNodeInput {
-  Organization: Never
+  Iscedfield: Never
 }

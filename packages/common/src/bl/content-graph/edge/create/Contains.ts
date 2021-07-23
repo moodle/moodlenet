@@ -1,4 +1,4 @@
-import { parseNodeId } from '../../../../utils/content-graph/id-key-type-guards'
+import { parseCheckedNodeId } from '../../../../utils/content-graph/id-key-type-guards'
 import { CreateEdgeArgs } from './types'
 
 export const Contains = ({
@@ -8,8 +8,8 @@ export const Contains = ({
   profileId: userId,
   ops: { and, edgeExists, not, or, isCreator },
 }: CreateEdgeArgs) => {
-  const { nodeType: fromType } = parseNodeId(collectionId)
-  const { nodeType: toType } = parseNodeId(resourceId)
+  const [fromType] = parseCheckedNodeId(collectionId)
+  const [toType] = parseCheckedNodeId(resourceId)
 
   const legalBind = and(fromType === 'Collection', toType === 'Resource')
   const roleAdmitted = or(userRole === 'Admin', userRole === 'Editor', userRole === 'System')

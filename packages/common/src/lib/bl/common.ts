@@ -1,5 +1,5 @@
 import { EdgeType } from '../../graphql/types.graphql.gen'
-import { Id } from '../../utils/content-graph/id-key-type-guards'
+import { Key } from '../../utils/content-graph/id-key-type-guards'
 
 export type W<T> = { _?: T }
 export type BLVal<T> = T | W<T>
@@ -16,6 +16,6 @@ export type BaseOperators = {
 }
 
 export type GraphOperators = {
-  edgeExists(from: Id, edge: EdgeType, to: Id): BLVal<boolean>
-  isCreator(ownerProfileId: Id, nodeId: Id): BLVal<boolean>
+  edgeExists(from: Key, edge: EdgeType, to: Key): BLVal<boolean>
+  isCreator(ownerProfileId: Key, nodeId: Key): BLVal<boolean>
 }

@@ -32,7 +32,7 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
   const subjectsQ = useGlobalSearchQuery({
     variables: {
       sortBy,
-      nodeTypes: ['SubjectField'],
+      nodeTypes: ['Iscedfield'],
       text,
     },
   })
@@ -56,7 +56,7 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
   const subjects = useMemo(
     () =>
       (subjectsQ.data?.globalSearch.edges || [])
-        .map(edge => (edge.node.__typename === 'SubjectField' ? edge.node : null))
+        .map(edge => (edge.node.__typename === 'Iscedfield' ? edge.node : null))
         .filter(isJust),
     [subjectsQ.data?.globalSearch.edges],
   )

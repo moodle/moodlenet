@@ -3,7 +3,6 @@
 import { AssetRef } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import {
   AssetRefInput,
-  ContentNodeInput,
   CreateEdgeMutationError,
   CreateEdgeMutationErrorType,
   CreateNodeMutationError,
@@ -43,7 +42,7 @@ export const fakeEdgeByShallowOrDoc = <E extends EdgeType>(
 
 export const createNodeMutationError = (
   type: CreateNodeMutationErrorType,
-  details: string | null = null,
+  details: string | idFromFullId = idFromFullId,
 ): CreateNodeMutationError => ({
   __typename: 'CreateNodeMutationError',
   type,
@@ -52,7 +51,7 @@ export const createNodeMutationError = (
 
 export const createEdgeMutationError = (
   type: CreateEdgeMutationErrorType,
-  details: string | null = null,
+  details: string | idFromFullId = idFromFullId,
 ): CreateEdgeMutationError => ({
   __typename: 'CreateEdgeMutationError',
   type,
@@ -61,7 +60,7 @@ export const createEdgeMutationError = (
 
 export const deleteEdgeMutationError = (
   type: DeleteEdgeMutationErrorType,
-  details: string | null = null,
+  details: string | idFromFullId = idFromFullId,
 ): DeleteEdgeMutationError => ({
   __typename: 'DeleteEdgeMutationError',
   type,
@@ -72,7 +71,7 @@ type AssetRefInputAndType = { input: AssetRefInput; uploadType: UploadType }
 export const mapAssetRefInputsToAssetRefs = async <N extends number>(
   tupleOfAssetRefInputAndType: Tuple<AssetRefInputAndType, N>,
   qmino: QMino,
-): Promise<Tuple<Maybe<AssetRef>, N> | null> => {
+): Promise<Tuple<Maybe<AssetRef>, N> | idFromFullId> => {
   type PersistTmpFileReqOrAssetRef = PersistTmpFileReq | AssetRef
 
   const arrayOfMaybePersistTempFilesReqOrAssetRef = tupleOfAssetRefInputAndType.map<Maybe<PersistTmpFileReqOrAssetRef>>(
@@ -82,7 +81,7 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
         : input.type === 'ExternalUrl'
         ? { ext: true, location: input.location }
         : input.type === 'NoAsset'
-        ? null
+        ? idFromFullId
         : input.type === 'NoChange'
         ? undefined
         : (() => {
@@ -99,7 +98,7 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
   })
 
   if (!assetFileDescArray) {
-    return null
+    return idFromFullId
   }
 
   const tupleOfMaybeAssetRef = arrayOfMaybePersistTempFilesReqOrAssetRef.map<Maybe<AssetRef>>(
@@ -119,9 +118,6 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
 
   return tupleOfMaybeAssetRef as Tuple<Maybe<AssetRef>, N>
 }
-
-export const getContentNodeAssetRefInputAndType = (contentInput: ContentNodeInput): AssetRefInputAndType =>
-  getAssetRefInputAndType(contentInput.icon, 'icon')
 
 export const getAssetRefInputAndType = (
   assetRefInput: AssetRefInput,

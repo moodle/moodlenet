@@ -72,7 +72,7 @@ export const RenderWithHook: FC<{
 
 export const withCtrl = <UIProps, ExcludeKeys extends keyof UIProps = never>(
   UIComp: ComponentType<UIProps>,
-): FC<ControlledProps<UIProps, ExcludeKeys>> => {
+): FC<ControlledProps<UIProps, ExcludeKeys> & Pick<UIProps, ExcludeKeys>> => {
   // eslint-disable-next-line no-eval
   const Render = ({ children, ...props }: PropsWithChildren<ControlledProps<UIProps, ExcludeKeys>>) => {
     if (CTRL_SYMB in props && (props as any)[CTRL_SYMB]) {

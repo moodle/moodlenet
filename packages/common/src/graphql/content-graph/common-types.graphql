@@ -1,18 +1,6 @@
 scalar Cursor
 scalar AssetRef
 
-interface IContentNode {
-  name: String!
-  summary: String!
-  icon: AssetRef
-}
-
-input ContentNodeInput {
-  name: String!
-  summary: String!
-  icon: AssetRefInput!
-}
-
 enum AssetRefInputType {
   TmpUpload
   ExternalUrl
@@ -27,7 +15,8 @@ input AssetRefInput {
 
 interface INode {
   id: ID!
-  _organization: Organization
+  slug: String!
+  _organization: Organization!
   _created: GlyphByAt!
   _lastEdited: GlyphByAt
   _rel(edge: EdgeTypeInput!, page: PaginationInput): RelPage!

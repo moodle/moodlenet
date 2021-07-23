@@ -3,7 +3,6 @@ import * as GQL from '../../../types.graphql.gen'
 import { email } from './common'
 
 export const token = string()
-export const username = string()
 export const password = string()
 
 export const signUp: SchemaOf<GQL.MutationSignUpArgs> = object({
@@ -15,9 +14,8 @@ export const changeEmailRequest: SchemaOf<GQL.MutationChangeEmailRequestArgs> = 
 })
 
 export const changeEmailConfirm: SchemaOf<GQL.MutationChangeEmailConfirmArgs> = object({
-  username: username.required(),
   password: password.required(),
-  token: token.required(),
+  changeEmailToken: token.required(),
 })
 
 export const changePassword: SchemaOf<GQL.MutationChangePasswordArgs> = object({
@@ -26,17 +24,16 @@ export const changePassword: SchemaOf<GQL.MutationChangePasswordArgs> = object({
 })
 
 export const activateUser: SchemaOf<GQL.MutationActivateUserArgs> = object({
-  username: username.required(),
+  displayName: string().required(),
   password: password.required(),
-  token: token.required(),
+  activationToken: token.required(),
 })
 
 export const createSession: SchemaOf<GQL.MutationCreateSessionArgs> = object({
-  username: username.required(),
+  email: email.required(),
   password: password.required(),
 })
 
 export const sessionByEmail: SchemaOf<GQL.MutationSessionByEmailArgs> = object({
-  username: username.required(),
   email: email.required(),
 })

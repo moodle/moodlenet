@@ -1,4 +1,4 @@
-import { edgeTypeFromId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { edgeTypeFromCheckedId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { getOneResult } from '../../../../lib/helpers/arango'
 import { CreateAdapter, DeleteAdapter } from '../../../../ports/content-graph/edge'
 import { baseOperators } from '../bl/baseOperators'
@@ -33,7 +33,7 @@ export const createEdgeAdapter = (db: ContentGraphDB): CreateAdapter => ({
 
 export const deleteEdgeAdapter = (db: ContentGraphDB): DeleteAdapter => ({
   deleteEdge: async ({ edgeType, deleterProfileId, edgeId }) => {
-    if (edgeType !== edgeTypeFromId(edgeId)) {
+    if (edgeType !== edgeTypeFromCheckedId(edgeId)) {
       return 'NotFound'
     }
     const q = deleteEdgeQ({ deleterProfileId, edgeId, edgeType })

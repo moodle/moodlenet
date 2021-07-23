@@ -22,7 +22,7 @@ export const setupSearchView = async ({ db }: { db: Database }) => {
     links: {
       Resource: contentAnalyzer,
       Collection: contentAnalyzer,
-      SubjectField: contentAnalyzer,
+      Iscedfield: contentAnalyzer,
     },
   })
 

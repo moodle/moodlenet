@@ -1,19 +1,19 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
 import { useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
-import { href } from '../../../../elements/link'
-import { CtrlHook } from '../../../../lib/ctrl'
+import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { SubmitForm } from '../../../../lib/formik'
-import { defaultOrganization } from '../../../../lib/static-data'
+import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { SignupFormValues, SignupProps } from '../Signup'
 
 export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
   useRedirectHomeIfLoggedIn()
   const { signup } = useSession()
   const [signupErrorMessage, setSignupErrorMessage] = useState<string | null>(null)
+  const [requestSent, setRequestSent] = useState(false)
   const onSubmit = useCallback<SubmitForm<SignupFormValues>>(
     ({ email, username }) =>
-    signup({ email, username }).then(resp => {
+      signup({ email, username }).then(resp => {
         setSignupErrorMessage(resp)
       }),
     [signup],
@@ -21,16 +21,13 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
 
   const signupProps = useMemo<SignupProps>(() => {
     const signupProps: SignupProps = {
-      accessHeaderProps: {
-        homeHref: href('Landing/Logged In'),
-        organization: defaultOrganization,
-      },
+      accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Signup Access Header'),
       onSubmit,
       signupErrorMessage,
-      requestSent
+      requestSent,
     }
     return signupProps
-  }, [signupErrorMessage, onSubmit])
+  }, [onSubmit, signupErrorMessage, requestSent])
 
   return signupProps && [signupProps]
 }

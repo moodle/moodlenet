@@ -14,13 +14,13 @@ const SignupStory: ComponentStory<typeof Signup> = args => <Signup {...args} />
 export const SignupStoryProps: SignupProps = {
   accessHeaderProps: AccessHeaderStoryProps,
   onSubmit: action('Submit signup'),
-  loginErrorMessage: null,
-  requestSent: false
+  signupErrorMessage: null,
+  requestSent: false,
 }
 
 export const EmailSendStoryProps: SignupProps = {
   ...SignupStoryProps,
-  requestSent: true
+  requestSent: true,
 }
 
 export const SignUpPage = SignupStory.bind({})

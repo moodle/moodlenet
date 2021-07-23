@@ -5,8 +5,8 @@ import { useHistory, useLocation } from 'react-router'
 import { mainPath } from '../../hooks/glob/nav'
 import { GlobalSearchEdgeFragment, useGlobalSearchLazyQuery } from './GlobalSearch/globalSearch.gen'
 
-type NodeTypeFilter = 'Resource' | 'Collection' | 'SubjectField'
-const nodeTypeFilters: NodeTypeFilter[] = ['Resource', 'Collection', 'SubjectField']
+type NodeTypeFilter = 'Resource' | 'Collection' | 'Iscedfield'
+const nodeTypeFilters: NodeTypeFilter[] = ['Resource', 'Collection', 'Iscedfield']
 const isNodeTypeFilter = (_: any): _ is NodeTypeFilter => !!_ && nodeTypeFilters.includes(_)
 export const useUrlQuery = () => {
   const search = useLocation().search

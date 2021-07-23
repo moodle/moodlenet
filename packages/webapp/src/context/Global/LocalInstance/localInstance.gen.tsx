@@ -1,34 +1,37 @@
-import * as Types from '../../../graphql/pub.graphql.link';
+import * as Apollo from '@apollo/client'
+import { gql } from '@apollo/client'
+import * as Types from '../../../graphql/pub.graphql.link'
 
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
-const defaultOptions =  {}
-export type LocalInstanceQueryVariables = Types.Exact<{ [key: string]: never; }>;
+const defaultOptions = {}
+export type LocalInstanceQueryVariables = Types.Exact<{ [key: string]: never }>
 
-
-export type LocalInstanceQuery = (
-  { __typename: 'Query' }
-  & { node?: Types.Maybe<{ __typename: 'Collection' } | (
-    { __typename: 'Organization' }
-    & Pick<Types.Organization, 'id' | 'name' | 'summary' | 'icon' | 'color' | 'domain'>
-  ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' }> }
-);
-
+export type LocalInstanceQuery = { __typename: 'Query' } & {
+  node?: Types.Maybe<
+    | { __typename: 'Collection' }
+    | ({ __typename: 'Organization' } & Pick<
+        Types.Organization,
+        'id' | 'name' | 'summary' | 'icon' | 'color' | 'domain'
+      >)
+    | { __typename: 'Profile' }
+    | { __typename: 'Resource' }
+    | { __typename: 'Iscedfield' }
+  >
+}
 
 export const LocalInstanceDocument = gql`
-    query localInstance {
-  node(id: "Organization/local") {
-    ... on Organization {
-      id
-      name
-      summary
-      icon
-      color
-      domain
+  query localInstance {
+    node(id: "Organization/local") {
+      ... on Organization {
+        id
+        name
+        summary
+        icon
+        color
+        domain
+      }
     }
   }
-}
-    `;
+`
 
 /**
  * __useLocalInstanceQuery__
@@ -45,14 +48,18 @@ export const LocalInstanceDocument = gql`
  *   },
  * });
  */
-export function useLocalInstanceQuery(baseOptions?: Apollo.QueryHookOptions<LocalInstanceQuery, LocalInstanceQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<LocalInstanceQuery, LocalInstanceQueryVariables>(LocalInstanceDocument, options);
-      }
-export function useLocalInstanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LocalInstanceQuery, LocalInstanceQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<LocalInstanceQuery, LocalInstanceQueryVariables>(LocalInstanceDocument, options);
-        }
-export type LocalInstanceQueryHookResult = ReturnType<typeof useLocalInstanceQuery>;
-export type LocalInstanceLazyQueryHookResult = ReturnType<typeof useLocalInstanceLazyQuery>;
-export type LocalInstanceQueryResult = Apollo.QueryResult<LocalInstanceQuery, LocalInstanceQueryVariables>;
+export function useLocalInstanceQuery(
+  baseOptions?: Apollo.QueryHookOptions<LocalInstanceQuery, LocalInstanceQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<LocalInstanceQuery, LocalInstanceQueryVariables>(LocalInstanceDocument, options)
+}
+export function useLocalInstanceLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<LocalInstanceQuery, LocalInstanceQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<LocalInstanceQuery, LocalInstanceQueryVariables>(LocalInstanceDocument, options)
+}
+export type LocalInstanceQueryHookResult = ReturnType<typeof useLocalInstanceQuery>
+export type LocalInstanceLazyQueryHookResult = ReturnType<typeof useLocalInstanceLazyQuery>
+export type LocalInstanceQueryResult = Apollo.QueryResult<LocalInstanceQuery, LocalInstanceQueryVariables>

@@ -2,7 +2,7 @@ import { Id, parseEdgeId, parseNodeId } from '@moodlenet/common/lib/utils/conten
 import { Database } from 'arangojs'
 import { aqlstr, getOneResult, justExecute } from '../../../../lib/helpers/arango'
 
-export const updateNodeEdgeCounters = async ({ edgeId, db, del }: { db: Database; edgeId: Id; del: boolean }) => {
+export const editNodeEdgeCounters = async ({ edgeId, db, del }: { db: Database; edgeId: Id; del: boolean }) => {
   const { edgeType } = parseEdgeId(edgeId)
   const q = `
     LET edge = DOCUMENT(${aqlstr(edgeId)})
