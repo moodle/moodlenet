@@ -4,7 +4,7 @@
 
 .landing {
   > .landing-title > div {
-    margin: 36px 0;
+    margin: 36px 0 0;
     font-weight: bold;
     display: inline-flex;
     flex-wrap: wrap;
@@ -21,11 +21,11 @@
     }
 
     @media (max-width: 450px) {
-      margin: 28px 24px;
+      margin: 28px 24px 0;
     }
 
     @media screen and (max-width: 675px) and (min-width: 450px) {
-      margin: 36px 0;
+      margin: 36px 0 0;
       font-weight: bold;
       > .moodle-title {
         font-size: 22px;
@@ -37,23 +37,30 @@
   }
 
   > .searchbox {
-    margin-bottom: 36px;
+    margin: 36px 0;
     > .search-box {
       width: 100%;
       border: none;
+      height: fit-content;
       > .search-text {
         font-size: 40px;
         background-color: transparent;
         width: 100%;
       }
-      > .search-icon {
+      > .big-search-icon, > .search-icon {
         display: none;
       }
     }
     @media (max-width: 450px) {
-      margin: 6px 28px 36px;
-      > .search-box > .search-text {
-        font-size: 38px;
+      margin: 36px 28px;
+      > .search-box {
+        display: block;
+        > .search-text {
+          font-size: 38px;
+        }
+      }
+      > .big-search-icon {
+        display: none;
       }
     }
   }
