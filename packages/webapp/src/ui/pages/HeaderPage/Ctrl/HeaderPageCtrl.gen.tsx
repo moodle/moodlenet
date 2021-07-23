@@ -1,104 +1,107 @@
-import * as Types from '../../../../graphql/pub.graphql.link';
+import * as Apollo from '@apollo/client'
+import { gql } from '@apollo/client'
+import * as Types from '../../../../graphql/pub.graphql.link'
 
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
-const defaultOptions =  {}
+const defaultOptions = {}
 export type HeaderPagePinnedQueryVariables = Types.Exact<{
-  currentProfileId: Types.Scalars['ID'];
-}>;
+  currentProfileId: Types.Scalars['ID']
+}>
 
-
-export type HeaderPagePinnedQuery = (
-  { __typename: 'Query' }
-  & { node?: Types.Maybe<(
-    { __typename: 'Collection' }
-    & Pick<Types.Collection, 'id'>
-    & { pinnedList: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
-          { __typename: 'SubjectField' }
-          & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
-        ) }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'Organization' }
-    & Pick<Types.Organization, 'id'>
-    & { pinnedList: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
-          { __typename: 'SubjectField' }
-          & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
-        ) }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'Profile' }
-    & Pick<Types.Profile, 'id'>
-    & { pinnedList: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
-          { __typename: 'SubjectField' }
-          & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
-        ) }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'Resource' }
-    & Pick<Types.Resource, 'id'>
-    & { pinnedList: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
-          { __typename: 'SubjectField' }
-          & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
-        ) }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'SubjectField' }
-    & Pick<Types.SubjectField, 'id'>
-    & { pinnedList: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
-          { __typename: 'SubjectField' }
-          & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
-        ) }
-      )> }
-    ) }
-  )> }
-);
-
+export type HeaderPagePinnedQuery = { __typename: 'Query' } & {
+  node?: Types.Maybe<
+    | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id'> & {
+          pinnedList: { __typename: 'RelPage' } & {
+            edges: Array<
+              { __typename: 'RelPageEdge' } & {
+                node:
+                  | { __typename: 'Collection' }
+                  | { __typename: 'Organization' }
+                  | { __typename: 'Profile' }
+                  | { __typename: 'Resource' }
+                  | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id' | 'name' | 'icon'>)
+              }
+            >
+          }
+        })
+    | ({ __typename: 'Organization' } & Pick<Types.Organization, 'id'> & {
+          pinnedList: { __typename: 'RelPage' } & {
+            edges: Array<
+              { __typename: 'RelPageEdge' } & {
+                node:
+                  | { __typename: 'Collection' }
+                  | { __typename: 'Organization' }
+                  | { __typename: 'Profile' }
+                  | { __typename: 'Resource' }
+                  | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id' | 'name' | 'icon'>)
+              }
+            >
+          }
+        })
+    | ({ __typename: 'Profile' } & Pick<Types.Profile, 'id'> & {
+          pinnedList: { __typename: 'RelPage' } & {
+            edges: Array<
+              { __typename: 'RelPageEdge' } & {
+                node:
+                  | { __typename: 'Collection' }
+                  | { __typename: 'Organization' }
+                  | { __typename: 'Profile' }
+                  | { __typename: 'Resource' }
+                  | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id' | 'name' | 'icon'>)
+              }
+            >
+          }
+        })
+    | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id'> & {
+          pinnedList: { __typename: 'RelPage' } & {
+            edges: Array<
+              { __typename: 'RelPageEdge' } & {
+                node:
+                  | { __typename: 'Collection' }
+                  | { __typename: 'Organization' }
+                  | { __typename: 'Profile' }
+                  | { __typename: 'Resource' }
+                  | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id' | 'name' | 'icon'>)
+              }
+            >
+          }
+        })
+    | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id'> & {
+          pinnedList: { __typename: 'RelPage' } & {
+            edges: Array<
+              { __typename: 'RelPageEdge' } & {
+                node:
+                  | { __typename: 'Collection' }
+                  | { __typename: 'Organization' }
+                  | { __typename: 'Profile' }
+                  | { __typename: 'Resource' }
+                  | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id' | 'name' | 'icon'>)
+              }
+            >
+          }
+        })
+  >
+}
 
 export const HeaderPagePinnedDocument = gql`
-    query HeaderPagePinned($currentProfileId: ID!) {
-  node(id: $currentProfileId) {
-    ... on INode {
-      id
-      pinnedList: _rel(edge: {type: Follows, node: SubjectField}, page: {first: 10}) {
-        edges {
-          node {
-            ... on SubjectField {
-              id
-              name
-              icon
+  query HeaderPagePinned($currentProfileId: ID!) {
+    node(id: $currentProfileId) {
+      ... on INode {
+        id
+        pinnedList: _rel(edge: { type: Follows, node: Iscedfield }, page: { first: 10 }) {
+          edges {
+            node {
+              ... on Iscedfield {
+                id
+                name
+                icon
+              }
             }
           }
         }
       }
     }
   }
-}
-    `;
+`
 
 /**
  * __useHeaderPagePinnedQuery__
@@ -116,14 +119,18 @@ export const HeaderPagePinnedDocument = gql`
  *   },
  * });
  */
-export function useHeaderPagePinnedQuery(baseOptions: Apollo.QueryHookOptions<HeaderPagePinnedQuery, HeaderPagePinnedQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<HeaderPagePinnedQuery, HeaderPagePinnedQueryVariables>(HeaderPagePinnedDocument, options);
-      }
-export function useHeaderPagePinnedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HeaderPagePinnedQuery, HeaderPagePinnedQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<HeaderPagePinnedQuery, HeaderPagePinnedQueryVariables>(HeaderPagePinnedDocument, options);
-        }
-export type HeaderPagePinnedQueryHookResult = ReturnType<typeof useHeaderPagePinnedQuery>;
-export type HeaderPagePinnedLazyQueryHookResult = ReturnType<typeof useHeaderPagePinnedLazyQuery>;
-export type HeaderPagePinnedQueryResult = Apollo.QueryResult<HeaderPagePinnedQuery, HeaderPagePinnedQueryVariables>;
+export function useHeaderPagePinnedQuery(
+  baseOptions: Apollo.QueryHookOptions<HeaderPagePinnedQuery, HeaderPagePinnedQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<HeaderPagePinnedQuery, HeaderPagePinnedQueryVariables>(HeaderPagePinnedDocument, options)
+}
+export function useHeaderPagePinnedLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<HeaderPagePinnedQuery, HeaderPagePinnedQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<HeaderPagePinnedQuery, HeaderPagePinnedQueryVariables>(HeaderPagePinnedDocument, options)
+}
+export type HeaderPagePinnedQueryHookResult = ReturnType<typeof useHeaderPagePinnedQuery>
+export type HeaderPagePinnedLazyQueryHookResult = ReturnType<typeof useHeaderPagePinnedLazyQuery>
+export type HeaderPagePinnedQueryResult = Apollo.QueryResult<HeaderPagePinnedQuery, HeaderPagePinnedQueryVariables>

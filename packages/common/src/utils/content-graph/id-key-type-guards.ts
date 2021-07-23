@@ -1,38 +1,29 @@
-//TODO: review all parse|extraction return types to make them stricter
-
 import { EdgeType, GlobalSearchSort, NodeType } from '../../graphql/types.graphql.gen'
-// export type Id = string // & { readonly __: unique symbol } this leads to tsc errors as it recognizes Id from src/* as different type in respect of from lib/*
 
-export const isIdKey = (_: string | undefined | null): _ is IdKey => !!_ && true //FIXME: proper guard
-export const isId = (_: string | undefined | null): _ is Id => {
-  if (!_) {
-    return false
-  }
-  const split = _.split('/')
-  if (split.length !== 2) {
-    return false
-  }
-  const [type /* , key */] = split
-  if (!(isEdgeType(type) || isNodeType(type))) {
-    return false
-  }
-  return true //isIdKey(key)
-}
-
-export const makeId = (type: NodeType | EdgeType, key: IdKey): Id => `${type}/${key}` as Id
+export type Key = string
+export type Id = string
 
 export const globalSearchSort: GlobalSearchSort[] = ['Popularity', 'Relevance', 'Relevance']
 export const isGlobalSearchSort = (_: any): _ is GlobalSearchSort => !!_ && globalSearchSort.includes(_)
 
+export const glyphId = (type: EdgeType | NodeType, id: string): Id => `${type}/${id}`
+
+const nodeTypes: NodeType[] = ['Collection', 'Profile', 'Resource', 'Iscedfield', 'Organization']
+export const isNodeType = (_: any): _ is NodeType => !!_ && nodeTypes.includes(_)
 const edgeTypes: EdgeType[] = ['AppliesTo', 'Contains', 'Created', 'Follows', 'Likes']
 export const isEdgeType = (_: any): _ is EdgeType => !!_ && edgeTypes.includes(_)
-export const edgeTypeFromId = (_: Id): EdgeType => {
+
+export const nodeTypeFromCheckedId = (_: Id) => nodeTypeFromUncheckedId(_)!
+export const nodeTypeFromUncheckedId = (_: Id): NodeType | null => {
+  const [nodeType] = _.split('/')
+  return isNodeType(nodeType) ? nodeType : null
+}
+export const edgeTypeFromCheckedId = (_: Id) => edgeTypeFromUncheckedId(_)!
+export const edgeTypeFromUncheckedId = (_: Id): EdgeType => {
   const [edgeType] = _.split('/')
   return edgeType as EdgeType
 }
 
-const nodeTypes: NodeType[] = ['Collection', 'Profile', 'Resource', 'SubjectField', 'Organization']
-export const isNodeType = (_: any): _ is NodeType => !!_ && nodeTypes.includes(_)
 const caseInsensitiveNodeTypesMap = nodeTypes.reduce(
   (_map, NodeType) => ({
     ..._map,
@@ -42,49 +33,51 @@ const caseInsensitiveNodeTypesMap = nodeTypes.reduce(
 ) as {
   [lowertype in Lowercase<NodeType>]: NodeType
 }
-console.log({ caseInsensitiveNodeTypesMap })
-export const getNodeTypeByCaseinsensitive = (caseInsensitiveNodeType: string) =>
+//console.log({ caseInsensitiveNodeTypesMap })
+export const getNodeTypeByCaseInsensitive = (caseInsensitiveNodeType: string) =>
   (caseInsensitiveNodeTypesMap as any)[caseInsensitiveNodeType.toLowerCase()] as NodeType | undefined
 
-export const nodeTypeFromId = (_: Id): NodeType => {
-  const [nodeType] = _.split('/')
-  return nodeType as NodeType
-}
-export const glyphId = (type: EdgeType | NodeType, key: string): Id => `${type}/${key}` as Id
-
-export const idKeyFromId = (_: Id): IdKey => {
+export const keyFromUncheckedId = (_: Key): Id | null => {
   const [, key] = _.split('/')
-  return key as IdKey
+  return key ?? null
 }
 
-export const parseNodeId = (_: Id): { nodeType: NodeType; _key: IdKey } => ({
-  nodeType: nodeTypeFromId(_),
-  _key: idKeyFromId(_),
-})
-
-export const parseNodeIdString = (_: string): { nodeType: NodeType; _key: IdKey; id: Id } | null => {
-  const [type, _key] = _.split('/')
-  if (!(type && _key)) {
+export const parseCheckedNodeId = (_: Id) => parseUncheckedNodeId(_)!
+export const parseUncheckedNodeId = (_: Id): [nodeType: NodeType, id: Key] | null => {
+  const nodeType = nodeTypeFromUncheckedId(_)
+  const id = keyFromUncheckedId(_)
+  if (!(nodeType && id)) {
     return null
   }
-  const nodeType = getNodeTypeByCaseinsensitive(type)
-  if (!(nodeType && isIdKey(_key))) {
+  return [nodeType, id]
+}
+export const parseCheckedEdgeId = (_: Id) => parseUncheckedEdgeId(_)!
+export const parseUncheckedEdgeId = (_: Id): [edgeType: EdgeType, id: Key] | null => {
+  const edgeType = edgeTypeFromUncheckedId(_)
+  const id = keyFromUncheckedId(_)
+  if (!(edgeType && id)) {
     return null
   }
-  return { nodeType, _key, id: `${nodeType}/${_key}` as Id }
+  return [edgeType, id]
 }
 
-export const parseEdgeId = (_: Id): { edgeType: EdgeType; _key: IdKey } => ({
-  edgeType: edgeTypeFromId(_),
-  _key: idKeyFromId(_),
-})
-
-export const checkIDOrError = (_?: string) => {
-  if (!isId(_)) {
-    throw 'invalid ID'
+export const parseId = (_: Id): [glyphType: EdgeType | NodeType, id: Key] | null =>
+  parseUncheckedEdgeId(_) || parseUncheckedNodeId(_)
+export const checkIDIsValidOrError = (_: any) => {
+  if (typeof _ !== 'string' || !parseId(_)) {
+    throw new Error(`${_} is not a valid Id`)
   }
-  return _
 }
 
-export type IdKey = string //& { readonly __: unique symbol }
-export type Id<N extends NodeType = NodeType> = `${N}/${IdKey}` // & { readonly __: unique symbol }
+export const parseNodeIdCaseInsensitive = (_: string): [nodeType: NodeType, id: Key, Id: Id] | null => {
+  const [type, id] = _.split('/')
+  if (!(type && id)) {
+    return null
+  }
+  const nodeType = getNodeTypeByCaseInsensitive(type)
+  if (!nodeType) {
+    return null
+  }
+  const Id = `${nodeType}/${id}`
+  return [nodeType, id, Id]
+}

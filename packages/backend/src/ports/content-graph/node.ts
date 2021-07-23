@@ -56,5 +56,5 @@ export const create = QMCommand(
       return result
     },
 )
-const NamedKeysOnNodeTypes: GQL.NodeType[] = ['Organization', 'Profile', 'SubjectField']
+const NamedKeysOnNodeTypes: GQL.NodeType[] = ['Organization', 'Profile', 'Iscedfield']
 QMModule(module)

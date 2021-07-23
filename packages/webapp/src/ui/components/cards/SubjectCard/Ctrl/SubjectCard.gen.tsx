@@ -1,71 +1,49 @@
-import * as Types from '../../../../../graphql/pub.graphql.link';
+import * as Apollo from '@apollo/client'
+import { gql } from '@apollo/client'
+import * as Types from '../../../../../graphql/pub.graphql.link'
 
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
-const defaultOptions =  {}
+const defaultOptions = {}
 export type SubjectCardQueryVariables = Types.Exact<{
-  id: Types.Scalars['ID'];
-}>;
+  id: Types.Scalars['ID']
+}>
 
-
-export type SubjectCardQuery = (
-  { __typename: 'Query' }
-  & { node?: Types.Maybe<(
-    { __typename: 'Collection' }
-    & Pick<Types.Collection, 'name' | 'icon' | 'id'>
-    & { _organization?: Types.Maybe<(
-      { __typename: 'Organization' }
-      & Pick<Types.Organization, 'domain' | 'color'>
-    )> }
-  ) | (
-    { __typename: 'Organization' }
-    & Pick<Types.Organization, 'name' | 'icon' | 'id'>
-    & { _organization?: Types.Maybe<(
-      { __typename: 'Organization' }
-      & Pick<Types.Organization, 'domain' | 'color'>
-    )> }
-  ) | (
-    { __typename: 'Profile' }
-    & Pick<Types.Profile, 'name' | 'icon' | 'id'>
-    & { _organization?: Types.Maybe<(
-      { __typename: 'Organization' }
-      & Pick<Types.Organization, 'domain' | 'color'>
-    )> }
-  ) | (
-    { __typename: 'Resource' }
-    & Pick<Types.Resource, 'name' | 'icon' | 'id'>
-    & { _organization?: Types.Maybe<(
-      { __typename: 'Organization' }
-      & Pick<Types.Organization, 'domain' | 'color'>
-    )> }
-  ) | (
-    { __typename: 'SubjectField' }
-    & Pick<Types.SubjectField, 'name' | 'icon' | 'id'>
-    & { _organization?: Types.Maybe<(
-      { __typename: 'Organization' }
-      & Pick<Types.Organization, 'domain' | 'color'>
-    )> }
-  )> }
-);
-
+export type SubjectCardQuery = { __typename: 'Query' } & {
+  node?: Types.Maybe<
+    | ({ __typename: 'Collection' } & Pick<Types.Collection, 'name' | 'icon' | 'id'> & {
+          _organization?: Types.Maybe<{ __typename: 'Organization' } & Pick<Types.Organization, 'domain' | 'color'>>
+        })
+    | ({ __typename: 'Organization' } & Pick<Types.Organization, 'name' | 'icon' | 'id'> & {
+          _organization?: Types.Maybe<{ __typename: 'Organization' } & Pick<Types.Organization, 'domain' | 'color'>>
+        })
+    | ({ __typename: 'Profile' } & Pick<Types.Profile, 'name' | 'icon' | 'id'> & {
+          _organization?: Types.Maybe<{ __typename: 'Organization' } & Pick<Types.Organization, 'domain' | 'color'>>
+        })
+    | ({ __typename: 'Resource' } & Pick<Types.Resource, 'name' | 'icon' | 'id'> & {
+          _organization?: Types.Maybe<{ __typename: 'Organization' } & Pick<Types.Organization, 'domain' | 'color'>>
+        })
+    | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'name' | 'icon' | 'id'> & {
+          _organization?: Types.Maybe<{ __typename: 'Organization' } & Pick<Types.Organization, 'domain' | 'color'>>
+        })
+  >
+}
 
 export const SubjectCardDocument = gql`
-    query SubjectCard($id: ID!) {
-  node(id: $id) {
-    ... on IContentNode {
-      name
-      icon
-    }
-    ... on INode {
-      id
-      _organization {
-        domain
-        color
+  query SubjectCard($id: ID!) {
+    node(id: $id) {
+      ... on IContentNode {
+        name
+        icon
+      }
+      ... on INode {
+        id
+        _organization {
+          domain
+          color
+        }
       }
     }
   }
-}
-    `;
+`
 
 /**
  * __useSubjectCardQuery__
@@ -84,13 +62,15 @@ export const SubjectCardDocument = gql`
  * });
  */
 export function useSubjectCardQuery(baseOptions: Apollo.QueryHookOptions<SubjectCardQuery, SubjectCardQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SubjectCardQuery, SubjectCardQueryVariables>(SubjectCardDocument, options);
-      }
-export function useSubjectCardLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SubjectCardQuery, SubjectCardQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SubjectCardQuery, SubjectCardQueryVariables>(SubjectCardDocument, options);
-        }
-export type SubjectCardQueryHookResult = ReturnType<typeof useSubjectCardQuery>;
-export type SubjectCardLazyQueryHookResult = ReturnType<typeof useSubjectCardLazyQuery>;
-export type SubjectCardQueryResult = Apollo.QueryResult<SubjectCardQuery, SubjectCardQueryVariables>;
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<SubjectCardQuery, SubjectCardQueryVariables>(SubjectCardDocument, options)
+}
+export function useSubjectCardLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<SubjectCardQuery, SubjectCardQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<SubjectCardQuery, SubjectCardQueryVariables>(SubjectCardDocument, options)
+}
+export type SubjectCardQueryHookResult = ReturnType<typeof useSubjectCardQuery>
+export type SubjectCardLazyQueryHookResult = ReturnType<typeof useSubjectCardLazyQuery>
+export type SubjectCardQueryResult = Apollo.QueryResult<SubjectCardQuery, SubjectCardQueryVariables>

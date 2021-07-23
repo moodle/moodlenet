@@ -4,22 +4,22 @@ import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryButton'
-import { withCtrl } from '../../../lib/ctrl'
+import { CP, withCtrl } from '../../../lib/ctrl'
 import { SubmitForm, useFormikBag } from '../../../lib/formik'
 import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
-export type SignupFormValues = { email: string; username: string }
+export type SignupFormValues = { email: string }
 export type SignupProps = {
-  accessHeaderProps: AccessHeaderProps
+  accessHeaderProps: CP<AccessHeaderProps, 'page'>
   onSubmit: SubmitForm<SignupFormValues>
   signupErrorMessage: string | null
   requestSent: boolean
 }
 
 export const Signup = withCtrl<SignupProps>(({ accessHeaderProps, onSubmit, requestSent }) => {
-  const [form, attrs] = useFormikBag({ initialValues: { email: '' }, onSubmit })
+  const [form, attrs] = useFormikBag<SignupFormValues>({ initialValues: { email: '' }, onSubmit })
   return (
     <MainPageWrapper>
       <div className={`signup-page ${requestSent ? 'success' : ''}`}>
@@ -72,7 +72,7 @@ export const Signup = withCtrl<SignupProps>(({ accessHeaderProps, onSubmit, requ
           </Card>
         </div>
         <div className={`success-content ${requestSent ? 'success' : ''}`}>
-        <Card>
+          <Card>
             <div className="content">
               <div className="title">
                 <Trans>Email sent!</Trans>

@@ -1,10 +1,8 @@
-import { IdKey } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { Database } from 'arangojs'
 import { CreateCollectionOptions, DocumentCollection, EdgeCollection } from 'arangojs/collection'
 import { Config } from 'arangojs/connection'
 import { CreateDatabaseOptions } from 'arangojs/database'
 import promiseRetry, { PromiseRetryOpts } from 'promise-retry'
-import { ulid } from 'ulid'
 import { Maybe } from './types'
 
 export const createVertexCollectionIfNotExists = async <
@@ -89,8 +87,6 @@ export const getDocumentById = async <Type extends object = object>({
 }
 
 export const aqlstr = (_: any) => JSON.stringify(_)
-
-export const newGlyphKey = (): IdKey => ulid()
 
 export const getOneResult = async (q: string, db: Database) => {
   const cursor = await db.query(q)

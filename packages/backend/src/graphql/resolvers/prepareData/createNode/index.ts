@@ -1,13 +1,10 @@
 import { CreateNodeInput, CreateNodeMutationError, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { newINodeIdSlug } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { Just } from '@moodlenet/common/lib/utils/types'
 import { DocumentNodeDataByType } from '../../../../adapters/content-graph/arangodb/functions/types'
 import { QMino } from '../../../../lib/qmino'
-import {
-  createNodeMutationError,
-  getAssetRefInputAndType,
-  getContentNodeAssetRefInputAndType,
-  mapAssetRefInputsToAssetRefs,
-} from '../../helpers'
+import { ShallowNodeByType } from '../../../types.node'
+import { createNodeMutationError, getAssetRefInputAndType, mapAssetRefInputsToAssetRefs } from '../../helpers'
 
 const noTmpFilesCreateNodeMutationError = () =>
   createNodeMutationError('UnexpectedInput', `couldn't find requested tempFiles`)
@@ -15,28 +12,27 @@ const nodeDocumentDataBaker: {
   [T in NodeType]: (
     input: Just<CreateNodeInput[T]>,
     qmino: QMino,
-  ) => Promise<DocumentNodeDataByType<T> | CreateNodeMutationError>
+  ) => Promise<ShallowNodeByType<T> | CreateNodeMutationError>
 } = {
-  async SubjectField(/* input, qmino */) {
-    throw new Error('GQL create SubjectField not implemented')
+  async Iscedfield(/* input, qmino */) {
+    throw new Error('GQL create Iscedfield not implemented')
   },
   async Organization(/* input, qmino */) {
-    throw new Error('GQL create SubjectField not implemented')
+    throw new Error('GQL create Organization not implemented')
   },
   async Collection(input, qmino) {
-    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
-      [getContentNodeAssetRefInputAndType(input.content)],
-      qmino,
-    )
-    if (!contentNodeAssetRefs) {
+    const imageAssetRefs = await mapAssetRefInputsToAssetRefs([getAssetRefInputAndType(input.image, 'image')], qmino)
+    if (!imageAssetRefs) {
       return noTmpFilesCreateNodeMutationError()
     }
-    const [icon] = contentNodeAssetRefs
-    return {
-      name: input.content.name,
-      summary: input.content.summary,
-      icon,
+    const [image] = imageAssetRefs
+    const collectionData: ShallowNodeByType<'Collection'> = {
+      ...newINodeIdSlug(input.name),
+      name: input.name,
+      description: input.description,
+      image,
     }
+    return collectionData
   },
   async Resource(input, qmino) {
     const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(

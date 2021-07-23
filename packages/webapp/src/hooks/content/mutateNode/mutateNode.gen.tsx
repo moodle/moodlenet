@@ -1,113 +1,94 @@
-import * as Types from '../../../graphql/pub.graphql.link';
+import * as Apollo from '@apollo/client'
+import { gql } from '@apollo/client'
+import * as Types from '../../../graphql/pub.graphql.link'
 
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
-const defaultOptions =  {}
+const defaultOptions = {}
 export type CreateNodeMutationVariables = Types.Exact<{
-  input: Types.CreateNodeInput;
-}>;
+  input: Types.CreateNodeInput
+}>
 
-
-export type CreateNodeMutation = (
-  { __typename: 'Mutation' }
-  & { createNode: (
-    { __typename: 'CreateNodeMutationSuccess' }
-    & BasicCreateNodeMutationPayload_CreateNodeMutationSuccess_Fragment
-  ) | (
-    { __typename: 'CreateNodeMutationError' }
-    & BasicCreateNodeMutationPayload_CreateNodeMutationError_Fragment
-  ) }
-);
+export type CreateNodeMutation = { __typename: 'Mutation' } & {
+  createNode:
+    | ({ __typename: 'CreateNodeMutationSuccess' } & BasicCreateNodeMutationPayload_CreateNodeMutationSuccess_Fragment)
+    | ({ __typename: 'CreateNodeMutationError' } & BasicCreateNodeMutationPayload_CreateNodeMutationError_Fragment)
+}
 
 export type DeleteNodeMutationVariables = Types.Exact<{
-  input: Types.DeleteNodeInput;
-}>;
+  input: Types.DeleteNodeInput
+}>
 
+export type DeleteNodeMutation = { __typename: 'Mutation' } & {
+  deleteNode:
+    | ({ __typename: 'DeleteNodeMutationSuccess' } & BasicDeleteNodeMutationPayload_DeleteNodeMutationSuccess_Fragment)
+    | ({ __typename: 'DeleteNodeMutationError' } & BasicDeleteNodeMutationPayload_DeleteNodeMutationError_Fragment)
+}
 
-export type DeleteNodeMutation = (
-  { __typename: 'Mutation' }
-  & { deleteNode: (
-    { __typename: 'DeleteNodeMutationSuccess' }
-    & BasicDeleteNodeMutationPayload_DeleteNodeMutationSuccess_Fragment
-  ) | (
-    { __typename: 'DeleteNodeMutationError' }
-    & BasicDeleteNodeMutationPayload_DeleteNodeMutationError_Fragment
-  ) }
-);
+export type BasicCreateNodeMutationPayload_CreateNodeMutationSuccess_Fragment = {
+  __typename: 'CreateNodeMutationSuccess'
+} & {
+  node:
+    | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id'>)
+    | ({ __typename: 'Organization' } & Pick<Types.Organization, 'id'>)
+    | ({ __typename: 'Profile' } & Pick<Types.Profile, 'id'>)
+    | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id'>)
+    | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id'>)
+}
 
-export type BasicCreateNodeMutationPayload_CreateNodeMutationSuccess_Fragment = (
-  { __typename: 'CreateNodeMutationSuccess' }
-  & { node: (
-    { __typename: 'Collection' }
-    & Pick<Types.Collection, 'id'>
-  ) | (
-    { __typename: 'Organization' }
-    & Pick<Types.Organization, 'id'>
-  ) | (
-    { __typename: 'Profile' }
-    & Pick<Types.Profile, 'id'>
-  ) | (
-    { __typename: 'Resource' }
-    & Pick<Types.Resource, 'id'>
-  ) | (
-    { __typename: 'SubjectField' }
-    & Pick<Types.SubjectField, 'id'>
-  ) }
-);
+export type BasicCreateNodeMutationPayload_CreateNodeMutationError_Fragment = {
+  __typename: 'CreateNodeMutationError'
+} & Pick<Types.CreateNodeMutationError, 'type' | 'details'>
 
-export type BasicCreateNodeMutationPayload_CreateNodeMutationError_Fragment = (
-  { __typename: 'CreateNodeMutationError' }
-  & Pick<Types.CreateNodeMutationError, 'type' | 'details'>
-);
+export type BasicCreateNodeMutationPayloadFragment =
+  | BasicCreateNodeMutationPayload_CreateNodeMutationSuccess_Fragment
+  | BasicCreateNodeMutationPayload_CreateNodeMutationError_Fragment
 
-export type BasicCreateNodeMutationPayloadFragment = BasicCreateNodeMutationPayload_CreateNodeMutationSuccess_Fragment | BasicCreateNodeMutationPayload_CreateNodeMutationError_Fragment;
+export type BasicDeleteNodeMutationPayload_DeleteNodeMutationSuccess_Fragment = {
+  __typename: 'DeleteNodeMutationSuccess'
+} & Pick<Types.DeleteNodeMutationSuccess, 'nodeId'>
 
-export type BasicDeleteNodeMutationPayload_DeleteNodeMutationSuccess_Fragment = (
-  { __typename: 'DeleteNodeMutationSuccess' }
-  & Pick<Types.DeleteNodeMutationSuccess, 'nodeId'>
-);
+export type BasicDeleteNodeMutationPayload_DeleteNodeMutationError_Fragment = {
+  __typename: 'DeleteNodeMutationError'
+} & Pick<Types.DeleteNodeMutationError, 'type' | 'details'>
 
-export type BasicDeleteNodeMutationPayload_DeleteNodeMutationError_Fragment = (
-  { __typename: 'DeleteNodeMutationError' }
-  & Pick<Types.DeleteNodeMutationError, 'type' | 'details'>
-);
-
-export type BasicDeleteNodeMutationPayloadFragment = BasicDeleteNodeMutationPayload_DeleteNodeMutationSuccess_Fragment | BasicDeleteNodeMutationPayload_DeleteNodeMutationError_Fragment;
+export type BasicDeleteNodeMutationPayloadFragment =
+  | BasicDeleteNodeMutationPayload_DeleteNodeMutationSuccess_Fragment
+  | BasicDeleteNodeMutationPayload_DeleteNodeMutationError_Fragment
 
 export const BasicCreateNodeMutationPayloadFragmentDoc = gql`
-    fragment BasicCreateNodeMutationPayload on CreateNodeMutationPayload {
-  ... on CreateNodeMutationSuccess {
-    node {
-      ... on INode {
-        id
+  fragment BasicCreateNodeMutationPayload on CreateNodeMutationPayload {
+    ... on CreateNodeMutationSuccess {
+      node {
+        ... on INode {
+          id
+        }
       }
     }
+    ... on CreateNodeMutationError {
+      type
+      details
+    }
   }
-  ... on CreateNodeMutationError {
-    type
-    details
-  }
-}
-    `;
+`
 export const BasicDeleteNodeMutationPayloadFragmentDoc = gql`
-    fragment BasicDeleteNodeMutationPayload on DeleteNodeMutationPayload {
-  ... on DeleteNodeMutationSuccess {
-    nodeId
+  fragment BasicDeleteNodeMutationPayload on DeleteNodeMutationPayload {
+    ... on DeleteNodeMutationSuccess {
+      nodeId
+    }
+    ... on DeleteNodeMutationError {
+      type
+      details
+    }
   }
-  ... on DeleteNodeMutationError {
-    type
-    details
-  }
-}
-    `;
+`
 export const CreateNodeDocument = gql`
-    mutation CreateNode($input: CreateNodeInput!) {
-  createNode(input: $input) {
-    ...BasicCreateNodeMutationPayload
+  mutation CreateNode($input: CreateNodeInput!) {
+    createNode(input: $input) {
+      ...BasicCreateNodeMutationPayload
+    }
   }
-}
-    ${BasicCreateNodeMutationPayloadFragmentDoc}`;
-export type CreateNodeMutationFn = Apollo.MutationFunction<CreateNodeMutation, CreateNodeMutationVariables>;
+  ${BasicCreateNodeMutationPayloadFragmentDoc}
+`
+export type CreateNodeMutationFn = Apollo.MutationFunction<CreateNodeMutation, CreateNodeMutationVariables>
 
 /**
  * __useCreateNodeMutation__
@@ -126,21 +107,24 @@ export type CreateNodeMutationFn = Apollo.MutationFunction<CreateNodeMutation, C
  *   },
  * });
  */
-export function useCreateNodeMutation(baseOptions?: Apollo.MutationHookOptions<CreateNodeMutation, CreateNodeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateNodeMutation, CreateNodeMutationVariables>(CreateNodeDocument, options);
-      }
-export type CreateNodeMutationHookResult = ReturnType<typeof useCreateNodeMutation>;
-export type CreateNodeMutationResult = Apollo.MutationResult<CreateNodeMutation>;
-export type CreateNodeMutationOptions = Apollo.BaseMutationOptions<CreateNodeMutation, CreateNodeMutationVariables>;
-export const DeleteNodeDocument = gql`
-    mutation DeleteNode($input: DeleteNodeInput!) {
-  deleteNode(input: $input) {
-    ...BasicDeleteNodeMutationPayload
-  }
+export function useCreateNodeMutation(
+  baseOptions?: Apollo.MutationHookOptions<CreateNodeMutation, CreateNodeMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<CreateNodeMutation, CreateNodeMutationVariables>(CreateNodeDocument, options)
 }
-    ${BasicDeleteNodeMutationPayloadFragmentDoc}`;
-export type DeleteNodeMutationFn = Apollo.MutationFunction<DeleteNodeMutation, DeleteNodeMutationVariables>;
+export type CreateNodeMutationHookResult = ReturnType<typeof useCreateNodeMutation>
+export type CreateNodeMutationResult = Apollo.MutationResult<CreateNodeMutation>
+export type CreateNodeMutationOptions = Apollo.BaseMutationOptions<CreateNodeMutation, CreateNodeMutationVariables>
+export const DeleteNodeDocument = gql`
+  mutation DeleteNode($input: DeleteNodeInput!) {
+    deleteNode(input: $input) {
+      ...BasicDeleteNodeMutationPayload
+    }
+  }
+  ${BasicDeleteNodeMutationPayloadFragmentDoc}
+`
+export type DeleteNodeMutationFn = Apollo.MutationFunction<DeleteNodeMutation, DeleteNodeMutationVariables>
 
 /**
  * __useDeleteNodeMutation__
@@ -159,10 +143,12 @@ export type DeleteNodeMutationFn = Apollo.MutationFunction<DeleteNodeMutation, D
  *   },
  * });
  */
-export function useDeleteNodeMutation(baseOptions?: Apollo.MutationHookOptions<DeleteNodeMutation, DeleteNodeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteNodeMutation, DeleteNodeMutationVariables>(DeleteNodeDocument, options);
-      }
-export type DeleteNodeMutationHookResult = ReturnType<typeof useDeleteNodeMutation>;
-export type DeleteNodeMutationResult = Apollo.MutationResult<DeleteNodeMutation>;
-export type DeleteNodeMutationOptions = Apollo.BaseMutationOptions<DeleteNodeMutation, DeleteNodeMutationVariables>;
+export function useDeleteNodeMutation(
+  baseOptions?: Apollo.MutationHookOptions<DeleteNodeMutation, DeleteNodeMutationVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<DeleteNodeMutation, DeleteNodeMutationVariables>(DeleteNodeDocument, options)
+}
+export type DeleteNodeMutationHookResult = ReturnType<typeof useDeleteNodeMutation>
+export type DeleteNodeMutationResult = Apollo.MutationResult<DeleteNodeMutation>
+export type DeleteNodeMutationOptions = Apollo.BaseMutationOptions<DeleteNodeMutation, DeleteNodeMutationVariables>

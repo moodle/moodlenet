@@ -13,7 +13,7 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
   const trendingQ = useGlobalSearchQuery({
     variables: {
       sortBy: 'Popularity',
-      nodeTypes: ['Collection', 'SubjectField'],
+      nodeTypes: ['Collection', 'Iscedfield'],
       text: '',
     },
   })
@@ -21,7 +21,7 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
     () =>
       trendingQ.data?.globalSearch.edges
         .map(edge =>
-          edge.node.__typename === 'SubjectField' || edge.node.__typename === 'Collection' ? edge.node : null,
+          edge.node.__typename === 'Iscedfield' || edge.node.__typename === 'Collection' ? edge.node : null,
         )
         .filter(isJust)
         .map<FollowTag>(node => ({

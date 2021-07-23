@@ -1,29 +1,33 @@
 import { t, Trans } from '@lingui/macro'
 import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
-import { withCtrl } from '../../../lib/ctrl'
+import { CP, withCtrl } from '../../../lib/ctrl'
 import { SubmitForm, useFormikBag } from '../../../lib/formik'
 import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
-export type ActivationFormValues = { displayName: string, password: string }
+export type ActivationFormValues = { displayName: string; password: string }
 export type ActivationProps = {
-  accessHeaderProps: AccessHeaderProps
+  accessHeaderProps: CP<AccessHeaderProps, 'page'>
   onSubmit: SubmitForm<ActivationFormValues>
   activationErrorMessage: string | null
-  requestSent: boolean
 }
 
-export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, onSubmit, requestSent }) => {
-  const [form, attrs] = useFormikBag({ initialValues: { displayName: '', password: '' }, onSubmit })
+export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, onSubmit }) => {
+  const [form, attrs] = useFormikBag<ActivationFormValues>({
+    initialValues: { displayName: '', password: '' },
+    onSubmit,
+  })
   return (
     <MainPageWrapper>
-      <div className="activation-page" >
+      <div className="activation-page">
         <AccessHeader {...accessHeaderProps} page={'activation'} />
         <div className="separator" />
         <div className="main-content">
-          <Card><Trans>Account activated!</Trans></Card>
+          <Card>
+            <Trans>Account activated!</Trans>
+          </Card>
           <Card>
             <div className="content">
               <div className="title">
