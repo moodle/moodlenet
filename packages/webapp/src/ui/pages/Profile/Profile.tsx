@@ -40,7 +40,7 @@ export const Profile = withCtrl<ProfileProps>(
                 className="resources"
               />
               <ListCard
-                title={t`Collections curated by ${username}`}
+                title={`${t`Collections curated by`} ${username}`}
                 content={collectionCardPropsList.map(collectionCardProps => (
                   <CollectionCard {...collectionCardProps} />
                 ))}
@@ -50,7 +50,7 @@ export const Profile = withCtrl<ProfileProps>(
             <div className="side-column">
               <OverallCard {...overallCardProps} />
               <ListCard
-                title={t`Collections curated by ${username}`}
+                title={`${t`Collections curated by`} ${username}`}
                 content={collectionCardPropsList.map(collectionCardProps => (
                   <CollectionCard {...collectionCardProps} />
                 ))}
