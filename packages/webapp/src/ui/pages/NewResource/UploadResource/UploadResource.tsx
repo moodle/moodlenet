@@ -1,0 +1,44 @@
+import verifiedIcon from '../../../assets/icons/verified.svg'
+import SecondaryButton from '../../../components/atoms/SecondaryButton/SecondaryButton'
+import { withCtrl } from '../../../lib/ctrl'
+import './styles.scss'
+
+export type UploadResourceProps = {
+  backgroundUrl: string
+  username: string
+  avatarUrl: string
+  firstName: string
+  lastName: string
+  organizationName: string
+  location: string
+  siteUrl: string
+  description: string
+}
+
+export const UploadResource = withCtrl<UploadResourceProps>(
+  ({ avatarUrl, username, backgroundUrl, description, firstName, lastName, location, organizationName, siteUrl }) => {
+    return (
+      <div className="upload-resource">
+        <img className="background" src={backgroundUrl} alt="Background" />
+        <img className="avatar" src={avatarUrl} alt="Avatar" />
+        <div className="info">
+          <div className="title">
+            {firstName} {lastName}
+            <img className="verified-icon" src={verifiedIcon} alt="Verified" />
+          </div>
+          <div className="subtitle">
+            @{username}&nbsp; · &nbsp;
+            {organizationName} MoodleNet&nbsp; | &nbsp;
+            {location}&nbsp; · &nbsp;
+            <span style={{ cursor: 'pointer' }}>{siteUrl}</span>
+          </div>
+          <div className="presentation">{description}</div>
+          <div className="buttons">
+            <SecondaryButton>Edit UploadResource</SecondaryButton>
+            <SecondaryButton>Go to Setting</SecondaryButton>
+          </div>
+        </div>
+      </div>
+    )
+  },
+)
