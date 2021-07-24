@@ -1,5 +1,6 @@
 import { t, Trans } from '@lingui/macro'
 import CallMadeIcon from '@material-ui/icons/CallMade'
+import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryButton'
@@ -9,39 +10,37 @@ import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
-export type LoginFormValues = { username: string; password: string }
-export type LoginProps = {
+export type SignupFormValues = { email: string; username: string }
+export type SignupProps = {
   accessHeaderProps: AccessHeaderProps
-  onSubmit: SubmitForm<LoginFormValues>
-  loginErrorMessage: string | null
+  onSubmit: SubmitForm<SignupFormValues>
+  signupErrorMessage: string | null
+  requestSent: boolean
 }
 
-export const Login = withCtrl<LoginProps>(({ accessHeaderProps, onSubmit }) => {
-  const [form, attrs] = useFormikBag({ initialValues: { username: '', password: '' }, onSubmit })
+export const Signup = withCtrl<SignupProps>(({ accessHeaderProps, onSubmit, requestSent }) => {
+  const [form, attrs] = useFormikBag({ initialValues: { email: '' }, onSubmit })
   return (
     <MainPageWrapper>
-      <div className="login-page">
-        <AccessHeader {...accessHeaderProps} page={'login'}/>
+      <div className={`signup-page ${requestSent ? 'success' : ''}`}>
+        <AccessHeader {...accessHeaderProps} page={'signup'} />
         <div className="separator" />
-        <div className="content">
+        <div className={`signup-content ${requestSent ? 'success' : ''}`}>
+          <Card>
+            Sign in
+            <CallMadeIcon />
+          </Card>
           <Card>
             <div className="content">
               <div className="title">
-                <Trans>Login</Trans>
+                <Trans>Sign up</Trans>
               </div>
               <form>
                 <input
                   className="email"
                   type="text"
                   placeholder={t`Email`}
-                  {...attrs.username}
-                  onChange={form.handleChange}
-                />
-                <input
-                  className="password"
-                  type="password"
-                  placeholder={t`Password`}
-                  {...attrs.password}
+                  {...attrs.email}
                   onChange={form.handleChange}
                 />
               </form>
@@ -71,13 +70,22 @@ export const Login = withCtrl<LoginProps>(({ accessHeaderProps, onSubmit }) => {
               </div>
             </div>
           </Card>
-          <Card>
-            Sign up
-            <CallMadeIcon />
+        </div>
+        <div className={`success-content ${requestSent ? 'success' : ''}`}>
+        <Card>
+            <div className="content">
+              <div className="title">
+                <Trans>Email sent!</Trans>
+              </div>
+              <MailOutlineIcon className="icon" />
+              <div className="subtitle">
+                <Trans>Check out your inbox and activate your account</Trans>
+              </div>
+            </div>
           </Card>
         </div>
       </div>
     </MainPageWrapper>
   )
 })
-Login.displayName = 'LoginPage'
+Signup.displayName = 'SignUpPage'

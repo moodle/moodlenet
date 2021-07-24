@@ -7,7 +7,7 @@
   width: 100%;
   font-size: 0.7rem;
 
-  @media (max-width:675px) and (min-width:300px) {
+  @media (max-width:675px) {
     padding: 0 25px;
   }
 
@@ -19,8 +19,19 @@
     align-items: center;
     justify-content: space-between;
 
-    > .primary-button {
-      background-color: #7F8393;
+    > .buttons {
+      display: flex;
+      > .secondary-button:first-child {
+        display: none;
+      }
+      > .primary-button:last-child {
+        background-color: #7F8393;
+      }
+      @media (max-width:650px) {
+        > .secondary-button:first-child {
+          display: flex;
+        }
+      }
     }
   }
 }
