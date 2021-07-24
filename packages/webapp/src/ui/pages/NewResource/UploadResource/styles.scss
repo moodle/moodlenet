@@ -1,0 +1,89 @@
+.upload-resource {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%);
+
+  @media (max-width: 450px) {
+    box-shadow: none;
+    border-radius: 0;
+    margin-top: 0;
+  }
+
+  .background {
+    cursor: pointer;
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 16px 16px 0 0;
+    @media (max-width: 450px) {
+      border-radius: 0;
+    }
+  }
+
+  .avatar {
+      cursor: pointer;
+      z-index: 3;
+      border: 2px solid white;
+      border-radius: 15px;
+      width: 75px;
+      height: 75px;
+      object-fit: cover;
+      margin-left: 40px;
+      margin-top: -39px;
+  }
+
+  .info {
+    margin-top: 13px;
+    margin-left: 40px;
+    margin-right: 20%;
+    @media (max-width: 450px) {
+      margin-right: 40px;
+    }
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: bold;
+  }
+
+  .verified-icon {
+    max-height: 10px;
+    margin-left: 5px;
+  }
+
+  .subtitle {
+    margin-top: 3px;
+    font-size: 8px;
+  }
+
+  .presentation {
+    margin-top: 12px;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 1.25;
+  }
+
+  .buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 22px;
+  }
+
+  .button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border: 2px solid black;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 10px;
+    height: 25px;
+    padding: 6px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+}
