@@ -1,8 +1,8 @@
 import { t, Trans } from '@lingui/macro'
-import addIcon from '../../assets/icons/add.svg'
 import { Href, Link } from '../../elements/link'
 import { withCtrl } from '../../lib/ctrl'
 import { Organization } from '../../types'
+import AddButton from '../atoms/AddButton/AddButton'
 import PrimaryButton from '../atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../atoms/Searchbox/Searchbox'
 import TertiaryButton from '../atoms/TertiaryButton/TertiaryButton'
@@ -26,13 +26,15 @@ export type HeaderPropsLoading = HeaderPropsBase & {
 export type HeaderPropsBase = {
   homeHref: Href
   loginHref: Href
+  newResourceHref: Href
+  newCollectionHref: Href
   setSearchText(text: string): unknown
   searchText: string
 }
 export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
 
 export const Header = withCtrl<HeaderProps>(props => {
-  const { homeHref, loginHref, searchText, setSearchText } = props
+  const { homeHref, loginHref, newResourceHref, newCollectionHref, searchText, setSearchText } = props
   if (props.status === 'loading') {
     return null
   }
@@ -48,7 +50,7 @@ export const Header = withCtrl<HeaderProps>(props => {
           <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for anything!`} />
           {me ? (
             <>
-              <img className="add-icon" src={addIcon} alt="Add" />
+              <AddButton newResourceHref={newResourceHref} newCollectionHref={newCollectionHref} />
               <Link href={me.myProfileHref}>
                 <img className="avatar" src={me.avatar} alt="Avatar" />
               </Link>
