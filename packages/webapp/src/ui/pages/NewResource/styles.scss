@@ -43,41 +43,4 @@
         display: flex;
         justify-content: space-between;
     }
-
-    .main-column {
-        width: 65%;
-        height: 100%;
-
-        .collections {
-            display: none;
-        }
-
-        > :not(:last-child) {
-            margin-bottom: 16px;
-        }  
-    }
-
-    .side-column {
-        width: 32%;
-        height: 100%;
-    }
-
-    @media screen and (max-width: 800px) {
-        .main-column {
-            width: 100%;
-            height: 100%;
-
-            > .collections {
-                display: block;
-            }
-        }
-
-        .side-column {
-            display: none;
-            width: 325px;
-            height: 100%;
-            background-color: yellow;
-
-        }
-    }
 }

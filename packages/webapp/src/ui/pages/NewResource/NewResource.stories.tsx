@@ -6,6 +6,7 @@ import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.storie
 import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { NewResource, NewResourceProps } from './NewResource'
+import { UploadResourceStoryProps } from './UploadResource/UploadResource.stories'
 
 const meta: ComponentMeta<typeof NewResource> = {
   title: 'Pages/New Resource',
@@ -28,6 +29,7 @@ export const NewResourceStoryProps: NewResourceProps = {
   // scoreCardProps: ScoreCardStoryProps,
   collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
   resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
+  uploadResource: UploadResourceStoryProps,
   username: 'Juanito',
 }
 
