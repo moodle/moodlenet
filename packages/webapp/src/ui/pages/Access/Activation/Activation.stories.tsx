@@ -4,7 +4,7 @@ import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
 import { Activation, ActivationProps } from './Activation'
 
 const meta: ComponentMeta<typeof Activation> = {
-  title: 'Pages/SignUp',
+  title: 'Pages/Activation',
   component: Activation,
   excludeStories: ['SignupStoryProps', 'ActivationStoryProps'],
 }
