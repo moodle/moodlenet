@@ -1,39 +1,30 @@
-import { CollectionCardProps } from '../../components/cards/CollectionCard/CollectionCard'
-import { OverallCardProps } from '../../components/cards/OverallCard/OverallCard'
-import { ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
+import ProgressState from '../../components/atoms/ProgressState/ProgressState'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import './styles.scss'
 import { UploadResource, UploadResourceProps } from './UploadResource/UploadResource'
 
+export type NewResourceState = 'UploadResource' |'Collections' | 'ExtraData'
+export type NewResourceProgressState = [NewResourceState, string][]
+
 export type NewResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
-  overallCardProps: OverallCardProps
   uploadResource: UploadResourceProps
-  collectionCardPropsList: CP<CollectionCardProps>[]
-  resourceCardPropsList: CP<ResourceCardProps>[]
-  username: string
-  state: 'Initial' | 'MainData' |'Collections' | 'ExtraData'
+  states: NewResourceProgressState
+  currentState: NewResourceState
 }
 
 export const NewResource = withCtrl<NewResourceProps>(
   ({
     headerPageTemplateProps,
-    overallCardProps,
-    collectionCardPropsList,
-    resourceCardPropsList,
     uploadResource,
-    username,
-    state
+    states,
+    currentState
   }) => {
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <div className="new-resource">
-          <div className="progress-header">
-            <div className="title"><span>1</span>Upload Resource</div>
-            <div className={`progress-bar ${state}`}><div></div><div></div><div></div>   
-          </div>
-          </div>
+          <ProgressState states={states} currentState={currentState} />
           <div className="content">
               <UploadResource {...uploadResource} />
           </div>
