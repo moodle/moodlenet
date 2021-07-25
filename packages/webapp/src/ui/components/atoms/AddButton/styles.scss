@@ -1,36 +1,49 @@
 .add-button {
+    cursor: pointer;
     position: relative;
     float: right;
     > .add-icon {
         max-height: 30px;
     }
     >.menu {
+        visibility: hidden;
+        display: none;
         position: absolute;
         width: max-content;
         display: flex;
-        flex-direction: column;
-        right: 0;
-        background-color: white;
-        border: 1px solid #b6b6b6;
-        border-radius: 9px;
-        top: 38px;
-        gap: 14px;
-        flex-wrap: wrap;
-        padding: 15px;
-
-        > a {
-            text-decoration: inherit;
-            color: inherit;
-            font-size: 14px;
-            font-family: inherit;
+        right: -12px;
+        padding-top: 8px;
+        
+        > .content {
             display: flex;
-            align-items: center;
-            color: black;
+            flex-direction: column;
+            background-color: white;
+            border: 1px solid #b6b6b6;
+            border-radius: 9px;
+            gap: 14px;
+            flex-wrap: wrap;
+            padding: 15px;
 
-            > svg {
-                margin-right: 14px;
-                color: grey;
+            > a {
+                text-decoration: inherit;
+                color: inherit;
+                font-size: 14px;
+                font-family: inherit;
+                display: flex;
+                align-items: center;
+                color: black;
+
+                > svg {
+                    margin-right: 14px;
+                    color: grey;
+                }
             }
         }
     }
+}
+
+
+
+.add-button:hover .menu {
+    visibility: visible;
 }
