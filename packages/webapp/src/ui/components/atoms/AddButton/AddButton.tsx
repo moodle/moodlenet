@@ -16,14 +16,16 @@ export const AddButton: FC<AddButtonProps> = ({ onClick, newResourceHref, newCol
     <div className="add-button" onClick={onClick}>
       <img className="add-icon" src={addIcon} alt="Add" />
       <div className="menu">
-        <Link href={newResourceHref}>
-          <NoteAddIcon />
-          New Resource
-        </Link>
-        <Link href={newCollectionHref}>
-          <LibraryAddIcon />
-          New Collection
-        </Link>
+        <div className="content">
+          <Link href={newResourceHref}>
+            <NoteAddIcon />
+            New Resource
+          </Link>
+          <Link href={newCollectionHref}>
+            <LibraryAddIcon />
+            New Collection
+          </Link>
+        </div>
       </div>
     </div>
   )
