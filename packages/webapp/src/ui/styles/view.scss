@@ -23,7 +23,7 @@
   max-width: 1100px;
 }
 
-.logged-in {
+.double-header-page {
   padding: 120px 100px 50px 100px;
 
   @media (max-width:450px) {
@@ -35,7 +35,7 @@
   }
 }
 
-.logged-out {
+.single-header-page {
   padding: 60px 100px 50px 100px;
 
   @media (max-width:450px) {

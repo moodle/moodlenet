@@ -11,8 +11,10 @@
         position: absolute;
         width: max-content;
         display: flex;
-        right: -12px;
-        padding-top: 8px;
+        right: -40px;
+        padding-right: 32px;
+        top: 10px;
+        padding-top: 28px;
         
         > .content {
             display: flex;
@@ -35,7 +37,7 @@
 
                 > svg {
                     margin-right: 14px;
-                    color: grey;
+                    color: #a7a7a7;
                 }
             }
         }
@@ -44,6 +46,6 @@
 
 
 
-.add-button:hover .menu {
+.add-button:hover .menu, .add-button:active .menu {
     visibility: visible;
 }
