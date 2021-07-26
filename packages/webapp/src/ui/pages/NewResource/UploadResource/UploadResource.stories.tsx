@@ -14,15 +14,9 @@ const meta: ComponentMeta<typeof UploadResource> = {
 }
 
 export const UploadResourceStoryProps: UploadResourceProps = {
-  backgroundUrl: 'https://picsum.photos/200/100',
-  username: 'juanito',
-  avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
-  firstName: 'Juanito',
-  lastName: 'Rodriguez',
-  organizationName: 'UM',
-  location: 'Malta',
-  siteUrl: 'https://iuri.is/',
-  description: 'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.'
+  state: 'Initial',
+  type: '',
+  imageUrl: 'https://picsum.photos/200/100'
 }
 
 const UploadResourceStory: ComponentStory<typeof UploadResource> = args => <UploadResource {...args} />

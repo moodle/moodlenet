@@ -7,15 +7,25 @@ export type HeaderPageProps = {
   headerProps: CP<HeaderProps>
   subHeaderProps: SubHeaderProps,
   isAuthenticated: boolean
+  showSubHeader?: boolean
 }
 
-export const HeaderPage = withCtrl<HeaderPageProps>(({ headerProps, subHeaderProps, isAuthenticated }) => {
+export const HeaderPage = withCtrl<HeaderPageProps>(({ 
+  headerProps, 
+  subHeaderProps, 
+  isAuthenticated ,
+  showSubHeader 
+}) => {
   return (
     <div className="page-header">
       <Header {...headerProps} />
-      { isAuthenticated && <SubHeader {...subHeaderProps} />}
+      { isAuthenticated && showSubHeader && <SubHeader {...subHeaderProps} />}
     </div>
   )
 })
 HeaderPage.displayName = 'HeaderPage'
+HeaderPage.defaultProps = {
+  showSubHeader: true
+}
 export default HeaderPage
+

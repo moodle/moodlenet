@@ -1,6 +1,4 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
-import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { UploadResourceStoryProps } from './UploadResource/UploadResource.stories'
@@ -15,8 +13,8 @@ const meta: ComponentMeta<typeof NewResource> = {
   excludeStories: [
     'NewResourceProgressStateStory',
     'NewResourceStoryProps', 
-    'NewResourceLoggedOutStoryProps', 
-    'NewResourceLoggedInStoryProps'
+    'NewResourceCollectionsStoryProps',
+    'NewResourceExtraDataStoryProps'
   ],
 }
 
@@ -30,47 +28,35 @@ export const NewResourceProgressStateStory: NewResourceProgressState = [
 
 export const NewResourceStoryProps: NewResourceProps = {
   headerPageTemplateProps: {
-    headerPageProps: HeaderPageLoggedInStoryProps,
+    headerPageProps: {
+      ...HeaderPageLoggedInStoryProps,
+      showSubHeader: false
+    },
     isAuthenticated: true,
+    showSubHeader: false
   },
   uploadResource: UploadResourceStoryProps,
   states: NewResourceProgressStateStory,
   currentState: 'UploadResource'  
 }
 
-export const NewResourceLoggedOutStoryProps: NewResourceProps = {
+export const NewResourceCollectionsStoryProps: NewResourceProps = {
   ...NewResourceStoryProps,
-  headerPageTemplateProps: {
-    isAuthenticated: false,
-    headerPageProps: {
-      isAuthenticated: false,
-      headerProps: {
-        ...HeaderLoggedOutStoryProps,
-        me: null,
-      },
-      subHeaderProps: {
-        tags: [],
-      },
-    },
-  },
+  currentState: 'Collections'
 }
 
-export const NewResourceLoggedInStoryProps: NewResourceProps = {
+export const NewResourceExtraDataStoryProps: NewResourceProps = {
   ...NewResourceStoryProps,
-  headerPageTemplateProps: {
-    isAuthenticated: true,
-    headerPageProps: {
-      isAuthenticated: true,
-      headerProps: HeaderLoggedOutStoryProps,
-      subHeaderProps: SubHeaderStoryProps,
-    },
-  },
+  currentState: 'ExtraData'
 }
 
-export const LoggedOut = NewResourceStory.bind({})
-LoggedOut.args = NewResourceLoggedOutStoryProps
+export const UploadResource = NewResourceStory.bind({})
+UploadResource.args = NewResourceStoryProps
 
-export const LoggedIn = NewResourceStory.bind({})
-LoggedIn.args = NewResourceLoggedInStoryProps
+export const Collections = NewResourceStory.bind({})
+Collections.args = NewResourceCollectionsStoryProps
+
+export const ExtraData = NewResourceStory.bind({})
+ExtraData.args = NewResourceExtraDataStoryProps
 
 export default meta

@@ -21,7 +21,8 @@
         width: 100%;
         height: auto;
         display: flex;
-        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 3%;
         > * {
             width: 31%;
             height: 9px;
