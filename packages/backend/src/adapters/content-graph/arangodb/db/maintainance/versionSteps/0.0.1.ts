@@ -1,5 +1,6 @@
 import { GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
 import { BumbNodeStatus, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import { newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { /* rootUser, */ getRootUser, localOrganizationData } from '../../../../../../initialData/content'
 import { iscedfields } from '../../../../../../initialData/ISCED/Fields/Iscedfields'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
@@ -26,11 +27,13 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
     const _bumpStatus: BumbNodeStatus = { date: Number(new Date()), status: 'Active' }
 
     const localOrg = localOrganizationData({ domain })
+
     await justExecute(
       createNodeQ({
         nodeType: 'Organization',
         data: {
           _bumpStatus: localOrg._bumpStatus,
+          _permId: localOrg._permId,
           _slug: localOrg._slug,
           color: localOrg.color,
           domain: localOrg.domain,
@@ -49,6 +52,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
         data: {
           _slug: rootUser.slug,
           _authId: rootUser.rootAuthId,
+          _permId: rootUser.rootPermId,
           _bumpStatus,
           avatar: null,
           bio: '',
@@ -74,6 +78,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
             nodeType: 'Iscedf',
             data: {
               _bumpStatus,
+              _permId: newGlyphPermId(),
               _slug: subj_field_data._slug,
               codePath: subj_field_data.codePath,
               description: subj_field_data.description,
