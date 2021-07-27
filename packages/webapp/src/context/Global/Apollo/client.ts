@@ -25,7 +25,7 @@ const cache = new InMemoryCache({
     },
   },
 })
-
+window.cache=cache.data.data
 let authToken: string | null = null
 
 export const setToken = (token: string | null) => (authToken = token)

@@ -51,7 +51,7 @@ const doMany = async <T>(tag: string, amount: number, fn: (i: number) => Promise
 
 ;(async function () {
   await doMany('SUBJECTS', SUBJECTS_AMOUNT, () => {
-    return createNewFakeNode({ type: 'Iscedfield' })
+    return createNewFakeNode({ type: 'Iscedf' })
   })
   await doMany('PROFILES', PROFILES_AMOUNT, () => {
     return createNewFakeNode({ type: 'Profile' })

@@ -1,8 +1,8 @@
+import { getRootUser } from '../../../../../../initialData/content'
 import { DefaultConfig } from '../../../../../../initialData/user-auth/defaultConfig'
-import initialUsers from '../../../../../../initialData/user-auth/initialUsers'
 import { argonHashPassword } from '../../../../../../lib/auth/argon'
-import { justExecute } from '../../../../../../lib/helpers/arango'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
+import { justExecute } from '../../../../../../lib/helpers/arango/query'
 import { MNStaticEnv } from '../../../../../../lib/types'
 import { saveConfigQ } from '../../../queries/config'
 import { createNewUserQ } from '../../../queries/createNewUser'
@@ -16,11 +16,17 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
 
     console.log(`creating user-auth collection ${USER}`)
     await db.createCollection(USER)
-    await Promise.all(
-      initialUsers({ domain }).map(async userData => {
-        userData.password = await argonHashPassword({ pwd: userData.password })
-        return justExecute(createNewUserQ(userData), db)
+
+    const rootUser = getRootUser({ domain })
+    const rootUserPassword = await argonHashPassword({ pwd: rootUser.clearPassword })
+    await justExecute(
+      createNewUserQ({
+        status: 'Active',
+        email: rootUser.email,
+        authId: rootUser.rootAuthId,
+        password: rootUserPassword,
       }),
+      db,
     )
   },
 }

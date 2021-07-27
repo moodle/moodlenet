@@ -2,10 +2,10 @@ query HeaderPagePinned($currentProfileId: ID!) {
   node(id: $currentProfileId) {
     ... on INode {
       id
-      pinnedList: _rel(edge: { type: Follows, node: Iscedfield }, page: { first: 10 }) {
+      pinnedList: _rel(edge: { type: Follows, node: Iscedf }, page: { first: 10 }) {
         edges {
           node {
-            ... on Iscedfield {
+            ... on Iscedf {
               id
               name
               icon

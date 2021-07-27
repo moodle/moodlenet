@@ -10,7 +10,7 @@ import { JwtPrivateKey } from '../../lib/auth/jwt'
 import { QMino } from '../../lib/qmino'
 
 export type GQLAppConfig = {
-  additionalResolvers: any
+  additionalResolvers: object | null
   jwtSignOptions: SignOptions
   jwtPrivateKey: JwtPrivateKey
   qmino: QMino

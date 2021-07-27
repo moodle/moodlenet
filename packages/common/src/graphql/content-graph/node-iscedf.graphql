@@ -1,0 +1,26 @@
+type Iscedf implements INode {
+  name: String!
+  description: String!
+  codePath: [String!]!
+  iscedCode: String!
+  thumbnail: AssetRef
+  image: AssetRef
+  # INode
+  id: ID!
+  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput): RelPage!
+  _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
+}
+
+# integrations
+union Node = Iscedf
+enum NodeType {
+  Iscedf
+}
+
+input CreateNodeInput {
+  Iscedf: Never
+}
+
+input EditNodeInput {
+  Iscedf: Never
+}

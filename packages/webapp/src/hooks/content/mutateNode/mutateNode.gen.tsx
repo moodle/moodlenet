@@ -31,7 +31,7 @@ export type BasicCreateNodeMutationPayload_CreateNodeMutationSuccess_Fragment = 
     | ({ __typename: 'Organization' } & Pick<Types.Organization, 'id'>)
     | ({ __typename: 'Profile' } & Pick<Types.Profile, 'id'>)
     | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id'>)
-    | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id'>)
+    | ({ __typename: 'Iscedf' } & Pick<Types.Iscedf, 'id'>)
 }
 
 export type BasicCreateNodeMutationPayload_CreateNodeMutationError_Fragment = {

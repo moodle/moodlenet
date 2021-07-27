@@ -1,28 +1,27 @@
-import { ActiveUser } from '../../adapters/user-auth/arangodb/types'
-import { GuestSessionEnvUser, SystemSessionEnvUser } from '../../lib/auth/env'
+import { ActiveUser } from '@moodlenet/common/lib/user-auth/types'
 import { PasswordVerifier } from '../../lib/auth/types'
 import { QMModule, QMQuery } from '../../lib/qmino'
 
 export type Adapter = {
-  getActiveUserByUsername(_: { username: string }): Promise<ActiveUser | null>
+  getActiveUserByEmail(_: { email: string }): Promise<ActiveUser | null>
   verifyPassword: PasswordVerifier
 }
-export type Input = { username: string; matchPassword: string | false }
-export const getActiveByUsername = QMQuery(
-  ({ username, matchPassword }: Input) =>
-    async ({ getActiveUserByUsername, verifyPassword }: Adapter) => {
-      if (username === GuestSessionEnvUser.name || username === SystemSessionEnvUser.name) {
-        return null
-      }
-      const activeUser = await getActiveUserByUsername({ username })
+export type Input = { email: string; matchHashedPassword: string | false }
+export const getActiveByEmail = QMQuery(
+  ({ email, matchHashedPassword }: Input) =>
+    async ({ getActiveUserByEmail, verifyPassword }: Adapter) => {
+      const activeUser = await getActiveUserByEmail({ email })
       if (!activeUser) {
         return null
       }
-      if (matchPassword === false) {
+      if (matchHashedPassword === false) {
         return activeUser
       }
-      const passwordMatch = await verifyPassword({ pwdhash: activeUser.password, pwd: matchPassword })
-      if (!passwordMatch) {
+      const passwordMatches = await verifyPassword({
+        providedPwdHash: matchHashedPassword,
+        currentPwdHash: activeUser.password,
+      })
+      if (!passwordMatches) {
         return null
       }
       return activeUser

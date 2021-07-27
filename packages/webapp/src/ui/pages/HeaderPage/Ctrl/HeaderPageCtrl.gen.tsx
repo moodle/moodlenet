@@ -18,7 +18,7 @@ export type HeaderPagePinnedQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id' | 'name' | 'icon'>)
+                  | ({ __typename: 'Iscedf' } & Pick<Types.Iscedf, 'id' | 'name' | 'icon'>)
               }
             >
           }
@@ -32,7 +32,7 @@ export type HeaderPagePinnedQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id' | 'name' | 'icon'>)
+                  | ({ __typename: 'Iscedf' } & Pick<Types.Iscedf, 'id' | 'name' | 'icon'>)
               }
             >
           }
@@ -46,7 +46,7 @@ export type HeaderPagePinnedQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id' | 'name' | 'icon'>)
+                  | ({ __typename: 'Iscedf' } & Pick<Types.Iscedf, 'id' | 'name' | 'icon'>)
               }
             >
           }
@@ -60,12 +60,12 @@ export type HeaderPagePinnedQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id' | 'name' | 'icon'>)
+                  | ({ __typename: 'Iscedf' } & Pick<Types.Iscedf, 'id' | 'name' | 'icon'>)
               }
             >
           }
         })
-    | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id'> & {
+    | ({ __typename: 'Iscedf' } & Pick<Types.Iscedf, 'id'> & {
           pinnedList: { __typename: 'RelPage' } & {
             edges: Array<
               { __typename: 'RelPageEdge' } & {
@@ -74,7 +74,7 @@ export type HeaderPagePinnedQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id' | 'name' | 'icon'>)
+                  | ({ __typename: 'Iscedf' } & Pick<Types.Iscedf, 'id' | 'name' | 'icon'>)
               }
             >
           }
@@ -87,10 +87,10 @@ export const HeaderPagePinnedDocument = gql`
     node(id: $currentProfileId) {
       ... on INode {
         id
-        pinnedList: _rel(edge: { type: Follows, node: Iscedfield }, page: { first: 10 }) {
+        pinnedList: _rel(edge: { type: Follows, node: Iscedf }, page: { first: 10 }) {
           edges {
             node {
-              ... on Iscedfield {
+              ... on Iscedf {
                 id
                 name
                 icon

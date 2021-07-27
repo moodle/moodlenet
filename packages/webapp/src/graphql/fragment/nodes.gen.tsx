@@ -23,8 +23,8 @@ export type BaseIContentNode_Resource_Fragment = { __typename: 'Resource' } & Pi
   'name' | 'icon' | 'summary'
 >
 
-export type BaseIContentNode_Iscedfield_Fragment = { __typename: 'Iscedfield' } & Pick<
-  Types.Iscedfield,
+export type BaseIContentNode_Iscedfield_Fragment = { __typename: 'Iscedf' } & Pick<
+  Types.Iscedf,
   'name' | 'icon' | 'summary'
 >
 
@@ -55,9 +55,9 @@ export type BaseINode_Resource_Fragment = { __typename: 'Resource' } & Pick<Type
     likersCount: Types.Resource['_relCount']
   }
 
-export type BaseINode_Iscedfield_Fragment = { __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id'> & {
-    followersCount: Types.Iscedfield['_relCount']
-    likersCount: Types.Iscedfield['_relCount']
+export type BaseINode_Iscedfield_Fragment = { __typename: 'Iscedf' } & Pick<Types.Iscedf, 'id'> & {
+    followersCount: Types.Iscedf['_relCount']
+    likersCount: Types.Iscedf['_relCount']
   }
 
 export type BaseINodeFragment =

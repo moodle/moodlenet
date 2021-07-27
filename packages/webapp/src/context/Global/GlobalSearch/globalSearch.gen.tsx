@@ -36,7 +36,7 @@ export type GlobalSearchEdgeFragment = { __typename: 'SearchPageEdge' } & Pick<T
       | ({ __typename: 'Organization' } & BaseINode_Organization_Fragment & BaseIContentNode_Organization_Fragment)
       | ({ __typename: 'Profile' } & BaseINode_Profile_Fragment & BaseIContentNode_Profile_Fragment)
       | ({ __typename: 'Resource' } & BaseINode_Resource_Fragment & BaseIContentNode_Resource_Fragment)
-      | ({ __typename: 'Iscedfield' } & BaseINode_Iscedfield_Fragment & BaseIContentNode_Iscedfield_Fragment)
+      | ({ __typename: 'Iscedf' } & BaseINode_Iscedfield_Fragment & BaseIContentNode_Iscedfield_Fragment)
   }
 
 export const GlobalSearchEdgeFragmentDoc = gql`

@@ -14,7 +14,7 @@ export type LocalInstanceQuery = { __typename: 'Query' } & {
       >)
     | { __typename: 'Profile' }
     | { __typename: 'Resource' }
-    | { __typename: 'Iscedfield' }
+    | { __typename: 'Iscedf' }
   >
 }
 
