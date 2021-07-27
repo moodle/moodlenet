@@ -15,16 +15,14 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
   const trendingQ = useGlobalSearchQuery({
     variables: {
       sortBy: 'Popularity',
-      nodeTypes: ['Collection', 'Iscedfield'],
+      nodeTypes: ['Collection', 'Iscedf'],
       text: '',
     },
   })
   const tags = useMemo(
     () =>
       trendingQ.data?.globalSearch.edges
-        .map(edge =>
-          edge.node.__typename === 'Iscedfield' || edge.node.__typename === 'Collection' ? edge.node : null,
-        )
+        .map(edge => (edge.node.__typename === 'Iscedf' || edge.node.__typename === 'Collection' ? edge.node : null))
         .filter(isJust)
         .map<FollowTag>(node => ({
           name: node.name,

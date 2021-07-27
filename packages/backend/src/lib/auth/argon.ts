@@ -16,6 +16,6 @@ export const argonHashPassword = async (_: { pwd: string; argonPwdHashOpts?: Arg
 
 export const argonVerifyPassword =
   (argonPwdHashOpts = defaultArgonPwdHashOpts): PasswordVerifier =>
-  async ({ pwd, pwdhash }) => {
+  async ({ currentPwdHash: pwd, providedPwdHash: pwdhash }) => {
     return Argon.verify(pwdhash, pwd, argonPwdHashOpts)
   }

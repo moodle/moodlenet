@@ -1,16 +1,15 @@
-import { getProfileIdByUsername } from '@moodlenet/common/lib/utils/auth/helpers'
-import { EdgeType, NodeType } from '../../../../../../graphql/types.node'
-import { initialProfiles } from '../../../../../../initialData/content-graph/content'
+import { GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
+import { BumbNodeStatus, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import { /* rootUser, */ getRootUser, localOrganizationData } from '../../../../../../initialData/content'
 import { iscedfields } from '../../../../../../initialData/ISCED/Fields/Iscedfields'
-import { SystemSessionEnvUser } from '../../../../../../lib/auth/env'
-import { justExecute } from '../../../../../../lib/helpers/arango'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
+import { justExecute } from '../../../../../../lib/helpers/arango/query'
 import { MNStaticEnv } from '../../../../../../lib/types'
 import { createNodeQ } from '../../../functions/createNode'
 import { setupSearchView } from './0.0.1/setupSearchView'
 
-const nodes: NodeType[] = ['Profile', 'Collection', 'Resource', 'Iscedfield']
-const edges: EdgeType[] = ['Contains', 'Likes', 'Follows', 'Created', 'Edited', 'AppliesTo']
+const nodes: GraphNodeType[] = ['Profile', 'Collection', 'Resource', 'Iscedf', 'Organization']
+const edges: GraphEdgeType[] = ['Created', 'HasOpBadge']
 
 const init_0_0_1: VersionUpdater<MNStaticEnv> = {
   async initialSetUp({ db, ctx: { domain } }) {
@@ -24,32 +23,66 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
       const edgeCollection = await db.createEdgeCollection(edgeCollName)
       return edgeCollection
     })
+    const _bumpStatus: BumbNodeStatus = { date: Number(new Date()), status: 'Active' }
 
-    const creatorProfileId = getProfileIdByUsername(SystemSessionEnvUser.name)
-
-    await Promise.all(
-      initialProfiles({ domain }).map(async profileData => {
-        console.log(`creating profile ${profileData.name}`)
-        await justExecute(
-          createNodeQ({
-            creatorProfileId,
-            nodeType: 'Profile',
-            data: profileData,
-            key: profileData.name,
-          }),
-          db,
-        ).catch(e => {
-          console.log({ e, name: profileData.name })
-          throw e
-        })
+    const localOrg = localOrganizationData({ domain })
+    await justExecute(
+      createNodeQ({
+        nodeType: 'Organization',
+        data: {
+          _bumpStatus: localOrg._bumpStatus,
+          _slug: localOrg._slug,
+          color: localOrg.color,
+          domain: localOrg.domain,
+          intro: localOrg.intro,
+          logo: localOrg.logo,
+          name: localOrg.name,
+        },
       }),
+      db,
     )
+    const rootUser = getRootUser({ domain })
+    console.log(`creating rootUser profile`)
+    await justExecute(
+      createNodeQ({
+        nodeType: 'Profile',
+        data: {
+          _slug: rootUser.slug,
+          _authId: rootUser.rootAuthId,
+          _bumpStatus,
+          avatar: null,
+          bio: '',
+          displayName: '',
+          firstName: null,
+          image: null,
+          lastName: null,
+          location: null,
+          siteUrl: null,
+        },
+      }),
+      db,
+    ).catch(e => {
+      console.log({ e, name: 'rootUser' })
+      throw e
+    })
 
     await Promise.all(
       iscedfields.map(async subj_field_data => {
-        console.log(`creating subject ${subj_field_data.name} ${subj_field_data.code}`)
+        console.log(`creating subject ${subj_field_data.name} ${subj_field_data.iscedCode}`)
         await justExecute(
-          createNodeQ({ nodeType: 'Iscedfield', key: subj_field_data.code, data: subj_field_data, creatorProfileId }),
+          createNodeQ({
+            nodeType: 'Iscedf',
+            data: {
+              _bumpStatus,
+              _slug: subj_field_data._slug,
+              codePath: subj_field_data.codePath,
+              description: subj_field_data.description,
+              iscedCode: subj_field_data.iscedCode,
+              image: subj_field_data.image,
+              name: subj_field_data.name,
+              thumbnail: subj_field_data.thumbnail,
+            },
+          }),
           db,
         ).catch(e => {
           console.log({ e, name: subj_field_data.name })

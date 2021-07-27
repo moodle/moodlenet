@@ -1,0 +1,38 @@
+type OpBadge implements INode {
+  type: OpBadgeType!
+  descripton: String!
+  # INode
+  id: ID!
+  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput): RelPage!
+  _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
+}
+
+enum OpBadgeType {
+  Admin
+  Editor
+}
+
+# integrations
+union Node = OpBadge
+enum NodeType {
+  OpBadge
+}
+
+input CreateNodeInput {
+  OpBadge: Never
+}
+
+input EditProfileInput {
+  displayName: String!
+  avatar: AssetRef
+  bio: String!
+  image: AssetRef
+  firstName: String
+  lastName: String
+  siteUrl: String
+  location: String
+  slug: String!
+}
+input EditNodeInput {
+  OpBadge: EditProfileInput
+}

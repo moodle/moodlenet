@@ -21,7 +21,7 @@ export type SubjectCardQuery = { __typename: 'Query' } & {
     | ({ __typename: 'Resource' } & Pick<Types.Resource, 'name' | 'icon' | 'id'> & {
           _organization?: Types.Maybe<{ __typename: 'Organization' } & Pick<Types.Organization, 'domain' | 'color'>>
         })
-    | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'name' | 'icon' | 'id'> & {
+    | ({ __typename: 'Iscedf' } & Pick<Types.Iscedf, 'name' | 'icon' | 'id'> & {
           _organization?: Types.Maybe<{ __typename: 'Organization' } & Pick<Types.Organization, 'domain' | 'color'>>
         })
   >

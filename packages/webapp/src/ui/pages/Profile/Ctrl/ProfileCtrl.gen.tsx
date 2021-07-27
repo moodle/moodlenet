@@ -21,7 +21,7 @@ export type ProfilePageUserDataQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
@@ -33,7 +33,7 @@ export type ProfilePageUserDataQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
@@ -50,7 +50,7 @@ export type ProfilePageUserDataQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
@@ -62,7 +62,7 @@ export type ProfilePageUserDataQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
@@ -79,7 +79,7 @@ export type ProfilePageUserDataQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
@@ -91,7 +91,7 @@ export type ProfilePageUserDataQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
@@ -108,7 +108,7 @@ export type ProfilePageUserDataQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
@@ -120,14 +120,14 @@ export type ProfilePageUserDataQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
         })
-    | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'id'> & {
-          followersCount: Types.Iscedfield['_relCount']
-          resourcesCount: Types.Iscedfield['_relCount']
+    | ({ __typename: 'Iscedf' } & Pick<Types.Iscedf, 'id'> & {
+          followersCount: Types.Iscedf['_relCount']
+          resourcesCount: Types.Iscedf['_relCount']
         } & {
           collections: { __typename: 'RelPage' } & {
             edges: Array<
@@ -137,7 +137,7 @@ export type ProfilePageUserDataQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
@@ -149,7 +149,7 @@ export type ProfilePageUserDataQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }

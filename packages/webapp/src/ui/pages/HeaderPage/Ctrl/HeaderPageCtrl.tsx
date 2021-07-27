@@ -21,7 +21,7 @@ export const useHeaderPageCtrl: CtrlHook<HeaderPageProps, {}> = () => {
   const subHeaderProps = useMemo<SubHeaderProps>(() => {
     const tags =
       pinned.data?.node?.pinnedList.edges
-        .map(edge => (edge.node.__typename === 'Iscedfield' ? edge.node : null))
+        .map(edge => (edge.node.__typename === 'Iscedf' ? edge.node : null))
         .filter(isJust)
         .map<FollowTag>(({ name }) => ({
           name,

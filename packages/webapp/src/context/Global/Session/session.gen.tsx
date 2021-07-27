@@ -20,7 +20,7 @@ export type GetCurrentProfileQuery = { __typename: 'Query' } & {
     | { __typename: 'Organization' }
     | ({ __typename: 'Profile' } & CurrentProfileInfoFragment)
     | { __typename: 'Resource' }
-    | { __typename: 'Iscedfield' }
+    | { __typename: 'Iscedf' }
   >
 }
 
@@ -54,7 +54,7 @@ export type CurrentProfileInfoFragment = { __typename: 'Profile' } & {
           | { __typename: 'Organization' }
           | { __typename: 'Profile' }
           | { __typename: 'Resource' }
-          | { __typename: 'Iscedfield' }
+          | { __typename: 'Iscedf' }
       }
     >
   }

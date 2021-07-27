@@ -18,7 +18,7 @@ export type ResourceCardQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
@@ -32,7 +32,7 @@ export type ResourceCardQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
@@ -46,7 +46,7 @@ export type ResourceCardQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
@@ -60,12 +60,12 @@ export type ResourceCardQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
         })
-    | ({ __typename: 'Iscedfield' } & Pick<Types.Iscedfield, 'name' | 'icon' | 'id'> & {
+    | ({ __typename: 'Iscedf' } & Pick<Types.Iscedf, 'name' | 'icon' | 'id'> & {
           inCollections: { __typename: 'RelPage' } & {
             edges: Array<
               { __typename: 'RelPageEdge' } & {
@@ -74,7 +74,7 @@ export type ResourceCardQuery = { __typename: 'Query' } & {
                   | { __typename: 'Organization' }
                   | { __typename: 'Profile' }
                   | { __typename: 'Resource' }
-                  | { __typename: 'Iscedfield' }
+                  | { __typename: 'Iscedf' }
               }
             >
           }
