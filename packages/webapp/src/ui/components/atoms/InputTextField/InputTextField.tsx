@@ -1,5 +1,5 @@
 import { t } from "@lingui/macro";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import "./styles.scss";
 
 export type InputTextFieldProps = {
@@ -7,17 +7,25 @@ export type InputTextFieldProps = {
   placeholder: string
   textarea?: boolean
   disabled?: boolean
+  hidden?: boolean
+  button?: ReactNode
+  className?: string
 }
 
 export const InputTextField: FC<InputTextFieldProps> = ({
   label,
   placeholder,
   textarea,
-  disabled
-}) => {
-  
+  disabled,
+  button,
+  hidden,
+  className
+}) => { 
   return (
-    <div className={`input-text-field ${disabled ? 'disabled' : ''}`}>
+    <div 
+      className={`input-text-field ${className} ${disabled ? 'disabled' : ''}`}
+      style={{visibility: hidden ? 'hidden' : 'visible'}}
+    >
       { label ? <label>{label}</label> : <></> }
       { textarea ? (
         <div className="textarea-container">
@@ -35,12 +43,16 @@ export const InputTextField: FC<InputTextFieldProps> = ({
           type="text"
           placeholder={t`${placeholder}`}
         />
+        {button}
       </div>
     )}
     </div>
   );
 }
 
-InputTextField.defaultProps = {}
+InputTextField.defaultProps = {
+  hidden: false,
+  className: ''
+}
 
 export default InputTextField;

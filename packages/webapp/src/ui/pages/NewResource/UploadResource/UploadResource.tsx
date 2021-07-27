@@ -1,6 +1,7 @@
-import { Trans } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import Card from '../../../components/atoms/Card/Card'
 import InputTextField from '../../../components/atoms/InputTextField/InputTextField'
+import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import { withCtrl } from '../../../lib/ctrl'
 import uploadFileIcon from '../../../static/icons/upload-file.svg'
 import uploadImageIcon from '../../../static/icons/upload-image.svg'
@@ -16,6 +17,10 @@ export type UploadResourceProps = {
 }
 
 export const UploadResource = withCtrl<UploadResourceProps>(({ state, type, imageUrl }) => {
+  const background = {
+    backgroundImage: 'url(' + imageUrl + ')',
+    backgroundSize: 'cover',
+  }
   return (
     <div className="upload-resource">
       <div className="main-column">
@@ -24,7 +29,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ state, type, imag
         </div>
         <Card>
           <div className="main-container">
-            <div className="uploader">
+            <div className="uploader" hidden={state === 'ImageUploaded'}>
               <div className="file upload" hidden={state !== 'Initial'}>
                 <img src={uploadFileIcon} />
                 <span>
@@ -37,11 +42,17 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ state, type, imag
                   <Trans>Drop an image here or click to upload!</Trans>
                 </span>
               </div>
-              {state === 'ImageUploaded' ? <img className="image-uploaded" src={imageUrl} alt="Background" /> : <></>}
             </div>
+            {state === 'ImageUploaded' ? <div className="image-container" style={background} /> : <></>}
           </div>
           <div className="bottom-container">
-            <div className="link" hidden={state !== 'Initial'}></div>
+            <InputTextField
+              className="link"
+              hidden={state !== 'Initial'}
+              placeholder={`${t`Paste or type a link`}`}
+              button={<PrimaryButton>Add</PrimaryButton>}
+            />
+            <div  ></div>
             <div className="uploaded-file" hidden={state !== 'ContentUploaded' || type !== 'File'}></div>
             <div className="uploaded-link" hidden={state !== 'ContentUploaded' || type !== 'Link'}></div>
           </div>

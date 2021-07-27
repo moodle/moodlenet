@@ -51,6 +51,11 @@
             }
           }
         }
+        > .image-container {
+          border-radius: 15px;
+          height: 100%;
+          width: 100%;
+        }
       }
 
       > .bottom-container {
@@ -59,6 +64,13 @@
         box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.0509804);
         border: 1px solid #e4e5eb;
         border-radius: 10px;
+
+        > .link > .input-container {
+          padding: 8px 0;
+          > :last-child:not(input) {
+            margin-right: 10px;
+          }
+        }
       }
     }
   }
@@ -71,7 +83,7 @@
     gap: 17px;
     > .input-text-field:nth-child(2) {
       height: 100%;
-      input {
+      .textarea-container {
         height: 100%;
       }
     }

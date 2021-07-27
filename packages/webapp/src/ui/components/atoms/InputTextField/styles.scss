@@ -7,15 +7,22 @@
     margin-bottom: 8px;
   }
 
-  .input-container > input,
   > .input-container,
-  .textarea-container > textarea,
-  >.textarea-container {
+  > .textarea-container {
     width: 100%;
     background: #ffffff;
     border: none;
     box-shadow: 0 0 6px #dedede;
     border-radius: 7px;
+  }
+
+  .input-container > input,
+  > .input-container,
+  .textarea-container > textarea,
+  > .textarea-container {
+    width: 100%;
+    background: #ffffff;
+    border: none;
 
     &:focus,
     &:not(:focus) {
@@ -50,9 +57,13 @@
     }
   }
 
-  > .textarea-container, .input-container {
+  > .textarea-container,
+  .input-container {
+    display: flex;
+    align-items: center;
     padding: 12px 0;
-    > textarea, input {
+    > textarea,
+    input {
       box-shadow: none;
       height: 100%;
       line-height: 20px;
@@ -61,6 +72,9 @@
       &:not(:focus) {
         padding: 0 12px;
       }
+    }
+    > :last-child:not(input) {
+      margin-right: 10px;
     }
   }
 }
