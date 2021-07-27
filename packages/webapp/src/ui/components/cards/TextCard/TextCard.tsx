@@ -9,7 +9,7 @@ export const TextCard: FC<TextCardProps> = ({children}) => {
 
   return (
     <div className="text-card">
-      <Card>
+      <Card hideBorderWhenSmall={true}>
         <div className="text">{children}</div>
       </Card>
     </div>

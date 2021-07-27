@@ -1,30 +1,37 @@
 .upload-resource {
-  height: 500px;
+  height: 325px;
   width: 100%;
   display: flex;
   justify-content: space-between;
-  
+
   .main-column {
     width: 60%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    > .card-title {
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
 
     > .card {
-      height: fit-content;
+      height: 100%;
       width: 100%;
       display: flex;
       flex-direction: column;
-      flex-wrap: wrap;
       gap: 20px;
       padding: 20px;
 
       > .main-container {
-        height: 180px;
+        height: 100%;
         width: 100%;
 
         > .uploader {
           width: 100%;
           height: 100%;
-          border: 4px dashed #D1D4E0;
+          border: 4px dashed #d1d4e0;
           border-radius: 15px;
 
           > .upload {
@@ -40,7 +47,7 @@
             > span {
               font-weight: bold;
               font-size: 15px;
-              color: #F88012;
+              color: #f88012;
             }
           }
         }
@@ -50,7 +57,7 @@
         width: 100%;
         height: 50px;
         box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.0509804);
-        border: 1px solid #E4E5EB;
+        border: 1px solid #e4e5eb;
         border-radius: 10px;
       }
     }
@@ -59,7 +66,15 @@
   .side-column {
     width: 37%;
     height: 100%;
-    background-color: blueviolet;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 17px;
+    > .input-text-field:nth-child(2) {
+      height: 100%;
+      input {
+        height: 100%;
+      }
+    }
   }
 
   @media screen and (max-width: 800px) {

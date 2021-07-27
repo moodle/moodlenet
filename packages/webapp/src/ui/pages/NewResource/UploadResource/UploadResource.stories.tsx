@@ -9,7 +9,7 @@ const meta: ComponentMeta<typeof UploadResource> = {
   },
   excludeStories: ['UploadResourceStoryProps'],
   decorators:[
-    (Story)=>(<div style={{maxWidth:500}}><Story/></div>)
+    (Story)=>(<div style={{maxWidth:1100}}><Story/></div>)
   ]
 }
 
