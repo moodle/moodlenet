@@ -63,6 +63,9 @@ export const Header = withCtrl<HeaderProps>(props => {
         <div className="left">
           <HeaderTitle organization={organization} homeHref={homeHref} />
         </div>
+        <div className="center">
+          <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for anything!`} />
+        </div>
         <div className="right">
           <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for anything!`} />
           {me ? (

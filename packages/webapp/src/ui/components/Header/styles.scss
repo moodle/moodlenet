@@ -15,73 +15,89 @@
     padding: 0 25px;
   }
 
-  .content {
+  > .content {
     height: 100%;
     width: 100%;
     max-width: 1100px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
 
-  .left {
-    display: flex;
-    align-items: center;
-    margin-right: 6px;
-  }
-
-  a {
-    text-decoration: none;
-  }
-
-  .text {
-    color: #b6bacb;
-    font-weight: bold;
-    font-size: 25px;
-    margin-left: 10px;
-  }
-
-  .right {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    > .searchbox {
-      margin: 0 6px 0 6px;
+    .left {
+      display: flex;
+      align-items: center;
+      margin-right: 6px;
     }
-  }
 
-  .signin-btn {
-    > .floating-menu {
-      > .menu {
-        display: none;
+    a {
+      text-decoration: none;
+    }
+
+    .text {
+      color: #b6bacb;
+      font-weight: bold;
+      font-size: 25px;
+      margin-left: 10px;
+    }
+
+    .center {
+      width: 100%;
+      padding: 0 8px;
+      display: none;
+      @media screen and (max-width: 450px) {
+        display: block;
       }
-      > .primary-button {
-        svg {
+      > .searchbox > .search-box {
+        width: 100%;
+      }
+    }
+
+    > .right {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      > .searchbox {
+        margin: 0 6px 0 6px;
+        @media screen and (max-width: 450px) {
           display: none;
         }
       }
 
-      @media screen and (max-width: 350px) {
-        > .primary-button {
-          padding: 10px 3px;
-          margin-left: 6px;
-          > a {
+      .signin-btn {
+        > .floating-menu {
+          > .menu {
             display: none;
           }
-          > svg {
-            display: block;
+          > .primary-button {
+            margin-left: 10px;
+            svg {
+              display: none;
+            }
+          }
+
+          @media screen and (max-width: 450px) {
+            > .primary-button {
+              padding: 10px 3px;
+              margin-left: 6px;
+              > a {
+                display: none;
+              }
+              > svg {
+                display: block;
+              }
+            }
+            > .menu {
+              display: block;
+            }
           }
         }
-        > .menu {
-          display: block;
+      }
+
+      .signup-btn {
+        @media screen and (max-width: 450px) {
+          display: none;
         }
       }
-    }
-  }
-
-  .signup-btn {
-    @media screen and (max-width: 400px) {
-      display: none;
     }
   }
 
@@ -94,9 +110,5 @@
     max-height: 36px;
     border-radius: 50%;
     margin-left: 6px;
-  }
-
-  .primary-button {
-    margin-left: 10px;
   }
 }
