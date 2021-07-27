@@ -1,0 +1,56 @@
+.floating-menu {
+  position: relative;
+
+  > :first-child {
+    cursor: pointer;
+    position: relative;
+    float: right;
+  }
+
+  > .menu {
+    visibility: hidden;
+    display: none;
+    position: absolute;
+    width: max-content;
+    display: flex;
+    right: -40px;
+    padding-right: 32px;
+    top: 28px;
+    padding-top: 10px;
+
+    > .content {
+      background-color: white;
+      border: 1px solid #b6b6b6;
+      border-radius: 9px;
+      padding: 15px;
+
+      > div {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        flex-wrap: wrap;
+        > * {
+          cursor: pointer;
+          text-decoration: inherit;
+          color: inherit;
+          font-size: 14px;
+          font-family: inherit;
+          display: flex;
+          align-items: center;
+          color: black;
+
+          > svg {
+            margin-right: 14px;
+            color: #a7a7a7;
+          }
+        }
+      }
+    }
+  }
+}
+
+.menu.visible,
+.floating-menu:hover .menu,
+.floating-menu:active .menu {
+  visibility: visible;
+}

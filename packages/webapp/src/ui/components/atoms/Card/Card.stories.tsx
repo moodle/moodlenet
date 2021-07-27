@@ -7,21 +7,21 @@ const meta: ComponentMeta<typeof Card> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['TextCardStoryProps'],
+  excludeStories: ['CardStoryProps'],
   decorators:[
     (Story)=>(<div style={{height:100,width:300}}><Story/></div>)
   ]
 }
 
-export const TextCardStoryProps: CardProps = {}
+export const CardStoryProps: CardProps = {}
 
-const TextCardStory: ComponentStory<typeof Card> = args => <Card {...args}>
+const CardStory: ComponentStory<typeof Card> = args => <Card {...args}>
   <div style={{padding: 24}}>
     Diverse, vibrant, dynamic. The cornerstone values that define our amazing <span style={{color: '#b6bacb'}}>Cards</span> 
   </div> 
 </Card>
 
-export const Default = TextCardStory.bind({})
-Default.args = TextCardStoryProps
+export const Default = CardStory.bind({})
+Default.args = CardStoryProps
 
 export default meta

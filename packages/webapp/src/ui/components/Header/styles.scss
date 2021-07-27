@@ -11,7 +11,7 @@
   background-color: white;
   box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%);
 
-  @media screen and (max-width:675px) {
+  @media screen and (max-width: 675px) {
     padding: 0 25px;
   }
 
@@ -27,6 +27,7 @@
   .left {
     display: flex;
     align-items: center;
+    margin-right: 6px;
   }
 
   a {
@@ -44,22 +45,49 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
+    > .searchbox {
+      margin: 0 6px 0 6px;
+    }
   }
 
   .signin-btn {
-    @media screen and (max-width:450px) {
-      display: none;
+    > .floating-menu {
+      > .menu {
+        display: none;
+      }
+      > .primary-button {
+        svg {
+          display: none;
+        }
+      }
+
+      @media screen and (max-width: 350px) {
+        > .primary-button {
+          padding: 10px 3px;
+          margin-left: 6px;
+          > a {
+            display: none;
+          }
+          > svg {
+            display: block;
+          }
+        }
+        > .menu {
+          display: block;
+        }
+      }
     }
   }
 
   .signup-btn {
-    @media screen and (max-width:550px) {
+    @media screen and (max-width: 400px) {
       display: none;
     }
   }
 
-  .add-button {
+  .add-icon {
     margin: 0 6px;
+    max-height: 30px;
   }
 
   .avatar {

@@ -18,3 +18,5 @@ body {
     width: 100%;
     max-width: None;
 }
+
+[hidden] { display: none !important; }

@@ -13,6 +13,8 @@ const meta: ComponentMeta<typeof NewResource> = {
   excludeStories: [
     'NewResourceProgressStateStory',
     'NewResourceStoryProps', 
+    'NewResourceContentUploadedStoryProps',
+    'NewResourceImageUploadedStoryProps',
     'NewResourceCollectionsStoryProps',
     'NewResourceExtraDataStoryProps'
   ],
@@ -35,9 +37,28 @@ export const NewResourceStoryProps: NewResourceProps = {
     isAuthenticated: true,
     showSubHeader: false
   },
-  uploadResource: UploadResourceStoryProps,
+  uploadResource: {
+    ...UploadResourceStoryProps,
+    state: 'Initial'
+  },
   states: NewResourceProgressStateStory,
   currentState: 'UploadResource'  
+}
+
+export const NewResourceContentUploadedStoryProps: NewResourceProps = {
+  ...NewResourceStoryProps,
+  uploadResource: {
+    ...UploadResourceStoryProps,
+    state: 'ContentUploaded'
+  }
+}
+
+export const NewResourceImageUploadedStoryProps: NewResourceProps = {
+  ...NewResourceStoryProps,
+  uploadResource: {
+    ...UploadResourceStoryProps,
+    state: 'ImageUploaded'
+  }
 }
 
 export const NewResourceCollectionsStoryProps: NewResourceProps = {
@@ -50,8 +71,14 @@ export const NewResourceExtraDataStoryProps: NewResourceProps = {
   currentState: 'ExtraData'
 }
 
-export const UploadResource = NewResourceStory.bind({})
-UploadResource.args = NewResourceStoryProps
+export const Start = NewResourceStory.bind({})
+Start.args = NewResourceStoryProps
+
+export const ContentUploaded = NewResourceStory.bind({})
+ContentUploaded.args = NewResourceContentUploadedStoryProps
+
+export const ImageUploaded = NewResourceStory.bind({})
+ImageUploaded.args = NewResourceImageUploadedStoryProps
 
 export const Collections = NewResourceStory.bind({})
 Collections.args = NewResourceCollectionsStoryProps
