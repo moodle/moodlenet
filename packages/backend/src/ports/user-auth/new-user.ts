@@ -1,75 +1,69 @@
-// import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
-// import { ActiveUser, UserAuthConfig } from '../../adapters/user-auth/arangodb/types'
-// import { makeEnv } from '../../lib/auth/env'
-// import { SessionEnv } from '../../lib/auth/types'
-// import { fillEmailTemplate } from '../../lib/emailSender/helpers'
-// import { EmailAddr, EmailObj } from '../../lib/emailSender/types'
-// import { QMCommand, QMModule } from '../../lib/qmino'
+import { ActiveUser, AuthId, UserAuthConfig, WaitingFirstActivationUser } from '@moodlenet/common/lib/user-auth/types'
+import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
+import { fillEmailTemplate } from '../../lib/emailSender/helpers'
+import { EmailAddr, EmailObj } from '../../lib/emailSender/types'
+import { QMCommand, QMModule } from '../../lib/qmino'
 
-// export type SignupIssue = 'email not available'
-// export type SignUpAdapter = {
-//   storeNewSignupRequest(_: { email: string; token: string }): Promise<void | SignupIssue>
-//   generateToken(): Promise<string>
-//   getConfig(): Promise<UserAuthConfig>
-//   sendEmail(_: EmailObj): Promise<unknown>
-//   publicBaseUrl: string
-// }
-// export const signUp = QMCommand(
-//   ({ email }: { email: EmailAddr }) =>
-//     async ({ storeNewSignupRequest, generateToken, sendEmail, publicBaseUrl, getConfig }: SignUpAdapter) => {
-//       const token = await generateToken()
-//       const insertIssue = await storeNewSignupRequest({ email, token })
-//       if (insertIssue) {
-//         return insertIssue
-//       }
-//       const { newUserRequestEmail } = await getConfig()
+export type SignupIssue = 'email not available'
+export type SignUpAdapter = {
+  storeNewSignupRequest(
+    _: Pick<WaitingFirstActivationUser, 'firstActivationToken' | 'email'>,
+  ): Promise<void | SignupIssue>
+  generateToken(): Promise<string>
+  getConfig(): Promise<UserAuthConfig>
+  sendEmail(_: EmailObj): Promise<unknown>
+  publicBaseUrl: string
+}
+export const signUp = QMCommand(
+  ({ email }: { email: EmailAddr }) =>
+    async ({ storeNewSignupRequest, generateToken, sendEmail, publicBaseUrl, getConfig }: SignUpAdapter) => {
+      const firstActivationToken = await generateToken()
+      const mInsertIssue = await storeNewSignupRequest({ email, firstActivationToken })
+      if (mInsertIssue) {
+        return mInsertIssue
+      }
+      const { newUserRequestEmail } = await getConfig()
 
-//       const emailObj = fillEmailTemplate({
-//         template: newUserRequestEmail,
-//         to: email,
-//         vars: {
-//           email,
-//           link: `${publicBaseUrl}${webappPath<Routes.ActivateNewUser>('/activate-new-user/:token', {
-//             token,
-//           })}`,
-//         },
-//       })
-//       sendEmail(emailObj)
-//       return { token }
-//     },
-// )
+      const emailObj = fillEmailTemplate({
+        template: newUserRequestEmail,
+        to: email,
+        vars: {
+          email,
+          link: `${publicBaseUrl}${webappPath<Routes.Activation>('/activate-new-user/:token', {
+            token: firstActivationToken,
+          })}`,
+        },
+      })
+      sendEmail(emailObj)
+      return { token: firstActivationToken }
+    },
+)
 
-// export type NewUserConfirmAdapter = {
-//   activateUser(_: {
-//     token: string
-//     hashedPassword: string
-//   }): Promise<ActiveUser | 'username not available' | 'not found'>
+export type NewUserConfirmAdapter = {
+  activateUser(_: { token: string; hashedPassword: string }): Promise<ActiveUser | 'not found'>
+  createNewProfile(_: { name: string; authId: AuthId }): Promise<unknown>
+}
+type ConfirmSignup = { token: string; hashedPassword: string; profileName: string }
+export const confirmSignup = QMCommand(
+  ({ token, hashedPassword, profileName }: ConfirmSignup) =>
+    async ({ activateUser, createNewProfile }: NewUserConfirmAdapter) => {
+      const mActiveUser = await activateUser({ hashedPassword, token })
 
-//   createNewProfile(_: { username: string; env: SessionEnv }): Promise<unknown>
-// }
-// type ConfirmSignup = { token: string; hashedPassword: string; username: string }
-// export const confirmSignup = QMCommand(
-//   ({ token, hashedPassword, username }: ConfirmSignup) =>
-//     async ({ activateUser, createNewProfile }: NewUserConfirmAdapter) => {
-//       const activateResult = await activateUser({ hashedPassword, token })
+      if (typeof mActiveUser === 'string') {
+        return mActiveUser // error
+      }
 
-//       if (typeof activateResult === 'string') {
-//         return activateResult // error
-//       }
+      await createNewProfile({ name: profileName, authId: mActiveUser.authId })
 
-//       const env = makeEnv({ user: { name: activateResult.username, role: activateResult.role } })
-//       createNewProfile({ username, env })
-
-//       return activateResult
-//     },
-// )
+      return mActiveUser
+    },
+)
 
 // export type CreateNewUserAdapter = {
 //   createUser(_: {
 //     email: EmailAddr
 //     password: string
 //     username: string
-//     role: Role
 //   }): Promise<ActiveUser | null | 'username not available' | 'email not available'>
 //   hashPassword(pwd: string): Promise<string>
 
@@ -93,4 +87,4 @@
 //     },
 // )
 
-// QMModule(module)
+QMModule(module)

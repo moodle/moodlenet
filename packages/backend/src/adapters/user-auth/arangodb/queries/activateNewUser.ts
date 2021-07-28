@@ -1,39 +1,29 @@
-// import { Role } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-// import { aqlstr } from '../../../../lib/helpers/arango/query'
-// import { USER, UserStatus } from '../types'
-// import { isUsernameInUseQ } from './isUsernameInUse'
+import { ActiveUser, Status } from '@moodlenet/common/lib/user-auth/types'
+import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
+import { USER } from '../types'
 
-// export const activateNewUserQ = ({
-//   token,
-//   password,
-//   username,
-//   role,
-// }: {
-//   token: string
-//   role: Role
-//   username: string
-//   password: string
-// }) => {
-//   return `
+export const activateNewUserQ = ({ token, password }: { token: string; password: string }) => {
+  const activeUserPatch: Pick<ActiveUser, 'password' | 'status'> = {
+    password,
+    status: 'Active',
+  }
+  const WaitingFirstActivationStatus: Status = 'WaitingFirstActivation'
+  return aq<ActiveUser>(`
+    FOR user IN ${USER}
 
-//   LET usernameInUse = (${isUsernameInUseQ({ username })})[0]
+      FILTER user.firstActivationToken == ${aqlstr(token)}
+        && user.status == ${aqlstr(WaitingFirstActivationStatus)}
 
-//   FOR user IN ${USER}
+      LIMIT 1
+      
+      let activeUser = MERGE( user, ${aqlstr(activeUserPatch)}, {
+        updatedAt: DATE_NOW()
+      } )
 
-//     FILTER !usernameInUse
-//       && user.firstActivationToken == ${aqlstr(token)}
-//       && user.status == ${aqlstr(UserStatus.WaitingFirstActivation)}
+     // UNSET( activeUser, "firstActivationToken" )
 
-//     LIMIT 1
+      UPDATE activeUser IN ${USER}
 
-//     UPDATE user WITH {
-//       updatedAt: DATE_NOW(),
-//       password: ${aqlstr(password)},
-//       username: ${aqlstr(username)},
-//       status: ${aqlstr(UserStatus.Active)},
-//       changeEmailRequest: null,
-//       role: ${aqlstr(role)},
-//     } IN ${USER}
-//     RETURN NEW
-//   `
-// }
+    RETURN NEW
+  `)
+}

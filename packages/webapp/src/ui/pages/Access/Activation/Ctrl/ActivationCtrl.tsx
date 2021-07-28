@@ -1,21 +1,21 @@
 import { useCallback, useMemo, useState } from 'react'
-import { useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
+import { useSession } from '../../../../../context/Global/Session'
+import { useRedirectProfileHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { SubmitForm } from '../../../../lib/formik'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { ActivationFormValues, ActivationProps } from '../Activation'
 
-const activation = async (..._a: any[]) => null as any
-export const useActivationCtrl: CtrlHook<ActivationProps, {}> = () => {
-  useRedirectHomeIfLoggedIn()
-  // const { activation } = useSession()
+export const useActivationCtrl: CtrlHook<ActivationProps, { activationToken: string }> = ({ activationToken }) => {
+  useRedirectProfileHomeIfLoggedIn()
+  const { activateNewUser } = useSession()
   const [activationErrorMessage, setActivationErrorMessage] = useState<string | null>(null)
   const onSubmit = useCallback<SubmitForm<ActivationFormValues>>(
     ({ password, name }) =>
-      activation({ password, name }).then(resp => {
+      activateNewUser({ password, name, activationToken }).then(resp => {
         setActivationErrorMessage(resp)
       }),
-    [],
+    [activateNewUser, activationToken],
   )
 
   const activationProps = useMemo<ActivationProps>(() => {

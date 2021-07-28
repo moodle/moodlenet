@@ -8,8 +8,8 @@ export const contentSlug = (slug: Slug, permId: PermId, locale?: string) => `${p
 const alphabet = `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`
 export const newGlyphPermId = customAlphabet(alphabet, 12)
 
-export const newGlyphIdentifiers = (name: string, locale?: string): { slug: string; permId: PermId } => {
-  const permId = newGlyphPermId()
-  const slug = contentSlug(name, permId, locale)
-  return { permId, slug }
+export const newGlyphIdentifiers = (name: string, locale?: string): { _slug: string; _permId: PermId } => {
+  const _permId = newGlyphPermId()
+  const _slug = contentSlug(name, _permId, locale)
+  return { _permId, _slug }
 }

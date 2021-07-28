@@ -1,5 +1,5 @@
 import { GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { BumbNodeStatus, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import { GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { /* rootUser, */ getRootUser, localOrganizationData } from '../../../../../../initialData/content'
 import { iscedfields } from '../../../../../../initialData/ISCED/Fields/Iscedfields'
@@ -24,24 +24,22 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
       const edgeCollection = await db.createEdgeCollection(edgeCollName)
       return edgeCollection
     })
-    const _bumpStatus: BumbNodeStatus = { date: Number(new Date()), status: 'Active' }
 
     const localOrg = localOrganizationData({ domain })
 
     await justExecute(
       createNodeQ({
-        nodeType: 'Organization',
-        data: {
-          _bumpStatus: localOrg._bumpStatus,
+        node: {
+          _type: 'Organization',
           _permId: localOrg._permId,
           _slug: localOrg._slug,
-          _type: localOrg._type,
           color: localOrg.color,
           domain: localOrg.domain,
           intro: localOrg.intro,
           logo: localOrg.logo,
           name: localOrg.name,
         },
+        status: 'Active',
       }),
       db,
     )
@@ -49,12 +47,10 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
     console.log(`creating rootUser profile`)
     await justExecute(
       createNodeQ({
-        nodeType: 'Profile',
-        data: {
+        node: {
           _slug: `__root__`,
           _authId: rootUser.rootAuthId,
           _permId: rootUser.rootPermId,
-          _bumpStatus,
           _type: 'Profile',
           avatar: null,
           bio: '',
@@ -65,6 +61,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
           location: null,
           siteUrl: null,
         },
+        status: 'Active',
       }),
       db,
     ).catch(e => {
@@ -77,9 +74,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
         console.log(`creating subject ${subj_field_data.name} ${subj_field_data.iscedCode}`)
         await justExecute(
           createNodeQ({
-            nodeType: 'Iscedf',
-            data: {
-              _bumpStatus,
+            node: {
               _permId: newGlyphPermId(),
               _slug: subj_field_data._slug,
               _type: 'Iscedf',
@@ -90,6 +85,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
               name: subj_field_data.name,
               thumbnail: subj_field_data.thumbnail,
             },
+            status: 'Active',
           }),
           db,
         ).catch(e => {

@@ -1,0 +1,20 @@
+import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { ctrlHook } from '../ui/lib/ctrl'
+import { Activation } from '../ui/pages/Access/Activation/Activation'
+import { useActivationCtrl } from '../ui/pages/Access/Activation/Ctrl/ActivationCtrl'
+import { MNRouteProps, RouteFC } from './lib'
+
+export const ActivationRouteComponent: RouteFC<Routes.Activation> = ({
+  match: {
+    params: { token },
+  },
+}) => {
+  const props = ctrlHook(useActivationCtrl, { activationToken: token })
+  return <Activation {...props} />
+}
+
+export const ActivationRoute: MNRouteProps<Routes.Activation> = {
+  component: ActivationRouteComponent,
+  path: '/activate-new-user/:token',
+  exact: true,
+}
