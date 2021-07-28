@@ -1,5 +1,5 @@
 import { GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNode, GraphNodeType, Slug } from '@moodlenet/common/lib/content-graph/types/node'
+import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { NodeTraversalPage, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
 import { SessionEnv } from '../../lib/auth/types'
 import { QMModule, QMQuery } from '../../lib/qmino'
@@ -31,7 +31,7 @@ export type NodeRelationCountAdapter = {
 }
 
 export type NodeRelationCountInput = {
-  fromNode: { slug: Slug; type: GraphNodeType }
+  fromNode: Pick<GraphNode, '_slug' | '_type'>
   edgeType: GraphEdgeType
   targetNodeType: GraphNodeType
   inverse: Boolean

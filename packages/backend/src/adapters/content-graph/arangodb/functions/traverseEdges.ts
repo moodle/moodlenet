@@ -1,7 +1,7 @@
 import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { PageItem } from '@moodlenet/common/lib/content-graph/types/page'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
-import { TraverseFromNodeInput } from '../../../../ports/content-graph/traverseNodeRel'
+import { NodeRelationCountInput, TraverseFromNodeInput } from '../../../../ports/content-graph/traverseNodeRel'
 import { AqlGraphEdge, AqlGraphNode } from '../types'
 // import { getNodeOpAqlAssertions } from './assertions/node'
 import { cursorPaginatedQuery, documentBySlugType } from './helpers'
@@ -19,7 +19,7 @@ export const traverseEdgesQ = ({
 
   const queryMapper = traversePaginateMapQuery({
     edgeType,
-    parentNode: fromNode,
+    fromNode,
     inverse,
     targetNodeType,
   })
@@ -36,7 +36,7 @@ export const traversePaginateMapQuery =
   ({
     // edgeAndNodeAssertionFilters,
     edgeType,
-    parentNode,
+    fromNode,
     additionalFilter,
     targetNodeType,
     inverse,
@@ -44,7 +44,7 @@ export const traversePaginateMapQuery =
     edgeType: string
     targetNodeType: GraphNodeType
     inverse: boolean
-    parentNode: Pick<GraphNode, '_slug' | '_type'>
+    fromNode: Pick<GraphNode, '_slug' | '_type'>
     additionalFilter?: string
     // edgeAndNodeAssertionFilters: string
   }) =>
@@ -52,7 +52,7 @@ export const traversePaginateMapQuery =
     const targetSide = inverse ? 'from' : 'to'
     const parentSide = inverse ? 'to' : 'from'
     return aq<PageItem<{ edge: AqlGraphEdge; node: AqlGraphNode }>>(`
-      let parentNode = ${documentBySlugType(parentNode)}
+      let parentNode = ${documentBySlugType(fromNode)}
       FOR edge IN ${edgeType}
         FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
           && edge._${parentSide} == parentNode._id
@@ -72,3 +72,22 @@ export const traversePaginateMapQuery =
         ]
       `)
   }
+
+export const nodeRelationCountQ = ({
+  edgeType,
+  fromNode,
+  inverse,
+  targetNodeType /* , env */,
+}: NodeRelationCountInput) => {
+  const targetSide = inverse ? 'from' : 'to'
+  const parentSide = inverse ? 'to' : 'from'
+  return aq<number>(`
+    let parentNode = ${documentBySlugType(fromNode)}
+    
+    FOR edge IN ${edgeType}
+      FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
+        && edge._${parentSide} == parentNode._id
+      COLLECT WITH COUNT INTO count
+    RETURN count
+`)
+}
