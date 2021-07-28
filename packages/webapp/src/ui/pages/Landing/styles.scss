@@ -21,7 +21,7 @@
     }
 
     @media (max-width: 450px) {
-      margin: 28px 24px 0;
+      margin: 28px 0 0;
     }
 
     @media screen and (max-width: 675px) and (min-width: 450px) {
@@ -52,7 +52,7 @@
       }
     }
     @media (max-width: 450px) {
-      margin: 36px 28px;
+      margin: 36px 0;
       > .search-box {
         display: block;
         > .search-text {

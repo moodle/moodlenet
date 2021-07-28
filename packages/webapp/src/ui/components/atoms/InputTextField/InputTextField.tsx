@@ -8,6 +8,7 @@ export type InputTextFieldProps = {
   textarea?: boolean
   disabled?: boolean
   hidden?: boolean
+  autoUpdate?: boolean
   buttonName?: string
   className?: string
   value?: string | undefined
@@ -21,6 +22,7 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   disabled,
   buttonName,
   hidden,
+  autoUpdate,
   className,
   value,
   getText
@@ -39,6 +41,7 @@ export const InputTextField: FC<InputTextFieldProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.currentTarget.value)
+    if (autoUpdate) getText && getText(e.currentTarget.value)
   }
 
 

@@ -54,7 +54,7 @@ export const Login = withCtrl<LoginProps>(({ accessHeaderProps, onSubmit }) => {
                     <Trans>or browse now!</Trans>
                   </TertiaryButton>
                 </div>
-                <div className="right">
+                <div className="right" hidden>
                   <div className="icon">
                     <img
                       alt="apple login"

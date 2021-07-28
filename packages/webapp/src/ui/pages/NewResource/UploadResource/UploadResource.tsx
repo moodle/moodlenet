@@ -2,9 +2,12 @@ import { t, Trans } from '@lingui/macro';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import LinkIcon from '@material-ui/icons/Link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from '../../../components/atoms/Card/Card';
 import InputTextField from '../../../components/atoms/InputTextField/InputTextField';
+import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton';
+import SecondaryButton from '../../../components/atoms/SecondaryButton/SecondaryButton';
+import { withCtrl } from '../../../lib/ctrl';
 import uploadFileIcon from '../../../static/icons/upload-file.svg';
 import uploadImageIcon from '../../../static/icons/upload-image.svg';
 import './styles.scss';
@@ -13,6 +16,7 @@ type UploadResourceState = 'Initial' | 'ContentUploaded' | 'ImageUploaded' | 'Al
 type ContentType = 'File' | 'Link' | ''
 
 export type UploadResourceProps = {
+  state: UploadResourceState
 }
 
 export type Content = {
@@ -24,9 +28,9 @@ export type Content = {
   imagePath: string | undefined
 }
 
-export const UploadResource = () => {
+export const UploadResource = withCtrl<UploadResourceProps>(({state}) => {
   const [content, setContent] = useState<Content>({name: undefined, type: undefined, category: undefined, description: undefined, title: undefined, imagePath: undefined})
-  const [state, setState] = useState<UploadResourceState>('Initial')
+  const [currentState, setCurrentState] = useState<UploadResourceState>(state)
 
   const background = {
     backgroundImage: 'url(' + content.imagePath + ')',
@@ -34,8 +38,8 @@ export const UploadResource = () => {
   }
 
   const setLink = (text: string) => {
-    setContent({...content, name: text})
-    setState('ContentUploaded')
+    setContent({...content, name: text, type: 'Link'})
+    setCurrentState('ContentUploaded')
   }
 
   const selectFile = () => {
@@ -45,7 +49,7 @@ export const UploadResource = () => {
   const uploadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.currentTarget.value) {
       setContent({...content, name: e.currentTarget.value.split('\\').pop()?.split('/').pop(), type: 'File'})
-      setState('ContentUploaded')
+      setCurrentState('ContentUploaded')
     }
   }
 
@@ -56,14 +60,41 @@ export const UploadResource = () => {
   const uploadImage = (e: React.ChangeEvent<HTMLInputElement> ) => {
     if (e.currentTarget.files && e.currentTarget.files[0]) {
       setContent({...content, imagePath: URL.createObjectURL(e.currentTarget.files[0])})
-      setState('ImageUploaded')
+      setCurrentState('ImageUploaded')
     }
   }
 
   const deleteImage = () => {
     setContent({...content, imagePath: undefined})
-    setState('ContentUploaded')
+    setCurrentState('ContentUploaded')
   }
+
+  useEffect(() => {
+    const isAllSet = () => {
+      if (content.title && content.title.length > 0  && 
+          content.type && 
+          content.name && 
+          content.description && 
+          content.description.length >= 5 && 
+          content.category && content.category.length >= 5
+      ) {
+        if (content.imagePath) { 
+          setCurrentState('AllSetImage')
+        } else {
+          setCurrentState('AllSet')
+        }
+        return true
+      } else if (content.imagePath ) {
+        setCurrentState('ImageUploaded')
+      } else if (content.type) {
+        setCurrentState('ContentUploaded')
+      } else {
+        setCurrentState('Initial')
+      }
+      return false
+    }
+    isAllSet()
+  }, [content.title, content.category, content.description, content.imagePath, content.name, content.type, currentState]);
 
   const onTitleChange = (text: string) => setContent({...content, title: text})
   const onDescriptionChange = (text: string) => setContent({...content, description: text})
@@ -71,66 +102,77 @@ export const UploadResource = () => {
 
   return (
     <div className="upload-resource">
-      <div className="main-column">
-        <div className="card-title">
-          <Trans>Content</Trans>
-        </div>
-        <Card>
-          <div className="main-container">
-            {state !== 'ImageUploaded' ? (
-            <div className="uploader">
-              {state === 'Initial' ? (
-                <div className="file upload" hidden={state !== 'Initial'} onClick={selectFile}>
-                  <input id="uploadFile" type="file" name="myFile" onChange={uploadFile} hidden/>
-                  <img src={uploadFileIcon} />
-                  <span>
-                    <Trans>Drop a file here or click to upload!</Trans>
-                  </span>
-                </div>
-              ) : state === 'ContentUploaded' ? (
-                <div className="image upload" hidden={state !== 'ContentUploaded'} onClick={selectImage}>
-                  <input id="uploadImage" type="file" name="myImage" onChange={uploadImage} hidden/>
-                  <img src={uploadImageIcon} />
-                  <span>
-                    <Trans>Drop an image here or click to upload!</Trans>
-                  </span>
-                </div>
-              ) : ( <></>)}
-              </div>
-            ) : (
-              <div className="image-container" style={background}>
-                <div className="delete-image" onClick={deleteImage}><CloseRoundedIcon /></div>
-              </div>
-            )}
+      <div className="content">
+        <div className="main-column">
+          <div className="card-title">
+            <Trans>Content</Trans>
           </div>
-          <div className="bottom-container">
-          {state === 'Initial'  ? (
-            <InputTextField
-              className="link"
-              placeholder={t`Paste or type a link`}
-              getText={setLink}
-              buttonName={t`Add`}
-            />
-            ) : (
-            <div className="uploaded-name">
-              <div className="content-icon">
-                { content.type === 'File' ? (
-                  <InsertDriveFileIcon />
-                ) : (
-                  <LinkIcon />
-                )}
-              </div>
-              {content.name}
+          <Card>
+            <div className="main-container">
+              {currentState !== 'ImageUploaded' && currentState !== 'AllSetImage' ? (
+              <div className="uploader">
+                {currentState === 'Initial' ? (
+                  <div className="file upload" hidden={currentState !== 'Initial'} onClick={selectFile}>
+                    <input id="uploadFile" type="file" name="myFile" onChange={uploadFile} hidden/>
+                    <img src={uploadFileIcon} />
+                    <span>
+                      <Trans>Drop a file here or click to upload!</Trans>
+                    </span>
+                  </div>
+                ) : currentState === 'ContentUploaded' || currentState === 'AllSet' ? (
+                  <div className="image upload" onClick={selectImage}>
+                    <input id="uploadImage" type="file" name="myImage" onChange={uploadImage} hidden/>
+                    <img src={uploadImageIcon} />
+                    <span>
+                      <Trans>Drop an image here or click to upload!</Trans>
+                    </span>
+                  </div>
+                ) : ( <></>)}
+                </div>
+              ) : (
+                <div className="image-container" style={background}>
+                  <div className="delete-image" onClick={deleteImage}><CloseRoundedIcon /></div>
+                </div>
+              )}
             </div>
-            )}
+            <div className="bottom-container">
+            {currentState === 'Initial'  ? (
+              <InputTextField
+                className="link"
+                placeholder={t`Paste or type a link`}
+                getText={setLink}
+                buttonName={t`Add`}
+              />
+              ) : (
+              <div className="uploaded-name">
+                <div className="content-icon">
+                  { content.type === 'File' ? (
+                    <InsertDriveFileIcon />
+                  ) : (
+                    <LinkIcon />
+                  )}
+                </div>
+                {content.name}
+              </div>
+              )}
+            </div>
+          </Card>
+          <div className="small-screen-details">
+            <InputTextField autoUpdate={true} label="Title" placeholder="" disabled={currentState === 'Initial'} getText={onTitleChange}/>
+            <InputTextField autoUpdate={true} textarea={true} label="Description" placeholder="" disabled={currentState === 'Initial'} getText={onDescriptionChange} />
+            <InputTextField autoUpdate={true} label="Categories" placeholder="" disabled={currentState === 'Initial'} getText={onCategoryChange}/>
           </div>
-        </Card>
+        </div>
+        <div className="side-column">
+          <InputTextField autoUpdate={true} label="Title" placeholder="" disabled={currentState === 'Initial'} getText={onTitleChange}/>
+          <InputTextField autoUpdate={true} textarea={true} label="Description" placeholder="" disabled={currentState === 'Initial'} getText={onDescriptionChange} />
+          <InputTextField autoUpdate={true} label="Categories" placeholder="" disabled={currentState === 'Initial'} getText={onCategoryChange}/>
+        </div>
       </div>
-      <div className="side-column">
-        <InputTextField label="Title" placeholder="" disabled={state === 'Initial'} getText={onTitleChange}/>
-        <InputTextField textarea={true} label="Description" placeholder="" disabled={state === 'Initial'} getText={onDescriptionChange} />
-        <InputTextField label="Categories" placeholder="" disabled={state === 'Initial'} getText={onCategoryChange}/>
+      <div className="footer">
+        { state !== 'Initial' && <SecondaryButton><Trans>Delete</Trans></SecondaryButton>}
+        <PrimaryButton disabled={currentState !== 'AllSet' && currentState !== 'AllSetImage'}><Trans>Next</Trans></PrimaryButton>
       </div>
     </div>
   )
-}
+})
