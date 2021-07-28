@@ -28,11 +28,12 @@ export type HeaderPropsBase = {
   loginHref: Href
   setSearchText(text: string): unknown
   searchText: string
+  signUpHref: Href
 }
 export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
 
 export const Header = withCtrl<HeaderProps>(props => {
-  const { homeHref, loginHref, searchText, setSearchText } = props
+  const { homeHref, loginHref, searchText, setSearchText, signUpHref } = props
   if (props.status === 'loading') {
     return null
   }
@@ -62,11 +63,13 @@ export const Header = withCtrl<HeaderProps>(props => {
                   </PrimaryButton>
                 </div>
               </Link>
-              <div className="signup-btn">
-                <TertiaryButton>
-                  <Trans>Join now</Trans>
-                </TertiaryButton>
-              </div>
+              <Link href={signUpHref}>
+                <div className="signup-btn">
+                  <TertiaryButton>
+                    <Trans>Join now</Trans>
+                  </TertiaryButton>
+                </div>
+              </Link>
             </>
           )}
         </div>

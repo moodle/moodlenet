@@ -1,11 +1,14 @@
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
-import { GlobalSearch, Landing, Login } from '@moodlenet/common/lib/webapp/sitemap/routes'
-import { useLayoutEffect } from 'react'
+import { nodeId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { GlobalSearch, Landing, Login, Signup } from '@moodlenet/common/lib/webapp/sitemap/routes'
+import { useCallback, useLayoutEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useSession } from '../../context/Global/Session'
+import { UserSessionFragment } from '../../context/Global/Session/session.gen'
 
 export const mainPath = {
   login: webappPath<Login>('/login', {}),
+  signUp: webappPath<Signup>('/signup', {}),
   landing: webappPath<Landing>('/', {}),
   search: webappPath<GlobalSearch>('/search', {}),
 }
@@ -15,7 +18,7 @@ export const useRedirectToBySession = ({
   to,
   replace,
 }: {
-  to: string
+  to: string | ((_: UserSessionFragment | null) => string)
   ifLogged: boolean
   replace: boolean
 }) => {
@@ -25,11 +28,12 @@ export const useRedirectToBySession = ({
   const shouldRedirect = !!ifLogged === !!session
   useLayoutEffect(() => {
     if (shouldRedirect) {
+      const target = typeof to === 'string' ? to : to(session)
       setImmediate(() => {
-        history[replace ? 'replace' : 'push'](to)
+        history[replace ? 'replace' : 'push'](target)
       })
     }
-  }, [history, replace, shouldRedirect, to])
+  }, [history, replace, session, shouldRedirect, to])
 }
 
 export const useRedirectHomeIfLoggedIn = () => {
@@ -37,5 +41,13 @@ export const useRedirectHomeIfLoggedIn = () => {
     ifLogged: true,
     replace: true,
     to: mainPath.landing,
+  })
+}
+
+export const useRedirectProfileHomeIfLoggedIn = () => {
+  useRedirectToBySession({
+    ifLogged: true,
+    replace: true,
+    to: useCallback((session: UserSessionFragment | null) => nodeId2UrlPath(session!.profile.id), []),
   })
 }

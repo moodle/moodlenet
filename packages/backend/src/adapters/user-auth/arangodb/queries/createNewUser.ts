@@ -4,8 +4,9 @@ import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { USER } from '../types'
 import { isEmailInUseQ } from './isEmailInUse'
 
-export const createNewUserQ = (user: DistOmit<User, 'id' | 'createdAt' | 'updatedAt'>) => {
-  return aq<typeof user>(`
+export type CreateNewUserQArg<U extends User> = DistOmit<U, 'id' | 'createdAt' | 'updatedAt'>
+export const createNewUserQ = <U extends User>(user: CreateNewUserQArg<U>) => {
+  return aq<U>(`
     LET emailInUse = (${isEmailInUseQ({ email: user.email })})[0]
     
     FILTER !emailInUse

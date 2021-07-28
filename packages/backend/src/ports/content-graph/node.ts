@@ -1,7 +1,15 @@
-import { GraphNodeByType, GraphNodeType, Slug } from '@moodlenet/common/lib/content-graph/types/node'
-import { Maybe } from '@moodlenet/common/lib/utils/types'
+import {
+  GraphNode,
+  GraphNodeByType,
+  GraphNodeType,
+  NodeStatus,
+  Profile,
+  Slug,
+} from '@moodlenet/common/lib/content-graph/types/node'
+import { newGlyphIdentifiers } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
 import { SessionEnv } from '../../lib/auth/types'
-import { QMModule, QMQuery } from '../../lib/qmino'
+import { QMCommand, QMModule, QMQuery } from '../../lib/qmino'
 
 // query by id
 export type BySlugAdapter = {
@@ -21,62 +29,34 @@ export const getBySlug = QMQuery(
     },
 )
 
-QMModule(module)
-
 // create
+export type CreateNodeAdapter = {
+  storeNode: <N extends GraphNode>(_: { node: DistOmit<N, '_bumpStatus'>; status: NodeStatus }) => Promise<N | null>
+}
 
-// export type CreateAdapter = {
-//   storeNode: <Type extends GQL.NodeType>(_: {
-//     nodeType: Type
-//     data: ShallowNodeByType<Type>
-//     creatorProfileId: Id
-//   }) => Promise<DocumentNodeByType<Type> | null>
-// }
+export type CreateProfile = {
+  partProfile: Partial<Omit<Profile, `_${string}`>> & Pick<Profile, 'name' | '_authId'>
+}
 
-// export type CreateNode = {
-//   env: SessionEnv
-//   data:
-//     | (GQL.CreateCollectionInput & { __typename: 'Collection' })
-//     | (GQL.CreateResourceInput & { __typename: 'Resource' })
-// }
+export const createProfile = QMCommand(({ partProfile }: CreateProfile) => async ({ storeNode }: CreateNodeAdapter) => {
+  const ids = newGlyphIdentifiers(partProfile.name)
+  const profile: Omit<Profile, '_bumpStatus'> = {
+    _type: 'Profile',
+    ...ids,
+    avatar: undefined,
+    bio: '',
+    firstName: undefined,
+    image: undefined,
+    lastName: undefined,
+    location: undefined,
+    siteUrl: undefined,
+    ...partProfile,
+  }
+  const result = await storeNode<Profile>({ node: profile, status: 'Active' })
+  if (!result) {
+    return null
+  }
+  return result
+})
 
-// export const create = QMCommand(
-//   (createData: CreateNode) =>
-//     async ({ storeNode }: CreateAdapter): Promise<ShallowNode | GQL.CreateNodeMutationErrorType> => {
-//       const creatorProfileId = getProfileId(env)
-//       const data = getNewNodeData(createData)
-//       const result = await storeNode({ data, creatorProfileId })
-//       if (!result) {
-//         return 'AssertionFailed'
-//       }
-//       return result
-//     },
-// )
-
-// const getNewNodeData = async ({ data, env }: CreateNode): ShallowNode => {
-//   if (data.__typename === 'Collection') {
-//     const [id, slug, key] = newGlyphIdentifiers(data.name, data.__typename)
-//     const collection: ShallowNodeByType<'Collection'> = {
-//       __typename: 'Collection',
-//       id,
-//       slug,
-//       name: data.name,
-//       description: data.description,
-//       image: data.image,
-//     }
-//     return collection
-//   } else if (data.__typename === 'Resource') {
-//     const [id, slug, _key] = newGlyphIdentifiers(data.name, data.__typename)
-//     const resource: ShallowNodeByType<'Resource'> = {
-//       __typename: 'Resource',
-//       id,
-//       slug,
-//       name: data.name,
-//       content: data.content,
-//       contentType: data.contentType,
-//       description: data.description,
-//       thumbnail: data.thumbnail,
-//     }
-//   }
-//   throw new Error(`can't create nodeType ${data.__typename}`)
-// }
+QMModule(module)

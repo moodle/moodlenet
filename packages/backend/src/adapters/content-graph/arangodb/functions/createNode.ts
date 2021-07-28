@@ -1,17 +1,29 @@
-import { GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import { GraphNodeByType, GraphNodeType, NodeStatus } from '@moodlenet/common/lib/content-graph/types/node'
 import { omit } from '@moodlenet/common/lib/utils/object'
+import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
-import { AqlGraphNodeByType, AqlGraphNodeDataByType } from '../types'
+import { AqlGraphNodeByType } from '../types'
 
 export const createNodeQ = <Type extends GraphNodeType>({
-  data,
-  nodeType,
+  node,
+  status,
 }: {
-  nodeType: Type
-  data: AqlGraphNodeDataByType<Type> & { _permId: string }
+  node: DistOmit<GraphNodeByType<Type>, '_bumpStatus'>
+  status: NodeStatus
 }) => {
-  const q = aq<AqlGraphNodeByType<typeof nodeType>>(`
-    let newnode = ${aqlstr({ ...omit(data, ['_permId']), _key: data._permId })}
+  const nodeType = node._type
+  const aqlNodeButBump = { ...omit(node, ['_permId']), _key: node._permId }
+
+  const q = aq<AqlGraphNodeByType<Type>>(`
+    let newnode = MERGE(
+      ${aqlstr(aqlNodeButBump)},
+      {
+        _bumpStatus:{
+          status: ${aqlstr(status)},
+          date: DATE_NOW()
+        }
+      }
+    )
 
     INSERT newnode into ${nodeType}
 

@@ -7,7 +7,7 @@ import { SignOptions } from 'jsonwebtoken'
 import { getGQLResolvers } from '../../graphql/resolvers'
 import { Context, RootValue } from '../../graphql/types'
 import { JwtPrivateKey } from '../../lib/auth/jwt'
-import { PasswordVerifier } from '../../lib/auth/types'
+import { PasswordHasher, PasswordVerifier } from '../../lib/auth/types'
 import { QMino } from '../../lib/qmino'
 
 export type GQLAppConfig = {
@@ -15,6 +15,7 @@ export type GQLAppConfig = {
   jwtSignOptions: SignOptions
   jwtPrivateKey: JwtPrivateKey
   passwordVerifier: PasswordVerifier
+  passwordHasher: PasswordHasher
   qmino: QMino
 }
 export const createGraphQLApp = ({
@@ -22,6 +23,7 @@ export const createGraphQLApp = ({
   jwtPrivateKey,
   jwtSignOptions,
   qmino,
+  passwordHasher,
   passwordVerifier,
 }: GQLAppConfig) => {
   const mainResolvers = getGQLResolvers({
@@ -29,6 +31,7 @@ export const createGraphQLApp = ({
     jwtSignOptions,
     qmino,
     passwordVerifier,
+    passwordHasher,
   })
   const schema = makeExecutableSchema({
     typeDefs: printSchema(buildClientSchema(introspection as any)), // ? don't know why it doesn' accept IntrospectionQuery

@@ -22,7 +22,9 @@ export type ActiveUser = UserBase<'Active'> & {
   authId: AuthId
   password: Password
 }
-export type WaitingFirstActivationUser = UserBase<'WaitingFirstActivation'> & {}
+export type WaitingFirstActivationUser = UserBase<'WaitingFirstActivation'> & {
+  firstActivationToken: Token
+}
 
 export type User = ActiveUser | WaitingFirstActivationUser
 
@@ -44,4 +46,5 @@ export type Link = string
 export type UserId = string
 export type AuthId = string
 export type Password = string
+export type Token = string
 export type TimeoutSecs = number
