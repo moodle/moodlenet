@@ -1,12 +1,13 @@
-import { t, Trans } from '@lingui/macro'
-import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
-import LinkIcon from '@material-ui/icons/Link'
-import React, { useState } from 'react'
-import Card from '../../../components/atoms/Card/Card'
-import InputTextField from '../../../components/atoms/InputTextField/InputTextField'
-import uploadFileIcon from '../../../static/icons/upload-file.svg'
-import uploadImageIcon from '../../../static/icons/upload-image.svg'
-import './styles.scss'
+import { t, Trans } from '@lingui/macro';
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
+import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import LinkIcon from '@material-ui/icons/Link';
+import React, { useState } from 'react';
+import Card from '../../../components/atoms/Card/Card';
+import InputTextField from '../../../components/atoms/InputTextField/InputTextField';
+import uploadFileIcon from '../../../static/icons/upload-file.svg';
+import uploadImageIcon from '../../../static/icons/upload-image.svg';
+import './styles.scss';
 
 type UploadResourceState = 'Initial' | 'ContentUploaded' | 'ImageUploaded' | 'AllSet' | 'AllSetImage'
 type ContentType = 'File' | 'Link' | ''
@@ -59,6 +60,11 @@ export const UploadResource = () => {
     }
   }
 
+  const deleteImage = () => {
+    setContent({...content, imagePath: undefined})
+    setState('ContentUploaded')
+  }
+
   const onTitleChange = (text: string) => setContent({...content, title: text})
   const onDescriptionChange = (text: string) => setContent({...content, description: text})
   const onCategoryChange = (text: string) => setContent({...content, category: text})
@@ -71,26 +77,31 @@ export const UploadResource = () => {
         </div>
         <Card>
           <div className="main-container">
-            <div className="uploader" hidden={state === 'ImageUploaded'}>
-            {state === 'Initial' ? 
-              <div className="file upload" hidden={state !== 'Initial'} onClick={selectFile}>
-                <input id="uploadFile" type="file" name="myFile" onChange={uploadFile} hidden/>
-                <img src={uploadFileIcon} />
-                <span>
-                  <Trans>Drop a file here or click to upload!</Trans>
-                </span>
+            {state !== 'ImageUploaded' ? (
+            <div className="uploader">
+              {state === 'Initial' ? (
+                <div className="file upload" hidden={state !== 'Initial'} onClick={selectFile}>
+                  <input id="uploadFile" type="file" name="myFile" onChange={uploadFile} hidden/>
+                  <img src={uploadFileIcon} />
+                  <span>
+                    <Trans>Drop a file here or click to upload!</Trans>
+                  </span>
+                </div>
+              ) : state === 'ContentUploaded' ? (
+                <div className="image upload" hidden={state !== 'ContentUploaded'} onClick={selectImage}>
+                  <input id="uploadImage" type="file" name="myImage" onChange={uploadImage} hidden/>
+                  <img src={uploadImageIcon} />
+                  <span>
+                    <Trans>Drop an image here or click to upload!</Trans>
+                  </span>
+                </div>
+              ) : ( <></>)}
               </div>
-            : state === 'ContentUploaded' ?
-              <div className="image upload" hidden={state !== 'ContentUploaded'} onClick={selectImage}>
-                <input id="uploadImage" type="file" name="myImage" onChange={uploadImage} hidden/>
-                <img src={uploadImageIcon} />
-                <span>
-                  <Trans>Drop an image here or click to upload!</Trans>
-                </span>
+            ) : (
+              <div className="image-container" style={background}>
+                <div className="delete-image" onClick={deleteImage}><CloseRoundedIcon /></div>
               </div>
-              : <></>}
-            </div>
-            {state === 'ImageUploaded' ? <div className="image-container" style={background} /> : <></>}
+            )}
           </div>
           <div className="bottom-container">
           {state === 'Initial'  ? (
