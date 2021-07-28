@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
@@ -23,9 +24,9 @@ const meta: ComponentMeta<typeof NewResource> = {
 const NewResourceStory: ComponentStory<typeof NewResource> = args => <NewResource {...args} />
 
 export const NewResourceProgressStateStory: NewResourceProgressState = [
-  ['UploadResource', 'Upload Resource'], 
-  ['Collections', 'Add to Collections'], 
-  ['ExtraData', 'Add Details']
+  ['UploadResource', t`Upload Resource`], 
+  ['Collections', t`Add to Collections`], 
+  ['ExtraData', t`Add Details`]
 ];
 
 export const NewResourceStoryProps: NewResourceProps = {

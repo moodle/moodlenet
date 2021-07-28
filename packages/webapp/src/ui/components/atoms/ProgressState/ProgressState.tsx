@@ -1,4 +1,3 @@
-import { Trans } from '@lingui/macro';
 import { FC } from 'react';
 import { NewResourceProgressState, NewResourceState } from '../../../pages/NewResource/NewResource';
 import './styles.scss';
@@ -14,10 +13,10 @@ export const ProgressState: FC<ProgressStateProps> = ({ states, currentState }) 
   
   return (
     <div className="progress-state">
-      <div className="title"><span>{currentIndex + 1}</span><Trans>{title}</Trans></div> 
+      <div className="title"><span>{currentIndex + 1}</span>{title}</div> 
       <div className="progress-bar">
       {states.map((state, index) => {
-        return <div className={state[0] === currentState ? 'current' : currentIndex > index ? 'done' : 'todo'}></div>
+        return <div key={state[1]} className={state[0] === currentState ? 'current' : currentIndex > index ? 'done' : 'todo'}></div>
       })}
       </div>   
     </div>
