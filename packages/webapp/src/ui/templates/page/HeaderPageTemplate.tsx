@@ -10,8 +10,6 @@ export type HeaderPageTemplateProps = {
 
 export const HeaderPageTemplate = withCtrl<HeaderPageTemplateProps>(
   ({ headerPageProps, isAuthenticated, showSubHeader, children }) => {
-    console.log('auth : ' + isAuthenticated)
-    console.log('showSubHea : ' + showSubHeader)
     return (
       <MainPageWrapper>
         <HeaderPage {...headerPageProps} isAuthenticated={isAuthenticated} />

@@ -1,5 +1,5 @@
-import { t } from "@lingui/macro";
-import { FC, ReactNode } from "react";
+import React, { FC, useState } from "react";
+import PrimaryButton from "../PrimaryButton/PrimaryButton";
 import "./styles.scss";
 
 export type InputTextFieldProps = {
@@ -8,8 +8,10 @@ export type InputTextFieldProps = {
   textarea?: boolean
   disabled?: boolean
   hidden?: boolean
-  button?: ReactNode
+  buttonName?: string
   className?: string
+  value?: string | undefined
+  getText?(text: string): void
 }
 
 export const InputTextField: FC<InputTextFieldProps> = ({
@@ -17,21 +19,44 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   placeholder,
   textarea,
   disabled,
-  button,
+  buttonName,
   hidden,
-  className
+  className,
+  value,
+  getText
 }) => { 
+  const [text, setText] = useState<string |undefined>(value)
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      getText && getText(text ? text : '')
+    }
+  }
+
+  const handleClick = () => {
+    getText && getText(text ? text : '')
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.currentTarget.value)
+  }
+
+
   return (
     <div 
       className={`input-text-field ${className} ${disabled ? 'disabled' : ''}`}
       style={{visibility: hidden ? 'hidden' : 'visible'}}
+      hidden={hidden}
     >
       { label ? <label>{label}</label> : <></> }
       { textarea ? (
         <div className="textarea-container">
           <textarea 
+            value={text}
+            onChange={ handleChange }
+            onKeyDown={ handleKeyDown }
             disabled={disabled}
-            name="Text1" 
+            name="textarea" 
             cols={40} 
             rows={5}
           />
@@ -39,20 +64,25 @@ export const InputTextField: FC<InputTextFieldProps> = ({
       ) : (
       <div className="input-container">
         <input
+          value={text}
+          onChange={ handleChange }
+          {...buttonName && {onKeyDown:handleKeyDown}}
           disabled={disabled}
-          type="text"
-          placeholder={t`${placeholder}`}
+          type="input"
+          placeholder={placeholder}
         />
-        {button}
+        {buttonName ? (<PrimaryButton onClick={handleClick}>{buttonName}</PrimaryButton>):(<></>)}
       </div>
     )}
     </div>
-  );
-}
+  )
+};
 
 InputTextField.defaultProps = {
   hidden: false,
-  className: ''
+  value: '',
+  className: '',
+  getText: () => ''
 }
 
 export default InputTextField;

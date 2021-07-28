@@ -2,7 +2,7 @@ import { FC } from 'react'
 import './styles.scss'
 
 export type PrimaryButtonProps = {
-  onClick?(): unknown
+  onClick?(arg0: unknown): unknown
 }
 
 export const PrimaryButton: FC<PrimaryButtonProps> = ({ children, onClick }) => {
