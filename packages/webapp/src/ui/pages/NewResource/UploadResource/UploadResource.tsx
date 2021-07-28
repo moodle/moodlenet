@@ -28,8 +28,10 @@ export type Content = {
   imagePath: string | undefined
 }
 
+const emptyContent = {name: undefined, type: undefined, category: undefined, description: undefined, title: undefined, imagePath: undefined}
+
 export const UploadResource = withCtrl<UploadResourceProps>(({state}) => {
-  const [content, setContent] = useState<Content>({name: undefined, type: undefined, category: undefined, description: undefined, title: undefined, imagePath: undefined})
+  const [content, setContent] = useState<Content>(emptyContent)
   const [currentState, setCurrentState] = useState<UploadResourceState>(state)
 
   const background = {
@@ -67,6 +69,15 @@ export const UploadResource = withCtrl<UploadResourceProps>(({state}) => {
   const deleteImage = () => {
     setContent({...content, imagePath: undefined})
     setCurrentState('ContentUploaded')
+  }
+
+  const deleteContent = () => {
+    setContent(emptyContent)
+    setCurrentState('Initial')
+  }
+
+  const toCollections = () => {
+    console.log('Done')
   }
 
   useEffect(() => {
@@ -170,8 +181,8 @@ export const UploadResource = withCtrl<UploadResourceProps>(({state}) => {
         </div>
       </div>
       <div className="footer">
-        { state !== 'Initial' && <SecondaryButton><Trans>Delete</Trans></SecondaryButton>}
-        <PrimaryButton disabled={currentState !== 'AllSet' && currentState !== 'AllSetImage'}><Trans>Next</Trans></PrimaryButton>
+        { currentState !== 'Initial' && <SecondaryButton onClick={deleteContent} type="grey"><Trans>Delete</Trans></SecondaryButton>}
+        <PrimaryButton disabled={currentState !== 'AllSet' && currentState !== 'AllSetImage'} onClick={toCollections}><Trans>Next</Trans></PrimaryButton>
       </div>
     </div>
   )
