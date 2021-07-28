@@ -24,7 +24,7 @@ export const password = string()
 // })
 
 // export const activateUser: SchemaOf<GQL.MutationActivateUserArgs> = object({
-//   displayName: string().required(),
+//   name: string().required(),
 //   password: password.required(),
 //   activationToken: token.required(),
 // })

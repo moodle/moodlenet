@@ -3,6 +3,7 @@ import { ArangoSearchViewLink } from 'arangojs/view'
 
 export const SearchViewName = 'SearchView'
 export const setupSearchView = async ({ db }: { db: Database }) => {
+  console.log(`setting up View ${SearchViewName}`)
   let searchView = db.view(SearchViewName)
   const textAnalyzer = db.analyzer('global-text-search')
   await textAnalyzer.create({
@@ -29,6 +30,7 @@ export const setupSearchView = async ({ db }: { db: Database }) => {
       Iscedf: contentAnalyzer,
     },
   })
+  console.log(` ... done ${SearchViewName}`)
 
   return searchView
 }

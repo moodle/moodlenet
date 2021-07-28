@@ -1,3 +1,4 @@
+import { ID } from './scalars.graphql';
 import { AssetRef } from './scalars.graphql';
 import { Cursor } from './scalars.graphql';
 import { DateTime } from './scalars.graphql';
@@ -9,7 +10,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
+  ID: ID;
   String: string;
   Boolean: boolean;
   Int: number;
@@ -58,6 +59,12 @@ export type Collection_RelCountArgs = {
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
+export type Contains = IEdge & {
+  __typename: 'Contains';
+  id: Scalars['ID'];
+  _created: Scalars['DateTime'];
+};
+
 export type CreateCollectionInput = {
   name: Scalars['String'];
   description: Scalars['String'];
@@ -66,8 +73,11 @@ export type CreateCollectionInput = {
 };
 
 export type CreateEdgeInput = {
+  Contains?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
+  Follows?: Maybe<Scalars['Empty']>;
   HasOpBadge?: Maybe<Scalars['Empty']>;
+  Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   from: Scalars['ID'];
   to: Scalars['ID'];
@@ -190,11 +200,14 @@ export type DeleteNodeMutationSuccess = {
   nodeId?: Maybe<Scalars['ID']>;
 };
 
-export type Edge = Created | HasOpBadge;
+export type Edge = Contains | Created | Follows | HasOpBadge | Pinned;
 
 export type EdgeType =
+  | 'Contains'
   | 'Created'
-  | 'HasOpBadge';
+  | 'Follows'
+  | 'HasOpBadge'
+  | 'Pinned';
 
 export type EditCollectionInput = {
   name: Scalars['String'];
@@ -206,7 +219,7 @@ export type EditCollectionInput = {
 export type EditNodeInput = {
   Collection?: Maybe<EditCollectionInput>;
   Iscedf?: Maybe<Scalars['Never']>;
-  OpBadge?: Maybe<EditProfileInput>;
+  OpBadge?: Maybe<Scalars['Never']>;
   Organization?: Maybe<Scalars['Never']>;
   Profile?: Maybe<EditProfileInput>;
   Resource?: Maybe<EditResourceInput>;
@@ -234,14 +247,14 @@ export type EditNodeMutationSuccess = {
 };
 
 export type EditProfileInput = {
+  name: Scalars['String'];
   avatar?: Maybe<Scalars['AssetRef']>;
   bio: Scalars['String'];
-  displayName: Scalars['String'];
-  firstName?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['AssetRef']>;
+  firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
-  location?: Maybe<Scalars['String']>;
   siteUrl?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
   slug: Scalars['String'];
 };
 
@@ -251,6 +264,12 @@ export type EditResourceInput = {
   image?: Maybe<AssetRefInput>;
 };
 
+
+export type Follows = IEdge & {
+  __typename: 'Follows';
+  id: Scalars['ID'];
+  _created: Scalars['DateTime'];
+};
 
 export type GlobalSearchSort =
   | 'Relevance'
@@ -270,6 +289,7 @@ export type IEdge = {
 
 export type INode = {
   id: Scalars['ID'];
+  name: Scalars['String'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -347,6 +367,7 @@ export type NodeType =
 
 export type OpBadge = INode & {
   __typename: 'OpBadge';
+  name: Scalars['String'];
   type: OpBadgeType;
   descripton: Scalars['String'];
   id: Scalars['ID'];
@@ -378,6 +399,7 @@ export type Organization = INode & {
   name: Scalars['String'];
   intro: Scalars['String'];
   logo?: Maybe<Scalars['AssetRef']>;
+  image?: Maybe<Scalars['AssetRef']>;
   color: Scalars['String'];
   domain: Scalars['String'];
   id: Scalars['ID'];
@@ -424,9 +446,15 @@ export type PaginationInput = {
   last?: Maybe<Scalars['Int']>;
 };
 
+export type Pinned = IEdge & {
+  __typename: 'Pinned';
+  id: Scalars['ID'];
+  _created: Scalars['DateTime'];
+};
+
 export type Profile = INode & {
   __typename: 'Profile';
-  displayName: Scalars['String'];
+  name: Scalars['String'];
   avatar?: Maybe<Scalars['AssetRef']>;
   bio: Scalars['String'];
   image?: Maybe<Scalars['AssetRef']>;
@@ -483,7 +511,7 @@ export type RelPage = Page & {
 export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
-  edge: Created | HasOpBadge;
+  edge: Contains | Created | Follows | HasOpBadge | Pinned;
   node: Collection | Iscedf | OpBadge | Organization | Profile | Resource;
 };
 
@@ -538,8 +566,11 @@ export type SimpleResponse = {
 };
 
 export type UpdateEdgeInput = {
+  Contains?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
+  Follows?: Maybe<Scalars['Empty']>;
   HasOpBadge?: Maybe<Scalars['Empty']>;
+  Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   id: Scalars['ID'];
 };
@@ -565,7 +596,8 @@ export type UpdateEdgeMutationSuccess = {
 
 export type UserSession = {
   __typename: 'UserSession';
-  userId: Scalars['String'];
+  email: Scalars['String'];
+  profile: Profile;
 };
 
 
@@ -593,16 +625,22 @@ export type UserSession = {
       "DeleteNodeMutationError"
     ],
     "Edge": [
+      "Contains",
       "Created",
-      "HasOpBadge"
+      "Follows",
+      "HasOpBadge",
+      "Pinned"
     ],
     "EditNodeMutationPayload": [
       "EditNodeMutationSuccess",
       "EditNodeMutationError"
     ],
     "IEdge": [
+      "Contains",
       "Created",
-      "HasOpBadge"
+      "Follows",
+      "HasOpBadge",
+      "Pinned"
     ],
     "INode": [
       "Collection",

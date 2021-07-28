@@ -8,6 +8,9 @@ const inputObjectValidators: {
 } = {
   Created: neverCreate('Created'),
   HasOpBadge: neverCreate('HasOpBadge'),
+  Contains: neverCreate('Contains'),
+  Pinned: neverCreate('Pinned'),
+  Follows: neverCreate('Follows'),
   // Contains: object<Just<CreateEdgeInput['Contains']>>().required(),
 }
 

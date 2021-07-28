@@ -26,7 +26,6 @@ const rootPermId = newGlyphPermId()
 
 export const getRootUser = ({ domain }: { domain: string }) => ({
   clearPassword: `root`,
-  slug: `__root__`,
   rootPermId,
   rootAuthId,
   email: `root@${domain}`,

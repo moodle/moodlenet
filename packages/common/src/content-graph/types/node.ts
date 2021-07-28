@@ -25,6 +25,7 @@ export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _permId: PermId
   _slug: Slug
   _bumpStatus: BumbNodeStatus
+  name: string
 }
 
 export type NodeStatus = 'Active' | 'Deleted'
@@ -43,13 +44,11 @@ export type OpBadge = BaseGraphNode<'OpBadge'> & {
 }
 
 export type Collection = BaseGraphNode<'Collection'> & {
-  name: string
   description: string
   image: Maybe<AssetRef>
 }
 
 export type Iscedf = BaseGraphNode<'Iscedf'> & {
-  name: string
   description: string
   codePath: Array<string>
   iscedCode: string
@@ -58,7 +57,6 @@ export type Iscedf = BaseGraphNode<'Iscedf'> & {
 }
 
 export type Organization = BaseGraphNode<'Organization'> & {
-  name: string
   intro: string
   logo: Maybe<AssetRef>
   color: string
@@ -67,7 +65,6 @@ export type Organization = BaseGraphNode<'Organization'> & {
 
 export type Profile = BaseGraphNode<'Profile'> & {
   _authId: AuthId
-  displayName: string
   avatar: Maybe<AssetRef>
   bio: string
   image: Maybe<AssetRef>
@@ -83,7 +80,6 @@ export type AssetRef = {
   location: string
 }
 export type Resource = BaseGraphNode<'Resource'> & {
-  name: string
   description: string
   thumbnail: Maybe<AssetRef>
   content: AssetRef

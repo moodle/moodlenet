@@ -3,6 +3,7 @@ import { Algorithm, SignOptions, VerifyOptions } from 'jsonwebtoken'
 // import { createTransport } from 'nodemailer'
 import { globalSearch } from '../adapters/content-graph/arangodb/adapters/globalSearch'
 import { getNodeBySlugAdapter } from '../adapters/content-graph/arangodb/adapters/node'
+import { getByAuthId } from '../adapters/content-graph/arangodb/adapters/profile'
 import {
   getNodeRelationCountAdapter,
   getTraverseNodeRelAdapter,
@@ -21,6 +22,7 @@ import { getVersionedDBOrThrow } from '../lib/helpers/arango/migrate/lib'
 import { Qmino } from '../lib/qmino'
 import { createInProcessTransport } from '../lib/qmino/transports/in-process/transport'
 import * as nodePorts from '../ports/content-graph/node'
+import * as profilePorts from '../ports/content-graph/profile'
 import * as searchPorts from '../ports/content-graph/search'
 // import * as edgePorts from '../ports/content-graph/edge'
 import * as traverseNodePorts from '../ports/content-graph/traverseNodeRel'
@@ -59,6 +61,7 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt /* ,
     jwtPrivateKey: jwt.privateKey,
     jwtSignOptions,
     qmino: qminoInProcess,
+    passwordVerifier: argonVerifyPassword,
   })
   const assetsApp = createStaticAssetsApp({ qmino: qminoInProcess })
   await startMNHttpServer({
@@ -85,7 +88,10 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt /* ,
 
   qminoInProcess.open(userPorts.getActiveByEmail, {
     ...byEmail(userAuthDatabase),
-    verifyPassword: argonVerifyPassword(),
+  })
+
+  qminoInProcess.open(profilePorts.getByAuthId, {
+    ...getByAuthId(contentGraphDatabase),
   })
 
   // qminoInProcess.open(newUserPorts.signUp, {

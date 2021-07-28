@@ -4,24 +4,29 @@ import {
   GlobalSearchNodeType,
   globalSearchNodeType,
   isGlobalSearchNodeType,
+  parseNodeId,
 } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { SignOptions } from 'jsonwebtoken'
-import { JwtPrivateKey } from '../../lib/auth/jwt'
+import { JwtPrivateKey, signJwtActiveUser } from '../../lib/auth/jwt'
+import { PasswordVerifier } from '../../lib/auth/types'
 import { QMino } from '../../lib/qmino'
 import * as nodePorts from '../../ports/content-graph/node'
+import * as profilePorts from '../../ports/content-graph/profile'
 import * as searchPorts from '../../ports/content-graph/search'
 import * as traversePorts from '../../ports/content-graph/traverseNodeRel'
 import * as userPorts from '../../ports/user-auth/user'
 import * as GQLResolvers from '../types.graphql.gen'
-import { graphEdge2GqlEdge, graphNode2GqlNode, parseNodeId } from './helpers'
+import { graphEdge2GqlEdge, graphNode2GqlNode } from './helpers'
 
 export const getGQLResolvers = ({
-  // jwtPrivateKey,
-  // jwtSignOptions,
+  jwtPrivateKey,
+  jwtSignOptions,
+  passwordVerifier,
   qmino,
 }: {
   jwtSignOptions: SignOptions
   jwtPrivateKey: JwtPrivateKey
+  passwordVerifier: PasswordVerifier
   qmino: QMino
 }): GQLResolvers.Resolvers => {
   return {
@@ -82,16 +87,25 @@ export const getGQLResolvers = ({
         if (!ctx.authSessionEnv) {
           return null
         }
-        const activeUser = await qmino.query(
-          userPorts.getActiveByEmail({ email: ctx.authSessionEnv.user.email, matchHashedPassword: false }),
-          { timeout: 5000 },
-        )
-        if (!activeUser) {
+
+        const mActiveUser = await qmino.query(userPorts.getActiveByEmail({ email: ctx.authSessionEnv.user.email }), {
+          timeout: 5000,
+        })
+        if (!mActiveUser) {
           return null
         }
+
+        const mProfile = await qmino.query(profilePorts.getByAuthId({ authId: mActiveUser.authId }), { timeout: 5000 })
+        if (!mProfile) {
+          return null
+        }
+
+        const email = mActiveUser.email
+        const profile = graphNode2GqlNode(mProfile) as GQLTypes.Profile
         return {
           __typename: 'UserSession',
-          userId: activeUser.id,
+          email,
+          profile,
         }
       },
     },
@@ -160,22 +174,25 @@ export const getGQLResolvers = ({
       },
     },
     Mutation: {
-      // async createSession(_root, { password, username } /* , ctx */) {
-      //   const activeUser = await qmino.query(userPorts.getActiveByEmail({ username, matchHashedPassword: password }), {
-      //     timeout: 5000,
-      //   })
-      //   if (!activeUser) {
-      //     return {
-      //       __typename: 'CreateSession',
-      //       message: 'not found',
-      //     }
-      //   }
-      //   const jwt = signJwtActiveUser({ jwtPrivateKey, jwtSignOptions, user: activeUser })
-      //   return {
-      //     __typename: 'CreateSession',
-      //     jwt,
-      //   }
-      // },
+      async createSession(_root, { password, email } /* , ctx */) {
+        const activeUser = await qmino.query(userPorts.getActiveByEmail({ email }), {
+          timeout: 5000,
+        })
+        const passwordMatches =
+          !!activeUser?.password && (await passwordVerifier({ plainPwd: password, pwdHash: activeUser.password }))
+
+        if (!(activeUser && passwordMatches)) {
+          return {
+            __typename: 'CreateSession',
+            message: 'not found',
+          }
+        }
+        const jwt = signJwtActiveUser({ jwtPrivateKey, jwtSignOptions, user: activeUser })
+        return {
+          __typename: 'CreateSession',
+          jwt,
+        }
+      },
       // async signUp(_root, { email } /* ,env */) {
       //   const res = await qmino.callSync(newUserPorts.signUp({ email }), { timeout: 5000 })
       //   if (typeof res === 'string') {

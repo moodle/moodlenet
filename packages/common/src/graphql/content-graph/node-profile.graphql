@@ -1,5 +1,5 @@
 type Profile implements INode {
-  displayName: String!
+  name: String!
   avatar: AssetRef
   bio: String!
   image: AssetRef
@@ -24,7 +24,7 @@ input CreateNodeInput {
 }
 
 input EditProfileInput {
-  displayName: String!
+  name: String!
   avatar: AssetRef
   bio: String!
   image: AssetRef

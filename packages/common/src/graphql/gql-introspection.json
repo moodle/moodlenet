@@ -348,6 +348,55 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "Contains",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "_created",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "IEdge",
+            "ofType": null
+          }
+        ],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "INPUT_OBJECT",
         "name": "CreateCollectionInput",
         "description": null,
@@ -429,6 +478,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "Contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Empty",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "Created",
             "description": null,
             "type": {
@@ -441,7 +502,31 @@
             "deprecationReason": null
           },
           {
+            "name": "Follows",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Empty",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "HasOpBadge",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Empty",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Pinned",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -1358,12 +1443,27 @@
         "possibleTypes": [
           {
             "kind": "OBJECT",
+            "name": "Contains",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
             "name": "Created",
             "ofType": null
           },
           {
             "kind": "OBJECT",
+            "name": "Follows",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
             "name": "HasOpBadge",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "Pinned",
             "ofType": null
           }
         ]
@@ -1377,13 +1477,31 @@
         "interfaces": null,
         "enumValues": [
           {
+            "name": "Contains",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "Created",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
+            "name": "Follows",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "HasOpBadge",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Pinned",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -1500,8 +1618,8 @@
             "name": "OpBadge",
             "description": null,
             "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "EditProfileInput",
+              "kind": "SCALAR",
+              "name": "Never",
               "ofType": null
             },
             "defaultValue": null,
@@ -1706,6 +1824,22 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "name",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "avatar",
             "description": null,
             "type": {
@@ -1734,16 +1868,12 @@
             "deprecationReason": null
           },
           {
-            "name": "displayName",
+            "name": "image",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "AssetRef",
+              "ofType": null
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -1755,18 +1885,6 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "image",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "AssetRef",
               "ofType": null
             },
             "defaultValue": null,
@@ -1786,7 +1904,7 @@
             "deprecationReason": null
           },
           {
-            "name": "location",
+            "name": "siteUrl",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -1798,7 +1916,7 @@
             "deprecationReason": null
           },
           {
-            "name": "siteUrl",
+            "name": "location",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -1892,6 +2010,55 @@
         "fields": null,
         "inputFields": null,
         "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "Follows",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "_created",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "IEdge",
+            "ofType": null
+          }
+        ],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -2013,12 +2180,27 @@
         "possibleTypes": [
           {
             "kind": "OBJECT",
+            "name": "Contains",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
             "name": "Created",
             "ofType": null
           },
           {
             "kind": "OBJECT",
+            "name": "Follows",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
             "name": "HasOpBadge",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "Pinned",
             "ofType": null
           }
         ]
@@ -2038,6 +2220,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -2675,6 +2873,22 @@
         "description": null,
         "fields": [
           {
+            "name": "name",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "type",
             "description": null,
             "args": [],
@@ -2930,6 +3144,18 @@
           },
           {
             "name": "logo",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "AssetRef",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "image",
             "description": null,
             "args": [],
             "type": {
@@ -3362,11 +3588,60 @@
       },
       {
         "kind": "OBJECT",
+        "name": "Pinned",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "_created",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "IEdge",
+            "ofType": null
+          }
+        ],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "Profile",
         "description": null,
         "fields": [
           {
-            "name": "displayName",
+            "name": "name",
             "description": null,
             "args": [],
             "type": {
@@ -4316,6 +4591,18 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "Contains",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Empty",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "Created",
             "description": null,
             "type": {
@@ -4328,7 +4615,31 @@
             "deprecationReason": null
           },
           {
+            "name": "Follows",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Empty",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "HasOpBadge",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Empty",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Pinned",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4500,7 +4811,7 @@
         "description": null,
         "fields": [
           {
-            "name": "userId",
+            "name": "email",
             "description": null,
             "args": [],
             "type": {
@@ -4509,6 +4820,22 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "profile",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Profile",
                 "ofType": null
               }
             },
