@@ -4,7 +4,6 @@ import LinkIcon from '@material-ui/icons/Link'
 import React, { useState } from 'react'
 import Card from '../../../components/atoms/Card/Card'
 import InputTextField from '../../../components/atoms/InputTextField/InputTextField'
-import { withCtrl } from '../../../lib/ctrl'
 import uploadFileIcon from '../../../static/icons/upload-file.svg'
 import uploadImageIcon from '../../../static/icons/upload-image.svg'
 import './styles.scss'
@@ -13,8 +12,6 @@ type UploadResourceState = 'Initial' | 'ContentUploaded' | 'ImageUploaded' | 'Al
 type ContentType = 'File' | 'Link' | ''
 
 export type UploadResourceProps = {
-  type?: ContentType
-  imageUrl?: string
 }
 
 export type Content = {
@@ -23,19 +20,20 @@ export type Content = {
   title: string | undefined
   description: string | undefined
   category: string |undefined
+  imagePath: string | undefined
 }
 
-export const UploadResource = withCtrl<UploadResourceProps>(({ imageUrl }) => {
+export const UploadResource = () => {
+  const [content, setContent] = useState<Content>({name: undefined, type: undefined, category: undefined, description: undefined, title: undefined, imagePath: undefined})
+  const [state, setState] = useState<UploadResourceState>('Initial')
+
   const background = {
-    backgroundImage: 'url(' + imageUrl + ')',
+    backgroundImage: 'url(' + content.imagePath + ')',
     backgroundSize: 'cover',
   }
 
-  const [content, setContent] = useState<Content>({name: undefined, type: undefined, category: undefined, description: undefined, title: undefined})
-  const [state, setState] = useState<UploadResourceState>('Initial')
-
   const setLink = (text: string) => {
-    setContent({...content, name: ''})
+    setContent({...content, name: text})
     setState('ContentUploaded')
   }
 
@@ -44,8 +42,21 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ imageUrl }) => {
   }
 
   const uploadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setContent({...content, name: e.currentTarget.value.split('\\').pop()?.split('/').pop(), type: 'File'})
-    setState('ContentUploaded')
+    if (e.currentTarget.value) {
+      setContent({...content, name: e.currentTarget.value.split('\\').pop()?.split('/').pop(), type: 'File'})
+      setState('ContentUploaded')
+    }
+  }
+
+  const selectImage = () => {
+    document.getElementById("uploadImage")?.click()
+  }
+
+  const uploadImage = (e: React.ChangeEvent<HTMLInputElement> ) => {
+    if (e.currentTarget.files && e.currentTarget.files[0]) {
+      setContent({...content, imagePath: URL.createObjectURL(e.currentTarget.files[0])})
+      setState('ImageUploaded')
+    }
   }
 
   const onTitleChange = (text: string) => setContent({...content, title: text})
@@ -63,14 +74,15 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ imageUrl }) => {
             <div className="uploader" hidden={state === 'ImageUploaded'}>
             {state === 'Initial' ? 
               <div className="file upload" hidden={state !== 'Initial'} onClick={selectFile}>
-                <img src={uploadFileIcon} />
                 <input id="uploadFile" type="file" name="myFile" onChange={uploadFile} hidden/>
+                <img src={uploadFileIcon} />
                 <span>
                   <Trans>Drop a file here or click to upload!</Trans>
                 </span>
               </div>
             : state === 'ContentUploaded' ?
-              <div className="image upload" hidden={state !== 'ContentUploaded'}>
+              <div className="image upload" hidden={state !== 'ContentUploaded'} onClick={selectImage}>
+                <input id="uploadImage" type="file" name="myImage" onChange={uploadImage} hidden/>
                 <img src={uploadImageIcon} />
                 <span>
                   <Trans>Drop an image here or click to upload!</Trans>
@@ -81,7 +93,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ imageUrl }) => {
             {state === 'ImageUploaded' ? <div className="image-container" style={background} /> : <></>}
           </div>
           <div className="bottom-container">
-          {!content ? (
+          {state === 'Initial'  ? (
             <InputTextField
               className="link"
               placeholder={t`Paste or type a link`}
@@ -110,4 +122,4 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ imageUrl }) => {
       </div>
     </div>
   )
-})
+}
