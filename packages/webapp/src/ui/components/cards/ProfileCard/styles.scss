@@ -41,6 +41,9 @@
     margin-right: 20%;
     @media (max-width: 450px) {
       margin-right: 40px;
+      > .buttons > :first-child {
+        margin: 0 5px 0 0;
+      }
     }
   }
 

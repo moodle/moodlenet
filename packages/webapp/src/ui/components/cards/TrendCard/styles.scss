@@ -6,13 +6,6 @@
     display: flex;
     flex-direction: column;
 
-    @media (max-width:450px) {
-        box-shadow: none;
-        border-radius: 0;
-        margin-top: 0;
-        background-color: transparent;
-    }
-
     > .title {
         font-size: 12px;
         font-weight: bold;
@@ -46,5 +39,20 @@
     .light-font {
         color: #7F8393
         ;
+    }
+
+    @media (max-width:450px) {
+        box-shadow: none;
+        border-radius: 0;
+        margin-top: 0;
+        background-color: transparent;
+        > .title {
+            padding-left: 0;
+        }
+
+        > .content {
+            padding-left: 0;
+            padding-right: 0;
+        }
     }
 }
