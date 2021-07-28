@@ -15,7 +15,7 @@ export type HeaderPropsIdle = HeaderPropsBase & {
   me: null | {
     avatar: string
     logout?: () => unknown
-    username: string
+    name: string
     myProfileHref: Href
   }
 }

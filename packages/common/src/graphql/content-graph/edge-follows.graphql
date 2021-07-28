@@ -1,7 +1,6 @@
 type Follows implements IEdge {
   id: ID!
-  _created: GlyphByAt!
-  _lastEdited: GlyphByAt
+  _created: DateTime!
 }
 
 ## integrations

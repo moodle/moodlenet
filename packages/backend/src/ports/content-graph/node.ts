@@ -1,60 +1,82 @@
-import * as GQL from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { Id, IdKey } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { DocumentNodeByType, DocumentNodeDataByType } from '../../adapters/content-graph/arangodb/functions/types'
-import { getProfileId } from '../../lib/auth/env'
+import { GraphNodeByType, GraphNodeType, Slug } from '@moodlenet/common/lib/content-graph/types/node'
+import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { SessionEnv } from '../../lib/auth/types'
-import { newGlyphKey } from '../../lib/helpers/arango'
-import { QMCommand, QMModule, QMQuery } from '../../lib/qmino'
+import { QMModule, QMQuery } from '../../lib/qmino'
 
 // query by id
-export type ByIdAdapter = {
-  getNodeById: <Type extends GQL.NodeType>(_: {
-    nodeType: Type
-    _key: IdKey
-  }) => Promise<DocumentNodeByType<Type> | null>
+export type BySlugAdapter = {
+  getNodeBySlug: <Type extends GraphNodeType>(_: { type: Type; slug: Slug }) => Promise<Maybe<GraphNodeByType<Type>>>
 }
 
-export type ByIdInput<Type extends GQL.NodeType = GQL.NodeType> = {
-  _key: IdKey
-  nodeType: Type
+export type BySlugInput<Type extends GraphNodeType> = {
+  slug: Slug
+  type: Type
+  env: SessionEnv | null
 }
 
-export const byId = QMQuery(
-  <Type extends GQL.NodeType = GQL.NodeType>({ _key, nodeType }: ByIdInput<Type>) =>
-    async ({ getNodeById }: ByIdAdapter) => {
-      return getNodeById({ _key, nodeType })
+export const getBySlug = QMQuery(
+  <Type extends GraphNodeType>({ type, slug }: BySlugInput<Type>) =>
+    async ({ getNodeBySlug }: BySlugAdapter) => {
+      return getNodeBySlug({ slug, type })
     },
 )
+
+QMModule(module)
 
 // create
 
-export type CreateAdapter = {
-  storeNode: <Type extends GQL.NodeType>(_: {
-    nodeType: Type
-    data: DocumentNodeDataByType<Type>
-    creatorProfileId: Id
-    key: string
-  }) => Promise<DocumentNodeByType<Type> | null>
-}
+// export type CreateAdapter = {
+//   storeNode: <Type extends GQL.NodeType>(_: {
+//     nodeType: Type
+//     data: ShallowNodeByType<Type>
+//     creatorProfileId: Id
+//   }) => Promise<DocumentNodeByType<Type> | null>
+// }
 
-export type CreateInput<Type extends GQL.NodeType = GQL.NodeType> = {
-  env: SessionEnv
-  nodeType: Type
-  data: DocumentNodeDataByType<Type>
-}
+// export type CreateNode = {
+//   env: SessionEnv
+//   data:
+//     | (GQL.CreateCollectionInput & { __typename: 'Collection' })
+//     | (GQL.CreateResourceInput & { __typename: 'Resource' })
+// }
 
-export const create = QMCommand(
-  <Type extends GQL.NodeType = GQL.NodeType>({ data, env, nodeType }: CreateInput<Type>) =>
-    async ({ storeNode }: CreateAdapter): Promise<DocumentNodeByType<Type> | GQL.CreateNodeMutationErrorType> => {
-      const creatorProfileId = getProfileId(env)
-      const key = NamedKeysOnNodeTypes.includes(nodeType) ? data.name : newGlyphKey()
+// export const create = QMCommand(
+//   (createData: CreateNode) =>
+//     async ({ storeNode }: CreateAdapter): Promise<ShallowNode | GQL.CreateNodeMutationErrorType> => {
+//       const creatorProfileId = getProfileId(env)
+//       const data = getNewNodeData(createData)
+//       const result = await storeNode({ data, creatorProfileId })
+//       if (!result) {
+//         return 'AssertionFailed'
+//       }
+//       return result
+//     },
+// )
 
-      const result = await storeNode({ nodeType, data, key, creatorProfileId })
-      if (!result) {
-        return 'AssertionFailed'
-      }
-      return result
-    },
-)
-const NamedKeysOnNodeTypes: GQL.NodeType[] = ['Organization', 'Profile', 'SubjectField']
-QMModule(module)
+// const getNewNodeData = async ({ data, env }: CreateNode): ShallowNode => {
+//   if (data.__typename === 'Collection') {
+//     const [id, slug, key] = newGlyphIdentifiers(data.name, data.__typename)
+//     const collection: ShallowNodeByType<'Collection'> = {
+//       __typename: 'Collection',
+//       id,
+//       slug,
+//       name: data.name,
+//       description: data.description,
+//       image: data.image,
+//     }
+//     return collection
+//   } else if (data.__typename === 'Resource') {
+//     const [id, slug, _key] = newGlyphIdentifiers(data.name, data.__typename)
+//     const resource: ShallowNodeByType<'Resource'> = {
+//       __typename: 'Resource',
+//       id,
+//       slug,
+//       name: data.name,
+//       content: data.content,
+//       contentType: data.contentType,
+//       description: data.description,
+//       thumbnail: data.thumbnail,
+//     }
+//   }
+//   throw new Error(`can't create nodeType ${data.__typename}`)
+// }

@@ -8,7 +8,7 @@ import { useLocalInstanceQuery } from './LocalInstance/localInstance.gen'
 export type LocalInstanceContextType = {
   org: {
     name: string
-    summary: string
+    intro: string
     icon: string
     image: string
     color: string
@@ -27,10 +27,10 @@ export const LocalInstanceProvider: FC = ({ children }) => {
           org: {
             color: localInstanceData.color,
             domain: localInstanceData.domain,
-            icon: getMaybeAssetRefUrl(localInstanceData.icon) ?? moodlenet_logo,
-            image: moodlenet_front_image,
+            icon: getMaybeAssetRefUrl(localInstanceData.logo) ?? moodlenet_logo,
+            image: getMaybeAssetRefUrl(localInstanceData.image) ?? moodlenet_front_image,
             name: localInstanceData.name,
-            summary: localInstanceData.summary,
+            intro: localInstanceData.intro,
           },
         }
       : null

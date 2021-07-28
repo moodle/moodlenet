@@ -2,13 +2,12 @@ query HeaderPagePinned($currentProfileId: ID!) {
   node(id: $currentProfileId) {
     ... on INode {
       id
-      pinnedList: _rel(edge: { type: Follows, node: SubjectField }, page: { first: 10 }) {
+      pinnedList: _rel(type: Pinned, target: Iscedf, page: { first: 10 }) {
         edges {
           node {
-            ... on SubjectField {
+            ... on Iscedf {
               id
               name
-              icon
             }
           }
         }

@@ -1,21 +1,11 @@
-type Collection implements INode & IContentNode {
+type Collection implements INode {
   name: String!
-  summary: String!
-  icon: AssetRef
+  description: String!
+  image: AssetRef
+  # INode
   id: ID!
-  _organization: Organization
-  _created: GlyphByAt!
-  _lastEdited: GlyphByAt
-  _rel(edge: EdgeTypeInput!, page: PaginationInput): RelPage!
+  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput): RelPage!
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
-}
-
-input CreateCollectionInput {
-  content: ContentNodeInput!
-}
-
-input UpdateCollectionInput {
-  content: ContentNodeInput!
 }
 
 # integrations
@@ -23,9 +13,23 @@ union Node = Collection
 enum NodeType {
   Collection
 }
+
+input CreateCollectionInput {
+  name: String!
+  description: String!
+  image: AssetRefInput!
+  slug: String!
+}
 input CreateNodeInput {
   Collection: CreateCollectionInput
 }
-input UpdateNodeInput {
-  Collection: UpdateCollectionInput
+
+input EditCollectionInput {
+  name: String!
+  description: String!
+  image: AssetRefInput!
+  slug: String!
+}
+input EditNodeInput {
+  Collection: EditCollectionInput
 }

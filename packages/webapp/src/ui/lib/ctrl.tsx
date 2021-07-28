@@ -57,8 +57,8 @@ const defaultCtrlHookRetOpts: CtrlHookRetOpts = {
 export const RenderWithHook: FC<{
   chw: CtrlHookWrap<any>
   UIComp: ComponentType<any>
-  displayName: string
-}> = ({ UIComp, chw, displayName, ...rest }) => {
+  name: string
+}> = ({ UIComp, chw, name, ...rest }) => {
   const { useCtrlHook, hookArg } = chw[CTRL_SYMB]
   const hookRet = useCtrlHook(hookArg)
   if (!hookRet) {
@@ -66,13 +66,13 @@ export const RenderWithHook: FC<{
   }
   const [feedProps, opts] = hookRet
   const { wrap } = { ...defaultCtrlHookRetOpts, ...opts }
-  UIComp.displayName = `${displayName}_UI`
+  UIComp.displayName = `${name}_UI`
   return wrap(<UIComp {...feedProps} {...rest} />)
 }
 
 export const withCtrl = <UIProps, ExcludeKeys extends keyof UIProps = never>(
   UIComp: ComponentType<UIProps>,
-): FC<ControlledProps<UIProps, ExcludeKeys>> => {
+): FC<ControlledProps<UIProps, ExcludeKeys> & Pick<UIProps, ExcludeKeys>> => {
   // eslint-disable-next-line no-eval
   const Render = ({ children, ...props }: PropsWithChildren<ControlledProps<UIProps, ExcludeKeys>>) => {
     if (CTRL_SYMB in props && (props as any)[CTRL_SYMB]) {
@@ -81,7 +81,7 @@ export const withCtrl = <UIProps, ExcludeKeys extends keyof UIProps = never>(
         <RenderWithHook
           {...{
             chw: props as PropsWithChildren<CtrlHookWrap<UIProps>>,
-            displayName: Render.displayName,
+            name: Render.name,
             UIComp,
           }}
         >

@@ -1,5 +1,5 @@
+import { ActiveUser } from '@moodlenet/common/lib/user-auth/types'
 import JWT from 'jsonwebtoken'
-import { ActiveUser } from '../../adapters/user-auth/arangodb/types'
 import { SessionEnv } from './types'
 
 export const INVALID_TOKEN = Symbol('INVALID_TOKEN')
@@ -41,8 +41,8 @@ export const signJwtActiveUser = ({
 
 export const getSessioncEnvByActiveUser = (user: ActiveUser): SessionEnv => ({
   user: {
-    name: user.username,
-    role: user.role,
+    authId: user.authId,
+    email: user.email,
   },
 })
 

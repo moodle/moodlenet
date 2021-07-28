@@ -9,13 +9,10 @@ export const defaultArgonPwdHashOpts: ArgonPwdHashOpts = {
   type: argon2id,
 }
 
-export const argonHashPassword = async (_: { pwd: string; argonPwdHashOpts?: ArgonPwdHashOpts }) => {
-  const { pwd, argonPwdHashOpts = defaultArgonPwdHashOpts } = _
-  return Argon.hash(pwd, argonPwdHashOpts)
+export const argonHashPassword = async (pwd: string) => {
+  return Argon.hash(pwd, defaultArgonPwdHashOpts)
 }
 
-export const argonVerifyPassword =
-  (argonPwdHashOpts = defaultArgonPwdHashOpts): PasswordVerifier =>
-  async ({ pwd, pwdhash }) => {
-    return Argon.verify(pwdhash, pwd, argonPwdHashOpts)
-  }
+export const argonVerifyPassword: PasswordVerifier = async ({ pwdHash, plainPwd }) => {
+  return Argon.verify(pwdHash, plainPwd, defaultArgonPwdHashOpts)
+}

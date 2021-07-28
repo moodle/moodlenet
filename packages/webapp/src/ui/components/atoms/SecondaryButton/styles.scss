@@ -9,6 +9,18 @@
     height: 30px;
     padding: 12px;
     margin: 0 5px;
+    padding: 12px 18px;
+    width: fit-content;
     cursor: pointer;
     white-space: nowrap;
+
+    &.orange {
+        border-radius: 45px;
+        font-weight: bold;
+        font-size: 12px;
+        height: 30px;
+        color: #F88012;
+        background-color: #f4f5f7;
+        border: 2px solid #F88012;
+    }
 }

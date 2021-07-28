@@ -10,48 +10,9 @@ export type ResourceCardQueryVariables = Types.Exact<{
 
 export type ResourceCardQuery = (
   { __typename: 'Query' }
-  & { node?: Types.Maybe<(
-    { __typename: 'Collection' }
-    & Pick<Types.Collection, 'name' | 'icon' | 'id'>
-    & { inCollections: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: (
-          { __typename: 'Collection' }
-          & Pick<Types.Collection, 'id' | 'name'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'Organization' }
-    & Pick<Types.Organization, 'name' | 'icon' | 'id'>
-    & { inCollections: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: (
-          { __typename: 'Collection' }
-          & Pick<Types.Collection, 'id' | 'name'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'Profile' }
-    & Pick<Types.Profile, 'name' | 'icon' | 'id'>
-    & { inCollections: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: (
-          { __typename: 'Collection' }
-          & Pick<Types.Collection, 'id' | 'name'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
-      )> }
-    ) }
-  ) | (
+  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
     { __typename: 'Resource' }
-    & Pick<Types.Resource, 'name' | 'icon' | 'id'>
+    & Pick<Types.Resource, 'id' | 'name' | 'thumbnail' | 'kind' | 'content' | 'description' | 'image'>
     & { inCollections: (
       { __typename: 'RelPage' }
       & { edges: Array<(
@@ -59,20 +20,7 @@ export type ResourceCardQuery = (
         & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'SubjectField' }
-    & Pick<Types.SubjectField, 'name' | 'icon' | 'id'>
-    & { inCollections: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: (
-          { __typename: 'Collection' }
-          & Pick<Types.Collection, 'id' | 'name'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
+        ) | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ) }
   )> }
@@ -82,14 +30,18 @@ export type ResourceCardQuery = (
 export const ResourceCardDocument = gql`
     query ResourceCard($id: ID!) {
   node(id: $id) {
-    ... on IContentNode {
-      name
-      icon
-    }
-    ... on INode {
+    ... on Resource {
       id
+      name
+      thumbnail
+      kind
+      content
+      description
+      image
       inCollections: _rel(
-        edge: {type: Contains, node: Collection, inverse: true}
+        type: Contains
+        target: Collection
+        inverse: true
         page: {first: 3}
       ) {
         edges {

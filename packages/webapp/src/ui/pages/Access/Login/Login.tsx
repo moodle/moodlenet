@@ -3,25 +3,25 @@ import CallMadeIcon from '@material-ui/icons/CallMade'
 import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryButton'
-import { withCtrl } from '../../../lib/ctrl'
+import { CP, withCtrl } from '../../../lib/ctrl'
 import { SubmitForm, useFormikBag } from '../../../lib/formik'
 import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
-export type LoginFormValues = { username: string; password: string }
+export type LoginFormValues = { email: string; password: string }
 export type LoginProps = {
-  accessHeaderProps: AccessHeaderProps
+  accessHeaderProps: CP<AccessHeaderProps, 'page'>
   onSubmit: SubmitForm<LoginFormValues>
   loginErrorMessage: string | null
 }
 
 export const Login = withCtrl<LoginProps>(({ accessHeaderProps, onSubmit }) => {
-  const [form, attrs] = useFormikBag({ initialValues: { username: '', password: '' }, onSubmit })
+  const [form, attrs] = useFormikBag<LoginFormValues>({ initialValues: { email: '', password: '' }, onSubmit })
   return (
     <MainPageWrapper>
       <div className="login-page">
-        <AccessHeader {...accessHeaderProps} />
+        <AccessHeader {...accessHeaderProps} page={'login'} />
         <div className="separator" />
         <div className="content">
           <Card>
@@ -33,8 +33,8 @@ export const Login = withCtrl<LoginProps>(({ accessHeaderProps, onSubmit }) => {
                 <input
                   className="email"
                   type="text"
-                  placeholder={t`Username`}
-                  {...attrs.username}
+                  placeholder={t`Email`}
+                  {...attrs.email}
                   onChange={form.handleChange}
                 />
                 <input

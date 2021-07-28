@@ -12,55 +12,18 @@ export type CollectionCardQuery = (
   { __typename: 'Query' }
   & { node?: Types.Maybe<(
     { __typename: 'Collection' }
-    & Pick<Types.Collection, 'name' | 'icon' | 'id'>
-    & { _organization?: Types.Maybe<(
-      { __typename: 'Organization' }
-      & Pick<Types.Organization, 'name'>
-    )> }
-  ) | (
-    { __typename: 'Organization' }
-    & Pick<Types.Organization, 'name' | 'icon' | 'id'>
-    & { _organization?: Types.Maybe<(
-      { __typename: 'Organization' }
-      & Pick<Types.Organization, 'name'>
-    )> }
-  ) | (
-    { __typename: 'Profile' }
-    & Pick<Types.Profile, 'name' | 'icon' | 'id'>
-    & { _organization?: Types.Maybe<(
-      { __typename: 'Organization' }
-      & Pick<Types.Organization, 'name'>
-    )> }
-  ) | (
-    { __typename: 'Resource' }
-    & Pick<Types.Resource, 'name' | 'icon' | 'id'>
-    & { _organization?: Types.Maybe<(
-      { __typename: 'Organization' }
-      & Pick<Types.Organization, 'name'>
-    )> }
-  ) | (
-    { __typename: 'SubjectField' }
-    & Pick<Types.SubjectField, 'name' | 'icon' | 'id'>
-    & { _organization?: Types.Maybe<(
-      { __typename: 'Organization' }
-      & Pick<Types.Organization, 'name'>
-    )> }
-  )> }
+    & Pick<Types.Collection, 'id' | 'name' | 'image'>
+  ) | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' }> }
 );
 
 
 export const CollectionCardDocument = gql`
     query CollectionCard($id: ID!) {
   node(id: $id) {
-    ... on IContentNode {
-      name
-      icon
-    }
-    ... on INode {
+    ... on Collection {
       id
-      _organization {
-        name
-      }
+      name
+      image
     }
   }
 }

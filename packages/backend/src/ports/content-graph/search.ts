@@ -1,33 +1,25 @@
-import * as GQL from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { Maybe } from '@moodlenet/common/lib/utils/types'
-import { Context } from '../../graphql/types'
+import { GraphNodeByType } from '@moodlenet/common/lib/content-graph/types/node'
+import { Page, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
+import { GlobalSearchNodeType, GlobalSearchSortBy } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { SessionEnv } from '../../lib/auth/types'
 import { QMModule, QMQuery } from '../../lib/qmino'
 
-// FIXME!!!: is it possible to model this to free it from GQL ?
-// or shall we go towards naturally implement specific graphql (port|adapter)s ?
-// see: packages/backend/src/adapters/content-graph/arangodb/graphql/types.node.ts
-// FIXME!!!
-
 export type Adapter = {
-  searchNodes: <Type extends GQL.NodeType>(_: {
-    sortBy: GQL.GlobalSearchSort
-    text: string
-    nodeTypes: Maybe<Type[]>
-    page: Maybe<GQL.PaginationInput>
-    env: Context
-  }) => Promise<GQL.SearchPage>
+  searchNodes: <NodeType extends GlobalSearchNodeType>(_: GlobalSearchInput<NodeType>) => Promise<SearchPage>
 }
 
-export type Input<Type extends GQL.NodeType = GQL.NodeType> = {
-  sortBy: GQL.GlobalSearchSort
+export type GlobalSearchInput<NodeType extends GlobalSearchNodeType> = {
+  sortBy: GlobalSearchSortBy
   text: string
-  nodeTypes: Maybe<Type[]>
-  page: Maybe<GQL.PaginationInput>
-  env: Context
+  nodeTypes: NodeType[]
+  page: PaginationInput
+  env: SessionEnv | null
 }
+
+export type SearchPage = Page<GraphNodeByType<GlobalSearchNodeType>>
 
 export const byTerm = QMQuery(
-  <Types extends GQL.NodeType = GQL.NodeType>({ sortBy, text, nodeTypes, page, env }: Input<Types>) =>
+  <NodeType extends GlobalSearchNodeType>({ sortBy, text, nodeTypes, page, env }: GlobalSearchInput<NodeType>) =>
     async ({ searchNodes }: Adapter) => {
       return searchNodes({ sortBy, text, nodeTypes, page, env })
     },

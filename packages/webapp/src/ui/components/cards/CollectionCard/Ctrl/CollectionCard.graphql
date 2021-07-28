@@ -1,14 +1,9 @@
 query CollectionCard($id: ID!) {
   node(id: $id) {
-    ... on IContentNode {
-      name
-      icon
-    }
-    ... on INode {
+    ... on Collection {
       id
-      _organization {
-        name
-      }
+      name
+      image
     }
   }
 }
