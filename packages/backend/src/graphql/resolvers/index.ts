@@ -164,7 +164,7 @@ export const getGQLResolvers = ({
         return await qmino.query(
           traversePorts.count({
             edgeType: type,
-            fromNode: { slug: fromSlug, type: fromType },
+            fromNode: { _slug: fromSlug, _type: fromType },
             env: ctx.authSessionEnv,
             inverse: !!inverse,
             targetNodeType: target,

@@ -1,8 +1,8 @@
 import { mapPageItem } from '@moodlenet/common/lib/content-graph/types/page'
-import { getAllResults } from '../../../../lib/helpers/arango/query'
+import { getAllResults, getOneResult } from '../../../../lib/helpers/arango/query'
 import { NodeRelationCountAdapter, TraverseNodeRelAdapter } from '../../../../ports/content-graph/traverseNodeRel'
 import { aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode, makeAfterBeforePage } from '../functions/helpers'
-import { traverseEdgesQ } from '../functions/traverseEdges'
+import { nodeRelationCountQ, traverseEdgesQ } from '../functions/traverseEdges'
 import { AqlGraphEdge, AqlGraphNode, ContentGraphDB } from '../types'
 
 const pageItemMapper = mapPageItem(({ edge, node }: { edge: AqlGraphEdge; node: AqlGraphNode }) => ({
@@ -23,8 +23,9 @@ export const getTraverseNodeRelAdapter = (db: ContentGraphDB): TraverseNodeRelAd
   },
 })
 
-export const getNodeRelationCountAdapter = (_db: ContentGraphDB): NodeRelationCountAdapter => ({
-  async countNodeRelations() {
-    return 12
+export const getNodeRelationCountAdapter = (db: ContentGraphDB): NodeRelationCountAdapter => ({
+  async countNodeRelations({ edgeType, fromNode, inverse, targetNodeType, env }) {
+    const q = nodeRelationCountQ({ edgeType, env, fromNode, inverse, targetNodeType })
+    return (await getOneResult(q, db)) || 0
   },
 })
