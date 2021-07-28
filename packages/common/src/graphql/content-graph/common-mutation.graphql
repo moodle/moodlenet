@@ -1,10 +1,10 @@
 type Mutation {
-  createEdge(input: CreateEdgeInput!): CreateEdgeMutationPayload!
   createNode(input: CreateNodeInput!): CreateNodeMutationPayload!
-  updateEdge(input: UpdateEdgeInput!): UpdateEdgeMutationPayload!
-  updateNode(input: UpdateNodeInput!): UpdateNodeMutationPayload!
-  deleteEdge(input: DeleteEdgeInput!): DeleteEdgeMutationPayload!
-  deleteNode(input: DeleteNodeInput!): DeleteNodeMutationPayload!
+  # editNode(input: EditNodeInput!): EditNodeMutationPayload!
+  # deleteNode(input: DeleteNodeInput!): DeleteNodeMutationPayload!
+  # createEdge(input: CreateEdgeInput!): CreateEdgeMutationPayload!
+  # updateEdge(input: UpdateEdgeInput!): UpdateEdgeMutationPayload!
+  # deleteEdge(input: DeleteEdgeInput!): DeleteEdgeMutationPayload!
 }
 
 # ^ CreateNode
@@ -49,26 +49,26 @@ enum CreateEdgeMutationErrorType {
 }
 # $ CreateEdge
 
-# ^ UpdateNode
-input UpdateNodeInput {
+# ^ EditNode
+input EditNodeInput {
   id: ID!
   nodeType: NodeType!
 }
-union UpdateNodeMutationPayload = UpdateNodeMutationSuccess | UpdateNodeMutationError
-type UpdateNodeMutationSuccess {
+union EditNodeMutationPayload = EditNodeMutationSuccess | EditNodeMutationError
+type EditNodeMutationSuccess {
   node: Node
 }
-type UpdateNodeMutationError {
-  type: UpdateNodeMutationErrorType!
+type EditNodeMutationError {
+  type: EditNodeMutationErrorType!
   details: String
 }
-enum UpdateNodeMutationErrorType {
+enum EditNodeMutationErrorType {
   NotFound
   NotAuthorized
   UnexpectedInput
   AssertionFailed
 }
-# $ UpdateNode
+# $ EditNode
 
 # ^ UpdateEdge
 input UpdateEdgeInput {

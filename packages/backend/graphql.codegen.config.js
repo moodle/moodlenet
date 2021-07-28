@@ -25,6 +25,8 @@ const graphqlConfig = {
         //avoidOptionals: true,
         nonOptionalTypename: true,
         skipTypename: false,
+        optionalResolveType: true,
+        // useTypeImports:true
       },
     },
   }

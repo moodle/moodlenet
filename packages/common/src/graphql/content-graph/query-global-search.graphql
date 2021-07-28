@@ -9,7 +9,7 @@ type SearchPage implements Page {
 
 type SearchPageEdge implements PageEdge {
   cursor: Cursor!
-  node: IContentNode!
+  node: INode!
 }
 
 enum GlobalSearchSort {

@@ -1,33 +1,39 @@
 query ProfilePageUserData($profileId: ID!) {
   node(id: $profileId) {
-    ... on INode {
+    ... on Profile {
       id
-      ... on Profile {
-        name
-        summary
-        icon
-      }
-      followersCount: _relCount(type: Follows, target: Profile, inverse: true)
-      resourcesCount: _relCount(type: Created, target: Resource)
+      name
+      avatar
+      bio
+      image
+      firstName
+      lastName
+      siteUrl
+      location
 
-      collections: _rel(edge: { type: Created, node: Collection }, page: { first: 100 }) {
+      followersCount: _relCount(type: Follows, target: Profile, inverse: true)
+
+      collectionsCount: _relCount(type: Created, target: Collection)
+      collections: _rel(type: Created, target: Collection, page: { first: 100 }) {
         edges {
           node {
             ... on Collection {
               id
               name
-              icon
+              image
             }
           }
         }
       }
-      resources: _rel(edge: { type: Created, node: Resource }, page: { first: 100 }) {
+
+      resourcesCount: _relCount(type: Created, target: Resource)
+      resources: _rel(type: Created, target: Resource, page: { first: 100 }) {
         edges {
           node {
             ... on Resource {
               id
               name
-              icon
+              thumbnail
             }
           }
         }

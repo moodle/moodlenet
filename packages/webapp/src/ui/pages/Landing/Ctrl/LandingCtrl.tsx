@@ -15,16 +15,15 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
   const trendingQ = useGlobalSearchQuery({
     variables: {
       sortBy: 'Popularity',
-      nodeTypes: ['Collection', 'SubjectField'],
+      nodeTypes: ['Collection', 'Iscedf'],
       text: '',
+      page: { first: 5 },
     },
   })
   const tags = useMemo(
     () =>
       trendingQ.data?.globalSearch.edges
-        .map(edge =>
-          edge.node.__typename === 'SubjectField' || edge.node.__typename === 'Collection' ? edge.node : null,
-        )
+        .map(edge => (edge.node.__typename === 'Iscedf' || edge.node.__typename === 'Collection' ? edge.node : null))
         .filter(isJust)
         .map<FollowTag>(node => ({
           name: node.name,
@@ -40,13 +39,13 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
       organization: {
         name: localOrg.name,
-        intro: localOrg.summary,
+        intro: localOrg.intro,
       },
       image: localOrg.icon ?? null,
       trendCardProps: { tags: tags || [] },
       setSearchText,
     }),
-    [localOrg.icon, isAuthenticated, localOrg.name, localOrg.summary, setSearchText, tags],
+    [localOrg.icon, isAuthenticated, localOrg.name, localOrg.intro, setSearchText, tags],
   )
   // console.log({ landingProps })
   return [landingProps]

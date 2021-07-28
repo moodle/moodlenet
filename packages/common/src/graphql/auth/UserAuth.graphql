@@ -1,12 +1,12 @@
 type Mutation {
-  signUp(email: String!): SimpleResponse!
-  changePassword(newPassword: String!, currentPassword: String!): SimpleResponse!
-  activateUser(username: String!, password: String!, token: String!): CreateSession!
-  createSession(username: String!, password: String!): CreateSession!
+  # signUp(email: String!): SimpleResponse!
+  # activateUser(name: String!, password: String!, activationToken: String!): CreateSession!
+  createSession(email: String!, password: String!): CreateSession!
   #later..
-  changeEmailRequest(newEmail: String!): SimpleResponse!
-  changeEmailConfirm(token: String!, password: String!, username: String!): Boolean!
-  sessionByEmail(username: String!, email: String!): SimpleResponse!
+  # changePassword(newPassword: String!, currentPassword: String!): SimpleResponse!
+  # changeEmailRequest(newEmail: String!): SimpleResponse!
+  # changeEmailConfirm(changeEmailToken: String!, password: String!): Boolean!
+  # sessionByEmail(email: String!): SimpleResponse!
 }
 
 type Query {
@@ -24,14 +24,6 @@ type CreateSession {
 }
 
 type UserSession {
-  username: String!
-  role: Role!
-}
-
-enum Role {
-  Guest
-  Admin
-  User
-  Editor
-  System
+  email: String!
+  profile: Profile!
 }

@@ -1,37 +1,37 @@
+import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { isJust } from '@moodlenet/common/lib/utils/array'
-import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { useMemo } from 'react'
+import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { getMaybeAssetRefUrl } from '../../../../helpers/data'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
-import { defaultOrganization } from '../../../lib/static-data'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { ProfileProps } from '../Profile'
 import { useProfilePageUserDataQuery } from './ProfileCtrl.gen'
 
-export type ProfileCtrlProps = { id: Id }
+export type ProfileCtrlProps = { id: ID }
 export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id }) => {
+  const { org: localOrg } = useLocalInstance()
   const profileQ = useProfilePageUserDataQuery({ variables: { profileId: id } })
-
+  const profile = profileQ.data?.node?.__typename === 'Profile' ? profileQ.data.node : null
   const collectionCardPropsList = useMemo(
     () =>
-      (profileQ.data?.node?.collections.edges || [])
+      (profile?.collections.edges || [])
         .map(edge => (edge.node.__typename === 'Collection' ? edge.node : null))
         .filter(isJust)
         .map(({ id }) => ctrlHook(useCollectionCardCtrl, { id })),
-    [profileQ.data?.node?.collections.edges],
+    [profile?.collections.edges],
   )
 
   const resourceCardPropsList = useMemo(
     () =>
-      (profileQ.data?.node?.resources.edges || [])
+      (profile?.resources.edges || [])
         .map(edge => (edge.node.__typename === 'Resource' ? edge.node : null))
         .filter(isJust)
         .map(({ id }) => ctrlHook(useResourceCardCtrl, { id })),
-    [profileQ.data?.node?.resources.edges],
+    [profile?.resources.edges],
   )
-  const profile = profileQ.data?.node?.__typename === 'Profile' ? profileQ.data?.node : null
   const profileProps = useMemo<ProfileProps | null>(
     () =>
       profile
@@ -47,21 +47,21 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
             },
             profileCardProps: {
               avatarUrl:
-                getMaybeAssetRefUrl(profile.icon) ?? `https://picsum.photos/seed/${id.split('/')[1]}_avatar/200/300`,
-
-              backgroundUrl: `https://picsum.photos/seed/${id.split('/')[1]}_bg/600/400`,
-              description: profile.summary,
-              firstName: profile.name,
-              lastName: profile.name,
-              location: 'Barcelona',
-              organizationName: defaultOrganization.name,
-              siteUrl: 'www.juanito.example',
+                getMaybeAssetRefUrl(profile.avatar) ?? `https://picsum.photos/seed/${id.split('/')[1]}_avatar/200/300`,
+              backgroundUrl:
+                getMaybeAssetRefUrl(profile.image) ?? `https://picsum.photos/seed/${id.split('/')[1]}_bg/600/400`,
+              description: profile.bio,
+              firstName: profile.firstName ?? '',
+              lastName: profile.lastName ?? '',
+              location: profile.location ?? '',
+              organizationName: localOrg.name,
+              siteUrl: profile.siteUrl ?? '',
               username: profile.name,
             },
             username: profile.name,
           }
         : null,
-    [collectionCardPropsList, id, profile, resourceCardPropsList],
+    [collectionCardPropsList, id, localOrg.name, profile, resourceCardPropsList],
   )
   return profileProps && [profileProps]
 }
