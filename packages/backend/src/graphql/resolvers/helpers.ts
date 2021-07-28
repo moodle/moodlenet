@@ -1,11 +1,11 @@
 // import { PersistTmpFileReq } from '../../../services/StaticAssets/types'
 // import { DocumentEdgeByType, DocumentNodeByType } from '../functions/types'
-import { EdgeId, GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNode, GraphNodeType, Slug } from '@moodlenet/common/lib/content-graph/types/node'
+import { GraphEdge } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { AssetRef } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { AssetRefInput, Edge, Node } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
-import { isGraphEdgeType, isGraphNodeType } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { parseEdgeId, parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { pick } from '@moodlenet/common/lib/utils/object'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { Tuple } from 'tuple-type'
@@ -17,6 +17,7 @@ export const graphNode2GqlNode = (node: GraphNode): Node => {
   const id = `${node._type}/${node._slug}`
   const base = {
     id,
+    name: node.name,
     ...({} as Pick<Node, '_rel' | '_relCount'>),
   }
   switch (node._type) {
@@ -24,7 +25,7 @@ export const graphNode2GqlNode = (node: GraphNode): Node => {
       return {
         __typename: 'Profile',
         ...base,
-        ...pick(node, ['bio', 'displayName', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl']),
+        ...pick(node, ['bio', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl']),
       }
     case 'Collection':
       return {
@@ -36,25 +37,25 @@ export const graphNode2GqlNode = (node: GraphNode): Node => {
       return {
         __typename: 'Iscedf',
         ...base,
-        ...pick(node, ['codePath', 'description', 'image', 'iscedCode', 'name', 'thumbnail']),
+        ...pick(node, ['codePath', 'description', 'image', 'iscedCode', 'thumbnail']),
       }
     case 'OpBadge':
       return {
         __typename: 'OpBadge',
         ...base,
-        ...pick(node, ['descripton', 'type']),
+        ...pick(node, ['descripton', 'type', 'name']),
       }
     case 'Organization':
       return {
         __typename: 'Organization',
         ...base,
-        ...pick(node, ['color', 'domain', 'name', 'logo', 'intro']),
+        ...pick(node, ['color', 'domain', 'logo', 'intro']),
       }
     case 'Resource':
       return {
         __typename: 'Resource',
         ...base,
-        ...pick(node, ['content', 'thumbnail', 'name', 'kind', 'description']),
+        ...pick(node, ['content', 'thumbnail', 'kind', 'description']),
       }
     default:
       throw new Error(`graphNode2GqlNode: can't map unknown node type '${(node as any)?._type}'`)
@@ -68,6 +69,7 @@ export const gqlNode2GraphNode = (node: Node): Omit<GraphNode, '_permId' | '_bum
   const [, _slug] = parsed
   const base = {
     _slug,
+    name: node.name,
   }
 
   switch (node.__typename) {
@@ -75,7 +77,7 @@ export const gqlNode2GraphNode = (node: Node): Omit<GraphNode, '_permId' | '_bum
       return {
         _type: 'Profile',
         ...base,
-        ...pick(node, ['bio', 'displayName', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl']),
+        ...pick(node, ['bio', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl']),
       }
     case 'Collection':
       return {
@@ -87,7 +89,7 @@ export const gqlNode2GraphNode = (node: Node): Omit<GraphNode, '_permId' | '_bum
       return {
         _type: 'Iscedf',
         ...base,
-        ...pick(node, ['codePath', 'description', 'image', 'iscedCode', 'name', 'thumbnail']),
+        ...pick(node, ['codePath', 'description', 'image', 'iscedCode', 'thumbnail']),
       }
     case 'OpBadge':
       return {
@@ -99,13 +101,13 @@ export const gqlNode2GraphNode = (node: Node): Omit<GraphNode, '_permId' | '_bum
       return {
         _type: 'Organization',
         ...base,
-        ...pick(node, ['color', 'domain', 'name', 'logo', 'intro']),
+        ...pick(node, ['color', 'domain', 'logo', 'intro']),
       }
     case 'Resource':
       return {
         _type: 'Resource',
         ...base,
-        ...pick(node, ['content', 'image', 'name', 'kind', 'description', 'thumbnail']),
+        ...pick(node, ['content', 'image', 'kind', 'description', 'thumbnail']),
       }
     default:
       throw new Error(`graphNode2GqlNode: can't map unknown node type '${(node as any)?._type}'`)
@@ -212,27 +214,3 @@ export const getAssetRefInputAndType = (
   assetRefInput: AssetRefInput,
   uploadType: UploadType,
 ): AssetRefInputAndType => ({ input: assetRefInput, uploadType })
-
-export const parseNodeId = (id: string): [type: GraphNodeType, slug: Slug] | null => {
-  const splitted = (id || '').split('/')
-  if (splitted.length !== 2) {
-    return null
-  }
-  const [type, slug] = splitted
-  if (!(type && slug && isGraphNodeType(type))) {
-    return null
-  }
-  return [type, slug]
-}
-
-export const parseEdgeId = (id: string): [type: GraphEdgeType, id: EdgeId] | null => {
-  const splitted = (id || '').split('/')
-  if (splitted.length !== 2) {
-    return null
-  }
-  const [type, _id] = splitted
-  if (!(type && _id && isGraphEdgeType(type))) {
-    return null
-  }
-  return [type, _id]
-}

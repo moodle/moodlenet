@@ -9,6 +9,7 @@ const pageItemMapper = mapPageItem(({ edge, node }: { edge: AqlGraphEdge; node: 
   node: aqlGraphNode2GraphNode(node),
   edge: aqlGraphEdge2GraphEdge(edge),
 }))
+
 export const getTraverseNodeRelAdapter = (db: ContentGraphDB): TraverseNodeRelAdapter => ({
   async traverseNodeRelations(input) {
     const { afterPageQuery, beforePageQuery } = traverseEdgesQ(input)
@@ -23,7 +24,7 @@ export const getTraverseNodeRelAdapter = (db: ContentGraphDB): TraverseNodeRelAd
 })
 
 export const getNodeRelationCountAdapter = (_db: ContentGraphDB): NodeRelationCountAdapter => ({
-  async traverseNodeRelations() {
+  async countNodeRelations() {
     return 12
   },
 })

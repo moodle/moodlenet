@@ -1,110 +1,62 @@
-import * as Apollo from '@apollo/client'
-import { gql } from '@apollo/client'
-import * as Types from '../../../../../graphql/pub.graphql.link'
+import * as Types from '../../../../../graphql/pub.graphql.link';
 
-const defaultOptions = {}
+import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type ResourceCardQueryVariables = Types.Exact<{
-  id: Types.Scalars['ID']
-}>
+  id: Types.Scalars['ID'];
+}>;
 
-export type ResourceCardQuery = { __typename: 'Query' } & {
-  node?: Types.Maybe<
-    | ({ __typename: 'Collection' } & Pick<Types.Collection, 'name' | 'icon' | 'id'> & {
-          inCollections: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id' | 'name'>)
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | { __typename: 'Resource' }
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-        })
-    | ({ __typename: 'Organization' } & Pick<Types.Organization, 'name' | 'icon' | 'id'> & {
-          inCollections: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id' | 'name'>)
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | { __typename: 'Resource' }
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-        })
-    | ({ __typename: 'Profile' } & Pick<Types.Profile, 'name' | 'icon' | 'id'> & {
-          inCollections: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id' | 'name'>)
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | { __typename: 'Resource' }
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-        })
-    | ({ __typename: 'Resource' } & Pick<Types.Resource, 'name' | 'icon' | 'id'> & {
-          inCollections: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id' | 'name'>)
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | { __typename: 'Resource' }
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-        })
-    | ({ __typename: 'Iscedf' } & Pick<Types.Iscedf, 'name' | 'icon' | 'id'> & {
-          inCollections: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id' | 'name'>)
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | { __typename: 'Resource' }
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-        })
-  >
-}
+
+export type ResourceCardQuery = (
+  { __typename: 'Query' }
+  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
+    { __typename: 'Resource' }
+    & Pick<Types.Resource, 'id' | 'name' | 'thumbnail' | 'kind' | 'content' | 'description' | 'image'>
+    & { inCollections: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: (
+          { __typename: 'Collection' }
+          & Pick<Types.Collection, 'id' | 'name'>
+        ) | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+      )> }
+    ) }
+  )> }
+);
+
 
 export const ResourceCardDocument = gql`
-  query ResourceCard($id: ID!) {
-    node(id: $id) {
-      ... on IContentNode {
-        name
-        icon
-      }
-      ... on INode {
-        id
-        inCollections: _rel(edge: { type: Contains, node: Collection, inverse: true }, page: { first: 3 }) {
-          edges {
-            node {
-              ... on Collection {
-                id
-                name
-              }
+    query ResourceCard($id: ID!) {
+  node(id: $id) {
+    ... on Resource {
+      id
+      name
+      thumbnail
+      kind
+      content
+      description
+      image
+      inCollections: _rel(
+        type: Contains
+        target: Collection
+        inverse: true
+        page: {first: 3}
+      ) {
+        edges {
+          node {
+            ... on Collection {
+              id
+              name
             }
           }
         }
       }
     }
   }
-`
+}
+    `;
 
 /**
  * __useResourceCardQuery__
@@ -122,18 +74,14 @@ export const ResourceCardDocument = gql`
  *   },
  * });
  */
-export function useResourceCardQuery(
-  baseOptions: Apollo.QueryHookOptions<ResourceCardQuery, ResourceCardQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<ResourceCardQuery, ResourceCardQueryVariables>(ResourceCardDocument, options)
-}
-export function useResourceCardLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ResourceCardQuery, ResourceCardQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<ResourceCardQuery, ResourceCardQueryVariables>(ResourceCardDocument, options)
-}
-export type ResourceCardQueryHookResult = ReturnType<typeof useResourceCardQuery>
-export type ResourceCardLazyQueryHookResult = ReturnType<typeof useResourceCardLazyQuery>
-export type ResourceCardQueryResult = Apollo.QueryResult<ResourceCardQuery, ResourceCardQueryVariables>
+export function useResourceCardQuery(baseOptions: Apollo.QueryHookOptions<ResourceCardQuery, ResourceCardQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ResourceCardQuery, ResourceCardQueryVariables>(ResourceCardDocument, options);
+      }
+export function useResourceCardLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ResourceCardQuery, ResourceCardQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ResourceCardQuery, ResourceCardQueryVariables>(ResourceCardDocument, options);
+        }
+export type ResourceCardQueryHookResult = ReturnType<typeof useResourceCardQuery>;
+export type ResourceCardLazyQueryHookResult = ReturnType<typeof useResourceCardLazyQuery>;
+export type ResourceCardQueryResult = Apollo.QueryResult<ResourceCardQuery, ResourceCardQueryVariables>;

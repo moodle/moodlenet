@@ -1,200 +1,84 @@
-import * as Apollo from '@apollo/client'
-import { gql } from '@apollo/client'
-import * as Types from '../../../../graphql/pub.graphql.link'
+import * as Types from '../../../../graphql/pub.graphql.link';
 
-const defaultOptions = {}
+import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
+const defaultOptions =  {}
 export type ProfilePageUserDataQueryVariables = Types.Exact<{
-  profileId: Types.Scalars['ID']
-}>
+  profileId: Types.Scalars['ID'];
+}>;
 
-export type ProfilePageUserDataQuery = { __typename: 'Query' } & {
-  node?: Types.Maybe<
-    | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id'> & {
-          followersCount: Types.Collection['_relCount']
-          resourcesCount: Types.Collection['_relCount']
-        } & {
-          collections: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | { __typename: 'Resource' }
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-          resources: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | { __typename: 'Collection' }
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-        })
-    | ({ __typename: 'Organization' } & Pick<Types.Organization, 'id'> & {
-          followersCount: Types.Organization['_relCount']
-          resourcesCount: Types.Organization['_relCount']
-        } & {
-          collections: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | { __typename: 'Resource' }
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-          resources: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | { __typename: 'Collection' }
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-        })
-    | ({ __typename: 'Profile' } & Pick<Types.Profile, 'name' | 'summary' | 'icon' | 'id'> & {
-          followersCount: Types.Profile['_relCount']
-          resourcesCount: Types.Profile['_relCount']
-        } & {
-          collections: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | { __typename: 'Resource' }
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-          resources: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | { __typename: 'Collection' }
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-        })
-    | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id'> & {
-          followersCount: Types.Resource['_relCount']
-          resourcesCount: Types.Resource['_relCount']
-        } & {
-          collections: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | { __typename: 'Resource' }
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-          resources: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | { __typename: 'Collection' }
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-        })
-    | ({ __typename: 'Iscedf' } & Pick<Types.Iscedf, 'id'> & {
-          followersCount: Types.Iscedf['_relCount']
-          resourcesCount: Types.Iscedf['_relCount']
-        } & {
-          collections: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | { __typename: 'Resource' }
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-          resources: { __typename: 'RelPage' } & {
-            edges: Array<
-              { __typename: 'RelPageEdge' } & {
-                node:
-                  | { __typename: 'Collection' }
-                  | { __typename: 'Organization' }
-                  | { __typename: 'Profile' }
-                  | ({ __typename: 'Resource' } & Pick<Types.Resource, 'id' | 'name' | 'icon'>)
-                  | { __typename: 'Iscedf' }
-              }
-            >
-          }
-        })
-  >
-}
+
+export type ProfilePageUserDataQuery = (
+  { __typename: 'Query' }
+  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | (
+    { __typename: 'Profile' }
+    & Pick<Types.Profile, 'id' | 'name' | 'avatar' | 'bio' | 'image' | 'firstName' | 'lastName' | 'siteUrl' | 'location'>
+    & { followersCount: Types.Profile['_relCount'], collectionsCount: Types.Profile['_relCount'], resourcesCount: Types.Profile['_relCount'] }
+    & { collections: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: (
+          { __typename: 'Collection' }
+          & Pick<Types.Collection, 'id' | 'name' | 'image'>
+        ) | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+      )> }
+    ), resources: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
+          { __typename: 'Resource' }
+          & Pick<Types.Resource, 'id' | 'name' | 'thumbnail'>
+        ) }
+      )> }
+    ) }
+  ) | { __typename: 'Resource' }> }
+);
+
 
 export const ProfilePageUserDataDocument = gql`
-  query ProfilePageUserData($profileId: ID!) {
-    node(id: $profileId) {
-      ... on INode {
-        id
-        ... on Profile {
-          name
-          summary
-          icon
-        }
-        followersCount: _relCount(type: Follows, target: Profile, inverse: true)
-        resourcesCount: _relCount(type: Created, target: Resource)
-        collections: _rel(edge: { type: Created, node: Collection }, page: { first: 100 }) {
-          edges {
-            node {
-              ... on Collection {
-                id
-                name
-                icon
-              }
+    query ProfilePageUserData($profileId: ID!) {
+  node(id: $profileId) {
+    ... on Profile {
+      id
+      name
+      avatar
+      bio
+      image
+      firstName
+      lastName
+      siteUrl
+      location
+      followersCount: _relCount(type: Follows, target: Profile, inverse: true)
+      collectionsCount: _relCount(type: Created, target: Collection)
+      collections: _rel(type: Created, target: Collection, page: {first: 100}) {
+        edges {
+          node {
+            ... on Collection {
+              id
+              name
+              image
             }
           }
         }
-        resources: _rel(edge: { type: Created, node: Resource }, page: { first: 100 }) {
-          edges {
-            node {
-              ... on Resource {
-                id
-                name
-                icon
-              }
+      }
+      resourcesCount: _relCount(type: Created, target: Resource)
+      resources: _rel(type: Created, target: Resource, page: {first: 100}) {
+        edges {
+          node {
+            ... on Resource {
+              id
+              name
+              thumbnail
             }
           }
         }
       }
     }
   }
-`
+}
+    `;
 
 /**
  * __useProfilePageUserDataQuery__
@@ -212,27 +96,14 @@ export const ProfilePageUserDataDocument = gql`
  *   },
  * });
  */
-export function useProfilePageUserDataQuery(
-  baseOptions: Apollo.QueryHookOptions<ProfilePageUserDataQuery, ProfilePageUserDataQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useQuery<ProfilePageUserDataQuery, ProfilePageUserDataQueryVariables>(
-    ProfilePageUserDataDocument,
-    options,
-  )
-}
-export function useProfilePageUserDataLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<ProfilePageUserDataQuery, ProfilePageUserDataQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions }
-  return Apollo.useLazyQuery<ProfilePageUserDataQuery, ProfilePageUserDataQueryVariables>(
-    ProfilePageUserDataDocument,
-    options,
-  )
-}
-export type ProfilePageUserDataQueryHookResult = ReturnType<typeof useProfilePageUserDataQuery>
-export type ProfilePageUserDataLazyQueryHookResult = ReturnType<typeof useProfilePageUserDataLazyQuery>
-export type ProfilePageUserDataQueryResult = Apollo.QueryResult<
-  ProfilePageUserDataQuery,
-  ProfilePageUserDataQueryVariables
->
+export function useProfilePageUserDataQuery(baseOptions: Apollo.QueryHookOptions<ProfilePageUserDataQuery, ProfilePageUserDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProfilePageUserDataQuery, ProfilePageUserDataQueryVariables>(ProfilePageUserDataDocument, options);
+      }
+export function useProfilePageUserDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProfilePageUserDataQuery, ProfilePageUserDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProfilePageUserDataQuery, ProfilePageUserDataQueryVariables>(ProfilePageUserDataDocument, options);
+        }
+export type ProfilePageUserDataQueryHookResult = ReturnType<typeof useProfilePageUserDataQuery>;
+export type ProfilePageUserDataLazyQueryHookResult = ReturnType<typeof useProfilePageUserDataLazyQuery>;
+export type ProfilePageUserDataQueryResult = Apollo.QueryResult<ProfilePageUserDataQuery, ProfilePageUserDataQueryVariables>;

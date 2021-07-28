@@ -1,4 +1,5 @@
 type OpBadge implements INode {
+  name: String!
   type: OpBadgeType!
   descripton: String!
   # INode
@@ -22,17 +23,6 @@ input CreateNodeInput {
   OpBadge: Never
 }
 
-input EditProfileInput {
-  displayName: String!
-  avatar: AssetRef
-  bio: String!
-  image: AssetRef
-  firstName: String
-  lastName: String
-  siteUrl: String
-  location: String
-  slug: String!
-}
 input EditNodeInput {
-  OpBadge: EditProfileInput
+  OpBadge: Never
 }

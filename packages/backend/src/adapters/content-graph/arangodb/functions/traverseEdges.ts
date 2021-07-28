@@ -1,4 +1,3 @@
-import { GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
 import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { PageItem } from '@moodlenet/common/lib/content-graph/types/page'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
@@ -14,7 +13,7 @@ export const traverseEdgesQ = ({
   inverse,
   /* env, */
   fromNode,
-}: TraverseFromNodeInput<GraphNodeType, GraphEdgeType>) => {
+}: TraverseFromNodeInput) => {
   // const targetIdsFilter =
   //   targetNodeIds && targetNodeIds.length ? `&& edge._${targetSide} IN [${targetNodeIds.map(aqlstr).join(',')}]` : ''
 

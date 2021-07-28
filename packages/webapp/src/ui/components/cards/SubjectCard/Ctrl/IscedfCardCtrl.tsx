@@ -1,18 +1,18 @@
-import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { useMemo } from 'react'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { CtrlHook } from '../../../../lib/ctrl'
 import { SubjectCardProps } from '../SubjectCard'
-import { useSubjectCardQuery } from './SubjectCard.gen'
+import { useIscedfCardQuery } from './IscedfCard.gen'
 
-export const useSubjectCardCtrl: CtrlHook<SubjectCardProps, { id: Id }> = ({ id }) => {
-  const subjectNode = useSubjectCardQuery({ variables: { id } }).data?.node
+export const useIscedfCardCtrl: CtrlHook<SubjectCardProps, { id: ID }> = ({ id }) => {
+  const subjectNode = useIscedfCardQuery({ variables: { id } }).data?.node
   const { org: localOrg } = useLocalInstance()
   const subjectCardUIProps = useMemo<SubjectCardProps | null>(() => {
-    if (!subjectNode) {
+    if (!(subjectNode && subjectNode.__typename === 'Iscedf')) {
       return null
     }
-    const orgData = subjectNode._organization ?? localOrg
+    const orgData = null ?? localOrg
     const organization: SubjectCardProps['organization'] = {
       color: orgData.color,
       url: `${orgData.domain}`,

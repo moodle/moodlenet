@@ -18,7 +18,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
     await db.createCollection(USER)
 
     const rootUser = getRootUser({ domain })
-    const rootUserPassword = await argonHashPassword({ pwd: rootUser.clearPassword })
+    const rootUserPassword = await argonHashPassword(rootUser.clearPassword)
     await justExecute(
       createNewUserQ({
         status: 'Active',

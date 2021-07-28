@@ -9,14 +9,14 @@ import { HeaderPageProps } from '../HeaderPage'
 import { useHeaderPagePinnedLazyQuery } from './HeaderPageCtrl.gen'
 
 export const useHeaderPageCtrl: CtrlHook<HeaderPageProps, {}> = () => {
-  const { isAuthenticated, currentProfile } = useSession()
+  const { isAuthenticated, session } = useSession()
   const [queryPinned, pinned] = useHeaderPagePinnedLazyQuery()
 
   useEffect(() => {
-    if (currentProfile) {
-      queryPinned({ variables: { currentProfileId: currentProfile.id } })
+    if (session) {
+      queryPinned({ variables: { currentProfileId: session.profile.id } })
     }
-  }, [currentProfile, queryPinned])
+  }, [session, queryPinned])
 
   const subHeaderProps = useMemo<SubHeaderProps>(() => {
     const tags =

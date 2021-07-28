@@ -19,7 +19,7 @@ export const globalSearchQuery = ({
   const { limit, skip } = forwardSkipLimitPagination({ page })
   const aql_txt = aqlstr(text)
 
-  const nodeTypeConditions = (nodeTypes ?? []).map(nodeType => `node.__typename == ${aqlstr(nodeType)}`).join(' OR ')
+  const nodeTypeConditions = (nodeTypes ?? []).map(nodeType => `node._type == ${aqlstr(nodeType)}`).join(' OR ')
 
   const filterConditions = [nodeTypeConditions].filter(Boolean).join(' && ')
 
@@ -55,9 +55,7 @@ export const globalSearchQuery = ({
       
       LIMIT ${skip}, ${limit}
       
-      RETURN {
-        node
-      }
+      RETURN node
     `)
   // console.log(query)
   return { limit, skip, query }

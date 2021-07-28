@@ -217,6 +217,7 @@ export const documentBySlugType = ({ _slug, _type }: Pick<GraphNode, '_type' | '
 `
 
 export const aqlGraphNode2GraphNode = <T extends GraphNodeType>(aqlGraphNode: AqlGraphNodeByType<T>) => {
+  console.log(`aqlGraphNode2GraphNode ${aqlGraphNode._id}`, aqlGraphNode)
   const [__type, __permId] = aqlGraphNode._id.split('/')
   const graphNode: GraphNodeByType<T> = {
     _type: __type! as T,

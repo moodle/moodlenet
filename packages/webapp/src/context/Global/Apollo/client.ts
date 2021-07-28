@@ -1,5 +1,5 @@
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client'
-import { parseNodeIdString } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { setContext } from 'apollo-link-context'
 import apolloLogger from 'apollo-link-logger'
 import { GRAPHQL_ENDPOINT, isProduction } from '../../../constants'
@@ -11,11 +11,12 @@ const cache = new InMemoryCache({
     Query: {
       fields: {
         node(_, { args, toReference }) {
-          const parsedId = parseNodeIdString(args?.id)
+          const id = args?.id ?? ''
+          const parsedId = parseNodeId(id)
           if (parsedId) {
-            const { id, nodeType } = parsedId
+            const [type] = parsedId
             return toReference({
-              __typename: nodeType,
+              __typename: type,
               id,
             })
           }
@@ -25,7 +26,7 @@ const cache = new InMemoryCache({
     },
   },
 })
-window.cache=cache.data.data
+// window.cache = cache.data.data
 let authToken: string | null = null
 
 export const setToken = (token: string | null) => (authToken = token)

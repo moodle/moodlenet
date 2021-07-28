@@ -9,8 +9,8 @@ import { MNStaticEnv } from '../../../../../../lib/types'
 import { createNodeQ } from '../../../functions/createNode'
 import { setupSearchView } from './0.0.1/setupSearchView'
 
-const nodes: GraphNodeType[] = ['Profile', 'Collection', 'Resource', 'Iscedf', 'Organization']
-const edges: GraphEdgeType[] = ['Created', 'HasOpBadge']
+const nodes: GraphNodeType[] = ['Profile', 'Collection', 'Resource', 'Iscedf', 'Organization', 'OpBadge']
+const edges: GraphEdgeType[] = ['Created', 'HasOpBadge', 'Contains', 'Follows', 'Pinned']
 
 const init_0_0_1: VersionUpdater<MNStaticEnv> = {
   async initialSetUp({ db, ctx: { domain } }) {
@@ -35,6 +35,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
           _bumpStatus: localOrg._bumpStatus,
           _permId: localOrg._permId,
           _slug: localOrg._slug,
+          _type: localOrg._type,
           color: localOrg.color,
           domain: localOrg.domain,
           intro: localOrg.intro,
@@ -50,13 +51,14 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
       createNodeQ({
         nodeType: 'Profile',
         data: {
-          _slug: rootUser.slug,
+          _slug: `__root__`,
           _authId: rootUser.rootAuthId,
           _permId: rootUser.rootPermId,
           _bumpStatus,
+          _type: 'Profile',
           avatar: null,
           bio: '',
-          displayName: '',
+          name: 'ROOT',
           firstName: null,
           image: null,
           lastName: null,
@@ -80,6 +82,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
               _bumpStatus,
               _permId: newGlyphPermId(),
               _slug: subj_field_data._slug,
+              _type: 'Iscedf',
               codePath: subj_field_data.codePath,
               description: subj_field_data.description,
               iscedCode: subj_field_data.iscedCode,

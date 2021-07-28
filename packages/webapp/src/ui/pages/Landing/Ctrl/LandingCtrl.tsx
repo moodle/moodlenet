@@ -17,6 +17,7 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       sortBy: 'Popularity',
       nodeTypes: ['Collection', 'Iscedf'],
       text: '',
+      page: { first: 5 },
     },
   })
   const tags = useMemo(
@@ -38,13 +39,13 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
       organization: {
         name: localOrg.name,
-        intro: localOrg.summary,
+        intro: localOrg.intro,
       },
       image: localOrg.icon ?? null,
       trendCardProps: { tags: tags || [] },
       setSearchText,
     }),
-    [localOrg.icon, isAuthenticated, localOrg.name, localOrg.summary, setSearchText, tags],
+    [localOrg.icon, isAuthenticated, localOrg.name, localOrg.intro, setSearchText, tags],
   )
   // console.log({ landingProps })
   return [landingProps]

@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { useGlobalSearchQuery } from '../../../../context/Global/GlobalSearch/globalSearch.gen'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
-import { useSubjectCardCtrl } from '../../../components/cards/SubjectCard/Ctrl/SubjectCardCtrl'
+import { useIscedfCardCtrl } from '../../../components/cards/SubjectCard/Ctrl/IscedfCardCtrl'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { SearchProps } from '../Search'
@@ -70,7 +70,7 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
       ctrlHook(useResourceCardCtrl, { id: resource.id }, `Search Resource ${resource.id} Card`),
     ),
     subjectCardPropsList: subjects.map(subject =>
-      ctrlHook(useSubjectCardCtrl, { id: subject.id }, `Search Subject ${subject.id} Card`),
+      ctrlHook(useIscedfCardCtrl, { id: subject.id }, `Search Subject ${subject.id} Card`),
     ),
     setSortBy,
   }

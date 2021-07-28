@@ -5,22 +5,20 @@ import { SessionEnv } from '../../lib/auth/types'
 import { QMModule, QMQuery } from '../../lib/qmino'
 
 export type TraverseNodeRelAdapter = {
-  traverseNodeRelations: <GNT extends GraphNodeType, GET extends GraphEdgeType>(
-    _: TraverseFromNodeInput<GNT, GET>,
-  ) => Promise<NodeTraversalPage>
+  traverseNodeRelations: (_: TraverseFromNodeInput) => Promise<NodeTraversalPage>
 }
 
-export type TraverseFromNodeInput<GNT extends GraphNodeType, GET extends GraphEdgeType> = {
+export type TraverseFromNodeInput = {
   fromNode: Pick<GraphNode, '_slug' | '_type'>
-  edgeType: GET
-  targetNodeType: GNT
+  edgeType: GraphEdgeType
+  targetNodeType: GraphNodeType
   inverse: boolean
   page: PaginationInput
   env: SessionEnv | null
 }
 
 export const fromNode = QMQuery(
-  <GNT extends GraphNodeType, GET extends GraphEdgeType>(input: TraverseFromNodeInput<GNT, GET>) =>
+  (input: TraverseFromNodeInput) =>
     async ({ traverseNodeRelations }: TraverseNodeRelAdapter) => {
       return traverseNodeRelations(input)
     },
@@ -29,21 +27,19 @@ export const fromNode = QMQuery(
 //
 
 export type NodeRelationCountAdapter = {
-  traverseNodeRelations: <GNT extends GraphNodeType, GET extends GraphEdgeType>(
-    _: NodeRelationCountInput<GNT, GET>,
-  ) => Promise<number>
+  countNodeRelations: (_: NodeRelationCountInput) => Promise<number>
 }
 
-export type NodeRelationCountInput<GNT extends GraphNodeType, GET extends GraphEdgeType> = {
+export type NodeRelationCountInput = {
   fromNode: { slug: Slug; type: GraphNodeType }
-  edgeType: GET
-  targetNodeType: GNT
+  edgeType: GraphEdgeType
+  targetNodeType: GraphNodeType
   inverse: Boolean
   env: SessionEnv | null
 }
 export const count = QMQuery(
-  <GNT extends GraphNodeType, GET extends GraphEdgeType>(input: NodeRelationCountInput<GNT, GET>) =>
-    async ({ traverseNodeRelations }: NodeRelationCountAdapter) => {
+  (input: NodeRelationCountInput) =>
+    async ({ countNodeRelations: traverseNodeRelations }: NodeRelationCountAdapter) => {
       return traverseNodeRelations(input)
     },
 )

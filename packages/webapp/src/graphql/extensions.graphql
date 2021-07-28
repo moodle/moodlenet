@@ -1,1 +1,1 @@
-directive @connection(key: String!, filter: [String]) on FIELD
+#directive @connection(key: String!, filter: [String]) on FIELD
