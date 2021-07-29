@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { href } from '../../../elements/link'
 import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
 import { Signup, SignupProps } from './Signup'
 
@@ -16,6 +17,8 @@ export const SignupStoryProps: SignupProps = {
   onSubmit: action('Submit signup'),
   signupErrorMessage: null,
   requestSent: false,
+  landingHref: href('yyy/yyy'),
+  loginHref: href('yyy/yyy'),
 }
 
 export const EmailSendStoryProps: SignupProps = {

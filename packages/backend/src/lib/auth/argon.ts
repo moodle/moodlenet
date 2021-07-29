@@ -1,5 +1,5 @@
 import Argon, { argon2id, hash } from 'argon2'
-import { PasswordVerifier } from './types'
+import { PasswordHasher, PasswordVerifier } from './types'
 
 type ArgonPwdHashOpts = Parameters<typeof hash>[1]
 export const defaultArgonPwdHashOpts: ArgonPwdHashOpts = {
@@ -9,7 +9,7 @@ export const defaultArgonPwdHashOpts: ArgonPwdHashOpts = {
   type: argon2id,
 }
 
-export const argonHashPassword = async (pwd: string) => {
+export const argonHashPassword: PasswordHasher = async (pwd: string) => {
   return Argon.hash(pwd, defaultArgonPwdHashOpts)
 }
 

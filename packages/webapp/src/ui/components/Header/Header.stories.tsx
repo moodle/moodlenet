@@ -25,6 +25,7 @@ export const HeaderLoggedInStoryProps: HeaderPropsIdle = {
     logo: '',
   },
   homeHref: href('Landing/Logged In'),
+  signUpHref: href('SignUp'),
   me: {
     myProfileHref: href('Pages/Profile/LoggedIn'),
     avatar: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',

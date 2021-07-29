@@ -26,6 +26,7 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
       me,
       homeHref: href(mainPath.landing),
       loginHref: href(mainPath.login),
+      signUpHref: href(mainPath.signUp),
       organization: {
         name: localOrg.name,
         url: `//${localOrg.domain}`,

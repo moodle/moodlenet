@@ -1,13 +1,16 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
-import { useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
+import { mainPath, useRedirectProfileHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
+import { href } from '../../../../elements/link'
 import { CtrlHook, ctrlHook } from '../../../../lib/ctrl'
 import { SubmitForm } from '../../../../lib/formik'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { LoginFormValues, LoginProps } from '../Login'
 
+const landingHref = href(mainPath.landing)
+const signupHref = href(mainPath.signUp)
 export const useLoginCtrl: CtrlHook<LoginProps, {}> = () => {
-  useRedirectHomeIfLoggedIn()
+  useRedirectProfileHomeIfLoggedIn()
   const { login } = useSession()
   const [loginErrorMessage, setLoginErrorMessage] = useState<string | null>(null)
   const onSubmit = useCallback<SubmitForm<LoginFormValues>>(
@@ -22,6 +25,8 @@ export const useLoginCtrl: CtrlHook<LoginProps, {}> = () => {
       accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Login Access Header'),
       onSubmit,
       loginErrorMessage,
+      landingHref,
+      signupHref,
     }
     return loginProps
   }, [loginErrorMessage, onSubmit])

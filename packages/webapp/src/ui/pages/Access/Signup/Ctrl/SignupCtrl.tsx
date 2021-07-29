@@ -1,27 +1,25 @@
 import { useCallback, useMemo, useState } from 'react'
-import { useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
+import { useSession } from '../../../../../context/Global/Session'
+import { mainPath, useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
+import { href } from '../../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { SubmitForm } from '../../../../lib/formik'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { SignupFormValues, SignupProps } from '../Signup'
-
-const signup = async (..._a: any[]) => null as any
+const landingHref = href(mainPath.landing)
+const loginHref = href(mainPath.login)
 export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
   useRedirectHomeIfLoggedIn()
-  // const { signup } = useSession()
+  const { signUp } = useSession()
   const [signupErrorMessage, setSignupErrorMessage] = useState<string | null>(null)
   const [requestSent, setRequestSent] = useState(false)
   const onSubmit = useCallback<SubmitForm<SignupFormValues>>(
     ({ email }) =>
-      signup({ email }).then(
-        _resp => {
-          setRequestSent(true)
-        },
-        err => {
-          setSignupErrorMessage(String(err))
-        },
-      ),
-    [],
+      signUp({ email }).then(_resp => {
+        setSignupErrorMessage(_resp)
+        setRequestSent(_resp === null)
+      }),
+    [signUp],
   )
 
   const signupProps = useMemo<SignupProps>(() => {
@@ -30,6 +28,8 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
       onSubmit,
       signupErrorMessage,
       requestSent,
+      landingHref,
+      loginHref,
     }
     return signupProps
   }, [onSubmit, signupErrorMessage, requestSent])

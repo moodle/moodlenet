@@ -1,6 +1,6 @@
 type Mutation {
-  # signUp(email: String!): SimpleResponse!
-  # activateUser(name: String!, password: String!, activationToken: String!): CreateSession!
+  signUp(email: String!): SimpleResponse!
+  activateUser(name: String!, password: String!, activationToken: String!): CreateSession!
   createSession(email: String!, password: String!): CreateSession!
   #later..
   # changePassword(newPassword: String!, currentPassword: String!): SimpleResponse!
