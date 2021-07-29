@@ -1,72 +1,160 @@
 // import { PersistTmpFileReq } from '../../../services/StaticAssets/types'
 // import { DocumentEdgeByType, DocumentNodeByType } from '../functions/types'
+import { GraphEdge } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { AssetRef } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import {
-  AssetRefInput,
-  ContentNodeInput,
-  CreateEdgeMutationError,
-  CreateEdgeMutationErrorType,
-  CreateNodeMutationError,
-  CreateNodeMutationErrorType,
-  DeleteEdgeMutationError,
-  DeleteEdgeMutationErrorType,
-  EdgeType,
-  NodeType,
-} from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { AssetRefInput, Edge, Node } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
+import { parseEdgeId, parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { pick } from '@moodlenet/common/lib/utils/object'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { Tuple } from 'tuple-type'
-import { DocumentEdgeByType, DocumentNodeByType } from '../../adapters/content-graph/arangodb/functions/types'
 import { QMino } from '../../lib/qmino'
 import { persistTempAssets } from '../../ports/static-assets/temp'
 import { PersistTmpFileReq } from '../../ports/static-assets/types'
-import { EdgeByType, NodeByType, ShallowEdgeByType, ShallowNodeByType } from '../types.node'
 
-export const fakeNodeByShallowOrDoc = <N extends NodeType>(
-  shallowOrDoc: ShallowNodeByType<N> | DocumentNodeByType<N>,
-): NodeByType<N> => ({ ...shallowOrDoc } as NodeByType<N>)
-export const fakeEdgeByShallowOrDoc = <E extends EdgeType>(
-  shallowOrDoc: ShallowEdgeByType<E> | DocumentEdgeByType<E>,
-): EdgeByType<E> => ({ ...shallowOrDoc } as EdgeByType<E>)
+export const graphNode2GqlNode = (node: GraphNode): Node => {
+  const id = `${node._type}/${node._slug}`
+  const base = {
+    id,
+    name: node.name,
+    ...({} as Pick<Node, '_rel' | '_relCount'>),
+  }
+  switch (node._type) {
+    case 'Profile':
+      return {
+        __typename: 'Profile',
+        ...base,
+        ...pick(node, ['bio', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl']),
+      }
+    case 'Collection':
+      return {
+        __typename: 'Collection',
+        ...base,
+        ...pick(node, ['description', 'image', 'name']),
+      }
+    case 'Iscedf':
+      return {
+        __typename: 'Iscedf',
+        ...base,
+        ...pick(node, ['codePath', 'description', 'image', 'iscedCode', 'thumbnail']),
+      }
+    case 'OpBadge':
+      return {
+        __typename: 'OpBadge',
+        ...base,
+        ...pick(node, ['descripton', 'type', 'name']),
+      }
+    case 'Organization':
+      return {
+        __typename: 'Organization',
+        ...base,
+        ...pick(node, ['color', 'domain', 'logo', 'intro']),
+      }
+    case 'Resource':
+      return {
+        __typename: 'Resource',
+        ...base,
+        ...pick(node, ['content', 'thumbnail', 'kind', 'description']),
+      }
+    default:
+      throw new Error(`graphNode2GqlNode: can't map unknown node type '${(node as any)?._type}'`)
+  }
+}
+export const gqlNode2GraphNode = (node: Node): Omit<GraphNode, '_permId' | '_bumpStatus'> => {
+  const parsed = parseNodeId(node.id)
+  if (!parsed) {
+    throw new Error(`gqlNode2GraphNode: can't parse id '${node.id}'`)
+  }
+  const [, _slug] = parsed
+  const base = {
+    _slug,
+    name: node.name,
+  }
 
-// export const fakeNodeByDoc = <N extends NodeType>(
-//   nodeDoc: DocumentNodeByType<N>,
-// ): NodeByType<N> => fakeNodeByShallow(shallowNodeByDoc(nodeDoc))
-// export const fakeEdgeByDoc = <E extends EdgeType>(
-//   edgeDoc: DocumentEdgeByType<E>,
-// ): EdgeByType<E> => fakeEdgeByShallow(shallowEdgeByDoc(edgeDoc))
+  switch (node.__typename) {
+    case 'Profile':
+      return {
+        _type: 'Profile',
+        ...base,
+        ...pick(node, ['bio', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl']),
+      }
+    case 'Collection':
+      return {
+        _type: 'Collection',
+        ...base,
+        ...pick(node, ['description', 'image', 'name']),
+      }
+    case 'Iscedf':
+      return {
+        _type: 'Iscedf',
+        ...base,
+        ...pick(node, ['codePath', 'description', 'image', 'iscedCode', 'thumbnail']),
+      }
+    case 'OpBadge':
+      return {
+        _type: 'OpBadge',
+        ...base,
+        ...pick(node, ['descripton', 'type']),
+      }
+    case 'Organization':
+      return {
+        _type: 'Organization',
+        ...base,
+        ...pick(node, ['color', 'domain', 'logo', 'intro']),
+      }
+    case 'Resource':
+      return {
+        _type: 'Resource',
+        ...base,
+        ...pick(node, ['content', 'image', 'kind', 'description', 'thumbnail']),
+      }
+    default:
+      throw new Error(`graphNode2GqlNode: can't map unknown node type '${(node as any)?._type}'`)
+  }
+}
 
-// export const shallowNodeByDoc = <N extends NodeType>(nodeDoc: DocumentNodeByType<N>): ShallowNodeByType<N> =>
-//   (({ ...nodeDoc, id: nodeDoc._id } as unknown) as ShallowNodeByType<N>)
-// export const shallowEdgeByDoc = <E extends EdgeType>(edgeDoc: DocumentEdgeByType<E>): ShallowEdgeByType<E> =>
-//   (({ ...edgeDoc, id: edgeDoc._id } as unknown) as ShallowEdgeByType<E>)
-
-export const createNodeMutationError = (
-  type: CreateNodeMutationErrorType,
-  details: string | null = null,
-): CreateNodeMutationError => ({
-  __typename: 'CreateNodeMutationError',
-  type,
-  details,
-})
-
-export const createEdgeMutationError = (
-  type: CreateEdgeMutationErrorType,
-  details: string | null = null,
-): CreateEdgeMutationError => ({
-  __typename: 'CreateEdgeMutationError',
-  type,
-  details,
-})
-
-export const deleteEdgeMutationError = (
-  type: DeleteEdgeMutationErrorType,
-  details: string | null = null,
-): DeleteEdgeMutationError => ({
-  __typename: 'DeleteEdgeMutationError',
-  type,
-  details,
-})
+export const graphEdge2GqlEdge = (edge: GraphEdge): Edge => {
+  const id = `${edge._type}/${edge.id}`
+  const _created = new Date(edge._created.at)
+  const base = { id, _created }
+  switch (edge._type) {
+    case 'Created':
+      return {
+        __typename: 'Created',
+        ...base,
+      }
+    case 'HasOpBadge':
+      return {
+        __typename: 'HasOpBadge',
+        ...base,
+      }
+    default:
+      throw new Error(`graphEdge2GqlEdge: can't map unknown edge type '${(edge as any)?._type}''`)
+  }
+}
+export const gqlEdge2GraphEdge = (edge: Edge): GraphEdge => {
+  const parsed = parseEdgeId(edge.id)
+  if (!parsed) {
+    throw new Error(`gqlEdge2GraphEdge: can't parse id '${edge.id}'`)
+  }
+  const [, id] = parsed
+  const base = { id, _created: { at: Number(edge._created) } }
+  switch (edge.__typename) {
+    case 'Created':
+      return {
+        _type: 'Created',
+        ...base,
+      }
+    case 'HasOpBadge':
+      return {
+        _type: 'HasOpBadge',
+        ...base,
+      }
+    default:
+      throw new Error(`graphEdge2GqlEdge: can't map unknown edge type '${(edge as any)?._type}''`)
+  }
+}
 
 type AssetRefInputAndType = { input: AssetRefInput; uploadType: UploadType }
 export const mapAssetRefInputsToAssetRefs = async <N extends number>(
@@ -76,18 +164,20 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
   type PersistTmpFileReqOrAssetRef = PersistTmpFileReq | AssetRef
 
   const arrayOfMaybePersistTempFilesReqOrAssetRef = tupleOfAssetRefInputAndType.map<Maybe<PersistTmpFileReqOrAssetRef>>(
-    ({ input, uploadType }) =>
-      input.type === 'TmpUpload'
-        ? { tempAssetId: input.location, uploadType }
-        : input.type === 'ExternalUrl'
-        ? { ext: true, location: input.location }
-        : input.type === 'NoAsset'
-        ? null
-        : input.type === 'NoChange'
-        ? undefined
-        : (() => {
-            throw new Error(`Should never happen : input.type === '${input.type}'`)
-          })(),
+    ({ input, uploadType }) => {
+      switch (input.type) {
+        case 'TmpUpload':
+          return { tempAssetId: input.location, uploadType }
+        case 'ExternalUrl':
+          return { ext: true, location: input.location }
+        case 'NoAsset':
+          return null
+        case 'NoChange':
+          return undefined
+        default:
+          throw new Error(`mapAssetRefInputsToAssetRefs: unknown input type: '${input.type}'`)
+      }
+    },
   )
 
   const _isPersistReq = (_: Maybe<PersistTmpFileReqOrAssetRef>): _ is PersistTmpFileReq => !!_ && 'uploadType' in _
@@ -119,9 +209,6 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
 
   return tupleOfMaybeAssetRef as Tuple<Maybe<AssetRef>, N>
 }
-
-export const getContentNodeAssetRefInputAndType = (contentInput: ContentNodeInput): AssetRefInputAndType =>
-  getAssetRefInputAndType(contentInput.icon, 'icon')
 
 export const getAssetRefInputAndType = (
   assetRefInput: AssetRefInput,

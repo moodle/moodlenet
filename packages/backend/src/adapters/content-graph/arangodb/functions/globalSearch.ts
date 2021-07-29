@@ -1,24 +1,25 @@
-import * as GQL from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { Document } from 'arangojs/documents'
-import { Maybe } from 'graphql/jsutils/Maybe'
-import { aqlstr } from '../../../../lib/helpers/arango'
-import { isMarkDeleted, makePage, skipLimitPagination, toDocumentEdgeOrNode } from './helpers'
+import { GraphNodeByType, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import { PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
+import { GlobalSearchNodeType, GlobalSearchSortBy } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
+import { AqlGraphNode } from '../types'
+import { forwardSkipLimitPagination } from './helpers'
 
 export const globalSearchQuery = ({
   page,
   text,
   nodeTypes,
-  sortBy = 'Relevance',
+  sortBy,
 }: {
   text: string
-  page: Maybe<GQL.PaginationInput>
-  nodeTypes: Maybe<GQL.NodeType[]>
-  sortBy: Maybe<GQL.GlobalSearchSort>
+  page: PaginationInput
+  nodeTypes: GraphNodeType[]
+  sortBy: GlobalSearchSortBy
 }) => {
-  const { limit, skip } = skipLimitPagination({ page })
+  const { limit, skip } = forwardSkipLimitPagination({ page })
   const aql_txt = aqlstr(text)
 
-  const nodeTypeConditions = (nodeTypes ?? []).map(nodeType => `node.__typename == ${aqlstr(nodeType)}`).join(' OR ')
+  const nodeTypeConditions = (nodeTypes ?? []).map(nodeType => `node._type == ${aqlstr(nodeType)}`).join(' OR ')
 
   const filterConditions = [nodeTypeConditions].filter(Boolean).join(' && ')
 
@@ -29,8 +30,8 @@ export const globalSearchQuery = ({
       ? '0'
       : '(1 + (node._relCount.Likes.from.Profile || 0) + (node._relCount.Follows.from.Profile || 0))'
 
-  const query = `
-      let searchTerm = ${aql_txt}
+  const query = aq<AqlGraphNode<GraphNodeByType<GlobalSearchNodeType>>>(`
+    let searchTerm = ${aql_txt}
       FOR node IN SearchView
         SEARCH ANALYZER(
           !searchTerm ? 1 : 
@@ -47,38 +48,37 @@ export const globalSearchQuery = ({
           BOOST( NGRAM_MATCH(node.summary, searchTerm, 0.05, "global-text-search"), 0.1 )
         , "text_en")
       
-        FILTER !${isMarkDeleted('node')} AND ${filterConditions || 'true'}
+        FILTER ${filterConditions || 'true'}
+        //FILTER !$ {isMarkDeleted('node')} AND ${filterConditions || 'true'}
 
       SORT ( TFIDF(node) * ${sortFactor}) desc, node._key desc
       
       LIMIT ${skip}, ${limit}
       
-      RETURN {
-        node: ${toDocumentEdgeOrNode('node')}
-      }
-    `
+      RETURN node
+    `)
   // console.log(query)
   return { limit, skip, query }
 }
 
-export const makeGlobalSearchGQLSearchPage = ({
-  documents,
-  skip,
-}: {
-  documents: Document[]
-  skip: number
-}): GQL.SearchPage => {
-  const results = documents.map((edge, i) => {
-    return {
-      ...edge,
-      cursor: i + skip,
-    }
-  })
+// export const makeGlobalSearchGQLSearchPage = ({
+//   documents,
+//   skip,
+// }: {
+//   documents: Document[]
+//   skip: number
+// }): GQL.SearchPage => {
+//   const results = documents.map((edge, i) => {
+//     return {
+//       ...edge,
+//       cursor: i + skip,
+//     }
+//   })
 
-  return makePage<GQL.SearchPage>({
-    afterEdges: results,
-    beforeEdges: [],
-    pageEdgeTypename: 'SearchPageEdge',
-    pageTypename: 'SearchPage',
-  })
-}
+//   return makePage<GQL.SearchPage>({
+//     afterEdges: results,
+//     beforeEdges: [],
+//     pageEdgeTypename: 'SearchPageEdge',
+//     pageTypename: 'SearchPage',
+//   })
+// }

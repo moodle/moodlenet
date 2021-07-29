@@ -1,34 +1,34 @@
-import { NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { Id, IdKey } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { createNodeMergePatch, toDocumentEdgeOrNode } from './helpers'
-import { DocumentNodeDataByType } from './types'
+import { GraphNodeByType, GraphNodeType, NodeStatus } from '@moodlenet/common/lib/content-graph/types/node'
+import { omit } from '@moodlenet/common/lib/utils/object'
+import { DistOmit } from '@moodlenet/common/lib/utils/types'
+import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
+import { AqlGraphNodeByType } from '../types'
 
-export const createNodeQ = <Type extends NodeType>({
-  data,
-  nodeType,
-  key,
-  organization,
-  creatorProfileId,
+export const createNodeQ = <Type extends GraphNodeType>({
+  node,
+  status,
 }: {
-  key: IdKey
-  organization?: string
-  nodeType: Type
-  data: DocumentNodeDataByType<Type>
-  creatorProfileId: Id
+  node: DistOmit<GraphNodeByType<Type>, '_bumpStatus'>
+  status: NodeStatus
 }) => {
-  const newnode = {
-    ...data,
-    _organization: organization && { _id: `Organization/${organization}` },
-    _key: key,
-    __typename: nodeType,
-  }
-  const q = `
-    let newnode = ${createNodeMergePatch({ doc: newnode, byId: creatorProfileId, orgId: organization })}
+  const nodeType = node._type
+  const aqlNodeButBump = { ...omit(node, ['_permId']), _key: node._permId }
+
+  const q = aq<AqlGraphNodeByType<Type>>(`
+    let newnode = MERGE(
+      ${aqlstr(aqlNodeButBump)},
+      {
+        _bumpStatus:{
+          status: ${aqlstr(status)},
+          date: DATE_NOW()
+        }
+      }
+    )
 
     INSERT newnode into ${nodeType}
 
-    return ${toDocumentEdgeOrNode('NEW')}
-  `
-  console.log(q)
+    return NEW
+  `)
+  // console.log(q)
   return q
 }

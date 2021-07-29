@@ -15,3 +15,6 @@ export type SubType<Base, Condition> = Pick<Base, AllowedNames<Base, Condition>>
 //
 export type Just<T> = Exclude<T, null | undefined>
 export type Maybe<T> = T | null | undefined
+
+//https://stackoverflow.com/a/57103940/1455910
+export type DistOmit<T, K extends keyof T> = T extends any ? Omit<T, K> : never

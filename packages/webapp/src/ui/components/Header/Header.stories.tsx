@@ -28,10 +28,10 @@ export const HeaderLoggedInStoryProps: HeaderPropsIdle = {
   me: {
     myProfileHref: href('Pages/Profile/LoggedIn'),
     avatar: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
-    username: 'username',
+    name: 'username',
   },
   loginHref: href('Pages/Login/LoginPage'),
-  signupHref: href('Pages/SignUp/SignUpPage'),
+  signUpHref: href('Pages/SignUp/SignUpPage'),
   logoutHref: href('Pages/Login/LoginPage'),
   newResourceHref: href('Pages/New Resource/Default'),
   newCollectionHref: href('Pages/New Collection/Default'),

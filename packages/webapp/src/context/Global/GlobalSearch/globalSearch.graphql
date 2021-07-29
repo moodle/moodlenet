@@ -1,5 +1,5 @@
-query globalSearch($text: String!, $sortBy: GlobalSearchSort!, $nodeTypes: [NodeType!]) {
-  globalSearch(text: $text, sortBy: $sortBy, nodeTypes: $nodeTypes) {
+query globalSearch($text: String!, $sortBy: GlobalSearchSort!, $nodeTypes: [NodeType!], $page: PaginationInput) {
+  globalSearch(text: $text, sortBy: $sortBy, nodeTypes: $nodeTypes, page: $page) {
     edges {
       ...GlobalSearchEdge
     }
@@ -10,15 +10,10 @@ query globalSearch($text: String!, $sortBy: GlobalSearchSort!, $nodeTypes: [Node
   }
 }
 
-fragment GlobalSearchEdge on SearchPageEdge{
-      cursor
-      node {
-        ... on INode {
-          ...BaseINode
-        }
-        __typename
-        ... on IContentNode {
-          ...BaseIContentNode
-        }
-      }
-    }
+fragment GlobalSearchEdge on SearchPageEdge {
+  cursor
+  node {
+    id
+    name
+  }
+}

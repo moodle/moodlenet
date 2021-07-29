@@ -17,10 +17,36 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
-          { __typename: 'SubjectField' }
-          & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
-        ) }
+        & { node: { __typename: 'Collection' } | (
+          { __typename: 'Iscedf' }
+          & Pick<Types.Iscedf, 'id' | 'name'>
+        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'Iscedf' }
+    & Pick<Types.Iscedf, 'id'>
+    & { pinnedList: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | (
+          { __typename: 'Iscedf' }
+          & Pick<Types.Iscedf, 'id' | 'name'>
+        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'OpBadge' }
+    & Pick<Types.OpBadge, 'id'>
+    & { pinnedList: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | (
+          { __typename: 'Iscedf' }
+          & Pick<Types.Iscedf, 'id' | 'name'>
+        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ) }
   ) | (
@@ -30,10 +56,10 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
-          { __typename: 'SubjectField' }
-          & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
-        ) }
+        & { node: { __typename: 'Collection' } | (
+          { __typename: 'Iscedf' }
+          & Pick<Types.Iscedf, 'id' | 'name'>
+        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ) }
   ) | (
@@ -43,10 +69,10 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
-          { __typename: 'SubjectField' }
-          & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
-        ) }
+        & { node: { __typename: 'Collection' } | (
+          { __typename: 'Iscedf' }
+          & Pick<Types.Iscedf, 'id' | 'name'>
+        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ) }
   ) | (
@@ -56,23 +82,10 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
-          { __typename: 'SubjectField' }
-          & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
-        ) }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'SubjectField' }
-    & Pick<Types.SubjectField, 'id'>
-    & { pinnedList: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
-          { __typename: 'SubjectField' }
-          & Pick<Types.SubjectField, 'id' | 'name' | 'icon'>
-        ) }
+        & { node: { __typename: 'Collection' } | (
+          { __typename: 'Iscedf' }
+          & Pick<Types.Iscedf, 'id' | 'name'>
+        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ) }
   )> }
@@ -84,13 +97,12 @@ export const HeaderPagePinnedDocument = gql`
   node(id: $currentProfileId) {
     ... on INode {
       id
-      pinnedList: _rel(edge: {type: Follows, node: SubjectField}, page: {first: 10}) {
+      pinnedList: _rel(type: Pinned, target: Iscedf, page: {first: 10}) {
         edges {
           node {
-            ... on SubjectField {
+            ... on Iscedf {
               id
               name
-              icon
             }
           }
         }

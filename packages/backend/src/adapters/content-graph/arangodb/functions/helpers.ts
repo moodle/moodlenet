@@ -1,31 +1,25 @@
-import { EdgeType, NodeType, Page, PageInfo, PaginationInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { Id, parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { Maybe } from 'graphql/jsutils/Maybe'
-import { aqlstr } from '../../../../lib/helpers/arango'
-const DEFAULT_PAGE_LENGTH = 10
-const MAX_PAGE_LENGTH = 25
+import { GraphEdgeByType, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphNode, GraphNodeByType, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
+import { AQ, aqlstr } from '../../../../lib/helpers/arango/query'
+import { AqlGraphEdgeByType, AqlGraphNodeByType } from '../types'
 
-export const cursorPaginatedQuery = ({
+export const cursorPaginatedQuery = <T>({
   page,
   cursorProp,
   inverseSort = false,
   mapQuery,
 }: {
-  page: Maybe<PaginationInput>
+  page: PaginationInput
   cursorProp: string
   inverseSort?: boolean
-  mapQuery(pageFilterSortLimit: string): string
+  mapQuery(pageFilterSortLimit: string): AQ<T>
 }) => {
-  const { after, first, last, before } = {
-    ...page,
-    last: page?.last ?? 0,
-    first: page?.first ?? DEFAULT_PAGE_LENGTH,
-  }
+  const { after, first, last, before } = page
   const beforeCursor = before || after
   const getCursorToo = beforeCursor === after
 
-  const pageLimit = (_: number, pageType: 'after' | 'before') =>
-    Math.min(_ || Infinity, MAX_PAGE_LENGTH) + (pageType === 'before' && getCursorToo ? 1 : 0)
+  const pageLimit = (_: number, pageType: 'after' | 'before') => _ + (pageType === 'before' && getCursorToo ? 1 : 0)
 
   const _afterPage =
     !after && !!before
@@ -45,164 +39,211 @@ export const cursorPaginatedQuery = ({
       : null
 
   return {
-    beforePageQuery:
-      _beforePage &&
-      mapQuery(`
+    beforePageQuery: _beforePage
+      ? mapQuery(`
         ${_beforePage}
         LET cursor = ${cursorProp}
-      `),
-    afterPageQuery:
-      _afterPage &&
-      mapQuery(`
+      `)
+      : null,
+    afterPageQuery: _afterPage
+      ? mapQuery(`
         ${_afterPage}
         LET cursor = ${cursorProp}
-      `),
+      `)
+      : null,
   }
 }
 
-export const makePage = <P extends Page>({
-  afterEdges,
-  beforeEdges,
-  pageEdgeTypename,
-  pageTypename,
+export const makeAfterBeforePage = <T>({
+  afterItems,
+  beforeItems,
 }: {
-  afterEdges: P['edges'][number][]
-  beforeEdges: P['edges'][number][]
-  //@ts-expect-error
-  pageTypename: P['__typename']
-  pageEdgeTypename: P['edges'][number]['__typename']
-}): P => {
-  const edges: P['edges'] = beforeEdges
-    .reverse()
-    .concat(afterEdges)
-    .map(_ => ({ ..._, __typename: pageEdgeTypename }))
+  afterItems: PageItem<T>[]
+  beforeItems: PageItem<T>[]
+}): Page<T> => {
+  const items = beforeItems.reverse().concat(afterItems)
+  return makePage({
+    items,
+    hasNextPage: !!afterItems.length,
+    hasPreviousPage: !!beforeItems.length,
+  })
+}
+
+export const makePage = <T>({
+  items,
+  hasNextPage,
+  hasPreviousPage,
+}: {
+  items: PageItem<T>[]
+  hasNextPage: boolean
+  hasPreviousPage: boolean
+}): Page<T> => {
+  const [startCursor] = items[0] || []
+  const [endCursor] = items[items.length - 1] || []
   const pageInfo: PageInfo = {
-    startCursor: edges[0]?.cursor ?? null,
-    endCursor: edges[edges.length - 1]?.cursor ?? null,
-    hasNextPage: true,
-    hasPreviousPage: true,
-    __typename: 'PageInfo',
+    startCursor,
+    endCursor,
+    hasNextPage,
+    hasPreviousPage,
   }
-  const page = {
-    __typename: pageTypename,
+  const page: Page<T> = {
     pageInfo,
-    edges,
-  } as any as P
+    items,
+  }
   return page
 }
-
 // TODO: Make it like cursorPaginatedQuery
-export const skipLimitPagination = ({ page }: { page: Maybe<PaginationInput> }) => {
-  const { after, first } = {
-    ...page,
-    first: page?.first ?? DEFAULT_PAGE_LENGTH,
-  }
-  const limit = Math.min(first, MAX_PAGE_LENGTH)
+export const forwardSkipLimitPagination = ({ page }: { page: PaginationInput }) => {
+  const { after, first: limit } = page
   const skip = Math.max((typeof after === 'number' ? after : -1) + 1, 0)
   return {
     limit,
     skip,
   }
 }
+export const forwardSkipLimitPage = <T>({ docs, skip }: { docs: T[]; skip: number }) => {
+  const items = docs.map<PageItem<T>>((item, i) => [i + skip, item])
 
-export const updateRelationCountQuery = ({
-  edgeType,
-  targetNodeType,
-  nodeId,
-  side,
-  amount,
-}: {
-  edgeType: EdgeType
-  nodeId: string
-  targetNodeType: NodeType
-  side: 'from' | 'to' //FIXME: use GQL Type
-  amount: number
-}) => {
-  const { nodeType } = parseNodeId(nodeId as Id)
-  const q = `
-    LET v = Document( ${aqlstr(nodeId)} )
-      LET currRelCount = v._relCount.${edgeType}.${side}.${targetNodeType} || 0
-      UPDATE v WITH MERGE_RECURSIVE(v,{
-        _relCount: {
-          ${edgeType} : {
-            ${side}: {
-              ${targetNodeType}:currRelCount + (${Math.floor(amount)})
-            }
-          }
-        }
-      })
-
-      IN ${nodeType} 
-      
-      RETURN NEW
-  `
-  return q
+  return makePage({ items, hasNextPage: !!items.length, hasPreviousPage: false })
 }
+
+// export const updateRelationCountQuery = ({
+//   edgeType,
+//   targetNodeType,
+//   nodeId,
+//   side,
+//   amount,
+// }: {
+//   edgeType: EdgeType
+//   nodeId: string
+//   targetNodeType: NodeType
+//   side: 'from' | 'to' //FIXME: use GQL Type
+//   amount: number
+// }) => {
+//   const [nodeType] = parseCheckedNodeId(nodeId as Id)
+//   const q = aq<number | null>(`
+//       LET v = Document( ${aqlstr(nodeId)} )
+//       LET currRelCount = v._relCount.${edgeType}.${side}.${targetNodeType} || 0
+//       LET newRelCount = currRelCount + (${Math.floor(amount)})
+//       UPDATE v WITH MERGE_RECURSIVE(v,{
+//         _relCount: {
+//           ${edgeType} : {
+//             ${side}: {
+//               ${targetNodeType}: newRelCount
+//             }
+//           }
+//         }
+//       })
+
+//       IN ${nodeType}
+
+//       RETURN newRelCount
+//   `)
+//   return q
+// }
 
 // export const mergeNodeMeta = ({ mergeMeta, nodeProp }: { mergeMeta: string; nodeProp: string }) =>
 //   `MERGE_RECURSIVE(${nodeProp},{ ${NODE_META_PROP}: ${mergeMeta} })`
 
-export const updateRelationCountQueries = ({
-  life,
-  edgeType,
-  _from,
-  _to,
-}: {
-  life: 'create' | 'delete'
-  _from: string
-  _to: string
-  edgeType: EdgeType
-}) => {
-  const amount = life === 'create' ? 1 : -1
-  const { nodeType: fromNodeType } = parseNodeId(_from as Id)
-  const { nodeType: toNodeType } = parseNodeId(_to as Id)
+// export const updateRelationCountQueries = ({
+//   life,
+//   edgeType,
+//   _from,
+//   _to,
+// }: {
+//   life: 'create' | 'delete'
+//   _from: string
+//   _to: string
+//   edgeType: EdgeType
+// }) => {
+//   const amount = life === 'create' ? 1 : -1
+//   const [fromNodeType] = parseCheckedNodeId(_from as Id)
+//   const [toNodeType] = parseCheckedNodeId(_to as Id)
 
-  const relationOut = updateRelationCountQuery({
-    edgeType,
-    nodeId: _from,
-    side: 'to',
-    amount,
-    targetNodeType: toNodeType,
-  })
-  const relationIn = updateRelationCountQuery({
-    edgeType,
-    nodeId: _to,
-    side: 'from',
-    amount,
-    targetNodeType: fromNodeType,
-  })
-  return { relationIn, relationOut }
+//   const relationOut = updateRelationCountQuery({
+//     edgeType,
+//     nodeId: _from,
+//     side: 'to',
+//     amount,
+//     targetNodeType: toNodeType,
+//   })
+//   const relationIn = updateRelationCountQuery({
+//     edgeType,
+//     nodeId: _to,
+//     side: 'from',
+//     amount,
+//     targetNodeType: fromNodeType,
+//   })
+//   return { relationIn, relationOut }
+// }
+
+// const MARK_DELETED_PROP = '_deleted'
+// export const isMarkDeleted = (varname: string) => `HAS(${varname}, "${MARK_DELETED_PROP}")`
+// export const markDeletedPatch = ({ byId }: { byId: Id }) => `{ ${MARK_DELETED_PROP}: {
+//     by: { _id: ${aqlstr(byId)} },
+//     at: DATE_NOW()
+//   }
+// }`
+
+// const CREATED_PROP = '_created'
+// export const createdByAtPatch = ({ byId }: { byId: string }) => `{
+//     ${CREATED_PROP}:{
+//       by: { _id: ${aqlstr(byId)}, id: ${aqlstr(byId)} },
+//       at: DATE_NOW()
+//     }
+//   }`
+
+// const ORGANIZATION_PROP = '_organization'
+// export const createdOrganizationPatch = ({ orgId }: { orgId?: string }) =>
+//   orgId
+//     ? `{
+//       ${ORGANIZATION_PROP}: { _id: ${aqlstr(orgId)}, id: ${aqlstr(orgId)} }
+//     }`
+//     : `{}`
+
+// export const createNodeMergePatch = ({ byId, doc, orgId }: { doc: object; byId: string; orgId?: string }) => `
+//   MERGE( ${aqlstr(doc)}, ${createdOrganizationPatch({ orgId })}, ${createdByAtPatch({ byId })}  )`
+
+// export const createEdgeMergePatch = ({ byId, doc }: { doc: object; byId: string }) => `
+//   MERGE( ${aqlstr(doc)}, ${createdByAtPatch({ byId })},  )`
+
+export const documentBySlugType = ({ _slug, _type }: Pick<GraphNode, '_type' | '_slug'>) => `
+  ( ( 
+    FOR n in ${_type} 
+      FILTER n._slug==${aqlstr(_slug)} 
+      LIMIT 1
+    RETURN n
+  ) [0] )
+`
+
+export const aqlGraphNode2GraphNode = <T extends GraphNodeType>(aqlGraphNode: AqlGraphNodeByType<T>) => {
+  // console.log(`aqlGraphNode2GraphNode ${aqlGraphNode._id}`, aqlGraphNode)
+  const [__type, __permId] = aqlGraphNode._id.split('/')
+  const graphNode: GraphNodeByType<T> = {
+    _type: __type! as T,
+    _permId: __permId!,
+    ...(aqlGraphNode as any),
+  }
+  return graphNode
 }
 
-const MARK_DELETED_PROP = '_deleted'
-export const isMarkDeleted = (varname: string) => `HAS(${varname}, "${MARK_DELETED_PROP}")`
-export const markDeletedPatch = ({ byId }: { byId: Id }) => `{ ${MARK_DELETED_PROP}: {
-    by: { _id: ${aqlstr(byId)} },
-    at: DATE_NOW() 
+export const graphNode2AqlGraphNode = <T extends GraphNodeType>(graphNode: GraphNodeByType<T>) => {
+  const _key = graphNode._permId
+  const _id = `${graphNode._type}/${graphNode._permId}`
+  const aqlGraphNode: AqlGraphNodeByType<T> = {
+    _key,
+    _id,
+    ...(graphNode as any),
   }
-}`
+  return aqlGraphNode
+}
 
-const CREATED_PROP = '_created'
-export const createdByAtPatch = ({ byId }: { byId: string }) => `{
-    ${CREATED_PROP}:{
-      by: { _id: ${aqlstr(byId)}, id: ${aqlstr(byId)} },
-      at: DATE_NOW() 
-    }
-  }`
-
-const ORGANIZATION_PROP = '_organization'
-export const createdOrganizationPatch = ({ orgId }: { orgId?: string }) =>
-  orgId
-    ? `{
-      ${ORGANIZATION_PROP}: { _id: ${aqlstr(orgId)}, id: ${aqlstr(orgId)} }
-    }`
-    : `{}`
-
-export const createNodeMergePatch = ({ byId, doc, orgId }: { doc: object; byId: string; orgId?: string }) => `
-  MERGE( ${aqlstr(doc)}, ${createdOrganizationPatch({ orgId })}, ${createdByAtPatch({ byId })}  )`
-
-export const createEdgeMergePatch = ({ byId, doc }: { doc: object; byId: string }) => `
-  MERGE( ${aqlstr(doc)}, ${createdByAtPatch({ byId })},  )`
-
-export const toDocumentEdgeOrNode = (varname: string) => `MERGE(${varname}, ${pickDocumentEdgeOrNodeId(varname)})`
-export const pickDocumentEdgeOrNodeId = (varname: string) => `{id: ${varname}._id}`
+export const aqlGraphEdge2GraphEdge = <T extends GraphEdgeType>(aqlGraphEdge: AqlGraphEdgeByType<T>) => {
+  const [__type, __permId] = aqlGraphEdge._id.split('/')
+  const graphEdge: GraphEdgeByType<T> = {
+    _type: __type! as T,
+    _permId: __permId!,
+    ...(aqlGraphEdge as any),
+  }
+  return graphEdge
+}

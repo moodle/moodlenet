@@ -1,49 +1,27 @@
-import { Role } from '../../../../lib/auth/types'
-import { EmailAddr } from '../../../../lib/emailSender/types'
-import { aqlstr } from '../../../../lib/helpers/arango'
-import { ActiveUser, USER, UserStatus } from '../types'
+import { User } from '@moodlenet/common/lib/user-auth/types'
+import { DistOmit } from '@moodlenet/common/lib/utils/types'
+import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
+import { USER } from '../types'
 import { isEmailInUseQ } from './isEmailInUse'
-import { isUsernameInUseQ } from './isUsernameInUse'
 
-export const createNewUserQ = ({
-  email,
-  password,
-  username,
-  role,
-}: {
-  email: EmailAddr
-  username: string
-  password: string
-  role: Role
-}) => {
-  const document: ActiveUser = {
-    _id: undefined as never,
-    createdAt: undefined as never,
-    updatedAt: undefined as never,
-    status: UserStatus.Active,
-    email,
-    firstActivationToken: undefined,
-    changeEmailRequest: null,
-    password,
-    username,
-    role,
-  }
-  return `
-    LET emailInUse = (${isEmailInUseQ({ email })})[0]
-    LET usernameInUse = (${isUsernameInUseQ({ username })})[0]
+export type CreateNewUserQArg<U extends User> = DistOmit<U, 'id' | 'createdAt' | 'updatedAt'>
+export const createNewUserQ = <U extends User>(user: CreateNewUserQArg<U>) => {
+  return aq<U>(`
+    LET emailInUse = (${isEmailInUseQ({ email: user.email })})[0]
     
-    FILTER !usernameInUse && !emailInUse
+    FILTER !emailInUse
     
     LIMIT 1
       
     INSERT MERGE(
-      ${aqlstr(document)},
+      ${aqlstr(user)},
       { 
         createdAt: DATE_NOW(),
         updatedAt: DATE_NOW()
       } 
     )
+
     INTO ${USER}
-    RETURN NEW
-  `
+    RETURN MERGE( { id:NEW._key } , NEW )
+  `)
 }

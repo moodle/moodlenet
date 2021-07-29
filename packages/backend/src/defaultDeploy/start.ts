@@ -2,10 +2,13 @@ import { Database } from 'arangojs'
 import { Algorithm, SignOptions, VerifyOptions } from 'jsonwebtoken'
 import { createTransport } from 'nodemailer'
 import { ulid } from 'ulid'
-import { createEdgeAdapter, deleteEdgeAdapter } from '../adapters/content-graph/arangodb/adapters/edge'
 import { globalSearch } from '../adapters/content-graph/arangodb/adapters/globalSearch'
-import { createNodeAdapter, getNodeByIdAdapter } from '../adapters/content-graph/arangodb/adapters/node'
-import { graphqlArangoContentGraphResolvers } from '../adapters/content-graph/arangodb/graphql/additional-resolvers'
+import { createNodeAdapter, getNodeBySlugAdapter } from '../adapters/content-graph/arangodb/adapters/node'
+import { getByAuthId } from '../adapters/content-graph/arangodb/adapters/profile'
+import {
+  getNodeRelationCountAdapter,
+  getTraverseNodeRelAdapter,
+} from '../adapters/content-graph/arangodb/adapters/traversal'
 import { createGraphQLApp } from '../adapters/http/graphqlApp'
 import { startMNHttpServer } from '../adapters/http/MNHTTPServer'
 import { createStaticAssetsApp } from '../adapters/http/staticAssetsApp'
@@ -14,21 +17,21 @@ import { delAssetAdapter } from '../adapters/staticAssets/fs/adapters/delAsset'
 import { getAssetAdapter } from '../adapters/staticAssets/fs/adapters/getAsset'
 import { persistTempAssetsAdapter } from '../adapters/staticAssets/fs/adapters/persistTemp'
 import { setupFs } from '../adapters/staticAssets/fs/setup'
-import { getConfigAdapter } from '../adapters/user-auth/arangodb/adapters/config'
-import { activateNewUser, createNewUser, storeNewSignupRequest } from '../adapters/user-auth/arangodb/adapters/new-user'
-import { byUsername } from '../adapters/user-auth/arangodb/adapters/session'
+import { activateNewUser, storeNewSignupRequest } from '../adapters/user-auth/arangodb/adapters/new-user'
+import { byEmail } from '../adapters/user-auth/arangodb/adapters/session'
 import { argonHashPassword, argonVerifyPassword } from '../lib/auth/argon'
-import { SystemSessionEnv } from '../lib/auth/env'
 import { getVersionedDBOrThrow } from '../lib/helpers/arango/migrate/lib'
 import { Qmino } from '../lib/qmino'
 import { createInProcessTransport } from '../lib/qmino/transports/in-process/transport'
-import * as edgePorts from '../ports/content-graph/edge'
 import * as nodePorts from '../ports/content-graph/node'
+import * as profilePorts from '../ports/content-graph/profile'
 import * as searchPorts from '../ports/content-graph/search'
+// import * as edgePorts from '../ports/content-graph/edge'
+import * as traverseNodePorts from '../ports/content-graph/traverseNodeRel'
 import * as assetPorts from '../ports/static-assets/asset'
 import * as tmpAssetPorts from '../ports/static-assets/temp'
-import * as userAuthConfigPorts from '../ports/user-auth/config'
 import * as newUserPorts from '../ports/user-auth/new-user'
+// import * as userAuthConfigPorts from '../ports/user-auth/config'
 import * as userPorts from '../ports/user-auth/user'
 import { DefaultDeployEnv } from './env'
 
@@ -42,10 +45,9 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
   const userAuthDatabase = await getVersionedDBOrThrow({ version: '0.0.1' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.userAuthDBName }),
   })
-  const contentGraphDatabase = await getVersionedDBOrThrow({ version: '0.0.3' })({
+  const contentGraphDatabase = await getVersionedDBOrThrow({ version: '0.0.1' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.contentGraphDBName }),
   })
-  const arangoContentGraphAdditionalGQLResolvers = graphqlArangoContentGraphResolvers(contentGraphDatabase)
 
   const jwtAlg: Algorithm = 'RS256'
   const jwtVerifyOpts: VerifyOptions = {
@@ -57,10 +59,12 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
   }
 
   const graphqlApp = createGraphQLApp({
-    additionalResolvers: { ...arangoContentGraphAdditionalGQLResolvers },
+    additionalResolvers: null,
     jwtPrivateKey: jwt.privateKey,
     jwtSignOptions,
     qmino: qminoInProcess,
+    passwordVerifier: argonVerifyPassword,
+    passwordHasher: argonHashPassword,
   })
   const assetsApp = createStaticAssetsApp({ qmino: qminoInProcess })
   await startMNHttpServer({
@@ -73,23 +77,24 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
   // open ports
 
   // userAuth Config
-  qminoInProcess.open(userAuthConfigPorts.getLatest, getConfigAdapter({ db: userAuthDatabase }))
-  qminoInProcess.open(userAuthConfigPorts.save, getConfigAdapter({ db: userAuthDatabase }))
+  // qminoInProcess.open(userAuthConfigPorts.getLatest, getConfigAdapter({ db: userAuthDatabase }))
+  // qminoInProcess.open(userAuthConfigPorts.save, getConfigAdapter({ db: userAuthDatabase }))
 
   //
 
-  qminoInProcess.open(nodePorts.byId, getNodeByIdAdapter(contentGraphDatabase))
+  qminoInProcess.open(nodePorts.getBySlug, getNodeBySlugAdapter(contentGraphDatabase))
+
+  qminoInProcess.open(traverseNodePorts.fromNode, getTraverseNodeRelAdapter(contentGraphDatabase))
+  qminoInProcess.open(traverseNodePorts.count, getNodeRelationCountAdapter(contentGraphDatabase))
 
   qminoInProcess.open(searchPorts.byTerm, globalSearch(contentGraphDatabase))
 
-  qminoInProcess.open(userPorts.getActiveByUsername, {
-    ...byUsername(userAuthDatabase),
-    verifyPassword: argonVerifyPassword(),
+  qminoInProcess.open(userPorts.getActiveByEmail, {
+    ...byEmail(userAuthDatabase),
   })
 
-  qminoInProcess.open(userPorts.getActiveByUsername, {
-    ...byUsername(userAuthDatabase),
-    verifyPassword: argonVerifyPassword(),
+  qminoInProcess.open(profilePorts.getByAuthId, {
+    ...getByAuthId(contentGraphDatabase),
   })
 
   qminoInProcess.open(newUserPorts.signUp, {
@@ -105,37 +110,24 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
 
   qminoInProcess.open(newUserPorts.confirmSignup, {
     ...activateNewUser(userAuthDatabase),
-    hashPassword: (plain: string) => argonHashPassword({ pwd: plain }),
-    createNewProfile: async ({ username, env }) => {
+    createNewProfile: async ({ authId, name }) => {
       return qminoInProcess.callSync(
-        nodePorts.create<'Profile'>({
-          env,
-          data: { name: username, summary: '' },
-          nodeType: 'Profile',
-        }),
-        { timeout: 5000 },
-      )
-    },
-  })
-  qminoInProcess.open(newUserPorts.createNewUser, {
-    ...createNewUser(userAuthDatabase),
-    hashPassword: (plain: string) => argonHashPassword({ pwd: plain }),
-    createNewProfile: async ({ username }) => {
-      return qminoInProcess.callSync(
-        nodePorts.create<'Profile'>({
-          env: SystemSessionEnv(),
-          data: { name: username, summary: '' },
-          nodeType: 'Profile',
+        nodePorts.createProfile({
+          partProfile: { _authId: authId, name },
         }),
         { timeout: 5000 },
       )
     },
   })
 
-  qminoInProcess.open(nodePorts.create, createNodeAdapter(contentGraphDatabase))
+  qminoInProcess.open(nodePorts.createProfile, {
+    ...createNodeAdapter(contentGraphDatabase),
+  })
 
-  qminoInProcess.open(edgePorts.create, createEdgeAdapter(contentGraphDatabase))
-  qminoInProcess.open(edgePorts.del, deleteEdgeAdapter(contentGraphDatabase))
+  // qminoInProcess.open(nodePorts.create, createNodeAdapter(contentGraphDatabase))
+
+  // qminoInProcess.open(edgePorts.create, createEdgeAdapter(contentGraphDatabase))
+  // qminoInProcess.open(edgePorts.del, deleteEdgeAdapter(contentGraphDatabase))
 
   //FS asset
   const rootDir = fsAsset.rootFolder

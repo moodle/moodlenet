@@ -1,4 +1,4 @@
-import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { nodeId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useMemo } from 'react'
 import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../context/Global/Session'
@@ -8,26 +8,31 @@ import { href } from '../../../elements/link'
 import { CtrlHook } from '../../../lib/ctrl'
 import { useSearchUrlQuery } from '../../../pages/Search/Ctrl/useSearchUrlQuery'
 import { HeaderProps, HeaderPropsIdle } from '../Header'
+const homeHref = href(mainPath.landing)
+const loginHref = href(mainPath.login)
+const signUpHref = href(mainPath.signUp)
+const logoutHref = href('')
+const newCollectionHref = href('')
+const newResourceHref = href('')
 
 export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
-  const { session, logout, currentProfile } = useSession()
+  const { session, logout } = useSession()
   const { setText: setSearchText, text: searchText } = useSearchUrlQuery()
   const { org: localOrg } = useLocalInstance()
   const headerProps = useMemo<HeaderProps>(() => {
-    const me: HeaderPropsIdle['me'] =
-      currentProfile && session
-        ? {
-            myProfileHref: href(`/profile/${parseNodeId(currentProfile.id)._key}`), //FIXME: make it less eror prone
-            avatar: getMaybeAssetRefUrl(currentProfile.icon) ?? '',
-            username: session.username,
-            logout,
-          }
-        : null
-    return {
+    const me: HeaderPropsIdle['me'] = session
+      ? {
+          myProfileHref: href(nodeId2UrlPath(session.profile.id)),
+          avatar: getMaybeAssetRefUrl(session.profile.avatar) ?? '',
+          name: session.profile.name,
+          logout,
+        }
+      : null
+    const headerProps: HeaderPropsIdle = {
       status: 'idle',
       me,
-      homeHref: href(mainPath.landing),
-      loginHref: href(mainPath.login),
+      homeHref,
+      loginHref,
       organization: {
         name: localOrg.name,
         url: `//${localOrg.domain}`,
@@ -35,7 +40,12 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
       },
       searchText,
       setSearchText,
+      logoutHref,
+      newCollectionHref,
+      newResourceHref,
+      signUpHref,
     }
-  }, [currentProfile, localOrg.domain, localOrg.icon, localOrg.name, logout, searchText, session, setSearchText])
+    return headerProps
+  }, [localOrg.domain, localOrg.icon, localOrg.name, logout, searchText, session, setSearchText])
   return [headerProps]
 }

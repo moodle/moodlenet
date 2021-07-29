@@ -1,36 +1,33 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
-import { useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
-import { href } from '../../../../elements/link'
-import { CtrlHook } from '../../../../lib/ctrl'
+import { useRedirectProfileHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
+import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { SubmitForm } from '../../../../lib/formik'
-import { defaultOrganization } from '../../../../lib/static-data'
+import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { ActivationFormValues, ActivationProps } from '../Activation'
 
-export const useActivationCtrl: CtrlHook<ActivationProps, {}> = () => {
-  useRedirectHomeIfLoggedIn()
-  const { activation } = useSession()
+export const useActivationCtrl: CtrlHook<ActivationProps, { activationToken: string }> = ({ activationToken }) => {
+  useRedirectProfileHomeIfLoggedIn({ delay: 618 })
+  const { activateNewUser } = useSession()
   const [activationErrorMessage, setActivationErrorMessage] = useState<string | null>(null)
+  const [accountActivated, setAccountActivated] = useState(false)
   const onSubmit = useCallback<SubmitForm<ActivationFormValues>>(
-    ({ email, username }) =>
-    activation({ email, username }).then(resp => {
-        setActivationErrorMessage(resp)
+    ({ password, name }) =>
+      activateNewUser({ password, name, activationToken }).then(err => {
+        setActivationErrorMessage(err)
+        setAccountActivated(!err)
       }),
-    [activation],
+    [activateNewUser, activationToken],
   )
-
   const activationProps = useMemo<ActivationProps>(() => {
     const activationProps: ActivationProps = {
-      accessHeaderProps: {
-        homeHref: href('Landing/Logged In'),
-        organization: defaultOrganization,
-      },
+      accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Activate User Access Header'),
       onSubmit,
       activationErrorMessage,
-      requestSent
+      accountActivated,
     }
     return activationProps
-  }, [activationErrorMessage, onSubmit])
+  }, [activationErrorMessage, accountActivated, onSubmit])
 
   return activationProps && [activationProps]
 }

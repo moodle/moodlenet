@@ -1,36 +1,38 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
-import { useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
+import { mainPath, useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
 import { href } from '../../../../elements/link'
-import { CtrlHook } from '../../../../lib/ctrl'
+import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { SubmitForm } from '../../../../lib/formik'
-import { defaultOrganization } from '../../../../lib/static-data'
+import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { SignupFormValues, SignupProps } from '../Signup'
-
+const landingHref = href(mainPath.landing)
+const loginHref = href(mainPath.login)
 export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
   useRedirectHomeIfLoggedIn()
-  const { signup } = useSession()
+  const { signUp } = useSession()
   const [signupErrorMessage, setSignupErrorMessage] = useState<string | null>(null)
+  const [requestSent, setRequestSent] = useState(false)
   const onSubmit = useCallback<SubmitForm<SignupFormValues>>(
-    ({ email, username }) =>
-    signup({ email, username }).then(resp => {
-        setSignupErrorMessage(resp)
+    ({ email }) =>
+      signUp({ email }).then(_resp => {
+        setSignupErrorMessage(_resp)
+        setRequestSent(_resp === null)
       }),
-    [signup],
+    [signUp],
   )
 
   const signupProps = useMemo<SignupProps>(() => {
     const signupProps: SignupProps = {
-      accessHeaderProps: {
-        homeHref: href('Landing/Logged In'),
-        organization: defaultOrganization,
-      },
+      accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Signup Access Header'),
       onSubmit,
       signupErrorMessage,
-      requestSent
+      requestSent,
+      landingHref,
+      loginHref,
     }
     return signupProps
-  }, [signupErrorMessage, onSubmit])
+  }, [onSubmit, signupErrorMessage, requestSent])
 
   return signupProps && [signupProps]
 }

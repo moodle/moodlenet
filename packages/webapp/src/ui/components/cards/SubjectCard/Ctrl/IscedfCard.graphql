@@ -1,0 +1,9 @@
+query IscedfCard($id: ID!) {
+  node(id: $id) {
+    ... on Iscedf {
+      name
+      image
+      id
+    }
+  }
+}

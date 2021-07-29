@@ -1,8 +1,3 @@
-export type NewUserRequestEmailVars = {
-  email: string
-  link: string
-}
-
 const text = `Hello {{=it.email}}
 
 Someone (probably you) signed up for a new MoodleNet user. 

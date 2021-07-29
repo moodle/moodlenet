@@ -1,15 +1,19 @@
-import { NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { IdKey } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { aqlstr } from '../../../../lib/helpers/arango'
-import { isMarkDeleted, toDocumentEdgeOrNode } from './helpers'
+import { GraphNodeType, Slug } from '@moodlenet/common/lib/content-graph/types/node'
+import { aq } from '../../../../lib/helpers/arango/query'
+import { AqlGraphNodeByType } from '../types'
+import { documentBySlugType } from './helpers'
 
-export const getNode = <Type extends NodeType = NodeType>({ nodeType, _key }: { _key: IdKey; nodeType: Type }) => {
-  const q = `
-    let node = Document(${aqlstr(`${nodeType}/${_key}`)})
+export const getNodeBySlugQ = <Type extends GraphNodeType = GraphNodeType>({
+  slug,
+  type,
+}: {
+  slug: Slug
+  type: Type
+}) => {
+  const q = aq<AqlGraphNodeByType<Type>>(`
+    let node = ${documentBySlugType({ _slug: slug, _type: type })}
 
-    FILTER !${isMarkDeleted('node')}
-
-    return ${toDocumentEdgeOrNode('node')}
-  `
+    return node
+  `)
   return q
 }

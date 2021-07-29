@@ -1,19 +1,19 @@
-import { t, Trans } from '@lingui/macro';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
-import NoteAddIcon from '@material-ui/icons/NoteAdd';
-import PersonIcon from '@material-ui/icons/Person';
-import addIcon from '../../assets/icons/add.svg';
-import { Href, Link } from '../../elements/link';
-import { withCtrl } from '../../lib/ctrl';
-import { Organization } from '../../types';
-import FloatingMenu from '../atoms/FloatingMenu/FloatingMenu';
-import PrimaryButton from '../atoms/PrimaryButton/PrimaryButton';
-import Searchbox from '../atoms/Searchbox/Searchbox';
-import TertiaryButton from '../atoms/TertiaryButton/TertiaryButton';
-import HeaderTitle from './HeaderTitle/HeaderTitle';
-import './styles.scss';
+import { t, Trans } from '@lingui/macro'
+import AccountCircleIcon from '@material-ui/icons/AccountCircle'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
+import NoteAddIcon from '@material-ui/icons/NoteAdd'
+import PersonIcon from '@material-ui/icons/Person'
+import addIcon from '../../assets/icons/add.svg'
+import { Href, Link } from '../../elements/link'
+import { withCtrl } from '../../lib/ctrl'
+import { Organization } from '../../types'
+import FloatingMenu from '../atoms/FloatingMenu/FloatingMenu'
+import PrimaryButton from '../atoms/PrimaryButton/PrimaryButton'
+import Searchbox from '../atoms/Searchbox/Searchbox'
+import TertiaryButton from '../atoms/TertiaryButton/TertiaryButton'
+import HeaderTitle from './HeaderTitle/HeaderTitle'
+import './styles.scss'
 
 export type HeaderPropsIdle = HeaderPropsBase & {
   status: 'idle'
@@ -21,7 +21,7 @@ export type HeaderPropsIdle = HeaderPropsBase & {
   me: null | {
     avatar: string
     logout?: () => unknown
-    username: string
+    name: string
     myProfileHref: Href
   }
 }
@@ -32,25 +32,25 @@ export type HeaderPropsLoading = HeaderPropsBase & {
 export type HeaderPropsBase = {
   homeHref: Href
   loginHref: Href
-  signupHref: Href
   logoutHref: Href
   newResourceHref: Href
   newCollectionHref: Href
   setSearchText(text: string): unknown
   searchText: string
+  signUpHref: Href
 }
 export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
 
 export const Header = withCtrl<HeaderProps>(props => {
-  const { 
-    homeHref, 
-    loginHref, 
-    signupHref,
-    logoutHref, 
-    newResourceHref, 
-    newCollectionHref, 
-    searchText, 
-    setSearchText 
+  const {
+    homeHref,
+    loginHref,
+    searchText,
+    setSearchText,
+    logoutHref,
+    newCollectionHref,
+    newResourceHref,
+    signUpHref,
   } = props
   if (props.status === 'loading') {
     return null
@@ -70,60 +70,66 @@ export const Header = withCtrl<HeaderProps>(props => {
           <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for anything!`} />
           {me ? (
             <>
-              <FloatingMenu menuContent={
-                <div>
-                <Link href={newResourceHref}>
-                  <NoteAddIcon />
-                  <Trans>New Resource</Trans>
-                </Link>
-                <Link href={newCollectionHref}>
-                  <LibraryAddIcon />
-                  <Trans>New Collection</Trans>
-                </Link>
-              </div>
-              } 
-              hoverElement={<img className="add-icon" src={addIcon} alt="Add" />}
+              <FloatingMenu
+                menuContent={
+                  <div>
+                    <Link href={newResourceHref}>
+                      <NoteAddIcon />
+                      <Trans>New Resource</Trans>
+                    </Link>
+                    <Link href={newCollectionHref}>
+                      <LibraryAddIcon />
+                      <Trans>New Collection</Trans>
+                    </Link>
+                  </div>
+                }
+                hoverElement={<img className="add-icon" src={addIcon} alt="Add" />}
               />
-              <FloatingMenu menuContent={
-                <div>
-                <Link href={me.myProfileHref}>
-                  <AccountCircleIcon />
-                  <Trans>Profile</Trans>
-                </Link>
-                <Link href={logoutHref}>
-                  <ExitToAppIcon />
-                  <Trans>Logout</Trans>
-                </Link>
-              </div>
-              } 
-              hoverElement={
-                <Link href={me.myProfileHref}>
-                  <img className="avatar" src={me.avatar} alt="Avatar" />
-                </Link>
-              }
+              <FloatingMenu
+                menuContent={
+                  <div>
+                    <Link href={me.myProfileHref}>
+                      <AccountCircleIcon />
+                      <Trans>Profile</Trans>
+                    </Link>
+                    <Link href={logoutHref}>
+                      <ExitToAppIcon />
+                      <Trans>Logout</Trans>
+                    </Link>
+                  </div>
+                }
+                hoverElement={
+                  <Link href={me.myProfileHref}>
+                    <img className="avatar" src={me.avatar} alt="Avatar" />
+                  </Link>
+                }
               />
             </>
           ) : (
             <>
               <div className="signin-btn">
-              <FloatingMenu menuContent={
-                <div>
-                <Link href={loginHref}>
-                  <Trans>Login</Trans>
-                </Link>
-                <Link href={signupHref}>
-                  <Trans>Sign Up</Trans>
-                </Link>
+                <FloatingMenu
+                  menuContent={
+                    <div>
+                      <Link href={loginHref}>
+                        <Trans>Login</Trans>
+                      </Link>
+                      <Link href={signUpHref}>
+                        <Trans>Sign Up</Trans>
+                      </Link>
+                    </div>
+                  }
+                  hoverElement={
+                    <PrimaryButton>
+                      <Link href={loginHref}>
+                        <Trans>Sign in</Trans>
+                      </Link>
+                      <PersonIcon />
+                    </PrimaryButton>
+                  }
+                />
               </div>
-              } 
-              hoverElement={
-                <PrimaryButton>
-                  <Link href={loginHref}><Trans>Sign in</Trans></Link>
-                  <PersonIcon />
-                </PrimaryButton>
-              } />
-              </div>
-              
+
               <div className="signup-btn">
                 <TertiaryButton>
                   <Trans>Join now</Trans>
