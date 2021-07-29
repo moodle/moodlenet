@@ -1,4 +1,5 @@
 import { ActiveUser, AuthId, UserAuthConfig, WaitingFirstActivationUser } from '@moodlenet/common/lib/user-auth/types'
+import { newAuthId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { fillEmailTemplate } from '../../lib/emailSender/helpers'
 import { EmailAddr, EmailObj } from '../../lib/emailSender/types'
@@ -40,14 +41,15 @@ export const signUp = QMCommand(
 )
 
 export type NewUserConfirmAdapter = {
-  activateUser(_: { token: string; hashedPassword: string }): Promise<ActiveUser | 'not found'>
+  activateUser(_: { token: string; hashedPassword: string; authId: AuthId }): Promise<ActiveUser | 'not found'>
   createNewProfile(_: { name: string; authId: AuthId }): Promise<unknown>
 }
 type ConfirmSignup = { token: string; hashedPassword: string; profileName: string }
 export const confirmSignup = QMCommand(
   ({ token, hashedPassword, profileName }: ConfirmSignup) =>
     async ({ activateUser, createNewProfile }: NewUserConfirmAdapter) => {
-      const mActiveUser = await activateUser({ hashedPassword, token })
+      const authId = newAuthId()
+      const mActiveUser = await activateUser({ hashedPassword, token, authId })
 
       if (typeof mActiveUser === 'string') {
         return mActiveUser // error

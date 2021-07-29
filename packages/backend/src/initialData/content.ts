@@ -1,6 +1,5 @@
 import { Organization } from '@moodlenet/common/lib/content-graph/types/node'
-import { newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
-import { nanoid } from 'nanoid'
+import { newAuthId, newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 
 const localOrgPermId = newGlyphPermId()
 export const localOrganizationData = ({ domain }: { domain: string }): Organization => ({
@@ -21,7 +20,7 @@ Build your profile as an educator.`,
   logo: null,
 })
 
-const rootAuthId = nanoid(18)
+const rootAuthId = newAuthId()
 const rootPermId = newGlyphPermId()
 
 export const getRootUser = ({ domain }: { domain: string }) => ({
