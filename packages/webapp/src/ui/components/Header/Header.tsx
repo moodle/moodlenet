@@ -20,7 +20,7 @@ export type HeaderPropsIdle = HeaderPropsBase & {
   organization: Pick<Organization, 'logo' | 'name' | 'url'>
   me: null | {
     avatar: string
-    logout?: () => unknown
+    logout(): unknown
     name: string
     myProfileHref: Href
   }
@@ -32,7 +32,6 @@ export type HeaderPropsLoading = HeaderPropsBase & {
 export type HeaderPropsBase = {
   homeHref: Href
   loginHref: Href
-  logoutHref: Href
   newResourceHref: Href
   newCollectionHref: Href
   setSearchText(text: string): unknown
@@ -42,16 +41,7 @@ export type HeaderPropsBase = {
 export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
 
 export const Header = withCtrl<HeaderProps>(props => {
-  const {
-    homeHref,
-    loginHref,
-    searchText,
-    setSearchText,
-    logoutHref,
-    newCollectionHref,
-    newResourceHref,
-    signUpHref,
-  } = props
+  const { homeHref, loginHref, searchText, setSearchText, newCollectionHref, newResourceHref, signUpHref } = props
   if (props.status === 'loading') {
     return null
   }
@@ -92,7 +82,7 @@ export const Header = withCtrl<HeaderProps>(props => {
                       <AccountCircleIcon />
                       <Trans>Profile</Trans>
                     </Link>
-                    <Link href={logoutHref}>
+                    <Link onClick={me.logout} href={homeHref}>
                       <ExitToAppIcon />
                       <Trans>Logout</Trans>
                     </Link>
@@ -131,9 +121,11 @@ export const Header = withCtrl<HeaderProps>(props => {
               </div>
 
               <div className="signup-btn">
-                <TertiaryButton>
-                  <Trans>Join now</Trans>
-                </TertiaryButton>
+                <Link href={signUpHref}>
+                  <TertiaryButton>
+                    <Trans>Join now</Trans>
+                  </TertiaryButton>
+                </Link>
               </div>
             </>
           )}
