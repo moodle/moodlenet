@@ -8,6 +8,13 @@ import { href } from '../../../elements/link'
 import { CtrlHook } from '../../../lib/ctrl'
 import { useSearchUrlQuery } from '../../../pages/Search/Ctrl/useSearchUrlQuery'
 import { HeaderProps, HeaderPropsIdle } from '../Header'
+const homeHref = href(mainPath.landing)
+const loginHref = href(mainPath.login)
+const signUpHref = href(mainPath.signUp)
+const logoutHref = href('')
+const newCollectionHref = href('')
+const newResourceHref = href('')
+
 export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
   const { session, logout } = useSession()
   const { setText: setSearchText, text: searchText } = useSearchUrlQuery()
@@ -21,12 +28,11 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
           logout,
         }
       : null
-    return {
+    const headerProps: HeaderPropsIdle = {
       status: 'idle',
       me,
-      homeHref: href(mainPath.landing),
-      loginHref: href(mainPath.login),
-      signUpHref: href(mainPath.signUp),
+      homeHref,
+      loginHref,
       organization: {
         name: localOrg.name,
         url: `//${localOrg.domain}`,
@@ -34,7 +40,12 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
       },
       searchText,
       setSearchText,
+      logoutHref,
+      newCollectionHref,
+      newResourceHref,
+      signUpHref,
     }
+    return headerProps
   }, [localOrg.domain, localOrg.icon, localOrg.name, logout, searchText, session, setSearchText])
   return [headerProps]
 }

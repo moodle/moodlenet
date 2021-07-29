@@ -5,6 +5,8 @@
     box-shadow: 0 0 6px #dedede;
 
     @media (max-width:450px) {
-        background-color: transparent;
+        &.hide-border  {
+            background-color: transparent;
+        }
     }
 }

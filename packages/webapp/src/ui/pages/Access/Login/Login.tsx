@@ -60,7 +60,7 @@ export const Login = withCtrl<LoginProps>(
                       </TertiaryButton>
                     </Link>
                   </div>
-                  <div className="right">
+                  <div className="right" hidden>
                     <div className="icon">
                       <img
                         alt="apple login"

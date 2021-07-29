@@ -3,16 +3,18 @@ import "./styles.scss";
 
 export type CardProps = {
   style?: CSSProperties
+  hideBorderWhenSmall?: boolean
 }
 
-export const Card: FC<CardProps> = ({style, children}) => {
+export const Card: FC<CardProps> = ({style, hideBorderWhenSmall, children}) => {
   
 
   return (
-    <div className="card" style={style}>{children}</div>
+    <div className={`card ${hideBorderWhenSmall ? 'hide-border': ''}`} style={style}>{children}</div>
   );
 }
 
-Card.defaultProps = {}
+Card.defaultProps = {
+}
 
 export default Card;

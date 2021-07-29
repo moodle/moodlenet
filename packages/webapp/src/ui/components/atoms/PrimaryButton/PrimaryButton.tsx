@@ -2,12 +2,13 @@ import { FC } from 'react'
 import './styles.scss'
 
 export type PrimaryButtonProps = {
-  onClick?(): unknown
+  onClick?(arg0: unknown): unknown
+  disabled?: boolean
 }
 
-export const PrimaryButton: FC<PrimaryButtonProps> = ({ children, onClick }) => {
+export const PrimaryButton: FC<PrimaryButtonProps> = ({ children, onClick, disabled }) => {
   return (
-    <div className="primary-button" onClick={onClick}>
+    <div className={`primary-button ${disabled ? 'disabled' : ''}`} onClick={onClick}>
       {children}
     </div>
   )
