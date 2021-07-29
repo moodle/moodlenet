@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import PrimaryButton from "../PrimaryButton/PrimaryButton";
 import "./styles.scss";
 
@@ -43,6 +43,10 @@ export const InputTextField: FC<InputTextFieldProps> = ({
     setText(e.currentTarget.value)
     if (autoUpdate) getText && getText(e.currentTarget.value)
   }
+
+  useEffect(() => {
+    setText(value)
+  }, [value]);
 
 
   return (
