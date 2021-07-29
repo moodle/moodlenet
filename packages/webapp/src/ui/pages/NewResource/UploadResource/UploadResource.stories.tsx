@@ -18,8 +18,7 @@ const meta: ComponentMeta<typeof UploadResource> = {
 }
 
 export const UploadResourceStoryProps: UploadResourceProps = {
-  state: 'Initial',
-  // imageUrl: 'https://picsum.photos/200/100'
+  state: 'Initial'
 }
 
 const UploadResourceStory: ComponentStory<typeof UploadResource> = args => <UploadResource {...args} />

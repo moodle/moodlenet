@@ -1,17 +1,21 @@
 import ProgressState from '../../components/atoms/ProgressState/ProgressState'
-import { CP, withCtrl } from '../../lib/ctrl'
-import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
+import { withCtrl } from '../../lib/ctrl'
+import { FormikBag } from '../../lib/formik'
+import { HeaderPageTemplate } from '../../templates/page/HeaderPageTemplate'
 import './styles.scss'
-import { UploadResource, UploadResourceProps } from './UploadResource/UploadResource'
+import { NewResourceFormValues } from './types'
+import { UploadResource } from './UploadResource/UploadResource'
 
 export type NewResourceState = 'UploadResource' |'Collections' | 'ExtraData'
 export type NewResourceProgressState = [NewResourceState, string][]
 
 export type NewResourceProps = {
-  headerPageTemplateProps: CP<HeaderPageTemplateProps>
-  uploadResource: UploadResourceProps
-  states: NewResourceProgressState
-  currentState: NewResourceState
+  form: FormikBag<NewResourceFormValues>
+  stepProps: UploadResourceProps | _2StepProps | _3StepProps 
+  // headerPageTemplateProps: CP<HeaderPageTemplateProps>
+  // uploadResource: UploadResourceProps
+  // states: NewResourceProgressState
+  // currentState: NewResourceState
 }
 
 export const NewResource = withCtrl<NewResourceProps>(
