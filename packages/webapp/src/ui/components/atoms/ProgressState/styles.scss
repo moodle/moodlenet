@@ -1,0 +1,41 @@
+.progress-state {
+    width: 100%;
+    height: auto;
+    margin: 40px 0;
+
+    > .title {
+        font-weight: bold;
+        margin-bottom: 16px;
+        > span {
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            margin-right: 8px;
+            padding: 0px 5px;
+            border: 2px solid #000;
+            text-align: center;
+            font-size: 15px;
+        }
+    }
+    > .progress-bar  {
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3%;
+        > * {
+            width: 31%;
+            height: 9px;
+            border-radius: 7px;
+            &.done {
+                background-color: #00E096;
+            }
+            &.current {
+                background-color: #337AFF;
+            }
+            &.todo {
+                background: #B6BACB;
+            }
+        }
+    }
+}

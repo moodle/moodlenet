@@ -5,16 +5,20 @@ import { MainPageWrapper } from './MainPageWrapper'
 export type HeaderPageTemplateProps = {
   headerPageProps: CP<HeaderPageProps>
   isAuthenticated: boolean
+  showSubHeader?: boolean
 }
 
 export const HeaderPageTemplate = withCtrl<HeaderPageTemplateProps>(
-  ({ headerPageProps, isAuthenticated, children }) => {
+  ({ headerPageProps, isAuthenticated, showSubHeader, children }) => {
     return (
       <MainPageWrapper>
         <HeaderPage {...headerPageProps} isAuthenticated={isAuthenticated} />
-        <div className={`view ${isAuthenticated ? 'logged-in' : 'logged-out'}`}>{children}</div>
+        <div className={`view ${isAuthenticated && showSubHeader ? 'double-header-page' : 'single-header-page'}`}>{children}</div>
       </MainPageWrapper>
     )
   },
 )
 HeaderPageTemplate.displayName = 'HeaderPageTemplate'
+HeaderPageTemplate.defaultProps = {
+  showSubHeader: true
+}

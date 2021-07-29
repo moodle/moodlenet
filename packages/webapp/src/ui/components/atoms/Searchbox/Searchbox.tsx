@@ -15,7 +15,6 @@ export const Searchbox: FC<SearchboxProps> = ({ searchText, placeholder, setSear
   )
   return (
     <div className="searchbox">
-      <img className="big-search-icon" src={searchIcon} alt="Search" />
       <div className="search-box">
         <img className="search-icon" src={searchIcon} alt="Search" />
         <input
