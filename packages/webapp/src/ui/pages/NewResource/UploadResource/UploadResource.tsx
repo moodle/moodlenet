@@ -111,6 +111,12 @@ export const UploadResource = withCtrl<UploadResourceProps>(({state}) => {
   const onDescriptionChange = (text: string) => setContent({...content, description: text})
   const onCategoryChange = (text: string) => setContent({...content, category: text})
 
+  const dataInputs = <div>
+    <InputTextField autoUpdate={true} value={content.title} label="Title" placeholder="" disabled={currentState === 'Initial'} getText={onTitleChange}/>
+    <InputTextField autoUpdate={true} value={content.description} textarea={true} label="Description" placeholder="" disabled={currentState === 'Initial'} getText={onDescriptionChange} />
+    <InputTextField autoUpdate={true} value={content.category} label="Categories" placeholder="" disabled={currentState === 'Initial'} getText={onCategoryChange}/>
+  </div>
+
   return (
     <div className="upload-resource">
       <div className="content">
@@ -168,17 +174,9 @@ export const UploadResource = withCtrl<UploadResourceProps>(({state}) => {
               )}
             </div>
           </Card>
-          <div className="small-screen-details">
-            <InputTextField autoUpdate={true} label="Title" placeholder="" disabled={currentState === 'Initial'} getText={onTitleChange}/>
-            <InputTextField autoUpdate={true} textarea={true} label="Description" placeholder="" disabled={currentState === 'Initial'} getText={onDescriptionChange} />
-            <InputTextField autoUpdate={true} label="Categories" placeholder="" disabled={currentState === 'Initial'} getText={onCategoryChange}/>
-          </div>
+          <div className="small-screen-details">{dataInputs}</div>
         </div>
-        <div className="side-column">
-          <InputTextField autoUpdate={true} label="Title" placeholder="" disabled={currentState === 'Initial'} getText={onTitleChange}/>
-          <InputTextField autoUpdate={true} textarea={true} label="Description" placeholder="" disabled={currentState === 'Initial'} getText={onDescriptionChange} />
-          <InputTextField autoUpdate={true} label="Categories" placeholder="" disabled={currentState === 'Initial'} getText={onCategoryChange}/>
-        </div>
+        <div className="side-column">{dataInputs}</div>
       </div>
       <div className="footer">
         { currentState !== 'Initial' && <SecondaryButton onClick={deleteContent} type="grey"><Trans>Delete</Trans></SecondaryButton>}
