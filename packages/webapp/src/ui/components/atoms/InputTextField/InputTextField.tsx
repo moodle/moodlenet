@@ -13,6 +13,8 @@ export type InputTextFieldProps = {
   className?: string
   value?: string | undefined
   getText?(text: string): void
+  textAreaAttrs?:React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>,
+  inputAttrs?:React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 }
 
 export const InputTextField: FC<InputTextFieldProps> = ({
@@ -25,7 +27,9 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   autoUpdate,
   className,
   value,
-  getText
+  getText,
+  inputAttrs,
+  textAreaAttrs
 }) => { 
   const [text, setText] = useState<string |undefined>(value)
 
@@ -66,21 +70,23 @@ export const InputTextField: FC<InputTextFieldProps> = ({
             name="textarea" 
             cols={40} 
             rows={5}
+            {...textAreaAttrs}
           />
         </div>
       ) : (
-      <div className="input-container">
-        <input
-          value={text}
-          onChange={ handleChange }
-          {...buttonName && {onKeyDown:handleKeyDown}}
-          disabled={disabled}
-          type="input"
-          placeholder={placeholder}
-        />
-        {buttonName ? (<PrimaryButton onClick={handleClick}>{buttonName}</PrimaryButton>):(<></>)}
-      </div>
-    )}
+        <div className="input-container">
+          <input
+            value={text}
+            onChange={ handleChange }
+            {...buttonName && {onKeyDown:handleKeyDown}}
+            disabled={disabled}
+            type="input"
+            placeholder={placeholder}
+            {...inputAttrs}
+          />
+          {buttonName ? (<PrimaryButton onClick={handleClick}>{buttonName}</PrimaryButton>):(<></>)}
+        </div>
+      )}
     </div>
   )
 };
