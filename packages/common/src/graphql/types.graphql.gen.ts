@@ -339,8 +339,17 @@ export type Iscedf_RelCountArgs = {
 
 export type Mutation = {
   __typename: 'Mutation';
+  activateUser: CreateSession;
   createNode: CreateNodeMutationPayload;
   createSession: CreateSession;
+  signUp: SimpleResponse;
+};
+
+
+export type MutationActivateUserArgs = {
+  name: Scalars['String'];
+  password: Scalars['String'];
+  activationToken: Scalars['String'];
 };
 
 
@@ -352,6 +361,11 @@ export type MutationCreateNodeArgs = {
 export type MutationCreateSessionArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationSignUpArgs = {
+  email: Scalars['String'];
 };
 
 

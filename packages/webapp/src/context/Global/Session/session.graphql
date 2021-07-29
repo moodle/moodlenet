@@ -29,9 +29,16 @@ mutation login($email: String!, $password: String!) {
   }
 }
 
-# mutation activateNewUser($token: String!, $username: String!, $password: String!) {
-#   activateUser(username: $username, password: $password, token: $token) {
-#     jwt
-#     message
-#   }
-# }
+mutation activateNewUser($activationToken: String!, $name: String!, $password: String!) {
+  activateUser(name: $name, password: $password, activationToken: $activationToken) {
+    jwt
+    message
+  }
+}
+
+mutation signUp($email: String!) {
+  signUp(email: $email) {
+    success
+    message
+  }
+}

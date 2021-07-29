@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
-import { useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
+import { mainPath, useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
 import { href } from '../../../../elements/link'
 import { CtrlHook } from '../../../../lib/ctrl'
 import { AccessHeaderProps } from '../AccessHeader'
+const homeHref = href(mainPath.landing)
 
 export const useAccessHeaderCtrl: CtrlHook<AccessHeaderProps, {}, 'page'> = () => {
   useRedirectHomeIfLoggedIn()
@@ -11,7 +12,7 @@ export const useAccessHeaderCtrl: CtrlHook<AccessHeaderProps, {}, 'page'> = () =
 
   const accessHeaderProps = useMemo(() => {
     const accessHeaderProps: Omit<AccessHeaderProps, 'page'> = {
-      homeHref: href('Landing/Logged In'),
+      homeHref,
       organization: {
         logo: org.icon,
         name: org.name,

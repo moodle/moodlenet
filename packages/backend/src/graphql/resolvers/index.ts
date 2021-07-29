@@ -8,12 +8,13 @@ import {
 } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { SignOptions } from 'jsonwebtoken'
 import { JwtPrivateKey, signJwtActiveUser } from '../../lib/auth/jwt'
-import { PasswordVerifier } from '../../lib/auth/types'
+import { PasswordHasher, PasswordVerifier } from '../../lib/auth/types'
 import { QMino } from '../../lib/qmino'
 import * as nodePorts from '../../ports/content-graph/node'
 import * as profilePorts from '../../ports/content-graph/profile'
 import * as searchPorts from '../../ports/content-graph/search'
 import * as traversePorts from '../../ports/content-graph/traverseNodeRel'
+import * as newUserPorts from '../../ports/user-auth/new-user'
 import * as userPorts from '../../ports/user-auth/user'
 import * as GQLResolvers from '../types.graphql.gen'
 import { graphEdge2GqlEdge, graphNode2GqlNode } from './helpers'
@@ -22,11 +23,13 @@ export const getGQLResolvers = ({
   jwtPrivateKey,
   jwtSignOptions,
   passwordVerifier,
+  passwordHasher,
   qmino,
 }: {
   jwtSignOptions: SignOptions
   jwtPrivateKey: JwtPrivateKey
   passwordVerifier: PasswordVerifier
+  passwordHasher: PasswordHasher
   qmino: QMino
 }): GQLResolvers.Resolvers => {
   return {
@@ -91,11 +94,12 @@ export const getGQLResolvers = ({
         const mActiveUser = await qmino.query(userPorts.getActiveByEmail({ email: ctx.authSessionEnv.user.email }), {
           timeout: 5000,
         })
+        console.log({ mActiveUser })
         if (!mActiveUser) {
           return null
         }
-
         const mProfile = await qmino.query(profilePorts.getByAuthId({ authId: mActiveUser.authId }), { timeout: 5000 })
+        console.log({ mProfile })
         if (!mProfile) {
           return null
         }
@@ -193,30 +197,34 @@ export const getGQLResolvers = ({
           jwt,
         }
       },
-      // async signUp(_root, { email } /* ,env */) {
-      //   const res = await qmino.callSync(newUserPorts.signUp({ email }), { timeout: 5000 })
-      //   if (typeof res === 'string') {
-      //     return { __typename: 'SimpleResponse', success: false, message: res }
-      //   }
-      //   return { __typename: 'SimpleResponse', success: true }
-      // },
-      // async activateUser(_root, { password, token, username } /*, ctx */) {
-      //   const activationresult = await qmino.callSync(newUserPorts.confirmSignup({ password, token, username }), {
-      //     timeout: 5000,
-      //   })
-      //   if ('string' === typeof activationresult) {
-      //     return {
-      //       __typename: 'CreateSession',
-      //       jwt: null,
-      //       message: activationresult,
-      //     }
-      //   }
-      //   const jwt = signJwtActiveUser({ user: activationresult, jwtPrivateKey, jwtSignOptions })
-      //   return {
-      //     __typename: 'CreateSession',
-      //     jwt,
-      //   }
-      // },
+      async signUp(_root, { email } /* ,env */) {
+        const res = await qmino.callSync(newUserPorts.signUp({ email }), { timeout: 5000 })
+        if (typeof res === 'string') {
+          return { __typename: 'SimpleResponse', success: false, message: res }
+        }
+        return { __typename: 'SimpleResponse', success: true }
+      },
+      async activateUser(_root, { password, activationToken, name } /*, ctx */) {
+        const hashedPassword = await passwordHasher(password)
+        const activationresult = await qmino.callSync(
+          newUserPorts.confirmSignup({ hashedPassword, profileName: name, token: activationToken }),
+          {
+            timeout: 5000,
+          },
+        )
+        if ('string' === typeof activationresult) {
+          return {
+            __typename: 'CreateSession',
+            jwt: null,
+            message: activationresult,
+          }
+        }
+        const jwt = signJwtActiveUser({ user: activationresult, jwtPrivateKey, jwtSignOptions })
+        return {
+          __typename: 'CreateSession',
+          jwt,
+        }
+      },
       // async createNode(_root, { input }, ctx, _info) {
       //   const { nodeType } = input
       //   // if (env.type === 'anon') {
