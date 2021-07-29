@@ -23,8 +23,8 @@ export const storeNewSignupRequest = (db: UserAuthDB): Pick<SignUpAdapter, 'stor
 })
 
 export const activateNewUser = (db: UserAuthDB): Pick<NewUserConfirmAdapter, 'activateUser'> => ({
-  activateUser: async ({ hashedPassword: password, token }) => {
-    const activateQ = activateNewUserQ({ password, token })
+  activateUser: async ({ hashedPassword: password, token, authId }) => {
+    const activateQ = activateNewUserQ({ password, token, authId })
     const activeUser = await getOneResult(activateQ, db)
     if (!activeUser) {
       return 'not found'

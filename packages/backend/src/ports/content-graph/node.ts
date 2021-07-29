@@ -39,7 +39,7 @@ export type CreateProfile = {
 }
 
 export const createProfile = QMCommand(({ partProfile }: CreateProfile) => async ({ storeNode }: CreateNodeAdapter) => {
-  const ids = newGlyphIdentifiers(partProfile.name)
+  const ids = newGlyphIdentifiers({ name: partProfile.name })
   const profile: Omit<Profile, '_bumpStatus'> = {
     _type: 'Profile',
     ...ids,

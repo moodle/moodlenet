@@ -27,6 +27,6 @@ export const getNodeTypeByCaseInsensitive = (caseInsensitiveNodeType: string) =>
 export const nodeId2UrlPath = (id: string) => {
   const [type, slug] = id.split('/')
   const lowerCaseType = (lowerType2NodeTypeMap as any)[type!]
-  console.log({ id, type, slug, lowerCaseType, caseInsensitiveNodeTypesMap: nodeType2LowerTypeMap })
+  // console.log({ id, type, slug, lowerCaseType, caseInsensitiveNodeTypesMap: nodeType2LowerTypeMap })
   return `/${lowerCaseType}/${slug}`
 }

@@ -2,7 +2,7 @@ import { GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
 import { GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { /* rootUser, */ getRootUser, localOrganizationData } from '../../../../../../initialData/content'
-import { iscedfields } from '../../../../../../initialData/ISCED/Fields/Iscedfields'
+import { getIscedfields } from '../../../../../../initialData/ISCED/Fields/Iscedfields'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
 import { justExecute } from '../../../../../../lib/helpers/arango/query'
 import { MNStaticEnv } from '../../../../../../lib/types'
@@ -69,6 +69,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
       throw e
     })
 
+    const iscedfields = getIscedfields()
     await Promise.all(
       iscedfields.map(async subj_field_data => {
         console.log(`creating subject ${subj_field_data.name} ${subj_field_data.iscedCode}`)

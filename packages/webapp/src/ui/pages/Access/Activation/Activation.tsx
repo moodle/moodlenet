@@ -12,9 +12,10 @@ export type ActivationProps = {
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
   onSubmit: SubmitForm<ActivationFormValues>
   activationErrorMessage: string | null
+  accountActivated: boolean
 }
 
-export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, onSubmit }) => {
+export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, onSubmit /* , accountActivated  */ }) => {
   const [form, attrs] = useFormikBag<ActivationFormValues>({
     initialValues: { name: '', password: '' },
     onSubmit,

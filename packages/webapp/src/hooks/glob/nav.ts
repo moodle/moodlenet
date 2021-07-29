@@ -17,10 +17,12 @@ export const useRedirectToBySession = ({
   ifLogged,
   to,
   replace,
+  delay = 0,
 }: {
   to: string | ((_: UserSessionFragment | null) => string)
   ifLogged: boolean
   replace: boolean
+  delay?: number
 }) => {
   const history = useHistory()
   const { session } = useSession()
@@ -28,26 +30,29 @@ export const useRedirectToBySession = ({
   const shouldRedirect = !!ifLogged === !!session
   useLayoutEffect(() => {
     if (shouldRedirect) {
-      const target = typeof to === 'string' ? to : to(session)
-      setImmediate(() => {
-        history[replace ? 'replace' : 'push'](target)
-      })
+      const targetRedirect = typeof to === 'string' ? to : to(session)
+      const schedule = delay ? setTimeout : setImmediate
+      schedule(() => {
+        history[replace ? 'replace' : 'push'](targetRedirect)
+      }, delay)
     }
-  }, [history, replace, session, shouldRedirect, to])
+  }, [delay, history, replace, session, shouldRedirect, to])
 }
 
-export const useRedirectHomeIfLoggedIn = () => {
+export const useRedirectHomeIfLoggedIn = (opts?: { delay?: number }) => {
   useRedirectToBySession({
     ifLogged: true,
     replace: true,
     to: mainPath.landing,
+    delay: opts?.delay,
   })
 }
 
-export const useRedirectProfileHomeIfLoggedIn = () => {
+export const useRedirectProfileHomeIfLoggedIn = (opts?: { delay?: number }) => {
   useRedirectToBySession({
     ifLogged: true,
     replace: true,
     to: useCallback((session: UserSessionFragment | null) => nodeId2UrlPath(session!.profile.id), []),
+    delay: opts?.delay,
   })
 }

@@ -1,11 +1,14 @@
-import { ActiveUser, Status } from '@moodlenet/common/lib/user-auth/types'
+import { ActiveUser, AuthId, Status, WaitingFirstActivationUser } from '@moodlenet/common/lib/user-auth/types'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { USER } from '../types'
 
-export const activateNewUserQ = ({ token, password }: { token: string; password: string }) => {
-  const activeUserPatch: Pick<ActiveUser, 'password' | 'status'> = {
+export const activateNewUserQ = ({ token, password, authId }: { authId: AuthId; token: string; password: string }) => {
+  const _fake_waiting = {} as WaitingFirstActivationUser
+  const activeUserPatch: ActiveUser = {
+    ..._fake_waiting,
     password,
     status: 'Active',
+    authId,
   }
   const WaitingFirstActivationStatus: Status = 'WaitingFirstActivation'
   return aq<ActiveUser>(`
@@ -16,11 +19,15 @@ export const activateNewUserQ = ({ token, password }: { token: string; password:
 
       LIMIT 1
       
-      let activeUser = MERGE( user, ${aqlstr(activeUserPatch)}, {
-        updatedAt: DATE_NOW()
-      } )
+      let activeUser = MERGE( 
+        UNSET( user, "firstActivationToken" ), 
+        ${aqlstr(activeUserPatch)}, 
+        {
+          updatedAt: DATE_NOW()
+        } 
+      )
 
-     // UNSET( activeUser, "firstActivationToken" )
+     // activeUser
 
       UPDATE activeUser IN ${USER}
 
