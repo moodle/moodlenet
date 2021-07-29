@@ -15,7 +15,7 @@ export type ActivationProps = {
   accountActivated: boolean
 }
 
-export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, onSubmit /* , accountActivated  */ }) => {
+export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, onSubmit, accountActivated }) => {
   const [form, attrs] = useFormikBag<ActivationFormValues>({
     initialValues: { name: '', password: '' },
     onSubmit,
@@ -26,7 +26,7 @@ export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, onSubm
         <AccessHeader {...accessHeaderProps} page={'activation'} />
         <div className="separator" />
         <div className="main-content">
-          <Card>
+          <Card style={accountActivated ? {} : { visibility: 'hidden' }}>
             <Trans>Account activated!</Trans>
           </Card>
           <Card>
@@ -38,6 +38,7 @@ export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, onSubm
                 <input
                   className="diplay-name"
                   type="text"
+                  disabled={accountActivated}
                   placeholder={t`Display name`}
                   {...attrs.name}
                   onChange={form.handleChange}
@@ -45,6 +46,7 @@ export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, onSubm
                 <input
                   className="password"
                   type="password"
+                  disabled={accountActivated}
                   placeholder={t`Password`}
                   {...attrs.password}
                   onChange={form.handleChange}
