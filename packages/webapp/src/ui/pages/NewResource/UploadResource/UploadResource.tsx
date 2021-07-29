@@ -3,6 +3,7 @@ import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import LinkIcon from '@material-ui/icons/Link';
 import React, { useEffect, useState } from 'react';
+import { isURL } from '../../../../helpers/utilities';
 import Card from '../../../components/atoms/Card/Card';
 import InputTextField from '../../../components/atoms/InputTextField/InputTextField';
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton';
@@ -40,8 +41,11 @@ export const UploadResource = withCtrl<UploadResourceProps>(({state}) => {
   }
 
   const setLink = (text: string) => {
-    setContent({...content, name: text, type: 'Link'})
-    setCurrentState('ContentUploaded')
+    if (isURL(text)) {
+      console.log(text)
+      setContent({...content, name: text, type: 'Link'})
+      setCurrentState('ContentUploaded')
+    }
   }
 
   const selectFile = () => {
@@ -112,9 +116,9 @@ export const UploadResource = withCtrl<UploadResourceProps>(({state}) => {
   const onCategoryChange = (text: string) => setContent({...content, category: text})
 
   const dataInputs = <div>
-    <InputTextField autoUpdate={true} value={content.title} label="Title" placeholder="" disabled={currentState === 'Initial'} getText={onTitleChange}/>
-    <InputTextField autoUpdate={true} value={content.description} textarea={true} label="Description" placeholder="" disabled={currentState === 'Initial'} getText={onDescriptionChange} />
-    <InputTextField autoUpdate={true} value={content.category} label="Categories" placeholder="" disabled={currentState === 'Initial'} getText={onCategoryChange}/>
+    <InputTextField autoUpdate={true} value={content.title} label="Title" placeholder="Write title here" disabled={currentState === 'Initial'} getText={onTitleChange}/>
+    <InputTextField autoUpdate={true} value={content.description} textarea={true} label="Write description here" placeholder="" disabled={currentState === 'Initial'} getText={onDescriptionChange} />
+    <InputTextField autoUpdate={true} value={content.category} label="Categories" placeholder="Start typing to search" disabled={currentState === 'Initial'} getText={onCategoryChange}/>
   </div>
 
   return (
