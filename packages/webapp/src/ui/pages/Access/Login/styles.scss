@@ -17,26 +17,29 @@
 
   > .content {
     display: flex;
-    margin-left: 130px;
+    margin-left: calc((100vw - 525px) / 2);
     height: 340px;
     margin-bottom: 130px;
 
     @media (max-width: 650px) {
+      justify-content: center;
       margin: 0 25px;
     }
     @media (max-height: 750px) {
       margin-bottom: 5%;
-    }
-    @media (min-width: 1320px) {
-      margin-left: calc( (100vw - 1100px) / 2);
     }
 
     > .card {
       height: 100%;
     }
     > .card:first-child {
-      width: 100%;
+      width: 525px;
+      
       background-color: white;
+      @media (max-width: 900px) {
+        max-width: 525px;
+        width: 100%;
+      }
       > .content {
         flex-direction: column;
         justify-content: space-between;
@@ -50,7 +53,7 @@
         }
 
         > .title {
-          color: #B6BACB;
+          color: #b6bacb;
           font-size: 28px;
         }
         > form {
@@ -64,10 +67,11 @@
             border-radius: 45px;
 
             &:focus {
-              border:0 solid white;
+              border: 0 solid white;
             }
 
-            &:focus, &:not(:focus) {
+            &:focus,
+            &:not(:focus) {
               outline: none;
               padding: 0 25px;
               font-weight: 500;
@@ -76,49 +80,49 @@
             }
 
             &:not(:focus) {
-              color: #B6BACB;
+              color: #b6bacb;
             }
 
             &::placeholder {
               font-weight: 500;
               font-size: 17px;
-              color: #B6BACB;
+              color: #b6bacb;
               opacity: 1;
             }
             &::-ms-input-placeholder {
               font-weight: 500;
               font-size: 17px;
-              color: #B6BACB;
+              color: #b6bacb;
             }
             &:-ms-input-placeholder {
               font-weight: 500;
               font-size: 17px;
-              color: #B6BACB;
+              color: #b6bacb;
             }
           }
           > .email {
-            border-color:#F88012;
+            border-color: #f88012;
             margin-bottom: 14px;
             max-width: 335px;
             &:focus {
-              border:0 solid white;
-              box-shadow: 0 0 5px #F88012;
+              border: 0 solid white;
+              box-shadow: 0 0 5px #f88012;
             }
           }
           > .password {
-            border-color: #B6BACB;
+            border-color: #b6bacb;
             max-width: 250px;
             &:focus {
-              border:0 solid white;
-              box-shadow: 0 0 5px #B6BACB;
+              border: 0 solid white;
+              box-shadow: 0 0 5px #b6bacb;
             }
           }
         }
         > .bottom {
           display: flex;
           justify-content: space-between;
-          align-items: center;   
-          >.left {
+          align-items: center;
+          > .left {
             display: flex;
             > .tertiary-button {
               @media (max-width: 450px) {
@@ -154,28 +158,33 @@
     > .card:last-child {
       cursor: pointer;
       margin-left: 30px;
-      width: 30%;
+      flex: 1;
       min-width: 185px;
       border-radius: 16px 0 0 16px;
-      color: white;
       background-color: #b6bacb;
-      justify-content: center;
-      display: flex;
-      align-items: start;
-      flex-direction: column;
       padding-left: 30px;
-      font-size: 36px;
 
       @media (max-width: 650px) {
         display: none;
       }
-      
-      > svg {
-        -webkit-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-        transform: rotate(45deg);
-        margin-top: 20px;
-        width: 43px;
+
+      > a {
+        text-decoration: none;
+        height: 100%;
+        width: 100%;
+        font-size: 28px;
+        justify-content: center;
+        display: flex;
+        align-items: start;
+        flex-direction: column;
+        color: white;
+        > svg {
+          -webkit-transform: rotate(45deg);
+          -ms-transform: rotate(45deg);
+          transform: rotate(45deg);
+          margin-top: 20px;
+          width: 43px;
+        }
       }
     }
   }
