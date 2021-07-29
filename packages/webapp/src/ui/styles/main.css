@@ -18,13 +18,16 @@ body::-webkit-scrollbar {
 }
 
 .main-page-wrapper {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: None;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: None;
+}
+
+a {
+    text-decoration: none;
 }
 
 [hidden] {

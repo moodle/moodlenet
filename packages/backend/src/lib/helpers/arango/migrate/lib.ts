@@ -1,6 +1,6 @@
 import { Database } from 'arangojs'
 import semverRCompare from 'semver/functions/rcompare'
-import { getAllResults, getOneResult } from '../../arango'
+import { getAllResults, getOneResult } from '../query'
 import { climbLadder, getLadderVersionSorted } from './ladder'
 import { addMigrationRecordQ, getMigrationHistoryQ, MIGRATIONS_COLLECTION } from './queries'
 import { DBWorker, MigrationRecord, Version, VersionedDB, VersionLadder } from './types'

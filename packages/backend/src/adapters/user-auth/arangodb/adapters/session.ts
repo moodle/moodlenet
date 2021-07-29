@@ -1,14 +1,14 @@
-import { getOneResult } from '../../../../lib/helpers/arango'
+import { getOneResult } from '../../../../lib/helpers/arango/query'
 import { Adapter } from '../../../../ports/user-auth/user'
-import { getActiveUserByUsernameQ } from '../queries/getActiveUserByUsername'
-import { ActiveUser, UserAuthDB } from '../types'
-export const byUsername = (db: UserAuthDB): Pick<Adapter, 'getActiveUserByUsername'> => ({
-  getActiveUserByUsername: async ({ username }) => {
-    const activeUserQ = getActiveUserByUsernameQ({ username })
-    const activeUser = (await getOneResult(activeUserQ, db)) as ActiveUser | null
-    if (!activeUser) {
+import { getUserByEmailQ } from '../queries/getUserByEmail'
+import { UserAuthDB } from '../types'
+export const byEmail = (db: UserAuthDB): Pick<Adapter, 'getActiveUserByEmail'> => ({
+  getActiveUserByEmail: async ({ email }) => {
+    const activeUserQ = getUserByEmailQ({ email })
+    const mUser = await getOneResult(activeUserQ, db)
+    if (!(mUser && mUser.status === 'Active')) {
       return null
     }
-    return activeUser
+    return mUser
   },
 })

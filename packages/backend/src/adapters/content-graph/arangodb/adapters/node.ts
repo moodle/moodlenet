@@ -1,33 +1,39 @@
-import { getOneResult } from '../../../../lib/helpers/arango'
-import { ByIdAdapter, CreateAdapter } from '../../../../ports/content-graph/node'
+import { getOneResult } from '../../../../lib/helpers/arango/query'
+import { BySlugAdapter, CreateNodeAdapter } from '../../../../ports/content-graph/node'
 import { createNodeQ } from '../functions/createNode'
-import { getNode } from '../functions/getNode'
-import { DocumentNodeByType } from '../functions/types'
+import { getNodeBySlugQ } from '../functions/getNode'
+import { aqlGraphNode2GraphNode } from '../functions/helpers'
 import { ContentGraphDB } from '../types'
-import { createEdgeAdapter } from './edge'
 
-export const getNodeByIdAdapter = (db: ContentGraphDB): ByIdAdapter => ({
-  getNodeById: async ({ _key, nodeType }) => {
-    const q = getNode({ _key, nodeType })
-    return getOneResult(q, db)
+export const getNodeBySlugAdapter = (db: ContentGraphDB): BySlugAdapter => ({
+  async getNodeBySlug({ slug, type }) {
+    const q = getNodeBySlugQ({ slug, type })
+    const mAqlNode = await getOneResult(q, db)
+    if (!mAqlNode) {
+      return mAqlNode
+    }
+    return aqlGraphNode2GraphNode(mAqlNode)
   },
 })
 
-export const createNodeAdapter = (db: ContentGraphDB): CreateAdapter => ({
-  storeNode: async ({ data, nodeType, creatorProfileId, key }) => {
-    const q = createNodeQ({ creatorProfileId, data, nodeType, key })
-    const result = (await getOneResult(q, db)) as null | DocumentNodeByType<typeof nodeType>
-    // FIXME: use events!
-    if (result) {
-      createEdgeAdapter(db).storeEdge({
-        creatorProfileId,
-        data: {},
-        edgeType: 'Created',
-        from: creatorProfileId,
-        to: result._id,
-        rule: true,
-      })
+export const createNodeAdapter = (db: ContentGraphDB): Pick<CreateNodeAdapter, 'storeNode'> => ({
+  storeNode: async ({ node, status }) => {
+    const q = createNodeQ<typeof node._type>({ node, status })
+    const result = await getOneResult(q, db)
+    // // FIXME: use events!
+    // if (result) {
+    //   createEdgeAdapter(db).storeEdge({
+    //     creatorProfileId,
+    //     data: {},
+    //     edgeType: 'Created',
+    //     from: creatorProfileId,
+    //     to: result._id,
+    //     rule: true,
+    //   })
+    // }
+    if (!result) {
+      return null
     }
-    return result
+    return aqlGraphNode2GraphNode<typeof node._type>(result) as any // FIXME
   },
 })

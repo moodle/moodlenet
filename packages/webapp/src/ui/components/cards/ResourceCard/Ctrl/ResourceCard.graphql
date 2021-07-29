@@ -1,12 +1,14 @@
 query ResourceCard($id: ID!) {
   node(id: $id) {
-    ... on IContentNode {
-      name
-      icon
-    }
-    ... on INode {
+    ... on Resource {
       id
-      inCollections: _rel(edge: { type: Contains, node: Collection, inverse: true }, page: { first: 3 }) {
+      name
+      thumbnail
+      kind
+      content
+      description
+      image
+      inCollections: _rel(type: Contains, target: Collection, inverse: true, page: { first: 3 }) {
         edges {
           node {
             ... on Collection {

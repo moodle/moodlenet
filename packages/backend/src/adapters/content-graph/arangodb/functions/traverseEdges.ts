@@ -1,38 +1,27 @@
-import * as GQL from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { Id /*, parseNodeId */ } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { Maybe } from 'graphql/jsutils/Maybe'
-import { aqlstr } from '../../../../lib/helpers/arango'
+import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import { PageItem } from '@moodlenet/common/lib/content-graph/types/page'
+import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
+import { NodeRelationCountInput, TraverseFromNodeInput } from '../../../../ports/content-graph/traverseNodeRel'
+import { AqlGraphEdge, AqlGraphNode } from '../types'
 // import { getNodeOpAqlAssertions } from './assertions/node'
-import { cursorPaginatedQuery, isMarkDeleted, toDocumentEdgeOrNode } from './helpers'
+import { cursorPaginatedQuery, documentBySlugType } from './helpers'
 
-export const traverseEdges = ({
+export const traverseEdgesQ = ({
   edgeType,
   page,
-  parentNodeId,
   targetNodeType,
   inverse,
-  targetNodeIds,
-}: {
-  parentNodeId: Id
-  edgeType: GQL.EdgeType
-  targetNodeType: GQL.NodeType
-  inverse: boolean
-  page: Maybe<GQL.PaginationInput>
-  targetNodeIds: Maybe<Id[]>
-}) => {
-  const targetSide = inverse ? 'from' : 'to'
-  const parentSide = inverse ? 'to' : 'from'
-
-  const targetIdsFilter =
-    targetNodeIds && targetNodeIds.length ? `&& edge._${targetSide} IN [${targetNodeIds.map(aqlstr).join(',')}]` : ''
+  /* env, */
+  fromNode,
+}: TraverseFromNodeInput) => {
+  // const targetIdsFilter =
+  //   targetNodeIds && targetNodeIds.length ? `&& edge._${targetSide} IN [${targetNodeIds.map(aqlstr).join(',')}]` : ''
 
   const queryMapper = traversePaginateMapQuery({
     edgeType,
-    parentNodeId,
-    parentSide,
-    targetIdsFilter,
+    fromNode,
+    inverse,
     targetNodeType,
-    targetSide,
   })
 
   return cursorPaginatedQuery({
@@ -47,37 +36,58 @@ export const traversePaginateMapQuery =
   ({
     // edgeAndNodeAssertionFilters,
     edgeType,
-    parentNodeId,
-    parentSide,
-    targetIdsFilter,
+    fromNode,
+    additionalFilter,
     targetNodeType,
-    targetSide,
+    inverse,
   }: {
     edgeType: string
-    targetSide: string
-    targetNodeType: string
-    parentSide: string
-    parentNodeId: string
-    targetIdsFilter: string
+    targetNodeType: GraphNodeType
+    inverse: boolean
+    fromNode: Pick<GraphNode, '_slug' | '_type'>
+    additionalFilter?: string
     // edgeAndNodeAssertionFilters: string
   }) =>
-  (pageFilterSortLimit: string) =>
-    `
-FOR edge IN ${edgeType}
-  FILTER !${isMarkDeleted('edge')}
-    && edge._${targetSide}Type == ${aqlstr(targetNodeType)}
-    && edge._${parentSide} == ${aqlstr(parentNodeId)}
-    ${targetIdsFilter}
+  (pageFilterSortLimit: string) => {
+    const targetSide = inverse ? 'from' : 'to'
+    const parentSide = inverse ? 'to' : 'from'
+    return aq<PageItem<{ edge: AqlGraphEdge; node: AqlGraphNode }>>(`
+      let parentNode = ${documentBySlugType(fromNode)}
+      FOR edge IN ${edgeType}
+        FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
+          && edge._${parentSide} == parentNode._id
+          //&& !$ {isMarkDeleted('edge')}
+          ${additionalFilter ? `&& ${additionalFilter}` : ''}
+          
+          ${pageFilterSortLimit}
+        
+        LET targetNode = Document(edge._${targetSide})
 
-  LET targetNode=Document(edge._${targetSide})
-  //FILTER $ {edgeAndNodeAssertionFilters}
+        RETURN  [
+          cursor,
+          {
+            edge,
+            node: targetNode
+          }
+        ]
+      `)
+  }
 
-
-${pageFilterSortLimit}
-
-RETURN  {
-  cursor,
-  edge:${toDocumentEdgeOrNode('edge')},
-  node: ${toDocumentEdgeOrNode('targetNode')}
+export const nodeRelationCountQ = ({
+  edgeType,
+  fromNode,
+  inverse,
+  targetNodeType /* , env */,
+}: NodeRelationCountInput) => {
+  const targetSide = inverse ? 'from' : 'to'
+  const parentSide = inverse ? 'to' : 'from'
+  return aq<number>(`
+    let parentNode = ${documentBySlugType(fromNode)}
+    
+    FOR edge IN ${edgeType}
+      FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
+        && edge._${parentSide} == parentNode._id
+      COLLECT WITH COUNT INTO count
+    RETURN count
+`)
 }
-`

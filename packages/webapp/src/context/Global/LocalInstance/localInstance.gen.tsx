@@ -8,21 +8,22 @@ export type LocalInstanceQueryVariables = Types.Exact<{ [key: string]: never; }>
 
 export type LocalInstanceQuery = (
   { __typename: 'Query' }
-  & { node?: Types.Maybe<{ __typename: 'Collection' } | (
+  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | (
     { __typename: 'Organization' }
-    & Pick<Types.Organization, 'id' | 'name' | 'summary' | 'icon' | 'color' | 'domain'>
-  ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' }> }
+    & Pick<Types.Organization, 'id' | 'name' | 'intro' | 'logo' | 'image' | 'color' | 'domain'>
+  ) | { __typename: 'Profile' } | { __typename: 'Resource' }> }
 );
 
 
 export const LocalInstanceDocument = gql`
     query localInstance {
-  node(id: "Organization/local") {
+  node(id: "Organization/--local--") {
     ... on Organization {
       id
       name
-      summary
-      icon
+      intro
+      logo
+      image
       color
       domain
     }

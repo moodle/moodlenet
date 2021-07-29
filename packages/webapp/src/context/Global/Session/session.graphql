@@ -1,47 +1,44 @@
 query getCurrentSession {
   getSession {
-    ...UserSessionFrag
+    ...UserSession
   }
 }
-
-query getCurrentProfile($id: ID!) {
-  node(id: $id) {
-    ... on Profile {
-      ...CurrentProfileInfo
-    }
-  }
-}
-
-mutation login($username: String!, $password: String!) {
-  createSession(username: $username, password: $password) {
-    jwt
-    message
-  }
-}
-
-mutation activateNewUser($token: String!, $username: String!, $password: String!) {
-  activateUser(username: $username, password: $password, token: $token) {
-    jwt
-    message
-  }
-}
-
-fragment UserSessionFrag on UserSession {
-  username
-  role
-}
-
-fragment CurrentProfileInfo on Profile {
-  ...ShallowProfile
-  myOwnCollections: _rel(edge: { type: Created, node: Collection }, page: { first: 100 }) {
-    edges {
-      node {
-        ... on Collection {
-          id
-          name
-          icon
+fragment UserSession on UserSession {
+  email
+  profile {
+    id
+    name
+    avatar
+    myOwnCollections: _rel(type: Created, target: Collection, page: { first: 100 }) {
+      edges {
+        node {
+          ... on Collection {
+            id
+            name
+          }
         }
       }
     }
+  }
+}
+
+mutation login($email: String!, $password: String!) {
+  createSession(email: $email, password: $password) {
+    jwt
+    message
+  }
+}
+
+mutation activateNewUser($activationToken: String!, $name: String!, $password: String!) {
+  activateUser(name: $name, password: $password, activationToken: $activationToken) {
+    jwt
+    message
+  }
+}
+
+mutation signUp($email: String!) {
+  signUp(email: $email) {
+    success
+    message
   }
 }

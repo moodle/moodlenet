@@ -1,6 +1,4 @@
 import { GraphQLScalarType } from 'graphql'
-import * as idTypes from '../utils/content-graph/id-key-type-guards'
-export type ID = idTypes.Id
 
 export type AssetRef = {
   ext: boolean
@@ -11,6 +9,7 @@ export type DateTime = Date
 export type Empty = {}
 export type Cursor = string
 export type Never = never
+export type ID = string
 
 export const getScalarsGql = (root: string) => ({
   AssetRef: `${root}/scalars.graphql#AssetRef`,
@@ -24,8 +23,8 @@ export const getScalarsGql = (root: string) => ({
 export const IDScalarType = new GraphQLScalarType({
   name: 'ID',
   serialize: String,
-  parseValue: v => idTypes.checkIDOrError(v),
-  parseLiteral: vnode => (vnode.kind === 'StringValue' ? idTypes.checkIDOrError(vnode.value) : null),
+  // parseValue: v => v, // idTypes.checkIDIsValidOrError(v),
+  // parseLiteral: vnode => (vnode.kind === 'StringValue' ? idTypes.checkIDIsValidOrError(vnode.value) : null),
 })
 
 // const AssetRefScalarType = new GraphQLScalarType({

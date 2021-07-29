@@ -15,31 +15,29 @@ export type LandingProps = {
   isAuthenticated: boolean
 }
 
-export const Landing = withCtrl<LandingProps>(({ 
-  headerPageTemplateProps,
-  trendCardProps, 
-  organization, 
-  image, 
-  setSearchText, 
-  isAuthenticated 
-}) => {
-  return (
-    <HeaderPageTemplate {...headerPageTemplateProps}>
-      <div className="landing">
-        { !isAuthenticated ? <div className="landing-title">
-          { organization.name === 'MoodleNet' ? (
-            <div>
-              <div className="organization-title">Welcome to MoodleNet</div>
-              <div className="moodle-title">Our global network to share and curate open educational resources</div>
-            </div> 
-          ) : ( 
-            <div> 
-              <div className="moodle-title">Welome to MoodleNet</div>
-              <div className="organization-title">{organization.name}</div>
-            </div> 
+export const Landing = withCtrl<LandingProps>(
+  ({ headerPageTemplateProps, trendCardProps, organization, image, setSearchText, isAuthenticated }) => {
+    return (
+      <HeaderPageTemplate {...headerPageTemplateProps}>
+        <div className="landing">
+          {!isAuthenticated ? (
+            <div className="landing-title">
+              {organization.name === 'MoodleNet' ? (
+                <div>
+                  <div className="organization-title">Welcome to MoodleNet</div>
+                  <div className="moodle-title">Our global network to share and curate open educational resources</div>
+                </div>
+              ) : (
+                <div>
+                  <div className="moodle-title">Welome to MoodleNet</div>
+                  <div className="organization-title">{organization.name}</div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <></>
           )}
-        </div> : <></>}
-        <Searchbox setSearchText={setSearchText} searchText='' placeholder='Start searching now' />
+          <Searchbox setSearchText={setSearchText} searchText="" placeholder="Start searching now" />
           <div className="content">
             <div className="main-column">
               <TextCard>
@@ -52,9 +50,10 @@ export const Landing = withCtrl<LandingProps>(({
               <TrendCard {...trendCardProps} />
             </div>
           </div>
-      </div>
-    </HeaderPageTemplate>
-  )},
+        </div>
+      </HeaderPageTemplate>
+    )
+  },
 )
 
 Landing.displayName = 'LandingPage'

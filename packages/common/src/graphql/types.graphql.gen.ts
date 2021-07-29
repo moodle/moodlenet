@@ -22,13 +22,6 @@ export type Scalars = {
   Never: Never;
 };
 
-export type AppliesTo = IEdge & {
-  __typename: 'AppliesTo';
-  id: Scalars['ID'];
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
-};
-
 
 export type AssetRefInput = {
   type: AssetRefInputType;
@@ -41,22 +34,21 @@ export type AssetRefInputType =
   | 'NoChange'
   | 'NoAsset';
 
-export type Collection = INode & IContentNode & {
+export type Collection = INode & {
   __typename: 'Collection';
   name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['AssetRef']>;
+  description: Scalars['String'];
+  image?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
-  _organization?: Maybe<Organization>;
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
 
 
 export type Collection_RelArgs = {
-  edge: EdgeTypeInput;
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
 };
 
@@ -70,27 +62,22 @@ export type Collection_RelCountArgs = {
 export type Contains = IEdge & {
   __typename: 'Contains';
   id: Scalars['ID'];
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
-};
-
-export type ContentNodeInput = {
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  icon: AssetRefInput;
+  _created: Scalars['DateTime'];
 };
 
 export type CreateCollectionInput = {
-  content: ContentNodeInput;
+  name: Scalars['String'];
+  description: Scalars['String'];
+  image: AssetRefInput;
+  slug: Scalars['String'];
 };
 
 export type CreateEdgeInput = {
-  AppliesTo?: Maybe<Scalars['Empty']>;
   Contains?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
-  Edited?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
-  Likes?: Maybe<Scalars['Empty']>;
+  HasOpBadge?: Maybe<Scalars['Empty']>;
+  Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   from: Scalars['ID'];
   to: Scalars['ID'];
@@ -118,10 +105,11 @@ export type CreateEdgeMutationSuccess = {
 
 export type CreateNodeInput = {
   Collection?: Maybe<CreateCollectionInput>;
-  Organization?: Maybe<CreateOrganizationInput>;
-  Profile?: Maybe<CreateProfileInput>;
+  Iscedf?: Maybe<Scalars['Never']>;
+  OpBadge?: Maybe<Scalars['Never']>;
+  Organization?: Maybe<Scalars['Never']>;
+  Profile?: Maybe<Scalars['Never']>;
   Resource?: Maybe<CreateResourceInput>;
-  SubjectField?: Maybe<CreateSubjectInput>;
   nodeType: NodeType;
 };
 
@@ -143,17 +131,12 @@ export type CreateNodeMutationSuccess = {
   node: Node;
 };
 
-export type CreateOrganizationInput = {
-  content: ContentNodeInput;
-};
-
-export type CreateProfileInput = {
-  content: ContentNodeInput;
-};
-
 export type CreateResourceInput = {
-  content: ContentNodeInput;
-  resource: AssetRefInput;
+  name: Scalars['String'];
+  description: Scalars['String'];
+  image?: Maybe<AssetRefInput>;
+  content: AssetRefInput;
+  slug: Scalars['String'];
 };
 
 export type CreateSession = {
@@ -162,15 +145,10 @@ export type CreateSession = {
   message?: Maybe<Scalars['String']>;
 };
 
-export type CreateSubjectInput = {
-  content: ContentNodeInput;
-};
-
 export type Created = IEdge & {
   __typename: 'Created';
   id: Scalars['ID'];
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
+  _created: Scalars['DateTime'];
 };
 
 
@@ -222,37 +200,75 @@ export type DeleteNodeMutationSuccess = {
   nodeId?: Maybe<Scalars['ID']>;
 };
 
-export type Edge = AppliesTo | Contains | Created | Edited | Follows | Likes;
+export type Edge = Contains | Created | Follows | HasOpBadge | Pinned;
 
 export type EdgeType =
-  | 'AppliesTo'
   | 'Contains'
   | 'Created'
-  | 'Edited'
   | 'Follows'
-  | 'Likes';
+  | 'HasOpBadge'
+  | 'Pinned';
 
-export type EdgeTypeInput = {
-  type: EdgeType;
-  node: NodeType;
-  inverse?: Maybe<Scalars['Boolean']>;
-  targetMe?: Maybe<Scalars['Boolean']>;
-  targetIDs?: Maybe<Array<Scalars['ID']>>;
+export type EditCollectionInput = {
+  name: Scalars['String'];
+  description: Scalars['String'];
+  image: AssetRefInput;
+  slug: Scalars['String'];
 };
 
-export type Edited = IEdge & {
-  __typename: 'Edited';
+export type EditNodeInput = {
+  Collection?: Maybe<EditCollectionInput>;
+  Iscedf?: Maybe<Scalars['Never']>;
+  OpBadge?: Maybe<Scalars['Never']>;
+  Organization?: Maybe<Scalars['Never']>;
+  Profile?: Maybe<EditProfileInput>;
+  Resource?: Maybe<EditResourceInput>;
   id: Scalars['ID'];
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
+  nodeType: NodeType;
+};
+
+export type EditNodeMutationError = {
+  __typename: 'EditNodeMutationError';
+  type: EditNodeMutationErrorType;
+  details?: Maybe<Scalars['String']>;
+};
+
+export type EditNodeMutationErrorType =
+  | 'NotFound'
+  | 'NotAuthorized'
+  | 'UnexpectedInput'
+  | 'AssertionFailed';
+
+export type EditNodeMutationPayload = EditNodeMutationSuccess | EditNodeMutationError;
+
+export type EditNodeMutationSuccess = {
+  __typename: 'EditNodeMutationSuccess';
+  node?: Maybe<Node>;
+};
+
+export type EditProfileInput = {
+  name: Scalars['String'];
+  avatar?: Maybe<Scalars['AssetRef']>;
+  bio: Scalars['String'];
+  image?: Maybe<Scalars['AssetRef']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  siteUrl?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  slug: Scalars['String'];
+};
+
+export type EditResourceInput = {
+  name: Scalars['String'];
+  description: Scalars['String'];
+  image?: Maybe<AssetRefInput>;
 };
 
 
 export type Follows = IEdge & {
   __typename: 'Follows';
   id: Scalars['ID'];
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
+  _created: Scalars['DateTime'];
 };
 
 export type GlobalSearchSort =
@@ -260,36 +276,29 @@ export type GlobalSearchSort =
   | 'Popularity'
   | 'Recent';
 
-export type GlyphByAt = {
-  __typename: 'GlyphByAt';
-  by: Profile;
-  at: Scalars['DateTime'];
-};
-
-export type IContentNode = {
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['AssetRef']>;
+export type HasOpBadge = IEdge & {
+  __typename: 'HasOpBadge';
+  id: Scalars['ID'];
+  _created: Scalars['DateTime'];
 };
 
 export type IEdge = {
   id?: Maybe<Scalars['ID']>;
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
+  _created: Scalars['DateTime'];
 };
 
 export type INode = {
   id: Scalars['ID'];
-  _organization?: Maybe<Organization>;
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
+  name: Scalars['String'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
 
 
 export type INode_RelArgs = {
-  edge: EdgeTypeInput;
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
 };
 
@@ -300,58 +309,47 @@ export type INode_RelCountArgs = {
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
-export type Likes = IEdge & {
-  __typename: 'Likes';
+export type Iscedf = INode & {
+  __typename: 'Iscedf';
+  name: Scalars['String'];
+  description: Scalars['String'];
+  codePath: Array<Scalars['String']>;
+  iscedCode: Scalars['String'];
+  thumbnail?: Maybe<Scalars['AssetRef']>;
+  image?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+};
+
+
+export type Iscedf_RelArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type Iscedf_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
 };
 
 export type Mutation = {
   __typename: 'Mutation';
   activateUser: CreateSession;
-  changeEmailConfirm: Scalars['Boolean'];
-  changeEmailRequest: SimpleResponse;
-  changePassword: SimpleResponse;
-  createEdge: CreateEdgeMutationPayload;
   createNode: CreateNodeMutationPayload;
   createSession: CreateSession;
-  deleteEdge: DeleteEdgeMutationPayload;
-  deleteNode: DeleteNodeMutationPayload;
-  sessionByEmail: SimpleResponse;
   signUp: SimpleResponse;
-  updateEdge: UpdateEdgeMutationPayload;
-  updateNode: UpdateNodeMutationPayload;
 };
 
 
 export type MutationActivateUserArgs = {
-  username: Scalars['String'];
+  name: Scalars['String'];
   password: Scalars['String'];
-  token: Scalars['String'];
-};
-
-
-export type MutationChangeEmailConfirmArgs = {
-  token: Scalars['String'];
-  password: Scalars['String'];
-  username: Scalars['String'];
-};
-
-
-export type MutationChangeEmailRequestArgs = {
-  newEmail: Scalars['String'];
-};
-
-
-export type MutationChangePasswordArgs = {
-  newPassword: Scalars['String'];
-  currentPassword: Scalars['String'];
-};
-
-
-export type MutationCreateEdgeArgs = {
-  input: CreateEdgeInput;
+  activationToken: Scalars['String'];
 };
 
 
@@ -361,24 +359,8 @@ export type MutationCreateNodeArgs = {
 
 
 export type MutationCreateSessionArgs = {
-  username: Scalars['String'];
-  password: Scalars['String'];
-};
-
-
-export type MutationDeleteEdgeArgs = {
-  input: DeleteEdgeInput;
-};
-
-
-export type MutationDeleteNodeArgs = {
-  input: DeleteNodeInput;
-};
-
-
-export type MutationSessionByEmailArgs = {
-  username: Scalars['String'];
   email: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
@@ -387,43 +369,63 @@ export type MutationSignUpArgs = {
 };
 
 
-export type MutationUpdateEdgeArgs = {
-  input: UpdateEdgeInput;
-};
-
-
-export type MutationUpdateNodeArgs = {
-  input: UpdateNodeInput;
-};
-
-
-export type Node = Collection | Organization | Profile | Resource | SubjectField;
+export type Node = Collection | Iscedf | OpBadge | Organization | Profile | Resource;
 
 export type NodeType =
   | 'Collection'
+  | 'Iscedf'
+  | 'OpBadge'
   | 'Organization'
   | 'Profile'
-  | 'Resource'
-  | 'SubjectField';
+  | 'Resource';
 
-export type Organization = INode & IContentNode & {
+export type OpBadge = INode & {
+  __typename: 'OpBadge';
+  name: Scalars['String'];
+  type: OpBadgeType;
+  descripton: Scalars['String'];
+  id: Scalars['ID'];
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+};
+
+
+export type OpBadge_RelArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type OpBadge_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+};
+
+export type OpBadgeType =
+  | 'Admin'
+  | 'Editor';
+
+export type Organization = INode & {
   __typename: 'Organization';
   name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['AssetRef']>;
+  intro: Scalars['String'];
+  logo?: Maybe<Scalars['AssetRef']>;
+  image?: Maybe<Scalars['AssetRef']>;
   color: Scalars['String'];
   domain: Scalars['String'];
   id: Scalars['ID'];
-  _organization?: Maybe<Organization>;
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
 
 
 export type Organization_RelArgs = {
-  edge: EdgeTypeInput;
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
 };
 
@@ -458,22 +460,32 @@ export type PaginationInput = {
   last?: Maybe<Scalars['Int']>;
 };
 
-export type Profile = INode & IContentNode & {
+export type Pinned = IEdge & {
+  __typename: 'Pinned';
+  id: Scalars['ID'];
+  _created: Scalars['DateTime'];
+};
+
+export type Profile = INode & {
   __typename: 'Profile';
   name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['AssetRef']>;
+  avatar?: Maybe<Scalars['AssetRef']>;
+  bio: Scalars['String'];
+  image?: Maybe<Scalars['AssetRef']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  siteUrl?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  _organization?: Maybe<Organization>;
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
 
 
 export type Profile_RelArgs = {
-  edge: EdgeTypeInput;
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
 };
 
@@ -513,27 +525,28 @@ export type RelPage = Page & {
 export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
-  edge: AppliesTo | Contains | Created | Edited | Follows | Likes;
-  node: Collection | Organization | Profile | Resource | SubjectField;
+  edge: Contains | Created | Follows | HasOpBadge | Pinned;
+  node: Collection | Iscedf | OpBadge | Organization | Profile | Resource;
 };
 
-export type Resource = INode & IContentNode & {
+export type Resource = INode & {
   __typename: 'Resource';
   name: Scalars['String'];
-  summary: Scalars['String'];
-  icon?: Maybe<Scalars['AssetRef']>;
-  asset: Scalars['AssetRef'];
+  description: Scalars['String'];
+  image?: Maybe<Scalars['AssetRef']>;
+  thumbnail?: Maybe<Scalars['AssetRef']>;
+  content: Scalars['AssetRef'];
+  kind: ResourceKind;
   id: Scalars['ID'];
-  _organization?: Maybe<Organization>;
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
 
 
 export type Resource_RelArgs = {
-  edge: EdgeTypeInput;
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
 };
 
@@ -544,12 +557,9 @@ export type Resource_RelCountArgs = {
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
-export type Role =
-  | 'Guest'
-  | 'Admin'
-  | 'User'
-  | 'Editor'
-  | 'System';
+export type ResourceKind =
+  | 'Upload'
+  | 'Link';
 
 export type SearchPage = Page & {
   __typename: 'SearchPage';
@@ -560,7 +570,7 @@ export type SearchPage = Page & {
 export type SearchPageEdge = PageEdge & {
   __typename: 'SearchPageEdge';
   cursor: Scalars['Cursor'];
-  node: Collection | Organization | Profile | Resource | SubjectField;
+  node: Collection | Iscedf | OpBadge | Organization | Profile | Resource;
 };
 
 export type SimpleResponse = {
@@ -569,45 +579,12 @@ export type SimpleResponse = {
   message?: Maybe<Scalars['String']>;
 };
 
-export type SubjectField = INode & IContentNode & {
-  __typename: 'SubjectField';
-  name: Scalars['String'];
-  summary: Scalars['String'];
-  codePath: Array<Scalars['String']>;
-  code: Scalars['String'];
-  icon?: Maybe<Scalars['AssetRef']>;
-  id: Scalars['ID'];
-  _organization?: Maybe<Organization>;
-  _created: GlyphByAt;
-  _lastEdited?: Maybe<GlyphByAt>;
-  _rel: RelPage;
-  _relCount: Scalars['Int'];
-};
-
-
-export type SubjectField_RelArgs = {
-  edge: EdgeTypeInput;
-  page?: Maybe<PaginationInput>;
-};
-
-
-export type SubjectField_RelCountArgs = {
-  type: EdgeType;
-  target: NodeType;
-  inverse?: Maybe<Scalars['Boolean']>;
-};
-
-export type UpdateCollectionInput = {
-  content: ContentNodeInput;
-};
-
 export type UpdateEdgeInput = {
-  AppliesTo?: Maybe<Scalars['Empty']>;
   Contains?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
-  Edited?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
-  Likes?: Maybe<Scalars['Empty']>;
+  HasOpBadge?: Maybe<Scalars['Empty']>;
+  Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   id: Scalars['ID'];
 };
@@ -631,55 +608,10 @@ export type UpdateEdgeMutationSuccess = {
   edge?: Maybe<Edge>;
 };
 
-export type UpdateNodeInput = {
-  Collection?: Maybe<UpdateCollectionInput>;
-  Organization?: Maybe<UpdateOrganizationInput>;
-  Profile?: Maybe<UpdateProfileInput>;
-  Resource?: Maybe<UpdateResourceInput>;
-  SubjectField?: Maybe<UpdateSubjectInput>;
-  id: Scalars['ID'];
-  nodeType: NodeType;
-};
-
-export type UpdateNodeMutationError = {
-  __typename: 'UpdateNodeMutationError';
-  type: UpdateNodeMutationErrorType;
-  details?: Maybe<Scalars['String']>;
-};
-
-export type UpdateNodeMutationErrorType =
-  | 'NotFound'
-  | 'NotAuthorized'
-  | 'UnexpectedInput'
-  | 'AssertionFailed';
-
-export type UpdateNodeMutationPayload = UpdateNodeMutationSuccess | UpdateNodeMutationError;
-
-export type UpdateNodeMutationSuccess = {
-  __typename: 'UpdateNodeMutationSuccess';
-  node?: Maybe<Node>;
-};
-
-export type UpdateOrganizationInput = {
-  content: ContentNodeInput;
-};
-
-export type UpdateProfileInput = {
-  content: ContentNodeInput;
-};
-
-export type UpdateResourceInput = {
-  content: ContentNodeInput;
-};
-
-export type UpdateSubjectInput = {
-  content: ContentNodeInput;
-};
-
 export type UserSession = {
   __typename: 'UserSession';
-  username: Scalars['String'];
-  role: Role;
+  email: Scalars['String'];
+  profile: Profile;
 };
 
 
@@ -707,41 +639,38 @@ export type UserSession = {
       "DeleteNodeMutationError"
     ],
     "Edge": [
-      "AppliesTo",
       "Contains",
       "Created",
-      "Edited",
       "Follows",
-      "Likes"
+      "HasOpBadge",
+      "Pinned"
     ],
-    "IContentNode": [
-      "Collection",
-      "Organization",
-      "Profile",
-      "Resource",
-      "SubjectField"
+    "EditNodeMutationPayload": [
+      "EditNodeMutationSuccess",
+      "EditNodeMutationError"
     ],
     "IEdge": [
-      "AppliesTo",
       "Contains",
       "Created",
-      "Edited",
       "Follows",
-      "Likes"
+      "HasOpBadge",
+      "Pinned"
     ],
     "INode": [
       "Collection",
+      "Iscedf",
+      "OpBadge",
       "Organization",
       "Profile",
-      "Resource",
-      "SubjectField"
+      "Resource"
     ],
     "Node": [
       "Collection",
+      "Iscedf",
+      "OpBadge",
       "Organization",
       "Profile",
-      "Resource",
-      "SubjectField"
+      "Resource"
     ],
     "Page": [
       "RelPage",
@@ -754,10 +683,6 @@ export type UserSession = {
     "UpdateEdgeMutationPayload": [
       "UpdateEdgeMutationSuccess",
       "UpdateEdgeMutationError"
-    ],
-    "UpdateNodeMutationPayload": [
-      "UpdateNodeMutationSuccess",
-      "UpdateNodeMutationError"
     ]
   }
 };

@@ -1,7 +1,6 @@
 import express, { Response } from 'express'
 import { createReadStream } from 'fs'
 import { rm } from 'fs/promises'
-import { isGuest } from '../../../lib/auth/env'
 import { QMino } from '../../../lib/qmino'
 import { get } from '../../../ports/static-assets/asset'
 import { createTemp } from '../../../ports/static-assets/temp'
@@ -17,7 +16,7 @@ export const createStaticAssetsApp = ({ qmino }: Config) => {
   const app = express()
   app.post('/upload-temp', async (req, res) => {
     // this check could get more accurate (context assertions engine)
-    if (isGuest(req.mnHttpSessionEnv)) {
+    if (req.mnHttpSessionEnv) {
       return sendErrorResponse(res, help.respError(401, 'logged users only can upload'))
     }
 

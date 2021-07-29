@@ -5,7 +5,7 @@ import './styles.scss'
 
 export type HeaderPageProps = {
   headerProps: CP<HeaderProps>
-  subHeaderProps: SubHeaderProps,
+  subHeaderProps: SubHeaderProps
   isAuthenticated: boolean
   showSubHeader?: boolean
 }

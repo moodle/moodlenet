@@ -1,60 +1,62 @@
-import * as GQL from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { Id, IdKey } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { DocumentNodeByType, DocumentNodeDataByType } from '../../adapters/content-graph/arangodb/functions/types'
-import { getProfileId } from '../../lib/auth/env'
+import {
+  GraphNode,
+  GraphNodeByType,
+  GraphNodeType,
+  NodeStatus,
+  Profile,
+  Slug,
+} from '@moodlenet/common/lib/content-graph/types/node'
+import { newGlyphIdentifiers } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
 import { SessionEnv } from '../../lib/auth/types'
-import { newGlyphKey } from '../../lib/helpers/arango'
 import { QMCommand, QMModule, QMQuery } from '../../lib/qmino'
 
 // query by id
-export type ByIdAdapter = {
-  getNodeById: <Type extends GQL.NodeType>(_: {
-    nodeType: Type
-    _key: IdKey
-  }) => Promise<DocumentNodeByType<Type> | null>
+export type BySlugAdapter = {
+  getNodeBySlug: <Type extends GraphNodeType>(_: { type: Type; slug: Slug }) => Promise<Maybe<GraphNodeByType<Type>>>
 }
 
-export type ByIdInput<Type extends GQL.NodeType = GQL.NodeType> = {
-  _key: IdKey
-  nodeType: Type
+export type BySlugInput<Type extends GraphNodeType> = {
+  slug: Slug
+  type: Type
+  env: SessionEnv | null
 }
 
-export const byId = QMQuery(
-  <Type extends GQL.NodeType = GQL.NodeType>({ _key, nodeType }: ByIdInput<Type>) =>
-    async ({ getNodeById }: ByIdAdapter) => {
-      return getNodeById({ _key, nodeType })
+export const getBySlug = QMQuery(
+  <Type extends GraphNodeType>({ type, slug }: BySlugInput<Type>) =>
+    async ({ getNodeBySlug }: BySlugAdapter) => {
+      return getNodeBySlug({ slug, type })
     },
 )
 
 // create
-
-export type CreateAdapter = {
-  storeNode: <Type extends GQL.NodeType>(_: {
-    nodeType: Type
-    data: DocumentNodeDataByType<Type>
-    creatorProfileId: Id
-    key: string
-  }) => Promise<DocumentNodeByType<Type> | null>
+export type CreateNodeAdapter = {
+  storeNode: <N extends GraphNode>(_: { node: DistOmit<N, '_bumpStatus'>; status: NodeStatus }) => Promise<N | null>
 }
 
-export type CreateInput<Type extends GQL.NodeType = GQL.NodeType> = {
-  env: SessionEnv
-  nodeType: Type
-  data: DocumentNodeDataByType<Type>
+export type CreateProfile = {
+  partProfile: Partial<Omit<Profile, `_${string}`>> & Pick<Profile, 'name' | '_authId'>
 }
 
-export const create = QMCommand(
-  <Type extends GQL.NodeType = GQL.NodeType>({ data, env, nodeType }: CreateInput<Type>) =>
-    async ({ storeNode }: CreateAdapter): Promise<DocumentNodeByType<Type> | GQL.CreateNodeMutationErrorType> => {
-      const creatorProfileId = getProfileId(env)
-      const key = NamedKeysOnNodeTypes.includes(nodeType) ? data.name : newGlyphKey()
+export const createProfile = QMCommand(({ partProfile }: CreateProfile) => async ({ storeNode }: CreateNodeAdapter) => {
+  const ids = newGlyphIdentifiers({ name: partProfile.name })
+  const profile: Omit<Profile, '_bumpStatus'> = {
+    _type: 'Profile',
+    ...ids,
+    avatar: undefined,
+    bio: '',
+    firstName: undefined,
+    image: undefined,
+    lastName: undefined,
+    location: undefined,
+    siteUrl: undefined,
+    ...partProfile,
+  }
+  const result = await storeNode<Profile>({ node: profile, status: 'Active' })
+  if (!result) {
+    return null
+  }
+  return result
+})
 
-      const result = await storeNode({ nodeType, data, key, creatorProfileId })
-      if (!result) {
-        return 'AssertionFailed'
-      }
-      return result
-    },
-)
-const NamedKeysOnNodeTypes: GQL.NodeType[] = ['Organization', 'Profile', 'SubjectField']
 QMModule(module)

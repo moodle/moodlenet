@@ -1,21 +1,21 @@
+import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { isJust } from '@moodlenet/common/lib/utils/array'
-import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { useMemo } from 'react'
 import { getMaybeAssetRefUrl } from '../../../../../helpers/data'
 import { CtrlHook } from '../../../../lib/ctrl'
 import { ResourceCardProps } from '../ResourceCard'
 import { useResourceCardQuery } from './ResourceCard.gen'
 
-export type ResourceCardCtrlArg = { id: Id }
+export type ResourceCardCtrlArg = { id: ID }
 export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlArg> = ({ id }) => {
   const resourceNode = useResourceCardQuery({ variables: { id } }).data?.node
 
   const resourceCardUIProps = useMemo<ResourceCardProps | null>(
     () =>
-      resourceNode
+      resourceNode && resourceNode.__typename === 'Resource'
         ? {
-            type: 'Web Page',
-            image: getMaybeAssetRefUrl(resourceNode.icon) ?? '',
+            type: resourceNode.kind === 'Link' ? 'Web Page' : 'Video',
+            image: getMaybeAssetRefUrl(resourceNode.image) ?? '',
             title: resourceNode.name,
             tags: resourceNode.inCollections.edges
               .map(edge => (edge.node.__typename === 'Collection' ? edge.node : null))

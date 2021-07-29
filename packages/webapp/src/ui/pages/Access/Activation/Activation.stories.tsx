@@ -14,8 +14,8 @@ const ActivationStory: ComponentStory<typeof Activation> = args => <Activation {
 export const ActivationStoryProps: ActivationProps = {
   accessHeaderProps: AccessHeaderStoryProps,
   onSubmit: action('Submit signup'),
-  loginErrorMessage: null,
-  requestSent: false
+  activationErrorMessage: null,
+  accountActivated: true,
 }
 
 export const ActivationPage = ActivationStory.bind({})

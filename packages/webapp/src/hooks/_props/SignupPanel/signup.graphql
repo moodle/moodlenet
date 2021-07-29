@@ -1,6 +1,0 @@
-mutation signUp($email: String!) {
-  signUp(email: $email) {
-    success
-    message
-  }
-}

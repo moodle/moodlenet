@@ -10,155 +10,67 @@ export type ProfilePageUserDataQueryVariables = Types.Exact<{
 
 export type ProfilePageUserDataQuery = (
   { __typename: 'Query' }
-  & { node?: Types.Maybe<(
-    { __typename: 'Collection' }
-    & Pick<Types.Collection, 'id'>
-    & { followersCount: Types.Collection['_relCount'], resourcesCount: Types.Collection['_relCount'] }
-    & { collections: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: (
-          { __typename: 'Collection' }
-          & Pick<Types.Collection, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
-      )> }
-    ), resources: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
-          { __typename: 'Resource' }
-          & Pick<Types.Resource, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'SubjectField' } }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'Organization' }
-    & Pick<Types.Organization, 'id'>
-    & { followersCount: Types.Organization['_relCount'], resourcesCount: Types.Organization['_relCount'] }
-    & { collections: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: (
-          { __typename: 'Collection' }
-          & Pick<Types.Collection, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
-      )> }
-    ), resources: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
-          { __typename: 'Resource' }
-          & Pick<Types.Resource, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'SubjectField' } }
-      )> }
-    ) }
-  ) | (
+  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | (
     { __typename: 'Profile' }
-    & Pick<Types.Profile, 'name' | 'summary' | 'icon' | 'id'>
-    & { followersCount: Types.Profile['_relCount'], resourcesCount: Types.Profile['_relCount'] }
+    & Pick<Types.Profile, 'id' | 'name' | 'avatar' | 'bio' | 'image' | 'firstName' | 'lastName' | 'siteUrl' | 'location'>
+    & { followersCount: Types.Profile['_relCount'], collectionsCount: Types.Profile['_relCount'], resourcesCount: Types.Profile['_relCount'] }
     & { collections: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
         & { node: (
           { __typename: 'Collection' }
-          & Pick<Types.Collection, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
+          & Pick<Types.Collection, 'id' | 'name' | 'image'>
+        ) | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ), resources: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
-          & Pick<Types.Resource, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'SubjectField' } }
+          & Pick<Types.Resource, 'id' | 'name' | 'thumbnail'>
+        ) }
       )> }
     ) }
-  ) | (
-    { __typename: 'Resource' }
-    & Pick<Types.Resource, 'id'>
-    & { followersCount: Types.Resource['_relCount'], resourcesCount: Types.Resource['_relCount'] }
-    & { collections: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: (
-          { __typename: 'Collection' }
-          & Pick<Types.Collection, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
-      )> }
-    ), resources: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
-          { __typename: 'Resource' }
-          & Pick<Types.Resource, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'SubjectField' } }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'SubjectField' }
-    & Pick<Types.SubjectField, 'id'>
-    & { followersCount: Types.SubjectField['_relCount'], resourcesCount: Types.SubjectField['_relCount'] }
-    & { collections: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: (
-          { __typename: 'Collection' }
-          & Pick<Types.Collection, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'SubjectField' } }
-      )> }
-    ), resources: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
-          { __typename: 'Resource' }
-          & Pick<Types.Resource, 'id' | 'name' | 'icon'>
-        ) | { __typename: 'SubjectField' } }
-      )> }
-    ) }
-  )> }
+  ) | { __typename: 'Resource' }> }
 );
 
 
 export const ProfilePageUserDataDocument = gql`
     query ProfilePageUserData($profileId: ID!) {
   node(id: $profileId) {
-    ... on INode {
+    ... on Profile {
       id
-      ... on Profile {
-        name
-        summary
-        icon
-      }
+      name
+      avatar
+      bio
+      image
+      firstName
+      lastName
+      siteUrl
+      location
       followersCount: _relCount(type: Follows, target: Profile, inverse: true)
-      resourcesCount: _relCount(type: Created, target: Resource)
-      collections: _rel(edge: {type: Created, node: Collection}, page: {first: 100}) {
+      collectionsCount: _relCount(type: Created, target: Collection)
+      collections: _rel(type: Created, target: Collection, page: {first: 100}) {
         edges {
           node {
             ... on Collection {
               id
               name
-              icon
+              image
             }
           }
         }
       }
-      resources: _rel(edge: {type: Created, node: Resource}, page: {first: 100}) {
+      resourcesCount: _relCount(type: Created, target: Resource)
+      resources: _rel(type: Created, target: Resource, page: {first: 100}) {
         edges {
           node {
             ... on Resource {
               id
               name
-              icon
+              thumbnail
             }
           }
         }
