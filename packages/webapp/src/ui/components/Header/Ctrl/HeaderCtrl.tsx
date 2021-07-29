@@ -11,7 +11,6 @@ import { HeaderProps, HeaderPropsIdle } from '../Header'
 const homeHref = href(mainPath.landing)
 const loginHref = href(mainPath.login)
 const signUpHref = href(mainPath.signUp)
-const logoutHref = href('')
 const newCollectionHref = href('')
 const newResourceHref = href('')
 
@@ -40,7 +39,6 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
       },
       searchText,
       setSearchText,
-      logoutHref,
       newCollectionHref,
       newResourceHref,
       signUpHref,

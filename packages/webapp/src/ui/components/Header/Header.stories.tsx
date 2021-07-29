@@ -27,12 +27,12 @@ export const HeaderLoggedInStoryProps: HeaderPropsIdle = {
   homeHref: href('Landing/Logged In'),
   me: {
     myProfileHref: href('Pages/Profile/LoggedIn'),
+    logout: action('logout'),
     avatar: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
     name: 'username',
   },
   loginHref: href('Pages/Login/LoginPage'),
   signUpHref: href('Pages/SignUp/SignUpPage'),
-  logoutHref: href('Pages/Login/LoginPage'),
   newResourceHref: href('Pages/New Resource/Default'),
   newCollectionHref: href('Pages/New Collection/Default'),
   searchText: '',
