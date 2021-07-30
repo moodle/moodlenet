@@ -5,7 +5,7 @@ import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton
 import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryButton'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
-import { SubmitForm, useFormikBag } from '../../../lib/formik'
+import { FormikBag } from '../../../lib/formik'
 import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
@@ -13,15 +13,15 @@ import './styles.scss'
 export type LoginFormValues = { email: string; password: string }
 export type LoginProps = {
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
-  onSubmit: SubmitForm<LoginFormValues>
+  formBag: FormikBag<LoginFormValues>
   loginErrorMessage: string | null
   signupHref: Href
   landingHref: Href
 }
 
 export const Login = withCtrl<LoginProps>(
-  ({ accessHeaderProps, onSubmit, signupHref, landingHref /* , loginErrorMessage  */ }) => {
-    const [form, attrs] = useFormikBag<LoginFormValues>({ initialValues: { email: '', password: '' }, onSubmit })
+  ({ accessHeaderProps, formBag, signupHref, landingHref /* , loginErrorMessage  */ }) => {
+    const [form, attrs] = formBag
     return (
       <MainPageWrapper>
         <div className="login-page">
