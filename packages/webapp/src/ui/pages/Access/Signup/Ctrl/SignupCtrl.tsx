@@ -3,7 +3,7 @@ import { useSession } from '../../../../../context/Global/Session'
 import { mainPath, useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
 import { href } from '../../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
-import { SubmitForm } from '../../../../lib/formik'
+import { SubmitForm, useFormikBag } from '../../../../lib/formik'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { SignupFormValues, SignupProps } from '../Signup'
 const landingHref = href(mainPath.landing)
@@ -21,18 +21,18 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
       }),
     [signUp],
   )
-
+  const formBag = useFormikBag<SignupFormValues>({ initialValues: { email: '' }, onSubmit })
   const signupProps = useMemo<SignupProps>(() => {
     const signupProps: SignupProps = {
       accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Signup Access Header'),
-      onSubmit,
+      formBag,
       signupErrorMessage,
       requestSent,
       landingHref,
       loginHref,
     }
     return signupProps
-  }, [onSubmit, signupErrorMessage, requestSent])
+  }, [formBag, signupErrorMessage, requestSent])
 
   return signupProps && [signupProps]
 }
