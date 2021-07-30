@@ -1,5 +1,5 @@
 import { LocalizationProvider } from '../src/context/Global/Localization';
-import { ProvideGlobalSBLinkComponent } from '../src/ui/lib/SBLinkComponent';
+import { ProvideGlobalSBLinkComponent } from '../src/ui/lib/storybook/SBLinkComponent';
 // import '../src/index.css';
 
 export const parameters = {
