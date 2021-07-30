@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
 import { useRedirectProfileHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
-import { SubmitForm } from '../../../../lib/formik'
+import { SubmitForm, useFormikBag } from '../../../../lib/formik'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { ActivationFormValues, ActivationProps } from '../Activation'
 
@@ -19,15 +19,19 @@ export const useActivationCtrl: CtrlHook<ActivationProps, { activationToken: str
       }),
     [activateNewUser, activationToken],
   )
+  const formBag = useFormikBag<ActivationFormValues>({
+    initialValues: { name: '', password: '' },
+    onSubmit,
+  })
   const activationProps = useMemo<ActivationProps>(() => {
     const activationProps: ActivationProps = {
       accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Activate User Access Header'),
-      onSubmit,
+      formBag,
       activationErrorMessage,
       accountActivated,
     }
     return activationProps
-  }, [activationErrorMessage, accountActivated, onSubmit])
+  }, [formBag, activationErrorMessage, accountActivated])
 
   return activationProps && [activationProps]
 }

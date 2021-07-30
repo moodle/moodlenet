@@ -2,7 +2,7 @@ import { t, Trans } from '@lingui/macro'
 import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import { CP, withCtrl } from '../../../lib/ctrl'
-import { SubmitForm, useFormikBag } from '../../../lib/formik'
+import { FormikBag } from '../../../lib/formik'
 import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
@@ -10,16 +10,13 @@ import './styles.scss'
 export type ActivationFormValues = { name: string; password: string }
 export type ActivationProps = {
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
-  onSubmit: SubmitForm<ActivationFormValues>
+  formBag: FormikBag<ActivationFormValues>
   activationErrorMessage: string | null
   accountActivated: boolean
 }
 
-export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, onSubmit, accountActivated }) => {
-  const [form, attrs] = useFormikBag<ActivationFormValues>({
-    initialValues: { name: '', password: '' },
-    onSubmit,
-  })
+export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, formBag, accountActivated }) => {
+  const [form, attrs] = formBag
   return (
     <MainPageWrapper>
       <div className="activation-page">
