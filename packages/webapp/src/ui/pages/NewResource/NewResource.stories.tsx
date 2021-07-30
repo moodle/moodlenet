@@ -1,8 +1,9 @@
-import { t } from '@lingui/macro'
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
-import { UploadResourceStoryProps } from './UploadResource/UploadResource.stories'
+import { NewResourceFormValues } from './types'
 
 const meta: ComponentMeta<typeof NewResource> = {
   title: 'Pages/New Resource',
@@ -13,64 +14,85 @@ const meta: ComponentMeta<typeof NewResource> = {
   parameters: { layout: 'fullscreen' },
   excludeStories: [
     'NewResourceProgressStateStory',
-    'NewResourceStoryProps', 
+    'NewResourceStoryProps',
     'NewResourceContentUploadedStoryProps',
     'NewResourceImageUploadedStoryProps',
     'NewResourceCollectionsStoryProps',
-    'NewResourceExtraDataStoryProps'
+    'NewResourceExtraDataStoryProps',
   ],
 }
 
 const NewResourceStory: ComponentStory<typeof NewResource> = args => <NewResource {...args} />
 
 export const NewResourceProgressStateStory: NewResourceProgressState = [
-  ['UploadResource', t`Upload Resource`], 
-  ['Collections', t`Add to Collections`], 
-  ['ExtraData', t`Add Details`]
-];
+  ['UploadResource', `Upload Resource`],
+  ['Collections', `Add to Collections`],
+  ['ExtraData', `Add Details`],
+]
+
+const formBag = SBFormikBag<NewResourceFormValues>({
+  addToCollections: [],
+  category: 'category',
+  content: 'content',
+  contentType: 'Link',
+  description: 'description',
+  format: 'format',
+  image: 'image',
+  language: 'language',
+  level: 'level',
+  license: 'license',
+  name: 'name',
+  originalDate: new Date(),
+  title: 'title',
+  type: 'type',
+})
 
 export const NewResourceStoryProps: NewResourceProps = {
   headerPageTemplateProps: {
     headerPageProps: {
       ...HeaderPageLoggedInStoryProps,
-      showSubHeader: false
+      showSubHeader: false,
     },
     isAuthenticated: true,
-    showSubHeader: false
+    showSubHeader: false,
   },
-  uploadResource: {
-    ...UploadResourceStoryProps,
-    state: 'Initial'
+  stepProps: {
+    step: 'UploadResourceStep',
+    formBag,
+    state: 'ChooseResource',
+    imageUrl: '',
+    nextStep: action('nextStep'),
+    deleteContent: action('deleteContent'),
   },
-  states: NewResourceProgressStateStory,
-  currentState: 'UploadResource'  
 }
 
 export const NewResourceContentUploadedStoryProps: NewResourceProps = {
   ...NewResourceStoryProps,
-  uploadResource: {
-    ...UploadResourceStoryProps,
-    state: 'ContentUploaded'
-  }
+  stepProps: {
+    ...NewResourceStoryProps.stepProps,
+    state: 'EditData',
+    imageUrl: '',
+  },
 }
 
 export const NewResourceImageUploadedStoryProps: NewResourceProps = {
   ...NewResourceStoryProps,
-  uploadResource: {
-    ...UploadResourceStoryProps,
-    state: 'ImageUploaded'
-  }
+  stepProps: {
+    ...NewResourceStoryProps.stepProps,
+    state: 'EditData',
+    imageUrl: 'https://picsum.photos/200/100',
+  },
 }
 
-export const NewResourceCollectionsStoryProps: NewResourceProps = {
-  ...NewResourceStoryProps,
-  currentState: 'Collections'
-}
+// export const NewResourceCollectionsStoryProps: NewResourceProps = {
+//   ...NewResourceStoryProps,
+//   currentState: 'Collections',
+// }
 
-export const NewResourceExtraDataStoryProps: NewResourceProps = {
-  ...NewResourceStoryProps,
-  currentState: 'ExtraData'
-}
+// export const NewResourceExtraDataStoryProps: NewResourceProps = {
+//   ...NewResourceStoryProps,
+//   currentState: 'ExtraData',
+// }
 
 export const Start = NewResourceStory.bind({})
 Start.args = NewResourceStoryProps
@@ -81,10 +103,10 @@ ContentUploaded.args = NewResourceContentUploadedStoryProps
 export const ImageUploaded = NewResourceStory.bind({})
 ImageUploaded.args = NewResourceImageUploadedStoryProps
 
-export const Collections = NewResourceStory.bind({})
-Collections.args = NewResourceCollectionsStoryProps
+// export const Collections = NewResourceStory.bind({})
+// Collections.args = NewResourceCollectionsStoryProps
 
-export const ExtraData = NewResourceStory.bind({})
-ExtraData.args = NewResourceExtraDataStoryProps
+// export const ExtraData = NewResourceStory.bind({})
+// ExtraData.args = NewResourceExtraDataStoryProps
 
 export default meta

@@ -1,40 +1,40 @@
+import { t } from '@lingui/macro'
 import ProgressState from '../../components/atoms/ProgressState/ProgressState'
-import { withCtrl } from '../../lib/ctrl'
-import { FormikBag } from '../../lib/formik'
-import { HeaderPageTemplate } from '../../templates/page/HeaderPageTemplate'
+import { CP, withCtrl } from '../../lib/ctrl'
+import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import './styles.scss'
-import { NewResourceFormValues } from './types'
-import { UploadResource } from './UploadResource/UploadResource'
+import { UploadResource, UploadResourceProps } from './UploadResource/UploadResource'
 
-export type NewResourceState = 'UploadResource' |'Collections' | 'ExtraData'
+export type NewResourceState = 'UploadResource' | 'Collections' | 'ExtraData'
 export type NewResourceProgressState = [NewResourceState, string][]
 
 export type NewResourceProps = {
-  form: FormikBag<NewResourceFormValues>
-  stepProps: UploadResourceProps | _2StepProps | _3StepProps 
-  // headerPageTemplateProps: CP<HeaderPageTemplateProps>
+  stepProps: UploadResourceProps //| _2StepProps | _3StepProps
+  headerPageTemplateProps: CP<HeaderPageTemplateProps>
   // uploadResource: UploadResourceProps
   // states: NewResourceProgressState
   // currentState: NewResourceState
 }
 
-export const NewResource = withCtrl<NewResourceProps>(
-  ({
-    headerPageTemplateProps,
-    uploadResource,
-    states,
-    currentState
-  }) => {
-    return (
-      <HeaderPageTemplate {...headerPageTemplateProps}>
-        <div className="new-resource">
-          <ProgressState states={states} currentState={currentState} />
-          <div className="content">
-              <UploadResource {...uploadResource} />
-          </div>
+const progressStates = [t`Upload Resource`, t`Add to Collections`, t`Add Details`]
+export const NewResource = withCtrl<NewResourceProps>(({ stepProps, headerPageTemplateProps }) => {
+  const progressCurrentIndex = stepProps.step === 'UploadResourceStep' ? 0 : undefined
+
+  if (progressCurrentIndex === undefined) {
+    console.error({ stepProps })
+    throw new Error(`unknown stepProps: step=${stepProps.step}`)
+  }
+  const StepComp = stepProps.step === 'UploadResourceStep' ? UploadResource : () => <div>SHOULD NEVER HAPPEN</div>
+
+  return (
+    <HeaderPageTemplate {...headerPageTemplateProps}>
+      <div className="new-resource">
+        <ProgressState stateNames={progressStates} currentIndex={progressCurrentIndex} />
+        <div className="content">
+          <StepComp {...stepProps} />
         </div>
-      </HeaderPageTemplate>
-    )
-  },
-)
+      </div>
+    </HeaderPageTemplate>
+  )
+})
 NewResource.displayName = 'NewResourcePage'

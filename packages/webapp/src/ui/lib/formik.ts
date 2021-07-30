@@ -22,17 +22,18 @@ export const formikInputAttrs = <Values>(values: Values) =>
     {} as any,
   )
 
-export const useFormikInputAttrs = <Values>(formik: SimplifiedFormikBag<Values>) =>
+export const useFormikInputAttrs = <Values>(formik: SimplifiedFormik<Values>) =>
   useMemo(() => formikInputAttrs(formik.values), [formik.values])
 
-export type FormikBag<Values = {}> = [SimplifiedFormikBag<Values>, FormikInputAttrs<Values>]
+export type FormikBag<Values = {}> = [SimplifiedFormik<Values>, FormikInputAttrs<Values>]
 export const useFormikBag = <Values>(config: FormikConfig<Values>): FormikBag<Values> => {
   const formik = useFormik(config)
-  const inputAttrs = useFormikInputAttrs(formik)
-  return [formik, inputAttrs]
+  const s_formik = formik as SimplifiedFormik<Values>
+  const inputAttrs = useFormikInputAttrs(s_formik)
+  return [s_formik, inputAttrs]
 }
 
-export interface SimplifiedFormikBag<Values = {}> {
+export interface SimplifiedFormik<Values = {}> {
   initialValues: Values
   handleBlur: (eventOrString: any) => void | ((e: any) => void)
   handleChange: (
@@ -41,7 +42,7 @@ export interface SimplifiedFormikBag<Values = {}> {
   handleReset: (e: any) => void
   handleSubmit: (e?: FormEvent<HTMLFormElement> | undefined) => void
   submitForm: () => unknown
-  setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => any
+  setFieldValue: <K extends keyof Values>(field: K, value: Values[K], shouldValidate?: boolean | undefined) => any
 
   isValid: boolean
   dirty: boolean

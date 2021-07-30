@@ -1,6 +1,6 @@
 import _LinkTo, { LinkTo } from '@storybook/addon-links/react'
 import { FC } from 'react'
-import { LinkComponentCtx, LinkComponentType } from '../elements/link'
+import { LinkComponentCtx, LinkComponentType } from '../../elements/link'
 
 // HACK: it seems '@storybook/addon-links' typings are not accurate
 const SBLinkTo = (_LinkTo as any) as typeof LinkTo
