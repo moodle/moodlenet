@@ -1,4 +1,7 @@
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
+import { NewResourceFormValues } from '../types'
 import { UploadResource, UploadResourceProps } from './UploadResource'
 
 const meta: ComponentMeta<typeof UploadResource> = {
@@ -18,7 +21,27 @@ const meta: ComponentMeta<typeof UploadResource> = {
 }
 
 export const UploadResourceStoryProps: UploadResourceProps = {
-  state: 'Initial'
+  deleteContent: action('deleteContent'),
+  nextStep: action('nextStep'),
+  formBag: SBFormikBag<NewResourceFormValues>({
+    addToCollections: [],
+    category: '',
+    content: '',
+    contentType: 'Link',
+    description: '',
+    format: '',
+    image: '',
+    language: '',
+    level: '',
+    license: '',
+    name: '',
+    originalDate: new Date(),
+    title: '',
+    type: '',
+  }),
+  imageUrl: '',
+  state: 'ChooseResource',
+  step: 'UploadResourceStep',
 }
 
 const UploadResourceStory: ComponentStory<typeof UploadResource> = args => <UploadResource {...args} />

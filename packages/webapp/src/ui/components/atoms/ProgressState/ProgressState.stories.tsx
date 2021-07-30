@@ -1,5 +1,4 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { NewResourceProgressStateStory } from '../../../pages/NewResource/NewResource.stories'
 import { ProgressState, ProgressStateProps } from './ProgressState'
 
 const meta: ComponentMeta<typeof ProgressState> = {
@@ -18,8 +17,8 @@ const meta: ComponentMeta<typeof ProgressState> = {
 const ProgressStateStory: ComponentStory<typeof ProgressState> = args => <ProgressState {...args} />
 
 export const ProgressStateStoryProps: ProgressStateProps = {
-  states: NewResourceProgressStateStory,
-  currentState: 'Collections'
+  stateNames: [`Upload Resource`, `Add to Collections`, `Add Details`],
+  currentIndex: 1,
 }
 
 export const Default = ProgressStateStory.bind({})
