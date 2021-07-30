@@ -17,20 +17,20 @@
         display: flex;
         padding: 18px 20px;
 
-        .gradient-bar {
+        > .gradient-bar {
             width: 4px;
             min-height:100%;
             background-image: linear-gradient(#D53686, #F8A302);
             border-radius: 5px;
         }
 
-        .tags {
+        > .tags {
             flex-wrap: wrap;
             margin-left: 22px;
             width: 100%;
             height: 100%;
 
-            .tag {
+            > .tag {
                 margin: 7px 10px 7px 3px;
             }
         }

@@ -19,6 +19,7 @@ const meta: ComponentMeta<typeof NewResource> = {
     'NewResourceImageUploadedStoryProps',
     'NewResourceCollectionsStoryProps',
     'NewResourceExtraDataStoryProps',
+    'NewResourceAddToCollectionsStoryProps'
   ],
 }
 
@@ -26,26 +27,38 @@ const NewResourceStory: ComponentStory<typeof NewResource> = args => <NewResourc
 
 export const NewResourceProgressStateStory: NewResourceProgressState = [
   ['UploadResource', `Upload Resource`],
-  ['Collections', `Add to Collections`],
+  ['AddToCollections', `Add to Collections`],
   ['ExtraData', `Add Details`],
 ]
 
-const formBag = SBFormikBag<NewResourceFormValues>({
+const initialFormValues: NewResourceFormValues = {
   addToCollections: [],
-  category: 'category',
+  category: '',
   content: 'content',
   contentType: 'Link',
-  description: 'description',
+  description: '',
   format: 'format',
   image: 'image',
   language: 'language',
   level: 'level',
   license: 'license',
-  name: 'name',
+  name: 'https://moodle.com/awesome-content',
   originalDate: new Date(),
-  title: 'title',
+  title: '',
   type: 'type',
-})
+}
+
+const basicDataFormValue: NewResourceFormValues = {
+  ...initialFormValues, 
+  title: 'The Best Content Ever', 
+  description: 'This is the description that tells you that this a not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.', 
+  category: 'Important Matters'
+}
+
+
+
+const formBag = SBFormikBag<NewResourceFormValues>(initialFormValues)
+const formBagBasicData = SBFormikBag<NewResourceFormValues>(basicDataFormValue)
 
 export const NewResourceStoryProps: NewResourceProps = {
   headerPageTemplateProps: {
@@ -72,22 +85,27 @@ export const NewResourceContentUploadedStoryProps: NewResourceProps = {
     ...NewResourceStoryProps.stepProps,
     state: 'EditData',
     imageUrl: '',
+    formBag: formBagBasicData
   },
 }
 
 export const NewResourceImageUploadedStoryProps: NewResourceProps = {
-  ...NewResourceStoryProps,
+  ...NewResourceContentUploadedStoryProps,
   stepProps: {
-    ...NewResourceStoryProps.stepProps,
+    ...NewResourceContentUploadedStoryProps.stepProps,
     state: 'EditData',
     imageUrl: 'https://picsum.photos/200/100',
   },
 }
 
-// export const NewResourceCollectionsStoryProps: NewResourceProps = {
-//   ...NewResourceStoryProps,
-//   currentState: 'Collections',
-// }
+export const NewResourceAddToCollectionsStoryProps: NewResourceProps = {
+   ...NewResourceContentUploadedStoryProps,
+   stepProps: {
+     ...NewResourceContentUploadedStoryProps.stepProps,
+     step: 'AddToCollectionsStep',
+     collections: ['Education', 'Biology', 'Algebra', 'Phycology', 'Phylosophy', 'Sociology', 'English Literature', 'Marketing', 'Physiotherapy', 'Agriculture', 'Taxonomy', 'Law', 'Interpretation', 'Molecular Biology', 'Nano Engineering', 'Macro Economy', 'Animal Rights']
+   }
+}
 
 // export const NewResourceExtraDataStoryProps: NewResourceProps = {
 //   ...NewResourceStoryProps,
@@ -103,8 +121,8 @@ ContentUploaded.args = NewResourceContentUploadedStoryProps
 export const ImageUploaded = NewResourceStory.bind({})
 ImageUploaded.args = NewResourceImageUploadedStoryProps
 
-// export const Collections = NewResourceStory.bind({})
-// Collections.args = NewResourceCollectionsStoryProps
+export const AddToCollections = NewResourceStory.bind({})
+AddToCollections.args = NewResourceAddToCollectionsStoryProps
 
 // export const ExtraData = NewResourceStory.bind({})
 // ExtraData.args = NewResourceExtraDataStoryProps
