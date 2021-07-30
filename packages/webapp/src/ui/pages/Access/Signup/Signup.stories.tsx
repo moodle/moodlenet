@@ -1,8 +1,8 @@
-import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../elements/link'
+import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
 import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
-import { Signup, SignupProps } from './Signup'
+import { Signup, SignupFormValues, SignupProps } from './Signup'
 
 const meta: ComponentMeta<typeof Signup> = {
   title: 'Pages/SignUp',
@@ -14,7 +14,7 @@ const SignupStory: ComponentStory<typeof Signup> = args => <Signup {...args} />
 
 export const SignupStoryProps: SignupProps = {
   accessHeaderProps: AccessHeaderStoryProps,
-  onSubmit: action('Submit signup'),
+  formBag: SBFormikBag<SignupFormValues>({ email: '' }),
   signupErrorMessage: null,
   requestSent: false,
   landingHref: href('yyy/yyy'),
