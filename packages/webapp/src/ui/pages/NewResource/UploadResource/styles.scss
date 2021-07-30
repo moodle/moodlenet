@@ -53,6 +53,10 @@
               flex-wrap: wrap;
               gap: 10px;
 
+              &.image > img {
+                height: 65px;
+              }
+
               > span {
                 font-weight: bold;
                 font-size: 15px;
