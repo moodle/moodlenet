@@ -1,7 +1,5 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
-import { NewResourceFormValues } from '../types'
 import { AddToCollections, AddToCollectionsProps } from './AddToCollections'
 
 const meta: ComponentMeta<typeof AddToCollections> = {
@@ -10,7 +8,7 @@ const meta: ComponentMeta<typeof AddToCollections> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['AddToCollectionsStoryProps'],
+  excludeStories: ['AddToCollectionsStoryProps', 'Default'],
   decorators: [
     Story => (
       <div style={{ maxWidth: 1100 }}>
@@ -21,25 +19,9 @@ const meta: ComponentMeta<typeof AddToCollections> = {
 }
 
 export const AddToCollectionsStoryProps: AddToCollectionsProps = {
+  setSearchText: action('setSearchText'),
   previousStep: action('previousStep'),
   nextStep: action('nextStep'),
-  formBag: SBFormikBag<NewResourceFormValues>({
-    addToCollections: [],
-    category: '',
-    content: '',
-    contentType: 'Link',
-    description: '',
-    format: '',
-    image: '',
-    language: '',
-    level: '',
-    license: '',
-    name: '',
-    originalDate: new Date(),
-    title: '',
-    type: '',
-  }),
-  imageUrl: '',
   step: 'AddToCollectionsStep',
   collections: ['Education', 'Biology', 'Algebra', 'Phycology', 'Phylosophy', 'Sociology', 'English Literature']
 }

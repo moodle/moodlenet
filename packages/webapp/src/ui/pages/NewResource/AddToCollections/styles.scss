@@ -1,4 +1,4 @@
-.upload-resource {
+.add-to-collections {
   width: 100%;
 
   > .content {
@@ -9,7 +9,6 @@
 
     > .card {
       padding: 22px 28px 28px;
-      margin-bottom: 30px;
       height: fit-content;
 
       > .collections-header {
@@ -70,7 +69,7 @@
     justify-content: flex-end;
     padding: 30px 0 0 0;
     @media screen and (max-width: 800px) {
-      padding: 5px 0 35px 0;
+      padding: 30px 0;
     }
   }
 }

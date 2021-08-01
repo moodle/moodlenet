@@ -13,6 +13,10 @@
     color: white;
     background-color: #F88012;
     white-space: nowrap;
+    
+    &:hover {
+        background-color: #e37511;
+    }
 
     &.disabled {
         cursor: default;

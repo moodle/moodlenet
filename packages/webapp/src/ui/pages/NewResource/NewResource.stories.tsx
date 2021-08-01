@@ -19,7 +19,8 @@ const meta: ComponentMeta<typeof NewResource> = {
     'NewResourceImageUploadedStoryProps',
     'NewResourceCollectionsStoryProps',
     'NewResourceExtraDataStoryProps',
-    'NewResourceAddToCollectionsStoryProps'
+    'NewResourceAddToCollectionsStoryProps',
+    'NewResourceExtraDetailsStoryProps'
   ],
 }
 
@@ -28,7 +29,7 @@ const NewResourceStory: ComponentStory<typeof NewResource> = args => <NewResourc
 export const NewResourceProgressStateStory: NewResourceProgressState = [
   ['UploadResource', `Upload Resource`],
   ['AddToCollections', `Add to Collections`],
-  ['ExtraData', `Add Details`],
+  ['ExtraDetails', `Add Details`],
 ]
 
 const initialFormValues: NewResourceFormValues = {
@@ -37,15 +38,15 @@ const initialFormValues: NewResourceFormValues = {
   content: 'content',
   contentType: 'Link',
   description: '',
-  format: 'format',
+  format: '',
   image: 'image',
-  language: 'language',
-  level: 'level',
-  license: 'license',
+  language: '',
+  level: '',
+  license: '',
   name: 'https://moodle.com/awesome-content',
   originalDate: new Date(),
   title: '',
-  type: 'type',
+  type: '',
 }
 
 const basicDataFormValue: NewResourceFormValues = {
@@ -103,14 +104,21 @@ export const NewResourceAddToCollectionsStoryProps: NewResourceProps = {
    stepProps: {
      ...NewResourceContentUploadedStoryProps.stepProps,
      step: 'AddToCollectionsStep',
-     collections: ['Education', 'Biology', 'Algebra', 'Phycology', 'Phylosophy', 'Sociology', 'English Literature', 'Marketing', 'Physiotherapy', 'Agriculture', 'Taxonomy', 'Law', 'Interpretation', 'Molecular Biology', 'Nano Engineering', 'Macro Economy', 'Animal Rights']
+     collections: ['Education', 'Biology', 'Algebra', 'Phycology', 'Phylosophy', 'Sociology', 'English Literature', 'Marketing', 'Physiotherapy', 'Agriculture', 'Taxonomy', 'Law', 'Interpretation', 'Molecular Biology', 'Nano Engineering', 'Macro Economy', 'Animal Rights'],
+     previousStep: action('previousStep'),
+     setSearchText: action('setSearchText')
    }
 }
 
-// export const NewResourceExtraDataStoryProps: NewResourceProps = {
-//   ...NewResourceStoryProps,
-//   currentState: 'ExtraData',
-// }
+ export const NewResourceExtraDetailsStoryProps: NewResourceProps = {
+   ...NewResourceContentUploadedStoryProps,
+   stepProps: {
+    step: 'ExtraDetailsStep',
+    formBag,
+    nextStep: action('nextStep'),
+    previousStep: action('previousStep')
+  },
+ }
 
 export const Start = NewResourceStory.bind({})
 Start.args = NewResourceStoryProps
@@ -124,7 +132,7 @@ ImageUploaded.args = NewResourceImageUploadedStoryProps
 export const AddToCollections = NewResourceStory.bind({})
 AddToCollections.args = NewResourceAddToCollectionsStoryProps
 
-// export const ExtraData = NewResourceStory.bind({})
-// ExtraData.args = NewResourceExtraDataStoryProps
+export const ExtraDetails = NewResourceStory.bind({})
+ExtraDetails.args = NewResourceExtraDetailsStoryProps
 
 export default meta

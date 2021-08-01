@@ -85,6 +85,11 @@
                 background: #ffffff;
                 box-shadow: 0px 0px 5px rgb(0 0 0 / 5%);
                 color: #9598a8;
+
+                &:hover {
+                  color: #545761;
+                  background: rgb(223, 223, 223);
+                }
               }
             }
           }
