@@ -2,15 +2,15 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
 import { NewResourceFormValues } from '../types'
-import { UploadResource, UploadResourceProps } from './UploadResource'
+import { ExtraDetails, ExtraDetailsProps } from './ExtraDetails'
 
-const meta: ComponentMeta<typeof UploadResource> = {
+const meta: ComponentMeta<typeof ExtraDetails> = {
   title: 'Pages/New Resource/Upload Resource',
-  component: UploadResource,
+  component: ExtraDetails,
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['UploadResourceStoryProps', 'Default'],
+  excludeStories: ['ExtraDetailsStoryProps', 'Default'],
   decorators: [
     Story => (
       <div style={{ maxWidth: 1100 }}>
@@ -20,8 +20,8 @@ const meta: ComponentMeta<typeof UploadResource> = {
   ],
 }
 
-export const UploadResourceStoryProps: UploadResourceProps = {
-  deleteContent: action('deleteContent'),
+export const ExtraDetailsStoryProps: ExtraDetailsProps = {
+  previousStep: action('previousStep'),
   nextStep: action('nextStep'),
   formBag: SBFormikBag<NewResourceFormValues>({
     addToCollections: [],
@@ -39,14 +39,12 @@ export const UploadResourceStoryProps: UploadResourceProps = {
     title: '',
     type: '',
   }),
-  imageUrl: '',
-  state: 'ChooseResource',
-  step: 'UploadResourceStep',
+  step: 'ExtraDetailsStep',
 }
 
-const UploadResourceStory: ComponentStory<typeof UploadResource> = args => <UploadResource {...args} />
+const ExtraDetailsStory: ComponentStory<typeof ExtraDetails> = args => <ExtraDetails {...args} />
 
-export const Default = UploadResourceStory.bind({})
-Default.args = UploadResourceStoryProps
+export const Default = ExtraDetailsStory.bind({})
+Default.args = ExtraDetailsStoryProps
 
 export default meta

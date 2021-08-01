@@ -3,10 +3,10 @@
     height: auto;
     margin: 40px 0;
 
-    > .title {
+    > .progress-header {
         font-weight: bold;
         margin-bottom: 16px;
-        > span {
+        > .number {
             border-radius: 50%;
             width: 34px;
             height: 34px;
@@ -16,6 +16,11 @@
             text-align: center;
             font-size: 15px;
         }
+
+        > .subtitle {
+            margin-left: 16px;
+            color: #B6BACB;
+        }
     }
     > .progress-bar  {
         width: 100%;
@@ -24,7 +29,7 @@
         flex-wrap: wrap;
         gap: 3%;
         > * {
-            width: 31%;
+            flex: 1 1 0px;
             height: 9px;
             border-radius: 7px;
             &.done {

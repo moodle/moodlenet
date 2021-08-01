@@ -26,11 +26,21 @@
     color: #f88012;
     background-color: #f4f5f7;
     border: 2px solid #f88012;
+
+    &:hover {
+      color: #e37511;
+      border: 2px solid #e37511;
+    }
   }
 
   &.grey {
     color: #7f8393;
     background-color: transparent;
     border: 2px solid #7f8393;
+
+    &:hover {
+      color: #545761;
+      border: 2px solid #545761;
+    }
   }
 }

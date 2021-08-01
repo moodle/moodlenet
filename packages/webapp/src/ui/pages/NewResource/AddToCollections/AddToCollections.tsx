@@ -5,14 +5,10 @@ import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton
 import Searchbox from '../../../components/atoms/Searchbox/Searchbox'
 import SecondaryButton from '../../../components/atoms/SecondaryButton/SecondaryButton'
 import { withCtrl } from '../../../lib/ctrl'
-import { FormikBag } from '../../../lib/formik'
-import { NewResourceFormValues } from '../types'
 import './styles.scss'
 
 export type AddToCollectionsProps = {
   step: 'AddToCollectionsStep'
-  formBag: FormikBag<NewResourceFormValues>
-  imageUrl: string
   previousStep: (() => unknown) | undefined
   nextStep: (() => unknown) | undefined
   collections: string[]
@@ -38,7 +34,7 @@ export const AddToCollections = withCtrl<AddToCollectionsProps>(({ collections, 
   })
  
   return (
-    <div className="upload-resource">
+    <div className="add-to-collections">
       <div className="content">
         <Card>
           <div className="collections-header">

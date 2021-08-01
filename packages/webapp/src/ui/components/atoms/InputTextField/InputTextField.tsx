@@ -11,7 +11,7 @@ export type InputTextFieldProps = {
   autoUpdate?: boolean
   buttonName?: string
   className?: string
-  value?: string | undefined
+  value?: string | undefined |null
   getText?(text: string): void
   textAreaAttrs?:React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>,
   inputAttrs?:React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
@@ -31,7 +31,7 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   inputAttrs,
   textAreaAttrs
 }) => { 
-  const [text, setText] = useState<string |undefined>(value)
+  const [text, setText] = useState<string |undefined | null>(value)
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter') {
@@ -63,10 +63,11 @@ export const InputTextField: FC<InputTextFieldProps> = ({
       { textarea ? (
         <div className="textarea-container">
           <textarea 
-            value={text}
+            value={text ? text : ''}
             onChange={ handleChange }
             onKeyDown={ handleKeyDown }
             disabled={disabled}
+            placeholder={placeholder}
             name="textarea" 
             cols={40} 
             rows={5}
@@ -76,7 +77,7 @@ export const InputTextField: FC<InputTextFieldProps> = ({
       ) : (
         <div className="input-container">
           <input
-            value={text}
+            value={text ? text : ''}
             onChange={ handleChange }
             {...buttonName && {onKeyDown:handleKeyDown}}
             disabled={disabled}
