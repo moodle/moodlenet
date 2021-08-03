@@ -1,6 +1,6 @@
 type Pinned implements IEdge {
   id: ID!
-  _created: DateTime!
+  _created: Timestamp!
 }
 
 ## integrations
