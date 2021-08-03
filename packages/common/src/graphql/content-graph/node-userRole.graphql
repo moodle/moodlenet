@@ -1,6 +1,6 @@
-type OpBadge implements INode {
+type UserRole implements INode {
   name: String!
-  type: OpBadgeType!
+  type: UserRoleType!
   descripton: String!
   # INode
   id: ID!
@@ -8,21 +8,21 @@ type OpBadge implements INode {
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }
 
-enum OpBadgeType {
+enum UserRoleType {
   Admin
   Editor
 }
 
 # integrations
-union Node = OpBadge
+union Node = UserRole
 enum NodeType {
-  OpBadge
+  UserRole
 }
 
 input CreateNodeInput {
-  OpBadge: Never
+  UserRole: Never
 }
 
 input EditNodeInput {
-  OpBadge: Never
+  UserRole: Never
 }

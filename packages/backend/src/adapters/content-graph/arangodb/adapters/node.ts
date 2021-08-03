@@ -17,8 +17,8 @@ export const getNodeBySlugAdapter = (db: ContentGraphDB): BySlugAdapter => ({
 })
 
 export const createNodeAdapter = (db: ContentGraphDB): Pick<CreateNodeAdapter, 'storeNode'> => ({
-  storeNode: async ({ node, status }) => {
-    const q = createNodeQ<typeof node._type>({ node, status })
+  storeNode: async ({ node }) => {
+    const q = createNodeQ<typeof node._type>({ node })
     const result = await getOneResult(q, db)
     // // FIXME: use events!
     // if (result) {
