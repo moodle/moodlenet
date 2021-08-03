@@ -13,7 +13,7 @@ export type IscedfCardQuery = (
   & { node?: Types.Maybe<{ __typename: 'Collection' } | (
     { __typename: 'Iscedf' }
     & Pick<Types.Iscedf, 'name' | 'image' | 'id'>
-  ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' }> }
+  ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' }> }
 );
 
 

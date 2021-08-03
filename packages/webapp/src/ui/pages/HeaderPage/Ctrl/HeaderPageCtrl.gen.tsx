@@ -20,7 +20,7 @@ export type HeaderPagePinnedQuery = (
         & { node: { __typename: 'Collection' } | (
           { __typename: 'Iscedf' }
           & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
       )> }
     ) }
   ) | (
@@ -33,20 +33,7 @@ export type HeaderPagePinnedQuery = (
         & { node: { __typename: 'Collection' } | (
           { __typename: 'Iscedf' }
           & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'OpBadge' }
-    & Pick<Types.OpBadge, 'id'>
-    & { pinnedList: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
-          { __typename: 'Iscedf' }
-          & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
       )> }
     ) }
   ) | (
@@ -59,7 +46,7 @@ export type HeaderPagePinnedQuery = (
         & { node: { __typename: 'Collection' } | (
           { __typename: 'Iscedf' }
           & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
       )> }
     ) }
   ) | (
@@ -72,7 +59,7 @@ export type HeaderPagePinnedQuery = (
         & { node: { __typename: 'Collection' } | (
           { __typename: 'Iscedf' }
           & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
       )> }
     ) }
   ) | (
@@ -85,7 +72,20 @@ export type HeaderPagePinnedQuery = (
         & { node: { __typename: 'Collection' } | (
           { __typename: 'Iscedf' }
           & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'UserRole' }
+    & Pick<Types.UserRole, 'id'>
+    & { pinnedList: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | (
+          { __typename: 'Iscedf' }
+          & Pick<Types.Iscedf, 'id' | 'name'>
+        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
       )> }
     ) }
   )> }

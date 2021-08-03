@@ -1,14 +1,14 @@
 import { AuthId } from '../../user-auth/types'
 
-export type GraphNodeType = 'Collection' | 'Iscedf' | 'OpBadge' | 'Organization' | 'Profile' | 'Resource'
+export type GraphNodeType = 'Collection' | 'Iscedf' | 'UserRole' | 'Organization' | 'Profile' | 'Resource'
 // export type GraphNodeType = GraphNode['_type']
-export type GraphNode = Collection | Iscedf | OpBadge | Organization | Profile | Resource
+export type GraphNode = Collection | Iscedf | UserRole | Organization | Profile | Resource
 export type GraphNodeByType<T extends GraphNodeType> = GraphNodeMap[T]
 // export type GraphNodeMap = {
 //   [type in GraphNodeType]:
 // }
 export type GraphNodeMap = {
-  OpBadge: OpBadge
+  UserRole: UserRole
   Collection: Collection
   Iscedf: Iscedf
   Organization: Organization
@@ -24,22 +24,18 @@ export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _type: GNT
   _permId: PermId
   _slug: Slug
-  _bumpStatus: BumbNodeStatus
+  _status: NodeStatus
   name: string
 }
 
 export type NodeStatus = 'Active' | 'Deleted'
-export type BumbNodeStatus = {
-  date: Timestamp
-  status: NodeStatus
-}
 
 type Maybe<T> = T | null | undefined
 
-export type OpBadgeType = 'Admin' | 'Editor'
+export type UserRoleType = 'Admin' | 'Editor'
 
-export type OpBadge = BaseGraphNode<'OpBadge'> & {
-  type: OpBadgeType
+export type UserRole = BaseGraphNode<'UserRole'> & {
+  type: UserRoleType
   descripton: string
 }
 

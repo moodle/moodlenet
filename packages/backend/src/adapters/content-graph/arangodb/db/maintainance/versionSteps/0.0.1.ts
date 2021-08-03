@@ -9,8 +9,8 @@ import { MNStaticEnv } from '../../../../../../lib/types'
 import { createNodeQ } from '../../../functions/createNode'
 import { setupSearchView } from './0.0.1/setupSearchView'
 
-const nodes: GraphNodeType[] = ['Profile', 'Collection', 'Resource', 'Iscedf', 'Organization', 'OpBadge']
-const edges: GraphEdgeType[] = ['Created', 'HasOpBadge', 'Contains', 'Follows', 'Pinned']
+const nodes: GraphNodeType[] = ['Profile', 'Collection', 'Resource', 'Iscedf', 'Organization', 'UserRole']
+const edges: GraphEdgeType[] = ['Created', 'HasUserRole', 'Contains', 'Follows', 'Pinned']
 
 const init_0_0_1: VersionUpdater<MNStaticEnv> = {
   async initialSetUp({ db, ctx: { domain } }) {
@@ -32,6 +32,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
         node: {
           _type: 'Organization',
           _permId: localOrg._permId,
+          _status: 'Active',
           _slug: localOrg._slug,
           color: localOrg.color,
           domain: localOrg.domain,
@@ -39,7 +40,6 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
           logo: localOrg.logo,
           name: localOrg.name,
         },
-        status: 'Active',
       }),
       db,
     )
@@ -51,6 +51,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
           _slug: `__root__`,
           _authId: rootUser.rootAuthId,
           _permId: rootUser.rootPermId,
+          _status: 'Active',
           _type: 'Profile',
           avatar: null,
           bio: '',
@@ -61,7 +62,6 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
           location: null,
           siteUrl: null,
         },
-        status: 'Active',
       }),
       db,
     ).catch(e => {
@@ -79,6 +79,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
               _permId: newGlyphPermId(),
               _slug: subj_field_data._slug,
               _type: 'Iscedf',
+              _status: 'Active',
               codePath: subj_field_data.codePath,
               description: subj_field_data.description,
               iscedCode: subj_field_data.iscedCode,
@@ -86,7 +87,6 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
               name: subj_field_data.name,
               thumbnail: subj_field_data.thumbnail,
             },
-            status: 'Active',
           }),
           db,
         ).catch(e => {

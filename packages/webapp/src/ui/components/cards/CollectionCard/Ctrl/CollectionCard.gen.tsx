@@ -1,33 +1,34 @@
-import * as Types from '../../../../../graphql/pub.graphql.link';
+import * as Apollo from '@apollo/client'
+import { gql } from '@apollo/client'
+import * as Types from '../../../../../graphql/pub.graphql.link'
 
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
-const defaultOptions =  {}
+const defaultOptions = {}
 export type CollectionCardQueryVariables = Types.Exact<{
-  id: Types.Scalars['ID'];
-}>;
+  id: Types.Scalars['ID']
+}>
 
-
-export type CollectionCardQuery = (
-  { __typename: 'Query' }
-  & { node?: Types.Maybe<(
-    { __typename: 'Collection' }
-    & Pick<Types.Collection, 'id' | 'name' | 'image'>
-  ) | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' }> }
-);
-
+export type CollectionCardQuery = { __typename: 'Query' } & {
+  node?: Types.Maybe<
+    | ({ __typename: 'Collection' } & Pick<Types.Collection, 'id' | 'name' | 'image'>)
+    | { __typename: 'Iscedf' }
+    | { __typename: 'UserRole' }
+    | { __typename: 'Organization' }
+    | { __typename: 'Profile' }
+    | { __typename: 'Resource' }
+  >
+}
 
 export const CollectionCardDocument = gql`
-    query CollectionCard($id: ID!) {
-  node(id: $id) {
-    ... on Collection {
-      id
-      name
-      image
+  query CollectionCard($id: ID!) {
+    node(id: $id) {
+      ... on Collection {
+        id
+        name
+        image
+      }
     }
   }
-}
-    `;
+`
 
 /**
  * __useCollectionCardQuery__
@@ -45,14 +46,18 @@ export const CollectionCardDocument = gql`
  *   },
  * });
  */
-export function useCollectionCardQuery(baseOptions: Apollo.QueryHookOptions<CollectionCardQuery, CollectionCardQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CollectionCardQuery, CollectionCardQueryVariables>(CollectionCardDocument, options);
-      }
-export function useCollectionCardLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CollectionCardQuery, CollectionCardQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CollectionCardQuery, CollectionCardQueryVariables>(CollectionCardDocument, options);
-        }
-export type CollectionCardQueryHookResult = ReturnType<typeof useCollectionCardQuery>;
-export type CollectionCardLazyQueryHookResult = ReturnType<typeof useCollectionCardLazyQuery>;
-export type CollectionCardQueryResult = Apollo.QueryResult<CollectionCardQuery, CollectionCardQueryVariables>;
+export function useCollectionCardQuery(
+  baseOptions: Apollo.QueryHookOptions<CollectionCardQuery, CollectionCardQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useQuery<CollectionCardQuery, CollectionCardQueryVariables>(CollectionCardDocument, options)
+}
+export function useCollectionCardLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<CollectionCardQuery, CollectionCardQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useLazyQuery<CollectionCardQuery, CollectionCardQueryVariables>(CollectionCardDocument, options)
+}
+export type CollectionCardQueryHookResult = ReturnType<typeof useCollectionCardQuery>
+export type CollectionCardLazyQueryHookResult = ReturnType<typeof useCollectionCardLazyQuery>
+export type CollectionCardQueryResult = Apollo.QueryResult<CollectionCardQuery, CollectionCardQueryVariables>
