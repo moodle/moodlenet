@@ -35,9 +35,6 @@ export type GlobalSearchEdgeFragment = (
     { __typename: 'Iscedf' }
     & Pick<Types.Iscedf, 'id' | 'name'>
   ) | (
-    { __typename: 'OpBadge' }
-    & Pick<Types.OpBadge, 'id' | 'name'>
-  ) | (
     { __typename: 'Organization' }
     & Pick<Types.Organization, 'id' | 'name'>
   ) | (
@@ -46,6 +43,9 @@ export type GlobalSearchEdgeFragment = (
   ) | (
     { __typename: 'Resource' }
     & Pick<Types.Resource, 'id' | 'name'>
+  ) | (
+    { __typename: 'UserRole' }
+    & Pick<Types.UserRole, 'id' | 'name'>
   ) }
 );
 

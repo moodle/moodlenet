@@ -15,6 +15,7 @@ export const getIscedfields = () =>
       image: rndImgAssetRef('img', field.code),
       _slug: contentSlug({ name: field.desc, slugCode: field.code }),
       _type: 'Iscedf',
+      _status: 'Active',
     }
     return iscedfield
   })

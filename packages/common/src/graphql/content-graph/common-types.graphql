@@ -22,7 +22,7 @@ interface INode {
 
 interface IEdge {
   id: ID
-  _created: DateTime!
+  _created: Timestamp!
 }
 
 type RelPage implements Page {

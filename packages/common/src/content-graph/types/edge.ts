@@ -1,8 +1,8 @@
-export type GraphEdgeType = 'Created' | 'HasOpBadge' | 'Pinned' | 'Contains' | 'Follows'
-export type GraphEdge = Created | HasOpBadge | Pinned | Contains | Follows
+export type GraphEdgeType = 'Created' | 'HasUserRole' | 'Pinned' | 'Contains' | 'Follows'
+export type GraphEdge = Created | HasUserRole | Pinned | Contains | Follows
 export type GraphEdgeByType<T extends GraphEdgeType> = GraphEdgeMap[T]
 export type GraphEdgeMap = {
-  HasOpBadge: HasOpBadge
+  HasUserRole: HasUserRole
   Created: Created
   Pinned: Pinned
   Contains: Contains
@@ -13,12 +13,10 @@ export type EdgeId = string
 export type BaseGraphEdge<GET extends GraphEdgeType> = {
   id: EdgeId
   _type: GET
-  _created: {
-    at: Timestamp
-  }
+  _created: Timestamp
 }
 
-export type HasOpBadge = BaseGraphEdge<'HasOpBadge'> & {}
+export type HasUserRole = BaseGraphEdge<'HasUserRole'> & {}
 export type Created = BaseGraphEdge<'Created'> & {}
 export type Pinned = BaseGraphEdge<'Pinned'> & {}
 export type Contains = BaseGraphEdge<'Contains'> & {}

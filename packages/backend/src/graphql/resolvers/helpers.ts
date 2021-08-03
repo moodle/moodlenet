@@ -39,9 +39,9 @@ export const graphNode2GqlNode = (node: GraphNode): Node => {
         ...base,
         ...pick(node, ['codePath', 'description', 'image', 'iscedCode', 'thumbnail']),
       }
-    case 'OpBadge':
+    case 'UserRole':
       return {
-        __typename: 'OpBadge',
+        __typename: 'UserRole',
         ...base,
         ...pick(node, ['descripton', 'type', 'name']),
       }
@@ -61,7 +61,7 @@ export const graphNode2GqlNode = (node: GraphNode): Node => {
       throw new Error(`graphNode2GqlNode: can't map unknown node type '${(node as any)?._type}'`)
   }
 }
-export const gqlNode2GraphNode = (node: Node): Omit<GraphNode, '_permId' | '_bumpStatus'> => {
+export const gqlNode2GraphNode = (node: Node): Omit<GraphNode, '_permId' | '_status'> => {
   const parsed = parseNodeId(node.id)
   if (!parsed) {
     throw new Error(`gqlNode2GraphNode: can't parse id '${node.id}'`)
@@ -91,9 +91,9 @@ export const gqlNode2GraphNode = (node: Node): Omit<GraphNode, '_permId' | '_bum
         ...base,
         ...pick(node, ['codePath', 'description', 'image', 'iscedCode', 'thumbnail']),
       }
-    case 'OpBadge':
+    case 'UserRole':
       return {
-        _type: 'OpBadge',
+        _type: 'UserRole',
         ...base,
         ...pick(node, ['descripton', 'type']),
       }
@@ -116,17 +116,16 @@ export const gqlNode2GraphNode = (node: Node): Omit<GraphNode, '_permId' | '_bum
 
 export const graphEdge2GqlEdge = (edge: GraphEdge): Edge => {
   const id = `${edge._type}/${edge.id}`
-  const _created = new Date(edge._created.at)
-  const base = { id, _created }
+  const base = { id, _created: edge._created }
   switch (edge._type) {
     case 'Created':
       return {
         __typename: 'Created',
         ...base,
       }
-    case 'HasOpBadge':
+    case 'HasUserRole':
       return {
-        __typename: 'HasOpBadge',
+        __typename: 'HasUserRole',
         ...base,
       }
     default:
@@ -139,16 +138,16 @@ export const gqlEdge2GraphEdge = (edge: Edge): GraphEdge => {
     throw new Error(`gqlEdge2GraphEdge: can't parse id '${edge.id}'`)
   }
   const [, id] = parsed
-  const base = { id, _created: { at: Number(edge._created) } }
+  const base = { id, _created: edge._created }
   switch (edge.__typename) {
     case 'Created':
       return {
         _type: 'Created',
         ...base,
       }
-    case 'HasOpBadge':
+    case 'HasUserRole':
       return {
-        _type: 'HasOpBadge',
+        _type: 'HasUserRole',
         ...base,
       }
     default:

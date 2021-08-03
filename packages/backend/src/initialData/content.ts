@@ -11,10 +11,7 @@ Integrated with Moodle LMS and Moodle Workplace to make resources easy to find a
 Build your profile as an educator.`,
   color: '#f98109',
   domain,
-  _bumpStatus: {
-    date: Number(new Date()),
-    status: 'Active',
-  },
+  _status: 'Active',
   _slug: '--local--',
   _type: 'Organization',
   logo: null,

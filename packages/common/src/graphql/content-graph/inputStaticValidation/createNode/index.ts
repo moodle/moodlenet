@@ -9,7 +9,7 @@ const inputObjectStaticValidators: {
   Iscedf: object<any /* Just<CreateNodeInput['Iscedf']> */>().required(),
   Collection: object<any /* Just<CreateNodeInput['Collection']> */>().required(),
   Resource: object<any /* Just<CreateNodeInput['Resource']> */>().required(),
-  OpBadge: neverCreate('OpBadge'),
+  UserRole: neverCreate('UserRole'),
   Profile: neverCreate('Profile'),
   Organization: neverCreate('Organization'),
 }

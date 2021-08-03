@@ -9,9 +9,9 @@ export type GlobalSearchNodeType = 'Collection' | 'Resource' | 'Iscedf'
 export const globalSearchNodeType: GlobalSearchNodeType[] = ['Collection', 'Resource', 'Iscedf']
 export const isGlobalSearchNodeType = (_: any): _ is GlobalSearchNodeType => !!_ && globalSearchNodeType.includes(_)
 
-export const nodeTypes: GraphNodeType[] = ['Collection', 'Profile', 'Resource', 'Iscedf', 'Organization', 'OpBadge']
+export const nodeTypes: GraphNodeType[] = ['Collection', 'Profile', 'Resource', 'Iscedf', 'Organization', 'UserRole']
 export const isGraphNodeType = (_: any): _ is GraphNodeType => !!_ && nodeTypes.includes(_)
-export const edgeTypes: GraphEdgeType[] = ['Created', 'HasOpBadge', 'Contains', 'Follows', 'Pinned']
+export const edgeTypes: GraphEdgeType[] = ['Created', 'HasUserRole', 'Contains', 'Follows', 'Pinned']
 export const isGraphEdgeType = (_: any): _ is GraphEdgeType => !!_ && edgeTypes.includes(_)
 
 export const nodeSlugId = (type: GraphNodeType, slug: Slug) => `${type}/${slug}`

@@ -1,16 +1,16 @@
-type Contains implements IEdge {
+type HasUserRole implements IEdge {
   id: ID!
   _created: Timestamp!
 }
 
 ## integrations
-union Edge = Contains
+union Edge = HasUserRole
 enum EdgeType {
-  Contains
+  HasUserRole
 }
 input CreateEdgeInput {
-  Contains: Empty
+  HasUserRole: Empty
 }
 input UpdateEdgeInput {
-  Contains: Empty
+  HasUserRole: Empty
 }
