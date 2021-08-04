@@ -1,31 +1,38 @@
-import { Organization } from '@moodlenet/common/lib/content-graph/types/node'
-import { newAuthId, newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { Organization, Profile } from '@moodlenet/common/lib/content-graph/types/node'
+import { ActiveUser } from '@moodlenet/common/lib/user-auth/types'
+import { DistOmit } from '@moodlenet/common/lib/utils/types'
+import { nanoid } from 'nanoid'
 
-const localOrgPermId = newGlyphPermId()
-export const localOrganizationData = ({ domain }: { domain: string }): Organization => ({
-  _permId: localOrgPermId,
+export const localOrganizationData: Omit<Organization, 'domain'> = {
+  _permId: 'local',
   name: 'MoodleNet',
   // shortIntro: 'Our global network to share and curate open educational resources',
   intro: `Join our social network to share and curate open educational resources with educators world-wide.
 Integrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.
 Build your profile as an educator.`,
   color: '#f98109',
-  domain,
-  _bumpStatus: {
-    date: Number(new Date()),
-    status: 'Active',
-  },
   _slug: '--local--',
   _type: 'Organization',
   logo: null,
-})
+}
 
-const rootAuthId = newAuthId()
-const rootPermId = newGlyphPermId()
+const rootAuthId = nanoid(18)
+export const rootUserProfile: Profile = {
+  _slug: `__root__`,
+  _authId: rootAuthId,
+  _permId: 'ROOT',
+  _type: 'Profile',
+  avatar: null,
+  bio: '',
+  name: 'ROOT',
+  firstName: null,
+  image: null,
+  lastName: null,
+  location: null,
+  siteUrl: null,
+}
 
-export const getRootUser = ({ domain }: { domain: string }) => ({
-  clearPassword: `root`,
-  rootPermId,
-  rootAuthId,
-  email: `root@${domain}`,
-})
+export const rootUserActive: DistOmit<ActiveUser, 'email' | 'password' | 'id' | 'createdAt' | 'updatedAt'> = {
+  status: 'Active',
+  authId: rootAuthId,
+}

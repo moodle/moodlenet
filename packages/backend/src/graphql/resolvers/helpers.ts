@@ -33,11 +33,17 @@ export const graphNode2GqlNode = (node: GraphNode): Node => {
         ...base,
         ...pick(node, ['description', 'image', 'name']),
       }
-    case 'Iscedf':
+    case 'IscedField':
       return {
-        __typename: 'Iscedf',
+        __typename: 'IscedField',
         ...base,
-        ...pick(node, ['codePath', 'description', 'image', 'iscedCode', 'thumbnail']),
+        ...pick(node, ['codePath', 'description', 'iscedCode']),
+      }
+    case 'IscedGrade':
+      return {
+        __typename: 'IscedGrade',
+        ...base,
+        ...pick(node, ['codePath', 'description', 'iscedCode']),
       }
     case 'OpBadge':
       return {
@@ -85,9 +91,15 @@ export const gqlNode2GraphNode = (node: Node): Omit<GraphNode, '_permId' | '_bum
         ...base,
         ...pick(node, ['description', 'image', 'name']),
       }
-    case 'Iscedf':
+    case 'IscedField':
       return {
-        _type: 'Iscedf',
+        _type: 'IscedField',
+        ...base,
+        ...pick(node, ['codePath', 'description', 'image', 'iscedCode', 'thumbnail']),
+      }
+    case 'IscedGrade':
+      return {
+        _type: 'IscedGrade',
         ...base,
         ...pick(node, ['codePath', 'description', 'image', 'iscedCode', 'thumbnail']),
       }

@@ -1,6 +1,6 @@
 import { isJust } from '../array'
 
-export const getIscedfieldPathByCode = (code: string): string[] | null => {
+export const getIscedFieldPathByCode = (code: string): string[] | null => {
   const [F, top_a, top_b, mid, low] = Array.from(code)
   if (!(F && top_a && top_b)) {
     return null

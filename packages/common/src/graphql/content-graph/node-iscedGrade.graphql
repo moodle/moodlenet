@@ -1,4 +1,4 @@
-type Iscedf implements INode {
+type IscedGrade implements INode {
   name: String!
   description: String!
   codePath: [String!]!
@@ -12,15 +12,15 @@ type Iscedf implements INode {
 }
 
 # integrations
-union Node = Iscedf
+union Node = IscedGrade
 enum NodeType {
-  Iscedf
+  IscedGrade
 }
 
 input CreateNodeInput {
-  Iscedf: Never
+  IscedGrade: Never
 }
 
 input EditNodeInput {
-  Iscedf: Never
+  IscedGrade: Never
 }

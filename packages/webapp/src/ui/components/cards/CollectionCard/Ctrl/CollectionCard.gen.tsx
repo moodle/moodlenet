@@ -13,7 +13,7 @@ export type CollectionCardQuery = (
   & { node?: Types.Maybe<(
     { __typename: 'Collection' }
     & Pick<Types.Collection, 'id' | 'name' | 'image'>
-  ) | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' }> }
+  ) | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' }> }
 );
 
 

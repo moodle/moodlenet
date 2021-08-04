@@ -1,7 +1,6 @@
-import { UserAuthConfig } from '@moodlenet/common/lib/user-auth/types'
 import { newUserRequestEmail } from './newUserRequestEmail'
 
-export const DefaultConfig: UserAuthConfig = {
+export const DefaultConfig = {
   newUserRequestEmail: {
     ...newUserRequestEmail,
     from: 'Moodlenet <noreply@moodle.net>',

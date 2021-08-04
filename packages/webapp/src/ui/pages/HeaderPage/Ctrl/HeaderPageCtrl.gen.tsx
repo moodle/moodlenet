@@ -18,22 +18,35 @@ export type HeaderPagePinnedQuery = (
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
         & { node: { __typename: 'Collection' } | (
-          { __typename: 'Iscedf' }
-          & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ) }
   ) | (
-    { __typename: 'Iscedf' }
-    & Pick<Types.Iscedf, 'id'>
+    { __typename: 'IscedField' }
+    & Pick<Types.IscedField, 'id'>
     & { pinnedList: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
         & { node: { __typename: 'Collection' } | (
-          { __typename: 'Iscedf' }
-          & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'IscedGrade' }
+    & Pick<Types.IscedGrade, 'id'>
+    & { pinnedList: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ) }
   ) | (
@@ -44,9 +57,9 @@ export type HeaderPagePinnedQuery = (
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
         & { node: { __typename: 'Collection' } | (
-          { __typename: 'Iscedf' }
-          & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ) }
   ) | (
@@ -57,9 +70,9 @@ export type HeaderPagePinnedQuery = (
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
         & { node: { __typename: 'Collection' } | (
-          { __typename: 'Iscedf' }
-          & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ) }
   ) | (
@@ -70,9 +83,9 @@ export type HeaderPagePinnedQuery = (
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
         & { node: { __typename: 'Collection' } | (
-          { __typename: 'Iscedf' }
-          & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ) }
   ) | (
@@ -83,9 +96,9 @@ export type HeaderPagePinnedQuery = (
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
         & { node: { __typename: 'Collection' } | (
-          { __typename: 'Iscedf' }
-          & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ) }
   )> }
@@ -97,10 +110,10 @@ export const HeaderPagePinnedDocument = gql`
   node(id: $currentProfileId) {
     ... on INode {
       id
-      pinnedList: _rel(type: Pinned, target: Iscedf, page: {first: 10}) {
+      pinnedList: _rel(type: Pinned, target: IscedField, page: {first: 10}) {
         edges {
           node {
-            ... on Iscedf {
+            ... on IscedField {
               id
               name
             }
