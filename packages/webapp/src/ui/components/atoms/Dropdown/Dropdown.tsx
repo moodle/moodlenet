@@ -1,70 +1,110 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import "./styles.scss";
+
+export type DropdownOptionsType = string[] | [string, React.ReactNode][]
 
 export type DropdownProps = {
   label?: string
-  placeholder: string
+  placeholder?: string
   disabled?: boolean
   hidden?: boolean
   autoUpdate?: boolean
   className?: string
-  getValue?(text: string): void
+  getIndex?(index: number | undefined): void
   inputAttrs?:React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
   hasSearch?: boolean
-  options: string[] | [string, HTMLImageElement][]
+  options: DropdownOptionsType
 }
 
 export const Dropdown: FC<DropdownProps> = ({
   label,
   placeholder,
   hidden,
-  getValue,
+  getIndex,
   hasSearch,
-  options,
+  options
 }) => { 
-  const [text, setText] = useState<string |undefined | null>(undefined)
+  const [value, setValue] = useState<string |undefined | null>(undefined)
+  const [index, setIndex] = useState<number |undefined | null>(undefined)
 
   const type: 'Text' | 'IconAndText' = typeof options[0] === 'string' ? 'Text' : 'IconAndText'
 
-  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
-    getValue && getValue(text ? text : '')
+  const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
+    console.log('Searching for: ' + e.currentTarget.value)
   }
 
-  const dropdownButton = document.getElementById('dropdown-button')
-  const dropdownContent = document.getElementById('dropdown-content')
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
+    filterFunction()
+    setValue(e.currentTarget.value)
+  }
 
-  const handleOnChange = () => {}
+  const handleOnClick = () => {
+    const dropdownButton = document.getElementById('dropdown-button')
+    const dropdownContent = document.getElementById('dropdown-content')
+    dropdownButton && dropdownButton.classList.remove("focus")
+    dropdownContent && dropdownContent.classList.add("focus")
+    dropdownContent && (dropdownContent.style.visibility = 'visible')
+  }
 
   const setOptionListPosition = () => {
+    const dropdownButton = document.getElementById('dropdown-button')
     const topPos = dropdownButton?.offsetTop;
     console.log(topPos)
   }
 
   setOptionListPosition()
 
-  const handleSelection = (index:number, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleOnSelection = (i:number, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    setIndex(i)
+    setValue((e.target as HTMLElement).innerText)
+    const dropdownContent = document.getElementById('dropdown-content')
     console.log('clicked')
-    const element = e.target  as HTMLElement
-    dropdownButton && dropdownButton.classList.remove("hover")
     dropdownContent && (dropdownContent.style.visibility = 'hidden')
-    const text =  element.innerText
-    setText(text)
-    console.log(index + ' - ' + text)
+  }
+
+  const handleOnMouseOut = () => {
+    setTimeout(() => {
+      const dropdownContent = document.getElementById('dropdown-content')
+      dropdownContent && (dropdownContent.style.visibility = 'hidden')
+    }, 100);
+    
+  }
+
+  useEffect(() => {
+    getIndex && getIndex(index ? index : undefined)
+  }, [index, getIndex]);
+
+  const filterFunction = () => {
+    const filter = (document.getElementById("dropdown-button") as HTMLInputElement).value.toUpperCase()
+    console.log('filter: ' + filter)
+    const div = document.getElementById("dropdown-content") as HTMLDivElement
+    Array.prototype.slice.call(div.getElementsByClassName("option")).map(e => {
+      const txtValue = e.innerText.toUpperCase()
+      console.log(e)
+      console.log(txtValue)
+      if (txtValue.indexOf(filter) > -1) {
+        console.log('Found!')
+        e.style.display = '';
+      } else {
+        console.log('Not found!')
+        e.style.display = 'none';
+      }
+    })
   }
 
 
 
   const optionsList = type === 'Text' ? (
-    options.map((value, index) => {
+    options.map((value, i) => {
       return (
-        <div key={index} className='option only-text' onClick={(e) => handleSelection(index, e)}>
+        <div key={i} className='option only-text' onClick={(e) => handleOnSelection(i, e)}>
           {value}
         </div>
       )
     })) : (
-    options.map((value, index) => {
+    options.map((value, i) => {
       return (
-        <div key={index} className='option icon-and-text' onClick={(e) => handleSelection(index, e)}>
+        <div key={i} className='option icon-and-text' onClick={(e) => handleOnSelection(i, e)}>
           {value[1]}
           <div className="text">{value[0]}</div>
         </div>
@@ -77,13 +117,19 @@ export const Dropdown: FC<DropdownProps> = ({
       className={`dropdown ${hasSearch ? 'search' : ''}`}
       style={{visibility: hidden ? 'hidden' : 'visible'}}
       hidden={hidden}
+      onBlur={handleOnMouseOut}
     >
       { label ? <label>{label}</label> : <></> }
-      { type === 'Text' ? (
-        <input id="dropdown-button" className="button search-field" type="text" placeholder={placeholder} onKeyUp={handleKeyUp} onChange={handleOnChange}/>
-      ) : (
-        <div className="button"></div>
-      )}
+      <input 
+        id="dropdown-button" 
+        className="button search-field" 
+        type="text"
+        placeholder={placeholder} 
+        onKeyUp={handleOnKeyUp} 
+        onChange={handleOnChange}
+        onClick={handleOnClick}
+        value={value? value : ''}
+      />
       <div id="dropdown-content">
         {optionsList}
       </div>
@@ -92,9 +138,10 @@ export const Dropdown: FC<DropdownProps> = ({
 };
 
 Dropdown.defaultProps = {
+  placeholder: '',
   hidden: false,
   className: '',
-  getValue: () => '',
+  getIndex: () => undefined,
 }
 
 export default Dropdown;

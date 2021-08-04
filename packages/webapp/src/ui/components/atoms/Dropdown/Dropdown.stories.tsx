@@ -1,4 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import uploadImageIcon from '../../../static/icons/upload-image.svg'
 import { Dropdown, DropdownProps } from './Dropdown'
 
 const meta: ComponentMeta<typeof Dropdown> = {
@@ -7,10 +8,10 @@ const meta: ComponentMeta<typeof Dropdown> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['DropdownStoryProps']
+  excludeStories: ['DropdownTextStoryProps', 'DropdownTextAndIconsStoryProps']
 }
 
-export const DropdownStoryProps: DropdownProps = {
+export const DropdownTextStoryProps: DropdownProps = {
   label: 'Just a text field',
   placeholder: 'Start typing to fill it',
   options: [
@@ -28,9 +29,21 @@ export const DropdownStoryProps: DropdownProps = {
   ]
 }
 
+export const DropdownTextAndIconsStoryProps: DropdownProps = {
+  label: 'Just a text field',
+  placeholder: 'Start typing to fill it',
+  options: [
+    ['Link', <img src={uploadImageIcon} />],
+
+  ]
+}
+
 const DropdownStory: ComponentStory<typeof Dropdown> = args => <Dropdown {...args}></Dropdown>
 
-export const Default = DropdownStory.bind({})
-Default.args = DropdownStoryProps
+export const Text = DropdownStory.bind({})
+Text.args = DropdownTextStoryProps
+
+export const TextAndIcons = DropdownStory.bind({})
+TextAndIcons.args = DropdownTextAndIconsStoryProps
 
 export default meta
