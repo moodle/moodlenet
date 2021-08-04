@@ -36,7 +36,7 @@ const initialFormValues: NewResourceFormValues = {
   addToCollections: [],
   category: '',
   content: 'content',
-  contentType: 'Link',
+  contentType: 'File',
   description: '',
   format: '',
   image: 'image',

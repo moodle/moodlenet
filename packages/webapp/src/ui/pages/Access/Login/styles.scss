@@ -59,7 +59,7 @@
         > form {
           display: flex;
           flex-direction: column;
-          justify-content: start;
+          justify-content: flex-start;
           > input {
             height: 46px;
             border-style: solid;
@@ -175,7 +175,7 @@
         font-size: 28px;
         justify-content: center;
         display: flex;
-        align-items: start;
+        align-items: flex-start;
         flex-direction: column;
         color: white;
         > svg {
