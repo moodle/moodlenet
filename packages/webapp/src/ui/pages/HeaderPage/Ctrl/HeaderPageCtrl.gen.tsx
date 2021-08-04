@@ -20,7 +20,7 @@ export type HeaderPagePinnedQuery = (
         & { node: { __typename: 'Collection' } | (
           { __typename: 'IscedField' }
           & Pick<Types.IscedField, 'id' | 'name'>
-        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
       )> }
     ) }
   ) | (
@@ -33,7 +33,7 @@ export type HeaderPagePinnedQuery = (
         & { node: { __typename: 'Collection' } | (
           { __typename: 'IscedField' }
           & Pick<Types.IscedField, 'id' | 'name'>
-        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
       )> }
     ) }
   ) | (
@@ -46,20 +46,7 @@ export type HeaderPagePinnedQuery = (
         & { node: { __typename: 'Collection' } | (
           { __typename: 'IscedField' }
           & Pick<Types.IscedField, 'id' | 'name'>
-        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
-      )> }
-    ) }
-  ) | (
-    { __typename: 'OpBadge' }
-    & Pick<Types.OpBadge, 'id'>
-    & { pinnedList: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
-          { __typename: 'IscedField' }
-          & Pick<Types.IscedField, 'id' | 'name'>
-        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
       )> }
     ) }
   ) | (
@@ -72,7 +59,7 @@ export type HeaderPagePinnedQuery = (
         & { node: { __typename: 'Collection' } | (
           { __typename: 'IscedField' }
           & Pick<Types.IscedField, 'id' | 'name'>
-        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
       )> }
     ) }
   ) | (
@@ -85,7 +72,7 @@ export type HeaderPagePinnedQuery = (
         & { node: { __typename: 'Collection' } | (
           { __typename: 'IscedField' }
           & Pick<Types.IscedField, 'id' | 'name'>
-        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
       )> }
     ) }
   ) | (
@@ -98,7 +85,20 @@ export type HeaderPagePinnedQuery = (
         & { node: { __typename: 'Collection' } | (
           { __typename: 'IscedField' }
           & Pick<Types.IscedField, 'id' | 'name'>
-        ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'UserRole' }
+    & Pick<Types.UserRole, 'id'>
+    & { pinnedList: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
       )> }
     ) }
   )> }

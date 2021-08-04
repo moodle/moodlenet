@@ -1,6 +1,6 @@
 type Follows implements IEdge {
   id: ID!
-  _created: DateTime!
+  _created: Timestamp!
 }
 
 ## integrations

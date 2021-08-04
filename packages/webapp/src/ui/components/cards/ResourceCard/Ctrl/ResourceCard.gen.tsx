@@ -10,7 +10,7 @@ export type ResourceCardQueryVariables = Types.Exact<{
 
 export type ResourceCardQuery = (
   { __typename: 'Query' }
-  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
+  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
     { __typename: 'Resource' }
     & Pick<Types.Resource, 'id' | 'name' | 'thumbnail' | 'kind' | 'content' | 'description' | 'image'>
     & { inCollections: (
@@ -20,10 +20,10 @@ export type ResourceCardQuery = (
         & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name'>
-        ) | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
       )> }
     ) }
-  )> }
+  ) | { __typename: 'UserRole' }> }
 );
 
 

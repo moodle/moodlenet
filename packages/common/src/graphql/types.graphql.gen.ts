@@ -3,6 +3,7 @@ import { AssetRef } from './scalars.graphql';
 import { Cursor } from './scalars.graphql';
 import { Empty } from './scalars.graphql';
 import { Never } from './scalars.graphql';
+import { Timestamp } from './scalars.graphql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -16,9 +17,9 @@ export type Scalars = {
   Float: number;
   AssetRef: AssetRef;
   Cursor: Cursor;
-  DateTime: any;
   Empty: Empty;
   Never: Never;
+  Timestamp: Timestamp;
 };
 
 
@@ -61,7 +62,7 @@ export type Collection_RelCountArgs = {
 export type Contains = IEdge & {
   __typename: 'Contains';
   id: Scalars['ID'];
-  _created: Scalars['DateTime'];
+  _created: Scalars['Timestamp'];
 };
 
 export type CreateCollectionInput = {
@@ -75,7 +76,7 @@ export type CreateEdgeInput = {
   Contains?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
-  HasOpBadge?: Maybe<Scalars['Empty']>;
+  HasUserRole?: Maybe<Scalars['Empty']>;
   Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   from: Scalars['ID'];
@@ -106,10 +107,10 @@ export type CreateNodeInput = {
   Collection?: Maybe<CreateCollectionInput>;
   IscedField?: Maybe<Scalars['Never']>;
   IscedGrade?: Maybe<Scalars['Never']>;
-  OpBadge?: Maybe<Scalars['Never']>;
   Organization?: Maybe<Scalars['Never']>;
   Profile?: Maybe<Scalars['Never']>;
   Resource?: Maybe<CreateResourceInput>;
+  UserRole?: Maybe<Scalars['Never']>;
   nodeType: NodeType;
 };
 
@@ -148,9 +149,8 @@ export type CreateSession = {
 export type Created = IEdge & {
   __typename: 'Created';
   id: Scalars['ID'];
-  _created: Scalars['DateTime'];
+  _created: Scalars['Timestamp'];
 };
-
 
 
 export type DeleteEdgeInput = {
@@ -200,13 +200,13 @@ export type DeleteNodeMutationSuccess = {
   nodeId?: Maybe<Scalars['ID']>;
 };
 
-export type Edge = Contains | Created | Follows | HasOpBadge | Pinned;
+export type Edge = Contains | Created | Follows | HasUserRole | Pinned;
 
 export type EdgeType =
   | 'Contains'
   | 'Created'
   | 'Follows'
-  | 'HasOpBadge'
+  | 'HasUserRole'
   | 'Pinned';
 
 export type EditCollectionInput = {
@@ -220,10 +220,10 @@ export type EditNodeInput = {
   Collection?: Maybe<EditCollectionInput>;
   IscedField?: Maybe<Scalars['Never']>;
   IscedGrade?: Maybe<Scalars['Never']>;
-  OpBadge?: Maybe<Scalars['Never']>;
   Organization?: Maybe<Scalars['Never']>;
   Profile?: Maybe<EditProfileInput>;
   Resource?: Maybe<EditResourceInput>;
+  UserRole?: Maybe<Scalars['Never']>;
   id: Scalars['ID'];
   nodeType: NodeType;
 };
@@ -269,7 +269,7 @@ export type EditResourceInput = {
 export type Follows = IEdge & {
   __typename: 'Follows';
   id: Scalars['ID'];
-  _created: Scalars['DateTime'];
+  _created: Scalars['Timestamp'];
 };
 
 export type GlobalSearchSort =
@@ -277,15 +277,15 @@ export type GlobalSearchSort =
   | 'Popularity'
   | 'Recent';
 
-export type HasOpBadge = IEdge & {
-  __typename: 'HasOpBadge';
+export type HasUserRole = IEdge & {
+  __typename: 'HasUserRole';
   id: Scalars['ID'];
-  _created: Scalars['DateTime'];
+  _created: Scalars['Timestamp'];
 };
 
 export type IEdge = {
   id?: Maybe<Scalars['ID']>;
-  _created: Scalars['DateTime'];
+  _created: Scalars['Timestamp'];
 };
 
 export type INode = {
@@ -398,45 +398,16 @@ export type MutationSignUpArgs = {
 };
 
 
-export type Node = Collection | IscedField | IscedGrade | OpBadge | Organization | Profile | Resource;
+export type Node = Collection | IscedField | IscedGrade | Organization | Profile | Resource | UserRole;
 
 export type NodeType =
   | 'Collection'
   | 'IscedField'
   | 'IscedGrade'
-  | 'OpBadge'
   | 'Organization'
   | 'Profile'
-  | 'Resource';
-
-export type OpBadge = INode & {
-  __typename: 'OpBadge';
-  name: Scalars['String'];
-  type: OpBadgeType;
-  descripton: Scalars['String'];
-  id: Scalars['ID'];
-  _rel: RelPage;
-  _relCount: Scalars['Int'];
-};
-
-
-export type OpBadge_RelArgs = {
-  type: EdgeType;
-  target: NodeType;
-  inverse?: Maybe<Scalars['Boolean']>;
-  page?: Maybe<PaginationInput>;
-};
-
-
-export type OpBadge_RelCountArgs = {
-  type: EdgeType;
-  target: NodeType;
-  inverse?: Maybe<Scalars['Boolean']>;
-};
-
-export type OpBadgeType =
-  | 'Admin'
-  | 'Editor';
+  | 'Resource'
+  | 'UserRole';
 
 export type Organization = INode & {
   __typename: 'Organization';
@@ -493,7 +464,7 @@ export type PaginationInput = {
 export type Pinned = IEdge & {
   __typename: 'Pinned';
   id: Scalars['ID'];
-  _created: Scalars['DateTime'];
+  _created: Scalars['Timestamp'];
 };
 
 export type Profile = INode & {
@@ -555,8 +526,8 @@ export type RelPage = Page & {
 export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
-  edge: Contains | Created | Follows | HasOpBadge | Pinned;
-  node: Collection | IscedField | IscedGrade | OpBadge | Organization | Profile | Resource;
+  edge: Contains | Created | Follows | HasUserRole | Pinned;
+  node: Collection | IscedField | IscedGrade | Organization | Profile | Resource | UserRole;
 };
 
 export type Resource = INode & {
@@ -600,7 +571,7 @@ export type SearchPage = Page & {
 export type SearchPageEdge = PageEdge & {
   __typename: 'SearchPageEdge';
   cursor: Scalars['Cursor'];
-  node: Collection | IscedField | IscedGrade | OpBadge | Organization | Profile | Resource;
+  node: Collection | IscedField | IscedGrade | Organization | Profile | Resource | UserRole;
 };
 
 export type SimpleResponse = {
@@ -609,11 +580,12 @@ export type SimpleResponse = {
   message?: Maybe<Scalars['String']>;
 };
 
+
 export type UpdateEdgeInput = {
   Contains?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
-  HasOpBadge?: Maybe<Scalars['Empty']>;
+  HasUserRole?: Maybe<Scalars['Empty']>;
   Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   id: Scalars['ID'];
@@ -637,6 +609,35 @@ export type UpdateEdgeMutationSuccess = {
   __typename: 'UpdateEdgeMutationSuccess';
   edge?: Maybe<Edge>;
 };
+
+export type UserRole = INode & {
+  __typename: 'UserRole';
+  name: Scalars['String'];
+  type: UserRoleType;
+  descripton: Scalars['String'];
+  id: Scalars['ID'];
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+};
+
+
+export type UserRole_RelArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type UserRole_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+};
+
+export type UserRoleType =
+  | 'Admin'
+  | 'Editor';
 
 export type UserSession = {
   __typename: 'UserSession';
@@ -672,7 +673,7 @@ export type UserSession = {
       "Contains",
       "Created",
       "Follows",
-      "HasOpBadge",
+      "HasUserRole",
       "Pinned"
     ],
     "EditNodeMutationPayload": [
@@ -683,26 +684,26 @@ export type UserSession = {
       "Contains",
       "Created",
       "Follows",
-      "HasOpBadge",
+      "HasUserRole",
       "Pinned"
     ],
     "INode": [
       "Collection",
       "IscedField",
       "IscedGrade",
-      "OpBadge",
       "Organization",
       "Profile",
-      "Resource"
+      "Resource",
+      "UserRole"
     ],
     "Node": [
       "Collection",
       "IscedField",
       "IscedGrade",
-      "OpBadge",
       "Organization",
       "Profile",
-      "Resource"
+      "Resource",
+      "UserRole"
     ],
     "Page": [
       "RelPage",
