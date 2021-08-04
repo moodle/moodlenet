@@ -73,7 +73,7 @@
         > form {
           display: inline-flex;
           flex-direction: column;
-          justify-content: start;
+          justify-content: flex-start;
           border-color: transparent;
           flex-wrap: wrap;
           gap: 14px;
@@ -123,7 +123,7 @@
         }
         > .bottom {
           display: flex;
-          justify-content: start;
+          justify-content: flex-start;
           align-items: center;    
         }
       }

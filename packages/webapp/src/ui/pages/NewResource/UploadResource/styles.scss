@@ -43,6 +43,18 @@
             border-radius: 15px;
             cursor: pointer;
 
+            &:hover {
+              border: 4px dashed #337AFF;
+              color: #337AFF;
+              background-color: #337af95c;
+
+              > .upload {
+                > span {
+                  color: #337AFF;
+                }
+              }
+            }
+
             > .upload {
               height: 100%;
               width: 100%;

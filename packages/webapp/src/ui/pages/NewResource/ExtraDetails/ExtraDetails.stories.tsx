@@ -5,7 +5,7 @@ import { NewResourceFormValues } from '../types'
 import { ExtraDetails, ExtraDetailsProps } from './ExtraDetails'
 
 const meta: ComponentMeta<typeof ExtraDetails> = {
-  title: 'Pages/New Resource/Upload Resource',
+  title: 'Pages/New Resource/Extra Details',
   component: ExtraDetails,
   argTypes: {
     // backgroundColor: { control: 'color' },
