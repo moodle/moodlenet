@@ -36,9 +36,7 @@
     @media (max-height: 750px) {
       margin-bottom: 5%;
     }
-    @media (min-width: 1320px) {
-      margin-right: calc( (100vw - 1100px) / 2);
-    }
+
     > .card:first-child {
       display: flex;
       justify-content: center;
