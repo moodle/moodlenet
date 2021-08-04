@@ -7,7 +7,7 @@ const inputObjectValidators: {
   [T in EdgeType]: ObjectSchema<Just<CreateEdgeInput[T]>>
 } = {
   Created: neverCreate('Created'),
-  HasOpBadge: neverCreate('HasOpBadge'),
+  HasUserRole: neverCreate('HasUserRole'),
   Contains: neverCreate('Contains'),
   Pinned: neverCreate('Pinned'),
   Follows: neverCreate('Follows'),

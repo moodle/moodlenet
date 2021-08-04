@@ -1,7 +1,7 @@
 import { AuthId } from '../../user-auth/types'
 
 export type GraphNodeMap = {
-  OpBadge: OpBadge
+  UserRole: UserRole
   Collection: Collection
   IscedField: IscedField
   Organization: Organization
@@ -13,7 +13,6 @@ export type GraphNodeType = keyof GraphNodeMap
 export type GraphNode = GraphNodeMap[GraphNodeType]
 export type GraphNodeByType<T extends GraphNodeType> = GraphNodeMap[T]
 
-export type Timestamp = number
 export type PermId = string
 export type Slug = string
 
@@ -26,10 +25,10 @@ export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
 
 type Maybe<T> = T | null | undefined
 
-export type OpBadgeType = 'Admin' | 'Editor'
+export type UserRoleType = 'Admin' | 'Editor'
 
-export type OpBadge = BaseGraphNode<'OpBadge'> & {
-  type: OpBadgeType
+export type UserRole = BaseGraphNode<'UserRole'> & {
+  type: UserRoleType
   descripton: string
 }
 

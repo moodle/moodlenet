@@ -39,6 +39,12 @@ export const getUploadedFile = (req: Request) =>
         return resolve(badReq(`post one file`))
       }
 
+      // FIXME: extract mimetype server side
+      // https://www.npmjs.com/package/file-type
+      // const FileType = require('file-type');
+      // const fileMime= await FileType.fromFile(file.path)
+      // >>>> fileMime : {ext: 'png', mime: 'image/png'}
+
       resolve([file, uploadType]) //({ ...file, hash: file.hash! })
     })
   })

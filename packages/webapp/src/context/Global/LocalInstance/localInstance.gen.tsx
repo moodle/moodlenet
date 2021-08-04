@@ -8,10 +8,10 @@ export type LocalInstanceQueryVariables = Types.Exact<{ [key: string]: never; }>
 
 export type LocalInstanceQuery = (
   { __typename: 'Query' }
-  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | (
+  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | (
     { __typename: 'Organization' }
     & Pick<Types.Organization, 'id' | 'name' | 'intro' | 'logo' | 'image' | 'color' | 'domain'>
-  ) | { __typename: 'Profile' } | { __typename: 'Resource' }> }
+  ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' }> }
 );
 
 

@@ -5,12 +5,15 @@ import { AqlGraphNodeByType } from '../types'
 
 export const createNodeQ = <Type extends GraphNodeType>({ node }: { node: GraphNodeByType<Type> }) => {
   const nodeType = node._type
-  const aqlNodeButBump = { ...omit(node, ['_permId']), _key: node._permId }
+  const aqlNode = {
+    _key: node._permId,
+    ...omit(node, ['_permId']),
+  }
 
   const q = aq<AqlGraphNodeByType<Type>>(`
-    let newnode =${aqlstr(aqlNodeButBump)}
+    let newnode = ${aqlstr(aqlNode)}
 
-    INSERT newnode into ${nodeType}
+    INSERT ${aqlstr(aqlNode)} into ${nodeType}
 
     return NEW
   `)
