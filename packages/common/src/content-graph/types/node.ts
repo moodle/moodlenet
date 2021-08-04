@@ -1,20 +1,17 @@
 import { AuthId } from '../../user-auth/types'
 
-export type GraphNodeType = 'Collection' | 'Iscedf' | 'OpBadge' | 'Organization' | 'Profile' | 'Resource'
-// export type GraphNodeType = GraphNode['_type']
-export type GraphNode = Collection | Iscedf | OpBadge | Organization | Profile | Resource
-export type GraphNodeByType<T extends GraphNodeType> = GraphNodeMap[T]
-// export type GraphNodeMap = {
-//   [type in GraphNodeType]:
-// }
 export type GraphNodeMap = {
   OpBadge: OpBadge
   Collection: Collection
-  Iscedf: Iscedf
+  IscedField: IscedField
   Organization: Organization
   Profile: Profile
   Resource: Resource
+  IscedGrade: IscedGrade
 }
+export type GraphNodeType = keyof GraphNodeMap
+export type GraphNode = GraphNodeMap[GraphNodeType]
+export type GraphNodeByType<T extends GraphNodeType> = GraphNodeMap[T]
 
 export type Timestamp = number
 export type PermId = string
@@ -24,14 +21,7 @@ export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _type: GNT
   _permId: PermId
   _slug: Slug
-  _bumpStatus: BumbNodeStatus
   name: string
-}
-
-export type NodeStatus = 'Active' | 'Deleted'
-export type BumbNodeStatus = {
-  date: Timestamp
-  status: NodeStatus
 }
 
 type Maybe<T> = T | null | undefined
@@ -48,12 +38,16 @@ export type Collection = BaseGraphNode<'Collection'> & {
   image: Maybe<AssetRef>
 }
 
-export type Iscedf = BaseGraphNode<'Iscedf'> & {
+export type IscedField = BaseGraphNode<'IscedField'> & {
   description: string
   codePath: Array<string>
   iscedCode: string
-  thumbnail: Maybe<AssetRef>
-  image: Maybe<AssetRef>
+}
+
+export type IscedGrade = BaseGraphNode<'IscedGrade'> & {
+  description: string
+  codePath: Array<string>
+  iscedCode: string
 }
 
 export type Organization = BaseGraphNode<'Organization'> & {

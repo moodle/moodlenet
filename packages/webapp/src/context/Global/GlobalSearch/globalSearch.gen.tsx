@@ -32,8 +32,11 @@ export type GlobalSearchEdgeFragment = (
     { __typename: 'Collection' }
     & Pick<Types.Collection, 'id' | 'name'>
   ) | (
-    { __typename: 'Iscedf' }
-    & Pick<Types.Iscedf, 'id' | 'name'>
+    { __typename: 'IscedField' }
+    & Pick<Types.IscedField, 'id' | 'name'>
+  ) | (
+    { __typename: 'IscedGrade' }
+    & Pick<Types.IscedGrade, 'id' | 'name'>
   ) | (
     { __typename: 'OpBadge' }
     & Pick<Types.OpBadge, 'id' | 'name'>

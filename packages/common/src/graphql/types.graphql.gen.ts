@@ -1,7 +1,6 @@
 import { ID } from './scalars.graphql';
 import { AssetRef } from './scalars.graphql';
 import { Cursor } from './scalars.graphql';
-import { DateTime } from './scalars.graphql';
 import { Empty } from './scalars.graphql';
 import { Never } from './scalars.graphql';
 export type Maybe<T> = T | null;
@@ -17,7 +16,7 @@ export type Scalars = {
   Float: number;
   AssetRef: AssetRef;
   Cursor: Cursor;
-  DateTime: DateTime;
+  DateTime: any;
   Empty: Empty;
   Never: Never;
 };
@@ -105,7 +104,8 @@ export type CreateEdgeMutationSuccess = {
 
 export type CreateNodeInput = {
   Collection?: Maybe<CreateCollectionInput>;
-  Iscedf?: Maybe<Scalars['Never']>;
+  IscedField?: Maybe<Scalars['Never']>;
+  IscedGrade?: Maybe<Scalars['Never']>;
   OpBadge?: Maybe<Scalars['Never']>;
   Organization?: Maybe<Scalars['Never']>;
   Profile?: Maybe<Scalars['Never']>;
@@ -218,7 +218,8 @@ export type EditCollectionInput = {
 
 export type EditNodeInput = {
   Collection?: Maybe<EditCollectionInput>;
-  Iscedf?: Maybe<Scalars['Never']>;
+  IscedField?: Maybe<Scalars['Never']>;
+  IscedGrade?: Maybe<Scalars['Never']>;
   OpBadge?: Maybe<Scalars['Never']>;
   Organization?: Maybe<Scalars['Never']>;
   Profile?: Maybe<EditProfileInput>;
@@ -309,8 +310,8 @@ export type INode_RelCountArgs = {
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
-export type Iscedf = INode & {
-  __typename: 'Iscedf';
+export type IscedField = INode & {
+  __typename: 'IscedField';
   name: Scalars['String'];
   description: Scalars['String'];
   codePath: Array<Scalars['String']>;
@@ -323,7 +324,7 @@ export type Iscedf = INode & {
 };
 
 
-export type Iscedf_RelArgs = {
+export type IscedField_RelArgs = {
   type: EdgeType;
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
@@ -331,7 +332,35 @@ export type Iscedf_RelArgs = {
 };
 
 
-export type Iscedf_RelCountArgs = {
+export type IscedField_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+};
+
+export type IscedGrade = INode & {
+  __typename: 'IscedGrade';
+  name: Scalars['String'];
+  description: Scalars['String'];
+  codePath: Array<Scalars['String']>;
+  iscedCode: Scalars['String'];
+  thumbnail?: Maybe<Scalars['AssetRef']>;
+  image?: Maybe<Scalars['AssetRef']>;
+  id: Scalars['ID'];
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+};
+
+
+export type IscedGrade_RelArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type IscedGrade_RelCountArgs = {
   type: EdgeType;
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
@@ -369,11 +398,12 @@ export type MutationSignUpArgs = {
 };
 
 
-export type Node = Collection | Iscedf | OpBadge | Organization | Profile | Resource;
+export type Node = Collection | IscedField | IscedGrade | OpBadge | Organization | Profile | Resource;
 
 export type NodeType =
   | 'Collection'
-  | 'Iscedf'
+  | 'IscedField'
+  | 'IscedGrade'
   | 'OpBadge'
   | 'Organization'
   | 'Profile'
@@ -526,7 +556,7 @@ export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
   edge: Contains | Created | Follows | HasOpBadge | Pinned;
-  node: Collection | Iscedf | OpBadge | Organization | Profile | Resource;
+  node: Collection | IscedField | IscedGrade | OpBadge | Organization | Profile | Resource;
 };
 
 export type Resource = INode & {
@@ -570,7 +600,7 @@ export type SearchPage = Page & {
 export type SearchPageEdge = PageEdge & {
   __typename: 'SearchPageEdge';
   cursor: Scalars['Cursor'];
-  node: Collection | Iscedf | OpBadge | Organization | Profile | Resource;
+  node: Collection | IscedField | IscedGrade | OpBadge | Organization | Profile | Resource;
 };
 
 export type SimpleResponse = {
@@ -658,7 +688,8 @@ export type UserSession = {
     ],
     "INode": [
       "Collection",
-      "Iscedf",
+      "IscedField",
+      "IscedGrade",
       "OpBadge",
       "Organization",
       "Profile",
@@ -666,7 +697,8 @@ export type UserSession = {
     ],
     "Node": [
       "Collection",
-      "Iscedf",
+      "IscedField",
+      "IscedGrade",
       "OpBadge",
       "Organization",
       "Profile",

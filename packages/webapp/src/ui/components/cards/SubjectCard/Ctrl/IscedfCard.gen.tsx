@@ -11,16 +11,16 @@ export type IscedfCardQueryVariables = Types.Exact<{
 export type IscedfCardQuery = (
   { __typename: 'Query' }
   & { node?: Types.Maybe<{ __typename: 'Collection' } | (
-    { __typename: 'Iscedf' }
-    & Pick<Types.Iscedf, 'name' | 'image' | 'id'>
-  ) | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' }> }
+    { __typename: 'IscedField' }
+    & Pick<Types.IscedField, 'name' | 'image' | 'id'>
+  ) | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' }> }
 );
 
 
 export const IscedfCardDocument = gql`
     query IscedfCard($id: ID!) {
   node(id: $id) {
-    ... on Iscedf {
+    ... on IscedField {
       name
       image
       id

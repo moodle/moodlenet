@@ -2,12 +2,11 @@ import {
   GraphNode,
   GraphNodeByType,
   GraphNodeType,
-  NodeStatus,
   Profile,
   Slug,
 } from '@moodlenet/common/lib/content-graph/types/node'
 import { newGlyphIdentifiers } from '@moodlenet/common/lib/utils/content-graph/slug-id'
-import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
+import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { SessionEnv } from '../../lib/auth/types'
 import { QMCommand, QMModule, QMQuery } from '../../lib/qmino'
 
@@ -31,7 +30,7 @@ export const getBySlug = QMQuery(
 
 // create
 export type CreateNodeAdapter = {
-  storeNode: <N extends GraphNode>(_: { node: DistOmit<N, '_bumpStatus'>; status: NodeStatus }) => Promise<N | null>
+  storeNode: <N extends GraphNode>(_: { node: N }) => Promise<N | null>
 }
 
 export type CreateProfile = {
@@ -52,7 +51,7 @@ export const createProfile = QMCommand(({ partProfile }: CreateProfile) => async
     siteUrl: undefined,
     ...partProfile,
   }
-  const result = await storeNode<Profile>({ node: profile, status: 'Active' })
+  const result = await storeNode<Profile>({ node: profile })
   if (!result) {
     return null
   }

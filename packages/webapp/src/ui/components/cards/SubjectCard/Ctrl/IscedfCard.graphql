@@ -1,6 +1,6 @@
 query IscedfCard($id: ID!) {
   node(id: $id) {
-    ... on Iscedf {
+    ... on IscedField {
       name
       image
       id

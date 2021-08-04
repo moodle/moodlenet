@@ -1,7 +1,4 @@
-import { AssetRef } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { nanoid } from 'nanoid'
-
-const _rndImgAssetRef = ([w, h]: [number, number], seed = nanoid(10)): AssetRef => ({
+const _rndImgAssetRef = ([w, h]: [number, number], seed = `${Math.random()}`) => ({
   ext: true,
   location: `https://picsum.photos/seed/${seed}/${w}/${h}`,
 })

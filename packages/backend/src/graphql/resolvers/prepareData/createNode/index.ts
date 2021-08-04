@@ -14,8 +14,8 @@
 //     qmino: QMino,
 //   ) => Promise<ShallowNodeByType<T> | CreateNodeMutationError>
 // } = {
-//   async Iscedf(/* input, qmino */) {
-//     throw new Error('GQL create Iscedf not implemented')
+//   async IscedField(/* input, qmino */) {
+//     throw new Error('GQL create IscedField not implemented')
 //   },
 //   async Organization(/* input, qmino */) {
 //     throw new Error('GQL create Organization not implemented')

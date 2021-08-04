@@ -2,7 +2,6 @@ import { GraphNodeType, Slug } from '@moodlenet/common/lib/content-graph/types/n
 import { aq } from '../../../../lib/helpers/arango/query'
 import { AqlGraphNodeByType } from '../types'
 import { documentBySlugType } from './helpers'
-
 export const getNodeBySlugQ = <Type extends GraphNodeType = GraphNodeType>({
   slug,
   type,

@@ -10,7 +10,7 @@ export type ProfilePageUserDataQueryVariables = Types.Exact<{
 
 export type ProfilePageUserDataQuery = (
   { __typename: 'Query' }
-  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | (
+  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | (
     { __typename: 'Profile' }
     & Pick<Types.Profile, 'id' | 'name' | 'avatar' | 'bio' | 'image' | 'firstName' | 'lastName' | 'siteUrl' | 'location'>
     & { followersCount: Types.Profile['_relCount'], collectionsCount: Types.Profile['_relCount'], resourcesCount: Types.Profile['_relCount'] }
@@ -21,13 +21,13 @@ export type ProfilePageUserDataQuery = (
         & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'image'>
-        ) | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ), resources: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'Iscedf' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'OpBadge' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, 'id' | 'name' | 'thumbnail'>
         ) }

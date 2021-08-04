@@ -131,11 +131,12 @@ export type ResolversTypes = {
   GlobalSearchSort: Types.GlobalSearchSort;
   HasOpBadge: ResolverTypeWrapper<Types.HasOpBadge>;
   IEdge: ResolversTypes['Contains'] | ResolversTypes['Created'] | ResolversTypes['Follows'] | ResolversTypes['HasOpBadge'] | ResolversTypes['Pinned'];
-  INode: ResolversTypes['Collection'] | ResolversTypes['Iscedf'] | ResolversTypes['OpBadge'] | ResolversTypes['Organization'] | ResolversTypes['Profile'] | ResolversTypes['Resource'];
-  Iscedf: ResolverTypeWrapper<Types.Iscedf>;
+  INode: ResolversTypes['Collection'] | ResolversTypes['IscedField'] | ResolversTypes['IscedGrade'] | ResolversTypes['OpBadge'] | ResolversTypes['Organization'] | ResolversTypes['Profile'] | ResolversTypes['Resource'];
+  IscedField: ResolverTypeWrapper<Types.IscedField>;
+  IscedGrade: ResolverTypeWrapper<Types.IscedGrade>;
   Mutation: ResolverTypeWrapper<RootValue>;
   Never: ResolverTypeWrapper<Types.Scalars['Never']>;
-  Node: ResolversTypes['Collection'] | ResolversTypes['Iscedf'] | ResolversTypes['OpBadge'] | ResolversTypes['Organization'] | ResolversTypes['Profile'] | ResolversTypes['Resource'];
+  Node: ResolversTypes['Collection'] | ResolversTypes['IscedField'] | ResolversTypes['IscedGrade'] | ResolversTypes['OpBadge'] | ResolversTypes['Organization'] | ResolversTypes['Profile'] | ResolversTypes['Resource'];
   NodeType: Types.NodeType;
   OpBadge: ResolverTypeWrapper<Types.OpBadge>;
   OpBadgeType: Types.OpBadgeType;
@@ -206,11 +207,12 @@ export type ResolversParentTypes = {
   Follows: Types.Follows;
   HasOpBadge: Types.HasOpBadge;
   IEdge: ResolversParentTypes['Contains'] | ResolversParentTypes['Created'] | ResolversParentTypes['Follows'] | ResolversParentTypes['HasOpBadge'] | ResolversParentTypes['Pinned'];
-  INode: ResolversParentTypes['Collection'] | ResolversParentTypes['Iscedf'] | ResolversParentTypes['OpBadge'] | ResolversParentTypes['Organization'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'];
-  Iscedf: Types.Iscedf;
+  INode: ResolversParentTypes['Collection'] | ResolversParentTypes['IscedField'] | ResolversParentTypes['IscedGrade'] | ResolversParentTypes['OpBadge'] | ResolversParentTypes['Organization'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'];
+  IscedField: Types.IscedField;
+  IscedGrade: Types.IscedGrade;
   Mutation: RootValue;
   Never: Types.Scalars['Never'];
-  Node: ResolversParentTypes['Collection'] | ResolversParentTypes['Iscedf'] | ResolversParentTypes['OpBadge'] | ResolversParentTypes['Organization'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'];
+  Node: ResolversParentTypes['Collection'] | ResolversParentTypes['IscedField'] | ResolversParentTypes['IscedGrade'] | ResolversParentTypes['OpBadge'] | ResolversParentTypes['Organization'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'];
   OpBadge: Types.OpBadge;
   Organization: Types.Organization;
   Page: ResolversParentTypes['RelPage'] | ResolversParentTypes['SearchPage'];
@@ -375,14 +377,14 @@ export type IEdgeResolvers<ContextType = Context, ParentType extends ResolversPa
 };
 
 export type INodeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['INode'] = ResolversParentTypes['INode']> = {
-  __resolveType?: TypeResolveFn<'Collection' | 'Iscedf' | 'OpBadge' | 'Organization' | 'Profile' | 'Resource', ParentType, ContextType>;
+  __resolveType?: TypeResolveFn<'Collection' | 'IscedField' | 'IscedGrade' | 'OpBadge' | 'Organization' | 'Profile' | 'Resource', ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.INode_RelArgs, 'type' | 'target'>>;
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.INode_RelCountArgs, 'type' | 'target'>>;
 };
 
-export type IscedfResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Iscedf'] = ResolversParentTypes['Iscedf']> = {
+export type IscedFieldResolvers<ContextType = Context, ParentType extends ResolversParentTypes['IscedField'] = ResolversParentTypes['IscedField']> = {
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   codePath?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
@@ -390,8 +392,21 @@ export type IscedfResolvers<ContextType = Context, ParentType extends ResolversP
   thumbnail?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   image?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.Iscedf_RelArgs, 'type' | 'target'>>;
-  _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.Iscedf_RelCountArgs, 'type' | 'target'>>;
+  _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.IscedField_RelArgs, 'type' | 'target'>>;
+  _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.IscedField_RelCountArgs, 'type' | 'target'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type IscedGradeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['IscedGrade'] = ResolversParentTypes['IscedGrade']> = {
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  codePath?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
+  iscedCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  thumbnail?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
+  image?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.IscedGrade_RelArgs, 'type' | 'target'>>;
+  _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.IscedGrade_RelCountArgs, 'type' | 'target'>>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -407,7 +422,7 @@ export interface NeverScalarConfig extends GraphQLScalarTypeConfig<ResolversType
 }
 
 export type NodeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = {
-  __resolveType?: TypeResolveFn<'Collection' | 'Iscedf' | 'OpBadge' | 'Organization' | 'Profile' | 'Resource', ParentType, ContextType>;
+  __resolveType?: TypeResolveFn<'Collection' | 'IscedField' | 'IscedGrade' | 'OpBadge' | 'Organization' | 'Profile' | 'Resource', ParentType, ContextType>;
 };
 
 export type OpBadgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['OpBadge'] = ResolversParentTypes['OpBadge']> = {
@@ -573,7 +588,8 @@ export type Resolvers<ContextType = Context> = {
   HasOpBadge?: HasOpBadgeResolvers<ContextType>;
   IEdge?: IEdgeResolvers<ContextType>;
   INode?: INodeResolvers<ContextType>;
-  Iscedf?: IscedfResolvers<ContextType>;
+  IscedField?: IscedFieldResolvers<ContextType>;
+  IscedGrade?: IscedGradeResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Never?: GraphQLScalarType;
   Node?: NodeResolvers<ContextType>;
