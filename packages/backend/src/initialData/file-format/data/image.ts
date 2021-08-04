@@ -74,6 +74,4 @@ export default [
   { name: 'vnd.xiff', mimetype: 'image/vnd.xiff' },
   { name: 'vnd.zbrush.pcx', mimetype: 'image/vnd.zbrush.pcx' },
   { name: 'wmf', mimetype: 'image/wmf' },
-  { name: 'x-emf - DEPRECATED in favor of image/emf', mimetype: 'image/emf' },
-  { name: 'x-wmf - DEPRECATED in favor of image/wmf', mimetype: 'image/wmf' },
 ]

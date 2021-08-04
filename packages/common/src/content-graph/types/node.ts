@@ -7,15 +7,23 @@ export type GraphNodeMap = {
   Profile: Profile
   Resource: Resource
   IscedGrade: IscedGrade
+  ResourceType: ResourceType
+  FileFormat: FileFormat
+  License: License
+  Language: Language
 }
 export type GraphNodeType = keyof GraphNodeMap
 export const nodeTypes: GraphNodeType[] = [
+  'Language',
+  'License',
   'Profile',
   'Collection',
   'Resource',
   'IscedField',
   'Organization',
   'IscedGrade',
+  'ResourceType',
+  'FileFormat',
 ]
 export type GraphNode = GraphNodeMap[GraphNodeType]
 export type GraphNodeByType<T extends GraphNodeType> = GraphNodeMap[T]
@@ -28,23 +36,43 @@ export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _permId: PermId
   _slug: Slug
   name: string
+  description: string
 }
 
 type Maybe<T> = T | null | undefined
 
 export type Collection = BaseGraphNode<'Collection'> & {
-  description: string
   image: Maybe<AssetRef>
 }
 
+export type ResourceType = BaseGraphNode<'ResourceType'> & {}
+
+export type FileFormatType =
+  | 'application'
+  | 'audio'
+  | 'font'
+  | 'image'
+  | 'message'
+  | 'model'
+  | 'multipart'
+  | 'text'
+  | 'video'
+export type FileFormat = BaseGraphNode<'FileFormat'> & {
+  code: string
+  type: FileFormatType
+  subtype: string
+}
+
+export type License = BaseGraphNode<'License'> & {
+  code: string
+}
+
 export type IscedField = BaseGraphNode<'IscedField'> & {
-  description: string
   codePath: Array<string>
   code: string
 }
 
 export type IscedGrade = BaseGraphNode<'IscedGrade'> & {
-  description: string
   codePath: Array<string>
   code: string
 }
@@ -75,8 +103,16 @@ export type AssetRef = {
 }
 
 export type Resource = BaseGraphNode<'Resource'> & {
-  description: string
   thumbnail: Maybe<AssetRef>
   content: AssetRef
   kind: ResourceKind
+}
+
+export type Language = BaseGraphNode<'Language'> & {
+  part2b: string | null
+  part2t: string | null
+  part1: string | null
+  scope: string
+  langType: string
+  name: string
 }

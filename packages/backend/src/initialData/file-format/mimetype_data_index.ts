@@ -1,3 +1,4 @@
+import { FileFormatType } from '@moodlenet/common/lib/content-graph/types/node'
 import application from './data/application'
 import audio from './data/audio'
 import font from './data/font'
@@ -9,7 +10,7 @@ import text from './data/text'
 import video from './data/video'
 
 // https://www.iana.org/assignments/media-types/media-types.xhtml
-export const mimetypes = {
+export const mimetypesMap: { [t in FileFormatType]: { name: string; mimetype: string }[] } = {
   application,
   audio,
   font,

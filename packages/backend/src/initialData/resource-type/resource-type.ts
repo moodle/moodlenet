@@ -1,24 +1,15 @@
-type Basic_Type = { code: string; desc: string }
+import { ResourceType } from '@moodlenet/common/lib/content-graph/types/node'
+import { slugify } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import resourceTypesData from './resource-type-DATA'
 
-export default types()
-function types(): Basic_Type[] {
-  return [
-    { code: 'assessment', desc: 'assessment / self-assessment / exercise' },
-    { code: 'graph', desc: 'diagram / graph / concept map' },
-    { code: 'guides', desc: 'guides / tutorials' },
-    { code: 'narrative-text', desc: 'narrative text' },
-    { code: 'problem-statement', desc: 'problem statement' },
-    { code: 'experiment', desc: 'experiment' },
-    { code: 'figure', desc: 'figure' },
-    { code: 'game', desc: 'game' },
-    { code: 'index', desc: 'index' },
-    { code: 'lecture', desc: 'lecture' },
-    { code: 'map', desc: 'map' },
-    { code: 'questionnaire', desc: 'questionnaire' },
-    { code: 'references', desc: 'references' },
-    { code: 'reports', desc: 'reports' },
-    { code: 'simulation', desc: 'simulation' },
-    { code: 'slide', desc: 'slide' },
-    { code: 'table', desc: 'table' },
-  ]
-}
+export const getResourceTypes = () =>
+  resourceTypesData.map(resourceTypeData => {
+    const resourceType: ResourceType = {
+      _type: 'ResourceType',
+      _permId: resourceTypeData.code,
+      _slug: slugify({ str: resourceTypeData.desc }),
+      name: resourceTypeData.desc,
+      description: resourceTypeData.desc,
+    }
+    return resourceType
+  })

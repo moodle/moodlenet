@@ -3,64 +3,93 @@ import { nodeTypes } from '@moodlenet/common/lib/content-graph/types/node'
 import { Database } from 'arangojs'
 
 export const createDBCollections = async ({ db }: { db: Database }) => {
-  await nodeTypes.map(async nodeCollName => {
-    console.log(`creating node collection ${nodeCollName}`)
-    const collection = await db.createCollection(nodeCollName)
-    collection.ensureIndex({
-      type: 'persistent',
-      unique: true,
-      name: '_slug',
-      fields: ['_slug'],
-    })
-
-    if (nodeCollName === 'Profile') {
-      collection.ensureIndex({
+  console.log(`creating node collections`)
+  await Promise.all(
+    nodeTypes.map(async nodeCollName => {
+      console.log(`creating node collection ${nodeCollName}`)
+      const collection = await db.createCollection(nodeCollName)
+      await collection.ensureIndex({
         type: 'persistent',
         unique: true,
-        name: '_authId',
-        fields: ['_authId'],
+        name: 'slug',
+        fields: ['_slug'],
       })
-    }
 
-    if (nodeCollName === 'IscedField' || nodeCollName === 'IscedGrade') {
-      collection.ensureIndex({
+      if (nodeCollName === 'Profile') {
+        await collection.ensureIndex({
+          type: 'persistent',
+          unique: true,
+          name: 'authId',
+          fields: ['_authId'],
+        })
+      }
+
+      if (nodeCollName === 'Language') {
+        await collection.ensureIndex({
+          type: 'persistent',
+          unique: true,
+          name: 'name',
+          fields: ['name'],
+        })
+        await collection.ensureIndex({
+          type: 'persistent',
+          unique: true,
+          name: 'part1',
+          sparse: true,
+          fields: ['part1'],
+        })
+      }
+
+      if (
+        nodeCollName === 'IscedField' ||
+        nodeCollName === 'IscedGrade' ||
+        nodeCollName === 'FileFormat' ||
+        nodeCollName === 'ResourceType'
+      ) {
+        await collection.ensureIndex({
+          type: 'persistent',
+          unique: true,
+          name: 'code',
+          fields: ['code'],
+        })
+
+        if (nodeCollName === 'IscedField' || nodeCollName === 'IscedGrade') {
+          await collection.ensureIndex({
+            type: 'persistent',
+            name: 'codePath',
+            fields: ['codePath[*]'],
+          })
+        }
+      }
+
+      return collection
+    }),
+  )
+  console.log(`creating edge collections`)
+  await Promise.all(
+    edgeTypes.map(async edgeCollName => {
+      console.log(`creating edge collection ${edgeCollName}`)
+      const edgeCollection = await db.createEdgeCollection(edgeCollName)
+
+      await edgeCollection.ensureIndex({
         type: 'persistent',
-        unique: true,
-        name: 'code',
-        fields: ['code'],
+        name: 'fromType',
+        fields: ['_fromType'],
       })
-      collection.ensureIndex({
+
+      await edgeCollection.ensureIndex({
         type: 'persistent',
-        unique: true,
-        name: 'codePath',
-        fields: ['codePath[*]'],
+        name: 'toType',
+        fields: ['_toType'],
       })
-    }
 
-    return collection
-  })
-  await edgeTypes.map(async edgeCollName => {
-    console.log(`creating edge collection ${edgeCollName}`)
-    const edgeCollection = await db.createEdgeCollection(edgeCollName)
+      await edgeCollection.ensureIndex({
+        type: 'persistent',
+        name: 'formToType',
+        fields: ['_toType', '_fromType'],
+      })
 
-    edgeCollection.ensureIndex({
-      type: 'persistent',
-      name: '_fromType',
-      fields: ['_fromType'],
-    })
-
-    edgeCollection.ensureIndex({
-      type: 'persistent',
-      name: '_toType',
-      fields: ['_toType'],
-    })
-
-    edgeCollection.ensureIndex({
-      type: 'persistent',
-      name: '_formToType',
-      fields: ['_toType', '_fromType'],
-    })
-
-    return edgeCollection
-  })
+      return edgeCollection
+    }),
+  )
 }

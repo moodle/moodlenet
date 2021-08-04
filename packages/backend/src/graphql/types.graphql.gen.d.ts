@@ -365,6 +365,7 @@ export type INodeResolvers<ContextType = Context, ParentType extends ResolversPa
   __resolveType?: TypeResolveFn<'Collection' | 'IscedField' | 'IscedGrade' | 'Organization' | 'Profile' | 'Resource', ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.INode_RelArgs, 'type' | 'target'>>;
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.INode_RelCountArgs, 'type' | 'target'>>;
 };
@@ -412,6 +413,7 @@ export type NodeResolvers<ContextType = Context, ParentType extends ResolversPar
 
 export type OrganizationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = {
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   logo?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   image?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
@@ -450,6 +452,7 @@ export type PinnedResolvers<ContextType = Context, ParentType extends ResolversP
 
 export type ProfileResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Profile'] = ResolversParentTypes['Profile']> = {
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   avatar?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   bio?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   image?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
@@ -485,7 +488,6 @@ export type RelPageEdgeResolvers<ContextType = Context, ParentType extends Resol
 export type ResourceResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Resource'] = ResolversParentTypes['Resource']> = {
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  image?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   thumbnail?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['AssetRef'], ParentType, ContextType>;
   kind?: Resolver<ResolversTypes['ResourceKind'], ParentType, ContextType>;

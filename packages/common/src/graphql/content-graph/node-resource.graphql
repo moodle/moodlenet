@@ -1,7 +1,6 @@
 type Resource implements INode {
   name: String!
   description: String!
-  image: AssetRef
   thumbnail: AssetRef
   content: AssetRef!
   kind: ResourceKind!

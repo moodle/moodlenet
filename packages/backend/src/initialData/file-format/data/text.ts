@@ -8,7 +8,6 @@ export default [
   { name: 'css', mimetype: 'text/css' },
   { name: 'csv', mimetype: 'text/csv' },
   { name: 'csv-schema', mimetype: 'text/csv-schema' },
-  { name: 'directory - DEPRECATED by RFC6350', mimetype: 'text/directory' },
   { name: 'dns', mimetype: 'text/dns' },
   { name: 'ecmascript - OBSOLETED in favor of application/ecmascript', mimetype: 'text/ecmascript' },
   { name: 'encaprtp', mimetype: 'text/encaprtp' },

@@ -18,6 +18,7 @@ export const graphNode2GqlNode = (node: GraphNode): Node => {
   const base = {
     id,
     name: node.name,
+    description: node.description,
     ...({} as Pick<Node, '_rel' | '_relCount'>),
   }
   switch (node._type) {
@@ -31,19 +32,19 @@ export const graphNode2GqlNode = (node: GraphNode): Node => {
       return {
         __typename: 'Collection',
         ...base,
-        ...pick(node, ['description', 'image', 'name']),
+        ...pick(node, ['image', 'name']),
       }
     case 'IscedField':
       return {
         __typename: 'IscedField',
         ...base,
-        ...pick(node, ['codePath', 'description', 'code']),
+        ...pick(node, ['codePath', 'code']),
       }
     case 'IscedGrade':
       return {
         __typename: 'IscedGrade',
         ...base,
-        ...pick(node, ['codePath', 'description', 'code']),
+        ...pick(node, ['codePath', 'code']),
       }
     case 'Organization':
       return {
@@ -70,6 +71,7 @@ export const gqlNode2GraphNode = (node: Node): Omit<GraphNode, '_permId' | '_sta
   const base = {
     _slug,
     name: node.name,
+    description: node.description,
   }
 
   switch (node.__typename) {
@@ -77,37 +79,37 @@ export const gqlNode2GraphNode = (node: Node): Omit<GraphNode, '_permId' | '_sta
       return {
         _type: 'Profile',
         ...base,
-        ...pick(node, ['bio', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl']),
+        ...pick(node, ['bio', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl', 'description']),
       }
     case 'Collection':
       return {
         _type: 'Collection',
         ...base,
-        ...pick(node, ['description', 'image', 'name']),
+        ...pick(node, ['image', 'name']),
       }
     case 'IscedField':
       return {
         _type: 'IscedField',
         ...base,
-        ...pick(node, ['codePath', 'description', 'image', 'code', 'thumbnail']),
+        ...pick(node, ['codePath', 'image', 'code', 'thumbnail']),
       }
     case 'IscedGrade':
       return {
         _type: 'IscedGrade',
         ...base,
-        ...pick(node, ['codePath', 'description', 'image', 'code', 'thumbnail']),
+        ...pick(node, ['codePath', 'image', 'code', 'thumbnail']),
       }
     case 'Organization':
       return {
         _type: 'Organization',
         ...base,
-        ...pick(node, ['color', 'domain', 'logo', 'intro']),
+        ...pick(node, ['color', 'domain', 'logo', 'intro', 'description']),
       }
     case 'Resource':
       return {
         _type: 'Resource',
         ...base,
-        ...pick(node, ['content', 'image', 'kind', 'description', 'thumbnail']),
+        ...pick(node, ['content', 'kind', 'thumbnail']),
       }
     default:
       throw new Error(`graphNode2GqlNode: can't map unknown node type '${(node as any)?._type}'`)

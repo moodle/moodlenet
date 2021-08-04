@@ -281,6 +281,7 @@ export type IEdge = {
 export type INode = {
   id: Scalars['ID'];
   name: Scalars['String'];
+  description: Scalars['String'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -401,6 +402,7 @@ export type NodeType =
 export type Organization = INode & {
   __typename: 'Organization';
   name: Scalars['String'];
+  description: Scalars['String'];
   intro: Scalars['String'];
   logo?: Maybe<Scalars['AssetRef']>;
   image?: Maybe<Scalars['AssetRef']>;
@@ -459,6 +461,7 @@ export type Pinned = IEdge & {
 export type Profile = INode & {
   __typename: 'Profile';
   name: Scalars['String'];
+  description: Scalars['String'];
   avatar?: Maybe<Scalars['AssetRef']>;
   bio: Scalars['String'];
   image?: Maybe<Scalars['AssetRef']>;
@@ -523,7 +526,6 @@ export type Resource = INode & {
   __typename: 'Resource';
   name: Scalars['String'];
   description: Scalars['String'];
-  image?: Maybe<Scalars['AssetRef']>;
   thumbnail?: Maybe<Scalars['AssetRef']>;
   content: Scalars['AssetRef'];
   kind: ResourceKind;
