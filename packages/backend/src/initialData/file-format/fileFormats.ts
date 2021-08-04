@@ -1,0 +1,24 @@
+import { FileFormat, FileFormatType } from '@moodlenet/common/lib/content-graph/types/node'
+import { slugify } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { mimetypesMap } from './mimetype_data_index'
+
+export const getFileFormats = () =>
+  Object.entries(mimetypesMap).reduce<FileFormat[]>((_formats, [type, mimetypesData]) => {
+    const more = mimetypesData.map(mimetypeData => {
+      const [, subtype] = mimetypeData.mimetype.split(`/`)
+      const cleanMime = slugify({ str: mimetypeData.mimetype.replace(/\+$/g, '-plus').replace(/\+/g, '-plus-') })
+      const fileFormat: FileFormat = {
+        _type: 'FileFormat',
+        _permId: cleanMime,
+        _slug: cleanMime,
+        name: mimetypeData.name,
+        code: mimetypeData.mimetype,
+        description: `${mimetypeData.name} : ${mimetypeData.mimetype}`,
+        type: type as FileFormatType,
+        subtype: subtype!,
+      }
+      return fileFormat
+    })
+
+    return [..._formats, ...more]
+  }, [])

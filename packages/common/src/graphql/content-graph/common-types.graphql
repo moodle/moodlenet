@@ -16,6 +16,7 @@ input AssetRefInput {
 interface INode {
   id: ID!
   name: String!
+  description: String!
   _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput): RelPage!
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }

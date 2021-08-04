@@ -1,16 +1,17 @@
-type Basic_License = { code: string; desc: string }
+import { License } from '@moodlenet/common/lib/content-graph/types/node'
+import { contentSlug } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import licensesData from './licenses-DATA'
 
-export default _licenses()
-function _licenses(): Basic_License[] {
-  return [
-    { code: 'cc-0', desc: 'Public domain' },
-    { code: 'cc-by', desc: 'Attribution' },
-    { code: 'cc-by-sa', desc: 'Attribution-ShareAlike' },
-    { code: 'cc-by-nc', desc: 'Attribution-NonCommercial' },
-    { code: 'cc-by-nc-sa', desc: 'Attribution-NonCommercial-ShareAlike' },
-    { code: 'cc-by-nd', desc: 'Attribution-NonCommercial' },
-    { code: 'cc-by-nc-nd', desc: 'Attribution-NonCommercial-NoDerivatives' },
-    { code: 'other-open', desc: 'Other open license' },
-    { code: 'restricted-copyright', desc: 'Restricted / copyrighted' },
-  ]
-}
+export const getLicenses = () =>
+  licensesData.map(licenseData => {
+    const license: License = {
+      _type: 'License',
+      _permId: licenseData.code,
+      _slug: contentSlug({ name: licenseData.desc, slugCode: licenseData.code }),
+      name: licenseData.desc,
+      code: licenseData.code,
+      description: licenseData.desc,
+    }
+
+    return license
+  })

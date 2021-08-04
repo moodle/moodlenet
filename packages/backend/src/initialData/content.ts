@@ -6,10 +6,10 @@ import { nanoid } from 'nanoid'
 export const localOrganizationData: Omit<Organization, 'domain'> = {
   _permId: 'local',
   name: 'MoodleNet',
-  // shortIntro: 'Our global network to share and curate open educational resources',
   intro: `Join our social network to share and curate open educational resources with educators world-wide.
 Integrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.
 Build your profile as an educator.`,
+  description: `Our global network to share and curate open educational resources.`,
   color: '#f98109',
   _slug: '--local--',
   _type: 'Organization',
@@ -24,6 +24,7 @@ export const rootUserProfile: Profile = {
   _type: 'Profile',
   avatar: null,
   bio: '',
+  description: '',
   name: 'ROOT',
   firstName: null,
   image: null,

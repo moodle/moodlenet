@@ -1,5 +1,6 @@
 type Profile implements INode {
   name: String!
+  description: String!
   avatar: AssetRef
   bio: String!
   image: AssetRef
