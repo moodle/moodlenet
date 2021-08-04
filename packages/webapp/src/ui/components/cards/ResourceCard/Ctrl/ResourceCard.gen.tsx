@@ -20,10 +20,10 @@ export type ResourceCardQuery = (
         & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name'>
-        ) | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
+        ) | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ) }
-  ) | { __typename: 'UserRole' }> }
+  )> }
 );
 
 
@@ -39,7 +39,7 @@ export const ResourceCardDocument = gql`
       description
       image
       inCollections: _rel(
-        type: Contains
+        type: Features
         target: Collection
         inverse: true
         page: {first: 3}

@@ -1,7 +1,6 @@
 import { AuthId } from '../../user-auth/types'
 
 export type GraphNodeMap = {
-  UserRole: UserRole
   Collection: Collection
   IscedField: IscedField
   Organization: Organization
@@ -10,6 +9,14 @@ export type GraphNodeMap = {
   IscedGrade: IscedGrade
 }
 export type GraphNodeType = keyof GraphNodeMap
+export const nodeTypes: GraphNodeType[] = [
+  'Profile',
+  'Collection',
+  'Resource',
+  'IscedField',
+  'Organization',
+  'IscedGrade',
+]
 export type GraphNode = GraphNodeMap[GraphNodeType]
 export type GraphNodeByType<T extends GraphNodeType> = GraphNodeMap[T]
 
@@ -25,13 +32,6 @@ export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
 
 type Maybe<T> = T | null | undefined
 
-export type UserRoleType = 'Admin' | 'Editor'
-
-export type UserRole = BaseGraphNode<'UserRole'> & {
-  type: UserRoleType
-  descripton: string
-}
-
 export type Collection = BaseGraphNode<'Collection'> & {
   description: string
   image: Maybe<AssetRef>
@@ -40,13 +40,13 @@ export type Collection = BaseGraphNode<'Collection'> & {
 export type IscedField = BaseGraphNode<'IscedField'> & {
   description: string
   codePath: Array<string>
-  iscedCode: string
+  code: string
 }
 
 export type IscedGrade = BaseGraphNode<'IscedGrade'> & {
   description: string
   codePath: Array<string>
-  iscedCode: string
+  code: string
 }
 
 export type Organization = BaseGraphNode<'Organization'> & {
@@ -71,7 +71,9 @@ export type ResourceKind = 'Upload' | 'Link'
 export type AssetRef = {
   ext: boolean
   location: string
+  mimetype: string
 }
+
 export type Resource = BaseGraphNode<'Resource'> & {
   description: string
   thumbnail: Maybe<AssetRef>

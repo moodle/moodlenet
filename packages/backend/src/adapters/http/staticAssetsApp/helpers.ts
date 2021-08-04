@@ -1,5 +1,6 @@
 import { isUploadType, UploadType } from '@moodlenet/common/lib/staticAsset/lib'
 import { Request } from 'express'
+import { fromFile } from 'file-type'
 import Formidable, { File } from 'formidable'
 
 export type RespError = [errCode: number, msg: any, _: typeof _RespError]
@@ -8,10 +9,10 @@ export const respError = (errCode: number, msg: any): RespError => [errCode, msg
 export const isRespError = (_: any): _ is RespError => Array.isArray(_) && _.length === 3 && _[2] === _RespError
 
 // type FileWithHash = File & { hash: string }
-type GetUploadFileResp = RespError | [File, UploadType] //WithHash
+type GetUploadFileResp = RespError | [File & { mimetype: string; ext: string }, UploadType] //WithHash
 export const getUploadedFile = (req: Request) =>
   new Promise<GetUploadFileResp>(resolve => {
-    new Formidable({ multiples: false /* , hash: 'md5' */ }).parse(req, (err, fields, files) => {
+    new Formidable({ multiples: false /* , hash: 'md5' */ }).parse(req, async (err, fields, files) => {
       if (err) {
         return resolve(respError(400, `cannot accept files: ${String(err)}`))
       }
@@ -39,12 +40,13 @@ export const getUploadedFile = (req: Request) =>
         return resolve(badReq(`post one file`))
       }
 
-      // FIXME: extract mimetype server side
-      // https://www.npmjs.com/package/file-type
-      // const FileType = require('file-type');
-      // const fileMime= await FileType.fromFile(file.path)
-      // >>>> fileMime : {ext: 'png', mime: 'image/png'}
+      const fileMeta = await fromFile(file.path)
+      if (!fileMeta) {
+        return resolve(badReq(`cannot detect file mimetype`))
+      }
 
-      resolve([file, uploadType]) //({ ...file, hash: file.hash! })
+      const fileWithMeta = { ...file, mimetype: fileMeta.mime, ext: fileMeta.ext }
+
+      resolve([fileWithMeta, uploadType]) //({ ...file, hash: file.hash! })
     })
   })

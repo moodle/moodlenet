@@ -1,8 +1,7 @@
-import { GraphQLScalarType } from 'graphql'
-
 export type AssetRef = {
   ext: boolean
   location: string
+  mimetype: string | null
 }
 
 export type Timestamp = number
@@ -19,19 +18,3 @@ export const getScalarsGql = (root: string) => ({
   Cursor: `${root}/scalars.graphql#Cursor`,
   Never: `${root}/scalars.graphql#Never`,
 })
-
-export const IDScalarType = new GraphQLScalarType({
-  name: 'ID',
-  serialize: String,
-  // parseValue: v => v, // idTypes.checkIDIsValidOrError(v),
-  // parseLiteral: vnode => (vnode.kind === 'StringValue' ? idTypes.checkIDIsValidOrError(vnode.value) : null),
-})
-
-// const AssetRefScalarType = new GraphQLScalarType({
-//   name: 'AssetRef',
-//   serialize: JSON.stringify,
-//   parseValue: v => {
-//     console.log('--', v)
-//     return v
-//   },
-// })

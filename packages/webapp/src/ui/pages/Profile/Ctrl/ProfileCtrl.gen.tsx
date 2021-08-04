@@ -21,7 +21,7 @@ export type ProfilePageUserDataQuery = (
         & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'image'>
-        ) | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
+        ) | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
       )> }
     ), resources: (
       { __typename: 'RelPage' }
@@ -30,10 +30,10 @@ export type ProfilePageUserDataQuery = (
         & { node: { __typename: 'Collection' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, 'id' | 'name' | 'thumbnail'>
-        ) | { __typename: 'UserRole' } }
+        ) }
       )> }
     ) }
-  ) | { __typename: 'Resource' } | { __typename: 'UserRole' }> }
+  ) | { __typename: 'Resource' }> }
 );
 
 

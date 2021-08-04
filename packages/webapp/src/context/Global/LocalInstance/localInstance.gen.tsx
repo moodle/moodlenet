@@ -11,7 +11,7 @@ export type LocalInstanceQuery = (
   & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | (
     { __typename: 'Organization' }
     & Pick<Types.Organization, 'id' | 'name' | 'intro' | 'logo' | 'image' | 'color' | 'domain'>
-  ) | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' }> }
+  ) | { __typename: 'Profile' } | { __typename: 'Resource' }> }
 );
 
 

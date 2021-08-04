@@ -7,7 +7,7 @@ export const createIscedFields = async ({ db }: { db: Database }) => {
   const iscedFields = getIscedFields()
   await Promise.all(
     iscedFields.map(async iscedField_data => {
-      console.log(`creating IscedField ${iscedField_data.name} ${iscedField_data.iscedCode}`)
+      console.log(`creating IscedField ${iscedField_data.name} ${iscedField_data.code}`)
       await justExecute(createNodeQ({ node: iscedField_data }), db)
     }),
   )

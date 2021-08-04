@@ -2,6 +2,7 @@ import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/typ
 import { MNStaticEnv } from '../../../../../../lib/types'
 import { createDBCollections } from './0.0.1/createDBCollections'
 import { createIscedFields } from './0.0.1/createIscedFields'
+import { createIscedGrades } from './0.0.1/createIscedGrades'
 import { createLocalOrg } from './0.0.1/createLocalOrg'
 import { createRootUserProfile } from './0.0.1/createRootUserProfile'
 import { setupSearchView } from './0.0.1/setupSearchView'
@@ -13,6 +14,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
     await createLocalOrg({ db, domain })
     await createIscedFields({ db })
     await setupSearchView({ db })
+    await createIscedGrades({ db })
   },
 }
 
