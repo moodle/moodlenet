@@ -46,9 +46,6 @@ export type GlobalSearchEdgeFragment = (
   ) | (
     { __typename: 'Resource' }
     & Pick<Types.Resource, 'id' | 'name'>
-  ) | (
-    { __typename: 'UserRole' }
-    & Pick<Types.UserRole, 'id' | 'name'>
   ) }
 );
 

@@ -11,7 +11,7 @@ export const getIscedFields = () =>
       _slug: contentSlug({ name: field.desc, slugCode: field.code }),
       name: field.desc,
       codePath: getIscedFieldPathByCode(field.code)!,
-      iscedCode: field.code,
+      code: field.code,
       description: field.desc,
     }
     return iscedfield

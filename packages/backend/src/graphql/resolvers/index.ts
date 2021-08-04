@@ -1,4 +1,3 @@
-import { IDScalarType } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import * as GQLTypes from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import {
   GlobalSearchNodeType,
@@ -33,9 +32,6 @@ export const getGQLResolvers = ({
   qmino: QMino
 }): GQLResolvers.Resolvers => {
   return {
-    //@ ts-expect-error : Scalar ID is not present in Resolvers
-    //@ts-ignore: Scalar ID is not present in Resolvers
-    ID: IDScalarType,
     Query: {
       async node(_root, { id }, ctx /*,_info */) {
         console.log({ id })

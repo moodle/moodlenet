@@ -11,7 +11,7 @@ export const getIscedGrades = () =>
       _slug: contentSlug({ name: grade.desc, slugCode: grade.code }),
       name: grade.desc,
       codePath: getIscedGradePathByCode(grade.code)!,
-      iscedCode: grade.code,
+      code: grade.code,
       description: grade.desc,
     }
     return iscedGrade

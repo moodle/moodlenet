@@ -10,7 +10,6 @@ const inputObjectStaticValidators: {
   IscedGrade: object<any /* Just<CreateNodeInput['IscedField']> */>().required(),
   Collection: object<any /* Just<CreateNodeInput['Collection']> */>().required(),
   Resource: object<any /* Just<CreateNodeInput['Resource']> */>().required(),
-  UserRole: neverCreate('UserRole'),
   Profile: neverCreate('Profile'),
   Organization: neverCreate('Organization'),
 }

@@ -29,7 +29,7 @@ export const createStaticAssetsApp = ({ qmino }: Config) => {
     const uploadReadStream = createReadStream(file.path)
     const tempFileDesc: TempFileDesc = {
       name: file.name,
-      mimetype: file.type,
+      mimetype: file.mimetype,
       size: file.size,
       lastModifiedDate: file.lastModifiedDate,
       uploadType,

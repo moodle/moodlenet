@@ -37,19 +37,13 @@ export const graphNode2GqlNode = (node: GraphNode): Node => {
       return {
         __typename: 'IscedField',
         ...base,
-        ...pick(node, ['codePath', 'description', 'iscedCode']),
+        ...pick(node, ['codePath', 'description', 'code']),
       }
     case 'IscedGrade':
       return {
         __typename: 'IscedGrade',
         ...base,
-        ...pick(node, ['codePath', 'description', 'iscedCode']),
-      }
-    case 'UserRole':
-      return {
-        __typename: 'UserRole',
-        ...base,
-        ...pick(node, ['descripton', 'type', 'name']),
+        ...pick(node, ['codePath', 'description', 'code']),
       }
     case 'Organization':
       return {
@@ -95,19 +89,13 @@ export const gqlNode2GraphNode = (node: Node): Omit<GraphNode, '_permId' | '_sta
       return {
         _type: 'IscedField',
         ...base,
-        ...pick(node, ['codePath', 'description', 'image', 'iscedCode', 'thumbnail']),
+        ...pick(node, ['codePath', 'description', 'image', 'code', 'thumbnail']),
       }
     case 'IscedGrade':
       return {
         _type: 'IscedGrade',
         ...base,
-        ...pick(node, ['codePath', 'description', 'image', 'iscedCode', 'thumbnail']),
-      }
-    case 'UserRole':
-      return {
-        _type: 'UserRole',
-        ...base,
-        ...pick(node, ['descripton', 'type']),
+        ...pick(node, ['codePath', 'description', 'image', 'code', 'thumbnail']),
       }
     case 'Organization':
       return {
@@ -135,9 +123,19 @@ export const graphEdge2GqlEdge = (edge: GraphEdge): Edge => {
         __typename: 'Created',
         ...base,
       }
-    case 'HasUserRole':
+    case 'Features':
       return {
-        __typename: 'HasUserRole',
+        __typename: 'Features',
+        ...base,
+      }
+    case 'Follows':
+      return {
+        __typename: 'Follows',
+        ...base,
+      }
+    case 'Pinned':
+      return {
+        __typename: 'Pinned',
         ...base,
       }
     default:
@@ -157,9 +155,19 @@ export const gqlEdge2GraphEdge = (edge: Edge): GraphEdge => {
         _type: 'Created',
         ...base,
       }
-    case 'HasUserRole':
+    case 'Features':
       return {
-        _type: 'HasUserRole',
+        _type: 'Features',
+        ...base,
+      }
+    case 'Follows':
+      return {
+        _type: 'Follows',
+        ...base,
+      }
+    case 'Pinned':
+      return {
+        _type: 'Pinned',
         ...base,
       }
     default:
@@ -180,7 +188,7 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
         case 'TmpUpload':
           return { tempAssetId: input.location, uploadType }
         case 'ExternalUrl':
-          return { ext: true, location: input.location }
+          return { ext: true, location: input.location, mimetype: null }
         case 'NoAsset':
           return null
         case 'NoChange':
@@ -209,10 +217,11 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
         return maybePersistTmpFileReqOrAssetRef
       }
       const reqIndex = toPersistReqsTuple.indexOf(maybePersistTmpFileReqOrAssetRef)
-      const { assetId } = assetFileDescArray[reqIndex]!
+      const { assetId, tempAssetDesc } = assetFileDescArray[reqIndex]!
       const assetRef: AssetRef = {
         ext: false,
         location: assetId,
+        mimetype: tempAssetDesc.mimetype,
       }
       return assetRef
     },

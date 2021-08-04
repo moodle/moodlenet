@@ -59,12 +59,6 @@ export type Collection_RelCountArgs = {
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
-export type Contains = IEdge & {
-  __typename: 'Contains';
-  id: Scalars['ID'];
-  _created: Scalars['Timestamp'];
-};
-
 export type CreateCollectionInput = {
   name: Scalars['String'];
   description: Scalars['String'];
@@ -73,10 +67,9 @@ export type CreateCollectionInput = {
 };
 
 export type CreateEdgeInput = {
-  Contains?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
+  Features?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
-  HasUserRole?: Maybe<Scalars['Empty']>;
   Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   from: Scalars['ID'];
@@ -110,7 +103,6 @@ export type CreateNodeInput = {
   Organization?: Maybe<Scalars['Never']>;
   Profile?: Maybe<Scalars['Never']>;
   Resource?: Maybe<CreateResourceInput>;
-  UserRole?: Maybe<Scalars['Never']>;
   nodeType: NodeType;
 };
 
@@ -200,13 +192,12 @@ export type DeleteNodeMutationSuccess = {
   nodeId?: Maybe<Scalars['ID']>;
 };
 
-export type Edge = Contains | Created | Follows | HasUserRole | Pinned;
+export type Edge = Created | Features | Follows | Pinned;
 
 export type EdgeType =
-  | 'Contains'
   | 'Created'
+  | 'Features'
   | 'Follows'
-  | 'HasUserRole'
   | 'Pinned';
 
 export type EditCollectionInput = {
@@ -223,7 +214,6 @@ export type EditNodeInput = {
   Organization?: Maybe<Scalars['Never']>;
   Profile?: Maybe<EditProfileInput>;
   Resource?: Maybe<EditResourceInput>;
-  UserRole?: Maybe<Scalars['Never']>;
   id: Scalars['ID'];
   nodeType: NodeType;
 };
@@ -266,6 +256,12 @@ export type EditResourceInput = {
 };
 
 
+export type Features = IEdge & {
+  __typename: 'Features';
+  id: Scalars['ID'];
+  _created: Scalars['Timestamp'];
+};
+
 export type Follows = IEdge & {
   __typename: 'Follows';
   id: Scalars['ID'];
@@ -276,12 +272,6 @@ export type GlobalSearchSort =
   | 'Relevance'
   | 'Popularity'
   | 'Recent';
-
-export type HasUserRole = IEdge & {
-  __typename: 'HasUserRole';
-  id: Scalars['ID'];
-  _created: Scalars['Timestamp'];
-};
 
 export type IEdge = {
   id?: Maybe<Scalars['ID']>;
@@ -315,7 +305,7 @@ export type IscedField = INode & {
   name: Scalars['String'];
   description: Scalars['String'];
   codePath: Array<Scalars['String']>;
-  iscedCode: Scalars['String'];
+  code: Scalars['String'];
   thumbnail?: Maybe<Scalars['AssetRef']>;
   image?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
@@ -343,7 +333,7 @@ export type IscedGrade = INode & {
   name: Scalars['String'];
   description: Scalars['String'];
   codePath: Array<Scalars['String']>;
-  iscedCode: Scalars['String'];
+  code: Scalars['String'];
   thumbnail?: Maybe<Scalars['AssetRef']>;
   image?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
@@ -398,7 +388,7 @@ export type MutationSignUpArgs = {
 };
 
 
-export type Node = Collection | IscedField | IscedGrade | Organization | Profile | Resource | UserRole;
+export type Node = Collection | IscedField | IscedGrade | Organization | Profile | Resource;
 
 export type NodeType =
   | 'Collection'
@@ -406,8 +396,7 @@ export type NodeType =
   | 'IscedGrade'
   | 'Organization'
   | 'Profile'
-  | 'Resource'
-  | 'UserRole';
+  | 'Resource';
 
 export type Organization = INode & {
   __typename: 'Organization';
@@ -526,8 +515,8 @@ export type RelPage = Page & {
 export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
-  edge: Contains | Created | Follows | HasUserRole | Pinned;
-  node: Collection | IscedField | IscedGrade | Organization | Profile | Resource | UserRole;
+  edge: Created | Features | Follows | Pinned;
+  node: Collection | IscedField | IscedGrade | Organization | Profile | Resource;
 };
 
 export type Resource = INode & {
@@ -571,7 +560,7 @@ export type SearchPage = Page & {
 export type SearchPageEdge = PageEdge & {
   __typename: 'SearchPageEdge';
   cursor: Scalars['Cursor'];
-  node: Collection | IscedField | IscedGrade | Organization | Profile | Resource | UserRole;
+  node: Collection | IscedField | IscedGrade | Organization | Profile | Resource;
 };
 
 export type SimpleResponse = {
@@ -582,10 +571,9 @@ export type SimpleResponse = {
 
 
 export type UpdateEdgeInput = {
-  Contains?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
+  Features?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
-  HasUserRole?: Maybe<Scalars['Empty']>;
   Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   id: Scalars['ID'];
@@ -609,35 +597,6 @@ export type UpdateEdgeMutationSuccess = {
   __typename: 'UpdateEdgeMutationSuccess';
   edge?: Maybe<Edge>;
 };
-
-export type UserRole = INode & {
-  __typename: 'UserRole';
-  name: Scalars['String'];
-  type: UserRoleType;
-  descripton: Scalars['String'];
-  id: Scalars['ID'];
-  _rel: RelPage;
-  _relCount: Scalars['Int'];
-};
-
-
-export type UserRole_RelArgs = {
-  type: EdgeType;
-  target: NodeType;
-  inverse?: Maybe<Scalars['Boolean']>;
-  page?: Maybe<PaginationInput>;
-};
-
-
-export type UserRole_RelCountArgs = {
-  type: EdgeType;
-  target: NodeType;
-  inverse?: Maybe<Scalars['Boolean']>;
-};
-
-export type UserRoleType =
-  | 'Admin'
-  | 'Editor';
 
 export type UserSession = {
   __typename: 'UserSession';
@@ -670,10 +629,9 @@ export type UserSession = {
       "DeleteNodeMutationError"
     ],
     "Edge": [
-      "Contains",
       "Created",
+      "Features",
       "Follows",
-      "HasUserRole",
       "Pinned"
     ],
     "EditNodeMutationPayload": [
@@ -681,10 +639,9 @@ export type UserSession = {
       "EditNodeMutationError"
     ],
     "IEdge": [
-      "Contains",
       "Created",
+      "Features",
       "Follows",
-      "HasUserRole",
       "Pinned"
     ],
     "INode": [
@@ -693,8 +650,7 @@ export type UserSession = {
       "IscedGrade",
       "Organization",
       "Profile",
-      "Resource",
-      "UserRole"
+      "Resource"
     ],
     "Node": [
       "Collection",
@@ -702,8 +658,7 @@ export type UserSession = {
       "IscedGrade",
       "Organization",
       "Profile",
-      "Resource",
-      "UserRole"
+      "Resource"
     ],
     "Page": [
       "RelPage",

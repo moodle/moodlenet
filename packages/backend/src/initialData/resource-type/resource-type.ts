@@ -3,9 +3,9 @@ type Basic_Type = { code: string; desc: string }
 export default types()
 function types(): Basic_Type[] {
   return [
-    { code: 'assessment', desc: 'assessment/self-assessment/exercise' },
-    { code: 'graph', desc: 'diagram/graph/concept map' },
-    { code: 'guides', desc: 'guides/tutorials' },
+    { code: 'assessment', desc: 'assessment / self-assessment / exercise' },
+    { code: 'graph', desc: 'diagram / graph / concept map' },
+    { code: 'guides', desc: 'guides / tutorials' },
     { code: 'narrative-text', desc: 'narrative text' },
     { code: 'problem-statement', desc: 'problem statement' },
     { code: 'experiment', desc: 'experiment' },
