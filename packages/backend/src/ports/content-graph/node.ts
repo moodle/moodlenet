@@ -42,7 +42,6 @@ export const createProfile = QMCommand(({ partProfile }: CreateProfile) => async
   const profile: Profile = {
     ...ids,
     _type: 'Profile',
-    _status: 'Active',
     avatar: undefined,
     bio: '',
     firstName: undefined,
