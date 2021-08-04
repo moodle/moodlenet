@@ -1,3 +1,5 @@
+import { Timestamp } from './common'
+
 export type GraphEdgeType = 'Created' | 'HasUserRole' | 'Pinned' | 'Contains' | 'Follows'
 export type GraphEdge = Created | HasUserRole | Pinned | Contains | Follows
 export type GraphEdgeByType<T extends GraphEdgeType> = GraphEdgeMap[T]
@@ -8,7 +10,10 @@ export type GraphEdgeMap = {
   Contains: Contains
   Follows: Follows
 }
-export type Timestamp = number
+export type GraphedgeType = keyof GraphEdgeMap
+export type Graphedge = GraphEdgeMap[GraphEdgeType]
+export type GraphedgeByType<T extends GraphEdgeType> = GraphEdgeMap[T]
+
 export type EdgeId = string
 export type BaseGraphEdge<GET extends GraphEdgeType> = {
   id: EdgeId
