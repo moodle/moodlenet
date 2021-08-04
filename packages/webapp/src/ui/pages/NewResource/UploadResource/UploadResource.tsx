@@ -4,6 +4,7 @@ import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import React from 'react'
 import Card from '../../../components/atoms/Card/Card'
+import Dropdown, { DropdownOptionsType } from '../../../components/atoms/Dropdown/Dropdown'
 import InputTextField from '../../../components/atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../components/atoms/SecondaryButton/SecondaryButton'
@@ -13,19 +14,19 @@ import uploadFileIcon from '../../../static/icons/upload-file.svg'
 import uploadImageIcon from '../../../static/icons/upload-image.svg'
 import { NewResourceFormValues } from '../types'
 import './styles.scss'
-
 type UploadResourceState = 'ChooseResource' | 'EditData'
 
 export type UploadResourceProps = {
   step: 'UploadResourceStep'
   state: UploadResourceState
-  formBag: FormikBag<NewResourceFormValues>
+  formBag: FormikBag<NewResourceFormValues>,
+  categories: DropdownOptionsType,
   imageUrl: string
   nextStep: (() => unknown) | undefined
   deleteContent: () => unknown
 }
 
-export const UploadResource = withCtrl<UploadResourceProps>(({ formBag, state, imageUrl, nextStep, deleteContent }) => {
+export const UploadResource = withCtrl<UploadResourceProps>(({ formBag, state, imageUrl, categories, nextStep, deleteContent }) => {
   const [form, formAttrs] = formBag
   const background = {
     backgroundImage: 'url(' + imageUrl + ')',
@@ -72,11 +73,9 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ formBag, state, i
         disabled={state === 'ChooseResource'}
         {...formAttrs.description}
       />
-      <InputTextField
-        autoUpdate={true}
-        value={form.values.category}
+      <Dropdown 
+        options={categories}
         label="Categories"
-        placeholder=""
         disabled={state === 'ChooseResource'}
         {...formAttrs.category}
       />

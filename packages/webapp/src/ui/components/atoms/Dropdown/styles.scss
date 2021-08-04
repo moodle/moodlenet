@@ -18,14 +18,14 @@
     padding: 12px 12px;
     line-height: 20px;
     resize: none;
-    color: #b6bacb;
+    color: rgba(0, 0, 0, 0.80);
 
     outline: none;
     font-weight: 500;
     font-size: 14px;
 
     &:focus {
-      color: #9598a7;
+      color: rgba(0, 0, 0, 0.87);
     }
 
     &::placeholder {
@@ -57,10 +57,12 @@
     max-height: 300px;
     overflow-y: scroll;
     margin-top: 5px;
+    color: rgba(0, 0, 0, 0.87);
 
     > .option {
       cursor: pointer;
       padding: 9px 15px;
+      font-size: 14px;
       &:hover {
         background-color: #f5f5f5;
       }
