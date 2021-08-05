@@ -45,7 +45,8 @@ export const FormatDropdown: DropdownField  =  {
 }
 
 export const MonthDropdown: DropdownField  =  {
-    label: t`Original Date`,
+    label: t`Original Creation Date`,
+    placeholder: t`Month`,
     options:  [
         t`January`,
         t`February`,
@@ -64,20 +65,8 @@ export const MonthDropdown: DropdownField  =  {
 
 export const YearsDropdown: DropdownField  =  {
     label: t``,
-    options:  [
-        t`January`,
-        t`February`,
-        t`March`,
-        t`April`,
-        t`May`,
-        t`June`,
-        t`July`,
-        t`August`,
-        t`September`,
-        t`October`,
-        t`November`,
-        t`December`
-    ]
+    placeholder: t`Year`,
+    options: ['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021'].reverse()
 }
 
 export const TypeDropdown: DropdownField  =  {
