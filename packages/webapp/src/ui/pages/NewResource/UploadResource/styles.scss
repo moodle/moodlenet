@@ -44,13 +44,16 @@
             cursor: pointer;
 
             &:hover {
-              border: 4px dashed #337AFF;
-              color: #337AFF;
-              background-color: #337af95c;
+              border: 4px dashed #337aff;
+              color: #337aff;
+              background-color: #337cf93f;
 
               > .upload {
                 > span {
-                  color: #337AFF;
+                  color: #337aff;
+                }
+                > svg > path {
+                  fill: #337aff;
                 }
               }
             }
@@ -65,7 +68,7 @@
               flex-wrap: wrap;
               gap: 10px;
 
-              &.image > img {
+              &.image > svg {
                 height: 65px;
               }
 
@@ -110,9 +113,17 @@
         > .bottom-container {
           width: 100%;
           height: fit-content;
-          box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.0509804);
-          border: 1px solid #e4e5eb;
-          border-radius: 10px;
+          display: flex;
+          gap: 15px;
+
+          > .subcontainer,
+          .dropdown > input {
+            width: 100%;
+            height: fit-content;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.0509804);
+            border: 1px solid #e4e5eb;
+            border-radius: 10px;
+          }
 
           > .link {
             height: 100%;
@@ -131,15 +142,24 @@
           > .uploaded-name {
             display: flex;
             height: 46px;
+            padding-right: 10px;
             align-items: center;
             font-weight: 500;
             font-size: 15px;
             color: #b6bacb;
+            width: calc(100% - 90px);
             > .content-icon {
               display: flex;
               align-items: center;
               margin: 0 10px 0 16px;
               color: #b6bacb;
+            }
+          }
+
+          > .dropdown {
+            > .dropdown-content {
+              width: auto;
+              max-width: 200px;
             }
           }
         }
@@ -150,6 +170,7 @@
       width: 37%;
       > div {
         height: 100%;
+        padding-bottom: 2px;
         display: inline-flex;
         flex-direction: column;
         gap: 17px;
@@ -192,6 +213,10 @@
     padding: 30px 0 0 0;
     @media screen and (max-width: 800px) {
       padding: 5px 0 35px 0;
+    }
+    > .secondary-button:hover {
+      color: red;
+      border: 2px solid red;
     }
   }
 }

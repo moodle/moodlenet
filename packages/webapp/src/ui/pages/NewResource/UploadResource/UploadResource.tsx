@@ -10,9 +10,9 @@ import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton
 import SecondaryButton from '../../../components/atoms/SecondaryButton/SecondaryButton'
 import { withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
-import uploadFileIcon from '../../../static/icons/upload-file.svg'
-import uploadImageIcon from '../../../static/icons/upload-image.svg'
-import { Field } from '../FieldsData'
+import { ReactComponent as UploadFileIcon } from '../../../static/icons/upload-file.svg'
+import { ReactComponent as UploadImageIcon } from '../../../static/icons/upload-image.svg'
+import { DropdownField } from '../FieldsData'
 import { NewResourceFormValues } from '../types'
 import './styles.scss'
 type UploadResourceState = 'ChooseResource' | 'EditData'
@@ -22,12 +22,13 @@ export type UploadResourceProps = {
   state: UploadResourceState
   formBag: FormikBag<NewResourceFormValues>,
   imageUrl: string
-  categories: Field
+  categories: DropdownField
+  licenses: DropdownField
   nextStep: (() => unknown) | undefined
   deleteContent: () => unknown
 }
 
-export const UploadResource = withCtrl<UploadResourceProps>(({ formBag, state, imageUrl, categories, nextStep, deleteContent }) => {
+export const UploadResource = withCtrl<UploadResourceProps>(({ formBag, state, imageUrl, licenses, categories, nextStep, deleteContent }) => {
   const [form, formAttrs] = formBag
   const background = {
     backgroundImage: 'url(' + imageUrl + ')',
@@ -104,7 +105,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ formBag, state, i
                   {state === 'ChooseResource' ? (
                     <div className="file upload" onClick={selectFile}>
                       <input id="uploadFile" type="file" name="myFile" onChange={uploadFile} hidden />
-                      <img src={uploadFileIcon} alt="resource file icon" />
+                      <UploadFileIcon />
                       <span>
                         <Trans>Drop a file here or click to upload!</Trans>
                       </span>
@@ -119,7 +120,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ formBag, state, i
                         onChange={uploadImage}
                         hidden
                       />
-                      <img src={uploadImageIcon} alt="resource backgroud icon" />
+                      <UploadImageIcon />
                       <span>
                         <Trans>Drop an image here or click to upload!</Trans>
                       </span>
@@ -134,23 +135,26 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ formBag, state, i
                 </div>
               )}
             </div>
-            <div className="bottom-container">
-              {state === 'ChooseResource' ? (
-                <InputTextField
-                  className="link"
-                  placeholder={t`Paste or type a link`}
-                  getText={setLink}
-                  buttonName={t`Add`}
-                />
-              ) : (
-                <div className="uploaded-name">
+            {state === 'ChooseResource' ? (
+              <div className="bottom-container">
+              <InputTextField
+                className="link subcontainer"
+                placeholder={t`Paste or type a link`}
+                getText={setLink}
+                buttonName={t`Add`}
+              />
+              </div>
+            ) : (
+              <div className="bottom-container">
+                <div className="uploaded-name subcontainer">
                   <div className="content-icon">
                     {form.values.contentType === 'File' ? <InsertDriveFileIcon /> : <LinkIcon />}
                   </div>
-                  {form.values.name}
+                  <abbr className="scroll" title={form.values.name}>{form.values.name}</abbr>
                 </div>
-              )}
-            </div>
+                <Dropdown {...licenses}  />
+              </div>
+            )}
           </Card>
           <div className="small-screen-details">{dataInputs}</div>
         </div>

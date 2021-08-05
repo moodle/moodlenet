@@ -2,7 +2,7 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
-import { CategoryDropdown } from './FieldsData'
+import { CategoriesDropdown, FormatDropdown, LanguagesDropdown, LevelDropdown, LicenseDropdown, MonthDropdown, TypeDropdown, YearsDropdown } from './FieldsData'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'
 
@@ -76,7 +76,8 @@ export const NewResourceStoryProps: NewResourceProps = {
     imageUrl: '',
     nextStep: action('nextStep'),
     deleteContent: action('deleteContent'),
-    categories: CategoryDropdown
+    categories: CategoriesDropdown,
+    licenses: LicenseDropdown
   },
 }
 
@@ -117,7 +118,13 @@ export const NewResourceAddToCollectionsStoryProps: NewResourceProps = {
     step: 'ExtraDetailsStep',
     formBag,
     nextStep: action('nextStep'),
-    previousStep: action('previousStep')
+    previousStep: action('previousStep'),
+    types: TypeDropdown,
+    levels: LevelDropdown,
+    months: MonthDropdown,
+    years: YearsDropdown,
+    languages: LanguagesDropdown,
+    formats: FormatDropdown
   },
  }
 
