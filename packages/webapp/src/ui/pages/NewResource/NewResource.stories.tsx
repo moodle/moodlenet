@@ -2,6 +2,7 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
+import { CategoryDropdown } from './FieldsData'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'
 
@@ -56,8 +57,6 @@ const basicDataFormValue: NewResourceFormValues = {
   category: 'Important Matters'
 }
 
-
-
 const formBag = SBFormikBag<NewResourceFormValues>(initialFormValues)
 const formBagBasicData = SBFormikBag<NewResourceFormValues>(basicDataFormValue)
 
@@ -77,6 +76,7 @@ export const NewResourceStoryProps: NewResourceProps = {
     imageUrl: '',
     nextStep: action('nextStep'),
     deleteContent: action('deleteContent'),
+    categories: CategoryDropdown
   },
 }
 
@@ -84,9 +84,10 @@ export const NewResourceContentUploadedStoryProps: NewResourceProps = {
   ...NewResourceStoryProps,
   stepProps: {
     ...NewResourceStoryProps.stepProps,
+    step: 'UploadResourceStep',
     state: 'EditData',
     imageUrl: '',
-    formBag: formBagBasicData
+    formBag: formBagBasicData,
   },
 }
 

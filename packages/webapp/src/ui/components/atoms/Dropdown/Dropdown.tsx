@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useState } from "react";
-import "./styles.scss";
+import React, { FC, useEffect, useRef, useState } from 'react'
+import './styles.scss'
 
 export type DropdownOptionsType = string[] | [string, React.ReactNode][]
 
@@ -11,27 +11,19 @@ export type DropdownProps = {
   autoUpdate?: boolean
   className?: string
   getIndex?(index: number | undefined): void
-  inputAttrs?:React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
+  inputAttrs?: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
   hasSearch?: boolean
   options: DropdownOptionsType
 }
 
-export const Dropdown: FC<DropdownProps> = ({
-  label,
-  placeholder,
-  hidden,
-  getIndex,
-  hasSearch,
-  options
-}) => { 
-  const [value, setValue] = useState<string |undefined | null>(undefined)
-  const [index, setIndex] = useState<number |undefined | null>(undefined)
+export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getIndex, hasSearch, options, disabled}) => {
+  const [value, setValue] = useState<string | undefined | null>(undefined)
+  const [index, setIndex] = useState<number | undefined | null>(undefined)
+  const [isOnHover, setIsOnHover] = useState<boolean>(false)
+  const dropdownButton = useRef<HTMLInputElement>(null)
+  const dropdownContent = useRef<HTMLDivElement>(null)
 
-  const type: 'Text' | 'IconAndText' = typeof options[0] === 'string' ? 'Text' : 'IconAndText'
-
-  const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
-    console.log('Searching for: ' + e.currentTarget.value)
-  }
+  const type: 'Text' | 'IconAndText' = options && typeof options[0] === 'string' ? 'Text' : 'IconAndText'
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     filterFunction()
@@ -39,103 +31,111 @@ export const Dropdown: FC<DropdownProps> = ({
   }
 
   const handleOnClick = () => {
-    const dropdownButton = document.getElementById('dropdown-button')
-    const dropdownContent = document.getElementById('dropdown-content')
-    dropdownButton && dropdownButton.classList.remove("focus")
-    dropdownContent && dropdownContent.classList.add("focus")
-    dropdownContent && (dropdownContent.style.visibility = 'visible')
+    dropdownContent.current && (dropdownContent.current.style.visibility = 'visible')
   }
 
-  const setOptionListPosition = () => {
-    const dropdownButton = document.getElementById('dropdown-button')
-    const topPos = dropdownButton?.offsetTop;
-    console.log(topPos)
+  window.addEventListener('DOMContentLoaded', () => {
+    setOptionListPosition()
+  })
+  window.onscroll = window.onresize = () => setOptionListPosition()
+
+
+  const setOptionListPosition = () => { 
+    const viewportOffset = dropdownButton.current && dropdownButton.current.getBoundingClientRect()
+    const top = viewportOffset?.top
+    const bottom = viewportOffset && (window.innerHeight - viewportOffset.bottom)
+
+    if (bottom && top && (bottom > 200 || bottom > top)) {
+      dropdownContent.current && (dropdownContent.current.style.maxHeight = bottom && bottom < 200 ? bottom - 20 + 'px' : '200px')
+      dropdownContent.current && (dropdownContent.current.style.top = '74px')
+      dropdownContent.current && (dropdownContent.current.style.bottom = 'auto')
+    } else {
+      dropdownContent.current && (dropdownContent.current.style.maxHeight = top && top < 200 ? top - 20 + 'px' : '200px')
+      dropdownContent.current && (dropdownContent.current.style.bottom = '50px')
+      dropdownContent.current && (dropdownContent.current.style.top = 'auto')
+    }
   }
 
-  setOptionListPosition()
-
-  const handleOnSelection = (i:number, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleOnSelection = (i: number, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     setIndex(i)
     setValue((e.target as HTMLElement).innerText)
-    const dropdownContent = document.getElementById('dropdown-content')
-    console.log('clicked')
-    dropdownContent && (dropdownContent.style.visibility = 'hidden')
+    dropdownContent.current && (dropdownContent.current.style.visibility = 'hidden')
   }
 
-  const handleOnMouseOut = () => {
-    setTimeout(() => {
-      const dropdownContent = document.getElementById('dropdown-content')
-      dropdownContent && (dropdownContent.style.visibility = 'hidden')
-    }, 100);
-    
+  const handleOnBlur = () => {
+    if (!isOnHover) {
+      dropdownContent.current && (dropdownContent.current.style.visibility = 'hidden')
+    }
   }
 
   useEffect(() => {
     getIndex && getIndex(index ? index : undefined)
-  }, [index, getIndex]);
+  }, [index, getIndex])
 
   const filterFunction = () => {
-    const filter = (document.getElementById("dropdown-button") as HTMLInputElement).value.toUpperCase()
-    console.log('filter: ' + filter)
-    const div = document.getElementById("dropdown-content") as HTMLDivElement
-    Array.prototype.slice.call(div.getElementsByClassName("option")).map(e => {
+    const filter = dropdownButton.current?.value.toUpperCase()
+    const div = dropdownContent.current
+    let length = 0
+    Array.prototype.slice.call(div?.getElementsByClassName('option')).forEach((e) => {
       const txtValue = e.innerText.toUpperCase()
-      console.log(e)
-      console.log(txtValue)
       if (txtValue.indexOf(filter) > -1) {
-        console.log('Found!')
-        e.style.display = '';
+        txtValue === filter && setIndex(e.getAttribute('data-key')) 
+        e.style.display = ''
+        length ++
       } else {
-        console.log('Not found!')
-        e.style.display = 'none';
+        e.style.display = 'none'
       }
     })
+    length > 0 ? div && (div.style.visibility = 'visible') : div && (div.style.visibility = 'hidden')
   }
 
-
-
   const optionsList = type === 'Text' ? (
-    options.map((value, i) => {
+    options?.map((value, i) => {
       return (
-        <div key={i} className='option only-text' onClick={(e) => handleOnSelection(i, e)}>
+        <div key={i} data-key={i} className="option only-text" onClick={e => handleOnSelection(i, e)}>
           {value}
         </div>
       )
-    })) : (
-    options.map((value, i) => {
+  })) : (
+    options?.map((value, i) => {
       return (
-        <div key={i} className='option icon-and-text' onClick={(e) => handleOnSelection(i, e)}>
+        <div key={i} data-key={i} className="option icon-and-text" onClick={e => handleOnSelection(i, e)}>
           {value[1]}
-          <div className="text">{value[0]}</div>
+          {value[0]}
         </div>
-      )  
-    }))
-
+      )
+    })
+  )
 
   return (
-    <div 
-      className={`dropdown ${hasSearch ? 'search' : ''}`}
-      style={{visibility: hidden ? 'hidden' : 'visible'}}
+    <div
+      className={`dropdown ${hasSearch ? 'search' : ''} ${disabled ? 'disabled' : ''}`}
+      style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
-      onBlur={handleOnMouseOut}
     >
-      { label ? <label>{label}</label> : <></> }
-      <input 
-        id="dropdown-button" 
-        className="button search-field" 
+      {label ? <label>{label}</label> : <></>}
+      <input
+        ref={dropdownButton}
+        className=" dropdown-button button search-field"
         type="text"
-        placeholder={placeholder} 
-        onKeyUp={handleOnKeyUp} 
+        placeholder={placeholder}
         onChange={handleOnChange}
         onClick={handleOnClick}
-        value={value? value : ''}
+        onBlur={handleOnBlur}
+        value={value ? value : ''}
       />
-      <div id="dropdown-content">
+      <div 
+        ref={dropdownContent}
+        className="dropdown-content"
+        onMouseEnter={() => setIsOnHover(true)}
+        onMouseLeave={() => setIsOnHover(false)}
+        tabIndex={-1}
+      >
         {optionsList}
       </div>
     </div>
   )
-};
+}
 
 Dropdown.defaultProps = {
   placeholder: '',
@@ -144,4 +144,4 @@ Dropdown.defaultProps = {
   getIndex: () => undefined,
 }
 
-export default Dropdown;
+export default Dropdown

@@ -2,7 +2,7 @@
 module.exports = {
   rules: [
     {
-      test: /\.(png|jpg|gif|svg)$/i,
+      test: /\.(png|jpg|gif)$/i,
       use: [
           {
               loader: 'url-loader',
@@ -12,6 +12,17 @@ module.exports = {
           },
       ],
     },
+    {
+      test: /\.svg$/,
+      use: [
+        {
+          loader: 'svg-url-loader',
+          options: {
+            limit: 10000,
+          },
+        },
+      ],
+    }
   ],
   resolve: {
     alias: {
