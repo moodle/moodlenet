@@ -1,7 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { DropdownTextStoryProps } from '../../../components/atoms/Dropdown/Dropdown.stories'
 import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
+import { CategoryDropdown } from '../FieldsData'
 import { NewResourceFormValues } from '../types'
 import { UploadResource, UploadResourceProps } from './UploadResource'
 
@@ -43,7 +43,7 @@ export const UploadResourceStoryProps: UploadResourceProps = {
   imageUrl: '',
   state: 'ChooseResource',
   step: 'UploadResourceStep',
-  categories: DropdownTextStoryProps.options
+  categories: CategoryDropdown
 }
 
 const UploadResourceStory: ComponentStory<typeof UploadResource> = args => <UploadResource {...args} />
