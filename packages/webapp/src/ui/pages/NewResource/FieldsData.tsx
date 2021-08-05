@@ -47,7 +47,6 @@ export const FormatDropdown: DropdownField  =  {
 }
 
 export const MonthDropdown: DropdownField  =  {
-    label: t`Original Creation Date`,
     placeholder: t`Month`,
     options:  [
         t`January`,

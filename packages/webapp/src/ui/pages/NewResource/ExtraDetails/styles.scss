@@ -21,19 +21,25 @@
 
       > .date {
         display: flex;
-        gap: 12px;
-        align-items: flex-end;
-        > :first-child {
-          flex: 1;
-          > label {
-            white-space: nowrap;
-            position: absolute;
-            top: -24px;
-          }
+        flex-direction: column;
+        align-items: flex-start;
+
+        > label {
+          font-weight: bold;
+          font-size: 14px;
+          margin-bottom: 8px;
         }
-        > :last-child {
-          min-width: 85px;
-          width: 40%;
+
+        > .fields {
+          display: flex;
+          gap: 12px;
+          > :first-child {
+            flex: 1;
+          }
+          > :last-child {
+            min-width: 85px;
+            width: 40%;
+          }
         }
       }
 
