@@ -1,3 +1,69 @@
+import { GraphEdgeByType, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
+import { AuthId } from '@moodlenet/common/lib/user-auth/types'
+import { omit } from '@moodlenet/common/lib/utils/object'
+import { DistOmit } from '@moodlenet/common/lib/utils/types'
+import { GraphNodeIdentifier } from '@moodlenet/common/src/content-graph/types/node'
+import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
+import { AqlGraphEdge, AqlGraphEdgeByType } from '../types'
+import { documentBySlugType } from './helpers'
+
+export const getAqlNodeByGraphNodeIdentifier = (identifier: GraphNodeIdentifier) => {
+  const { _type } = identifier
+  if ('_slug' in identifier) {
+    const { _slug } = identifier
+    return documentBySlugType({ _type, _slug })
+  } else {
+    const { _permId } = identifier
+    return `DOCUMENT("${_type}/${_permId}")`
+  }
+}
+
+export const createEdgeQ = <Type extends GraphEdgeType>({
+  edge,
+  from,
+  to,
+  authId,
+}: {
+  edge: GraphEdgeByType<Type>
+  from: GraphNodeIdentifier
+  to: GraphNodeIdentifier
+  authId: AuthId
+}) => {
+  const edgeType = edge._type
+  const aqlEdge: DistOmit<
+    AqlGraphEdge,
+    '_key' | '_from' | '_to' | '_created' | '_rev' | '_id' | '_fromType' | '_toType'
+  > = {
+    _key: edge.id,
+    authId,
+    ...omit(edge, ['_created', 'id']),
+  }
+
+  const q = aq<AqlGraphEdgeByType<Type>>(`
+    let fromNode = ${getAqlNodeByGraphNodeIdentifier(from)}
+    let toNode = ${getAqlNodeByGraphNodeIdentifier(to)}
+    
+    let newedge = ${aqlstr(aqlEdge)}
+
+    INSERT MERGE(
+      ${aqlstr(aqlEdge)},
+      {
+        _created: DATE_NOW(),
+        _from: fromNode._id,
+        _fromType:fromNode._type,
+        _to: toNode._id,
+        _toType:toNode._type
+      }
+    )
+    
+    into ${edgeType}
+
+    return NEW
+  `)
+  // console.log(q)
+  return q
+}
+
 // import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 // import { BLRule } from '@moodlenet/common/lib/lib/bl/common'
 // import { Id, nodeTypeFromCheckedId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'

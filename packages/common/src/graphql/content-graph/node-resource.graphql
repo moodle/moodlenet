@@ -24,10 +24,11 @@ enum NodeType {
 input CreateResourceInput {
   name: String!
   description: String!
-  image: AssetRefInput
+  thumbnail: AssetRefInput
   content: AssetRefInput!
   slug: String!
 }
+
 input CreateNodeInput {
   Resource: CreateResourceInput
 }

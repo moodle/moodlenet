@@ -7,7 +7,7 @@ import { AssetRefInput, Edge, Node } from '@moodlenet/common/lib/graphql/types.g
 import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
 import { parseEdgeId, parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { pick } from '@moodlenet/common/lib/utils/object'
-import { Maybe } from '@moodlenet/common/lib/utils/types'
+import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
 import { Tuple } from 'tuple-type'
 import { QMino } from '../../lib/qmino'
 import { persistTempAssets } from '../../ports/static-assets/temp'
@@ -144,7 +144,7 @@ export const graphEdge2GqlEdge = (edge: GraphEdge): Edge => {
       throw new Error(`graphEdge2GqlEdge: can't map unknown edge type '${(edge as any)?._type}''`)
   }
 }
-export const gqlEdge2GraphEdge = (edge: Edge): GraphEdge => {
+export const gqlEdge2GraphEdge = (edge: Edge): DistOmit<GraphEdge, '_authId'> => {
   const parsed = parseEdgeId(edge.id)
   if (!parsed) {
     throw new Error(`gqlEdge2GraphEdge: can't parse id '${edge.id}'`)

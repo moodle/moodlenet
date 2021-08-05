@@ -127,7 +127,7 @@ export type CreateNodeMutationSuccess = {
 export type CreateResourceInput = {
   name: Scalars['String'];
   description: Scalars['String'];
-  image?: Maybe<AssetRefInput>;
+  thumbnail?: Maybe<AssetRefInput>;
   content: AssetRefInput;
   slug: Scalars['String'];
 };
