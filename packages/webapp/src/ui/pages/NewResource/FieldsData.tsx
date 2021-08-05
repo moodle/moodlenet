@@ -14,6 +14,7 @@ export type DropdownField = {
 
 export const LevelDropdown: DropdownField  =  {
     label: t`Level`,
+    placeholder: t`Educational Phase`,
     options:  [
         t`0.1 Early childhood educational development`,
         t`0.2 Pre-primary education`,
@@ -30,6 +31,7 @@ export const LevelDropdown: DropdownField  =  {
 
 export const FormatDropdown: DropdownField  =  {
     label: t`Format`,
+    placeholder: t`Content Format`,
     options:  [
         t`0.1 Early childhood educational development`,
         t`0.2 Pre-primary education`,
@@ -71,6 +73,7 @@ export const YearsDropdown: DropdownField  =  {
 
 export const TypeDropdown: DropdownField  =  {
     label: t`Type`,
+    placeholder: t`Content Type`,
     options:  [
         t`0.1 Early childhood educational development`,
         t`0.2 Pre-primary education`,
@@ -87,6 +90,7 @@ export const TypeDropdown: DropdownField  =  {
 
 export const LanguagesDropdown: DropdownField  =  {
     label: t`Languages`,
+    placeholder: t`Content Language`,
     options:  [
         t`0.1 Early childhood educational development`,
         t`0.2 Pre-primary education`,
@@ -122,6 +126,7 @@ export const LicenseDropdown: DropdownField  =  {
 
 export const CategoriesDropdown: DropdownField  =  {
     label: t`Categories`,
+    placeholder: t`Content Category`,
     options:  `0000 Generic programmes and qualifications not further defined
         0011 Basic programmes and qualifications
         0021 Literacy and numeracy
