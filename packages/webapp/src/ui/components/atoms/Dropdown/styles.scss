@@ -81,6 +81,9 @@
             height: 22px;
           }
         }
+        > span {
+          white-space: nowrap;
+        }
       }
     }
   }
