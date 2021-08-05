@@ -101,7 +101,7 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getInd
       return (
         <div key={i} data-key={i} className="option icon-and-text" onClick={e => handleOnSelection(i, e)}>
           {value[1]}
-          {value[0]}
+          <span>{value[0]}</span>
         </div>
       )
     })
