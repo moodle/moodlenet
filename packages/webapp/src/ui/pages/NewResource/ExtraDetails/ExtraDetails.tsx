@@ -1,10 +1,11 @@
-import { t, Trans } from '@lingui/macro'
+import { Trans } from '@lingui/macro'
 import React from 'react'
-import InputTextField from '../../../components/atoms/InputTextField/InputTextField'
+import Dropdown from '../../../components/atoms/Dropdown/Dropdown'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../components/atoms/SecondaryButton/SecondaryButton'
 import { withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
+import { DropdownField } from '../FieldsData'
 import { NewResourceFormValues } from '../types'
 import './styles.scss'
 
@@ -13,48 +14,37 @@ export type ExtraDetailsProps = {
   formBag: FormikBag<NewResourceFormValues>
   nextStep: (() => unknown) | undefined
   previousStep: (() => unknown) | undefined
+  types: DropdownField
+  levels: DropdownField
+  months: DropdownField
+  years: DropdownField
+  languages: DropdownField
+  formats: DropdownField
 }
 
-export const ExtraDetails = withCtrl<ExtraDetailsProps>(({ formBag, nextStep, previousStep }) => {
+export const ExtraDetails = withCtrl<ExtraDetailsProps>(({ 
+  formBag, 
+  types, 
+  levels,
+  months,
+  years,
+  languages,
+  formats,
+  nextStep, 
+  previousStep 
+}) => {
   const [form, formAttrs] = formBag
 
   const dataInputs = (
     <div className="data-inputs">
-      <InputTextField
-        autoUpdate={true}
-        value={form.values.type || null }
-        label={t`Type`}
-        placeholder=""
-        {...formAttrs.type}
-      />
-      <InputTextField
-        autoUpdate={true}
-        value={form.values.level || null}
-        label={t`Level`}
-        placeholder=""
-        {...formAttrs.level}
-      />
-      <InputTextField
-        autoUpdate={true}
-        value={form.values.level || null}
-        label={t`Original Resource Date`}
-        placeholder=""
-        {...formAttrs.level}
-      />
-      <InputTextField
-        autoUpdate={true}
-        value={form.values.language || null}
-        label={t`Language`}
-        placeholder=""
-        {...formAttrs.language}
-      />
-      <InputTextField
-        autoUpdate={true}
-        value={form.values.format || null}
-        label={t`Format`}
-        placeholder=""
-        {...formAttrs.format}
-      />
+      <Dropdown {...types} {...formAttrs.type} getValue={(value) => form.setFieldValue('type', value)}/>
+      <Dropdown {...levels} {...formAttrs.level} getValue={(value) => form.setFieldValue('level', value)}/>
+      <div className="date">
+        <Dropdown {...months} {...formAttrs.originalDate} getValue={() => form.setFieldValue('originalDate', null)}/>
+        <Dropdown {...years} {...formAttrs.originalDate} getValue={() => form.setFieldValue('originalDate', null)}/>
+      </div>
+      <Dropdown {...languages} {...formAttrs.language} getValue={(value) => form.setFieldValue('language', value)}/>
+      <Dropdown {...formats} {...formAttrs.format} getValue={(value) => form.setFieldValue('format', value)}/>
     </div>
   )
 

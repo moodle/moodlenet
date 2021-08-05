@@ -10,15 +10,14 @@ export type DropdownProps = {
   hidden?: boolean
   autoUpdate?: boolean
   className?: string
-  getIndex?(index: number | undefined): void
+  getValue?(value: string): void
   inputAttrs?: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
   hasSearch?: boolean
   options: DropdownOptionsType
 }
 
-export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getIndex, hasSearch, options, disabled}) => {
+export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getValue, hasSearch, options, disabled}) => {
   const [value, setValue] = useState<string | undefined | null>(undefined)
-  const [index, setIndex] = useState<number | undefined | null>(undefined)
   const [isOnHover, setIsOnHover] = useState<boolean>(false)
   const dropdownButton = useRef<HTMLInputElement>(null)
   const dropdownContent = useRef<HTMLDivElement>(null)
@@ -45,19 +44,20 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getInd
     const top = viewportOffset?.top
     const bottom = viewportOffset && (window.innerHeight - viewportOffset.bottom)
 
-    if (bottom && top && (bottom > 200 || bottom > top)) {
-      dropdownContent.current && (dropdownContent.current.style.maxHeight = bottom && bottom < 200 ? bottom - 20 + 'px' : '200px')
-      dropdownContent.current && (dropdownContent.current.style.top = '74px')
+    if (bottom && top && (bottom > 160 || bottom > top)) {
+      dropdownContent.current && (dropdownContent.current.style.maxHeight = bottom && bottom < 160 ? bottom - 20 + 'px' : '160px')
+      dropdownContent.current && (dropdownContent.current.style.top = '50px')
       dropdownContent.current && (dropdownContent.current.style.bottom = 'auto')
+      dropdownContent.current && (dropdownContent.current.style.transform = ' translate(-50%, 0px)')
     } else {
-      dropdownContent.current && (dropdownContent.current.style.maxHeight = top && top < 200 ? top - 20 + 'px' : '200px')
+      dropdownContent.current && (dropdownContent.current.style.maxHeight = top && top < 160 ? top - 20 + 'px' : '160px')
       dropdownContent.current && (dropdownContent.current.style.bottom = '50px')
       dropdownContent.current && (dropdownContent.current.style.top = 'auto')
+      dropdownContent.current && (dropdownContent.current.style.transform = ' translate(-50%, 0px)')
     }
   }
 
-  const handleOnSelection = (i: number, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    setIndex(i)
+  const handleOnSelection = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     setValue((e.target as HTMLElement).innerText)
     dropdownContent.current && (dropdownContent.current.style.visibility = 'hidden')
   }
@@ -69,8 +69,8 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getInd
   }
 
   useEffect(() => {
-    getIndex && getIndex(index ? index : undefined)
-  }, [index, getIndex])
+    getValue && value && getValue(value)
+  }, [value, getValue])
 
   const filterFunction = () => {
     const filter = dropdownButton.current?.value.toUpperCase()
@@ -79,7 +79,7 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getInd
     Array.prototype.slice.call(div?.getElementsByClassName('option')).forEach((e) => {
       const txtValue = e.innerText.toUpperCase()
       if (txtValue.indexOf(filter) > -1) {
-        txtValue === filter && setIndex(e.getAttribute('data-key')) 
+        txtValue === filter && setValue(e.innerText) 
         e.style.display = ''
         length ++
       } else {
@@ -92,14 +92,14 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getInd
   const optionsList = type === 'Text' ? (
     options?.map((value, i) => {
       return (
-        <div key={i} data-key={i} className="option only-text" onClick={e => handleOnSelection(i, e)}>
+        <div key={i} className="option only-text" onClick={e => handleOnSelection(e)}>
           {value}
         </div>
       )
   })) : (
     options?.map((value, i) => {
       return (
-        <div key={i} data-key={i} className="option icon-and-text" onClick={e => handleOnSelection(i, e)}>
+        <div key={i} className="option icon-and-text" onClick={e => handleOnSelection(e)}>
           {value[1]}
           <span>{value[0]}</span>
         </div>
@@ -113,7 +113,7 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getInd
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
-      {label ? <label>{label}</label> : <></>}
+      {label && <label>{label}</label>}
       <input
         ref={dropdownButton}
         className=" dropdown-button button search-field"
@@ -138,10 +138,9 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getInd
 }
 
 Dropdown.defaultProps = {
-  placeholder: '',
   hidden: false,
   className: '',
-  getIndex: () => undefined,
+  getValue: () => undefined,
 }
 
 export default Dropdown

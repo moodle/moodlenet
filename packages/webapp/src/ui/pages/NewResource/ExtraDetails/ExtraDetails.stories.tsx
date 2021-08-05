@@ -1,6 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
+import { FormatDropdown, LanguagesDropdown, LevelDropdown, MonthDropdown, TypeDropdown, YearsDropdown } from '../FieldsData'
 import { NewResourceFormValues } from '../types'
 import { ExtraDetails, ExtraDetailsProps } from './ExtraDetails'
 
@@ -35,11 +36,17 @@ export const ExtraDetailsStoryProps: ExtraDetailsProps = {
     level: '',
     license: '',
     name: '',
-    originalDate: new Date(),
+    originalDate: {month: '', year: ''},
     title: '',
     type: '',
   }),
   step: 'ExtraDetailsStep',
+  types: TypeDropdown,
+  levels: LevelDropdown,
+  months: MonthDropdown,
+  years: YearsDropdown,
+  languages: LanguagesDropdown,
+  formats: FormatDropdown
 }
 
 const ExtraDetailsStory: ComponentStory<typeof ExtraDetails> = args => <ExtraDetails {...args} />

@@ -22,7 +22,7 @@ export const SubHeader: FC<SubHeaderProps> = ({ tags }) => {
         <ExpandMoreIcon />
         <div className="text">Following</div>
       </div>
-      <div className="tags">
+      <div className="tags scroll">
         {tagList}
         <div className="empty-space">&nbsp;</div>
       </div>
