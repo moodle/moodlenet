@@ -1,5 +1,6 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
-import './styles.scss'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import './styles.scss';
 
 export type DropdownOptionsType = string[] | [string, React.ReactNode][]
 
@@ -46,7 +47,7 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
 
     if (bottom && top && (bottom > 160 || bottom > top)) {
       dropdownContent.current && (dropdownContent.current.style.maxHeight = bottom && bottom < 160 ? bottom - 20 + 'px' : '160px')
-      dropdownContent.current && (dropdownContent.current.style.top = '50px')
+      dropdownContent.current && (dropdownContent.current.style.top = label? '75px' : '50px')
       dropdownContent.current && (dropdownContent.current.style.bottom = 'auto')
       dropdownContent.current && (dropdownContent.current.style.transform = ' translate(-50%, 0px)')
     } else {
@@ -114,16 +115,19 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
       hidden={hidden}
     >
       {label && <label>{label}</label>}
-      <input
-        ref={dropdownButton}
-        className=" dropdown-button button search-field"
-        type="text"
-        placeholder={placeholder}
-        onChange={handleOnChange}
-        onClick={handleOnClick}
-        onBlur={handleOnBlur}
-        value={value ? value : ''}
-      />
+      <div className="dropdown-button button">
+        <input
+          ref={dropdownButton}
+          className=" dropdown-button button search-field"
+          type="text"
+          placeholder={placeholder}
+          onChange={handleOnChange}
+          onClick={handleOnClick}
+          onBlur={handleOnBlur}
+          value={value ? value : ''}
+        />
+        <ExpandMoreIcon />
+      </div>
       <div 
         ref={dropdownContent}
         className="dropdown-content"

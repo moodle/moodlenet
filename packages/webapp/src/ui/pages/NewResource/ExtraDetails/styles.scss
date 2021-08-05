@@ -19,6 +19,24 @@
         flex: 0 0 31.3333%;
       }
 
+      > .date {
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+        > :first-child {
+          flex: 1;
+          > label {
+            white-space: nowrap;
+            position: absolute;
+            top: -24px;
+          }
+        }
+        > :last-child {
+          min-width: 85px;
+          width: 40%;
+        }
+      }
+
       @media (min-width: 400px) and (max-width: 850px) {
         gap: 5%;
         row-gap: 20px;
