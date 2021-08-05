@@ -911,7 +911,7 @@
             "deprecationReason": null
           },
           {
-            "name": "image",
+            "name": "thumbnail",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",

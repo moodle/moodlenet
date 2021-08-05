@@ -31,6 +31,9 @@ export type GraphNodeByType<T extends GraphNodeType> = GraphNodeMap[T]
 export type PermId = string
 export type Slug = string
 
+export type GraphNodeIdentifier = Pick<BaseGraphNode, '_type'> &
+  (Pick<BaseGraphNode, '_permId'> | Pick<BaseGraphNode, '_slug'>)
+
 export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _type: GNT
   _permId: PermId
@@ -96,6 +99,7 @@ export type Profile = BaseGraphNode<'Profile'> & {
 }
 
 export type ResourceKind = 'Upload' | 'Link'
+
 export type AssetRef = {
   ext: boolean
   location: string

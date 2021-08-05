@@ -1,9 +1,9 @@
-import { Slug } from '../../content-graph/types/node'
+import { GraphNodeIdentifier } from '../../content-graph/types/node'
 import { EdgeType } from '../../graphql/types.graphql.gen'
 
 export type GraphOperators = {
-  edgeExists(from: Slug, edge: EdgeType, to: Slug): BLVal<boolean>
-  isCreator(ownerProfileId: Slug, nodeId: Slug): BLVal<boolean>
+  edgeExists(from: GraphNodeIdentifier, edge: EdgeType, to: GraphNodeIdentifier): BLVal<boolean>
+  isCreator(ownerProfileId: GraphNodeIdentifier, nodeId: GraphNodeIdentifier): BLVal<boolean>
 }
 
 type Wrapper<T> = { _?: T }

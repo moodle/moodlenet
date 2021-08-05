@@ -1,3 +1,4 @@
+import { AuthId } from '../../user-auth/types'
 import { Timestamp } from './common'
 
 export type GraphEdgeMap = {
@@ -16,6 +17,7 @@ export type BaseGraphEdge<GET extends GraphEdgeType> = {
   id: EdgeId
   _type: GET
   _created: Timestamp
+  _authId: AuthId
 }
 
 export type Created = BaseGraphEdge<'Created'> & {}
