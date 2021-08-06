@@ -109,7 +109,7 @@
       cursor: pointer;
       padding: 9px 15px;
       font-size: 14px;
-      &:hover {
+      &:hover, &:focus {
         background-color: #f5f5f5;
       }
       &.icon-and-text {
