@@ -1,7 +1,7 @@
 type Resource implements INode {
   name: String!
   description: String!
-  thumbnail: AssetRef
+  image: AssetRef
   content: AssetRef!
   kind: ResourceKind!
   # INode
@@ -24,7 +24,7 @@ enum NodeType {
 input CreateResourceInput {
   name: String!
   description: String!
-  thumbnail: AssetRefInput
+  image: AssetRefInput
   content: AssetRefInput!
 }
 input CreateNodeInput {
@@ -34,7 +34,7 @@ input CreateNodeInput {
 input EditResourceInput {
   name: String!
   description: String!
-  thumbnail: AssetRefInput
+  image: AssetRefInput
 }
 input EditNodeInput {
   Resource: EditResourceInput

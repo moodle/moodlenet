@@ -19,6 +19,7 @@ const ProgressStateStory: ComponentStory<typeof ProgressState> = args => <Progre
 export const ProgressStateStoryProps: ProgressStateProps = {
   stateNames: [`Upload Resource`, `Add to Collections`, `Add Details`],
   currentIndex: 1,
+  progressSubtitles: [`sub:Upload Resource`, `sub:Add to Collections`, `sub:Add Details`],
 }
 
 export const Default = ProgressStateStory.bind({})

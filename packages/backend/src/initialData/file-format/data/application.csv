@@ -903,7 +903,7 @@ vnd.micro+json,application/vnd.micro+json
 vnd.micrografx.flo,application/vnd.micrografx.flo
 vnd.micrografx.igx,application/vnd.micrografx.igx
 vnd.microsoft.portable-executable,application/vnd.microsoft.portable-executable
-vnd.microsoft.windows.thumbnail-cache,application/vnd.microsoft.windows.thumbnail-cache
+vnd.microsoft.windows.image-cache,application/vnd.microsoft.windows.image-cache
 vnd.miele+json,application/vnd.miele+json
 vnd.mif,application/vnd.mif
 vnd.minisoft-hp3000-save,application/vnd.minisoft-hp3000-save

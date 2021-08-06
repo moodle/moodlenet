@@ -36,7 +36,7 @@ export const UploadResourceStoryProps: UploadResourceProps = {
     level: '',
     license: '',
     name: '',
-    originalDate: new Date(),
+    originalDate: { month: 'July', year: '2021' },
     title: '',
     type: '',
   }),
@@ -44,7 +44,7 @@ export const UploadResourceStoryProps: UploadResourceProps = {
   state: 'ChooseResource',
   step: 'UploadResourceStep',
   categories: CategoriesDropdown,
-  licenses: LicenseDropdown
+  licenses: LicenseDropdown,
 }
 
 const UploadResourceStory: ComponentStory<typeof UploadResource> = args => <UploadResource {...args} />

@@ -964,7 +964,7 @@ export default [
   { name: 'vnd.micrografx.flo', mimetype: 'application/vnd.micrografx.flo' },
   { name: 'vnd.micrografx.igx', mimetype: 'application/vnd.micrografx.igx' },
   { name: 'vnd.microsoft.portable-executable', mimetype: 'application/vnd.microsoft.portable-executable' },
-  { name: 'vnd.microsoft.windows.thumbnail-cache', mimetype: 'application/vnd.microsoft.windows.thumbnail-cache' },
+  { name: 'vnd.microsoft.windows.image-cache', mimetype: 'application/vnd.microsoft.windows.image-cache' },
   { name: 'vnd.miele+json', mimetype: 'application/vnd.miele+json' },
   { name: 'vnd.mif', mimetype: 'application/vnd.mif' },
   { name: 'vnd.minisoft-hp3000-save', mimetype: 'application/vnd.minisoft-hp3000-save' },

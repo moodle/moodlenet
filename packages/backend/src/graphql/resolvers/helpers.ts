@@ -65,7 +65,7 @@ export const graphNode2GqlNode = (node: GraphNode.GraphNode): GQL.Node => {
     const _node: GQL.Resource = {
       __typename: 'Resource',
       ...base,
-      ...pick(node, ['content', 'thumbnail', 'kind', 'description']),
+      ...pick(node, ['content', 'image', 'kind', 'description']),
     }
     return _node
   } else if (node._type === 'FileFormat') {
@@ -97,7 +97,7 @@ export const graphNode2GqlNode = (node: GraphNode.GraphNode): GQL.Node => {
     }
     return _node
   } else {
-    throw assertNever(node, `graphNode2GqlNode: can't map unknown node type '${(node as any)?._type}'`)
+    return assertNever(node, `graphNode2GqlNode: can't map unknown node type '${(node as any)?._type}'`)
   }
 }
 export const gqlNode2GraphNode = (node: GQL.Node): Omit<GraphNode.GraphNode, '_permId' | '_status'> => {
@@ -130,14 +130,14 @@ export const gqlNode2GraphNode = (node: GQL.Node): Omit<GraphNode.GraphNode, '_p
     const _node: Omit<GraphNode.GraphNode, '_permId' | '_status'> = {
       _type: 'IscedField',
       ...base,
-      ...pick(node, ['codePath', 'image', 'code', 'thumbnail']),
+      ...pick(node, ['codePath', 'image', 'code', 'image']),
     }
     return _node
   } else if (node.__typename === 'IscedGrade') {
     const _node: Omit<GraphNode.GraphNode, '_permId' | '_status'> = {
       _type: 'IscedGrade',
       ...base,
-      ...pick(node, ['codePath', 'image', 'code', 'thumbnail']),
+      ...pick(node, ['codePath', 'image', 'code', 'image']),
     }
     return _node
   } else if (node.__typename === 'Organization') {
@@ -151,7 +151,7 @@ export const gqlNode2GraphNode = (node: GQL.Node): Omit<GraphNode.GraphNode, '_p
     const _node: Omit<GraphNode.GraphNode, '_permId' | '_status'> = {
       _type: 'Resource',
       ...base,
-      ...pick(node, ['content', 'kind', 'thumbnail']),
+      ...pick(node, ['content', 'kind', 'image']),
     }
     return _node
   } else if (node.__typename === 'FileFormat') {
@@ -183,7 +183,7 @@ export const gqlNode2GraphNode = (node: GQL.Node): Omit<GraphNode.GraphNode, '_p
     }
     return _node
   } else {
-    throw assertNever(node, `gqlNode2GraphNode: can't map unknown node type '${(node as any)?.__typename}'`)
+    return assertNever(node, `gqlNode2GraphNode: can't map unknown node type '${(node as any)?.__typename}'`)
   }
 }
 
@@ -216,7 +216,7 @@ export const graphEdge2GqlEdge = (edge: GraphEdge.GraphEdge): GQL.Edge => {
     }
     return _edge
   } else {
-    throw assertNever(edge, `graphEdge2GqlEdge: can't map unknown edge type '${(edge as any)?._type}''`)
+    return assertNever(edge, `graphEdge2GqlEdge: can't map unknown edge type '${(edge as any)?._type}''`)
   }
 }
 export const gqlEdge2GraphEdge = (edge: GQL.Edge): DistOmit<GraphEdge.GraphEdge, '_authId'> => {
@@ -252,7 +252,7 @@ export const gqlEdge2GraphEdge = (edge: GQL.Edge): DistOmit<GraphEdge.GraphEdge,
     }
     return _edge
   } else {
-    throw assertNever(edge, `graphEdge2GqlEdge: can't map unknown edge type '${(edge as any)?._type}''`)
+    return assertNever(edge, `graphEdge2GqlEdge: can't map unknown edge type '${(edge as any)?._type}''`)
   }
 }
 
@@ -278,7 +278,7 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
       } else if (input.type === 'NoChange') {
         return undefined
       } else {
-        throw assertNever(input.type, `mapAssetRefInputsToAssetRefs: unknown input type: '${input.type}'`)
+        return assertNever(input.type, `mapAssetRefInputsToAssetRefs: unknown input type: '${input.type}'`)
       }
     },
   )

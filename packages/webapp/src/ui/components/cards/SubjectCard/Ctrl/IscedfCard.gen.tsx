@@ -10,10 +10,10 @@ export type IscedfCardQueryVariables = Types.Exact<{
 
 export type IscedfCardQuery = (
   { __typename: 'Query' }
-  & { node?: Types.Maybe<{ __typename: 'Collection' } | (
+  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'FileFormat' } | (
     { __typename: 'IscedField' }
     & Pick<Types.IscedField, 'name' | 'image' | 'id'>
-  ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' }> }
+  ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' }> }
 );
 
 

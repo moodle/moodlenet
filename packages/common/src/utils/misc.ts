@@ -2,9 +2,9 @@ import { memoize } from 'lodash'
 
 export type ValueOf<T extends object, K extends keyof T = keyof T> = T[K]
 
-export const assertNever = (_never: never, more = '') => {
+export const assertNever = (_never: never, more = ''): never => {
   console.error(`assertNever :`, _never)
-  new Error(`assertNever ${more}`)
+  throw new Error(`assertNever ${more}`)
 }
 
 const memoResolver = (...args: any[]) => JSON.stringify(args)

@@ -3,7 +3,7 @@ query ResourceCard($id: ID!) {
     ... on Resource {
       id
       name
-      thumbnail
+      image
       kind
       content
       description

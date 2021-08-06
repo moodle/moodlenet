@@ -2,7 +2,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import './styles.scss';
 
-export type DropdownOptionsType = string[] | [string, React.ReactNode][]
+export type DropdownOptionsType =  ([string, React.ReactNode]|string)[]
 
 export type DropdownProps = {
   label?: string
