@@ -33,7 +33,7 @@ query ProfilePageUserData($profileId: ID!) {
             ... on Resource {
               id
               name
-              thumbnail
+              image
             }
           }
         }

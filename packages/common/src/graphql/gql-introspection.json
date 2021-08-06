@@ -959,7 +959,7 @@
             "deprecationReason": null
           },
           {
-            "name": "thumbnail",
+            "name": "image",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
@@ -1985,7 +1985,7 @@
             "deprecationReason": null
           },
           {
-            "name": "thumbnail",
+            "name": "image",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
@@ -2832,18 +2832,6 @@
             "deprecationReason": null
           },
           {
-            "name": "thumbnail",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "AssetRef",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "image",
             "description": null,
             "args": [],
@@ -3090,18 +3078,6 @@
                 "name": "String",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "thumbnail",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "AssetRef",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -5254,7 +5230,7 @@
             "deprecationReason": null
           },
           {
-            "name": "thumbnail",
+            "name": "image",
             "description": null,
             "args": [],
             "type": {

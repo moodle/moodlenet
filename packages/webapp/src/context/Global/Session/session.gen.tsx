@@ -27,7 +27,7 @@ export type UserSessionFragment = (
         & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name'>
-        ) | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   ) }

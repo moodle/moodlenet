@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro'
+import { assertNever } from '@moodlenet/common/lib/utils/misc'
 import ProgressState from '../../components/atoms/ProgressState/ProgressState'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
@@ -11,7 +12,7 @@ export type NewResourceState = 'UploadResource' | 'AddToCollections' | 'ExtraDet
 export type NewResourceProgressState = [NewResourceState, string][]
 
 export type NewResourceProps = {
-  stepProps: UploadResourceProps | AddToCollectionsProps |ExtraDetailsProps
+  stepProps: UploadResourceProps | AddToCollectionsProps | ExtraDetailsProps
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   // uploadResource: UploadResourceProps
   // states: NewResourceProgressState
@@ -19,11 +20,16 @@ export type NewResourceProps = {
 }
 
 const progressStates = [t`Upload Resource`, t`Add to Collections`, t`Add Details`]
-const progressSubtitles= [t``, t`Earn 1 Point `, t`Earn 5 Points by completing this useful information`]
+const progressSubtitles = [t``, t`Earn 1 Point `, t`Earn 5 Points by completing this useful information`]
 export const NewResource = withCtrl<NewResourceProps>(({ stepProps, headerPageTemplateProps }) => {
-  const progressCurrentIndex = stepProps.step === 'UploadResourceStep' ? 0 : 
-  stepProps.step === 'AddToCollectionsStep' ? 1 :
-  stepProps.step === 'ExtraDetailsStep' ? 2 : undefined
+  const progressCurrentIndex =
+    stepProps.step === 'UploadResourceStep'
+      ? 0
+      : stepProps.step === 'AddToCollectionsStep'
+      ? 1
+      : stepProps.step === 'ExtraDetailsStep'
+      ? 2
+      : assertNever(stepProps, `Should never happen`)
 
   if (progressCurrentIndex === undefined) {
     console.error({ stepProps })
@@ -31,18 +37,23 @@ export const NewResource = withCtrl<NewResourceProps>(({ stepProps, headerPageTe
   }
 
   return (
-    <HeaderPageTemplate {...headerPageTemplateProps} style={{backgroundColor: '#f4f5f7'}}>
+    <HeaderPageTemplate {...headerPageTemplateProps} style={{ backgroundColor: '#f4f5f7' }}>
       <div className="new-resource">
-        <ProgressState stateNames={progressStates} currentIndex={progressCurrentIndex} progressSubtitles={progressSubtitles} />
+        <ProgressState
+          stateNames={progressStates}
+          currentIndex={progressCurrentIndex}
+          progressSubtitles={progressSubtitles}
+        />
         <div className="content">
-          {(() => {
-            switch (stepProps.step) {
-              case 'UploadResourceStep': return <UploadResource {...stepProps} />
-              case 'AddToCollectionsStep': return <AddToCollections {...stepProps} />
-              case 'ExtraDetailsStep': return <ExtraDetails {...stepProps} />
-              default: return <div>Should never happen</div>
-            }
-          })()}
+          {stepProps.step === 'UploadResourceStep' ? (
+            <UploadResource {...stepProps} />
+          ) : stepProps.step === 'AddToCollectionsStep' ? (
+            <AddToCollections {...stepProps} />
+          ) : stepProps.step === 'ExtraDetailsStep' ? (
+            <ExtraDetails {...stepProps} />
+          ) : (
+            assertNever(stepProps, `Should never happen`)
+          )}
         </div>
       </div>
     </HeaderPageTemplate>

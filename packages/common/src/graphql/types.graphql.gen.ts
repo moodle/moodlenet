@@ -131,7 +131,7 @@ export type CreateNodeMutationSuccess = {
 export type CreateResourceInput = {
   name: Scalars['String'];
   description: Scalars['String'];
-  thumbnail?: Maybe<AssetRefInput>;
+  image?: Maybe<AssetRefInput>;
   content: AssetRefInput;
 };
 
@@ -259,7 +259,7 @@ export type EditProfileInput = {
 export type EditResourceInput = {
   name: Scalars['String'];
   description: Scalars['String'];
-  thumbnail?: Maybe<AssetRefInput>;
+  image?: Maybe<AssetRefInput>;
 };
 
 
@@ -352,7 +352,6 @@ export type IscedField = INode & {
   description: Scalars['String'];
   codePath: Array<Scalars['String']>;
   code: Scalars['String'];
-  thumbnail?: Maybe<Scalars['AssetRef']>;
   image?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
   _rel: RelPage;
@@ -380,7 +379,6 @@ export type IscedGrade = INode & {
   description: Scalars['String'];
   codePath: Array<Scalars['String']>;
   code: Scalars['String'];
-  thumbnail?: Maybe<Scalars['AssetRef']>;
   image?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
   _rel: RelPage;
@@ -635,7 +633,7 @@ export type Resource = INode & {
   __typename: 'Resource';
   name: Scalars['String'];
   description: Scalars['String'];
-  thumbnail?: Maybe<Scalars['AssetRef']>;
+  image?: Maybe<Scalars['AssetRef']>;
   content: Scalars['AssetRef'];
   kind: ResourceKind;
   id: Scalars['ID'];

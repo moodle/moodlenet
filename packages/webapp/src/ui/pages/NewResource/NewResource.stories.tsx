@@ -2,9 +2,19 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
-import { CategoriesDropdown, FormatDropdown, LanguagesDropdown, LevelDropdown, LicenseDropdown, MonthDropdown, TypeDropdown, YearsDropdown } from './FieldsData'
+import {
+  CategoriesDropdown,
+  FormatDropdown,
+  LanguagesDropdown,
+  LevelDropdown,
+  LicenseDropdown,
+  MonthDropdown,
+  TypeDropdown,
+  YearsDropdown,
+} from './FieldsData'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'
+import { UploadResourceProps } from './UploadResource/UploadResource'
 
 const meta: ComponentMeta<typeof NewResource> = {
   title: 'Pages/New Resource',
@@ -21,7 +31,7 @@ const meta: ComponentMeta<typeof NewResource> = {
     'NewResourceCollectionsStoryProps',
     'NewResourceExtraDataStoryProps',
     'NewResourceAddToCollectionsStoryProps',
-    'NewResourceExtraDetailsStoryProps'
+    'NewResourceExtraDetailsStoryProps',
   ],
 }
 
@@ -45,21 +55,32 @@ const initialFormValues: NewResourceFormValues = {
   level: '',
   license: '',
   name: 'https://moodle.com/awesome-content',
-  originalDate: new Date(),
+  originalDate: { month: 'July', year: '2021' },
   title: '',
   type: '',
 }
 
 const basicDataFormValue: NewResourceFormValues = {
-  ...initialFormValues, 
-  title: 'The Best Content Ever', 
-  description: 'This is the description that tells you that this a not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.', 
-  category: 'Important Matters'
+  ...initialFormValues,
+  title: 'The Best Content Ever',
+  description:
+    'This is the description that tells you that this a not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
+  category: 'Important Matters',
 }
 
 const formBag = SBFormikBag<NewResourceFormValues>(initialFormValues)
 const formBagBasicData = SBFormikBag<NewResourceFormValues>(basicDataFormValue)
 
+const uploadResourceProps: UploadResourceProps = {
+  step: 'UploadResourceStep',
+  formBag,
+  state: 'ChooseResource',
+  imageUrl: '',
+  nextStep: action('nextStep'),
+  deleteContent: action('deleteContent'),
+  categories: CategoriesDropdown,
+  licenses: LicenseDropdown,
+}
 export const NewResourceStoryProps: NewResourceProps = {
   headerPageTemplateProps: {
     headerPageProps: {
@@ -69,25 +90,14 @@ export const NewResourceStoryProps: NewResourceProps = {
     isAuthenticated: true,
     showSubHeader: false,
   },
-  stepProps: {
-    step: 'UploadResourceStep',
-    formBag,
-    state: 'ChooseResource',
-    imageUrl: '',
-    nextStep: action('nextStep'),
-    deleteContent: action('deleteContent'),
-    categories: CategoriesDropdown,
-    licenses: LicenseDropdown
-  },
+  stepProps: uploadResourceProps,
 }
 
 export const NewResourceContentUploadedStoryProps: NewResourceProps = {
   ...NewResourceStoryProps,
   stepProps: {
-    ...NewResourceStoryProps.stepProps,
-    step: 'UploadResourceStep',
+    ...uploadResourceProps,
     state: 'EditData',
-    imageUrl: '',
     formBag: formBagBasicData,
   },
 }
@@ -95,26 +105,45 @@ export const NewResourceContentUploadedStoryProps: NewResourceProps = {
 export const NewResourceImageUploadedStoryProps: NewResourceProps = {
   ...NewResourceContentUploadedStoryProps,
   stepProps: {
-    ...NewResourceContentUploadedStoryProps.stepProps,
+    ...uploadResourceProps,
     state: 'EditData',
     imageUrl: 'https://picsum.photos/200/100',
+    formBag: formBagBasicData,
   },
 }
 
 export const NewResourceAddToCollectionsStoryProps: NewResourceProps = {
-   ...NewResourceContentUploadedStoryProps,
-   stepProps: {
-     ...NewResourceContentUploadedStoryProps.stepProps,
-     step: 'AddToCollectionsStep',
-     collections: ['Education', 'Biology', 'Algebra', 'Phycology', 'Phylosophy', 'Sociology', 'English Literature', 'Marketing', 'Physiotherapy', 'Agriculture', 'Taxonomy', 'Law', 'Interpretation', 'Molecular Biology', 'Nano Engineering', 'Macro Economy', 'Animal Rights'],
-     previousStep: action('previousStep'),
-     setSearchText: action('setSearchText')
-   }
+  ...NewResourceContentUploadedStoryProps,
+  stepProps: {
+    ...NewResourceContentUploadedStoryProps.stepProps,
+    step: 'AddToCollectionsStep',
+    collections: [
+      'Education',
+      'Biology',
+      'Algebra',
+      'Phycology',
+      'Phylosophy',
+      'Sociology',
+      'English Literature',
+      'Marketing',
+      'Physiotherapy',
+      'Agriculture',
+      'Taxonomy',
+      'Law',
+      'Interpretation',
+      'Molecular Biology',
+      'Nano Engineering',
+      'Macro Economy',
+      'Animal Rights',
+    ],
+    previousStep: action('previousStep'),
+    setSearchText: action('setSearchText'),
+  },
 }
 
- export const NewResourceExtraDetailsStoryProps: NewResourceProps = {
-   ...NewResourceContentUploadedStoryProps,
-   stepProps: {
+export const NewResourceExtraDetailsStoryProps: NewResourceProps = {
+  ...NewResourceContentUploadedStoryProps,
+  stepProps: {
     step: 'ExtraDetailsStep',
     formBag,
     nextStep: action('nextStep'),
@@ -124,9 +153,9 @@ export const NewResourceAddToCollectionsStoryProps: NewResourceProps = {
     months: MonthDropdown,
     years: YearsDropdown,
     languages: LanguagesDropdown,
-    formats: FormatDropdown
+    formats: FormatDropdown,
   },
- }
+}
 
 export const Start = NewResourceStory.bind({})
 Start.args = NewResourceStoryProps

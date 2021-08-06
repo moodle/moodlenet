@@ -3,7 +3,7 @@ type IscedGrade implements INode {
   description: String!
   codePath: [String!]!
   code: String!
-  thumbnail: AssetRef
+  image: AssetRef
   image: AssetRef
   # INode
   id: ID!

@@ -39,21 +39,21 @@ const nodeDocumentDataBaker: {
   },
   async Resource(input, qmino) {
     const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
-      [getAssetRefInputAndType(input.content, 'resource'), getAssetRefInputAndType(input.thumbnail, 'icon')],
+      [getAssetRefInputAndType(input.content, 'resource'), getAssetRefInputAndType(input.image, 'icon')],
       qmino,
     )
 
     if (!contentNodeAssetRefs) {
       return noTmpFilesCreateNodeMutationError()
     }
-    const [resourceAssetRef, thumbnailAssetRef] = contentNodeAssetRefs
+    const [resourceAssetRef, imageAssetRef] = contentNodeAssetRefs
     if (!resourceAssetRef) {
       return noTmpFilesCreateNodeMutationError()
     }
     const newResourceInput: NewNodeInput = {
       _type: 'Resource',
       content: resourceAssetRef,
-      thumbnail: thumbnailAssetRef,
+      image: imageAssetRef,
       kind: resourceAssetRef.ext ? 'Link' : 'Upload',
       description: input.description,
       name: input.name,

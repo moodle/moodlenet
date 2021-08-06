@@ -32,11 +32,20 @@ export type GlobalSearchEdgeFragment = (
     { __typename: 'Collection' }
     & Pick<Types.Collection, 'id' | 'name'>
   ) | (
+    { __typename: 'FileFormat' }
+    & Pick<Types.FileFormat, 'id' | 'name'>
+  ) | (
     { __typename: 'IscedField' }
     & Pick<Types.IscedField, 'id' | 'name'>
   ) | (
     { __typename: 'IscedGrade' }
     & Pick<Types.IscedGrade, 'id' | 'name'>
+  ) | (
+    { __typename: 'Language' }
+    & Pick<Types.Language, 'id' | 'name'>
+  ) | (
+    { __typename: 'License' }
+    & Pick<Types.License, 'id' | 'name'>
   ) | (
     { __typename: 'Organization' }
     & Pick<Types.Organization, 'id' | 'name'>
@@ -46,6 +55,9 @@ export type GlobalSearchEdgeFragment = (
   ) | (
     { __typename: 'Resource' }
     & Pick<Types.Resource, 'id' | 'name'>
+  ) | (
+    { __typename: 'ResourceType' }
+    & Pick<Types.ResourceType, 'id' | 'name'>
   ) }
 );
 

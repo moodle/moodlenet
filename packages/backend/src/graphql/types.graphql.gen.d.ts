@@ -396,7 +396,6 @@ export type IscedFieldResolvers<ContextType = Context, ParentType extends Resolv
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   codePath?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  thumbnail?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   image?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.IscedField_RelArgs, 'type' | 'target'>>;
@@ -409,7 +408,6 @@ export type IscedGradeResolvers<ContextType = Context, ParentType extends Resolv
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   codePath?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  thumbnail?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   image?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.IscedGrade_RelArgs, 'type' | 'target'>>;
@@ -534,7 +532,7 @@ export type RelPageEdgeResolvers<ContextType = Context, ParentType extends Resol
 export type ResourceResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Resource'] = ResolversParentTypes['Resource']> = {
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  thumbnail?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
+  image?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   content?: Resolver<ResolversTypes['AssetRef'], ParentType, ContextType>;
   kind?: Resolver<ResolversTypes['ResourceKind'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;

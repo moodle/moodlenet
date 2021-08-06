@@ -109,7 +109,7 @@ export type AssetRef = {
 }
 
 export type Resource = BaseGraphNode<'Resource'> & {
-  thumbnail: Maybe<AssetRef>
+  image: Maybe<AssetRef>
   content: AssetRef
   kind: ResourceKind
 }

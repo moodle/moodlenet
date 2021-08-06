@@ -17,10 +17,23 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
           { __typename: 'IscedField' }
           & Pick<Types.IscedField, 'id' | 'name'>
-        ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'FileFormat' }
+    & Pick<Types.FileFormat, 'id'>
+    & { pinnedList: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   ) | (
@@ -30,10 +43,10 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
           { __typename: 'IscedField' }
           & Pick<Types.IscedField, 'id' | 'name'>
-        ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   ) | (
@@ -43,10 +56,36 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
           { __typename: 'IscedField' }
           & Pick<Types.IscedField, 'id' | 'name'>
-        ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'Language' }
+    & Pick<Types.Language, 'id'>
+    & { pinnedList: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'License' }
+    & Pick<Types.License, 'id'>
+    & { pinnedList: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   ) | (
@@ -56,10 +95,10 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
           { __typename: 'IscedField' }
           & Pick<Types.IscedField, 'id' | 'name'>
-        ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   ) | (
@@ -69,10 +108,10 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
           { __typename: 'IscedField' }
           & Pick<Types.IscedField, 'id' | 'name'>
-        ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   ) | (
@@ -82,10 +121,23 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
           { __typename: 'IscedField' }
           & Pick<Types.IscedField, 'id' | 'name'>
-        ) | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'ResourceType' }
+    & Pick<Types.ResourceType, 'id'>
+    & { pinnedList: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   )> }

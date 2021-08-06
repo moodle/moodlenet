@@ -10,7 +10,7 @@ export type ProfilePageUserDataQueryVariables = Types.Exact<{
 
 export type ProfilePageUserDataQuery = (
   { __typename: 'Query' }
-  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | (
+  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | (
     { __typename: 'Profile' }
     & Pick<Types.Profile, 'id' | 'name' | 'avatar' | 'bio' | 'image' | 'firstName' | 'lastName' | 'siteUrl' | 'location'>
     & { followersCount: Types.Profile['_relCount'], collectionsCount: Types.Profile['_relCount'], resourcesCount: Types.Profile['_relCount'] }
@@ -21,19 +21,19 @@ export type ProfilePageUserDataQuery = (
         & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'image'>
-        ) | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } }
+        ) | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ), resources: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
-          & Pick<Types.Resource, 'id' | 'name' | 'thumbnail'>
-        ) }
+          & Pick<Types.Resource, 'id' | 'name' | 'image'>
+        ) | { __typename: 'ResourceType' } }
       )> }
     ) }
-  ) | { __typename: 'Resource' }> }
+  ) | { __typename: 'Resource' } | { __typename: 'ResourceType' }> }
 );
 
 
@@ -70,7 +70,7 @@ export const ProfilePageUserDataDocument = gql`
             ... on Resource {
               id
               name
-              thumbnail
+              image
             }
           }
         }
