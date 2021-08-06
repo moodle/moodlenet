@@ -1,8 +1,7 @@
 import { GraphEdgeByType, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { AuthId } from '@moodlenet/common/lib/user-auth/types'
+import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
 import { omit } from '@moodlenet/common/lib/utils/object'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
-import { GraphNodeIdentifier } from '@moodlenet/common/src/content-graph/types/node'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { AqlGraphEdge, AqlGraphEdgeByType } from '../types'
 import { documentBySlugType } from './helpers'
@@ -22,12 +21,10 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
   edge,
   from,
   to,
-  authId,
 }: {
   edge: GraphEdgeByType<Type>
   from: GraphNodeIdentifier
   to: GraphNodeIdentifier
-  authId: AuthId
 }) => {
   const edgeType = edge._type
   const aqlEdge: DistOmit<
@@ -35,8 +32,7 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
     '_key' | '_from' | '_to' | '_created' | '_rev' | '_id' | '_fromType' | '_toType'
   > = {
     _key: edge.id,
-    authId,
-    ...omit(edge, ['_created', 'id']),
+    ...omit(edge, ['id']),
   }
 
   const q = aq<AqlGraphEdgeByType<Type>>(`
@@ -48,7 +44,6 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
     INSERT MERGE(
       ${aqlstr(aqlEdge)},
       {
-        _created: DATE_NOW(),
         _from: fromNode._id,
         _fromType:fromNode._type,
         _to: toNode._id,

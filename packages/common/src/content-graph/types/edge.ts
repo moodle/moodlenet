@@ -13,6 +13,9 @@ export type GraphEdge = GraphEdgeMap[GraphEdgeType]
 export type GraphEdgeByType<T extends GraphEdgeType> = GraphEdgeMap[T]
 
 export type EdgeId = string
+
+export type GraphEdgeIdentifier<GET extends GraphEdgeType = GraphEdgeType> = Pick<BaseGraphEdge<GET>, 'id' | '_type'>
+
 export type BaseGraphEdge<GET extends GraphEdgeType> = {
   id: EdgeId
   _type: GET

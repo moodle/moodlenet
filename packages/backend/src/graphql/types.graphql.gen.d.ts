@@ -126,15 +126,19 @@ export type ResolversTypes = {
   EditResourceInput: Types.EditResourceInput;
   Empty: ResolverTypeWrapper<Types.Scalars['Empty']>;
   Features: ResolverTypeWrapper<Types.Features>;
+  FileFormat: ResolverTypeWrapper<Types.FileFormat>;
+  FileFormatType: Types.FileFormatType;
   Follows: ResolverTypeWrapper<Types.Follows>;
   GlobalSearchSort: Types.GlobalSearchSort;
   IEdge: ResolversTypes['Created'] | ResolversTypes['Features'] | ResolversTypes['Follows'] | ResolversTypes['Pinned'];
-  INode: ResolversTypes['Collection'] | ResolversTypes['IscedField'] | ResolversTypes['IscedGrade'] | ResolversTypes['Organization'] | ResolversTypes['Profile'] | ResolversTypes['Resource'];
+  INode: ResolversTypes['Collection'] | ResolversTypes['FileFormat'] | ResolversTypes['IscedField'] | ResolversTypes['IscedGrade'] | ResolversTypes['Language'] | ResolversTypes['License'] | ResolversTypes['Organization'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['ResourceType'];
   IscedField: ResolverTypeWrapper<Types.IscedField>;
   IscedGrade: ResolverTypeWrapper<Types.IscedGrade>;
+  Language: ResolverTypeWrapper<Types.Language>;
+  License: ResolverTypeWrapper<Types.License>;
   Mutation: ResolverTypeWrapper<RootValue>;
   Never: ResolverTypeWrapper<Types.Scalars['Never']>;
-  Node: ResolversTypes['Collection'] | ResolversTypes['IscedField'] | ResolversTypes['IscedGrade'] | ResolversTypes['Organization'] | ResolversTypes['Profile'] | ResolversTypes['Resource'];
+  Node: ResolversTypes['Collection'] | ResolversTypes['FileFormat'] | ResolversTypes['IscedField'] | ResolversTypes['IscedGrade'] | ResolversTypes['Language'] | ResolversTypes['License'] | ResolversTypes['Organization'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['ResourceType'];
   NodeType: Types.NodeType;
   Organization: ResolverTypeWrapper<Types.Organization>;
   Page: ResolversTypes['RelPage'] | ResolversTypes['SearchPage'];
@@ -148,6 +152,7 @@ export type ResolversTypes = {
   RelPageEdge: ResolverTypeWrapper<Types.RelPageEdge>;
   Resource: ResolverTypeWrapper<Types.Resource>;
   ResourceKind: Types.ResourceKind;
+  ResourceType: ResolverTypeWrapper<Types.ResourceType>;
   SearchPage: ResolverTypeWrapper<Types.SearchPage>;
   SearchPageEdge: ResolverTypeWrapper<Types.SearchPageEdge>;
   SimpleResponse: ResolverTypeWrapper<Types.SimpleResponse>;
@@ -200,14 +205,17 @@ export type ResolversParentTypes = {
   EditResourceInput: Types.EditResourceInput;
   Empty: Types.Scalars['Empty'];
   Features: Types.Features;
+  FileFormat: Types.FileFormat;
   Follows: Types.Follows;
   IEdge: ResolversParentTypes['Created'] | ResolversParentTypes['Features'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Pinned'];
-  INode: ResolversParentTypes['Collection'] | ResolversParentTypes['IscedField'] | ResolversParentTypes['IscedGrade'] | ResolversParentTypes['Organization'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'];
+  INode: ResolversParentTypes['Collection'] | ResolversParentTypes['FileFormat'] | ResolversParentTypes['IscedField'] | ResolversParentTypes['IscedGrade'] | ResolversParentTypes['Language'] | ResolversParentTypes['License'] | ResolversParentTypes['Organization'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['ResourceType'];
   IscedField: Types.IscedField;
   IscedGrade: Types.IscedGrade;
+  Language: Types.Language;
+  License: Types.License;
   Mutation: RootValue;
   Never: Types.Scalars['Never'];
-  Node: ResolversParentTypes['Collection'] | ResolversParentTypes['IscedField'] | ResolversParentTypes['IscedGrade'] | ResolversParentTypes['Organization'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'];
+  Node: ResolversParentTypes['Collection'] | ResolversParentTypes['FileFormat'] | ResolversParentTypes['IscedField'] | ResolversParentTypes['IscedGrade'] | ResolversParentTypes['Language'] | ResolversParentTypes['License'] | ResolversParentTypes['Organization'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['ResourceType'];
   Organization: Types.Organization;
   Page: ResolversParentTypes['RelPage'] | ResolversParentTypes['SearchPage'];
   PageEdge: ResolversParentTypes['RelPageEdge'] | ResolversParentTypes['SearchPageEdge'];
@@ -219,6 +227,7 @@ export type ResolversParentTypes = {
   RelPage: Types.RelPage;
   RelPageEdge: Types.RelPageEdge;
   Resource: Types.Resource;
+  ResourceType: Types.ResourceType;
   SearchPage: Types.SearchPage;
   SearchPageEdge: Types.SearchPageEdge;
   SimpleResponse: Types.SimpleResponse;
@@ -349,6 +358,18 @@ export type FeaturesResolvers<ContextType = Context, ParentType extends Resolver
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type FileFormatResolvers<ContextType = Context, ParentType extends ResolversParentTypes['FileFormat'] = ResolversParentTypes['FileFormat']> = {
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['FileFormatType'], ParentType, ContextType>;
+  subtype?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.FileFormat_RelArgs, 'type' | 'target'>>;
+  _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.FileFormat_RelCountArgs, 'type' | 'target'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type FollowsResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Follows'] = ResolversParentTypes['Follows']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   _created?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
@@ -362,7 +383,7 @@ export type IEdgeResolvers<ContextType = Context, ParentType extends ResolversPa
 };
 
 export type INodeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['INode'] = ResolversParentTypes['INode']> = {
-  __resolveType?: TypeResolveFn<'Collection' | 'IscedField' | 'IscedGrade' | 'Organization' | 'Profile' | 'Resource', ParentType, ContextType>;
+  __resolveType?: TypeResolveFn<'Collection' | 'FileFormat' | 'IscedField' | 'IscedGrade' | 'Language' | 'License' | 'Organization' | 'Profile' | 'Resource' | 'ResourceType', ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -396,8 +417,33 @@ export type IscedGradeResolvers<ContextType = Context, ParentType extends Resolv
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type LanguageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Language'] = ResolversParentTypes['Language']> = {
+  part2b?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  part2t?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  part1?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  scope?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  langType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.Language_RelArgs, 'type' | 'target'>>;
+  _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.Language_RelCountArgs, 'type' | 'target'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type LicenseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['License'] = ResolversParentTypes['License']> = {
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.License_RelArgs, 'type' | 'target'>>;
+  _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.License_RelCountArgs, 'type' | 'target'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   activateUser?: Resolver<ResolversTypes['CreateSession'], ParentType, ContextType, RequireFields<Types.MutationActivateUserArgs, 'name' | 'password' | 'activationToken'>>;
+  createEdge?: Resolver<ResolversTypes['CreateEdgeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationCreateEdgeArgs, 'input'>>;
   createNode?: Resolver<ResolversTypes['CreateNodeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationCreateNodeArgs, 'input'>>;
   createSession?: Resolver<ResolversTypes['CreateSession'], ParentType, ContextType, RequireFields<Types.MutationCreateSessionArgs, 'email' | 'password'>>;
   signUp?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<Types.MutationSignUpArgs, 'email'>>;
@@ -408,7 +454,7 @@ export interface NeverScalarConfig extends GraphQLScalarTypeConfig<ResolversType
 }
 
 export type NodeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = {
-  __resolveType?: TypeResolveFn<'Collection' | 'IscedField' | 'IscedGrade' | 'Organization' | 'Profile' | 'Resource', ParentType, ContextType>;
+  __resolveType?: TypeResolveFn<'Collection' | 'FileFormat' | 'IscedField' | 'IscedGrade' | 'Language' | 'License' | 'Organization' | 'Profile' | 'Resource' | 'ResourceType', ParentType, ContextType>;
 };
 
 export type OrganizationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = {
@@ -497,6 +543,16 @@ export type ResourceResolvers<ContextType = Context, ParentType extends Resolver
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ResourceTypeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ResourceType'] = ResolversParentTypes['ResourceType']> = {
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.ResourceType_RelArgs, 'type' | 'target'>>;
+  _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.ResourceType_RelCountArgs, 'type' | 'target'>>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type SearchPageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SearchPage'] = ResolversParentTypes['SearchPage']> = {
   pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>;
   edges?: Resolver<Array<ResolversTypes['SearchPageEdge']>, ParentType, ContextType>;
@@ -564,11 +620,14 @@ export type Resolvers<ContextType = Context> = {
   EditNodeMutationSuccess?: EditNodeMutationSuccessResolvers<ContextType>;
   Empty?: GraphQLScalarType;
   Features?: FeaturesResolvers<ContextType>;
+  FileFormat?: FileFormatResolvers<ContextType>;
   Follows?: FollowsResolvers<ContextType>;
   IEdge?: IEdgeResolvers<ContextType>;
   INode?: INodeResolvers<ContextType>;
   IscedField?: IscedFieldResolvers<ContextType>;
   IscedGrade?: IscedGradeResolvers<ContextType>;
+  Language?: LanguageResolvers<ContextType>;
+  License?: LicenseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Never?: GraphQLScalarType;
   Node?: NodeResolvers<ContextType>;
@@ -582,6 +641,7 @@ export type Resolvers<ContextType = Context> = {
   RelPage?: RelPageResolvers<ContextType>;
   RelPageEdge?: RelPageEdgeResolvers<ContextType>;
   Resource?: ResourceResolvers<ContextType>;
+  ResourceType?: ResourceTypeResolvers<ContextType>;
   SearchPage?: SearchPageResolvers<ContextType>;
   SearchPageEdge?: SearchPageEdgeResolvers<ContextType>;
   SimpleResponse?: SimpleResponseResolvers<ContextType>;

@@ -1,46 +1,55 @@
 // create
 
-// import { QMModule } from '../../lib/qmino';
+import { GraphEdge } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
+import { newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { DistOmit } from '@moodlenet/common/lib/utils/types'
+import { SessionEnv } from '../../lib/auth/types'
+import { QMModule } from '../../lib/qmino'
+import { QMCommand } from '../../lib/qmino/lib'
 
-// export type CreateAdapter = {
-//   storeEdge: <Type extends GQL.EdgeType>(_: {
-//     edgeType: Type
-//     data: DocumentEdgeDataByType<Type>
-//     from: NodeId
-//     to: NodeId
-//     creatorProfileId: NodeId
-//     rule: BLRule
-//   }) => Promise<DocumentEdgeByType<Type> | null>
-//   ops: CreateEdgeBLOps
-// }
+export type NewEdgeInput = DistOmit<GraphEdge, '_authId' | '_created' | 'id'>
+export type CreateAdapter = {
+  storeEdge: <E extends GraphEdge>(_: {
+    edge: E
+    from: GraphNodeIdentifier
+    to: GraphNodeIdentifier
+  }) => Promise<E | null>
+  // ops: CreateEdgeBLOps
+}
 
-// export type CreateInput<Type extends GQL.EdgeType = GQL.EdgeType> = {
-//   env: SessionEnv
-//   from: NodeId
-//   to: NodeId
-//   edgeType: Type
-//   data: DocumentEdgeDataByType<Type>
-// }
+export type CreateInput = {
+  sessionEnv: SessionEnv
+  from: GraphNodeIdentifier
+  to: GraphNodeIdentifier
+  newEdge: NewEdgeInput
+}
 
-// export const create = QMCommand(
-//   <Type extends GQL.EdgeType = GQL.EdgeType>({ data, env, edgeType, from, to }: CreateInput<Type>) =>
-//     async ({ storeEdge, ops }: CreateAdapter): Promise<DocumentEdgeByType<Type> | GQL.CreateEdgeMutationErrorType> => {
-//       const rule = createEdgeRule({
-//         edgeType,
-//         from,
-//         profileId: getProfileId(env),
-//         ops,
-//         to,
-//         userRole: env.user.role,
-//       })
-//       const creatorProfileId = getProfileId(env)
-//       const result = await storeEdge({ from, to, edgeType, data, creatorProfileId, rule })
-//       if (!result) {
-//         return 'AssertionFailed'
-//       }
-//       return result
-//     },
-// )
+export const createEdge = QMCommand(
+  ({ from, to, sessionEnv, newEdge }: CreateInput) =>
+    async ({ storeEdge }: CreateAdapter) => {
+      // const rule = createEdgeRule({
+      //   edgeType,
+      //   from,
+      //   profileId: getProfileId(env),
+      //   ops,
+      //   to,
+      //   userRole: env.user.role,
+      // })
+      const _authId = sessionEnv.user.authId
+      const edge: GraphEdge = {
+        ...newEdge,
+        _authId,
+        _created: Number(new Date()),
+        id: newGlyphPermId(),
+      }
+      const result = await storeEdge({ edge, from, to })
+      if (!result) {
+        return null
+      }
+      return result
+    },
+)
 
 // // delete
 
@@ -70,4 +79,4 @@
 //     },
 // )
 
-// QMModule(module)
+QMModule(module)

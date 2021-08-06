@@ -30,7 +30,7 @@ export const getBySlug = QMQuery(
 
 // create
 export type CreateNodeAdapter = {
-  storeNode: <N extends GraphNode>(_: { node: N }) => Promise<N | null>
+  storeNode: <N extends GraphNode>(_: { node: N }) => Promise<N | undefined>
 }
 export type NewNodeInput = DistOmit<GraphNode, '_permId' | '_slug'>
 export type CreateNode = {
@@ -50,6 +50,9 @@ export const createNode = QMCommand(
       if (!result) {
         return null
       }
+
+      // FIXME: Created Edge !
+
       return result
     },
 )

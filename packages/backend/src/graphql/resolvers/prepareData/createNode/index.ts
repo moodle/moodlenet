@@ -25,6 +25,18 @@ const nodeDocumentDataBaker: {
   async Profile(/* input, qmino */) {
     throw new Error('GQL create Profile not implemented')
   },
+  FileFormat(/* input, qmino */) {
+    throw new Error('GQL create FileFormat not implemented')
+  },
+  Language(/* input, qmino */) {
+    throw new Error('GQL create Language not implemented')
+  },
+  License(/* input, qmino */) {
+    throw new Error('GQL create License not implemented')
+  },
+  ResourceType(/* input, qmino */) {
+    throw new Error('GQL create ResourceType not implemented')
+  },
   async Resource(input, qmino) {
     const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
       [getAssetRefInputAndType(input.content, 'resource'), getAssetRefInputAndType(input.thumbnail, 'icon')],

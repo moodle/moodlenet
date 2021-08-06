@@ -26,7 +26,6 @@ input CreateResourceInput {
   description: String!
   thumbnail: AssetRefInput
   content: AssetRefInput!
-  licenseCode: String!
 }
 input CreateNodeInput {
   Resource: CreateResourceInput
