@@ -26,9 +26,8 @@ input CreateResourceInput {
   description: String!
   thumbnail: AssetRefInput
   content: AssetRefInput!
-  slug: String!
+  licenseCode: String!
 }
-
 input CreateNodeInput {
   Resource: CreateResourceInput
 }
@@ -36,7 +35,7 @@ input CreateNodeInput {
 input EditResourceInput {
   name: String!
   description: String!
-  image: AssetRefInput
+  thumbnail: AssetRefInput
 }
 input EditNodeInput {
   Resource: EditResourceInput

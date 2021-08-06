@@ -939,7 +939,7 @@
             "deprecationReason": null
           },
           {
-            "name": "slug",
+            "name": "licenseCode",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -1905,7 +1905,7 @@
             "deprecationReason": null
           },
           {
-            "name": "image",
+            "name": "thumbnail",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",

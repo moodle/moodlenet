@@ -3,7 +3,13 @@
 import { GraphEdge } from '@moodlenet/common/lib/content-graph/types/edge'
 import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { AssetRef } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { AssetRefInput, Edge, Node } from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import {
+  AssetRefInput,
+  CreateNodeMutationError,
+  CreateNodeMutationErrorType,
+  Edge,
+  Node,
+} from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
 import { parseEdgeId, parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { pick } from '@moodlenet/common/lib/utils/object'
@@ -179,18 +185,22 @@ export const gqlEdge2GraphEdge = (edge: Edge): DistOmit<GraphEdge, '_authId'> =>
 
 type AssetRefInputAndType = { input: AssetRefInput; uploadType: UploadType }
 export const mapAssetRefInputsToAssetRefs = async <N extends number>(
-  tupleOfAssetRefInputAndType: Tuple<AssetRefInputAndType, N>,
+  tupleOfAssetRefInputAndType: Tuple<AssetRefInputAndType | undefined | null, N>,
   qmino: QMino,
 ): Promise<Tuple<Maybe<AssetRef>, N> | null> => {
   type PersistTmpFileReqOrAssetRef = PersistTmpFileReq | AssetRef
 
   const arrayOfMaybePersistTempFilesReqOrAssetRef = tupleOfAssetRefInputAndType.map<Maybe<PersistTmpFileReqOrAssetRef>>(
-    ({ input, uploadType }) => {
+    assRefInpAndType => {
+      if (!assRefInpAndType) {
+        return assRefInpAndType
+      }
+      const { input, uploadType } = assRefInpAndType
       switch (input.type) {
         case 'TmpUpload':
           return { tempAssetId: input.location, uploadType }
         case 'ExternalUrl':
-          return { ext: true, location: input.location, mimetype: null }
+          return { ext: true, location: input.location, mimetype: 'text/html' } // TODO: define mimetype for links
         case 'NoAsset':
           return null
         case 'NoChange':
@@ -233,6 +243,15 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
 }
 
 export const getAssetRefInputAndType = (
-  assetRefInput: AssetRefInput,
+  assetRefInput: AssetRefInput | undefined | null,
   uploadType: UploadType,
-): AssetRefInputAndType => ({ input: assetRefInput, uploadType })
+): AssetRefInputAndType | undefined | null => assetRefInput && { input: assetRefInput, uploadType }
+
+export const createNodeMutationError = (
+  type: CreateNodeMutationErrorType,
+  details: string | null = null,
+): CreateNodeMutationError => ({
+  __typename: 'CreateNodeMutationError',
+  type,
+  details,
+})

@@ -1,7 +1,7 @@
 import { Organization, Profile } from '@moodlenet/common/lib/content-graph/types/node'
 import { ActiveUser } from '@moodlenet/common/lib/user-auth/types'
+import { newAuthId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
-import { nanoid } from 'nanoid'
 
 export const localOrganizationData: Omit<Organization, 'domain'> = {
   _permId: 'local',
@@ -16,7 +16,7 @@ Build your profile as an educator.`,
   logo: null,
 }
 
-const rootAuthId = nanoid(18)
+const rootAuthId = newAuthId()
 export const rootUserProfile: Profile = {
   _slug: `__root__`,
   _authId: rootAuthId,

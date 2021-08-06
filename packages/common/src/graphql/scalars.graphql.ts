@@ -1,7 +1,7 @@
 export type AssetRef = {
   ext: boolean
   location: string
-  mimetype: string | null
+  mimetype: string
 }
 
 export type Timestamp = number
