@@ -19,7 +19,9 @@ export type DropdownProps = {
 
 export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getValue, hasSearch, options, disabled}) => {
   const [value, setValue] = useState<string | undefined | null>(undefined)
+  const [index, setIndex] = useState<number | undefined | null>(undefined)
   const [isOnHover, setIsOnHover] = useState<boolean>(false)
+  const [isIconVisible, setIsIconVisible] = useState<boolean>(false)
   const dropdownButton = useRef<HTMLInputElement>(null)
   const dropdownContent = useRef<HTMLDivElement>(null)
 
@@ -32,6 +34,8 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
 
   const handleOnClick = () => {
     dropdownContent.current && (dropdownContent.current.style.visibility = 'visible')
+    setIsIconVisible(false)
+    dropdownButton.current && dropdownButton.current.focus()
   }
 
   window.addEventListener('DOMContentLoaded', () => {
@@ -46,7 +50,7 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
     const bottom = viewportOffset && (window.innerHeight - viewportOffset.bottom)
 
     if (bottom && top && (bottom > 160 || bottom > top)) {
-      dropdownContent.current && (dropdownContent.current.style.maxHeight = bottom && bottom < 160 ? bottom - 20 + 'px' : '160px')
+      dropdownContent.current && (dropdownContent.current.style.maxHeight = bottom && bottom - 20 < 160 ? bottom - 20 + 'px' : '160px')
       dropdownContent.current && (dropdownContent.current.style.top = label? '75px' : '50px')
       dropdownContent.current && (dropdownContent.current.style.bottom = 'auto')
       dropdownContent.current && (dropdownContent.current.style.transform = ' translate(-50%, 0px)')
@@ -58,14 +62,18 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
     }
   }
 
-  const handleOnSelection = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleOnSelection = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, i: number) => {
     setValue((e.target as HTMLElement).innerText)
+    setIndex(i)
     dropdownContent.current && (dropdownContent.current.style.visibility = 'hidden')
+    console.log('selection')
+    setIsIconVisible(true)
   }
 
   const handleOnBlur = () => {
     if (!isOnHover) {
       dropdownContent.current && (dropdownContent.current.style.visibility = 'hidden')
+      index && setIsIconVisible(true)
     }
   }
 
@@ -77,10 +85,10 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
     const filter = dropdownButton.current?.value.toUpperCase()
     const div = dropdownContent.current
     let length = 0
-    Array.prototype.slice.call(div?.getElementsByClassName('option')).forEach((e) => {
+    Array.prototype.slice.call(div?.getElementsByClassName('option')).forEach((e, i) => {
       const txtValue = e.innerText.toUpperCase()
       if (txtValue.indexOf(filter) > -1) {
-        txtValue === filter && setValue(e.innerText) 
+        txtValue === filter && setValue(e.innerText) && setIndex(i) 
         e.style.display = ''
         length ++
       } else {
@@ -93,14 +101,14 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
   const optionsList = type === 'Text' ? (
     options?.map((value, i) => {
       return (
-        <div key={i} className="option only-text" onClick={e => handleOnSelection(e)}>
+        <div key={i} data-key={i} className="option only-text" onClick={e => handleOnSelection(e, i)}>
           {value}
         </div>
       )
   })) : (
     options?.map((value, i) => {
       return (
-        <div key={i} className="option icon-and-text" onClick={e => handleOnSelection(e)}>
+        <div key={i} data-key={i} className="option icon-and-text" onClick={e => handleOnSelection(e, i)}>
           {value[1]}
           <span>{value[0]}</span>
         </div>
@@ -115,18 +123,24 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
       hidden={hidden}
     >
       {label && <label>{label}</label>}
-      <div className="dropdown-button button">
-        <input
-          ref={dropdownButton}
-          className=" dropdown-button button search-field"
-          type="text"
-          placeholder={placeholder}
-          onChange={handleOnChange}
-          onClick={handleOnClick}
-          onBlur={handleOnBlur}
-          value={value ? value : ''}
-        />
-        <ExpandMoreIcon />
+      <div className="input-container" onClick={handleOnClick}>
+        <div className="dropdown-button button">
+          <input
+            ref={dropdownButton}
+            className=" dropdown-button button search-field"
+            type="text"
+            style={(type === 'Text' || !isIconVisible) ? {visibility: 'visible', display: 'block'} : {visibility: 'hidden', display: 'none'}}
+            placeholder={placeholder}
+            onChange={handleOnChange}
+            onClick={handleOnClick}
+            onBlur={handleOnBlur}
+            value={value ? value : ''}
+          />
+          { isIconVisible && index && options && options[index]?.length === 2 && (
+            options.map((value, i) => i === index && <div className="icons scroll">{value[1]}</div>)
+          )}
+          <ExpandMoreIcon />
+        </div>
       </div>
       <div 
         ref={dropdownContent}

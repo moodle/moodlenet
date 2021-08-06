@@ -1,10 +1,10 @@
 import { t } from "@lingui/macro"
 import { DropdownOptionsType } from "../../components/atoms/Dropdown/Dropdown"
-import byIcon from '../../static/icons/license/by.svg'
-import ncIcon from '../../static/icons/license/nc.svg'
-import ndIcon from '../../static/icons/license/nd.svg'
-import saIcon from '../../static/icons/license/sa.svg'
-import zeroIcon from '../../static/icons/license/zero.svg'
+import { ReactComponent as ByIcon } from '../../static/icons/license/by.svg'
+import { ReactComponent as NcIcon } from '../../static/icons/license/nc.svg'
+import { ReactComponent as NdIcon } from '../../static/icons/license/nd.svg'
+import { ReactComponent as SaIcon } from '../../static/icons/license/sa.svg'
+import { ReactComponent as ZeroIcon } from '../../static/icons/license/zero.svg'
 
 export type DropdownField = {
     label?: string
@@ -104,11 +104,11 @@ export const LanguagesDropdown: DropdownField  =  {
     ]
 }
 
-const by = <img src={byIcon} alt="BY"/>
-const zero = <img src={zeroIcon} alt="CCO"/>
-const nc = <img src={ncIcon} alt="CCO"/>
-const nd = <img src={ndIcon} alt="BY"/>
-const sa = <img src={saIcon} alt="CCO"/>
+const by = <ByIcon/>
+const zero = <ZeroIcon/>
+const nc = <NcIcon/>
+const nd = <NdIcon/>
+const sa = <SaIcon/>
 
 export const LicenseDropdown: DropdownField  =  {
     placeholder: t`License`,
