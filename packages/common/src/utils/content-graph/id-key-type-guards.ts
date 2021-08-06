@@ -14,26 +14,26 @@ export const isGraphEdgeType = (_: any): _ is GraphEdgeType => !!_ && edgeTypes.
 
 export const nodeSlugId = (type: GraphNodeType, slug: Slug) => `${type}/${slug}`
 
-export const parseNodeId = (id: string): [type: GraphNodeType, slug: Slug] | null => {
-  const splitted = (id || '').split('/')
+export const gqlNodeId2GraphNodeIdentifier = (_id: string): { _type: GraphNodeType; _slug: Slug } | null => {
+  const splitted = (_id || '').split('/')
   if (splitted.length !== 2) {
     return null
   }
-  const [type, slug] = splitted
-  if (!(type && slug && isGraphNodeType(type))) {
+  const [_type, _slug] = splitted
+  if (!(_type && _slug && isGraphNodeType(_type))) {
     return null
   }
-  return [type, slug]
+  return { _type, _slug }
 }
 
-export const parseEdgeId = (id: string): [type: GraphEdgeType, id: EdgeId] | null => {
-  const splitted = (id || '').split('/')
+export const gqlEdgeId2GraphEdgeIdentifier = (_id: string): { _type: GraphEdgeType; id: EdgeId } | null => {
+  const splitted = (_id || '').split('/')
   if (splitted.length !== 2) {
     return null
   }
-  const [type, _id] = splitted
-  if (!(type && _id && isGraphEdgeType(type))) {
+  const [_type, id] = splitted
+  if (!(_type && id && isGraphEdgeType(_type))) {
     return null
   }
-  return [type, _id]
+  return { _type, id }
 }

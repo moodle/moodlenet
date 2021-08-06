@@ -2,6 +2,7 @@ import { Database } from 'arangojs'
 import { Algorithm, SignOptions, VerifyOptions } from 'jsonwebtoken'
 import { createTransport } from 'nodemailer'
 import { ulid } from 'ulid'
+import { createEdgeAdapter } from '../adapters/content-graph/arangodb/adapters/edge'
 import { globalSearch } from '../adapters/content-graph/arangodb/adapters/globalSearch'
 import { createNodeAdapter, getNodeBySlugAdapter } from '../adapters/content-graph/arangodb/adapters/node'
 import { getByAuthId } from '../adapters/content-graph/arangodb/adapters/profile'
@@ -23,10 +24,10 @@ import { argonHashPassword, argonVerifyPassword } from '../lib/auth/argon'
 import { getVersionedDBOrThrow } from '../lib/helpers/arango/migrate/lib'
 import { Qmino } from '../lib/qmino'
 import { createInProcessTransport } from '../lib/qmino/transports/in-process/transport'
+import * as edgePorts from '../ports/content-graph/edge'
 import * as nodePorts from '../ports/content-graph/node'
 import * as profilePorts from '../ports/content-graph/profile'
 import * as searchPorts from '../ports/content-graph/search'
-// import * as edgePorts from '../ports/content-graph/edge'
 import * as traverseNodePorts from '../ports/content-graph/traverseNodeRel'
 import * as assetPorts from '../ports/static-assets/asset'
 import * as tmpAssetPorts from '../ports/static-assets/temp'
@@ -126,7 +127,7 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
 
   qminoInProcess.open(nodePorts.createNode, createNodeAdapter(contentGraphDatabase))
 
-  // qminoInProcess.open(edgePorts.create, createEdgeAdapter(contentGraphDatabase))
+  qminoInProcess.open(edgePorts.createEdge, createEdgeAdapter(contentGraphDatabase))
   // qminoInProcess.open(edgePorts.del, deleteEdgeAdapter(contentGraphDatabase))
 
   //FS asset

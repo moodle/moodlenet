@@ -1,5 +1,5 @@
 import * as GQLTypes from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { gqlNodeId2GraphNodeIdentifier } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { QMino } from '../../lib/qmino'
 import * as traversePorts from '../../ports/content-graph/traverseNodeRel'
 import { Context } from '../types'
@@ -26,11 +26,11 @@ export const getINodeResolver = ({
 } => {
   return {
     async _rel(node, { target, type, inverse, page }, ctx) {
-      const parsed = parseNodeId(node.id)
+      const parsed = gqlNodeId2GraphNodeIdentifier(node.id)
       if (!parsed) {
         throw `FIXME _rel`
       }
-      const [fromType, fromSlug] = parsed
+      const { _type: fromType, _slug: fromSlug } = parsed
 
       const { items, pageInfo } = await qmino.query(
         traversePorts.fromNode({
@@ -70,11 +70,11 @@ export const getINodeResolver = ({
       }
     },
     async _relCount(node, { target, type, inverse }, ctx) {
-      const parsed = parseNodeId(node.id)
+      const parsed = gqlNodeId2GraphNodeIdentifier(node.id)
       if (!parsed) {
         throw `FIXME _rel`
       }
-      const [fromType, fromSlug] = parsed
+      const { _type: fromType, _slug: fromSlug } = parsed
 
       return await qmino.query(
         traversePorts.count({

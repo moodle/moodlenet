@@ -7,21 +7,21 @@ export type GraphNodeMap = {
   Profile: Profile
   Resource: Resource
   IscedGrade: IscedGrade
+  Language: Language
+  License: License
   ResourceType: ResourceType
   FileFormat: FileFormat
-  License: License
-  Language: Language
 }
 export type GraphNodeType = keyof GraphNodeMap
 export const nodeTypes: GraphNodeType[] = [
-  'Language',
-  'License',
   'Profile',
   'Collection',
-  'Resource',
   'IscedField',
-  'Organization',
   'IscedGrade',
+  'Organization',
+  'Resource',
+  'Language',
+  'License',
   'ResourceType',
   'FileFormat',
 ]

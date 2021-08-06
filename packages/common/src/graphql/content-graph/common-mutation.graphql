@@ -2,7 +2,7 @@ type Mutation {
   createNode(input: CreateNodeInput!): CreateNodeMutationPayload!
   # editNode(input: EditNodeInput!): EditNodeMutationPayload!
   # deleteNode(input: DeleteNodeInput!): DeleteNodeMutationPayload!
-  # createEdge(input: CreateEdgeInput!): CreateEdgeMutationPayload!
+  createEdge(input: CreateEdgeInput!): CreateEdgeMutationPayload!
   # updateEdge(input: UpdateEdgeInput!): UpdateEdgeMutationPayload!
   # deleteEdge(input: DeleteEdgeInput!): DeleteEdgeMutationPayload!
 }

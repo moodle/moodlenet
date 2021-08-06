@@ -1,23 +1,26 @@
+import { validateCreateEdgeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/createEdge'
 import { validateCreateNodeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/createNode'
 import * as GQLTypes from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import {
   GlobalSearchNodeType,
   globalSearchNodeType,
+  gqlNodeId2GraphNodeIdentifier,
   isGlobalSearchNodeType,
-  parseNodeId,
 } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { SignOptions } from 'jsonwebtoken'
 import { JwtPrivateKey, signJwtActiveUser } from '../../lib/auth/jwt'
 import { PasswordHasher, PasswordVerifier } from '../../lib/auth/types'
 import { QMino } from '../../lib/qmino'
+import * as edgePorts from '../../ports/content-graph/edge'
 import * as nodePorts from '../../ports/content-graph/node'
 import * as profilePorts from '../../ports/content-graph/profile'
 import * as searchPorts from '../../ports/content-graph/search'
 import * as newUserPorts from '../../ports/user-auth/new-user'
 import * as userPorts from '../../ports/user-auth/user'
 import * as GQLResolvers from '../types.graphql.gen'
-import { createNodeMutationError, graphNode2GqlNode } from './helpers'
+import { createEdgeMutationError, createNodeMutationError, graphEdge2GqlEdge, graphNode2GqlNode } from './helpers'
 import { getINodeResolver } from './INode'
+import { bakeEdgeDoumentData } from './prepareData/createEdge'
 import { bakeNodeDoumentData } from './prepareData/createNode'
 
 export const getGQLResolvers = ({
@@ -38,11 +41,11 @@ export const getGQLResolvers = ({
     Query: {
       async node(_root, { id }, ctx /*,_info */) {
         console.log({ id })
-        const parsed = parseNodeId(id)
+        const parsed = gqlNodeId2GraphNodeIdentifier(id)
         if (!parsed) {
           return null
         }
-        const [type, slug] = parsed
+        const { _type: type, _slug: slug } = parsed
         const maybeNode = await qmino.query(nodePorts.getBySlug({ type, slug, env: ctx.authSessionEnv }), {
           timeout: 5000,
         })
@@ -118,6 +121,10 @@ export const getGQLResolvers = ({
     IscedGrade: INodeResolver,
     Organization: INodeResolver,
     Resource: INodeResolver,
+    FileFormat: INodeResolver,
+    Language: INodeResolver,
+    License: INodeResolver,
+    ResourceType: INodeResolver,
     Mutation: {
       async createSession(_root, { password, email } /* , ctx */) {
         const activeUser = await qmino.query(userPorts.getActiveByEmail({ email }), {
@@ -180,7 +187,7 @@ export const getGQLResolvers = ({
           return data
         }
         // const data = { name, summary, ...assetRefMap }
-        const shallowNodeOrError = await qmino.callSync(
+        const graphNodeOrError = await qmino.callSync(
           nodePorts.createNode({
             newNode: {
               ...data,
@@ -189,44 +196,55 @@ export const getGQLResolvers = ({
           }),
           { timeout: 5000 },
         )
-        if (!shallowNodeOrError) {
+        if (!graphNodeOrError) {
           return createNodeMutationError('AssertionFailed')
         }
-        const node = graphNode2GqlNode(shallowNodeOrError)
+        const node = graphNode2GqlNode(graphNodeOrError)
         return {
           __typename: 'CreateNodeMutationSuccess',
           node,
         }
       },
-      // async createEdge(_root, { input }, ctx, _info) {
-      //   // if (env.type === 'anon') {
-      //   //   return createEdgeMutationError('NotAuthorized')
-      //   // }
-      //   const { edgeType, from, to } = input
-      //   const data = validateCreateEdgeInput(input)
-      //   if (data instanceof Error) {
-      //     return createEdgeMutationError('UnexpectedInput', data.message)
-      //   }
-      //   // const data = { name, summary, ...assetRefMap }
-      //   const edgeCreateResult = await qmino.callSync(
-      //     edgePorts.create({
-      //       from,
-      //       to,
-      //       data,
-      //       edgeType,
-      //       env,
-      //     }),
-      //     { timeout: 5000 },
-      //   )
-      //   if (typeof edgeCreateResult === 'string') {
-      //     return createEdgeMutationError(edgeCreateResult, '')
-      //   }
-      //   const successResult: GQLTypes.CreateEdgeMutationSuccess = {
-      //     __typename: 'CreateEdgeMutationSuccess',
-      //     edge: gqlEdgeByShallowOrDoc(edgeCreateResult),
-      //   }
-      //   return successResult
-      // },
+      async createEdge(_root, { input }, ctx, _info) {
+        if (!ctx.authSessionEnv) {
+          return createEdgeMutationError('NotAuthorized')
+        }
+        const { edgeType, from, to } = input
+        const fromIdentifier = gqlNodeId2GraphNodeIdentifier(from)
+        const toIdentifier = gqlNodeId2GraphNodeIdentifier(to)
+        if (!(fromIdentifier && toIdentifier)) {
+          return createEdgeMutationError('UnexpectedInput', `can't parse node ids`)
+        }
+
+        const nodeInput = validateCreateEdgeInput(input)
+        if (nodeInput instanceof Error) {
+          return createEdgeMutationError('UnexpectedInput', nodeInput.message)
+        }
+        const data = await bakeEdgeDoumentData(nodeInput, edgeType, qmino)
+        if ('__typename' in data) {
+          return data
+        }
+        // const data = { name, summary, ...assetRefMap }
+        const graphEdgeOrError = await qmino.callSync(
+          edgePorts.createEdge({
+            newEdge: {
+              ...data,
+            },
+            sessionEnv: ctx.authSessionEnv,
+            from: fromIdentifier,
+            to: toIdentifier,
+          }),
+          { timeout: 5000 },
+        )
+        if (!graphEdgeOrError) {
+          return createEdgeMutationError('AssertionFailed')
+        }
+        const edge = graphEdge2GqlEdge(graphEdgeOrError)
+        return {
+          __typename: 'CreateEdgeMutationSuccess',
+          edge,
+        }
+      },
       // async deleteEdge(_root, { input }, ctx /*,  _info */) {
       //   // console.log('deleteEdge', input)
       //   const { edgeType, id } = input

@@ -239,10 +239,10 @@ export const graphNode2AqlGraphNode = <T extends GraphNodeType>(graphNode: Graph
 }
 
 export const aqlGraphEdge2GraphEdge = <T extends GraphEdgeType>(aqlGraphEdge: AqlGraphEdgeByType<T>) => {
-  const [__type, __permId] = aqlGraphEdge._id.split('/')
+  const [__type, id] = aqlGraphEdge._id.split('/')
   const graphEdge: GraphEdgeByType<T> = {
     _type: __type! as T,
-    _permId: __permId!,
+    id,
     ...(aqlGraphEdge as any),
   }
   return graphEdge

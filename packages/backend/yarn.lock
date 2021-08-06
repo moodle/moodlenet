@@ -1110,6 +1110,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/istextorbinary@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@types/istextorbinary/-/istextorbinary-2.3.1.tgz#71628af15801ecc336d196bc0685cc71e31bee7e"
+  integrity sha512-Fu3zxViCkMd2oEkwQ1ITv16MCfybykq1VYjoeqLcYjeq3RhWDnwMb+Ang0MP3xwq17kDkCt8XQ7omTJ/1ukSoQ==
+  dependencies:
+    "@types/node" "*"
+
 "@types/js-yaml@^4.0.0":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@types/js-yaml/-/js-yaml-4.0.1.tgz#5544730b65a480b18ace6b6ce914e519cec2d43b"
@@ -1575,6 +1582,11 @@ binary-extensions@^2.0.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.2.0.tgz#75f502eeaf9ffde42fc98829645be4ea76bd9e2d"
   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
+
+binaryextensions@^4.18.0:
+  version "4.18.0"
+  resolved "https://registry.yarnpkg.com/binaryextensions/-/binaryextensions-4.18.0.tgz#22aeada2d14de062c60e8ca59a504a5636a76ceb"
+  integrity sha512-PQu3Kyv9dM4FnwB7XGj1+HucW+ShvJzJqjuw1JkKVs1mWdwOKVcRjOi+pV9X52A0tNvrPCsPkbFFQb+wE1EAXw==
 
 bitsyntax@~0.1.0:
   version "0.1.0"
@@ -3459,6 +3471,14 @@ isomorphic-ws@4.0.1:
   resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-4.0.1.tgz#55fd4cd6c5e6491e76dc125938dd863f5cd4f2dc"
   integrity sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==
 
+istextorbinary@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/istextorbinary/-/istextorbinary-6.0.0.tgz#bc6e7541006bc203feffe16628d0a72893b2ad54"
+  integrity sha512-4j3UqQCa06GAf6QHlN3giz2EeFU7qc6Q5uB/aY7Gmb3xmLDLepDOtsZqkb4sCfJgFvTbLUinNw0kHgHs8XOHoQ==
+  dependencies:
+    binaryextensions "^4.18.0"
+    textextensions "^5.14.0"
+
 iterall@^1.1.3, iterall@^1.2.1:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/iterall/-/iterall-1.3.0.tgz#afcb08492e2915cbd8a0884eb93a8c94d0d72fea"
@@ -5164,6 +5184,11 @@ text-hex@1.0.x:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/text-hex/-/text-hex-1.0.0.tgz#69dc9c1b17446ee79a92bf5b884bb4b9127506f5"
   integrity sha512-uuVGNWzgJ4yhRaNSiubPY7OjISw4sw4E5Uv0wbjp+OzcbmVU/rsT8ujgcXJhn9ypzsgr5vlzpPqP+MBBKcGvbg==
+
+textextensions@^5.14.0:
+  version "5.14.0"
+  resolved "https://registry.yarnpkg.com/textextensions/-/textextensions-5.14.0.tgz#a6ff6aee5faaa751e6157d422c722a2bfd59eedf"
+  integrity sha512-4cAYwNFNYlIAHBUo7p6zw8POUvWbZor+/R0Tanv+rIhsauEyV9QSrEXL40pI+GfTQxKX8k6Tyw6CmdSDSmASrg==
 
 through@^2.3.6:
   version "2.3.8"

@@ -98,11 +98,15 @@ export type CreateEdgeMutationSuccess = {
 
 export type CreateNodeInput = {
   Collection?: Maybe<CreateCollectionInput>;
+  FileFormat?: Maybe<Scalars['Never']>;
   IscedField?: Maybe<Scalars['Never']>;
   IscedGrade?: Maybe<Scalars['Never']>;
+  Language?: Maybe<Scalars['Never']>;
+  License?: Maybe<Scalars['Never']>;
   Organization?: Maybe<Scalars['Never']>;
   Profile?: Maybe<Scalars['Never']>;
   Resource?: Maybe<CreateResourceInput>;
+  ResourceType?: Maybe<Scalars['Never']>;
   nodeType: NodeType;
 };
 
@@ -129,7 +133,6 @@ export type CreateResourceInput = {
   description: Scalars['String'];
   thumbnail?: Maybe<AssetRefInput>;
   content: AssetRefInput;
-  licenseCode: Scalars['String'];
 };
 
 export type CreateSession = {
@@ -209,11 +212,15 @@ export type EditCollectionInput = {
 
 export type EditNodeInput = {
   Collection?: Maybe<EditCollectionInput>;
+  FileFormat?: Maybe<Scalars['Never']>;
   IscedField?: Maybe<Scalars['Never']>;
   IscedGrade?: Maybe<Scalars['Never']>;
+  Language?: Maybe<Scalars['Never']>;
+  License?: Maybe<Scalars['Never']>;
   Organization?: Maybe<Scalars['Never']>;
   Profile?: Maybe<EditProfileInput>;
   Resource?: Maybe<EditResourceInput>;
+  ResourceType?: Maybe<Scalars['Never']>;
   id: Scalars['ID'];
   nodeType: NodeType;
 };
@@ -261,6 +268,44 @@ export type Features = IEdge & {
   id: Scalars['ID'];
   _created: Scalars['Timestamp'];
 };
+
+export type FileFormat = INode & {
+  __typename: 'FileFormat';
+  code: Scalars['String'];
+  type: FileFormatType;
+  subtype: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+};
+
+
+export type FileFormat_RelArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type FileFormat_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+};
+
+export type FileFormatType =
+  | 'application'
+  | 'audio'
+  | 'font'
+  | 'image'
+  | 'message'
+  | 'model'
+  | 'multipart'
+  | 'text'
+  | 'video';
 
 export type Follows = IEdge & {
   __typename: 'Follows';
@@ -357,9 +402,64 @@ export type IscedGrade_RelCountArgs = {
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
+export type Language = INode & {
+  __typename: 'Language';
+  part2b?: Maybe<Scalars['String']>;
+  part2t?: Maybe<Scalars['String']>;
+  part1?: Maybe<Scalars['String']>;
+  scope: Scalars['String'];
+  langType: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+};
+
+
+export type Language_RelArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type Language_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+};
+
+export type License = INode & {
+  __typename: 'License';
+  code: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+};
+
+
+export type License_RelArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type License_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+};
+
 export type Mutation = {
   __typename: 'Mutation';
   activateUser: CreateSession;
+  createEdge: CreateEdgeMutationPayload;
   createNode: CreateNodeMutationPayload;
   createSession: CreateSession;
   signUp: SimpleResponse;
@@ -370,6 +470,11 @@ export type MutationActivateUserArgs = {
   name: Scalars['String'];
   password: Scalars['String'];
   activationToken: Scalars['String'];
+};
+
+
+export type MutationCreateEdgeArgs = {
+  input: CreateEdgeInput;
 };
 
 
@@ -389,15 +494,19 @@ export type MutationSignUpArgs = {
 };
 
 
-export type Node = Collection | IscedField | IscedGrade | Organization | Profile | Resource;
+export type Node = Collection | FileFormat | IscedField | IscedGrade | Language | License | Organization | Profile | Resource | ResourceType;
 
 export type NodeType =
   | 'Collection'
+  | 'FileFormat'
   | 'IscedField'
   | 'IscedGrade'
+  | 'Language'
+  | 'License'
   | 'Organization'
   | 'Profile'
-  | 'Resource';
+  | 'Resource'
+  | 'ResourceType';
 
 export type Organization = INode & {
   __typename: 'Organization';
@@ -519,7 +628,7 @@ export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
   edge: Created | Features | Follows | Pinned;
-  node: Collection | IscedField | IscedGrade | Organization | Profile | Resource;
+  node: Collection | FileFormat | IscedField | IscedGrade | Language | License | Organization | Profile | Resource | ResourceType;
 };
 
 export type Resource = INode & {
@@ -553,6 +662,31 @@ export type ResourceKind =
   | 'Upload'
   | 'Link';
 
+export type ResourceType = INode & {
+  __typename: 'ResourceType';
+  code: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  _rel: RelPage;
+  _relCount: Scalars['Int'];
+};
+
+
+export type ResourceType_RelArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+  page?: Maybe<PaginationInput>;
+};
+
+
+export type ResourceType_RelCountArgs = {
+  type: EdgeType;
+  target: NodeType;
+  inverse?: Maybe<Scalars['Boolean']>;
+};
+
 export type SearchPage = Page & {
   __typename: 'SearchPage';
   pageInfo: PageInfo;
@@ -562,7 +696,7 @@ export type SearchPage = Page & {
 export type SearchPageEdge = PageEdge & {
   __typename: 'SearchPageEdge';
   cursor: Scalars['Cursor'];
-  node: Collection | IscedField | IscedGrade | Organization | Profile | Resource;
+  node: Collection | FileFormat | IscedField | IscedGrade | Language | License | Organization | Profile | Resource | ResourceType;
 };
 
 export type SimpleResponse = {
@@ -648,19 +782,27 @@ export type UserSession = {
     ],
     "INode": [
       "Collection",
+      "FileFormat",
       "IscedField",
       "IscedGrade",
+      "Language",
+      "License",
       "Organization",
       "Profile",
-      "Resource"
+      "Resource",
+      "ResourceType"
     ],
     "Node": [
       "Collection",
+      "FileFormat",
       "IscedField",
       "IscedGrade",
+      "Language",
+      "License",
       "Organization",
       "Profile",
-      "Resource"
+      "Resource",
+      "ResourceType"
     ],
     "Page": [
       "RelPage",
