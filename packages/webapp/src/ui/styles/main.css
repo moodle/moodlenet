@@ -18,16 +18,33 @@ body::-webkit-scrollbar {
 }
 
 .main-page-wrapper {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: None;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: None;
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
+}
+
+.scroll {
+  overflow: scroll;
+  white-space: nowrap;
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  /* Hide scrollbar for Chrome, Safari and Opera */
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+abbr {
+  text-decoration: none;
 }
 
 [hidden] {

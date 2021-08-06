@@ -40,7 +40,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(({ tags, image, type, ti
         <div className="title">
           <abbr title={title}>{title}</abbr>
         </div>
-        <div className="tags">{tagSet}</div>
+        <div className="tags scroll">{tagSet}</div>
       </div>
     </div>
   )
