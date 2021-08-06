@@ -6,7 +6,7 @@ import {
   Slug,
 } from '@moodlenet/common/lib/content-graph/types/node'
 import { newGlyphIdentifiers } from '@moodlenet/common/lib/utils/content-graph/slug-id'
-import { Maybe } from '@moodlenet/common/lib/utils/types'
+import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
 import { SessionEnv } from '../../lib/auth/types'
 import { QMCommand, QMModule, QMQuery } from '../../lib/qmino'
 
@@ -32,7 +32,27 @@ export const getBySlug = QMQuery(
 export type CreateNodeAdapter = {
   storeNode: <N extends GraphNode>(_: { node: N }) => Promise<N | null>
 }
+export type NewNodeInput = DistOmit<GraphNode, '_permId' | '_slug'>
+export type CreateNode = {
+  newNode: NewNodeInput
+  sessionEnv: SessionEnv
+}
 
+export const createNode = QMCommand(
+  ({ newNode /* , sessionEnv */ }: CreateNode) =>
+    async ({ storeNode }: CreateNodeAdapter) => {
+      const ids = newGlyphIdentifiers({ name: newNode.name })
+      const node: GraphNode = {
+        ...ids,
+        ...newNode,
+      }
+      const result = await storeNode({ node })
+      if (!result) {
+        return null
+      }
+      return result
+    },
+)
 export type CreateProfile = {
   partProfile: Partial<Omit<Profile, `_${string}`>> & Pick<Profile, 'name' | '_authId'>
 }

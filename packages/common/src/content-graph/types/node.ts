@@ -31,8 +31,8 @@ export type GraphNodeByType<T extends GraphNodeType> = GraphNodeMap[T]
 export type PermId = string
 export type Slug = string
 
-export type GraphNodeIdentifier = Pick<BaseGraphNode, '_type'> &
-  (Pick<BaseGraphNode, '_permId'> | Pick<BaseGraphNode, '_slug'>)
+export type GraphNodeIdentifier<GNT extends GraphNodeType = GraphNodeType> = Pick<BaseGraphNode<GNT>, '_type'> &
+  (Pick<BaseGraphNode<GNT>, '_permId'> | Pick<BaseGraphNode<GNT>, '_slug'>)
 
 export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _type: GNT
@@ -48,7 +48,9 @@ export type Collection = BaseGraphNode<'Collection'> & {
   image: Maybe<AssetRef>
 }
 
-export type ResourceType = BaseGraphNode<'ResourceType'> & {}
+export type ResourceType = BaseGraphNode<'ResourceType'> & {
+  code: string
+}
 
 export type FileFormatType =
   | 'application'

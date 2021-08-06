@@ -37,6 +37,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
         })
       }
       console.error(`init_0_0_1 : ${e instanceof Error ? e.stack : e}`)
+      throw e
     }
   },
 }

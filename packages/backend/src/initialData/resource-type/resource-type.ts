@@ -8,6 +8,7 @@ export const getResourceTypes = () =>
       _type: 'ResourceType',
       _permId: resourceTypeData.code,
       _slug: slugify({ str: resourceTypeData.desc }),
+      code: resourceTypeData.code,
       name: resourceTypeData.desc,
       description: resourceTypeData.desc,
     }

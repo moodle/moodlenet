@@ -124,7 +124,7 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
     ...createNodeAdapter(contentGraphDatabase),
   })
 
-  // qminoInProcess.open(nodePorts.create, createNodeAdapter(contentGraphDatabase))
+  qminoInProcess.open(nodePorts.createNode, createNodeAdapter(contentGraphDatabase))
 
   // qminoInProcess.open(edgePorts.create, createEdgeAdapter(contentGraphDatabase))
   // qminoInProcess.open(edgePorts.del, deleteEdgeAdapter(contentGraphDatabase))

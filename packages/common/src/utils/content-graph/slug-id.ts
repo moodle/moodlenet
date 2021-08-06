@@ -1,17 +1,21 @@
-import { customAlphabet, nanoid } from 'nanoid'
+import { customAlphabet } from 'nanoid'
 import { PermId, Slug } from '../../content-graph/types/node'
 
 const Slugify = require('slugifyjs')
 export const slugify = ({ str, locale = 'en' }: { str: string; locale?: string }): Slug =>
   Slugify.fromLocale(locale).parse(str)
 
-export const contentSlug = ({ name, locale, slugCode }: { name: Slug; locale?: string; slugCode?: string }) =>
-  `${slugCode ?? newGlyphSlugId()}-${slugify({ str: name, locale })}`
+export const contentSlug = ({ name, locale, slugCode }: { name: Slug; locale?: string; slugCode?: string }) => {
+  const slug_code = slugCode ? slugify({ str: slugCode, locale }) : newGlyphSlugId()
+  const slug_name = slugify({ str: name, locale })
+  return `${slug_code}-${slug_name}`
+}
 
-const alphabet = `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`
-export const newGlyphSlugId = customAlphabet(alphabet, 12)
-export const newGlyphPermId = () => nanoid(18)
-export const newAuthId = () => nanoid(18)
+const idAlphabet = `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-`
+const slugAlphabet = `0123456789abcdefghijklmnopqrstuvwxyz`
+export const newGlyphSlugId = customAlphabet(slugAlphabet, 12)
+export const newGlyphPermId = customAlphabet(idAlphabet, 25)
+export const newAuthId = customAlphabet(idAlphabet, 25)
 
 export const newGlyphIdentifiers = ({
   name,

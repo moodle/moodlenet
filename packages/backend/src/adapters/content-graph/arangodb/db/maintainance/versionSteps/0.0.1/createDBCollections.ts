@@ -6,8 +6,8 @@ export const createDBCollections = async ({ db }: { db: Database }) => {
   console.log(`creating node collections`)
   await Promise.all(
     nodeTypes.map(async nodeCollName => {
-      console.log(`creating node collection ${nodeCollName}`)
       const collection = await db.createCollection(nodeCollName)
+      console.log(`created node collection ${nodeCollName}`)
       await collection.ensureIndex({
         type: 'persistent',
         unique: true,
@@ -85,8 +85,27 @@ export const createDBCollections = async ({ db }: { db: Database }) => {
 
       await edgeCollection.ensureIndex({
         type: 'persistent',
-        name: 'formToType',
-        fields: ['_toType', '_fromType'],
+        name: 'fromType-toType',
+        fields: ['_fromType', '_toType'],
+      })
+
+      await edgeCollection.ensureIndex({
+        type: 'persistent',
+        name: 'from-toType',
+        fields: ['_from', '_toType'],
+      })
+
+      await edgeCollection.ensureIndex({
+        type: 'persistent',
+        name: 'fromType-to',
+        fields: ['_fromType', '_to'],
+      })
+
+      await edgeCollection.ensureIndex({
+        type: 'persistent',
+        unique: true,
+        name: 'from-to',
+        fields: ['_from', '_to'],
       })
 
       return edgeCollection

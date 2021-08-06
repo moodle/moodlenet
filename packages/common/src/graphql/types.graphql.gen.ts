@@ -129,7 +129,7 @@ export type CreateResourceInput = {
   description: Scalars['String'];
   thumbnail?: Maybe<AssetRefInput>;
   content: AssetRefInput;
-  slug: Scalars['String'];
+  licenseCode: Scalars['String'];
 };
 
 export type CreateSession = {
@@ -252,7 +252,7 @@ export type EditProfileInput = {
 export type EditResourceInput = {
   name: Scalars['String'];
   description: Scalars['String'];
-  image?: Maybe<AssetRefInput>;
+  thumbnail?: Maybe<AssetRefInput>;
 };
 
 
