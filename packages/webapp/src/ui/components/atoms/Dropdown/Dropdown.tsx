@@ -33,9 +33,9 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
   }
 
   const handleOnClick = () => {
-    dropdownContent.current && (dropdownContent.current.style.visibility = 'visible')
     setIsIconVisible(false)
-    dropdownButton.current && dropdownButton.current.focus()
+    dropdownContent.current && (dropdownContent.current.style.visibility = 'visible')
+    setTimeout(() => dropdownButton.current && dropdownButton.current.focus(), 100)
   }
 
   window.addEventListener('DOMContentLoaded', () => {
@@ -62,11 +62,20 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
     }
   }
 
+  // TODO
+  const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'ArrowUp') { // Up
+      
+    } else if (e.key === 'ArrowDown') {  // Down
+        //dropdownButton.current?.isSameNode(e.currentTarget) && 
+        //dropdownContent.current && (dropdownContent.current.firstChild as HTMLElement)?.focus()
+    }
+  }
+
   const handleOnSelection = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, i: number) => {
     setValue((e.target as HTMLElement).innerText)
     setIndex(i)
     dropdownContent.current && (dropdownContent.current.style.visibility = 'hidden')
-    console.log('selection')
     setIsIconVisible(true)
   }
 
@@ -81,6 +90,10 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
     getValue && value && getValue(value)
   }, [value, getValue])
 
+  useEffect(() => {
+    index && setIsIconVisible(true)
+  }, [index])
+
   const filterFunction = () => {
     const filter = dropdownButton.current?.value.toUpperCase()
     const div = dropdownContent.current
@@ -88,10 +101,12 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
     Array.prototype.slice.call(div?.getElementsByClassName('option')).forEach((e, i) => {
       const txtValue = e.innerText.toUpperCase()
       if (txtValue.indexOf(filter) > -1) {
-        txtValue === filter && setValue(e.innerText) && setIndex(i) 
+        setValue(e.innerText)
+        txtValue === filter ? setIndex(i) : setIndex(undefined)
         e.style.display = ''
         length ++
       } else {
+        setIndex(undefined) 
         e.style.display = 'none'
       }
     })
@@ -101,14 +116,14 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
   const optionsList = type === 'Text' ? (
     options?.map((value, i) => {
       return (
-        <div key={i} data-key={i} className="option only-text" onClick={e => handleOnSelection(e, i)}>
+        <div key={i} data-key={i} className="option only-text" onClick={e => handleOnSelection(e, i)} onKeyUp={handleOnKeyDown}>
           {value}
         </div>
       )
   })) : (
     options?.map((value, i) => {
       return (
-        <div key={i} data-key={i} className="option icon-and-text" onClick={e => handleOnSelection(e, i)}>
+        <div key={i} data-key={i} className="option icon-and-text" onClick={e => handleOnSelection(e, i)} onKeyUp={handleOnKeyDown}>
           {value[1]}
           <span>{value[0]}</span>
         </div>
@@ -133,11 +148,12 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
             placeholder={placeholder}
             onChange={handleOnChange}
             onClick={handleOnClick}
+            onKeyDown={handleOnKeyDown}
             onBlur={handleOnBlur}
             value={value ? value : ''}
           />
-          { isIconVisible && index && options && options[index]?.length === 2 && (
-            options.map((value, i) => i === index && <div className="icons scroll">{value[1]}</div>)
+          { isIconVisible && (typeof index === 'number' && index > -1) && options && options[index]?.length === 2 && (
+            options.map((value, i) => i === index && <div key={i} className="icons scroll">{value[1]}</div>)
           )}
           <ExpandMoreIcon />
         </div>
@@ -155,10 +171,5 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
   )
 }
 
-Dropdown.defaultProps = {
-  hidden: false,
-  className: '',
-  getValue: () => undefined,
-}
 
 export default Dropdown
