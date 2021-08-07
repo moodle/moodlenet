@@ -39,8 +39,8 @@ export type NodeRelationCountInput = {
 }
 export const count = QMQuery(
   (input: NodeRelationCountInput) =>
-    async ({ countNodeRelations: traverseNodeRelations }: NodeRelationCountAdapter) => {
-      return traverseNodeRelations(input)
+    async ({ countNodeRelations }: NodeRelationCountAdapter) => {
+      return countNodeRelations(input)
     },
 )
 

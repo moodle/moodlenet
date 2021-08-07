@@ -4,18 +4,7 @@ import { omit } from '@moodlenet/common/lib/utils/object'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { AqlGraphEdge, AqlGraphEdgeByType } from '../types'
-import { documentBySlugType } from './helpers'
-
-export const getAqlNodeByGraphNodeIdentifier = (identifier: GraphNodeIdentifier) => {
-  const { _type } = identifier
-  if ('_slug' in identifier) {
-    const { _slug } = identifier
-    return documentBySlugType({ _type, _slug })
-  } else {
-    const { _permId } = identifier
-    return `DOCUMENT("${_type}/${_permId}")`
-  }
-}
+import { getAqlNodeByGraphNodeIdentifier } from './getAqlNodeByGraphNodeIdQ.ts'
 
 export const createEdgeQ = <Type extends GraphEdgeType>({
   edge,

@@ -31,8 +31,18 @@ export type GraphNodeByType<T extends GraphNodeType> = GraphNodeMap[T]
 export type PermId = string
 export type Slug = string
 
-export type GraphNodeIdentifier<GNT extends GraphNodeType = GraphNodeType> = Pick<BaseGraphNode<GNT>, '_type'> &
-  (Pick<BaseGraphNode<GNT>, '_permId'> | Pick<BaseGraphNode<GNT>, '_slug'>)
+export type GraphNodeIdentifierSlug<GNT extends GraphNodeType = GraphNodeType> = Pick<
+  BaseGraphNode<GNT>,
+  '_type' | '_slug'
+>
+export type GraphNodeIdentifierPerm<GNT extends GraphNodeType = GraphNodeType> = Pick<
+  BaseGraphNode<GNT>,
+  '_type' | '_permId'
+>
+
+export type GraphNodeIdentifier<GNT extends GraphNodeType = GraphNodeType> =
+  | GraphNodeIdentifierSlug<GNT>
+  | GraphNodeIdentifierPerm<GNT>
 
 export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _type: GNT
