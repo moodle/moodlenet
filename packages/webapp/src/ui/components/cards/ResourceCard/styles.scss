@@ -9,10 +9,6 @@
     justify-content: flex-start;
     align-items: center;
 
-    @media (max-width:450px) {
-        margin-top: 0;
-    }
-
     .image {
         width: 30%;
         max-width: 100px;
