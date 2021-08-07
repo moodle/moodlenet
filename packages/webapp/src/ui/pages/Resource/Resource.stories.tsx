@@ -26,7 +26,9 @@ export const ResourceStoryProps: ResourceProps = {
   overallCardProps: OverallCardStoryProps,
   profileCardProps: ProfileCardStoryProps,
   imageUrl: 'https://picsum.photos/200/100',
-  title: "My best resource"
+  title: "My best resource",
+  description: 'This is the description that tells you that this a not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.' 
+
 }
 
 export const ResourceLoggedOutStoryProps: ResourceProps = {
