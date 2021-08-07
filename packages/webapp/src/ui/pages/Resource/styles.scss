@@ -16,19 +16,52 @@
       margin-top: 30px;
 
       > .card {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        padding: 26px 34px;
+
         > .resource-header {
           display: flex;
           justify-content: space-between;
+          > .title {
+            font-weight: bold;
+            font-size: 14px;
+          }
           > .actions {
             display: flex;
             gap: 20px;
+            font-size: 12px;
 
             > * {
+              cursor: pointer;
               display: flex;
               align-items: center;
-              gap: 10px;
+              gap: 8px;
+              > svg {
+                width: 14px;
+                height: 14px;
+              }
+            }
+
+            > .like:hover {
+              color: red;
+            }
+
+            > .share:hover {
+              color: #f88012;
             }
           }
+        }
+
+        > .image {
+          width: 100%;
+          object-fit: cover;
+          border-radius: 20px;
+        }
+
+        > .description {
+          font-size: 13px;
         }
       }
 
