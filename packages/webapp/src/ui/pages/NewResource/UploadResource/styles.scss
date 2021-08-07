@@ -147,7 +147,7 @@
             font-weight: 500;
             font-size: 15px;
             color: #b6bacb;
-            width: calc(100% - 125px);
+            width: calc(100% - 146px);
             > .content-icon {
               display: flex;
               align-items: center;
@@ -157,7 +157,7 @@
           }
 
           > .dropdown {
-            width: 108px;
+            width: 130px;
             > .dropdown-content {
               width: auto;
             }
@@ -169,6 +169,7 @@
     > .side-column {
       width: 37%;
       > div {
+        width: 100%;
         height: 100%;
         padding-bottom: 2px;
         display: inline-flex;

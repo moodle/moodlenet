@@ -108,6 +108,20 @@ export const createDBCollections = async ({ db }: { db: Database }) => {
         fields: ['_from', '_to'],
       })
 
+      await edgeCollection.ensureIndex({
+        type: 'persistent',
+        unique: true,
+        name: 'fromType-from',
+        fields: ['_fromType', '_from'],
+      })
+
+      await edgeCollection.ensureIndex({
+        type: 'persistent',
+        unique: true,
+        name: 'toType-to',
+        fields: ['_toType', '_to'],
+      })
+
       return edgeCollection
     }),
   )
