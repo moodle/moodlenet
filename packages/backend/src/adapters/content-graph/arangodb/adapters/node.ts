@@ -6,13 +6,15 @@ import { aqlGraphNode2GraphNode } from '../functions/helpers'
 import { ContentGraphDB } from '../types'
 
 export const getNodeBySlugAdapter = (db: ContentGraphDB): BySlugAdapter => ({
-  async getNodeBySlug({ slug, type }) {
-    const q = getNodeBySlugQ({ slug, type })
+  async getNodeBySlug(slugId) {
+    type T = typeof slugId._type
+    const q = getNodeBySlugQ<T>(slugId)
     const mAqlNode = await getOneResult(q, db)
     if (!mAqlNode) {
       return mAqlNode
     }
-    return aqlGraphNode2GraphNode(mAqlNode)
+    const x = aqlGraphNode2GraphNode<T>(mAqlNode)
+    return x
   },
 })
 

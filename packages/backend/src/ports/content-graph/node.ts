@@ -1,9 +1,9 @@
 import {
   GraphNode,
   GraphNodeByType,
+  GraphNodeIdentifierSlug,
   GraphNodeType,
   Profile,
-  Slug,
 } from '@moodlenet/common/lib/content-graph/types/node'
 import { newGlyphIdentifiers } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
@@ -12,19 +12,17 @@ import { QMCommand, QMModule, QMQuery } from '../../lib/qmino'
 
 // query by id
 export type BySlugAdapter = {
-  getNodeBySlug: <Type extends GraphNodeType>(_: { type: Type; slug: Slug }) => Promise<Maybe<GraphNodeByType<Type>>>
+  getNodeBySlug: <Type extends GraphNodeType>(_: GraphNodeIdentifierSlug<Type>) => Promise<Maybe<GraphNodeByType<Type>>>
 }
 
-export type BySlugInput<Type extends GraphNodeType> = {
-  slug: Slug
-  type: Type
+export type BySlugInput<Type extends GraphNodeType> = GraphNodeIdentifierSlug<Type> & {
   env: SessionEnv | null
 }
 
 export const getBySlug = QMQuery(
-  <Type extends GraphNodeType>({ type, slug }: BySlugInput<Type>) =>
+  <Type extends GraphNodeType>({ env, ...nodeSlugId }: BySlugInput<Type>) =>
     async ({ getNodeBySlug }: BySlugAdapter) => {
-      return getNodeBySlug({ slug, type })
+      return getNodeBySlug(nodeSlugId)
     },
 )
 

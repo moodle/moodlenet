@@ -4,7 +4,7 @@ import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { NodeRelationCountInput, TraverseFromNodeInput } from '../../../../ports/content-graph/traverseNodeRel'
 import { AqlGraphEdge, AqlGraphNode } from '../types'
 // import { getNodeOpAqlAssertions } from './assertions/node'
-import { cursorPaginatedQuery, documentBySlugType } from './helpers'
+import { cursorPaginatedQuery, documentByNodeIdSlug } from './helpers'
 
 export const traverseEdgesQ = ({
   edgeType,
@@ -52,7 +52,7 @@ export const traversePaginateMapQuery =
     const targetSide = inverse ? 'from' : 'to'
     const parentSide = inverse ? 'to' : 'from'
     return aq<PageItem<{ edge: AqlGraphEdge; node: AqlGraphNode }>>(`
-      let parentNode = ${documentBySlugType(fromNode)}
+      let parentNode = ${documentByNodeIdSlug(fromNode)}
       FOR edge IN ${edgeType}
         FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
           && edge._${parentSide} == parentNode._id
@@ -82,7 +82,7 @@ export const nodeRelationCountQ = ({
   const targetSide = inverse ? 'from' : 'to'
   const parentSide = inverse ? 'to' : 'from'
   return aq<number>(`
-    let parentNode = ${documentBySlugType(fromNode)}
+    let parentNode = ${documentByNodeIdSlug(fromNode)}
     
     FOR edge IN ${edgeType}
       FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
