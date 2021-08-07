@@ -5,31 +5,28 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import ShareIcon from '@material-ui/icons/Share'
 import { useState } from 'react'
 import Card from '../../components/atoms/Card/Card'
-import { OverallCard, OverallCardProps } from '../../components/cards/OverallCard/OverallCard'
-import { ProfileCard, ProfileCardProps } from '../../components/cards/ProfileCard/ProfileCard'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
+import { InfoCard, InfoCardProps } from './InfoCard/InfoCard'
 import './styles.scss'
 
 export type ResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
-  overallCardProps: OverallCardProps
-  profileCardProps: ProfileCardProps
   imageUrl: string 
   title: string
   description: string
-  liked: boolean
+  liked: boolean,
+  infoCardProps: InfoCardProps
 }
 
 export const Resource = withCtrl<ResourceProps>(
   ({
     headerPageTemplateProps,
-    overallCardProps,
-    profileCardProps,
     imageUrl,
     title,
     description,
-    liked
+    liked,
+    infoCardProps
   }) => {
     const [likeState, setLikeState] = useState<boolean>(liked)
     return (
@@ -56,10 +53,10 @@ export const Resource = withCtrl<ResourceProps>(
                 <div className="description">{description}</div>
                 {/*<div className="comments"></div>*/}
               </Card>
-              <ProfileCard {...profileCardProps} />
+            
             </div>
             <div className="side-column">
-              <OverallCard {...overallCardProps} />
+              <InfoCard {...infoCardProps} />
             </div>
           </div>
         </div>
