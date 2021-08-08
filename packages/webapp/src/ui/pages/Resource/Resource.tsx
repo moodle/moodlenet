@@ -40,13 +40,12 @@ export const Resource = withCtrl<ResourceProps>(
         <div className="resource">
           <div className="content">
             <div className="main-column">
-              <Card>
+              <Card className="main-resource-card">
                 <div className="resource-header">
-                  <div className="title">{title}</div>
                   <div className="actions">
-                    <div className="like" onClick={() => setLikeState(!likeState)}>
+                    <div className={`like ${likeState && 'liked'}`} onClick={() => setLikeState(!likeState)}>
                       { likeState ? (
-                        <FavoriteIcon style={{color: 'red'}}/>
+                        <FavoriteIcon/>
                       ) : (
                         <FavoriteBorderIcon/>
                       )}
@@ -55,15 +54,17 @@ export const Resource = withCtrl<ResourceProps>(
                     <div className="share"><ShareIcon/><Trans>Share</Trans></div>
                   </div>
                 </div>
+                <InfoCard {...infoCardProps} />
                 <img className="image" src={imageUrl} alt="Background" />
                 <div className="description">{description}</div>
                 {/*<div className="comments"></div>*/}
               </Card>
-            
+              <div className="resource-footer">
+                <ContributorCard {...contributorCardProps} />
+                <ResourceActionsCard {...resourceActionsCard} />
+              </div>
             </div>
             <div className="side-column">
-              <div className="info-title"><Trans>Info</Trans></div>
-              <InfoCard {...infoCardProps} />
               <ContributorCard {...contributorCardProps} />
               <ResourceActionsCard {...resourceActionsCard} />
             </div>

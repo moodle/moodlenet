@@ -34,7 +34,7 @@ export const InfoCard = withCtrl<InfoCardProps>(({ tags, type, title }) => {
   return (
     <Card className="info-card">
       <div className="type">
-        <Trans>Resource</Trans>
+        <span></span><Trans>Resource</Trans>
         <div style={{ color: color }}>&nbsp;/ {type}</div>
       </div>
       <div className="title">{title}</div>   
