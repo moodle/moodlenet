@@ -10,8 +10,10 @@ export type DropdownProps = {
   disabled?: boolean
   hidden?: boolean
   autoUpdate?: boolean
+  value?: string | null
+  edit?: boolean
   className?: string
-  getValue?(value: string): void
+  getValue?(currentValue: string): void
   inputAttrs?: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
   hasSearch?: boolean
   options: DropdownOptionsType
@@ -24,10 +26,12 @@ export const Dropdown: FC<DropdownProps> = ({
   getValue, 
   inputAttrs, 
   hasSearch, 
+  value,
+  edit,
   options, 
   disabled
 }) => {
-  const [value, setValue] = useState<string | undefined | null>(undefined)
+  const [currentValue, setValue] = useState<string | undefined | null>(value ? value : undefined)
   const [index, setIndex] = useState<number | undefined | null>(undefined)
   const [isOnHover, setIsOnHover] = useState<boolean>(false)
   const [isIconVisible, setIsIconVisible] = useState<boolean>(false)
@@ -96,8 +100,8 @@ export const Dropdown: FC<DropdownProps> = ({
   }
 
   useEffect(() => {
-    getValue && value && getValue(value)
-  }, [value, getValue])
+    getValue && currentValue && getValue(currentValue)
+  }, [currentValue, getValue])
 
   useEffect(() => {
     index && setIsIconVisible(true)
@@ -123,18 +127,18 @@ export const Dropdown: FC<DropdownProps> = ({
   }
 
   const optionsList = type === 'Text' ? (
-    options?.map((value, i) => {
+    options?.map((currentValue, i) => {
       return (
         <div key={i} data-key={i} className="option only-text" onClick={e => handleOnSelection(e, i)} onKeyUp={handleOnKeyDown}>
-          {value}
+          {currentValue}
         </div>
       )
   })) : (
-    options?.map((value, i) => {
+    options?.map((currentValue, i) => {
       return (
         <div key={i} data-key={i} className="option icon-and-text" onClick={e => handleOnSelection(e, i)} onKeyUp={handleOnKeyDown}>
-          {value[1]}
-          <span>{value[0]}</span>
+          {currentValue[1]}
+          <span>{currentValue[0]}</span>
         </div>
       )
     })
@@ -148,7 +152,6 @@ export const Dropdown: FC<DropdownProps> = ({
     >
       {label && <label>{label}</label>}
       <div className="input-container" onClick={handleOnClick}>
-        <input {...inputAttrs} type='input' />
         <input
           ref={dropdownButton}
           className="dropdown-button search-field"
@@ -159,11 +162,12 @@ export const Dropdown: FC<DropdownProps> = ({
           onClick={handleOnClick}
           onKeyDown={handleOnKeyDown}
           onBlur={handleOnBlur}
-          value={value ? value : ''}
+          disabled={disabled || !edit}
+          value={currentValue ? currentValue : ''}
           {...inputAttrs}
         />
         { isIconVisible && (typeof index === 'number' && index > -1) && options && options[index]?.length === 2 && (
-          options.map((value, i) => i === index && <div key={i} className="icons scroll">{value[1]}</div>)
+          options.map((currentValue, i) => i === index && <div key={i} className="icons scroll">{currentValue[1]}</div>)
         )}
         <ExpandMoreIcon />
       </div>
@@ -178,6 +182,10 @@ export const Dropdown: FC<DropdownProps> = ({
       </div>
     </div>
   )
+}
+
+Dropdown.defaultProps = {
+  edit: true
 }
 
 
