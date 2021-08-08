@@ -29,8 +29,8 @@
     &:hover {
       //color: #e37511;
       //border: 2px solid #e37511;
-      color: #337AFF;
-      border: 2px solid #337AFF;
+      color: #337aff;
+      border: 2px solid #337aff;
     }
   }
 
@@ -42,6 +42,13 @@
     &:hover {
       color: #545761;
       border: 2px solid #545761;
+    }
+  }
+
+  &:hover {
+    &.hover-red {
+      color: red;
+      border: 2px solid red;
     }
   }
 }
