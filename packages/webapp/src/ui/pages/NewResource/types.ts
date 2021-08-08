@@ -3,7 +3,6 @@ export type Url = string
 export type Category = string
 export type Type= string
 export type Level= string
-export type OriginalDate = {month: string, year: string}
 export type Language= string
 export type Format= string
 export type License= string
@@ -21,7 +20,7 @@ export type NewResourceFormValues = {
     type:Type | null
     level:Level | null
     
-    originalDate:OriginalDate | null
+    originalDate: {month: string, year: string} | null
     language:Language | null
     format:Format | null
     license:License | null
