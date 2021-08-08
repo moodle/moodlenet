@@ -15,23 +15,27 @@
       width: 65%;
       height: 100%;
 
-      > .card {
+      > .main-resource-card {
         display: flex;
         flex-direction: column;
         gap: 24px;
         padding: 26px 34px;
+        position: relative;
+
+        > .info-card {
+          display: flex;
+          padding: 0;
+          box-shadow: none;
+        }
 
         > .resource-header {
           display: flex;
-          justify-content: space-between;
-          > .title {
-            font-weight: bold;
-            font-size: 14px;
-          }
+          position: absolute;
+          right: 34px;
           > .actions {
             display: flex;
             gap: 20px;
-            font-size: 12px;
+            font-size: 14px;
 
             > * {
               cursor: pointer;
@@ -42,6 +46,10 @@
                 width: 14px;
                 height: 14px;
               }
+            }
+
+            .liked {
+              color: red;
             }
 
             > .like:hover {
@@ -65,7 +73,7 @@
         }
       }
 
-      > .collections {
+      > .resource-footer {
         display: none;
       }
     }
@@ -76,21 +84,19 @@
       display: flex;
       flex-direction: column;
       gap: 20px;
-
-      .info-title {
-        display: none;
-        font-size: 24px;
-        font-weight: bold;
-      }
     }
 
     @media screen and (max-width: 800px) {
       > .main-column {
         width: 100%;
         height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
 
-        > .collections {
-          display: block;
+        > .resource-footer {
+          display: flex;
+          gap: 16px;
         }
       }
 
