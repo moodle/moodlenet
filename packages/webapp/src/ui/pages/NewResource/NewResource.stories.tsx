@@ -45,7 +45,8 @@ const initialFormValues: NewResourceFormValues = {
   level: '',
   license: '',
   name: 'https://moodle.com/awesome-content',
-  originalDate: new Date(),
+  originalDateMonth: '',
+  originalDateYear: '',
   title: '',
   type: '',
 }

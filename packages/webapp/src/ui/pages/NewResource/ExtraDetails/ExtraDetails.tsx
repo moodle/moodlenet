@@ -42,8 +42,8 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(({
       <div className="date">
         <label><Trans>Original Creation Date</Trans></label>
         <div className="fields">
-          <Dropdown value={form.values.originalDate?.month {...months} {...formAttrs.originalDate} getValue={() => form.setFieldValue('originalDate', null)}/>
-          <Dropdown value={form.values.originalDate?.year} {...years} {...formAttrs.originalDate} getValue={() => form.setFieldValue('originalDate', null)}/>
+          <Dropdown value={form.values.originalDateMonth} {...months} {...formAttrs.originalDateMonth} getValue={() => form.setFieldValue('originalDate', null)}/>
+          <Dropdown value={form.values.originalDateYear} {...years} {...formAttrs.originalDateYear} getValue={() => form.setFieldValue('originalDate', null)}/>
         </div>
       </div>
       <Dropdown value={form.values.language} {...languages} {...formAttrs.language} getValue={(value) => form.setFieldValue('language', value)}/>
