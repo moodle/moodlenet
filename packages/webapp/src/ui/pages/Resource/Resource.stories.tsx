@@ -2,6 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
+import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
 import { InfoCardStoryProps } from './InfoCard/InfoCard.stories'
 import { Resource, ResourceProps } from './Resource'
 
@@ -26,7 +27,8 @@ export const ResourceStoryProps: ResourceProps = {
   title: "My Best Resource",
   description: 'This is the description that tells you that this a not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
   liked: false,
-  infoCardProps: InfoCardStoryProps
+  infoCardProps: InfoCardStoryProps,
+  contributorCardProps: ContributorCardStoryProps
 
 }
 

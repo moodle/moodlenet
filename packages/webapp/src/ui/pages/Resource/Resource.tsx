@@ -7,6 +7,7 @@ import { useState } from 'react'
 import Card from '../../components/atoms/Card/Card'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
+import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
 import { InfoCard, InfoCardProps } from './InfoCard/InfoCard'
 import './styles.scss'
 
@@ -16,7 +17,8 @@ export type ResourceProps = {
   title: string
   description: string
   liked: boolean,
-  infoCardProps: InfoCardProps
+  infoCardProps: InfoCardProps,
+  contributorCardProps: ContributorCardProps
 }
 
 export const Resource = withCtrl<ResourceProps>(
@@ -26,7 +28,8 @@ export const Resource = withCtrl<ResourceProps>(
     title,
     description,
     liked,
-    infoCardProps
+    infoCardProps,
+    contributorCardProps
   }) => {
     const [likeState, setLikeState] = useState<boolean>(liked)
     return (
@@ -56,7 +59,9 @@ export const Resource = withCtrl<ResourceProps>(
             
             </div>
             <div className="side-column">
+              <div className="info-title"><Trans>Info</Trans></div>
               <InfoCard {...infoCardProps} />
+              <ContributorCard {...contributorCardProps} />
             </div>
           </div>
         </div>
