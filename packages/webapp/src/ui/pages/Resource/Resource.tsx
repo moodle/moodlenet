@@ -14,7 +14,7 @@ import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryBut
 import { CP, withCtrl } from '../../lib/ctrl'
 import { FormikBag } from '../../lib/formik'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
-import { getResourceColorType, ResourceType } from '../../types'
+import { getResourceColorType } from '../../types'
 import { DropdownField } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
@@ -26,7 +26,6 @@ export type ResourceProps = {
   isOwner: boolean
   title: string
   liked: boolean
-  type: ResourceType
   tags: Array<string>
   contributorCardProps: ContributorCardProps
   resourceActionsCard: ResourceActionsCardProps
@@ -37,6 +36,8 @@ export type ResourceProps = {
   years: DropdownField
   languages: DropdownField
   formats: DropdownField
+  licenses: DropdownField
+  categories: DropdownField
 }
 
 export const Resource = withCtrl<ResourceProps>(
@@ -44,7 +45,6 @@ export const Resource = withCtrl<ResourceProps>(
     headerPageTemplateProps,
     isOwner,
     liked,
-    type,
     tags,
     contributorCardProps,
     resourceActionsCard,
@@ -54,7 +54,9 @@ export const Resource = withCtrl<ResourceProps>(
     months,
     years,
     languages,
-    formats
+    formats,
+    licenses,
+    categories
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [likeState, setLikeState] = useState<boolean>(liked)
@@ -77,17 +79,19 @@ export const Resource = withCtrl<ResourceProps>(
     const [form, formAttrs] = formBag
     const extraDetails = (
       <Card className="extra-details-card">
-        <Dropdown {...types} {...formAttrs.type} getValue={(value) => form.setFieldValue('type', value)}/>
-        <Dropdown {...levels} {...formAttrs.level} getValue={(value) => form.setFieldValue('level', value)}/>
+        <Dropdown value={form.values.category} {...categories} {...formAttrs.category} displayMode={true} edit={isEditing} getValue={(value) => form.setFieldValue('category', value)}/>
+        <Dropdown value={form.values.license} {...licenses} {...formAttrs.license} displayMode={true} edit={isEditing} getValue={(value) => form.setFieldValue('license', value)}/>
+        <Dropdown value={form.values.type} {...types} {...formAttrs.type} displayMode={true} edit={isEditing} getValue={(value) => form.setFieldValue('type', value)}/>
+        <Dropdown value={form.values.level} {...levels} {...formAttrs.level} displayMode={true} edit={isEditing} getValue={(value) => form.setFieldValue('level', value)}/>
         <div className="date">
           <label><Trans>Original Creation Date</Trans></label>
           <div className="fields">
-            <Dropdown {...months} {...formAttrs.originalDateMonth} getValue={() => form.setFieldValue('originalDateMonth', null)}/>
-            <Dropdown {...years} {...formAttrs.originalDateYear} getValue={() => form.setFieldValue('originalDateYear', null)}/>
+            <Dropdown value={form.values.originalDateMonth} {...months} {...formAttrs.originalDateMonth} displayMode={true} edit={isEditing} getValue={() => form.setFieldValue('originalDateMonth', null)}/>
+            <Dropdown value={form.values.originalDateYear} {...years} {...formAttrs.originalDateYear} displayMode={true} edit={isEditing} getValue={() => form.setFieldValue('originalDateYear', null)}/>
           </div>
         </div>
-        <Dropdown {...languages} {...formAttrs.language} getValue={(value) => form.setFieldValue('language', value)}/>
-        <Dropdown {...formats} {...formAttrs.format} getValue={(value) => form.setFieldValue('format', value)}/>
+        <Dropdown value={form.values.language} {...languages} {...formAttrs.language} displayMode={true} edit={isEditing} getValue={(value) => form.setFieldValue('language', value)}/>
+        <Dropdown value={form.values.format} {...formats} {...formAttrs.format} displayMode={true} edit={isEditing} getValue={(value) => form.setFieldValue('format', value)}/>
       </Card>
     )
 
@@ -101,7 +105,8 @@ export const Resource = withCtrl<ResourceProps>(
                   <div className="type-and-actions">
                     <span className="type">
                       <Trans>Resource</Trans>
-                      <div style={{ color: getResourceColorType(type) }}>&nbsp;/ {type}</div>
+                      <div style={{ color: getResourceColorType(form.values.type ? form.values.type : form.values.contentType) }}>
+                        &nbsp;/ {form.values.type ? form.values.type : form.values.contentType}</div>
                     </span>
                     <div className="actions">
                     <div className={`like ${likeState && 'liked'}`} onClick={() => setLikeState(!likeState)}>
@@ -113,13 +118,15 @@ export const Resource = withCtrl<ResourceProps>(
                       <Trans>Like</Trans>
                     </div>
                     <div className="share"><ShareIcon/><Trans>Share</Trans></div>
-                    <div className="edit-save">
-                      { isOwner && isEditing ? (
+                    { isOwner && (
+                      <div className="edit-save">
+                        { isEditing ? (
                         <PrimaryButton color="green" onHoverColor="orange" onClick={handleOnSaveClick}><SaveIcon/></PrimaryButton>
                       ) : (
                         <SecondaryButton onClick={handleOnEditClick} color="orange"><EditIcon/></SecondaryButton>
                       )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                   </div>
                   { isOwner ? (

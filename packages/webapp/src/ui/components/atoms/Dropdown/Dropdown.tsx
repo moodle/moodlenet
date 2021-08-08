@@ -12,6 +12,7 @@ export type DropdownProps = {
   autoUpdate?: boolean
   value?: string | null
   edit?: boolean
+  displayMode?: boolean
   className?: string
   getValue?(currentValue: string): void
   inputAttrs?: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
@@ -28,17 +29,18 @@ export const Dropdown: FC<DropdownProps> = ({
   hasSearch, 
   value,
   edit,
+  displayMode,
   options, 
   disabled
 }) => {
+  const type = options && typeof options[0] === 'string' ? 'Text' : 'IconAndText'
+
   const [currentValue, setValue] = useState<string | undefined | null>(value ? value : undefined)
   const [index, setIndex] = useState<number | undefined | null>(undefined)
   const [isOnHover, setIsOnHover] = useState<boolean>(false)
   const [isIconVisible, setIsIconVisible] = useState<boolean>(false)
   const dropdownButton = useRef<HTMLInputElement>(null)
   const dropdownContent = useRef<HTMLDivElement>(null)
-
-  const type: 'Text' | 'IconAndText' = options && typeof options[0] === 'string' ? 'Text' : 'IconAndText'
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     filterFunction()
@@ -64,7 +66,7 @@ export const Dropdown: FC<DropdownProps> = ({
 
     if (bottom && top && (bottom > 160 || bottom > top)) {
       dropdownContent.current && (dropdownContent.current.style.maxHeight = bottom && bottom - 20 < 160 ? bottom - 20 + 'px' : '160px')
-      dropdownContent.current && (dropdownContent.current.style.top = label? '75px' : '50px')
+      dropdownContent.current && (dropdownContent.current.style.top = (label && !displayMode)? '75px' : '50px')
       dropdownContent.current && (dropdownContent.current.style.bottom = 'auto')
       dropdownContent.current && (dropdownContent.current.style.transform = ' translate(-50%, 0px)')
     } else {
@@ -100,6 +102,10 @@ export const Dropdown: FC<DropdownProps> = ({
   }
 
   useEffect(() => {
+    type === 'IconAndText' && value === 'string' && value.length > 0 && setIsIconVisible(true)
+  }, [type, value, setIsIconVisible])
+
+  useEffect(() => {
     getValue && currentValue && getValue(currentValue)
   }, [currentValue, getValue])
 
@@ -107,8 +113,12 @@ export const Dropdown: FC<DropdownProps> = ({
     index && setIsIconVisible(true)
   }, [index])
 
-  const filterFunction = () => {
-    const filter = dropdownButton.current?.value.toUpperCase()
+  const filterFunction = (value?: string) => {
+    let filter = dropdownButton.current?.value
+    if (value) {
+      filter = value
+    }
+    filter?.toUpperCase()
     const div = dropdownContent.current
     let length = 0
     Array.prototype.slice.call(div?.getElementsByClassName('option')).forEach((e, i) => {
@@ -151,10 +161,10 @@ export const Dropdown: FC<DropdownProps> = ({
       hidden={hidden}
     >
       {label && <label>{label}</label>}
-      <div className="input-container" onClick={handleOnClick}>
+      <div className={`input-container ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`} onClick={handleOnClick}>
         <input
           ref={dropdownButton}
-          className="dropdown-button search-field"
+          className={`dropdown-button search-field ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
           type="input"
           style={(type === 'Text' || !isIconVisible) ? {visibility: 'visible', display: 'block'} : {visibility: 'hidden', display: 'none'}}
           placeholder={placeholder}
