@@ -40,6 +40,7 @@
             font-size: 14px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             > * {
               display: flex;
             }
@@ -56,7 +57,7 @@
                 display: flex;
                 align-items: center;
                 gap: 8px;
-                > svg {
+                > svg, * > svg {
                   width: 14px;
                   height: 14px;
                 }
@@ -73,12 +74,26 @@
               > .share:hover {
                 color: #f88012;
               }
+
+              > .edit-save {
+                width: 40px;
+                > * {
+                  width: 100%;
+                }
+              }
             }
           }
 
           .title {
             font-weight: bold;
             font-size: 26px;
+
+            > .input-container {
+              > input {
+                font-weight: bold;
+                font-size: 26px;
+              }
+            }
           }
 
           .tags {
@@ -114,6 +129,11 @@
       display: flex;
       flex-direction: column;
       gap: 20px;
+
+      > :first-child:is(.button) {
+        width: 100%;
+        justify-content: center;
+      }
     }
 
     @media screen and (max-width: 800px) {

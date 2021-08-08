@@ -42,8 +42,8 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(({
       <div className="date">
         <label><Trans>Original Creation Date</Trans></label>
         <div className="fields">
-          <Dropdown value={form.values.originalDateMonth} {...months} {...formAttrs.originalDateMonth} getValue={() => form.setFieldValue('originalDate', null)}/>
-          <Dropdown value={form.values.originalDateYear} {...years} {...formAttrs.originalDateYear} getValue={() => form.setFieldValue('originalDate', null)}/>
+          <Dropdown value={form.values.originalDateMonth} {...months} {...formAttrs.originalDateMonth} getValue={() => form.setFieldValue('originalDateMonth', null)}/>
+          <Dropdown value={form.values.originalDateYear} {...years} {...formAttrs.originalDateYear} getValue={() => form.setFieldValue('originalDateYear', null)}/>
         </div>
       </div>
       <Dropdown value={form.values.language} {...languages} {...formAttrs.language} getValue={(value) => form.setFieldValue('language', value)}/>
@@ -57,7 +57,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(({
           {dataInputs}
       </div>
       <div className="footer">
-        <SecondaryButton onClick={previousStep} type="grey">
+        <SecondaryButton onClick={previousStep} color="grey">
           <Trans>Back</Trans>
         </SecondaryButton>
         <PrimaryButton disabled={!nextStep} onClick={nextStep}>

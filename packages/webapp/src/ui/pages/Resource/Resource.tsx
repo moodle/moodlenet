@@ -1,11 +1,16 @@
 
 import { Trans } from '@lingui/macro'
+import EditIcon from '@material-ui/icons/Edit'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
+import SaveIcon from '@material-ui/icons/Save'
 import ShareIcon from '@material-ui/icons/Share'
 import { useState } from 'react'
 import Card from '../../components/atoms/Card/Card'
 import Dropdown from '../../components/atoms/Dropdown/Dropdown'
+import InputTextField from '../../components/atoms/InputTextField/InputTextField'
+import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
+import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { FormikBag } from '../../lib/formik'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
@@ -18,9 +23,8 @@ import './styles.scss'
 
 export type ResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
-  imageUrl: string 
+  isOwner: boolean
   title: string
-  description: string
   liked: boolean
   type: ResourceType
   tags: Array<string>
@@ -38,9 +42,7 @@ export type ResourceProps = {
 export const Resource = withCtrl<ResourceProps>(
   ({
     headerPageTemplateProps,
-    imageUrl,
-    title,
-    description,
+    isOwner,
     liked,
     type,
     tags,
@@ -54,7 +56,15 @@ export const Resource = withCtrl<ResourceProps>(
     languages,
     formats
   }) => {
+    const [isEditing, setIsEditing] = useState<boolean>(false)
     const [likeState, setLikeState] = useState<boolean>(liked)
+
+    const handleOnEditClick = () => {
+      setIsEditing(true)
+    }
+    const handleOnSaveClick = () => {
+      setIsEditing(false)
+    }
     
     const tagSet = tags.map((value: string, index: number) => {
       return (
@@ -72,8 +82,8 @@ export const Resource = withCtrl<ResourceProps>(
         <div className="date">
           <label><Trans>Original Creation Date</Trans></label>
           <div className="fields">
-            <Dropdown {...months} {...formAttrs.originalDate} getValue={() => form.setFieldValue('originalDate', null)}/>
-            <Dropdown {...years} {...formAttrs.originalDate} getValue={() => form.setFieldValue('originalDate', null)}/>
+            <Dropdown {...months} {...formAttrs.originalDateMonth} getValue={() => form.setFieldValue('originalDateMonth', null)}/>
+            <Dropdown {...years} {...formAttrs.originalDateYear} getValue={() => form.setFieldValue('originalDateYear', null)}/>
           </div>
         </div>
         <Dropdown {...languages} {...formAttrs.language} getValue={(value) => form.setFieldValue('language', value)}/>
@@ -103,13 +113,42 @@ export const Resource = withCtrl<ResourceProps>(
                       <Trans>Like</Trans>
                     </div>
                     <div className="share"><ShareIcon/><Trans>Share</Trans></div>
+                    <div className="edit-save">
+                      { isOwner && isEditing ? (
+                        <PrimaryButton color="green" onHoverColor="orange" onClick={handleOnSaveClick}><SaveIcon/></PrimaryButton>
+                      ) : (
+                        <SecondaryButton onClick={handleOnEditClick} color="orange"><EditIcon/></SecondaryButton>
+                      )}
+                    </div>
                   </div>
                   </div>
-                  <div className="title">{title}</div>   
+                  { isOwner ? (
+                    <InputTextField
+                      className="title"
+                      autoUpdate={true}
+                      value={form.values.title}
+                      displayMode={true}
+                      edit={isEditing}
+                      {...formAttrs.title}
+                    />
+                  ) : (
+                    <div className="title">{form.values.title}</div>   
+                  )}
                   <div className="tags scroll">{tagSet}</div>
                 </div>
-                <img className="image" src={imageUrl} alt="Background" />
-                <div className="description">{description}</div>
+                <img className="image" src={typeof form.values.image === 'string' ? form.values.image : ''} alt="Background" />
+                { isOwner ? (
+                  <InputTextField
+                    autoUpdate={true}
+                    value={form.values.description}
+                    textarea={true}
+                    displayMode={true}
+                    edit={isEditing}
+                    {...formAttrs.description}
+                  />
+                ) : (
+                  <div className="description">{form.values.description}</div> 
+                )}
                 {/*<div className="comments"></div>*/}
               </Card>
               <div className="resource-footer">
