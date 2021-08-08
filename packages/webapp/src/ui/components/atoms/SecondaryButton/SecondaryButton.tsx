@@ -12,7 +12,7 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({children, type, class
   
 
   return (
-    <div className={`secondary-button ${className} ${type} hover-${onHoverColor}`} onClick={onClick}>
+    <div className={`secondary-button button ${className} ${type} hover-${onHoverColor}`} onClick={onClick}>
       {children}
     </div>
   );

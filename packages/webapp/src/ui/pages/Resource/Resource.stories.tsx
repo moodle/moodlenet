@@ -5,6 +5,7 @@ import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
 import { InfoCardStoryProps } from './InfoCard/InfoCard.stories'
 import { Resource, ResourceProps } from './Resource'
+import { ResourceActionsCardStoryProps } from './ResourceActionsCard/ResourceActionsCard.stories'
 
 const meta: ComponentMeta<typeof Resource> = {
   title: 'Pages/Resource',
@@ -28,7 +29,8 @@ export const ResourceStoryProps: ResourceProps = {
   description: 'This is the description that tells you that this a not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
   liked: false,
   infoCardProps: InfoCardStoryProps,
-  contributorCardProps: ContributorCardStoryProps
+  contributorCardProps: ContributorCardStoryProps,
+  resourceActionsCard: ResourceActionsCardStoryProps
 
 }
 

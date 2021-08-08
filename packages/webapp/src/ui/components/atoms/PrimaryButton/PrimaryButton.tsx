@@ -8,7 +8,7 @@ export type PrimaryButtonProps = {
 
 export const PrimaryButton: FC<PrimaryButtonProps> = ({ children, onClick, disabled }) => {
   return (
-    <div className={`primary-button ${disabled ? 'disabled' : ''}`} onClick={onClick}>
+    <div className={`primary-button button ${disabled ? 'disabled' : ''}`} onClick={onClick}>
       {children}
     </div>
   )
