@@ -30,35 +30,65 @@
 
         > .resource-header {
           display: flex;
-          position: absolute;
-          right: 34px;
-          > .actions {
-            display: flex;
-            gap: 20px;
-            font-size: 14px;
+          width: 100%;
+          height: fit-content;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
 
+          .type-and-actions {
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
             > * {
-              cursor: pointer;
               display: flex;
-              align-items: center;
-              gap: 8px;
-              > svg {
-                width: 14px;
-                height: 14px;
+            }
+            > .type {
+              font-weight: bold;
+            }
+            > .actions {
+              display: flex;
+              gap: 20px;
+              font-size: 14px;
+
+              > * {
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                > svg {
+                  width: 14px;
+                  height: 14px;
+                }
+              }
+
+              .liked {
+                color: red;
+              }
+
+              > .like:hover {
+                color: red;
+              }
+
+              > .share:hover {
+                color: #f88012;
               }
             }
+          }
 
-            .liked {
-              color: red;
-            }
+          .title {
+            font-weight: bold;
+            font-size: 26px;
+          }
 
-            > .like:hover {
-              color: red;
-            }
+          .tags {
+            margin-top: 7px;
+          }
 
-            > .share:hover {
-              color: #f88012;
-            }
+          .tags > .tag {
+            font-size: 10px;
+            padding: 3px 10px;
+            margin-right: 3px;
           }
         }
 
@@ -104,6 +134,26 @@
         display: none;
         width: 325px;
         height: 100%;
+      }
+    }
+
+    > * > .extra-details-card {
+      width: 100%;
+      height: fit-content;
+      padding: 25px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+
+      > .date {
+        display: flex;
+        flex-direction: column;
+        > label {
+          font-weight: bold;
+          font-size: 14px;
+          margin-bottom: 8px;
+        }
       }
     }
   }

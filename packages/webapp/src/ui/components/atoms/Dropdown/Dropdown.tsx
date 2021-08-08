@@ -17,7 +17,16 @@ export type DropdownProps = {
   options: DropdownOptionsType
 }
 
-export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getValue, hasSearch, options, disabled}) => {
+export const Dropdown: FC<DropdownProps> = ({ 
+  label, 
+  placeholder, 
+  hidden, 
+  getValue, 
+  inputAttrs, 
+  hasSearch, 
+  options, 
+  disabled
+}) => {
   const [value, setValue] = useState<string | undefined | null>(undefined)
   const [index, setIndex] = useState<number | undefined | null>(undefined)
   const [isOnHover, setIsOnHover] = useState<boolean>(false)
@@ -139,10 +148,11 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
     >
       {label && <label>{label}</label>}
       <div className="input-container" onClick={handleOnClick}>
+        <input {...inputAttrs} type='input' />
         <input
           ref={dropdownButton}
           className="dropdown-button search-field"
-          type="text"
+          type="input"
           style={(type === 'Text' || !isIconVisible) ? {visibility: 'visible', display: 'block'} : {visibility: 'hidden', display: 'none'}}
           placeholder={placeholder}
           onChange={handleOnChange}
@@ -150,6 +160,7 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
           onKeyDown={handleOnKeyDown}
           onBlur={handleOnBlur}
           value={value ? value : ''}
+          {...inputAttrs}
         />
         { isIconVisible && (typeof index === 'number' && index > -1) && options && options[index]?.length === 2 && (
           options.map((value, i) => i === index && <div key={i} className="icons scroll">{value[1]}</div>)
