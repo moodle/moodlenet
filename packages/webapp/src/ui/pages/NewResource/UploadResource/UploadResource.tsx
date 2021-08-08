@@ -162,7 +162,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ formBag, state, i
       </div>
       <div className="footer">
         {state === 'EditData' && (
-          <SecondaryButton onClick={deleteContent} type="grey">
+          <SecondaryButton className="delete-button" onClick={deleteContent} type="grey">
             <Trans>Delete</Trans>
           </SecondaryButton>
         )}

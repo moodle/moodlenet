@@ -21,6 +21,7 @@
 
     > .buttons {
       display: flex;
+      gap: 10px;
       > .secondary-button:first-child {
         display: none;
       }
