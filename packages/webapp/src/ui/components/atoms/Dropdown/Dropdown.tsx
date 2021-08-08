@@ -139,24 +139,22 @@ export const Dropdown: FC<DropdownProps> = ({ label, placeholder, hidden, getVal
     >
       {label && <label>{label}</label>}
       <div className="input-container" onClick={handleOnClick}>
-        <div className="dropdown-button button">
-          <input
-            ref={dropdownButton}
-            className=" dropdown-button button search-field"
-            type="text"
-            style={(type === 'Text' || !isIconVisible) ? {visibility: 'visible', display: 'block'} : {visibility: 'hidden', display: 'none'}}
-            placeholder={placeholder}
-            onChange={handleOnChange}
-            onClick={handleOnClick}
-            onKeyDown={handleOnKeyDown}
-            onBlur={handleOnBlur}
-            value={value ? value : ''}
-          />
-          { isIconVisible && (typeof index === 'number' && index > -1) && options && options[index]?.length === 2 && (
-            options.map((value, i) => i === index && <div key={i} className="icons scroll">{value[1]}</div>)
-          )}
-          <ExpandMoreIcon />
-        </div>
+        <input
+          ref={dropdownButton}
+          className="dropdown-button search-field"
+          type="text"
+          style={(type === 'Text' || !isIconVisible) ? {visibility: 'visible', display: 'block'} : {visibility: 'hidden', display: 'none'}}
+          placeholder={placeholder}
+          onChange={handleOnChange}
+          onClick={handleOnClick}
+          onKeyDown={handleOnKeyDown}
+          onBlur={handleOnBlur}
+          value={value ? value : ''}
+        />
+        { isIconVisible && (typeof index === 'number' && index > -1) && options && options[index]?.length === 2 && (
+          options.map((value, i) => i === index && <div key={i} className="icons scroll">{value[1]}</div>)
+        )}
+        <ExpandMoreIcon />
       </div>
       <div 
         ref={dropdownContent}
