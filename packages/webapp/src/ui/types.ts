@@ -12,8 +12,21 @@ export type FollowTag = {
   name: string
 }
 
+export type ResourceType = 'Video' | 'Web Page' | 'Moodle Book'
+
+export const getResourceColorType = (type: ResourceType) => {
+  switch (type) {
+    case 'Video':
+      return '#2c7bcb'
+    case 'Web Page':
+      return '#cc4fd1'
+    default:
+      return '#20c184'
+  }
+}
+
 export type ResourceInfo = {
-  type: 'Video' | 'Web Page' | 'Moodle Book'
+  type: ResourceType
   title: string
   tags: Pick<FollowTag, 'name'>[]
   image: string

@@ -11,7 +11,7 @@ export const Card: FC<CardProps> = ({className, style, hideBorderWhenSmall, chil
   
 
   return (
-    <div className={`card ${className} ${hideBorderWhenSmall ? 'hide-border': ''}`} style={style}>{children}</div>
+    <div className={`card ${className}${hideBorderWhenSmall ? ' hide-border': ''}`} style={style}>{children}</div>
   );
 }
 
