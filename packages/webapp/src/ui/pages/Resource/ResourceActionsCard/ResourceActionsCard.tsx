@@ -11,8 +11,6 @@ export type ResourceActionsCardProps = {
 }
 
 export const ResourceActionsCard = withCtrl<ResourceActionsCardProps>(() => {
-
-
   return (
     <Card className="resource-action-card">
       <PrimaryButton><Trans>Send to Moodle</Trans></PrimaryButton>
