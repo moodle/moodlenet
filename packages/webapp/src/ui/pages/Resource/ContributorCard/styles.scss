@@ -2,9 +2,6 @@
   width: 100%;
   height: fit-content;
   padding: 18px;
-  background-color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 0 6px #dedede;
   display: flex;
   align-items: center;
   gap: 15px;
@@ -21,7 +18,7 @@
   }
 
   > .description {
-    font-weight: 500;
+    font-weight: bold;
     font-size: 19px;
     color: #b6bacb;
     > a {

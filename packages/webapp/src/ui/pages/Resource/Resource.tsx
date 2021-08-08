@@ -9,6 +9,7 @@ import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
 import { InfoCard, InfoCardProps } from './InfoCard/InfoCard'
+import { ResourceActionsCard, ResourceActionsCardProps } from './ResourceActionsCard/ResourceActionsCard'
 import './styles.scss'
 
 export type ResourceProps = {
@@ -16,9 +17,10 @@ export type ResourceProps = {
   imageUrl: string 
   title: string
   description: string
-  liked: boolean,
-  infoCardProps: InfoCardProps,
+  liked: boolean
+  infoCardProps: InfoCardProps
   contributorCardProps: ContributorCardProps
+  resourceActionsCard: ResourceActionsCardProps
 }
 
 export const Resource = withCtrl<ResourceProps>(
@@ -29,7 +31,8 @@ export const Resource = withCtrl<ResourceProps>(
     description,
     liked,
     infoCardProps,
-    contributorCardProps
+    contributorCardProps,
+    resourceActionsCard
   }) => {
     const [likeState, setLikeState] = useState<boolean>(liked)
     return (
@@ -62,6 +65,7 @@ export const Resource = withCtrl<ResourceProps>(
               <div className="info-title"><Trans>Info</Trans></div>
               <InfoCard {...infoCardProps} />
               <ContributorCard {...contributorCardProps} />
+              <ResourceActionsCard {...resourceActionsCard} />
             </div>
           </div>
         </div>

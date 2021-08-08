@@ -2,12 +2,9 @@
   width: 100%;
   height: fit-content;
   padding: 18px;
-  background-color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 0 6px #dedede;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 
   .type {
     font-size: 12px;
@@ -16,7 +13,6 @@
   }
 
   .title {
-    margin-top: -2px;
     font-weight: bold;
     font-size: 26px;
   }
