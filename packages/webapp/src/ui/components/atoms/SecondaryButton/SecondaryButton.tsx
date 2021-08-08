@@ -3,6 +3,7 @@ import "./styles.scss";
 
 export type SecondaryButtonProps = {
   type?: 'default' | 'orange' | 'grey'
+  className?: string
   onClick?(arg0: unknown): unknown
 }
 
@@ -16,6 +17,9 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({children, type, onCli
   );
 }
 
-SecondaryButton.defaultProps = { type : 'default'}
+SecondaryButton.defaultProps = { 
+  type: 'default',
+  className: ''
+}
 
 export default SecondaryButton;
