@@ -19,7 +19,6 @@ export type NewResourceFormValues = {
     // extra
     type:Type | null
     level:Level | null
-    
     originalDateMonth: string | null
     originalDateYear: string | null
     language:Language | null

@@ -42,7 +42,7 @@
       color: black;
     }
 
-    &:not(.not-editing:not(:focus)) {
+    &:not(.not-editing):not(:focus) {
       color: rgba(0, 0, 0, 0.5);
     }
 

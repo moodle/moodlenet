@@ -162,9 +162,15 @@
       height: fit-content;
       padding: 25px;
       display: flex;
-      gap: 10px;
+      gap: 13px;
       flex-wrap: wrap;
       justify-content: center;
+
+      > * {
+        > label {
+          margin-bottom: 2px;
+        }
+      }
 
       > .date {
         display: flex;
@@ -172,7 +178,9 @@
         > label {
           font-weight: bold;
           font-size: 14px;
-          margin-bottom: 8px;
+        }
+        > .fields {
+          display: flex;
         }
       }
     }

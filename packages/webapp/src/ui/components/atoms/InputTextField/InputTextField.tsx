@@ -88,7 +88,7 @@ export const InputTextField: FC<InputTextFieldProps> = ({
             onChange={ handleChange }
             {...buttonName && {onKeyDown:handleKeyDown}}
             disabled={disabled || !edit}
-            color="input"
+            type="input"
             placeholder={placeholder}
             {...inputAttrs}
           />

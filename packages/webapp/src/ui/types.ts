@@ -1,3 +1,5 @@
+import { Type } from "./pages/NewResource/types"
+
 export type Organization = {
   name: string
   shortName: string
@@ -14,7 +16,7 @@ export type FollowTag = {
 
 export type ResourceType = 'Video' | 'Web Page' | 'Moodle Book'
 
-export const getResourceColorType = (type: ResourceType) => {
+export const getResourceColorType = (type: Type) => {
   switch (type) {
     case 'Video':
       return '#2c7bcb'
