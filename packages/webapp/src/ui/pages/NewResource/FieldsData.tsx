@@ -1,5 +1,5 @@
-import { t } from "@lingui/macro"
-import { DropdownOptionsType } from "../../components/atoms/Dropdown/Dropdown"
+import { t } from '@lingui/macro'
+import { DropdownOptionsType } from '../../components/atoms/Dropdown/Dropdown'
 import { ReactComponent as ByIcon } from '../../static/icons/license/by.svg'
 import { ReactComponent as NcIcon } from '../../static/icons/license/nc.svg'
 import { ReactComponent as NdIcon } from '../../static/icons/license/nd.svg'
@@ -7,126 +7,201 @@ import { ReactComponent as SaIcon } from '../../static/icons/license/sa.svg'
 import { ReactComponent as ZeroIcon } from '../../static/icons/license/zero.svg'
 
 export type DropdownField = {
-    label?: string
-    options: DropdownOptionsType 
-    placeholder?: string
+  label?: string
+  options: DropdownOptionsType
+  placeholder?: string
 }
 
-export const LevelDropdown: DropdownField  =  {
-    label: t`Level`,
-    placeholder: t`Educational Phase`,
-    options:  [
-        t`0.1 Early childhood educational development`,
-        t`0.2 Pre-primary education`,
-        t`1 Primary education`,
-        t`2 Lower secondary education`,
-        t`3 Upper secondary education`,
-        t`4 Post-secondary non-tertiary education`,
-        t`5 Short-cycle tertiary education`,
-        t`6 Bachelor or equivalent`,
-        t`7 Master or equivalent`,
-        t`8 Doctoral or equivalent`
-    ]
+export const LevelDropdown: DropdownField = {
+  label: t`Level`,
+  placeholder: t`Educational Phase`,
+  options: [
+    t`0.1 Early childhood educational development`,
+    t`0.2 Pre-primary education`,
+    t`1 Primary education`,
+    t`2 Lower secondary education`,
+    t`3 Upper secondary education`,
+    t`4 Post-secondary non-tertiary education`,
+    t`5 Short-cycle tertiary education`,
+    t`6 Bachelor or equivalent`,
+    t`7 Master or equivalent`,
+    t`8 Doctoral or equivalent`,
+  ],
 }
 
-export const FormatDropdown: DropdownField  =  {
-    label: t`Format`,
-    placeholder: t`Content Format`,
-    options:  [
-        t`0.1 Early childhood educational development`,
-        t`0.2 Pre-primary education`,
-        t`1 Primary education`,
-        t`2 Lower secondary education`,
-        t`3 Upper secondary education`,
-        t`4 Post-secondary non-tertiary education`,
-        t`5 Short-cycle tertiary education`,
-        t`6 Bachelor or equivalent`,
-        t`7 Master or equivalent`,
-        t`8 Doctoral or equivalent`
-    ]
+export const FormatDropdown: DropdownField = {
+  label: t`Format`,
+  placeholder: t`Content Format`,
+  options: [
+    t`0.1 Early childhood educational development`,
+    t`0.2 Pre-primary education`,
+    t`1 Primary education`,
+    t`2 Lower secondary education`,
+    t`3 Upper secondary education`,
+    t`4 Post-secondary non-tertiary education`,
+    t`5 Short-cycle tertiary education`,
+    t`6 Bachelor or equivalent`,
+    t`7 Master or equivalent`,
+    t`8 Doctoral or equivalent`,
+  ],
 }
 
-export const MonthDropdown: DropdownField  =  {
-    placeholder: t`Month`,
-    options:  [
-        t`January`,
-        t`February`,
-        t`March`,
-        t`April`,
-        t`May`,
-        t`June`,
-        t`July`,
-        t`August`,
-        t`September`,
-        t`October`,
-        t`November`,
-        t`December`
-    ]
+export const MonthDropdown: DropdownField = {
+  placeholder: t`Month`,
+  options: [
+    t`January`,
+    t`February`,
+    t`March`,
+    t`April`,
+    t`May`,
+    t`June`,
+    t`July`,
+    t`August`,
+    t`September`,
+    t`October`,
+    t`November`,
+    t`December`,
+  ],
 }
 
-export const YearsDropdown: DropdownField  =  {
-    label: t``,
-    placeholder: t`Year`,
-    options: ['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021'].reverse()
+export const YearsDropdown: DropdownField = {
+  label: t``,
+  placeholder: t`Year`,
+  options: [
+    '2000',
+    '2001',
+    '2002',
+    '2003',
+    '2004',
+    '2005',
+    '2006',
+    '2007',
+    '2008',
+    '2009',
+    '2010',
+    '2011',
+    '2012',
+    '2013',
+    '2014',
+    '2015',
+    '2016',
+    '2017',
+    '2018',
+    '2019',
+    '2020',
+    '2021',
+  ].reverse(),
 }
 
-export const TypeDropdown: DropdownField  =  {
-    label: t`Type`,
-    placeholder: t`Content Type`,
-    options:  [
-        t`0.1 Early childhood educational development`,
-        t`0.2 Pre-primary education`,
-        t`1 Primary education`,
-        t`2 Lower secondary education`,
-        t`3 Upper secondary education`,
-        t`4 Post-secondary non-tertiary education`,
-        t`5 Short-cycle tertiary education`,
-        t`6 Bachelor or equivalent`,
-        t`7 Master or equivalent`,
-        t`8 Doctoral or equivalent`
-    ]
+export const TypeDropdown: DropdownField = {
+  label: t`Type`,
+  placeholder: t`Content Type`,
+  options: [
+    t`0.1 Early childhood educational development`,
+    t`0.2 Pre-primary education`,
+    t`1 Primary education`,
+    t`2 Lower secondary education`,
+    t`3 Upper secondary education`,
+    t`4 Post-secondary non-tertiary education`,
+    t`5 Short-cycle tertiary education`,
+    t`6 Bachelor or equivalent`,
+    t`7 Master or equivalent`,
+    t`8 Doctoral or equivalent`,
+  ],
 }
 
-export const LanguagesDropdown: DropdownField  =  {
-    label: t`Languages`,
-    placeholder: t`Content Language`,
-    options:  [
-        t`0.1 Early childhood educational development`,
-        t`0.2 Pre-primary education`,
-        t`1 Primary education`,
-        t`2 Lower secondary education`,
-        t`3 Upper secondary education`,
-        t`4 Post-secondary non-tertiary education`,
-        t`5 Short-cycle tertiary education`,
-        t`6 Bachelor or equivalent`,
-        t`7 Master or equivalent`,
-        t`8 Doctoral or equivalent`
-    ]
+export const LanguagesDropdown: DropdownField = {
+  label: t`Languages`,
+  placeholder: t`Content Language`,
+  options: [
+    t`0.1 Early childhood educational development`,
+    t`0.2 Pre-primary education`,
+    t`1 Primary education`,
+    t`2 Lower secondary education`,
+    t`3 Upper secondary education`,
+    t`4 Post-secondary non-tertiary education`,
+    t`5 Short-cycle tertiary education`,
+    t`6 Bachelor or equivalent`,
+    t`7 Master or equivalent`,
+    t`8 Doctoral or equivalent`,
+  ],
 }
 
-const by = <ByIcon/>
-const zero = <ZeroIcon/>
-const nc = <NcIcon/>
-const nd = <NdIcon/>
-const sa = <SaIcon/>
+const by = <ByIcon />
+const zero = <ZeroIcon />
+const nc = <NcIcon />
+const nd = <NdIcon />
+const sa = <SaIcon />
 
-export const LicenseDropdown: DropdownField  =  {
-    placeholder: t`License`,
-    options: [
-        ['CCO (Public domain)', <div>{zero}</div>],
-        ['CC-BY (Attribution)', <div>{zero}{by}</div>],
-        ['CC-BY-SA (Attribution-ShareAlike)', <div>{zero}{by}{sa}</div>],
-        ['CC-BY-NC (Attribution-NonCommercial)', <div>{zero}{by}{nc}</div>],
-        ['CC-BY-NC-SA (Attribution-NonCommercial-ShareAlike)', <div>{zero}{by}{nc}{sa}</div>],
-        ['CC-BY-ND (Attribution-NonCommercial)', <div>{zero}{by}{nd}</div>],
-        ['CC-BY-NC-ND (Attribution-NonCommercial-NoDerivatives)', <div>{zero}{by}{nc}{nd}</div>],
-    ]
+export const licenseIconMap = {
+  by,
+  zero,
+  nc,
+  nd,
+  sa,
+}
+export type LicenseTypes = keyof typeof licenseIconMap
+
+export const LicenseDropdown: DropdownField = {
+  placeholder: t`License`,
+  options: [
+    ['CCO (Public domain)', <div>{zero}</div>],
+    [
+      'CC-BY (Attribution)',
+      <div>
+        {zero}
+        {by}
+      </div>,
+    ],
+    [
+      'CC-BY-SA (Attribution-ShareAlike)',
+      <div>
+        {zero}
+        {by}
+        {sa}
+      </div>,
+    ],
+    [
+      'CC-BY-NC (Attribution-NonCommercial)',
+      <div>
+        {zero}
+        {by}
+        {nc}
+      </div>,
+    ],
+    [
+      'CC-BY-NC-SA (Attribution-NonCommercial-ShareAlike)',
+      <div>
+        {zero}
+        {by}
+        {nc}
+        {sa}
+      </div>,
+    ],
+    [
+      'CC-BY-ND (Attribution-NonCommercial)',
+      <div>
+        {zero}
+        {by}
+        {nd}
+      </div>,
+    ],
+    [
+      'CC-BY-NC-ND (Attribution-NonCommercial-NoDerivatives)',
+      <div>
+        {zero}
+        {by}
+        {nc}
+        {nd}
+      </div>,
+    ],
+  ],
 }
 
-export const CategoriesDropdown: DropdownField  =  {
-    label: t`Categories`,
-    placeholder: t`Content Category`,
-    options:  `0000 Generic programmes and qualifications not further defined
+export const CategoriesDropdown: DropdownField = {
+  label: t`Categories`,
+  placeholder: t`Content Category`,
+  options: `0000 Generic programmes and qualifications not further defined
         0011 Basic programmes and qualifications
         0021 Literacy and numeracy
         0031 Personal skills and development
@@ -273,5 +348,7 @@ export const CategoriesDropdown: DropdownField  =  {
         1041 Transport services
         1088 Inter-disciplinary programmes and qualifications involving services
         1099 Services not elsewhere classified
-        9999 Field unknown`.split(/\r?\n/).map(s => t`${s}`)
+        9999 Field unknown`
+    .split(/\r?\n/)
+    .map(s => t`${s}`),
 }

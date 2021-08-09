@@ -1,5 +1,5 @@
-import { Language } from '@moodlenet/common/lib/content-graph/types/node'
-import { contentSlug } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { contentSlug } from '../../../utils/content-graph/slug-id'
+import { Language } from '../../types/node'
 import iso_data_arr from './ISO_639_3_tab-DATA'
 
 export const getIso639_3 = () =>

@@ -1,7 +1,7 @@
-import { Organization, Profile } from '@moodlenet/common/lib/content-graph/types/node'
-import { ActiveUser } from '@moodlenet/common/lib/user-auth/types'
-import { newAuthId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
-import { DistOmit } from '@moodlenet/common/lib/utils/types'
+import { ActiveUser } from '../../user-auth/types'
+import { newAuthId } from '../../utils/content-graph/slug-id'
+import { DistOmit } from '../../utils/types'
+import { Organization, Profile } from '../types/node'
 
 export const localOrganizationData: Omit<Organization, 'domain'> = {
   _permId: 'local',

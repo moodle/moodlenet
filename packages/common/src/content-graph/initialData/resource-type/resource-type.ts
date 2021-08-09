@@ -1,5 +1,5 @@
-import { ResourceType } from '@moodlenet/common/lib/content-graph/types/node'
-import { slugify } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { slugify } from '../../../utils/content-graph/slug-id'
+import { ResourceType } from '../../types/node'
 import resourceTypesData from './resource-type-DATA'
 
 export const getResourceTypes = () =>
