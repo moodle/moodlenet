@@ -78,7 +78,7 @@ export const Resource = withCtrl<ResourceProps>(
 
     const [form, formAttrs] = formBag
     const extraDetails = (
-      <Card className="extra-details-card">
+      <Card className="extra-details-card" hideBorderWhenSmall={true}>
         <Dropdown value={form.values.category} {...categories} {...formAttrs.category} displayMode={true} edit={isEditing} getValue={(value) => form.setFieldValue('category', value)}/>
         <Dropdown value={form.values.license} {...licenses} {...formAttrs.license} displayMode={true} edit={isEditing} getValue={(value) => form.setFieldValue('license', value)}/>
         <Dropdown value={form.values.type} {...types} {...formAttrs.type} displayMode={true} edit={isEditing} getValue={(value) => form.setFieldValue('type', value)}/>
@@ -100,7 +100,7 @@ export const Resource = withCtrl<ResourceProps>(
         <div className="resource">
           <div className="content">
             <div className="main-column">
-              <Card className="main-resource-card">
+              <Card className="main-resource-card" hideBorderWhenSmall={true}>
                 <div className="resource-header">
                   <div className="type-and-actions">
                     <span className="type">
@@ -147,6 +147,7 @@ export const Resource = withCtrl<ResourceProps>(
                 { isOwner ? (
                   <InputTextField
                     autoUpdate={true}
+                    textAreaAutoSize={true}
                     value={form.values.description}
                     textarea={true}
                     displayMode={true}
@@ -159,8 +160,18 @@ export const Resource = withCtrl<ResourceProps>(
                 {/*<div className="comments"></div>*/}
               </Card>
               <div className="resource-footer">
-                <ContributorCard {...contributorCardProps} />
-                <ResourceActionsCard {...resourceActionsCard} />
+                <div className="left-column">
+                  <ContributorCard {...contributorCardProps} />
+                  <ResourceActionsCard {...resourceActionsCard} />
+                </div>
+                <div className="right-column">
+                  {extraDetails}
+                </div>
+                <div className="one-column">
+                  <ContributorCard {...contributorCardProps} />
+                  <ResourceActionsCard {...resourceActionsCard} />
+                  {extraDetails}
+                </div>
               </div>
             </div>
             <div className="side-column">

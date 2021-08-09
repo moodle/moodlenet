@@ -41,7 +41,7 @@ export const ResourceStoryProps: ResourceProps = {
     description: 'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     format: 'Portal / main site',
     image: 'https://picsum.photos/200/100',
-    language: 'Mexicano',
+    language: 'Spanish',
     level: '1 Primary education',
     license: 'CCO (Public domain)',
     name: '',

@@ -13,7 +13,7 @@ export type ContributorCardProps = {
 
 export const ContributorCard = withCtrl<ContributorCardProps>(({ avatarUrl, displayName, timeSinceCreation, creatorProfileHref }) => {
   return (
-    <Card className="contributor-card">
+    <Card className="contributor-card" hideBorderWhenSmall={true}>
       <Link href={creatorProfileHref}><img className="avatar" src={avatarUrl} alt="Avatar" /></Link>
       <div className="description">
         Uploaded {timeSinceCreation} by <Link href={creatorProfileHref}>{displayName}</Link>
