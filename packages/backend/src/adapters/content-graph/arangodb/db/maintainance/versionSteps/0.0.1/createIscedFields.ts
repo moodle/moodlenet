@@ -1,5 +1,5 @@
+import { getIscedFields } from '@moodlenet/common/lib/content-graph/initialData/ISCED/Fields/IscedFields'
 import { Database } from 'arangojs'
-import { getIscedFields } from '../../../../../../../initialData/ISCED/Fields/IscedFields'
 import { justExecute } from '../../../../../../../lib/helpers/arango/query'
 import { createNodeQ } from '../../../../functions/createNode'
 

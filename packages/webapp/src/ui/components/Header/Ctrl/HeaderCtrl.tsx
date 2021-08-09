@@ -12,7 +12,7 @@ const homeHref = href(mainPath.landing)
 const loginHref = href(mainPath.login)
 const signUpHref = href(mainPath.signUp)
 const newCollectionHref = href('')
-const newResourceHref = href('')
+const newResourceHref = href(mainPath.createNewResource)
 
 export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
   const { session, logout } = useSession()

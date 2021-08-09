@@ -127,11 +127,11 @@ export const LanguagesDropdown: DropdownField = {
   ],
 }
 
-const by = <ByIcon />
-const zero = <ZeroIcon />
-const nc = <NcIcon />
-const nd = <NdIcon />
-const sa = <SaIcon />
+const by = <ByIcon style={{ width: '20px' }} />
+const zero = <ZeroIcon style={{ width: '20px' }} />
+const nc = <NcIcon style={{ width: '20px' }} />
+const nd = <NdIcon style={{ width: '20px' }} />
+const sa = <SaIcon style={{ width: '20px' }} />
 
 export const licenseIconMap = {
   by,

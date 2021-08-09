@@ -4,9 +4,9 @@ import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import {
   CategoriesDropdown,
-  FormatDropdown,
   LanguagesDropdown,
   LevelDropdown,
+  LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
   YearsDropdown,
@@ -78,8 +78,8 @@ const uploadResourceProps: UploadResourceProps = {
   imageUrl: '',
   nextStep: action('nextStep'),
   deleteContent: action('deleteContent'),
-  categories: CategoriesDropdown.options,
-  // licenses: LicenseDropdown.options,
+  categories: CategoriesDropdown,
+  licenses: LicenseDropdown,
 }
 export const NewResourceStoryProps: NewResourceProps = {
   headerPageTemplateProps: {
@@ -136,6 +136,7 @@ export const NewResourceAddToCollectionsStoryProps: NewResourceProps = {
       'Macro Economy',
       'Animal Rights',
     ],
+    setAddToCollections: action('setAddToCollections'),
     previousStep: action('previousStep'),
     setSearchText: action('setSearchText'),
   },
@@ -153,7 +154,7 @@ export const NewResourceExtraDetailsStoryProps: NewResourceProps = {
     months: MonthDropdown,
     years: YearsDropdown,
     languages: LanguagesDropdown,
-    formats: FormatDropdown,
+    // formats: FormatDropdown,
   },
 }
 

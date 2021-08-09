@@ -2,9 +2,9 @@ import { t, Trans } from '@lingui/macro'
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
-import React from 'react'
+import React, { useCallback } from 'react'
 import Card from '../../../components/atoms/Card/Card'
-import Dropdown, { DropdownOptionsType } from '../../../components/atoms/Dropdown/Dropdown'
+import Dropdown from '../../../components/atoms/Dropdown/Dropdown'
 import InputTextField from '../../../components/atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../components/atoms/SecondaryButton/SecondaryButton'
@@ -12,7 +12,7 @@ import { withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
 import { ReactComponent as UploadFileIcon } from '../../../static/icons/upload-file.svg'
 import { ReactComponent as UploadImageIcon } from '../../../static/icons/upload-image.svg'
-import { LicenseDropdown } from '../FieldsData'
+import { DropdownField } from '../FieldsData'
 import { NewResourceFormValues } from '../types'
 import './styles.scss'
 type UploadResourceState = 'ChooseResource' | 'EditData'
@@ -22,73 +22,84 @@ export type UploadResourceProps = {
   state: UploadResourceState
   formBag: FormikBag<NewResourceFormValues>
   imageUrl: string
-  categories: DropdownOptionsType
-  // licenses: DropdownOptionsType
+  categories: DropdownField
+  licenses: DropdownField
   nextStep: (() => unknown) | undefined
   deleteContent: () => unknown
 }
 
 export const UploadResource = withCtrl<UploadResourceProps>(
-  ({ formBag, state, imageUrl, /* licenses, */ categories, nextStep, deleteContent }) => {
-    const [form, formAttrs] = formBag
+  ({ formBag, state, imageUrl, licenses, categories, nextStep, deleteContent }) => {
+    const [form] = formBag
+    const setFieldValue = form.setFieldValue
     const background = {
       backgroundImage: 'url(' + imageUrl + ')',
       backgroundSize: 'cover',
     }
-    const setLink = (link: string) => {
-      form.setFieldValue('content', link)
-      form.setFieldValue('contentType', 'Link')
-    }
+    const setLink = useCallback(
+      (link: string) => {
+        setFieldValue('content', link)
+        setFieldValue('contentType', 'Link')
+      },
+      [setFieldValue],
+    )
 
-    const uploadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const selectedFile = e.currentTarget.files?.item(0)
-      if (selectedFile) {
-        form.setFieldValue('content', selectedFile)
-        form.setFieldValue('contentType', 'File')
-      }
-    }
+    const uploadFile = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.currentTarget.files?.item(0)
+        if (selectedFile) {
+          setFieldValue('content', selectedFile)
+          setFieldValue('contentType', 'File')
+        }
+      },
+      [setFieldValue],
+    )
 
-    const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const selectedFile = e.currentTarget.files?.item(0)
-      form.setFieldValue('image', selectedFile ?? null)
-    }
+    const uploadImage = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.currentTarget.files?.item(0)
+        setFieldValue('image', selectedFile ?? null)
+      },
+      [setFieldValue],
+    )
+    const setLicenseVal = useCallback(
+      (v: string) => {
+        setFieldValue('license', v)
+      },
+      [setFieldValue],
+    )
 
-    const deleteImage = () => {
-      form.setFieldValue('image', null)
-    }
+    const deleteImage = useCallback(() => {
+      setFieldValue('image', null)
+    }, [setFieldValue])
 
+    const dd = useCallback(
+      (v: string) => {
+        setFieldValue('category', v)
+      },
+      [setFieldValue],
+    )
     const dataInputs = (
       <div>
         <InputTextField
           autoUpdate={true}
-          value={form.values.title}
           label="Title"
           placeholder=""
           disabled={state === 'ChooseResource'}
-          {...formAttrs.title}
+          getText={text => form.setFieldValue('title', text)}
         />
         <InputTextField
           autoUpdate={true}
-          value={form.values.description}
           textarea={true}
           label="Description"
           placeholder=""
           disabled={state === 'ChooseResource'}
-          {...formAttrs.description}
+          getText={text => form.setFieldValue('description', text)}
         />
-        <Dropdown
-          label={t`Categories`}
-          placeholder={t`Content Category`}
-          options={categories}
-          value={form.values.category}
-          disabled={state === 'ChooseResource'}
-          getValue={v => {
-            form.setFieldValue('category', v)
-          }}
-          {...formAttrs.category}
-        />
+        <Dropdown {...categories} getValue={dd} disabled={state === 'ChooseResource'} />
       </div>
     )
+
     const selectImage = () => {
       //FIXME: useRef()s
       document.getElementById('uploadImage')?.click()
@@ -161,13 +172,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                       {form.values.name}
                     </abbr>
                   </div>
-                  <Dropdown
-                    getValue={v => {
-                      form.setFieldValue('license', v)
-                    }}
-                    placeholder={t`License`}
-                    options={LicenseDropdown.options}
-                  />
+                  <Dropdown {...licenses} getValue={setLicenseVal} />
                 </div>
               )}
             </Card>

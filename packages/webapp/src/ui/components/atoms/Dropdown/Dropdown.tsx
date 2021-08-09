@@ -1,8 +1,8 @@
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import React, { FC, useEffect, useRef, useState } from 'react';
-import './styles.scss';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import React, { FC, useEffect, useRef, useState } from 'react'
+import './styles.scss'
 
-export type DropdownOptionsType =  ([string, React.ReactNode]|string)[]
+export type DropdownOptionsType = ([string, React.ReactNode] | string)[]
 
 export type DropdownProps = {
   label?: string
@@ -15,23 +15,21 @@ export type DropdownProps = {
   displayMode?: boolean
   className?: string
   getValue?(currentValue: string): void
-  inputAttrs?: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
   hasSearch?: boolean
   options: DropdownOptionsType
 }
 
-export const Dropdown: FC<DropdownProps> = ({ 
-  label, 
-  placeholder, 
-  hidden, 
-  getValue, 
-  inputAttrs, 
-  hasSearch, 
+export const Dropdown: FC<DropdownProps> = ({
+  label,
+  placeholder,
+  hidden,
+  getValue,
+  hasSearch,
   value,
   edit,
   displayMode,
-  options, 
-  disabled
+  options,
+  disabled,
 }) => {
   const type = options && typeof options[0] === 'string' ? 'Text' : 'IconAndText'
 
@@ -58,19 +56,20 @@ export const Dropdown: FC<DropdownProps> = ({
   })
   window.onscroll = window.onresize = () => setOptionListPosition()
 
-
-  const setOptionListPosition = () => { 
+  const setOptionListPosition = () => {
     const viewportOffset = dropdownButton.current && dropdownButton.current.getBoundingClientRect()
     const top = viewportOffset?.top
-    const bottom = viewportOffset && (window.innerHeight - viewportOffset.bottom)
+    const bottom = viewportOffset && window.innerHeight - viewportOffset.bottom
 
     if (bottom && top && (bottom > 160 || bottom > top)) {
-      dropdownContent.current && (dropdownContent.current.style.maxHeight = bottom && bottom - 20 < 160 ? bottom - 20 + 'px' : '160px')
-      dropdownContent.current && (dropdownContent.current.style.top = (label && !displayMode)? '75px' : '50px')
+      dropdownContent.current &&
+        (dropdownContent.current.style.maxHeight = bottom && bottom - 20 < 160 ? bottom - 20 + 'px' : '160px')
+      dropdownContent.current && (dropdownContent.current.style.top = label && !displayMode ? '75px' : '50px')
       dropdownContent.current && (dropdownContent.current.style.bottom = 'auto')
       dropdownContent.current && (dropdownContent.current.style.transform = ' translate(-50%, 0px)')
     } else {
-      dropdownContent.current && (dropdownContent.current.style.maxHeight = top && top < 160 ? top - 20 + 'px' : '160px')
+      dropdownContent.current &&
+        (dropdownContent.current.style.maxHeight = top && top < 160 ? top - 20 + 'px' : '160px')
       dropdownContent.current && (dropdownContent.current.style.bottom = '50px')
       dropdownContent.current && (dropdownContent.current.style.top = 'auto')
       dropdownContent.current && (dropdownContent.current.style.transform = ' translate(-50%, 0px)')
@@ -79,11 +78,12 @@ export const Dropdown: FC<DropdownProps> = ({
 
   // TODO
   const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'ArrowUp') { // Up
-      
-    } else if (e.key === 'ArrowDown') {  // Down
-        //dropdownButton.current?.isSameNode(e.currentTarget) && 
-        //dropdownContent.current && (dropdownContent.current.firstChild as HTMLElement)?.focus()
+    if (e.key === 'ArrowUp') {
+      // Up
+    } else if (e.key === 'ArrowDown') {
+      // Down
+      //dropdownButton.current?.isSameNode(e.currentTarget) &&
+      //dropdownContent.current && (dropdownContent.current.firstChild as HTMLElement)?.focus()
     }
   }
 
@@ -106,6 +106,8 @@ export const Dropdown: FC<DropdownProps> = ({
   }, [type, value, setIsIconVisible])
 
   useEffect(() => {
+    console.log({ currentValue, getValue })
+
     getValue && currentValue && getValue(currentValue)
   }, [currentValue, getValue])
 
@@ -127,32 +129,44 @@ export const Dropdown: FC<DropdownProps> = ({
         setValue(e.innerText)
         txtValue === filter ? setIndex(i) : setIndex(undefined)
         e.style.display = ''
-        length ++
+        length++
       } else {
-        setIndex(undefined) 
+        setIndex(undefined)
         e.style.display = 'none'
       }
     })
     length > 0 ? div && (div.style.visibility = 'visible') : div && (div.style.visibility = 'hidden')
   }
 
-  const optionsList = type === 'Text' ? (
-    options?.map((currentValue, i) => {
-      return (
-        <div key={i} data-key={i} className="option only-text" onClick={e => handleOnSelection(e, i)} onKeyUp={handleOnKeyDown}>
-          {currentValue}
-        </div>
-      )
-  })) : (
-    options?.map((currentValue, i) => {
-      return (
-        <div key={i} data-key={i} className="option icon-and-text" onClick={e => handleOnSelection(e, i)} onKeyUp={handleOnKeyDown}>
-          {currentValue[1]}
-          <span>{currentValue[0]}</span>
-        </div>
-      )
-    })
-  )
+  const optionsList =
+    type === 'Text'
+      ? options?.map((currentValue, i) => {
+          return (
+            <div
+              key={i}
+              data-key={i}
+              className="option only-text"
+              onClick={e => handleOnSelection(e, i)}
+              onKeyUp={handleOnKeyDown}
+            >
+              {currentValue}
+            </div>
+          )
+        })
+      : options?.map((currentValue, i) => {
+          return (
+            <div
+              key={i}
+              data-key={i}
+              className="option icon-and-text"
+              onClick={e => handleOnSelection(e, i)}
+              onKeyUp={handleOnKeyDown}
+            >
+              {currentValue[1]}
+              <span>{currentValue[0]}</span>
+            </div>
+          )
+        })
 
   return (
     <div
@@ -161,12 +175,19 @@ export const Dropdown: FC<DropdownProps> = ({
       hidden={hidden}
     >
       {label && <label>{label}</label>}
-      <div className={`input-container ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`} onClick={handleOnClick}>
+      <div
+        className={`input-container ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
+        onClick={handleOnClick}
+      >
         <input
           ref={dropdownButton}
           className={`dropdown-button search-field ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
           type="input"
-          style={(type === 'Text' || !isIconVisible) ? {visibility: 'visible', display: 'block'} : {visibility: 'hidden', display: 'none'}}
+          style={
+            type === 'Text' || !isIconVisible
+              ? { visibility: 'visible', display: 'block' }
+              : { visibility: 'hidden', display: 'none' }
+          }
           placeholder={placeholder}
           onChange={handleOnChange}
           onClick={handleOnClick}
@@ -174,14 +195,23 @@ export const Dropdown: FC<DropdownProps> = ({
           onBlur={handleOnBlur}
           disabled={disabled || !edit}
           value={currentValue ? currentValue : ''}
-          {...inputAttrs}
         />
-        { isIconVisible && (typeof index === 'number' && index > -1) && options && options[index]?.length === 2 && (
-          options.map((currentValue, i) => i === index && <div key={i} className="icons scroll">{currentValue[1]}</div>)
-        )}
+        {isIconVisible &&
+          typeof index === 'number' &&
+          index > -1 &&
+          options &&
+          options[index]?.length === 2 &&
+          options.map(
+            (currentValue, i) =>
+              i === index && (
+                <div key={i} className="icons scroll">
+                  {currentValue[1]}
+                </div>
+              ),
+          )}
         <ExpandMoreIcon />
       </div>
-      <div 
+      <div
         ref={dropdownContent}
         className="dropdown-content"
         onMouseEnter={() => setIsOnHover(true)}
@@ -195,8 +225,7 @@ export const Dropdown: FC<DropdownProps> = ({
 }
 
 Dropdown.defaultProps = {
-  edit: true
+  edit: true,
 }
-
 
 export default Dropdown

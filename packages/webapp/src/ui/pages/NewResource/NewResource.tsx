@@ -20,7 +20,7 @@ export type NewResourceProps = {
 }
 
 const progressStates = [t`Upload Resource`, t`Add to Collections`, t`Add Details`]
-const progressSubtitles = [t``, t`Earn 1 Point `, t`Earn 5 Points by completing this useful information`]
+const progressSubtitles = [``, t`Earn 1 Point `, t`Earn 5 Points by completing this useful information`]
 export const NewResource = withCtrl<NewResourceProps>(({ stepProps, headerPageTemplateProps }) => {
   const progressCurrentIndex =
     stepProps.step === 'UploadResourceStep'

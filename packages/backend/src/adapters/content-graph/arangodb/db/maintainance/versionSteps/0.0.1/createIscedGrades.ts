@@ -1,5 +1,5 @@
+import { getIscedGrades } from '@moodlenet/common/lib/content-graph/initialData/ISCED/Grades/IscedGrades'
 import { Database } from 'arangojs'
-import { getIscedGrades } from '../../../../../../../initialData/ISCED/Grades/IscedGrades'
 import { justExecute } from '../../../../../../../lib/helpers/arango/query'
 import { createNodeQ } from '../../../../functions/createNode'
 

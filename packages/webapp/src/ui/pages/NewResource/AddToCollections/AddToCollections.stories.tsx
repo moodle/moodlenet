@@ -23,7 +23,8 @@ export const AddToCollectionsStoryProps: AddToCollectionsProps = {
   previousStep: action('previousStep'),
   nextStep: action('nextStep'),
   step: 'AddToCollectionsStep',
-  collections: ['Education', 'Biology', 'Algebra', 'Phycology', 'Phylosophy', 'Sociology', 'English Literature']
+  setAddToCollections: action('setAddToCollections'),
+  collections: ['Education', 'Biology', 'Algebra', 'Phycology', 'Phylosophy', 'Sociology', 'English Literature'],
 }
 
 const AddToCollectionsStory: ComponentStory<typeof AddToCollections> = args => <AddToCollections {...args} />
