@@ -26,11 +26,12 @@ export const useFormikInputAttrs = <Values>(formik: SimplifiedFormik<Values>) =>
   useMemo(() => formikInputAttrs(formik.values), [formik.values])
 
 export type FormikBag<Values = {}> = [SimplifiedFormik<Values>, FormikInputAttrs<Values>]
-export const useFormikBag = <Values>(config: FormikConfig<Values>): FormikBag<Values> => {
+export const useFormikBag = <Values>(config: FormikConfig<Values>) => {
   const formik = useFormik(config)
   const s_formik = formik as SimplifiedFormik<Values>
   const inputAttrs = useFormikInputAttrs(s_formik)
-  return [s_formik, inputAttrs]
+  const bag: FormikBag<Values> = [s_formik, inputAttrs]
+  return [formik, bag] as const
 }
 
 export interface SimplifiedFormik<Values = {}> {

@@ -1,5 +1,5 @@
-import { FileFormat, FileFormatType } from '@moodlenet/common/lib/content-graph/types/node'
-import { slugify } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { slugify } from '../../../utils/content-graph/slug-id'
+import { FileFormat, FileFormatType } from '../../types/node'
 import { mimetypesMap } from './mimetype_data_index'
 
 export const getFileFormats = () =>

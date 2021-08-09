@@ -1,6 +1,6 @@
-import { IscedField } from '@moodlenet/common/lib/content-graph/types/node'
-import { getIscedFieldPathByCode } from '@moodlenet/common/lib/utils/content-graph/isced-field'
-import { contentSlug } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { getIscedFieldPathByCode } from '../../../../utils/content-graph/isced-field'
+import { contentSlug } from '../../../../utils/content-graph/slug-id'
+import { IscedField } from '../../../types/node'
 import isced_fields from './CL_ISCED13-Fields'
 
 export const getIscedFields = () =>

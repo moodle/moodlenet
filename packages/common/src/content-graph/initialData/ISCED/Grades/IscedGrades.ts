@@ -1,6 +1,6 @@
-import { IscedGrade } from '@moodlenet/common/lib/content-graph/types/node'
-import { getIscedGradePathByCode } from '@moodlenet/common/lib/utils/content-graph/isced-grade'
-import { contentSlug } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { getIscedGradePathByCode } from '../../../../utils/content-graph/isced-grade'
+import { contentSlug } from '../../../../utils/content-graph/slug-id'
+import { IscedGrade } from '../../../types/node'
 import isced_grades from './CL_ISCED11-Grades'
 
 export const getIscedGrades = () =>

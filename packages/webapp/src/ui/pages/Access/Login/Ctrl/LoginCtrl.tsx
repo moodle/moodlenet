@@ -20,7 +20,7 @@ export const useLoginCtrl: CtrlHook<LoginProps, {}> = () => {
       }),
     [login],
   )
-  const formBag = useFormikBag<LoginFormValues>({ initialValues: { email: '', password: '' }, onSubmit })
+  const [, formBag] = useFormikBag<LoginFormValues>({ initialValues: { email: '', password: '' }, onSubmit })
   const loginProps = useMemo<LoginProps>(() => {
     const loginProps: LoginProps = {
       accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Login Access Header'),

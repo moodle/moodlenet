@@ -56,6 +56,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           <Trans>Finish</Trans>
         </PrimaryButton>
       </div>
+    </div>
     )
   },
 )

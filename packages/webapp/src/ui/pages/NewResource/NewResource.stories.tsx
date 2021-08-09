@@ -7,7 +7,6 @@ import {
   FormatDropdown,
   LanguagesDropdown,
   LevelDropdown,
-  LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
   YearsDropdown,
@@ -79,8 +78,8 @@ const uploadResourceProps: UploadResourceProps = {
   imageUrl: '',
   nextStep: action('nextStep'),
   deleteContent: action('deleteContent'),
-  categories: CategoriesDropdown,
-  licenses: LicenseDropdown,
+  categories: CategoriesDropdown.options,
+  // licenses: LicenseDropdown.options,
 }
 export const NewResourceStoryProps: NewResourceProps = {
   headerPageTemplateProps: {

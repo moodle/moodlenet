@@ -1,5 +1,5 @@
-import { License } from '@moodlenet/common/lib/content-graph/types/node'
-import { contentSlug } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { contentSlug } from '../../../utils/content-graph/slug-id'
+import { License } from '../../types/node'
 import licensesData from './licenses-DATA'
 
 export const getLicenses = () =>
