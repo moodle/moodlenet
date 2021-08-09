@@ -12,7 +12,7 @@ export type ResourceActionsCardProps = {
 
 export const ResourceActionsCard = withCtrl<ResourceActionsCardProps>(() => {
   return (
-    <Card className="resource-action-card">
+    <Card className="resource-action-card" hideBorderWhenSmall={true}>
       <PrimaryButton><Trans>Send to Moodle</Trans></PrimaryButton>
       <SecondaryButton><Trans>Add to Collection</Trans></SecondaryButton>
     </Card>

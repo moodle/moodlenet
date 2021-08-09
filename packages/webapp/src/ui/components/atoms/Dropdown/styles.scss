@@ -29,6 +29,21 @@
       padding: 0;
       background: none;
       box-shadow: none;
+
+      > .icons {
+        height: 24px;
+        margin-left: 0;
+        justify-content: start;
+        > div > svg > g {
+          fill: black
+        }
+      }
+
+      &:not(.not-editing) {
+        > .icons > div > svg > g {
+          fill: rgba(0, 0, 0, 0.5);
+        }
+      }
     }
 
     &.not-editing {
@@ -37,7 +52,6 @@
       > svg {
         display: none;
       }
-
     }
 
     &:not(.not-editing:not(:focus)) {
@@ -83,6 +97,10 @@
       &.display-mode {
         padding: 0;
         height: 24px;
+        color: black;
+        &:not(.not-editing) {
+          color: rgba(0, 0, 0, 0.5);
+        }
       }
     }
 

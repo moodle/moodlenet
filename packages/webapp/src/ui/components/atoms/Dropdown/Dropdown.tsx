@@ -1,5 +1,5 @@
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import './styles.scss';
 
 export type DropdownOptionsType = string[] | [string, React.ReactNode][]
@@ -48,9 +48,11 @@ export const Dropdown: FC<DropdownProps> = ({
   }
 
   const handleOnClick = () => {
-    setIsIconVisible(false)
-    dropdownContent.current && (dropdownContent.current.style.visibility = 'visible')
-    setTimeout(() => dropdownButton.current && dropdownButton.current.focus(), 100)
+    if (edit) {
+      setIsIconVisible(false)
+      dropdownContent.current && (dropdownContent.current.style.visibility = 'visible')
+      setTimeout(() => dropdownButton.current && dropdownButton.current.focus(), 100)
+    }
   }
 
   window.addEventListener('DOMContentLoaded', () => {
@@ -106,19 +108,17 @@ export const Dropdown: FC<DropdownProps> = ({
   }, [type, value, setIsIconVisible])
 
   useEffect(() => {
+    //!index && value && filterFunction(value)
     getValue && currentValue && getValue(currentValue)
   }, [currentValue, getValue])
 
   useEffect(() => {
-    index && setIsIconVisible(true)
+    console.log('Got new index: ' + index)
+    typeof index === 'number' && setIsIconVisible(true)
   }, [index])
 
-  const filterFunction = (value?: string) => {
-    let filter = dropdownButton.current?.value
-    if (value) {
-      filter = value
-    }
-    filter?.toUpperCase()
+  const filterFunction = useCallback((value?: string) => {
+    const filter = (value ? value : dropdownButton.current?.value)?.toUpperCase()
     const div = dropdownContent.current
     let length = 0
     Array.prototype.slice.call(div?.getElementsByClassName('option')).forEach((e, i) => {
@@ -126,6 +126,7 @@ export const Dropdown: FC<DropdownProps> = ({
       if (txtValue.indexOf(filter) > -1) {
         setValue(e.innerText)
         txtValue === filter ? setIndex(i) : setIndex(undefined)
+        txtValue === filter && console.log(i)
         e.style.display = ''
         length ++
       } else {
@@ -134,7 +135,15 @@ export const Dropdown: FC<DropdownProps> = ({
       }
     })
     length > 0 ? div && (div.style.visibility = 'visible') : div && (div.style.visibility = 'hidden')
-  }
+  }, [])
+
+  useEffect(() => {
+    if (type === 'IconAndText' && value && options) {
+      (options as any[]).every((e, i) => {
+        return (value === e[0] && setIndex(i))
+      })
+    }
+  }, [value, type, options])
 
   const optionsList = type === 'Text' ? (
     options?.map((currentValue, i) => {
@@ -156,15 +165,15 @@ export const Dropdown: FC<DropdownProps> = ({
 
   return (
     <div
-      className={`dropdown ${hasSearch ? 'search' : ''} ${disabled ? 'disabled' : ''}`}
+      className={`dropdown ${hasSearch ? 'search' : ''} ${disabled ? 'disabled' : ''} ${displayMode ? 'display-mode' : ''} ${!edit ? 'not-editing' : ''}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
       {label && <label>{label}</label>}
-      <div className={`input-container ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`} onClick={handleOnClick}>
+      <div className={`input-container ${displayMode ? 'display-mode' : ''} ${!edit ? 'not-editing': ''}`} onClick={handleOnClick}>
         <input
           ref={dropdownButton}
-          className={`dropdown-button search-field ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
+          className={`dropdown-button search-field ${displayMode ? 'display-mode' : ''} ${!edit ? 'not-editing' : ''}`}
           type="input"
           style={(type === 'Text' || !isIconVisible) ? {visibility: 'visible', display: 'block'} : {visibility: 'hidden', display: 'none'}}
           placeholder={placeholder}

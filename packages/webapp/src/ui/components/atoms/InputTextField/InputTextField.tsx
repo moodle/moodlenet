@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import PrimaryButton from "../PrimaryButton/PrimaryButton";
 import "./styles.scss";
 
@@ -15,8 +15,9 @@ export type InputTextFieldProps = {
   displayMode?: boolean
   value?: string | undefined |null
   getText?(text: string): void
-  textAreaAttrs?:React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>,
+  textAreaAttrs?:React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>
   inputAttrs?:React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
+  textAreaAutoSize?: boolean
 }
 
 export const InputTextField: FC<InputTextFieldProps> = ({
@@ -33,14 +34,25 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   value,
   getText,
   inputAttrs,
-  textAreaAttrs
+  textAreaAttrs,
+  textAreaAutoSize
 }) => { 
   const [text, setText] = useState<string |undefined | null>(value)
+  const [rows, setRows] = useState<number>(textAreaAutoSize ? 1 : 5)
+  const textArea = useRef<HTMLTextAreaElement>(null)
+
+  const checkRowChange = useCallback(() => {
+    if (textAreaAutoSize && textArea && textArea.current) {
+      textArea.current.style.height = 'fit-content'
+      textArea.current.style.height = (Math.ceil(textArea.current.scrollHeight / 10) * 10) + 'px'
+    }
+  }, [textAreaAutoSize])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter') {
       getText && getText(text ? text : '')
     }
+    setRows(rows)
   }
 
   const handleClick = () => {
@@ -49,13 +61,17 @@ export const InputTextField: FC<InputTextFieldProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.currentTarget.value)
-    if (autoUpdate) getText && getText(e.currentTarget.value)
+    autoUpdate && getText && getText(e.currentTarget.value)
   }
+
+  useEffect(() => {
+    console.log('And here?')
+    textArea && checkRowChange()
+  }, [text, checkRowChange])
 
   useEffect(() => {
     setText(value)
   }, [value]);
-
 
   return (
     <div 
@@ -67,6 +83,7 @@ export const InputTextField: FC<InputTextFieldProps> = ({
       { textarea ? (
         <div className={`textarea-container ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}>
           <textarea 
+            ref={textArea}
             className={`${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
             value={text ? text : ''}
             onChange={ handleChange }
@@ -75,7 +92,7 @@ export const InputTextField: FC<InputTextFieldProps> = ({
             placeholder={placeholder}
             name="textarea" 
             cols={40} 
-            rows={5}
+            rows={rows}
             {...textAreaAttrs}
           />
         </div>
@@ -106,7 +123,8 @@ InputTextField.defaultProps = {
   value: '',
   className: '',
   edit: true,
-  getText: () => ''
+  getText: () => '',
+  textAreaAutoSize: false
 }
 
 export default InputTextField;
