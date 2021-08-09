@@ -1,0 +1,43 @@
+query ResourcePageUserData($ResourceId: ID!) {
+  node(id: $ResourceId) {
+    ... on Resource {
+      id
+      name
+      avatar
+      bio
+      image
+      firstName
+      lastName
+      siteUrl
+      location
+
+      followersCount: _relCount(type: Follows, target: Resource, inverse: true)
+
+      collectionsCount: _relCount(type: Created, target: Collection)
+      collections: _rel(type: Created, target: Collection, page: { first: 100 }) {
+        edges {
+          node {
+            ... on Collection {
+              id
+              name
+              image
+            }
+          }
+        }
+      }
+
+      resourcesCount: _relCount(type: Created, target: Resource)
+      resources: _rel(type: Created, target: Resource, page: { first: 100 }) {
+        edges {
+          node {
+            ... on Resource {
+              id
+              name
+              thumbnail
+            }
+          }
+        }
+      }
+    }
+  }
+}

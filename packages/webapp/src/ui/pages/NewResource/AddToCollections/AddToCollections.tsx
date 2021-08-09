@@ -46,7 +46,7 @@ export const AddToCollections = withCtrl<AddToCollectionsProps>(({ collections, 
         </Card>
       </div>
       <div className="footer">
-        <SecondaryButton onClick={previousStep} type="grey">
+        <SecondaryButton onClick={previousStep} color="grey">
           <Trans>Back</Trans>
         </SecondaryButton>
         <PrimaryButton disabled={!nextStep} onClick={nextStep}>

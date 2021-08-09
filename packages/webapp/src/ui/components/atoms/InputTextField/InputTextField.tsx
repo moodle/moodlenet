@@ -4,13 +4,15 @@ import "./styles.scss";
 
 export type InputTextFieldProps = {
   label?: string
-  placeholder: string
+  placeholder?: string
   textarea?: boolean
   disabled?: boolean
   hidden?: boolean
   autoUpdate?: boolean
   buttonName?: string
   className?: string
+  edit?: boolean
+  displayMode?: boolean
   value?: string | undefined |null
   getText?(text: string): void
   textAreaAttrs?:React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>,
@@ -26,6 +28,8 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   hidden,
   autoUpdate,
   className,
+  edit,
+  displayMode,
   value,
   getText,
   inputAttrs,
@@ -61,12 +65,13 @@ export const InputTextField: FC<InputTextFieldProps> = ({
     >
       { label ? <label>{label}</label> : <></> }
       { textarea ? (
-        <div className="textarea-container">
+        <div className={`textarea-container ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}>
           <textarea 
+            className={`${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
             value={text ? text : ''}
             onChange={ handleChange }
             onKeyDown={ handleKeyDown }
-            disabled={disabled}
+            disabled={disabled || !edit}
             placeholder={placeholder}
             name="textarea" 
             cols={40} 
@@ -75,12 +80,14 @@ export const InputTextField: FC<InputTextFieldProps> = ({
           />
         </div>
       ) : (
-        <div className="input-container">
+        <div className={`input-container ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}>
+          {edit !== undefined}
           <input
+            className={`${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
             value={text ? text : ''}
             onChange={ handleChange }
             {...buttonName && {onKeyDown:handleKeyDown}}
-            disabled={disabled}
+            disabled={disabled || !edit}
             type="input"
             placeholder={placeholder}
             {...inputAttrs}
@@ -94,8 +101,11 @@ export const InputTextField: FC<InputTextFieldProps> = ({
 
 InputTextField.defaultProps = {
   hidden: false,
+  displayMode: false,
+  placeholder: '',
   value: '',
   className: '',
+  edit: true,
   getText: () => ''
 }
 

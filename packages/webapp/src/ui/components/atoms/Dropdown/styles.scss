@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  width: 100%;
   > label {
     font-weight: bold;
     font-size: 14px;
@@ -23,6 +24,25 @@
     outline: none;
     font-weight: 500;
     font-size: 14px;
+
+    &.display-mode {
+      padding: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    &.not-editing {
+      color: black;
+
+      > svg {
+        display: none;
+      }
+
+    }
+
+    &:not(.not-editing:not(:focus)) {
+      color: rgba(0, 0, 0, 0.5);
+    }
 
     > .dropdown-button {
       width: 100%;
@@ -59,6 +79,11 @@
         font-size: 15px;
         color: #c0c4d6;
       }
+
+      &.display-mode {
+        padding: 0;
+        height: 24px;
+      }
     }
 
     > .icons {
@@ -84,6 +109,7 @@
     }
 
     > svg {
+      display: block;
       margin-right: 6px;
       color: #b6bacb;
     }

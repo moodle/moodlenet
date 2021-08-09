@@ -77,6 +77,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ formBag, state, i
       />
       <Dropdown 
         {...categories}
+        value={form.values.category}
         disabled={state === 'ChooseResource'}
         {...formAttrs.category}
       />
@@ -107,7 +108,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ formBag, state, i
                       <input id="uploadFile" type="file" name="myFile" onChange={uploadFile} hidden />
                       <UploadFileIcon />
                       <span>
-                        <Trans>Drop a file here or click to upload!</Trans>
+                        <Trans>Click to upload a file!</Trans>
                       </span>
                     </div>
                   ) : (
@@ -122,7 +123,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ formBag, state, i
                       />
                       <UploadImageIcon />
                       <span>
-                        <Trans>Drop an image here or click to upload!</Trans>
+                        <Trans>Click to upload an image!</Trans>
                       </span>
                     </div>
                   )}
@@ -162,7 +163,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(({ formBag, state, i
       </div>
       <div className="footer">
         {state === 'EditData' && (
-          <SecondaryButton onClick={deleteContent} type="grey">
+          <SecondaryButton onHoverColor="red" onClick={deleteContent} type="grey">
             <Trans>Delete</Trans>
           </SecondaryButton>
         )}

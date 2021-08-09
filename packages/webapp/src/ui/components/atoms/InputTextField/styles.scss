@@ -14,6 +14,12 @@
     border: none;
     box-shadow: 0 0 6px #dedede;
     border-radius: 7px;
+
+    &.display-mode {
+      padding: 0;
+      background: none;
+      box-shadow: none;
+    }
   }
 
   .input-container > input,
@@ -27,7 +33,16 @@
     font-weight: 500;
     font-size: 14px;
 
-    &:not(:focus) {
+    &.display-mode {
+      padding: 0;
+      background: none;
+    }
+
+    &.not-editing {
+      color: black;
+    }
+
+    &:not(.not-editing):not(:focus) {
       color: rgba(0, 0, 0, 0.5);
     }
 
@@ -60,8 +75,8 @@
       height: 100%;
       line-height: 20px;
       resize: none;
-      &:focus,
-      &:not(:focus) {
+      &:not(.display-mode):focus,
+      &:not(.display-mode):not(:focus) {
         padding: 0 12px;
       }
     }

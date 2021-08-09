@@ -12,7 +12,7 @@
     margin-top: 0;
   }
 
-  .background {
+  > .background {
     cursor: pointer;
     width: 100%;
     height: 100px;
@@ -23,72 +23,64 @@
     }
   }
 
-  .avatar {
-      cursor: pointer;
-      z-index: 3;
-      border: 2px solid white;
-      border-radius: 15px;
-      width: 75px;
-      height: 75px;
-      object-fit: cover;
-      margin-left: 40px;
-      margin-top: -39px;
+  > .avatar {
+    cursor: pointer;
+    z-index: 3;
+    border: 2px solid white;
+    border-radius: 15px;
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
+    margin-left: 40px;
+    margin-top: -39px;
   }
 
-  .info {
+  > .info {
     margin-top: 13px;
     margin-left: 40px;
     margin-right: 20%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
     @media (max-width: 450px) {
-      margin-right: 40px;
-      > .buttons > :first-child {
-        margin: 0 5px 0 0;
+      margin: 13px 40px 0 40px
+    }
+
+    > .profile-card-header {
+      > .title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 20px;
+        font-size: 19px;
+        font-weight: bold;
+
+        > .verified-icon {
+          height: 80%;
+        }
+      }
+
+      > .subtitle {
+        margin-top: 3px;
+        font-size: 11px;
+        display: flex;
+        justify-content: flex-start;
+        gap: 5px;
       }
     }
-  }
 
-  .title {
-    display: flex;
-    align-items: center;
-    font-size: 15px;
-    font-weight: bold;
-  }
+    > .presentation {
+      font-size: 12px;
+      font-weight: bold;
+      line-height: 1.25;
+    }
 
-  .verified-icon {
-    max-height: 10px;
-    margin-left: 5px;
-  }
-
-  .subtitle {
-    margin-top: 3px;
-    font-size: 8px;
-  }
-
-  .presentation {
-    margin-top: 12px;
-    font-size: 10px;
-    font-weight: bold;
-    line-height: 1.25;
-  }
-
-  .buttons {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    margin-top: 22px;
-  }
-
-  .button {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    border: 2px solid black;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 10px;
-    height: 25px;
-    padding: 6px;
-    margin-right: 10px;
-    cursor: pointer;
+    > .buttons {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+    }
   }
 }

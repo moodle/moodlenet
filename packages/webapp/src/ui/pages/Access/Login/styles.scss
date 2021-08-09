@@ -124,6 +124,7 @@
           align-items: center;
           > .left {
             display: flex;
+            gap: 10px;
             > .tertiary-button {
               @media (max-width: 450px) {
                 display: none;
