@@ -1,32 +1,39 @@
 .primary-button {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    border-radius: 45px;
-    font-weight: bold;
-    font-size: 12px;
-    height: 30px;
-    padding: 12px 18px;
-    width: fit-content;
-    margin: 0 5px;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 45px;
+  font-weight: bold;
+  font-size: 12px;
+  height: 30px;
+  padding: 12px 18px;
+  width: fit-content;
+  cursor: pointer;
+  color: white;
+  background-color: #f88012;
+  white-space: nowrap;
+
+  &.green {
+    background-color: #00e096;
+  }
+
+  &:hover {
+    //background-color: #e37511;
+    background-color: #337aff;
+
+    &.hover-orange {
+      background-color: #f88012;
+    }
+  }
+
+  &.disabled {
+    cursor: default;
+    user-select: none;
+    background-color: #e8e8e8;
+  }
+
+  a {
     color: white;
-    background-color: #F88012;
-    white-space: nowrap;
-    
-    &:hover {
-        //background-color: #e37511;
-        background-color: #337AFF;
-    }
-
-    &.disabled {
-        cursor: default;
-        user-select: none;
-        background-color: #e8e8e8;
-    }
-
-    a {
-        color: white;
-        text-decoration: none;
-    }
+    text-decoration: none;
+  }
 }

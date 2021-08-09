@@ -1,14 +1,13 @@
 .secondary-button {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   border: 2px solid black;
-  border-radius: 5px;
+  border-radius: 45px;
   font-weight: bold;
   font-size: 12px;
   height: 30px;
   padding: 12px;
-  margin: 0 5px;
   padding: 12px 18px;
   width: fit-content;
   cursor: pointer;
@@ -24,25 +23,28 @@
 
   &.orange {
     color: #f88012;
-    background-color: #f4f5f7;
     border: 2px solid #f88012;
-
-    &:hover {
-      //color: #e37511;
-      //border: 2px solid #e37511;
-      color: #337AFF;
-      border: 2px solid #337AFF;
-    }
   }
 
   &.grey {
     color: #7f8393;
-    background-color: transparent;
     border: 2px solid #7f8393;
 
     &:hover {
       color: #545761;
       border: 2px solid #545761;
+    }
+  }
+
+  &:hover {
+    //color: #e37511;
+    //border: 2px solid #e37511;
+    color: #337aff;
+    border: 2px solid #337aff;
+
+    &.hover-red {
+      color: red;
+      border: 2px solid red;
     }
   }
 }

@@ -25,43 +25,36 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
   ({ formBag, types, levels, months, years, languages, formats, nextStep, previousStep }) => {
     const [form, formAttrs] = formBag
 
-    const dataInputs = (
-      <div className="data-inputs">
-        <Dropdown {...types} {...formAttrs.type} getValue={value => form.setFieldValue('type', value)} />
-        <Dropdown {...levels} {...formAttrs.level} getValue={value => form.setFieldValue('level', value)} />
-        <div className="date">
-          <label>
-            <Trans>Original Creation Date</Trans>
-          </label>
-          <div className="fields">
-            <Dropdown
-              {...months}
-              {...formAttrs.originalDate}
-              getValue={() => form.setFieldValue('originalDate', null)}
-            />
-            <Dropdown
-              {...years}
-              {...formAttrs.originalDate}
-              getValue={() => form.setFieldValue('originalDate', null)}
-            />
-          </div>
+  const dataInputs = (
+    <div className="data-inputs">
+      <Dropdown value={form.values.type} {...types} {...formAttrs.type} getValue={(value) => form.setFieldValue('type', value)}/>
+      <Dropdown value={form.values.level} {...levels} {...formAttrs.level} getValue={(value) => form.setFieldValue('level', value)}/>
+      <div className="date">
+        <label><Trans>Original Creation Date</Trans></label>
+        <div className="fields">
+          <Dropdown value={form.values.originalDateMonth} {...months} {...formAttrs.originalDateMonth} getValue={() => form.setFieldValue('originalDateMonth', null)}/>
+          <Dropdown value={form.values.originalDateYear} {...years} {...formAttrs.originalDateYear} getValue={() => form.setFieldValue('originalDateYear', null)}/>
         </div>
         <Dropdown {...languages} {...formAttrs.language} getValue={value => form.setFieldValue('language', value)} />
         <Dropdown {...formats} {...formAttrs.format} getValue={value => form.setFieldValue('format', value)} />
       </div>
-    )
+      <Dropdown value={form.values.language} {...languages} {...formAttrs.language} getValue={(value) => form.setFieldValue('language', value)}/>
+      <Dropdown value={form.values.format} {...formats} {...formAttrs.format} getValue={(value) => form.setFieldValue('format', value)}/>
+    </div>
+  )
 
-    return (
-      <div className="extra-details">
-        <div className="content">{dataInputs}</div>
-        <div className="footer">
-          <SecondaryButton onClick={previousStep} type="grey">
-            <Trans>Back</Trans>
-          </SecondaryButton>
-          <PrimaryButton disabled={!nextStep} onClick={nextStep}>
-            <Trans>Finish</Trans>
-          </PrimaryButton>
-        </div>
+  return (
+    <div className="extra-details">
+      <div className="content">
+          {dataInputs}
+      </div>
+      <div className="footer">
+        <SecondaryButton onClick={previousStep} color="grey">
+          <Trans>Back</Trans>
+        </SecondaryButton>
+        <PrimaryButton disabled={!nextStep} onClick={nextStep}>
+          <Trans>Finish</Trans>
+        </PrimaryButton>
       </div>
     )
   },

@@ -211,13 +211,10 @@
   > .footer {
     display: flex;
     justify-content: flex-end;
+    gap: 10px;
     padding: 30px 0 0 0;
     @media screen and (max-width: 800px) {
       padding: 5px 0 35px 0;
-    }
-    > .secondary-button:hover {
-      color: red;
-      border: 2px solid red;
     }
   }
 }
