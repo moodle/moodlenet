@@ -1,5 +1,5 @@
+import { getIso639_3 } from '@moodlenet/common/lib/content-graph/initialData/ISO_639_3/ISO_639_3'
 import { Database } from 'arangojs'
-import { getIso639_3 } from '../../../../../../../initialData/ISO_639_3/ISO_639_3'
 import { justExecute } from '../../../../../../../lib/helpers/arango/query'
 import { createNodeQ } from '../../../../functions/createNode'
 

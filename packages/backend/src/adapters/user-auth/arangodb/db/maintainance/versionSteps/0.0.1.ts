@@ -1,5 +1,5 @@
-import { rootUserActive } from '../../../../../../initialData/content'
-import { DefaultConfig } from '../../../../../../initialData/user-auth/defaultConfig'
+import { rootUserActive } from '@moodlenet/common/lib/content-graph/initialData/content'
+import { DefaultConfig } from '@moodlenet/common/lib/content-graph/initialData/user-auth/defaultConfig'
 import { argonHashPassword } from '../../../../../../lib/auth/argon'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
 import { justExecute } from '../../../../../../lib/helpers/arango/query'

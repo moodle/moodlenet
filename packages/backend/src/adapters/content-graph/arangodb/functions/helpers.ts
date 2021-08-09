@@ -1,7 +1,6 @@
 import { GraphEdgeByType, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNodeByType, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import { GraphNodeByType, GraphNodeIdentifierSlug, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
-import { GraphNodeIdentifierSlug } from '@moodlenet/common/src/content-graph/types/node'
 import { AQ, aqlstr } from '../../../../lib/helpers/arango/query'
 import { AqlGraphEdgeByType, AqlGraphNodeByType } from '../types'
 

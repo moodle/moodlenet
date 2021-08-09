@@ -1,5 +1,5 @@
+import { getResourceTypes } from '@moodlenet/common/lib/content-graph/initialData/resource-type/resource-type'
 import { Database } from 'arangojs'
-import { getResourceTypes } from '../../../../../../../initialData/resource-type/resource-type'
 import { justExecute } from '../../../../../../../lib/helpers/arango/query'
 import { createNodeQ } from '../../../../functions/createNode'
 

@@ -7,3 +7,4 @@ export type Signup = RouteDef<'/signup', {}>
 export type TermsAndConditions = RouteDef<'/terms', {}>
 export type GlobalSearch = RouteDef<'/search', {}>
 export type Profile = RouteDef<'/profile/:slug', { slug: string }>
+export type CreateNewResource = RouteDef<'/create-new-resource', {}>

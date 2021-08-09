@@ -1,5 +1,5 @@
+import { localOrganizationData } from '@moodlenet/common/lib/content-graph/initialData/content'
 import { Database } from 'arangojs'
-import { localOrganizationData } from '../../../../../../../initialData/content'
 import { justExecute } from '../../../../../../../lib/helpers/arango/query'
 import { createNodeQ } from '../../../../functions/createNode'
 

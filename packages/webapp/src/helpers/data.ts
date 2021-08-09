@@ -30,6 +30,12 @@ export const mapTupleUIAssetInputToAssetRefInput = (apiKey: string) => async <N 
 ): Promise<Tuple<AssetRefInput, N>> =>
   Promise.all(inputs.map(mapUIAssetInputToAssetRefInput(apiKey))) as Promise<Tuple<AssetRefInput, N>>
 
+export const useUploadTempFile = () => {
+  const { lastSessionJwt } = useSession()
+  return useMemo(() => {
+    return lastSessionJwt ? uploadTempFile(lastSessionJwt) : () => Promise.reject('no jwt key available')
+  }, [lastSessionJwt])
+}
 export const uploadTempFile = (apiKey: string) => async (assetType: UploadType, file: File): Promise<string> => {
   const formData = new FormData()
   formData.append('file', file)
