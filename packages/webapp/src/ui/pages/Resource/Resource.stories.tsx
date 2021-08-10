@@ -4,7 +4,7 @@ import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.storie
 import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
-import { CategoriesDropdown, FormatDropdown, LanguagesDropdown, LevelDropdown, LicenseDropdown, MonthDropdown, TypeDropdown, YearsDropdown } from '../NewResource/FieldsData'
+import { CategoriesDropdown, LanguagesDropdown, LevelDropdown, LicenseDropdown, MonthDropdown, TypeDropdown, YearsDropdown } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
 import { Resource, ResourceProps } from './Resource'
@@ -41,7 +41,7 @@ export const ResourceStoryProps: ResourceProps = {
     description: 'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     format: 'Portal / main site',
     image: 'https://picsum.photos/200/100',
-    language: 'Mexicano',
+    language: 'Spanish',
     level: '1 Primary education',
     license: 'CCO (Public domain)',
     name: '',
@@ -55,7 +55,7 @@ export const ResourceStoryProps: ResourceProps = {
   months: MonthDropdown,
   years: YearsDropdown,
   languages: LanguagesDropdown,
-  formats: FormatDropdown,
+  // formats: FormatDropdown,
   categories: CategoriesDropdown,
   licenses: {...LicenseDropdown, label: t`License`,}
 }

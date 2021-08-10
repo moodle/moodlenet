@@ -58,7 +58,7 @@ const nodeDocumentDataBaker: {
       kind: resourceAssetRef.ext ? 'Link' : 'Upload',
       description: input.description,
       name: input.name,
-      creationDate: input.creationDate,
+      originalCreationDate: input.originalCreationDate,
     }
 
     return newResourceInput

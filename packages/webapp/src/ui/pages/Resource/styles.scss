@@ -8,10 +8,43 @@
     justify-content: space-between;
 
     @media screen and (max-width: 450px) {
+      margin-top: 0;
       padding: 0;
     }
 
+    @media (min-width: 450px) and (max-width: 800px) {
+      > .main-column {
+        gap: 15px;
+        > .resource-footer {
+          > * {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 50%;
+          }
+          > .one-column {
+            display: none;
+          }
+        }
+      }
+    }
+
+    @media screen and (max-width: 450px) {
+      > .main-column {
+        > .resource-footer {
+          > :not(.one-column) {
+            display: none;
+          }
+          .one-column {
+            display: flex;
+            flex-direction: column;
+          }
+        }
+      }
+    }
+
     > .main-column {
+      gap: 0;
       width: 65%;
       height: 100%;
 
@@ -19,7 +52,7 @@
         display: flex;
         flex-direction: column;
         gap: 24px;
-        padding: 26px 34px;
+        padding: 26px 34px 34px 34px;
         position: relative;
 
         > .info-card {
@@ -57,7 +90,8 @@
                 display: flex;
                 align-items: center;
                 gap: 8px;
-                > svg, * > svg {
+                > svg,
+                * > svg {
                   width: 14px;
                   height: 14px;
                 }
@@ -142,11 +176,9 @@
         height: 100%;
         display: flex;
         flex-direction: column;
-        gap: 16px;
 
         > .resource-footer {
           display: flex;
-          gap: 16px;
         }
       }
 
@@ -157,7 +189,8 @@
       }
     }
 
-    > * > .extra-details-card {
+    > .side-column > .extra-details-card,
+    > .main-column > .resource-footer > * > .extra-details-card {
       width: 100%;
       height: fit-content;
       padding: 25px;
@@ -173,6 +206,7 @@
       }
 
       > .date {
+        width: 100%;
         display: flex;
         flex-direction: column;
         > label {
@@ -181,6 +215,9 @@
         }
         > .fields {
           display: flex;
+          :first-child.display-mode.not-editing {
+            width: 60px;
+          }
         }
       }
     }
