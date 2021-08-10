@@ -6,6 +6,7 @@
 
     @media (max-width:450px) {
         &.hide-border  {
+            box-shadow: none;
             background-color: transparent;
         }
     }

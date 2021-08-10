@@ -2,15 +2,16 @@ import { CSSProperties, FC } from "react";
 import "./styles.scss";
 
 export type CardProps = {
+  className?: string
   style?: CSSProperties
   hideBorderWhenSmall?: boolean
 }
 
-export const Card: FC<CardProps> = ({style, hideBorderWhenSmall, children}) => {
+export const Card: FC<CardProps> = ({className, style, hideBorderWhenSmall, children}) => {
   
 
   return (
-    <div className={`card ${hideBorderWhenSmall ? 'hide-border': ''}`} style={style}>{children}</div>
+    <div className={`card ${className}${hideBorderWhenSmall ? ' hide-border': ''}`} style={style}>{children}</div>
   );
 }
 

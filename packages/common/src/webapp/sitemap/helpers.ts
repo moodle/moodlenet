@@ -1,5 +1,4 @@
-import { GraphNodeType } from '../../content-graph/types/node'
-import { nodeTypes } from '../../utils/content-graph/id-key-type-guards'
+import { GraphNodeType, nodeTypes } from '../../content-graph/types/node'
 
 const nodeType2LowerTypeMap = nodeTypes.reduce(
   (_map, nodeType) => ({

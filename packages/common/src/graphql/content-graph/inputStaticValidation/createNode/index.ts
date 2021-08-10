@@ -6,12 +6,16 @@ import { neverCreate } from '../helpers'
 const inputObjectStaticValidators: {
   [T in NodeType]: ObjectSchema<any /* Just<CreateNodeInput[T]> */>
 } = {
-  Iscedf: object<any /* Just<CreateNodeInput['Iscedf']> */>().required(),
+  IscedField: neverCreate('IscedField'),
+  IscedGrade: neverCreate('IscedGrade'),
   Collection: object<any /* Just<CreateNodeInput['Collection']> */>().required(),
   Resource: object<any /* Just<CreateNodeInput['Resource']> */>().required(),
-  UserRole: neverCreate('UserRole'),
   Profile: neverCreate('Profile'),
   Organization: neverCreate('Organization'),
+  FileFormat: neverCreate('FileFormat'),
+  Language: neverCreate('Language'),
+  License: neverCreate('License'),
+  ResourceType: neverCreate('ResourceType'),
 }
 
 export const validateCreateNodeInput = (input: CreateNodeInput): Just<CreateNodeInput[NodeType]> | ValidationError => {

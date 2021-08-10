@@ -1,4 +1,5 @@
 import verifiedIcon from '../../../assets/icons/verified.svg'
+import { href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import './styles.scss'
@@ -22,15 +23,20 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
         <img className="background" src={backgroundUrl} alt="Background" />
         <img className="avatar" src={avatarUrl} alt="Avatar" />
         <div className="info">
-          <div className="title">
-            {firstName} {lastName}
-            <img className="verified-icon" src={verifiedIcon} alt="Verified" />
-          </div>
-          <div className="subtitle">
-            @{username}&nbsp; · &nbsp;
-            {organizationName} MoodleNet&nbsp; | &nbsp;
-            {location}&nbsp; · &nbsp;
-            <span style={{ cursor: 'pointer' }}>{siteUrl}</span>
+          <div className="profile-card-header">
+            <div className="title">
+              {firstName} {lastName}
+              <img className="verified-icon" src={verifiedIcon} alt="Verified" />
+            </div>
+            <div className="subtitle">
+              <span>@{username}</span>
+              <span>·</span>
+              <span>{organizationName}</span>
+              <span>·</span>
+              <span>{location}</span>
+              <span>·</span>
+              <Link href={href(siteUrl)}>{siteUrl}</Link>
+            </div>
           </div>
           <div className="presentation">{description}</div>
           <div className="buttons">

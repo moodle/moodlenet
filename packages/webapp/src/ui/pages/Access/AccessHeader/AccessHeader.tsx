@@ -20,9 +20,9 @@ export const AccessHeader = withCtrl<AccessHeaderProps, 'page'>(({ organization,
         {page !== 'activation' ? (
           <div className="buttons">
             {page === 'login' ? (
-              <SecondaryButton type="orange">Sign up</SecondaryButton>
+              <SecondaryButton color="orange">Sign up</SecondaryButton>
             ) : (
-              <SecondaryButton type="orange">Login</SecondaryButton>
+              <SecondaryButton color="orange">Login</SecondaryButton>
             )}
             <PrimaryButton>Learn more</PrimaryButton>
           </div>

@@ -9,7 +9,7 @@ export const useIscedfCardCtrl: CtrlHook<SubjectCardProps, { id: ID }> = ({ id }
   const subjectNode = useIscedfCardQuery({ variables: { id } }).data?.node
   const { org: localOrg } = useLocalInstance()
   const subjectCardUIProps = useMemo<SubjectCardProps | null>(() => {
-    if (!(subjectNode && subjectNode.__typename === 'Iscedf')) {
+    if (!(subjectNode && subjectNode.__typename === 'IscedField')) {
       return null
     }
     const orgData = null ?? localOrg

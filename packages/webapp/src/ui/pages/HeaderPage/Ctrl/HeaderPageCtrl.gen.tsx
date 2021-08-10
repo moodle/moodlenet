@@ -17,23 +17,75 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
-          { __typename: 'Iscedf' }
-          & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   ) | (
-    { __typename: 'Iscedf' }
-    & Pick<Types.Iscedf, 'id'>
+    { __typename: 'FileFormat' }
+    & Pick<Types.FileFormat, 'id'>
     & { pinnedList: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
-          { __typename: 'Iscedf' }
-          & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'IscedField' }
+    & Pick<Types.IscedField, 'id'>
+    & { pinnedList: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'IscedGrade' }
+    & Pick<Types.IscedGrade, 'id'>
+    & { pinnedList: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'Language' }
+    & Pick<Types.Language, 'id'>
+    & { pinnedList: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
+      )> }
+    ) }
+  ) | (
+    { __typename: 'License' }
+    & Pick<Types.License, 'id'>
+    & { pinnedList: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   ) | (
@@ -43,10 +95,10 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
-          { __typename: 'Iscedf' }
-          & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   ) | (
@@ -56,10 +108,10 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
-          { __typename: 'Iscedf' }
-          & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   ) | (
@@ -69,23 +121,23 @@ export type HeaderPagePinnedQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
-          { __typename: 'Iscedf' }
-          & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   ) | (
-    { __typename: 'UserRole' }
-    & Pick<Types.UserRole, 'id'>
+    { __typename: 'ResourceType' }
+    & Pick<Types.ResourceType, 'id'>
     & { pinnedList: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | (
-          { __typename: 'Iscedf' }
-          & Pick<Types.Iscedf, 'id' | 'name'>
-        ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
+        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   )> }
@@ -97,10 +149,10 @@ export const HeaderPagePinnedDocument = gql`
   node(id: $currentProfileId) {
     ... on INode {
       id
-      pinnedList: _rel(type: Pinned, target: Iscedf, page: {first: 10}) {
+      pinnedList: _rel(type: Pinned, target: IscedField, page: {first: 10}) {
         edges {
           node {
-            ... on Iscedf {
+            ... on IscedField {
               id
               name
             }

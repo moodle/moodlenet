@@ -16,7 +16,7 @@ export const createStaticAssetsApp = ({ qmino }: Config) => {
   const app = express()
   app.post('/upload-temp', async (req, res) => {
     // this check could get more accurate (context assertions engine)
-    if (req.mnHttpSessionEnv) {
+    if (!req.mnHttpSessionEnv) {
       return sendErrorResponse(res, help.respError(401, 'logged users only can upload'))
     }
 
@@ -29,7 +29,7 @@ export const createStaticAssetsApp = ({ qmino }: Config) => {
     const uploadReadStream = createReadStream(file.path)
     const tempFileDesc: TempFileDesc = {
       name: file.name,
-      mimetype: file.type,
+      mimetype: file.mimetype,
       size: file.size,
       lastModifiedDate: file.lastModifiedDate,
       uploadType,

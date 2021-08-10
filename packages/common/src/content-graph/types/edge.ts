@@ -1,23 +1,29 @@
-export type GraphEdgeType = 'Created' | 'HasUserRole' | 'Pinned' | 'Contains' | 'Follows'
-export type GraphEdge = Created | HasUserRole | Pinned | Contains | Follows
-export type GraphEdgeByType<T extends GraphEdgeType> = GraphEdgeMap[T]
+import { AuthId } from '../../user-auth/types'
+import { Timestamp } from './common'
+
 export type GraphEdgeMap = {
-  HasUserRole: HasUserRole
   Created: Created
   Pinned: Pinned
-  Contains: Contains
+  Features: Features
   Follows: Follows
 }
-export type Timestamp = number
+export const edgeTypes: GraphEdgeType[] = ['Created', 'Features', 'Follows', 'Pinned']
+export type GraphEdgeType = keyof GraphEdgeMap
+export type GraphEdge = GraphEdgeMap[GraphEdgeType]
+export type GraphEdgeByType<T extends GraphEdgeType> = GraphEdgeMap[T]
+
 export type EdgeId = string
+
+export type GraphEdgeIdentifier<GET extends GraphEdgeType = GraphEdgeType> = Pick<BaseGraphEdge<GET>, 'id' | '_type'>
+
 export type BaseGraphEdge<GET extends GraphEdgeType> = {
   id: EdgeId
   _type: GET
   _created: Timestamp
+  _authId: AuthId
 }
 
-export type HasUserRole = BaseGraphEdge<'HasUserRole'> & {}
 export type Created = BaseGraphEdge<'Created'> & {}
 export type Pinned = BaseGraphEdge<'Pinned'> & {}
-export type Contains = BaseGraphEdge<'Contains'> & {}
+export type Features = BaseGraphEdge<'Features'> & {}
 export type Follows = BaseGraphEdge<'Follows'> & {}

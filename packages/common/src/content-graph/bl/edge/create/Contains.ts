@@ -1,7 +1,7 @@
 // import { parseCheckedNodeId } from '../../../../utils/content-graph/id-key-type-guards'
 // import { CreateEdgeArgs } from './types'
 
-// export const Contains = ({
+// export const Features = ({
 //   from: collectionId,
 //   to: resourceId,
 //   userRole,
@@ -13,7 +13,7 @@
 
 //   const legalBind = and(fromType === 'Collection', toType === 'Resource')
 //   const roleAdmitted = or(userRole === 'Admin', userRole === 'Editor', userRole === 'Root')
-//   const edgeNotExistYet = not(edgeExists(collectionId, 'Contains', resourceId))
+//   const edgeNotExistYet = not(edgeExists(collectionId, 'Features', resourceId))
 
 //   const userIsCollectionCreator = isCreator(userId, collectionId)
 

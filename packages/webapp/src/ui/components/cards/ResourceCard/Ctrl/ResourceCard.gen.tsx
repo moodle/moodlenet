@@ -10,9 +10,9 @@ export type ResourceCardQueryVariables = Types.Exact<{
 
 export type ResourceCardQuery = (
   { __typename: 'Query' }
-  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'Iscedf' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
+  & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
     { __typename: 'Resource' }
-    & Pick<Types.Resource, 'id' | 'name' | 'thumbnail' | 'kind' | 'content' | 'description' | 'image'>
+    & Pick<Types.Resource, 'id' | 'name' | 'image' | 'kind' | 'content' | 'description'>
     & { inCollections: (
       { __typename: 'RelPage' }
       & { edges: Array<(
@@ -20,10 +20,10 @@ export type ResourceCardQuery = (
         & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name'>
-        ) | { __typename: 'Iscedf' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'UserRole' } }
+        ) | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
-  ) | { __typename: 'UserRole' }> }
+  ) | { __typename: 'ResourceType' }> }
 );
 
 
@@ -33,13 +33,13 @@ export const ResourceCardDocument = gql`
     ... on Resource {
       id
       name
-      thumbnail
+      image
       kind
       content
       description
       image
       inCollections: _rel(
-        type: Contains
+        type: Features
         target: Collection
         inverse: true
         page: {first: 3}

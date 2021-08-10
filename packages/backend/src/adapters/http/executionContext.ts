@@ -10,6 +10,7 @@ export const getMNExecEnvMiddleware =
     req.mnHttpSessionEnv = {
       authSessionEnv: getSessionEnv({ headerToken, jwtPublicKey, jwtVerifyOpts }),
     }
+    console.log({ mnHttpSessionEnv: req.mnHttpSessionEnv })
     next()
   }
 
@@ -26,6 +27,6 @@ export const getSessionEnv = ({
     return null
   }
   const tokenVerification = verifyJwt({ jwtPublicKey, jwtVerifyOpts, token: headerToken })
-
+  // console.log({ tokenVerification })
   return tokenVerification === INVALID_TOKEN ? null : tokenVerification
 }

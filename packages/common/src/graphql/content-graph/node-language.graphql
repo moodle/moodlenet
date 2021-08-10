@@ -1,0 +1,29 @@
+type Language implements INode {
+  part2b: String
+  part2t: String
+  part1: String
+  scope: String!
+  langType: String!
+  # INode
+  id: ID!
+  name: String!
+  description: String!
+  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput): RelPage!
+  _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
+}
+
+# integrations
+union Node = Language
+enum NodeType {
+  Language
+}
+
+# input CreateLanguageInput {}
+input CreateNodeInput {
+  Language: Never
+}
+
+# input EditLanguageInput {}
+input EditNodeInput {
+  Language: Never
+}

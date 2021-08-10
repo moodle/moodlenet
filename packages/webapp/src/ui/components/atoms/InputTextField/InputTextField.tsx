@@ -1,20 +1,23 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import PrimaryButton from "../PrimaryButton/PrimaryButton";
 import "./styles.scss";
 
 export type InputTextFieldProps = {
   label?: string
-  placeholder: string
+  placeholder?: string
   textarea?: boolean
   disabled?: boolean
   hidden?: boolean
   autoUpdate?: boolean
   buttonName?: string
   className?: string
-  value?: string | undefined
+  edit?: boolean
+  displayMode?: boolean
+  value?: string | undefined |null
   getText?(text: string): void
-  textAreaAttrs?:React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>,
+  textAreaAttrs?:React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>
   inputAttrs?:React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
+  textAreaAutoSize?: boolean
 }
 
 export const InputTextField: FC<InputTextFieldProps> = ({
@@ -26,17 +29,30 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   hidden,
   autoUpdate,
   className,
+  edit,
+  displayMode,
   value,
   getText,
   inputAttrs,
-  textAreaAttrs
+  textAreaAttrs,
+  textAreaAutoSize
 }) => { 
-  const [text, setText] = useState<string |undefined>(value)
+  const [text, setText] = useState<string |undefined | null>(value)
+  const [rows, setRows] = useState<number>(textAreaAutoSize ? 1 : 5)
+  const textArea = useRef<HTMLTextAreaElement>(null)
+
+  const checkRowChange = useCallback(() => {
+    if (textAreaAutoSize && textArea && textArea.current) {
+      textArea.current.style.height = 'fit-content'
+      textArea.current.style.height = (Math.ceil(textArea.current.scrollHeight / 10) * 10) + 'px'
+    }
+  }, [textAreaAutoSize])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter') {
       getText && getText(text ? text : '')
     }
+    setRows(rows)
   }
 
   const handleClick = () => {
@@ -45,13 +61,17 @@ export const InputTextField: FC<InputTextFieldProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.currentTarget.value)
-    if (autoUpdate) getText && getText(e.currentTarget.value)
+    autoUpdate && getText && getText(e.currentTarget.value)
   }
+
+  useEffect(() => {
+    console.log('And here?')
+    textArea && checkRowChange()
+  }, [text, checkRowChange])
 
   useEffect(() => {
     setText(value)
   }, [value]);
-
 
   return (
     <div 
@@ -61,25 +81,30 @@ export const InputTextField: FC<InputTextFieldProps> = ({
     >
       { label ? <label>{label}</label> : <></> }
       { textarea ? (
-        <div className="textarea-container">
+        <div className={`textarea-container ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}>
           <textarea 
-            value={text}
+            ref={textArea}
+            className={`${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
+            value={text ? text : ''}
             onChange={ handleChange }
             onKeyDown={ handleKeyDown }
-            disabled={disabled}
+            disabled={disabled || !edit}
+            placeholder={placeholder}
             name="textarea" 
             cols={40} 
-            rows={5}
+            rows={rows}
             {...textAreaAttrs}
           />
         </div>
       ) : (
-        <div className="input-container">
+        <div className={`input-container ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}>
+          {edit !== undefined}
           <input
-            value={text}
+            className={`${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
+            value={text ? text : ''}
             onChange={ handleChange }
             {...buttonName && {onKeyDown:handleKeyDown}}
-            disabled={disabled}
+            disabled={disabled || !edit}
             type="input"
             placeholder={placeholder}
             {...inputAttrs}
@@ -93,9 +118,13 @@ export const InputTextField: FC<InputTextFieldProps> = ({
 
 InputTextField.defaultProps = {
   hidden: false,
+  displayMode: false,
+  placeholder: '',
   value: '',
   className: '',
-  getText: () => ''
+  edit: true,
+  getText: () => '',
+  textAreaAutoSize: false
 }
 
 export default InputTextField;

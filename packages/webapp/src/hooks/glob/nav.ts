@@ -1,6 +1,6 @@
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { nodeId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
-import { GlobalSearch, Landing, Login, Signup } from '@moodlenet/common/lib/webapp/sitemap/routes'
+import { CreateNewResource, GlobalSearch, Landing, Login, Signup } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useCallback, useLayoutEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useSession } from '../../context/Global/Session'
@@ -11,6 +11,7 @@ export const mainPath = {
   signUp: webappPath<Signup>('/signup', {}),
   landing: webappPath<Landing>('/', {}),
   search: webappPath<GlobalSearch>('/search', {}),
+  createNewResource: webappPath<CreateNewResource>('/create-new-resource', {}),
 }
 
 export const useRedirectToBySession = ({
