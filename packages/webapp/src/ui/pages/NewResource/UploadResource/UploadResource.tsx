@@ -87,6 +87,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           placeholder=""
           disabled={state === 'ChooseResource'}
           getText={text => form.setFieldValue('title', text)}
+          value={form.values.title}
         />
         <InputTextField
           autoUpdate={true}
@@ -94,6 +95,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           label="Description"
           placeholder=""
           disabled={state === 'ChooseResource'}
+          value={form.values.description}
           getText={text => form.setFieldValue('description', text)}
         />
         <Dropdown {...categories} getValue={dd} disabled={state === 'ChooseResource'} />
@@ -157,6 +159,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                 <div className="bottom-container">
                   <InputTextField
                     className="link subcontainer"
+                    value={form.values.name}
                     placeholder={t`Paste or type a link`}
                     getText={setLink}
                     buttonName={t`Add`}
@@ -172,7 +175,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                       {form.values.name}
                     </abbr>
                   </div>
-                  <Dropdown {...licenses} getValue={setLicenseVal} />
+                  <Dropdown {...licenses} getValue={setLicenseVal} value={form.values.category} />
                 </div>
               )}
             </Card>

@@ -6,8 +6,8 @@ import { neverCreate } from '../helpers'
 const inputObjectStaticValidators: {
   [T in NodeType]: ObjectSchema<any /* Just<CreateNodeInput[T]> */>
 } = {
-  IscedField: object<any /* Just<CreateNodeInput['IscedField']> */>().required(),
-  IscedGrade: object<any /* Just<CreateNodeInput['IscedField']> */>().required(),
+  IscedField: neverCreate('IscedField'),
+  IscedGrade: neverCreate('IscedGrade'),
   Collection: object<any /* Just<CreateNodeInput['Collection']> */>().required(),
   Resource: object<any /* Just<CreateNodeInput['Resource']> */>().required(),
   Profile: neverCreate('Profile'),
