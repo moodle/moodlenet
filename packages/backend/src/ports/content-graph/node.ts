@@ -30,7 +30,7 @@ export const getBySlug = QMQuery(
 export type CreateNodeAdapter = {
   storeNode: <N extends GraphNode>(_: { node: N }) => Promise<N | undefined>
 }
-export type NewNodeInput = DistOmit<GraphNode, '_permId' | '_slug'>
+export type NewNodeInput<N extends GraphNode = GraphNode> = DistOmit<N, '_permId' | '_slug'>
 export type CreateNode = {
   newNode: NewNodeInput
   sessionEnv: SessionEnv

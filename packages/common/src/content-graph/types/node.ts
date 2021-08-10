@@ -1,4 +1,5 @@
 import { AuthId } from '../../user-auth/types'
+import { Timestamp } from './common'
 
 export type GraphNodeMap = {
   Collection: Collection
@@ -122,6 +123,7 @@ export type Resource = BaseGraphNode<'Resource'> & {
   image: Maybe<AssetRef>
   content: AssetRef
   kind: ResourceKind
+  creationDate: Maybe<Timestamp>
 }
 
 export type Language = BaseGraphNode<'Language'> & {

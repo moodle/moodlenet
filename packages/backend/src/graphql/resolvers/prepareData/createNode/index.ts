@@ -1,3 +1,4 @@
+import { Resource } from '@moodlenet/common/lib/content-graph/types/node'
 import { CreateNodeInput, CreateNodeMutationError, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Just } from '@moodlenet/common/lib/utils/types'
 import { QMino } from '../../../../lib/qmino'
@@ -39,7 +40,7 @@ const nodeDocumentDataBaker: {
   },
   async Resource(input, qmino) {
     const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
-      [getAssetRefInputAndType(input.content, 'resource'), getAssetRefInputAndType(input.image, 'icon')],
+      [getAssetRefInputAndType(input.content, 'resource'), getAssetRefInputAndType(input.image, 'image')],
       qmino,
     )
 
@@ -50,13 +51,14 @@ const nodeDocumentDataBaker: {
     if (!resourceAssetRef) {
       return noTmpFilesCreateNodeMutationError()
     }
-    const newResourceInput: NewNodeInput = {
+    const newResourceInput: NewNodeInput<Resource> = {
       _type: 'Resource',
       content: resourceAssetRef,
       image: imageAssetRef,
       kind: resourceAssetRef.ext ? 'Link' : 'Upload',
       description: input.description,
       name: input.name,
+      creationDate: input.creationDate,
     }
 
     return newResourceInput

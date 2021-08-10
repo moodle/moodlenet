@@ -13,8 +13,8 @@ export const getNodeBySlugAdapter = (db: ContentGraphDB): BySlugAdapter => ({
     if (!mAqlNode) {
       return mAqlNode
     }
-    const x = aqlGraphNode2GraphNode<T>(mAqlNode)
-    return x
+    const graphNode = aqlGraphNode2GraphNode<T>(mAqlNode)
+    return graphNode
   },
 })
 

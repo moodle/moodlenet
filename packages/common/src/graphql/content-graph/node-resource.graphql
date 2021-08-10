@@ -4,6 +4,7 @@ type Resource implements INode {
   image: AssetRef
   content: AssetRef!
   kind: ResourceKind!
+  creationDate: Timestamp
   # INode
   id: ID!
   _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput): RelPage!
@@ -26,6 +27,7 @@ input CreateResourceInput {
   description: String!
   image: AssetRefInput
   content: AssetRefInput!
+  creationDate: Timestamp
 }
 input CreateNodeInput {
   Resource: CreateResourceInput

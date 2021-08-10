@@ -1,7 +1,7 @@
 import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { nodeSlugId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
-import { Reducer, useCallback, useEffect, useMemo, useReducer } from 'react'
+import { Reducer, useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { iscedFields, iscedGrades, iso639_3, licenses, resourceTypes } from '../../../../constants/wellKnownNodes'
 import { useSession } from '../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../helpers/data'
@@ -107,7 +107,10 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
   const [sform] = formBag
   const sformSetField = sform.setFieldValue
 
-  const deleteContent = useCallback(() => sformSetField('content', ''), [sformSetField])
+  const deleteContent = useCallback(() => {
+    sformSetField('image', '')
+    sformSetField('content', '')
+  }, [sformSetField])
 
   type StepProps = DistOmit<NewResourceProps['stepProps'], 'nextStep'>
   type StepPropsHistoryItem = [curr: StepProps, prev: StepPropsHistoryItem | null]
@@ -127,6 +130,14 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
       null,
     ],
   )
+  const { content, name, image } = sform.values
+
+  const [imageUrl, setImageUrl] = useState('')
+  useEffect(() => {
+    const imageObjectUrl = image instanceof File ? URL.createObjectURL(image) : ''
+    setImageUrl(imageObjectUrl)
+    return () => URL.revokeObjectURL(imageObjectUrl)
+  }, [image, setImageUrl])
 
   useEffect(() => {
     if (!sform.values.content && prevStepProps) {
@@ -142,12 +153,16 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
       if (stepProps.state === 'ChooseResource') {
         if (form.values.content) {
           return () => {
+            if (form.values.content instanceof File && form.values.content.type.toLowerCase().startsWith('image')) {
+              sformSetField('image', form.values.content)
+            }
             setNextStepProps({
               ...initialSetStepProps,
               step: 'UploadResourceStep',
               state: 'EditData',
               deleteContent,
               formBag,
+              imageUrl,
             })
           }
         }
@@ -183,13 +198,15 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           content,
           category,
           image,
-          name,
+          title,
           description,
           level,
           language,
           license,
           type,
           addToCollections,
+          originalDateMonth,
+          originalDateYear,
         } = form.values
         if (!content) {
           return previousStep()
@@ -224,8 +241,13 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
               Resource: {
                 content: contentAssetRef,
                 description,
-                name,
+                name: title,
                 image: imageAssetRef,
+                creationDate:
+                  (originalDateMonth &&
+                    originalDateYear &&
+                    Number(new Date(`${originalDateMonth} 1 ${originalDateYear} GMT`))) ||
+                  null,
               },
             },
           },
@@ -236,41 +258,44 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
 
           const Lang = iso639_3.find(_ => _.name === language)!
           const langId = nodeSlugId(Lang._type, Lang._slug)
-          await createResourceRelMut({
+          const creatLangeRelPr = createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: resId, to: langId, Features: {} } },
           })
 
           const License = licenses.find(_ => license?.toLowerCase().startsWith(_.code.toLowerCase()))!
           const licenseId = nodeSlugId(License._type, License._slug)
-          await createResourceRelMut({
+          const createReLicenRelPr = createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: resId, to: licenseId, Features: {} } },
           })
 
           const Type = resourceTypes.find(_ => _.name === type)!
           const typeId = nodeSlugId(Type._type, Type._slug)
-          await createResourceRelMut({
+          const creatTypeeRelPr = createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: resId, to: typeId, Features: {} } },
           })
 
           const Grade = iscedGrades.find(_ => _.name === level)!
           const gradeId = nodeSlugId(Grade._type, Grade._slug)
-          await createResourceRelMut({
+          const createGradeRelPr = createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: resId, to: gradeId, Features: {} } },
           })
 
           const IscedF = iscedFields.find(_ => _.name === category)!
           const iscedFId = nodeSlugId(IscedF._type, IscedF._slug)
-          await createResourceRelMut({
+          const createRIscedRelPr = createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: resId, to: iscedFId, Features: {} } },
           })
 
-          await addToCollections.map(async collName => {
-            const collectionId = mycollections.find(_ => _.name === collName)!.id
-            await createResourceRelMut({
-              variables: { edge: { edgeType: 'Features', to: resId, from: collectionId, Features: {} } },
-            })
-          })
-          console.log('save', resource.node)
+          await Promise.all(
+            addToCollections
+              .map(async collName => {
+                const collectionId = mycollections.find(_ => _.name === collName)!.id
+                return createResourceRelMut({
+                  variables: { edge: { edgeType: 'Features', to: resId, from: collectionId, Features: {} } },
+                })
+              })
+              .concat([creatLangeRelPr, createReLicenRelPr, creatTypeeRelPr, createGradeRelPr, createRIscedRelPr]),
+          )
         }
       }
     }
@@ -286,9 +311,9 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
     stepProps,
     form.values,
     mycollections,
+    imageUrl,
   ])
 
-  const { content, name } = sform.values
   useEffect(() => {
     if (content) {
       if (content instanceof File) {
@@ -299,16 +324,16 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
     } else {
       return sformSetField('name', '')
     }
-  }, [content, sformSetField, name])
+  }, [content, sformSetField, name, image])
 
   const newResourceProps = useMemo<NewResourceProps>(() => {
     return {
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
-      stepProps: { ...stepProps, nextStep },
+      stepProps: { ...stepProps, nextStep, imageUrl }, //FIXME: stepProps are created in `nextStep()`, so they're static
     }
-  }, [nextStep, stepProps])
+  }, [nextStep, stepProps, imageUrl])
 
-  //  console.log({ vals: form.values, step: newResourceProps.stepProps })
+  console.log({ vals: form.values, step: newResourceProps.stepProps })
 
   return newResourceProps && [newResourceProps]
 }
