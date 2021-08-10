@@ -1,3 +1,4 @@
+import { Href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
 import '../../../styles/tags.css'
 import './styles.scss'
@@ -5,11 +6,12 @@ import './styles.scss'
 export type ResourceCardProps = {
   tags: Array<string>
   image: string
-  type: 'Video' | 'Web Page' | 'Moodle Book'
+  type: string //'Video' | 'Web Page' | 'Moodle Book'
   title: string
+  resourceHomeHref: Href
 }
 
-export const ResourceCard = withCtrl<ResourceCardProps>(({ tags, image, type, title }) => {
+export const ResourceCard = withCtrl<ResourceCardProps>(({ tags, image, type, title, resourceHomeHref }) => {
   const tagSet = tags.map((value: string, index: number) => {
     return (
       <div key={index} className="tag">
@@ -38,7 +40,9 @@ export const ResourceCard = withCtrl<ResourceCardProps>(({ tags, image, type, ti
           {type}
         </div>
         <div className="title">
-          <abbr title={title}>{title}</abbr>
+          <Link href={resourceHomeHref}>
+            <abbr title={title}>{title}</abbr>
+          </Link>
         </div>
         <div className="tags scroll">{tagSet}</div>
       </div>
