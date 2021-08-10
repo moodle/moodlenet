@@ -9,10 +9,6 @@
     justify-content: flex-start;
     align-items: center;
 
-    @media (max-width:450px) {
-        margin-top: 0;
-    }
-
     .image {
         width: 30%;
         max-width: 100px;
@@ -30,17 +26,13 @@
     .type {
         display: flex;
         align-items: center;
-        font-size: 9px;
+        font-size: 11px;
         font-weight: bold;
     }
 
     .title {
-        margin-top: -2px;
         font-weight: bold;
         font-size: 14px;
-        > abbr {
-            text-decoration: none;
-        }
     }
 
     .tags {

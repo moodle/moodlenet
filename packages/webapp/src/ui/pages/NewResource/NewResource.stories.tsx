@@ -2,8 +2,18 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
+import {
+  CategoriesDropdown,
+  LanguagesDropdown,
+  LevelDropdown,
+  LicenseDropdown,
+  MonthDropdown,
+  TypeDropdown,
+  YearsDropdown,
+} from './FieldsData'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'
+import { UploadResourceProps } from './UploadResource/UploadResource'
 
 const meta: ComponentMeta<typeof NewResource> = {
   title: 'Pages/New Resource',
@@ -19,6 +29,8 @@ const meta: ComponentMeta<typeof NewResource> = {
     'NewResourceImageUploadedStoryProps',
     'NewResourceCollectionsStoryProps',
     'NewResourceExtraDataStoryProps',
+    'NewResourceAddToCollectionsStoryProps',
+    'NewResourceExtraDetailsStoryProps',
   ],
 }
 
@@ -26,27 +38,49 @@ const NewResourceStory: ComponentStory<typeof NewResource> = args => <NewResourc
 
 export const NewResourceProgressStateStory: NewResourceProgressState = [
   ['UploadResource', `Upload Resource`],
-  ['Collections', `Add to Collections`],
-  ['ExtraData', `Add Details`],
+  ['AddToCollections', `Add to Collections`],
+  ['ExtraDetails', `Add Details`],
 ]
 
-const formBag = SBFormikBag<NewResourceFormValues>({
+const initialFormValues: NewResourceFormValues = {
   addToCollections: [],
-  category: 'category',
+  category: '',
   content: 'content',
-  contentType: 'Link',
-  description: 'description',
-  format: 'format',
+  contentType: 'File',
+  description: '',
+  format: '',
   image: 'image',
-  language: 'language',
-  level: 'level',
-  license: 'license',
-  name: 'name',
-  originalDate: new Date(),
-  title: 'title',
-  type: 'type',
-})
+  language: '',
+  level: '',
+  license: '',
+  name: 'https://moodle.com/awesome-content',
+  originalDateMonth: '',
+  originalDateYear: '',
+  title: '',
+  type: '',
+}
 
+const basicDataFormValue: NewResourceFormValues = {
+  ...initialFormValues,
+  title: 'The Best Content Ever',
+  description:
+    'This is the description that tells you that this a not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
+  category: 'Important Matters',
+}
+
+const formBag = SBFormikBag<NewResourceFormValues>(initialFormValues)
+const formBagBasicData = SBFormikBag<NewResourceFormValues>(basicDataFormValue)
+
+const uploadResourceProps: UploadResourceProps = {
+  step: 'UploadResourceStep',
+  formBag,
+  state: 'ChooseResource',
+  imageUrl: '',
+  nextStep: action('nextStep'),
+  deleteContent: action('deleteContent'),
+  categories: CategoriesDropdown,
+  licenses: LicenseDropdown,
+}
 export const NewResourceStoryProps: NewResourceProps = {
   headerPageTemplateProps: {
     headerPageProps: {
@@ -56,43 +90,73 @@ export const NewResourceStoryProps: NewResourceProps = {
     isAuthenticated: true,
     showSubHeader: false,
   },
-  stepProps: {
-    step: 'UploadResourceStep',
-    formBag,
-    state: 'ChooseResource',
-    imageUrl: '',
-    nextStep: action('nextStep'),
-    deleteContent: action('deleteContent'),
-  },
+  stepProps: uploadResourceProps,
 }
 
 export const NewResourceContentUploadedStoryProps: NewResourceProps = {
   ...NewResourceStoryProps,
   stepProps: {
-    ...NewResourceStoryProps.stepProps,
+    ...uploadResourceProps,
     state: 'EditData',
-    imageUrl: '',
+    formBag: formBagBasicData,
   },
 }
 
 export const NewResourceImageUploadedStoryProps: NewResourceProps = {
-  ...NewResourceStoryProps,
+  ...NewResourceContentUploadedStoryProps,
   stepProps: {
-    ...NewResourceStoryProps.stepProps,
+    ...uploadResourceProps,
     state: 'EditData',
     imageUrl: 'https://picsum.photos/200/100',
+    formBag: formBagBasicData,
   },
 }
 
-// export const NewResourceCollectionsStoryProps: NewResourceProps = {
-//   ...NewResourceStoryProps,
-//   currentState: 'Collections',
-// }
+export const NewResourceAddToCollectionsStoryProps: NewResourceProps = {
+  ...NewResourceContentUploadedStoryProps,
+  stepProps: {
+    ...NewResourceContentUploadedStoryProps.stepProps,
+    step: 'AddToCollectionsStep',
+    collections: [
+      'Education',
+      'Biology',
+      'Algebra',
+      'Phycology',
+      'Phylosophy',
+      'Sociology',
+      'English Literature',
+      'Marketing',
+      'Physiotherapy',
+      'Agriculture',
+      'Taxonomy',
+      'Law',
+      'Interpretation',
+      'Molecular Biology',
+      'Nano Engineering',
+      'Macro Economy',
+      'Animal Rights',
+    ],
+    setAddToCollections: action('setAddToCollections'),
+    previousStep: action('previousStep'),
+    setSearchText: action('setSearchText'),
+  },
+}
 
-// export const NewResourceExtraDataStoryProps: NewResourceProps = {
-//   ...NewResourceStoryProps,
-//   currentState: 'ExtraData',
-// }
+export const NewResourceExtraDetailsStoryProps: NewResourceProps = {
+  ...NewResourceContentUploadedStoryProps,
+  stepProps: {
+    step: 'ExtraDetailsStep',
+    formBag,
+    nextStep: action('nextStep'),
+    previousStep: action('previousStep'),
+    types: TypeDropdown,
+    levels: LevelDropdown,
+    months: MonthDropdown,
+    years: YearsDropdown,
+    languages: LanguagesDropdown,
+    // formats: FormatDropdown,
+  },
+}
 
 export const Start = NewResourceStory.bind({})
 Start.args = NewResourceStoryProps
@@ -103,10 +167,10 @@ ContentUploaded.args = NewResourceContentUploadedStoryProps
 export const ImageUploaded = NewResourceStory.bind({})
 ImageUploaded.args = NewResourceImageUploadedStoryProps
 
-// export const Collections = NewResourceStory.bind({})
-// Collections.args = NewResourceCollectionsStoryProps
+export const AddToCollections = NewResourceStory.bind({})
+AddToCollections.args = NewResourceAddToCollectionsStoryProps
 
-// export const ExtraData = NewResourceStory.bind({})
-// ExtraData.args = NewResourceExtraDataStoryProps
+export const ExtraDetails = NewResourceStory.bind({})
+ExtraDetails.args = NewResourceExtraDetailsStoryProps
 
 export default meta

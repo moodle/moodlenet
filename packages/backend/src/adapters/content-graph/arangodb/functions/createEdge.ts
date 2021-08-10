@@ -1,3 +1,53 @@
+import { GraphEdgeByType, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
+import { omit } from '@moodlenet/common/lib/utils/object'
+import { DistOmit } from '@moodlenet/common/lib/utils/types'
+import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
+import { AqlGraphEdge, AqlGraphEdgeByType } from '../types'
+import { getAqlNodeByGraphNodeIdentifier } from './getAqlNodeByGraphNodeIdQ.ts'
+
+export const createEdgeQ = <Type extends GraphEdgeType>({
+  edge,
+  from,
+  to,
+}: {
+  edge: GraphEdgeByType<Type>
+  from: GraphNodeIdentifier
+  to: GraphNodeIdentifier
+}) => {
+  const edgeType = edge._type
+  const aqlEdge: DistOmit<
+    AqlGraphEdge,
+    '_key' | '_from' | '_to' | '_created' | '_rev' | '_id' | '_fromType' | '_toType'
+  > = {
+    _key: edge.id,
+    ...omit(edge, ['id']),
+  }
+
+  const q = aq<AqlGraphEdgeByType<Type>>(`
+    let fromNode = ${getAqlNodeByGraphNodeIdentifier(from)}
+    let toNode = ${getAqlNodeByGraphNodeIdentifier(to)}
+    
+    let newedge = ${aqlstr(aqlEdge)}
+
+    INSERT MERGE(
+      ${aqlstr(aqlEdge)},
+      {
+        _from: fromNode._id,
+        _fromType:fromNode._type,
+        _to: toNode._id,
+        _toType:toNode._type
+      }
+    )
+    
+    into ${edgeType}
+
+    return NEW
+  `)
+  // console.log(q)
+  return q
+}
+
 // import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 // import { BLRule } from '@moodlenet/common/lib/lib/bl/common'
 // import { Id, nodeTypeFromCheckedId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'

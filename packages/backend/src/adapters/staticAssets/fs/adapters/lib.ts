@@ -127,6 +127,8 @@ export const persistTemp = async ({
   const tempDir = getDir(rootDir, 'temp')
   const assetDir = getDir(rootDir, 'assets')
   const tempAssetDesc = await getTempAssetDesc(tempDir, tempAssetId)
+  console.log({ tempAssetDesc, uploadType })
+
   if (!tempAssetDesc || tempAssetDesc.uploadType !== uploadType) {
     return null
   }

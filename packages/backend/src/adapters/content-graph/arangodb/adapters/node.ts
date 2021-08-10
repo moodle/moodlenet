@@ -6,34 +6,26 @@ import { aqlGraphNode2GraphNode } from '../functions/helpers'
 import { ContentGraphDB } from '../types'
 
 export const getNodeBySlugAdapter = (db: ContentGraphDB): BySlugAdapter => ({
-  async getNodeBySlug({ slug, type }) {
-    const q = getNodeBySlugQ({ slug, type })
+  async getNodeBySlug(slugId) {
+    type T = typeof slugId._type
+    const q = getNodeBySlugQ<T>(slugId)
     const mAqlNode = await getOneResult(q, db)
     if (!mAqlNode) {
       return mAqlNode
     }
-    return aqlGraphNode2GraphNode(mAqlNode)
+    const graphNode = aqlGraphNode2GraphNode<T>(mAqlNode)
+    return graphNode
   },
 })
 
 export const createNodeAdapter = (db: ContentGraphDB): Pick<CreateNodeAdapter, 'storeNode'> => ({
   storeNode: async ({ node }) => {
-    const q = createNodeQ<typeof node._type>({ node })
-    const result = await getOneResult(q, db)
-    // // FIXME: use events!
-    // if (result) {
-    //   createEdgeAdapter(db).storeEdge({
-    //     creatorProfileId,
-    //     data: {},
-    //     edgeType: 'Created',
-    //     from: creatorProfileId,
-    //     to: result._id,
-    //     rule: true,
-    //   })
-    // }
-    if (!result) {
-      return null
-    }
-    return aqlGraphNode2GraphNode<typeof node._type>(result) as any // FIXME
+    type NT = typeof node._type
+    const q = createNodeQ<NT>({ node })
+    const aqlResult = await getOneResult(q, db)
+
+    const result = aqlResult && aqlGraphNode2GraphNode<NT>(aqlResult)
+
+    return result as any
   },
 })

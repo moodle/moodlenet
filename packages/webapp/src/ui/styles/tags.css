@@ -1,37 +1,27 @@
 .tags {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    overflow-x: scroll;
-    white-space: nowrap;
-    /* Hide scrollbar for IE, Edge and Firefox */
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
 
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  .tags::-webkit-scrollbar {
-    display: none;
-  }
+.tag {
+  cursor: pointer;
+  padding: 5px 10px;
+  display: flex;
+  height: 100%;
+  font-size: 13px;
+  color: white;
+  align-items: center;
+  margin-right: 10px;
+  background-color: #b6bacb;
+  border-radius: 15px;
+}
 
-  .tag {
-    cursor: pointer;
-    padding: 5px 10px;
-    display: flex;
-    height: 100%;
-    font-size: 13px;
-    color: white;
-    align-items: center;
-    margin-right: 10px;
-    background-color: #b6bacb;
-    border-radius: 15px;
-  }
+.tagGeneral {
+  background-color: #7f8393;
+  border-radius: 6px;
+}
 
-  .tagGeneral {
-    background-color: #7f8393;
-    border-radius: 6px;
-  }
-
-  .empty-space {
-    width: 10px;
-  }
+.empty-space {
+  width: 10px;
+}

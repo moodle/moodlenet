@@ -1,5 +1,5 @@
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client'
-import { parseNodeId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { gqlNodeId2GraphNodeIdentifier } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { setContext } from 'apollo-link-context'
 import apolloLogger from 'apollo-link-logger'
 import { GRAPHQL_ENDPOINT, isProduction } from '../../../constants'
@@ -12,11 +12,11 @@ const cache = new InMemoryCache({
       fields: {
         node(_, { args, toReference }) {
           const id = args?.id ?? ''
-          const parsedId = parseNodeId(id)
+          const parsedId = gqlNodeId2GraphNodeIdentifier(id)
           if (parsedId) {
-            const [type] = parsedId
+            const { _type } = parsedId
             return toReference({
-              __typename: type,
+              __typename: _type,
               id,
             })
           }

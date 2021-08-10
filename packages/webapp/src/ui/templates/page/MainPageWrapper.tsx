@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import '../../styles/main.css'
+import '../../styles/main.scss'
 import '../../styles/view.scss'
 
 export type MainPageWrapperProps = {}

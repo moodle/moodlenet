@@ -1,0 +1,25 @@
+type License implements INode {
+  code: String!
+  # INode
+  id: ID!
+  name: String!
+  description: String!
+  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput): RelPage!
+  _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
+}
+
+# integrations
+union Node = License
+enum NodeType {
+  License
+}
+
+# input CreateLicenseInput {}
+input CreateNodeInput {
+  License: Never
+}
+
+# input EditLicenseInput {}
+input EditNodeInput {
+  License: Never
+}

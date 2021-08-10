@@ -1,5 +1,6 @@
 type Organization implements INode {
   name: String!
+  description: String!
   intro: String!
   logo: AssetRef
   image: AssetRef

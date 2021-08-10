@@ -21,7 +21,7 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
       }),
     [signUp],
   )
-  const formBag = useFormikBag<SignupFormValues>({ initialValues: { email: '' }, onSubmit })
+  const [, formBag] = useFormikBag<SignupFormValues>({ initialValues: { email: '' }, onSubmit })
   const signupProps = useMemo<SignupProps>(() => {
     const signupProps: SignupProps = {
       accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Signup Access Header'),

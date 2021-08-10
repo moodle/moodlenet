@@ -19,7 +19,7 @@ export const useActivationCtrl: CtrlHook<ActivationProps, { activationToken: str
       }),
     [activateNewUser, activationToken],
   )
-  const formBag = useFormikBag<ActivationFormValues>({
+  const [, formBag] = useFormikBag<ActivationFormValues>({
     initialValues: { name: '', password: '' },
     onSubmit,
   })

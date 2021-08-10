@@ -3,17 +3,20 @@ import './styles.scss'
 
 export type ProgressStateProps = {
   stateNames: string[]
+  progressSubtitles: string[]
   currentIndex: number
 }
 
-export const ProgressState: FC<ProgressStateProps> = ({ stateNames, currentIndex }) => {
+export const ProgressState: FC<ProgressStateProps> = ({ stateNames, progressSubtitles, currentIndex }) => {
   const title = stateNames[currentIndex]
+  const subtitle = progressSubtitles[currentIndex]
 
   return (
     <div className="progress-state">
-      <div className="title">
-        <span>{currentIndex + 1}</span>
-        {title}
+      <div className="progress-header">
+        <span className="number">{currentIndex + 1}</span>
+        <span className="title">{title}</span>
+        <span className="subtitle">{subtitle}</span>
       </div>
       <div className="progress-bar">
         {stateNames.map((state, index) => {

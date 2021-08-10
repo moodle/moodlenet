@@ -3,12 +3,12 @@ query ResourceCard($id: ID!) {
     ... on Resource {
       id
       name
-      thumbnail
+      image
       kind
       content
       description
       image
-      inCollections: _rel(type: Contains, target: Collection, inverse: true, page: { first: 3 }) {
+      inCollections: _rel(type: Features, target: Collection, inverse: true, page: { first: 3 }) {
         edges {
           node {
             ... on Collection {

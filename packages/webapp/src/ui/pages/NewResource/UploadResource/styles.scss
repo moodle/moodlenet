@@ -43,6 +43,21 @@
             border-radius: 15px;
             cursor: pointer;
 
+            &:hover {
+              border: 4px dashed #337aff;
+              color: #337aff;
+              background-color: #337cf93f;
+
+              > .upload {
+                > span {
+                  color: #337aff;
+                }
+                > svg > path {
+                  fill: #337aff;
+                }
+              }
+            }
+
             > .upload {
               height: 100%;
               width: 100%;
@@ -52,6 +67,10 @@
               justify-content: center;
               flex-wrap: wrap;
               gap: 10px;
+
+              &.image > svg {
+                height: 65px;
+              }
 
               > span {
                 font-weight: bold;
@@ -81,6 +100,11 @@
                 background: #ffffff;
                 box-shadow: 0px 0px 5px rgb(0 0 0 / 5%);
                 color: #9598a8;
+
+                &:hover {
+                  color: #545761;
+                  background: rgb(223, 223, 223);
+                }
               }
             }
           }
@@ -89,9 +113,17 @@
         > .bottom-container {
           width: 100%;
           height: fit-content;
-          box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.0509804);
-          border: 1px solid #e4e5eb;
-          border-radius: 10px;
+          display: flex;
+          gap: 15px;
+
+          > .subcontainer,
+          .dropdown > input {
+            width: 100%;
+            height: fit-content;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.0509804);
+            border: 1px solid #e4e5eb;
+            border-radius: 10px;
+          }
 
           > .link {
             height: 100%;
@@ -110,15 +142,24 @@
           > .uploaded-name {
             display: flex;
             height: 46px;
+            padding-right: 10px;
             align-items: center;
             font-weight: 500;
             font-size: 15px;
             color: #b6bacb;
+            width: calc(100% - 146px);
             > .content-icon {
               display: flex;
               align-items: center;
               margin: 0 10px 0 16px;
               color: #b6bacb;
+            }
+          }
+
+          > .dropdown {
+            width: 130px;
+            > .dropdown-content {
+              width: auto;
             }
           }
         }
@@ -128,7 +169,9 @@
     > .side-column {
       width: 37%;
       > div {
+        width: 100%;
         height: 100%;
+        padding-bottom: 2px;
         display: inline-flex;
         flex-direction: column;
         gap: 17px;
@@ -149,7 +192,7 @@
 
         > .small-screen-details {
           display: block;
-          padding: 30px 0 20px 0;
+          padding: 30px 0 0 0;
           > div {
             gap: 20px;
             display: flex;
@@ -168,9 +211,7 @@
   > .footer {
     display: flex;
     justify-content: flex-end;
-    padding: 30px 0 0 0;
-    @media screen and (max-width: 800px) {
-      padding: 5px 0 35px 0;
-    }
+    gap: 10px;
+    padding: 30px 0 40px 0;
   }
 }

@@ -44,7 +44,7 @@ export const Signup = withCtrl<SignupProps>(
                 <form>
                   <input
                     className="email"
-                    type="text"
+                    color="text"
                     placeholder={t`Email`}
                     {...attrs.email}
                     onChange={form.handleChange}

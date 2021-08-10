@@ -1,5 +1,5 @@
 import { GraphEdgeByType, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNode, GraphNodeByType, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import { GraphNodeByType, GraphNodeIdentifierSlug, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
 import { AQ, aqlstr } from '../../../../lib/helpers/arango/query'
 import { AqlGraphEdgeByType, AqlGraphNodeByType } from '../types'
@@ -207,10 +207,13 @@ export const forwardSkipLimitPage = <T>({ docs, skip }: { docs: T[]; skip: numbe
 // export const createEdgeMergePatch = ({ byId, doc }: { doc: object; byId: string }) => `
 //   MERGE( ${aqlstr(doc)}, ${createdByAtPatch({ byId })},  )`
 
-export const documentBySlugType = ({ _slug, _type }: Pick<GraphNode, '_type' | '_slug'>) => `
+export const documentByNodeIdSlug = ({ _slug, _type }: GraphNodeIdentifierSlug) =>
+  documentBySlugType({ slugVar: `${aqlstr(_slug)}`, type: _type })
+
+export const documentBySlugType = ({ slugVar, type }: { type: GraphNodeType; slugVar: string }) => `
   ( ( 
-    FOR n in ${_type} 
-      FILTER n._slug==${aqlstr(_slug)} 
+    FOR n in ${type} 
+      FILTER n._slug == ${slugVar}
       LIMIT 1
     RETURN n
   ) [0] )
@@ -239,10 +242,10 @@ export const graphNode2AqlGraphNode = <T extends GraphNodeType>(graphNode: Graph
 }
 
 export const aqlGraphEdge2GraphEdge = <T extends GraphEdgeType>(aqlGraphEdge: AqlGraphEdgeByType<T>) => {
-  const [__type, __permId] = aqlGraphEdge._id.split('/')
+  const [__type, id] = aqlGraphEdge._id.split('/')
   const graphEdge: GraphEdgeByType<T> = {
     _type: __type! as T,
-    _permId: __permId!,
+    id,
     ...(aqlGraphEdge as any),
   }
   return graphEdge
