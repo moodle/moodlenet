@@ -8,3 +8,4 @@ export type TermsAndConditions = RouteDef<'/terms', {}>
 export type GlobalSearch = RouteDef<'/search', {}>
 export type Profile = RouteDef<'/profile/:slug', { slug: string }>
 export type CreateNewResource = RouteDef<'/create-new-resource', {}>
+export type ResourcePage = RouteDef<'/resource/:slug', { slug: string }>

@@ -195,6 +195,9 @@ export const getGQLResolvers = ({
           }),
           { timeout: 5000 },
         )
+        if (graphNodeOrError === 'unauthorized') {
+          return createNodeMutationError('NotAuthorized')
+        }
         if (!graphNodeOrError) {
           return createNodeMutationError('AssertionFailed')
         }

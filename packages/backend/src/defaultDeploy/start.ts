@@ -125,7 +125,12 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
     ...createNodeAdapter(contentGraphDatabase),
   })
 
-  qminoInProcess.open(nodePorts.createNode, createNodeAdapter(contentGraphDatabase))
+  qminoInProcess.open(nodePorts.createNode, {
+    ...createNodeAdapter(contentGraphDatabase),
+    createEdge: ({ from, newEdge, sessionEnv, to }) =>
+      qminoInProcess.callSync(edgePorts.createEdge({ from, newEdge, sessionEnv, to }), { timeout: 5000 }),
+    getProfileByAuthId: ({ authId }) => qminoInProcess.query(profilePorts.getByAuthId({ authId }), { timeout: 5000 }),
+  })
 
   qminoInProcess.open(edgePorts.createEdge, createEdgeAdapter(contentGraphDatabase))
   // qminoInProcess.open(edgePorts.del, deleteEdgeAdapter(contentGraphDatabase))

@@ -987,7 +987,7 @@
             "deprecationReason": null
           },
           {
-            "name": "creationDate",
+            "name": "originalCreationDate",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -5286,7 +5286,7 @@
             "deprecationReason": null
           },
           {
-            "name": "creationDate",
+            "name": "originalCreationDate",
             "description": null,
             "args": [],
             "type": {

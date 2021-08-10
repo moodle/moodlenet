@@ -133,7 +133,7 @@ export type CreateResourceInput = {
   description: Scalars['String'];
   image?: Maybe<AssetRefInput>;
   content: AssetRefInput;
-  creationDate?: Maybe<Scalars['Timestamp']>;
+  originalCreationDate?: Maybe<Scalars['Timestamp']>;
 };
 
 export type CreateSession = {
@@ -637,7 +637,7 @@ export type Resource = INode & {
   image?: Maybe<Scalars['AssetRef']>;
   content: Scalars['AssetRef'];
   kind: ResourceKind;
-  creationDate?: Maybe<Scalars['Timestamp']>;
+  originalCreationDate?: Maybe<Scalars['Timestamp']>;
   id: Scalars['ID'];
   _rel: RelPage;
   _relCount: Scalars['Int'];

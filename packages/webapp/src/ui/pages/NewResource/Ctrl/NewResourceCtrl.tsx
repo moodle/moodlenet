@@ -1,23 +1,27 @@
 import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { nodeSlugId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
+import { nodeId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { Reducer, useCallback, useEffect, useMemo, useReducer, useState } from 'react'
-import { iscedFields, iscedGrades, iso639_3, licenses, resourceTypes } from '../../../../constants/wellKnownNodes'
+import { useHistory } from 'react-router'
 import { useSession } from '../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../helpers/data'
+import {
+  categoriesOptions,
+  getGrade,
+  getIscedF,
+  getLang,
+  getLicense,
+  getType,
+  langOptions,
+  licensesOptions,
+  monthOptions,
+  resGradeOptions,
+  resTypeOptions,
+  yearsOptions,
+} from '../../../../helpers/resource-relation-data-static'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useFormikBag } from '../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
-import {
-  CategoriesDropdown,
-  DropdownField,
-  LanguagesDropdown,
-  LevelDropdown,
-  LicenseDropdown,
-  MonthDropdown,
-  TypeDropdown,
-  YearsDropdown,
-} from '../FieldsData'
 import { NewResourceProps } from '../NewResource'
 import { NewResourceFormValues } from '../types'
 import { UploadResourceProps } from '../UploadResource/UploadResource'
@@ -26,35 +30,6 @@ import {
   useCreateResourceRelationMutation,
   useNewResourceDataPageLazyQuery,
 } from './NewResourceCtrl.gen'
-
-const categoriesOptions: DropdownField = {
-  ...CategoriesDropdown,
-  options: iscedFields.map(cat => cat.name),
-}
-
-const resTypeOptions: DropdownField = {
-  ...TypeDropdown,
-  options: resourceTypes.map(restype => restype.name),
-}
-
-const resGradeOptions: DropdownField = {
-  ...LevelDropdown,
-  options: iscedGrades.map(grade => grade.name),
-}
-
-const langOptions: DropdownField = {
-  ...LanguagesDropdown,
-  options: iso639_3.map(lang => lang.name),
-}
-
-// const resFormatOptions: DropdownField = {
-//   ...FormatDropdown,
-//   options: fileFormats.map(format => format.name),
-// }
-
-const licensesOptions = {
-  ...LicenseDropdown,
-}
 
 const initialSetStepProps: DistOmit<UploadResourceProps, 'formBag' | 'deleteContent' | 'nextStep'> = {
   step: 'UploadResourceStep',
@@ -68,6 +43,7 @@ export type NewResourceCtrlProps = {}
 
 export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps> = () => {
   const { session } = useSession()
+  const { push } = useHistory()
   const myId = session?.profile.id
   const [loadMyColl, mycollectionsQRes] = useNewResourceDataPageLazyQuery()
   const uploadTempFile = useUploadTempFile()
@@ -165,6 +141,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
               imageUrl,
             })
           }
+          //   categories,
         }
       } else if (stepProps.state === 'EditData') {
         if (form.values.title && form.values.description && form.values.category && form.values.license) {
@@ -186,8 +163,8 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           languages: langOptions,
           levels: resGradeOptions,
           types: resTypeOptions,
-          months: MonthDropdown,
-          years: YearsDropdown,
+          months: monthOptions,
+          years: yearsOptions,
           previousStep,
           formBag,
         })
@@ -234,7 +211,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
               type: 'TmpUpload',
             }
 
-        const resp = await createResourceMut({
+        const resourceCreationResp = await createResourceMut({
           variables: {
             res: {
               nodeType: 'Resource',
@@ -243,7 +220,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
                 description,
                 name: title,
                 image: imageAssetRef,
-                creationDate:
+                originalCreationDate:
                   (originalDateMonth &&
                     originalDateYear &&
                     Number(new Date(`${originalDateMonth} 1 ${originalDateYear} GMT`))) ||
@@ -252,36 +229,31 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
             },
           },
         })
-        const resource = resp.data?.resource
+        const resource = resourceCreationResp.data?.resource
         if (resource?.__typename === 'CreateNodeMutationSuccess' && resource.node.__typename === 'Resource') {
           const resId = resource.node.id
 
-          const Lang = iso639_3.find(_ => _.name === language)!
-          const langId = nodeSlugId(Lang._type, Lang._slug)
+          const { langId } = getLang(language)
           const creatLangeRelPr = createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: resId, to: langId, Features: {} } },
           })
 
-          const License = licenses.find(_ => license?.toLowerCase().startsWith(_.code.toLowerCase()))!
-          const licenseId = nodeSlugId(License._type, License._slug)
+          const { licenseId } = getLicense(license)
           const createReLicenRelPr = createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: resId, to: licenseId, Features: {} } },
           })
 
-          const Type = resourceTypes.find(_ => _.name === type)!
-          const typeId = nodeSlugId(Type._type, Type._slug)
+          const { typeId } = getType(type)
           const creatTypeeRelPr = createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: resId, to: typeId, Features: {} } },
           })
 
-          const Grade = iscedGrades.find(_ => _.name === level)!
-          const gradeId = nodeSlugId(Grade._type, Grade._slug)
+          const { gradeId } = getGrade(level)
           const createGradeRelPr = createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: resId, to: gradeId, Features: {} } },
           })
 
-          const IscedF = iscedFields.find(_ => _.name === category)!
-          const iscedFId = nodeSlugId(IscedF._type, IscedF._slug)
+          const { iscedFId } = getIscedF(category)
           const createRIscedRelPr = createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: resId, to: iscedFId, Features: {} } },
           })
@@ -296,11 +268,13 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
               })
               .concat([creatLangeRelPr, createReLicenRelPr, creatTypeeRelPr, createGradeRelPr, createRIscedRelPr]),
           )
+          push(nodeId2UrlPath(resId))
         }
       }
     }
     return undefined
   }, [
+    push,
     createResourceRelMut,
     deleteContent,
     createResourceMut,

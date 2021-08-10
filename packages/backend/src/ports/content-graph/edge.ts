@@ -18,7 +18,7 @@ export type CreateAdapter = {
   // ops: CreateEdgeBLOps
 }
 
-export type CreateInput = {
+export type CreateEdgeInput = {
   sessionEnv: SessionEnv
   from: GraphNodeIdentifier
   to: GraphNodeIdentifier
@@ -26,7 +26,7 @@ export type CreateInput = {
 }
 
 export const createEdge = QMCommand(
-  ({ from, to, sessionEnv, newEdge }: CreateInput) =>
+  ({ from, to, sessionEnv, newEdge }: CreateEdgeInput) =>
     async ({ storeEdge }: CreateAdapter) => {
       // const rule = createEdgeRule({
       //   edgeType,

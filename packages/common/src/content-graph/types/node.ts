@@ -123,7 +123,7 @@ export type Resource = BaseGraphNode<'Resource'> & {
   image: Maybe<AssetRef>
   content: AssetRef
   kind: ResourceKind
-  creationDate: Maybe<Timestamp>
+  originalCreationDate: Maybe<Timestamp>
 }
 
 export type Language = BaseGraphNode<'Language'> & {
