@@ -1,5 +1,7 @@
-type ResourceType implements INode {
+type FileFormat implements INode {
   code: String!
+  type: FileFormatType!
+  subtype: String!
   # INode
   id: ID!
   name: String!
@@ -7,19 +9,29 @@ type ResourceType implements INode {
   _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput): RelPage!
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }
-
+enum FileFormatType {
+  application
+  audio
+  font
+  image
+  message
+  model
+  multipart
+  text
+  video
+}
 # integrations
-union Node = ResourceType
+union Node = FileFormat
 enum NodeType {
-  ResourceType
+  FileFormat
 }
 
-# input CreateResourceTypeInput {}
+# input CreateFileFormatInput {}
 input CreateNodeInput {
-  ResourceType: Never
+  FileFormat: Never
 }
 
-# input EditResourceTypeInput {}
+# input EditFileFormatInput {}
 input EditNodeInput {
-  ResourceType: Never
+  FileFormat: Never
 }
