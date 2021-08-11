@@ -11,6 +11,14 @@ import {
   TypeDropdown,
   YearsDropdown,
 } from '../ui/pages/NewResource/FieldsData'
+
+const mainLangs = iso639_3.filter(_ => !!_.part1)
+
+export const langOptions: DropdownField = {
+  ...LanguagesDropdown,
+  options: mainLangs.map(lang => lang.name),
+}
+
 export const categoriesOptions: DropdownField = {
   ...CategoriesDropdown,
   options: iscedFields.map(cat => cat.name),
@@ -26,11 +34,6 @@ export const resGradeOptions: DropdownField = {
   options: iscedGrades.map(grade => grade.name),
 }
 
-export const langOptions: DropdownField = {
-  ...LanguagesDropdown,
-  options: iso639_3.map(lang => lang.name),
-}
-
 export const licensesOptions = {
   ...LicenseDropdown,
 }
@@ -44,7 +47,7 @@ export const yearsOptions = {
 }
 
 export const getLang = (language: string | null | undefined) => {
-  const Lang = iso639_3.find(_ => _.name === language)
+  const Lang = mainLangs.find(_ => _.name === language)
   if (!Lang) {
     throw new Error(`RESOURCE-RELATION-DATA-STATIC: should never happen: Lang not found: ${language}`)
   }
