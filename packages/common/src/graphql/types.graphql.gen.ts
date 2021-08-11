@@ -151,7 +151,6 @@ export type Created = IEdge & {
 
 export type DeleteEdgeInput = {
   id: Scalars['ID'];
-  edgeType: EdgeType;
 };
 
 export type DeleteEdgeMutationError = {
@@ -170,7 +169,7 @@ export type DeleteEdgeMutationPayload = DeleteEdgeMutationSuccess | DeleteEdgeMu
 
 export type DeleteEdgeMutationSuccess = {
   __typename: 'DeleteEdgeMutationSuccess';
-  edgeId?: Maybe<Scalars['ID']>;
+  edgeId: Scalars['ID'];
 };
 
 export type DeleteNodeInput = {
@@ -209,6 +208,34 @@ export type EditCollectionInput = {
   description: Scalars['String'];
   image: AssetRefInput;
   slug: Scalars['String'];
+};
+
+export type EditEdgeInput = {
+  Created?: Maybe<Scalars['Empty']>;
+  Features?: Maybe<Scalars['Empty']>;
+  Follows?: Maybe<Scalars['Empty']>;
+  Pinned?: Maybe<Scalars['Empty']>;
+  edgeType: EdgeType;
+  id: Scalars['ID'];
+};
+
+export type EditEdgeMutationError = {
+  __typename: 'EditEdgeMutationError';
+  type: EditEdgeMutationErrorType;
+  details?: Maybe<Scalars['String']>;
+};
+
+export type EditEdgeMutationErrorType =
+  | 'NotFound'
+  | 'NotAuthorized'
+  | 'UnexpectedInput'
+  | 'AssertionFailed';
+
+export type EditEdgeMutationPayload = EditEdgeMutationSuccess | EditEdgeMutationError;
+
+export type EditEdgeMutationSuccess = {
+  __typename: 'EditEdgeMutationSuccess';
+  edge?: Maybe<Edge>;
 };
 
 export type EditNodeInput = {
@@ -261,6 +288,7 @@ export type EditResourceInput = {
   name: Scalars['String'];
   description: Scalars['String'];
   image?: Maybe<AssetRefInput>;
+  originalCreationDate?: Maybe<Scalars['Timestamp']>;
 };
 
 
@@ -461,6 +489,8 @@ export type Mutation = {
   createEdge: CreateEdgeMutationPayload;
   createNode: CreateNodeMutationPayload;
   createSession: CreateSession;
+  deleteEdge: DeleteEdgeMutationPayload;
+  editNode: EditNodeMutationPayload;
   signUp: SimpleResponse;
 };
 
@@ -485,6 +515,16 @@ export type MutationCreateNodeArgs = {
 export type MutationCreateSessionArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationDeleteEdgeArgs = {
+  input: DeleteEdgeInput;
+};
+
+
+export type MutationEditNodeArgs = {
+  input: EditNodeInput;
 };
 
 
@@ -706,34 +746,6 @@ export type SimpleResponse = {
 };
 
 
-export type UpdateEdgeInput = {
-  Created?: Maybe<Scalars['Empty']>;
-  Features?: Maybe<Scalars['Empty']>;
-  Follows?: Maybe<Scalars['Empty']>;
-  Pinned?: Maybe<Scalars['Empty']>;
-  edgeType: EdgeType;
-  id: Scalars['ID'];
-};
-
-export type UpdateEdgeMutationError = {
-  __typename: 'UpdateEdgeMutationError';
-  type: UpdateEdgeMutationErrorType;
-  details?: Maybe<Scalars['String']>;
-};
-
-export type UpdateEdgeMutationErrorType =
-  | 'NotFound'
-  | 'NotAuthorized'
-  | 'UnexpectedInput'
-  | 'AssertionFailed';
-
-export type UpdateEdgeMutationPayload = UpdateEdgeMutationSuccess | UpdateEdgeMutationError;
-
-export type UpdateEdgeMutationSuccess = {
-  __typename: 'UpdateEdgeMutationSuccess';
-  edge?: Maybe<Edge>;
-};
-
 export type UserSession = {
   __typename: 'UserSession';
   email: Scalars['String'];
@@ -769,6 +781,10 @@ export type UserSession = {
       "Features",
       "Follows",
       "Pinned"
+    ],
+    "EditEdgeMutationPayload": [
+      "EditEdgeMutationSuccess",
+      "EditEdgeMutationError"
     ],
     "EditNodeMutationPayload": [
       "EditNodeMutationSuccess",
@@ -811,10 +827,6 @@ export type UserSession = {
     "PageEdge": [
       "RelPageEdge",
       "SearchPageEdge"
-    ],
-    "UpdateEdgeMutationPayload": [
-      "UpdateEdgeMutationSuccess",
-      "UpdateEdgeMutationError"
     ]
   }
 };

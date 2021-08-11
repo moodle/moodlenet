@@ -117,6 +117,11 @@ export type ResolversTypes = {
   Edge: ResolversTypes['Created'] | ResolversTypes['Features'] | ResolversTypes['Follows'] | ResolversTypes['Pinned'];
   EdgeType: Types.EdgeType;
   EditCollectionInput: Types.EditCollectionInput;
+  EditEdgeInput: Types.EditEdgeInput;
+  EditEdgeMutationError: ResolverTypeWrapper<Types.EditEdgeMutationError>;
+  EditEdgeMutationErrorType: Types.EditEdgeMutationErrorType;
+  EditEdgeMutationPayload: ResolversTypes['EditEdgeMutationSuccess'] | ResolversTypes['EditEdgeMutationError'];
+  EditEdgeMutationSuccess: ResolverTypeWrapper<Omit<Types.EditEdgeMutationSuccess, 'edge'> & { edge?: Types.Maybe<ResolversTypes['Edge']> }>;
   EditNodeInput: Types.EditNodeInput;
   EditNodeMutationError: ResolverTypeWrapper<Types.EditNodeMutationError>;
   EditNodeMutationErrorType: Types.EditNodeMutationErrorType;
@@ -157,11 +162,6 @@ export type ResolversTypes = {
   SearchPageEdge: ResolverTypeWrapper<Types.SearchPageEdge>;
   SimpleResponse: ResolverTypeWrapper<Types.SimpleResponse>;
   Timestamp: ResolverTypeWrapper<Types.Scalars['Timestamp']>;
-  UpdateEdgeInput: Types.UpdateEdgeInput;
-  UpdateEdgeMutationError: ResolverTypeWrapper<Types.UpdateEdgeMutationError>;
-  UpdateEdgeMutationErrorType: Types.UpdateEdgeMutationErrorType;
-  UpdateEdgeMutationPayload: ResolversTypes['UpdateEdgeMutationSuccess'] | ResolversTypes['UpdateEdgeMutationError'];
-  UpdateEdgeMutationSuccess: ResolverTypeWrapper<Omit<Types.UpdateEdgeMutationSuccess, 'edge'> & { edge?: Types.Maybe<ResolversTypes['Edge']> }>;
   UserSession: ResolverTypeWrapper<Types.UserSession>;
 };
 
@@ -197,6 +197,10 @@ export type ResolversParentTypes = {
   DeleteNodeMutationSuccess: Types.DeleteNodeMutationSuccess;
   Edge: ResolversParentTypes['Created'] | ResolversParentTypes['Features'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Pinned'];
   EditCollectionInput: Types.EditCollectionInput;
+  EditEdgeInput: Types.EditEdgeInput;
+  EditEdgeMutationError: Types.EditEdgeMutationError;
+  EditEdgeMutationPayload: ResolversParentTypes['EditEdgeMutationSuccess'] | ResolversParentTypes['EditEdgeMutationError'];
+  EditEdgeMutationSuccess: Omit<Types.EditEdgeMutationSuccess, 'edge'> & { edge?: Types.Maybe<ResolversParentTypes['Edge']> };
   EditNodeInput: Types.EditNodeInput;
   EditNodeMutationError: Types.EditNodeMutationError;
   EditNodeMutationPayload: ResolversParentTypes['EditNodeMutationSuccess'] | ResolversParentTypes['EditNodeMutationError'];
@@ -232,10 +236,6 @@ export type ResolversParentTypes = {
   SearchPageEdge: Types.SearchPageEdge;
   SimpleResponse: Types.SimpleResponse;
   Timestamp: Types.Scalars['Timestamp'];
-  UpdateEdgeInput: Types.UpdateEdgeInput;
-  UpdateEdgeMutationError: Types.UpdateEdgeMutationError;
-  UpdateEdgeMutationPayload: ResolversParentTypes['UpdateEdgeMutationSuccess'] | ResolversParentTypes['UpdateEdgeMutationError'];
-  UpdateEdgeMutationSuccess: Omit<Types.UpdateEdgeMutationSuccess, 'edge'> & { edge?: Types.Maybe<ResolversParentTypes['Edge']> };
   UserSession: Types.UserSession;
 };
 
@@ -310,7 +310,7 @@ export type DeleteEdgeMutationPayloadResolvers<ContextType = Context, ParentType
 };
 
 export type DeleteEdgeMutationSuccessResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DeleteEdgeMutationSuccess'] = ResolversParentTypes['DeleteEdgeMutationSuccess']> = {
-  edgeId?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  edgeId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -331,6 +331,21 @@ export type DeleteNodeMutationSuccessResolvers<ContextType = Context, ParentType
 
 export type EdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Edge'] = ResolversParentTypes['Edge']> = {
   __resolveType?: TypeResolveFn<'Created' | 'Features' | 'Follows' | 'Pinned', ParentType, ContextType>;
+};
+
+export type EditEdgeMutationErrorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EditEdgeMutationError'] = ResolversParentTypes['EditEdgeMutationError']> = {
+  type?: Resolver<ResolversTypes['EditEdgeMutationErrorType'], ParentType, ContextType>;
+  details?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type EditEdgeMutationPayloadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EditEdgeMutationPayload'] = ResolversParentTypes['EditEdgeMutationPayload']> = {
+  __resolveType?: TypeResolveFn<'EditEdgeMutationSuccess' | 'EditEdgeMutationError', ParentType, ContextType>;
+};
+
+export type EditEdgeMutationSuccessResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EditEdgeMutationSuccess'] = ResolversParentTypes['EditEdgeMutationSuccess']> = {
+  edge?: Resolver<Types.Maybe<ResolversTypes['Edge']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type EditNodeMutationErrorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EditNodeMutationError'] = ResolversParentTypes['EditNodeMutationError']> = {
@@ -444,6 +459,8 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   createEdge?: Resolver<ResolversTypes['CreateEdgeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationCreateEdgeArgs, 'input'>>;
   createNode?: Resolver<ResolversTypes['CreateNodeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationCreateNodeArgs, 'input'>>;
   createSession?: Resolver<ResolversTypes['CreateSession'], ParentType, ContextType, RequireFields<Types.MutationCreateSessionArgs, 'email' | 'password'>>;
+  deleteEdge?: Resolver<ResolversTypes['DeleteEdgeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationDeleteEdgeArgs, 'input'>>;
+  editNode?: Resolver<ResolversTypes['EditNodeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationEditNodeArgs, 'input'>>;
   signUp?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<Types.MutationSignUpArgs, 'email'>>;
 };
 
@@ -574,21 +591,6 @@ export interface TimestampScalarConfig extends GraphQLScalarTypeConfig<Resolvers
   name: 'Timestamp';
 }
 
-export type UpdateEdgeMutationErrorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UpdateEdgeMutationError'] = ResolversParentTypes['UpdateEdgeMutationError']> = {
-  type?: Resolver<ResolversTypes['UpdateEdgeMutationErrorType'], ParentType, ContextType>;
-  details?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type UpdateEdgeMutationPayloadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UpdateEdgeMutationPayload'] = ResolversParentTypes['UpdateEdgeMutationPayload']> = {
-  __resolveType?: TypeResolveFn<'UpdateEdgeMutationSuccess' | 'UpdateEdgeMutationError', ParentType, ContextType>;
-};
-
-export type UpdateEdgeMutationSuccessResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UpdateEdgeMutationSuccess'] = ResolversParentTypes['UpdateEdgeMutationSuccess']> = {
-  edge?: Resolver<Types.Maybe<ResolversTypes['Edge']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type UserSessionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserSession'] = ResolversParentTypes['UserSession']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   profile?: Resolver<ResolversTypes['Profile'], ParentType, ContextType>;
@@ -614,6 +616,9 @@ export type Resolvers<ContextType = Context> = {
   DeleteNodeMutationPayload?: DeleteNodeMutationPayloadResolvers<ContextType>;
   DeleteNodeMutationSuccess?: DeleteNodeMutationSuccessResolvers<ContextType>;
   Edge?: EdgeResolvers<ContextType>;
+  EditEdgeMutationError?: EditEdgeMutationErrorResolvers<ContextType>;
+  EditEdgeMutationPayload?: EditEdgeMutationPayloadResolvers<ContextType>;
+  EditEdgeMutationSuccess?: EditEdgeMutationSuccessResolvers<ContextType>;
   EditNodeMutationError?: EditNodeMutationErrorResolvers<ContextType>;
   EditNodeMutationPayload?: EditNodeMutationPayloadResolvers<ContextType>;
   EditNodeMutationSuccess?: EditNodeMutationSuccessResolvers<ContextType>;
@@ -645,9 +650,6 @@ export type Resolvers<ContextType = Context> = {
   SearchPageEdge?: SearchPageEdgeResolvers<ContextType>;
   SimpleResponse?: SimpleResponseResolvers<ContextType>;
   Timestamp?: GraphQLScalarType;
-  UpdateEdgeMutationError?: UpdateEdgeMutationErrorResolvers<ContextType>;
-  UpdateEdgeMutationPayload?: UpdateEdgeMutationPayloadResolvers<ContextType>;
-  UpdateEdgeMutationSuccess?: UpdateEdgeMutationSuccessResolvers<ContextType>;
   UserSession?: UserSessionResolvers<ContextType>;
 };
 

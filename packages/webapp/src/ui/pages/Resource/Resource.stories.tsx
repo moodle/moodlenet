@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro'
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
@@ -57,7 +58,8 @@ export const ResourceStoryProps: ResourceProps = {
   languages: LanguagesDropdown,
   // formats: FormatDropdown,
   categories: CategoriesDropdown,
-  licenses: {...LicenseDropdown, label: t`License`,}
+  licenses: {...LicenseDropdown, label: t`License`,},
+  updateResource:action('updateResource')
 }
 
 export const ResourceLoggedOutStoryProps: ResourceProps = {
