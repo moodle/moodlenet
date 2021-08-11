@@ -1,6 +1,11 @@
 .upload-resource {
   width: 100%;
-  margin-top: 30px;
+
+  > .title {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 30px 0;
+  }
 
   > .content {
     height: fit-content;
