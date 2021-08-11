@@ -18,10 +18,8 @@ export const SortButton: FC<SortButtonProps> = ({ label, state, clicked, active 
   const onClick = useCallback(() => {
     if (inState === 'inactive') {
       setInState('more')
-      console.log('more')
     } else if (inState === 'more') {
       setInState('less')
-      console.log('less')
     } else {
       setInState('inactive')
     }

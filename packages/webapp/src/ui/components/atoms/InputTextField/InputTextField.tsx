@@ -65,7 +65,6 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   }
 
   useEffect(() => {
-    console.log('And here?')
     textArea && checkRowChange()
   }, [text, checkRowChange])
 
