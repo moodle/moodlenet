@@ -47,7 +47,19 @@ export type ResourcePageDataQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+        & { edge: (
+          { __typename: 'Created' }
+          & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Features' }
+          & Pick<Types.Features, 'id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Pinned' }
+          & Pick<Types.Pinned, 'id'>
+        ), node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
           { __typename: 'IscedField' }
           & Pick<Types.IscedField, 'id' | 'name' | 'code'>
         ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
@@ -56,7 +68,19 @@ export type ResourcePageDataQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | (
+        & { edge: (
+          { __typename: 'Created' }
+          & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Features' }
+          & Pick<Types.Features, 'id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Pinned' }
+          & Pick<Types.Pinned, 'id'>
+        ), node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | (
           { __typename: 'IscedGrade' }
           & Pick<Types.IscedGrade, 'id' | 'name' | 'code'>
         ) | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
@@ -65,7 +89,19 @@ export type ResourcePageDataQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
+        & { edge: (
+          { __typename: 'Created' }
+          & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Features' }
+          & Pick<Types.Features, 'id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Pinned' }
+          & Pick<Types.Pinned, 'id'>
+        ), node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | (
           { __typename: 'ResourceType' }
           & Pick<Types.ResourceType, 'id' | 'name' | 'code'>
         ) }
@@ -74,7 +110,19 @@ export type ResourcePageDataQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | (
+        & { edge: (
+          { __typename: 'Created' }
+          & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Features' }
+          & Pick<Types.Features, 'id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Pinned' }
+          & Pick<Types.Pinned, 'id'>
+        ), node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | (
           { __typename: 'Language' }
           & Pick<Types.Language, 'id' | 'name'>
         ) | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
@@ -83,13 +131,58 @@ export type ResourcePageDataQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | (
+        & { edge: (
+          { __typename: 'Created' }
+          & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Features' }
+          & Pick<Types.Features, 'id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Pinned' }
+          & Pick<Types.Pinned, 'id'>
+        ), node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | (
           { __typename: 'License' }
-          & Pick<Types.License, 'id' | 'name'>
+          & Pick<Types.License, 'id' | 'name' | 'code'>
         ) | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ) }
   ) | { __typename: 'ResourceType' }> }
+);
+
+export type EditResourceMutationVariables = Types.Exact<{
+  id: Types.Scalars['ID'];
+  resInput: Types.EditResourceInput;
+}>;
+
+
+export type EditResourceMutation = (
+  { __typename: 'Mutation' }
+  & { editNode: (
+    { __typename: 'EditNodeMutationSuccess' }
+    & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
+      { __typename: 'Resource' }
+      & Pick<Types.Resource, 'id' | 'name' | 'description' | 'image' | 'content' | 'originalCreationDate'>
+    ) | { __typename: 'ResourceType' }> }
+  ) | (
+    { __typename: 'EditNodeMutationError' }
+    & Pick<Types.EditNodeMutationError, 'type' | 'details'>
+  ) }
+);
+
+export type DelResourceRelationMutationVariables = Types.Exact<{
+  edge: Types.DeleteEdgeInput;
+}>;
+
+
+export type DelResourceRelationMutation = (
+  { __typename: 'Mutation' }
+  & { deleteEdge: { __typename: 'DeleteEdgeMutationSuccess' } | (
+    { __typename: 'DeleteEdgeMutationError' }
+    & Pick<Types.DeleteEdgeMutationError, 'type' | 'details'>
+  ) }
 );
 
 
@@ -135,6 +228,9 @@ export const ResourcePageDataDocument = gql`
       }
       categories: _rel(type: Features, target: IscedField) {
         edges {
+          edge {
+            id
+          }
           node {
             ... on IscedField {
               id
@@ -146,6 +242,9 @@ export const ResourcePageDataDocument = gql`
       }
       grades: _rel(type: Features, target: IscedGrade) {
         edges {
+          edge {
+            id
+          }
           node {
             ... on IscedGrade {
               id
@@ -157,6 +256,9 @@ export const ResourcePageDataDocument = gql`
       }
       types: _rel(type: Features, target: ResourceType) {
         edges {
+          edge {
+            id
+          }
           node {
             ... on ResourceType {
               id
@@ -168,6 +270,9 @@ export const ResourcePageDataDocument = gql`
       }
       languages: _rel(type: Features, target: Language) {
         edges {
+          edge {
+            id
+          }
           node {
             ... on Language {
               id
@@ -178,10 +283,14 @@ export const ResourcePageDataDocument = gql`
       }
       licenses: _rel(type: Features, target: License) {
         edges {
+          edge {
+            id
+          }
           node {
             ... on License {
               id
               name
+              code
             }
           }
         }
@@ -218,3 +327,88 @@ export function useResourcePageDataLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type ResourcePageDataQueryHookResult = ReturnType<typeof useResourcePageDataQuery>;
 export type ResourcePageDataLazyQueryHookResult = ReturnType<typeof useResourcePageDataLazyQuery>;
 export type ResourcePageDataQueryResult = Apollo.QueryResult<ResourcePageDataQuery, ResourcePageDataQueryVariables>;
+export const EditResourceDocument = gql`
+    mutation editResource($id: ID!, $resInput: EditResourceInput!) {
+  editNode(input: {id: $id, nodeType: Resource, Resource: $resInput}) {
+    ... on EditNodeMutationError {
+      type
+      details
+    }
+    ... on EditNodeMutationSuccess {
+      node {
+        ... on Resource {
+          id
+          name
+          description
+          image
+          content
+          originalCreationDate
+        }
+      }
+    }
+  }
+}
+    `;
+export type EditResourceMutationFn = Apollo.MutationFunction<EditResourceMutation, EditResourceMutationVariables>;
+
+/**
+ * __useEditResourceMutation__
+ *
+ * To run a mutation, you first call `useEditResourceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditResourceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editResourceMutation, { data, loading, error }] = useEditResourceMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      resInput: // value for 'resInput'
+ *   },
+ * });
+ */
+export function useEditResourceMutation(baseOptions?: Apollo.MutationHookOptions<EditResourceMutation, EditResourceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditResourceMutation, EditResourceMutationVariables>(EditResourceDocument, options);
+      }
+export type EditResourceMutationHookResult = ReturnType<typeof useEditResourceMutation>;
+export type EditResourceMutationResult = Apollo.MutationResult<EditResourceMutation>;
+export type EditResourceMutationOptions = Apollo.BaseMutationOptions<EditResourceMutation, EditResourceMutationVariables>;
+export const DelResourceRelationDocument = gql`
+    mutation delResourceRelation($edge: DeleteEdgeInput!) {
+  deleteEdge(input: $edge) {
+    ... on DeleteEdgeMutationError {
+      type
+      details
+    }
+  }
+}
+    `;
+export type DelResourceRelationMutationFn = Apollo.MutationFunction<DelResourceRelationMutation, DelResourceRelationMutationVariables>;
+
+/**
+ * __useDelResourceRelationMutation__
+ *
+ * To run a mutation, you first call `useDelResourceRelationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDelResourceRelationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [delResourceRelationMutation, { data, loading, error }] = useDelResourceRelationMutation({
+ *   variables: {
+ *      edge: // value for 'edge'
+ *   },
+ * });
+ */
+export function useDelResourceRelationMutation(baseOptions?: Apollo.MutationHookOptions<DelResourceRelationMutation, DelResourceRelationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DelResourceRelationMutation, DelResourceRelationMutationVariables>(DelResourceRelationDocument, options);
+      }
+export type DelResourceRelationMutationHookResult = ReturnType<typeof useDelResourceRelationMutation>;
+export type DelResourceRelationMutationResult = Apollo.MutationResult<DelResourceRelationMutation>;
+export type DelResourceRelationMutationOptions = Apollo.BaseMutationOptions<DelResourceRelationMutation, DelResourceRelationMutationVariables>;

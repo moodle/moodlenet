@@ -37,6 +37,7 @@ input EditResourceInput {
   name: String!
   description: String!
   image: AssetRefInput
+  originalCreationDate: Timestamp
 }
 input EditNodeInput {
   Resource: EditResourceInput

@@ -11,6 +11,7 @@ import {
   getIscedF,
   getLang,
   getLicense,
+  getOriginalCreationTimestampByStrings,
   getType,
   langOptions,
   licensesOptions,
@@ -18,7 +19,7 @@ import {
   resGradeOptions,
   resTypeOptions,
   yearsOptions,
-} from '../../../../helpers/resource-relation-data-static'
+} from '../../../../helpers/resource-relation-data-static-and-utils'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useFormikBag } from '../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
@@ -220,11 +221,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
                 description,
                 name: title,
                 image: imageAssetRef,
-                originalCreationDate:
-                  (originalDateMonth &&
-                    originalDateYear &&
-                    Number(new Date(`${originalDateMonth} 1 ${originalDateYear} GMT`))) ||
-                  null,
+                originalCreationDate: getOriginalCreationTimestampByStrings({ originalDateMonth, originalDateYear }),
               },
             },
           },
@@ -234,7 +231,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           const resId = resource.node.id
 
           const { langId } = getLang(language)
-          const creatLangeRelPr = createResourceRelMut({
+          const createLangRelPr = createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: resId, to: langId, Features: {} } },
           })
 
@@ -244,7 +241,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           })
 
           const { typeId } = getType(type)
-          const creatTypeeRelPr = createResourceRelMut({
+          const createTypeRelPr = createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: resId, to: typeId, Features: {} } },
           })
 
@@ -266,7 +263,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
                   variables: { edge: { edgeType: 'Features', to: resId, from: collectionId, Features: {} } },
                 })
               })
-              .concat([creatLangeRelPr, createReLicenRelPr, creatTypeeRelPr, createGradeRelPr, createRIscedRelPr]),
+              .concat([createLangRelPr, createReLicenRelPr, createTypeRelPr, createGradeRelPr, createRIscedRelPr]),
           )
           push(nodeId2UrlPath(resId))
         }

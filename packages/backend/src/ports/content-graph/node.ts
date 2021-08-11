@@ -2,6 +2,7 @@ import { GraphEdge } from '@moodlenet/common/lib/content-graph/types/edge'
 import {
   GraphNode,
   GraphNodeByType,
+  GraphNodeIdentifier,
   GraphNodeIdentifierSlug,
   GraphNodeType,
   Profile,
@@ -35,23 +36,23 @@ export type CreateNodeAdapter = {
   createEdge: (_: CreateEdgeInput) => Promise<GraphEdge | null>
   getProfileByAuthId: (_: { authId: AuthId }) => Promise<Maybe<Profile>>
 }
-export type NewNodeInput<N extends GraphNode = GraphNode> = DistOmit<N, '_permId' | '_slug'>
+export type NewNodeData<N extends GraphNode = GraphNode> = DistOmit<N, '_permId' | '_slug'>
 export type CreateNode = {
-  newNode: NewNodeInput
+  nodeData: NewNodeData
   sessionEnv: SessionEnv
 }
 
 export const createNode = QMCommand(
-  ({ newNode, sessionEnv }: CreateNode) =>
+  ({ nodeData, sessionEnv }: CreateNode) =>
     async ({ storeNode, getProfileByAuthId, createEdge }: CreateNodeAdapter) => {
       const authProfile = await getProfileByAuthId({ authId: sessionEnv.user.authId })
       if (!authProfile) {
         return 'unauthorized' as const
       }
-      const ids = newGlyphIdentifiers({ name: newNode.name })
+      const ids = newGlyphIdentifiers({ name: nodeData.name })
       const node: GraphNode = {
         ...ids,
-        ...newNode,
+        ...nodeData,
       }
       const result = await storeNode({ node })
       if (!result) {
@@ -68,6 +69,32 @@ export const createNode = QMCommand(
       return result
     },
 )
+
+// edit
+export type EditNodeAdapter = {
+  updateNode: <N extends GraphNodeType = GraphNodeType>(_: {
+    nodeData: EditNodeData<N>
+    nodeId: GraphNodeIdentifier
+  }) => Promise<GraphNodeByType<N> | undefined>
+}
+export type EditNodeData<N extends GraphNodeType = GraphNodeType> = DistOmit<GraphNodeByType<N>, '_permId' | '_slug'>
+export type EditNode<N extends GraphNodeType = GraphNodeType> = {
+  nodeData: EditNodeData<N>
+  nodeId: GraphNodeIdentifier
+  sessionEnv: SessionEnv
+}
+
+export const editNode = QMCommand(
+  <N extends GraphNodeType = GraphNodeType>({ nodeData, nodeId /* , sessionEnv  */ }: EditNode<N>) =>
+    async ({ updateNode }: EditNodeAdapter) => {
+      const result = await updateNode({ nodeData, nodeId })
+      if (!result) {
+        return null
+      }
+      return result
+    },
+)
+
 export type CreateProfile = {
   partProfile: Partial<Omit<Profile, `_${string}`>> & Pick<Profile, 'name' | '_authId'>
 }
