@@ -11,6 +11,6 @@ enum EdgeType {
 input CreateEdgeInput {
   Features: Empty
 }
-input UpdateEdgeInput {
+input EditEdgeInput {
   Features: Empty
 }

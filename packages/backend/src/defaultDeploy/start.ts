@@ -2,9 +2,13 @@ import { Database } from 'arangojs'
 import { Algorithm, SignOptions, VerifyOptions } from 'jsonwebtoken'
 import { createTransport } from 'nodemailer'
 import { ulid } from 'ulid'
-import { createEdgeAdapter } from '../adapters/content-graph/arangodb/adapters/edge'
+import { createEdgeAdapter, deleteEdgeAdapter } from '../adapters/content-graph/arangodb/adapters/edge'
 import { globalSearch } from '../adapters/content-graph/arangodb/adapters/globalSearch'
-import { createNodeAdapter, getNodeBySlugAdapter } from '../adapters/content-graph/arangodb/adapters/node'
+import {
+  createNodeAdapter,
+  editNodeAdapter,
+  getNodeBySlugAdapter,
+} from '../adapters/content-graph/arangodb/adapters/node'
 import { getByAuthId } from '../adapters/content-graph/arangodb/adapters/profile'
 import {
   getNodeRelationCountAdapter,
@@ -132,8 +136,12 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
     getProfileByAuthId: ({ authId }) => qminoInProcess.query(profilePorts.getByAuthId({ authId }), { timeout: 5000 }),
   })
 
+  qminoInProcess.open(nodePorts.editNode, {
+    ...editNodeAdapter(contentGraphDatabase),
+  })
+
   qminoInProcess.open(edgePorts.createEdge, createEdgeAdapter(contentGraphDatabase))
-  // qminoInProcess.open(edgePorts.del, deleteEdgeAdapter(contentGraphDatabase))
+  qminoInProcess.open(edgePorts.deleteEdge, deleteEdgeAdapter(contentGraphDatabase))
 
   //FS asset
   const rootDir = fsAsset.rootFolder

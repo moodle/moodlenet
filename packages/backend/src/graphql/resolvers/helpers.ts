@@ -65,7 +65,7 @@ export const graphNode2GqlNode = (node: GraphNode.GraphNode): GQL.Node => {
     const _node: GQL.Resource = {
       __typename: 'Resource',
       ...base,
-      ...pick(node, ['content', 'image', 'kind', 'description']),
+      ...pick(node, ['content', 'image', 'kind', 'originalCreationDate']),
     }
     return _node
   } else if (node._type === 'FileFormat') {
@@ -144,14 +144,14 @@ export const gqlNode2GraphNode = (node: GQL.Node): Omit<GraphNode.GraphNode, '_p
     const _node: Omit<GraphNode.GraphNode, '_permId' | '_status'> = {
       _type: 'Organization',
       ...base,
-      ...pick(node, ['color', 'domain', 'logo', 'intro', 'description']),
+      ...pick(node, ['color', 'domain', 'logo', 'intro']),
     }
     return _node
   } else if (node.__typename === 'Resource') {
     const _node: Omit<GraphNode.GraphNode, '_permId' | '_status'> = {
       _type: 'Resource',
       ...base,
-      ...pick(node, ['content', 'kind', 'image']),
+      ...pick(node, ['content', 'kind', 'image', 'originalCreationDate']),
     }
     return _node
   } else if (node.__typename === 'FileFormat') {
@@ -319,6 +319,15 @@ export const getAssetRefInputAndType = (
   uploadType: UploadType,
 ): AssetRefInputAndType | undefined | null => assetRefInput && { input: assetRefInput, uploadType }
 
+export const editNodeMutationError = (
+  type: GQL.EditNodeMutationErrorType,
+  details: string | null = null,
+): GQL.EditNodeMutationError => ({
+  __typename: 'EditNodeMutationError',
+  type,
+  details,
+})
+
 export const createNodeMutationError = (
   type: GQL.CreateNodeMutationErrorType,
   details: string | null = null,
@@ -333,6 +342,15 @@ export const createEdgeMutationError = (
   details: string | null = null,
 ): GQL.CreateEdgeMutationError => ({
   __typename: 'CreateEdgeMutationError',
+  type,
+  details,
+})
+
+export const deleteEdgeMutationError = (
+  type: GQL.DeleteEdgeMutationErrorType,
+  details: string | null = null,
+): GQL.DeleteEdgeMutationError => ({
+  __typename: 'DeleteEdgeMutationError',
   type,
   details,
 })

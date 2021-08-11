@@ -1,4 +1,4 @@
-import { EdgeId, edgeTypes, GraphEdgeType } from '../../content-graph/types/edge'
+import { edgeTypes, GraphEdgeIdentifier, GraphEdgeType } from '../../content-graph/types/edge'
 import { GraphNodeIdentifierSlug, GraphNodeType, nodeTypes, Slug } from '../../content-graph/types/node'
 
 export type GlobalSearchSortBy = 'Relevance' | 'Popularity' | 'Recent'
@@ -26,8 +26,8 @@ export const gqlNodeId2GraphNodeIdentifier = (_id: string): GraphNodeIdentifierS
   return { _type, _slug }
 }
 
-export const gqlEdgeId2GraphEdgeIdentifier = (_id: string): { _type: GraphEdgeType; id: EdgeId } | null => {
-  const splitted = (_id || '').split('/')
+export const gqlEdgeId2GraphEdgeIdentifier = (_id: string): GraphEdgeIdentifier | null => {
+  const splitted = _id.split('/')
   if (splitted.length !== 2) {
     return null
   }

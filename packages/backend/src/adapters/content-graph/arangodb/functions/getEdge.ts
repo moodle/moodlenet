@@ -2,7 +2,7 @@ import { GraphEdgeByType, GraphEdgeType } from '@moodlenet/common/lib/content-gr
 import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
 import { aq } from '../../../../lib/helpers/arango/query'
 import { AqlGraphEdgeByType } from '../types'
-import { getAqlNodeByGraphNodeIdentifier } from './getAqlNodeByGraphNodeIdQ.ts'
+import { getAqlNodeByGraphNodeIdentifier } from './helpers'
 
 export const getEdgeByNodesQ = <Type extends GraphEdgeType>({
   edge,
