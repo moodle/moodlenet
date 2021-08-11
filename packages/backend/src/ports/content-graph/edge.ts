@@ -1,6 +1,6 @@
 // create
 
-import { GraphEdge } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphEdge, GraphEdgeIdentifier } from '@moodlenet/common/lib/content-graph/types/edge'
 import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
 import { newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
@@ -51,32 +51,33 @@ export const createEdge = QMCommand(
     },
 )
 
-// // delete
+// delete
 
-// export type DeleteAdapter = {
-//   deleteEdge: <Type extends GQL.EdgeType>(_: {
-//     edgeType: Type
-//     edgeId: NodeId
-//     deleterProfileId: NodeId
-//   }) => Promise<DocumentEdgeByType<Type> | GQL.DeleteEdgeMutationErrorType>
-// }
+export type DeleteAdapter = {
+  deleteEdge: (_: { edge: GraphEdgeIdentifier }) => Promise<boolean>
+}
 
-// export type DeleteInput<Type extends GQL.EdgeType = GQL.EdgeType> = {
-//   env: SessionEnv
-//   id: NodeId
-//   edgeType: Type
-// }
+export type DeleteEdgeInput = {
+  sessionEnv: SessionEnv
+  edge: GraphEdgeIdentifier
+}
 
-// export const del = QMCommand(
-//   <Type extends GQL.EdgeType = GQL.EdgeType>({ env, edgeType, id: edgeId }: DeleteInput<Type>) =>
-//     async ({ deleteEdge }: DeleteAdapter): Promise<DocumentEdgeByType<Type> | GQL.DeleteEdgeMutationErrorType> => {
-//       const deleterProfileId = getProfileId(env)
-//       const result = await deleteEdge({ edgeId, edgeType, deleterProfileId })
-//       if (!result) {
-//         return 'AssertionFailed'
-//       }
-//       return result
-//     },
-// )
+export const deleteEdge = QMCommand(
+  ({ edge /* , sessionEnv */ }: DeleteEdgeInput) =>
+    async ({ deleteEdge }: DeleteAdapter) => {
+      // const rule = deleteEdgeRule({
+      //   edgeType,
+      //   from,
+      //   profileId: getProfileId(env),
+      //   ops,
+      //   to,
+      //   userRole: env.user.role,
+      // })
+      // const _authId = sessionEnv.user.authId
+      const result = await deleteEdge({ edge })
+
+      return result
+    },
+)
 
 QMModule(module)

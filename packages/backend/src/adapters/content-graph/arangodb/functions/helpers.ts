@@ -1,5 +1,11 @@
 import { GraphEdgeByType, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNodeByType, GraphNodeIdentifierSlug, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import {
+  GraphNodeByType,
+  GraphNodeIdentifier,
+  GraphNodeIdentifierPerm,
+  GraphNodeIdentifierSlug,
+  GraphNodeType,
+} from '@moodlenet/common/lib/content-graph/types/node'
 import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
 import { AQ, aqlstr } from '../../../../lib/helpers/arango/query'
 import { AqlGraphEdgeByType, AqlGraphNodeByType } from '../types'
@@ -210,14 +216,18 @@ export const forwardSkipLimitPage = <T>({ docs, skip }: { docs: T[]; skip: numbe
 export const documentByNodeIdSlug = ({ _slug, _type }: GraphNodeIdentifierSlug) =>
   documentBySlugType({ slugVar: `${aqlstr(_slug)}`, type: _type })
 
+export const documentByNodeIdPerm = ({ _permId, _type }: GraphNodeIdentifierPerm) => `DOCUMENT("${_type}/${_permId}")`
+
 export const documentBySlugType = ({ slugVar, type }: { type: GraphNodeType; slugVar: string }) => `
   ( ( 
     FOR n in ${type} 
       FILTER n._slug == ${slugVar}
       LIMIT 1
     RETURN n
-  ) [0] )
-`
+  ) [0] )`
+
+export const getAqlNodeByGraphNodeIdentifier = (identifier: GraphNodeIdentifier) =>
+  '_permId' in identifier ? documentByNodeIdPerm(identifier) : documentByNodeIdSlug(identifier)
 
 export const aqlGraphNode2GraphNode = <T extends GraphNodeType>(aqlGraphNode: AqlGraphNodeByType<T>) => {
   // console.log(`aqlGraphNode2GraphNode ${aqlGraphNode._id}`, aqlGraphNode)

@@ -38,6 +38,9 @@ query ResourcePageData($resourceId: ID!) {
 
       categories: _rel(type: Features, target: IscedField) {
         edges {
+          edge {
+            id
+          }
           node {
             ... on IscedField {
               id
@@ -50,6 +53,9 @@ query ResourcePageData($resourceId: ID!) {
 
       grades: _rel(type: Features, target: IscedGrade) {
         edges {
+          edge {
+            id
+          }
           node {
             ... on IscedGrade {
               id
@@ -62,6 +68,9 @@ query ResourcePageData($resourceId: ID!) {
 
       types: _rel(type: Features, target: ResourceType) {
         edges {
+          edge {
+            id
+          }
           node {
             ... on ResourceType {
               id
@@ -74,6 +83,9 @@ query ResourcePageData($resourceId: ID!) {
 
       languages: _rel(type: Features, target: Language) {
         edges {
+          edge {
+            id
+          }
           node {
             ... on Language {
               id
@@ -85,14 +97,48 @@ query ResourcePageData($resourceId: ID!) {
 
       licenses: _rel(type: Features, target: License) {
         edges {
+          edge {
+            id
+          }
           node {
             ... on License {
               id
               name
+              code
             }
           }
         }
       }
+    }
+  }
+}
+
+mutation editResource($id: ID!, $resInput: EditResourceInput!) {
+  editNode(input: { id: $id, nodeType: Resource, Resource: $resInput }) {
+    ... on EditNodeMutationError {
+      type
+      details
+    }
+    ... on EditNodeMutationSuccess {
+      node {
+        ... on Resource {
+          id
+          name
+          description
+          image
+          content
+          originalCreationDate
+        }
+      }
+    }
+  }
+}
+
+mutation delResourceRelation($edge: DeleteEdgeInput!) {
+  deleteEdge(input: $edge) {
+    ... on DeleteEdgeMutationError {
+      type
+      details
     }
   }
 }

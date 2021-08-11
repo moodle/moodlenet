@@ -37,6 +37,7 @@ export type ResourceProps = {
   // formats: DropdownField
   licenses: DropdownField
   categories: DropdownField
+  updateResource: () => unknown
 }
 
 export const Resource = withCtrl<ResourceProps>(
@@ -56,6 +57,7 @@ export const Resource = withCtrl<ResourceProps>(
     // formats,
     licenses,
     categories,
+    updateResource,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [likeState, setLikeState] = useState<boolean>(liked)
@@ -64,6 +66,7 @@ export const Resource = withCtrl<ResourceProps>(
       setIsEditing(true)
     }
     const handleOnSaveClick = () => {
+      updateResource()
       setIsEditing(false)
     }
 
@@ -77,6 +80,8 @@ export const Resource = withCtrl<ResourceProps>(
 
     const [form, formAttrs] = formBag
     const setFieldValue = form.setFieldValue
+    const setTitleField = useCallback((_: string) => setFieldValue('title', _), [setFieldValue])
+    const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
     const setTypeField = useCallback((_: string) => setFieldValue('type', _), [setFieldValue])
     const setLevelField = useCallback((_: string) => setFieldValue('level', _), [setFieldValue])
     const setMonthField = useCallback((_: string) => setFieldValue('originalDateMonth', _), [setFieldValue])
@@ -86,19 +91,76 @@ export const Resource = withCtrl<ResourceProps>(
     const setLicenseField = useCallback((_: string) => setFieldValue('license', _), [setFieldValue])
     const extraDetails = (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
-        <Dropdown value={form.values.category} {...categories} {...formAttrs.category} displayMode={true} edit={isEditing} getValue={setCategoryField} />
-        <Dropdown value={form.values.license} {...licenses} {...formAttrs.license} displayMode={true} edit={isEditing} getValue={setLicenseField}/>
-        <Dropdown value={form.values.type} {...types} {...formAttrs.type} displayMode={true} edit={isEditing} getValue={setTypeField}/>
-        <Dropdown value={form.values.level} {...levels} {...formAttrs.level} displayMode={true} edit={isEditing} getValue={setLevelField}/>
+        <Dropdown
+          value={form.values.category}
+          {...categories}
+          {...formAttrs.category}
+          displayMode={true}
+          edit={isEditing}
+          getValue={setCategoryField}
+        />
+        <Dropdown
+          value={form.values.license}
+          {...licenses}
+          {...formAttrs.license}
+          displayMode={true}
+          edit={isEditing}
+          getValue={setLicenseField}
+        />
+        <Dropdown
+          value={form.values.type}
+          {...types}
+          {...formAttrs.type}
+          displayMode={true}
+          edit={isEditing}
+          getValue={setTypeField}
+        />
+        <Dropdown
+          value={form.values.level}
+          {...levels}
+          {...formAttrs.level}
+          displayMode={true}
+          edit={isEditing}
+          getValue={setLevelField}
+        />
         <div className="date">
-          <label><Trans>Original Creation Date</Trans></label>
+          <label>
+            <Trans>Original Creation Date</Trans>
+          </label>
           <div className="fields">
-            <Dropdown value={form.values.originalDateMonth} {...months} {...formAttrs.originalDateMonth} displayMode={true} edit={isEditing} getValue={setMonthField}/>
-            <Dropdown value={form.values.originalDateYear} {...years} {...formAttrs.originalDateYear} displayMode={true} edit={isEditing} getValue={setYearField}/>
+            <Dropdown
+              value={form.values.originalDateMonth}
+              {...months}
+              {...formAttrs.originalDateMonth}
+              displayMode={true}
+              edit={isEditing}
+              getValue={setMonthField}
+            />
+            <Dropdown
+              value={form.values.originalDateYear}
+              {...years}
+              {...formAttrs.originalDateYear}
+              displayMode={true}
+              edit={isEditing}
+              getValue={setYearField}
+            />
           </div>
         </div>
-        <Dropdown value={form.values.language} {...languages} {...formAttrs.language} displayMode={true} edit={isEditing} getValue={setLangField}/>
-        <Dropdown value={form.values.format} {...FormatDropdown} {...formAttrs.format} displayMode={true} edit={false} />
+        <Dropdown
+          value={form.values.language}
+          {...languages}
+          {...formAttrs.language}
+          displayMode={true}
+          edit={isEditing}
+          getValue={setLangField}
+        />
+        <Dropdown
+          value={form.values.format}
+          {...FormatDropdown}
+          {...formAttrs.format}
+          displayMode={true}
+          edit={false}
+        />
       </Card>
     )
 
@@ -152,6 +214,7 @@ export const Resource = withCtrl<ResourceProps>(
                       displayMode={true}
                       edit={isEditing}
                       {...formAttrs.title}
+                      getText={setTitleField}
                     />
                   ) : (
                     <div className="title">{form.values.title}</div>
@@ -172,6 +235,7 @@ export const Resource = withCtrl<ResourceProps>(
                     displayMode={true}
                     edit={isEditing}
                     {...formAttrs.description}
+                    getText={setDescriptionField}
                   />
                 ) : (
                   <div className="description">{form.values.description}</div>

@@ -2,14 +2,14 @@ import { Resource } from '@moodlenet/common/lib/content-graph/types/node'
 import { CreateNodeInput, CreateNodeMutationError, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Just } from '@moodlenet/common/lib/utils/types'
 import { QMino } from '../../../../lib/qmino'
-import { NewNodeInput } from '../../../../ports/content-graph/node'
+import { NewNodeData } from '../../../../ports/content-graph/node'
 import { createNodeMutationError, getAssetRefInputAndType, mapAssetRefInputsToAssetRefs } from '../../helpers'
 
 const noTmpFilesCreateNodeMutationError = () =>
   createNodeMutationError('UnexpectedInput', `couldn't find requested tempFiles`)
 
 const nodeDocumentDataBaker: {
-  [T in NodeType]: (input: Just<CreateNodeInput[T]>, qmino: QMino) => Promise<NewNodeInput | CreateNodeMutationError>
+  [T in NodeType]: (input: Just<CreateNodeInput[T]>, qmino: QMino) => Promise<NewNodeData | CreateNodeMutationError>
 } = {
   async IscedField(/* input, qmino */) {
     throw new Error('GQL create IscedField not implemented')
@@ -51,7 +51,7 @@ const nodeDocumentDataBaker: {
     if (!resourceAssetRef) {
       return noTmpFilesCreateNodeMutationError()
     }
-    const newResourceInput: NewNodeInput<Resource> = {
+    const newResourceInput: NewNodeData<Resource> = {
       _type: 'Resource',
       content: resourceAssetRef,
       image: imageAssetRef,
@@ -65,11 +65,11 @@ const nodeDocumentDataBaker: {
   },
 }
 
-export const bakeNodeDoumentData = async <T extends NodeType>(
+export const bakeCreateNodeDoumentData = async <T extends NodeType>(
   input: Just<CreateNodeInput[T]>,
   nodeType: T,
   qmino: QMino,
-): Promise<NewNodeInput | CreateNodeMutationError> => {
+): Promise<NewNodeData | CreateNodeMutationError> => {
   const baker = (nodeDocumentDataBaker as any)[nodeType]
   return baker(input, qmino)
 }

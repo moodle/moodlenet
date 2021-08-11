@@ -1,9 +1,11 @@
 import { validateCreateEdgeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/createEdge'
 import { validateCreateNodeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/createNode'
+import { validateEditNodeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/editNode'
 import * as GQLTypes from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import {
   GlobalSearchNodeType,
   globalSearchNodeType,
+  gqlEdgeId2GraphEdgeIdentifier,
   gqlNodeId2GraphNodeIdentifier,
   isGlobalSearchNodeType,
 } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
@@ -18,10 +20,18 @@ import * as searchPorts from '../../ports/content-graph/search'
 import * as newUserPorts from '../../ports/user-auth/new-user'
 import * as userPorts from '../../ports/user-auth/user'
 import * as GQLResolvers from '../types.graphql.gen'
-import { createEdgeMutationError, createNodeMutationError, graphEdge2GqlEdge, graphNode2GqlNode } from './helpers'
+import {
+  createEdgeMutationError,
+  createNodeMutationError,
+  deleteEdgeMutationError,
+  editNodeMutationError,
+  graphEdge2GqlEdge,
+  graphNode2GqlNode,
+} from './helpers'
 import { getINodeResolver } from './INode'
 import { bakeEdgeDoumentData } from './prepareData/createEdge'
-import { bakeNodeDoumentData } from './prepareData/createNode'
+import { bakeCreateNodeDoumentData } from './prepareData/createNode'
+import { bakeEditNodeDoumentData } from './prepareData/editNode'
 
 export const getGQLResolvers = ({
   jwtPrivateKey,
@@ -181,14 +191,14 @@ export const getGQLResolvers = ({
         if (nodeInput instanceof Error) {
           return createNodeMutationError('UnexpectedInput', nodeInput.message)
         }
-        const data = await bakeNodeDoumentData(nodeInput, nodeType, qmino)
+        const data = await bakeCreateNodeDoumentData(nodeInput, nodeType, qmino)
         if ('__typename' in data) {
           return data
         }
         // const data = { name, summary, ...assetRefMap }
         const graphNodeOrError = await qmino.callSync(
           nodePorts.createNode({
-            newNode: {
+            nodeData: {
               ...data,
             },
             sessionEnv: ctx.authSessionEnv,
@@ -204,6 +214,44 @@ export const getGQLResolvers = ({
         const node = graphNode2GqlNode(graphNodeOrError)
         return {
           __typename: 'CreateNodeMutationSuccess',
+          node,
+        }
+      },
+      async editNode(_root, { input }, ctx, _info) {
+        const { nodeType, id } = input
+        const nodeId = gqlNodeId2GraphNodeIdentifier(id)
+        if (!nodeId) {
+          return editNodeMutationError('UnexpectedInput', `invalid id:${id}`)
+        }
+
+        if (!ctx.authSessionEnv) {
+          return editNodeMutationError('NotAuthorized')
+        }
+        const nodeInput = validateEditNodeInput(input)
+        if (nodeInput instanceof Error) {
+          return editNodeMutationError('UnexpectedInput', nodeInput.message)
+        }
+        const data = await bakeEditNodeDoumentData(nodeInput, nodeType, qmino)
+        if ('__typename' in data) {
+          return data
+        }
+        // const data = { name, summary, ...assetRefMap }
+        const graphNodeOrError = await qmino.callSync(
+          nodePorts.editNode({
+            nodeData: {
+              ...data,
+            },
+            nodeId,
+            sessionEnv: ctx.authSessionEnv,
+          }),
+          { timeout: 5000 },
+        )
+        if (!graphNodeOrError) {
+          return editNodeMutationError('AssertionFailed')
+        }
+        const node = graphNode2GqlNode(graphNodeOrError)
+        return {
+          __typename: 'EditNodeMutationSuccess',
           node,
         }
       },
@@ -247,26 +295,30 @@ export const getGQLResolvers = ({
           edge,
         }
       },
-      // async deleteEdge(_root, { input }, ctx /*,  _info */) {
-      //   // console.log('deleteEdge', input)
-      //   const { edgeType, id } = input
-      //   const deleteResult = await qmino.callSync(
-      //     edgePorts.del({
-      //       env,
-      //       edgeType,
-      //       id,
-      //     }),
-      //     { timeout: 5000 },
-      //   )
-      //   if (typeof deleteResult === 'string') {
-      //     return deleteEdgeMutationError(deleteResult, null)
-      //   }
-      //   const successResult: GQLTypes.DeleteEdgeMutationSuccess = {
-      //     __typename: 'DeleteEdgeMutationSuccess',
-      //     edgeId: id,
-      //   }
-      //   return successResult
-      // },
+      async deleteEdge(_root, { input }, ctx /*,  _info */) {
+        const edge = gqlEdgeId2GraphEdgeIdentifier(input.id)
+        if (!edge) {
+          return deleteEdgeMutationError('UnexpectedInput')
+        }
+        if (!ctx.authSessionEnv) {
+          return deleteEdgeMutationError('NotAuthorized')
+        }
+        const deleteResult = await qmino.callSync(
+          edgePorts.deleteEdge({
+            sessionEnv: ctx.authSessionEnv,
+            edge,
+          }),
+          { timeout: 5000 },
+        )
+        if (deleteResult === false) {
+          return deleteEdgeMutationError('UnexpectedInput', null)
+        }
+        const successResult: GQLTypes.DeleteEdgeMutationSuccess = {
+          __typename: 'DeleteEdgeMutationSuccess',
+          edgeId: input.id,
+        }
+        return successResult
+      },
     },
   }
 }
