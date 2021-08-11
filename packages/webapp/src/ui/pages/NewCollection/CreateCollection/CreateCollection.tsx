@@ -75,6 +75,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
 
     return (
       <div className="upload-resource">
+        <div className="title"><Trans>Create Collection</Trans></div>
         <div className="content">
           <div className="main-column">
             <div className="card-title">
