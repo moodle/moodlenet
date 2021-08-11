@@ -120,7 +120,6 @@ export const Dropdown: FC<DropdownProps> = ({
   }, [currentValue, getValue])
 
   useEffect(() => {
-    console.log('Got new index: ' + index)
     typeof index === 'number' && setIsIconVisible(true)
   }, [index])
 
@@ -133,7 +132,6 @@ export const Dropdown: FC<DropdownProps> = ({
       if (txtValue.indexOf(filter) > -1) {
         setValue(e.innerText)
         txtValue === filter ? setIndex(i) : setIndex(undefined)
-        txtValue === filter && console.log(i)
         e.style.display = ''
         length++
       } else {
