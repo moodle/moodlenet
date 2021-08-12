@@ -197,7 +197,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     if (!(creator && session)) {
       return false
     }
-    return creator.id === session.profile.id
+    return creator.id === session.profile.id || session.profile.id === 'Profile/__root__' //FIXME: MVP hack
   }, [creator, session])
   const liked = false
   const resourceProps = useMemo<null | ResourceProps>(() => {
