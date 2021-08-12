@@ -6,11 +6,11 @@ import { getMNExecEnvMiddleware } from './executionContext'
 
 declare module 'express-serve-static-core' {
   export interface Request {
-    mnHttpSessionEnv: Context
+    mnHttpContext: Context
   }
 }
 
-export type MountServiceName = 'graphql' | 'assets'
+export type MountServiceName = 'graphql' | 'assets' | '.well-known'
 export type MountServices = {
   [name in MountServiceName]: Application | null
 }
