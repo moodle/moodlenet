@@ -1,4 +1,4 @@
-import { Resource } from '@moodlenet/common/lib/content-graph/types/node'
+import { Collection, Resource } from '@moodlenet/common/lib/content-graph/types/node'
 import { CreateNodeInput, CreateNodeMutationError, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Just } from '@moodlenet/common/lib/utils/types'
 import { QMino } from '../../../../lib/qmino'
@@ -16,9 +16,6 @@ const nodeDocumentDataBaker: {
   },
   async Organization(/* input, qmino */) {
     throw new Error('GQL create Organization not implemented')
-  },
-  async Collection(/* input, qmino */) {
-    throw new Error('GQL create Collection not implemented')
   },
   async IscedGrade(/* input, qmino */) {
     throw new Error('GQL create IscedGrade not implemented')
@@ -62,6 +59,25 @@ const nodeDocumentDataBaker: {
     }
 
     return newResourceInput
+  },
+  async Collection(input, qmino) {
+    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
+      [getAssetRefInputAndType(input.image, 'image')],
+      qmino,
+    )
+
+    if (!contentNodeAssetRefs) {
+      return noTmpFilesCreateNodeMutationError()
+    }
+    const [imageAssetRef] = contentNodeAssetRefs
+    const newCollectionInput: NewNodeData<Collection> = {
+      _type: 'Collection',
+      image: imageAssetRef,
+      description: input.description,
+      name: input.name,
+    }
+
+    return newCollectionInput
   },
 }
 

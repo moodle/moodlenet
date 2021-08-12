@@ -11,7 +11,7 @@ import { HeaderProps, HeaderPropsIdle } from '../Header'
 const homeHref = href(mainPath.landing)
 const loginHref = href(mainPath.login)
 const signUpHref = href(mainPath.signUp)
-const newCollectionHref = href('')
+const newCollectionHref = href(mainPath.createNewCollection)
 const newResourceHref = href(mainPath.createNewResource)
 
 export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {

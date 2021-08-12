@@ -3,9 +3,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { CreateCollectionProps } from './CreateCollection/CreateCollection'
-import {
-  CategoriesDropdown
-} from './FieldsData'
+import { CategoriesDropdown } from './FieldsData'
 import { NewCollection, NewCollectionProgressState, NewCollectionProps } from './NewCollection'
 import { NewCollectionFormValues } from './types'
 
@@ -39,7 +37,6 @@ const initialFormValues: NewCollectionFormValues = {
   category: '',
   description: '',
   image: 'image',
-  name: 'https://moodle.com/awesome-content',
   title: '',
 }
 
@@ -58,7 +55,7 @@ const CreateCollectionStoryProps: CreateCollectionProps = {
   step: 'CreateCollectionStep',
   formBag,
   imageUrl: '',
-  nextStep: action('nextStep'),
+  finish: action('nextStep'),
   categories: CategoriesDropdown,
 }
 
