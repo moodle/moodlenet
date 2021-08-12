@@ -17,6 +17,7 @@ import {
 import { createGraphQLApp } from '../adapters/http/graphqlApp'
 import { startMNHttpServer } from '../adapters/http/MNHTTPServer'
 import { createStaticAssetsApp } from '../adapters/http/staticAssetsApp'
+import { createWebfingerApp } from '../adapters/http/webfingerApp'
 import { createTempAdapter } from '../adapters/staticAssets/fs/adapters/createTemp'
 import { delAssetAdapter } from '../adapters/staticAssets/fs/adapters/delAsset'
 import { getAssetAdapter } from '../adapters/staticAssets/fs/adapters/getAsset'
@@ -43,7 +44,16 @@ import { DefaultDeployEnv } from './env'
 export type Config = {
   env: DefaultDeployEnv
 }
-export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nodemailer } }: Config) => {
+export const startDefaultMoodlenet = async ({
+  env: {
+    db,
+    fsAsset,
+    http,
+    jwt,
+    nodemailer,
+    mnStatic: { domain },
+  },
+}: Config) => {
   const inProcessTransport = createInProcessTransport()
   const qminoInProcess = Qmino(inProcessTransport)
   const emailSender = createTransport(nodemailer.smtp)
@@ -72,9 +82,10 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
     passwordHasher: argonHashPassword,
   })
   const assetsApp = createStaticAssetsApp({ qmino: qminoInProcess })
+  const webfingerApp = createWebfingerApp({ qmino: qminoInProcess, domain })
   await startMNHttpServer({
     httpPort: http.port,
-    startServices: { graphql: graphqlApp, assets: assetsApp },
+    startServices: { 'graphql': graphqlApp, 'assets': assetsApp, '.well-known': webfingerApp },
     jwtPublicKey: jwt.publicKey,
     jwtVerifyOpts,
   })
