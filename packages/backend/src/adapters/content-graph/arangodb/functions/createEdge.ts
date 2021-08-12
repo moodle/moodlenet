@@ -1,4 +1,4 @@
-import { GraphEdgeByType, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
 import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
 import { omit } from '@moodlenet/common/lib/utils/object'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
@@ -11,7 +11,7 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
   from,
   to,
 }: {
-  edge: GraphEdgeByType<Type>
+  edge: GraphEdge<Type>
   from: GraphNodeIdentifier
   to: GraphNodeIdentifier
 }) => {

@@ -1,4 +1,5 @@
 import { AuthId } from '../../user-auth/types'
+import { stringUnionList } from '../../utils/misc'
 import { Timestamp } from './common'
 
 export type GraphNodeMap = {
@@ -13,21 +14,22 @@ export type GraphNodeMap = {
   ResourceType: ResourceType
   FileFormat: FileFormat
 }
+
 export type GraphNodeType = keyof GraphNodeMap
-export const nodeTypes: GraphNodeType[] = [
-  'Profile',
-  'Collection',
-  'IscedField',
-  'IscedGrade',
-  'Organization',
-  'Resource',
-  'Language',
-  'License',
-  'ResourceType',
-  'FileFormat',
-]
-export type GraphNode = GraphNodeMap[GraphNodeType]
-export type GraphNodeByType<T extends GraphNodeType> = GraphNodeMap[T]
+export const nodeTypes = stringUnionList<GraphNodeType>({
+  Profile: 0,
+  Collection: 0,
+  IscedField: 0,
+  IscedGrade: 0,
+  Organization: 0,
+  Resource: 0,
+  Language: 0,
+  License: 0,
+  ResourceType: 0,
+  FileFormat: 0,
+})
+
+export type GraphNode<T extends GraphNodeType = GraphNodeType> = GraphNodeMap[T]
 
 export type PermId = string
 export type Slug = string
@@ -51,6 +53,9 @@ export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _slug: Slug
   name: string
   description: string
+}
+export type AuthOp = {
+  _authId: AuthId
 }
 
 type Maybe<T> = T | null | undefined
@@ -100,16 +105,16 @@ export type Organization = BaseGraphNode<'Organization'> & {
   domain: string
 }
 
-export type Profile = BaseGraphNode<'Profile'> & {
-  _authId: AuthId
-  avatar: Maybe<AssetRef>
-  bio: string
-  image: Maybe<AssetRef>
-  firstName: Maybe<string>
-  lastName: Maybe<string>
-  siteUrl: Maybe<string>
-  location: Maybe<string>
-}
+export type Profile = AuthOp &
+  BaseGraphNode<'Profile'> & {
+    avatar: Maybe<AssetRef>
+    bio: string
+    image: Maybe<AssetRef>
+    firstName: Maybe<string>
+    lastName: Maybe<string>
+    siteUrl: Maybe<string>
+    location: Maybe<string>
+  }
 
 export type ResourceKind = 'Upload' | 'Link'
 
