@@ -44,7 +44,7 @@ export type NewResourceCtrlProps = {}
 
 export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps> = () => {
   const { session } = useSession()
-  const { push } = useHistory()
+  const history = useHistory()
   const myId = session?.profile.id
   const [loadMyColl, mycollectionsQRes] = useNewResourceDataPageLazyQuery()
   const uploadTempFile = useUploadTempFile()
@@ -230,48 +230,69 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
         if (resource?.__typename === 'CreateNodeMutationSuccess' && resource.node.__typename === 'Resource') {
           const resId = resource.node.id
 
-          const { langId } = getLang(language)
-          const createLangRelPr = createResourceRelMut({
-            variables: { edge: { edgeType: 'Features', from: resId, to: langId, Features: {} } },
-          })
-
-          const { licenseId } = getLicense(license)
-          const createReLicenRelPr = createResourceRelMut({
-            variables: { edge: { edgeType: 'Features', from: resId, to: licenseId, Features: {} } },
-          })
-
-          const { typeId } = getType(type)
-          const createTypeRelPr = createResourceRelMut({
-            variables: { edge: { edgeType: 'Features', from: resId, to: typeId, Features: {} } },
-          })
-
-          const { gradeId } = getGrade(level)
-          const createGradeRelPr = createResourceRelMut({
-            variables: { edge: { edgeType: 'Features', from: resId, to: gradeId, Features: {} } },
-          })
+          const waitFor: Promise<any>[] = []
 
           const { iscedFId } = getIscedF(category)
-          const createRIscedRelPr = createResourceRelMut({
-            variables: { edge: { edgeType: 'Features', from: resId, to: iscedFId, Features: {} } },
-          })
-
-          await Promise.all(
-            addToCollections
-              .map(async collName => {
-                const collectionId = mycollections.find(_ => _.name === collName)!.id
-                return createResourceRelMut({
-                  variables: { edge: { edgeType: 'Features', to: resId, from: collectionId, Features: {} } },
-                })
-              })
-              .concat([createLangRelPr, createReLicenRelPr, createTypeRelPr, createGradeRelPr, createRIscedRelPr]),
+          waitFor.push(
+            createResourceRelMut({
+              variables: { edge: { edgeType: 'Features', from: resId, to: iscedFId, Features: {} } },
+            }),
           )
-          push(nodeId2UrlPath(resId))
+
+          if (language) {
+            const { langId } = getLang(language)
+            waitFor.push(
+              createResourceRelMut({
+                variables: { edge: { edgeType: 'Features', from: resId, to: langId, Features: {} } },
+              }),
+            )
+          }
+
+          if (license) {
+            const { licenseId } = getLicense(license)
+            waitFor.push(
+              createResourceRelMut({
+                variables: { edge: { edgeType: 'Features', from: resId, to: licenseId, Features: {} } },
+              }),
+            )
+          }
+
+          if (type) {
+            const { typeId } = getType(type)
+            waitFor.push(
+              createResourceRelMut({
+                variables: { edge: { edgeType: 'Features', from: resId, to: typeId, Features: {} } },
+              }),
+            )
+          }
+
+          if (level) {
+            const { gradeId } = getGrade(level)
+            waitFor.push(
+              createResourceRelMut({
+                variables: { edge: { edgeType: 'Features', from: resId, to: gradeId, Features: {} } },
+              }),
+            )
+          }
+
+          waitFor.push(
+            ...addToCollections.map(async collName => {
+              const collectionId = mycollections.find(_ => _.name === collName)!.id
+              return createResourceRelMut({
+                variables: { edge: { edgeType: 'Features', to: resId, from: collectionId, Features: {} } },
+              })
+            }),
+          )
+
+          await Promise.all(waitFor)
+
+          history.push(nodeId2UrlPath(resId))
         }
       }
     }
     return undefined
   }, [
-    push,
+    history,
     createResourceRelMut,
     deleteContent,
     createResourceMut,

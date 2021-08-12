@@ -18,7 +18,6 @@ input CreateCollectionInput {
   name: String!
   description: String!
   image: AssetRefInput!
-  slug: String!
 }
 input CreateNodeInput {
   Collection: CreateCollectionInput

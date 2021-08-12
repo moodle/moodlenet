@@ -17,11 +17,11 @@ export type CreateCollectionProps = {
   formBag: FormikBag<NewCollectionFormValues>
   imageUrl: string
   categories: DropdownField
-  nextStep: (() => unknown) | undefined
+  finish: (() => unknown) | undefined
 }
 
 export const CreateCollection = withCtrl<CreateCollectionProps>(
-  ({ formBag, imageUrl, categories, nextStep }) => {
+  ({ formBag, imageUrl, categories, finish }) => {
     const [form] = formBag
     const setFieldValue = form.setFieldValue
     const background = {
@@ -114,7 +114,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           <div className="side-column">{dataInputs}</div>
         </div>
         <div className="footer">
-          <PrimaryButton disabled={!nextStep} onClick={nextStep}>
+          <PrimaryButton disabled={!finish} onClick={finish}>
             <Trans>Finish</Trans>
           </PrimaryButton>
         </div>
