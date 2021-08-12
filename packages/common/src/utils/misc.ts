@@ -23,3 +23,5 @@ export const sequencePromiseCalls = <T>(thunks: (() => Promise<T>)[]) => {
     .reduce((prev, curr) => () => prev().then(curr))()
     .then(() => results)
 }
+
+export const stringUnionList = <K extends string>(_: { [k in K]: any }): K[] => Object.keys(_) as K[]
