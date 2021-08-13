@@ -46,7 +46,7 @@ export const yearsOptions = {
   ...YearsDropdown,
 }
 
-export const getLang = (language: string | null | undefined) => {
+export const getLang = (language: string) => {
   const Lang = mainLangs.find(_ => _.name === language)
   if (!Lang) {
     throw new Error(`RESOURCE-RELATION-DATA-STATIC: should never happen: Lang not found: ${language}`)
@@ -55,7 +55,7 @@ export const getLang = (language: string | null | undefined) => {
   return { langId, Lang }
 }
 
-export const getLicenseOptField = (licenseCode: string | null | undefined) => {
+export const getLicenseOptField = (licenseCode: string) => {
   if (!licenseCode) {
     return ''
   }
@@ -68,7 +68,7 @@ export const getLicenseOptField = (licenseCode: string | null | undefined) => {
   return license[0]!
 }
 
-export const getLicense = (license: string | null | undefined) => {
+export const getLicense = (license: string) => {
   const License = licenses.find(_ => license?.toLowerCase().startsWith(`${_.code.toLowerCase()} `))
   if (!License) {
     throw new Error(`RESOURCE-RELATION-DATA-STATIC: should never happen: License not found: ${license}`)
@@ -77,7 +77,7 @@ export const getLicense = (license: string | null | undefined) => {
   return { licenseId, License }
 }
 
-export const getType = (type: string | null | undefined) => {
+export const getType = (type: string) => {
   const Type = resourceTypes.find(_ => _.name === type)
   if (!Type) {
     throw new Error(`RESOURCE-RELATION-DATA-STATIC: should never happen: Type not found: ${type}`)
@@ -86,7 +86,7 @@ export const getType = (type: string | null | undefined) => {
   return { typeId, Type }
 }
 
-export const getGrade = (level: string | null | undefined) => {
+export const getGrade = (level: string) => {
   const Grade = iscedGrades.find(_ => _.name === level)
   if (!Grade) {
     throw new Error(`RESOURCE-RELATION-DATA-STATIC: should never happen: Grade not found: ${level}`)
@@ -95,7 +95,7 @@ export const getGrade = (level: string | null | undefined) => {
   return { gradeId, Grade }
 }
 
-export const getIscedF = (category: string | null | undefined) => {
+export const getIscedF = (category: string) => {
   const IscedF = iscedFields.find(_ => _.name === category)
   if (!IscedF) {
     throw new Error(`RESOURCE-RELATION-DATA-STATIC: should never happen: IscedF not found: ${category}`)

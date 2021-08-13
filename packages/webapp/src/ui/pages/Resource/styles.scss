@@ -44,7 +44,7 @@
     }
 
     > .main-column {
-      gap: 0;
+      gap: 15px;
       width: 65%;
       height: 100%;
 
@@ -179,6 +179,7 @@
 
         > .resource-footer {
           display: flex;
+          gap: 15px;
         }
       }
 
@@ -221,5 +222,21 @@
         }
       }
     }
+    .resource-action-card {
+      width: 100%;
+      height: fit-content;
+      padding: 25px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    
+      > .button {
+        max-width: 160px;
+        justify-content: center;
+        padding: 11px;
+        flex: 1;
+      }
+    }    
   }
 }
