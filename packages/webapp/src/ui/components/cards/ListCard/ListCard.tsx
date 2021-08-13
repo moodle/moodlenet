@@ -12,7 +12,7 @@ export type ListCardProps = {
 export const ListCard: FC<ListCardProps> = ({ className, content, title, noCard, children }) => {
   return (
     <div className={`list-card ${className} ${noCard ? 'no-card' : ''}`}>
-      <div className="title">{title ? title : <div>{children}</div>}</div>
+      {(title || children) && <div className="title">{title ? title : <div>{children}</div>}</div>}
       <div className="content">{content}</div>
     </div>
   )

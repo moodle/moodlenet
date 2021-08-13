@@ -1,6 +1,7 @@
 import { Href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
 import '../../../styles/tags.css'
+import DeleteButton from '../../atoms/DeleteButton/DeleteButton'
 import './styles.scss'
 
 export type ResourceCardProps = {
@@ -9,9 +10,19 @@ export type ResourceCardProps = {
   type: string //'Video' | 'Web Page' | 'Moodle Book'
   title: string
   resourceHomeHref: Href
+  showRemoveButton?: boolean
+  onRemoveClick?(arg0: unknown): unknown
 }
 
-export const ResourceCard = withCtrl<ResourceCardProps>(({ tags, image, type, title, resourceHomeHref }) => {
+export const ResourceCard = withCtrl<ResourceCardProps>(({ 
+  tags, 
+  image, 
+  type, 
+  title, 
+  resourceHomeHref, 
+  showRemoveButton,
+  onRemoveClick 
+}) => {
   const tagSet = tags.map((value: string, index: number) => {
     return (
       <div key={index} className="tag">
@@ -46,6 +57,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(({ tags, image, type, ti
         </div>
         <div className="tags scroll">{tagSet}</div>
       </div>
+      { showRemoveButton && <DeleteButton className="remove" onClick={onRemoveClick} />}
     </div>
   )
 })

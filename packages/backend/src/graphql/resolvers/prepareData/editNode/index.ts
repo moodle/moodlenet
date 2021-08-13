@@ -16,9 +16,6 @@ const nodeDocumentDataBaker: {
   async Organization(/* input, qmino */) {
     throw new Error('GQL edit Organization not implemented')
   },
-  async Collection(/* input, qmino */) {
-    throw new Error('GQL edit Collection not implemented')
-  },
   async IscedGrade(/* input, qmino */) {
     throw new Error('GQL edit IscedGrade not implemented')
   },
@@ -55,6 +52,23 @@ const nodeDocumentDataBaker: {
     }
 
     return editResourceData as EditNodeData<'Resource'> // FIXME: when assets are externalilzed to own nodes
+  },
+  async Collection(input, qmino) {
+    const assetRefs = await mapAssetRefInputsToAssetRefs([getAssetRefInputAndType(input.image, 'image')], qmino)
+
+    if (!assetRefs) {
+      return noTmpFilesEditNodeMutationError()
+    }
+    const [imageAssetRef] = assetRefs
+
+    const editCollectionData: EditNodeData<'Collection'> = {
+      _type: 'Collection',
+      image: imageAssetRef,
+      description: input.description,
+      name: input.name,
+    }
+
+    return editCollectionData
   },
 }
 

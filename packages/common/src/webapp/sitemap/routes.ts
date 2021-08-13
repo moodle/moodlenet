@@ -10,3 +10,4 @@ export type Profile = RouteDef<'/profile/:slug', { slug: string }>
 export type CreateNewResource = RouteDef<'/create-new-resource', {}>
 export type CreateNewCollection = RouteDef<'/create-new-collection', {}>
 export type ResourcePage = RouteDef<'/resource/:slug', { slug: string }>
+export type CollectionPage = RouteDef<'/collection/:slug', { slug: string }>

@@ -26,8 +26,7 @@ input CreateNodeInput {
 input EditCollectionInput {
   name: String!
   description: String!
-  image: AssetRefInput!
-  slug: String!
+  image: AssetRefInput
 }
 input EditNodeInput {
   Collection: EditCollectionInput
