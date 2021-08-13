@@ -2,14 +2,20 @@ import { t } from '@lingui/macro'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
-import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
-import { CategoriesDropdown, LanguagesDropdown, LevelDropdown, LicenseDropdown, MonthDropdown, TypeDropdown, YearsDropdown } from '../NewResource/FieldsData'
+import {
+  CategoriesDropdown,
+  LanguagesDropdown,
+  LevelDropdown,
+  LicenseDropdown,
+  MonthDropdown,
+  TypeDropdown,
+  YearsDropdown
+} from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
 import { Resource, ResourceProps } from './Resource'
-import { ResourceActionsCardStoryProps } from './ResourceActionsCard/ResourceActionsCard.stories'
 
 const meta: ComponentMeta<typeof Resource> = {
   title: 'Pages/Resource',
@@ -18,7 +24,12 @@ const meta: ComponentMeta<typeof Resource> = {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: ['ResourceStoryProps', 'ResourceLoggedOutStoryProps', 'ResourceLoggedInStoryProps'],
+  excludeStories: [
+    'ResourceStoryProps',
+    'ResourceLoggedOutStoryProps',
+    'ResourceLoggedInStoryProps',
+    'ResourceOwnerStoryProps',
+  ],
 }
 
 const ResourceStory: ComponentStory<typeof Resource> = args => <Resource {...args} />
@@ -28,18 +39,19 @@ export const ResourceStoryProps: ResourceProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
   },
-  isOwner: true,
+  isAuthenticated: true,
+  isOwner: false,
   title: 'The Best Resource Ever',
   liked: false,
-  tags: ["Reforestationg", "Drones", "Soil"],
+  tags: ['Reforestationg', 'Drones', 'Soil'],
   contributorCardProps: ContributorCardStoryProps,
-  resourceActionsCard: ResourceActionsCardStoryProps,
   formBag: SBFormikBag<NewResourceFormValues>({
     addToCollections: [],
     category: '0215 Music and performing arts',
     content: '',
     contentType: 'Link',
-    description: 'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
+    description:
+      'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     format: 'Portal / main site',
     image: 'https://picsum.photos/200/100',
     language: 'Spanish',
@@ -58,8 +70,8 @@ export const ResourceStoryProps: ResourceProps = {
   languages: LanguagesDropdown,
   // formats: FormatDropdown,
   categories: CategoriesDropdown,
-  licenses: {...LicenseDropdown, label: t`License`,},
-  updateResource:action('updateResource')
+  licenses: { ...LicenseDropdown, label: t`License` },
+  updateResource: action('updateResource'),
 }
 
 export const ResourceLoggedOutStoryProps: ResourceProps = {
@@ -77,18 +89,16 @@ export const ResourceLoggedOutStoryProps: ResourceProps = {
       },
     },
   },
+  isAuthenticated: false
 }
 
 export const ResourceLoggedInStoryProps: ResourceProps = {
   ...ResourceStoryProps,
-  headerPageTemplateProps: {
-    isAuthenticated: true,
-    headerPageProps: {
-      isAuthenticated: true,
-      headerProps: HeaderLoggedOutStoryProps,
-      subHeaderProps: SubHeaderStoryProps,
-    },
-  },
+}
+
+export const ResourceOwnerStoryProps: ResourceProps = {
+  ...ResourceStoryProps,
+  isOwner: true,
 }
 
 export const LoggedOut = ResourceStory.bind({})
@@ -96,5 +106,8 @@ LoggedOut.args = ResourceLoggedOutStoryProps
 
 export const LoggedIn = ResourceStory.bind({})
 LoggedIn.args = ResourceLoggedInStoryProps
+
+export const Owner = ResourceStory.bind({})
+Owner.args = ResourceOwnerStoryProps
 
 export default meta
