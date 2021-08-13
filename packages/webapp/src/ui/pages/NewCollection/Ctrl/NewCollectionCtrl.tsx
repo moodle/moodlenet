@@ -1,5 +1,5 @@
 import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { nodeId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { useUploadTempFile } from '../../../../helpers/data'
@@ -78,7 +78,7 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
       }
 
       await Promise.all(waitFor)
-      history.push(nodeId2UrlPath(collId))
+      history.push(nodeGqlId2UrlPath(collId))
     }
   }, [category, createCollectionMut, createCollectionRelMut, description, history, image, title, uploadTempFile])
 
