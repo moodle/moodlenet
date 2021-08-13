@@ -1,6 +1,6 @@
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { isJust } from '@moodlenet/common/lib/utils/array'
-import { nodeId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useEffect, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
 import { getMaybeAssetRefUrl } from '../../../../helpers/data'
@@ -132,7 +132,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       },
       contributorCardProps: {
         avatarUrl: getMaybeAssetRefUrl(creator?.avatar) ?? '',
-        creatorProfileHref: href(creator ? nodeId2UrlPath(creator.id) : ''),
+        creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
       },
       categories: categoriesOptions,
