@@ -27,6 +27,7 @@ export const CreateCollectionStoryProps: CreateCollectionProps = {
     category: '',
     description: '',
     image: '',
+    // resources: [],
     title: '',
   }),
   imageUrl: '',
