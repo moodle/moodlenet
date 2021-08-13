@@ -8,7 +8,7 @@ const meta: ComponentMeta<typeof ContributorCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['ContributorCardStoryProps'],
+  excludeStories: ['ContributorCardStoryProps', 'Default'],
   decorators: [
     Story => (
       <div style={{ height: 100, width: 300 }}>

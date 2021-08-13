@@ -192,7 +192,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
   }, [creatorEdge])
 
   const { session } = useSession()
-
+  const isAuthenticated = !!session
   const isOwner = useMemo(() => {
     if (!(creator && session)) {
       return false
@@ -218,7 +218,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
           ? duration(creatorEdge.edge._created - new Date().valueOf(), 'milliseconds').humanize(true)
           : '?',
       },
-      resourceActionsCard: {},
+      isAuthenticated,
       tags: resourceData.collections.edges
         .map(_ => (_.node.__typename === 'Collection' && _.node.name) || null)
         .filter(isJust),
@@ -233,6 +233,6 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       updateResource: formik.submitForm,
     }
     return props
-  }, [resourceData, creator, creatorEdge, formBag, isOwner, liked, formik.submitForm])
+  }, [resourceData, formBag, isOwner, liked, creator, creatorEdge, isAuthenticated, formik.submitForm])
   return resourceProps && [resourceProps]
 }
