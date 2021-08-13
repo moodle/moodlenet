@@ -69,6 +69,7 @@ export type CreateEdgeInput = {
   Created?: Maybe<Scalars['Empty']>;
   Features?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
+  Likes?: Maybe<Scalars['Empty']>;
   Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   from: Scalars['ID'];
@@ -194,12 +195,13 @@ export type DeleteNodeMutationSuccess = {
   nodeId?: Maybe<Scalars['ID']>;
 };
 
-export type Edge = Created | Features | Follows | Pinned;
+export type Edge = Created | Features | Follows | Likes | Pinned;
 
 export type EdgeType =
   | 'Created'
   | 'Features'
   | 'Follows'
+  | 'Likes'
   | 'Pinned';
 
 export type EditCollectionInput = {
@@ -212,6 +214,7 @@ export type EditEdgeInput = {
   Created?: Maybe<Scalars['Empty']>;
   Features?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
+  Likes?: Maybe<Scalars['Empty']>;
   Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   id: Scalars['ID'];
@@ -481,6 +484,12 @@ export type License_RelCountArgs = {
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
+export type Likes = IEdge & {
+  __typename: 'Likes';
+  id: Scalars['ID'];
+  _created: Scalars['Timestamp'];
+};
+
 export type Mutation = {
   __typename: 'Mutation';
   activateUser: CreateSession;
@@ -664,7 +673,7 @@ export type RelPage = Page & {
 export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
-  edge: Created | Features | Follows | Pinned;
+  edge: Created | Features | Follows | Likes | Pinned;
   node: Collection | FileFormat | IscedField | IscedGrade | Language | License | Organization | Profile | Resource | ResourceType;
 };
 
@@ -778,6 +787,7 @@ export type UserSession = {
       "Created",
       "Features",
       "Follows",
+      "Likes",
       "Pinned"
     ],
     "EditEdgeMutationPayload": [
@@ -792,6 +802,7 @@ export type UserSession = {
       "Created",
       "Features",
       "Follows",
+      "Likes",
       "Pinned"
     ],
     "INode": [

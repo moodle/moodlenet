@@ -213,6 +213,12 @@ export const graphEdge2GqlEdge = (edge: GE.GraphEdge): GQL.Edge => {
       ...base,
     }
     return _edge
+  } else if (edge._type === 'Likes') {
+    const _edge: GQL.Likes = {
+      __typename: 'Likes',
+      ...base,
+    }
+    return _edge
   } else {
     return assertNever(edge, `graphEdge2GqlEdge: can't map unknown edge type '${(edge as any)?._type}''`)
   }
@@ -246,6 +252,12 @@ export const gqlEdge2GraphEdge = (edge: GQL.Edge): DistOmit<GE.GraphEdge, '_auth
   } else if (edge.__typename === 'Pinned') {
     const _edge: DistOmit<GE.Pinned, '_authId'> = {
       _type: 'Pinned',
+      ...base,
+    }
+    return _edge
+  } else if (edge.__typename === 'Likes') {
+    const _edge: DistOmit<GE.Likes, '_authId'> = {
+      _type: 'Likes',
       ...base,
     }
     return _edge
