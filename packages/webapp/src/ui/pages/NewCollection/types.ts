@@ -1,3 +1,5 @@
+import { NewResourceFormValues } from "../NewResource/types"
+
 export type Url = string
 export type Category = string
 export type NewCollectionFormValues = {
@@ -6,5 +8,5 @@ export type NewCollectionFormValues = {
   description: string
   category: Category
   image: Url | File | null
-  //addResources: Resource[]
+  resources: Pick<NewResourceFormValues, 'title' | 'type' | 'image' | 'description'>[]
 }
