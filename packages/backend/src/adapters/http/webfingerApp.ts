@@ -43,11 +43,11 @@ export const createWebfingerApp = ({ qmino, domain }: GQLAppConfig) => {
     }
     const profilePagePath = nodeIdentifierSlug2UrlPath(profile)
     const resp: WebFingerResp = {
-      subject: 'string',
+      subject: `MoodleNet user: ${profile.name}`,
       links: [
         {
           rel: 'http://webfinger.example/rel/profile-page',
-          href: `http://${domain}${profilePagePath}`, //FIXME: hardcoded protocol for MVP !!
+          href: `https://${domain}${profilePagePath}`, //FIXME: hardcoded protocol for MVP !!
         },
       ],
     }
