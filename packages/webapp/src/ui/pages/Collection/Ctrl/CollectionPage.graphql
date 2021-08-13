@@ -1,0 +1,83 @@
+query collectionPageData($collectionId: ID!) {
+  node(id: $collectionId) {
+    ... on Collection {
+      id
+      name
+      description
+      image
+
+      resourcesCount: _relCount(type: Features, target: Resource)
+      # followersCount: _relCount(type: Follow, target: Profile, inverse: true)
+
+      resources: _rel(type: Features, target: Resource) {
+        edges {
+          node {
+            ... on Resource {
+              id
+              name
+              image
+            }
+          }
+        }
+      }
+
+      creator: _rel(type: Created, target: Profile, inverse: true, page: { first: 1 }) {
+        edges {
+          edge {
+            _created
+          }
+          node {
+            ... on Profile {
+              id
+              name
+              avatar
+            }
+          }
+        }
+      }
+
+      categories: _rel(type: Features, target: IscedField) {
+        edges {
+          edge {
+            id
+          }
+          node {
+            ... on IscedField {
+              id
+              name
+              code
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation editCollection($id: ID!, $collInput: EditCollectionInput!) {
+  editNode(input: { id: $id, nodeType: Collection, Collection: $collInput }) {
+    ... on EditNodeMutationError {
+      type
+      details
+    }
+    ... on EditNodeMutationSuccess {
+      node {
+        ... on Collection {
+          id
+          name
+          description
+          image
+        }
+      }
+    }
+  }
+}
+
+mutation delCollectionRelation($edge: DeleteEdgeInput!) {
+  deleteEdge(input: $edge) {
+    ... on DeleteEdgeMutationError {
+      type
+      details
+    }
+  }
+}

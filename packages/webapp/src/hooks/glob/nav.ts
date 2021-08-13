@@ -1,6 +1,13 @@
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
-import { CreateNewResource, GlobalSearch, Landing, Login, Signup } from '@moodlenet/common/lib/webapp/sitemap/routes'
+import {
+  CreateNewCollection,
+  CreateNewResource,
+  GlobalSearch,
+  Landing,
+  Login,
+  Signup,
+} from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useCallback, useLayoutEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useSession } from '../../context/Global/Session'
@@ -12,6 +19,7 @@ export const mainPath = {
   landing: webappPath<Landing>('/', {}),
   search: webappPath<GlobalSearch>('/search', {}),
   createNewResource: webappPath<CreateNewResource>('/create-new-resource', {}),
+  createNewCollection: webappPath<CreateNewCollection>('/create-new-collection', {}),
 }
 
 export const useRedirectToBySession = ({

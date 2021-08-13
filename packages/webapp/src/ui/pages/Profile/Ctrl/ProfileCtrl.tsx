@@ -32,36 +32,36 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
         .map(({ id }) => ctrlHook(useResourceCardCtrl, { id })),
     [profile?.resources.edges],
   )
-  const profileProps = useMemo<ProfileProps | null>(
-    () =>
-      profile
-        ? {
-            headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
-            resourceCardPropsList,
-            collectionCardPropsList,
-            overallCardProps: {
-              followers: profile.followersCount,
-              resources: profile.resourcesCount,
-              years: 1,
-              kudos: 10,
-            },
-            profileCardProps: {
-              avatarUrl:
-                getMaybeAssetRefUrl(profile.avatar) ?? `https://picsum.photos/seed/${id.split('/')[1]}_avatar/200/300`,
-              backgroundUrl:
-                getMaybeAssetRefUrl(profile.image) ?? `https://picsum.photos/seed/${id.split('/')[1]}_bg/600/400`,
-              description: profile.bio,
-              firstName: profile.firstName ?? '',
-              lastName: profile.lastName ?? '',
-              location: profile.location ?? '',
-              organizationName: localOrg.name,
-              siteUrl: profile.siteUrl ?? '',
-              username: profile.name,
-            },
-            username: profile.name,
-          }
-        : null,
-    [collectionCardPropsList, id, localOrg.name, profile, resourceCardPropsList],
-  )
+  const profileProps = useMemo<ProfileProps | null>(() => {
+    if (!profile) {
+      return null
+    }
+    const props: ProfileProps = {
+      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
+      resourceCardPropsList,
+      collectionCardPropsList,
+      overallCardProps: {
+        followers: profile.followersCount,
+        resources: profile.resourcesCount,
+        years: 1,
+        kudos: 10,
+      },
+      profileCardProps: {
+        avatarUrl:
+          getMaybeAssetRefUrl(profile.avatar) ?? `https://picsum.photos/seed/${id.split('/')[1]}_avatar/200/300`,
+        backgroundUrl:
+          getMaybeAssetRefUrl(profile.image) ?? `https://picsum.photos/seed/${id.split('/')[1]}_bg/600/400`,
+        description: profile.bio,
+        firstName: profile.firstName ?? '',
+        lastName: profile.lastName ?? '',
+        location: profile.location ?? '',
+        organizationName: localOrg.name,
+        siteUrl: profile.siteUrl ?? '',
+        username: profile.name,
+      },
+      username: profile.name,
+    }
+    return props
+  }, [collectionCardPropsList, id, localOrg.name, profile, resourceCardPropsList])
   return profileProps && [profileProps]
 }

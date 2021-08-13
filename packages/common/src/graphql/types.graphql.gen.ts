@@ -63,7 +63,6 @@ export type CreateCollectionInput = {
   name: Scalars['String'];
   description: Scalars['String'];
   image: AssetRefInput;
-  slug: Scalars['String'];
 };
 
 export type CreateEdgeInput = {
@@ -206,8 +205,7 @@ export type EdgeType =
 export type EditCollectionInput = {
   name: Scalars['String'];
   description: Scalars['String'];
-  image: AssetRefInput;
-  slug: Scalars['String'];
+  image?: Maybe<AssetRefInput>;
 };
 
 export type EditEdgeInput = {
