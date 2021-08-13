@@ -8,7 +8,7 @@ const meta: ComponentMeta<typeof ContributorCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['ContributorCardStoryProps'],
+  excludeStories: ['ContributorCardStoryProps', 'Default'],
   decorators:[
     (Story)=>(<div style={{height:100,width:300}}><Story/></div>)
   ]
@@ -17,7 +17,6 @@ const meta: ComponentMeta<typeof ContributorCard> = {
 export const ContributorCardStoryProps: ContributorCardProps = {
   avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
   displayName: 'Juanito Rodriguez',
-  timeSinceCreation: '4 hours ago',
   creatorProfileHref: href('Pages/Profile/LoggedIn')
 }
 
