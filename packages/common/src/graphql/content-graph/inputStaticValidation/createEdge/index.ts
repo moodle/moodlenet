@@ -8,8 +8,9 @@ const inputObjectValidators: {
 } = {
   Created: neverCreate('Created'),
   Features: object().required(),
-  Pinned: neverCreate('Pinned'),
-  Follows: neverCreate('Follows'),
+  Pinned: object().required(),
+  Follows: object().required(),
+  Likes: object().required(),
 }
 
 export const validateCreateEdgeInput = (input: CreateEdgeInput): Just<CreateEdgeInput[EdgeType]> | Error => {

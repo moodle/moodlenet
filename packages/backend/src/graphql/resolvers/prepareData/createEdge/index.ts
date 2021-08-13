@@ -10,10 +10,18 @@ const edgeDocumentDataBaker: {
     throw new Error('GQL create Created not implemented')
   },
   async Pinned(/* input, qmino */) {
-    throw new Error('GQL create Pinned not implemented')
+    const newPinnedEdgeInput: NewEdgeInput = {
+      _type: 'Pinned',
+    }
+
+    return newPinnedEdgeInput
   },
   async Follows(/* input, qmino */) {
-    throw new Error('GQL create Follows not implemented')
+    const newFollowsEdgeInput: NewEdgeInput = {
+      _type: 'Follows',
+    }
+
+    return newFollowsEdgeInput
   },
   async Features(/* input, qmino */) {
     const newFeaturesEdgeInput: NewEdgeInput = {
@@ -21,6 +29,13 @@ const edgeDocumentDataBaker: {
     }
 
     return newFeaturesEdgeInput
+  },
+  async Likes(/* input, qmino */) {
+    const newLikesEdgeInput: NewEdgeInput = {
+      _type: 'Likes',
+    }
+
+    return newLikesEdgeInput
   },
 }
 

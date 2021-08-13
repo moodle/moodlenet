@@ -36,6 +36,9 @@ export type ResourcePageDataQuery = (
           { __typename: 'Follows' }
           & Pick<Types.Follows, '_created'>
         ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, '_created'>
+        ) | (
           { __typename: 'Pinned' }
           & Pick<Types.Pinned, '_created'>
         ), node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | (
@@ -56,6 +59,9 @@ export type ResourcePageDataQuery = (
         ) | (
           { __typename: 'Follows' }
           & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, 'id'>
         ) | (
           { __typename: 'Pinned' }
           & Pick<Types.Pinned, 'id'>
@@ -78,6 +84,9 @@ export type ResourcePageDataQuery = (
           { __typename: 'Follows' }
           & Pick<Types.Follows, 'id'>
         ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, 'id'>
+        ) | (
           { __typename: 'Pinned' }
           & Pick<Types.Pinned, 'id'>
         ), node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | (
@@ -98,6 +107,9 @@ export type ResourcePageDataQuery = (
         ) | (
           { __typename: 'Follows' }
           & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, 'id'>
         ) | (
           { __typename: 'Pinned' }
           & Pick<Types.Pinned, 'id'>
@@ -120,6 +132,9 @@ export type ResourcePageDataQuery = (
           { __typename: 'Follows' }
           & Pick<Types.Follows, 'id'>
         ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, 'id'>
+        ) | (
           { __typename: 'Pinned' }
           & Pick<Types.Pinned, 'id'>
         ), node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | (
@@ -140,6 +155,9 @@ export type ResourcePageDataQuery = (
         ) | (
           { __typename: 'Follows' }
           & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, 'id'>
         ) | (
           { __typename: 'Pinned' }
           & Pick<Types.Pinned, 'id'>
