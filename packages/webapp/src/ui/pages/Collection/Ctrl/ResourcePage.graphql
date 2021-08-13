@@ -1,0 +1,144 @@
+query ResourcePageData($resourceId: ID!) {
+  node(id: $resourceId) {
+    ... on Resource {
+      id
+      name
+      description
+      image
+      content
+      originalCreationDate
+
+      # collectionsCount: _relCount(type: Features, target: Collection, inverse: true)
+      collections: _rel(type: Features, target: Collection, page: { first: 5 }, inverse: true) {
+        edges {
+          node {
+            ... on Collection {
+              id
+              name
+              image
+            }
+          }
+        }
+      }
+
+      creator: _rel(type: Created, target: Profile, inverse: true, page: { first: 1 }) {
+        edges {
+          edge {
+            _created
+          }
+          node {
+            ... on Profile {
+              id
+              name
+              avatar
+            }
+          }
+        }
+      }
+
+      categories: _rel(type: Features, target: IscedField) {
+        edges {
+          edge {
+            id
+          }
+          node {
+            ... on IscedField {
+              id
+              name
+              code
+            }
+          }
+        }
+      }
+
+      grades: _rel(type: Features, target: IscedGrade) {
+        edges {
+          edge {
+            id
+          }
+          node {
+            ... on IscedGrade {
+              id
+              name
+              code
+            }
+          }
+        }
+      }
+
+      types: _rel(type: Features, target: ResourceType) {
+        edges {
+          edge {
+            id
+          }
+          node {
+            ... on ResourceType {
+              id
+              name
+              code
+            }
+          }
+        }
+      }
+
+      languages: _rel(type: Features, target: Language) {
+        edges {
+          edge {
+            id
+          }
+          node {
+            ... on Language {
+              id
+              name
+            }
+          }
+        }
+      }
+
+      licenses: _rel(type: Features, target: License) {
+        edges {
+          edge {
+            id
+          }
+          node {
+            ... on License {
+              id
+              name
+              code
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation editResource($id: ID!, $resInput: EditResourceInput!) {
+  editNode(input: { id: $id, nodeType: Resource, Resource: $resInput }) {
+    ... on EditNodeMutationError {
+      type
+      details
+    }
+    ... on EditNodeMutationSuccess {
+      node {
+        ... on Resource {
+          id
+          name
+          description
+          image
+          content
+          originalCreationDate
+        }
+      }
+    }
+  }
+}
+
+mutation delResourceRelation($edge: DeleteEdgeInput!) {
+  deleteEdge(input: $edge) {
+    ... on DeleteEdgeMutationError {
+      type
+      details
+    }
+  }
+}

@@ -13,12 +13,16 @@
   cursor: pointer;
   white-space: nowrap;
 
-  &.orange,
-  &.grey {
-    border-radius: 45px;
-    font-weight: bold;
-    font-size: 12px;
-    height: 30px;
+  &.disabled {
+    cursor: default;
+    user-select: none;
+    color: #e8e8e8;
+    border: 2px solid #e8e8e8;
+  }
+
+  &.red {
+    color: red;
+    border: 2px solid red;
   }
 
   &.orange {
@@ -44,6 +48,12 @@
 
     &.hover-red {
       color: red;
+      border: 2px solid red;
+    }
+
+    &.hover-filled-red {
+      background-color: red;
+      color: white;
       border: 2px solid red;
     }
   }
