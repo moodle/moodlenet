@@ -49,7 +49,7 @@ export const Search = withCtrl<SearchProps>(
                 content={[
                   <Checkbox
                     onChange={setFilterCB}
-                    label={t`Subjects`}
+                    label={t`Categories`}
                     name="Subjects"
                     key="Subjects"
                     checked={filters.Subjects}
@@ -92,7 +92,7 @@ export const Search = withCtrl<SearchProps>(
                 >
                   <div className="card-header">
                     <div className="title">
-                      <Trans>Subjects</Trans>
+                      <Trans>Categories</Trans>
                     </div>
                     <SecondaryButton>
                       <Trans>See all</Trans>
