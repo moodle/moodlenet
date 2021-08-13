@@ -1,6 +1,7 @@
 import { edgeTypes } from '@moodlenet/common/lib/content-graph/types/edge'
 import { nodeTypes } from '@moodlenet/common/lib/content-graph/types/node'
 import { Database } from 'arangojs'
+import { ensureEdgeIndexes_0_0_1 } from './ensureEdgeIndexes0_0_1'
 
 export const createDBCollections = async ({ db }: { db: Database }) => {
   console.log(`creating node collections`)
@@ -70,56 +71,7 @@ export const createDBCollections = async ({ db }: { db: Database }) => {
     edgeTypes.map(async edgeCollName => {
       console.log(`creating edge collection ${edgeCollName}`)
       const edgeCollection = await db.createEdgeCollection(edgeCollName)
-
-      await edgeCollection.ensureIndex({
-        type: 'persistent',
-        name: 'fromType',
-        fields: ['_fromType'],
-      })
-
-      await edgeCollection.ensureIndex({
-        type: 'persistent',
-        name: 'toType',
-        fields: ['_toType'],
-      })
-
-      await edgeCollection.ensureIndex({
-        type: 'persistent',
-        name: 'fromType-toType',
-        fields: ['_fromType', '_toType'],
-      })
-
-      await edgeCollection.ensureIndex({
-        type: 'persistent',
-        name: 'from-toType',
-        fields: ['_from', '_toType'],
-      })
-
-      await edgeCollection.ensureIndex({
-        type: 'persistent',
-        name: 'fromType-to',
-        fields: ['_fromType', '_to'],
-      })
-
-      await edgeCollection.ensureIndex({
-        type: 'persistent',
-        unique: true,
-        name: 'from-to',
-        fields: ['_from', '_to'],
-      })
-
-      await edgeCollection.ensureIndex({
-        type: 'persistent',
-        name: 'fromType-from',
-        fields: ['_fromType', '_from'],
-      })
-
-      await edgeCollection.ensureIndex({
-        type: 'persistent',
-        name: 'toType-to',
-        fields: ['_toType', '_to'],
-      })
-
+      await ensureEdgeIndexes_0_0_1(edgeCollection)
       return edgeCollection
     }),
   )
