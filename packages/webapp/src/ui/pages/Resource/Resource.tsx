@@ -17,17 +17,16 @@ import { getResourceColorType } from '../../types'
 import { DropdownField, FormatDropdown } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
-import { ResourceActionsCard, ResourceActionsCardProps } from './ResourceActionsCard/ResourceActionsCard'
 import './styles.scss'
 
 export type ResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
+  isAuthenticated: boolean
   isOwner: boolean
   title: string
   liked: boolean
   tags: Array<string>
   contributorCardProps: ContributorCardProps
-  resourceActionsCard: ResourceActionsCardProps
   formBag: FormikBag<NewResourceFormValues>
   types: DropdownField
   levels: DropdownField
@@ -43,11 +42,11 @@ export type ResourceProps = {
 export const Resource = withCtrl<ResourceProps>(
   ({
     headerPageTemplateProps,
+    isAuthenticated,
     isOwner,
     liked,
     tags,
     contributorCardProps,
-    resourceActionsCard, //FIXME: What this ?
     formBag,
     types,
     levels,
@@ -77,6 +76,14 @@ export const Resource = withCtrl<ResourceProps>(
         </div>
       )
     })
+
+
+    const actions = (
+      <Card className="resource-action-card" hideBorderWhenSmall={true}>
+        <PrimaryButton disabled={!isAuthenticated}><Trans>Send to Moodle</Trans></PrimaryButton>
+        <SecondaryButton disabled={!isAuthenticated}><Trans>Add to Collection</Trans></SecondaryButton>
+      </Card>
+    )
 
     const [form, formAttrs] = formBag
     const setFieldValue = form.setFieldValue
@@ -244,20 +251,20 @@ export const Resource = withCtrl<ResourceProps>(
               </Card>
               <div className="resource-footer">
                 <div className="left-column">
-                  <ContributorCard {...contributorCardProps} />
-                  <ResourceActionsCard {...resourceActionsCard} />
+                { !isOwner && <ContributorCard {...contributorCardProps} />}
+                  {actions}
                 </div>
                 <div className="right-column">{extraDetails}</div>
                 <div className="one-column">
-                  <ContributorCard {...contributorCardProps} />
-                  <ResourceActionsCard {...resourceActionsCard} />
+                { !isOwner && <ContributorCard {...contributorCardProps} />}
+                  {actions}
                   {extraDetails}
                 </div>
               </div>
             </div>
             <div className="side-column">
-              <ContributorCard {...contributorCardProps} />
-              <ResourceActionsCard {...resourceActionsCard} />
+            { !isOwner && <ContributorCard {...contributorCardProps} />}
+              {actions}
               {extraDetails}
             </div>
           </div>
