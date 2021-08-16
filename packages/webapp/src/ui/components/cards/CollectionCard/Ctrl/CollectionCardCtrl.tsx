@@ -16,10 +16,11 @@ export const useCollectionCardCtrl: CtrlHook<CollectionCardProps, CollectionCard
     () =>
       collectionNode && collectionNode.__typename === 'Collection'
         ? {
-            organization: null ?? localOrg.name,
+            organization: localOrg.name,
             title: collectionNode.name,
             imageUrl: getMaybeAssetRefUrlOrDefaultImage(collectionNode.image, id, 'image'),
             collectionHref: href(nodeGqlId2UrlPath(id)),
+            key: id, //FIXME: propagate key  properly with
           }
         : null,
     [collectionNode, id, localOrg.name],
