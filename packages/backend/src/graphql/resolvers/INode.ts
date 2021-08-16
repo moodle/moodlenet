@@ -1,4 +1,5 @@
 import * as GQLTypes from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { isJust } from '@moodlenet/common/lib/utils/array'
 import { gqlNodeId2GraphNodeIdentifier } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { QMino } from '../../lib/qmino'
 import * as traversePorts from '../../ports/content-graph/traverseNodeRel'
@@ -25,7 +26,7 @@ export const getINodeResolver = ({
   >
 } => {
   return {
-    async _rel(node, { target, type, inverse, page }, ctx) {
+    async _rel(node, { target, type, inverse, page, targetIds }, ctx) {
       const parsed = gqlNodeId2GraphNodeIdentifier(node.id)
       if (!parsed) {
         throw `FIXME _rel`
@@ -45,6 +46,7 @@ export const getINodeResolver = ({
             last: page?.last ?? 20,
           },
           targetNodeType: target,
+          targetIds: targetIds?.map(id => gqlNodeId2GraphNodeIdentifier(id)).filter(isJust),
         }),
         { timeout: 5000 },
       )

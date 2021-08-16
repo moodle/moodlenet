@@ -12,14 +12,22 @@ export const Qmino = (transport: QM.Transport): QM.QMino => {
     if (actionExtract.type !== 'query') {
       throw new Error(`cannot query an action [${actionExtract.id}] of type ${actionExtract.type}`)
     }
-    return transport.send(actionExtract.id, actionExtract.args, waitsForResponse) as Promise<Res>
+    return transport.send(actionExtract.id, actionExtract.args, waitsForResponse).catch(e => {
+      console.error(`Rejection on ${actionExtract.id}`)
+      console.error(e instanceof Error ? e.stack : e)
+      throw e
+    }) as Promise<Res>
   }
   const callSync = async <Res>(action: QM.QMAction<any, Res>, waitsForResponse: QM.WaitsForResponse) => {
     const actionExtract = QM.extractAction(transport, action)
     if (actionExtract.type !== 'command') {
       throw new Error(`cannot callSync an action [${actionExtract.id}] of type ${actionExtract.type}`)
     }
-    return transport.send(actionExtract.id, actionExtract.args, waitsForResponse) as Promise<Res>
+    return transport.send(actionExtract.id, actionExtract.args, waitsForResponse).catch(e => {
+      console.error(`Rejection on ${actionExtract.id}`)
+      console.error(e instanceof Error ? e.stack : e)
+      throw e
+    }) as Promise<Res>
   }
 
   return {
