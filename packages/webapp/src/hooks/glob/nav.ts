@@ -7,6 +7,7 @@ import {
   Landing,
   Login,
   Signup,
+  TermsAndConditions,
 } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useCallback, useLayoutEffect } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -14,6 +15,7 @@ import { useSession } from '../../context/Global/Session'
 import { UserSessionFragment } from '../../context/Global/Session/session.gen'
 
 export const mainPath = {
+  termsAndConditionsHref: webappPath<TermsAndConditions>('/terms', {}),
   login: webappPath<Login>('/login', {}),
   signUp: webappPath<Signup>('/signup', {}),
   landing: webappPath<Landing>('/', {}),
