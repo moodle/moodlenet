@@ -1,6 +1,6 @@
 import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
-import { nodeId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { Reducer, useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { useHistory } from 'react-router'
 import { useSession } from '../../../../context/Global/Session'
@@ -265,7 +265,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
               })
               .concat([createLangRelPr, createReLicenRelPr, createTypeRelPr, createGradeRelPr, createRIscedRelPr]),
           )
-          push(nodeId2UrlPath(resId))
+          push(nodeGqlId2UrlPath(resId))
         }
       }
     }

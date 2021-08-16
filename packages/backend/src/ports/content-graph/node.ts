@@ -1,7 +1,6 @@
 import { GraphEdge } from '@moodlenet/common/lib/content-graph/types/edge'
 import {
   GraphNode,
-  GraphNodeByType,
   GraphNodeIdentifier,
   GraphNodeIdentifierSlug,
   GraphNodeType,
@@ -16,7 +15,7 @@ import { CreateEdgeInput } from './edge'
 
 // query by id
 export type BySlugAdapter = {
-  getNodeBySlug: <Type extends GraphNodeType>(_: GraphNodeIdentifierSlug<Type>) => Promise<Maybe<GraphNodeByType<Type>>>
+  getNodeBySlug: <Type extends GraphNodeType>(_: GraphNodeIdentifierSlug<Type>) => Promise<Maybe<GraphNode<Type>>>
 }
 
 export type BySlugInput<Type extends GraphNodeType> = GraphNodeIdentifierSlug<Type> & {
@@ -75,9 +74,9 @@ export type EditNodeAdapter = {
   updateNode: <N extends GraphNodeType = GraphNodeType>(_: {
     nodeData: EditNodeData<N>
     nodeId: GraphNodeIdentifier
-  }) => Promise<GraphNodeByType<N> | undefined>
+  }) => Promise<GraphNode<N> | undefined>
 }
-export type EditNodeData<N extends GraphNodeType = GraphNodeType> = DistOmit<GraphNodeByType<N>, '_permId' | '_slug'>
+export type EditNodeData<N extends GraphNodeType = GraphNodeType> = DistOmit<GraphNode<N>, '_permId' | '_slug'>
 export type EditNode<N extends GraphNodeType = GraphNodeType> = {
   nodeData: EditNodeData<N>
   nodeId: GraphNodeIdentifier
