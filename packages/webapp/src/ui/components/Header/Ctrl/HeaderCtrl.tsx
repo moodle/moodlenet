@@ -1,4 +1,4 @@
-import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { nodeId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useMemo } from 'react'
 import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../context/Global/Session'
@@ -21,7 +21,7 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
   const headerProps = useMemo<HeaderProps>(() => {
     const me: HeaderPropsIdle['me'] = session
       ? {
-          myProfileHref: href(nodeGqlId2UrlPath(session.profile.id)),
+          myProfileHref: href(nodeId2UrlPath(session.profile.id)),
           avatar: getMaybeAssetRefUrl(session.profile.avatar) ?? '',
           name: session.profile.name,
           logout,

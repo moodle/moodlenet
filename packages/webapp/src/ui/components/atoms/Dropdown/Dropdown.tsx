@@ -127,9 +127,6 @@ export const Dropdown: FC<DropdownProps> = ({
     const filter = (value ? value : dropdownButton.current?.value)?.toUpperCase()
     const div = dropdownContent.current
     let length = 0
-    //FIXME: can't call this way as div may be null
-    // Array.prototype.slice.call(null) throws
-    // TSC can't detect issues on these hacks ( `this` substitution )
     Array.prototype.slice.call(div?.getElementsByClassName('option')).forEach((e, i) => {
       const txtValue = e.innerText.toUpperCase()
       if (txtValue.indexOf(filter) > -1) {

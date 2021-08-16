@@ -1,8 +1,8 @@
-import { GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import { GraphNodeByType, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
 import { GlobalSearchNodeType, GlobalSearchSortBy } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
-import { AqlGraphNodeByType } from '../types'
+import { AqlGraphNode } from '../types'
 import { forwardSkipLimitPagination } from './helpers'
 
 export const globalSearchQuery = ({
@@ -30,7 +30,7 @@ export const globalSearchQuery = ({
       ? '0'
       : '(1 + (node._relCount.Likes.from.Profile || 0) + (node._relCount.Follows.from.Profile || 0))'
 
-  const query = aq<AqlGraphNodeByType<GlobalSearchNodeType>>(`
+  const query = aq<AqlGraphNode<GraphNodeByType<GlobalSearchNodeType>>>(`
     let searchTerm = ${aql_txt}
       FOR node IN SearchView
         SEARCH ANALYZER(

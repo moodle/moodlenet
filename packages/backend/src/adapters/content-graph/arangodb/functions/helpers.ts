@@ -1,6 +1,6 @@
-import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphEdgeByType, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
 import {
-  GraphNode,
+  GraphNodeByType,
   GraphNodeIdentifier,
   GraphNodeIdentifierPerm,
   GraphNodeIdentifierSlug,
@@ -232,7 +232,7 @@ export const getAqlNodeByGraphNodeIdentifier = (identifier: GraphNodeIdentifier)
 export const aqlGraphNode2GraphNode = <T extends GraphNodeType>(aqlGraphNode: AqlGraphNodeByType<T>) => {
   // console.log(`aqlGraphNode2GraphNode ${aqlGraphNode._id}`, aqlGraphNode)
   const [__type, __permId] = aqlGraphNode._id.split('/')
-  const graphNode: GraphNode<T> = {
+  const graphNode: GraphNodeByType<T> = {
     _type: __type! as T,
     _permId: __permId!,
     ...(aqlGraphNode as any),
@@ -240,7 +240,7 @@ export const aqlGraphNode2GraphNode = <T extends GraphNodeType>(aqlGraphNode: Aq
   return graphNode
 }
 
-export const graphNode2AqlGraphNode = <T extends GraphNodeType>(graphNode: GraphNode<T>) => {
+export const graphNode2AqlGraphNode = <T extends GraphNodeType>(graphNode: GraphNodeByType<T>) => {
   const _key = graphNode._permId
   const _id = `${graphNode._type}/${graphNode._permId}`
   const aqlGraphNode: AqlGraphNodeByType<T> = {
@@ -253,7 +253,7 @@ export const graphNode2AqlGraphNode = <T extends GraphNodeType>(graphNode: Graph
 
 export const aqlGraphEdge2GraphEdge = <T extends GraphEdgeType>(aqlGraphEdge: AqlGraphEdgeByType<T>) => {
   const [__type, id] = aqlGraphEdge._id.split('/')
-  const graphEdge: GraphEdge<T> = {
+  const graphEdge: GraphEdgeByType<T> = {
     _type: __type! as T,
     id,
     ...(aqlGraphEdge as any),

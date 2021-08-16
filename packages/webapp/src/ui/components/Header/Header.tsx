@@ -111,7 +111,7 @@ export const Header = withCtrl<HeaderProps>(props => {
                   hoverElement={
                     <PrimaryButton>
                       <Link href={loginHref}>
-                        <Trans>Login</Trans>
+                        <Trans>Sign in</Trans>
                       </Link>
                       <PersonIcon />
                     </PrimaryButton>
@@ -122,7 +122,7 @@ export const Header = withCtrl<HeaderProps>(props => {
               <div className="signup-btn">
                 <Link href={signUpHref}>
                   <TertiaryButton>
-                    <Trans>Sign up</Trans>
+                    <Trans>Join now</Trans>
                   </TertiaryButton>
                 </Link>
               </div>
