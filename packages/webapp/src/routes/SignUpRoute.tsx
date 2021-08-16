@@ -5,7 +5,7 @@ import { Signup } from '../ui/pages/Access/Signup/Signup'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const SignupRouteComponent: RouteFC<Routes.Signup> = (/* { match } */) => {
-  const props = ctrlHook(useSignupCtrl, {})
+  const props = ctrlHook(useSignupCtrl, {}, 'signup-route')
   return <Signup {...props} />
 }
 

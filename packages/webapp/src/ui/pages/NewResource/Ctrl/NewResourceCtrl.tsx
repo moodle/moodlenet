@@ -319,7 +319,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
 
   const newResourceProps = useMemo<NewResourceProps>(() => {
     return {
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
+      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
       stepProps: { ...stepProps, nextStep, imageUrl }, //FIXME: stepProps are created in `nextStep()`, so they're static
     }
   }, [nextStep, stepProps, imageUrl])
