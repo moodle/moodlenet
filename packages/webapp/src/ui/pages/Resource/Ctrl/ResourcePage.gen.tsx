@@ -5,6 +5,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
 export type ResourcePageDataQueryVariables = Types.Exact<{
   resourceId: Types.Scalars['ID'];
+  myProfileId?: Types.Maybe<Array<Types.Scalars['ID']> | Types.Scalars['ID']>;
 }>;
 
 
@@ -13,7 +14,28 @@ export type ResourcePageDataQuery = (
   & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
     { __typename: 'Resource' }
     & Pick<Types.Resource, 'id' | 'name' | 'description' | 'image' | 'content' | 'originalCreationDate'>
-    & { collections: (
+    & { myLike: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { edge: (
+          { __typename: 'Created' }
+          & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Features' }
+          & Pick<Types.Features, 'id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, 'id'>
+        ) | (
+          { __typename: 'Pinned' }
+          & Pick<Types.Pinned, 'id'>
+        ) }
+      )> }
+    ), collections: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
@@ -205,7 +227,7 @@ export type DelResourceRelationMutation = (
 
 
 export const ResourcePageDataDocument = gql`
-    query ResourcePageData($resourceId: ID!) {
+    query ResourcePageData($resourceId: ID!, $myProfileId: [ID!]) {
   node(id: $resourceId) {
     ... on Resource {
       id
@@ -214,6 +236,19 @@ export const ResourcePageDataDocument = gql`
       image
       content
       originalCreationDate
+      myLike: _rel(
+        type: Likes
+        target: Profile
+        inverse: true
+        page: {first: 1}
+        targetIds: $myProfileId
+      ) {
+        edges {
+          edge {
+            id
+          }
+        }
+      }
       collections: _rel(
         type: Features
         target: Collection
@@ -331,6 +366,7 @@ export const ResourcePageDataDocument = gql`
  * const { data, loading, error } = useResourcePageDataQuery({
  *   variables: {
  *      resourceId: // value for 'resourceId'
+ *      myProfileId: // value for 'myProfileId'
  *   },
  * });
  */

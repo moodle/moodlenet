@@ -11,7 +11,7 @@ import {
   LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown
+  YearsDropdown,
 } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
@@ -72,6 +72,7 @@ export const ResourceStoryProps: ResourceProps = {
   categories: CategoriesDropdown,
   licenses: { ...LicenseDropdown, label: t`License` },
   updateResource: action('updateResource'),
+  toggleLike: action('toggleLike'),
 }
 
 export const ResourceLoggedOutStoryProps: ResourceProps = {
@@ -89,7 +90,7 @@ export const ResourceLoggedOutStoryProps: ResourceProps = {
       },
     },
   },
-  isAuthenticated: false
+  isAuthenticated: false,
 }
 
 export const ResourceLoggedInStoryProps: ResourceProps = {
