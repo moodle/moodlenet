@@ -10,10 +10,12 @@ import { ProfileRoute } from './ProfileRoute'
 import { ResourceRoute } from './ResourceRoute'
 import { SearchRoute } from './SearchRoute'
 import { SignupRoute } from './SignUpRoute'
+import { TermsAndConditionsSignupRoute } from './TermsAndConditionStaticHtmlRoute'
 
 export const MNRouter: FC = (/* { children } */) => {
   return (
     <Switch>
+      <Route {...TermsAndConditionsSignupRoute} />
       <Route {...SearchRoute} />
       <Route {...NewResourceRoute} />
       <Route {...NewCollectionRoute} />
