@@ -2,7 +2,7 @@ import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { isJust } from '@moodlenet/common/lib/utils/array'
 import { useMemo } from 'react'
 import { useLocalInstance } from '../../../../context/Global/LocalInstance'
-import { getMaybeAssetRefUrl } from '../../../../helpers/data'
+import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
@@ -50,10 +50,8 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
         kudos,
       },
       profileCardProps: {
-        avatarUrl:
-          getMaybeAssetRefUrl(profile.avatar) ?? `https://picsum.photos/seed/${id.split('/')[1]}_avatar/200/300`,
-        backgroundUrl:
-          getMaybeAssetRefUrl(profile.image) ?? `https://picsum.photos/seed/${id.split('/')[1]}_bg/600/400`,
+        avatarUrl: getMaybeAssetRefUrlOrDefaultImage(profile.avatar, id, 'icon'),
+        backgroundUrl: getMaybeAssetRefUrlOrDefaultImage(profile.image, id, 'image'),
         description: profile.bio,
         firstName: profile.firstName ?? '',
         lastName: profile.lastName ?? '',
