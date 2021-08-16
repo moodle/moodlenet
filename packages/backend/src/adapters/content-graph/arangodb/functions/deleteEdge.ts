@@ -4,10 +4,10 @@ import { AqlGraphEdge } from '../types'
 
 export const deleteEdgeQ = ({ _type, id }: GraphEdgeIdentifier) => {
   const q = aq<null | AqlGraphEdge>(`
-    REMOVE { _key: ${aqlstr(id)} } IN ${_type}
+    REMOVE { _key: ${aqlstr(id)} } IN ${_type} OPTIONS { ignoreErrors: true }
 
     RETURN OLD
   `)
-  console.log(q)
+  // console.log(q)
   return q
 }

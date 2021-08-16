@@ -10,7 +10,7 @@ export const getMNExecEnvMiddleware =
     req.mnHttpContext = {
       authSessionEnv: getSessionEnv({ headerToken, jwtPublicKey, jwtVerifyOpts }),
     }
-    console.log({ mnHttpSessionEnv: req.mnHttpContext })
+    // console.log({ mnHttpSessionEnv: req.mnHttpContext })
     next()
   }
 

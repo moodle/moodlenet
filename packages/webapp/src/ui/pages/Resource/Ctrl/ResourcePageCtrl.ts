@@ -36,8 +36,12 @@ import { useDelResourceRelationMutation, useEditResourceMutation, useResourcePag
 
 export type ResourceCtrlProps = { id: ID }
 export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id }) => {
+  const { session } = useSession()
+  const isAuthenticated = !!session
   // const { org: localOrg } = useLocalInstance()
-  const { data, refetch } = useResourcePageDataQuery({ variables: { resourceId: id } })
+  const { data, refetch } = useResourcePageDataQuery({
+    variables: { resourceId: id, myProfileId: session ? [session.profile.id] : [] },
+  })
   const resourceData = data?.node?.__typename === 'Resource' ? data.node : null
   const [createResourceRelMut /* , createResourceRelMutRes */] = useCreateResourceRelationMutation()
   const [delResourceRelMut /* , delResourceRelMutRes */] = useDelResourceRelationMutation()
@@ -191,8 +195,6 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     return creatorEdge?.node.__typename === 'Profile' ? creatorEdge?.node : undefined
   }, [creatorEdge])
 
-  const { session } = useSession()
-  const isAuthenticated = !!session
   const isOwner = useMemo(() => {
     if (!(creator && session)) {
       return false

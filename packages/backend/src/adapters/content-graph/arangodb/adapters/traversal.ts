@@ -13,8 +13,11 @@ const pageItemMapper = mapPageItem(({ edge, node }: { edge: AqlGraphEdge; node: 
 export const getTraverseNodeRelAdapter = (db: ContentGraphDB): TraverseNodeRelAdapter => ({
   async traverseNodeRelations(input) {
     const { afterPageQuery, beforePageQuery } = traverseEdgesQ(input)
-    const afterItems = (afterPageQuery ? await getAllResults(afterPageQuery, db) : []).map(pageItemMapper)
-    const beforeItems = (beforePageQuery ? await getAllResults(beforePageQuery, db) : []).map(pageItemMapper)
+    const afterItemsQres = afterPageQuery ? await getAllResults(afterPageQuery, db) : []
+    const beforeItemsQres = beforePageQuery ? await getAllResults(beforePageQuery, db) : []
+    // console.log({ afterPageQuery, beforePageQuery, afterItemsQres, beforeItemsQres })
+    const afterItems = afterItemsQres.map(pageItemMapper)
+    const beforeItems = beforeItemsQres.map(pageItemMapper)
     const page = makeAfterBeforePage({
       afterItems,
       beforeItems,

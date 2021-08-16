@@ -105,12 +105,12 @@ export const getGQLResolvers = ({
         const mActiveUser = await qmino.query(userPorts.getActiveByEmail({ email: ctx.authSessionEnv.user.email }), {
           timeout: 5000,
         })
-        console.log({ mActiveUser })
+        // console.log({ mActiveUser })
         if (!mActiveUser) {
           return null
         }
         const mProfile = await qmino.query(profilePorts.getByAuthId({ authId: mActiveUser.authId }), { timeout: 5000 })
-        console.log({ mProfile })
+        // console.log({ mProfile })
         if (!mProfile) {
           return null
         }
