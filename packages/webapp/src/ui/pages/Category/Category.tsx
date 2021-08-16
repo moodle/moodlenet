@@ -1,24 +1,29 @@
-import { Trans } from '@lingui/macro';
-import { useState } from 'react';
-import Card from '../../components/atoms/Card/Card';
-import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton';
-import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton';
-import ListCard from '../../components/cards/ListCard/ListCard';
-import { OverallCardProps } from '../../components/cards/OverallCard/OverallCard';
-import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard';
-import { CP, withCtrl } from '../../lib/ctrl';
-import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate';
-import { ContributorCardProps } from './ContributorCard/ContributorCard';
-import './styles.scss';
+import { Trans } from '@lingui/macro'
+import { useState } from 'react'
+import Card from '../../components/atoms/Card/Card'
+import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
+import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
+import { CollectionCard, CollectionCardProps } from '../../components/cards/CollectionCard/CollectionCard'
+import ListCard from '../../components/cards/ListCard/ListCard'
+import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
+import { CP, withCtrl } from '../../lib/ctrl'
+import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
+import { CategoryOverallCardProps } from './CategoryOverallCard/CategoryOverallCard'
+import { ContributorCardProps } from './ContributorCard/ContributorCard'
+import './styles.scss'
 
 export type CategoryProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   isAuthenticated: boolean
-  isOwner: boolean
+  title: string
   following: boolean
   contributorCardProps: ContributorCardProps
-  overallCardProps: OverallCardProps
+  categoryOverallCard: CategoryOverallCardProps
+  collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
+  numFollowers: number,
+  numCollections: number,
+  numResources: number,
   updateCategory: () => unknown
 }
 
@@ -26,11 +31,16 @@ export const Category = withCtrl<CategoryProps>(
   ({
     headerPageTemplateProps,
     isAuthenticated,
+    title,
     following,
+    //categoryOverallCard,
     resourceCardPropsList,
+    collectionCardPropsList,
+    numFollowers,
+    numCollections,
+    numResources
   }) => {
     const [isFollowig, setIsFollowing] = useState<boolean>(following)
-
 
     const handleOnFollowClick = () => {
       setIsFollowing(true)
@@ -43,32 +53,67 @@ export const Category = withCtrl<CategoryProps>(
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <div className="category">
           <div className="content">
-              <Card className="main-Category-card" hideBorderWhenSmall={true}>
+            <div className="category-header">
+              <Card className="category-card" hideBorderWhenSmall={true}>
                 <div className="info">
-                  <div className="label"><Trans>Category</Trans></div>
+                  <div className="title">#{title}</div>
+                  <div className="overall">
+                    <div className="data"><span>{numFollowers}</span><span><Trans>Followers</Trans></span></div>
+                    <div className="data"><span>{numCollections}</span><span><Trans>Collections</Trans></span></div>
+                    <div className="data"><span>{numResources}</span><span><Trans>Resources</Trans></span></div>
+                  </div>
                 </div>
                 <div className="actions">
                   {isFollowig ? (
-                    <SecondaryButton onClick={handleOnUnfollowClick}><Trans>Unfollow</Trans></SecondaryButton>
+                    <SecondaryButton onClick={handleOnUnfollowClick}>
+                      <Trans>Unfollow</Trans>
+                    </SecondaryButton>
                   ) : (
-                    <PrimaryButton disabled={!isAuthenticated} onClick={handleOnFollowClick}><Trans>Follow</Trans></PrimaryButton>
+                    <PrimaryButton disabled={!isAuthenticated} onClick={handleOnFollowClick}>
+                      <Trans>Follow</Trans>
+                    </PrimaryButton>
                   )}
                 </div>
               </Card>
-              <div className="main-content">
-                <div className="main-column">
-                  <ListCard
-                    content={resourceCardPropsList.map(resourcesCardProps => {
-                      return <ResourceCard {...resourcesCardProps}/>
-                    })}
-                    className="resources no-card"
-                  />
-              </div>
+            </div>
+            <div className="main-content">
+              {collectionCardPropsList && (
+                <ListCard
+                  content={collectionCardPropsList.slice(0, 4).map(collectionCardProps => (
+                    <CollectionCard {...collectionCardProps} />
+                  ))}
+                  className="collections"
+                  noCard={true}
+                >
+                  <div className="card-header">
+                    <div className="title">
+                      <Trans>Collections</Trans>
+                    </div>
+                    <SecondaryButton>
+                      <Trans>See all</Trans>
+                    </SecondaryButton>
+                  </div>
+                </ListCard>
+              )}
+              {resourceCardPropsList && (
+                <ListCard
+                  content={resourceCardPropsList.slice(0, 8).map(resourcesCardProps => (
+                    <ResourceCard {...resourcesCardProps} />
+                  ))}
+                  className="resources"
+                  noCard={true}
+                >
+                  <div className="card-header">
+                    <div className="title">
+                      <Trans>Resources</Trans>
+                    </div>
+                  </div>
+                </ListCard>
+              )}
             </div>
           </div>
         </div>
-      </ HeaderPageTemplate>
+      </HeaderPageTemplate>
     )
-  }
+  },
 )
-

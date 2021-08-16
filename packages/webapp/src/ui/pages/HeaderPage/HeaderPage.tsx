@@ -1,5 +1,5 @@
 import Header, { HeaderProps } from '../../components/Header/Header'
-import SubHeader, { SubHeaderProps } from '../../components/SubHeader/SubHeader'
+import { SubHeaderProps } from '../../components/SubHeader/SubHeader'
 import { CP, withCtrl } from '../../lib/ctrl'
 import './styles.scss'
 
@@ -12,14 +12,14 @@ export type HeaderPageProps = {
 
 export const HeaderPage = withCtrl<HeaderPageProps>(({ 
   headerProps, 
-  subHeaderProps, 
-  isAuthenticated ,
-  showSubHeader 
+  //subHeaderProps, 
+  //isAuthenticated ,
+  //showSubHeader 
 }) => {
   return (
     <div className="page-header">
       <Header {...headerProps} />
-      { isAuthenticated && showSubHeader && <SubHeader {...subHeaderProps} />}
+      {/*{ isAuthenticated && showSubHeader && <SubHeader {...subHeaderProps} />}*/} {/* Uncomment when Tags implemented*/}
     </div>
   )
 })

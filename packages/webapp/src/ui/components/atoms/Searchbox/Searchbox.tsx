@@ -1,5 +1,5 @@
 import { ChangeEventHandler, FC, useCallback } from 'react'
-import searchIcon from '../../../assets/icons/search.svg'
+import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
 import './styles.scss'
 
 export type SearchboxProps = {
@@ -13,18 +13,17 @@ export const Searchbox: FC<SearchboxProps> = ({ searchText, placeholder, setSear
     ev => setSearchText(ev.currentTarget.value),
     [setSearchText],
   )
+  
   return (
     <div className="searchbox">
-      <div className="search-box">
-        <img className="search-icon" src={searchIcon} alt="Search" />
-        <input
-          className="search-text"
-          placeholder={placeholder}
-          autoFocus
-          defaultValue={searchText}
-          onChange={setSearchTextCB}
-        />
-      </div>
+      <SearchIcon/>
+      <input
+        className="search-text"
+        placeholder={placeholder}
+        autoFocus
+        defaultValue={searchText}
+        onChange={setSearchTextCB}
+      />
     </div>
   )
 }

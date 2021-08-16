@@ -1,11 +1,11 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { OverallCardStoryProps } from '../../components/cards/OverallCard/OverallCard.stories'
+import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
-import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Category, CategoryProps } from './Category'
+import { CategoryOverallCardStoryProps } from './CategoryOverallCard/CategoryOverallCard.stories'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
 
 const meta: ComponentMeta<typeof Category> = {
@@ -18,8 +18,7 @@ const meta: ComponentMeta<typeof Category> = {
   excludeStories: [
     'CategoryStoryProps', 
     'CategoryLoggedOutStoryProps', 
-    'CategoryLoggedInStoryProps', 
-    'CategoryOwnerStoryProps'
+    'CategoryLoggedInStoryProps'
   ],
 }
 
@@ -31,10 +30,20 @@ export const CategoryStoryProps: CategoryProps = {
     isAuthenticated: true,
   },
   isAuthenticated: true,
-  isOwner: false,
+  title:'Environment',
   following: false,
+  numFollowers: 2387,
+  numCollections: 43,
+  numResources: 165,
   contributorCardProps: ContributorCardStoryProps,
-  overallCardProps: OverallCardStoryProps,
+  categoryOverallCard: CategoryOverallCardStoryProps,
+  collectionCardPropsList: [
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+  ],
   resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
   updateCategory:action('updateCategory')
 }
@@ -60,18 +69,9 @@ export const CategoryLoggedOutStoryProps: CategoryProps = {
 export const CategoryLoggedInStoryProps: CategoryProps = {
   ...CategoryStoryProps,
   headerPageTemplateProps: {
-    isAuthenticated: true,
-    headerPageProps: {
-      isAuthenticated: true,
-      headerProps: HeaderLoggedOutStoryProps,
-      subHeaderProps: SubHeaderStoryProps,
-    },
+    ...CategoryStoryProps.headerPageTemplateProps,
+    isAuthenticated: true
   },
-}
-
-export const CategoryOwnerStoryProps: CategoryProps = {
-  ...CategoryLoggedInStoryProps,
-  isOwner: true
 }
 
 export const LoggedOut = CategoryStory.bind({})
@@ -79,8 +79,5 @@ LoggedOut.args = CategoryLoggedOutStoryProps
 
 export const LoggedIn = CategoryStory.bind({})
 LoggedIn.args = CategoryLoggedInStoryProps
-
-export const Owner = CategoryStory.bind({})
-Owner.args = CategoryOwnerStoryProps
 
 export default meta
