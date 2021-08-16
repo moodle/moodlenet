@@ -9,6 +9,6 @@ export const getProfileByAuthIdQ = ({ authId }: { authId: AuthId }) => {
       LIMIT 1
     return profile 
   `)
-  console.log({ getProfileByAuthIdQ: q })
+  // console.log({ getProfileByAuthIdQ: q })
   return q
 }

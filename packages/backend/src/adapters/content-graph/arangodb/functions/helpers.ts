@@ -230,7 +230,7 @@ export const getAqlNodeByGraphNodeIdentifier = (identifier: GraphNodeIdentifier)
   '_permId' in identifier ? documentByNodeIdPerm(identifier) : documentByNodeIdSlug(identifier)
 
 export const aqlGraphNode2GraphNode = <T extends GraphNodeType>(aqlGraphNode: AqlGraphNodeByType<T>) => {
-  // console.log(`aqlGraphNode2GraphNode ${aqlGraphNode._id}`, aqlGraphNode)
+  // console.log(`aqlGraphNode2GraphNode `, aqlGraphNode)
   const [__type, __permId] = aqlGraphNode._id.split('/')
   const graphNode: GraphNode<T> = {
     _type: __type! as T,

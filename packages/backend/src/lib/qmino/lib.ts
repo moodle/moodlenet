@@ -106,7 +106,7 @@ export const wrapQMPort = <Port extends QM.AnyQMPort, PortType extends QM.QMPort
 ): Port => {
   const port_wrap = (...args: any[]) => {
     const action = async (adapter: any) => {
-      console.log(`accessing port [${displayId(portDef.link?.id)}]( ${inspect(args)} )`)
+      // console.log(`accessing port [${displayId(portDef.link?.id)}]( ${inspect(args)} )`)
       const resp = await original_port(...args)(adapter)
       console.log(`RESP:port [${displayId(portDef.link?.id)}]\nRESP:args:${inspect(args)}\nRESP:${inspect(resp)}`)
       return resp
