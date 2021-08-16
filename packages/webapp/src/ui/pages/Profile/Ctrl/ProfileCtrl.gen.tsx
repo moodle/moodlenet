@@ -21,6 +21,7 @@ export type ProfilePageUserDataQuery = (
         & { node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name' | 'image'>
+          & { likesCount: Types.Collection['_relCount'] }
         ) | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ), resources: (
@@ -30,6 +31,7 @@ export type ProfilePageUserDataQuery = (
         & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, 'id' | 'name' | 'image'>
+          & { likesCount: Types.Resource['_relCount'] }
         ) | { __typename: 'ResourceType' } }
       )> }
     ) }
@@ -59,6 +61,7 @@ export const ProfilePageUserDataDocument = gql`
               id
               name
               image
+              likesCount: _relCount(type: Likes, target: Profile, inverse: true)
             }
           }
         }
@@ -71,6 +74,7 @@ export const ProfilePageUserDataDocument = gql`
               id
               name
               image
+              likesCount: _relCount(type: Likes, target: Profile, inverse: true)
             }
           }
         }
