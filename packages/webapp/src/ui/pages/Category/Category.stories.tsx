@@ -5,8 +5,6 @@ import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/Reso
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Category, CategoryProps } from './Category'
-import { CategoryOverallCardStoryProps } from './CategoryOverallCard/CategoryOverallCard.stories'
-import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
 
 const meta: ComponentMeta<typeof Category> = {
   title: 'Pages/Category',
@@ -31,8 +29,6 @@ export const CategoryStoryProps: CategoryProps = {
   numFollowers: 2387,
   numCollections: 43,
   numResources: 165,
-  contributorCardProps: ContributorCardStoryProps,
-  categoryOverallCard: CategoryOverallCardStoryProps,
   collectionCardPropsList: [
     CollectionCardStoryProps,
     CollectionCardStoryProps,

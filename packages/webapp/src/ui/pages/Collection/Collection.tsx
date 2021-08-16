@@ -1,22 +1,22 @@
-import { Trans } from '@lingui/macro';
-import EditIcon from '@material-ui/icons/Edit';
-import SaveIcon from '@material-ui/icons/Save';
-import { useCallback, useState } from 'react';
-import Card from '../../components/atoms/Card/Card';
-import Dropdown from '../../components/atoms/Dropdown/Dropdown';
-import InputTextField from '../../components/atoms/InputTextField/InputTextField';
-import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton';
-import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton';
-import ListCard from '../../components/cards/ListCard/ListCard';
-import { OverallCard, OverallCardProps } from '../../components/cards/OverallCard/OverallCard';
-import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard';
-import { CP, withCtrl } from '../../lib/ctrl';
-import { FormikBag } from '../../lib/formik';
-import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate';
-import { DropdownField } from '../NewCollection/FieldsData';
-import { NewCollectionFormValues } from '../NewCollection/types';
-import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard';
-import './styles.scss';
+import { Trans } from '@lingui/macro'
+import EditIcon from '@material-ui/icons/Edit'
+import SaveIcon from '@material-ui/icons/Save'
+import { useCallback, useState } from 'react'
+import Card from '../../components/atoms/Card/Card'
+import Dropdown from '../../components/atoms/Dropdown/Dropdown'
+import InputTextField from '../../components/atoms/InputTextField/InputTextField'
+import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
+import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
+import ListCard from '../../components/cards/ListCard/ListCard'
+import { OverallCard, OverallCardProps } from '../../components/cards/OverallCard/OverallCard'
+import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
+import { CP, withCtrl } from '../../lib/ctrl'
+import { FormikBag } from '../../lib/formik'
+import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
+import { DropdownField } from '../NewCollection/FieldsData'
+import { NewCollectionFormValues } from '../NewCollection/types'
+import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
+import './styles.scss'
 
 export type CollectionProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
@@ -72,8 +72,12 @@ export const Collection = withCtrl<CollectionProps>(
 
     const actionsCard = (
       <Card className="collection-actions-card" hideBorderWhenSmall={true}>
-        <PrimaryButton disabled={!isAuthenticated}><Trans>Send all to Moodle</Trans></PrimaryButton>
-        <SecondaryButton disabled={!isAuthenticated}><Trans>Suggest Resource</Trans></SecondaryButton>
+        <PrimaryButton disabled={!isAuthenticated}>
+          <Trans>Send all to Moodle</Trans>
+        </PrimaryButton>
+        <SecondaryButton disabled={!isAuthenticated}>
+          <Trans>Suggest Resource</Trans>
+        </SecondaryButton>
       </Card>
     )
 
@@ -109,9 +113,11 @@ export const Collection = withCtrl<CollectionProps>(
         <div className="collection">
           <div className="content">
             <Card className="main-collection-card" hideBorderWhenSmall={true}>
-              <div className="image" style={background}/>
+              <div className="image" style={background} />
               <div className="info">
-                <div className="label"><Trans>Collection</Trans></div>
+                <div className="label">
+                  <Trans>Collection</Trans>
+                </div>
                 {isOwner ? (
                   <InputTextField
                     className="title"
@@ -154,26 +160,37 @@ export const Collection = withCtrl<CollectionProps>(
                 </div>
               ) : (
                 <div className="actions">
-                {isFollowig ? (
-                  <SecondaryButton onClick={handleOnUnfollowClick}><Trans>Unfollow</Trans></SecondaryButton>
-                ) : (
-                  <PrimaryButton disabled={!isAuthenticated} onClick={handleOnFollowClick}><Trans>Follow</Trans></PrimaryButton>
-                )}
+                  {isFollowig ? (
+                    <SecondaryButton onClick={handleOnUnfollowClick}>
+                      <Trans>Unfollow</Trans>
+                    </SecondaryButton>
+                  ) : (
+                    <PrimaryButton disabled={!isAuthenticated} onClick={handleOnFollowClick}>
+                      <Trans>Follow</Trans>
+                    </PrimaryButton>
+                  )}
                 </div>
               )}
             </Card>
             <div className="main-content">
               <div className="main-column">
                 <ListCard
-                  content={resourceCardPropsList.map(resourcesCardProps => {
-                    return <ResourceCard {...resourcesCardProps} showRemoveButton={isEditing} onRemoveClick={handleOnRemoveResourceClick}/>
+                  content={resourceCardPropsList.map((resourceCardProps, i) => {
+                    return (
+                      <ResourceCard
+                        {...resourceCardProps}
+                        showRemoveButton={isEditing}
+                        onRemoveClick={handleOnRemoveResourceClick}
+                        key={i}
+                      />
+                    )
                   })}
                   className="resources no-card"
                 />
                 <div className="collection-footer">
                   <div className="left-column">
-                    { !isOwner && <ContributorCard {...contributorCardProps} />}
-                    { !isOwner && <OverallCard {...overallCardProps} />}
+                    {!isOwner && <ContributorCard {...contributorCardProps} />}
+                    {!isOwner && <OverallCard {...overallCardProps} />}
                   </div>
                   <div className="right-column">
                     {actionsCard}
@@ -181,18 +198,18 @@ export const Collection = withCtrl<CollectionProps>(
                   </div>
                   <div className="one-column">
                     {actionsCard}
-                    { !isOwner && <ContributorCard {...contributorCardProps} />}
-                    { !isOwner && <OverallCard {...overallCardProps} hideBorderWhenSmall={true} />}
+                    {!isOwner && <ContributorCard {...contributorCardProps} />}
+                    {!isOwner && <OverallCard {...overallCardProps} hideBorderWhenSmall={true} />}
                     {extraDetails}
                   </div>
                 </div>
               </div>
               <div className="side-column">
-              { !isOwner && <ContributorCard {...contributorCardProps} />}
-              { !isOwner && <OverallCard {...overallCardProps} />}
-              {actionsCard}
-              {extraDetails}
-            </div>
+                {!isOwner && <ContributorCard {...contributorCardProps} />}
+                {!isOwner && <OverallCard {...overallCardProps} />}
+                {actionsCard}
+                {extraDetails}
+              </div>
             </div>
           </div>
         </div>
@@ -200,4 +217,3 @@ export const Collection = withCtrl<CollectionProps>(
     )
   },
 )
-

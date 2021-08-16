@@ -8,8 +8,6 @@ import ListCard from '../../components/cards/ListCard/ListCard'
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
-import { CategoryOverallCardProps } from './CategoryOverallCard/CategoryOverallCard'
-import { ContributorCardProps } from './ContributorCard/ContributorCard'
 import './styles.scss'
 
 export type CategoryProps = {
@@ -17,8 +15,6 @@ export type CategoryProps = {
   isAuthenticated: boolean
   title: string
   following: boolean
-  contributorCardProps: ContributorCardProps
-  categoryOverallCard: CategoryOverallCardProps
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
   numFollowers: number
@@ -94,8 +90,8 @@ export const Category = withCtrl<CategoryProps>(
             <div className="main-content">
               {collectionCardPropsList && (
                 <ListCard
-                  content={collectionCardPropsList.slice(0, 4).map(collectionCardProps => (
-                    <CollectionCard {...collectionCardProps} />
+                  content={collectionCardPropsList.slice(0, 4).map((collectionCardProps, i) => (
+                    <CollectionCard {...collectionCardProps} key={i}/>
                   ))}
                   className="collections"
                   noCard={true}
@@ -113,8 +109,8 @@ export const Category = withCtrl<CategoryProps>(
               )}
               {resourceCardPropsList && (
                 <ListCard
-                  content={resourceCardPropsList.slice(0, 8).map(resourcesCardProps => (
-                    <ResourceCard {...resourcesCardProps} />
+                  content={resourceCardPropsList.slice(0, 8).map((resourcesCardProps, i) => (
+                    <ResourceCard {...resourcesCardProps} key={i} />
                   ))}
                   className="resources"
                   noCard={true}
