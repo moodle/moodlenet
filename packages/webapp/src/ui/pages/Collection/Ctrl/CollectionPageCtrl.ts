@@ -118,12 +118,12 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       return null
     }
     const props: CollectionProps = {
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
+      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
       formBag,
       isOwner,
       following,
       isAuthenticated,
-      resourceCardPropsList: resourceNodes.map(({ id }) => ctrlHook(useResourceCardCtrl, { id })),
+      resourceCardPropsList: resourceNodes.map(({ id }) => ctrlHook(useResourceCardCtrl, { id }, id)),
       overallCardProps: {
         followers,
         kudos,

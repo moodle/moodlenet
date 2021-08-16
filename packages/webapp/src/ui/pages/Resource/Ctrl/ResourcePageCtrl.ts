@@ -221,7 +221,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       return null
     }
     const props: ResourceProps = {
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
+      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, id),
       formBag,
       title: resourceData.name,
       isOwner,

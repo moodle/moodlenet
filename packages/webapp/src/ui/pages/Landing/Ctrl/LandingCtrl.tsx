@@ -38,7 +38,7 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
   const landingProps = useMemo<LandingProps>(
     () => ({
       isAuthenticated,
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
+      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
       organization: {
         name: localOrg.name,
         intro: localOrg.intro,

@@ -84,7 +84,7 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
 
   const NewCollectionProps = useMemo<NewCollectionProps>(() => {
     const props: NewCollectionProps = {
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
+      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
       stepProps: {
         step: 'CreateCollectionStep',
         categories: categoriesOptions,

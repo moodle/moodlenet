@@ -5,7 +5,7 @@ import { NewCollection } from '../ui/pages/NewCollection/NewCollection'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const NewCollectionComponent: RouteFC<Routes.CreateNewCollection> = () => {
-  const props = ctrlHook(useNewCollectionCtrl, {})
+  const props = ctrlHook(useNewCollectionCtrl, {}, 'new-collection-route')
   return <NewCollection {...props} />
 }
 
