@@ -1,6 +1,6 @@
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { isJust } from '@moodlenet/common/lib/utils/array'
-import { nodeId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { duration } from 'moment'
 import { useEffect, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
@@ -197,7 +197,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     if (!(creator && session)) {
       return false
     }
-    return creator.id === session.profile.id
+    return creator.id === session.profile.id || session.profile.id === 'Profile/__root__' //FIXME: MVP hack
   }, [creator, session])
   const liked = false
   const resourceProps = useMemo<null | ResourceProps>(() => {
@@ -212,7 +212,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       liked,
       contributorCardProps: {
         avatarUrl: getMaybeAssetRefUrl(creator?.avatar) ?? '',
-        creatorProfileHref: href(creator ? nodeId2UrlPath(creator.id) : ''),
+        creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
         timeSinceCreation: creatorEdge
           ? duration(creatorEdge.edge._created - new Date().valueOf(), 'milliseconds').humanize(true)
