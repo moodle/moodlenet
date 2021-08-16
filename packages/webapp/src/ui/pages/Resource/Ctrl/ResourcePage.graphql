@@ -1,4 +1,4 @@
-query ResourcePageData($resourceId: ID!) {
+query ResourcePageData($resourceId: ID!, $myProfileId: [ID!]) {
   node(id: $resourceId) {
     ... on Resource {
       id
@@ -8,7 +8,13 @@ query ResourcePageData($resourceId: ID!) {
       content
       originalCreationDate
 
-      # collectionsCount: _relCount(type: Features, target: Collection, inverse: true)
+      myLike: _rel(type: Likes, target: Profile, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
+        edges {
+          edge {
+            id
+          }
+        }
+      }
       collections: _rel(type: Features, target: Collection, page: { first: 5 }, inverse: true) {
         edges {
           node {

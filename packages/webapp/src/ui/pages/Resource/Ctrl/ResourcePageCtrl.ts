@@ -2,7 +2,7 @@ import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { isJust } from '@moodlenet/common/lib/utils/array'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { duration } from 'moment'
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
 import { getJustAssetRefUrl, getMaybeAssetRefUrl } from '../../../../helpers/data'
 import {
@@ -199,7 +199,21 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     }
     return creator.id === session.profile.id || session.profile.id === 'Profile/__root__' //FIXME: MVP hack
   }, [creator, session])
-  const liked = false
+  const likedEdge = resourceData?.myLike.edges[0]
+  const liked = !!likedEdge
+  const toggleLike = useCallback(async () => {
+    if (!(session && resourceData)) {
+      return
+    }
+    if (likedEdge) {
+      await delResourceRelMut({ variables: { edge: { id: likedEdge.edge.id } } })
+    } else {
+      await createResourceRelMut({
+        variables: { edge: { edgeType: 'Likes', from: session.profile.id, to: resourceData.id, Likes: {} } },
+      })
+    }
+    refetch()
+  }, [session, resourceData, likedEdge, delResourceRelMut, createResourceRelMut, refetch])
   const resourceProps = useMemo<null | ResourceProps>(() => {
     if (!resourceData) {
       return null
@@ -231,8 +245,9 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       categories: categoriesOptions,
       licenses: licensesOptions,
       updateResource: formik.submitForm,
+      toggleLike,
     }
     return props
-  }, [resourceData, formBag, isOwner, liked, creator, creatorEdge, isAuthenticated, formik.submitForm])
+  }, [resourceData, formBag, isOwner, liked, creator, creatorEdge, isAuthenticated, formik.submitForm, toggleLike])
   return resourceProps && [resourceProps]
 }

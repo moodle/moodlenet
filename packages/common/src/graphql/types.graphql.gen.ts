@@ -50,6 +50,7 @@ export type Collection_RelArgs = {
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
+  targetIds?: Maybe<Array<Scalars['ID']>>;
 };
 
 
@@ -317,6 +318,7 @@ export type FileFormat_RelArgs = {
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
+  targetIds?: Maybe<Array<Scalars['ID']>>;
 };
 
 
@@ -367,6 +369,7 @@ export type INode_RelArgs = {
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
+  targetIds?: Maybe<Array<Scalars['ID']>>;
 };
 
 
@@ -394,6 +397,7 @@ export type IscedField_RelArgs = {
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
+  targetIds?: Maybe<Array<Scalars['ID']>>;
 };
 
 
@@ -421,6 +425,7 @@ export type IscedGrade_RelArgs = {
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
+  targetIds?: Maybe<Array<Scalars['ID']>>;
 };
 
 
@@ -450,6 +455,7 @@ export type Language_RelArgs = {
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
+  targetIds?: Maybe<Array<Scalars['ID']>>;
 };
 
 
@@ -475,6 +481,7 @@ export type License_RelArgs = {
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
+  targetIds?: Maybe<Array<Scalars['ID']>>;
 };
 
 
@@ -574,6 +581,7 @@ export type Organization_RelArgs = {
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
+  targetIds?: Maybe<Array<Scalars['ID']>>;
 };
 
 
@@ -635,6 +643,7 @@ export type Profile_RelArgs = {
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
+  targetIds?: Maybe<Array<Scalars['ID']>>;
 };
 
 
@@ -696,6 +705,7 @@ export type Resource_RelArgs = {
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
+  targetIds?: Maybe<Array<Scalars['ID']>>;
 };
 
 
@@ -725,6 +735,7 @@ export type ResourceType_RelArgs = {
   target: NodeType;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
+  targetIds?: Maybe<Array<Scalars['ID']>>;
 };
 
 

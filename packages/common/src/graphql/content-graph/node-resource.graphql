@@ -7,7 +7,7 @@ type Resource implements INode {
   originalCreationDate: Timestamp
   # INode
   id: ID!
-  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput): RelPage!
+  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }
 

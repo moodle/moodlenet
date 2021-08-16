@@ -37,6 +37,7 @@ export type ResourceProps = {
   licenses: DropdownField
   categories: DropdownField
   updateResource: () => unknown
+  toggleLike: () => unknown
 }
 
 export const Resource = withCtrl<ResourceProps>(
@@ -57,9 +58,9 @@ export const Resource = withCtrl<ResourceProps>(
     licenses,
     categories,
     updateResource,
+    toggleLike,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
-    const [likeState, setLikeState] = useState<boolean>(liked)
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -77,11 +78,14 @@ export const Resource = withCtrl<ResourceProps>(
       )
     })
 
-
     const actions = (
       <Card className="resource-action-card" hideBorderWhenSmall={true}>
-        <PrimaryButton disabled={!isAuthenticated}><Trans>Send to Moodle</Trans></PrimaryButton>
-        <SecondaryButton disabled={!isAuthenticated}><Trans>Add to Collection</Trans></SecondaryButton>
+        <PrimaryButton disabled={!isAuthenticated}>
+          <Trans>Send to Moodle</Trans>
+        </PrimaryButton>
+        <SecondaryButton disabled={!isAuthenticated}>
+          <Trans>Add to Collection</Trans>
+        </SecondaryButton>
       </Card>
     )
 
@@ -190,8 +194,8 @@ export const Resource = withCtrl<ResourceProps>(
                       </div>
                     </span>
                     <div className="actions">
-                      <div className={`like ${likeState && 'liked'}`} onClick={() => setLikeState(!likeState)}>
-                        {likeState ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                      <div className={`like ${liked && 'liked'}`} onClick={toggleLike}>
+                        {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                         <Trans>Like</Trans>
                       </div>
                       <div className="share">
@@ -251,19 +255,19 @@ export const Resource = withCtrl<ResourceProps>(
               </Card>
               <div className="resource-footer">
                 <div className="left-column">
-                { !isOwner && <ContributorCard {...contributorCardProps} />}
+                  {!isOwner && <ContributorCard {...contributorCardProps} />}
                   {actions}
                 </div>
                 <div className="right-column">{extraDetails}</div>
                 <div className="one-column">
-                { !isOwner && <ContributorCard {...contributorCardProps} />}
+                  {!isOwner && <ContributorCard {...contributorCardProps} />}
                   {actions}
                   {extraDetails}
                 </div>
               </div>
             </div>
             <div className="side-column">
-            { !isOwner && <ContributorCard {...contributorCardProps} />}
+              {!isOwner && <ContributorCard {...contributorCardProps} />}
               {actions}
               {extraDetails}
             </div>
