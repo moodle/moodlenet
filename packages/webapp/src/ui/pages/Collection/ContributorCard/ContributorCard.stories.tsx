@@ -3,7 +3,7 @@ import { href } from '../../../elements/link'
 import { ContributorCard, ContributorCardProps } from './ContributorCard'
 
 const meta: ComponentMeta<typeof ContributorCard> = {
-  title: 'Pages/Resource/ContributorCard',
+  title: 'Pages/Collection/ContributorCard',
   component: ContributorCard,
   argTypes: {
     // backgroundColor: { control: 'color' },
