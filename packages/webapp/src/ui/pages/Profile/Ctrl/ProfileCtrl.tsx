@@ -15,36 +15,39 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
   const { org: localOrg } = useLocalInstance()
   const profileQ = useProfilePageUserDataQuery({ variables: { profileId: id } })
   const profile = profileQ.data?.node?.__typename === 'Profile' ? profileQ.data.node : null
-  const collectionCardPropsList = useMemo(
+  const collections = useMemo(
     () =>
       (profile?.collections.edges || [])
         .map(edge => (edge.node.__typename === 'Collection' ? edge.node : null))
-        .filter(isJust)
-        .map(({ id }) => ctrlHook(useCollectionCardCtrl, { id })),
+        .filter(isJust),
     [profile?.collections.edges],
   )
 
-  const resourceCardPropsList = useMemo(
+  const resources = useMemo(
     () =>
       (profile?.resources.edges || [])
         .map(edge => (edge.node.__typename === 'Resource' ? edge.node : null))
-        .filter(isJust)
-        .map(({ id }) => ctrlHook(useResourceCardCtrl, { id })),
+        .filter(isJust),
     [profile?.resources.edges],
   )
+
   const profileProps = useMemo<ProfileProps | null>(() => {
     if (!profile) {
       return null
     }
+    const kudos =
+      resources.reduce((allLikes, { likesCount }) => allLikes + likesCount, 0) +
+      collections.reduce((allLikes, { likesCount }) => allLikes + likesCount, 0)
+
     const props: ProfileProps = {
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
-      resourceCardPropsList,
-      collectionCardPropsList,
+      resourceCardPropsList: resources.map(({ id }) => ctrlHook(useResourceCardCtrl, { id })),
+      collectionCardPropsList: collections.map(({ id }) => ctrlHook(useCollectionCardCtrl, { id })),
       overallCardProps: {
         followers: profile.followersCount,
         resources: profile.resourcesCount,
         years: 1,
-        kudos: 10,
+        kudos,
       },
       profileCardProps: {
         avatarUrl:
@@ -62,6 +65,6 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
       username: profile.name,
     }
     return props
-  }, [collectionCardPropsList, id, localOrg.name, profile, resourceCardPropsList])
+  }, [collections, id, localOrg.name, profile, resources])
   return profileProps && [profileProps]
 }
