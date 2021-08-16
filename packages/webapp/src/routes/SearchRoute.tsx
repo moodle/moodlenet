@@ -5,7 +5,7 @@ import { Search } from '../ui/pages/Search/Search'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const SearchRouteComponent: RouteFC<Routes.GlobalSearch> = (/* { match } */) => {
-  const props = ctrlHook(useSearchCtrl, {})
+  const props = ctrlHook(useSearchCtrl, {}, 'search-route')
   return <Search {...props} />
 }
 
