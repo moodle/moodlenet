@@ -1,6 +1,7 @@
 import { GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import { GraphNodeIdentifier, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { NodeTraversalPage, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
+import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { SessionEnv } from '../../lib/auth/types'
 import { QMModule, QMQuery } from '../../lib/qmino'
 
@@ -9,9 +10,10 @@ export type TraverseNodeRelAdapter = {
 }
 
 export type TraverseFromNodeInput = {
-  fromNode: Pick<GraphNode, '_slug' | '_type'>
+  fromNode: GraphNodeIdentifier
   edgeType: GraphEdgeType
   targetNodeType: GraphNodeType
+  targetIds: Maybe<GraphNodeIdentifier[]>
   inverse: boolean
   page: PaginationInput
   env: SessionEnv | null
@@ -31,7 +33,7 @@ export type NodeRelationCountAdapter = {
 }
 
 export type NodeRelationCountInput = {
-  fromNode: Pick<GraphNode, '_slug' | '_type'>
+  fromNode: GraphNodeIdentifier
   edgeType: GraphEdgeType
   targetNodeType: GraphNodeType
   inverse: Boolean
