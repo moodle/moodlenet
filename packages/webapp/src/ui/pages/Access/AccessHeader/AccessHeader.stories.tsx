@@ -15,12 +15,14 @@ const meta: ComponentMeta<typeof AccessHeader> = {
 export const AccessHeaderStoryProps: AccessHeaderProps = {
   organization: HeaderLoggedOutStoryProps.organization,
   homeHref: href('Landing/Logged Out'),
+  termsAndConditionsHref: href('_/_'),
   page: 'login'
 }
 
 export const AccessOrganizationHeaderStoryProps: AccessHeaderProps = {
   organization: HeaderLoggedOutOrganizationStoryProps.organization,
   homeHref: href('Landing/Logged Out'),
+  termsAndConditionsHref: href('_/_'),
   page: 'signup'
 }
 
