@@ -1,11 +1,11 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { TrendCardStoryProps } from '../../components/cards/TrendCard/TrendCard.stories'
-import { HeaderLoggedInStoryProps, HeaderLoggedOutOrganizationStoryProps } from '../../components/Header/Header.stories'
+import { HeaderLoggedOutOrganizationStoryProps } from '../../components/Header/Header.stories'
 import {
   HeaderPageLoggedInOrganizationStoryProps,
   HeaderPageLoggedInStoryProps,
-  HeaderPageLoggedOutStoryProps,
+  HeaderPageLoggedOutStoryProps
 } from '../HeaderPage/HeaderPage.stories'
 import { Landing, LandingProps } from './Landing'
 
@@ -47,10 +47,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   ...LandingLoggedInStoryProps,
   headerPageTemplateProps: {
     isAuthenticated: false,
-    headerPageProps: {
-      ...HeaderPageLoggedOutStoryProps,
-      headerProps: HeaderLoggedInStoryProps,
-    },
+    headerPageProps: HeaderPageLoggedOutStoryProps
   },
   isAuthenticated: false,
 }

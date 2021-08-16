@@ -7,7 +7,7 @@ export type OverallCardProps = {
     resources: number
     years: number
     kudos: number
-    hideBorderWhenSmall: boolean
+    hideBorderWhenSmall?: boolean
 }
 
 export const OverallCard: FC<OverallCardProps> = ({followers, resources, kudos, hideBorderWhenSmall}) => {

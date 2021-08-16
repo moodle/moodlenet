@@ -57,7 +57,6 @@ export const Header = withCtrl<HeaderProps>(props => {
           <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for anything!`} />
         </div>
         <div className="right">
-          <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for anything!`} />
           {me ? (
             <>
               <FloatingMenu
