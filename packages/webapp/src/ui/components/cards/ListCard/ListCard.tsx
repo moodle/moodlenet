@@ -14,7 +14,7 @@ export const ListCard: FC<ListCardProps> = ({ className, content, direction, tit
   return (
     <div className={`list-card ${className} ${noCard ? 'no-card' : ''}`}>
       {(title || children) && <div className="title">{title ? title : <div>{children}</div>}</div>}
-      <div className={`content ${direction} ${direction === 'horizontal' && 'scroll'}`}>{content}</div>
+      <div className={`content ${direction} ${direction === 'horizontal' ? 'scroll' : ''}`}>{content}</div>
     </div>
   )
 }

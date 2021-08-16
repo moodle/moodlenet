@@ -101,17 +101,18 @@
       flex-direction: column;
       gap: 20px;
 
-      > .collections, .resources {
+      > .collections,
+      > .resources {
         > .title > div > .card-header {
           display: flex;
           align-items: center;
           > .title {
-            font-size: 24px;
+            font-size: 20px;
             margin-right: 16px;
           }
           > .secondary-button {
             height: 26px;
-            padding: 10px;
+            padding: 8px 10px;
             border-radius: 15px;
             border: 1px solid #b6bacb;
             color: #b6bacb;
@@ -119,9 +120,24 @@
         }
       }
 
-      > .resources > .content > .resource-card {
-        width: 46%;
-        min-width: 180px;
+      > .collections > .content {
+        justify-content: flex-start;
+        > .collection-card {
+          max-width: 200px;
+          min-width: 180px;
+          height: 100px;
+          > .title {
+            margin-top: 50px;
+          }          
+        }
+      }
+
+      > .resources > .content {
+        justify-content: space-between;
+        > .resource-card {
+          width: calc(50% - 6px);
+          min-width: 180px;
+        }
       }
 
       @media (min-width: 450px) and (max-width: 800px) {
@@ -138,10 +154,8 @@
 
       @media screen and (max-width: 800px) {
         > .resources > .content {
-          justify-content: space-between;
           > .resource-card {
             font-size: 15px;
-            width: calc(50% - 6px);
           }
         }
       }

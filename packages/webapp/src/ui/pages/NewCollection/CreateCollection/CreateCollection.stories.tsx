@@ -6,7 +6,7 @@ import { NewCollectionFormValues } from '../types'
 import { CreateCollection, CreateCollectionProps } from './CreateCollection'
 
 const meta: ComponentMeta<typeof CreateCollection> = {
-  title: 'Pages/New Resource/Upload Resource',
+  title: 'Pages/New Resource/Create Collection',
   component: CreateCollection,
   argTypes: {
     // backgroundColor: { control: 'color' },
