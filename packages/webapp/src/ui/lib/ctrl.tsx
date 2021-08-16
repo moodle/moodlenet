@@ -84,6 +84,7 @@ export const withCtrl = <UIProps, ExcludeKeys extends keyof UIProps = never>(
             name: Render.name,
             UIComp,
           }}
+          key={props.key} //FIXME: check how to propagate key properly
         >
           {children}
         </RenderWithHook>

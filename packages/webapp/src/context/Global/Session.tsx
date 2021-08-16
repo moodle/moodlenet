@@ -58,7 +58,7 @@ export const SessionProvider: FC = ({ children }) => {
   const [activateUserMut /* , activateResult */] = useActivateNewUserMutation()
   const [signUpMut /* , activateResult */] = useSignUpMutation()
   const [lastSession, setLastSession] = useState<Partial<LastSession>>(getLastSession())
-  const [getSessionQ, sessionQResult] = useGetCurrentSessionLazyQuery({ fetchPolicy: 'cache-first' })
+  const [getSessionLazyQ, sessionQResult] = useGetCurrentSessionLazyQuery({ fetchPolicy: 'network-only' })
   const [loginMut /* , loginResult */] = useLoginMutation()
 
   const login = useCallback<SessionContextType['login']>(
@@ -98,8 +98,8 @@ export const SessionProvider: FC = ({ children }) => {
   useEffect(() => {
     setToken(lastSession.jwt ?? null)
     storeLastSession(lastSession)
-    getSessionQ()
-  }, [getSessionQ, lastSession])
+    getSessionLazyQ()
+  }, [getSessionLazyQ, lastSession])
 
   const ctx = useMemo<SessionContextType>(
     () => ({
