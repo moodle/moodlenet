@@ -42,7 +42,7 @@ export const createGraphQLApp = ({
     schema,
     customExecuteFn(args) {
       const httpReq = args.contextValue as unknown as Request
-      const contextValue: Context = httpReq.mnHttpContext
+      const contextValue: Context = httpReq.mnHttpSessionEnv
       const rootValue: RootValue = {}
       const source = print(args.document)
       return graphql({

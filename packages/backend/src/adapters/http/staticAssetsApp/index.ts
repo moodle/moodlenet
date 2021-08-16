@@ -16,7 +16,7 @@ export const createStaticAssetsApp = ({ qmino }: Config) => {
   const app = express()
   app.post('/upload-temp', async (req, res) => {
     // this check could get more accurate (context assertions engine)
-    if (!req.mnHttpContext) {
+    if (!req.mnHttpSessionEnv) {
       return sendErrorResponse(res, help.respError(401, 'logged users only can upload'))
     }
 

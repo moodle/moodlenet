@@ -1,6 +1,6 @@
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { isJust } from '@moodlenet/common/lib/utils/array'
-import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { nodeId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useMemo } from 'react'
 import { getMaybeAssetRefUrl } from '../../../../../helpers/data'
 import { href } from '../../../../elements/link'
@@ -23,7 +23,7 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
               .map(edge => (edge.node.__typename === 'Collection' ? edge.node : null))
               .filter(isJust)
               .map(node => node.name),
-            resourceHomeHref: href(nodeGqlId2UrlPath(resourceNode.id)),
+            resourceHomeHref: href(nodeId2UrlPath(resourceNode.id)),
           }
         : null,
     [resourceNode],

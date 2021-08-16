@@ -1,5 +1,4 @@
-import { AuthId as GE } from '../../user-auth/types'
-import { stringUnionList } from '../../utils/misc'
+import { AuthId } from '../../user-auth/types'
 import { Timestamp } from './common'
 
 export type GraphEdgeMap = {
@@ -8,15 +7,10 @@ export type GraphEdgeMap = {
   Features: Features
   Follows: Follows
 }
-export const edgeTypes = stringUnionList<GraphEdgeType>({
-  Created: 0,
-  Features: 0,
-  Follows: 0,
-  Pinned: 0,
-})
-
+export const edgeTypes: GraphEdgeType[] = ['Created', 'Features', 'Follows', 'Pinned']
 export type GraphEdgeType = keyof GraphEdgeMap
-export type GraphEdge<T extends GraphEdgeType = GraphEdgeType> = GraphEdgeMap[T]
+export type GraphEdge = GraphEdgeMap[GraphEdgeType]
+export type GraphEdgeByType<T extends GraphEdgeType> = GraphEdgeMap[T]
 
 export type EdgeId = string // the _key
 
@@ -26,7 +20,7 @@ export type BaseGraphEdge<GET extends GraphEdgeType> = {
   id: EdgeId
   _type: GET
   _created: Timestamp
-  _authId: GE
+  _authId: AuthId
 }
 
 export type Created = BaseGraphEdge<'Created'> & {}

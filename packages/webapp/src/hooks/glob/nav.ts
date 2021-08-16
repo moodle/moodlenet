@@ -1,5 +1,5 @@
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
-import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { nodeId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { CreateNewResource, GlobalSearch, Landing, Login, Signup } from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useCallback, useLayoutEffect } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -53,7 +53,7 @@ export const useRedirectProfileHomeIfLoggedIn = (opts?: { delay?: number }) => {
   useRedirectToBySession({
     ifLogged: true,
     replace: true,
-    to: useCallback((session: UserSessionFragment | null) => nodeGqlId2UrlPath(session!.profile.id), []),
+    to: useCallback((session: UserSessionFragment | null) => nodeId2UrlPath(session!.profile.id), []),
     delay: opts?.delay,
   })
 }
