@@ -24,6 +24,7 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
               .filter(isJust)
               .map(node => node.name),
             resourceHomeHref: href(nodeGqlId2UrlPath(resourceNode.id)),
+            key: id, //FIXME: propagate key  properly with ctrlHook
           }
         : null,
     [resourceNode, id],
