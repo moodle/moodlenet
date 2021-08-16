@@ -65,5 +65,14 @@ export const hasNoValue = (_: any): _ is null | undefined | void => [null, undef
 
 export const getJustAssetRefUrl = (assetRef: AssetRef): string =>
   getAssetRefUrl({ assetRef, baseStaticAssetUrl: STATIC_ASSET_BASE })
+
 export const getMaybeAssetRefUrl = (assetRef: AssetRef | null | undefined): null | string =>
   assetRef ? getJustAssetRefUrl(assetRef) : null
+
+export const getMaybeAssetRefUrlOrDefaultImage = (
+  assetRef: AssetRef | null | undefined,
+  id: string,
+  type: 'icon' | 'image',
+): string =>
+  getMaybeAssetRefUrl(assetRef) ??
+  `https://picsum.photos/seed/${id.replaceAll('/', '_')}_${type}_/${type === 'icon' ? '200/200' : '800/600'}`

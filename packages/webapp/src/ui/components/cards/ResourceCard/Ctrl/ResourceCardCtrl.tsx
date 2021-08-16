@@ -2,7 +2,7 @@ import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { isJust } from '@moodlenet/common/lib/utils/array'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useMemo } from 'react'
-import { getMaybeAssetRefUrl } from '../../../../../helpers/data'
+import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../../helpers/data'
 import { href } from '../../../../elements/link'
 import { CtrlHook } from '../../../../lib/ctrl'
 import { ResourceCardProps } from '../ResourceCard'
@@ -17,7 +17,7 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
       resourceNode && resourceNode.__typename === 'Resource'
         ? {
             type: resourceNode.kind === 'Link' ? 'Web Page' : resourceNode.content.mimetype,
-            image: getMaybeAssetRefUrl(resourceNode.image) ?? '',
+            image: getMaybeAssetRefUrlOrDefaultImage(resourceNode.image, id, 'image') ?? '',
             title: resourceNode.name,
             tags: resourceNode.inCollections.edges
               .map(edge => (edge.node.__typename === 'Collection' ? edge.node : null))
@@ -26,7 +26,7 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
             resourceHomeHref: href(nodeGqlId2UrlPath(resourceNode.id)),
           }
         : null,
-    [resourceNode],
+    [resourceNode, id],
   )
   return resourceCardUIProps && [resourceCardUIProps]
 }
