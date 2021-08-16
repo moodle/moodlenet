@@ -3,7 +3,7 @@ import { isJust } from '@moodlenet/common/lib/utils/array'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useEffect, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
-import { getMaybeAssetRefUrl } from '../../../../helpers/data'
+import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
 import { categoriesOptions, getIscedF } from '../../../../helpers/resource-relation-data-static-and-utils'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { href } from '../../../elements/link'
@@ -81,11 +81,11 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
           title,
           description,
           category,
-          image: getMaybeAssetRefUrl(image),
+          image: getMaybeAssetRefUrlOrDefaultImage(image, id, 'image'),
         },
       })
     }
-  }, [collectionData, fresetForm, category])
+  }, [collectionData, fresetForm, category, id])
 
   const creatorEdge = useMemo(() => {
     return collectionData?.creator.edges[0]
@@ -131,7 +131,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
         years: creatorEdge ? new Date(creatorEdge.edge._created).getFullYear() : '?',
       },
       contributorCardProps: {
-        avatarUrl: getMaybeAssetRefUrl(creator?.avatar) ?? '',
+        avatarUrl: getMaybeAssetRefUrlOrDefaultImage(creator?.avatar, creator?.id || id, 'icon'),
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
       },
@@ -140,6 +140,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     }
     return props
   }, [
+    id,
     collectionData,
     formBag,
     isOwner,

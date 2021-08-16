@@ -4,7 +4,7 @@ import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { duration } from 'moment'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
-import { getJustAssetRefUrl, getMaybeAssetRefUrl } from '../../../../helpers/data'
+import { getJustAssetRefUrl, getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
 import {
   categoriesOptions,
   getGrade,
@@ -177,7 +177,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
           content: getJustAssetRefUrl(content),
           description,
           format: content.mimetype,
-          image: getMaybeAssetRefUrl(image),
+          image: getMaybeAssetRefUrlOrDefaultImage(image, id, 'image'),
           contentType: content.ext ? 'Link' : 'File',
           name: '',
           ...orgDateStrings,
@@ -185,7 +185,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         },
       })
     }
-  }, [resourceData, fresetForm, category, language, level, license, type])
+  }, [resourceData, fresetForm, category, language, level, license, type, id])
 
   const creatorEdge = useMemo(() => {
     return resourceData?.creator.edges[0]
@@ -227,7 +227,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       isOwner,
       liked,
       contributorCardProps: {
-        avatarUrl: getMaybeAssetRefUrl(creator?.avatar) ?? '',
+        avatarUrl: getMaybeAssetRefUrlOrDefaultImage(creator?.avatar, creator?.id || id, 'icon'),
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
         timeSinceCreation: creatorEdge
@@ -250,6 +250,6 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       toggleLike,
     }
     return props
-  }, [resourceData, formBag, isOwner, liked, creator, creatorEdge, isAuthenticated, formik.submitForm, toggleLike])
+  }, [id, resourceData, formBag, isOwner, liked, creator, creatorEdge, isAuthenticated, formik.submitForm, toggleLike])
   return resourceProps && [resourceProps]
 }
