@@ -21,8 +21,13 @@
         width: 100%;
         height: 100%;
         display: inline-flex;
-        flex-wrap: wrap;
         gap: 12px;
+        &.vertical {
+            flex-wrap: wrap;
+        }
+        &.horizontal {
+            
+        }
     }
 }
 

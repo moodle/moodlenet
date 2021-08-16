@@ -21,9 +21,9 @@ export type CategoryProps = {
   categoryOverallCard: CategoryOverallCardProps
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
-  numFollowers: number,
-  numCollections: number,
-  numResources: number,
+  numFollowers: number
+  numCollections: number
+  numResources: number
   updateCategory: () => unknown
 }
 
@@ -38,7 +38,7 @@ export const Category = withCtrl<CategoryProps>(
     collectionCardPropsList,
     numFollowers,
     numCollections,
-    numResources
+    numResources,
   }) => {
     const [isFollowig, setIsFollowing] = useState<boolean>(following)
 
@@ -58,9 +58,24 @@ export const Category = withCtrl<CategoryProps>(
                 <div className="info">
                   <div className="title">#{title}</div>
                   <div className="overall">
-                    <div className="data"><span>{numFollowers}</span><span><Trans>Followers</Trans></span></div>
-                    <div className="data"><span>{numCollections}</span><span><Trans>Collections</Trans></span></div>
-                    <div className="data"><span>{numResources}</span><span><Trans>Resources</Trans></span></div>
+                    <div className="data">
+                      <span>{numFollowers}</span>
+                      <span>
+                        <Trans>Followers</Trans>
+                      </span>
+                    </div>
+                    <div className="data">
+                      <span>{numCollections}</span>
+                      <span>
+                        <Trans>Collections</Trans>
+                      </span>
+                    </div>
+                    <div className="data">
+                      <span>{numResources}</span>
+                      <span>
+                        <Trans>Resources</Trans>
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="actions">
@@ -84,6 +99,7 @@ export const Category = withCtrl<CategoryProps>(
                   ))}
                   className="collections"
                   noCard={true}
+                  direction="horizontal"
                 >
                   <div className="card-header">
                     <div className="title">
@@ -107,6 +123,9 @@ export const Category = withCtrl<CategoryProps>(
                     <div className="title">
                       <Trans>Resources</Trans>
                     </div>
+                    <SecondaryButton>
+                      <Trans>See all</Trans>
+                    </SecondaryButton>
                   </div>
                 </ListCard>
               )}

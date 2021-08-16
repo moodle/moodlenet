@@ -15,11 +15,7 @@ const meta: ComponentMeta<typeof Category> = {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: [
-    'CategoryStoryProps', 
-    'CategoryLoggedOutStoryProps', 
-    'CategoryLoggedInStoryProps'
-  ],
+  excludeStories: ['CategoryStoryProps', 'CategoryLoggedOutStoryProps', 'CategoryLoggedInStoryProps'],
 }
 
 const CategoryStory: ComponentStory<typeof Category> = args => <Category {...args} />
@@ -30,7 +26,7 @@ export const CategoryStoryProps: CategoryProps = {
     isAuthenticated: true,
   },
   isAuthenticated: true,
-  title:'Environment',
+  title: 'Environment',
   following: false,
   numFollowers: 2387,
   numCollections: 43,
@@ -44,8 +40,15 @@ export const CategoryStoryProps: CategoryProps = {
     CollectionCardStoryProps,
     CollectionCardStoryProps,
   ],
-  resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
-  updateCategory:action('updateCategory')
+  resourceCardPropsList: [
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps
+  ],
+  updateCategory: action('updateCategory'),
 }
 
 export const CategoryLoggedOutStoryProps: CategoryProps = {
@@ -70,7 +73,7 @@ export const CategoryLoggedInStoryProps: CategoryProps = {
   ...CategoryStoryProps,
   headerPageTemplateProps: {
     ...CategoryStoryProps.headerPageTemplateProps,
-    isAuthenticated: true
+    isAuthenticated: true,
   },
 }
 
