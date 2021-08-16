@@ -9,7 +9,7 @@ export const ActivationRouteComponent: RouteFC<Routes.Activation> = ({
     params: { token },
   },
 }) => {
-  const props = ctrlHook(useActivationCtrl, { activationToken: token })
+  const props = ctrlHook(useActivationCtrl, { activationToken: token }, token)
   return <Activation {...props} />
 }
 

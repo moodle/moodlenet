@@ -22,7 +22,7 @@ export type CtrlHookRetOpts = {
 export const ctrlHook = <UIProps, HookArg, ExcludeKeys extends keyof UIProps = never>(
   useCtrlHook: CtrlHook<UIProps, HookArg, ExcludeKeys>,
   hookArg: HookArg,
-  key?: CKey,
+  key: CKey,
 ): ControlledProps<UIProps, ExcludeKeys, HookArg> => {
   return {
     key,

@@ -40,9 +40,9 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
       collections.reduce((allLikes, { likesCount }) => allLikes + likesCount, 0)
 
     const props: ProfileProps = {
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
-      resourceCardPropsList: resources.map(({ id }) => ctrlHook(useResourceCardCtrl, { id })),
-      collectionCardPropsList: collections.map(({ id }) => ctrlHook(useCollectionCardCtrl, { id })),
+      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
+      resourceCardPropsList: resources.map(({ id }) => ctrlHook(useResourceCardCtrl, { id }, id)),
+      collectionCardPropsList: collections.map(({ id }) => ctrlHook(useCollectionCardCtrl, { id }, id)),
       overallCardProps: {
         followers: profile.followersCount,
         resources: profile.resourcesCount,
