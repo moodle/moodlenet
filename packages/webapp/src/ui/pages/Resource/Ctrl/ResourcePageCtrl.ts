@@ -42,8 +42,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     variables: { resourceId: id, myProfileId: session ? [session.profile.id] : [] },
   })
   const resourceData = data?.node?.__typename === 'Resource' ? data.node : null
-  const [createResourceRelMut /* , createResourceRelMutRes */] = useCreateResourceRelationMutation()
-  const [delResourceRelMut /* , delResourceRelMutRes */] = useDelResourceRelationMutation()
+  const [createResourceRelMut, createResourceRelMutRes] = useCreateResourceRelationMutation()
+  const [delResourceRelMut, delResourceRelMutRes] = useDelResourceRelationMutation()
   const [edit /* , editResult */] = useEditResourceMutation()
   const categoryEdge = useMemo(() => resourceData?.categories.edges[0], [resourceData])
   const levelEdge = useMemo(() => resourceData?.grades.edges[0], [resourceData])
@@ -199,18 +199,27 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
   const likedEdge = resourceData?.myLike.edges[0]
   const liked = !!likedEdge
   const toggleLike = useCallback(async () => {
-    if (!(session && resourceData)) {
+    if (!session || createResourceRelMutRes.loading || delResourceRelMutRes.loading) {
       return
     }
     if (likedEdge) {
       await delResourceRelMut({ variables: { edge: { id: likedEdge.edge.id } } })
     } else {
       await createResourceRelMut({
-        variables: { edge: { edgeType: 'Likes', from: session.profile.id, to: resourceData.id, Likes: {} } },
+        variables: { edge: { edgeType: 'Likes', from: session.profile.id, to: id, Likes: {} } },
       })
     }
     refetch()
-  }, [session, resourceData, likedEdge, delResourceRelMut, createResourceRelMut, refetch])
+  }, [
+    session,
+    createResourceRelMutRes.loading,
+    delResourceRelMutRes.loading,
+    likedEdge,
+    refetch,
+    delResourceRelMut,
+    createResourceRelMut,
+    id,
+  ])
   const resourceProps = useMemo<null | ResourceProps>(() => {
     if (!resourceData) {
       return null

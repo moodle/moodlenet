@@ -10,19 +10,46 @@ import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTem
 // import { useFormikBag } from '../../../lib/formik'
 // import { NewCategoryFormValues } from '../../NewCategory/types'
 import { CategoryProps } from '../Category'
-import { useCategoryPageDataQuery } from './CategoryPage.gen'
+import {
+  useAddCategoryRelationMutation,
+  useCategoryPageDataQuery,
+  useDelCategoryRelationMutation,
+} from './CategoryPage.gen'
 
 export type CategoryCtrlProps = { id: ID }
 export const useCategoryCtrl: CtrlHook<CategoryProps, CategoryCtrlProps> = ({ id }) => {
   const { session, isAuthenticated } = useSession()
-  const { data } = useCategoryPageDataQuery({
+  const [addCategoryRelation, addCategoryRelationRes] = useAddCategoryRelationMutation()
+  const [delCategoryRelation, delCategoryRelationRes] = useDelCategoryRelationMutation()
+  const { data, refetch } = useCategoryPageDataQuery({
     variables: { categoryId: id, myProfileId: session ? [session.profile.id] : [] },
   })
 
   const categoryData = data?.node?.__typename === 'IscedField' ? data.node : null
   const myFollowEdgeId = categoryData?.myFollow.edges[0]?.edge.id
 
-  const toggleFollow = useCallback(() => {}, [])
+  const toggleFollow = useCallback(() => {
+    if (!session || addCategoryRelationRes.loading || delCategoryRelationRes.loading) {
+      return
+    }
+    if (myFollowEdgeId) {
+      return delCategoryRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(() => refetch())
+    } else {
+      return addCategoryRelation({
+        variables: { edge: { edgeType: 'Follows', from: session.profile.id, to: id, Follows: {} } },
+      }).then(() => refetch())
+    }
+  }, [
+    addCategoryRelation,
+    addCategoryRelationRes.loading,
+    delCategoryRelation,
+    delCategoryRelationRes.loading,
+    id,
+    myFollowEdgeId,
+    refetch,
+    session,
+  ])
+
   const categoryProps = useMemo<null | CategoryProps>(() => {
     if (!categoryData) {
       return null

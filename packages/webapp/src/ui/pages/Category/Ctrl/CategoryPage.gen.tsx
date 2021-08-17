@@ -83,6 +83,32 @@ export type CategoryPageDataQuery = (
   ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' }> }
 );
 
+export type DelCategoryRelationMutationVariables = Types.Exact<{
+  edge: Types.DeleteEdgeInput;
+}>;
+
+
+export type DelCategoryRelationMutation = (
+  { __typename: 'Mutation' }
+  & { deleteEdge: { __typename: 'DeleteEdgeMutationSuccess' } | (
+    { __typename: 'DeleteEdgeMutationError' }
+    & Pick<Types.DeleteEdgeMutationError, 'type' | 'details'>
+  ) }
+);
+
+export type AddCategoryRelationMutationVariables = Types.Exact<{
+  edge: Types.CreateEdgeInput;
+}>;
+
+
+export type AddCategoryRelationMutation = (
+  { __typename: 'Mutation' }
+  & { createEdge: { __typename: 'CreateEdgeMutationSuccess' } | (
+    { __typename: 'CreateEdgeMutationError' }
+    & Pick<Types.CreateEdgeMutationError, 'type' | 'details'>
+  ) }
+);
+
 
 export const CategoryPageDataDocument = gql`
     query CategoryPageData($categoryId: ID!, $myProfileId: [ID!]) {
@@ -187,3 +213,75 @@ export function useCategoryPageDataLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type CategoryPageDataQueryHookResult = ReturnType<typeof useCategoryPageDataQuery>;
 export type CategoryPageDataLazyQueryHookResult = ReturnType<typeof useCategoryPageDataLazyQuery>;
 export type CategoryPageDataQueryResult = Apollo.QueryResult<CategoryPageDataQuery, CategoryPageDataQueryVariables>;
+export const DelCategoryRelationDocument = gql`
+    mutation delCategoryRelation($edge: DeleteEdgeInput!) {
+  deleteEdge(input: $edge) {
+    ... on DeleteEdgeMutationError {
+      type
+      details
+    }
+  }
+}
+    `;
+export type DelCategoryRelationMutationFn = Apollo.MutationFunction<DelCategoryRelationMutation, DelCategoryRelationMutationVariables>;
+
+/**
+ * __useDelCategoryRelationMutation__
+ *
+ * To run a mutation, you first call `useDelCategoryRelationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDelCategoryRelationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [delCategoryRelationMutation, { data, loading, error }] = useDelCategoryRelationMutation({
+ *   variables: {
+ *      edge: // value for 'edge'
+ *   },
+ * });
+ */
+export function useDelCategoryRelationMutation(baseOptions?: Apollo.MutationHookOptions<DelCategoryRelationMutation, DelCategoryRelationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DelCategoryRelationMutation, DelCategoryRelationMutationVariables>(DelCategoryRelationDocument, options);
+      }
+export type DelCategoryRelationMutationHookResult = ReturnType<typeof useDelCategoryRelationMutation>;
+export type DelCategoryRelationMutationResult = Apollo.MutationResult<DelCategoryRelationMutation>;
+export type DelCategoryRelationMutationOptions = Apollo.BaseMutationOptions<DelCategoryRelationMutation, DelCategoryRelationMutationVariables>;
+export const AddCategoryRelationDocument = gql`
+    mutation addCategoryRelation($edge: CreateEdgeInput!) {
+  createEdge(input: $edge) {
+    ... on CreateEdgeMutationError {
+      type
+      details
+    }
+  }
+}
+    `;
+export type AddCategoryRelationMutationFn = Apollo.MutationFunction<AddCategoryRelationMutation, AddCategoryRelationMutationVariables>;
+
+/**
+ * __useAddCategoryRelationMutation__
+ *
+ * To run a mutation, you first call `useAddCategoryRelationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddCategoryRelationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addCategoryRelationMutation, { data, loading, error }] = useAddCategoryRelationMutation({
+ *   variables: {
+ *      edge: // value for 'edge'
+ *   },
+ * });
+ */
+export function useAddCategoryRelationMutation(baseOptions?: Apollo.MutationHookOptions<AddCategoryRelationMutation, AddCategoryRelationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddCategoryRelationMutation, AddCategoryRelationMutationVariables>(AddCategoryRelationDocument, options);
+      }
+export type AddCategoryRelationMutationHookResult = ReturnType<typeof useAddCategoryRelationMutation>;
+export type AddCategoryRelationMutationResult = Apollo.MutationResult<AddCategoryRelationMutation>;
+export type AddCategoryRelationMutationOptions = Apollo.BaseMutationOptions<AddCategoryRelationMutation, AddCategoryRelationMutationVariables>;
