@@ -20,7 +20,7 @@ const ListCardStory: ComponentStory<typeof ListCard> = args => <ListCard {...arg
 export const SubjectListCardStoryProps: ListCardProps = {
   className: 'subjects',
   content: ['#Education', '#Forestry', 'Enviromental Science'].map(x => (
-    <SubjectCard organization={{ ...SubjectCardStoryProps }.organization} title={x} />
+    <SubjectCard {...{ ...SubjectCardStoryProps, title: x }} />
   )),
   noCard: true,
 }
