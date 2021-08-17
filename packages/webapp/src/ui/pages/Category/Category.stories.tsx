@@ -35,6 +35,8 @@ export const CategoryStoryProps: CategoryProps = {
     CollectionCardStoryProps,
     CollectionCardStoryProps,
     CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps
   ],
   resourceCardPropsList: [
     ResourceCardStoryProps,
