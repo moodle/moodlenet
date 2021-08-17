@@ -35,6 +35,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
   isAuthenticated: true,
   isOwner: false,
   following: false,
+  bookmarked: false,
   contributorCardProps: ContributorCardStoryProps,
   overallCardProps: OverallCardStoryProps,
   formBag: SBFormikBag<NewCollectionFormValues>({
@@ -50,7 +51,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     image: 'https://picsum.photos/200/100',
-    title: 'The Best Collection Ever',
+    title: 'Best Collection Ever',
   }),
   categories: CategoriesDropdown,
   resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],

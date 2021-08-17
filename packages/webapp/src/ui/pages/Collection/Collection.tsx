@@ -1,4 +1,5 @@
 import { Trans } from '@lingui/macro'
+import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@material-ui/icons/BookmarkBorder'
 import EditIcon from '@material-ui/icons/Edit'
 import SaveIcon from '@material-ui/icons/Save'
 import { useCallback, useState } from 'react'
@@ -8,7 +9,6 @@ import InputTextField from '../../components/atoms/InputTextField/InputTextField
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
 import ListCard from '../../components/cards/ListCard/ListCard'
-import { OverallCard, OverallCardProps } from '../../components/cards/OverallCard/OverallCard'
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { FormikBag } from '../../lib/formik'
@@ -23,12 +23,13 @@ export type CollectionProps = {
   isAuthenticated: boolean
   isOwner: boolean
   following: boolean
+  bookmarked: boolean
   contributorCardProps: ContributorCardProps
-  overallCardProps: Omit<OverallCardProps, 'hideBorderWhenSmall'>
   formBag: FormikBag<NewCollectionFormValues>
   categories: DropdownField
   resourceCardPropsList: CP<ResourceCardProps>[]
   updateCollection: () => unknown
+  toggleBookmark: () => unknown
 }
 
 export const Collection = withCtrl<CollectionProps>(
@@ -37,11 +38,12 @@ export const Collection = withCtrl<CollectionProps>(
     isAuthenticated,
     isOwner,
     following,
+    bookmarked,
     contributorCardProps,
-    overallCardProps,
     formBag,
     categories,
     resourceCardPropsList,
+    toggleBookmark,
     updateCollection,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -117,6 +119,13 @@ export const Collection = withCtrl<CollectionProps>(
               <div className="info">
                 <div className="label">
                   <Trans>Collection</Trans>
+                  {!isOwner && (
+                    <div className="actions">
+                      <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
+                        {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                      </div>
+                    </div>
+                  )}
                 </div>
                 {isOwner ? (
                   <InputTextField
@@ -145,20 +154,6 @@ export const Collection = withCtrl<CollectionProps>(
                 ) : (
                   <div className="description">{form.values.description}</div>
                 )}
-              </div>
-              {isOwner ? (
-                <div className="actions edit-save">
-                  {isEditing ? (
-                    <PrimaryButton color="green" onHoverColor="orange" onClick={handleOnSaveClick}>
-                      <SaveIcon />
-                    </PrimaryButton>
-                  ) : (
-                    <SecondaryButton onClick={handleOnEditClick} color="orange">
-                      <EditIcon />
-                    </SecondaryButton>
-                  )}
-                </div>
-              ) : (
                 <div className="actions">
                   {isFollowig ? (
                     <SecondaryButton onClick={handleOnUnfollowClick}>
@@ -168,6 +163,19 @@ export const Collection = withCtrl<CollectionProps>(
                     <PrimaryButton disabled={!isAuthenticated} onClick={handleOnFollowClick}>
                       <Trans>Follow</Trans>
                     </PrimaryButton>
+                  )}
+                </div>
+              </div>
+              {isOwner && (
+                <div className="actions edit-save">
+                  {isEditing ? (
+                    <PrimaryButton color="green" onHoverColor="orange" onClick={handleOnSaveClick}>
+                      <SaveIcon />
+                    </PrimaryButton>
+                  ) : (
+                    <SecondaryButton onClick={handleOnEditClick} color="orange">
+                      <EditIcon />
+                    </SecondaryButton>
                   )}
                 </div>
               )}
@@ -187,10 +195,7 @@ export const Collection = withCtrl<CollectionProps>(
                   className="resources no-card"
                 />
                 <div className="collection-footer">
-                  <div className="left-column">
-                    {!isOwner && <ContributorCard {...contributorCardProps} />}
-                    {!isOwner && <OverallCard {...overallCardProps} />}
-                  </div>
+                  <div className="left-column">{!isOwner && <ContributorCard {...contributorCardProps} />}</div>
                   <div className="right-column">
                     {actionsCard}
                     {extraDetails}
@@ -198,14 +203,12 @@ export const Collection = withCtrl<CollectionProps>(
                   <div className="one-column">
                     {actionsCard}
                     {!isOwner && <ContributorCard {...contributorCardProps} />}
-                    {!isOwner && <OverallCard {...overallCardProps} hideBorderWhenSmall={true} />}
                     {extraDetails}
                   </div>
                 </div>
               </div>
               <div className="side-column">
                 {!isOwner && <ContributorCard {...contributorCardProps} />}
-                {!isOwner && <OverallCard {...overallCardProps} />}
                 {actionsCard}
                 {extraDetails}
               </div>

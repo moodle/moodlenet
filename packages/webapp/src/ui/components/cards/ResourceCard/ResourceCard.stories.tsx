@@ -20,7 +20,7 @@ const meta: ComponentMeta<typeof ResourceCard> = {
 
 export const ResourceCardStoryProps: ResourceCardProps = {
   tags: ['Reforestationg', 'Drones', 'Soil'],
-  title: 'Latest Resources',
+  title: 'Best Resource Ever',
   image: 'https://picsum.photos/200/100',
   type: 'Video',
   resourceHomeHref: href('resource/hom'),
