@@ -57,7 +57,6 @@ export const Header = withCtrl<HeaderProps>(props => {
           <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for anything!`} />
         </div>
         <div className="right">
-          <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for anything!`} />
           {me ? (
             <>
               <FloatingMenu
@@ -112,7 +111,7 @@ export const Header = withCtrl<HeaderProps>(props => {
                   hoverElement={
                     <PrimaryButton>
                       <Link href={loginHref}>
-                        <Trans>Login</Trans>
+                        <Trans>Sign in</Trans>
                       </Link>
                       <PersonIcon />
                     </PrimaryButton>
@@ -123,7 +122,7 @@ export const Header = withCtrl<HeaderProps>(props => {
               <div className="signup-btn">
                 <Link href={signUpHref}>
                   <TertiaryButton>
-                    <Trans>Sign up</Trans>
+                    <Trans>Join now</Trans>
                   </TertiaryButton>
                 </Link>
               </div>

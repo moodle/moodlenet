@@ -21,8 +21,15 @@
         width: 100%;
         height: 100%;
         display: inline-flex;
-        flex-wrap: wrap;
         gap: 12px;
+        &.vertical {
+            flex-wrap: wrap;
+        }
+        &.horizontal {
+            padding-right: 13px;
+            -webkit-mask-image: linear-gradient(to left, transparent 0%, black 3%);
+            mask-image: linear-gradient(to left, transparent 0%, black 3%);
+        }
     }
 }
 

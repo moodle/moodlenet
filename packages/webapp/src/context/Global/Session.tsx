@@ -44,6 +44,7 @@ export type SessionContextType = {
   lastSessionEmail: string | null
   lastSessionJwt: string | null
   isAuthenticated: boolean
+  isAdmin: boolean
   logout(): unknown
   activateNewUser(_: { password: string; activationToken: string; name: string }): Promise<ActivateWarnMessage | null>
   signUp(_: { email: string }): Promise<SignupWarnMessage | null>
@@ -100,7 +101,6 @@ export const SessionProvider: FC = ({ children }) => {
     storeLastSession(lastSession)
     getSessionLazyQ()
   }, [getSessionLazyQ, lastSession])
-
   const ctx = useMemo<SessionContextType>(
     () => ({
       logout,
@@ -108,6 +108,7 @@ export const SessionProvider: FC = ({ children }) => {
       activateNewUser,
       signUp,
       session,
+      isAdmin: session?.profile.id === 'Profile/__root__', // FIXME HACK for mvp
       isAuthenticated: !!session,
       lastSessionEmail: lastSession.email ?? null,
       lastSessionJwt: lastSession.jwt ?? null,
