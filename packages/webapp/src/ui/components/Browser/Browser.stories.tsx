@@ -40,6 +40,8 @@ export const BrowserStoryProps: BrowserProps = {
     CollectionCardStoryProps,
     CollectionCardStoryProps,
     CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
   ],
   resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
 }

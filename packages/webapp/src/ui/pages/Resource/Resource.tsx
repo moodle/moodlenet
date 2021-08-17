@@ -1,24 +1,24 @@
-import { Trans } from '@lingui/macro';
-import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@material-ui/icons/BookmarkBorder';
-import EditIcon from '@material-ui/icons/Edit';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import SaveIcon from '@material-ui/icons/Save';
-import ShareIcon from '@material-ui/icons/Share';
-import { useCallback, useState } from 'react';
-import Card from '../../components/atoms/Card/Card';
-import Dropdown from '../../components/atoms/Dropdown/Dropdown';
-import InputTextField from '../../components/atoms/InputTextField/InputTextField';
-import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton';
-import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton';
-import { CP, withCtrl } from '../../lib/ctrl';
-import { FormikBag } from '../../lib/formik';
-import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate';
-import { getResourceColorType } from '../../types';
-import { DropdownField, FormatDropdown } from '../NewResource/FieldsData';
-import { NewResourceFormValues } from '../NewResource/types';
-import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard';
-import './styles.scss';
+import { Trans } from '@lingui/macro'
+import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@material-ui/icons/BookmarkBorder'
+import EditIcon from '@material-ui/icons/Edit'
+import FavoriteIcon from '@material-ui/icons/Favorite'
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
+import SaveIcon from '@material-ui/icons/Save'
+import ShareIcon from '@material-ui/icons/Share'
+import { useCallback, useState } from 'react'
+import Card from '../../components/atoms/Card/Card'
+import Dropdown from '../../components/atoms/Dropdown/Dropdown'
+import InputTextField from '../../components/atoms/InputTextField/InputTextField'
+import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
+import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
+import { CP, withCtrl } from '../../lib/ctrl'
+import { FormikBag } from '../../lib/formik'
+import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
+import { getResourceColorType } from '../../types'
+import { DropdownField, FormatDropdown } from '../NewResource/FieldsData'
+import { NewResourceFormValues } from '../NewResource/types'
+import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
+import './styles.scss'
 
 export type ResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
@@ -65,7 +65,7 @@ export const Resource = withCtrl<ResourceProps>(
     categories,
     updateResource,
     toggleLike,
-    toggleBookmark
+    toggleBookmark,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
 
@@ -205,9 +205,11 @@ export const Resource = withCtrl<ResourceProps>(
                         {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                         <span>{numLikes}</span>
                       </div>
-                      <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
-                        {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-                      </div>
+                      {!isOwner && (
+                        <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
+                          {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                        </div>
+                      )}
                       <div className="share">
                         <ShareIcon />
                       </div>

@@ -12,10 +12,6 @@
       > :not(:last-child) {
         margin-bottom: 30px;
       }
-      > .collections > .content > * {
-        width: 46%;
-        min-width: 180px;
-      }
       > .subjects {
         max-height: 260px;
         overflow: hidden;
@@ -52,6 +48,13 @@
       }
     }
 
+    @media screen and (min-width: 1000px) {
+      .collections > .content > .collection-card {
+        font-size: 15px;
+        width: calc(33% - 8px);
+      }
+    }
+
     @media screen and (max-width: 800px) {
       > .main-column {
         width: 100%;
@@ -69,21 +72,22 @@
 
     .collections > .content {
       justify-content: space-between;
-      > .collection-card {
+    }
+  }
+
+  @media (min-width: 450px) and (max-width: 1000px) {
+    .collections > .content > .collection-card {
         font-size: 15px;
         width: calc(50% - 6px);
       }
-    }
   }
 
   @media screen and (max-width: 450px) {
     .search > .content {
       margin: 25px;
-      .collections > .content {
-        > .collection-card {
-          font-size: 15px;
-          width: 100%;
-        }
+      .collections > .content > .collection-card {
+        font-size: 15px;
+        width: 100%;
       }
     }
   }

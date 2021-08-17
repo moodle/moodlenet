@@ -99,7 +99,7 @@ export const Browser = withCtrl<BrowserProps>(
               )}
               {filters.Collections && (
                 <ListCard
-                  content={collectionCardPropsList.slice(0, 4).map((collectionCardProps, i) => (
+                  content={collectionCardPropsList.slice(0, 6).map((collectionCardProps, i) => (
                     <CollectionCard {...collectionCardProps} key={i}/>
                   ))}
                   className="collections"
