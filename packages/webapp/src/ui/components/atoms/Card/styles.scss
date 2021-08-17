@@ -9,5 +9,8 @@
             box-shadow: none;
             background-color: transparent;
         }
+        &.remove-padding {
+            padding: 0;
+        }
     }
 }
