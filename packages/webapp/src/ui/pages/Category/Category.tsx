@@ -80,7 +80,7 @@ export const Category = withCtrl<CategoryProps>(
             <div className="main-content">
               {collectionCardPropsList && (
                 <ListCard
-                  content={collectionCardPropsList./*slice(0, 4).*/ map((
+                  content={collectionCardPropsList.map((
                     collectionCardProps,
                     i, //Infinite scoll?
                   ) => (
