@@ -1,5 +1,5 @@
+import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { isJust } from '@moodlenet/common/lib/utils/array'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { duration } from 'moment'
 import { useCallback, useEffect, useMemo } from 'react'
@@ -239,9 +239,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
           : '?',
       },
       isAuthenticated,
-      tags: resourceData.collections.edges
-        .map(_ => (_.node.__typename === 'Collection' && _.node.name) || null)
-        .filter(isJust),
+      tags: resourceData.collections.edges.filter(isEdgeNodeOfType(['Collection'])).map(({ node: { name } }) => name),
 
       languages: langOptions,
       levels: resGradeOptions,

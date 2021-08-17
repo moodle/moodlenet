@@ -1,4 +1,4 @@
-import { isJust } from '@moodlenet/common/lib/utils/array'
+import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
 import { useMemo } from 'react'
 import { useGlobalSearchQuery } from '../../../../context/Global/GlobalSearch/globalSearch.gen'
 import { useLocalInstance } from '../../../../context/Global/LocalInstance'
@@ -23,12 +23,9 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
   const tags = useMemo(
     () =>
       trendingQ.data?.globalSearch.edges
-        .map(edge =>
-          edge.node.__typename === 'IscedField' || edge.node.__typename === 'Collection' ? edge.node : null,
-        )
-        .filter(isJust)
-        .map<FollowTag>(node => ({
-          name: node.name,
+        .filter(isEdgeNodeOfType(['IscedField', 'Collection']))
+        .map<FollowTag>(({ node: { name } }) => ({
+          name,
           type: 'Specific',
         })),
     [trendingQ.data?.globalSearch.edges],
