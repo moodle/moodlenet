@@ -3,14 +3,13 @@
     width: 100%;
     max-width: 1100px;
     height: 100%;
-    margin-top: 40px;
+    padding-top: 40px;
     display: flex;
     flex-direction: column;
     gap: 20px;
 
     @media screen and (max-width: 450px) {
-      margin-top: 0;
-      padding: 0 20px;
+      padding: 20px;
     }
 
     .category-header {
@@ -59,6 +58,7 @@
 
         @media screen and (max-width: 450px) {
           justify-content: center;
+          padding: 10px 0 14px 0;
           > .info {
             > .title {
               text-align: center;
