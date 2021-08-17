@@ -1,23 +1,24 @@
-import { Trans } from '@lingui/macro'
-import EditIcon from '@material-ui/icons/Edit'
-import FavoriteIcon from '@material-ui/icons/Favorite'
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
-import SaveIcon from '@material-ui/icons/Save'
-import ShareIcon from '@material-ui/icons/Share'
-import { useCallback, useState } from 'react'
-import Card from '../../components/atoms/Card/Card'
-import Dropdown from '../../components/atoms/Dropdown/Dropdown'
-import InputTextField from '../../components/atoms/InputTextField/InputTextField'
-import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
-import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
-import { CP, withCtrl } from '../../lib/ctrl'
-import { FormikBag } from '../../lib/formik'
-import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
-import { getResourceColorType } from '../../types'
-import { DropdownField, FormatDropdown } from '../NewResource/FieldsData'
-import { NewResourceFormValues } from '../NewResource/types'
-import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
-import './styles.scss'
+import { Trans } from '@lingui/macro';
+import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@material-ui/icons/BookmarkBorder';
+import EditIcon from '@material-ui/icons/Edit';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import SaveIcon from '@material-ui/icons/Save';
+import ShareIcon from '@material-ui/icons/Share';
+import { useCallback, useState } from 'react';
+import Card from '../../components/atoms/Card/Card';
+import Dropdown from '../../components/atoms/Dropdown/Dropdown';
+import InputTextField from '../../components/atoms/InputTextField/InputTextField';
+import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton';
+import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton';
+import { CP, withCtrl } from '../../lib/ctrl';
+import { FormikBag } from '../../lib/formik';
+import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate';
+import { getResourceColorType } from '../../types';
+import { DropdownField, FormatDropdown } from '../NewResource/FieldsData';
+import { NewResourceFormValues } from '../NewResource/types';
+import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard';
+import './styles.scss';
 
 export type ResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
@@ -25,6 +26,8 @@ export type ResourceProps = {
   isOwner: boolean
   title: string
   liked: boolean
+  numLikes: number
+  bookmarked: boolean
   tags: Array<string>
   contributorCardProps: ContributorCardProps
   formBag: FormikBag<NewResourceFormValues>
@@ -38,6 +41,7 @@ export type ResourceProps = {
   categories: DropdownField
   updateResource: () => unknown
   toggleLike: () => unknown
+  toggleBookmark: () => unknown
 }
 
 export const Resource = withCtrl<ResourceProps>(
@@ -46,6 +50,8 @@ export const Resource = withCtrl<ResourceProps>(
     isAuthenticated,
     isOwner,
     liked,
+    numLikes,
+    bookmarked,
     tags,
     contributorCardProps,
     formBag,
@@ -59,6 +65,7 @@ export const Resource = withCtrl<ResourceProps>(
     categories,
     updateResource,
     toggleLike,
+    toggleBookmark
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
 
@@ -196,11 +203,13 @@ export const Resource = withCtrl<ResourceProps>(
                     <div className="actions">
                       <div className={`like ${liked && 'liked'}`} onClick={toggleLike}>
                         {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                        <Trans>Like</Trans>
+                        <span>{numLikes}</span>
+                      </div>
+                      <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
+                        {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                       </div>
                       <div className="share">
                         <ShareIcon />
-                        <Trans>Share</Trans>
                       </div>
                       {isOwner && (
                         <div className="edit-save">
