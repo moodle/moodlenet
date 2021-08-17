@@ -3,7 +3,6 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { OverallCardStoryProps } from '../../components/cards/OverallCard/OverallCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
-import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { CategoriesDropdown } from '../NewCollection/FieldsData'
@@ -28,7 +27,7 @@ const meta: ComponentMeta<typeof Collection> = {
 
 const CollectionStory: ComponentStory<typeof Collection> = args => <Collection {...args} />
 
-export const CollectionStoryProps: CollectionProps = {
+export const CollectionLoggedInStoryProps: CollectionProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
@@ -59,7 +58,7 @@ export const CollectionStoryProps: CollectionProps = {
 }
 
 export const CollectionLoggedOutStoryProps: CollectionProps = {
-  ...CollectionStoryProps,
+  ...CollectionLoggedInStoryProps,
   isAuthenticated: false,
   headerPageTemplateProps: {
     isAuthenticated: false,
@@ -72,18 +71,6 @@ export const CollectionLoggedOutStoryProps: CollectionProps = {
       subHeaderProps: {
         tags: [],
       },
-    },
-  },
-}
-
-export const CollectionLoggedInStoryProps: CollectionProps = {
-  ...CollectionStoryProps,
-  headerPageTemplateProps: {
-    isAuthenticated: true,
-    headerPageProps: {
-      isAuthenticated: true,
-      headerProps: HeaderLoggedOutStoryProps,
-      subHeaderProps: SubHeaderStoryProps,
     },
   },
 }

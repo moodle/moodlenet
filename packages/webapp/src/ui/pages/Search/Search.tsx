@@ -49,7 +49,7 @@ export const Search = withCtrl<SearchProps>(
                 content={[
                   <Checkbox
                     onChange={setFilterCB}
-                    label={t`Subjects`}
+                    label={t`Categories`}
                     name="Subjects"
                     key="Subjects"
                     checked={filters.Subjects}
@@ -84,15 +84,15 @@ export const Search = withCtrl<SearchProps>(
             <div className="main-column">
               {filters.Subjects && (
                 <ListCard
-                  content={subjectCardPropsList.slice(0, 8).map(subjectCardProps => (
-                    <SubjectCard {...subjectCardProps} />
+                  content={subjectCardPropsList.slice(0, 8).map((subjectCardProps, i) => (
+                    <SubjectCard {...subjectCardProps} key={i} />
                   ))}
                   className="subjects"
                   noCard={true}
                 >
                   <div className="card-header">
                     <div className="title">
-                      <Trans>Subjects</Trans>
+                      <Trans>Categories</Trans>
                     </div>
                     <SecondaryButton>
                       <Trans>See all</Trans>
@@ -102,8 +102,8 @@ export const Search = withCtrl<SearchProps>(
               )}
               {filters.Collections && (
                 <ListCard
-                  content={collectionCardPropsList.slice(0, 4).map(collectionCardProps => (
-                    <CollectionCard {...collectionCardProps} />
+                  content={collectionCardPropsList.slice(0, 4).map((collectionCardProps, i) => (
+                    <CollectionCard {...collectionCardProps} key={i}/>
                   ))}
                   className="collections"
                   noCard={true}
@@ -120,8 +120,8 @@ export const Search = withCtrl<SearchProps>(
               )}
               {filters.Resources && (
                 <ListCard
-                  content={resourceCardPropsList.slice(0, 8).map(resourcesCardProps => (
-                    <ResourceCard {...resourcesCardProps} />
+                  content={resourceCardPropsList.slice(0, 8).map((resourceCardProps, i) => (
+                    <ResourceCard {...resourceCardProps} key={i}/>
                   ))}
                   className="resources"
                   noCard={true}

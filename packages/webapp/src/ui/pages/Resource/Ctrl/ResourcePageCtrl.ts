@@ -36,8 +36,7 @@ import { useDelResourceRelationMutation, useEditResourceMutation, useResourcePag
 
 export type ResourceCtrlProps = { id: ID }
 export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id }) => {
-  const { session } = useSession()
-  const isAuthenticated = !!session
+  const { session, isAdmin, isAuthenticated } = useSession()
   // const { org: localOrg } = useLocalInstance()
   const { data, refetch } = useResourcePageDataQuery({
     variables: { resourceId: id, myProfileId: session ? [session.profile.id] : [] },
@@ -195,12 +194,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     return creatorEdge?.node.__typename === 'Profile' ? creatorEdge?.node : undefined
   }, [creatorEdge])
 
-  const isOwner = useMemo(() => {
-    if (!(creator && session)) {
-      return false
-    }
-    return creator.id === session.profile.id || session.profile.id === 'Profile/__root__' //FIXME: MVP hack
-  }, [creator, session])
+  const isOwner = isAdmin || (creator && session ? creator.id === session.profile.id : false)
+
   const likedEdge = resourceData?.myLike.edges[0]
   const liked = !!likedEdge
   const toggleLike = useCallback(async () => {
