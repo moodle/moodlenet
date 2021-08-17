@@ -1,3 +1,4 @@
+import { narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useMemo } from 'react'
@@ -8,10 +9,10 @@ import { SubjectCardProps } from '../SubjectCard'
 import { useIscedfCardQuery } from './IscedfCard.gen'
 
 export const useIscedfCardCtrl: CtrlHook<SubjectCardProps, { id: ID }> = ({ id }) => {
-  const subjectNode = useIscedfCardQuery({ variables: { id } }).data?.node
+  const subjectNode = narrowNodeType(['IscedField'])(useIscedfCardQuery({ variables: { id } }).data?.node)
   const { org: localOrg } = useLocalInstance()
   const subjectCardUIProps = useMemo<SubjectCardProps | null>(() => {
-    if (!(subjectNode && subjectNode.__typename === 'IscedField')) {
+    if (!subjectNode) {
       return null
     }
     const orgData = null ?? localOrg

@@ -1,3 +1,4 @@
+import { narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useMemo } from 'react'
@@ -10,11 +11,11 @@ import { useCollectionCardQuery } from './CollectionCard.gen'
 
 export type CollectionCardCtrlArg = { id: ID }
 export const useCollectionCardCtrl: CtrlHook<CollectionCardProps, CollectionCardCtrlArg> = ({ id }) => {
-  const collectionNode = useCollectionCardQuery({ variables: { id } }).data?.node
+  const collectionNode = narrowNodeType(['Collection'])(useCollectionCardQuery({ variables: { id } }).data?.node)
   const { org: localOrg } = useLocalInstance()
   const collectionCardUIProps = useMemo<CollectionCardProps | null>(
     () =>
-      collectionNode && collectionNode.__typename === 'Collection'
+      collectionNode
         ? {
             organization: localOrg.name,
             title: collectionNode.name,

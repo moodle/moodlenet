@@ -1,4 +1,4 @@
-import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
+import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useEffect, useMemo } from 'react'
@@ -26,16 +26,13 @@ export type CollectionCtrlProps = { id: ID }
 export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> = ({ id }) => {
   // const { org: localOrg } = useLocalInstance()
   const { data, refetch } = useCollectionPageDataQuery({ variables: { collectionId: id } })
-  const collectionData = data?.node?.__typename === 'Collection' ? data.node : null
+  const collectionData = narrowNodeType(['Collection'])(data?.node)
   const [createCollectionRelMut /* , createCollectionRelMutRes */] = useCreateCollectionRelationMutation()
   const [delCollectionRelMut /* , delCollectionRelMutRes */] = useDelCollectionRelationMutation()
   const [edit /* , editResult */] = useEditCollectionMutation()
-  const categoryEdge = useMemo(() => collectionData?.categories.edges[0], [collectionData])
+  const categoryEdge = narrowEdgeNodeOfType(['IscedField'])(collectionData?.categories.edges[0])
 
-  const categoryNode = useMemo(() => (categoryEdge?.node.__typename === 'IscedField' ? categoryEdge.node : null), [
-    categoryEdge,
-  ])
-  const category = categoryNode?.name ?? ''
+  const category = categoryEdge?.node.name ?? ''
 
   const [formik, formBag] = useFormikBag<NewCollectionFormValues>({
     initialValues: {} as any,
@@ -87,13 +84,8 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     }
   }, [collectionData, fresetForm, category, id])
 
-  const creatorEdge = useMemo(() => {
-    return collectionData?.creator.edges[0]
-  }, [collectionData])
-
-  const creator = useMemo(() => {
-    return creatorEdge?.node.__typename === 'Profile' ? creatorEdge?.node : undefined
-  }, [creatorEdge])
+  const creatorEdge = narrowEdgeNodeOfType(['Profile'])(collectionData?.creator.edges[0])
+  const creator = creatorEdge?.node
 
   const { session, isAdmin, isAuthenticated } = useSession()
   const resourceNodes = useMemo(
