@@ -8,7 +8,7 @@ const meta: ComponentMeta<typeof ResourceCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['ResourceCardStoryProps'],
+  excludeStories: ['ResourceCardStoryProps', 'ResourceCardLoggedOutStoryProps', 'ResourceCardLoggedInStoryProps'],
   decorators: [
     Story => (
       <div style={{ height: 100, width: 300 }}>
@@ -24,11 +24,27 @@ export const ResourceCardStoryProps: ResourceCardProps = {
   image: 'https://picsum.photos/200/100',
   type: 'Video',
   resourceHomeHref: href('resource/hom'),
+  isAuthenticated: true,
+  bookmarked: false,
+  liked: false,
+  numLikes: 23
+}
+
+export const ResourceCardLoggedInStoryProps: ResourceCardProps = {
+  ...ResourceCardStoryProps
+}
+
+export const ResourceCardLoggedOutStoryProps: ResourceCardProps = {
+  ...ResourceCardStoryProps,
+  isAuthenticated: false
 }
 
 const ResourceCardStory: ComponentStory<typeof ResourceCard> = args => <ResourceCard {...args} />
 
-export const Default = ResourceCardStory.bind({})
-Default.args = ResourceCardStoryProps
+export const LoggedIn = ResourceCardStory.bind({})
+LoggedIn.args = ResourceCardLoggedInStoryProps
+
+export const LoggedOut = ResourceCardStory.bind({})
+LoggedOut.args = ResourceCardLoggedOutStoryProps
 
 export default meta

@@ -1,53 +1,108 @@
 .resource-card {
-    position: relative;
-    cursor: pointer;
+  position: relative;
+  cursor: pointer;
+  width: 100%;
+  height: 85px;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 0 6px #dedede;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  > .image {
+    width: 30%;
+    max-width: 100px;
+    margin-left: 10px;
+    height: calc(100% - 20px);
+    object-fit: cover;
+    border-radius: 9px;
+  }
+
+  > .resource-card-header {
     width: 100%;
-    height: 85px;
-    background-color: #fff;
-    border-radius: 16px;
-    box-shadow: 0 0 6px #dedede;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-
-    .image {
-        width: 30%;
-        max-width: 100px;
-        margin-left: 10px;
-        height: calc(100% - 20px);
-        object-fit: cover;
-        border-radius: 9px;
-    }
-
-    .info {
-        margin: 10px;
-        overflow: hidden;
-    }
-
-    .type {
+    margin: 0 14px 0 12px;
+    overflow: hidden;
+    > .main {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      > .type-and-actions {
         display: flex;
-        align-items: center;
-        font-size: 11px;
-        font-weight: bold;
-    }
+        justify-content: space-between;        
 
-    .title {
+        > .type {
+          display: flex;
+          align-items: center;
+          font-size: 11px;
+          font-weight: bold;
+        }
+
+        > .actions {
+          display: flex;
+          gap: 10px;
+          font-size: 13px;
+          color: #b6bacb;
+
+          > * {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            > svg,
+            * > svg {
+              width: 18px;
+              height: 18px;
+            }
+          }
+
+          .liked {
+            color: red;
+          }
+
+          > .like:hover {
+            color: red;
+          }
+
+          .bookmarked {
+            color: rgb(32, 193, 132);
+          }
+
+          > .bookmark:hover {
+            color: rgb(32, 193, 132);
+          }
+
+          > .share:hover {
+            color: #f88012;
+          }
+
+          > .edit-save {
+            width: 40px;
+            > * {
+              width: 100%;
+            }
+          }
+        }
+      }
+      > .title {
+        overflow: hidden;
         font-weight: bold;
         font-size: 14px;
+      }
     }
+    > .tags {
+      margin-top: 7px;
 
-    .tags {
-        margin-top: 7px;
-    }
-
-    .tags > .tag {
+      > .tag {
         font-size: 10px;
         padding: 3px 10px;
         margin-right: 3px;
+      }
     }
+  }
 
-    .delete-button {
-        position: absolute;
-        right: 0;
-    }
+  > .delete-button {
+    position: absolute;
+    right: 0;
+  }
 }
