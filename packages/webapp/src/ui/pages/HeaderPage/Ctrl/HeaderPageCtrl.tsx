@@ -1,4 +1,4 @@
-import { isJust } from '@moodlenet/common/lib/utils/array'
+import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
 import { useEffect, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
 import { useHeaderCtrl } from '../../../components/Header/Ctrl/HeaderCtrl'
@@ -21,9 +21,8 @@ export const useHeaderPageCtrl: CtrlHook<HeaderPageProps, {}> = () => {
   const subHeaderProps = useMemo<SubHeaderProps>(() => {
     const tags =
       pinned.data?.node?.pinnedList.edges
-        .map(edge => (edge.node.__typename === 'IscedField' ? edge.node : null))
-        .filter(isJust)
-        .map<FollowTag>(({ name }) => ({
+        .filter(isEdgeNodeOfType(['IscedField']))
+        .map<FollowTag>(({ node: { name } }) => ({
           name,
           type: 'General',
         })) ?? []
