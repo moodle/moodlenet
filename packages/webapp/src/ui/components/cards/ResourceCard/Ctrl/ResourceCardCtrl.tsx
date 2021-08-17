@@ -1,4 +1,4 @@
-import { isEdgeNodeOfType, maybeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
+import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useMemo } from 'react'
@@ -10,7 +10,7 @@ import { useResourceCardQuery } from './ResourceCard.gen'
 
 export type ResourceCardCtrlArg = { id: ID }
 export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlArg> = ({ id }) => {
-  const resourceNode = maybeNodeOfType(['Resource'])(useResourceCardQuery({ variables: { id } }).data?.node)
+  const resourceNode = narrowNodeType(['Resource'])(useResourceCardQuery({ variables: { id } }).data?.node)
 
   const resourceCardUIProps = useMemo<ResourceCardProps | null>(
     () =>

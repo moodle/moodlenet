@@ -1,3 +1,4 @@
+import { narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { FC, useMemo } from 'react'
 import { getMaybeAssetRefUrl } from '../../helpers/data'
 import { createCtx } from '../../lib/context'
@@ -19,8 +20,9 @@ export type LocalInstanceContextType = {
 export const [useLocalInstance, ProvideLocalInstance] = createCtx<LocalInstanceContextType>('LocalInstance')
 
 export const LocalInstanceProvider: FC = ({ children }) => {
-  const _localInstanceNode = useLocalInstanceQuery({ fetchPolicy: 'cache-first' }).data?.node
-  const localInstanceData = _localInstanceNode?.__typename === 'Organization' ? _localInstanceNode : undefined
+  const localInstanceData = narrowNodeType(['Organization'])(
+    useLocalInstanceQuery({ fetchPolicy: 'cache-first' }).data?.node,
+  )
   const ctx = useMemo<LocalInstanceContextType | null>(() => {
     return localInstanceData
       ? {

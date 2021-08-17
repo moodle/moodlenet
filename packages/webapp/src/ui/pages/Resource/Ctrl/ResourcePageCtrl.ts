@@ -1,4 +1,4 @@
-import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
+import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { duration } from 'moment'
@@ -41,33 +41,21 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
   const { data, refetch } = useResourcePageDataQuery({
     variables: { resourceId: id, myProfileId: session ? [session.profile.id] : [] },
   })
-  const resourceData = data?.node?.__typename === 'Resource' ? data.node : null
+  const resourceData = narrowNodeType(['Resource'])(data?.node)
   const [createResourceRelMut, createResourceRelMutRes] = useCreateResourceRelationMutation()
   const [delResourceRelMut, delResourceRelMutRes] = useDelResourceRelationMutation()
   const [edit /* , editResult */] = useEditResourceMutation()
-  const categoryEdge = useMemo(() => resourceData?.categories.edges[0], [resourceData])
-  const levelEdge = useMemo(() => resourceData?.grades.edges[0], [resourceData])
-  const typeEdge = useMemo(() => resourceData?.types.edges[0], [resourceData])
-  const languageEdge = useMemo(() => resourceData?.languages.edges[0], [resourceData])
-  const licenseEdge = useMemo(() => resourceData?.licenses.edges[0], [resourceData])
+  const categoryEdge = narrowEdgeNodeOfType(['IscedField'])(resourceData?.categories.edges[0])
+  const levelEdge = narrowEdgeNodeOfType(['IscedGrade'])(resourceData?.grades.edges[0])
+  const typeEdge = narrowEdgeNodeOfType(['ResourceType'])(resourceData?.types.edges[0])
+  const languageEdge = narrowEdgeNodeOfType(['Language'])(resourceData?.languages.edges[0])
+  const licenseEdge = narrowEdgeNodeOfType(['License'])(resourceData?.licenses.edges[0])
 
-  const categoryNode = useMemo(() => (categoryEdge?.node.__typename === 'IscedField' ? categoryEdge.node : null), [
-    categoryEdge,
-  ])
-  const levelNode = useMemo(() => (levelEdge?.node.__typename === 'IscedGrade' ? levelEdge.node : null), [levelEdge])
-  const typeNode = useMemo(() => (typeEdge?.node.__typename === 'ResourceType' ? typeEdge.node : null), [typeEdge])
-  const languageNode = useMemo(() => (languageEdge?.node.__typename === 'Language' ? languageEdge.node : null), [
-    languageEdge,
-  ])
-  const licenseNode = useMemo(() => (licenseEdge?.node.__typename === 'License' ? licenseEdge.node : null), [
-    licenseEdge,
-  ])
-
-  const category = categoryNode?.name ?? ''
-  const language = languageNode?.name ?? ''
-  const level = levelNode?.name ?? ''
-  const license = getLicenseOptField(licenseNode?.code ?? '')
-  const type = typeNode?.name ?? ''
+  const category = categoryEdge?.node.name ?? ''
+  const level = levelEdge?.node.name ?? ''
+  const type = typeEdge?.node.name ?? ''
+  const language = languageEdge?.node.name ?? ''
+  const license = getLicenseOptField(licenseEdge?.node.code ?? '')
 
   const [formik, formBag] = useFormikBag<NewResourceFormValues>({
     initialValues: {} as any,
@@ -186,13 +174,9 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     }
   }, [resourceData, fresetForm, category, language, level, license, type, id])
 
-  const creatorEdge = useMemo(() => {
-    return resourceData?.creator.edges[0]
-  }, [resourceData])
+  const creatorEdge = narrowEdgeNodeOfType(['Profile'])(resourceData?.creator.edges[0])
 
-  const creator = useMemo(() => {
-    return creatorEdge?.node.__typename === 'Profile' ? creatorEdge?.node : undefined
-  }, [creatorEdge])
+  const creator = creatorEdge?.node
 
   const isOwner = isAdmin || (creator && session ? creator.id === session.profile.id : false)
 
