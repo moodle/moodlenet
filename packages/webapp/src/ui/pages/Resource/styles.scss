@@ -92,8 +92,8 @@
                 gap: 8px;
                 > svg,
                 * > svg {
-                  width: 14px;
-                  height: 14px;
+                  width: 18px;
+                  height: 18px;
                 }
               }
 
@@ -103,6 +103,14 @@
 
               > .like:hover {
                 color: red;
+              }
+
+              .bookmarked {
+                color: rgb(32, 193, 132);
+              }
+
+              > .bookmark:hover {
+                color: rgb(32, 193, 132);
               }
 
               > .share:hover {

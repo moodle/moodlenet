@@ -1,6 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { BrowserStoryProps } from '../../components/Browser/Browser.stories'
-import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Bookmarks, BookmarksProps } from './Bookmarks'
 
@@ -24,26 +23,11 @@ export const BookmarksStoryProps: BookmarksProps = {
   browserProps: BrowserStoryProps
 }
 
-export const BookmarksLoggedOutStoryProps: BookmarksProps = {
-  ...BookmarksStoryProps,
-  headerPageTemplateProps: {
-    isAuthenticated: false,
-    headerPageProps: {
-      isAuthenticated: false,
-      headerProps: HeaderLoggedOutStoryProps,
-      subHeaderProps: { tags: [] },
-    },
-  },
-}
-
 export const BookmarksLoggedInStoryProps: BookmarksProps = {
   ...BookmarksStoryProps,
 }
 
-export const LoggedOut = BookmarksStory.bind({})
-LoggedOut.args = BookmarksLoggedOutStoryProps
-
-export const LoggedIn = BookmarksStory.bind({})
-LoggedIn.args = BookmarksLoggedInStoryProps
+export const Default = BookmarksStory.bind({})
+Default.args = BookmarksStoryProps
 
 export default meta

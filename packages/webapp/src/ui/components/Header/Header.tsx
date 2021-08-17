@@ -1,5 +1,6 @@
 import { t, Trans } from '@lingui/macro'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
+import BookmarksIcon from '@material-ui/icons/Bookmarks'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 import NoteAddIcon from '@material-ui/icons/NoteAdd'
@@ -23,6 +24,7 @@ export type HeaderPropsIdle = HeaderPropsBase & {
     logout(): unknown
     name: string
     myProfileHref: Href
+    bookmarksHref: Href
   }
 }
 export type HeaderPropsLoading = HeaderPropsBase & {
@@ -77,6 +79,10 @@ export const Header = withCtrl<HeaderProps>(props => {
               <FloatingMenu
                 menuContent={
                   <div>
+                    <Link href={me.bookmarksHref}>
+                      <BookmarksIcon />
+                      <Trans>Bookmarks</Trans>
+                    </Link>
                     <Link href={me.myProfileHref}>
                       <AccountCircleIcon />
                       <Trans>Profile</Trans>
