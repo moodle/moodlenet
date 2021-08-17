@@ -5,7 +5,7 @@ import { NewResource } from '../ui/pages/NewResource/NewResource'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const NewResourceComponent: RouteFC<Routes.CreateNewResource> = () => {
-  const props = ctrlHook(useNewResourceCtrl, {}, 'new-resourec-route')
+  const props = ctrlHook(useNewResourceCtrl, {}, 'new-resource-route')
   return <NewResource {...props} />
 }
 

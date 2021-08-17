@@ -5,6 +5,7 @@ import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/Reso
 import { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
 import { HeaderLoggedInStoryProps, HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
+import { href } from '../../elements/link'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Search, SearchProps } from './Search'
 
@@ -28,7 +29,11 @@ const subjectCardPropsList: SubjectCardProps[] = [
   'Latin',
   'Hebrew',
   'NoShow',
-].map(x => ({ organization: { ...SubjectCardStoryProps }.organization, title: x }))
+].map(x => ({
+  organization: { ...SubjectCardStoryProps }.organization,
+  title: x,
+  subjectHomeHref: href('Subject/home'),
+}))
 
 export const SearchStoryProps: SearchProps = {
   setSortBy: action(`set sort by`),

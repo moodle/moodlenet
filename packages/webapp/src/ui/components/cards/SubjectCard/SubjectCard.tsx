@@ -1,3 +1,4 @@
+import { Href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
 import '../../../styles/tags.css'
 import { Organization } from '../../../types'
@@ -7,9 +8,10 @@ import './styles.scss'
 export type SubjectCardProps = {
   title: string
   organization: Pick<Organization, 'url' | 'color'>
+  subjectHomeHref: Href
 }
 
-export const SubjectCard = withCtrl<SubjectCardProps>(({ title, organization }) => {
+export const SubjectCard = withCtrl<SubjectCardProps>(({ title, organization, subjectHomeHref }) => {
   return (
     <Card
       style={{
@@ -19,7 +21,9 @@ export const SubjectCard = withCtrl<SubjectCardProps>(({ title, organization }) 
     >
       <div className="subject-card">
         <div className="title">
-          <abbr title={title}>{title}</abbr>
+          <Link href={subjectHomeHref}>
+            <abbr title={title}>{title}</abbr>
+          </Link>
         </div>
         <div className="subtitle">
           <div className="url">{organization.url}</div>
