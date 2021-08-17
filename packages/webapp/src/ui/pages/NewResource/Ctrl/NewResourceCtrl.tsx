@@ -1,3 +1,4 @@
+import { isOfNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
@@ -226,9 +227,12 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
             },
           },
         })
-        const resource = resourceCreationResp.data?.resource
-        if (resource?.__typename === 'CreateNodeMutationSuccess' && resource.node.__typename === 'Resource') {
-          const resId = resource.node.id
+        const createRespData = resourceCreationResp.data?.resource
+        if (
+          createRespData?.__typename === 'CreateNodeMutationSuccess' &&
+          isOfNodeType(['Resource'])(createRespData.node)
+        ) {
+          const resId = createRespData.node.id
 
           const waitFor: Promise<any>[] = []
 

@@ -1,4 +1,4 @@
-import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
+import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { useCallback, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
@@ -25,7 +25,7 @@ export const useCategoryCtrl: CtrlHook<CategoryProps, CategoryCtrlProps> = ({ id
     variables: { categoryId: id, myProfileId: session ? [session.profile.id] : [] },
   })
 
-  const categoryData = data?.node?.__typename === 'IscedField' ? data.node : null
+  const categoryData = narrowNodeType(['IscedField'])(data?.node)
   const myFollowEdgeId = categoryData?.myFollow.edges[0]?.edge.id
 
   const toggleFollow = useCallback(() => {
