@@ -1,10 +1,6 @@
-import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
-import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
-import { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
-import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
-import { HeaderLoggedInStoryProps, HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
+import { BrowserStoryProps } from '../../components/Browser/Browser.stories'
+import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Search, SearchProps } from './Search'
 
@@ -20,31 +16,12 @@ const meta: ComponentMeta<typeof Search> = {
 
 const SearchStory: ComponentStory<typeof Search> = args => <Search {...args} />
 
-const subjectCardPropsList: SubjectCardProps[] = [
-  '#Education',
-  '#Forestry',
-  'Enviromental Science with a lot of Mathematics and Physics',
-  'Sailing Principles',
-  'Latin',
-  'Hebrew',
-  'NoShow',
-].map(x => ({ organization: { ...SubjectCardStoryProps }.organization, title: x }))
-
 export const SearchStoryProps: SearchProps = {
-  setSortBy: action(`set sort by`),
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
   },
-  subjectCardPropsList: subjectCardPropsList,
-  collectionCardPropsList: [
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-  ],
-  resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
+  browserProps: BrowserStoryProps
 }
 
 export const SearchLoggedOutStoryProps: SearchProps = {
@@ -61,14 +38,6 @@ export const SearchLoggedOutStoryProps: SearchProps = {
 
 export const SearchLoggedInStoryProps: SearchProps = {
   ...SearchStoryProps,
-  headerPageTemplateProps: {
-    isAuthenticated: false,
-    headerPageProps: {
-      isAuthenticated: false,
-      headerProps: HeaderLoggedInStoryProps,
-      subHeaderProps: { tags: [] },
-    },
-  },
 }
 
 export const LoggedOut = SearchStory.bind({})

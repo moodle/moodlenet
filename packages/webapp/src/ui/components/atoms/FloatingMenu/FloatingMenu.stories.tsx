@@ -1,8 +1,8 @@
-import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
-import NoteAddIcon from '@material-ui/icons/NoteAdd';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import addIcon from '../../../assets/icons/add.svg';
-import { FloatingMenu, FloatingMenuProps } from './FloatingMenu';
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
+import NoteAddIcon from '@material-ui/icons/NoteAdd'
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import addIcon from '../../../assets/icons/add.svg'
+import { FloatingMenu, FloatingMenuProps } from './FloatingMenu'
 
 const meta: ComponentMeta<typeof FloatingMenu> = {
   title: 'Components/Atoms/FloatingMenu',
@@ -11,32 +11,38 @@ const meta: ComponentMeta<typeof FloatingMenu> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: ['FloatingMenuStoryProps'],
-  
-  decorators:[
-    (Story)=>(<div style={{position: 'relative'}}><Story/></div>)
-  ]
+  decorators: [
+    Story => (
+      <div style={{ position: 'relative' }}>
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export const FloatingMenuStoryProps: FloatingMenuProps = {
   hoverElement: <img className="add-icon" src={addIcon} alt="Add" />,
-  menuContent: <div>
+  menuContent: (
     <div>
-      <NoteAddIcon />
-      New Resource
+      <div>
+        <NoteAddIcon />
+        New Resource
+      </div>
+      <div>
+        <LibraryAddIcon />
+        New Collection
+      </div>
     </div>
-    <div>
-      <LibraryAddIcon />
-      New Collection
-    </div>
-  </div>
-  ,
-  visible: true
+  ),
+  visible: true,
 }
 
-const FloatingMenuStory: ComponentStory<typeof FloatingMenu> = args => <FloatingMenu {...args}>
+const FloatingMenuStory: ComponentStory<typeof FloatingMenu> = args => (
+  <FloatingMenu {...args}>
     <div>This</div>
-    <div>And that</div> 
-</FloatingMenu>
+    <div>And that</div>
+  </FloatingMenu>
+)
 
 export const Default = FloatingMenuStory.bind({})
 Default.args = FloatingMenuStoryProps
