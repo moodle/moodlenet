@@ -32,7 +32,7 @@ export const Signup = withCtrl<SignupProps>(
           <div className={`signup-content ${requestSent ? 'success' : ''}`}>
             <Card>
               <Link href={loginHref}>
-                Login
+                Sign in
                 <CallMadeIcon />
               </Link>
             </Card>

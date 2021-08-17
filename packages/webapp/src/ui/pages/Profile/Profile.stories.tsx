@@ -4,7 +4,6 @@ import { OverallCardStoryProps } from '../../components/cards/OverallCard/Overal
 import { ProfileCardStoryProps } from '../../components/cards/ProfileCard/ProfileCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
-import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Profile, ProfileProps } from './Profile'
 
@@ -53,12 +52,8 @@ export const ProfileLoggedOutStoryProps: ProfileProps = {
 export const ProfileLoggedInStoryProps: ProfileProps = {
   ...ProfileStoryProps,
   headerPageTemplateProps: {
+    ...ProfileStoryProps.headerPageTemplateProps,
     isAuthenticated: true,
-    headerPageProps: {
-      isAuthenticated: true,
-      headerProps: HeaderLoggedOutStoryProps,
-      subHeaderProps: SubHeaderStoryProps,
-    },
   },
 }
 
