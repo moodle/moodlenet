@@ -1,5 +1,5 @@
+import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { isJust } from '@moodlenet/common/lib/utils/array'
 import { useCallback, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
@@ -62,14 +62,12 @@ export const useCategoryCtrl: CtrlHook<CategoryProps, CategoryCtrlProps> = ({ id
     const following = !!myFollowEdgeId
 
     const collectionCardPropsList = categoryData.collections.edges
-      .map(({ node }) => (node.__typename === 'Collection' ? node : null))
-      .filter(isJust)
-      .map(({ id }) => ctrlHook(useCollectionCardCtrl, { id }, id))
+      .filter(isEdgeNodeOfType(['Collection']))
+      .map(({ node: { id } }) => ctrlHook(useCollectionCardCtrl, { id }, id))
 
     const resourceCardPropsList = categoryData.resources.edges
-      .map(({ node }) => (node.__typename === 'Resource' ? node : null))
-      .filter(isJust)
-      .map(({ id }) => ctrlHook(useResourceCardCtrl, { id }, id))
+      .filter(isEdgeNodeOfType(['Resource']))
+      .map(({ node: { id } }) => ctrlHook(useResourceCardCtrl, { id }, id))
 
     const props: CategoryProps = {
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),

@@ -1,5 +1,5 @@
+import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
 import { GlobalSearchSort } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { isJust } from '@moodlenet/common/lib/utils/array'
 import { useMemo, useState } from 'react'
 import { useGlobalSearchQuery } from '../../../../context/Global/GlobalSearch/globalSearch.gen'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
@@ -39,25 +39,17 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
 
   const collections = useMemo(
     () =>
-      (collectionsQ.data?.globalSearch.edges || [])
-        .map(edge => (edge.node.__typename === 'Collection' ? edge.node : null))
-        .filter(isJust),
+      (collectionsQ.data?.globalSearch.edges || []).filter(isEdgeNodeOfType(['Collection'])).map(({ node }) => node),
     [collectionsQ.data?.globalSearch.edges],
   )
 
   const resources = useMemo(
-    () =>
-      (resourcesQ.data?.globalSearch.edges || [])
-        .map(edge => (edge.node.__typename === 'Resource' ? edge.node : null))
-        .filter(isJust),
+    () => (resourcesQ.data?.globalSearch.edges || []).filter(isEdgeNodeOfType(['Resource'])).map(({ node }) => node),
     [resourcesQ.data?.globalSearch.edges],
   )
 
   const subjects = useMemo(
-    () =>
-      (subjectsQ.data?.globalSearch.edges || [])
-        .map(edge => (edge.node.__typename === 'IscedField' ? edge.node : null))
-        .filter(isJust),
+    () => (subjectsQ.data?.globalSearch.edges || []).filter(isEdgeNodeOfType(['IscedField'])).map(({ node }) => node),
     [subjectsQ.data?.globalSearch.edges],
   )
 
