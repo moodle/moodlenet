@@ -3,7 +3,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { AddResources, AddResourcesProps } from './AddResources'
 
 const meta: ComponentMeta<typeof AddResources> = {
-  title: 'Pages/New Resource/Add To Collections',
+  title: 'Pages/Add Resources',
   component: AddResources,
   argTypes: {
     // backgroundColor: { control: 'color' },

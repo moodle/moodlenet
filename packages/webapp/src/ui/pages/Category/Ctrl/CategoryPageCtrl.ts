@@ -1,10 +1,8 @@
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { isJust } from '@moodlenet/common/lib/utils/array'
-import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { duration } from 'moment'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
-import { getJustAssetRefUrl, getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
 import {
   categoriesOptions,
   getGrade,
@@ -21,42 +19,39 @@ import {
   resGradeOptions,
   resTypeOptions,
   yearsOptions,
-} from '../../../../helpers/resource-relation-data-static-and-utils'
+} from '../../../../helpers/category-relation-data-static-and-utils'
+import { getJustAssetRefUrl, getMaybeAssetRefUrl } from '../../../../helpers/data'
 import { href } from '../../../elements/link'
 // import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useFormikBag } from '../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
-import { useCreateResourceRelationMutation } from '../../NewResource/Ctrl/NewResourceCtrl.gen'
-import { NewResourceFormValues } from '../../NewResource/types'
+import { useCreateCategoryRelationMutation } from '../../NewCategory/Ctrl/NewCategoryCtrl.gen'
+import { NewCategoryFormValues } from '../../NewCategory/types'
 // import { useFormikBag } from '../../../lib/formik'
-// import { NewResourceFormValues } from '../../NewResource/types'
-import { ResourceProps } from '../Resource'
-import { useDelResourceRelationMutation, useEditResourceMutation, useResourcePageDataQuery } from './ResourcePage.gen'
+// import { NewCategoryFormValues } from '../../NewCategory/types'
+import { CategoryProps } from '../Category'
+import { useCategoryPageDataQuery, useDelCategoryRelationMutation, useEditCategoryMutation } from './CategoryPage.gen'
 
-export type ResourceCtrlProps = { id: ID }
-export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id }) => {
-  const { session } = useSession()
-  const isAuthenticated = !!session
+export type CategoryCtrlProps = { id: ID }
+export const useCategoryCtrl: CtrlHook<CategoryProps, CategoryCtrlProps> = ({ id }) => {
   // const { org: localOrg } = useLocalInstance()
-  const { data, refetch } = useResourcePageDataQuery({
-    variables: { resourceId: id, myProfileId: session ? [session.profile.id] : [] },
-  })
-  const resourceData = data?.node?.__typename === 'Resource' ? data.node : null
-  const [createResourceRelMut /* , createResourceRelMutRes */] = useCreateResourceRelationMutation()
-  const [delResourceRelMut /* , delResourceRelMutRes */] = useDelResourceRelationMutation()
-  const [edit /* , editResult */] = useEditResourceMutation()
-  const categoryEdge = useMemo(() => resourceData?.categories.edges[0], [resourceData])
-  const levelEdge = useMemo(() => resourceData?.grades.edges[0], [resourceData])
-  const typeEdge = useMemo(() => resourceData?.types.edges[0], [resourceData])
-  const languageEdge = useMemo(() => resourceData?.languages.edges[0], [resourceData])
-  const licenseEdge = useMemo(() => resourceData?.licenses.edges[0], [resourceData])
+  const { data, refetch } = useCategoryPageDataQuery({ variables: { categoryId: id } })
+  const categoryData = data?.node?.__typename === 'Category' ? data.node : null
+  const [createCategoryRelMut /* , createCategoryRelMutRes */] = useCreateCategoryRelationMutation()
+  const [delCategoryRelMut /* , delCategoryRelMutRes */] = useDelCategoryRelationMutation()
+  const [edit /* , editResult */] = useEditCategoryMutation()
+  const categoryEdge = useMemo(() => categoryData?.categories.edges[0], [categoryData])
+  const levelEdge = useMemo(() => categoryData?.grades.edges[0], [categoryData])
+  const typeEdge = useMemo(() => categoryData?.types.edges[0], [categoryData])
+  const languageEdge = useMemo(() => categoryData?.languages.edges[0], [categoryData])
+  const licenseEdge = useMemo(() => categoryData?.licenses.edges[0], [categoryData])
 
   const categoryNode = useMemo(() => (categoryEdge?.node.__typename === 'IscedField' ? categoryEdge.node : null), [
     categoryEdge,
   ])
   const levelNode = useMemo(() => (levelEdge?.node.__typename === 'IscedGrade' ? levelEdge.node : null), [levelEdge])
-  const typeNode = useMemo(() => (typeEdge?.node.__typename === 'ResourceType' ? typeEdge.node : null), [typeEdge])
+  const typeNode = useMemo(() => (typeEdge?.node.__typename === 'CategoryType' ? typeEdge.node : null), [typeEdge])
   const languageNode = useMemo(() => (languageEdge?.node.__typename === 'Language' ? languageEdge.node : null), [
     languageEdge,
   ])
@@ -70,11 +65,11 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
   const license = getLicenseOptField(licenseNode?.code ?? '')
   const type = typeNode?.name ?? ''
 
-  const [formik, formBag] = useFormikBag<NewResourceFormValues>({
+  const [formik, formBag] = useFormikBag<NewCategoryFormValues>({
     initialValues: {} as any,
     onSubmit: async vals => {
       console.log('save update', vals)
-      if (!resourceData) {
+      if (!categoryData) {
         return
       }
       const editResPr = edit({
@@ -96,8 +91,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { langId } = getLang(vals.language)
         return Promise.all([
-          languageEdge && delResourceRelMut({ variables: { edge: { id: languageEdge.edge.id } } }),
-          createResourceRelMut({
+          languageEdge && delCategoryRelMut({ variables: { edge: { id: languageEdge.edge.id } } }),
+          createCategoryRelMut({
             variables: { edge: { edgeType: 'Features', from: id, to: langId, Features: {} } },
           }),
         ])
@@ -109,8 +104,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { licenseId } = getLicense(vals.license)
         return Promise.all([
-          licenseEdge && delResourceRelMut({ variables: { edge: { id: licenseEdge.edge.id } } }),
-          createResourceRelMut({
+          licenseEdge && delCategoryRelMut({ variables: { edge: { id: licenseEdge.edge.id } } }),
+          createCategoryRelMut({
             variables: { edge: { edgeType: 'Features', from: id, to: licenseId, Features: {} } },
           }),
         ])
@@ -122,8 +117,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { typeId } = getType(vals.type)
         return Promise.all([
-          typeEdge && delResourceRelMut({ variables: { edge: { id: typeEdge.edge.id } } }),
-          createResourceRelMut({
+          typeEdge && delCategoryRelMut({ variables: { edge: { id: typeEdge.edge.id } } }),
+          createCategoryRelMut({
             variables: { edge: { edgeType: 'Features', from: id, to: typeId, Features: {} } },
           }),
         ])
@@ -135,8 +130,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { gradeId } = getGrade(vals.level)
         return Promise.all([
-          levelEdge && delResourceRelMut({ variables: { edge: { id: levelEdge.edge.id } } }),
-          createResourceRelMut({
+          levelEdge && delCategoryRelMut({ variables: { edge: { id: levelEdge.edge.id } } }),
+          createCategoryRelMut({
             variables: { edge: { edgeType: 'Features', from: id, to: gradeId, Features: {} } },
           }),
         ])
@@ -148,8 +143,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { iscedFId } = getIscedF(vals.category)
         return Promise.all([
-          categoryEdge && delResourceRelMut({ variables: { edge: { id: categoryEdge.edge.id } } }),
-          createResourceRelMut({
+          categoryEdge && delCategoryRelMut({ variables: { edge: { id: categoryEdge.edge.id } } }),
+          createCategoryRelMut({
             variables: { edge: { edgeType: 'Features', from: id, to: iscedFId, Features: {} } },
           }),
         ])
@@ -161,9 +156,9 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
   })
   const { resetForm: fresetForm } = formik
   useEffect(() => {
-    if (resourceData) {
-      const { name: title, description, image, content } = resourceData
-      const orgDateStrings = getOriginalCreationStringsByTimestamp(resourceData.originalCreationDate)
+    if (categoryData) {
+      const { name: title, description, image, content } = categoryData
+      const orgDateStrings = getOriginalCreationStringsByTimestamp(categoryData.originalCreationDate)
       fresetForm({
         touched: {},
         values: {
@@ -177,7 +172,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
           content: getJustAssetRefUrl(content),
           description,
           format: content.mimetype,
-          image: getMaybeAssetRefUrlOrDefaultImage(image, id, 'image'),
+          image: getMaybeAssetRefUrl(image),
           contentType: content.ext ? 'Link' : 'File',
           name: '',
           ...orgDateStrings,
@@ -185,15 +180,17 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         },
       })
     }
-  }, [resourceData, fresetForm, category, language, level, license, type, id])
+  }, [categoryData, fresetForm, category, language, level, license, type])
 
   const creatorEdge = useMemo(() => {
-    return resourceData?.creator.edges[0]
-  }, [resourceData])
+    return categoryData?.creator.edges[0]
+  }, [categoryData])
 
   const creator = useMemo(() => {
     return creatorEdge?.node.__typename === 'Profile' ? creatorEdge?.node : undefined
   }, [creatorEdge])
+
+  const { session } = useSession()
 
   const isOwner = useMemo(() => {
     if (!(creator && session)) {
@@ -201,41 +198,27 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     }
     return creator.id === session.profile.id
   }, [creator, session])
-  const likedEdge = resourceData?.myLike.edges[0]
-  const liked = !!likedEdge
-  const toggleLike = useCallback(async () => {
-    if (!(session && resourceData)) {
-      return
-    }
-    if (likedEdge) {
-      await delResourceRelMut({ variables: { edge: { id: likedEdge.edge.id } } })
-    } else {
-      await createResourceRelMut({
-        variables: { edge: { edgeType: 'Likes', from: session.profile.id, to: resourceData.id, Likes: {} } },
-      })
-    }
-    refetch()
-  }, [session, resourceData, likedEdge, delResourceRelMut, createResourceRelMut, refetch])
-  const resourceProps = useMemo<null | ResourceProps>(() => {
-    if (!resourceData) {
+  const liked = false
+  const categoryProps = useMemo<null | CategoryProps>(() => {
+    if (!categoryData) {
       return null
     }
-    const props: ResourceProps = {
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, id),
+    const props: CategoryProps = {
+      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}),
       formBag,
-      title: resourceData.name,
+      title: categoryData.name,
       isOwner,
       liked,
       contributorCardProps: {
-        avatarUrl: getMaybeAssetRefUrlOrDefaultImage(creator?.avatar, creator?.id || id, 'icon'),
-        creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
+        avatarUrl: getMaybeAssetRefUrl(creator?.avatar) ?? '',
+        creatorProfileHref: href(creator ? nodeId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
         timeSinceCreation: creatorEdge
           ? duration(creatorEdge.edge._created - new Date().valueOf(), 'milliseconds').humanize(true)
           : '?',
       },
-      isAuthenticated,
-      tags: resourceData.collections.edges
+      categoryActionsCard: {},
+      tags: categoryData.collections.edges
         .map(_ => (_.node.__typename === 'Collection' && _.node.name) || null)
         .filter(isJust),
 
@@ -246,10 +229,9 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       years: yearsOptions,
       categories: categoriesOptions,
       licenses: licensesOptions,
-      updateResource: formik.submitForm,
-      toggleLike,
+      updateCategory: formik.submitForm,
     }
     return props
-  }, [id, resourceData, formBag, isOwner, liked, creator, creatorEdge, isAuthenticated, formik.submitForm, toggleLike])
-  return resourceProps && [resourceProps]
+  }, [categoryData, creator, creatorEdge, formBag, isOwner, liked, formik.submitForm])
+  return categoryProps && [categoryProps]
 }

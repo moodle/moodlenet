@@ -175,10 +175,10 @@ export const Collection = withCtrl<CollectionProps>(
             <div className="main-content">
               <div className="main-column">
                 <ListCard
-                  content={resourceCardPropsList.map(resourcesCardProps => {
+                  content={resourceCardPropsList.map(resourceCardProps => {
                     return (
                       <ResourceCard
-                        {...resourcesCardProps}
+                        {...resourceCardProps}
                         showRemoveButton={isEditing}
                         onRemoveClick={handleOnRemoveResourceClick}
                       />
