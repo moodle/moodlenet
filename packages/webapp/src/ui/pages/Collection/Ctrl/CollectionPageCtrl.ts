@@ -1,5 +1,5 @@
+import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { isJust } from '@moodlenet/common/lib/utils/array'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useEffect, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
@@ -97,15 +97,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
 
   const { session, isAdmin, isAuthenticated } = useSession()
   const resourceNodes = useMemo(
-    () =>
-      (collectionData?.resources.edges || [])
-        .map(resEdge => {
-          if (resEdge.node.__typename !== 'Resource') {
-            return null
-          }
-          return resEdge.node
-        })
-        .filter(isJust),
+    () => (collectionData?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])).map(({ node }) => node),
     [collectionData?.resources.edges],
   )
   const isOwner = isAdmin || (creator && session ? creator.id === session.profile.id : false)
