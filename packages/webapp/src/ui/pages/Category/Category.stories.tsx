@@ -42,9 +42,9 @@ export const CategoryStoryProps: CategoryProps = {
     ResourceCardStoryProps,
     ResourceCardStoryProps,
     ResourceCardStoryProps,
-    ResourceCardStoryProps
+    ResourceCardStoryProps,
   ],
-  updateCategory: action('updateCategory'),
+  toggleFollow: action('toggleFollow'),
 }
 
 export const CategoryLoggedOutStoryProps: CategoryProps = {

@@ -95,7 +95,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     return creatorEdge?.node.__typename === 'Profile' ? creatorEdge?.node : undefined
   }, [creatorEdge])
 
-  const { session } = useSession()
+  const { session, isAdmin, isAuthenticated } = useSession()
   const resourceNodes = useMemo(
     () =>
       (collectionData?.resources.edges || [])
@@ -108,8 +108,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
         .filter(isJust),
     [collectionData?.resources.edges],
   )
-  const isAuthenticated = !!session
-  const isOwner = !!(isAuthenticated && creator && session) && creator.id === session.profile.id
+  const isOwner = isAdmin || (creator && session ? creator.id === session.profile.id : false)
   const following = false
   const followers = 0
   const kudos = 0

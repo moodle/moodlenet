@@ -15,6 +15,7 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!]) {
           }
         }
       }
+
       collections: _rel(type: Features, target: Collection, page: { first: 5 }, inverse: true) {
         edges {
           node {

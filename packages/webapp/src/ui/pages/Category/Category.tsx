@@ -1,5 +1,4 @@
 import { Trans } from '@lingui/macro'
-import { useState } from 'react'
 import Card from '../../components/atoms/Card/Card'
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
@@ -20,7 +19,7 @@ export type CategoryProps = {
   numFollowers: number
   numCollections: number
   numResources: number
-  updateCategory: () => unknown
+  toggleFollow(): unknown
 }
 
 export const Category = withCtrl<CategoryProps>(
@@ -29,22 +28,13 @@ export const Category = withCtrl<CategoryProps>(
     isAuthenticated,
     title,
     following,
-    //categoryOverallCard,
+    toggleFollow,
     resourceCardPropsList,
     collectionCardPropsList,
     numFollowers,
     numCollections,
     numResources,
   }) => {
-    const [isFollowig, setIsFollowing] = useState<boolean>(following)
-
-    const handleOnFollowClick = () => {
-      setIsFollowing(true)
-    }
-    const handleOnUnfollowClick = () => {
-      setIsFollowing(false)
-    }
-
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <div className="category">
@@ -75,12 +65,12 @@ export const Category = withCtrl<CategoryProps>(
                   </div>
                 </div>
                 <div className="actions">
-                  {isFollowig ? (
-                    <SecondaryButton onClick={handleOnUnfollowClick}>
+                  {following ? (
+                    <SecondaryButton onClick={toggleFollow}>
                       <Trans>Unfollow</Trans>
                     </SecondaryButton>
                   ) : (
-                    <PrimaryButton disabled={!isAuthenticated} onClick={handleOnFollowClick}>
+                    <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow}>
                       <Trans>Follow</Trans>
                     </PrimaryButton>
                   )}
@@ -91,7 +81,7 @@ export const Category = withCtrl<CategoryProps>(
               {collectionCardPropsList && (
                 <ListCard
                   content={collectionCardPropsList.slice(0, 4).map((collectionCardProps, i) => (
-                    <CollectionCard {...collectionCardProps} key={i}/>
+                    <CollectionCard {...collectionCardProps} key={i} />
                   ))}
                   className="collections"
                   noCard={true}
