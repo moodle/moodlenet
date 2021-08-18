@@ -14,7 +14,32 @@ export type ResourcePageDataQuery = (
   & { node?: Types.Maybe<{ __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
     { __typename: 'Resource' }
     & Pick<Types.Resource, 'id' | 'name' | 'description' | 'image' | 'content' | 'originalCreationDate'>
-    & { myLike: (
+    & { likesCount: Types.Resource['_relCount'] }
+    & { myBookmarked: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { edge: (
+          { __typename: 'Bookmarked' }
+          & Pick<Types.Bookmarked, 'id'>
+        ) | (
+          { __typename: 'Created' }
+          & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Features' }
+          & Pick<Types.Features, 'id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, 'id'>
+        ) | (
+          { __typename: 'Pinned' }
+          & Pick<Types.Pinned, 'id'>
+        ) }
+      )> }
+    ), myLike: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
@@ -257,6 +282,33 @@ export const ResourcePageDataDocument = gql`
       image
       content
       originalCreationDate
+      myBookmarked: _rel(
+        type: Bookmarked
+        target: Profile
+        inverse: true
+        page: {first: 1}
+        targetIds: $myProfileId
+      ) {
+        edges {
+          edge {
+            id
+          }
+        }
+      }
+      likesCount: _relCount(type: Likes, target: Profile, inverse: true)
+      myLike: _rel(
+        type: Likes
+        target: Profile
+        inverse: true
+        page: {first: 1}
+        targetIds: $myProfileId
+      ) {
+        edges {
+          edge {
+            id
+          }
+        }
+      }
       myLike: _rel(
         type: Likes
         target: Profile

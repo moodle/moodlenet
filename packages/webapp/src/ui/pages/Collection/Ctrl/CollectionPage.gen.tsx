@@ -5,6 +5,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
 export type CollectionPageDataQueryVariables = Types.Exact<{
   collectionId: Types.Scalars['ID'];
+  myProfileId?: Types.Maybe<Array<Types.Scalars['ID']> | Types.Scalars['ID']>;
 }>;
 
 
@@ -13,8 +14,56 @@ export type CollectionPageDataQuery = (
   & { node?: Types.Maybe<(
     { __typename: 'Collection' }
     & Pick<Types.Collection, 'id' | 'name' | 'description' | 'image'>
-    & { resourcesCount: Types.Collection['_relCount'] }
-    & { resources: (
+    & { followersCount: Types.Collection['_relCount'] }
+    & { myFollow: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { edge: (
+          { __typename: 'Bookmarked' }
+          & Pick<Types.Bookmarked, 'id'>
+        ) | (
+          { __typename: 'Created' }
+          & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Features' }
+          & Pick<Types.Features, 'id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, 'id'>
+        ) | (
+          { __typename: 'Pinned' }
+          & Pick<Types.Pinned, 'id'>
+        ) }
+      )> }
+    ), myBookmarked: (
+      { __typename: 'RelPage' }
+      & { edges: Array<(
+        { __typename: 'RelPageEdge' }
+        & { edge: (
+          { __typename: 'Bookmarked' }
+          & Pick<Types.Bookmarked, 'id'>
+        ) | (
+          { __typename: 'Created' }
+          & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Features' }
+          & Pick<Types.Features, 'id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, 'id'>
+        ) | (
+          { __typename: 'Pinned' }
+          & Pick<Types.Pinned, 'id'>
+        ) }
+      )> }
+    ), resources: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
@@ -114,16 +163,55 @@ export type DelCollectionRelationMutation = (
   ) }
 );
 
+export type AddCollectionRelationMutationVariables = Types.Exact<{
+  edge: Types.CreateEdgeInput;
+}>;
+
+
+export type AddCollectionRelationMutation = (
+  { __typename: 'Mutation' }
+  & { createEdge: { __typename: 'CreateEdgeMutationSuccess' } | (
+    { __typename: 'CreateEdgeMutationError' }
+    & Pick<Types.CreateEdgeMutationError, 'type' | 'details'>
+  ) }
+);
+
 
 export const CollectionPageDataDocument = gql`
-    query collectionPageData($collectionId: ID!) {
+    query collectionPageData($collectionId: ID!, $myProfileId: [ID!]) {
   node(id: $collectionId) {
     ... on Collection {
       id
       name
       description
       image
-      resourcesCount: _relCount(type: Features, target: Resource)
+      followersCount: _relCount(type: Follows, target: Profile, inverse: true)
+      myFollow: _rel(
+        type: Follows
+        target: Profile
+        inverse: true
+        page: {first: 1}
+        targetIds: $myProfileId
+      ) {
+        edges {
+          edge {
+            id
+          }
+        }
+      }
+      myBookmarked: _rel(
+        type: Bookmarked
+        target: Profile
+        inverse: true
+        page: {first: 1}
+        targetIds: $myProfileId
+      ) {
+        edges {
+          edge {
+            id
+          }
+        }
+      }
       resources: _rel(type: Features, target: Resource) {
         edges {
           node {
@@ -181,6 +269,7 @@ export const CollectionPageDataDocument = gql`
  * const { data, loading, error } = useCollectionPageDataQuery({
  *   variables: {
  *      collectionId: // value for 'collectionId'
+ *      myProfileId: // value for 'myProfileId'
  *   },
  * });
  */
@@ -278,3 +367,39 @@ export function useDelCollectionRelationMutation(baseOptions?: Apollo.MutationHo
 export type DelCollectionRelationMutationHookResult = ReturnType<typeof useDelCollectionRelationMutation>;
 export type DelCollectionRelationMutationResult = Apollo.MutationResult<DelCollectionRelationMutation>;
 export type DelCollectionRelationMutationOptions = Apollo.BaseMutationOptions<DelCollectionRelationMutation, DelCollectionRelationMutationVariables>;
+export const AddCollectionRelationDocument = gql`
+    mutation addCollectionRelation($edge: CreateEdgeInput!) {
+  createEdge(input: $edge) {
+    ... on CreateEdgeMutationError {
+      type
+      details
+    }
+  }
+}
+    `;
+export type AddCollectionRelationMutationFn = Apollo.MutationFunction<AddCollectionRelationMutation, AddCollectionRelationMutationVariables>;
+
+/**
+ * __useAddCollectionRelationMutation__
+ *
+ * To run a mutation, you first call `useAddCollectionRelationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddCollectionRelationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addCollectionRelationMutation, { data, loading, error }] = useAddCollectionRelationMutation({
+ *   variables: {
+ *      edge: // value for 'edge'
+ *   },
+ * });
+ */
+export function useAddCollectionRelationMutation(baseOptions?: Apollo.MutationHookOptions<AddCollectionRelationMutation, AddCollectionRelationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddCollectionRelationMutation, AddCollectionRelationMutationVariables>(AddCollectionRelationDocument, options);
+      }
+export type AddCollectionRelationMutationHookResult = ReturnType<typeof useAddCollectionRelationMutation>;
+export type AddCollectionRelationMutationResult = Apollo.MutationResult<AddCollectionRelationMutation>;
+export type AddCollectionRelationMutationOptions = Apollo.BaseMutationOptions<AddCollectionRelationMutation, AddCollectionRelationMutationVariables>;
