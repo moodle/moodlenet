@@ -201,11 +201,11 @@ export const Resource = withCtrl<ResourceProps>(
                       </div>
                     </span>
                     <div className="actions">
-                      <div className={`like ${liked && 'liked'}`} onClick={toggleLike}>
+                      <div className={`${isAuthenticated ? 'like' : 'not-authentificated'} ${liked && 'liked'}`} onClick={isAuthenticated ? toggleLike : () => {}}>
                         {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                         <span>{numLikes}</span>
                       </div>
-                      {!isOwner && (
+                      {!isOwner && isAuthenticated && (
                         <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
                           {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                         </div>

@@ -94,30 +94,35 @@
             margin-top: 8px;
             width: fit-content;
             align-items: center;
-  
+
             > * {
               cursor: pointer;
               display: flex;
               align-items: center;
-  
+
               > svg {
                 width: 28px;
                 height: 28px;
               }
             }
-  
+
+            &.edit-save > * > svg {
+              width: 14px;
+              height: 14px;
+            }
+
             > .bookmark {
               color: #b6bacb;
             }
-  
+
             > .bookmarked {
               color: rgb(32, 193, 132);
             }
-  
+
             > .bookmark:hover {
               color: rgb(32, 193, 132);
             }
-  
+
             > .share:hover {
               color: #f88012;
             }
@@ -146,12 +151,31 @@
           margin-top: 8px;
           width: fit-content;
           align-items: center;
-        }
-      }
+          gap: 10px;
 
-      > .edit-save > * > svg {
-        width: 14px;
-        height: 14px;
+          > .follow-and-followers {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            > :first-child {
+              width: 84px;
+            }
+          }
+          .followers {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 15px;
+
+            > .following {
+              color: #f88012;
+            }
+
+            > .follow:hover {
+              color: #f88012;
+            }
+          }
+        }
       }
     }
 

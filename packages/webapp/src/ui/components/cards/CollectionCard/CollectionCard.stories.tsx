@@ -1,3 +1,4 @@
+import { linkTo } from '@storybook/addon-links'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../elements/link'
 import { CollectionCard, CollectionCardProps } from './CollectionCard'
@@ -23,7 +24,7 @@ const meta: ComponentMeta<typeof CollectionCard> = {
   ],
 }
 
-export const CollectionCardLoggedInStoryProps: CollectionCardProps = {
+export const CollectionCardStoryProps: CollectionCardProps = {
   title: 'Best Collection Ever',
   imageUrl: 'https://picsum.photos/200/100',
   collectionHref: href('collection/home'),
@@ -31,7 +32,11 @@ export const CollectionCardLoggedInStoryProps: CollectionCardProps = {
   following: false,
   numFollowers: 32,
   isAuthenticated: true,
-  toggleFollow: () => href('Components/Cards/CollectionCard/Following'),
+  toggleFollow: linkTo('Components/Cards/CollectionCard', 'Following'),
+}
+
+export const CollectionCardLoggedInStoryProps: CollectionCardProps = {
+  ...CollectionCardStoryProps
 }
 
 export const CollectionCardFollowingStoryProps: CollectionCardProps = {
@@ -40,7 +45,7 @@ export const CollectionCardFollowingStoryProps: CollectionCardProps = {
 }
 
 export const CollectionCardLoggedOutStoryProps: CollectionCardProps = {
-  ...CollectionCardLoggedInStoryProps,
+  ...CollectionCardStoryProps,
   isAuthenticated: false,
 }
 
