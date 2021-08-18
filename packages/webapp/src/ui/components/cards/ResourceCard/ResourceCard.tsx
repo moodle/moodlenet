@@ -62,32 +62,32 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
 
     return (
       <Card className="resource-card">
+        <div className="actions">
+          {isAuthenticated && (
+          <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
+            {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+          </div>
+          )}
+          <div className={`like ${liked && 'liked'}`} onClick={isAuthenticated ? toggleLike : () => {}}>
+            {(liked) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            <span>{numLikes}</span>
+          </div>
+        </div>
+        <Link href={resourceHomeHref}>
         <img className="image" src={image} alt="Background" />
         <div className="resource-card-header">
-            <div className="type-and-actions">
-              <div className="type" style={{ color: color }}>
-                {type}
-              </div>
-              <div className="actions">
-                {isAuthenticated && (
-                <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
-                  {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-                </div>
-                )}
-                <div className={`like ${liked && 'liked'}`} onClick={isAuthenticated ? toggleLike : () => {}}>
-                  {(liked) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                  <span>{numLikes}</span>
-                </div>
-              </div>
+          <div className="type-and-actions">
+            <div className="type" style={{ color: color }}>
+              {type}
             </div>
-            <div className="title">
-              <Link href={resourceHomeHref}>
-                <abbr title={title}>{title}</abbr>
-              </Link>
-            </div>
-          <div className="tags scroll">{tagSet}</div>
+          </div>
+          <div className="title">
+              <abbr title={title}>{title}</abbr>
+          </div>
         </div>
+        </Link>
         {showRemoveButton && <DeleteButton className="remove" onClick={onRemoveClick} />}
+        <div className="tags scroll">{tagSet}</div>
       </Card>
     )
   },
