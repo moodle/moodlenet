@@ -19,7 +19,7 @@ const meta: ComponentMeta<typeof ResourceCard> = {
 }
 
 export const ResourceCardStoryProps: ResourceCardProps = {
-  tags: ['Reforestationg', 'Drones', 'Soil'],
+  tags: ['Reforestationg', 'Drones', 'Soil', 'Agroforestry'],
   title: 'Best Resource Ever',
   image: 'https://picsum.photos/200/100',
   type: 'Video',
