@@ -12,7 +12,9 @@ export const ProvideGlobalSBLinkComponent: FC = ({ children }) => {
 const SBLinkComp: LinkComponentType = props => {
   const isExternal = props.href.ext
   const asExternal = props.asExt
-  const [kind, story] = props.href.url.split('/')
+  const splitHref = props.href.url.split('/')
+  const story = splitHref.pop()
+  const kind = splitHref.join('/')
 
   if (isExternal || asExternal || !(kind && story)) {
     const { href, externalClassName, externalStyle, activeClassName, activeStyle, ...restProps } = props
