@@ -4,6 +4,7 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import { Href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
 import '../../../styles/tags.css'
+import Card from '../../atoms/Card/Card'
 import DeleteButton from '../../atoms/DeleteButton/DeleteButton'
 import './styles.scss'
 
@@ -59,10 +60,9 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     }
 
     return (
-      <div className="resource-card">
+      <Card className="resource-card">
         <img className="image" src={image} alt="Background" />
         <div className="resource-card-header">
-          <div className="main">
             <div className="type-and-actions">
               <div className="type" style={{ color: color }}>
                 {type}
@@ -82,11 +82,10 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
                 <abbr title={title}>{title}</abbr>
               </Link>
             </div>
-          </div>
           <div className="tags scroll">{tagSet}</div>
         </div>
         {showRemoveButton && <DeleteButton className="remove" onClick={onRemoveClick} />}
-      </div>
+      </Card>
     )
   },
 )
