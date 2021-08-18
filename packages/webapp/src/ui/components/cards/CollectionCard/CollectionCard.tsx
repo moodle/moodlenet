@@ -37,14 +37,14 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
 
     return (
       <div className="collection-card" style={background}>
-        <div className="actions">
+        <div className={`actions`}>
           <div>
             {isAuthenticated && (
               <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
                 {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
               </div>
             )}
-            <div className={`follow ${following && 'following'}`} onClick={isAuthenticated ? toggleFollow : () => {}}>
+            <div className={`${following && 'following follow'}`} onClick={isAuthenticated ? toggleFollow : () => {}}>
               {following ? <PersonIcon /> : <PermIdentityIcon />}
               <span>{numFollowers}</span>
             </div>

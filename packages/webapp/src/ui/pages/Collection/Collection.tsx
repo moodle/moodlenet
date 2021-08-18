@@ -1,6 +1,8 @@
 import { Trans } from '@lingui/macro'
 import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@material-ui/icons/BookmarkBorder'
 import EditIcon from '@material-ui/icons/Edit'
+import PermIdentityIcon from '@material-ui/icons/PermIdentity'
+import PersonIcon from '@material-ui/icons/Person'
 import SaveIcon from '@material-ui/icons/Save'
 import { useCallback, useState } from 'react'
 import Card from '../../components/atoms/Card/Card'
@@ -23,6 +25,7 @@ export type CollectionProps = {
   isAuthenticated: boolean
   isOwner: boolean
   following: boolean
+  numFollowers: number
   bookmarked: boolean
   contributorCardProps: ContributorCardProps
   formBag: FormikBag<NewCollectionFormValues>
@@ -38,6 +41,7 @@ export const Collection = withCtrl<CollectionProps>(
     isAuthenticated,
     isOwner,
     following,
+    numFollowers,
     bookmarked,
     contributorCardProps,
     formBag,
@@ -156,13 +160,25 @@ export const Collection = withCtrl<CollectionProps>(
                 )}
                 <div className="actions">
                   {isFollowig ? (
-                    <SecondaryButton onClick={handleOnUnfollowClick}>
-                      <Trans>Unfollow</Trans>
-                    </SecondaryButton>
+                    <div className="follow-and-followers">
+                      <SecondaryButton onClick={handleOnUnfollowClick}>
+                        <Trans>Unfollow</Trans>
+                      </SecondaryButton>
+                      <div className="followers">
+                        <PersonIcon />
+                        <span>{numFollowers}</span>
+                      </div>
+                    </div>
                   ) : (
-                    <PrimaryButton disabled={!isAuthenticated} onClick={handleOnFollowClick}>
-                      <Trans>Follow</Trans>
-                    </PrimaryButton>
+                    <div className="follow-and-followers">
+                      <PrimaryButton disabled={!isAuthenticated} onClick={handleOnFollowClick}>
+                        <Trans>Follow</Trans>
+                      </PrimaryButton>
+                      <div className={`followers ${!isAuthenticated ? 'disabled' : ''}`}>
+                        <PermIdentityIcon />
+                        <span>{numFollowers}</span>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
