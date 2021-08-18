@@ -14,6 +14,7 @@ const meta: ComponentMeta<typeof CollectionCard> = {
     'CollectionCardLoggedInStoryProps',
     'CollectionCardLoggedOutStoryProps',
     'CollectionCardFollowingStoryProps',
+    'CollectionCardBookmarkedStoryProps',
   ],
   decorators: [
     Story => (
@@ -27,21 +28,29 @@ const meta: ComponentMeta<typeof CollectionCard> = {
 export const CollectionCardStoryProps: CollectionCardProps = {
   title: 'Best Collection Ever',
   imageUrl: 'https://picsum.photos/200/100',
-  collectionHref: href('collection/home'),
+  collectionHref: href('Pages/Collection/LoggedIn'),
   bookmarked: false,
   following: false,
   numFollowers: 32,
   isAuthenticated: true,
   toggleFollow: linkTo('Components/Cards/CollectionCard', 'Following'),
+  toggleBookmark: linkTo('Components/Cards/CollectionCard', 'Bookmarked'),
 }
 
 export const CollectionCardLoggedInStoryProps: CollectionCardProps = {
-  ...CollectionCardStoryProps
+  ...CollectionCardStoryProps,
 }
 
 export const CollectionCardFollowingStoryProps: CollectionCardProps = {
   ...CollectionCardLoggedInStoryProps,
-  following: true
+  following: true,
+  toggleFollow: linkTo('Components/Cards/CollectionCard', 'LoggedIn'), // Strangely not working
+}
+
+export const CollectionCardBookmarkedStoryProps: CollectionCardProps = {
+  ...CollectionCardLoggedInStoryProps,
+  bookmarked: true,
+  toggleBookmark: linkTo('Components/Cards/CollectionCard', 'LoggedIn'), // Strangely not working
 }
 
 export const CollectionCardLoggedOutStoryProps: CollectionCardProps = {
@@ -56,6 +65,9 @@ LoggedIn.args = CollectionCardLoggedInStoryProps
 
 export const Following = CollectionCardStory.bind({})
 Following.args = CollectionCardFollowingStoryProps
+
+export const Bookmarked = CollectionCardStory.bind({})
+Bookmarked.args = CollectionCardBookmarkedStoryProps
 
 export const LoggedOut = CollectionCardStory.bind({})
 LoggedOut.args = CollectionCardLoggedOutStoryProps

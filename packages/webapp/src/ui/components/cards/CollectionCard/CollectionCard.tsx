@@ -48,11 +48,11 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
             </div>
           )}
         </div>
-        <div className="title">
-          <Link href={collectionHref}>
+        <Link href={collectionHref}>
+          <div className="title">
             <abbr title={title}>{title}</abbr>
-          </Link>
-        </div>
+          </div>
+        </Link>
       </div>
     )
   },
