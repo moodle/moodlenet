@@ -1,28 +1,79 @@
 .collection-card {
-    cursor: pointer;
-    width: 100%;
-    height: 65px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 6px #dedede;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  cursor: pointer;
+  width: 100%;
+  height: 88px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 6px #dedede;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
 
-    > .title {
+  > .actions {
+    display: flex;
+    gap: 10px;
+    margin-right: 2px;
+    width: 100%;
+    justify-content: flex-end;
+
+    > div {
+      background-color: #b6bacb;
+      border-radius: 6px;
+      display: flex;
+      gap: 10px;
+      font-size: 13px;
+      padding: 1px 3px;
+      > * {
+        font-size: 13px;
         color: white;
-        background-color: #b6bacb;
-        border-radius: 35px;
-        padding: 7px 12px;
-        margin: 0 15px;
-        font-size: 14px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        position: relative;
-        display: inline-block;
-        > abbr {
-            text-decoration: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        > svg,
+        * > svg {
+          width: 18px;
+          height: 18px;
         }
+      }
+
+      .following {
+        color: #f88012;
+      }
+
+      > .follow:hover {
+        color: #f88012;
+      }
+
+      .bookmarked {
+        color: rgb(32, 193, 132);
+      }
+
+      > .bookmark:hover {
+        color: rgb(32, 193, 132);
+      }
     }
+  }
+
+  > .title {
+    color: white;
+    background-color: #b6bacb;
+    border-radius: 35px;
+    padding: 7px 12px;
+    margin: 0 15px;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 10px;
+    > abbr {
+      text-decoration: none;
+    }
+  }
 }
