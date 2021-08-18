@@ -1,4 +1,5 @@
 import { Database } from 'arangojs'
+import { ArangoError } from 'arangojs/error'
 import semverRCompare from 'semver/functions/rcompare'
 import { getAllResults, getOneResult } from '../query'
 import { climbLadder, getLadderVersionSorted } from './ladder'
@@ -125,10 +126,24 @@ export const stepDB =
       updater = latestUpdater.pushDown
     }
     console.log(`calling [${dir}] updater from version ${latestVersion} to ${targetVersion}`)
-    await updater({ db, ctx })
-    console.log(`addding migration record`)
-    await addMigrationRecord(targetVersion)({ db })
-    return [latestVersion, targetVersion, true] as const
+    try {
+      await updater({ db, ctx })
+      console.log(`addding migration record`)
+      await addMigrationRecord(targetVersion)({ db })
+      return [latestVersion, targetVersion, true] as const
+    } catch (e) {
+      if (e instanceof ArangoError) {
+        console.error('ArangoError', {
+          code: e.code,
+          errorNum: e.errorNum,
+          message: e.message,
+          // response: e.response,
+          name: e.name,
+        })
+      }
+      console.error(`StepDB Error :\n${e instanceof Error ? e.stack : e}`)
+      throw e
+    }
   }
 
 export const upgradeToLatest =

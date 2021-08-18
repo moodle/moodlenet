@@ -20,6 +20,9 @@ export type CategoryPageDataQuery = (
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
         & { edge: (
+          { __typename: 'Bookmarked' }
+          & Pick<Types.Bookmarked, 'id'>
+        ) | (
           { __typename: 'Created' }
           & Pick<Types.Created, 'id'>
         ) | (
@@ -57,6 +60,9 @@ export type CategoryPageDataQuery = (
             & { edges: Array<(
               { __typename: 'RelPageEdge' }
               & { edge: (
+                { __typename: 'Bookmarked' }
+                & Pick<Types.Bookmarked, 'id'>
+              ) | (
                 { __typename: 'Created' }
                 & Pick<Types.Created, 'id'>
               ) | (
