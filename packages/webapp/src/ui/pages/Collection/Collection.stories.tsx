@@ -1,6 +1,5 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { OverallCardStoryProps } from '../../components/cards/OverallCard/OverallCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
@@ -32,12 +31,12 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
   },
+  toggleBookmark: action('toggleBookmark'),
   isAuthenticated: true,
   isOwner: false,
   following: false,
   bookmarked: false,
   contributorCardProps: ContributorCardStoryProps,
-  overallCardProps: OverallCardStoryProps,
   formBag: SBFormikBag<NewCollectionFormValues>({
     // resources: [
     //   {

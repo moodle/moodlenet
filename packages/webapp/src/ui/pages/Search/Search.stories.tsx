@@ -21,7 +21,7 @@ export const SearchStoryProps: SearchProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
   },
-  browserProps: BrowserStoryProps
+  browserProps: BrowserStoryProps,
 }
 
 export const SearchLoggedOutStoryProps: SearchProps = {

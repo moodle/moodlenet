@@ -10,7 +10,8 @@ export const ResourceRouteComponent: RouteFC<Routes.ResourcePage> = ({
     params: { slug },
   },
 }) => {
-  const props = ctrlHook(useResourceCtrl, { id: nodeSlugId('Resource', slug) }, `Resource/${slug}`)
+  const id = nodeSlugId('Resource', slug)
+  const props = ctrlHook(useResourceCtrl, { id }, `route-${id}`)
   return <Resource {...props} />
 }
 

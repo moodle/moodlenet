@@ -1,5 +1,5 @@
+import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { isJust } from '@moodlenet/common/lib/utils/array'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useEffect, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
@@ -26,16 +26,13 @@ export type CollectionCtrlProps = { id: ID }
 export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> = ({ id }) => {
   // const { org: localOrg } = useLocalInstance()
   const { data, refetch } = useCollectionPageDataQuery({ variables: { collectionId: id } })
-  const collectionData = data?.node?.__typename === 'Collection' ? data.node : null
+  const collectionData = narrowNodeType(['Collection'])(data?.node)
   const [createCollectionRelMut /* , createCollectionRelMutRes */] = useCreateCollectionRelationMutation()
   const [delCollectionRelMut /* , delCollectionRelMutRes */] = useDelCollectionRelationMutation()
   const [edit /* , editResult */] = useEditCollectionMutation()
-  const categoryEdge = useMemo(() => collectionData?.categories.edges[0], [collectionData])
+  const categoryEdge = narrowEdgeNodeOfType(['IscedField'])(collectionData?.categories.edges[0])
 
-  const categoryNode = useMemo(() => (categoryEdge?.node.__typename === 'IscedField' ? categoryEdge.node : null), [
-    categoryEdge,
-  ])
-  const category = categoryNode?.name ?? ''
+  const category = categoryEdge?.node.name ?? ''
 
   const [formik, formBag] = useFormikBag<NewCollectionFormValues>({
     initialValues: {} as any,
@@ -87,31 +84,16 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     }
   }, [collectionData, fresetForm, category, id])
 
-  const creatorEdge = useMemo(() => {
-    return collectionData?.creator.edges[0]
-  }, [collectionData])
-
-  const creator = useMemo(() => {
-    return creatorEdge?.node.__typename === 'Profile' ? creatorEdge?.node : undefined
-  }, [creatorEdge])
+  const creatorEdge = narrowEdgeNodeOfType(['Profile'])(collectionData?.creator.edges[0])
+  const creator = creatorEdge?.node
 
   const { session, isAdmin, isAuthenticated } = useSession()
   const resourceNodes = useMemo(
-    () =>
-      (collectionData?.resources.edges || [])
-        .map(resEdge => {
-          if (resEdge.node.__typename !== 'Resource') {
-            return null
-          }
-          return resEdge.node
-        })
-        .filter(isJust),
+    () => (collectionData?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])).map(({ node }) => node),
     [collectionData?.resources.edges],
   )
   const isOwner = isAdmin || (creator && session ? creator.id === session.profile.id : false)
-  const following = false
-  const followers = 0
-  const kudos = 0
+
   const collectionProps = useMemo<null | CollectionProps>(() => {
     if (!collectionData) {
       return null
@@ -120,15 +102,8 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
       formBag,
       isOwner,
-      following,
       isAuthenticated,
       resourceCardPropsList: resourceNodes.map(({ id }) => ctrlHook(useResourceCardCtrl, { id }, id)),
-      overallCardProps: {
-        followers,
-        kudos,
-        resources: collectionData.resourcesCount,
-        years: creatorEdge ? new Date(creatorEdge.edge._created).getFullYear() : '?',
-      },
       contributorCardProps: {
         avatarUrl: getMaybeAssetRefUrlOrDefaultImage(creator?.avatar, creator?.id || id, 'icon'),
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
@@ -136,19 +111,11 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       },
       categories: categoriesOptions,
       updateCollection: formik.submitForm,
+      bookmarked,
+      following,
+      toggleBookmark,
     }
     return props
-  }, [
-    id,
-    collectionData,
-    formBag,
-    isOwner,
-    following,
-    isAuthenticated,
-    resourceNodes,
-    creatorEdge,
-    creator,
-    formik.submitForm,
-  ])
+  }, [id, collectionData, formBag, isOwner, isAuthenticated, resourceNodes, creatorEdge, creator, formik.submitForm])
   return collectionProps && [collectionProps]
 }
