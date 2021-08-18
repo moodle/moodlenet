@@ -1,18 +1,13 @@
 .collection-card {
-  cursor: pointer;
   width: 100%;
   height: 88px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 0 6px #dedede;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 5px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 10px;
-
+  
   > .actions {
     display: flex;
     margin-right: 2px;
@@ -22,7 +17,7 @@
     > * {
       padding: 1px 3px;
       background-color: #b6bacb;
-    border-radius: 6px;
+      border-radius: 6px;
       font-size: 13px;
       color: white;
       cursor: pointer;
@@ -51,28 +46,36 @@
 
     .bookmarked {
       background-color: rgb(32, 193, 132);
-      color:white;
+      color: white;
     }
 
     > .bookmark:hover {
       background-color: rgb(32, 193, 132);
     }
   }
+  > a {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  > .title {
-    max-width: 100%;
-    color: white;
-    background-color: #b6bacb;
-    border-radius: 35px;
-    padding: 7px 12px;
-    font-size: 14px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    position: relative;
-    display: inline-block;
-    > abbr {
-      text-decoration: none;
+    > .title {
+      max-width: 100%;
+      color: white;
+      background-color: #b6bacb;
+      border-radius: 35px;
+      padding: 7px 12px;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+      display: inline-block;
+      > abbr {
+        text-decoration: none;
+      }
     }
   }
 }

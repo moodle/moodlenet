@@ -1,95 +1,109 @@
 .resource-card {
   position: relative;
-  cursor: pointer;
-  width: 100%;
-  height: 88px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 10px;
-  gap: 14px;
 
-  > .image {
-    width: 30%;
-    max-width: 100px;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 9px;
+  > .actions {
+    position: absolute;
+    right: 12px;
+    top:10px;
+    z-index: 1;
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    color: #b6bacb;
+
+    > * {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      > svg,
+      * > svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    .liked {
+      color: red;
+    }
+
+    > .like:hover {
+      color: red;
+    }
+
+    .bookmarked {
+      color: rgb(32, 193, 132);
+    }
+
+    > .bookmark:hover {
+      color: rgb(32, 193, 132);
+    }
   }
 
-  > .resource-card-header {
+  > a {
+    position: relative;
+    cursor: pointer;
     width: 100%;
-    overflow: hidden;
-    flex-direction: column;
+    height: 88px;
     display: flex;
-    grid-gap: 6px;
-    height: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    gap: 14px;
 
-    > .type-and-actions {
+    > .image {
+      width: 30%;
+      max-width: 100px;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 9px;
+    }
+
+    > .resource-card-header {
+      width: 100%;
+      overflow: hidden;
+      flex-direction: column;
       display: flex;
-      justify-content: space-between;
+      grid-gap: 6px;
+      height: 100%;
 
-      > .type {
+      > .type-and-actions {
         display: flex;
-        align-items: center;
-        font-size: 11px;
-        font-weight: bold;
-      }
+        justify-content: space-between;
 
-      > .actions {
-        display: flex;
-        gap: 10px;
-        font-size: 13px;
-        color: #b6bacb;
-        margin-right: 2px;
-
-        > * {
-          cursor: pointer;
+        > .type {
           display: flex;
           align-items: center;
-          gap: 4px;
-          > svg,
-          * > svg {
-            width: 18px;
-            height: 18px;
-          }
-        }
-
-        .liked {
-          color: red;
-        }
-
-        > .like:hover {
-          color: red;
-        }
-
-        .bookmarked {
-          color: rgb(32, 193, 132);
-        }
-
-        > .bookmark:hover {
-          color: rgb(32, 193, 132);
+          font-size: 11px;
+          font-weight: bold;
         }
       }
-    }
-    > .title {
-      overflow: hidden;
-      font-weight: bold;
-      font-size: 14px;
-      margin-bottom: 5px;
-    }
 
-    > .tags {
-      > .tag {
-        font-size: 10px;
-        padding: 3px 10px;
-        margin-right: 3px;
+      > .title {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        font-weight: bold;
+        font-size: 14px;
+        margin-top: 4px;
+      }
+
+      > .delete-button {
+        position: absolute;
+        right: 0;
       }
     }
   }
 
-  > .delete-button {
+  > .tags {
     position: absolute;
-    right: 0;
+    bottom: 10px;
+    left: 108px;
+    width: calc(100% - 120px);
+    > .tag {
+      font-size: 10px;
+      padding: 3px 10px;
+      margin-right: 3px;
+    }
   }
 }

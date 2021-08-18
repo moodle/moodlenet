@@ -20,10 +20,10 @@ const meta: ComponentMeta<typeof ResourceCard> = {
 
 export const ResourceCardStoryProps: ResourceCardProps = {
   tags: ['Reforestationg', 'Drones', 'Soil', 'Agroforestry'],
-  title: 'Best Resource Ever',
+  title: 'Best Resource Ever Forever',
   image: 'https://picsum.photos/200/100',
   type: 'Video',
-  resourceHomeHref: href('resource/hom'),
+  resourceHomeHref: href('Pages/Resource/LoggedIn'),
   isAuthenticated: true,
   bookmarked: false,
   liked: false,
