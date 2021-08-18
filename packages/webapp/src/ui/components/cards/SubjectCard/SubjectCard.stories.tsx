@@ -1,4 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { href } from '../../../elements/link'
 import SubjectCard, { SubjectCardProps } from './SubjectCard'
 
 const meta: ComponentMeta<typeof SubjectCard> = {
@@ -8,17 +9,22 @@ const meta: ComponentMeta<typeof SubjectCard> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: ['SubjectCardStoryProps'],
-  decorators:[
-    (Story)=>(<div style={{height:100,width:'auto'}}><Story/></div>)
-  ]
+  decorators: [
+    Story => (
+      <div style={{ height: 100, width: 'auto' }}>
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export const SubjectCardStoryProps: SubjectCardProps = {
   title: 'Latest Resources',
   organization: {
     url: 'uws.edu',
-    color: '#40E3A4'
-  }
+    color: '#40E3A4',
+  },
+  subjectHomeHref: href('Subject/home'),
 }
 
 const SubjectCardStory: ComponentStory<typeof SubjectCard> = args => <SubjectCard {...args} />

@@ -10,7 +10,8 @@ export const CollectionRouteComponent: RouteFC<Routes.CollectionPage> = ({
     params: { slug },
   },
 }) => {
-  const props = ctrlHook(useCollectionCtrl, { id: nodeSlugId('Collection', slug) }, `Collection/${slug}`)
+  const id = nodeSlugId('Collection', slug)
+  const props = ctrlHook(useCollectionCtrl, { id }, `route-${id}`)
   return <Collection {...props} />
 }
 

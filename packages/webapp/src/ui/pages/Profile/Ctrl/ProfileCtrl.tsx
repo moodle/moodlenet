@@ -1,5 +1,5 @@
+import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { isJust } from '@moodlenet/common/lib/utils/array'
 import { useMemo } from 'react'
 import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
@@ -13,21 +13,14 @@ import { useProfilePageUserDataQuery } from './ProfileCtrl.gen'
 export type ProfileCtrlProps = { id: ID }
 export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id }) => {
   const { org: localOrg } = useLocalInstance()
-  const profileQ = useProfilePageUserDataQuery({ variables: { profileId: id } })
-  const profile = profileQ.data?.node?.__typename === 'Profile' ? profileQ.data.node : null
+  const profile = narrowNodeType(['Profile'])(useProfilePageUserDataQuery({ variables: { profileId: id } }).data?.node)
   const collections = useMemo(
-    () =>
-      (profile?.collections.edges || [])
-        .map(edge => (edge.node.__typename === 'Collection' ? edge.node : null))
-        .filter(isJust),
+    () => (profile?.collections.edges || []).filter(isEdgeNodeOfType(['Collection'])).map(({ node }) => node),
     [profile?.collections.edges],
   )
 
   const resources = useMemo(
-    () =>
-      (profile?.resources.edges || [])
-        .map(edge => (edge.node.__typename === 'Resource' ? edge.node : null))
-        .filter(isJust),
+    () => (profile?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])).map(({ node }) => node),
     [profile?.resources.edges],
   )
 

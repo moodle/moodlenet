@@ -81,8 +81,8 @@ export const Browser = withCtrl<BrowserProps>(
             <div className="main-column">
               {filters.Subjects && (
                 <ListCard
-                  content={subjectCardPropsList.slice(0, 8).map((subjectCardProps, i) => (
-                    <SubjectCard {...subjectCardProps} key={i} />
+                  content={subjectCardPropsList.slice(0, 8).map((subjectCardProps) => (
+                    <SubjectCard {...subjectCardProps} />
                   ))}
                   className="subjects"
                   noCard={true}
@@ -99,8 +99,8 @@ export const Browser = withCtrl<BrowserProps>(
               )}
               {filters.Collections && (
                 <ListCard
-                  content={collectionCardPropsList.slice(0, 6).map((collectionCardProps, i) => (
-                    <CollectionCard {...collectionCardProps} key={i}/>
+                  content={collectionCardPropsList.slice(0, 6).map((collectionCardProps) => (
+                    <CollectionCard {...collectionCardProps} />
                   ))}
                   className="collections"
                   noCard={true}
@@ -117,8 +117,8 @@ export const Browser = withCtrl<BrowserProps>(
               )}
               {filters.Resources && (
                 <ListCard
-                  content={resourceCardPropsList.slice(0, 8).map((resourceCardProps, i) => (
-                    <ResourceCard {...resourceCardProps} key={i}/>
+                  content={resourceCardPropsList.slice(0, 8).map((resourceCardProps) => (
+                    <ResourceCard {...resourceCardProps} />
                   ))}
                   className="resources"
                   noCard={true}

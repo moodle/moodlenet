@@ -4,6 +4,7 @@ import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
+import { href } from '../../elements/link'
 import { Browser, BrowserProps } from './Browser'
 
 const meta: ComponentMeta<typeof Browser> = {
@@ -14,9 +15,13 @@ const meta: ComponentMeta<typeof Browser> = {
   },
   parameters: { layout: 'fullscreen' },
   excludeStories: ['BrowserStoryProps', 'BrowserLoggedOutStoryProps', 'BrowserLoggedInStoryProps'],
-  decorators:[
-    (Story)=>(<div style={{margin: '50px'}}><Story/></div>)
-  ]
+  decorators: [
+    Story => (
+      <div style={{ margin: '50px' }}>
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 const BrowserStory: ComponentStory<typeof Browser> = args => <Browser {...args} />
@@ -29,7 +34,11 @@ const subjectCardPropsList: SubjectCardProps[] = [
   'Latin',
   'Hebrew',
   'NoShow',
-].map(x => ({ organization: { ...SubjectCardStoryProps }.organization, title: x }))
+].map(x => ({
+  organization: { ...SubjectCardStoryProps }.organization,
+  title: x,
+  subjectHomeHref: href('Subject/home'),
+}))
 
 export const BrowserStoryProps: BrowserProps = {
   setSortBy: action(`set sort by`),

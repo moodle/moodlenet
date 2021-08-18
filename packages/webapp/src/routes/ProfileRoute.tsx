@@ -10,7 +10,8 @@ export const ProfileRouteComponent: RouteFC<Routes.Profile> = ({
     params: { slug },
   },
 }) => {
-  const props = ctrlHook(useProfileCtrl, { id: nodeSlugId('Profile', slug) }, `Profile/${slug}`)
+  const id = nodeSlugId('Profile', slug)
+  const props = ctrlHook(useProfileCtrl, { id }, `route-${id}`)
   return <Profile {...props} />
 }
 

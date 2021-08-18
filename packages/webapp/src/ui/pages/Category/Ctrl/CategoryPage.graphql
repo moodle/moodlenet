@@ -57,3 +57,21 @@ query CategoryPageData($categoryId: ID!, $myProfileId: [ID!]) {
     }
   }
 }
+
+mutation delCategoryRelation($edge: DeleteEdgeInput!) {
+  deleteEdge(input: $edge) {
+    ... on DeleteEdgeMutationError {
+      type
+      details
+    }
+  }
+}
+
+mutation addCategoryRelation($edge: CreateEdgeInput!) {
+  createEdge(input: $edge) {
+    ... on CreateEdgeMutationError {
+      type
+      details
+    }
+  }
+}

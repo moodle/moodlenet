@@ -1,3 +1,4 @@
+import { isOfNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -63,9 +64,12 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
         },
       },
     })
-    const collection = collectionCreationResp.data?.collection
-    if (collection?.__typename === 'CreateNodeMutationSuccess' && collection.node.__typename === 'Collection') {
-      const collId = collection.node.id
+    const createRespData = collectionCreationResp.data?.collection
+    if (
+      createRespData?.__typename === 'CreateNodeMutationSuccess' &&
+      isOfNodeType(['Collection'])(createRespData.node)
+    ) {
+      const collId = createRespData.node.id
 
       const waitFor: Promise<any>[] = []
       if (category) {
