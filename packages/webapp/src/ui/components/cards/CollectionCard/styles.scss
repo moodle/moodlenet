@@ -19,9 +19,6 @@
     width: 100%;
     justify-content: space-between;
 
-    
-
-
     > * {
       padding: 1px 3px;
       background-color: #b6bacb;
@@ -48,7 +45,7 @@
     }
 
     > .follow:hover {
-      color: #f88012;
+      background-color: #f88012;
     }
 
     .bookmarked {
@@ -56,7 +53,7 @@
     }
 
     > .bookmark:hover {
-      color: rgb(32, 193, 132);
+      background-color: rgb(32, 193, 132);
     }
   }
 
