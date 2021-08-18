@@ -34,6 +34,12 @@ export type AssetRefInputType =
   | 'NoChange'
   | 'NoAsset';
 
+export type Bookmarked = IEdge & {
+  __typename: 'Bookmarked';
+  id: Scalars['ID'];
+  _created: Scalars['Timestamp'];
+};
+
 export type Collection = INode & {
   __typename: 'Collection';
   name: Scalars['String'];
@@ -67,6 +73,7 @@ export type CreateCollectionInput = {
 };
 
 export type CreateEdgeInput = {
+  Bookmarked?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
   Features?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
@@ -196,9 +203,10 @@ export type DeleteNodeMutationSuccess = {
   nodeId?: Maybe<Scalars['ID']>;
 };
 
-export type Edge = Created | Features | Follows | Likes | Pinned;
+export type Edge = Bookmarked | Created | Features | Follows | Likes | Pinned;
 
 export type EdgeType =
+  | 'Bookmarked'
   | 'Created'
   | 'Features'
   | 'Follows'
@@ -212,6 +220,7 @@ export type EditCollectionInput = {
 };
 
 export type EditEdgeInput = {
+  Bookmarked?: Maybe<Scalars['Empty']>;
   Created?: Maybe<Scalars['Empty']>;
   Features?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
@@ -682,7 +691,7 @@ export type RelPage = Page & {
 export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
-  edge: Created | Features | Follows | Likes | Pinned;
+  edge: Bookmarked | Created | Features | Follows | Likes | Pinned;
   node: Collection | FileFormat | IscedField | IscedGrade | Language | License | Organization | Profile | Resource | ResourceType;
 };
 
@@ -795,6 +804,7 @@ export type UserSession = {
       "DeleteNodeMutationError"
     ],
     "Edge": [
+      "Bookmarked",
       "Created",
       "Features",
       "Follows",
@@ -810,6 +820,7 @@ export type UserSession = {
       "EditNodeMutationError"
     ],
     "IEdge": [
+      "Bookmarked",
       "Created",
       "Features",
       "Follows",

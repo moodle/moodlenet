@@ -21,7 +21,12 @@ export const useCollectionCardCtrl: CtrlHook<CollectionCardProps, CollectionCard
             title: collectionNode.name,
             imageUrl: getMaybeAssetRefUrlOrDefaultImage(collectionNode.image, id, 'image'),
             collectionHref: href(nodeGqlId2UrlPath(id)),
-            key: id, //FIXME: propagate key  properly with
+            bookmarked,
+            following,
+            isAuthenticated,
+            numFollowers,
+            toggleBookmark,
+            toggleFollow,
           }
         : null,
     [collectionNode, id, localOrg.name],
