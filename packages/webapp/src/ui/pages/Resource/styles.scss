@@ -85,7 +85,6 @@
               gap: 20px;
 
               > * {
-                cursor: pointer;
                 display: flex;
                 align-items: center;
                 gap: 8px;
@@ -94,6 +93,10 @@
                   width: 18px;
                   height: 18px;
                 }
+              }
+
+              > *:not(.not-authentificated) {
+                cursor: pointer;
               }
 
               .liked {
