@@ -154,7 +154,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       toggleBookmark,
       numFollowers: collectionData.followersCount,
       toggleFollow,
-      deleteCollection: () => alert('AAA'),
+      deleteCollection: undefined, //() => alert('must implement'),
     }
     return props
   }, [

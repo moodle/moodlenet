@@ -73,8 +73,8 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
             toggleLike,
             toggleBookmark,
             isAuthenticated,
-            onRemoveClick: () => alert('*****AAA*****'),
-            showRemoveButton: true,
+            onRemoveClick: undefined, //() => alert('must implement'),
+            showRemoveButton: false,
           }
         : null,
     [resourceNode, id, myLikeEdgeId, myBookmarkedEdgeId, toggleLike, toggleBookmark, isAuthenticated],
