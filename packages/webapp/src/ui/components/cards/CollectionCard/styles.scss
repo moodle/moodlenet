@@ -60,18 +60,17 @@
   }
 
   > .title {
+    max-width: 100%;
     color: white;
     background-color: #b6bacb;
     border-radius: 35px;
     padding: 7px 12px;
-    margin: 0 15px;
     font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     position: relative;
     display: inline-block;
-    margin-bottom: 14px;
     > abbr {
       text-decoration: none;
     }
