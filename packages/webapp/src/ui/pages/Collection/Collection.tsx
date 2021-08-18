@@ -2,7 +2,6 @@ import { Trans } from '@lingui/macro'
 import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@material-ui/icons/BookmarkBorder'
 import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
-import PersonIcon from '@material-ui/icons/Person'
 import SaveIcon from '@material-ui/icons/Save'
 import { useCallback, useState } from 'react'
 import Card from '../../components/atoms/Card/Card'
@@ -123,11 +122,25 @@ export const Collection = withCtrl<CollectionProps>(
               <div className="info">
                 <div className="label">
                   <Trans>Collection</Trans>
-                  {!isOwner && (
+                  {!isOwner ? (
                     <div className="actions">
-                      <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
-                        {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-                      </div>
+                      {isAuthenticated && (
+                        <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
+                          {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="actions edit-save">
+                      {isEditing ? (
+                        <PrimaryButton color="green" onHoverColor="orange" onClick={handleOnSaveClick}>
+                          <SaveIcon />
+                        </PrimaryButton>
+                      ) : (
+                        <SecondaryButton onClick={handleOnEditClick} color="orange">
+                          <EditIcon />
+                        </SecondaryButton>
+                      )}
                     </div>
                   )}
                 </div>
@@ -164,37 +177,20 @@ export const Collection = withCtrl<CollectionProps>(
                       <SecondaryButton onClick={handleOnUnfollowClick}>
                         <Trans>Unfollow</Trans>
                       </SecondaryButton>
-                      <div className="followers">
-                        <PersonIcon />
-                        <span>{numFollowers}</span>
-                      </div>
                     </div>
                   ) : (
                     <div className="follow-and-followers">
                       <PrimaryButton disabled={!isAuthenticated} onClick={handleOnFollowClick}>
                         <Trans>Follow</Trans>
                       </PrimaryButton>
-                      <div className={`followers ${!isAuthenticated ? 'disabled' : ''}`}>
-                        <PermIdentityIcon />
-                        <span>{numFollowers}</span>
-                      </div>
                     </div>
                   )}
+                  <div className={`followers`}>
+                    <PermIdentityIcon />
+                    <span>{numFollowers}</span>
+                  </div>
                 </div>
               </div>
-              {isOwner && (
-                <div className="actions edit-save">
-                  {isEditing ? (
-                    <PrimaryButton color="green" onHoverColor="orange" onClick={handleOnSaveClick}>
-                      <SaveIcon />
-                    </PrimaryButton>
-                  ) : (
-                    <SecondaryButton onClick={handleOnEditClick} color="orange">
-                      <EditIcon />
-                    </SecondaryButton>
-                  )}
-                </div>
-              )}
             </Card>
             <div className="main-content">
               <div className="main-column">
