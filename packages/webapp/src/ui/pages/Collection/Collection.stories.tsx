@@ -55,8 +55,9 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
   }),
   categories: CategoriesDropdown,
   resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
-  toggleBookmark: action('toggleBookmark'),
   updateCollection: action('updateCollection'),
+  toggleFollow: action('toggleFollow'),
+  deleteCollection: action('deleteCollection'),
 }
 
 export const CollectionLoggedOutStoryProps: CollectionProps = {

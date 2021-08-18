@@ -23,7 +23,6 @@ export type CollectionProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   isAuthenticated: boolean
   isOwner: boolean
-  following: boolean
   numFollowers: number
   bookmarked: boolean
   contributorCardProps: ContributorCardProps
@@ -32,6 +31,9 @@ export type CollectionProps = {
   resourceCardPropsList: CP<ResourceCardProps>[]
   updateCollection: () => unknown
   toggleBookmark: () => unknown
+  toggleFollow: () => unknown
+  deleteCollection?: () => unknown
+  following: boolean
 }
 
 export const Collection = withCtrl<CollectionProps>(
@@ -48,9 +50,10 @@ export const Collection = withCtrl<CollectionProps>(
     resourceCardPropsList,
     toggleBookmark,
     updateCollection,
+    deleteCollection,
+    toggleFollow,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
-    const [isFollowig, setIsFollowing] = useState<boolean>(following)
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -58,21 +61,6 @@ export const Collection = withCtrl<CollectionProps>(
     const handleOnSaveClick = () => {
       updateCollection()
       setIsEditing(false)
-    }
-
-    const handleOnFollowClick = () => {
-      setIsFollowing(true)
-    }
-    const handleOnUnfollowClick = () => {
-      setIsFollowing(false)
-    }
-
-    const handleOnRemoveResourceClick = () => {
-      // TODO
-    }
-
-    const handleOnDeleteCollectionClick = () => {
-      // TODO
     }
 
     const actionsCard = (
@@ -106,7 +94,7 @@ export const Collection = withCtrl<CollectionProps>(
           getValue={setCategoryField}
         />
         {isEditing && (
-          <SecondaryButton color="red" onHoverColor="filled-red" onClick={handleOnDeleteCollectionClick}>
+          <SecondaryButton color="red" onHoverColor="filled-red" onClick={deleteCollection}>
             <Trans>Delete Collection</Trans>
           </SecondaryButton>
         )}
@@ -172,15 +160,15 @@ export const Collection = withCtrl<CollectionProps>(
                   <div className="description">{form.values.description}</div>
                 )}
                 <div className="actions">
-                  {isFollowig ? (
+                  {following ? (
                     <div className="follow-and-followers">
-                      <SecondaryButton onClick={handleOnUnfollowClick}>
+                      <SecondaryButton onClick={toggleFollow}>
                         <Trans>Unfollow</Trans>
                       </SecondaryButton>
                     </div>
                   ) : (
                     <div className="follow-and-followers">
-                      <PrimaryButton disabled={!isAuthenticated} onClick={handleOnFollowClick}>
+                      <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow}>
                         <Trans>Follow</Trans>
                       </PrimaryButton>
                     </div>
@@ -196,13 +184,7 @@ export const Collection = withCtrl<CollectionProps>(
               <div className="main-column">
                 <ListCard
                   content={resourceCardPropsList.map(resourceCardProps => {
-                    return (
-                      <ResourceCard
-                        {...resourceCardProps}
-                        showRemoveButton={isEditing}
-                        onRemoveClick={handleOnRemoveResourceClick}
-                      />
-                    )
+                    return <ResourceCard {...resourceCardProps} showRemoveButton={isEditing} />
                   })}
                   className="resources no-card"
                 />
