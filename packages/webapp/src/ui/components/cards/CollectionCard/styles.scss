@@ -41,7 +41,8 @@
     }
 
     .following {
-      color: #f88012;
+      background-color: #f88012;
+      color: white;
     }
 
     > .follow:hover {
@@ -49,7 +50,8 @@
     }
 
     .bookmarked {
-      color: rgb(32, 193, 132);
+      background-color: rgb(32, 193, 132);
+      color:white;
     }
 
     > .bookmark:hover {
