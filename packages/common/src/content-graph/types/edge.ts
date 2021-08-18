@@ -8,6 +8,7 @@ export type GraphEdgeMap = {
   Features: Features
   Follows: Follows
   Likes: Likes
+  Bookmarked: Bookmarked
 }
 export const edgeTypes = stringUnionList<GraphEdgeType>({
   Created: 0,
@@ -15,6 +16,7 @@ export const edgeTypes = stringUnionList<GraphEdgeType>({
   Follows: 0,
   Pinned: 0,
   Likes: 0,
+  Bookmarked: 0,
 })
 
 export type GraphEdgeType = keyof GraphEdgeMap
@@ -36,3 +38,4 @@ export type Pinned = BaseGraphEdge<'Pinned'> & {}
 export type Features = BaseGraphEdge<'Features'> & {}
 export type Likes = BaseGraphEdge<'Likes'> & {}
 export type Follows = BaseGraphEdge<'Follows'> & {}
+export type Bookmarked = BaseGraphEdge<'Bookmarked'> & {}

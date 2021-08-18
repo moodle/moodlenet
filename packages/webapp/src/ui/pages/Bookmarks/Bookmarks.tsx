@@ -3,11 +3,11 @@ import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import './styles.scss'
 
-export type SearchProps = {
+export type BookmarksProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   browserProps: BrowserProps
 }
-export const Search = withCtrl<SearchProps>(
+export const Bookmarks = withCtrl<BookmarksProps>(
   ({ headerPageTemplateProps, browserProps}) => {
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
@@ -16,4 +16,4 @@ export const Search = withCtrl<SearchProps>(
     )
   },
 )
-Search.displayName = 'SearchPage'
+Bookmarks.displayName = 'BookmarksPage'
