@@ -32,6 +32,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     title,
     resourceHomeHref,
     showRemoveButton,
+    isAuthenticated,
     liked,
     numLikes,
     bookmarked,
@@ -68,11 +69,13 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
                 {type}
               </div>
               <div className="actions">
+                {isAuthenticated && (
                 <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
                   {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                 </div>
-                <div className={`like ${liked && 'liked'}`} onClick={toggleLike}>
-                  {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                )}
+                <div className={`like ${liked && 'liked'}`} onClick={isAuthenticated ? toggleLike : () => {}}>
+                  {(liked) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                   <span>{numLikes}</span>
                 </div>
               </div>

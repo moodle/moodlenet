@@ -8,7 +8,12 @@ const meta: ComponentMeta<typeof CollectionCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['CollectionCardStoryProps'],
+  excludeStories: [
+    'CollectionCardStoryProps',
+    'CollectionCardLoggedInStoryProps',
+    'CollectionCardLoggedOutStoryProps',
+    'CollectionCardFollowingStoryProps',
+  ],
   decorators: [
     Story => (
       <div style={{ height: 100, width: 300 }}>
@@ -18,15 +23,36 @@ const meta: ComponentMeta<typeof CollectionCard> = {
   ],
 }
 
-export const CollectionCardStoryProps: CollectionCardProps = {
+export const CollectionCardLoggedInStoryProps: CollectionCardProps = {
   title: 'Best Collection Ever',
   imageUrl: 'https://picsum.photos/200/100',
   collectionHref: href('collection/home'),
+  bookmarked: false,
+  following: false,
+  numFollowers: 32,
+  isAuthenticated: true,
+  toggleFollow: () => href('Components/Cards/CollectionCard/Following'),
+}
+
+export const CollectionCardFollowingStoryProps: CollectionCardProps = {
+  ...CollectionCardLoggedInStoryProps,
+  following: true
+}
+
+export const CollectionCardLoggedOutStoryProps: CollectionCardProps = {
+  ...CollectionCardLoggedInStoryProps,
+  isAuthenticated: false,
 }
 
 const CollectionCardStory: ComponentStory<typeof CollectionCard> = args => <CollectionCard {...args} />
 
-export const Default = CollectionCardStory.bind({})
-Default.args = CollectionCardStoryProps
+export const LoggedIn = CollectionCardStory.bind({})
+LoggedIn.args = CollectionCardLoggedInStoryProps
+
+export const Following = CollectionCardStory.bind({})
+Following.args = CollectionCardFollowingStoryProps
+
+export const LoggedOut = CollectionCardStory.bind({})
+LoggedOut.args = CollectionCardLoggedOutStoryProps
 
 export default meta
