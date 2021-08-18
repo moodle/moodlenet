@@ -15,8 +15,14 @@ const SBLinkComp: LinkComponentType = props => {
   const splitHref = props.href.url.split('/')
   const story = splitHref.pop()
   const kind = splitHref.join('/')
-
+  console.log({
+    isExternal,
+    asExternal,
+    kind,
+    story,
+  })
   if (isExternal || asExternal || !(kind && story)) {
+    console.log('external !!')
     const { href, externalClassName, externalStyle, activeClassName, activeStyle, ...restProps } = props
     return (
       <a
@@ -31,6 +37,7 @@ const SBLinkComp: LinkComponentType = props => {
       </a>
     )
   } else {
+    console.log('internal !!')
     const { href, externalClassName, externalStyle, children, ...restProps } = props
     // props.activeClassName || props.activeStyle
     return (

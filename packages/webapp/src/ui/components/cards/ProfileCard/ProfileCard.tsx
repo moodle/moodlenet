@@ -1,5 +1,4 @@
 import verifiedIcon from '../../../assets/icons/verified.svg'
-import { href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import './styles.scss'
@@ -35,7 +34,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               <span>·</span>
               <span>{location}</span>
               <span>·</span>
-              <Link href={href(siteUrl)}>{siteUrl}</Link>
+              <a href={siteUrl}>{siteUrl}</a>
             </div>
           </div>
           <div className="presentation">{description}</div>

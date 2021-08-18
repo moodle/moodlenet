@@ -1,3 +1,4 @@
+import { linkTo } from '@storybook/addon-links'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../elements/link'
 import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
@@ -14,11 +15,11 @@ const SignupStory: ComponentStory<typeof Signup> = args => <Signup {...args} />
 
 export const SignupStoryProps: SignupProps = {
   accessHeaderProps: AccessHeaderStoryProps,
-  formBag: SBFormikBag<SignupFormValues>({ email: '' }),
+  formBag: SBFormikBag<SignupFormValues>({ email: '' }, { submitForm: linkTo('', 'Email Sent') }),
   signupErrorMessage: null,
   requestSent: false,
-  landingHref: href('yyy/yyy'),
-  loginHref: href('yyy/yyy'),
+  landingHref: href('Pages/Landing/Logged In'),
+  loginHref: href('Pages/Login/Login Page'),
 }
 
 export const EmailSendStoryProps: SignupProps = {

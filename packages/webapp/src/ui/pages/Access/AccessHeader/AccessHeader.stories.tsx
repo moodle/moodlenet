@@ -1,5 +1,8 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { HeaderLoggedOutOrganizationStoryProps, HeaderLoggedOutStoryProps } from '../../../components/Header/Header.stories'
+import {
+  HeaderLoggedOutOrganizationStoryProps,
+  HeaderLoggedOutStoryProps,
+} from '../../../components/Header/Header.stories'
 import { href } from '../../../elements/link'
 import { AccessHeader, AccessHeaderProps } from './AccessHeader'
 
@@ -9,31 +12,31 @@ const meta: ComponentMeta<typeof AccessHeader> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['AccessHeaderStoryProps', 'AccessOrganizationHeaderStoryProps']
+  excludeStories: ['AccessHeaderStoryProps', 'AccessOrganizationHeaderStoryProps'],
 }
 
 export const AccessHeaderStoryProps: AccessHeaderProps = {
   organization: HeaderLoggedOutStoryProps.organization,
   homeHref: href('Landing/Logged Out'),
-  termsAndConditionsHref: href('_/_'),
-  page: 'login'
+  termsAndConditionsHref: href('#'),
+  page: 'login',
 }
 
 export const AccessOrganizationHeaderStoryProps: AccessHeaderProps = {
   organization: HeaderLoggedOutOrganizationStoryProps.organization,
   homeHref: href('Landing/Logged Out'),
-  termsAndConditionsHref: href('_/_'),
-  page: 'signup'
+  termsAndConditionsHref: href('#'),
+  page: 'signup',
 }
 
 const AccessHeaderStory: ComponentStory<typeof AccessHeader> = args => <AccessHeader {...args} />
 
 export const Moodle = AccessHeaderStory.bind({})
 Moodle.args = AccessHeaderStoryProps
-Moodle.parameters = {layout: 'fullscreen'}
+Moodle.parameters = { layout: 'fullscreen' }
 
 export const Organization = AccessHeaderStory.bind({})
 Organization.args = AccessOrganizationHeaderStoryProps
-Organization.parameters = {layout: 'fullscreen'}
+Organization.parameters = { layout: 'fullscreen' }
 
 export default meta
