@@ -34,6 +34,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
   isAuthenticated: true,
   isOwner: false,
   following: false,
+  numFollowers: 23,
   bookmarked: false,
   contributorCardProps: ContributorCardStoryProps,
   formBag: SBFormikBag<NewCollectionFormValues>({
@@ -53,6 +54,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
   }),
   categories: CategoriesDropdown,
   resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
+  toggleBookmark: action('toggleBookmark'),
   updateCollection: action('updateCollection'),
 }
 
