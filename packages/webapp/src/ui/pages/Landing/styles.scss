@@ -38,29 +38,23 @@
 
   > .searchbox {
     margin: 36px 0;
-    > .search-box {
+    width: 100%;
+    border: none;
+    height: fit-content;
+    > .search-text {
+      font-size: 40px;
+      background-color: transparent;
       width: 100%;
-      border: none;
-      height: fit-content;
-      > .search-text {
-        font-size: 40px;
-        background-color: transparent;
-        width: 100%;
-      }
-      > .big-search-icon, > .search-icon {
-        display: none;
-      }
     }
+    > :first-child {
+      display: none;
+    }
+
     @media (max-width: 450px) {
       margin: 36px 0;
-      > .search-box {
-        display: block;
-        > .search-text {
-          font-size: 38px;
-        }
-      }
-      > .big-search-icon {
-        display: none;
+      display: block;
+      > .search-text {
+        font-size: 38px;
       }
     }
   }
