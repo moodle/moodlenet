@@ -14,7 +14,7 @@ export type ResourceCardProps = {
   type: string //'Video' | 'Web Page' | 'Moodle Book'
   title: string
   resourceHomeHref: Href
-  showRemoveButton?: boolean
+  isEditing?: boolean
   isAuthenticated?: boolean
   liked: boolean
   numLikes: number
@@ -31,7 +31,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     type,
     title,
     resourceHomeHref,
-    showRemoveButton,
+    isEditing,
     isAuthenticated,
     liked,
     numLikes,
@@ -86,7 +86,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
           </div>
         </div>
         </Link>
-        {showRemoveButton && <DeleteButton className="remove" onClick={onRemoveClick} />}
+        {isEditing && <DeleteButton className="remove" type="trash" onClick={onRemoveClick} />}
         <div className="tags scroll">{tagSet}</div>
       </Card>
     )

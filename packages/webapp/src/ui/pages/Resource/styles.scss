@@ -158,7 +158,8 @@
         }
 
         > .description {
-          font-size: 13px;
+          font-size: 14px;
+          line-height: 20px;
         }
       }
 
@@ -240,13 +241,13 @@
       gap: 10px;
       flex-wrap: wrap;
       justify-content: center;
-    
+
       > .button {
         max-width: 160px;
         justify-content: center;
         padding: 11px;
         flex: 1;
       }
-    }    
+    }
   }
 }

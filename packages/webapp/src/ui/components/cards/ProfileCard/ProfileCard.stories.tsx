@@ -1,5 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
+import { ProfileFormValues } from '../../../pages/Profile/types'
 import { ProfileCard, ProfileCardProps } from './ProfileCard'
 
 const meta: ComponentMeta<typeof ProfileCard> = {
@@ -18,8 +20,6 @@ export const ProfileCardStoryProps: ProfileCardProps = {
   backgroundUrl: 'https://picsum.photos/200/100',
   username: 'juanito',
   avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
-  firstName: 'Juanito',
-  lastName: 'Rodriguez',
   organizationName: 'UM',
   location: 'Malta',
   siteUrl: 'https://iuri.is/',
@@ -27,7 +27,11 @@ export const ProfileCardStoryProps: ProfileCardProps = {
   isOwner: false,
   isAuthenticated: false,
   toggleFollow: action('toogleFollow'),
-  description: 'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.'
+  toggleIsEditing: action('toogleIsEditing'),
+  formBag: SBFormikBag<ProfileFormValues>({
+    displayName: 'Juanito Rodriguez',
+    description: 'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
+  }),
 }
 
 export const ProfileCardLoggedOutStoryProps: ProfileCardProps = {
