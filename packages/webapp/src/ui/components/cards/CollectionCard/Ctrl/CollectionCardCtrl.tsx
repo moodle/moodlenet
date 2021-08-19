@@ -17,11 +17,13 @@ import {
 export type CollectionCardCtrlArg = { id: ID }
 export const useCollectionCardCtrl: CtrlHook<CollectionCardProps, CollectionCardCtrlArg> = ({ id }) => {
   const { org: localOrg } = useLocalInstance()
+  const { session, isAuthenticated } = useSession()
 
-  const { data, refetch } = useCollectionCardQuery({ variables: { id } })
+  const { data, refetch } = useCollectionCardQuery({
+    variables: { id, myProfileId: session ? [session.profile.id] : [] },
+  })
   const collectionNode = narrowNodeType(['Collection'])(data?.node)
 
-  const { session, isAuthenticated } = useSession()
   const [addRelation, addRelationRes] = useAddCollectionCardRelationMutation()
   const [delRelation, delRelationRes] = useDelCollectionCardRelationMutation()
   const myFollowEdgeId = collectionNode?.myFollow.edges[0]?.edge.id
