@@ -67,7 +67,25 @@ export type CollectionPageDataQuery = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
+        & { edge: (
+          { __typename: 'Bookmarked' }
+          & Pick<Types.Bookmarked, 'id'>
+        ) | (
+          { __typename: 'Created' }
+          & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Features' }
+          & Pick<Types.Features, 'id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, 'id'>
+        ) | (
+          { __typename: 'Pinned' }
+          & Pick<Types.Pinned, 'id'>
+        ), node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | (
           { __typename: 'Resource' }
           & Pick<Types.Resource, 'id' | 'name' | 'image'>
         ) | { __typename: 'ResourceType' } }
@@ -227,6 +245,9 @@ export const CollectionPageDataDocument = gql`
       }
       resources: _rel(type: Features, target: Resource) {
         edges {
+          edge {
+            id
+          }
           node {
             ... on Resource {
               id
