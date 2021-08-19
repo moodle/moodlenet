@@ -63,7 +63,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
 
   const [addRelation, addRelationRes] = useCreateResourceRelationMutation()
   const [delRelation, delRelationRes] = useDelResourceRelationMutation()
-  const [edit /* , editResult */] = useEditResourceMutation()
+  const [edit, editRes] = useEditResourceMutation()
   const categoryEdge = narrowEdgeNodeOfType(['IscedField'])(resourceData?.categories.edges[0])
   const levelEdge = narrowEdgeNodeOfType(['IscedGrade'])(resourceData?.grades.edges[0])
   const typeEdge = narrowEdgeNodeOfType(['ResourceType'])(resourceData?.types.edges[0])
@@ -79,8 +79,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
   const [formik, formBag] = useFormikBag<NewResourceFormValues>({
     initialValues: {} as any,
     onSubmit: async vals => {
-      console.log('save update', vals)
-      if (!resourceData) {
+      if (!formik.dirty || !resourceData || addRelationRes.loading || delRelationRes.loading || editRes.loading) {
         return
       }
       const editResPr = edit({

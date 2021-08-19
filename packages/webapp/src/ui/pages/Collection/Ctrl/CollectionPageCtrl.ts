@@ -33,7 +33,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
   const collectionData = narrowNodeType(['Collection'])(data?.node)
   const [addRelation, addRelationRes] = useAddCollectionRelationMutation()
   const [delRelation, delRelationRes] = useDelCollectionRelationMutation()
-  const [edit /* , editResult */] = useEditCollectionMutation()
+  const [edit, editRes] = useEditCollectionMutation()
   const categoryEdge = narrowEdgeNodeOfType(['IscedField'])(collectionData?.categories.edges[0])
 
   const history = useHistory()
@@ -90,8 +90,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
   const [formik, formBag] = useFormikBag<NewCollectionFormValues>({
     initialValues: {} as any,
     onSubmit: async vals => {
-      console.log('save update', vals)
-      if (!collectionData) {
+      if (!formik.dirty || !collectionData || addRelationRes.loading || delRelationRes.loading || editRes.loading) {
         return
       }
       const editResPr = edit({

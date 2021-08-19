@@ -41,10 +41,13 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
     return () => URL.revokeObjectURL(imageObjectUrl)
   }, [image, setImageUrl])
 
+  const [saving, setSaving] = useState(false)
   const save = useCallback(async () => {
-    if (!(title && description)) {
+    if (!(title && description) || saving) {
       return
     }
+    setSaving(true)
+
     const imageAssetRef: AssetRefInput = !image
       ? { location: '', type: 'NoAsset' }
       : typeof image === 'string'
@@ -81,10 +84,21 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
         )
       }
 
-      await Promise.all(waitFor)
+      await Promise.all(waitFor).finally(() => setSaving(false))
+
       history.push(nodeGqlId2UrlPath(collId))
     }
-  }, [category, createCollectionMut, createCollectionRelMut, description, history, image, title, uploadTempFile])
+  }, [
+    category,
+    createCollectionMut,
+    createCollectionRelMut,
+    description,
+    history,
+    image,
+    saving,
+    title,
+    uploadTempFile,
+  ])
 
   const NewCollectionProps = useMemo<NewCollectionProps>(() => {
     const props: NewCollectionProps = {
