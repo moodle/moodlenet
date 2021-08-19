@@ -125,6 +125,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
 
   const previousStep = useCallback(() => setNextStepProps('back'), [setNextStepProps])
 
+  const [saving, setSaving] = useState(false)
   const nextStep = useMemo(() => {
     // console.log('nextStep', { deleteContent, formBag, previousStep, sform, stepProps, formValues: form.values })
     if (stepProps.step === 'UploadResourceStep') {
@@ -190,6 +191,10 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
         if (!content) {
           return previousStep()
         }
+        if (saving) {
+          return
+        }
+        setSaving(true)
         const contentAssetRef: AssetRefInput =
           typeof content === 'string'
             ? {
@@ -287,7 +292,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
               })
             }),
           )
-          await Promise.all(waitFor)
+          await Promise.all(waitFor).finally(() => setSaving(false))
 
           history.push(nodeGqlId2UrlPath(resId))
         }
@@ -295,18 +300,19 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
     }
     return undefined
   }, [
-    history,
-    createResourceRelMut,
-    deleteContent,
-    createResourceMut,
-    uploadTempFile,
-    formBag,
-    previousStep,
-    sformSetField,
     stepProps,
     form.values,
-    mycollections,
+    deleteContent,
+    formBag,
     imageUrl,
+    sformSetField,
+    mycollections,
+    previousStep,
+    saving,
+    uploadTempFile,
+    createResourceMut,
+    createResourceRelMut,
+    history,
   ])
 
   useEffect(() => {
