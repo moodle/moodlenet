@@ -213,12 +213,12 @@ export const forwardSkipLimitPage = <T>({ docs, skip }: { docs: T[]; skip: numbe
 // export const createEdgeMergePatch = ({ byId, doc }: { doc: object; byId: string }) => `
 //   MERGE( ${aqlstr(doc)}, ${createdByAtPatch({ byId })},  )`
 
-export const documentByNodeIdSlug = ({ _slug, _type }: GraphNodeIdentifierSlug) =>
-  documentBySlugType({ slugVar: `${aqlstr(_slug)}`, type: _type })
+export const documentByNodeIdSlugQ = ({ _slug, _type }: GraphNodeIdentifierSlug) =>
+  documentBySlugTypeQ({ slugVar: `${aqlstr(_slug)}`, type: _type })
 
-export const documentByNodeIdPerm = ({ _permId, _type }: GraphNodeIdentifierPerm) => `DOCUMENT("${_type}/${_permId}")`
+export const documentByNodeIdPermQ = ({ _permId, _type }: GraphNodeIdentifierPerm) => `DOCUMENT("${_type}/${_permId}")`
 
-export const documentBySlugType = ({ slugVar, type }: { type: GraphNodeType; slugVar: string }) => `
+export const documentBySlugTypeQ = ({ slugVar, type }: { type: GraphNodeType; slugVar: string }) => `
   ( ( 
     FOR n in ${type} 
       FILTER n._slug == ${slugVar}
@@ -226,8 +226,8 @@ export const documentBySlugType = ({ slugVar, type }: { type: GraphNodeType; slu
     RETURN n
   ) [0] )`
 
-export const getAqlNodeByGraphNodeIdentifier = (identifier: GraphNodeIdentifier) =>
-  '_permId' in identifier ? documentByNodeIdPerm(identifier) : documentByNodeIdSlug(identifier)
+export const getAqlNodeByGraphNodeIdentifierQ = (identifier: GraphNodeIdentifier) =>
+  '_permId' in identifier ? documentByNodeIdPermQ(identifier) : documentByNodeIdSlugQ(identifier)
 
 export const aqlGraphNode2GraphNode = <T extends GraphNodeType>(aqlGraphNode: AqlGraphNodeByType<T>) => {
   // console.log(`aqlGraphNode2GraphNode `, aqlGraphNode)

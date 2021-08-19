@@ -1,6 +1,6 @@
 import { isArangoError } from 'arangojs/error'
 import { getOneResult } from '../../../../lib/helpers/arango/query'
-import { CreateAdapter, DeleteAdapter } from '../../../../ports/content-graph/edge'
+import { CreateAdapter, DeleteEdgeAdapter } from '../../../../ports/content-graph/edge'
 import { createEdgeQ } from '../functions/createEdge'
 import { deleteEdgeQ } from '../functions/deleteEdge'
 import { getEdgeByNodesQ } from '../functions/getEdge'
@@ -32,7 +32,7 @@ export const createEdgeAdapter = (db: ContentGraphDB): CreateAdapter => ({
   // },
 })
 
-export const deleteEdgeAdapter = (db: ContentGraphDB): DeleteAdapter => ({
+export const deleteEdgeAdapter = (db: ContentGraphDB): DeleteEdgeAdapter => ({
   deleteEdge: async ({ edge }) => {
     const q = deleteEdgeQ(edge)
     const result = await getOneResult(q, db)

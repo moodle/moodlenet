@@ -3,7 +3,7 @@ import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { AqlGraphEdge } from '../types'
 
 export const deleteEdgeQ = ({ _type, id }: GraphEdgeIdentifier) => {
-  const q = aq<null | AqlGraphEdge>(`
+  const q = aq<AqlGraphEdge>(`
     REMOVE { _key: ${aqlstr(id)} } IN ${_type} OPTIONS { ignoreErrors: true }
 
     RETURN OLD

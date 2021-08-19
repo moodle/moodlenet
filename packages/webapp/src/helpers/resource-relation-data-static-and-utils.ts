@@ -123,10 +123,6 @@ export const getOriginalCreationTimestampByStrings = ({
 
 export const getOriginalCreationStringsByTimestamp = (ts: Maybe<number>) => {
   const date = new Date(ts ?? 'no date')
-  console.log({
-    date,
-    ts,
-  })
   if (isNaN(date.valueOf())) {
     return {
       originalDateMonth: '',
@@ -135,10 +131,7 @@ export const getOriginalCreationStringsByTimestamp = (ts: Maybe<number>) => {
   }
   const originalDateMonth = (monthOptions.options as string[])[date.getMonth()]!
   const originalDateYear = `${date.getFullYear()}`
-  console.log({
-    originalDateMonth,
-    originalDateYear,
-  })
+
   return {
     originalDateMonth,
     originalDateYear,

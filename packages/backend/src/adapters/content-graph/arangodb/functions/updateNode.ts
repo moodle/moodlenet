@@ -2,7 +2,7 @@ import { GraphNodeIdentifier, GraphNodeType } from '@moodlenet/common/lib/conten
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { EditNodeData } from '../../../../ports/content-graph/node'
 import { AqlGraphNodeByType } from '../types'
-import { getAqlNodeByGraphNodeIdentifier } from './helpers'
+import { getAqlNodeByGraphNodeIdentifierQ } from './helpers'
 
 export const updateNodeQ = <Type extends GraphNodeType>({
   nodeData,
@@ -14,7 +14,7 @@ export const updateNodeQ = <Type extends GraphNodeType>({
   const nodeType = nodeId._type
 
   const q = aq<AqlGraphNodeByType<Type>>(`
-    let node = ${getAqlNodeByGraphNodeIdentifier(nodeId)}
+    let node = ${getAqlNodeByGraphNodeIdentifierQ(nodeId)}
     UPDATE node WITH ${aqlstr(nodeData)} into ${nodeType}
 
     return NEW
