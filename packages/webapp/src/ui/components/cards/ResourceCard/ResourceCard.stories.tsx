@@ -8,7 +8,7 @@ const meta: ComponentMeta<typeof ResourceCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['ResourceCardStoryProps', 'ResourceCardLoggedOutStoryProps', 'ResourceCardLoggedInStoryProps'],
+  excludeStories: ['ResourceCardStoryProps'],
   decorators: [
     Story => (
       <div style={{ height: 100, width: 300 }}>
@@ -19,32 +19,16 @@ const meta: ComponentMeta<typeof ResourceCard> = {
 }
 
 export const ResourceCardStoryProps: ResourceCardProps = {
-  tags: ['Reforestationg', 'Drones', 'Soil', 'Agroforestry'],
-  title: 'Best Resource Ever Forever',
+  tags: ['Reforestationg', 'Drones', 'Soil'],
+  title: 'Latest Resources',
   image: 'https://picsum.photos/200/100',
   type: 'Video',
-  resourceHomeHref: href('Pages/Resource/LoggedIn'),
-  isAuthenticated: true,
-  bookmarked: false,
-  liked: false,
-  numLikes: 23
-}
-
-export const ResourceCardLoggedInStoryProps: ResourceCardProps = {
-  ...ResourceCardStoryProps
-}
-
-export const ResourceCardLoggedOutStoryProps: ResourceCardProps = {
-  ...ResourceCardStoryProps,
-  isAuthenticated: false
+  resourceHomeHref: href('resource/hom'),
 }
 
 const ResourceCardStory: ComponentStory<typeof ResourceCard> = args => <ResourceCard {...args} />
 
-export const LoggedIn = ResourceCardStory.bind({})
-LoggedIn.args = ResourceCardLoggedInStoryProps
-
-export const LoggedOut = ResourceCardStory.bind({})
-LoggedOut.args = ResourceCardLoggedOutStoryProps
+export const Default = ResourceCardStory.bind({})
+Default.args = ResourceCardStoryProps
 
 export default meta

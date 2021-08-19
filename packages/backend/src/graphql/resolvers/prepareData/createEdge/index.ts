@@ -37,13 +37,6 @@ const edgeDocumentDataBaker: {
 
     return newLikesEdgeInput
   },
-  async Bookmarked(/* input, qmino */) {
-    const newBookmarkedEdgeInput: NewEdgeInput = {
-      _type: 'Bookmarked',
-    }
-
-    return newBookmarkedEdgeInput
-  },
 }
 
 export const bakeEdgeDoumentData = async <T extends EdgeType>(

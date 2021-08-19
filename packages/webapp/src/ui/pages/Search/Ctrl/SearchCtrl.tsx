@@ -55,19 +55,16 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
 
   const searchUIProps: SearchProps = {
     headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
-
-    browserProps: {
-      collectionCardPropsList: collections.map(collection =>
-        ctrlHook(useCollectionCardCtrl, { id: collection.id }, `Search Collection ${collection.id} Card`),
-      ),
-      resourceCardPropsList: resources.map(resource =>
-        ctrlHook(useResourceCardCtrl, { id: resource.id }, `Search Resource ${resource.id} Card`),
-      ),
-      subjectCardPropsList: subjects.map(subject =>
-        ctrlHook(useIscedfCardCtrl, { id: subject.id }, `Search Subject ${subject.id} Card`),
-      ),
-      setSortBy,
-    },
+    collectionCardPropsList: collections.map(collection =>
+      ctrlHook(useCollectionCardCtrl, { id: collection.id }, `Search Collection ${collection.id} Card`),
+    ),
+    resourceCardPropsList: resources.map(resource =>
+      ctrlHook(useResourceCardCtrl, { id: resource.id }, `Search Resource ${resource.id} Card`),
+    ),
+    subjectCardPropsList: subjects.map(subject =>
+      ctrlHook(useIscedfCardCtrl, { id: subject.id }, `Search Subject ${subject.id} Card`),
+    ),
+    setSortBy,
   }
 
   return [searchUIProps]

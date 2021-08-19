@@ -85,9 +85,8 @@ export type ResolversTypes = {
   AssetRefInput: Types.AssetRefInput;
   String: ResolverTypeWrapper<Types.Scalars['String']>;
   AssetRefInputType: Types.AssetRefInputType;
-  Bookmarked: ResolverTypeWrapper<Types.Bookmarked>;
-  ID: ResolverTypeWrapper<Types.Scalars['ID']>;
   Collection: ResolverTypeWrapper<Types.Collection>;
+  ID: ResolverTypeWrapper<Types.Scalars['ID']>;
   Boolean: ResolverTypeWrapper<Types.Scalars['Boolean']>;
   Int: ResolverTypeWrapper<Types.Scalars['Int']>;
   CreateCollectionInput: Types.CreateCollectionInput;
@@ -115,7 +114,7 @@ export type ResolversTypes = {
   DeleteNodeMutationErrorType: Types.DeleteNodeMutationErrorType;
   DeleteNodeMutationPayload: ResolversTypes['DeleteNodeMutationSuccess'] | ResolversTypes['DeleteNodeMutationError'];
   DeleteNodeMutationSuccess: ResolverTypeWrapper<Types.DeleteNodeMutationSuccess>;
-  Edge: ResolversTypes['Bookmarked'] | ResolversTypes['Created'] | ResolversTypes['Features'] | ResolversTypes['Follows'] | ResolversTypes['Likes'] | ResolversTypes['Pinned'];
+  Edge: ResolversTypes['Created'] | ResolversTypes['Features'] | ResolversTypes['Follows'] | ResolversTypes['Likes'] | ResolversTypes['Pinned'];
   EdgeType: Types.EdgeType;
   EditCollectionInput: Types.EditCollectionInput;
   EditEdgeInput: Types.EditEdgeInput;
@@ -136,7 +135,7 @@ export type ResolversTypes = {
   FileFormatType: Types.FileFormatType;
   Follows: ResolverTypeWrapper<Types.Follows>;
   GlobalSearchSort: Types.GlobalSearchSort;
-  IEdge: ResolversTypes['Bookmarked'] | ResolversTypes['Created'] | ResolversTypes['Features'] | ResolversTypes['Follows'] | ResolversTypes['Likes'] | ResolversTypes['Pinned'];
+  IEdge: ResolversTypes['Created'] | ResolversTypes['Features'] | ResolversTypes['Follows'] | ResolversTypes['Likes'] | ResolversTypes['Pinned'];
   INode: ResolversTypes['Collection'] | ResolversTypes['FileFormat'] | ResolversTypes['IscedField'] | ResolversTypes['IscedGrade'] | ResolversTypes['Language'] | ResolversTypes['License'] | ResolversTypes['Organization'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['ResourceType'];
   IscedField: ResolverTypeWrapper<Types.IscedField>;
   IscedGrade: ResolverTypeWrapper<Types.IscedGrade>;
@@ -172,9 +171,8 @@ export type ResolversParentTypes = {
   AssetRef: Types.Scalars['AssetRef'];
   AssetRefInput: Types.AssetRefInput;
   String: Types.Scalars['String'];
-  Bookmarked: Types.Bookmarked;
-  ID: Types.Scalars['ID'];
   Collection: Types.Collection;
+  ID: Types.Scalars['ID'];
   Boolean: Types.Scalars['Boolean'];
   Int: Types.Scalars['Int'];
   CreateCollectionInput: Types.CreateCollectionInput;
@@ -198,7 +196,7 @@ export type ResolversParentTypes = {
   DeleteNodeMutationError: Types.DeleteNodeMutationError;
   DeleteNodeMutationPayload: ResolversParentTypes['DeleteNodeMutationSuccess'] | ResolversParentTypes['DeleteNodeMutationError'];
   DeleteNodeMutationSuccess: Types.DeleteNodeMutationSuccess;
-  Edge: ResolversParentTypes['Bookmarked'] | ResolversParentTypes['Created'] | ResolversParentTypes['Features'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'] | ResolversParentTypes['Pinned'];
+  Edge: ResolversParentTypes['Created'] | ResolversParentTypes['Features'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'] | ResolversParentTypes['Pinned'];
   EditCollectionInput: Types.EditCollectionInput;
   EditEdgeInput: Types.EditEdgeInput;
   EditEdgeMutationError: Types.EditEdgeMutationError;
@@ -214,7 +212,7 @@ export type ResolversParentTypes = {
   Features: Types.Features;
   FileFormat: Types.FileFormat;
   Follows: Types.Follows;
-  IEdge: ResolversParentTypes['Bookmarked'] | ResolversParentTypes['Created'] | ResolversParentTypes['Features'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'] | ResolversParentTypes['Pinned'];
+  IEdge: ResolversParentTypes['Created'] | ResolversParentTypes['Features'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'] | ResolversParentTypes['Pinned'];
   INode: ResolversParentTypes['Collection'] | ResolversParentTypes['FileFormat'] | ResolversParentTypes['IscedField'] | ResolversParentTypes['IscedGrade'] | ResolversParentTypes['Language'] | ResolversParentTypes['License'] | ResolversParentTypes['Organization'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['ResourceType'];
   IscedField: Types.IscedField;
   IscedGrade: Types.IscedGrade;
@@ -246,12 +244,6 @@ export type ResolversParentTypes = {
 export interface AssetRefScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['AssetRef'], any> {
   name: 'AssetRef';
 }
-
-export type BookmarkedResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Bookmarked'] = ResolversParentTypes['Bookmarked']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _created?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
 
 export type CollectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Collection'] = ResolversParentTypes['Collection']> = {
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -340,7 +332,7 @@ export type DeleteNodeMutationSuccessResolvers<ContextType = Context, ParentType
 };
 
 export type EdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Edge'] = ResolversParentTypes['Edge']> = {
-  __resolveType?: TypeResolveFn<'Bookmarked' | 'Created' | 'Features' | 'Follows' | 'Likes' | 'Pinned', ParentType, ContextType>;
+  __resolveType?: TypeResolveFn<'Created' | 'Features' | 'Follows' | 'Likes' | 'Pinned', ParentType, ContextType>;
 };
 
 export type EditEdgeMutationErrorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EditEdgeMutationError'] = ResolversParentTypes['EditEdgeMutationError']> = {
@@ -402,7 +394,7 @@ export type FollowsResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 export type IEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['IEdge'] = ResolversParentTypes['IEdge']> = {
-  __resolveType?: TypeResolveFn<'Bookmarked' | 'Created' | 'Features' | 'Follows' | 'Likes' | 'Pinned', ParentType, ContextType>;
+  __resolveType?: TypeResolveFn<'Created' | 'Features' | 'Follows' | 'Likes' | 'Pinned', ParentType, ContextType>;
   id?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   _created?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
 };
@@ -615,7 +607,6 @@ export type UserSessionResolvers<ContextType = Context, ParentType extends Resol
 
 export type Resolvers<ContextType = Context> = {
   AssetRef?: GraphQLScalarType;
-  Bookmarked?: BookmarkedResolvers<ContextType>;
   Collection?: CollectionResolvers<ContextType>;
   CreateEdgeMutationError?: CreateEdgeMutationErrorResolvers<ContextType>;
   CreateEdgeMutationPayload?: CreateEdgeMutationPayloadResolvers<ContextType>;

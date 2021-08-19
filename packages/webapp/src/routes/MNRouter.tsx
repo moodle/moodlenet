@@ -1,7 +1,6 @@
 import { FC } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import { ActivationRoute } from './ActivateNewUserRoute'
-import { BookmarksRoute } from './BookmarksRoute'
 import { CategoryRoute } from './CategoryRoute'
 import { CollectionRoute } from './CollectionRoute'
 import { LandingRoute } from './LandingRoute'
@@ -21,7 +20,6 @@ export const MNRouter: FC = (/* { children } */) => {
       <Route {...SearchRoute} />
       <Route {...NewResourceRoute} />
       <Route {...NewCollectionRoute} />
-      <Route {...BookmarksRoute} />
       <Route {...ProfileRoute} />
       <Route {...CategoryRoute} />
       <Route {...ResourceRoute} />

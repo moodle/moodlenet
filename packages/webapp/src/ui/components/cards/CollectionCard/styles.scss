@@ -1,81 +1,28 @@
 .collection-card {
-  width: 100%;
-  height: 88px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 0 6px #dedede;
-  padding: 5px;
-  display: flex;
-  flex-direction: column;
-  
-  > .actions {
-    display: flex;
-    margin-right: 2px;
-    width: 100%;
-    justify-content: space-between;
-
-    > * {
-      padding: 1px 3px;
-      background-color: #b6bacb;
-      border-radius: 6px;
-      font-size: 13px;
-      color: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      > svg,
-      * > svg {
-        width: 18px;
-        height: 18px;
-      }
-    }
-
-    :last-child {
-      padding-right: 2px;
-    }
-
-    .following {
-      background-color: #f88012;
-      color: white;
-    }
-
-    > .follow:hover {
-      background-color: #f88012;
-    }
-
-    .bookmarked {
-      background-color: rgb(32, 193, 132);
-      color: white;
-    }
-
-    > .bookmark:hover {
-      background-color: rgb(32, 193, 132);
-    }
-  }
-  > a {
     cursor: pointer;
     width: 100%;
-    height: 100%;
+    height: 65px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 6px #dedede;
     display: flex;
     justify-content: center;
     align-items: center;
 
     > .title {
-      max-width: 100%;
-      color: white;
-      background-color: #b6bacb;
-      border-radius: 35px;
-      padding: 7px 12px;
-      font-size: 14px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      position: relative;
-      display: inline-block;
-      > abbr {
-        text-decoration: none;
-      }
+        color: white;
+        background-color: #b6bacb;
+        border-radius: 35px;
+        padding: 7px 12px;
+        margin: 0 15px;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        position: relative;
+        display: inline-block;
+        > abbr {
+            text-decoration: none;
+        }
     }
-  }
 }

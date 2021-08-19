@@ -8,29 +8,6 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!]) {
       content
       originalCreationDate
 
-      myBookmarked: _rel(
-        type: Bookmarked
-        target: Profile
-        inverse: true
-        page: { first: 1 }
-        targetIds: $myProfileId
-      ) {
-        edges {
-          edge {
-            id
-          }
-        }
-      }
-
-      likesCount: _relCount(type: Likes, target: Profile, inverse: true)
-      myLike: _rel(type: Likes, target: Profile, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
-        edges {
-          edge {
-            id
-          }
-        }
-      }
-
       myLike: _rel(type: Likes, target: Profile, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
         edges {
           edge {

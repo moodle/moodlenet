@@ -1,3 +1,4 @@
+import { ArangoError } from 'arangojs/error'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
 import { MNStaticEnv } from '../../../../../../lib/types'
 import { createDBCollections } from './0.0.1/createDBCollections'
@@ -13,17 +14,31 @@ import { setupSearchView } from './0.0.1/setupSearchView'
 
 const init_0_0_1: VersionUpdater<MNStaticEnv> = {
   async initialSetUp({ db, ctx: { domain } }) {
-    await createDBCollections({ db })
-    await createRootUserProfile({ db })
-    await createLocalOrg({ db, domain })
-    await createIscedFields({ db })
-    await createIscedGrades({ db })
-    await createFileFormats({ db })
-    await createResourceTypes({ db })
-    await createLicenses({ db })
-    await createLanguges({ db })
+    try {
+      await createDBCollections({ db })
+      await createRootUserProfile({ db })
+      await createLocalOrg({ db, domain })
+      await createIscedFields({ db })
+      await createIscedGrades({ db })
+      await createFileFormats({ db })
+      await createResourceTypes({ db })
+      await createLicenses({ db })
+      await createLanguges({ db })
 
-    await setupSearchView({ db })
+      await setupSearchView({ db })
+    } catch (e) {
+      if (e instanceof ArangoError) {
+        console.error({
+          code: e.code,
+          errorNum: e.errorNum,
+          message: e.message,
+          // response: e.response,
+          name: e.name,
+        })
+      }
+      console.error(`init_0_0_1 : ${e instanceof Error ? e.stack : e}`)
+      throw e
+    }
   },
 }
 

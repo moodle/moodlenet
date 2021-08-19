@@ -108,65 +108,6 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Bookmarked",
-        "description": null,
-        "fields": [
-          {
-            "name": "id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "_created",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Timestamp",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "IEdge",
-            "ofType": null
-          }
-        ],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "ID",
-        "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
         "name": "Collection",
         "description": null,
         "fields": [
@@ -398,6 +339,16 @@
       },
       {
         "kind": "SCALAR",
+        "name": "ID",
+        "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
         "name": "Boolean",
         "description": "The `Boolean` scalar type represents `true` or `false`.",
         "fields": null,
@@ -481,18 +432,6 @@
         "description": null,
         "fields": null,
         "inputFields": [
-          {
-            "name": "Bookmarked",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Empty",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
           {
             "name": "Created",
             "description": null,
@@ -1481,11 +1420,6 @@
         "possibleTypes": [
           {
             "kind": "OBJECT",
-            "name": "Bookmarked",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
             "name": "Created",
             "ofType": null
           },
@@ -1519,12 +1453,6 @@
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
-          {
-            "name": "Bookmarked",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
           {
             "name": "Created",
             "description": null,
@@ -1619,18 +1547,6 @@
         "description": null,
         "fields": null,
         "inputFields": [
-          {
-            "name": "Bookmarked",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Empty",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
           {
             "name": "Created",
             "description": null,
@@ -2832,11 +2748,6 @@
         "interfaces": [],
         "enumValues": null,
         "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "Bookmarked",
-            "ofType": null
-          },
           {
             "kind": "OBJECT",
             "name": "Created",

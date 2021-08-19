@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { OverallCardStoryProps } from '../../components/cards/OverallCard/OverallCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
@@ -31,13 +32,11 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
   },
-  toggleBookmark: action('toggleBookmark'),
   isAuthenticated: true,
   isOwner: false,
   following: false,
-  numFollowers: 23,
-  bookmarked: false,
   contributorCardProps: ContributorCardStoryProps,
+  overallCardProps: OverallCardStoryProps,
   formBag: SBFormikBag<NewCollectionFormValues>({
     // resources: [
     //   {
@@ -51,13 +50,11 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     image: 'https://picsum.photos/200/100',
-    title: 'Best Collection Ever',
+    title: 'The Best Collection Ever',
   }),
   categories: CategoriesDropdown,
   resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
   updateCollection: action('updateCollection'),
-  toggleFollow: action('toggleFollow'),
-  deleteCollection: action('deleteCollection'),
 }
 
 export const CollectionLoggedOutStoryProps: CollectionProps = {
