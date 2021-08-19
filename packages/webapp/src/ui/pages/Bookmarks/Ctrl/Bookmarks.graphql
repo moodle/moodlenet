@@ -1,0 +1,31 @@
+query bookmarksPage($profileId: ID!) {
+  node(id: $profileId) {
+    ... on Profile {
+      id
+      collections: _rel(type: Bookmarked, target: Collection, page: { first: 100 }) {
+        edges {
+          edge {
+            id
+          }
+          node {
+            ... on Collection {
+              id
+            }
+          }
+        }
+      }
+      resources: _rel(type: Bookmarked, target: Resource, page: { first: 100 }) {
+        edges {
+          edge {
+            id
+          }
+          node {
+            ... on Resource {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+}
