@@ -2,6 +2,7 @@ import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlen
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useEffect, useMemo } from 'react'
+import { useHistory } from 'react-router'
 import { useSession } from '../../../../context/Global/Session'
 import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
 import { categoriesOptions, getIscedF } from '../../../../helpers/resource-relation-data-static-and-utils'
@@ -18,6 +19,7 @@ import { CollectionProps } from '../Collection'
 import {
   useAddCollectionRelationMutation,
   useCollectionPageDataQuery,
+  useDelCollectionMutation,
   useDelCollectionRelationMutation,
   useEditCollectionMutation,
 } from './CollectionPage.gen'
@@ -33,6 +35,18 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
   const [delRelation, delRelationRes] = useDelCollectionRelationMutation()
   const [edit /* , editResult */] = useEditCollectionMutation()
   const categoryEdge = narrowEdgeNodeOfType(['IscedField'])(collectionData?.categories.edges[0])
+
+  const history = useHistory()
+  const [delCollection, delCollectionRes] = useDelCollectionMutation()
+  const myId = session?.profile.id
+  const deleteCollection = useCallback(() => {
+    if (!myId || delCollectionRes.loading) {
+      return
+    }
+    delCollection({ variables: { node: { id, nodeType: 'Collection' } } }).then(() => {
+      history.replace(nodeGqlId2UrlPath(myId))
+    })
+  }, [delCollection, delCollectionRes.loading, history, id, myId])
 
   const myFollowEdgeId = collectionData?.myFollow.edges[0]?.edge.id
   const toggleFollow = useCallback(() => {
@@ -154,7 +168,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       toggleBookmark,
       numFollowers: collectionData.followersCount,
       toggleFollow,
-      deleteCollection: undefined, //() => alert('must implement'),
+      deleteCollection: isOwner ? deleteCollection : undefined,
     }
     return props
   }, [
@@ -170,6 +184,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     myFollowEdgeId,
     toggleBookmark,
     toggleFollow,
+    deleteCollection,
   ])
   return collectionProps && [collectionProps]
 }

@@ -150,6 +150,19 @@ export type EditCollectionMutation = (
   ) }
 );
 
+export type DelCollectionMutationVariables = Types.Exact<{
+  node: Types.DeleteNodeInput;
+}>;
+
+
+export type DelCollectionMutation = (
+  { __typename: 'Mutation' }
+  & { deleteNode: { __typename: 'DeleteNodeMutationSuccess' } | (
+    { __typename: 'DeleteNodeMutationError' }
+    & Pick<Types.DeleteNodeMutationError, 'type' | 'details'>
+  ) }
+);
+
 export type DelCollectionRelationMutationVariables = Types.Exact<{
   edge: Types.DeleteEdgeInput;
 }>;
@@ -331,6 +344,42 @@ export function useEditCollectionMutation(baseOptions?: Apollo.MutationHookOptio
 export type EditCollectionMutationHookResult = ReturnType<typeof useEditCollectionMutation>;
 export type EditCollectionMutationResult = Apollo.MutationResult<EditCollectionMutation>;
 export type EditCollectionMutationOptions = Apollo.BaseMutationOptions<EditCollectionMutation, EditCollectionMutationVariables>;
+export const DelCollectionDocument = gql`
+    mutation delCollection($node: DeleteNodeInput!) {
+  deleteNode(input: $node) {
+    ... on DeleteNodeMutationError {
+      type
+      details
+    }
+  }
+}
+    `;
+export type DelCollectionMutationFn = Apollo.MutationFunction<DelCollectionMutation, DelCollectionMutationVariables>;
+
+/**
+ * __useDelCollectionMutation__
+ *
+ * To run a mutation, you first call `useDelCollectionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDelCollectionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [delCollectionMutation, { data, loading, error }] = useDelCollectionMutation({
+ *   variables: {
+ *      node: // value for 'node'
+ *   },
+ * });
+ */
+export function useDelCollectionMutation(baseOptions?: Apollo.MutationHookOptions<DelCollectionMutation, DelCollectionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DelCollectionMutation, DelCollectionMutationVariables>(DelCollectionDocument, options);
+      }
+export type DelCollectionMutationHookResult = ReturnType<typeof useDelCollectionMutation>;
+export type DelCollectionMutationResult = Apollo.MutationResult<DelCollectionMutation>;
+export type DelCollectionMutationOptions = Apollo.BaseMutationOptions<DelCollectionMutation, DelCollectionMutationVariables>;
 export const DelCollectionRelationDocument = gql`
     mutation delCollectionRelation($edge: DeleteEdgeInput!) {
   deleteEdge(input: $edge) {

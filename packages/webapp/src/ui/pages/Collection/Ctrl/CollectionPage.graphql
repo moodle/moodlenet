@@ -92,6 +92,15 @@ mutation editCollection($id: ID!, $collInput: EditCollectionInput!) {
   }
 }
 
+mutation delCollection($node: DeleteNodeInput!) {
+  deleteNode(input: $node) {
+    ... on DeleteNodeMutationError {
+      type
+      details
+    }
+  }
+}
+
 mutation delCollectionRelation($edge: DeleteEdgeInput!) {
   deleteEdge(input: $edge) {
     ... on DeleteEdgeMutationError {

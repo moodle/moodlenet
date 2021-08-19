@@ -3,6 +3,7 @@ import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { duration } from 'moment'
 import { useCallback, useEffect, useMemo } from 'react'
+import { useHistory } from 'react-router'
 import { useSession } from '../../../../context/Global/Session'
 import { getJustAssetRefUrl, getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
 import {
@@ -32,7 +33,12 @@ import { NewResourceFormValues } from '../../NewResource/types'
 // import { useFormikBag } from '../../../lib/formik'
 // import { NewResourceFormValues } from '../../NewResource/types'
 import { ResourceProps } from '../Resource'
-import { useDelResourceRelationMutation, useEditResourceMutation, useResourcePageDataQuery } from './ResourcePage.gen'
+import {
+  useDelResourceMutation,
+  useDelResourceRelationMutation,
+  useEditResourceMutation,
+  useResourcePageDataQuery,
+} from './ResourcePage.gen'
 
 export type ResourceCtrlProps = { id: ID }
 export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id }) => {
@@ -42,6 +48,19 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     variables: { resourceId: id, myProfileId: session ? [session.profile.id] : [] },
   })
   const resourceData = narrowNodeType(['Resource'])(data?.node)
+
+  const history = useHistory()
+  const [delResource, delResourceRes] = useDelResourceMutation()
+  const myId = session?.profile.id
+  const deleteResource = useCallback(() => {
+    if (!myId || delResourceRes.loading) {
+      return
+    }
+    delResource({ variables: { node: { id, nodeType: 'Resource' } } }).then(() => {
+      history.replace(nodeGqlId2UrlPath(myId))
+    })
+  }, [delResource, delResourceRes.loading, history, id, myId])
+
   const [addRelation, addRelationRes] = useCreateResourceRelationMutation()
   const [delRelation, delRelationRes] = useDelResourceRelationMutation()
   const [edit /* , editResult */] = useEditResourceMutation()
@@ -251,9 +270,12 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       bookmarked: !!myBookmarkedEdgeId,
       numLikes: resourceData.likesCount,
       toggleBookmark,
+      //@ts-expect-error
+      deleteResource,
     }
     return props
   }, [
+    deleteResource,
     resourceData,
     id,
     formBag,
