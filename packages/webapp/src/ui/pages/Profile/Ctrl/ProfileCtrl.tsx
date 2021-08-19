@@ -24,13 +24,15 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
     [profile?.resources.edges],
   )
 
+  const kudos = useMemo(
+    () => [...resources, ...collections].reduce((allLikes, { likesCount }) => allLikes + likesCount, 0),
+    [collections, resources],
+  )
+
   const profileProps = useMemo<ProfileProps | null>(() => {
     if (!profile) {
       return null
     }
-    const kudos =
-      resources.reduce((allLikes, { likesCount }) => allLikes + likesCount, 0) +
-      collections.reduce((allLikes, { likesCount }) => allLikes + likesCount, 0)
 
     const props: ProfileProps = {
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
@@ -56,6 +58,6 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
       username: profile.name,
     }
     return props
-  }, [collections, id, localOrg.name, profile, resources])
+  }, [collections, id, kudos, localOrg.name, profile, resources])
   return profileProps && [profileProps]
 }
