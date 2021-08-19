@@ -376,3 +376,12 @@ export const deleteEdgeMutationError = (
   type,
   details,
 })
+
+export const deleteNodeMutationError = (
+  type: GQL.DeleteNodeMutationErrorType,
+  details: string | null = null,
+): GQL.DeleteNodeMutationError => ({
+  __typename: 'DeleteNodeMutationError',
+  type,
+  details,
+})

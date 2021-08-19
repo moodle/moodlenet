@@ -6,7 +6,7 @@ import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { NodeRelationCountInput, TraverseFromNodeInput } from '../../../../ports/content-graph/traverseNodeRel'
 import { AqlGraphEdge, AqlGraphNode } from '../types'
 // import { getNodeOpAqlAssertions } from './assertions/node'
-import { cursorPaginatedQuery, getAqlNodeByGraphNodeIdentifier } from './helpers'
+import { cursorPaginatedQuery, getAqlNodeByGraphNodeIdentifierQ } from './helpers'
 
 export const traverseEdgesQ = ({
   edgeType,
@@ -63,12 +63,12 @@ export const traversePaginateMapQuery =
     const targetSide = inverse ? 'from' : 'to'
     const parentSide = inverse ? 'to' : 'from'
     const q = aq<PageItem<{ edge: AqlGraphEdge; node: AqlGraphNode }>>(`
-      let parentNode = ${getAqlNodeByGraphNodeIdentifier(fromNode)}
+      let parentNode = ${getAqlNodeByGraphNodeIdentifierQ(fromNode)}
       let targets = ${!!targetIds}
         ? [ ${
           targetIds
             ? targetIds
-                .map(getAqlNodeByGraphNodeIdentifier)
+                .map(getAqlNodeByGraphNodeIdentifierQ)
                 .map(_ => `${_}._id`)
                 .join(',')
             : null
@@ -84,6 +84,7 @@ export const traversePaginateMapQuery =
           ${pageFilterSortLimit}
         
         LET targetNode = Document(edge._${targetSide})
+        FILTER !!targetNode 
 
         RETURN  [
           cursor,
@@ -106,11 +107,17 @@ export const nodeRelationCountQ = ({
   const targetSide = inverse ? 'from' : 'to'
   const parentSide = inverse ? 'to' : 'from'
   return aq<number>(`
-    let parentNode = ${getAqlNodeByGraphNodeIdentifier(fromNode)}
+    let parentNode = ${getAqlNodeByGraphNodeIdentifierQ(fromNode)}
     
     FOR edge IN ${edgeType}
       FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
         && edge._${parentSide} == parentNode._id
+
+        // LET targetNode = Document(edge._${targetSide})
+
+        // FILTER !!targetNode 
+        
+
       COLLECT WITH COUNT INTO count
     RETURN count
 `)
