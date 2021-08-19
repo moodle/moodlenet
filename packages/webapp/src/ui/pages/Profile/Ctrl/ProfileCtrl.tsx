@@ -36,7 +36,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
 
     const props: ProfileProps = {
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
-      resourceCardPropsList: resources.map(({ id }) => ctrlHook(useResourceCardCtrl, { id }, id)),
+      resourceCardPropsList: resources.map(({ id }) => ctrlHook(useResourceCardCtrl, { id, removeAction: false }, id)),
       collectionCardPropsList: collections.map(({ id }) => ctrlHook(useCollectionCardCtrl, { id }, id)),
       overallCardProps: {
         followers: profile.followersCount,

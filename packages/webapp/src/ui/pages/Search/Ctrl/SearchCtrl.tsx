@@ -61,7 +61,7 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
         ctrlHook(useCollectionCardCtrl, { id: collection.id }, `Search Collection ${collection.id} Card`),
       ),
       resourceCardPropsList: resources.map(resource =>
-        ctrlHook(useResourceCardCtrl, { id: resource.id }, `Search Resource ${resource.id} Card`),
+        ctrlHook(useResourceCardCtrl, { id: resource.id, removeAction: false }, `Search Resource ${resource.id} Card`),
       ),
       subjectCardPropsList: subjects.map(subject =>
         ctrlHook(useIscedfCardCtrl, { id: subject.id }, `Search Subject ${subject.id} Card`),

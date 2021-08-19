@@ -30,6 +30,9 @@ query collectionPageData($collectionId: ID!, $myProfileId: [ID!]) {
       }
       resources: _rel(type: Features, target: Resource) {
         edges {
+          edge {
+            id
+          }
           node {
             ... on Resource {
               id

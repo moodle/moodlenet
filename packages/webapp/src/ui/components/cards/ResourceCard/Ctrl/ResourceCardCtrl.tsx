@@ -13,8 +13,8 @@ import {
   useResourceCardQuery,
 } from './ResourceCard.gen'
 
-export type ResourceCardCtrlArg = { id: ID }
-export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlArg> = ({ id }) => {
+export type ResourceCardCtrlArg = { id: ID; removeAction: false | null | (() => unknown) }
+export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlArg> = ({ id, removeAction }) => {
   const { session, isAuthenticated } = useSession()
   const { data, refetch } = useResourceCardQuery({
     variables: { id, myProfileId: session ? [session.profile.id] : [] },
@@ -75,11 +75,11 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
             toggleLike,
             toggleBookmark,
             isAuthenticated,
-            onRemoveClick: undefined, //() => alert('must implement'),
-            showRemoveButton: false,
+            onRemoveClick: removeAction || undefined,
+            showRemoveButton: !!removeAction,
           }
         : null,
-    [resourceNode, id, myLikeEdgeId, myBookmarkedEdgeId, toggleLike, toggleBookmark, isAuthenticated],
+    [resourceNode, id, removeAction, myLikeEdgeId, myBookmarkedEdgeId, toggleLike, toggleBookmark, isAuthenticated],
   )
   return resourceCardUIProps && [resourceCardUIProps]
 }
