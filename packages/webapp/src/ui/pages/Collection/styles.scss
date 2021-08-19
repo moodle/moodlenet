@@ -91,7 +91,6 @@
           > .actions {
             display: flex;
             gap: 12px;
-            margin-top: 8px;
             width: fit-content;
             align-items: center;
 
@@ -106,9 +105,16 @@
               }
             }
 
-            &.edit-save > * > svg {
-              width: 14px;
-              height: 14px;
+            &.edit-save {
+              width: 40px;
+              > * {
+                width: 100%;
+                > svg {
+                  width: 18px;
+                  height: 18px;
+                }
+              }
+              
             }
 
             > .bookmark {
@@ -142,7 +148,8 @@
         }
 
         > .description {
-          font-size: 13px;
+          font-size: 14px;
+          line-height: 20px;
         }
 
         > .actions {

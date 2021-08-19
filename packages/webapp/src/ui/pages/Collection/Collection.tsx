@@ -184,7 +184,7 @@ export const Collection = withCtrl<CollectionProps>(
               <div className="main-column">
                 <ListCard
                   content={resourceCardPropsList.map(resourceCardProps => {
-                    return <ResourceCard {...resourceCardProps} showRemoveButton={isEditing} />
+                    return <ResourceCard {...resourceCardProps} isEditing={isEditing} />
                   })}
                   className="resources no-card"
                 />

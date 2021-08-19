@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro'
+import { useState } from 'react'
 import { CollectionCard, CollectionCardProps } from '../../components/cards/CollectionCard/CollectionCard'
 import { ListCard } from '../../components/cards/ListCard/ListCard'
 import { OverallCard, OverallCardProps } from '../../components/cards/OverallCard/OverallCard'
@@ -26,36 +27,39 @@ export const Profile = withCtrl<ProfileProps>(
     resourceCardPropsList,
     username,
   }) => {
+    const [isEditing, setIsEditing] = useState<boolean>(false)
+    const toggleIsEditing = () => {
+      setIsEditing(!isEditing)
+    }
+
+    const collectionList = (
+      <ListCard
+        title={`${t`Collections curated by`} ${username}`}
+        content={collectionCardPropsList.map(collectionCardProps => (
+          <CollectionCard {...collectionCardProps} isEditing={isEditing} />
+        ))}
+        className="collections"
+      />
+    )
+
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <div className="profile">
           <div className="content">
             <div className="main-column">
-              <ProfileCard {...profileCardProps} />
+              <ProfileCard {...profileCardProps} isEditing={isEditing} toggleIsEditing={toggleIsEditing} />
               <ListCard
                 content={resourceCardPropsList.map(resourcesCardProps => {
-                  return <ResourceCard {...resourcesCardProps} />
+                  return <ResourceCard {...resourcesCardProps} isEditing={isEditing} />
                 })}
                 title={t`Latest Resources`}
                 className="resources"
               />
-              <ListCard
-                title={`${t`Collections curated by`} ${username}`}
-                content={collectionCardPropsList.map(collectionCardProps => (
-                  <CollectionCard {...collectionCardProps} />
-                ))}
-                className="collections"
-              />
+              {collectionList}
             </div>
             <div className="side-column">
               <OverallCard {...overallCardProps} />
-              <ListCard
-                title={`${t`Collections curated by`} ${username}`}
-                content={collectionCardPropsList.map(collectionCardProps => (
-                  <CollectionCard {...collectionCardProps} />
-                ))}
-                className="collections"
-              />
+              {collectionList}
             </div>
           </div>
         </div>
