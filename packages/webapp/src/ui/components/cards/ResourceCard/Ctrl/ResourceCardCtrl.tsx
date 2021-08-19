@@ -15,9 +15,11 @@ import {
 
 export type ResourceCardCtrlArg = { id: ID }
 export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlArg> = ({ id }) => {
-  const { data, refetch } = useResourceCardQuery({ variables: { id } })
-  const resourceNode = narrowNodeType(['Resource'])(data?.node)
   const { session, isAuthenticated } = useSession()
+  const { data, refetch } = useResourceCardQuery({
+    variables: { id, myProfileId: session ? [session.profile.id] : [] },
+  })
+  const resourceNode = narrowNodeType(['Resource'])(data?.node)
   const [addRelation, addRelationRes] = useAddResourceCardRelationMutation()
   const [delRelation, delRelationRes] = useDelResourceCardRelationMutation()
 
