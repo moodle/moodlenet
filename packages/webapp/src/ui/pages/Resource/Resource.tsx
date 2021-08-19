@@ -42,6 +42,7 @@ export type ResourceProps = {
   updateResource: () => unknown
   toggleLike: () => unknown
   toggleBookmark: () => unknown
+  deleteResource?: () => unknown
 }
 
 export const Resource = withCtrl<ResourceProps>(
@@ -66,6 +67,7 @@ export const Resource = withCtrl<ResourceProps>(
     updateResource,
     toggleLike,
     toggleBookmark,
+    deleteResource,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
 
@@ -179,6 +181,11 @@ export const Resource = withCtrl<ResourceProps>(
           displayMode={true}
           edit={false}
         />
+        {isEditing && (
+          <SecondaryButton color="red" onHoverColor="filled-red" onClick={deleteResource}>
+            <Trans>Delete Resource</Trans>
+          </SecondaryButton>
+        )}
       </Card>
     )
 
@@ -201,7 +208,10 @@ export const Resource = withCtrl<ResourceProps>(
                       </div>
                     </span>
                     <div className="actions">
-                      <div className={`${isAuthenticated ? 'like' : 'not-authentificated'} ${liked && 'liked'}`} onClick={isAuthenticated ? toggleLike : () => {}}>
+                      <div
+                        className={`${isAuthenticated ? 'like' : 'not-authentificated'} ${liked && 'liked'}`}
+                        onClick={isAuthenticated ? toggleLike : () => {}}
+                      >
                         {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                         <span>{numLikes}</span>
                       </div>

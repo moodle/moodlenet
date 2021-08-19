@@ -270,7 +270,6 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       bookmarked: !!myBookmarkedEdgeId,
       numLikes: resourceData.likesCount,
       toggleBookmark,
-      //@ts-expect-error
       deleteResource,
     }
     return props
