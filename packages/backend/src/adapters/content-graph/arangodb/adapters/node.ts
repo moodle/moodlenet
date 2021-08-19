@@ -1,6 +1,12 @@
 import { getOneResult } from '../../../../lib/helpers/arango/query'
-import { BySlugAdapter, CreateNodeAdapter, EditNodeAdapter } from '../../../../ports/content-graph/node'
+import {
+  BySlugAdapter,
+  CreateNodeAdapter,
+  DeleteNodeAdapter,
+  EditNodeAdapter,
+} from '../../../../ports/content-graph/node'
 import { createNodeQ } from '../functions/createNode'
+import { deleteNodeQ } from '../functions/deleteNode'
 import { getNodeBySlugQ } from '../functions/getNode'
 import { aqlGraphNode2GraphNode } from '../functions/helpers'
 import { updateNodeQ } from '../functions/updateNode'
@@ -40,5 +46,13 @@ export const editNodeAdapter = (db: ContentGraphDB): EditNodeAdapter => ({
     const result = aqlResult && aqlGraphNode2GraphNode<NT>(aqlResult)
 
     return result as any
+  },
+})
+
+export const deleteNodeAdapter = (db: ContentGraphDB): DeleteNodeAdapter => ({
+  deleteNode: async ({ node }) => {
+    const q = deleteNodeQ(node)
+    const result = await getOneResult(q, db)
+    return !!result
   },
 })
