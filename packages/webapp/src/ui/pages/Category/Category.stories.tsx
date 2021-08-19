@@ -2,8 +2,7 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
-import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
-import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
+import { HeaderPageLoggedInStoryProps, HeaderPageLoggedOutStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Category, CategoryProps } from './Category'
 
 const meta: ComponentMeta<typeof Category> = {
@@ -51,20 +50,12 @@ export const CategoryStoryProps: CategoryProps = {
 
 export const CategoryLoggedOutStoryProps: CategoryProps = {
   ...CategoryStoryProps,
-  isAuthenticated: false,
   headerPageTemplateProps: {
+    headerPageProps: HeaderPageLoggedOutStoryProps,
     isAuthenticated: false,
-    headerPageProps: {
-      isAuthenticated: false,
-      headerProps: {
-        ...HeaderLoggedOutStoryProps,
-        me: null,
-      },
-      subHeaderProps: {
-        tags: [],
-      },
-    },
   },
+  isAuthenticated: true,
+  
 }
 
 export const CategoryLoggedInStoryProps: CategoryProps = {

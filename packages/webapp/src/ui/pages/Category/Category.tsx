@@ -82,9 +82,8 @@ export const Category = withCtrl<CategoryProps>(
                 <ListCard
                   content={collectionCardPropsList.map((
                     collectionCardProps,
-                    i, //Infinite scoll?
                   ) => (
-                    <CollectionCard {...collectionCardProps} key={i} />
+                    <CollectionCard {...collectionCardProps} />
                   ))}
                   className="collections"
                   noCard={true}
@@ -104,9 +103,8 @@ export const Category = withCtrl<CategoryProps>(
                 <ListCard
                   content={resourceCardPropsList.map((
                     resourcesCardProps,
-                    i, //Requires infinite scrolling
                   ) => (
-                    <ResourceCard {...resourcesCardProps} key={i} />
+                    <ResourceCard {...resourcesCardProps} />
                   ))}
                   className="resources"
                   noCard={true}

@@ -1,6 +1,6 @@
 import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Database } from 'arangojs'
-import { ensureEdgeIndexes_0_0_1 } from '../0.0.1/ensureEdgeIndexes0_0_1'
+import { ensureEdgeIndexes_0_0_2 } from './ensureEdgeIndexes0_0_2'
 
 export const createLikeEdgeCollections = async ({ db }: { db: Database }) => {
   console.log(`creating "Likes" edge collection`)
@@ -9,5 +9,5 @@ export const createLikeEdgeCollections = async ({ db }: { db: Database }) => {
   if (!(await edgeCollection.exists())) {
     edgeCollection = await db.createEdgeCollection(edgeCollName)
   }
-  await ensureEdgeIndexes_0_0_1(edgeCollection)
+  await ensureEdgeIndexes_0_0_2(edgeCollection)
 }
