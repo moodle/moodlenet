@@ -67,7 +67,7 @@ export const useCategoryCtrl: CtrlHook<CategoryProps, CategoryCtrlProps> = ({ id
 
     const resourceCardPropsList = categoryData.resources.edges
       .filter(isEdgeNodeOfType(['Resource']))
-      .map(({ node: { id } }) => ctrlHook(useResourceCardCtrl, { id }, id))
+      .map(({ node: { id } }) => ctrlHook(useResourceCardCtrl, { id, removeAction: false }, id))
 
     const props: CategoryProps = {
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
