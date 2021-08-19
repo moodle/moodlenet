@@ -43,7 +43,11 @@ export const useBookmarksCtrl: CtrlHook<BookmarksProps, {}> = () => {
           ctrlHook(useCollectionCardCtrl, { id: collection.id }, `Bookmarks Collection ${collection.id} Card`),
         ),
         resourceCardPropsList: resources.map(resource =>
-          ctrlHook(useResourceCardCtrl, { id: resource.id }, `Bookmarks Resource ${resource.id} Card`),
+          ctrlHook(
+            useResourceCardCtrl,
+            { id: resource.id, removeAction: false },
+            `Bookmarks Resource ${resource.id} Card`,
+          ),
         ),
         subjectCardPropsList: [],
         setSortBy: () => console.error('implement setSortBy in bookmark page ?'),

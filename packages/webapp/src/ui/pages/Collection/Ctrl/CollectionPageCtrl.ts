@@ -140,11 +140,20 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
   const creatorEdge = narrowEdgeNodeOfType(['Profile'])(collectionData?.creator.edges[0])
   const creator = creatorEdge?.node
 
-  const resourceNodes = useMemo(
-    () => (collectionData?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])).map(({ node }) => node),
-    [collectionData?.resources.edges],
-  )
+  const resourceEdges = useMemo(() => (collectionData?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])), [
+    collectionData?.resources.edges,
+  ])
   const isOwner = isAdmin || (creator && session ? creator.id === session.profile.id : false)
+
+  const removeResource = useCallback(
+    (edgeId: string) => {
+      if (delRelationRes.loading) {
+        return
+      }
+      return delRelation({ variables: { edge: { id: edgeId } } }).then(() => refetch())
+    },
+    [delRelation, delRelationRes.loading, refetch],
+  )
 
   const collectionProps = useMemo<null | CollectionProps>(() => {
     if (!collectionData) {
@@ -155,7 +164,16 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       formBag,
       isOwner,
       isAuthenticated,
-      resourceCardPropsList: resourceNodes.map(({ id }) => ctrlHook(useResourceCardCtrl, { id }, id)),
+      resourceCardPropsList: resourceEdges.map(({ edge, node: { id } }) =>
+        ctrlHook(
+          useResourceCardCtrl,
+          {
+            id,
+            removeAction: isOwner && (() => removeResource(edge.id)),
+          },
+          id,
+        ),
+      ),
       contributorCardProps: {
         avatarUrl: getMaybeAssetRefUrlOrDefaultImage(creator?.avatar, creator?.id || id, 'icon'),
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
@@ -176,7 +194,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     formBag,
     isOwner,
     isAuthenticated,
-    resourceNodes,
+    resourceEdges,
     creator,
     id,
     formik.submitForm,
@@ -185,6 +203,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     toggleBookmark,
     toggleFollow,
     deleteCollection,
+    removeResource,
   ])
   return collectionProps && [collectionProps]
 }
