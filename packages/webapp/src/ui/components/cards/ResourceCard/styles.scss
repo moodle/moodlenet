@@ -98,12 +98,14 @@
   > .tags {
     position: absolute;
     bottom: 10px;
-    left: 108px;
-    width: calc(100% - 120px);
+    padding-left: calc(min(106px, 30%) + 18px);
+    padding-right: 12px;
+    width: max(calc(100% - 13px), 70%);
     > .tag {
       font-size: 10px;
       padding: 3px 10px;
       margin-right: 3px;
     }
+
   }
 }
