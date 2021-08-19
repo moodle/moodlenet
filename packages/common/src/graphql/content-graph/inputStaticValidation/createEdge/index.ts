@@ -11,6 +11,7 @@ const inputObjectValidators: {
   Pinned: object().required(),
   Follows: object().required(),
   Likes: object().required(),
+  Bookmarked: object().required(),
 }
 
 export const validateCreateEdgeInput = (input: CreateEdgeInput): Just<CreateEdgeInput[EdgeType]> | Error => {
