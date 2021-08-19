@@ -83,20 +83,18 @@
             > .actions {
               display: flex;
               gap: 20px;
+              font-size: 14px;
 
               > * {
+                cursor: pointer;
                 display: flex;
                 align-items: center;
                 gap: 8px;
                 > svg,
                 * > svg {
-                  width: 18px;
-                  height: 18px;
+                  width: 14px;
+                  height: 14px;
                 }
-              }
-
-              > *:not(.not-authentificated) {
-                cursor: pointer;
               }
 
               .liked {
@@ -105,14 +103,6 @@
 
               > .like:hover {
                 color: red;
-              }
-
-              .bookmarked {
-                color: rgb(32, 193, 132);
-              }
-
-              > .bookmark:hover {
-                color: rgb(32, 193, 132);
               }
 
               > .share:hover {

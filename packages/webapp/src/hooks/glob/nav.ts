@@ -1,7 +1,6 @@
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import {
-  BookmarksPage,
   CreateNewCollection,
   CreateNewResource,
   GlobalSearch,
@@ -23,7 +22,6 @@ export const mainPath = {
   search: webappPath<GlobalSearch>('/search', {}),
   createNewResource: webappPath<CreateNewResource>('/create-new-resource', {}),
   createNewCollection: webappPath<CreateNewCollection>('/create-new-collection', {}),
-  bookmarksHref: webappPath<BookmarksPage>('/bookmarks', {}),
 }
 
 export const useRedirectToBySession = ({

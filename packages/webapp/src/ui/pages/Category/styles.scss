@@ -125,7 +125,10 @@
         > .collection-card {
           max-width: 200px;
           min-width: 180px;
-          height: 100px;        
+          height: 100px;
+          > .title {
+            margin-top: 50px;
+          }          
         }
       }
 

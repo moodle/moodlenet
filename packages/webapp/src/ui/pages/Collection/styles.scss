@@ -35,12 +35,6 @@
         }
       }
 
-      @media (min-width: 450px) {
-        > :not(.image) {
-          padding: 0 20px 0 20px;
-        }
-      }
-
       @media screen and (max-width: 850px) {
         position: inherit;
         flex-direction: column;
@@ -53,9 +47,10 @@
           position: inherit;
         }
 
-        > .info {
+        > :not(.image) {
           padding: 0 20px 0 20px;
         }
+
       }
 
       @media screen and (min-width: 850px) {
@@ -84,49 +79,6 @@
         > .label {
           font-size: 19px;
           font-weight: bold;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-
-          > .actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 8px;
-            width: fit-content;
-            align-items: center;
-
-            > * {
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-
-              > svg {
-                width: 28px;
-                height: 28px;
-              }
-            }
-
-            &.edit-save > * > svg {
-              width: 14px;
-              height: 14px;
-            }
-
-            > .bookmark {
-              color: #b6bacb;
-            }
-
-            > .bookmarked {
-              color: rgb(32, 193, 132);
-            }
-
-            > .bookmark:hover {
-              color: rgb(32, 193, 132);
-            }
-
-            > .share:hover {
-              color: #f88012;
-            }
-          }
         }
 
         .title {
@@ -144,38 +96,15 @@
         > .description {
           font-size: 13px;
         }
+      }
 
-        > .actions {
-          display: flex;
-          gap: 12px;
-          margin-top: 8px;
-          width: fit-content;
-          align-items: center;
-          gap: 10px;
+      > .actions {
+        width: fit-content;
+      }
 
-          > .follow-and-followers {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            > :first-child {
-              width: 84px;
-            }
-          }
-          .followers {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            font-size: 15px;
-
-            > .following {
-              color: #f88012;
-            }
-
-            > .follow:hover {
-              color: #f88012;
-            }
-          }
-        }
+      > .edit-save > * > svg {
+        width: 14px;
+        height: 14px;
       }
     }
 

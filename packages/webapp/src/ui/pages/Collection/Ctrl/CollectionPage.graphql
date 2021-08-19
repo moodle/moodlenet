@@ -1,4 +1,4 @@
-query collectionPageData($collectionId: ID!, $myProfileId: [ID!]) {
+query collectionPageData($collectionId: ID!) {
   node(id: $collectionId) {
     ... on Collection {
       id
@@ -6,28 +6,9 @@ query collectionPageData($collectionId: ID!, $myProfileId: [ID!]) {
       description
       image
 
-      followersCount: _relCount(type: Follows, target: Profile, inverse: true)
-      myFollow: _rel(type: Follows, target: Profile, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
-        edges {
-          edge {
-            id
-          }
-        }
-      }
+      resourcesCount: _relCount(type: Features, target: Resource)
+      # followersCount: _relCount(type: Follow, target: Profile, inverse: true)
 
-      myBookmarked: _rel(
-        type: Bookmarked
-        target: Profile
-        inverse: true
-        page: { first: 1 }
-        targetIds: $myProfileId
-      ) {
-        edges {
-          edge {
-            id
-          }
-        }
-      }
       resources: _rel(type: Features, target: Resource) {
         edges {
           node {
@@ -95,15 +76,6 @@ mutation editCollection($id: ID!, $collInput: EditCollectionInput!) {
 mutation delCollectionRelation($edge: DeleteEdgeInput!) {
   deleteEdge(input: $edge) {
     ... on DeleteEdgeMutationError {
-      type
-      details
-    }
-  }
-}
-
-mutation addCollectionRelation($edge: CreateEdgeInput!) {
-  createEdge(input: $edge) {
-    ... on CreateEdgeMutationError {
       type
       details
     }

@@ -11,7 +11,7 @@ import {
   LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown
+  YearsDropdown,
 } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
@@ -43,8 +43,6 @@ export const ResourceStoryProps: ResourceProps = {
   isOwner: false,
   title: 'The Best Resource Ever',
   liked: false,
-  numLikes: 23,
-  bookmarked: false,
   tags: ['Reforestationg', 'Drones', 'Soil'],
   contributorCardProps: ContributorCardStoryProps,
   formBag: SBFormikBag<NewResourceFormValues>({
@@ -75,7 +73,6 @@ export const ResourceStoryProps: ResourceProps = {
   licenses: { ...LicenseDropdown, label: t`License` },
   updateResource: action('updateResource'),
   toggleLike: action('toggleLike'),
-  toggleBookmark: action('toggleBookmark'),
 }
 
 export const ResourceLoggedOutStoryProps: ResourceProps = {

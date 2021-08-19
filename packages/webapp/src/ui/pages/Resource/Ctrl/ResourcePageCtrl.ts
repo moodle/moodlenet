@@ -42,8 +42,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     variables: { resourceId: id, myProfileId: session ? [session.profile.id] : [] },
   })
   const resourceData = narrowNodeType(['Resource'])(data?.node)
-  const [addRelation, addRelationRes] = useCreateResourceRelationMutation()
-  const [delRelation, delRelationRes] = useDelResourceRelationMutation()
+  const [createResourceRelMut, createResourceRelMutRes] = useCreateResourceRelationMutation()
+  const [delResourceRelMut, delResourceRelMutRes] = useDelResourceRelationMutation()
   const [edit /* , editResult */] = useEditResourceMutation()
   const categoryEdge = narrowEdgeNodeOfType(['IscedField'])(resourceData?.categories.edges[0])
   const levelEdge = narrowEdgeNodeOfType(['IscedGrade'])(resourceData?.grades.edges[0])
@@ -83,8 +83,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { langId } = getLang(vals.language)
         return Promise.all([
-          languageEdge && delRelation({ variables: { edge: { id: languageEdge.edge.id } } }),
-          addRelation({
+          languageEdge && delResourceRelMut({ variables: { edge: { id: languageEdge.edge.id } } }),
+          createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: id, to: langId, Features: {} } },
           }),
         ])
@@ -96,8 +96,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { licenseId } = getLicense(vals.license)
         return Promise.all([
-          licenseEdge && delRelation({ variables: { edge: { id: licenseEdge.edge.id } } }),
-          addRelation({
+          licenseEdge && delResourceRelMut({ variables: { edge: { id: licenseEdge.edge.id } } }),
+          createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: id, to: licenseId, Features: {} } },
           }),
         ])
@@ -109,8 +109,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { typeId } = getType(vals.type)
         return Promise.all([
-          typeEdge && delRelation({ variables: { edge: { id: typeEdge.edge.id } } }),
-          addRelation({
+          typeEdge && delResourceRelMut({ variables: { edge: { id: typeEdge.edge.id } } }),
+          createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: id, to: typeId, Features: {} } },
           }),
         ])
@@ -122,8 +122,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { gradeId } = getGrade(vals.level)
         return Promise.all([
-          levelEdge && delRelation({ variables: { edge: { id: levelEdge.edge.id } } }),
-          addRelation({
+          levelEdge && delResourceRelMut({ variables: { edge: { id: levelEdge.edge.id } } }),
+          createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: id, to: gradeId, Features: {} } },
           }),
         ])
@@ -135,8 +135,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { iscedFId } = getIscedF(vals.category)
         return Promise.all([
-          categoryEdge && delRelation({ variables: { edge: { id: categoryEdge.edge.id } } }),
-          addRelation({
+          categoryEdge && delResourceRelMut({ variables: { edge: { id: categoryEdge.edge.id } } }),
+          createResourceRelMut({
             variables: { edge: { edgeType: 'Features', from: id, to: iscedFId, Features: {} } },
           }),
         ])
@@ -180,44 +180,30 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
 
   const isOwner = isAdmin || (creator && session ? creator.id === session.profile.id : false)
 
-  const myBookmarkedEdgeId = resourceData?.myBookmarked.edges[0]?.edge.id
-  const toggleBookmark = useCallback(() => {
-    if (!session || addRelationRes.loading || delRelationRes.loading) {
-      return
-    }
-    if (myBookmarkedEdgeId) {
-      return delRelation({ variables: { edge: { id: myBookmarkedEdgeId } } }).then(() => refetch())
-    } else {
-      return addRelation({
-        variables: { edge: { edgeType: 'Bookmarked', from: session.profile.id, to: id, Bookmarked: {} } },
-      }).then(() => refetch())
-    }
-  }, [
-    addRelation,
-    addRelationRes.loading,
-    delRelation,
-    delRelationRes.loading,
-    id,
-    myBookmarkedEdgeId,
-    refetch,
-    session,
-  ])
-
   const likedEdge = resourceData?.myLike.edges[0]
   const liked = !!likedEdge
   const toggleLike = useCallback(async () => {
-    if (!session || addRelationRes.loading || delRelationRes.loading) {
+    if (!session || createResourceRelMutRes.loading || delResourceRelMutRes.loading) {
       return
     }
     if (likedEdge) {
-      await delRelation({ variables: { edge: { id: likedEdge.edge.id } } })
+      await delResourceRelMut({ variables: { edge: { id: likedEdge.edge.id } } })
     } else {
-      await addRelation({
+      await createResourceRelMut({
         variables: { edge: { edgeType: 'Likes', from: session.profile.id, to: id, Likes: {} } },
       })
     }
     refetch()
-  }, [session, addRelationRes.loading, delRelationRes.loading, likedEdge, refetch, delRelation, addRelation, id])
+  }, [
+    session,
+    createResourceRelMutRes.loading,
+    delResourceRelMutRes.loading,
+    likedEdge,
+    refetch,
+    delResourceRelMut,
+    createResourceRelMut,
+    id,
+  ])
   const resourceProps = useMemo<null | ResourceProps>(() => {
     if (!resourceData) {
       return null
@@ -248,24 +234,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       licenses: licensesOptions,
       updateResource: formik.submitForm,
       toggleLike,
-      bookmarked: !!myBookmarkedEdgeId,
-      numLikes: resourceData.likesCount,
-      toggleBookmark,
     }
     return props
-  }, [
-    resourceData,
-    id,
-    formBag,
-    isOwner,
-    liked,
-    creator,
-    creatorEdge,
-    isAuthenticated,
-    formik.submitForm,
-    toggleLike,
-    myBookmarkedEdgeId,
-    toggleBookmark,
-  ])
+  }, [id, resourceData, formBag, isOwner, liked, creator, creatorEdge, isAuthenticated, formik.submitForm, toggleLike])
   return resourceProps && [resourceProps]
 }

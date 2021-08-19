@@ -1,5 +1,4 @@
 import { Trans } from '@lingui/macro'
-import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@material-ui/icons/BookmarkBorder'
 import EditIcon from '@material-ui/icons/Edit'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
@@ -26,8 +25,6 @@ export type ResourceProps = {
   isOwner: boolean
   title: string
   liked: boolean
-  numLikes: number
-  bookmarked: boolean
   tags: Array<string>
   contributorCardProps: ContributorCardProps
   formBag: FormikBag<NewResourceFormValues>
@@ -41,7 +38,6 @@ export type ResourceProps = {
   categories: DropdownField
   updateResource: () => unknown
   toggleLike: () => unknown
-  toggleBookmark: () => unknown
 }
 
 export const Resource = withCtrl<ResourceProps>(
@@ -50,8 +46,6 @@ export const Resource = withCtrl<ResourceProps>(
     isAuthenticated,
     isOwner,
     liked,
-    numLikes,
-    bookmarked,
     tags,
     contributorCardProps,
     formBag,
@@ -65,7 +59,6 @@ export const Resource = withCtrl<ResourceProps>(
     categories,
     updateResource,
     toggleLike,
-    toggleBookmark,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
 
@@ -201,17 +194,13 @@ export const Resource = withCtrl<ResourceProps>(
                       </div>
                     </span>
                     <div className="actions">
-                      <div className={`${isAuthenticated ? 'like' : 'not-authentificated'} ${liked && 'liked'}`} onClick={isAuthenticated ? toggleLike : () => {}}>
+                      <div className={`like ${liked && 'liked'}`} onClick={toggleLike}>
                         {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                        <span>{numLikes}</span>
+                        <Trans>Like</Trans>
                       </div>
-                      {!isOwner && isAuthenticated && (
-                        <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
-                          {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-                        </div>
-                      )}
                       <div className="share">
                         <ShareIcon />
+                        <Trans>Share</Trans>
                       </div>
                       {isOwner && (
                         <div className="edit-save">
