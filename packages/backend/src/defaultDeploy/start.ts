@@ -6,6 +6,7 @@ import { createEdgeAdapter, deleteEdgeAdapter } from '../adapters/content-graph/
 import { globalSearch } from '../adapters/content-graph/arangodb/adapters/globalSearch'
 import {
   createNodeAdapter,
+  deleteNodeAdapter,
   editNodeAdapter,
   getNodeBySlugAdapter,
 } from '../adapters/content-graph/arangodb/adapters/node'
@@ -138,6 +139,9 @@ export const startDefaultMoodlenet = async ({
 
   qminoInProcess.open(nodePorts.createProfile, {
     ...createNodeAdapter(contentGraphDatabase),
+  })
+  qminoInProcess.open(nodePorts.deleteNode, {
+    ...deleteNodeAdapter(contentGraphDatabase),
   })
 
   qminoInProcess.open(nodePorts.createNode, {

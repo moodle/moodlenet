@@ -172,3 +172,12 @@ mutation delResourceRelation($edge: DeleteEdgeInput!) {
     }
   }
 }
+
+mutation delResource($node: DeleteNodeInput!) {
+  deleteNode(input: $node) {
+    ... on DeleteNodeMutationError {
+      type
+      details
+    }
+  }
+}

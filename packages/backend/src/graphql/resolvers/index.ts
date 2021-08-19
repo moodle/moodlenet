@@ -24,6 +24,7 @@ import {
   createEdgeMutationError,
   createNodeMutationError,
   deleteEdgeMutationError,
+  deleteNodeMutationError,
   editNodeMutationError,
   graphEdge2GqlEdge,
   graphNode2GqlNode,
@@ -316,6 +317,30 @@ export const getGQLResolvers = ({
         const successResult: GQLTypes.DeleteEdgeMutationSuccess = {
           __typename: 'DeleteEdgeMutationSuccess',
           edgeId: input.id,
+        }
+        return successResult
+      },
+      async deleteNode(_root, { input }, ctx /*,  _info */) {
+        const node = gqlNodeId2GraphNodeIdentifier(input.id)
+        if (!node) {
+          return deleteNodeMutationError('UnexpectedInput')
+        }
+        if (!ctx.authSessionEnv) {
+          return deleteNodeMutationError('NotAuthorized')
+        }
+        const deleteResult = await qmino.callSync(
+          nodePorts.deleteNode({
+            sessionEnv: ctx.authSessionEnv,
+            node,
+          }),
+          { timeout: 5000 },
+        )
+        if (deleteResult === false) {
+          return deleteNodeMutationError('UnexpectedInput', null)
+        }
+        const successResult: GQLTypes.DeleteNodeMutationSuccess = {
+          __typename: 'DeleteNodeMutationSuccess',
+          nodeId: input.id,
         }
         return successResult
       },

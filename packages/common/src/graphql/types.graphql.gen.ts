@@ -194,6 +194,7 @@ export type DeleteNodeMutationError = {
 export type DeleteNodeMutationErrorType =
   | 'NotFound'
   | 'NotAuthorized'
+  | 'UnexpectedInput'
   | 'AssertionFailed';
 
 export type DeleteNodeMutationPayload = DeleteNodeMutationSuccess | DeleteNodeMutationError;
@@ -513,6 +514,7 @@ export type Mutation = {
   createNode: CreateNodeMutationPayload;
   createSession: CreateSession;
   deleteEdge: DeleteEdgeMutationPayload;
+  deleteNode: DeleteNodeMutationPayload;
   editNode: EditNodeMutationPayload;
   signUp: SimpleResponse;
 };
@@ -543,6 +545,11 @@ export type MutationCreateSessionArgs = {
 
 export type MutationDeleteEdgeArgs = {
   input: DeleteEdgeInput;
+};
+
+
+export type MutationDeleteNodeArgs = {
+  input: DeleteNodeInput;
 };
 
 

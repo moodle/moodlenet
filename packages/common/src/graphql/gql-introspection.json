@@ -1418,6 +1418,12 @@
             "deprecationReason": null
           },
           {
+            "name": "UnexpectedInput",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "AssertionFailed",
             "description": null,
             "isDeprecated": false,
@@ -4453,6 +4459,39 @@
               "ofType": {
                 "kind": "UNION",
                 "name": "DeleteEdgeMutationPayload",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deleteNode",
+            "description": null,
+            "args": [
+              {
+                "name": "input",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "DeleteNodeInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "UNION",
+                "name": "DeleteNodeMutationPayload",
                 "ofType": null
               }
             },

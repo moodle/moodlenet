@@ -271,6 +271,19 @@ export type DelResourceRelationMutation = (
   ) }
 );
 
+export type DelResourceMutationVariables = Types.Exact<{
+  node: Types.DeleteNodeInput;
+}>;
+
+
+export type DelResourceMutation = (
+  { __typename: 'Mutation' }
+  & { deleteNode: { __typename: 'DeleteNodeMutationSuccess' } | (
+    { __typename: 'DeleteNodeMutationError' }
+    & Pick<Types.DeleteNodeMutationError, 'type' | 'details'>
+  ) }
+);
+
 
 export const ResourcePageDataDocument = gql`
     query ResourcePageData($resourceId: ID!, $myProfileId: [ID!]) {
@@ -539,3 +552,39 @@ export function useDelResourceRelationMutation(baseOptions?: Apollo.MutationHook
 export type DelResourceRelationMutationHookResult = ReturnType<typeof useDelResourceRelationMutation>;
 export type DelResourceRelationMutationResult = Apollo.MutationResult<DelResourceRelationMutation>;
 export type DelResourceRelationMutationOptions = Apollo.BaseMutationOptions<DelResourceRelationMutation, DelResourceRelationMutationVariables>;
+export const DelResourceDocument = gql`
+    mutation delResource($node: DeleteNodeInput!) {
+  deleteNode(input: $node) {
+    ... on DeleteNodeMutationError {
+      type
+      details
+    }
+  }
+}
+    `;
+export type DelResourceMutationFn = Apollo.MutationFunction<DelResourceMutation, DelResourceMutationVariables>;
+
+/**
+ * __useDelResourceMutation__
+ *
+ * To run a mutation, you first call `useDelResourceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDelResourceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [delResourceMutation, { data, loading, error }] = useDelResourceMutation({
+ *   variables: {
+ *      node: // value for 'node'
+ *   },
+ * });
+ */
+export function useDelResourceMutation(baseOptions?: Apollo.MutationHookOptions<DelResourceMutation, DelResourceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DelResourceMutation, DelResourceMutationVariables>(DelResourceDocument, options);
+      }
+export type DelResourceMutationHookResult = ReturnType<typeof useDelResourceMutation>;
+export type DelResourceMutationResult = Apollo.MutationResult<DelResourceMutation>;
+export type DelResourceMutationOptions = Apollo.BaseMutationOptions<DelResourceMutation, DelResourceMutationVariables>;

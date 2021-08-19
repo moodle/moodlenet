@@ -53,7 +53,7 @@ export const createEdge = QMCommand(
 
 // delete
 
-export type DeleteAdapter = {
+export type DeleteEdgeAdapter = {
   deleteEdge: (_: { edge: GraphEdgeIdentifier }) => Promise<boolean>
 }
 
@@ -64,7 +64,7 @@ export type DeleteEdgeInput = {
 
 export const deleteEdge = QMCommand(
   ({ edge /* , sessionEnv */ }: DeleteEdgeInput) =>
-    async ({ deleteEdge }: DeleteAdapter) => {
+    async ({ deleteEdge }: DeleteEdgeAdapter) => {
       // const rule = deleteEdgeRule({
       //   edgeType,
       //   from,

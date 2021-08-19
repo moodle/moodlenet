@@ -126,4 +126,33 @@ export const createProfile = QMCommand(
     },
 )
 
+// delete
+
+export type DeleteNodeAdapter = {
+  deleteNode: (_: { node: GraphNodeIdentifier }) => Promise<boolean>
+}
+
+export type DeleteNodeInput = {
+  sessionEnv: SessionEnv
+  node: GraphNodeIdentifier
+}
+
+export const deleteNode = QMCommand(
+  ({ node /* , sessionEnv */ }: DeleteNodeInput) =>
+    async ({ deleteNode }: DeleteNodeAdapter) => {
+      // const rule = deleteNodeRule({
+      //   nodeType,
+      //   from,
+      //   profileId: getProfileId(env),
+      //   ops,
+      //   to,
+      //   userRole: env.user.role,
+      // })
+      // const _authId = sessionEnv.user.authId
+      const result = await deleteNode({ node })
+
+      return result
+    },
+)
+
 QMModule(module)
