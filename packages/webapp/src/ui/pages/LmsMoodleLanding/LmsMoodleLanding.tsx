@@ -26,8 +26,8 @@ export const LMSMoodleLanding = withCtrl<LMSMoodleLandingProps>(props => {
     return (
       <HeaderPageTemplate {...props.headerPageTemplateProps}>
         <div>
-          <h1>Welcome from Moodle LMS !</h1>
-          <h2>Site: {site}</h2>
+          <h1>Welcome from Moodle LMS : {site} !</h1>
+          <h2>Saving this target for import</h2>
           {course && <h3>course: {course}</h3>}
           {section && <h3>section: {section}</h3>}
         </div>

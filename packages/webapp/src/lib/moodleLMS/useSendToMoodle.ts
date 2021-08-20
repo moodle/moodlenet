@@ -4,10 +4,10 @@ import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useMemo, useState } from 'react'
 import { License, Resource } from '../../graphql/pub.graphql.link'
 import { getMaybeAssetRefUrl } from '../../helpers/data'
-import { createLocalSessionKVStorage, SESSION } from '../keyvaluestore/localSessionStorage'
+import { createLocalSessionKVStorage, LOCAL } from '../keyvaluestore/localSessionStorage'
 import { LMSPrefs, sendToMoodle } from './LMSintegration'
 
-const storage = createLocalSessionKVStorage(SESSION)('LMS_')
+const storage = createLocalSessionKVStorage(LOCAL)('LMS_')
 const LMS_PREFS_KEY = 'Prefs'
 
 export const useLMS = (
