@@ -5,6 +5,7 @@ import { BookmarksRoute } from './BookmarksRoute'
 import { CategoryRoute } from './CategoryRoute'
 import { CollectionRoute } from './CollectionRoute'
 import { LandingRoute } from './LandingRoute'
+import { LMSMoodleLandingRoute } from './LMSMoodleLandingRoute'
 import { LoginRoute } from './LoginRoute'
 import { NewCollectionRoute } from './NewCollectionRoute'
 import { NewResourceRoute } from './NewResourceRoute'
@@ -17,6 +18,7 @@ import { TermsAndConditionsSignupRoute } from './TermsAndConditionStaticHtmlRout
 export const MNRouter: FC = (/* { children } */) => {
   return (
     <Switch>
+      <Route {...LMSMoodleLandingRoute} />
       <Route {...TermsAndConditionsSignupRoute} />
       <Route {...SearchRoute} />
       <Route {...NewResourceRoute} />
