@@ -43,6 +43,7 @@ export type ResourceProps = {
   toggleLike: () => unknown
   toggleBookmark: () => unknown
   deleteResource?: () => unknown
+  sendToMoodleLms?: () => unknown
 }
 
 export const Resource = withCtrl<ResourceProps>(
@@ -68,6 +69,7 @@ export const Resource = withCtrl<ResourceProps>(
     toggleLike,
     toggleBookmark,
     deleteResource,
+    sendToMoodleLms,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
 
@@ -89,7 +91,7 @@ export const Resource = withCtrl<ResourceProps>(
 
     const actions = (
       <Card className="resource-action-card" hideBorderWhenSmall={true}>
-        <PrimaryButton disabled={!isAuthenticated}>
+        <PrimaryButton disabled={!isAuthenticated} onClick={sendToMoodleLms}>
           <Trans>Send to Moodle</Trans>
         </PrimaryButton>
         <SecondaryButton disabled={!isAuthenticated}>
