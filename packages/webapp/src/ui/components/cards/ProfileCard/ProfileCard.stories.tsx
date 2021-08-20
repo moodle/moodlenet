@@ -10,19 +10,24 @@ const meta: ComponentMeta<typeof ProfileCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['ProfileCardStoryProps', 'ProfileCardLoggedOutStoryProps', 'ProfileCardLoggedInStoryProps', 'ProfileCardOwnerStoryProps'],
-  decorators:[
-    (Story)=>(<div style={{maxWidth:500}}><Story/></div>)
-  ]
+  excludeStories: [
+    'ProfileCardStoryProps',
+    'ProfileCardLoggedOutStoryProps',
+    'ProfileCardLoggedInStoryProps',
+    'ProfileCardOwnerStoryProps',
+  ],
+  decorators: [
+    Story => (
+      <div style={{ maxWidth: 500 }}>
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export const ProfileCardStoryProps: ProfileCardProps = {
   backgroundUrl: 'https://picsum.photos/200/100',
-  username: 'juanito',
   avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
-  organizationName: 'UM',
-  location: 'Malta',
-  siteUrl: 'https://iuri.is/',
   email: 'info@moodle.com',
   isOwner: false,
   isAuthenticated: false,
@@ -30,7 +35,12 @@ export const ProfileCardStoryProps: ProfileCardProps = {
   toggleIsEditing: action('toogleIsEditing'),
   formBag: SBFormikBag<ProfileFormValues>({
     displayName: 'Juanito Rodriguez',
-    description: 'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
+    description:
+      'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
+    organizationName: 'UM',
+    location: 'Malta',
+    siteUrl: 'https://iuri.is/',
+    username: 'juanito',
   }),
 }
 
@@ -40,12 +50,12 @@ export const ProfileCardLoggedOutStoryProps: ProfileCardProps = {
 
 export const ProfileCardLoggedInStoryProps: ProfileCardProps = {
   ...ProfileCardStoryProps,
-  isAuthenticated: true
+  isAuthenticated: true,
 }
 
 export const ProfileCardOwnerStoryProps: ProfileCardProps = {
   ...ProfileCardLoggedInStoryProps,
-  isOwner: true
+  isOwner: true,
 }
 
 const ProfileCardStory: ComponentStory<typeof ProfileCard> = args => <ProfileCard {...args} />

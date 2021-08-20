@@ -14,15 +14,11 @@ import './styles.scss'
 
 export type ProfileCardProps = {
   backgroundUrl: string
-  username: string
   avatarUrl: string
   isOwner?: boolean
   isFollowing?: boolean
   isEditing?: boolean
   email: string
-  organizationName: string
-  location: string
-  siteUrl: string
   isAuthenticated: boolean
   formBag: FormikBag<ProfileFormValues>
   toggleIsEditing(): unknown
@@ -32,24 +28,24 @@ export type ProfileCardProps = {
 export const ProfileCard = withCtrl<ProfileCardProps>(
   ({
     avatarUrl,
-    username,
     backgroundUrl,
     isOwner,
     isAuthenticated,
     isEditing,
     email,
     isFollowing,
-    location,
     toggleFollow,
     toggleIsEditing,
-    organizationName,
-    siteUrl,
     formBag,
   }) => {
     const [form, formAttrs] = formBag
     const setFieldValue = form.setFieldValue
     const setDisplayNameField = useCallback((_: string) => setFieldValue('displayName', _), [setFieldValue])
     const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
+    const setUsernameField = useCallback((_: string) => setFieldValue('username', _), [setFieldValue])
+    const setOrganizationNameField = useCallback((_: string) => setFieldValue('organizationName', _), [setFieldValue])
+    const setLocationField = useCallback((_: string) => setFieldValue('location', _), [setFieldValue])
+    const setSiteUrlField = useCallback((_: string) => setFieldValue('siteUrl', _), [setFieldValue])
 
     return (
       <div className="profile-card">
@@ -81,6 +77,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                   autoUpdate={true}
                   value={form.values.displayName}
                   displayMode={true}
+                  placeholder="Display name"
                   edit={isEditing}
                   {...formAttrs.displayName}
                   getText={setDisplayNameField}
@@ -90,15 +87,56 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               )}
               {!isEditing && <img className="verified-icon" src={verifiedIcon} alt="Verified" />}
             </div>
-            <div className="subtitle">
-              <span>@{username}</span>
-              <span>·</span>
-              <span>{organizationName}</span>
-              <span>·</span>
-              <span>{location}</span>
-              <span>·</span>
-              <a href={siteUrl}>{siteUrl}</a>
-            </div>
+            {isOwner && isEditing ? (
+              <div className="subtitle">
+                @<InputTextField
+                  autoUpdate={true}
+                  value={form.values.username}
+                  displayMode={true}
+                  placeholder="Username"
+                  edit={isEditing}
+                  {...formAttrs.username}
+                  getText={setUsernameField}
+                />
+                <InputTextField
+                  autoUpdate={true}
+                  value={form.values.organizationName}
+                  displayMode={true}
+                  placeholder="Organization"
+                  edit={isEditing}
+                  {...formAttrs.organizationName}
+                  getText={setOrganizationNameField}
+                />
+                <InputTextField
+                  autoUpdate={true}
+                  value={form.values.location}
+                  displayMode={true}
+                  placeholder="Location"
+                  edit={isEditing}
+                  {...formAttrs.location}
+                  getText={setLocationField}
+                />
+                <InputTextField
+                  autoUpdate={true}
+                  value={form.values.siteUrl}
+                  displayMode={true}
+                  placeholder="Website"
+                  edit={isEditing}
+                  {...formAttrs.location}
+                  getText={setSiteUrlField}
+                />
+              </div>
+            ) : (
+              <div className="subtitle">
+                <span>@{form.values.username}</span>
+                <span>·</span>
+                <span>{form.values.organizationName}</span>
+                <span>·</span>
+                <span>{form.values.location}</span>
+                <span>·</span>
+                <a href={form.values.siteUrl}>{form.values.siteUrl}</a>
+              </div>
+            )}
           </div>
           {isOwner ? (
             <InputTextField
@@ -107,6 +145,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               value={form.values.description}
               textarea={true}
               displayMode={true}
+              placeholder="What should others know about you?"
               edit={isEditing}
               {...formAttrs.description}
               getText={setDescriptionField}

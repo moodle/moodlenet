@@ -70,7 +70,8 @@
       > .title > .display-name {
         width: 100%;
       }
-      > .title, .display-name > .input-container > input {
+      > .title,
+      .display-name > .input-container > input {
         display: flex;
         align-items: center;
         width: 100%;
@@ -90,10 +91,20 @@
         display: flex;
         justify-content: flex-start;
         gap: 5px;
+
+        > .input-text-field > .input-container > input {
+          font-size: 11px;
+
+          &::placeholder {
+            font-size: 11px;
+            color: #b6bacb;
+          }
+        }
       }
     }
 
-    > .description, .description > .input-container > textarea {
+    > .description,
+    .description > .input-container > textarea {
       font-size: 14px;
       line-height: 20px;
     }

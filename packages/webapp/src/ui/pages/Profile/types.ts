@@ -9,4 +9,8 @@ export type Collection = string
 export type ProfileFormValues = {
   displayName: string
   description: string
+  username: string
+  organizationName: string
+  location: string
+  siteUrl: string
 }
