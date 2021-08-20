@@ -9,7 +9,7 @@ import {
   useGetCurrentSessionLazyQuery,
   useLoginMutation,
   UserSessionFragment,
-  useSignUpMutation,
+  useSignUpMutation
 } from './Session/session.gen'
 
 const LAST_SESSION_EMAIL_STORAGE_KEY = 'LAST_SESSION_EMAIL'
@@ -44,6 +44,7 @@ export type SessionContextType = {
   lastSessionEmail: string | null
   lastSessionJwt: string | null
   isAuthenticated: boolean
+  loading:boolean
   isAdmin: boolean
   logout(): unknown
   activateNewUser(_: { password: string; activationToken: string; name: string }): Promise<ActivateWarnMessage | null>
@@ -95,6 +96,7 @@ export const SessionProvider: FC = ({ children }) => {
   }, [lastSession])
 
   const session = sessionQResult.data?.getSession ?? null
+  const loading = sessionQResult.loading
 
   useEffect(() => {
     setToken(lastSession.jwt ?? null)
@@ -108,12 +110,13 @@ export const SessionProvider: FC = ({ children }) => {
       activateNewUser,
       signUp,
       session,
+      loading,
       isAdmin: session?.profile.id === 'Profile/__root__', // FIXME HACK for mvp
       isAuthenticated: !!session,
       lastSessionEmail: lastSession.email ?? null,
       lastSessionJwt: lastSession.jwt ?? null,
     }),
-    [logout, login, activateNewUser, signUp, session, lastSession.email, lastSession.jwt],
+    [logout,loading, login, activateNewUser, signUp, session, lastSession.email, lastSession.jwt],
   )
   return <ProvideSession value={ctx}>{!sessionQResult.called ? null : children}</ProvideSession>
 }
