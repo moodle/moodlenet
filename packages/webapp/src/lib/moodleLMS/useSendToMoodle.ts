@@ -1,28 +1,47 @@
 import { AssetRef } from '@moodlenet/common/lib/content-graph/types/node'
+import { Maybe } from '@moodlenet/common/lib/utils/types'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useMemo, useState } from 'react'
-import { Resource } from '../../graphql/pub.graphql.link'
-import { getJustAssetRefUrl } from '../../helpers/data'
+import { License, Resource } from '../../graphql/pub.graphql.link'
+import { getJustAssetRefUrl, getMaybeAssetRefUrl } from '../../helpers/data'
 import { createLocalSessionKVStorage, SESSION } from '../keyvaluestore/localSessionStorage'
 import { LMSPrefs, sendToMoodle } from './LMSintegration'
 
 const storage = createLocalSessionKVStorage(SESSION)('LMS_')
 const LMS_PREFS_KEY = 'Prefs'
 
-export const useLMS = (resource: Pick<Resource, 'kind'>, asset: AssetRef) => {
+export const useLMS = (
+  obj: Maybe<{
+    resource: Pick<Resource, 'id' | 'image' | 'name' | 'description'>
+    license: Pick<License, 'code'>
+    asset: AssetRef
+  }>,
+) => {
   const { updateLMSPrefs, currentLMSPrefs } = useLMSPrefs()
-
   const sendToLMS = useCallback(
     (LMS: LMSPrefs) => {
-      // if (!( resource)) {
-      //   return false
-      // }
-      const resource_info_stringified = JSON.stringify(resource)
-      const type = resource.kind === 'Link' ? 'link' : 'file'
+      if (!obj) {
+        return false
+      }
+      const { asset, license, resource } = obj
       const resUrl = getJustAssetRefUrl(asset)
+
+      const resource_info = {
+        canonicalUrl: `${window.location.host}${nodeGqlId2UrlPath(resource.id)}`,
+        icon: getMaybeAssetRefUrl(resource.image) ?? '',
+        licence: license.code.toUpperCase(),
+        name: resource.name,
+        summary: resource.description,
+        url: resUrl,
+      }
+      const resource_info_stringified = JSON.stringify(resource_info)
+
+      const type = asset.ext ? 'link' : 'file'
+      // console.log({ resUrl, resource_info, type, LMS })
       sendToMoodle(resUrl, resource_info_stringified, type, LMS)
       return true
     },
-    [asset, resource],
+    [obj],
   )
 
   return useMemo(
