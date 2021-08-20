@@ -278,10 +278,11 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       numLikes: resourceData.likesCount,
       toggleBookmark,
       deleteResource,
-      sendToMoodleLms,
+      sendToMoodleLms: currentLMSPrefs ? sendToMoodleLms : undefined,
     }
     return props
   }, [
+    currentLMSPrefs,
     sendToMoodleLms,
     deleteResource,
     resourceData,
