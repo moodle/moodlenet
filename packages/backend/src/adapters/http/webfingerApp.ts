@@ -5,6 +5,7 @@ import { getBySlug } from '../../ports/content-graph/node'
 
 export type WebFingerResp = {
   subject: string
+  aliases: string[]
   links: [
     {
       rel: 'http://webfinger.example/rel/profile-page'
@@ -42,12 +43,14 @@ export const createWebfingerApp = ({ qmino, domain }: GQLAppConfig) => {
       return
     }
     const profilePagePath = nodeIdentifierSlug2UrlPath(profile)
+    const profileUrl = `https://${domain}${profilePagePath}` //FIXME: hardcoded protocol for MVP !!
     const resp: WebFingerResp = {
-      subject: `MoodleNet user: ${profile.name}`,
+      subject: profileUrl,
+      aliases: [profileUrl],
       links: [
         {
           rel: 'http://webfinger.example/rel/profile-page',
-          href: `https://${domain}${profilePagePath}`, //FIXME: hardcoded protocol for MVP !!
+          href: profileUrl,
         },
       ],
     }
