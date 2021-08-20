@@ -23,6 +23,7 @@ import {
   resTypeOptions,
   yearsOptions,
 } from '../../../../helpers/resource-relation-data-static-and-utils'
+import { useLMS } from '../../../../lib/moodleLMS/useSendToMoodle'
 import { href } from '../../../elements/link'
 // import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
@@ -48,7 +49,6 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     variables: { resourceId: id, myProfileId: session ? [session.profile.id] : [] },
   })
   const resourceData = narrowNodeType(['Resource'])(data?.node)
-
   const history = useHistory()
   const [delResource, delResourceRes] = useDelResourceMutation()
   const myId = session?.profile.id
@@ -236,6 +236,14 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     }
     refetch()
   }, [session, addRelationRes.loading, delRelationRes.loading, likedEdge, refetch, delRelation, addRelation, id])
+
+  const { sendToLMS, currentLMSPrefs } = useLMS(
+    licenseEdge && resourceData
+      ? { asset: resourceData.content, resource: resourceData, license: licenseEdge.node }
+      : null,
+  )
+
+  const sendToMoodleLms = useCallback(() => currentLMSPrefs && sendToLMS(currentLMSPrefs), [currentLMSPrefs, sendToLMS])
   const resourceProps = useMemo<null | ResourceProps>(() => {
     if (!resourceData) {
       return null
@@ -270,9 +278,11 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       numLikes: resourceData.likesCount,
       toggleBookmark,
       deleteResource,
+      sendToMoodleLms,
     }
     return props
   }, [
+    sendToMoodleLms,
     deleteResource,
     resourceData,
     id,
