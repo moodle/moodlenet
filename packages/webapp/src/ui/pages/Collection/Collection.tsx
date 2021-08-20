@@ -65,9 +65,9 @@ export const Collection = withCtrl<CollectionProps>(
 
     const actionsCard = (
       <Card className="collection-actions-card" hideBorderWhenSmall={true}>
-        <PrimaryButton disabled={!isAuthenticated}>
+        {/*         <PrimaryButton disabled={!isAuthenticated}>
           <Trans>Send all to Moodle</Trans>
-        </PrimaryButton>
+        </PrimaryButton> */}
         <SecondaryButton disabled={!isAuthenticated}>
           <Trans>Suggest Resource</Trans>
         </SecondaryButton>
