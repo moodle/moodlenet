@@ -13,3 +13,4 @@ export type ResourcePage = RouteDef<'/resource/:slug', { slug: string }>
 export type CollectionPage = RouteDef<'/collection/:slug', { slug: string }>
 export type CategoryPage = RouteDef<'/iscedfield/:slug', { slug: string }>
 export type BookmarksPage = RouteDef<'/bookmarks', {}>
+export type LMSMoodleLanding = RouteDef<'/lms/moodle/search', {}>
