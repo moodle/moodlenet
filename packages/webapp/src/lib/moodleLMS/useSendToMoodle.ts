@@ -3,7 +3,7 @@ import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useMemo, useState } from 'react'
 import { License, Resource } from '../../graphql/pub.graphql.link'
-import { getJustAssetRefUrl, getMaybeAssetRefUrl } from '../../helpers/data'
+import { getMaybeAssetRefUrl } from '../../helpers/data'
 import { createLocalSessionKVStorage, SESSION } from '../keyvaluestore/localSessionStorage'
 import { LMSPrefs, sendToMoodle } from './LMSintegration'
 
@@ -24,10 +24,14 @@ export const useLMS = (
         return false
       }
       const { asset, license, resource } = obj
-      const resUrl = getJustAssetRefUrl(asset)
+      // const resUrl = getJustAssetRefUrl(asset)
+      // FIXME: hardcoded url gen for local env ..
+      const resUrl = asset.ext
+        ? asset.location
+        : `${window.location.protocol}//${window.location.host}/assets/${asset.location}`
 
       const resource_info = {
-        canonicalUrl: `${window.location.host}${nodeGqlId2UrlPath(resource.id)}`,
+        canonicalUrl: `${window.location.protocol}//${window.location.host}${nodeGqlId2UrlPath(resource.id)}`,
         icon: getMaybeAssetRefUrl(resource.image) ?? '',
         licence: license.code.toUpperCase(),
         name: resource.name,
