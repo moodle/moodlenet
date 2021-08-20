@@ -91,7 +91,7 @@ export const Resource = withCtrl<ResourceProps>(
 
     const actions = (
       <Card className="resource-action-card" hideBorderWhenSmall={true}>
-        <PrimaryButton disabled={!(isAuthenticated && sendToMoodleLms)} onClick={sendToMoodleLms}>
+        <PrimaryButton disabled={!sendToMoodleLms} onClick={sendToMoodleLms}>
           <Trans>Send to Moodle</Trans>
         </PrimaryButton>
         <SecondaryButton disabled={!isAuthenticated}>
@@ -300,4 +300,3 @@ export const Resource = withCtrl<ResourceProps>(
     )
   },
 )
-Resource.displayName = 'ResourcePage'
