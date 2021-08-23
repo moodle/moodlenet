@@ -1,7 +1,12 @@
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
 import { OverallCardStoryProps } from '../../components/cards/OverallCard/OverallCard.stories'
-import { ProfileCardStoryProps } from '../../components/cards/ProfileCard/ProfileCard.stories'
+import {
+  ProfileCardLoggedInStoryProps,
+  ProfileCardOwnerStoryProps,
+  ProfileCardStoryProps,
+} from '../../components/cards/ProfileCard/ProfileCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
@@ -14,12 +19,18 @@ const meta: ComponentMeta<typeof Profile> = {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: ['ProfileStoryProps', 'ProfileLoggedOutStoryProps', 'ProfileLoggedInStoryProps'],
+  excludeStories: [
+    'ProfileStoryProps',
+    'ProfileLoggedOutStoryProps',
+    'ProfileLoggedInStoryProps',
+    'ProfileOwnerStoryProps',
+  ],
 }
 
 const ProfileStory: ComponentStory<typeof Profile> = args => <Profile {...args} />
 
 export const ProfileStoryProps: ProfileProps = {
+  save: action('save'),
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
@@ -55,6 +66,12 @@ export const ProfileLoggedInStoryProps: ProfileProps = {
     ...ProfileStoryProps.headerPageTemplateProps,
     isAuthenticated: true,
   },
+  profileCardProps: ProfileCardLoggedInStoryProps,
+}
+
+export const ProfileOwnerStoryProps: ProfileProps = {
+  ...ProfileLoggedInStoryProps,
+  profileCardProps: ProfileCardOwnerStoryProps,
 }
 
 export const LoggedOut = ProfileStory.bind({})
@@ -62,5 +79,8 @@ LoggedOut.args = ProfileLoggedOutStoryProps
 
 export const LoggedIn = ProfileStory.bind({})
 LoggedIn.args = ProfileLoggedInStoryProps
+
+export const Owner = ProfileStory.bind({})
+Owner.args = ProfileOwnerStoryProps
 
 export default meta

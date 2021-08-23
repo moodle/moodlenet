@@ -1,10 +1,10 @@
-query ProfilePageUserData($profileId: ID!) {
+query ProfilePageUserData($profileId: ID!, $myProfileId: [ID!]) {
   node(id: $profileId) {
     ... on Profile {
       id
       name
       avatar
-      bio
+      description
       image
       firstName
       lastName
@@ -12,7 +12,13 @@ query ProfilePageUserData($profileId: ID!) {
       location
 
       followersCount: _relCount(type: Follows, target: Profile, inverse: true)
-
+      myFollow: _rel(type: Follows, target: Profile, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
+        edges {
+          edge {
+            id
+          }
+        }
+      }
       collectionsCount: _relCount(type: Created, target: Collection)
       collections: _rel(type: Created, target: Collection, page: { first: 100 }) {
         edges {
@@ -40,6 +46,47 @@ query ProfilePageUserData($profileId: ID!) {
           }
         }
       }
+    }
+  }
+}
+
+mutation editProfile($id: ID!, $profileInput: EditProfileInput!) {
+  editNode(input: { id: $id, nodeType: Profile, Profile: $profileInput }) {
+    ... on EditNodeMutationError {
+      type
+      details
+    }
+    ... on EditNodeMutationSuccess {
+      node {
+        ... on Profile {
+          name
+          avatar
+          description
+          image
+          firstName
+          lastName
+          siteUrl
+          location
+        }
+      }
+    }
+  }
+}
+
+mutation delProfileRelation($edge: DeleteEdgeInput!) {
+  deleteEdge(input: $edge) {
+    ... on DeleteEdgeMutationError {
+      type
+      details
+    }
+  }
+}
+
+mutation addProfileRelation($edge: CreateEdgeInput!) {
+  createEdge(input: $edge) {
+    ... on CreateEdgeMutationError {
+      type
+      details
     }
   }
 }

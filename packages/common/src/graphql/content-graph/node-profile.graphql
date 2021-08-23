@@ -2,7 +2,7 @@ type Profile implements INode {
   name: String!
   description: String!
   avatar: AssetRef
-  bio: String!
+  bio: String
   image: AssetRef
   firstName: String
   lastName: String
@@ -26,14 +26,14 @@ input CreateNodeInput {
 
 input EditProfileInput {
   name: String!
-  avatar: AssetRef
-  bio: String!
-  image: AssetRef
+  description: String!
+  avatar: AssetRefInput
+  bio: String
+  image: AssetRefInput
   firstName: String
   lastName: String
   siteUrl: String
   location: String
-  slug: String!
 }
 input EditNodeInput {
   Profile: EditProfileInput
