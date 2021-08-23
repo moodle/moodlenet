@@ -10,7 +10,7 @@ const inputObjectStaticValidators: {
   IscedGrade: neverEdit('IscedGrade'),
   Collection: object<any /* Just<EditNodeInput['Collection']> */>().required(),
   Resource: object<any /* Just<EditNodeInput['Resource']> */>().required(),
-  Profile: neverEdit('Profile'),
+  Profile: object<any /* Just<EditNodeInput['Resource']> */>().required(),
   Organization: neverEdit('Organization'),
   FileFormat: neverEdit('FileFormat'),
   Language: neverEdit('Language'),

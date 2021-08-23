@@ -12,10 +12,11 @@ import './styles.scss'
 export type ProfileProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   overallCardProps: OverallCardProps
-  profileCardProps: ProfileCardProps
+  profileCardProps: Omit<ProfileCardProps, 'isEditing' | 'toggleIsEditing'>
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
   username: string
+  save: () => unknown
 }
 
 export const Profile = withCtrl<ProfileProps>(
@@ -26,10 +27,14 @@ export const Profile = withCtrl<ProfileProps>(
     collectionCardPropsList,
     resourceCardPropsList,
     username,
+    save,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const toggleIsEditing = () => {
       setIsEditing(!isEditing)
+      if (isEditing) {
+        save()
+      }
     }
 
     const collectionList = (
