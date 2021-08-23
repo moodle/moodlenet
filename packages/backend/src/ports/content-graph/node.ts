@@ -76,7 +76,7 @@ export type EditNodeAdapter = {
     nodeId: GraphNodeIdentifier
   }) => Promise<GraphNode<N> | undefined>
 }
-export type EditNodeData<N extends GraphNodeType = GraphNodeType> = DistOmit<GraphNode<N>, '_permId' | '_slug'>
+export type EditNodeData<N extends GraphNodeType = GraphNodeType> = Partial<DistOmit<GraphNode<N>, '_permId' | '_slug'>>
 export type EditNode<N extends GraphNodeType = GraphNodeType> = {
   nodeData: EditNodeData<N>
   nodeId: GraphNodeIdentifier

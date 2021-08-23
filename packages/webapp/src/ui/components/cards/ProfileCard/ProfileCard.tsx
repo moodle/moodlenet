@@ -42,8 +42,6 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     const setFieldValue = form.setFieldValue
     const setDisplayNameField = useCallback((_: string) => setFieldValue('displayName', _), [setFieldValue])
     const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
-    const setUsernameField = useCallback((_: string) => setFieldValue('username', _), [setFieldValue])
-    const setOrganizationNameField = useCallback((_: string) => setFieldValue('organizationName', _), [setFieldValue])
     const setLocationField = useCallback((_: string) => setFieldValue('location', _), [setFieldValue])
     const setSiteUrlField = useCallback((_: string) => setFieldValue('siteUrl', _), [setFieldValue])
 
@@ -89,23 +87,22 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             </div>
             {isOwner && isEditing ? (
               <div className="subtitle">
-                @<InputTextField
+                @
+                <InputTextField
                   autoUpdate={true}
                   value={form.values.username}
                   displayMode={true}
                   placeholder="Username"
-                  edit={isEditing}
+                  edit={false}
                   {...formAttrs.username}
-                  getText={setUsernameField}
                 />
                 <InputTextField
                   autoUpdate={true}
                   value={form.values.organizationName}
                   displayMode={true}
                   placeholder="Organization"
-                  edit={isEditing}
+                  edit={false}
                   {...formAttrs.organizationName}
-                  getText={setOrganizationNameField}
                 />
                 <InputTextField
                   autoUpdate={true}
@@ -122,7 +119,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                   displayMode={true}
                   placeholder="Website"
                   edit={isEditing}
-                  {...formAttrs.location}
+                  {...formAttrs.siteUrl}
                   getText={setSiteUrlField}
                 />
               </div>

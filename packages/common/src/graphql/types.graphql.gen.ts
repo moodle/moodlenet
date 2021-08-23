@@ -286,14 +286,14 @@ export type EditNodeMutationSuccess = {
 
 export type EditProfileInput = {
   name: Scalars['String'];
-  avatar?: Maybe<Scalars['AssetRef']>;
-  bio: Scalars['String'];
-  image?: Maybe<Scalars['AssetRef']>;
+  description: Scalars['String'];
+  avatar?: Maybe<AssetRefInput>;
+  bio?: Maybe<Scalars['String']>;
+  image?: Maybe<AssetRefInput>;
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   siteUrl?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
-  slug: Scalars['String'];
 };
 
 export type EditResourceInput = {
@@ -642,7 +642,7 @@ export type Profile = INode & {
   name: Scalars['String'];
   description: Scalars['String'];
   avatar?: Maybe<Scalars['AssetRef']>;
-  bio: Scalars['String'];
+  bio?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['AssetRef']>;
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;

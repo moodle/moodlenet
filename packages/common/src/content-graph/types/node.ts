@@ -108,7 +108,7 @@ export type Organization = BaseGraphNode<'Organization'> & {
 export type Profile = AuthOp &
   BaseGraphNode<'Profile'> & {
     avatar: Maybe<AssetRef>
-    bio: string
+    bio: Maybe<string>
     image: Maybe<AssetRef>
     firstName: Maybe<string>
     lastName: Maybe<string>
