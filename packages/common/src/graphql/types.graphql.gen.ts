@@ -516,6 +516,7 @@ export type Mutation = {
   deleteEdge: DeleteEdgeMutationPayload;
   deleteNode: DeleteNodeMutationPayload;
   editNode: EditNodeMutationPayload;
+  sendEmailToProfile: Scalars['Boolean'];
   signUp: SimpleResponse;
 };
 
@@ -555,6 +556,12 @@ export type MutationDeleteNodeArgs = {
 
 export type MutationEditNodeArgs = {
   input: EditNodeInput;
+};
+
+
+export type MutationSendEmailToProfileArgs = {
+  text: Scalars['String'];
+  toProfileId: Scalars['ID'];
 };
 
 

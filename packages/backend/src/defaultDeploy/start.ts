@@ -8,6 +8,7 @@ import {
   createNodeAdapter,
   deleteNodeAdapter,
   editNodeAdapter,
+  getNodeByIdentifierAdapter,
   getNodeBySlugAdapter,
 } from '../adapters/content-graph/arangodb/adapters/node'
 import { getByAuthId } from '../adapters/content-graph/arangodb/adapters/profile'
@@ -25,7 +26,7 @@ import { getAssetAdapter } from '../adapters/staticAssets/fs/adapters/getAsset'
 import { persistTempAssetsAdapter } from '../adapters/staticAssets/fs/adapters/persistTemp'
 import { setupFs } from '../adapters/staticAssets/fs/setup'
 import { activateNewUser, storeNewSignupRequest } from '../adapters/user-auth/arangodb/adapters/new-user'
-import { byEmail } from '../adapters/user-auth/arangodb/adapters/session'
+import { byAuthId, byEmail } from '../adapters/user-auth/arangodb/adapters/user'
 import { argonHashPassword, argonVerifyPassword } from '../lib/auth/argon'
 import { getVersionedDBOrThrow } from '../lib/helpers/arango/migrate/lib'
 import { Qmino } from '../lib/qmino'
@@ -40,6 +41,7 @@ import * as tmpAssetPorts from '../ports/static-assets/temp'
 import * as newUserPorts from '../ports/user-auth/new-user'
 // import * as userAuthConfigPorts from '../ports/user-auth/config'
 import * as userPorts from '../ports/user-auth/user'
+import * as utilsPorts from '../ports/utils/utils'
 import { DefaultDeployEnv } from './env'
 
 export type Config = {
@@ -118,11 +120,7 @@ export const startDefaultMoodlenet = async ({
     ...storeNewSignupRequest(userAuthDatabase),
     publicBaseUrl: http.publicUrl,
     generateToken: async () => ulid(),
-    sendEmail: _ =>
-      emailSender.sendMail(_).then(
-        _ => (console.log(_), _),
-        _ => (console.log(_), Promise.reject(_)),
-      ),
+    sendEmail: _ => emailSender.sendMail(_),
   })
 
   qminoInProcess.open(newUserPorts.confirmSignup, {
@@ -157,6 +155,22 @@ export const startDefaultMoodlenet = async ({
 
   qminoInProcess.open(edgePorts.createEdge, createEdgeAdapter(contentGraphDatabase))
   qminoInProcess.open(edgePorts.deleteEdge, deleteEdgeAdapter(contentGraphDatabase))
+
+  const nodeIdAdapter = getNodeByIdentifierAdapter(contentGraphDatabase)
+  const userAuthIdAdapter = byAuthId(userAuthDatabase)
+  const profileByAuthIdAdapter = getByAuthId(contentGraphDatabase)
+
+  qminoInProcess.open(utilsPorts.sendEmailToProfile, {
+    ...userAuthIdAdapter,
+    getLocalDomain: async () => domain,
+    getProfile: nodeIdAdapter.getNodeByIdentifier,
+    getProfileByAuth: profileByAuthIdAdapter.getProfileByAuthId,
+    sendEmail: _ =>
+      emailSender.sendMail(_).then(
+        _ => true,
+        _ => false,
+      ),
+  })
 
   //FS asset
   const rootDir = fsAsset.rootFolder

@@ -16,7 +16,7 @@ export const createNodeQ = <Type extends GraphNodeType>({ node }: { node: GraphN
   const q = aq<AqlGraphNodeByType<Type>>(`
     let newnode = ${aqlstr(aqlNode)}
 
-    INSERT ${aqlstr(aqlNode)} into ${nodeType}
+    INSERT newnode into ${nodeType}
 
     return NEW
   `)
