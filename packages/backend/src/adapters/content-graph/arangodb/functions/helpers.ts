@@ -123,7 +123,7 @@ export const forwardSkipLimitPage = <T>({ docs, skip }: { docs: T[]; skip: numbe
 //   edgeType: EdgeType
 //   nodeId: string
 //   targetNodeType: NodeType
-//   side: 'from' | 'to' //FIXME: use GQL Type
+//   side: 'from' | 'to'
 //   amount: number
 // }) => {
 //   const [nodeType] = parseCheckedNodeId(nodeId as Id)
@@ -213,12 +213,13 @@ export const forwardSkipLimitPage = <T>({ docs, skip }: { docs: T[]; skip: numbe
 // export const createEdgeMergePatch = ({ byId, doc }: { doc: object; byId: string }) => `
 //   MERGE( ${aqlstr(doc)}, ${createdByAtPatch({ byId })},  )`
 
-export const documentByNodeIdSlugQ = ({ _slug, _type }: GraphNodeIdentifierSlug) =>
-  documentBySlugTypeQ({ slugVar: `${aqlstr(_slug)}`, type: _type })
+export const documentByNodeIdSlugQFrag = ({ _slug, _type }: GraphNodeIdentifierSlug) =>
+  documentBySlugTypeQFrag({ slugVar: `${aqlstr(_slug)}`, type: _type })
 
-export const documentByNodeIdPermQ = ({ _permId, _type }: GraphNodeIdentifierPerm) => `DOCUMENT("${_type}/${_permId}")`
+export const documentByNodeIdPermQFrag = ({ _permId, _type }: GraphNodeIdentifierPerm) =>
+  `DOCUMENT("${_type}/${_permId}")`
 
-export const documentBySlugTypeQ = ({ slugVar, type }: { type: GraphNodeType; slugVar: string }) => `
+export const documentBySlugTypeQFrag = ({ slugVar, type }: { type: GraphNodeType; slugVar: string }) => `
   ( ( 
     FOR n in ${type} 
       FILTER n._slug == ${slugVar}
@@ -226,8 +227,8 @@ export const documentBySlugTypeQ = ({ slugVar, type }: { type: GraphNodeType; sl
     RETURN n
   ) [0] )`
 
-export const getAqlNodeByGraphNodeIdentifierQ = (identifier: GraphNodeIdentifier) =>
-  '_permId' in identifier ? documentByNodeIdPermQ(identifier) : documentByNodeIdSlugQ(identifier)
+export const getAqlNodeByGraphNodeIdentifierQFrag = (identifier: GraphNodeIdentifier) =>
+  '_permId' in identifier ? documentByNodeIdPermQFrag(identifier) : documentByNodeIdSlugQFrag(identifier)
 
 export const aqlGraphNode2GraphNode = <T extends GraphNodeType>(aqlGraphNode: AqlGraphNodeByType<T>) => {
   // console.log(`aqlGraphNode2GraphNode `, aqlGraphNode)
