@@ -11,6 +11,7 @@ export type CollectionCardProps = {
   title: string
   collectionHref: Href
   isAuthenticated: boolean
+  isEditing?: boolean
   bookmarked: boolean
   following: boolean
   numFollowers: number

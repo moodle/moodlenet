@@ -532,7 +532,7 @@ export type ProfileResolvers<ContextType = Context, ParentType extends Resolvers
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   avatar?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
-  bio?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  bio?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   image?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   firstName?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastName?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;

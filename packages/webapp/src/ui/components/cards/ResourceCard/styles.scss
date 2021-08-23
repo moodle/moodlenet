@@ -87,23 +87,29 @@
         font-size: 14px;
         margin-top: 4px;
       }
-
-      > .delete-button {
-        position: absolute;
-        right: 0;
-      }
     }
+  }
+
+  > .delete-button {
+    position: absolute;
+    background: white;
+    padding: 2px 2px 2px 6px;
+    margin: 7px 7px 3px;
+    right: 0;
+    bottom: 0px;
+    z-index: 2;
   }
 
   > .tags {
     position: absolute;
     bottom: 10px;
-    left: 108px;
-    width: calc(100% - 120px);
+    margin-left: calc(min(106px, 30%) + 18px);
+    width: calc(70% - 30px);
     > .tag {
       font-size: 10px;
       padding: 3px 10px;
       margin-right: 3px;
     }
+
   }
 }

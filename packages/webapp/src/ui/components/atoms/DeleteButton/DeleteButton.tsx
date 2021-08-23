@@ -1,21 +1,25 @@
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
-import { FC } from 'react'
-import './styles.scss'
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import { FC } from 'react';
+import './styles.scss';
 
 export type DeleteButtonProps = {
   onClick?(arg0: unknown): unknown
   className?: string
+  type?: 'cross' | 'trash'
 }
 
-export const DeleteButton: FC<DeleteButtonProps> = ({ className, onClick}) => {
+export const DeleteButton: FC<DeleteButtonProps> = ({ className, type, onClick}) => {
   return (
     <div className={`delete-button ${className}`} onClick={onClick}>
-      <CloseRoundedIcon />
+      { type === 'cross' && <CloseRoundedIcon />}
+      { type === 'trash' && <DeleteOutlineIcon />}
     </div>
   )
 }
 
 DeleteButton.defaultProps = {
+  type: 'cross'
 }
 
 export default DeleteButton

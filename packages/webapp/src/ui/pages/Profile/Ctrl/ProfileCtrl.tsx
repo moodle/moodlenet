@@ -1,23 +1,42 @@
 import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useLocalInstance } from '../../../../context/Global/LocalInstance'
+import { useSession } from '../../../../context/Global/Session'
 import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
+import { useFormikBag } from '../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { ProfileProps } from '../Profile'
-import { useProfilePageUserDataQuery } from './ProfileCtrl.gen'
+import { ProfileFormValues } from '../types'
+import {
+  useAddProfileRelationMutation,
+  useDelProfileRelationMutation,
+  useEditProfileMutation,
+  useProfilePageUserDataQuery,
+} from './ProfileCtrl.gen'
 
 export type ProfileCtrlProps = { id: ID }
 export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id }) => {
+  const { isAuthenticated, session, isAdmin } = useSession()
   const { org: localOrg } = useLocalInstance()
-  const profile = narrowNodeType(['Profile'])(useProfilePageUserDataQuery({ variables: { profileId: id } }).data?.node)
+  const isMe = session?.profile && session.profile.id === id
+  const { data, refetch } = useProfilePageUserDataQuery({
+    variables: {
+      profileId: id,
+      myProfileId: session?.profile && !isMe ? [session.profile.id] : [],
+    },
+  })
+  const profile = narrowNodeType(['Profile'])(data?.node)
   const collections = useMemo(
     () => (profile?.collections.edges || []).filter(isEdgeNodeOfType(['Collection'])).map(({ node }) => node),
     [profile?.collections.edges],
   )
+  const [edit, editProfile] = useEditProfileMutation()
+  const [addRelation, addRelationRes] = useAddProfileRelationMutation()
+  const [delRelation, delRelationRes] = useDelProfileRelationMutation()
 
   const resources = useMemo(
     () => (profile?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])).map(({ node }) => node),
@@ -28,7 +47,57 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
     () => [...resources, ...collections].reduce((allLikes, { likesCount }) => allLikes + likesCount, 0),
     [collections, resources],
   )
+  const myFollowEdgeId = profile?.myFollow.edges[0]?.edge.id
+  const toggleFollow = useCallback(() => {
+    if (!session || addRelationRes.loading || delRelationRes.loading) {
+      return
+    }
+    if (myFollowEdgeId) {
+      return delRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(() => refetch())
+    } else {
+      return addRelation({
+        variables: { edge: { edgeType: 'Follows', from: session.profile.id, to: id, Follows: {} } },
+      }).then(() => refetch())
+    }
+  }, [addRelation, addRelationRes.loading, delRelation, delRelationRes.loading, id, myFollowEdgeId, refetch, session])
 
+  const [formik, formBag] = useFormikBag<ProfileFormValues>({
+    initialValues: {} as any,
+    onSubmit: async vals => {
+      if (!formik.dirty || !vals.username || editProfile.loading) {
+        return
+      }
+      await edit({
+        variables: {
+          id,
+          profileInput: {
+            name: vals.displayName,
+            description: vals.description,
+            location: vals.location,
+            siteUrl: vals.siteUrl,
+          },
+        },
+      })
+      refetch()
+    },
+  })
+  const { resetForm: fresetForm } = formik
+  useEffect(() => {
+    if (profile) {
+      const { name: username, description, firstName, lastName, location, siteUrl } = profile
+      fresetForm({
+        touched: {},
+        values: {
+          displayName: firstName || lastName ? `${firstName ?? ''} ${lastName ?? ''}` : username,
+          organizationName: localOrg.name,
+          location: location ?? '',
+          siteUrl: siteUrl ?? '',
+          username,
+          description,
+        },
+      })
+    }
+  }, [fresetForm, id, profile, localOrg.name])
   const profileProps = useMemo<ProfileProps | null>(() => {
     if (!profile) {
       return null
@@ -47,17 +116,30 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
       profileCardProps: {
         avatarUrl: getMaybeAssetRefUrlOrDefaultImage(profile.avatar, id, 'icon'),
         backgroundUrl: getMaybeAssetRefUrlOrDefaultImage(profile.image, id, 'image'),
-        description: profile.bio,
-        firstName: profile.firstName ?? '',
-        lastName: profile.lastName ?? '',
-        location: profile.location ?? '',
-        organizationName: localOrg.name,
-        siteUrl: profile.siteUrl ?? '',
-        username: profile.name,
+        formBag,
+        isAuthenticated,
+        email: '##',
+        toggleFollow,
+        isFollowing: !!myFollowEdgeId,
+        isOwner: isMe || isAdmin,
       },
       username: profile.name,
+      save: () => formik.submitForm(),
     }
     return props
-  }, [collections, id, kudos, localOrg.name, profile, resources])
+  }, [
+    collections,
+    formBag,
+    formik,
+    id,
+    isAdmin,
+    isAuthenticated,
+    isMe,
+    kudos,
+    myFollowEdgeId,
+    profile,
+    resources,
+    toggleFollow,
+  ])
   return profileProps && [profileProps]
 }

@@ -8,7 +8,7 @@ const noTmpFilesEditNodeMutationError = () =>
   editNodeMutationError('UnexpectedInput', `couldn't find requested tempFiles`)
 
 const nodeDocumentDataBaker: {
-  [T in NodeType]: (input: Just<EditNodeInput[T]>, qmino: QMino) => Promise<NewNodeData | EditNodeMutationError>
+  [T in NodeType]: (input: Just<EditNodeInput[T]>, qmino: QMino) => Promise<EditNodeData | EditNodeMutationError>
 } = {
   async IscedField(/* input, qmino */) {
     throw new Error('GQL edit IscedField not implemented')
@@ -18,9 +18,6 @@ const nodeDocumentDataBaker: {
   },
   async IscedGrade(/* input, qmino */) {
     throw new Error('GQL edit IscedGrade not implemented')
-  },
-  async Profile(/* input, qmino */) {
-    throw new Error('GQL edit Profile not implemented')
   },
   FileFormat(/* input, qmino */) {
     throw new Error('GQL edit FileFormat not implemented')
@@ -69,6 +66,28 @@ const nodeDocumentDataBaker: {
     }
 
     return editCollectionData
+  },
+  async Profile(input, qmino) {
+    const assetRefs = await mapAssetRefInputsToAssetRefs(
+      [getAssetRefInputAndType(input.image, 'image'), getAssetRefInputAndType(input.avatar, 'icon')],
+      qmino,
+    )
+    if (!assetRefs) {
+      return noTmpFilesEditNodeMutationError()
+    }
+    const [imageAssetRef, avatarAssetRef] = assetRefs
+
+    const editProfileData: EditNodeData<'Profile'> = {
+      _type: 'Profile',
+      image: imageAssetRef,
+      avatar: avatarAssetRef,
+      description: input.description,
+      name: input.name,
+      siteUrl: input.siteUrl,
+      location: input.location,
+    }
+
+    return editProfileData
   },
 }
 

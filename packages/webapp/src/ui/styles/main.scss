@@ -51,3 +51,9 @@ abbr {
 [hidden] {
   display: none !important;
 }
+
+.font-disabled {
+  color: #e8e8e8;
+  pointer-events: none;
+}
+

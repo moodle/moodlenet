@@ -22,16 +22,36 @@
     }
   }
 
-  > .avatar {
-    cursor: pointer;
-    z-index: 3;
-    border: 2px solid white;
-    border-radius: 15px;
-    width: 75px;
-    height: 75px;
-    object-fit: cover;
-    margin-left: 40px;
-    margin-top: -39px;
+  > .avatar-and-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    > .avatar {
+      cursor: pointer;
+      z-index: 3;
+      border: 2px solid white;
+      border-radius: 15px;
+      width: 75px;
+      height: 75px;
+      object-fit: cover;
+      margin-left: 40px;
+      margin-top: -39px;
+    }
+
+    > .actions {
+      margin-right: 20px;
+
+      &.edit-save {
+        width: 40px;
+        > * {
+          width: 100%;
+          > svg {
+            width: 18px;
+            height: 18px;
+          }
+        }
+      }
+    }
   }
 
   > .info {
@@ -43,13 +63,18 @@
     gap: 20px;
 
     @media (max-width: 450px) {
-      margin: 13px 40px 0 40px
+      margin: 13px 40px 0 40px;
     }
 
     > .profile-card-header {
-      > .title {
+      > .title > .display-name {
+        width: 100%;
+      }
+      > .title,
+      .display-name > .input-container > input {
         display: flex;
         align-items: center;
+        width: 100%;
         gap: 10px;
         height: 20px;
         font-size: 19px;
@@ -66,13 +91,22 @@
         display: flex;
         justify-content: flex-start;
         gap: 5px;
+
+        > .input-text-field > .input-container > input {
+          font-size: 11px;
+
+          &::placeholder {
+            font-size: 11px;
+            color: #b6bacb;
+          }
+        }
       }
     }
 
-    > .presentation {
-      font-size: 12px;
-      font-weight: bold;
-      line-height: 1.25;
+    > .description,
+    .description > .input-container > textarea {
+      font-size: 14px;
+      line-height: 20px;
     }
 
     > .buttons {
@@ -80,6 +114,11 @@
       align-items: center;
       justify-content: flex-start;
       gap: 10px;
+
+      > a {
+        display: flex;
+        align-items: center;
+      }
     }
   }
 }
