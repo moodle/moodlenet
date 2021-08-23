@@ -478,6 +478,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   deleteEdge?: Resolver<ResolversTypes['DeleteEdgeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationDeleteEdgeArgs, 'input'>>;
   deleteNode?: Resolver<ResolversTypes['DeleteNodeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationDeleteNodeArgs, 'input'>>;
   editNode?: Resolver<ResolversTypes['EditNodeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationEditNodeArgs, 'input'>>;
+  sendEmailToProfile?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<Types.MutationSendEmailToProfileArgs, 'text' | 'toProfileId'>>;
   signUp?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<Types.MutationSignUpArgs, 'email'>>;
 };
 

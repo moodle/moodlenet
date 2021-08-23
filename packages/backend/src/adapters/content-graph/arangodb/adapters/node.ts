@@ -1,3 +1,4 @@
+import { GraphNodeIdentifier, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { getOneResult } from '../../../../lib/helpers/arango/query'
 import {
   BySlugAdapter,
@@ -7,7 +8,7 @@ import {
 } from '../../../../ports/content-graph/node'
 import { createNodeQ } from '../functions/createNode'
 import { deleteNodeQ } from '../functions/deleteNode'
-import { getNodeBySlugQ } from '../functions/getNode'
+import { getNodeByIdentifierQ } from '../functions/getNode'
 import { aqlGraphNode2GraphNode } from '../functions/helpers'
 import { updateNodeQ } from '../functions/updateNode'
 import { ContentGraphDB } from '../types'
@@ -15,12 +16,23 @@ import { ContentGraphDB } from '../types'
 export const getNodeBySlugAdapter = (db: ContentGraphDB): BySlugAdapter => ({
   async getNodeBySlug(slugId) {
     type T = typeof slugId._type
-    const q = getNodeBySlugQ<T>(slugId)
+    const q = getNodeByIdentifierQ<T>(slugId)
     const mAqlNode = await getOneResult(q, db)
     if (!mAqlNode) {
       return mAqlNode
     }
     const graphNode = aqlGraphNode2GraphNode<T>(mAqlNode)
+    return graphNode
+  },
+})
+export const getNodeByIdentifierAdapter = (db: ContentGraphDB) => ({
+  async getNodeByIdentifier<NT extends GraphNodeType = GraphNodeType>(nodeIdentifier: GraphNodeIdentifier<NT>) {
+    const q = getNodeByIdentifierQ<NT>(nodeIdentifier)
+    const mAqlNode = await getOneResult(q, db)
+    if (!mAqlNode) {
+      return null
+    }
+    const graphNode = aqlGraphNode2GraphNode(mAqlNode)
     return graphNode
   },
 })
