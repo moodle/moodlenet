@@ -7,6 +7,7 @@ import {
   globalSearchNodeType,
   gqlEdgeId2GraphEdgeIdentifier,
   gqlNodeId2GraphNodeIdentifier,
+  gqlNodeId2GraphNodeIdentifierOfType,
   isGlobalSearchNodeType,
 } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { SignOptions } from 'jsonwebtoken'
@@ -19,6 +20,7 @@ import * as profilePorts from '../../ports/content-graph/profile'
 import * as searchPorts from '../../ports/content-graph/search'
 import * as newUserPorts from '../../ports/user-auth/new-user'
 import * as userPorts from '../../ports/user-auth/user'
+import * as utilPorts from '../../ports/utils/utils'
 import * as GQLResolvers from '../types.graphql.gen'
 import {
   createEdgeMutationError,
@@ -343,6 +345,17 @@ export const getGQLResolvers = ({
           nodeId: input.id,
         }
         return successResult
+      },
+      async sendEmailToProfile(_root, { text, toProfileId }, ctx) {
+        const toProfileIdentifier = gqlNodeId2GraphNodeIdentifierOfType(toProfileId, 'Profile')
+        if (!(ctx.authSessionEnv?.user && toProfileIdentifier)) {
+          return false
+        }
+        const sendResult = await qmino.callSync(
+          utilPorts.sendEmailToProfile({ env: ctx.authSessionEnv, text, toProfileId: toProfileIdentifier }),
+          { timeout: 5000 },
+        )
+        return sendResult
       },
     },
   }

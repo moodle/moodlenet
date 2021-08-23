@@ -4,7 +4,7 @@ import { omit } from '@moodlenet/common/lib/utils/object'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { AqlGraphEdge, AqlGraphEdgeByType } from '../types'
-import { getAqlNodeByGraphNodeIdentifierQ } from './helpers'
+import { getAqlNodeByGraphNodeIdentifierQFrag } from './helpers'
 
 export const createEdgeQ = <Type extends GraphEdgeType>({
   edge,
@@ -25,8 +25,8 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
   }
 
   const q = aq<AqlGraphEdgeByType<Type>>(`
-    let fromNode = ${getAqlNodeByGraphNodeIdentifierQ(from)}
-    let toNode = ${getAqlNodeByGraphNodeIdentifierQ(to)}
+    let fromNode = ${getAqlNodeByGraphNodeIdentifierQFrag(from)}
+    let toNode = ${getAqlNodeByGraphNodeIdentifierQFrag(to)}
     
     let newedge = ${aqlstr(aqlEdge)}
 
