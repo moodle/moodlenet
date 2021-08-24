@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
 import { mainPath, useRedirectProfileHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
 import { href } from '../../../../elements/link'
@@ -20,7 +20,13 @@ export const useLoginCtrl: CtrlHook<LoginProps, {}> = () => {
       }),
     [login],
   )
-  const [, formBag] = useFormikBag<LoginFormValues>({ initialValues: { email: '', password: '' }, onSubmit })
+
+  const [formik, formBag] = useFormikBag<LoginFormValues>({ initialValues: { email: '', password: '' }, onSubmit })
+
+  useEffect(() => {
+    setLoginErrorMessage(null)
+  }, [formik.values])
+
   const loginProps = useMemo<LoginProps>(() => {
     const loginProps: LoginProps = {
       accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Login Access Header'),
