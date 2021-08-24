@@ -43,7 +43,7 @@ export const NewResourceProgressStateStory: NewResourceProgressState = [
 ]
 
 const initialFormValues: NewResourceFormValues = {
-  addToCollections: [],
+  collections: [],
   category: '',
   content: 'content',
   contentType: 'File',
@@ -135,7 +135,7 @@ export const NewResourceAddToCollectionsStoryProps: NewResourceProps = {
       'Nano Engineering',
       'Macro Economy',
       'Animal Rights',
-    ],
+    ].map(label => ({ label, id: label })),
     setAddToCollections: action('setAddToCollections'),
     previousStep: action('previousStep'),
     setSearchText: action('setSearchText'),

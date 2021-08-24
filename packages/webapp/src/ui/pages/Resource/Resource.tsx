@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@material-ui/icons/BookmarkBorder'
 import EditIcon from '@material-ui/icons/Edit'
 import FavoriteIcon from '@material-ui/icons/Favorite'
@@ -11,8 +11,10 @@ import { useCallback, useState } from 'react'
 import Card from '../../components/atoms/Card/Card'
 import Dropdown from '../../components/atoms/Dropdown/Dropdown'
 import InputTextField from '../../components/atoms/InputTextField/InputTextField'
+import Modal from '../../components/atoms/Modal/Modal'
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
+import { AddToCollectionsCard, CollectionItem } from '../../components/cards/AddToCollectionsCard/AddToCollectionsCard'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { FormikBag } from '../../lib/formik'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
@@ -43,6 +45,9 @@ export type ResourceProps = {
   // formats: DropdownField
   licenses: DropdownField
   categories: DropdownField
+  setAddToCollections?: (selectedCollections: CollectionItem[]) => unknown
+  collections?: CollectionItem[]
+  selectedCollections?: CollectionItem[]
   updateResource: () => unknown
   toggleLike: () => unknown
   toggleBookmark: () => unknown
@@ -69,6 +74,9 @@ export const Resource = withCtrl<ResourceProps>(
     // formats,
     licenses,
     categories,
+    collections,
+    selectedCollections,
+    setAddToCollections,
     updateResource,
     toggleLike,
     toggleBookmark,
@@ -78,6 +86,7 @@ export const Resource = withCtrl<ResourceProps>(
     type,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
+    const [isAddingToCollection, setIsAddingToCollection] = useState<boolean>(false)
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -100,7 +109,7 @@ export const Resource = withCtrl<ResourceProps>(
         <PrimaryButton disabled={!sendToMoodleLms} onClick={sendToMoodleLms}>
           <Trans>Send to Moodle</Trans>
         </PrimaryButton>
-        <SecondaryButton disabled={!isAuthenticated}>
+        <SecondaryButton disabled={!isAuthenticated} onClick={() => setIsAddingToCollection(true)}>
           <Trans>Add to Collection</Trans>
         </SecondaryButton>
         <a href={contentUrl} target="_blank" rel="noreferrer">
@@ -132,6 +141,8 @@ export const Resource = withCtrl<ResourceProps>(
     const setLangField = useCallback((_: string) => setFieldValue('language', _), [setFieldValue])
     const setCategoryField = useCallback((_: string) => setFieldValue('category', _), [setFieldValue])
     const setLicenseField = useCallback((_: string) => setFieldValue('license', _), [setFieldValue])
+    //const setCollectionsField = useCallback((_: string) => setFieldValue('collections', _), [setFieldValue])
+    console.log({ selectedCollections, collections })
     const extraDetails = (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
         <Dropdown
@@ -211,10 +222,25 @@ export const Resource = withCtrl<ResourceProps>(
         )}
       </Card>
     )
-
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <div className="resource">
+          {isAddingToCollection && collections && setAddToCollections && (
+            <Modal
+              title={t`Select Collections`}
+              actions={<PrimaryButton onClick={() => setIsAddingToCollection(false)}>Done</PrimaryButton>}
+              onClose={() => setIsAddingToCollection(false)}
+              style={{ maxWidth: '400px' }}
+            >
+              <AddToCollectionsCard
+                allCollections={collections}
+                setAddToCollections={setAddToCollections}
+                header={false}
+                noCard={true}
+                value={selectedCollections}
+              />
+            </Modal>
+          )}
           <div className="content">
             <div className="main-column">
               <Card className="main-resource-card" hideBorderWhenSmall={true}>

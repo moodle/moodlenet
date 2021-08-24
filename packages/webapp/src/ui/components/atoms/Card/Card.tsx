@@ -5,16 +5,19 @@ export type CardProps = {
   className?: string
   style?: CSSProperties
   hideBorderWhenSmall?: boolean
+  noCard?: boolean
   removePaddingWhenSmall?: boolean
+  onClick?(arg0: unknown): unknown
 }
 
-export const Card: FC<CardProps> = ({ className, style, hideBorderWhenSmall, removePaddingWhenSmall, children }) => {
+export const Card: FC<CardProps> = ({ onClick, className, noCard, style, hideBorderWhenSmall, removePaddingWhenSmall, children }) => {
   return (
     <div
-      className={`card ${className}${hideBorderWhenSmall ? ' hide-border' : ''} ${
+      className={`card ${className}${hideBorderWhenSmall ? ' hide-border' : ''} ${noCard ? 'no-card' : ''} ${
         removePaddingWhenSmall ? 'remove-padding' : ''
       }`}
       style={style}
+      onClick={onClick}
     >
       {children}
     </div>

@@ -15,14 +15,14 @@ const StorybookLinkComponent: LinkComponentType = props => {
   const splitHref = props.href.url.split('/')
   const story = splitHref.pop()
   const kind = splitHref.join('/')
-  console.log({
+  /*console.log({
     isExternal,
     asExternal,
     kind,
     story,
-  })
+  })*/
   if (isExternal || asExternal || !(kind && story)) {
-    console.log('external !!')
+    //console.log('external !!')
     const { href, externalClassName, externalStyle, activeClassName, activeStyle, ...restProps } = props
     return (
       <a
@@ -37,7 +37,7 @@ const StorybookLinkComponent: LinkComponentType = props => {
       </a>
     )
   } else {
-    console.log('internal !!')
+    //console.log('internal !!')
     const { href, externalClassName, externalStyle, children, ...restProps } = props
     // props.activeClassName || props.activeStyle
     return (
