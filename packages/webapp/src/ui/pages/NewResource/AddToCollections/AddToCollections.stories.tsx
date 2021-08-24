@@ -24,7 +24,15 @@ export const AddToCollectionsStoryProps: AddToCollectionsProps = {
   nextStep: action('nextStep'),
   step: 'AddToCollectionsStep',
   setAddToCollections: action('setAddToCollections'),
-  collections: ['Education', 'Biology', 'Algebra', 'Phycology', 'Phylosophy', 'Sociology', 'English Literature'],
+  collections: [
+    'Education',
+    'Biology',
+    'Algebra',
+    'Phycology',
+    'Phylosophy',
+    'Sociology',
+    'English Literature',
+  ].map(label => ({ label, id: label })),
 }
 
 const AddToCollectionsStory: ComponentStory<typeof AddToCollections> = args => <AddToCollections {...args} />

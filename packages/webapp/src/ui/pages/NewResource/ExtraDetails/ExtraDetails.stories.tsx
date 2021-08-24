@@ -25,7 +25,7 @@ export const ExtraDetailsStoryProps: ExtraDetailsProps = {
   previousStep: action('previousStep'),
   nextStep: action('nextStep'),
   formBag: SBFormikBag<NewResourceFormValues>({
-    addToCollections: [],
+    collections: [],
     category: '',
     content: '',
     contentType: 'Link',

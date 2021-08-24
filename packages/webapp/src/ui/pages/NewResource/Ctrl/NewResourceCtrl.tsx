@@ -63,7 +63,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
   }, [myId, loadMyColl])
   const [form, formBag] = useFormikBag<NewResourceFormValues>({
     initialValues: {
-      addToCollections: [],
+      collections: [],
       category: '',
       content: '',
       description: '',
@@ -151,9 +151,9 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           return () => {
             setNextStepProps({
               step: 'AddToCollectionsStep',
-              collections: mycollections.map(_ => _.name),
+              collections: mycollections.map(_ => ({ label: _.name, id: _.id })),
               previousStep,
-              setAddToCollections: collections => sformSetField('addToCollections', collections),
+              setAddToCollections: collections => sformSetField('collections', collections),
             })
           }
         }
@@ -184,7 +184,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           language,
           license,
           type,
-          addToCollections,
+          collections,
           originalDateMonth,
           originalDateYear,
         } = form.values
@@ -285,8 +285,8 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           }
 
           waitFor.push(
-            ...addToCollections.map(async collName => {
-              const collectionId = mycollections.find(_ => _.name === collName)!.id
+            ...collections.map(async collItem => {
+              const collectionId = mycollections.find(_ => _.id === collItem.id)!.id
               return createResourceRelMut({
                 variables: { edge: { edgeType: 'Features', to: resId, from: collectionId, Features: {} } },
               })
