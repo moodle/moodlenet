@@ -18,11 +18,11 @@ export type ProfileCardProps = {
   isOwner?: boolean
   isFollowing?: boolean
   isEditing?: boolean
-  email: string
   isAuthenticated: boolean
   formBag: FormikBag<ProfileFormValues>
   toggleIsEditing(): unknown
   toggleFollow(): unknown
+  openSendMessage(): unknown
 }
 
 export const ProfileCard = withCtrl<ProfileCardProps>(
@@ -32,7 +32,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     isOwner,
     isAuthenticated,
     isEditing,
-    email,
+    openSendMessage,
     isFollowing,
     toggleFollow,
     toggleIsEditing,
@@ -161,9 +161,9 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                   <Trans>Follow</Trans>
                 </PrimaryButton>
               )}
-              <a href={`mailto:${email}`} target="-_blank" className={`${isAuthenticated ? '' : 'font-disabled'}`}>
+              <div className={`${isAuthenticated ? '' : 'font-disabled'}`} onClick={openSendMessage}>
                 <MailOutlineIcon />
-              </a>
+              </div>
             </div>
           )}
         </div>
