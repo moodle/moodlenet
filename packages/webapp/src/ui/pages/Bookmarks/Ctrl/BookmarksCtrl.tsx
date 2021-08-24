@@ -55,6 +55,5 @@ export const useBookmarksCtrl: CtrlHook<BookmarksProps, {}> = () => {
     }
     return props
   }, [collections, resources])
-  console.log({ bookmarksUIProps, profileNode, bookmarksQ })
   return [bookmarksUIProps]
 }
