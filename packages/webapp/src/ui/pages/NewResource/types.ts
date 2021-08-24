@@ -15,7 +15,7 @@ export type NewResourceFormValues = {
   category: Category
   image: Url | File | null
   content: Url | File
-  addToCollections: Collection[]
+  collections: string[]
   // extra
   type: Type | null
   level: Level | null
