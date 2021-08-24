@@ -109,6 +109,17 @@ export type AddProfileRelationMutation = (
   ) }
 );
 
+export type SendEmailToProfileMutationVariables = Types.Exact<{
+  toProfileId: Types.Scalars['ID'];
+  text: Types.Scalars['String'];
+}>;
+
+
+export type SendEmailToProfileMutation = (
+  { __typename: 'Mutation' }
+  & Pick<Types.Mutation, 'sendEmailToProfile'>
+);
+
 
 export const ProfilePageUserDataDocument = gql`
     query ProfilePageUserData($profileId: ID!, $myProfileId: [ID!]) {
@@ -319,3 +330,35 @@ export function useAddProfileRelationMutation(baseOptions?: Apollo.MutationHookO
 export type AddProfileRelationMutationHookResult = ReturnType<typeof useAddProfileRelationMutation>;
 export type AddProfileRelationMutationResult = Apollo.MutationResult<AddProfileRelationMutation>;
 export type AddProfileRelationMutationOptions = Apollo.BaseMutationOptions<AddProfileRelationMutation, AddProfileRelationMutationVariables>;
+export const SendEmailToProfileDocument = gql`
+    mutation sendEmailToProfile($toProfileId: ID!, $text: String!) {
+  sendEmailToProfile(text: $text, toProfileId: $toProfileId)
+}
+    `;
+export type SendEmailToProfileMutationFn = Apollo.MutationFunction<SendEmailToProfileMutation, SendEmailToProfileMutationVariables>;
+
+/**
+ * __useSendEmailToProfileMutation__
+ *
+ * To run a mutation, you first call `useSendEmailToProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendEmailToProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendEmailToProfileMutation, { data, loading, error }] = useSendEmailToProfileMutation({
+ *   variables: {
+ *      toProfileId: // value for 'toProfileId'
+ *      text: // value for 'text'
+ *   },
+ * });
+ */
+export function useSendEmailToProfileMutation(baseOptions?: Apollo.MutationHookOptions<SendEmailToProfileMutation, SendEmailToProfileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendEmailToProfileMutation, SendEmailToProfileMutationVariables>(SendEmailToProfileDocument, options);
+      }
+export type SendEmailToProfileMutationHookResult = ReturnType<typeof useSendEmailToProfileMutation>;
+export type SendEmailToProfileMutationResult = Apollo.MutationResult<SendEmailToProfileMutation>;
+export type SendEmailToProfileMutationOptions = Apollo.BaseMutationOptions<SendEmailToProfileMutation, SendEmailToProfileMutationVariables>;

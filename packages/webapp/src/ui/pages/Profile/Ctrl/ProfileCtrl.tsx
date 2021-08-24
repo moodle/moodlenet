@@ -16,6 +16,7 @@ import {
   useDelProfileRelationMutation,
   useEditProfileMutation,
   useProfilePageUserDataQuery,
+  useSendEmailToProfileMutation,
 } from './ProfileCtrl.gen'
 
 export type ProfileCtrlProps = { id: ID }
@@ -29,6 +30,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
       myProfileId: session?.profile && !isMe ? [session.profile.id] : [],
     },
   })
+  const [sendEmailMut, sendEmailMutRes] = useSendEmailToProfileMutation()
   const profile = narrowNodeType(['Profile'])(data?.node)
   const collections = useMemo(
     () => (profile?.collections.edges || []).filter(isEdgeNodeOfType(['Collection'])).map(({ node }) => node),
@@ -118,12 +120,17 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
         backgroundUrl: getMaybeAssetRefUrlOrDefaultImage(profile.image, id, 'image'),
         formBag,
         isAuthenticated,
-        email: '##',
         toggleFollow,
         isFollowing: !!myFollowEdgeId,
         isOwner: isMe || isAdmin,
       },
-      username: profile.name,
+      sendEmail: text => {
+        if (sendEmailMutRes.loading) {
+          return
+        }
+        sendEmailMut({ variables: { text, toProfileId: id } })
+      },
+      displayName: profile.name,
       save: () => formik.submitForm(),
     }
     return props
@@ -139,6 +146,8 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
     myFollowEdgeId,
     profile,
     resources,
+    sendEmailMut,
+    sendEmailMutRes.loading,
     toggleFollow,
   ])
   return profileProps && [profileProps]
