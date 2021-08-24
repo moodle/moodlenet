@@ -1,4 +1,5 @@
-import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@material-ui/icons/BookmarkBorder'
+import BookmarkIcon from '@material-ui/icons/Bookmark'
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import PersonIcon from '@material-ui/icons/Person'
 import { Href, Link } from '../../../elements/link'
