@@ -1,8 +1,8 @@
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
-import React, { useCallback, useEffect } from 'react';
-import ReactDOM from 'react-dom';
-import Card from '../Card/Card';
-import './styles.scss';
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
+import React, { useCallback, useEffect } from 'react'
+import ReactDOM from 'react-dom'
+import Card from '../Card/Card'
+import './styles.scss'
 
 class Portal extends React.Component {
   static el = (() => {
@@ -26,13 +26,15 @@ class Portal extends React.Component {
 }
 
 export type ModalProps = {
+  title?: string
+  actions?: React.ReactNode
+  style: React.CSSProperties
   onClose: () => void
 }
 
-const stopPropagation = (event: React.MouseEvent) => event.stopPropagation();
+const stopPropagation = (event: React.MouseEvent) => event.stopPropagation()
 
-
-export const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
+export const Modal: React.FC<ModalProps> = ({ onClose, title, actions, style, children }) => {
   const handleonClose = useCallback(
     (event: React.MouseEvent) => {
       event.stopPropagation()
@@ -53,12 +55,16 @@ export const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
   return (
     <Portal>
       <div className="modal-container" onClick={handleonClose}>
-          <Card className="modal" onClick={stopPropagation}>
-            <div onClick={handleonClose}>
+        <Card className="modal" onClick={stopPropagation} style={style}>
+          <div className="modal-header">
+            <div className="title">{title}</div>
+            <div className="close-button" onClick={handleonClose}>
               <CloseRoundedIcon />
             </div>
-            <div className="content">{children}</div>
-          </Card>
+          </div>
+          <div className="content">{children}</div>
+          <div className="actions">{actions}</div>
+        </Card>
       </div>
     </Portal>
   )

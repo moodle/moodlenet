@@ -19,7 +19,7 @@ import {
   monthOptions,
   resGradeOptions,
   resTypeOptions,
-  yearsOptions,
+  yearsOptions
 } from '../../../../helpers/resource-relation-data-static-and-utils'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useFormikBag } from '../../../lib/formik'
@@ -30,7 +30,7 @@ import { UploadResourceProps } from '../UploadResource/UploadResource'
 import {
   useCreateResourceMutation,
   useCreateResourceRelationMutation,
-  useNewResourceDataPageLazyQuery,
+  useNewResourceDataPageLazyQuery
 } from './NewResourceCtrl.gen'
 
 const initialSetStepProps: DistOmit<UploadResourceProps, 'formBag' | 'deleteContent' | 'nextStep'> = {
@@ -184,7 +184,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           language,
           license,
           type,
-          addToCollections,
+          collections,
           originalDateMonth,
           originalDateYear,
         } = form.values
@@ -285,7 +285,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           }
 
           waitFor.push(
-            ...addToCollections.map(async collName => {
+            ...collections.map(async collName => {
               const collectionId = mycollections.find(_ => _.name === collName)!.id
               return createResourceRelMut({
                 variables: { edge: { edgeType: 'Features', to: resId, from: collectionId, Features: {} } },

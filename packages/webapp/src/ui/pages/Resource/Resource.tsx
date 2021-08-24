@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@material-ui/icons/BookmarkBorder'
 import EditIcon from '@material-ui/icons/Edit'
 import FavoriteIcon from '@material-ui/icons/Favorite'
@@ -12,6 +12,7 @@ import InputTextField from '../../components/atoms/InputTextField/InputTextField
 import Modal from '../../components/atoms/Modal/Modal'
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
+import { AddToCollectionsCard } from '../../components/cards/AddToCollectionsCard/AddToCollectionsCard'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { FormikBag } from '../../lib/formik'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
@@ -40,6 +41,8 @@ export type ResourceProps = {
   // formats: DropdownField
   licenses: DropdownField
   categories: DropdownField
+  setAddToCollections?: (selectedCollections: string[]) => unknown
+  collections?: string[]
   updateResource: () => unknown
   toggleLike: () => unknown
   toggleBookmark: () => unknown
@@ -66,6 +69,8 @@ export const Resource = withCtrl<ResourceProps>(
     // formats,
     licenses,
     categories,
+    collections,
+    setAddToCollections,
     updateResource,
     toggleLike,
     toggleBookmark,
@@ -113,6 +118,8 @@ export const Resource = withCtrl<ResourceProps>(
     const setLangField = useCallback((_: string) => setFieldValue('language', _), [setFieldValue])
     const setCategoryField = useCallback((_: string) => setFieldValue('category', _), [setFieldValue])
     const setLicenseField = useCallback((_: string) => setFieldValue('license', _), [setFieldValue])
+    //const setCollectionsField = useCallback((_: string) => setFieldValue('collections', _), [setFieldValue])
+
     const extraDetails = (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
         <Dropdown
@@ -196,7 +203,22 @@ export const Resource = withCtrl<ResourceProps>(
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <div className="resource">
-          {isAddingToCollection && <Modal onClose={() => setIsAddingToCollection(false)}>Hllo</Modal>}
+          {isAddingToCollection && collections && setAddToCollections && (
+            <Modal
+              title={t`Select Collections`}
+              actions={<PrimaryButton>Done</PrimaryButton>}
+              onClose={() => setIsAddingToCollection(false)}
+              style={{ maxWidth: '400px' }}
+            >
+              {console.log(formAttrs.collections)}
+              <AddToCollectionsCard
+                allCollections={collections}
+                setAddToCollections={setAddToCollections}
+                header={false}
+                noCard={true}
+              />
+            </Modal>
+          )}
           <div className="content">
             <div className="main-column">
               <Card className="main-resource-card" hideBorderWhenSmall={true}>
