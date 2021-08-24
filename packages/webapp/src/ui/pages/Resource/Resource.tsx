@@ -202,23 +202,23 @@ export const Resource = withCtrl<ResourceProps>(
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        {isAddingToCollection && collections && setAddToCollections && (
+          <Modal
+            title={t`Select Collections`}
+            actions={<PrimaryButton><Trans>Done</Trans></PrimaryButton>}
+            onClose={() => setIsAddingToCollection(false)}
+            style={{ maxWidth: '400px' }}
+          >
+            {console.log(formAttrs.collections)}
+            <AddToCollectionsCard
+              allCollections={collections}
+              setAddToCollections={setAddToCollections}
+              header={false}
+              noCard={true}
+            />
+          </Modal>
+        )}
         <div className="resource">
-          {isAddingToCollection && collections && setAddToCollections && (
-            <Modal
-              title={t`Select Collections`}
-              actions={<PrimaryButton>Done</PrimaryButton>}
-              onClose={() => setIsAddingToCollection(false)}
-              style={{ maxWidth: '400px' }}
-            >
-              {console.log(formAttrs.collections)}
-              <AddToCollectionsCard
-                allCollections={collections}
-                setAddToCollections={setAddToCollections}
-                header={false}
-                noCard={true}
-              />
-            </Modal>
-          )}
           <div className="content">
             <div className="main-column">
               <Card className="main-resource-card" hideBorderWhenSmall={true}>
