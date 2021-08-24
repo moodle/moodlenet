@@ -9,6 +9,7 @@ import { useCallback, useState } from 'react'
 import Card from '../../components/atoms/Card/Card'
 import Dropdown from '../../components/atoms/Dropdown/Dropdown'
 import InputTextField from '../../components/atoms/InputTextField/InputTextField'
+import Modal from '../../components/atoms/Modal/Modal'
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
 import { CP, withCtrl } from '../../lib/ctrl'
@@ -72,6 +73,7 @@ export const Resource = withCtrl<ResourceProps>(
     sendToMoodleLms,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
+    const [isAddingToCollection, setIsAddingToCollection] = useState<boolean>(false)
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -94,7 +96,7 @@ export const Resource = withCtrl<ResourceProps>(
         <PrimaryButton disabled={!sendToMoodleLms} onClick={sendToMoodleLms}>
           <Trans>Send to Moodle</Trans>
         </PrimaryButton>
-        <SecondaryButton disabled={!isAuthenticated}>
+        <SecondaryButton disabled={!isAuthenticated} onClick={() => setIsAddingToCollection(true)}>
           <Trans>Add to Collection</Trans>
         </SecondaryButton>
       </Card>
@@ -194,6 +196,7 @@ export const Resource = withCtrl<ResourceProps>(
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <div className="resource">
+          {isAddingToCollection && <Modal onClose={() => setIsAddingToCollection(false)}>Hllo</Modal>}
           <div className="content">
             <div className="main-column">
               <Card className="main-resource-card" hideBorderWhenSmall={true}>
