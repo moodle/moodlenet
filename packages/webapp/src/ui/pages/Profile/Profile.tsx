@@ -15,10 +15,11 @@ import './styles.scss'
 export type ProfileProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   overallCardProps: OverallCardProps
-  profileCardProps: Omit<ProfileCardProps, 'isEditing' | 'toggleIsEditing'>
+  profileCardProps: Omit<ProfileCardProps, 'isEditing' | 'toggleIsEditing' | 'openSendMessage'>
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
   displayName: string
+  sendEmail?: (text: string) => unknown
   save: () => unknown
 }
 
@@ -30,6 +31,7 @@ export const Profile = withCtrl<ProfileProps>(
     collectionCardPropsList,
     resourceCardPropsList,
     displayName,
+    sendEmail,
     save,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -52,26 +54,38 @@ export const Profile = withCtrl<ProfileProps>(
       />
     )
 
+    const [emailText, setEmailText] = useState('')
+    console.log({ emailText })
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        {isSendingMessage && (
+        {isSendingMessage && sendEmail && (
           <Modal
             title={t`Send a message to ${displayName}`}
             actions={
-              <PrimaryButton>
+              <PrimaryButton
+                onClick={() => {
+                  sendEmail(emailText)
+                  setIsSendingMessage(false)
+                }}
+              >
                 <Trans>Send</Trans>
               </PrimaryButton>
             }
             onClose={() => setIsSendingMessage(false)}
             style={{ maxWidth: '400px' }}
           >
-            <InputTextField textarea={true}/>
+            <InputTextField textarea={true} getText={setEmailText} autoUpdate />
           </Modal>
         )}
         <div className="profile">
           <div className="content">
             <div className="main-column">
-              <ProfileCard {...profileCardProps} isEditing={isEditing} toggleIsEditing={toggleIsEditing} openSendMessage={() => setIsSendingMessage(true)}/>
+              <ProfileCard
+                {...profileCardProps}
+                isEditing={isEditing}
+                toggleIsEditing={toggleIsEditing}
+                openSendMessage={() => setIsSendingMessage(!!sendEmail && true)}
+              />
               <ListCard
                 content={resourceCardPropsList.map(resourcesCardProps => {
                   return <ResourceCard {...resourcesCardProps} isEditing={isEditing} />
