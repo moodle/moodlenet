@@ -60,7 +60,7 @@ export const Profile = withCtrl<ProfileProps>(
       <HeaderPageTemplate {...headerPageTemplateProps}>
         {isSendingMessage && sendEmail && (
           <Modal
-            title={t`Send a message to ${displayName}`}
+            title={`${t`Send a message to`} ${displayName}`}
             actions={
               <PrimaryButton
                 onClick={() => {
