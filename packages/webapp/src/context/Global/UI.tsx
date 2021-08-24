@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import { ProvideGlobalLinkComponent } from './UI/LinkComponent'
+import { ProvideReactRouterLinkComponent } from './UI/LinkComponent'
 
 export const UICtxProviders: FC = ({ children }) => {
-  return <ProvideGlobalLinkComponent>{children}</ProvideGlobalLinkComponent>
+  return <ProvideReactRouterLinkComponent>{children}</ProvideReactRouterLinkComponent>
 }
