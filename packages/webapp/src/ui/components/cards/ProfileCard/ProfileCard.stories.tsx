@@ -28,11 +28,11 @@ const meta: ComponentMeta<typeof ProfileCard> = {
 export const ProfileCardStoryProps: ProfileCardProps = {
   backgroundUrl: 'https://picsum.photos/200/100',
   avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
-  email: 'info@moodle.com',
   isOwner: false,
   isAuthenticated: false,
   toggleFollow: action('toogleFollow'),
   toggleIsEditing: action('toogleIsEditing'),
+  openSendMessage: action('openSendMessage'),
   formBag: SBFormikBag<ProfileFormValues>({
     displayName: 'Juanito Rodriguez',
     description:
