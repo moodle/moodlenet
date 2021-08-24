@@ -22,7 +22,7 @@ export type SignupProps = {
 }
 
 export const Signup = withCtrl<SignupProps>(
-  ({ accessHeaderProps, formBag, requestSent, landingHref, loginHref /* ,signupErrorMessage */ }) => {
+  ({ accessHeaderProps, formBag, requestSent, landingHref, loginHref, signupErrorMessage }) => {
     const [form, attrs] = formBag
     return (
       <MainPageWrapper>
@@ -41,7 +41,7 @@ export const Signup = withCtrl<SignupProps>(
                 <div className="title">
                   <Trans>Sign up</Trans>
                 </div>
-                <form>
+                <form onSubmit={form.handleSubmit}>
                   <input
                     className="email"
                     color="text"
@@ -49,7 +49,14 @@ export const Signup = withCtrl<SignupProps>(
                     {...attrs.email}
                     onChange={form.handleChange}
                   />
+                  <button type="submit" style={{ display: 'none' }} />
                 </form>
+                {signupErrorMessage && (
+                  <span style={{ color: 'red' }}>
+                    <Trans>Signup error: </Trans>
+                    {signupErrorMessage}
+                  </span>
+                )}
                 <div className="bottom">
                   <div className="left">
                     <PrimaryButton onClick={form.submitForm}>

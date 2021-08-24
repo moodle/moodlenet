@@ -20,7 +20,7 @@ export type LoginProps = {
 }
 
 export const Login = withCtrl<LoginProps>(
-  ({ accessHeaderProps, formBag, signupHref, landingHref /* , loginErrorMessage  */ }) => {
+  ({ accessHeaderProps, formBag, signupHref, landingHref, loginErrorMessage }) => {
     const [form, attrs] = formBag
     return (
       <MainPageWrapper>
@@ -33,7 +33,7 @@ export const Login = withCtrl<LoginProps>(
                 <div className="title">
                   <Trans>Login</Trans>
                 </div>
-                <form>
+                <form onSubmit={form.handleSubmit}>
                   <input
                     className="email"
                     type="text"
@@ -48,7 +48,14 @@ export const Login = withCtrl<LoginProps>(
                     {...attrs.password}
                     onChange={form.handleChange}
                   />
+                  <button type="submit" style={{ display: 'none' }} />
                 </form>
+                {loginErrorMessage && (
+                  <span style={{ color: 'red' }}>
+                    <Trans>Login error: </Trans>
+                    {loginErrorMessage}
+                  </span>
+                )}
                 <div className="bottom">
                   <div className="left">
                     <PrimaryButton onClick={form.submitForm}>
