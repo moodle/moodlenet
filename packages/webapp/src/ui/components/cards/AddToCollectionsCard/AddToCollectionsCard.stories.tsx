@@ -20,10 +20,20 @@ const meta: ComponentMeta<typeof AddToCollectionsCard> = {
 
 export const AddToCollectionsCardStoryProps: AddToCollectionsCardProps = {
   setAddToCollections: action('setAddToCollectionsCard'),
-  allCollections: ['Education', 'Biology', 'Algebra', 'Phycology', 'Phylosophy', 'Sociology', 'English Literature'],
+  allCollections: [
+    'Education',
+    'Biology',
+    'Algebra',
+    'Phycology',
+    'Phylosophy',
+    'Sociology',
+    'English Literature',
+  ].map(label => ({ label, id: label })),
 }
 
-const AddToCollectionsCardStory: ComponentStory<typeof AddToCollectionsCard> = args => <AddToCollectionsCard {...args} />
+const AddToCollectionsCardStory: ComponentStory<typeof AddToCollectionsCard> = args => (
+  <AddToCollectionsCard {...args} />
+)
 
 export const Default = AddToCollectionsCardStory.bind({})
 Default.args = AddToCollectionsCardStoryProps

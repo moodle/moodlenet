@@ -11,6 +11,9 @@ fragment UserSession on UserSession {
     avatar
     myOwnCollections: _rel(type: Created, target: Collection, page: { first: 100 }) {
       edges {
+        edge {
+          id
+        }
         node {
           ... on Collection {
             id

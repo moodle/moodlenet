@@ -9,7 +9,7 @@ import {
   LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown
+  YearsDropdown,
 } from './FieldsData'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'
@@ -135,7 +135,7 @@ export const NewResourceAddToCollectionsStoryProps: NewResourceProps = {
       'Nano Engineering',
       'Macro Economy',
       'Animal Rights',
-    ],
+    ].map(label => ({ label, id: label })),
     setAddToCollections: action('setAddToCollections'),
     previousStep: action('previousStep'),
     setSearchText: action('setSearchText'),

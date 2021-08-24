@@ -24,7 +24,25 @@ export type UserSessionFragment = (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: (
+        & { edge: (
+          { __typename: 'Bookmarked' }
+          & Pick<Types.Bookmarked, 'id'>
+        ) | (
+          { __typename: 'Created' }
+          & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Features' }
+          & Pick<Types.Features, 'id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, 'id'>
+        ) | (
+          { __typename: 'Pinned' }
+          & Pick<Types.Pinned, 'id'>
+        ), node: (
           { __typename: 'Collection' }
           & Pick<Types.Collection, 'id' | 'name'>
         ) | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
@@ -84,6 +102,9 @@ export const UserSessionFragmentDoc = gql`
     avatar
     myOwnCollections: _rel(type: Created, target: Collection, page: {first: 100}) {
       edges {
+        edge {
+          id
+        }
         node {
           ... on Collection {
             id

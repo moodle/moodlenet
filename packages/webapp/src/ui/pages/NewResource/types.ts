@@ -1,3 +1,5 @@
+import { CollectionItem } from '../../components/cards/AddToCollectionsCard/AddToCollectionsCard'
+
 export type ContentType = 'File' | 'Link'
 export type Url = string
 export type Category = string
@@ -15,7 +17,7 @@ export type NewResourceFormValues = {
   category: Category
   image: Url | File | null
   content: Url | File
-  collections: string[]
+  collections: CollectionItem[]
   // extra
   type: Type | null
   level: Level | null

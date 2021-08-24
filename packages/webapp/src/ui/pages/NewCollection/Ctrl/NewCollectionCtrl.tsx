@@ -3,6 +3,7 @@ import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
+import { useSession } from '../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../helpers/data'
 import { categoriesOptions, getIscedF } from '../../../../helpers/resource-relation-data-static-and-utils'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
@@ -17,6 +18,7 @@ export type NewCollectionCtrlProps = {}
 export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtrlProps> = () => {
   const history = useHistory()
   const uploadTempFile = useUploadTempFile()
+  const { refetch } = useSession()
   const [createCollectionMut /* , createCollectionMutRes */] = useCreateCollectionMutation()
   const [createCollectionRelMut /* , createCollectionRelMutRes */] = useCreateCollectionRelationMutation()
 
@@ -84,11 +86,15 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
         )
       }
 
-      await Promise.all(waitFor).finally(() => setSaving(false))
+      await Promise.all(waitFor).finally(() => {
+        setSaving(false)
+        refetch()
+      })
 
       history.push(nodeGqlId2UrlPath(collId))
     }
   }, [
+    refetch,
     category,
     createCollectionMut,
     createCollectionRelMut,
