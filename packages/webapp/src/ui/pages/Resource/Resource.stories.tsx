@@ -11,7 +11,7 @@ import {
   LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown
+  YearsDropdown,
 } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
@@ -65,6 +65,8 @@ export const ResourceStoryProps: ResourceProps = {
     title: 'The Best Resource Ever',
     type: 'Web Site',
   }),
+  contentUrl: '#',
+  type: 'link',
   types: TypeDropdown,
   levels: LevelDropdown,
   months: MonthDropdown,
