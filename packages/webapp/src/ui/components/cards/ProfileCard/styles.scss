@@ -115,7 +115,8 @@
       justify-content: flex-start;
       gap: 10px;
 
-      > a {
+      > .message {
+        cursor: pointer;
         display: flex;
         align-items: center;
       }
