@@ -161,7 +161,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                   <Trans>Follow</Trans>
                 </PrimaryButton>
               )}
-              <div className={`${isAuthenticated ? '' : 'font-disabled'}`} onClick={openSendMessage}>
+              <div className={`message ${isAuthenticated ? '' : 'font-disabled'}`} onClick={openSendMessage}>
                 <MailOutlineIcon />
               </div>
             </div>
