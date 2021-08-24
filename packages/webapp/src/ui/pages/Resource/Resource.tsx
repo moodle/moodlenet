@@ -3,6 +3,8 @@ import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@materia
 import EditIcon from '@material-ui/icons/Edit'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
+import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
+import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
 import ShareIcon from '@material-ui/icons/Share'
 import { useCallback, useState } from 'react'
@@ -36,6 +38,8 @@ export type ResourceProps = {
   months: DropdownField
   years: DropdownField
   languages: DropdownField
+  contentUrl: string
+  type: 'link' | 'file'
   // formats: DropdownField
   licenses: DropdownField
   categories: DropdownField
@@ -70,6 +74,8 @@ export const Resource = withCtrl<ResourceProps>(
     toggleBookmark,
     deleteResource,
     sendToMoodleLms,
+    contentUrl,
+    type,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
 
@@ -97,6 +103,21 @@ export const Resource = withCtrl<ResourceProps>(
         <SecondaryButton disabled={!isAuthenticated}>
           <Trans>Add to Collection</Trans>
         </SecondaryButton>
+        <a href={contentUrl} target="_blank" rel="noreferrer">
+          <SecondaryButton>
+            {type === 'file' ? (
+              <>
+                <Trans>download resource</Trans>
+                <InsertDriveFileIcon />
+              </>
+            ) : (
+              <>
+                <Trans>browse to resource</Trans>
+                <LinkIcon />
+              </>
+            )}
+          </SecondaryButton>
+        </a>
       </Card>
     )
 

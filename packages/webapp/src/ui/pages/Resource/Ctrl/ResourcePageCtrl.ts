@@ -279,6 +279,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       toggleBookmark,
       deleteResource,
       sendToMoodleLms: currentLMSPrefs ? sendToMoodleLms : undefined,
+      contentUrl: getJustAssetRefUrl(resourceData.content),
+      type: resourceData.content.ext ? 'link' : 'file',
     }
     return props
   }, [
