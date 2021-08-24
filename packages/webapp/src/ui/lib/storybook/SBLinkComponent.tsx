@@ -1,15 +1,15 @@
 import _LinkTo, { LinkTo } from '@storybook/addon-links/react'
 import { FC } from 'react'
-import { LinkComponentCtx, LinkComponentType } from '../../elements/link'
+import { LinkComponentType, ProvideLinkComponentCtx } from '../../elements/link'
 
 // HACK: it seems '@storybook/addon-links' typings are not accurate
 const SBLinkTo = (_LinkTo as any) as typeof LinkTo
 
-export const ProvideGlobalSBLinkComponent: FC = ({ children }) => {
-  return <LinkComponentCtx.Provider value={SBLinkComp}>{children}</LinkComponentCtx.Provider>
+export const ProvideStorybookLinkComponent: FC = ({ children }) => {
+  return <ProvideLinkComponentCtx value={StorybookLinkComponent}>{children}</ProvideLinkComponentCtx>
 }
 
-const SBLinkComp: LinkComponentType = props => {
+const StorybookLinkComponent: LinkComponentType = props => {
   const isExternal = props.href.ext
   const asExternal = props.asExt
   const splitHref = props.href.url.split('/')

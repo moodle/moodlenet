@@ -103,26 +103,12 @@ export const Header = withCtrl<HeaderProps>(props => {
           ) : (
             <>
               <div className="signin-btn">
-                <FloatingMenu
-                  menuContent={
-                    <div>
-                      <Link href={loginHref}>
-                        <Trans>Login</Trans>
-                      </Link>
-                      <Link href={signUpHref}>
-                        <Trans>Sign Up</Trans>
-                      </Link>
-                    </div>
-                  }
-                  hoverElement={
-                    <PrimaryButton>
-                      <Link href={loginHref}>
-                        <Trans>Sign in</Trans>
-                      </Link>
-                      <PersonIcon />
-                    </PrimaryButton>
-                  }
-                />
+                <Link href={loginHref}>
+                  <PrimaryButton>
+                    <Trans>Sign in</Trans>
+                    <PersonIcon />
+                  </PrimaryButton>
+                </Link>
               </div>
 
               <div className="signup-btn">
