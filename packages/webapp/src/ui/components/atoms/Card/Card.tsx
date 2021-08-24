@@ -10,7 +10,15 @@ export type CardProps = {
   onClick?(arg0: unknown): unknown
 }
 
-export const Card: FC<CardProps> = ({ onClick, className, noCard, style, hideBorderWhenSmall, removePaddingWhenSmall, children }) => {
+export const Card: FC<CardProps> = ({
+  onClick,
+  className,
+  noCard,
+  style,
+  hideBorderWhenSmall,
+  removePaddingWhenSmall,
+  children,
+}) => {
   return (
     <div
       className={`card ${className}${hideBorderWhenSmall ? ' hide-border' : ''} ${noCard ? 'no-card' : ''} ${

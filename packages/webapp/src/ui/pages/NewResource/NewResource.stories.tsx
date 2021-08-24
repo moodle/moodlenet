@@ -9,7 +9,7 @@ import {
   LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown,
+  YearsDropdown
 } from './FieldsData'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'

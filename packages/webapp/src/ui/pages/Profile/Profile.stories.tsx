@@ -5,7 +5,7 @@ import { OverallCardStoryProps } from '../../components/cards/OverallCard/Overal
 import {
   ProfileCardLoggedInStoryProps,
   ProfileCardOwnerStoryProps,
-  ProfileCardStoryProps,
+  ProfileCardStoryProps
 } from '../../components/cards/ProfileCard/ProfileCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
@@ -40,7 +40,7 @@ export const ProfileStoryProps: ProfileProps = {
   // scoreCardProps: ScoreCardStoryProps,
   collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
   resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
-  username: 'Juanito',
+  displayName: 'Juanito',
 }
 
 export const ProfileLoggedOutStoryProps: ProfileProps = {

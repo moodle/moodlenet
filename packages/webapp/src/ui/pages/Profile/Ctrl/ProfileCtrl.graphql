@@ -90,3 +90,7 @@ mutation addProfileRelation($edge: CreateEdgeInput!) {
     }
   }
 }
+
+mutation sendEmailToProfile($toProfileId: ID!, $text: String!) {
+  sendEmailToProfile(text: $text, toProfileId: $toProfileId)
+}
