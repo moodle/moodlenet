@@ -1,5 +1,7 @@
 .resource {
+  z-index: 10;
   > .content {
+    z-index: 3;
     width: 100%;
     max-width: 1100px;
     height: 100%;
