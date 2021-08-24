@@ -9,7 +9,7 @@ import {
   LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown,
+  YearsDropdown
 } from './FieldsData'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'
@@ -43,7 +43,7 @@ export const NewResourceProgressStateStory: NewResourceProgressState = [
 ]
 
 const initialFormValues: NewResourceFormValues = {
-  addToCollections: [],
+  collections: [],
   category: '',
   content: 'content',
   contentType: 'File',

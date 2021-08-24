@@ -1,5 +1,4 @@
 .modal-portal {
-   
   > .modal-container {
     position: fixed;
     width: 100%;
@@ -10,10 +9,35 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.4);
 
     > .modal {
+      position: relative;
       display: flex;
+      gap: 15px;
+      flex-direction: column;
+      width: fit-content;
+      padding: 20px 30px;
+
+      > .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        > .title {
+          font-size: 14px;
+          font-weight: bold;
+        }
+
+        > .close-button {
+          cursor: pointer;
+        }
+      }
+
+      > .actions {
+        display: flex;
+        justify-content: flex-end;
+      }
     }
   }
 }

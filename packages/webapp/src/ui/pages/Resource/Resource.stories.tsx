@@ -48,7 +48,7 @@ export const ResourceStoryProps: ResourceProps = {
   tags: ['Reforestationg', 'Drones', 'Soil'],
   contributorCardProps: ContributorCardStoryProps,
   formBag: SBFormikBag<NewResourceFormValues>({
-    addToCollections: [],
+    collections: ['Biology'],
     category: '0215 Music and performing arts',
     content: '',
     contentType: 'Link',
@@ -67,6 +67,7 @@ export const ResourceStoryProps: ResourceProps = {
   }),
   contentUrl: '#',
   type: 'link',
+  collections: ['Education', 'Biology', 'Algebra', 'Phycology', 'Phylosophy', 'Sociology', 'English Literature'],
   types: TypeDropdown,
   levels: LevelDropdown,
   months: MonthDropdown,
@@ -78,6 +79,7 @@ export const ResourceStoryProps: ResourceProps = {
   updateResource: action('updateResource'),
   toggleLike: action('toggleLike'),
   toggleBookmark: action('toggleBookmark'),
+  setAddToCollections: action('setAddToCollection'),
 }
 
 export const ResourceLoggedOutStoryProps: ResourceProps = {
