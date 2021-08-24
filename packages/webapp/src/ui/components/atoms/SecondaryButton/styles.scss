@@ -33,18 +33,16 @@
   &.grey {
     color: #7f8393;
     border: 2px solid #7f8393;
-
-    &:hover {
-      color: #545761;
-      border: 2px solid #545761;
-    }
   }
 
-  &:hover {
-    //color: #e37511;
-    //border: 2px solid #e37511;
+  &:not(.disabled):hover {
     color: #337aff;
     border: 2px solid #337aff;
+
+    &.grey {
+        color: #545761;
+        border: 2px solid #545761;
+    }
 
     &.hover-red {
       color: red;
