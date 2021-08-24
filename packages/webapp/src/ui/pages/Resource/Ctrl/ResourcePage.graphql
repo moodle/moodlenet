@@ -1,4 +1,4 @@
-query ResourcePageData($resourceId: ID!, $myProfileId: [ID!]) {
+query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds: [ID!]!) {
   node(id: $resourceId) {
     ... on Resource {
       id
@@ -39,6 +39,21 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!]) {
         }
       }
 
+      inMyCollections: _rel(type: Features, target: Collection, inverse: true, targetIds: $myCollectionsIds) {
+        edges {
+          edge {
+            id
+          }
+          node {
+            ... on Collection {
+              id
+              name
+              image
+            }
+          }
+        }
+      }
+
       collections: _rel(type: Features, target: Collection, page: { first: 5 }, inverse: true) {
         edges {
           node {
@@ -50,7 +65,6 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!]) {
           }
         }
       }
-
       creator: _rel(type: Created, target: Profile, inverse: true, page: { first: 1 }) {
         edges {
           edge {

@@ -14,7 +14,7 @@ import InputTextField from '../../components/atoms/InputTextField/InputTextField
 import Modal from '../../components/atoms/Modal/Modal'
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
-import { AddToCollectionsCard } from '../../components/cards/AddToCollectionsCard/AddToCollectionsCard'
+import { AddToCollectionsCard, CollectionItem } from '../../components/cards/AddToCollectionsCard/AddToCollectionsCard'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { FormikBag } from '../../lib/formik'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
@@ -45,8 +45,9 @@ export type ResourceProps = {
   // formats: DropdownField
   licenses: DropdownField
   categories: DropdownField
-  setAddToCollections?: (selectedCollections: string[]) => unknown
-  collections?: string[]
+  setAddToCollections?: (selectedCollections: CollectionItem[]) => unknown
+  collections?: CollectionItem[]
+  selectedCollections?: CollectionItem[]
   updateResource: () => unknown
   toggleLike: () => unknown
   toggleBookmark: () => unknown
@@ -74,6 +75,7 @@ export const Resource = withCtrl<ResourceProps>(
     licenses,
     categories,
     collections,
+    selectedCollections,
     setAddToCollections,
     updateResource,
     toggleLike,
@@ -140,7 +142,7 @@ export const Resource = withCtrl<ResourceProps>(
     const setCategoryField = useCallback((_: string) => setFieldValue('category', _), [setFieldValue])
     const setLicenseField = useCallback((_: string) => setFieldValue('license', _), [setFieldValue])
     //const setCollectionsField = useCallback((_: string) => setFieldValue('collections', _), [setFieldValue])
-
+    console.log({ selectedCollections, collections })
     const extraDetails = (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
         <Dropdown
@@ -220,23 +222,22 @@ export const Resource = withCtrl<ResourceProps>(
         )}
       </Card>
     )
-
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <div className="resource">
           {isAddingToCollection && collections && setAddToCollections && (
             <Modal
               title={t`Select Collections`}
-              actions={<PrimaryButton>Done</PrimaryButton>}
+              actions={<PrimaryButton onClick={() => setIsAddingToCollection(false)}>Done</PrimaryButton>}
               onClose={() => setIsAddingToCollection(false)}
               style={{ maxWidth: '400px' }}
             >
-              {console.log(formAttrs.collections)}
               <AddToCollectionsCard
                 allCollections={collections}
                 setAddToCollections={setAddToCollections}
                 header={false}
                 noCard={true}
+                value={selectedCollections}
               />
             </Modal>
           )}

@@ -9,7 +9,7 @@ import {
   useGetCurrentSessionLazyQuery,
   useLoginMutation,
   UserSessionFragment,
-  useSignUpMutation
+  useSignUpMutation,
 } from './Session/session.gen'
 
 const LAST_SESSION_EMAIL_STORAGE_KEY = 'LAST_SESSION_EMAIL'
@@ -44,9 +44,10 @@ export type SessionContextType = {
   lastSessionEmail: string | null
   lastSessionJwt: string | null
   isAuthenticated: boolean
-  loading:boolean
+  loading: boolean
   isAdmin: boolean
   logout(): unknown
+  refetch(): unknown
   activateNewUser(_: { password: string; activationToken: string; name: string }): Promise<ActivateWarnMessage | null>
   signUp(_: { email: string }): Promise<SignupWarnMessage | null>
   login(_: { email: string; password: string }): Promise<LoginWarnMessage | null>
@@ -105,6 +106,7 @@ export const SessionProvider: FC = ({ children }) => {
   }, [getSessionLazyQ, lastSession])
   const ctx = useMemo<SessionContextType>(
     () => ({
+      refetch: () => getSessionLazyQ(),
       logout,
       login,
       activateNewUser,
@@ -116,7 +118,7 @@ export const SessionProvider: FC = ({ children }) => {
       lastSessionEmail: lastSession.email ?? null,
       lastSessionJwt: lastSession.jwt ?? null,
     }),
-    [logout,loading, login, activateNewUser, signUp, session, lastSession.email, lastSession.jwt],
+    [logout, login, activateNewUser, signUp, session, loading, lastSession.email, lastSession.jwt, getSessionLazyQ],
   )
   return <ProvideSession value={ctx}>{!sessionQResult.called ? null : children}</ProvideSession>
 }

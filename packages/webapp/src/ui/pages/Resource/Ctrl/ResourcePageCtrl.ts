@@ -44,9 +44,18 @@ import {
 export type ResourceCtrlProps = { id: ID }
 export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id }) => {
   const { session, isAdmin, isAuthenticated } = useSession()
+  const allMyOwnCollectionEdges = useMemo(
+    () => session?.profile.myOwnCollections.edges.filter(isEdgeNodeOfType(['Collection'])) ?? [],
+    [session?.profile.myOwnCollections.edges],
+  )
+  console.log({ allMyOwnCollectionEdges })
   // const { org: localOrg } = useLocalInstance()
   const { data, refetch } = useResourcePageDataQuery({
-    variables: { resourceId: id, myProfileId: session ? [session.profile.id] : [] },
+    variables: {
+      resourceId: id,
+      myProfileId: session ? [session.profile.id] : [],
+      myCollectionsIds: allMyOwnCollectionEdges.map(_ => _.node.id),
+    },
   })
   const resourceData = narrowNodeType(['Resource'])(data?.node)
   const history = useHistory()
@@ -165,6 +174,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     },
   })
   const { resetForm: fresetForm } = formik
+
   useEffect(() => {
     if (resourceData) {
       const { name: title, description, image, content } = resourceData
@@ -178,7 +188,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
           license,
           type,
 
-          addToCollections: [],
+          collections: allMyOwnCollectionEdges.map(edge => ({ label: edge.node.name, id: edge.node.id })),
           content: getJustAssetRefUrl(content),
           description,
           format: content.mimetype,
@@ -190,7 +200,18 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         },
       })
     }
-  }, [resourceData, fresetForm, category, language, level, license, type, id])
+  }, [
+    resourceData,
+    fresetForm,
+    category,
+    language,
+    level,
+    license,
+    type,
+    id,
+    session?.profile.myOwnCollections.edges,
+    allMyOwnCollectionEdges,
+  ])
 
   const creatorEdge = narrowEdgeNodeOfType(['Profile'])(resourceData?.creator.edges[0])
 
@@ -264,7 +285,38 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       },
       isAuthenticated,
       tags: resourceData.collections.edges.filter(isEdgeNodeOfType(['Collection'])).map(({ node: { name } }) => name),
+      collections: allMyOwnCollectionEdges.map(({ node: { id, name } }) => ({ label: name, id })),
+      selectedCollections: resourceData.inMyCollections.edges
+        .filter(isEdgeNodeOfType(['Collection']))
+        .map(({ node: { name: label, id } }) => ({ label, id })),
+      setAddToCollections: async selectedCollItems => {
+        const selectedIds = selectedCollItems.map(({ id }) => id as string)
+        const myCollectionsIds = allMyOwnCollectionEdges.map(({ node: { id } }) => id)
+        const collToAdd = allMyOwnCollectionEdges
+          .filter(myColEdge => selectedIds.includes(myColEdge.node.id))
+          .map(({ node }) => node)
+        const collEdgesToRem = resourceData.inMyCollections.edges
+          .filter(isEdgeNodeOfType(['Collection']))
+          .filter(myColEdge => !selectedIds.includes(myColEdge.node.id) && myCollectionsIds.includes(myColEdge.node.id))
 
+        console.log({
+          add: collToAdd.map(({ name }) => name).join(),
+          selected: selectedCollItems.map(({ label }) => label).join(),
+        })
+
+        await Promise.all<any>([
+          ...collToAdd.map(selectedCollToAdd => {
+            return addRelation({
+              variables: { edge: { edgeType: 'Features', from: selectedCollToAdd.id, to: id, Features: {} } },
+            })
+          }),
+          ...collEdgesToRem.map(selectedCollEdgeToAdd => {
+            return delRelation({
+              variables: { edge: { id: selectedCollEdgeToAdd.edge.id } },
+            })
+          }),
+        ]).then(() => refetch())
+      },
       languages: langOptions,
       levels: resGradeOptions,
       types: resTypeOptions,
@@ -284,9 +336,6 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     }
     return props
   }, [
-    currentLMSPrefs,
-    sendToMoodleLms,
-    deleteResource,
     resourceData,
     id,
     formBag,
@@ -295,10 +344,17 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     creator,
     creatorEdge,
     isAuthenticated,
+    allMyOwnCollectionEdges,
     formik.submitForm,
     toggleLike,
     myBookmarkedEdgeId,
     toggleBookmark,
+    deleteResource,
+    currentLMSPrefs,
+    sendToMoodleLms,
+    addRelation,
+    delRelation,
+    refetch,
   ])
   return resourceProps && [resourceProps]
 }

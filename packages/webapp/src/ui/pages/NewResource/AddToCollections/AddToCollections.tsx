@@ -1,7 +1,10 @@
 import { Trans } from '@lingui/macro'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../components/atoms/SecondaryButton/SecondaryButton'
-import { AddToCollectionsCard } from '../../../components/cards/AddToCollectionsCard/AddToCollectionsCard'
+import {
+  AddToCollectionsCard,
+  CollectionItem,
+} from '../../../components/cards/AddToCollectionsCard/AddToCollectionsCard'
 import { withCtrl } from '../../../lib/ctrl'
 import './styles.scss'
 
@@ -9,8 +12,8 @@ export type AddToCollectionsProps = {
   step: 'AddToCollectionsStep'
   previousStep: (() => unknown) | undefined
   nextStep: (() => unknown) | undefined
-  setAddToCollections: (selectedCollections: string[]) => unknown
-  collections: string[]
+  setAddToCollections: (selectedCollections: CollectionItem[]) => unknown
+  collections: CollectionItem[]
   setSearchText?(text: string): unknown
 }
 

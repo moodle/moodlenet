@@ -25,7 +25,7 @@ export const UploadResourceStoryProps: UploadResourceProps = {
   deleteContent: action('deleteContent'),
   nextStep: action('nextStep'),
   formBag: SBFormikBag<NewResourceFormValues>({
-    addToCollections: [],
+    collections: [],
     category: '',
     content: '',
     contentType: 'Link',
