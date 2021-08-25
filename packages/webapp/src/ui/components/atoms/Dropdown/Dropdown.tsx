@@ -98,7 +98,7 @@ export const Dropdown: FC<DropdownProps> = ({
   }
 
   const handleOnSelection = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, i: number) => {
-    setValue((e.target as HTMLElement).innerText)
+    setValue((e.currentTarget as HTMLElement).innerText)
     setIndex(i)
     dropdownContent.current && (dropdownContent.current.style.visibility = 'hidden')
     setIsIconVisible(true)
