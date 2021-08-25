@@ -1,12 +1,12 @@
 import { t, Trans } from '@lingui/macro'
-import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@material-ui/icons/BookmarkBorder'
+import BookmarkIcon from '@material-ui/icons/Bookmark'
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
 import EditIcon from '@material-ui/icons/Edit'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
-import ShareIcon from '@material-ui/icons/Share'
 import { useCallback, useState } from 'react'
 import Card from '../../components/atoms/Card/Card'
 import Dropdown from '../../components/atoms/Dropdown/Dropdown'
@@ -318,9 +318,9 @@ export const Resource = withCtrl<ResourceProps>(
                           {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                         </div>
                       )}
-                      <div className="share">
+                      {/*<div className="share">
                         <ShareIcon />
-                      </div>
+                      </div>*/}
                       {isOwner && (
                         <div className="edit-save">
                           {isEditing ? (
