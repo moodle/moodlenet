@@ -86,7 +86,6 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
   const sformSetField = sform.setFieldValue
 
   const deleteContent = useCallback(() => {
-    sformSetField('image', '')
     sformSetField('content', '')
   }, [sformSetField])
 
@@ -154,6 +153,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
               collections: mycollections.map(_ => ({ label: _.name, id: _.id })),
               previousStep,
               setAddToCollections: collections => sformSetField('collections', collections),
+              selectedCollections: form.values.collections,
             })
           }
         }
@@ -330,11 +330,11 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
   const newResourceProps = useMemo<NewResourceProps>(() => {
     return {
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
-      stepProps: { ...stepProps, nextStep, imageUrl }, //FIXME: stepProps are created in `nextStep()`, so they're static
+      stepProps: { ...stepProps, nextStep, imageUrl, formBag, selectedCollections: form.values.collections }, //FIXME: stepProps are created in `nextStep()`, so they're static
     }
-  }, [nextStep, stepProps, imageUrl])
+  }, [nextStep, stepProps, imageUrl, formBag, form.values])
 
-  console.log({ vals: form.values, step: newResourceProps.stepProps })
+  console.log('form.values', form.values)
 
   return newResourceProps && [newResourceProps]
 }
