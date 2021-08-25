@@ -30,7 +30,7 @@ export type UploadResourceProps = {
 
 export const UploadResource = withCtrl<UploadResourceProps>(
   ({ formBag, state, imageUrl, licenses, categories, nextStep, deleteContent }) => {
-    const [form] = formBag
+    const [form, formAttrs] = formBag
     const setFieldValue = form.setFieldValue
     const background = {
       backgroundImage: 'url(' + imageUrl + ')',
@@ -73,7 +73,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       setFieldValue('image', null)
     }, [setFieldValue])
 
-    const dd = useCallback(
+    const setCategoryValue = useCallback(
       (v: string) => {
         setFieldValue('category', v)
       },
@@ -98,7 +98,12 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           value={form.values.description}
           getText={text => form.setFieldValue('description', text)}
         />
-        <Dropdown {...categories} getValue={dd} disabled={state === 'ChooseResource'} />
+        <Dropdown
+          {...categories}
+          {...formAttrs.category}
+          getValue={setCategoryValue}
+          disabled={state === 'ChooseResource'}
+        />
       </div>
     )
 
