@@ -86,8 +86,13 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
   const sformSetField = sform.setFieldValue
 
   const deleteContent = useCallback(() => {
+    // if (sform.values.image === sform.values.content) {
+    sformSetField('image', '')
+    setImageUrl('')
+    // }
     sformSetField('content', '')
   }, [sformSetField])
+  // }, [sform.values.content, sform.values.image, sformSetField])
 
   type StepProps = DistOmit<NewResourceProps['stepProps'], 'nextStep'>
   type StepPropsHistoryItem = [curr: StepProps, prev: StepPropsHistoryItem | null]
@@ -115,12 +120,6 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
     setImageUrl(imageObjectUrl)
     return () => URL.revokeObjectURL(imageObjectUrl)
   }, [image, setImageUrl])
-
-  useEffect(() => {
-    if (!sform.values.content && prevStepProps) {
-      setNextStepProps('back')
-    }
-  }, [sform.values.content, prevStepProps])
 
   const previousStep = useCallback(() => setNextStepProps('back'), [setNextStepProps])
 
@@ -314,6 +313,19 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
     createResourceRelMut,
     history,
   ])
+
+  useEffect(() => {
+    if (!sform.values.content && prevStepProps) {
+      setNextStepProps('back')
+    } else if (
+      sform.values.content &&
+      stepProps.step === 'UploadResourceStep' &&
+      stepProps.state === 'ChooseResource' &&
+      nextStep
+    ) {
+      nextStep()
+    }
+  }, [sform.values.content, prevStepProps, stepProps, nextStep])
 
   useEffect(() => {
     if (content) {
