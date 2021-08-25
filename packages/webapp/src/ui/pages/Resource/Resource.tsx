@@ -52,7 +52,8 @@ export type ResourceProps = {
   toggleLike: () => unknown
   toggleBookmark: () => unknown
   deleteResource?: () => unknown
-  sendToMoodleLms?: (site?: string) => unknown
+  sendToMoodleLms: (site?: string) => unknown
+  lmsSite?: string
 }
 
 export const Resource = withCtrl<ResourceProps>(
@@ -84,11 +85,12 @@ export const Resource = withCtrl<ResourceProps>(
     sendToMoodleLms,
     contentUrl,
     type,
+    lmsSite,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isAddingToCollection, setIsAddingToCollection] = useState<boolean>(false)
     const [isAddingToMoodleLms, setIsAddingToMoodleLms] = useState<boolean>(false)
-    const [moodleLmsSite, setMoodleLmsSite] = useState<string>('')
+    const [moodleLmsSite, setMoodleLmsSite] = useState<string>(lmsSite ?? '')
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -108,7 +110,7 @@ export const Resource = withCtrl<ResourceProps>(
 
     const actions = (
       <Card className="resource-action-card" hideBorderWhenSmall={true}>
-        <PrimaryButton disabled={!isAuthenticated || !sendToMoodleLms} onClick={() => setIsAddingToMoodleLms(true)}>
+        <PrimaryButton onClick={() => setIsAddingToMoodleLms(true)}>
           <Trans>Send to Moodle</Trans>
         </PrimaryButton>
         <SecondaryButton disabled={!isAuthenticated} onClick={() => setIsAddingToCollection(true)}>
@@ -246,7 +248,7 @@ export const Resource = withCtrl<ResourceProps>(
             />
           </Modal>
         )}
-        {isAddingToMoodleLms && sendToMoodleLms && (
+        {isAddingToMoodleLms && (
           <Modal
             title={t`Your Moodle LMS Site`}
             actions={
@@ -267,6 +269,7 @@ export const Resource = withCtrl<ResourceProps>(
               placeholder="http://your-moodle-lms-site.com"
               value={moodleLmsSite}
               getText={setMoodleLmsSite}
+              autoUpdate
             />
           </Modal>
         )}
