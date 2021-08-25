@@ -1,5 +1,6 @@
 import { Trans } from '@lingui/macro'
-import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@material-ui/icons/BookmarkBorder'
+import BookmarkIcon from '@material-ui/icons/Bookmark'
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
 import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import SaveIcon from '@material-ui/icons/Save'
@@ -63,16 +64,16 @@ export const Collection = withCtrl<CollectionProps>(
       setIsEditing(false)
     }
 
-    const actionsCard = (
+    /*const actionsCard = (
       <Card className="collection-actions-card" hideBorderWhenSmall={true}>
-        {/*         <PrimaryButton disabled={!isAuthenticated}>
+                 <PrimaryButton disabled={!isAuthenticated}>
           <Trans>Send all to Moodle</Trans>
-        </PrimaryButton> */}
+        </PrimaryButton> 
         <SecondaryButton disabled={!isAuthenticated}>
           <Trans>Suggest Resource</Trans>
         </SecondaryButton>
       </Card>
-    )
+    )*/
 
     const [form, formAttrs] = formBag
     const setFieldValue = form.setFieldValue
@@ -191,11 +192,11 @@ export const Collection = withCtrl<CollectionProps>(
                 <div className="collection-footer">
                   <div className="left-column">{!isOwner && <ContributorCard {...contributorCardProps} />}</div>
                   <div className="right-column">
-                    {actionsCard}
+                    {/*actionsCard*/}
                     {extraDetails}
                   </div>
                   <div className="one-column">
-                    {actionsCard}
+                    {/*actionsCard*/}
                     {!isOwner && <ContributorCard {...contributorCardProps} />}
                     {extraDetails}
                   </div>
@@ -203,7 +204,7 @@ export const Collection = withCtrl<CollectionProps>(
               </div>
               <div className="side-column">
                 {!isOwner && <ContributorCard {...contributorCardProps} />}
-                {actionsCard}
+                {/*actionsCard*/}
                 {extraDetails}
               </div>
             </div>

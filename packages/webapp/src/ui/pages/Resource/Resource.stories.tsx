@@ -25,6 +25,7 @@ const meta: ComponentMeta<typeof Resource> = {
   },
   parameters: { layout: 'fullscreen' },
   excludeStories: [
+    'resourceFormBag',
     'ResourceStoryProps',
     'ResourceLinkLoggedOutStoryProps',
     'ResourceFileLoggedOutStoryProps',
@@ -64,7 +65,7 @@ export const ResourceStoryProps: ResourceProps = {
   title: 'The Best Resource Ever',
   liked: false,
   numLikes: 23,
-  bookmarked: false,
+  bookmarked: true,
   tags: ['Reforestationg', 'Drones', 'Soil'],
   contributorCardProps: ContributorCardStoryProps,
   formBag: SBFormikBag<NewResourceFormValues>(resourceFormBag),
