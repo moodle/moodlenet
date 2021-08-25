@@ -6,6 +6,7 @@ query getCurrentSession {
 fragment UserSession on UserSession {
   email
   profile {
+    #FIXME: keep the id only as useSession won't update during app mutations
     id
     name
     avatar
