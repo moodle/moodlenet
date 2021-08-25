@@ -14,14 +14,19 @@ export type AddToCollectionsProps = {
   nextStep: (() => unknown) | undefined
   setAddToCollections: (selectedCollections: CollectionItem[]) => unknown
   collections: CollectionItem[]
+  selectedCollections: CollectionItem[]
   setSearchText?(text: string): unknown
 }
 
 export const AddToCollections = withCtrl<AddToCollectionsProps>(
-  ({ collections, setAddToCollections = () => {}, nextStep, previousStep }) => {
+  ({ collections, setAddToCollections = () => {}, nextStep, previousStep, selectedCollections }) => {
     return (
       <div className="add-to-collections">
-        <AddToCollectionsCard allCollections={collections} setAddToCollections={setAddToCollections} />
+        <AddToCollectionsCard
+          value={selectedCollections}
+          allCollections={collections}
+          setAddToCollections={setAddToCollections}
+        />
         <div className="footer">
           <SecondaryButton onClick={previousStep} color="grey">
             <Trans>Back</Trans>

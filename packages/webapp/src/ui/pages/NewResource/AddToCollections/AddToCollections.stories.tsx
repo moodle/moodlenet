@@ -33,6 +33,7 @@ export const AddToCollectionsStoryProps: AddToCollectionsProps = {
     'Sociology',
     'English Literature',
   ].map(label => ({ label, id: label })),
+  selectedCollections: [],
 }
 
 const AddToCollectionsStory: ComponentStory<typeof AddToCollections> = args => <AddToCollections {...args} />
