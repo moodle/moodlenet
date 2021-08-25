@@ -92,6 +92,7 @@ export const ResourceStoryProps: ResourceProps = {
   toggleLike: action('toggleLike'),
   toggleBookmark: action('toggleBookmark'),
   setAddToCollections: action('setAddToCollection'),
+  sendToMoodleLms: action('Send to Moodle LMS')
 }
 
 export const ResourceLinkLoggedOutStoryProps: ResourceProps = {
