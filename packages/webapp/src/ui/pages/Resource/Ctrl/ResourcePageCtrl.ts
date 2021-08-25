@@ -264,7 +264,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       : null,
   )
 
-  const sendToMoodleLms = useCallback(() => currentLMSPrefs && sendToLMS(currentLMSPrefs), [currentLMSPrefs, sendToLMS])
+  const sendToMoodleLms = useCallback((site?: string) => sendToLMS(site), [sendToLMS])
   const resourceProps = useMemo<null | ResourceProps>(() => {
     if (!resourceData) {
       return null
@@ -330,7 +330,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       numLikes: resourceData.likesCount,
       toggleBookmark,
       deleteResource,
-      sendToMoodleLms: currentLMSPrefs ? sendToMoodleLms : undefined,
+      sendToMoodleLms,
+      lmsSite: currentLMSPrefs?.site,
       contentUrl: getJustAssetRefUrl(resourceData.content),
       type: resourceData.content.ext ? 'link' : 'file',
     }

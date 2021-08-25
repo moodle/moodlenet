@@ -19,9 +19,13 @@ export const useLMS = (
 ) => {
   const { updateLMSPrefs, currentLMSPrefs } = useLMSPrefs()
   const sendToLMS = useCallback(
-    (LMS: LMSPrefs) => {
-      if (!obj) {
+    (_site?: Maybe<string>) => {
+      const site = _site ?? currentLMSPrefs?.site
+      if (!(obj && site)) {
         return false
+      }
+      if (_site && _site !== currentLMSPrefs?.site) {
+        updateLMSPrefs({ ...currentLMSPrefs, site: _site })
       }
       const { asset, license, resource } = obj
       // const resUrl = getJustAssetRefUrl(asset)
@@ -42,10 +46,10 @@ export const useLMS = (
 
       const type = asset.ext ? 'link' : 'file'
       // console.log({ resUrl, resource_info, type, LMS })
-      sendToMoodle(resUrl, resource_info_stringified, type, LMS)
+      sendToMoodle(resUrl, resource_info_stringified, type, { ...currentLMSPrefs, site })
       return true
     },
-    [obj],
+    [currentLMSPrefs, obj, updateLMSPrefs],
   )
 
   return useMemo(

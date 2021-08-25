@@ -2,7 +2,7 @@ import { FC } from 'react'
 import './styles.scss'
 
 export type PrimaryButtonProps = {
-  onClick?(arg0: unknown): unknown
+  onClick?(arg0: unknown): unknown | any
   className?: string
   disabled?: boolean
   color?: '' | 'green'
