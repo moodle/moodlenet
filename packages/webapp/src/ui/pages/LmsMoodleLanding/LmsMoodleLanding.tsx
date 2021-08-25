@@ -1,12 +1,7 @@
-import { LMSPrefs } from '../../../lib/moodleLMS/LMSintegration'
-import { CP, withCtrl } from '../../lib/ctrl'
-import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
+import { withCtrl } from '../../lib/ctrl'
 
-export type LMSMoodleLandingProps = {
-  headerPageTemplateProps: CP<HeaderPageTemplateProps>
-} & (
+export type LMSMoodleLandingProps = {} & (
   | {
-      params: LMSPrefs
       badParams?: false
     }
   | {
@@ -21,17 +16,6 @@ export const LMSMoodleLanding = withCtrl<LMSMoodleLandingProps>(props => {
         <h2>Bad Params</h2>
       </div>
     )
-  } else {
-    const { course, site, section } = props.params
-    return (
-      <HeaderPageTemplate {...props.headerPageTemplateProps}>
-        <div>
-          <h1>Welcome from Moodle LMS : {site} !</h1>
-          <h2>Saving this target for import</h2>
-          {course && <h3>course: {course}</h3>}
-          {section && <h3>section: {section}</h3>}
-        </div>
-      </HeaderPageTemplate>
-    )
   }
+  return null
 })

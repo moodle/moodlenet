@@ -1,33 +1,28 @@
 import { useEffect, useMemo, useRef } from 'react'
+import { useHistory } from 'react-router'
+import { mainPath } from '../../../../hooks/glob/nav'
 import { getUrlParamsFromEntryPointForMoodleLMS } from '../../../../lib/moodleLMS/LMSintegration'
 import { useLMSPrefs } from '../../../../lib/moodleLMS/useSendToMoodle'
-import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
-import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
+import { CtrlHook } from '../../../lib/ctrl'
 import { LMSMoodleLandingProps } from '../LmsMoodleLanding'
 
 export const useLmsMoodleLandingCtrl: CtrlHook<LMSMoodleLandingProps, {}> = () => {
   const params = useRef(getUrlParamsFromEntryPointForMoodleLMS()).current
   const { updateLMSPrefs } = useLMSPrefs()
-  const headerPageTemplateProps = ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template')
+  const { replace } = useHistory()
   useEffect(() => {
     params && updateLMSPrefs(params)
   }, [params, updateLMSPrefs])
 
-  const lMSMoodleLandingProps = useMemo<LMSMoodleLandingProps>(() => {
+  const lMSMoodleLandingProps = useMemo<LMSMoodleLandingProps | null>(() => {
     if (!params) {
       const props: LMSMoodleLandingProps = {
         badParams: true,
-        headerPageTemplateProps,
-      }
-      return props
-    } else {
-      const props: LMSMoodleLandingProps = {
-        params,
-        badParams: false,
-        headerPageTemplateProps,
       }
       return props
     }
-  }, [headerPageTemplateProps, params])
-  return [lMSMoodleLandingProps]
+    replace(mainPath.search)
+    return null
+  }, [params, replace])
+  return lMSMoodleLandingProps && [lMSMoodleLandingProps]
 }
