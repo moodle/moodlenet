@@ -29,12 +29,12 @@ export const NewResource = withCtrl<NewResourceProps>(({ stepProps, headerPageTe
       ? 1
       : stepProps.step === 'ExtraDetailsStep'
       ? 2
-      : assertNever(stepProps, `Should never happen`)
+      : assertNever(stepProps, `unknown stepProps: step=${stepProps!.step}`)
 
-  if (progressCurrentIndex === undefined) {
-    console.error({ stepProps })
-    throw new Error(`unknown stepProps: step=${stepProps.step}`)
-  }
+  // if (progressCurrentIndex === undefined) {
+  //   console.error({ stepProps })
+  //   throw new Error(`unknown stepProps: step=${stepProps.step}`)
+  // }
 
   return (
     <HeaderPageTemplate {...headerPageTemplateProps} style={{ backgroundColor: '#f4f5f7' }}>

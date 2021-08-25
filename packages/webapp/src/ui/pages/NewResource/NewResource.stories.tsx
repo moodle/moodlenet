@@ -9,7 +9,7 @@ import {
   LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown
+  YearsDropdown,
 } from './FieldsData'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'
@@ -139,6 +139,7 @@ export const NewResourceAddToCollectionsStoryProps: NewResourceProps = {
     setAddToCollections: action('setAddToCollections'),
     previousStep: action('previousStep'),
     setSearchText: action('setSearchText'),
+    selectedCollections: [],
   },
 }
 
