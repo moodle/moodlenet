@@ -320,7 +320,7 @@ export const Resource = withCtrl<ResourceProps>(
                   ) : (
                     <div className="title">{form.values.title}</div>
                   )}
-                  <div className="tags scroll">{tagSet}</div>
+                  {tagSet.length > 0 && <div className="tags scroll">{tagSet}</div>}
                 </div>
                 <img
                   className="image"
