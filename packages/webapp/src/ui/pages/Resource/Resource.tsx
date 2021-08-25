@@ -116,13 +116,13 @@ export const Resource = withCtrl<ResourceProps>(
           <SecondaryButton>
             {type === 'file' ? (
               <>
-                <Trans>download resource</Trans>
                 <InsertDriveFileIcon />
+                <Trans>Download File</Trans>
               </>
             ) : (
               <>
-                <Trans>browse to resource</Trans>
                 <LinkIcon />
+                <Trans>Open Link</Trans>
               </>
             )}
           </SecondaryButton>
