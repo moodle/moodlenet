@@ -52,7 +52,7 @@ export type ResourceProps = {
   toggleLike: () => unknown
   toggleBookmark: () => unknown
   deleteResource?: () => unknown
-  sendToMoodleLms?: () => unknown
+  sendToMoodleLms?: (site?: string) => unknown
 }
 
 export const Resource = withCtrl<ResourceProps>(
@@ -87,6 +87,8 @@ export const Resource = withCtrl<ResourceProps>(
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isAddingToCollection, setIsAddingToCollection] = useState<boolean>(false)
+    const [isAddingToMoodleLms, setIsAddingToMoodleLms] = useState<boolean>(false)
+    const [moodleLmsSite, setMoodleLmsSite] = useState<string>('')
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -106,7 +108,7 @@ export const Resource = withCtrl<ResourceProps>(
 
     const actions = (
       <Card className="resource-action-card" hideBorderWhenSmall={true}>
-        <PrimaryButton disabled={!sendToMoodleLms} onClick={sendToMoodleLms}>
+        <PrimaryButton disabled={!isAuthenticated || !sendToMoodleLms} onClick={() => setIsAddingToMoodleLms(true)}>
           <Trans>Send to Moodle</Trans>
         </PrimaryButton>
         <SecondaryButton disabled={!isAuthenticated} onClick={() => setIsAddingToCollection(true)}>
@@ -241,6 +243,30 @@ export const Resource = withCtrl<ResourceProps>(
               setAddToCollections={setAddToCollections}
               header={false}
               noCard={true}
+            />
+          </Modal>
+        )}
+        {isAddingToMoodleLms && sendToMoodleLms && (
+          <Modal
+            title={t`Your Moodle LMS Site`}
+            actions={
+              <PrimaryButton
+                onClick={() => {
+                  sendToMoodleLms(moodleLmsSite)
+                  setIsAddingToMoodleLms(false)
+                }}
+              >
+                <Trans>Send</Trans>
+              </PrimaryButton>
+            }
+            onClose={() => setIsAddingToMoodleLms(false)}
+            style={{ maxWidth: '350px', width: '100%' }}
+          >
+            {console.log(formAttrs.collections)}
+            <InputTextField
+              placeholder="http://your-moodle-lms-site.com"
+              value={moodleLmsSite}
+              getText={setMoodleLmsSite}
             />
           </Modal>
         )}
