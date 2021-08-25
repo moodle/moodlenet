@@ -11,7 +11,7 @@ import {
   LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown,
+  YearsDropdown
 } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
@@ -26,13 +26,33 @@ const meta: ComponentMeta<typeof Resource> = {
   parameters: { layout: 'fullscreen' },
   excludeStories: [
     'ResourceStoryProps',
-    'ResourceLoggedOutStoryProps',
+    'ResourceLinkLoggedOutStoryProps',
+    'ResourceFileLoggedOutStoryProps',
     'ResourceLoggedInStoryProps',
     'ResourceOwnerStoryProps',
   ],
 }
 
 const ResourceStory: ComponentStory<typeof Resource> = args => <Resource {...args} />
+
+export const resourceFormBag: NewResourceFormValues = {
+  collections: ['Biology'].map(label => ({ label, id: label })),
+  category: '0215 Music and performing arts',
+  content: '',
+  contentType: 'Link',
+  description:
+    'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
+  format: 'Portal / main site',
+  image: 'https://picsum.photos/200/100',
+  language: 'Spanish',
+  level: '1 Primary education',
+  license: 'CCO (Public domain)',
+  name: '',
+  originalDateMonth: 'August',
+  originalDateYear: '2021',
+  title: 'The Best Resource Ever',
+  type: 'Web Site',
+}
 
 export const ResourceStoryProps: ResourceProps = {
   headerPageTemplateProps: {
@@ -47,24 +67,7 @@ export const ResourceStoryProps: ResourceProps = {
   bookmarked: false,
   tags: ['Reforestationg', 'Drones', 'Soil'],
   contributorCardProps: ContributorCardStoryProps,
-  formBag: SBFormikBag<NewResourceFormValues>({
-    collections: ['Biology'].map(label => ({ label, id: label })),
-    category: '0215 Music and performing arts',
-    content: '',
-    contentType: 'Link',
-    description:
-      'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-    format: 'Portal / main site',
-    image: 'https://picsum.photos/200/100',
-    language: 'Spanish',
-    level: '1 Primary education',
-    license: 'CCO (Public domain)',
-    name: '',
-    originalDateMonth: 'August',
-    originalDateYear: '2021',
-    title: 'The Best Resource Ever',
-    type: 'Web Site',
-  }),
+  formBag: SBFormikBag<NewResourceFormValues>(resourceFormBag),
   contentUrl: '#',
   type: 'link',
   collections: [
@@ -91,7 +94,7 @@ export const ResourceStoryProps: ResourceProps = {
   setAddToCollections: action('setAddToCollection'),
 }
 
-export const ResourceLoggedOutStoryProps: ResourceProps = {
+export const ResourceLinkLoggedOutStoryProps: ResourceProps = {
   ...ResourceStoryProps,
   headerPageTemplateProps: {
     isAuthenticated: false,
@@ -109,6 +112,12 @@ export const ResourceLoggedOutStoryProps: ResourceProps = {
   isAuthenticated: false,
 }
 
+export const ResourceFileLoggedOutStoryProps: ResourceProps = {
+  ...ResourceLinkLoggedOutStoryProps,
+  type: 'file',
+  formBag: SBFormikBag<NewResourceFormValues>({ ...resourceFormBag, contentType: 'File', type: 'Video' }),
+}
+
 export const ResourceLoggedInStoryProps: ResourceProps = {
   ...ResourceStoryProps,
 }
@@ -118,8 +127,11 @@ export const ResourceOwnerStoryProps: ResourceProps = {
   isOwner: true,
 }
 
-export const LoggedOut = ResourceStory.bind({})
-LoggedOut.args = ResourceLoggedOutStoryProps
+export const LinkLoggedOut = ResourceStory.bind({})
+LinkLoggedOut.args = ResourceLinkLoggedOutStoryProps
+
+export const FileLoggedOut = ResourceStory.bind({})
+FileLoggedOut.args = ResourceFileLoggedOutStoryProps
 
 export const LoggedIn = ResourceStory.bind({})
 LoggedIn.args = ResourceLoggedInStoryProps
