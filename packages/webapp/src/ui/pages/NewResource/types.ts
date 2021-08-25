@@ -11,7 +11,7 @@ export type License = string
 export type Collection = string
 export type NewResourceFormValues = {
   name: string
-  contentType: 'File' | 'Link'
+  contentType: ContentType
   title: string
   description: string
   category: Category
