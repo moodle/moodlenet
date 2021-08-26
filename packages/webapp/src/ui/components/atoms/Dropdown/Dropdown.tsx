@@ -61,12 +61,10 @@ export const Dropdown: FC<DropdownProps> = ({
     }
   }
 
-  window.addEventListener('DOMContentLoaded', () => {
-    setOptionListPosition()
-  })
   window.onscroll = window.onresize = () => setOptionListPosition()
 
   const setOptionListPosition = () => {
+    console.log('Content Loaded')
     const viewportOffset = dropdownButton.current && dropdownButton.current.getBoundingClientRect()
     const top = viewportOffset?.top
     const bottom = viewportOffset && window.innerHeight - viewportOffset.bottom
@@ -85,6 +83,11 @@ export const Dropdown: FC<DropdownProps> = ({
       dropdownContent.current && (dropdownContent.current.style.transform = ' translate(-50%, 0px)')
     }
   }
+
+  useEffect(() => {
+    setOptionListPosition();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // TODO
   const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLDivElement>) => {
