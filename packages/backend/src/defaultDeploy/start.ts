@@ -158,13 +158,12 @@ export const startDefaultMoodlenet = async ({
 
   const nodeIdAdapter = getNodeByIdentifierAdapter(contentGraphDatabase)
   const userAuthIdAdapter = byAuthId(userAuthDatabase)
-  const profileByAuthIdAdapter = getByAuthId(contentGraphDatabase)
 
   qminoInProcess.open(utilsPorts.sendEmailToProfile, {
     ...userAuthIdAdapter,
     getLocalDomain: async () => domain,
     getProfile: nodeIdAdapter.getNodeByIdentifier,
-    getProfileByAuth: profileByAuthIdAdapter.getProfileByAuthId,
+    getProfileByAuth: ({ authId }) => qminoInProcess.query(profilePorts.getByAuthId({ authId }), { timeout: 5000 }),
     sendEmail: _ =>
       emailSender.sendMail(_).then(
         _ => true,

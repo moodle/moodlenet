@@ -36,7 +36,7 @@ export type NodeRelationCountInput = {
   fromNode: GraphNodeIdentifier
   edgeType: GraphEdgeType
   targetNodeType: GraphNodeType
-  inverse: Boolean
+  inverse: boolean
   env: SessionEnv | null
 }
 export const count = QMQuery(

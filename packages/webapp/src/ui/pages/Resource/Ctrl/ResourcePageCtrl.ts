@@ -299,18 +299,22 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
           .filter(isEdgeNodeOfType(['Collection']))
           .filter(myColEdge => !selectedIds.includes(myColEdge.node.id) && myCollectionsIds.includes(myColEdge.node.id))
 
-        console.log({
-          add: collToAdd.map(({ name }) => name).join(),
-          selected: selectedCollItems.map(({ label }) => label).join(),
-        })
-
+        // console.log('***', {
+        //   add: collToAdd.map(({ name }) => name).join(),
+        //   rem: collEdgesToRem.map(({ node: { name } }) => name).join(),
+        //   selected: selectedCollItems.map(({ label }) => label).join(),
+        // })
+        //FIXME: redoes calls multiple times
         await Promise.all<any>([
           ...collToAdd.map(selectedCollToAdd => {
+            // console.log(`**** addd`, selectedCollToAdd)
+
             return addRelation({
               variables: { edge: { edgeType: 'Features', from: selectedCollToAdd.id, to: id, Features: {} } },
             })
           }),
           ...collEdgesToRem.map(selectedCollEdgeToAdd => {
+            // console.log(`**** remmm`, selectedCollEdgeToAdd)
             return delRelation({
               variables: { edge: { id: selectedCollEdgeToAdd.edge.id } },
             })

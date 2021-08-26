@@ -1,7 +1,7 @@
 import { getFileFormats } from '@moodlenet/common/lib/content-graph/initialData/file-format/fileFormats'
 import { Database } from 'arangojs'
 import { justExecute } from '../../../../../../../lib/helpers/arango/query'
-import { createNodeQ } from '../../../../functions/createNode'
+import { createNodeQ } from '../../../../aql/writes/createNode'
 
 export const createFileFormats = async ({ db }: { db: Database }) => {
   const fileFormats = getFileFormats()

@@ -6,17 +6,17 @@ import {
   DeleteNodeAdapter,
   EditNodeAdapter,
 } from '../../../../ports/content-graph/node'
-import { createNodeQ } from '../functions/createNode'
-import { deleteNodeQ } from '../functions/deleteNode'
-import { getNodeByIdentifierQ } from '../functions/getNode'
-import { aqlGraphNode2GraphNode } from '../functions/helpers'
-import { updateNodeQ } from '../functions/updateNode'
+import { aqlGraphNode2GraphNode } from '../aql/helpers'
+import { getAqlNodeByGraphNodeIdentifierQ } from '../aql/queries/getNode'
+import { createNodeQ } from '../aql/writes/createNode'
+import { deleteNodeQ } from '../aql/writes/deleteNode'
+import { updateNodeQ } from '../aql/writes/updateNode'
 import { ContentGraphDB } from '../types'
 
 export const getNodeBySlugAdapter = (db: ContentGraphDB): BySlugAdapter => ({
   async getNodeBySlug(slugId) {
     type T = typeof slugId._type
-    const q = getNodeByIdentifierQ<T>(slugId)
+    const q = getAqlNodeByGraphNodeIdentifierQ<T>(slugId)
     const mAqlNode = await getOneResult(q, db)
     if (!mAqlNode) {
       return mAqlNode
@@ -27,7 +27,7 @@ export const getNodeBySlugAdapter = (db: ContentGraphDB): BySlugAdapter => ({
 })
 export const getNodeByIdentifierAdapter = (db: ContentGraphDB) => ({
   async getNodeByIdentifier<NT extends GraphNodeType = GraphNodeType>(nodeIdentifier: GraphNodeIdentifier<NT>) {
-    const q = getNodeByIdentifierQ<NT>(nodeIdentifier)
+    const q = getAqlNodeByGraphNodeIdentifierQ<NT>(nodeIdentifier)
     const mAqlNode = await getOneResult(q, db)
     if (!mAqlNode) {
       return null

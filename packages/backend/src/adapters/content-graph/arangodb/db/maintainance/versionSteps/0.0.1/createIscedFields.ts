@@ -1,7 +1,7 @@
 import { getIscedFields } from '@moodlenet/common/lib/content-graph/initialData/ISCED/Fields/IscedFields'
 import { Database } from 'arangojs'
 import { justExecute } from '../../../../../../../lib/helpers/arango/query'
-import { createNodeQ } from '../../../../functions/createNode'
+import { createNodeQ } from '../../../../aql/writes/createNode'
 
 export const createIscedFields = async ({ db }: { db: Database }) => {
   const iscedFields = getIscedFields()

@@ -1,8 +1,8 @@
 import { GlobalSearchNodeType } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { getAllResults } from '../../../../lib/helpers/arango/query'
 import { Adapter } from '../../../../ports/content-graph/search'
-import { globalSearchQuery } from '../functions/globalSearch'
-import { aqlGraphNode2GraphNode, forwardSkipLimitPage } from '../functions/helpers'
+import { globalSearchQuery } from '../aql/globalSearch'
+import { aqlGraphNode2GraphNode, forwardSkipLimitPage } from '../aql/helpers'
 import { ContentGraphDB } from '../types'
 
 export const globalSearch = (db: ContentGraphDB): Adapter => ({
