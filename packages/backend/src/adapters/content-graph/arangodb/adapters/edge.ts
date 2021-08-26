@@ -1,10 +1,11 @@
 import { isArangoError } from 'arangojs/error'
 import { getOneResult } from '../../../../lib/helpers/arango/query'
 import { CreateAdapter, DeleteEdgeAdapter } from '../../../../ports/content-graph/edge'
-import { createEdgeQ } from '../functions/createEdge'
-import { deleteEdgeQ } from '../functions/deleteEdge'
-import { getEdgeByNodesQ } from '../functions/getEdge'
-import { aqlGraphEdge2GraphEdge } from '../functions/helpers'
+import { aqlGraphEdge2GraphEdge, getOneAQFrag } from '../aql/helpers'
+import { getEdgeByNodesQ } from '../aql/queries/getEdge'
+import { getAqlNodeByGraphNodeIdentifierQ } from '../aql/queries/getNode'
+import { createEdgeQ } from '../aql/writes/createEdge'
+import { deleteEdgeQ } from '../aql/writes/deleteEdge'
 import { ContentGraphDB } from '../types'
 
 export const createEdgeAdapter = (db: ContentGraphDB): CreateAdapter => ({
@@ -16,7 +17,11 @@ export const createEdgeAdapter = (db: ContentGraphDB): CreateAdapter => ({
       if (!(isArangoError(e) && e.errorNum === 1210)) {
         throw e
       }
-      const existingEdgeQ = getEdgeByNodesQ({ edge, from, to })
+      const existingEdgeQ = getEdgeByNodesQ({
+        edge,
+        from: getOneAQFrag(getAqlNodeByGraphNodeIdentifierQ(from)),
+        to: getOneAQFrag(getAqlNodeByGraphNodeIdentifierQ(to)),
+      })
       const existingEdge = await getOneResult(existingEdgeQ, db)
 
       return existingEdge
