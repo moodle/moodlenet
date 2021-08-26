@@ -1,7 +1,7 @@
 import { getLicenses } from '@moodlenet/common/lib/content-graph/initialData/licenses/licenses'
 import { Database } from 'arangojs'
 import { justExecute } from '../../../../../../../lib/helpers/arango/query'
-import { createNodeQ } from '../../../../functions/createNode'
+import { createNodeQ } from '../../../../aql/writes/createNode'
 
 export const createLicenses = async ({ db }: { db: Database }) => {
   const licenses = getLicenses()

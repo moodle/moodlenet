@@ -2,9 +2,10 @@ import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/ty
 import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
 import { omit } from '@moodlenet/common/lib/utils/object'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
-import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
-import { AqlGraphEdge, AqlGraphEdgeByType } from '../types'
-import { getAqlNodeByGraphNodeIdentifierQFrag } from './helpers'
+import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
+import { AqlGraphEdge, AqlGraphEdgeByType } from '../../types'
+import { getOneAQFrag } from '../helpers'
+import { getAqlNodeByGraphNodeIdentifierQ } from '../queries/getNode'
 
 export const createEdgeQ = <Type extends GraphEdgeType>({
   edge,
@@ -25,8 +26,8 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
   }
 
   const q = aq<AqlGraphEdgeByType<Type>>(`
-    let fromNode = ${getAqlNodeByGraphNodeIdentifierQFrag(from)}
-    let toNode = ${getAqlNodeByGraphNodeIdentifierQFrag(to)}
+    let fromNode = ${getOneAQFrag(getAqlNodeByGraphNodeIdentifierQ(from))}
+    let toNode = ${getOneAQFrag(getAqlNodeByGraphNodeIdentifierQ(to))}
     
     let newedge = ${aqlstr(aqlEdge)}
 

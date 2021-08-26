@@ -3,7 +3,8 @@ import { PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
 import { GlobalSearchNodeType, GlobalSearchSortBy } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { AqlGraphNodeByType } from '../types'
-import { forwardSkipLimitPagination } from './helpers'
+import { forwardSkipLimitPagination, getOneAQFrag } from './helpers'
+import { nodeRelationCountQ } from './queries/traverseEdges'
 
 export const globalSearchQuery = ({
   page,
@@ -24,11 +25,24 @@ export const globalSearchQuery = ({
   const filterConditions = [nodeTypeConditions].filter(Boolean).join(' && ')
 
   const sortFactor =
-    sortBy === 'Relevance'
-      ? '1'
-      : sortBy === 'Recent'
-      ? '0'
-      : '(1 + (node._relCount.Likes.from.Profile || 0) + (node._relCount.Follows.from.Profile || 0))'
+    sortBy === 'Popularity'
+      ? `(1 + 
+        ( ${getOneAQFrag(
+          nodeRelationCountQ({
+            edgeType: 'Follows',
+            inverse: true,
+            targetNodeType: 'Profile',
+            parentNodeId: 'node._id',
+          }),
+        )} )
+        +
+        ( ${getOneAQFrag(
+          nodeRelationCountQ({ edgeType: 'Likes', inverse: true, targetNodeType: 'Profile', parentNodeId: 'node._id' }),
+        )} )
+        )
+        `
+      : '1'
+  // : `(1 + (node._relCount.Likes.from.Profile || 0) + (node._relCount.Follows.from.Profile || 0))`
 
   const query = aq<AqlGraphNodeByType<GlobalSearchNodeType>>(`
     let searchTerm = ${aql_txt}
@@ -50,8 +64,10 @@ export const globalSearchQuery = ({
       
         FILTER ${filterConditions || 'true'}
         //FILTER !$ {isMarkDeleted('node')} AND ${filterConditions || 'true'}
+      
+      let sortFactor = ${sortFactor}
 
-      SORT ( TFIDF(node) * ${sortFactor}) desc, node._key desc
+      SORT ( (0.1 + TFIDF(node)) * sortFactor ) desc, node._key desc
       
       LIMIT ${skip}, ${limit}
       

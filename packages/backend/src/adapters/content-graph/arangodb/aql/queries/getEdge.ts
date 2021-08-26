@@ -1,8 +1,6 @@
 import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
-import { aq } from '../../../../lib/helpers/arango/query'
-import { AqlGraphEdgeByType } from '../types'
-import { getAqlNodeByGraphNodeIdentifierQFrag } from './helpers'
+import { aq, AqlVar } from '../../../../../lib/helpers/arango/query'
+import { AqlGraphEdgeByType } from '../../types'
 
 export const getEdgeByNodesQ = <Type extends GraphEdgeType>({
   edge,
@@ -10,14 +8,14 @@ export const getEdgeByNodesQ = <Type extends GraphEdgeType>({
   to,
 }: {
   edge: GraphEdge<Type>
-  from: GraphNodeIdentifier
-  to: GraphNodeIdentifier
+  from: AqlVar
+  to: AqlVar
 }) => {
   const edgeType = edge._type
 
   const q = aq<AqlGraphEdgeByType<Type>>(`
-    let fromNode = ${getAqlNodeByGraphNodeIdentifierQFrag(from)}
-    let toNode = ${getAqlNodeByGraphNodeIdentifierQFrag(to)}
+    let fromNode = ${from}
+    let toNode = ${to}
     
     for e in ${edgeType}
       filter e._from == fromNode._id 
