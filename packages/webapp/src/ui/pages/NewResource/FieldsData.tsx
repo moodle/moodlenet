@@ -145,7 +145,7 @@ export type LicenseTypes = keyof typeof licenseIconMap
 export const LicenseDropdown: DropdownField = {
   placeholder: t`License`,
   options: [
-    ['CCO (Public domain)', <div>{zero}</div>],
+    ['CC-0 (Public domain)', <div>{zero}</div>],
     [
       'CC-BY (Attribution)',
       <div>
