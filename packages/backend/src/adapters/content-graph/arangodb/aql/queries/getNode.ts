@@ -16,7 +16,7 @@ const documentByNodeIdSlugQ = <Type extends GraphNodeType = GraphNodeType>({
 const documentByNodeIdPermQFrag = <Type extends GraphNodeType = GraphNodeType>({
   _permId,
   _type,
-}: GraphNodeIdentifierPerm<Type>) => aq<AqlGraphNodeByType<Type>>(`DOCUMENT("${_type}/${_permId}")`)
+}: GraphNodeIdentifierPerm<Type>) => aq<AqlGraphNodeByType<Type>>(`[ DOCUMENT("${_type}/${_permId}") ]`)
 
 const documentBySlugTypeQ = <Type extends GraphNodeType = GraphNodeType>({
   slugVar,

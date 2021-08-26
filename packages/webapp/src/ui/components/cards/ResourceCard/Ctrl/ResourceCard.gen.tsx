@@ -15,14 +15,32 @@ export type ResourceCardQuery = (
     { __typename: 'Resource' }
     & Pick<Types.Resource, 'id' | 'name' | 'image' | 'kind' | 'content' | 'description'>
     & { likesCount: Types.Resource['_relCount'] }
-    & { inCollections: (
+    & { categories: (
       { __typename: 'RelPage' }
       & { edges: Array<(
         { __typename: 'RelPageEdge' }
-        & { node: (
-          { __typename: 'Collection' }
-          & Pick<Types.Collection, 'id' | 'name'>
-        ) | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
+        & { edge: (
+          { __typename: 'Bookmarked' }
+          & Pick<Types.Bookmarked, 'id'>
+        ) | (
+          { __typename: 'Created' }
+          & Pick<Types.Created, 'id'>
+        ) | (
+          { __typename: 'Features' }
+          & Pick<Types.Features, 'id'>
+        ) | (
+          { __typename: 'Follows' }
+          & Pick<Types.Follows, 'id'>
+        ) | (
+          { __typename: 'Likes' }
+          & Pick<Types.Likes, 'id'>
+        ) | (
+          { __typename: 'Pinned' }
+          & Pick<Types.Pinned, 'id'>
+        ), node: { __typename: 'Collection' } | { __typename: 'FileFormat' } | (
+          { __typename: 'IscedField' }
+          & Pick<Types.IscedField, 'id' | 'name'>
+        ) | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
     ), myBookmarked: (
       { __typename: 'RelPage' }
@@ -114,15 +132,13 @@ export const ResourceCardDocument = gql`
       content
       description
       image
-      inCollections: _rel(
-        type: Features
-        target: Collection
-        inverse: true
-        page: {first: 3}
-      ) {
+      categories: _rel(type: Features, target: IscedField, page: {first: 1}) {
         edges {
+          edge {
+            id
+          }
           node {
-            ... on Collection {
+            ... on IscedField {
               id
               name
             }

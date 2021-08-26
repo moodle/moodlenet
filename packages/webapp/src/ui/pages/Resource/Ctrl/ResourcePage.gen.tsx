@@ -91,15 +91,6 @@ export type ResourcePageDataQuery = (
           & Pick<Types.Collection, 'id' | 'name' | 'image'>
         ) | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
       )> }
-    ), collections: (
-      { __typename: 'RelPage' }
-      & { edges: Array<(
-        { __typename: 'RelPageEdge' }
-        & { node: (
-          { __typename: 'Collection' }
-          & Pick<Types.Collection, 'id' | 'name' | 'image'>
-        ) | { __typename: 'FileFormat' } | { __typename: 'IscedField' } | { __typename: 'IscedGrade' } | { __typename: 'Language' } | { __typename: 'License' } | { __typename: 'Organization' } | { __typename: 'Profile' } | { __typename: 'Resource' } | { __typename: 'ResourceType' } }
-      )> }
     ), creator: (
       { __typename: 'RelPage' }
       & { edges: Array<(
@@ -382,22 +373,6 @@ export const ResourcePageDataDocument = gql`
           }
         }
       }
-      collections: _rel(
-        type: Features
-        target: Collection
-        page: {first: 5}
-        inverse: true
-      ) {
-        edges {
-          node {
-            ... on Collection {
-              id
-              name
-              image
-            }
-          }
-        }
-      }
       creator: _rel(type: Created, target: Profile, inverse: true, page: {first: 1}) {
         edges {
           edge {
@@ -412,7 +387,7 @@ export const ResourcePageDataDocument = gql`
           }
         }
       }
-      categories: _rel(type: Features, target: IscedField) {
+      categories: _rel(type: Features, target: IscedField, page: {first: 1}) {
         edges {
           edge {
             id
