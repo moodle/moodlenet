@@ -12,7 +12,8 @@ import SortCard from '../cards/SortCard/SortCard'
 import SubjectCard, { SubjectCardProps } from '../cards/SubjectCard/SubjectCard'
 import './styles.scss'
 
-type FilterType = 'Subjects' | 'Collections' | 'Resources'
+export const filterTypes = ['Subjects', 'Collections', 'Resources'] as const
+export type FilterType = typeof filterTypes[number]
 type SortType = 'Relevance' | 'Recent' | 'Popularity'
 export type BrowserProps = {
   subjectCardPropsList: CP<SubjectCardProps>[] | null
@@ -33,6 +34,22 @@ export const Browser = withCtrl<BrowserProps>(
         Resources: true,
       },
     )
+
+    const seeAll = (type: FilterType) => {
+      filterTypes.forEach((filterType: FilterType) => {
+        filterType !== type && setFilter([filterType, false])
+      })
+    }
+
+    const shouldShowSeeAll = (type: FilterType): boolean => {
+      let shouldShowSeeAll = false
+      filterTypes.forEach((filterType: FilterType) => {
+        if (filterType !== type && filters[filterType]) {
+          shouldShowSeeAll = true
+        }
+      })
+      return shouldShowSeeAll
+    }
 
     const setFilterCB = useCallback<ChangeEventHandler<HTMLInputElement>>(ev => {
       setFilter([ev.currentTarget.name as FilterType, ev.currentTarget.checked])
@@ -100,9 +117,9 @@ export const Browser = withCtrl<BrowserProps>(
                   <div className="title">
                     <Trans>Categories</Trans>
                   </div>
-                  <SecondaryButton>
+                  { shouldShowSeeAll('Subjects') && <SecondaryButton onClick={() => seeAll('Subjects')}>
                     <Trans>See all</Trans>
-                  </SecondaryButton>
+                  </SecondaryButton>}
                 </div>
               </ListCard>
             )}
@@ -118,9 +135,9 @@ export const Browser = withCtrl<BrowserProps>(
                   <div className="title">
                     <Trans>Collections</Trans>
                   </div>
-                  <SecondaryButton>
+                  { shouldShowSeeAll('Collections') && <SecondaryButton onClick={() => seeAll('Collections')}>
                     <Trans>See all</Trans>
-                  </SecondaryButton>
+                  </SecondaryButton>}
                 </div>
               </ListCard>
             )}
