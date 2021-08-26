@@ -49,8 +49,8 @@ export const useBookmarksCtrl: CtrlHook<BookmarksProps, {}> = () => {
             `Bookmarks Resource ${resource.id} Card`,
           ),
         ),
-        subjectCardPropsList: [],
-        setSortBy: () => console.error('implement setSortBy in bookmark page ?'),
+        subjectCardPropsList: null,
+        setSortBy: null,
       },
     }
     return props
