@@ -14,10 +14,10 @@ import './styles.scss'
 type FilterType = 'Subjects' | 'Collections' | 'Resources'
 type SortType = 'Relevance' | 'Recent' | 'Popularity'
 export type BrowserProps = {
-  subjectCardPropsList: CP<SubjectCardProps>[]
-  collectionCardPropsList: CP<CollectionCardProps>[]
-  resourceCardPropsList: CP<ResourceCardProps>[]
-  setSortBy(sortType: SortType): unknown
+  subjectCardPropsList: CP<SubjectCardProps>[] | null
+  collectionCardPropsList: CP<CollectionCardProps>[] | null
+  resourceCardPropsList: CP<ResourceCardProps>[] | null
+  setSortBy:  ( (sortType: SortType) => unknown ) | null
 }
 export const Browser = withCtrl<BrowserProps>(
   ({ subjectCardPropsList, collectionCardPropsList, resourceCardPropsList, setSortBy }) => {
@@ -44,21 +44,21 @@ export const Browser = withCtrl<BrowserProps>(
                 className="filter"
                 title={t`Filters`}
                 content={[
-                  <Checkbox
+                  subjectCardPropsList && <Checkbox
                     onChange={setFilterCB}
                     label={t`Categories`}
                     name="Subjects"
                     key="Subjects"
                     checked={filters.Subjects}
                   />,
-                  <Checkbox
+                  collectionCardPropsList && <Checkbox
                     onChange={setFilterCB}
                     label={t`Collections`}
                     name="Collections"
                     key="Collections"
                     checked={filters.Collections}
                   />,
-                  <Checkbox
+                  resourceCardPropsList && <Checkbox
                     onChange={setFilterCB}
                     label={t`Resources`}
                     name="Resources"
@@ -67,7 +67,7 @@ export const Browser = withCtrl<BrowserProps>(
                   />,
                 ]}
               />
-              <SortCard
+              { setSortBy && <SortCard
                 className="sort"
                 title={t`Sort`}
                 content={[
@@ -76,10 +76,10 @@ export const Browser = withCtrl<BrowserProps>(
                   ['Popularity', t`Popularity`, 'inactive'],
                 ]}
                 onChange={setSortBy}
-              />
+              />}
             </div>
             <div className="main-column">
-              {filters.Subjects && (
+              {subjectCardPropsList && filters.Subjects && (
                 <ListCard
                   content={subjectCardPropsList.slice(0, 8).map((subjectCardProps) => (
                     <SubjectCard {...subjectCardProps} />
@@ -97,7 +97,7 @@ export const Browser = withCtrl<BrowserProps>(
                   </div>
                 </ListCard>
               )}
-              {filters.Collections && (
+              {collectionCardPropsList && filters.Collections && (
                 <ListCard
                   content={collectionCardPropsList.slice(0, 6).map((collectionCardProps) => (
                     <CollectionCard {...collectionCardProps} />
@@ -115,7 +115,7 @@ export const Browser = withCtrl<BrowserProps>(
                   </div>
                 </ListCard>
               )}
-              {filters.Resources && (
+              {resourceCardPropsList && filters.Resources && (
                 <ListCard
                   content={resourceCardPropsList.slice(0, 8).map((resourceCardProps) => (
                     <ResourceCard {...resourceCardProps} />
