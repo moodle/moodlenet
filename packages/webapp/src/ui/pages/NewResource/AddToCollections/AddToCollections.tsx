@@ -19,7 +19,7 @@ export type AddToCollectionsProps = {
 }
 
 export const AddToCollections = withCtrl<AddToCollectionsProps>(
-  ({ collections, setAddToCollections = () => {}, nextStep, previousStep, selectedCollections }) => {
+  ({ collections, setAddToCollections, nextStep, previousStep, selectedCollections }) => {
     return (
       <div className="add-to-collections">
         <AddToCollectionsCard
