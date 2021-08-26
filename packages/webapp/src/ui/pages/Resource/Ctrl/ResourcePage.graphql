@@ -54,17 +54,6 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
         }
       }
 
-      collections: _rel(type: Features, target: Collection, page: { first: 5 }, inverse: true) {
-        edges {
-          node {
-            ... on Collection {
-              id
-              name
-              image
-            }
-          }
-        }
-      }
       creator: _rel(type: Created, target: Profile, inverse: true, page: { first: 1 }) {
         edges {
           edge {
@@ -80,7 +69,7 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
         }
       }
 
-      categories: _rel(type: Features, target: IscedField) {
+      categories: _rel(type: Features, target: IscedField, page: { first: 1 }) {
         edges {
           edge {
             id

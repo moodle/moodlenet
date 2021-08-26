@@ -284,7 +284,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
           : '?',
       },
       isAuthenticated,
-      tags: resourceData.collections.edges.filter(isEdgeNodeOfType(['Collection'])).map(({ node: { name } }) => name),
+      tags: resourceData.categories.edges.filter(isEdgeNodeOfType(['IscedField'])).map(edge => edge.node.name),
       collections: allMyOwnCollectionEdges.map(({ node: { id, name } }) => ({ label: name, id })),
       selectedCollections: resourceData.inMyCollections.edges
         .filter(isEdgeNodeOfType(['Collection']))
@@ -292,34 +292,40 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       setAddToCollections: async selectedCollItems => {
         const selectedIds = selectedCollItems.map(({ id }) => id as string)
         const myCollectionsIds = allMyOwnCollectionEdges.map(({ node: { id } }) => id)
-        const collToAdd = allMyOwnCollectionEdges
-          .filter(myColEdge => selectedIds.includes(myColEdge.node.id))
-          .map(({ node }) => node)
-        const collEdgesToRem = resourceData.inMyCollections.edges
-          .filter(isEdgeNodeOfType(['Collection']))
-          .filter(myColEdge => !selectedIds.includes(myColEdge.node.id) && myCollectionsIds.includes(myColEdge.node.id))
+        const containedInCollEdges = resourceData.inMyCollections.edges.filter(isEdgeNodeOfType(['Collection']))
 
-        // console.log('***', {
-        //   add: collToAdd.map(({ name }) => name).join(),
-        //   rem: collEdgesToRem.map(({ node: { name } }) => name).join(),
-        //   selected: selectedCollItems.map(({ label }) => label).join(),
-        // })
-        //FIXME: redoes calls multiple times
-        await Promise.all<any>([
-          ...collToAdd.map(selectedCollToAdd => {
-            // console.log(`**** addd`, selectedCollToAdd)
+        const containedInCollIds = containedInCollEdges.map(({ node: { id } }) => id)
+        const collIdsToAdd = selectedIds.filter(selectedId => !containedInCollIds.includes(selectedId))
+
+        const collEdgesToRem = containedInCollEdges.filter(
+          myColEdge => !selectedIds.includes(myColEdge.node.id) && myCollectionsIds.includes(myColEdge.node.id),
+        )
+
+        console.log('***', {
+          add: collIdsToAdd.join(),
+          rem: collEdgesToRem.map(({ node: { name } }) => name).join(),
+          selected: selectedCollItems.map(({ label }) => label).join(),
+        })
+        //FIXME: enters once and makes 1 single promise array but does http calls twice ! :|
+        const promises = [
+          ...collIdsToAdd.map(collIdToAdd => {
+            console.log(`**** addd`, collIdToAdd)
 
             return addRelation({
-              variables: { edge: { edgeType: 'Features', from: selectedCollToAdd.id, to: id, Features: {} } },
+              variables: { edge: { edgeType: 'Features', from: collIdToAdd, to: id, Features: {} } },
             })
           }),
           ...collEdgesToRem.map(selectedCollEdgeToAdd => {
-            // console.log(`**** remmm`, selectedCollEdgeToAdd)
+            console.log(`**** remmm`, selectedCollEdgeToAdd)
             return delRelation({
               variables: { edge: { id: selectedCollEdgeToAdd.edge.id } },
             })
           }),
-        ]).then(() => refetch())
+        ]
+        console.log('***', promises)
+        const _ = await Promise.all<any>(promises)
+        console.log('***', _)
+        refetch()
       },
       languages: langOptions,
       levels: resGradeOptions,
