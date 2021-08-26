@@ -20,7 +20,11 @@ export const BookmarksStoryProps: BookmarksProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
   },
-  browserProps: BrowserStoryProps
+  browserProps: {
+    ...BrowserStoryProps,
+    subjectCardPropsList: null,
+    setSortBy: null
+  }
 }
 
 export const BookmarksLoggedInStoryProps: BookmarksProps = {
