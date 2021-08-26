@@ -13,7 +13,7 @@ import {
 } from '../ui/pages/NewResource/FieldsData'
 
 const mainLangs = iso639_3.filter(_ => !!_.part1)
-
+// console.log({licenses})
 export const langOptions: DropdownField = {
   ...LanguagesDropdown,
   options: mainLangs.map(lang => lang.name),
