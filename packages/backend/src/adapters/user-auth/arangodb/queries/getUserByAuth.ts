@@ -1,5 +1,5 @@
-import { ActiveUser, Status } from '@moodlenet/common/lib/user-auth/types'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
+import { ActiveUser, Status } from '../../../../ports/user-auth/types'
 import { USER } from '../types'
 
 export const getActiveUserByAuthIdQ = ({ authId }: Pick<ActiveUser, 'authId'>) => {

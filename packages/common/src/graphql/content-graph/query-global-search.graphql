@@ -1,5 +1,5 @@
 type Query {
-  globalSearch(text: String!, nodeTypes: [NodeType!], sortBy: GlobalSearchSort!, page: PaginationInput): SearchPage!
+  globalSearch(text: String!, nodeTypes: [NodeType!], sort: GlobalSearchSort, page: PaginationInput): SearchPage!
 }
 
 type SearchPage implements Page {
@@ -12,7 +12,12 @@ type SearchPageEdge implements PageEdge {
   node: INode!
 }
 
-enum GlobalSearchSort {
+input GlobalSearchSort {
+  by: GlobalSearchSortBy!
+  asc: Boolean
+}
+
+enum GlobalSearchSortBy {
   Relevance
   Popularity
   Recent

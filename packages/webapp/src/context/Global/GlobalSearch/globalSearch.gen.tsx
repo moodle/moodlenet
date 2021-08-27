@@ -5,7 +5,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions =  {}
 export type GlobalSearchQueryVariables = Types.Exact<{
   text: Types.Scalars['String'];
-  sortBy: Types.GlobalSearchSort;
+  sort?: Types.Maybe<Types.GlobalSearchSort>;
   nodeTypes?: Types.Maybe<Array<Types.NodeType> | Types.NodeType>;
   page?: Types.Maybe<Types.PaginationInput>;
 }>;
@@ -71,8 +71,8 @@ export const GlobalSearchEdgeFragmentDoc = gql`
 }
     `;
 export const GlobalSearchDocument = gql`
-    query globalSearch($text: String!, $sortBy: GlobalSearchSort!, $nodeTypes: [NodeType!], $page: PaginationInput) {
-  globalSearch(text: $text, sortBy: $sortBy, nodeTypes: $nodeTypes, page: $page) {
+    query globalSearch($text: String!, $sort: GlobalSearchSort, $nodeTypes: [NodeType!], $page: PaginationInput) {
+  globalSearch(text: $text, sort: $sort, nodeTypes: $nodeTypes, page: $page) {
     edges {
       ...GlobalSearchEdge
     }
@@ -97,7 +97,7 @@ export const GlobalSearchDocument = gql`
  * const { data, loading, error } = useGlobalSearchQuery({
  *   variables: {
  *      text: // value for 'text'
- *      sortBy: // value for 'sortBy'
+ *      sort: // value for 'sort'
  *      nodeTypes: // value for 'nodeTypes'
  *      page: // value for 'page'
  *   },

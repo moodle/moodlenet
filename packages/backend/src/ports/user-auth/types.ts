@@ -1,4 +1,5 @@
-import { EmailTemplate } from '../../../backend/src/lib/emailSender/types'
+import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
+import { EmailTemplate } from '../../lib/emailSender/types'
 
 export enum Messages {
   EmailNotAvailable = 'email-not-available',
@@ -44,7 +45,6 @@ export type NewUserRequestEmailVars = {
 export type Email = string
 export type Link = string
 export type UserId = string
-export type AuthId = string
 export type Password = string
 export type Token = string
 export type TimeoutSecs = number

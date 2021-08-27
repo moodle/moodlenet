@@ -1,6 +1,5 @@
-import { AuthId } from '../../user-auth/types'
 import { stringUnionList } from '../../utils/misc'
-import { Timestamp } from './common'
+import { AuthId, Timestamp } from './common'
 
 export type GraphNodeMap = {
   Collection: Collection

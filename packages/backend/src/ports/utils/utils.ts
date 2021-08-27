@@ -1,10 +1,11 @@
+import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
 import { GraphNodeIdentifier, Profile } from '@moodlenet/common/lib/content-graph/types/node'
-import { ActiveUser, AuthId } from '@moodlenet/common/lib/user-auth/types'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { nodeIdentifierSlug2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { SessionEnv } from '../../lib/auth/types'
 import { EmailObj } from '../../lib/emailSender/types'
 import { QMCommand, QMModule } from '../../lib/qmino'
+import { ActiveUser } from '../user-auth/types'
 
 export type SendEmailToProfileAdapter = {
   sendEmail(_: EmailObj): Promise<boolean>

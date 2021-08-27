@@ -109,7 +109,10 @@ export const forwardSkipLimitPage = <T>({ docs, skip }: { docs: T[]; skip: numbe
 
 export const aqlGraphNode2GraphNode = <T extends GraphNodeType>(aqlGraphNode: AqlGraphNodeByType<T>) => {
   // console.log(`aqlGraphNode2GraphNode `, aqlGraphNode)
+  // const {_type, _key}=aqlGraphNode  *****************
   const [__type, __permId] = aqlGraphNode._id.split('/')
+  // *********************** */
+
   const graphNode: GraphNode<T> = {
     _type: __type! as T,
     _permId: __permId!,

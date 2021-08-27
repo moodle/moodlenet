@@ -1,14 +1,6 @@
 import { edgeTypes, GraphEdgeIdentifier, GraphEdgeType } from '../../content-graph/types/edge'
 import { GraphNodeIdentifierSlug, GraphNodeType, nodeTypes, Slug } from '../../content-graph/types/node'
 
-export type GlobalSearchSortBy = 'Relevance' | 'Popularity' | 'Recent'
-export const globalSearchSort: GlobalSearchSortBy[] = ['Popularity', 'Relevance', 'Relevance']
-export const isGlobalSearchSort = (_: any): _ is GlobalSearchSortBy => !!_ && globalSearchSort.includes(_)
-
-export type GlobalSearchNodeType = 'Collection' | 'Resource' | 'IscedField'
-export const globalSearchNodeType: GraphNodeType[] = ['Collection', 'Resource', 'IscedField']
-export const isGlobalSearchNodeType = (_: any): _ is GlobalSearchNodeType => !!_ && globalSearchNodeType.includes(_)
-
 export const isGraphNodeType = (_: any): _ is GraphNodeType => !!_ && nodeTypes.includes(_)
 export const isGraphEdgeType = (_: any): _ is GraphEdgeType => !!_ && edgeTypes.includes(_)
 

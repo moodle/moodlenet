@@ -1,3 +1,4 @@
+import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
 import { GraphEdge } from '@moodlenet/common/lib/content-graph/types/edge'
 import {
   GraphNode,
@@ -6,7 +7,6 @@ import {
   GraphNodeType,
   Profile,
 } from '@moodlenet/common/lib/content-graph/types/node'
-import { AuthId } from '@moodlenet/common/lib/user-auth/types'
 import { newGlyphIdentifiers } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
 import { SessionEnv } from '../../lib/auth/types'

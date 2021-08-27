@@ -1,5 +1,5 @@
-import { ActiveUser } from '@moodlenet/common/lib/user-auth/types'
 import JWT from 'jsonwebtoken'
+import { ActiveUser } from '../../ports/user-auth/types'
 import { SessionEnv } from './types'
 
 export const INVALID_TOKEN = Symbol('INVALID_TOKEN')

@@ -1,5 +1,5 @@
-import { ActiveUser } from '@moodlenet/common/lib/user-auth/types'
 import { QMModule, QMQuery } from '../../lib/qmino'
+import { ActiveUser } from './types'
 
 export type Adapter = {
   getActiveUserByEmail(_: { email: string }): Promise<ActiveUser | null>

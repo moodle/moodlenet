@@ -14,7 +14,7 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
   const { setText: setSearchText } = useSearchUrlQuery()
   const trendingQ = useGlobalSearchQuery({
     variables: {
-      sortBy: 'Popularity',
+      sort: { by: 'Popularity' },
       nodeTypes: ['Collection', 'IscedField'],
       text: '',
       page: { first: 5 },

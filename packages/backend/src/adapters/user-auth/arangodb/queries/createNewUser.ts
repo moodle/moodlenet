@@ -1,6 +1,6 @@
-import { User } from '@moodlenet/common/lib/user-auth/types'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
+import { User } from '../../../../ports/user-auth/types'
 import { USER } from '../types'
 import { isEmailInUseQ } from './isEmailInUse'
 
