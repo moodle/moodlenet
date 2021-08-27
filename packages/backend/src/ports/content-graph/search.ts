@@ -1,6 +1,7 @@
+import { GlobalSearchNodeType, GlobalSearchSort } from '@moodlenet/common/lib/content-graph/types/global-search'
 import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { Page, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
-import { GlobalSearchNodeType, GlobalSearchSortBy } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { SessionEnv } from '../../lib/auth/types'
 import { QMModule, QMQuery } from '../../lib/qmino'
 
@@ -8,20 +9,18 @@ export type Adapter = {
   searchNodes: <NodeType extends GlobalSearchNodeType>(_: GlobalSearchInput<NodeType>) => Promise<SearchPage>
 }
 
-export type GlobalSearchInput<NodeType extends GlobalSearchNodeType> = {
-  sortBy: GlobalSearchSortBy
+export type SearchPage = Page<GraphNode<GlobalSearchNodeType>>
+export type GlobalSearchInput<NodeType extends GlobalSearchNodeType = GlobalSearchNodeType> = {
+  sort: Maybe<GlobalSearchSort>
   text: string
-  nodeTypes: NodeType[]
+  nodeTypes: Maybe<NodeType[]>
   page: PaginationInput
   env: SessionEnv | null
 }
-
-export type SearchPage = Page<GraphNode<GlobalSearchNodeType>>
-
 export const byTerm = QMQuery(
-  <NodeType extends GlobalSearchNodeType>({ sortBy, text, nodeTypes, page, env }: GlobalSearchInput<NodeType>) =>
+  <NodeType extends GlobalSearchNodeType>({ sort, text, nodeTypes, page, env }: GlobalSearchInput<NodeType>) =>
     async ({ searchNodes }: Adapter) => {
-      return searchNodes({ sortBy, text, nodeTypes, page, env })
+      return searchNodes({ sort, text, nodeTypes, page, env })
     },
 )
 

@@ -6,22 +6,31 @@ export type SortCardProps = {
   className: string
   title: string
   content: [name: string, label: string, state: SortState][]
-  onChange(sortby: string): unknown
+  onChange(sortby: string, state: SortState): unknown
 }
 
 export const SortCard: FC<SortCardProps> = ({ className, content, title, onChange }) => {
-  const [currentSort, setCurrentSort] = useState(content[1] ? content[1][0] : 'none')
+  const [currentSort, setCurrentSort] = useState<{ name: string; state: SortState }>({
+    name: content[1] ? content[1][0] : 'none',
+    state: 'inactive',
+  })
 
   const onClick = useCallback(
-    (name: string) => {
-      onChange(name)
-      setCurrentSort(name)
+    (name: string, state: SortState) => {
+      onChange(name, state)
+      setCurrentSort({ name, state })
     },
     [onChange],
   )
 
   const inContent = content.map(([name, label, state]) => (
-    <SortButton key={name} label={label} state={state} active={currentSort === name ? true : false} clicked={onClick} />
+    <SortButton
+      key={name}
+      label={label}
+      state={state}
+      active={currentSort.name === name ? true : false}
+      clicked={onClick}
+    />
   ))
 
   return (

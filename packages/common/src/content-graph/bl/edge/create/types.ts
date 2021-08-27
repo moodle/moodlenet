@@ -1,6 +1,6 @@
 import { EdgeType } from '../../../../graphql/types.graphql.gen'
 import { BaseOperators, GraphOperators } from '../../../../lib/bl/common'
-import { AuthId } from '../../../../user-auth/types'
+import { AuthId } from '../../../types/common'
 import { GraphNodeIdentifier } from '../../../types/node'
 
 export type CreateEdgeBLOps = BaseOperators & GraphOperators

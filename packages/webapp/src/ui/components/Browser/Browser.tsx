@@ -7,6 +7,7 @@ import { CollectionCard, CollectionCardProps } from '../cards/CollectionCard/Col
 import FilterCard from '../cards/FilterCard/FilterCard'
 import ListCard from '../cards/ListCard/ListCard'
 import { ResourceCard, ResourceCardProps } from '../cards/ResourceCard/ResourceCard'
+import { SortState } from '../cards/SortCard/SortButton/SortButton'
 import SortCard from '../cards/SortCard/SortCard'
 import SubjectCard, { SubjectCardProps } from '../cards/SubjectCard/SubjectCard'
 import './styles.scss'
@@ -17,7 +18,7 @@ export type BrowserProps = {
   subjectCardPropsList: CP<SubjectCardProps>[] | null
   collectionCardPropsList: CP<CollectionCardProps>[] | null
   resourceCardPropsList: CP<ResourceCardProps>[] | null
-  setSortBy:  ( (sortType: SortType) => unknown ) | null
+  setSortBy: ((sortType: SortType, dir: SortState) => unknown) | null
 }
 export const Browser = withCtrl<BrowserProps>(
   ({ subjectCardPropsList, collectionCardPropsList, resourceCardPropsList, setSortBy }) => {
@@ -37,37 +38,44 @@ export const Browser = withCtrl<BrowserProps>(
       setFilter([ev.currentTarget.name as FilterType, ev.currentTarget.checked])
     }, [])
     return (
-        <div className="browser">
-          <div className="content">
-            <div className="side-column">
-              <FilterCard
-                className="filter"
-                title={t`Filters`}
-                content={[
-                  subjectCardPropsList && <Checkbox
+      <div className="browser">
+        <div className="content">
+          <div className="side-column">
+            <FilterCard
+              className="filter"
+              title={t`Filters`}
+              content={[
+                subjectCardPropsList && (
+                  <Checkbox
                     onChange={setFilterCB}
                     label={t`Categories`}
                     name="Subjects"
                     key="Subjects"
                     checked={filters.Subjects}
-                  />,
-                  collectionCardPropsList && <Checkbox
+                  />
+                ),
+                collectionCardPropsList && (
+                  <Checkbox
                     onChange={setFilterCB}
                     label={t`Collections`}
                     name="Collections"
                     key="Collections"
                     checked={filters.Collections}
-                  />,
-                  resourceCardPropsList && <Checkbox
+                  />
+                ),
+                resourceCardPropsList && (
+                  <Checkbox
                     onChange={setFilterCB}
                     label={t`Resources`}
                     name="Resources"
                     key="Resources"
                     checked={filters.Resources}
-                  />,
-                ]}
-              />
-              { setSortBy && <SortCard
+                  />
+                ),
+              ]}
+            />
+            {setSortBy && (
+              <SortCard
                 className="sort"
                 title={t`Sort`}
                 content={[
@@ -76,63 +84,64 @@ export const Browser = withCtrl<BrowserProps>(
                   ['Popularity', t`Popularity`, 'inactive'],
                 ]}
                 onChange={setSortBy}
-              />}
-            </div>
-            <div className="main-column">
-              {subjectCardPropsList && filters.Subjects && (
-                <ListCard
-                  content={subjectCardPropsList.slice(0, 8).map((subjectCardProps) => (
-                    <SubjectCard {...subjectCardProps} />
-                  ))}
-                  className="subjects"
-                  noCard={true}
-                >
-                  <div className="card-header">
-                    <div className="title">
-                      <Trans>Categories</Trans>
-                    </div>
-                    <SecondaryButton>
-                      <Trans>See all</Trans>
-                    </SecondaryButton>
+              />
+            )}
+          </div>
+          <div className="main-column">
+            {subjectCardPropsList && filters.Subjects && (
+              <ListCard
+                content={subjectCardPropsList.slice(0, 8).map(subjectCardProps => (
+                  <SubjectCard {...subjectCardProps} />
+                ))}
+                className="subjects"
+                noCard={true}
+              >
+                <div className="card-header">
+                  <div className="title">
+                    <Trans>Categories</Trans>
                   </div>
-                </ListCard>
-              )}
-              {collectionCardPropsList && filters.Collections && (
-                <ListCard
-                  content={collectionCardPropsList.slice(0, 6).map((collectionCardProps) => (
-                    <CollectionCard {...collectionCardProps} />
-                  ))}
-                  className="collections"
-                  noCard={true}
-                >
-                  <div className="card-header">
-                    <div className="title">
-                      <Trans>Collections</Trans>
-                    </div>
-                    <SecondaryButton>
-                      <Trans>See all</Trans>
-                    </SecondaryButton>
+                  <SecondaryButton>
+                    <Trans>See all</Trans>
+                  </SecondaryButton>
+                </div>
+              </ListCard>
+            )}
+            {collectionCardPropsList && filters.Collections && (
+              <ListCard
+                content={collectionCardPropsList.slice(0, 6).map(collectionCardProps => (
+                  <CollectionCard {...collectionCardProps} />
+                ))}
+                className="collections"
+                noCard={true}
+              >
+                <div className="card-header">
+                  <div className="title">
+                    <Trans>Collections</Trans>
                   </div>
-                </ListCard>
-              )}
-              {resourceCardPropsList && filters.Resources && (
-                <ListCard
-                  content={resourceCardPropsList.slice(0, 8).map((resourceCardProps) => (
-                    <ResourceCard {...resourceCardProps} />
-                  ))}
-                  className="resources"
-                  noCard={true}
-                >
-                  <div className="card-header">
-                    <div className="title">
-                      <Trans>Resources</Trans>
-                    </div>
+                  <SecondaryButton>
+                    <Trans>See all</Trans>
+                  </SecondaryButton>
+                </div>
+              </ListCard>
+            )}
+            {resourceCardPropsList && filters.Resources && (
+              <ListCard
+                content={resourceCardPropsList.slice(0, 8).map(resourceCardProps => (
+                  <ResourceCard {...resourceCardProps} />
+                ))}
+                className="resources"
+                noCard={true}
+              >
+                <div className="card-header">
+                  <div className="title">
+                    <Trans>Resources</Trans>
                   </div>
-                </ListCard>
-              )}
-            </div>
+                </div>
+              </ListCard>
+            )}
           </div>
         </div>
+      </div>
     )
   },
 )

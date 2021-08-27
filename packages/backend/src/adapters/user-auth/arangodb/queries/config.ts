@@ -1,5 +1,5 @@
-import { UserAuthConfig } from '@moodlenet/common/lib/user-auth/types'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
+import { UserAuthConfig } from '../../../../ports/user-auth/types'
 import { CONFIG } from '../types'
 
 export const getLatestConfigQ = () =>

@@ -1,5 +1,5 @@
-query globalSearch($text: String!, $sortBy: GlobalSearchSort!, $nodeTypes: [NodeType!], $page: PaginationInput) {
-  globalSearch(text: $text, sortBy: $sortBy, nodeTypes: $nodeTypes, page: $page) {
+query globalSearch($text: String!, $sort: GlobalSearchSort, $nodeTypes: [NodeType!], $page: PaginationInput) {
+  globalSearch(text: $text, sort: $sort, nodeTypes: $nodeTypes, page: $page) {
     edges {
       ...GlobalSearchEdge
     }

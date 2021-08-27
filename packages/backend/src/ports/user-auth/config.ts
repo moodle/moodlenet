@@ -1,5 +1,5 @@
-import { UserAuthConfig } from '@moodlenet/common/lib/user-auth/types'
 import { QMModule, QMQuery } from '../../lib/qmino'
+import { UserAuthConfig } from './types'
 
 export type Adapter = {
   getLatestConfig(): Promise<UserAuthConfig>
