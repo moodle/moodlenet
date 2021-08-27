@@ -355,6 +355,11 @@ export type Follows = IEdge & {
   _created: Scalars['Timestamp'];
 };
 
+export type GlobalSearchNodeType =
+  | 'Collection'
+  | 'Resource'
+  | 'IscedField';
+
 export type GlobalSearchSort = {
   by: GlobalSearchSortBy;
   asc?: Maybe<Scalars['Boolean']>;
@@ -691,7 +696,7 @@ export type Query = {
 
 export type QueryGlobalSearchArgs = {
   text: Scalars['String'];
-  nodeTypes?: Maybe<Array<NodeType>>;
+  nodeTypes?: Maybe<Array<GlobalSearchNodeType>>;
   sort?: Maybe<GlobalSearchSort>;
   page?: Maybe<PaginationInput>;
 };

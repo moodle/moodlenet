@@ -6,7 +6,7 @@ const defaultOptions =  {}
 export type GlobalSearchQueryVariables = Types.Exact<{
   text: Types.Scalars['String'];
   sort?: Types.Maybe<Types.GlobalSearchSort>;
-  nodeTypes?: Types.Maybe<Array<Types.NodeType> | Types.NodeType>;
+  nodeTypes?: Types.Maybe<Array<Types.GlobalSearchNodeType> | Types.GlobalSearchNodeType>;
   page?: Types.Maybe<Types.PaginationInput>;
 }>;
 
@@ -71,7 +71,7 @@ export const GlobalSearchEdgeFragmentDoc = gql`
 }
     `;
 export const GlobalSearchDocument = gql`
-    query globalSearch($text: String!, $sort: GlobalSearchSort, $nodeTypes: [NodeType!], $page: PaginationInput) {
+    query globalSearch($text: String!, $sort: GlobalSearchSort, $nodeTypes: [GlobalSearchNodeType!], $page: PaginationInput) {
   globalSearch(text: $text, sort: $sort, nodeTypes: $nodeTypes, page: $page) {
     edges {
       ...GlobalSearchEdge

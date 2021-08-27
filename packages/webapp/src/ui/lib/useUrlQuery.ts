@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useHistory, useLocation } from 'react-router'
+import { useHistory } from 'react-router'
 
-const getQueryString = <QPar extends QueryParams<string>>(qPar: QPar) => {
+const getQueryString = <QPar extends QueryParamsArray<string>>(qPar: QPar) => {
   const params = new URLSearchParams()
 
   Object.entries(qPar).forEach(([pname, pvals]) => {
@@ -12,40 +12,57 @@ const getQueryString = <QPar extends QueryParams<string>>(qPar: QPar) => {
   return qstring
 }
 
-type QueryParams<ParamNames extends string> = Record<ParamNames, string[]>
+type QueryParamsArray<ParamNames extends string> = Record<ParamNames, string[]>
+type QueryParams<ParamNames extends string> = Record<ParamNames, string>
 export const useUrlQuery = <ParamNames extends string>(
   paramNames: readonly ParamNames[],
   opts?: {
     baseUrl?: string
     delay?: number
+    sep?: string
   },
 ) => {
+  type QParamsArray = QueryParamsArray<ParamNames>
   type QParams = QueryParams<ParamNames>
   const paramNamesRef = useRef(paramNames)
   const firstIn = useRef(true)
   const neverSet = useRef(true)
-  const location = useLocation()
+  const history = useHistory()
+  const location = history.location
+
   const urlSearch = location.search
   const baseUrl = opts?.baseUrl || location.pathname
-  const history = useHistory()
 
-  const queryParams = useMemo(() => {
+  const [queryParamsArray, queryParams] = useMemo(() => {
     const urlSearchParams = new URLSearchParams(urlSearch)
-    return paramNamesRef.current.reduce((obj, paramName) => {
-      const paramValue = urlSearchParams.getAll(paramName)
-      return {
-        ...obj,
-        [paramName]: paramValue,
-      }
-    }, {} as QParams)
-  }, [urlSearch])
+    return paramNamesRef.current.reduce(
+      ([_qParamsArray, _qParams], paramName) => {
+        const paramValue = urlSearchParams.getAll(paramName)
+        return [
+          {
+            ..._qParamsArray,
+            [paramName]: paramValue,
+          },
+          {
+            ..._qParams,
+            [paramName]: paramValue.join(opts?.sep ?? ' '),
+          },
+        ]
+      },
+      [{}, {}] as [QParamsArray, QParams],
+    )
+  }, [opts?.sep, urlSearch])
 
-  const [queryString, setQueryString] = useState(getQueryString(queryParams))
+  const [queryString, setQueryString] = useState(getQueryString(queryParamsArray))
 
-  const setQueryParams = useCallback((newQueryParams: QParams) => {
-    const qstring = getQueryString(newQueryParams)
-    setQueryString(qstring)
-  }, [])
+  const setQueryParams = useCallback(
+    (newQueryParams: Partial<QParamsArray>) => {
+      // console.log({ queryParamsArray, newQueryParams })
+      const qstring = getQueryString({ ...queryParamsArray, ...newQueryParams })
+      setQueryString(qstring)
+    },
+    [queryParamsArray],
+  )
 
   useEffect(() => {
     if (firstIn.current) {
@@ -55,7 +72,10 @@ export const useUrlQuery = <ParamNames extends string>(
     const to = setTimeout(() => {
       const action = opts?.baseUrl === location.pathname ? 'replace' : 'push'
       neverSet.current = false
-      history[action](`${baseUrl}?${queryString}`)
+      history[action]({
+        pathname: '',
+        search: `?${queryString}`,
+      })
     }, opts?.delay || 300)
     return () => clearTimeout(to)
   }, [history, baseUrl, queryString, opts?.delay, opts?.baseUrl, location.pathname])
@@ -70,6 +90,7 @@ export const useUrlQuery = <ParamNames extends string>(
 
   return {
     queryParams,
+    queryParamsArray,
     setQueryParams,
   }
 }
