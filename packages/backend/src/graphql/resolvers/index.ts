@@ -75,6 +75,8 @@ export const getGQLResolvers = ({
           sort,
           text,
         }
+        // console.log({ nodeTypes, page, sort, text, _: '**' })
+
         const { items, pageInfo } = await qmino.query(searchPorts.byTerm(searchInput), { timeout: 5000 })
 
         return {
