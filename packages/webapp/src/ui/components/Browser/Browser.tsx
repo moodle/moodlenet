@@ -29,9 +29,9 @@ export const Browser = withCtrl<BrowserProps>(
         [type]: checked,
       }),
       {
-        Subjects: true,
-        Collections: true,
-        Resources: true,
+        Subjects: subjectCardPropsList !== null,
+        Collections: !collectionCardPropsList !== null,
+        Resources: !resourceCardPropsList !== null,
       },
     )
 
@@ -47,7 +47,7 @@ export const Browser = withCtrl<BrowserProps>(
         if (filterType !== type && filters[filterType]) {
           shouldShowSeeAll = true
         }
-      })
+      }, [])
       return shouldShowSeeAll
     }
 
@@ -92,19 +92,20 @@ export const Browser = withCtrl<BrowserProps>(
       />
     )
 
-    const sortCard = (direction: SortCardDirection) => setSortBy && (
-      <SortCard
-        className="sort"
-        title={t`Sort`}
-        direction={direction}
-        content={[
-          ['Relevance', t`Relevance`, 'inactive'],
-          ['Recent', t`Recent`, 'more'],
-          ['Popularity', t`Popularity`, 'inactive'],
-        ]}
-        onChange={setSortBy}
-      />
-    )
+    const sortCard = (direction: SortCardDirection) =>
+      setSortBy && (
+        <SortCard
+          className="sort"
+          title={t`Sort`}
+          direction={direction}
+          content={[
+            ['Relevance', t`Relevance`, 'inactive'],
+            ['Recent', t`Recent`, 'more'],
+            ['Popularity', t`Popularity`, 'inactive'],
+          ]}
+          onChange={setSortBy}
+        />
+      )
 
     return (
       <div className="browser">
