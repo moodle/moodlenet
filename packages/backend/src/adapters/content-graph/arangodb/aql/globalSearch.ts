@@ -50,11 +50,11 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
           OR
           BOOST( node.name IN TOKENS(searchTerm), 3 )
           OR
-          BOOST( node.summary IN TOKENS(searchTerm), 1 )
+          BOOST( node.description IN TOKENS(searchTerm), 1 )
           OR
           BOOST(  NGRAM_MATCH(node.name, searchTerm, 0.05, "global-text-search"), 0.2 )
           OR
-          BOOST( NGRAM_MATCH(node.summary, searchTerm, 0.05, "global-text-search"), 0.1 )
+          BOOST( NGRAM_MATCH(node.description, searchTerm, 0.05, "global-text-search"), 0.1 )
         , "text_en")
       
         FILTER ${filterConditions || 'true'}

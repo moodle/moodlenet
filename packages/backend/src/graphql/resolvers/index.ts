@@ -195,7 +195,6 @@ export const getGQLResolvers = ({
         if ('__typename' in data) {
           return data
         }
-        // const data = { name, summary, ...assetRefMap }
         const graphNodeOrError = await qmino.callSync(
           nodePorts.createNode({
             nodeData: {
@@ -235,7 +234,6 @@ export const getGQLResolvers = ({
         if ('__typename' in data) {
           return data
         }
-        // const data = { name, summary, ...assetRefMap }
         const graphNodeOrError = await qmino.callSync(
           nodePorts.editNode({
             nodeData: {
@@ -274,7 +272,6 @@ export const getGQLResolvers = ({
         if ('__typename' in data) {
           return data
         }
-        // const data = { name, summary, ...assetRefMap }
         const graphEdgeOrError = await qmino.callSync(
           edgePorts.createEdge({
             newEdge: {
