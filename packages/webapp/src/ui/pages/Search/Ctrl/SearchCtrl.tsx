@@ -1,6 +1,5 @@
 import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
-import { GlobalSearchSort } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useGlobalSearchQuery } from '../../../../context/Global/GlobalSearch/globalSearch.gen'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
@@ -11,8 +10,9 @@ import { SearchProps } from '../Search'
 import { useSearchUrlQuery } from './useSearchUrlQuery'
 
 export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
-  const { /* setText, */ text } = useSearchUrlQuery()
-  const [sort, setSort] = useState<GlobalSearchSort>({ by: 'Popularity' })
+  const { text, sort, setSort } = useSearchUrlQuery()
+  // const [sort, setSort] = useState<GlobalSearchSort>({ by: 'Popularity' })
+
   const collectionsQ = useGlobalSearchQuery({
     variables: {
       sort,
@@ -67,10 +67,8 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
         ctrlHook(useIscedfCardCtrl, { id: subject.id }, `Search Subject ${subject.id} Card`),
       ),
       setSortBy: (by, dir) => {
-        setSort({
-          by,
-          asc: dir === 'less' ? true : false,
-        })
+        // console.log({ by, dir })
+        setSort({ by, asc: dir === 'less' })
       },
     },
   }
