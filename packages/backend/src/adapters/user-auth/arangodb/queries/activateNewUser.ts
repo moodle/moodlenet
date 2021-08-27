@@ -1,5 +1,6 @@
-import { ActiveUser, AuthId, Status, WaitingFirstActivationUser } from '@moodlenet/common/lib/user-auth/types'
+import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
+import { ActiveUser, Status, WaitingFirstActivationUser } from '../../../../ports/user-auth/types'
 import { USER } from '../types'
 
 export const activateNewUserQ = ({ token, password, authId }: { authId: AuthId; token: string; password: string }) => {

@@ -9,21 +9,16 @@ export type SortButtonProps = {
   label: string
   state?: SortState
   active?: boolean
-  clicked: (label: string) => void
+  clicked: (label: string, state: SortState) => void
 }
 
 export const SortButton: FC<SortButtonProps> = ({ label, state, clicked, active }) => {
   const [inState, setInState] = useState(state)
 
   const onClick = useCallback(() => {
-    if (inState === 'inactive') {
-      setInState('more')
-    } else if (inState === 'more') {
-      setInState('less')
-    } else {
-      setInState('inactive')
-    }
-    clicked(label)
+    const nextState = inState === 'inactive' ? 'more' : inState === 'more' ? 'less' : 'inactive'
+    setInState(nextState)
+    clicked(label, nextState)
   }, [clicked, inState, label])
 
   return (

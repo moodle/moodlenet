@@ -1,6 +1,4 @@
-import { ActiveUser } from '../../user-auth/types'
 import { newAuthId } from '../../utils/content-graph/slug-id'
-import { DistOmit } from '../../utils/types'
 import { Organization, Profile } from '../types/node'
 
 export const localOrganizationData: Omit<Organization, 'domain'> = {
@@ -31,9 +29,4 @@ export const rootUserProfile: Profile = {
   lastName: null,
   location: null,
   siteUrl: null,
-}
-
-export const rootUserActive: DistOmit<ActiveUser, 'email' | 'password' | 'id' | 'createdAt' | 'updatedAt'> = {
-  status: 'Active',
-  authId: rootAuthId,
 }

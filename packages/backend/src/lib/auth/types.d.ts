@@ -1,4 +1,5 @@
-import { AuthId, Email } from '@moodlenet/common/lib/user-auth/types'
+import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
+import { Email } from '../../ports/user-auth/types'
 
 export type PasswordVerifier = (_: { plainPwd: string; pwdHash: string }) => Promise<boolean>
 export type PasswordHasher = (pwd: string) => Promise<string>

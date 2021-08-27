@@ -1,5 +1,4 @@
-import { GlobalSearchSort } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { isGlobalSearchSort } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { GlobalSearchSort, isGlobalSearchSortBy } from '@moodlenet/common/lib/content-graph/types/global-search'
 import { createContext, FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useHistory, useLocation } from 'react-router'
 import { mainPath } from '../../hooks/glob/nav'
@@ -16,8 +15,8 @@ export const useUrlQuery = () => {
 type GlobalSearchCtx = {
   searchText: string
   setSearchText(searchText: string): void
-  setSortBy(sortBy: GlobalSearchSort): void
-  sortBy: GlobalSearchSort
+  setSort(sort: GlobalSearchSort): void
+  sort: GlobalSearchSort
   typeFilters: NodeTypeFilter[]
   setTypeFilter(nodeTypeFilters: NodeTypeFilter[]): void
   edges: GlobalSearchEdgeFragment[]
@@ -35,18 +34,20 @@ export const GlobalSearchProvider: FC = ({ children }) => {
 
   const initialParams = useMemo(() => {
     const q = urlQuery.get('q') ?? ''
-    const sort = urlQuery.get('sort') ?? ''
+    const sortBy = urlQuery.get('sort-by') ?? ''
+    const asc = urlQuery.get('sort-asc') ?? ''
     const filter = (urlQuery.get('filter') ?? '').split(',').filter(isNodeTypeFilter)
 
     return {
       q,
       filter,
-      sort: isGlobalSearchSort(sort) ? sort : 'Relevance',
+      sortby: isGlobalSearchSortBy(sortBy) ? sortBy : 'Relevance',
+      asc: asc ? true : false,
     }
   }, [urlQuery])
 
   const [searchText, setSearchText] = useState(initialParams.q)
-  const [sortBy, setSortBy] = useState<GlobalSearchSort>(initialParams.sort)
+  const [sort, setSort] = useState<GlobalSearchSort>({ by: initialParams.sortby, asc: initialParams.asc })
   const [typeFilters, setTypeFilter] = useState<NodeTypeFilter[]>(initialParams.filter)
 
   useEffect(() => {
@@ -58,26 +59,27 @@ export const GlobalSearchProvider: FC = ({ children }) => {
       let params = new URLSearchParams()
 
       params.append('q', searchText)
-      params.append('sort', sortBy)
+      params.append('sort-by', sort.by)
+      sort.asc && params.append('sort-asc', '')
       params.append('filter', typeFilters.join(','))
 
       history[firstIn.current ? 'push' : 'replace'](`${mainPath.search}?${params.toString()}`)
       firstIn.current = false
-      query({ variables: { text: searchText, sortBy, nodeTypes: typeFilters } })
+      query({ variables: { text: searchText, sort, nodeTypes: typeFilters } })
     }, 500)
     return () => clearTimeout(toId)
-  }, [typeFilters, query, searchText, sortBy, history])
+  }, [typeFilters, query, searchText, sort, history])
   const globSearch = useMemo<GlobalSearchCtx>(
     () => ({
       edges: res.data?.globalSearch.edges ?? [],
       searchText,
       setSearchText,
-      setSortBy,
-      sortBy,
+      setSort,
+      sort,
       typeFilters,
       setTypeFilter,
     }),
-    [searchText, res, sortBy, typeFilters],
+    [searchText, res, sort, typeFilters],
   )
 
   return <GlobalSearchContext.Provider value={globSearch}>{children}</GlobalSearchContext.Provider>
