@@ -9,7 +9,7 @@ export const globalSearch = (db: ContentGraphDB): Adapter => ({
   searchNodes: async ({ nodeTypes, page, sort, text }) => {
     type _NodeType = typeof nodeTypes
     type NodeType = _NodeType extends GlobalSearchNodeType[] ? _NodeType[number] : GlobalSearchNodeType
-    console.log({ nodeTypes, page, sort, text })
+    // console.log({ nodeTypes, page, sort, text })
     const { query, skip } = globalSearchQuery<NodeType>({ nodeTypes, page, sort, text })
     const aqlGraphNodes = await getAllResults(query, db)
     const docs = aqlGraphNodes.map(_ => aqlGraphNode2GraphNode<NodeType>(_))

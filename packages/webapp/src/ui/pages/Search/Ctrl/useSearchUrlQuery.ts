@@ -1,4 +1,4 @@
-import { isGlobalSearchNodeType } from '@moodlenet/common/lib/content-graph/types/global-search'
+import { isGlobalSearchSortBy } from '@moodlenet/common/lib/content-graph/types/global-search'
 import { GlobalSearchSort, Maybe } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { useCallback, useMemo } from 'react'
 import { mainPath } from '../../../../hooks/glob/nav'
@@ -10,7 +10,7 @@ export const useSearchUrlQuery = () => {
     baseUrl: mainPath.search,
   })
   const sort = useMemo<Maybe<GlobalSearchSort>>(() => {
-    if (!isGlobalSearchNodeType(queryParams.sortBy)) {
+    if (!isGlobalSearchSortBy(queryParams.sortBy)) {
       return null
     }
     return {

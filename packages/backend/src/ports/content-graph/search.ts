@@ -20,6 +20,7 @@ export type GlobalSearchInput<NodeType extends GlobalSearchNodeType = GlobalSear
 export const byTerm = QMQuery(
   <NodeType extends GlobalSearchNodeType>({ sort, text, nodeTypes, page, env }: GlobalSearchInput<NodeType>) =>
     async ({ searchNodes }: Adapter) => {
+      // console.log({ nodeTypes, page, sort, text })
       return searchNodes({ sort, text, nodeTypes, page, env })
     },
 )
