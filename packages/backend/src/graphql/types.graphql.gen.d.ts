@@ -135,6 +135,7 @@ export type ResolversTypes = {
   FileFormat: ResolverTypeWrapper<Types.FileFormat>;
   FileFormatType: Types.FileFormatType;
   Follows: ResolverTypeWrapper<Types.Follows>;
+  GlobalSearchNodeType: Types.GlobalSearchNodeType;
   GlobalSearchSort: Types.GlobalSearchSort;
   GlobalSearchSortBy: Types.GlobalSearchSortBy;
   IEdge: ResolversTypes['Bookmarked'] | ResolversTypes['Created'] | ResolversTypes['Features'] | ResolversTypes['Follows'] | ResolversTypes['Likes'] | ResolversTypes['Pinned'];
