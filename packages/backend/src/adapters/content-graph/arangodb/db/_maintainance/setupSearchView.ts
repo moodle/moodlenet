@@ -10,7 +10,7 @@ export const setupSearchView = async ({ db }: { db: Database }) => {
   if (!(await searchView.exists())) {
     const contentAnalyzer: ArangoSearchViewLink = {
       analyzers: ['text_en', 'global-text-search'],
-      fields: { summary: {}, name: {} },
+      fields: { description: {}, name: {} },
       includeAllFields: false,
       storeValues: 'none',
       trackListPositions: false,
