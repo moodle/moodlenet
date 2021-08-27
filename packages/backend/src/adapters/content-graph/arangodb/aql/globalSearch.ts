@@ -14,9 +14,15 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
   const { limit, skip } = forwardSkipLimitPagination({ page })
   const aql_txt = aqlstr(text)
 
-  const nodeTypeConditions = (nodeTypes ?? []).map(nodeType => `node._type == ${aqlstr(nodeType)}`).join(' OR ')
+  const nodeTypeConditions = nodeTypes?.length
+    ? nodeTypes.map(nodeType => `node._type == ${aqlstr(nodeType)}`).join(' || ')
+    : null
 
-  const filterConditions = [nodeTypeConditions].filter(Boolean).join(' && ')
+  const filterConditions =
+    [nodeTypeConditions]
+      .filter(Boolean)
+      .map(_ => `(${_})`)
+      .join(' && ') || 'true'
 
   const sortDir = sort?.asc ? 'asc' : 'desc'
   const sortFactor =
@@ -57,8 +63,7 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
           BOOST( NGRAM_MATCH(node.description, searchTerm, 0.05, "global-text-search"), 0.1 )
         , "text_en")
       
-        FILTER ${filterConditions || 'true'}
-        //FILTER !$ {isMarkDeleted('node')} AND ${filterConditions || 'true'}
+        FILTER ${filterConditions} //&& !$ {isMarkDeleted('node')} 
       
       let sortFactor = ${sortFactor}
       let rank = ( (0.1 + TFIDF(node)) * sortFactor )
@@ -69,7 +74,7 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
       
       RETURN node
     `)
-  console.log('**', query)
+  // console.log('**', inspect({ query, nodeTypeConditions, nodeTypes, filterConditions, sortDir, sortFactor }))
   return { limit, skip, query }
 }
 
