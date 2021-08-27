@@ -73,7 +73,7 @@ export const useUrlQuery = <ParamNames extends string>(
       const action = opts?.baseUrl === location.pathname ? 'replace' : 'push'
       neverSet.current = false
       history[action]({
-        pathname: '',
+        pathname: opts?.baseUrl,
         search: `?${queryString}`,
       })
     }, opts?.delay || 300)
