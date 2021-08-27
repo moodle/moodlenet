@@ -1,6 +1,6 @@
-import { WaitingFirstActivationUser } from '@moodlenet/common/lib/user-auth/types'
 import { getOneResult } from '../../../../lib/helpers/arango/query'
 import { NewUserConfirmAdapter, SignUpAdapter } from '../../../../ports/user-auth/new-user'
+import { WaitingFirstActivationUser } from '../../../../ports/user-auth/types'
 import { activateNewUserQ } from '../queries/activateNewUser'
 import { createNewUserQ, CreateNewUserQArg } from '../queries/createNewUser'
 import { UserAuthDB } from '../types'

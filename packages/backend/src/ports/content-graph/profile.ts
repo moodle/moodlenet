@@ -1,5 +1,5 @@
+import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
 import { Profile } from '@moodlenet/common/lib/content-graph/types/node'
-import { AuthId } from '@moodlenet/common/lib/user-auth/types'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { QMModule, QMQuery } from '../../lib/qmino'
 

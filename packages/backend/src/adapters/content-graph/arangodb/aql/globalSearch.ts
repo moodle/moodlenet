@@ -1,22 +1,16 @@
-import { GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
-import { PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
-import { GlobalSearchNodeType, GlobalSearchSortBy } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { GlobalSearchNodeType } from '@moodlenet/common/lib/content-graph/types/global-search'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
+import { GlobalSearchInput } from '../../../../ports/content-graph/search'
 import { AqlGraphNodeByType } from '../types'
 import { forwardSkipLimitPagination, getOneAQFrag } from './helpers'
 import { nodeRelationCountQ } from './queries/traverseEdges'
 
-export const globalSearchQuery = ({
+export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSearchNodeType>({
   page,
   text,
   nodeTypes,
-  sortBy,
-}: {
-  text: string
-  page: PaginationInput
-  nodeTypes: GraphNodeType[]
-  sortBy: GlobalSearchSortBy
-}) => {
+  sort,
+}: Omit<GlobalSearchInput<NType>, 'env'>) => {
   const { limit, skip } = forwardSkipLimitPagination({ page })
   const aql_txt = aqlstr(text)
 
@@ -24,8 +18,9 @@ export const globalSearchQuery = ({
 
   const filterConditions = [nodeTypeConditions].filter(Boolean).join(' && ')
 
+  const sortDir = sort?.asc ? 'asc' : 'desc'
   const sortFactor =
-    sortBy === 'Popularity'
+    sort?.by === 'Popularity'
       ? `(1 + 
         ( ${getOneAQFrag(
           nodeRelationCountQ({
@@ -42,9 +37,9 @@ export const globalSearchQuery = ({
         )
         `
       : '1'
-  // : `(1 + (node._relCount.Likes.from.Profile || 0) + (node._relCount.Follows.from.Profile || 0))`
+  const isSortRecent = sort?.by === 'Recent'
 
-  const query = aq<AqlGraphNodeByType<GlobalSearchNodeType>>(`
+  const query = aq<AqlGraphNodeByType<NType>>(`
     let searchTerm = ${aql_txt}
       FOR node IN SearchView
         SEARCH ANALYZER(
@@ -66,14 +61,15 @@ export const globalSearchQuery = ({
         //FILTER !$ {isMarkDeleted('node')} AND ${filterConditions || 'true'}
       
       let sortFactor = ${sortFactor}
+      let rank = ( (0.1 + TFIDF(node)) * sortFactor )
 
-      SORT ( (0.1 + TFIDF(node)) * sortFactor ) desc, node._key desc
+      SORT rank ${isSortRecent ? 'desc' : sortDir}, node._rev ${isSortRecent ? sortDir : 'desc'}
       
       LIMIT ${skip}, ${limit}
       
       RETURN node
     `)
-  // console.log(query)
+  console.log('**', query)
   return { limit, skip, query }
 }
 

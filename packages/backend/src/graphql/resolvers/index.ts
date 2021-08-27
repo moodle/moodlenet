@@ -1,14 +1,12 @@
+import { globalSearchNodeTypes, isGlobalSearchNodeType } from '@moodlenet/common/lib/content-graph/types/global-search'
 import { validateCreateEdgeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/createEdge'
 import { validateCreateNodeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/createNode'
 import { validateEditNodeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/editNode'
 import * as GQLTypes from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import {
-  GlobalSearchNodeType,
-  globalSearchNodeType,
   gqlEdgeId2GraphEdgeIdentifier,
   gqlNodeId2GraphNodeIdentifier,
   gqlNodeId2GraphNodeIdentifierOfType,
-  isGlobalSearchNodeType,
 } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { SignOptions } from 'jsonwebtoken'
 import { JwtPrivateKey, signJwtActiveUser } from '../../lib/auth/jwt'
@@ -64,18 +62,17 @@ export const getGQLResolvers = ({
         return maybeNode ? graphNode2GqlNode(maybeNode) : null
       },
 
-      async globalSearch(_root, { sortBy, text, nodeTypes: _nodeTypes, page }, ctx) {
-        const nodeTypes = (_nodeTypes || globalSearchNodeType).filter(isGlobalSearchNodeType)
-        const searchInput: searchPorts.GlobalSearchInput<GlobalSearchNodeType> = {
+      async globalSearch(_root, { sort, text, nodeTypes, page }, ctx) {
+        const searchInput: searchPorts.GlobalSearchInput = {
           env: ctx.authSessionEnv,
-          nodeTypes,
+          nodeTypes: (nodeTypes ?? globalSearchNodeTypes).filter(isGlobalSearchNodeType),
           page: {
             after: page?.after,
             before: page?.before,
             first: page?.first ?? 20,
             last: page?.last ?? 20,
           },
-          sortBy,
+          sort,
           text,
         }
         const { items, pageInfo } = await qmino.query(searchPorts.byTerm(searchInput), { timeout: 5000 })

@@ -12,10 +12,10 @@ import { useSearchUrlQuery } from './useSearchUrlQuery'
 
 export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
   const { /* setText, */ text } = useSearchUrlQuery()
-  const [sortBy, setSortBy] = useState<GlobalSearchSort>('Popularity')
+  const [sort, setSort] = useState<GlobalSearchSort>({ by: 'Popularity' })
   const collectionsQ = useGlobalSearchQuery({
     variables: {
-      sortBy,
+      sort,
       nodeTypes: ['Collection'],
       text,
     },
@@ -23,7 +23,7 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
 
   const resourcesQ = useGlobalSearchQuery({
     variables: {
-      sortBy,
+      sort,
       nodeTypes: ['Resource'],
       text,
     },
@@ -31,7 +31,7 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
 
   const subjectsQ = useGlobalSearchQuery({
     variables: {
-      sortBy,
+      sort,
       nodeTypes: ['IscedField'],
       text,
     },
@@ -66,7 +66,12 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
       subjectCardPropsList: subjects.map(subject =>
         ctrlHook(useIscedfCardCtrl, { id: subject.id }, `Search Subject ${subject.id} Card`),
       ),
-      setSortBy,
+      setSortBy: (by, dir) => {
+        setSort({
+          by,
+          asc: dir === 'less' ? true : false,
+        })
+      },
     },
   }
 

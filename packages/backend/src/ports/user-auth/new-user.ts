@@ -1,9 +1,10 @@
-import { ActiveUser, AuthId, UserAuthConfig, WaitingFirstActivationUser } from '@moodlenet/common/lib/user-auth/types'
+import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
 import { newAuthId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { fillEmailTemplate } from '../../lib/emailSender/helpers'
 import { EmailAddr, EmailObj } from '../../lib/emailSender/types'
 import { QMCommand, QMModule } from '../../lib/qmino'
+import { ActiveUser, UserAuthConfig, WaitingFirstActivationUser } from './types'
 
 export type SignupIssue = 'email not available'
 export type SignUpAdapter = {
