@@ -5,22 +5,26 @@ import { Href, Link } from '../../../elements/link'
 import { tagList } from '../../../elements/tags'
 import { withCtrl } from '../../../lib/ctrl'
 import '../../../styles/tags.css'
-import { FollowTag } from '../../../types'
 import Card from '../../atoms/Card/Card'
 import DeleteButton from '../../atoms/DeleteButton/DeleteButton'
 import './styles.scss'
 
 export type ResourceCardProps = {
-  tags: FollowTag[]
+  tags?: Array<string>
+  className?: string
+  direction?: 'vertical' | 'horizontal'
   image: string
   type: string //'Video' | 'Web Page' | 'Moodle Book'
   title: string
-  resourceHomeHref: Href
+  resourceHomeHref?: Href
   isEditing?: boolean
   isAuthenticated?: boolean
+  isSelected?: boolean
+  selectionMode?: boolean
   liked: boolean
   numLikes: number
   bookmarked: boolean
+  onClick?(arg0: unknown): unknown
   onRemoveClick?(arg0: unknown): unknown
   toggleLike?: () => unknown
   toggleBookmark?: () => unknown
@@ -28,21 +32,41 @@ export type ResourceCardProps = {
 
 export const ResourceCard = withCtrl<ResourceCardProps>(
   ({
+    direction,
+    isSelected,
     tags,
     image,
     type,
     title,
     resourceHomeHref,
     isEditing,
+    selectionMode,
     isAuthenticated,
     liked,
     numLikes,
     bookmarked,
+    onClick,
     onRemoveClick,
     toggleLike,
     toggleBookmark,
   }) => {
-    let color = ''
+    const content = (color: string) => (
+      <div className="content">
+        <img className="image" src={image} alt="Background" />
+        <div className="resource-card-header">
+          <div className="type-and-actions">
+            <div className="type" style={{ color: color }}>
+              {type}
+            </div>
+          </div>
+          <div className="title">
+            <abbr title={title}>{title}</abbr>
+          </div>
+        </div>
+      </div>
+    )
+
+    let color: string = ''
     switch (type) {
       case 'Video':
         color = '#2c7bcb'
@@ -55,34 +79,28 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     }
 
     return (
-      <Card className="resource-card">
-        <div className="actions">
-          {isAuthenticated && (
-          <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
-            {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-          </div>
+      <Card className={`resource-card ${isSelected ? 'selected' : ''} ${direction}`} onClick={onClick}>
+        <div className={`actions  ${selectionMode || !isAuthenticated ? 'disabled' : ''}`}>
+          {isAuthenticated && !selectionMode && (
+             <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
+              {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+            </div>
           )}
-          <div className={`like ${liked && 'liked'}`} onClick={isAuthenticated ? toggleLike : () => {}}>
-            {(liked) ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          <div className={`like ${liked && 'liked'}`} onClick={isAuthenticated && !selectionMode ? toggleLike : () => {}}>
+            {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
             <span>{numLikes}</span>
           </div>
         </div>
-        <Link href={resourceHomeHref}>
-        <img className="image" src={image} alt="Background" />
-        <div className="resource-card-header">
-          <div className="type-and-actions">
-            <div className="type" style={{ color: color }}>
-              {type}
-            </div>
-          </div>
-          <div className="title">
-              <abbr title={title}>{title}</abbr>
-          </div>
-        </div>
-        </Link>
-        {isEditing && <DeleteButton className="remove" type="trash" onHoverColor='red' onClick={onRemoveClick} />}
-        <div className="tags scroll">{tagList(tags)}</div>
+        {resourceHomeHref ? <Link href={resourceHomeHref}>{content(color)}</Link> : <div className="content-container">{content(color)}</div>}
+        {isEditing && <DeleteButton className="remove" type="trash" onClick={onRemoveClick} />}
+        <div className={`tags scroll ${selectionMode ? 'disabled' : ''}`}>{tagList(tags)}</div>
       </Card>
     )
   },
 )
+
+ResourceCard.defaultProps = {
+  direction: 'horizontal'
+}
+
+export default ResourceCard

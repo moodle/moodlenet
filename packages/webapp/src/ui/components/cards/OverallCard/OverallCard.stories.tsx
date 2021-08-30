@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { OverallCard, OverallCardProps } from './OverallCard'
 
 const meta: ComponentMeta<typeof OverallCard> = {
-  title: 'Components/Cards/OverallCard',
+  title: 'Components/Organisms/Cards/OverallCard',
   component: OverallCard,
   argTypes: {
     // backgroundColor: { control: 'color' },
