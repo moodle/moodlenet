@@ -48,6 +48,7 @@ export const Browser = withCtrl<BrowserProps>(
           shouldShowSeeAll = true
         }
       }, [])
+      // TODO If shouldShowSeeAll === false we should activate infinite scroll
       return shouldShowSeeAll
     }
 

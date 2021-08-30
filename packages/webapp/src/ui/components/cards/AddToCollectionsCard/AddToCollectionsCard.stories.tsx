@@ -3,12 +3,12 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { AddToCollectionsCard, AddToCollectionsCardProps } from './AddToCollectionsCard'
 
 const meta: ComponentMeta<typeof AddToCollectionsCard> = {
-  title: 'Components/Cards/Add To Collections',
+  title: 'Components/Organisms/Cards/AddToCollectionsCard',
   component: AddToCollectionsCard,
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['AddToCollectionsCardStoryProps', 'Default'],
+  excludeStories: ['AddToCollectionsCardStoryProps'],
   decorators: [
     Story => (
       <div style={{ maxWidth: 1100 }}>

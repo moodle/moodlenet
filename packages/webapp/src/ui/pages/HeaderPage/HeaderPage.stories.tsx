@@ -4,7 +4,7 @@ import { SubHeaderStoryProps } from '../../components/SubHeader/SubHeader.storie
 import HeaderPage, { HeaderPageProps } from './HeaderPage'
 
 const meta: ComponentMeta<typeof HeaderPage> = {
-  title: 'Components/Headers/HeaderPage',
+  title: 'Components/Organisms/Headers/HeaderPage',
   component: HeaderPage,
   argTypes: {
     // backgroundColor: { control: 'color' },
