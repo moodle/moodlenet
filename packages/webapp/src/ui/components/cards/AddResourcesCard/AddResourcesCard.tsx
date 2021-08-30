@@ -34,19 +34,15 @@ export const AddResourcesCard: FC<AddResourcesCardProps> = ({
   })
 
   return (
-    <div className="add-resources-card">
-      <div className="content">
-        <Card noCard={noCard}>
+    <Card noCard={noCard} className="add-resources-card">
           {header && (
             <div className="resources-header">
               <Trans>Select Resources</Trans>
               {/*<Searchbox setSearchText={setSearchText} searchText="" placeholder={t`Find more resources`} />*/}
             </div>
           )}
-          <div className="resources">{resourceList}</div>
-        </Card>
-      </div>
-    </div>
+          <div className="resources scroll">{resourceList}</div>
+    </Card>
   )
 }
 
