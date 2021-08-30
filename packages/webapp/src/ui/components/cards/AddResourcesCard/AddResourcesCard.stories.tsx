@@ -11,9 +11,10 @@ const meta: ComponentMeta<typeof AddResourcesCard> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: ['AddResourcesCardStoryProps'],
+  parameters: { layout: 'fullscreen'},
   decorators: [
     Story => (
-      <div style={{ maxWidth: 1100 }}>
+      <div style={{ maxWidth: 800, width: '100%', padding: 20}}>
         <Story />
       </div>
     ),
