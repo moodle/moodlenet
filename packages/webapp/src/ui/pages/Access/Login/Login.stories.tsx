@@ -7,7 +7,8 @@ import { Login, LoginFormValues, LoginProps } from './Login'
 const meta: ComponentMeta<typeof Login> = {
   title: 'Pages/Login',
   component: Login,
-  excludeStories: ['LoginStoryProps'],
+  excludeStories: ['LoginStoryProps', 'LoginErrorStoryProps'],
+  parameters: { layout: 'fullscreen' }
 }
 
 const LoginStory: ComponentStory<typeof Login> = args => <Login {...args} />
@@ -17,11 +18,19 @@ export const LoginStoryProps: LoginProps = {
   formBag: SBFormikBag<LoginFormValues>({ email: '', password: '' }),
   loginErrorMessage: null,
   landingHref: href('Pages/Landing/Logged In'),
-  signupHref: href('Pages/SignUp/Sign Up Page'),
+  signupHref: href('Pages/SignUp/Sign Up'),
 }
 
-export const LoginPage = LoginStory.bind({})
-LoginPage.args = LoginStoryProps
-LoginPage.parameters = { layout: 'fullscreen' }
+export const LoginErrorStoryProps: LoginProps = {
+  ...LoginStoryProps,
+  loginErrorMessage: 'A friendly error'
+}
+
+export const Default = LoginStory.bind({})
+Default.args = LoginStoryProps
+
+export const Error = LoginStory.bind({})
+Error.args = LoginErrorStoryProps
+
 
 export default meta

@@ -9,12 +9,14 @@ import './styles.scss'
 export type AccessHeaderProps = {
   organization: Pick<Organization, 'logo' | 'name' | 'url'>
   homeHref: Href
+  signupHref: Href
+  loginHref: Href
   page: 'login' | 'signup' | 'activation'
   termsAndConditionsHref: Href
 }
 
 export const AccessHeader = withCtrl<AccessHeaderProps, 'page'>(
-  ({ organization, homeHref, page, termsAndConditionsHref }) => {
+  ({ organization, homeHref, signupHref, loginHref, page, termsAndConditionsHref }) => {
     return (
       <div className="access-header">
         <div className="content">
@@ -22,9 +24,13 @@ export const AccessHeader = withCtrl<AccessHeaderProps, 'page'>(
           {page !== 'activation' ? (
             <div className="buttons">
               {page === 'login' ? (
-                <SecondaryButton color="orange">Sign up</SecondaryButton>
+                <Link href={signupHref}> {/* TODO Implement on Controller */}
+                  <SecondaryButton color="orange">Sign up</SecondaryButton>
+                </Link>
               ) : (
-                <SecondaryButton color="orange">Login</SecondaryButton>
+                <Link href={loginHref}> {/* TODO Implement on Controller */}
+                  <SecondaryButton color="orange">Login</SecondaryButton>
+                </Link>
               )}
               <PrimaryButton>
                 <Link href={termsAndConditionsHref} target="__blank">

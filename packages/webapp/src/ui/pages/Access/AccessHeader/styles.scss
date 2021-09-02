@@ -7,7 +7,7 @@
   width: 100%;
   font-size: 0.7rem;
 
-  @media (max-width:675px) {
+  @media (max-width: 675px) {
     padding: 0 25px;
   }
 
@@ -22,15 +22,18 @@
     > .buttons {
       display: flex;
       gap: 10px;
-      > .secondary-button:first-child {
-        display: none;
-      }
-      > .primary-button:last-child {
-        background-color: #7F8393;
-      }
-      @media (max-width:650px) {
+
+      > a {
         > .secondary-button:first-child {
-          display: flex;
+          display: none;
+        }
+        > .primary-button:last-child {
+          background-color: #7f8393;
+        }
+        @media (max-width: 650px) {
+          > .secondary-button:first-child {
+            display: flex;
+          }
         }
       }
     }

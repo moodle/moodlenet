@@ -50,11 +50,10 @@ export const Login = withCtrl<LoginProps>(
                   />
                   <button type="submit" style={{ display: 'none' }} />
                 </form>
-                {loginErrorMessage && (
-                  <span style={{ color: 'red' }}>
-                    <Trans>Login error: </Trans>
+                {loginErrorMessage  && (
+                  <div className="error">
                     {loginErrorMessage}
-                  </span>
+                  </div>
                 )}
                 <div className="bottom">
                   <div className="left">
