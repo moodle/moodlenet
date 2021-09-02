@@ -5,6 +5,8 @@ import { href } from '../../../../elements/link'
 import { CtrlHook } from '../../../../lib/ctrl'
 import { AccessHeaderProps } from '../AccessHeader'
 const homeHref = href(mainPath.landing)
+const signupHref = href(mainPath.signUp)
+const loginHref = href(mainPath.login)
 const termsAndConditionsHref = href(mainPath.termsAndConditionsHref)
 
 export const useAccessHeaderCtrl: CtrlHook<AccessHeaderProps, {}, 'page'> = () => {
@@ -14,6 +16,8 @@ export const useAccessHeaderCtrl: CtrlHook<AccessHeaderProps, {}, 'page'> = () =
   const accessHeaderProps = useMemo(() => {
     const accessHeaderProps: Omit<AccessHeaderProps, 'page'> = {
       homeHref,
+      loginHref,
+      signupHref,
       termsAndConditionsHref,
       organization: {
         logo: org.icon,
