@@ -36,6 +36,7 @@ export type HeaderPropsBase = {
   loginHref: Href
   newResourceHref: Href
   newCollectionHref: Href
+  showSearchbox?: boolean
   setSearchText(text: string): unknown
   searchText: string
   signUpHref: Href
@@ -43,7 +44,16 @@ export type HeaderPropsBase = {
 export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
 
 export const Header = withCtrl<HeaderProps>(props => {
-  const { homeHref, loginHref, searchText, setSearchText, newCollectionHref, newResourceHref, signUpHref } = props
+  const {
+    homeHref,
+    loginHref,
+    searchText,
+    showSearchbox,
+    setSearchText,
+    newCollectionHref,
+    newResourceHref,
+    signUpHref,
+  } = props
   if (props.status === 'loading') {
     return null
   }
@@ -56,7 +66,9 @@ export const Header = withCtrl<HeaderProps>(props => {
           <HeaderTitle organization={organization} homeHref={homeHref} />
         </div>
         <div className="center">
-          <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for anything!`} />
+          {showSearchbox && (
+            <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for anything!`} />
+          )}
         </div>
         <div className="right">
           {me ? (
@@ -139,4 +151,9 @@ export const Header = withCtrl<HeaderProps>(props => {
     </div>
   )
 })
+
+Header.defaultProps = {
+  showSearchbox: true,
+}
+
 export default Header

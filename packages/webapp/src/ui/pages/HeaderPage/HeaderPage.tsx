@@ -8,17 +8,19 @@ export type HeaderPageProps = {
   subHeaderProps: SubHeaderProps
   isAuthenticated: boolean
   showSubHeader?: boolean
+  showSearchbox?: boolean
 }
 
 export const HeaderPage = withCtrl<HeaderPageProps>(({ 
   headerProps, 
+  showSearchbox,
   //subHeaderProps, 
   //isAuthenticated ,
   //showSubHeader 
 }) => {
   return (
     <div className="page-header">
-      <Header {...headerProps} />
+      <Header {...headerProps} showSearchbox={showSearchbox} />
       {/*{ isAuthenticated && showSubHeader && <SubHeader {...subHeaderProps} />}*/} {/* Uncomment when Tags implemented*/}
     </div>
   )
