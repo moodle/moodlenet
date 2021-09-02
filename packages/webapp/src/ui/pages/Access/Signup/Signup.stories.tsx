@@ -8,7 +8,7 @@ import { Signup, SignupFormValues, SignupProps } from './Signup'
 const meta: ComponentMeta<typeof Signup> = {
   title: 'Pages/SignUp',
   component: Signup,
-  excludeStories: ['SignupStoryProps', 'EmailSendStoryProps'],
+  excludeStories: ['SignupStoryProps', 'EmailSendStoryProps', 'SignupErrorStoryProps'],
 }
 
 const SignupStory: ComponentStory<typeof Signup> = args => <Signup {...args} />
@@ -19,7 +19,12 @@ export const SignupStoryProps: SignupProps = {
   signupErrorMessage: null,
   requestSent: false,
   landingHref: href('Pages/Landing/Logged In'),
-  loginHref: href('Pages/Login/Login Page'),
+  loginHref: href('Pages/Login/Default'),
+}
+
+export const SignupErrorStoryProps: SignupProps = {
+  ...SignupStoryProps,
+  signupErrorMessage: 'A beautiful error message',
 }
 
 export const EmailSendStoryProps: SignupProps = {
@@ -27,9 +32,14 @@ export const EmailSendStoryProps: SignupProps = {
   requestSent: true,
 }
 
-export const SignUpPage = SignupStory.bind({})
-SignUpPage.args = SignupStoryProps
-SignUpPage.parameters = { layout: 'fullscreen' }
+export const SignUp = SignupStory.bind({})
+SignUp.args = SignupStoryProps
+SignUp.parameters = { layout: 'fullscreen' }
+
+export const SignUpError = SignupStory.bind({})
+SignUpError.args = SignupErrorStoryProps
+SignUpError.parameters = { layout: 'fullscreen' }
+
 
 export const EmailSent = SignupStory.bind({})
 EmailSent.args = EmailSendStoryProps

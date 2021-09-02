@@ -21,8 +21,8 @@ export const Card: FC<CardProps> = ({
 }) => {
   return (
     <div
-      className={`card ${className}${hideBorderWhenSmall ? ' hide-border' : ''} ${noCard ? 'no-card' : ''} ${
-        removePaddingWhenSmall ? 'remove-padding' : ''
+      className={`card${className ? ''+className : ''}${hideBorderWhenSmall ? ' hide-border' : ''}${noCard ? ' no-card' : ''}${
+        removePaddingWhenSmall ? ' remove-padding' : ''
       }`}
       style={style}
       onClick={onClick}

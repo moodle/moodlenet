@@ -74,10 +74,12 @@
           font-size: 28px;
         }
         > form {
+          position: relative;
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
           border-color: transparent;
+          gap: 15px;
 
           > input {
             height: 46px;
@@ -122,7 +124,31 @@
               color: #b6bacb;
             }
           }
+
+          > .error {
+            position: absolute;
+            bottom: -46px;
+            padding: 0 18px;
+            width: fit-content;
+            font-size: 14px;
+            color: white;
+            align-items: center;
+            display: flex;
+            background-color: #ff6262;
+            border-radius: 20px;
+            height: 35px;
+          }
+
+          @media (max-height: 425px) {
+            gap: 15px;
+            
+            > .error {
+              position: relative;
+              bottom: 0;
+            }
+          }
         }
+
         > .bottom {
           display: flex;
           justify-content: space-between;
