@@ -18,7 +18,7 @@ export const LoginStoryProps: LoginProps = {
   formBag: SBFormikBag<LoginFormValues>({ email: '', password: '' }),
   loginErrorMessage: null,
   landingHref: href('Pages/Landing/Logged In'),
-  signupHref: href('Pages/SignUp/Sign Up Page'),
+  signupHref: href('Pages/SignUp/Sign Up'),
 }
 
 export const LoginErrorStoryProps: LoginProps = {

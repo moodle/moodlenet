@@ -50,13 +50,8 @@ export const Signup = withCtrl<SignupProps>(
                     onChange={form.handleChange}
                   />
                   <button type="submit" style={{ display: 'none' }} />
+                  {signupErrorMessage && <div className="error">{signupErrorMessage}</div>}
                 </form>
-                {signupErrorMessage && (
-                  <span style={{ color: 'red' }}>
-                    <Trans>Signup error: </Trans>
-                    {signupErrorMessage}
-                  </span>
-                )}
                 <div className="bottom">
                   <div className="left">
                     <PrimaryButton onClick={form.submitForm}>
