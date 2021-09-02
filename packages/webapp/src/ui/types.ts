@@ -1,3 +1,4 @@
+import { Href } from "./elements/link"
 import { Type } from "./pages/NewResource/types"
 
 export type Organization = {
@@ -12,6 +13,7 @@ export type Organization = {
 export type FollowTag = {
   type: 'General' | 'Specific'
   name: string
+  subjectHomeHref: Href
 }
 
 export type ResourceType = 'Video' | 'Web Page' | 'Moodle Book'

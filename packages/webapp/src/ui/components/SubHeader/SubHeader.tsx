@@ -1,5 +1,6 @@
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { FC } from 'react'
+import { Link } from '../../elements/link'
 import '../../styles/tags.css'
 import { FollowTag } from '../../types'
 import './styles.scss'
@@ -10,9 +11,11 @@ export type SubHeaderProps = {
 export const SubHeader: FC<SubHeaderProps> = ({ tags }) => {
   const tagList = tags.map((value, index) => {
     return (
-      <div key={index} className={'tag tag' + value.type}>
-        {value.name}
-      </div>
+      <Link href={value.subjectHomeHref}>
+        <div key={index} className={'tag tag' + value.type}>
+          {value.name}
+        </div>
+      </Link>
     )
   })
 
