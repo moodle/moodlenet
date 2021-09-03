@@ -80,7 +80,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
           </div>
         </div>
         </Link>
-        {isEditing && <DeleteButton className="remove" type="trash" onClick={onRemoveClick} />}
+        {isEditing && <DeleteButton className="remove" type="trash" onHoverColor='red' onClick={onRemoveClick} />}
         <div className="tags scroll">{tagList(tags)}</div>
       </Card>
     )

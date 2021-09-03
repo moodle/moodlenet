@@ -19,7 +19,7 @@ import {
   monthOptions,
   resGradeOptions,
   resTypeOptions,
-  yearsOptions,
+  yearsOptions
 } from '../../../../helpers/resource-relation-data-static-and-utils'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useFormikBag } from '../../../lib/formik'
@@ -30,7 +30,7 @@ import { UploadResourceProps } from '../UploadResource/UploadResource'
 import {
   useCreateResourceMutation,
   useCreateResourceRelationMutation,
-  useNewResourceDataPageLazyQuery,
+  useNewResourceDataPageLazyQuery
 } from './NewResourceCtrl.gen'
 
 const initialSetStepProps: DistOmit<UploadResourceProps, 'formBag' | 'deleteContent' | 'nextStep'> = {
@@ -86,12 +86,13 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
   const sformSetField = sform.setFieldValue
 
   const deleteContent = useCallback(() => {
+    sform.handleReset
     // if (sform.values.image === sform.values.content) {
-    sformSetField('image', '')
-    setImageUrl('')
+    // sformSetField('image', '')
+    // setImageUrl('')
     // }
-    sformSetField('content', '')
-  }, [sformSetField])
+    // sformSetField('content', '')
+  }, [/*sformSetField*/])
   // }, [sform.values.content, sform.values.image, sformSetField])
 
   type StepProps = DistOmit<NewResourceProps['stepProps'], 'nextStep'>
