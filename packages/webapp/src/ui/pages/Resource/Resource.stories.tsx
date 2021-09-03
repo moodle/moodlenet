@@ -2,6 +2,7 @@ import { t } from '@lingui/macro'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
+import { TagListStory } from '../../elements/tags'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import {
@@ -66,7 +67,7 @@ export const ResourceStoryProps: ResourceProps = {
   liked: false,
   numLikes: 23,
   bookmarked: true,
-  tags: ['Reforestationg', 'Drones', 'Soil'],
+  tags: TagListStory,
   contributorCardProps: ContributorCardStoryProps,
   formBag: SBFormikBag<NewResourceFormValues>(resourceFormBag),
   contentUrl: '#',

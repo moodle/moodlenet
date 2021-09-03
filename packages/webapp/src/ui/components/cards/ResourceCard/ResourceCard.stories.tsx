@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../elements/link'
+import { TagListStory } from '../../../elements/tags'
 import { ResourceCard, ResourceCardProps } from './ResourceCard'
 
 const meta: ComponentMeta<typeof ResourceCard> = {
@@ -19,7 +20,7 @@ const meta: ComponentMeta<typeof ResourceCard> = {
 }
 
 export const ResourceCardStoryProps: ResourceCardProps = {
-  tags: ['Reforestationg', 'Drones', 'Soil', 'Agroforestry'],
+  tags: TagListStory,
   title: 'Best Resource Ever Forever',
   image: 'https://picsum.photos/200/100',
   type: 'Video',

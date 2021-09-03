@@ -2,14 +2,16 @@ import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@materia
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import { Href, Link } from '../../../elements/link'
+import { tagList } from '../../../elements/tags'
 import { withCtrl } from '../../../lib/ctrl'
 import '../../../styles/tags.css'
+import { FollowTag } from '../../../types'
 import Card from '../../atoms/Card/Card'
 import DeleteButton from '../../atoms/DeleteButton/DeleteButton'
 import './styles.scss'
 
 export type ResourceCardProps = {
-  tags: Array<string>
+  tags: FollowTag[]
   image: string
   type: string //'Video' | 'Web Page' | 'Moodle Book'
   title: string
@@ -40,14 +42,6 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     toggleLike,
     toggleBookmark,
   }) => {
-    const tagSet = tags.map((value: string, index: number) => {
-      return (
-        <div key={index} className="tag">
-          {value}
-        </div>
-      )
-    })
-
     let color = ''
     switch (type) {
       case 'Video':
@@ -87,7 +81,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
         </div>
         </Link>
         {isEditing && <DeleteButton className="remove" type="trash" onClick={onRemoveClick} />}
-        <div className="tags scroll">{tagSet}</div>
+        <div className="tags scroll">{tagList(tags)}</div>
       </Card>
     )
   },

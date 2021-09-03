@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/macro'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../components/atoms/SecondaryButton/SecondaryButton'
 import HeaderTitle from '../../../components/Header/HeaderTitle/HeaderTitle'
@@ -24,19 +25,21 @@ export const AccessHeader = withCtrl<AccessHeaderProps, 'page'>(
           {page !== 'activation' ? (
             <div className="buttons">
               {page === 'login' ? (
-                <Link href={signupHref}> {/* TODO Implement on Controller */}
-                  <SecondaryButton color="orange">Sign up</SecondaryButton>
+                <Link href={signupHref}>
+                  {' '}
+                  {/* TODO Implement on Controller */}
+                  <SecondaryButton color="orange"><Trans>Sign up</Trans></SecondaryButton>
                 </Link>
               ) : (
-                <Link href={loginHref}> {/* TODO Implement on Controller */}
-                  <SecondaryButton color="orange">Login</SecondaryButton>
+                <Link href={loginHref}>
+                  {' '}
+                  {/* TODO Implement on Controller */}
+                  <SecondaryButton color="orange"><Trans>Log in</Trans></SecondaryButton>
                 </Link>
               )}
-              <PrimaryButton>
-                <Link href={termsAndConditionsHref} target="__blank">
-                  Learn more
-                </Link>
-              </PrimaryButton>
+              <Link href={termsAndConditionsHref} target="__blank">
+                <PrimaryButton><Trans>Learn more</Trans></PrimaryButton>
+              </Link>
             </div>
           ) : (
             <></>

@@ -1,5 +1,6 @@
 import { t, Trans } from '@lingui/macro'
 import CallMadeIcon from '@material-ui/icons/CallMade'
+import React from 'react'
 import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryButton'
@@ -22,8 +23,15 @@ export type LoginProps = {
 export const Login = withCtrl<LoginProps>(
   ({ accessHeaderProps, formBag, signupHref, landingHref, loginErrorMessage }) => {
     const [form, attrs] = formBag
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'Enter') {
+        form.submitForm()
+      }
+    }
+
     return (
-      <MainPageWrapper>
+      <MainPageWrapper onKeyDown={handleKeyDown}>
         <div className="login-page">
           <AccessHeader {...accessHeaderProps} page={'login'} />
           <div className="separator" />
@@ -31,7 +39,7 @@ export const Login = withCtrl<LoginProps>(
             <Card>
               <div className="content">
                 <div className="title">
-                  <Trans>Login</Trans>
+                  <Trans>Log in</Trans>
                 </div>
                 <form onSubmit={form.handleSubmit}>
                   <input
@@ -62,7 +70,7 @@ export const Login = withCtrl<LoginProps>(
                     </PrimaryButton>
                     <Link href={landingHref}>
                       <TertiaryButton>
-                        <Trans>or browse now!</Trans>
+                        <Trans>or recover password</Trans>
                       </TertiaryButton>
                     </Link>
                   </div>
