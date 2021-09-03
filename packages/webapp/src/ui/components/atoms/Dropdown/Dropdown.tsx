@@ -66,7 +66,6 @@ export const Dropdown: FC<DropdownProps> = ({
   window.onscroll = window.onresize = () => setOptionListPosition()
 
   const setOptionListPosition = () => {
-    console.log('Content Loaded')
     const viewportOffset = dropdownButton.current && dropdownButton.current.getBoundingClientRect()
     const top = viewportOffset?.top
     const bottom = viewportOffset && window.innerHeight - viewportOffset.bottom
