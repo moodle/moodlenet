@@ -7,11 +7,12 @@ export type DeleteButtonProps = {
   onClick?(arg0: unknown): unknown
   className?: string
   type?: 'cross' | 'trash'
+  onHoverColor?: 'red'
 }
 
-export const DeleteButton: FC<DeleteButtonProps> = ({ className, type, onClick}) => {
+export const DeleteButton: FC<DeleteButtonProps> = ({ className, type, onHoverColor, onClick}) => {
   return (
-    <div className={`delete-button ${className}`} onClick={onClick}>
+    <div className={`delete-button ${className} hover-${onHoverColor}`} onClick={onClick}>
       { type === 'cross' && <CloseRoundedIcon />}
       { type === 'trash' && <DeleteOutlineIcon />}
     </div>

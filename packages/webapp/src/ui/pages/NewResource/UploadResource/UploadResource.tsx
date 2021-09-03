@@ -1,9 +1,9 @@
 import { t, Trans } from '@lingui/macro'
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import React, { useCallback, useState } from 'react'
 import Card from '../../../components/atoms/Card/Card'
+import DeleteButton from '../../../components/atoms/DeleteButton/DeleteButton'
 import Dropdown from '../../../components/atoms/Dropdown/Dropdown'
 import InputTextField from '../../../components/atoms/InputTextField/InputTextField'
 import Modal from '../../../components/atoms/Modal/Modal'
@@ -75,6 +75,11 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       setFieldValue('image', null)
     }, [setFieldValue])
 
+    const deleteFileOrLink = useCallback(() => {
+      setFieldValue('content', '')
+      setFieldValue('contentType', 'Link')
+    }, [setFieldValue])
+
     const setCategoryValue = useCallback(
       (v: string) => {
         setFieldValue('category', v)
@@ -124,7 +129,13 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           <Modal
             title={t`Alert`}
             actions={
-              <PrimaryButton onClick={() => {deleteContent(); setIsToDelete(false)}} color="red">
+              <PrimaryButton
+                onClick={() => {
+                  deleteContent()
+                  setIsToDelete(false)
+                }}
+                color="red"
+              >
                 <Trans>Delete</Trans>
               </PrimaryButton>
             }
@@ -171,9 +182,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                   </div>
                 ) : (
                   <div className="image-container" style={background}>
-                    <div className="delete-image" onClick={deleteImage}>
-                      <CloseRoundedIcon />
-                    </div>
+                    <DeleteButton onClick={deleteImage} />
                   </div>
                 )}
               </div>
@@ -196,7 +205,9 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     <abbr className="scroll" title={form.values.name}>
                       {form.values.name}
                     </abbr>
+                    <DeleteButton onClick={deleteFileOrLink} />
                   </div>
+
                   <Dropdown
                     {...licenses}
                     getValue={setLicenseVal}
