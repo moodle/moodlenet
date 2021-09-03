@@ -125,13 +125,10 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               </div>
             ) : (
               <div className="subtitle">
-                <span>@{form.values.username}</span>
-                <span>·</span>
-                <span>{form.values.organizationName}</span>
-                <span>·</span>
-                <span>{form.values.location}</span>
-                <span>·</span>
-                <a href={form.values.siteUrl}>{form.values.siteUrl}</a>
+                {form.values.username !== '' && <span>@{form.values.username}</span>}
+                {form.values.organizationName !== '' && <span>{form.values.organizationName}</span>}
+                {form.values.location !== '' && <span>{form.values.location}</span>}
+                {form.values.siteUrl !== '' && <a href={form.values.siteUrl}>{form.values.siteUrl}</a>}
               </div>
             )}
           </div>
