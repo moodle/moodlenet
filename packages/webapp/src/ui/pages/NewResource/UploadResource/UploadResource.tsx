@@ -180,7 +180,12 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                       {form.values.name}
                     </abbr>
                   </div>
-                  <Dropdown {...licenses} getValue={setLicenseVal} value={form.values.license} />
+                  <Dropdown
+                    {...licenses}
+                    getValue={setLicenseVal}
+                    value={form.values.license}
+                    highglight={!form.values.license}
+                  />
                 </div>
               )}
             </Card>

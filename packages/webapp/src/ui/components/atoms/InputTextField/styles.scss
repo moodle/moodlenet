@@ -7,6 +7,11 @@
     margin-bottom: 8px;
   }
 
+  &.highlight > .input-container,
+  &.highlight > .textarea-container {
+    box-shadow: 0 0 0 2px #f88012;
+  }
+
   > .input-container,
   > .textarea-container {
     width: 100%;

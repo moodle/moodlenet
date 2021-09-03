@@ -25,6 +25,10 @@
     font-weight: 500;
     font-size: 14px;
 
+    &.highlight {
+      box-shadow: 0 0 0 2px #f88012;
+    }
+
     &.display-mode {
       padding: 0;
       background: none;
@@ -35,7 +39,7 @@
         margin-left: 0;
         justify-content: start;
         > div > svg > g {
-          fill: black
+          fill: black;
         }
       }
 
