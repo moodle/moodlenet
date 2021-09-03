@@ -39,7 +39,7 @@ export const Login = withCtrl<LoginProps>(
             <Card>
               <div className="content">
                 <div className="title">
-                  <Trans>Login</Trans>
+                  <Trans>Log in</Trans>
                 </div>
                 <form onSubmit={form.handleSubmit}>
                   <input
@@ -70,7 +70,7 @@ export const Login = withCtrl<LoginProps>(
                     </PrimaryButton>
                     <Link href={landingHref}>
                       <TertiaryButton>
-                        <Trans>or browse now!</Trans>
+                        <Trans>or recover password</Trans>
                       </TertiaryButton>
                     </Link>
                   </div>
