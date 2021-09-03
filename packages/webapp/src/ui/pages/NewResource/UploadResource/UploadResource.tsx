@@ -212,7 +212,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                         <input id="uploadFile" type="file" name="myFile" onChange={uploadFile} hidden />
                         <UploadFileIcon />
                         <span>
-                          <Trans>Click to upload a file!</Trans>
+                          <Trans>Drop or click to upload a file!</Trans>
                         </span>
                       </div>
                     ) : (
@@ -227,7 +227,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                         />
                         <UploadImageIcon />
                         <span>
-                          <Trans>Click to upload an image!</Trans>
+                          <Trans>Drop or click to upload an image!</Trans>
                         </span>
                       </div>
                     )}
