@@ -1,6 +1,7 @@
 import { t, Trans } from '@lingui/macro'
 import CallMadeIcon from '@material-ui/icons/CallMade'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
+import React from 'react'
 import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryButton'
@@ -24,8 +25,15 @@ export type SignupProps = {
 export const Signup = withCtrl<SignupProps>(
   ({ accessHeaderProps, formBag, requestSent, landingHref, loginHref, signupErrorMessage }) => {
     const [form, attrs] = formBag
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'Enter') {
+        form.submitForm()
+      }
+    }
+
     return (
-      <MainPageWrapper>
+      <MainPageWrapper onKeyDown={handleKeyDown}>
         <div className={`signup-page ${requestSent ? 'success' : ''}`}>
           <AccessHeader {...accessHeaderProps} page={'signup'} />
           <div className="separator" />
@@ -99,4 +107,4 @@ export const Signup = withCtrl<SignupProps>(
     )
   },
 )
-Signup.displayName = 'SignUpPage'
+
