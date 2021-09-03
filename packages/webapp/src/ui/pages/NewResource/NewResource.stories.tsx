@@ -9,7 +9,7 @@ import {
   LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown,
+  YearsDropdown
 } from './FieldsData'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'
@@ -68,8 +68,15 @@ const basicDataFormValue: NewResourceFormValues = {
   category: 'Important Matters',
 }
 
+const advancedDataFormValue: NewResourceFormValues = {
+  ...initialFormValues,
+  license: 'CC-BY-NC (Attribution-NonCommercial)',
+  category: '0021 Literacy and numeracy'
+}
+
 const formBag = SBFormikBag<NewResourceFormValues>(initialFormValues)
-const formBagBasicData = SBFormikBag<NewResourceFormValues>(basicDataFormValue)
+const formBagBasic = SBFormikBag<NewResourceFormValues>(basicDataFormValue)
+const formBagAdvanced = SBFormikBag<NewResourceFormValues>(advancedDataFormValue)
 
 const uploadResourceProps: UploadResourceProps = {
   step: 'UploadResourceStep',
@@ -98,7 +105,7 @@ export const NewResourceContentUploadedStoryProps: NewResourceProps = {
   stepProps: {
     ...uploadResourceProps,
     state: 'EditData',
-    formBag: formBagBasicData,
+    formBag: formBagBasic,
   },
 }
 
@@ -108,7 +115,7 @@ export const NewResourceImageUploadedStoryProps: NewResourceProps = {
     ...uploadResourceProps,
     state: 'EditData',
     imageUrl: 'https://picsum.photos/200/100',
-    formBag: formBagBasicData,
+    formBag: formBagAdvanced,
   },
 }
 

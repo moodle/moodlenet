@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import BookmarkIcon from '@material-ui/icons/Bookmark'
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
 import EditIcon from '@material-ui/icons/Edit'
@@ -8,6 +8,7 @@ import { useCallback, useState } from 'react'
 import Card from '../../components/atoms/Card/Card'
 import Dropdown from '../../components/atoms/Dropdown/Dropdown'
 import InputTextField from '../../components/atoms/InputTextField/InputTextField'
+import Modal from '../../components/atoms/Modal/Modal'
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
 import ListCard from '../../components/cards/ListCard/ListCard'
@@ -55,6 +56,7 @@ export const Collection = withCtrl<CollectionProps>(
     toggleFollow,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
+    const [isToDelete, setIsToDelete] = useState<boolean>(false)
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -95,7 +97,7 @@ export const Collection = withCtrl<CollectionProps>(
           getValue={setCategoryField}
         />
         {isEditing && (
-          <SecondaryButton color="red" onHoverColor="filled-red" onClick={deleteCollection}>
+          <SecondaryButton color="red" onHoverColor="filled-red" onClick={() => setIsToDelete(true)}>
             <Trans>Delete Collection</Trans>
           </SecondaryButton>
         )}
@@ -104,6 +106,21 @@ export const Collection = withCtrl<CollectionProps>(
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        {isToDelete && deleteCollection && (
+          <Modal
+            title={t`Alert`}
+            actions={
+              <PrimaryButton onClick={() => {deleteCollection(); setIsToDelete(false)}} color="red">
+                <Trans>Delete</Trans>
+              </PrimaryButton>
+            }
+            onClose={() => setIsToDelete(false)}
+            style={{ maxWidth: '400px' }}
+            className="delete-message"
+          >
+            <Trans>The collection will be deleted</Trans>
+          </Modal>
+        )}
         <div className="collection">
           <div className="content">
             <Card className="main-collection-card" hideBorderWhenSmall={true}>
