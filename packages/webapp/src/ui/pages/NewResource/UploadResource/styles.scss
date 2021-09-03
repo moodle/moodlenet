@@ -43,7 +43,7 @@
             border-radius: 15px;
             cursor: pointer;
 
-            &:hover {
+            &:hover, &.hover {
               border: 4px dashed #337aff;
               color: #337aff;
               background-color: #337cf93f;
