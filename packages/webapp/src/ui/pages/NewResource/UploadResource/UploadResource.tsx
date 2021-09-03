@@ -33,6 +33,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
   ({ formBag, state, imageUrl, licenses, categories, nextStep, deleteContent }) => {
     const [form, formAttrs] = formBag
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
+    const [isToDrop, setIsToDrop] = useState<boolean>(false)
     const setFieldValue = form.setFieldValue
     const background = {
       backgroundImage: 'url(' + imageUrl + ')',
@@ -47,8 +48,8 @@ export const UploadResource = withCtrl<UploadResourceProps>(
     )
 
     const uploadFile = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e.currentTarget.files?.item(0)
+      (e?: React.ChangeEvent<HTMLInputElement>, file?: File) => {
+        const selectedFile = file ? file : e?.currentTarget.files?.item(0)
         if (selectedFile) {
           setFieldValue('content', selectedFile)
           setFieldValue('contentType', 'File')
@@ -58,8 +59,8 @@ export const UploadResource = withCtrl<UploadResourceProps>(
     )
 
     const uploadImage = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e.currentTarget.files?.item(0)
+      (e?: React.ChangeEvent<HTMLInputElement>, file?: File) => {
+        const selectedFile = file ? file : e?.currentTarget.files?.item(0)
         setFieldValue('image', selectedFile ?? null)
       },
       [setFieldValue],
@@ -123,6 +124,51 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       document.getElementById('uploadFile')?.click()
     }
 
+    const dropHandler = (e: React.DragEvent<HTMLDivElement>) => {
+      console.log('File(s) dropped')
+      setIsToDrop(false)
+
+      // Prevent default behavior (Prevent file from being opened)
+      e.preventDefault()
+
+      let selectedFile
+
+      if (e.dataTransfer.items) {
+        // Use DataTransferItemList interface to access the file(s)
+        for (let i = 0; i < e.dataTransfer.items.length; i++) {
+          // If dropped items aren't files, reject them
+          const item = e.dataTransfer.items[i]
+          if (item && item.kind === 'file') {
+            var file = item.getAsFile()
+            console.log('... file[' + i + '].name = ' + file?.name)
+            file && (selectedFile = file)
+            break
+          }
+        }
+      } else {
+        // Use DataTransfer interface to access the file(s)
+        for (let i = 0; i < e.dataTransfer.files.length; i++) {
+          const item = e.dataTransfer.files[i]
+          console.log('... file[' + i + '].name = ' + item?.name)
+          item && (selectedFile = item)
+        }
+      }
+
+      if (state === 'ChooseResource') {
+        uploadFile(undefined, selectedFile)
+      } else {
+        uploadImage(undefined, selectedFile)
+      }
+    }
+
+    const dragOverHandler = (e: React.DragEvent<HTMLDivElement>) => {
+      console.log('File(s) in drop zone')
+      setIsToDrop(true)
+
+      // Prevent default behavior (Prevent file from being opened)
+      e.preventDefault()
+    }
+
     return (
       <div className="upload-resource">
         {isToDelete && (
@@ -154,7 +200,13 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             <Card>
               <div className="main-container">
                 {!imageUrl ? (
-                  <div className="uploader">
+                  <div
+                    className={`uploader ${isToDrop ? 'hover' : ''}`}
+                    id="drop_zone"
+                    onDrop={dropHandler}
+                    onDragOver={dragOverHandler}
+                    onDragLeave={() => setIsToDrop(false)}
+                  >
                     {state === 'ChooseResource' ? (
                       <div className="file upload" onClick={selectFile}>
                         <input id="uploadFile" type="file" name="myFile" onChange={uploadFile} hidden />
