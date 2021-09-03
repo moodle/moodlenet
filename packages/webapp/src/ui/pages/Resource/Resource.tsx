@@ -91,6 +91,7 @@ export const Resource = withCtrl<ResourceProps>(
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isAddingToCollection, setIsAddingToCollection] = useState<boolean>(false)
     const [isAddingToMoodleLms, setIsAddingToMoodleLms] = useState<boolean>(false)
+    const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [moodleLmsSite, setMoodleLmsSite] = useState<string>(lmsSite ?? '')
 
     const handleOnEditClick = () => {
@@ -213,7 +214,7 @@ export const Resource = withCtrl<ResourceProps>(
           edit={false}
         />
         {isEditing && (
-          <SecondaryButton color="red" onHoverColor="filled-red" onClick={deleteResource}>
+          <SecondaryButton color="red" onHoverColor="filled-red" onClick={() => setIsToDelete(true)}>
             <Trans>Delete Resource</Trans>
           </SecondaryButton>
         )}
@@ -264,6 +265,21 @@ export const Resource = withCtrl<ResourceProps>(
               getText={setMoodleLmsSite}
               autoUpdate
             />
+          </Modal>
+        )}
+        {isToDelete && deleteResource && (
+          <Modal
+            title={t`Alert`}
+            actions={
+              <PrimaryButton onClick={() => {deleteResource(); setIsToDelete(false)}} color="red">
+                <Trans>Delete</Trans>
+              </PrimaryButton>
+            }
+            onClose={() => setIsToDelete(false)}
+            style={{ maxWidth: '400px' }}
+            className="delete-message"
+          >
+            <Trans>The resource will be deleted</Trans>
           </Modal>
         )}
         <div className="resource">

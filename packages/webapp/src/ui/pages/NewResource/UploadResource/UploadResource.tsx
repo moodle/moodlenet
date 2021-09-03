@@ -2,10 +2,11 @@ import { t, Trans } from '@lingui/macro'
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import Card from '../../../components/atoms/Card/Card'
 import Dropdown from '../../../components/atoms/Dropdown/Dropdown'
 import InputTextField from '../../../components/atoms/InputTextField/InputTextField'
+import Modal from '../../../components/atoms/Modal/Modal'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../components/atoms/SecondaryButton/SecondaryButton'
 import { withCtrl } from '../../../lib/ctrl'
@@ -31,6 +32,7 @@ export type UploadResourceProps = {
 export const UploadResource = withCtrl<UploadResourceProps>(
   ({ formBag, state, imageUrl, licenses, categories, nextStep, deleteContent }) => {
     const [form, formAttrs] = formBag
+    const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const setFieldValue = form.setFieldValue
     const background = {
       backgroundImage: 'url(' + imageUrl + ')',
@@ -118,6 +120,21 @@ export const UploadResource = withCtrl<UploadResourceProps>(
 
     return (
       <div className="upload-resource">
+        {isToDelete && (
+          <Modal
+            title={t`Alert`}
+            actions={
+              <PrimaryButton onClick={() => {deleteContent(); setIsToDelete(false)}} color="red">
+                <Trans>Delete</Trans>
+              </PrimaryButton>
+            }
+            onClose={() => setIsToDelete(false)}
+            style={{ maxWidth: '400px' }}
+            className="delete-message"
+          >
+            <Trans>All the information will be deleted</Trans>
+          </Modal>
+        )}
         <div className="content">
           <div className="main-column">
             <div className="card-title">
@@ -195,7 +212,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
         </div>
         <div className="footer">
           {state === 'EditData' && (
-            <SecondaryButton onHoverColor="red" onClick={deleteContent} color="grey">
+            <SecondaryButton onHoverColor="red" onClick={() => setIsToDelete(true)} color="grey">
               <Trans>Delete</Trans>
             </SecondaryButton>
           )}

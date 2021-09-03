@@ -17,12 +17,24 @@
     background-color: #00e096;
   }
 
+  &.red {
+    background-color: red;
+  }
+
   &:hover {
     //background-color: #e37511;
     background-color: #337aff;
 
     &.hover-orange {
       background-color: #f88012;
+    }
+
+    &.hover-green {
+      background-color: #00e096;
+    }
+
+    &.hover-red {
+      background-color: red;
     }
   }
 
