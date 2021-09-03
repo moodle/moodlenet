@@ -15,10 +15,11 @@ import Modal from '../../components/atoms/Modal/Modal'
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
 import { AddToCollectionsCard, CollectionItem } from '../../components/cards/AddToCollectionsCard/AddToCollectionsCard'
+import { tagList } from '../../elements/tags'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { FormikBag } from '../../lib/formik'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
-import { getResourceColorType } from '../../types'
+import { FollowTag, getResourceColorType } from '../../types'
 import { DropdownField, FormatDropdown } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
@@ -32,7 +33,7 @@ export type ResourceProps = {
   liked: boolean
   numLikes: number
   bookmarked: boolean
-  tags: Array<string>
+  tags: FollowTag[]
   contributorCardProps: ContributorCardProps
   formBag: FormikBag<NewResourceFormValues>
   types: DropdownField
@@ -99,14 +100,6 @@ export const Resource = withCtrl<ResourceProps>(
       updateResource()
       setIsEditing(false)
     }
-
-    const tagSet = tags.map((value: string, index: number) => {
-      return (
-        <div key={index} className="tag">
-          {value}
-        </div>
-      )
-    })
 
     const actions = (
       <Card className="resource-action-card" hideBorderWhenSmall={true}>
@@ -349,7 +342,7 @@ export const Resource = withCtrl<ResourceProps>(
                   ) : (
                     <div className="title">{form.values.title}</div>
                   )}
-                  {tagSet.length > 0 && <div className="tags scroll">{tagSet}</div>}
+                  {tags.length > 0 && <div className="tags scroll">{tagList(tags)}</div>}
                 </div>
                 <img
                   className="image"
