@@ -62,17 +62,17 @@
           > .menu {
             display: none;
           }
-          > .primary-button {
+          > a > .primary-button {
             svg {
               display: none;
             }
           }
 
           @media screen and (max-width: 450px) {
-            > .primary-button {
+            > a > .primary-button {
               padding: 10px 3px;
               margin-left: 6px;
-              > a {
+              > span {
                 display: none;
               }
               > svg {

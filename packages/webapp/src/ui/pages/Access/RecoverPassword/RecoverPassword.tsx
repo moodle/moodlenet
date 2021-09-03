@@ -4,7 +4,6 @@ import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import React from 'react'
 import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
-import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryButton'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
@@ -12,18 +11,18 @@ import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
-export type SignupFormValues = { email: string }
-export type SignupProps = {
+export type RecoverPasswordFormValues = { email: string }
+export type RecoverPasswordProps = {
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
-  formBag: FormikBag<SignupFormValues>
-  signupErrorMessage: string | null
+  formBag: FormikBag<RecoverPasswordFormValues>
+  RecoverPasswordErrorMessage: string | null
   requestSent: boolean
   loginHref: Href
   landingHref: Href
 }
 
-export const Signup = withCtrl<SignupProps>(
-  ({ accessHeaderProps, formBag, requestSent, landingHref, loginHref, signupErrorMessage }) => {
+export const RecoverPassword = withCtrl<RecoverPasswordProps>(
+  ({ accessHeaderProps, formBag, requestSent, loginHref, RecoverPasswordErrorMessage }) => {
     const [form, attrs] = formBag
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -34,10 +33,10 @@ export const Signup = withCtrl<SignupProps>(
 
     return (
       <MainPageWrapper onKeyDown={handleKeyDown}>
-        <div className={`signup-page ${requestSent ? 'success' : ''}`}>
-          <AccessHeader {...accessHeaderProps} page={'signup'} />
+        <div className={`recover-password-page ${requestSent ? 'success' : ''}`}>
+          <AccessHeader {...accessHeaderProps} page={'login'} />
           <div className="separator" />
-          <div className={`signup-content ${requestSent ? 'success' : ''}`}>
+          <div className={`recover-password-content ${requestSent ? 'success' : ''}`}>
             <Card>
               <Link href={loginHref}>
                 <Trans>Log in</Trans>
@@ -47,7 +46,7 @@ export const Signup = withCtrl<SignupProps>(
             <Card>
               <div className="content">
                 <div className="title">
-                  <Trans>Sign up</Trans>
+                  <Trans>Recover password</Trans>
                 </div>
                 <form onSubmit={form.handleSubmit}>
                   <input
@@ -58,18 +57,13 @@ export const Signup = withCtrl<SignupProps>(
                     onChange={form.handleChange}
                   />
                   <button type="submit" style={{ display: 'none' }} />
-                  {signupErrorMessage && <div className="error">{signupErrorMessage}</div>}
+                  {RecoverPasswordErrorMessage && <div className="error">{RecoverPasswordErrorMessage}</div>}
                 </form>
                 <div className="bottom">
                   <div className="left">
                     <PrimaryButton onClick={form.submitForm}>
                       <Trans>Next</Trans>
                     </PrimaryButton>
-                    <Link href={landingHref}>
-                      <TertiaryButton>
-                        <Trans>or browse now!</Trans>
-                      </TertiaryButton>
-                    </Link>
                   </div>
                   <div className="right" hidden>
                     <div className="icon">
@@ -97,7 +91,7 @@ export const Signup = withCtrl<SignupProps>(
                 </div>
                 <MailOutlineIcon className="icon" />
                 <div className="subtitle">
-                  <Trans>Check out your inbox and activate your account</Trans>
+                  <Trans>Check out your inbox to recover your password</Trans>
                 </div>
               </div>
             </Card>
