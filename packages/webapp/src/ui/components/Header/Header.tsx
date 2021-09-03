@@ -101,7 +101,7 @@ export const Header = withCtrl<HeaderProps>(props => {
                     </Link>
                     <Link onClick={me.logout} href={homeHref}>
                       <ExitToAppIcon />
-                      <Trans>Logout</Trans>
+                      <Trans>Log out</Trans>
                     </Link>
                   </div>
                 }
@@ -119,20 +119,20 @@ export const Header = withCtrl<HeaderProps>(props => {
                   menuContent={
                     <div>
                       <Link href={loginHref}>
-                        <Trans>Login</Trans>
+                        <Trans>Log in</Trans>
                       </Link>
                       <Link href={signUpHref}>
-                        <Trans>Sign Up</Trans>
+                        <Trans>Sign up</Trans>
                       </Link>
                     </div>
                   }
                   hoverElement={
-                    <PrimaryButton>
-                      <Link href={loginHref}>
-                        <Trans>Sign in</Trans>
-                      </Link>
-                      <PersonIcon />
-                    </PrimaryButton>
+                    <Link href={loginHref}>
+                      <PrimaryButton>
+                        <span><Trans>Log in</Trans></span>
+                        <PersonIcon />
+                      </PrimaryButton>
+                    </Link>
                   }
                 />
               </div>
