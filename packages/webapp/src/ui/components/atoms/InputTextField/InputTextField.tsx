@@ -18,6 +18,7 @@ export type InputTextFieldProps = {
   textAreaAttrs?:React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>
   inputAttrs?:React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
   textAreaAutoSize?: boolean
+  highlightWhenEmpty?: boolean
 }
 
 export const InputTextField: FC<InputTextFieldProps> = ({
@@ -35,7 +36,8 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   getText,
   inputAttrs,
   textAreaAttrs,
-  textAreaAutoSize
+  textAreaAutoSize,
+  highlightWhenEmpty
 }) => { 
   const [text, setText] = useState<string |undefined | null>(value)
   const [rows, setRows] = useState<number>(textAreaAutoSize ? 1 : 5)
@@ -74,7 +76,7 @@ export const InputTextField: FC<InputTextFieldProps> = ({
 
   return (
     <div 
-      className={`input-text-field ${className} ${disabled ? 'disabled' : ''}`}
+      className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${highlightWhenEmpty && !text ? ' highlight' : ''}`}
       style={{visibility: hidden ? 'hidden' : 'visible'}}
       hidden={hidden}
     >
