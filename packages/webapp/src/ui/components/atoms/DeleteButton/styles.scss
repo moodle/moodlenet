@@ -11,8 +11,13 @@
     color: #9598a8;
 
     &:hover {
-      color: white;
-      background: red;
+      color: #545761;
+      background: rgb(223, 223, 223);
+      
+      &.hover-red {
+        color: white;
+        background: red;
+      }
     }
   }
 }
