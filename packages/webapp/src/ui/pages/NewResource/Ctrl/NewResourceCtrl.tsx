@@ -85,14 +85,19 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
   const [sform] = formBag
   const sformSetField = sform.setFieldValue
 
-  const deleteContent = useCallback(() => {
-    sform.handleReset
-    // if (sform.values.image === sform.values.content) {
-    // sformSetField('image', '')
-    // setImageUrl('')
-    // }
-    // sformSetField('content', '')
-  }, [/*sformSetField*/])
+  const deleteContent = useCallback(
+    () => {
+      sform.handleReset
+      // if (sform.values.image === sform.values.content) {
+      // sformSetField('image', '')
+      // setImageUrl('')
+      // }
+      // sformSetField('content', '')
+    },
+    [
+      /*sformSetField*/
+    ],
+  )
   // }, [sform.values.content, sform.values.image, sformSetField])
 
   type StepProps = DistOmit<NewResourceProps['stepProps'], 'nextStep'>
@@ -350,4 +355,34 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
   console.log('form.values', form.values)
 
   return newResourceProps && [newResourceProps]
+}
+
+export const canLoadUrlToImgTag = (url: string, timeoutT?: number) => {
+  return new Promise(function (resolve, reject) {
+    const timeout = timeoutT || 5000
+    const img = new Image()
+
+    img.onerror = img.onabort = () => {
+      clearTimeout()
+      reject('error')
+    }
+
+    img.onload = () => {
+      clearTimeout()
+      resolve('success')
+    }
+
+    setTimeout(() => {
+      // reset .src to invalid URL so it stops previous
+      // loading, but doesn't trigger new load
+      img.src = '//!!!!/test.jpg'
+      reject('timeout')
+    }, timeout)
+
+    img.src = url
+  })
+}
+
+export const urlMatchesImage = (url: string): boolean => {
+  return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
 }
