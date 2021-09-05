@@ -92,6 +92,16 @@
         justify-content: flex-start;
         gap: 5px;
 
+        > span {
+          display: flex;
+          align-items: center;
+          gap: 5px
+        }
+
+        > span:not(:first-child):before {
+          content: '·';
+        }
+
         > .input-text-field > .input-container > input {
           font-size: 11px;
 
