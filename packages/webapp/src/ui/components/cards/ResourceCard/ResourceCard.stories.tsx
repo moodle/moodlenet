@@ -21,7 +21,7 @@ const meta: ComponentMeta<typeof ResourceCard> = {
 
 export const ResourceCardStoryProps: ResourceCardProps = {
   tags: TagListStory,
-  title: 'Best Resource Ever Forever',
+  title: 'Best resource ever forever',
   image: 'https://picsum.photos/200/100',
   type: 'Video',
   resourceHomeHref: href('Pages/Resource/LoggedIn'),
