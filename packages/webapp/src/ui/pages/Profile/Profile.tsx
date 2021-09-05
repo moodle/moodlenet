@@ -90,7 +90,7 @@ export const Profile = withCtrl<ProfileProps>(
                 content={resourceCardPropsList.map(resourcesCardProps => {
                   return <ResourceCard {...resourcesCardProps} isEditing={isEditing} />
                 })}
-                title={t`Latest Resources`}
+                title={t`Latest resources`}
                 className="resources"
               />
               {collectionList}

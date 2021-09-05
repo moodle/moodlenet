@@ -177,7 +177,7 @@ export const Resource = withCtrl<ResourceProps>(
         />
         <div className="date">
           <label>
-            <Trans>Original Creation Date</Trans>
+            <Trans>Original creation date</Trans>
           </label>
           <div className="fields">
             <Dropdown

@@ -26,7 +26,7 @@ const meta: ComponentMeta<typeof CollectionCard> = {
 }
 
 export const CollectionCardStoryProps: CollectionCardProps = {
-  title: 'Best Collection Ever',
+  title: 'Best collection ever',
   imageUrl: 'https://picsum.photos/200/100',
   collectionHref: href('Pages/Collection/LoggedIn'),
   bookmarked: false,

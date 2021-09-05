@@ -19,7 +19,7 @@ const meta: ComponentMeta<typeof SubjectCard> = {
 }
 
 export const SubjectCardStoryProps: SubjectCardProps = {
-  title: 'Latest Resources',
+  title: 'Latest resources',
   organization: {
     url: 'uws.edu',
     color: '#40E3A4',
