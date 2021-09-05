@@ -85,19 +85,14 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
   const [sform] = formBag
   const sformSetField = sform.setFieldValue
 
-  const deleteContent = useCallback(
-    () => {
-      sform.handleReset
-      // if (sform.values.image === sform.values.content) {
-      // sformSetField('image', '')
-      // setImageUrl('')
-      // }
-      // sformSetField('content', '')
-    },
-    [
-      /*sformSetField*/
-    ],
-  )
+  const deleteContent = useCallback(() => {
+    sform.handleReset(null) // TODO Originally sform.handleReset, changed because was throwing errors
+    // if (sform.values.image === sform.values.content) {
+    // sformSetField('image', '')
+    // setImageUrl('')
+    // }
+    // sformSetField('content', '')
+  }, [sform/*sformSetField*/]) //TODO Added sform as it was asking it and throwing error otherwise
   // }, [sform.values.content, sform.values.image, sformSetField])
 
   type StepProps = DistOmit<NewResourceProps['stepProps'], 'nextStep'>
@@ -384,5 +379,5 @@ export const canLoadUrlToImgTag = (url: string, timeoutT?: number) => {
 }
 
 export const urlMatchesImage = (url: string): boolean => {
-  return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+  return url.match(/\.(jpeg|jpg|gif|png)$/) != null
 }

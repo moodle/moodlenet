@@ -17,9 +17,9 @@ const meta: ComponentMeta<typeof ProgressState> = {
 const ProgressStateStory: ComponentStory<typeof ProgressState> = args => <ProgressState {...args} />
 
 export const ProgressStateStoryProps: ProgressStateProps = {
-  stateNames: [`Upload Resource`, `Add to Collections`, `Add Details`],
+  stateNames: [`Upload resource`, `Add to collections`, `Add details`],
   currentIndex: 1,
-  progressSubtitles: [`sub:Upload Resource`, `sub:Add to Collections`, `sub:Add Details`],
+  progressSubtitles: [`sub:Upload resource`, `sub:Add to collections`, `sub:Add details`],
 }
 
 export const Default = ProgressStateStory.bind({})

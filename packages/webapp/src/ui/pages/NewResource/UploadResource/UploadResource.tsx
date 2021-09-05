@@ -40,15 +40,6 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       backgroundImage: 'url(' + imageUrl + ')',
       backgroundSize: 'cover',
     }
-    const setLink = useCallback(
-      (link: string) => {
-        setFieldValue('content', link)
-        setFieldValue('contentType', 'Link')
-        urlMatchesImage(link) && setFieldValue('image', link)
-        !canLoadUrlToImgTag(link) && deleteImage()
-      },
-      [setFieldValue],
-    )
 
     const uploadFile = useCallback(
       (e?: React.ChangeEvent<HTMLInputElement>, file?: File) => {
@@ -78,6 +69,16 @@ export const UploadResource = withCtrl<UploadResourceProps>(
     const deleteImage = useCallback(() => {
       setFieldValue('image', null)
     }, [setFieldValue])
+
+    const setLink = useCallback(
+      (link: string) => {
+        setFieldValue('content', link)
+        setFieldValue('contentType', 'Link')
+        urlMatchesImage(link) && setFieldValue('image', link)
+        !canLoadUrlToImgTag(link) && deleteImage()
+      },
+      [setFieldValue, deleteImage],
+    )
 
     const deleteFileOrLink = useCallback(() => {
       setFieldValue('content', '')

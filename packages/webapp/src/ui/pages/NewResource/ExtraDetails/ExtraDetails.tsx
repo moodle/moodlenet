@@ -39,7 +39,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
         <Dropdown value={form.values.level} {...levels} {...formAttrs.level} getValue={setLevelField} />
         <div className="date">
           <label>
-            <Trans>Original Creation Date</Trans>
+            <Trans>Original creation date</Trans>
           </label>
           <div className="fields">
             <Dropdown
