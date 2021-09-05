@@ -13,6 +13,7 @@ import { withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
 import { ReactComponent as UploadFileIcon } from '../../../static/icons/upload-file.svg'
 import { ReactComponent as UploadImageIcon } from '../../../static/icons/upload-image.svg'
+import { canLoadUrlToImgTag, urlMatchesImage } from '../Ctrl/NewResourceCtrl'
 import { DropdownField } from '../FieldsData'
 import { NewResourceFormValues } from '../types'
 import './styles.scss'
@@ -43,6 +44,8 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       (link: string) => {
         setFieldValue('content', link)
         setFieldValue('contentType', 'Link')
+        urlMatchesImage(link) && setFieldValue('image', link)
+        !canLoadUrlToImgTag(link) && deleteImage()
       },
       [setFieldValue],
     )
