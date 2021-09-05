@@ -42,7 +42,7 @@ const initialFormValues: NewCollectionFormValues = {
 
 const basicDataFormValue: NewCollectionFormValues = {
   ...initialFormValues,
-  title: 'The Best Collection Ever',
+  title: 'The best collection ever',
   description:
     'This is the description that tells you that this a not only the best collection ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
   category: 'Important Matters',

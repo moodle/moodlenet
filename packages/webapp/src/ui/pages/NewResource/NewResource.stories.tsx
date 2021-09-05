@@ -37,9 +37,9 @@ const meta: ComponentMeta<typeof NewResource> = {
 const NewResourceStory: ComponentStory<typeof NewResource> = args => <NewResource {...args} />
 
 export const NewResourceProgressStateStory: NewResourceProgressState = [
-  ['UploadResource', `Upload Resource`],
-  ['AddToCollections', `Add to Collections`],
-  ['ExtraDetails', `Add Details`],
+  ['UploadResource', `Upload resource`],
+  ['AddToCollections', `Add to collections`],
+  ['ExtraDetails', `Add details`],
 ]
 
 const initialFormValues: NewResourceFormValues = {
