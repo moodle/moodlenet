@@ -67,7 +67,7 @@ export const Header = withCtrl<HeaderProps>(props => {
         </div>
         <div className="center">
           {showSearchbox && (
-            <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for anything!`} />
+            <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for education content`} />
           )}
         </div>
         <div className="right">
