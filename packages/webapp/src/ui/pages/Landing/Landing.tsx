@@ -37,7 +37,7 @@ export const Landing = withCtrl<LandingProps>(
           ) : (
             <></>
           )}
-          <Searchbox setSearchText={setSearchText} searchText="" placeholder="Start searching now" />
+          <Searchbox setSearchText={setSearchText} searchText="" placeholder="Search for education content" />
           <div className="content">
             <div className="main-column">
               <TextCard>
