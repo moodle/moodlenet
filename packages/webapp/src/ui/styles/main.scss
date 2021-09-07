@@ -24,9 +24,19 @@ body::-webkit-scrollbar {
   flex-direction: column;
   align-items: center;
   max-width: None;
+
+  &.current-intent-mouse {
+    input:focus,
+    select:focus,
+    textarea:focus,
+    button:focus {
+      outline: none;
+    }
+  }
 }
 
-a, a:hover {
+a,
+a:hover {
   text-decoration: none;
   color: inherit;
 }
@@ -56,4 +66,3 @@ abbr {
   color: #e8e8e8;
   pointer-events: none;
 }
-
