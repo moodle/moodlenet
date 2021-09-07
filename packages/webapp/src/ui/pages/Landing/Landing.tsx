@@ -4,6 +4,7 @@ import { TrendCard, TrendCardProps } from '../../components/cards/TrendCard/Tren
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import { Organization } from '../../types'
+import { useTitle } from '../commons'
 import './styles.scss'
 
 export type LandingProps = {
@@ -17,6 +18,7 @@ export type LandingProps = {
 
 export const Landing = withCtrl<LandingProps>(
   ({ headerPageTemplateProps, trendCardProps, organization, image, setSearchText, isAuthenticated }) => {
+    useTitle('MoodleNet')
     return (
       <HeaderPageTemplate {...headerPageTemplateProps} showSearchbox={false}>
         <div className="landing">
