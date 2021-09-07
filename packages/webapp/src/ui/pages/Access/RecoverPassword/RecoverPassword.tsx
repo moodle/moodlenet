@@ -8,6 +8,7 @@ import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
 import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
+import { useTitle } from '../../commons'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
@@ -23,6 +24,7 @@ export type RecoverPasswordProps = {
 
 export const RecoverPassword = withCtrl<RecoverPasswordProps>(
   ({ accessHeaderProps, formBag, requestSent, loginHref, RecoverPasswordErrorMessage }) => {
+    useTitle('New password | MoodleNet')
     const [form, attrs] = formBag
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

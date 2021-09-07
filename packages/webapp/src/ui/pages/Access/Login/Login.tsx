@@ -8,6 +8,7 @@ import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
 import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
+import { useTitle } from '../../commons'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
@@ -22,6 +23,7 @@ export type LoginProps = {
 
 export const Login = withCtrl<LoginProps>(
   ({ accessHeaderProps, formBag, signupHref, landingHref, loginErrorMessage }) => {
+    useTitle('Log in | MoodleNet')
     const [form, attrs] = formBag
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
