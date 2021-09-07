@@ -7,6 +7,7 @@ import ListCard from '../../components/cards/ListCard/ListCard'
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
+import { useTitle } from '../commons'
 import './styles.scss'
 
 export type CategoryProps = {
@@ -35,6 +36,7 @@ export const Category = withCtrl<CategoryProps>(
     numCollections,
     numResources,
   }) => {
+    useTitle(title +  ' | MoodleNet')
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <div className="category">

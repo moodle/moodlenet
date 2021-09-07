@@ -22,6 +22,7 @@ export const SearchStoryProps: SearchProps = {
     isAuthenticated: true,
   },
   browserProps: BrowserStoryProps,
+  searchedText: 'A great query'
 }
 
 export const SearchLoggedOutStoryProps: SearchProps = {

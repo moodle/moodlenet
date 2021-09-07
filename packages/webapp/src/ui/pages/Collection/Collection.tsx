@@ -16,6 +16,7 @@ import { ResourceCard, ResourceCardProps } from '../../components/cards/Resource
 import { CP, withCtrl } from '../../lib/ctrl'
 import { FormikBag } from '../../lib/formik'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
+import { useTitle } from '../commons'
 import { DropdownField } from '../NewCollection/FieldsData'
 import { NewCollectionFormValues } from '../NewCollection/types'
 import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
@@ -78,6 +79,7 @@ export const Collection = withCtrl<CollectionProps>(
     )*/
 
     const [form, formAttrs] = formBag
+    useTitle(form.values.title +  ' | MoodleNet')
     const setFieldValue = form.setFieldValue
     const setTitleField = useCallback((_: string) => setFieldValue('title', _), [setFieldValue])
     const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
