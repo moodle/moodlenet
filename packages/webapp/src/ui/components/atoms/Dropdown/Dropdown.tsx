@@ -11,7 +11,7 @@ export type DropdownProps = {
   hidden?: boolean
   autoUpdate?: boolean
   value?: string | null
-  highglight?: boolean
+  highlight?: boolean
   edit?: boolean
   displayMode?: boolean
   className?: string
@@ -29,7 +29,7 @@ export const Dropdown: FC<DropdownProps> = ({
   value,
   edit,
   displayMode,
-  highglight,
+  highlight,
   options,
   disabled,
 }) => {
@@ -197,7 +197,7 @@ export const Dropdown: FC<DropdownProps> = ({
     >
       {label && <label>{label}</label>}
       <div
-        className={`input-container${displayMode ? ' display-mode' : ''}${!edit ? ' not-editing' : ''}${highglight ? ' highlight' : ''}`}
+        className={`input-container${displayMode ? ' display-mode' : ''}${!edit ? ' not-editing' : ''}${highlight ? ' highlight' : ''}`}
         onClick={handleOnClick}
       >
         <input
