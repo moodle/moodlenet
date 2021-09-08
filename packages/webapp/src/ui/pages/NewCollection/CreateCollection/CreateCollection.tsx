@@ -115,7 +115,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
         </div>
         <div className="footer">
           <PrimaryButton disabled={!finish} onClick={finish}>
-            <Trans>Finish</Trans>
+            <Trans>Create collection</Trans>
           </PrimaryButton>
         </div>
       </div>

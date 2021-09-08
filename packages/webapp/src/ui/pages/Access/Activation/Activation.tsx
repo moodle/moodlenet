@@ -54,7 +54,7 @@ export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, formBa
               <div className="bottom">
                 <div className="left">
                   <PrimaryButton onClick={form.submitForm}>
-                    <Trans>Finish</Trans>
+                    <Trans>Create account</Trans>
                   </PrimaryButton>
                 </div>
               </div>
