@@ -69,7 +69,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
             <Trans>Back</Trans>
           </SecondaryButton>
           <PrimaryButton disabled={!nextStep} onClick={nextStep}>
-            <Trans>Finish</Trans>
+            <Trans>Create resource</Trans>
           </PrimaryButton>
         </div>
       </div>

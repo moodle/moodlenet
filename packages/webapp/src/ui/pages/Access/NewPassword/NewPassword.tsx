@@ -42,7 +42,7 @@ export const NewPassword = withCtrl<NewPasswordProps>(({ accessHeaderProps, newP
               <div className="bottom">
                 <div className="left">
                   <PrimaryButton onClick={form.submitForm}>
-                    <Trans>Finish</Trans>
+                    <Trans>Change password</Trans>
                   </PrimaryButton>
                 </div>
               </div>
