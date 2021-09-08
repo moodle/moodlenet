@@ -4,6 +4,7 @@ import { Organization, Profile } from '../types/node'
 export const localOrganizationData: Omit<Organization, 'domain'> = {
   _permId: 'local',
   name: 'MoodleNet',
+  introTitle: 'Join our world-wide educators social network',
   intro: `Join our social network to share and curate open educational resources with educators world-wide.
 Integrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.
 Build your profile as an educator.`,

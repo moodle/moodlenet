@@ -36,7 +36,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
   organization: {
     name: 'MoodleNet',
     introTitle: 'Join our world-wide educators social network',
-    intro:`Share and curate open educational resources\n
+    intro:`Share and curate open educational resources.\n
             Integrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.\n
             Build your profile as an educator.`,
   },
