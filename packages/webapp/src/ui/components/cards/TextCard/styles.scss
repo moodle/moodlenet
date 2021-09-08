@@ -1,19 +1,9 @@
 .text-card {
-    > .card {
-        > .text {
-            padding: 20px;
-            font-weight: bold;
-            font-size: 13px;
-            white-space: pre-line;
-        }
-    
-        @media (max-width:450px) {
-            padding: 0;
-            box-shadow: none;
-            border-radius: 0;
-            > .text {
-                padding: 0;
-            }
-        }
-    }
+  padding: 20px;
+  font-size: 13px;
+  white-space: pre-line;
+
+  @media (max-width: 450px) {
+    padding: 0;
+  }
 }

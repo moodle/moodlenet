@@ -2,6 +2,7 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { TrendCardStoryProps } from '../../components/cards/TrendCard/TrendCard.stories'
 import { HeaderLoggedOutOrganizationStoryProps } from '../../components/Header/Header.stories'
+import { href } from '../../elements/link'
 import {
   HeaderPageLoggedInOrganizationStoryProps,
   HeaderPageLoggedInStoryProps,
@@ -34,13 +35,15 @@ export const LandingLoggedInStoryProps: LandingProps = {
   trendCardProps: TrendCardStoryProps,
   organization: {
     name: 'MoodleNet',
-    intro: `Join our social network to share and curate open educational resources with educators world-wide.\n
+    introTitle: 'Join our world-wide educators social network',
+    intro:`Share and curate open educational resources\n
             Integrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.\n
             Build your profile as an educator.`,
   },
   image: 'https://picsum.photos/200/100',
   setSearchText: action('setSearchText'),
   isAuthenticated: true,
+  signUpHref: href('Pages/SignUp/Sign Up')
 }
 
 export const LandingLoggedOutStoryProps: LandingProps = {
@@ -65,6 +68,8 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
   image: 'https://picsum.photos/200/100',
   setSearchText: action('setSearchText'),
   isAuthenticated: true,
+  signUpHref: href('Pages/SignUp/Sign Up')
+
 }
 
 export const LandingOrganizationLoggedOutStoryProps: LandingProps = {
