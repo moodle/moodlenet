@@ -1,6 +1,6 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from "react";
-import PrimaryButton from "../PrimaryButton/PrimaryButton";
-import "./styles.scss";
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import PrimaryButton from '../PrimaryButton/PrimaryButton'
+import './styles.scss'
 
 export type InputTextFieldProps = {
   label?: string
@@ -13,12 +13,13 @@ export type InputTextFieldProps = {
   className?: string
   edit?: boolean
   displayMode?: boolean
-  value?: string | undefined |null
+  value?: string | undefined | null
   getText?(text: string): void
-  textAreaAttrs?:React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>
-  inputAttrs?:React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
+  textAreaAttrs?: React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>
+  inputAttrs?: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
   textAreaAutoSize?: boolean
   highlightWhenEmpty?: boolean
+  highlight?: boolean
 }
 
 export const InputTextField: FC<InputTextFieldProps> = ({
@@ -37,16 +38,17 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   inputAttrs,
   textAreaAttrs,
   textAreaAutoSize,
-  highlightWhenEmpty
-}) => { 
-  const [text, setText] = useState<string |undefined | null>(value)
+  highlightWhenEmpty,
+  highlight,
+}) => {
+  const [text, setText] = useState<string | undefined | null>(value)
   const [rows, setRows] = useState<number>(textAreaAutoSize ? 1 : 5)
   const textArea = useRef<HTMLTextAreaElement>(null)
 
   const checkRowChange = useCallback(() => {
     if (textAreaAutoSize && textArea && textArea.current) {
       textArea.current.style.height = 'fit-content'
-      textArea.current.style.height = (Math.ceil(textArea.current.scrollHeight / 10) * 10) + 'px'
+      textArea.current.style.height = Math.ceil(textArea.current.scrollHeight / 10) * 10 + 'px'
     }
   }, [textAreaAutoSize])
 
@@ -72,27 +74,29 @@ export const InputTextField: FC<InputTextFieldProps> = ({
 
   useEffect(() => {
     setText(value)
-  }, [value]);
+  }, [value])
 
   return (
-    <div 
-      className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${highlightWhenEmpty && !text ? ' highlight' : ''}`}
-      style={{visibility: hidden ? 'hidden' : 'visible'}}
+    <div
+      className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${
+        (highlightWhenEmpty && !text) || highlight ? ' highlight' : ''
+      }`}
+      style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
-      { label ? <label>{label}</label> : <></> }
-      { textarea ? (
+      {label ? <label>{label}</label> : <></>}
+      {textarea ? (
         <div className={`textarea-container ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}>
-          <textarea 
+          <textarea
             ref={textArea}
             className={`${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
             value={text ? text : ''}
-            onChange={ handleChange }
-            onKeyDown={ handleKeyDown }
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
             disabled={disabled || !edit}
             placeholder={placeholder}
-            name="textarea" 
-            cols={40} 
+            name="textarea"
+            cols={40}
             rows={rows}
             {...textAreaAttrs}
           />
@@ -103,19 +107,19 @@ export const InputTextField: FC<InputTextFieldProps> = ({
           <input
             className={`${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
             value={text ? text : ''}
-            onChange={ handleChange }
-            {...buttonName && {onKeyDown:handleKeyDown}}
+            onChange={handleChange}
+            {...(buttonName && { onKeyDown: handleKeyDown })}
             disabled={disabled || !edit}
             type="input"
             placeholder={placeholder}
             {...inputAttrs}
           />
-          {buttonName ? (<PrimaryButton onClick={handleClick}>{buttonName}</PrimaryButton>):(<></>)}
+          {buttonName ? <PrimaryButton onClick={handleClick}>{buttonName}</PrimaryButton> : <></>}
         </div>
       )}
     </div>
   )
-};
+}
 
 InputTextField.defaultProps = {
   hidden: false,
@@ -125,7 +129,7 @@ InputTextField.defaultProps = {
   className: '',
   edit: true,
   getText: () => '',
-  textAreaAutoSize: false
+  textAreaAutoSize: false,
 }
 
-export default InputTextField;
+export default InputTextField
