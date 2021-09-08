@@ -6,6 +6,7 @@ export type Organization = {
   shortName: string
   url: string
   logo: string
+  introTitle?: string,
   intro: string
   color: string
 }
