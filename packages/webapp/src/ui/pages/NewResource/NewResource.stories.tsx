@@ -83,7 +83,7 @@ const uploadResourceProps: UploadResourceProps = {
   formBag,
   state: 'ChooseResource',
   imageUrl: '',
-  nextStep: action('nextStep'),
+  nextStep: undefined,
   deleteContent: action('deleteContent'),
   categories: CategoriesDropdown,
   licenses: LicenseDropdown,
