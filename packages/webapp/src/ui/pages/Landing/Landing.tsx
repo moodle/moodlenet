@@ -1,6 +1,9 @@
+import { Trans } from '@lingui/macro'
+import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../components/atoms/Searchbox/Searchbox'
-import { TextCard } from '../../components/cards/TextCard/TextCard'
+import TextCard from '../../components/cards/TextCard/TextCard'
 import { TrendCard, TrendCardProps } from '../../components/cards/TrendCard/TrendCard'
+import { Href, Link } from '../../elements/link'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import { Organization } from '../../types'
@@ -10,14 +13,15 @@ import './styles.scss'
 export type LandingProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   trendCardProps: TrendCardProps
-  organization: Pick<Organization, 'name' | 'intro'>
-  image: string
+  organization: Pick<Organization, 'name' | 'introTitle' | 'intro'>
+  image?: string
   setSearchText(text: string): unknown
   isAuthenticated: boolean
+  signUpHref?: Href
 }
 
 export const Landing = withCtrl<LandingProps>(
-  ({ headerPageTemplateProps, trendCardProps, organization, image, setSearchText, isAuthenticated }) => {
+  ({ headerPageTemplateProps, trendCardProps, organization, image, setSearchText, isAuthenticated, signUpHref }) => {
     useTitle('MoodleNet')
     return (
       <HeaderPageTemplate {...headerPageTemplateProps} showSearchbox={false}>
@@ -42,9 +46,21 @@ export const Landing = withCtrl<LandingProps>(
           <Searchbox setSearchText={setSearchText} searchText="" placeholder="Search for education content" />
           <div className="content">
             <div className="main-column">
-              <TextCard>
-                <div>{organization.intro}</div>
-                {organization.name === 'MoodleNet' ? '' : <img className="text-image" src={image} alt="Background" />}
+              <TextCard className="intro-card">
+                {((!isAuthenticated && organization.name === 'MoodleNet') || organization.name !== 'MoodleNet') && (
+                  <div className="title">{organization.introTitle}</div>
+                )}
+                <div className="content">{organization.intro}</div>
+                {!isAuthenticated && signUpHref && (
+                  <Link href={signUpHref}>
+                    <PrimaryButton>
+                      <Trans>Join now</Trans>
+                    </PrimaryButton>
+                  </Link>
+                )}
+                {organization.name === 'MoodleNet'
+                  ? ''
+                  : image && <img className="text-image" src={image} alt="Background" />}
               </TextCard>
               <TrendCard {...trendCardProps} />
             </div>
