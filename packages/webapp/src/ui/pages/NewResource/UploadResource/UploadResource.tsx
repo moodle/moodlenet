@@ -33,6 +33,7 @@ export type UploadResourceProps = {
 export const UploadResource = withCtrl<UploadResourceProps>(
   ({ formBag, state, imageUrl, licenses, categories, nextStep, deleteContent }) => {
     const [form, formAttrs] = formBag
+    const [highlightMandatoryFields, setHighlightMandatoryFields] = useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isToDrop, setIsToDrop] = useState<boolean>(false)
     const setFieldValue = form.setFieldValue
@@ -100,6 +101,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           disabled={state === 'ChooseResource'}
           getText={text => form.setFieldValue('title', text)}
           value={form.values.title}
+          highlight={highlightMandatoryFields && !form.values.title}
         />
         <InputTextField
           autoUpdate={true}
@@ -109,12 +111,15 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           disabled={state === 'ChooseResource'}
           value={form.values.description}
           getText={text => form.setFieldValue('description', text)}
+          highlight={highlightMandatoryFields && !form.values.description}
         />
         <Dropdown
           {...categories}
           {...formAttrs.category}
+          value={form.values.category}
           getValue={setCategoryValue}
           disabled={state === 'ChooseResource'}
+          highlight={highlightMandatoryFields && !form.values.category}
         />
       </div>
     )
@@ -129,7 +134,6 @@ export const UploadResource = withCtrl<UploadResourceProps>(
     }
 
     const dropHandler = (e: React.DragEvent<HTMLDivElement>) => {
-      console.log('File(s) dropped')
       setIsToDrop(false)
 
       // Prevent default behavior (Prevent file from being opened)
@@ -166,12 +170,14 @@ export const UploadResource = withCtrl<UploadResourceProps>(
     }
 
     const dragOverHandler = (e: React.DragEvent<HTMLDivElement>) => {
-      console.log('File(s) in drop zone')
       setIsToDrop(true)
 
       // Prevent default behavior (Prevent file from being opened)
       e.preventDefault()
     }
+
+    const next = () => nextStep ? nextStep() : () => setHighlightMandatoryFields(true)
+    
 
     return (
       <div className="upload-resource">
@@ -181,6 +187,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             actions={
               <PrimaryButton
                 onClick={() => {
+                  setHighlightMandatoryFields(false)
                   deleteContent()
                   setIsToDelete(false)
                 }}
@@ -268,7 +275,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     {...licenses}
                     getValue={setLicenseVal}
                     value={form.values.license}
-                    highglight={!form.values.license}
+                    highlight={highlightMandatoryFields && !form.values.license}
                   />
                 </div>
               )}
@@ -283,7 +290,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
               <Trans>Delete</Trans>
             </SecondaryButton>
           )}
-          <PrimaryButton disabled={!nextStep} onClick={nextStep}>
+          <PrimaryButton disabled={state === 'ChooseResource'} onClick={next}>
             <Trans>Next</Trans>
           </PrimaryButton>
         </div>
