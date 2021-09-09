@@ -7,7 +7,6 @@ import { Href, Link } from '../../elements/link'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import { Organization } from '../../types'
-import { useTitle } from '../commons'
 import './styles.scss'
 
 export type LandingProps = {
@@ -22,9 +21,8 @@ export type LandingProps = {
 
 export const Landing = withCtrl<LandingProps>(
   ({ headerPageTemplateProps, trendCardProps, organization, image, setSearchText, isAuthenticated, signUpHref }) => {
-    useTitle('MoodleNet')
     return (
-      <HeaderPageTemplate {...headerPageTemplateProps} showSearchbox={false}>
+      <HeaderPageTemplate {...headerPageTemplateProps} hideSearchbox={true}>
         <div className="landing">
           {!isAuthenticated ? (
             <div className="landing-title">

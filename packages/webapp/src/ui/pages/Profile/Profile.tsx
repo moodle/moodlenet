@@ -10,7 +10,6 @@ import { ProfileCard, ProfileCardProps } from '../../components/cards/ProfileCar
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
-import { useTitle } from '../commons'
 import './styles.scss'
 
 export type ProfileProps = {
@@ -35,7 +34,6 @@ export const Profile = withCtrl<ProfileProps>(
     sendEmail,
     save,
   }) => {
-    useTitle(displayName +  ' | MoodleNet')
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
 
@@ -57,7 +55,6 @@ export const Profile = withCtrl<ProfileProps>(
     )
 
     const [emailText, setEmailText] = useState('')
-    console.log({ emailText })
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         {isSendingMessage && sendEmail && (

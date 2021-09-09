@@ -1,6 +1,7 @@
 import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { useCallback, useMemo } from 'react'
+import { useSeoContentId } from '../../../../context/Global/Seo'
 import { useSession } from '../../../../context/Global/Session'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
@@ -18,6 +19,7 @@ import {
 
 export type CategoryCtrlProps = { id: ID }
 export const useCategoryCtrl: CtrlHook<CategoryProps, CategoryCtrlProps> = ({ id }) => {
+  useSeoContentId(id)
   const { session, isAuthenticated } = useSession()
   const [addCategoryRelation, addCategoryRelationRes] = useAddCategoryRelationMutation()
   const [delCategoryRelation, delCategoryRelationRes] = useDelCategoryRelationMutation()

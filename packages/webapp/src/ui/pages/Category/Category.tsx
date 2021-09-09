@@ -7,7 +7,6 @@ import ListCard from '../../components/cards/ListCard/ListCard'
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
-import { useTitle } from '../commons'
 import './styles.scss'
 
 export type CategoryProps = {
@@ -36,7 +35,6 @@ export const Category = withCtrl<CategoryProps>(
     numCollections,
     numResources,
   }) => {
-    useTitle(title +  ' | MoodleNet')
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <div className="category">
@@ -82,9 +80,7 @@ export const Category = withCtrl<CategoryProps>(
             <div className="main-content">
               {collectionCardPropsList && (
                 <ListCard
-                  content={collectionCardPropsList.map((
-                    collectionCardProps,
-                  ) => (
+                  content={collectionCardPropsList.map(collectionCardProps => (
                     <CollectionCard {...collectionCardProps} />
                   ))}
                   className="collections"
@@ -103,9 +99,7 @@ export const Category = withCtrl<CategoryProps>(
               )}
               {resourceCardPropsList && (
                 <ListCard
-                  content={resourceCardPropsList.map((
-                    resourcesCardProps,
-                  ) => (
+                  content={resourceCardPropsList.map(resourcesCardProps => (
                     <ResourceCard {...resourcesCardProps} />
                   ))}
                   className="resources"

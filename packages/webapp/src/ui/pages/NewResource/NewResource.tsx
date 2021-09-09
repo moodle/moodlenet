@@ -3,7 +3,6 @@ import { assertNever } from '@moodlenet/common/lib/utils/misc'
 import ProgressState from '../../components/atoms/ProgressState/ProgressState'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
-import { useTitle } from '../commons'
 import { AddToCollections, AddToCollectionsProps } from './AddToCollections/AddToCollections'
 import { ExtraDetails, ExtraDetailsProps } from './ExtraDetails/ExtraDetails'
 import './styles.scss'
@@ -23,7 +22,6 @@ export type NewResourceProps = {
 const progressStates = [t`Upload resource`, t`Add to collections`, t`Add details`]
 const progressSubtitles = [``, t`Earn 1 Point `, t`Earn 5 Points by completing this useful information`]
 export const NewResource = withCtrl<NewResourceProps>(({ stepProps, headerPageTemplateProps }) => {
-  useTitle('New resource | MoodleNet')
   const progressCurrentIndex =
     stepProps.step === 'UploadResourceStep'
       ? 0

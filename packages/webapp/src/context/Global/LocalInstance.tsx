@@ -13,6 +13,7 @@ export type LocalInstanceContextType = {
     icon: string
     image: string
     color: string
+    description: string
     domain: string
   }
 }
@@ -27,6 +28,7 @@ export const LocalInstanceProvider: FC = ({ children }) => {
     return localInstanceData
       ? {
           org: {
+            description: localInstanceData.description,
             color: localInstanceData.color,
             domain: localInstanceData.domain,
             icon: getMaybeAssetRefUrl(localInstanceData.logo) ?? moodlenet_logo,

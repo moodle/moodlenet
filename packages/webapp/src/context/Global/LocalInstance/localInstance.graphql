@@ -3,6 +3,7 @@ query localInstance {
     ... on Organization {
       id
       name
+      description
       intro
       logo
       image

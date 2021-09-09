@@ -4,6 +4,7 @@ import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { duration } from 'moment'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
+import { useSeoContentId } from '../../../../context/Global/Seo'
 import { useSession } from '../../../../context/Global/Session'
 import { getJustAssetRefUrl, getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
 import {
@@ -43,6 +44,7 @@ import {
 
 export type ResourceCtrlProps = { id: ID }
 export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id }) => {
+  useSeoContentId(id)
   const { session, isAdmin, isAuthenticated } = useSession()
   const allMyOwnCollectionEdges = useMemo(
     () => session?.profile.myOwnCollections.edges.filter(isEdgeNodeOfType(['Collection'])) ?? [],
@@ -284,7 +286,11 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
           : '?',
       },
       isAuthenticated,
-      tags: resourceData.categories.edges.filter(isEdgeNodeOfType(['IscedField'])).map(edge => edge.node.name),
+      tags: resourceData.categories.edges.filter(isEdgeNodeOfType(['IscedField'])).map(({ node }) => ({
+        name: node.name,
+        type: 'General',
+        subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
+      })),
       collections: allMyOwnCollectionEdges.map(({ node: { id, name } }) => ({ label: name, id })),
       selectedCollections: resourceData.inMyCollections.edges
         .filter(isEdgeNodeOfType(['Collection']))

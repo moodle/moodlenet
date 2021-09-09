@@ -8,26 +8,28 @@ export type HeaderPageProps = {
   subHeaderProps: SubHeaderProps
   isAuthenticated: boolean
   showSubHeader?: boolean
-  showSearchbox?: boolean
+  hideSearchbox?: boolean
 }
 
-export const HeaderPage = withCtrl<HeaderPageProps>(({ 
-  headerProps, 
-  showSearchbox,
-  //subHeaderProps, 
-  //isAuthenticated ,
-  //showSubHeader 
-}) => {
-  return (
-    <div className="page-header">
-      <Header {...headerProps} showSearchbox={showSearchbox} />
-      {/*{ isAuthenticated && showSubHeader && <SubHeader {...subHeaderProps} />}*/} {/* Uncomment when Tags implemented*/}
-    </div>
-  )
-})
+export const HeaderPage = withCtrl<HeaderPageProps>(
+  ({
+    headerProps,
+    hideSearchbox,
+    //subHeaderProps,
+    //isAuthenticated ,
+    //showSubHeader
+  }) => {
+    return (
+      <div className="page-header">
+        <Header {...headerProps} hideSearchbox={hideSearchbox} />
+        {/*{ isAuthenticated && showSubHeader && <SubHeader {...subHeaderProps} />}*/}{' '}
+        {/* Uncomment when Tags implemented*/}
+      </div>
+    )
+  },
+)
 HeaderPage.displayName = 'HeaderPage'
 HeaderPage.defaultProps = {
-  showSubHeader: true
+  showSubHeader: true,
 }
 export default HeaderPage
-
