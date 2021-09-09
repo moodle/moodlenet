@@ -4,7 +4,6 @@ import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
 import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
-import { useTitle } from '../../commons'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
@@ -17,7 +16,6 @@ export type ActivationProps = {
 }
 
 export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, formBag, accountActivated }) => {
-  useTitle('Account activation | MoodleNet')
   const [form, attrs] = formBag
   return (
     <MainPageWrapper>

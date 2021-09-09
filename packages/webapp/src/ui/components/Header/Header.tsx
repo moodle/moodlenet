@@ -36,7 +36,7 @@ export type HeaderPropsBase = {
   loginHref: Href
   newResourceHref: Href
   newCollectionHref: Href
-  showSearchbox?: boolean
+  hideSearchbox?: boolean
   setSearchText(text: string): unknown
   searchText: string
   signUpHref: Href
@@ -48,7 +48,7 @@ export const Header = withCtrl<HeaderProps>(props => {
     homeHref,
     loginHref,
     searchText,
-    showSearchbox,
+    hideSearchbox,
     setSearchText,
     newCollectionHref,
     newResourceHref,
@@ -66,8 +66,12 @@ export const Header = withCtrl<HeaderProps>(props => {
           <HeaderTitle organization={organization} homeHref={homeHref} />
         </div>
         <div className="center">
-          {showSearchbox && (
-            <Searchbox setSearchText={setSearchText} searchText={searchText} placeholder={t`Search for education content`} />
+          {!hideSearchbox && (
+            <Searchbox
+              setSearchText={setSearchText}
+              searchText={searchText}
+              placeholder={t`Search for education content`}
+            />
           )}
         </div>
         <div className="right">
@@ -129,7 +133,9 @@ export const Header = withCtrl<HeaderProps>(props => {
                   hoverElement={
                     <Link href={loginHref}>
                       <PrimaryButton>
-                        <span><Trans>Log in</Trans></span>
+                        <span>
+                          <Trans>Log in</Trans>
+                        </span>
                         <PersonIcon />
                       </PrimaryButton>
                     </Link>
@@ -153,7 +159,7 @@ export const Header = withCtrl<HeaderProps>(props => {
 })
 
 Header.defaultProps = {
-  showSearchbox: true,
+  hideSearchbox: true,
 }
 
 export default Header

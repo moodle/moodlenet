@@ -3,6 +3,7 @@ import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
+import { useSeoContentId } from '../../../../context/Global/Seo'
 import { useSession } from '../../../../context/Global/Session'
 import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
 import { categoriesOptions, getIscedF } from '../../../../helpers/resource-relation-data-static-and-utils'
@@ -26,6 +27,7 @@ import {
 
 export type CollectionCtrlProps = { id: ID }
 export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> = ({ id }) => {
+  useSeoContentId(id)
   // const { org: localOrg } = useLocalInstance()
   const { session, isAdmin, isAuthenticated } = useSession()
 

@@ -1,6 +1,8 @@
+import { t } from '@lingui/macro'
 import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useGlobalSearchQuery } from '../../../../context/Global/GlobalSearch/globalSearch.gen'
+import { useSeo } from '../../../../context/Global/Seo'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { useIscedfCardCtrl } from '../../../components/cards/SubjectCard/Ctrl/IscedfCardCtrl'
@@ -12,6 +14,13 @@ import { useSearchUrlQuery } from './useSearchUrlQuery'
 export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
   const { text, sort, setSort } = useSearchUrlQuery()
   // const [sort, setSort] = useState<GlobalSearchSort>({ by: 'Popularity' })
+  const { updateSeoMeta } = useSeo()
+  useEffect(() => {
+    console.log(`updateSeoMeta ${text}`)
+    updateSeoMeta({
+      title: t`find "${text}"`,
+    })
+  }, [updateSeoMeta, text])
 
   const collectionsQ = useGlobalSearchQuery({
     variables: {
@@ -55,7 +64,6 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
 
   const searchUIProps: SearchProps = {
     headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
-
     browserProps: {
       collectionCardPropsList: collections.map(collection =>
         ctrlHook(useCollectionCardCtrl, { id: collection.id }, `Search Collection ${collection.id} Card`),

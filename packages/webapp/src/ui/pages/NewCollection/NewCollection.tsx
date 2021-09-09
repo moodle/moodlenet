@@ -1,6 +1,5 @@
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
-import { useTitle } from '../commons'
 import { CreateCollection, CreateCollectionProps } from './CreateCollection/CreateCollection'
 import './styles.scss'
 
@@ -17,7 +16,6 @@ export type NewCollectionProps = {
 
 //const progressStates = [t`Upload Resource`, t`Add to Resources`]
 export const NewCollection = withCtrl<NewCollectionProps>(({ stepProps, headerPageTemplateProps }) => {
-  useTitle('New Collection | MoodleNet')
   /*const progressCurrentIndex =
     stepProps.step === 'CreateCollectionStep'
       ? 0

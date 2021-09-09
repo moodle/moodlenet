@@ -2,6 +2,7 @@ import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useLocalInstance } from '../../../../context/Global/LocalInstance'
+import { useSeoContentId } from '../../../../context/Global/Seo'
 import { useSession } from '../../../../context/Global/Session'
 import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
@@ -21,6 +22,7 @@ import {
 
 export type ProfileCtrlProps = { id: ID }
 export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id }) => {
+  useSeoContentId(id)
   const { isAuthenticated, session, isAdmin } = useSession()
   const { org: localOrg } = useLocalInstance()
   const isMe = session?.profile && session.profile.id === id

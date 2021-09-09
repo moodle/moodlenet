@@ -4,7 +4,6 @@ import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
 import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
-import { useTitle } from '../../commons'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
@@ -16,7 +15,6 @@ export type NewPasswordProps = {
 }
 
 export const NewPassword = withCtrl<NewPasswordProps>(({ accessHeaderProps, newPasswordErrorMessage, formBag }) => {
-  useTitle('New password | MoodleNet')
   const [form, attrs] = formBag
   return (
     <MainPageWrapper>

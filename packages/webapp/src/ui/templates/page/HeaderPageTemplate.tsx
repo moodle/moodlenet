@@ -7,15 +7,15 @@ export type HeaderPageTemplateProps = {
   headerPageProps: CP<HeaderPageProps>
   isAuthenticated: boolean
   showSubHeader?: boolean
-  showSearchbox?: boolean
+  hideSearchbox?: boolean
   style?: React.CSSProperties
 }
 
 export const HeaderPageTemplate = withCtrl<HeaderPageTemplateProps>(
-  ({ headerPageProps, isAuthenticated, showSearchbox, /*showSubHeader,*/ style, children }) => {
+  ({ headerPageProps, isAuthenticated, hideSearchbox, /*showSubHeader,*/ style, children }) => {
     return (
       <MainPageWrapper>
-        <HeaderPage {...headerPageProps} isAuthenticated={isAuthenticated} showSearchbox={showSearchbox}/>
+        <HeaderPage {...headerPageProps} isAuthenticated={isAuthenticated} hideSearchbox={hideSearchbox} />
         {/*<div className={`view ${isAuthenticated && showSubHeader ? 'double-header-page' : 'single-header-page'}`}   Uncomment when Tags implemented*/}
         <div className="view single-header-page" style={style}>
           {children}

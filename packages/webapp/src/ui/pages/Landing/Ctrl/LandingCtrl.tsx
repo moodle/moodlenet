@@ -1,8 +1,10 @@
 import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useMemo } from 'react'
 import { useGlobalSearchQuery } from '../../../../context/Global/GlobalSearch/globalSearch.gen'
 import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../context/Global/Session'
+import { href } from '../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { FollowTag } from '../../../types'
@@ -24,9 +26,10 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
     () =>
       trendingQ.data?.globalSearch.edges
         .filter(isEdgeNodeOfType(['IscedField', 'Collection']))
-        .map<FollowTag>(({ node: { name } }) => ({
-          name,
-          type: 'Specific',
+        .map<FollowTag>(({ node }) => ({
+          name: node.name,
+          type: 'General',
+          subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
         })),
     [trendingQ.data?.globalSearch.edges],
   )
@@ -38,13 +41,14 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
       organization: {
         name: localOrg.name,
-        intro: localOrg.intro,
+        intro: localOrg.description,
+        introTitle: localOrg.intro,
       },
       image: localOrg.icon ?? null,
       trendCardProps: { tags: tags || [] },
       setSearchText,
     }),
-    [localOrg.icon, isAuthenticated, localOrg.name, localOrg.intro, setSearchText, tags],
+    [localOrg.icon, localOrg.description, isAuthenticated, localOrg.name, localOrg.intro, setSearchText, tags],
   )
   // console.log({ landingProps })
   return [landingProps]
