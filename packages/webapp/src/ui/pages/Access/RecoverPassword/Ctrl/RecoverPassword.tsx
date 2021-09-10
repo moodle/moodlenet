@@ -1,5 +1,4 @@
-export { };
-/*import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
 import { mainPath, useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
 import { href } from '../../../../elements/link'
@@ -11,16 +10,16 @@ const landingHref = href(mainPath.landing)
 const loginHref = href(mainPath.login)
 export const useRecoverPasswordCtrl: CtrlHook<RecoverPasswordProps, {}> = () => {
   useRedirectHomeIfLoggedIn()
-  const { RecoverPassword } = useSession()
+  const { recoverPassword } = useSession()
   const [RecoverPasswordErrorMessage, setRecoverPasswordErrorMessage] = useState<string | null>(null)
   const [requestSent, setRequestSent] = useState(false)
   const onSubmit = useCallback<SubmitForm<RecoverPasswordFormValues>>(
     ({ email }) =>
-      RecoverPassword({ email }).then(_resp => {
+      recoverPassword({ email }).then(_resp => {
         setRecoverPasswordErrorMessage(_resp)
         setRequestSent(_resp === null)
       }),
-    [RecoverPassword],
+    [recoverPassword],
   )
   const [formik, formBag] = useFormikBag<RecoverPasswordFormValues>({ initialValues: { email: '' }, onSubmit })
   useEffect(() => {
@@ -29,7 +28,7 @@ export const useRecoverPasswordCtrl: CtrlHook<RecoverPasswordProps, {}> = () => 
 
   const RecoverPasswordProps = useMemo<RecoverPasswordProps>(() => {
     const RecoverPasswordProps: RecoverPasswordProps = {
-      accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'RecoverPassword Access Header'),
+      accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Recover Password Access Header'),
       formBag,
       RecoverPasswordErrorMessage,
       requestSent,
@@ -41,4 +40,3 @@ export const useRecoverPasswordCtrl: CtrlHook<RecoverPasswordProps, {}> = () => 
 
   return RecoverPasswordProps && [RecoverPasswordProps]
 }
-*/

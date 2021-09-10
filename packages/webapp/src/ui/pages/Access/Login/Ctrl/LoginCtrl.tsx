@@ -7,7 +7,8 @@ import { SubmitForm, useFormikBag } from '../../../../lib/formik'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { LoginFormValues, LoginProps } from '../Login'
 
-const landingHref = href(mainPath.landing)
+// const landingHref = href(mainPath.landing)
+const recoverPasswordHref = href(mainPath.recoverPassword)
 const signupHref = href(mainPath.signUp)
 export const useLoginCtrl: CtrlHook<LoginProps, {}> = () => {
   useRedirectProfileHomeIfLoggedIn()
@@ -32,8 +33,9 @@ export const useLoginCtrl: CtrlHook<LoginProps, {}> = () => {
       accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Login Access Header'),
       formBag,
       wrongCreds,
-      landingHref,
+      // landingHref,
       signupHref,
+      recoverPasswordHref,
     }
     return loginProps
   }, [formBag, wrongCreds])

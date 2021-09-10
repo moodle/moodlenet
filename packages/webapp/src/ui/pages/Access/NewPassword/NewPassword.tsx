@@ -7,7 +7,7 @@ import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
-export type NewPasswordFormValues = { name: string; password: string }
+export type NewPasswordFormValues = { newPassword: string }
 export type NewPasswordProps = {
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
   formBag: FormikBag<NewPasswordFormValues>
@@ -32,7 +32,7 @@ export const NewPassword = withCtrl<NewPasswordProps>(({ accessHeaderProps, newP
                   className="password"
                   type="text"
                   placeholder={t`New password`}
-                  {...attrs.name}
+                  {...attrs.newPassword}
                   onChange={form.handleChange}
                 />
                 {newPasswordErrorMessage && <div className="error">{newPasswordErrorMessage}</div>}

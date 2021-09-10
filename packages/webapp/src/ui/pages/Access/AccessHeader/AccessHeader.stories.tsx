@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
   HeaderLoggedOutOrganizationStoryProps,
-  HeaderLoggedOutStoryProps
+  HeaderLoggedOutStoryProps,
 } from '../../../components/Header/Header.stories'
 import { href } from '../../../elements/link'
 import { AccessHeader, AccessHeaderProps } from './AccessHeader'
@@ -17,7 +17,7 @@ const meta: ComponentMeta<typeof AccessHeader> = {
 
 export const AccessHeaderStoryProps: AccessHeaderProps = {
   organization: HeaderLoggedOutStoryProps.organization,
-  homeHref: href('Landing/Logged Out'),
+  homeHref: href('Pages/Landing/Logged Out'),
   signupHref: href('Pages/SignUp/Sign Up'),
   loginHref: href('Pages/Login/Default'),
   termsAndConditionsHref: href('#'),
