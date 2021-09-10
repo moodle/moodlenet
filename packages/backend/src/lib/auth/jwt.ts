@@ -17,12 +17,29 @@ export const verifyJwt = ({
   jwtVerifyOpts: JWT.VerifyOptions
 }): JWTTokenVerification => {
   try {
-    const sessionEnv = JWT.verify(String(token), jwtPublicKey, jwtVerifyOpts)
+    const sessionEnv = verifyJwtAny({ token, jwtPublicKey, jwtVerifyOpts })
     if (typeof sessionEnv !== 'object') {
       return INVALID_TOKEN
     }
     /* FIXME: implement proper checks */
     return sessionEnv as SessionEnv
+  } catch {
+    return INVALID_TOKEN
+  }
+}
+
+export const verifyJwtAny = ({
+  jwtPublicKey,
+  jwtVerifyOpts,
+  token,
+}: {
+  token: string
+  jwtPublicKey: string
+  jwtVerifyOpts: JWT.VerifyOptions
+}): unknown => {
+  try {
+    const payload = JWT.verify(String(token), jwtPublicKey, jwtVerifyOpts)
+    return payload
   } catch {
     return INVALID_TOKEN
   }

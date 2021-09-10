@@ -1,10 +1,11 @@
+import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
 import { getOneResult } from '../../../../lib/helpers/arango/query'
-import { Adapter } from '../../../../ports/user-auth/user'
+import { GetActiveByEmailAdapter } from '../../../../ports/user-auth/user'
 import { SendEmailToProfileAdapter } from '../../../../ports/utils/utils'
-import { getActiveUserByAuthIdQ } from '../queries/getUserByAuth'
+import { getActiveUserByAuthIdQ, updateActiveUserPasswordByAuthIdQ } from '../queries/getUserByAuth'
 import { getUserByEmailQ } from '../queries/getUserByEmail'
 import { UserAuthDB } from '../types'
-export const byEmail = (db: UserAuthDB): Pick<Adapter, 'getActiveUserByEmail'> => ({
+export const byEmail = (db: UserAuthDB): Pick<GetActiveByEmailAdapter, 'getActiveUserByEmail'> => ({
   getActiveUserByEmail: async ({ email }) => {
     const activeUserQ = getUserByEmailQ({ email })
     const mUser = await getOneResult(activeUserQ, db)
@@ -14,6 +15,7 @@ export const byEmail = (db: UserAuthDB): Pick<Adapter, 'getActiveUserByEmail'> =
     return mUser
   },
 })
+
 export const byAuthId = (db: UserAuthDB): Pick<SendEmailToProfileAdapter, 'getActiveUserByAuth'> => ({
   getActiveUserByAuth: async ({ authId }) => {
     const activeUserQ = getActiveUserByAuthIdQ({ authId })
@@ -21,3 +23,11 @@ export const byAuthId = (db: UserAuthDB): Pick<SendEmailToProfileAdapter, 'getAc
     return mUser
   },
 })
+
+export const updateUserPasswordByAuthId =
+  (db: UserAuthDB) =>
+  async ({ authId, password }: { authId: AuthId; password: string }) => {
+    const changePasswordQ = updateActiveUserPasswordByAuthIdQ({ authId, password })
+    const mUser = await getOneResult(changePasswordQ, db)
+    return !!mUser
+  }

@@ -138,6 +138,7 @@ export const getGQLResolvers = ({
     ResourceType: INodeResolver,
     Mutation: {
       async createSession(_root, { password, email } /* , ctx */) {
+        // TODO: implement a port
         const activeUser = await qmino.query(userPorts.getActiveByEmail({ email }), {
           timeout: 5000,
         })
@@ -164,6 +165,7 @@ export const getGQLResolvers = ({
         return { __typename: 'SimpleResponse', success: true }
       },
       async activateUser(_root, { password, activationToken, name } /*, ctx */) {
+        // TODO: implement a port
         const hashedPassword = await passwordHasher(password)
         const activationresult = await qmino.callSync(
           newUserPorts.confirmSignup({ hashedPassword, profileName: name, token: activationToken }),
