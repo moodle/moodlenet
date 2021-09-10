@@ -8,7 +8,7 @@ const meta: ComponentMeta<typeof Login> = {
   title: 'Pages/Login',
   component: Login,
   excludeStories: ['LoginStoryProps', 'LoginErrorStoryProps'],
-  parameters: { layout: 'fullscreen' }
+  parameters: { layout: 'fullscreen' },
 }
 
 const LoginStory: ComponentStory<typeof Login> = args => <Login {...args} />
@@ -16,14 +16,14 @@ const LoginStory: ComponentStory<typeof Login> = args => <Login {...args} />
 export const LoginStoryProps: LoginProps = {
   accessHeaderProps: AccessHeaderStoryProps,
   formBag: SBFormikBag<LoginFormValues>({ email: '', password: '' }),
-  loginErrorMessage: null,
+  wrongCreds: false,
   landingHref: href('Pages/Landing/Logged In'),
   signupHref: href('Pages/SignUp/Sign Up'),
 }
 
 export const LoginErrorStoryProps: LoginProps = {
   ...LoginStoryProps,
-  loginErrorMessage: 'A friendly error'
+  wrongCreds: true,
 }
 
 export const Default = LoginStory.bind({})
@@ -31,6 +31,5 @@ Default.args = LoginStoryProps
 
 export const Error = LoginStory.bind({})
 Error.args = LoginErrorStoryProps
-
 
 export default meta
