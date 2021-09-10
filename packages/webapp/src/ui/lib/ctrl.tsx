@@ -58,7 +58,8 @@ export const RenderWithHook: FC<{
   chw: CtrlHookWrap<any>
   UIComp: ComponentType<any>
   name: string
-}> = ({ UIComp, chw, name, ...rest }) => {
+  key?: CKey
+}> = ({ UIComp, chw, name, key, children }) => {
   const { useCtrlHook, hookArg } = chw[CTRL_SYMB]
   const hookRet = useCtrlHook(hookArg)
   if (!hookRet) {
@@ -67,7 +68,12 @@ export const RenderWithHook: FC<{
   const [feedProps, opts] = hookRet
   const { wrap } = { ...defaultCtrlHookRetOpts, ...opts }
   UIComp.displayName = `${name}_UI`
-  return wrap(<UIComp {...feedProps} {...rest} />)
+
+  return wrap(
+    <UIComp key={key} {...feedProps} {...chw}>
+      {children}
+    </UIComp>,
+  )
 }
 
 export const withCtrl = <UIProps, ExcludeKeys extends keyof UIProps = never>(
@@ -79,11 +85,9 @@ export const withCtrl = <UIProps, ExcludeKeys extends keyof UIProps = never>(
       // console.log('RenderWithHook', props)
       return (
         <RenderWithHook
-          {...{
-            chw: props as PropsWithChildren<CtrlHookWrap<UIProps>>,
-            name: Render.name,
-            UIComp,
-          }}
+          chw={props as PropsWithChildren<CtrlHookWrap<UIProps>>}
+          name={Render.name}
+          UIComp={UIComp}
           key={props.key} //FIXME: check how to propagate key properly
         >
           {children}
