@@ -8,8 +8,10 @@ import { LandingRoute } from './LandingRoute'
 import { LMSMoodleLandingRoute } from './LMSMoodleLandingRoute'
 import { LoginRoute } from './LoginRoute'
 import { NewCollectionRoute } from './NewCollectionRoute'
+import { NewPasswordRoute } from './NewPasswordRoute'
 import { NewResourceRoute } from './NewResourceRoute'
 import { ProfileRoute } from './ProfileRoute'
+import { RecoverPasswordRoute } from './RecoverPasswordRoute'
 import { ResourceRoute } from './ResourceRoute'
 import { SearchRoute } from './SearchRoute'
 import { SignupRoute } from './SignUpRoute'
@@ -28,6 +30,8 @@ export const MNRouter: FC = (/* { children } */) => {
       <Route {...CategoryRoute} />
       <Route {...ResourceRoute} />
       <Route {...CollectionRoute} />
+      <Route {...RecoverPasswordRoute} />
+      <Route {...NewPasswordRoute} />
       <Route {...LoginRoute} />
       <Route {...SignupRoute} />
       <Route {...ActivationRoute} />

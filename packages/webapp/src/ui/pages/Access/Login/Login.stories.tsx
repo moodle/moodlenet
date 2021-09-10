@@ -17,8 +17,9 @@ export const LoginStoryProps: LoginProps = {
   accessHeaderProps: AccessHeaderStoryProps,
   formBag: SBFormikBag<LoginFormValues>({ email: '', password: '' }),
   wrongCreds: false,
-  landingHref: href('Pages/Landing/Logged In'),
+  // landingHref: href('Pages/Landing/Logged In'),
   signupHref: href('Pages/SignUp/Sign Up'),
+  recoverPasswordHref: href('Pages/Recover Password/Recover'),
 }
 
 export const LoginErrorStoryProps: LoginProps = {
