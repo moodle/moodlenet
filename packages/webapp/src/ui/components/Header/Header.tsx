@@ -159,7 +159,7 @@ export const Header = withCtrl<HeaderProps>(props => {
 })
 
 Header.defaultProps = {
-  hideSearchbox: true,
+  hideSearchbox: false,
 }
 
 export default Header
