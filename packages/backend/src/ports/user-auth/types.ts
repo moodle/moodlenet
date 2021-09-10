@@ -33,16 +33,23 @@ export type User = ActiveUser | WaitingFirstActivationUser
 
 // ^ Config
 export type UserAuthConfig = {
+  recoverPasswordEmail: EmailTemplate<RecoverPasswordEmailVars>
+  recoverPasswordEmailExpiresSecs: TimeoutSecs
   newUserRequestEmail: EmailTemplate<NewUserRequestEmailVars>
   newUserVerificationWaitSecs: TimeoutSecs
 }
+
 // $ Config
 export type NewUserRequestEmailVars = {
   email: Email
   link: Link
 }
+export type RecoverPasswordEmailVars = {
+  link: Link
+}
 
 export type Email = string
+export const isEmail = (_: any): _ is Email => 'string' === typeof _
 export type Link = string
 export type UserId = string
 export type Password = string

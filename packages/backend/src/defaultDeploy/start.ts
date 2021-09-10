@@ -26,8 +26,9 @@ import { getAssetAdapter } from '../adapters/staticAssets/fs/adapters/getAsset'
 import { persistTempAssetsAdapter } from '../adapters/staticAssets/fs/adapters/persistTemp'
 import { setupFs } from '../adapters/staticAssets/fs/setup'
 import { activateNewUser, storeNewSignupRequest } from '../adapters/user-auth/arangodb/adapters/new-user'
-import { byAuthId, byEmail } from '../adapters/user-auth/arangodb/adapters/user'
+import { byAuthId, byEmail, updateUserPasswordByAuthId } from '../adapters/user-auth/arangodb/adapters/user'
 import { argonHashPassword, argonVerifyPassword } from '../lib/auth/argon'
+import { signJwtAny, verifyJwtAny } from '../lib/auth/jwt'
 import { getVersionedDBOrThrow } from '../lib/helpers/arango/migrate/lib'
 import { Qmino } from '../lib/qmino'
 import { createInProcessTransport } from '../lib/qmino/transports/in-process/transport'
@@ -60,7 +61,7 @@ export const startDefaultMoodlenet = async ({
   const inProcessTransport = createInProcessTransport()
   const qminoInProcess = Qmino(inProcessTransport)
   const emailSender = createTransport(nodemailer.smtp)
-  const userAuthDatabase = await getVersionedDBOrThrow({ version: '0.0.1' })({
+  const userAuthDatabase = await getVersionedDBOrThrow({ version: '0.0.2' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.userAuthDBName }),
   })
   const contentGraphDatabase = await getVersionedDBOrThrow({ version: '0.0.3' })({
@@ -110,6 +111,37 @@ export const startDefaultMoodlenet = async ({
 
   qminoInProcess.open(userPorts.getActiveByEmail, {
     ...byEmail(userAuthDatabase),
+  })
+
+  qminoInProcess.open(userPorts.recoverPasswordEmail, {
+    ...byEmail(userAuthDatabase),
+    ...storeNewSignupRequest(userAuthDatabase),
+    async jwtSigner(recoverPasswordJwt, expiresSecs) {
+      return signJwtAny({
+        jwtPrivateKey: jwt.privateKey,
+        jwtSignOptions: {
+          ...jwtSignOptions,
+          expiresIn: expiresSecs,
+        },
+        payload: recoverPasswordJwt,
+      })
+    },
+    publicBaseUrl: http.publicUrl,
+    sendEmail: _ => emailSender.sendMail(_),
+  })
+
+  qminoInProcess.open(userPorts.changePassword, {
+    ...byEmail(userAuthDatabase),
+    hasher: argonHashPassword,
+    jwtVerifier: async recoverPasswordJwtStr =>
+      verifyJwtAny({
+        jwtPublicKey: jwt.publicKey,
+        jwtVerifyOpts,
+        token: recoverPasswordJwtStr,
+      }),
+    changePasswordByAuthId: ({ authId, newPassword }) => {
+      return updateUserPasswordByAuthId(userAuthDatabase)({ authId, password: newPassword })
+    },
   })
 
   qminoInProcess.open(profilePorts.getByAuthId, {
