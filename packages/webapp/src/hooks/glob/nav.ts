@@ -1,29 +1,21 @@
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
-import {
-  BookmarksPage,
-  CreateNewCollection,
-  CreateNewResource,
-  GlobalSearch,
-  Landing,
-  Login,
-  Signup,
-  TermsAndConditions,
-} from '@moodlenet/common/lib/webapp/sitemap/routes'
+import * as Routes from '@moodlenet/common/lib/webapp/sitemap/routes'
 import { useCallback, useLayoutEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useSession } from '../../context/Global/Session'
 import { UserSessionFragment } from '../../context/Global/Session/session.gen'
 
 export const mainPath = {
-  termsAndConditionsHref: webappPath<TermsAndConditions>('/terms', {}),
-  login: webappPath<Login>('/login', {}),
-  signUp: webappPath<Signup>('/signup', {}),
-  landing: webappPath<Landing>('/', {}),
-  search: webappPath<GlobalSearch>('/search', {}),
-  createNewResource: webappPath<CreateNewResource>('/create-new-resource', {}),
-  createNewCollection: webappPath<CreateNewCollection>('/create-new-collection', {}),
-  bookmarksHref: webappPath<BookmarksPage>('/bookmarks', {}),
+  termsAndConditionsHref: webappPath<Routes.TermsAndConditions>('/terms', {}),
+  login: webappPath<Routes.Login>('/login', {}),
+  recoverPassword: webappPath<Routes.RecoverPassword>('/recover-password', {}),
+  signUp: webappPath<Routes.Signup>('/signup', {}),
+  landing: webappPath<Routes.Landing>('/', {}),
+  search: webappPath<Routes.GlobalSearch>('/search', {}),
+  createNewResource: webappPath<Routes.CreateNewResource>('/create-new-resource', {}),
+  createNewCollection: webappPath<Routes.CreateNewCollection>('/create-new-collection', {}),
+  bookmarksHref: webappPath<Routes.BookmarksPage>('/bookmarks', {}),
 }
 
 export const useRedirectToBySession = ({

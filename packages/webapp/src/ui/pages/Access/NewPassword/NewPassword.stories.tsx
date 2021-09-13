@@ -7,7 +7,7 @@ const meta: ComponentMeta<typeof NewPassword> = {
   title: 'Pages/New Password',
   component: NewPassword,
   excludeStories: ['NewPasswordStory', 'NewPasswordStoryProps', 'NewPasswordErrorStoryProps'],
-  parameters: { layout: 'fullscreen' }
+  parameters: { layout: 'fullscreen' },
 }
 
 const NewPasswordStory: ComponentStory<typeof NewPassword> = args => <NewPassword {...args} />
@@ -15,15 +15,14 @@ const NewPasswordStory: ComponentStory<typeof NewPassword> = args => <NewPasswor
 export const NewPasswordStoryProps: NewPasswordProps = {
   accessHeaderProps: AccessHeaderStoryProps,
   formBag: SBFormikBag<NewPasswordFormValues>({
-    name: '',
-    password: '',
+    newPassword: '',
   }),
   newPasswordErrorMessage: null,
 }
 
 export const NewPasswordErrorStoryProps: NewPasswordProps = {
   ...NewPasswordStoryProps,
-  newPasswordErrorMessage: "At least 6 characters needed"
+  newPasswordErrorMessage: 'At least 6 characters needed',
 }
 
 export const Default = NewPasswordStory.bind({})

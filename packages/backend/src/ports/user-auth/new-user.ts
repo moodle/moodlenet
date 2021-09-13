@@ -2,9 +2,9 @@ import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
 import { newAuthId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { fillEmailTemplate } from '../../lib/emailSender/helpers'
-import { EmailAddr, EmailObj } from '../../lib/emailSender/types'
+import { EmailObj } from '../../lib/emailSender/types'
 import { QMCommand, QMModule } from '../../lib/qmino'
-import { ActiveUser, UserAuthConfig, WaitingFirstActivationUser } from './types'
+import { ActiveUser, Email, UserAuthConfig, WaitingFirstActivationUser } from './types'
 
 export type SignupIssue = 'email not available'
 export type SignUpAdapter = {
@@ -17,7 +17,7 @@ export type SignUpAdapter = {
   publicBaseUrl: string
 }
 export const signUp = QMCommand(
-  ({ email }: { email: EmailAddr }) =>
+  ({ email }: { email: Email }) =>
     async ({ storeNewSignupRequest, generateToken, sendEmail, publicBaseUrl, getConfig }: SignUpAdapter) => {
       const firstActivationToken = await generateToken()
       const mInsertIssue = await storeNewSignupRequest({ email, firstActivationToken })

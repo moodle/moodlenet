@@ -475,12 +475,14 @@ export type LikesResolvers<ContextType = Context, ParentType extends ResolversPa
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   activateUser?: Resolver<ResolversTypes['CreateSession'], ParentType, ContextType, RequireFields<Types.MutationActivateUserArgs, 'name' | 'password' | 'activationToken'>>;
+  changeRecoverPassword?: Resolver<Types.Maybe<ResolversTypes['CreateSession']>, ParentType, ContextType, RequireFields<Types.MutationChangeRecoverPasswordArgs, 'newPassword' | 'token'>>;
   createEdge?: Resolver<ResolversTypes['CreateEdgeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationCreateEdgeArgs, 'input'>>;
   createNode?: Resolver<ResolversTypes['CreateNodeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationCreateNodeArgs, 'input'>>;
   createSession?: Resolver<ResolversTypes['CreateSession'], ParentType, ContextType, RequireFields<Types.MutationCreateSessionArgs, 'email' | 'password'>>;
   deleteEdge?: Resolver<ResolversTypes['DeleteEdgeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationDeleteEdgeArgs, 'input'>>;
   deleteNode?: Resolver<ResolversTypes['DeleteNodeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationDeleteNodeArgs, 'input'>>;
   editNode?: Resolver<ResolversTypes['EditNodeMutationPayload'], ParentType, ContextType, RequireFields<Types.MutationEditNodeArgs, 'input'>>;
+  recoverPassword?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<Types.MutationRecoverPasswordArgs, 'email'>>;
   sendEmailToProfile?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<Types.MutationSendEmailToProfileArgs, 'text' | 'toProfileId'>>;
   signUp?: Resolver<ResolversTypes['SimpleResponse'], ParentType, ContextType, RequireFields<Types.MutationSignUpArgs, 'email'>>;
 };
