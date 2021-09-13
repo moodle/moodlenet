@@ -65,7 +65,7 @@ export const Browser = withCtrl<BrowserProps>(
           subjectCardPropsList && (
             <Checkbox
               onChange={setFilterCB}
-              label={t`Categories`}
+              label={t`Subjects`}
               name="Subjects"
               key="Subjects"
               checked={filters.Subjects}
@@ -132,7 +132,7 @@ export const Browser = withCtrl<BrowserProps>(
               >
                 <div className="card-header">
                   <div className="title">
-                    <Trans>Categories</Trans>
+                    <Trans>Subjects</Trans>
                   </div>
                   {shouldShowSeeAll('Subjects') && (
                     <SecondaryButton onClick={() => seeAll('Subjects')}>

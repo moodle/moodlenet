@@ -6,7 +6,7 @@ import { HeaderPageLoggedInStoryProps, HeaderPageLoggedOutStoryProps } from '../
 import { Category, CategoryProps } from './Category'
 
 const meta: ComponentMeta<typeof Category> = {
-  title: 'Pages/Category',
+  title: 'Pages/Subject',
   component: Category,
   argTypes: {
     // backgroundColor: { control: 'color' },
