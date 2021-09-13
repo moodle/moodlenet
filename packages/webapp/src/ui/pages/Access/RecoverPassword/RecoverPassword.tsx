@@ -1,7 +1,6 @@
 import { t, Trans } from '@lingui/macro'
 import CallMadeIcon from '@material-ui/icons/CallMade'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
-import React from 'react'
 import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import { Href, Link } from '../../../elements/link'
@@ -25,14 +24,15 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
   ({ accessHeaderProps, formBag, requestSent, loginHref, RecoverPasswordErrorMessage }) => {
     const [form, attrs] = formBag
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (e.key === 'Enter') {
-        form.submitForm()
-      }
-    }
+    // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    //   if (e.key === 'Enter') {
+    //     form.submitForm()
+    //   }
+    // }
 
     return (
-      <MainPageWrapper onKeyDown={handleKeyDown}>
+      <MainPageWrapper>
+        {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
         <div className={`recover-password-page ${requestSent ? 'success' : ''}`}>
           <AccessHeader {...accessHeaderProps} page={'login'} />
           <div className="separator" />
@@ -91,7 +91,10 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
                 </div>
                 <MailOutlineIcon className="icon" />
                 <div className="subtitle">
-                  <Trans>Check out your inbox to recover your password</Trans>
+                  <Trans>
+                    If the email address you provided corresponds to a Moodlenet user, you'll receive an email with a
+                    change password link
+                  </Trans>
                 </div>
               </div>
             </Card>

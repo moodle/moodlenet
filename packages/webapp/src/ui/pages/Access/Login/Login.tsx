@@ -1,6 +1,5 @@
 import { t, Trans } from '@lingui/macro'
 import CallMadeIcon from '@material-ui/icons/CallMade'
-import React from 'react'
 import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryButton'
@@ -25,14 +24,15 @@ export const Login = withCtrl<LoginProps>(
   ({ accessHeaderProps, formBag, signupHref, recoverPasswordHref, wrongCreds }) => {
     const [form, attrs] = formBag
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (e.key === 'Enter') {
-        form.submitForm()
-      }
-    }
+    // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    //   if (e.key === 'Enter') {
+    //     form.submitForm()
+    //   }
+    // }
 
     return (
-      <MainPageWrapper onKeyDown={handleKeyDown}>
+      <MainPageWrapper>
+        {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
         <div className="login-page">
           <AccessHeader {...accessHeaderProps} page={'login'} />
           <div className="separator" />
