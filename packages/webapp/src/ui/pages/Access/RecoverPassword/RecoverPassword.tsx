@@ -86,13 +86,10 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
           <div className={`success-content ${requestSent ? 'success' : ''}`}>
             <Card>
               <div className="content">
-                <div className="title">
-                  <Trans>Email sent!</Trans>
-                </div>
                 <MailOutlineIcon className="icon" />
                 <div className="subtitle">
                   <Trans>
-                    If the email address you provided corresponds to a Moodlenet user, you'll receive an email with a
+                    If the email you provided corresponds to a Moodlenet user, you'll receive an email with a
                     change password link
                   </Trans>
                 </div>
