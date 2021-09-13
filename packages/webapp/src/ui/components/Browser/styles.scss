@@ -16,11 +16,11 @@
       > :not(:last-child) {
         margin-bottom: 30px;
       }
-      > .subjects {
+      > .subjects:not(.see-all) {
         max-height: 260px;
         overflow: hidden;
       }
-      > .collections {
+      > .collections:not(.see-all) {
         max-height: 234px;
         overflow: hidden;
       }
@@ -87,9 +87,9 @@
 
   @media (min-width: 450px) and (max-width: 1000px) {
     .collections > .content > .collection-card {
-        font-size: 15px;
-        width: calc(50% - 6px);
-      }
+      font-size: 15px;
+      width: calc(50% - 6px);
+    }
   }
 
   @media screen and (max-width: 450px) {
