@@ -1,6 +1,7 @@
 import { t, Trans } from '@lingui/macro'
 import BookmarkIcon from '@material-ui/icons/Bookmark'
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import EditIcon from '@material-ui/icons/Edit'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
@@ -213,11 +214,6 @@ export const Resource = withCtrl<ResourceProps>(
           displayMode={true}
           edit={false}
         />
-        {isEditing && (
-          <SecondaryButton color="red" onHoverColor="filled-red" onClick={() => setIsToDelete(true)}>
-            <Trans>Delete Resource</Trans>
-          </SecondaryButton>
-        )}
       </Card>
     )
     return (
@@ -385,6 +381,13 @@ export const Resource = withCtrl<ResourceProps>(
                 ) : (
                   <div className="description">{form.values.description}</div>
                 )}
+                <div className="bottom">
+                    {isEditing && (
+                      <SecondaryButton color="red" onHoverColor="filled-red" onClick={() => setIsToDelete(true)}>
+                        <DeleteOutlineIcon />
+                      </SecondaryButton>
+                    )}
+                  </div>
                 {/* <div className="comments"></div> */}
               </Card>
               <div className="resource-footer">

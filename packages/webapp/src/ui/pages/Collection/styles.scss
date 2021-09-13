@@ -20,12 +20,10 @@
     }
 
     > .main-collection-card {
-      position: relative;
       display: flex;
       gap: 20px;
-      padding: 20px;
 
-      @media (min-width: 450px) and (max-width: 850px) {
+      @media (min-width: 450px) {
         > .image {
           border-radius: 16px 16px 0 0;
         }
@@ -33,46 +31,24 @@
         > :last-child {
           margin-bottom: 20px;
         }
-      }
 
-      @media (min-width: 450px) {
         > :not(.image) {
           padding: 0 20px 0 20px;
         }
       }
 
-      @media screen and (max-width: 850px) {
+      position: inherit;
+      flex-direction: column;
+      align-items: flex-start;
+
+      > .image {
+        height: 100px;
+        width: 100%;
         position: inherit;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 0;
-
-        > .image {
-          height: 100px;
-          width: 100%;
-          position: inherit;
-        }
-
-        > .info {
-          padding: 0 20px 0 20px;
-        }
       }
 
-      @media screen and (min-width: 850px) {
-        align-items: center;
-        > .image {
-          border-radius: 16px;
-          position: absolute;
-          top: 15px;
-          right: 0;
-          left: 15px;
-          width: 170px;
-          height: calc(100% - 30px);
-        }
-
-        > .info {
-          margin-left: 185px;
-        }
+      > .info {
+        padding: 0 20px 0 20px;
       }
 
       > .info {
@@ -106,15 +82,13 @@
             }
 
             &.edit-save {
-              width: 40px;
-              > * {
-                width: 100%;
+              > :last-child {
+                width: 40px;
                 > svg {
                   width: 18px;
                   height: 18px;
                 }
               }
-              
             }
 
             > .bookmark {
@@ -154,32 +128,45 @@
 
         > .actions {
           display: flex;
-          gap: 12px;
           margin-top: 8px;
-          width: fit-content;
+          width: 100%;
           align-items: center;
-          gap: 10px;
+          justify-content: space-between;
 
-          > .follow-and-followers {
+          > .left {
             display: flex;
             align-items: center;
-            gap: 5px;
-            > :first-child {
-              width: 84px;
+            gap: 10px;
+
+            > .follow-and-followers {
+              display: flex;
+              align-items: center;
+              gap: 5px;
+              > :first-child {
+                width: 84px;
+              }
+            }
+            .followers {
+              display: flex;
+              align-items: center;
+              gap: 2px;
+              font-size: 15px;
+
+              > .following {
+                color: #f88012;
+              }
+
+              > .follow:hover {
+                color: #f88012;
+              }
             }
           }
-          .followers {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            font-size: 15px;
 
-            > .following {
-              color: #f88012;
-            }
-
-            > .follow:hover {
-              color: #f88012;
+          .right > div {
+            width: 40px;
+            > svg {
+              width: 18px;
+              height: 18px;
             }
           }
         }
@@ -234,6 +221,10 @@
         gap: 20px;
         width: 65%;
         height: 100%;
+
+        &.full-width {
+          width: 100%;
+        }
 
         > .collection-footer {
           display: none;
