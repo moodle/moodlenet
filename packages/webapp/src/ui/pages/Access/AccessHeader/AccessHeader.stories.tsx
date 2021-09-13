@@ -7,7 +7,7 @@ import { href } from '../../../elements/link'
 import { AccessHeader, AccessHeaderProps } from './AccessHeader'
 
 const meta: ComponentMeta<typeof AccessHeader> = {
-  title: 'Components/Headers/AccessHeader',
+  title: 'Components/Organisms/Headers/AccessHeader',
   component: AccessHeader,
   argTypes: {
     // backgroundColor: { control: 'color' },
