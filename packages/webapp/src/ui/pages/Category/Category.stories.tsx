@@ -28,6 +28,8 @@ export const CategoryStoryProps: CategoryProps = {
   numFollowers: 2387,
   numCollections: 43,
   numResources: 165,
+  iscedLink: 'http://uis.unesco.org/en/topic/international-standard-classification-education-isced',
+  isIscedSubject: true,
   collectionCardPropsList: [
     CollectionCardStoryProps,
     CollectionCardStoryProps,
