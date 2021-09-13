@@ -64,7 +64,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           value={form.values.description}
           getText={text => form.setFieldValue('description', text)}
         />
-        <Dropdown {...categories} getValue={dd} />
+        <Dropdown {...categories} label="Subject" getValue={dd} />
       </div>
     )
 

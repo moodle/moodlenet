@@ -116,6 +116,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
         <Dropdown
           {...categories}
           {...formAttrs.category}
+          label="Subject"
           value={form.values.category}
           getValue={setCategoryValue}
           disabled={state === 'ChooseResource'}
