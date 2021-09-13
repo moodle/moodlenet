@@ -3,7 +3,7 @@ import { href } from '../../../elements/link'
 import SubjectCard, { SubjectCardProps } from './SubjectCard'
 
 const meta: ComponentMeta<typeof SubjectCard> = {
-  title: 'Components/Cards/SubjectCard',
+  title: 'Components/Organisms/Cards/SubjectCard',
   component: SubjectCard,
   argTypes: {
     // backgroundColor: { control: 'color' },

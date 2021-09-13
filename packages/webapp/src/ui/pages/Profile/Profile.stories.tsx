@@ -7,7 +7,7 @@ import {
   ProfileCardOwnerStoryProps,
   ProfileCardStoryProps
 } from '../../components/cards/ProfileCard/ProfileCard.stories'
-import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
+import { ResourceCardLoggedOutStoryProps, ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Profile, ProfileProps } from './Profile'
@@ -58,6 +58,7 @@ export const ProfileLoggedOutStoryProps: ProfileProps = {
       },
     },
   },
+  resourceCardPropsList: [ResourceCardLoggedOutStoryProps, ResourceCardLoggedOutStoryProps, ResourceCardLoggedOutStoryProps],
 }
 
 export const ProfileLoggedInStoryProps: ProfileProps = {

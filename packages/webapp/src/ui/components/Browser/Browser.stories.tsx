@@ -8,7 +8,7 @@ import { href } from '../../elements/link'
 import { Browser, BrowserProps } from './Browser'
 
 const meta: ComponentMeta<typeof Browser> = {
-  title: 'Components/Browser',
+  title: 'Components/Organisms/Browser',
   component: Browser,
   argTypes: {
     // backgroundColor: { control: 'color' },

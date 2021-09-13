@@ -4,7 +4,7 @@ import { TagListStory } from '../../../elements/tags'
 import { ResourceCard, ResourceCardProps } from './ResourceCard'
 
 const meta: ComponentMeta<typeof ResourceCard> = {
-  title: 'Components/Cards/ResourceCard',
+  title: 'Components/Organisms/Cards/ResourceCard',
   component: ResourceCard,
   argTypes: {
     // backgroundColor: { control: 'color' },
@@ -28,7 +28,7 @@ export const ResourceCardStoryProps: ResourceCardProps = {
   isAuthenticated: true,
   bookmarked: false,
   liked: false,
-  numLikes: 23
+  numLikes: 23,
 }
 
 export const ResourceCardLoggedInStoryProps: ResourceCardProps = {

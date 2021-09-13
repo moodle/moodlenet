@@ -3,7 +3,7 @@ import Checkbox from '../../atoms/Checkbox/Checkbox'
 import { FilterCard, FilterCardProps } from './FilterCard'
 
 const meta: ComponentMeta<typeof FilterCard> = {
-  title: 'Components/Cards/FilterCard',
+  title: 'Components/Organisms/Cards/FilterCard',
   component: FilterCard,
   argTypes: {
     // backgroundColor: { control: 'color' },
