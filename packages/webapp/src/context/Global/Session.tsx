@@ -4,10 +4,12 @@ import { createCtx } from '../../lib/context'
 import { setToken } from './Apollo/client'
 import {
   useActivateNewUserMutation,
+  useChangeRecoverPasswordMutation,
 
   // useGetCurrentProfileLazyQuery,
   useGetCurrentSessionLazyQuery,
   useLoginMutation,
+  useRecoverPasswordMutation,
   UserSessionFragment,
   useSignUpMutation,
 } from './Session/session.gen'
@@ -69,6 +71,8 @@ export const SessionProvider: FC = ({ children }) => {
   const [signUpMut /* , activateResult */] = useSignUpMutation()
   const [lastSession, setLastSession] = useState<Partial<LastSession>>(getLastSession())
   const [getSessionLazyQ, sessionQResult] = useGetCurrentSessionLazyQuery({ fetchPolicy: 'network-only' })
+  const [recoverPasswordMut, recoverPasswordMutResp] = useRecoverPasswordMutation()
+  const [changeRecoverPasswordMut, changeRecoverPasswordMutResp] = useChangeRecoverPasswordMutation()
   const [loginMut /* , loginResult */] = useLoginMutation()
 
   const login = useCallback<SessionContextType['login']>(
@@ -106,16 +110,33 @@ export const SessionProvider: FC = ({ children }) => {
   const session = sessionQResult.data?.getSession ?? null
   const loading = sessionQResult.loading
   const recoverPassword = useCallback<SessionContextType['recoverPassword']>(
-    async (/* { email } */) => {
-      return null
+    async ({ email }) => {
+      if (recoverPasswordMutResp.loading) {
+        return 'executinging ...'
+      }
+      const { data, errors } = await recoverPasswordMut({ variables: { email } })
+      return data?.recoverPassword.success
+        ? null
+        : data?.recoverPassword.message ?? errors?.join(';') ?? 'Unexpected error'
     },
-    [],
+    [recoverPasswordMut, recoverPasswordMutResp.loading],
   )
   const changeRecoverPassword = useCallback<SessionContextType['changeRecoverPassword']>(
-    async (/* { newPassword, recoverPasswordToken } */) => {
-      return null
+    async ({ newPassword, recoverPasswordToken }) => {
+      if (changeRecoverPasswordMutResp.loading) {
+        return 'executinging ...'
+      }
+      const { data, errors } = await changeRecoverPasswordMut({
+        variables: { newPassword, token: recoverPasswordToken },
+      })
+      const jwt = data?.changeRecoverPassword?.jwt
+      if (jwt) {
+        setLastSession({ jwt })
+        return null
+      }
+      return data?.changeRecoverPassword?.message ?? errors?.join(';') ?? 'Unexpected error'
     },
-    [],
+    [changeRecoverPasswordMut, changeRecoverPasswordMutResp.loading],
   )
 
   useEffect(() => {

@@ -27,10 +27,10 @@ export const NewPassword = withCtrl<NewPasswordProps>(({ accessHeaderProps, newP
               <div className="title">
                 <Trans>Update password</Trans>
               </div>
-              <form>
+              <form onSubmit={form.handleSubmit}>
                 <input
                   className="password"
-                  type="text"
+                  type="password"
                   placeholder={t`New password`}
                   {...attrs.newPassword}
                   onChange={form.handleChange}

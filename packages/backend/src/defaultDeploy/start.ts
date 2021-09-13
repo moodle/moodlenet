@@ -130,7 +130,7 @@ export const startDefaultMoodlenet = async ({
     sendEmail: _ => emailSender.sendMail(_),
   })
 
-  qminoInProcess.open(userPorts.changePassword, {
+  qminoInProcess.open(userPorts.changeRecoverPassword, {
     ...byEmail(userAuthDatabase),
     hasher: argonHashPassword,
     jwtVerifier: async recoverPasswordJwtStr =>

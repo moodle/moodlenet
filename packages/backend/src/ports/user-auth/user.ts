@@ -1,4 +1,5 @@
 import { AuthId, isAuthId } from '@moodlenet/common/lib/content-graph/types/common'
+import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { fillEmailTemplate } from '../../lib/emailSender/helpers'
 import { EmailObj } from '../../lib/emailSender/types'
@@ -21,25 +22,25 @@ export const getActiveByEmail = QMQuery(
     },
 )
 
-export type ChangePasswordAdapter = {
-  changePasswordByAuthId(_: { authId: AuthId; newPassword: string }): Promise<boolean>
+export type ChangeRecoverPasswordAdapter = {
+  changePasswordByAuthId(_: { authId: AuthId; newPassword: string }): Promise<Maybe<ActiveUser>>
   hasher(str: string): Promise<string>
   jwtVerifier(recoverPasswordJwtString: string): Promise<unknown>
 }
-export const changePassword = QMCommand(
+export const changeRecoverPassword = QMCommand(
   ({ token, newPasswordClear }: { newPasswordClear: string; token: string }) =>
-    async ({ jwtVerifier, hasher, changePasswordByAuthId }: ChangePasswordAdapter) => {
+    async ({ jwtVerifier, hasher, changePasswordByAuthId }: ChangeRecoverPasswordAdapter) => {
       const recoverPasswordJwt = await jwtVerifier(token)
 
       if (!isRecoverPasswordJwt(recoverPasswordJwt)) {
         return false
       }
       const newPasswordHashed = await hasher(newPasswordClear)
-      const done = await changePasswordByAuthId({
+      const resp = await changePasswordByAuthId({
         authId: recoverPasswordJwt.authId,
         newPassword: newPasswordHashed,
       })
-      return done
+      return resp
     },
 )
 
