@@ -1,13 +1,17 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
+import { CollectionCardLoggedOutStoryProps, CollectionCardOwnerStoryProps, CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
 import { OverallCardStoryProps } from '../../components/cards/OverallCard/OverallCard.stories'
 import {
   ProfileCardLoggedInStoryProps,
   ProfileCardOwnerStoryProps,
   ProfileCardStoryProps
 } from '../../components/cards/ProfileCard/ProfileCard.stories'
-import { ResourceCardLoggedOutStoryProps, ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
+import {
+  ResourceCardLoggedInStoryProps,
+  ResourceCardLoggedOutStoryProps,
+  ResourceCardOwnerStoryProps
+} from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Profile, ProfileProps } from './Profile'
@@ -39,7 +43,7 @@ export const ProfileStoryProps: ProfileProps = {
   profileCardProps: ProfileCardStoryProps,
   // scoreCardProps: ScoreCardStoryProps,
   collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
-  resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
+  resourceCardPropsList: [ResourceCardLoggedInStoryProps, ResourceCardLoggedInStoryProps, ResourceCardLoggedInStoryProps],
   displayName: 'Juanito',
 }
 
@@ -58,7 +62,11 @@ export const ProfileLoggedOutStoryProps: ProfileProps = {
       },
     },
   },
-  resourceCardPropsList: [ResourceCardLoggedOutStoryProps, ResourceCardLoggedOutStoryProps, ResourceCardLoggedOutStoryProps],
+  collectionCardPropsList: [CollectionCardLoggedOutStoryProps, CollectionCardLoggedOutStoryProps, CollectionCardLoggedOutStoryProps],
+  resourceCardPropsList: [
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
+  ],
 }
 
 export const ProfileLoggedInStoryProps: ProfileProps = {
@@ -73,6 +81,12 @@ export const ProfileLoggedInStoryProps: ProfileProps = {
 export const ProfileOwnerStoryProps: ProfileProps = {
   ...ProfileLoggedInStoryProps,
   profileCardProps: ProfileCardOwnerStoryProps,
+  collectionCardPropsList: [CollectionCardOwnerStoryProps, CollectionCardOwnerStoryProps, CollectionCardOwnerStoryProps],
+  resourceCardPropsList: [
+    ResourceCardOwnerStoryProps,
+    ResourceCardOwnerStoryProps,
+    ResourceCardOwnerStoryProps,
+  ],
 }
 
 export const LoggedOut = ProfileStory.bind({})

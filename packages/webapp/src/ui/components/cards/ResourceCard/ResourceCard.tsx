@@ -5,18 +5,20 @@ import { Href, Link } from '../../../elements/link'
 import { tagList } from '../../../elements/tags'
 import { withCtrl } from '../../../lib/ctrl'
 import '../../../styles/tags.css'
+import { FollowTag } from '../../../types'
 import Card from '../../atoms/Card/Card'
 import DeleteButton from '../../atoms/DeleteButton/DeleteButton'
 import './styles.scss'
 
 export type ResourceCardProps = {
-  tags?: Array<string>
+  tags?: FollowTag[]
   className?: string
   direction?: 'vertical' | 'horizontal'
   image: string
   type: string //'Video' | 'Web Page' | 'Moodle Book'
   title: string
   resourceHomeHref?: Href
+  isOwner: boolean
   isEditing?: boolean
   isAuthenticated?: boolean
   isSelected?: boolean
@@ -45,6 +47,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     liked,
     numLikes,
     bookmarked,
+    isOwner,
     onClick,
     onRemoveClick,
     toggleLike,
@@ -80,27 +83,39 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
 
     return (
       <Card className={`resource-card ${isSelected ? 'selected' : ''} ${direction}`} onClick={onClick}>
-        <div className={`actions  ${selectionMode || !isAuthenticated ? 'disabled' : ''}`}>
+        <div className={`actions`}>
           {isAuthenticated && !selectionMode && (
-             <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
+            <div
+              className={`bookmark ${bookmarked && 'bookmarked'} ${
+                selectionMode || !isAuthenticated ? 'disabled' : ''
+              }`}
+              onClick={toggleBookmark}
+            >
               {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
             </div>
           )}
-          <div className={`like ${liked && 'liked'}`} onClick={isAuthenticated && !selectionMode ? toggleLike : () => {}}>
+          <div
+            className={`like ${liked && 'liked'} ${selectionMode || !isAuthenticated || isOwner ? 'disabled' : ''}`}
+            {...(isAuthenticated && !isOwner && !selectionMode && { onClick: toggleLike })}
+          >
             {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
             <span>{numLikes}</span>
           </div>
         </div>
-        {resourceHomeHref ? <Link href={resourceHomeHref}>{content(color)}</Link> : <div className="content-container">{content(color)}</div>}
+        {resourceHomeHref ? (
+          <Link href={resourceHomeHref}>{content(color)}</Link>
+        ) : (
+          <div className="content-container">{content(color)}</div>
+        )}
         {isEditing && <DeleteButton className="remove" type="trash" onClick={onRemoveClick} />}
-        <div className={`tags scroll ${selectionMode ? 'disabled' : ''}`}>{tagList(tags)}</div>
+        <div className={`tags scroll ${selectionMode ? 'disabled' : ''}`}>{tags && tagList(tags)}</div>
       </Card>
     )
   },
 )
 
 ResourceCard.defaultProps = {
-  direction: 'horizontal'
+  direction: 'horizontal',
 }
 
 export default ResourceCard
