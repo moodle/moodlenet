@@ -51,8 +51,21 @@ export const BrowserStoryProps: BrowserProps = {
     CollectionCardStoryProps,
     CollectionCardStoryProps,
     CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
   ],
-  resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
+  resourceCardPropsList: [
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+  ],
 }
 
 export const Default = BrowserStory.bind({})

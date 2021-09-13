@@ -122,10 +122,12 @@ export const Browser = withCtrl<BrowserProps>(
             </div>
             {subjectCardPropsList && filters.Subjects && (
               <ListCard
-                content={subjectCardPropsList.slice(0, 8).map(subjectCardProps => (
-                  <SubjectCard {...subjectCardProps} />
-                ))}
-                className="subjects"
+                content={(shouldShowSeeAll('Subjects') ? subjectCardPropsList.slice(0, 8) : subjectCardPropsList).map(
+                  subjectCardProps => (
+                    <SubjectCard {...subjectCardProps} />
+                  ),
+                )}
+                className={`subjects ${!shouldShowSeeAll('Subjects') ? 'see-all' : ''}`}
                 noCard={true}
               >
                 <div className="card-header">
@@ -142,10 +144,13 @@ export const Browser = withCtrl<BrowserProps>(
             )}
             {collectionCardPropsList && filters.Collections && (
               <ListCard
-                content={collectionCardPropsList.slice(0, 6).map(collectionCardProps => (
+                content={(shouldShowSeeAll('Collections')
+                  ? collectionCardPropsList.slice(0, 6)
+                  : collectionCardPropsList
+                ).map(collectionCardProps => (
                   <CollectionCard {...collectionCardProps} />
                 ))}
-                className="collections"
+                className={`collections ${!shouldShowSeeAll('Collections') ? 'see-all' : ''}`}
                 noCard={true}
               >
                 <div className="card-header">
@@ -162,7 +167,10 @@ export const Browser = withCtrl<BrowserProps>(
             )}
             {resourceCardPropsList && filters.Resources && (
               <ListCard
-                content={resourceCardPropsList.slice(0, 8).map(resourceCardProps => (
+                content={(shouldShowSeeAll('Resources')
+                  ? resourceCardPropsList.slice(0, 6)
+                  : resourceCardPropsList
+                ).map(resourceCardProps => (
                   <ResourceCard {...resourceCardProps} />
                 ))}
                 className="resources"
@@ -172,6 +180,11 @@ export const Browser = withCtrl<BrowserProps>(
                   <div className="title">
                     <Trans>Resources</Trans>
                   </div>
+                  {shouldShowSeeAll('Resources') && (
+                    <SecondaryButton onClick={() => seeAll('Resources')}>
+                      <Trans>See all</Trans>
+                    </SecondaryButton>
+                  )}
                 </div>
               </ListCard>
             )}
