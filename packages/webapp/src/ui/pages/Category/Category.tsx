@@ -19,6 +19,8 @@ export type CategoryProps = {
   numFollowers: number
   numCollections: number
   numResources: number
+  isIscedSubject?: boolean
+  iscedLink?: string
   toggleFollow(): unknown
 }
 
@@ -31,9 +33,11 @@ export const Category = withCtrl<CategoryProps>(
     toggleFollow,
     resourceCardPropsList,
     collectionCardPropsList,
+    isIscedSubject,
     numFollowers,
     numCollections,
     numResources,
+    iscedLink,
   }) => {
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
@@ -42,7 +46,16 @@ export const Category = withCtrl<CategoryProps>(
             <div className="category-header">
               <Card className="category-card" hideBorderWhenSmall={true}>
                 <div className="info">
-                  <div className="title">#{title}</div>
+                  <div className="title">
+                    <abbr className="name" title={title}>
+                      {title}
+                    </abbr>
+                    {isIscedSubject && iscedLink && (
+                      <a href={iscedLink} target="_blank" rel="noreferrer" className="isced-pill">
+                        ISCED
+                      </a>
+                    )}
+                  </div>
                   <div className="overall">
                     <div className="data">
                       <span>{numFollowers}</span>
@@ -119,3 +132,7 @@ export const Category = withCtrl<CategoryProps>(
     )
   },
 )
+
+Category.defaultProps = {
+  isIscedSubject: true,
+}
