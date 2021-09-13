@@ -112,8 +112,15 @@
     position: absolute;
     bottom: 10px;
     margin-left: calc(min(106px, 30%) + 18px);
-    width: calc(100% - 138px);
     z-index: 2;
+
+    &:not(.editing) {
+      width: calc(100% - 138px);
+    }
+
+    &.editing {
+      width: calc(100% - 165px);
+    }
 
     &.disabled {
       pointer-events: none;
