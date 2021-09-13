@@ -29,5 +29,5 @@ export const updateUserPasswordByAuthId =
   async ({ authId, password }: { authId: AuthId; password: string }) => {
     const changePasswordQ = updateActiveUserPasswordByAuthIdQ({ authId, password })
     const mUser = await getOneResult(changePasswordQ, db)
-    return !!mUser
+    return mUser
   }

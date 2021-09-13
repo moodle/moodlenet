@@ -93,6 +93,33 @@ export type SignUpMutation = (
   ) }
 );
 
+export type RecoverPasswordMutationVariables = Types.Exact<{
+  email: Types.Scalars['String'];
+}>;
+
+
+export type RecoverPasswordMutation = (
+  { __typename: 'Mutation' }
+  & { recoverPassword: (
+    { __typename: 'SimpleResponse' }
+    & Pick<Types.SimpleResponse, 'success' | 'message'>
+  ) }
+);
+
+export type ChangeRecoverPasswordMutationVariables = Types.Exact<{
+  token: Types.Scalars['String'];
+  newPassword: Types.Scalars['String'];
+}>;
+
+
+export type ChangeRecoverPasswordMutation = (
+  { __typename: 'Mutation' }
+  & { changeRecoverPassword?: Types.Maybe<(
+    { __typename: 'CreateSession' }
+    & Pick<Types.CreateSession, 'jwt' | 'message'>
+  )> }
+);
+
 export const UserSessionFragmentDoc = gql`
     fragment UserSession on UserSession {
   email
@@ -259,3 +286,72 @@ export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignU
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
+export const RecoverPasswordDocument = gql`
+    mutation recoverPassword($email: String!) {
+  recoverPassword(email: $email) {
+    success
+    message
+  }
+}
+    `;
+export type RecoverPasswordMutationFn = Apollo.MutationFunction<RecoverPasswordMutation, RecoverPasswordMutationVariables>;
+
+/**
+ * __useRecoverPasswordMutation__
+ *
+ * To run a mutation, you first call `useRecoverPasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRecoverPasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [recoverPasswordMutation, { data, loading, error }] = useRecoverPasswordMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useRecoverPasswordMutation(baseOptions?: Apollo.MutationHookOptions<RecoverPasswordMutation, RecoverPasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RecoverPasswordMutation, RecoverPasswordMutationVariables>(RecoverPasswordDocument, options);
+      }
+export type RecoverPasswordMutationHookResult = ReturnType<typeof useRecoverPasswordMutation>;
+export type RecoverPasswordMutationResult = Apollo.MutationResult<RecoverPasswordMutation>;
+export type RecoverPasswordMutationOptions = Apollo.BaseMutationOptions<RecoverPasswordMutation, RecoverPasswordMutationVariables>;
+export const ChangeRecoverPasswordDocument = gql`
+    mutation changeRecoverPassword($token: String!, $newPassword: String!) {
+  changeRecoverPassword(token: $token, newPassword: $newPassword) {
+    jwt
+    message
+  }
+}
+    `;
+export type ChangeRecoverPasswordMutationFn = Apollo.MutationFunction<ChangeRecoverPasswordMutation, ChangeRecoverPasswordMutationVariables>;
+
+/**
+ * __useChangeRecoverPasswordMutation__
+ *
+ * To run a mutation, you first call `useChangeRecoverPasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangeRecoverPasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changeRecoverPasswordMutation, { data, loading, error }] = useChangeRecoverPasswordMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *      newPassword: // value for 'newPassword'
+ *   },
+ * });
+ */
+export function useChangeRecoverPasswordMutation(baseOptions?: Apollo.MutationHookOptions<ChangeRecoverPasswordMutation, ChangeRecoverPasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChangeRecoverPasswordMutation, ChangeRecoverPasswordMutationVariables>(ChangeRecoverPasswordDocument, options);
+      }
+export type ChangeRecoverPasswordMutationHookResult = ReturnType<typeof useChangeRecoverPasswordMutation>;
+export type ChangeRecoverPasswordMutationResult = Apollo.MutationResult<ChangeRecoverPasswordMutation>;
+export type ChangeRecoverPasswordMutationOptions = Apollo.BaseMutationOptions<ChangeRecoverPasswordMutation, ChangeRecoverPasswordMutationVariables>;

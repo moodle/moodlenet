@@ -46,3 +46,17 @@ mutation signUp($email: String!) {
     message
   }
 }
+
+mutation recoverPassword($email: String!) {
+  recoverPassword(email: $email) {
+    success
+    message
+  }
+}
+
+mutation changeRecoverPassword($token: String!, $newPassword: String!) {
+  changeRecoverPassword(token: $token, newPassword: $newPassword) {
+    jwt
+    message
+  }
+}

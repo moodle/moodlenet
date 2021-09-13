@@ -137,6 +137,28 @@ export const getGQLResolvers = ({
     License: INodeResolver,
     ResourceType: INodeResolver,
     Mutation: {
+      async recoverPassword(_root, { email } /* , ctx */) {
+        qmino.callSync(userPorts.recoverPasswordEmail({ email }), { timeout: 5000 })
+        return {
+          __typename: 'SimpleResponse',
+          success: true,
+        }
+      },
+      async changeRecoverPassword(_root, { newPassword, token } /* , ctx */) {
+        const activeUser = await qmino.callSync(
+          userPorts.changeRecoverPassword({ newPasswordClear: newPassword, token }),
+          { timeout: 5000 },
+        )
+        if (!activeUser) {
+          return null
+        }
+        const jwt = signJwtActiveUser({ jwtPrivateKey, jwtSignOptions, user: activeUser })
+
+        return {
+          __typename: 'CreateSession',
+          jwt,
+        }
+      },
       async createSession(_root, { password, email } /* , ctx */) {
         // TODO: implement a port
         const activeUser = await qmino.query(userPorts.getActiveByEmail({ email }), {
