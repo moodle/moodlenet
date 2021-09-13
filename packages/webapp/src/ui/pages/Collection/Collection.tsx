@@ -1,12 +1,12 @@
 import { t, Trans } from '@lingui/macro'
 import BookmarkIcon from '@material-ui/icons/Bookmark'
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import SaveIcon from '@material-ui/icons/Save'
 import { useCallback, useState } from 'react'
 import Card from '../../components/atoms/Card/Card'
-import Dropdown from '../../components/atoms/Dropdown/Dropdown'
 import InputTextField from '../../components/atoms/InputTextField/InputTextField'
 import Modal from '../../components/atoms/Modal/Modal'
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
@@ -16,7 +16,6 @@ import { ResourceCard, ResourceCardProps } from '../../components/cards/Resource
 import { CP, withCtrl } from '../../lib/ctrl'
 import { FormikBag } from '../../lib/formik'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
-import { DropdownField } from '../NewCollection/FieldsData'
 import { NewCollectionFormValues } from '../NewCollection/types'
 import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
 import './styles.scss'
@@ -29,7 +28,6 @@ export type CollectionProps = {
   bookmarked: boolean
   contributorCardProps: ContributorCardProps
   formBag: FormikBag<NewCollectionFormValues>
-  categories: DropdownField
   resourceCardPropsList: CP<ResourceCardProps>[]
   updateCollection: () => unknown
   toggleBookmark: () => unknown
@@ -48,7 +46,6 @@ export const Collection = withCtrl<CollectionProps>(
     bookmarked,
     contributorCardProps,
     formBag,
-    categories,
     resourceCardPropsList,
     toggleBookmark,
     updateCollection,
@@ -81,28 +78,10 @@ export const Collection = withCtrl<CollectionProps>(
     const setFieldValue = form.setFieldValue
     const setTitleField = useCallback((_: string) => setFieldValue('title', _), [setFieldValue])
     const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
-    const setCategoryField = useCallback((_: string) => setFieldValue('category', _), [setFieldValue])
     const background = {
       backgroundImage: 'url(' + form.values.image + ')',
       backgroundSize: 'cover',
     }
-    const extraDetails = (
-      <Card className="extra-details-card" hideBorderWhenSmall={true}>
-        <Dropdown
-          value={form.values.category}
-          {...categories}
-          {...formAttrs.category}
-          displayMode={true}
-          edit={isEditing}
-          getValue={setCategoryField}
-        />
-        {isEditing && (
-          <SecondaryButton color="red" onHoverColor="filled-red" onClick={() => setIsToDelete(true)}>
-            <Trans>Delete Collection</Trans>
-          </SecondaryButton>
-        )}
-      </Card>
-    )
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
@@ -117,7 +96,7 @@ export const Collection = withCtrl<CollectionProps>(
                 }}
                 color="red"
               >
-                <Trans>Delete</Trans>
+                <Trans>Delete collection</Trans>
               </PrimaryButton>
             }
             onClose={() => setIsToDelete(false)}
@@ -134,27 +113,23 @@ export const Collection = withCtrl<CollectionProps>(
               <div className="info">
                 <div className="label">
                   <Trans>Collection</Trans>
-                  {!isOwner ? (
-                    <div className="actions">
-                      {isAuthenticated && (
-                        <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
-                          {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="actions edit-save">
-                      {isEditing ? (
-                        <PrimaryButton color="green" onHoverColor="orange" onClick={handleOnSaveClick}>
-                          <SaveIcon />
-                        </PrimaryButton>
-                      ) : (
-                        <SecondaryButton onClick={handleOnEditClick} color="orange">
-                          <EditIcon />
-                        </SecondaryButton>
-                      )}
-                    </div>
-                  )}
+                  <div className={`actions ${isOwner ? 'edit-save' : ''}`}>
+                    {isAuthenticated && !isEditing && (
+                      <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
+                        {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                      </div>
+                    )}
+                    {isOwner && isEditing && (
+                      <PrimaryButton color="green" onHoverColor="orange" onClick={handleOnSaveClick}>
+                        <SaveIcon />
+                      </PrimaryButton>
+                    )}
+                    {isOwner && !isEditing && (
+                      <SecondaryButton onClick={handleOnEditClick} color="orange">
+                        <EditIcon />
+                      </SecondaryButton>
+                    )}
+                  </div>
                 </div>
                 {isOwner ? (
                   <InputTextField
@@ -184,28 +159,37 @@ export const Collection = withCtrl<CollectionProps>(
                   <div className="description">{form.values.description}</div>
                 )}
                 <div className="actions">
-                  {following ? (
-                    <div className="follow-and-followers">
-                      <SecondaryButton onClick={toggleFollow}>
-                        <Trans>Unfollow</Trans>
+                  <div className="left">
+                    {following ? (
+                      <div className="follow-and-followers">
+                        <SecondaryButton onClick={toggleFollow}>
+                          <Trans>Unfollow</Trans>
+                        </SecondaryButton>
+                      </div>
+                    ) : (
+                      <div className="follow-and-followers">
+                        <PrimaryButton disabled={!isAuthenticated || isOwner} onClick={toggleFollow}>
+                          <Trans>Follow</Trans>
+                        </PrimaryButton>
+                      </div>
+                    )}
+                    <div className={`followers`}>
+                      <PermIdentityIcon />
+                      <span>{numFollowers}</span>
+                    </div>
+                  </div>
+                  <div className="right">
+                    {isEditing && (
+                      <SecondaryButton color="red" onHoverColor="filled-red" onClick={() => setIsToDelete(true)}>
+                        <DeleteOutlineIcon />
                       </SecondaryButton>
-                    </div>
-                  ) : (
-                    <div className="follow-and-followers">
-                      <PrimaryButton disabled={!isAuthenticated || isOwner} onClick={toggleFollow}>
-                        <Trans>Follow</Trans>
-                      </PrimaryButton>
-                    </div>
-                  )}
-                  <div className={`followers`}>
-                    <PermIdentityIcon />
-                    <span>{numFollowers}</span>
+                    )}
                   </div>
                 </div>
               </div>
             </Card>
             <div className="main-content">
-              <div className="main-column">
+              <div className={`main-column ${isOwner ? 'full-width' : ''}`}>
                 <ListCard
                   content={resourceCardPropsList.map(resourceCardProps => {
                     return <ResourceCard {...resourceCardProps} isEditing={isEditing} />
@@ -214,22 +198,19 @@ export const Collection = withCtrl<CollectionProps>(
                 />
                 <div className="collection-footer">
                   <div className="left-column">{!isOwner && <ContributorCard {...contributorCardProps} />}</div>
-                  <div className="right-column">
-                    {/*actionsCard*/}
-                    {extraDetails}
-                  </div>
+                  <div className="right-column">{/*actionsCard*/}</div>
                   <div className="one-column">
                     {/*actionsCard*/}
                     {!isOwner && <ContributorCard {...contributorCardProps} />}
-                    {extraDetails}
                   </div>
                 </div>
               </div>
-              <div className="side-column">
-                {!isOwner && <ContributorCard {...contributorCardProps} />}
-                {/*actionsCard*/}
-                {extraDetails}
-              </div>
+              {!isOwner && (
+                <div className="side-column">
+                  <ContributorCard {...contributorCardProps} />
+                  {/*actionsCard*/}
+                </div>
+              )}
             </div>
           </div>
         </div>

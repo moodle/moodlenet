@@ -108,7 +108,9 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
           <div className="content-container">{content(color)}</div>
         )}
         {isEditing && <DeleteButton className="remove" type="trash" onClick={onRemoveClick} />}
-        <div className={`tags scroll ${selectionMode ? 'disabled' : ''}`}>{tags && tagList(tags)}</div>
+        <div className={`tags scroll ${selectionMode ? 'disabled' : ''} ${isEditing ? 'editing' : ''}`}>
+          {tags && tagList(tags)}
+        </div>
       </Card>
     )
   },
