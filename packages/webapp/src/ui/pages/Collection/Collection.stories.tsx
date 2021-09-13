@@ -1,6 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
+import { ResourceCardOwnerStoryProps, ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
@@ -54,7 +54,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     title: 'Best collection ever',
   }),
   categories: CategoriesDropdown,
-  resourceCardPropsList: [ResourceCardStoryProps, ResourceCardStoryProps, ResourceCardStoryProps],
+  resourceCardPropsList: [ResourceCardOwnerStoryProps, ResourceCardOwnerStoryProps, ResourceCardStoryProps],
   updateCollection: action('updateCollection'),
   toggleFollow: action('toggleFollow'),
   deleteCollection: action('deleteCollection'),

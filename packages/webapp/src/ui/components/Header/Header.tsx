@@ -70,7 +70,7 @@ export const Header = withCtrl<HeaderProps>(props => {
             <Searchbox
               setSearchText={setSearchText}
               searchText={searchText}
-              placeholder={t`Search for education content`}
+              placeholder={t`Search for open educational content`}
             />
           )}
         </div>
