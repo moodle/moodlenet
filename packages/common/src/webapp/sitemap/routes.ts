@@ -3,6 +3,8 @@ import { RouteDef } from './types'
 export type Landing = RouteDef<'/', {}>
 export type Activation = RouteDef<'/activate-new-user/:token', { token: string }>
 export type Login = RouteDef<'/login', {}>
+export type RecoverPassword = RouteDef<'/recover-password', {}>
+export type NewPassword = RouteDef<'/new-password/:token', { token: string }>
 export type Signup = RouteDef<'/signup', {}>
 export type TermsAndConditions = RouteDef<'/terms', {}>
 export type GlobalSearch = RouteDef<'/search', {}>
