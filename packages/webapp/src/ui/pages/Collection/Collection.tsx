@@ -96,7 +96,7 @@ export const Collection = withCtrl<CollectionProps>(
                 }}
                 color="red"
               >
-                <Trans>Delete collection</Trans>
+                <Trans>Delete</Trans>
               </PrimaryButton>
             }
             onClose={() => setIsToDelete(false)}

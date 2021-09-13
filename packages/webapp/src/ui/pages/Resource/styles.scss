@@ -163,6 +163,18 @@
           font-size: 14px;
           line-height: 20px;
         }
+
+        .bottom {
+          display: flex;
+          justify-content: flex-end;
+          > div {
+            width: 40px;
+            > svg {
+              width: 18px;
+              height: 18px;
+            }
+          }
+        }
       }
 
       > .resource-footer {
@@ -245,7 +257,8 @@
       align-items: center;
 
       @media screen and (min-width: 1000px) {
-        > .button, a  {
+        > .button,
+        a {
           max-width: 80%;
         }
       }
