@@ -1,18 +1,20 @@
 .collection-card {
+  position: relative;
   width: 100%;
   height: 88px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 0 6px #dedede;
-  padding: 5px;
   display: flex;
   flex-direction: column;
   
   > .actions {
+    position: absolute;
     display: flex;
-    margin-right: 2px;
     width: 100%;
     justify-content: space-between;
+    pointer-events: none;
+    padding: 5px;
 
     > * {
       padding: 1px 3px;
@@ -31,6 +33,10 @@
       }
     }
 
+    > :not(.disabled) {
+      pointer-events: auto;
+    }
+
     :last-child {
       padding-right: 2px;
     }
@@ -40,7 +46,7 @@
       color: white;
     }
 
-    > .follow:hover {
+    > .follow:hover:not(.disabled) {
       background-color: #f88012;
     }
 
@@ -60,13 +66,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 5px;
 
     > .title {
+      margin-top: 16px;
       max-width: 100%;
       color: white;
       background-color: #b6bacb;
       border-radius: 35px;
-      padding: 7px 12px;
+      padding: 5px 12px;
       font-size: 14px;
       white-space: nowrap;
       overflow: hidden;
