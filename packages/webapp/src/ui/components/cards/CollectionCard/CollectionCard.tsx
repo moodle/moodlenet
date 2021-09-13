@@ -12,6 +12,7 @@ export type CollectionCardProps = {
   title: string
   collectionHref: Href
   isAuthenticated: boolean
+  isOwner: boolean
   isEditing?: boolean
   bookmarked: boolean
   following: boolean
@@ -25,6 +26,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
     imageUrl,
     title,
     isAuthenticated,
+    isOwner,
     bookmarked,
     following,
     numFollowers,
@@ -40,7 +42,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
     return (
       <div className="collection-card" style={background}>
         <div className={`actions`}>
-          <div className={`follow ${following ? 'following' : ''}`} onClick={isAuthenticated ? toggleFollow : () => {}}>
+          <div className={`follow ${following ? 'following' : ''} ${!isAuthenticated || isOwner ? 'disabled' : ''}`} onClick={isAuthenticated && !isOwner ? toggleFollow : () => {}}>
             {following ? <PersonIcon /> : <PermIdentityIcon />}
             <span>{numFollowers}</span>
           </div>

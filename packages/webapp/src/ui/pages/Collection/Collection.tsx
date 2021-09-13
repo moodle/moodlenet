@@ -192,7 +192,7 @@ export const Collection = withCtrl<CollectionProps>(
                     </div>
                   ) : (
                     <div className="follow-and-followers">
-                      <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow}>
+                      <PrimaryButton disabled={!isAuthenticated || isOwner} onClick={toggleFollow}>
                         <Trans>Follow</Trans>
                       </PrimaryButton>
                     </div>
