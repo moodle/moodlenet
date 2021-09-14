@@ -13,11 +13,10 @@ export type AccessHeaderProps = {
   signupHref: Href
   loginHref: Href
   page: 'login' | 'signup' | 'activation'
-  termsAndConditionsHref: Href
 }
 
 export const AccessHeader = withCtrl<AccessHeaderProps, 'page'>(
-  ({ organization, homeHref, signupHref, loginHref, page, termsAndConditionsHref }) => {
+  ({ organization, homeHref, signupHref, loginHref, page }) => {
     return (
       <div className="access-header">
         <div className="content">
@@ -37,9 +36,9 @@ export const AccessHeader = withCtrl<AccessHeaderProps, 'page'>(
                   <SecondaryButton color="orange"><Trans>Log in</Trans></SecondaryButton>
                 </Link>
               )}
-              <Link href={termsAndConditionsHref} target="__blank">
+              <a href="https://moodle.com/moodlenet/" target="__blank">
                 <PrimaryButton><Trans>Learn more</Trans></PrimaryButton>
-              </Link>
+              </a>
             </div>
           ) : (
             <></>

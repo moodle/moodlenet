@@ -7,7 +7,6 @@ import { AccessHeaderProps } from '../AccessHeader'
 const homeHref = href(mainPath.landing)
 const signupHref = href(mainPath.signUp)
 const loginHref = href(mainPath.login)
-const termsAndConditionsHref = href(mainPath.termsAndConditionsHref)
 
 export const useAccessHeaderCtrl: CtrlHook<AccessHeaderProps, {}, 'page'> = () => {
   useRedirectHomeIfLoggedIn()
@@ -18,7 +17,6 @@ export const useAccessHeaderCtrl: CtrlHook<AccessHeaderProps, {}, 'page'> = () =
       homeHref,
       loginHref,
       signupHref,
-      termsAndConditionsHref,
       organization: {
         logo: org.icon,
         name: org.name,

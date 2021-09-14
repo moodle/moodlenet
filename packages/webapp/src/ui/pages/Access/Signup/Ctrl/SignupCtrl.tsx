@@ -8,6 +8,7 @@ import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { SignupFormValues, SignupProps } from '../Signup'
 const landingHref = href(mainPath.landing)
 const loginHref = href(mainPath.login)
+const termsAndConditionsHref = href(mainPath.termsAndConditionsHref)
 export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
   useRedirectHomeIfLoggedIn()
   const { signUp } = useSession()
@@ -21,7 +22,7 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
       }),
     [signUp],
   )
-  const [formik, formBag] = useFormikBag<SignupFormValues>({ initialValues: { email: '' }, onSubmit })
+  const [formik, formBag] = useFormikBag<SignupFormValues>({ initialValues: { name: '', email: '', password: '' }, onSubmit })
   useEffect(() => {
     setSignupErrorMessage(null)
   }, [formik.values])
@@ -34,6 +35,7 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
       requestSent,
       landingHref,
       loginHref,
+      termsAndConditionsHref
     }
     return signupProps
   }, [formBag, signupErrorMessage, requestSent])

@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
+import { href } from '../../../elements/link'
 import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
-import { Activation, ActivationFormValues, ActivationProps } from './Activation'
+import { Activation, ActivationProps } from './Activation'
 
 const meta: ComponentMeta<typeof Activation> = {
   title: 'Pages/Activation',
@@ -13,12 +13,7 @@ const ActivationStory: ComponentStory<typeof Activation> = args => <Activation {
 
 export const ActivationStoryProps: ActivationProps = {
   accessHeaderProps: AccessHeaderStoryProps,
-  formBag: SBFormikBag<ActivationFormValues>({
-    name: '',
-    password: '',
-  }),
-  activationErrorMessage: null,
-  accountActivated: true,
+  loginHref: href('Pages/Login/Default')
 }
 
 export const ActivationPage = ActivationStory.bind({})

@@ -31,8 +31,9 @@
   > .signup-content {
     display: flex;
     margin-right: calc((100vw - 525px) / 2);
-    height: 340px;
+    height: 400px;
     margin-bottom: 130px;
+    align-items: center;
 
     @media (max-width: 650px) {
       justify-content: center;
@@ -74,7 +75,6 @@
           font-size: 28px;
         }
         > form {
-          position: relative;
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
@@ -124,28 +124,26 @@
               color: #b6bacb;
             }
           }
+        }
+
+        > .error {
+          padding: 0 18px;
+          width: fit-content;
+          font-size: 14px;
+          color: white;
+          align-items: center;
+          display: flex;
+          background-color: #ff6262;
+          border-radius: 20px;
+          height: 35px;
+        }
+
+        @media (max-height: 425px) {
+          gap: 15px;
 
           > .error {
-            position: absolute;
-            bottom: -46px;
-            padding: 0 18px;
-            width: fit-content;
-            font-size: 14px;
-            color: white;
-            align-items: center;
-            display: flex;
-            background-color: #ff6262;
-            border-radius: 20px;
-            height: 35px;
-          }
-
-          @media (max-height: 425px) {
-            gap: 15px;
-            
-            > .error {
-              position: relative;
-              bottom: 0;
-            }
+            position: relative;
+            bottom: 0;
           }
         }
 
@@ -156,11 +154,14 @@
           > .left {
             display: flex;
             gap: 10px;
+            width: 100%;
+            @media (max-width: 450px) {
+              flex-direction: column-reverse;
+              gap: 5px;
+            }
             > a > .tertiary-button {
               color: white;
-              @media (max-width: 450px) {
-                display: none;
-              }
+              white-space: normal;
             }
           }
           > .right {
@@ -189,6 +190,7 @@
       }
     }
     > .card:first-child {
+      max-height: 340px;
       cursor: pointer;
       margin-right: 30px;
       flex: 1;
