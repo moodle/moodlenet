@@ -145,6 +145,7 @@ export const Resource = withCtrl<ResourceProps>(
     const extraDetails = (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
         <Dropdown
+          className="scroll"
           value={form.values.category}
           {...categories}
           {...formAttrs.category}
@@ -317,14 +318,16 @@ export const Resource = withCtrl<ResourceProps>(
                       </div>
                     </span>
                     <div className="actions">
-                      <div
-                        className={`${isAuthenticated && !isOwner ? 'like' : 'like-disabled'} ${liked && 'liked'}`}
-                        onClick={isAuthenticated && !isOwner ? toggleLike : () => {}}
-                      >
-                        {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                        <span>{numLikes}</span>
-                      </div>
-                      {!isOwner && isAuthenticated && (
+                      {!isEditing && (
+                        <div
+                          className={`${isAuthenticated && !isOwner ? 'like' : 'like-disabled'} ${liked && 'liked'}`}
+                          onClick={isAuthenticated && !isOwner ? toggleLike : () => {}}
+                        >
+                          {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                          <span>{numLikes}</span>
+                        </div>
+                      )}
+                      {isAuthenticated && !isEditing && (
                         <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
                           {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                         </div>
@@ -382,12 +385,12 @@ export const Resource = withCtrl<ResourceProps>(
                   <div className="description">{form.values.description}</div>
                 )}
                 <div className="bottom">
-                    {isEditing && (
-                      <SecondaryButton color="red" onHoverColor="filled-red" onClick={() => setIsToDelete(true)}>
-                        <DeleteOutlineIcon />
-                      </SecondaryButton>
-                    )}
-                  </div>
+                  {isEditing && (
+                    <SecondaryButton color="red" onHoverColor="filled-red" onClick={() => setIsToDelete(true)}>
+                      <DeleteOutlineIcon />
+                    </SecondaryButton>
+                  )}
+                </div>
                 {/* <div className="comments"></div> */}
               </Card>
               <div className="resource-footer">
