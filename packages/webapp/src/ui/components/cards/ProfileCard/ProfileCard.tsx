@@ -2,7 +2,8 @@ import { Trans } from '@lingui/macro'
 import EditIcon from '@material-ui/icons/Edit'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import SaveIcon from '@material-ui/icons/Save'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
+import { isEmailAddress } from '../../../../helpers/utilities'
 import verifiedIcon from '../../../assets/icons/verified.svg'
 import { withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
@@ -39,11 +40,20 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     formBag,
   }) => {
     const [form, formAttrs] = formBag
+    const [profileCardErrorMessage, setProfileCardErrorMessage] = useState<string | null>(null)
     const setFieldValue = form.setFieldValue
     const setDisplayNameField = useCallback((_: string) => setFieldValue('displayName', _), [setFieldValue])
     const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
     const setLocationField = useCallback((_: string) => setFieldValue('location', _), [setFieldValue])
     const setSiteUrlField = useCallback((_: string) => setFieldValue('siteUrl', _), [setFieldValue])
+
+    const setDisplayNameFieldCtrl = (displayName: string) => {
+      if (isEmailAddress(form.values.displayName)) {
+        setProfileCardErrorMessage('Display name cannot be an email')
+      } else {
+        setDisplayNameField(displayName)
+      }
+    }
 
     return (
       <div className="profile-card">
@@ -78,7 +88,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                   placeholder="Display name"
                   edit={isEditing}
                   {...formAttrs.displayName}
-                  getText={setDisplayNameField}
+                  getText={setDisplayNameFieldCtrl}
                 />
               ) : (
                 <div className="title">{form.values.displayName}</div>
@@ -131,6 +141,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 {form.values.siteUrl !== '' && <a href={form.values.siteUrl}>{form.values.siteUrl}</a>}
               </div>
             )}
+            {profileCardErrorMessage && <div className="error">{profileCardErrorMessage}</div>}
           </div>
           {isOwner ? (
             <InputTextField

@@ -95,7 +95,7 @@
         > span {
           display: flex;
           align-items: center;
-          gap: 5px
+          gap: 5px;
         }
 
         > span:not(:first-child):before {
@@ -110,6 +110,19 @@
             color: #b6bacb;
           }
         }
+      }
+
+      > .error {
+        padding: 0 18px;
+        width: fit-content;
+        font-size: 14px;
+        color: white;
+        align-items: center;
+        display: flex;
+        background-color: #ff6262;
+        border-radius: 20px;
+        margin-top: 10px;
+        height: 28px;
       }
     }
 
