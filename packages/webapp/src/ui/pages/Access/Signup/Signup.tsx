@@ -1,6 +1,7 @@
 import { t, Trans } from '@lingui/macro'
 import CallMadeIcon from '@material-ui/icons/CallMade'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
+import { isEmailAddress } from '../../../../helpers/utilities'
 import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryButton'
@@ -31,6 +32,14 @@ export const Signup = withCtrl<SignupProps>(
     //     form.submitForm()
     //   }
     // }
+
+    const submitForm = () => {
+      if (isEmailAddress(form.values.name)) {
+        signupErrorMessage = 'Display name cannot be an email'
+      } else {
+        form.submitForm()
+      }
+    }
 
     return (
       <MainPageWrapper>
@@ -80,7 +89,7 @@ export const Signup = withCtrl<SignupProps>(
                 {signupErrorMessage && <div className="error">{signupErrorMessage}</div>}
                 <div className="bottom">
                   <div className="left">
-                    <PrimaryButton onClick={form.submitForm}>
+                    <PrimaryButton onClick={submitForm}>
                       <Trans>Sign up</Trans>
                     </PrimaryButton>
                     <Link href={termsAndConditionsHref} target="__blank">
