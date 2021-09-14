@@ -3,7 +3,6 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { CreateCollectionProps } from './CreateCollection/CreateCollection'
-import { CategoriesDropdown } from './FieldsData'
 import { NewCollection, NewCollectionProgressState, NewCollectionProps } from './NewCollection'
 import { NewCollectionFormValues } from './types'
 
@@ -56,7 +55,6 @@ const CreateCollectionStoryProps: CreateCollectionProps = {
   formBag,
   imageUrl: '',
   finish: action('nextStep'),
-  categories: CategoriesDropdown,
 }
 
 export const NewCollectionStoryProps: NewCollectionProps = {
