@@ -2,13 +2,11 @@ import { Trans } from '@lingui/macro'
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
 import React, { useCallback } from 'react'
 import Card from '../../../components/atoms/Card/Card'
-import Dropdown from '../../../components/atoms/Dropdown/Dropdown'
 import InputTextField from '../../../components/atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import { withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
 import { ReactComponent as UploadImageIcon } from '../../../static/icons/upload-image.svg'
-import { DropdownField } from '../FieldsData'
 import { NewCollectionFormValues } from '../types'
 import './styles.scss'
 
@@ -16,12 +14,11 @@ export type CreateCollectionProps = {
   step: 'CreateCollectionStep'
   formBag: FormikBag<NewCollectionFormValues>
   imageUrl: string
-  categories: DropdownField
   finish: (() => unknown) | undefined
 }
 
 export const CreateCollection = withCtrl<CreateCollectionProps>(
-  ({ formBag, imageUrl, categories, finish }) => {
+  ({ formBag, imageUrl, finish }) => {
     const [form] = formBag
     const setFieldValue = form.setFieldValue
     const background = {
@@ -41,12 +38,6 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
       setFieldValue('image', null)
     }, [setFieldValue])
 
-    const dd = useCallback(
-      (v: string) => {
-        setFieldValue('category', v)
-      },
-      [setFieldValue],
-    )
     const dataInputs = (
       <div>
         <InputTextField
@@ -64,7 +55,6 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           value={form.values.description}
           getText={text => form.setFieldValue('description', text)}
         />
-        <Dropdown {...categories} label="Subject" getValue={dd} />
       </div>
     )
 
