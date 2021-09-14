@@ -1,7 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
-import { CategoriesDropdown } from '../FieldsData'
 import { NewCollectionFormValues } from '../types'
 import { CreateCollection, CreateCollectionProps } from './CreateCollection'
 
@@ -32,7 +31,6 @@ export const CreateCollectionStoryProps: CreateCollectionProps = {
   }),
   imageUrl: '',
   step: 'CreateCollectionStep',
-  categories: CategoriesDropdown,
 }
 
 const CreateCollectionStory: ComponentStory<typeof CreateCollection> = args => <CreateCollection {...args} />
