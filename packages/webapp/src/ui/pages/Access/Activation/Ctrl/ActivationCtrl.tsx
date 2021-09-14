@@ -1,37 +1,20 @@
-import { useCallback, useMemo, useState } from 'react'
-import { useSession } from '../../../../../context/Global/Session'
-import { useRedirectProfileHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
+import { useMemo } from 'react'
+import { mainPath, useRedirectProfileHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
+import { href } from '../../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
-import { SubmitForm, useFormikBag } from '../../../../lib/formik'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
-import { ActivationFormValues, ActivationProps } from '../Activation'
+import { ActivationProps } from '../Activation'
+const loginHref = href(mainPath.login)
 
-export const useActivationCtrl: CtrlHook<ActivationProps, { activationToken: string }> = ({ activationToken }) => {
+export const useActivationCtrl: CtrlHook<ActivationProps, {}> = ({}) => {
   useRedirectProfileHomeIfLoggedIn({ delay: 618 })
-  const { activateNewUser } = useSession()
-  const [activationErrorMessage, setActivationErrorMessage] = useState<string | null>(null)
-  const [accountActivated, setAccountActivated] = useState(false)
-  const onSubmit = useCallback<SubmitForm<ActivationFormValues>>(
-    ({ password, name }) =>
-      activateNewUser({ password, name, activationToken }).then(err => {
-        setActivationErrorMessage(err)
-        setAccountActivated(!err)
-      }),
-    [activateNewUser, activationToken],
-  )
-  const [, formBag] = useFormikBag<ActivationFormValues>({
-    initialValues: { name: '', password: '' },
-    onSubmit,
-  })
   const activationProps = useMemo<ActivationProps>(() => {
     const activationProps: ActivationProps = {
       accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Activate User Access Header'),
-      formBag,
-      activationErrorMessage,
-      accountActivated,
+      loginHref,
     }
     return activationProps
-  }, [formBag, activationErrorMessage, accountActivated])
+  }, [])
 
   return activationProps && [activationProps]
 }

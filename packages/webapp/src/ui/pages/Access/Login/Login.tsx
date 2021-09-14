@@ -67,7 +67,7 @@ export const Login = withCtrl<LoginProps>(
                 <div className="bottom">
                   <div className="left">
                     <PrimaryButton onClick={form.submitForm}>
-                      <Trans>Next</Trans>
+                      <Trans>Log in</Trans>
                     </PrimaryButton>
                     <Link href={recoverPasswordHref}>
                       <TertiaryButton>
