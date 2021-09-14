@@ -11,7 +11,7 @@ import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
-export type SignupFormValues = { email: string }
+export type SignupFormValues = { name: string; email: string; password: string }
 export type SignupProps = {
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
   formBag: FormikBag<SignupFormValues>
@@ -19,10 +19,11 @@ export type SignupProps = {
   requestSent: boolean
   loginHref: Href
   landingHref: Href
+  termsAndConditionsHref: Href
 }
 
 export const Signup = withCtrl<SignupProps>(
-  ({ accessHeaderProps, formBag, requestSent, landingHref, loginHref, signupErrorMessage }) => {
+  ({ accessHeaderProps, formBag, requestSent, loginHref, signupErrorMessage, termsAndConditionsHref }) => {
     const [form, attrs] = formBag
 
     // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -51,23 +52,40 @@ export const Signup = withCtrl<SignupProps>(
                 </div>
                 <form onSubmit={form.handleSubmit}>
                   <input
+                    className="diplay-name"
+                    type="text"
+                    placeholder={t`Display name`}
+                    {...attrs.name}
+                    onChange={form.handleChange}
+                  />
+                  <input
                     className="email"
+                    id="username_input"
                     color="text"
+                    type="text"
                     placeholder={t`Email`}
                     {...attrs.email}
                     onChange={form.handleChange}
                   />
-                  <button type="submit" style={{ display: 'none' }} />
-                  {signupErrorMessage && <div className="error">{signupErrorMessage}</div>}
+                  <input
+                    className="password"
+                    id="password_input"
+                    type="password"
+                    placeholder={t`Password`}
+                    {...attrs.password}
+                    onChange={form.handleChange}
+                  />
+                  <button id="signup-button" type="submit" style={{ display: 'none' }} />
                 </form>
+                {signupErrorMessage && <div className="error">{signupErrorMessage}</div>}
                 <div className="bottom">
                   <div className="left">
                     <PrimaryButton onClick={form.submitForm}>
-                      <Trans>Next</Trans>
+                      <Trans>Sign up</Trans>
                     </PrimaryButton>
-                    <Link href={landingHref}>
+                    <Link href={termsAndConditionsHref} target="__blank">
                       <TertiaryButton>
-                        <Trans>or browse now!</Trans>
+                        <Trans>You agree to our Terms &amp; Conditions</Trans>
                       </TertiaryButton>
                     </Link>
                   </div>

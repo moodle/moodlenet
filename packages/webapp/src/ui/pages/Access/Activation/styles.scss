@@ -25,7 +25,7 @@
     gap: 20px;
     width: 100%;
     max-width: 410px;
-    max-height: 380px;
+    max-height: 175px;
     height: 100%;
     margin-bottom: 130px;
 
@@ -37,28 +37,19 @@
       margin-bottom: 5%;
     }
 
-    > .card:first-child {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #00E096;
-      color: white;
-      font-size: 16px;
-      text-align: center;
-      height: 62px;
-    }
     > .card {
-      height: 100%;
-      width: 100%;
-      background-color: #B6BACB;
+      height: fit-content;
+      width: fit-content;
+      background-color: #00E096;
 
       > .content {
         flex-direction: column;
         justify-content: space-between;
         display: flex;
         padding: 42px 65px;
-        width: 100%;
+        width: fit-content;
         height: 100%;
+        gap: 20px;
 
         @media (max-width: 450px) {
           padding: 38px calc(25px + 5%);
@@ -67,6 +58,7 @@
         > .title {
           color: white;
           font-size: 28px;
+          width: fit-content;
         }
         > form {
           display: inline-flex;
@@ -121,7 +113,7 @@
         }
         > .bottom {
           display: flex;
-          justify-content: flex-start;
+          justify-content: center;
           align-items: center;    
         }
       }
