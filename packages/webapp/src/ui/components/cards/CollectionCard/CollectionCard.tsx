@@ -42,7 +42,10 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
     return (
       <div className="collection-card" style={background}>
         <div className={`actions`}>
-          <div className={`follow ${following ? 'following' : ''} ${!isAuthenticated || isOwner ? 'disabled' : ''}`} onClick={isAuthenticated && !isOwner ? toggleFollow : () => {}}>
+          <div
+            className={`follow ${following ? 'following' : ''} ${!isAuthenticated || isOwner ? 'disabled' : ''}`}
+            onClick={isAuthenticated && !isOwner ? toggleFollow : () => {}}
+          >
             {following ? <PersonIcon /> : <PermIdentityIcon />}
             <span>{numFollowers}</span>
           </div>
