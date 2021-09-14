@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { useSession } from '../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../helpers/data'
-import { categoriesOptions, getIscedF } from '../../../../helpers/resource-relation-data-static-and-utils'
+import { getIscedF } from '../../../../helpers/resource-relation-data-static-and-utils'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useFormikBag } from '../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
@@ -111,7 +111,6 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
       stepProps: {
         step: 'CreateCollectionStep',
-        categories: categoriesOptions,
         imageUrl,
         formBag,
         finish: title && description ? save : undefined,
