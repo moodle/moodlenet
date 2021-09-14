@@ -18,8 +18,9 @@
   > .content {
     display: flex;
     margin-left: calc((100vw - 525px) / 2);
-    height: 340px;
+    height: 400px;
     margin-bottom: 130px;
+    align-items: center;
 
     @media (max-width: 650px) {
       justify-content: center;
@@ -34,6 +35,7 @@
     }
     > .card:first-child {
       width: 525px;
+      max-height: 340px;
 
       background-color: white;
       @media (max-width: 900px) {
