@@ -6,7 +6,6 @@ import { useHistory } from 'react-router'
 import { useSeoContentId } from '../../../../context/Global/Seo'
 import { useSession } from '../../../../context/Global/Session'
 import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
-import { categoriesOptions, getIscedF } from '../../../../helpers/resource-relation-data-static-and-utils'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { href } from '../../../elements/link'
 // import { useLocalInstance } from '../../../../context/Global/LocalInstance'
@@ -95,7 +94,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       if (!formik.dirty || !collectionData || addRelationRes.loading || delRelationRes.loading || editRes.loading) {
         return
       }
-      const editResPr = edit({
+      await edit({
         variables: {
           id,
           collInput: {
@@ -105,20 +104,6 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
         },
       })
 
-      const editIscedFRelPr = (() => {
-        if (!vals.category || vals.category === category) {
-          return
-        }
-        const { iscedFId } = getIscedF(vals.category)
-        return Promise.all([
-          categoryEdge && delRelation({ variables: { edge: { id: categoryEdge.edge.id } } }),
-          addRelation({
-            variables: { edge: { edgeType: 'Features', from: id, to: iscedFId, Features: {} } },
-          }),
-        ])
-      })()
-
-      await Promise.all([editResPr, editIscedFRelPr])
       return refetch()
     },
   })
@@ -180,7 +165,6 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
       },
-      categories: categoriesOptions,
       updateCollection: formik.submitForm,
       bookmarked: !!myBookmarkedEdgeId,
       following: !!myFollowEdgeId,

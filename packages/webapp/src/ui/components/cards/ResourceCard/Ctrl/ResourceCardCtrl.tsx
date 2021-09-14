@@ -20,6 +20,9 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
     variables: { id, myProfileId: session ? [session.profile.id] : [] },
   })
   const resourceNode = narrowNodeType(['Resource'])(data?.node)
+  const creatorId = resourceNode?.creator.edges[0]?.node.id
+  const isOwner = !!session && creatorId === session.profile.id
+
   const [addRelation, addRelationRes] = useAddResourceCardRelationMutation()
   const [delRelation, delRelationRes] = useDelResourceCardRelationMutation()
 
@@ -81,9 +84,20 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
             isAuthenticated,
             onRemoveClick: removeAction || undefined,
             showRemoveButton: !!removeAction,
+            isOwner,
           }
         : null,
-    [resourceNode, id, removeAction, myLikeEdgeId, myBookmarkedEdgeId, toggleLike, toggleBookmark, isAuthenticated],
+    [
+      resourceNode,
+      isOwner,
+      id,
+      removeAction,
+      myLikeEdgeId,
+      myBookmarkedEdgeId,
+      toggleLike,
+      toggleBookmark,
+      isAuthenticated,
+    ],
   )
   return resourceCardUIProps && [resourceCardUIProps]
 }

@@ -1,5 +1,6 @@
 import { narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
+import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useMemo } from 'react'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
@@ -15,7 +16,8 @@ import {
 } from './CollectionCard.gen'
 
 export type CollectionCardCtrlArg = { id: ID }
-export const useCollectionCardCtrl: CtrlHook<CollectionCardProps, CollectionCardCtrlArg> = ({ id }) => {
+type ProvidesProps = DistOmit<CollectionCardProps, 'isEditing'>
+export const useCollectionCardCtrl: CtrlHook<ProvidesProps, CollectionCardCtrlArg> = ({ id }) => {
   const { org: localOrg } = useLocalInstance()
   const { session, isAuthenticated } = useSession()
 
@@ -23,6 +25,8 @@ export const useCollectionCardCtrl: CtrlHook<CollectionCardProps, CollectionCard
     variables: { id, myProfileId: session ? [session.profile.id] : [] },
   })
   const collectionNode = narrowNodeType(['Collection'])(data?.node)
+  const creatorId = collectionNode?.creator.edges[0]?.node.id
+  const isOwner = !!session && creatorId === session.profile.id
 
   const [addRelation, addRelationRes] = useAddCollectionCardRelationMutation()
   const [delRelation, delRelationRes] = useDelCollectionCardRelationMutation()
@@ -77,6 +81,7 @@ export const useCollectionCardCtrl: CtrlHook<CollectionCardProps, CollectionCard
             numFollowers: collectionNode.followersCount,
             toggleBookmark,
             toggleFollow,
+            isOwner,
           }
         : null,
     [
@@ -88,6 +93,7 @@ export const useCollectionCardCtrl: CtrlHook<CollectionCardProps, CollectionCard
       myFollowEdgeId,
       toggleBookmark,
       toggleFollow,
+      isOwner,
     ],
   )
 
