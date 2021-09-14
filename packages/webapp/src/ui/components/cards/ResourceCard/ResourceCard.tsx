@@ -1,4 +1,5 @@
-import { default as BookmarkBorderIcon, default as BookmarkIcon } from '@material-ui/icons/BookmarkBorder'
+import BookmarkIcon from '@material-ui/icons/Bookmark'
+import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import { Href, Link } from '../../../elements/link'
@@ -87,7 +88,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
           {isAuthenticated && !selectionMode && (
             <div
               className={`bookmark ${bookmarked && 'bookmarked'} ${
-                selectionMode || !isAuthenticated ? 'disabled' : ''
+                selectionMode || !isAuthenticated || isEditing ? 'disabled' : ''
               }`}
               onClick={toggleBookmark}
             >
@@ -102,7 +103,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             <span>{numLikes}</span>
           </div>
         </div>
-        {resourceHomeHref ? (
+        {resourceHomeHref && !selectionMode ? (
           <Link href={resourceHomeHref}>{content(color)}</Link>
         ) : (
           <div className="content-container">{content(color)}</div>

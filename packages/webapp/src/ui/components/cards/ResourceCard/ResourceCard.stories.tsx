@@ -14,6 +14,7 @@ const meta: ComponentMeta<typeof ResourceCard> = {
     'ResourceCardLoggedOutStoryProps',
     'ResourceCardLoggedInStoryProps',
     'ResourceCardOwnerStoryProps',
+    'ResourceCardOwnerBookmarkedStoryProps'
   ],
   decorators: [
     Story => (
@@ -49,6 +50,11 @@ export const ResourceCardLoggedOutStoryProps: ResourceCardProps = {
 export const ResourceCardOwnerStoryProps: ResourceCardProps = {
   ...ResourceCardLoggedInStoryProps,
   isOwner: true,
+}
+
+export const ResourceCardOwnerBookmarkedStoryProps: ResourceCardProps = {
+  ...ResourceCardOwnerStoryProps,
+  bookmarked: true,
 }
 
 const ResourceCardStory: ComponentStory<typeof ResourceCard> = args => <ResourceCard {...args} />

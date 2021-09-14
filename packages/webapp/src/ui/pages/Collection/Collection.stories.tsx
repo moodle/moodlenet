@@ -1,8 +1,9 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
-  ResourceCardOwnerStoryProps,
-  ResourceCardStoryProps,
+  ResourceCardOwnerBookmarkedStoryProps, ResourceCardOwnerStoryProps,
+
+  ResourceCardStoryProps
 } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
@@ -55,7 +56,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     image: 'https://picsum.photos/200/100',
     title: 'Best collection ever',
   }),
-  resourceCardPropsList: [ResourceCardOwnerStoryProps, ResourceCardOwnerStoryProps, ResourceCardStoryProps],
+  resourceCardPropsList: [ResourceCardOwnerStoryProps, ResourceCardOwnerBookmarkedStoryProps, ResourceCardStoryProps],
   updateCollection: action('updateCollection'),
   toggleFollow: action('toggleFollow'),
   deleteCollection: action('deleteCollection'),
