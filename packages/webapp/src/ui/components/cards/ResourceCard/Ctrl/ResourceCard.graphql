@@ -8,7 +8,13 @@ query ResourceCard($id: ID!, $myProfileId: [ID!]) {
       content
       description
       image
-
+      creator: _rel(type: Created, target: Profile, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
       categories: _rel(type: Features, target: IscedField, page: { first: 1 }) {
         edges {
           edge {
