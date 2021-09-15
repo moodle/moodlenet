@@ -1,3 +1,5 @@
+@import '../../styles/application';
+
 .collection {
   > .content {
     width: 100%;
@@ -104,7 +106,7 @@
             }
 
             > .share:hover {
-              color: #f88012;
+              color: $primary-color;
             }
           }
         }
@@ -153,11 +155,11 @@
               font-size: 15px;
 
               > .following {
-                color: #f88012;
+                color: $primary-color;
               }
 
               > .follow:hover {
-                color: #f88012;
+                color: $primary-color;
               }
             }
           }

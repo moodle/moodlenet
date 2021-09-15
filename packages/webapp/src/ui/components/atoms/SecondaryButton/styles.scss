@@ -1,3 +1,5 @@
+@import '../../../styles/application';
+
 .secondary-button {
   display: flex;
   align-items: center;
@@ -26,8 +28,8 @@
   }
 
   &.orange {
-    color: #f88012;
-    border: 2px solid #f88012;
+    color: $primary-color;
+    border: 2px solid $primary-color;
   }
 
   &.grey {

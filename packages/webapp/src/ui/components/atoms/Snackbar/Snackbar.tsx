@@ -14,7 +14,7 @@ export type SnackbarProps = {
   style?: React.CSSProperties
   type?: 'error' | 'warning' | 'info' | 'success'
   className?: string
-  onClose: () => void
+  onClose?: () => void
 }
 
 const stopPropagation = (event: React.MouseEvent) => event.stopPropagation()
@@ -32,7 +32,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   const handleonClose = useCallback(
     (event: React.MouseEvent) => {
       event.stopPropagation()
-      onClose()
+      onClose && onClose()
     },
     [onClose],
   )

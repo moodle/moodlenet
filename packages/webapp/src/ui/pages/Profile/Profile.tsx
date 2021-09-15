@@ -3,6 +3,7 @@ import { useState } from 'react'
 import InputTextField from '../../components/atoms/InputTextField/InputTextField'
 import Modal from '../../components/atoms/Modal/Modal'
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
+import Snackbar from '../../components/atoms/Snackbar/Snackbar'
 import { CollectionCard, CollectionCardProps } from '../../components/cards/CollectionCard/CollectionCard'
 import { ListCard } from '../../components/cards/ListCard/ListCard'
 import { OverallCard, OverallCardProps } from '../../components/cards/OverallCard/OverallCard'
@@ -19,6 +20,7 @@ export type ProfileProps = {
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
   displayName: string
+  showAccountCreationSuccessAlert?: boolean
   sendEmail?: (text: string) => unknown
   save: () => unknown
 }
@@ -31,11 +33,15 @@ export const Profile = withCtrl<ProfileProps>(
     collectionCardPropsList,
     resourceCardPropsList,
     displayName,
+    showAccountCreationSuccessAlert,
     sendEmail,
     save,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
+    const [isShowingAccountCreationSuccessAlert, setIsShowingAccountCreationSuccessAlert] = useState<boolean>(
+      showAccountCreationSuccessAlert ? true : false,
+    )
 
     const toggleIsEditing = () => {
       setIsEditing(!isEditing)
@@ -57,6 +63,11 @@ export const Profile = withCtrl<ProfileProps>(
     const [emailText, setEmailText] = useState('')
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        {showAccountCreationSuccessAlert && isShowingAccountCreationSuccessAlert && (
+          <Snackbar type="success" onClose={() => setIsShowingAccountCreationSuccessAlert(false)}>
+            <Trans>Account activated! Feel free to complete your profile</Trans>
+          </Snackbar>
+        )}
         {isSendingMessage && sendEmail && (
           <Modal
             title={`${t`Send a message to`} ${displayName}`}
