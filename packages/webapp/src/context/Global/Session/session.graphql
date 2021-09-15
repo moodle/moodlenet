@@ -26,22 +26,22 @@ fragment UserSession on UserSession {
   }
 }
 
-mutation login($email: String!, $password: String!) {
-  createSession(email: $email, password: $password) {
+mutation login($email: String!, $password: String!, $activationEmailToken: String) {
+  createSession(email: $email, password: $password, activationEmailToken: $activationEmailToken) {
     jwt
     message
   }
 }
 
-mutation activateNewUser($activationToken: String!, $name: String!, $password: String!) {
-  activateUser(name: $name, password: $password, activationToken: $activationToken) {
-    jwt
-    message
-  }
-}
+# mutation activateNewUser($activationToken: String!, $name: String!, $password: String!) {
+#   activateUser(name: $name, password: $password, activationToken: $activationToken) {
+#     jwt
+#     message
+#   }
+# }
 
-mutation signUp($email: String!) {
-  signUp(email: $email) {
+mutation signUp($email: String!, $password: String!, $name: String!) {
+  signUp(email: $email, password: $password, name: $name) {
     success
     message
   }

@@ -23,11 +23,11 @@ export type ActiveUser = UserBase<'Active'> & {
   authId: AuthId
   password: Password
 }
-export type WaitingFirstActivationUser = UserBase<'WaitingFirstActivation'> & {
-  firstActivationToken: Token
-}
+// export type WaitingFirstActivationUser = UserBase<'WaitingFirstActivation'> & {
+//   firstActivationToken: Token
+// }
 
-export type User = ActiveUser | WaitingFirstActivationUser
+export type User = ActiveUser //| WaitingFirstActivationUser
 
 // $ UserAuth
 

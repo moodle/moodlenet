@@ -1,3 +1,4 @@
+import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
 import { mainPath, useRedirectProfileHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
@@ -10,16 +11,18 @@ import { LoginFormValues, LoginProps } from '../Login'
 // const landingHref = href(mainPath.landing)
 const recoverPasswordHref = href(mainPath.recoverPassword)
 const signupHref = href(mainPath.signUp)
-export const useLoginCtrl: CtrlHook<LoginProps, {}> = () => {
+export const useLoginCtrl: CtrlHook<LoginProps, { activationEmailToken: Maybe<string> }> = ({
+  activationEmailToken,
+}) => {
   useRedirectProfileHomeIfLoggedIn()
   const { login } = useSession()
   const [wrongCreds, setWrongCreds] = useState(false)
   const onSubmit = useCallback<SubmitForm<LoginFormValues>>(
     ({ password, email }) =>
-      login({ password, email }).then(resp => {
+      login({ password, email, activationEmailToken }).then(resp => {
         setWrongCreds(resp !== null)
       }),
-    [login],
+    [login, activationEmailToken],
   )
 
   const [formik, formBag] = useFormikBag<LoginFormValues>({ initialValues: { email: '', password: '' }, onSubmit })
