@@ -1,7 +1,6 @@
 import { Database } from 'arangojs'
 import { Algorithm, SignOptions, VerifyOptions } from 'jsonwebtoken'
 import { createTransport } from 'nodemailer'
-import { ulid } from 'ulid'
 import { createEdgeAdapter, deleteEdgeAdapter } from '../adapters/content-graph/arangodb/adapters/edge'
 import { globalSearch } from '../adapters/content-graph/arangodb/adapters/globalSearch'
 import {
@@ -25,7 +24,8 @@ import { delAssetAdapter } from '../adapters/staticAssets/fs/adapters/delAsset'
 import { getAssetAdapter } from '../adapters/staticAssets/fs/adapters/getAsset'
 import { persistTempAssetsAdapter } from '../adapters/staticAssets/fs/adapters/persistTemp'
 import { setupFs } from '../adapters/staticAssets/fs/setup'
-import { activateNewUser, storeNewSignupRequest } from '../adapters/user-auth/arangodb/adapters/new-user'
+import { getConfigAdapter } from '../adapters/user-auth/arangodb/adapters/config'
+import { storeNewSignupRequest } from '../adapters/user-auth/arangodb/adapters/new-user'
 import { byAuthId, byEmail, updateUserPasswordByAuthId } from '../adapters/user-auth/arangodb/adapters/user'
 import { argonHashPassword, argonVerifyPassword } from '../lib/auth/argon'
 import { signJwtAny, verifyJwtAny } from '../lib/auth/jwt'
@@ -151,21 +151,31 @@ export const startDefaultMoodlenet = async ({
   qminoInProcess.open(newUserPorts.signUp, {
     ...storeNewSignupRequest(userAuthDatabase),
     publicBaseUrl: http.publicUrl,
-    generateToken: async () => ulid(),
     sendEmail: _ => emailSender.sendMail(_),
-  })
-
-  qminoInProcess.open(newUserPorts.confirmSignup, {
-    ...activateNewUser(userAuthDatabase),
-    createNewProfile: async ({ authId, name }) => {
-      return qminoInProcess.callSync(
-        nodePorts.createProfile({
-          partProfile: { _authId: authId, name },
-        }),
-        { timeout: 5000 },
-      )
+    getConfig: () => getConfigAdapter({ db: userAuthDatabase }).getLatestConfig(),
+    async jwtSigner(recoverPasswordJwt, expiresSecs) {
+      return signJwtAny({
+        jwtPrivateKey: jwt.privateKey,
+        jwtSignOptions: {
+          ...jwtSignOptions,
+          expiresIn: expiresSecs,
+        },
+        payload: recoverPasswordJwt,
+      })
     },
   })
+
+  // qminoInProcess.open(newUserPorts.confirmSignup, {
+  //   ...storeNewActiveUser(userAuthDatabase),
+  //   createNewProfile: async ({ authId, name }) => {
+  //     return qminoInProcess.callSync(
+  //       nodePorts.createProfile({
+  //         partProfile: { _authId: authId, name },
+  //       }),
+  //       { timeout: 5000 },
+  //     )
+  //   },
+  // })
 
   qminoInProcess.open(nodePorts.createProfile, {
     ...createNodeAdapter(contentGraphDatabase),

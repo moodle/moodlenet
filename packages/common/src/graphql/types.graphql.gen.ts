@@ -519,7 +519,6 @@ export type Likes = IEdge & {
 
 export type Mutation = {
   __typename: 'Mutation';
-  activateUser: CreateSession;
   changeRecoverPassword?: Maybe<CreateSession>;
   createEdge: CreateEdgeMutationPayload;
   createNode: CreateNodeMutationPayload;
@@ -530,13 +529,6 @@ export type Mutation = {
   recoverPassword: SimpleResponse;
   sendEmailToProfile: Scalars['Boolean'];
   signUp: SimpleResponse;
-};
-
-
-export type MutationActivateUserArgs = {
-  name: Scalars['String'];
-  password: Scalars['String'];
-  activationToken: Scalars['String'];
 };
 
 
@@ -559,6 +551,7 @@ export type MutationCreateNodeArgs = {
 export type MutationCreateSessionArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
+  activationEmailToken?: Maybe<Scalars['String']>;
 };
 
 
@@ -590,6 +583,8 @@ export type MutationSendEmailToProfileArgs = {
 
 export type MutationSignUpArgs = {
   email: Scalars['String'];
+  name: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
