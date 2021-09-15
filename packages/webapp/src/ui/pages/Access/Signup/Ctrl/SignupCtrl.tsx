@@ -15,14 +15,17 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
   const [signupErrorMessage, setSignupErrorMessage] = useState<string | null>(null)
   const [requestSent, setRequestSent] = useState(false)
   const onSubmit = useCallback<SubmitForm<SignupFormValues>>(
-    ({ email }) =>
-      signUp({ email }).then(_resp => {
+    ({ email, name, password }) =>
+      signUp({ email, name, password }).then(_resp => {
         setSignupErrorMessage(_resp)
         setRequestSent(_resp === null)
       }),
     [signUp],
   )
-  const [formik, formBag] = useFormikBag<SignupFormValues>({ initialValues: { name: '', email: '', password: '' }, onSubmit })
+  const [formik, formBag] = useFormikBag<SignupFormValues>({
+    initialValues: { name: '', email: '', password: '' },
+    onSubmit,
+  })
   useEffect(() => {
     setSignupErrorMessage(null)
   }, [formik.values])
@@ -35,7 +38,7 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
       requestSent,
       landingHref,
       loginHref,
-      termsAndConditionsHref
+      termsAndConditionsHref,
     }
     return signupProps
   }, [formBag, signupErrorMessage, requestSent])

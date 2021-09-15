@@ -10,7 +10,7 @@ import {
 } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { SignOptions } from 'jsonwebtoken'
 import { JwtPrivateKey, signJwtActiveUser } from '../../lib/auth/jwt'
-import { PasswordHasher, PasswordVerifier } from '../../lib/auth/types'
+import { PasswordHasher } from '../../lib/auth/types'
 import { QMino } from '../../lib/qmino'
 import * as edgePorts from '../../ports/content-graph/edge'
 import * as nodePorts from '../../ports/content-graph/node'
@@ -37,13 +37,13 @@ import { bakeEditNodeDoumentData } from './prepareData/editNode'
 export const getGQLResolvers = ({
   jwtPrivateKey,
   jwtSignOptions,
-  passwordVerifier,
+  // passwordVerifier,
   passwordHasher,
   qmino,
 }: {
   jwtSignOptions: SignOptions
   jwtPrivateKey: JwtPrivateKey
-  passwordVerifier: PasswordVerifier
+  // passwordVerifier: PasswordVerifier
   passwordHasher: PasswordHasher
   qmino: QMino
 }): GQLResolvers.Resolvers => {
@@ -159,24 +159,19 @@ export const getGQLResolvers = ({
           jwt,
         }
       },
-      async createSession(_root, { password, email } /* , ctx */) {
-        // TODO: implement a port
-        const activeUser = await qmino.query(userPorts.getActiveByEmail({ email }), {
+      async createSession(_root, { password, email, activationEmailToken } /* , ctx */) {
+        const sessionResp = await qmino.callSync(userPorts.createSession({ email, activationEmailToken, password }), {
           timeout: 5000,
         })
-        const passwordMatches =
-          !!activeUser?.password && (await passwordVerifier({ plainPwd: password, pwdHash: activeUser.password }))
-
-        if (!(activeUser && passwordMatches)) {
+        if ('string' === typeof sessionResp) {
           return {
             __typename: 'CreateSession',
-            message: 'not found',
+            message: sessionResp,
           }
         }
-        const jwt = signJwtActiveUser({ jwtPrivateKey, jwtSignOptions, user: activeUser })
         return {
           __typename: 'CreateSession',
-          jwt,
+          ...sessionResp,
         }
       },
       async signUp(_root, { email, name, password } /* ,env */) {
