@@ -1,3 +1,5 @@
+@import '../../../styles/application';
+
 .dropdown {
   display: flex;
   flex-direction: column;
@@ -26,7 +28,7 @@
     font-size: 14px;
 
     &.highlight {
-      box-shadow: 0 0 0 2px #f88012;
+      box-shadow: 0 0 0 2px $primary-color;
     }
 
     &.display-mode {

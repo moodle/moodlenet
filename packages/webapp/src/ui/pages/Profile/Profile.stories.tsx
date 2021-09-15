@@ -28,6 +28,7 @@ const meta: ComponentMeta<typeof Profile> = {
     'ProfileLoggedOutStoryProps',
     'ProfileLoggedInStoryProps',
     'ProfileOwnerStoryProps',
+    'ProfileActivatedStoryProps',
   ],
 }
 
@@ -89,6 +90,11 @@ export const ProfileOwnerStoryProps: ProfileProps = {
   ],
 }
 
+export const ProfileActivatedStoryProps: ProfileProps = {
+  ...ProfileOwnerStoryProps,
+  showAccountCreationSuccessAlert: true
+}
+
 export const LoggedOut = ProfileStory.bind({})
 LoggedOut.args = ProfileLoggedOutStoryProps
 
@@ -97,5 +103,8 @@ LoggedIn.args = ProfileLoggedInStoryProps
 
 export const Owner = ProfileStory.bind({})
 Owner.args = ProfileOwnerStoryProps
+
+export const Activated = ProfileStory.bind({})
+Activated.args = ProfileActivatedStoryProps
 
 export default meta

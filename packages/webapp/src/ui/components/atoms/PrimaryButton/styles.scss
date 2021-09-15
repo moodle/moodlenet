@@ -1,3 +1,5 @@
+@import '../../../styles/application';
+
 .primary-button {
   display: flex;
   align-items: center;
@@ -10,7 +12,7 @@
   width: fit-content;
   cursor: pointer;
   color: white;
-  background-color: #f88012;
+  background-color: $primary-color;
   white-space: nowrap;
 
   &.green {
@@ -26,7 +28,7 @@
     background-color: #337aff;
 
     &.hover-orange {
-      background-color: #f88012;
+      background-color: $primary-color;
     }
 
     &.hover-green {

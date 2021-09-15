@@ -33,11 +33,11 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     isOwner,
     isAuthenticated,
     isEditing,
-    openSendMessage,
     isFollowing,
+    formBag,
+    openSendMessage,
     toggleFollow,
     toggleIsEditing,
-    formBag,
   }) => {
     const [form, formAttrs] = formBag
     const [profileCardErrorMessage, setProfileCardErrorMessage] = useState<string | null>(null)

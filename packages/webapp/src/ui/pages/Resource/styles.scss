@@ -1,3 +1,5 @@
+@import '../../styles/application';
+
 .resource {
   z-index: 10;
   > .content {
@@ -118,7 +120,7 @@
               }
 
               > .share:hover {
-                color: #f88012;
+                color: $primary-color;
               }
 
               > .edit-save {

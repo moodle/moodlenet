@@ -1,3 +1,5 @@
+@import '../../../styles/application';
+
 .card.snackbar {
   min-height: 40px;
   color: #fff;
@@ -10,6 +12,10 @@
   padding: 6px 6px 6px 14px;
   border-radius: 4px;
   gap: 10px;
+  position: fixed;
+  bottom: 20px;
+  z-index: 5;
+  width: fit-content;
 
   > * {
     display: flex;
@@ -20,18 +26,18 @@
   }
 
   &.type-success {
-    background-color: #4caf50;
+    background-color: $success-color;
   }
 
   &.type-error {
-    background-color: #ff6262;
+    background-color: $error-color;
   }
 
   &.type-warning {
-    background-color: #f88012;
+    background-color: $warning-color;
   }
 
   &.type-info {
-    background-color: #337aff;
+    background-color: $info-color;
   }
 }
