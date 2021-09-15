@@ -30,8 +30,8 @@ export const signUp = QMCommand(
         to: email,
         vars: {
           email,
-          link: `${publicBaseUrl}${webappPath<Routes.Login>('/login/:activationToken?', {
-            activationToken: activationEmailToken,
+          link: `${publicBaseUrl}${webappPath<Routes.Login>('/login/:activationEmailToken?', {
+            activationEmailToken,
           })}`,
         },
       })

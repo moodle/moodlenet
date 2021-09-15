@@ -136,16 +136,10 @@ export const createSession = QMCommand(
         !!activeUser && (await passwordVerifier({ plainPwd: password, pwdHash: activeUser.password }))
 
       if (!(activeUser && passwordMatches)) {
-        return {
-          __typename: 'CreateSession',
-          message: 'invalid credentials',
-        }
+        return 'invalid credentials'
       }
       const jwt = signJwtActiveUser({ jwtPrivateKey, jwtSignOptions, user: activeUser })
-      return {
-        __typename: 'CreateSession',
-        jwt,
-      }
+      return { jwt }
     },
 )
 QMModule(module)
