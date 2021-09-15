@@ -3,7 +3,7 @@ import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
 import ReportProblemOutlinedIcon from '@material-ui/icons/ReportProblemOutlined'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Card from '../Card/Card'
 import './styles.scss'
 
@@ -14,6 +14,7 @@ export type SnackbarProps = {
   style?: React.CSSProperties
   type?: 'error' | 'warning' | 'info' | 'success'
   className?: string
+  autoHideDuration?: number
   onClose?: () => void
 }
 
@@ -27,18 +28,33 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   style,
   className,
   type,
+  autoHideDuration,
   children,
 }) => {
+  const [movementState, setMovementState] = useState<'opening' | 'closing'>('opening')
   const handleonClose = useCallback(
-    (event: React.MouseEvent) => {
-      event.stopPropagation()
-      onClose && onClose()
+    (event?: React.MouseEvent) => {
+      event?.stopPropagation()
+      setMovementState('closing')
+      setTimeout(() => {
+        onClose && onClose()
+      }, 100)
     },
     [onClose],
   )
 
+  useEffect(() => {
+    if (autoHideDuration) {
+      const timer = setTimeout(() => {
+        handleonClose()
+      }, autoHideDuration)
+      return () => clearTimeout(timer)
+    }
+    return
+  }, [autoHideDuration, handleonClose])
+
   return (
-    <Card className={`snackbar ${className} type-${type}`} onClick={stopPropagation} style={style}>
+    <Card className={`snackbar ${className} type-${type} state-${movementState}`} onClick={stopPropagation} style={style}>
       {showIcon && (icon || type) && (
         <div className="icon">
           {icon
