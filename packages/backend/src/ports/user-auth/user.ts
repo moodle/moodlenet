@@ -93,7 +93,7 @@ export type ActivationEmailTokenObj = {
   authId: AuthId
 }
 const isActivationEmailTokenObj = (_: any): _ is ActivationEmailTokenObj =>
-  isEmail(_?.email) && isString(_?.hashedPassword) && isString(_?.displayName)
+  isEmail(_?.email) && isString(_?.hashedPassword) && isString(_?.displayName) && isString(_?.authId)
 export const createSession = QMCommand(
   ({
       password,
