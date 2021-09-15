@@ -40,4 +40,24 @@
   &.type-info {
     background-color: $info-color;
   }
+
+  &.state-opening {
+    animation: fadeIn 0.5s forwards;
+    text-align: center;
+  }
+  
+    @keyframes fadeIn {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+
+  &.state-closing {
+    animation: fadeOut 0.2s forwards;
+    text-align: center;
+  }
+
+  @keyframes fadeOut {
+      from {opacity: 1;}
+      to {opacity: 0;}
+  }
 }
