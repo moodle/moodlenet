@@ -8,11 +8,12 @@ export type OverallCardProps = {
   years: number | string
   kudos: number
   hideBorderWhenSmall?: boolean
+  noCard?: boolean
 }
 
-export const OverallCard: FC<OverallCardProps> = ({ followers, resources, kudos, hideBorderWhenSmall }) => {
+export const OverallCard: FC<OverallCardProps> = ({ followers, resources, kudos, hideBorderWhenSmall, noCard }) => {
   return (
-    <Card className="overall-card" hideBorderWhenSmall={hideBorderWhenSmall}>
+    <Card className="overall-card" hideBorderWhenSmall={hideBorderWhenSmall} noCard={noCard}>
       <div className="data">
         {followers}
         <span>Followers</span>

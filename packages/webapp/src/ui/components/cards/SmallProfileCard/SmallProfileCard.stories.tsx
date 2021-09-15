@@ -1,0 +1,66 @@
+import { action } from '@storybook/addon-actions'
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { OverallCardNoCardStoryProps } from '../OverallCard/OverallCard.stories'
+import { SmallProfileCard, SmallProfileCardProps } from './SmallProfileCard'
+
+const meta: ComponentMeta<typeof SmallProfileCard> = {
+  title: 'Components/Organisms/Cards/SmallProfileCard',
+  component: SmallProfileCard,
+  argTypes: {
+    // backgroundColor: { control: 'color' },
+  },
+  excludeStories: [
+    'SmallProfileCardStoryProps',
+    'SmallProfileCardLoggedOutStoryProps',
+    'SmallProfileCardLoggedInStoryProps',
+    'SmallProfileCardOwnerStoryProps',
+  ],
+  decorators: [
+    Story => (
+      <div style={{ maxWidth: 500 }}>
+        <Story />
+      </div>
+    ),
+  ],
+}
+
+export const SmallProfileCardStoryProps: SmallProfileCardProps = {
+  backgroundUrl: 'https://picsum.photos/200/100',
+  avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
+  isOwner: false,
+  isAuthenticated: false,
+  isFollowing: false,
+  isVerified: true,
+  toggleFollow: action('toogleFollow'),
+  displayName: 'Juanito Rodriguez',
+  organizationName: 'UM',
+  username: 'juanito',
+  overallCardProps: OverallCardNoCardStoryProps
+}
+
+export const SmallProfileCardLoggedOutStoryProps: SmallProfileCardProps = {
+  ...SmallProfileCardStoryProps,
+}
+
+export const SmallProfileCardLoggedInStoryProps: SmallProfileCardProps = {
+  ...SmallProfileCardStoryProps,
+  isAuthenticated: true,
+}
+
+export const SmallProfileCardOwnerStoryProps: SmallProfileCardProps = {
+  ...SmallProfileCardLoggedInStoryProps,
+  isOwner: true,
+}
+
+const SmallProfileCardStory: ComponentStory<typeof SmallProfileCard> = args => <SmallProfileCard {...args} />
+
+export const LoggedOut = SmallProfileCardStory.bind({})
+LoggedOut.args = SmallProfileCardLoggedOutStoryProps
+
+export const LoggedIn = SmallProfileCardStory.bind({})
+LoggedIn.args = SmallProfileCardLoggedInStoryProps
+
+export const Owner = SmallProfileCardStory.bind({})
+Owner.args = SmallProfileCardOwnerStoryProps
+
+export default meta
