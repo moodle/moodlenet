@@ -1,6 +1,11 @@
 import { AuthId, isAuthId } from '@moodlenet/common/lib/content-graph/types/common'
-import { Maybe } from '@moodlenet/common/lib/utils/types'
+import { newAuthId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
+import { SignOptions } from 'jsonwebtoken'
+import { isString } from 'lodash'
+import { JwtPrivateKey, signJwtActiveUser } from '../../lib/auth/jwt'
+import { PasswordVerifier } from '../../lib/auth/types'
 import { fillEmailTemplate } from '../../lib/emailSender/helpers'
 import { EmailObj } from '../../lib/emailSender/types'
 import { QMModule, QMQuery } from '../../lib/qmino'
@@ -36,6 +41,7 @@ export const changeRecoverPassword = QMCommand(
         return false
       }
       const newPasswordHashed = await hasher(newPasswordClear)
+
       const resp = await changePasswordByAuthId({
         authId: recoverPasswordJwt.authId,
         newPassword: newPasswordHashed,
@@ -81,4 +87,65 @@ export const recoverPasswordEmail = QMCommand(
     },
 )
 
+export type ActivationEmailTokenObj = {
+  email: Email
+  hashedPassword: string
+  displayName: string
+}
+const isActivationEmailTokenObj = (_: any): _ is ActivationEmailTokenObj =>
+  isEmail(_?.email) && isString(_?.hashedPassword) && isString(_?.displayName)
+export const createSession = QMCommand(
+  ({
+      password,
+      email,
+      activationEmailToken,
+    }: {
+      password: string
+      email: string
+      activationEmailToken: Maybe<string>
+    }) =>
+    async ({
+      getActiveUserByEmail,
+      jwtVerifier,
+      saveActiveUser,
+      createNewProfile,
+      passwordVerifier,
+      jwtPrivateKey,
+      jwtSignOptions,
+    }: {
+      saveActiveUser(_: DistOmit<ActiveUser, 'id' | 'createdAt' | 'updatedAt'>): Promise<unknown>
+      getActiveUserByEmail(_: { email: string }): Promise<ActiveUser | null>
+      jwtVerifier(activationEmailToken: string): Promise<unknown>
+      createNewProfile(_: { name: string; authId: AuthId }): Promise<unknown>
+      passwordVerifier: PasswordVerifier
+      jwtSignOptions: SignOptions
+      jwtPrivateKey: JwtPrivateKey
+    }) => {
+      if (activationEmailToken) {
+        const activationEmailTokenObj = await jwtVerifier(activationEmailToken)
+        if (!isActivationEmailTokenObj(activationEmailTokenObj) || activationEmailTokenObj.email !== email) {
+          return 'invalid credentials' as const
+        }
+        const { displayName, hashedPassword } = activationEmailTokenObj
+        const authId = newAuthId()
+        await saveActiveUser({ authId, email, password: hashedPassword, status: 'Active' })
+        await createNewProfile({ name: displayName, authId })
+      }
+      const activeUser = await getActiveUserByEmail({ email })
+      const passwordMatches =
+        !!activeUser && (await passwordVerifier({ plainPwd: password, pwdHash: activeUser.password }))
+
+      if (!(activeUser && passwordMatches)) {
+        return {
+          __typename: 'CreateSession',
+          message: 'invalid credentials',
+        }
+      }
+      const jwt = signJwtActiveUser({ jwtPrivateKey, jwtSignOptions, user: activeUser })
+      return {
+        __typename: 'CreateSession',
+        jwt,
+      }
+    },
+)
 QMModule(module)

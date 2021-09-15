@@ -32,6 +32,7 @@ export const password = string()
 export const createSession: SchemaOf<GQL.MutationCreateSessionArgs> = object({
   email: email.required(),
   password: password.required(),
+  activationEmailToken: string().notRequired(),
 })
 
 // export const sessionByEmail: SchemaOf<GQL.MutationSessionByEmailArgs> = object({
