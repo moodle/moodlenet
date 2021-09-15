@@ -23,7 +23,7 @@ export const storeNewActiveUser =
     if (!newWaitingFirstActivationUser) {
       return 'email not available'
     }
-    return //newWaitingFirstActivationUser
+    return newWaitingFirstActivationUser
   }
 
 // export const createNewUser = (db: UserAuthDB): Pick<CreateNewUserAdapter, 'createUser'> => ({
