@@ -1,0 +1,74 @@
+query ResourceCard($id: ID!, $myProfileId: [ID!]) {
+  node(id: $id) {
+    ... on Resource {
+      id
+      name
+      image
+      kind
+      content
+      description
+      image
+      creator: _rel(type: Created, target: Profile, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+      categories: _rel(type: Features, target: IscedField, page: { first: 1 }) {
+        edges {
+          edge {
+            id
+          }
+          node {
+            ... on IscedField {
+              id
+              name
+            }
+          }
+        }
+      }
+
+      myBookmarked: _rel(
+        type: Bookmarked
+        target: Profile
+        inverse: true
+        page: { first: 1 }
+        targetIds: $myProfileId
+      ) {
+        edges {
+          edge {
+            id
+          }
+        }
+      }
+
+      likesCount: _relCount(type: Likes, target: Profile, inverse: true)
+      myLike: _rel(type: Likes, target: Profile, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
+        edges {
+          edge {
+            id
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation delResourceCardRelation($edge: DeleteEdgeInput!) {
+  deleteEdge(input: $edge) {
+    ... on DeleteEdgeMutationError {
+      type
+      details
+    }
+  }
+}
+
+mutation addResourceCardRelation($edge: CreateEdgeInput!) {
+  createEdge(input: $edge) {
+    ... on CreateEdgeMutationError {
+      type
+      details
+    }
+  }
+}
