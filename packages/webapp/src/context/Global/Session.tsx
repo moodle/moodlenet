@@ -1,9 +1,10 @@
 import { t } from '@lingui/macro'
+import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { createCtx } from '../../lib/context'
 import { setToken } from './Apollo/client'
 import {
-  useActivateNewUserMutation,
+  // useActivateNewUserMutation,
   useChangeRecoverPasswordMutation,
 
   // useGetCurrentProfileLazyQuery,
@@ -34,7 +35,7 @@ const storeLastSession = ({ jwt, email }: Partial<LastSession>) => {
 
 type LoginWarnMessage = string
 type RecoverPasswordWarnMessage = string
-type ActivateWarnMessage = string
+// type ActivateWarnMessage = string
 type SignupWarnMessage = string
 type ChangePasswordWarnMessage = string
 
@@ -52,9 +53,9 @@ export type SessionContextType = {
   isAdmin: boolean
   logout(): unknown
   refetch(): unknown
-  activateNewUser(_: { password: string; activationToken: string; name: string }): Promise<ActivateWarnMessage | null>
-  signUp(_: { email: string }): Promise<SignupWarnMessage | null>
-  login(_: { email: string; password: string }): Promise<LoginWarnMessage | null>
+  // activateNewUser(_: { password: string; activationToken: string; name: string }): Promise<ActivateWarnMessage | null>
+  signUp(_: { email: string; password: string; name: string }): Promise<SignupWarnMessage | null>
+  login(_: { email: string; password: string; activationEmailToken: Maybe<string> }): Promise<LoginWarnMessage | null>
   recoverPassword(_: { email: string }): Promise<RecoverPasswordWarnMessage | null>
   changeRecoverPassword(_: {
     newPassword: string
@@ -67,7 +68,7 @@ export const [useSession, ProvideSession] = createCtx<SessionContextType>('Sessi
 const WRONG_CREDS_MSG = t`wrong credentials`
 
 export const SessionProvider: FC = ({ children }) => {
-  const [activateUserMut /* , activateResult */] = useActivateNewUserMutation()
+  // const [activateUserMut /* , activateResult */] = useActivateNewUserMutation()
   const [signUpMut /* , activateResult */] = useSignUpMutation()
   const [lastSession, setLastSession] = useState<Partial<LastSession>>(getLastSession())
   const [getSessionLazyQ, sessionQResult] = useGetCurrentSessionLazyQuery({ fetchPolicy: 'network-only' })
@@ -76,8 +77,8 @@ export const SessionProvider: FC = ({ children }) => {
   const [loginMut /* , loginResult */] = useLoginMutation()
 
   const login = useCallback<SessionContextType['login']>(
-    ({ email, password }) => {
-      return loginMut({ variables: { password, email } }).then(res => {
+    ({ email, password, activationEmailToken }) => {
+      return loginMut({ variables: { password, email, activationEmailToken } }).then(res => {
         const jwt = res.data?.createSession.jwt ?? null
         setLastSession({ jwt, email })
         return res.data?.createSession.message ?? ((!jwt && WRONG_CREDS_MSG) || null)
@@ -86,20 +87,21 @@ export const SessionProvider: FC = ({ children }) => {
     [loginMut],
   )
 
-  const activateNewUser = useCallback<SessionContextType['activateNewUser']>(
-    ({ password, activationToken, name }) => {
-      return activateUserMut({ variables: { password, activationToken, name } }).then(res => {
-        const jwt = res.data?.activateUser.jwt ?? null
+  // const activateNewUser = useCallback<SessionContextType['activateNewUser']>(
+  //   ({ password, activationToken, name }) => {
+  //     return activateUserMut({ variables: { password, activationToken, name } }).then(res => {
+  //       const jwt = res.data?.activateUser.jwt ?? null
 
-        setLastSession({ jwt })
-        return res.data?.activateUser.message ?? null
-      })
-    },
-    [activateUserMut],
-  )
+  //       setLastSession({ jwt })
+  //       return res.data?.activateUser.message ?? null
+  //     })
+  //   },
+  //   [activateUserMut],
+  // )
 
   const signUp = useCallback<SessionContextType['signUp']>(
-    ({ email }) => signUpMut({ variables: { email } }).then(res => res.data?.signUp.message ?? null),
+    ({ email, name, password }) =>
+      signUpMut({ variables: { email, name, password } }).then(res => res.data?.signUp.message ?? null),
     [signUpMut],
   )
 
@@ -149,7 +151,7 @@ export const SessionProvider: FC = ({ children }) => {
       refetch: () => getSessionLazyQ(),
       logout,
       login,
-      activateNewUser,
+      // activateNewUser,
       signUp,
       session,
       loading,
@@ -163,7 +165,7 @@ export const SessionProvider: FC = ({ children }) => {
     [
       logout,
       login,
-      activateNewUser,
+      // activateNewUser,
       signUp,
       session,
       loading,

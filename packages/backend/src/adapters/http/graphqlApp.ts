@@ -7,14 +7,14 @@ import { SignOptions } from 'jsonwebtoken'
 import { getGQLResolvers } from '../../graphql/resolvers'
 import { Context, RootValue } from '../../graphql/types'
 import { JwtPrivateKey } from '../../lib/auth/jwt'
-import { PasswordHasher, PasswordVerifier } from '../../lib/auth/types'
+import { PasswordHasher } from '../../lib/auth/types'
 import { QMino } from '../../lib/qmino'
 
 export type GQLAppConfig = {
   additionalResolvers: object | null
   jwtSignOptions: SignOptions
   jwtPrivateKey: JwtPrivateKey
-  passwordVerifier: PasswordVerifier
+  // passwordVerifier: PasswordVerifier
   passwordHasher: PasswordHasher
   qmino: QMino
 }
@@ -24,13 +24,13 @@ export const createGraphQLApp = ({
   jwtSignOptions,
   qmino,
   passwordHasher,
-  passwordVerifier,
-}: GQLAppConfig) => {
+}: // passwordVerifier,
+GQLAppConfig) => {
   const mainResolvers = getGQLResolvers({
     jwtPrivateKey,
     jwtSignOptions,
     qmino,
-    passwordVerifier,
+    // passwordVerifier,
     passwordHasher,
   })
   const schema = makeExecutableSchema({
