@@ -1,16 +1,22 @@
+import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { getOneResult } from '../../../../lib/helpers/arango/query'
-import { NewUserConfirmAdapter, SignUpAdapter } from '../../../../ports/user-auth/new-user'
-import { WaitingFirstActivationUser } from '../../../../ports/user-auth/types'
-import { activateNewUserQ } from '../queries/activateNewUser'
+import { SignUpAdapter } from '../../../../ports/user-auth/new-user'
+import { ActiveUser } from '../../../../ports/user-auth/types'
 import { createNewUserQ, CreateNewUserQArg } from '../queries/createNewUser'
 import { UserAuthDB } from '../types'
 import { getConfigAdapter } from './config'
-export const storeNewSignupRequest = (db: UserAuthDB): Pick<SignUpAdapter, 'storeNewSignupRequest' | 'getConfig'> => ({
-  storeNewSignupRequest: async ({ email, firstActivationToken }) => {
-    const waitingFirstActivationUser: CreateNewUserQArg<WaitingFirstActivationUser> = {
+export const storeNewSignupRequest = (db: UserAuthDB): Pick<SignUpAdapter, 'getConfig'> => ({
+  getConfig: getConfigAdapter({ db }).getLatestConfig,
+})
+
+export const storeNewActiveUser =
+  (db: UserAuthDB) =>
+  async ({ authId, email, password, status }: DistOmit<ActiveUser, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const waitingFirstActivationUser: CreateNewUserQArg<ActiveUser> = {
       email,
-      firstActivationToken,
-      status: 'WaitingFirstActivation',
+      authId,
+      password,
+      status,
     }
     const insertQ = createNewUserQ(waitingFirstActivationUser)
     const newWaitingFirstActivationUser = await getOneResult(insertQ, db)
@@ -18,20 +24,7 @@ export const storeNewSignupRequest = (db: UserAuthDB): Pick<SignUpAdapter, 'stor
       return 'email not available'
     }
     return //newWaitingFirstActivationUser
-  },
-  getConfig: getConfigAdapter({ db }).getLatestConfig,
-})
-
-export const activateNewUser = (db: UserAuthDB): Pick<NewUserConfirmAdapter, 'activateUser'> => ({
-  activateUser: async ({ hashedPassword: password, token, authId }) => {
-    const activateQ = activateNewUserQ({ password, token, authId })
-    const activeUser = await getOneResult(activateQ, db)
-    if (!activeUser) {
-      return 'not found'
-    }
-    return activeUser
-  },
-})
+  }
 
 // export const createNewUser = (db: UserAuthDB): Pick<CreateNewUserAdapter, 'createUser'> => ({
 //   async createUser({ password, email, username, role }) {
