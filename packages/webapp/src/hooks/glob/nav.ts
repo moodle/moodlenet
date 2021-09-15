@@ -8,7 +8,9 @@ import { UserSessionFragment } from '../../context/Global/Session/session.gen'
 
 export const mainPath = {
   termsAndConditionsHref: webappPath<Routes.TermsAndConditions>('/terms', {}),
-  login: webappPath<Routes.Login>('/login', {}),
+  login: webappPath<Routes.Login>('/login/:activationEmailToken?', {}),
+  firstLogin: (activationEmailToken: string) =>
+    webappPath<Routes.Login>('/login/:activationEmailToken?', { activationEmailToken }),
   recoverPassword: webappPath<Routes.RecoverPassword>('/recover-password', {}),
   signUp: webappPath<Routes.Signup>('/signup', {}),
   landing: webappPath<Routes.Landing>('/', {}),
