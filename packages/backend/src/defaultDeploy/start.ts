@@ -102,18 +102,18 @@ export const startDefaultMoodlenet = async ({
 
   //
 
-  qminoInProcess.open(nodePorts.getBySlug, getNodeBySlugAdapter(contentGraphDatabase))
+  await qminoInProcess.open(nodePorts.getBySlug, getNodeBySlugAdapter(contentGraphDatabase))
 
-  qminoInProcess.open(traverseNodePorts.fromNode, getTraverseNodeRelAdapter(contentGraphDatabase))
-  qminoInProcess.open(traverseNodePorts.count, getNodeRelationCountAdapter(contentGraphDatabase))
+  await qminoInProcess.open(traverseNodePorts.fromNode, getTraverseNodeRelAdapter(contentGraphDatabase))
+  await qminoInProcess.open(traverseNodePorts.count, getNodeRelationCountAdapter(contentGraphDatabase))
 
-  qminoInProcess.open(searchPorts.byTerm, globalSearch(contentGraphDatabase))
+  await qminoInProcess.open(searchPorts.byTerm, globalSearch(contentGraphDatabase))
 
-  qminoInProcess.open(userPorts.getActiveByEmail, {
+  await qminoInProcess.open(userPorts.getActiveByEmail, {
     ...byEmail(userAuthDatabase),
   })
 
-  qminoInProcess.open(userPorts.recoverPasswordEmail, {
+  await qminoInProcess.open(userPorts.recoverPasswordEmail, {
     ...byEmail(userAuthDatabase),
     ...storeNewSignupRequest(userAuthDatabase),
     async jwtSigner(recoverPasswordJwt, expiresSecs) {
@@ -130,7 +130,7 @@ export const startDefaultMoodlenet = async ({
     sendEmail: _ => emailSender.sendMail(_),
   })
 
-  qminoInProcess.open(userPorts.changeRecoverPassword, {
+  await qminoInProcess.open(userPorts.changeRecoverPassword, {
     ...byEmail(userAuthDatabase),
     hasher: argonHashPassword,
     jwtVerifier: async recoverPasswordJwtStr =>
@@ -144,7 +144,7 @@ export const startDefaultMoodlenet = async ({
     },
   })
 
-  qminoInProcess.open(userPorts.createSession, {
+  await qminoInProcess.open(userPorts.createSession, {
     ...byEmail(userAuthDatabase),
     jwtVerifier: async recoverPasswordJwtStr =>
       verifyJwtAny({
@@ -167,11 +167,11 @@ export const startDefaultMoodlenet = async ({
     passwordVerifier: argonVerifyPassword,
   })
 
-  qminoInProcess.open(profilePorts.getByAuthId, {
+  await qminoInProcess.open(profilePorts.getByAuthId, {
     ...getByAuthId(contentGraphDatabase),
   })
 
-  qminoInProcess.open(newUserPorts.signUp, {
+  await qminoInProcess.open(newUserPorts.signUp, {
     ...storeNewSignupRequest(userAuthDatabase),
     publicBaseUrl: http.publicUrl,
     sendEmail: _ => emailSender.sendMail(_),
@@ -200,31 +200,31 @@ export const startDefaultMoodlenet = async ({
   //   },
   // })
 
-  qminoInProcess.open(nodePorts.createProfile, {
+  await qminoInProcess.open(nodePorts.createProfile, {
     ...createNodeAdapter(contentGraphDatabase),
   })
-  qminoInProcess.open(nodePorts.deleteNode, {
+  await qminoInProcess.open(nodePorts.deleteNode, {
     ...deleteNodeAdapter(contentGraphDatabase),
   })
 
-  qminoInProcess.open(nodePorts.createNode, {
+  await qminoInProcess.open(nodePorts.createNode, {
     ...createNodeAdapter(contentGraphDatabase),
     createEdge: ({ from, newEdge, sessionEnv, to }) =>
       qminoInProcess.callSync(edgePorts.createEdge({ from, newEdge, sessionEnv, to }), { timeout: 5000 }),
     getProfileByAuthId: ({ authId }) => qminoInProcess.query(profilePorts.getByAuthId({ authId }), { timeout: 5000 }),
   })
 
-  qminoInProcess.open(nodePorts.editNode, {
+  await qminoInProcess.open(nodePorts.editNode, {
     ...editNodeAdapter(contentGraphDatabase),
   })
 
-  qminoInProcess.open(edgePorts.createEdge, createEdgeAdapter(contentGraphDatabase))
-  qminoInProcess.open(edgePorts.deleteEdge, deleteEdgeAdapter(contentGraphDatabase))
+  await qminoInProcess.open(edgePorts.createEdge, createEdgeAdapter(contentGraphDatabase))
+  await qminoInProcess.open(edgePorts.deleteEdge, deleteEdgeAdapter(contentGraphDatabase))
 
   const nodeIdAdapter = getNodeByIdentifierAdapter(contentGraphDatabase)
   const userAuthIdAdapter = byAuthId(userAuthDatabase)
 
-  qminoInProcess.open(utilsPorts.sendEmailToProfile, {
+  await qminoInProcess.open(utilsPorts.sendEmailToProfile, {
     ...userAuthIdAdapter,
     getLocalDomain: async () => domain,
     getProfile: nodeIdAdapter.getNodeByIdentifier,
@@ -239,8 +239,8 @@ export const startDefaultMoodlenet = async ({
   //FS asset
   const rootDir = fsAsset.rootFolder
   setupFs({ rootDir })
-  qminoInProcess.open(assetPorts.del, delAssetAdapter({ rootDir }))
-  qminoInProcess.open(assetPorts.get, getAssetAdapter({ rootDir }))
-  qminoInProcess.open(tmpAssetPorts.createTemp, createTempAdapter({ rootDir }))
-  qminoInProcess.open(tmpAssetPorts.persistTempAssets, persistTempAssetsAdapter({ rootDir }))
+  await qminoInProcess.open(assetPorts.del, delAssetAdapter({ rootDir }))
+  await qminoInProcess.open(assetPorts.get, getAssetAdapter({ rootDir }))
+  await qminoInProcess.open(tmpAssetPorts.createTemp, createTempAdapter({ rootDir }))
+  await qminoInProcess.open(tmpAssetPorts.persistTempAssets, persistTempAssetsAdapter({ rootDir }))
 }

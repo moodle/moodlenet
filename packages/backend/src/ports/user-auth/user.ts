@@ -1,5 +1,4 @@
 import { AuthId, isAuthId } from '@moodlenet/common/lib/content-graph/types/common'
-import { newAuthId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { SignOptions } from 'jsonwebtoken'
@@ -8,8 +7,8 @@ import { JwtPrivateKey, signJwtActiveUser } from '../../lib/auth/jwt'
 import { PasswordVerifier } from '../../lib/auth/types'
 import { fillEmailTemplate } from '../../lib/emailSender/helpers'
 import { EmailObj } from '../../lib/emailSender/types'
-import { QMModule, QMQuery } from '../../lib/qmino'
-import { QMCommand } from '../../lib/qmino/lib'
+import { QMQuery } from '../../lib/qmino'
+import { QMCommand, QMModule } from '../../lib/qmino/lib'
 import { ActiveUser, Email, isEmail, UserAuthConfig } from './types'
 
 export type GetActiveByEmailAdapter = {
@@ -91,6 +90,7 @@ export type ActivationEmailTokenObj = {
   email: Email
   hashedPassword: string
   displayName: string
+  authId: AuthId
 }
 const isActivationEmailTokenObj = (_: any): _ is ActivationEmailTokenObj =>
   isEmail(_?.email) && isString(_?.hashedPassword) && isString(_?.displayName)
@@ -113,7 +113,7 @@ export const createSession = QMCommand(
       jwtPrivateKey,
       jwtSignOptions,
     }: {
-      saveActiveUser(_: DistOmit<ActiveUser, 'id' | 'createdAt' | 'updatedAt'>): Promise<unknown>
+      saveActiveUser(_: DistOmit<ActiveUser, 'id' | 'createdAt' | 'updatedAt'>): Promise<ActiveUser | string>
       getActiveUserByEmail(_: { email: string }): Promise<ActiveUser | null>
       jwtVerifier(activationEmailToken: string): Promise<unknown>
       createNewProfile(_: { name: string; authId: AuthId }): Promise<unknown>
@@ -121,22 +121,34 @@ export const createSession = QMCommand(
       jwtSignOptions: SignOptions
       jwtPrivateKey: JwtPrivateKey
     }) => {
-      if (activationEmailToken) {
-        const activationEmailTokenObj = await jwtVerifier(activationEmailToken)
-        if (!isActivationEmailTokenObj(activationEmailTokenObj) || activationEmailTokenObj.email !== email) {
-          return 'invalid credentials' as const
+      const INVALID_CREDENTIALS = 'invalid credentials' as const
+      const activeUser = await getActiveUserByEmail({ email }).then(async activeUser => {
+        if (activeUser) {
+          return activeUser
+        } else if (activationEmailToken) {
+          const activationEmailTokenObj = await jwtVerifier(activationEmailToken)
+          if (!isActivationEmailTokenObj(activationEmailTokenObj) || activationEmailTokenObj.email !== email) {
+            return INVALID_CREDENTIALS
+          }
+          const { displayName, hashedPassword, authId } = activationEmailTokenObj
+          const mActiveUser = await saveActiveUser({ authId, email, password: hashedPassword, status: 'Active' })
+          if ('string' == typeof mActiveUser) {
+            return mActiveUser
+          }
+          await createNewProfile({ name: displayName, authId })
+          return mActiveUser
         }
-        const { displayName, hashedPassword } = activationEmailTokenObj
-        const authId = newAuthId()
-        await saveActiveUser({ authId, email, password: hashedPassword, status: 'Active' })
-        await createNewProfile({ name: displayName, authId })
+
+        return INVALID_CREDENTIALS
+      })
+      if ('string' === typeof activeUser) {
+        return activeUser
       }
-      const activeUser = await getActiveUserByEmail({ email })
       const passwordMatches =
         !!activeUser && (await passwordVerifier({ plainPwd: password, pwdHash: activeUser.password }))
 
       if (!(activeUser && passwordMatches)) {
-        return 'invalid credentials'
+        return INVALID_CREDENTIALS
       }
       const jwt = signJwtActiveUser({ jwtPrivateKey, jwtSignOptions, user: activeUser })
       return { jwt }
