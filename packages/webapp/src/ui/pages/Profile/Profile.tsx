@@ -64,7 +64,7 @@ export const Profile = withCtrl<ProfileProps>(
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         {showAccountCreationSuccessAlert && isShowingAccountCreationSuccessAlert && (
-          <Snackbar type="success" onClose={() => setIsShowingAccountCreationSuccessAlert(false)}>
+          <Snackbar type="success" autoHideDuration={4000} onClose={() => setIsShowingAccountCreationSuccessAlert(false)}>
             <Trans>Account activated! Feel free to complete your profile</Trans>
           </Snackbar>
         )}
