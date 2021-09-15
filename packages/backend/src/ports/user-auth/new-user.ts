@@ -1,3 +1,4 @@
+import { newAuthId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { fillEmailTemplate } from '../../lib/emailSender/helpers'
 import { EmailObj } from '../../lib/emailSender/types'
@@ -16,11 +17,14 @@ export const signUp = QMCommand(
   ({ email, displayName, hashedPassword }: { email: Email; hashedPassword: string; displayName: string }) =>
     async ({ jwtSigner, sendEmail, publicBaseUrl, getConfig }: SignUpAdapter) => {
       const { newUserRequestEmail, newUserVerificationWaitSecs } = await getConfig()
+      const authId = newAuthId()
+
       const activationEmailToken = await jwtSigner(
         {
           displayName,
           email,
           hashedPassword,
+          authId,
         },
         newUserVerificationWaitSecs,
       )
