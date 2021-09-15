@@ -72,7 +72,7 @@ export const getMaybeAssetRefUrl = (assetRef: AssetRef | null | undefined): null
 export const getMaybeAssetRefUrlOrDefaultImage = (
   assetRef: AssetRef | null | undefined,
   id: string,
-  type: 'icon' | 'image',
+  type: 'icon' | 'image' | 'avatar',
 ): string =>
   getMaybeAssetRefUrl(assetRef) ??
   `https://picsum.photos/seed/${id.replaceAll('/', '_')}_${type}_/${type === 'icon' ? '200/200' : '800/600'}`
