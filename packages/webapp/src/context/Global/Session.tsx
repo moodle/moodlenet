@@ -61,6 +61,7 @@ export type SessionContextType = {
     newPassword: string
     recoverPasswordToken: string
   }): Promise<ChangePasswordWarnMessage | null>
+  firstLogin: boolean
 }
 
 export const [useSession, ProvideSession] = createCtx<SessionContextType>('Session')
@@ -75,18 +76,25 @@ export const SessionProvider: FC = ({ children }) => {
   const [recoverPasswordMut, recoverPasswordMutResp] = useRecoverPasswordMutation()
   const [changeRecoverPasswordMut, changeRecoverPasswordMutResp] = useChangeRecoverPasswordMutation()
   const [loginMut /* , loginResult */] = useLoginMutation()
-
+  const [firstLogin, setFirstLogin] = useState(false)
+  useEffect(() => {
+    if (firstLogin) {
+      setTimeout(() => setFirstLogin(false), 15000)
+    }
+  }, [firstLogin])
   const login = useCallback<SessionContextType['login']>(
     ({ email, password, activationEmailToken }) => {
       return loginMut({ variables: { password, email, activationEmailToken } }).then(res => {
         const jwt = res.data?.createSession.jwt ?? null
         setLastSession({ jwt, email })
+        if (jwt && activationEmailToken) {
+          setFirstLogin(true)
+        }
         return res.data?.createSession.message ?? ((!jwt && WRONG_CREDS_MSG) || null)
       })
     },
-    [loginMut],
+    [loginMut, setFirstLogin],
   )
-
   // const activateNewUser = useCallback<SessionContextType['activateNewUser']>(
   //   ({ password, activationToken, name }) => {
   //     return activateUserMut({ variables: { password, activationToken, name } }).then(res => {
@@ -151,6 +159,7 @@ export const SessionProvider: FC = ({ children }) => {
       refetch: () => getSessionLazyQ(),
       logout,
       login,
+      firstLogin,
       // activateNewUser,
       signUp,
       session,
@@ -174,6 +183,7 @@ export const SessionProvider: FC = ({ children }) => {
       recoverPassword,
       changeRecoverPassword,
       getSessionLazyQ,
+      firstLogin,
     ],
   )
   return <ProvideSession value={ctx}>{!sessionQResult.called ? null : children}</ProvideSession>
