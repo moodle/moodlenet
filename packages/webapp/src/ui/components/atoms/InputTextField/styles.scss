@@ -1,3 +1,5 @@
+@import '../../../styles/application';
+
 .input-text-field {
   display: flex;
   flex-direction: column;
@@ -9,7 +11,7 @@
 
   &.highlight > .input-container,
   &.highlight > .textarea-container {
-    box-shadow: 0 0 0 2px #f88012;
+    box-shadow: 0 0 0 2px $primary-color;
   }
 
   > .input-container,

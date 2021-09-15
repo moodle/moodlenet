@@ -1,0 +1,43 @@
+@import '../../../styles/application';
+
+.card.snackbar {
+  min-height: 40px;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: bold;
+  background-color: #7b7b7b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 6px 6px 14px;
+  border-radius: 4px;
+  gap: 10px;
+  position: fixed;
+  bottom: 20px;
+  z-index: 5;
+  width: fit-content;
+
+  > * {
+    display: flex;
+  }
+
+  > .close-button {
+    cursor: pointer;
+  }
+
+  &.type-success {
+    background-color: $success-color;
+  }
+
+  &.type-error {
+    background-color: $error-color;
+  }
+
+  &.type-warning {
+    background-color: $warning-color;
+  }
+
+  &.type-info {
+    background-color: $info-color;
+  }
+}

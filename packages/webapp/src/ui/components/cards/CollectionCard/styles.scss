@@ -1,3 +1,5 @@
+@import '../../../styles/application';
+
 .collection-card {
   position: relative;
   width: 100%;
@@ -42,12 +44,12 @@
     }
 
     .following {
-      background-color: #f88012;
+      background-color: $primary-color;
       color: white;
     }
 
     > .follow:hover:not(.disabled) {
-      background-color: #f88012;
+      background-color: $primary-color;
     }
 
     .bookmarked {
