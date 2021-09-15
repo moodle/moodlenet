@@ -15,4 +15,32 @@ Default.args = {
   children: <div>Snackbar Content</div>,
 }
 
+export const Success = SnackbarStory.bind({})
+Success.args = {
+  type: 'success',
+  onClose: action('close Snackbar'),
+  children: <div>Snackbar Content</div>,
+}
+
+export const Warning = SnackbarStory.bind({})
+Warning.args = {
+  type: 'warning',
+  onClose: action('close Snackbar'),
+  children: <div>Snackbar Content</div>,
+}
+
+export const Error = SnackbarStory.bind({})
+Error.args = {
+  type: 'error',
+  onClose: action('close Snackbar'),
+  children: <div>Snackbar Content</div>,
+}
+
+export const Info = SnackbarStory.bind({})
+Info.args = {
+  type: 'info',
+  onClose: action('close Snackbar'),
+  children: <div>Snackbar Content</div>,
+}
+
 export default meta

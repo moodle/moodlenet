@@ -3,11 +3,11 @@
   color: #fff;
   font-size: 0.875rem;
   font-weight: bold;
-  background-color: #4caf50;
+  background-color: #7b7b7b;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px;
+  padding: 6px 6px 6px 14px;
   border-radius: 4px;
   gap: 10px;
 
@@ -17,5 +17,21 @@
 
   > .close-button {
     cursor: pointer;
+  }
+
+  &.type-success {
+    background-color: #4caf50;
+  }
+
+  &.type-error {
+    background-color: #ff6262;
+  }
+
+  &.type-warning {
+    background-color: #f88012;
+  }
+
+  &.type-info {
+    background-color: #337aff;
   }
 }
