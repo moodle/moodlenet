@@ -1,0 +1,21 @@
+.card.snackbar {
+  min-height: 40px;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: bold;
+  background-color: #4caf50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px;
+  border-radius: 4px;
+  gap: 10px;
+
+  > * {
+    display: flex;
+  }
+
+  > .close-button {
+    cursor: pointer;
+  }
+}
