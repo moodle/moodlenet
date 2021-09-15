@@ -179,35 +179,34 @@ export const getGQLResolvers = ({
           jwt,
         }
       },
-      async signUp(_root, { email } /* ,env */) {
-        const res = await qmino.callSync(newUserPorts.signUp({ email }), { timeout: 5000 })
-        if (typeof res === 'string') {
-          return { __typename: 'SimpleResponse', success: false, message: res }
-        }
+      async signUp(_root, { email, name, password } /* ,env */) {
+        const hashedPassword = await passwordHasher(password)
+        await qmino.callSync(newUserPorts.signUp({ email, displayName: name, hashedPassword }), { timeout: 5000 })
+
         return { __typename: 'SimpleResponse', success: true }
       },
-      async activateUser(_root, { password, activationToken, name } /*, ctx */) {
-        // TODO: implement a port
-        const hashedPassword = await passwordHasher(password)
-        const activationresult = await qmino.callSync(
-          newUserPorts.confirmSignup({ hashedPassword, profileName: name, token: activationToken }),
-          {
-            timeout: 5000,
-          },
-        )
-        if ('string' === typeof activationresult) {
-          return {
-            __typename: 'CreateSession',
-            jwt: null,
-            message: activationresult,
-          }
-        }
-        const jwt = signJwtActiveUser({ user: activationresult, jwtPrivateKey, jwtSignOptions })
-        return {
-          __typename: 'CreateSession',
-          jwt,
-        }
-      },
+      // async activateUser(_root, { password, activationToken, name } /*, ctx */) {
+      //   // TODO: implement a port
+      //   const hashedPassword = await passwordHasher(password)
+      //   const activationresult = await qmino.callSync(
+      //     newUserPorts.confirmSignup({ hashedPassword, profileName: name, token: activationToken }),
+      //     {
+      //       timeout: 5000,
+      //     },
+      //   )
+      //   if ('string' === typeof activationresult) {
+      //     return {
+      //       __typename: 'CreateSession',
+      //       jwt: null,
+      //       message: activationresult,
+      //     }
+      //   }
+      //   const jwt = signJwtActiveUser({ user: activationresult, jwtPrivateKey, jwtSignOptions })
+      //   return {
+      //     __typename: 'CreateSession',
+      //     jwt,
+      //   }
+      // },
       async createNode(_root, { input }, ctx, _info) {
         if (!ctx.authSessionEnv) {
           return createNodeMutationError('NotAuthorized')

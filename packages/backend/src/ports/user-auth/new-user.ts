@@ -1,66 +1,65 @@
-import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
-import { newAuthId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { fillEmailTemplate } from '../../lib/emailSender/helpers'
 import { EmailObj } from '../../lib/emailSender/types'
 import { QMCommand, QMModule } from '../../lib/qmino'
-import { ActiveUser, Email, UserAuthConfig, WaitingFirstActivationUser } from './types'
+import { Email, UserAuthConfig } from './types'
+import { ActivationEmailTokenObj } from './user'
 
 export type SignupIssue = 'email not available'
 export type SignUpAdapter = {
-  storeNewSignupRequest(
-    _: Pick<WaitingFirstActivationUser, 'firstActivationToken' | 'email'>,
-  ): Promise<void | SignupIssue>
-  generateToken(): Promise<string>
+  jwtSigner(activationEmailTokenObj: ActivationEmailTokenObj, expiresSecs: number): Promise<string>
   getConfig(): Promise<UserAuthConfig>
   sendEmail(_: EmailObj): Promise<unknown>
   publicBaseUrl: string
 }
 export const signUp = QMCommand(
-  ({ email }: { email: Email }) =>
-    async ({ storeNewSignupRequest, generateToken, sendEmail, publicBaseUrl, getConfig }: SignUpAdapter) => {
-      const firstActivationToken = await generateToken()
-      const mInsertIssue = await storeNewSignupRequest({ email, firstActivationToken })
-      if (mInsertIssue) {
-        return mInsertIssue
-      }
-      const { newUserRequestEmail } = await getConfig()
+  ({ email, displayName, hashedPassword }: { email: Email; hashedPassword: string; displayName: string }) =>
+    async ({ jwtSigner, sendEmail, publicBaseUrl, getConfig }: SignUpAdapter) => {
+      const { newUserRequestEmail, newUserVerificationWaitSecs } = await getConfig()
+      const activationEmailToken = await jwtSigner(
+        {
+          displayName,
+          email,
+          hashedPassword,
+        },
+        newUserVerificationWaitSecs,
+      )
 
       const emailObj = fillEmailTemplate({
         template: newUserRequestEmail,
         to: email,
         vars: {
           email,
-          link: `${publicBaseUrl}${webappPath<Routes.Activation>('/activate-new-user/:token', {
-            token: firstActivationToken,
+          link: `${publicBaseUrl}${webappPath<Routes.Login>('/login/:activationToken?', {
+            activationToken: activationEmailToken,
           })}`,
         },
       })
       sendEmail(emailObj)
-      return { token: firstActivationToken }
+      return { token: activationEmailToken }
     },
 )
 
-export type NewUserConfirmAdapter = {
-  activateUser(_: { token: string; hashedPassword: string; authId: AuthId }): Promise<ActiveUser | 'not found'>
-  createNewProfile(_: { name: string; authId: AuthId }): Promise<unknown>
-}
-type ConfirmSignup = { token: string; hashedPassword: string; profileName: string }
-export const confirmSignup = QMCommand(
-  ({ token, hashedPassword, profileName }: ConfirmSignup) =>
-    async ({ activateUser, createNewProfile }: NewUserConfirmAdapter) => {
-      const authId = newAuthId()
-      const mActiveUser = await activateUser({ hashedPassword, token, authId })
+// export type NewUserConfirmAdapter = {
+//   activateUser(_: { token: string; hashedPassword: string; authId: AuthId }): Promise<ActiveUser | 'not found'>
+//   createNewProfile(_: { name: string; authId: AuthId }): Promise<unknown>
+// }
+// type ConfirmSignup = { token: string; hashedPassword: string; profileName: string }
+// export const confirmSignup = QMCommand(
+//   ({ token, hashedPassword, profileName }: ConfirmSignup) =>
+//     async ({ activateUser, createNewProfile }: NewUserConfirmAdapter) => {
+//       const authId = newAuthId()
+//       const mActiveUser = await activateUser({ hashedPassword, token, authId })
 
-      if (typeof mActiveUser === 'string') {
-        return mActiveUser // error
-      }
+//       if (typeof mActiveUser === 'string') {
+//         return mActiveUser // error
+//       }
 
-      await createNewProfile({ name: profileName, authId: mActiveUser.authId })
+//       await createNewProfile({ name: profileName, authId: mActiveUser.authId })
 
-      return mActiveUser
-    },
-)
+//       return mActiveUser
+//     },
+// )
 
 // export type CreateNewUserAdapter = {
 //   createUser(_: {

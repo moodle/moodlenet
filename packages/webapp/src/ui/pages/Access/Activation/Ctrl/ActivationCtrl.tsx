@@ -6,7 +6,7 @@ import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { ActivationProps } from '../Activation'
 const loginHref = href(mainPath.login)
 
-export const useActivationCtrl: CtrlHook<ActivationProps, {}> = ({}) => {
+export const useActivationCtrl: CtrlHook<ActivationProps, {}> = () => {
   useRedirectProfileHomeIfLoggedIn({ delay: 618 })
   const activationProps = useMemo<ActivationProps>(() => {
     const activationProps: ActivationProps = {
