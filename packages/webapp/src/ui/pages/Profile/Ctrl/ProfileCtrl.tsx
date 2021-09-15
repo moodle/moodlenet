@@ -23,7 +23,7 @@ import {
 export type ProfileCtrlProps = { id: ID }
 export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id }) => {
   useSeoContentId(id)
-  const { isAuthenticated, session, isAdmin } = useSession()
+  const { isAuthenticated, session, isAdmin, firstLogin } = useSession()
   const { org: localOrg } = useLocalInstance()
   const isMe = session?.profile && session.profile.id === id
   const { data, refetch } = useProfilePageUserDataQuery({
@@ -117,6 +117,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
         years: 1,
         kudos,
       },
+      showAccountCreationSuccessAlert: firstLogin,
       profileCardProps: {
         avatarUrl: getMaybeAssetRefUrlOrDefaultImage(profile.avatar, id, 'icon'),
         backgroundUrl: getMaybeAssetRefUrlOrDefaultImage(profile.image, id, 'image'),
@@ -138,6 +139,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
     return props
   }, [
     collections,
+    firstLogin,
     formBag,
     formik,
     id,
