@@ -8,7 +8,6 @@ import './styles.scss'
 export type ResourceItem<Id = any> = { props: CP<ResourceCardProps>; id: Id }
 export type AddResourcesCardProps = {
   toggleResource: (selectedResource: CP<ResourceCardProps>) => unknown
-  value?: ResourceItem[] | undefined
   resourceCardPropsList: CP<ResourceCardProps>[]
   header?: boolean
   noCard?: boolean
@@ -16,12 +15,10 @@ export type AddResourcesCardProps = {
 
 export const AddResourcesCard: FC<AddResourcesCardProps> = ({
   resourceCardPropsList,
-  value,
   header,
   noCard,
   toggleResource,
 }) => {
-  console.log({ value })
 
   const resourceList = resourceCardPropsList.map((resourceCardProps, index) => {
     return (
