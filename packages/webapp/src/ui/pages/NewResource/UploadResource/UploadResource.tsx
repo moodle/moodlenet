@@ -177,7 +177,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       e.preventDefault()
     }
 
-    const next = () => nextStep ? nextStep() : () => setHighlightMandatoryFields(true)
+    const next = () => nextStep ? nextStep() : setHighlightMandatoryFields(true)
     
 
     return (
