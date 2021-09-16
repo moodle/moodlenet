@@ -202,7 +202,7 @@ export const Browser = withCtrl<BrowserProps>(
             {smallProfileCardPropsList && filters.People && (
               <ListCard
                 content={(shouldShowSeeAll('People')
-                  ? smallProfileCardPropsList.slice(0, 6)
+                  ? smallProfileCardPropsList.slice(0, 11)
                   : smallProfileCardPropsList
                 ).map(smallProfileCardProps => (
                   <SmallProfileCard {...smallProfileCardProps} />
