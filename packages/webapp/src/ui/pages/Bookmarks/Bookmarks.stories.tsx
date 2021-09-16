@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { BrowserStoryProps } from '../../components/Browser/Browser.stories'
-import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
+import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '../../components/Browser/Browser.stories'
+import { HeaderPageLoggedInStoryProps, HeaderPageLoggedOutStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Bookmarks, BookmarksProps } from './Bookmarks'
 
 const meta: ComponentMeta<typeof Bookmarks> = {
@@ -10,28 +10,42 @@ const meta: ComponentMeta<typeof Bookmarks> = {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: ['BookmarksStoryProps', 'BookmarksLoggedOutStoryProps', 'BookmarksLoggedInStoryProps'],
+  excludeStories: ['BookmarksLoggedOutStoryProps', 'BookmarksLoggedInStoryProps'],
 }
 
 const BookmarksStory: ComponentStory<typeof Bookmarks> = args => <Bookmarks {...args} />
 
-export const BookmarksStoryProps: BookmarksProps = {
+export const BookmarksLoggedInStoryProps: BookmarksProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
   },
   browserProps: {
-    ...BrowserStoryProps,
+    ...BrowserLoggedInStoryProps,
     subjectCardPropsList: null,
+    smallProfileCardPropsList: null,
     setSortBy: null
   }
 }
 
-export const BookmarksLoggedInStoryProps: BookmarksProps = {
-  ...BookmarksStoryProps,
+export const BookmarksLoggedOutStoryProps: BookmarksProps = {
+  ...BookmarksLoggedInStoryProps,
+  headerPageTemplateProps: {
+    headerPageProps: HeaderPageLoggedOutStoryProps,
+    isAuthenticated: false,
+  },
+  browserProps: {
+    ...BrowserLoggedOutStoryProps,
+    subjectCardPropsList: null,
+    smallProfileCardPropsList: null,
+    setSortBy: null
+  }
 }
 
-export const Default = BookmarksStory.bind({})
-Default.args = BookmarksStoryProps
+export const LoggedIn = BookmarksStory.bind({})
+LoggedIn.args = BookmarksLoggedInStoryProps
+
+export const LoggedOut = BookmarksStory.bind({})
+LoggedOut.args = BookmarksLoggedOutStoryProps
 
 export default meta

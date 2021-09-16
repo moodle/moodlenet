@@ -6,6 +6,7 @@ import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import PersonIcon from '@material-ui/icons/Person'
 import addIcon from '../../assets/icons/add.svg'
+import { ReactComponent as ArrowsIcon } from '../../assets/icons/arrows.svg'
 import { Href, Link } from '../../elements/link'
 import { withCtrl } from '../../lib/ctrl'
 import { Organization } from '../../types'
@@ -25,6 +26,7 @@ export type HeaderPropsIdle = HeaderPropsBase & {
     name: string
     myProfileHref: Href
     bookmarksHref: Href
+    followingHref: Href
   }
 }
 export type HeaderPropsLoading = HeaderPropsBase & {
@@ -98,6 +100,10 @@ export const Header = withCtrl<HeaderProps>(props => {
                     <Link href={me.bookmarksHref}>
                       <BookmarksIcon />
                       <Trans>Bookmarks</Trans>
+                    </Link>
+                    <Link href={me.followingHref}>
+                      <ArrowsIcon />
+                      <Trans>Following</Trans>
                     </Link>
                     <Link href={me.myProfileHref}>
                       <AccountCircleIcon />
