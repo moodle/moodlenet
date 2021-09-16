@@ -142,7 +142,7 @@ export const Resource = withCtrl<ResourceProps>(
     const setLicenseField = useCallback((_: string) => setFieldValue('license', _), [setFieldValue])
     //const setCollectionsField = useCallback((_: string) => setFieldValue('collections', _), [setFieldValue])
     console.log({ selectedCollections, collections })
-    const extraDetails = (
+    const extraDetails = isEditing ? (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
         <Dropdown
           className="scroll"
@@ -215,6 +215,54 @@ export const Resource = withCtrl<ResourceProps>(
           displayMode={true}
           edit={false}
         />
+      </Card>
+    ) : (
+      <Card className="extra-details-card" hideBorderWhenSmall={true}>
+        <div className="detail">
+          <div className="title">
+            <Trans>Subject</Trans>
+          </div>
+          <div className="value">{form.values.category}</div>
+        </div>
+        <div className="detail">
+          <div className="title">
+            <Trans>License</Trans>
+          </div>
+          <div className="value">{form.values.license}</div>
+        </div>
+        <div className="detail">
+          <div className="title">
+            <Trans>Type</Trans>
+          </div>
+          <div className="value">{form.values.type}</div>
+        </div>
+        <div className="detail">
+          <div className="title">
+            <Trans>Level</Trans>
+          </div>
+          <div className="value">{form.values.level}</div>
+        </div>
+        <div className="detail">
+          <div className="title">
+            <Trans>Original creation date</Trans>
+          </div>
+          <div className="value">
+            <span>{form.values.originalDateMonth}</span>
+            <span>{form.values.originalDateYear}</span>
+          </div>
+        </div>
+        <div className="detail">
+          <div className="title">
+            <Trans>Language</Trans>
+          </div>
+          <div className="value">{form.values.language}</div>
+        </div>
+        <div className="detail">
+          <div className="title">
+            <Trans>Format</Trans>
+          </div>
+          <div className="value">{form.values.format}</div>
+        </div>
       </Card>
     )
     return (

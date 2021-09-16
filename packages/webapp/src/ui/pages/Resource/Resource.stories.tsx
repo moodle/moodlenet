@@ -50,7 +50,7 @@ export const resourceFormBag: NewResourceFormValues = {
   level: '1 Primary education',
   license: 'CCO (Public domain)',
   name: '',
-  originalDateMonth: 'August',
+  originalDateMonth: 'September',
   originalDateYear: '2021',
   title: 'The Best Resource Ever',
   type: 'Web Site',
