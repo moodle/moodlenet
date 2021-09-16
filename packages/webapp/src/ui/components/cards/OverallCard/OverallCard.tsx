@@ -41,7 +41,7 @@ export const OverallCard: FC<OverallCardProps> = ({
             {kudos}
           </div>
           <div className="data">
-            <abbr title={t`Followers`}>
+            <abbr title={t`Resources`}>
               <LibraryBooksIcon />
             </abbr>
             {resources}

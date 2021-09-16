@@ -7,22 +7,24 @@ import { CollectionCard, CollectionCardProps } from '../cards/CollectionCard/Col
 import FilterCard, { FilterCardDirection } from '../cards/FilterCard/FilterCard'
 import ListCard from '../cards/ListCard/ListCard'
 import { ResourceCard, ResourceCardProps } from '../cards/ResourceCard/ResourceCard'
+import { SmallProfileCard, SmallProfileCardProps } from '../cards/SmallProfileCard/SmallProfileCard'
 import { SortState } from '../cards/SortCard/SortButton/SortButton'
 import SortCard, { SortCardDirection } from '../cards/SortCard/SortCard'
 import SubjectCard, { SubjectCardProps } from '../cards/SubjectCard/SubjectCard'
 import './styles.scss'
 
-export const filterTypes = ['Subjects', 'Collections', 'Resources'] as const
+export const filterTypes = ['Subjects', 'Collections', 'Resources', 'People'] as const
 export type FilterType = typeof filterTypes[number]
 type SortType = 'Relevance' | 'Recent' | 'Popularity'
 export type BrowserProps = {
   subjectCardPropsList: CP<SubjectCardProps>[] | null
   collectionCardPropsList: CP<CollectionCardProps>[] | null
   resourceCardPropsList: CP<ResourceCardProps>[] | null
+  smallProfileCardPropsList: CP<SmallProfileCardProps>[] | null
   setSortBy: ((sortType: SortType, dir: SortState) => unknown) | null
 }
 export const Browser = withCtrl<BrowserProps>(
-  ({ subjectCardPropsList, collectionCardPropsList, resourceCardPropsList, setSortBy }) => {
+  ({ subjectCardPropsList, collectionCardPropsList, resourceCardPropsList, smallProfileCardPropsList, setSortBy }) => {
     const [filters, setFilter] = useReducer(
       (prev: Record<FilterType, boolean>, [type, checked]: readonly [FilterType, boolean]) => ({
         ...prev,
@@ -32,6 +34,7 @@ export const Browser = withCtrl<BrowserProps>(
         Subjects: subjectCardPropsList !== null,
         Collections: !collectionCardPropsList !== null,
         Resources: !resourceCardPropsList !== null,
+        People: !smallProfileCardPropsList !== null,
       },
     )
 
@@ -88,6 +91,9 @@ export const Browser = withCtrl<BrowserProps>(
               key="Resources"
               checked={filters.Resources}
             />
+          ),
+          smallProfileCardPropsList && (
+            <Checkbox onChange={setFilterCB} label={t`People`} name="People" key="People" checked={filters.People} />
           ),
         ]}
       />
@@ -182,6 +188,29 @@ export const Browser = withCtrl<BrowserProps>(
                   </div>
                   {shouldShowSeeAll('Resources') && (
                     <SecondaryButton onClick={() => seeAll('Resources')}>
+                      <Trans>See all</Trans>
+                    </SecondaryButton>
+                  )}
+                </div>
+              </ListCard>
+            )}
+            {smallProfileCardPropsList && filters.People && (
+              <ListCard
+                content={(shouldShowSeeAll('People')
+                  ? smallProfileCardPropsList.slice(0, 6)
+                  : smallProfileCardPropsList
+                ).map(smallProfileCardProps => (
+                  <SmallProfileCard {...smallProfileCardProps} />
+                ))}
+                className="people"
+                noCard={true}
+              >
+                <div className="card-header">
+                  <div className="title">
+                    <Trans>People</Trans>
+                  </div>
+                  {shouldShowSeeAll('People') && (
+                    <SecondaryButton onClick={() => seeAll('People')}>
                       <Trans>See all</Trans>
                     </SecondaryButton>
                   )}
