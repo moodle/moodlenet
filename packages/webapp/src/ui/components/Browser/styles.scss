@@ -46,6 +46,16 @@
         max-height: 245px;
         overflow: hidden;
       }
+
+      > .resources:not(.see-all) {
+        max-height: 242px;
+        overflow: hidden;
+      }
+
+      > .people:not(.see-all) {
+        max-height: 567px;
+        overflow: hidden;
+      }
     }
 
     > .side-column {
