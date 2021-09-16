@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '../../components/Browser/Browser.stories'
-import { HeaderPageLoggedInStoryProps, HeaderPageLoggedOutStoryProps } from '../HeaderPage/HeaderPage.stories'
+import { BrowserFollowingStoryProps } from '../../components/Browser/Browser.stories'
+import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Following, FollowingProps } from './Following'
 
 const meta: ComponentMeta<typeof Following> = {
@@ -10,44 +10,24 @@ const meta: ComponentMeta<typeof Following> = {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: ['FollowingStoryProps', 'FollowingLoggedOutStoryProps', 'FollowingLoggedInStoryProps'],
+  excludeStories: ['FollowingLoggedInStoryProps'],
 }
 
 const FollowingStory: ComponentStory<typeof Following> = args => <Following {...args} />
 
-export const FollowingStoryProps: FollowingProps = {
+export const FollowingLoggedInStoryProps: FollowingProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
   },
   browserProps: {
-    ...BrowserLoggedInStoryProps,
+    ...BrowserFollowingStoryProps,
     resourceCardPropsList: null,
     setSortBy: null,
   },
 }
 
-export const FollowingLoggedInStoryProps: FollowingProps = {
-  ...FollowingStoryProps,
-}
-
-export const FollowingLoggedOutStoryProps: FollowingProps = {
-  ...FollowingStoryProps,
-  headerPageTemplateProps: {
-    headerPageProps: HeaderPageLoggedOutStoryProps,
-    isAuthenticated: false,
-  },
-  browserProps: {
-    ...BrowserLoggedOutStoryProps,
-    resourceCardPropsList: null,
-    setSortBy: null,
-  },
-}
-
-export const LoggedIn = FollowingStory.bind({})
-LoggedIn.args = FollowingLoggedInStoryProps
-
-export const LoggedOut = FollowingStory.bind({})
-LoggedOut.args = FollowingLoggedOutStoryProps
+export const Default = FollowingStory.bind({})
+Default.args = FollowingLoggedInStoryProps
 
 export default meta

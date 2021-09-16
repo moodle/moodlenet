@@ -1,11 +1,21 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { CollectionCardLoggedInStoryProps, CollectionCardLoggedOutStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
-import { ResourceCardLoggedInStoryProps, ResourceCardLoggedOutStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
+import {
+  CollectionCardLoggedInStoryProps,
+  CollectionCardLoggedOutStoryProps
+} from '../../components/cards/CollectionCard/CollectionCard.stories'
+import {
+  ResourceCardLoggedInStoryProps,
+  ResourceCardLoggedOutStoryProps
+} from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
 import { href } from '../../elements/link'
-import { SmallProfileCardLoggedInStoryProps, SmallProfileCardLoggedOutStoryProps } from '../cards/SmallProfileCard/SmallProfileCard.stories'
+import {
+  SmallProfileCardFollowingStoryProps,
+  SmallProfileCardLoggedInStoryProps,
+  SmallProfileCardLoggedOutStoryProps
+} from '../cards/SmallProfileCard/SmallProfileCard.stories'
 import { Browser, BrowserProps } from './Browser'
 
 const meta: ComponentMeta<typeof Browser> = {
@@ -15,7 +25,12 @@ const meta: ComponentMeta<typeof Browser> = {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: ['BrowserStoryProps', 'BrowserLoggedOutStoryProps', 'BrowserLoggedInStoryProps'],
+  excludeStories: [
+    'BrowserStoryProps',
+    'BrowserLoggedOutStoryProps',
+    'BrowserLoggedInStoryProps',
+    'BrowserFollowingStoryProps',
+  ],
   decorators: [
     Story => (
       <div style={{ margin: '50px' }}>
@@ -84,8 +99,9 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
     SmallProfileCardLoggedOutStoryProps,
     SmallProfileCardLoggedOutStoryProps,
     SmallProfileCardLoggedOutStoryProps,
-  ]
+  ],
 }
+
 export const BrowserLoggedInStoryProps: BrowserProps = {
   setSortBy: action(`set sort by`),
   subjectCardPropsList: subjectCardPropsList,
@@ -130,7 +146,26 @@ export const BrowserLoggedInStoryProps: BrowserProps = {
     SmallProfileCardLoggedInStoryProps,
     SmallProfileCardLoggedInStoryProps,
     SmallProfileCardLoggedInStoryProps,
-  ]
+  ],
+}
+
+export const BrowserFollowingStoryProps: BrowserProps = {
+  ...BrowserLoggedInStoryProps,
+  smallProfileCardPropsList: [
+    SmallProfileCardFollowingStoryProps,
+    SmallProfileCardFollowingStoryProps,
+    SmallProfileCardFollowingStoryProps,
+    SmallProfileCardFollowingStoryProps,
+    SmallProfileCardFollowingStoryProps,
+    SmallProfileCardFollowingStoryProps,
+    SmallProfileCardFollowingStoryProps,
+    SmallProfileCardFollowingStoryProps,
+    SmallProfileCardFollowingStoryProps,
+    SmallProfileCardFollowingStoryProps,
+    SmallProfileCardFollowingStoryProps,
+    SmallProfileCardFollowingStoryProps,
+    SmallProfileCardFollowingStoryProps,
+  ],
 }
 
 export const LoggedOut = BrowserStory.bind({})
@@ -138,5 +173,8 @@ LoggedOut.args = BrowserLoggedOutStoryProps
 
 export const LoggedIn = BrowserStory.bind({})
 LoggedIn.args = BrowserLoggedInStoryProps
+
+export const Following = BrowserStory.bind({})
+Following.args = BrowserFollowingStoryProps
 
 export default meta
