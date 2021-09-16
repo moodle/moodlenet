@@ -25,7 +25,10 @@ body::-webkit-scrollbar {
   align-items: center;
   max-width: None;
 
-  &.current-intent-mouse {
+  &.current-intent-mouse,
+  &.current-intent-touch,
+  &.current-input-mouse,
+  &.current-input-mouse {
     input:focus,
     select:focus,
     textarea:focus,
