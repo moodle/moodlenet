@@ -96,34 +96,39 @@ export const Category = withCtrl<CategoryProps>(
                   content={collectionCardPropsList.map(collectionCardProps => (
                     <CollectionCard {...collectionCardProps} />
                   ))}
+                  title={
+                    <div className="card-header">
+                      <div className="title">
+                        <Trans>Collections</Trans>
+                      </div>
+                      <SecondaryButton>
+                        <Trans>See all</Trans>
+                      </SecondaryButton>
+                    </div>
+                  }
                   className="collections"
                   noCard={true}
                   direction="horizontal"
-                >
-                  <div className="card-header">
-                    <div className="title">
-                      <Trans>Collections</Trans>
-                    </div>
-                    <SecondaryButton>
-                      <Trans>See all</Trans>
-                    </SecondaryButton>
-                  </div>
-                </ListCard>
+                />
               )}
               {resourceCardPropsList && (
                 <ListCard
                   content={resourceCardPropsList.map(resourcesCardProps => (
                     <ResourceCard {...resourcesCardProps} />
                   ))}
+                  title={
+                    <div className="card-header">
+                      <div className="title">
+                        <Trans>Resources</Trans>
+                      </div>
+                      <SecondaryButton>
+                        <Trans>See all</Trans>
+                      </SecondaryButton>
+                    </div>
+                  }
                   className="resources"
                   noCard={true}
-                >
-                  <div className="card-header">
-                    <div className="title">
-                      <Trans>Resources</Trans>
-                    </div>
-                  </div>
-                </ListCard>
+                />
               )}
             </div>
           </div>

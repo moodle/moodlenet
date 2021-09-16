@@ -16,29 +16,35 @@
       > :not(:last-child) {
         margin-bottom: 30px;
       }
+
+      > .list-card {
+        .title {
+          .card-header {
+            display: flex;
+            align-items: center;
+            .title {
+              font-size: 24px;
+              margin-right: 16px;
+            }
+            .secondary-button {
+              height: 26px;
+              padding: 10px;
+              border-radius: 15px;
+              border: 1px solid #b6bacb;
+              color: #b6bacb;
+            }
+          }
+        }
+      }
+
       > .subjects:not(.see-all) {
         max-height: 260px;
         overflow: hidden;
       }
-      > .collections:not(.see-all) {
-        max-height: 234px;
-        overflow: hidden;
-      }
-    }
 
-    .card-header {
-      display: flex;
-      align-items: center;
-      .title {
-        font-size: 24px;
-        margin-right: 16px;
-      }
-      .secondary-button {
-        height: 26px;
-        padding: 10px;
-        border-radius: 15px;
-        border: 1px solid #b6bacb;
-        color: #b6bacb;
+      > .collections:not(.see-all) {
+        max-height: 245px;
+        overflow: hidden;
       }
     }
 
@@ -49,13 +55,6 @@
 
       > .filter-card {
         margin-bottom: 15px;
-      }
-    }
-
-    @media screen and (min-width: 1000px) {
-      .collections > .content > .collection-card {
-        font-size: 15px;
-        width: calc(33% - 8px);
       }
     }
 
@@ -79,16 +78,11 @@
         background-color: yellow;
       }
     }
-
-    .collections > .content {
-      justify-content: space-between;
-    }
   }
 
   @media (min-width: 450px) and (max-width: 1000px) {
     .collections > .content > .collection-card {
       font-size: 15px;
-      width: calc(50% - 6px);
     }
   }
 
