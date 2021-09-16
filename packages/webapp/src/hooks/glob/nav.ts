@@ -18,6 +18,7 @@ export const mainPath = {
   createNewResource: webappPath<Routes.CreateNewResource>('/create-new-resource', {}),
   createNewCollection: webappPath<Routes.CreateNewCollection>('/create-new-collection', {}),
   bookmarksHref: webappPath<Routes.BookmarksPage>('/bookmarks', {}),
+  followingHref: webappPath<Routes.FollowingPage>('/following', {}),
 }
 
 export const useRedirectToBySession = ({

@@ -3,6 +3,8 @@ import { CollectionCard } from '../CollectionCard/CollectionCard'
 import { CollectionCardStoryProps } from '../CollectionCard/CollectionCard.stories'
 import { ResourceCard } from '../ResourceCard/ResourceCard'
 import { ResourceCardStoryProps } from '../ResourceCard/ResourceCard.stories'
+import { SmallProfileCard } from '../SmallProfileCard/SmallProfileCard'
+import { SmallProfileCardLoggedInStoryProps } from '../SmallProfileCard/SmallProfileCard.stories'
 import SubjectCard from '../SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../SubjectCard/SubjectCard.stories'
 import { ListCard, ListCardProps } from './ListCard'
@@ -12,7 +14,12 @@ const meta: ComponentMeta<typeof ListCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['SubjectListCardStoryProps', 'CollectionListCardStoryProps', 'ResourceListCardStoryProps'],
+  excludeStories: [
+    'SubjectListCardStoryProps',
+    'CollectionListCardStoryProps',
+    'ResourceListCardStoryProps',
+    'PeopleListCardStoryProps',
+  ],
 }
 
 const ListCardStory: ComponentStory<typeof ListCard> = args => <ListCard {...args} />
@@ -22,14 +29,14 @@ export const SubjectListCardStoryProps: ListCardProps = {
   content: ['#Education', '#Forestry', 'Enviromental Science'].map(x => (
     <SubjectCard {...{ ...SubjectCardStoryProps, title: x }} />
   )),
-  noCard: true,
+  noCard: false,
 }
 
 export const Subject = ListCardStory.bind({})
 Subject.args = SubjectListCardStoryProps
 Subject.decorators = [
   Story => (
-    <div style={{ width: 300 }}>
+    <div style={{ maxWidth: 800 }}>
       <Story />
     </div>
   ),
@@ -63,6 +70,23 @@ Resource.args = ResourceListCardStoryProps
 Resource.decorators = [
   Story => (
     <div style={{ width: 450 }}>
+      <Story />
+    </div>
+  ),
+]
+
+export const PeopleListCardStoryProps: ListCardProps = {
+  className: 'people',
+  content: [1, 2, 3, 4, 5, 6, 7, 8, 9].map(() => <SmallProfileCard {...SmallProfileCardLoggedInStoryProps} />),
+  noCard: false,
+  minGrid: 140
+}
+
+export const People = ListCardStory.bind({})
+People.args = PeopleListCardStoryProps
+People.decorators = [
+  Story => (
+    <div style={{ width: '450' }}>
       <Story />
     </div>
   ),
