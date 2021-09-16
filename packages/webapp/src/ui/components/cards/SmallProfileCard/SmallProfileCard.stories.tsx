@@ -33,7 +33,7 @@ export const SmallProfileCardStoryProps: SmallProfileCardProps = {
   isVerified: true,
   toggleFollow: action('toogleFollow'),
   displayName: 'Juanito Rodriguez',
-  organizationName: 'UM',
+  organizationName: 'University of Malta',
   username: 'juanito',
   overallCardProps: OverallCardNoCardStoryProps
 }
