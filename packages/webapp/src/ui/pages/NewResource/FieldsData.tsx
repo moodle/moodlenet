@@ -199,7 +199,7 @@ export const LicenseDropdown: DropdownField = {
 }
 
 export const CategoriesDropdown: DropdownField = {
-  label: t`Subjects`,
+  label: t`Subject`,
   placeholder: t`Content Category`,
   options: `0000 Generic programmes and qualifications not further defined
         0011 Basic programmes and qualifications
