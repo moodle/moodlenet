@@ -10,11 +10,11 @@ const meta: ComponentMeta<typeof AddResourcesCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['AddResourcesCardStoryProps'],
-  parameters: { layout: 'fullscreen'},
+  excludeStories: ['AddResourceCard', 'AddResourcesCardStoryProps'],
+  parameters: { layout: 'fullscreen' },
   decorators: [
     Story => (
-      <div style={{ maxWidth: 800, width: '100%', padding: 20}}>
+      <div style={{ maxWidth: 800, width: '100%', padding: 20 }}>
         <Story />
       </div>
     ),
@@ -26,24 +26,22 @@ export const AddResourceCard: ResourceCardProps = {
   isSelected: false,
   resourceHomeHref: undefined,
   direction: 'vertical',
-  selectionMode: true
+  selectionMode: true,
 }
 
 export const AddResourcesCardStoryProps: AddResourcesCardProps = {
   toggleResource: action('toggleResources'),
   resourceCardPropsList: [
     AddResourceCard,
-    {...AddResourceCard, isSelected: true},
+    { ...AddResourceCard, isSelected: true },
     AddResourceCard,
     AddResourceCard,
     AddResourceCard,
-    {...AddResourceCard, isSelected: true},
-  ]
+    { ...AddResourceCard, isSelected: true },
+  ],
 }
 
-const AddResourcesCardStory: ComponentStory<typeof AddResourcesCard> = args => (
-  <AddResourcesCard {...args} />
-)
+const AddResourcesCardStory: ComponentStory<typeof AddResourcesCard> = args => <AddResourcesCard {...args} />
 
 export const Default = AddResourcesCardStory.bind({})
 Default.args = AddResourcesCardStoryProps
