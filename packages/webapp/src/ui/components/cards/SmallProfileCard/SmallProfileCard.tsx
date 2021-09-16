@@ -49,7 +49,7 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
               {organizationName !== '' && <div>{organizationName}</div>}
             </div>
           </div>
-          <OverallCard noCard={true} {...overallCardProps}/>
+          <OverallCard noCard={true} showIcons={true} {...overallCardProps}/>
           {!isOwner && (
             <div className="buttons">
               {isFollowing ? (

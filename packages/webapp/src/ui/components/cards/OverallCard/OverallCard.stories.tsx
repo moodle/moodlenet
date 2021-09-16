@@ -7,7 +7,7 @@ const meta: ComponentMeta<typeof OverallCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['OverallCardStoryProps', 'OverallCardNoCardStoryProps'],
+  excludeStories: ['OverallCardStoryProps', 'OverallCardNoCardStoryProps', 'OverallCardIconsStoryProps'],
   decorators: [
     Story => (
       <div style={{ height: 100, width: 300 }}>
@@ -29,6 +29,11 @@ export const OverallCardNoCardStoryProps: OverallCardProps = {
   noCard: true,
 }
 
+export const OverallCardIconsStoryProps: OverallCardProps = {
+  ...OverallCardStoryProps,
+  showIcons: true,
+}
+
 const OverallCardStory: ComponentStory<typeof OverallCard> = args => <OverallCard {...args} />
 
 export const Default = OverallCardStory.bind({})
@@ -36,5 +41,8 @@ Default.args = OverallCardStoryProps
 
 export const NoCard = OverallCardStory.bind({})
 NoCard.args = OverallCardNoCardStoryProps
+
+export const Icons = OverallCardStory.bind({})
+Icons.args = OverallCardIconsStoryProps
 
 export default meta

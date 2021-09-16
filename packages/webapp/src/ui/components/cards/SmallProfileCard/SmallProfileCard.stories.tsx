@@ -13,6 +13,7 @@ const meta: ComponentMeta<typeof SmallProfileCard> = {
     'SmallProfileCardStoryProps',
     'SmallProfileCardLoggedOutStoryProps',
     'SmallProfileCardLoggedInStoryProps',
+    'SmallProfileCardFollowingStoryProps',
     'SmallProfileCardOwnerStoryProps',
   ],
   decorators: [
@@ -33,7 +34,7 @@ export const SmallProfileCardStoryProps: SmallProfileCardProps = {
   isVerified: true,
   toggleFollow: action('toogleFollow'),
   displayName: 'Juanito Rodriguez',
-  organizationName: 'UM',
+  organizationName: 'University of Malta',
   username: 'juanito',
   overallCardProps: OverallCardNoCardStoryProps
 }
@@ -47,6 +48,10 @@ export const SmallProfileCardLoggedInStoryProps: SmallProfileCardProps = {
   isAuthenticated: true,
 }
 
+export const SmallProfileCardFollowingStoryProps: SmallProfileCardProps = {
+  ...SmallProfileCardLoggedInStoryProps,
+  isFollowing: true,
+}
 export const SmallProfileCardOwnerStoryProps: SmallProfileCardProps = {
   ...SmallProfileCardLoggedInStoryProps,
   isOwner: true,
@@ -59,6 +64,9 @@ LoggedOut.args = SmallProfileCardLoggedOutStoryProps
 
 export const LoggedIn = SmallProfileCardStory.bind({})
 LoggedIn.args = SmallProfileCardLoggedInStoryProps
+
+export const Following = SmallProfileCardStory.bind({})
+Following.args = SmallProfileCardFollowingStoryProps
 
 export const Owner = SmallProfileCardStory.bind({})
 Owner.args = SmallProfileCardOwnerStoryProps
