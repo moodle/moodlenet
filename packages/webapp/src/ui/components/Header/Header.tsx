@@ -6,6 +6,7 @@ import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import PersonIcon from '@material-ui/icons/Person'
 import addIcon from '../../assets/icons/add.svg'
+import { ReactComponent as ArrowsIcon } from '../../assets/icons/arrows.svg'
 import { Href, Link } from '../../elements/link'
 import { withCtrl } from '../../lib/ctrl'
 import { Organization } from '../../types'
@@ -101,7 +102,7 @@ export const Header = withCtrl<HeaderProps>(props => {
                       <Trans>Bookmarks</Trans>
                     </Link>
                     <Link href={me.followingHref}>
-                      <BookmarksIcon />
+                      <ArrowsIcon />
                       <Trans>Following</Trans>
                     </Link>
                     <Link href={me.myProfileHref}>
