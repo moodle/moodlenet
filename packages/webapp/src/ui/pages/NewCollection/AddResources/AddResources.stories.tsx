@@ -9,9 +9,10 @@ const meta: ComponentMeta<typeof AddResources> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: ['AddResourcesStoryProps', 'Default'],
+  parameters: { layout: 'fullscreen' },
   decorators: [
     Story => (
-      <div style={{ maxWidth: 1100 }}>
+      <div style={{ maxWidth: 1100, width: '100%' }}>
         <Story />
       </div>
     ),

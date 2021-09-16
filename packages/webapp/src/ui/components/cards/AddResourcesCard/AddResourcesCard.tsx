@@ -8,7 +8,6 @@ import './styles.scss'
 export type ResourceItem<Id = any> = { props: CP<ResourceCardProps>; id: Id }
 export type AddResourcesCardProps = {
   toggleResource: (selectedResource: CP<ResourceCardProps>) => unknown
-  value?: ResourceItem[] | undefined
   resourceCardPropsList: CP<ResourceCardProps>[]
   header?: boolean
   noCard?: boolean
@@ -16,12 +15,10 @@ export type AddResourcesCardProps = {
 
 export const AddResourcesCard: FC<AddResourcesCardProps> = ({
   resourceCardPropsList,
-  value,
   header,
   noCard,
   toggleResource,
 }) => {
-  console.log({ value })
 
   const resourceList = resourceCardPropsList.map((resourceCardProps, index) => {
     return (
@@ -34,19 +31,15 @@ export const AddResourcesCard: FC<AddResourcesCardProps> = ({
   })
 
   return (
-    <div className="add-resources-card">
-      <div className="content">
-        <Card noCard={noCard}>
+    <Card noCard={noCard} className="add-resources-card">
           {header && (
             <div className="resources-header">
               <Trans>Select Resources</Trans>
               {/*<Searchbox setSearchText={setSearchText} searchText="" placeholder={t`Find more resources`} />*/}
             </div>
           )}
-          <div className="resources">{resourceList}</div>
-        </Card>
-      </div>
-    </div>
+          <div className="resources scroll">{resourceList}</div>
+    </Card>
   )
 }
 
