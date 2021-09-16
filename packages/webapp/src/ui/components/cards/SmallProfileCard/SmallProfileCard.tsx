@@ -25,7 +25,6 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
     avatarUrl,
     backgroundUrl,
     displayName,
-    username,
     organizationName,
     isOwner,
     isVerified,
@@ -45,8 +44,7 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
               {isVerified && <img className="verified-icon" src={verifiedIcon} alt="Verified" />}
             </div>
             <div className="subtitle">
-              {username !== '' && <div>@{username}</div>}
-              {organizationName !== '' && <div>{organizationName}</div>}
+              <div>{organizationName}</div>
             </div>
           </div>
           <OverallCard noCard={true} showIcons={true} {...overallCardProps}/>
