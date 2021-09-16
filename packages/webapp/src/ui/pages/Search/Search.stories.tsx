@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { BrowserStoryProps } from '../../components/Browser/Browser.stories'
+import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '../../components/Browser/Browser.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Search, SearchProps } from './Search'
@@ -21,7 +21,7 @@ export const SearchStoryProps: SearchProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
   },
-  browserProps: BrowserStoryProps,
+  browserProps: BrowserLoggedInStoryProps,
 }
 
 export const SearchLoggedOutStoryProps: SearchProps = {
@@ -33,7 +33,8 @@ export const SearchLoggedOutStoryProps: SearchProps = {
       headerProps: HeaderLoggedOutStoryProps,
       subHeaderProps: { tags: [] },
     },
-  },
+  }, 
+  browserProps: BrowserLoggedOutStoryProps,
 }
 
 export const SearchLoggedInStoryProps: SearchProps = {

@@ -25,6 +25,7 @@ export type HeaderPropsIdle = HeaderPropsBase & {
     name: string
     myProfileHref: Href
     bookmarksHref: Href
+    followingHref: Href
   }
 }
 export type HeaderPropsLoading = HeaderPropsBase & {
@@ -98,6 +99,10 @@ export const Header = withCtrl<HeaderProps>(props => {
                     <Link href={me.bookmarksHref}>
                       <BookmarksIcon />
                       <Trans>Bookmarks</Trans>
+                    </Link>
+                    <Link href={me.followingHref}>
+                      <BookmarksIcon />
+                      <Trans>Following</Trans>
                     </Link>
                     <Link href={me.myProfileHref}>
                       <AccountCircleIcon />
