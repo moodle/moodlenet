@@ -1,6 +1,7 @@
 import { Trans } from '@lingui/macro'
-import verifiedIcon from '../../../assets/icons/verified.svg'
+import { Href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
+import Card from '../../atoms/Card/Card'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import { OverallCard, OverallCardProps } from '../OverallCard/OverallCard'
@@ -12,6 +13,7 @@ export type SmallProfileCardProps = {
   displayName: string
   username: string
   organizationName: string
+  profileHref: Href
   isOwner?: boolean
   isVerified?: boolean
   isFollowing?: boolean
@@ -26,28 +28,29 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
     backgroundUrl,
     displayName,
     organizationName,
+    profileHref,
     isOwner,
-    isVerified,
     isFollowing,
     isAuthenticated,
     overallCardProps,
     toggleFollow,
   }) => {
     return (
-      <div className="small-profile-card">
+      <Card className="small-profile-card" hover={true}>
         <img className="background" src={backgroundUrl} alt="Background" />
-        <img className="avatar" src={avatarUrl} alt="Avatar" />
+        <Link className="avatar" href={profileHref}>
+          <img src={avatarUrl} alt="Avatar" />
+        </Link>
         <div className="info">
-          <div className="profile-card-header">
-            <div className="title">
-              <abbr className="display-name" title={displayName}>{displayName}</abbr>
-              {isVerified && <img className="verified-icon" src={verifiedIcon} alt="Verified" />}
-            </div>
+          <Link className="profile-card-header" href={profileHref}>
+            <abbr className="title" title={displayName}>
+              {displayName}
+            </abbr>
             <div className="subtitle">
               <div>{organizationName}</div>
             </div>
-          </div>
-          <OverallCard noCard={true} showIcons={true} {...overallCardProps}/>
+          </Link>
+          <OverallCard noCard={true} showIcons={true} {...overallCardProps} />
           {!isOwner && (
             <div className="buttons">
               {isFollowing ? (
@@ -62,7 +65,7 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
             </div>
           )}
         </div>
-      </div>
+      </Card>
     )
   },
 )
