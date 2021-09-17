@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { href } from '../../../elements/link'
 import { OverallCardNoCardStoryProps } from '../OverallCard/OverallCard.stories'
 import { SmallProfileCard, SmallProfileCardProps } from './SmallProfileCard'
 
@@ -28,6 +29,7 @@ const meta: ComponentMeta<typeof SmallProfileCard> = {
 export const SmallProfileCardStoryProps: SmallProfileCardProps = {
   backgroundUrl: 'https://picsum.photos/200/100',
   avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
+  profileHref: href('Pages/Profile/Logged In'),
   isOwner: false,
   isAuthenticated: false,
   isFollowing: false,

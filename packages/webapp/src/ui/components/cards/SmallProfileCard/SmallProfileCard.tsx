@@ -1,4 +1,5 @@
 import { Trans } from '@lingui/macro'
+import { Href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
 import Card from '../../atoms/Card/Card'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
@@ -12,6 +13,7 @@ export type SmallProfileCardProps = {
   displayName: string
   username: string
   organizationName: string
+  profileHref: Href
   isOwner?: boolean
   isVerified?: boolean
   isFollowing?: boolean
@@ -26,6 +28,7 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
     backgroundUrl,
     displayName,
     organizationName,
+    profileHref,
     isOwner,
     isFollowing,
     isAuthenticated,
@@ -35,16 +38,18 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
     return (
       <Card className="small-profile-card" hover={true}>
         <img className="background" src={backgroundUrl} alt="Background" />
-        <img className="avatar" src={avatarUrl} alt="Avatar" />
+        <Link className="avatar" href={profileHref}>
+          <img src={avatarUrl} alt="Avatar" />
+        </Link>
         <div className="info">
-          <div className="profile-card-header">
+          <Link className="profile-card-header" href={profileHref}>
             <abbr className="title" title={displayName}>
               {displayName}
             </abbr>
             <div className="subtitle">
               <div>{organizationName}</div>
             </div>
-          </div>
+          </Link>
           <OverallCard noCard={true} showIcons={true} {...overallCardProps} />
           {!isOwner && (
             <div className="buttons">
