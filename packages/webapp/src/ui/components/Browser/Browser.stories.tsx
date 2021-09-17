@@ -58,7 +58,10 @@ const subjectCardPropsList: SubjectCardProps[] = [
 
 export const BrowserLoggedOutStoryProps: BrowserProps = {
   setSortBy: action(`set sort by`),
-  loadMore: action(`load more`),
+  loadMoreSubjects: action(`load more subjects`),
+  loadMoreCollections: action(`load more collections`),
+  loadMoreResources: action(`load more resources`),
+  loadMorePeople: action(`load more people`),
   subjectCardPropsList: subjectCardPropsList,
   collectionCardPropsList: [
     CollectionCardLoggedOutStoryProps,

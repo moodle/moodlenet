@@ -22,7 +22,10 @@ export type BrowserProps = {
   resourceCardPropsList: CP<ResourceCardProps>[] | null
   smallProfileCardPropsList: CP<SmallProfileCardProps>[] | null
   setSortBy: ((sortType: SortType, dir: SortState) => unknown) | null
-  loadMore?: (() => unknown) | null
+  loadMoreSubjects?: (() => unknown) | null
+  loadMoreCollections?: (() => unknown) | null
+  loadMoreResources?: (() => unknown) | null
+  loadMorePeople?: (() => unknown) | null
 }
 export const Browser = withCtrl<BrowserProps>(
   ({
@@ -31,7 +34,10 @@ export const Browser = withCtrl<BrowserProps>(
     resourceCardPropsList,
     smallProfileCardPropsList,
     setSortBy,
-    loadMore,
+    loadMoreSubjects,
+    loadMoreCollections,
+    loadMoreResources,
+    loadMorePeople,
   }) => {
     const [filters, setFilter] = useReducer(
       (prev: Record<FilterType, boolean>, [type, checked]: readonly [FilterType, boolean]) => ({
@@ -63,12 +69,39 @@ export const Browser = withCtrl<BrowserProps>(
       return shouldShowSeeAll
     }
 
-    const oneFilterActive = (): boolean => {
+    const loadMore = (): (() => unknown) | null | undefined => {
+      const activeFilter = singleActiveFilter()
+      console.log(activeFilter)
+      switch (activeFilter) {
+        case 'Subjects': {
+          return loadMoreSubjects
+        }
+        case 'Collections': {
+          return loadMoreCollections
+        }
+        case 'Resources': {
+          return loadMoreResources
+        }
+        case 'People': {
+          return loadMorePeople
+        }
+        default: {
+          return null
+        }
+      }
+    }
+
+    const singleActiveFilter = (): FilterType | undefined => {
       let numActiveFilters = 0
+      let activeFilter
       filterTypes.forEach((filterType: FilterType) => {
-        filters[filterType] && numActiveFilters++
+        console.log(filterType + ' ' + filters[filterType])
+        if (filters[filterType]) {
+          numActiveFilters++
+          activeFilter = filterType
+        }
       }, [])
-      return numActiveFilters === 1 ? true : false
+      return numActiveFilters === 1 ? activeFilter : undefined
     }
 
     const setFilterCB = useCallback<ChangeEventHandler<HTMLInputElement>>(ev => {
@@ -240,9 +273,9 @@ export const Browser = withCtrl<BrowserProps>(
                 minGrid={160}
               />
             )}
-            {loadMore && oneFilterActive() && (
+            {loadMore() && (
               <div className="load-more">
-                <SecondaryButton>
+                <SecondaryButton onClick={loadMore}>
                   <Trans>Load more</Trans>
                 </SecondaryButton>
               </div>
