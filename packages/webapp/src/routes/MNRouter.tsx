@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom'
 import { BookmarksRoute } from './BookmarksRoute'
 import { CategoryRoute } from './CategoryRoute'
 import { CollectionRoute } from './CollectionRoute'
+import { FollowingRoute } from './FollowingRoute'
 import { LandingRoute } from './LandingRoute'
 import { LMSMoodleLandingRoute } from './LMSMoodleLandingRoute'
 import { LoginRoute } from './LoginRoute'
@@ -26,6 +27,7 @@ export const MNRouter: FC = (/* { children } */) => {
       <Route {...NewResourceRoute} />
       <Route {...NewCollectionRoute} />
       <Route {...BookmarksRoute} />
+      <Route {...FollowingRoute} />
       <Route {...ProfileRoute} />
       <Route {...CategoryRoute} />
       <Route {...ResourceRoute} />

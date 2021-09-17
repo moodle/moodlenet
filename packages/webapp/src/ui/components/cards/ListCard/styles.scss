@@ -1,56 +1,62 @@
 .list-card {
-    width: 100%;
-    background-color: #fff;
-    border-radius: 16px;
-    box-shadow: 0 0 6px #dedede;
-    padding: 24px;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 0 6px #dedede;
+  padding: 24px;
 
-    @media (max-width:450px) {
-        box-shadow: none;
-        border-radius: 0;
-        margin-top: 0;
-    }
+  @media (max-width: 450px) {
+    box-shadow: none;
+    border-radius: 0;
+    margin-top: 0;
+  }
 
-    > .title {
-        font-size: 14px;
-        font-weight: bold;
-        padding-bottom: 18px;
-    }
+  > .title {
+    font-size: 14px;
+    font-weight: bold;
+    padding-bottom: 18px;
+  }
 
-    > :not(.grid).content {
-        width: 100%;
-        height: 100%;
-        display: inline-flex;
-        gap: 12px;
-        &.vertical {
-            flex-wrap: wrap;
-        }
-        &.horizontal {
-            padding-right: 13px;
-            -webkit-mask-image: linear-gradient(to left, transparent 0%, black 3%);
-            mask-image: linear-gradient(to left, transparent 0%, black 3%);
-        }
-    }
+  > .content {
+    padding: 0 3px 6px 3px;
 
-    > .grid {
-        display: grid;
+    &:not(.grid) {
+      width: 100%;
+      height: 100%;
+      display: inline-flex;
+      gap: 12px;
+
+      &.vertical {
         flex-wrap: wrap;
-        width: 100%;
-        height: -moz-fit-content;
-        height: fit-content;
-        grid-gap: 15px;
-        gap: 15px;
-        justify-content: center;
+      }
+
+      &.horizontal {
+        padding-right: 13px;
+        -webkit-mask-image: linear-gradient(to left, transparent 0%, black 3%);
+        mask-image: linear-gradient(to left, transparent 0%, black 3%);
+      }
     }
+
+    &.grid {
+      display: grid;
+      flex-wrap: wrap;
+      width: 100%;
+      height: -moz-fit-content;
+      height: fit-content;
+      grid-gap: 15px;
+      gap: 15px;
+      justify-content: center;
+    }
+  }
 }
 
 .no-card {
-    background-color: transparent;
-    border-radius: 0;
-    box-shadow: none;
-    padding: 0;
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
 
-    .content {
-        margin: 0px;
-    }
+  .content {
+    margin: 0px;
+  }
 }

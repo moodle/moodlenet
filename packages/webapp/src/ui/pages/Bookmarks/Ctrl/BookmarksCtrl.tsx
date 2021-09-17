@@ -51,6 +51,7 @@ export const useBookmarksCtrl: CtrlHook<BookmarksProps, {}> = () => {
         ),
         subjectCardPropsList: null,
         setSortBy: null,
+        smallProfileCardPropsList: null,
       },
     }
     return props

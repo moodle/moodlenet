@@ -1,8 +1,8 @@
-query bookmarksPage($profileId: ID!) {
+query followingPage($profileId: ID!) {
   node(id: $profileId) {
     ... on Profile {
       id
-      collections: _rel(type: Bookmarked, target: Collection, page: { first: 100 }) {
+      collections: _rel(type: Follows, target: Collection, page: { first: 100 }) {
         edges {
           edge {
             id
@@ -14,13 +14,25 @@ query bookmarksPage($profileId: ID!) {
           }
         }
       }
-      resources: _rel(type: Bookmarked, target: Resource, page: { first: 100 }) {
+      profiles: _rel(type: Follows, target: Profile, page: { first: 100 }) {
         edges {
           edge {
             id
           }
           node {
-            ... on Resource {
+            ... on Profile {
+              id
+            }
+          }
+        }
+      }
+      subjects: _rel(type: Follows, target: IscedField, page: { first: 100 }) {
+        edges {
+          edge {
+            id
+          }
+          node {
+            ... on IscedField {
               id
             }
           }
