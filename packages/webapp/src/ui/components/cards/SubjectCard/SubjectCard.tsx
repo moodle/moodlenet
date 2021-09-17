@@ -18,6 +18,7 @@ export const SubjectCard = withCtrl<SubjectCardProps>(({ title, organization, su
         width: 'auto',
         maxWidth: '100%',
       }}
+      hover={true}
     >
       <div className="subject-card">
         <div className="title">

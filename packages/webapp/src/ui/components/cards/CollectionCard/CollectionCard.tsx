@@ -5,6 +5,7 @@ import PersonIcon from '@material-ui/icons/Person'
 import { Href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
 import '../../../styles/tags.css'
+import Card from '../../atoms/Card/Card'
 import './styles.scss'
 
 export type CollectionCardProps = {
@@ -40,7 +41,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
     }
 
     return (
-      <div className="collection-card" style={background}>
+      <Card className="collection-card" style={background} hover={true}>
         <div className={`actions`}>
           <div
             className={`follow ${following ? 'following' : ''} ${!isAuthenticated || isOwner ? 'disabled' : ''}`}
@@ -60,7 +61,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
             <abbr title={title}>{title}</abbr>
           </div>
         </Link>
-      </div>
+      </Card>
     )
   },
 )

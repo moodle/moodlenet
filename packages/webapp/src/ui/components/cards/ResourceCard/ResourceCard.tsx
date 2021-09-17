@@ -83,7 +83,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     }
 
     return (
-      <Card className={`resource-card ${isSelected ? 'selected' : ''} ${direction}`} onClick={onClick}>
+      <Card className={`resource-card ${isSelected ? 'selected' : ''} ${direction}`} hover={true} onClick={onClick}>
         <div className={`actions`}>
           {isAuthenticated && !selectionMode && (
             <div

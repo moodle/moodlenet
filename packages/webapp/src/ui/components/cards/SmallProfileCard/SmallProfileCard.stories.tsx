@@ -31,7 +31,6 @@ export const SmallProfileCardStoryProps: SmallProfileCardProps = {
   isOwner: false,
   isAuthenticated: false,
   isFollowing: false,
-  isVerified: true,
   toggleFollow: action('toogleFollow'),
   displayName: 'Juanito Rodriguez',
   organizationName: 'University of Malta',
