@@ -11,6 +11,8 @@ query globalSearch(
     pageInfo {
       startCursor
       endCursor
+      hasNextPage
+      hasPreviousPage
     }
   }
 }
