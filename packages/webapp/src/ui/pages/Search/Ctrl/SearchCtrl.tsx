@@ -65,6 +65,7 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
   const searchUIProps: SearchProps = {
     headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
     browserProps: {
+      smallProfileCardPropsList: null,
       collectionCardPropsList: collections.map(collection =>
         ctrlHook(useCollectionCardCtrl, { id: collection.id }, `Search Collection ${collection.id} Card`),
       ),

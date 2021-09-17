@@ -11,6 +11,6 @@ export const FollowingRouteComponent: RouteFC<Routes.FollowingPage> = (/* { matc
 
 export const FollowingRoute: MNRouteProps<Routes.FollowingPage> = {
   component: FollowingRouteComponent,
-  path: '/Following',
+  path: '/following',
   exact: true,
 }
