@@ -1,15 +1,9 @@
 .small-profile-card {
   width: 100%;
   max-width: 200px;
-  background-color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%);
-
-  @media (max-width: 450px) {
-    box-shadow: none;
-    border-radius: 0;
-    margin-top: 0;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   > .background {
     cursor: pointer;
@@ -27,15 +21,14 @@
     z-index: 3;
     border: 2px solid white;
     border-radius: 15px;
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     object-fit: cover;
-    margin-left: 15px;
     margin-top: -45px;
   }
 
   > .info {
-    padding: 0 15px 15px 15px;
+    padding: 7px 15px 15px 15px;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -45,28 +38,22 @@
     }
 
     > .profile-card-header {
-      > .title {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        height: 20px;
-        width: 100%;
-        .display-name {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          font-size: 16px;
-          font-weight: bold;
-        }
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
-        > .verified-icon {
-          height: 80%;
-        }
+      > .title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 15px;
+        font-weight: bold;
       }
 
       > .subtitle {
         margin-top: 3px;
-        font-size: 12px;
+        font-size: 13px;
+        color: #7e7e7e;
         display: flex;
         justify-content: flex-start;
         gap: 5px;
