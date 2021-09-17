@@ -22,9 +22,17 @@ export type BrowserProps = {
   resourceCardPropsList: CP<ResourceCardProps>[] | null
   smallProfileCardPropsList: CP<SmallProfileCardProps>[] | null
   setSortBy: ((sortType: SortType, dir: SortState) => unknown) | null
+  loadMore?: (() => unknown) | null
 }
 export const Browser = withCtrl<BrowserProps>(
-  ({ subjectCardPropsList, collectionCardPropsList, resourceCardPropsList, smallProfileCardPropsList, setSortBy }) => {
+  ({
+    subjectCardPropsList,
+    collectionCardPropsList,
+    resourceCardPropsList,
+    smallProfileCardPropsList,
+    setSortBy,
+    loadMore,
+  }) => {
     const [filters, setFilter] = useReducer(
       (prev: Record<FilterType, boolean>, [type, checked]: readonly [FilterType, boolean]) => ({
         ...prev,
@@ -53,6 +61,14 @@ export const Browser = withCtrl<BrowserProps>(
       }, [])
       // TODO If shouldShowSeeAll === false we should activate infinite scroll
       return shouldShowSeeAll
+    }
+
+    const oneFilterActive = (): boolean => {
+      let numActiveFilters = 0
+      filterTypes.forEach((filterType: FilterType) => {
+        filters[filterType] && numActiveFilters++
+      }, [])
+      return numActiveFilters === 1 ? true : false
     }
 
     const setFilterCB = useCallback<ChangeEventHandler<HTMLInputElement>>(ev => {
@@ -194,7 +210,7 @@ export const Browser = withCtrl<BrowserProps>(
                     )}
                   </div>
                 }
-                className="resources"
+                className={`resources ${!shouldShowSeeAll('Resources') ? 'see-all' : ''}`}
                 noCard={true}
                 minGrid={280}
               />
@@ -219,10 +235,17 @@ export const Browser = withCtrl<BrowserProps>(
                     )}
                   </div>
                 }
-                className="people"
+                className={`people ${!shouldShowSeeAll('People') ? 'see-all' : ''}`}
                 noCard={true}
                 minGrid={160}
               />
+            )}
+            {loadMore && oneFilterActive() && (
+              <div className="load-more">
+                <SecondaryButton>
+                  <Trans>Load more</Trans>
+                </SecondaryButton>
+              </div>
             )}
           </div>
         </div>

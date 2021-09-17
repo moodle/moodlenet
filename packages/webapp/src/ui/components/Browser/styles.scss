@@ -53,8 +53,13 @@
       }
 
       > .people:not(.see-all) {
-        max-height: 586px;
+        max-height: 594px;
         overflow: hidden;
+      }
+
+      > .load-more {
+        display: flex;
+        justify-content: center;
       }
     }
 
