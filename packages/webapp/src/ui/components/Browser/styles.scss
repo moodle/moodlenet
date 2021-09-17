@@ -38,7 +38,7 @@
       }
 
       > .subjects:not(.see-all) {
-        max-height: 260px;
+        max-height: 265px;
         overflow: hidden;
       }
 
@@ -48,13 +48,18 @@
       }
 
       > .resources:not(.see-all) {
-        max-height: 242px;
+        max-height: 244px;
         overflow: hidden;
       }
 
       > .people:not(.see-all) {
-        max-height: 567px;
+        max-height: 594px;
         overflow: hidden;
+      }
+
+      > .load-more {
+        display: flex;
+        justify-content: center;
       }
     }
 

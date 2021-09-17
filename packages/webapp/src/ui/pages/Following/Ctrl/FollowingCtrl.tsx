@@ -2,7 +2,8 @@ import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/
 import { useEffect, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
-import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
+import { useSmallProfileCardCtrl } from '../../../components/cards/SmallProfileCard/Ctrl/SmallProfileCardCtrl'
+import { useIscedfCardCtrl } from '../../../components/cards/SubjectCard/Ctrl/IscedfCardCtrl'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { FollowingProps } from '../Following'
@@ -29,9 +30,13 @@ export const useFollowingCtrl: CtrlHook<FollowingProps, {}> = () => {
     () => (profileNode?.collections.edges || []).filter(isEdgeNodeOfType(['Collection'])).map(({ node }) => node),
     [profileNode?.collections.edges],
   )
-  const resources = useMemo(
-    () => (profileNode?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])).map(({ node }) => node),
-    [profileNode?.resources.edges],
+  const subjects = useMemo(
+    () => (profileNode?.subjects.edges || []).filter(isEdgeNodeOfType(['IscedField'])).map(({ node }) => node),
+    [profileNode?.subjects.edges],
+  )
+  const profiles = useMemo(
+    () => (profileNode?.profiles.edges || []).filter(isEdgeNodeOfType(['Profile'])).map(({ node }) => node),
+    [profileNode?.profiles.edges],
   )
 
   const followingUIProps = useMemo(() => {
@@ -42,18 +47,17 @@ export const useFollowingCtrl: CtrlHook<FollowingProps, {}> = () => {
         collectionCardPropsList: collections.map(collection =>
           ctrlHook(useCollectionCardCtrl, { id: collection.id }, `Following Collection ${collection.id} Card`),
         ),
-        resourceCardPropsList: resources.map(resource =>
-          ctrlHook(
-            useResourceCardCtrl,
-            { id: resource.id, removeAction: false },
-            `Following Resource ${resource.id} Card`,
-          ),
+        smallProfileCardPropsList: profiles.map(profile =>
+          ctrlHook(useSmallProfileCardCtrl, { id: profile.id }, `Following Profile ${profile.id}`),
         ),
-        subjectCardPropsList: null,
+        subjectCardPropsList: subjects.map(subject =>
+          ctrlHook(useIscedfCardCtrl, { id: subject.id }, `Following Profile ${subject.id}`),
+        ),
+        resourceCardPropsList: null,
         setSortBy: null,
       },
     }
     return props
-  }, [collections, resources])
+  }, [collections, profiles, subjects])
   return [followingUIProps]
 }
