@@ -1,8 +1,10 @@
 import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useMemo } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
 import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../../helpers/data'
+import { href } from '../../../../elements/link'
 import { CtrlHook } from '../../../../lib/ctrl'
 import {
   useAddProfileRelationMutation,
@@ -32,7 +34,7 @@ export const useSmallProfileCardCtrl: CtrlHook<SmallProfileCardProps, SmallProfi
       return delRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(() => refetch())
     } else {
       return addRelation({
-        variables: { edge: { edgeType: 'Likes', from: session.profile.id, to: id, Likes: {} } },
+        variables: { edge: { edgeType: 'Follows', from: session.profile.id, to: id, Follows: {} } },
       }).then(() => refetch())
     }
   }, [addRelation, addRelationRes.loading, delRelation, delRelationRes.loading, id, myFollowEdgeId, refetch, session])
@@ -69,6 +71,7 @@ export const useSmallProfileCardCtrl: CtrlHook<SmallProfileCardProps, SmallProfi
             isVerified: true,
             isAuthenticated,
             isOwner,
+            profileHref: href(nodeGqlId2UrlPath(id)),
           }
         : null,
     [profileNode, id, myFollowEdgeId, kudos, toggleFollow, isAuthenticated, isOwner],
