@@ -26,8 +26,8 @@ export const HeaderLoggedInStoryProps: HeaderPropsIdle = {
   },
   homeHref: href('Pages/Landing/Logged In'),
   me: {
-    bookmarksHref: href('Pages/Bookmarks/LoggedIn'),
-    followingHref: href('Pages/Following/Default'),
+    bookmarksHref: href('Pages/Bookmarks/Logged In'),
+    followingHref: href('Pages/Following/Logged In'),
     myProfileHref: href('Pages/Profile/Logged In'),
     logout: action('logout'),
     avatar: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
