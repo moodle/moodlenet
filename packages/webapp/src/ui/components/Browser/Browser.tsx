@@ -1,5 +1,5 @@
 import { t, Trans } from '@lingui/macro'
-import { ChangeEventHandler, useCallback, useReducer } from 'react'
+import { ChangeEventHandler, useCallback, useMemo, useReducer } from 'react'
 import { CP, withCtrl } from '../../lib/ctrl'
 import Checkbox from '../atoms/Checkbox/Checkbox'
 import SecondaryButton from '../atoms/SecondaryButton/SecondaryButton'
@@ -69,7 +69,20 @@ export const Browser = withCtrl<BrowserProps>(
       return shouldShowSeeAll
     }
 
-    const loadMore = (): (() => unknown) | null | undefined => {
+    const singleActiveFilter = useCallback((): FilterType | undefined => {
+      let numActiveFilters = 0
+      let activeFilter
+      filterTypes.forEach((filterType: FilterType) => {
+        console.log(filterType + ' ' + filters[filterType])
+        if (filters[filterType]) {
+          numActiveFilters++
+          activeFilter = filterType
+        }
+      }, [])
+      return numActiveFilters === 1 ? activeFilter : undefined
+    }, [filters])
+
+    const loadMore = useMemo<(() => unknown) | null | undefined>(() => {
       const activeFilter = singleActiveFilter()
       console.log(activeFilter)
       switch (activeFilter) {
@@ -89,20 +102,7 @@ export const Browser = withCtrl<BrowserProps>(
           return null
         }
       }
-    }
-
-    const singleActiveFilter = (): FilterType | undefined => {
-      let numActiveFilters = 0
-      let activeFilter
-      filterTypes.forEach((filterType: FilterType) => {
-        console.log(filterType + ' ' + filters[filterType])
-        if (filters[filterType]) {
-          numActiveFilters++
-          activeFilter = filterType
-        }
-      }, [])
-      return numActiveFilters === 1 ? activeFilter : undefined
-    }
+    }, [loadMoreCollections, loadMorePeople, loadMoreResources, loadMoreSubjects, singleActiveFilter])
 
     const setFilterCB = useCallback<ChangeEventHandler<HTMLInputElement>>(ev => {
       setFilter([ev.currentTarget.name as FilterType, ev.currentTarget.checked])
@@ -273,7 +273,7 @@ export const Browser = withCtrl<BrowserProps>(
                 minGrid={160}
               />
             )}
-            {loadMore() && (
+            {loadMore && (
               <div className="load-more">
                 <SecondaryButton onClick={loadMore}>
                   <Trans>Load more</Trans>

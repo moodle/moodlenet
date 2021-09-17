@@ -21,7 +21,7 @@ const graphqlConfig = {
         extension: '.gen.tsx',
         baseTypesPath: 'pub.graphql.link.ts'
       },
-      plugins: ['typescript-operations', 'typescript-react-apollo'],
+      plugins: ['typescript', 'typescript-operations', 'typescript-react-apollo'],
       config: {
         scalars,
         useImplementingTypes: true,
