@@ -8,12 +8,11 @@ export type NewPassword = RouteDef<'/new-password/:token', { token: string }>
 export type Signup = RouteDef<'/signup', {}>
 export type TermsAndConditions = RouteDef<'/terms', {}>
 export type GlobalSearch = RouteDef<'/search', {}>
-export type Profile = RouteDef<'/profile/:slug', { slug: string }>
 export type CreateNewResource = RouteDef<'/create-new-resource', {}>
 export type CreateNewCollection = RouteDef<'/create-new-collection', {}>
-export type ResourcePage = RouteDef<'/resource/:slug', { slug: string }>
-export type CollectionPage = RouteDef<'/collection/:slug', { slug: string }>
-export type CategoryPage = RouteDef<'/iscedfield/:slug', { slug: string }>
 export type BookmarksPage = RouteDef<'/bookmarks', {}>
 export type FollowingPage = RouteDef<'/following', {}>
 export type LMSMoodleLanding = RouteDef<'/lms/moodle/search', {}>
+
+// node home pages
+export type ContentNodeHomePage = RouteDef<`/${string}/:slug`, { slug: string }>
