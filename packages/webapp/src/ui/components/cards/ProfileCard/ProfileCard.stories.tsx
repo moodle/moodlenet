@@ -1,5 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { people } from '../../../../helpers/factories'
+import { randomIntFromInterval } from '../../../../helpers/utilities'
 import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
 import { ProfileFormValues } from '../../../pages/Profile/types'
 import { ProfileCard, ProfileCardProps } from './ProfileCard'
@@ -25,24 +27,26 @@ const meta: ComponentMeta<typeof ProfileCard> = {
   ],
 }
 
+const randomProfileIndex = randomIntFromInterval(0, 3)
+
 export const ProfileCardStoryProps: ProfileCardProps = {
+  backgroundUrl: people[randomProfileIndex]?.backgroundUrl!,
+  avatarUrl: people[randomProfileIndex]?.avatarUrl!,
   isOwner: false,
   isAuthenticated: false,
   toggleFollow: action('toogleFollow'),
   toggleIsEditing: action('toogleIsEditing'),
   openSendMessage: action('openSendMessage'),
-  avatarUrl: 'https://picsum.photos/200/100',
-  backgroundUrl: 'https://picsum.photos/200/100',
   formBag: SBFormikBag<ProfileFormValues>({
-    displayName: 'Juanito Rodriguez',
+    displayName: people[randomProfileIndex]?.displayName!,
     description:
       'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
-    organizationName: 'UM',
-    location: 'Malta',
+    organizationName: people[randomProfileIndex]?.organization!,
+    location: people[randomProfileIndex]?.location!,
     siteUrl: 'https://iuri.is/',
-    username: 'juanito',
     avatarImage: null,
     backgroundImage: null,
+    username: people[randomProfileIndex]?.username!,
   }),
 }
 
