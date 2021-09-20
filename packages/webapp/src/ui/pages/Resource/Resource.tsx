@@ -93,6 +93,7 @@ export const Resource = withCtrl<ResourceProps>(
     const [isAddingToCollection, setIsAddingToCollection] = useState<boolean>(false)
     const [isAddingToMoodleLms, setIsAddingToMoodleLms] = useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
+    const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
     const [moodleLmsSite, setMoodleLmsSite] = useState<string>(lmsSite ?? '')
 
     const handleOnEditClick = () => {
@@ -267,6 +268,16 @@ export const Resource = withCtrl<ResourceProps>(
     )
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        {isShowingImage && typeof form.values.image === 'string' && (
+          <Modal
+            className="image-modal"
+            closeButton={false}
+            onClose={() => setIsShowingImage(false)}
+            style={{ maxWidth: '90%', maxHeight: '90%' }}
+          >
+            <img src={form.values.image} />
+          </Modal>
+        )}
         {isAddingToCollection && collections && setAddToCollections && (
           <Modal
             title={t`Select Collections`}
@@ -417,6 +428,7 @@ export const Resource = withCtrl<ResourceProps>(
                   className="image"
                   src={typeof form.values.image === 'string' ? form.values.image : ''}
                   alt="Background"
+                  onClick={() => setIsShowingImage(true)}
                 />
                 {isOwner ? (
                   <InputTextField
