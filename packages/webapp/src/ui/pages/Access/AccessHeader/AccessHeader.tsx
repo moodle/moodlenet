@@ -15,7 +15,7 @@ export type AccessHeaderProps = {
   page: 'login' | 'signup' | 'activation'
 }
 
-export const AccessHeader = withCtrl<AccessHeaderProps, 'page'>(
+export const AccessHeader = withCtrl<AccessHeaderProps>(
   ({ organization, homeHref, signupHref, loginHref, page }) => {
     return (
       <div className="access-header">
