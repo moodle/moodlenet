@@ -13,6 +13,8 @@ export type ProfileFormValues = {
   organizationName: string
   location: string
   siteUrl: string
-  backgroundUrl: Url | File | null
-  avatarUrl: Url | File | null
+  backgroundImage: Url | File | null
+  // backgroundUrl: string | null
+  avatarImage: Url | File | null
+  // avatarUrl: string |null
 }
