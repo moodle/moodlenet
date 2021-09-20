@@ -31,6 +31,7 @@ const meta: ComponentMeta<typeof NewResource> = {
     'NewResourceExtraDataStoryProps',
     'NewResourceAddToCollectionsStoryProps',
     'NewResourceExtraDetailsStoryProps',
+    'NewResourceLinkUploadedStoryProps',
   ],
 }
 
@@ -68,6 +69,12 @@ const basicDataFormValue: NewResourceFormValues = {
   category: 'Important Matters',
 }
 
+const basicLinkDataFormValue: NewResourceFormValues = {
+  ...initialFormValues,
+  content: 'https://moodle.com/awesome-content',
+  contentType: 'Link'
+}
+
 const advancedDataFormValue: NewResourceFormValues = {
   ...initialFormValues,
   license: 'CC-BY-NC (Attribution-NonCommercial)',
@@ -76,6 +83,7 @@ const advancedDataFormValue: NewResourceFormValues = {
 
 const formBag = SBFormikBag<NewResourceFormValues>(initialFormValues)
 const formBagBasic = SBFormikBag<NewResourceFormValues>(basicDataFormValue)
+const formBagLinkBasic = SBFormikBag<NewResourceFormValues>(basicLinkDataFormValue)
 const formBagAdvanced = SBFormikBag<NewResourceFormValues>(advancedDataFormValue)
 
 const uploadResourceProps: UploadResourceProps = {
@@ -106,6 +114,15 @@ export const NewResourceContentUploadedStoryProps: NewResourceProps = {
     ...uploadResourceProps,
     state: 'EditData',
     formBag: formBagBasic,
+  },
+}
+
+export const NewResourceLinkUploadedStoryProps: NewResourceProps = {
+  ...NewResourceStoryProps,
+  stepProps: {
+    ...uploadResourceProps,
+    state: 'EditData',
+    formBag: formBagLinkBasic,
   },
 }
 
@@ -169,8 +186,11 @@ export const NewResourceExtraDetailsStoryProps: NewResourceProps = {
 export const Start = NewResourceStory.bind({})
 Start.args = NewResourceStoryProps
 
-export const ContentUploaded = NewResourceStory.bind({})
-ContentUploaded.args = NewResourceContentUploadedStoryProps
+export const FileUploaded = NewResourceStory.bind({})
+FileUploaded.args = NewResourceContentUploadedStoryProps
+
+export const LinkUploaded = NewResourceStory.bind({})
+LinkUploaded.args = NewResourceLinkUploadedStoryProps
 
 export const ImageUploaded = NewResourceStory.bind({})
 ImageUploaded.args = NewResourceImageUploadedStoryProps

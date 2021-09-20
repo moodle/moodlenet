@@ -100,24 +100,24 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
 
     return (
       <div className="profile-card">
-        {isShowingBackground && (
+        {isShowingBackground && backgroundUrl && (
           <Modal
             className="image-modal"
             closeButton={false}
             onClose={() => setIsShowingBackground(false)}
             style={{ maxWidth: '90%', maxHeight: '90%' }}
           >
-            <img src={backgroundUrl} />
+            <img src={backgroundUrl} alt="Background" />
           </Modal>
         )}
-        {isShowingAvatar && (
+        {isShowingAvatar && avatarUrl && (
           <Modal
             className="image-modal"
             closeButton={false}
             onClose={() => setIsShowingAvatar(false)}
             style={{ maxWidth: '90%', maxHeight: '90%' }}
           >
-            <img src={avatarUrl} />
+            <img src={avatarUrl} alt="Avatar"/>
           </Modal>
         )}
         <div className="background" style={background} onClick={() => setIsShowingBackground(true)}>
