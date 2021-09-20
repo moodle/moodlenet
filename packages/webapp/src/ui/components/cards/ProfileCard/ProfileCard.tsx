@@ -217,7 +217,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 {form.values.username !== '' && <span>@{form.values.username}</span>}
                 {form.values.organizationName !== '' && <span>{form.values.organizationName}</span>}
                 {form.values.location !== '' && <span>{form.values.location}</span>}
-                {form.values.siteUrl !== '' && <a href={form.values.siteUrl}>{form.values.siteUrl}</a>}
+                {form.values.siteUrl !== '' && <a href={form.values.siteUrl} target="_blank">{form.values.siteUrl}</a>}
               </div>
             )}
             {profileCardErrorMessage && <div className="error">{profileCardErrorMessage}</div>}
