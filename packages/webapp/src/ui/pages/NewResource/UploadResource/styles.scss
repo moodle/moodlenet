@@ -45,7 +45,8 @@
             border-radius: 15px;
             cursor: pointer;
 
-            &:hover, &.hover {
+            &:hover,
+            &.hover {
               border: 4px dashed #337aff;
               color: #337aff;
               background-color: #337cf93f;
@@ -133,7 +134,14 @@
             font-weight: 500;
             font-size: 15px;
             color: #b6bacb;
-            width: calc(100% - 146px);
+
+            &.file {
+              width: calc(100% - 146px);
+            }
+
+            &.link {
+              width: 100%;
+            }
             > .content-icon {
               display: flex;
               align-items: center;
