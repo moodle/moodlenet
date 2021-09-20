@@ -1,11 +1,12 @@
 import { nodeSlugId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { getContentNodeHomePageRoutePath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { ctrlHook } from '../ui/lib/ctrl'
 import { Collection } from '../ui/pages/Collection/Collection'
 import { useCollectionCtrl } from '../ui/pages/Collection/Ctrl/CollectionPageCtrl'
 import { MNRouteProps, RouteFC } from './lib'
 
-export const CollectionRouteComponent: RouteFC<Routes.CollectionPage> = ({
+export const CollectionRouteComponent: RouteFC<Routes.ContentNodeHomePage> = ({
   match: {
     params: { slug },
   },
@@ -15,8 +16,8 @@ export const CollectionRouteComponent: RouteFC<Routes.CollectionPage> = ({
   return <Collection {...props} />
 }
 
-export const CollectionRoute: MNRouteProps<Routes.CollectionPage> = {
+export const CollectionRoute: MNRouteProps<Routes.ContentNodeHomePage> = {
   component: CollectionRouteComponent,
-  path: '/collection/:slug',
+  path: getContentNodeHomePageRoutePath('Collection'),
   exact: true,
 }

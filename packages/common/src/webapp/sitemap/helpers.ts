@@ -1,38 +1,73 @@
-import { GraphNodeType, nodeTypes } from '../../content-graph/types/node'
-import { NodeType } from '../../graphql/types.graphql.gen'
+import { GraphNodeIdentifierSlug, GraphNodeType } from '../../content-graph/types/node'
 
 // TODO: should this stuff go to common/graphql/helpers.ts ?
 
-const nodeType2LowerTypeMap = nodeTypes.reduce(
-  (_map, nodeType) => ({
-    ..._map,
-    [nodeType.toLowerCase()]: nodeType,
-  }),
-  {},
-) as {
-  [lowertype in Lowercase<GraphNodeType>]: GraphNodeType
+const NOT_IMPLEMENTED_CONTENT_NODE_HOME_PATH = 'no-home'
+const contentNodeType2NodeHomePagePathsMap: Record<GraphNodeType, string> = {
+  Profile: 'profile',
+  Resource: 'resource',
+  Collection: 'collection',
+  IscedField: 'subject',
+  FileFormat: NOT_IMPLEMENTED_CONTENT_NODE_HOME_PATH,
+  IscedGrade: NOT_IMPLEMENTED_CONTENT_NODE_HOME_PATH,
+  Language: NOT_IMPLEMENTED_CONTENT_NODE_HOME_PATH,
+  License: NOT_IMPLEMENTED_CONTENT_NODE_HOME_PATH,
+  Organization: NOT_IMPLEMENTED_CONTENT_NODE_HOME_PATH,
+  ResourceType: NOT_IMPLEMENTED_CONTENT_NODE_HOME_PATH,
 }
 
-const lowerType2NodeTypeMap = nodeTypes.reduce(
-  (_map, nodeType) => ({
-    ..._map,
-    [nodeType]: nodeType.toLowerCase(),
-  }),
+const nodeHomePagePathsMap2ContentNodeType: Record<string, GraphNodeType> = Object.entries(
+  contentNodeType2NodeHomePagePathsMap,
+).reduce(
+  (_map, [graphNodeType, path]) =>
+    path
+      ? {
+          ..._map,
+          [path]: graphNodeType,
+        }
+      : _map,
   {},
-) as {
-  [type in GraphNodeType]: Lowercase<GraphNodeType>
-}
+)
+// const nodeType2LowerTypeMap = nodeTypes.reduce(
+//   (_map, nodeType) => ({
+//     ..._map,
+//     [nodeType.toLowerCase()]: nodeType,
+//   }),
+//   {},
+// ) as {
+//   [lowertype in Lowercase<GraphNodeType>]: GraphNodeType
+// }
 
-export const getNodeTypeByCaseInsensitive = (caseInsensitiveNodeType: string) =>
-  (nodeType2LowerTypeMap as any)[caseInsensitiveNodeType.toLowerCase()] as GraphNodeType | undefined
+// const lowerType2NodeTypeMap = nodeTypes.reduce(
+//   (_map, nodeType) => ({
+//     ..._map,
+//     [nodeType]: nodeType.toLowerCase(),
+//   }),
+//   {},
+// ) as {
+//   [type in GraphNodeType]: Lowercase<GraphNodeType>
+// }
+
+export const getNodeTypeByCaseInsensitiveContentNodePath = (caseInsensitiveContentNodePath: string) =>
+  nodeHomePagePathsMap2ContentNodeType[caseInsensitiveContentNodePath.toLowerCase()]
 
 export const nodeGqlId2UrlPath = (id: string) => {
   const [_type, _slug] = id.split('/')
+  // console.log({ _type, _slug })
 
-  return nodeIdentifierSlug2UrlPath({ _type: String(_type) as NodeType, _slug: _slug! })
+  return nodeIdentifierSlug2UrlPath({ _type: String(_type) as GraphNodeType, _slug: _slug! })
 }
-export const nodeIdentifierSlug2UrlPath = ({ _slug, _type }: { _slug: string; _type: NodeType }) => {
-  const lowerCaseType = (lowerType2NodeTypeMap as any)[_type]
-  // console.log({ id, type, slug, lowerCaseType, caseInsensitiveNodeTypesMap: nodeType2LowerTypeMap })
-  return `/${lowerCaseType}/${_slug}`
+export const nodeIdentifierSlug2UrlPath = ({ _slug, _type }: GraphNodeIdentifierSlug) => {
+  const contentNodeHomePath = getContentNodeHomePageBasePath(_type)
+  const contentNodeHomePathSlug = `${contentNodeHomePath}/${_slug}`
+  // console.log({ _type, _slug, contentNodeHomePath, contentNodeHomePathSlug })
+  return contentNodeHomePathSlug
 }
+export const getContentNodeHomePageRoutePath = (nodeType: GraphNodeType) => {
+  const contentNodeHomePageRoutePath = `${getContentNodeHomePageBasePath(nodeType)}/:slug` as `/${string}/:slug`
+  console.log({ nodeType, contentNodeHomePageRoutePath })
+  return contentNodeHomePageRoutePath
+}
+
+export const getContentNodeHomePageBasePath = (nodeType: GraphNodeType) =>
+  `/${contentNodeType2NodeHomePagePathsMap[nodeType]}`
