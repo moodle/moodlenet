@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro'
 import EditIcon from '@material-ui/icons/Edit'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import SaveIcon from '@material-ui/icons/Save'
-import { useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { isEmailAddress } from '../../../../helpers/utilities'
 import verifiedIcon from '../../../assets/icons/verified.svg'
 import { withCtrl } from '../../../lib/ctrl'
@@ -55,6 +55,34 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
         setDisplayNameField(displayName)
       }
     }
+
+    const selectBackground = () => {
+      document.getElementById('upload-background')?.click()
+    }
+
+    const selectAvatar = () => {
+      document.getElementById('upload-avatar')?.click()
+    }
+
+    const uploadBackground = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedFile = e.currentTarget.files?.item(0)
+      selectedFile && uploadImage(selectedFile, 'background')
+    }
+
+    const uploadAvatar = (e?: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedFile = e?.currentTarget.files?.item(0)
+      selectedFile && uploadImage(selectedFile, 'background')
+    }
+
+    const uploadImage = useCallback(
+      (file: File, type: 'background' | 'avatar') => {
+        if (file) {
+          type === 'background' ? setFieldValue('backgroundUrl', file) : setFieldValue('avatarUrl', file)
+        }
+      },
+      [setFieldValue],
+    )
+
     const background = {
       backgroundImage: 'url(' + backgroundUrl + ')',
       backgroundSize: 'cover',
@@ -68,13 +96,31 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     return (
       <div className="profile-card">
         <div className="background" style={background}>
-          {isEditing && <RoundButton className="change-background-button" type='edit' onClick={() => {}} />}
+          {isEditing && (
+            <input
+              id="upload-background"
+              type="file"
+              accept=".jpg,.jpeg,.png,.gif"
+              onChange={uploadBackground}
+              hidden
+            />
+          )}
+          {isEditing && <RoundButton className="change-background-button" type="edit" onClick={selectBackground} />}
         </div>
 
         <div className="avatar-and-actions">
           <div className="avatar" style={avatar}>
-          {isEditing && <RoundButton className="change-avatar-button" type='edit' onClick={() => {}} />}
-        </div>
+            {isEditing && (
+              <input
+                id="upload-avatar"
+                type="file"
+                accept=".jpg,.jpeg,.png,.gif"
+                onChange={uploadAvatar}
+                hidden
+              />
+            )}
+            {isEditing && <RoundButton className="change-avatar-button" type="edit" onClick={selectAvatar} />}
+          </div>
           {isOwner && (
             <div className="actions edit-save">
               {isEditing ? (
