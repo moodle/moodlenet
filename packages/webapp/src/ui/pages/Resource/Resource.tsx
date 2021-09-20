@@ -275,7 +275,7 @@ export const Resource = withCtrl<ResourceProps>(
             onClose={() => setIsShowingImage(false)}
             style={{ maxWidth: '90%', maxHeight: '90%' }}
           >
-            <img src={form.values.image} />
+            <img src={form.values.image} alt="Resource" />
           </Modal>
         )}
         {isAddingToCollection && collections && setAddToCollections && (
