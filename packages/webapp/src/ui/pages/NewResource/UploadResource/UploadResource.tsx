@@ -271,14 +271,14 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     <RoundButton onClick={deleteFileOrLink} />
                   </div>
 
-
+                  {form.values.contentType === 'File' && (
                     <Dropdown
                       {...licenses}
                       getValue={setLicenseVal}
                       value={form.values.license}
                       highlight={highlightMandatoryFields && !form.values.license}
                     />
-
+                  )}
                 </div>
               )}
             </Card>
