@@ -146,7 +146,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           //   categories,
         }
       } else if (stepProps.state === 'EditData') {
-        if (form.values.title && form.values.description && form.values.category && form.values.license) {
+        if (form.values.title && form.values.description && form.values.category && (form.values.contentType === 'File' ? form.values.license : true)) {
           return () => {
             setNextStepProps({
               step: 'AddToCollectionsStep',
