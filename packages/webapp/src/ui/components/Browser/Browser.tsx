@@ -84,7 +84,6 @@ export const Browser = withCtrl<BrowserProps>(
 
     const loadMore = useMemo<(() => unknown) | null | undefined>(() => {
       const activeFilter = singleActiveFilter()
-      console.log(activeFilter)
       switch (activeFilter) {
         case 'Subjects': {
           return loadMoreSubjects

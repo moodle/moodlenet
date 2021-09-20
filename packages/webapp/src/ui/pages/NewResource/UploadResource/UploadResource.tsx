@@ -3,11 +3,11 @@ import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import React, { useCallback, useState } from 'react'
 import Card from '../../../components/atoms/Card/Card'
-import DeleteButton from '../../../components/atoms/DeleteButton/DeleteButton'
 import Dropdown from '../../../components/atoms/Dropdown/Dropdown'
 import InputTextField from '../../../components/atoms/InputTextField/InputTextField'
 import Modal from '../../../components/atoms/Modal/Modal'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
+import RoundButton from '../../../components/atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../../components/atoms/SecondaryButton/SecondaryButton'
 import { withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
@@ -246,7 +246,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                   </div>
                 ) : (
                   <div className="image-container" style={background}>
-                    <DeleteButton onClick={deleteImage} />
+                    <RoundButton onClick={deleteImage} />
                   </div>
                 )}
               </div>
@@ -269,7 +269,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     <abbr className="scroll" title={form.values.name}>
                       {form.values.name}
                     </abbr>
-                    <DeleteButton onClick={deleteFileOrLink} />
+                    <RoundButton onClick={deleteFileOrLink} />
                   </div>
 
                   <Dropdown
