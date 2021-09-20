@@ -141,7 +141,7 @@ export const Resource = withCtrl<ResourceProps>(
     const setCategoryField = useCallback((_: string) => setFieldValue('category', _), [setFieldValue])
     const setLicenseField = useCallback((_: string) => setFieldValue('license', _), [setFieldValue])
     //const setCollectionsField = useCallback((_: string) => setFieldValue('collections', _), [setFieldValue])
-    console.log({ selectedCollections, collections })
+    // console.log({ selectedCollections, collections })
     const extraDetails = isEditing ? (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
         <Dropdown
