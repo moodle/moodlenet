@@ -9,6 +9,7 @@ import addIcon from '../../assets/icons/add.svg'
 import { ReactComponent as ArrowsIcon } from '../../assets/icons/arrows.svg'
 import { Href, Link } from '../../elements/link'
 import { withCtrl } from '../../lib/ctrl'
+import defaultAvatar from '../../static/img/default-avatar.svg'
 import { Organization } from '../../types'
 import FloatingMenu from '../atoms/FloatingMenu/FloatingMenu'
 import PrimaryButton from '../atoms/PrimaryButton/PrimaryButton'
@@ -21,7 +22,7 @@ export type HeaderPropsIdle = HeaderPropsBase & {
   status: 'idle'
   organization: Pick<Organization, 'logo' | 'name' | 'url'>
   me: null | {
-    avatar: string
+    avatar: string | null
     logout(): unknown
     name: string
     myProfileHref: Href
@@ -60,7 +61,8 @@ export const Header = withCtrl<HeaderProps>(props => {
     return null
   }
   const { me, organization } = props
-
+  const avatarUrl = me?.avatar || defaultAvatar
+  console.log({ avatarUrl })
   return (
     <div className="header">
       <div className="content">
@@ -117,7 +119,7 @@ export const Header = withCtrl<HeaderProps>(props => {
                 }
                 hoverElement={
                   <Link href={me.myProfileHref}>
-                    <img className="avatar" src={me.avatar} alt="Avatar" />
+                    <img className="avatar" src={avatarUrl} alt="Avatar" />
                   </Link>
                 }
               />

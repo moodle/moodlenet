@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { useSeoContentId } from '../../../../context/Global/Seo'
 import { useSession } from '../../../../context/Global/Session'
-import { getMaybeAssetRefUrlOrDefaultImage, useUploadTempFile } from '../../../../helpers/data'
+import { getMaybeAssetRefUrl, useUploadTempFile } from '../../../../helpers/data'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
@@ -74,26 +74,26 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
         return
       }
 
-      const imageAssetRef: AssetRefInput = !vals.backgroundUrl
-        ? { location: '', type: 'NoAsset' }
-        : typeof vals.backgroundUrl === 'string'
+      const imageAssetRef: AssetRefInput = !vals.backgroundImage
+        ? { location: '', type: 'NoChange' }
+        : typeof vals.backgroundImage === 'string'
         ? {
-            location: vals.backgroundUrl,
+            location: vals.backgroundImage,
             type: 'ExternalUrl',
           }
         : {
-            location: await uploadTempFile('image', vals.backgroundUrl),
+            location: await uploadTempFile('image', vals.backgroundImage),
             type: 'TmpUpload',
           }
-      const avatarAssetRef: AssetRefInput = !vals.avatarUrl
-        ? { location: '', type: 'NoAsset' }
-        : typeof vals.avatarUrl === 'string'
+      const avatarAssetRef: AssetRefInput = !vals.avatarImage
+        ? { location: '', type: 'NoChange' }
+        : typeof vals.avatarImage === 'string'
         ? {
-            location: vals.avatarUrl,
+            location: vals.avatarImage,
             type: 'ExternalUrl',
           }
         : {
-            location: await uploadTempFile('icon', vals.avatarUrl),
+            location: await uploadTempFile('icon', vals.avatarImage),
             type: 'TmpUpload',
           }
       await edit({
@@ -116,36 +116,36 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
 
   const [backgroundUrl, setBackgroundUrl] = useState('')
   useEffect(() => {
-    if (!(formik.values.backgroundUrl instanceof File)) {
+    if (!(formik.values.backgroundImage instanceof File)) {
       return
     }
-    const backgroundObjectUrl = URL.createObjectURL(formik.values.backgroundUrl)
+    const backgroundObjectUrl = URL.createObjectURL(formik.values.backgroundImage)
     setBackgroundUrl(backgroundObjectUrl)
     return () => {
       // console.log(`revoking   ${backgroundObjectUrl}`)
       URL.revokeObjectURL(backgroundObjectUrl)
     }
-  }, [formik.values.backgroundUrl])
+  }, [formik.values.backgroundImage])
 
   const [avatarUrl, setAvatarUrl] = useState('')
   useEffect(() => {
-    if (!(formik.values.avatarUrl instanceof File)) {
+    if (!(formik.values.avatarImage instanceof File)) {
       return
     }
-    const avatarObjectUrl = URL.createObjectURL(formik.values.avatarUrl)
+    const avatarObjectUrl = URL.createObjectURL(formik.values.avatarImage)
     setAvatarUrl(avatarObjectUrl)
     return () => {
       // console.log(`revoking   ${avatarObjectUrl}`)
       URL.revokeObjectURL(avatarObjectUrl)
     }
-  }, [formik.values.avatarUrl])
+  }, [formik.values.avatarImage])
 
   const { image, avatar } = profile || {}
   useEffect(() => {
-    setAvatarUrl(getMaybeAssetRefUrlOrDefaultImage(avatar, id, 'icon'))
+    setAvatarUrl(getMaybeAssetRefUrl(avatar) ?? '')
   }, [id, avatar])
   useEffect(() => {
-    setBackgroundUrl(getMaybeAssetRefUrlOrDefaultImage(image, id, 'image'))
+    setBackgroundUrl(getMaybeAssetRefUrl(image) ?? '')
   }, [id, image])
 
   useEffect(() => {
@@ -160,8 +160,8 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
           siteUrl: siteUrl ?? '',
           username: name,
           description,
-          avatarUrl: '',
-          backgroundUrl: '',
+          avatarImage: '',
+          backgroundImage: '',
         },
       })
     }
