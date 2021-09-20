@@ -26,8 +26,6 @@ const meta: ComponentMeta<typeof ProfileCard> = {
 }
 
 export const ProfileCardStoryProps: ProfileCardProps = {
-  backgroundUrl: 'https://picsum.photos/200/100',
-  avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
   isOwner: false,
   isAuthenticated: false,
   toggleFollow: action('toogleFollow'),
@@ -41,6 +39,10 @@ export const ProfileCardStoryProps: ProfileCardProps = {
     location: 'Malta',
     siteUrl: 'https://iuri.is/',
     username: 'juanito',
+    backgroundImage: null,
+    backgroundUrl: 'https://picsum.photos/200/100',
+    avatarImage: null,
+    avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg'
   }),
 }
 

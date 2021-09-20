@@ -8,6 +8,8 @@ import verifiedIcon from '../../../assets/icons/verified.svg'
 import { withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
 import { ProfileFormValues } from '../../../pages/Profile/types'
+import defaultAvatar from '../../../static/img/default-avatar.svg'
+import defaultBackgroud from '../../../static/img/default-background.svg'
 import InputTextField from '../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
@@ -15,8 +17,6 @@ import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import './styles.scss'
 
 export type ProfileCardProps = {
-  backgroundUrl: string
-  avatarUrl: string
   isOwner?: boolean
   isFollowing?: boolean
   isEditing?: boolean
@@ -29,8 +29,6 @@ export type ProfileCardProps = {
 
 export const ProfileCard = withCtrl<ProfileCardProps>(
   ({
-    avatarUrl,
-    backgroundUrl,
     isOwner,
     isAuthenticated,
     isEditing,
@@ -77,19 +75,19 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     const uploadImage = useCallback(
       (file: File, type: 'background' | 'avatar') => {
         if (file) {
-          type === 'background' ? setFieldValue('backgroundUrl', file) : setFieldValue('avatarUrl', file)
+          type === 'background' ? setFieldValue('backgroundImage', file) : setFieldValue('avatarImage', file)
         }
       },
       [setFieldValue],
     )
 
     const background = {
-      backgroundImage: 'url(' + backgroundUrl + ')',
+      backgroundImage: 'url(' + (form.values.backgroundUrl ? form.values.backgroundUrl : defaultBackgroud)  + ')',
       backgroundSize: 'cover',
     }
 
     const avatar = {
-      backgroundImage: 'url(' + avatarUrl + ')',
+      backgroundImage: 'url(' + (form.values.avatarUrl ? form.values.avatarUrl : defaultAvatar)  + ')',
       backgroundSize: 'cover',
     }
 
