@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { randomIntFromInterval } from '../../../helpers/utilities'
 import {
   CollectionCardLoggedInStoryProps,
   CollectionCardLoggedOutStoryProps
@@ -14,7 +15,8 @@ import { href } from '../../elements/link'
 import {
   SmallProfileCardFollowingStoryProps,
   SmallProfileCardLoggedInStoryProps,
-  SmallProfileCardLoggedOutStoryProps
+
+  SmallProfileCardStoryProps
 } from '../cards/SmallProfileCard/SmallProfileCard.stories'
 import { Browser, BrowserProps } from './Browser'
 
@@ -90,19 +92,20 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
     ResourceCardLoggedOutStoryProps,
   ],
   smallProfileCardPropsList: [
-    SmallProfileCardLoggedOutStoryProps,
-    SmallProfileCardLoggedOutStoryProps,
-    SmallProfileCardLoggedOutStoryProps,
-    SmallProfileCardLoggedOutStoryProps,
-    SmallProfileCardLoggedOutStoryProps,
-    SmallProfileCardLoggedOutStoryProps,
-    SmallProfileCardLoggedOutStoryProps,
-    SmallProfileCardLoggedOutStoryProps,
-    SmallProfileCardLoggedOutStoryProps,
-    SmallProfileCardLoggedOutStoryProps,
-    SmallProfileCardLoggedOutStoryProps,
-    SmallProfileCardLoggedOutStoryProps,
-    SmallProfileCardLoggedOutStoryProps,
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
   ],
 }
 
@@ -137,38 +140,45 @@ export const BrowserLoggedInStoryProps: BrowserProps = {
     ResourceCardLoggedInStoryProps,
   ],
   smallProfileCardPropsList: [
-    SmallProfileCardLoggedInStoryProps,
-    SmallProfileCardLoggedInStoryProps,
-    SmallProfileCardLoggedInStoryProps,
-    SmallProfileCardLoggedInStoryProps,
-    SmallProfileCardLoggedInStoryProps,
-    SmallProfileCardLoggedInStoryProps,
-    SmallProfileCardLoggedInStoryProps,
-    SmallProfileCardLoggedInStoryProps,
-    SmallProfileCardLoggedInStoryProps,
-    SmallProfileCardLoggedInStoryProps,
-    SmallProfileCardLoggedInStoryProps,
-    SmallProfileCardLoggedInStoryProps,
-    SmallProfileCardLoggedInStoryProps,
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardLoggedInStoryProps(randomIntFromInterval(0, 3)),
   ],
 }
 
 export const BrowserFollowingStoryProps: BrowserProps = {
   ...BrowserLoggedInStoryProps,
   smallProfileCardPropsList: [
-    SmallProfileCardFollowingStoryProps,
-    SmallProfileCardFollowingStoryProps,
-    SmallProfileCardFollowingStoryProps,
-    SmallProfileCardFollowingStoryProps,
-    SmallProfileCardFollowingStoryProps,
-    SmallProfileCardFollowingStoryProps,
-    SmallProfileCardFollowingStoryProps,
-    SmallProfileCardFollowingStoryProps,
-    SmallProfileCardFollowingStoryProps,
-    SmallProfileCardFollowingStoryProps,
-    SmallProfileCardFollowingStoryProps,
-    SmallProfileCardFollowingStoryProps,
-    SmallProfileCardFollowingStoryProps,
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardFollowingStoryProps(randomIntFromInterval(0, 3)),
   ],
 }
 

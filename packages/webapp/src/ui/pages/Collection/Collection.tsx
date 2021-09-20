@@ -54,6 +54,7 @@ export const Collection = withCtrl<CollectionProps>(
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
+    const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -85,6 +86,16 @@ export const Collection = withCtrl<CollectionProps>(
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        {isShowingBackground && typeof form.values.image === 'string' && (
+          <Modal
+            className="image-modal"
+            closeButton={false}
+            onClose={() => setIsShowingBackground(false)}
+            style={{ maxWidth: '90%', maxHeight: '90%' }}
+          >
+            <img src={form.values.image} />
+          </Modal>
+        )}
         {isToDelete && deleteCollection && (
           <Modal
             title={t`Alert`}
@@ -109,7 +120,7 @@ export const Collection = withCtrl<CollectionProps>(
         <div className="collection">
           <div className="content">
             <Card className="main-collection-card" hideBorderWhenSmall={true}>
-              <div className="image" style={background} />
+              <div className="image" style={background} onClick={() => setIsShowingBackground(true)}/>
               <div className="info">
                 <div className="label">
                   <Trans>Collection</Trans>
