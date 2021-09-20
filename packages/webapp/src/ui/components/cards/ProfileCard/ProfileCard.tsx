@@ -10,6 +10,7 @@ import { FormikBag } from '../../../lib/formik'
 import { ProfileFormValues } from '../../../pages/Profile/types'
 import InputTextField from '../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
+import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import './styles.scss'
 
@@ -54,13 +55,26 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
         setDisplayNameField(displayName)
       }
     }
+    const background = {
+      backgroundImage: 'url(' + backgroundUrl + ')',
+      backgroundSize: 'cover',
+    }
+
+    const avatar = {
+      backgroundImage: 'url(' + avatarUrl + ')',
+      backgroundSize: 'cover',
+    }
 
     return (
       <div className="profile-card">
-        <img className="background" src={backgroundUrl} alt="Background" />
+        <div className="background" style={background}>
+          {isEditing && <RoundButton className="change-background-button" type='edit' onClick={() => {}} />}
+        </div>
 
         <div className="avatar-and-actions">
-          <img className="avatar" src={avatarUrl} alt="Avatar" />
+          <div className="avatar" style={avatar}>
+          {isEditing && <RoundButton className="change-avatar-button" type='edit' onClick={() => {}} />}
+        </div>
           {isOwner && (
             <div className="actions edit-save">
               {isEditing ? (

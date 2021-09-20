@@ -8,7 +8,7 @@ import { withCtrl } from '../../../lib/ctrl'
 import '../../../styles/tags.css'
 import { FollowTag } from '../../../types'
 import Card from '../../atoms/Card/Card'
-import DeleteButton from '../../atoms/DeleteButton/DeleteButton'
+import RoundButton from '../../atoms/RoundButton/RoundButton'
 import './styles.scss'
 
 export type ResourceCardProps = {
@@ -108,7 +108,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
         ) : (
           <div className="content-container">{content(color)}</div>
         )}
-        {isEditing && <DeleteButton className="remove" type="trash" onClick={onRemoveClick} />}
+        {isEditing && <RoundButton className="remove" type="trash" onClick={onRemoveClick} />}
         <div className={`tags scroll ${selectionMode ? 'disabled' : ''} ${isEditing ? 'editing' : ''}`}>
           {tags && tagList(tags)}
         </div>

@@ -13,7 +13,7 @@ export const Searchbox: FC<SearchboxProps> = ({ searchText, placeholder, setSear
     ev => setSearchText(ev.currentTarget.value),
     [setSearchText],
   )
-  
+
   return (
     <div className="searchbox">
       <SearchIcon/>
