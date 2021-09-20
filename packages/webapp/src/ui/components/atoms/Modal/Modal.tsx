@@ -30,12 +30,13 @@ export type ModalProps = {
   actions?: React.ReactNode
   style?: React.CSSProperties
   className?: string
+  closeButton?: boolean
   onClose: () => void
 }
 
 const stopPropagation = (event: React.MouseEvent) => event.stopPropagation()
 
-export const Modal: React.FC<ModalProps> = ({ onClose, title, actions, style, className, children }) => {
+export const Modal: React.FC<ModalProps> = ({ onClose, title, actions, style, className, closeButton, children }) => {
   const handleonClose = useCallback(
     (event: React.MouseEvent) => {
       event.stopPropagation()
@@ -57,21 +58,26 @@ export const Modal: React.FC<ModalProps> = ({ onClose, title, actions, style, cl
     <Portal>
       <div className={`modal-container ${className}`} onClick={handleonClose}>
         <Card className={`modal`} onClick={stopPropagation} style={style}>
-          <div className="modal-header">
-            <div className="title">{title}</div>
-            <div className="close-button" onClick={handleonClose}>
-              <CloseRoundedIcon />
+          {(title || closeButton) && (
+            <div className="modal-header">
+              {title && <div className="title">{title}</div>}
+              {closeButton && (
+                <div className="close-button" onClick={handleonClose}>
+                  <CloseRoundedIcon />
+                </div>
+              )}
             </div>
-          </div>
-          <div className="content">{children}</div>
-          <div className="actions">{actions}</div>
+          )}
+          {children && <div className="content">{children}</div>}
+          {actions && <div className="actions">{actions}</div>}
         </Card>
       </div>
     </Portal>
   )
 }
 Modal.defaultProps = {
-  className: ''
+  className: '',
+  closeButton: true,
 }
 
 export default Modal

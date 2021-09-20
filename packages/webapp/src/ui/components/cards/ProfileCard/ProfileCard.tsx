@@ -11,6 +11,7 @@ import { ProfileFormValues } from '../../../pages/Profile/types'
 import defaultAvatar from '../../../static/img/default-avatar.svg'
 import defaultBackgroud from '../../../static/img/default-background.svg'
 import InputTextField from '../../atoms/InputTextField/InputTextField'
+import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
@@ -44,6 +45,8 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
   }) => {
     const [form, formAttrs] = formBag
     const [profileCardErrorMessage, setProfileCardErrorMessage] = useState<string | null>(null)
+    const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
+    const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
     const setFieldValue = form.setFieldValue
     const setDisplayNameField = useCallback((_: string) => setFieldValue('displayName', _), [setFieldValue])
     const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
@@ -97,7 +100,27 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
 
     return (
       <div className="profile-card">
-        <div className="background" style={background}>
+        {isShowingBackground && (
+          <Modal
+            className="image-modal"
+            closeButton={false}
+            onClose={() => setIsShowingBackground(false)}
+            style={{ maxWidth: '90%', maxHeight: '90%' }}
+          >
+            <img src={backgroundUrl} />
+          </Modal>
+        )}
+        {isShowingAvatar && (
+          <Modal
+            className="image-modal"
+            closeButton={false}
+            onClose={() => setIsShowingAvatar(false)}
+            style={{ maxWidth: '90%', maxHeight: '90%' }}
+          >
+            <img src={avatarUrl} />
+          </Modal>
+        )}
+        <div className="background" style={background} onClick={() => setIsShowingBackground(true)}>
           {isEditing && (
             <input
               id="upload-background"
@@ -111,7 +134,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
         </div>
 
         <div className="avatar-and-actions">
-          <div className="avatar" style={avatar}>
+          <div className="avatar" style={avatar} onClick={() => setIsShowingAvatar(true)}>
             {isEditing && (
               <input id="upload-avatar" type="file" accept=".jpg,.jpeg,.png,.gif" onChange={uploadAvatar} hidden />
             )}
