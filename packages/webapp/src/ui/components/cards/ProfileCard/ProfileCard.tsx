@@ -71,7 +71,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
 
     const uploadAvatar = (e?: React.ChangeEvent<HTMLInputElement>) => {
       const selectedFile = e?.currentTarget.files?.item(0)
-      selectedFile && uploadImage(selectedFile, 'background')
+      selectedFile && uploadImage(selectedFile, 'avatar')
     }
 
     const uploadImage = useCallback(
@@ -111,13 +111,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
         <div className="avatar-and-actions">
           <div className="avatar" style={avatar}>
             {isEditing && (
-              <input
-                id="upload-avatar"
-                type="file"
-                accept=".jpg,.jpeg,.png,.gif"
-                onChange={uploadAvatar}
-                hidden
-              />
+              <input id="upload-avatar" type="file" accept=".jpg,.jpeg,.png,.gif" onChange={uploadAvatar} hidden />
             )}
             {isEditing && <RoundButton className="change-avatar-button" type="edit" onClick={selectAvatar} />}
           </div>

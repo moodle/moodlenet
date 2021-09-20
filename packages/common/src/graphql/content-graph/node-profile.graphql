@@ -28,6 +28,7 @@ input EditProfileInput {
   name: String!
   description: String!
   avatar: AssetRefInput
+  image: AssetRefInput
   bio: String
   image: AssetRefInput
   firstName: String
