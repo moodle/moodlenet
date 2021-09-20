@@ -261,7 +261,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                 </div>
               ) : (
                 <div className="bottom-container">
-                  <div className="uploaded-name subcontainer">
+                  <div className={`uploaded-name subcontainer ${form.values.contentType === 'File' ? 'file' : 'link'}`}>
                     <div className="content-icon">
                       {form.values.contentType === 'File' ? <InsertDriveFileIcon /> : <LinkIcon />}
                     </div>
