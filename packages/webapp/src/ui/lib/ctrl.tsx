@@ -76,11 +76,23 @@ export const RenderWithHook: FC<{
   )
 }
 
-export const withCtrl = <UIProps, ExcludeKeys extends keyof UIProps = never>(
+export type WithCtrlProps<UIProps, ExcludeKeys extends keyof UIProps = never> = ControlledProps<UIProps, ExcludeKeys> &
+  Pick<UIProps, ExcludeKeys>
+export const withCtrl = <UIProps,>(
   UIComp: ComponentType<UIProps>,
-): FC<ControlledProps<UIProps, ExcludeKeys> & Pick<UIProps, ExcludeKeys>> => {
+): {
+  <ExcludeKeys extends never | keyof UIProps>(
+    props: PropsWithChildren<WithCtrlProps<UIProps, ExcludeKeys>>,
+    context?: any,
+  ): ReactElement<any, any> | null
+  displayName?: string
+  defaultProps?: Partial<UIProps>
+} => {
   // eslint-disable-next-line no-eval
-  const Render = ({ children, ...props }: PropsWithChildren<ControlledProps<UIProps, ExcludeKeys>>) => {
+  const Render = <ExcludeKeys extends never | keyof UIProps>({
+    children,
+    ...props
+  }: PropsWithChildren<ControlledProps<UIProps, ExcludeKeys>>) => {
     if (CTRL_SYMB in props && (props as any)[CTRL_SYMB]) {
       // console.log('RenderWithHook', props)
       return (
