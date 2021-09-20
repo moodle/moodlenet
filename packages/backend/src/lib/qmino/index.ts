@@ -1,3 +1,4 @@
+import { inspect } from 'util'
 import * as QM from './lib'
 import { QMPortId } from './types'
 
@@ -44,11 +45,11 @@ async function portLogUmbrella<T>(p: Promise<T>, { args, id }: { id: QMPortId; a
   const logmsg = `
 - QMino port access -
   portId : ${id.join('::')} 
-  args : ${JSON.stringify(args, null, 2)}
+  args : ${inspect(args, false, 3, true)}
   `
   try {
     const res = await p
-    console.log(`${logmsg}response : ${JSON.stringify(res, null, 2)}}`, res)
+    //console.log(`${logmsg}response : ${inspect(res, false, 0, true)}}`, res)
     return res
   } catch (e) {
     console.error(`${logmsg}error : ${String(e)} - ${e instanceof Error ? e.stack : ''}`, e)

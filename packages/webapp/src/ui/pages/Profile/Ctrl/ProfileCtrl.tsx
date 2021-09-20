@@ -1,10 +1,11 @@
 import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { useCallback, useEffect, useMemo } from 'react'
+import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { useSeoContentId } from '../../../../context/Global/Seo'
 import { useSession } from '../../../../context/Global/Session'
-import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
+import { getMaybeAssetRefUrlOrDefaultImage, useUploadTempFile } from '../../../../helpers/data'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
@@ -41,6 +42,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
   const [edit, editProfile] = useEditProfileMutation()
   const [addRelation, addRelationRes] = useAddProfileRelationMutation()
   const [delRelation, delRelationRes] = useDelProfileRelationMutation()
+  const uploadTempFile = useUploadTempFile()
 
   const resources = useMemo(
     () => (profile?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])).map(({ node }) => node),
@@ -71,6 +73,29 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
       if (!formik.dirty || !vals.username || editProfile.loading) {
         return
       }
+
+      const imageAssetRef: AssetRefInput = !vals.backgroundUrl
+        ? { location: '', type: 'NoAsset' }
+        : typeof vals.backgroundUrl === 'string'
+        ? {
+            location: vals.backgroundUrl,
+            type: 'ExternalUrl',
+          }
+        : {
+            location: await uploadTempFile('image', vals.backgroundUrl),
+            type: 'TmpUpload',
+          }
+      const avatarAssetRef: AssetRefInput = !vals.avatarUrl
+        ? { location: '', type: 'NoAsset' }
+        : typeof vals.avatarUrl === 'string'
+        ? {
+            location: vals.avatarUrl,
+            type: 'ExternalUrl',
+          }
+        : {
+            location: await uploadTempFile('icon', vals.avatarUrl),
+            type: 'TmpUpload',
+          }
       await edit({
         variables: {
           id,
@@ -79,6 +104,8 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
             description: vals.description,
             location: vals.location,
             siteUrl: vals.siteUrl,
+            image: imageAssetRef,
+            avatar: avatarAssetRef,
           },
         },
       })
@@ -86,22 +113,59 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
     },
   })
   const { resetForm: fresetForm } = formik
+
+  const [backgroundUrl, setBackgroundUrl] = useState('')
+  useEffect(() => {
+    if (!(formik.values.backgroundUrl instanceof File)) {
+      return
+    }
+    const backgroundObjectUrl = URL.createObjectURL(formik.values.backgroundUrl)
+    setBackgroundUrl(backgroundObjectUrl)
+    return () => {
+      // console.log(`revoking   ${backgroundObjectUrl}`)
+      URL.revokeObjectURL(backgroundObjectUrl)
+    }
+  }, [formik.values.backgroundUrl])
+
+  const [avatarUrl, setAvatarUrl] = useState('')
+  useEffect(() => {
+    if (!(formik.values.avatarUrl instanceof File)) {
+      return
+    }
+    const avatarObjectUrl = URL.createObjectURL(formik.values.avatarUrl)
+    setAvatarUrl(avatarObjectUrl)
+    return () => {
+      // console.log(`revoking   ${avatarObjectUrl}`)
+      URL.revokeObjectURL(avatarObjectUrl)
+    }
+  }, [formik.values.avatarUrl])
+
+  const { image, avatar } = profile || {}
+  useEffect(() => {
+    setAvatarUrl(getMaybeAssetRefUrlOrDefaultImage(avatar, id, 'icon'))
+  }, [id, avatar])
+  useEffect(() => {
+    setBackgroundUrl(getMaybeAssetRefUrlOrDefaultImage(image, id, 'image'))
+  }, [id, image])
+
   useEffect(() => {
     if (profile) {
-      const { name: username, description, firstName, lastName, location, siteUrl } = profile
+      const { name, description, location, siteUrl } = profile
       fresetForm({
         touched: {},
         values: {
-          displayName: firstName || lastName ? `${firstName ?? ''} ${lastName ?? ''}` : username,
+          displayName: name,
           organizationName: localOrg.name,
           location: location ?? '',
           siteUrl: siteUrl ?? '',
-          username,
+          username: name,
           description,
+          avatarUrl: '',
+          backgroundUrl: '',
         },
       })
     }
-  }, [fresetForm, id, profile, localOrg.name])
+  }, [fresetForm, id, profile, localOrg.name /* avatarUrl, backgroundUrl */])
   const profileProps = useMemo<ProfileProps | null>(() => {
     if (!profile) {
       return null
@@ -119,11 +183,11 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
       },
       showAccountCreationSuccessAlert: firstLogin,
       profileCardProps: {
-        avatarUrl: getMaybeAssetRefUrlOrDefaultImage(profile.avatar, id, 'icon'),
-        backgroundUrl: getMaybeAssetRefUrlOrDefaultImage(profile.image, id, 'image'),
         formBag,
         isAuthenticated,
         toggleFollow,
+        avatarUrl,
+        backgroundUrl,
         isFollowing: !!myFollowEdgeId,
         isOwner: isMe || isAdmin,
       },
@@ -138,6 +202,8 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
     }
     return props
   }, [
+    avatarUrl,
+    backgroundUrl,
     collections,
     firstLogin,
     formBag,
@@ -154,5 +220,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
     sendEmailMutRes.loading,
     toggleFollow,
   ])
+  // console.log(profileProps?.profileCardProps)
+  // console.log(formik.values)
   return profileProps && [profileProps]
 }

@@ -20,6 +20,6 @@ export const updateNodeQ = <Type extends GraphNodeType>({
 
     return NEW
   `)
-  console.log(q)
+  // console.log(q)
   return q
 }
