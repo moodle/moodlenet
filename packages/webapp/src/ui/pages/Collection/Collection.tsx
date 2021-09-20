@@ -93,7 +93,7 @@ export const Collection = withCtrl<CollectionProps>(
             onClose={() => setIsShowingBackground(false)}
             style={{ maxWidth: '90%', maxHeight: '90%' }}
           >
-            <img src={form.values.image} />
+            <img src={form.values.image} alt="Cover"/>
           </Modal>
         )}
         {isToDelete && deleteCollection && (
