@@ -177,8 +177,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       e.preventDefault()
     }
 
-    const next = () => nextStep ? nextStep() : setHighlightMandatoryFields(true)
-    
+    const next = () => (nextStep ? nextStep() : setHighlightMandatoryFields(true))
 
     return (
       <div className="upload-resource">
@@ -272,12 +271,14 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     <RoundButton onClick={deleteFileOrLink} />
                   </div>
 
-                  <Dropdown
-                    {...licenses}
-                    getValue={setLicenseVal}
-                    value={form.values.license}
-                    highlight={highlightMandatoryFields && !form.values.license}
-                  />
+
+                    <Dropdown
+                      {...licenses}
+                      getValue={setLicenseVal}
+                      value={form.values.license}
+                      highlight={highlightMandatoryFields && !form.values.license}
+                    />
+
                 </div>
               )}
             </Card>
