@@ -20,6 +20,12 @@
     @media (max-width: 450px) {
       border-radius: 0;
     }
+    display: flex;
+    justify-content: flex-end;
+
+    > .change-background-button {
+      padding: 10px;
+    }
   }
 
   > .avatar-and-actions {
@@ -36,6 +42,12 @@
       object-fit: cover;
       margin-left: 40px;
       margin-top: -39px;
+      display: flex;
+      justify-content: flex-end;
+      
+      > .change-avatar-button {
+        padding: 5px;
+      }
     }
 
     > .actions {

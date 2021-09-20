@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro'
 import EditIcon from '@material-ui/icons/Edit'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import SaveIcon from '@material-ui/icons/Save'
-import { useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { isEmailAddress } from '../../../../helpers/utilities'
 import verifiedIcon from '../../../assets/icons/verified.svg'
 import { withCtrl } from '../../../lib/ctrl'
@@ -10,6 +10,7 @@ import { FormikBag } from '../../../lib/formik'
 import { ProfileFormValues } from '../../../pages/Profile/types'
 import InputTextField from '../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
+import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import './styles.scss'
 
@@ -55,12 +56,71 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
       }
     }
 
+    const selectBackground = () => {
+      document.getElementById('upload-background')?.click()
+    }
+
+    const selectAvatar = () => {
+      document.getElementById('upload-avatar')?.click()
+    }
+
+    const uploadBackground = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedFile = e.currentTarget.files?.item(0)
+      selectedFile && uploadImage(selectedFile, 'background')
+    }
+
+    const uploadAvatar = (e?: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedFile = e?.currentTarget.files?.item(0)
+      selectedFile && uploadImage(selectedFile, 'background')
+    }
+
+    const uploadImage = useCallback(
+      (file: File, type: 'background' | 'avatar') => {
+        if (file) {
+          type === 'background' ? setFieldValue('backgroundUrl', file) : setFieldValue('avatarUrl', file)
+        }
+      },
+      [setFieldValue],
+    )
+
+    const background = {
+      backgroundImage: 'url(' + backgroundUrl + ')',
+      backgroundSize: 'cover',
+    }
+
+    const avatar = {
+      backgroundImage: 'url(' + avatarUrl + ')',
+      backgroundSize: 'cover',
+    }
+
     return (
       <div className="profile-card">
-        <img className="background" src={backgroundUrl} alt="Background" />
+        <div className="background" style={background}>
+          {isEditing && (
+            <input
+              id="upload-background"
+              type="file"
+              accept=".jpg,.jpeg,.png,.gif"
+              onChange={uploadBackground}
+              hidden
+            />
+          )}
+          {isEditing && <RoundButton className="change-background-button" type="edit" onClick={selectBackground} />}
+        </div>
 
         <div className="avatar-and-actions">
-          <img className="avatar" src={avatarUrl} alt="Avatar" />
+          <div className="avatar" style={avatar}>
+            {isEditing && (
+              <input
+                id="upload-avatar"
+                type="file"
+                accept=".jpg,.jpeg,.png,.gif"
+                onChange={uploadAvatar}
+                hidden
+              />
+            )}
+            {isEditing && <RoundButton className="change-avatar-button" type="edit" onClick={selectAvatar} />}
+          </div>
           {isOwner && (
             <div className="actions edit-save">
               {isEditing ? (

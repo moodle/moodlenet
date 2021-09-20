@@ -1,26 +1,28 @@
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import EditIcon from '@material-ui/icons/Edit';
 import { FC } from 'react';
 import './styles.scss';
 
-export type DeleteButtonProps = {
+export type RoundButtonProps = {
   onClick?(arg0: unknown): unknown
   className?: string
-  type?: 'cross' | 'trash'
+  type?: 'cross' | 'trash' |'edit'
   onHoverColor?: 'red'
 }
 
-export const DeleteButton: FC<DeleteButtonProps> = ({ className, type, onHoverColor, onClick}) => {
+export const RoundButton: FC<RoundButtonProps> = ({ className, type, onHoverColor, onClick}) => {
   return (
-    <div className={`delete-button ${className} hover-${onHoverColor}`} onClick={onClick}>
+    <div className={`round-button ${className} hover-${onHoverColor}`} onClick={onClick}>
       { type === 'cross' && <CloseRoundedIcon />}
       { type === 'trash' && <DeleteOutlineIcon />}
+      { type === 'edit' && <EditIcon />}
     </div>
   )
 }
 
-DeleteButton.defaultProps = {
+RoundButton.defaultProps = {
   type: 'cross'
 }
 
-export default DeleteButton
+export default RoundButton
