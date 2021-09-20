@@ -46,9 +46,9 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
             <abbr className="title" title={displayName}>
               {displayName}
             </abbr>
-            <div className="subtitle">
-              <div>{organizationName}</div>
-            </div>
+            <abbr className="subtitle" title={organizationName}>
+              {organizationName}
+            </abbr>
           </Link>
           <OverallCard noCard={true} showIcons={true} {...overallCardProps} />
           {!isOwner && (
