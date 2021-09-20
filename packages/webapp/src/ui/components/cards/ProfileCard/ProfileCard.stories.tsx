@@ -41,6 +41,8 @@ export const ProfileCardStoryProps: ProfileCardProps = {
     location: 'Malta',
     siteUrl: 'https://iuri.is/',
     username: 'juanito',
+    avatarUrl: 'https://picsum.photos/200/100',
+    backgroundUrl: 'https://picsum.photos/200/100',
   }),
 }
 

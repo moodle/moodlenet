@@ -50,7 +50,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     () => session?.profile.myOwnCollections.edges.filter(isEdgeNodeOfType(['Collection'])) ?? [],
     [session?.profile.myOwnCollections.edges],
   )
-  console.log({ allMyOwnCollectionEdges })
+  // console.log({ allMyOwnCollectionEdges })
   // const { org: localOrg } = useLocalInstance()
   const { data, refetch } = useResourcePageDataQuery({
     variables: {

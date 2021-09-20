@@ -65,7 +65,7 @@ export const nodeIdentifierSlug2UrlPath = ({ _slug, _type }: GraphNodeIdentifier
 }
 export const getContentNodeHomePageRoutePath = (nodeType: GraphNodeType) => {
   const contentNodeHomePageRoutePath = `${getContentNodeHomePageBasePath(nodeType)}/:slug` as `/${string}/:slug`
-  console.log({ nodeType, contentNodeHomePageRoutePath })
+  // console.log({ nodeType, contentNodeHomePageRoutePath })
   return contentNodeHomePageRoutePath
 }
 

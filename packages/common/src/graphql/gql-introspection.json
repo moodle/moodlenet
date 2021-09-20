@@ -2184,11 +2184,11 @@
             "deprecationReason": null
           },
           {
-            "name": "bio",
+            "name": "image",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
+              "kind": "INPUT_OBJECT",
+              "name": "AssetRefInput",
               "ofType": null
             },
             "defaultValue": null,
@@ -2196,11 +2196,11 @@
             "deprecationReason": null
           },
           {
-            "name": "image",
+            "name": "bio",
             "description": null,
             "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "AssetRefInput",
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null,

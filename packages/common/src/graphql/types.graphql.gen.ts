@@ -288,8 +288,8 @@ export type EditProfileInput = {
   name: Scalars['String'];
   description: Scalars['String'];
   avatar?: Maybe<AssetRefInput>;
-  bio?: Maybe<Scalars['String']>;
   image?: Maybe<AssetRefInput>;
+  bio?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   siteUrl?: Maybe<Scalars['String']>;
