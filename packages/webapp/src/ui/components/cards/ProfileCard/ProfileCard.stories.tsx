@@ -26,13 +26,13 @@ const meta: ComponentMeta<typeof ProfileCard> = {
 }
 
 export const ProfileCardStoryProps: ProfileCardProps = {
-  backgroundUrl: 'https://picsum.photos/200/100',
-  avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
   isOwner: false,
   isAuthenticated: false,
   toggleFollow: action('toogleFollow'),
   toggleIsEditing: action('toogleIsEditing'),
   openSendMessage: action('openSendMessage'),
+  avatarUrl: 'https://picsum.photos/200/100',
+  backgroundUrl: 'https://picsum.photos/200/100',
   formBag: SBFormikBag<ProfileFormValues>({
     displayName: 'Juanito Rodriguez',
     description:
@@ -41,8 +41,8 @@ export const ProfileCardStoryProps: ProfileCardProps = {
     location: 'Malta',
     siteUrl: 'https://iuri.is/',
     username: 'juanito',
-    avatarUrl: 'https://picsum.photos/200/100',
-    backgroundUrl: 'https://picsum.photos/200/100',
+    avatarImage: null,
+    backgroundImage: null,
   }),
 }
 

@@ -22,7 +22,7 @@ import {
   monthOptions,
   resGradeOptions,
   resTypeOptions,
-  yearsOptions,
+  yearsOptions
 } from '../../../../helpers/resource-relation-data-static-and-utils'
 import { useLMS } from '../../../../lib/moodleLMS/useSendToMoodle'
 import { href } from '../../../elements/link'
@@ -39,7 +39,7 @@ import {
   useDelResourceMutation,
   useDelResourceRelationMutation,
   useEditResourceMutation,
-  useResourcePageDataQuery,
+  useResourcePageDataQuery
 } from './ResourcePage.gen'
 
 export type ResourceCtrlProps = { id: ID }
