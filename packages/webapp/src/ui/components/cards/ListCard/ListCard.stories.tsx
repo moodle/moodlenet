@@ -77,9 +77,9 @@ Resource.decorators = [
 
 export const PeopleListCardStoryProps: ListCardProps = {
   className: 'people',
-  content: [1, 2, 3, 4, 5, 6, 7, 8, 9].map(() => <SmallProfileCard {...SmallProfileCardLoggedInStoryProps} />),
+  content: [1, 2, 3, 4, 5, 6, 7, 8, 9].map(() => <SmallProfileCard {...SmallProfileCardLoggedInStoryProps(0)} />),
   noCard: false,
-  minGrid: 140
+  minGrid: 140,
 }
 
 export const People = ListCardStory.bind({})
