@@ -1,6 +1,5 @@
 .signup-page {
   display: flex;
-  justify-content: center;
   flex-direction: column;
   width: 100%;
   height: 100%;
@@ -10,29 +9,20 @@
     align-items: center;
   }
 
-  > .separator {
-    height: 68px;
-
-    @media (max-height: 600px) {
-      height: 5%;
-      height: calc(5% - 10px);
-    }
-  }
-
   > .success {
     &.signup-content {
       display: none;
     }
     &.success-content {
-      display: block;
+      display: flex;
     }
   }
 
   > .signup-content {
     display: flex;
+    height: 100%;
+    margin-bottom: 120px;
     margin-right: calc((100vw - 525px) / 2);
-    height: 400px;
-    margin-bottom: 130px;
     align-items: center;
 
     @media (max-width: 650px) {
@@ -51,6 +41,7 @@
     > .card:last-child,
     .card:only-child {
       width: 525px;
+      height: 400px;
       background-color: #b6bacb;
 
       @media (max-width: 900px) {
@@ -227,8 +218,9 @@
 
   > .success-content {
     display: none;
+    align-items: center;
     margin-right: 0;
-    height: 340px;
+    height: 100%;
     margin-bottom: 130px;
 
     @media (max-width: 650px) {
@@ -242,7 +234,7 @@
 
     > .card {
       max-width: 390px;
-      height: 100%;
+      height: 340px;
       background-color: #b6bacb;
       flex-direction: column;
       justify-content: space-between;

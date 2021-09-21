@@ -18,7 +18,6 @@ export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, loginH
     <MainPageWrapper>
       <div className="activation-page">
         <AccessHeader {...accessHeaderProps} page={'activation'} />
-        <div className="separator" />
         <div className="main-content">
           <Card>
             <div className="content">
