@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Footer, FooterProps } from './Footer'
 
 const meta: ComponentMeta<typeof Footer> = {
-  title: 'Components/Organisms/Footers/Footer',
+  title: 'Components/Organisms/Footer',
   component: Footer,
   argTypes: {
     // backgroundColor: { control: 'color' },

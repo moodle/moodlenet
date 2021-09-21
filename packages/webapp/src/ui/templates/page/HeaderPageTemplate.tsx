@@ -1,4 +1,5 @@
 import React from 'react'
+import Footer from '../../components/molecules/Footer/Footer'
 import { CP, withCtrl } from '../../lib/ctrl'
 import HeaderPage, { HeaderPageProps } from '../../pages/HeaderPage/HeaderPage'
 import { MainPageWrapper } from './MainPageWrapper'
@@ -19,6 +20,7 @@ export const HeaderPageTemplate = withCtrl<HeaderPageTemplateProps>(
         {/*<div className={`view ${isAuthenticated && showSubHeader ? 'double-header-page' : 'single-header-page'}`}   Uncomment when Tags implemented*/}
         <div className="view single-header-page" style={style}>
           {children}
+          <Footer />
         </div>
       </MainPageWrapper>
     )
