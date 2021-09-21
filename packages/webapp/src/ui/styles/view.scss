@@ -3,7 +3,9 @@
   position: relative;
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   height: 100%;
   background-color: #f4f5f7;
   background-size: cover;
@@ -34,25 +36,25 @@
 }
 
 .double-header-page {
-  padding: 120px 100px 50px 100px;
+  padding: 120px 100px 0 100px;
 
   @media (max-width: 450px) {
-    padding: 120px 0 60px 0;
+    padding: 120px 0 0 0;
   }
 
   @media screen and (max-width: 675px) and (min-width: 450px) {
-    padding: 120px 25px 60px 25px;
+    padding: 120px 25px 0 25px;
   }
 }
 
 .single-header-page {
-  padding: 60px 100px 50px 100px;
+  padding: 60px 100px 0 100px;
 
   @media (max-width: 450px) {
-    padding: 60px 0 60px 0;
+    padding: 60px 0 0 0;
   }
 
   @media screen and (max-width: 675px) and (min-width: 450px) {
-    padding: 60px 25px 60px 25px;
+    padding: 60px 25px 0 25px;
   }
 }

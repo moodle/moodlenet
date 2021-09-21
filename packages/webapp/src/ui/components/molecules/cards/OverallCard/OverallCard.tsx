@@ -3,7 +3,7 @@ import GradeIcon from '@material-ui/icons/Grade'
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import { FC } from 'react'
-import { Card } from '../../atoms/Card/Card'
+import { Card } from '../../../atoms/Card/Card'
 import './styles.scss'
 
 export type OverallCardProps = {

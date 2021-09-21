@@ -1,7 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CollectionCardLoggedOutStoryProps, CollectionCardOwnerStoryProps, CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
-import { OverallCardStoryProps } from '../../components/cards/OverallCard/OverallCard.stories'
 import {
   ProfileCardLoggedInStoryProps,
   ProfileCardOwnerStoryProps,
@@ -12,7 +11,8 @@ import {
   ResourceCardLoggedOutStoryProps,
   ResourceCardOwnerStoryProps
 } from '../../components/cards/ResourceCard/ResourceCard.stories'
-import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
+import { OverallCardStoryProps } from '../../components/molecules/cards/OverallCard/OverallCard.stories'
+import { HeaderLoggedOutStoryProps } from '../../components/molecules/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Profile, ProfileProps } from './Profile'
 

@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { TagListStory } from '../../../elements/tags'
+import { TagListStory } from '../../../../elements/tags'
 import { TrendCard, TrendCardProps } from './TrendCard'
 const meta: ComponentMeta<typeof TrendCard> = {
   title: 'Components/Organisms/Cards/TrendCard',

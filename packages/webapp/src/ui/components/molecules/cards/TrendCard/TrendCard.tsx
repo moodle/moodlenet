@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
-import { tagList } from '../../../elements/tags'
-import { withCtrl } from '../../../lib/ctrl'
-import { FollowTag } from '../../../types'
+import { tagList } from '../../../../elements/tags'
+import { withCtrl } from '../../../../lib/ctrl'
+import { FollowTag } from '../../../../types'
 import './styles.scss'
 
 export type TrendCardProps = {
