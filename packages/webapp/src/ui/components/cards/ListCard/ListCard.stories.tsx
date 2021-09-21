@@ -1,12 +1,12 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import SubjectCard from '../../molecules/cards/SubjectCard/SubjectCard'
+import { SubjectCardStoryProps } from '../../molecules/cards/SubjectCard/SubjectCard.stories'
 import { CollectionCard } from '../CollectionCard/CollectionCard'
 import { CollectionCardStoryProps } from '../CollectionCard/CollectionCard.stories'
 import { ResourceCard } from '../ResourceCard/ResourceCard'
 import { ResourceCardStoryProps } from '../ResourceCard/ResourceCard.stories'
 import { SmallProfileCard } from '../SmallProfileCard/SmallProfileCard'
 import { SmallProfileCardLoggedInStoryProps } from '../SmallProfileCard/SmallProfileCard.stories'
-import SubjectCard from '../SubjectCard/SubjectCard'
-import { SubjectCardStoryProps } from '../SubjectCard/SubjectCard.stories'
 import { ListCard, ListCardProps } from './ListCard'
 const meta: ComponentMeta<typeof ListCard> = {
   title: 'Components/Organisms/Cards/ListCard',

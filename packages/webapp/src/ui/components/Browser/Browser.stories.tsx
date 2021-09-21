@@ -9,8 +9,8 @@ import {
   ResourceCardLoggedInStoryProps,
   ResourceCardLoggedOutStoryProps
 } from '../../components/cards/ResourceCard/ResourceCard.stories'
-import { SubjectCardProps } from '../../components/cards/SubjectCard/SubjectCard'
-import { SubjectCardStoryProps } from '../../components/cards/SubjectCard/SubjectCard.stories'
+import { SubjectCardProps } from '../../components/molecules/cards/SubjectCard/SubjectCard'
+import { SubjectCardStoryProps } from '../../components/molecules/cards/SubjectCard/SubjectCard.stories'
 import { href } from '../../elements/link'
 import {
   SmallProfileCardFollowingStoryProps,

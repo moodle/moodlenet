@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import Card from '../../atoms/Card/Card'
+import Card from '../../../atoms/Card/Card'
 import './styles.scss'
 
 export type TextCardProps = {
