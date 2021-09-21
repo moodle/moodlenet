@@ -1,0 +1,17 @@
+query HeaderPagePinned($currentProfileId: ID!) {
+  node(id: $currentProfileId) {
+    ... on INode {
+      id
+      pinnedList: _rel(type: Pinned, target: IscedField, page: { first: 10 }) {
+        edges {
+          node {
+            ... on IscedField {
+              id
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+}

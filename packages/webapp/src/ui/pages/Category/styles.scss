@@ -1,0 +1,180 @@
+.category {
+  > .content {
+    width: 100%;
+    max-width: 1100px;
+    height: 100%;
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    @media screen and (max-width: 450px) {
+      padding: 20px;
+    }
+
+    .category-header {
+      display: flex;
+      gap: 25px;
+
+      > .category-card {
+        width: 100%;
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        justify-content: space-between;
+        align-items: center;
+
+        > .info {
+          display: flex;
+          width: 100%;
+          gap: 10px;
+          flex-direction: column;
+          > .title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            > .name {
+              overflow: hidden;
+              text-overflow: ellipsis;
+              font-weight: bold;
+              font-size: 26px;
+            }
+            .isced-pill {
+              cursor: pointer;
+              color: white;
+              background-color: #337aff;
+              font-size: 10px;
+              padding: 4px 8px;
+              border-radius: 5px;
+            }
+          }
+
+          > .overall {
+            display: flex;
+            font-size: 14px;
+            gap: 20px;
+            > .data {
+              display: flex;
+              gap: 5px;
+              > :first-child {
+                font-weight: bold;
+              }
+            }
+          }
+        }
+
+        @media screen and (min-width: 850px) {
+          > .info {
+            max-width: calc(100% - 95px);
+          }
+        }
+
+        @media screen and (max-width: 850px) {
+          flex-direction: column;
+          align-items: start;
+          gap: 10px;
+        }
+
+        @media screen and (max-width: 450px) {
+          justify-content: center;
+          padding: 10px 0 14px 0;
+          > .info {
+            > .title {
+              text-align: center;
+            }
+            > .overall {
+              justify-content: center;
+              > .data {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              }
+            }
+          }
+
+          > .actions {
+            width: 100%;
+            justify-content: center;
+            display: flex;
+          }
+        }
+      }
+
+      .category-overall-card {
+        width: 35%;
+      }
+
+      @media screen and (max-width: 850px) {
+      }
+
+      @media screen and (min-width: 850px) {
+      }
+
+      > .actions {
+        width: fit-content;
+      }
+    }
+
+    > .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      > .collections,
+      > .resources {
+        > .title > .card-header {
+          display: flex;
+          align-items: center;
+          > .title {
+            font-size: 20px;
+            margin-right: 16px;
+          }
+          > .secondary-button {
+            height: 26px;
+            padding: 8px 10px;
+            border-radius: 15px;
+            border: 1px solid #b6bacb;
+            color: #b6bacb;
+          }
+        }
+      }
+
+      > .collections > .content {
+        justify-content: flex-start;
+        > .collection-card {
+          max-width: 200px;
+          min-width: 180px;
+          height: 100px;
+        }
+      }
+
+      > .resources > .content {
+        justify-content: space-between;
+        > .resource-card {
+          width: calc(50% - 6px);
+          min-width: 180px;
+        }
+      }
+
+      @media (min-width: 450px) and (max-width: 800px) {
+      }
+
+      @media screen and (max-width: 450px) {
+        .resources > .content {
+          > .resource-card {
+            font-size: 15px;
+            width: 100%;
+          }
+        }
+      }
+
+      @media screen and (max-width: 800px) {
+        > .resources > .content {
+          > .resource-card {
+            font-size: 15px;
+          }
+        }
+      }
+    }
+  }
+}

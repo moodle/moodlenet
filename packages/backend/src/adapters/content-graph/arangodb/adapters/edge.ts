@@ -1,47 +1,46 @@
-import { edgeTypeFromId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { getOneResult } from '../../../../lib/helpers/arango'
-import { CreateAdapter, DeleteAdapter } from '../../../../ports/content-graph/edge'
-import { createEdgeQ } from '../functions/createEdge'
-import { deleteEdgeQ } from '../functions/deleteEdge'
-import { updateRelationCountQueries } from '../functions/helpers'
-import { DocumentEdgeByType } from '../functions/types'
+import { isArangoError } from 'arangojs/error'
+import { getOneResult } from '../../../../lib/helpers/arango/query'
+import { CreateAdapter, DeleteEdgeAdapter } from '../../../../ports/content-graph/edge'
+import { aqlGraphEdge2GraphEdge, getOneAQFrag } from '../aql/helpers'
+import { getEdgeByNodesQ } from '../aql/queries/getEdge'
+import { getAqlNodeByGraphNodeIdentifierQ } from '../aql/queries/getNode'
+import { createEdgeQ } from '../aql/writes/createEdge'
+import { deleteEdgeQ } from '../aql/writes/deleteEdge'
 import { ContentGraphDB } from '../types'
 
 export const createEdgeAdapter = (db: ContentGraphDB): CreateAdapter => ({
-  storeEdge: async ({ data, edgeType, creatorProfileId, from, to }) => {
-    const q = createEdgeQ({ creatorProfileId, data, edgeType, from, to })
+  storeEdge: async ({ edge, from, to }) => {
+    type ET = typeof edge._type
+    const q = createEdgeQ<ET>({ edge, from, to })
 
-    const result = (await getOneResult(q, db)) as null | DocumentEdgeByType<typeof edgeType> //NOTE: must infer generic type from argument, as cannot redeclare generic on function signature
-    // NOTE: if result is `any` (not strictly typed),
-    //       the whole function looses typing,
-    //       allowing to return anything (... since later it returns `result:any`)
+    const aqlResult = await getOneResult(q, db).catch(async e => {
+      if (!(isArangoError(e) && e.errorNum === 1210)) {
+        throw e
+      }
+      const existingEdgeQ = getEdgeByNodesQ({
+        edge,
+        from: getOneAQFrag(getAqlNodeByGraphNodeIdentifierQ(from)),
+        to: getOneAQFrag(getAqlNodeByGraphNodeIdentifierQ(to)),
+      })
+      const existingEdge = await getOneResult(existingEdgeQ, db)
 
-    if (result) {
-      const relCountQ = updateRelationCountQueries({ ...result, edgeType, life: 'create' })
-      getOneResult(relCountQ.relationIn, db)
-      getOneResult(relCountQ.relationOut, db)
-    }
-    return result
+      return existingEdge
+    })
+
+    const result = aqlResult && aqlGraphEdge2GraphEdge<ET>(aqlResult)
+
+    return result as any
   },
+  // ops: {
+  //   ...graphOperators,
+  //   ...baseOperators,
+  // },
 })
 
-export const deleteEdgeAdapter = (db: ContentGraphDB): DeleteAdapter => ({
-  deleteEdge: async ({ edgeType, deleterProfileId, edgeId }) => {
-    if (edgeType !== edgeTypeFromId(edgeId)) {
-      return 'NotFound'
-    }
-    const q = deleteEdgeQ({ deleterProfileId, edgeId, edgeType })
-    const result = (await getOneResult(q, db)) as null | DocumentEdgeByType<typeof edgeType> //NOTE: must infer generic type from argument, as cannot redeclare generic on function signature
-    // NOTE: if result is `any` (not strictly typed),
-    //       the whole function looses typing,
-    //       allowing to return anything (... since later it returns `result:any`)
-
-    if (!result) {
-      return 'NotFound'
-    }
-    const relCountQ = updateRelationCountQueries({ ...result, edgeType, life: 'delete' })
-    getOneResult(relCountQ.relationIn, db)
-    getOneResult(relCountQ.relationOut, db)
-    return result
+export const deleteEdgeAdapter = (db: ContentGraphDB): DeleteEdgeAdapter => ({
+  deleteEdge: async ({ edge }) => {
+    const q = deleteEdgeQ(edge)
+    const result = await getOneResult(q, db)
+    return !!result
   },
 })

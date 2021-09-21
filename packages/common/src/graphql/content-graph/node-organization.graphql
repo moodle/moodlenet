@@ -1,0 +1,27 @@
+type Organization implements INode {
+  name: String!
+  description: String!
+  intro: String!
+  logo: AssetRef
+  image: AssetRef
+  color: String!
+  domain: String!
+  # INode
+  id: ID!
+  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
+  _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
+}
+
+# integrations
+union Node = Organization
+enum NodeType {
+  Organization
+}
+
+input CreateNodeInput {
+  Organization: Never
+}
+
+input EditNodeInput {
+  Organization: Never
+}

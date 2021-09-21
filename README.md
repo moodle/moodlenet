@@ -72,6 +72,9 @@ yarn
 # lerna bootstrap: links and installs deps for packages
 yarn bs
 
+# install storybook
+npx lerna add @types/storybook packages/webapp
+
 # build packages
 yarn build
 
@@ -114,6 +117,10 @@ cd ../..
 # starts the backend as a monolith on port 8080, with in-process transport
 # and starts the react app and serves on port 3000, binding localhost:8080 as backend url
 yarn start-dev
+
+# start storybook (optional)
+cd packages/webapp/
+yarn storybook
 ```
 
 the HTTP backend starts on 8080 and web-app on 3000.

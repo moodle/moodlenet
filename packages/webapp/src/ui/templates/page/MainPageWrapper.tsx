@@ -1,13 +1,18 @@
-import { FC } from 'react'
-import 'semantic-ui-css/semantic.min.css'
-import { Container } from 'semantic-ui-react'
-export { PageHeader } from '../../components/PageHeader'
+import { FC } from 'react';
+import useWhatInput from 'react-use-what-input';
+import '../../styles/main.scss';
+import '../../styles/view.scss';
 
-export type MainPageWrapperProps = {}
-export const MainPageWrapper: FC<MainPageWrapperProps> = ({ children }) => {
+export type MainPageWrapperProps = {
+  onKeyDown?(arg0: unknown): unknown
+}
+export const MainPageWrapper: FC<MainPageWrapperProps> = ({ children, onKeyDown }) => {
+  const [currentInput, currentIntent] = useWhatInput();
+
   return (
-    <Container text fluid style={{ paddingTop: '4.5em' }}>
+    <div className={`main-page-wrapper current-input-${currentInput} current-intent-${currentIntent}`} onKeyDown={onKeyDown}>
       {children}
-    </Container>
+    </div>
   )
 }
+MainPageWrapper.displayName = 'MainPageWrapper'

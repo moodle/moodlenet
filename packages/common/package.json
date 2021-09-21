@@ -15,18 +15,21 @@
     "@graphql-codegen/typescript-react-apollo": "^2.2.1",
     "@graphql-codegen/typescript-resolvers": "^1.18.1",
     "@playlyfe/gql": "^2.6.2",
+    "@types/nanoid": "^3.0.0",
     "@types/path-to-regexp": "^1.7.0",
     "@types/yup": "^0.29.11",
     "boolean-expressions": "^1.1.1",
     "graphql": "^15.4.0",
     "graphql-cli": "^4.1.0",
+    "nanoid": "^3.1.23",
     "path-to-regexp": "^6.2.0",
     "run-script-os": "^1.1.5",
+    "slugifyjs": "^0.0.7",
     "typescript": "~4.2.3",
     "yup": "^0.32.8"
   },
   "scripts": {
-    "build": "tsc ; yarn gen:graphql:types ; tsc",
+    "build": "tsc && yarn gen:graphql:types && tsc",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js"
   }
 }

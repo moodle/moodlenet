@@ -1,5 +1,5 @@
 import JWT from 'jsonwebtoken'
-import { ActiveUser } from '../../adapters/user-auth/arangodb/types'
+import { ActiveUser } from '../../ports/user-auth/types'
 import { SessionEnv } from './types'
 
 export const INVALID_TOKEN = Symbol('INVALID_TOKEN')
@@ -17,12 +17,29 @@ export const verifyJwt = ({
   jwtVerifyOpts: JWT.VerifyOptions
 }): JWTTokenVerification => {
   try {
-    const sessionEnv = JWT.verify(String(token), jwtPublicKey, jwtVerifyOpts)
+    const sessionEnv = verifyJwtAny({ token, jwtPublicKey, jwtVerifyOpts })
     if (typeof sessionEnv !== 'object') {
       return INVALID_TOKEN
     }
     /* FIXME: implement proper checks */
     return sessionEnv as SessionEnv
+  } catch {
+    return INVALID_TOKEN
+  }
+}
+
+export const verifyJwtAny = ({
+  jwtPublicKey,
+  jwtVerifyOpts,
+  token,
+}: {
+  token: string
+  jwtPublicKey: string
+  jwtVerifyOpts: JWT.VerifyOptions
+}): unknown => {
+  try {
+    const payload = JWT.verify(String(token), jwtPublicKey, jwtVerifyOpts)
+    return payload
   } catch {
     return INVALID_TOKEN
   }
@@ -41,8 +58,8 @@ export const signJwtActiveUser = ({
 
 export const getSessioncEnvByActiveUser = (user: ActiveUser): SessionEnv => ({
   user: {
-    name: user.username,
-    role: user.role,
+    authId: user.authId,
+    email: user.email,
   },
 })
 

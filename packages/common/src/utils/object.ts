@@ -1,4 +1,15 @@
 import { isJust } from './array'
+import { DistOmit } from './types'
+
+export const pick = <T, K extends keyof T>(
+  o: T,
+  ks: K[],
+): Required<Pick<T, K>> => ks.reduce((_, k) => ({ ..._, [k]: o[k] }), {} as any) //{ [k in K]-?: T[K] }
+
+export const omit = <T, K extends keyof T>(o: T, ks: K[]): DistOmit<T, K> => {
+  const pickKeys = Object.keys(o).filter(k => !ks.includes(k as any)) as any
+  return pick(o, pickKeys) as any
+}
 
 //FIXME: all functions here have some typing issues .
 // check if|how to keep those utilities

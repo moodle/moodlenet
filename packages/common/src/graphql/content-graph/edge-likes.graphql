@@ -1,5 +1,6 @@
 type Likes implements IEdge {
   id: ID!
+  _created: Timestamp!
 }
 
 ## integrations
@@ -10,6 +11,6 @@ enum EdgeType {
 input CreateEdgeInput {
   Likes: Empty
 }
-input UpdateEdgeInput {
+input EditEdgeInput {
   Likes: Empty
 }

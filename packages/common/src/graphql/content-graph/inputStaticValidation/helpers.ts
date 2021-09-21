@@ -10,5 +10,4 @@ export const neverValidate = (name: string, msg: string) => Yup.object<never>().
 export const neverCreate = (type: GQL.NodeType | GQL.EdgeType) =>
   neverValidate('cannot create', `Cannnot create ${type}`)
 
-export const neverUpdate = (type: GQL.NodeType | GQL.EdgeType) =>
-  neverValidate('cannot update', `Cannnot update ${type}`)
+export const neverEdit = (type: GQL.NodeType | GQL.EdgeType) => neverValidate('cannot edit', `Cannnot edit ${type}`)

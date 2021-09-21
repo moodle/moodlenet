@@ -1,18 +1,6 @@
 scalar Cursor
 scalar AssetRef
 
-interface IContentNode {
-  name: String! # TODO: rename to title
-  summary: String! # TODO: rename to description
-  icon: AssetRef
-}
-
-input ContentNodeInput {
-  name: String! # TODO: rename to title
-  summary: String! # TODO: rename to description
-  icon: AssetRefInput!
-}
-
 enum AssetRefInputType {
   TmpUpload
   ExternalUrl
@@ -27,8 +15,24 @@ input AssetRefInput {
 
 interface INode {
   id: ID!
+  name: String!
+  description: String!
+  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
+  _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }
 
 interface IEdge {
   id: ID
+  _created: Timestamp!
+}
+
+type RelPage implements Page {
+  pageInfo: PageInfo!
+  edges: [RelPageEdge!]!
+}
+
+type RelPageEdge implements PageEdge {
+  cursor: Cursor!
+  edge: IEdge!
+  node: INode!
 }

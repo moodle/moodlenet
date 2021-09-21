@@ -1,0 +1,16 @@
+type Pinned implements IEdge {
+  id: ID!
+  _created: Timestamp!
+}
+
+## integrations
+union Edge = Pinned
+enum EdgeType {
+  Pinned
+}
+input CreateEdgeInput {
+  Pinned: Empty
+}
+input EditEdgeInput {
+  Pinned: Empty
+}

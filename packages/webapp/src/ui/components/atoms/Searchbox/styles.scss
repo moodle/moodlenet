@@ -1,0 +1,43 @@
+.searchbox {
+  border: 1px solid #dbdbdb;
+  border-radius: 16px;
+  width: 160px;
+  height: 40px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-right: 10px;
+
+  [placeholder] {
+    text-overflow: ellipsis;
+  }
+
+  @media screen and (max-width: 400px) {
+    width: 100%;
+  }
+
+  > svg {
+    width: 17px;
+    height: 21px;
+    margin: 0 10px 2px 10px;
+    > g > g > path {
+      fill: #b6bacb;
+    }
+  }
+
+  > .search-text {
+    background-color: transparent;
+    width: 100%;
+    font-size: 15px;
+    border: none;
+    color: black;
+    &::placeholder {
+      color: #b6bacb;
+    }
+  }
+
+  > .search-text:focus-visible {
+    outline: none;
+    border: none;
+  }
+}

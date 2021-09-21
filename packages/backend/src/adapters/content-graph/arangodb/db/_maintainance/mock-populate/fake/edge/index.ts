@@ -1,5 +1,5 @@
 export * from './AppliesTo'
-export * from './Contains'
 export * from './Created'
+export * from './Features'
 export * from './Follows'
 export * from './Likes'

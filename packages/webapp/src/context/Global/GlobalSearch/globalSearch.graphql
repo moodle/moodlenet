@@ -1,0 +1,26 @@
+query globalSearch(
+  $text: String!
+  $sort: GlobalSearchSort
+  $nodeTypes: [GlobalSearchNodeType!]
+  $page: PaginationInput
+) {
+  globalSearch(text: $text, sort: $sort, nodeTypes: $nodeTypes, page: $page) {
+    edges {
+      ...GlobalSearchEdge
+    }
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+
+fragment GlobalSearchEdge on SearchPageEdge {
+  cursor
+  node {
+    id
+    name
+  }
+}

@@ -2,7 +2,7 @@ import semverRCompare from 'semver/functions/rcompare'
 import semverValid from 'semver/functions/valid'
 import { Version, VersionLadder } from './types'
 
-export const climbLadder = (ladder: VersionLadder, from: Version, dir: 'up' | 'down') => {
+export const climbLadder = <Ctx>(ladder: VersionLadder<Ctx>, from: Version, dir: 'up' | 'down') => {
   const ladderVersionsSorted = getLadderVersionSorted(ladder)
 
   const currVersionIndex = ladderVersionsSorted.indexOf(from)
@@ -13,7 +13,7 @@ export const climbLadder = (ladder: VersionLadder, from: Version, dir: 'up' | 'd
   return [requestedVersion, ladder[requestedVersion]!] as const
 }
 
-export const getLadderVersionSorted = (ladder: VersionLadder) => {
+export const getLadderVersionSorted = <Ctx>(ladder: VersionLadder<Ctx>) => {
   const ladderVersionsStrs = Object.keys(ladder)
   const invalidSemvers = ladderVersionsStrs.filter(_ => !semverValid(_))
   if (invalidSemvers.length) {

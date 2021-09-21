@@ -1,0 +1,25 @@
+type ResourceType implements INode {
+  code: String!
+  # INode
+  id: ID!
+  name: String!
+  description: String!
+  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
+  _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
+}
+
+# integrations
+union Node = ResourceType
+enum NodeType {
+  ResourceType
+}
+
+# input CreateResourceTypeInput {}
+input CreateNodeInput {
+  ResourceType: Never
+}
+
+# input EditResourceTypeInput {}
+input EditNodeInput {
+  ResourceType: Never
+}
