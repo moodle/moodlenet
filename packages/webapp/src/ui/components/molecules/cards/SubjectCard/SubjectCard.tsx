@@ -1,8 +1,8 @@
-import { Href, Link } from '../../../elements/link'
-import { withCtrl } from '../../../lib/ctrl'
-import '../../../styles/tags.css'
-import { Organization } from '../../../types'
-import Card from '../../atoms/Card/Card'
+import { Href, Link } from '../../../../elements/link'
+import { withCtrl } from '../../../../lib/ctrl'
+import '../../../../styles/tags.css'
+import { Organization } from '../../../../types'
+import Card from '../../../atoms/Card/Card'
 import './styles.scss'
 
 export type SubjectCardProps = {

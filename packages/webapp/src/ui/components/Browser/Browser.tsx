@@ -10,7 +10,7 @@ import { ResourceCard, ResourceCardProps } from '../cards/ResourceCard/ResourceC
 import { SmallProfileCard, SmallProfileCardProps } from '../cards/SmallProfileCard/SmallProfileCard'
 import { SortState } from '../cards/SortCard/SortButton/SortButton'
 import SortCard, { SortCardDirection } from '../cards/SortCard/SortCard'
-import SubjectCard, { SubjectCardProps } from '../cards/SubjectCard/SubjectCard'
+import SubjectCard, { SubjectCardProps } from '../molecules/cards/SubjectCard/SubjectCard'
 import './styles.scss'
 
 export const filterTypes = ['Subjects', 'Collections', 'Resources', 'People'] as const
