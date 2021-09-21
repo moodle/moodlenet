@@ -16,6 +16,7 @@ import { ResourceCard, ResourceCardProps } from '../../components/cards/Resource
 import ListCard from '../../components/molecules/cards/ListCard/ListCard'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { FormikBag } from '../../lib/formik'
+import defaultBackgroud from '../../static/img/default-background.svg'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import { NewCollectionFormValues } from '../NewCollection/types'
 import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
@@ -80,8 +81,9 @@ export const Collection = withCtrl<CollectionProps>(
     const setFieldValue = form.setFieldValue
     const setTitleField = useCallback((_: string) => setFieldValue('title', _), [setFieldValue])
     const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
+    
     const background = {
-      backgroundImage: 'url(' + form.values.image + ')',
+      backgroundImage: form.values.image ? 'url(' + form.values.image + ')' : 'url(' + defaultBackgroud + ')',
       backgroundSize: 'cover',
     }
 
