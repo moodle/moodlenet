@@ -35,7 +35,6 @@ export const Login = withCtrl<LoginProps>(
         {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
         <div className="login-page">
           <AccessHeader {...accessHeaderProps} page={'login'} />
-          <div className="separator" />
           <div className="content">
             <Card>
               <div className="content">

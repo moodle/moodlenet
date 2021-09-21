@@ -46,7 +46,6 @@ export const Signup = withCtrl<SignupProps>(
         {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
         <div className={`signup-page ${requestSent ? 'success' : ''}`}>
           <AccessHeader {...accessHeaderProps} page={'signup'} />
-          <div className="separator" />
           <div className={`signup-content ${requestSent ? 'success' : ''}`}>
             <Card>
               <Link href={loginHref}>
