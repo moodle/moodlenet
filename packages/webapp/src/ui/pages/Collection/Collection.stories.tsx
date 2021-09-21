@@ -5,7 +5,7 @@ import {
 
   ResourceCardStoryProps
 } from '../../components/cards/ResourceCard/ResourceCard.stories'
-import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
+import { HeaderLoggedOutStoryProps } from '../../components/molecules/Header/Header.stories'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { NewCollectionFormValues } from '../NewCollection/types'

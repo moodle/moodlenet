@@ -12,7 +12,7 @@ import {
   ResourceCardLoggedOutStoryProps,
   ResourceCardOwnerStoryProps
 } from '../../components/cards/ResourceCard/ResourceCard.stories'
-import { HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
+import { HeaderLoggedOutStoryProps } from '../../components/molecules/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Profile, ProfileProps } from './Profile'
 

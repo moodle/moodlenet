@@ -1,4 +1,4 @@
-import Header, { HeaderProps } from '../../components/Header/Header'
+import Header, { HeaderProps } from '../../components/molecules/Header/Header'
 import { SubHeaderProps } from '../../components/molecules/SubHeader/SubHeader'
 import { CP, withCtrl } from '../../lib/ctrl'
 import './styles.scss'
