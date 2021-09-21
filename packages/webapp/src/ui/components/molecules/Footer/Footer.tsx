@@ -1,24 +1,25 @@
+import { Trans } from '@lingui/macro'
 import { FC } from 'react'
 import './styles.scss'
 
 export type FooterProps = {}
 
-export const Footer: FC<FooterProps> = (() => {
+export const Footer: FC<FooterProps> = () => {
   return (
-    <div className="Footer">
+    <div className="footer">
       <div className="content">
-        <div className="left">
-        </div>
+        <div className="left"></div>
         <div className="center">
+          <a href="https://docs.moodle.org/dev/MoodleNet" target="_blank" rel="noreferrer">
+            <Trans>MoodleNet Beta</Trans>
+          </a>
         </div>
-        <div className="right">
-        </div>
+        <div className="right"></div>
       </div>
     </div>
   )
-})
-
-Footer.defaultProps = {
 }
+
+Footer.defaultProps = {}
 
 export default Footer
