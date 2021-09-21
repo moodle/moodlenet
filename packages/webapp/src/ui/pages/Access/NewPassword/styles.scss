@@ -1,20 +1,10 @@
 .new-password-page {
   display: flex;
-  justify-content: center;
   flex-direction: column;
   align-items: center;
   width: 100%;
   height: 100%;
   background: #f4f5f7;
-
-  > .separator {
-    height: 68px;
-
-    @media (max-height: 600px) {
-      height: 5%;
-      height: calc(5% - 10px);
-    }
-  }
 
   > .main-content {
     display: flex;
@@ -25,7 +15,6 @@
     gap: 20px;
     width: 100%;
     max-width: 410px;
-    max-height: 380px;
     height: 100%;
     margin-bottom: 130px;
 

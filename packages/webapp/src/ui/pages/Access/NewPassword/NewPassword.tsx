@@ -20,7 +20,6 @@ export const NewPassword = withCtrl<NewPasswordProps>(({ accessHeaderProps, newP
     <MainPageWrapper>
       <div className="new-password-page">
         <AccessHeader {...accessHeaderProps} page={'login'} />
-        <div className="separator" />
         <div className="main-content">
           <Card>
             <div className="content">
