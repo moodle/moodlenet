@@ -223,47 +223,47 @@ export const Resource = withCtrl<ResourceProps>(
           <div className="title">
             <Trans>Subject</Trans>
           </div>
-          <div className="value">{form.values.category}</div>
+          <abbr className="value">{form.values.category}</abbr>
         </div>
-        <div className="detail">
+        { form.values.license && <div className="detail">
           <div className="title">
             <Trans>License</Trans>
           </div>
-          <div className="value">{form.values.license}</div>
-        </div>
-        <div className="detail">
+          <abbr className="value" title={form.values.license}>{form.values.license}</abbr>
+        </div>}
+        {form.values.type && <div className="detail">
           <div className="title">
             <Trans>Type</Trans>
           </div>
-          <div className="value">{form.values.type}</div>
-        </div>
-        <div className="detail">
+          <abbr className="value" title={form.values.type}>{form.values.type}</abbr>
+        </div>}
+        {form.values.level && <div className="detail">
           <div className="title">
             <Trans>Level</Trans>
           </div>
-          <div className="value">{form.values.level}</div>
-        </div>
-        <div className="detail">
+          <abbr className="value" title={form.values.level}>{form.values.level}</abbr>
+        </div>}
+        {(form.values.originalDateMonth || form.values.originalDateYear) && <div className="detail">
           <div className="title">
             <Trans>Original creation date</Trans>
           </div>
-          <div className="value">
+          <abbr className="value date" title={`${form.values.originalDateMonth} ${form.values.originalDateYear}`}>
             <span>{form.values.originalDateMonth}</span>
             <span>{form.values.originalDateYear}</span>
-          </div>
-        </div>
-        <div className="detail">
+          </abbr>
+        </div>}
+        {form.values.language && <div className="detail">
           <div className="title">
             <Trans>Language</Trans>
           </div>
-          <div className="value">{form.values.language}</div>
-        </div>
-        <div className="detail">
+          <abbr className="value" title={form.values.language}>{form.values.language}</abbr>
+        </div>}
+        {form.values.format && <div className="detail">
           <div className="title">
             <Trans>Format</Trans>
           </div>
-          <div className="value">{form.values.format}</div>
-        </div>
+          <abbr className="value" title={form.values.format}>{form.values.format}</abbr>
+        </div>}
       </Card>
     )
     return (
