@@ -1,8 +1,8 @@
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { FC } from 'react'
-import { tagList } from '../../elements/tags'
-import '../../styles/tags.css'
-import { FollowTag } from '../../types'
+import { tagList } from '../../../elements/tags'
+import '../../../styles/tags.css'
+import { FollowTag } from '../../../types'
 import './styles.scss'
 
 export type SubHeaderProps = {
