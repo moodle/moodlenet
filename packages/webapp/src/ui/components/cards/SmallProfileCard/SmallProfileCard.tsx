@@ -4,7 +4,7 @@ import { withCtrl } from '../../../lib/ctrl'
 import Card from '../../atoms/Card/Card'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
-import { OverallCard, OverallCardProps } from '../OverallCard/OverallCard'
+import { OverallCard, OverallCardProps } from '../../molecules/cards/OverallCard/OverallCard'
 import './styles.scss'
 
 export type SmallProfileCardProps = {

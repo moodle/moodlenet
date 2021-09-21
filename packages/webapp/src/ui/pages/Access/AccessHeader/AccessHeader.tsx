@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../components/atoms/SecondaryButton/SecondaryButton'
-import HeaderTitle from '../../../components/Header/HeaderTitle/HeaderTitle'
+import HeaderTitle from '../../../components/molecules/Header/HeaderTitle/HeaderTitle'
 import { Href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
 import { Organization } from '../../../types'

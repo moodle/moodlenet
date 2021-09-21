@@ -3,7 +3,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { people } from '../../../../helpers/factories'
 import { randomIntFromInterval } from '../../../../helpers/utilities'
 import { href } from '../../../elements/link'
-import { OverallCardNoCardStoryProps } from '../OverallCard/OverallCard.stories'
+import { OverallCardNoCardStoryProps } from '../../molecules/cards/OverallCard/OverallCard.stories'
 import { SmallProfileCard, SmallProfileCardProps } from './SmallProfileCard'
 
 const meta: ComponentMeta<typeof SmallProfileCard> = {
