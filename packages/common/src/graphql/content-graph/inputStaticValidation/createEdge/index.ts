@@ -6,12 +6,12 @@ type Just<T> = Exclude<T, null | undefined>
 const inputObjectValidators: {
   [T in EdgeType]: ObjectSchema<Just<CreateEdgeInput[T]>>
 } = {
-  Follows: object<Just<CreateEdgeInput['Follows']>>().required(),
   Created: neverCreate('Created'),
-  AppliesTo: object<Just<CreateEdgeInput['AppliesTo']>>().required(),
-  Contains: object<Just<CreateEdgeInput['Contains']>>().required(),
-  Likes: object<Just<CreateEdgeInput['Likes']>>().required(),
-  Edited: object<Just<CreateEdgeInput['Edited']>>().required(),
+  Features: object().required(),
+  Pinned: object().required(),
+  Follows: object().required(),
+  Likes: object().required(),
+  Bookmarked: object().required(),
 }
 
 export const validateCreateEdgeInput = (input: CreateEdgeInput): Just<CreateEdgeInput[EdgeType]> | Error => {

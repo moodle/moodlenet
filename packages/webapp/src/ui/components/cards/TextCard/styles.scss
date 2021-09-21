@@ -1,0 +1,9 @@
+.text-card {
+  padding: 20px;
+  font-size: 13px;
+  white-space: pre-line;
+
+  @media (max-width: 450px) {
+    padding: 0;
+  }
+}

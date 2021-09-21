@@ -1,0 +1,9 @@
+query seoContent($id: ID!) {
+  node(id: $id) {
+    ... on INode {
+      id
+      name
+      description
+    }
+  }
+}

@@ -1,16 +1,17 @@
-type Profile implements INode & IContentNode {
+type Profile implements INode {
   name: String!
-  summary: String!
-  icon: AssetRef
+  description: String!
+  avatar: AssetRef
+  bio: String
+  image: AssetRef
+  firstName: String
+  lastName: String
+  siteUrl: String
+  location: String
+  # INode
   id: ID!
-}
-
-input UpdateProfileInput {
-  content: ContentNodeInput!
-}
-
-input CreateProfileInput {
-  content: ContentNodeInput!
+  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
+  _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }
 
 # integrations
@@ -18,9 +19,23 @@ union Node = Profile
 enum NodeType {
   Profile
 }
-input UpdateNodeInput {
-  Profile: UpdateProfileInput
-}
+
 input CreateNodeInput {
-  Profile: CreateProfileInput
+  Profile: Never
+}
+
+input EditProfileInput {
+  name: String!
+  description: String!
+  avatar: AssetRefInput
+  image: AssetRefInput
+  bio: String
+  image: AssetRefInput
+  firstName: String
+  lastName: String
+  siteUrl: String
+  location: String
+}
+input EditNodeInput {
+  Profile: EditProfileInput
 }

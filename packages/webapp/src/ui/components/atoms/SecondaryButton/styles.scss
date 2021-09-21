@@ -1,0 +1,60 @@
+@import '../../../styles/application';
+
+.secondary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid black;
+  border-radius: 45px;
+  font-weight: bold;
+  font-size: 12px;
+  height: 30px;
+  padding: 12px;
+  padding: 12px 18px;
+  width: fit-content;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &.disabled {
+    cursor: default;
+    user-select: none;
+    color: #e8e8e8;
+    border: 2px solid #e8e8e8;
+  }
+
+  &.red {
+    color: red;
+    border: 2px solid red;
+  }
+
+  &.orange {
+    color: $primary-color;
+    border: 2px solid $primary-color;
+  }
+
+  &.grey {
+    color: #7f8393;
+    border: 2px solid #7f8393;
+  }
+
+  &:not(.disabled):hover {
+    color: #337aff;
+    border: 2px solid #337aff;
+
+    &.grey {
+        color: #545761;
+        border: 2px solid #545761;
+    }
+
+    &.hover-red {
+      color: red;
+      border: 2px solid red;
+    }
+
+    &.hover-filled-red {
+      background-color: red;
+      color: white;
+      border: 2px solid red;
+    }
+  }
+}

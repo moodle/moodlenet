@@ -1,0 +1,58 @@
+.view {
+  z-index: 0;
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  background-color: #f4f5f7;
+  background-size: cover;
+  overflow-x: hidden;
+  bottom: 0;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+  @media (max-width: 450px) {
+    background-color: white;
+  }
+}
+
+.view::-webkit-scrollbar {
+  display: none;
+}
+
+.view > * {
+  height: max-content;
+  width: 100%;
+  max-width: 1100px;
+
+  > * {
+    @media (max-width: 450px) {
+      padding: 0 25px;
+    }
+  }
+}
+
+.double-header-page {
+  padding: 120px 100px 50px 100px;
+
+  @media (max-width: 450px) {
+    padding: 120px 0 60px 0;
+  }
+
+  @media screen and (max-width: 675px) and (min-width: 450px) {
+    padding: 120px 25px 60px 25px;
+  }
+}
+
+.single-header-page {
+  padding: 60px 100px 50px 100px;
+
+  @media (max-width: 450px) {
+    padding: 60px 0 60px 0;
+  }
+
+  @media screen and (max-width: 675px) and (min-width: 450px) {
+    padding: 60px 25px 60px 25px;
+  }
+}

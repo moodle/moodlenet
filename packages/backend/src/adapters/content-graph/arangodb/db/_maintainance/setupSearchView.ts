@@ -9,13 +9,13 @@ export const setupSearchView = async ({ db }: { db: Database }) => {
   // await searchView.drop()
   if (!(await searchView.exists())) {
     const contentAnalyzer: ArangoSearchViewLink = {
-      analyzers: ['text_en', 'global-search-ngram'],
-      fields: { summary: {}, name: {} },
+      analyzers: ['text_en', 'global-text-search'],
+      fields: { description: {}, name: {} },
       includeAllFields: false,
       storeValues: 'none',
       trackListPositions: false,
     }
-    const ngramAnalyzer = db.analyzer('global-search-ngram')
+    const ngramAnalyzer = db.analyzer('global-text-search')
     ;(await ngramAnalyzer.exists()) && (await ngramAnalyzer.drop())
     await ngramAnalyzer.create({
       type: 'ngram',
@@ -26,7 +26,7 @@ export const setupSearchView = async ({ db }: { db: Database }) => {
       links: {
         Resource: contentAnalyzer,
         Collection: contentAnalyzer,
-        SubjectField: contentAnalyzer,
+        IscedField: contentAnalyzer,
       },
     })
   }

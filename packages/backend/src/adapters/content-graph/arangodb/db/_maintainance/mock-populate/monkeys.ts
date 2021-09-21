@@ -30,7 +30,7 @@ getPersistence({ cfg, databaseName }).then(async ([{ db }]) => {
   }
 })
 const monkeyCreateNode = (_db: Database) => async (env: SessionEnv<'session'>) => {
-  const nodeType = getRndType('Profile', 'SubjectField')
+  const nodeType = getRndType('Profile', 'IscedField')
   return enqueue<MoodleNetArangoContentGraphSubDomain>()(
     'ContentGraph.Node.Create',
     newFlow(),

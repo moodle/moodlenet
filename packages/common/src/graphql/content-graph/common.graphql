@@ -1,6 +1,6 @@
 scalar Never
 scalar Empty
-scalar DateTime
+scalar Timestamp
 
 # graphql-tools schema stitching
 # directive @merge(

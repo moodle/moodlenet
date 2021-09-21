@@ -1,0 +1,27 @@
+.tags {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.tag {
+  cursor: pointer;
+  padding: 5px 10px;
+  display: flex;
+  height: 100%;
+  font-size: 13px;
+  color: white;
+  align-items: center;
+  margin-right: 10px;
+  background-color: #b6bacb;
+  border-radius: 15px;
+}
+
+.tagGeneral {
+  background-color: #7f8393;
+  border-radius: 6px;
+}
+
+.empty-space {
+  width: 10px;
+}

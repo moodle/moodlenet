@@ -62,5 +62,5 @@ export const getTempAssetDesc = (tempFileDesc: TempFileDesc, tempAssetId: TempAs
 
 const sharpImagePipeline = {
   icon: () => sharp({ sequentialRead: true }).resize(256, 256, { fit: 'inside' }).jpeg(),
-  image: () => sharp({ sequentialRead: true }).resize(1600, null, { fit: 'cover', withoutEnlargement: true }).jpeg(),
+  image: () => sharp({ sequentialRead: true }).resize(800, 800, { fit: 'inside', withoutEnlargement: true }).jpeg(),
 }

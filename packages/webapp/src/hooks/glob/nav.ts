@@ -1,23 +1,36 @@
 import { webappPath } from '@moodlenet/common/lib/webapp/sitemap'
-import { GlobalSearch, Home, Login } from '@moodlenet/common/lib/webapp/sitemap/routes'
-import { useLayoutEffect } from 'react'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import * as Routes from '@moodlenet/common/lib/webapp/sitemap/routes'
+import { useCallback, useLayoutEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useSession } from '../../contexts/Global/Session'
+import { useSession } from '../../context/Global/Session'
+import { UserSessionFragment } from '../../context/Global/Session/session.gen'
 
 export const mainPath = {
-  login: webappPath<Login>('/login', {}),
-  home: webappPath<Home>('/', {}),
-  search: webappPath<GlobalSearch>('/search', {}),
+  termsAndConditionsHref: webappPath<Routes.TermsAndConditions>('/terms', {}),
+  login: webappPath<Routes.Login>('/login/:activationEmailToken?', {}),
+  firstLogin: (activationEmailToken: string) =>
+    webappPath<Routes.Login>('/login/:activationEmailToken?', { activationEmailToken }),
+  recoverPassword: webappPath<Routes.RecoverPassword>('/recover-password', {}),
+  signUp: webappPath<Routes.Signup>('/signup', {}),
+  landing: webappPath<Routes.Landing>('/', {}),
+  search: webappPath<Routes.GlobalSearch>('/search', {}),
+  createNewResource: webappPath<Routes.CreateNewResource>('/create-new-resource', {}),
+  createNewCollection: webappPath<Routes.CreateNewCollection>('/create-new-collection', {}),
+  bookmarks: webappPath<Routes.BookmarksPage>('/bookmarks', {}),
+  following: webappPath<Routes.FollowingPage>('/following', {}),
 }
 
 export const useRedirectToBySession = ({
   ifLogged,
   to,
   replace,
+  delay = 0,
 }: {
-  to: string
+  to: string | ((_: UserSessionFragment | null) => string)
   ifLogged: boolean
   replace: boolean
+  delay?: number
 }) => {
   const history = useHistory()
   const { session } = useSession()
@@ -25,17 +38,29 @@ export const useRedirectToBySession = ({
   const shouldRedirect = !!ifLogged === !!session
   useLayoutEffect(() => {
     if (shouldRedirect) {
-      setImmediate(() => {
-        history[replace ? 'replace' : 'push'](to)
-      })
+      const targetRedirect = typeof to === 'string' ? to : to(session)
+      const schedule = delay ? setTimeout : setImmediate
+      schedule(() => {
+        history[replace ? 'replace' : 'push'](targetRedirect)
+      }, delay)
     }
-  }, [history, replace, shouldRedirect, to])
+  }, [delay, history, replace, session, shouldRedirect, to])
 }
 
-export const useRedirectHomeIfLoggedIn = () => {
+export const useRedirectHomeIfLoggedIn = (opts?: { delay?: number }) => {
   useRedirectToBySession({
     ifLogged: true,
     replace: true,
-    to: mainPath.home,
+    to: mainPath.landing,
+    delay: opts?.delay,
+  })
+}
+
+export const useRedirectProfileHomeIfLoggedIn = (opts?: { delay?: number }) => {
+  useRedirectToBySession({
+    ifLogged: true,
+    replace: true,
+    to: useCallback((session: UserSessionFragment | null) => nodeGqlId2UrlPath(session!.profile.id), []),
+    delay: opts?.delay,
   })
 }

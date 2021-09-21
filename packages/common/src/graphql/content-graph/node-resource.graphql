@@ -1,18 +1,19 @@
-type Resource implements INode & IContentNode {
+type Resource implements INode {
   name: String!
-  summary: String!
-  icon: AssetRef
-  asset: AssetRef!
+  description: String!
+  image: AssetRef
+  content: AssetRef!
+  kind: ResourceKind!
+  originalCreationDate: Timestamp
+  # INode
   id: ID!
+  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
+  _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }
 
-input CreateResourceInput {
-  content: ContentNodeInput!
-  resource: AssetRefInput!
-}
-
-input UpdateResourceInput {
-  content: ContentNodeInput!
+enum ResourceKind {
+  Upload
+  Link
 }
 
 # integrations
@@ -20,9 +21,24 @@ union Node = Resource
 enum NodeType {
   Resource
 }
+
+input CreateResourceInput {
+  name: String!
+  description: String!
+  image: AssetRefInput
+  content: AssetRefInput!
+  originalCreationDate: Timestamp
+}
 input CreateNodeInput {
   Resource: CreateResourceInput
 }
-input UpdateNodeInput {
-  Resource: UpdateResourceInput
+
+input EditResourceInput {
+  name: String!
+  description: String!
+  image: AssetRefInput
+  originalCreationDate: Timestamp
+}
+input EditNodeInput {
+  Resource: EditResourceInput
 }

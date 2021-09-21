@@ -1,0 +1,20 @@
+:not(.no-card).card {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 0 6px #dedede;
+
+    @media (max-width:450px) {
+        &.hide-border  {
+            box-shadow: none;
+            background-color: transparent;
+        }
+        &.remove-padding {
+            padding: 0;
+        }
+    }
+
+    &.hover:hover {
+        box-shadow: 0 4px 4px rgba(0,0,0,0.3);
+    }
+}

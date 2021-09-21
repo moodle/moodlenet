@@ -1,0 +1,26 @@
+type IscedGrade implements INode {
+  name: String!
+  description: String!
+  codePath: [String!]!
+  code: String!
+  image: AssetRef
+  image: AssetRef
+  # INode
+  id: ID!
+  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
+  _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
+}
+
+# integrations
+union Node = IscedGrade
+enum NodeType {
+  IscedGrade
+}
+
+input CreateNodeInput {
+  IscedGrade: Never
+}
+
+input EditNodeInput {
+  IscedGrade: Never
+}

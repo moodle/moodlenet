@@ -1,6 +1,5 @@
 import { RequestHandler } from 'express'
 import { VerifyOptions } from 'jsonwebtoken'
-import { GuestSessionEnv } from '../../lib/auth/env'
 import { INVALID_TOKEN, verifyJwt } from '../../lib/auth/jwt'
 import { SessionEnv } from '../../lib/auth/types'
 
@@ -8,7 +7,10 @@ export const getMNExecEnvMiddleware =
   ({ jwtPublicKey, jwtVerifyOpts }: { jwtPublicKey: string; jwtVerifyOpts: VerifyOptions }): RequestHandler =>
   (req, _res, next) => {
     const headerToken = req.header('bearer')
-    req.mnHttpSessionEnv = getSessionEnv({ headerToken, jwtPublicKey, jwtVerifyOpts })
+    req.mnHttpContext = {
+      authSessionEnv: getSessionEnv({ headerToken, jwtPublicKey, jwtVerifyOpts }),
+    }
+    // console.log({ mnHttpSessionEnv: req.mnHttpContext })
     next()
   }
 
@@ -20,11 +22,11 @@ export const getSessionEnv = ({
   headerToken: string | null | undefined
   jwtPublicKey: string
   jwtVerifyOpts: VerifyOptions
-}): SessionEnv => {
+}): SessionEnv | null => {
   if (!headerToken) {
-    return GuestSessionEnv()
+    return null
   }
   const tokenVerification = verifyJwt({ jwtPublicKey, jwtVerifyOpts, token: headerToken })
-
-  return tokenVerification === INVALID_TOKEN ? GuestSessionEnv() : tokenVerification
+  // console.log({ tokenVerification })
+  return tokenVerification === INVALID_TOKEN ? null : tokenVerification
 }

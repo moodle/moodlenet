@@ -1,37 +1,51 @@
-import * as GQL from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { Id } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { DocumentEdgeByType, DocumentEdgeDataByType } from '../../adapters/content-graph/arangodb/functions/types'
-import { getProfileId } from '../../lib/auth/env'
-import { SessionEnv } from '../../lib/auth/types'
-import { QMCommand, QMModule } from '../../lib/qmino'
-
 // create
 
+import { GraphEdge, GraphEdgeIdentifier } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
+import { newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { DistOmit } from '@moodlenet/common/lib/utils/types'
+import { SessionEnv } from '../../lib/auth/types'
+import { QMModule } from '../../lib/qmino'
+import { QMCommand } from '../../lib/qmino/lib'
+
+export type NewEdgeInput = DistOmit<GraphEdge, '_authId' | '_created' | 'id'>
 export type CreateAdapter = {
-  storeEdge: <Type extends GQL.EdgeType>(_: {
-    edgeType: Type
-    data: DocumentEdgeDataByType<Type>
-    from: Id
-    to: Id
-    creatorProfileId: Id
-  }) => Promise<DocumentEdgeByType<Type> | null>
+  storeEdge: <E extends GraphEdge>(_: {
+    edge: E
+    from: GraphNodeIdentifier
+    to: GraphNodeIdentifier
+  }) => Promise<E | null>
+  // ops: CreateEdgeBLOps
 }
 
-export type CreateInput<Type extends GQL.EdgeType = GQL.EdgeType> = {
-  env: SessionEnv
-  from: Id
-  to: Id
-  edgeType: Type
-  data: DocumentEdgeDataByType<Type>
+export type CreateEdgeInput = {
+  sessionEnv: SessionEnv
+  from: GraphNodeIdentifier
+  to: GraphNodeIdentifier
+  newEdge: NewEdgeInput
 }
 
-export const create = QMCommand(
-  <Type extends GQL.EdgeType = GQL.EdgeType>({ data, env, edgeType, from, to }: CreateInput<Type>) =>
-    async ({ storeEdge }: CreateAdapter): Promise<DocumentEdgeByType<Type> | GQL.CreateEdgeMutationErrorType> => {
-      const creatorProfileId = getProfileId(env)
-      const result = await storeEdge({ from, to, edgeType, data, creatorProfileId })
+export const createEdge = QMCommand(
+  ({ from, to, sessionEnv, newEdge }: CreateEdgeInput) =>
+    async ({ storeEdge }: CreateAdapter) => {
+      // const rule = createEdgeRule({
+      //   edgeType,
+      //   from,
+      //   profileId: getProfileId(env),
+      //   ops,
+      //   to,
+      //   userRole: env.user.role,
+      // })
+      const _authId = sessionEnv.user.authId
+      const edge: GraphEdge = {
+        ...newEdge,
+        _authId,
+        _created: Number(new Date()),
+        id: newGlyphPermId(),
+      }
+      const result = await storeEdge({ edge, from, to })
       if (!result) {
-        return 'AssertionFailed'
+        return null
       }
       return result
     },
@@ -39,28 +53,29 @@ export const create = QMCommand(
 
 // delete
 
-export type DeleteAdapter = {
-  deleteEdge: <Type extends GQL.EdgeType>(_: {
-    edgeType: Type
-    edgeId: Id
-    deleterProfileId: Id
-  }) => Promise<DocumentEdgeByType<Type> | GQL.DeleteEdgeMutationErrorType>
+export type DeleteEdgeAdapter = {
+  deleteEdge: (_: { edge: GraphEdgeIdentifier }) => Promise<boolean>
 }
 
-export type DeleteInput<Type extends GQL.EdgeType = GQL.EdgeType> = {
-  env: SessionEnv
-  id: Id
-  edgeType: Type
+export type DeleteEdgeInput = {
+  sessionEnv: SessionEnv
+  edge: GraphEdgeIdentifier
 }
 
-export const del = QMCommand(
-  <Type extends GQL.EdgeType = GQL.EdgeType>({ env, edgeType, id: edgeId }: DeleteInput<Type>) =>
-    async ({ deleteEdge }: DeleteAdapter): Promise<DocumentEdgeByType<Type> | GQL.DeleteEdgeMutationErrorType> => {
-      const deleterProfileId = getProfileId(env)
-      const result = await deleteEdge({ edgeId, edgeType, deleterProfileId })
-      if (!result) {
-        return 'AssertionFailed'
-      }
+export const deleteEdge = QMCommand(
+  ({ edge /* , sessionEnv */ }: DeleteEdgeInput) =>
+    async ({ deleteEdge }: DeleteEdgeAdapter) => {
+      // const rule = deleteEdgeRule({
+      //   edgeType,
+      //   from,
+      //   profileId: getProfileId(env),
+      //   ops,
+      //   to,
+      //   userRole: env.user.role,
+      // })
+      // const _authId = sessionEnv.user.authId
+      const result = await deleteEdge({ edge })
+
       return result
     },
 )
