@@ -26,8 +26,8 @@ export type ProfileCardProps = {
   toggleIsEditing(): unknown
   toggleFollow(): unknown
   openSendMessage(): unknown
-  avatarUrl:string|null
-  backgroundUrl :string|null
+  avatarUrl: string | null
+  backgroundUrl: string | null
 }
 
 export const ProfileCard = withCtrl<ProfileCardProps>(
@@ -89,12 +89,12 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     )
 
     const background = {
-      backgroundImage: 'url(' + (backgroundUrl ? backgroundUrl : defaultBackgroud)  + ')',
+      backgroundImage: 'url(' + (backgroundUrl ? backgroundUrl : defaultBackgroud) + ')',
       backgroundSize: 'cover',
     }
 
     const avatar = {
-      backgroundImage: 'url(' + (avatarUrl ? avatarUrl : defaultAvatar)  + ')',
+      backgroundImage: 'url(' + (avatarUrl ? avatarUrl : defaultAvatar) + ')',
       backgroundSize: 'cover',
     }
 
@@ -117,7 +117,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             onClose={() => setIsShowingAvatar(false)}
             style={{ maxWidth: '90%', maxHeight: '90%' }}
           >
-            <img src={avatarUrl} alt="Avatar"/>
+            <img src={avatarUrl} alt="Avatar" />
           </Modal>
         )}
         <div className="background" style={background} onClick={() => setIsShowingBackground(true)}>
@@ -217,7 +217,11 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 {form.values.username !== '' && <span>@{form.values.username}</span>}
                 {form.values.organizationName !== '' && <span>{form.values.organizationName}</span>}
                 {form.values.location !== '' && <span>{form.values.location}</span>}
-                {form.values.siteUrl !== '' && <a href={form.values.siteUrl} target="_blank" rel="noreferrer">{form.values.siteUrl}</a>}
+                {form.values.siteUrl !== '' && (
+                  <a href={form.values.siteUrl} target="_blank" rel="noreferrer">
+                    {form.values.siteUrl}
+                  </a>
+                )}
               </div>
             )}
             {profileCardErrorMessage && <div className="error">{profileCardErrorMessage}</div>}
