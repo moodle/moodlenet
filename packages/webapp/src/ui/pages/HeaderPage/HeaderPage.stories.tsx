@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { HeaderLoggedInOrganizationStoryProps, HeaderLoggedInStoryProps, HeaderLoggedOutOrganizationStoryProps, HeaderLoggedOutStoryProps } from '../../components/Header/Header.stories'
+import { HeaderLoggedInOrganizationStoryProps, HeaderLoggedInStoryProps, HeaderLoggedOutOrganizationStoryProps, HeaderLoggedOutStoryProps } from '../../components/molecules/Header/Header.stories'
 import { SubHeaderStoryProps } from '../../components/molecules/SubHeader/SubHeader.stories'
 import HeaderPage, { HeaderPageProps } from './HeaderPage'
 

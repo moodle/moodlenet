@@ -1,7 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { TrendCardStoryProps } from '../../components/cards/TrendCard/TrendCard.stories'
-import { HeaderLoggedOutOrganizationStoryProps } from '../../components/Header/Header.stories'
+import { HeaderLoggedOutOrganizationStoryProps } from '../../components/molecules/Header/Header.stories'
 import { href } from '../../elements/link'
 import {
   HeaderPageLoggedInOrganizationStoryProps,

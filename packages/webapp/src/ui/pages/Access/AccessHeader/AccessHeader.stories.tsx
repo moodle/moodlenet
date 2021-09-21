@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
   HeaderLoggedOutOrganizationStoryProps,
   HeaderLoggedOutStoryProps
-} from '../../../components/Header/Header.stories'
+} from '../../../components/molecules/Header/Header.stories'
 import { href } from '../../../elements/link'
 import { AccessHeader, AccessHeaderProps } from './AccessHeader'
 
