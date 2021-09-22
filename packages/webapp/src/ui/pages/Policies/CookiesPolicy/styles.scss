@@ -1,0 +1,135 @@
+.text {
+  color: #212529;
+}
+
+.landing {
+  > .landing-title > div {
+    margin: 36px 0 0;
+    font-weight: bold;
+    display: inline-flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 10px;
+    > .moodle-title {
+      color: #b6bacb;
+      font-size: 25px;
+    }
+    > .organization-title {
+      line-height: 34px;
+      color: black;
+      font-size: 35px;
+    }
+
+    @media (max-width: 450px) {
+      margin: 28px 0 0;
+    }
+
+    @media screen and (max-width: 675px) and (min-width: 450px) {
+      margin: 36px 0 0;
+      font-weight: bold;
+      > .moodle-title {
+        font-size: 22px;
+      }
+      > .organization-title {
+        font-size: 33px;
+      }
+    }
+  }
+
+  > .searchbox {
+    margin: 36px 0;
+    width: 100%;
+    border: none;
+    height: fit-content;
+    > .search-text {
+      font-size: 40px;
+      background-color: transparent;
+      width: 100%;
+    }
+    > :first-child {
+      display: none;
+    }
+
+    @media (max-width: 450px) {
+      margin: 36px 0;
+      display: block;
+      > .search-text {
+        font-size: 38px;
+      }
+    }
+  }
+
+  > .content {
+    width: 100%;
+    max-width: 1100px;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .main-column {
+    width: 48.5%;
+    height: 100%;
+
+    > .intro-card {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      > .title {
+        font-weight: bold;
+        font-size: 16px;
+      }
+      >.content {
+        font-size: 14px;
+      }
+    }
+
+    > .trend-card {
+      display: none;
+    }
+
+    > :not(:last-child) {
+      margin-bottom: 24px;
+    }
+  }
+
+  .side-column {
+    width: 48.5%;
+    height: 100%;
+  }
+
+  .collection {
+    display: none;
+  }
+
+  @media screen and (max-width: 800px) {
+    .main-column {
+      width: 100%;
+      height: 100%;
+      .trend-card {
+        display: block;
+      }
+    }
+
+    .side-column {
+      display: none;
+      width: 325px;
+      height: 100%;
+      background-color: yellow;
+      .trend-card {
+        display: none;
+      }
+    }
+
+    .collection {
+      display: block;
+    }
+  }
+}
+
+.text-image {
+  width: 100%;
+  height: 137px;
+  object-fit: cover;
+  border-radius: 9px;
+}

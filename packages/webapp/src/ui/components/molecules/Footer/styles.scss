@@ -1,3 +1,5 @@
+@import '../../../styles/utils/colors';
+
 .footer {
   padding: 20px 100px;
   display: flex;
@@ -27,6 +29,14 @@
       width: 100%;
       > a {
         color: #717171;
+        font-size: 14px;
+        > span {
+          color: $base-moodle-color;
+          &:hover {
+            text-decoration: underline;
+            text-decoration-color: $base-moodle-color;
+          }
+        }
         &:hover {
           text-decoration: underline;
         }
