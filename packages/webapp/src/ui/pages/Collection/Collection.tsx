@@ -81,9 +81,9 @@ export const Collection = withCtrl<CollectionProps>(
     const setFieldValue = form.setFieldValue
     const setTitleField = useCallback((_: string) => setFieldValue('title', _), [setFieldValue])
     const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
-    
+
     const background = {
-      backgroundImage: form.values.image ? 'url(' + form.values.image + ')' : 'url(' + defaultBackgroud + ')',
+      backgroundImage: form.values.imageUrl ? 'url(' + form.values.imageUrl + ')' : 'url(' + defaultBackgroud + ')',
       backgroundSize: 'cover',
     }
 

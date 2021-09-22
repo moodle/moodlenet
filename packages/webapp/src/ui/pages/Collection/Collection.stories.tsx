@@ -1,9 +1,9 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
-  ResourceCardOwnerBookmarkedStoryProps, ResourceCardOwnerStoryProps,
-
-  ResourceCardStoryProps
+  ResourceCardOwnerBookmarkedStoryProps,
+  ResourceCardOwnerStoryProps,
+  ResourceCardStoryProps,
 } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/molecules/Header/Header.stories'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
@@ -54,6 +54,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     image: null,
+    imageUrl: null,
     title: 'Best collection ever',
   }),
   resourceCardPropsList: [ResourceCardOwnerStoryProps, ResourceCardOwnerBookmarkedStoryProps, ResourceCardStoryProps],
