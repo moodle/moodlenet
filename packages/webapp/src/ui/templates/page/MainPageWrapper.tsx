@@ -7,28 +7,28 @@ import '../../styles/main.scss'
 import '../../styles/view.scss'
 
 export type MainPageWrapperProps = {
-  userAcceptsCookies: (() => unknown) | null
+  userAcceptsPolicies: (() => unknown) | null
   onKeyDown?(arg0: unknown): unknown
 }
-export const MainPageWrapper = withCtrl<MainPageWrapperProps>(({ children, userAcceptsCookies, onKeyDown }) => {
+export const MainPageWrapper = withCtrl<MainPageWrapperProps>(({ children, userAcceptsPolicies, onKeyDown }) => {
   const [currentInput, currentIntent] = useWhatInput()
-  const [isShowingCookierPrompt, setIsShowingCookierPrompt] = useState<boolean>(!!userAcceptsCookies)
-  const userAcceptsCookiesCb = useCallback(() => {
-    setIsShowingCookierPrompt(false)
-    userAcceptsCookies && userAcceptsCookies()
-  }, [userAcceptsCookies])
+  const [isShowingPoliciesPrompt, setIsShowingPoliciesPrompt] = useState<boolean>(!!userAcceptsPolicies)
+  const userAcceptsPoliciesCb = useCallback(() => {
+    setIsShowingPoliciesPrompt(false)
+    userAcceptsPolicies && userAcceptsPolicies()
+  }, [userAcceptsPolicies])
 
   return (
     <div
       className={`main-page-wrapper current-input-${currentInput} current-intent-${currentIntent}`}
       onKeyDown={onKeyDown}
     >
-      {isShowingCookierPrompt && (
+      {isShowingPoliciesPrompt && (
         <Snackbar
           className="policies-snackbar"
           buttonText={t`Accept`}
           style={{ backgroundColor: 'black' }}
-          onClose={userAcceptsCookiesCb}
+          onClose={userAcceptsPoliciesCb}
         >
           <Trans>
             If you continue browsing this website, you agree to our

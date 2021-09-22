@@ -3,9 +3,9 @@ import { CtrlHook } from '../../../lib/ctrl'
 import { MainPageWrapperProps } from '../MainPageWrapper'
 
 export const useMainPageWrapperCtrl: CtrlHook<MainPageWrapperProps, {}> = () => {
-  const { userMustAcceptCookies } = useSession()
+  const { userMustAcceptPolicies } = useSession()
   const mainPageWrapperProps: MainPageWrapperProps = {
-    userAcceptsCookies: userMustAcceptCookies,
+    userAcceptsPolicies: userMustAcceptPolicies,
   }
   return [mainPageWrapperProps]
 }

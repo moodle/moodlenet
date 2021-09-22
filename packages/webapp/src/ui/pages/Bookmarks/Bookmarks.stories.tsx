@@ -20,7 +20,7 @@ export const BookmarksLoggedInStoryProps: BookmarksProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   browserProps: {
@@ -37,7 +37,7 @@ export const BookmarksLoggedOutStoryProps: BookmarksProps = {
     headerPageProps: HeaderPageLoggedOutStoryProps,
     isAuthenticated: false,
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   browserProps: {

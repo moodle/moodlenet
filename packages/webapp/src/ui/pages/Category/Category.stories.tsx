@@ -22,7 +22,7 @@ export const CategoryStoryProps: CategoryProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   isAuthenticated: true,
@@ -59,7 +59,7 @@ export const CategoryLoggedOutStoryProps: CategoryProps = {
     headerPageProps: HeaderPageLoggedOutStoryProps,
     isAuthenticated: false,
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   isAuthenticated: true,

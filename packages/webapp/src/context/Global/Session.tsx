@@ -15,7 +15,7 @@ import {
   useSignUpMutation,
 } from './Session/session.gen'
 
-const USER_ACCEPTED_COOKIES_STORAGE_KEY = 'USER_ACCEPTED_COOKIES'
+const USER_ACCEPTED_POLICIES_STORAGE_KEY = 'USER_ACCEPTED_POLICIES'
 
 const LAST_SESSION_EMAIL_STORAGE_KEY = 'LAST_SESSION_EMAIL'
 const LAST_SESSION_TOKEN_STORAGE_KEY = 'LAST_SESSION_TOKEN'
@@ -64,7 +64,7 @@ export type SessionContextType = {
     recoverPasswordToken: string
   }): Promise<ChangePasswordWarnMessage | null>
   firstLogin: boolean
-  userMustAcceptCookies: (() => unknown) | null
+  userMustAcceptPolicies: (() => unknown) | null
 }
 
 export const [useSession, ProvideSession] = createCtx<SessionContextType>('Session')
@@ -152,13 +152,13 @@ export const SessionProvider: FC = ({ children }) => {
     [changeRecoverPasswordMut, changeRecoverPasswordMutResp.loading],
   )
 
-  const [userAcceptedCookies, setUserAcceptedCookies] = useState(
-    localStorage.getItem(USER_ACCEPTED_COOKIES_STORAGE_KEY) === 'true',
+  const [userAcceptedPolicies, setUserAcceptedPolicies] = useState(
+    localStorage.getItem(USER_ACCEPTED_POLICIES_STORAGE_KEY) === 'true',
   )
-  //const userMustAcceptCookies = useState<null|(()=>unknown)>()
-  const userAcceptCookiesCb = useCallback(() => {
-    setUserAcceptedCookies(true)
-    localStorage.setItem(USER_ACCEPTED_COOKIES_STORAGE_KEY, 'true')
+  //const userMustAcceptPolicies = useState<null|(()=>unknown)>()
+  const userAcceptPoliciesCb = useCallback(() => {
+    setUserAcceptedPolicies(true)
+    localStorage.setItem(USER_ACCEPTED_POLICIES_STORAGE_KEY, 'true')
   }, [])
 
   useEffect(() => {
@@ -182,7 +182,7 @@ export const SessionProvider: FC = ({ children }) => {
       lastSessionJwt: lastSession.jwt ?? null,
       recoverPassword,
       changeRecoverPassword,
-      userMustAcceptCookies: userAcceptedCookies ? null : userAcceptCookiesCb,
+      userMustAcceptPolicies: userAcceptedPolicies ? null : userAcceptPoliciesCb,
     }),
     [
       logout,
@@ -195,11 +195,11 @@ export const SessionProvider: FC = ({ children }) => {
       lastSession.jwt,
       recoverPassword,
       changeRecoverPassword,
-      userAcceptedCookies,
-      userAcceptCookiesCb,
+      userAcceptedPolicies,
+      userAcceptPoliciesCb,
       getSessionLazyQ,
     ],
   )
-  console.log({ __: ctx.userMustAcceptCookies })
+  console.log({ __: ctx.userMustAcceptPolicies })
   return <ProvideSession value={ctx}>{!sessionQResult.called ? null : children}</ProvideSession>
 }

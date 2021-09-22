@@ -44,7 +44,7 @@ export const ProfileStoryProps: ProfileProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   overallCardProps: OverallCardStoryProps,
@@ -74,7 +74,7 @@ export const ProfileLoggedOutStoryProps: ProfileProps = {
       },
     },
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   collectionCardPropsList: [
