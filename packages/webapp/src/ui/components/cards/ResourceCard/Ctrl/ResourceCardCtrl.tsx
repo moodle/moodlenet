@@ -3,7 +3,7 @@ import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useMemo } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
-import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../../helpers/data'
+import { getMaybeAssetRefUrl } from '../../../../../helpers/data'
 import { href } from '../../../../elements/link'
 import { CtrlHook } from '../../../../lib/ctrl'
 import { ResourceCardProps } from '../ResourceCard'
@@ -68,7 +68,7 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
       resourceNode
         ? {
             type: resourceNode.kind === 'Link' ? 'Web Page' : resourceNode.content.mimetype,
-            image: getMaybeAssetRefUrlOrDefaultImage(resourceNode.image, id, 'image') ?? '',
+            image: getMaybeAssetRefUrl(resourceNode.image),
             title: resourceNode.name,
             tags: resourceNode.categories.edges.filter(isEdgeNodeOfType(['IscedField'])).map(({ node }) => ({
               name: node.name,
@@ -90,7 +90,6 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
     [
       resourceNode,
       isOwner,
-      id,
       removeAction,
       myLikeEdgeId,
       myBookmarkedEdgeId,

@@ -5,16 +5,18 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import SaveIcon from '@material-ui/icons/Save'
-import { useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import Card from '../../components/atoms/Card/Card'
 import InputTextField from '../../components/atoms/InputTextField/InputTextField'
 import Modal from '../../components/atoms/Modal/Modal'
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
+import RoundButton from '../../components/atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
-import ListCard from '../../components/cards/ListCard/ListCard'
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
+import ListCard from '../../components/molecules/cards/ListCard/ListCard'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { FormikBag } from '../../lib/formik'
+import defaultBackgroud from '../../static/img/default-background.svg'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import { NewCollectionFormValues } from '../NewCollection/types'
 import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
@@ -79,10 +81,23 @@ export const Collection = withCtrl<CollectionProps>(
     const setFieldValue = form.setFieldValue
     const setTitleField = useCallback((_: string) => setFieldValue('title', _), [setFieldValue])
     const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
+
     const background = {
-      backgroundImage: 'url(' + form.values.image + ')',
+      backgroundImage: form.values.imageUrl ? 'url(' + form.values.imageUrl + ')' : 'url(' + defaultBackgroud + ')',
       backgroundSize: 'cover',
     }
+
+    const selectImage = () => {
+      document.getElementById('upload-image')?.click()
+    }
+
+    const uploadImage = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e?.currentTarget.files?.item(0)
+        selectedFile && setFieldValue('image', selectedFile)
+      },
+      [setFieldValue],
+    )
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
@@ -93,7 +108,7 @@ export const Collection = withCtrl<CollectionProps>(
             onClose={() => setIsShowingBackground(false)}
             style={{ maxWidth: '90%', maxHeight: '90%' }}
           >
-            <img src={form.values.image} alt="Cover"/>
+            <img src={form.values.image} alt="Cover" />
           </Modal>
         )}
         {isToDelete && deleteCollection && (
@@ -120,7 +135,12 @@ export const Collection = withCtrl<CollectionProps>(
         <div className="collection">
           <div className="content">
             <Card className="main-collection-card" hideBorderWhenSmall={true}>
-              <div className="image" style={background} onClick={() => setIsShowingBackground(true)}/>
+              <div className="image" style={background} onClick={() => !isEditing && setIsShowingBackground(true)}>
+                {isEditing && (
+                  <input id="upload-image" type="file" accept=".jpg,.jpeg,.png,.gif" onChange={uploadImage} hidden />
+                )}
+                {isEditing && <RoundButton className="change-image-button" type="edit" onClick={selectImage} />}
+              </div>
               <div className="info">
                 <div className="label">
                   <Trans>Collection</Trans>

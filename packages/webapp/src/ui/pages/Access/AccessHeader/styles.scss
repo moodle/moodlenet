@@ -3,7 +3,8 @@
   padding: 0 130px;
   display: flex;
   justify-content: center;
-  height: 60px;
+  height: 100%;
+  max-height: 60px;
   width: 100%;
   font-size: 0.7rem;
 
@@ -14,7 +15,7 @@
   .content {
     height: 100%;
     width: 100%;
-    max-width: 525px;
+    max-width: 1100px;
     display: flex;
     align-items: center;
     justify-content: space-between;

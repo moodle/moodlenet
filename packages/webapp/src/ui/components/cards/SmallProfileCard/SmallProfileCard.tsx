@@ -1,15 +1,17 @@
 import { Trans } from '@lingui/macro'
 import { Href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
+import defaultAvatar from '../../../static/img/default-avatar.svg'
+import defaultBackgroud from '../../../static/img/default-background.svg'
 import Card from '../../atoms/Card/Card'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
-import { OverallCard, OverallCardProps } from '../OverallCard/OverallCard'
+import { OverallCard, OverallCardProps } from '../../molecules/cards/OverallCard/OverallCard'
 import './styles.scss'
 
 export type SmallProfileCardProps = {
-  backgroundUrl: string
-  avatarUrl: string
+  backgroundUrl: string | null
+  avatarUrl: string | null
   displayName: string
   username: string
   organizationName: string
@@ -37,9 +39,9 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
   }) => {
     return (
       <Card className="small-profile-card" hover={true}>
-        <img className="background" src={backgroundUrl} alt="Background" />
+        <img className="background" src={backgroundUrl || defaultBackgroud} alt="Background" />
         <Link className="avatar" href={profileHref}>
-          <img src={avatarUrl} alt="Avatar" />
+          <img src={avatarUrl || defaultAvatar} alt="Avatar" />
         </Link>
         <div className="info">
           <Link className="profile-card-header" href={profileHref}>

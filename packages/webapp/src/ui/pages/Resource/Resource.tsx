@@ -8,17 +8,19 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
-import { useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import Card from '../../components/atoms/Card/Card'
 import Dropdown from '../../components/atoms/Dropdown/Dropdown'
 import InputTextField from '../../components/atoms/InputTextField/InputTextField'
 import Modal from '../../components/atoms/Modal/Modal'
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
+import RoundButton from '../../components/atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
 import { AddToCollectionsCard, CollectionItem } from '../../components/cards/AddToCollectionsCard/AddToCollectionsCard'
 import { tagList } from '../../elements/tags'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { FormikBag } from '../../lib/formik'
+import defaultBackgroud from '../../static/img/default-background.svg'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import { FollowTag, getResourceColorType } from '../../types'
 import { DropdownField, FormatDropdown } from '../NewResource/FieldsData'
@@ -103,7 +105,6 @@ export const Resource = withCtrl<ResourceProps>(
       updateResource()
       setIsEditing(false)
     }
-
     const actions = (
       <Card className="resource-action-card" hideBorderWhenSmall={true}>
         <PrimaryButton onClick={() => setIsAddingToMoodleLms(true)}>
@@ -143,6 +144,19 @@ export const Resource = withCtrl<ResourceProps>(
     const setLicenseField = useCallback((_: string) => setFieldValue('license', _), [setFieldValue])
     //const setCollectionsField = useCallback((_: string) => setFieldValue('collections', _), [setFieldValue])
     // console.log({ selectedCollections, collections })
+
+    const selectImage = () => {
+      document.getElementById('upload-image')?.click()
+    }
+
+    const uploadImage = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e?.currentTarget.files?.item(0)
+        selectedFile && setFieldValue('image', selectedFile)
+      },
+      [setFieldValue],
+    )
+
     const extraDetails = isEditing ? (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
         <Dropdown
@@ -223,59 +237,81 @@ export const Resource = withCtrl<ResourceProps>(
           <div className="title">
             <Trans>Subject</Trans>
           </div>
-          <div className="value">{form.values.category}</div>
+          <abbr className="value">{form.values.category}</abbr>
         </div>
-        <div className="detail">
-          <div className="title">
-            <Trans>License</Trans>
+        {form.values.license && (
+          <div className="detail">
+            <div className="title">
+              <Trans>License</Trans>
+            </div>
+            <abbr className="value" title={form.values.license}>
+              {form.values.license}
+            </abbr>
           </div>
-          <div className="value">{form.values.license}</div>
-        </div>
-        <div className="detail">
-          <div className="title">
-            <Trans>Type</Trans>
+        )}
+        {form.values.type && (
+          <div className="detail">
+            <div className="title">
+              <Trans>Type</Trans>
+            </div>
+            <abbr className="value" title={form.values.type}>
+              {form.values.type}
+            </abbr>
           </div>
-          <div className="value">{form.values.type}</div>
-        </div>
-        <div className="detail">
-          <div className="title">
-            <Trans>Level</Trans>
+        )}
+        {form.values.level && (
+          <div className="detail">
+            <div className="title">
+              <Trans>Level</Trans>
+            </div>
+            <abbr className="value" title={form.values.level}>
+              {form.values.level}
+            </abbr>
           </div>
-          <div className="value">{form.values.level}</div>
-        </div>
-        <div className="detail">
-          <div className="title">
-            <Trans>Original creation date</Trans>
+        )}
+        {(form.values.originalDateMonth || form.values.originalDateYear) && (
+          <div className="detail">
+            <div className="title">
+              <Trans>Original creation date</Trans>
+            </div>
+            <abbr className="value date" title={`${form.values.originalDateMonth} ${form.values.originalDateYear}`}>
+              <span>{form.values.originalDateMonth}</span>
+              <span>{form.values.originalDateYear}</span>
+            </abbr>
           </div>
-          <div className="value">
-            <span>{form.values.originalDateMonth}</span>
-            <span>{form.values.originalDateYear}</span>
+        )}
+        {form.values.language && (
+          <div className="detail">
+            <div className="title">
+              <Trans>Language</Trans>
+            </div>
+            <abbr className="value" title={form.values.language}>
+              {form.values.language}
+            </abbr>
           </div>
-        </div>
-        <div className="detail">
-          <div className="title">
-            <Trans>Language</Trans>
+        )}
+        {form.values.format && (
+          <div className="detail">
+            <div className="title">
+              <Trans>Format</Trans>
+            </div>
+            <abbr className="value" title={form.values.format}>
+              {form.values.format}
+            </abbr>
           </div>
-          <div className="value">{form.values.language}</div>
-        </div>
-        <div className="detail">
-          <div className="title">
-            <Trans>Format</Trans>
-          </div>
-          <div className="value">{form.values.format}</div>
-        </div>
+        )}
       </Card>
     )
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        {isShowingImage && typeof form.values.image === 'string' && (
+        {isShowingImage && typeof form.values.imageUrl === 'string' && (
           <Modal
             className="image-modal"
             closeButton={false}
             onClose={() => setIsShowingImage(false)}
             style={{ maxWidth: '90%', maxHeight: '90%' }}
           >
-            <img src={form.values.image} alt="Resource" />
+            <img src={form.values.imageUrl} alt="Resource" />
           </Modal>
         )}
         {isAddingToCollection && collections && setAddToCollections && (
@@ -424,12 +460,26 @@ export const Resource = withCtrl<ResourceProps>(
                   )}
                   {tags.length > 0 && <div className="tags scroll">{tagList(tags)}</div>}
                 </div>
-                <img
-                  className="image"
-                  src={typeof form.values.image === 'string' ? form.values.image : ''}
-                  alt="Background"
-                  onClick={() => setIsShowingImage(true)}
-                />
+                {(typeof form.values.imageUrl === 'string' || isEditing) && (
+                  <div className="image-container">
+                    <img
+                      className="image"
+                      src={typeof form.values.imageUrl === 'string' ? form.values.imageUrl : defaultBackgroud}
+                      alt="Background"
+                      onClick={() => setIsShowingImage(true)}
+                    />
+                    {isEditing && (
+                      <input
+                        id="upload-image"
+                        type="file"
+                        accept=".jpg,.jpeg,.png,.gif"
+                        onChange={uploadImage}
+                        hidden
+                      />
+                    )}
+                    {isEditing && <RoundButton className="change-image-button" type="edit" onClick={selectImage} />}
+                  </div>
+                )}
                 {isOwner ? (
                   <InputTextField
                     autoUpdate={true}

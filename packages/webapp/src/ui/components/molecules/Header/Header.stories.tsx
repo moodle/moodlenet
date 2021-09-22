@@ -1,6 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { href } from '../../elements/link'
+import { href } from '../../../elements/link'
 import { Header, HeaderPropsIdle } from './Header'
 
 const meta: ComponentMeta<typeof Header> = {

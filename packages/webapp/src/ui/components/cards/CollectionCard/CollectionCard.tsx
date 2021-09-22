@@ -4,12 +4,13 @@ import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import PersonIcon from '@material-ui/icons/Person'
 import { Href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
+import defaultBackgroud from '../../../static/img/default-background.svg'
 import '../../../styles/tags.css'
 import Card from '../../atoms/Card/Card'
 import './styles.scss'
 
 export type CollectionCardProps = {
-  imageUrl: string
+  imageUrl: string | null
   title: string
   collectionHref: Href
   isAuthenticated: boolean
@@ -36,7 +37,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
     collectionHref,
   }) => {
     const background = {
-      backgroundImage: 'url(' + imageUrl + ')',
+      backgroundImage: 'url(' + (imageUrl || defaultBackgroud) + ')',
       backgroundSize: 'cover',
     }
 

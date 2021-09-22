@@ -1,11 +1,12 @@
 import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
+import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useSeoContentId } from '../../../../context/Global/Seo'
 import { useSession } from '../../../../context/Global/Session'
-import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
+import { getMaybeAssetRefUrl, useUploadTempFile } from '../../../../helpers/data'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { href } from '../../../elements/link'
 // import { useLocalInstance } from '../../../../context/Global/LocalInstance'
@@ -87,6 +88,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
   ])
 
   const category = categoryEdge?.node.name ?? ''
+  const uploadTempFile = useUploadTempFile()
 
   const [formik, formBag] = useFormikBag<NewCollectionFormValues>({
     initialValues: {} as any,
@@ -94,12 +96,24 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       if (!formik.dirty || !collectionData || addRelationRes.loading || delRelationRes.loading || editRes.loading) {
         return
       }
+      const imageAssetRef: AssetRefInput = !vals.image
+        ? { location: '', type: 'NoChange' }
+        : typeof vals.image === 'string'
+        ? {
+            location: vals.image,
+            type: 'ExternalUrl',
+          }
+        : {
+            location: await uploadTempFile('image', vals.image),
+            type: 'TmpUpload',
+          }
       await edit({
         variables: {
           id,
           collInput: {
             description: vals.description,
             name: vals.title,
+            image: imageAssetRef,
           },
         },
       })
@@ -117,11 +131,29 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
           title,
           description,
           category,
-          image: getMaybeAssetRefUrlOrDefaultImage(image, id, 'image'),
+          image: getMaybeAssetRefUrl(image),
+          imageUrl: getMaybeAssetRefUrl(image),
         },
       })
     }
   }, [collectionData, fresetForm, category, id])
+
+  const formikSetFieldValue = formik.setFieldValue
+  useEffect(() => {
+    if (!(formik.values.image instanceof File)) {
+      formikSetFieldValue('imageUrl', formik.values.image)
+      return
+    }
+    const imageObjectUrl = URL.createObjectURL(formik.values.image)
+    // console.log(`CreatTING`, imageObjectUrl)
+    formikSetFieldValue('imageUrl', imageObjectUrl)
+    return () => {
+      // console.log(`reVOKING   `, imageObjectUrl)
+      imageObjectUrl && URL.revokeObjectURL(imageObjectUrl)
+    }
+  }, [formikSetFieldValue, formik.values.image])
+
+  // console.log(formik.values)
 
   const creatorEdge = narrowEdgeNodeOfType(['Profile'])(collectionData?.creator.edges[0])
   const creator = creatorEdge?.node
@@ -161,7 +193,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
         ),
       ),
       contributorCardProps: {
-        avatarUrl: getMaybeAssetRefUrlOrDefaultImage(creator?.avatar, creator?.id || id, 'icon'),
+        avatarUrl: getMaybeAssetRefUrl(creator?.avatar),
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
       },
@@ -181,7 +213,6 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     isAuthenticated,
     resourceEdges,
     creator,
-    id,
     formik.submitForm,
     myBookmarkedEdgeId,
     myFollowEdgeId,

@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import { Href, Link } from '../../../elements/link'
-import smallLogo from '../../../static/img/moodlenet-logo-small.svg'
-import Logo from '../../../static/img/moodlenet-logo.svg'
-import { Organization } from '../../../types'
+import { Href, Link } from '../../../../elements/link'
+import smallLogo from '../../../../static/img/moodlenet-logo-small.svg'
+import Logo from '../../../../static/img/moodlenet-logo.svg'
+import { Organization } from '../../../../types'
 import './styles.scss'
 
 export type HeaderTitleProps = {

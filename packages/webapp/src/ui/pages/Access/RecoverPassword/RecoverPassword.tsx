@@ -35,7 +35,6 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
         {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
         <div className={`recover-password-page ${requestSent ? 'success' : ''}`}>
           <AccessHeader {...accessHeaderProps} page={'login'} />
-          <div className="separator" />
           <div className={`recover-password-content ${requestSent ? 'success' : ''}`}>
             <Card>
               <Link href={loginHref}>
