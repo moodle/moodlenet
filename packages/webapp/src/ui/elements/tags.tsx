@@ -4,8 +4,8 @@ import { href, Link } from './link'
 export const tagList = (tags: FollowTag[]) => {
   return tags.map((tag, index) => {
     return (
-      <Link href={tag.subjectHomeHref}>
-        <div key={index} className={'tag tag' + tag.type}>
+      <Link href={tag.subjectHomeHref} key={index}>
+        <div className={'tag tag' + tag.type}>
           {tag.name}
         </div>
       </Link>

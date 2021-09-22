@@ -10,6 +10,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 6px 6px 6px 14px;
+  margin: 0 20px;
   border-radius: 4px;
   gap: 10px;
   position: fixed;
@@ -23,6 +24,9 @@
 
   > .close-button {
     cursor: pointer;
+    > span {
+      padding: 0 15px 0 0;
+    }
   }
 
   &.type-success {
