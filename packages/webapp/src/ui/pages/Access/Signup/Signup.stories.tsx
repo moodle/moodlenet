@@ -25,7 +25,7 @@ export const SignupStoryProps: SignupProps = {
   loginHref: href('Pages/Login/Default'),
   termsAndConditionsHref: href('#'),
   mainPageWrapperProps: {
-    userAcceptsCookies: null,
+    userAcceptsPolicies: null,
   },
 }
 

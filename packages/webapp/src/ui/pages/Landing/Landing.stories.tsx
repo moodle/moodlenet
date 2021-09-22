@@ -32,7 +32,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   trendCardProps: TrendCardStoryProps,
@@ -55,7 +55,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
     isAuthenticated: false,
     headerPageProps: HeaderPageLoggedOutStoryProps,
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   isAuthenticated: false,
@@ -66,7 +66,7 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
     headerPageProps: HeaderPageLoggedInOrganizationStoryProps,
     isAuthenticated: true,
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   trendCardProps: TrendCardStoryProps,
@@ -89,7 +89,7 @@ export const LandingOrganizationLoggedOutStoryProps: LandingProps = {
       headerProps: HeaderLoggedOutOrganizationStoryProps,
     },
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   isAuthenticated: false,
