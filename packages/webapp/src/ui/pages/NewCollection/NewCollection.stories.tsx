@@ -36,6 +36,7 @@ const initialFormValues: NewCollectionFormValues = {
   category: '',
   description: '',
   image: 'image',
+  imageUrl: 'image',
   title: '',
 }
 

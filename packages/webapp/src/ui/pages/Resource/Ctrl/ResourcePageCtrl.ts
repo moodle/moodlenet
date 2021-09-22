@@ -1,12 +1,13 @@
 import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
+import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { duration } from 'moment'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useSeoContentId } from '../../../../context/Global/Seo'
 import { useSession } from '../../../../context/Global/Session'
-import { getJustAssetRefUrl, getMaybeAssetRefUrlOrDefaultImage } from '../../../../helpers/data'
+import { getJustAssetRefUrl, getMaybeAssetRefUrl, useUploadTempFile } from '../../../../helpers/data'
 import {
   categoriesOptions,
   getGrade,
@@ -22,7 +23,7 @@ import {
   monthOptions,
   resGradeOptions,
   resTypeOptions,
-  yearsOptions
+  yearsOptions,
 } from '../../../../helpers/resource-relation-data-static-and-utils'
 import { useLMS } from '../../../../lib/moodleLMS/useSendToMoodle'
 import { href } from '../../../elements/link'
@@ -39,7 +40,7 @@ import {
   useDelResourceMutation,
   useDelResourceRelationMutation,
   useEditResourceMutation,
-  useResourcePageDataQuery
+  useResourcePageDataQuery,
 } from './ResourcePage.gen'
 
 export type ResourceCtrlProps = { id: ID }
@@ -87,12 +88,24 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
   const language = languageEdge?.node.name ?? ''
   const license = getLicenseOptField(licenseEdge?.node.code ?? '')
 
+  const uploadTempFile = useUploadTempFile()
   const [formik, formBag] = useFormikBag<NewResourceFormValues>({
     initialValues: {} as any,
     onSubmit: async vals => {
       if (!formik.dirty || !resourceData || addRelationRes.loading || delRelationRes.loading || editRes.loading) {
         return
       }
+      const imageAssetRef: AssetRefInput = !vals.image
+        ? { location: '', type: 'NoChange' }
+        : typeof vals.image === 'string'
+        ? {
+            location: vals.image,
+            type: 'ExternalUrl',
+          }
+        : {
+            location: await uploadTempFile('image', vals.image),
+            type: 'TmpUpload',
+          }
       const editResPr = edit({
         variables: {
           id,
@@ -103,6 +116,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
               originalDateMonth: vals.originalDateMonth,
               originalDateYear: vals.originalDateYear,
             }),
+            image: imageAssetRef,
           },
         },
       })
@@ -194,7 +208,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
           content: getJustAssetRefUrl(content),
           description,
           format: content.mimetype,
-          image: getMaybeAssetRefUrlOrDefaultImage(image, id, 'image'),
+          image: getMaybeAssetRefUrl(image),
+          imageUrl: getMaybeAssetRefUrl(image),
           contentType: content.ext ? 'Link' : 'File',
           name: '',
           ...orgDateStrings,
@@ -214,6 +229,21 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     session?.profile.myOwnCollections.edges,
     allMyOwnCollectionEdges,
   ])
+
+  const formikSetFieldValue = formik.setFieldValue
+  useEffect(() => {
+    if (!(formik.values.image instanceof File)) {
+      formikSetFieldValue('imageUrl', formik.values.image)
+      return
+    }
+    const imageObjectUrl = URL.createObjectURL(formik.values.image)
+    // console.log(`CreatTING`, imageObjectUrl)
+    formikSetFieldValue('imageUrl', imageObjectUrl)
+    return () => {
+      // console.log(`reVOKING   `, imageObjectUrl)
+      imageObjectUrl && URL.revokeObjectURL(imageObjectUrl)
+    }
+  }, [formikSetFieldValue, formik.values.image])
 
   const creatorEdge = narrowEdgeNodeOfType(['Profile'])(resourceData?.creator.edges[0])
 
@@ -278,7 +308,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       isOwner,
       liked,
       contributorCardProps: {
-        avatarUrl: getMaybeAssetRefUrlOrDefaultImage(creator?.avatar, creator?.id || id, 'icon'),
+        avatarUrl: getMaybeAssetRefUrl(creator?.avatar),
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
         timeSinceCreation: creatorEdge

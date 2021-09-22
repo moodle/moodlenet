@@ -155,11 +155,23 @@
           }
         }
 
-        > .image {
-          cursor: pointer;
+        > .image-container {
+          position: relative;
           width: 100%;
-          object-fit: cover;
-          border-radius: 20px;
+          > .image {
+            cursor: pointer;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+          }
+
+          > .change-image-button {
+            position: absolute;
+            right: 0;
+            top: 0;
+            z-index: 5;
+            padding: 10px;
+          }
         }
 
         > .description {
@@ -261,8 +273,6 @@
           font-size: 14px;
         }
         > .value {
-          display: flex;
-          gap: 8px;
           color: rgba(0, 0, 0, 0.5);
           height: 24px;
           width: 100%;
@@ -272,6 +282,11 @@
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+
+          &.date {
+            display: flex;
+            gap: 8px;
+          }
         }
       }
 

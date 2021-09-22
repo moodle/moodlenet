@@ -2,8 +2,9 @@ import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/
 import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useMemo } from 'react'
+import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../../context/Global/Session'
-import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../../helpers/data'
+import { getMaybeAssetRefUrl } from '../../../../../helpers/data'
 import { href } from '../../../../elements/link'
 import { CtrlHook } from '../../../../lib/ctrl'
 import {
@@ -16,6 +17,7 @@ import { SmallProfileCardProps } from '../SmallProfileCard'
 export type SmallProfileCardCtrlArg = { id: ID }
 export const useSmallProfileCardCtrl: CtrlHook<SmallProfileCardProps, SmallProfileCardCtrlArg> = ({ id }) => {
   const { session, isAuthenticated } = useSession()
+  const { org } = useLocalInstance()
   const { data, refetch } = useProfilePageUserDataQuery({
     variables: { profileId: id, myProfileId: session ? [session.profile.id] : [] },
   })
@@ -55,7 +57,7 @@ export const useSmallProfileCardCtrl: CtrlHook<SmallProfileCardProps, SmallProfi
     () =>
       profileNode
         ? {
-            backgroundUrl: getMaybeAssetRefUrlOrDefaultImage(profileNode.image, id, 'image') ?? '',
+            backgroundUrl: getMaybeAssetRefUrl(profileNode.image),
             displayName: profileNode.name,
             isFollowing: !!myFollowEdgeId,
             overallCardProps: {
@@ -64,8 +66,8 @@ export const useSmallProfileCardCtrl: CtrlHook<SmallProfileCardProps, SmallProfi
               kudos,
               years: 0,
             },
-            avatarUrl: getMaybeAssetRefUrlOrDefaultImage(profileNode.avatar, id, 'avatar') ?? '',
-            organizationName: 'organizationName',
+            avatarUrl: getMaybeAssetRefUrl(profileNode.avatar),
+            organizationName: org.name,
             toggleFollow,
             username: profileNode.name,
             isVerified: true,
@@ -74,7 +76,7 @@ export const useSmallProfileCardCtrl: CtrlHook<SmallProfileCardProps, SmallProfi
             profileHref: href(nodeGqlId2UrlPath(id)),
           }
         : null,
-    [profileNode, id, myFollowEdgeId, kudos, toggleFollow, isAuthenticated, isOwner],
+    [profileNode, id, myFollowEdgeId, kudos, org.name, toggleFollow, isAuthenticated, isOwner],
   )
   return SmallProfileCardUIProps && [SmallProfileCardUIProps]
 }

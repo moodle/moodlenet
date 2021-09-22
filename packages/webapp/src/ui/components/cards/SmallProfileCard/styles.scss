@@ -50,6 +50,9 @@
         text-overflow: ellipsis;
         font-size: 15px;
         font-weight: bold;
+        &:hover {
+          text-decoration: underline;
+        }
       }
 
       > .subtitle {

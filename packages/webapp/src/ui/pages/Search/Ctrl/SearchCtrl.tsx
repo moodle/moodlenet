@@ -6,7 +6,7 @@ import { usePaginateSearch } from '../../../../context/Global/GlobalSearch/pagin
 import { useSeo } from '../../../../context/Global/Seo'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
-import { useIscedfCardCtrl } from '../../../components/cards/SubjectCard/Ctrl/IscedfCardCtrl'
+import { useIscedfCardCtrl } from '../../../components/molecules/cards/SubjectCard/Ctrl/IscedfCardCtrl'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { SearchProps } from '../Search'

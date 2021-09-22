@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { TagListStory } from '../../elements/tags'
+import { TagListStory } from '../../../elements/tags'
 import { SubHeader, SubHeaderProps } from './SubHeader'
 
 const meta: ComponentMeta<typeof SubHeader> = {

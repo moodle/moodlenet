@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { href } from '../../../elements/link'
+import { href } from '../../../../elements/link'
 import { HeaderTitle, HeaderTitleProps } from './HeaderTitle'
 
 const meta: ComponentMeta<typeof HeaderTitle> = {
