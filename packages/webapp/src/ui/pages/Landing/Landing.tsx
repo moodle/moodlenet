@@ -22,7 +22,7 @@ export type LandingProps = {
 export const Landing = withCtrl<LandingProps>(
   ({ headerPageTemplateProps, trendCardProps, organization, image, setSearchText, isAuthenticated, signUpHref }) => {
     return (
-      <HeaderPageTemplate {...headerPageTemplateProps} hideSearchbox={true} cookiesAccepted={isAuthenticated}>
+      <HeaderPageTemplate {...headerPageTemplateProps} hideSearchbox={true}>
         <div className="landing">
           {!isAuthenticated ? (
             <div className="landing-title">

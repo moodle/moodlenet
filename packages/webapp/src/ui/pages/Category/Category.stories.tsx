@@ -21,6 +21,9 @@ export const CategoryStoryProps: CategoryProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
   isAuthenticated: true,
   title: 'Environment',
@@ -37,7 +40,7 @@ export const CategoryStoryProps: CategoryProps = {
     CollectionCardStoryProps,
     CollectionCardStoryProps,
     CollectionCardStoryProps,
-    CollectionCardStoryProps
+    CollectionCardStoryProps,
   ],
   resourceCardPropsList: [
     ResourceCardStoryProps,
@@ -55,9 +58,11 @@ export const CategoryLoggedOutStoryProps: CategoryProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedOutStoryProps,
     isAuthenticated: false,
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
   isAuthenticated: true,
-  
 }
 
 export const CategoryLoggedInStoryProps: CategoryProps = {

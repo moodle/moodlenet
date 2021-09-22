@@ -105,6 +105,9 @@ export const NewResourceStoryProps: NewResourceProps = {
     },
     isAuthenticated: true,
     showSubHeader: false,
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
   stepProps: uploadResourceProps,
 }

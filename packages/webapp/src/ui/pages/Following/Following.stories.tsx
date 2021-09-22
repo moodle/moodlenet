@@ -19,6 +19,9 @@ export const FollowingLoggedInStoryProps: FollowingProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
   browserProps: {
     ...BrowserFollowingStoryProps,
