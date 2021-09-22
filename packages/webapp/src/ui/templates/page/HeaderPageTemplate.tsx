@@ -2,9 +2,10 @@ import React from 'react'
 import Footer from '../../components/molecules/Footer/Footer'
 import { CP, withCtrl } from '../../lib/ctrl'
 import HeaderPage, { HeaderPageProps } from '../../pages/HeaderPage/HeaderPage'
-import { MainPageWrapper } from './MainPageWrapper'
+import { MainPageWrapper, MainPageWrapperProps } from './MainPageWrapper'
 
 export type HeaderPageTemplateProps = {
+  mainPageWrapperProps: CP<MainPageWrapperProps>
   headerPageProps: CP<HeaderPageProps>
   isAuthenticated: boolean
   showSubHeader?: boolean
@@ -13,9 +14,9 @@ export type HeaderPageTemplateProps = {
 }
 
 export const HeaderPageTemplate = withCtrl<HeaderPageTemplateProps>(
-  ({ headerPageProps, isAuthenticated, hideSearchbox, /*showSubHeader,*/ style, children }) => {
+  ({ headerPageProps, isAuthenticated, hideSearchbox, mainPageWrapperProps, /*showSubHeader,*/ style, children }) => {
     return (
-      <MainPageWrapper>
+      <MainPageWrapper {...mainPageWrapperProps}>
         <HeaderPage {...headerPageProps} isAuthenticated={isAuthenticated} hideSearchbox={hideSearchbox} />
         {/*<div className={`view ${isAuthenticated && showSubHeader ? 'double-header-page' : 'single-header-page'}`}   Uncomment when Tags implemented*/}
         <div className="view single-header-page" style={style}>

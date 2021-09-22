@@ -15,12 +15,18 @@ const SignupStory: ComponentStory<typeof Signup> = args => <Signup {...args} />
 
 export const SignupStoryProps: SignupProps = {
   accessHeaderProps: AccessHeaderStoryProps,
-  formBag: SBFormikBag<SignupFormValues>({ name: '', email: '', password: '' }, { submitForm: linkTo('', 'Email Sent') }),
+  formBag: SBFormikBag<SignupFormValues>(
+    { name: '', email: '', password: '' },
+    { submitForm: linkTo('', 'Email Sent') },
+  ),
   signupErrorMessage: null,
   requestSent: false,
   landingHref: href('Pages/Landing/Logged In'),
   loginHref: href('Pages/Login/Default'),
   termsAndConditionsHref: href('#'),
+  mainPageWrapperProps: {
+    userAcceptsCookies: null,
+  },
 }
 
 export const SignupErrorStoryProps: SignupProps = {
@@ -40,7 +46,6 @@ SignUp.parameters = { layout: 'fullscreen' }
 export const SignUpError = SignupStory.bind({})
 SignUpError.args = SignupErrorStoryProps
 SignUpError.parameters = { layout: 'fullscreen' }
-
 
 export const EmailSent = SignupStory.bind({})
 EmailSent.args = EmailSendStoryProps

@@ -19,13 +19,16 @@ export const BookmarksLoggedInStoryProps: BookmarksProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
   browserProps: {
     ...BrowserLoggedInStoryProps,
     subjectCardPropsList: null,
     smallProfileCardPropsList: null,
-    setSortBy: null
-  }
+    setSortBy: null,
+  },
 }
 
 export const BookmarksLoggedOutStoryProps: BookmarksProps = {
@@ -33,13 +36,16 @@ export const BookmarksLoggedOutStoryProps: BookmarksProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedOutStoryProps,
     isAuthenticated: false,
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
   browserProps: {
     ...BrowserLoggedOutStoryProps,
     subjectCardPropsList: null,
     smallProfileCardPropsList: null,
-    setSortBy: null
-  }
+    setSortBy: null,
+  },
 }
 
 export const LoggedIn = BookmarksStory.bind({})

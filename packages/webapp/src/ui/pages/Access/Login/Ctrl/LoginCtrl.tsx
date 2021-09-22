@@ -5,6 +5,7 @@ import { mainPath, useRedirectProfileHomeIfLoggedIn } from '../../../../../hooks
 import { href } from '../../../../elements/link'
 import { CtrlHook, ctrlHook } from '../../../../lib/ctrl'
 import { SubmitForm, useFormikBag } from '../../../../lib/formik'
+import { useMainPageWrapperCtrl } from '../../../../templates/page/MainPageWrapperCtrl.tsx/MainPageWrapperCtrl'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { LoginFormValues, LoginProps } from '../Login'
 
@@ -39,6 +40,7 @@ export const useLoginCtrl: CtrlHook<LoginProps, { activationEmailToken: Maybe<st
       // landingHref,
       signupHref,
       recoverPasswordHref,
+      mainPageWrapperProps: ctrlHook(useMainPageWrapperCtrl, {}, 'main-page-wrapper'),
     }
     return loginProps
   }, [formBag, wrongCreds])

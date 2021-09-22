@@ -20,6 +20,9 @@ export const LoginStoryProps: LoginProps = {
   // landingHref: href('Pages/Landing/Logged In'),
   signupHref: href('Pages/SignUp/Sign Up'),
   recoverPasswordHref: href('Pages/Recover Password/Recover'),
+  mainPageWrapperProps: {
+    userAcceptsCookies: null,
+  },
 }
 
 export const LoginErrorStoryProps: LoginProps = {

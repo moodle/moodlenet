@@ -66,6 +66,9 @@ export const NewCollectionStoryProps: NewCollectionProps = {
     },
     isAuthenticated: true,
     showSubHeader: false,
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
   stepProps: CreateCollectionStoryProps,
 }

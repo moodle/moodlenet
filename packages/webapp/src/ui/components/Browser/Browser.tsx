@@ -73,7 +73,6 @@ export const Browser = withCtrl<BrowserProps>(
       let numActiveFilters = 0
       let activeFilter
       filterTypes.forEach((filterType: FilterType) => {
-        console.log(filterType + ' ' + filters[filterType])
         if (filters[filterType]) {
           numActiveFilters++
           activeFilter = filterType

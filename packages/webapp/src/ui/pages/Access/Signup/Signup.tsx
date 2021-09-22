@@ -8,12 +8,13 @@ import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryBut
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
-import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
+import { MainPageWrapper, MainPageWrapperProps } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
 export type SignupFormValues = { name: string; email: string; password: string }
 export type SignupProps = {
+  mainPageWrapperProps: CP<MainPageWrapperProps>
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
   formBag: FormikBag<SignupFormValues>
   signupErrorMessage: string | null
@@ -24,7 +25,15 @@ export type SignupProps = {
 }
 
 export const Signup = withCtrl<SignupProps>(
-  ({ accessHeaderProps, formBag, requestSent, loginHref, signupErrorMessage, termsAndConditionsHref }) => {
+  ({
+    mainPageWrapperProps,
+    accessHeaderProps,
+    formBag,
+    requestSent,
+    loginHref,
+    signupErrorMessage,
+    termsAndConditionsHref,
+  }) => {
     const [form, attrs] = formBag
 
     // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -42,7 +51,7 @@ export const Signup = withCtrl<SignupProps>(
     }
 
     return (
-      <MainPageWrapper>
+      <MainPageWrapper {...mainPageWrapperProps}>
         {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
         <div className={`signup-page ${requestSent ? 'success' : ''}`}>
           <AccessHeader {...accessHeaderProps} page={'signup'} />
