@@ -11,6 +11,7 @@ export type SnackbarProps = {
   actions?: React.ReactNode
   icon?: React.ReactNode
   showIcon?: boolean
+  buttonText?: string
   style?: React.CSSProperties
   type?: 'error' | 'warning' | 'info' | 'success'
   className?: string
@@ -26,6 +27,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   icon,
   showIcon,
   style,
+  buttonText,
   className,
   type,
   autoHideDuration,
@@ -78,7 +80,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
       <div className="content">{children}</div>
       {actions && <div className="actions">{actions}</div>}
       <div className="close-button" onClick={handleonClose}>
-        <CloseRoundedIcon />
+        {buttonText ? <span>{buttonText}</span> : <CloseRoundedIcon />}
       </div>
     </Card>
   )
