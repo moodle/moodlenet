@@ -25,6 +25,7 @@ export const CreateCollectionStoryProps: CreateCollectionProps = {
   formBag: SBFormikBag<NewCollectionFormValues>({
     category: '',
     description: '',
+    imageUrl: '',
     image: '',
     // resources: [],
     title: '',

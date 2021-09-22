@@ -5,6 +5,7 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import { Href, Link } from '../../../elements/link'
 import { tagList } from '../../../elements/tags'
 import { withCtrl } from '../../../lib/ctrl'
+import defaultBackgroud from '../../../static/img/default-background.svg'
 import '../../../styles/tags.css'
 import { FollowTag } from '../../../types'
 import Card from '../../atoms/Card/Card'
@@ -15,7 +16,7 @@ export type ResourceCardProps = {
   tags?: FollowTag[]
   className?: string
   direction?: 'vertical' | 'horizontal'
-  image: string
+  image: string | null
   type: string //'Video' | 'Web Page' | 'Moodle Book'
   title: string
   resourceHomeHref?: Href
@@ -56,7 +57,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
   }) => {
     const content = (color: string) => (
       <div className="content">
-        <img className="image" src={image} alt="Background" />
+        <img className="image" src={image || defaultBackgroud} alt="Background" />
         <div className="resource-card-header">
           <div className="type-and-actions">
             <div className="type" style={{ color: color }}>
