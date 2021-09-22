@@ -18,7 +18,7 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
   const { updateSeoMeta } = useSeo()
   useEffect(() => {
     updateSeoMeta({
-      title: t`find "${text}"`,
+      title: t`search` + ' ' + text,
     })
   }, [updateSeoMeta, text])
 
