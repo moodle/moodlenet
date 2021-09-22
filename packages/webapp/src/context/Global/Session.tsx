@@ -15,6 +15,8 @@ import {
   useSignUpMutation,
 } from './Session/session.gen'
 
+const USER_ACCEPTED_COOKIES_STORAGE_KEY = 'USER_ACCEPTED_COOKIES'
+
 const LAST_SESSION_EMAIL_STORAGE_KEY = 'LAST_SESSION_EMAIL'
 const LAST_SESSION_TOKEN_STORAGE_KEY = 'LAST_SESSION_TOKEN'
 const getLastSession = (): LastSession => {
@@ -62,6 +64,7 @@ export type SessionContextType = {
     recoverPasswordToken: string
   }): Promise<ChangePasswordWarnMessage | null>
   firstLogin: boolean
+  userMustAcceptCookies: (() => unknown) | null
 }
 
 export const [useSession, ProvideSession] = createCtx<SessionContextType>('Session')
@@ -149,6 +152,15 @@ export const SessionProvider: FC = ({ children }) => {
     [changeRecoverPasswordMut, changeRecoverPasswordMutResp.loading],
   )
 
+  const [userAcceptedCookies, setUserAcceptedCookies] = useState(
+    localStorage.getItem(USER_ACCEPTED_COOKIES_STORAGE_KEY) === 'true',
+  )
+  //const userMustAcceptCookies = useState<null|(()=>unknown)>()
+  const userAcceptCookiesCb = useCallback(() => {
+    setUserAcceptedCookies(true)
+    localStorage.setItem(USER_ACCEPTED_COOKIES_STORAGE_KEY, 'true')
+  }, [])
+
   useEffect(() => {
     setToken(lastSession.jwt ?? null)
     storeLastSession(lastSession)
@@ -170,11 +182,12 @@ export const SessionProvider: FC = ({ children }) => {
       lastSessionJwt: lastSession.jwt ?? null,
       recoverPassword,
       changeRecoverPassword,
+      userMustAcceptCookies: userAcceptedCookies ? null : userAcceptCookiesCb,
     }),
     [
       logout,
       login,
-      // activateNewUser,
+      firstLogin,
       signUp,
       session,
       loading,
@@ -182,9 +195,11 @@ export const SessionProvider: FC = ({ children }) => {
       lastSession.jwt,
       recoverPassword,
       changeRecoverPassword,
+      userAcceptedCookies,
+      userAcceptCookiesCb,
       getSessionLazyQ,
-      firstLogin,
     ],
   )
+  console.log({ __: ctx.userMustAcceptCookies })
   return <ProvideSession value={ctx}>{!sessionQResult.called ? null : children}</ProvideSession>
 }

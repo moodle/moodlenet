@@ -6,7 +6,7 @@ import { href } from '../../elements/link'
 import {
   HeaderPageLoggedInOrganizationStoryProps,
   HeaderPageLoggedInStoryProps,
-  HeaderPageLoggedOutStoryProps
+  HeaderPageLoggedOutStoryProps,
 } from '../HeaderPage/HeaderPage.stories'
 import { Landing, LandingProps } from './Landing'
 
@@ -31,26 +31,32 @@ export const LandingLoggedInStoryProps: LandingProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
   trendCardProps: TrendCardStoryProps,
   organization: {
     name: 'MoodleNet',
     introTitle: 'Join our world-wide educators social network',
-    intro:`Share and curate open educational resources.\n
+    intro: `Share and curate open educational resources.\n
             Integrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.\n
             Build your profile as an educator.`,
   },
   image: 'https://picsum.photos/200/100',
   setSearchText: action('setSearchText'),
   isAuthenticated: true,
-  signUpHref: href('Pages/SignUp/Sign Up')
+  signUpHref: href('Pages/SignUp/Sign Up'),
 }
 
 export const LandingLoggedOutStoryProps: LandingProps = {
   ...LandingLoggedInStoryProps,
   headerPageTemplateProps: {
     isAuthenticated: false,
-    headerPageProps: HeaderPageLoggedOutStoryProps
+    headerPageProps: HeaderPageLoggedOutStoryProps,
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
   isAuthenticated: false,
 }
@@ -59,6 +65,9 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInOrganizationStoryProps,
     isAuthenticated: true,
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
   trendCardProps: TrendCardStoryProps,
   organization: {
@@ -68,8 +77,7 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
   image: 'https://picsum.photos/200/100',
   setSearchText: action('setSearchText'),
   isAuthenticated: true,
-  signUpHref: href('Pages/SignUp/Sign Up')
-
+  signUpHref: href('Pages/SignUp/Sign Up'),
 }
 
 export const LandingOrganizationLoggedOutStoryProps: LandingProps = {
@@ -79,6 +87,9 @@ export const LandingOrganizationLoggedOutStoryProps: LandingProps = {
     headerPageProps: {
       ...HeaderPageLoggedInStoryProps,
       headerProps: HeaderLoggedOutOrganizationStoryProps,
+    },
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
     },
   },
   isAuthenticated: false,

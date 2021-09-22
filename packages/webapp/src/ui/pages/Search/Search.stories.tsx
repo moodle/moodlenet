@@ -20,6 +20,9 @@ export const SearchStoryProps: SearchProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
   browserProps: BrowserLoggedInStoryProps,
 }
@@ -33,7 +36,10 @@ export const SearchLoggedOutStoryProps: SearchProps = {
       headerProps: HeaderLoggedOutStoryProps,
       subHeaderProps: { tags: [] },
     },
-  }, 
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
+  },
   browserProps: BrowserLoggedOutStoryProps,
 }
 
