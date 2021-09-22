@@ -1,15 +1,19 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { CollectionCardLoggedOutStoryProps, CollectionCardOwnerStoryProps, CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
+import {
+  CollectionCardLoggedOutStoryProps,
+  CollectionCardOwnerStoryProps,
+  CollectionCardStoryProps,
+} from '../../components/cards/CollectionCard/CollectionCard.stories'
 import {
   ProfileCardLoggedInStoryProps,
   ProfileCardOwnerStoryProps,
-  ProfileCardStoryProps
+  ProfileCardStoryProps,
 } from '../../components/cards/ProfileCard/ProfileCard.stories'
 import {
   ResourceCardLoggedInStoryProps,
   ResourceCardLoggedOutStoryProps,
-  ResourceCardOwnerStoryProps
+  ResourceCardOwnerStoryProps,
 } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { OverallCardStoryProps } from '../../components/molecules/cards/OverallCard/OverallCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/molecules/Header/Header.stories'
@@ -39,12 +43,19 @@ export const ProfileStoryProps: ProfileProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
   overallCardProps: OverallCardStoryProps,
   profileCardProps: ProfileCardStoryProps,
   // scoreCardProps: ScoreCardStoryProps,
   collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
-  resourceCardPropsList: [ResourceCardLoggedInStoryProps, ResourceCardLoggedInStoryProps, ResourceCardLoggedInStoryProps],
+  resourceCardPropsList: [
+    ResourceCardLoggedInStoryProps,
+    ResourceCardLoggedInStoryProps,
+    ResourceCardLoggedInStoryProps,
+  ],
   displayName: 'Juanito',
 }
 
@@ -62,12 +73,16 @@ export const ProfileLoggedOutStoryProps: ProfileProps = {
         tags: [],
       },
     },
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
-  collectionCardPropsList: [CollectionCardLoggedOutStoryProps, CollectionCardLoggedOutStoryProps, CollectionCardLoggedOutStoryProps],
-  resourceCardPropsList: [
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
+  collectionCardPropsList: [
+    CollectionCardLoggedOutStoryProps,
+    CollectionCardLoggedOutStoryProps,
+    CollectionCardLoggedOutStoryProps,
   ],
+  resourceCardPropsList: [ResourceCardLoggedOutStoryProps, ResourceCardLoggedOutStoryProps],
 }
 
 export const ProfileLoggedInStoryProps: ProfileProps = {
@@ -82,17 +97,17 @@ export const ProfileLoggedInStoryProps: ProfileProps = {
 export const ProfileOwnerStoryProps: ProfileProps = {
   ...ProfileLoggedInStoryProps,
   profileCardProps: ProfileCardOwnerStoryProps,
-  collectionCardPropsList: [CollectionCardOwnerStoryProps, CollectionCardOwnerStoryProps, CollectionCardOwnerStoryProps],
-  resourceCardPropsList: [
-    ResourceCardOwnerStoryProps,
-    ResourceCardOwnerStoryProps,
-    ResourceCardOwnerStoryProps,
+  collectionCardPropsList: [
+    CollectionCardOwnerStoryProps,
+    CollectionCardOwnerStoryProps,
+    CollectionCardOwnerStoryProps,
   ],
+  resourceCardPropsList: [ResourceCardOwnerStoryProps, ResourceCardOwnerStoryProps, ResourceCardOwnerStoryProps],
 }
 
 export const ProfileActivatedStoryProps: ProfileProps = {
   ...ProfileOwnerStoryProps,
-  showAccountCreationSuccessAlert: true
+  showAccountCreationSuccessAlert: true,
 }
 
 export const LoggedOut = ProfileStory.bind({})

@@ -6,12 +6,13 @@ import TertiaryButton from '../../../components/atoms/TertiaryButton/TertiaryBut
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
-import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
+import { MainPageWrapper, MainPageWrapperProps } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
 export type LoginFormValues = { email: string; password: string }
 export type LoginProps = {
+  mainPageWrapperProps: CP<MainPageWrapperProps>
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
   formBag: FormikBag<LoginFormValues>
   wrongCreds: boolean
@@ -21,7 +22,7 @@ export type LoginProps = {
 }
 
 export const Login = withCtrl<LoginProps>(
-  ({ accessHeaderProps, formBag, signupHref, recoverPasswordHref, wrongCreds }) => {
+  ({ accessHeaderProps, formBag, signupHref, recoverPasswordHref, wrongCreds, mainPageWrapperProps }) => {
     const [form, attrs] = formBag
 
     // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -31,7 +32,7 @@ export const Login = withCtrl<LoginProps>(
     // }
 
     return (
-      <MainPageWrapper>
+      <MainPageWrapper {...mainPageWrapperProps}>
         {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
         <div className="login-page">
           <AccessHeader {...accessHeaderProps} page={'login'} />

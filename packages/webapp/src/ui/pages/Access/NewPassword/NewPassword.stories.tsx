@@ -18,6 +18,9 @@ export const NewPasswordStoryProps: NewPasswordProps = {
     newPassword: '',
   }),
   newPasswordErrorMessage: null,
+  mainPageWrapperProps: {
+    userAcceptsCookies: null,
+  },
 }
 
 export const NewPasswordErrorStoryProps: NewPasswordProps = {

@@ -61,6 +61,9 @@ export const ResourceStoryProps: ResourceProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
+    },
   },
   isAuthenticated: true,
   isOwner: false,
@@ -112,6 +115,9 @@ export const ResourceLinkLoggedOutStoryProps: ResourceProps = {
       subHeaderProps: {
         tags: [],
       },
+    },
+    mainPageWrapperProps: {
+      userAcceptsCookies: null,
     },
   },
   isAuthenticated: false,
