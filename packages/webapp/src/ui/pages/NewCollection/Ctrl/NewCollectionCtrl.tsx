@@ -26,6 +26,7 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
     initialValues: {
       description: '',
       image: null,
+      imageUrl: null,
       title: '',
       category: '',
     },

@@ -9,7 +9,7 @@ import {
   LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown
+  YearsDropdown,
 } from './FieldsData'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'
@@ -51,6 +51,7 @@ const initialFormValues: NewResourceFormValues = {
   description: '',
   format: '',
   image: 'image',
+  imageUrl: 'image',
   language: '',
   level: '',
   license: '',
@@ -72,13 +73,13 @@ const basicDataFormValue: NewResourceFormValues = {
 const basicLinkDataFormValue: NewResourceFormValues = {
   ...initialFormValues,
   content: 'https://moodle.com/awesome-content',
-  contentType: 'Link'
+  contentType: 'Link',
 }
 
 const advancedDataFormValue: NewResourceFormValues = {
   ...initialFormValues,
   license: 'CC-BY-NC (Attribution-NonCommercial)',
-  category: '0021 Literacy and numeracy'
+  category: '0021 Literacy and numeracy',
 }
 
 const formBag = SBFormikBag<NewResourceFormValues>(initialFormValues)

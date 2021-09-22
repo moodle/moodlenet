@@ -19,7 +19,7 @@ import {
   monthOptions,
   resGradeOptions,
   resTypeOptions,
-  yearsOptions
+  yearsOptions,
 } from '../../../../helpers/resource-relation-data-static-and-utils'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useFormikBag } from '../../../lib/formik'
@@ -30,7 +30,7 @@ import { UploadResourceProps } from '../UploadResource/UploadResource'
 import {
   useCreateResourceMutation,
   useCreateResourceRelationMutation,
-  useNewResourceDataPageLazyQuery
+  useNewResourceDataPageLazyQuery,
 } from './NewResourceCtrl.gen'
 
 const initialSetStepProps: DistOmit<UploadResourceProps, 'formBag' | 'deleteContent' | 'nextStep'> = {
@@ -69,6 +69,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
       description: '',
       format: null,
       image: null,
+      imageUrl: null,
       language: null,
       level: null,
       license: null,
@@ -92,7 +93,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
     // setImageUrl('')
     // }
     // sformSetField('content', '')
-  }, [sform/*sformSetField*/]) //TODO Added sform as it was asking it and throwing error otherwise
+  }, [sform /*sformSetField*/]) //TODO Added sform as it was asking it and throwing error otherwise
   // }, [sform.values.content, sform.values.image, sformSetField])
 
   type StepProps = DistOmit<NewResourceProps['stepProps'], 'nextStep'>
@@ -146,7 +147,12 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           //   categories,
         }
       } else if (stepProps.state === 'EditData') {
-        if (form.values.title && form.values.description && form.values.category && (form.values.contentType === 'File' ? form.values.license : true)) {
+        if (
+          form.values.title &&
+          form.values.description &&
+          form.values.category &&
+          (form.values.contentType === 'File' ? form.values.license : true)
+        ) {
           return () => {
             setNextStepProps({
               step: 'AddToCollectionsStep',

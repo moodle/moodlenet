@@ -32,6 +32,7 @@ export const ExtraDetailsStoryProps: ExtraDetailsProps = {
     description: '',
     format: '',
     image: '',
+    imageUrl: '',
     language: '',
     level: '',
     license: '',

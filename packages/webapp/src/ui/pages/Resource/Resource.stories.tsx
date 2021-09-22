@@ -12,7 +12,7 @@ import {
   LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown
+  YearsDropdown,
 } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
@@ -46,6 +46,7 @@ export const resourceFormBag: NewResourceFormValues = {
     'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
   format: 'Portal / main site',
   image: 'https://picsum.photos/200/100',
+  imageUrl: 'https://picsum.photos/200/100',
   language: 'Spanish',
   level: '1 Primary education',
   license: 'CCO (Public domain)',
@@ -95,7 +96,7 @@ export const ResourceStoryProps: ResourceProps = {
   toggleBookmark: action('toggleBookmark'),
   setAddToCollections: action('setAddToCollection'),
   sendToMoodleLms: action('Send to Moodle LMS'),
-  deleteResource: action('Delete Resource')
+  deleteResource: action('Delete Resource'),
 }
 
 export const ResourceLinkLoggedOutStoryProps: ResourceProps = {

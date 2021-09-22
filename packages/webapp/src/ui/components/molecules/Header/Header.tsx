@@ -62,7 +62,7 @@ export const Header = withCtrl<HeaderProps>(props => {
   }
   const { me, organization } = props
   const avatarUrl = me?.avatar || defaultAvatar
-  console.log({ avatarUrl })
+  // console.log({ avatarUrl })
   return (
     <div className="header">
       <div className="content">
