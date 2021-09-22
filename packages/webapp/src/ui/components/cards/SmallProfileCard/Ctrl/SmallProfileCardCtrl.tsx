@@ -4,7 +4,7 @@ import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useMemo } from 'react'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../../context/Global/Session'
-import { getMaybeAssetRefUrl, getMaybeAssetRefUrlOrDefaultImage } from '../../../../../helpers/data'
+import { getMaybeAssetRefUrl } from '../../../../../helpers/data'
 import { href } from '../../../../elements/link'
 import { CtrlHook } from '../../../../lib/ctrl'
 import {
@@ -57,7 +57,7 @@ export const useSmallProfileCardCtrl: CtrlHook<SmallProfileCardProps, SmallProfi
     () =>
       profileNode
         ? {
-            backgroundUrl: getMaybeAssetRefUrlOrDefaultImage(profileNode.image, id, 'image') ?? '',
+            backgroundUrl: getMaybeAssetRefUrl(profileNode.image),
             displayName: profileNode.name,
             isFollowing: !!myFollowEdgeId,
             overallCardProps: {
@@ -66,7 +66,7 @@ export const useSmallProfileCardCtrl: CtrlHook<SmallProfileCardProps, SmallProfi
               kudos,
               years: 0,
             },
-            avatarUrl: getMaybeAssetRefUrl(profileNode.avatar) ?? '',
+            avatarUrl: getMaybeAssetRefUrl(profileNode.avatar),
             organizationName: org.name,
             toggleFollow,
             username: profileNode.name,

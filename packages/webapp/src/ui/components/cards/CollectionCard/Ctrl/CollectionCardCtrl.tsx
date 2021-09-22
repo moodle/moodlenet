@@ -5,7 +5,7 @@ import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useCallback, useMemo } from 'react'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../../context/Global/Session'
-import { getMaybeAssetRefUrlOrDefaultImage } from '../../../../../helpers/data'
+import { getMaybeAssetRefUrl } from '../../../../../helpers/data'
 import { href } from '../../../../elements/link'
 import { CtrlHook } from '../../../../lib/ctrl'
 import { CollectionCardProps } from '../CollectionCard'
@@ -73,7 +73,7 @@ export const useCollectionCardCtrl: CtrlHook<ProvidesProps, CollectionCardCtrlAr
         ? {
             organization: localOrg.name,
             title: collectionNode.name,
-            imageUrl: getMaybeAssetRefUrlOrDefaultImage(collectionNode.image, id, 'image'),
+            imageUrl: getMaybeAssetRefUrl(collectionNode.image),
             collectionHref: href(nodeGqlId2UrlPath(id)),
             following: !!myFollowEdgeId,
             bookmarked: !!myBookmarkedEdgeId,

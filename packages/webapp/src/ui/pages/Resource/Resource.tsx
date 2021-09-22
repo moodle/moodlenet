@@ -105,7 +105,6 @@ export const Resource = withCtrl<ResourceProps>(
       updateResource()
       setIsEditing(false)
     }
-
     const actions = (
       <Card className="resource-action-card" hideBorderWhenSmall={true}>
         <PrimaryButton onClick={() => setIsAddingToMoodleLms(true)}>
@@ -305,14 +304,14 @@ export const Resource = withCtrl<ResourceProps>(
     )
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        {isShowingImage && typeof form.values.image === 'string' && (
+        {isShowingImage && typeof form.values.imageUrl === 'string' && (
           <Modal
             className="image-modal"
             closeButton={false}
             onClose={() => setIsShowingImage(false)}
             style={{ maxWidth: '90%', maxHeight: '90%' }}
           >
-            <img src={form.values.image} alt="Resource" />
+            <img src={form.values.imageUrl} alt="Resource" />
           </Modal>
         )}
         {isAddingToCollection && collections && setAddToCollections && (
@@ -461,11 +460,11 @@ export const Resource = withCtrl<ResourceProps>(
                   )}
                   {tags.length > 0 && <div className="tags scroll">{tagList(tags)}</div>}
                 </div>
-                {(typeof form.values.image === 'string' || isEditing) && (
+                {(typeof form.values.imageUrl === 'string' || isEditing) && (
                   <div className="image-container">
                     <img
                       className="image"
-                      src={typeof form.values.image === 'string' ? form.values.image : defaultBackgroud}
+                      src={typeof form.values.imageUrl === 'string' ? form.values.imageUrl : defaultBackgroud}
                       alt="Background"
                       onClick={() => setIsShowingImage(true)}
                     />

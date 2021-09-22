@@ -7,5 +7,6 @@ export type NewCollectionFormValues = {
   description: string
   category: Category
   image: Url | File | null
+  imageUrl: Url | null
   // resources: Pick<NewResourceFormValues, 'title' | 'type' | 'image' | 'description'>[]
 }

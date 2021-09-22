@@ -32,6 +32,7 @@ export const UploadResourceStoryProps: UploadResourceProps = {
     description: '',
     format: '',
     image: '',
+    imageUrl: '',
     language: '',
     level: '',
     license: '',
