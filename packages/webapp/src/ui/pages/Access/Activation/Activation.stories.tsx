@@ -13,7 +13,10 @@ const ActivationStory: ComponentStory<typeof Activation> = args => <Activation {
 
 export const ActivationStoryProps: ActivationProps = {
   accessHeaderProps: AccessHeaderStoryProps,
-  loginHref: href('Pages/Login/Default')
+  loginHref: href('Pages/Login/Default'),
+  mainPageWrapperProps: {
+    userAcceptsCookies: null,
+  },
 }
 
 export const ActivationPage = ActivationStory.bind({})

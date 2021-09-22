@@ -4,6 +4,7 @@ import { mainPath, useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/n
 import { href } from '../../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { SubmitForm, useFormikBag } from '../../../../lib/formik'
+import { useMainPageWrapperCtrl } from '../../../../templates/page/MainPageWrapperCtrl.tsx/MainPageWrapperCtrl'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { SignupFormValues, SignupProps } from '../Signup'
 const landingHref = href(mainPath.landing)
@@ -39,6 +40,7 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
       landingHref,
       loginHref,
       termsAndConditionsHref,
+      mainPageWrapperProps: ctrlHook(useMainPageWrapperCtrl, {}, 'main-page-wrapper'),
     }
     return signupProps
   }, [formBag, signupErrorMessage, requestSent])

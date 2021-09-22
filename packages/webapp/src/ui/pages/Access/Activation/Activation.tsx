@@ -3,19 +3,20 @@ import Card from '../../../components/atoms/Card/Card'
 import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
-import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
+import { MainPageWrapper, MainPageWrapperProps } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
 export type ActivationFormValues = { name: string; password: string }
 export type ActivationProps = {
+  mainPageWrapperProps: CP<MainPageWrapperProps>
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
   loginHref: Href
 }
 
-export const Activation = withCtrl<ActivationProps>(({ accessHeaderProps, loginHref }) => {
+export const Activation = withCtrl<ActivationProps>(({ mainPageWrapperProps, accessHeaderProps, loginHref }) => {
   return (
-    <MainPageWrapper>
+    <MainPageWrapper {...mainPageWrapperProps}>
       <div className="activation-page">
         <AccessHeader {...accessHeaderProps} page={'activation'} />
         <div className="main-content">
