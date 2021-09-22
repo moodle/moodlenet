@@ -9,7 +9,7 @@ const meta: ComponentMeta<typeof RecoverPassword> = {
   title: 'Pages/Recover Password',
   component: RecoverPassword,
   excludeStories: ['RecoverPasswordErrorStoryProps', 'RecoverPasswordStoryProps', 'EmailSendStoryProps'],
-  parameters: { layout: 'fullscreen' }
+  parameters: { layout: 'fullscreen' },
 }
 
 const RecoverPasswordStory: ComponentStory<typeof RecoverPassword> = args => <RecoverPassword {...args} />
@@ -21,6 +21,9 @@ export const RecoverPasswordStoryProps: RecoverPasswordProps = {
   requestSent: false,
   landingHref: href('Pages/Landing/Logged In'),
   loginHref: href('Pages/Login/Default'),
+  mainPageWrapperProps: {
+    userAcceptsCookies: null,
+  },
 }
 
 export const RecoverPasswordErrorStoryProps: RecoverPasswordProps = {

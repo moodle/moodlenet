@@ -3,6 +3,7 @@ import { useSession } from '../../../../../context/Global/Session'
 import { useRedirectProfileHomeIfLoggedIn } from '../../../../../hooks/glob/nav'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { SubmitForm, useFormikBag } from '../../../../lib/formik'
+import { useMainPageWrapperCtrl } from '../../../../templates/page/MainPageWrapperCtrl.tsx/MainPageWrapperCtrl'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { NewPasswordFormValues, NewPasswordProps } from '../NewPassword'
 
@@ -28,6 +29,7 @@ export const useNewPasswordCtrl: CtrlHook<NewPasswordProps, { recoverPasswordTok
       accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'New Password Access Header'),
       formBag,
       newPasswordErrorMessage,
+      mainPageWrapperProps: ctrlHook(useMainPageWrapperCtrl, {}, 'main-page-wrapper'),
     }
     return newPasswordProps
   }, [formBag, newPasswordErrorMessage])

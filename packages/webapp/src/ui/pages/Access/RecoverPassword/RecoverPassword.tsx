@@ -6,12 +6,13 @@ import PrimaryButton from '../../../components/atoms/PrimaryButton/PrimaryButton
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
-import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
+import { MainPageWrapper, MainPageWrapperProps } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
 export type RecoverPasswordFormValues = { email: string }
 export type RecoverPasswordProps = {
+  mainPageWrapperProps: CP<MainPageWrapperProps>
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
   formBag: FormikBag<RecoverPasswordFormValues>
   RecoverPasswordErrorMessage: string | null
@@ -21,7 +22,7 @@ export type RecoverPasswordProps = {
 }
 
 export const RecoverPassword = withCtrl<RecoverPasswordProps>(
-  ({ accessHeaderProps, formBag, requestSent, loginHref, RecoverPasswordErrorMessage }) => {
+  ({ mainPageWrapperProps, accessHeaderProps, formBag, requestSent, loginHref, RecoverPasswordErrorMessage }) => {
     const [form, attrs] = formBag
 
     // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -31,7 +32,7 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
     // }
 
     return (
-      <MainPageWrapper>
+      <MainPageWrapper {...mainPageWrapperProps}>
         {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
         <div className={`recover-password-page ${requestSent ? 'success' : ''}`}>
           <AccessHeader {...accessHeaderProps} page={'login'} />
@@ -88,8 +89,8 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
                 <MailOutlineIcon className="icon" />
                 <div className="subtitle">
                   <Trans>
-                    If the email you provided corresponds to a Moodlenet user, you'll receive an email with a
-                    change password link
+                    If the email you provided corresponds to a Moodlenet user, you'll receive an email with a change
+                    password link
                   </Trans>
                 </div>
               </div>

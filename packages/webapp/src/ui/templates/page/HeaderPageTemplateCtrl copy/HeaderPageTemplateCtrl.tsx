@@ -8,8 +8,8 @@ export const useHeaderPageTemplateCtrl: CtrlHook<HeaderPageTemplateProps, {}> = 
   const { isAuthenticated } = useSession()
   const headerPageTemplateProps: HeaderPageTemplateProps = {
     isAuthenticated,
-    headerPageProps: ctrlHook(useHeaderPageCtrl, {}, 'header-page'),
     mainPageWrapperProps: ctrlHook(useMainPageWrapperCtrl, {}, 'main-page-wrapper'),
+    headerPageProps: ctrlHook(useHeaderPageCtrl, {}, 'header-page'),
   }
   return [headerPageTemplateProps]
 }

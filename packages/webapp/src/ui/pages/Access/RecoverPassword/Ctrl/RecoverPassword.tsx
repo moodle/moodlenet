@@ -4,6 +4,7 @@ import { mainPath, useRedirectHomeIfLoggedIn } from '../../../../../hooks/glob/n
 import { href } from '../../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { SubmitForm, useFormikBag } from '../../../../lib/formik'
+import { useMainPageWrapperCtrl } from '../../../../templates/page/MainPageWrapperCtrl.tsx/MainPageWrapperCtrl'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { RecoverPasswordFormValues, RecoverPasswordProps } from '../RecoverPassword'
 const landingHref = href(mainPath.landing)
@@ -34,6 +35,7 @@ export const useRecoverPasswordCtrl: CtrlHook<RecoverPasswordProps, {}> = () => 
       requestSent,
       landingHref,
       loginHref,
+      mainPageWrapperProps: ctrlHook(useMainPageWrapperCtrl, {}, 'main-page-wrapper'),
     }
     return RecoverPasswordProps
   }, [formBag, RecoverPasswordErrorMessage, requestSent])
