@@ -34,7 +34,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   toggleBookmark: action('toggleBookmark'),
@@ -82,7 +82,7 @@ export const CollectionLoggedOutStoryProps: CollectionProps = {
       },
     },
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
 }

@@ -21,7 +21,7 @@ export const SearchStoryProps: SearchProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   browserProps: BrowserLoggedInStoryProps,
@@ -37,7 +37,7 @@ export const SearchLoggedOutStoryProps: SearchProps = {
       subHeaderProps: { tags: [] },
     },
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   browserProps: BrowserLoggedOutStoryProps,

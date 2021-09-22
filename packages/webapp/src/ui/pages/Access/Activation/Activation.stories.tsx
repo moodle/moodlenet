@@ -15,7 +15,7 @@ export const ActivationStoryProps: ActivationProps = {
   accessHeaderProps: AccessHeaderStoryProps,
   loginHref: href('Pages/Login/Default'),
   mainPageWrapperProps: {
-    userAcceptsCookies: null,
+    userAcceptsPolicies: null,
   },
 }
 
