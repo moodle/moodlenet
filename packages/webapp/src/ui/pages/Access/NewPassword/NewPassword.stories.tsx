@@ -19,7 +19,7 @@ export const NewPasswordStoryProps: NewPasswordProps = {
   }),
   newPasswordErrorMessage: null,
   mainPageWrapperProps: {
-    userAcceptsCookies: null,
+    userAcceptsPolicies: null,
   },
 }
 

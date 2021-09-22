@@ -20,7 +20,7 @@ export const FollowingLoggedInStoryProps: FollowingProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   browserProps: {

@@ -62,7 +62,7 @@ export const ResourceStoryProps: ResourceProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   isAuthenticated: true,
@@ -117,7 +117,7 @@ export const ResourceLinkLoggedOutStoryProps: ResourceProps = {
       },
     },
     mainPageWrapperProps: {
-      userAcceptsCookies: null,
+      userAcceptsPolicies: null,
     },
   },
   isAuthenticated: false,
