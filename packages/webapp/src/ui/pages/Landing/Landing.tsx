@@ -22,7 +22,7 @@ export type LandingProps = {
 export const Landing = withCtrl<LandingProps>(
   ({ headerPageTemplateProps, trendCardProps, organization, image, setSearchText, isAuthenticated, signUpHref }) => {
     return (
-      <HeaderPageTemplate {...headerPageTemplateProps} hideSearchbox={true}>
+      <HeaderPageTemplate {...headerPageTemplateProps} hideSearchbox={true} cookiesAccepted={isAuthenticated}>
         <div className="landing">
           {!isAuthenticated ? (
             <div className="landing-title">
@@ -49,6 +49,9 @@ export const Landing = withCtrl<LandingProps>(
                   <div className="title">{organization.introTitle}</div>
                 )}
                 <div className="content">{organization.intro}</div>
+                {organization.name !== 'MoodleNet' && image && (
+                  <img className="text-image" src={image} alt="Background" />
+                )}
                 {!isAuthenticated && signUpHref && (
                   <Link href={signUpHref}>
                     <PrimaryButton>
@@ -56,9 +59,6 @@ export const Landing = withCtrl<LandingProps>(
                     </PrimaryButton>
                   </Link>
                 )}
-                {organization.name === 'MoodleNet'
-                  ? ''
-                  : image && <img className="text-image" src={image} alt="Background" />}
               </TextCard>
               <TrendCard {...trendCardProps} />
             </div>
