@@ -30,13 +30,6 @@
       > a {
         color: #717171;
         font-size: 14px;
-        > span {
-          color: $base-moodle-color;
-          &:hover {
-            text-decoration: underline;
-            text-decoration-color: $base-moodle-color;
-          }
-        }
         &:hover {
           text-decoration: underline;
         }

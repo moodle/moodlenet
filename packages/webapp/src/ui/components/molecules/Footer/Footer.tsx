@@ -11,7 +11,7 @@ export const Footer: FC<FooterProps> = () => {
         <div className="left"></div>
         <div className="center">
           <a href="https://docs.moodle.org/dev/MoodleNet" target="_blank" rel="noreferrer">
-            <Trans><span>MoodleNet</span> Beta</Trans>
+            <Trans>MoodleNet Beta</Trans>
           </a>
         </div>
         <div className="right"></div>
