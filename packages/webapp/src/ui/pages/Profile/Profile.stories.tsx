@@ -3,20 +3,21 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
   CollectionCardLoggedOutStoryProps,
   CollectionCardOwnerStoryProps,
-  CollectionCardStoryProps,
+  CollectionCardStoryProps
 } from '../../components/cards/CollectionCard/CollectionCard.stories'
 import {
   ProfileCardLoggedInStoryProps,
   ProfileCardOwnerStoryProps,
-  ProfileCardStoryProps,
+  ProfileCardStoryProps
 } from '../../components/cards/ProfileCard/ProfileCard.stories'
 import {
   ResourceCardLoggedInStoryProps,
   ResourceCardLoggedOutStoryProps,
-  ResourceCardOwnerStoryProps,
+  ResourceCardOwnerStoryProps
 } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { OverallCardStoryProps } from '../../components/molecules/cards/OverallCard/OverallCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/molecules/Header/Header.stories'
+import { href } from '../../elements/link'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Profile, ProfileProps } from './Profile'
 
@@ -40,11 +41,14 @@ const ProfileStory: ComponentStory<typeof Profile> = args => <Profile {...args} 
 
 export const ProfileStoryProps: ProfileProps = {
   save: action('save'),
+  newResourceHref: href('Pages/New Resource/Start'),
+  newCollectionHref: href('Pages/New Collection/Start'),
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   overallCardProps: OverallCardStoryProps,
@@ -75,6 +79,7 @@ export const ProfileLoggedOutStoryProps: ProfileProps = {
     },
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   collectionCardPropsList: [
@@ -107,6 +112,9 @@ export const ProfileOwnerStoryProps: ProfileProps = {
 
 export const ProfileActivatedStoryProps: ProfileProps = {
   ...ProfileOwnerStoryProps,
+  profileCardProps: ProfileCardOwnerStoryProps,
+  collectionCardPropsList: [],
+  resourceCardPropsList: [],
   showAccountCreationSuccessAlert: true,
 }
 

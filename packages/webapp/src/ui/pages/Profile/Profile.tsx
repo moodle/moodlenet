@@ -1,4 +1,6 @@
 import { t, Trans } from '@lingui/macro'
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
+import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import { useState } from 'react'
 import InputTextField from '../../components/atoms/InputTextField/InputTextField'
 import Modal from '../../components/atoms/Modal/Modal'
@@ -9,6 +11,7 @@ import { ProfileCard, ProfileCardProps } from '../../components/cards/ProfileCar
 import { ResourceCard, ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
 import { ListCard } from '../../components/molecules/cards/ListCard/ListCard'
 import { OverallCard, OverallCardProps } from '../../components/molecules/cards/OverallCard/OverallCard'
+import { Href, Link } from '../../elements/link'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import './styles.scss'
@@ -20,6 +23,8 @@ export type ProfileProps = {
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
   displayName: string
+  newCollectionHref: Href
+  newResourceHref: Href
   showAccountCreationSuccessAlert?: boolean
   sendEmail?: (text: string) => unknown
   save: () => unknown
@@ -33,6 +38,8 @@ export const Profile = withCtrl<ProfileProps>(
     collectionCardPropsList,
     resourceCardPropsList,
     displayName,
+    newCollectionHref,
+    newResourceHref,
     showAccountCreationSuccessAlert,
     sendEmail,
     save,
@@ -52,19 +59,33 @@ export const Profile = withCtrl<ProfileProps>(
 
     const collectionList = (
       <ListCard
+        className="collections"
         title={`${t`Collections curated by`} ${displayName}`}
         content={collectionCardPropsList.map(collectionCardProps => (
           <CollectionCard {...collectionCardProps} isEditing={isEditing} />
         ))}
-        className="collections"
-      />
+        actions={
+          profileCardProps.isOwner && (
+            <Link href={newCollectionHref}>
+              <PrimaryButton className="action">
+                <LibraryAddIcon />
+                <Trans>New collection</Trans>
+              </PrimaryButton>
+            </Link>
+          )
+        }
+      ></ListCard>
     )
 
     const [emailText, setEmailText] = useState('')
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         {showAccountCreationSuccessAlert && isShowingAccountCreationSuccessAlert && (
-          <Snackbar type="success" autoHideDuration={4000} onClose={() => setIsShowingAccountCreationSuccessAlert(false)}>
+          <Snackbar
+            type="success"
+            autoHideDuration={4000}
+            onClose={() => setIsShowingAccountCreationSuccessAlert(false)}
+          >
             <Trans>Account activated! Feel free to complete your profile</Trans>
           </Snackbar>
         )}
@@ -97,12 +118,22 @@ export const Profile = withCtrl<ProfileProps>(
                 openSendMessage={() => setIsSendingMessage(!!sendEmail && true)}
               />
               <ListCard
+                className="resources"
                 content={resourceCardPropsList.map(resourcesCardProps => {
                   return <ResourceCard {...resourcesCardProps} isEditing={isEditing} />
                 })}
                 title={t`Latest resources`}
-                className="resources"
-              />
+                actions={
+                  profileCardProps.isOwner && (
+                    <Link href={newResourceHref}>
+                      <PrimaryButton className="action">
+                        <NoteAddIcon />
+                        <Trans>New resource</Trans>
+                      </PrimaryButton>
+                    </Link>
+                  )
+                }
+              ></ListCard>
               {collectionList}
             </div>
             <div className="side-column">

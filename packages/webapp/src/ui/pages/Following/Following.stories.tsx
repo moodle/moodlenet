@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { BrowserFollowingStoryProps } from '../../components/Browser/Browser.stories'
+import { href } from '../../elements/link'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Following, FollowingProps } from './Following'
 
@@ -21,6 +22,7 @@ export const FollowingLoggedInStoryProps: FollowingProps = {
     isAuthenticated: true,
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   browserProps: {

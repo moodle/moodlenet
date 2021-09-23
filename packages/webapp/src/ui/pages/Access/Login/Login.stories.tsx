@@ -22,6 +22,7 @@ export const LoginStoryProps: LoginProps = {
   recoverPasswordHref: href('Pages/Recover Password/Recover'),
   mainPageWrapperProps: {
     userAcceptsPolicies: null,
+    cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
   },
 }
 
