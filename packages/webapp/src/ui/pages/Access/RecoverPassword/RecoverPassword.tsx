@@ -89,7 +89,7 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
                 <MailOutlineIcon className="icon" />
                 <div className="subtitle">
                   <Trans>
-                    If the email you provided corresponds to a Moodlenet user, you'll receive an email with a change
+                    If the email you provided corresponds to a MoodleNet user, you'll receive an email with a change
                     password link
                   </Trans>
                 </div>
