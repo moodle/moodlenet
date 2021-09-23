@@ -82,10 +82,10 @@ export const traversePaginateMapQuery =
           && ( targetIds ? edge._${targetSide} IN targetIds : true )
           ${additionalFilter ? `&& ${additionalFilter}` : ''}
           
+          
+          LET targetNode = Document(edge._${targetSide})
+          FILTER !!targetNode 
           ${pageFilterSortLimit}
-        
-        LET targetNode = Document(edge._${targetSide})
-        FILTER !!targetNode 
 
         RETURN  [
           cursor,
