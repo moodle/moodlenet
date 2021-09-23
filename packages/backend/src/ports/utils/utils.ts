@@ -42,7 +42,7 @@ export const sendEmailToProfile = QMCommand(
         from: `noreply@${domain}`,
         to: recipientUser.email,
         subject: `Hey ${recipient.name}, ${sender.name}@${domain} sent you a message!`,
-        html: `<h2>Moodlenetter ${sender.name} @ ${domain} sent you this message:</h2>
+        html: `<h2>Moodlenet user ${sender.name} @ ${domain} sent you this message:</h2>
         <p>${text}</p>
         <br/>
         <p>
