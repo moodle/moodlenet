@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { href } from '../../elements/link'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { CreateCollectionProps } from './CreateCollection/CreateCollection'
@@ -68,6 +69,7 @@ export const NewCollectionStoryProps: NewCollectionProps = {
     showSubHeader: false,
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default')
     },
   },
   stepProps: CreateCollectionStoryProps,
