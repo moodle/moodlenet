@@ -61,11 +61,13 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
       }
     }
 
-    const selectBackground = () => {
+    const selectBackground = (e: React.MouseEvent<HTMLElement>) => {
+      e.stopPropagation();
       document.getElementById('upload-background')?.click()
     }
-
-    const selectAvatar = () => {
+    
+    const selectAvatar = (e: React.MouseEvent<HTMLElement>) => {
+      e.stopPropagation();
       document.getElementById('upload-avatar')?.click()
     }
 
@@ -73,7 +75,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
       const selectedFile = e.currentTarget.files?.item(0)
       selectedFile && uploadImage(selectedFile, 'background')
     }
-
+    
     const uploadAvatar = (e?: React.ChangeEvent<HTMLInputElement>) => {
       const selectedFile = e?.currentTarget.files?.item(0)
       selectedFile && uploadImage(selectedFile, 'avatar')

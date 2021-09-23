@@ -1,5 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '../../components/Browser/Browser.stories'
+import { href } from '../../elements/link'
 import { HeaderPageLoggedInStoryProps, HeaderPageLoggedOutStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Bookmarks, BookmarksProps } from './Bookmarks'
 
@@ -21,6 +22,7 @@ export const BookmarksLoggedInStoryProps: BookmarksProps = {
     isAuthenticated: true,
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   browserProps: {
@@ -38,6 +40,7 @@ export const BookmarksLoggedOutStoryProps: BookmarksProps = {
     isAuthenticated: false,
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   browserProps: {
