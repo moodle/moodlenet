@@ -6,8 +6,10 @@ import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { useSeoContentId } from '../../../../context/Global/Seo'
 import { useSession } from '../../../../context/Global/Session'
 import { getMaybeAssetRefUrl, useUploadTempFile } from '../../../../helpers/data'
+import { mainPath } from '../../../../hooks/glob/nav'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
+import { href } from '../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useFormikBag } from '../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
@@ -18,8 +20,10 @@ import {
   useDelProfileRelationMutation,
   useEditProfileMutation,
   useProfilePageUserDataQuery,
-  useSendEmailToProfileMutation,
+  useSendEmailToProfileMutation
 } from './ProfileCtrl.gen'
+const newCollectionHref = href(mainPath.createNewCollection)
+const newResourceHref = href(mainPath.createNewResource)
 
 export type ProfileCtrlProps = { id: ID }
 export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id }) => {
@@ -181,6 +185,8 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
         years: 1,
         kudos,
       },
+      newCollectionHref,
+      newResourceHref,
       showAccountCreationSuccessAlert: firstLogin,
       profileCardProps: {
         formBag,
