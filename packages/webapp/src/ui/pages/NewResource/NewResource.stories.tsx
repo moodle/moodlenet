@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { href } from '../../elements/link'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import {
@@ -51,7 +52,6 @@ const initialFormValues: NewResourceFormValues = {
   description: '',
   format: '',
   image: 'image',
-  imageUrl: 'image',
   language: '',
   level: '',
   license: '',
