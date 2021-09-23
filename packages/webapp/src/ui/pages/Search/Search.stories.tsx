@@ -1,6 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '../../components/Browser/Browser.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/molecules/Header/Header.stories'
+import { href } from '../../elements/link'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Search, SearchProps } from './Search'
 
@@ -22,6 +23,7 @@ export const SearchStoryProps: SearchProps = {
     isAuthenticated: true,
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   browserProps: BrowserLoggedInStoryProps,
@@ -38,6 +40,7 @@ export const SearchLoggedOutStoryProps: SearchProps = {
     },
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   browserProps: BrowserLoggedOutStoryProps,

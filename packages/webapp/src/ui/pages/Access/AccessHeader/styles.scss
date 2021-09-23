@@ -1,14 +1,17 @@
 .access-header {
   z-index: 1;
-  padding: 0 130px;
+  padding: 0 100px;
   display: flex;
   justify-content: center;
   height: 100%;
   max-height: 60px;
   width: 100%;
   font-size: 0.7rem;
+  max-width: 1100px;
 
-  @media (max-width: 675px) {
+  margin: 0 0 18px;
+
+  @media screen and (max-width: 675px) {
     padding: 0 25px;
   }
 
