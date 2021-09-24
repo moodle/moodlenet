@@ -8,7 +8,7 @@ export const useMainPageWrapperCtrl: CtrlHook<MainPageWrapperProps, {}> = () => 
   const { userMustAcceptPolicies } = useSession()
   const mainPageWrapperProps: MainPageWrapperProps = {
     userAcceptsPolicies: userMustAcceptPolicies,
-    cookiesPolicyHref: href(mainPath.cookiesPolicies),
+    cookiesPolicyHref: href(mainPath.cookiesPolicy),
   }
   return [mainPageWrapperProps]
 }

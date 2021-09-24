@@ -21,7 +21,7 @@ export type SignupProps = {
   requestSent: boolean
   loginHref: Href
   landingHref: Href
-  termsAndConditionsHref: Href
+  userAgreementHref: Href
 }
 
 export const Signup = withCtrl<SignupProps>(
@@ -32,7 +32,7 @@ export const Signup = withCtrl<SignupProps>(
     requestSent,
     loginHref,
     signupErrorMessage,
-    termsAndConditionsHref,
+    userAgreementHref,
   }) => {
     const [form, attrs] = formBag
 
@@ -100,7 +100,7 @@ export const Signup = withCtrl<SignupProps>(
                     <PrimaryButton onClick={submitForm}>
                       <Trans>Sign up</Trans>
                     </PrimaryButton>
-                    <Link href={termsAndConditionsHref} target="__blank">
+                    <Link href={userAgreementHref} target="__blank">
                       <TertiaryButton>
                         <Trans>You agree to our Terms &amp; Conditions</Trans>
                       </TertiaryButton>

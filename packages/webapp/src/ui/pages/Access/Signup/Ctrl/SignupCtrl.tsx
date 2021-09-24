@@ -9,7 +9,7 @@ import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { SignupFormValues, SignupProps } from '../Signup'
 const landingHref = href(mainPath.landing)
 const loginHref = href(mainPath.login)
-const termsAndConditionsHref = href(mainPath.termsAndConditionsHref)
+const userAgreementHref = href(mainPath.userAgreement)
 export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
   useRedirectHomeIfLoggedIn()
   const { signUp } = useSession()
@@ -39,7 +39,7 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
       requestSent,
       landingHref,
       loginHref,
-      termsAndConditionsHref,
+      userAgreementHref,
       mainPageWrapperProps: ctrlHook(useMainPageWrapperCtrl, {}, 'main-page-wrapper'),
     }
     return signupProps
