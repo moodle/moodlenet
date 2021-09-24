@@ -19,11 +19,12 @@
         }
       }
     }
+
     > .main-column {
       width: 65%;
       height: 100%;
 
-      .collections {
+      > .collections {
         display: none;
       }
 
@@ -45,7 +46,7 @@
       flex-direction: column;
       gap: 15px;
     }
-
+    
     @media screen and (max-width: 800px) {
       > .main-column {
         width: 100%;

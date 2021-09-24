@@ -194,6 +194,7 @@ export const Browser = withCtrl<BrowserProps>(
                 }
                 className={`subjects ${!shouldShowSeeAll('Subjects') ? 'see-all' : ''}`}
                 noCard={true}
+                direction="wrap"
               />
             )}
             {collectionCardPropsList && filters.Collections && (

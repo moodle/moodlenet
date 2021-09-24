@@ -2,6 +2,7 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
 import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
+import { href } from '../../elements/link'
 import { HeaderPageLoggedInStoryProps, HeaderPageLoggedOutStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Category, CategoryProps } from './Category'
 
@@ -23,6 +24,7 @@ export const CategoryStoryProps: CategoryProps = {
     isAuthenticated: true,
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   isAuthenticated: true,
@@ -60,6 +62,7 @@ export const CategoryLoggedOutStoryProps: CategoryProps = {
     isAuthenticated: false,
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   isAuthenticated: true,

@@ -13,6 +13,7 @@ export type CreateNewCollection = RouteDef<'/create-new-collection', {}>
 export type BookmarksPage = RouteDef<'/bookmarks', {}>
 export type FollowingPage = RouteDef<'/following', {}>
 export type LMSMoodleLanding = RouteDef<'/lms/moodle/search', {}>
+export type CookiesPolicies = RouteDef<'/cookies-policies', {}>
 
 // node home pages
 export type ContentNodeHomePage = RouteDef<`/${string}/:slug`, { slug: string }>

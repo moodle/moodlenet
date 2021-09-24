@@ -1,4 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { href } from '../../../elements/link'
 import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
 import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
 import { NewPassword, NewPasswordFormValues, NewPasswordProps } from './NewPassword'
@@ -20,6 +21,7 @@ export const NewPasswordStoryProps: NewPasswordProps = {
   newPasswordErrorMessage: null,
   mainPageWrapperProps: {
     userAcceptsPolicies: null,
+    cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
   },
 }
 
