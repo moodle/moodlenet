@@ -7,7 +7,7 @@ export const TermsAndConditionsComponent: RouteFC<Routes.TermsAndConditions> = (
   return <TermsAndConditionsPage />
 }
 
-export const TermsAndConditionsSignupRoute: MNRouteProps<Routes.TermsAndConditions> = {
+export const TermsAndConditionsRoute: MNRouteProps<Routes.TermsAndConditions> = {
   component: TermsAndConditionsComponent,
   path: '/terms',
   exact: true,
