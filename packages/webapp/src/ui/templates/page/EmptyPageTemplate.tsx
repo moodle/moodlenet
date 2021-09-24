@@ -1,11 +1,12 @@
 import { FC } from 'react'
-import { MainPageWrapper } from './MainPageWrapper'
+import { CP } from '../../lib/ctrl'
+import { MainPageWrapper, MainPageWrapperProps } from './MainPageWrapper'
 
 export type EmptyPageTemplateProps = {
-  userAcceptsPolicies: (() => unknown) | null
+  mainPageWrapperProps: CP<MainPageWrapperProps>
 }
 
-export const EmptyPageTemplate: FC<EmptyPageTemplateProps> = ({ children, userAcceptsPolicies }) => {
-  return <MainPageWrapper userAcceptsPolicies={userAcceptsPolicies}>{children}</MainPageWrapper>
+export const EmptyPageTemplate: FC<EmptyPageTemplateProps> = ({ children, mainPageWrapperProps }) => {
+  return <MainPageWrapper {...mainPageWrapperProps}>{children}</MainPageWrapper>
 }
 EmptyPageTemplate.displayName = 'EmptyPageTemplate'

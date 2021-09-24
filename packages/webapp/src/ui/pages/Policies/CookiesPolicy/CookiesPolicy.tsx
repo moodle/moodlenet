@@ -1,17 +1,17 @@
 import { Trans } from '@lingui/macro'
-import { FC } from 'react'
-import { CP } from '../../../lib/ctrl'
-import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
+import { CP, withCtrl } from '../../../lib/ctrl'
+import { MainPageWrapper, MainPageWrapperProps } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../../Access/AccessHeader/AccessHeader'
 import './styles.scss'
 
 export type CookiesPolicyProps = {
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
+  mainPageWrapperProps: CP<MainPageWrapperProps>
 }
 
-export const CookiesPolicy: FC<CookiesPolicyProps> = ({ accessHeaderProps }) => {
+export const CookiesPolicy = withCtrl<CookiesPolicyProps>(({ accessHeaderProps, mainPageWrapperProps }) => {
   return (
-    <MainPageWrapper>
+    <MainPageWrapper {...mainPageWrapperProps}>
       {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
       <AccessHeader {...accessHeaderProps} page={'login'} />
       <div className="cookies-policy">
@@ -236,6 +236,6 @@ export const CookiesPolicy: FC<CookiesPolicyProps> = ({ accessHeaderProps }) => 
       </div>
     </MainPageWrapper>
   )
-}
+})
 
 CookiesPolicy.displayName = 'CookiesPolicyPage'

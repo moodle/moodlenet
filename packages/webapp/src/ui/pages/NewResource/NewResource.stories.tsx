@@ -10,7 +10,7 @@ import {
   LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown
+  YearsDropdown,
 } from './FieldsData'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'
@@ -52,6 +52,7 @@ const initialFormValues: NewResourceFormValues = {
   description: '',
   format: '',
   image: 'image',
+  imageUrl: 'image',
   language: '',
   level: '',
   license: '',
@@ -106,7 +107,8 @@ export const NewResourceStoryProps: NewResourceProps = {
     isAuthenticated: true,
     showSubHeader: false,
     mainPageWrapperProps: {
-      userAcceptsPolicies: null,cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default')
+      userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   stepProps: uploadResourceProps,
