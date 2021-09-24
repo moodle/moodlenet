@@ -1,5 +1,5 @@
 import { t, Trans } from '@lingui/macro'
-import { useCallback, useState } from 'react'
+// import { useCallback, useState } from 'react'
 import useWhatInput from 'react-use-what-input'
 import Snackbar from '../../components/atoms/Snackbar/Snackbar'
 import { Href, Link } from '../../elements/link'
@@ -14,23 +14,23 @@ export type MainPageWrapperProps = {
 }
 export const MainPageWrapper = withCtrl<MainPageWrapperProps>(({ cookiesPolicyHref, children, userAcceptsPolicies, onKeyDown }) => {
   const [currentInput, currentIntent] = useWhatInput()
-  const [isShowingPoliciesPrompt, setIsShowingPoliciesPrompt] = useState<boolean>(!!userAcceptsPolicies)
-  const userAcceptsPoliciesCb = useCallback(() => {
-    setIsShowingPoliciesPrompt(false)
-    userAcceptsPolicies && userAcceptsPolicies()
-  }, [userAcceptsPolicies])
+  // const [isShowingPoliciesPrompt, setIsShowingPoliciesPrompt] = useState<boolean>(!!userAcceptsPolicies)
+  // const userAcceptsPoliciesCb = useCallback(() => {
+  //   setIsShowingPoliciesPrompt(false)
+  //   userAcceptsPolicies && userAcceptsPolicies()
+  // }, [userAcceptsPolicies])
 
   return (
     <div
       className={`main-page-wrapper current-input-${currentInput} current-intent-${currentIntent}`}
       onKeyDown={onKeyDown}
     >
-      {isShowingPoliciesPrompt && (
+      {userAcceptsPolicies && (
         <Snackbar
           className="policies-snackbar"
           buttonText={t`Accept`}
           style={{ backgroundColor: 'black' }}
-          onClose={userAcceptsPoliciesCb}
+          onClose={userAcceptsPolicies}
         >
           <Trans>
             If you continue browsing this website, you agree to our
