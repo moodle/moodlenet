@@ -1,17 +1,17 @@
 import { Trans } from '@lingui/macro'
-import { FC } from 'react'
-import { CP } from '../../../lib/ctrl'
-import { MainPageWrapper } from '../../../templates/page/MainPageWrapper'
+import { CP, withCtrl } from '../../../lib/ctrl'
+import { MainPageWrapper, MainPageWrapperProps } from '../../../templates/page/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../../Access/AccessHeader/AccessHeader'
 import './styles.scss'
 
 export type UserAgreementProps = {
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
+  mainPageWrapperProps: CP<MainPageWrapperProps>
 }
 
-export const UserAgreement: FC<UserAgreementProps> = ({ accessHeaderProps }) => {
+export const UserAgreement = withCtrl<UserAgreementProps>(({ accessHeaderProps, mainPageWrapperProps }) => {
   return (
-    <MainPageWrapper>
+    <MainPageWrapper {...mainPageWrapperProps}>
       {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
       <AccessHeader {...accessHeaderProps} page={'login'} />
       <div className="user-agreement">
@@ -295,7 +295,7 @@ export const UserAgreement: FC<UserAgreementProps> = ({ accessHeaderProps }) => 
             these limitations may not apply to you.
           </Trans>
         </p>
-        <p style={{fontWeight: "lighter"}}>
+        <p style={{ fontWeight: 'lighter' }}>
           <Trans>
             LIABILITY EXCLUSIONS. UNDER NO CIRCUMSTANCES WILL THE SITE OPERATOR, MOODLE HQ, OR THEIR SUPPLIERS BE LIABLE
             FOR: LOSS OF REVENUE; LOSS OF ACTUAL OR ANTICIPATED PROFITS; LOSS OF CONTRACTS; LOSS OF THE USE OF MONEY;
@@ -321,6 +321,6 @@ export const UserAgreement: FC<UserAgreementProps> = ({ accessHeaderProps }) => 
       </div>
     </MainPageWrapper>
   )
-}
+})
 
 UserAgreement.displayName = 'UserAgreementPage'
