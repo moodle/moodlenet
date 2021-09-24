@@ -1,12 +1,12 @@
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useMainPageWrapperCtrl } from '../../../../templates/page/MainPageWrapperCtrl.tsx/MainPageWrapperCtrl'
 import { useAccessHeaderCtrl } from '../../../Access/AccessHeader/Ctrl/AccessHeaderCtrl'
-import { CookiesPolicyProps } from '../CookiesPolicy'
+import { UserAgreementProps } from '../UserAgreement'
 
-export const useCookiesPolicyCtrl: CtrlHook<CookiesPolicyProps, {}> = () => {
-  const cookiesPolicyProps: CookiesPolicyProps = {
+export const useUserAgreementCtrl: CtrlHook<UserAgreementProps, {}> = () => {
+  const userAgreementProps: UserAgreementProps = {
     accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'access-header'),
     mainPageWrapperProps: ctrlHook(useMainPageWrapperCtrl, {}, 'main-page-wrapper'),
   }
-  return [cookiesPolicyProps]
+  return [userAgreementProps]
 }

@@ -7,7 +7,6 @@ import { useSession } from '../../context/Global/Session'
 import { UserSessionFragment } from '../../context/Global/Session/session.gen'
 
 export const mainPath = {
-  termsAndConditionsHref: webappPath<Routes.TermsAndConditions>('/terms', {}),
   login: webappPath<Routes.Login>('/login/:activationEmailToken?', {}),
   firstLogin: (activationEmailToken: string) =>
     webappPath<Routes.Login>('/login/:activationEmailToken?', { activationEmailToken }),
@@ -19,7 +18,8 @@ export const mainPath = {
   createNewCollection: webappPath<Routes.CreateNewCollection>('/create-new-collection', {}),
   bookmarks: webappPath<Routes.BookmarksPage>('/bookmarks', {}),
   following: webappPath<Routes.FollowingPage>('/following', {}),
-  cookiesPolicies: webappPath<Routes.CookiesPolicies>('/cookies-policies', {}),
+  cookiesPolicy: webappPath<Routes.CookiesPolicy>('/cookies-policy', {}),
+  userAgreement: webappPath<Routes.UserAgreement>('/user-agreement', {}),
 }
 
 export const useRedirectToBySession = ({
