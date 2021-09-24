@@ -58,8 +58,8 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     category: '0215 Music and performing arts',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-    image: null,
-    imageUrl: null,
+    image: 'https://picsum.photos/200/100',
+    imageUrl: 'https://picsum.photos/200/100',
     title: 'Best collection ever',
   }),
   resourceCardPropsList: [ResourceCardOwnerStoryProps, ResourceCardOwnerBookmarkedStoryProps, ResourceCardStoryProps],

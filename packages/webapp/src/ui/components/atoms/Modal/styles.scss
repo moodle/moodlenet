@@ -38,6 +38,13 @@
 
       > .content {
         width: 100%;
+
+        > img {
+          height: auto;
+          width: auto;
+          max-width: calc(90vw - 50px);
+          max-height: calc(90vh - 50px);
+        }
       }
 
       > .actions {
