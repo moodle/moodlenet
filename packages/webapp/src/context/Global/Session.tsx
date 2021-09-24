@@ -16,6 +16,7 @@ import {
 } from './Session/session.gen'
 
 const USER_ACCEPTED_POLICIES_STORAGE_KEY = 'USER_ACCEPTED_POLICIES'
+const USER_ACCEPTED_POLICIES_STORAGE_VAL = 'true'
 
 const LAST_SESSION_EMAIL_STORAGE_KEY = 'LAST_SESSION_EMAIL'
 const LAST_SESSION_TOKEN_STORAGE_KEY = 'LAST_SESSION_TOKEN'
@@ -153,12 +154,22 @@ export const SessionProvider: FC = ({ children }) => {
   )
 
   const [userAcceptedPolicies, setUserAcceptedPolicies] = useState(
-    localStorage.getItem(USER_ACCEPTED_POLICIES_STORAGE_KEY) === 'true',
+    localStorage.getItem(USER_ACCEPTED_POLICIES_STORAGE_KEY) === USER_ACCEPTED_POLICIES_STORAGE_VAL,
   )
-  //const userMustAcceptPolicies = useState<null|(()=>unknown)>()
+  useEffect(() => {
+    window.addEventListener('storage', handler)
+    return () => {
+      window.removeEventListener('storage', handler)
+    }
+    function handler(_: StorageEvent) {
+      if (_.key === USER_ACCEPTED_POLICIES_STORAGE_KEY) {
+        setUserAcceptedPolicies(_.newValue === USER_ACCEPTED_POLICIES_STORAGE_VAL)
+      }
+    }
+  })
+
   const userAcceptPoliciesCb = useCallback(() => {
-    setUserAcceptedPolicies(true)
-    localStorage.setItem(USER_ACCEPTED_POLICIES_STORAGE_KEY, 'true')
+    localStorage.setItem(USER_ACCEPTED_POLICIES_STORAGE_KEY, USER_ACCEPTED_POLICIES_STORAGE_VAL)
   }, [])
 
   useEffect(() => {

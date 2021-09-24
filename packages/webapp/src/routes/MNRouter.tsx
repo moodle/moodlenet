@@ -4,7 +4,7 @@ import { Route, Switch } from 'react-router-dom'
 import { BookmarksRoute } from './BookmarksRoute'
 import { CategoryRoute } from './CategoryRoute'
 import { CollectionRoute } from './CollectionRoute'
-import { CookiesPoliciesRoute } from './CookiesPoliciesRoute'
+import { CookiesPoliciesRoute } from './CookiesPolicyRoute'
 import { FollowingRoute } from './FollowingRoute'
 import { LandingRoute } from './LandingRoute'
 import { LMSMoodleLandingRoute } from './LMSMoodleLandingRoute'
@@ -17,13 +17,12 @@ import { RecoverPasswordRoute } from './RecoverPasswordRoute'
 import { ResourceRoute } from './ResourceRoute'
 import { SearchRoute } from './SearchRoute'
 import { SignupRoute } from './SignUpRoute'
-import { TermsAndConditionsRoute } from './TermsAndConditionStaticHtmlRoute'
+import { UserAgreementRoute } from './UserAgreementRoute'
 
 export const MNRouter: FC = (/* { children } */) => {
   return (
     <Switch>
       <Route {...LMSMoodleLandingRoute} />
-      <Route {...TermsAndConditionsRoute} />
       <Route {...SearchRoute} />
       <Route {...NewResourceRoute} />
       <Route {...NewCollectionRoute} />
@@ -40,6 +39,7 @@ export const MNRouter: FC = (/* { children } */) => {
       {/* <Route {...ActivationRoute} /> */}
       <Route {...LandingRoute} />
       <Route {...CookiesPoliciesRoute} />
+      <Route {...UserAgreementRoute} />
     </Switch>
   )
 }
