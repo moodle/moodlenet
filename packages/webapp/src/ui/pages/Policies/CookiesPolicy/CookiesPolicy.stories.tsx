@@ -1,4 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { href } from '../../../elements/link'
 import { AccessHeaderStoryProps } from '../../Access/AccessHeader/AccessHeader.stories'
 import { CookiesPolicy, CookiesPolicyProps } from './CookiesPolicy'
 
@@ -13,6 +14,10 @@ const CookiesPolicyStory: ComponentStory<typeof CookiesPolicy> = args => <Cookie
 
 export const CookiesPolicyStoryProps: CookiesPolicyProps = {
   accessHeaderProps: AccessHeaderStoryProps,
+  mainPageWrapperProps: {
+    userAcceptsPolicies: null,
+    cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+  },
 }
 
 

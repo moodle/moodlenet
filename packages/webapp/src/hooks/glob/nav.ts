@@ -19,6 +19,7 @@ export const mainPath = {
   createNewCollection: webappPath<Routes.CreateNewCollection>('/create-new-collection', {}),
   bookmarks: webappPath<Routes.BookmarksPage>('/bookmarks', {}),
   following: webappPath<Routes.FollowingPage>('/following', {}),
+  cookiesPolicies: webappPath<Routes.CookiesPolicies>('/cookies-policies', {}),
 }
 
 export const useRedirectToBySession = ({
