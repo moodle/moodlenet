@@ -2,6 +2,7 @@ import { t } from '@lingui/macro'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { HeaderLoggedOutStoryProps } from '../../components/molecules/Header/Header.stories'
+import { href } from '../../elements/link'
 import { TagListStory } from '../../elements/tags'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
@@ -12,7 +13,7 @@ import {
   LicenseDropdown,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown,
+  YearsDropdown
 } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
@@ -63,6 +64,7 @@ export const ResourceStoryProps: ResourceProps = {
     isAuthenticated: true,
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   isAuthenticated: true,
@@ -118,6 +120,7 @@ export const ResourceLinkLoggedOutStoryProps: ResourceProps = {
     },
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   isAuthenticated: false,

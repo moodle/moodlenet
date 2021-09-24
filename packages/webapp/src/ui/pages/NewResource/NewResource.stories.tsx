@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { href } from '../../elements/link'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import {
@@ -107,6 +108,7 @@ export const NewResourceStoryProps: NewResourceProps = {
     showSubHeader: false,
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   stepProps: uploadResourceProps,

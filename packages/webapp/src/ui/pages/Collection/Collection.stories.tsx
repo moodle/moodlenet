@@ -3,9 +3,10 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
   ResourceCardOwnerBookmarkedStoryProps,
   ResourceCardOwnerStoryProps,
-  ResourceCardStoryProps,
+  ResourceCardStoryProps
 } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/molecules/Header/Header.stories'
+import { href } from '../../elements/link'
 import { SBFormikBag } from '../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { NewCollectionFormValues } from '../NewCollection/types'
@@ -35,6 +36,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     isAuthenticated: true,
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   toggleBookmark: action('toggleBookmark'),
@@ -83,6 +85,7 @@ export const CollectionLoggedOutStoryProps: CollectionProps = {
     },
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
 }

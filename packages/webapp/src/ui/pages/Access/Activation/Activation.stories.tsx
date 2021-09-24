@@ -16,6 +16,7 @@ export const ActivationStoryProps: ActivationProps = {
   loginHref: href('Pages/Login/Default'),
   mainPageWrapperProps: {
     userAcceptsPolicies: null,
+    cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
   },
 }
 

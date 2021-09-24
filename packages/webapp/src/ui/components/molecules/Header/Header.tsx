@@ -61,7 +61,12 @@ export const Header = withCtrl<HeaderProps>(props => {
     return null
   }
   const { me, organization } = props
-  const avatarUrl = me?.avatar || defaultAvatar
+
+  const avatar = {
+    backgroundImage: 'url(' + (me ? me.avatar : defaultAvatar) + ')',
+    backgroundSize: 'cover',
+  }
+
   // console.log({ avatarUrl })
   return (
     <div className="header">
@@ -118,9 +123,7 @@ export const Header = withCtrl<HeaderProps>(props => {
                   </div>
                 }
                 hoverElement={
-                  <Link href={me.myProfileHref}>
-                    <img className="avatar" src={avatarUrl} alt="Avatar" />
-                  </Link>
+                  <Link href={me.myProfileHref} style={avatar} className="avatar"/>
                 }
               />
             </>

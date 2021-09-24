@@ -6,7 +6,7 @@ import { href } from '../../elements/link'
 import {
   HeaderPageLoggedInOrganizationStoryProps,
   HeaderPageLoggedInStoryProps,
-  HeaderPageLoggedOutStoryProps,
+  HeaderPageLoggedOutStoryProps
 } from '../HeaderPage/HeaderPage.stories'
 import { Landing, LandingProps } from './Landing'
 
@@ -32,7 +32,8 @@ export const LandingLoggedInStoryProps: LandingProps = {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
     mainPageWrapperProps: {
-      userAcceptsPolicies: null,
+      userAcceptsPolicies: () => {},
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default')
     },
   },
   trendCardProps: TrendCardStoryProps,
@@ -54,9 +55,7 @@ export const LandingLoggedOutStoryProps: LandingProps = {
   headerPageTemplateProps: {
     isAuthenticated: false,
     headerPageProps: HeaderPageLoggedOutStoryProps,
-    mainPageWrapperProps: {
-      userAcceptsPolicies: null,
-    },
+    ...LandingLoggedInStoryProps.headerPageTemplateProps
   },
   isAuthenticated: false,
 }
@@ -65,9 +64,7 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInOrganizationStoryProps,
     isAuthenticated: true,
-    mainPageWrapperProps: {
-      userAcceptsPolicies: null,
-    },
+    ...LandingLoggedInStoryProps.headerPageTemplateProps
   },
   trendCardProps: TrendCardStoryProps,
   organization: {
@@ -88,9 +85,7 @@ export const LandingOrganizationLoggedOutStoryProps: LandingProps = {
       ...HeaderPageLoggedInStoryProps,
       headerProps: HeaderLoggedOutOrganizationStoryProps,
     },
-    mainPageWrapperProps: {
-      userAcceptsPolicies: null,
-    },
+    ...LandingLoggedInStoryProps.headerPageTemplateProps
   },
   isAuthenticated: false,
 }
