@@ -122,7 +122,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             <img src={avatarUrl} alt="Avatar" />
           </Modal>
         )}
-        <div className="background" style={background} onClick={() => setIsShowingBackground(true)}>
+        <div className="background" style={background} onClick={() => !isEditing && setIsShowingBackground(true)}>
           {isEditing && (
             <input
               id="upload-background"
@@ -136,7 +136,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
         </div>
 
         <div className="avatar-and-actions">
-          <div className="avatar" style={avatar} onClick={() => setIsShowingAvatar(true)}>
+          <div className="avatar" style={avatar} onClick={() => !isEditing && setIsShowingAvatar(true)}>
             {isEditing && (
               <input id="upload-avatar" type="file" accept=".jpg,.jpeg,.png,.gif" onChange={uploadAvatar} hidden />
             )}

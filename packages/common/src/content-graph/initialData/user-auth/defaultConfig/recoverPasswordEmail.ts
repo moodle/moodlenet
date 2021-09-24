@@ -1,6 +1,6 @@
 const text = `Hello 
 
-Someone (probably you) requested a paaword change on MoodleNet. 
+Someone (probably you) requested a password change on MoodleNet. 
 If that was you, please click on the link below:
 {{=it.link}}
 and choose a new password for your account
