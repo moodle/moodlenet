@@ -23,7 +23,7 @@ export const SignupStoryProps: SignupProps = {
   requestSent: false,
   landingHref: href('Pages/Landing/Logged In'),
   loginHref: href('Pages/Login/Default'),
-  termsAndConditionsHref: href('#'),
+  userAgreementHref: href('Pages/Policies/UserAgreement/Default'),
   mainPageWrapperProps: {
     userAcceptsPolicies: null,
     cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
