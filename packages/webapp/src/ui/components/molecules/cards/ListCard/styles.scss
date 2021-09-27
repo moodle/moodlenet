@@ -53,6 +53,9 @@
       grid-gap: 15px;
       gap: 15px;
       justify-content: center;
+      > * {
+        justify-self: center;
+      }
     }
   }
 

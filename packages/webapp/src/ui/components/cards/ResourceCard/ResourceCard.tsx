@@ -55,9 +55,14 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     toggleLike,
     toggleBookmark,
   }) => {
+    const background = {
+      backgroundImage: 'url(' + (image ? image : defaultBackgroud) + ')',
+      backgroundSize: 'cover',
+    }
+
     const content = (color: string) => (
       <div className="content">
-        <img className="image" src={image || defaultBackgroud} alt="Background" />
+        <div className="image" style={background} /> 
         <div className="resource-card-header">
           <div className="type-and-actions">
             <div className="type" style={{ color: color }}>
