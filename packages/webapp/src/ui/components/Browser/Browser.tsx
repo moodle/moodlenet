@@ -22,6 +22,7 @@ export type BrowserProps = {
   resourceCardPropsList: CP<ResourceCardProps>[] | null
   smallProfileCardPropsList: CP<SmallProfileCardProps>[] | null
   hideSortAndFilter?: boolean
+  peopleTitle?: string
   setSortBy: ((sortType: SortType, dir: SortState) => unknown) | null
   loadMoreSubjects?: (() => unknown) | null
   loadMoreCollections?: (() => unknown) | null
@@ -35,6 +36,7 @@ export const Browser = withCtrl<BrowserProps>(
     resourceCardPropsList,
     smallProfileCardPropsList,
     hideSortAndFilter,
+    peopleTitle,
     setSortBy,
     loadMoreSubjects,
     loadMoreCollections,
@@ -264,7 +266,7 @@ export const Browser = withCtrl<BrowserProps>(
                 title={
                   <div className="card-header">
                     <div className="title">
-                      <Trans>People</Trans>
+                      {peopleTitle? t`${peopleTitle}` : <Trans>People</Trans>}
                     </div>
                     {shouldShowSeeAll('People') && (
                       <SecondaryButton onClick={() => seeAll('People')}>
