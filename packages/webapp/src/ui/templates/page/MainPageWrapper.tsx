@@ -33,7 +33,7 @@ export const MainPageWrapper = withCtrl<MainPageWrapperProps>(({ cookiesPolicyHr
           onClose={userAcceptsPolicies}
         >
           <Trans>
-            If you continue browsing this website, you agree to our
+            If you continue browsing this website, you agree to our<br></br>
             <a href="https://moodle.com/privacy-notice/" target="_blank" rel="noreferrer">
             <Trans>Privacy notice</Trans>
             </a>
