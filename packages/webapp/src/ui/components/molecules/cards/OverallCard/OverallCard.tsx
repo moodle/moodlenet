@@ -1,14 +1,16 @@
-import { t } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import GradeIcon from '@material-ui/icons/Grade'
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import { FC } from 'react'
+import { Href, Link } from '../../../../elements/link'
 import { Card } from '../../../atoms/Card/Card'
 import './styles.scss'
 
 export type OverallCardProps = {
   followers: number
   resources: number
+  followingHref: Href
   years: number | string
   kudos: number
   hideBorderWhenSmall?: boolean
@@ -20,6 +22,7 @@ export const OverallCard: FC<OverallCardProps> = ({
   followers,
   resources,
   kudos,
+  followingHref,
   hideBorderWhenSmall,
   showIcons,
   noCard,
@@ -49,17 +52,17 @@ export const OverallCard: FC<OverallCardProps> = ({
         </div>
       ) : (
         <div className="overall-container">
-          <div className="data">
+          <Link className="data" href={followingHref}>
             {followers}
-            <span>Followers</span>
-          </div>
+            <span><Trans>Followers</Trans></span>
+          </Link>
           <div className="data">
             {kudos}
-            <span>Kudos</span>
+            <span><Trans>Kudos</Trans></span>
           </div>
           <div className="data">
             {resources}
-            <span>Resources</span>
+            <span><Trans>Resources</Trans></span>
           </div>
         </div>
       )}
