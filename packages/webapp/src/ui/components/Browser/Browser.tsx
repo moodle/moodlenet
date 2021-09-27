@@ -21,6 +21,7 @@ export type BrowserProps = {
   collectionCardPropsList: CP<CollectionCardProps>[] | null
   resourceCardPropsList: CP<ResourceCardProps>[] | null
   smallProfileCardPropsList: CP<SmallProfileCardProps>[] | null
+  hideSortAndFilter?: boolean
   setSortBy: ((sortType: SortType, dir: SortState) => unknown) | null
   loadMoreSubjects?: (() => unknown) | null
   loadMoreCollections?: (() => unknown) | null
@@ -33,6 +34,7 @@ export const Browser = withCtrl<BrowserProps>(
     collectionCardPropsList,
     resourceCardPropsList,
     smallProfileCardPropsList,
+    hideSortAndFilter,
     setSortBy,
     loadMoreSubjects,
     loadMoreCollections,
@@ -45,10 +47,10 @@ export const Browser = withCtrl<BrowserProps>(
         [type]: checked,
       }),
       {
-        Subjects: subjectCardPropsList !== null,
-        Collections: !collectionCardPropsList !== null,
-        Resources: !resourceCardPropsList !== null,
-        People: !smallProfileCardPropsList !== null,
+        Subjects: subjectCardPropsList && subjectCardPropsList.length > 0 ? true : false,
+        Collections: collectionCardPropsList && collectionCardPropsList.length > 0 ? true : false,
+        Resources: resourceCardPropsList && resourceCardPropsList.length > 0 ? true : false,
+        People: smallProfileCardPropsList && smallProfileCardPropsList.length > 0 ? true : false,
       },
     )
 
@@ -112,7 +114,7 @@ export const Browser = withCtrl<BrowserProps>(
         title={t`Filters`}
         direction={direction}
         content={[
-          subjectCardPropsList && (
+          subjectCardPropsList && subjectCardPropsList.length > 0 && (
             <Checkbox
               onChange={setFilterCB}
               label={t`Subjects`}
@@ -121,7 +123,7 @@ export const Browser = withCtrl<BrowserProps>(
               checked={filters.Subjects}
             />
           ),
-          collectionCardPropsList && (
+          collectionCardPropsList && collectionCardPropsList.length > 0 && (
             <Checkbox
               onChange={setFilterCB}
               label={t`Collections`}
@@ -130,7 +132,7 @@ export const Browser = withCtrl<BrowserProps>(
               checked={filters.Collections}
             />
           ),
-          resourceCardPropsList && (
+          resourceCardPropsList && resourceCardPropsList.length > 0 && (
             <Checkbox
               onChange={setFilterCB}
               label={t`Resources`}
@@ -139,7 +141,7 @@ export const Browser = withCtrl<BrowserProps>(
               checked={filters.Resources}
             />
           ),
-          smallProfileCardPropsList && (
+          smallProfileCardPropsList && smallProfileCardPropsList.length > 0 && (
             <Checkbox onChange={setFilterCB} label={t`People`} name="People" key="People" checked={filters.People} />
           ),
         ]}
@@ -164,16 +166,20 @@ export const Browser = withCtrl<BrowserProps>(
     return (
       <div className="browser">
         <div className="content">
-          <div className="side-column">
-            {filterCard('vertical')}
-            {sortCard('vertical')}
-          </div>
-          <div className="main-column">
-            <div className="filter-and-sort">
-              {filterCard('horizontal')}
-              {sortCard('horizontal')}
+          {!hideSortAndFilter && (
+            <div className="side-column">
+              {filterCard('vertical')}
+              {sortCard('vertical')}
             </div>
-            {subjectCardPropsList && filters.Subjects && (
+          )}
+          <div className={`main-column ${hideSortAndFilter ? 'full-width' : ''}`}>
+            {!hideSortAndFilter && (
+              <div className="filter-and-sort">
+                {filterCard('horizontal')}
+                {sortCard('horizontal')}
+              </div>
+            )}
+            {subjectCardPropsList && subjectCardPropsList.length > 0 && filters.Subjects && (
               <ListCard
                 content={(shouldShowSeeAll('Subjects') ? subjectCardPropsList.slice(0, 8) : subjectCardPropsList).map(
                   subjectCardProps => (
@@ -197,7 +203,7 @@ export const Browser = withCtrl<BrowserProps>(
                 direction="wrap"
               />
             )}
-            {collectionCardPropsList && filters.Collections && (
+            {collectionCardPropsList && collectionCardPropsList.length > 0 && filters.Collections && (
               <ListCard
                 content={(shouldShowSeeAll('Collections')
                   ? collectionCardPropsList.slice(0, 6)
@@ -222,7 +228,7 @@ export const Browser = withCtrl<BrowserProps>(
                 minGrid={240}
               />
             )}
-            {resourceCardPropsList && filters.Resources && (
+            {resourceCardPropsList && resourceCardPropsList.length > 0 && filters.Resources && (
               <ListCard
                 content={(shouldShowSeeAll('Resources')
                   ? resourceCardPropsList.slice(0, 6)
@@ -247,7 +253,7 @@ export const Browser = withCtrl<BrowserProps>(
                 minGrid={280}
               />
             )}
-            {smallProfileCardPropsList && filters.People && (
+            {smallProfileCardPropsList && smallProfileCardPropsList.length > 0 && filters.People && (
               <ListCard
                 content={(shouldShowSeeAll('People')
                   ? smallProfileCardPropsList.slice(0, 11)
