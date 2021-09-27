@@ -41,10 +41,10 @@ body::-webkit-scrollbar {
 
   > .policies-snackbar {
     padding: 10px 14px 10px 25px;
+    gap: 24px;
     > .content {
       display: inline;
       line-height: 22px;
-      gap: 26px;
       > a {
         color: $info-color;
         margin: 0 5px;
