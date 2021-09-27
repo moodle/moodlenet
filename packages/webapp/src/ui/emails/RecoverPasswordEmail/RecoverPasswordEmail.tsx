@@ -85,7 +85,7 @@ export const RecoverPasswordEmail = (
   <html>
     <head>
       <title></title>
-      <style>{css /* {getCssFromScss('styles.scss') as any} */}</style>
+      <style>{css}</style>
     </head>
     <body>
       <div id="email-header">
