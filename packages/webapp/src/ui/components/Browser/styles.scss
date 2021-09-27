@@ -6,9 +6,17 @@
     display: flex;
 
     > .main-column {
-      width: calc(100% - 190px);
       height: 100%;
-      margin-left: 190px;
+
+      &.full-width {
+        width: 100%;
+      }
+
+      &:not(.full-width) {
+        width: calc(100% - 190px);
+        margin-left: 190px;
+      }
+
       > .filter-and-sort {
         display: none;
       }
@@ -53,7 +61,7 @@
       }
 
       > .people:not(.see-all) {
-        max-height: 594px;
+        max-height: 585px;
         overflow: hidden;
       }
 
@@ -75,9 +83,10 @@
 
     @media screen and (max-width: 800px) {
       > .main-column {
-        width: 100%;
-        height: 100%;
-        margin-left: 0;
+        &:not(.full-width) {
+          margin-left: 0;
+          width: 100%;
+        }
 
         > .filter-and-sort {
           display: flex;

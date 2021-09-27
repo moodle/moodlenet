@@ -1,7 +1,7 @@
 @import '../../../styles/utils/colors';
 
 .footer {
-  padding: 20px 100px;
+  padding: 35px 100px 40px 100px;
   display: flex;
   justify-content: center;
   top: 0;
@@ -10,7 +10,7 @@
   font-size: 0.7rem;
 
   @media screen and (max-width: 675px) {
-    padding: 0 25px;
+    padding: 25px 25px 35px 25px;
     > .content {
       gap: 15px;
     }

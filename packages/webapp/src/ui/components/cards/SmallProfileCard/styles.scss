@@ -1,6 +1,7 @@
 .small-profile-card {
   width: 100%;
   max-width: 245px;
+  height: 258px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,9 +12,6 @@
     height: 60px;
     object-fit: cover;
     border-radius: 16px 16px 0 0;
-    @media (max-width: 450px) {
-      border-radius: 0;
-    }
   }
 
   > .avatar > img {
@@ -32,10 +30,6 @@
     display: flex;
     flex-direction: column;
     gap: 7px;
-
-    @media (max-width: 450px) {
-      margin: 13px 40px 0 40px;
-    }
 
     > .profile-card-header {
       display: flex;
