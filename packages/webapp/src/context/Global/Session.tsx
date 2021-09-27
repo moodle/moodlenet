@@ -122,6 +122,7 @@ export const SessionProvider: FC = ({ children }) => {
   }, [lastSession])
 
   const session = sessionQResult.data?.getSession ?? null
+  const isAuthenticated = !!session
   const loading = sessionQResult.loading
   const recoverPassword = useCallback<SessionContextType['recoverPassword']>(
     async ({ email }) => {
@@ -166,10 +167,11 @@ export const SessionProvider: FC = ({ children }) => {
         setUserAcceptedPolicies(_.newValue === USER_ACCEPTED_POLICIES_STORAGE_VAL)
       }
     }
-  })
+  }, [])
 
   const userAcceptPoliciesCb = useCallback(() => {
     localStorage.setItem(USER_ACCEPTED_POLICIES_STORAGE_KEY, USER_ACCEPTED_POLICIES_STORAGE_VAL)
+    setUserAcceptedPolicies(true)
   }, [])
 
   useEffect(() => {
@@ -188,14 +190,15 @@ export const SessionProvider: FC = ({ children }) => {
       session,
       loading,
       isAdmin: session?.profile.id === 'Profile/__root__', // FIXME HACK for mvp
-      isAuthenticated: !!session,
+      isAuthenticated,
       lastSessionEmail: lastSession.email ?? null,
       lastSessionJwt: lastSession.jwt ?? null,
       recoverPassword,
       changeRecoverPassword,
-      userMustAcceptPolicies: userAcceptedPolicies ? null : userAcceptPoliciesCb,
+      userMustAcceptPolicies: isAuthenticated || userAcceptedPolicies ? null : userAcceptPoliciesCb,
     }),
     [
+      isAuthenticated,
       logout,
       login,
       firstLogin,
