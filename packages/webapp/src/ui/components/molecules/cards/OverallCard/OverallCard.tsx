@@ -10,7 +10,7 @@ import './styles.scss'
 export type OverallCardProps = {
   followers: number
   resources: number
-  followingHref: Href
+  followingHref?: Href
   years: number | string
   kudos: number
   hideBorderWhenSmall?: boolean
@@ -22,7 +22,7 @@ export const OverallCard: FC<OverallCardProps> = ({
   followers,
   resources,
   kudos,
-  followingHref,
+  // followingHref,
   hideBorderWhenSmall,
   showIcons,
   noCard,
@@ -54,7 +54,9 @@ export const OverallCard: FC<OverallCardProps> = ({
         <div className="overall-container">
           <div className="data">
             {followers}
-            <span><Trans>Followers</Trans></span>
+            <span>
+              <Trans>Followers</Trans>
+            </span>
           </div>
           {/* <Link className="data" href={followingHref}>
             {followers}
@@ -62,11 +64,15 @@ export const OverallCard: FC<OverallCardProps> = ({
           </Link> */}
           <div className="data">
             {kudos}
-            <span><Trans>Kudos</Trans></span>
+            <span>
+              <Trans>Kudos</Trans>
+            </span>
           </div>
           <div className="data">
             {resources}
-            <span><Trans>Resources</Trans></span>
+            <span>
+              <Trans>Resources</Trans>
+            </span>
           </div>
         </div>
       )}
