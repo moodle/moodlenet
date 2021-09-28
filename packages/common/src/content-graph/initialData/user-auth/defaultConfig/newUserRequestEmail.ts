@@ -85,7 +85,7 @@ export const html = `
   <html>
     <head>
       <title></title>
-      <style>{css}</style>
+      <style>${css}</style>
     </head>
     <body>
       <div id="email-header">
