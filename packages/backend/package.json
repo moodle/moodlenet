@@ -87,7 +87,7 @@
     "sharp": "^0.28.1",
     "sshpk": "^1.16.1",
     "tuple-type": "^1.0.3",
-    "typescript": "~4.2.3",
+    "typescript": "^4.4.3",
     "typescript-compare": "^0.0.2",
     "typescript-conditional-types": "^1.0.0",
     "typescript-logic": "^0.0.0",
