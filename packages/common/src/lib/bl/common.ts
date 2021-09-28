@@ -15,7 +15,10 @@ export type Cmp = '==' | '!=' | '<' | '>' | '<=' | '>='
 export type BaseOperators = {
   cmp<T>(a: BLVal<T>, cmp: Cmp, b: BLVal<T>): BLVal<boolean>
   cond<T>(condition: BLVal<boolean>, right: BLVal<T>, left: BLVal<T>): BLVal<T>
-  and(bool: BLVal<boolean>, ...moreBools: BLVal<boolean>[]): BLVal<boolean>
-  or(bool: BLVal<boolean>, ...moreBools: BLVal<boolean>[]): BLVal<boolean>
+  and(bools: [BLVal<boolean>, ...BLVal<boolean>[]]): BLVal<boolean>
+  or(bools: [BLVal<boolean>, ...BLVal<boolean>[]]): BLVal<boolean>
   not(bool: BLVal<boolean>): BLVal<boolean>
+
+  // and(bool: BLVal<boolean>, ...moreBools: BLVal<boolean>[]): BLVal<boolean>
+  // or(bool: BLVal<boolean>, ...moreBools: BLVal<boolean>[]): BLVal<boolean>
 }
