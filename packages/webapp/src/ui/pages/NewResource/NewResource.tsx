@@ -29,7 +29,7 @@ export const NewResource = withCtrl<NewResourceProps>(({ stepProps, headerPageTe
       ? 1
       : stepProps.step === 'ExtraDetailsStep'
       ? 2
-      : assertNever(stepProps, `unknown stepProps: step=${stepProps!.step}`)
+      : assertNever(stepProps, `unknown stepProps: step=${(stepProps as any)?.step}`)
 
   // if (progressCurrentIndex === undefined) {
   //   console.error({ stepProps })
