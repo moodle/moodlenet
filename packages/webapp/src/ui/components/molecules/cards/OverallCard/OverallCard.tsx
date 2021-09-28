@@ -3,7 +3,7 @@ import GradeIcon from '@material-ui/icons/Grade'
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import { FC } from 'react'
-import { Href, Link } from '../../../../elements/link'
+import { Href } from '../../../../elements/link'
 import { Card } from '../../../atoms/Card/Card'
 import './styles.scss'
 
@@ -52,10 +52,14 @@ export const OverallCard: FC<OverallCardProps> = ({
         </div>
       ) : (
         <div className="overall-container">
-          <Link className="data" href={followingHref}>
+          <div className="data">
             {followers}
             <span><Trans>Followers</Trans></span>
-          </Link>
+          </div>
+          {/* <Link className="data" href={followingHref}>
+            {followers}
+            <span><Trans>Followers</Trans></span>
+          </Link> */}
           <div className="data">
             {kudos}
             <span><Trans>Kudos</Trans></span>
