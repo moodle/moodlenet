@@ -49,10 +49,10 @@ export const Browser = withCtrl<BrowserProps>(
         [type]: checked,
       }),
       {
-        Subjects: subjectCardPropsList && subjectCardPropsList.length > 0 ? true : false,
-        Collections: collectionCardPropsList && collectionCardPropsList.length > 0 ? true : false,
-        Resources: resourceCardPropsList && resourceCardPropsList.length > 0 ? true : false,
-        People: smallProfileCardPropsList && smallProfileCardPropsList.length > 0 ? true : false,
+        Subjects: subjectCardPropsList ? true : false,
+        Collections: collectionCardPropsList ? true : false,
+        Resources: resourceCardPropsList ? true : false,
+        People: smallProfileCardPropsList ? true : false,
       },
     )
 
@@ -116,7 +116,7 @@ export const Browser = withCtrl<BrowserProps>(
         title={t`Filters`}
         direction={direction}
         content={[
-          subjectCardPropsList && subjectCardPropsList.length > 0 && (
+          subjectCardPropsList && (
             <Checkbox
               onChange={setFilterCB}
               label={t`Subjects`}
@@ -125,7 +125,7 @@ export const Browser = withCtrl<BrowserProps>(
               checked={filters.Subjects}
             />
           ),
-          collectionCardPropsList && collectionCardPropsList.length > 0 && (
+          collectionCardPropsList && (
             <Checkbox
               onChange={setFilterCB}
               label={t`Collections`}
@@ -134,7 +134,7 @@ export const Browser = withCtrl<BrowserProps>(
               checked={filters.Collections}
             />
           ),
-          resourceCardPropsList && resourceCardPropsList.length > 0 && (
+          resourceCardPropsList && (
             <Checkbox
               onChange={setFilterCB}
               label={t`Resources`}
@@ -143,7 +143,7 @@ export const Browser = withCtrl<BrowserProps>(
               checked={filters.Resources}
             />
           ),
-          smallProfileCardPropsList && smallProfileCardPropsList.length > 0 && (
+          smallProfileCardPropsList && (
             <Checkbox onChange={setFilterCB} label={t`People`} name="People" key="People" checked={filters.People} />
           ),
         ]}
@@ -181,7 +181,7 @@ export const Browser = withCtrl<BrowserProps>(
                 {sortCard('horizontal')}
               </div>
             )}
-            {subjectCardPropsList && subjectCardPropsList.length > 0 && filters.Subjects && (
+            {subjectCardPropsList && filters.Subjects && (
               <ListCard
                 content={(shouldShowSeeAll('Subjects') ? subjectCardPropsList.slice(0, 8) : subjectCardPropsList).map(
                   subjectCardProps => (
@@ -205,7 +205,7 @@ export const Browser = withCtrl<BrowserProps>(
                 direction="wrap"
               />
             )}
-            {collectionCardPropsList && collectionCardPropsList.length > 0 && filters.Collections && (
+            {collectionCardPropsList && filters.Collections && (
               <ListCard
                 content={(shouldShowSeeAll('Collections')
                   ? collectionCardPropsList.slice(0, 6)
@@ -230,7 +230,7 @@ export const Browser = withCtrl<BrowserProps>(
                 minGrid={240}
               />
             )}
-            {resourceCardPropsList && resourceCardPropsList.length > 0 && filters.Resources && (
+            {resourceCardPropsList && filters.Resources && (
               <ListCard
                 content={(shouldShowSeeAll('Resources')
                   ? resourceCardPropsList.slice(0, 6)
@@ -255,7 +255,7 @@ export const Browser = withCtrl<BrowserProps>(
                 minGrid={280}
               />
             )}
-            {smallProfileCardPropsList && smallProfileCardPropsList.length > 0 && filters.People && (
+            {smallProfileCardPropsList && filters.People && (
               <ListCard
                 content={(shouldShowSeeAll('People')
                   ? smallProfileCardPropsList.slice(0, 11)
