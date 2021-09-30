@@ -1,10 +1,17 @@
 // create
 
+import { Assumptions, BaseOperators } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
+import {
+  AddEdgeAssumptionsFactoryMap,
+  AddEdgeOperators,
+  getAddEdgeAssumptions,
+} from '@moodlenet/common/lib/content-graph/bl/graph-lang/AddEdge'
+import { GraphOperators } from '@moodlenet/common/lib/content-graph/bl/graph-lang/graphOperators'
 import { GraphEdge, GraphEdgeIdentifier } from '@moodlenet/common/lib/content-graph/types/edge'
 import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
+import { SessionEnv } from '@moodlenet/common/lib/types'
 import { newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
-import { SessionEnv } from '../../lib/auth/types'
 import { QMModule } from '../../lib/qmino'
 import { QMCommand } from '../../lib/qmino/lib'
 
@@ -14,8 +21,12 @@ export type CreateAdapter = {
     edge: E
     from: GraphNodeIdentifier
     to: GraphNodeIdentifier
+    assumptions: Assumptions
   }) => Promise<E | null>
-  // ops: CreateEdgeBLOps
+  assumptionsMap: AddEdgeAssumptionsFactoryMap
+  graphOperators: GraphOperators
+  baseOperators: BaseOperators
+  addEdgeOperators: AddEdgeOperators
 }
 
 export type CreateEdgeInput = {
@@ -27,15 +38,21 @@ export type CreateEdgeInput = {
 
 export const createEdge = QMCommand(
   ({ from, to, sessionEnv, newEdge }: CreateEdgeInput) =>
-    async ({ storeEdge }: CreateAdapter) => {
-      // const rule = createEdgeRule({
-      //   edgeType,
-      //   from,
-      //   profileId: getProfileId(env),
-      //   ops,
-      //   to,
-      //   userRole: env.user.role,
-      // })
+    async ({ storeEdge, assumptionsMap, addEdgeOperators, baseOperators, graphOperators }: CreateAdapter) => {
+      const assumptions = await getAddEdgeAssumptions({
+        from,
+        edgeType: newEdge._type,
+        to,
+        map: assumptionsMap,
+        env: sessionEnv,
+        addEdgeOperators,
+        baseOperators,
+        graphOperators,
+      })
+      console.log({ assumptions })
+      if (!assumptions) {
+        return null
+      }
       const _authId = sessionEnv.user.authId
       const edge: GraphEdge = {
         ...newEdge,
@@ -43,7 +60,7 @@ export const createEdge = QMCommand(
         _created: Number(new Date()),
         id: newGlyphPermId(),
       }
-      const result = await storeEdge({ edge, from, to })
+      const result = await storeEdge({ edge, from, to, assumptions })
       if (!result) {
         return null
       }

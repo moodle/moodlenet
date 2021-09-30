@@ -1,5 +1,6 @@
+import { AuthId } from '../../types'
 import { stringUnionList } from '../../utils/misc'
-import { AuthId, Timestamp } from './common'
+import { Timestamp } from './common'
 
 export type GraphNodeMap = {
   Collection: Collection
@@ -41,10 +42,15 @@ export type GraphNodeIdentifierPerm<GNT extends GraphNodeType = GraphNodeType> =
   BaseGraphNode<GNT>,
   '_type' | '_permId'
 >
+export type GraphNodeIdentifierAuth<GNT extends GraphNodeType = GraphNodeType> = Pick<
+  BaseGraphNode<GNT> & AuthOp,
+  '_type' | '_authId'
+>
 
 export type GraphNodeIdentifier<GNT extends GraphNodeType = GraphNodeType> =
   | GraphNodeIdentifierSlug<GNT>
   | GraphNodeIdentifierPerm<GNT>
+  | GraphNodeIdentifierAuth<GNT>
 
 export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _type: GNT

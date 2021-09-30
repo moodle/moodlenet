@@ -1,9 +1,9 @@
 import { mapPageItem } from '@moodlenet/common/lib/content-graph/types/page'
 import { getAllResults, getOneResult } from '../../../../lib/helpers/arango/query'
 import { NodeRelationCountAdapter, TraverseNodeRelAdapter } from '../../../../ports/content-graph/traverseNodeRel'
-import { aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode, getOneAQFrag, makeAfterBeforePage } from '../aql/helpers'
-import { getAqlNodeByGraphNodeIdentifierQ } from '../aql/queries/getNode'
+import { aqBV, aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode, makeAfterBeforePage } from '../aql/helpers'
 import { nodeRelationCountQ, traverseEdgesQ } from '../aql/queries/traverseEdges'
+import { graphOperators } from '../bl/graphOperators'
 import { AqlGraphEdge, AqlGraphNode, ContentGraphDB } from '../types'
 
 const pageItemMapper = mapPageItem(({ edge, node }: { edge: AqlGraphEdge; node: AqlGraphNode }) => ({
@@ -25,6 +25,7 @@ export const getTraverseNodeRelAdapter = (db: ContentGraphDB): TraverseNodeRelAd
     })
     return page
   },
+  graphOperators,
 })
 
 export const getNodeRelationCountAdapter = (db: ContentGraphDB): NodeRelationCountAdapter => ({
@@ -33,8 +34,9 @@ export const getNodeRelationCountAdapter = (db: ContentGraphDB): NodeRelationCou
       edgeType,
       inverse,
       targetNodeType,
-      parentNodeId: `${getOneAQFrag(getAqlNodeByGraphNodeIdentifierQ(fromNode))}._id`,
+      parentNode: fromNode,
     })
-    return (await getOneResult(q, db)) || 0
+    return (await getOneResult(aqBV(q), db)) || 0
   },
+  graphOperators,
 })

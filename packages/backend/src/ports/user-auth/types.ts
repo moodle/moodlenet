@@ -1,4 +1,4 @@
-import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
+import { AuthId } from '@moodlenet/common/lib/types'
 import { EmailTemplate } from '../../lib/emailSender/types'
 
 export enum Messages {
