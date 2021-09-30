@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "cross-env": "^7.0.3",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "nodemailer": "^6.6.5"
   },
   "scripts": {
     "bs": "lerna bootstrap --nohoist=babel-* --nohoist=*react*",
