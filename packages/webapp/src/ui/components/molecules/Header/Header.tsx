@@ -63,7 +63,7 @@ export const Header = withCtrl<HeaderProps>(props => {
   const { me, organization } = props
 
   const avatar = {
-    backgroundImage: 'url(' + (me ? me.avatar : defaultAvatar) + ')',
+    backgroundImage: 'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
     backgroundSize: 'cover',
   }
 

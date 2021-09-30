@@ -72,10 +72,6 @@
     flex-direction: column;
     gap: 20px;
 
-    @media (max-width: 450px) {
-      margin: 13px 40px 0 40px;
-    }
-
     > .profile-card-header {
       > .title > .display-name {
         width: 100%;
