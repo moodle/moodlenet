@@ -67,9 +67,7 @@
   }
 
   > .info {
-    margin-top: 13px;
-    margin-left: 40px;
-    margin-right: 20%;
+    padding: 13px 40px 0 40px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -99,26 +97,32 @@
 
       > .subtitle {
         margin-top: 3px;
-        font-size: 11px;
+        font-size: 12px;
         display: flex;
         justify-content: flex-start;
-        gap: 5px;
+        gap: 6px;
 
-        > span {
+        @media (max-width: 450px) {
+          flex-direction: column;
+        }
+
+        @media (min-width: 450px) {
+          > *:not(:first-child):before {
+            content: '·';
+          }
+        }
+
+        > * {
           display: flex;
           align-items: center;
-          gap: 5px;
+          gap: 6px;
         }
 
-        > span:not(:first-child):before {
-          content: '·';
-        }
-
-        > .input-text-field > .input-container > input {
-          font-size: 11px;
+        > span > .input-text-field > .input-container > input {
+          font-size: 12px;
 
           &::placeholder {
-            font-size: 11px;
+            font-size: 12px;
             color: #b6bacb;
           }
         }
