@@ -1,7 +1,7 @@
+import { SessionEnv } from '@moodlenet/common/lib/types'
 import { RequestHandler } from 'express'
 import { VerifyOptions } from 'jsonwebtoken'
 import { INVALID_TOKEN, verifyJwt } from '../../lib/auth/jwt'
-import { SessionEnv } from '../../lib/auth/types'
 
 export const getMNExecEnvMiddleware =
   ({ jwtPublicKey, jwtVerifyOpts }: { jwtPublicKey: string; jwtVerifyOpts: VerifyOptions }): RequestHandler =>

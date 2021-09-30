@@ -1,6 +1,6 @@
+import { SessionEnv } from '@moodlenet/common/lib/types'
 import JWT from 'jsonwebtoken'
 import { ActiveUser } from '../../ports/user-auth/types'
-import { SessionEnv } from './types'
 
 export const INVALID_TOKEN = Symbol('INVALID_TOKEN')
 export type INVALID_TOKEN = typeof INVALID_TOKEN
@@ -59,7 +59,7 @@ export const signJwtActiveUser = ({
 export const getSessioncEnvByActiveUser = (user: ActiveUser): SessionEnv => ({
   user: {
     authId: user.authId,
-    email: user.email,
+    //  email: user.email,
   },
 })
 

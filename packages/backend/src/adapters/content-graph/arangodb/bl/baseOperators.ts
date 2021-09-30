@@ -1,29 +1,23 @@
-import { BaseOperators, BLVal } from '@moodlenet/common/lib/lib/bl/common'
-
-export const and: BaseOperators['and'] = (...bvals) => {
-  return `( ${bvals.join(' && ')} )` as BLVal<boolean>
-}
-
-export const or: BaseOperators['or'] = (...bvals) => {
-  return `( ${bvals.join(' || ')} )` as BLVal<boolean>
-}
-
-export const cmp: BaseOperators['cmp'] = (a, cmp, b) => {
-  return `( ${a} ${cmp} ${b} )` as BLVal<boolean>
-}
-
-export const cond: BaseOperators['cond'] = (condition, right, left) => {
-  return `( ${condition} ? ${right} : ${left} )` as typeof right | typeof left
-}
-
-export const not: BaseOperators['not'] = _ => {
-  return `!( ${_} )` as BLVal<boolean>
-}
+import { BaseOperators, BV, _T } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
+import { aqlstr } from '../../../../lib/helpers/arango/query'
 
 export const baseOperators: BaseOperators = {
-  and,
-  cond,
-  cmp,
-  not,
-  or,
+  and: (...bvals) => {
+    return _<boolean>(`${bvals.join(' && ')}`)
+  },
+  or: (...bvals) => {
+    return _<boolean>(`${bvals.join(' || ')}`)
+  },
+  cmp: (a, cmp, b) => {
+    return _<boolean>(`${a} ${cmp} ${b}`)
+  },
+  cond: (condition, right, left) => {
+    return _<_T<typeof right | typeof left>>(`${condition} ? ${right} : ${left}`)
+  },
+  not: val => {
+    return _<boolean>(`! ${val}`)
+  },
+  _: val => _(`${aqlstr(val)}`),
 }
+
+export const _ = <T>(val: string) => `( ${val} )` as BV<T>
