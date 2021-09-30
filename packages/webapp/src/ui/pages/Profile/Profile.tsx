@@ -83,7 +83,7 @@ export const Profile = withCtrl<ProfileProps>(
         {showAccountCreationSuccessAlert && isShowingAccountCreationSuccessAlert && (
           <Snackbar
             type="success"
-            autoHideDuration={4000}
+            autoHideDuration={6000}
             onClose={() => setIsShowingAccountCreationSuccessAlert(false)}
           >
             <Trans>Account activated! Feel free to complete your profile</Trans>
