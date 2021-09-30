@@ -1,8 +1,4 @@
-const css = `
-
-`
-
-export const html = `<!DOCTYPE html>
+<!DOCTYPE html>
 <html
   lang="en"
   xmlns="http://www.w3.org/1999/xhtml"
@@ -444,31 +440,3 @@ export const html = `<!DOCTYPE html>
     </center>
   </body>
 </html>
-`
-
-const text = `Hello {{=it.email}}
-
-Someone (probably you) signed up for a new MoodleNet user. 
-If that was you, please click on the link below:
-{{=it.link}}
-
-Not you? Just ignore this message. 
-`
-
-/* const html = `<h3>Hello {{=it.email}}</h3>
-<p>
-  Someone (probably you) signed up for a new MoodleNet user. 
-  If that was you, please click on the link below:
-</p>
-<p>
-  <a href="{{=it.link}}">{{=it.link}}</a>
-</p>
-<p>
-  Not you? Just ignore this message. 
-</p>
-` */
-
-export const newUserRequestEmail = {
-  text,
-  html,
-}

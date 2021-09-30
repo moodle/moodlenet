@@ -1,8 +1,10 @@
-const css = `
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { FC } from 'react'
 
-`
-
-export const html = `<!DOCTYPE html>
+function html() {
+  return {
+    __html: `
+    <!DOCTYPE html>
 <html
   lang="en"
   xmlns="http://www.w3.org/1999/xhtml"
@@ -351,7 +353,7 @@ export const html = `<!DOCTYPE html>
                 <tr>
                   <td style="padding: 0 2.5em; text-align: center">
                     <div class="text">
-                      <h2>Welcome to MoodleNet</h2>
+                      <h2>Martin Dougiamas sent you a message</h2>
                     </div>
                   </td>
                 </tr>
@@ -359,10 +361,9 @@ export const html = `<!DOCTYPE html>
                   <td style="text-align: center">
                     <div class="text-author">
                       <span class="position"
-                        >Thanks for signing up to MoodleNet! Click the button below to activate your account.</span
+                        >Dear MoodleNetter, the quality of your content is just great! We are very happy to have contributors like you. Thank you for you efforts!</span
                       >
-                      <p style="margin: 25px 0"><a href="{{=it.link}}" class="btn btn-primary">Activate account</a></p>
-                      <span class="position disclaimer">Not you? Just ignore this message.</span>
+                      <p style="margin: 25px 0"><a href=# class="btn btn-primary">Sender profile</a></p>
                     </div>
                   </td>
                 </tr>
@@ -444,31 +445,22 @@ export const html = `<!DOCTYPE html>
     </center>
   </body>
 </html>
-`
-
-const text = `Hello {{=it.email}}
-
-Someone (probably you) signed up for a new MoodleNet user. 
-If that was you, please click on the link below:
-{{=it.link}}
-
-Not you? Just ignore this message. 
-`
-
-/* const html = `<h3>Hello {{=it.email}}</h3>
-<p>
-  Someone (probably you) signed up for a new MoodleNet user. 
-  If that was you, please click on the link below:
-</p>
-<p>
-  <a href="{{=it.link}}">{{=it.link}}</a>
-</p>
-<p>
-  Not you? Just ignore this message. 
-</p>
-` */
-
-export const newUserRequestEmail = {
-  text,
-  html,
+    `,
+  }
 }
+
+export const Email: FC<{}> = () => {
+  return <div style={{ width: '100%', height: '100%' }} dangerouslySetInnerHTML={html()} />
+}
+
+const meta: ComponentMeta<typeof Email> = {
+  title: 'Emails/Access/MessageReceivedEmail',
+  excludeStories: ['Email'],
+  parameters: { layout: 'fullscreen' },
+}
+
+const MessageReceivedEmailStory: ComponentStory<typeof Email> = () => <Email />
+
+export const Default = MessageReceivedEmailStory.bind({})
+
+export default meta
