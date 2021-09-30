@@ -2,6 +2,7 @@
   height: 100%;
   width: 100%;
   position: relative;
+  max-width: 100%;
 
   > .content {
     height: 100%;
@@ -16,30 +17,13 @@
 
   > .hat-logo {
     position: absolute;
-    bottom: 115px;
-    width: 80%;
-    left: calc(10%);
-    height: calc(100% - 160px);
-    > svg {
-      height: 180px;
-      width: 180px;
-    }
-  }
-
-  .m-logo {
-    position: absolute;
-    right: 0;
-    bottom: 0;
     height: 180px;
     width: 180px;
-  }
-
-  > .hat-logo {
     z-index: 1;
     bottom: 48px;
-    animation: spin 5s infinite linear;
+    animation: move 2s infinite linear;
     > svg {
-      animation: spin 2s infinite linear;
+      animation: spin 1s infinite linear;
     }
   }
 
@@ -49,6 +33,21 @@
     }
     to {
       transform: rotate(360deg);
+    }
+  }
+
+  @keyframes move {
+    0% {
+      left: -180px;
+      bottom: 20%;
+    }
+    50% {
+      left: 50%;
+      bottom: 0px;
+    }
+    100% {
+      left: calc(100% + 180px);
+      bottom: 20%;
     }
   }
 }

@@ -1,6 +1,5 @@
 import { Trans } from '@lingui/macro'
 import { ReactComponent as HatLogo } from '../../assets/icons/hat-moodle.svg'
-import { ReactComponent as MLogo } from '../../assets/icons/m-moodle.svg'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import './styles.scss'
@@ -21,9 +20,6 @@ export const FallbackPage = withCtrl<FallbackPageProps>(
           </div>
           <div className="hat-logo">
             <HatLogo />
-          </div>
-          <div className="m-logo">
-            <MLogo />
           </div>
         </div>
       </HeaderPageTemplate>
