@@ -1,4 +1,4 @@
-import { AuthId, isAuthId } from '@moodlenet/common/lib/content-graph/types/common'
+import { AuthId, isAuthId } from '@moodlenet/common/lib/types'
 import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { SignOptions } from 'jsonwebtoken'
@@ -19,6 +19,20 @@ export const getActiveByEmail = QMQuery(
   ({ email }: { email: string }) =>
     async ({ getActiveUserByEmail }: GetActiveByEmailAdapter) => {
       const activeUser = await getActiveUserByEmail({ email })
+      if (!activeUser) {
+        return null
+      }
+      return activeUser
+    },
+)
+export type GetActiveByAuthIdAdapter = {
+  getActiveUserByAuth(_: { authId: AuthId }): Promise<ActiveUser | null | undefined>
+}
+
+export const getActiveByAuthId = QMQuery(
+  ({ authId }: { authId: AuthId }) =>
+    async ({ getActiveUserByAuth }: GetActiveByAuthIdAdapter) => {
+      const activeUser = await getActiveUserByAuth({ authId })
       if (!activeUser) {
         return null
       }

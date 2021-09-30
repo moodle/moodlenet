@@ -1,4 +1,4 @@
-import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
+import { AuthId } from '@moodlenet/common/lib/types'
 import { getOneResult } from '../../../../lib/helpers/arango/query'
 import { GetActiveByEmailAdapter } from '../../../../ports/user-auth/user'
 import { SendEmailToProfileAdapter } from '../../../../ports/utils/utils'

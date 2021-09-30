@@ -1,19 +1,20 @@
-import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { aq, AqlVar } from '../../../../../lib/helpers/arango/query'
+import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
+import { GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
+import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { _ } from '../../bl/baseOperators'
 import { AqlGraphEdgeByType } from '../../types'
 
 export const getEdgeByNodesQ = <Type extends GraphEdgeType>({
-  edge,
+  edgeType,
   from,
   to,
 }: {
-  edge: GraphEdge<Type>
-  from: AqlVar
-  to: AqlVar
+  edgeType: EdgeType
+  from: BV<GraphNode | null>
+  to: BV<GraphNode | null>
 }) => {
-  const edgeType = edge._type
-
-  const q = aq<AqlGraphEdgeByType<Type>>(`
+  const q = _<AqlGraphEdgeByType<Type>>(`(
     let fromNode = ${from}
     let toNode = ${to}
     
@@ -23,7 +24,7 @@ export const getEdgeByNodesQ = <Type extends GraphEdgeType>({
     limit 1
 
     return e
-  `)
-  // console.log(q)
+  )[0]`)
+  console.log(q)
   return q
 }

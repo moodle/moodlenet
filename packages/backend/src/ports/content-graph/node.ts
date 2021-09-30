@@ -1,4 +1,3 @@
-import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
 import { GraphEdge } from '@moodlenet/common/lib/content-graph/types/edge'
 import {
   GraphNode,
@@ -7,9 +6,9 @@ import {
   GraphNodeType,
   Profile,
 } from '@moodlenet/common/lib/content-graph/types/node'
+import { AuthId, SessionEnv } from '@moodlenet/common/lib/types'
 import { newGlyphIdentifiers } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
-import { SessionEnv } from '../../lib/auth/types'
 import { QMCommand, QMModule, QMQuery } from '../../lib/qmino'
 import { CreateEdgeInput } from './edge'
 

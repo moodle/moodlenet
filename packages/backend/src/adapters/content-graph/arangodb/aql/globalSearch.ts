@@ -1,8 +1,9 @@
 import { GlobalSearchNodeType } from '@moodlenet/common/lib/content-graph/types/global-search'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { GlobalSearchInput } from '../../../../ports/content-graph/search'
+import { _ } from '../bl/baseOperators'
 import { AqlGraphNodeByType } from '../types'
-import { forwardSkipLimitPagination, getOneAQFrag } from './helpers'
+import { forwardSkipLimitPagination } from './helpers'
 import { nodeRelationCountQ } from './queries/traverseEdges'
 
 export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSearchNodeType>({
@@ -28,18 +29,19 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
   const sortFactor =
     sort?.by === 'Popularity'
       ? `(1 + 
-        ( ${getOneAQFrag(
-          nodeRelationCountQ({
-            edgeType: 'Follows',
-            inverse: true,
-            targetNodeType: 'Profile',
-            parentNodeId: 'node._id',
-          }),
-        )} )
+        ( ${nodeRelationCountQ({
+          edgeType: 'Follows',
+          inverse: true,
+          targetNodeType: 'Profile',
+          parentNode: _('node._id'),
+        })} )
         +
-        ( ${getOneAQFrag(
-          nodeRelationCountQ({ edgeType: 'Likes', inverse: true, targetNodeType: 'Profile', parentNodeId: 'node._id' }),
-        )} )
+        ( ${nodeRelationCountQ({
+          edgeType: 'Likes',
+          inverse: true,
+          targetNodeType: 'Profile',
+          parentNode: _('node._id'),
+        })} )
         )
         `
       : '1'

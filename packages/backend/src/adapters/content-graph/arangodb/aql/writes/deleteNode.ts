@@ -1,13 +1,12 @@
 import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
 import { aq } from '../../../../../lib/helpers/arango/query'
+import { graphOperators } from '../../bl/graphOperators'
 import { AqlGraphNode } from '../../types'
-import { getOneAQFrag } from '../helpers'
-import { getAqlNodeByGraphNodeIdentifierQ } from '../queries/getNode'
 
 export const deleteNodeQ = (nodeId: GraphNodeIdentifier) => {
   const q = aq<AqlGraphNode>(`
-    let nodeToDeleteKey = ${getOneAQFrag(getAqlNodeByGraphNodeIdentifierQ(nodeId))}._key
-    REMOVE { _key: nodeToDeleteKey } IN ${nodeId._type} OPTIONS { ignoreErrors: true }
+    let nodeToDelete = ${graphOperators.graphNode(nodeId)}
+    REMOVE nodeToDelete IN ${nodeId._type} OPTIONS { ignoreErrors: true }
 
     RETURN OLD
   `)
