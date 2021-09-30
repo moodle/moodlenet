@@ -62,12 +62,12 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     }
 
     const selectBackground = (e: React.MouseEvent<HTMLElement>) => {
-      e.stopPropagation();
+      e.stopPropagation()
       document.getElementById('upload-background')?.click()
     }
-    
+
     const selectAvatar = (e: React.MouseEvent<HTMLElement>) => {
-      e.stopPropagation();
+      e.stopPropagation()
       document.getElementById('upload-avatar')?.click()
     }
 
@@ -75,7 +75,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
       const selectedFile = e.currentTarget.files?.item(0)
       selectedFile && uploadImage(selectedFile, 'background')
     }
-    
+
     const uploadAvatar = (e?: React.ChangeEvent<HTMLInputElement>) => {
       const selectedFile = e?.currentTarget.files?.item(0)
       selectedFile && uploadImage(selectedFile, 'avatar')
@@ -178,41 +178,49 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             </div>
             {isOwner && isEditing ? (
               <div className="subtitle">
-                @
-                <InputTextField
-                  autoUpdate={true}
-                  value={form.values.username}
-                  displayMode={true}
-                  placeholder="Username"
-                  edit={false}
-                  {...formAttrs.username}
-                />
-                <InputTextField
-                  autoUpdate={true}
-                  value={form.values.organizationName}
-                  displayMode={true}
-                  placeholder="Organization"
-                  edit={false}
-                  {...formAttrs.organizationName}
-                />
-                <InputTextField
-                  autoUpdate={true}
-                  value={form.values.location}
-                  displayMode={true}
-                  placeholder="Location"
-                  edit={isEditing}
-                  {...formAttrs.location}
-                  getText={setLocationField}
-                />
-                <InputTextField
-                  autoUpdate={true}
-                  value={form.values.siteUrl}
-                  displayMode={true}
-                  placeholder="Website"
-                  edit={isEditing}
-                  {...formAttrs.siteUrl}
-                  getText={setSiteUrlField}
-                />
+                <span>
+                  @
+                  <InputTextField
+                    autoUpdate={true}
+                    value={form.values.username}
+                    displayMode={true}
+                    placeholder="Username"
+                    edit={false}
+                    {...formAttrs.username}
+                  />
+                </span>
+                <span>
+                  <InputTextField
+                    autoUpdate={true}
+                    value={form.values.organizationName}
+                    displayMode={true}
+                    placeholder="Organization"
+                    edit={false}
+                    {...formAttrs.organizationName}
+                  />
+                </span>
+                <span>
+                  <InputTextField
+                    autoUpdate={true}
+                    value={form.values.location}
+                    displayMode={true}
+                    placeholder="Location"
+                    edit={isEditing}
+                    {...formAttrs.location}
+                    getText={setLocationField}
+                  />
+                </span>
+                <span>
+                  <InputTextField
+                    autoUpdate={true}
+                    value={form.values.siteUrl}
+                    displayMode={true}
+                    placeholder="Website"
+                    edit={isEditing}
+                    {...formAttrs.siteUrl}
+                    getText={setSiteUrlField}
+                  />
+                </span>
               </div>
             ) : (
               <div className="subtitle">

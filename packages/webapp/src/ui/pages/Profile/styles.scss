@@ -7,6 +7,7 @@
     justify-content: space-between;
     margin-top: 30px;
     @media screen and (max-width: 450px) {
+      margin-top: 0;
       padding: 0;
 
       > .main-column {
@@ -46,7 +47,7 @@
       flex-direction: column;
       gap: 15px;
     }
-    
+
     @media screen and (max-width: 800px) {
       > .main-column {
         width: 100%;

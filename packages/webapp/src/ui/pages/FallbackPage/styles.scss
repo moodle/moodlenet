@@ -21,10 +21,9 @@
     width: 180px;
     z-index: 1;
     bottom: 48px;
-    animation: move 2s infinite linear;
-    > svg {
-      animation: spin 1s infinite linear;
-    }
+    animation: 
+    move 2s infinite linear,
+    spin 1s infinite linear;
   }
 
   @keyframes spin {
