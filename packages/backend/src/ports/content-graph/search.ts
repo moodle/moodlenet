@@ -1,8 +1,8 @@
 import { GlobalSearchNodeType, GlobalSearchSort } from '@moodlenet/common/lib/content-graph/types/global-search'
 import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { Page, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
+import { SessionEnv } from '@moodlenet/common/lib/types'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
-import { SessionEnv } from '../../lib/auth/types'
 import { QMModule, QMQuery } from '../../lib/qmino'
 
 export type Adapter = {

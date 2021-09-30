@@ -1,5 +1,6 @@
+import { AuthId } from '../../types'
 import { stringUnionList } from '../../utils/misc'
-import { AuthId, Timestamp } from './common'
+import { Timestamp } from './common'
 
 export type GraphEdgeMap = {
   Created: Created
@@ -25,9 +26,11 @@ export type EdgeId = string // the _key
 
 export type GraphEdgeIdentifier<GET extends GraphEdgeType = GraphEdgeType> = Pick<BaseGraphEdge<GET>, 'id' | '_type'>
 
-export type BaseGraphEdge<GET extends GraphEdgeType> = {
+export type EdgeIdentifier<GET extends GraphEdgeType> = {
   id: EdgeId
   _type: GET
+}
+export type BaseGraphEdge<GET extends GraphEdgeType> = EdgeIdentifier<GET> & {
   _created: Timestamp
   _authId: AuthId
 }

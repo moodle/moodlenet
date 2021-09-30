@@ -1,28 +1,31 @@
 import { isArangoError } from 'arangojs/error'
 import { getOneResult } from '../../../../lib/helpers/arango/query'
 import { CreateAdapter, DeleteEdgeAdapter } from '../../../../ports/content-graph/edge'
-import { aqlGraphEdge2GraphEdge, getOneAQFrag } from '../aql/helpers'
+import { aqBV, aqlGraphEdge2GraphEdge } from '../aql/helpers'
 import { getEdgeByNodesQ } from '../aql/queries/getEdge'
-import { getAqlNodeByGraphNodeIdentifierQ } from '../aql/queries/getNode'
+// import { getAqlNodeByGraphNodeIdentifierQ } from '../aql/queries/getNode'
 import { createEdgeQ } from '../aql/writes/createEdge'
 import { deleteEdgeQ } from '../aql/writes/deleteEdge'
+import { addEdgeOperators } from '../bl/addEdgeOperators'
+import { baseOperators } from '../bl/baseOperators'
+import { graphOperators } from '../bl/graphOperators'
 import { ContentGraphDB } from '../types'
 
-export const createEdgeAdapter = (db: ContentGraphDB): CreateAdapter => ({
-  storeEdge: async ({ edge, from, to }) => {
+export const createEdgeAdapter = (db: ContentGraphDB): Omit<CreateAdapter, 'assumptionsMap'> => ({
+  storeEdge: async ({ edge, from, to, assumptions }) => {
     type ET = typeof edge._type
-    const q = createEdgeQ<ET>({ edge, from, to })
+    const q = createEdgeQ<ET>({ edge, from, to, assumptions })
 
     const aqlResult = await getOneResult(q, db).catch(async e => {
-      if (!(isArangoError(e) && e.errorNum === 1210)) {
+      if (!(isArangoError(e) && [1210, 1200].includes(e.errorNum))) {
         throw e
       }
       const existingEdgeQ = getEdgeByNodesQ({
-        edge,
-        from: getOneAQFrag(getAqlNodeByGraphNodeIdentifierQ(from)),
-        to: getOneAQFrag(getAqlNodeByGraphNodeIdentifierQ(to)),
+        edgeType: edge._type,
+        from: graphOperators.graphNode(from),
+        to: graphOperators.graphNode(to),
       })
-      const existingEdge = await getOneResult(existingEdgeQ, db)
+      const existingEdge = await getOneResult(aqBV(existingEdgeQ), db)
 
       return existingEdge
     })
@@ -31,6 +34,9 @@ export const createEdgeAdapter = (db: ContentGraphDB): CreateAdapter => ({
 
     return result as any
   },
+  addEdgeOperators,
+  baseOperators,
+  graphOperators,
   // ops: {
   //   ...graphOperators,
   //   ...baseOperators,

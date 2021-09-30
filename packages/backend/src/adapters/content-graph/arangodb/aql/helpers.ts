@@ -1,7 +1,8 @@
+import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
 import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
 import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
-import { AQ, aqfrag, aqlstr } from '../../../../lib/helpers/arango/query'
+import { AQ, aqlstr } from '../../../../lib/helpers/arango/query'
 import { AqlGraphEdgeByType, AqlGraphNodeByType } from '../types'
 
 export const cursorPaginatedQuery = <T>({
@@ -142,4 +143,6 @@ export const aqlGraphEdge2GraphEdge = <T extends GraphEdgeType>(aqlGraphEdge: Aq
   return graphEdge
 }
 
-export const getOneAQFrag = <T>(_aq: AQ<T>) => aqfrag<T>(`((${_aq})[${0}])`)
+// export const getOneAQFrag = <T>(_aq: AQ<T>) => aq<T>(`((${_aq})[${0}])`)
+
+export const aqBV = <T>(q: BV<T>) => `RETURN ${q}` as AQ<T>
