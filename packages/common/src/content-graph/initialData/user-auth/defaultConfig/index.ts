@@ -1,5 +1,6 @@
 import { newUserRequestEmail } from './newUserRequestEmail'
 import { recoverPasswordEmail } from './recoverPasswordEmail'
+import { sendMessageToUserEmail } from './sendMessageToUserEmail'
 
 export const DefaultConfig = {
   newUserRequestEmail: {
@@ -14,4 +15,9 @@ export const DefaultConfig = {
     subject: 'change your password',
   },
   recoverPasswordEmailExpiresSecs: 2 * 60 * 60,
+  messageToUserEmail: {
+    ...sendMessageToUserEmail,
+    from: 'Moodlenet <noreply@moodle.net>',
+    subject: 'You received a message',
+  },
 }
