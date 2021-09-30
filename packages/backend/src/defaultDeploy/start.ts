@@ -234,6 +234,7 @@ export const startDefaultMoodlenet = async ({
         _ => true,
         _ => false,
       ),
+    getConfig: () => getConfigAdapter({ db: userAuthDatabase }).getLatestConfig(),
   })
 
   //FS asset
