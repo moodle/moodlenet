@@ -37,9 +37,15 @@ export type UserAuthConfig = {
   recoverPasswordEmailExpiresSecs: TimeoutSecs
   newUserRequestEmail: EmailTemplate<NewUserRequestEmailVars>
   newUserVerificationWaitSecs: TimeoutSecs
+  messageToUserEmail: EmailTemplate<MessageToUserEmailVars>
 }
-
 // $ Config
+export type MessageToUserEmailVars = {
+  senderName: string
+  msgText: string
+  senderProfileUrl: Link
+  email: Email
+}
 export type NewUserRequestEmailVars = {
   email: Email
   link: Link

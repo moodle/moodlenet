@@ -12,6 +12,7 @@ import { LoginRoute } from './LoginRoute'
 import { NewCollectionRoute } from './NewCollectionRoute'
 import { NewPasswordRoute } from './NewPasswordRoute'
 import { NewResourceRoute } from './NewResourceRoute'
+import { NotFoundRoute } from './NotFoundRoute'
 import { ProfileRoute } from './ProfileRoute'
 import { RecoverPasswordRoute } from './RecoverPasswordRoute'
 import { ResourceRoute } from './ResourceRoute'
@@ -40,6 +41,7 @@ export const MNRouter: FC = (/* { children } */) => {
       <Route {...LandingRoute} />
       <Route {...CookiesPoliciesRoute} />
       <Route {...UserAgreementRoute} />
+      <Route {...NotFoundRoute} />
     </Switch>
   )
 }
