@@ -1,4 +1,11 @@
-export const html = `<!DOCTYPE html>
+const text = `{{=it.senderName}} sent you a message
+{{=it.msgText}}
+
+checkout sender's profile here
+{{=it.senderProfileUrl}}`
+
+const html = `
+<!DOCTYPE html>
 <html
   lang="en"
   xmlns="http://www.w3.org/1999/xhtml"
@@ -347,7 +354,7 @@ export const html = `<!DOCTYPE html>
                 <tr>
                   <td style="padding: 0 2.5em; text-align: center">
                     <div class="text">
-                      <h2>Welcome to MoodleNet</h2>
+                      <h2>{{=it.senderName}} sent you a message</h2>
                     </div>
                   </td>
                 </tr>
@@ -355,10 +362,9 @@ export const html = `<!DOCTYPE html>
                   <td style="text-align: center">
                     <div class="text-author">
                       <span class="position"
-                        >Thanks for signing up to MoodleNet! Click the button below to activate your account.</span
+                        >{{=it.msgText}}</span
                       >
-                      <p style="margin: 25px 0"><a href="{{=it.link}}" class="btn btn-primary">Activate account</a></p>
-                      <span class="position disclaimer">Not you? Just ignore this message.</span>
+                      <p style="margin: 25px 0"><a href={{=it.senderProfileUrl}} class="btn btn-primary">Sender profile</a></p>
                     </div>
                   </td>
                 </tr>
@@ -442,29 +448,7 @@ export const html = `<!DOCTYPE html>
 </html>
 `
 
-const text = `Hello {{=it.email}}
-
-Someone (probably you) signed up for a new MoodleNet user. 
-If that was you, please click on the link below:
-{{=it.link}}
-
-Not you? Just ignore this message. 
-`
-
-/* const html = `<h3>Hello {{=it.email}}</h3>
-<p>
-  Someone (probably you) signed up for a new MoodleNet user. 
-  If that was you, please click on the link below:
-</p>
-<p>
-  <a href="{{=it.link}}">{{=it.link}}</a>
-</p>
-<p>
-  Not you? Just ignore this message. 
-</p>
-` */
-
-export const newUserRequestEmail = {
+export const sendMessageToUserEmail = {
   text,
   html,
 }
