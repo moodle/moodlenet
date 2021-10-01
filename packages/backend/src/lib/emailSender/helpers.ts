@@ -9,10 +9,13 @@ export const fillEmailTemplate = <Vars>(_: {
 }): EmailObj => {
   const { template, to, vars, type = 'html' } = _
   const tplString = template[type]
-  const msg = { [type]: tplString && dot.compile(tplString)(vars) }
+  const interpolated: Pick<EmailObj, 'subject' | 'html' | 'text'> = {
+    [type]: tplString && dot.compile(tplString)(vars),
+    subject: dot.compile(template.subject)(vars),
+  }
   return {
     ...template,
-    ...msg,
+    ...interpolated,
     to,
   }
 }

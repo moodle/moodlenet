@@ -41,6 +41,7 @@ export type UserAuthConfig = {
 }
 // $ Config
 export type MessageToUserEmailVars = {
+  // recipientName: string
   senderName: string
   msgText: string
   senderProfileUrl: Link
