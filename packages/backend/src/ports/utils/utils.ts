@@ -8,7 +8,7 @@ import { QMCommand, QMModule } from '../../lib/qmino'
 import { ActiveUser, UserAuthConfig } from '../user-auth/types'
 
 export const capitalizeFirstLetter = (text: string) => {
-  return text.charAt(0).toUpperCase() + text.slice(1);
+  return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
 export type SendEmailToProfileAdapter = {
@@ -51,16 +51,13 @@ export const sendEmailToProfile = QMCommand(
         vars: {
           email: recipientUser.email,
           msgText: text,
-          senderName: sender.name,
+          senderName: capitalizeFirstLetter(sender.name),
+          // recipientName: capitalizeFirstLetter(recipient.name),
           senderProfileUrl: senderProfileUrl,
         },
       })
 
-      return sendEmail({
-        ...emailObj,
-        to: recipientUser.email,
-        subject: `${capitalizeFirstLetter(sender.name)} sent you a message!`,
-      })
+      return sendEmail(emailObj)
     },
 )
 

@@ -18,6 +18,6 @@ export const DefaultConfig = {
   messageToUserEmail: {
     ...sendMessageToUserEmail,
     from: 'Moodlenet <noreply@moodle.net>',
-    subject: 'You received a message',
+    subject: '{{=it.senderName}} sent you a message!',
   },
 }
