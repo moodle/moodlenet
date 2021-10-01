@@ -7,10 +7,6 @@ import { EmailObj } from '../../lib/emailSender/types'
 import { QMCommand, QMModule } from '../../lib/qmino'
 import { ActiveUser, UserAuthConfig } from '../user-auth/types'
 
-export const capitalizeFirstLetter = (text: string) => {
-  return text.charAt(0).toUpperCase() + text.slice(1)
-}
-
 export type SendEmailToProfileAdapter = {
   getConfig(): Promise<UserAuthConfig>
   sendEmail(_: EmailObj): Promise<boolean>
@@ -51,8 +47,7 @@ export const sendEmailToProfile = QMCommand(
         vars: {
           email: recipientUser.email,
           msgText: text,
-          senderName: capitalizeFirstLetter(sender.name),
-          // recipientName: capitalizeFirstLetter(recipient.name),
+          senderName: sender.name,
           senderProfileUrl: senderProfileUrl,
         },
       })
