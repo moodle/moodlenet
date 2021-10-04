@@ -14,7 +14,6 @@
   border-radius: 4px;
   gap: 10px;
   position: fixed;
-  bottom: 20px;
   z-index: 5;
   width: fit-content;
 
@@ -58,6 +57,14 @@
   &.state-closing {
     animation: fadeOut 0.2s forwards;
     text-align: center;
+  }
+
+  &.position-top {
+    top: 68px;
+  }
+
+  &.position-bottom {
+    bottom: 20px;
   }
 
   @keyframes fadeOut {
