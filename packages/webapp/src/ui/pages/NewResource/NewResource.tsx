@@ -21,6 +21,7 @@ export type NewResourceProps = {
 
 const progressStates = [t`Upload resource`, t`Add to collections`, t`Add details`]
 //const progressSubtitles = [``, t`Earn 1 Point `, t`Earn 5 Points by completing this useful information`]
+const progressSubtitles = [`Please, publish only open education content on MoodleNet`, ``, ``]
 export const NewResource = withCtrl<NewResourceProps>(({ stepProps, headerPageTemplateProps }) => {
   const progressCurrentIndex =
     stepProps.step === 'UploadResourceStep'
@@ -42,7 +43,7 @@ export const NewResource = withCtrl<NewResourceProps>(({ stepProps, headerPageTe
         <ProgressState
           stateNames={progressStates}
           currentIndex={progressCurrentIndex}
-          /* progressSubtitles={progressSubtitles} */
+          progressSubtitles={progressSubtitles}
         />
         <div className="content">
           {stepProps.step === 'UploadResourceStep' ? (
