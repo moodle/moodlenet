@@ -128,6 +128,7 @@ export const Category = withCtrl<CategoryProps>(
                   }
                   className="resources"
                   noCard={true}
+                  minGrid={300}
                 />
               )}
             </div>
