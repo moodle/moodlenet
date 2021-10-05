@@ -38,12 +38,14 @@
   }
 
   &:not(.disabled):hover {
-    color: #337aff;
-    border: 2px solid #337aff;
+    &.hover-blue {
+      color: #337aff;
+      border: 2px solid #337aff;
+    }
 
-    &.grey {
-        color: #545761;
-        border: 2px solid #545761;
+    &.hover-grey {
+      color: #545761;
+      border: 2px solid #545761;
     }
 
     &.hover-red {
