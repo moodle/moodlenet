@@ -59,6 +59,10 @@
     text-align: center;
   }
 
+  &.state-closed {
+    display: none;
+  }
+
   &.position-top {
     top: 68px;
   }
