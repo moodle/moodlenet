@@ -35,12 +35,13 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   position,
   children,
 }) => {
-  const [movementState, setMovementState] = useState<'opening' | 'closing'>('opening')
+  const [movementState, setMovementState] = useState<'opening' | 'closing' | 'closed'>('opening')
   const handleonClose = useCallback(
     (event?: React.MouseEvent) => {
       event?.stopPropagation()
       setMovementState('closing')
       setTimeout(() => {
+        setMovementState('closed')
         onClose && onClose()
       }, 100)
     },
