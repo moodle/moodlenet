@@ -6,7 +6,7 @@ export type FooterProps = {}
 
 export const Footer: FC<FooterProps> = () => {
   return (
-    <div className="footer">
+    <div className={`footer`}>
       <div className="content">
         <div className="left"></div>
         <div className="center">

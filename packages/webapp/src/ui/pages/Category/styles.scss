@@ -148,13 +148,7 @@
         }
       }
 
-      > .resources > .content {
-        justify-content: space-between;
-        > .resource-card {
-          width: calc(50% - 6px);
-          min-width: 180px;
-        }
-      }
+
 
       @media (min-width: 450px) and (max-width: 800px) {
       }

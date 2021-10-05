@@ -1,11 +1,10 @@
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import './styles.scss'
-import { setListPosition } from './utils'
 
 export type DropdownOptionsType = ([string, React.ReactNode] | string)[]
 
-export type DropdownProps = {
+export type DropdownLegacyProps = {
   label?: string
   placeholder?: string
   disabled?: boolean
@@ -21,7 +20,7 @@ export type DropdownProps = {
   options: DropdownOptionsType
 }
 
-export const Dropdown: FC<DropdownProps> = ({
+export const DropdownLegacy: FC<DropdownLegacyProps> = ({
   label,
   placeholder,
   hidden,
@@ -40,8 +39,8 @@ export const Dropdown: FC<DropdownProps> = ({
   const [index, setIndex] = useState<number | undefined | null>(undefined)
   const [isOnHover, setIsOnHover] = useState<boolean>(false)
   const [isIconVisible, setIsIconVisible] = useState<boolean>(false)
-  const dropdownButton = useRef<HTMLInputElement>(null)
-  const dropdownContent = useRef<HTMLDivElement>(null)
+  const DropdownLegacyButton = useRef<HTMLInputElement>(null)
+  const DropdownLegacyContent = useRef<HTMLDivElement>(null)
   
   // const _set = useRef(false)
   useEffect(() => {
@@ -59,26 +58,35 @@ export const Dropdown: FC<DropdownProps> = ({
   const handleOnClick = () => {
     if (edit) {
       setIsIconVisible(false)
-      dropdownContent.current && (dropdownContent.current.style.visibility = 'visible')
-      setTimeout(() => dropdownButton.current && dropdownButton.current.focus(), 100)
+      DropdownLegacyContent.current && (DropdownLegacyContent.current.style.visibility = 'visible')
+      setTimeout(() => DropdownLegacyButton.current && DropdownLegacyButton.current.focus(), 100)
     }
   }
 
-  const setListOptionsPosition = useCallback(() => {
-    setListPosition(dropdownContent, dropdownButton, label, displayMode, window)
-  }, [dropdownContent, dropdownButton, label, displayMode])
-  
-  useEffect(() => {
-    window.addEventListener('scroll', setListOptionsPosition)
-    window.addEventListener('resize', setListOptionsPosition)
-    return () => {
-      window.removeEventListener('scroll', setListOptionsPosition)
-      window.removeEventListener('resize', setListOptionsPosition)
+  window.onscroll = window.onresize = () => setOptionListPosition()
+
+  const setOptionListPosition = () => {
+    const viewportOffset = DropdownLegacyButton.current && DropdownLegacyButton.current.getBoundingClientRect()
+    const top = viewportOffset?.top
+    const bottom = viewportOffset && window.innerHeight - viewportOffset.bottom
+
+    if (bottom && top && (bottom > 160 || bottom > top)) {
+      DropdownLegacyContent.current &&
+        (DropdownLegacyContent.current.style.maxHeight = bottom && bottom - 20 < 160 ? bottom - 20 + 'px' : '160px')
+      DropdownLegacyContent.current && (DropdownLegacyContent.current.style.top = label && !displayMode ? '75px' : '50px')
+      DropdownLegacyContent.current && (DropdownLegacyContent.current.style.bottom = 'auto')
+      DropdownLegacyContent.current && (DropdownLegacyContent.current.style.transform = ' translate(-50%, 0px)')
+    } else {
+      DropdownLegacyContent.current &&
+        (DropdownLegacyContent.current.style.maxHeight = top && top < 160 ? top - 20 + 'px' : '160px')
+      DropdownLegacyContent.current && (DropdownLegacyContent.current.style.bottom = '50px')
+      DropdownLegacyContent.current && (DropdownLegacyContent.current.style.top = 'auto')
+      DropdownLegacyContent.current && (DropdownLegacyContent.current.style.transform = ' translate(-50%, 0px)')
     }
-  }, [setListOptionsPosition])
+  }
 
   useEffect(() => {
-    setListPosition(dropdownContent, dropdownButton, label, displayMode, window);
+    setOptionListPosition();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -88,21 +96,21 @@ export const Dropdown: FC<DropdownProps> = ({
       // Up
     } else if (e.key === 'ArrowDown') {
       // Down
-      //dropdownButton.current?.isSameNode(e.currentTarget) &&
-      //dropdownContent.current && (dropdownContent.current.firstChild as HTMLElement)?.focus()
+      //DropdownLegacyButton.current?.isSameNode(e.currentTarget) &&
+      //DropdownLegacyContent.current && (DropdownLegacyContent.current.firstChild as HTMLElement)?.focus()
     }
   }
 
   const handleOnSelection = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, i: number) => {
     setValue((e.currentTarget as HTMLElement).innerText)
     setIndex(i)
-    dropdownContent.current && (dropdownContent.current.style.visibility = 'hidden')
+    DropdownLegacyContent.current && (DropdownLegacyContent.current.style.visibility = 'hidden')
     setIsIconVisible(true)
   }
 
   const handleOnBlur = () => {
     if (!isOnHover) {
-      dropdownContent.current && (dropdownContent.current.style.visibility = 'hidden')
+      DropdownLegacyContent.current && (DropdownLegacyContent.current.style.visibility = 'hidden')
       index && setIsIconVisible(true)
     }
   }
@@ -120,8 +128,8 @@ export const Dropdown: FC<DropdownProps> = ({
   }, [index])
 
   const filterFunction = useCallback((value?: string) => {
-    const filter = (value ? value : dropdownButton.current?.value)?.toUpperCase()
-    const div = dropdownContent.current
+    const filter = (value ? value : DropdownLegacyButton.current?.value)?.toUpperCase()
+    const div = DropdownLegacyContent.current
     let length = 0
     //FIXME: can't call this way as div may be null
     // Array.prototype.slice.call(null) throws
@@ -181,7 +189,7 @@ export const Dropdown: FC<DropdownProps> = ({
 
   return (
     <div
-      className={`dropdown ${hasSearch ? 'search' : ''} ${disabled ? 'disabled' : ''} ${
+      className={`dropdown-legacy ${hasSearch ? 'search' : ''} ${disabled ? 'disabled' : ''} ${
         displayMode ? 'display-mode' : ''
       } ${!edit ? 'not-editing' : ''}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
@@ -193,8 +201,8 @@ export const Dropdown: FC<DropdownProps> = ({
         onClick={handleOnClick}
       >
         <input
-          ref={dropdownButton}
-          className={`dropdown-button search-field ${displayMode ? 'display-mode' : ''} ${!edit ? 'not-editing' : ''}`}
+          ref={DropdownLegacyButton}
+          className={`DropdownLegacy-button search-field ${displayMode ? 'display-mode' : ''} ${!edit ? 'not-editing' : ''}`}
           type="input"
           style={
             type === 'Text' || !isIconVisible
@@ -225,8 +233,8 @@ export const Dropdown: FC<DropdownProps> = ({
         <ExpandMoreIcon />
       </div>
       <div
-        ref={dropdownContent}
-        className="dropdown-content"
+        ref={DropdownLegacyContent}
+        className="DropdownLegacy-content"
         onMouseEnter={() => setIsOnHover(true)}
         onMouseLeave={() => setIsOnHover(false)}
         tabIndex={-1}
@@ -237,8 +245,8 @@ export const Dropdown: FC<DropdownProps> = ({
   )
 }
 
-Dropdown.defaultProps = {
+DropdownLegacy.defaultProps = {
   edit: true,
 }
 
-export default Dropdown
+export default DropdownLegacy
