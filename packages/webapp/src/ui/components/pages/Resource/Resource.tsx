@@ -251,7 +251,7 @@ export const Resource = withCtrl<ResourceProps>(
         {isOwner && (
           <div className="detail">
             <div className="title">
-              <Trans>Visbility</Trans>
+              <Trans>Visibility</Trans>
             </div>
             <abbr className="value">{form.values.visibility}</abbr>
           </div>
