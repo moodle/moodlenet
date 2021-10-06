@@ -40,6 +40,7 @@ const ResourceStory: ComponentStory<typeof Resource> = args => <Resource {...arg
 
 export const resourceFormBag: NewResourceFormValues = {
   collections: ['Biology'].map(label => ({ label, id: label })),
+  visibility: 'Private',
   category: '0188 Inter-disciplinary programmes and qualifications involving education',
   content: '',
   contentType: 'Link',

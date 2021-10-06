@@ -4,13 +4,12 @@ import { href } from '../../../elements/link'
 import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import {
-    CategoriesDropdown,
-    LanguagesDropdown,
-    LevelDropdown,
-    LicenseDropdown,
-    MonthDropdown,
-    TypeDropdown,
-    YearsDropdown
+  CategoriesDropdown,
+  LanguagesDropdown,
+  LevelDropdown,
+  LicenseDropdown,
+  MonthDropdown,
+  TypeDropdown, VisibilityDropdown, YearsDropdown
 } from './FieldsData'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'
@@ -61,6 +60,7 @@ const initialFormValues: NewResourceFormValues = {
   originalDateYear: '',
   title: '',
   type: '',
+  visibility: '',
 }
 
 const basicDataFormValue: NewResourceFormValues = {
@@ -69,6 +69,7 @@ const basicDataFormValue: NewResourceFormValues = {
   description:
     'This is the description that tells you that this a not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
   category: 'Important Matters',
+  visibility: 'Public',
 }
 
 const basicLinkDataFormValue: NewResourceFormValues = {
@@ -97,6 +98,7 @@ const uploadResourceProps: UploadResourceProps = {
   deleteContent: action('deleteContent'),
   categories: CategoriesDropdown,
   licenses: LicenseDropdown,
+  visibility: VisibilityDropdown,
 }
 export const NewResourceStoryProps: NewResourceProps = {
   headerPageTemplateProps: {

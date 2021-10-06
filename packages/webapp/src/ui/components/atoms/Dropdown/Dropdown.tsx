@@ -1,9 +1,10 @@
+import { SvgIconTypeMap } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import './styles.scss'
 import { setListPosition } from './utils'
 
-export type DropdownOptionsType = ([string, React.ReactNode] | string)[]
+export type DropdownOptionsType = ([string, React.ReactNode | SvgIconTypeMap] | string)[]
 
 export type DropdownProps = {
   label?: string
@@ -33,6 +34,7 @@ export const Dropdown: FC<DropdownProps> = ({
   highlight,
   options,
   disabled,
+  className
 }) => {
   const type = options && typeof options[0] === 'string' ? 'Text' : 'IconAndText'
 
@@ -183,7 +185,7 @@ export const Dropdown: FC<DropdownProps> = ({
     <div
       className={`dropdown ${hasSearch ? 'search' : ''} ${disabled ? 'disabled' : ''} ${
         displayMode ? 'display-mode' : ''
-      } ${!edit ? 'not-editing' : ''}`}
+      } ${!edit ? 'not-editing' : ''} ${className}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
