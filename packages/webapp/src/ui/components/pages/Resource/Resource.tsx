@@ -48,6 +48,7 @@ export type ResourceProps = {
   type: 'link' | 'file'
   // formats: DropdownField
   licenses: DropdownField
+  visibility: DropdownField
   categories: DropdownField
   setAddToCollections?: (selectedCollections: CollectionItem[]) => unknown
   collections?: CollectionItem[]
@@ -78,6 +79,7 @@ export const Resource = withCtrl<ResourceProps>(
     languages,
     // formats,
     licenses,
+    visibility,
     categories,
     collections,
     selectedCollections,
@@ -146,6 +148,7 @@ export const Resource = withCtrl<ResourceProps>(
     const setLangField = useCallback((_: string) => setFieldValue('language', _), [setFieldValue])
     const setCategoryField = useCallback((_: string) => setFieldValue('category', _), [setFieldValue])
     const setLicenseField = useCallback((_: string) => setFieldValue('license', _), [setFieldValue])
+    const setVisibilityField = useCallback((_: string) => setFieldValue('visibility', _), [setFieldValue])
     //const setCollectionsField = useCallback((_: string) => setFieldValue('collections', _), [setFieldValue])
     // console.log({ selectedCollections, collections })
 
@@ -163,6 +166,14 @@ export const Resource = withCtrl<ResourceProps>(
 
     const extraDetails = isEditing ? (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
+        <Dropdown
+          value={form.values.visibility}
+          {...visibility}
+          {...formAttrs.visibility}
+          displayMode={true}
+          edit={isEditing}
+          getValue={setVisibilityField}
+        />
         <Dropdown
           className="scroll"
           value={form.values.category}
@@ -237,6 +248,14 @@ export const Resource = withCtrl<ResourceProps>(
       </Card>
     ) : (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
+        {isOwner && (
+          <div className="detail">
+            <div className="title">
+              <Trans>Visbility</Trans>
+            </div>
+            <abbr className="value">{form.values.visibility}</abbr>
+          </div>
+        )}
         <div className="detail">
           <div className="title">
             <Trans>Subject</Trans>
@@ -399,7 +418,7 @@ export const Resource = withCtrl<ResourceProps>(
                 color="red"
               >
                 <Trans>Delete</Trans>
-              </PrimaryButton>
+              </PrimaryButton>,
             ]}
             onClose={() => setIsToDelete(false)}
             style={{ maxWidth: '400px' }}

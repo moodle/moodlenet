@@ -202,6 +202,7 @@ export const LicenseDropdown: DropdownField = {
 }
 
 export const VisibilityDropdown: DropdownField = {
+  label: t`Visibility`,
   placeholder: t`Visibility`,
   options: [
     [
