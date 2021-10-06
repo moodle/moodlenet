@@ -213,6 +213,10 @@ export const VisibilityDropdown: DropdownField = {
       'Private',
       <VisibilityOffIcon />,
     ],
+    /* [
+      'Private',
+      'Public'
+    ] */
   ],
 }
 
