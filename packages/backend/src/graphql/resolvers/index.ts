@@ -56,9 +56,7 @@ export const getGQLResolvers = ({
         if (!parsed) {
           return null
         }
-        const maybeNode = await qmino.query(nodePorts.getBySlug({ ...parsed, env: ctx.authSessionEnv }), {
-          timeout: 5000,
-        })
+        const maybeNode = await nodePorts.getByIdentifier(ctx.authSessionEnv, parsed)
         return maybeNode ? graphNode2GqlNode(maybeNode) : null
       },
 
