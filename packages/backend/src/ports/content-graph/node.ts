@@ -9,24 +9,22 @@ import {
 import { AuthId, SessionEnv } from '@moodlenet/common/lib/types'
 import { newGlyphIdentifiers } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
-import { QMCommand, QMModule, QMQuery } from '../../lib/qmino'
+import { QMCommand, QMModule } from '../../lib/qmino'
+import { getGraphBV, getGraphOperators } from './common'
 import { CreateEdgeInput } from './edge'
 
 // query by id
-export type BySlugAdapter = {
-  getNodeBySlug: <Type extends GraphNodeType>(_: GraphNodeIdentifierSlug<Type>) => Promise<Maybe<GraphNode<Type>>>
-}
+// export const getNodeByIdentifier = stub<
+//   <Type extends GraphNodeType>(_: GraphNodeIdentifier<Type>) => Promise<Maybe<GraphNode<Type>>>
+// >(ns('get-node-by-identifier'))
 
-export type BySlugInput<Type extends GraphNodeType> = GraphNodeIdentifierSlug<Type> & {
-  env: SessionEnv | null
+export async function getByIdentifier<Type extends GraphNodeType>(
+  _env: SessionEnv | null,
+  identifier: GraphNodeIdentifierSlug<Type>,
+) {
+  const { graphNode } = await getGraphOperators()
+  return getGraphBV(graphNode(identifier))
 }
-
-export const getBySlug = QMQuery(
-  <Type extends GraphNodeType>({ env, ...nodeSlugId }: BySlugInput<Type>) =>
-    async ({ getNodeBySlug }: BySlugAdapter) => {
-      return getNodeBySlug(nodeSlugId)
-    },
-)
 
 // create
 export type CreateNodeAdapter = {
@@ -75,7 +73,10 @@ export type EditNodeAdapter = {
     nodeId: GraphNodeIdentifier
   }) => Promise<GraphNode<N> | undefined>
 }
-export type EditNodeData<N extends GraphNodeType = GraphNodeType> = Partial<DistOmit<GraphNode<N>, '_permId' | '_slug'>>
+export type EditNodeData<N extends GraphNodeType = GraphNodeType> = Partial<
+  DistOmit<GraphNode<N>, '_permId' | '_slug' | '_type'>
+> &
+  Pick<GraphNode<N>, '_type'>
 export type EditNode<N extends GraphNodeType = GraphNodeType> = {
   nodeData: EditNodeData<N>
   nodeId: GraphNodeIdentifier

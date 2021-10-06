@@ -1,6 +1,6 @@
 // create
 
-import { Assumptions, BaseOperators } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
+import { Assumptions, BaseOperators, BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
 import {
   AddEdgeAssumptionsFactoryMap,
   AddEdgeOperators,
@@ -8,7 +8,7 @@ import {
 } from '@moodlenet/common/lib/content-graph/bl/graph-lang/AddEdge'
 import { GraphOperators } from '@moodlenet/common/lib/content-graph/bl/graph-lang/graphOperators'
 import { GraphEdge, GraphEdgeIdentifier } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
+import { GraphNode, GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
 import { SessionEnv } from '@moodlenet/common/lib/types'
 import { newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
@@ -19,8 +19,8 @@ export type NewEdgeInput = DistOmit<GraphEdge, '_authId' | '_created' | 'id'>
 export type CreateAdapter = {
   storeEdge: <E extends GraphEdge>(_: {
     edge: E
-    from: GraphNodeIdentifier
-    to: GraphNodeIdentifier
+    from: BV<GraphNode | null>
+    to: BV<GraphNode | null>
     assumptions: Assumptions
   }) => Promise<E | null>
   assumptionsMap: AddEdgeAssumptionsFactoryMap
@@ -60,7 +60,13 @@ export const createEdge = QMCommand(
         _created: Number(new Date()),
         id: newGlyphPermId(),
       }
-      const result = await storeEdge({ edge, from, to, assumptions })
+
+      const result = await storeEdge({
+        edge,
+        from: graphOperators.graphNode(from),
+        to: graphOperators.graphNode(to),
+        assumptions,
+      })
       if (!result) {
         return null
       }
