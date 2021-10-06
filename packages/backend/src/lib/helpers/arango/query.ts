@@ -13,22 +13,31 @@ export const aq = <T>(q: string) => q as AQ<T>
 export const aqlstr = (_: any) => JSON.stringify(_)
 
 export const getOneResult = async <T>(q: AQ<T>, db: Database): Promise<T | undefined> => {
-  const cursor = await db.query(q)
+  const cursor = await db.query(q).catch(e => {
+    console.error(`getOneResult`, e, q)
+    throw e
+  })
+
   const result = await cursor.next()
-  // console.log({ getOneResult: q, result })
   cursor.kill()
   return result
 }
 
 export const getAllResults = async <T>(q: AQ<T>, db: Database): Promise<T[]> => {
-  const cursor = await db.query(q)
+  const cursor = await db.query(q).catch(e => {
+    console.error(`getAllResults`, e, q)
+    throw e
+  })
   const results = await cursor.all()
   cursor.kill()
   return results
 }
 
 export const justExecute = async (q: string, db: Database) => {
-  const cursor = await db.query(q)
+  const cursor = await db.query(q).catch(e => {
+    console.error(`getOneResult`, e, q)
+    throw e
+  })
   cursor.kill()
   const { count, extra } = cursor
   return {
