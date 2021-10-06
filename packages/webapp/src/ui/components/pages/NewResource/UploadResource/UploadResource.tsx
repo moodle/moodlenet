@@ -26,12 +26,13 @@ export type UploadResourceProps = {
   imageUrl: string
   categories: DropdownField
   licenses: DropdownField
+  visibility: DropdownField
   nextStep: (() => unknown) | undefined
   deleteContent: () => unknown
 }
 
 export const UploadResource = withCtrl<UploadResourceProps>(
-  ({ formBag, state, imageUrl, licenses, categories, nextStep, deleteContent }) => {
+  ({ formBag, state, imageUrl, licenses, visibility, categories, nextStep, deleteContent }) => {
     const [form, formAttrs] = formBag
     const [highlightMandatoryFields, setHighlightMandatoryFields] = useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
@@ -60,9 +61,17 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       },
       [setFieldValue],
     )
+
     const setLicenseVal = useCallback(
       (v: string) => {
         setFieldValue('license', v)
+      },
+      [setFieldValue],
+    )
+
+    const setVisibilityVal = useCallback(
+      (v: string) => {
+        setFieldValue('visibility', v)
       },
       [setFieldValue],
     )
@@ -93,7 +102,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       [setFieldValue],
     )
     const dataInputs = (
-      <div>
+      <div className="data-inputs">
         <InputTextField
           autoUpdate={true}
           label="Title"
@@ -113,15 +122,26 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           getText={text => form.setFieldValue('description', text)}
           highlight={highlightMandatoryFields && !form.values.description}
         />
-        <Dropdown
-          {...categories}
-          {...formAttrs.category}
-          label="Subject"
-          value={form.values.category}
-          getValue={setCategoryValue}
-          disabled={state === 'ChooseResource'}
-          highlight={highlightMandatoryFields && !form.values.category}
-        />
+        <div className="subject-and-visibility">
+          <Dropdown
+            {...categories}
+            {...formAttrs.category}
+            label="Subject"
+            value={form.values.category}
+            getValue={setCategoryValue}
+            disabled={state === 'ChooseResource'}
+            highlight={highlightMandatoryFields && !form.values.category}
+            />
+          <Dropdown
+            {...visibility}
+            getValue={setVisibilityVal}
+            label="Visibility"
+            value={form.values.visibility}
+            disabled={state === 'ChooseResource'}
+            className="visibility-dropdown"
+            highlight={highlightMandatoryFields && !form.values.visibility}
+          />
+        </div>
       </div>
     )
 
@@ -185,7 +205,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           <Modal
             title={t`Alert`}
             actions={
-              <PrimaryButton
+              [<PrimaryButton
                 onClick={() => {
                   setHighlightMandatoryFields(false)
                   deleteContent()
@@ -194,7 +214,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                 color="red"
               >
                 <Trans>Delete</Trans>
-              </PrimaryButton>
+              </PrimaryButton>]
             }
             onClose={() => setIsToDelete(false)}
             style={{ maxWidth: '400px' }}
