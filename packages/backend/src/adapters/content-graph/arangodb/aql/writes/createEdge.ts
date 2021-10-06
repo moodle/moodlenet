@@ -1,11 +1,11 @@
-import { Assumptions } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
+import { Assumptions, BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
 import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
+import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { omit } from '@moodlenet/common/lib/utils/object'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
-import { graphOperators } from '../../bl/graphOperators'
-import { AqlGraphEdge, AqlGraphEdgeByType } from '../../types'
+import { AqlGraphEdge } from '../../types'
+import { aqlGraphEdge2GraphEdge, graphNode2AqlId } from '../helpers'
 
 export const createEdgeQ = <Type extends GraphEdgeType>({
   edge,
@@ -14,8 +14,8 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
   assumptions,
 }: {
   edge: GraphEdge<Type>
-  from: GraphNodeIdentifier
-  to: GraphNodeIdentifier
+  from: BV<GraphNode | null>
+  to: BV<GraphNode | null>
   assumptions: Assumptions
 }) => {
   const edgeType = edge._type
@@ -31,29 +31,29 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
     Object.entries(assumptions)
       .map(([, assumption]) => assumption)
       .join(' && ') || 'true'
-  const q = aq<AqlGraphEdgeByType<Type>>(`
-    let fromNode = ${graphOperators.graphNode(from)}
-    let toNode = ${graphOperators.graphNode(to)}
+  const q = aq<GraphEdge<Type>>(`
+    let fromNode = ${from}
+    let toNode = ${to}
     
     let newedge = ${aqlstr(aqlEdge)}
 
     FILTER ${aqlAssumptions}
 
     INSERT MERGE(
-      ${aqlstr(aqlEdge)},
+      newedge,
       {
-        _from: fromNode._id,
+        _from: ${graphNode2AqlId('fromNode')},
         _fromType:fromNode._type,
-        _to: toNode._id,
+        _to: ${graphNode2AqlId('toNode')},
         _toType:toNode._type
       }
     )
     
     into ${edgeType}
 
-    return NEW
+    return ${aqlGraphEdge2GraphEdge('NEW')}
   `)
-  console.log('**', q)
+  // console.log('**', q)
   return q
 }
 

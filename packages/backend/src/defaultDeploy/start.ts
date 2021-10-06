@@ -4,13 +4,9 @@ import { Database } from 'arangojs'
 import { Algorithm, SignOptions, VerifyOptions } from 'jsonwebtoken'
 import { createTransport } from 'nodemailer'
 import { createEdgeAdapter, deleteEdgeAdapter } from '../adapters/content-graph/arangodb/adapters/edge'
+import { getBVAdapter } from '../adapters/content-graph/arangodb/adapters/getBVAdapter'
 import { globalSearch } from '../adapters/content-graph/arangodb/adapters/globalSearch'
-import {
-  createNodeAdapter,
-  deleteNodeAdapter,
-  editNodeAdapter,
-  getBVAdapter,
-} from '../adapters/content-graph/arangodb/adapters/node'
+import { createNodeAdapter, deleteNodeAdapter, editNodeAdapter } from '../adapters/content-graph/arangodb/adapters/node'
 import { getByAuthId } from '../adapters/content-graph/arangodb/adapters/profile'
 import {
   getNodeRelationCountAdapter,
@@ -34,6 +30,8 @@ import { signJwtAny, verifyJwtAny } from '../lib/auth/jwt'
 import { getVersionedDBOrThrow } from '../lib/helpers/arango/migrate/lib'
 import { Qmino } from '../lib/qmino'
 import { createInProcessTransport } from '../lib/qmino/transports/in-process/transport'
+import { bind } from '../lib/stub/Stub'
+import * as contentGraphCommon from '../ports/content-graph/common'
 import * as edgePorts from '../ports/content-graph/edge'
 import * as nodePorts from '../ports/content-graph/node'
 import * as profilePorts from '../ports/content-graph/profile'
@@ -88,7 +86,7 @@ export const startDefaultMoodlenet = async ({
     passwordHasher: argonHashPassword,
   })
   const assetsApp = createStaticAssetsApp({ qmino: qminoInProcess })
-  const webfingerApp = createWebfingerApp({ qmino: qminoInProcess, domain })
+  const webfingerApp = createWebfingerApp({ domain })
   await startMNHttpServer({
     httpPort: http.port,
     startServices: { 'graphql': graphqlApp, 'assets': assetsApp, '.well-known': webfingerApp },
@@ -104,9 +102,8 @@ export const startDefaultMoodlenet = async ({
 
   //
 
-  await qminoInProcess.open(nodePorts.getBySlug, {
-    getNodeBySlug: nodeId => getBV(graphOperators.graphNode(nodeId)),
-  })
+  bind(contentGraphCommon.getGraphBV, getBVAdapter(contentGraphDatabase))
+  bind(contentGraphCommon.getGraphOperators, async () => graphOperators)
 
   await qminoInProcess.open(traverseNodePorts.fromNode, getTraverseNodeRelAdapter(contentGraphDatabase))
   await qminoInProcess.open(traverseNodePorts.count, getNodeRelationCountAdapter(contentGraphDatabase))
@@ -226,8 +223,8 @@ export const startDefaultMoodlenet = async ({
           id: newGlyphPermId(),
           ...newEdge,
         },
-        from,
-        to,
+        from: graphOperators.graphNode(from),
+        to: graphOperators.graphNode(to),
       }),
     // qminoInProcess.callSync(edgePorts.createEdge({ from, newEdge, sessionEnv, to }), { timeout: 5000 }),
     getProfileByAuthId: ({ authId }) => qminoInProcess.query(profilePorts.getByAuthId({ authId }), { timeout: 5000 }),
@@ -243,14 +240,14 @@ export const startDefaultMoodlenet = async ({
   })
   await qminoInProcess.open(edgePorts.deleteEdge, deleteEdgeAdapter(contentGraphDatabase))
 
-  const getBV = getBVAdapter(contentGraphDatabase)
   const userAuthIdAdapter = byAuthId(userAuthDatabase)
 
+  const __getBV = getBVAdapter(contentGraphDatabase)
   await qminoInProcess.open(utilsPorts.sendEmailToProfile, {
     ...userAuthIdAdapter,
     getLocalDomain: async () => domain,
-    getProfile: nodeId => getBV(graphOperators.graphNode(nodeId)),
-    getProfileByAuth: ({ authId }) => getBV(graphOperators.graphNode({ _authId: authId, _type: 'Profile' })),
+    getProfile: nodeId => __getBV(graphOperators.graphNode(nodeId)),
+    getProfileByAuth: ({ authId }) => __getBV(graphOperators.graphNode({ _authId: authId, _type: 'Profile' })),
     sendEmail: _ =>
       emailSender.sendMail(_).then(
         _ => true,

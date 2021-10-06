@@ -1,9 +1,9 @@
 import { GlobalSearchNodeType } from '@moodlenet/common/lib/content-graph/types/global-search'
+import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { GlobalSearchInput } from '../../../../ports/content-graph/search'
 import { _ } from '../bl/baseOperators'
-import { AqlGraphNodeByType } from '../types'
-import { forwardSkipLimitPagination } from './helpers'
+import { aqlGraphNode2GraphNode, forwardSkipLimitPagination } from './helpers'
 import { nodeRelationCountQ } from './queries/traverseEdges'
 
 export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSearchNodeType>({
@@ -47,7 +47,7 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
       : '1'
   const isSortRecent = sort?.by === 'Recent'
 
-  const query = aq<AqlGraphNodeByType<NType>>(`
+  const query = aq<GraphNode<NType>>(`
     let searchTerm = ${aql_txt}
       FOR node IN SearchView
         SEARCH ANALYZER(
@@ -74,7 +74,7 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
       
       LIMIT ${skip}, ${limit}
       
-      RETURN node
+      RETURN ${aqlGraphNode2GraphNode('node')}
     `)
   // console.log('**', inspect({ query, nodeTypeConditions, nodeTypes, filterConditions, sortDir, sortFactor }))
   return { limit, skip, query }

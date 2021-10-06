@@ -1,14 +1,13 @@
 import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
-import { GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
 import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { PageItem } from '@moodlenet/common/lib/content-graph/types/page'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
 import { TraverseFromNodeAdapterInput } from '../../../../../ports/content-graph/traverseNodeRel'
 import { _ } from '../../bl/baseOperators'
-import { AqlGraphEdge, AqlGraphNode } from '../../types'
 // import { getNodeOpAqlAssertions } from './assertions/node'
-import { cursorPaginatedQuery } from '../helpers'
+import { aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode, cursorPaginatedQuery, graphNode2AqlId } from '../helpers'
 
 export const traverseEdgesQ = ({
   edgeType,
@@ -60,22 +59,25 @@ export const traversePaginateMapQuery =
   (pageFilterSortLimit: string) => {
     // console.log('********************', { targetIds })
     if (targetIds && !targetIds.length) {
-      return aq<PageItem<{ edge: AqlGraphEdge; node: AqlGraphNode }>>(`FOR x in [] RETURN x`)
+      return aq<PageItem<{ edge: GraphEdge; node: GraphNode }>>(`FOR x in [] RETURN x`)
     }
     const targetSide = inverse ? 'from' : 'to'
     const parentSide = inverse ? 'to' : 'from'
 
-    const aqlTargetIds = targetIds ? `[ ${targetIds.map(_ => `${_}._id`).join(',')} ]` : `null`
+    //const aqlTargetIds = targetIds ? `[ ${targetIds.map(_ => `${_}._id`).join(',')} ]` : `null`
+    const aqlTargetIds = targetIds
+      ? `(FOR trgtNode IN ${`[${targetIds.join(',')}]`} RETURN ${graphNode2AqlId('trgtNode')})`
+      : `null`
 
-    const q = aq<PageItem<{ edge: AqlGraphEdge; node: AqlGraphNode }>>(`
+    const q = aq<PageItem<{ edge: GraphEdge; node: GraphNode }>>(`
       let parentNode = ${fromNode}
       let targetIds = ${aqlTargetIds}
 
       FOR edge IN ${edgeType}
         FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
-          && edge._${parentSide} == parentNode._id
+          && edge._${parentSide} == ${graphNode2AqlId('parentNode')}
           && ( targetIds ? edge._${targetSide} IN targetIds : true )
-          ${additionalFilter ? `&& ${additionalFilter}` : ''}
+            ${additionalFilter ? `&& ${additionalFilter}` : ''}
           
           
           LET targetNode = Document(edge._${targetSide})
@@ -85,8 +87,8 @@ export const traversePaginateMapQuery =
         RETURN  [
           cursor,
           {
-            edge,
-            node: targetNode
+            edge: ${aqlGraphEdge2GraphEdge('edge')},
+            node: ${aqlGraphNode2GraphNode('targetNode')}
           }
         ]
       `)
@@ -108,14 +110,10 @@ export const nodeRelationCountQ = ({
   const targetSide = inverse ? 'from' : 'to'
   const parentSide = inverse ? 'to' : 'from'
   return _<number>(`(    
-    FOR edge IN ${edgeType}
+      let parentNode = ${parentNode}
+      FOR edge IN ${edgeType}
       FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
-        && edge._${parentSide} == ${parentNode}._id
-
-        // LET targetNode = Document(edge._${targetSide})
-
-        // FILTER !!targetNode 
-        
+        && edge._${parentSide} == ${graphNode2AqlId('parentNode')}
 
       COLLECT WITH COUNT INTO count
     RETURN count

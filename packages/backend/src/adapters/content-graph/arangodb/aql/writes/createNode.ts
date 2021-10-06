@@ -2,7 +2,8 @@ import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/ty
 import { omit } from '@moodlenet/common/lib/utils/object'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
-import { AqlGraphNode, AqlGraphNodeByType } from '../../types'
+import { AqlGraphNode } from '../../types'
+import { aqlGraphNode2GraphNode } from '../helpers'
 
 export const createNodeQ = <Type extends GraphNodeType>({ node }: { node: GraphNode<Type> }) => {
   const nodeType = node._type
@@ -13,12 +14,12 @@ export const createNodeQ = <Type extends GraphNodeType>({ node }: { node: GraphN
     ...omit(node, ['_permId']),
   }
 
-  const q = aq<AqlGraphNodeByType<Type>>(`
+  const q = aq<GraphNode<Type>>(`
     let newnode = ${aqlstr(aqlNode)}
 
     INSERT newnode into ${nodeType}
 
-    return NEW
+    return ${aqlGraphNode2GraphNode('NEW')}
   `)
   // console.log(q)
   return q
