@@ -1,4 +1,3 @@
-import { GraphEdge } from '@moodlenet/common/lib/content-graph/types/edge'
 import {
   GraphNode,
   GraphNodeIdentifier,
@@ -7,11 +6,11 @@ import {
   Profile,
 } from '@moodlenet/common/lib/content-graph/types/node'
 import { AuthId, SessionEnv } from '@moodlenet/common/lib/types'
-import { newGlyphIdentifiers } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { newGlyphIdentifiers, newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
 import { QMCommand, QMModule } from '../../lib/qmino'
 import { getGraphBV, getGraphOperators } from './common'
-import { CreateEdgeInput } from './edge'
+import { storeEdge } from './edge'
 
 // query by id
 // export const getNodeByIdentifier = stub<
@@ -29,7 +28,6 @@ export async function getByIdentifier<Type extends GraphNodeType>(
 // create
 export type CreateNodeAdapter = {
   storeNode: <N extends GraphNode>(_: { node: N }) => Promise<N | undefined>
-  createEdge: (_: CreateEdgeInput) => Promise<GraphEdge | null>
   getProfileByAuthId: (_: { authId: AuthId }) => Promise<Maybe<Profile>>
 }
 export type NewNodeData<N extends GraphNode = GraphNode> = DistOmit<N, '_permId' | '_slug'>
@@ -40,7 +38,7 @@ export type CreateNode = {
 
 export const createNode = QMCommand(
   ({ nodeData, sessionEnv }: CreateNode) =>
-    async ({ storeNode, getProfileByAuthId, createEdge }: CreateNodeAdapter) => {
+    async ({ storeNode, getProfileByAuthId }: CreateNodeAdapter) => {
       const authProfile = await getProfileByAuthId({ authId: sessionEnv.user.authId })
       if (!authProfile) {
         return 'unauthorized' as const
@@ -54,12 +52,18 @@ export const createNode = QMCommand(
       if (!result) {
         return null
       }
-
-      await createEdge({
-        from: authProfile,
-        to: result,
-        newEdge: { _type: 'Created' },
-        sessionEnv,
+      const graphOperators = await getGraphOperators()
+      await storeEdge({
+        assumptions: {},
+        edge: {
+          _type: 'Created',
+          _authId: sessionEnv.user.authId,
+          _created: Number(new Date()),
+          id: newGlyphPermId(),
+        },
+        issuer: graphOperators.graphNode({ _authId: sessionEnv.user.authId, _type: 'Profile' }),
+        from: graphOperators.graphNode(authProfile),
+        to: graphOperators.graphNode(result),
       })
 
       return result
