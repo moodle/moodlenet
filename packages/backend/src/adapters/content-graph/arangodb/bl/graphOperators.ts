@@ -1,7 +1,7 @@
 import { GraphOperators } from '@moodlenet/common/lib/content-graph/bl/graph-lang/graphOperators'
 import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { aqlstr } from '../../../../lib/helpers/arango/query'
-import { aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode } from '../aql/helpers'
+import { aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode, graphNode2AqlId } from '../aql/helpers'
 import { _ } from './baseOperators'
 
 export const graphOperators: GraphOperators = {
@@ -33,12 +33,12 @@ export const graphOperators: GraphOperators = {
   graphEdge: ({ _type, id }) => {
     return _(`${aqlGraphEdge2GraphEdge(`DOCUMENT("${_type}/${id}")`)}`)
   },
-  isCreator: ({ authId, nodeId }) => {
+  isCreator: ({ authNode, ofNode }) => {
     const Created: EdgeType = 'Created'
-    return _<boolean>(`${authId} && ${nodeId} ? ( LENGTH(
+    return _<boolean>(`${authNode}._authId && ${ofNode} ? ( LENGTH(
       FOR e in ${Created}
-        FILTER  e._authId == ${authId}._authId
-                && e._to == ${nodeId}._id
+        FILTER  e._authId == ${authNode}._authId
+            &&  e._to == ${graphNode2AqlId(ofNode)}
         LIMIT 1
       RETURN e
     ) == 1 ) : false`)
