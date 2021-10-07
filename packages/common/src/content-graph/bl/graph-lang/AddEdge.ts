@@ -1,10 +1,14 @@
-import { Assumptions, BaseOperators } from '.'
+import { Assumptions, BaseOperators, BV } from '.'
 import { EdgeType, NodeType } from '../../../graphql/types.graphql.gen'
 import { SessionEnv } from '../../../types'
-import { GraphNodeIdentifier } from '../../types/node'
+import { GraphNode, GraphNodeIdentifier } from '../../types/node'
 import { GraphOperators } from './graphOperators'
 
-export type AddEdgeOperators = {}
+export type AddEdgeOperators = {
+  issuerNode: BV<GraphNode | null>
+  fromNode: BV<GraphNode | null>
+  toNode: BV<GraphNode | null>
+}
 export type AddEdgeAssumptionsFactory = (_: {
   from: GraphNodeIdentifier
   to: GraphNodeIdentifier
