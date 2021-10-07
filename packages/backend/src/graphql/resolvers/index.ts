@@ -290,17 +290,15 @@ export const getGQLResolvers = ({
         if ('__typename' in data) {
           return data
         }
-        const graphEdgeOrError = await qmino.callSync(
-          edgePorts.createEdge({
-            newEdge: {
-              ...data,
-            },
-            sessionEnv: ctx.authSessionEnv,
-            from: fromIdentifier,
-            to: toIdentifier,
-          }),
-          { timeout: 5000 },
-        )
+        const graphEdgeOrError = await edgePorts.addEdge({
+          newEdge: {
+            ...data,
+          },
+          sessionEnv: ctx.authSessionEnv,
+          from: fromIdentifier,
+          to: toIdentifier,
+        })
+
         if (!graphEdgeOrError) {
           return createEdgeMutationError('AssertionFailed')
         }
