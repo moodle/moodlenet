@@ -1,4 +1,5 @@
 import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
+import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
 import { AQ, aqlstr } from '../../../../lib/helpers/arango/query'
 
@@ -142,17 +143,15 @@ export const forwardSkipLimitPage = <T>({ docs, skip }: { docs: T[]; skip: numbe
 
 export const aqlGraphEdge2GraphEdge = (edgeVar: string) => `${edgeVar} && MERGE(
   UNSET(MERGE({},${edgeVar}), '_id', '_key', '_from', '_to' ),
-  {
-    _type: SPLIT( ${edgeVar}._id, '/', 1)[0],
-    id: ${edgeVar}._key
-  }
+  { id: ${edgeVar}._key }
 )`
 
-export const graphNode2AqlIdentifier = (nodeVar: string) =>
+export const graphNode2AqlIdentifier = (nodeVar: string | BV<GraphNode | null>) =>
   `{_id:${graphNode2AqlId(nodeVar)}, _key:${graphNode2AqlKey(nodeVar)}}`
-export const graphNode2AqlId = (nodeVar: string) => `CONCAT(${nodeVar}._type,'/',${nodeVar}._permId)`
-export const graphNode2AqlKey = (nodeVar: string) => `${nodeVar}._permId`
-export const graphNode2AqlGraphNode = (nodeVar: string) => `${nodeVar} && MERGE(
+export const graphNode2AqlId = (nodeVar: string | BV<GraphNode | null>) =>
+  `CONCAT(${nodeVar}._type,'/',${nodeVar}._permId)`
+export const graphNode2AqlKey = (nodeVar: string | BV<GraphNode | null>) => `${nodeVar}._permId`
+export const graphNode2AqlGraphNode = (nodeVar: string | BV<GraphNode | null>) => `${nodeVar} && MERGE(
   UNSET(MERGE({},${nodeVar}), '_permId', '_type' ),
   {
     _key: ${nodeVar}._permId,
@@ -162,10 +161,7 @@ export const graphNode2AqlGraphNode = (nodeVar: string) => `${nodeVar} && MERGE(
 
 export const aqlGraphNode2GraphNode = (nodeVar: string) => `${nodeVar} && MERGE(
 UNSET(MERGE({},${nodeVar}), '_id', '_key' ),
-{
-  _permId: ${nodeVar}._key,
-  _type: SPLIT( ${nodeVar}._id, '/', 1)[0]
-}
+{ _permId: ${nodeVar}._key }
 )`
 
 // export const getOneAQFrag = <T>(_aq: AQ<T>) => aq<T>(`((${_aq})[${0}])`)
