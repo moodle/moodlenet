@@ -1,9 +1,7 @@
-import { addEdgeAssumptionsMap } from '@moodlenet/common/lib/content-graph/bl/rules/addEdgeAssumptions'
-import { newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { Database } from 'arangojs'
 import { Algorithm, SignOptions, VerifyOptions } from 'jsonwebtoken'
 import { createTransport } from 'nodemailer'
-import { createEdgeAdapter, deleteEdgeAdapter } from '../adapters/content-graph/arangodb/adapters/edge'
+import { bindStoreEdge, deleteEdgeAdapter } from '../adapters/content-graph/arangodb/adapters/edge'
 import { getBVAdapter } from '../adapters/content-graph/arangodb/adapters/getBVAdapter'
 import { globalSearch } from '../adapters/content-graph/arangodb/adapters/globalSearch'
 import { createNodeAdapter, deleteNodeAdapter, editNodeAdapter } from '../adapters/content-graph/arangodb/adapters/node'
@@ -104,6 +102,7 @@ export const startDefaultMoodlenet = async ({
 
   bind(contentGraphCommon.getGraphBV, getBVAdapter(contentGraphDatabase))
   bind(contentGraphCommon.getGraphOperators, async () => graphOperators)
+  bindStoreEdge(contentGraphDatabase)
 
   await qminoInProcess.open(traverseNodePorts.fromNode, getTraverseNodeRelAdapter(contentGraphDatabase))
   await qminoInProcess.open(traverseNodePorts.count, getNodeRelationCountAdapter(contentGraphDatabase))
@@ -214,19 +213,6 @@ export const startDefaultMoodlenet = async ({
 
   await qminoInProcess.open(nodePorts.createNode, {
     ...createNodeAdapter(contentGraphDatabase),
-    createEdge: ({ from, newEdge, sessionEnv, to }) =>
-      createEdgeAdapter(contentGraphDatabase).storeEdge({
-        assumptions: {},
-        edge: {
-          _authId: sessionEnv.user.authId,
-          _created: Number(new Date()),
-          id: newGlyphPermId(),
-          ...newEdge,
-        },
-        issuer: graphOperators.graphNode({ _authId: sessionEnv.user.authId, _type: 'Profile' }),
-        from: graphOperators.graphNode(from),
-        to: graphOperators.graphNode(to),
-      }),
     // qminoInProcess.callSync(edgePorts.createEdge({ from, newEdge, sessionEnv, to }), { timeout: 5000 }),
     getProfileByAuthId: ({ authId }) => qminoInProcess.query(profilePorts.getByAuthId({ authId }), { timeout: 5000 }),
   })
@@ -235,10 +221,6 @@ export const startDefaultMoodlenet = async ({
     ...editNodeAdapter(contentGraphDatabase),
   })
 
-  await qminoInProcess.open(edgePorts.createEdge, {
-    ...createEdgeAdapter(contentGraphDatabase),
-    assumptionsMap: addEdgeAssumptionsMap,
-  })
   await qminoInProcess.open(edgePorts.deleteEdge, deleteEdgeAdapter(contentGraphDatabase))
 
   const userAuthIdAdapter = byAuthId(userAuthDatabase)

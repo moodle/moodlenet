@@ -66,7 +66,8 @@ const config: Config = {
 }
 
 export const umbrella = (binding: Binding) => (config.umbrella = binding)
-export const value = <T>(namespace: string[]): SecondaryStub<() => Promise<T>> => stub(namespace)
+export const value = <T>(namespace: string[], defaultValue?: T): SecondaryStub<() => Promise<T>> =>
+  stub(namespace, defaultValue && (async () => defaultValue))
 
 export function stub<Sec extends Secondary>(namespace: string[], defaultSec?: Sec): SecondaryStub<Sec> {
   if (!isNamespace(namespace)) {
