@@ -223,6 +223,7 @@ export const startDefaultMoodlenet = async ({
           id: newGlyphPermId(),
           ...newEdge,
         },
+        issuer: graphOperators.graphNode({ _authId: sessionEnv.user.authId, _type: 'Profile' }),
         from: graphOperators.graphNode(from),
         to: graphOperators.graphNode(to),
       }),

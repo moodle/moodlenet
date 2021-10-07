@@ -19,6 +19,7 @@ export type NewEdgeInput = DistOmit<GraphEdge, '_authId' | '_created' | 'id'>
 export type CreateAdapter = {
   storeEdge: <E extends GraphEdge>(_: {
     edge: E
+    issuer: BV<GraphNode | null>
     from: BV<GraphNode | null>
     to: BV<GraphNode | null>
     assumptions: Assumptions
@@ -63,6 +64,7 @@ export const createEdge = QMCommand(
 
       const result = await storeEdge({
         edge,
+        issuer: graphOperators.graphNode({ _authId: sessionEnv.user.authId, _type: 'Profile' }),
         from: graphOperators.graphNode(from),
         to: graphOperators.graphNode(to),
         assumptions,
