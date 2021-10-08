@@ -11,7 +11,6 @@ import { assertNever } from '@moodlenet/common/lib/utils/misc'
 import { pick } from '@moodlenet/common/lib/utils/object'
 import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
 import { Tuple } from 'tuple-type'
-import { QMino } from '../../lib/qmino'
 import { persistTempAssets } from '../../ports/static-assets/temp'
 import { PersistTmpFileReq } from '../../ports/static-assets/types'
 
@@ -281,7 +280,6 @@ export const gqlEdge2GraphEdge = (edge: GQL.Edge): DistOmit<GE.GraphEdge, '_auth
 type AssetRefInputAndType = { input: GQL.AssetRefInput; uploadType: UploadType }
 export const mapAssetRefInputsToAssetRefs = async <N extends number>(
   tupleOfAssetRefInputAndType: Tuple<AssetRefInputAndType | undefined | null, N>,
-  qmino: QMino,
 ): Promise<Tuple<Maybe<AssetRef>, N> | null> => {
   type PersistTmpFileReqOrAssetRef = PersistTmpFileReq | AssetRef
 
@@ -309,9 +307,7 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
 
   const toPersistReqsTuple = arrayOfMaybePersistTempFilesReqOrAssetRef.filter(_isPersistReq)
 
-  const assetFileDescArray = await qmino.callSync(persistTempAssets({ persistTmpFilesReqs: toPersistReqsTuple }), {
-    timeout: 5000,
-  })
+  const assetFileDescArray = await persistTempAssets({ persistTmpFilesReqs: toPersistReqsTuple })
 
   if (!assetFileDescArray) {
     return null

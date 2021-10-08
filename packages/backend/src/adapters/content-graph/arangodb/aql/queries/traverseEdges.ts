@@ -5,7 +5,7 @@ import { PageItem } from '@moodlenet/common/lib/content-graph/types/page'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
 import { TraverseFromNodeAdapterInput } from '../../../../../ports/content-graph/traverseNodeRel'
-import { _ } from '../../bl/baseOperators'
+import { _ } from '../../adapters/bl/_'
 // import { getNodeOpAqlAssertions } from './assertions/node'
 import { aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode, cursorPaginatedQuery, graphNode2AqlId } from '../helpers'
 

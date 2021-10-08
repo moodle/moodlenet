@@ -2,7 +2,7 @@ import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
 import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
 import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { _ } from '../../bl/baseOperators'
+import { _ } from '../../adapters/bl/_'
 import { aqlGraphEdge2GraphEdge } from '../helpers'
 
 export const getEdgeByNodesQ = <Type extends GraphEdgeType>({

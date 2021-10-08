@@ -1,6 +1,6 @@
 import { nodeIdentifierSlug2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import express from 'express'
-import { getByIdentifier } from '../../ports/content-graph/node'
+import { byIdentifier } from '../../ports/content-graph/node'
 
 export type WebFingerResp = {
   subject: string
@@ -29,7 +29,7 @@ export const createWebfingerApp = ({ domain }: GQLAppConfig) => {
     const acct = resParam.split(':')[1]!
     const userSlug = acct.split('@')[0]!
 
-    const profile = await getByIdentifier(req.mnHttpContext.authSessionEnv, { _slug: userSlug, _type: 'Profile' })
+    const profile = await byIdentifier(req.mnHttpContext.authSessionEnv, { _slug: userSlug, _type: 'Profile' })
 
     if (!profile) {
       res.sendStatus(404).send(`user ${acct} not found`)
