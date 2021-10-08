@@ -92,7 +92,7 @@ export function plug<Sock extends Socket>(namespace: string[], defaultSocket?: S
       .catch((_: any) => ({ success: false, err: _, args } as const))
       .then((_: any) => {
         console.log(`\n-----------------\n`)
-        console.log(`socket:${namespaceString(namespace)}:\n`, inspect(_, false, 5, true).substring(0, 200))
+        console.log(`socket:${namespaceString(namespace)}:\n`, inspect(_, false, 5, true).substring(0, 750))
         console.log(`\n-----------------\n`)
       })
     return resp
