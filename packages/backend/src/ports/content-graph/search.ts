@@ -3,11 +3,12 @@ import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { Page, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
 import { SessionEnv } from '@moodlenet/common/lib/types'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
-import { QMModule, QMQuery } from '../../lib/qmino'
+import { ns } from '../../lib/ns/namespace'
+import { plug } from '../../lib/stub/Stub'
 
-export type Adapter = {
-  searchNodes: <NodeType extends GlobalSearchNodeType>(_: GlobalSearchInput<NodeType>) => Promise<SearchPage>
-}
+export const searchByTermAdapter = plug<
+  <NodeType extends GlobalSearchNodeType>(_: GlobalSearchInput<NodeType>) => Promise<SearchPage>
+>(ns('search-by-term-adapter'))
 
 export type SearchPage = Page<GraphNode<GlobalSearchNodeType>>
 export type GlobalSearchInput<NodeType extends GlobalSearchNodeType = GlobalSearchNodeType> = {
@@ -17,12 +18,11 @@ export type GlobalSearchInput<NodeType extends GlobalSearchNodeType = GlobalSear
   page: PaginationInput
   env: SessionEnv | null
 }
-export const byTerm = QMQuery(
-  <NodeType extends GlobalSearchNodeType>({ sort, text, nodeTypes, page, env }: GlobalSearchInput<NodeType>) =>
-    async ({ searchNodes }: Adapter) => {
-      // console.log({ nodeTypes, page, sort, text })
-      return searchNodes({ sort, text, nodeTypes, page, env })
-    },
-)
+export const searchByTerm = plug(
+  ns('search-by-term'),
+  async <NodeType extends GlobalSearchNodeType>({ sort, text, nodeTypes, page, env }: GlobalSearchInput<NodeType>) => {
+    // console.log({ nodeTypes, page, sort, text })
 
-QMModule(module)
+    return searchByTermAdapter({ sort, text, nodeTypes, page, env })
+  },
+)

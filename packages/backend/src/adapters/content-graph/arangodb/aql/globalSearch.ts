@@ -2,7 +2,7 @@ import { GlobalSearchNodeType } from '@moodlenet/common/lib/content-graph/types/
 import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { GlobalSearchInput } from '../../../../ports/content-graph/search'
-import { _ } from '../bl/baseOperators'
+import { _ } from '../adapters/bl/_'
 import { aqlGraphNode2GraphNode, forwardSkipLimitPagination } from './helpers'
 import { nodeRelationCountQ } from './queries/traverseEdges'
 

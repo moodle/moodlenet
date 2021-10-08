@@ -1,10 +1,10 @@
 import { rootUserProfile } from '@moodlenet/common/lib/content-graph/initialData/content'
 import { DefaultConfig } from '@moodlenet/common/lib/content-graph/initialData/user-auth/defaultConfig'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
-import { argonHashPassword } from '../../../../../../lib/auth/argon'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
 import { justExecute } from '../../../../../../lib/helpers/arango/query'
 import { MNStaticEnv } from '../../../../../../lib/types'
+import { passwordHasher } from '../../../../../../ports/user-auth/adapters'
 import { ActiveUser } from '../../../../../../ports/user-auth/types'
 import { saveConfigQ } from '../../../queries/config'
 import { createNewUserQ } from '../../../queries/createNewUser'
@@ -24,7 +24,7 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
     console.log(`creating user-auth collection ${USER}`)
     await db.createCollection(USER)
 
-    const password = await argonHashPassword('root')
+    const password = await passwordHasher('root')
     await justExecute(
       createNewUserQ({
         ...rootUserActive,
