@@ -34,33 +34,3 @@ export const getAddNodeAssumptions = async ({
   }
   return assuptionsFactory({ env, newNodeData, graphOperators, baseOperators })
 }
-
-// declare const graph: GraphOperators
-// declare const base: BaseOperators
-// declare const e: Exec
-// ;(async () => {
-//   const val = base.cmp(5, '!=', 7)
-//   const x = await e(val)
-//   console.log(x)
-// })()
-// ;(async () => {
-//   const val = base.cond(true, 'a' as const, 'b' as const)
-//   const x = await e(val)
-//   console.log(x)
-// })()
-// ;(async () => {
-//   const isc = graph.isCreator({ _type: 'Collection', _permId: '' }, { _type: 'Collection', _permId: '' })
-//   const _or = base.or(isc, isc, isc, true)
-//   const val = graph.isCreator(
-//     base.cond(isc, { _type: 'Collection', _permId: '' }, { _type: 'Collection', _permId: '' }),
-//     { _type: 'Collection', _permId: '' },
-//   )
-//   const x = await e(val)
-//   console.log(x, _or)
-// })()
-// ;(async () => {
-//   const isc = graph.isCreator({ _type: 'Collection', _permId: '' }, { _type: 'Collection', _permId: '' })
-//   const val = base.cond(isc, isc, 'b' as const)
-//   const x = await e(val)
-//   console.log(x)
-// })()
