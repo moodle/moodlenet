@@ -19,10 +19,9 @@ export const getSessionEnv = async ({
   if (!headerToken) {
     return null
   }
-  const jwtBodyUser = await jwtVerifierAdapter(headerToken)
-  if (jwtBodyUser === INVALID_JWT_TOKEN) {
+  const sessionEnv = await jwtVerifierAdapter(headerToken)
+  if (sessionEnv === INVALID_JWT_TOKEN) {
     return null
   }
-  const sessionEnv = { user: jwtBodyUser }
   return isSessionEnv(sessionEnv) ? sessionEnv : null
 }
