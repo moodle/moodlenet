@@ -8,17 +8,8 @@ import {
   gqlNodeId2GraphNodeIdentifier,
   gqlNodeId2GraphNodeIdentifierOfType,
 } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { SignOptions } from 'jsonwebtoken'
-import { JwtPrivateKey, signJwtActiveUser } from '../../lib/auth/jwt'
-import { PasswordHasher } from '../../lib/auth/types'
-import { QMino } from '../../lib/qmino'
-import * as edgePorts from '../../ports/content-graph/edge'
-import * as nodePorts from '../../ports/content-graph/node'
-import * as profilePorts from '../../ports/content-graph/profile'
-import * as searchPorts from '../../ports/content-graph/search'
-import * as newUserPorts from '../../ports/user-auth/new-user'
-import * as userPorts from '../../ports/user-auth/user'
-import * as utilPorts from '../../ports/utils/utils'
+import * as contentGraph from '../../ports/content-graph'
+import * as userAuth from '../../ports/user-auth'
 import * as GQLResolvers from '../types.graphql.gen'
 import {
   createEdgeMutationError,
@@ -34,20 +25,8 @@ import { bakeEdgeDoumentData } from './prepareData/createEdge'
 import { bakeCreateNodeDoumentData } from './prepareData/createNode'
 import { bakeEditNodeDoumentData } from './prepareData/editNode'
 
-export const getGQLResolvers = ({
-  jwtPrivateKey,
-  jwtSignOptions,
-  // passwordVerifier,
-  passwordHasher,
-  qmino,
-}: {
-  jwtSignOptions: SignOptions
-  jwtPrivateKey: JwtPrivateKey
-  // passwordVerifier: PasswordVerifier
-  passwordHasher: PasswordHasher
-  qmino: QMino
-}): GQLResolvers.Resolvers => {
-  const INodeResolver = getINodeResolver({ qmino })
+export const getGQLResolvers = (): GQLResolvers.Resolvers => {
+  const INodeResolver = getINodeResolver()
   return {
     Query: {
       async node(_root, { id }, ctx /*,_info */) {
@@ -56,12 +35,12 @@ export const getGQLResolvers = ({
         if (!parsed) {
           return null
         }
-        const maybeNode = await nodePorts.getByIdentifier(ctx.authSessionEnv, parsed)
+        const maybeNode = await contentGraph.node.byIdentifier(ctx.authSessionEnv, parsed)
         return maybeNode ? graphNode2GqlNode(maybeNode) : null
       },
 
       async globalSearch(_root, { sort, text, nodeTypes, page }, ctx) {
-        const searchInput: searchPorts.GlobalSearchInput = {
+        const searchInput: contentGraph.search.GlobalSearchInput = {
           env: ctx.authSessionEnv,
           nodeTypes: (nodeTypes ?? globalSearchNodeTypes).filter(isGlobalSearchNodeType),
           page: {
@@ -75,7 +54,7 @@ export const getGQLResolvers = ({
         }
         // console.log({ nodeTypes, page, sort, text, _: '**' })
 
-        const { items, pageInfo } = await qmino.query(searchPorts.byTerm(searchInput), { timeout: 5000 })
+        const { items, pageInfo } = await contentGraph.search.searchByTerm(searchInput)
 
         return {
           __typename: 'SearchPage',
@@ -102,14 +81,17 @@ export const getGQLResolvers = ({
           return null
         }
 
-        const mActiveUser = await qmino.query(userPorts.getActiveByAuthId({ authId: ctx.authSessionEnv.user.authId }), {
-          timeout: 5000,
+        const mActiveUser = await userAuth.adapters.getActiveUserByAuthAdapter({
+          authId: ctx.authSessionEnv.user.authId,
         })
         // console.log({ mActiveUser })
         if (!mActiveUser) {
           return null
         }
-        const mProfile = await qmino.query(profilePorts.getByAuthId({ authId: mActiveUser.authId }), { timeout: 5000 })
+        const mProfile = await contentGraph.node.byIdentifier(ctx.authSessionEnv, {
+          _authId: mActiveUser.authId,
+          _type: 'Profile',
+        })
         // console.log({ mProfile })
         if (!mProfile) {
           return null
@@ -136,31 +118,25 @@ export const getGQLResolvers = ({
     ResourceType: INodeResolver,
     Mutation: {
       async recoverPassword(_root, { email } /* , ctx */) {
-        qmino.callSync(userPorts.recoverPasswordEmail({ email }), { timeout: 5000 })
+        await userAuth.user.recoverPasswordEmail({ email })
         return {
           __typename: 'SimpleResponse',
           success: true,
         }
       },
       async changeRecoverPassword(_root, { newPassword, token } /* , ctx */) {
-        const activeUser = await qmino.callSync(
-          userPorts.changeRecoverPassword({ newPasswordClear: newPassword, token }),
-          { timeout: 5000 },
-        )
-        if (!activeUser) {
+        const resp = await userAuth.user.changeRecoverPassword({ newPasswordClear: newPassword, token })
+        if (!resp) {
           return null
         }
-        const jwt = signJwtActiveUser({ jwtPrivateKey, jwtSignOptions, user: activeUser })
 
         return {
           __typename: 'CreateSession',
-          jwt,
+          jwt: resp.jwt,
         }
       },
       async createSession(_root, { password, email, activationEmailToken } /* , ctx */) {
-        const sessionResp = await qmino.callSync(userPorts.createSession({ email, activationEmailToken, password }), {
-          timeout: 5000,
-        })
+        const sessionResp = await userAuth.user.createSession({ email, activationEmailToken, password })
         if ('string' === typeof sessionResp) {
           return {
             __typename: 'CreateSession',
@@ -173,33 +149,10 @@ export const getGQLResolvers = ({
         }
       },
       async signUp(_root, { email, name, password } /* ,env */) {
-        const hashedPassword = await passwordHasher(password)
-        await qmino.callSync(newUserPorts.signUp({ email, displayName: name, hashedPassword }), { timeout: 5000 })
+        await userAuth.newUser.signUp({ email, displayName: name, password })
 
         return { __typename: 'SimpleResponse', success: true }
       },
-      // async activateUser(_root, { password, activationToken, name } /*, ctx */) {
-      //   // TODO: implement a port
-      //   const hashedPassword = await passwordHasher(password)
-      //   const activationresult = await qmino.callSync(
-      //     newUserPorts.confirmSignup({ hashedPassword, profileName: name, token: activationToken }),
-      //     {
-      //       timeout: 5000,
-      //     },
-      //   )
-      //   if ('string' === typeof activationresult) {
-      //     return {
-      //       __typename: 'CreateSession',
-      //       jwt: null,
-      //       message: activationresult,
-      //     }
-      //   }
-      //   const jwt = signJwtActiveUser({ user: activationresult, jwtPrivateKey, jwtSignOptions })
-      //   return {
-      //     __typename: 'CreateSession',
-      //     jwt,
-      //   }
-      // },
       async createNode(_root, { input }, ctx, _info) {
         if (!ctx.authSessionEnv) {
           return createNodeMutationError('NotAuthorized')
@@ -209,19 +162,16 @@ export const getGQLResolvers = ({
         if (nodeInput instanceof Error) {
           return createNodeMutationError('UnexpectedInput', nodeInput.message)
         }
-        const data = await bakeCreateNodeDoumentData(nodeInput, nodeType, qmino)
+        const data = await bakeCreateNodeDoumentData(nodeInput, nodeType)
         if ('__typename' in data) {
           return data
         }
-        const graphNodeOrError = await qmino.callSync(
-          nodePorts.createNode({
-            nodeData: {
-              ...data,
-            },
-            sessionEnv: ctx.authSessionEnv,
-          }),
-          { timeout: 5000 },
-        )
+        const graphNodeOrError = await contentGraph.node.createNode({
+          nodeData: {
+            ...data,
+          },
+          sessionEnv: ctx.authSessionEnv,
+        })
         if (graphNodeOrError === 'unauthorized') {
           return createNodeMutationError('NotAuthorized')
         }
@@ -248,20 +198,17 @@ export const getGQLResolvers = ({
         if (nodeInput instanceof Error) {
           return editNodeMutationError('UnexpectedInput', nodeInput.message)
         }
-        const data = await bakeEditNodeDoumentData(nodeInput, nodeType, qmino)
+        const data = await bakeEditNodeDoumentData(nodeInput, nodeType)
         if ('__typename' in data) {
           return data
         }
-        const graphNodeOrError = await qmino.callSync(
-          nodePorts.editNode({
-            nodeData: {
-              ...data,
-            },
-            nodeId,
-            sessionEnv: ctx.authSessionEnv,
-          }),
-          { timeout: 5000 },
-        )
+        const graphNodeOrError = await contentGraph.node.editNode({
+          nodeData: {
+            ...data,
+          },
+          nodeId,
+          sessionEnv: ctx.authSessionEnv,
+        })
         if (!graphNodeOrError) {
           return editNodeMutationError('AssertionFailed')
         }
@@ -286,11 +233,11 @@ export const getGQLResolvers = ({
         if (nodeInput instanceof Error) {
           return createEdgeMutationError('UnexpectedInput', nodeInput.message)
         }
-        const data = await bakeEdgeDoumentData(nodeInput, edgeType, qmino)
+        const data = await bakeEdgeDoumentData(nodeInput, edgeType)
         if ('__typename' in data) {
           return data
         }
-        const graphEdgeOrError = await edgePorts.addEdge({
+        const graphEdgeOrError = await contentGraph.edge.addEdge({
           newEdge: {
             ...data,
           },
@@ -316,13 +263,10 @@ export const getGQLResolvers = ({
         if (!ctx.authSessionEnv) {
           return deleteEdgeMutationError('NotAuthorized')
         }
-        const deleteResult = await qmino.callSync(
-          edgePorts.deleteEdge({
-            sessionEnv: ctx.authSessionEnv,
-            edge,
-          }),
-          { timeout: 5000 },
-        )
+        const deleteResult = await contentGraph.edge.deleteEdge({
+          sessionEnv: ctx.authSessionEnv,
+          edge,
+        })
         if (deleteResult === false) {
           return deleteEdgeMutationError('UnexpectedInput', null)
         }
@@ -340,13 +284,10 @@ export const getGQLResolvers = ({
         if (!ctx.authSessionEnv) {
           return deleteNodeMutationError('NotAuthorized')
         }
-        const deleteResult = await qmino.callSync(
-          nodePorts.deleteNode({
-            sessionEnv: ctx.authSessionEnv,
-            node,
-          }),
-          { timeout: 5000 },
-        )
+        const deleteResult = await contentGraph.node.deleteNode({
+          sessionEnv: ctx.authSessionEnv,
+          node,
+        })
         if (deleteResult === false) {
           return deleteNodeMutationError('UnexpectedInput', null)
         }
@@ -361,10 +302,11 @@ export const getGQLResolvers = ({
         if (!(ctx.authSessionEnv?.user && toProfileIdentifier)) {
           return false
         }
-        const sendResult = await qmino.callSync(
-          utilPorts.sendEmailToProfile({ env: ctx.authSessionEnv, text, toProfileId: toProfileIdentifier }),
-          { timeout: 5000 },
-        )
+        const sendResult = await contentGraph.profile.sendTextToProfile({
+          env: ctx.authSessionEnv,
+          text,
+          toProfileId: toProfileIdentifier,
+        })
         return sendResult
       },
     },

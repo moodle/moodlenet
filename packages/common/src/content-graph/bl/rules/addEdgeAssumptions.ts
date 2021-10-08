@@ -1,6 +1,9 @@
-import { AddEdgeAssumptionsFactoryMap } from '../graph-lang/AddEdge'
+import { AddEdgeAssumptionsMap } from '../graph-lang/AddEdge'
 
-export const addEdgeAssumptionsMap: AddEdgeAssumptionsFactoryMap = {
+//export const getAddEdgeAssumptionsMap : SecOf< typeof getAddEdgeAssumptionsMap>=async ()=>addEdgeAssumptionsMap
+export const getAddEdgeAssumptionsMap = async () => addEdgeAssumptionsMap
+
+export const addEdgeAssumptionsMap: AddEdgeAssumptionsMap = {
   Collection_Features_Resource: async ({
     // env,
     // from,

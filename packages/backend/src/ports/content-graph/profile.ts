@@ -1,16 +1,31 @@
-import { Profile } from '@moodlenet/common/lib/content-graph/types/node'
-import { AuthId } from '@moodlenet/common/lib/types'
-import { Maybe } from '@moodlenet/common/lib/utils/types'
-import { QMModule, QMQuery } from '../../lib/qmino'
+import { GraphNodeIdentifier, Profile } from '@moodlenet/common/lib/content-graph/types/node'
+import { SessionEnv } from '@moodlenet/common/lib/types'
+import { ns } from '../../lib/ns/namespace'
+import { plug } from '../../lib/stub/Stub'
+import { getBaseOperatorsAdapter, getGraphOperatorsAdapter } from './common'
 
-export type ByAuthIdAdapter = {
-  getProfileByAuthId: (_: ByAuthIdInput) => Promise<Maybe<Profile>>
+export const sendTextToProfileAdapter = plug<
+  (_: { sender: Profile; recipient: Profile; text: string }) => Promise<boolean>
+>(ns('send-text-to-profile-adapter'))
+
+export type SendTextToProfile = {
+  env: SessionEnv
+  toProfileId: GraphNodeIdentifier<'Profile'>
+  text: string
 }
+export const sendTextToProfile = plug(
+  ns('send-text-to-profile'),
+  async ({ env, toProfileId, text }: SendTextToProfile) => {
+    const { getBV } = await getBaseOperatorsAdapter()
+    const { graphNode } = await getGraphOperatorsAdapter()
 
-export type ByAuthIdInput = { authId: AuthId }
+    const recipient = await getBV(graphNode(toProfileId))
+    const sender = await getBV(graphNode({ _authId: env.user.authId, _type: 'Profile' }))
 
-export const getByAuthId = QMQuery(({ authId }: ByAuthIdInput) => async ({ getProfileByAuthId }: ByAuthIdAdapter) => {
-  return getProfileByAuthId({ authId })
-})
+    if (!(recipient && sender)) {
+      return false
+    }
 
-QMModule(module)
+    return sendTextToProfileAdapter({ sender, recipient, text })
+  },
+)

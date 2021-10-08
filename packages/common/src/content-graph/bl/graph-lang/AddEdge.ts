@@ -18,9 +18,7 @@ export type AddEdgeAssumptionsFactory = (_: {
   addEdgeOperators: AddEdgeOperators
 }) => Promise<Assumptions>
 
-export type AddEdgeAssumptionsFactoryMap = Partial<
-  Record<`${NodeType}_${EdgeType}_${NodeType}`, AddEdgeAssumptionsFactory>
->
+export type AddEdgeAssumptionsMap = Partial<Record<`${NodeType}_${EdgeType}_${NodeType}`, AddEdgeAssumptionsFactory>>
 
 export const getAddEdgeAssumptions = async ({
   edgeType,
@@ -36,7 +34,7 @@ export const getAddEdgeAssumptions = async ({
   edgeType: EdgeType
   to: GraphNodeIdentifier
   env: SessionEnv
-  map: AddEdgeAssumptionsFactoryMap
+  map: AddEdgeAssumptionsMap
   graphOperators: GraphOperators
   baseOperators: BaseOperators
   addEdgeOperators: AddEdgeOperators

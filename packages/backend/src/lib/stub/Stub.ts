@@ -1,97 +1,123 @@
 import { isArray } from 'lodash'
+import { inspect } from 'util'
 
 const isNsPath = (_: any): _ is NsPath => typeof _ === 'string' && _.length > 0 //(/^[a-z]$/.test(_) || /^[a-z][a-z0-9-]*[a-z]$/.test(_))
 
 declare const VALID_NS_SYM: unique symbol
-const SYM_STUB = Symbol()
-const LocalBindings = new Map<string, LocalBinding>()
-const setLocalBinding = (_: Namespace, secBinding: Secondary | undefined) =>
-  LocalBindings.set(namespaceString(_), { namespace: _, secBinding })
-const hasLocalBinding = (_: Namespace) => LocalBindings.has(namespaceString(_))
+const SYM_PLUG = Symbol()
+const PlugRegistrations = new Map<string, PlugRegistration>()
+const setPlugRegistration = (namespace: Namespace, socket: Socket | undefined) =>
+  PlugRegistrations.set(namespaceString(namespace), { namespace: namespace, socket: socket })
+const hasRegisteredPlug = (namespace: Namespace) => PlugRegistrations.has(namespaceString(namespace))
+export const getPlugRegistrations = () => Array.from(PlugRegistrations.values())
 
-function getLocalBinding(stubOrNamespace: any) {
-  const namespace = getStubNamespace(stubOrNamespace)
-  return namespace ? LocalBindings.get(namespaceString(namespace)) : undefined
+function getPlugRegistration(plugOrNamespace: any) {
+  const namespace = getPlugNamespace(plugOrNamespace)
+  return namespace ? PlugRegistrations.get(namespaceString(namespace)) : undefined
 }
 
-const namespaceString = (_: Namespace) => _.join(':::')
+const namespaceString = (namespace: Namespace) => namespace.join(':::')
 
 type NsPath = string & { readonly [VALID_NS_SYM]: unique symbol }
-type LocalBinding = {
+type PlugRegistration = {
   namespace: Namespace
-  secBinding?: Secondary
+  socket?: Socket
 }
-type StubDef = {
+type PlugDef = {
   namespace: Namespace
 }
 type Namespace = NsPath[]
 const isNamespace = (_: any): _ is Namespace => isArray(_) && _.every(isNsPath)
 
-type Action = {
+type Signal = {
   args: any[]
   namespace: Namespace
 }
-type Secondary = (...action: any[]) => Promise<any>
-type SecondaryStub<S extends Secondary> = S & { [SYM_STUB]: StubDef }
+type Socket = (...args: any[]) => Promise<any>
+type Plug<S extends Socket> = S & { [SYM_PLUG]: PlugDef }
 
-export function bind<S extends Secondary>(secStubOrNamespace: Namespace | SecondaryStub<S>, sec: S) {
-  const stubNamespace = getStubNamespace(secStubOrNamespace)
-  if (!stubNamespace) {
-    console.error(secStubOrNamespace)
-    throw new TypeError(`argument secStubOrNamespace [${stubNamespace}] is not a Stub or a namespace`)
+export function socket<Sock extends Socket>(plugOrNamespace: Namespace | Plug<Sock>, sock: Sock) {
+  const plugNamespace = getPlugNamespace(plugOrNamespace)
+  if (!plugNamespace) {
+    console.error(plugOrNamespace)
+    throw new TypeError(`Argument \`plugOrNamespace\` [${plugNamespace}] is neither a Plug or a namespace`)
   }
 
-  const localbinding = getLocalBinding(stubNamespace)
-  if (!localbinding) {
-    throw new ReferenceError(`stub [${namespaceString(stubNamespace)}] not registered`)
+  const plugRegistration = getPlugRegistration(plugNamespace)
+  if (!plugRegistration) {
+    throw new ReferenceError(`Plug [${namespaceString(plugNamespace)}] not registered`)
   }
-  console.log(`Binding: [${stubNamespace.join('][')}]`)
-  if (localbinding.secBinding) {
-    console.warn(`[${namespaceString(stubNamespace)}] already bound, overriding`)
+  if (plugRegistration.socket) {
+    const error = `Attempting to plug [${namespaceString(plugNamespace)}] already bound`
+    console.error(error)
+    throw new ReferenceError(error)
   }
-  localbinding.secBinding = sec
+  console.log(`Plug [${namespaceString(plugNamespace)}] to socket`)
+  plugRegistration.socket = sock
 }
 
-const getStubNamespace = (secStubOrNamespace: any) =>
-  isNamespace(secStubOrNamespace) ? secStubOrNamespace : getDefStub(secStubOrNamespace)?.namespace
+const getPlugNamespace = (secPlugOrNamespace: any) =>
+  isNamespace(secPlugOrNamespace) ? secPlugOrNamespace : getPlugDef(secPlugOrNamespace)?.namespace
 
-const getDefStub = (secStub: any) => (secStub ? (secStub[SYM_STUB] as StubDef | undefined) : undefined)
+const getPlugDef = (secPlug: any) => (secPlug ? (secPlug[SYM_PLUG] as PlugDef | undefined) : undefined)
 
-type Binding = (action: Action) => Promise<any>
+export type SockOf<Plg> = Plg extends Plug<infer S> ? S : never
+type Umbrella = (signal: Signal) => Promise<any>
 type Config = {
-  umbrella: Binding
+  umbrella: Umbrella
 }
 const config: Config = {
-  umbrella: localBindingError,
+  umbrella: noUmbrellaError,
 }
 
-export const umbrella = (binding: Binding) => (config.umbrella = binding)
-export const value = <T>(namespace: string[], defaultValue?: T): SecondaryStub<() => Promise<T>> =>
-  stub(namespace, defaultValue && (async () => defaultValue))
+export const umbrella = (umbrella: Umbrella) => (config.umbrella = umbrella)
+export const value = <T>(namespace: string[], defaultValue?: T): Plug<() => Promise<T>> =>
+  plug(namespace, defaultValue && (async () => defaultValue))
 
-export function stub<Sec extends Secondary>(namespace: string[], defaultSec?: Sec): SecondaryStub<Sec> {
+export function plug<Sock extends Socket>(namespace: string[], defaultSocket?: Sock): Plug<Sock> {
   if (!isNamespace(namespace)) {
-    throw new Error(`${namespace && namespaceString(namespace as any)} is not a valid Namespace`)
+    throw new Error(`[${namespace && namespaceString(namespace as any)}] is not a valid Namespace`)
   }
 
-  if (hasLocalBinding(namespace)) {
-    throw new Error(`stub [${namespaceString(namespace)}] already registered`)
+  if (hasRegisteredPlug(namespace)) {
+    throw new Error(`Plug [${namespaceString(namespace)}] already registered`)
   }
-  const _stub: any = async (...args: any[]) => {
-    const localbinding = getLocalBinding(namespace)
-    if (!localbinding?.secBinding) {
-      // return config.binding( packStubAction({ args, namespace }) as any)
-      return (defaultSec ?? config.umbrella)({ args, namespace })
-    }
-    return localbinding.secBinding(...args) as any
+  const _plug: any = async (...args: any[]) => {
+    const plugRegistration = getPlugRegistration(namespace)
+    const resp = plugRegistration?.socket
+      ? (plugRegistration.socket(...args) as any)
+      : config.umbrella({ args, namespace })
+    resp
+      .then((_: any) => ({ success: true, resp: _, args } as const))
+      .catch((_: any) => ({ success: false, err: _, args } as const))
+      .then((_: any) => {
+        console.log(`\n-----------------\n`)
+        console.log(`socket:${namespaceString(namespace)}:\n`, inspect(_, false, 5, true).substring(0, 200))
+        console.log(`\n-----------------\n`)
+      })
+    return resp
   }
-  _stub[SYM_STUB] = { namespace }
-  setLocalBinding(namespace, undefined)
-  return _stub // as SecondaryStub<Sec>
+  _plug[SYM_PLUG] = { namespace }
+  setPlugRegistration(namespace, defaultSocket)
+  return _plug // as SecondaryPlug<Sec>
 }
 
-function localBindingError(action: Action): Promise<any> {
-  const msg = `no local binding for [${namespaceString(action.namespace)}] - no alternative binding configured`
+function noUmbrellaError(signal: Signal): Promise<any> {
+  const msg = `No local socket for plug [${namespaceString(signal.namespace)}] and no umbrella socket configured`
   console.error(msg)
   throw new Error(msg)
+}
+
+export const checkAndLogUnboundPlugRegistrations = () => {
+  const missingSockets = getPlugRegistrations()
+    .filter(_ => !_.socket)
+    .map(_ => namespaceString(_.namespace))
+
+  missingSockets.length
+    ? console.warn(`\nMissing some plugs local socket\n- ${missingSockets.join('\n- ')}\n`)
+    : console.log(`\nAll plugs locally bound!\n`)
+  if (missingSockets.length && config.umbrella === noUmbrellaError) {
+    throw new Error(`Missing umbrella!`)
+  }
+  return missingSockets
 }

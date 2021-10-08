@@ -14,6 +14,7 @@ export type BaseOperators = {
   or(...bools: [BV<boolean>, ...BV<boolean>[]]): BV<boolean>
   not(bool: BV<boolean>): BV<boolean>
   _<T>(val: T): BV<T>
+  getBV: GetBV
 }
 
 export type Cmp = '==' | '!=' | '<' | '>' | '<=' | '>='
