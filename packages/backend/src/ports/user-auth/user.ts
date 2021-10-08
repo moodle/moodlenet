@@ -1,4 +1,4 @@
-import { AuthId, isAuthId } from '@moodlenet/common/lib/types'
+import { AuthId, isAuthId, SessionEnv } from '@moodlenet/common/lib/types'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { isString } from 'lodash'
@@ -126,9 +126,15 @@ export const createSession = plug(
   },
 )
 
-const authJWT = (activeUser: ActiveUser) => {
+const authJWT = async (activeUser: ActiveUser) => {
+  // TODO : add `jwtExpireSecs` in Config
   // const {jwtExpireSecs}=await getLatestConfigAdapter()
   const jwtExpireSecs = 30 * 24 * 60 * 60 * 1000
-  const jwt = jwtSignerAdapter(activeUser, jwtExpireSecs)
+  const sessionEnv: SessionEnv = {
+    user: {
+      authId: activeUser.authId,
+    },
+  }
+  const jwt = jwtSignerAdapter(sessionEnv, jwtExpireSecs)
   return jwt
 }
