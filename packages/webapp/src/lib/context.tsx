@@ -17,7 +17,7 @@ export const createCtx = <Value,>(ctxName: string, initialValue: Value = NEVER_I
 
 type ValueGetterHook<Value> = () => Value
 
-const CTX_VALUE_SYMBOL = Symbol()
+declare const CTX_VALUE_SYMBOL: unique symbol
 export type CtxValue<Value> = () => Value & { readonly [CTX_VALUE_SYMBOL]: unique symbol }
 export type ProviderBag<Value> = readonly [key: string, ctxValue: CtxValue<Value>]
 
