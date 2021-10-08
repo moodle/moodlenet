@@ -1,7 +1,4 @@
-// export const _ = <T>(__ser__: string, __type__?: T): _<T> => ({ __ser__, __type__ })
-
-// export type __unfold__<T> = T extends __ser__<T> ? T : T | __ser__<T>
-const _TSym = Symbol()
+declare const _TSym: unique symbol
 export type _T<__> = __ extends BV<infer T> ? T : never
 export type BV<T> = { readonly [_TSym]?: T }
 export type GetBV = <T extends any>(_: BV<T>) => Promise<T>
