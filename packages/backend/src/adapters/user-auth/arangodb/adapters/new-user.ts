@@ -1,17 +1,13 @@
-import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { getOneResult } from '../../../../lib/helpers/arango/query'
-import { SignUpAdapter } from '../../../../ports/user-auth/new-user'
+import { SockOf } from '../../../../lib/stub/Stub'
+import { saveActiveUserAdapter } from '../../../../ports/user-auth/adapters'
 import { ActiveUser } from '../../../../ports/user-auth/types'
 import { createNewUserQ, CreateNewUserQArg } from '../queries/createNewUser'
 import { UserAuthDB } from '../types'
-import { getConfigAdapter } from './config'
-export const storeNewSignupRequest = (db: UserAuthDB): Pick<SignUpAdapter, 'getConfig'> => ({
-  getConfig: getConfigAdapter({ db }).getLatestConfig,
-})
 
-export const storeNewActiveUser =
-  (db: UserAuthDB) =>
-  async ({ authId, email, password, status }: DistOmit<ActiveUser, 'id' | 'createdAt' | 'updatedAt'>) => {
+export const saveActiveUser =
+  (db: UserAuthDB): SockOf<typeof saveActiveUserAdapter> =>
+  async ({ authId, email, password, status }) => {
     const waitingFirstActivationUser: CreateNewUserQArg<ActiveUser> = {
       email,
       authId,
@@ -25,25 +21,3 @@ export const storeNewActiveUser =
     }
     return newWaitingFirstActivationUser
   }
-
-// export const createNewUser = (db: UserAuthDB): Pick<CreateNewUserAdapter, 'createUser'> => ({
-//   async createUser({ password, email, username, role }) {
-//     const userNameInUseQ = isUsernameInUseQ({ username })
-//     const userNameInUse = (await getOneResult(userNameInUseQ, db)) as true | null
-//     if (userNameInUse) {
-//       return 'username not available'
-//     }
-//     const emailInUseQ = isEmailInUseQ({ email })
-//     const isEmailInUse = (await getOneResult(emailInUseQ, db)) as true | null
-//     if (isEmailInUse) {
-//       return 'email not available'
-//     }
-
-//     const createQ = createNewUserQ({ password, username, email, role })
-//     const activeUser = (await getOneResult(createQ, db)) as ActiveUser | null
-//     console.log(`\n\n\n\n\n\n\n\n\n\n\n`)
-//     console.log({ activeUser })
-//     console.log(`\n\n\n\n\n\n\n\n\n\n\n`)
-//     return activeUser
-//   },
-// })

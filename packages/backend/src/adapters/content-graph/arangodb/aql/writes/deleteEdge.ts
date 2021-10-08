@@ -1,12 +1,13 @@
-import { GraphEdgeIdentifier } from '@moodlenet/common/lib/content-graph/types/edge'
-import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
-import { AqlGraphEdge } from '../../types'
+import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
+import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
+import { aq } from '../../../../../lib/helpers/arango/query'
+import { aqlGraphEdge2GraphEdge } from '../helpers'
 
-export const deleteEdgeQ = ({ _type, id }: GraphEdgeIdentifier) => {
-  const q = aq<AqlGraphEdge>(`
-    REMOVE { _key: ${aqlstr(id)} } IN ${_type} OPTIONS { ignoreErrors: true }
+export const deleteEdgeQ = (edge: BV<GraphEdge | null>, edgeType: GraphEdgeType) => {
+  const q = aq<GraphEdge | null>(`
+    REMOVE { _key: ${edge}.id } IN ${edgeType} OPTIONS { ignoreErrors: true }
 
-    RETURN OLD
+    RETURN ${aqlGraphEdge2GraphEdge('OLD')}
   `)
   // console.log(q)
   return q

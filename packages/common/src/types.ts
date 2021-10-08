@@ -6,3 +6,8 @@ export type SessionEnv = {
     authId: AuthId
   }
 }
+
+export const isSessionEnv = (_: any): _ is SessionEnv => {
+  // console.log(`isSessionEnv `, _, typeof _?.user?.authId === 'string')
+  return typeof _?.user?.authId === 'string'
+}

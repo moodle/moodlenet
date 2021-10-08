@@ -1,24 +1,22 @@
 import { Readable } from 'stream'
-import { QMModule, QMQuery } from '../../lib/qmino'
+import { ns } from '../../lib/ns/namespace'
+import { plug } from '../../lib/stub/Stub'
 import { AssetFileDesc, AssetId } from './types'
 
 // get asset
 
-export type GetAssetAdapter = {
-  getAsset: (_: { assetId: AssetId }) => Promise<null | [Readable, AssetFileDesc]>
-}
-export const get = QMQuery(({ assetId }: { assetId: AssetId }) => async ({ getAsset }: GetAssetAdapter) => {
-  const result = await getAsset({ assetId })
+export const getAssetAdapter = plug<(_: { assetId: AssetId }) => Promise<null | [Readable, AssetFileDesc]>>(
+  ns('get-asset-adapter'),
+)
+
+export const getAsset = plug(ns('get-asset'), async ({ assetId }: { assetId: AssetId }) => {
+  const result = await getAssetAdapter({ assetId })
   return result
 })
 
 // del asset
 
-export type DelAssetAdapter = {
-  delAsset: (_: { assetId: AssetId }) => Promise<void>
-}
-export const del = QMQuery(({ assetId }: { assetId: AssetId }) => async ({ delAsset }: DelAssetAdapter) => {
-  await delAsset({ assetId })
+export const delAssetAdapter = plug<(_: { assetId: AssetId }) => Promise<void>>(ns('del-asset-adapter'))
+export const delAsset = plug(ns('del-asset'), async ({ assetId }: { assetId: AssetId }) => {
+  await delAssetAdapter({ assetId })
 })
-
-QMModule(module)

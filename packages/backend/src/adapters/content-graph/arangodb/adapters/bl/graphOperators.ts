@@ -1,9 +1,12 @@
 import { GraphOperators } from '@moodlenet/common/lib/content-graph/bl/graph-lang/graphOperators'
 import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { aqlstr } from '../../../../lib/helpers/arango/query'
-import { aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode, graphNode2AqlId } from '../aql/helpers'
-import { _ } from './baseOperators'
+import { aqlstr } from '../../../../../lib/helpers/arango/query'
+import { SockOf } from '../../../../../lib/stub/Stub'
+import { getGraphOperatorsAdapter } from '../../../../../ports/content-graph/common'
+import { aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode, graphNode2AqlId } from '../../aql/helpers'
+import { _ } from './_'
 
+export const getGraphOperators: SockOf<typeof getGraphOperatorsAdapter> = async () => graphOperators
 export const graphOperators: GraphOperators = {
   // edgeType: edgeType => ` ${edgeType} ` as BV<GraphEdgeType>,
   // nodeType: nodeType => ` ${nodeType} ` as BV<GraphNodeType>,

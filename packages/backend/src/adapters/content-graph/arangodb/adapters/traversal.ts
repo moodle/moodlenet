@@ -1,8 +1,11 @@
 import { getAllResults, getOneResult } from '../../../../lib/helpers/arango/query'
-import { NodeRelationCountAdapter, TraverseNodeRelAdapter } from '../../../../ports/content-graph/traverseNodeRel'
+import { SockOf } from '../../../../lib/stub/Stub'
+import {
+  countNodeRelationsAdapter,
+  traverseNodeRelationsAdapter,
+} from '../../../../ports/content-graph/traverseNodeRel'
 import { aqBV, makeAfterBeforePage } from '../aql/helpers'
 import { nodeRelationCountQ, traverseEdgesQ } from '../aql/queries/traverseEdges'
-import { graphOperators } from '../bl/graphOperators'
 import { ContentGraphDB } from '../types'
 
 // const pageItemMapper = mapPageItem(({ edge, node }: { edge: AqlGraphEdge; node: AqlGraphNode }) => ({
@@ -10,8 +13,9 @@ import { ContentGraphDB } from '../types'
 //   edge: aqlGraphEdge2GraphEdge(edge),
 // }))
 
-export const getTraverseNodeRelAdapter = (db: ContentGraphDB): TraverseNodeRelAdapter => ({
-  async traverseNodeRelations(input) {
+export const traverseNodeRelations =
+  (db: ContentGraphDB): SockOf<typeof traverseNodeRelationsAdapter> =>
+  async input => {
     const { afterPageQuery, beforePageQuery } = traverseEdgesQ(input)
     const afterItems = afterPageQuery ? await getAllResults(afterPageQuery, db) : []
     const beforeItems = beforePageQuery ? await getAllResults(beforePageQuery, db) : []
@@ -23,12 +27,11 @@ export const getTraverseNodeRelAdapter = (db: ContentGraphDB): TraverseNodeRelAd
       beforeItems,
     })
     return page
-  },
-  graphOperators,
-})
+  }
 
-export const getNodeRelationCountAdapter = (db: ContentGraphDB): NodeRelationCountAdapter => ({
-  async countNodeRelations({ edgeType, fromNode, inverse, targetNodeType /* , env  */ }) {
+export const countNodeRelations =
+  (db: ContentGraphDB): SockOf<typeof countNodeRelationsAdapter> =>
+  async ({ edgeType, fromNode, inverse, targetNodeType /* , env  */ }) => {
     const q = nodeRelationCountQ({
       edgeType,
       inverse,
@@ -36,6 +39,4 @@ export const getNodeRelationCountAdapter = (db: ContentGraphDB): NodeRelationCou
       parentNode: fromNode,
     })
     return (await getOneResult(aqBV(q), db)) || 0
-  },
-  graphOperators,
-})
+  }
