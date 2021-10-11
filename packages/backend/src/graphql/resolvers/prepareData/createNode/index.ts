@@ -1,7 +1,6 @@
 import { Collection, Resource } from '@moodlenet/common/lib/content-graph/types/node'
 import { CreateNodeInput, CreateNodeMutationError, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Just } from '@moodlenet/common/lib/utils/types'
-import { QMino } from '../../../../lib/qmino'
 import { NewNodeData } from '../../../../ports/content-graph/node'
 import { createNodeMutationError, getAssetRefInputAndType, mapAssetRefInputsToAssetRefs } from '../../helpers'
 
@@ -9,37 +8,37 @@ const noTmpFilesCreateNodeMutationError = () =>
   createNodeMutationError('UnexpectedInput', `couldn't find requested tempFiles`)
 
 const nodeDocumentDataBaker: {
-  [T in NodeType]: (input: Just<CreateNodeInput[T]>, qmino: QMino) => Promise<NewNodeData | CreateNodeMutationError>
+  [T in NodeType]: (input: Just<CreateNodeInput[T]>) => Promise<NewNodeData | CreateNodeMutationError>
 } = {
-  async IscedField(/* input, qmino */) {
+  async IscedField(/* input */) {
     throw new Error('GQL create IscedField not implemented')
   },
-  async Organization(/* input, qmino */) {
+  async Organization(/* input */) {
     throw new Error('GQL create Organization not implemented')
   },
-  async IscedGrade(/* input, qmino */) {
+  async IscedGrade(/* input */) {
     throw new Error('GQL create IscedGrade not implemented')
   },
-  async Profile(/* input, qmino */) {
+  async Profile(/* input */) {
     throw new Error('GQL create Profile not implemented')
   },
-  FileFormat(/* input, qmino */) {
+  FileFormat(/* input */) {
     throw new Error('GQL create FileFormat not implemented')
   },
-  Language(/* input, qmino */) {
+  Language(/* input */) {
     throw new Error('GQL create Language not implemented')
   },
-  License(/* input, qmino */) {
+  License(/* input */) {
     throw new Error('GQL create License not implemented')
   },
-  ResourceType(/* input, qmino */) {
+  ResourceType(/* input */) {
     throw new Error('GQL create ResourceType not implemented')
   },
-  async Resource(input, qmino) {
-    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
-      [getAssetRefInputAndType(input.content, 'resource'), getAssetRefInputAndType(input.image, 'image')],
-      qmino,
-    )
+  async Resource(input) {
+    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs([
+      getAssetRefInputAndType(input.content, 'resource'),
+      getAssetRefInputAndType(input.image, 'image'),
+    ])
 
     if (!contentNodeAssetRefs) {
       return noTmpFilesCreateNodeMutationError()
@@ -60,11 +59,8 @@ const nodeDocumentDataBaker: {
 
     return newResourceInput
   },
-  async Collection(input, qmino) {
-    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs(
-      [getAssetRefInputAndType(input.image, 'image')],
-      qmino,
-    )
+  async Collection(input) {
+    const contentNodeAssetRefs = await mapAssetRefInputsToAssetRefs([getAssetRefInputAndType(input.image, 'image')])
 
     if (!contentNodeAssetRefs) {
       return noTmpFilesCreateNodeMutationError()
@@ -84,8 +80,7 @@ const nodeDocumentDataBaker: {
 export const bakeCreateNodeDoumentData = async <T extends NodeType>(
   input: Just<CreateNodeInput[T]>,
   nodeType: T,
-  qmino: QMino,
 ): Promise<NewNodeData | CreateNodeMutationError> => {
   const baker = (nodeDocumentDataBaker as any)[nodeType]
-  return baker(input, qmino)
+  return baker(input)
 }

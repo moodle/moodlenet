@@ -1,9 +1,9 @@
 import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
-import { GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
 import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { _ } from '../../bl/baseOperators'
-import { AqlGraphEdgeByType } from '../../types'
+import { _ } from '../../adapters/bl/_'
+import { aqlGraphEdge2GraphEdge } from '../helpers'
 
 export const getEdgeByNodesQ = <Type extends GraphEdgeType>({
   edgeType,
@@ -14,7 +14,7 @@ export const getEdgeByNodesQ = <Type extends GraphEdgeType>({
   from: BV<GraphNode | null>
   to: BV<GraphNode | null>
 }) => {
-  const q = _<AqlGraphEdgeByType<Type>>(`(
+  const q = _<GraphEdge<Type>>(`(
     let fromNode = ${from}
     let toNode = ${to}
     
@@ -23,7 +23,7 @@ export const getEdgeByNodesQ = <Type extends GraphEdgeType>({
       && e._to == toNode._id 
     limit 1
 
-    return e
+    return ${aqlGraphEdge2GraphEdge('e')}
   )[0]`)
   console.log(q)
   return q

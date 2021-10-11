@@ -1,5 +1,5 @@
 import { AuthId } from '@moodlenet/common/lib/types'
-import { EmailTemplate } from '../../lib/emailSender/types'
+import { EmailTemplate } from '../../adapters/emailSender/types'
 
 export enum Messages {
   EmailNotAvailable = 'email-not-available',

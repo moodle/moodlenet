@@ -1,9 +1,8 @@
 import { ComponentType, FC, PropsWithChildren, ReactElement } from 'react'
 
 export type UIPropsOf<UIProps, ExcludeKeys extends keyof UIProps = never> = Pick<UIProps, ExcludeKeys>
-const rnd = Number(`${Math.random()}`.substring(2)).toString(36)
-const s = Symbol()
-const CTRL_SYMB: typeof s = `___CTRL_SYMBOL___${rnd}` as any
+declare const s: unique symbol
+const CTRL_SYMB: typeof s = `___CTRL_SYMBOL___${Number(`${Math.random()}`.substring(2)).toString(36)}` as any
 
 export type CtrlHook<UIProps, HookArg, ExcludeKeys extends keyof UIProps = never> = (
   hookArg: HookArg,

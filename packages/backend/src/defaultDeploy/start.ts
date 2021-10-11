@@ -1,50 +1,19 @@
-import { addEdgeAssumptionsMap } from '@moodlenet/common/lib/content-graph/bl/rules/addEdgeAssumptions'
-import { newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { getAddEdgeAssumptionsMap } from '@moodlenet/common/lib/content-graph/bl/rules/addEdgeAssumptions'
 import { Database } from 'arangojs'
-import { Algorithm, SignOptions, VerifyOptions } from 'jsonwebtoken'
-import { createTransport } from 'nodemailer'
-import { createEdgeAdapter, deleteEdgeAdapter } from '../adapters/content-graph/arangodb/adapters/edge'
-import { globalSearch } from '../adapters/content-graph/arangodb/adapters/globalSearch'
-import {
-  createNodeAdapter,
-  deleteNodeAdapter,
-  editNodeAdapter,
-  getBVAdapter,
-} from '../adapters/content-graph/arangodb/adapters/node'
-import { getByAuthId } from '../adapters/content-graph/arangodb/adapters/profile'
-import {
-  getNodeRelationCountAdapter,
-  getTraverseNodeRelAdapter,
-} from '../adapters/content-graph/arangodb/adapters/traversal'
-import { graphOperators } from '../adapters/content-graph/arangodb/bl/graphOperators'
+import * as contentGraphAd from '../adapters/content-graph/arangodb/adapters'
+import * as cryptoAdapters from '../adapters/crypto'
+import { getNodemailerSendEmailAdapter } from '../adapters/emailSender/nodemailer/nodemailer'
 import { createGraphQLApp } from '../adapters/http/graphqlApp'
 import { startMNHttpServer } from '../adapters/http/MNHTTPServer'
 import { createStaticAssetsApp } from '../adapters/http/staticAssetsApp'
 import { createWebfingerApp } from '../adapters/http/webfingerApp'
-import { createTempAdapter } from '../adapters/staticAssets/fs/adapters/createTemp'
-import { delAssetAdapter } from '../adapters/staticAssets/fs/adapters/delAsset'
-import { getAssetAdapter } from '../adapters/staticAssets/fs/adapters/getAsset'
-import { persistTempAssetsAdapter } from '../adapters/staticAssets/fs/adapters/persistTemp'
-import { setupFs } from '../adapters/staticAssets/fs/setup'
-import { getConfigAdapter } from '../adapters/user-auth/arangodb/adapters/config'
-import { storeNewActiveUser, storeNewSignupRequest } from '../adapters/user-auth/arangodb/adapters/new-user'
-import { byAuthId, byEmail, updateUserPasswordByAuthId } from '../adapters/user-auth/arangodb/adapters/user'
-import { argonHashPassword, argonVerifyPassword } from '../lib/auth/argon'
-import { signJwtAny, verifyJwtAny } from '../lib/auth/jwt'
+import { getFsAssetAdapters } from '../adapters/staticAssets/fs/setup'
+import * as userAuthAdapters from '../adapters/user-auth/arangodb/adapters'
 import { getVersionedDBOrThrow } from '../lib/helpers/arango/migrate/lib'
-import { Qmino } from '../lib/qmino'
-import { createInProcessTransport } from '../lib/qmino/transports/in-process/transport'
-import * as edgePorts from '../ports/content-graph/edge'
-import * as nodePorts from '../ports/content-graph/node'
-import * as profilePorts from '../ports/content-graph/profile'
-import * as searchPorts from '../ports/content-graph/search'
-import * as traverseNodePorts from '../ports/content-graph/traverseNodeRel'
-import * as assetPorts from '../ports/static-assets/asset'
-import * as tmpAssetPorts from '../ports/static-assets/temp'
-import * as newUserPorts from '../ports/user-auth/new-user'
-// import * as userAuthConfigPorts from '../ports/user-auth/config'
-import * as userPorts from '../ports/user-auth/user'
-import * as utilsPorts from '../ports/utils/utils'
+import { checkAndLogUnboundPlugRegistrations, socket } from '../lib/plug'
+import * as contentGraph from '../ports/content-graph'
+import * as staticAsset from '../ports/static-assets'
+import * as userAuth from '../ports/user-auth'
 import { DefaultDeployEnv } from './env'
 
 export type Config = {
@@ -60,9 +29,6 @@ export const startDefaultMoodlenet = async ({
     mnStatic: { domain },
   },
 }: Config) => {
-  const inProcessTransport = createInProcessTransport()
-  const qminoInProcess = Qmino(inProcessTransport)
-  const emailSender = createTransport(nodemailer.smtp)
   const userAuthDatabase = await getVersionedDBOrThrow({ version: '0.0.2' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.userAuthDBName }),
   })
@@ -70,200 +36,74 @@ export const startDefaultMoodlenet = async ({
     db: new Database({ url: db.arangoUrl, databaseName: db.contentGraphDBName }),
   })
 
-  const jwtAlg: Algorithm = 'RS256'
-  const jwtVerifyOpts: VerifyOptions = {
-    algorithms: [jwtAlg],
-  }
-  const jwtSignOptions: SignOptions = {
-    algorithm: jwtAlg,
-    expiresIn: jwt.expirationSecs,
-  }
+  const jwtAdapters = cryptoAdapters.jwt.getJwtCrypto({
+    ...jwt,
+    signOpts: {
+      algorithm: 'RS256',
+    },
+    verifyOpts: {
+      algorithms: ['RS256'],
+    },
+  })
+
+  const pwdHashAdapters = cryptoAdapters.pwd.getPasswordCrypto()
+  const fsAssetAdapters = await getFsAssetAdapters({ rootDir: fsAsset.rootFolder })
+
+  socket(userAuth.adapters.passwordHasher, pwdHashAdapters.hasher)
+  socket(userAuth.adapters.passwordVerifier, pwdHashAdapters.verifier)
+
+  socket(userAuth.adapters.jwtVerifierAdapter, jwtAdapters.verifier)
+  socket(userAuth.adapters.jwtSignerAdapter, jwtAdapters.signer)
+
+  socket(userAuth.adapters.sendEmailAdapter, getNodemailerSendEmailAdapter(nodemailer))
+  socket(
+    contentGraph.common.getBaseOperatorsAdapter,
+    contentGraphAd.baseOperators.getBaseOperators(contentGraphDatabase),
+  )
+  socket(contentGraph.common.getGraphOperatorsAdapter, contentGraphAd.graphOperators.getGraphOperators)
+  socket(contentGraph.edge.addEdgeAdapter, contentGraphAd.edge.addEdge(contentGraphDatabase))
+  socket(contentGraph.edge.deleteEdgeAdapter, contentGraphAd.edge.deleteEdge(contentGraphDatabase))
+  socket(contentGraph.node.createNodeAdapter, contentGraphAd.node.createNode(contentGraphDatabase))
+  socket(contentGraph.node.deleteNodeAdapter, contentGraphAd.node.deleteNode(contentGraphDatabase))
+  socket(contentGraph.node.editNodeAdapter, contentGraphAd.node.editNode(contentGraphDatabase))
+  socket(contentGraph.edge.getAddEdgeOperatorsAdapter, contentGraphAd.addEdgeOperators.getAddEgdeOperators)
+  socket(contentGraph.edge.getAddEdgeAssumptionsMap, getAddEdgeAssumptionsMap)
+
+  socket(contentGraph.profile.sendTextToProfileAdapter, userAuth.notifications.sendTextAdapter)
+  socket(contentGraph.search.searchByTermAdapter, contentGraphAd.globalSearch.searchByTerm(contentGraphDatabase))
+  socket(
+    contentGraph.traverseNodeRel.traverseNodeRelationsAdapter,
+    contentGraphAd.traversal.traverseNodeRelations(contentGraphDatabase),
+  )
+  socket(
+    contentGraph.traverseNodeRel.countNodeRelationsAdapter,
+    contentGraphAd.traversal.countNodeRelations(contentGraphDatabase),
+  )
+  socket(userAuth.adapters.localDomainAdapter, async () => domain)
+
+  socket(userAuth.adapters.getLatestConfigAdapter, userAuthAdapters.config.getLatestConfig(userAuthDatabase))
+  socket(userAuth.adapters.getActiveUserByAuthAdapter, userAuthAdapters.user.getActiveUserByAuth(userAuthDatabase))
+  socket(userAuth.adapters.getActiveUserByEmailAdapter, userAuthAdapters.user.getActiveUserByEmail(userAuthDatabase))
+  socket(
+    userAuth.adapters.changePasswordByAuthIdAdapter,
+    userAuthAdapters.user.changePasswordByAuthId(userAuthDatabase),
+  )
+  socket(userAuth.adapters.saveActiveUserAdapter, userAuthAdapters.newUser.saveActiveUser(userAuthDatabase))
+
+  socket(staticAsset.temp.persistTempAssetsAdapter, fsAssetAdapters.persistTempAssetsAdapter)
+  socket(staticAsset.temp.createTempAssetAdapter, fsAssetAdapters.createTempAssetAdapter)
+  socket(staticAsset.asset.getAssetAdapter, fsAssetAdapters.getAssetAdapter)
+  socket(staticAsset.asset.delAssetAdapter, fsAssetAdapters.delAssetAdapter)
 
   const graphqlApp = createGraphQLApp({
     additionalResolvers: null,
-    jwtPrivateKey: jwt.privateKey,
-    jwtSignOptions,
-    qmino: qminoInProcess,
-    // passwordVerifier: argonVerifyPassword,
-    passwordHasher: argonHashPassword,
   })
-  const assetsApp = createStaticAssetsApp({ qmino: qminoInProcess })
-  const webfingerApp = createWebfingerApp({ qmino: qminoInProcess, domain })
+  const assetsApp = createStaticAssetsApp({})
+  const webfingerApp = createWebfingerApp({ domain })
   await startMNHttpServer({
     httpPort: http.port,
     startServices: { 'graphql': graphqlApp, 'assets': assetsApp, '.well-known': webfingerApp },
-    jwtPublicKey: jwt.publicKey,
-    jwtVerifyOpts,
   })
 
-  // open ports
-
-  // userAuth Config
-  // qminoInProcess.open(userAuthConfigPorts.getLatest, getConfigAdapter({ db: userAuthDatabase }))
-  // qminoInProcess.open(userAuthConfigPorts.save, getConfigAdapter({ db: userAuthDatabase }))
-
-  //
-
-  await qminoInProcess.open(nodePorts.getBySlug, {
-    getNodeBySlug: nodeId => getBV(graphOperators.graphNode(nodeId)),
-  })
-
-  await qminoInProcess.open(traverseNodePorts.fromNode, getTraverseNodeRelAdapter(contentGraphDatabase))
-  await qminoInProcess.open(traverseNodePorts.count, getNodeRelationCountAdapter(contentGraphDatabase))
-
-  await qminoInProcess.open(searchPorts.byTerm, globalSearch(contentGraphDatabase))
-
-  await qminoInProcess.open(userPorts.getActiveByEmail, {
-    ...byEmail(userAuthDatabase),
-  })
-
-  await qminoInProcess.open(userPorts.getActiveByAuthId, {
-    ...byAuthId(userAuthDatabase),
-  })
-
-  await qminoInProcess.open(userPorts.recoverPasswordEmail, {
-    ...byEmail(userAuthDatabase),
-    ...storeNewSignupRequest(userAuthDatabase),
-    async jwtSigner(recoverPasswordJwt, expiresSecs) {
-      return signJwtAny({
-        jwtPrivateKey: jwt.privateKey,
-        jwtSignOptions: {
-          ...jwtSignOptions,
-          expiresIn: expiresSecs,
-        },
-        payload: recoverPasswordJwt,
-      })
-    },
-    publicBaseUrl: http.publicUrl,
-    sendEmail: _ => emailSender.sendMail(_),
-  })
-
-  await qminoInProcess.open(userPorts.changeRecoverPassword, {
-    ...byEmail(userAuthDatabase),
-    hasher: argonHashPassword,
-    jwtVerifier: async recoverPasswordJwtStr =>
-      verifyJwtAny({
-        jwtPublicKey: jwt.publicKey,
-        jwtVerifyOpts,
-        token: recoverPasswordJwtStr,
-      }),
-    changePasswordByAuthId: ({ authId, newPassword }) => {
-      return updateUserPasswordByAuthId(userAuthDatabase)({ authId, password: newPassword })
-    },
-  })
-
-  await qminoInProcess.open(userPorts.createSession, {
-    ...byEmail(userAuthDatabase),
-    jwtVerifier: async recoverPasswordJwtStr =>
-      verifyJwtAny({
-        jwtPublicKey: jwt.publicKey,
-        jwtVerifyOpts,
-        token: recoverPasswordJwtStr,
-      }),
-    saveActiveUser: storeNewActiveUser(userAuthDatabase),
-    createNewProfile: async ({ authId, name }) => {
-      return qminoInProcess.callSync(
-        nodePorts.createProfile({
-          partProfile: { _authId: authId, name },
-        }),
-        { timeout: 5000 },
-      )
-    },
-    ...byEmail(userAuthDatabase),
-    jwtPrivateKey: jwt.privateKey,
-    jwtSignOptions,
-    passwordVerifier: argonVerifyPassword,
-  })
-
-  await qminoInProcess.open(profilePorts.getByAuthId, {
-    ...getByAuthId(contentGraphDatabase),
-  })
-
-  await qminoInProcess.open(newUserPorts.signUp, {
-    ...storeNewSignupRequest(userAuthDatabase),
-    publicBaseUrl: http.publicUrl,
-    sendEmail: _ => emailSender.sendMail(_),
-    getConfig: () => getConfigAdapter({ db: userAuthDatabase }).getLatestConfig(),
-    async jwtSigner(recoverPasswordJwt, expiresSecs) {
-      return signJwtAny({
-        jwtPrivateKey: jwt.privateKey,
-        jwtSignOptions: {
-          ...jwtSignOptions,
-          expiresIn: expiresSecs,
-        },
-        payload: recoverPasswordJwt,
-      })
-    },
-  })
-
-  // qminoInProcess.open(newUserPorts.confirmSignup, {
-  //   ...storeNewActiveUser(userAuthDatabase),
-  //   createNewProfile: async ({ authId, name }) => {
-  //     return qminoInProcess.callSync(
-  //       nodePorts.createProfile({
-  //         partProfile: { _authId: authId, name },
-  //       }),
-  //       { timeout: 5000 },
-  //     )
-  //   },
-  // })
-
-  await qminoInProcess.open(nodePorts.createProfile, {
-    ...createNodeAdapter(contentGraphDatabase),
-  })
-  await qminoInProcess.open(nodePorts.deleteNode, {
-    ...deleteNodeAdapter(contentGraphDatabase),
-  })
-
-  await qminoInProcess.open(nodePorts.createNode, {
-    ...createNodeAdapter(contentGraphDatabase),
-    createEdge: ({ from, newEdge, sessionEnv, to }) =>
-      createEdgeAdapter(contentGraphDatabase).storeEdge({
-        assumptions: {},
-        edge: {
-          _authId: sessionEnv.user.authId,
-          _created: Number(new Date()),
-          id: newGlyphPermId(),
-          ...newEdge,
-        },
-        from,
-        to,
-      }),
-    // qminoInProcess.callSync(edgePorts.createEdge({ from, newEdge, sessionEnv, to }), { timeout: 5000 }),
-    getProfileByAuthId: ({ authId }) => qminoInProcess.query(profilePorts.getByAuthId({ authId }), { timeout: 5000 }),
-  })
-
-  await qminoInProcess.open(nodePorts.editNode, {
-    ...editNodeAdapter(contentGraphDatabase),
-  })
-
-  await qminoInProcess.open(edgePorts.createEdge, {
-    ...createEdgeAdapter(contentGraphDatabase),
-    assumptionsMap: addEdgeAssumptionsMap,
-  })
-  await qminoInProcess.open(edgePorts.deleteEdge, deleteEdgeAdapter(contentGraphDatabase))
-
-  const getBV = getBVAdapter(contentGraphDatabase)
-  const userAuthIdAdapter = byAuthId(userAuthDatabase)
-
-  await qminoInProcess.open(utilsPorts.sendEmailToProfile, {
-    ...userAuthIdAdapter,
-    getLocalDomain: async () => domain,
-    getProfile: nodeId => getBV(graphOperators.graphNode(nodeId)),
-    getProfileByAuth: ({ authId }) => getBV(graphOperators.graphNode({ _authId: authId, _type: 'Profile' })),
-    sendEmail: _ =>
-      emailSender.sendMail(_).then(
-        _ => true,
-        _ => false,
-      ),
-    getConfig: () => getConfigAdapter({ db: userAuthDatabase }).getLatestConfig(),
-  })
-
-  //FS asset
-  const rootDir = fsAsset.rootFolder
-  setupFs({ rootDir })
-  await qminoInProcess.open(assetPorts.del, delAssetAdapter({ rootDir }))
-  await qminoInProcess.open(assetPorts.get, getAssetAdapter({ rootDir }))
-  await qminoInProcess.open(tmpAssetPorts.createTemp, createTempAdapter({ rootDir }))
-  await qminoInProcess.open(tmpAssetPorts.persistTempAssets, persistTempAssetsAdapter({ rootDir }))
+  checkAndLogUnboundPlugRegistrations()
 }

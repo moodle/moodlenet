@@ -1,9 +1,7 @@
 import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
-import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
 import { AQ, aqlstr } from '../../../../lib/helpers/arango/query'
-import { AqlGraphEdgeByType, AqlGraphNodeByType } from '../types'
 
 export const cursorPaginatedQuery = <T>({
   page,
@@ -108,40 +106,63 @@ export const forwardSkipLimitPage = <T>({ docs, skip }: { docs: T[]; skip: numbe
   return makePage({ items, hasNextPage: !!items.length, hasPreviousPage: false })
 }
 
-export const aqlGraphNode2GraphNode = <T extends GraphNodeType>(aqlGraphNode: AqlGraphNodeByType<T>) => {
-  // console.log(`aqlGraphNode2GraphNode `, aqlGraphNode)
-  // const {_type, _key}=aqlGraphNode  *****************
-  const [__type, __permId] = aqlGraphNode._id.split('/')
-  // *********************** */
+// export const aqlGraphNode2GraphNode = <T extends GraphNodeType>(aqlGraphNode: AqlGraphNodeByType<T>) => {
+//   // console.log(`aqlGraphNode2GraphNode `, aqlGraphNode)
+//   // const {_type, _key}=aqlGraphNode  *****************
+//   const [__type, __permId] = aqlGraphNode._id.split('/')
+//   // *********************** */
 
-  const graphNode: GraphNode<T> = {
-    _type: __type! as T,
-    _permId: __permId!,
-    ...(aqlGraphNode as any),
-  }
-  return graphNode
-}
+//   const graphNode: GraphNode<T> = {
+//     _type: __type! as T,
+//     _permId: __permId!,
+//     ...(aqlGraphNode as any),
+//   }
+//   return graphNode
+// }
 
-export const graphNode2AqlGraphNode = <T extends GraphNodeType>(graphNode: GraphNode<T>) => {
-  const _key = graphNode._permId
-  const _id = `${graphNode._type}/${graphNode._permId}`
-  const aqlGraphNode: AqlGraphNodeByType<T> = {
-    _key,
-    _id,
-    ...(graphNode as any),
-  }
-  return aqlGraphNode
-}
+// export const graphNode2AqlGraphNode = <T extends GraphNodeType>(graphNode: GraphNode<T>) => {
+//   const _key = graphNode._permId
+//   const _id = `${graphNode._type}/${graphNode._permId}`
+//   const aqlGraphNode: AqlGraphNodeByType<T> = {
+//     _key,
+//     _id,
+//     ...(graphNode as any),
+//   }
+//   return aqlGraphNode
+// }
 
-export const aqlGraphEdge2GraphEdge = <T extends GraphEdgeType>(aqlGraphEdge: AqlGraphEdgeByType<T>) => {
-  const [__type, id] = aqlGraphEdge._id.split('/')
-  const graphEdge: GraphEdge<T> = {
-    _type: __type! as T,
-    id,
-    ...(aqlGraphEdge as any),
+// export const aqlGraphEdge2GraphEdge = <T extends GraphEdgeType>(aqlGraphEdge: AqlGraphEdgeByType<T>) => {
+//   const [__type, id] = aqlGraphEdge._id.split('/')
+//   const graphEdge: GraphEdge<T> = {
+//     _type: __type! as T,
+//     id,
+//     ...(aqlGraphEdge as any),
+//   }
+//   return graphEdge
+// }
+
+export const aqlGraphEdge2GraphEdge = (edgeVar: string) => `${edgeVar} && MERGE(
+  UNSET(MERGE({},${edgeVar}), '_id', '_key', '_from', '_to' ),
+  { id: ${edgeVar}._key }
+)`
+
+export const graphNode2AqlIdentifier = (nodeVar: string | BV<GraphNode | null>) =>
+  `{_id:${graphNode2AqlId(nodeVar)}, _key:${graphNode2AqlKey(nodeVar)}}`
+export const graphNode2AqlId = (nodeVar: string | BV<GraphNode | null>) =>
+  `CONCAT(${nodeVar}._type,'/',${nodeVar}._permId)`
+export const graphNode2AqlKey = (nodeVar: string | BV<GraphNode | null>) => `${nodeVar}._permId`
+export const graphNode2AqlGraphNode = (nodeVar: string | BV<GraphNode | null>) => `${nodeVar} && MERGE(
+  UNSET(MERGE({},${nodeVar}), '_permId', '_type' ),
+  {
+    _key: ${nodeVar}._permId,
+    _id: CONCAT( ${nodeVar}.__type, '/', ${nodeVar}._permId)
   }
-  return graphEdge
-}
+)`
+
+export const aqlGraphNode2GraphNode = (nodeVar: string) => `${nodeVar} && MERGE(
+UNSET(MERGE({},${nodeVar}), '_id', '_key' ),
+{ _permId: ${nodeVar}._key }
+)`
 
 // export const getOneAQFrag = <T>(_aq: AQ<T>) => aq<T>(`((${_aq})[${0}])`)
 
