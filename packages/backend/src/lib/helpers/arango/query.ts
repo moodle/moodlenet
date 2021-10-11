@@ -10,7 +10,7 @@ export const aqlstr = (_: any) => JSON.stringify(_)
 
 export const getOneResult = async <T>(q: AQ<T>, db: Database): Promise<T | undefined> => {
   const cursor = await db.query(q).catch(e => {
-    console.error(`getOneResult`, e, q)
+    // console.error(`getOneResult`, e, q)
     throw e
   })
 
@@ -21,7 +21,7 @@ export const getOneResult = async <T>(q: AQ<T>, db: Database): Promise<T | undef
 
 export const getAllResults = async <T>(q: AQ<T>, db: Database): Promise<T[]> => {
   const cursor = await db.query(q).catch(e => {
-    console.error(`getAllResults`, e, q)
+    // console.error(`getAllResults`, e, q)
     throw e
   })
   const results = await cursor.all()
@@ -31,7 +31,7 @@ export const getAllResults = async <T>(q: AQ<T>, db: Database): Promise<T[]> => 
 
 export const justExecute = async (q: string, db: Database) => {
   const cursor = await db.query(q).catch(e => {
-    console.error(`getOneResult`, e, q)
+    // console.error(`getOneResult`, e, q)
     throw e
   })
   cursor.kill()
