@@ -4,7 +4,7 @@ import { Page, PaginationInput } from '@moodlenet/common/lib/content-graph/types
 import { SessionEnv } from '@moodlenet/common/lib/types'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { ns } from '../../lib/ns/namespace'
-import { plug } from '../../lib/stub/Stub'
+import { plug } from '../../lib/plug'
 
 export const searchByTermAdapter = plug<
   <NodeType extends GlobalSearchNodeType>(_: GlobalSearchInput<NodeType>) => Promise<SearchPage>

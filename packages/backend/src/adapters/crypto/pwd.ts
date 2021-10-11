@@ -1,5 +1,5 @@
 import Argon, { argon2id, hash } from 'argon2'
-import { SockOf } from '../../lib/stub/Stub'
+import { SockOf } from '../../lib/plug'
 import { passwordHasher, passwordVerifier } from '../../ports/user-auth/adapters'
 
 export type ArgonPwdHashOpts = Parameters<typeof hash>[1]

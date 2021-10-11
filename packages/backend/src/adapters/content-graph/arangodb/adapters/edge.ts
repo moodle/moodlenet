@@ -1,6 +1,6 @@
 import { isArangoError } from 'arangojs/error'
 import { getOneResult } from '../../../../lib/helpers/arango/query'
-import { SockOf } from '../../../../lib/stub/Stub'
+import { SockOf } from '../../../../lib/plug'
 import { addEdgeAdapter, deleteEdgeAdapter } from '../../../../ports/content-graph/edge'
 import { aqBV } from '../aql/helpers'
 import { getEdgeByNodesQ } from '../aql/queries/getEdge'

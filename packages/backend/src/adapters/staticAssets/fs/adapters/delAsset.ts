@@ -1,4 +1,4 @@
-import { SockOf } from '../../../../lib/stub/Stub'
+import { SockOf } from '../../../../lib/plug'
 import { delAssetAdapter } from '../../../../ports/static-assets/asset'
 import { forceRmAsset, getDir } from './lib'
 
