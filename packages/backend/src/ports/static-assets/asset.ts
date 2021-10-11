@@ -1,6 +1,6 @@
 import { Readable } from 'stream'
 import { ns } from '../../lib/ns/namespace'
-import { plug } from '../../lib/stub/Stub'
+import { plug } from '../../lib/plug'
 import { AssetFileDesc, AssetId } from './types'
 
 // get asset

@@ -2,7 +2,7 @@ import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/n
 import { SessionEnv } from '@moodlenet/common/lib/types'
 import { nodeIdentifierSlug2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
-import { SockOf } from '../../lib/stub/Stub'
+import { SockOf } from '../../lib/plug'
 import { sendTextToProfileAdapter } from '../content-graph/profile'
 import { getActiveUserByAuthAdapter, getLatestConfigAdapter, localDomainAdapter, sendEmailAdapter } from './adapters'
 

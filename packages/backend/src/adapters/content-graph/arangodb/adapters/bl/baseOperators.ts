@@ -1,6 +1,6 @@
 import { BaseOperators, _T } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
 import { aqlstr, getOneResult } from '../../../../../lib/helpers/arango/query'
-import { SockOf } from '../../../../../lib/stub/Stub'
+import { SockOf } from '../../../../../lib/plug'
 import { getBaseOperatorsAdapter } from '../../../../../ports/content-graph/common'
 import { aqBV } from '../../aql/helpers'
 import { ContentGraphDB } from '../../types'

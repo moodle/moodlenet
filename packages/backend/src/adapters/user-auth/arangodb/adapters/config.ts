@@ -1,5 +1,5 @@
 import { getOneResult } from '../../../../lib/helpers/arango/query'
-import { SockOf } from '../../../../lib/stub/Stub'
+import { SockOf } from '../../../../lib/plug'
 import { getLatestConfigAdapter } from '../../../../ports/user-auth/adapters'
 import { getLatestConfigQ } from '../queries/config'
 import { UserAuthDB } from '../types'

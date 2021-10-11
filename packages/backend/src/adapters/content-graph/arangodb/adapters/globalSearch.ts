@@ -1,6 +1,6 @@
 import { GlobalSearchNodeType } from '@moodlenet/common/lib/content-graph/types/global-search'
 import { getAllResults } from '../../../../lib/helpers/arango/query'
-import { SockOf } from '../../../../lib/stub/Stub'
+import { SockOf } from '../../../../lib/plug'
 import { searchByTermAdapter } from '../../../../ports/content-graph/search'
 import { globalSearchQuery } from '../aql/globalSearch'
 import { forwardSkipLimitPage } from '../aql/helpers'
