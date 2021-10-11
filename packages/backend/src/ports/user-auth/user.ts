@@ -4,7 +4,7 @@ import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { isString } from 'lodash'
 import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
 import { ns } from '../../lib/ns/namespace'
-import { plug } from '../../lib/stub/Stub'
+import { plug } from '../../lib/plug'
 import { createProfile } from '../content-graph/node'
 import {
   changePasswordByAuthIdAdapter,

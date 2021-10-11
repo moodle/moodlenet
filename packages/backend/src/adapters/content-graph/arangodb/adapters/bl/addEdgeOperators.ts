@@ -1,5 +1,5 @@
 import { AddEdgeOperators } from '@moodlenet/common/lib/content-graph/bl/graph-lang/AddEdge'
-import { SockOf } from '../../../../../lib/stub/Stub'
+import { SockOf } from '../../../../../lib/plug'
 import { getAddEdgeOperatorsAdapter } from '../../../../../ports/content-graph/edge'
 import { _ } from './_'
 

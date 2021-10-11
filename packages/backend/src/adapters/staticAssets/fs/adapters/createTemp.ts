@@ -1,6 +1,6 @@
 import { writeFile } from 'fs/promises'
 import { ulid } from 'ulid'
-import { SockOf } from '../../../../lib/stub/Stub'
+import { SockOf } from '../../../../lib/plug'
 import { createTempAssetAdapter } from '../../../../ports/static-assets/temp'
 import { processTempAsset } from '../../processTempAsset'
 import { forceRmTemp, getDir, getTempAssetFSPaths, pipeToFile } from './lib'

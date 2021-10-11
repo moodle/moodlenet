@@ -1,5 +1,5 @@
 import { getOneResult } from '../../../../lib/helpers/arango/query'
-import { SockOf } from '../../../../lib/stub/Stub'
+import { SockOf } from '../../../../lib/plug'
 import { saveActiveUserAdapter } from '../../../../ports/user-auth/adapters'
 import { ActiveUser } from '../../../../ports/user-auth/types'
 import { createNewUserQ, CreateNewUserQArg } from '../queries/createNewUser'

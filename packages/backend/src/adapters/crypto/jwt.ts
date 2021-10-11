@@ -1,5 +1,5 @@
 import JWT from 'jsonwebtoken'
-import { SockOf } from '../../lib/stub/Stub'
+import { SockOf } from '../../lib/plug'
 import { INVALID_JWT_TOKEN, jwtSignerAdapter, jwtVerifierAdapter } from '../../ports/user-auth/adapters'
 
 export type Config = {

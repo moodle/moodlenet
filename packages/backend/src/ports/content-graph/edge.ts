@@ -12,7 +12,7 @@ import { SessionEnv } from '@moodlenet/common/lib/types'
 import { newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { ns } from '../../lib/ns/namespace'
-import { plug, value } from '../../lib/stub/Stub'
+import { plug, value } from '../../lib/plug'
 import { getBaseOperatorsAdapter, getGraphOperatorsAdapter } from './common'
 
 export type NewEdgeInput = DistOmit<GraphEdge, '_authId' | '_created' | 'id'>
