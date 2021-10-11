@@ -61,27 +61,31 @@ export function plug<Sock extends Socket>(namespace: string[], defaultSocket?: S
   }
   const _plug: any = async (...args: any[]) => {
     const plugRegistration = getPlugRegistration(namespace)
-    const resp = plugRegistration?.socket
-      ? (plugRegistration.socket(...args) as any)
+    const respPromise = plugRegistration?.socket
+      ? plugRegistration.socket(...args)
       : config.umbrella({ args, namespace })
-    resp
-      .then((_: any) => ({ success: true, resp: _, args } as const))
-      .catch((_: any) => ({ success: false, err: _, args } as const))
-      .then((_: any) => {
-        console.log(`\n-----------------\n`)
-        console.log(`socket:${namespaceString(namespace)}:\n`, inspect(_, false, 5, true).substring(0, 750))
-        console.log(`\n-----------------\n`)
-      })
-    return resp
+    logResp(namespace, args, respPromise)
+    return respPromise
   }
   _plug[PLUG_DEF_SYM] = { namespace }
   setPlugRegistration(namespace, defaultSocket)
   return _plug // as SecondaryPlug<Sec>
 }
 
+function logResp(namespace: Namespace, args: any[], respPromise: Promise<any>) {
+  respPromise
+    .then((_: any) => ({ success: true, args, response: _ } as const))
+    .catch((_: any) => ({ success: false, args, error: _ } as const))
+    .then(_ => {
+      const logfn = _.success ? console.log : console.error
+      logfn(`socket call: ${namespaceString(namespace)}`)
+      !_.success && logfn(`args:`, inspect(_.args, false, 5, true), `\nError: \n`, _.error.stack)
+    })
+}
+
 function noUmbrellaError(signal: Signal): Promise<any> {
   const msg = `No local socket for plug [${namespaceString(signal.namespace)}] and no umbrella socket configured`
-  console.error(msg)
+  // console.error(msg)
   throw new Error(msg)
 }
 
