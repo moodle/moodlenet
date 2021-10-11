@@ -24,11 +24,11 @@ export const addEdgeAdapter = plug<
     to: BV<GraphNode | null>
     assumptions: Assumptions
   }) => Promise<E | null>
->(ns('add-edge-adapter'))
-export const getAddEdgeAssumptionsMap = value<AddEdgeAssumptionsMap>(ns('get-add-edge-assumptions-map'))
-export const getAddEdgeOperatorsAdapter = value<AddEdgeOperators>(ns('get-add-edge-operators-adapter'))
+>(ns(__dirname, 'add-edge-adapter'))
+export const getAddEdgeAssumptionsMap = value<AddEdgeAssumptionsMap>(ns(__dirname, 'get-add-edge-assumptions-map'))
+export const getAddEdgeOperatorsAdapter = value<AddEdgeOperators>(ns(__dirname, 'get-add-edge-operators-adapter'))
 export const deleteEdgeAdapter = plug<(_: { edge: BV<GraphEdge | null>; edgeType: GraphEdgeType }) => Promise<boolean>>(
-  ns('delete-edge-adapter'),
+  ns(__dirname, 'delete-edge-adapter'),
 )
 
 export type AddEdgeInput = {
@@ -39,7 +39,7 @@ export type AddEdgeInput = {
 }
 
 export type AddEdgePort = (_: AddEdgeInput) => Promise<GraphEdge | null>
-export const addEdge = plug<AddEdgePort>(ns('add-edge'), async ({ from, to, sessionEnv, newEdge }) => {
+export const addEdge = plug<AddEdgePort>(ns(__dirname, 'add-edge'), async ({ from, to, sessionEnv, newEdge }) => {
   const graphOperators = await getGraphOperatorsAdapter()
   const baseOperators = await getBaseOperatorsAdapter()
   const addEdgeOperators = await getAddEdgeOperatorsAdapter()
@@ -86,7 +86,7 @@ export type DeleteEdgeInput = {
   edge: GraphEdgeIdentifier
 }
 
-export const deleteEdge = plug(ns('delete-edge'), async ({ edge /* , sessionEnv */ }: DeleteEdgeInput) => {
+export const deleteEdge = plug(ns(__dirname, 'delete-edge'), async ({ edge /* , sessionEnv */ }: DeleteEdgeInput) => {
   // const _authId = sessionEnv.user.authId
   const { graphEdge } = await getGraphOperatorsAdapter()
   const result = await deleteEdgeAdapter({ edge: graphEdge(edge), edgeType: edge._type })

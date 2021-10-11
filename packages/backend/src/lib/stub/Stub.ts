@@ -4,7 +4,7 @@ import { inspect } from 'util'
 const isNsPath = (_: any): _ is NsPath => typeof _ === 'string' && _.length > 0 //(/^[a-z]$/.test(_) || /^[a-z][a-z0-9-]*[a-z]$/.test(_))
 
 declare const VALID_NS_SYM: unique symbol
-const SYM_PLUG = Symbol()
+const PLUG_DEF_SYM = Symbol()
 const PlugRegistrations = new Map<string, PlugRegistration>()
 const setPlugRegistration = (namespace: Namespace, socket: Socket | undefined) =>
   PlugRegistrations.set(namespaceString(namespace), { namespace: namespace, socket: socket })
@@ -34,7 +34,7 @@ type Signal = {
   namespace: Namespace
 }
 type Socket = (...args: any[]) => Promise<any>
-type Plug<S extends Socket> = S & { [SYM_PLUG]: PlugDef }
+type Plug<S extends Socket> = S & { [PLUG_DEF_SYM]: PlugDef }
 
 export function socket<Sock extends Socket>(plugOrNamespace: Namespace | Plug<Sock>, sock: Sock) {
   const plugNamespace = getPlugNamespace(plugOrNamespace)
@@ -56,10 +56,10 @@ export function socket<Sock extends Socket>(plugOrNamespace: Namespace | Plug<So
   plugRegistration.socket = sock
 }
 
-const getPlugNamespace = (secPlugOrNamespace: any) =>
-  isNamespace(secPlugOrNamespace) ? secPlugOrNamespace : getPlugDef(secPlugOrNamespace)?.namespace
+const getPlugNamespace = (plugOrNamespace: any) =>
+  isNamespace(plugOrNamespace) ? plugOrNamespace : getPlugDef(plugOrNamespace)?.namespace
 
-const getPlugDef = (secPlug: any) => (secPlug ? (secPlug[SYM_PLUG] as PlugDef | undefined) : undefined)
+const getPlugDef = (plug: any) => (plug ? (plug[PLUG_DEF_SYM] as PlugDef | undefined) : undefined)
 
 export type SockOf<Plg> = Plg extends Plug<infer S> ? S : never
 type Umbrella = (signal: Signal) => Promise<any>
@@ -97,7 +97,7 @@ export function plug<Sock extends Socket>(namespace: string[], defaultSocket?: S
       })
     return resp
   }
-  _plug[SYM_PLUG] = { namespace }
+  _plug[PLUG_DEF_SYM] = { namespace }
   setPlugRegistration(namespace, defaultSocket)
   return _plug // as SecondaryPlug<Sec>
 }

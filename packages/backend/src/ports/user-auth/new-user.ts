@@ -15,7 +15,7 @@ import { Email } from './types'
 export type SignupIssue = 'email not available'
 
 export const signUp = plug(
-  ns('sign-up'),
+  ns(__dirname, 'sign-up'),
   async ({ email, displayName, password }: { email: Email; password: string; displayName: string }) => {
     const { newUserRequestEmail, newUserVerificationWaitSecs } = await getLatestConfigAdapter()
     const authId = newAuthId()
