@@ -6,7 +6,7 @@ import { getBaseOperatorsAdapter, getGraphOperatorsAdapter } from './common'
 
 export const sendTextToProfileAdapter = plug<
   (_: { sender: Profile; recipient: Profile; text: string }) => Promise<boolean>
->(ns('send-text-to-profile-adapter'))
+>(ns(__dirname, 'send-text-to-profile-adapter'))
 
 export type SendTextToProfile = {
   env: SessionEnv
@@ -14,7 +14,7 @@ export type SendTextToProfile = {
   text: string
 }
 export const sendTextToProfile = plug(
-  ns('send-text-to-profile'),
+  ns(__dirname, 'send-text-to-profile'),
   async ({ env, toProfileId, text }: SendTextToProfile) => {
     const { getBV } = await getBaseOperatorsAdapter()
     const { graphNode } = await getGraphOperatorsAdapter()

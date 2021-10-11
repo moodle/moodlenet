@@ -8,7 +8,7 @@ import { plug } from '../../lib/stub/Stub'
 
 export const searchByTermAdapter = plug<
   <NodeType extends GlobalSearchNodeType>(_: GlobalSearchInput<NodeType>) => Promise<SearchPage>
->(ns('search-by-term-adapter'))
+>(ns(__dirname, 'search-by-term-adapter'))
 
 export type SearchPage = Page<GraphNode<GlobalSearchNodeType>>
 export type GlobalSearchInput<NodeType extends GlobalSearchNodeType = GlobalSearchNodeType> = {
@@ -19,7 +19,7 @@ export type GlobalSearchInput<NodeType extends GlobalSearchNodeType = GlobalSear
   env: SessionEnv | null
 }
 export const searchByTerm = plug(
-  ns('search-by-term'),
+  ns(__dirname, 'search-by-term'),
   async <NodeType extends GlobalSearchNodeType>({ sort, text, nodeTypes, page, env }: GlobalSearchInput<NodeType>) => {
     // console.log({ nodeTypes, page, sort, text })
 
