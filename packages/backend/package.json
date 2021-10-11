@@ -33,6 +33,7 @@
     "@graphql-tools/stitching-directives": "^1.1.1",
     "@graphql-tools/wrap": "^7.0.5",
     "@moodlenet/common": "^0.0.1",
+    "@moodlenet/webapp": "^0.0.1",
     "@types/amqplib": "^0.5.15",
     "@types/argon2": "^0.15.0",
     "@types/cors": "^2.8.9",
@@ -106,6 +107,7 @@
     "migrate-arangodb": "node lib/lib/helpers/arango/migrate/main",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
     "start": "NODE_ENV=production node -r ./env.js lib/defaultDeploy/main.js",
-    "start-dev": "node-dev -r ./env.js --inspect --deps 4 --respawn --notify=false lib/defaultDeploy/main.js"
+    "start-dev": "node-dev -r ./env.js --inspect --deps 4 --respawn --notify=false lib/defaultDeploy/main.js",
+    "postinstall": "yarn build"
   }
 }

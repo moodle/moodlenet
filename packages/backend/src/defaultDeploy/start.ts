@@ -100,9 +100,18 @@ export const startDefaultMoodlenet = async ({
   })
   const assetsApp = createStaticAssetsApp({})
   const webfingerApp = createWebfingerApp({ domain })
+  const [webappRootDir, defaultHtml] = require('@moodlenet/webapp/publicFolder') as [string, string]
   await startMNHttpServer({
     httpPort: http.port,
-    startServices: { 'graphql': graphqlApp, 'assets': assetsApp, '.well-known': webfingerApp },
+    startServices: {
+      'graphql': graphqlApp,
+      'assets': assetsApp,
+      '.well-known': webfingerApp,
+      '': webappRootDir,
+    },
+    defaultGet(_req, res) {
+      res.sendFile(defaultHtml)
+    },
   })
 
   checkAndLogUnboundPlugRegistrations()
