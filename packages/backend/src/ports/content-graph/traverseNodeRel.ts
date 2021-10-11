@@ -6,7 +6,7 @@ import { SessionEnv } from '@moodlenet/common/lib/types'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { getGraphOperators } from '../../adapters/content-graph/arangodb/adapters/bl/graphOperators'
 import { ns } from '../../lib/ns/namespace'
-import { plug } from '../../lib/stub/Stub'
+import { plug } from '../../lib/plug'
 import { getGraphOperatorsAdapter } from './common'
 
 export type TraverseFromNodeAdapterInput = {

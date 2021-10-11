@@ -1,7 +1,7 @@
 import { Readable } from 'stream'
 import { Tuple } from 'tuple-type'
 import { ns } from '../../lib/ns/namespace'
-import { plug } from '../../lib/stub/Stub'
+import { plug } from '../../lib/plug'
 import { AssetFileDesc, PersistTmpFileReq, TempAssetDesc, TempFileDesc } from './types'
 
 // persist temps

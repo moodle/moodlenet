@@ -2,7 +2,7 @@ import { AuthId } from '@moodlenet/common/lib/types'
 import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
 import { EmailAddr, EmailObj } from '../../adapters/emailSender/types'
 import { ns } from '../../lib/ns/namespace'
-import { plug, value } from '../../lib/stub/Stub'
+import { plug, value } from '../../lib/plug'
 import { ActiveUser, UserAuthConfig } from './types'
 
 export const sendEmailAdapter = plug<

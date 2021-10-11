@@ -1,5 +1,5 @@
 import createMailgun from 'mailgun-js'
-import { SockOf } from '../../../lib/stub/Stub'
+import { SockOf } from '../../../lib/plug'
 import { sendEmailAdapter } from '../../../ports/user-auth/adapters'
 // import { EmailSender } from '../types'
 

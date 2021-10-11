@@ -1,9 +1,9 @@
-import { isArray } from 'lodash'
 import { inspect } from 'util'
+import { Config, Namespace, NsPath, Plug, PlugDef, PlugRegistration, Signal, Socket, Umbrella } from '.'
 
 const isNsPath = (_: any): _ is NsPath => typeof _ === 'string' && _.length > 0 //(/^[a-z]$/.test(_) || /^[a-z][a-z0-9-]*[a-z]$/.test(_))
+const isNamespace = (_: any): _ is Namespace => Array.isArray(_) && _.every(isNsPath)
 
-declare const VALID_NS_SYM: unique symbol
 const PLUG_DEF_SYM = Symbol()
 const PlugRegistrations = new Map<string, PlugRegistration>()
 const setPlugRegistration = (namespace: Namespace, socket: Socket | undefined) =>
@@ -17,24 +17,6 @@ function getPlugRegistration(plugOrNamespace: any) {
 }
 
 const namespaceString = (namespace: Namespace) => namespace.join(':::')
-
-type NsPath = string & { readonly [VALID_NS_SYM]: unique symbol }
-type PlugRegistration = {
-  namespace: Namespace
-  socket?: Socket
-}
-type PlugDef = {
-  namespace: Namespace
-}
-type Namespace = NsPath[]
-const isNamespace = (_: any): _ is Namespace => isArray(_) && _.every(isNsPath)
-
-type Signal = {
-  args: any[]
-  namespace: Namespace
-}
-type Socket = (...args: any[]) => Promise<any>
-type Plug<S extends Socket> = S & { [PLUG_DEF_SYM]: PlugDef }
 
 export function socket<Sock extends Socket>(plugOrNamespace: Namespace | Plug<Sock>, sock: Sock) {
   const plugNamespace = getPlugNamespace(plugOrNamespace)
@@ -61,11 +43,6 @@ const getPlugNamespace = (plugOrNamespace: any) =>
 
 const getPlugDef = (plug: any) => (plug ? (plug[PLUG_DEF_SYM] as PlugDef | undefined) : undefined)
 
-export type SockOf<Plg> = Plg extends Plug<infer S> ? S : never
-type Umbrella = (signal: Signal) => Promise<any>
-type Config = {
-  umbrella: Umbrella
-}
 const config: Config = {
   umbrella: noUmbrellaError,
 }

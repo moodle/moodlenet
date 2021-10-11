@@ -1,5 +1,5 @@
 import { getAllResults, getOneResult } from '../../../../lib/helpers/arango/query'
-import { SockOf } from '../../../../lib/stub/Stub'
+import { SockOf } from '../../../../lib/plug'
 import {
   countNodeRelationsAdapter,
   traverseNodeRelationsAdapter,

@@ -1,6 +1,6 @@
 import { isJust } from '@moodlenet/common/lib/utils/array'
 import { Tuple } from 'tuple-type'
-import { SockOf } from '../../../../lib/stub/Stub'
+import { SockOf } from '../../../../lib/plug'
 import { persistTempAssetsAdapter } from '../../../../ports/static-assets/temp'
 import { AssetFileDesc, PersistTmpFileReq } from '../../../../ports/static-assets/types'
 import { forceRmAsset, getDir, persistTemp } from './lib'

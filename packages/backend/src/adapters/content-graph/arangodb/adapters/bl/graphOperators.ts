@@ -1,7 +1,7 @@
 import { GraphOperators } from '@moodlenet/common/lib/content-graph/bl/graph-lang/graphOperators'
 import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { aqlstr } from '../../../../../lib/helpers/arango/query'
-import { SockOf } from '../../../../../lib/stub/Stub'
+import { SockOf } from '../../../../../lib/plug'
 import { getGraphOperatorsAdapter } from '../../../../../ports/content-graph/common'
 import { aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode, graphNode2AqlId } from '../../aql/helpers'
 import { _ } from './_'
