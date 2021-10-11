@@ -1,10 +1,14 @@
-import { Assumptions, BaseOperators } from '.'
+import { Assumptions, BaseOperators, BV } from '.'
 import { EdgeType, NodeType } from '../../../graphql/types.graphql.gen'
 import { SessionEnv } from '../../../types'
-import { GraphNodeIdentifier } from '../../types/node'
+import { GraphNode, GraphNodeIdentifier } from '../../types/node'
 import { GraphOperators } from './graphOperators'
 
-export type AddEdgeOperators = {}
+export type AddEdgeOperators = {
+  issuerNode: BV<GraphNode | null>
+  fromNode: BV<GraphNode | null>
+  toNode: BV<GraphNode | null>
+}
 export type AddEdgeAssumptionsFactory = (_: {
   from: GraphNodeIdentifier
   to: GraphNodeIdentifier
@@ -14,9 +18,7 @@ export type AddEdgeAssumptionsFactory = (_: {
   addEdgeOperators: AddEdgeOperators
 }) => Promise<Assumptions>
 
-export type AddEdgeAssumptionsFactoryMap = Partial<
-  Record<`${NodeType}_${EdgeType}_${NodeType}`, AddEdgeAssumptionsFactory>
->
+export type AddEdgeAssumptionsMap = Partial<Record<`${NodeType}_${EdgeType}_${NodeType}`, AddEdgeAssumptionsFactory>>
 
 export const getAddEdgeAssumptions = async ({
   edgeType,
@@ -32,7 +34,7 @@ export const getAddEdgeAssumptions = async ({
   edgeType: EdgeType
   to: GraphNodeIdentifier
   env: SessionEnv
-  map: AddEdgeAssumptionsFactoryMap
+  map: AddEdgeAssumptionsMap
   graphOperators: GraphOperators
   baseOperators: BaseOperators
   addEdgeOperators: AddEdgeOperators
@@ -43,33 +45,3 @@ export const getAddEdgeAssumptions = async ({
   }
   return assuptionsFactory({ env, from, to, graphOperators, baseOperators, addEdgeOperators })
 }
-
-// declare const graph: GraphOperators
-// declare const base: BaseOperators
-// declare const e: Exec
-// ;(async () => {
-//   const val = base.cmp(5, '!=', 7)
-//   const x = await e(val)
-//   console.log(x)
-// })()
-// ;(async () => {
-//   const val = base.cond(true, 'a' as const, 'b' as const)
-//   const x = await e(val)
-//   console.log(x)
-// })()
-// ;(async () => {
-//   const isc = graph.isCreator({ _type: 'Collection', _permId: '' }, { _type: 'Collection', _permId: '' })
-//   const _or = base.or(isc, isc, isc, true)
-//   const val = graph.isCreator(
-//     base.cond(isc, { _type: 'Collection', _permId: '' }, { _type: 'Collection', _permId: '' }),
-//     { _type: 'Collection', _permId: '' },
-//   )
-//   const x = await e(val)
-//   console.log(x, _or)
-// })()
-// ;(async () => {
-//   const isc = graph.isCreator({ _type: 'Collection', _permId: '' }, { _type: 'Collection', _permId: '' })
-//   const val = base.cond(isc, isc, 'b' as const)
-//   const x = await e(val)
-//   console.log(x)
-// })()

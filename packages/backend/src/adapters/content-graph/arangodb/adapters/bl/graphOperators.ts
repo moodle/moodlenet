@@ -1,8 +1,12 @@
 import { GraphOperators } from '@moodlenet/common/lib/content-graph/bl/graph-lang/graphOperators'
 import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { aqlstr } from '../../../../lib/helpers/arango/query'
-import { _ } from './baseOperators'
+import { aqlstr } from '../../../../../lib/helpers/arango/query'
+import { SockOf } from '../../../../../lib/plug'
+import { getGraphOperatorsAdapter } from '../../../../../ports/content-graph/common'
+import { aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode, graphNode2AqlId } from '../../aql/helpers'
+import { _ } from './_'
 
+export const getGraphOperators: SockOf<typeof getGraphOperatorsAdapter> = async () => graphOperators
 export const graphOperators: GraphOperators = {
   // edgeType: edgeType => ` ${edgeType} ` as BV<GraphEdgeType>,
   // nodeType: nodeType => ` ${nodeType} ` as BV<GraphNodeType>,
@@ -10,7 +14,7 @@ export const graphOperators: GraphOperators = {
     // Identifier = { _authId } | { _permId } | { _slug } | AqlGraphNode
     if ('_permId' in identifier) {
       const { _permId, _type } = identifier
-      return _(`DOCUMENT("${_type}/${_permId}")`)
+      return _(`${aqlGraphNode2GraphNode(`DOCUMENT("${_type}/${_permId}")`)}`)
     }
 
     const [idProp, propVal] =
@@ -20,25 +24,27 @@ export const graphOperators: GraphOperators = {
         ? (['_authId', identifier._authId] as const)
         : (null as never)
 
-    return _(`(
+    return _(
+      `(
       FOR node IN ${identifier._type}
         FILTER node[${aqlstr(idProp)}] == ${aqlstr(propVal)}
         LIMIT 1
-      return node
-      )[0]`)
+      return ${aqlGraphNode2GraphNode('node')}
+      )[0]`,
+    )
   },
   graphEdge: ({ _type, id }) => {
-    return _(`DOCUMENT("${_type}/${id}")`)
+    return _(`${aqlGraphEdge2GraphEdge(`DOCUMENT("${_type}/${id}")`)}`)
   },
-  isCreator: ({ authId, nodeId }) => {
+  isCreator: ({ authNode, ofNode }) => {
     const Created: EdgeType = 'Created'
-    return _<boolean>(`LENGTH(
+    return _<boolean>(`${authNode}._authId && ${ofNode} ? ( LENGTH(
       FOR e in ${Created}
-        FILTER  e._authId == (${authId})._authId
-                && e._to == (${nodeId})._id
+        FILTER  e._authId == ${authNode}._authId
+            &&  e._to == ${graphNode2AqlId(ofNode)}
         LIMIT 1
       RETURN e
-    ) == 1`)
+    ) == 1 ) : false`)
   },
   // nodeId(nodeId) {
   //   return _(getAqlNodeByGraphNodeIdentifierQ(nodeId))

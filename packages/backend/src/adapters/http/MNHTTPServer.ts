@@ -1,8 +1,7 @@
 import cors from 'cors'
 import express, { Application } from 'express'
-import { VerifyOptions } from 'jsonwebtoken'
 import { Context } from '../../graphql/types'
-import { getMNExecEnvMiddleware } from './executionContext'
+import { execEnvMiddleware } from './executionContext'
 
 declare module 'express-serve-static-core' {
   export interface Request {
@@ -18,17 +17,15 @@ export type MountServices = {
 interface MNHttpServerCfg {
   startServices: MountServices
   httpPort: number
-  jwtPublicKey: string
-  jwtVerifyOpts: VerifyOptions
 }
 const nameTag = `MN-HTTP-Server`
 
-export const startMNHttpServer = ({ startServices, httpPort: port, jwtPublicKey, jwtVerifyOpts }: MNHttpServerCfg) => {
+export const startMNHttpServer = ({ startServices, httpPort: port }: MNHttpServerCfg) => {
   console.log(`\n${nameTag}: initializing`)
   const app = express()
   const subServicesApp = express()
   app.use(cors())
-  app.use(getMNExecEnvMiddleware({ jwtPublicKey, jwtVerifyOpts }))
+  app.use(execEnvMiddleware)
 
   app.use('/', subServicesApp) //FIXME: should use('/_/'  ...
   Object.entries(startServices).forEach(([mountName, application]) => {

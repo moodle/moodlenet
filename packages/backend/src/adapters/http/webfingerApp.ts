@@ -1,7 +1,6 @@
 import { nodeIdentifierSlug2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import express from 'express'
-import { QMino } from '../../lib/qmino'
-import { getBySlug } from '../../ports/content-graph/node'
+import { byIdentifier } from '../../ports/content-graph/node'
 
 export type WebFingerResp = {
   subject: string
@@ -15,10 +14,9 @@ export type WebFingerResp = {
 }
 
 export type GQLAppConfig = {
-  qmino: QMino
   domain: string
 }
-export const createWebfingerApp = ({ qmino, domain }: GQLAppConfig) => {
+export const createWebfingerApp = ({ domain }: GQLAppConfig) => {
   const app = express()
   const acctResourceParam = new RegExp(`^acct:[a-zA-Z0-9\.\_\-]+@${domain}$`)
   app.get<{}, WebFingerResp | string, any, { resource: string }>('/webfinger', async (req, res) => {
@@ -31,12 +29,7 @@ export const createWebfingerApp = ({ qmino, domain }: GQLAppConfig) => {
     const acct = resParam.split(':')[1]!
     const userSlug = acct.split('@')[0]!
 
-    const profile = await qmino.query(
-      getBySlug({ _slug: userSlug, _type: 'Profile', env: req.mnHttpContext.authSessionEnv }),
-      {
-        timeout: 5000,
-      },
-    )
+    const profile = await byIdentifier(req.mnHttpContext.authSessionEnv, { _slug: userSlug, _type: 'Profile' })
 
     if (!profile) {
       res.sendStatus(404).send(`user ${acct} not found`)

@@ -1,11 +1,19 @@
-import { AddEdgeAssumptionsFactoryMap } from '../graph-lang/AddEdge'
+import { AddEdgeAssumptionsMap } from '../graph-lang/AddEdge'
 
-export const addEdgeAssumptionsMap: AddEdgeAssumptionsFactoryMap = {
-  Collection_Features_Resource: async ({ env, from, graphOperators: { isCreator, graphNode } }) => {
+//export const getAddEdgeAssumptionsMap : SecOf< typeof getAddEdgeAssumptionsMap>=async ()=>addEdgeAssumptionsMap
+export const getAddEdgeAssumptionsMap = async () => addEdgeAssumptionsMap
+
+export const addEdgeAssumptionsMap: AddEdgeAssumptionsMap = {
+  Collection_Features_Resource: async ({
+    // env,
+    // from,
+    graphOperators: { isCreator },
+    addEdgeOperators: { fromNode, issuerNode },
+  }) => {
     return {
       isCreator: isCreator({
-        authId: graphNode({ _authId: env.user.authId, _type: 'Profile' }),
-        nodeId: graphNode(from),
+        authNode: issuerNode,
+        ofNode: fromNode,
       }),
     }
   },
