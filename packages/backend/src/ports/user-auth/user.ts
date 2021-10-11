@@ -21,7 +21,7 @@ import {
 import { ActiveUser, Email, isEmail } from './types'
 
 export const changeRecoverPassword = plug(
-  ns('change-recover-password'),
+  ns(__dirname, 'change-recover-password'),
   async ({ token, newPasswordClear }: { newPasswordClear: string; token: string }) => {
     const recoverPasswordJwt = await jwtVerifierAdapter(token)
 
@@ -48,29 +48,32 @@ export type RecoverPasswordJwt = {
 }
 const isRecoverPasswordJwt = (_: any): _ is RecoverPasswordJwt => isAuthId(_?.authId) && isEmail(_?.email)
 
-export const recoverPasswordEmail = plug(ns('recover-password-email'), async ({ email }: { email: Email }) => {
-  const activeUser = await getActiveUserByEmailAdapter({ email })
-  if (!activeUser) {
-    return null
-  }
-  const { recoverPasswordEmail, recoverPasswordEmailExpiresSecs } = await getLatestConfigAdapter()
-  const recoverPasswordJwt = await jwtSignerAdapter(
-    { authId: activeUser.authId, email },
-    recoverPasswordEmailExpiresSecs,
-  )
-  const publicBaseUrl = await localDomainAdapter()
-  const emailObj = fillEmailTemplate({
-    template: recoverPasswordEmail,
-    to: email,
-    vars: {
-      link: `https://${publicBaseUrl}${webappPath<Routes.NewPassword>('/new-password/:token', {
-        token: recoverPasswordJwt,
-      })}`,
-    },
-  })
-  await sendEmailAdapter(emailObj)
-  return { recoverPasswordJwt }
-})
+export const recoverPasswordEmail = plug(
+  ns(__dirname, 'recover-password-email'),
+  async ({ email }: { email: Email }) => {
+    const activeUser = await getActiveUserByEmailAdapter({ email })
+    if (!activeUser) {
+      return null
+    }
+    const { recoverPasswordEmail, recoverPasswordEmailExpiresSecs } = await getLatestConfigAdapter()
+    const recoverPasswordJwt = await jwtSignerAdapter(
+      { authId: activeUser.authId, email },
+      recoverPasswordEmailExpiresSecs,
+    )
+    const publicBaseUrl = await localDomainAdapter()
+    const emailObj = fillEmailTemplate({
+      template: recoverPasswordEmail,
+      to: email,
+      vars: {
+        link: `https://${publicBaseUrl}${webappPath<Routes.NewPassword>('/new-password/:token', {
+          token: recoverPasswordJwt,
+        })}`,
+      },
+    })
+    await sendEmailAdapter(emailObj)
+    return { recoverPasswordJwt }
+  },
+)
 
 export type ActivationEmailTokenObj = {
   email: Email
@@ -82,7 +85,7 @@ export type ActivationEmailTokenObj = {
 const isActivationEmailTokenObj = (_: any): _ is ActivationEmailTokenObj =>
   isEmail(_?.email) && isString(_?.hashedPassword) && isString(_?.displayName) && isString(_?.authId)
 export const createSession = plug(
-  ns('create-session'),
+  ns(__dirname, 'create-session'),
   async ({
     password,
     email,
