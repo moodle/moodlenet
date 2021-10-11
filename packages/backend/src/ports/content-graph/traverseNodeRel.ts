@@ -19,7 +19,7 @@ export type TraverseFromNodeAdapterInput = {
   env: SessionEnv | null
 }
 export const traverseNodeRelationsAdapter = plug<(_: TraverseFromNodeAdapterInput) => Promise<NodeTraversalPage>>(
-  ns('traverse-node-relations-adapter'),
+  ns(__dirname, 'traverse-node-relations-adapter'),
 )
 
 export type TraverseFromNodeInput = {
@@ -32,19 +32,22 @@ export type TraverseFromNodeInput = {
   env: SessionEnv | null
 }
 
-export const traverseNodeRelations = plug(ns('traverse-node-relations'), async (input: TraverseFromNodeInput) => {
-  const { graphNode } = await getGraphOperatorsAdapter()
-  return traverseNodeRelationsAdapter({
-    ...input,
-    fromNode: graphNode(input.fromNode),
-    targetIds: input.targetIds?.map(graphNode),
-  })
-})
+export const traverseNodeRelations = plug(
+  ns(__dirname, 'traverse-node-relations'),
+  async (input: TraverseFromNodeInput) => {
+    const { graphNode } = await getGraphOperatorsAdapter()
+    return traverseNodeRelationsAdapter({
+      ...input,
+      fromNode: graphNode(input.fromNode),
+      targetIds: input.targetIds?.map(graphNode),
+    })
+  },
+)
 
 //
 
 export const countNodeRelationsAdapter = plug<(_: NodeRelationCountAdapterInput) => Promise<number>>(
-  ns('count-node-relations-adapter'),
+  ns(__dirname, 'count-node-relations-adapter'),
 )
 
 export type NodeRelationCountAdapterInput = {
@@ -62,7 +65,7 @@ export type NodeRelationCountInput = {
   env: SessionEnv | null
 }
 
-export const countNodeRelations = plug(ns('count-node-relations'), async (input: NodeRelationCountInput) => {
+export const countNodeRelations = plug(ns(__dirname, 'count-node-relations'), async (input: NodeRelationCountInput) => {
   const { graphNode } = await getGraphOperators()
   return countNodeRelationsAdapter({ ...input, fromNode: graphNode(input.fromNode) })
 })

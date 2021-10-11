@@ -9,7 +9,7 @@ import { getBaseOperatorsAdapter, getGraphOperatorsAdapter } from './common'
 import { addEdgeAdapter } from './edge'
 
 export const byIdentifier = plug(
-  ns('by-identifier'),
+  ns(__dirname, 'by-identifier'),
   async <Type extends GraphNodeType>(_env: SessionEnv | null, identifier: GraphNodeIdentifier<Type>) => {
     const { getBV } = await getBaseOperatorsAdapter()
     const { graphNode } = await getGraphOperatorsAdapter()
@@ -19,7 +19,7 @@ export const byIdentifier = plug(
 
 // create
 export const createNodeAdapter = plug<<N extends GraphNode>(_: { node: N }) => Promise<N | undefined>>(
-  ns('create-node-adapter'),
+  ns(__dirname, 'create-node-adapter'),
 )
 export type NewNodeData<N extends GraphNode = GraphNode> = DistOmit<N, '_permId' | '_slug'>
 export type CreateNode = {
@@ -27,7 +27,7 @@ export type CreateNode = {
   sessionEnv: SessionEnv
 }
 
-export const createNode = plug(ns('create-node'), async ({ nodeData, sessionEnv }: CreateNode) => {
+export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, sessionEnv }: CreateNode) => {
   const { graphNode } = await getGraphOperatorsAdapter()
   const { getBV } = await getBaseOperatorsAdapter()
   const authProfile = await getBV(graphNode({ _authId: sessionEnv.user.authId, _type: 'Profile' }))
@@ -70,7 +70,7 @@ export const editNodeAdapter = plug<
     nodeId: BV<GraphNode<N> | null>
     type: GraphNodeType
   }) => Promise<GraphNode<N> | undefined>
->(ns('edit-node-adapter'))
+>(ns(__dirname, 'edit-node-adapter'))
 
 export type EditNodeData<N extends GraphNodeType = GraphNodeType> = Partial<
   DistOmit<GraphNode<N>, '_permId' | '_slug' | '_type'>
@@ -83,7 +83,7 @@ export type EditNode<N extends GraphNodeType = GraphNodeType> = {
 }
 
 export const editNode = plug(
-  ns('edit'),
+  ns(__dirname, 'edit'),
   async <N extends GraphNodeType = GraphNodeType>({ nodeData, nodeId /* , sessionEnv  */ }: EditNode<N>) => {
     const { graphNode } = await getGraphOperatorsAdapter()
     const { _ } = await getBaseOperatorsAdapter()
@@ -103,7 +103,7 @@ export type CreateProfile = {
   partProfile: Partial<Omit<Profile, `_${string}`>> & Pick<Profile, 'name' | '_authId'>
 }
 
-export const createProfile = plug(ns('create-profile'), async ({ partProfile }: CreateProfile) => {
+export const createProfile = plug(ns(__dirname, 'create-profile'), async ({ partProfile }: CreateProfile) => {
   const ids = newGlyphIdentifiers({ name: partProfile.name })
   const profile: Profile = {
     ...ids,
@@ -128,7 +128,7 @@ export const createProfile = plug(ns('create-profile'), async ({ partProfile }: 
 // delete
 
 export const deleteNodeAdapter = plug<(_: { node: BV<GraphNode | null>; type: GraphNodeType }) => Promise<boolean>>(
-  ns('delete-node-adapter'),
+  ns(__dirname, 'delete-node-adapter'),
 )
 
 export type DeleteNodeInput = {
@@ -136,7 +136,7 @@ export type DeleteNodeInput = {
   node: GraphNodeIdentifier
 }
 
-export const deleteNode = plug(ns('delete-node'), async ({ node /* , sessionEnv */ }: DeleteNodeInput) => {
+export const deleteNode = plug(ns(__dirname, 'delete-node'), async ({ node /* , sessionEnv */ }: DeleteNodeInput) => {
   const { graphNode } = await getGraphOperatorsAdapter()
   const result = await deleteNodeAdapter({ node: graphNode(node), type: node._type })
 
