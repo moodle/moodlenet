@@ -23,7 +23,6 @@
     "@lingui/react": "^3.5.0",
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
-    "@playlyfe/gql": "^2.6.2",
     "@storybook/theming": "^6.3.2",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
