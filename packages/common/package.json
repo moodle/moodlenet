@@ -1,6 +1,6 @@
 {
   "name": "my-moodlenet-common",
-  "version": "0.0.1-beta.0.1",
+  "version": "0.0.1-beta.0.2",
   "license": "AGPL",
   "author": "https://github.com/aleclofabbro",
   "description": "backend and webapp shared libs and graphql",
