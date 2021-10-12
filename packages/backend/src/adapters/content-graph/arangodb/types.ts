@@ -1,7 +1,7 @@
-import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
-import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { Document, Edge } from 'arangojs/documents'
+import { GraphEdge, GraphEdgeType } from 'my-moodlenet-common/lib/content-graph/types/edge'
+import { GraphNode, GraphNodeType } from 'my-moodlenet-common/lib/content-graph/types/node'
+import { DistOmit } from 'my-moodlenet-common/lib/utils/types'
 import { VersionedDB } from '../../../lib/helpers/arango/migrate/types'
 
 export type ContentGraphDB = VersionedDB<'0.0.3'>

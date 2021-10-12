@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro'
-import { Maybe } from '@moodlenet/common/lib/utils/types'
+import { Maybe } from 'my-moodlenet-common/lib/utils/types'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { createCtx } from '../../lib/context'
 import { setToken } from './Apollo/client'

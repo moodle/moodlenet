@@ -1,9 +1,9 @@
-import { getFileFormats } from '@moodlenet/common/lib/content-graph/initialData/file-format/fileFormats'
-import { getSelectedIscedFields } from '@moodlenet/common/lib/content-graph/initialData/ISCED/Fields/IscedFields'
-import { getIscedGrades } from '@moodlenet/common/lib/content-graph/initialData/ISCED/Grades/IscedGrades'
-import { getIso639_3 } from '@moodlenet/common/lib/content-graph/initialData/ISO_639_3/ISO_639_3'
-import { getLicenses } from '@moodlenet/common/lib/content-graph/initialData/licenses/licenses'
-import { getResourceTypes } from '@moodlenet/common/lib/content-graph/initialData/resource-type/resource-type'
+import { getFileFormats } from 'my-moodlenet-common/lib/content-graph/initialData/file-format/fileFormats'
+import { getSelectedIscedFields } from 'my-moodlenet-common/lib/content-graph/initialData/ISCED/Fields/IscedFields'
+import { getIscedGrades } from 'my-moodlenet-common/lib/content-graph/initialData/ISCED/Grades/IscedGrades'
+import { getIso639_3 } from 'my-moodlenet-common/lib/content-graph/initialData/ISO_639_3/ISO_639_3'
+import { getLicenses } from 'my-moodlenet-common/lib/content-graph/initialData/licenses/licenses'
+import { getResourceTypes } from 'my-moodlenet-common/lib/content-graph/initialData/resource-type/resource-type'
 
 export const iscedFields = getSelectedIscedFields()
 export const iscedGrades = getIscedGrades()

@@ -1,4 +1,4 @@
-import { validateDomainString } from '@moodlenet/common/lib/utils/general'
+import { validateDomainString } from 'my-moodlenet-common/lib/utils/general'
 
 const domain = process.env.DOMAIN || ''
 if (!validateDomainString(domain)) {

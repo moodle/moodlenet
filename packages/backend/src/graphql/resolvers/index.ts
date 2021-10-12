@@ -1,13 +1,16 @@
-import { globalSearchNodeTypes, isGlobalSearchNodeType } from '@moodlenet/common/lib/content-graph/types/global-search'
-import { validateCreateEdgeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/createEdge'
-import { validateCreateNodeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/createNode'
-import { validateEditNodeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/editNode'
-import * as GQLTypes from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import {
+  globalSearchNodeTypes,
+  isGlobalSearchNodeType,
+} from 'my-moodlenet-common/lib/content-graph/types/global-search'
+import { validateCreateEdgeInput } from 'my-moodlenet-common/lib/graphql/content-graph/inputStaticValidation/createEdge'
+import { validateCreateNodeInput } from 'my-moodlenet-common/lib/graphql/content-graph/inputStaticValidation/createNode'
+import { validateEditNodeInput } from 'my-moodlenet-common/lib/graphql/content-graph/inputStaticValidation/editNode'
+import * as GQLTypes from 'my-moodlenet-common/lib/graphql/types.graphql.gen'
 import {
   gqlEdgeId2GraphEdgeIdentifier,
   gqlNodeId2GraphNodeIdentifier,
   gqlNodeId2GraphNodeIdentifierOfType,
-} from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+} from 'my-moodlenet-common/lib/utils/content-graph/id-key-type-guards'
 import * as contentGraph from '../../ports/content-graph'
 import * as userAuth from '../../ports/user-auth'
 import * as GQLResolvers from '../types.graphql.gen'

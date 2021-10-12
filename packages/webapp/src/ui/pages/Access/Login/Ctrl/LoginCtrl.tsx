@@ -1,4 +1,4 @@
-import { Maybe } from '@moodlenet/common/lib/utils/types'
+import { Maybe } from 'my-moodlenet-common/lib/utils/types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
 import { mainPath, useRedirectProfileHomeIfLoggedIn } from '../../../../../hooks/glob/nav'

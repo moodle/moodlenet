@@ -1,5 +1,5 @@
-import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { useFormik } from 'formik'
+import { Maybe } from 'my-moodlenet-common/lib/utils/types'
 import { useCallback, useMemo } from 'react'
 import { PageInfo } from '../graphql/pub.graphql.link'
 import { SimplifiedFormik } from '../ui/lib/formik'

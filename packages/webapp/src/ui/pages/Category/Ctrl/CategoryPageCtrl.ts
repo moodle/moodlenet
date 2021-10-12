@@ -1,5 +1,5 @@
-import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
-import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
+import { isEdgeNodeOfType, narrowNodeType } from 'my-moodlenet-common/lib/graphql/helpers'
+import { ID } from 'my-moodlenet-common/lib/graphql/scalars.graphql'
 import { useCallback, useMemo } from 'react'
 import { useSeoContentId } from '../../../../context/Global/Seo'
 import { useSession } from '../../../../context/Global/Session'

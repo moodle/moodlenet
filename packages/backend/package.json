@@ -1,5 +1,5 @@
 {
-  "name": "@moodlenet/backend",
+  "name": "my-moodlenet-backend",
   "version": "0.0.1-beta.0.0",
   "namespace": {
     "root": [
@@ -35,8 +35,8 @@
     "@graphql-tools/stitch": "^7.1.6",
     "@graphql-tools/stitching-directives": "^1.1.1",
     "@graphql-tools/wrap": "^7.0.5",
-    "@moodlenet/common": "^0.0.1-beta.0.0",
-    "@moodlenet/webapp": "^0.0.1-beta.0.0",
+    "my-moodlenet-common": "^0.0.1-beta.0.0",
+    "my-moodlenet-webapp": "^0.0.1-beta.0.0",
     "@types/amqplib": "^0.5.15",
     "@types/argon2": "^0.15.0",
     "@types/cors": "^2.8.9",

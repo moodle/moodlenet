@@ -1,4 +1,4 @@
-import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { Routes } from 'my-moodlenet-common/lib/webapp/sitemap'
 import { ctrlHook } from '../ui/lib/ctrl'
 import { Bookmarks } from '../ui/pages/Bookmarks/Bookmarks'
 import { useBookmarksCtrl } from '../ui/pages/Bookmarks/Ctrl/BookmarksCtrl'

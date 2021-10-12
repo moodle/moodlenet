@@ -1,5 +1,5 @@
-import { BaseOperators } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
-import { GraphOperators } from '@moodlenet/common/lib/content-graph/bl/graph-lang/graphOperators'
+import { BaseOperators } from 'my-moodlenet-common/lib/content-graph/bl/graph-lang'
+import { GraphOperators } from 'my-moodlenet-common/lib/content-graph/bl/graph-lang/graphOperators'
 import { ns } from '../../lib/ns/namespace'
 import { value } from '../../lib/plug'
 
