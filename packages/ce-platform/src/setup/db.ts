@@ -1,8 +1,8 @@
+import contentGraphLadder from '@moodlenet/backend/lib/adapters/content-graph/arangodb/db/maintainance/ladder'
+import userAuthLadder from '@moodlenet/backend/lib/adapters/user-auth/arangodb/db/maintainance/ladder'
+import { initializeDB, upgradeToLatest } from '@moodlenet/backend/lib/lib/helpers/arango/migrate/lib'
+import { MNStaticEnv } from '@moodlenet/backend/lib/lib/types'
 import { Database } from 'arangojs'
-import contentGraphLadder from '../../adapters/content-graph/arangodb/db/maintainance/ladder'
-import userAuthLadder from '../../adapters/user-auth/arangodb/db/maintainance/ladder'
-import { initializeDB, upgradeToLatest } from '../../lib/helpers/arango/migrate/lib'
-import { MNStaticEnv } from '../../lib/types'
 import { DBEnv } from '../env/db'
 import mnStatic from '../env/mnStatic'
 

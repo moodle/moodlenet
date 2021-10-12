@@ -1,0 +1,27 @@
+{
+  "name": "@moodlenet/ce-platform",
+  "version": "0.0.1",
+  "main": "dist/main.js",
+  "license": "AGPL",
+  "description": "MoodleNet CE Platform",
+  "author": "https://github.com/aleclofabbro",
+  "engines": {
+    "node": ">=14.14.0"
+  },
+  "dependencies": {
+    "@moodlenet/backend": "^0.0.1",
+    "@moodlenet/common": "^0.0.1",
+    "@moodlenet/webapp": "^0.0.1",
+    "@types/sshpk": "^1.10.7",
+    "arangojs": "^7.1.0",
+    "sshpk": "^1.16.1"
+  },
+  "scripts": {
+    "clean-build": "rm -rf dist && yarn build",
+    "build": "tsc",
+    "setup": "node -r ./env.js dist/setup/setup.bin.js",
+    "upgrade-version": "node -r ./env.js dist/setup/upgrade.bin.js",
+    "start": "NODE_ENV=production node -r ./env.js dist/main.js",
+    "start-dev": "NODE_ENV=development node-dev -r ./env.js --inspect --deps 4 --respawn --notify=false dist/main.js"
+  }
+}

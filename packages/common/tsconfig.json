@@ -2,8 +2,6 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "rootDir": "src",
-    "declarationMap": true,
-    "declaration": true,
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "lib": ["ESNext"],

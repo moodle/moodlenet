@@ -3,7 +3,7 @@ const { getScalarsGql } = require('@moodlenet/common/lib/graphql/scalars.graphql
 const introspectionJson = `${__dirname}/../common/lib/graphql/gql-introspection.json`
 const scalars = getScalarsGql('@moodlenet/common/lib/graphql')
 const rootTypesRoot = `./types`
-const tsDefsFilename = `${__dirname}/src/graphql/types.graphql.gen.d.ts`
+const tsDefsFilename = `${__dirname}/src/graphql/types.graphql.gen.ts`
 
 const graphqlConfig = {
   generates: {
