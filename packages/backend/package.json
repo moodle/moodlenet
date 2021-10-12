@@ -1,6 +1,6 @@
 {
   "name": "my-moodlenet-backend",
-  "version": "0.0.1-beta.0.5",
+  "version": "0.0.1-beta.0.6",
   "namespace": {
     "root": [
       "lib",
