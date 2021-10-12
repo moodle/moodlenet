@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/backend",
-  "version": "0.0.1",
+  "version": "0.0.1-0.0.1-alpha.0.0",
   "namespace": {
     "root": [
       "lib",
@@ -32,8 +32,8 @@
     "@graphql-tools/stitch": "^7.1.6",
     "@graphql-tools/stitching-directives": "^1.1.1",
     "@graphql-tools/wrap": "^7.0.5",
-    "@moodlenet/common": "^0.0.1",
-    "@moodlenet/webapp": "^0.0.1",
+    "@moodlenet/common": "^0.0.1-0.0.1-alpha.0.0",
+    "@moodlenet/webapp": "^0.0.1-0.0.1-alpha.0.0",
     "@types/amqplib": "^0.5.15",
     "@types/argon2": "^0.15.0",
     "@types/cors": "^2.8.9",

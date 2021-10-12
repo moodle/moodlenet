@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/webapp",
-  "version": "0.0.1",
+  "version": "0.0.1-0.0.1-alpha.0.0",
   "license": "AGPL",
   "description": "MoodleNet Webapp",
   "author": "https://github.com/aleclofabbro",
@@ -19,7 +19,7 @@
     "@lingui/react": "^3.5.0",
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
-    "@moodlenet/common": "^0.0.1",
+    "@moodlenet/common": "^0.0.1-0.0.1-alpha.0.0",
     "@playlyfe/gql": "^2.6.2",
     "@storybook/theming": "^6.3.2",
     "@testing-library/jest-dom": "^5.11.4",
