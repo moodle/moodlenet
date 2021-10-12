@@ -1,9 +1,12 @@
 {
   "name": "@moodlenet/common",
-  "version": "0.0.1-0.0.1-alpha.0.0",
+  "version": "0.0.1-beta.0.0",
   "license": "AGPL",
   "author": "https://github.com/aleclofabbro",
   "description": "backend and webapp shared libs and graphql",
+  "files": [
+    "./lib/**/*"
+  ],
   "dependencies": {
     "@graphql-codegen/cli": "^1.19.3",
     "@graphql-codegen/fragment-matcher": "^2.0.1",
