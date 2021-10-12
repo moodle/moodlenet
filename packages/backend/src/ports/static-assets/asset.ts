@@ -1,7 +1,15 @@
 import { Readable } from 'stream'
 import { ns } from '../../lib/ns/namespace'
 import { plug } from '../../lib/plug'
-import { AssetFileDesc, AssetId } from './types'
+import { AssetFileDesc, AssetId, TempAssetDesc, TempAssetId, TempFileDesc } from './types'
+
+export type ProcessTempAssetAdapter = (_: {
+  originalAssetStream: Readable
+  tempFileDesc: TempFileDesc
+  tempAssetId: TempAssetId
+}) => Promise<[Readable, TempAssetDesc]>
+
+export const processTempAssetAdapter = plug<ProcessTempAssetAdapter>(ns(__dirname, 'process-temp-asset-adapter'))
 
 // get asset
 
