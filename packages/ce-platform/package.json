@@ -5,6 +5,9 @@
   "license": "AGPL",
   "description": "MoodleNet CE Platform",
   "author": "https://github.com/aleclofabbro",
+  "bin": {
+    "start-moodlenet-ce": "./start.js"
+  },
   "engines": {
     "node": ">=14.14.0"
   },
@@ -26,9 +29,7 @@
     "clean-build": "rm -rf dist && yarn build",
     "prepublish": "yarn clean-build",
     "build": "tsc",
-    "setup": "node -r ./env.js dist/setup/setup.bin.js",
-    "upgrade-version": "node -r ./env.js dist/setup/upgrade.bin.js",
-    "start": "NODE_ENV=production node -r ./env.js dist/main.js",
-    "start-dev": "NODE_ENV=development node-dev -r ./env.js --inspect --deps 4 --respawn --notify=false dist/main.js"
+    "start": "NODE_ENV=production node ./start.js",
+    "start-dev": "NODE_ENV=development node-dev --inspect --deps 4 --respawn --notify=false ./start.js "
   }
 }
