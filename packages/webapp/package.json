@@ -75,7 +75,7 @@
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
-    "postinstall": "yarn clean-build"
+    "prepublish": "yarn clean-build"
   },
   "eslintConfig": {
     "extends": [
