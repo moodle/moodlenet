@@ -1,7 +1,7 @@
-const dotenv = require('dotenv')
-const dotenvExpand = require('dotenv-expand')
+var dotenv = require('dotenv')
+var dotenvExpand = require('dotenv-expand')
 
-const myEnv = dotenv.config()
+var myEnv = dotenv.config()
 dotenvExpand(myEnv)
 
 require('./dist/main')
