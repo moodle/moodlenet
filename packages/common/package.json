@@ -32,8 +32,9 @@
     "yup": "^0.32.8"
   },
   "scripts": {
+    "clean-build": "rm -rf lib && yarn build",
     "build": "tsc && yarn gen:graphql:types && tsc",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
-    "postinstall": "yarn build"
+    "prepublish": "yarn clean-build"
   }
 }

@@ -21,6 +21,7 @@
   },
   "scripts": {
     "clean-build": "rm -rf dist && yarn build",
+    "prepublish": "yarn clean-build",
     "build": "tsc",
     "setup": "node -r ./env.js dist/setup/setup.bin.js",
     "upgrade-version": "node -r ./env.js dist/setup/upgrade.bin.js",
