@@ -15,7 +15,7 @@
     "node": ">=14.14.0"
   },
   "files": [
-    "./lib/**/*"
+    "lib/"
   ],
   "dependencies": {
     "@graphql-codegen/cli": "^1.19.3",
