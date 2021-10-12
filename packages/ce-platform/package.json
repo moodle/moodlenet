@@ -9,7 +9,7 @@
     "node": ">=14.14.0"
   },
   "files": [
-    "./dist/**/*"
+    "dist/"
   ],
   "dependencies": {
     "@types/sshpk": "^1.10.7",

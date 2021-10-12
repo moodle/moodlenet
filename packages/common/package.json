@@ -5,7 +5,7 @@
   "author": "https://github.com/aleclofabbro",
   "description": "backend and webapp shared libs and graphql",
   "files": [
-    "./lib/**/*"
+    "lib/"
   ],
   "dependencies": {
     "@graphql-codegen/cli": "^1.19.3",
