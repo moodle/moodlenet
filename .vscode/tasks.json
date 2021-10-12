@@ -17,9 +17,18 @@
         "webapp-gql-gen",
         "backend-gql-gen",
         "backend dev-build",
-        "webapp dev-build"
+        "webapp dev-build",
+        "ce-platform dev-build"
       ],
       "problemMatcher": []
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/ce-platform/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "ce-platform dev-build"
     },
     {
       "type": "typescript",
