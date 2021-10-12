@@ -17,7 +17,6 @@ export const addEdgeAssumptionsMap: AddEdgeAssumptionsMap = {
       }),
     }
   },
-  /// move following to SET EDGES
   Profile_Bookmarked_Collection: async ({ baseOperators: { _ } }) => ({ just: _(true) }),
   Profile_Bookmarked_Resource: async ({ baseOperators: { _ } }) => ({ just: _(true) }),
   Profile_Likes_Resource: async ({ baseOperators: { _ } }) => ({ just: _(true) }),

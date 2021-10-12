@@ -1,7 +1,6 @@
 import { AuthId, isAuthId, SessionEnv } from '@moodlenet/common/lib/types'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
-import { isString } from 'lodash'
 import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
 import { ns } from '../../lib/ns/namespace'
 import { plug } from '../../lib/plug'
@@ -83,7 +82,10 @@ export type ActivationEmailTokenObj = {
 }
 
 const isActivationEmailTokenObj = (_: any): _ is ActivationEmailTokenObj =>
-  isEmail(_?.email) && isString(_?.hashedPassword) && isString(_?.displayName) && isString(_?.authId)
+  isEmail(_?.email) &&
+  'string' === typeof _?.hashedPassword &&
+  'string' === typeof _?.displayName &&
+  'string' === typeof _?.authId
 export const createSession = plug(
   ns(__dirname, 'create-session'),
   async ({

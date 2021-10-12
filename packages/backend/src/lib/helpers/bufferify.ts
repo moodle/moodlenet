@@ -1,4 +1,3 @@
-import { cloneDeep } from 'lodash'
 type FileBag = {
   name: string
   data: Buffer
@@ -11,7 +10,7 @@ type BufferifyMeta = {
 
 export function bufferify(object: any, fileDataKeyPlaceholder: string) {
   const meta: BufferifyMeta = { files: [], key: fileDataKeyPlaceholder }
-  const clonedObject = cloneDeep(object)
+  const clonedObject = JSON.parse(JSON.stringify(object))
   const valueWithPlaceholders = bufferifyTraverse(meta)(clonedObject)
   const keyLenghtBuffer = Uint8Array.of(fileDataKeyPlaceholder.length)
   const keyBuffer = Buffer.from(fileDataKeyPlaceholder)
