@@ -1,6 +1,6 @@
 {
   "name": "my-moodlenet-backend",
-  "version": "0.0.1-beta.0.4",
+  "version": "0.0.1-beta.0.0",
   "namespace": {
     "root": [
       "lib",
@@ -15,7 +15,7 @@
     "node": ">=14.14.0"
   },
   "files": [
-    "lib/"
+    "./lib/**/*"
   ],
   "dependencies": {
     "@graphql-codegen/cli": "^1.19.3",
@@ -35,6 +35,8 @@
     "@graphql-tools/stitch": "^7.1.6",
     "@graphql-tools/stitching-directives": "^1.1.1",
     "@graphql-tools/wrap": "^7.0.5",
+    "my-moodlenet-common": "^0.0.1-beta.0.0",
+    "my-moodlenet-webapp": "^0.0.1-beta.0.0",
     "@types/amqplib": "^0.5.15",
     "@types/argon2": "^0.15.0",
     "@types/cors": "^2.8.9",
@@ -80,10 +82,8 @@
     "istextorbinary": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
     "mailgun-js": "^0.22.0",
-    "my-moodlenet-common": "^0.0.1-beta.0.4",
-    "my-moodlenet-webapp": "^0.0.1-beta.0.4",
     "node-dev": "^7.0.0",
-    "node-promise-retry": "^1.0.2",
+    "promise-retry": "^1.1.1",
     "nodemailer": "^6.6.1",
     "require-all": "^3.0.0",
     "run-script-os": "^1.1.3",
