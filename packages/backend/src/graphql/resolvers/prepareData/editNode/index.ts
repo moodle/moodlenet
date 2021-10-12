@@ -1,5 +1,5 @@
-import { EditNodeInput, EditNodeMutationError, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { DistOmit, Just } from '@moodlenet/common/lib/utils/types'
+import { EditNodeInput, EditNodeMutationError, NodeType } from 'my-moodlenet-common/lib/graphql/types.graphql.gen'
+import { DistOmit, Just } from 'my-moodlenet-common/lib/utils/types'
 import { EditNodeData, NewNodeData } from '../../../../ports/content-graph/node'
 import { editNodeMutationError, getAssetRefInputAndType, mapAssetRefInputsToAssetRefs } from '../../helpers'
 

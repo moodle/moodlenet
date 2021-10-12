@@ -1,4 +1,4 @@
-import Auth from '@moodlenet/common/lib/types'
+import Auth from 'my-moodlenet-common/lib/types'
 
 export type Context = {
   authSessionEnv: Auth.SessionEnv | null

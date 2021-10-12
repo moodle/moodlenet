@@ -1,6 +1,6 @@
-import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
-import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { isEdgeNodeOfType, narrowNodeType } from 'my-moodlenet-common/lib/graphql/helpers'
+import { ID } from 'my-moodlenet-common/lib/graphql/scalars.graphql'
+import { AssetRefInput } from 'my-moodlenet-common/lib/graphql/types.graphql.gen'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { useSeoContentId } from '../../../../context/Global/Seo'
@@ -20,7 +20,7 @@ import {
   useDelProfileRelationMutation,
   useEditProfileMutation,
   useProfilePageUserDataQuery,
-  useSendEmailToProfileMutation
+  useSendEmailToProfileMutation,
 } from './ProfileCtrl.gen'
 const newCollectionHref = href(mainPath.createNewCollection)
 const newResourceHref = href(mainPath.createNewResource)

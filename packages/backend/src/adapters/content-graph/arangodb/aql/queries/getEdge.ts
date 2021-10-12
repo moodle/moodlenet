@@ -1,7 +1,7 @@
-import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
-import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
-import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { BV } from 'my-moodlenet-common/lib/content-graph/bl/graph-lang'
+import { GraphEdge, GraphEdgeType } from 'my-moodlenet-common/lib/content-graph/types/edge'
+import { GraphNode } from 'my-moodlenet-common/lib/content-graph/types/node'
+import { EdgeType } from 'my-moodlenet-common/lib/graphql/types.graphql.gen'
 import { _ } from '../../adapters/bl/_'
 import { aqlGraphEdge2GraphEdge } from '../helpers'
 

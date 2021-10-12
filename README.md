@@ -98,7 +98,7 @@ yarn start-dev
 with backend process started on current terminal issue this command directly in the STDIN, to trigger initial DBs population:
 
 ```sh
-qmino: command::@moodlenet/backend::0.0.1::setup::initialContent##[{"domain":"moodlenet.dev"}]
+qmino: command::my-moodlenet-backend::0.0.1::setup::initialContent##[{"domain":"moodlenet.dev"}]
 ```
 
 and `enter`

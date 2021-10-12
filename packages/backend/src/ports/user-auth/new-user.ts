@@ -1,5 +1,5 @@
-import { newAuthId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
-import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
+import { newAuthId } from 'my-moodlenet-common/lib/utils/content-graph/slug-id'
+import { Routes, webappPath } from 'my-moodlenet-common/lib/webapp/sitemap'
 import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
 import { ns } from '../../lib/ns/namespace'
 import { plug } from '../../lib/plug'

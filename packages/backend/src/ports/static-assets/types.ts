@@ -1,4 +1,4 @@
-import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
+import { UploadType } from 'my-moodlenet-common/lib/staticAsset/lib'
 
 export type AssetId = string
 export type TempAssetId = string

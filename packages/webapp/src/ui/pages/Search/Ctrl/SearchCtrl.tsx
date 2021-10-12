@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro'
-import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
+import { isEdgeNodeOfType } from 'my-moodlenet-common/lib/graphql/helpers'
 import { useEffect, useMemo } from 'react'
 import { useGlobalSearchQuery } from '../../../../context/Global/GlobalSearch/globalSearch.gen'
 import { usePaginateSearch } from '../../../../context/Global/GlobalSearch/paginate'

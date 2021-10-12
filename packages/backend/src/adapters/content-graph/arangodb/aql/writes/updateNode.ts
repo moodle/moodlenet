@@ -1,5 +1,5 @@
-import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
-import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
+import { BV } from 'my-moodlenet-common/lib/content-graph/bl/graph-lang'
+import { GraphNode, GraphNodeType } from 'my-moodlenet-common/lib/content-graph/types/node'
 import { aq } from '../../../../../lib/helpers/arango/query'
 import { EditNodeData } from '../../../../../ports/content-graph/node'
 import { aqlGraphNode2GraphNode, graphNode2AqlIdentifier } from '../helpers'

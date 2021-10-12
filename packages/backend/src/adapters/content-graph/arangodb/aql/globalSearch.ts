@@ -1,5 +1,5 @@
-import { GlobalSearchNodeType } from '@moodlenet/common/lib/content-graph/types/global-search'
-import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
+import { GlobalSearchNodeType } from 'my-moodlenet-common/lib/content-graph/types/global-search'
+import { GraphNode } from 'my-moodlenet-common/lib/content-graph/types/node'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { GlobalSearchInput } from '../../../../ports/content-graph/search'
 import { _ } from '../adapters/bl/_'
