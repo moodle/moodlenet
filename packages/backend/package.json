@@ -1,6 +1,6 @@
 {
   "name": "my-moodlenet-backend",
-  "version": "0.0.1-beta.0.3",
+  "version": "0.0.1-beta.0.4",
   "namespace": {
     "root": [
       "lib",
@@ -80,8 +80,8 @@
     "istextorbinary": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
     "mailgun-js": "^0.22.0",
-    "my-moodlenet-common": "^0.0.1-beta.0.3",
-    "my-moodlenet-webapp": "^0.0.1-beta.0.3",
+    "my-moodlenet-common": "^0.0.1-beta.0.4",
+    "my-moodlenet-webapp": "^0.0.1-beta.0.4",
     "node-dev": "^7.0.0",
     "node-promise-retry": "^1.0.2",
     "nodemailer": "^6.6.1",
