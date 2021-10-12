@@ -8,6 +8,7 @@ import { startMNHttpServer } from '../adapters/http/MNHTTPServer'
 import { createStaticAssetsApp } from '../adapters/http/staticAssetsApp'
 import { createWebfingerApp } from '../adapters/http/webfingerApp'
 import { getFsAssetAdapters } from '../adapters/staticAssets/fs/setup'
+import { sharpProcessTempAsset } from '../adapters/staticAssets/processTempAsset/sharp'
 import * as userAuthAdapters from '../adapters/user-auth/arangodb/adapters'
 import { getVersionedDBOrThrow } from '../lib/helpers/arango/migrate/lib'
 import { checkAndLogUnboundPlugRegistrations, socket } from '../lib/plug'
@@ -94,6 +95,7 @@ export const startDefaultMoodlenet = async ({
   socket(staticAsset.temp.createTempAssetAdapter, fsAssetAdapters.createTempAssetAdapter)
   socket(staticAsset.asset.getAssetAdapter, fsAssetAdapters.getAssetAdapter)
   socket(staticAsset.asset.delAssetAdapter, fsAssetAdapters.delAssetAdapter)
+  socket(staticAsset.asset.processTempAssetAdapter, sharpProcessTempAsset)
 
   const graphqlApp = createGraphQLApp({
     additionalResolvers: null,

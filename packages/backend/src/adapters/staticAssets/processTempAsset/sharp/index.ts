@@ -1,16 +1,13 @@
 import sharp from 'sharp'
-import { Readable } from 'stream'
-import { TempAssetDesc, TempAssetId, TempFileDesc } from '../../ports/static-assets/types'
+import { SockOf } from '../../../../lib/plug'
+import { processTempAssetAdapter } from '../../../../ports/static-assets/asset'
+import { TempAssetDesc, TempAssetId, TempFileDesc } from '../../../../ports/static-assets/types'
 
-export const processTempAsset = ({
+export const sharpProcessTempAsset: SockOf<typeof processTempAssetAdapter> = async ({
   originalAssetStream,
   tempFileDesc,
   tempAssetId,
-}: {
-  originalAssetStream: Readable
-  tempFileDesc: TempFileDesc
-  tempAssetId: TempAssetId
-}): [Readable, TempAssetDesc] => {
+}) => {
   const tempAssetDesc = getTempAssetDesc(tempFileDesc, tempAssetId)
   if (tempFileDesc.uploadType === 'resource') {
     return [originalAssetStream, tempAssetDesc]
