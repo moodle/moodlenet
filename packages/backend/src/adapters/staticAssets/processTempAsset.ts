@@ -11,10 +11,6 @@ export const processTempAsset = ({
   tempFileDesc: TempFileDesc
   tempAssetId: TempAssetId
 }): [Readable, TempAssetDesc] => {
-  // console.log({
-  //   tempFileDesc,
-  //   tempAssetId,
-  // })
   const tempAssetDesc = getTempAssetDesc(tempFileDesc, tempAssetId)
   if (tempFileDesc.uploadType === 'resource') {
     return [originalAssetStream, tempAssetDesc]
@@ -23,13 +19,10 @@ export const processTempAsset = ({
   const imagePipeline = sharpImagePipeline[tempFileDesc.uploadType]()
   originalAssetStream.pipe(imagePipeline)
   const jpgTmpAssetDesc = getImageTempAssetDesc(tempAssetDesc)
-  // console.log({
-  //   jpgTmpAssetDesc,
-  // })
   return [imagePipeline, jpgTmpAssetDesc]
 }
 
-export const getImageTempAssetDesc = (tempAssetDesc: TempAssetDesc) => {
+const getImageTempAssetDesc = (tempAssetDesc: TempAssetDesc) => {
   const jpgTmpAssetDesc: TempAssetDesc = {
     ...tempAssetDesc,
     mimetype: 'image/jpeg',
@@ -41,7 +34,7 @@ export const getImageTempAssetDesc = (tempAssetDesc: TempAssetDesc) => {
   return jpgTmpAssetDesc
 }
 
-export const getTempAssetDesc = (tempFileDesc: TempFileDesc, tempAssetId: TempAssetId) => {
+const getTempAssetDesc = (tempFileDesc: TempFileDesc, tempAssetId: TempAssetId) => {
   const _splitname = !tempFileDesc.name ? null : tempFileDesc.name.split('.')
   const ext = (_splitname && _splitname.pop()) || null
   const originalBaseName = _splitname && _splitname.join('.')

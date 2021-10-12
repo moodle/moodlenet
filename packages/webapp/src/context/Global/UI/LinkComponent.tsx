@@ -25,11 +25,14 @@ const ReactRouterLinkComponent: LinkComponentType = props => {
     )
   } else {
     const { href, externalClassName, externalStyle, ...restProps } = props
-    const LinkComp = props.activeClassName || props.activeStyle ? NavLink : Link
-    return (
-      <LinkComp {...restProps} to={href.url} ref={null}>
+    return props.activeClassName || props.activeStyle ? (
+      <NavLink {...restProps} to={href.url} ref={null}>
         {props.children}
-      </LinkComp>
+      </NavLink>
+    ) : (
+      <Link {...restProps} to={href.url} ref={null}>
+        {props.children}
+      </Link>
     )
   }
 }
