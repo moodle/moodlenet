@@ -1,6 +1,0 @@
-**/node_modules
-./.docker*
-./docker*
-.gitignore
-./packages/common/lib
-./packages/backend/lib
