@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var dotenv = require('dotenv')
 var dotenvExpand = require('dotenv-expand')
 
