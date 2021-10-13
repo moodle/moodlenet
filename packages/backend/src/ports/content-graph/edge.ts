@@ -1,16 +1,16 @@
 // create
 
-import { Assumptions, BV } from 'my-moodlenet-common/lib/content-graph/bl/graph-lang'
+import { Assumptions, BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
 import {
   AddEdgeAssumptionsMap,
   AddEdgeOperators,
   getAddEdgeAssumptions,
-} from 'my-moodlenet-common/lib/content-graph/bl/graph-lang/AddEdge'
-import { GraphEdge, GraphEdgeIdentifier, GraphEdgeType } from 'my-moodlenet-common/lib/content-graph/types/edge'
-import { GraphNode, GraphNodeIdentifier } from 'my-moodlenet-common/lib/content-graph/types/node'
-import { SessionEnv } from 'my-moodlenet-common/lib/types'
-import { newGlyphPermId } from 'my-moodlenet-common/lib/utils/content-graph/slug-id'
-import { DistOmit } from 'my-moodlenet-common/lib/utils/types'
+} from '@moodlenet/common/lib/content-graph/bl/graph-lang/AddEdge'
+import { GraphEdge, GraphEdgeIdentifier, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphNode, GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
+import { SessionEnv } from '@moodlenet/common/lib/types'
+import { newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { ns } from '../../lib/ns/namespace'
 import { plug, value } from '../../lib/plug'
 import { getBaseOperatorsAdapter, getGraphOperatorsAdapter } from './common'

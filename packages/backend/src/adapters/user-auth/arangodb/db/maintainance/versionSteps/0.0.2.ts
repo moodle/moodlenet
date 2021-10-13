@@ -1,5 +1,5 @@
-import { DefaultConfig } from 'my-moodlenet-common/lib/content-graph/initialData/user-auth/defaultConfig'
-import { pick } from 'my-moodlenet-common/lib/utils/object'
+import { DefaultConfig } from '@moodlenet/common/lib/content-graph/initialData/user-auth/defaultConfig'
+import { pick } from '@moodlenet/common/lib/utils/object'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
 import { aqlstr, justExecute } from '../../../../../../lib/helpers/arango/query'
 import { MNStaticEnv } from '../../../../../../lib/types'

@@ -1,6 +1,6 @@
+import { edgeTypes } from '@moodlenet/common/lib/content-graph/types/edge'
+import { nodeTypes } from '@moodlenet/common/lib/content-graph/types/node'
 import { Database } from 'arangojs'
-import { edgeTypes } from 'my-moodlenet-common/lib/content-graph/types/edge'
-import { nodeTypes } from 'my-moodlenet-common/lib/content-graph/types/node'
 import { ensureEdgeIndexes_0_0_1 } from './ensureEdgeIndexes0_0_1'
 
 export const createDBCollections = async ({ db }: { db: Database }) => {

@@ -1,5 +1,5 @@
-import { CreateEdgeInput, CreateEdgeMutationError, EdgeType } from 'my-moodlenet-common/lib/graphql/types.graphql.gen'
-import { Just } from 'my-moodlenet-common/lib/utils/types'
+import { CreateEdgeInput, CreateEdgeMutationError, EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { Just } from '@moodlenet/common/lib/utils/types'
 import { NewEdgeInput } from '../../../../ports/content-graph/edge'
 
 const edgeDocumentDataBaker: {

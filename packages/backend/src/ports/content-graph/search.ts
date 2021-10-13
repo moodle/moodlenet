@@ -1,8 +1,8 @@
-import { GlobalSearchNodeType, GlobalSearchSort } from 'my-moodlenet-common/lib/content-graph/types/global-search'
-import { GraphNode } from 'my-moodlenet-common/lib/content-graph/types/node'
-import { Page, PaginationInput } from 'my-moodlenet-common/lib/content-graph/types/page'
-import { SessionEnv } from 'my-moodlenet-common/lib/types'
-import { Maybe } from 'my-moodlenet-common/lib/utils/types'
+import { GlobalSearchNodeType, GlobalSearchSort } from '@moodlenet/common/lib/content-graph/types/global-search'
+import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
+import { Page, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
+import { SessionEnv } from '@moodlenet/common/lib/types'
+import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { ns } from '../../lib/ns/namespace'
 import { plug } from '../../lib/plug'
 

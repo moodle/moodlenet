@@ -1,5 +1,5 @@
+import { isSessionEnv, SessionEnv } from '@moodlenet/common/lib/types'
 import { RequestHandler } from 'express'
-import { isSessionEnv, SessionEnv } from 'my-moodlenet-common/lib/types'
 import { INVALID_JWT_TOKEN, jwtVerifierAdapter } from '../../ports/user-auth/adapters'
 
 export const execEnvMiddleware: RequestHandler = async (req, _res, next) => {

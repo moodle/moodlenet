@@ -1,6 +1,6 @@
 {
-  "name": "my-moodlenet-backend",
-  "version": "0.0.1-beta.0.8",
+  "name": "@moodlenet/backend",
+  "version": "2.0.0-beta.0.8",
   "namespace": {
     "root": [
       "lib",
@@ -42,7 +42,7 @@
     "graphql-middleware": "^4.0.2",
     "istextorbinary": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
-    "my-moodlenet-common": "^0.0.1-beta.0.8",
+    "@moodlenet/common": "^2.0.0-beta.0.8",
     "nodemailer": "^6.6.1",
     "promise-retry": "^1.1.1",
     "require-all": "^3.0.0",

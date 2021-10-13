@@ -1,5 +1,5 @@
+import { nodeIdentifierSlug2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import express from 'express'
-import { nodeIdentifierSlug2UrlPath } from 'my-moodlenet-common/lib/webapp/sitemap/helpers'
 import { byIdentifier } from '../../ports/content-graph/node'
 
 export type WebFingerResp = {

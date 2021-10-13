@@ -4,8 +4,8 @@
 //   GraphNodeIdentifierSlug,
 //   // GraphNodeIdentifierSlug,
 //   GraphNodeType,
-// } from 'my-moodlenet-common/lib/content-graph/types/node'
-// import { AuthId } from 'my-moodlenet-common/lib/types'
+// } from '@moodlenet/common/lib/content-graph/types/node'
+// import { AuthId } from '@moodlenet/common/lib/types'
 // import { aq, aqlstr, AqlVar } from '../../../../../lib/helpers/arango/query'
 // import { AqlGraphNodeByType } from '../../types'
 

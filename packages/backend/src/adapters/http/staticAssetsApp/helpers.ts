@@ -1,10 +1,10 @@
+import { isUploadType, UploadType } from '@moodlenet/common/lib/staticAsset/lib'
+import { pick } from '@moodlenet/common/lib/utils/object'
 import { Request } from 'express'
 import { fromFile } from 'file-type'
 import Formidable, { File } from 'formidable'
 import { readFile } from 'fs/promises'
 import { isText } from 'istextorbinary'
-import { isUploadType, UploadType } from 'my-moodlenet-common/lib/staticAsset/lib'
-import { pick } from 'my-moodlenet-common/lib/utils/object'
 
 export type RespError = [errCode: number, msg: any, _: typeof _RespError]
 const _RespError = Symbol('RespError')

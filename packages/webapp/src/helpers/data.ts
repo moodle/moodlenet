@@ -1,5 +1,5 @@
-import { AssetRef } from 'my-moodlenet-common/lib/graphql/scalars.graphql'
-import { getAssetRefUrl, UploadType } from 'my-moodlenet-common/lib/staticAsset/lib'
+import { AssetRef } from '@moodlenet/common/lib/graphql/scalars.graphql'
+import { getAssetRefUrl, UploadType } from '@moodlenet/common/lib/staticAsset/lib'
 import { useMemo } from 'react'
 import { Tuple } from 'tuple-type'
 import { STATIC_ASSET_BASE } from '../constants'

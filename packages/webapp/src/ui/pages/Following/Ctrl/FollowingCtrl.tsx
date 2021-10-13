@@ -1,4 +1,4 @@
-import { isEdgeNodeOfType, narrowNodeType } from 'my-moodlenet-common/lib/graphql/helpers'
+import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { useEffect, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
 import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'

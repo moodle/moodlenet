@@ -1,4 +1,4 @@
-import { BaseOperators, _T } from 'my-moodlenet-common/lib/content-graph/bl/graph-lang'
+import { BaseOperators, _T } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
 import { aqlstr, getOneResult } from '../../../../../lib/helpers/arango/query'
 import { SockOf } from '../../../../../lib/plug'
 import { getBaseOperatorsAdapter } from '../../../../../ports/content-graph/common'

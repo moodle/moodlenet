@@ -1,8 +1,8 @@
 import { makeExecutableSchema } from '@graphql-tools/schema'
+import introspection from '@moodlenet/common/lib/graphql/introspection'
 import { Application, Request } from 'express'
 import { graphqlHTTP } from 'express-graphql'
 import { buildClientSchema, graphql, print, printSchema } from 'graphql'
-import introspection from 'my-moodlenet-common/lib/graphql/introspection'
 import { getGQLResolvers } from '../../graphql/resolvers'
 import { RootValue } from '../../graphql/types'
 
