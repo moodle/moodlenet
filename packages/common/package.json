@@ -38,7 +38,7 @@
     "clean-build": "rm -rf lib && yarn build",
     "build": "tsc && yarn gen:graphql:types && tsc",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
-    "_prepublish": "yarn clean-build"
+    "prepublish": "yarn clean-build"
   },
   "gitHead": "53aac3f3bc4f9d4fcfe9f8a51eaa3e113ba57e44"
 }
