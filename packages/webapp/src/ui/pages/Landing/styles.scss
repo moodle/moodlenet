@@ -92,6 +92,10 @@
           }
         }
       }
+      >.actions {
+        display: flex;
+        gap: 15px;
+      }
     }
 
     > .trend-card {

@@ -22,7 +22,7 @@ export type LandingProps = {
 
 export const Landing = withCtrl<LandingProps>(
   ({ headerPageTemplateProps, trendCardProps, organization, image, setSearchText, isAuthenticated, signUpHref }) => {
-    const docsCard = (
+    /* const docsCard = (
       <TextCard className="intro-card">
         <Trans>MoodleNet is currently in Beta version. Learn more about MoodleNet in our Docs.</Trans>
         <a href="https://docs.moodle.org/moodlenet/Main_Page" target="_blank" rel="noreferrer">
@@ -31,7 +31,7 @@ export const Landing = withCtrl<LandingProps>(
           </SecondaryButton>
         </a>
       </TextCard>
-    )
+    ) */
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps} hideSearchbox={true}>
@@ -72,15 +72,22 @@ export const Landing = withCtrl<LandingProps>(
                 {organization.name !== 'MoodleNet' && image && (
                   <img className="text-image" src={image} alt="Background" />
                 )}
-                {!isAuthenticated && signUpHref && (
-                  <Link href={signUpHref}>
-                    <PrimaryButton>
-                      <Trans>Join now</Trans>
-                    </PrimaryButton>
-                  </Link>
-                )}
+                <div className="actions">
+                  {!isAuthenticated && signUpHref && (
+                    <Link href={signUpHref}>
+                      <PrimaryButton>
+                        <Trans>Join now</Trans>
+                      </PrimaryButton>
+                    </Link>
+                  )}
+                  <a href="https://docs.moodle.org/moodlenet/Main_Page" target="_blank" rel="noreferrer">
+                    <SecondaryButton color="grey">
+                      <Trans>Go to Docs</Trans>
+                    </SecondaryButton>
+                  </a>
+                </div>
               </TextCard>
-              {docsCard}
+              {/* {docsCard} */}
               <TrendCard {...trendCardProps} />
             </div>
             <div className="side-column">
