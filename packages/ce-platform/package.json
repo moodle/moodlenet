@@ -16,7 +16,6 @@
     "env.js"
   ],
   "dependencies": {
-    "@types/sshpk": "^1.10.7",
     "arangojs": "^7.1.0",
     "dotenv": "^8.2.0",
     "dotenv-expand": "^5.1.0",
@@ -24,6 +23,10 @@
     "my-moodlenet-common": "^0.0.1-beta.0.4",
     "my-moodlenet-webapp": "^0.0.1-beta.0.4",
     "sshpk": "^1.16.1"
+  },
+  "devDependencies": {
+    "@types/sshpk": "^1.10.7",
+    "typescript": "^4.4.3"
   },
   "scripts": {
     "clean-build": "rm -rf dist && yarn build",

@@ -8,6 +8,14 @@
     "lib/"
   ],
   "dependencies": {
+    "graphql": "^15.4.0",
+    "nanoid": "^3.1.23",
+    "path-to-regexp": "^6.2.0",
+    "run-script-os": "^1.1.5",
+    "slugifyjs": "^0.0.7",
+    "yup": "^0.32.8"
+  },
+  "devDependencies": {
     "@graphql-codegen/cli": "^1.19.3",
     "@graphql-codegen/fragment-matcher": "^2.0.1",
     "@graphql-codegen/introspection": "^1.18.1",
@@ -20,15 +28,8 @@
     "@types/nanoid": "^3.0.0",
     "@types/path-to-regexp": "^1.7.0",
     "@types/yup": "^0.29.11",
-    "boolean-expressions": "^1.1.1",
-    "graphql": "^15.4.0",
     "graphql-cli": "^4.1.0",
-    "nanoid": "^3.1.23",
-    "path-to-regexp": "^6.2.0",
-    "run-script-os": "^1.1.5",
-    "slugifyjs": "^0.0.7",
-    "typescript": "^4.4.3",
-    "yup": "^0.32.8"
+    "typescript": "^4.4.3"
   },
   "scripts": {
     "clean-build": "rm -rf lib && yarn build",
