@@ -8,6 +8,9 @@
     "build/",
     "publicFolder.js"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@apollo/client": "^3.4.11",
     "@lingui/macro": "^3.5.0",
@@ -115,5 +118,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "gitHead": "53aac3f3bc4f9d4fcfe9f8a51eaa3e113ba57e44"
 }

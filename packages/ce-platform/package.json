@@ -15,6 +15,9 @@
     "dist/",
     "env.js"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@moodlenet/backend": "^2.0.0-beta.0.11",
     "@moodlenet/common": "^2.0.0-beta.0.11",
@@ -34,5 +37,6 @@
     "build": "tsc",
     "start": "NODE_ENV=production node ./start.js",
     "start-dev": "NODE_ENV=development node-dev --inspect --deps 4 --respawn --notify=false ./start.js "
-  }
+  },
+  "gitHead": "53aac3f3bc4f9d4fcfe9f8a51eaa3e113ba57e44"
 }
