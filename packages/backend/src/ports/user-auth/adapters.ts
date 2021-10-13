@@ -14,6 +14,9 @@ export const getLatestConfigAdapter = plug<() => Promise<UserAuthConfig>>(ns(__d
 // TODO: this is a core/http plug .. move
 export const localDomainAdapter = value<string>(ns(__dirname, 'local-domain-adapter'))
 
+// TODO: this is a core/http plug .. move
+export const publicUrlAdapter = value<string>(ns(__dirname, 'public-url-adapter'))
+
 export const getActiveUserByAuthAdapter = plug<(_: { authId: AuthId }) => Promise<Maybe<ActiveUser>>>(
   ns(__dirname, 'get-active-user-by-auth-adapter'),
 )

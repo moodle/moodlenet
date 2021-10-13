@@ -11,9 +11,9 @@ import {
   getLatestConfigAdapter,
   jwtSignerAdapter,
   jwtVerifierAdapter,
-  localDomainAdapter,
   passwordHasher,
   passwordVerifier,
+  publicUrlAdapter,
   saveActiveUserAdapter,
   sendEmailAdapter,
 } from './adapters'
@@ -59,12 +59,12 @@ export const recoverPasswordEmail = plug(
       { authId: activeUser.authId, email },
       recoverPasswordEmailExpiresSecs,
     )
-    const publicBaseUrl = await localDomainAdapter()
+    const publicBaseUrl = await publicUrlAdapter()
     const emailObj = fillEmailTemplate({
       template: recoverPasswordEmail,
       to: email,
       vars: {
-        link: `https://${publicBaseUrl}${webappPath<Routes.NewPassword>('/new-password/:token', {
+        link: `${publicBaseUrl}${webappPath<Routes.NewPassword>('/new-password/:token', {
           token: recoverPasswordJwt,
         })}`,
       },
