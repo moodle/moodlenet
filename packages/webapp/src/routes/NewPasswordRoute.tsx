@@ -1,4 +1,4 @@
-import { Routes } from 'my-moodlenet-common/lib/webapp/sitemap'
+import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
 import { ctrlHook } from '../ui/lib/ctrl'
 import { useNewPasswordCtrl } from '../ui/pages/Access/NewPassword/Ctrl/NewPassword'
 import { NewPassword } from '../ui/pages/Access/NewPassword/NewPassword'

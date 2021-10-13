@@ -1,20 +1,20 @@
+import * as contentGraphAd from '@moodlenet/backend/lib/adapters/content-graph/arangodb/adapters'
+import * as cryptoAdapters from '@moodlenet/backend/lib/adapters/crypto'
+import { getNodemailerSendEmailAdapter } from '@moodlenet/backend/lib/adapters/emailSender/nodemailer/nodemailer'
+import { createGraphQLApp } from '@moodlenet/backend/lib/adapters/http/graphqlApp'
+import { startMNHttpServer } from '@moodlenet/backend/lib/adapters/http/MNHTTPServer'
+import { createStaticAssetsApp } from '@moodlenet/backend/lib/adapters/http/staticAssetsApp'
+import { createWebfingerApp } from '@moodlenet/backend/lib/adapters/http/webfingerApp'
+import { getFsAssetAdapters } from '@moodlenet/backend/lib/adapters/staticAssets/fs/setup'
+import { sharpProcessTempAsset } from '@moodlenet/backend/lib/adapters/staticAssets/processTempAsset/sharp'
+import * as userAuthAdapters from '@moodlenet/backend/lib/adapters/user-auth/arangodb/adapters'
+import { getVersionedDBOrThrow } from '@moodlenet/backend/lib/lib/helpers/arango/migrate/lib'
+import { checkAndLogUnboundPlugRegistrations, socket } from '@moodlenet/backend/lib/lib/plug'
+import * as contentGraph from '@moodlenet/backend/lib/ports/content-graph'
+import * as staticAsset from '@moodlenet/backend/lib/ports/static-assets'
+import * as userAuth from '@moodlenet/backend/lib/ports/user-auth'
+import { getAddEdgeAssumptionsMap } from '@moodlenet/common/lib/content-graph/bl/rules/addEdgeAssumptions'
 import { Database } from 'arangojs'
-import * as contentGraphAd from 'my-moodlenet-backend/lib/adapters/content-graph/arangodb/adapters'
-import * as cryptoAdapters from 'my-moodlenet-backend/lib/adapters/crypto'
-import { getNodemailerSendEmailAdapter } from 'my-moodlenet-backend/lib/adapters/emailSender/nodemailer/nodemailer'
-import { createGraphQLApp } from 'my-moodlenet-backend/lib/adapters/http/graphqlApp'
-import { startMNHttpServer } from 'my-moodlenet-backend/lib/adapters/http/MNHTTPServer'
-import { createStaticAssetsApp } from 'my-moodlenet-backend/lib/adapters/http/staticAssetsApp'
-import { createWebfingerApp } from 'my-moodlenet-backend/lib/adapters/http/webfingerApp'
-import { getFsAssetAdapters } from 'my-moodlenet-backend/lib/adapters/staticAssets/fs/setup'
-import { sharpProcessTempAsset } from 'my-moodlenet-backend/lib/adapters/staticAssets/processTempAsset/sharp'
-import * as userAuthAdapters from 'my-moodlenet-backend/lib/adapters/user-auth/arangodb/adapters'
-import { getVersionedDBOrThrow } from 'my-moodlenet-backend/lib/lib/helpers/arango/migrate/lib'
-import { checkAndLogUnboundPlugRegistrations, socket } from 'my-moodlenet-backend/lib/lib/plug'
-import * as contentGraph from 'my-moodlenet-backend/lib/ports/content-graph'
-import * as staticAsset from 'my-moodlenet-backend/lib/ports/static-assets'
-import * as userAuth from 'my-moodlenet-backend/lib/ports/user-auth'
-import { getAddEdgeAssumptionsMap } from 'my-moodlenet-common/lib/content-graph/bl/rules/addEdgeAssumptions'
 import { DefaultDeployEnv } from './env'
 import { setupDb } from './setup/db'
 
@@ -106,7 +106,7 @@ export const startDefaultMoodlenet = async ({
   })
   const assetsApp = createStaticAssetsApp({})
   const webfingerApp = createWebfingerApp({ domain })
-  const [webappRootDir, defaultHtml] = require('my-moodlenet-webapp/publicFolder') as [string, string]
+  const [webappRootDir, defaultHtml] = require('@moodlenet/webapp/publicFolder') as [string, string]
   await startMNHttpServer({
     httpPort: http.port,
     startServices: {

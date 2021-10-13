@@ -1,6 +1,6 @@
 {
-  "name": "my-moodlenet-webapp",
-  "version": "0.0.1-beta.0.9",
+  "name": "@moodlenet/webapp",
+  "version": "2.0.0-beta.0.9",
   "license": "AGPL",
   "description": "MoodleNet Webapp",
   "author": "https://github.com/aleclofabbro",
@@ -20,7 +20,7 @@
     "formik": "^2.2.6",
     "graphql": "^15.5.0",
     "moment": "^2.29.1",
-    "my-moodlenet-common": "^0.0.1-beta.0.8",
+    "@moodlenet/common": "^2.0.0-beta.0.8",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-helmet": "^6.1.0",

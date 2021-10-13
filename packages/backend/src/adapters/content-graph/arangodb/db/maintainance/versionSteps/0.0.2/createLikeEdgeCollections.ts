@@ -1,5 +1,5 @@
+import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { Database } from 'arangojs'
-import { EdgeType } from 'my-moodlenet-common/lib/graphql/types.graphql.gen'
 import { ensureEdgeIndexes_0_0_2 } from './ensureEdgeIndexes0_0_2'
 
 export const createLikeEdgeCollections = async ({ db }: { db: Database }) => {

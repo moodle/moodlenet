@@ -1,5 +1,5 @@
-import { GraphNodeIdentifier, Profile } from 'my-moodlenet-common/lib/content-graph/types/node'
-import { SessionEnv } from 'my-moodlenet-common/lib/types'
+import { GraphNodeIdentifier, Profile } from '@moodlenet/common/lib/content-graph/types/node'
+import { SessionEnv } from '@moodlenet/common/lib/types'
 import { ns } from '../../lib/ns/namespace'
 import { plug } from '../../lib/plug'
 import { getBaseOperatorsAdapter, getGraphOperatorsAdapter } from './common'

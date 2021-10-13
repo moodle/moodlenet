@@ -1,5 +1,5 @@
-import { isEdgeNodeOfType } from 'my-moodlenet-common/lib/graphql/helpers'
-import { nodeGqlId2UrlPath } from 'my-moodlenet-common/lib/webapp/sitemap/helpers'
+import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { useEffect, useMemo } from 'react'
 import { useSession } from '../../../../context/Global/Session'
 import { useHeaderCtrl } from '../../../components/molecules/Header/Ctrl/HeaderCtrl'

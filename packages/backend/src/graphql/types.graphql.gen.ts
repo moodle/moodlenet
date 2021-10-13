@@ -1,4 +1,4 @@
-import * as Types from 'my-moodlenet-common/lib/graphql/types.graphql.gen'
+import * as Types from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { Context, RootValue } from './types';
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;

@@ -1,5 +1,5 @@
+import { getFileFormats } from '@moodlenet/common/lib/content-graph/initialData/file-format/fileFormats'
 import { Database } from 'arangojs'
-import { getFileFormats } from 'my-moodlenet-common/lib/content-graph/initialData/file-format/fileFormats'
 import { justExecute } from '../../../../../../../lib/helpers/arango/query'
 import { createNodeQ } from '../../../../aql/writes/createNode'
 

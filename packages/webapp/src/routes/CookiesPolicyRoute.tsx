@@ -1,4 +1,4 @@
-import { Routes } from 'my-moodlenet-common/lib/webapp/sitemap'
+import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
 import { ctrlHook } from '../ui/lib/ctrl'
 import { CookiesPolicy } from '../ui/pages/Policies/CookiesPolicy/CookiesPolicy'
 import { useCookiesPolicyCtrl } from '../ui/pages/Policies/CookiesPolicy/Ctrl/CookiesPolicyCtrl'

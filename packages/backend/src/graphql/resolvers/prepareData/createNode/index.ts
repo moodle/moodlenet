@@ -1,6 +1,6 @@
-import { Collection, Resource } from 'my-moodlenet-common/lib/content-graph/types/node'
-import { CreateNodeInput, CreateNodeMutationError, NodeType } from 'my-moodlenet-common/lib/graphql/types.graphql.gen'
-import { Just } from 'my-moodlenet-common/lib/utils/types'
+import { Collection, Resource } from '@moodlenet/common/lib/content-graph/types/node'
+import { CreateNodeInput, CreateNodeMutationError, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { Just } from '@moodlenet/common/lib/utils/types'
 import { NewNodeData } from '../../../../ports/content-graph/node'
 import { createNodeMutationError, getAssetRefInputAndType, mapAssetRefInputsToAssetRefs } from '../../helpers'
 

@@ -1,4 +1,4 @@
-import { Routes } from 'my-moodlenet-common/lib/webapp/sitemap'
+import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
 import { ctrlHook } from '../ui/lib/ctrl'
 import { useSearchCtrl } from '../ui/pages/Search/Ctrl/SearchCtrl'
 import { Search } from '../ui/pages/Search/Search'

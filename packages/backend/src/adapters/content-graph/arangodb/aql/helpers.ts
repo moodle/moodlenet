@@ -1,6 +1,6 @@
-import { BV } from 'my-moodlenet-common/lib/content-graph/bl/graph-lang'
-import { GraphNode } from 'my-moodlenet-common/lib/content-graph/types/node'
-import { Page, PageInfo, PageItem, PaginationInput } from 'my-moodlenet-common/lib/content-graph/types/page'
+import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
+import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
+import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
 import { AQ, aqlstr } from '../../../../lib/helpers/arango/query'
 
 export const cursorPaginatedQuery = <T>({

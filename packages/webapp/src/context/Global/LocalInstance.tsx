@@ -1,4 +1,4 @@
-import { narrowNodeType } from 'my-moodlenet-common/lib/graphql/helpers'
+import { narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
 import { FC, useMemo } from 'react'
 import { getMaybeAssetRefUrl } from '../../helpers/data'
 import { createCtx } from '../../lib/context'

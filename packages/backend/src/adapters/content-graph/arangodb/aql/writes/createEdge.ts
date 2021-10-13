@@ -1,8 +1,8 @@
-import { Assumptions, BV } from 'my-moodlenet-common/lib/content-graph/bl/graph-lang'
-import { GraphEdge, GraphEdgeType } from 'my-moodlenet-common/lib/content-graph/types/edge'
-import { GraphNode } from 'my-moodlenet-common/lib/content-graph/types/node'
-import { omit } from 'my-moodlenet-common/lib/utils/object'
-import { DistOmit } from 'my-moodlenet-common/lib/utils/types'
+import { Assumptions, BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
+import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
+import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
+import { omit } from '@moodlenet/common/lib/utils/object'
+import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
 import { AqlGraphEdge } from '../../types'
 import { aqlGraphEdge2GraphEdge, graphNode2AqlId } from '../helpers'
@@ -60,9 +60,9 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
   return q
 }
 
-// import { EdgeType } from 'my-moodlenet-common/lib/graphql/types.graphql.gen'
-// import { BLRule } from 'my-moodlenet-common/lib/content-graph/types/common'
-// import { Id, nodeTypeFromCheckedId } from 'my-moodlenet-common/lib/utils/content-graph/id-key-type-guards'
+// import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
+// import { BLRule } from '@moodlenet/common/lib/content-graph/types/common'
+// import { Id, nodeTypeFromCheckedId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 // import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 // import { DocumentEdgeByType, DocumentEdgeDataByType } from '../graphql/types'
 // import { createEdgeMergePatch, isMarkDeleted, toDocumentEdgeOrNode } from './helpers'

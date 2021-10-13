@@ -1,13 +1,8 @@
-import { BV } from 'my-moodlenet-common/lib/content-graph/bl/graph-lang'
-import {
-  GraphNode,
-  GraphNodeIdentifier,
-  GraphNodeType,
-  Profile,
-} from 'my-moodlenet-common/lib/content-graph/types/node'
-import { SessionEnv } from 'my-moodlenet-common/lib/types'
-import { newGlyphIdentifiers, newGlyphPermId } from 'my-moodlenet-common/lib/utils/content-graph/slug-id'
-import { DistOmit } from 'my-moodlenet-common/lib/utils/types'
+import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
+import { GraphNode, GraphNodeIdentifier, GraphNodeType, Profile } from '@moodlenet/common/lib/content-graph/types/node'
+import { SessionEnv } from '@moodlenet/common/lib/types'
+import { newGlyphIdentifiers, newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { ns } from '../../lib/ns/namespace'
 import { plug } from '../../lib/plug'
 import { getBaseOperatorsAdapter, getGraphOperatorsAdapter } from './common'

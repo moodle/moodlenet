@@ -1,5 +1,5 @@
-import { nodeSlugId } from 'my-moodlenet-common/lib/utils/content-graph/id-key-type-guards'
-import { Maybe } from 'my-moodlenet-common/lib/utils/types'
+import { nodeSlugId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { iscedFields, iscedGrades, iso639_3, licenses, resourceTypes } from '../constants/wellKnownNodes'
 import {
   CategoriesDropdown,

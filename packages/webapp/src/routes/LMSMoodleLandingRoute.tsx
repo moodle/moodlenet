@@ -1,4 +1,4 @@
-import { Routes } from 'my-moodlenet-common/lib/webapp/sitemap'
+import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
 import { ctrlHook } from '../ui/lib/ctrl'
 import { useLmsMoodleLandingCtrl } from '../ui/pages/LmsMoodleLanding/Ctrl/LmsMoodleLandingCtrl'
 import { LMSMoodleLanding } from '../ui/pages/LmsMoodleLanding/LmsMoodleLanding'

@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro'
-import { assertNever } from 'my-moodlenet-common/lib/utils/misc'
+import { assertNever } from '@moodlenet/common/lib/utils/misc'
 import ProgressState from '../../components/atoms/ProgressState/ProgressState'
 import { CP, withCtrl } from '../../lib/ctrl'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
