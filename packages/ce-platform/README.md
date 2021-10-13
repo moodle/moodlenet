@@ -10,7 +10,7 @@ the easiest way is using docker:
 
 ```sh
 # start an ArangoDB instance
-docker run -e ARANGO_NO_AUTH=1 --name mnarango -p 8529:8529 -d arangodb
+$ docker run -e ARANGO_NO_AUTH=1 --name mnarango -p 8529:8529 -d arangodb
 ```
 
 #### install Moodlenet CE Platform globally

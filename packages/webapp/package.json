@@ -6,7 +6,8 @@
   "author": "https://github.com/aleclofabbro",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/moodlenet/moodlenet/-/tree/master/packages/webapp"
+    "url": "https://gitlab.com/moodlenet/moodlenet.git",
+    "directory": "packages/webapp"
   },
   "files": [
     "build/",

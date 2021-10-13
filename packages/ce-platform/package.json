@@ -5,6 +5,12 @@
   "license": "AGPL",
   "description": "MoodleNet CE Platform",
   "author": "https://github.com/aleclofabbro",
+  "homepage": "https://gitlab.com/moodlenet/moodlenet/-/tree/master/packages/ce-platform",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/moodlenet/moodlenet.git",
+    "directory": "packages/ce-platform"
+  },
   "bin": {
     "start-moodlenet-ce": "./start.js"
   },
