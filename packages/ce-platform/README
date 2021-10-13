@@ -13,27 +13,26 @@ the easiest way is using docker:
 docker run -e ARANGO_NO_AUTH=1 --name mnarango -p 8529:8529 -d arangodb
 ```
 
-#### install Moodlenet Platform globally
+#### install Moodlenet CE Platform globally
 
 ```sh
 npm i -g @moodlenet/ce-platform
 ```
 
-#### An .env file for backend
+#### set environment variables
 
-should be positioned in `./packages/backend/` and contain following env vars:
+the easiest way is to make sure a `.env` file is present in start command working directory
 
 ```sh
-# this .env is ok for development env
+# sample .env file
 
-NODE_ENV=development
-
+NODE_ENV=production
 # DB
 ARANGO_URL=http://localhost:8529
 
 # HTTP config
 HTTP_PORT=8080
-DOMAIN=localhost:8080
+DOMAIN=localhost:${HTTP_PORT}
 PUBLIC_URL=http://${DOMAIN}
 
 
@@ -55,19 +54,25 @@ JWT_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n##<keyrows separated by \n>##\
 # $ JWT keys
 
 # Folder to save content static assets (images, resources ..)
-STATICASSETS_FS_ROOT_FOLDER=any/path/to/uploads/directory
+STATICASSETS_FS_ROOT_FOLDER=/any/path/to/uploads/directory
 ```
 
-#### Start
+#### Start Moodlenet CE Platform
+
+start the platform using `npx`
 
 ```sh
+# make sure env vars are set
+# or a proper .env file is present in cwd
 npx start-moodlenet-ce
 ```
 
-the HTTP server starts on 8080.
+only on first run the process populate the DB
+
+HTTP server starts on 8080.
 
 you can login as default admin with user="root@localhost:8080" and password="root",
 
-browse Moodlenet on page `http://localhost:8080/`
+browse your Moodlenet on page [http://localhost:8080/](http://localhost:8080/)
 
 enjoy MoodleNet ;)
