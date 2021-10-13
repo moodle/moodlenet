@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/backend",
-  "version": "2.0.0-beta.0.15",
+  "version": "2.0.0-beta.0.16",
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/moodlenet/moodlenet/-/tree/master/packages/backend"
@@ -36,7 +36,7 @@
     "@graphql-tools/stitch": "^7.1.6",
     "@graphql-tools/stitching-directives": "^1.1.1",
     "@graphql-tools/wrap": "^7.0.5",
-    "@moodlenet/common": "^2.0.0-beta.0.15",
+    "@moodlenet/common": "^2.0.0-beta.0.16",
     "arangojs": "^7.1.0",
     "argon2": "^0.27.0",
     "cors": "^2.8.5",
