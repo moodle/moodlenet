@@ -4,6 +4,12 @@
 
 ### Prerequisites
 
+#### Sharp package requirements
+
+This sofware leverages [sharp](https://www.npmjs.com/package/sharp) for uploaded image processing
+
+If you experience some weird issue on installation, you may want to [check out sharp system requisites](https://www.npmjs.com/package/sharp)
+
 #### A running ArangoDB instance
 
 the easiest way is using docker:
