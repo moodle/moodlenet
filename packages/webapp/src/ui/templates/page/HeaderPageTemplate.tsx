@@ -21,7 +21,7 @@ export const HeaderPageTemplate = withCtrl<HeaderPageTemplateProps>(
         {/*<div className={`view ${isAuthenticated && showSubHeader ? 'double-header-page' : 'single-header-page'}`}   Uncomment when Tags implemented*/}
         <div className="view single-header-page" style={style}>
           {children}
-          <Footer />
+          <Footer isAuthenticated={isAuthenticated} />
         </div>
       </MainPageWrapper>
     )

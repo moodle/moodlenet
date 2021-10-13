@@ -64,9 +64,11 @@ export const Landing = withCtrl<LandingProps>(
             <div className="main-column">
               <TextCard className="intro-card">
                 {((!isAuthenticated && organization.name === 'MoodleNet') || organization.name !== 'MoodleNet') && (
-                  <div className="title">{organization.introTitle}</div>
+                  <div className="title">
+                    <Trans>{organization.introTitle}</Trans>
+                  </div>
                 )}
-                <div className="content">{organization.intro}</div>
+                <div className="content" dangerouslySetInnerHTML={{ __html: organization.intro }} />{' '}
                 {organization.name !== 'MoodleNet' && image && (
                   <img className="text-image" src={image} alt="Background" />
                 )}
