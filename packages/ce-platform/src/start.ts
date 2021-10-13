@@ -54,6 +54,8 @@ export const startDefaultMoodlenet = async ({
       algorithms: ['RS256'],
     },
   })
+  socket(userAuth.adapters.publicUrlAdapter, async () => http.publicUrl)
+  socket(userAuth.adapters.localDomainAdapter, async () => domain)
 
   socket(userAuth.adapters.passwordVerifier, pwdHashAdapters.verifier)
 
@@ -84,7 +86,6 @@ export const startDefaultMoodlenet = async ({
     contentGraph.traverseNodeRel.countNodeRelationsAdapter,
     contentGraphAd.traversal.countNodeRelations(contentGraphDatabase),
   )
-  socket(userAuth.adapters.localDomainAdapter, async () => domain)
 
   socket(userAuth.adapters.getLatestConfigAdapter, userAuthAdapters.config.getLatestConfig(userAuthDatabase))
   socket(userAuth.adapters.getActiveUserByAuthAdapter, userAuthAdapters.user.getActiveUserByAuth(userAuthDatabase))
@@ -105,7 +106,7 @@ export const startDefaultMoodlenet = async ({
     additionalResolvers: null,
   })
   const assetsApp = createStaticAssetsApp({})
-  const webfingerApp = createWebfingerApp({ domain })
+  const webfingerApp = await createWebfingerApp()
   const [webappRootDir, defaultHtml] = require('@moodlenet/webapp/publicFolder') as [string, string]
   await startMNHttpServer({
     httpPort: http.port,

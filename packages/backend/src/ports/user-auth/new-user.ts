@@ -6,8 +6,8 @@ import { plug } from '../../lib/plug'
 import {
   getLatestConfigAdapter,
   jwtSignerAdapter,
-  localDomainAdapter,
   passwordHasher,
+  publicUrlAdapter,
   sendEmailAdapter,
 } from './adapters'
 import { Email } from './types'
@@ -30,13 +30,13 @@ export const signUp = plug(
       },
       newUserVerificationWaitSecs,
     )
-    const publicBaseUrl = await localDomainAdapter()
+    const publicBaseUrl = await publicUrlAdapter()
     const emailObj = fillEmailTemplate({
       template: newUserRequestEmail,
       to: email,
       vars: {
         email,
-        link: `https://${publicBaseUrl}${webappPath<Routes.Login>('/login/:activationEmailToken?', {
+        link: `${publicBaseUrl}${webappPath<Routes.Login>('/login/:activationEmailToken?', {
           activationEmailToken,
         })}`,
       },

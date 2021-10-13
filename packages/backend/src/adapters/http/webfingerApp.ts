@@ -1,6 +1,7 @@
 import { nodeIdentifierSlug2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import express from 'express'
 import { byIdentifier } from '../../ports/content-graph/node'
+import { localDomainAdapter, publicUrlAdapter } from '../../ports/user-auth/adapters'
 
 export type WebFingerResp = {
   subject: string
@@ -13,11 +14,10 @@ export type WebFingerResp = {
   ]
 }
 
-export type GQLAppConfig = {
-  domain: string
-}
-export const createWebfingerApp = ({ domain }: GQLAppConfig) => {
+export type GQLAppConfig = {}
+export const createWebfingerApp = async () => {
   const app = express()
+  const domain = await localDomainAdapter()
   const acctResourceParam = new RegExp(`^acct:[a-zA-Z0-9\.\_\-]+@${domain}$`)
   app.get<{}, WebFingerResp | string, any, { resource: string }>('/webfinger', async (req, res) => {
     const resParam = req.query.resource
@@ -36,7 +36,8 @@ export const createWebfingerApp = ({ domain }: GQLAppConfig) => {
       return
     }
     const profilePagePath = nodeIdentifierSlug2UrlPath(profile)
-    const profileUrl = `https://${domain}${profilePagePath}` //FIXME: hardcoded protocol for MVP !!
+    const publicBaseUrl = await publicUrlAdapter()
+    const profileUrl = `${publicBaseUrl}${profilePagePath}` //FIXME: hardcoded protocol for MVP !!
     const resp: WebFingerResp = {
       subject: profileUrl,
       aliases: [profileUrl],
