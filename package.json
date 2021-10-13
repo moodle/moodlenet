@@ -4,6 +4,10 @@
   "license": "AGPL",
   "description": "MoodleNet monorepo system",
   "author": "https://github.com/aleclofabbro",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/moodlenet/moodlenet"
+  },
   "devDependencies": {
     "lerna": "^3.22.1",
     "cross-env": "^7.0.3"

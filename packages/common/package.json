@@ -11,7 +11,7 @@
     "access": "public"
   },
   "dependencies": {
-    "graphql": "^15.4.0",
+    "graphql": "^15.6.1",
     "nanoid": "^3.1.23",
     "path-to-regexp": "^6.2.0",
     "run-script-os": "^1.1.5",
@@ -38,7 +38,7 @@
     "clean-build": "rm -rf lib && yarn build",
     "build": "tsc && yarn gen:graphql:types && tsc",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
-    "prepublish": "yarn clean-build"
+    "_prepublish": "yarn clean-build"
   },
   "gitHead": "53aac3f3bc4f9d4fcfe9f8a51eaa3e113ba57e44"
 }

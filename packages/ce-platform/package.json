@@ -33,7 +33,7 @@
   },
   "scripts": {
     "clean-build": "rm -rf dist && yarn build",
-    "prepublish": "yarn clean-build",
+    "_prepublish": "yarn clean-build",
     "build": "tsc",
     "start": "NODE_ENV=production node ./start.js",
     "start-dev": "NODE_ENV=development node-dev --inspect --deps 4 --respawn --notify=false ./start.js "
