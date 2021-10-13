@@ -1,9 +1,11 @@
 {
   "name": "@moodlenet/backend",
   "version": "2.0.0-beta.0.18",
+  "homepage": "https://gitlab.com/moodlenet/moodlenet/-/tree/master/packages/backend",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/moodlenet/moodlenet/-/tree/master/packages/backend"
+    "url": "https://gitlab.com/moodlenet/moodlenet.git",
+    "directory": "packages/backend"
   },
   "namespace": {
     "root": [

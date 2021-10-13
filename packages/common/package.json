@@ -7,6 +7,12 @@
   "files": [
     "lib/"
   ],
+  "homepage": "https://gitlab.com/moodlenet/moodlenet/-/tree/master/packages/common",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/moodlenet/moodlenet.git",
+    "directory": "packages/common"
+  },
   "publishConfig": {
     "access": "public"
   },
