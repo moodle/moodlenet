@@ -1,6 +1,6 @@
 {
   "name": "my-moodlenet-ce-platform",
-  "version": "0.0.1-beta.0.9",
+  "version": "0.0.1-beta.0.10",
   "main": "dist/main.js",
   "license": "AGPL",
   "description": "MoodleNet CE Platform",
