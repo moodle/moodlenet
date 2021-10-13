@@ -6,7 +6,7 @@
     "allowSyntheticDefaultImports": true,
     "rootDir": "src",
     "moduleResolution": "Node",
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "ES2015"],
     "target": "ES5",
     "outDir": "./dist" /* Redirect output structure to the directory. */,
     "resolveJsonModule": true

@@ -16,6 +16,7 @@ import * as staticAsset from 'my-moodlenet-backend/lib/ports/static-assets'
 import * as userAuth from 'my-moodlenet-backend/lib/ports/user-auth'
 import { getAddEdgeAssumptionsMap } from 'my-moodlenet-common/lib/content-graph/bl/rules/addEdgeAssumptions'
 import { DefaultDeployEnv } from './env'
+import { setupDb } from './setup/db'
 
 export type Config = {
   env: DefaultDeployEnv
@@ -30,6 +31,13 @@ export const startDefaultMoodlenet = async ({
     mnStatic: { domain },
   },
 }: Config) => {
+  // this chunk is a workaround for current non-optimal setup workflow
+  const pwdHashAdapters = cryptoAdapters.pwd.getPasswordCrypto()
+  const fsAssetAdapters = await getFsAssetAdapters({ rootDir: fsAsset.rootFolder })
+  socket(userAuth.adapters.passwordHasher, pwdHashAdapters.hasher)
+  await setupDb({ env: db, actionOnDBExists: 'upgrade' })
+  // ^^^^ that chunk was a workaround for current non-optimal setup workflow
+
   const userAuthDatabase = await getVersionedDBOrThrow({ version: '0.0.2' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.userAuthDBName }),
   })
@@ -47,10 +55,6 @@ export const startDefaultMoodlenet = async ({
     },
   })
 
-  const pwdHashAdapters = cryptoAdapters.pwd.getPasswordCrypto()
-  const fsAssetAdapters = await getFsAssetAdapters({ rootDir: fsAsset.rootFolder })
-
-  socket(userAuth.adapters.passwordHasher, pwdHashAdapters.hasher)
   socket(userAuth.adapters.passwordVerifier, pwdHashAdapters.verifier)
 
   socket(userAuth.adapters.jwtVerifierAdapter, jwtAdapters.verifier)
