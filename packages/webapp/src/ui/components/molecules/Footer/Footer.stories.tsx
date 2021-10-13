@@ -7,19 +7,24 @@ const meta: ComponentMeta<typeof Footer> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: [
-    'FooterStoryProps',
-  ],
+  excludeStories: ['FooterStoryProps', 'FooterLoggedInProps'],
+  parameters: { layout: 'fullscreen' },
 }
 
 export const FooterStoryProps: FooterProps = {
+  isAuthenticated: false,
+}
 
+export const FooterLoggedInProps: FooterProps = {
+  isAuthenticated: true,
 }
 
 const FooterStory: ComponentStory<typeof Footer> = args => <Footer {...args} />
 
-export const Default = FooterStory.bind({})
-Default.args = FooterStoryProps
-Default.parameters = { layout: 'fullscreen' }
+export const LoggedOut = FooterStory.bind({})
+LoggedOut.args = FooterStoryProps
+
+export const LoggedIn = FooterStory.bind({})
+LoggedIn.args = FooterLoggedInProps
 
 export default meta
