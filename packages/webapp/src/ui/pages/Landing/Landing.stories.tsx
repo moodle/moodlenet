@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '../../components/Browser/Browser.stories'
 import { TrendCardStoryProps } from '../../components/molecules/cards/TrendCard/TrendCard.stories'
 import { HeaderLoggedOutOrganizationStoryProps } from '../../components/molecules/Header/Header.stories'
 import { href } from '../../elements/link'
@@ -36,10 +37,15 @@ export const LandingLoggedInStoryProps: LandingProps = {
       cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
+  browserProps: {
+    ...BrowserLoggedInStoryProps,
+    smallProfileCardPropsList: null,
+    hideSortAndFilter: true,
+    
+  },
   trendCardProps: TrendCardStoryProps,
   organization: {
     name: 'MoodleNet',
-    introTitle: 'Join our world-wide educators social network',
     intro: `MoodleNet is currently in Public Beta version, meaning that this site is now live and being tested before its official release.\n
     We encourage you to join the site and become part of the open education movement and our community of MoodleNet testers.\n 
     You will then be able to add open educational resources and create collections, follow subjects or collections that are relevant to you, plus share resources and collections with your Moodle site.\n
@@ -61,6 +67,12 @@ export const LandingLoggedOutStoryProps: LandingProps = {
     headerPageProps: HeaderPageLoggedOutStoryProps,
     ...LandingLoggedInStoryProps.headerPageTemplateProps,
   },
+  browserProps: {
+    ...BrowserLoggedOutStoryProps,
+    smallProfileCardPropsList: null,
+    hideSortAndFilter: true,
+    
+  },
   isAuthenticated: false,
 }
 
@@ -69,6 +81,12 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
     headerPageProps: HeaderPageLoggedInOrganizationStoryProps,
     isAuthenticated: true,
     ...LandingLoggedInStoryProps.headerPageTemplateProps,
+  },
+  browserProps: {
+    ...BrowserLoggedInStoryProps,
+    smallProfileCardPropsList: null,
+    hideSortAndFilter: true,
+    
   },
   trendCardProps: TrendCardStoryProps,
   organization: {
@@ -90,6 +108,12 @@ export const LandingOrganizationLoggedOutStoryProps: LandingProps = {
       headerProps: HeaderLoggedOutOrganizationStoryProps,
     },
     ...LandingLoggedInStoryProps.headerPageTemplateProps,
+  },
+  browserProps: {
+    ...BrowserLoggedOutStoryProps,
+    smallProfileCardPropsList: null,
+    hideSortAndFilter: true,
+    
   },
   isAuthenticated: false,
 }

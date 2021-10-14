@@ -3,8 +3,12 @@
 }
 
 .landing {
-  > .landing-title > div {
-    margin: 36px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding-top: 30px;
+
+  > .landing-title {
     font-weight: bold;
     display: inline-flex;
     flex-wrap: wrap;
@@ -35,19 +39,42 @@
       }
     }
   }
+  
+  > .intro-card {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    line-height: 20px;
+    gap: 16px;
+    > .title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    > .content {
+      > a {
+        color: #337aff;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+    >.actions {
+      display: flex;
+      gap: 15px;
+    }
+  }
 
   > .searchbox {
-    margin: 36px 0;
     width: 100%;
-    border: none;
-    height: fit-content;
+    //border: none;
+    background-color: white;
+    //height: fit-content;
     > .search-text {
-      font-size: 40px;
-      background-color: transparent;
+      //font-size: 30px;
       width: 100%;
     }
     > :first-child {
-      display: none;
+      //display: none;
     }
 
     @media (max-width: 450px) {
@@ -57,6 +84,16 @@
         font-size: 38px;
       }
     }
+  }
+
+  > .trends-title {
+    color: black;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  > .browser {
+    margin-top: 0;
   }
 
   > .content {
@@ -74,29 +111,7 @@
     flex-direction: column;
     gap: 24px;
 
-    > .intro-card {
-      display: flex;
-      flex-direction: column;
-      font-size: 14px;
-      line-height: 20px;
-      gap: 16px;
-      > .title {
-        font-weight: bold;
-        font-size: 16px;
-      }
-      > .content {
-        > a {
-          color: #337aff;
-          &:hover {
-            text-decoration: underline;
-          }
-        }
-      }
-      >.actions {
-        display: flex;
-        gap: 15px;
-      }
-    }
+
 
     > .trend-card {
       display: none;
