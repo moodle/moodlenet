@@ -76,21 +76,22 @@ export const Landing = withCtrl<LandingProps>(
                 <Trans>{organization.introTitle}</Trans>
               </div>
             )} */}
-            <div className="content" />
-            MoodleNet is currently in Public Beta version, meaning that this site is now live and being tested before
-            its official release.\n We encourage you to join the site and become part of the open education movement and
-            our community of MoodleNet testers.\n You will then be able to add open educational resources and create
-            collections, follow subjects or collections that are relevant to you, plus share resources and collections
-            with your Moodle site.\n Should you encounter any bugs, glitches, lack of functionality or other problems,
-            please post in the{' '}
-            <a href="https://moodle.org/mod/forum/view.php?id=8726" target="_blank" rel="noreferrer">
-              MoodleNet community
-            </a>{' '}
-            or create an issue at{' '}
-            <a href="https://tracker.moodle.org/projects/MDLNET/summary" target="_blank" rel="noreferrer">
-              MoodleNet Tracker
-            </a>
-            .\n
+            <div className="content">   
+              <p>MoodleNet is currently in Public Beta version, meaning that this site is now live and being tested before
+              its official release.</p><p>We encourage you to join the site and become part of the open education movement
+              and our community of MoodleNet testers.</p><p> You will then be able to add open educational resources and
+              create collections, follow subjects or collections that are relevant to you, plus share resources and
+              collections with your Moodle site.</p><p> Should you encounter any bugs, glitches, lack of functionality or
+              other problems, please post in the{' '}
+              <a href="https://moodle.org/mod/forum/view.php?id=8726" target="_blank" rel="noreferrer">
+                MoodleNet community
+              </a>{' '}
+              or create an issue at{' '}
+              <a href="https://tracker.moodle.org/projects/MDLNET/summary" target="_blank" rel="noreferrer">
+                MoodleNet Tracker
+              </a>
+              .</p>
+            </div>
             {organization.name !== 'MoodleNet' && image && <img className="text-image" src={image} alt="Background" />}
             <div className="actions">
               {!isAuthenticated && signUpHref && (
