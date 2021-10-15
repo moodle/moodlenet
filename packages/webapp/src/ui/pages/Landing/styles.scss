@@ -76,9 +76,9 @@
       //font-size: 30px;
       width: 100%;
     }
-    > :first-child {
-      //display: none;
-    }
+    /* > :first-child {
+      display: none;
+    } */
 
     @media (max-width: 450px) {
       margin: 36px 0;
@@ -94,6 +94,11 @@
     font-size: 24px;
     font-weight: bold;
   }
+
+  > .list-card > .title .card-header .title {
+    font-size: 18px;
+    margin-right: 16px;
+}
 
   > .browser {
     margin-top: 0;

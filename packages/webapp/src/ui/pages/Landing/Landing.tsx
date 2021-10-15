@@ -1,9 +1,10 @@
 import { Trans } from '@lingui/macro'
 import { Fragment } from 'react'
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
-import Searchbox from '../../components/atoms/Searchbox/Searchbox'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
-import { BrowserProps } from '../../components/Browser/Browser'
+import { CollectionCard, CollectionCardProps } from '../../components/cards/CollectionCard/CollectionCard'
+import ResourceCard, { ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
+import ListCard from '../../components/molecules/cards/ListCard/ListCard'
 import TextCard from '../../components/molecules/cards/TextCard/TextCard'
 import TrendCard, { TrendCardProps } from '../../components/molecules/cards/TrendCard/TrendCard'
 import { Href, Link } from '../../elements/link'
@@ -14,11 +15,13 @@ import './styles.scss'
 
 export type LandingProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
-  browserProps: BrowserProps
+  //browserProps: BrowserProps
+  collectionCardPropsList: CP<CollectionCardProps>[]
+  resourceCardPropsList: CP<ResourceCardProps>[]
   trendCardProps: TrendCardProps
   organization: Pick<Organization, 'name' | 'intro'>
   image?: string
-  setSearchText(text: string): unknown
+  //setSearchText(text: string): unknown
   isAuthenticated: boolean
   signUpHref?: Href
 }
@@ -26,12 +29,15 @@ export type LandingProps = {
 export const Landing = withCtrl<LandingProps>(
   ({
     headerPageTemplateProps,
-    /* browserProps, */ trendCardProps,
+    /* browserProps, */
+    trendCardProps,
+    collectionCardPropsList,
+    resourceCardPropsList,
     organization,
     image,
-    setSearchText,
     isAuthenticated,
     signUpHref,
+    //setSearchText,
   }) => {
     /* const docsCard = (
       <TextCard className="intro-card">
@@ -45,7 +51,7 @@ export const Landing = withCtrl<LandingProps>(
     ) */
 
     return (
-      <HeaderPageTemplate {...headerPageTemplateProps} hideSearchbox={true}>
+      <HeaderPageTemplate {...headerPageTemplateProps} hideSearchbox={false}>
         <div className="landing">
           {!isAuthenticated ? (
             <div className="landing-title">
@@ -76,21 +82,32 @@ export const Landing = withCtrl<LandingProps>(
                 <Trans>{organization.introTitle}</Trans>
               </div>
             )} */}
-            <div className="content">   
-              <p>MoodleNet is currently in Public Beta version, meaning that this site is now live and being tested before
-              its official release.</p><p>We encourage you to join the site and become part of the open education movement
-              and our community of MoodleNet testers.</p><p> You will then be able to add open educational resources and
-              create collections, follow subjects or collections that are relevant to you, plus share resources and
-              collections with your Moodle site.</p><p> Should you encounter any bugs, glitches, lack of functionality or
-              other problems, please post in the{' '}
-              <a href="https://moodle.org/mod/forum/view.php?id=8726" target="_blank" rel="noreferrer">
-                MoodleNet community
-              </a>{' '}
-              or create an issue at{' '}
-              <a href="https://tracker.moodle.org/projects/MDLNET/summary" target="_blank" rel="noreferrer">
-                MoodleNet Tracker
-              </a>
-              .</p>
+            <div className="content">
+              <p>
+                MoodleNet is currently in Public Beta version, meaning that this site is now live and being tested
+                before its official release.
+              </p>
+              <p>
+                We encourage you to join the site and become part of the open education movement and our community of
+                MoodleNet testers.
+              </p>
+              <p>
+                {' '}
+                You will then be able to add open educational resources and create collections, follow subjects or
+                collections that are relevant to you, plus share resources and collections with your Moodle site.
+              </p>
+              <p>
+                {' '}
+                Should you encounter any bugs, glitches, lack of functionality or other problems, please post in the{' '}
+                <a href="https://moodle.org/mod/forum/view.php?id=8726" target="_blank" rel="noreferrer">
+                  MoodleNet community
+                </a>{' '}
+                or create an issue at{' '}
+                <a href="https://tracker.moodle.org/projects/MDLNET/summary" target="_blank" rel="noreferrer">
+                  MoodleNet Tracker
+                </a>
+                .
+              </p>
             </div>
             {organization.name !== 'MoodleNet' && image && <img className="text-image" src={image} alt="Background" />}
             <div className="actions">
@@ -108,9 +125,45 @@ export const Landing = withCtrl<LandingProps>(
               </a>
             </div>
           </TextCard>
-          <Searchbox setSearchText={setSearchText} searchText="" placeholder="Search for open educational content" />
+          {/* <Searchbox setSearchText={setSearchText} searchText="" placeholder="Search for open educational content" /> */}
           {/* <div className="trends-title"><Trans>Trendy content</Trans></div> */}
           <TrendCard {...trendCardProps} />
+          <ListCard
+            content={collectionCardPropsList.map(collectionCardProps => (
+              <CollectionCard {...collectionCardProps} />
+            ))}
+            title={
+              <div className="card-header">
+                <div className="title">
+                  <Trans>Latest collections</Trans>
+                </div>
+                <SecondaryButton>
+                  <Trans>See all</Trans>
+                </SecondaryButton>
+              </div>
+            }
+            className="collections"
+            noCard={true}
+            direction="horizontal"
+          />
+          <ListCard
+            content={resourceCardPropsList.map(resourcesCardProps => (
+              <ResourceCard {...resourcesCardProps} />
+            ))}
+            title={
+              <div className="card-header">
+                <div className="title">
+                  <Trans>Latest resources</Trans>
+                </div>
+                <SecondaryButton>
+                  <Trans>See all</Trans>
+                </SecondaryButton>
+              </div>
+            }
+            className="resources"
+            noCard={true}
+            minGrid={300}
+          />
           {/* <Browser {...browserProps} /> */}
           <div className="content">
             <div className="main-column">

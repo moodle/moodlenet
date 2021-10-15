@@ -1,6 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '../../components/Browser/Browser.stories'
+import { CollectionCardStoryProps } from '../../components/cards/CollectionCard/CollectionCard.stories'
+import { ResourceCardStoryProps } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { TrendCardStoryProps } from '../../components/molecules/cards/TrendCard/TrendCard.stories'
 import { HeaderLoggedOutOrganizationStoryProps } from '../../components/molecules/Header/Header.stories'
 import { href } from '../../elements/link'
@@ -26,6 +27,31 @@ const meta: ComponentMeta<typeof Landing> = {
   ],
 }
 
+const content = {
+  collectionCardPropsList: [
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+  ],
+  resourceCardPropsList: [
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+  ],
+  /* browserProps: {
+    ...BrowserLoggedInStoryProps,
+    smallProfileCardPropsList: null,
+    hideSortAndFilter: true,
+  }, */
+}
+
 const LandingStory: ComponentStory<typeof Landing> = args => <Landing {...args} />
 
 export const LandingLoggedInStoryProps: LandingProps = {
@@ -37,11 +63,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
       cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
-  browserProps: {
-    ...BrowserLoggedInStoryProps,
-    smallProfileCardPropsList: null,
-    hideSortAndFilter: true,
-  },
+  ...content,
   trendCardProps: TrendCardStoryProps,
   organization: {
     name: 'MoodleNet',
@@ -62,11 +84,6 @@ export const LandingLoggedOutStoryProps: LandingProps = {
     headerPageProps: HeaderPageLoggedOutStoryProps,
     ...LandingLoggedInStoryProps.headerPageTemplateProps,
   },
-  browserProps: {
-    ...BrowserLoggedOutStoryProps,
-    smallProfileCardPropsList: null,
-    hideSortAndFilter: true,
-  },
   isAuthenticated: false,
 }
 
@@ -76,12 +93,8 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
     isAuthenticated: true,
     ...LandingLoggedInStoryProps.headerPageTemplateProps,
   },
-  browserProps: {
-    ...BrowserLoggedInStoryProps,
-    smallProfileCardPropsList: null,
-    hideSortAndFilter: true,
-  },
   trendCardProps: TrendCardStoryProps,
+  ...content,
   organization: {
     name: 'Bern University of Applied Sciences',
     intro: 'Diverse, sound, dynamic – these are the values that define BFH. And this is our MoodleNet server. ',
@@ -101,11 +114,6 @@ export const LandingOrganizationLoggedOutStoryProps: LandingProps = {
       headerProps: HeaderLoggedOutOrganizationStoryProps,
     },
     ...LandingLoggedInStoryProps.headerPageTemplateProps,
-  },
-  browserProps: {
-    ...BrowserLoggedOutStoryProps,
-    smallProfileCardPropsList: null,
-    hideSortAndFilter: true,
   },
   isAuthenticated: false,
 }
