@@ -16,7 +16,7 @@ type FileD = Pick<File, 'hash' | 'lastModifiedDate' | 'name' | 'path' | 'size' |
 type GetUploadFileResp = RespError | [FileD & { mimetype: string }, UploadType] //WithHash
 export const getUploadedFile = (req: Request) =>
   new Promise<GetUploadFileResp>(resolve => {
-    new Formidable({ multiples: false /* , hash: 'md5' */ }).parse(req, async (err, fields, files) => {
+    Formidable({ multiples: false /* , hash: 'md5' */ }).parse(req, async (err, fields, files) => {
       if (err) {
         return resolve(respError(400, `cannot accept files: ${String(err)}`))
       }

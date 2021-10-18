@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "noUncheckedIndexedAccess": true,
+    "declarationMap": true,
+    "declaration": true,
     "sourceMap": true /* Generates corresponding '.map' file. */,
     "strict": true /* Enable all strict type-checking options. */,
     "noUnusedLocals": true /* Report errors on unused locals. */,

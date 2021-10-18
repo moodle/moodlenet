@@ -101,7 +101,7 @@ export const checkAndLogUnboundPlugRegistrations = () => {
     .map(_ => namespaceString(_.namespace))
 
   missingSockets.length
-    ? console.warn(`\nMissing some plugs local socket\n- ${missingSockets.join('\n- ')}\n`)
+    ? console.warn(`\nSome plugs don't have a local socket :\n- ${missingSockets.join('\n- ')}\n`)
     : console.log(`\nAll plugs locally bound!\n`)
   if (missingSockets.length && config.umbrella === noUmbrellaError) {
     throw new Error(`Missing umbrella!`)
