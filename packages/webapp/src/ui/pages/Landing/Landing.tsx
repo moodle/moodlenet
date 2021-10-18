@@ -9,6 +9,7 @@ import TextCard from '../../components/molecules/cards/TextCard/TextCard'
 import TrendCard, { TrendCardProps } from '../../components/molecules/cards/TrendCard/TrendCard'
 import { Href, Link } from '../../elements/link'
 import { CP, withCtrl } from '../../lib/ctrl'
+import AcademyLogo from '../../static/img/academy-logo.png'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import { Organization } from '../../types'
 import './styles.scss'
@@ -113,6 +114,11 @@ export const Landing = withCtrl<LandingProps>(
                   </PrimaryButton>
                 </Link>
               )}
+              <a className="academy-button" href="https://moodle.academy/course/view.php?id=13" target="_blank" rel="noreferrer">
+                <SecondaryButton color="orange">
+                  <img src={AcademyLogo} />
+                </SecondaryButton>
+              </a>
               <a href="https://docs.moodle.org/moodlenet/Main_Page" target="_blank" rel="noreferrer">
                 <SecondaryButton color="grey">
                   <Trans>Go to Docs</Trans>
