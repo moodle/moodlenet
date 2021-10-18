@@ -23,7 +23,7 @@ export type LandingProps = {
   image?: string
   //setSearchText(text: string): unknown
   isAuthenticated: boolean
-  signUpHref?: Href
+  signUpHref: Href
 }
 
 export const Landing = withCtrl<LandingProps>(
@@ -106,7 +106,7 @@ export const Landing = withCtrl<LandingProps>(
             </div>
             {organization.name !== 'MoodleNet' && image && <img className="text-image" src={image} alt="Background" />}
             <div className="actions">
-              {!isAuthenticated && signUpHref && (
+              {!isAuthenticated && (
                 <Link href={signUpHref}>
                   <PrimaryButton>
                     <Trans>Join now</Trans>

@@ -4,12 +4,16 @@ import { useMemo } from 'react'
 import { useGlobalSearchQuery } from '../../../../context/Global/GlobalSearch/globalSearch.gen'
 import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../context/Global/Session'
+import { mainPath } from '../../../../hooks/glob/nav'
+import { useCollectionCardCtrl } from '../../../components/cards/CollectionCard/Ctrl/CollectionCardCtrl'
+import { useResourceCardCtrl } from '../../../components/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { href } from '../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { FollowTag } from '../../../types'
 import { useSearchUrlQuery } from '../../Search/Ctrl/useSearchUrlQuery'
 import { LandingProps } from '../Landing'
+const signUpHref = href(mainPath.signUp)
 
 export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
   const { isAuthenticated } = useSession()
@@ -22,6 +26,48 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       page: { first: 5 },
     },
   })
+  const collectionsQ = useGlobalSearchQuery({
+    variables: {
+      nodeTypes: ['Collection'],
+      text: '',
+      page: { first: 5 },
+    },
+  })
+  const collectionCardPropsList = useMemo(
+    () =>
+      collectionsQ.data?.globalSearch.edges.filter(isEdgeNodeOfType(['Collection'])).map(({ node: { id } }) =>
+        ctrlHook(
+          useCollectionCardCtrl,
+          {
+            id,
+          },
+          id,
+        ),
+      ),
+    [collectionsQ.data?.globalSearch.edges],
+  )
+  const resourcesQ = useGlobalSearchQuery({
+    variables: {
+      nodeTypes: ['Resource'],
+      text: '',
+      page: { first: 6 },
+    },
+  })
+  const resourceCardPropsList = useMemo(
+    () =>
+      resourcesQ.data?.globalSearch.edges.filter(isEdgeNodeOfType(['Resource'])).map(({ node: { id } }) =>
+        ctrlHook(
+          useResourceCardCtrl,
+          {
+            id,
+            removeAction: null,
+          },
+          id,
+        ),
+      ),
+    [resourcesQ.data?.globalSearch.edges],
+  )
+
   const tags = useMemo(
     () =>
       trendingQ.data?.globalSearch.edges
@@ -47,8 +93,21 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       image: localOrg.icon ?? null,
       trendCardProps: { tags: tags || [] },
       setSearchText,
+      collectionCardPropsList: collectionCardPropsList || [],
+      resourceCardPropsList: resourceCardPropsList || [],
+      signUpHref,
     }),
-    [localOrg.icon, localOrg.description, isAuthenticated, localOrg.name, localOrg.intro, setSearchText, tags],
+    [
+      isAuthenticated,
+      localOrg.name,
+      localOrg.description,
+      localOrg.intro,
+      localOrg.icon,
+      tags,
+      setSearchText,
+      collectionCardPropsList,
+      resourceCardPropsList,
+    ],
   )
   // console.log({ landingProps })
   return [landingProps]
