@@ -1,7 +1,7 @@
 @import '../../../styles/utils/colors';
 
 .footer {
-  padding: 35px 100px 40px 100px;
+  padding: 35px 0 40px 0;
   display: flex;
   justify-content: center;
   top: 0;
@@ -10,7 +10,7 @@
   font-size: 0.7rem;
 
   @media screen and (max-width: 675px) {
-    padding: 25px 25px 35px 25px;
+    padding: 25px 0 35px 0;
     > .content {
       gap: 15px;
     }
@@ -27,11 +27,25 @@
       display: flex;
       justify-content: center;
       width: 100%;
-      > a {
+      .short {
+        > a {
+          color: #717171;
+          font-size: 14px;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+
+      .extended {
+        text-align: center;
         color: #717171;
-        font-size: 14px;
-        &:hover {
-          text-decoration: underline;
+          font-size: 13px;
+        > a {
+          color: #337aff;
+          &:hover {
+            text-decoration: underline;
+          }
         }
       }
     }
