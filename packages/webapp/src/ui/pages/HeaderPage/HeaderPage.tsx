@@ -5,7 +5,7 @@ import './styles.scss'
 
 export type HeaderPageProps = {
   headerProps: CP<HeaderProps>
-  subHeaderProps: SubHeaderProps
+  subHeaderProps?: SubHeaderProps
   isAuthenticated: boolean
   showSubHeader?: boolean
   hideSearchbox?: boolean
@@ -30,6 +30,6 @@ export const HeaderPage = withCtrl<HeaderPageProps>(
 )
 HeaderPage.displayName = 'HeaderPage'
 HeaderPage.defaultProps = {
-  showSubHeader: true,
+  showSubHeader: true
 }
 export default HeaderPage

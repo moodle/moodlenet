@@ -53,35 +53,30 @@ export const Landing = withCtrl<LandingProps>(
     return (
       <HeaderPageTemplate {...headerPageTemplateProps} hideSearchbox={false}>
         <div className="landing">
-          {!isAuthenticated ? (
-            <div className="landing-title">
-              {organization.name === 'MoodleNet' ? (
-                <Fragment>
-                  <div className="organization-title">
-                    <Trans>Welcome to MoodleNet</Trans>
-                  </div>
+          <div className="landing-title">
+            {organization.name === 'MoodleNet' ? (
+              <Fragment>
+                <div className="organization-title">
+                  {!isAuthenticated ? <Trans>Welcome to MoodleNet</Trans> : <Trans>MoodleNet Central</Trans>}
+                </div>
+                {!isAuthenticated && (
                   <div className="moodle-title">
                     <Trans>Our global network to share and curate open educational resources</Trans>
                   </div>
-                </Fragment>
-              ) : (
-                <Fragment>
+                )}
+              </Fragment>
+            ) : (
+              <Fragment>
+                {!isAuthenticated && (
                   <div className="moodle-title">
                     <Trans>Welome to MoodleNet</Trans>
                   </div>
-                  <div className="organization-title">{organization.name}</div>
-                </Fragment>
-              )}
-            </div>
-          ) : (
-            <></>
-          )}
+                )}
+                <div className="organization-title">{organization.name}</div>
+              </Fragment>
+            )}
+          </div>
           <TextCard className="intro-card">
-            {/* {((!isAuthenticated && organization.name === 'MoodleNet') || organization.name !== 'MoodleNet') && (
-              <div className="title">
-                <Trans>{organization.introTitle}</Trans>
-              </div>
-            )} */}
             <div className="content">
               <p>
                 MoodleNet is currently in Public Beta version, meaning that this site is now live and being tested
@@ -129,7 +124,7 @@ export const Landing = withCtrl<LandingProps>(
           {/* <div className="trends-title"><Trans>Trendy content</Trans></div> */}
           <TrendCard {...trendCardProps} />
           <ListCard
-            content={collectionCardPropsList.map(collectionCardProps => (
+            content={collectionCardPropsList.slice(0, 14).map(collectionCardProps => (
               <CollectionCard {...collectionCardProps} />
             ))}
             title={
@@ -147,7 +142,7 @@ export const Landing = withCtrl<LandingProps>(
             direction="horizontal"
           />
           <ListCard
-            content={resourceCardPropsList.map(resourcesCardProps => (
+            content={resourceCardPropsList.slice(0, 6).map(resourcesCardProps => (
               <ResourceCard {...resourcesCardProps} />
             ))}
             title={
