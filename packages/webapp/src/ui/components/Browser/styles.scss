@@ -1,6 +1,6 @@
 .browser {
+  margin-top: 50px;
   > .content {
-    margin-top: 50px;
     max-width: 1100px;
     height: 100%;
     display: flex;
@@ -23,26 +23,6 @@
 
       > :not(:last-child) {
         margin-bottom: 30px;
-      }
-
-      > .list-card {
-        .title {
-          .card-header {
-            display: flex;
-            align-items: center;
-            .title {
-              font-size: 24px;
-              margin-right: 16px;
-            }
-            .secondary-button {
-              height: 26px;
-              padding: 10px;
-              border-radius: 15px;
-              border: 1px solid #b6bacb;
-              color: #b6bacb;
-            }
-          }
-        }
       }
 
       > .subjects:not(.see-all) {

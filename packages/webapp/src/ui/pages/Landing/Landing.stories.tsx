@@ -1,12 +1,19 @@
-import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import {
+  CollectionCardLoggedOutStoryProps,
+  CollectionCardStoryProps
+} from '../../components/cards/CollectionCard/CollectionCard.stories'
+import {
+  ResourceCardLoggedOutStoryProps,
+  ResourceCardStoryProps
+} from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { TrendCardStoryProps } from '../../components/molecules/cards/TrendCard/TrendCard.stories'
-import { HeaderLoggedOutOrganizationStoryProps } from '../../components/molecules/Header/Header.stories'
 import { href } from '../../elements/link'
 import {
-  HeaderPageLoggedInOrganizationStoryProps,
-  HeaderPageLoggedInStoryProps,
-  HeaderPageLoggedOutStoryProps
+  HeaderPageTemplateLoggedInStoryProps,
+  HeaderPageTemplateLoggedOutStoryProps,
+  HeaderPageTemplateOrganizationLoggedInStoryProps,
+  HeaderPageTemplateOrganizationLoggedOutStoryProps
 } from '../HeaderPage/HeaderPage.stories'
 import { Landing, LandingProps } from './Landing'
 
@@ -22,71 +29,96 @@ const meta: ComponentMeta<typeof Landing> = {
     'LandingLoggedInStoryProps',
     'LandingOrganizationLoggedOutStoryProps',
     'LandingOrganizationLoggedInStoryProps',
+    'HeaderPageTemplateLoggedOutStoryProps',
+  ],
+}
+
+const contentLoggedIn = {
+  collectionCardPropsList: [
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+    CollectionCardStoryProps,
+  ],
+  resourceCardPropsList: [
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+  ],
+}
+
+const contentLoggedOut = {
+  collectionCardPropsList: [
+    CollectionCardLoggedOutStoryProps,
+    CollectionCardLoggedOutStoryProps,
+    CollectionCardLoggedOutStoryProps,
+    CollectionCardLoggedOutStoryProps,
+    CollectionCardLoggedOutStoryProps,
+    CollectionCardLoggedOutStoryProps,
+    CollectionCardLoggedOutStoryProps,
+    CollectionCardLoggedOutStoryProps,
+    CollectionCardLoggedOutStoryProps,
+  ],
+  resourceCardPropsList: [
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
   ],
 }
 
 const LandingStory: ComponentStory<typeof Landing> = args => <Landing {...args} />
 
 export const LandingLoggedInStoryProps: LandingProps = {
-  headerPageTemplateProps: {
-    headerPageProps: HeaderPageLoggedInStoryProps,
-    isAuthenticated: true,
-    mainPageWrapperProps: {
-      userAcceptsPolicies: () => {},
-      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default')
-    },
-  },
+  headerPageTemplateProps: HeaderPageTemplateLoggedInStoryProps,
+  ...contentLoggedIn,
   trendCardProps: TrendCardStoryProps,
   organization: {
     name: 'MoodleNet',
-    introTitle: 'Join our world-wide educators social network',
     intro: `Share and curate open educational resources.\n
             Integrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.\n
             Build your profile as an educator.`,
   },
   image: 'https://picsum.photos/200/100',
-  setSearchText: action('setSearchText'),
+
   isAuthenticated: true,
   signUpHref: href('Pages/SignUp/Sign Up'),
 }
 
 export const LandingLoggedOutStoryProps: LandingProps = {
   ...LandingLoggedInStoryProps,
-  headerPageTemplateProps: {
-    isAuthenticated: false,
-    headerPageProps: HeaderPageLoggedOutStoryProps,
-    ...LandingLoggedInStoryProps.headerPageTemplateProps
-  },
+  headerPageTemplateProps: HeaderPageTemplateLoggedOutStoryProps,
+  ...contentLoggedOut,
   isAuthenticated: false,
 }
 
 export const LandingOrganizationLoggedInStoryProps: LandingProps = {
-  headerPageTemplateProps: {
-    headerPageProps: HeaderPageLoggedInOrganizationStoryProps,
-    isAuthenticated: true,
-    ...LandingLoggedInStoryProps.headerPageTemplateProps
-  },
+  headerPageTemplateProps: HeaderPageTemplateOrganizationLoggedInStoryProps,
   trendCardProps: TrendCardStoryProps,
+  ...contentLoggedIn,
   organization: {
     name: 'Bern University of Applied Sciences',
     intro: 'Diverse, sound, dynamic – these are the values that define BFH. And this is our MoodleNet server. ',
   },
   image: 'https://picsum.photos/200/100',
-  setSearchText: action('setSearchText'),
   isAuthenticated: true,
   signUpHref: href('Pages/SignUp/Sign Up'),
 }
 
 export const LandingOrganizationLoggedOutStoryProps: LandingProps = {
   ...LandingOrganizationLoggedInStoryProps,
-  headerPageTemplateProps: {
-    isAuthenticated: false,
-    headerPageProps: {
-      ...HeaderPageLoggedInStoryProps,
-      headerProps: HeaderLoggedOutOrganizationStoryProps,
-    },
-    ...LandingLoggedInStoryProps.headerPageTemplateProps
-  },
+  headerPageTemplateProps: HeaderPageTemplateOrganizationLoggedOutStoryProps,
+  ...contentLoggedOut,
   isAuthenticated: false,
 }
 
