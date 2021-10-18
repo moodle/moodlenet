@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "@types/sshpk": "^1.10.7",
+    "node-dev": "^7.0.0",
     "typescript": "^4.4.3"
   },
   "scripts": {
