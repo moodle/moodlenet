@@ -1,12 +1,12 @@
 import { Trans } from '@lingui/macro'
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import PrimaryButton from '../../components/atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../components/atoms/SecondaryButton/SecondaryButton'
 import { CollectionCard, CollectionCardProps } from '../../components/cards/CollectionCard/CollectionCard'
 import ResourceCard, { ResourceCardProps } from '../../components/cards/ResourceCard/ResourceCard'
 import ListCard from '../../components/molecules/cards/ListCard/ListCard'
 import TextCard from '../../components/molecules/cards/TextCard/TextCard'
-import TrendCard, { TrendCardProps } from '../../components/molecules/cards/TrendCard/TrendCard'
+import { TrendCardProps } from '../../components/molecules/cards/TrendCard/TrendCard'
 import { Href, Link } from '../../elements/link'
 import { CP, withCtrl } from '../../lib/ctrl'
 import AcademyLogo from '../../static/img/academy-logo.png'
@@ -24,20 +24,22 @@ export type LandingProps = {
   image?: string
   //setSearchText(text: string): unknown
   isAuthenticated: boolean
-  signUpHref: Href
+  signUpHref?: Href
+  loadMoreResources?: (() => unknown) | null
 }
 
 export const Landing = withCtrl<LandingProps>(
   ({
     headerPageTemplateProps,
     /* browserProps, */
-    trendCardProps,
+    //trendCardProps,
     collectionCardPropsList,
     resourceCardPropsList,
     organization,
     image,
     isAuthenticated,
     signUpHref,
+    loadMoreResources,
     //setSearchText,
   }) => {
     /* const docsCard = (
@@ -50,6 +52,8 @@ export const Landing = withCtrl<LandingProps>(
         </a>
       </TextCard>
     ) */
+
+    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false)
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps} hideSearchbox={false}>
@@ -114,7 +118,12 @@ export const Landing = withCtrl<LandingProps>(
                   </PrimaryButton>
                 </Link>
               )}
-              <a className="academy-button" href="https://moodle.academy/course/view.php?id=13" target="_blank" rel="noreferrer">
+              <a
+                className="academy-button"
+                href="https://moodle.academy/course/view.php?id=13"
+                target="_blank"
+                rel="noreferrer"
+              >
                 <SecondaryButton color="orange">
                   <img src={AcademyLogo} />
                 </SecondaryButton>
@@ -128,7 +137,7 @@ export const Landing = withCtrl<LandingProps>(
           </TextCard>
           {/* <Searchbox setSearchText={setSearchText} searchText="" placeholder="Search for open educational content" /> */}
           {/* <div className="trends-title"><Trans>Trendy content</Trans></div> */}
-          <TrendCard {...trendCardProps} />
+          {/* <TrendCard {...trendCardProps} /> */}
           <ListCard
             content={collectionCardPropsList.slice(0, 14).map(collectionCardProps => (
               <CollectionCard {...collectionCardProps} />
@@ -148,7 +157,7 @@ export const Landing = withCtrl<LandingProps>(
             direction="horizontal"
           />
           <ListCard
-            content={resourceCardPropsList.slice(0, 6).map(resourcesCardProps => (
+            content={(isLoadingMore ? resourceCardPropsList : resourceCardPropsList.slice(0, 12)).map(resourcesCardProps => (
               <ResourceCard {...resourcesCardProps} />
             ))}
             title={
@@ -165,7 +174,19 @@ export const Landing = withCtrl<LandingProps>(
             noCard={true}
             minGrid={300}
           />
-          {/* <Browser {...browserProps} /> */}
+          {loadMoreResources && (
+            <div className="load-more">
+              <SecondaryButton
+                onClick={() => {
+                  setIsLoadingMore(true)
+                  loadMoreResources()
+                }}
+                color="grey"
+              >
+                <Trans>Load more</Trans>
+              </SecondaryButton>
+            </div>
+          )}
           <div className="content">
             <div className="main-column">
               {/* {docsCard} */}

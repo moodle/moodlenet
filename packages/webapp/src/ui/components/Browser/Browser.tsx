@@ -282,7 +282,7 @@ export const Browser = withCtrl<BrowserProps>(
             )}
             {loadMore && (
               <div className="load-more">
-                <SecondaryButton onClick={loadMore}>
+                <SecondaryButton onClick={loadMore} color="grey">
                   <Trans>Load more</Trans>
                 </SecondaryButton>
               </div>

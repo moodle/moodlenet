@@ -108,8 +108,9 @@
     margin-right: 16px;
   }
 
-  > .browser {
-    margin-top: 0;
+  > .load-more {
+    display: flex;
+    justify-content: center;
   }
 
   > .content {
