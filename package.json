@@ -4,20 +4,9 @@
   "license": "AGPL",
   "description": "MoodleNet monorepo system",
   "author": "https://github.com/aleclofabbro",
-  "_private": true,
-  "_workspaces": [
-    "packages/common",
-    "packages/backend",
-    "packages/webapp",
-    "packages/graphql-gen"
-  ],
   "devDependencies": {
-    "lerna": "^3.22.1"
-  },
-  "dependencies": {
-    "cross-env": "^7.0.3",
-    "typescript": "^4.4.3",
-    "nodemailer": "^6.6.5"
+    "lerna": "^3.22.1",
+    "cross-env": "^7.0.3"
   },
   "scripts": {
     "bs": "lerna bootstrap --nohoist=babel-* --nohoist=*react*",
@@ -25,7 +14,7 @@
     "upgrade-version": "lerna run upgrade-version --parallel --stream",
     "start-dev": "cross-env PUBLIC_URL=http://localhost:3000 REACT_APP_GRAPHQL_ENDPOINT=http://localhost:8080/graphql REACT_APP_STATIC_ASSET_BASE=http://localhost:8080/assets lerna run start-dev --parallel --stream -- -- ",
     "build": "lerna run build --stream",
-    "clean-build-dirs": "cross-env rm -rf packages/*/lib",
     "start": "lerna run start --parallel --stream"
-  }
+  },
+  "dependencies": {}
 }

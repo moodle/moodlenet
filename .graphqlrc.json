@@ -1,9 +1,0 @@
-{
-  "projects": {
-    "Moodlenet": {
-      "_schema": ["backend/**/*.graphql"],
-      "documents": ["backend/**/*.graphql", "webapp/**/*.graphql"],
-      "exclude": ["backend/node_modules/**/*", "webapp/node_modules/**/*"]
-    }
-  }
-}

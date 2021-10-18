@@ -20,7 +20,7 @@ import {
   useDelProfileRelationMutation,
   useEditProfileMutation,
   useProfilePageUserDataQuery,
-  useSendEmailToProfileMutation
+  useSendEmailToProfileMutation,
 } from './ProfileCtrl.gen'
 const newCollectionHref = href(mainPath.createNewCollection)
 const newResourceHref = href(mainPath.createNewResource)
