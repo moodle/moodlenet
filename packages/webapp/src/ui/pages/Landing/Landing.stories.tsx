@@ -1,3 +1,4 @@
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
   CollectionCardLoggedOutStoryProps,
@@ -50,6 +51,12 @@ const contentLoggedIn = {
     ResourceCardStoryProps,
     ResourceCardStoryProps,
     ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
+    ResourceCardStoryProps,
   ],
 }
 
@@ -66,6 +73,13 @@ const contentLoggedOut = {
     CollectionCardLoggedOutStoryProps,
   ],
   resourceCardPropsList: [
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
     ResourceCardLoggedOutStoryProps,
     ResourceCardLoggedOutStoryProps,
     ResourceCardLoggedOutStoryProps,
@@ -93,6 +107,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
 
   isAuthenticated: true,
   signUpHref: href('Pages/SignUp/Sign Up'),
+  loadMoreResources: action('Load more')
 }
 
 export const LandingLoggedOutStoryProps: LandingProps = {
@@ -113,6 +128,7 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
   image: 'https://picsum.photos/200/100',
   isAuthenticated: true,
   signUpHref: href('Pages/SignUp/Sign Up'),
+  loadMoreResources: action('Load more')
 }
 
 export const LandingOrganizationLoggedOutStoryProps: LandingProps = {
