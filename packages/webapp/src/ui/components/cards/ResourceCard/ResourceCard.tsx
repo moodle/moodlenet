@@ -114,7 +114,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
         ) : (
           <div className="content-container">{content(color)}</div>
         )}
-        {isEditing && <RoundButton className="remove" type="trash" onClick={onRemoveClick} />}
+        {isEditing && <RoundButton className="remove" type="trash" color="red" onHoverColor="fill-red" onClick={onRemoveClick} />}
         <div className={`tags scroll ${selectionMode ? 'disabled' : ''} ${isEditing ? 'editing' : ''}`}>
           {tags && tagList(tags)}
         </div>
