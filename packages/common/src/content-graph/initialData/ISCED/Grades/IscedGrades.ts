@@ -10,7 +10,7 @@ export const getIscedGrades = () =>
       _permId: grade.code,
       _slug: contentSlug({ name: grade.desc, slugCode: grade.code }),
       name: grade.desc,
-      codePath: getIscedGradePathByCode(grade.code)!,
+      codePath: grade.code === 'ADT' ? [grade.code] : getIscedGradePathByCode(grade.code),
       code: grade.code,
       description: grade.desc,
     }
