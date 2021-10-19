@@ -54,18 +54,6 @@ export const Collection = withCtrl<CollectionProps>(
     deleteCollection,
     toggleFollow,
   }) => {
-    const [isEditing, setIsEditing] = useState<boolean>(false)
-    const [isToDelete, setIsToDelete] = useState<boolean>(false)
-    const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
-
-    const handleOnEditClick = () => {
-      setIsEditing(true)
-    }
-    const handleOnSaveClick = () => {
-      updateCollection()
-      setIsEditing(false)
-    }
-
     /*const actionsCard = (
       <Card className="collection-actions-card" hideBorderWhenSmall={true}>
                  <PrimaryButton disabled={!isAuthenticated}>
@@ -76,6 +64,10 @@ export const Collection = withCtrl<CollectionProps>(
         </SecondaryButton>
       </Card>
     )*/
+
+    const [isEditing, setIsEditing] = useState<boolean>(false)
+    const [isToDelete, setIsToDelete] = useState<boolean>(false)
+    const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
 
     const [form, formAttrs] = formBag
     const setFieldValue = form.setFieldValue
@@ -151,12 +143,19 @@ export const Collection = withCtrl<CollectionProps>(
                       </div>
                     )}
                     {isOwner && isEditing && (
-                      <PrimaryButton color="green" onHoverColor="orange" onClick={handleOnSaveClick}>
+                      <PrimaryButton
+                        color="green"
+                        onHoverColor="orange"
+                        onClick={() => {
+                          updateCollection()
+                          setIsEditing(false)
+                        }}
+                      >
                         <SaveIcon />
                       </PrimaryButton>
                     )}
                     {isOwner && !isEditing && (
-                      <SecondaryButton onClick={handleOnEditClick} color="orange">
+                      <SecondaryButton onClick={() => setIsEditing(true)} color="orange">
                         <EditIcon />
                       </SecondaryButton>
                     )}
@@ -191,19 +190,21 @@ export const Collection = withCtrl<CollectionProps>(
                 )}
                 <div className="actions">
                   <div className="left">
-                    {following ? (
-                      <div className="follow-and-followers">
-                        <SecondaryButton onClick={toggleFollow}>
-                          <Trans>Unfollow</Trans>
-                        </SecondaryButton>
-                      </div>
-                    ) : (
-                      <div className="follow-and-followers">
-                        <PrimaryButton disabled={!isAuthenticated || isOwner} onClick={toggleFollow}>
-                          <Trans>Follow</Trans>
-                        </PrimaryButton>
-                      </div>
-                    )}
+                    {isAuthenticated &&
+                      !isOwner &&
+                      (following ? (
+                        <div className="follow-and-followers">
+                          <SecondaryButton onClick={toggleFollow}>
+                            <Trans>Unfollow</Trans>
+                          </SecondaryButton>
+                        </div>
+                      ) : (
+                        <div className="follow-and-followers">
+                          <PrimaryButton onClick={toggleFollow}>
+                            <Trans>Follow</Trans>
+                          </PrimaryButton>
+                        </div>
+                      ))}
                     <div className={`followers`}>
                       <PermIdentityIcon />
                       <span>{numFollowers}</span>
