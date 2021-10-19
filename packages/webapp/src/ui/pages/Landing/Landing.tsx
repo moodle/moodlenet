@@ -22,7 +22,7 @@ export type LandingProps = {
   image?: string
   //setSearchText(text: string): unknown
   isAuthenticated: boolean
-  signUpHref?: Href
+  signUpHref: Href
   loadMoreResources?: (() => unknown) | null
 }
 
