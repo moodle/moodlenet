@@ -17,8 +17,8 @@ export const getIscedFields = () =>
     return iscedfield
   })
 
-export const getSelectedIscedFields = () => getIscedFields().filter(({ code }) => selectedIscdFields.includes(code))
-const selectedIscdFields = [
+export const getSelectedIscedFields = () => getIscedFields().filter(({ code }) => selectedIscedFields.includes(code))
+export const selectedIscedFields = [
   'F00',
   'F001',
   'F002',
