@@ -3,14 +3,16 @@ import { ResourceType } from '../../types/node'
 import resourceTypesData from './resource-type-DATA'
 
 export const getResourceTypes = () =>
-  resourceTypesData.map(resourceTypeData => {
+  resourceTypesData.map(resourceTypeStr => {
+    const slugifiedType = slugify({ str: resourceTypeStr })
+
     const resourceType: ResourceType = {
       _type: 'ResourceType',
-      _permId: resourceTypeData.code,
-      _slug: slugify({ str: resourceTypeData.desc }),
-      code: resourceTypeData.code,
-      name: resourceTypeData.desc,
-      description: resourceTypeData.desc,
+      _permId: slugifiedType,
+      _slug: slugifiedType,
+      code: slugifiedType,
+      name: resourceTypeStr,
+      description: resourceTypeStr,
     }
     return resourceType
   })
