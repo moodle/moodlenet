@@ -144,9 +144,9 @@ export const Landing = withCtrl<LandingProps>(
                 <div className="title">
                   <Trans>Latest collections</Trans>
                 </div>
-                <SecondaryButton>
+                {/* <SecondaryButton>
                   <Trans>See all</Trans>
-                </SecondaryButton>
+                </SecondaryButton> */}
               </div>
             }
             className="collections"
@@ -162,9 +162,9 @@ export const Landing = withCtrl<LandingProps>(
                 <div className="title">
                   <Trans>Latest resources</Trans>
                 </div>
-                <SecondaryButton>
+                {/* <SecondaryButton>
                   <Trans>See all</Trans>
-                </SecondaryButton>
+                </SecondaryButton> */}
               </div>
             }
             className="resources"
