@@ -59,7 +59,7 @@ export const Landing = withCtrl<LandingProps>(
             {organization.name === 'MoodleNet' ? (
               <Fragment>
                 <div className="organization-title">
-                  {!isAuthenticated ? <Trans>Welcome to MoodleNet</Trans> : <Trans>MoodleNet Central</Trans>}
+                  {!isAuthenticated ? <Trans>Welcome to MoodleNet Central</Trans> : <Trans>MoodleNet Central</Trans>}
                 </div>
                 {!isAuthenticated && (
                   <div className="moodle-title">
