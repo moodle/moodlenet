@@ -9,14 +9,12 @@ import TextCard from '../../components/molecules/cards/TextCard/TextCard'
 import { TrendCardProps } from '../../components/molecules/cards/TrendCard/TrendCard'
 import { Href, Link } from '../../elements/link'
 import { CP, withCtrl } from '../../lib/ctrl'
-import AcademyLogo from '../../static/img/academy-logo.png'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/page/HeaderPageTemplate'
 import { Organization } from '../../types'
 import './styles.scss'
 
 export type LandingProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
-  //browserProps: BrowserProps
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
   trendCardProps: TrendCardProps
@@ -31,7 +29,6 @@ export type LandingProps = {
 export const Landing = withCtrl<LandingProps>(
   ({
     headerPageTemplateProps,
-    /* browserProps, */
     //trendCardProps,
     collectionCardPropsList,
     resourceCardPropsList,
@@ -118,7 +115,7 @@ export const Landing = withCtrl<LandingProps>(
                   </PrimaryButton>
                 </Link>
               )}
-              <a
+              {/* <a
                 className="academy-button"
                 href="https://moodle.academy/course/view.php?id=13"
                 target="_blank"
@@ -127,7 +124,7 @@ export const Landing = withCtrl<LandingProps>(
                 <SecondaryButton color="orange">
                   <img src={AcademyLogo} />
                 </SecondaryButton>
-              </a>
+              </a> */}
               <a href="https://docs.moodle.org/moodlenet/Main_Page" target="_blank" rel="noreferrer">
                 <SecondaryButton color="grey">
                   <Trans>Go to Docs</Trans>
@@ -187,14 +184,12 @@ export const Landing = withCtrl<LandingProps>(
               </SecondaryButton>
             </div>
           )}
-          <div className="content">
+          {/* <div className="content">
             <div className="main-column">
-              {/* {docsCard} */}
-              {/**/}
             </div>
-            <div className="side-column">{/* <TrendCard {...trendCardProps} /> */}</div>
-          </div>
-        </div>
+            <div className="side-column"><TrendCard {...trendCardProps} /></div>
+          </div> */}
+        </div> 
       </HeaderPageTemplate>
     )
   },
