@@ -1,7 +1,7 @@
 import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { useUserAgreementCtrl } from '../ui/components/pages/Policies/UserAgreement/Ctrl/UserAgreementCtrl'
+import { UserAgreement } from '../ui/components/pages/Policies/UserAgreement/UserAgreement'
 import { ctrlHook } from '../ui/lib/ctrl'
-import { useUserAgreementCtrl } from '../ui/pages/Policies/UserAgreement/Ctrl/UserAgreementCtrl'
-import { UserAgreement } from '../ui/pages/Policies/UserAgreement/UserAgreement'
 import { MNRouteProps, RouteFC } from './lib'
 
 const UserAgreementComponent: RouteFC<Routes.UserAgreement> = (/* { match } */) => {

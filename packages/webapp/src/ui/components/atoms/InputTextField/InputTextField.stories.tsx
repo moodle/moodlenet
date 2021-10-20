@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { InputTextField, InputTextFieldProps } from './InputTextField'
 
 const meta: ComponentMeta<typeof InputTextField> = {
-  title: 'Components/Atoms/InputTextField',
+  title: 'Atoms/InputTextField',
   component: InputTextField,
   argTypes: {
     // backgroundColor: { control: 'color' },

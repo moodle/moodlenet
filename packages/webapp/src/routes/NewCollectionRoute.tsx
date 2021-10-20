@@ -1,7 +1,7 @@
 import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { useNewCollectionCtrl } from '../ui/components/pages/NewCollection/Ctrl/NewCollectionCtrl'
+import { NewCollection } from '../ui/components/pages/NewCollection/NewCollection'
 import { ctrlHook } from '../ui/lib/ctrl'
-import { useNewCollectionCtrl } from '../ui/pages/NewCollection/Ctrl/NewCollectionCtrl'
-import { NewCollection } from '../ui/pages/NewCollection/NewCollection'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const NewCollectionComponent: RouteFC<Routes.CreateNewCollection> = () => {

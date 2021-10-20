@@ -3,7 +3,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Snackbar } from './Snackbar'
 
 const meta: ComponentMeta<typeof Snackbar> = {
-  title: 'Components/Atoms/Snackbar',
+  title: 'Atoms/Snackbar',
   component: Snackbar,
 }
 

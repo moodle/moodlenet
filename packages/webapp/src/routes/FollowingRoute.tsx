@@ -1,7 +1,7 @@
 import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { useFollowingCtrl } from '../ui/components/pages/Following/Ctrl/FollowingCtrl'
+import { Following } from '../ui/components/pages/Following/Following'
 import { ctrlHook } from '../ui/lib/ctrl'
-import { useFollowingCtrl } from '../ui/pages/Following/Ctrl/FollowingCtrl'
-import { Following } from '../ui/pages/Following/Following'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const FollowingRouteComponent: RouteFC<Routes.FollowingPage> = (/* { match } */) => {
