@@ -454,7 +454,7 @@ export const Email: FC<{}> = () => {
 }
 
 const meta: ComponentMeta<typeof Email> = {
-  title: 'Emails/Access/NewUserRequestEmail',
+  title: 'Pages/Emails/Access/NewUserRequestEmail',
   excludeStories: ['Email'],
   parameters: { layout: 'fullscreen' },
 }
