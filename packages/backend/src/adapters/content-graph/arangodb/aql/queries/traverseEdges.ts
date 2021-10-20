@@ -2,6 +2,7 @@ import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
 import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
 import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { PageItem } from '@moodlenet/common/lib/content-graph/types/page'
+import { AuthId } from '@moodlenet/common/lib/types'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
 import { TraverseFromNodeAdapterInput } from '../../../../../ports/content-graph/traverseNodeRel'
@@ -14,7 +15,7 @@ export const traverseEdgesQ = ({
   page,
   targetNodeType,
   inverse,
-  /* env, */
+  env,
   fromNode,
   targetIds,
 }: TraverseFromNodeAdapterInput) => {
@@ -28,6 +29,7 @@ export const traverseEdgesQ = ({
     inverse,
     targetNodeType,
     targetIds,
+    issuerAuthId: env?.user.authId,
   })
 
   return cursorPaginatedQuery({
@@ -41,6 +43,7 @@ export const traverseEdgesQ = ({
 export const traversePaginateMapQuery =
   ({
     // edgeAndNodeAssertionFilters,
+    issuerAuthId,
     edgeType,
     fromNode,
     additionalFilter,
@@ -48,6 +51,7 @@ export const traversePaginateMapQuery =
     inverse,
     targetIds,
   }: {
+    issuerAuthId: AuthId | null | undefined
     edgeType: GraphEdgeType
     targetNodeType: GraphNodeType
     inverse: boolean
@@ -81,7 +85,9 @@ export const traversePaginateMapQuery =
           
           
           LET targetNode = Document(edge._${targetSide})
-          FILTER !!targetNode 
+          FILTER !!targetNode && ( targetNode._published ${
+            issuerAuthId ? `|| targetNode._creatorAuthId == ${aqlstr(issuerAuthId)}` : ''
+          } )
           ${pageFilterSortLimit}
 
         RETURN  [

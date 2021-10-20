@@ -358,7 +358,13 @@ export type Follows = IEdge & {
 export type GlobalSearchNodeType =
   | 'Collection'
   | 'Resource'
-  | 'IscedField';
+  | 'IscedField'
+  | 'Profile'
+  | 'License'
+  | 'Organization'
+  | 'Language'
+  | 'IscedGrade'
+  | 'ResourceType';
 
 export type GlobalSearchSort = {
   by: GlobalSearchSortBy;

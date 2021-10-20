@@ -1,4 +1,4 @@
-import { FC } from 'react-transition-group/node_modules/@types/react'
+import { FC } from 'react'
 import { ctrlHook } from '../ui/lib/ctrl'
 import { FallbackPage } from '../ui/pages/FallbackPage/FallbackPage'
 import { useHeaderPageTemplateCtrl } from '../ui/templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'

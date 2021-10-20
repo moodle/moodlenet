@@ -21,7 +21,7 @@ export type GlobalSearchInput<NodeType extends GlobalSearchNodeType = GlobalSear
 export const searchByTerm = plug(
   ns(__dirname, 'search-by-term'),
   async <NodeType extends GlobalSearchNodeType>({ sort, text, nodeTypes, page, env }: GlobalSearchInput<NodeType>) => {
-    // console.log({ nodeTypes, page, sort, text })
+    //  console.log({ nodeTypes, page, sort, text })
 
     return searchByTermAdapter({ sort, text, nodeTypes, page, env })
   },
