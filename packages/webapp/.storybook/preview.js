@@ -13,7 +13,7 @@ export const parameters = {
   layout: 'centered',
   options: {
     storySort: {
-      //order: ['Atoms', 'Molecules', 'Organisms', 'Templates', 'Pages', 'Emails']
+      order: ['Atoms', 'Molecules', 'Organisms', 'Templates', 'Pages']
     }
   }
 }
