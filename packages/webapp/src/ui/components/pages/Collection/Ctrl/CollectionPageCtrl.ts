@@ -113,6 +113,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
           collInput: {
             description: vals.description,
             name: vals.title,
+            visibility: vals.visibility,
             image: imageAssetRef,
             _published: true,
           },
@@ -125,7 +126,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
   const { resetForm: fresetForm } = formik
   useEffect(() => {
     if (collectionData) {
-      const { name: title, description, image } = collectionData
+      const { name: title, description, visibility, image } = collectionData
       fresetForm({
         touched: {},
         values: {
