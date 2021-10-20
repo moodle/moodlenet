@@ -2,6 +2,16 @@ import { Database } from 'arangojs'
 import { ArangoSearchViewLink } from 'arangojs/view'
 
 export const SearchViewName = 'SearchView'
+export const contentAnalyzer: ArangoSearchViewLink = {
+  analyzers: ['text_en', 'global-text-search'],
+  fields: {
+    description: {},
+    name: {},
+  },
+  includeAllFields: false,
+  storeValues: 'none',
+  trackListPositions: false,
+}
 export const setupSearchView = async ({ db }: { db: Database }) => {
   console.log(`setting up View ${SearchViewName}`)
   let searchView = db.view(SearchViewName)
@@ -11,17 +21,6 @@ export const setupSearchView = async ({ db }: { db: Database }) => {
     properties: { case: 'upper', locale: 'en', stemming: true, edgeNgram: { max: 6, min: 2, preserveOriginal: true } },
     features: ['frequency', 'norm', 'position'],
   })
-
-  const contentAnalyzer: ArangoSearchViewLink = {
-    analyzers: ['text_en', 'global-text-search'],
-    fields: {
-      description: {},
-      name: {},
-    },
-    includeAllFields: false,
-    storeValues: 'none',
-    trackListPositions: false,
-  }
 
   searchView = await db.createView(SearchViewName, {
     links: {

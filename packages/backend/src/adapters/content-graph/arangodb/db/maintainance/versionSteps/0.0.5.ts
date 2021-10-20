@@ -5,6 +5,7 @@ import { rePopulateIscedFields } from './0.0.5/rePopulateIscedFields'
 import { rePopulateIscedGrades } from './0.0.5/rePopulateIscedGrades'
 import { setCreatorAuthIdAndCreatedToUserEntities } from './0.0.5/setCreatorAuthIdAndCreatedToUserEntities'
 import { setProperPublishedToAllEntities } from './0.0.5/setProperPublishedToAllEntities'
+import { updateSearchViewSettings } from './0.0.5/setupSearchView'
 
 const v_0_0_5: VersionUpdater<MNStaticEnv> = {
   async pullUp({ db /* , ctx: { domain } */ }) {
@@ -13,6 +14,7 @@ const v_0_0_5: VersionUpdater<MNStaticEnv> = {
     await remapIscedGrades({ db })
     await setCreatorAuthIdAndCreatedToUserEntities({ db })
     await setProperPublishedToAllEntities({ db })
+    await updateSearchViewSettings({ db })
   },
   async pushDown() {
     throw new Error(`v_0_0_5 pushDown not implemented`)

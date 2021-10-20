@@ -7,18 +7,13 @@ import { useHistory } from 'react-router'
 import { useSession } from '../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../helpers/data'
 import {
-  categoriesOptions,
-  getGrade,
-  getIscedF,
-  getLang,
-  getLicense,
   getOriginalCreationTimestampByStrings,
-  getType,
-  langOptions,
-  licensesOptions,
   monthOptions,
-  resGradeOptions,
-  resTypeOptions,
+  useIscedFieldsOptions,
+  useLangOptions,
+  useLicensesOptions,
+  useResourceGradeOptions,
+  useResourceTypeOptions,
   yearsOptions,
 } from '../../../../helpers/resource-relation-data-static-and-utils'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
@@ -33,12 +28,13 @@ import {
   useNewResourceDataPageLazyQuery,
 } from './NewResourceCtrl.gen'
 
-const initialSetStepProps: DistOmit<UploadResourceProps, 'formBag' | 'deleteContent' | 'nextStep'> = {
+const initialSetStepProps: DistOmit<
+  UploadResourceProps,
+  'formBag' | 'deleteContent' | 'nextStep' | 'categories' | 'licenses'
+> = {
   step: 'UploadResourceStep',
   state: 'ChooseResource',
   imageUrl: '',
-  categories: categoriesOptions,
-  licenses: licensesOptions,
 }
 
 export type NewResourceCtrlProps = {}
@@ -51,6 +47,11 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
   const uploadTempFile = useUploadTempFile()
   const [createResourceMut /* , createResourceMutRes */] = useCreateResourceMutation()
   const [createResourceRelMut /* , createResourceRelMutRes */] = useCreateResourceRelationMutation()
+  const { langOptions, getLang } = useLangOptions()
+  const { getIscedF, iscedFieldsOptions } = useIscedFieldsOptions()
+  const { resourceTypeOptions, getResourceType } = useResourceTypeOptions()
+  const { getGrade, resourceGradeOptions } = useResourceGradeOptions()
+  const { getLicense, licensesOptions } = useLicensesOptions()
 
   const mycollections = useMemo(() => mycollectionsQRes.data?.node?.myCollections.edges.map(_ => _.node) ?? [], [
     mycollectionsQRes.data?.node?.myCollections,
@@ -108,14 +109,15 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
     [
       {
         ...initialSetStepProps,
+        categories: iscedFieldsOptions,
         formBag,
         deleteContent,
+        licenses: licensesOptions,
       },
       null,
     ],
   )
   const { content, name, image } = sform.values
-
   const [imageUrl, setImageUrl] = useState('')
   useEffect(() => {
     const imageObjectUrl = image instanceof File ? URL.createObjectURL(image) : ''
@@ -142,6 +144,8 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
               deleteContent,
               formBag,
               imageUrl,
+              categories: iscedFieldsOptions,
+              licenses: licensesOptions,
             })
           }
           //   categories,
@@ -170,8 +174,8 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           step: 'ExtraDetailsStep',
           // formats: resFormatOptions,
           languages: langOptions,
-          levels: resGradeOptions,
-          types: resTypeOptions,
+          levels: resourceGradeOptions,
+          types: resourceTypeOptions,
           months: monthOptions,
           years: yearsOptions,
           previousStep,
@@ -247,7 +251,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
 
           const waitFor: Promise<any>[] = []
 
-          const { iscedFId } = getIscedF(category)
+          const { id: iscedFId } = getIscedF(category)
           waitFor.push(
             createResourceRelMut({
               variables: { edge: { edgeType: 'Features', from: resId, to: iscedFId, Features: {} } },
@@ -255,7 +259,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           )
 
           if (language) {
-            const { langId } = getLang(language)
+            const { id: langId } = getLang(language)
             waitFor.push(
               createResourceRelMut({
                 variables: { edge: { edgeType: 'Features', from: resId, to: langId, Features: {} } },
@@ -264,7 +268,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           }
 
           if (license) {
-            const { licenseId } = getLicense(license)
+            const { id: licenseId } = getLicense(license)
             waitFor.push(
               createResourceRelMut({
                 variables: { edge: { edgeType: 'Features', from: resId, to: licenseId, Features: {} } },
@@ -273,7 +277,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           }
 
           if (type) {
-            const { typeId } = getType(type)
+            const { id: typeId } = getResourceType(type)
             waitFor.push(
               createResourceRelMut({
                 variables: { edge: { edgeType: 'Features', from: resId, to: typeId, Features: {} } },
@@ -282,7 +286,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           }
 
           if (level) {
-            const { gradeId } = getGrade(level)
+            const { id: gradeId } = getGrade(level)
             waitFor.push(
               createResourceRelMut({
                 variables: { edge: { edgeType: 'Features', from: resId, to: gradeId, Features: {} } },
@@ -306,6 +310,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
     }
     return undefined
   }, [
+    resourceTypeOptions,
     stepProps,
     form.values,
     deleteContent,
@@ -319,6 +324,15 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
     createResourceMut,
     createResourceRelMut,
     history,
+    langOptions,
+    getLang,
+    getIscedF,
+    getResourceType,
+    iscedFieldsOptions,
+    resourceGradeOptions,
+    getGrade,
+    getLicense,
+    licensesOptions,
   ])
 
   useEffect(() => {

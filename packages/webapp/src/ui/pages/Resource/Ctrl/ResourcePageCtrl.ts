@@ -9,20 +9,14 @@ import { useSeoContentId } from '../../../../context/Global/Seo'
 import { useSession } from '../../../../context/Global/Session'
 import { getJustAssetRefUrl, getMaybeAssetRefUrl, useUploadTempFile } from '../../../../helpers/data'
 import {
-  categoriesOptions,
-  getGrade,
-  getIscedF,
-  getLang,
-  getLicense,
-  getLicenseOptField,
   getOriginalCreationStringsByTimestamp,
   getOriginalCreationTimestampByStrings,
-  getType,
-  langOptions,
-  licensesOptions,
   monthOptions,
-  resGradeOptions,
-  resTypeOptions,
+  useIscedFieldsOptions,
+  useLangOptions,
+  useLicensesOptions,
+  useResourceGradeOptions,
+  useResourceTypeOptions,
   yearsOptions,
 } from '../../../../helpers/resource-relation-data-static-and-utils'
 import { useLMS } from '../../../../lib/moodleLMS/useSendToMoodle'
@@ -86,7 +80,12 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
   const level = levelEdge?.node.name ?? ''
   const type = typeEdge?.node.name ?? ''
   const language = languageEdge?.node.name ?? ''
-  const license = getLicenseOptField(licenseEdge?.node.code ?? '')
+  const license = licenseEdge?.node.name ?? ''
+  const { langOptions, getLang } = useLangOptions()
+  const { getIscedF, iscedFieldsOptions } = useIscedFieldsOptions()
+  const { resourceTypeOptions, getResourceType } = useResourceTypeOptions()
+  const { getGrade, resourceGradeOptions } = useResourceGradeOptions()
+  const { getLicense, licensesOptions } = useLicensesOptions()
 
   const uploadTempFile = useUploadTempFile()
   const [formik, formBag] = useFormikBag<NewResourceFormValues>({
@@ -124,7 +123,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         if (!vals.language || vals.language === language) {
           return
         }
-        const { langId } = getLang(vals.language)
+        const { id: langId } = getLang(vals.language)
         return Promise.all([
           languageEdge && delRelation({ variables: { edge: { id: languageEdge.edge.id } } }),
           addRelation({
@@ -137,7 +136,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         if (!vals.license || vals.license === license) {
           return
         }
-        const { licenseId } = getLicense(vals.license)
+        const { id: licenseId } = getLicense(vals.license)
         return Promise.all([
           licenseEdge && delRelation({ variables: { edge: { id: licenseEdge.edge.id } } }),
           addRelation({
@@ -150,7 +149,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         if (!vals.type || vals.type === type) {
           return
         }
-        const { typeId } = getType(vals.type)
+        const { id: typeId } = getResourceType(vals.type)
         return Promise.all([
           typeEdge && delRelation({ variables: { edge: { id: typeEdge.edge.id } } }),
           addRelation({
@@ -163,7 +162,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         if (!vals.level || vals.level === level) {
           return
         }
-        const { gradeId } = getGrade(vals.level)
+        const { id: gradeId } = getGrade(vals.level)
         return Promise.all([
           levelEdge && delRelation({ variables: { edge: { id: levelEdge.edge.id } } }),
           addRelation({
@@ -176,7 +175,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         if (!vals.category || vals.category === category) {
           return
         }
-        const { iscedFId } = getIscedF(vals.category)
+        const { id: iscedFId } = getIscedF(vals.category)
         return Promise.all([
           categoryEdge && delRelation({ variables: { edge: { id: categoryEdge.edge.id } } }),
           addRelation({
@@ -364,11 +363,11 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         refetch()
       },
       languages: langOptions,
-      levels: resGradeOptions,
-      types: resTypeOptions,
+      levels: resourceGradeOptions,
+      types: resourceTypeOptions,
       months: monthOptions,
       years: yearsOptions,
-      categories: categoriesOptions,
+      categories: iscedFieldsOptions,
       licenses: licensesOptions,
       updateResource: formik.submitForm,
       toggleLike,
@@ -383,6 +382,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     }
     return props
   }, [
+    licensesOptions,
     resourceData,
     id,
     formBag,
@@ -402,6 +402,10 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     addRelation,
     delRelation,
     refetch,
+    langOptions,
+    iscedFieldsOptions,
+    resourceTypeOptions,
+    resourceGradeOptions,
   ])
   return resourceProps && [resourceProps]
 }
