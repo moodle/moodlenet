@@ -19,6 +19,7 @@ import {
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useFormikBag } from '../../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
+import { VisibilityDropdown } from '../FieldsData'
 import { NewResourceProps } from '../NewResource'
 import { NewResourceFormValues } from '../types'
 import { UploadResourceProps } from '../UploadResource/UploadResource'
@@ -30,11 +31,11 @@ import {
 
 const initialSetStepProps: DistOmit<
   UploadResourceProps,
-  'formBag' | 'deleteContent' | 'nextStep' | 'categories' | 'licenses'
+  'formBag' | 'deleteContent' | 'nextStep' | 'categories' | 'licenses' | 'visibility'
 > = {
   step: 'UploadResourceStep',
   state: 'ChooseResource',
-  imageUrl: '',
+  imageUrl: ''
 }
 
 export type NewResourceCtrlProps = {}
@@ -80,6 +81,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
       title: '',
       contentType: 'Link',
       type: null,
+      visibility: 'Private'
     },
     onSubmit: console.log.bind(console, 'submit newResource'),
   })
@@ -113,6 +115,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
         formBag,
         deleteContent,
         licenses: licensesOptions,
+        visibility: VisibilityDropdown
       },
       null,
     ],
@@ -146,6 +149,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
               imageUrl,
               categories: iscedFieldsOptions,
               licenses: licensesOptions,
+              visibility: VisibilityDropdown
             })
           }
           //   categories,
@@ -154,6 +158,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
         if (
           form.values.title &&
           form.values.description &&
+          form.values.visibility &&
           form.values.category &&
           (form.values.contentType === 'File' ? form.values.license : true)
         ) {
@@ -190,6 +195,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           image,
           title,
           description,
+          visibility,
           level,
           language,
           license,
@@ -235,6 +241,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
               Resource: {
                 content: contentAssetRef,
                 description,
+                visibility,
                 name: title,
                 image: imageAssetRef,
                 originalCreationDate: getOriginalCreationTimestampByStrings({ originalDateMonth, originalDateYear }),

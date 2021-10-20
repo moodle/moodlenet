@@ -13,12 +13,6 @@
     @media screen and (max-width: 450px) {
       margin-top: 0;
       padding: 0;
-
-      > .main-collection-card {
-        > :last-child {
-          margin: 0 20px;
-        }
-      }
     }
 
     > .main-collection-card {
@@ -140,6 +134,7 @@
           display: flex;
           margin-top: 8px;
           width: 100%;
+          height: 30px;
           align-items: center;
           justify-content: space-between;
 
@@ -232,10 +227,6 @@
         width: 65%;
         height: 100%;
 
-        &.full-width {
-          width: 100%;
-        }
-
         > .collection-footer {
           display: none;
         }
@@ -273,18 +264,22 @@
         }
       }
 
-      .extra-details-card {
+      > .side-column > .extra-details-card,
+      > .main-column > .collection-footer > .left-column > .extra-details-card,
+      > .main-column > .collection-footer > .one-column > .extra-details-card {
         width: 100%;
         height: fit-content;
         padding: 25px;
         display: flex;
+
+        flex-direction: column;
         gap: 13px;
         flex-wrap: wrap;
         justify-content: center;
 
         > * {
           > label {
-            margin-bottom: 2px;
+            margin-bottom: 4px;
           }
         }
 
@@ -303,11 +298,35 @@
             }
           }
         }
-
-        > .button {
-          max-width: 160px;
+        > .detail {
           width: 100%;
-          margin-top: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          > .title {
+            font-weight: bold;
+            font-size: 14px;
+          }
+          > .value {
+            color: rgba(0, 0, 0, 0.5);
+            height: 24px;
+            width: 100%;
+            line-height: 20px;
+            font-weight: 500;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            &.date {
+              display: flex;
+              gap: 8px;
+            }
+          }
+        }
+
+        > .dropdown:not(:last-child) {
+          margin-bottom: 2px;
         }
       }
     }

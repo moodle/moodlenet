@@ -92,7 +92,7 @@ export const Profile = withCtrl<ProfileProps>(
         {isSendingMessage && sendEmail && (
           <Modal
             title={`${t`Send a message to`} ${displayName}`}
-            actions={
+            actions={[
               <PrimaryButton
                 onClick={() => {
                   sendEmail(emailText)
@@ -101,7 +101,7 @@ export const Profile = withCtrl<ProfileProps>(
               >
                 <Trans>Send</Trans>
               </PrimaryButton>
-            }
+            ]}
             onClose={() => setIsSendingMessage(false)}
             style={{ maxWidth: '400px' }}
           >

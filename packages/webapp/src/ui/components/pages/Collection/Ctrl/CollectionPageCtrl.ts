@@ -18,11 +18,11 @@ import { NewCollectionFormValues } from '../../NewCollection/types'
 // import { NewCollectionFormValues } from '../../NewCollection/types'
 import { CollectionProps } from '../Collection'
 import {
-    useAddCollectionRelationMutation,
-    useCollectionPageDataQuery,
-    useDelCollectionMutation,
-    useDelCollectionRelationMutation,
-    useEditCollectionMutation
+  useAddCollectionRelationMutation,
+  useCollectionPageDataQuery,
+  useDelCollectionMutation,
+  useDelCollectionRelationMutation,
+  useEditCollectionMutation
 } from './CollectionPage.gen'
 
 export type CollectionCtrlProps = { id: ID }
@@ -131,6 +131,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
         values: {
           title,
           description,
+          visibility,
           image: getMaybeAssetRefUrl(image),
           imageUrl: getMaybeAssetRefUrl(image),
         },

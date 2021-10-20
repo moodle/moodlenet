@@ -1,7 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SBFormikBag } from '../../../../lib/storybook/SBFormikBag'
-import { CategoriesDropdown, LicenseDropdown } from '../FieldsData'
+import { CategoriesDropdown, LicenseDropdown, VisibilityDropdown } from '../FieldsData'
 import { NewResourceFormValues } from '../types'
 import { UploadResource, UploadResourceProps } from './UploadResource'
 const meta: ComponentMeta<typeof UploadResource> = {

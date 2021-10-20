@@ -1,12 +1,14 @@
 import { Trans } from '@lingui/macro'
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { withCtrl } from '../../../../lib/ctrl'
 import { FormikBag } from '../../../../lib/formik'
 import { ReactComponent as UploadImageIcon } from '../../../../static/icons/upload-image.svg'
 import Card from '../../../atoms/Card/Card'
+import Dropdown from '../../../atoms/Dropdown/Dropdown'
 import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
+import { DropdownField } from '../../NewResource/FieldsData'
 import { NewCollectionFormValues } from '../types'
 import './styles.scss'
 
@@ -14,17 +16,21 @@ export type CreateCollectionProps = {
   step: 'CreateCollectionStep'
   formBag: FormikBag<NewCollectionFormValues>
   imageUrl: string
+  visibility: DropdownField
   finish: (() => unknown) | undefined
 }
 
 export const CreateCollection = withCtrl<CreateCollectionProps>(
-  ({ formBag, imageUrl, finish }) => {
+  ({ formBag, imageUrl, visibility, finish }) => {
+    const [highlightMandatoryFields, setHighlightMandatoryFields] = useState<boolean>(false)
     const [form] = formBag
     const setFieldValue = form.setFieldValue
     const background = {
       backgroundImage: 'url(' + imageUrl + ')',
       backgroundSize: 'cover',
     }
+
+    const createCollection = () => (finish ? finish() : setHighlightMandatoryFields(true))
 
     const uploadImage = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,6 +52,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           placeholder=""
           getText={text => form.setFieldValue('title', text)}
           value={form.values.title}
+          highlight={highlightMandatoryFields && !form.values.title}
         />
         <InputTextField
           autoUpdate={true}
@@ -54,7 +61,16 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           placeholder=""
           value={form.values.description}
           getText={text => form.setFieldValue('description', text)}
+          highlight={highlightMandatoryFields && !form.values.description}
         />
+        <Dropdown
+            {...visibility}
+            getValue={text => form.setFieldValue('visibility', text)}
+            label="Visibility"
+            value={form.values.visibility}
+            className="visibility-dropdown"
+            highlight={highlightMandatoryFields && !form.values.visibility}
+          />
       </div>
     )
 
@@ -104,7 +120,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           <div className="side-column">{dataInputs}</div>
         </div>
         <div className="footer">
-          <PrimaryButton disabled={!finish} onClick={finish}>
+          <PrimaryButton onClick={createCollection}>
             <Trans>Create collection</Trans>
           </PrimaryButton>
         </div>
