@@ -4,7 +4,7 @@ import { href } from '../../../elements/link'
 import { Header, HeaderPropsIdle } from './Header'
 
 const meta: ComponentMeta<typeof Header> = {
-  title: 'Organisms/Headers/Header',
+  title: 'Organisms/Header',
   component: Header,
   argTypes: {
     // backgroundColor: { control: 'color' },

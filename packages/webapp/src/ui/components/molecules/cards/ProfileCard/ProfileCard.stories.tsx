@@ -7,7 +7,7 @@ import { ProfileFormValues } from '../../../pages/Profile/types'
 import { ProfileCard, ProfileCardProps } from './ProfileCard'
 
 const meta: ComponentMeta<typeof ProfileCard> = {
-  title: 'Molecules/Cards/ProfileCard',
+  title: 'Molecules/ProfileCard',
   component: ProfileCard,
   argTypes: {
     // backgroundColor: { control: 'color' },

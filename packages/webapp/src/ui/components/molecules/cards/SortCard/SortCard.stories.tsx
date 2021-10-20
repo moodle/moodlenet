@@ -3,7 +3,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SortCard, SortCardProps } from './SortCard'
 
 const meta: ComponentMeta<typeof SortCard> = {
-  title: 'Molecules/Cards/SortCard',
+  title: 'Molecules/SortCard',
   component: SortCard,
   argTypes: {
     // backgroundColor: { control: 'color' },

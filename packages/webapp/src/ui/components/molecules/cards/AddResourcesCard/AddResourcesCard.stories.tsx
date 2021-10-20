@@ -5,7 +5,7 @@ import { ResourceCardStoryProps } from '../ResourceCard/ResourceCard.stories'
 import { AddResourcesCard, AddResourcesCardProps } from './AddResourcesCard'
 
 const meta: ComponentMeta<typeof AddResourcesCard> = {
-  title: 'Molecules/Cards/AddResourcesCard',
+  title: 'Molecules/AddResourcesCard',
   component: AddResourcesCard,
   argTypes: {
     // backgroundColor: { control: 'color' },

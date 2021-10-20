@@ -1,13 +1,13 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../../elements/link'
 import {
-    HeaderLoggedOutOrganizationStoryProps,
-    HeaderLoggedOutStoryProps
+  HeaderLoggedOutOrganizationStoryProps,
+  HeaderLoggedOutStoryProps
 } from '../../../organisms/Header/Header.stories'
 import { AccessHeader, AccessHeaderProps } from './AccessHeader'
 
 const meta: ComponentMeta<typeof AccessHeader> = {
-  title: 'Molecules/Headers/AccessHeader',
+  title: 'Organisms/AccessHeader',
   component: AccessHeader,
   argTypes: {
     // backgroundColor: { control: 'color' },

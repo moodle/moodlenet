@@ -1,17 +1,17 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../elements/link'
 import {
-    HeaderLoggedInOrganizationStoryProps,
-    HeaderLoggedInStoryProps,
-    HeaderLoggedOutOrganizationStoryProps,
-    HeaderLoggedOutStoryProps
+  HeaderLoggedInOrganizationStoryProps,
+  HeaderLoggedInStoryProps,
+  HeaderLoggedOutOrganizationStoryProps,
+  HeaderLoggedOutStoryProps
 } from '../../organisms/Header/Header.stories'
 import { SubHeaderStoryProps } from '../../organisms/SubHeader/SubHeader.stories'
 import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 import HeaderPage, { HeaderPageProps } from './HeaderPage'
 
 const meta: ComponentMeta<typeof HeaderPage> = {
-  title: 'Molecules/Headers/HeaderPage',
+  title: 'Organisms/HeaderPage',
   component: HeaderPage,
   argTypes: {
     // backgroundColor: { control: 'color' },
@@ -25,6 +25,10 @@ const meta: ComponentMeta<typeof HeaderPage> = {
     'HeaderPageTemplateOrganizationLoggedOutStoryProps',
     'HeaderPageTemplateLoggedInStoryProps',
     'HeaderPageTemplateOrganizationLoggedInStoryProps',
+    'LoggedOut',
+    'LoggedIn',
+    'LoggedOutOrganization',
+    'LoggedInOrganization'
   ],
 }
 

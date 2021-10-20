@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { TagListStory } from '../../../../elements/tags'
 import { TrendCard, TrendCardProps } from './TrendCard'
 const meta: ComponentMeta<typeof TrendCard> = {
-  title: 'Molecules/Cards/TrendCard',
+  title: 'Molecules/TrendCard',
   component: TrendCard,
   argTypes: {
     // backgroundColor: { control: 'color' },
