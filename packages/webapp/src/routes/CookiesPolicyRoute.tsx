@@ -1,7 +1,7 @@
 import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { CookiesPolicy } from '../ui/components/pages/Policies/CookiesPolicy/CookiesPolicy'
+import { useCookiesPolicyCtrl } from '../ui/components/pages/Policies/CookiesPolicy/Ctrl/CookiesPolicyCtrl'
 import { ctrlHook } from '../ui/lib/ctrl'
-import { CookiesPolicy } from '../ui/pages/Policies/CookiesPolicy/CookiesPolicy'
-import { useCookiesPolicyCtrl } from '../ui/pages/Policies/CookiesPolicy/Ctrl/CookiesPolicyCtrl'
 import { MNRouteProps, RouteFC } from './lib'
 
 const CookiesPolicyComponent: RouteFC<Routes.CookiesPolicy> = (/* { match } */) => {

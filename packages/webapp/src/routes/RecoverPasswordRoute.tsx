@@ -1,7 +1,7 @@
 import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { useRecoverPasswordCtrl } from '../ui/components/pages/Access/RecoverPassword/Ctrl/RecoverPassword'
+import { RecoverPassword } from '../ui/components/pages/Access/RecoverPassword/RecoverPassword'
 import { ctrlHook } from '../ui/lib/ctrl'
-import { useRecoverPasswordCtrl } from '../ui/pages/Access/RecoverPassword/Ctrl/RecoverPassword'
-import { RecoverPassword } from '../ui/pages/Access/RecoverPassword/RecoverPassword'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const RecoverPasswordRouteComponent: RouteFC<Routes.RecoverPassword> = (/* { match } */) => {

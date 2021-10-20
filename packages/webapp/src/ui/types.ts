@@ -1,5 +1,5 @@
+import { Type } from "./components/pages/NewResource/types"
 import { Href } from "./elements/link"
-import { Type } from "./pages/NewResource/types"
 
 export type Organization = {
   name: string

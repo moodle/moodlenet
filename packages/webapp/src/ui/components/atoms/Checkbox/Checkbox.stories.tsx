@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import Checkbox from './Checkbox'
 
 const meta: ComponentMeta<typeof Checkbox> = {
-  title: 'Components/Atoms/Checkbox',
+  title: 'Atoms/Checkbox',
   component: Checkbox,
 }
 

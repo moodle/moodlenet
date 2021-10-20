@@ -1,9 +1,9 @@
 import { nodeSlugId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
 import { getContentNodeHomePageRoutePath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { Collection } from '../ui/components/pages/Collection/Collection'
+import { useCollectionCtrl } from '../ui/components/pages/Collection/Ctrl/CollectionPageCtrl'
 import { ctrlHook } from '../ui/lib/ctrl'
-import { Collection } from '../ui/pages/Collection/Collection'
-import { useCollectionCtrl } from '../ui/pages/Collection/Ctrl/CollectionPageCtrl'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const CollectionRouteComponent: RouteFC<Routes.ContentNodeHomePage> = ({

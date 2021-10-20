@@ -3,7 +3,7 @@ import { href } from '../../../../elements/link'
 import { OverallCard, OverallCardProps } from './OverallCard'
 
 const meta: ComponentMeta<typeof OverallCard> = {
-  title: 'Components/Organisms/Cards/OverallCard',
+  title: 'Molecules/Cards/OverallCard',
   component: OverallCard,
   argTypes: {
     // backgroundColor: { control: 'color' },
