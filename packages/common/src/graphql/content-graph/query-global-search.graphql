@@ -32,4 +32,10 @@ enum GlobalSearchNodeType {
   Collection
   Resource
   IscedField
+  Profile
+  License
+  Organization
+  Language
+  IscedGrade
+  ResourceType
 }

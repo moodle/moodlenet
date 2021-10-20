@@ -22,5 +22,14 @@ fragment GlobalSearchEdge on SearchPageEdge {
   node {
     id
     name
+    ... on License {
+      code
+    }
+    ... on IscedField {
+      code
+    }
+    ... on IscedGrade {
+      code
+    }
   }
 }

@@ -41,7 +41,7 @@ export const startDefaultMoodlenet = async ({
   const userAuthDatabase = await getVersionedDBOrThrow({ version: '0.0.2' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.userAuthDBName }),
   })
-  const contentGraphDatabase = await getVersionedDBOrThrow({ version: '0.0.4' })({
+  const contentGraphDatabase = await getVersionedDBOrThrow({ version: '0.0.5' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.contentGraphDBName }),
   })
 

@@ -23,7 +23,6 @@ const meta: ComponentMeta<typeof CreateCollection> = {
 export const CreateCollectionStoryProps: CreateCollectionProps = {
   finish: action('nextStep'),
   formBag: SBFormikBag<NewCollectionFormValues>({
-    category: '',
     description: '',
     imageUrl: '',
     image: '',

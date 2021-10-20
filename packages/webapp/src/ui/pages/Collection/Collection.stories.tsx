@@ -3,7 +3,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import {
   ResourceCardOwnerBookmarkedStoryProps,
   ResourceCardOwnerStoryProps,
-  ResourceCardStoryProps
+  ResourceCardStoryProps,
 } from '../../components/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../components/molecules/Header/Header.stories'
 import { href } from '../../elements/link'
@@ -55,7 +55,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     //     title: 'The little pearl of all'
     //   }
     // ],
-    category: '0215 Music and performing arts',
+    // category: '0215 Music and performing arts',
     description:
       'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
     image: 'https://picsum.photos/200/100',

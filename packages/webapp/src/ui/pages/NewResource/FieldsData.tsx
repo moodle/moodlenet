@@ -136,6 +136,7 @@ const sa = <SaIcon style={{ width: '20px' }} />
 export const licenseIconMap = {
   by,
   zero,
+  '0': zero,
   nc,
   nd,
   sa,
