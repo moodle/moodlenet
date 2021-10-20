@@ -1,10 +1,10 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { FC } from 'react';
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { FC } from 'react'
 
 function html() {
   return {
-     __html: `
-     <!DOCTYPE html>
+    __html: `
+    <!DOCTYPE html>
 <html
   lang="en"
   xmlns="http://www.w3.org/1999/xhtml"
@@ -353,7 +353,7 @@ function html() {
                 <tr>
                   <td style="padding: 0 2.5em; text-align: center">
                     <div class="text">
-                      <h2>Ready to change your password</h2>
+                      <h2>Martin Dougiamas sent you a message</h2>
                     </div>
                   </td>
                 </tr>
@@ -361,11 +361,9 @@ function html() {
                   <td style="text-align: center">
                     <div class="text-author">
                       <span class="position"
-                        >Someone (probably you) requested a password change on MoodleNet. If that was you, please click
-                        on the button below and choose a new password for your account.</span
+                        >Dear MoodleNetter, the quality of your content is just great! We are very happy to have contributors like you. Thank you for you efforts!</span
                       >
-                      <p style="margin: 25px 0"><a href="{{=it.link}}" class="btn btn-primary">Change password</a></p>
-                      <span class="position disclaimer">Not you? Just ignore this message.</span>
+                      <p style="margin: 25px 0"><a href=# class="btn btn-primary">Sender profile</a></p>
                     </div>
                   </td>
                 </tr>
@@ -447,23 +445,22 @@ function html() {
     </center>
   </body>
 </html>
-
-     `    };
+    `,
+  }
 }
 
 export const Email: FC<{}> = () => {
-  return <div style ={{width: '100%', height: '100%'}} dangerouslySetInnerHTML={html()} />
+  return <div style={{ width: '100%', height: '100%' }} dangerouslySetInnerHTML={html()} />
 }
 
 const meta: ComponentMeta<typeof Email> = {
-  title: 'Emails/Access/RecoverPasswordEmail',
+  title: 'Pages/Emails/Access/MessageReceivedEmail',
   excludeStories: ['Email'],
   parameters: { layout: 'fullscreen' },
 }
 
-const RecoverPasswordEmailStory: ComponentStory<typeof Email> = () => <Email />
-  
+const MessageReceivedEmailStory: ComponentStory<typeof Email> = () => <Email />
 
-export const Default = RecoverPasswordEmailStory.bind({})
+export const Default = MessageReceivedEmailStory.bind({})
 
 export default meta
