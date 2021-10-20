@@ -1,7 +1,7 @@
 import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { Bookmarks } from '../ui/components/pages/Bookmarks/Bookmarks'
+import { useBookmarksCtrl } from '../ui/components/pages/Bookmarks/Ctrl/BookmarksCtrl'
 import { ctrlHook } from '../ui/lib/ctrl'
-import { Bookmarks } from '../ui/pages/Bookmarks/Bookmarks'
-import { useBookmarksCtrl } from '../ui/pages/Bookmarks/Ctrl/BookmarksCtrl'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const BookmarksRouteComponent: RouteFC<Routes.BookmarksPage> = (/* { match } */) => {

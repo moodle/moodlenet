@@ -2,7 +2,7 @@ import { FC } from "react";
 import "./styles.scss";
 
 export type SecondaryButtonProps = {
-  color?: 'orange' | 'grey' | 'red'
+  color?: 'black' | 'orange' | 'grey' | 'red'
   className?: string
   disabled?: boolean
   onHoverColor?: 'blue' | 'grey' | 'red' | 'filled-red'
@@ -20,7 +20,7 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({children, color, clas
 }
 
 SecondaryButton.defaultProps = { 
-  color: 'orange',
+  color: 'black',
   onHoverColor: 'blue'
 }
 

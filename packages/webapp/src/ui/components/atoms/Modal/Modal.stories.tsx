@@ -3,7 +3,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Modal } from './Modal'
 
 const meta: ComponentMeta<typeof Modal> = {
-  title: 'Components/Atoms/Modal',
+  title: 'Atoms/Modal',
   component: Modal,
 }
 

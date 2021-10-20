@@ -12,8 +12,9 @@ import {
   LicenseTypes,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown,
-} from '../ui/pages/NewResource/FieldsData'
+  YearsDropdown
+} from '../ui/components/pages/NewResource/FieldsData'
+
 
 export const useLanguages = () => {
   const langs = useGlobalSearchQuery({

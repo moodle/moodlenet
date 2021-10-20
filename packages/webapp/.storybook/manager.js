@@ -4,4 +4,8 @@ import Moodle from './MoodleTheme';
 
 addons.setConfig({
   theme: Moodle,
+  showPanel: false,
+  sidebar: {
+    collapsedRoots: ['atoms', 'molecules', 'organisms', 'templates', 'emails'],
+  },
 });
