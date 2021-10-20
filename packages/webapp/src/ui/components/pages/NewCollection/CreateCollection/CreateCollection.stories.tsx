@@ -1,6 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SBFormikBag } from '../../../../lib/storybook/SBFormikBag'
+import { VisibilityDropdown } from '../../NewResource/FieldsData'
 import { NewCollectionFormValues } from '../types'
 import { CreateCollection, CreateCollectionProps } from './CreateCollection'
 
@@ -23,13 +24,15 @@ const meta: ComponentMeta<typeof CreateCollection> = {
 export const CreateCollectionStoryProps: CreateCollectionProps = {
   finish: action('nextStep'),
   formBag: SBFormikBag<NewCollectionFormValues>({
+    title: '',
+    visibility: 'Private',
     description: '',
     imageUrl: '',
     image: '',
     // resources: [],
-    title: '',
   }),
   imageUrl: '',
+  visibility: VisibilityDropdown,
   step: 'CreateCollectionStep',
 }
 

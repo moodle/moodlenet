@@ -35,6 +35,8 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-use-what-input": "^1.2.0",
+    "shelljs": "^0.8.4",
+    "shx": "^0.3.3",
     "web-vitals": "^0.2.4",
     "yup": "^0.32.8"
   },
@@ -85,7 +87,7 @@
     "start-dev": "cross-env NODE_ENV=development react-scripts start --incremental",
     "start": "cross-env NODE_ENV=production serve -s -l 3000 build",
     "build": "yarn gen:graphql:types ; react-scripts build",
-    "clean-build": "rm -rf build && yarn build",
+    "clean-build": "shx rm -rf build && yarn build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",

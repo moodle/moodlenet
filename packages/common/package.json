@@ -21,6 +21,7 @@
     "nanoid": "^3.1.23",
     "path-to-regexp": "^6.2.0",
     "run-script-os": "^1.1.5",
+    "shx": "^0.3.3",
     "slugifyjs": "^0.0.7",
     "yup": "^0.32.8"
   },
@@ -40,7 +41,7 @@
     "typescript": "^4.4.3"
   },
   "scripts": {
-    "clean-build": "rm -rf lib && yarn build",
+    "clean-build": "shx rm -rf lib && yarn build",
     "build": "tsc && yarn gen:graphql:types && tsc",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
     "prepublish": "yarn clean-build"

@@ -3,6 +3,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../elements/link'
 import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
+import { VisibilityDropdown } from '../NewResource/FieldsData'
 import { CreateCollectionProps } from './CreateCollection/CreateCollection'
 import { NewCollection, NewCollectionProgressState, NewCollectionProps } from './NewCollection'
 import { NewCollectionFormValues } from './types'
@@ -38,6 +39,7 @@ const initialFormValues: NewCollectionFormValues = {
   image: 'image',
   imageUrl: 'image',
   title: '',
+  visibility: 'Private',
 }
 
 const basicDataFormValue: NewCollectionFormValues = {
@@ -54,6 +56,7 @@ const CreateCollectionStoryProps: CreateCollectionProps = {
   step: 'CreateCollectionStep',
   formBag,
   imageUrl: '',
+  visibility: VisibilityDropdown,
   finish: action('nextStep'),
 }
 

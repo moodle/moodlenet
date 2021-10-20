@@ -10,6 +10,7 @@ import {
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { NewCollectionFormValues } from '../NewCollection/types'
+import { VisibilityDropdown } from '../NewResource/FieldsData'
 import { Collection, CollectionProps } from './Collection'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
 
@@ -46,6 +47,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
   following: false,
   numFollowers: 23,
   bookmarked: false,
+  visibility: VisibilityDropdown,
   contributorCardProps: ContributorCardStoryProps,
   formBag: SBFormikBag<NewCollectionFormValues>({
     // resources: [
@@ -62,6 +64,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     image: 'https://picsum.photos/200/100',
     imageUrl: 'https://picsum.photos/200/100',
     title: 'Best collection ever',
+    visibility: 'Public'
   }),
   resourceCardPropsList: [ResourceCardOwnerStoryProps, ResourceCardOwnerBookmarkedStoryProps, ResourceCardStoryProps],
   updateCollection: action('updateCollection'),

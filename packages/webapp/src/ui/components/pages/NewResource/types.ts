@@ -16,6 +16,7 @@ export type NewResourceFormValues = {
   title: string
   description: string
   category: Category
+  visibility: Visibility
   image: Url | File | null
   imageUrl: Url | null
   content: Url | File
@@ -28,5 +29,4 @@ export type NewResourceFormValues = {
   language: Language | null
   format: Format | null
   license: License | null
-  visibility: Visibility | null
 }
