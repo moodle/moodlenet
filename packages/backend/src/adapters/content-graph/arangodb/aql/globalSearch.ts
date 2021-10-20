@@ -11,7 +11,8 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
   text,
   nodeTypes,
   sort,
-}: Omit<GlobalSearchInput<NType>, 'env'>) => {
+  env,
+}: GlobalSearchInput<NType>) => {
   const { limit, skip } = forwardSkipLimitPagination({ page })
   const aql_txt = aqlstr(text)
 
@@ -46,7 +47,7 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
         `
       : '1'
   const isSortRecent = sort?.by === 'Recent'
-
+  const issuerAuthId = env?.user.authId
   const query = aq<GraphNode<NType>>(`
     let searchTerm = ${aql_txt}
       FOR node IN SearchView
@@ -65,12 +66,13 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
           BOOST( NGRAM_MATCH(node.description, searchTerm, 0.05, "global-text-search"), 0.1 )
         , "text_en")
       
-        FILTER ${filterConditions} //&& !$ {isMarkDeleted('node')} 
+        FILTER ( node._published ${issuerAuthId ? `|| node._creatorAuthId == ${aqlstr(issuerAuthId)}` : ''} ) 
+                && ${filterConditions} 
       
       let sortFactor = ${sortFactor}
       let rank = ( (0.1 + TFIDF(node)) * sortFactor )
 
-      SORT rank ${isSortRecent ? 'desc' : sortDir}, node._rev ${isSortRecent ? sortDir : 'desc'}
+      SORT rank ${isSortRecent ? 'desc' : sortDir}, node._created ${isSortRecent ? sortDir : 'desc'}
       
       LIMIT ${skip}, ${limit}
       

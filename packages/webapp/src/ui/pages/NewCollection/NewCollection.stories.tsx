@@ -34,7 +34,6 @@ export const NewCollectionProgressStateStory: NewCollectionProgressState = [
 ]
 
 const initialFormValues: NewCollectionFormValues = {
-  category: '',
   description: '',
   image: 'image',
   imageUrl: 'image',
@@ -46,7 +45,6 @@ const basicDataFormValue: NewCollectionFormValues = {
   title: 'The best collection ever',
   description:
     'This is the description that tells you that this a not only the best collection ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-  category: 'Important Matters',
 }
 
 const formBag = SBFormikBag<NewCollectionFormValues>(initialFormValues)
@@ -69,7 +67,7 @@ export const NewCollectionStoryProps: NewCollectionProps = {
     showSubHeader: false,
     mainPageWrapperProps: {
       userAcceptsPolicies: null,
-      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default')
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
   stepProps: CreateCollectionStoryProps,

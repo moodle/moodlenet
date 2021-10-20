@@ -13,6 +13,7 @@ export const setProperPublishedToAllEntities = async ({ db }: { db: Database }) 
   return Promise.all(
     nodeTypes.map(nodeType => {
       const langType: NodeType = 'Language'
+      const licenseType: NodeType = 'License'
       const selectCodes =
         nodeType === 'IscedField'
           ? selectedIscedFieldsCodes
@@ -26,10 +27,12 @@ FOR n IN ${nodeType}
   let up = { 
     _published: 
       n._type == ${aqlstr(langType)} 
-      ? n.part1 != null
-      : selectCodes != null 
-        ? n.code in selectCodes 
-        : true
+        ? n.part1 != null
+        : n._type == ${aqlstr(licenseType)}
+          ? STARTS_WITH(n.code, 'cc-')
+          : selectCodes != null 
+            ? n.code in selectCodes 
+            : true
   }
 
   UPDATE n WITH up in ${nodeType} 

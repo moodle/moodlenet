@@ -5,13 +5,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { useSession } from '../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../helpers/data'
-import { getIscedF } from '../../../../helpers/resource-relation-data-static-and-utils'
 import { ctrlHook, CtrlHook } from '../../../lib/ctrl'
 import { useFormikBag } from '../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/page/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { NewCollectionProps } from '../NewCollection'
 import { NewCollectionFormValues } from '../types'
-import { useCreateCollectionMutation, useCreateCollectionRelationMutation } from './NewCollectionCtrl.gen'
+import { useCreateCollectionMutation } from './NewCollectionCtrl.gen'
 
 export type NewCollectionCtrlProps = {}
 
@@ -20,7 +19,7 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
   const uploadTempFile = useUploadTempFile()
   const { refetch } = useSession()
   const [createCollectionMut /* , createCollectionMutRes */] = useCreateCollectionMutation()
-  const [createCollectionRelMut /* , createCollectionRelMutRes */] = useCreateCollectionRelationMutation()
+  // const [createCollectionRelMut /* , createCollectionRelMutRes */] = useCreateCollectionRelationMutation()
 
   const [, /* form */ formBag] = useFormikBag<NewCollectionFormValues>({
     initialValues: {
@@ -28,14 +27,13 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
       image: null,
       imageUrl: null,
       title: '',
-      category: '',
     },
     onSubmit: console.log.bind(console, 'submit NewCollection'),
   })
 
   const [sform] = formBag
 
-  const { image, category, description, title } = sform.values
+  const { image, description, title } = sform.values
 
   const [imageUrl, setImageUrl] = useState('')
   useEffect(() => {
@@ -78,14 +76,6 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
       const collId = createRespData.node.id
 
       const waitFor: Promise<any>[] = []
-      if (category) {
-        const { iscedFId } = getIscedF(category)
-        waitFor.push(
-          createCollectionRelMut({
-            variables: { edge: { edgeType: 'Features', from: collId, to: iscedFId, Features: {} } },
-          }),
-        )
-      }
 
       await Promise.all(waitFor).finally(() => {
         setSaving(false)
@@ -94,18 +84,7 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
 
       history.push(nodeGqlId2UrlPath(collId))
     }
-  }, [
-    refetch,
-    category,
-    createCollectionMut,
-    createCollectionRelMut,
-    description,
-    history,
-    image,
-    saving,
-    title,
-    uploadTempFile,
-  ])
+  }, [refetch, createCollectionMut, description, history, image, saving, title, uploadTempFile])
 
   const NewCollectionProps = useMemo<NewCollectionProps>(() => {
     const props: NewCollectionProps = {

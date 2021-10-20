@@ -130,7 +130,6 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
         values: {
           title,
           description,
-          category,
           image: getMaybeAssetRefUrl(image),
           imageUrl: getMaybeAssetRefUrl(image),
         },
