@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/ce-platform",
-  "version": "2.0.0-beta.0.24",
+  "version": "2.0.0-beta.0.25",
   "main": "dist/main.js",
   "license": "AGPL",
   "description": "MoodleNet CE Platform",
@@ -25,9 +25,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@moodlenet/backend": "^2.0.0-beta.0.23",
-    "@moodlenet/common": "^2.0.0-beta.0.23",
-    "@moodlenet/webapp": "^2.0.0-beta.0.24",
+    "@moodlenet/backend": "^2.0.0-beta.0.25",
+    "@moodlenet/common": "^2.0.0-beta.0.25",
+    "@moodlenet/webapp": "^2.0.0-beta.0.25",
     "arangojs": "^7.1.0",
     "dotenv": "^8.2.0",
     "dotenv-expand": "^5.1.0",
