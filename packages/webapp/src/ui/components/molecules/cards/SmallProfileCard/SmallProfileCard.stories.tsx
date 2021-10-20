@@ -7,7 +7,7 @@ import { OverallCardNoCardStoryProps } from '../OverallCard/OverallCard.stories'
 import { SmallProfileCard, SmallProfileCardProps } from './SmallProfileCard'
 
 const meta: ComponentMeta<typeof SmallProfileCard> = {
-  title: 'Molecules/Cards/SmallProfileCard',
+  title: 'Molecules/SmallProfileCard',
   component: SmallProfileCard,
   argTypes: {
     // backgroundColor: { control: 'color' },

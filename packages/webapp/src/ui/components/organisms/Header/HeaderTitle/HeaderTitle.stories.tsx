@@ -3,7 +3,7 @@ import { href } from '../../../../elements/link'
 import { HeaderTitle, HeaderTitleProps } from './HeaderTitle'
 
 const meta: ComponentMeta<typeof HeaderTitle> = {
-  title: 'Molecules/Headers/HeaderTitle',
+  title: 'Atoms/HeaderTitle',
   component: HeaderTitle,
   argTypes: {
     // backgroundColor: { control: 'color' },

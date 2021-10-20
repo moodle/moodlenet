@@ -3,7 +3,7 @@ import { TagListStory } from '../../../elements/tags'
 import { SubHeader, SubHeaderProps } from './SubHeader'
 
 const meta: ComponentMeta<typeof SubHeader> = {
-  title: 'Organisms/Headers/SubHeader',
+  title: 'Organisms/SubHeader',
   component: SubHeader,
   argTypes: {
     // backgroundColor: { control: 'color' },

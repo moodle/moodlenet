@@ -4,7 +4,7 @@ import { href } from '../../../../elements/link'
 import { CollectionCard, CollectionCardProps } from './CollectionCard'
 
 const meta: ComponentMeta<typeof CollectionCard> = {
-  title: 'Molecules/Cards/CollectionCard',
+  title: 'Molecules/CollectionCard',
   component: CollectionCard,
   argTypes: {
     // backgroundColor: { control: 'color' },
@@ -35,8 +35,8 @@ export const CollectionCardStoryProps: CollectionCardProps = {
   numFollowers: 32,
   isAuthenticated: true,
   isOwner: false,
-  toggleFollow: linkTo('Molecules/Cards/CollectionCard', 'Following'),
-  toggleBookmark: linkTo('Molecules/Cards/CollectionCard', 'Bookmarked'),
+  toggleFollow: linkTo('Molecules/CollectionCard', 'Following'),
+  toggleBookmark: linkTo('Molecules/CollectionCard', 'Bookmarked'),
 }
 
 export const CollectionCardLoggedInStoryProps: CollectionCardProps = {
@@ -46,13 +46,13 @@ export const CollectionCardLoggedInStoryProps: CollectionCardProps = {
 export const CollectionCardFollowingStoryProps: CollectionCardProps = {
   ...CollectionCardLoggedInStoryProps,
   following: true,
-  toggleFollow: linkTo('Molecules/Cards/CollectionCard', 'LoggedIn'), // Strangely not working
+  toggleFollow: linkTo('Molecules/CollectionCard', 'LoggedIn'), // Strangely not working
 }
 
 export const CollectionCardBookmarkedStoryProps: CollectionCardProps = {
   ...CollectionCardLoggedInStoryProps,
   bookmarked: true,
-  toggleBookmark: linkTo('Molecules/Cards/CollectionCard', 'LoggedIn'), // Strangely not working
+  toggleBookmark: linkTo('Molecules/CollectionCard', 'LoggedIn'), // Strangely not working
 }
 
 export const CollectionCardLoggedOutStoryProps: CollectionCardProps = {

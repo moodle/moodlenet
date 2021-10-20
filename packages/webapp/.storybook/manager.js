@@ -6,6 +6,6 @@ addons.setConfig({
   theme: Moodle,
   showPanel: false,
   sidebar: {
-    collapsedRoots: ['atoms', 'molecules', 'organisms', 'templates', 'pages', 'emails'],
+    collapsedRoots: ['atoms', 'molecules', 'organisms', 'templates', 'emails'],
   },
 });

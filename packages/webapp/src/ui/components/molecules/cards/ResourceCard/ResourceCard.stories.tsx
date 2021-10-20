@@ -4,7 +4,7 @@ import { TagListStory } from '../../../../elements/tags'
 import { ResourceCard, ResourceCardProps } from './ResourceCard'
 
 const meta: ComponentMeta<typeof ResourceCard> = {
-  title: 'Molecules/Cards/ResourceCard',
+  title: 'Molecules/ResourceCard',
   component: ResourceCard,
   argTypes: {
     // backgroundColor: { control: 'color' },
