@@ -1,7 +1,7 @@
 import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { useLandingCtrl } from '../ui/components/pages/Landing/Ctrl/LandingCtrl'
+import { Landing } from '../ui/components/pages/Landing/Landing'
 import { ctrlHook } from '../ui/lib/ctrl'
-import { useLandingCtrl } from '../ui/pages/Landing/Ctrl/LandingCtrl'
-import { Landing } from '../ui/pages/Landing/Landing'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const LandingRouteComponent: RouteFC<Routes.Landing> = (/* { match } */) => {

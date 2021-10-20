@@ -10,7 +10,12 @@ export const parameters = {
       date: /Date$/,
     },
   },
-  layout: 'centered'
+  layout: 'centered',
+  options: {
+    storySort: {
+      order: ['Atoms', 'Molecules', 'Organisms', 'Templates', 'Pages']
+    }
+  }
 }
 export const decorators = [
   (Story) => (

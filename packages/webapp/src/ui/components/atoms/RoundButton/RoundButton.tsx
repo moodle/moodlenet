@@ -8,21 +8,25 @@ export type RoundButtonProps = {
   onClick?(arg0: unknown): unknown
   className?: string
   type?: 'cross' | 'trash' |'edit'
-  onHoverColor?: 'red'
+  color?: 'gray' | 'red'
+  onHoverColor?: 'gray' | 'red' | 'fill-red'
 }
 
-export const RoundButton: FC<RoundButtonProps> = ({ className, type, onHoverColor, onClick}) => {
+export const RoundButton: FC<RoundButtonProps> = ({ className, type, color, onHoverColor, onClick}) => {
+  const svgClassName = `color-${color} hover-${onHoverColor}`
   return (
-    <div className={`round-button ${className} hover-${onHoverColor}`} onClick={onClick}>
-      { type === 'cross' && <CloseRoundedIcon />}
-      { type === 'trash' && <DeleteOutlineIcon />}
-      { type === 'edit' && <EditIcon />}
+    <div className={`round-button ${className}`} onClick={onClick}>
+      { type === 'cross' && <CloseRoundedIcon className={svgClassName} />}
+      { type === 'trash' && <DeleteOutlineIcon className={svgClassName}/>}
+      { type === 'edit' && <EditIcon className={svgClassName} />}
     </div>
   )
 }
 
 RoundButton.defaultProps = {
-  type: 'cross'
+  type: 'cross',
+  color: 'gray',
+  onHoverColor: 'gray',
 }
 
 export default RoundButton

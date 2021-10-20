@@ -3,7 +3,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Searchbox, SearchboxProps } from './Searchbox'
 
 const meta: ComponentMeta<typeof Searchbox> = {
-  title: 'Components/Atoms/Searchbox',
+  title: 'Atoms/Searchbox',
   component: Searchbox,
   excludeStories: ['SearchboxStoryProps'],
 }

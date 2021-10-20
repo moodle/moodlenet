@@ -1,9 +1,9 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { LevelDropdown, LicenseDropdown } from '../../../pages/NewResource/FieldsData'
+import { LevelDropdown, LicenseDropdown } from '../../pages/NewResource/FieldsData'
 import { DropdownLegacy, DropdownLegacyProps } from './DropdownLegacy'
 
 const meta: ComponentMeta<typeof DropdownLegacy> = {
-  title: 'Components/Atoms/DropdownLegacy',
+  title: 'Atoms/DropdownLegacy',
   component: DropdownLegacy,
   argTypes: {
     // backgroundColor: { control: 'color' },
