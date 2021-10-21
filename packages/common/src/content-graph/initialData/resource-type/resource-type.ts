@@ -10,6 +10,7 @@ export const getResourceTypes = () =>
       _type: 'ResourceType',
       _permId: slugifiedType,
       _slug: slugifiedType,
+      _published: true,
       code: slugifiedType,
       name: resourceTypeStr,
       description: resourceTypeStr,
