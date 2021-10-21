@@ -64,7 +64,7 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
       variables: {
         res: {
           nodeType: 'Collection',
-          Collection: { description, image: imageAssetRef, name: title },
+          Collection: { description, image: imageAssetRef, name: title, _published: true },
         },
       },
     })

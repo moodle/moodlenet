@@ -111,7 +111,7 @@ export const createSession = plug(
         if ('string' == typeof mActiveUser) {
           return mActiveUser
         }
-        await createProfile({ partProfile: { name: displayName, _authId: authId } })
+        await createProfile({ partProfile: { name: displayName, _authId: authId, _published: true } })
         return mActiveUser
       }
 

@@ -1,9 +1,10 @@
 type Collection implements INode {
-  name: String!
-  description: String!
   image: AssetRef
   # INode
   id: ID!
+  name: String!
+  description: String!
+  _published: Boolean!
   _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }
@@ -18,6 +19,7 @@ input CreateCollectionInput {
   name: String!
   description: String!
   image: AssetRefInput!
+  _published: Boolean!
 }
 input CreateNodeInput {
   Collection: CreateCollectionInput
@@ -27,6 +29,7 @@ input EditCollectionInput {
   name: String!
   description: String!
   image: AssetRefInput
+  _published: Boolean!
 }
 input EditNodeInput {
   Collection: EditCollectionInput

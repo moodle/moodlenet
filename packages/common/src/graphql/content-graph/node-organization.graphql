@@ -1,6 +1,4 @@
 type Organization implements INode {
-  name: String!
-  description: String!
   intro: String!
   logo: AssetRef
   image: AssetRef
@@ -8,6 +6,9 @@ type Organization implements INode {
   domain: String!
   # INode
   id: ID!
+  name: String!
+  description: String!
+  _published: Boolean!
   _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }

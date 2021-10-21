@@ -114,6 +114,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
             description: vals.description,
             name: vals.title,
             image: imageAssetRef,
+            _published: true,
           },
         },
       })

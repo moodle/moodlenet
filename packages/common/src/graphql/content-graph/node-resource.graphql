@@ -1,12 +1,13 @@
 type Resource implements INode {
-  name: String!
-  description: String!
   image: AssetRef
   content: AssetRef!
   kind: ResourceKind!
   originalCreationDate: Timestamp
   # INode
   id: ID!
+  name: String!
+  description: String!
+  _published: Boolean!
   _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }
@@ -28,6 +29,7 @@ input CreateResourceInput {
   image: AssetRefInput
   content: AssetRefInput!
   originalCreationDate: Timestamp
+  _published: Boolean!
 }
 input CreateNodeInput {
   Resource: CreateResourceInput
@@ -38,6 +40,7 @@ input EditResourceInput {
   description: String!
   image: AssetRefInput
   originalCreationDate: Timestamp
+  _published: Boolean!
 }
 input EditNodeInput {
   Resource: EditResourceInput
