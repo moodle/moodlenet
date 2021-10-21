@@ -14,7 +14,7 @@ import {
   useLicensesOptions,
   useResourceGradeOptions,
   useResourceTypeOptions,
-  yearsOptions
+  yearsOptions,
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useFormikBag } from '../../../../lib/formik'
@@ -26,7 +26,7 @@ import { UploadResourceProps } from '../UploadResource/UploadResource'
 import {
   useCreateResourceMutation,
   useCreateResourceRelationMutation,
-  useNewResourceDataPageLazyQuery
+  useNewResourceDataPageLazyQuery,
 } from './NewResourceCtrl.gen'
 
 const initialSetStepProps: DistOmit<
@@ -35,7 +35,7 @@ const initialSetStepProps: DistOmit<
 > = {
   step: 'UploadResourceStep',
   state: 'ChooseResource',
-  imageUrl: ''
+  imageUrl: '',
 }
 
 export type NewResourceCtrlProps = {}
@@ -81,7 +81,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
       title: '',
       contentType: 'Link',
       type: null,
-      visibility: 'Private'
+      visibility: 'Private',
     },
     onSubmit: console.log.bind(console, 'submit newResource'),
   })
@@ -115,7 +115,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
         formBag,
         deleteContent,
         licenses: licensesOptions,
-        visibility: VisibilityDropdown
+        visibility: VisibilityDropdown,
       },
       null,
     ],
@@ -149,7 +149,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
               imageUrl,
               categories: iscedFieldsOptions,
               licenses: licensesOptions,
-              visibility: VisibilityDropdown
+              visibility: VisibilityDropdown,
             })
           }
           //   categories,
@@ -241,11 +241,10 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
               Resource: {
                 content: contentAssetRef,
                 description,
-                visibility,
+                _published: visibility === 'Public',
                 name: title,
                 image: imageAssetRef,
                 originalCreationDate: getOriginalCreationTimestampByStrings({ originalDateMonth, originalDateYear }),
-                _published: true,
               },
             },
           },

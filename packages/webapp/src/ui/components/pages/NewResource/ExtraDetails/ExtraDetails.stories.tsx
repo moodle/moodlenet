@@ -41,6 +41,7 @@ export const ExtraDetailsStoryProps: ExtraDetailsProps = {
     originalDateYear: '',
     title: '',
     type: '',
+    visibility: 'Public',
   }),
   step: 'ExtraDetailsStep',
   types: TypeDropdown,

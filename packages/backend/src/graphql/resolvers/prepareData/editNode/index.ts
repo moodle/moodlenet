@@ -45,6 +45,7 @@ const nodeDocumentDataBaker: {
       description: input.description,
       name: input.name,
       originalCreationDate: input.originalCreationDate,
+      _published: input._published,
     }
 
     return editResourceData as EditNodeData<'Resource'> // FIXME: when assets are externalilzed to own nodes
@@ -62,6 +63,7 @@ const nodeDocumentDataBaker: {
       image: imageAssetRef,
       description: input.description,
       name: input.name,
+      _published: input._published,
     }
 
     return editCollectionData
