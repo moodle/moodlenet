@@ -42,10 +42,11 @@ export type Bookmarked = IEdge & {
 
 export type Collection = INode & {
   __typename: 'Collection';
-  name: Scalars['String'];
-  description: Scalars['String'];
   image?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -70,6 +71,7 @@ export type CreateCollectionInput = {
   name: Scalars['String'];
   description: Scalars['String'];
   image: AssetRefInput;
+  _published: Scalars['Boolean'];
 };
 
 export type CreateEdgeInput = {
@@ -142,6 +144,7 @@ export type CreateResourceInput = {
   image?: Maybe<AssetRefInput>;
   content: AssetRefInput;
   originalCreationDate?: Maybe<Scalars['Timestamp']>;
+  _published: Scalars['Boolean'];
 };
 
 export type CreateSession = {
@@ -218,6 +221,7 @@ export type EditCollectionInput = {
   name: Scalars['String'];
   description: Scalars['String'];
   image?: Maybe<AssetRefInput>;
+  _published: Scalars['Boolean'];
 };
 
 export type EditEdgeInput = {
@@ -301,6 +305,7 @@ export type EditResourceInput = {
   description: Scalars['String'];
   image?: Maybe<AssetRefInput>;
   originalCreationDate?: Maybe<Scalars['Timestamp']>;
+  _published: Scalars['Boolean'];
 };
 
 
@@ -318,6 +323,7 @@ export type FileFormat = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -385,6 +391,7 @@ export type INode = {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -407,12 +414,13 @@ export type INode_RelCountArgs = {
 
 export type IscedField = INode & {
   __typename: 'IscedField';
-  name: Scalars['String'];
-  description: Scalars['String'];
   codePath: Array<Scalars['String']>;
   code: Scalars['String'];
   image?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -435,12 +443,13 @@ export type IscedField_RelCountArgs = {
 
 export type IscedGrade = INode & {
   __typename: 'IscedGrade';
-  name: Scalars['String'];
-  description: Scalars['String'];
   codePath: Array<Scalars['String']>;
   code: Scalars['String'];
   image?: Maybe<Scalars['AssetRef']>;
   id: Scalars['ID'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -471,6 +480,7 @@ export type Language = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -497,6 +507,7 @@ export type License = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -610,14 +621,15 @@ export type NodeType =
 
 export type Organization = INode & {
   __typename: 'Organization';
-  name: Scalars['String'];
-  description: Scalars['String'];
   intro: Scalars['String'];
   logo?: Maybe<Scalars['AssetRef']>;
   image?: Maybe<Scalars['AssetRef']>;
   color: Scalars['String'];
   domain: Scalars['String'];
   id: Scalars['ID'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -670,8 +682,6 @@ export type Pinned = IEdge & {
 
 export type Profile = INode & {
   __typename: 'Profile';
-  name: Scalars['String'];
-  description: Scalars['String'];
   avatar?: Maybe<Scalars['AssetRef']>;
   bio?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['AssetRef']>;
@@ -680,6 +690,9 @@ export type Profile = INode & {
   siteUrl?: Maybe<Scalars['String']>;
   location?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -735,13 +748,14 @@ export type RelPageEdge = PageEdge & {
 
 export type Resource = INode & {
   __typename: 'Resource';
-  name: Scalars['String'];
-  description: Scalars['String'];
   image?: Maybe<Scalars['AssetRef']>;
   content: Scalars['AssetRef'];
   kind: ResourceKind;
   originalCreationDate?: Maybe<Scalars['Timestamp']>;
   id: Scalars['ID'];
+  name: Scalars['String'];
+  description: Scalars['String'];
+  _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -772,6 +786,7 @@ export type ResourceType = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };

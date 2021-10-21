@@ -8,6 +8,7 @@ export const getIso639_3 = () =>
       _type: 'Language',
       _permId: iso_data.id,
       _slug: contentSlug({ name: iso_data.name, slugCode: iso_data.id }),
+      _published: true,
       name: iso_data.name,
       description: iso_data.name,
       part1: iso_data.part1,

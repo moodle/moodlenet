@@ -56,6 +56,7 @@ export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _type: GNT
   _permId: PermId
   _slug: Slug
+  _published: boolean
   name: string
   description: string
 }

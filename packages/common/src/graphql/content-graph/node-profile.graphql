@@ -1,6 +1,4 @@
 type Profile implements INode {
-  name: String!
-  description: String!
   avatar: AssetRef
   bio: String
   image: AssetRef
@@ -10,6 +8,9 @@ type Profile implements INode {
   location: String
   # INode
   id: ID!
+  name: String!
+  description: String!
+  _published: Boolean!
   _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
 }

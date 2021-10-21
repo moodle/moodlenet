@@ -20,6 +20,7 @@ export const graphNode2GqlNode = (node: GN.GraphNode): GQL.Node => {
     id,
     name: node.name,
     description: node.description,
+    _published: node._published,
     ...({} as Pick<GQL.Node, '_rel' | '_relCount'>),
   }
 
@@ -105,6 +106,7 @@ export const gqlNode2GraphNode = (node: GQL.Node): Omit<GN.GraphNode, '_permId' 
   const { _slug } = parsed
   const base = {
     _slug,
+    _published: node._published,
     name: node.name,
     description: node.description,
   }

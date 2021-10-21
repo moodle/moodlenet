@@ -11,6 +11,7 @@ export const getFileFormats = () =>
         _type: 'FileFormat',
         _permId: cleanMime,
         _slug: cleanMime,
+        _published: true,
         name: mimetypeData.name,
         code: mimetypeData.mimetype,
         description: `${mimetypeData.name} : ${mimetypeData.mimetype}`,
