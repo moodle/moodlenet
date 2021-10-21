@@ -62,7 +62,7 @@ export const CollectionCardLoggedOutStoryProps: CollectionCardProps = {
 }
 
 export const CollectionCardOwnerStoryProps: CollectionCardProps = {
-  ...CollectionCardStoryProps,
+  ...CollectionCardLoggedInStoryProps,
   collectionHref: href('Pages/Collection/Owner'),
   isOwner: true,
 }

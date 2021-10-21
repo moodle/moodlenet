@@ -69,6 +69,7 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/yup": "^0.29.11",
     "babel-loader": "8.1.0",
+    "chromatic": "^6.0.4",
     "cross-env": "^7.0.3",
     "react-scripts": "4.0.1",
     "sass": "^1.34.0",
@@ -89,7 +90,8 @@
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
-    "prepublish": "yarn clean-build"
+    "prepublish": "yarn clean-build",
+    "chromatic": "chromatic --project-token cae3595a750c"
   },
   "eslintConfig": {
     "extends": [
