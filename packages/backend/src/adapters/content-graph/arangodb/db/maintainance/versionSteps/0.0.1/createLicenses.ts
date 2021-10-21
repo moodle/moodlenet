@@ -8,7 +8,7 @@ export const createLicenses = async ({ db }: { db: Database }) => {
   await Promise.all(
     licenses.map(async license_data => {
       console.log(`creating License ${license_data.name} ${license_data.code}`)
-      await justExecute(createNodeQ({ node: license_data }), db)
+      await justExecute(createNodeQ({ node: license_data, creatorAuthId: null }), db)
     }),
   )
 }

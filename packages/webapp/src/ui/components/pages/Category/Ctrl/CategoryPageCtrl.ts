@@ -12,9 +12,9 @@ import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplate
 // import { NewCategoryFormValues } from '../../NewCategory/types'
 import { CategoryProps } from '../Category'
 import {
-    useAddCategoryRelationMutation,
-    useCategoryPageDataQuery,
-    useDelCategoryRelationMutation
+  useAddCategoryRelationMutation,
+  useCategoryPageDataQuery,
+  useDelCategoryRelationMutation,
 } from './CategoryPage.gen'
 
 export type CategoryCtrlProps = { id: ID }
@@ -82,6 +82,8 @@ export const useCategoryCtrl: CtrlHook<CategoryProps, CategoryCtrlProps> = ({ id
       numResources,
       resourceCardPropsList,
       toggleFollow,
+      isIscedSubject: true,
+      iscedLink: 'http://uis.unesco.org/en/topic/international-standard-classification-education-isced',
     }
     return props
   }, [categoryData, isAuthenticated, myFollowEdgeId, toggleFollow])

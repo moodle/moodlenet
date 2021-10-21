@@ -138,6 +138,11 @@
       }
     }
 
+    > .main-column > .small-screen-details > div > .dropdown > div,
+    > .side-column > div > .dropdown > div {
+      min-height: 44px;
+    }
+
     @media screen and (max-width: 800px) {
       > .main-column {
         width: 100%;

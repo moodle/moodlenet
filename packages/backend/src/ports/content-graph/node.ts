@@ -1,6 +1,6 @@
 import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
 import { GraphNode, GraphNodeIdentifier, GraphNodeType, Profile } from '@moodlenet/common/lib/content-graph/types/node'
-import { SessionEnv } from '@moodlenet/common/lib/types'
+import { AuthId, SessionEnv } from '@moodlenet/common/lib/types'
 import { newGlyphIdentifiers, newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { ns } from '../../lib/ns/namespace'
@@ -18,9 +18,9 @@ export const byIdentifier = plug(
 )
 
 // create
-export const createNodeAdapter = plug<<N extends GraphNode>(_: { node: N }) => Promise<N | undefined>>(
-  ns(__dirname, 'create-node-adapter'),
-)
+export const createNodeAdapter = plug<
+  <N extends GraphNode>(_: { node: N; creatorAuthId: AuthId }) => Promise<N | undefined>
+>(ns(__dirname, 'create-node-adapter'))
 export type NewNodeData<N extends GraphNode = GraphNode> = DistOmit<N, '_permId' | '_slug'>
 export type CreateNode = {
   nodeData: NewNodeData
@@ -41,7 +41,7 @@ export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, 
     ...ids,
     ...nodeData,
   }
-  const result = await createNodeAdapter({ node })
+  const result = await createNodeAdapter({ node, creatorAuthId: sessionEnv.user.authId })
   if (!result) {
     return null
   }
@@ -118,7 +118,7 @@ export const createProfile = plug(ns(__dirname, 'create-profile'), async ({ part
     siteUrl: undefined,
     ...partProfile,
   }
-  const result = await createNodeAdapter<Profile>({ node: profile })
+  const result = await createNodeAdapter<Profile>({ node: profile, creatorAuthId: profile._authId })
   if (!result) {
     return null
   }

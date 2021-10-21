@@ -14,15 +14,16 @@ import { useFormikBag } from '../../../../lib/formik'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { NewCollectionFormValues } from '../../NewCollection/types'
+import { VisibilityDropdown } from '../../NewResource/FieldsData'
 // import { useFormikBag } from '../../../lib/formik'
 // import { NewCollectionFormValues } from '../../NewCollection/types'
 import { CollectionProps } from '../Collection'
 import {
-    useAddCollectionRelationMutation,
-    useCollectionPageDataQuery,
-    useDelCollectionMutation,
-    useDelCollectionRelationMutation,
-    useEditCollectionMutation
+  useAddCollectionRelationMutation,
+  useCollectionPageDataQuery,
+  useDelCollectionMutation,
+  useDelCollectionRelationMutation,
+  useEditCollectionMutation,
 } from './CollectionPage.gen'
 
 export type CollectionCtrlProps = { id: ID }
@@ -113,8 +114,9 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
           collInput: {
             description: vals.description,
             name: vals.title,
+            visibility: vals.visibility,
             image: imageAssetRef,
-            _published: true,
+            _published: vals.visibility === 'Public',
           },
         },
       })
@@ -125,12 +127,13 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
   const { resetForm: fresetForm } = formik
   useEffect(() => {
     if (collectionData) {
-      const { name: title, description, image } = collectionData
+      const { name: title, description, _published, image } = collectionData
       fresetForm({
         touched: {},
         values: {
           title,
           description,
+          visibility: _published ? 'Public' : 'Private',
           image: getMaybeAssetRefUrl(image),
           imageUrl: getMaybeAssetRefUrl(image),
         },
@@ -182,6 +185,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       formBag,
       isOwner,
       isAuthenticated,
+      visibility: VisibilityDropdown,
       resourceCardPropsList: resourceEdges.map(({ edge, node: { id } }) =>
         ctrlHook(
           useResourceCardCtrl,
