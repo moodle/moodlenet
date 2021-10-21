@@ -48,6 +48,7 @@ export type ResourceProps = {
   type: 'link' | 'file'
   // formats: DropdownField
   licenses: DropdownField
+  visibility: DropdownField
   categories: DropdownField
   setAddToCollections?: (selectedCollections: CollectionItem[]) => unknown
   collections?: CollectionItem[]
@@ -78,6 +79,7 @@ export const Resource = withCtrl<ResourceProps>(
     languages,
     // formats,
     licenses,
+    visibility,
     categories,
     collections,
     selectedCollections,
@@ -97,6 +99,8 @@ export const Resource = withCtrl<ResourceProps>(
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
     const [moodleLmsSite, setMoodleLmsSite] = useState<string>(lmsSite ?? '')
+    //const [isLeaving, setIsLeaving] = useState<boolean>(false)
+    //const [hasMadeChanges, setHasMadeChanges] = useState<string>(lmsSite ?? '')
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -110,9 +114,11 @@ export const Resource = withCtrl<ResourceProps>(
         <PrimaryButton onClick={() => setIsAddingToMoodleLms(true)}>
           <Trans>Send to Moodle</Trans>
         </PrimaryButton>
-        <SecondaryButton disabled={!isAuthenticated} onClick={() => setIsAddingToCollection(true)}>
-          <Trans>Add to Collection</Trans>
-        </SecondaryButton>
+        {isAuthenticated && (
+          <SecondaryButton onClick={() => setIsAddingToCollection(true)}>
+            <Trans>Add to Collection</Trans>
+          </SecondaryButton>
+        )}
         <a href={contentUrl} target="_blank" rel="noreferrer">
           <SecondaryButton>
             {type === 'file' ? (
@@ -142,6 +148,7 @@ export const Resource = withCtrl<ResourceProps>(
     const setLangField = useCallback((_: string) => setFieldValue('language', _), [setFieldValue])
     const setCategoryField = useCallback((_: string) => setFieldValue('category', _), [setFieldValue])
     const setLicenseField = useCallback((_: string) => setFieldValue('license', _), [setFieldValue])
+    const setVisibilityField = useCallback((_: string) => setFieldValue('visibility', _), [setFieldValue])
     //const setCollectionsField = useCallback((_: string) => setFieldValue('collections', _), [setFieldValue])
     // console.log({ selectedCollections, collections })
 
@@ -159,6 +166,14 @@ export const Resource = withCtrl<ResourceProps>(
 
     const extraDetails = isEditing ? (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
+        <Dropdown
+          value={form.values.visibility}
+          {...visibility}
+          {...formAttrs.visibility}
+          displayMode={true}
+          edit={isEditing}
+          getValue={setVisibilityField}
+        />
         <Dropdown
           className="scroll"
           value={form.values.category}
@@ -233,6 +248,14 @@ export const Resource = withCtrl<ResourceProps>(
       </Card>
     ) : (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
+        {isOwner && (
+          <div className="detail">
+            <div className="title">
+              <Trans>Visibility</Trans>
+            </div>
+            <abbr className="value">{form.values.visibility}</abbr>
+          </div>
+        )}
         <div className="detail">
           <div className="title">
             <Trans>Subject</Trans>
@@ -302,8 +325,32 @@ export const Resource = withCtrl<ResourceProps>(
         )}
       </Card>
     )
+
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        {/* {isLeaving && hasMadeChanges && (
+          <Modal
+            title={t`Discard changes`}
+            actions={[
+              <SecondaryButton
+                onClick={() => {
+                }}
+              >
+                <Trans>Cancel</Trans>
+              </SecondaryButton>,
+              <PrimaryButton
+                onClick={() => {
+                }}
+              >
+                <Trans>Discard</Trans>
+              </PrimaryButton>,
+            ]}
+            onClose={() => setIsAddingToMoodleLms(false)}
+            style={{ maxWidth: '350px', width: '100%' }}
+          >
+            <Trans>Are you sure you want to discard the changes you made?</Trans>
+          </Modal>
+        )} */}
         {isShowingImage && typeof form.values.imageUrl === 'string' && (
           <Modal
             className="image-modal"
@@ -317,11 +364,11 @@ export const Resource = withCtrl<ResourceProps>(
         {isAddingToCollection && collections && setAddToCollections && (
           <Modal
             title={t`Select Collections`}
-            actions={
+            actions={[
               <PrimaryButton>
                 <Trans>Done</Trans>
-              </PrimaryButton>
-            }
+              </PrimaryButton>,
+            ]}
             onClose={() => setIsAddingToCollection(false)}
             style={{ maxWidth: '400px' }}
           >
@@ -337,7 +384,7 @@ export const Resource = withCtrl<ResourceProps>(
         {isAddingToMoodleLms && (
           <Modal
             title={t`Your Moodle LMS Site`}
-            actions={
+            actions={[
               <PrimaryButton
                 onClick={() => {
                   sendToMoodleLms(moodleLmsSite)
@@ -345,8 +392,8 @@ export const Resource = withCtrl<ResourceProps>(
                 }}
               >
                 <Trans>Send</Trans>
-              </PrimaryButton>
-            }
+              </PrimaryButton>,
+            ]}
             onClose={() => setIsAddingToMoodleLms(false)}
             style={{ maxWidth: '350px', width: '100%' }}
           >
@@ -362,7 +409,7 @@ export const Resource = withCtrl<ResourceProps>(
         {isToDelete && deleteResource && (
           <Modal
             title={t`Alert`}
-            actions={
+            actions={[
               <PrimaryButton
                 onClick={() => {
                   deleteResource()
@@ -371,8 +418,8 @@ export const Resource = withCtrl<ResourceProps>(
                 color="red"
               >
                 <Trans>Delete</Trans>
-              </PrimaryButton>
-            }
+              </PrimaryButton>,
+            ]}
             onClose={() => setIsToDelete(false)}
             style={{ maxWidth: '400px' }}
             className="delete-message"
@@ -384,7 +431,7 @@ export const Resource = withCtrl<ResourceProps>(
           {isAddingToCollection && collections && setAddToCollections && (
             <Modal
               title={t`Select Collections`}
-              actions={<PrimaryButton onClick={() => setIsAddingToCollection(false)}>Done</PrimaryButton>}
+              actions={[<PrimaryButton onClick={() => setIsAddingToCollection(false)}>Done</PrimaryButton>]}
               onClose={() => setIsAddingToCollection(false)}
               style={{ maxWidth: '400px' }}
             >

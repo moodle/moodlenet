@@ -17,7 +17,7 @@ import {
   useLicensesOptions,
   useResourceGradeOptions,
   useResourceTypeOptions,
-  yearsOptions
+  yearsOptions,
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
 import { useLMS } from '../../../../../lib/moodleLMS/useSendToMoodle'
 import { href } from '../../../../elements/link'
@@ -26,6 +26,7 @@ import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useFormikBag } from '../../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { useCreateResourceRelationMutation } from '../../NewResource/Ctrl/NewResourceCtrl.gen'
+import { VisibilityDropdown } from '../../NewResource/FieldsData'
 import { NewResourceFormValues } from '../../NewResource/types'
 // import { useFormikBag } from '../../../lib/formik'
 // import { NewResourceFormValues } from '../../NewResource/types'
@@ -34,7 +35,7 @@ import {
   useDelResourceMutation,
   useDelResourceRelationMutation,
   useEditResourceMutation,
-  useResourcePageDataQuery
+  useResourcePageDataQuery,
 } from './ResourcePage.gen'
 
 export type ResourceCtrlProps = { id: ID }
@@ -116,7 +117,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
               originalDateYear: vals.originalDateYear,
             }),
             image: imageAssetRef,
-            _published: true,
+            _published: vals.visibility === 'Public',
           },
         },
       })
@@ -193,7 +194,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
 
   useEffect(() => {
     if (resourceData) {
-      const { name: title, description, image, content } = resourceData
+      const { name: title, description, image, content, _published } = resourceData
       const orgDateStrings = getOriginalCreationStringsByTimestamp(resourceData.originalCreationDate)
       fresetForm({
         touched: {},
@@ -212,6 +213,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
           imageUrl: getMaybeAssetRefUrl(image),
           contentType: content.ext ? 'Link' : 'File',
           name: '',
+          visibility: _published ? 'Public' : 'Private',
           ...orgDateStrings,
           title,
         },
@@ -307,6 +309,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       title: resourceData.name,
       isOwner,
       liked,
+      visibility: VisibilityDropdown,
       contributorCardProps: {
         avatarUrl: getMaybeAssetRefUrl(creator?.avatar),
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),

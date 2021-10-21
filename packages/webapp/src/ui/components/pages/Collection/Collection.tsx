@@ -10,6 +10,7 @@ import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikBag } from '../../../lib/formik'
 import defaultBackgroud from '../../../static/img/default-background.svg'
 import Card from '../../atoms/Card/Card'
+import Dropdown from '../../atoms/Dropdown/Dropdown'
 import InputTextField from '../../atoms/InputTextField/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
@@ -18,6 +19,7 @@ import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import ListCard from '../../molecules/cards/ListCard/ListCard'
 import { ResourceCard, ResourceCardProps } from '../../molecules/cards/ResourceCard/ResourceCard'
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
+import { DropdownField } from '../NewCollection/FieldsData'
 import { NewCollectionFormValues } from '../NewCollection/types'
 import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
 import './styles.scss'
@@ -28,6 +30,7 @@ export type CollectionProps = {
   isOwner: boolean
   numFollowers: number
   bookmarked: boolean
+  visibility: DropdownField
   contributorCardProps: ContributorCardProps
   formBag: FormikBag<NewCollectionFormValues>
   resourceCardPropsList: CP<ResourceCardProps>[]
@@ -46,6 +49,7 @@ export const Collection = withCtrl<CollectionProps>(
     following,
     numFollowers,
     bookmarked,
+    visibility,
     contributorCardProps,
     formBag,
     resourceCardPropsList,
@@ -73,6 +77,7 @@ export const Collection = withCtrl<CollectionProps>(
     const setFieldValue = form.setFieldValue
     const setTitleField = useCallback((_: string) => setFieldValue('title', _), [setFieldValue])
     const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
+    const setVisibilityField = useCallback((_: string) => setFieldValue('visibility', _), [setFieldValue])
 
     const background = {
       backgroundImage: form.values.imageUrl ? 'url(' + form.values.imageUrl + ')' : 'url(' + defaultBackgroud + ')',
@@ -91,6 +96,28 @@ export const Collection = withCtrl<CollectionProps>(
       [setFieldValue],
     )
 
+    const extraDetails = (
+      <Card className="extra-details-card" hideBorderWhenSmall={true}>
+        {isEditing ? (
+          <Dropdown
+            value={form.values.visibility}
+            {...visibility}
+            {...formAttrs.visibility}
+            displayMode={true}
+            edit={isEditing}
+            getValue={setVisibilityField}
+          />
+        ) : (
+          <div className="detail">
+            <div className="title">
+              <Trans>Visibility</Trans>
+            </div>
+            <abbr className="value">{form.values.visibility}</abbr>
+          </div>
+        )}
+      </Card>
+    )
+
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         {isShowingBackground && typeof form.values.image === 'string' && (
@@ -106,7 +133,7 @@ export const Collection = withCtrl<CollectionProps>(
         {isToDelete && deleteCollection && (
           <Modal
             title={t`Alert`}
-            actions={
+            actions={[
               <PrimaryButton
                 onClick={() => {
                   deleteCollection()
@@ -115,8 +142,8 @@ export const Collection = withCtrl<CollectionProps>(
                 color="red"
               >
                 <Trans>Delete</Trans>
-              </PrimaryButton>
-            }
+              </PrimaryButton>,
+            ]}
             onClose={() => setIsToDelete(false)}
             style={{ maxWidth: '400px' }}
             className="delete-message"
@@ -221,7 +248,7 @@ export const Collection = withCtrl<CollectionProps>(
               </div>
             </Card>
             <div className="main-content">
-              <div className={`main-column ${isOwner ? 'full-width' : ''}`}>
+              <div className={`main-column`}>
                 <ListCard
                   content={resourceCardPropsList.map(resourceCardProps => {
                     return <ResourceCard {...resourceCardProps} isEditing={isEditing} />
@@ -229,20 +256,23 @@ export const Collection = withCtrl<CollectionProps>(
                   className="resources no-card"
                 />
                 <div className="collection-footer">
-                  <div className="left-column">{!isOwner && <ContributorCard {...contributorCardProps} />}</div>
+                  <div className="left-column">
+                    {!isOwner && <ContributorCard {...contributorCardProps} />}
+                    {isOwner && extraDetails}
+                  </div>
                   <div className="right-column">{/*actionsCard*/}</div>
                   <div className="one-column">
                     {/*actionsCard*/}
                     {!isOwner && <ContributorCard {...contributorCardProps} />}
+                    {isOwner && extraDetails}
                   </div>
                 </div>
               </div>
-              {!isOwner && (
-                <div className="side-column">
-                  <ContributorCard {...contributorCardProps} />
-                  {/*actionsCard*/}
-                </div>
-              )}
+              <div className="side-column">
+                {!isOwner && <ContributorCard {...contributorCardProps} />}
+                {isOwner && extraDetails}
+                {/*actionsCard*/}
+              </div>
             </div>
           </div>
         </div>

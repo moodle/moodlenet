@@ -41,10 +41,10 @@ export const Landing = withCtrl<LandingProps>(
   }) => {
     /* const docsCard = (
       <TextCard className="intro-card">
-        <Trans>MoodleNet is currently in Beta version. Learn more about MoodleNet in our Docs.</Trans>
         <a href="https://docs.moodle.org/moodlenet/Main_Page" target="_blank" rel="noreferrer">
+        <Trans>MoodleNet is currently in beta version. Check out the docs to learn more.</Trans>
           <SecondaryButton>
-            <Trans>Go to Docs</Trans>
+            <Trans>Go to docs</Trans>
           </SecondaryButton>
         </a>
       </TextCard>

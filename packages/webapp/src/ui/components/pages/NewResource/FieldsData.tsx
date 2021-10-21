@@ -1,4 +1,6 @@
 import { t } from '@lingui/macro'
+import VisibilityIcon from '@material-ui/icons/Visibility'
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
 import { ReactComponent as ByIcon } from '../../../static/icons/license/by.svg'
 import { ReactComponent as NcIcon } from '../../../static/icons/license/nc.svg'
 import { ReactComponent as NdIcon } from '../../../static/icons/license/nd.svg'
@@ -196,6 +198,25 @@ export const LicenseDropdown: DropdownField = {
         {nd}
       </div>,
     ],
+  ],
+}
+
+export const VisibilityDropdown: DropdownField = {
+  label: t`Visibility`,
+  placeholder: t`Visibility`,
+  options: [
+    [
+      'Public',
+      <VisibilityIcon />,
+    ],
+    [
+      'Private',
+      <VisibilityOffIcon />,
+    ],
+    /* [
+      'Private',
+      'Public'
+    ] */
   ],
 }
 

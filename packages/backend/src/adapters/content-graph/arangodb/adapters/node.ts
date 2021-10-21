@@ -8,9 +8,9 @@ import { ContentGraphDB } from '../types'
 
 export const createNode =
   (db: ContentGraphDB): SockOf<typeof createNodeAdapter> =>
-  async ({ node }) => {
+  async ({ node, creatorAuthId }) => {
     type NT = typeof node._type
-    const q = createNodeQ<NT>({ node })
+    const q = createNodeQ<NT>({ node, creatorAuthId })
     const result = await getOneResult(q, db)
 
     return result as any

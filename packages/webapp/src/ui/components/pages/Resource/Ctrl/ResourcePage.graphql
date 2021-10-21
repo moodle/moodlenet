@@ -7,7 +7,7 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
       image
       content
       originalCreationDate
-
+      _published
       myBookmarked: _rel(
         type: Bookmarked
         target: Profile

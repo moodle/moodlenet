@@ -12,7 +12,7 @@ export const rePopulateIscedGrades = async ({ db }: { db: Database }) => {
   return Promise.all(
     iscedGrades.map(async iscedGrade_data => {
       console.log(`creating IscedGrade ${iscedGrade_data.name}  ${iscedGrade_data.code}`)
-      await justExecute(createNodeQ({ node: iscedGrade_data }), db)
+      await justExecute(createNodeQ({ node: iscedGrade_data, creatorAuthId: null }), db)
     }),
   )
 }

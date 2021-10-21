@@ -60,6 +60,7 @@
     "require-all": "^3.0.0",
     "semver": "^7.3.5",
     "sharp": "^0.28.1",
+    "shx": "^0.3.3",
     "ulid": "^2.3.0",
     "uuid": "^8.3.1",
     "yup": "^0.32.8"
@@ -106,7 +107,7 @@
     "typescript-tuple": "^5.0.0"
   },
   "scripts": {
-    "clean-build": "rm -rf lib && yarn build",
+    "clean-build": "shx rm -rf lib && yarn build",
     "build": "yarn gen:graphql:types && tsc",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
     "prepublish": "yarn clean-build"

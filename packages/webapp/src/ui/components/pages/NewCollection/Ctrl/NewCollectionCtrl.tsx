@@ -8,6 +8,7 @@ import { useUploadTempFile } from '../../../../../helpers/data'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useFormikBag } from '../../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
+import { VisibilityDropdown } from '../../NewResource/FieldsData'
 import { NewCollectionProps } from '../NewCollection'
 import { NewCollectionFormValues } from '../types'
 import { useCreateCollectionMutation } from './NewCollectionCtrl.gen'
@@ -27,13 +28,14 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
       image: null,
       imageUrl: null,
       title: '',
+      visibility: 'Private',
     },
     onSubmit: console.log.bind(console, 'submit NewCollection'),
   })
 
   const [sform] = formBag
 
-  const { image, description, title } = sform.values
+  const { image, description, title, visibility } = sform.values
 
   const [imageUrl, setImageUrl] = useState('')
   useEffect(() => {
@@ -64,7 +66,7 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
       variables: {
         res: {
           nodeType: 'Collection',
-          Collection: { description, image: imageAssetRef, name: title, _published: true },
+          Collection: { description, image: imageAssetRef, name: title, _published: visibility === 'Public' },
         },
       },
     })
@@ -84,7 +86,7 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
 
       history.push(nodeGqlId2UrlPath(collId))
     }
-  }, [refetch, createCollectionMut, description, history, image, saving, title, uploadTempFile])
+  }, [refetch, createCollectionMut, description, visibility, history, image, saving, title, uploadTempFile])
 
   const NewCollectionProps = useMemo<NewCollectionProps>(() => {
     const props: NewCollectionProps = {
@@ -93,13 +95,14 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
         step: 'CreateCollectionStep',
         imageUrl,
         formBag,
-        finish: title && description ? save : undefined,
+        visibility: VisibilityDropdown,
+        finish: title && description && visibility ? save : undefined,
       },
     }
     return props
-  }, [imageUrl, formBag, title, description, save])
+  }, [imageUrl, formBag, title, description, visibility, save])
 
   // console.log({ vals: form.values, step: NewCollectionProps.stepProps })
-
+  // console.log(formBag[0].touched, { NewCollectionProps })
   return NewCollectionProps && [NewCollectionProps]
 }

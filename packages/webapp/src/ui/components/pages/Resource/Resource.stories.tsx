@@ -7,13 +7,12 @@ import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import {
-    CategoriesDropdown,
-    LanguagesDropdown,
-    LevelDropdown,
-    LicenseDropdown,
-    MonthDropdown,
-    TypeDropdown,
-    YearsDropdown
+  CategoriesDropdown,
+  LanguagesDropdown,
+  LevelDropdown,
+  LicenseDropdown,
+  MonthDropdown,
+  TypeDropdown, VisibilityDropdown, YearsDropdown
 } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
@@ -40,6 +39,7 @@ const ResourceStory: ComponentStory<typeof Resource> = args => <Resource {...arg
 
 export const resourceFormBag: NewResourceFormValues = {
   collections: ['Biology'].map(label => ({ label, id: label })),
+  visibility: 'Private',
   category: '0188 Inter-disciplinary programmes and qualifications involving education',
   content: '',
   contentType: 'Link',
@@ -88,6 +88,7 @@ export const ResourceStoryProps: ResourceProps = {
     'English Literature',
   ].map(label => ({ label, id: label })),
   selectedCollections: [{ label: 'Education', id: 'Education' }],
+  visibility: VisibilityDropdown,
   types: TypeDropdown,
   levels: LevelDropdown,
   months: MonthDropdown,
