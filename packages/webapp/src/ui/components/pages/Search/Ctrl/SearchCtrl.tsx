@@ -7,6 +7,7 @@ import { useSeo } from '../../../../../context/Global/Seo'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useCollectionCardCtrl } from '../../../molecules/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
+import { useSmallProfileCardCtrl } from '../../../molecules/cards/SmallProfileCard/Ctrl/SmallProfileCardCtrl'
 import { useIscedfCardCtrl } from '../../../molecules/cards/SubjectCard/Ctrl/IscedfCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { SearchProps } from '../Search'
@@ -38,6 +39,22 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
   const {
     formiks: [loadMoreCollections],
   } = usePaginateSearch(collectionsQ)
+
+  const profilesQ = useGlobalSearchQuery({
+    variables: {
+      sort,
+      nodeTypes: ['Profile'],
+      text,
+      page: { first: 20 },
+    },
+  })
+  const profiles = useMemo(
+    () => (profilesQ.data?.globalSearch.edges || []).filter(isEdgeNodeOfType(['Profile'])).map(({ node }) => node),
+    [profilesQ.data?.globalSearch.edges],
+  )
+  const {
+    formiks: [loadMoreProfiles],
+  } = usePaginateSearch(profilesQ)
 
   const resourcesQ = useGlobalSearchQuery({
     variables: {
@@ -75,7 +92,9 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
     () => ({
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
       browserProps: {
-        smallProfileCardPropsList: null,
+        smallProfileCardPropsList: profiles.map(profile =>
+          ctrlHook(useSmallProfileCardCtrl, { id: profile.id }, `Search Profile ${profile.id} Card`),
+        ),
         collectionCardPropsList: collections.map(collection =>
           ctrlHook(useCollectionCardCtrl, { id: collection.id }, `Search Collection ${collection.id} Card`),
         ),
@@ -93,13 +112,23 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
           // console.log({ by, dir })
           setSort({ by, asc: dir === 'less' })
         },
-        loadMorePeople: null,
+        loadMorePeople: loadMoreProfiles?.submitForm,
         loadMoreCollections: loadMoreCollections?.submitForm,
         loadMoreResources: loadMoreResources?.submitForm,
         loadMoreSubjects: loadMoreSubjects?.submitForm,
       },
     }),
-    [collections, resources, subjects, loadMoreCollections, loadMoreResources, loadMoreSubjects, setSort],
+    [
+      profiles,
+      collections,
+      resources,
+      subjects,
+      loadMoreProfiles,
+      loadMoreCollections?.submitForm,
+      loadMoreResources?.submitForm,
+      loadMoreSubjects?.submitForm,
+      setSort,
+    ],
   )
   return [searchUIProps]
 }
