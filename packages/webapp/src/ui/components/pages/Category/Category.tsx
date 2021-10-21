@@ -19,7 +19,7 @@ export type CategoryProps = {
   numFollowers: number
   numCollections: number
   numResources: number
-  isIscedSubject?: boolean
+  isIscedSubject: boolean
   iscedLink?: string
   toggleFollow(): unknown
 }
@@ -140,5 +140,4 @@ export const Category = withCtrl<CategoryProps>(
 )
 
 Category.defaultProps = {
-  isIscedSubject: true,
 }

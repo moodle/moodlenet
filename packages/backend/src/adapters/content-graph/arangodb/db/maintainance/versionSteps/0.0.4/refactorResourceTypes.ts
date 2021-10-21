@@ -13,7 +13,7 @@ export const refactorResourceTypes = async ({ db }: { db: Database }) => {
   await Promise.all(
     resourceTypes.map(async resourceType_data => {
       console.log(`creating ResourceType ${resourceType_data.name}`)
-      await justExecute(createNodeQ({ node: resourceType_data }), db)
+      await justExecute(createNodeQ({ node: resourceType_data, creatorAuthId: null }), db)
     }),
   )
   const featuresColl: EdgeType = 'Features'

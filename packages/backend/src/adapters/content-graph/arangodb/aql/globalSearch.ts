@@ -78,6 +78,7 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
       
       RETURN ${aqlGraphNode2GraphNode('node')}
     `)
+  // console.log(query)
   // console.log('**', inspect({ query, nodeTypeConditions, nodeTypes, filterConditions, sortDir, sortFactor }))
   return { limit, skip, query }
 }

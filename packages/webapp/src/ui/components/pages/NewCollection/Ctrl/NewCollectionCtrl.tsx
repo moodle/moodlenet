@@ -46,7 +46,7 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
 
   const [saving, setSaving] = useState(false)
   const save = useCallback(async () => {
-    if (!(title && description && visibility) || saving) {
+    if (!(title && description) || saving) {
       return
     }
     setSaving(true)
@@ -66,7 +66,7 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
       variables: {
         res: {
           nodeType: 'Collection',
-          Collection: { description, image: imageAssetRef, name: title, _published: true },
+          Collection: { description, image: imageAssetRef, name: title, _published: visibility === 'Public' },
         },
       },
     })
@@ -103,6 +103,6 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
   }, [imageUrl, formBag, title, description, visibility, save])
 
   // console.log({ vals: form.values, step: NewCollectionProps.stepProps })
-
+  // console.log(formBag[0].touched, { NewCollectionProps })
   return NewCollectionProps && [NewCollectionProps]
 }

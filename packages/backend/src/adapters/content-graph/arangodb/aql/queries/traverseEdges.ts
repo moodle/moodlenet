@@ -98,6 +98,7 @@ export const traversePaginateMapQuery =
           }
         ]
       `)
+    // console.log(q)
     // targetIds && console.log('*******traversePaginateMapQuery*************', targetIds, aqlTargetIds)
     return q
   }
@@ -116,12 +117,15 @@ export const nodeRelationCountQ = ({
   const targetSide = inverse ? 'from' : 'to'
   const parentSide = inverse ? 'to' : 'from'
   return _<number>(`(    
-      let parentNode = ${parentNode}
-      FOR edge IN ${edgeType}
-      FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
-        && edge._${parentSide} == ${graphNode2AqlId('parentNode')}
+let parentNode = ${parentNode}
+FOR edge IN ${edgeType}
+  LET targetNode = Document(edge._${targetSide})
+  
+  FILTER !!targetNode._published 
+          && edge._${targetSide}Type == ${aqlstr(targetNodeType)}
+          && edge._${parentSide} == ${graphNode2AqlId('parentNode')}
 
-      COLLECT WITH COUNT INTO count
-    RETURN count
+  COLLECT WITH COUNT INTO count
+  RETURN count
   )[0]`)
 }

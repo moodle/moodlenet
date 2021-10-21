@@ -43,6 +43,13 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
     const deleteImage = useCallback(() => {
       setFieldValue('image', null)
     }, [setFieldValue])
+    
+    const setVisibilityVal = useCallback(
+      (v: string) => {
+        setFieldValue('visibility', v)
+      },
+      [setFieldValue],
+    )
 
     const dataInputs = (
       <div>
@@ -65,7 +72,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
         />
         <Dropdown
             {...visibility}
-            getValue={text => form.setFieldValue('visibility', text)}
+            getValue={setVisibilityVal}
             label="Visibility"
             value={form.values.visibility}
             className="visibility-dropdown"

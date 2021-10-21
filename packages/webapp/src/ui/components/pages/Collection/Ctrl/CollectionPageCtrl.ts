@@ -14,6 +14,7 @@ import { useFormikBag } from '../../../../lib/formik'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { NewCollectionFormValues } from '../../NewCollection/types'
+import { VisibilityDropdown } from '../../NewResource/FieldsData'
 // import { useFormikBag } from '../../../lib/formik'
 // import { NewCollectionFormValues } from '../../NewCollection/types'
 import { CollectionProps } from '../Collection'
@@ -22,7 +23,7 @@ import {
   useCollectionPageDataQuery,
   useDelCollectionMutation,
   useDelCollectionRelationMutation,
-  useEditCollectionMutation
+  useEditCollectionMutation,
 } from './CollectionPage.gen'
 
 export type CollectionCtrlProps = { id: ID }
@@ -115,7 +116,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
             name: vals.title,
             visibility: vals.visibility,
             image: imageAssetRef,
-            _published: true,
+            _published: vals.visibility === 'Public',
           },
         },
       })
@@ -126,13 +127,13 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
   const { resetForm: fresetForm } = formik
   useEffect(() => {
     if (collectionData) {
-      const { name: title, description, visibility, image } = collectionData
+      const { name: title, description, _published, image } = collectionData
       fresetForm({
         touched: {},
         values: {
           title,
           description,
-          visibility,
+          visibility: _published ? 'Public' : 'Private',
           image: getMaybeAssetRefUrl(image),
           imageUrl: getMaybeAssetRefUrl(image),
         },
@@ -184,6 +185,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       formBag,
       isOwner,
       isAuthenticated,
+      visibility: VisibilityDropdown,
       resourceCardPropsList: resourceEdges.map(({ edge, node: { id } }) =>
         ctrlHook(
           useResourceCardCtrl,

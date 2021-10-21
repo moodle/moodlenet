@@ -78,7 +78,7 @@ function logResp(namespace: Namespace, args: any[], respPromise: Promise<any>) {
     .catch((_: any) => ({ success: false, args, error: _ } as const))
     .then(_ => {
       const logfn = _.success ? console.log : console.error
-      logfn(`socket call: ${namespaceString(namespace)}`)
+      logfn(`socket call ${_.success ? 'success' : 'error'}: ${namespaceString(namespace)}`)
       !_.success &&
         logfn(
           `args:`,
