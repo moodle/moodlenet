@@ -238,6 +238,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
                 name: title,
                 image: imageAssetRef,
                 originalCreationDate: getOriginalCreationTimestampByStrings({ originalDateMonth, originalDateYear }),
+                _published: true,
               },
             },
           },

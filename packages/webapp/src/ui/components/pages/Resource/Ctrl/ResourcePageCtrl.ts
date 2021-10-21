@@ -116,6 +116,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
               originalDateYear: vals.originalDateYear,
             }),
             image: imageAssetRef,
+            _published: true,
           },
         },
       })

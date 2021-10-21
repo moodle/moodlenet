@@ -100,7 +100,7 @@ export const editNode = plug(
 )
 
 export type CreateProfile = {
-  partProfile: Partial<Omit<Profile, `_${string}`>> & Pick<Profile, 'name' | '_authId'>
+  partProfile: Partial<Omit<Profile, `_${string}`>> & Pick<Profile, 'name' | '_authId' | '_published'>
 }
 
 export const createProfile = plug(ns(__dirname, 'create-profile'), async ({ partProfile }: CreateProfile) => {

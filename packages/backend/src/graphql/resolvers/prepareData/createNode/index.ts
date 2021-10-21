@@ -55,6 +55,7 @@ const nodeDocumentDataBaker: {
       description: input.description,
       name: input.name,
       originalCreationDate: input.originalCreationDate,
+      _published: input._published,
     }
 
     return newResourceInput
@@ -71,6 +72,7 @@ const nodeDocumentDataBaker: {
       image: imageAssetRef,
       description: input.description,
       name: input.name,
+      _published: input._published,
     }
 
     return newCollectionInput

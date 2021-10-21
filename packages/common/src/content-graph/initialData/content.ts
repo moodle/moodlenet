@@ -3,6 +3,7 @@ import { Organization, Profile } from '../types/node'
 
 export const localOrganizationData: Omit<Organization, 'domain'> = {
   _permId: 'local',
+  _published: true,
   name: 'MoodleNet',
   introTitle: 'Join our world-wide educators social network',
   intro: `Join our social network to share and curate open educational resources with educators world-wide.
@@ -21,6 +22,7 @@ export const rootUserProfile: Profile = {
   _authId: rootAuthId,
   _permId: 'ROOT',
   _type: 'Profile',
+  _published: true,
   avatar: null,
   bio: '',
   description: '',
