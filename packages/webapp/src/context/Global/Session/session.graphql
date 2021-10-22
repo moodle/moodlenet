@@ -8,6 +8,7 @@ fragment UserSession on UserSession {
   profile {
     #FIXME: keep the id only as useSession won't update during app mutations
     id
+    _isAdmin
     name
     avatar
     myOwnCollections: _rel(type: Created, target: Collection, page: { first: 100 }) {
