@@ -189,7 +189,7 @@ export const SessionProvider: FC = ({ children }) => {
       signUp,
       session,
       loading,
-      isAdmin: session?.profile.id === 'Profile/__root__', // FIXME HACK for mvp
+      isAdmin: !!session?.profile._isAdmin,
       isAuthenticated,
       lastSessionEmail: lastSession.email ?? null,
       lastSessionJwt: lastSession.jwt ?? null,

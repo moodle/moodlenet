@@ -22,6 +22,7 @@ export const rootUserProfile: Profile = {
   _authId: rootAuthId,
   _permId: 'ROOT',
   _type: 'Profile',
+  _isAdmin: true,
   _published: true,
   avatar: null,
   bio: '',

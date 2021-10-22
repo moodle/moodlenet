@@ -114,6 +114,7 @@ export type Organization = BaseGraphNode<'Organization'> & {
 
 export type Profile = AuthOp &
   BaseGraphNode<'Profile'> & {
+    _isAdmin: boolean
     avatar: Maybe<AssetRef>
     bio: Maybe<string>
     image: Maybe<AssetRef>

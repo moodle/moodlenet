@@ -10,19 +10,19 @@ export const setupDb = async ({
   actionOnDBExists,
   env: { arangoUrl, contentGraphDBName, userAuthDBName },
 }: {
-  actionOnDBExists: 'drop' | 'abort' | 'upgrade'
+  actionOnDBExists: 'abort' | 'upgrade' // | 'drop'
   env: DBEnv
 }) => {
   const sys_db = new Database({ url: arangoUrl })
 
-  console.log(`initializing ContentGraphDB`)
-  await initializeDB<MNStaticEnv>({ dbname: contentGraphDBName, ladder: contentGraphLadder, actionOnDBExists })({
+  console.log(`initializing UserAuthDB`)
+  await initializeDB<MNStaticEnv>({ dbname: userAuthDBName, ladder: userAuthLadder, actionOnDBExists })({
     sys_db,
     ctx: mnStatic,
   })
 
-  console.log(`initializing UserAuthDB`)
-  await initializeDB<MNStaticEnv>({ dbname: userAuthDBName, ladder: userAuthLadder, actionOnDBExists })({
+  console.log(`initializing ContentGraphDB`)
+  await initializeDB<MNStaticEnv>({ dbname: contentGraphDBName, ladder: contentGraphLadder, actionOnDBExists })({
     sys_db,
     ctx: mnStatic,
   })
