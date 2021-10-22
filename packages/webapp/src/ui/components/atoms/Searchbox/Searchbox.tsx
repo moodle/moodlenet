@@ -5,17 +5,18 @@ import './styles.scss'
 export type SearchboxProps = {
   searchText: string
   placeholder: string
+  size?: 'small' | 'big' 
   setSearchText(text: string): unknown
 }
 
-export const Searchbox: FC<SearchboxProps> = ({ searchText, placeholder, setSearchText }) => {
+export const Searchbox: FC<SearchboxProps> = ({ searchText, placeholder, size, setSearchText }) => {
   const setSearchTextCB = useCallback<ChangeEventHandler<HTMLInputElement>>(
     ev => setSearchText(ev.currentTarget.value),
     [setSearchText],
   )
 
   return (
-    <div className="searchbox">
+    <div className={`searchbox size-${size}`}>
       <SearchIcon/>
       <input
         className="search-text"
@@ -26,6 +27,10 @@ export const Searchbox: FC<SearchboxProps> = ({ searchText, placeholder, setSear
       />
     </div>
   )
+}
+
+Searchbox.defaultProps = {
+  size: 'small'
 }
 
 export default Searchbox

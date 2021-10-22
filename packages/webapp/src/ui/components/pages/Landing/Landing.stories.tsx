@@ -2,19 +2,19 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../elements/link'
 import {
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardStoryProps
+  CollectionCardLoggedOutStoryProps,
+  CollectionCardStoryProps
 } from '../../molecules/cards/CollectionCard/CollectionCard.stories'
 import {
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardStoryProps
+  ResourceCardLoggedOutStoryProps,
+  ResourceCardStoryProps
 } from '../../molecules/cards/ResourceCard/ResourceCard.stories'
 import { TrendCardStoryProps } from '../../molecules/cards/TrendCard/TrendCard.stories'
 import {
-    HeaderPageTemplateLoggedInStoryProps,
-    HeaderPageTemplateLoggedOutStoryProps,
-    HeaderPageTemplateOrganizationLoggedInStoryProps,
-    HeaderPageTemplateOrganizationLoggedOutStoryProps
+  HeaderPageTemplateLoggedInStoryProps,
+  HeaderPageTemplateLoggedOutStoryProps,
+  HeaderPageTemplateOrganizationLoggedInStoryProps,
+  HeaderPageTemplateOrganizationLoggedOutStoryProps
 } from '../HeaderPage/HeaderPage.stories'
 import { Landing, LandingProps } from './Landing'
 
@@ -107,7 +107,8 @@ export const LandingLoggedInStoryProps: LandingProps = {
 
   isAuthenticated: true,
   signUpHref: href('Pages/SignUp/Sign Up'),
-  loadMoreResources: action('Load more')
+  loadMoreResources: action('Load more'),
+  setSearchText: action('Search Text'),
 }
 
 export const LandingLoggedOutStoryProps: LandingProps = {
@@ -128,6 +129,7 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
   image: 'https://picsum.photos/200/100',
   isAuthenticated: true,
   signUpHref: href('Pages/SignUp/Sign Up'),
+  setSearchText: action('Search Text'),
   loadMoreResources: action('Load more')
 }
 

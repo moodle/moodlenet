@@ -8,91 +8,44 @@
   gap: 30px;
   padding-top: 30px;
 
-  > .landing-title {
-    font-weight: bold;
-    display: inline-flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    gap: 10px;
-    > .moodle-title {
-      color: #b6bacb;
-      font-size: 25px;
-    }
-    > .organization-title {
-      line-height: 34px;
-      color: black;
-      font-size: 35px;
-    }
-
-    @media (max-width: 450px) {
-      margin: 28px 0 0;
-    }
-
-    @media screen and (max-width: 675px) and (min-width: 450px) {
-      margin: 36px 0 0;
-      font-weight: bold;
-      > .moodle-title {
-        font-size: 22px;
-      }
-      > .organization-title {
-        font-size: 33px;
-      }
-    }
-  }
-
-  > .intro-card {
+  > .landing-header {
     display: flex;
     flex-direction: column;
-    font-size: 14px;
-    line-height: 20px;
-    gap: 16px;
-    > .title {
-      font-weight: bold;
-      font-size: 16px;
-    }
-    > .content {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      > p > a {
-        color: #337aff;
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-    > .actions {
-      display: flex;
-      gap: 15px;
-
-      > .academy-button > div {
-        display: flex;
-        gap: 4px;
-        > img {
-          height: 16px;
-        }
-      }
-    }
-  }
-
-  > .searchbox {
-    width: 100%;
-    //border: none;
-    background-color: white;
-    //height: fit-content;
-    > .search-text {
-      //font-size: 30px;
-      width: 100%;
-    }
-    /* > :first-child {
-      display: none;
-    } */
+    align-items: center;
+    gap: 36px;
+    padding: 55px 0;
 
     @media (max-width: 450px) {
-      margin: 36px 0;
-      display: block;
-      > .search-text {
-        font-size: 38px;
+      padding: 20px;
+      gap: 26px;
+    }
+
+    > .landing-title {
+      font-weight: bold;
+      display: inline-flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+      > .moodle-title {
+        color: #b6bacb;
+        font-size: 25px;
+      }
+      > .organization-title {
+        line-height: 34px;
+        color: black;
+        font-size: 35px;
+      }
+
+      @media screen and (max-width: 675px) and (min-width: 450px) {
+        margin: 36px 0 0;
+        font-weight: bold;
+        > .moodle-title {
+          font-size: 22px;
+        }
+        > .organization-title {
+          font-size: 33px;
+        }
       }
     }
   }
@@ -121,48 +74,84 @@
     justify-content: space-between;
   }
 
-  .main-column {
-    width: 48.5%;
-    height: max-content;
+  > .columns-container {
     display: flex;
-    flex-direction: column;
-    gap: 24px;
+    gap: 25px;
 
-    > .trend-card {
-      display: none;
-    }
-  }
-
-  .side-column {
-    width: 48.5%;
-    height: 100%;
-  }
-
-  .collection {
-    display: none;
-  }
-
-  @media screen and (max-width: 800px) {
-    .main-column {
-      width: 100%;
-      height: max-content;
-      .trend-card {
-        display: block;
-      }
-    }
-
-    .side-column {
-      display: none;
-      width: 325px;
+    > .main-column {
+      width: 48.5%;
       height: 100%;
-      background-color: yellow;
-      .trend-card {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+
+      > .intro-card {
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        justify-content: space-between;
+        font-size: 14px;
+        line-height: 20px;
+        gap: 16px;
+        min-height: 200px;
+        > .title {
+          font-weight: bold;
+          font-size: 16px;
+        }
+        > .actions {
+          display: flex;
+          gap: 15px;
+
+          > .academy-button > div {
+            display: flex;
+            gap: 4px;
+            > img {
+              height: 16px;
+            }
+          }
+        }
+      }
+
+      > .trend-card {
         display: none;
       }
     }
 
-    .collection {
-      display: block;
+    > .side-column {
+      width: 48.5%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+
+      > .trend-card {
+        flex-basis: 0px;
+        flex-grow: 1;
+        overflow-y: auto;
+        height: 100%;
+        > .content {
+        }
+      }
+    }
+    @media screen and (max-width: 800px) {
+      > .main-column {
+        width: 100%;
+        height: max-content;
+        .trend-card {
+          display: block;
+          > .content > .gradient-bar {
+            padding-bottom: 78px;
+          }
+        }
+      }
+
+      > .side-column {
+        display: none;
+        width: 325px;
+        height: 100%;
+        background-color: yellow;
+        .trend-card {
+        }
+      }
     }
   }
 }
