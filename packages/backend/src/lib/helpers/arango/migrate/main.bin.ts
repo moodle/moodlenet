@@ -30,10 +30,7 @@ if (['up', 'down'].includes(step)) {
   stepDBTo({ ladder, targetVersion: step as Version })({ db, ctx }).then(exit(db))
 } else if ('init' === step) {
   const sys_db = new Database({ url: arangoUrl })
-  const forceDrop = process.env.FORCE_DROP_DBS === 'true'
-  initializeDB({ dbname, actionOnDBExists: forceDrop ? 'drop' : 'abort', ladder })({ sys_db, ctx }).then(
-    exit(db, sys_db),
-  )
+  initializeDB({ dbname, actionOnDBExists: 'abort', ladder })({ sys_db, ctx }).then(exit(db, sys_db))
 } else {
   exit(db)(`step shall be one of [up|down|init|targetVersion] found "${step}"`)
 }

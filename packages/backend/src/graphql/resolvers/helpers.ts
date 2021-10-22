@@ -28,7 +28,7 @@ export const graphNode2GqlNode = (node: GN.GraphNode): GQL.Node => {
     const _node: GQL.Profile = {
       __typename: 'Profile',
       ...base,
-      ...pick(node, ['bio', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl']),
+      ...pick(node, ['bio', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl', '_isAdmin']),
     }
     return _node
   } else if (node._type === 'Collection') {
@@ -115,7 +115,17 @@ export const gqlNode2GraphNode = (node: GQL.Node): Omit<GN.GraphNode, '_permId' 
     const _node: Omit<GN.Profile, '_permId' | '_authId'> = {
       _type: 'Profile',
       ...base,
-      ...pick(node, ['bio', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl', 'description']),
+      ...pick(node, [
+        'bio',
+        'firstName',
+        'lastName',
+        'location',
+        'image',
+        'avatar',
+        'siteUrl',
+        'description',
+        '_isAdmin',
+      ]),
     }
     return _node
   } else if (node.__typename === 'Collection') {

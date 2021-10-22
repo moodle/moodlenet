@@ -1,4 +1,5 @@
 type Profile implements INode {
+  _isAdmin: Boolean!
   avatar: AssetRef
   bio: String
   image: AssetRef
