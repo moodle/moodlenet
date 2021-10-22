@@ -683,6 +683,7 @@ export type Pinned = IEdge & {
 
 export type Profile = INode & {
   __typename: 'Profile';
+  _isAdmin: Scalars['Boolean'];
   avatar?: Maybe<Scalars['AssetRef']>;
   bio?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['AssetRef']>;

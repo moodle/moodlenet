@@ -192,7 +192,7 @@ export const initializeDB =
   }: {
     dbname: string
     ladder: VersionLadder<Ctx>
-    actionOnDBExists: 'drop' | 'abort' | 'upgrade'
+    actionOnDBExists: 'abort' | 'upgrade' // | 'drop'
   }) =>
   async ({ sys_db, ctx }: { sys_db: Database; ctx: Ctx }) => {
     const exists = await sys_db.database(dbname).exists()
@@ -200,15 +200,16 @@ export const initializeDB =
       if (actionOnDBExists === 'abort') {
         throw new Error(`db ${dbname} exists, abort`)
       }
-      if (actionOnDBExists === 'drop') {
-        console.log(`db ${dbname} exists, dropping`)
-        await sys_db.dropDatabase(dbname)
-      }
+      // if (actionOnDBExists === 'drop') {
+      //   console.log(`db ${dbname} exists, dropping`)
+      //   await sys_db.dropDatabase(dbname)
+      // }
     }
 
     const db = sys_db.database(dbname)
 
-    if (!exists || actionOnDBExists === 'drop') {
+    if (!exists) {
+      //  || actionOnDBExists === 'drop'){
       const versions = getLadderVersionSorted(ladder)
       const firstVersion = versions.reverse()[0]!
       const firstVersionUpdater = ladder[firstVersion]
@@ -226,7 +227,10 @@ export const initializeDB =
       await setUpMigrationCollection({ db })
 
       console.log(`db initial version`)
-      await firstVersionUpdater.initialSetUp({ db, ctx })
+      await firstVersionUpdater.initialSetUp({ db, ctx }).catch(async e => {
+        await sys_db.dropDatabase(dbname)
+        throw e
+      })
 
       console.log(`adding migration record`)
       await addMigrationRecord(firstVersion)({ db })

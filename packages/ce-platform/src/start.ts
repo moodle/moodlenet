@@ -31,20 +31,17 @@ export const startDefaultMoodlenet = async ({
     mnStatic: { domain },
   },
 }: Config) => {
-  // this chunk is a workaround for current non-optimal setup workflow
-  const pwdHashAdapters = cryptoAdapters.pwd.getPasswordCrypto()
-  const fsAssetAdapters = await getFsAssetAdapters({ rootDir: fsAsset.rootFolder })
-  socket(userAuth.adapters.passwordHasher, pwdHashAdapters.hasher)
   await setupDb({ env: db, actionOnDBExists: 'upgrade' })
-  // ^^^^ that chunk was a workaround for current non-optimal setup workflow
 
   const userAuthDatabase = await getVersionedDBOrThrow({ version: '0.0.2' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.userAuthDBName }),
   })
-  const contentGraphDatabase = await getVersionedDBOrThrow({ version: '0.0.5' })({
+
+  const contentGraphDatabase = await getVersionedDBOrThrow({ version: '0.0.6' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.contentGraphDBName }),
   })
 
+  const pwdHashAdapters = cryptoAdapters.pwd.getPasswordCrypto()
   const jwtAdapters = cryptoAdapters.jwt.getJwtCrypto({
     ...jwt,
     signOpts: {
@@ -54,13 +51,16 @@ export const startDefaultMoodlenet = async ({
       algorithms: ['RS256'],
     },
   })
-  socket(userAuth.adapters.publicUrlAdapter, async () => http.publicUrl)
-  socket(userAuth.adapters.localDomainAdapter, async () => domain)
+  const fsAssetAdapters = await getFsAssetAdapters({ rootDir: fsAsset.rootFolder })
 
+  socket(userAuth.adapters.passwordHasher, pwdHashAdapters.hasher)
   socket(userAuth.adapters.passwordVerifier, pwdHashAdapters.verifier)
 
   socket(userAuth.adapters.jwtVerifierAdapter, jwtAdapters.verifier)
   socket(userAuth.adapters.jwtSignerAdapter, jwtAdapters.signer)
+
+  socket(userAuth.adapters.publicUrlAdapter, async () => http.publicUrl)
+  socket(userAuth.adapters.localDomainAdapter, async () => domain)
 
   socket(userAuth.adapters.sendEmailAdapter, getNodemailerSendEmailAdapter(nodemailer))
   socket(
