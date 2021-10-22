@@ -55,7 +55,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
         <div className={`actions`}>
           <div
             className={`follow ${following ? 'following' : ''} ${!isAuthenticated || isOwner ? 'disabled' : ''}`}
-            onClick={isAuthenticated && !isOwner ? toggleFollow : () => {}}
+            {...(isAuthenticated && !isOwner && {onClick: toggleFollow})}
           >
             {following ? <PersonIcon /> : <PermIdentityIcon />}
             <span>{numFollowers}</span>
