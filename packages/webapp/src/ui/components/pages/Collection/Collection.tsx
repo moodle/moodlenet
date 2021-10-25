@@ -28,6 +28,7 @@ export type CollectionProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   isAuthenticated: boolean
   isOwner: boolean
+  isAdmin: boolean
   numFollowers: number
   bookmarked: boolean
   visibility: DropdownField
@@ -46,6 +47,7 @@ export const Collection = withCtrl<CollectionProps>(
     headerPageTemplateProps,
     isAuthenticated,
     isOwner,
+    isAdmin,
     following,
     numFollowers,
     bookmarked,
@@ -257,19 +259,19 @@ export const Collection = withCtrl<CollectionProps>(
                 />
                 <div className="collection-footer">
                   <div className="left-column">
-                    {!isOwner && <ContributorCard {...contributorCardProps} />}
+                    {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
                     {isOwner && extraDetails}
                   </div>
                   <div className="right-column">{/*actionsCard*/}</div>
                   <div className="one-column">
                     {/*actionsCard*/}
-                    {!isOwner && <ContributorCard {...contributorCardProps} />}
+                    {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
                     {isOwner && extraDetails}
                   </div>
                 </div>
               </div>
               <div className="side-column">
-                {!isOwner && <ContributorCard {...contributorCardProps} />}
+                {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
                 {isOwner && extraDetails}
                 {/*actionsCard*/}
               </div>
