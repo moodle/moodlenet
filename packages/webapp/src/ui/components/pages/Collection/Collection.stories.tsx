@@ -5,7 +5,7 @@ import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
 import {
   ResourceCardOwnerBookmarkedStoryProps,
   ResourceCardOwnerStoryProps,
-  ResourceCardStoryProps
+  ResourceCardStoryProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
@@ -13,7 +13,6 @@ import { NewCollectionFormValues } from '../NewCollection/types'
 import { VisibilityDropdown } from '../NewResource/FieldsData'
 import { Collection, CollectionProps } from './Collection'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
-
 
 const meta: ComponentMeta<typeof Collection> = {
   title: 'Pages/Collection',
@@ -27,6 +26,7 @@ const meta: ComponentMeta<typeof Collection> = {
     'CollectionLoggedOutStoryProps',
     'CollectionLoggedInStoryProps',
     'CollectionOwnerStoryProps',
+    'CollectionAdminStoryProps',
   ],
 }
 
@@ -44,6 +44,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
   toggleBookmark: action('toggleBookmark'),
   isAuthenticated: true,
   isOwner: false,
+  isAdmin: false,
   following: false,
   numFollowers: 23,
   bookmarked: false,
@@ -64,7 +65,7 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     image: 'https://picsum.photos/200/100',
     imageUrl: 'https://picsum.photos/200/100',
     title: 'Best collection ever',
-    visibility: 'Public'
+    visibility: 'Public',
   }),
   resourceCardPropsList: [ResourceCardOwnerStoryProps, ResourceCardOwnerBookmarkedStoryProps, ResourceCardStoryProps],
   updateCollection: action('updateCollection'),
@@ -99,6 +100,12 @@ export const CollectionOwnerStoryProps: CollectionProps = {
   isOwner: true,
 }
 
+export const CollectionAdminStoryProps: CollectionProps = {
+  ...CollectionLoggedInStoryProps,
+  isOwner: true,
+  isAdmin: true,
+}
+
 export const LoggedOut = CollectionStory.bind({})
 LoggedOut.args = CollectionLoggedOutStoryProps
 
@@ -107,5 +114,8 @@ LoggedIn.args = CollectionLoggedInStoryProps
 
 export const Owner = CollectionStory.bind({})
 Owner.args = CollectionOwnerStoryProps
+
+export const Admin = CollectionStory.bind({})
+Admin.args = CollectionAdminStoryProps
 
 export default meta
