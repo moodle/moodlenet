@@ -37,24 +37,10 @@
         margin: 7px 10px 7px 3px;
       }
 
-      &.max-rows-1 {
-        height: 39px;
-      }
-
-      &.max-rows-2 {
-        height: 78px;
-      }
-
-      &.max-rows-3 {
-        height: 117px;
-      }
-
-      &.max-rows-4 {
-        height: 156px;
-      }
-
-      &.max-rows-5 {
-        height: 185px;
+      @for $i from 1 through 20 {
+        &.max-rows-#{$i} {
+          height: calc(39px * $i);
+        }
       }
     }
   }

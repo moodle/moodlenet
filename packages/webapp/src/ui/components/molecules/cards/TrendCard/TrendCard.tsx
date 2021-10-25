@@ -26,9 +26,13 @@ export const TrendCard = withCtrl<TrendCardProps>(({ tags, maxRows }) => {
 
   const setNewNumRows = useCallback(() => {
     const containerHeight = card.current && card.current.clientHeight - 78 // 41px is the header height
+    console.log('card height - borders: ', containerHeight ? containerHeight : '')
     const numRows = containerHeight && Math.floor(containerHeight / 39)
+    console.log('numRos: ', numRows)
+    maxRows && !numRows && setNumRows(maxRows)
+    maxRows && numRows && setNumRows(maxRows <= numRows ? maxRows : numRows)
     numRows && setNumRows(numRows)
-  }, [card])
+  }, [card, maxRows])
 
   useEffect(() => {
     !maxRows && setNewNumRows()
@@ -41,6 +45,7 @@ export const TrendCard = withCtrl<TrendCardProps>(({ tags, maxRows }) => {
         window.removeEventListener('resize', setNewNumRows)
       }
     }
+    return
   }, [setNewNumRows, maxRows])
 
   return (
