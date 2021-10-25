@@ -15,7 +15,8 @@ const meta: ComponentMeta<typeof CollectionCard> = {
     'CollectionCardLoggedOutStoryProps',
     'CollectionCardFollowingStoryProps',
     'CollectionCardBookmarkedStoryProps',
-    'CollectionCardOwnerStoryProps'
+    'CollectionCardOwnerStoryProps',
+    'CollectionCardOwnerPrivateStoryProps',
   ],
   decorators: [
     Story => (
@@ -35,6 +36,7 @@ export const CollectionCardStoryProps: CollectionCardProps = {
   numFollowers: 32,
   isAuthenticated: true,
   isOwner: false,
+  visibility: 'Public',
   toggleFollow: linkTo('Molecules/CollectionCard', 'Following'),
   toggleBookmark: linkTo('Molecules/CollectionCard', 'Bookmarked'),
 }
@@ -65,6 +67,12 @@ export const CollectionCardOwnerStoryProps: CollectionCardProps = {
   ...CollectionCardLoggedInStoryProps,
   collectionHref: href('Pages/Collection/Owner'),
   isOwner: true,
+  visibility: 'Public',
+}
+
+export const CollectionCardOwnerPrivateStoryProps: CollectionCardProps = {
+  ...CollectionCardOwnerStoryProps,
+  visibility: 'Private',
 }
 
 const CollectionCardStory: ComponentStory<typeof CollectionCard> = args => <CollectionCard {...args} />
@@ -83,5 +91,11 @@ LoggedOut.args = CollectionCardLoggedOutStoryProps
 
 export const isOwner = CollectionCardStory.bind({})
 LoggedOut.args = CollectionCardOwnerStoryProps
+
+export const Public = CollectionCardStory.bind({})
+Public.args = CollectionCardOwnerStoryProps
+
+export const Private = CollectionCardStory.bind({})
+Private.args = CollectionCardOwnerPrivateStoryProps
 
 export default meta

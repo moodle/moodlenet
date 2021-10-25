@@ -2,6 +2,8 @@ import BookmarkIcon from '@material-ui/icons/Bookmark'
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
+import VisibilityIcon from '@material-ui/icons/Visibility'
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
 import { Href, Link } from '../../../../elements/link'
 import { tagList } from '../../../../elements/tags'
 import { withCtrl } from '../../../../lib/ctrl'
@@ -10,6 +12,7 @@ import '../../../../styles/tags.css'
 import { FollowTag } from '../../../../types'
 import Card from '../../../atoms/Card/Card'
 import RoundButton from '../../../atoms/RoundButton/RoundButton'
+import { Visibility } from '../../../pages/NewResource/FieldsData'
 import './styles.scss'
 
 export type ResourceCardProps = {
@@ -19,6 +22,7 @@ export type ResourceCardProps = {
   image: string | null
   type: string //'Video' | 'Web Page' | 'Moodle Book'
   title: string
+  visibility: Visibility
   resourceHomeHref?: Href
   isOwner: boolean
   isEditing?: boolean
@@ -50,6 +54,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     numLikes,
     bookmarked,
     isOwner,
+    visibility,
     onClick,
     onRemoveClick,
     toggleLike,
@@ -89,8 +94,19 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     }
 
     return (
-      <Card className={`resource-card ${isSelected ? 'selected' : ''} ${direction}`} hover={true} onClick={onClick}>
+      <Card
+        className={`resource-card ${isSelected ? 'selected' : ''} ${direction} ${
+          isOwner && visibility === 'Private' ? 'is-private' : ''
+        }`}
+        hover={true}
+        onClick={onClick}
+      >
         <div className={`actions`}>
+          {isOwner && (
+            <abbr className={`visibility ${visibility === 'Public' ? 'public' : 'private'}`} title={visibility}>
+              {visibility === 'Public' ? <VisibilityIcon /> : <VisibilityOffIcon />}
+            </abbr>
+          )}
           {isAuthenticated && !selectionMode && (
             <div
               className={`bookmark ${bookmarked && 'bookmarked'} ${
