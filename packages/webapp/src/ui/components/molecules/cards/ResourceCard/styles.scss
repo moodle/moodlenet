@@ -1,8 +1,10 @@
+@import '../../../../styles/application';
+
 .resource-card {
   position: relative;
 
   &.is-private {
-    opacity: 0.5;
+    opacity: 1;
   }
 
   > .actions {
@@ -32,8 +34,8 @@
       pointer-events: auto;
     }
 
-    > .visibility {
-      opacity: 1;
+    > .visibility.public {
+      color: $primary-color;
     }
 
     > .liked {

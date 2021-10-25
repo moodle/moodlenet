@@ -103,7 +103,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
       >
         <div className={`actions`}>
           {isOwner && (
-            <abbr className={`visibility`} title={visibility}>
+            <abbr className={`visibility ${visibility === 'Public' ? 'public' : 'private'}`} title={visibility}>
               {visibility === 'Public' ? <VisibilityIcon /> : <VisibilityOffIcon />}
             </abbr>
           )}
