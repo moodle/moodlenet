@@ -12,7 +12,9 @@ import {
   LevelDropdown,
   LicenseDropdown,
   MonthDropdown,
-  TypeDropdown, VisibilityDropdown, YearsDropdown
+  TypeDropdown,
+  VisibilityDropdown,
+  YearsDropdown,
 } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
@@ -130,6 +132,7 @@ export const ResourceLinkLoggedOutStoryProps: ResourceProps = {
 export const ResourceFileLoggedOutStoryProps: ResourceProps = {
   ...ResourceLinkLoggedOutStoryProps,
   type: 'file',
+  contentUrl: 'https://picsum.photos/200/100',
   formBag: SBFormikBag<NewResourceFormValues>({ ...resourceFormBag, contentType: 'File', type: 'Video' }),
 }
 
