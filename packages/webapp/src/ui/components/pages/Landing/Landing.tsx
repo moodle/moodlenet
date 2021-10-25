@@ -40,17 +40,6 @@ export const Landing = withCtrl<LandingProps>(
     loadMoreResources,
     setSearchText,
   }) => {
-    /* const docsCard = (
-      <TextCard className="intro-card">
-      <a href="https://docs.moodle.org/moodlenet/Main_Page" target="_blank" rel="noreferrer">
-      <Trans>MoodleNet is currently in beta version. Check out the docs to learn more.</Trans>
-      <SecondaryButton>
-      <Trans>Go to docs</Trans>
-          </SecondaryButton>
-          </a>
-          </TextCard>
-    ) */
-
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false)
 
     return (
@@ -111,7 +100,7 @@ export const Landing = withCtrl<LandingProps>(
                   )}
                   <a href="https://docs.moodle.org/moodlenet/Main_Page" target="_blank" rel="noreferrer">
                     <SecondaryButton color="grey">
-                      <Trans>Go to Docs</Trans>
+                      <Trans>Learn more</Trans>
                     </SecondaryButton>
                   </a>
                 </div>
