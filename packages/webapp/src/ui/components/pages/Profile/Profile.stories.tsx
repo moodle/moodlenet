@@ -3,6 +3,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../elements/link'
 import {
   CollectionCardLoggedOutStoryProps,
+  CollectionCardOwnerPrivateStoryProps,
   CollectionCardOwnerStoryProps,
   CollectionCardStoryProps,
 } from '../../molecules/cards/CollectionCard/CollectionCard.stories'
@@ -104,9 +105,10 @@ export const ProfileOwnerStoryProps: ProfileProps = {
   ...ProfileLoggedInStoryProps,
   profileCardProps: ProfileCardOwnerStoryProps,
   collectionCardPropsList: [
+    CollectionCardOwnerPrivateStoryProps,
     CollectionCardOwnerStoryProps,
     CollectionCardOwnerStoryProps,
-    CollectionCardOwnerStoryProps,
+    CollectionCardOwnerPrivateStoryProps,
   ],
   resourceCardPropsList: [
     ResourceCardOwnerPrivateStoryProps,

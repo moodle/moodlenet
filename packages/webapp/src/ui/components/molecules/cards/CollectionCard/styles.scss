@@ -9,7 +9,11 @@
   box-shadow: 0 0 6px #dedede;
   display: flex;
   flex-direction: column;
-  
+
+  &.is-private {
+    opacity: 1;
+  }
+
   > .actions {
     position: absolute;
     display: flex;
@@ -18,7 +22,8 @@
     pointer-events: none;
     padding: 5px;
 
-    > * {
+    > .right > *,
+    > .follow {
       padding: 1px 3px;
       background-color: #b6bacb;
       border-radius: 6px;
@@ -39,10 +44,6 @@
       pointer-events: auto;
     }
 
-    :last-child {
-      padding-right: 2px;
-    }
-
     .following {
       background-color: $primary-color;
       color: white;
@@ -52,13 +53,24 @@
       background-color: $primary-color;
     }
 
-    .bookmarked {
-      background-color: rgb(32, 193, 132);
-      color: white;
-    }
+    .right {
+      padding-right: 2px;
+      display: flex;
+      gap: 5px;
 
-    > .bookmark:hover {
-      background-color: rgb(32, 193, 132);
+      > .visibility.public {
+        color: white;
+        background-color: $primary-color;
+      }
+
+      > .bookmarked {
+        background-color: rgb(32, 193, 132);
+        color: white;
+      }
+
+      > .bookmark:hover {
+        background-color: rgb(32, 193, 132);
+      }
     }
   }
   > a {
