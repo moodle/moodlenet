@@ -32,6 +32,7 @@ export type ResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   isAuthenticated: boolean
   isOwner: boolean
+  isAdmin: boolean
   title: string
   liked: boolean
   numLikes: number
@@ -66,6 +67,7 @@ export const Resource = withCtrl<ResourceProps>(
     headerPageTemplateProps,
     isAuthenticated,
     isOwner,
+    isAdmin,
     liked,
     numLikes,
     bookmarked,
@@ -564,19 +566,19 @@ export const Resource = withCtrl<ResourceProps>(
               </Card>
               <div className="resource-footer">
                 <div className="left-column">
-                  {!isOwner && <ContributorCard {...contributorCardProps} />}
+                  {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
                   {actions}
                 </div>
                 <div className="right-column">{extraDetails}</div>
                 <div className="one-column">
-                  {!isOwner && <ContributorCard {...contributorCardProps} />}
+                  {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
                   {actions}
                   {extraDetails}
                 </div>
               </div>
             </div>
             <div className="side-column">
-              {!isOwner && <ContributorCard {...contributorCardProps} />}
+              {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
               {actions}
               {extraDetails}
             </div>
