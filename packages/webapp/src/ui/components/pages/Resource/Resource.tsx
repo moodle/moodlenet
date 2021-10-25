@@ -109,33 +109,6 @@ export const Resource = withCtrl<ResourceProps>(
       updateResource()
       setIsEditing(false)
     }
-    const actions = (
-      <Card className="resource-action-card" hideBorderWhenSmall={true}>
-        <PrimaryButton onClick={() => setIsAddingToMoodleLms(true)}>
-          <Trans>Send to Moodle</Trans>
-        </PrimaryButton>
-        {isAuthenticated && (
-          <SecondaryButton onClick={() => setIsAddingToCollection(true)}>
-            <Trans>Add to Collection</Trans>
-          </SecondaryButton>
-        )}
-        <a href={contentUrl} target="_blank" rel="noreferrer">
-          <SecondaryButton>
-            {type === 'file' ? (
-              <>
-                <InsertDriveFileIcon />
-                <Trans>Download File</Trans>
-              </>
-            ) : (
-              <>
-                <LinkIcon />
-                <Trans>Open Link</Trans>
-              </>
-            )}
-          </SecondaryButton>
-        </a>
-      </Card>
-    )
 
     const [form, formAttrs] = formBag
     const setFieldValue = form.setFieldValue
@@ -162,6 +135,43 @@ export const Resource = withCtrl<ResourceProps>(
         selectedFile && setFieldValue('image', selectedFile)
       },
       [setFieldValue],
+    )
+
+    const image = (
+      <img
+        className="image"
+        src={typeof form.values.imageUrl === 'string' ? form.values.imageUrl : defaultBackgroud}
+        alt="Background"
+        {...(type === 'file' && { onClick: () => setIsShowingImage(true) })}
+      />
+    )
+
+    const actions = (
+      <Card className="resource-action-card" hideBorderWhenSmall={true}>
+        <PrimaryButton onClick={() => setIsAddingToMoodleLms(true)}>
+          <Trans>Send to Moodle</Trans>
+        </PrimaryButton>
+        {isAuthenticated && (
+          <SecondaryButton onClick={() => setIsAddingToCollection(true)}>
+            <Trans>Add to Collection</Trans>
+          </SecondaryButton>
+        )}
+        <a href={contentUrl} target="_blank" rel="noreferrer" download={form.values.title}>
+          <SecondaryButton>
+            {type === 'file' ? (
+              <>
+                <InsertDriveFileIcon />
+                <Trans>Download File</Trans>
+              </>
+            ) : (
+              <>
+                <LinkIcon />
+                <Trans>Open Link</Trans>
+              </>
+            )}
+          </SecondaryButton>
+        </a>
+      </Card>
     )
 
     const extraDetails = isEditing ? (
@@ -509,12 +519,14 @@ export const Resource = withCtrl<ResourceProps>(
                 </div>
                 {(typeof form.values.imageUrl === 'string' || isEditing) && (
                   <div className="image-container">
-                    <img
-                      className="image"
-                      src={typeof form.values.imageUrl === 'string' ? form.values.imageUrl : defaultBackgroud}
-                      alt="Background"
-                      onClick={() => setIsShowingImage(true)}
-                    />
+                    {type === 'link' ? (
+                      <a href={contentUrl} target="_blank" rel="noreferrer">
+                        {image}
+                      </a>
+                    ) : (
+                      image
+                    )}
+
                     {isEditing && (
                       <input
                         id="upload-image"
