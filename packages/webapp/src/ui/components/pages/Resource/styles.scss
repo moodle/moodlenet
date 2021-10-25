@@ -158,7 +158,8 @@
         > .image-container {
           position: relative;
           width: 100%;
-          > .image {
+          > .image,
+          > a > .image {
             cursor: pointer;
             width: 100%;
             object-fit: cover;
@@ -294,7 +295,7 @@
         margin-bottom: 2px;
       }
     }
-    
+
     .resource-action-card {
       width: 100%;
       height: fit-content;
