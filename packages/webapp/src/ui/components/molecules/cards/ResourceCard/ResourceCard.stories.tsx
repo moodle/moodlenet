@@ -14,7 +14,8 @@ const meta: ComponentMeta<typeof ResourceCard> = {
     'ResourceCardLoggedOutStoryProps',
     'ResourceCardLoggedInStoryProps',
     'ResourceCardOwnerStoryProps',
-    'ResourceCardOwnerBookmarkedStoryProps'
+    'ResourceCardOwnerBookmarkedStoryProps',
+    'ResourceCardOwnerPrivateStoryProps',
   ],
   decorators: [
     Story => (
@@ -36,6 +37,7 @@ export const ResourceCardStoryProps: ResourceCardProps = {
   bookmarked: false,
   liked: false,
   numLikes: 23,
+  visibility: 'Public',
 }
 
 export const ResourceCardLoggedInStoryProps: ResourceCardProps = {
@@ -50,6 +52,12 @@ export const ResourceCardLoggedOutStoryProps: ResourceCardProps = {
 export const ResourceCardOwnerStoryProps: ResourceCardProps = {
   ...ResourceCardLoggedInStoryProps,
   isOwner: true,
+}
+
+export const ResourceCardOwnerPrivateStoryProps: ResourceCardProps = {
+  ...ResourceCardLoggedInStoryProps,
+  isOwner: true,
+  visibility: 'Private',
 }
 
 export const ResourceCardOwnerBookmarkedStoryProps: ResourceCardProps = {
@@ -67,5 +75,11 @@ LoggedOut.args = ResourceCardLoggedOutStoryProps
 
 export const Owner = ResourceCardStory.bind({})
 Owner.args = ResourceCardOwnerStoryProps
+
+export const Public = ResourceCardStory.bind({})
+Public.args = ResourceCardOwnerStoryProps
+
+export const Private = ResourceCardStory.bind({})
+Private.args = ResourceCardOwnerPrivateStoryProps
 
 export default meta

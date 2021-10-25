@@ -14,6 +14,8 @@ export type DropdownField = {
   placeholder?: string
 }
 
+export type Visibility = 'Public' | 'Private'
+
 export const LevelDropdown: DropdownField = {
   label: t`Level`,
   placeholder: t`Educational level`,
@@ -205,14 +207,8 @@ export const VisibilityDropdown: DropdownField = {
   label: t`Visibility`,
   placeholder: t`Visibility`,
   options: [
-    [
-      'Public',
-      <VisibilityIcon />,
-    ],
-    [
-      'Private',
-      <VisibilityOffIcon />,
-    ],
+    ['Public', <VisibilityIcon />],
+    ['Private', <VisibilityOffIcon />],
     /* [
       'Private',
       'Public'
