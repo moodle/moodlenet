@@ -2,20 +2,22 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../elements/link'
 import {
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardOwnerStoryProps,
-    CollectionCardStoryProps
+  CollectionCardLoggedOutStoryProps,
+  CollectionCardOwnerPrivateStoryProps,
+  CollectionCardOwnerStoryProps,
+  CollectionCardStoryProps,
 } from '../../molecules/cards/CollectionCard/CollectionCard.stories'
 import { OverallCardStoryProps } from '../../molecules/cards/OverallCard/OverallCard.stories'
 import {
-    ProfileCardLoggedInStoryProps,
-    ProfileCardOwnerStoryProps,
-    ProfileCardStoryProps
+  ProfileCardLoggedInStoryProps,
+  ProfileCardOwnerStoryProps,
+  ProfileCardStoryProps,
 } from '../../molecules/cards/ProfileCard/ProfileCard.stories'
 import {
-    ResourceCardLoggedInStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardOwnerStoryProps
+  ResourceCardLoggedInStoryProps,
+  ResourceCardLoggedOutStoryProps,
+  ResourceCardOwnerPrivateStoryProps,
+  ResourceCardOwnerStoryProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard.stories'
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
@@ -103,11 +105,18 @@ export const ProfileOwnerStoryProps: ProfileProps = {
   ...ProfileLoggedInStoryProps,
   profileCardProps: ProfileCardOwnerStoryProps,
   collectionCardPropsList: [
+    CollectionCardOwnerPrivateStoryProps,
     CollectionCardOwnerStoryProps,
     CollectionCardOwnerStoryProps,
-    CollectionCardOwnerStoryProps,
+    CollectionCardOwnerPrivateStoryProps,
   ],
-  resourceCardPropsList: [ResourceCardOwnerStoryProps, ResourceCardOwnerStoryProps, ResourceCardOwnerStoryProps],
+  resourceCardPropsList: [
+    ResourceCardOwnerPrivateStoryProps,
+    ResourceCardOwnerStoryProps,
+    ResourceCardOwnerStoryProps,
+    ResourceCardOwnerPrivateStoryProps,
+    ResourceCardOwnerStoryProps,
+  ],
 }
 
 export const ProfileActivatedStoryProps: ProfileProps = {
