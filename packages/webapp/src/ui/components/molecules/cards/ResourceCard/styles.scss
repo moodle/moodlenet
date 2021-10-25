@@ -1,6 +1,10 @@
 .resource-card {
   position: relative;
 
+  &.is-private {
+    opacity: 0.5;
+  }
+
   > .actions {
     position: absolute;
     pointer-events: none;
@@ -26,6 +30,10 @@
 
     > :not(.disabled) {
       pointer-events: auto;
+    }
+
+    > .visibility {
+      opacity: 1;
     }
 
     > .liked {
