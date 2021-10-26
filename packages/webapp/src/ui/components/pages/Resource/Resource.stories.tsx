@@ -34,6 +34,7 @@ const meta: ComponentMeta<typeof Resource> = {
     'ResourceFileLoggedOutStoryProps',
     'ResourceLoggedInStoryProps',
     'ResourceOwnerStoryProps',
+    'ResourceAdminStoryProps',
   ],
 }
 
@@ -71,6 +72,7 @@ export const ResourceStoryProps: ResourceProps = {
   },
   isAuthenticated: true,
   isOwner: false,
+  isAdmin: false,
   title: 'The Best Resource Ever',
   liked: false,
   numLikes: 23,
@@ -145,6 +147,12 @@ export const ResourceOwnerStoryProps: ResourceProps = {
   isOwner: true,
 }
 
+export const ResourceAdminStoryProps: ResourceProps = {
+  ...ResourceStoryProps,
+  isOwner: true,
+  isAdmin: true,
+}
+
 export const LinkLoggedOut = ResourceStory.bind({})
 LinkLoggedOut.args = ResourceLinkLoggedOutStoryProps
 
@@ -156,5 +164,8 @@ LoggedIn.args = ResourceLoggedInStoryProps
 
 export const Owner = ResourceStory.bind({})
 Owner.args = ResourceOwnerStoryProps
+
+export const Admin = ResourceStory.bind({})
+Admin.args = ResourceAdminStoryProps
 
 export default meta
