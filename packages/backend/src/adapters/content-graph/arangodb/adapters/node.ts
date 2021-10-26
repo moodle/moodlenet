@@ -1,6 +1,7 @@
 import { getOneResult } from '../../../../lib/helpers/arango/query'
 import { SockOf } from '../../../../lib/plug'
 import { createNodeAdapter, deleteNodeAdapter, editNodeAdapter } from '../../../../ports/content-graph/node'
+import { cleanupBrokenEdges } from '../aql/helpers'
 import { createNodeQ } from '../aql/writes/createNode'
 import { deleteNodeQ } from '../aql/writes/deleteNode'
 import { updateNodeQ } from '../aql/writes/updateNode'
@@ -30,5 +31,6 @@ export const deleteNode =
   async ({ node, type }) => {
     const q = deleteNodeQ(node, type)
     const result = await getOneResult(q, db)
+    cleanupBrokenEdges(db)
     return result as any
   }

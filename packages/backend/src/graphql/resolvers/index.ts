@@ -52,7 +52,6 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
           sort,
           text,
         }
-        // console.log({ nodeTypes, page, sort, text, _: '**' })
 
         const { items, pageInfo } = await contentGraph.search.searchByTerm(searchInput)
 
