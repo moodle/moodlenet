@@ -11,7 +11,7 @@
   },
   "files": [
     "build/",
-    "publicFolder.js"
+    "serverConfigure.js"
   ],
   "publishConfig": {
     "access": "public"
