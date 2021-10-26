@@ -27,7 +27,6 @@ input CreateNodeInput {
 
 input EditCollectionInput {
   name: String!
-  visibility: String!
   description: String!
   image: AssetRefInput
   _published: Boolean!

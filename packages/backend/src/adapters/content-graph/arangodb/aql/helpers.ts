@@ -1,8 +1,9 @@
-import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
+import { Assumptions, BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
 import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
 import { CollectionType } from 'arangojs'
 import { AQ, aqlstr, getAllResults } from '../../../../lib/helpers/arango/query'
+import { _ } from '../adapters/bl/_'
 import { ContentGraphDB } from '../types'
 import { deleteBrokenEdgesQ } from './writes/deleteEdge'
 
@@ -188,3 +189,10 @@ export const cleanupBrokenEdges = async (db: ContentGraphDB) => {
     }),
   )
 }
+
+export const getAqlAssumptions = (assumptions: Assumptions) =>
+  _<boolean>(
+    Object.entries(assumptions)
+      .map(([, assumption]) => assumption)
+      .join(' && ') || 'true',
+  )
