@@ -10,7 +10,7 @@ import { ResourceCardProps } from '../ResourceCard'
 import {
   useAddResourceCardRelationMutation,
   useDelResourceCardRelationMutation,
-  useResourceCardQuery
+  useResourceCardQuery,
 } from './ResourceCard.gen'
 
 export type ResourceCardCtrlArg = { id: ID; removeAction: false | null | (() => unknown) }
@@ -85,6 +85,7 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
             onRemoveClick: removeAction || undefined,
             showRemoveButton: !!removeAction,
             isOwner,
+            visibility: resourceNode._published ? 'Public' : 'Private',
           }
         : null,
     [
