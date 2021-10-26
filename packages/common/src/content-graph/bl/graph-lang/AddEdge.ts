@@ -9,14 +9,15 @@ export type AddEdgeOperators = {
   fromNode: BV<GraphNode | null>
   toNode: BV<GraphNode | null>
 }
-export type AddEdgeAssumptionsFactory = (_: {
+export type AddEdgeAssumptionsFactoryOps = {
   from: GraphNodeIdentifier
   to: GraphNodeIdentifier
   env: SessionEnv
   graphOperators: GraphOperators
   baseOperators: BaseOperators
   addEdgeOperators: AddEdgeOperators
-}) => Promise<Assumptions>
+}
+export type AddEdgeAssumptionsFactory = (_: AddEdgeAssumptionsFactoryOps) => Promise<Assumptions>
 
 export type AddEdgeAssumptionsMap = Partial<Record<`${NodeType}_${EdgeType}_${NodeType}`, AddEdgeAssumptionsFactory>>
 
