@@ -12,7 +12,7 @@ import { CollectionCardProps } from '../CollectionCard'
 import {
   useAddCollectionCardRelationMutation,
   useCollectionCardQuery,
-  useDelCollectionCardRelationMutation
+  useDelCollectionCardRelationMutation,
 } from './CollectionCard.gen'
 
 export type CollectionCardCtrlArg = { id: ID }
@@ -82,6 +82,7 @@ export const useCollectionCardCtrl: CtrlHook<ProvidesProps, CollectionCardCtrlAr
             toggleBookmark,
             toggleFollow,
             isOwner,
+            visibility: collectionNode._published ? 'Public' : 'Private',
           }
         : null,
     [
