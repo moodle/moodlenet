@@ -16,11 +16,11 @@ import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplate
 import { ProfileProps } from '../Profile'
 import { ProfileFormValues } from '../types'
 import {
-    useAddProfileRelationMutation,
-    useDelProfileRelationMutation,
-    useEditProfileMutation,
-    useProfilePageUserDataQuery,
-    useSendEmailToProfileMutation
+  useAddProfileRelationMutation,
+  useDelProfileRelationMutation,
+  useEditProfileMutation,
+  useProfilePageUserDataQuery,
+  useSendEmailToProfileMutation,
 } from './ProfileCtrl.gen'
 const newCollectionHref = href(mainPath.createNewCollection)
 const newResourceHref = href(mainPath.createNewResource)
@@ -28,7 +28,7 @@ const newResourceHref = href(mainPath.createNewResource)
 export type ProfileCtrlProps = { id: ID }
 export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id }) => {
   useSeoContentId(id)
-  const { isAuthenticated, session, isAdmin, firstLogin } = useSession()
+  const { isAuthenticated, session, firstLogin } = useSession()
   const { org: localOrg } = useLocalInstance()
   const isMe = session?.profile && session.profile.id === id
   const { data, refetch } = useProfilePageUserDataQuery({
@@ -195,7 +195,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
         avatarUrl,
         backgroundUrl,
         isFollowing: !!myFollowEdgeId,
-        isOwner: isMe || isAdmin,
+        isOwner: isMe,
       },
       sendEmail: text => {
         if (sendEmailMutRes.loading) {
@@ -215,7 +215,6 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
     formBag,
     formik,
     id,
-    isAdmin,
     isAuthenticated,
     isMe,
     kudos,
