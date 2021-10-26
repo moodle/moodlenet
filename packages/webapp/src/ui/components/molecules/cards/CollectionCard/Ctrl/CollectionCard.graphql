@@ -4,7 +4,7 @@ query CollectionCard($id: ID!, $myProfileId: [ID!]) {
       id
       name
       image
-
+      _published
       followersCount: _relCount(type: Follows, target: Profile, inverse: true)
       creator: _rel(type: Created, target: Profile, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
         edges {
