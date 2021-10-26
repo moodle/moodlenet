@@ -12,7 +12,7 @@
     "bs": "lerna bootstrap --nohoist=babel-* --nohoist=*react*",
     "setup": "lerna run setup --parallel --stream",
     "upgrade-version": "lerna run upgrade-version --parallel --stream",
-    "start-dev": "cross-env PUBLIC_URL=http://localhost:3000 REACT_APP_GRAPHQL_ENDPOINT=http://localhost:8080/graphql REACT_APP_STATIC_ASSET_BASE=http://localhost:8080/assets lerna run start-dev --parallel --stream -- -- ",
+    "start-dev": "cross-env lerna run start-dev --parallel --stream -- -- ",
     "build": "lerna run build --stream",
     "start": "lerna run start --parallel --stream"
   },

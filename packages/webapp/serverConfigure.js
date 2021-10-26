@@ -19,7 +19,6 @@ function configure({ mnEnv = {}, customHead = '' }) {
 
 
   mnEnv.REACT_APP_CUSTOM_HEAD = `<script>window.__MN_ENV__ = ${JSON.stringify(mnEnv)}</script>${customHead}`
-  console.log(mnEnv.REACT_APP_CUSTOM_HEAD)
   const interpolatedIndex = Object.entries(mnEnv).reduce(
     (_html, [key, val]) => _html.replace(new RegExp(`%${key}%`, 'g'), val),
     originalIndexHtmlFileString,
