@@ -164,7 +164,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
   const resourceEdges = useMemo(() => (collectionData?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])), [
     collectionData?.resources.edges,
   ])
-  const isOwner = isAdmin || (creator && session ? creator.id === session.profile.id : false)
+  const isOwner = creator && session ? creator.id === session.profile.id : false
 
   const removeResource = useCallback(
     (edgeId: string) => {
@@ -184,6 +184,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
       formBag,
       isOwner,
+      isAdmin,
       isAuthenticated,
       visibility: VisibilityDropdown,
       resourceCardPropsList: resourceEdges.map(({ edge, node: { id } }) =>
@@ -224,6 +225,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     toggleFollow,
     deleteCollection,
     removeResource,
+    isAdmin,
   ])
   return collectionProps && [collectionProps]
 }
