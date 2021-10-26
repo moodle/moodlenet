@@ -14,8 +14,10 @@ import * as contentGraph from '@moodlenet/backend/lib/ports/content-graph'
 import * as staticAsset from '@moodlenet/backend/lib/ports/static-assets'
 import * as userAuth from '@moodlenet/backend/lib/ports/user-auth'
 import { getAddEdgeAssumptionsMap } from '@moodlenet/common/lib/content-graph/bl/rules/addEdgeAssumptions'
+import { configure as webappConfigure } from '@moodlenet/webapp/serverConfigure'
 import { Database } from 'arangojs'
 import { DefaultDeployEnv } from './env'
+import mnStatic from './env/mnStatic'
 import { setupDb } from './setup/db'
 
 export type Config = {
@@ -107,17 +109,17 @@ export const startDefaultMoodlenet = async ({
   })
   const assetsApp = createStaticAssetsApp({})
   const webfingerApp = await createWebfingerApp()
-  const [webappRootDir, defaultHtml] = require('@moodlenet/webapp/publicFolder') as [string, string]
+  const webappConfig = webappConfigure({ customHead: mnStatic.customHead })
   await startMNHttpServer({
     httpPort: http.port,
     startServices: {
       'graphql': graphqlApp,
       'assets': assetsApp,
       '.well-known': webfingerApp,
-      '': webappRootDir,
+      '': webappConfig.staticFolder,
     },
     defaultGet(_req, res) {
-      res.sendFile(defaultHtml)
+      res.sendFile(webappConfig.defaultIndexFile)
     },
   })
 
