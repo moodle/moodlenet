@@ -14,6 +14,7 @@ import * as contentGraph from '@moodlenet/backend/lib/ports/content-graph'
 import * as staticAsset from '@moodlenet/backend/lib/ports/static-assets'
 import * as userAuth from '@moodlenet/backend/lib/ports/user-auth'
 import { getAddEdgeAssumptionsMap } from '@moodlenet/common/lib/content-graph/bl/rules/addEdgeAssumptions'
+import { getEditNodeAssumptionsMap } from '@moodlenet/common/lib/content-graph/bl/rules/editNodeAssumptions'
 import { configure as webappConfigure } from '@moodlenet/webapp/serverConfigure'
 import { Database } from 'arangojs'
 import { DefaultDeployEnv } from './env'
@@ -70,12 +71,16 @@ export const startDefaultMoodlenet = async ({
     contentGraphAd.baseOperators.getBaseOperators(contentGraphDatabase),
   )
   socket(contentGraph.common.getGraphOperatorsAdapter, contentGraphAd.graphOperators.getGraphOperators)
-  socket(contentGraph.edge.addEdgeAdapter, contentGraphAd.edge.addEdge(contentGraphDatabase))
   socket(contentGraph.edge.deleteEdgeAdapter, contentGraphAd.edge.deleteEdge(contentGraphDatabase))
   socket(contentGraph.node.createNodeAdapter, contentGraphAd.node.createNode(contentGraphDatabase))
   socket(contentGraph.node.deleteNodeAdapter, contentGraphAd.node.deleteNode(contentGraphDatabase))
+
   socket(contentGraph.node.editNodeAdapter, contentGraphAd.node.editNode(contentGraphDatabase))
-  socket(contentGraph.edge.getAddEdgeOperatorsAdapter, contentGraphAd.addEdgeOperators.getAddEgdeOperators)
+  socket(contentGraph.node.getEditNodeOperatorsAdapter, contentGraphAd.editNodeOperators.getEditNodeOperators)
+  socket(contentGraph.node.getEditNodeAssumptionsMap, getEditNodeAssumptionsMap)
+
+  socket(contentGraph.edge.addEdgeAdapter, contentGraphAd.edge.addEdge(contentGraphDatabase))
+  socket(contentGraph.edge.getAddEdgeOperatorsAdapter, contentGraphAd.addEdgeOperators.getAddEdgeOperators)
   socket(contentGraph.edge.getAddEdgeAssumptionsMap, getAddEdgeAssumptionsMap)
 
   socket(contentGraph.profile.sendTextToProfileAdapter, userAuth.notifications.sendTextAdapter)

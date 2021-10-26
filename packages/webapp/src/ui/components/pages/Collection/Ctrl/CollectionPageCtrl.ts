@@ -114,7 +114,6 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
           collInput: {
             description: vals.description,
             name: vals.title,
-            visibility: vals.visibility,
             image: imageAssetRef,
             _published: vals.visibility === 'Public',
           },

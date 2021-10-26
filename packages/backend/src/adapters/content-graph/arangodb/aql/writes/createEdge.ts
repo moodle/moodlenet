@@ -5,7 +5,7 @@ import { omit } from '@moodlenet/common/lib/utils/object'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
 import { AqlGraphEdge } from '../../types'
-import { aqlGraphEdge2GraphEdge, graphNode2AqlId } from '../helpers'
+import { aqlGraphEdge2GraphEdge, getAqlAssumptions, graphNode2AqlId } from '../helpers'
 
 export const createEdgeQ = <Type extends GraphEdgeType>({
   edge,
@@ -29,10 +29,7 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
     ...omit(edge, ['id']),
   }
 
-  const aqlAssumptions =
-    Object.entries(assumptions)
-      .map(([, assumption]) => assumption)
-      .join(' && ') || 'true'
+  const aqlAssumptions = getAqlAssumptions(assumptions)
   const q = aq<GraphEdge<Type>>(`
     let fromNode = ${from}
     let toNode = ${to}
@@ -40,7 +37,7 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
     
     let newedge = ${aqlstr(aqlEdge)}
 
-    FILTER ${aqlAssumptions}
+    FILTER fromNode && toNode && issuerNode && ${aqlAssumptions}
 
     INSERT MERGE(
       newedge,
