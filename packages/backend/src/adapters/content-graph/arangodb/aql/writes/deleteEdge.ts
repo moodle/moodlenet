@@ -12,3 +12,16 @@ export const deleteEdgeQ = (edge: BV<GraphEdge | null>, edgeType: GraphEdgeType)
   // console.log(q)
   return q
 }
+
+export const deleteBrokenEdgesQ = (edgeType: string) => {
+  const q = aq<GraphEdge | null>(`
+FOR e in ${edgeType}
+  LET from = Document(e._from)
+  LET to  = Document(e._to)
+  FILTER !(from && to)
+  REMOVE e IN ${edgeType} OPTIONS { ignoreErrors: true }
+  RETURN ${aqlGraphEdge2GraphEdge('OLD')}
+`)
+  // console.log(q)
+  return q
+}

@@ -17,7 +17,7 @@ import {
   useLicensesOptions,
   useResourceGradeOptions,
   useResourceTypeOptions,
-  yearsOptions,
+  yearsOptions
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
 import { useLMS } from '../../../../../lib/moodleLMS/useSendToMoodle'
 import { href } from '../../../../elements/link'
@@ -35,7 +35,7 @@ import {
   useDelResourceMutation,
   useDelResourceRelationMutation,
   useEditResourceMutation,
-  useResourcePageDataQuery,
+  useResourcePageDataQuery
 } from './ResourcePage.gen'
 
 export type ResourceCtrlProps = { id: ID }
@@ -341,30 +341,25 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
           myColEdge => !selectedIds.includes(myColEdge.node.id) && myCollectionsIds.includes(myColEdge.node.id),
         )
 
-        console.log('***', {
-          add: collIdsToAdd.join(),
-          rem: collEdgesToRem.map(({ node: { name } }) => name).join(),
-          selected: selectedCollItems.map(({ label }) => label).join(),
-        })
+        // console.log( {
+        //   add: collIdsToAdd.join(),
+        //   rem: collEdgesToRem.map(({ node: { name } }) => name).join(),
+        //   selected: selectedCollItems.map(({ label }) => label).join(),
+        // })
         //FIXME: enters once and makes 1 single promise array but does http calls twice ! :|
         const promises = [
           ...collIdsToAdd.map(collIdToAdd => {
-            console.log(`**** addd`, collIdToAdd)
-
             return addRelation({
               variables: { edge: { edgeType: 'Features', from: collIdToAdd, to: id, Features: {} } },
             })
           }),
           ...collEdgesToRem.map(selectedCollEdgeToAdd => {
-            console.log(`**** remmm`, selectedCollEdgeToAdd)
             return delRelation({
               variables: { edge: { id: selectedCollEdgeToAdd.edge.id } },
             })
           }),
         ]
-        console.log('***', promises)
-        const _ = await Promise.all<any>(promises)
-        console.log('***', _)
+        await Promise.all<any>(promises)
         refetch()
       },
       languages: langOptions,
