@@ -11,6 +11,6 @@ export const deleteNodeQ = (nodeId: BV<GraphNode | null>, type: GraphNodeType) =
 
     RETURN ${aqlGraphNode2GraphNode('OLD')}
   `)
-  console.log(q)
+  // console.log(q)
   return q
 }
