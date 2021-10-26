@@ -251,7 +251,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
 
   const creator = creatorEdge?.node
 
-  const isOwner = isAdmin || (creator && session ? creator.id === session.profile.id : false)
+  const isOwner = creator && session ? creator.id === session.profile.id : false
 
   const myBookmarkedEdgeId = resourceData?.myBookmarked.edges[0]?.edge.id
   const toggleBookmark = useCallback(() => {
@@ -308,6 +308,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       formBag,
       title: resourceData.name,
       isOwner,
+      isAdmin,
       liked,
       visibility: VisibilityDropdown,
       contributorCardProps: {
@@ -389,6 +390,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     licensesOptions,
     resourceData,
     id,
+    isAdmin,
     formBag,
     isOwner,
     liked,
