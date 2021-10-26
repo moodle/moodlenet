@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { Href, Link } from '../../../../elements/link'
-import smallLogo from '../../../../static/img/moodlenet-logo-small.svg'
+import SmallLogo from '../../../../static/img/moodlenet-logo-small.svg'
 import Logo from '../../../../static/img/moodlenet-logo.svg'
 import { Organization } from '../../../../types'
 import './styles.scss'
@@ -16,7 +16,7 @@ export const HeaderTitle: FC<HeaderTitleProps> = ({ organization, homeHref }) =>
       {organization.name === 'MoodleNet' ? (
         <div className="header-title">
           <img className="logo big" src={Logo} alt="Logo" />
-          <img className="logo small" src={smallLogo} alt="small Logo" />
+          <img className="logo small" src={SmallLogo} alt="small Logo" />
         </div>
       ) : (
         <div className="header-title">
