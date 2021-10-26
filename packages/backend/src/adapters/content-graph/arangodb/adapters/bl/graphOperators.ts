@@ -46,6 +46,9 @@ export const graphOperators: GraphOperators = {
       RETURN e
     ) == 1 ) : false`)
   },
+  isSameNode: (a, b) => {
+    return _<boolean>(`${graphNode2AqlId(a)} == ${graphNode2AqlId(b)}`)
+  },
   // nodeId(nodeId) {
   //   return _(getAqlNodeByGraphNodeIdentifierQ(nodeId))
   // },
