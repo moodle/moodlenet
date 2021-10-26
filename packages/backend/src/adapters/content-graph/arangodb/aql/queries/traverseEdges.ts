@@ -21,7 +21,6 @@ export const traverseEdgesQ = ({
 }: TraverseFromNodeAdapterInput) => {
   // const targetIdsFilter =
   //   targetNodeIds && targetNodeIds.length ? `&& edge._${targetSide} IN [${targetNodeIds.map(aqlstr).join(',')}]` : ''
-  // console.log('********************', { edgeType, targetNodeType, fromNode, targetIds })
 
   const queryMapper = traversePaginateMapQuery({
     edgeType,
@@ -61,7 +60,6 @@ export const traversePaginateMapQuery =
     // edgeAndNodeAssertionFilters: string
   }) =>
   (pageFilterSortLimit: string) => {
-    // console.log('********************', { targetIds })
     if (targetIds && !targetIds.length) {
       return aq<PageItem<{ edge: GraphEdge; node: GraphNode }>>(`FOR x in [] RETURN x`)
     }
@@ -99,7 +97,6 @@ export const traversePaginateMapQuery =
         ]
       `)
     // console.log(q)
-    // targetIds && console.log('*******traversePaginateMapQuery*************', targetIds, aqlTargetIds)
     return q
   }
 

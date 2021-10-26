@@ -20,7 +20,6 @@ export const AddToCollectionsCard: FC<AddToCollectionsCardProps> = ({
   setAddToCollections,
 }) => {
   const [selectedCollections, setSelectedCollections] = useState<CollectionItem[]>(value ? value : [])
-  // console.log(`***`, { allCollections, value })
 
   const [selectCollections, toggleSelectedCollection] = useReducer(
     (prevSelected: CollectionItem[] = selectedCollections, collection: CollectionItem | CollectionItem[]) => {
