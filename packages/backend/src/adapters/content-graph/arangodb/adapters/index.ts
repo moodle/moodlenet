@@ -1,5 +1,6 @@
 export * as addEdgeOperators from './bl/addEdgeOperators'
 export * as baseOperators from './bl/baseOperators'
+export * as editNodeOperators from './bl/editNodeOperators'
 export * as graphOperators from './bl/graphOperators'
 export * as edge from './edge'
 export * as globalSearch from './globalSearch'
