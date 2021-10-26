@@ -1,10 +1,15 @@
-import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
+import { Assumptions, BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
+import {
+  EditNodeAssumptionsFactoryMap,
+  EditNodeOperators,
+  getEditNodeAssumptions,
+} from '@moodlenet/common/lib/content-graph/bl/graph-lang/EditNode'
 import { GraphNode, GraphNodeIdentifier, GraphNodeType, Profile } from '@moodlenet/common/lib/content-graph/types/node'
 import { AuthId, SessionEnv } from '@moodlenet/common/lib/types'
 import { newGlyphIdentifiers, newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { ns } from '../../lib/ns/namespace'
-import { plug } from '../../lib/plug'
+import { plug, value } from '../../lib/plug'
 import { getBaseOperatorsAdapter, getGraphOperatorsAdapter } from './common'
 import { addEdgeAdapter } from './edge'
 
@@ -67,8 +72,10 @@ export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, 
 export const editNodeAdapter = plug<
   <N extends GraphNodeType = GraphNodeType>(_: {
     nodeData: BV<EditNodeData<N>>
+    issuer: BV<GraphNode | null>
     nodeId: BV<GraphNode<N> | null>
     type: GraphNodeType
+    assumptions: Assumptions
   }) => Promise<GraphNode<N> | undefined>
 >(ns(__dirname, 'edit-node-adapter'))
 
@@ -82,12 +89,33 @@ export type EditNode<N extends GraphNodeType = GraphNodeType> = {
   sessionEnv: SessionEnv
 }
 
+export const getEditNodeAssumptionsMap = value<EditNodeAssumptionsFactoryMap>(
+  ns(__dirname, 'get-edit-node-assumptions-map'),
+)
+export const getEditNodeOperatorsAdapter = value<EditNodeOperators>(ns(__dirname, 'get-edit-node-operators-adapter'))
 export const editNode = plug(
-  ns(__dirname, 'edit'),
-  async <N extends GraphNodeType = GraphNodeType>({ nodeData, nodeId /* , sessionEnv  */ }: EditNode<N>) => {
-    const { graphNode } = await getGraphOperatorsAdapter()
-    const { _ } = await getBaseOperatorsAdapter()
+  ns(__dirname, 'edit-node'),
+  async <N extends GraphNodeType = GraphNodeType>({ nodeData, nodeId, sessionEnv }: EditNode<N>) => {
+    const graphOperators = await getGraphOperatorsAdapter()
+    const baseOperators = await getBaseOperatorsAdapter()
+    const editNodeOperators = await getEditNodeOperatorsAdapter()
+    const editNodeAssumptionsMap = await getEditNodeAssumptionsMap()
+    const assumptions = await getEditNodeAssumptions({
+      map: editNodeAssumptionsMap,
+      env: sessionEnv,
+      baseOperators,
+      graphOperators,
+      editNodeOperators,
+      nodeIdentifier: nodeId,
+    })
+    if (!assumptions) {
+      return null
+    }
+    const { graphNode } = graphOperators
+    const { _ } = baseOperators
     const result = await editNodeAdapter({
+      assumptions,
+      issuer: graphOperators.graphNode({ _authId: sessionEnv.user.authId, _type: 'Profile' }),
       nodeData: _(nodeData),
       nodeId: graphNode(nodeId),
       type: nodeId._type,

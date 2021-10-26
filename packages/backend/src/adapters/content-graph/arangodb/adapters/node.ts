@@ -19,9 +19,13 @@ export const createNode =
 
 export const editNode =
   (db: ContentGraphDB): SockOf<typeof editNodeAdapter> =>
-  async ({ nodeData, nodeId, type }) => {
-    const q = updateNodeQ({ nodeData, nodeId, type })
-    const result = await getOneResult(q, db)
+  async ({ nodeData, nodeId, type, assumptions, issuer }) => {
+    const q = updateNodeQ({ nodeData, nodeId, type, assumptions, issuer })
+
+    const result = await getOneResult(q, db).catch(e => {
+      console.log(e, q)
+      throw e
+    })
 
     return result as any
   }
@@ -31,6 +35,8 @@ export const deleteNode =
   async ({ node, type }) => {
     const q = deleteNodeQ(node, type)
     const result = await getOneResult(q, db)
-    cleanupBrokenEdges(db)
+    if (result) {
+      cleanupBrokenEdges(db)
+    }
     return result as any
   }
