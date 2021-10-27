@@ -4,9 +4,9 @@ import {
   HeaderLoggedInOrganizationStoryProps,
   HeaderLoggedInStoryProps,
   HeaderLoggedOutOrganizationStoryProps,
-  HeaderLoggedOutStoryProps
+  HeaderLoggedOutStoryProps,
 } from '../../organisms/Header/Header.stories'
-import { SubHeaderStoryProps } from '../../organisms/SubHeader/SubHeader.stories'
+// import { SubHeaderStoryProps } from '../../organisms/SubHeader/SubHeader.stories'
 import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 import HeaderPage, { HeaderPageProps } from './HeaderPage'
 
@@ -28,7 +28,7 @@ const meta: ComponentMeta<typeof HeaderPage> = {
     'LoggedOut',
     'LoggedIn',
     'LoggedOutOrganization',
-    'LoggedInOrganization'
+    'LoggedInOrganization',
   ],
 }
 
@@ -36,26 +36,26 @@ const meta: ComponentMeta<typeof HeaderPage> = {
 
 export const HeaderPageLoggedInStoryProps: HeaderPageProps = {
   headerProps: HeaderLoggedInStoryProps,
-  subHeaderProps: SubHeaderStoryProps,
-  isAuthenticated: true,
+  // subHeaderProps: SubHeaderStoryProps,
+  // isAuthenticated: true,
 }
 
 export const HeaderPageLoggedOutStoryProps: HeaderPageProps = {
   headerProps: HeaderLoggedOutStoryProps,
-  subHeaderProps: SubHeaderStoryProps,
-  isAuthenticated: false,
+  // subHeaderProps: SubHeaderStoryProps,
+  // isAuthenticated: false,
 }
 
 export const HeaderPageOrganizationLoggedInStoryProps: HeaderPageProps = {
   headerProps: HeaderLoggedInOrganizationStoryProps,
-  subHeaderProps: SubHeaderStoryProps,
-  isAuthenticated: true,
+  // subHeaderProps: SubHeaderStoryProps,
+  // isAuthenticated: true,
 }
 
 export const HeaderPageOrganizationLoggedOutStoryProps: HeaderPageProps = {
   headerProps: HeaderLoggedOutOrganizationStoryProps,
-  subHeaderProps: SubHeaderStoryProps,
-  isAuthenticated: false,
+  // subHeaderProps: SubHeaderStoryProps,
+  // isAuthenticated: false,
 }
 
 // HEADER PAGE TEMPLATE PROPS
@@ -71,7 +71,7 @@ export const HeaderPageTemplateLoggedOutStoryProps: HeaderPageTemplateProps = {
 
 export const HeaderPageTemplateOrganizationLoggedOutStoryProps: HeaderPageTemplateProps = {
   ...HeaderPageTemplateLoggedOutStoryProps,
-  isAuthenticated: false,
+  // isAuthenticated: false,
   headerPageProps: HeaderPageOrganizationLoggedOutStoryProps,
 }
 
@@ -86,7 +86,7 @@ export const HeaderPageTemplateLoggedInStoryProps: HeaderPageTemplateProps = {
 
 export const HeaderPageTemplateOrganizationLoggedInStoryProps: HeaderPageTemplateProps = {
   ...HeaderPageTemplateLoggedInStoryProps,
-  isAuthenticated: false,
+  // isAuthenticated: false,
   headerPageProps: HeaderPageOrganizationLoggedInStoryProps,
 }
 
