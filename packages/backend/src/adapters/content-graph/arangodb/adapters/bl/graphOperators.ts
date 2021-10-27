@@ -10,7 +10,7 @@ export const graphOperators: GraphOperators = {
   // edgeType: edgeType => ` ${edgeType} ` as BV<GraphEdgeType>,
   // nodeType: nodeType => ` ${nodeType} ` as BV<GraphNodeType>,
   graphNode: identifier => {
-    // Identifier = { _authId } | { _permId } | { _slug } | AqlGraphNode
+    // Identifier = { _authKey } | { _permId } | { _slug } | AqlGraphNode
     if (!identifier) {
       return _('null')
     }
@@ -22,8 +22,8 @@ export const graphOperators: GraphOperators = {
     const [idProp, propVal] =
       '_slug' in identifier
         ? (['_slug', identifier._slug] as const)
-        : '_authId' in identifier
-        ? (['_authId', identifier._authId] as const)
+        : '_authKey' in identifier
+        ? (['_authKey', identifier._authKey] as const)
         : (null as never)
 
     return _(
@@ -42,13 +42,13 @@ export const graphOperators: GraphOperators = {
     const { _type, id } = identifier
     return _(`${aqlGraphEdge2GraphEdge(`DOCUMENT("${_type}/${id}")`)}`)
   },
-  isCreator: ({ authNode, ofNode }) => _<boolean>(`${authNode}._authId == ${ofNode}._creatorAuthId`),
+  isCreator: ({ authNode, ofNode }) => _<boolean>(`${authNode}._authKey == ${ofNode}._creatorAuthId`),
   isPublished: node => _<boolean>(`${node}._published == true`),
   // isCreator: ({ authNode, ofNode }) => {
   //   const Created: EdgeType = 'Created'
-  //   return _<boolean>(`${authNode}._authId && ${ofNode} ? ( LENGTH(
+  //   return _<boolean>(`${authNode}._authKey && ${ofNode} ? ( LENGTH(
   //     FOR e in ${Created}
-  //       FILTER  e._authId == ${authNode}._authId
+  //       FILTER  e._authKey == ${authNode}._authKey
   //           &&  e._to == ${graphNode2AqlId(ofNode)}
   //       LIMIT 1
   //     RETURN e

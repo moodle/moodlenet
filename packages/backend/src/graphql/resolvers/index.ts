@@ -35,13 +35,13 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         if (!parsed) {
           return null
         }
-        const maybeNode = await contentGraph.node.byIdentifier(ctx.authSessionEnv, parsed)
+        const maybeNode = await contentGraph.node.byIdentifier(ctx.sessionEnv, parsed)
         return maybeNode ? graphNode2GqlNode(maybeNode) : null
       },
 
       async globalSearch(_root, { sort, text, nodeTypes, page }, ctx) {
         const searchInput: contentGraph.search.GlobalSearchInput = {
-          env: ctx.authSessionEnv,
+          env: ctx.sessionEnv,
           nodeTypes: (nodeTypes ?? globalSearchNodeTypes).filter(isGlobalSearchNodeType),
           page: {
             after: page?.after,
@@ -76,32 +76,32 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
       },
 
       async getSession(_root, _no_args, ctx) {
-        if (!ctx.authSessionEnv) {
+        if (!ctx.sessionEnv?.authId) {
           return null
         }
 
         const mActiveUser = await userAuth.adapters.getActiveUserByAuthAdapter({
-          authId: ctx.authSessionEnv.user.authId,
+          authId: ctx.sessionEnv.authId,
         })
         // console.log({ mActiveUser })
         if (!mActiveUser) {
           return null
         }
-        const mProfile = await contentGraph.node.byIdentifier(ctx.authSessionEnv, {
-          _authId: mActiveUser.authId,
-          _type: 'Profile',
+        const mAuthProfileNode = await contentGraph.node.byIdentifier(ctx.sessionEnv, {
+          _authKey: mActiveUser.authId.key,
+          _type: mActiveUser.authId.profileType,
         })
         // console.log({ mProfile })
-        if (!mProfile) {
+        if (!mAuthProfileNode) {
           return null
         }
 
         const email = mActiveUser.email
-        const profile = graphNode2GqlNode(mProfile) as GQLTypes.Profile
+        const authProfileNode = graphNode2GqlNode(mAuthProfileNode)
         return {
           __typename: 'UserSession',
           email,
-          profile,
+          profile: authProfileNode,
         }
       },
     },
@@ -153,7 +153,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         return { __typename: 'SimpleResponse', success: true }
       },
       async createNode(_root, { input }, ctx, _info) {
-        if (!ctx.authSessionEnv) {
+        if (!ctx.sessionEnv) {
           return createNodeMutationError('NotAuthorized')
         }
         const { nodeType } = input
@@ -169,11 +169,9 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
           nodeData: {
             ...data,
           },
-          sessionEnv: ctx.authSessionEnv,
+          sessionEnv: ctx.sessionEnv,
         })
-        if (graphNodeOrError === 'unauthorized') {
-          return createNodeMutationError('NotAuthorized')
-        }
+
         if (!graphNodeOrError) {
           return createNodeMutationError('AssertionFailed')
         }
@@ -190,7 +188,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
           return editNodeMutationError('UnexpectedInput', `invalid id:${id}`)
         }
 
-        if (!ctx.authSessionEnv) {
+        if (!ctx.sessionEnv) {
           return editNodeMutationError('NotAuthorized')
         }
         const nodeInput = validateEditNodeInput(input)
@@ -206,7 +204,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
             ...data,
           },
           nodeId,
-          sessionEnv: ctx.authSessionEnv,
+          sessionEnv: ctx.sessionEnv,
         })
         if (!graphNodeOrError) {
           return editNodeMutationError('AssertionFailed')
@@ -218,7 +216,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         }
       },
       async createEdge(_root, { input }, ctx, _info) {
-        if (!ctx.authSessionEnv) {
+        if (!ctx.sessionEnv) {
           return createEdgeMutationError('NotAuthorized')
         }
         const { edgeType, from, to } = input
@@ -240,7 +238,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
           newEdge: {
             ...data,
           },
-          sessionEnv: ctx.authSessionEnv,
+          sessionEnv: ctx.sessionEnv,
           from: fromIdentifier,
           to: toIdentifier,
         })
@@ -259,11 +257,11 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         if (!edge) {
           return deleteEdgeMutationError('UnexpectedInput')
         }
-        if (!ctx.authSessionEnv) {
+        if (!ctx.sessionEnv) {
           return deleteEdgeMutationError('NotAuthorized')
         }
         const deleteResult = await contentGraph.edge.deleteEdge({
-          sessionEnv: ctx.authSessionEnv,
+          sessionEnv: ctx.sessionEnv,
           edge,
         })
         if (deleteResult === false) {
@@ -280,11 +278,11 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         if (!node) {
           return deleteNodeMutationError('UnexpectedInput')
         }
-        if (!ctx.authSessionEnv) {
+        if (!ctx.sessionEnv) {
           return deleteNodeMutationError('NotAuthorized')
         }
         const deleteResult = await contentGraph.node.deleteNode({
-          sessionEnv: ctx.authSessionEnv,
+          sessionEnv: ctx.sessionEnv,
           node,
         })
         if (deleteResult === false) {
@@ -298,11 +296,11 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
       },
       async sendEmailToProfile(_root, { text, toProfileId }, ctx) {
         const toProfileIdentifier = gqlNodeId2GraphNodeIdentifierOfType(toProfileId, 'Profile')
-        if (!(ctx.authSessionEnv?.user && toProfileIdentifier)) {
+        if (!(ctx.sessionEnv?.authId && toProfileIdentifier)) {
           return false
         }
         const sendResult = await contentGraph.profile.sendTextToProfile({
-          env: ctx.authSessionEnv,
+          authId: ctx.sessionEnv.authId,
           text,
           toProfileId: toProfileIdentifier,
         })

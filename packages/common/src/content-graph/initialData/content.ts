@@ -1,6 +1,7 @@
-import { newAuthId } from '../../utils/content-graph/slug-id'
-import { Organization, Profile } from '../types/node'
+import { newAuthKey } from '../../utils/content-graph/slug-id'
+import { Organization } from '../types/node'
 
+const now = Number(new Date())
 export const localOrganizationData: Omit<Organization, 'domain'> = {
   _permId: 'local',
   _published: true,
@@ -14,23 +15,7 @@ Build your profile as an educator.`,
   _slug: '--local--',
   _type: 'Organization',
   logo: null,
-}
-
-const rootAuthId = newAuthId()
-export const rootUserProfile: Profile = {
-  _slug: `__root__`,
-  _authId: rootAuthId,
-  _permId: 'ROOT',
-  _type: 'Profile',
-  _isAdmin: true,
-  _published: true,
-  avatar: null,
-  bio: '',
-  description: '',
-  name: 'ROOT',
-  firstName: null,
-  image: null,
-  lastName: null,
-  location: null,
-  siteUrl: null,
+  _authKey: newAuthKey(),
+  _created: now,
+  _edited: now,
 }

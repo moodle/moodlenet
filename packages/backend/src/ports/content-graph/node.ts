@@ -26,7 +26,10 @@ export const byIdentifier = plug(
 export const createNodeAdapter = plug<
   <N extends GraphNode>(_: { node: N; creatorNode: BV<GraphNode | null> | null }) => Promise<N | undefined | null>
 >(ns(__dirname, 'create-node-adapter'))
-export type NewNodeData<N extends GraphNode = GraphNode> = DistOmit<N, '_permId' | '_slug'>
+export type NewNodeData<N extends GraphNode = GraphNode> = DistOmit<
+  N,
+  '_permId' | '_slug' | '_created' | '_edited' | '_authKey'
+>
 export type CreateNode = {
   nodeData: NewNodeData
   sessionEnv: SessionEnv
@@ -34,20 +37,28 @@ export type CreateNode = {
 
 export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, sessionEnv }: CreateNode) => {
   const { graphNode } = await getGraphOperatorsAdapter()
-  const { getBV } = await getBaseOperatorsAdapter()
-  const authProfile = await getBV(graphNode({ _authId: sessionEnv.user.authId, _type: 'Profile' }))
-
-  // const authProfile = await getProfileByAuthId({ authId: sessionEnv.user.authId })
-  if (!authProfile) {
-    return 'unauthorized' as const
-  }
+  // const { getBV } = await getBaseOperatorsAdapter()
+  const authProfileBV = graphNode(
+    sessionEnv.authId ? { _authKey: sessionEnv.authId.key, _type: sessionEnv.authId.profileType } : null,
+  )
+  // const authProfile = await getBV(graphNode({ _authKey: sessionEnv.user.authId, _type: 'Profile' }))
+  // // const authProfile = await getProfileByAuthId({ authId: sessionEnv.user.authId })
+  // if (!authProfile) {
+  //   return 'unauthorized' as const
+  // }
   const ids = newGlyphIdentifiers({ name: nodeData.name })
+  const now = Number(new Date())
   const node: GraphNode = {
     ...ids,
     ...nodeData,
+    _authKey: sessionEnv.authId?.key ?? null,
+    _created: now,
+    _edited: now,
   }
   const graphOperators = await getGraphOperatorsAdapter()
-  const creatorNode = graphOperators.graphNode({ _authId: sessionEnv.user.authId, _type: 'Profile' })
+  const creatorNode = graphOperators.graphNode(
+    sessionEnv.authId ? { _authKey: sessionEnv.authId.key, _type: sessionEnv.authId.profileType } : null,
+  )
   const result = await createNodeAdapter({ node, creatorNode })
   if (!result) {
     return null
@@ -56,12 +67,13 @@ export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, 
     assumptions: {},
     edge: {
       _type: 'Created',
-      _authId: sessionEnv.user.authId,
-      _created: Number(new Date()),
+      _authKey: sessionEnv.authId?.key ?? null,
+      _created: now,
+      _edited: now,
       id: newGlyphPermId(),
     },
     issuer: creatorNode,
-    from: graphOperators.graphNode(authProfile),
+    from: authProfileBV,
     to: graphOperators.graphNode(result),
   })
 
@@ -112,11 +124,14 @@ export const editNode = plug(
     if (!assumptions) {
       return null
     }
+    const issuer = graphOperators.graphNode(
+      sessionEnv.authId ? { _authKey: sessionEnv.authId.key, _type: sessionEnv.authId.profileType } : null,
+    )
     const { graphNode } = graphOperators
     const { _ } = baseOperators
     const result = await editNodeAdapter({
       assumptions,
-      issuer: graphOperators.graphNode({ _authId: sessionEnv.user.authId, _type: 'Profile' }),
+      issuer,
       nodeData: _(nodeData),
       nodeId: graphNode(nodeId),
       type: nodeId._type,
@@ -129,28 +144,23 @@ export const editNode = plug(
 )
 
 export type CreateProfile = {
-  partProfile: Partial<Omit<Profile, `_${string}`>> & Pick<Profile, 'name' | '_authId' | '_published' | '_isAdmin'>
+  profile: DistOmit<Profile, '_created' | '_type' | '_edited' | '_permId' | '_slug'>
 }
 
-export const createProfile = plug(ns(__dirname, 'create-profile'), async ({ partProfile }: CreateProfile) => {
-  const ids = newGlyphIdentifiers({ name: partProfile.name })
-  const profile: Profile = {
+export const createProfile = plug(ns(__dirname, 'create-profile'), async ({ profile }: CreateProfile) => {
+  const ids = newGlyphIdentifiers({ name: profile.name })
+  const now = Number(new Date())
+  const newProfile: Profile = {
     ...ids,
+    ...profile,
     _type: 'Profile',
-    avatar: undefined,
-    bio: '',
-    description: '',
-    firstName: undefined,
-    image: undefined,
-    lastName: undefined,
-    location: undefined,
-    siteUrl: undefined,
-    ...partProfile,
+    _created: now,
+    _edited: now,
   }
   const graphOperators = await getGraphOperatorsAdapter()
-  const creatorNode = graphOperators.graphNode({ _authId: profile._authId, _type: 'Profile' })
+  const creatorNode = graphOperators.graphNode({ _authKey: profile._authKey, _type: 'Profile' })
 
-  const result = await createNodeAdapter<Profile>({ node: profile, creatorNode })
+  const result = await createNodeAdapter<Profile>({ node: newProfile, creatorNode })
   if (!result) {
     return null
   }

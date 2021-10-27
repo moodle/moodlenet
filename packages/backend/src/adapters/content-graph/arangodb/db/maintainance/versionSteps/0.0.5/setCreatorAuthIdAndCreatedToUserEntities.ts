@@ -14,7 +14,7 @@ FOR n IN ${updateUserEntitiesCollection}
             limit 1
             return e )[0]
   let up = { 
-    _creatorAuthId: e._authId,
+    _creatorAuthId: e._authKey,
     _created: e._created,
   }
   UPDATE n WITH up in ${updateUserEntitiesCollection} 

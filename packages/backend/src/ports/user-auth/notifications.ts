@@ -12,7 +12,12 @@ export type SendEmailToProfile = {
   text: string
 }
 export const sendTextAdapter: SockOf<typeof sendTextToProfileAdapter> = async ({ recipient, sender, text }) => {
-  const recipientUser = await getActiveUserByAuthAdapter({ authId: recipient._authId })
+  if (!recipient._authKey) {
+    return false
+  }
+  const recipientUser = await getActiveUserByAuthAdapter({
+    authId: { key: recipient._authKey, profileType: recipient._type },
+  })
 
   if (!recipientUser) {
     return false

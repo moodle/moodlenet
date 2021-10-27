@@ -508,6 +508,7 @@ export type NodeResolvers<ContextType = Context, ParentType extends ResolversPar
 
 export type OrganizationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']> = {
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  introTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   logo?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   image?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   color?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -547,7 +548,6 @@ export type PinnedResolvers<ContextType = Context, ParentType extends ResolversP
 };
 
 export type ProfileResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Profile'] = ResolversParentTypes['Profile']> = {
-  _isAdmin?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   avatar?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
   bio?: Resolver<Types.Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   image?: Resolver<Types.Maybe<ResolversTypes['AssetRef']>, ParentType, ContextType>;
@@ -632,7 +632,7 @@ export interface TimestampScalarConfig extends GraphQLScalarTypeConfig<Resolvers
 
 export type UserSessionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UserSession'] = ResolversParentTypes['UserSession']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  profile?: Resolver<ResolversTypes['Profile'], ParentType, ContextType>;
+  profile?: Resolver<ResolversTypes['INode'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

@@ -25,7 +25,7 @@ export const createNodeQ = <Type extends GraphNodeType>({
     let newnode = ${aqlstr(aqlNode)}
     ${
       creatorNode
-        ? `let _creatorAuthId = ${creatorNode}._authId
+        ? `let _creatorAuthId = ${creatorNode}._authKey
           FILTER !!_creatorAuthId`
         : `let _creatorAuthId = null`
     }

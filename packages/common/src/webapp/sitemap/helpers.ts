@@ -58,6 +58,9 @@ export const nodeGqlId2UrlPath = (id: string) => {
   return nodeIdentifierSlug2UrlPath({ _type: String(_type) as GraphNodeType, _slug: _slug! })
 }
 export const nodeIdentifierSlug2UrlPath = ({ _slug, _type }: GraphNodeIdentifierSlug) => {
+  if (_type === 'Organization') {
+    return '' // FIXME: before federation !! ;)
+  }
   const contentNodeHomePath = getContentNodeHomePageBasePath(_type)
   const contentNodeHomePathSlug = `${contentNodeHomePath}/${_slug}`
   // console.log({ _type, _slug, contentNodeHomePath, contentNodeHomePathSlug })

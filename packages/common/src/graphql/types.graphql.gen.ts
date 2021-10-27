@@ -622,6 +622,7 @@ export type NodeType =
 export type Organization = INode & {
   __typename: 'Organization';
   intro: Scalars['String'];
+  introTitle: Scalars['String'];
   logo?: Maybe<Scalars['AssetRef']>;
   image?: Maybe<Scalars['AssetRef']>;
   color: Scalars['String'];
@@ -682,7 +683,6 @@ export type Pinned = IEdge & {
 
 export type Profile = INode & {
   __typename: 'Profile';
-  _isAdmin: Scalars['Boolean'];
   avatar?: Maybe<Scalars['AssetRef']>;
   bio?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['AssetRef']>;
@@ -830,7 +830,7 @@ export type SimpleResponse = {
 export type UserSession = {
   __typename: 'UserSession';
   email: Scalars['String'];
-  profile: Profile;
+  profile: Collection | FileFormat | IscedField | IscedGrade | Language | License | Organization | Profile | Resource | ResourceType;
 };
 
 

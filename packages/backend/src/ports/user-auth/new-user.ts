@@ -1,4 +1,4 @@
-import { newAuthId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
+import { newAuthKey } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
 import { ns } from '../../lib/ns/namespace'
@@ -18,7 +18,7 @@ export const signUp = plug(
   ns(__dirname, 'sign-up'),
   async ({ email, displayName, password }: { email: Email; password: string; displayName: string }) => {
     const { newUserRequestEmail, newUserVerificationWaitSecs } = await getLatestConfigAdapter()
-    const authId = newAuthId()
+    const authId = newAuthKey()
     const hashedPassword = await passwordHasher(password)
 
     const activationEmailToken = await jwtSignerAdapter(

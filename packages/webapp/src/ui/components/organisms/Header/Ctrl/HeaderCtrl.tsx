@@ -19,17 +19,27 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
   const { session, logout } = useSession()
   const { setText: setSearchText, text: searchText } = useSearchUrlQuery()
   const { org: localOrg } = useLocalInstance()
+
   const headerProps = useMemo<HeaderProps>(() => {
-    const me: HeaderPropsIdle['me'] = session
-      ? {
-          myProfileHref: href(nodeGqlId2UrlPath(session.profile.id)),
-          avatar: getMaybeAssetRefUrl(session.profile.avatar),
-          name: session.profile.name,
-          logout,
-          bookmarksHref,
-          followingHref: href(mainPath.following),
-        }
-      : null
+    const me: HeaderPropsIdle['me'] =
+      !session || (session.profile.__typename !== 'Profile' && session.profile.__typename !== 'Organization')
+        ? null
+        : {
+            ...(session.profile.__typename === 'Profile'
+              ? {
+                  myProfileHref: href(nodeGqlId2UrlPath(session.profile.id)),
+                  avatar: getMaybeAssetRefUrl(session.profile.avatar),
+                }
+              : {
+                  myProfileHref: homeHref,
+                  avatar: getMaybeAssetRefUrl(session.profile.logo),
+                }),
+            name: session.profile.name,
+            logout,
+            bookmarksHref,
+            followingHref: href(mainPath.following),
+          }
+
     const headerProps: HeaderPropsIdle = {
       status: 'idle',
       me,
