@@ -1,13 +1,13 @@
 import { CP, withCtrl } from '../../../lib/ctrl'
 import Header, { HeaderProps } from '../../organisms/Header/Header'
-import { SubHeaderProps } from '../../organisms/SubHeader/SubHeader'
+// import { SubHeaderProps } from '../../organisms/SubHeader/SubHeader'
 import './styles.scss'
 
 export type HeaderPageProps = {
   headerProps: CP<HeaderProps>
-  subHeaderProps?: SubHeaderProps
-  isAuthenticated: boolean
-  showSubHeader?: boolean
+  // subHeaderProps?: SubHeaderProps
+  // isAuthenticated: boolean
+  // showSubHeader?: boolean
   hideSearchbox?: boolean
 }
 
@@ -29,7 +29,5 @@ export const HeaderPage = withCtrl<HeaderPageProps>(
   },
 )
 HeaderPage.displayName = 'HeaderPage'
-HeaderPage.defaultProps = {
-  showSubHeader: true
-}
+HeaderPage.defaultProps = {}
 export default HeaderPage

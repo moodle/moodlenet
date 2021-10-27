@@ -80,7 +80,6 @@ export type CreateEdgeInput = {
   Features?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
   Likes?: Maybe<Scalars['Empty']>;
-  Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   from: Scalars['ID'];
   to: Scalars['ID'];
@@ -207,15 +206,14 @@ export type DeleteNodeMutationSuccess = {
   nodeId?: Maybe<Scalars['ID']>;
 };
 
-export type Edge = Bookmarked | Created | Features | Follows | Likes | Pinned;
+export type Edge = Bookmarked | Created | Features | Follows | Likes;
 
 export type EdgeType =
   | 'Bookmarked'
   | 'Created'
   | 'Features'
   | 'Follows'
-  | 'Likes'
-  | 'Pinned';
+  | 'Likes';
 
 export type EditCollectionInput = {
   name: Scalars['String'];
@@ -230,7 +228,6 @@ export type EditEdgeInput = {
   Features?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
   Likes?: Maybe<Scalars['Empty']>;
-  Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   id: Scalars['ID'];
 };
@@ -675,12 +672,6 @@ export type PaginationInput = {
   last?: Maybe<Scalars['Int']>;
 };
 
-export type Pinned = IEdge & {
-  __typename: 'Pinned';
-  id: Scalars['ID'];
-  _created: Scalars['Timestamp'];
-};
-
 export type Profile = INode & {
   __typename: 'Profile';
   avatar?: Maybe<Scalars['AssetRef']>;
@@ -743,7 +734,7 @@ export type RelPage = Page & {
 export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
-  edge: Bookmarked | Created | Features | Follows | Likes | Pinned;
+  edge: Bookmarked | Created | Features | Follows | Likes;
   node: Collection | FileFormat | IscedField | IscedGrade | Language | License | Organization | Profile | Resource | ResourceType;
 };
 
@@ -862,8 +853,7 @@ export type UserSession = {
       "Created",
       "Features",
       "Follows",
-      "Likes",
-      "Pinned"
+      "Likes"
     ],
     "EditEdgeMutationPayload": [
       "EditEdgeMutationSuccess",
@@ -878,8 +868,7 @@ export type UserSession = {
       "Created",
       "Features",
       "Follows",
-      "Likes",
-      "Pinned"
+      "Likes"
     ],
     "INode": [
       "Collection",

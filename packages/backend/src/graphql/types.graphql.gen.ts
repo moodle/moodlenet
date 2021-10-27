@@ -120,7 +120,7 @@ export type ResolversTypes = {
   DeleteNodeMutationErrorType: Types.DeleteNodeMutationErrorType;
   DeleteNodeMutationPayload: ResolversTypes['DeleteNodeMutationSuccess'] | ResolversTypes['DeleteNodeMutationError'];
   DeleteNodeMutationSuccess: ResolverTypeWrapper<Types.DeleteNodeMutationSuccess>;
-  Edge: ResolversTypes['Bookmarked'] | ResolversTypes['Created'] | ResolversTypes['Features'] | ResolversTypes['Follows'] | ResolversTypes['Likes'] | ResolversTypes['Pinned'];
+  Edge: ResolversTypes['Bookmarked'] | ResolversTypes['Created'] | ResolversTypes['Features'] | ResolversTypes['Follows'] | ResolversTypes['Likes'];
   EdgeType: Types.EdgeType;
   EditCollectionInput: Types.EditCollectionInput;
   EditEdgeInput: Types.EditEdgeInput;
@@ -143,7 +143,7 @@ export type ResolversTypes = {
   GlobalSearchNodeType: Types.GlobalSearchNodeType;
   GlobalSearchSort: Types.GlobalSearchSort;
   GlobalSearchSortBy: Types.GlobalSearchSortBy;
-  IEdge: ResolversTypes['Bookmarked'] | ResolversTypes['Created'] | ResolversTypes['Features'] | ResolversTypes['Follows'] | ResolversTypes['Likes'] | ResolversTypes['Pinned'];
+  IEdge: ResolversTypes['Bookmarked'] | ResolversTypes['Created'] | ResolversTypes['Features'] | ResolversTypes['Follows'] | ResolversTypes['Likes'];
   INode: ResolversTypes['Collection'] | ResolversTypes['FileFormat'] | ResolversTypes['IscedField'] | ResolversTypes['IscedGrade'] | ResolversTypes['Language'] | ResolversTypes['License'] | ResolversTypes['Organization'] | ResolversTypes['Profile'] | ResolversTypes['Resource'] | ResolversTypes['ResourceType'];
   IscedField: ResolverTypeWrapper<Types.IscedField>;
   IscedGrade: ResolverTypeWrapper<Types.IscedGrade>;
@@ -159,7 +159,6 @@ export type ResolversTypes = {
   PageEdge: ResolversTypes['RelPageEdge'] | ResolversTypes['SearchPageEdge'];
   PageInfo: ResolverTypeWrapper<Types.PageInfo>;
   PaginationInput: Types.PaginationInput;
-  Pinned: ResolverTypeWrapper<Types.Pinned>;
   Profile: ResolverTypeWrapper<Types.Profile>;
   Query: ResolverTypeWrapper<RootValue>;
   RelPage: ResolverTypeWrapper<Types.RelPage>;
@@ -205,7 +204,7 @@ export type ResolversParentTypes = {
   DeleteNodeMutationError: Types.DeleteNodeMutationError;
   DeleteNodeMutationPayload: ResolversParentTypes['DeleteNodeMutationSuccess'] | ResolversParentTypes['DeleteNodeMutationError'];
   DeleteNodeMutationSuccess: Types.DeleteNodeMutationSuccess;
-  Edge: ResolversParentTypes['Bookmarked'] | ResolversParentTypes['Created'] | ResolversParentTypes['Features'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'] | ResolversParentTypes['Pinned'];
+  Edge: ResolversParentTypes['Bookmarked'] | ResolversParentTypes['Created'] | ResolversParentTypes['Features'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'];
   EditCollectionInput: Types.EditCollectionInput;
   EditEdgeInput: Types.EditEdgeInput;
   EditEdgeMutationError: Types.EditEdgeMutationError;
@@ -222,7 +221,7 @@ export type ResolversParentTypes = {
   FileFormat: Types.FileFormat;
   Follows: Types.Follows;
   GlobalSearchSort: Types.GlobalSearchSort;
-  IEdge: ResolversParentTypes['Bookmarked'] | ResolversParentTypes['Created'] | ResolversParentTypes['Features'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'] | ResolversParentTypes['Pinned'];
+  IEdge: ResolversParentTypes['Bookmarked'] | ResolversParentTypes['Created'] | ResolversParentTypes['Features'] | ResolversParentTypes['Follows'] | ResolversParentTypes['Likes'];
   INode: ResolversParentTypes['Collection'] | ResolversParentTypes['FileFormat'] | ResolversParentTypes['IscedField'] | ResolversParentTypes['IscedGrade'] | ResolversParentTypes['Language'] | ResolversParentTypes['License'] | ResolversParentTypes['Organization'] | ResolversParentTypes['Profile'] | ResolversParentTypes['Resource'] | ResolversParentTypes['ResourceType'];
   IscedField: Types.IscedField;
   IscedGrade: Types.IscedGrade;
@@ -237,7 +236,6 @@ export type ResolversParentTypes = {
   PageEdge: ResolversParentTypes['RelPageEdge'] | ResolversParentTypes['SearchPageEdge'];
   PageInfo: Types.PageInfo;
   PaginationInput: Types.PaginationInput;
-  Pinned: Types.Pinned;
   Profile: Types.Profile;
   Query: RootValue;
   RelPage: Types.RelPage;
@@ -349,7 +347,7 @@ export type DeleteNodeMutationSuccessResolvers<ContextType = Context, ParentType
 };
 
 export type EdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Edge'] = ResolversParentTypes['Edge']> = {
-  __resolveType?: TypeResolveFn<'Bookmarked' | 'Created' | 'Features' | 'Follows' | 'Likes' | 'Pinned', ParentType, ContextType>;
+  __resolveType?: TypeResolveFn<'Bookmarked' | 'Created' | 'Features' | 'Follows' | 'Likes', ParentType, ContextType>;
 };
 
 export type EditEdgeMutationErrorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['EditEdgeMutationError'] = ResolversParentTypes['EditEdgeMutationError']> = {
@@ -412,7 +410,7 @@ export type FollowsResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 export type IEdgeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['IEdge'] = ResolversParentTypes['IEdge']> = {
-  __resolveType?: TypeResolveFn<'Bookmarked' | 'Created' | 'Features' | 'Follows' | 'Likes' | 'Pinned', ParentType, ContextType>;
+  __resolveType?: TypeResolveFn<'Bookmarked' | 'Created' | 'Features' | 'Follows' | 'Likes', ParentType, ContextType>;
   id?: Resolver<Types.Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   _created?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
 };
@@ -538,12 +536,6 @@ export type PageInfoResolvers<ContextType = Context, ParentType extends Resolver
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   startCursor?: Resolver<Types.Maybe<ResolversTypes['Cursor']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type PinnedResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Pinned'] = ResolversParentTypes['Pinned']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  _created?: Resolver<ResolversTypes['Timestamp'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -680,7 +672,6 @@ export type Resolvers<ContextType = Context> = {
   Page?: PageResolvers<ContextType>;
   PageEdge?: PageEdgeResolvers<ContextType>;
   PageInfo?: PageInfoResolvers<ContextType>;
-  Pinned?: PinnedResolvers<ContextType>;
   Profile?: ProfileResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RelPage?: RelPageResolvers<ContextType>;

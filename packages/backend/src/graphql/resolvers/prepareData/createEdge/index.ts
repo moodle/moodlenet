@@ -8,13 +8,6 @@ const edgeDocumentDataBaker: {
   async Created(/* input */) {
     throw new Error('GQL create Created not implemented')
   },
-  async Pinned(/* input */) {
-    const newPinnedEdgeInput: NewEdgeInput = {
-      _type: 'Pinned',
-    }
-
-    return newPinnedEdgeInput
-  },
   async Follows(/* input */) {
     const newFollowsEdgeInput: NewEdgeInput = {
       _type: 'Follows',
