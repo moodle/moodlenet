@@ -2,10 +2,10 @@ import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
 import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
 import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
 import { PageItem } from '@moodlenet/common/lib/content-graph/types/page'
-import { AuthId } from '@moodlenet/common/lib/types'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
 import { TraverseFromNodeAdapterInput } from '../../../../../ports/content-graph/traverseNodeRel'
+import { graphOperators } from '../../adapters/bl/graphOperators'
 import { _ } from '../../adapters/bl/_'
 // import { getNodeOpAqlAssertions } from './assertions/node'
 import { aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode, cursorPaginatedQuery, graphNode2AqlId } from '../helpers'
@@ -15,9 +15,9 @@ export const traverseEdgesQ = ({
   page,
   targetNodeType,
   inverse,
-  env,
   fromNode,
   targetIds,
+  issuerNode,
 }: TraverseFromNodeAdapterInput) => {
   // const targetIdsFilter =
   //   targetNodeIds && targetNodeIds.length ? `&& edge._${targetSide} IN [${targetNodeIds.map(aqlstr).join(',')}]` : ''
@@ -28,7 +28,7 @@ export const traverseEdgesQ = ({
     inverse,
     targetNodeType,
     targetIds,
-    issuerAuthId: env?.user.authId,
+    issuerNode,
   })
 
   return cursorPaginatedQuery({
@@ -42,7 +42,7 @@ export const traverseEdgesQ = ({
 export const traversePaginateMapQuery =
   ({
     // edgeAndNodeAssertionFilters,
-    issuerAuthId,
+    issuerNode,
     edgeType,
     fromNode,
     additionalFilter,
@@ -50,7 +50,7 @@ export const traversePaginateMapQuery =
     inverse,
     targetIds,
   }: {
-    issuerAuthId: AuthId | null | undefined
+    issuerNode: BV<GraphNode | null>
     edgeType: GraphEdgeType
     targetNodeType: GraphNodeType
     inverse: boolean
@@ -83,9 +83,10 @@ export const traversePaginateMapQuery =
           
           
           LET targetNode = Document(edge._${targetSide})
-          FILTER !!targetNode && ( targetNode._published ${
-            issuerAuthId ? `|| targetNode._creatorAuthId == ${aqlstr(issuerAuthId)}` : ''
-          } )
+          FILTER !!targetNode && ( 
+            ${graphOperators.isPublished(_('targetNode'))} 
+            || ${graphOperators.isCreator({ authNode: issuerNode, ofNode: _('targetNode') })} 
+          )
           ${pageFilterSortLimit}
 
         RETURN  [
@@ -104,7 +105,7 @@ export const nodeRelationCountQ = ({
   edgeType,
   parentNode,
   inverse,
-  targetNodeType /* , env */,
+  targetNodeType,
 }: {
   parentNode: BV<GraphNode | null>
   edgeType: GraphEdgeType
@@ -118,7 +119,7 @@ let parentNode = ${parentNode}
 FOR edge IN ${edgeType}
   LET targetNode = Document(edge._${targetSide})
   
-  FILTER !!targetNode._published 
+  FILTER ${graphOperators.isPublished(_('targetNode'))}  
           && edge._${targetSide}Type == ${aqlstr(targetNodeType)}
           && edge._${parentSide} == ${graphNode2AqlId('parentNode')}
 

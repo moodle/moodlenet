@@ -8,7 +8,7 @@ export const createFileFormats = async ({ db }: { db: Database }) => {
   await Promise.all(
     fileFormats.map(async fileFormats_data => {
       console.log(`creating FileFormats ${fileFormats_data.name} ${fileFormats_data.code}`)
-      await justExecute(createNodeQ({ node: fileFormats_data, creatorAuthId: null }), db)
+      await justExecute(createNodeQ({ node: fileFormats_data, creatorNode: null }), db)
     }),
   )
 }

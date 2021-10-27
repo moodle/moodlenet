@@ -16,7 +16,7 @@ export type TraverseFromNodeAdapterInput = {
   targetIds: Maybe<BV<GraphNode | null>[]>
   inverse: boolean
   page: PaginationInput
-  env: SessionEnv | null
+  issuerNode: BV<GraphNode | null>
 }
 export const traverseNodeRelationsAdapter = plug<(_: TraverseFromNodeAdapterInput) => Promise<NodeTraversalPage>>(
   ns(__dirname, 'traverse-node-relations-adapter'),
@@ -34,12 +34,18 @@ export type TraverseFromNodeInput = {
 
 export const traverseNodeRelations = plug(
   ns(__dirname, 'traverse-node-relations'),
-  async (input: TraverseFromNodeInput) => {
+  async ({ edgeType, env, fromNode, inverse, page, targetIds, targetNodeType }: TraverseFromNodeInput) => {
     const { graphNode } = await getGraphOperatorsAdapter()
+    const issuerNode = graphNode(env && { _authId: env.user.authId, _type: 'Profile' })
+
     return traverseNodeRelationsAdapter({
-      ...input,
-      fromNode: graphNode(input.fromNode),
-      targetIds: input.targetIds?.map(graphNode),
+      issuerNode,
+      edgeType,
+      inverse,
+      page,
+      targetNodeType,
+      fromNode: graphNode(fromNode),
+      targetIds: targetIds?.map(graphNode),
     })
   },
 )

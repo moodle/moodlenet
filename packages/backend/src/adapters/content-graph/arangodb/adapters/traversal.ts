@@ -31,7 +31,7 @@ export const traverseNodeRelations =
 
 export const countNodeRelations =
   (db: ContentGraphDB): SockOf<typeof countNodeRelationsAdapter> =>
-  async ({ edgeType, fromNode, inverse, targetNodeType /* , env  */ }) => {
+  async ({ edgeType, fromNode, inverse, targetNodeType }) => {
     const q = nodeRelationCountQ({
       edgeType,
       inverse,
