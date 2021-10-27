@@ -5,7 +5,7 @@ import { INVALID_JWT_TOKEN, jwtVerifierAdapter } from '../../ports/user-auth/ada
 export const execEnvMiddleware: RequestHandler = async (req, _res, next) => {
   const headerToken = req.header('bearer')
   req.mnHttpContext = {
-    authSessionEnv: await getSessionEnv({ headerToken }),
+    sessionEnv: await getSessionEnv({ headerToken }),
   }
   // console.log({ mnHttpSessionEnv: req.mnHttpContext })
   next()

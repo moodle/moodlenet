@@ -111,7 +111,21 @@ export const createSession = plug(
         if ('string' == typeof mActiveUser) {
           return mActiveUser
         }
-        await createProfile({ partProfile: { name: displayName, _authId: authId, _published: true, _isAdmin: false } })
+        await createProfile({
+          profile: {
+            name: displayName,
+            _authKey: authId.key,
+            _published: true,
+            description: '',
+            avatar: null,
+            bio: null,
+            firstName: null,
+            image: null,
+            lastName: null,
+            location: null,
+            siteUrl: null,
+          },
+        })
         return mActiveUser
       }
 
@@ -136,9 +150,7 @@ const authJWT = async (activeUser: ActiveUser) => {
   // const {jwtExpireSecs}=await getLatestConfigAdapter()
   const jwtExpireSecs = 30 * 24 * 60 * 60 * 1000
   const sessionEnv: SessionEnv = {
-    user: {
-      authId: activeUser.authId,
-    },
+    authId: activeUser.authId,
   }
   const jwt = jwtSignerAdapter(sessionEnv, jwtExpireSecs)
   return jwt

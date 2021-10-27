@@ -189,7 +189,7 @@ export const SessionProvider: FC = ({ children }) => {
       signUp,
       session,
       loading,
-      isAdmin: !!session?.profile._isAdmin,
+      isAdmin: !!(session?.profile.__typename === 'Organization'), //FIXME: before federeation !! ;)
       isAuthenticated,
       lastSessionEmail: lastSession.email ?? null,
       lastSessionJwt: lastSession.jwt ?? null,

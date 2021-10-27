@@ -15,7 +15,7 @@ import { ns } from '../../lib/ns/namespace'
 import { plug, value } from '../../lib/plug'
 import { getBaseOperatorsAdapter, getGraphOperatorsAdapter } from './common'
 
-export type NewEdgeInput = DistOmit<GraphEdge, '_authId' | '_created' | 'id'>
+export type NewEdgeInput = DistOmit<GraphEdge, '_authKey' | '_created' | 'id' | '_edited'>
 export const addEdgeAdapter = plug<
   <E extends GraphEdge>(_: {
     edge: E
@@ -44,6 +44,15 @@ export const addEdge = plug<AddEdgePort>(ns(__dirname, 'add-edge'), async ({ fro
   const baseOperators = await getBaseOperatorsAdapter()
   const addEdgeOperators = await getAddEdgeOperatorsAdapter()
   const assumptionsMap = await getAddEdgeAssumptionsMap()
+  const now = Number(new Date())
+  const edge: GraphEdge = {
+    ...newEdge,
+    id: newGlyphPermId(),
+    _authKey: sessionEnv.authId?.key ?? null,
+    _created: now,
+    _edited: now,
+  }
+
   const assumptions = await getAddEdgeAssumptions({
     from,
     edgeType: newEdge._type,
@@ -58,17 +67,12 @@ export const addEdge = plug<AddEdgePort>(ns(__dirname, 'add-edge'), async ({ fro
   if (!assumptions) {
     return null
   }
-  const _authId = sessionEnv.user.authId
-  const edge: GraphEdge = {
-    ...newEdge,
-    _authId,
-    _created: Number(new Date()),
-    id: newGlyphPermId(),
-  }
 
   const result = await addEdgeAdapter({
     edge,
-    issuer: graphOperators.graphNode({ _authId: sessionEnv.user.authId, _type: 'Profile' }),
+    issuer: graphOperators.graphNode(
+      sessionEnv.authId ? { _authKey: sessionEnv.authId.key, _type: sessionEnv.authId.profileType } : null,
+    ),
     from: graphOperators.graphNode(from),
     to: graphOperators.graphNode(to),
     assumptions,
@@ -87,7 +91,7 @@ export type DeleteEdgeInput = {
 }
 
 export const deleteEdge = plug(ns(__dirname, 'delete-edge'), async ({ edge /* , sessionEnv */ }: DeleteEdgeInput) => {
-  // const _authId = sessionEnv.user.authId
+  // const _authKey = sessionEnv.user.authId
   const { graphEdge } = await getGraphOperatorsAdapter()
   const result = await deleteEdgeAdapter({ edge: graphEdge(edge), edgeType: edge._type })
   return result

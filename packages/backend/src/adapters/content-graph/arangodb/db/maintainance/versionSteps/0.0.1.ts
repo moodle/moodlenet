@@ -8,13 +8,13 @@ import { createLanguges } from './0.0.1/createLanguages'
 import { createLicenses } from './0.0.1/createLicenses'
 import { createLocalOrg } from './0.0.1/createLocalOrg'
 import { createResourceTypes } from './0.0.1/createResourceTypes'
-import { createRootUserProfile } from './0.0.1/createRootUserProfile'
+// import { createRootUserProfile } from './0.0.1/createRootUserProfile'
 import { setupSearchView } from './0.0.1/setupSearchView'
 
 const init_0_0_1: VersionUpdater<MNStaticEnv> = {
   async initialSetUp({ db, ctx: { domain } }) {
     await createDBCollections({ db })
-    await createRootUserProfile({ db })
+    // await createRootUserProfile({ db })
     await createLocalOrg({ db, domain })
     await createIscedFields({ db })
     await createIscedGrades({ db })

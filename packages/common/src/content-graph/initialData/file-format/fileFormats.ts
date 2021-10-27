@@ -1,7 +1,7 @@
 import { slugify } from '../../../utils/content-graph/slug-id'
 import { FileFormat, FileFormatType } from '../../types/node'
 import { mimetypesMap } from './mimetype_data_index'
-
+const now = Number(new Date())
 export const getFileFormats = () =>
   Object.entries(mimetypesMap).reduce<FileFormat[]>((_formats, [type, mimetypesData]) => {
     const more = mimetypesData.map(mimetypeData => {
@@ -17,6 +17,9 @@ export const getFileFormats = () =>
         description: `${mimetypeData.name} : ${mimetypeData.mimetype}`,
         type: type as FileFormatType,
         subtype: subtype!,
+        _created: now,
+        _edited: now,
+        _authKey: null,
       }
       return fileFormat
     })

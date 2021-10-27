@@ -36,7 +36,7 @@ export const traverseNodeRelations = plug(
   ns(__dirname, 'traverse-node-relations'),
   async ({ edgeType, env, fromNode, inverse, page, targetIds, targetNodeType }: TraverseFromNodeInput) => {
     const { graphNode } = await getGraphOperatorsAdapter()
-    const issuerNode = graphNode(env && { _authId: env.user.authId, _type: 'Profile' })
+    const issuerNode = graphNode(env?.authId ? { _authKey: env.authId.key, _type: env.authId.profileType } : null)
 
     return traverseNodeRelationsAdapter({
       issuerNode,

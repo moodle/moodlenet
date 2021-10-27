@@ -1,4 +1,4 @@
-import { rootUserProfile } from '@moodlenet/common/lib/content-graph/initialData/content'
+import { localOrganizationData } from '@moodlenet/common/lib/content-graph/initialData/content'
 import { DefaultConfig } from '@moodlenet/common/lib/content-graph/initialData/user-auth/defaultConfig'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
@@ -11,14 +11,14 @@ import { CONFIG, USER } from '../../../types'
 
 const rootUserActive: DistOmit<ActiveUser, 'email' | 'password' | 'id' | 'createdAt' | 'updatedAt'> = {
   status: 'Active',
-  authId: rootUserProfile._authId,
+  authId: { key: localOrganizationData._authKey!, profileType: localOrganizationData._type },
 }
 
 const init_0_0_1: VersionUpdater<MNStaticEnv> = {
   async initialSetUp({ db /* ctx: { domain }  */ }) {
-    const rootEmail = process.env.ROOT_EMAIL ?? ''
+    const rootEmail = process.env.ORGANIZATION_EMAIL ?? ''
     if (!EMAILREGEX.test(rootEmail)) {
-      throw new Error(`User Auth setup: need a env ROOT_EMAIL to be a valid email`)
+      throw new Error(`User Auth setup: need a env ORGANIZATION_EMAIL to be a valid email`)
     }
     console.log(`creating user-auth collection ${CONFIG}`)
     await db.createCollection(CONFIG)
@@ -27,7 +27,8 @@ const init_0_0_1: VersionUpdater<MNStaticEnv> = {
     console.log(`creating user-auth collection ${USER}`)
     await db.createCollection(USER)
 
-    const password = `---no-root-password-set---${Math.random().toString(36).substr(2)}`
+    console.log(`creating organization-user`)
+    const password = `---no-organization-user-password-set---${Math.random().toString(36).substr(2)}`
     await justExecute(
       createNewUserQ({
         ...rootUserActive,

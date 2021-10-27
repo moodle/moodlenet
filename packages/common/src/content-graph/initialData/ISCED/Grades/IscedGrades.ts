@@ -2,7 +2,7 @@ import { getIscedGradePathByCode } from '../../../../utils/content-graph/isced-g
 import { contentSlug } from '../../../../utils/content-graph/slug-id'
 import { IscedGrade } from '../../../types/node'
 import isced_grades from './CL_ISCED11-Grades'
-
+const now = Number(new Date())
 export const getIscedGrades = () =>
   isced_grades.map(grade => {
     const iscedGrade: IscedGrade = {
@@ -14,6 +14,9 @@ export const getIscedGrades = () =>
       codePath: grade.code === 'ADT' ? [grade.code] : getIscedGradePathByCode(grade.code),
       code: grade.code,
       description: grade.desc,
+      _created: now,
+      _edited: now,
+      _authKey: null,
     }
     return iscedGrade
   })

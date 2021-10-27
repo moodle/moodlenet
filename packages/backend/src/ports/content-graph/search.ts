@@ -30,7 +30,7 @@ export const searchByTerm = plug(
     //  console.log({ nodeTypes, page, sort, text })
     const { graphNode } = await getGraphOperatorsAdapter()
 
-    const issuerNode = graphNode(env && { _authId: env.user.authId, _type: 'Profile' })
+    const issuerNode = graphNode(env?.authId ? { _authKey: env.authId.key, _type: env.authId.profileType } : null)
     return searchByTermAdapter({ sort, text, nodeTypes, page, issuerNode })
   },
 )

@@ -29,7 +29,7 @@ export const createWebfingerApp = async () => {
     const acct = resParam.split(':')[1]!
     const userSlug = acct.split('@')[0]!
 
-    const profile = await byIdentifier(req.mnHttpContext.authSessionEnv, { _slug: userSlug, _type: 'Profile' })
+    const profile = await byIdentifier(req.mnHttpContext.sessionEnv, { _slug: userSlug, _type: 'Profile' })
 
     if (!profile) {
       res.sendStatus(404).send(`user ${acct} not found`)

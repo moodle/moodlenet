@@ -1,4 +1,4 @@
-import { AuthId } from '../../types'
+import { AuthKey } from '../../types'
 import { stringUnionList } from '../../utils/misc'
 import { Timestamp } from './common'
 
@@ -43,8 +43,8 @@ export type GraphNodeIdentifierPerm<GNT extends GraphNodeType = GraphNodeType> =
   '_type' | '_permId'
 >
 export type GraphNodeIdentifierAuth<GNT extends GraphNodeType = GraphNodeType> = Pick<
-  BaseGraphNode<GNT> & AuthOp,
-  '_type' | '_authId'
+  BaseGraphNode<GNT>,
+  '_type' | '_authKey'
 >
 
 export type GraphNodeIdentifier<GNT extends GraphNodeType = GraphNodeType> =
@@ -57,11 +57,11 @@ export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _permId: PermId
   _slug: Slug
   _published: boolean
+  _created: Timestamp
+  _edited: Timestamp
+  _authKey: AuthKey | null
   name: string
   description: string
-}
-export type AuthOp = {
-  _authId: AuthId
 }
 
 type Maybe<T> = T | null | undefined
@@ -112,17 +112,15 @@ export type Organization = BaseGraphNode<'Organization'> & {
   domain: string
 }
 
-export type Profile = AuthOp &
-  BaseGraphNode<'Profile'> & {
-    _isAdmin: boolean
-    avatar: Maybe<AssetRef>
-    bio: Maybe<string>
-    image: Maybe<AssetRef>
-    firstName: Maybe<string>
-    lastName: Maybe<string>
-    siteUrl: Maybe<string>
-    location: Maybe<string>
-  }
+export type Profile = BaseGraphNode<'Profile'> & {
+  avatar: Maybe<AssetRef>
+  bio: Maybe<string>
+  image: Maybe<AssetRef>
+  firstName: Maybe<string>
+  lastName: Maybe<string>
+  siteUrl: Maybe<string>
+  location: Maybe<string>
+}
 
 export type ResourceKind = 'Upload' | 'Link'
 

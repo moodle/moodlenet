@@ -29,7 +29,7 @@ export const getINodeResolver = (): {
       const { _type: fromType, _slug: fromSlug } = parsed
 
       const { items, pageInfo } = await traversePorts.traverseNodeRelations({
-        env: ctx.authSessionEnv,
+        env: ctx.sessionEnv,
         edgeType: type,
         fromNode: { _slug: fromSlug, _type: fromType },
         inverse: !!inverse,
@@ -73,7 +73,7 @@ export const getINodeResolver = (): {
       return traversePorts.countNodeRelations({
         edgeType: type,
         fromNode: { _slug: fromSlug, _type: fromType },
-        env: ctx.authSessionEnv,
+        env: ctx.sessionEnv,
         inverse: !!inverse,
         targetNodeType: target,
       })

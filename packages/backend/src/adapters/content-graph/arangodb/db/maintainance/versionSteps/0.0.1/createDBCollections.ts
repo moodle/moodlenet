@@ -21,7 +21,7 @@ export const createDBCollections = async ({ db }: { db: Database }) => {
           type: 'persistent',
           unique: true,
           name: 'authId',
-          fields: ['_authId'],
+          fields: ['_authKey'],
         })
       }
 
