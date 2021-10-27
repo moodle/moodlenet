@@ -1,5 +1,4 @@
 import { GraphOperators } from '@moodlenet/common/lib/content-graph/bl/graph-lang/graphOperators'
-import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
 import { aqlstr } from '../../../../../lib/helpers/arango/query'
 import { SockOf } from '../../../../../lib/plug'
 import { getGraphOperatorsAdapter } from '../../../../../ports/content-graph/common'
@@ -12,6 +11,9 @@ export const graphOperators: GraphOperators = {
   // nodeType: nodeType => ` ${nodeType} ` as BV<GraphNodeType>,
   graphNode: identifier => {
     // Identifier = { _authId } | { _permId } | { _slug } | AqlGraphNode
+    if (!identifier) {
+      return _('null')
+    }
     if ('_permId' in identifier) {
       const { _permId, _type } = identifier
       return _(`${aqlGraphNode2GraphNode(`DOCUMENT("${_type}/${_permId}")`)}`)
@@ -26,29 +28,33 @@ export const graphOperators: GraphOperators = {
 
     return _(
       `(
-      FOR node IN ${identifier._type}
-        FILTER node[${aqlstr(idProp)}] == ${aqlstr(propVal)}
+      FOR graphNode IN ${identifier._type}
+        FILTER graphNode[${aqlstr(idProp)}] == ${aqlstr(propVal)}
         LIMIT 1
-      return ${aqlGraphNode2GraphNode('node')}
+      return ${aqlGraphNode2GraphNode('graphNode')}
       )[0]`,
     )
   },
-  graphEdge: ({ _type, id }) => {
+  graphEdge: identifier => {
+    if (!identifier) {
+      return _('null')
+    }
+    const { _type, id } = identifier
     return _(`${aqlGraphEdge2GraphEdge(`DOCUMENT("${_type}/${id}")`)}`)
   },
-  isCreator: ({ authNode, ofNode }) => {
-    const Created: EdgeType = 'Created'
-    return _<boolean>(`${authNode}._authId && ${ofNode} ? ( LENGTH(
-      FOR e in ${Created}
-        FILTER  e._authId == ${authNode}._authId
-            &&  e._to == ${graphNode2AqlId(ofNode)}
-        LIMIT 1
-      RETURN e
-    ) == 1 ) : false`)
-  },
-  isSameNode: (a, b) => {
-    return _<boolean>(`${graphNode2AqlId(a)} == ${graphNode2AqlId(b)}`)
-  },
+  isCreator: ({ authNode, ofNode }) => _<boolean>(`${authNode}._authId == ${ofNode}._creatorAuthId`),
+  isPublished: node => _<boolean>(`${node}._published == true`),
+  // isCreator: ({ authNode, ofNode }) => {
+  //   const Created: EdgeType = 'Created'
+  //   return _<boolean>(`${authNode}._authId && ${ofNode} ? ( LENGTH(
+  //     FOR e in ${Created}
+  //       FILTER  e._authId == ${authNode}._authId
+  //           &&  e._to == ${graphNode2AqlId(ofNode)}
+  //       LIMIT 1
+  //     RETURN e
+  //   ) == 1 ) : false`)
+  // },
+  isSameNode: (a, b) => _<boolean>(`${graphNode2AqlId(a)} == ${graphNode2AqlId(b)}`),
   // nodeId(nodeId) {
   //   return _(getAqlNodeByGraphNodeIdentifierQ(nodeId))
   // },

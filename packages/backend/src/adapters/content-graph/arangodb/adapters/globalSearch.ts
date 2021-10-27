@@ -8,11 +8,11 @@ import { ContentGraphDB } from '../types'
 
 export const searchByTerm =
   (db: ContentGraphDB): SockOf<typeof searchByTermAdapter> =>
-  async ({ nodeTypes, page, sort, text, env }) => {
+  async ({ nodeTypes, page, sort, text, issuerNode }) => {
     type _NodeType = typeof nodeTypes
     type NodeType = _NodeType extends GlobalSearchNodeType[] ? _NodeType[number] : GlobalSearchNodeType
     // console.log({ nodeTypes, page, sort, text })
-    const { query, skip } = globalSearchQuery<NodeType>({ nodeTypes, page, sort, text, env })
+    const { query, skip } = globalSearchQuery<NodeType>({ nodeTypes, page, sort, text, issuerNode })
     const docs = await getAllResults(query, db)
     // const docs = aqlGraphNodes.map(_ => aqlGraphNode2GraphNode<NodeType>(_))
     const globSearchPage = forwardSkipLimitPage({ docs, skip })

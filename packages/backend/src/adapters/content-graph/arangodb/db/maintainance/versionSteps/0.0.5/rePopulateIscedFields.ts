@@ -12,7 +12,7 @@ export const rePopulateIscedFields = async ({ db }: { db: Database }) => {
   return Promise.all(
     iscedFields.map(async iscedField_data => {
       console.log(`creating IscedField ${iscedField_data.name} ${iscedField_data.code}`)
-      await justExecute(createNodeQ({ node: iscedField_data, creatorAuthId: null }), db)
+      await justExecute(createNodeQ({ node: iscedField_data, creatorNode: null }), db)
     }),
   )
 }

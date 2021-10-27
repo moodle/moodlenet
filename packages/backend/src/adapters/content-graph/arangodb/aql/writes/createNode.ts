@@ -1,5 +1,5 @@
+import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
 import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
-import { AuthId } from '@moodlenet/common/lib/types'
 import { omit } from '@moodlenet/common/lib/utils/object'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
@@ -8,10 +8,10 @@ import { aqlGraphNode2GraphNode } from '../helpers'
 
 export const createNodeQ = <Type extends GraphNodeType>({
   node,
-  creatorAuthId,
+  creatorNode,
 }: {
   node: GraphNode<Type>
-  creatorAuthId: AuthId | null
+  creatorNode: null | BV<GraphNode | null>
 }) => {
   const nodeType = node._type
 
@@ -21,11 +21,17 @@ export const createNodeQ = <Type extends GraphNodeType>({
     ...omit(node, ['_permId']),
   }
 
-  const q = aq<GraphNode<Type>>(`
+  const q = aq<GraphNode<Type> | null>(`
     let newnode = ${aqlstr(aqlNode)}
-
+    ${
+      creatorNode
+        ? `let _creatorAuthId = ${creatorNode}._authId
+          FILTER !!_creatorAuthId`
+        : `let _creatorAuthId = null`
+    }
+    
     INSERT MERGE( newnode, {
-      _creatorAuthId :${aqlstr(creatorAuthId)},
+      _creatorAuthId,
       _created: ${Number(new Date())}
     } ) into ${nodeType}
 

@@ -1,7 +1,8 @@
 import { GlobalSearchNodeType } from '@moodlenet/common/lib/content-graph/types/global-search'
 import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
-import { GlobalSearchInput } from '../../../../ports/content-graph/search'
+import { GlobalSearchInputAdapterArg } from '../../../../ports/content-graph/search'
+import { graphOperators } from '../adapters/bl/graphOperators'
 import { _ } from '../adapters/bl/_'
 import { aqlGraphNode2GraphNode, forwardSkipLimitPagination } from './helpers'
 import { nodeRelationCountQ } from './queries/traverseEdges'
@@ -11,10 +12,9 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
   text,
   nodeTypes,
   sort,
-  env,
-}: GlobalSearchInput<NType>) => {
+  issuerNode,
+}: GlobalSearchInputAdapterArg<NType>) => {
   const { limit, skip } = forwardSkipLimitPagination({ page })
-  const aql_txt = aqlstr(text)
 
   const nodeTypeConditions = nodeTypes?.length
     ? nodeTypes.map(nodeType => `node._type == ${aqlstr(nodeType)}`).join(' || ')
@@ -47,9 +47,8 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
         `
       : '1'
   const isSortRecent = sort?.by === 'Recent'
-  const issuerAuthId = env?.user.authId
   const query = aq<GraphNode<NType>>(`
-    let searchTerm = ${aql_txt}
+    let searchTerm = ${aqlstr(text)}
       FOR node IN SearchView
         SEARCH ANALYZER(
           !searchTerm ? 1 : 
@@ -61,13 +60,15 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
           OR
           BOOST( node.description IN TOKENS(searchTerm), 1 )
           OR
-          BOOST(  NGRAM_MATCH(node.name, searchTerm, 0.05, "global-text-search"), 0.2 )
+          BOOST( NGRAM_MATCH(node.name, searchTerm, 0.05, "global-text-search"), 0.2 )
           OR
           BOOST( NGRAM_MATCH(node.description, searchTerm, 0.05, "global-text-search"), 0.1 )
         , "text_en")
       
-        FILTER ( node._published ${issuerAuthId ? `|| node._creatorAuthId == ${aqlstr(issuerAuthId)}` : ''} ) 
-                && ${filterConditions} 
+        FILTER ( 
+          ${graphOperators.isPublished(_('node'))} 
+          || ${graphOperators.isCreator({ authNode: issuerNode, ofNode: _('node') })} 
+        ) && ${filterConditions} 
       
       let sortFactor = ${sortFactor}
       let rank = ( (0.1 + TFIDF(node)) * sortFactor )

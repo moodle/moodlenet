@@ -8,7 +8,7 @@ export const createRootUserProfile = async ({ db }: { db: Database }) => {
   await justExecute(
     createNodeQ({
       node: rootUserProfile,
-      creatorAuthId: null,
+      creatorNode: null,
     }),
     db,
   )

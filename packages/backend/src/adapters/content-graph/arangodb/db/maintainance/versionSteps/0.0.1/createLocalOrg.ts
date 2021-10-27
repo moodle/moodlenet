@@ -11,7 +11,7 @@ export const createLocalOrg = async ({ db, domain }: { db: Database; domain: str
         ...localOrganizationData,
         domain,
       },
-      creatorAuthId: null,
+      creatorNode: null,
     }),
     db,
   )
