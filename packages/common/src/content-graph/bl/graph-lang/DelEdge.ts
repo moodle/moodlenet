@@ -1,8 +1,7 @@
 import { Assumptions, BaseOperators } from '.'
-import { EdgeType, NodeType } from '../../../graphql/types.graphql.gen'
 import { SessionEnv } from '../../../types'
-import { GraphEdgeIdentifier } from '../../types/edge'
-import { GraphNodeIdentifier } from '../../types/node'
+import { GraphEdgeIdentifier, GraphEdgeType } from '../../types/edge'
+import { GraphNodeIdentifier, GraphNodeType } from '../../types/node'
 import { GraphOperators } from './graphOperators'
 
 export type DelEdgeAssumptionsFactory = (_: {
@@ -15,7 +14,7 @@ export type DelEdgeAssumptionsFactory = (_: {
 }) => Promise<Assumptions>
 
 export type DelEdgeAssumptionsFactoryMap = Partial<
-  Record<`${NodeType}_${EdgeType}_${NodeType}`, DelEdgeAssumptionsFactory>
+  Record<`${GraphNodeType}_${GraphEdgeType}_${GraphNodeType}`, DelEdgeAssumptionsFactory>
 >
 
 export const getDelEdgeAssumptions = async ({
