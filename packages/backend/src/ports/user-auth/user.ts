@@ -47,7 +47,7 @@ export type RecoverPasswordJwt = {
   email: Email
 }
 const isRecoverPasswordJwt = (_: any): _ is RecoverPasswordJwt =>
-  isGraphNodeIdentifierAuth(_?.authId) && isEmail(_?.email)
+  !!_ && isGraphNodeIdentifierAuth(_.authId) && isEmail(_.email)
 
 export const recoverPasswordEmail = plug(
   ns(__dirname, 'recover-password-email'),
@@ -84,17 +84,20 @@ export type ActivationEmailTokenObj = {
 }
 
 const isActivationEmailTokenObj = (_: any): _ is ActivationEmailTokenObj =>
-  isEmail(_?.email) &&
-  'string' === typeof _?.hashedPassword &&
-  'string' === typeof _?.displayName &&
-  'string' === typeof _?.authId
+  !!_ &&
+  isEmail(_.email) &&
+  'string' === typeof _.hashedPassword &&
+  'string' === typeof _.displayName &&
+  isGraphNodeIdentifierAuth(_.authId)
 export const createSession = plug(
   ns(__dirname, 'create-session'),
   async ({
     password,
     email,
     activationEmailToken,
+    env,
   }: {
+    env: SessionEnv
     password: string
     email: string
     activationEmailToken: Maybe<string>
@@ -113,7 +116,8 @@ export const createSession = plug(
         if ('string' == typeof mActiveUser) {
           return mActiveUser
         }
-        await createAuthNode({
+        const authNode = await createAuthNode({
+          env,
           authId,
           authNode: {
             name: displayName,
@@ -126,9 +130,10 @@ export const createSession = plug(
             lastName: null,
             location: null,
             siteUrl: null,
-            _creator: authId,
+            _creator: null,
           },
         })
+        console.log('---', authNode)
         return mActiveUser
       }
 
@@ -137,8 +142,7 @@ export const createSession = plug(
     if ('string' === typeof activeUser) {
       return activeUser
     }
-    const passwordMatches =
-      !!activeUser && (await passwordVerifier({ plainPwd: password, pwdHash: activeUser.password }))
+    const passwordMatches = await passwordVerifier({ plainPwd: password, pwdHash: activeUser.password })
 
     if (!(activeUser && passwordMatches)) {
       return INVALID_CREDENTIALS
@@ -152,9 +156,6 @@ const authJWT = async (activeUser: ActiveUser) => {
   // TODO : add `jwtExpireSecs` in Config
   // const {jwtExpireSecs}=await getLatestConfigAdapter()
   const jwtExpireSecs = 30 * 24 * 60 * 60 * 1000
-  const sessionEnv: SessionEnv = {
-    authId: activeUser.authId,
-  }
-  const jwt = jwtSignerAdapter(sessionEnv, jwtExpireSecs)
+  const jwt = jwtSignerAdapter(activeUser.authId, jwtExpireSecs)
   return jwt
 }

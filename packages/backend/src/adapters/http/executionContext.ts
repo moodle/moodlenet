@@ -1,4 +1,6 @@
-import { isSessionEnv, SessionEnv } from '@moodlenet/common/lib/types'
+import { isGraphNodeIdentifierAuth } from '@moodlenet/common/lib/content-graph/types/node'
+import { SessionEnv } from '@moodlenet/common/lib/types'
+import { pick } from '@moodlenet/common/lib/utils/object'
 import { RequestHandler } from 'express'
 import { INVALID_JWT_TOKEN, jwtVerifierAdapter } from '../../ports/user-auth/adapters'
 
@@ -11,20 +13,22 @@ export const execEnvMiddleware: RequestHandler = async (req, _res, next) => {
   next()
 }
 
-export const getSessionEnv = async ({
-  headerToken,
-}: {
-  headerToken: string | null | undefined
-}): Promise<SessionEnv> => {
-  const noAuth: SessionEnv = {
-    authId: null,
+export const getSessionEnv = async ({ headerToken }: { headerToken: string | null | undefined }) => {
+  const authId = await getAuthId(headerToken)
+  const sessionEnv: SessionEnv = {
+    authId,
+    timestamp: Number(new Date()),
   }
+  return sessionEnv
+}
+
+export const getAuthId = async (headerToken: string | null | undefined) => {
   if (!headerToken) {
-    return noAuth
+    return null
   }
-  const sessionEnv = await jwtVerifierAdapter(headerToken)
-  if (sessionEnv === INVALID_JWT_TOKEN) {
-    return noAuth
+  const mAuthId = await jwtVerifierAdapter(headerToken)
+  if (mAuthId === INVALID_JWT_TOKEN) {
+    return null
   }
-  return isSessionEnv(sessionEnv) ? sessionEnv : noAuth
+  return isGraphNodeIdentifierAuth(mAuthId) ? pick(mAuthId, ['_authKey', '_type']) : null
 }

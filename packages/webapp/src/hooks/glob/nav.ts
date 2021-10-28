@@ -61,7 +61,9 @@ export const useRedirectProfileHomeIfLoggedIn = (opts?: { delay?: number }) => {
   useRedirectToBySession({
     ifLogged: true,
     replace: true,
-    to: useCallback((session: UserSessionFragment | null) => nodeGqlId2UrlPath(session!.profile.id), []),
+    to: useCallback((session: UserSessionFragment | null) => {
+      return session ? nodeGqlId2UrlPath(session.profile.id) : '' //FIXME: what if not session ?
+    }, []),
     delay: opts?.delay,
   })
 }

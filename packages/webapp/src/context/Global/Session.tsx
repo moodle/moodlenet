@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro'
+import { isGqlIdLocalOrganization } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { createCtx } from '../../lib/context'
@@ -189,7 +190,7 @@ export const SessionProvider: FC = ({ children }) => {
       signUp,
       session,
       loading,
-      isAdmin: !!(session?.profile.__typename === 'Organization'), //FIXME: before federeation !! ;)
+      isAdmin: !!(session && isGqlIdLocalOrganization(session.profile.id)), //FIXME: before federation !! ;)
       isAuthenticated,
       lastSessionEmail: lastSession.email ?? null,
       lastSessionJwt: lastSession.jwt ?? null,

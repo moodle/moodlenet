@@ -131,8 +131,13 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
           jwt: resp.jwt,
         }
       },
-      async createSession(_root, { password, email, activationEmailToken } /* , ctx */) {
-        const sessionResp = await userAuth.user.createSession({ email, activationEmailToken, password })
+      async createSession(_root, { password, email, activationEmailToken }, { sessionEnv }) {
+        const sessionResp = await userAuth.user.createSession({
+          email,
+          activationEmailToken,
+          password,
+          env: sessionEnv,
+        })
         if ('string' === typeof sessionResp) {
           return {
             __typename: 'CreateSession',

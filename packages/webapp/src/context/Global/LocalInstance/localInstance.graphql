@@ -1,5 +1,5 @@
-query localInstance {
-  node(id: "Organization/--local--") {
+query localInstance($id: ID!) {
+  node(id: $id) {
     ... on Organization {
       id
       name

@@ -13,7 +13,7 @@ export const createNodeQ = <Type extends GraphNodeType>({ node }: { node: GraphN
     _key: node._permId,
     ...omit(node, ['_permId']),
   }
-
+  // console.log({ node, aqlNode })
   const q = aq<GraphNode<Type> | null>(`
     let newnode = ${aqlstr(aqlNode)}
     
