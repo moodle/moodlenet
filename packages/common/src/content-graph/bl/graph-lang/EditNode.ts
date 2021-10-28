@@ -10,7 +10,7 @@ export type EditNodeOperators = {
 }
 export type EditNodeAssumptionsFactoryOps = {
   nodeIdentifier: GraphNodeIdentifier
-  env: SessionEnv
+  sessionEnv: SessionEnv
   graphOperators: GraphOperators
   baseOperators: BaseOperators
   editNodeOperators: EditNodeOperators
@@ -20,7 +20,7 @@ export type EditNodeAssumptionsFactory = (_: EditNodeAssumptionsFactoryOps) => P
 export type EditNodeAssumptionsFactoryMap = Partial<Record<NodeType, EditNodeAssumptionsFactory>>
 
 export const getEditNodeAssumptions = async ({
-  env,
+  sessionEnv,
   map,
   nodeIdentifier,
   baseOperators,
@@ -28,7 +28,7 @@ export const getEditNodeAssumptions = async ({
   editNodeOperators,
 }: {
   nodeIdentifier: GraphNodeIdentifier
-  env: SessionEnv
+  sessionEnv: SessionEnv
   map: EditNodeAssumptionsFactoryMap
   graphOperators: GraphOperators
   baseOperators: BaseOperators
@@ -38,5 +38,5 @@ export const getEditNodeAssumptions = async ({
   if (!assuptionsFactory) {
     return undefined
   }
-  return assuptionsFactory({ env, nodeIdentifier, baseOperators, graphOperators, editNodeOperators })
+  return assuptionsFactory({ sessionEnv, nodeIdentifier, baseOperators, graphOperators, editNodeOperators })
 }

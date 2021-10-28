@@ -12,7 +12,7 @@ export type AddEdgeOperators = {
 export type AddEdgeAssumptionsFactoryOps = {
   from: GraphNodeIdentifier
   to: GraphNodeIdentifier
-  env: SessionEnv
+  sessionEnv: SessionEnv
   graphOperators: GraphOperators
   baseOperators: BaseOperators
   addEdgeOperators: AddEdgeOperators
@@ -23,7 +23,7 @@ export type AddEdgeAssumptionsMap = Partial<Record<`${NodeType}_${EdgeType}_${No
 
 export const getAddEdgeAssumptions = async ({
   edgeType,
-  env,
+  sessionEnv,
   from,
   map,
   to,
@@ -34,7 +34,7 @@ export const getAddEdgeAssumptions = async ({
   from: GraphNodeIdentifier
   edgeType: EdgeType
   to: GraphNodeIdentifier
-  env: SessionEnv
+  sessionEnv: SessionEnv
   map: AddEdgeAssumptionsMap
   graphOperators: GraphOperators
   baseOperators: BaseOperators
@@ -44,5 +44,5 @@ export const getAddEdgeAssumptions = async ({
   if (!assuptionsFactory) {
     return undefined
   }
-  return assuptionsFactory({ env, from, to, graphOperators, baseOperators, addEdgeOperators })
+  return assuptionsFactory({ sessionEnv, from, to, graphOperators, baseOperators, addEdgeOperators })
 }

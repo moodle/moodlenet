@@ -8,7 +8,7 @@ import { sendTextToProfileAdapter } from '../content-graph/profile'
 import { getActiveUserByAuthAdapter, getLatestConfigAdapter, publicUrlAdapter, sendEmailAdapter } from './adapters'
 
 export type SendEmailToProfile = {
-  env: SessionEnv
+  sessionEnv: SessionEnv
   toProfileId: GraphNodeIdentifier<'Profile'>
   text: string
 }

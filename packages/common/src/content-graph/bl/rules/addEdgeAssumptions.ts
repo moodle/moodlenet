@@ -6,11 +6,12 @@ export const getAddEdgeAssumptionsMap = async () => addEdgeAssumptionsMap
 const isCreatorBV =
   (from = false) =>
   ({
-    graphOperators: { isCreator },
-    addEdgeOperators: { fromNode, toNode, issuerNode },
+    sessionEnv,
+    graphOperators: { isCreator, graphNode },
+    addEdgeOperators: { fromNode, toNode },
   }: AddEdgeAssumptionsFactoryOps) => {
     return isCreator({
-      authNode: issuerNode,
+      authNode: graphNode(sessionEnv.authId),
       ofNode: from ? fromNode : toNode,
     })
   }

@@ -11,9 +11,9 @@ import { ContentGraphDB } from '../types'
 
 export const addEdge =
   (db: ContentGraphDB): SockOf<typeof addEdgeAdapter> =>
-  async ({ issuer, edge, from, to, assumptions }) => {
+  async ({ edge, from, to, assumptions }) => {
     type ET = typeof edge._type
-    const q = createEdgeQ<ET>({ issuer, edge, from, to, assumptions })
+    const q = createEdgeQ<ET>({ edge, from, to, assumptions })
 
     const result = await getOneResult(q, db).catch(async e => {
       if (!(isArangoError(e) && [1210, 1200].includes(e.errorNum))) {

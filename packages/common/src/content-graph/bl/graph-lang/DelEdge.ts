@@ -9,7 +9,7 @@ export type DelEdgeAssumptionsFactory = (_: {
   from: GraphNodeIdentifier
   edge: GraphEdgeIdentifier
   to: GraphNodeIdentifier
-  env: SessionEnv
+  sessionEnv: SessionEnv
   graphOperators: GraphOperators
   baseOperators: BaseOperators
 }) => Promise<Assumptions>
@@ -20,7 +20,7 @@ export type DelEdgeAssumptionsFactoryMap = Partial<
 
 export const getDelEdgeAssumptions = async ({
   edge,
-  env,
+  sessionEnv,
   from,
   map,
   to,
@@ -30,7 +30,7 @@ export const getDelEdgeAssumptions = async ({
   from: GraphNodeIdentifier
   edge: GraphEdgeIdentifier
   to: GraphNodeIdentifier
-  env: SessionEnv
+  sessionEnv: SessionEnv
   map: DelEdgeAssumptionsFactoryMap
   graphOperators: GraphOperators
   baseOperators: BaseOperators
@@ -39,5 +39,5 @@ export const getDelEdgeAssumptions = async ({
   if (!assuptionsFactory) {
     return undefined
   }
-  return assuptionsFactory({ env, from, edge, to, baseOperators, graphOperators })
+  return assuptionsFactory({ sessionEnv, from, edge, to, baseOperators, graphOperators })
 }

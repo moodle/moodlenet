@@ -8,7 +8,7 @@ import { GraphOperators } from './graphOperators'
 export type NewNodeData<N extends GraphNode = GraphNode> = DistOmit<N, '_permId' | '_slug'>
 export type AddNodeAssumptionsFactory = (_: {
   newNodeData: NewNodeData
-  env: SessionEnv
+  sessionEnv: SessionEnv
   graphOperators: GraphOperators
   baseOperators: BaseOperators
 }) => Promise<Assumptions>
@@ -16,14 +16,14 @@ export type AddNodeAssumptionsFactory = (_: {
 export type AddNodeAssumptionsFactoryMap = Partial<Record<`${NodeType}`, AddNodeAssumptionsFactory>>
 
 export const getAddNodeAssumptions = async ({
-  env,
+  sessionEnv,
   map,
   newNodeData,
   baseOperators,
   graphOperators,
 }: {
   newNodeData: NewNodeData
-  env: SessionEnv
+  sessionEnv: SessionEnv
   map: AddNodeAssumptionsFactoryMap
   graphOperators: GraphOperators
   baseOperators: BaseOperators
@@ -32,5 +32,5 @@ export const getAddNodeAssumptions = async ({
   if (!assuptionsFactory) {
     return undefined
   }
-  return assuptionsFactory({ env, newNodeData, graphOperators, baseOperators })
+  return assuptionsFactory({ sessionEnv, newNodeData, graphOperators, baseOperators })
 }
