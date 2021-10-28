@@ -76,7 +76,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
       },
 
       async getSession(_root, _no_args, ctx) {
-        if (!ctx.sessionEnv?.authId) {
+        if (!ctx.sessionEnv.authId) {
           return null
         }
 
@@ -87,10 +87,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         if (!mActiveUser) {
           return null
         }
-        const mAuthProfileNode = await contentGraph.node.byIdentifier(ctx.sessionEnv, {
-          _authKey: mActiveUser.authId.key,
-          _type: mActiveUser.authId.profileType,
-        })
+        const mAuthProfileNode = await contentGraph.node.byIdentifier(ctx.sessionEnv, ctx.sessionEnv.authId)
         // console.log({ mProfile })
         if (!mAuthProfileNode) {
           return null
@@ -296,7 +293,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
       },
       async sendEmailToProfile(_root, { text, toProfileId }, ctx) {
         const toProfileIdentifier = gqlNodeId2GraphNodeIdentifierOfType(toProfileId, 'Profile')
-        if (!(ctx.sessionEnv?.authId && toProfileIdentifier)) {
+        if (!(ctx.sessionEnv.authId && toProfileIdentifier)) {
           return false
         }
         const sendResult = await contentGraph.profile.sendTextToProfile({

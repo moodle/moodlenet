@@ -1,10 +1,11 @@
-import { AuthId, isAuthId, SessionEnv } from '@moodlenet/common/lib/types'
+import { GraphNodeIdentifierAuth, isGraphNodeIdentifierAuth } from '@moodlenet/common/lib/content-graph/types/node'
+import { SessionEnv } from '@moodlenet/common/lib/types'
 import { Maybe } from '@moodlenet/common/lib/utils/types'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
 import { ns } from '../../lib/ns/namespace'
 import { plug } from '../../lib/plug'
-import { createProfile } from '../content-graph/node'
+import { createAuthNode } from '../content-graph/node'
 import {
   changePasswordByAuthIdAdapter,
   getActiveUserByEmailAdapter,
@@ -42,10 +43,11 @@ export const changeRecoverPassword = plug(
 )
 
 export type RecoverPasswordJwt = {
-  authId: AuthId
+  authId: GraphNodeIdentifierAuth
   email: Email
 }
-const isRecoverPasswordJwt = (_: any): _ is RecoverPasswordJwt => isAuthId(_?.authId) && isEmail(_?.email)
+const isRecoverPasswordJwt = (_: any): _ is RecoverPasswordJwt =>
+  isGraphNodeIdentifierAuth(_?.authId) && isEmail(_?.email)
 
 export const recoverPasswordEmail = plug(
   ns(__dirname, 'recover-password-email'),
@@ -78,7 +80,7 @@ export type ActivationEmailTokenObj = {
   email: Email
   hashedPassword: string
   displayName: string
-  authId: AuthId
+  authId: GraphNodeIdentifierAuth
 }
 
 const isActivationEmailTokenObj = (_: any): _ is ActivationEmailTokenObj =>
@@ -111,10 +113,10 @@ export const createSession = plug(
         if ('string' == typeof mActiveUser) {
           return mActiveUser
         }
-        await createProfile({
-          profile: {
+        await createAuthNode({
+          authId,
+          authNode: {
             name: displayName,
-            _authKey: authId.key,
             _published: true,
             description: '',
             avatar: null,

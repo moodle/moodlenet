@@ -1,15 +1,7 @@
-import { GraphNodeType } from './content-graph/types/node'
-
-export type AuthKey = string
-export type AuthId = {
-  key: AuthKey
-  profileType: GraphNodeType
-}
-
-export const isAuthId = (_: any): _ is AuthId => !!_ && 'string' === typeof _.id && 'string' === typeof _.profileType
+import { GraphNodeIdentifierAuth, isGraphNodeIdentifierAuth } from './content-graph/types/node'
 
 export type SessionEnv = {
-  authId: AuthId | null
+  authId: GraphNodeIdentifierAuth | null
 }
 export const isSessionEnv = (_: any): _ is SessionEnv =>
-  !!_ && 'authId' in _ && (_.authId === null || isAuthId(_.authId))
+  !!_ && 'authId' in _ && (_.authId === null || isGraphNodeIdentifierAuth(_.authId))

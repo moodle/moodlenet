@@ -1,4 +1,4 @@
-import { AuthId } from '@moodlenet/common/lib/types'
+import { GraphNodeIdentifierAuth } from '@moodlenet/common/lib/content-graph/types/node'
 import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
 import { EmailAddr, EmailObj } from '../../adapters/emailSender/types'
 import { ns } from '../../lib/ns/namespace'
@@ -17,7 +17,7 @@ export const localDomainAdapter = value<string>(ns(__dirname, 'local-domain-adap
 // TODO: this is a core/http plug .. move
 export const publicUrlAdapter = value<string>(ns(__dirname, 'public-url-adapter'))
 
-export const getActiveUserByAuthAdapter = plug<(_: { authId: AuthId }) => Promise<Maybe<ActiveUser>>>(
+export const getActiveUserByAuthAdapter = plug<(_: { authId: GraphNodeIdentifierAuth }) => Promise<Maybe<ActiveUser>>>(
   ns(__dirname, 'get-active-user-by-auth-adapter'),
 )
 export const getActiveUserByEmailAdapter = plug<(_: { email: EmailAddr }) => Promise<Maybe<ActiveUser>>>(
@@ -37,7 +37,7 @@ export const jwtVerifierAdapter = plug<(jwt: string) => Promise<unknown | typeof
 export const INVALID_JWT_TOKEN = Symbol('INVALID_JWT_TOKEN')
 
 export const changePasswordByAuthIdAdapter = plug<
-  (_: { authId: AuthId; newPassword: string }) => Promise<Maybe<ActiveUser>>
+  (_: { authId: GraphNodeIdentifierAuth; newPassword: string }) => Promise<Maybe<ActiveUser>>
 >(ns(__dirname, 'change-password-by-auth-id-adapter'))
 
 // TODO: this is a crypto plug .. move

@@ -227,7 +227,7 @@ export const graphEdge2GqlEdge = (edge: GE.GraphEdge): GQL.Edge => {
   }
 }
 
-type OmitEdgeProps = '_authKey' | '_created' | '_edited'
+type OmitEdgeProps = '_authId' | '_created' | '_edited'
 export const gqlEdge2GraphEdge = (edge: GQL.Edge): DistOmit<GE.GraphEdge, OmitEdgeProps> => {
   const parsed = gqlEdgeId2GraphEdgeIdentifier(edge.id)
   if (!parsed) {

@@ -1,4 +1,4 @@
-import { AuthId } from '@moodlenet/common/lib/types'
+import { GraphNodeIdentifierAuth } from '@moodlenet/common/lib/content-graph/types/node'
 import { EmailTemplate } from '../../adapters/emailSender/types'
 
 export enum Messages {
@@ -20,7 +20,7 @@ type UserBase<S extends Status> = {
 }
 
 export type ActiveUser = UserBase<'Active'> & {
-  authId: AuthId
+  authId: GraphNodeIdentifierAuth
   password: Password
 }
 // export type WaitingFirstActivationUser = UserBase<'WaitingFirstActivation'> & {

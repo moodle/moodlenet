@@ -15,7 +15,7 @@ import { ns } from '../../lib/ns/namespace'
 import { plug, value } from '../../lib/plug'
 import { getBaseOperatorsAdapter, getGraphOperatorsAdapter } from './common'
 
-export type NewEdgeInput = DistOmit<GraphEdge, '_authKey' | '_created' | 'id' | '_edited'>
+export type NewEdgeInput = DistOmit<GraphEdge, '_authId' | '_created' | 'id' | '_edited'>
 export const addEdgeAdapter = plug<
   <E extends GraphEdge>(_: {
     edge: E
@@ -48,7 +48,7 @@ export const addEdge = plug<AddEdgePort>(ns(__dirname, 'add-edge'), async ({ fro
   const edge: GraphEdge = {
     ...newEdge,
     id: newGlyphPermId(),
-    _authKey: sessionEnv.authId?.key ?? null,
+    _authId: sessionEnv.authId,
     _created: now,
     _edited: now,
   }
@@ -70,9 +70,7 @@ export const addEdge = plug<AddEdgePort>(ns(__dirname, 'add-edge'), async ({ fro
 
   const result = await addEdgeAdapter({
     edge,
-    issuer: graphOperators.graphNode(
-      sessionEnv.authId ? { _authKey: sessionEnv.authId.key, _type: sessionEnv.authId.profileType } : null,
-    ),
+    issuer: graphOperators.graphNode(sessionEnv.authId),
     from: graphOperators.graphNode(from),
     to: graphOperators.graphNode(to),
     assumptions,

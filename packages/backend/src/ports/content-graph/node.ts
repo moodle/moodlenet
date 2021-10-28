@@ -4,7 +4,12 @@ import {
   EditNodeOperators,
   getEditNodeAssumptions,
 } from '@moodlenet/common/lib/content-graph/bl/graph-lang/EditNode'
-import { GraphNode, GraphNodeIdentifier, GraphNodeType, Profile } from '@moodlenet/common/lib/content-graph/types/node'
+import {
+  GraphNode,
+  GraphNodeIdentifier,
+  GraphNodeIdentifierAuth,
+  GraphNodeType,
+} from '@moodlenet/common/lib/content-graph/types/node'
 import { SessionEnv } from '@moodlenet/common/lib/types'
 import { newGlyphIdentifiers, newGlyphPermId } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
@@ -38,9 +43,7 @@ export type CreateNode = {
 export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, sessionEnv }: CreateNode) => {
   const { graphNode } = await getGraphOperatorsAdapter()
   // const { getBV } = await getBaseOperatorsAdapter()
-  const authProfileBV = graphNode(
-    sessionEnv.authId ? { _authKey: sessionEnv.authId.key, _type: sessionEnv.authId.profileType } : null,
-  )
+  const authProfileBV = graphNode(sessionEnv.authId)
   // const authProfile = await getBV(graphNode({ _authKey: sessionEnv.user.authId, _type: 'Profile' }))
   // // const authProfile = await getProfileByAuthId({ authId: sessionEnv.user.authId })
   // if (!authProfile) {
@@ -51,14 +54,12 @@ export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, 
   const node: GraphNode = {
     ...ids,
     ...nodeData,
-    _authKey: sessionEnv.authId?.key ?? null,
+    _authKey: null,
     _created: now,
     _edited: now,
   }
   const graphOperators = await getGraphOperatorsAdapter()
-  const creatorNode = graphOperators.graphNode(
-    sessionEnv.authId ? { _authKey: sessionEnv.authId.key, _type: sessionEnv.authId.profileType } : null,
-  )
+  const creatorNode = graphOperators.graphNode(sessionEnv.authId)
   const result = await createNodeAdapter({ node, creatorNode })
   if (!result) {
     return null
@@ -67,7 +68,7 @@ export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, 
     assumptions: {},
     edge: {
       _type: 'Created',
-      _authKey: sessionEnv.authId?.key ?? null,
+      _authId: sessionEnv.authId,
       _created: now,
       _edited: now,
       id: newGlyphPermId(),
@@ -124,9 +125,7 @@ export const editNode = plug(
     if (!assumptions) {
       return null
     }
-    const issuer = graphOperators.graphNode(
-      sessionEnv.authId ? { _authKey: sessionEnv.authId.key, _type: sessionEnv.authId.profileType } : null,
-    )
+    const issuer = graphOperators.graphNode(sessionEnv.authId)
     const { graphNode } = graphOperators
     const { _ } = baseOperators
     const result = await editNodeAdapter({
@@ -143,29 +142,33 @@ export const editNode = plug(
   },
 )
 
-export type CreateProfile = {
-  profile: DistOmit<Profile, '_created' | '_type' | '_edited' | '_permId' | '_slug'>
+export type CreateAuthNode = {
+  authNode: DistOmit<GraphNode, '_created' | '_edited' | '_permId' | '_slug' | '_type' | '_authKey'>
+  authId: GraphNodeIdentifierAuth
 }
 
-export const createProfile = plug(ns(__dirname, 'create-profile'), async ({ profile }: CreateProfile) => {
-  const ids = newGlyphIdentifiers({ name: profile.name })
-  const now = Number(new Date())
-  const newProfile: Profile = {
-    ...ids,
-    ...profile,
-    _type: 'Profile',
-    _created: now,
-    _edited: now,
-  }
-  const graphOperators = await getGraphOperatorsAdapter()
-  const creatorNode = graphOperators.graphNode({ _authKey: profile._authKey, _type: 'Profile' })
+export const createAuthNode = plug(
+  ns(__dirname, 'create-auth-profile'),
+  async ({ authNode, authId }: CreateAuthNode) => {
+    const ids = newGlyphIdentifiers({ name: authNode.name })
+    const now = Number(new Date())
+    const newAuthNode = {
+      ...ids,
+      ...authNode,
+      ...authId,
+      _created: now,
+      _edited: now,
+    } as GraphNode
+    const graphOperators = await getGraphOperatorsAdapter()
+    const creatorNode = graphOperators.graphNode(authId)
 
-  const result = await createNodeAdapter<Profile>({ node: newProfile, creatorNode })
-  if (!result) {
-    return null
-  }
-  return result
-})
+    const result = await createNodeAdapter({ node: newAuthNode, creatorNode })
+    if (!result) {
+      return null
+    }
+    return result
+  },
+)
 
 // delete
 

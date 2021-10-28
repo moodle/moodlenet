@@ -1,4 +1,3 @@
-import { AuthKey } from '../../types'
 import { stringUnionList } from '../../utils/misc'
 import { Timestamp } from './common'
 
@@ -52,14 +51,18 @@ export type GraphNodeIdentifier<GNT extends GraphNodeType = GraphNodeType> =
   | GraphNodeIdentifierPerm<GNT>
   | GraphNodeIdentifierAuth<GNT>
 
+export const isGraphNodeIdentifierAuth = (_: any): _ is GraphNodeIdentifierAuth =>
+  !!_ && 'string' === typeof _._authKey && nodeTypes.includes(_._type)
+export type AuthKey = string
+
 export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _type: GNT
+  _authKey: AuthKey | null
   _permId: PermId
   _slug: Slug
   _published: boolean
   _created: Timestamp
   _edited: Timestamp
-  _authKey: AuthKey | null
   name: string
   description: string
 }
