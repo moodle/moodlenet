@@ -260,7 +260,7 @@ export const Resource = withCtrl<ResourceProps>(
       </Card>
     ) : (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
-        {isOwner && (
+        {(isAdmin || isOwner) && (
           <div className="detail">
             <div className="title">
               <Trans>Visibility</Trans>
@@ -489,7 +489,7 @@ export const Resource = withCtrl<ResourceProps>(
                       {/*<div className="share">
                         <ShareIcon />
                       </div>*/}
-                      {isOwner && (
+                      {(isAdmin || isOwner) && (
                         <div className="edit-save">
                           {isEditing ? (
                             <PrimaryButton color="green" onHoverColor="orange" onClick={handleOnSaveClick}>
