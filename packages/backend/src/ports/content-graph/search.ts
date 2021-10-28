@@ -10,7 +10,7 @@ import { getGraphOperatorsAdapter } from './common'
 
 export type GlobalSearchInputAdapterArg<NodeType extends GlobalSearchNodeType = GlobalSearchNodeType> = {
   issuerNode: BV<GraphNode | null>
-} & Omit<GlobalSearchInput<NodeType>, 'env'>
+} & Omit<GlobalSearchInput<NodeType>, 'sessionEnv'>
 
 export const searchByTermAdapter = plug<
   <NodeType extends GlobalSearchNodeType>(_: GlobalSearchInputAdapterArg<NodeType>) => Promise<SearchPage>
@@ -22,15 +22,21 @@ export type GlobalSearchInput<NodeType extends GlobalSearchNodeType = GlobalSear
   text: string
   nodeTypes: Maybe<NodeType[]>
   page: PaginationInput
-  env: SessionEnv
+  sessionEnv: SessionEnv
 }
 export const searchByTerm = plug(
   ns(__dirname, 'search-by-term'),
-  async <NodeType extends GlobalSearchNodeType>({ sort, text, nodeTypes, page, env }: GlobalSearchInput<NodeType>) => {
+  async <NodeType extends GlobalSearchNodeType>({
+    sort,
+    text,
+    nodeTypes,
+    page,
+    sessionEnv,
+  }: GlobalSearchInput<NodeType>) => {
     //  console.log({ nodeTypes, page, sort, text })
     const { graphNode } = await getGraphOperatorsAdapter()
 
-    const issuerNode = graphNode(env.authId)
+    const issuerNode = graphNode(sessionEnv.authId)
     return searchByTermAdapter({ sort, text, nodeTypes, page, issuerNode })
   },
 )

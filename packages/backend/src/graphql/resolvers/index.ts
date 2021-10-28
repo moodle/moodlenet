@@ -41,7 +41,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
 
       async globalSearch(_root, { sort, text, nodeTypes, page }, ctx) {
         const searchInput: contentGraph.search.GlobalSearchInput = {
-          env: ctx.sessionEnv,
+          sessionEnv: ctx.sessionEnv,
           nodeTypes: (nodeTypes ?? globalSearchNodeTypes).filter(isGlobalSearchNodeType),
           page: {
             after: page?.after,
@@ -136,7 +136,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
           email,
           activationEmailToken,
           password,
-          env: sessionEnv,
+          sessionEnv: sessionEnv,
         })
         if ('string' === typeof sessionResp) {
           return {
@@ -149,7 +149,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
           ...sessionResp,
         }
       },
-      async signUp(_root, { email, name, password } /* ,env */) {
+      async signUp(_root, { email, name, password } /* ,sessionEnv */) {
         await userAuth.newUser.signUp({ email, displayName: name, password })
 
         return { __typename: 'SimpleResponse', success: true }

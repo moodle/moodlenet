@@ -95,9 +95,9 @@ export const createSession = plug(
     password,
     email,
     activationEmailToken,
-    env,
+    sessionEnv,
   }: {
-    env: SessionEnv
+    sessionEnv: SessionEnv
     password: string
     email: string
     activationEmailToken: Maybe<string>
@@ -117,7 +117,7 @@ export const createSession = plug(
           return mActiveUser
         }
         const authNode = await createAuthNode({
-          env,
+          sessionEnv,
           authId,
           authNode: {
             name: displayName,

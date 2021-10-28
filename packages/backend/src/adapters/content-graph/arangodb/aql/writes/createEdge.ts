@@ -11,13 +11,11 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
   edge,
   from,
   to,
-  issuer,
   assumptions,
 }: {
   edge: GraphEdge<Type>
   from: BV<GraphNode | null>
   to: BV<GraphNode | null>
-  issuer: BV<GraphNode | null>
   assumptions: Assumptions
 }) => {
   const edgeType = edge._type
@@ -33,7 +31,6 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
   const q = aq<GraphEdge<Type>>(`
     let fromNode = ${from}
     let toNode = ${to}
-    let issuerNode = ${issuer}
     
     let newedge = ${aqlstr(aqlEdge)}
 

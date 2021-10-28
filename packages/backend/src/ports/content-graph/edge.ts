@@ -19,7 +19,6 @@ export type NewEdgeInput = DistOmit<GraphEdge, '_authId' | '_created' | 'id' | '
 export const addEdgeAdapter = plug<
   <E extends GraphEdge>(_: {
     edge: E
-    issuer: BV<GraphNode | null>
     from: BV<GraphNode | null>
     to: BV<GraphNode | null>
     assumptions: Assumptions
@@ -57,7 +56,7 @@ export const addEdge = plug<AddEdgePort>(ns(__dirname, 'add-edge'), async ({ fro
     edgeType: newEdge._type,
     to,
     map: assumptionsMap,
-    env: sessionEnv,
+    sessionEnv,
     addEdgeOperators,
     baseOperators,
     graphOperators,
@@ -69,7 +68,6 @@ export const addEdge = plug<AddEdgePort>(ns(__dirname, 'add-edge'), async ({ fro
 
   const result = await addEdgeAdapter({
     edge,
-    issuer: graphOperators.graphNode(sessionEnv.authId),
     from: graphOperators.graphNode(from),
     to: graphOperators.graphNode(to),
     assumptions,

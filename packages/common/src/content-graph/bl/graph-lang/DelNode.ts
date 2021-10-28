@@ -6,7 +6,7 @@ import { GraphOperators } from './graphOperators'
 
 export type DelNodeAssumptionsFactory = (_: {
   nodeIdentifier: GraphNodeIdentifier
-  env: SessionEnv
+  sessionEnv: SessionEnv
   graphOperators: GraphOperators
   baseOperators: BaseOperators
 }) => Promise<Assumptions>
@@ -14,14 +14,14 @@ export type DelNodeAssumptionsFactory = (_: {
 export type DelNodeAssumptionsFactoryMap = Partial<Record<`${NodeType}`, DelNodeAssumptionsFactory>>
 
 export const getDelNodeAssumptions = async ({
-  env,
+  sessionEnv,
   map,
   nodeIdentifier,
   baseOperators,
   graphOperators,
 }: {
   nodeIdentifier: GraphNodeIdentifier
-  env: SessionEnv
+  sessionEnv: SessionEnv
   map: DelNodeAssumptionsFactoryMap
   graphOperators: GraphOperators
   baseOperators: BaseOperators
@@ -30,5 +30,5 @@ export const getDelNodeAssumptions = async ({
   if (!assuptionsFactory) {
     return undefined
   }
-  return assuptionsFactory({ env, nodeIdentifier, baseOperators, graphOperators })
+  return assuptionsFactory({ sessionEnv, nodeIdentifier, baseOperators, graphOperators })
 }

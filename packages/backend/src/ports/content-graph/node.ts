@@ -59,7 +59,6 @@ export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, 
     _creator: sessionEnv.authId,
   }
   const graphOperators = await getGraphOperatorsAdapter()
-  const creatorNode = graphOperators.graphNode(sessionEnv.authId)
   const result = await createNodeAdapter({ node })
   if (!result) {
     return null
@@ -73,7 +72,6 @@ export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, 
       _edited: sessionEnv.timestamp,
       id: newGlyphPermId(),
     },
-    issuer: creatorNode,
     from: authProfileBV,
     to: graphOperators.graphNode(result),
   })
@@ -115,7 +113,7 @@ export const editNode = plug(
     const editNodeAssumptionsMap = await getEditNodeAssumptionsMap()
     const assumptions = await getEditNodeAssumptions({
       map: editNodeAssumptionsMap,
-      env: sessionEnv,
+      sessionEnv,
       baseOperators,
       graphOperators,
       editNodeOperators,
@@ -141,20 +139,20 @@ export const editNode = plug(
 
 export type CreateAuthNode = {
   authNode: DistOmit<GraphNode, '_created' | '_edited' | '_permId' | '_slug' | '_authKey' | '_type'>
-  env: SessionEnv
+  sessionEnv: SessionEnv
   authId: GraphNodeIdentifierAuth
 }
 
 export const createAuthNode = plug(
   ns(__dirname, 'create-auth-profile'),
-  async ({ authNode, env, authId }: CreateAuthNode) => {
+  async ({ authNode, sessionEnv, authId }: CreateAuthNode) => {
     const ids = newGlyphIdentifiers({ name: authNode.name })
     const newAuthNode = {
       ...ids,
       ...authNode,
       ...authId,
-      _created: env.timestamp,
-      _edited: env.timestamp,
+      _created: sessionEnv.timestamp,
+      _edited: sessionEnv.timestamp,
     } as GraphNode
 
     const result = await createNodeAdapter({ node: newAuthNode })

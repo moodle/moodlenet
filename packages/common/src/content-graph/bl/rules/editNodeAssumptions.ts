@@ -7,10 +7,10 @@ import {
 const isCreatorBV = ({
   editNodeOperators: { node },
   graphOperators: { isCreator, graphNode },
-  env,
+  sessionEnv,
 }: EditNodeAssumptionsFactoryOps) => {
   return isCreator({
-    authNode: graphNode(env.authId),
+    authNode: graphNode(sessionEnv.authId),
     ofNode: node,
   })
 }

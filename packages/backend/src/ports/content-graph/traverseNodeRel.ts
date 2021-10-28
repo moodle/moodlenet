@@ -29,14 +29,14 @@ export type TraverseFromNodeInput = {
   targetIds: Maybe<GraphNodeIdentifier[]>
   inverse: boolean
   page: PaginationInput
-  env: SessionEnv
+  sessionEnv: SessionEnv
 }
 
 export const traverseNodeRelations = plug(
   ns(__dirname, 'traverse-node-relations'),
-  async ({ edgeType, env, fromNode, inverse, page, targetIds, targetNodeType }: TraverseFromNodeInput) => {
+  async ({ edgeType, sessionEnv, fromNode, inverse, page, targetIds, targetNodeType }: TraverseFromNodeInput) => {
     const { graphNode } = await getGraphOperatorsAdapter()
-    const issuerNode = graphNode(env.authId)
+    const issuerNode = graphNode(sessionEnv.authId)
 
     return traverseNodeRelationsAdapter({
       issuerNode,
@@ -61,14 +61,14 @@ export type NodeRelationCountAdapterInput = {
   edgeType: GraphEdgeType
   targetNodeType: GraphNodeType
   inverse: boolean
-  env: SessionEnv | null
+  sessionEnv: SessionEnv
 }
 export type NodeRelationCountInput = {
   fromNode: GraphNodeIdentifier
   edgeType: GraphEdgeType
   targetNodeType: GraphNodeType
   inverse: boolean
-  env: SessionEnv | null
+  sessionEnv: SessionEnv
 }
 
 export const countNodeRelations = plug(ns(__dirname, 'count-node-relations'), async (input: NodeRelationCountInput) => {
