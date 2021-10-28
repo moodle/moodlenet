@@ -6,5 +6,4 @@ import { _ } from './_'
 export const getEditNodeOperators: SockOf<typeof getEditNodeOperatorsAdapter> = async () => editNodeOperators
 export const editNodeOperators: EditNodeOperators = {
   node: _('editNode'),
-  issuerNode: _('issuerNode'),
 }

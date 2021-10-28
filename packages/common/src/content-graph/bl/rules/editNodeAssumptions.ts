@@ -5,11 +5,12 @@ import {
 } from '../graph-lang/EditNode'
 
 const isCreatorBV = ({
-  editNodeOperators: { node, issuerNode },
-  graphOperators: { isCreator },
+  editNodeOperators: { node },
+  graphOperators: { isCreator, graphNode },
+  env,
 }: EditNodeAssumptionsFactoryOps) => {
   return isCreator({
-    authNode: issuerNode,
+    authNode: graphNode(env.authId),
     ofNode: node,
   })
 }

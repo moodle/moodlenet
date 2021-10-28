@@ -44,13 +44,12 @@ export const addEdge = plug<AddEdgePort>(ns(__dirname, 'add-edge'), async ({ fro
   const baseOperators = await getBaseOperatorsAdapter()
   const addEdgeOperators = await getAddEdgeOperatorsAdapter()
   const assumptionsMap = await getAddEdgeAssumptionsMap()
-  const now = Number(new Date())
   const edge: GraphEdge = {
     ...newEdge,
     id: newGlyphPermId(),
     _authId: sessionEnv.authId,
-    _created: now,
-    _edited: now,
+    _created: sessionEnv.timestamp,
+    _edited: sessionEnv.timestamp,
   }
 
   const assumptions = await getAddEdgeAssumptions({

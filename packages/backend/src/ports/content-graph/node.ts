@@ -28,9 +28,9 @@ export const byIdentifier = plug(
 )
 
 // create
-export const createNodeAdapter = plug<
-  <N extends GraphNode>(_: { node: N; issuer: BV<GraphNode | null> }) => Promise<N | undefined | null>
->(ns(__dirname, 'create-node-adapter'))
+export const createNodeAdapter = plug<<N extends GraphNode>(_: { node: N }) => Promise<N | undefined | null>>(
+  ns(__dirname, 'create-node-adapter'),
+)
 export type NewNodeData<N extends GraphNode = GraphNode> = DistOmit<
   N,
   '_permId' | '_slug' | '_created' | '_edited' | '_authKey' | '_creator'
@@ -50,18 +50,17 @@ export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, 
   //   return 'unauthorized' as const
   // }
   const ids = newGlyphIdentifiers({ name: nodeData.name })
-  const now = Number(new Date())
   const node: GraphNode = {
     ...ids,
     ...nodeData,
     _authKey: null,
-    _created: now,
-    _edited: now,
+    _created: sessionEnv.timestamp,
+    _edited: sessionEnv.timestamp,
     _creator: sessionEnv.authId,
   }
   const graphOperators = await getGraphOperatorsAdapter()
   const creatorNode = graphOperators.graphNode(sessionEnv.authId)
-  const result = await createNodeAdapter({ node, issuer: creatorNode })
+  const result = await createNodeAdapter({ node })
   if (!result) {
     return null
   }
@@ -70,8 +69,8 @@ export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, 
     edge: {
       _type: 'Created',
       _authId: sessionEnv.authId,
-      _created: now,
-      _edited: now,
+      _created: sessionEnv.timestamp,
+      _edited: sessionEnv.timestamp,
       id: newGlyphPermId(),
     },
     issuer: creatorNode,
@@ -141,26 +140,24 @@ export const editNode = plug(
 )
 
 export type CreateAuthNode = {
-  authNode: DistOmit<GraphNode, '_created' | '_edited' | '_permId' | '_slug' | '_type' | '_authKey'>
+  authNode: DistOmit<GraphNode, '_created' | '_edited' | '_permId' | '_slug' | '_authKey' | '_type'>
+  env: SessionEnv
   authId: GraphNodeIdentifierAuth
 }
 
 export const createAuthNode = plug(
   ns(__dirname, 'create-auth-profile'),
-  async ({ authNode, authId }: CreateAuthNode) => {
+  async ({ authNode, env, authId }: CreateAuthNode) => {
     const ids = newGlyphIdentifiers({ name: authNode.name })
-    const now = Number(new Date())
     const newAuthNode = {
       ...ids,
       ...authNode,
       ...authId,
-      _created: now,
-      _edited: now,
+      _created: env.timestamp,
+      _edited: env.timestamp,
     } as GraphNode
-    const graphOperators = await getGraphOperatorsAdapter()
-    const creatorNode = graphOperators.graphNode(authId)
 
-    const result = await createNodeAdapter({ node: newAuthNode, issuer: creatorNode })
+    const result = await createNodeAdapter({ node: newAuthNode })
     if (!result) {
       return null
     }

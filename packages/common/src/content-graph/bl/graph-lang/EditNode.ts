@@ -6,7 +6,7 @@ import { GraphOperators } from './graphOperators'
 
 export type EditNodeOperators = {
   node: BV<GraphNode | null>
-  issuerNode: BV<GraphNode | null>
+  // issuerNode: BV<GraphNode | null>
 }
 export type EditNodeAssumptionsFactoryOps = {
   nodeIdentifier: GraphNodeIdentifier

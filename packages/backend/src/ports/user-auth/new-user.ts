@@ -1,3 +1,4 @@
+import { GraphNodeIdentifierAuth } from '@moodlenet/common/lib/content-graph/types/node'
 import { newAuthKey } from '@moodlenet/common/lib/utils/content-graph/slug-id'
 import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
 import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
@@ -18,7 +19,12 @@ export const signUp = plug(
   ns(__dirname, 'sign-up'),
   async ({ email, displayName, password }: { email: Email; password: string; displayName: string }) => {
     const { newUserRequestEmail, newUserVerificationWaitSecs } = await getLatestConfigAdapter()
-    const authId = newAuthKey()
+    // const authId = newAuthKey()
+    const authId: GraphNodeIdentifierAuth = {
+      _authKey: newAuthKey(),
+      _type: 'Profile',
+    }
+
     const hashedPassword = await passwordHasher(password)
 
     const activationEmailToken = await jwtSignerAdapter(

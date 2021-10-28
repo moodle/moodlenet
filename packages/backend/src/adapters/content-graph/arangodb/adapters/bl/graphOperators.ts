@@ -10,7 +10,6 @@ export const graphOperators: GraphOperators = {
   // edgeType: edgeType => ` ${edgeType} ` as BV<GraphEdgeType>,
   // nodeType: nodeType => ` ${nodeType} ` as BV<GraphNodeType>,
   graphNode: identifier => {
-    // Identifier = { _authKey } | { _permId } | { _slug } | AqlGraphNode
     if (!identifier) {
       return _('null')
     }
@@ -42,7 +41,8 @@ export const graphOperators: GraphOperators = {
     const { _type, id } = identifier
     return _(`${aqlGraphEdge2GraphEdge(`DOCUMENT("${_type}/${id}")`)}`)
   },
-  isCreator: ({ authNode, ofNode }) => _<boolean>(`${authNode}._authKey == ${ofNode}._creator`),
+  isCreator: ({ authNode, ofNode }) =>
+    _<boolean>(`${ofNode}._creator == { _type:${authNode}._type, _authKey:${authNode}._authKey }`),
   isPublished: node => _<boolean>(`${node}._published == true`),
   // isCreator: ({ authNode, ofNode }) => {
   //   const Created: EdgeType = 'Created'
