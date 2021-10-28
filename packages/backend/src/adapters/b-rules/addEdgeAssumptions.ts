@@ -1,4 +1,8 @@
-import { AddEdgeAssumptionsFactory, AddEdgeAssumptionsFactoryOps, AddEdgeAssumptionsMap } from '../graph-lang/AddEdge'
+import {
+  AddEdgeAssumptionsFactory,
+  AddEdgeAssumptionsFactoryOps,
+  AddEdgeAssumptionsMap,
+} from '@moodlenet/common/lib/content-graph/bl/graph-lang/AddEdge'
 
 export const getAddEdgeAssumptionsMap = async () => addEdgeAssumptionsMap
 //export const getAddEdgeAssumptionsMap : SecOf< typeof getAddEdgeAssumptionsMap>=async ()=>addEdgeAssumptionsMap

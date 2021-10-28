@@ -1,4 +1,4 @@
-import { DelEdgeAssumptionsFactoryMap } from '../graph-lang/DelEdge'
+import { DelEdgeAssumptionsFactoryMap } from '@moodlenet/common/lib/content-graph/bl/graph-lang/DelEdge'
 
 export const delEdgeAssumptionsMap: DelEdgeAssumptionsFactoryMap = {
   Profile_Bookmarked_Collection: async ({ baseOperators: { _ } }) => ({ just: _(true) }),
