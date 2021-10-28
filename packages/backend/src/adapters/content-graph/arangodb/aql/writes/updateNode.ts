@@ -9,19 +9,16 @@ export const updateNodeQ = <Type extends GraphNodeType>({
   nodeId,
   type,
   assumptions,
-  issuer,
 }: {
   nodeData: BV<EditNodeData<Type>>
   nodeId: BV<GraphNode<Type> | null>
   type: GraphNodeType
-  issuer: BV<GraphNode | null>
   assumptions: Assumptions
 }) => {
   const aqlAssumptions = getAqlAssumptions(assumptions)
   const q = aq<GraphNode<Type>>(`
     let editNode = ${nodeId}
-    let issuerNode = ${issuer}
-    FILTER editNode && issuerNode && ${aqlAssumptions}
+    FILTER editNode &&  ${aqlAssumptions}
     UPDATE ${graphNode2AqlIdentifier('editNode')} WITH ${nodeData} into ${type}
 
     return ${aqlGraphNode2GraphNode('NEW')}

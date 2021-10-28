@@ -42,7 +42,7 @@ export const graphOperators: GraphOperators = {
     const { _type, id } = identifier
     return _(`${aqlGraphEdge2GraphEdge(`DOCUMENT("${_type}/${id}")`)}`)
   },
-  isCreator: ({ authNode, ofNode }) => _<boolean>(`${authNode}._authKey == ${ofNode}._creatorAuthId`),
+  isCreator: ({ authNode, ofNode }) => _<boolean>(`${authNode}._authKey == ${ofNode}._creator`),
   isPublished: node => _<boolean>(`${node}._published == true`),
   // isCreator: ({ authNode, ofNode }) => {
   //   const Created: EdgeType = 'Created'

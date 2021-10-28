@@ -1,9 +1,9 @@
 import { getIscedFieldPathByCode } from '../../../../utils/content-graph/isced-field'
 import { contentSlug } from '../../../../utils/content-graph/slug-id'
 import { IscedField } from '../../../types/node'
+import { localOrganizationAuthId, now } from '../../content'
 import isced_fields from './CL_ISCED13-Fields'
 
-const now = Number(new Date())
 export const getIscedFields = () =>
   isced_fields.map(field => {
     const iscedfield: IscedField = {
@@ -18,6 +18,7 @@ export const getIscedFields = () =>
       _created: now,
       _edited: now,
       _authKey: null,
+      _creator: localOrganizationAuthId,
     }
     return iscedfield
   })

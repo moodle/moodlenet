@@ -1,7 +1,7 @@
 import { contentSlug } from '../../../utils/content-graph/slug-id'
 import { Language } from '../../types/node'
+import { localOrganizationAuthId, now } from '../content'
 import iso_data_arr from './ISO_639_3_tab-DATA'
-const now = Number(new Date())
 
 export const getIso639_3 = () =>
   iso_data_arr.map(iso_data => {
@@ -19,6 +19,7 @@ export const getIso639_3 = () =>
       langType: iso_data.type,
       _created: now,
       _edited: now,
+      _creator: localOrganizationAuthId,
       _authKey: null,
     }
 

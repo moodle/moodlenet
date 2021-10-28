@@ -29,11 +29,11 @@ export const byIdentifier = plug(
 
 // create
 export const createNodeAdapter = plug<
-  <N extends GraphNode>(_: { node: N; creatorNode: BV<GraphNode | null> | null }) => Promise<N | undefined | null>
+  <N extends GraphNode>(_: { node: N; issuer: BV<GraphNode | null> }) => Promise<N | undefined | null>
 >(ns(__dirname, 'create-node-adapter'))
 export type NewNodeData<N extends GraphNode = GraphNode> = DistOmit<
   N,
-  '_permId' | '_slug' | '_created' | '_edited' | '_authKey'
+  '_permId' | '_slug' | '_created' | '_edited' | '_authKey' | '_creator'
 >
 export type CreateNode = {
   nodeData: NewNodeData
@@ -57,10 +57,11 @@ export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, 
     _authKey: null,
     _created: now,
     _edited: now,
+    _creator: sessionEnv.authId,
   }
   const graphOperators = await getGraphOperatorsAdapter()
   const creatorNode = graphOperators.graphNode(sessionEnv.authId)
-  const result = await createNodeAdapter({ node, creatorNode })
+  const result = await createNodeAdapter({ node, issuer: creatorNode })
   if (!result) {
     return null
   }
@@ -86,7 +87,6 @@ export const createNode = plug(ns(__dirname, 'create-node'), async ({ nodeData, 
 export const editNodeAdapter = plug<
   <N extends GraphNodeType = GraphNodeType>(_: {
     nodeData: BV<EditNodeData<N>>
-    issuer: BV<GraphNode | null>
     nodeId: BV<GraphNode<N> | null>
     type: GraphNodeType
     assumptions: Assumptions
@@ -125,12 +125,10 @@ export const editNode = plug(
     if (!assumptions) {
       return null
     }
-    const issuer = graphOperators.graphNode(sessionEnv.authId)
     const { graphNode } = graphOperators
     const { _ } = baseOperators
     const result = await editNodeAdapter({
       assumptions,
-      issuer,
       nodeData: _(nodeData),
       nodeId: graphNode(nodeId),
       type: nodeId._type,
@@ -162,7 +160,7 @@ export const createAuthNode = plug(
     const graphOperators = await getGraphOperatorsAdapter()
     const creatorNode = graphOperators.graphNode(authId)
 
-    const result = await createNodeAdapter({ node: newAuthNode, creatorNode })
+    const result = await createNodeAdapter({ node: newAuthNode, issuer: creatorNode })
     if (!result) {
       return null
     }

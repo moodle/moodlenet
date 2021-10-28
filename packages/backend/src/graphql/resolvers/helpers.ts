@@ -99,7 +99,7 @@ export const graphNode2GqlNode = (node: GN.GraphNode): GQL.Node => {
   }
 }
 
-type OmitNodeProps = '_permId' | '_authKey' | '_created' | '_edited'
+type OmitNodeProps = '_permId' | '_authKey' | '_created' | '_edited' | '_creator'
 export const gqlNode2GraphNode = (node: GQL.Node): DistOmit<GN.GraphNode, OmitNodeProps> => {
   const parsed = gqlNodeId2GraphNodeIdentifier(node.id)
   if (!parsed) {

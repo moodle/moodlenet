@@ -8,7 +8,7 @@ export const createLanguges = async ({ db }: { db: Database }) => {
   await Promise.all(
     languges.map(async languge_data => {
       console.log(`creating Languge ${languge_data.name}`)
-      await justExecute(createNodeQ({ node: languge_data, creatorNode: null }), db)
+      await justExecute(createNodeQ({ node: languge_data }), db)
     }),
   )
 }
