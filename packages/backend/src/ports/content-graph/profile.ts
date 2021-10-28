@@ -1,5 +1,4 @@
-import { GraphNode, GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
-import { AuthId } from '@moodlenet/common/lib/types'
+import { GraphNode, GraphNodeIdentifier, GraphNodeIdentifierAuth } from '@moodlenet/common/lib/content-graph/types/node'
 import { ns } from '../../lib/ns/namespace'
 import { plug } from '../../lib/plug'
 import { getBaseOperatorsAdapter, getGraphOperatorsAdapter } from './common'
@@ -9,7 +8,7 @@ export const sendTextToProfileAdapter = plug<
 >(ns(__dirname, 'send-text-to-profile-adapter'))
 
 export type SendTextToProfile = {
-  authId: AuthId
+  authId: GraphNodeIdentifierAuth
   toProfileId: GraphNodeIdentifier
   text: string
 }
@@ -20,7 +19,7 @@ export const sendTextToProfile = plug(
     const { graphNode } = await getGraphOperatorsAdapter()
 
     const recipient = await getBV(graphNode(toProfileId))
-    const sender = await getBV(graphNode({ _authKey: authId.key, _type: authId.profileType }))
+    const sender = await getBV(graphNode(authId))
 
     if (!(recipient && sender)) {
       return false

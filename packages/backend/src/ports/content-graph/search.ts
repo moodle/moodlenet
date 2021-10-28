@@ -22,7 +22,7 @@ export type GlobalSearchInput<NodeType extends GlobalSearchNodeType = GlobalSear
   text: string
   nodeTypes: Maybe<NodeType[]>
   page: PaginationInput
-  env: SessionEnv | null
+  env: SessionEnv
 }
 export const searchByTerm = plug(
   ns(__dirname, 'search-by-term'),
@@ -30,7 +30,7 @@ export const searchByTerm = plug(
     //  console.log({ nodeTypes, page, sort, text })
     const { graphNode } = await getGraphOperatorsAdapter()
 
-    const issuerNode = graphNode(env?.authId ? { _authKey: env.authId.key, _type: env.authId.profileType } : null)
+    const issuerNode = graphNode(env.authId)
     return searchByTermAdapter({ sort, text, nodeTypes, page, issuerNode })
   },
 )

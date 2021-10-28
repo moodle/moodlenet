@@ -1,5 +1,6 @@
 import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
 import { SessionEnv } from '@moodlenet/common/lib/types'
+import { pick } from '@moodlenet/common/lib/utils/object'
 import { nodeIdentifierSlug2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
 import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
 import { SockOf } from '../../lib/plug'
@@ -16,7 +17,7 @@ export const sendTextAdapter: SockOf<typeof sendTextToProfileAdapter> = async ({
     return false
   }
   const recipientUser = await getActiveUserByAuthAdapter({
-    authId: { key: recipient._authKey, profileType: recipient._type },
+    authId: pick(recipient, ['_authKey', '_type']),
   })
 
   if (!recipientUser) {

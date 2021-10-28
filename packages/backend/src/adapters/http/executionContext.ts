@@ -15,13 +15,16 @@ export const getSessionEnv = async ({
   headerToken,
 }: {
   headerToken: string | null | undefined
-}): Promise<SessionEnv | null> => {
+}): Promise<SessionEnv> => {
+  const noAuth: SessionEnv = {
+    authId: null,
+  }
   if (!headerToken) {
-    return null
+    return noAuth
   }
   const sessionEnv = await jwtVerifierAdapter(headerToken)
   if (sessionEnv === INVALID_JWT_TOKEN) {
-    return null
+    return noAuth
   }
-  return isSessionEnv(sessionEnv) ? sessionEnv : null
+  return isSessionEnv(sessionEnv) ? sessionEnv : noAuth
 }

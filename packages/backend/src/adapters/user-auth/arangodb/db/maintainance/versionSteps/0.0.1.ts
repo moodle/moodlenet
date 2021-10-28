@@ -1,5 +1,6 @@
 import { localOrganizationData } from '@moodlenet/common/lib/content-graph/initialData/content'
 import { DefaultConfig } from '@moodlenet/common/lib/content-graph/initialData/user-auth/defaultConfig'
+import { pick } from '@moodlenet/common/lib/utils/object'
 import { DistOmit } from '@moodlenet/common/lib/utils/types'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
 import { justExecute } from '../../../../../../lib/helpers/arango/query'
@@ -11,7 +12,7 @@ import { CONFIG, USER } from '../../../types'
 
 const rootUserActive: DistOmit<ActiveUser, 'email' | 'password' | 'id' | 'createdAt' | 'updatedAt'> = {
   status: 'Active',
-  authId: { key: localOrganizationData._authKey!, profileType: localOrganizationData._type },
+  authId: pick(localOrganizationData, ['_authKey', '_type']),
 }
 
 const init_0_0_1: VersionUpdater<MNStaticEnv> = {
