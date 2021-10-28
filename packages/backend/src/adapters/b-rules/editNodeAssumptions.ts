@@ -2,7 +2,7 @@ import {
   EditNodeAssumptionsFactory,
   EditNodeAssumptionsFactoryMap,
   EditNodeAssumptionsFactoryOps,
-} from '../graph-lang/EditNode'
+} from '@moodlenet/common/lib/content-graph/bl/graph-lang/EditNode'
 
 const isCreatorBV = ({
   editNodeOperators: { node },
