@@ -1,7 +1,6 @@
 import { Assumptions, BaseOperators } from '.'
-import { NodeType } from '../../../graphql/types.graphql.gen'
 import { SessionEnv } from '../../../types'
-import { GraphNodeIdentifier } from '../../types/node'
+import { GraphNodeIdentifier, GraphNodeType } from '../../types/node'
 import { GraphOperators } from './graphOperators'
 
 export type DelNodeAssumptionsFactory = (_: {
@@ -11,7 +10,7 @@ export type DelNodeAssumptionsFactory = (_: {
   baseOperators: BaseOperators
 }) => Promise<Assumptions>
 
-export type DelNodeAssumptionsFactoryMap = Partial<Record<`${NodeType}`, DelNodeAssumptionsFactory>>
+export type DelNodeAssumptionsFactoryMap = Partial<Record<`${GraphNodeType}`, DelNodeAssumptionsFactory>>
 
 export const getDelNodeAssumptions = async ({
   sessionEnv,

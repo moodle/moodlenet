@@ -1,7 +1,7 @@
 import { Assumptions, BaseOperators, BV } from '.'
-import { EdgeType, NodeType } from '../../../graphql/types.graphql.gen'
 import { SessionEnv } from '../../../types'
-import { GraphNode, GraphNodeIdentifier } from '../../types/node'
+import { GraphEdgeType } from '../../types/edge'
+import { GraphNode, GraphNodeIdentifier, GraphNodeType } from '../../types/node'
 import { GraphOperators } from './graphOperators'
 
 export type AddEdgeOperators = {
@@ -19,7 +19,9 @@ export type AddEdgeAssumptionsFactoryOps = {
 }
 export type AddEdgeAssumptionsFactory = (_: AddEdgeAssumptionsFactoryOps) => Promise<Assumptions>
 
-export type AddEdgeAssumptionsMap = Partial<Record<`${NodeType}_${EdgeType}_${NodeType}`, AddEdgeAssumptionsFactory>>
+export type AddEdgeAssumptionsMap = Partial<
+  Record<`${GraphNodeType}_${GraphEdgeType}_${GraphNodeType}`, AddEdgeAssumptionsFactory>
+>
 
 export const getAddEdgeAssumptions = async ({
   edgeType,
@@ -32,7 +34,7 @@ export const getAddEdgeAssumptions = async ({
   addEdgeOperators,
 }: {
   from: GraphNodeIdentifier
-  edgeType: EdgeType
+  edgeType: GraphEdgeType
   to: GraphNodeIdentifier
   sessionEnv: SessionEnv
   map: AddEdgeAssumptionsMap

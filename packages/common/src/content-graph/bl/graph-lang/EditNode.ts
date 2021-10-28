@@ -1,7 +1,6 @@
 import { Assumptions, BaseOperators, BV } from '.'
-import { NodeType } from '../../../graphql/types.graphql.gen'
 import { SessionEnv } from '../../../types'
-import { GraphNode, GraphNodeIdentifier } from '../../types/node'
+import { GraphNode, GraphNodeIdentifier, GraphNodeType } from '../../types/node'
 import { GraphOperators } from './graphOperators'
 
 export type EditNodeOperators = {
@@ -17,7 +16,7 @@ export type EditNodeAssumptionsFactoryOps = {
 }
 export type EditNodeAssumptionsFactory = (_: EditNodeAssumptionsFactoryOps) => Promise<Assumptions>
 
-export type EditNodeAssumptionsFactoryMap = Partial<Record<NodeType, EditNodeAssumptionsFactory>>
+export type EditNodeAssumptionsFactoryMap = Partial<Record<GraphNodeType, EditNodeAssumptionsFactory>>
 
 export const getEditNodeAssumptions = async ({
   sessionEnv,
