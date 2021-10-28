@@ -1,8 +1,11 @@
-import { newAuthKey } from '../../utils/content-graph/slug-id'
-import { Organization } from '../types/node'
-
-const now = Number(new Date())
+import { GraphNodeIdentifierAuth, Organization } from '../types/node'
+export const now = 1636588800000
+export const localOrganizationAuthId: GraphNodeIdentifierAuth<'Organization'> = {
+  _type: 'Organization',
+  _authKey: 'local-organization',
+}
 export const localOrganizationData: Omit<Organization, 'domain'> = {
+  ...localOrganizationAuthId,
   _permId: 'local',
   _published: true,
   name: 'MoodleNet',
@@ -12,10 +15,9 @@ Integrated with Moodle LMS and Moodle Workplace to make resources easy to find a
 Build your profile as an educator.`,
   description: `Our global network to share and curate open educational resources.`,
   color: '#f98109',
-  _slug: '--local--',
-  _type: 'Organization',
+  _slug: 'moodle-net',
   logo: null,
-  _authKey: newAuthKey(),
   _created: now,
   _edited: now,
+  _creator: localOrganizationAuthId,
 }

@@ -63,6 +63,7 @@ export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _published: boolean
   _created: Timestamp
   _edited: Timestamp
+  _creator: null | GraphNodeIdentifierAuth
   name: string
   description: string
 }

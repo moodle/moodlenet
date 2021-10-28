@@ -126,6 +126,7 @@ export const createSession = plug(
             lastName: null,
             location: null,
             siteUrl: null,
+            _creator: authId,
           },
         })
         return mActiveUser

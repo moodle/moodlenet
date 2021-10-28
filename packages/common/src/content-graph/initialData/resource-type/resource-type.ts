@@ -1,7 +1,8 @@
 import { slugify } from '../../../utils/content-graph/slug-id'
 import { ResourceType } from '../../types/node'
+import { localOrganizationAuthId, now } from '../content'
 import resourceTypesData from './resource-type-DATA'
-const now = Number(new Date())
+
 export const getResourceTypes = () =>
   resourceTypesData.map(resourceTypeStr => {
     const slugifiedType = slugify({ str: resourceTypeStr })
@@ -17,6 +18,7 @@ export const getResourceTypes = () =>
       _created: now,
       _edited: now,
       _authKey: null,
+      _creator: localOrganizationAuthId,
     }
     return resourceType
   })

@@ -9,9 +9,9 @@ import { ContentGraphDB } from '../types'
 
 export const createNode =
   (db: ContentGraphDB): SockOf<typeof createNodeAdapter> =>
-  async ({ node, creatorNode }) => {
+  async ({ node }) => {
     type NT = typeof node._type
-    const q = createNodeQ<NT>({ node, creatorNode })
+    const q = createNodeQ<NT>({ node })
     const result = await getOneResult(q, db)
 
     return result as any
@@ -19,8 +19,8 @@ export const createNode =
 
 export const editNode =
   (db: ContentGraphDB): SockOf<typeof editNodeAdapter> =>
-  async ({ nodeData, nodeId, type, assumptions, issuer }) => {
-    const q = updateNodeQ({ nodeData, nodeId, type, assumptions, issuer })
+  async ({ nodeData, nodeId, type, assumptions }) => {
+    const q = updateNodeQ({ nodeData, nodeId, type, assumptions })
 
     const result = await getOneResult(q, db).catch(e => {
       console.log(e, q)

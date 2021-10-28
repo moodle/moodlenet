@@ -1,8 +1,9 @@
 import { getIscedGradePathByCode } from '../../../../utils/content-graph/isced-grade'
 import { contentSlug } from '../../../../utils/content-graph/slug-id'
 import { IscedGrade } from '../../../types/node'
+import { localOrganizationAuthId, now } from '../../content'
 import isced_grades from './CL_ISCED11-Grades'
-const now = Number(new Date())
+
 export const getIscedGrades = () =>
   isced_grades.map(grade => {
     const iscedGrade: IscedGrade = {
@@ -17,6 +18,7 @@ export const getIscedGrades = () =>
       _created: now,
       _edited: now,
       _authKey: null,
+      _creator: localOrganizationAuthId,
     }
     return iscedGrade
   })
