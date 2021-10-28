@@ -379,7 +379,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       bookmarked: !!myBookmarkedEdgeId,
       numLikes: resourceData.likesCount,
       toggleBookmark,
-      deleteResource,
+      deleteResource: isOwner || isAdmin ? deleteResource : undefined,
       sendToMoodleLms,
       lmsSite: currentLMSPrefs?.site,
       contentUrl: getJustAssetRefUrl(resourceData.content),
