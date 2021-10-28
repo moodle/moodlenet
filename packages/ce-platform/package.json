@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/ce-platform",
-  "version": "2.0.0-beta-patch-admin-edit.0.33.1",
+  "version": "2.0.0-beta-patch-admin-edit.0.33.2",
   "main": "dist/main.js",
   "license": "AGPL",
   "description": "MoodleNet CE Platform",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@moodlenet/backend": "^2.0.0-beta.0.30",
     "@moodlenet/common": "^2.0.0-beta.0.30",
-    "@moodlenet/webapp": "^2.0.0-beta-patch-admin-edit.0.33.1",
+    "@moodlenet/webapp": "^2.0.0-beta-patch-admin-edit.0.33.2",
     "arangojs": "^7.1.0",
     "dotenv": "^8.2.0",
     "dotenv-expand": "^5.1.0",
