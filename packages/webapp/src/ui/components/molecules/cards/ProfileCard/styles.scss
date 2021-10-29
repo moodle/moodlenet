@@ -79,15 +79,19 @@
       > .title,
       .display-name > .input-container > input {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         width: 100%;
         gap: 10px;
-        height: 20px;
         font-size: 19px;
         font-weight: bold;
 
         > .verified-icon {
-          height: 80%;
+          height: 22px;
+          display: flex;
+          align-items: center;
+          > img {
+            height: 18px;
+          }
         }
       }
 
