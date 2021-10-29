@@ -174,7 +174,11 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               ) : (
                 <div className="title">{form.values.displayName}</div>
               )}
-              {!isEditing && <img className="verified-icon" src={verifiedIcon} alt="Verified" />}
+              {!isEditing && (
+                <div className="verified-icon">
+                  <img src={verifiedIcon} alt="Verified" />
+                </div>
+              )}
             </div>
             {isOwner && isEditing ? (
               <div className="subtitle">
