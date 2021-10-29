@@ -3,6 +3,7 @@
 node_modules
 js
 *.pem
+*.gen.ts*
 yarn-error.log
 *.localnote
 /lib

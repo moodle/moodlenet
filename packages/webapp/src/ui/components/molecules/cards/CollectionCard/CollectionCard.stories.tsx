@@ -30,7 +30,7 @@ const meta: ComponentMeta<typeof CollectionCard> = {
 export const CollectionCardStoryProps: CollectionCardProps = {
   title: 'Best collection ever',
   imageUrl: 'https://picsum.photos/200/100',
-  collectionHref: href('Pages/Collection/Logged In'),
+  collectionHref: href('Pages/Collection/LoggedIn'),
   bookmarked: false,
   following: false,
   numFollowers: 32,
@@ -59,7 +59,7 @@ export const CollectionCardBookmarkedStoryProps: CollectionCardProps = {
 
 export const CollectionCardLoggedOutStoryProps: CollectionCardProps = {
   ...CollectionCardStoryProps,
-  collectionHref: href('Pages/Collection/Logged Out'),
+  collectionHref: href('Pages/Collection/LoggedOut'),
   isAuthenticated: false,
 }
 
@@ -89,8 +89,8 @@ Bookmarked.args = CollectionCardBookmarkedStoryProps
 export const LoggedOut = CollectionCardStory.bind({})
 LoggedOut.args = CollectionCardLoggedOutStoryProps
 
-export const isOwner = CollectionCardStory.bind({})
-LoggedOut.args = CollectionCardOwnerStoryProps
+export const Owner = CollectionCardStory.bind({})
+Owner.args = CollectionCardOwnerStoryProps
 
 export const Public = CollectionCardStory.bind({})
 Public.args = CollectionCardOwnerStoryProps
