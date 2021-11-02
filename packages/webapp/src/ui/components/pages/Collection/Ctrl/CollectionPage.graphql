@@ -7,8 +7,8 @@ query collectionPageData($collectionId: ID!, $myProfileId: [ID!]) {
       _published
       image
 
-      followersCount: _relCount(type: Follows, target: Profile, inverse: true)
-      myFollow: _rel(type: Follows, target: Profile, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
+      followersCount: _relCount(type: Follows, inverse: true)
+      myFollow: _rel(type: Follows, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
         edges {
           edge {
             id
@@ -16,20 +16,14 @@ query collectionPageData($collectionId: ID!, $myProfileId: [ID!]) {
         }
       }
 
-      myBookmarked: _rel(
-        type: Bookmarked
-        target: Profile
-        inverse: true
-        page: { first: 1 }
-        targetIds: $myProfileId
-      ) {
+      myBookmarked: _rel(type: Bookmarked, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
         edges {
           edge {
             id
           }
         }
       }
-      resources: _rel(type: Features, target: Resource) {
+      resources: _rel(type: Features, targetTypes: [Resource]) {
         edges {
           edge {
             id
@@ -44,7 +38,7 @@ query collectionPageData($collectionId: ID!, $myProfileId: [ID!]) {
         }
       }
 
-      creator: _rel(type: Created, target: Profile, inverse: true, page: { first: 1 }) {
+      creator: _rel(type: Created, inverse: true, page: { first: 1 }) {
         edges {
           edge {
             _created

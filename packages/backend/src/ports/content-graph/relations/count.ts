@@ -1,6 +1,7 @@
 import { GraphEdge, GraphEdgeType } from '@moodlenet/common/dist/content-graph/types/edge'
 import { GraphNode, GraphNodeIdentifier, GraphNodeType } from '@moodlenet/common/dist/content-graph/types/node'
 import { SessionEnv } from '@moodlenet/common/dist/types'
+import { Maybe } from '@moodlenet/common/dist/utils/types'
 import { arangoGraphOperators } from '../../../adapters/content-graph/arangodb/adapters/bl/graphOperators'
 import { ns } from '../../../lib/ns/namespace'
 import { plug, value } from '../../../lib/plug'
@@ -19,7 +20,7 @@ export const adapter = plug<(_: AdapterArg) => Promise<number>>(ns(module, 'adap
 export type AdapterArg = {
   fromNode: BV<GraphNode>
   edgeType: GraphEdgeType
-  targetNodeType: GraphNodeType
+  targetNodeTypes: Maybe<GraphNodeType[]>
   inverse: boolean
   assertions: Assertions
 }
@@ -27,7 +28,7 @@ export type AdapterArg = {
 export type Input = {
   fromNode: GraphNodeIdentifier
   edgeType: GraphEdgeType
-  targetNodeType: GraphNodeType
+  targetNodeTypes: Maybe<GraphNodeType[]>
   inverse: boolean
   sessionEnv: SessionEnv
 }

@@ -32,7 +32,12 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
   // const { org: localOrg } = useLocalInstance()
   const { session, isAdmin, isAuthenticated } = useSession()
 
-  const { data, refetch } = useCollectionPageDataQuery({ variables: { collectionId: id } })
+  const { data, refetch } = useCollectionPageDataQuery({
+    variables: {
+      collectionId: id,
+      myProfileId: session ? [session.profile.id] : [],
+    },
+  })
   const collectionData = narrowNodeType(['Collection'])(data?.node)
   const [addRelation, addRelationRes] = useAddCollectionRelationMutation()
   const [delRelation, delRelationRes] = useDelCollectionRelationMutation()

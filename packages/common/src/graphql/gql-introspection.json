@@ -283,15 +283,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -376,15 +380,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -2601,15 +2609,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -2694,15 +2706,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -3164,15 +3180,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -3257,15 +3277,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -3512,15 +3536,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -3605,15 +3633,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -3815,15 +3847,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -3908,15 +3944,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -4134,15 +4174,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -4227,15 +4271,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -4401,15 +4449,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -4494,15 +4546,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -5360,15 +5416,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -5453,15 +5513,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -5921,15 +5985,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -6014,15 +6082,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -6479,15 +6551,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -6572,15 +6648,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -6769,15 +6849,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -6862,15 +6946,19 @@
                 "deprecationReason": null
               },
               {
-                "name": "target",
+                "name": "targetTypes",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
+                  "kind": "LIST",
                   "name": null,
                   "ofType": {
-                    "kind": "ENUM",
-                    "name": "NodeType",
-                    "ofType": null
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "NodeType",
+                      "ofType": null
+                    }
                   }
                 },
                 "defaultValue": null,

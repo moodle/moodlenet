@@ -34,7 +34,7 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
         ( ${nodeRelationCountQ({
           edgeType: 'Follows',
           inverse: true,
-          targetNodeType: 'Profile',
+          targetNodeTypes: ['Profile', 'Organization'],
           parentNode: _aqlBv('searchNode._id'),
           assertions: {},
         })} )
@@ -42,7 +42,7 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
         ( ${nodeRelationCountQ({
           edgeType: 'Likes',
           inverse: true,
-          targetNodeType: 'Profile',
+          targetNodeTypes: ['Profile', 'Organization'],
           parentNode: _aqlBv('searchNode._id'),
           assertions: {},
         })} )

@@ -1,5 +1,4 @@
 import { narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
-import { nodeSlugId } from '@moodlenet/common/dist/utils/content-graph/id-key-type-guards'
 import { FC, useMemo } from 'react'
 import { getMaybeAssetRefUrl } from '../../helpers/data'
 import { createCtx } from '../../lib/context'
@@ -25,7 +24,6 @@ export const LocalInstanceProvider: FC = ({ children }) => {
   const localInstanceData = narrowNodeType(['Organization'])(
     useLocalInstanceQuery({
       fetchPolicy: 'cache-first',
-      variables: { id: nodeSlugId('Organization', '') },
     }).data?.node,
   )
   const ctx = useMemo<LocalInstanceContextType | null>(() => {

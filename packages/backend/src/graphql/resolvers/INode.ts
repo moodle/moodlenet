@@ -8,21 +8,16 @@ import { RequireFields, Resolver, ResolversTypes } from '../types.graphql.gen'
 import { graphEdge2GqlEdge, graphNode2GqlNode } from './helpers'
 
 export const getINodeResolver = (): {
-  _rel: Resolver<
-    ResolversTypes['RelPage'],
-    GQLTypes.INode,
-    Context,
-    RequireFields<GQLTypes.Profile_RelArgs, 'type' | 'target'>
-  >
+  _rel: Resolver<ResolversTypes['RelPage'], GQLTypes.INode, Context, RequireFields<GQLTypes.Profile_RelArgs, 'type'>>
   _relCount: Resolver<
     ResolversTypes['Int'],
     GQLTypes.INode,
     Context,
-    RequireFields<GQLTypes.Profile_RelCountArgs, 'type' | 'target'>
+    RequireFields<GQLTypes.Profile_RelCountArgs, 'type'>
   >
 } => {
   return {
-    async _rel(node, { target, type, inverse, page, targetIds }, ctx) {
+    async _rel(node, { targetTypes, type, inverse, page, targetIds }, ctx) {
       const parsed = gqlNodeId2GraphNodeIdentifier(node.id)
 
       if (!parsed) {
@@ -41,7 +36,7 @@ export const getINodeResolver = (): {
           first: page?.first ?? 20,
           last: page?.last ?? 20,
         },
-        targetNodeType: target,
+        targetNodeTypes: targetTypes,
         targetIds: targetIds?.map(id => gqlNodeId2GraphNodeIdentifier(id)).filter(isJust),
       })
 
@@ -65,7 +60,7 @@ export const getINodeResolver = (): {
         }),
       }
     },
-    async _relCount(node, { target, type, inverse }, ctx) {
+    async _relCount(node, { targetTypes, type, inverse }, ctx) {
       const parsed = gqlNodeId2GraphNodeIdentifier(node.id)
       if (!parsed) {
         throw new Error(`FIXME _rel`)
@@ -77,7 +72,7 @@ export const getINodeResolver = (): {
         fromNode: { _slug: fromSlug, _type: fromType },
         sessionEnv: ctx.sessionEnv,
         inverse: !!inverse,
-        targetNodeType: target,
+        targetNodeTypes: targetTypes,
       })
     },
   }

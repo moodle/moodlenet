@@ -8,13 +8,7 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
       content
       originalCreationDate
       _published
-      myBookmarked: _rel(
-        type: Bookmarked
-        target: Profile
-        inverse: true
-        page: { first: 1 }
-        targetIds: $myProfileId
-      ) {
+      myBookmarked: _rel(type: Bookmarked, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
         edges {
           edge {
             id
@@ -22,8 +16,8 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
         }
       }
 
-      likesCount: _relCount(type: Likes, target: Profile, inverse: true)
-      myLike: _rel(type: Likes, target: Profile, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
+      likesCount: _relCount(type: Likes, inverse: true)
+      myLike: _rel(type: Likes, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
         edges {
           edge {
             id
@@ -31,7 +25,7 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
         }
       }
 
-      inMyCollections: _rel(type: Features, target: Collection, inverse: true, targetIds: $myCollectionsIds) {
+      inMyCollections: _rel(type: Features, targetTypes: [Collection], inverse: true, targetIds: $myCollectionsIds) {
         edges {
           edge {
             id
@@ -46,7 +40,7 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
         }
       }
 
-      creator: _rel(type: Created, target: Profile, inverse: true, page: { first: 1 }) {
+      creator: _rel(type: Created, inverse: true, page: { first: 1 }) {
         edges {
           edge {
             _created
@@ -64,7 +58,7 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
         }
       }
 
-      categories: _rel(type: Features, target: IscedField, page: { first: 1 }) {
+      categories: _rel(type: Features, targetTypes: [IscedField], page: { first: 1 }) {
         edges {
           edge {
             id
@@ -79,7 +73,7 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
         }
       }
 
-      grades: _rel(type: Features, target: IscedGrade) {
+      grades: _rel(type: Features, targetTypes: [IscedGrade]) {
         edges {
           edge {
             id
@@ -94,7 +88,7 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
         }
       }
 
-      types: _rel(type: Features, target: ResourceType) {
+      types: _rel(type: Features, targetTypes: [ResourceType]) {
         edges {
           edge {
             id
@@ -109,7 +103,7 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
         }
       }
 
-      languages: _rel(type: Features, target: Language) {
+      languages: _rel(type: Features, targetTypes: [Language]) {
         edges {
           edge {
             id
@@ -123,7 +117,7 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
         }
       }
 
-      licenses: _rel(type: Features, target: License) {
+      licenses: _rel(type: Features, targetTypes: [License]) {
         edges {
           edge {
             id

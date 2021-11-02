@@ -10,8 +10,8 @@ type Language implements INode {
   description: String!
   _local: Boolean!
   _published: Boolean!
-  _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
-  _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!
+  _rel(type: EdgeType!, targetTypes: [NodeType!], inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
+  _relCount(type: EdgeType!, targetTypes: [NodeType!], inverse: Boolean): Int!
 }
 
 # integrations

@@ -2,7 +2,7 @@ query bookmarksPage($profileId: ID!) {
   node(id: $profileId) {
     ... on INode {
       id
-      collections: _rel(type: Bookmarked, target: Collection, page: { first: 100 }) {
+      collections: _rel(type: Bookmarked, targetTypes: [Collection], page: { first: 100 }) {
         edges {
           edge {
             id
@@ -14,7 +14,7 @@ query bookmarksPage($profileId: ID!) {
           }
         }
       }
-      resources: _rel(type: Bookmarked, target: Resource, page: { first: 100 }) {
+      resources: _rel(type: Bookmarked, targetTypes: [Resource], page: { first: 100 }) {
         edges {
           edge {
             id

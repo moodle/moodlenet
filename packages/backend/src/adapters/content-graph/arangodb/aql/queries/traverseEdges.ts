@@ -19,7 +19,7 @@ import {
 export const traverseEdgesQ = ({
   edgeType,
   page,
-  targetNodeType,
+  targetNodeTypes,
   inverse,
   fromNode,
   targetIds,
@@ -32,7 +32,7 @@ export const traverseEdgesQ = ({
     edgeType,
     fromNode,
     inverse,
-    targetNodeType,
+    targetNodeTypes,
     targetIds,
     assertions,
   })
@@ -50,12 +50,12 @@ export const traversePaginateMapQuery =
     edgeType,
     fromNode,
     assertions,
-    targetNodeType,
+    targetNodeTypes,
     inverse,
     targetIds,
   }: {
     edgeType: GraphEdgeType
-    targetNodeType: GraphNodeType
+    targetNodeTypes: Maybe<GraphNodeType[]>
     inverse: boolean
     fromNode: BV<GraphNode>
     assertions: Assertions
@@ -69,6 +69,9 @@ export const traversePaginateMapQuery =
 
     const targetSide = inverse ? 'from' : 'to'
     const parentSide = inverse ? 'to' : 'from'
+    const targetNodeTypesFilter = targetNodeTypes
+      ? `&& traverseEdge._${targetSide}Type IN ${aqlstr(targetNodeTypes)}`
+      : ``
 
     //const aqlTargetIds = targetIds ? `[ ${targetIds.map(_ => `${_}._id`).join(',')} ]` : `null`
     const aqlTargetIds = targetIds
@@ -80,9 +83,9 @@ export const traversePaginateMapQuery =
       let targetIds = ${aqlTargetIds}
 
       FOR traverseEdge IN ${edgeType}
-        FILTER traverseEdge._${targetSide}Type == ${aqlstr(targetNodeType)}
-          && traverseEdge._${parentSide} == ${graphNode2AqlId('traverseParentNode')}
-          && ( targetIds ? traverseEdge._${targetSide} IN targetIds : true )
+        FILTER  traverseEdge._${parentSide} == ${graphNode2AqlId('traverseParentNode')}
+                ${targetNodeTypesFilter}
+                && ( targetIds ? traverseEdge._${targetSide} IN targetIds : true )
           
           LET traverseNode = Document(traverseEdge._${targetSide})
           FILTER !!traverseNode && ${aqlAssertions}
