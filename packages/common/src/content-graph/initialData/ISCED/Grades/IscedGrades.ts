@@ -11,7 +11,7 @@ export const getIscedGrades = () =>
       _type: 'IscedGrade',
       _permId: grade.code,
       _slug: contentSlug({ name: grade.desc, slugCode: grade.code }),
-      _published: true,
+      _published: /^ED\d{1}$/.test(grade.code),
       name: grade.desc,
       codePath: grade.code === 'ADT' ? [grade.code] : getIscedGradePathByCode(grade.code),
       code: grade.code,
@@ -24,5 +24,3 @@ export const getIscedGrades = () =>
     }
     return iscedGrade
   })
-
-// console.log(iscedfields)

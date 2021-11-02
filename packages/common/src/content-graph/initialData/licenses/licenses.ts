@@ -10,7 +10,7 @@ export const getLicenses = () =>
       _type: 'License',
       _permId: licenseData.code,
       _slug: contentSlug({ name: licenseData.desc, slugCode: licenseData.code }),
-      _published: true,
+      _published: licenseData.pub,
       name: licenseData.desc,
       code: licenseData.code,
       description: licenseData.desc,
