@@ -7,11 +7,11 @@ import { ContentGraphDB } from '../../types'
 
 export const arangoCountNodeRelationsAdapter =
   (db: ContentGraphDB): SockOf<typeof adapter> =>
-  async ({ edgeType, fromNode, inverse, targetNodeType, assertions }) => {
+  async ({ edgeType, fromNode, inverse, targetNodeTypes, assertions }) => {
     const q = nodeRelationCountQ({
       edgeType,
       inverse,
-      targetNodeType,
+      targetNodeTypes,
       parentNode: fromNode,
       assertions,
     })

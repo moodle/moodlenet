@@ -20,7 +20,7 @@ export type BRules = (_: Input & { arg: Omit<AdapterArg, 'assertions'> }) => Pro
 export type AdapterArg = {
   fromNode: BV<GraphNode>
   edgeType: GraphEdgeType
-  targetNodeType: GraphNodeType
+  targetNodeTypes: Maybe<GraphNodeType[]>
   targetIds: Maybe<BV<GraphNode>[]>
   inverse: boolean
   page: PaginationInput
@@ -31,7 +31,7 @@ export const adapter = plug<(_: AdapterArg) => Promise<NodeTraversalPage>>(ns(mo
 export type Input = {
   fromNode: GraphNodeIdentifier
   edgeType: GraphEdgeType
-  targetNodeType: GraphNodeType
+  targetNodeTypes: Maybe<GraphNodeType[]>
   targetIds: Maybe<GraphNodeIdentifier[]>
   inverse: boolean
   page: PaginationInput
@@ -40,14 +40,14 @@ export type Input = {
 
 export const port = plug(ns(module, 'port'), async (input: Input) => {
   const { graphNode } = await graphOperators()
-  const { edgeType, fromNode, inverse, page, targetIds, targetNodeType } = input
+  const { edgeType, fromNode, inverse, page, targetIds, targetNodeTypes } = input
   const adapterArg = await bRules({
     ...input,
     arg: {
       edgeType,
       inverse,
       page,
-      targetNodeType,
+      targetNodeTypes,
       fromNode: graphNode(fromNode),
       targetIds: targetIds?.map(graphNode),
     },

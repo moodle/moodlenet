@@ -1,4 +1,4 @@
-query localInstance($id: ID!) {
+query localInstance($id: ID = "Organization/") {
   node(id: $id) {
     ... on Organization {
       id

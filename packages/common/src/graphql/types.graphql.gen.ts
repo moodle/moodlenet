@@ -55,7 +55,7 @@ export type Collection = INode & {
 
 export type Collection_RelArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
   targetIds?: Maybe<Array<Scalars['ID']>>;
@@ -64,7 +64,7 @@ export type Collection_RelArgs = {
 
 export type Collection_RelCountArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
@@ -330,7 +330,7 @@ export type FileFormat = INode & {
 
 export type FileFormat_RelArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
   targetIds?: Maybe<Array<Scalars['ID']>>;
@@ -339,7 +339,7 @@ export type FileFormat_RelArgs = {
 
 export type FileFormat_RelCountArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
@@ -399,7 +399,7 @@ export type INode = {
 
 export type INode_RelArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
   targetIds?: Maybe<Array<Scalars['ID']>>;
@@ -408,7 +408,7 @@ export type INode_RelArgs = {
 
 export type INode_RelCountArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
@@ -429,7 +429,7 @@ export type IscedField = INode & {
 
 export type IscedField_RelArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
   targetIds?: Maybe<Array<Scalars['ID']>>;
@@ -438,7 +438,7 @@ export type IscedField_RelArgs = {
 
 export type IscedField_RelCountArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
@@ -459,7 +459,7 @@ export type IscedGrade = INode & {
 
 export type IscedGrade_RelArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
   targetIds?: Maybe<Array<Scalars['ID']>>;
@@ -468,7 +468,7 @@ export type IscedGrade_RelArgs = {
 
 export type IscedGrade_RelCountArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
@@ -491,7 +491,7 @@ export type Language = INode & {
 
 export type Language_RelArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
   targetIds?: Maybe<Array<Scalars['ID']>>;
@@ -500,7 +500,7 @@ export type Language_RelArgs = {
 
 export type Language_RelCountArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
@@ -519,7 +519,7 @@ export type License = INode & {
 
 export type License_RelArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
   targetIds?: Maybe<Array<Scalars['ID']>>;
@@ -528,7 +528,7 @@ export type License_RelArgs = {
 
 export type License_RelCountArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
@@ -643,7 +643,7 @@ export type Organization = INode & {
 
 export type Organization_RelArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
   targetIds?: Maybe<Array<Scalars['ID']>>;
@@ -652,7 +652,7 @@ export type Organization_RelArgs = {
 
 export type Organization_RelCountArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
@@ -701,7 +701,7 @@ export type Profile = INode & {
 
 export type Profile_RelArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
   targetIds?: Maybe<Array<Scalars['ID']>>;
@@ -710,7 +710,7 @@ export type Profile_RelArgs = {
 
 export type Profile_RelCountArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
@@ -765,7 +765,7 @@ export type Resource = INode & {
 
 export type Resource_RelArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
   targetIds?: Maybe<Array<Scalars['ID']>>;
@@ -774,7 +774,7 @@ export type Resource_RelArgs = {
 
 export type Resource_RelCountArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
@@ -797,7 +797,7 @@ export type ResourceType = INode & {
 
 export type ResourceType_RelArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
   page?: Maybe<PaginationInput>;
   targetIds?: Maybe<Array<Scalars['ID']>>;
@@ -806,7 +806,7 @@ export type ResourceType_RelArgs = {
 
 export type ResourceType_RelCountArgs = {
   type: EdgeType;
-  target: NodeType;
+  targetTypes?: Maybe<Array<NodeType>>;
   inverse?: Maybe<Scalars['Boolean']>;
 };
 
