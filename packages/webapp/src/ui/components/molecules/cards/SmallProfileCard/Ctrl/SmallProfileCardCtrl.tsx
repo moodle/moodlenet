@@ -1,6 +1,6 @@
-import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
-import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { useCallback, useMemo } from 'react'
 import { useLocalInstance } from '../../../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../../../context/Global/Session'
@@ -8,9 +8,9 @@ import { getMaybeAssetRefUrl } from '../../../../../../helpers/data'
 import { href } from '../../../../../elements/link'
 import { CtrlHook } from '../../../../../lib/ctrl'
 import {
-    useAddProfileRelationMutation,
-    useDelProfileRelationMutation,
-    useProfilePageUserDataQuery
+  useAddProfileRelationMutation,
+  useDelProfileRelationMutation,
+  useProfilePageUserDataQuery,
 } from '../../../../pages/Profile/Ctrl/ProfileCtrl.gen'
 import { SmallProfileCardProps } from '../SmallProfileCard'
 

@@ -1,4 +1,4 @@
-import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { FC, useEffect, useMemo, useReducer } from 'react'
 import { Helmet } from 'react-helmet'
 import { useHistory } from 'react-router'

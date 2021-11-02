@@ -1,4 +1,4 @@
-import { Maybe } from '@moodlenet/common/lib/utils/types'
+import { Maybe } from '@moodlenet/common/dist/utils/types'
 import { useFormik } from 'formik'
 import { useCallback, useMemo } from 'react'
 import { PageInfo } from '../graphql/pub.graphql.link'

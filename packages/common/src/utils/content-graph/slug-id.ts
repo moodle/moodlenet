@@ -15,7 +15,7 @@ const idAlphabet = `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwx
 const slugAlphabet = `0123456789abcdefghijklmnopqrstuvwxyz`
 export const newGlyphSlugId = customAlphabet(slugAlphabet, 12)
 export const newGlyphPermId = customAlphabet(idAlphabet, 25)
-export const newAuthId = customAlphabet(idAlphabet, 25)
+export const newAuthKey = customAlphabet(idAlphabet, 25)
 
 export const newGlyphIdentifiers = ({
   name,

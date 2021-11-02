@@ -1,5 +1,5 @@
-import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
-import { Maybe } from '@moodlenet/common/lib/utils/types'
+import { isEdgeNodeOfType } from '@moodlenet/common/dist/graphql/helpers'
+import { Maybe } from '@moodlenet/common/dist/utils/types'
 import React, { useMemo } from 'react'
 import { useGlobalSearchQuery } from '../context/Global/GlobalSearch/globalSearch.gen'
 import { DropdownOptionsType } from '../ui/components/atoms/Dropdown/Dropdown'
@@ -12,9 +12,8 @@ import {
   LicenseTypes,
   MonthDropdown,
   TypeDropdown,
-  YearsDropdown
+  YearsDropdown,
 } from '../ui/components/pages/NewResource/FieldsData'
-
 
 export const useLanguages = () => {
   const langs = useGlobalSearchQuery({

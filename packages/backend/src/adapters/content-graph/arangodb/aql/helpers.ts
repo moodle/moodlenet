@@ -1,11 +1,11 @@
-import { Assumptions, BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
-import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
-import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
+import { GraphNode } from '@moodlenet/common/dist/content-graph/types/node'
+import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/dist/content-graph/types/page'
 import { CollectionType } from 'arangojs'
 import { AQ, aqlstr, getAllResults } from '../../../../lib/helpers/arango/query'
-import { _ } from '../adapters/bl/_'
+import { Assertions, BV } from '../../../../ports/content-graph/graph-lang/base'
+import { _aqlBv } from '../adapters/bl/bv'
 import { ContentGraphDB } from '../types'
-import { deleteBrokenEdgesQ } from './writes/deleteEdge'
+import { deleteBrokenEdgesQ } from './writes/deleteBrokenEdgesQ'
 
 export const cursorPaginatedQuery = <T>({
   page,
@@ -148,12 +148,11 @@ export const aqlGraphEdge2GraphEdge = (edgeVar: string) => `${edgeVar} && MERGE(
   { id: ${edgeVar}._key }
 )`
 
-export const graphNode2AqlIdentifier = (nodeVar: string | BV<GraphNode | null>) =>
+export const graphNode2AqlIdentifier = (nodeVar: string | BV<GraphNode>) =>
   `{_id:${graphNode2AqlId(nodeVar)}, _key:${graphNode2AqlKey(nodeVar)}}`
-export const graphNode2AqlId = (nodeVar: string | BV<GraphNode | null>) =>
-  `CONCAT(${nodeVar}._type,'/',${nodeVar}._permId)`
-export const graphNode2AqlKey = (nodeVar: string | BV<GraphNode | null>) => `${nodeVar}._permId`
-export const graphNode2AqlGraphNode = (nodeVar: string | BV<GraphNode | null>) => `${nodeVar} && MERGE(
+export const graphNode2AqlId = (nodeVar: string | BV<GraphNode>) => `CONCAT(${nodeVar}._type,'/',${nodeVar}._permId)`
+export const graphNode2AqlKey = (nodeVar: string | BV<GraphNode>) => `${nodeVar}._permId`
+export const graphNode2AqlGraphNode = (nodeVar: string | BV<GraphNode>) => `${nodeVar} && MERGE(
   UNSET(MERGE({},${nodeVar}), '_permId', '_type' ),
   {
     _key: ${nodeVar}._permId,
@@ -190,9 +189,10 @@ export const cleanupBrokenEdges = async (db: ContentGraphDB) => {
   )
 }
 
-export const getAqlAssumptions = (assumptions: Assumptions) =>
-  _<boolean>(
-    Object.entries(assumptions)
-      .map(([, assumption]) => assumption)
+export const getAqlAssertions = (assertions: Assertions) =>
+  _aqlBv<boolean>(
+    Object.entries(assertions)
+      .map(([, assertion]) => assertion)
+      .filter((assertion): assertion is BV<boolean> => !!assertion)
       .join(' && ') || 'true',
   )

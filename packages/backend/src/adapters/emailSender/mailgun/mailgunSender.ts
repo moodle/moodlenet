@@ -1,9 +1,8 @@
 import createMailgun from 'mailgun-js'
 import { SockOf } from '../../../lib/plug'
-import { sendEmailAdapter } from '../../../ports/user-auth/adapters'
-// import { EmailSender } from '../types'
+import { adapter } from '../../../ports/system/sendEmail'
 
-export const getMailgunSendEmailAdapter = (cfg: createMailgun.ConstructorParams): SockOf<typeof sendEmailAdapter> => {
+export const getMailgunSendEmailAdapter = (cfg: createMailgun.ConstructorParams): SockOf<typeof adapter> => {
   const mailgun = createMailgun(cfg)
 
   return req =>

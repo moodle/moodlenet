@@ -46,6 +46,7 @@ export type Collection = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -80,7 +81,6 @@ export type CreateEdgeInput = {
   Features?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
   Likes?: Maybe<Scalars['Empty']>;
-  Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   from: Scalars['ID'];
   to: Scalars['ID'];
@@ -207,15 +207,14 @@ export type DeleteNodeMutationSuccess = {
   nodeId?: Maybe<Scalars['ID']>;
 };
 
-export type Edge = Bookmarked | Created | Features | Follows | Likes | Pinned;
+export type Edge = Bookmarked | Created | Features | Follows | Likes;
 
 export type EdgeType =
   | 'Bookmarked'
   | 'Created'
   | 'Features'
   | 'Follows'
-  | 'Likes'
-  | 'Pinned';
+  | 'Likes';
 
 export type EditCollectionInput = {
   name: Scalars['String'];
@@ -230,7 +229,6 @@ export type EditEdgeInput = {
   Features?: Maybe<Scalars['Empty']>;
   Follows?: Maybe<Scalars['Empty']>;
   Likes?: Maybe<Scalars['Empty']>;
-  Pinned?: Maybe<Scalars['Empty']>;
   edgeType: EdgeType;
   id: Scalars['ID'];
 };
@@ -323,6 +321,7 @@ export type FileFormat = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -392,6 +391,7 @@ export type INode = {
   name: Scalars['String'];
   description: Scalars['String'];
   _published: Scalars['Boolean'];
+  _local: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -420,6 +420,7 @@ export type IscedField = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -449,6 +450,7 @@ export type IscedGrade = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -480,6 +482,7 @@ export type Language = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -507,6 +510,7 @@ export type License = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -622,6 +626,7 @@ export type NodeType =
 export type Organization = INode & {
   __typename: 'Organization';
   intro: Scalars['String'];
+  introTitle: Scalars['String'];
   logo?: Maybe<Scalars['AssetRef']>;
   image?: Maybe<Scalars['AssetRef']>;
   color: Scalars['String'];
@@ -629,6 +634,7 @@ export type Organization = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -674,15 +680,8 @@ export type PaginationInput = {
   last?: Maybe<Scalars['Int']>;
 };
 
-export type Pinned = IEdge & {
-  __typename: 'Pinned';
-  id: Scalars['ID'];
-  _created: Scalars['Timestamp'];
-};
-
 export type Profile = INode & {
   __typename: 'Profile';
-  _isAdmin: Scalars['Boolean'];
   avatar?: Maybe<Scalars['AssetRef']>;
   bio?: Maybe<Scalars['String']>;
   image?: Maybe<Scalars['AssetRef']>;
@@ -693,6 +692,7 @@ export type Profile = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -743,7 +743,7 @@ export type RelPage = Page & {
 export type RelPageEdge = PageEdge & {
   __typename: 'RelPageEdge';
   cursor: Scalars['Cursor'];
-  edge: Bookmarked | Created | Features | Follows | Likes | Pinned;
+  edge: Bookmarked | Created | Features | Follows | Likes;
   node: Collection | FileFormat | IscedField | IscedGrade | Language | License | Organization | Profile | Resource | ResourceType;
 };
 
@@ -756,6 +756,7 @@ export type Resource = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -787,6 +788,7 @@ export type ResourceType = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -830,7 +832,7 @@ export type SimpleResponse = {
 export type UserSession = {
   __typename: 'UserSession';
   email: Scalars['String'];
-  profile: Profile;
+  profile: Collection | FileFormat | IscedField | IscedGrade | Language | License | Organization | Profile | Resource | ResourceType;
 };
 
 
@@ -862,8 +864,7 @@ export type UserSession = {
       "Created",
       "Features",
       "Follows",
-      "Likes",
-      "Pinned"
+      "Likes"
     ],
     "EditEdgeMutationPayload": [
       "EditEdgeMutationSuccess",
@@ -878,8 +879,7 @@ export type UserSession = {
       "Created",
       "Features",
       "Follows",
-      "Likes",
-      "Pinned"
+      "Likes"
     ],
     "INode": [
       "Collection",

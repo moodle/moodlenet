@@ -1,14 +1,14 @@
 const HTTP_PORT = Number(process.env.HTTP_PORT) || 8080
-const PUBLIC_URL = process.env.PUBLIC_URL
+const PUBLIC_URL_PROTOCOL = process.env.PUBLIC_URL_PROTOCOL
 
-if (!(PUBLIC_URL && HTTP_PORT)) {
+if (!(PUBLIC_URL_PROTOCOL && HTTP_PORT)) {
   console.error('HTTP Env:')
-  console.log({ PUBLIC_URL, HTTP_PORT })
+  console.log({ PUBLIC_URL_PROTOCOL, HTTP_PORT })
   throw new Error(`some env missing or invalid`)
 }
 
 const httpenv = {
-  publicUrl: PUBLIC_URL,
+  publicUrlProtocol: PUBLIC_URL_PROTOCOL,
   port: HTTP_PORT,
 }
 

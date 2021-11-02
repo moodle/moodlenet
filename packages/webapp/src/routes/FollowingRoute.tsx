@@ -1,4 +1,4 @@
-import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { Routes } from '@moodlenet/common/dist/webapp/sitemap'
 import { useFollowingCtrl } from '../ui/components/pages/Following/Ctrl/FollowingCtrl'
 import { Following } from '../ui/components/pages/Following/Following'
 import { ctrlHook } from '../ui/lib/ctrl'
