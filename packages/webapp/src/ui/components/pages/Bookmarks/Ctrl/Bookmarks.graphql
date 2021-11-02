@@ -1,6 +1,6 @@
 query bookmarksPage($profileId: ID!) {
   node(id: $profileId) {
-    ... on Profile {
+    ... on INode {
       id
       collections: _rel(type: Bookmarked, target: Collection, page: { first: 100 }) {
         edges {

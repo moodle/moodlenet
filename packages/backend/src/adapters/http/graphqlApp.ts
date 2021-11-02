@@ -1,5 +1,5 @@
 import { makeExecutableSchema } from '@graphql-tools/schema'
-import introspection from '@moodlenet/common/lib/graphql/introspection'
+import introspection from '@moodlenet/common/dist/graphql/introspection'
 import { Application, Request } from 'express'
 import { graphqlHTTP } from 'express-graphql'
 import { buildClientSchema, graphql, print, printSchema } from 'graphql'

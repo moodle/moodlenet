@@ -1,14 +1,14 @@
-import { Collection, Resource } from '@moodlenet/common/lib/content-graph/types/node'
-import { CreateNodeInput, CreateNodeMutationError, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { Just } from '@moodlenet/common/lib/utils/types'
-import { NewNodeData } from '../../../../ports/content-graph/node'
+import { Collection, Resource } from '@moodlenet/common/dist/content-graph/types/node'
+import { CreateNodeInput, CreateNodeMutationError, NodeType } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { Just } from '@moodlenet/common/dist/utils/types'
+import { Data } from '../../../../ports/content-graph/node/add'
 import { createNodeMutationError, getAssetRefInputAndType, mapAssetRefInputsToAssetRefs } from '../../helpers'
 
 const noTmpFilesCreateNodeMutationError = () =>
   createNodeMutationError('UnexpectedInput', `couldn't find requested tempFiles`)
 
 const nodeDocumentDataBaker: {
-  [T in NodeType]: (input: Just<CreateNodeInput[T]>) => Promise<NewNodeData | CreateNodeMutationError>
+  [T in NodeType]: (input: Just<CreateNodeInput[T]>) => Promise<Data | CreateNodeMutationError>
 } = {
   async IscedField(/* input */) {
     throw new Error('GQL create IscedField not implemented')
@@ -47,8 +47,9 @@ const nodeDocumentDataBaker: {
     if (!resourceAssetRef) {
       return noTmpFilesCreateNodeMutationError()
     }
-    const newResourceInput: NewNodeData<Resource> = {
+    const newResourceInput: Data<Resource> = {
       _type: 'Resource',
+      _authKey: null,
       content: resourceAssetRef,
       image: imageAssetRef,
       kind: resourceAssetRef.ext ? 'Link' : 'Upload',
@@ -56,6 +57,7 @@ const nodeDocumentDataBaker: {
       name: input.name,
       originalCreationDate: input.originalCreationDate,
       _published: input._published,
+      _local: true,
     }
 
     return newResourceInput
@@ -67,12 +69,14 @@ const nodeDocumentDataBaker: {
       return noTmpFilesCreateNodeMutationError()
     }
     const [imageAssetRef] = contentNodeAssetRefs
-    const newCollectionInput: NewNodeData<Collection> = {
+    const newCollectionInput: Data<Collection> = {
       _type: 'Collection',
+      _authKey: null,
       image: imageAssetRef,
       description: input.description,
       name: input.name,
       _published: input._published,
+      _local: true,
     }
 
     return newCollectionInput
@@ -82,7 +86,7 @@ const nodeDocumentDataBaker: {
 export const bakeCreateNodeDoumentData = async <T extends NodeType>(
   input: Just<CreateNodeInput[T]>,
   nodeType: T,
-): Promise<NewNodeData | CreateNodeMutationError> => {
+): Promise<Data | CreateNodeMutationError> => {
   const baker = (nodeDocumentDataBaker as any)[nodeType]
   return baker(input)
 }

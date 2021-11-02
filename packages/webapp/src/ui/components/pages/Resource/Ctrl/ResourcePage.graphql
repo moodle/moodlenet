@@ -31,14 +31,6 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
         }
       }
 
-      myLike: _rel(type: Likes, target: Profile, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
-        edges {
-          edge {
-            id
-          }
-        }
-      }
-
       inMyCollections: _rel(type: Features, target: Collection, inverse: true, targetIds: $myCollectionsIds) {
         edges {
           edge {
@@ -60,10 +52,13 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
             _created
           }
           node {
+            id
+            name
             ... on Profile {
-              id
-              name
               avatar
+            }
+            ... on Organization {
+              logo
             }
           }
         }

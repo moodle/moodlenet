@@ -64,7 +64,7 @@ export const NewCollectionStoryProps: NewCollectionProps = {
   headerPageTemplateProps: {
     headerPageProps: {
       ...HeaderPageLoggedInStoryProps,
-      showSubHeader: false,
+      // showSubHeader: false,
     },
     isAuthenticated: true,
     showSubHeader: false,

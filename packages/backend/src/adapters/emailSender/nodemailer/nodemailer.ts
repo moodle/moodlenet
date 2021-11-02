@@ -1,10 +1,10 @@
 import { createTransport } from 'nodemailer'
 import { SockOf } from '../../../lib/plug'
-import { sendEmailAdapter } from '../../../ports/user-auth/adapters'
+import { adapter } from '../../../ports/system/sendEmail'
 // import { EmailSender } from '../types'
 
 type Config = { smtp: string }
-export const getNodemailerSendEmailAdapter = ({ smtp }: Config): SockOf<typeof sendEmailAdapter> => {
+export const getNodemailerSendEmailAdapter = ({ smtp }: Config): SockOf<typeof adapter> => {
   const emailSender = createTransport(smtp)
 
   return emailObj =>

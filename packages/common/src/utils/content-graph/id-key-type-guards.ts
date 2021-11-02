@@ -43,3 +43,8 @@ export const gqlEdgeId2GraphEdgeIdentifier = (_id: string): GraphEdgeIdentifier 
   }
   return { _type, id }
 }
+
+export const isGqlIdLocalOrganization = (id: string) => {
+  const slugId = gqlNodeId2GraphNodeIdentifier(id)
+  return slugId?._type === 'Organization' //FIXME: for Federation
+}
