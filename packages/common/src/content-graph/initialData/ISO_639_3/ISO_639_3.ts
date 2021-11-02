@@ -1,6 +1,7 @@
 import { contentSlug } from '../../../utils/content-graph/slug-id'
+import { time0 } from '../../types/common'
 import { Language } from '../../types/node'
-import { localOrganizationAuthId, now } from '../content'
+import { __initialLocalOrgAuthId } from '../content'
 import iso_data_arr from './ISO_639_3_tab-DATA'
 
 export const getIso639_3 = () =>
@@ -17,10 +18,11 @@ export const getIso639_3 = () =>
       part2t: iso_data.part2t,
       scope: iso_data.scope,
       langType: iso_data.type,
-      _created: now,
-      _edited: now,
-      _creator: localOrganizationAuthId,
+      _created: time0,
+      _edited: time0,
+      _creator: __initialLocalOrgAuthId,
       _authKey: null,
+      _local: true,
     }
 
     return language

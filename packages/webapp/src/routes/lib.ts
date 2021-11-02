@@ -1,4 +1,4 @@
-import { GetRouteDefParams, GetRouteDefPath, RouteDef } from '@moodlenet/common/lib/webapp/sitemap'
+import { GetRouteDefParams, GetRouteDefPath, RouteDef } from '@moodlenet/common/dist/webapp/sitemap'
 import * as H from 'history'
 import { FC } from 'react'
 import { RouteComponentProps } from 'react-router'

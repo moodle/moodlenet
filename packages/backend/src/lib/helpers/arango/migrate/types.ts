@@ -16,15 +16,15 @@ export const versionOrThrow = <V extends string>(_: V) => {
   return v
 }
 
-export type DBWorker<Context> = (_: { db: Database; ctx: Context }) => Promise<unknown>
-export type VersionUpdater<Context> =
+export type DBWorker = (_: { db: Database }) => Promise<unknown>
+export type VersionUpdater =
   | {
-      pullUp: DBWorker<Context>
-      pushDown: DBWorker<Context>
+      pullUp: DBWorker
+      pushDown: DBWorker
     }
   | {
-      initialSetUp: DBWorker<Context>
+      initialSetUp: DBWorker
     }
-export type VersionLadder<Context> = Record<string, VersionUpdater<Context>>
+export type VersionLadder = Record<string, VersionUpdater>
 
 export type VersionedDB<V extends string> = Database & { readonly __v__: Version<V> }

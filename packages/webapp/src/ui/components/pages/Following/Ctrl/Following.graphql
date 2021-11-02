@@ -1,6 +1,6 @@
 query followingPage($profileId: ID!) {
   node(id: $profileId) {
-    ... on Profile {
+    ... on INode {
       id
       collections: _rel(type: Follows, target: Collection, page: { first: 100 }) {
         edges {

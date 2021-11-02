@@ -1,5 +1,5 @@
 import dot from 'dot'
-import { EmailObj, EmailTemplate } from './types'
+import { EmailObj } from '../../ports/system/sendEmail'
 
 export const fillEmailTemplate = <Vars>(_: { template: EmailTemplate<Vars>; to: string; vars: Vars }): EmailObj => {
   const { template, to, vars } = _
@@ -13,4 +13,10 @@ export const fillEmailTemplate = <Vars>(_: { template: EmailTemplate<Vars>; to: 
     ...interpolated,
     to,
   }
+}
+// TODO:
+// we need just EmailObj<Vars>
+// and templateFillIn maps EmailObj props against Vars
+export type EmailTemplate<Vars> = Pick<EmailObj, 'from' | 'subject' | 'html' | 'text'> & {
+  $fake?: Vars
 }

@@ -1,4 +1,4 @@
-import { SessionEnv } from '@moodlenet/common/lib/types'
+import { SessionEnv } from '@moodlenet/common/dist/types'
 
 export type Context = {
   sessionEnv: SessionEnv

@@ -1,8 +1,8 @@
-import { isGraphNodeIdentifierAuth } from '@moodlenet/common/lib/content-graph/types/node'
-import { SessionEnv } from '@moodlenet/common/lib/types'
-import { pick } from '@moodlenet/common/lib/utils/object'
+import { isGraphNodeIdentifierAuth } from '@moodlenet/common/dist/content-graph/types/node'
+import { SessionEnv } from '@moodlenet/common/dist/types'
+import { pick } from '@moodlenet/common/dist/utils/object'
 import { RequestHandler } from 'express'
-import { INVALID_JWT_TOKEN, jwtVerifierAdapter } from '../../ports/user-auth/adapters'
+import { adapter, INVALID_JWT_TOKEN } from '../../ports/system/crypto/jwtVerifierAdapter'
 
 export const execEnvMiddleware: RequestHandler = async (req, _res, next) => {
   const headerToken = req.header('bearer')
@@ -26,7 +26,7 @@ export const getAuthId = async (headerToken: string | null | undefined) => {
   if (!headerToken) {
     return null
   }
-  const mAuthId = await jwtVerifierAdapter(headerToken)
+  const mAuthId = await adapter(headerToken)
   if (mAuthId === INVALID_JWT_TOKEN) {
     return null
   }

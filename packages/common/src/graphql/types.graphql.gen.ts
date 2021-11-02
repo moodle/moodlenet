@@ -46,6 +46,7 @@ export type Collection = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -320,6 +321,7 @@ export type FileFormat = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -389,6 +391,7 @@ export type INode = {
   name: Scalars['String'];
   description: Scalars['String'];
   _published: Scalars['Boolean'];
+  _local: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
 };
@@ -417,6 +420,7 @@ export type IscedField = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -446,6 +450,7 @@ export type IscedGrade = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -477,6 +482,7 @@ export type Language = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -504,6 +510,7 @@ export type License = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -627,6 +634,7 @@ export type Organization = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -684,6 +692,7 @@ export type Profile = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -747,6 +756,7 @@ export type Resource = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];
@@ -778,6 +788,7 @@ export type ResourceType = INode & {
   id: Scalars['ID'];
   name: Scalars['String'];
   description: Scalars['String'];
+  _local: Scalars['Boolean'];
   _published: Scalars['Boolean'];
   _rel: RelPage;
   _relCount: Scalars['Int'];

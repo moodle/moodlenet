@@ -79,13 +79,14 @@ function logResp(namespace: Namespace, args: any[], respPromise: Promise<any>) {
     .then(_ => {
       const logfn = _.success ? console.log : console.error
       logfn(`socket call ${_.success ? 'success' : 'error'}: ${namespaceString(namespace)}`)
-      !_.success &&
+      if (!_.success) {
         logfn(
           `args:`,
           inspect(_.args, false, 5, true),
           `\nError: \n`,
           _.error instanceof Error ? `${_.error.message}\n${_.error.stack}` : _.error,
         )
+      }
     })
 }
 

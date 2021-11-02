@@ -1,36 +1,25 @@
-import { BaseOperators, _T } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
 import { aqlstr, getOneResult } from '../../../../../lib/helpers/arango/query'
 import { SockOf } from '../../../../../lib/plug'
-import { getBaseOperatorsAdapter } from '../../../../../ports/content-graph/common'
+import { BaseOperators, baseOperators, _T } from '../../../../../ports/content-graph/graph-lang/base'
 import { aqBV } from '../../aql/helpers'
 import { ContentGraphDB } from '../../types'
-import { _ } from './_'
+import { _aqlBv } from './bv'
 
-export const getBaseOperators =
-  (db: ContentGraphDB): SockOf<typeof getBaseOperatorsAdapter> =>
-  async () =>
-    baseOperators(db)
+export const arangoBaseOperators = (db: ContentGraphDB): SockOf<typeof baseOperators> => {
+  const BASE_OPERATORS = getBaseOperators(db)
+  return async () => BASE_OPERATORS
+}
 
-export const baseOperators = (db: ContentGraphDB): BaseOperators => ({
-  and: (...bvals) => {
-    return _<boolean>(`${bvals.join(' && ')}`)
-  },
-  or: (...bvals) => {
-    return _<boolean>(`${bvals.join(' || ')}`)
-  },
-  cmp: (a, cmp, b) => {
-    return _<boolean>(`${a} ${cmp} ${b}`)
-  },
-  cond: (condition, right, left) => {
-    return _<_T<typeof right | typeof left>>(`${condition} ? ${right} : ${left}`)
-  },
-  not: val => {
-    return _<boolean>(`! ${val}`)
-  },
-  _: val => _(`${aqlstr(val)}`),
-  getBV: bv => {
-    const q = aqBV(bv)
-    // console.log(`getBV:\n${q}`)
-    return getOneResult(q, db) as any
-  },
+export const ARANGO_BASE_OPERATORS: Omit<BaseOperators, 'getBV'> = {
+  and: (...bvals) => _aqlBv<boolean>(`${bvals.join(' && ')}`),
+  or: (...bvals) => _aqlBv<boolean>(`${bvals.join(' || ')}`),
+  cmp: (a, cmp, b) => _aqlBv<boolean>(`${a} ${cmp} ${b}`),
+  cond: (condition, right, left) => _aqlBv<_T<typeof right | typeof left>>(`${condition} ? ${right} : ${left}`),
+  not: val => _aqlBv<boolean>(`! ${val}`),
+  bv: val => _aqlBv(`${aqlstr(val)}`),
+}
+
+export const getBaseOperators = (db: ContentGraphDB): BaseOperators => ({
+  ...ARANGO_BASE_OPERATORS,
+  getBV: bv => getOneResult(aqBV(bv), db),
 })

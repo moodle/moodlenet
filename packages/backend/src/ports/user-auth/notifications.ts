@@ -1,18 +1,20 @@
-import { GraphNodeIdentifier } from '@moodlenet/common/lib/content-graph/types/node'
-import { SessionEnv } from '@moodlenet/common/lib/types'
-import { pick } from '@moodlenet/common/lib/utils/object'
-import { nodeIdentifierSlug2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { pick } from '@moodlenet/common/dist/utils/object'
+import { nodeIdentifierSlug2HomeUrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
 import { SockOf } from '../../lib/plug'
-import { sendTextToProfileAdapter } from '../content-graph/profile'
-import { getActiveUserByAuthAdapter, getLatestConfigAdapter, publicUrlAdapter, sendEmailAdapter } from './adapters'
+import { baseOperators } from '../content-graph/graph-lang/base'
+import { graphOperators } from '../content-graph/graph-lang/graph'
+import { adapter } from '../content-graph/notifications/sendTextToAuthNode'
+import * as sys from '../system'
+import { getActiveUserByAuthAdapter, getLatestConfigAdapter } from './adapters'
 
-export type SendEmailToProfile = {
-  sessionEnv: SessionEnv
-  toProfileId: GraphNodeIdentifier<'Profile'>
-  text: string
-}
-export const sendTextAdapter: SockOf<typeof sendTextToProfileAdapter> = async ({ recipient, sender, text }) => {
+// export type SendEmailToProfile = {
+//   sessionEnv: SessionEnv
+//   toProfileId: GraphNodeIdentifier<'Profile'>
+//   text: string
+// }
+
+export const sendTextAdapter: SockOf<typeof adapter> = async ({ recipient, sender, text }) => {
   if (!recipient._authKey) {
     return false
   }
@@ -23,8 +25,14 @@ export const sendTextAdapter: SockOf<typeof sendTextToProfileAdapter> = async ({
   if (!recipientUser) {
     return false
   }
-  const domain = await publicUrlAdapter()
-  const senderProfileUrl = `${domain}${nodeIdentifierSlug2UrlPath(sender)}`
+  const { graphNode } = await graphOperators()
+  const { getBV } = await baseOperators()
+  const senderNode = await getBV(graphNode(sender), {})
+  if (!senderNode) {
+    return false
+  }
+  const { publicUrl } = await sys.localOrg.info.adapter()
+  const senderProfileUrl = `${publicUrl}${nodeIdentifierSlug2HomeUrlPath(senderNode)}`
   const { messageToUserEmail } = await getLatestConfigAdapter()
   const emailObj = fillEmailTemplate({
     template: messageToUserEmail,
@@ -32,10 +40,10 @@ export const sendTextAdapter: SockOf<typeof sendTextToProfileAdapter> = async ({
     vars: {
       email: recipientUser.email,
       msgText: text,
-      senderName: sender.name,
+      senderName: senderNode.name,
       senderProfileUrl: senderProfileUrl,
     },
   })
-  const { success } = await sendEmailAdapter(emailObj)
+  const { success } = await sys.sendEmail.adapter(emailObj)
   return success
 }

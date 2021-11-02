@@ -1,5 +1,5 @@
-import { GraphNodeIdentifierAuth } from '@moodlenet/common/lib/content-graph/types/node'
-import { EmailTemplate } from '../../adapters/emailSender/types'
+import { GraphNodeIdentifierAuth } from '@moodlenet/common/dist/content-graph/types/node'
+import { EmailTemplate } from '../../adapters/emailSender/helpers'
 
 export enum Messages {
   EmailNotAvailable = 'email-not-available',

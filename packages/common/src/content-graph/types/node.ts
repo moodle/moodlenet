@@ -33,18 +33,23 @@ export type GraphNode<T extends GraphNodeType = GraphNodeType> = GraphNodeMap[T]
 export type PermId = string
 export type Slug = string
 
-export type GraphNodeIdentifierSlug<GNT extends GraphNodeType = GraphNodeType> = Pick<
-  BaseGraphNode<GNT>,
-  '_type' | '_slug'
->
-export type GraphNodeIdentifierPerm<GNT extends GraphNodeType = GraphNodeType> = Pick<
-  BaseGraphNode<GNT>,
-  '_type' | '_permId'
->
-export type GraphNodeIdentifierAuth<GNT extends GraphNodeType = GraphNodeType> = Pick<
-  BaseGraphNode<GNT>,
-  '_type' | '_authKey'
->
+export type GraphNodeIdentifierSlug<GNT extends GraphNodeType = GraphNodeType> = {
+  _type: GNT
+  _slug: Slug
+}
+export type GraphNodeIdentifierPerm<GNT extends GraphNodeType = GraphNodeType> = {
+  _type: GNT
+  _permId: PermId
+}
+
+export type GraphNodeIdentifierAuth<GNT extends GraphNodeType = GraphNodeType> = {
+  _type: GNT
+  _authKey: AuthKey
+}
+export type GraphNodeNonIdentifiedAuth<GNT extends GraphNodeType = GraphNodeType> = {
+  _type: GNT
+  _authKey: null
+}
 
 export type GraphNodeIdentifier<GNT extends GraphNodeType = GraphNodeType> =
   | GraphNodeIdentifierSlug<GNT>
@@ -57,16 +62,18 @@ export type AuthKey = string
 
 export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _type: GNT
-  _authKey: AuthKey | null
   _permId: PermId
   _slug: Slug
   _published: boolean
   _created: Timestamp
   _edited: Timestamp
-  _creator: null | GraphNodeIdentifierAuth
+  _creator: GraphNodeIdentifierAuth
+  _local: boolean
   name: string
   description: string
-}
+} & GraphNodeIdentifierSlug<GNT> &
+  GraphNodeIdentifierPerm<GNT> &
+  (GraphNodeIdentifierAuth<GNT> | GraphNodeNonIdentifiedAuth<GNT>)
 
 type Maybe<T> = T | null | undefined
 

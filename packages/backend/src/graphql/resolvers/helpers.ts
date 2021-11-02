@@ -1,15 +1,15 @@
-import * as GE from '@moodlenet/common/lib/content-graph/types/edge'
-import * as GN from '@moodlenet/common/lib/content-graph/types/node'
-import { AssetRef } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import * as GQL from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
+import * as GE from '@moodlenet/common/dist/content-graph/types/edge'
+import * as GN from '@moodlenet/common/dist/content-graph/types/node'
+import { AssetRef } from '@moodlenet/common/dist/graphql/scalars.graphql'
+import * as GQL from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { UploadType } from '@moodlenet/common/dist/staticAsset/lib'
 import {
   gqlEdgeId2GraphEdgeIdentifier,
   gqlNodeId2GraphNodeIdentifier,
-} from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { assertNever } from '@moodlenet/common/lib/utils/misc'
-import { pick } from '@moodlenet/common/lib/utils/object'
-import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
+} from '@moodlenet/common/dist/utils/content-graph/id-key-type-guards'
+import { assertNever } from '@moodlenet/common/dist/utils/misc'
+import { pick } from '@moodlenet/common/dist/utils/object'
+import { DistOmit, Maybe } from '@moodlenet/common/dist/utils/types'
 import { Tuple } from 'tuple-type'
 import { persistTempAssets } from '../../ports/static-assets/temp'
 import { PersistTmpFileReq } from '../../ports/static-assets/types'
@@ -21,6 +21,7 @@ export const graphNode2GqlNode = (node: GN.GraphNode): GQL.Node => {
     name: node.name,
     description: node.description,
     _published: node._published,
+    _local: node._local,
     ...({} as Pick<GQL.Node, '_rel' | '_relCount'>),
   }
 
@@ -99,7 +100,7 @@ export const graphNode2GqlNode = (node: GN.GraphNode): GQL.Node => {
   }
 }
 
-type OmitNodeProps = '_permId' | '_authKey' | '_created' | '_edited' | '_creator'
+type OmitNodeProps = '_permId' | '_authKey' | '_created' | '_edited' | '_creator' | '_local'
 export const gqlNode2GraphNode = (node: GQL.Node): DistOmit<GN.GraphNode, OmitNodeProps> => {
   const parsed = gqlNodeId2GraphNodeIdentifier(node.id)
   if (!parsed) {
@@ -227,7 +228,7 @@ export const graphEdge2GqlEdge = (edge: GE.GraphEdge): GQL.Edge => {
   }
 }
 
-type OmitEdgeProps = '_authId' | '_created' | '_edited'
+type OmitEdgeProps = '_creator' | '_created' | '_edited'
 export const gqlEdge2GraphEdge = (edge: GQL.Edge): DistOmit<GE.GraphEdge, OmitEdgeProps> => {
   const parsed = gqlEdgeId2GraphEdgeIdentifier(edge.id)
   if (!parsed) {

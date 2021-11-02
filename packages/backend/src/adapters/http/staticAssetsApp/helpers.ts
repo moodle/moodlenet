@@ -1,5 +1,5 @@
-import { isUploadType, UploadType } from '@moodlenet/common/lib/staticAsset/lib'
-import { pick } from '@moodlenet/common/lib/utils/object'
+import { isUploadType, UploadType } from '@moodlenet/common/dist/staticAsset/lib'
+import { pick } from '@moodlenet/common/dist/utils/object'
 import { Request } from 'express'
 import { fromFile } from 'file-type'
 import Formidable, { File } from 'formidable'

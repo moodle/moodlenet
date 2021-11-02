@@ -31,7 +31,7 @@ export type EdgeIdentifier<GET extends GraphEdgeType> = {
 export type BaseGraphEdge<GET extends GraphEdgeType> = EdgeIdentifier<GET> & {
   _created: Timestamp
   _edited: Timestamp
-  _authId: GraphNodeIdentifierAuth | null
+  _creator: GraphNodeIdentifierAuth
 }
 
 export type Created = BaseGraphEdge<'Created'> & {}

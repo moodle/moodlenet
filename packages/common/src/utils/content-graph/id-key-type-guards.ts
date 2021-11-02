@@ -1,4 +1,3 @@
-import { LOCAL_ORG_SLUG } from '../../content-graph/types/common'
 import { edgeTypes, GraphEdgeIdentifier, GraphEdgeType } from '../../content-graph/types/edge'
 import { GraphNodeIdentifierSlug, GraphNodeType, nodeTypes, Slug } from '../../content-graph/types/node'
 
@@ -47,7 +46,5 @@ export const gqlEdgeId2GraphEdgeIdentifier = (_id: string): GraphEdgeIdentifier 
 
 export const isGqlIdLocalOrganization = (id: string) => {
   const slugId = gqlNodeId2GraphNodeIdentifier(id)
-  return !!slugId && isLocalOrganizationSlugId(slugId)
+  return slugId?._type === 'Organization' //FIXME: for Federation
 }
-export const isLocalOrganizationSlugId = ({ _type, _slug }: GraphNodeIdentifierSlug) =>
-  _type === 'Organization' && _slug === LOCAL_ORG_SLUG
