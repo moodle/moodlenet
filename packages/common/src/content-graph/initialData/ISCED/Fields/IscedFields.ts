@@ -11,7 +11,7 @@ export const getIscedFields = () =>
       _type: 'IscedField',
       _permId: field.code,
       _slug: contentSlug({ name: field.desc, slugCode: field.code }),
-      _published: true,
+      _published: selectedIscedFields.includes(field.code),
       name: field.desc,
       codePath: getIscedFieldPathByCode(field.code),
       code: field.code,
