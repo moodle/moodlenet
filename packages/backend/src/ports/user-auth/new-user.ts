@@ -1,33 +1,28 @@
-import { GraphNodeIdentifierAuth } from '@moodlenet/common/lib/content-graph/types/node'
-import { newAuthKey } from '@moodlenet/common/lib/utils/content-graph/slug-id'
-import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
+import { GraphNodeIdentifierAuth } from '@moodlenet/common/dist/content-graph/types/node'
+import { newAuthKey } from '@moodlenet/common/dist/utils/content-graph/slug-id'
+import { Routes, webappPath } from '@moodlenet/common/dist/webapp/sitemap'
 import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
 import { ns } from '../../lib/ns/namespace'
 import { plug } from '../../lib/plug'
-import {
-  getLatestConfigAdapter,
-  jwtSignerAdapter,
-  passwordHasher,
-  publicUrlAdapter,
-  sendEmailAdapter,
-} from './adapters'
+import * as sys from '../system'
+import { getLatestConfigAdapter } from './adapters'
 import { Email } from './types'
 
 export type SignupIssue = 'email not available'
 
 export const signUp = plug(
-  ns(__dirname, 'sign-up'),
+  ns(module, 'sign-up'),
   async ({ email, displayName, password }: { email: Email; password: string; displayName: string }) => {
     const { newUserRequestEmail, newUserVerificationWaitSecs } = await getLatestConfigAdapter()
     // const authId = newAuthKey()
-    const authId: GraphNodeIdentifierAuth = {
+    const authId: GraphNodeIdentifierAuth<'Profile'> = {
       _authKey: newAuthKey(),
       _type: 'Profile',
     }
 
-    const hashedPassword = await passwordHasher(password)
+    const hashedPassword = await sys.crypto.passwordHasher.adapter(password)
 
-    const activationEmailToken = await jwtSignerAdapter(
+    const activationEmailToken = await sys.crypto.jwtSigner.adapter(
       {
         displayName,
         email,
@@ -36,18 +31,18 @@ export const signUp = plug(
       },
       newUserVerificationWaitSecs,
     )
-    const publicBaseUrl = await publicUrlAdapter()
+    const { publicUrl } = await sys.localOrg.info.adapter()
     const emailObj = fillEmailTemplate({
       template: newUserRequestEmail,
       to: email,
       vars: {
         email,
-        link: `${publicBaseUrl}${webappPath<Routes.Login>('/login/:activationEmailToken?', {
+        link: `${publicUrl}${webappPath<Routes.Login>('/login/:activationEmailToken?', {
           activationEmailToken,
         })}`,
       },
     })
-    await sendEmailAdapter(emailObj)
+    await sys.sendEmail.adapter(emailObj)
     return { token: activationEmailToken }
   },
 )

@@ -1,7 +1,7 @@
-import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
-import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
+import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
@@ -37,7 +37,6 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
   const [addRelation, addRelationRes] = useAddCollectionRelationMutation()
   const [delRelation, delRelationRes] = useDelCollectionRelationMutation()
   const [edit, editRes] = useEditCollectionMutation()
-  const categoryEdge = narrowEdgeNodeOfType(['IscedField'])(collectionData?.categories.edges[0])
 
   const history = useHistory()
   const [delCollection, delCollectionRes] = useDelCollectionMutation()
@@ -88,7 +87,6 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     session,
   ])
 
-  const category = categoryEdge?.node.name ?? ''
   const uploadTempFile = useUploadTempFile()
 
   const [formik, formBag] = useFormikBag<NewCollectionFormValues>({
@@ -138,7 +136,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
         },
       })
     }
-  }, [collectionData, fresetForm, category, id])
+  }, [collectionData, fresetForm, id])
 
   const formikSetFieldValue = formik.setFieldValue
   useEffect(() => {
@@ -157,7 +155,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
 
   // console.log(formik.values)
 
-  const creatorEdge = narrowEdgeNodeOfType(['Profile'])(collectionData?.creator.edges[0])
+  const creatorEdge = narrowEdgeNodeOfType(['Profile', 'Organization'])(collectionData?.creator.edges[0])
   const creator = creatorEdge?.node
 
   const resourceEdges = useMemo(() => (collectionData?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])), [
@@ -197,7 +195,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
         ),
       ),
       contributorCardProps: {
-        avatarUrl: getMaybeAssetRefUrl(creator?.avatar),
+        avatarUrl: getMaybeAssetRefUrl(creator?.__typename === 'Profile' ? creator.avatar : creator?.logo),
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
       },

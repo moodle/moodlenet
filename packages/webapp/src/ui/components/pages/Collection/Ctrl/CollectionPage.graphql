@@ -50,25 +50,13 @@ query collectionPageData($collectionId: ID!, $myProfileId: [ID!]) {
             _created
           }
           node {
+            id
+            name
             ... on Profile {
-              id
-              name
               avatar
             }
-          }
-        }
-      }
-
-      categories: _rel(type: Features, target: IscedField) {
-        edges {
-          edge {
-            id
-          }
-          node {
-            ... on IscedField {
-              id
-              name
-              code
+            ... on Organization {
+              logo
             }
           }
         }

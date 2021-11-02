@@ -1,6 +1,7 @@
 import { slugify } from '../../../utils/content-graph/slug-id'
+import { time0 } from '../../types/common'
 import { FileFormat, FileFormatType } from '../../types/node'
-import { localOrganizationAuthId, now } from '../content'
+import { __initialLocalOrgAuthId } from '../content'
 import { mimetypesMap } from './mimetype_data_index'
 
 export const getFileFormats = () =>
@@ -18,10 +19,11 @@ export const getFileFormats = () =>
         description: `${mimetypeData.name} : ${mimetypeData.mimetype}`,
         type: type as FileFormatType,
         subtype: subtype!,
-        _created: now,
-        _edited: now,
-        _creator: localOrganizationAuthId,
+        _created: time0,
+        _edited: time0,
+        _creator: __initialLocalOrgAuthId,
         _authKey: null,
+        _local: true,
       }
       return fileFormat
     })

@@ -6,6 +6,7 @@ type FileFormat implements INode {
   id: ID!
   name: String!
   description: String!
+  _local: Boolean!
   _published: Boolean!
   _rel(type: EdgeType!, target: NodeType!, inverse: Boolean, page: PaginationInput, targetIds: [ID!]): RelPage!
   _relCount(type: EdgeType!, target: NodeType!, inverse: Boolean): Int!

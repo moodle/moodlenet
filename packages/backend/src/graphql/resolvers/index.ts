@@ -1,14 +1,15 @@
-import { globalSearchNodeTypes, isGlobalSearchNodeType } from '@moodlenet/common/lib/content-graph/types/global-search'
-import { validateCreateEdgeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/createEdge'
-import { validateCreateNodeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/createNode'
-import { validateEditNodeInput } from '@moodlenet/common/lib/graphql/content-graph/inputStaticValidation/editNode'
-import * as GQLTypes from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { globalSearchNodeTypes, isGlobalSearchNodeType } from '@moodlenet/common/dist/content-graph/types/global-search'
+import { validateCreateEdgeInput } from '@moodlenet/common/dist/graphql/content-graph/inputStaticValidation/createEdge'
+import { validateCreateNodeInput } from '@moodlenet/common/dist/graphql/content-graph/inputStaticValidation/createNode'
+import { validateEditNodeInput } from '@moodlenet/common/dist/graphql/content-graph/inputStaticValidation/editNode'
+import * as GQLTypes from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import {
   gqlEdgeId2GraphEdgeIdentifier,
   gqlNodeId2GraphNodeIdentifier,
   gqlNodeId2GraphNodeIdentifierOfType,
-} from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
+} from '@moodlenet/common/dist/utils/content-graph/id-key-type-guards'
 import * as contentGraph from '../../ports/content-graph'
+import { localOrg } from '../../ports/system'
 import * as userAuth from '../../ports/user-auth'
 import * as GQLResolvers from '../types.graphql.gen'
 import {
@@ -30,17 +31,20 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
   return {
     Query: {
       async node(_root, { id }, ctx /*,_info */) {
-        // console.log({ id })
-        const parsed = gqlNodeId2GraphNodeIdentifier(id)
-        if (!parsed) {
+        if (id === 'Organization/') {
+          return graphNode2GqlNode(await localOrg.node.adapter())
+        }
+        const parsedNodeId = gqlNodeId2GraphNodeIdentifier(id)
+        if (!parsedNodeId) {
           return null
         }
-        const maybeNode = await contentGraph.node.byIdentifier(ctx.sessionEnv, parsed)
+
+        const maybeNode = await contentGraph.node.read.port({ sessionEnv: ctx.sessionEnv, identifier: parsedNodeId })
         return maybeNode ? graphNode2GqlNode(maybeNode) : null
       },
 
       async globalSearch(_root, { sort, text, nodeTypes, page }, ctx) {
-        const searchInput: contentGraph.search.GlobalSearchInput = {
+        const searchInput: contentGraph.search.byTerm.Input = {
           sessionEnv: ctx.sessionEnv,
           nodeTypes: (nodeTypes ?? globalSearchNodeTypes).filter(isGlobalSearchNodeType),
           page: {
@@ -53,7 +57,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
           text,
         }
 
-        const { items, pageInfo } = await contentGraph.search.searchByTerm(searchInput)
+        const { items, pageInfo } = await contentGraph.search.byTerm.port(searchInput)
 
         return {
           __typename: 'SearchPage',
@@ -87,7 +91,10 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         if (!mActiveUser) {
           return null
         }
-        const mAuthProfileNode = await contentGraph.node.byIdentifier(ctx.sessionEnv, ctx.sessionEnv.authId)
+        const mAuthProfileNode = await contentGraph.node.read.port({
+          sessionEnv: ctx.sessionEnv,
+          identifier: ctx.sessionEnv.authId,
+        })
         // console.log({ mProfile })
         if (!mAuthProfileNode) {
           return null
@@ -167,8 +174,8 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         if ('__typename' in data) {
           return data
         }
-        const graphNodeOrError = await contentGraph.node.createNode({
-          nodeData: {
+        const graphNodeOrError = await contentGraph.node.add.port({
+          data: {
             ...data,
           },
           sessionEnv: ctx.sessionEnv,
@@ -201,8 +208,8 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         if ('__typename' in data) {
           return data
         }
-        const graphNodeOrError = await contentGraph.node.editNode({
-          nodeData: {
+        const graphNodeOrError = await contentGraph.node.edit.port({
+          data: {
             ...data,
           },
           nodeId,
@@ -236,8 +243,8 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         if ('__typename' in data) {
           return data
         }
-        const graphEdgeOrError = await contentGraph.edge.addEdge({
-          newEdge: {
+        const graphEdgeOrError = await contentGraph.edge.add.port({
+          data: {
             ...data,
           },
           sessionEnv: ctx.sessionEnv,
@@ -255,16 +262,16 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         }
       },
       async deleteEdge(_root, { input }, ctx /*,  _info */) {
-        const edge = gqlEdgeId2GraphEdgeIdentifier(input.id)
-        if (!edge) {
+        const edgeId = gqlEdgeId2GraphEdgeIdentifier(input.id)
+        if (!edgeId) {
           return deleteEdgeMutationError('UnexpectedInput')
         }
         if (!ctx.sessionEnv) {
           return deleteEdgeMutationError('NotAuthorized')
         }
-        const deleteResult = await contentGraph.edge.deleteEdge({
+        const deleteResult = await contentGraph.edge.del.port({
           sessionEnv: ctx.sessionEnv,
-          edge,
+          edgeId,
         })
         if (deleteResult === false) {
           return deleteEdgeMutationError('UnexpectedInput', null)
@@ -276,16 +283,16 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         return successResult
       },
       async deleteNode(_root, { input }, ctx /*,  _info */) {
-        const node = gqlNodeId2GraphNodeIdentifier(input.id)
-        if (!node) {
+        const nodeId = gqlNodeId2GraphNodeIdentifier(input.id)
+        if (!nodeId) {
           return deleteNodeMutationError('UnexpectedInput')
         }
         if (!ctx.sessionEnv) {
           return deleteNodeMutationError('NotAuthorized')
         }
-        const deleteResult = await contentGraph.node.deleteNode({
+        const deleteResult = await contentGraph.node.del.port({
           sessionEnv: ctx.sessionEnv,
-          node,
+          nodeId,
         })
         if (deleteResult === false) {
           return deleteNodeMutationError('UnexpectedInput', null)
@@ -298,13 +305,20 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
       },
       async sendEmailToProfile(_root, { text, toProfileId }, ctx) {
         const toProfileIdentifier = gqlNodeId2GraphNodeIdentifierOfType(toProfileId, 'Profile')
-        if (!(ctx.sessionEnv.authId && toProfileIdentifier)) {
+        if (!toProfileIdentifier) {
           return false
         }
-        const sendResult = await contentGraph.profile.sendTextToProfile({
-          authId: ctx.sessionEnv.authId,
+        const recipientId = await contentGraph.node.read.port({
+          sessionEnv: ctx.sessionEnv,
+          identifier: toProfileIdentifier,
+        })
+        if (!recipientId?._authKey) {
+          return false
+        }
+        const sendResult = await contentGraph.notifications.authNode.port({
+          sessionEnv: ctx.sessionEnv,
           text,
-          toProfileId: toProfileIdentifier,
+          recipientId,
         })
         return sendResult
       },

@@ -1,4 +1,4 @@
-import * as Types from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import * as Types from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { Context, RootValue } from './types';
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
@@ -264,6 +264,7 @@ export type CollectionResolvers<ContextType = Context, ParentType extends Resolv
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _local?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _published?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.Collection_RelArgs, 'type' | 'target'>>;
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.Collection_RelCountArgs, 'type' | 'target'>>;
@@ -397,6 +398,7 @@ export type FileFormatResolvers<ContextType = Context, ParentType extends Resolv
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _local?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _published?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.FileFormat_RelArgs, 'type' | 'target'>>;
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.FileFormat_RelCountArgs, 'type' | 'target'>>;
@@ -421,6 +423,7 @@ export type INodeResolvers<ContextType = Context, ParentType extends ResolversPa
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   _published?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  _local?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.INode_RelArgs, 'type' | 'target'>>;
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.INode_RelCountArgs, 'type' | 'target'>>;
 };
@@ -432,6 +435,7 @@ export type IscedFieldResolvers<ContextType = Context, ParentType extends Resolv
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _local?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _published?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.IscedField_RelArgs, 'type' | 'target'>>;
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.IscedField_RelCountArgs, 'type' | 'target'>>;
@@ -445,6 +449,7 @@ export type IscedGradeResolvers<ContextType = Context, ParentType extends Resolv
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _local?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _published?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.IscedGrade_RelArgs, 'type' | 'target'>>;
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.IscedGrade_RelCountArgs, 'type' | 'target'>>;
@@ -460,6 +465,7 @@ export type LanguageResolvers<ContextType = Context, ParentType extends Resolver
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _local?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _published?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.Language_RelArgs, 'type' | 'target'>>;
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.Language_RelCountArgs, 'type' | 'target'>>;
@@ -471,6 +477,7 @@ export type LicenseResolvers<ContextType = Context, ParentType extends Resolvers
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _local?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _published?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.License_RelArgs, 'type' | 'target'>>;
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.License_RelCountArgs, 'type' | 'target'>>;
@@ -514,6 +521,7 @@ export type OrganizationResolvers<ContextType = Context, ParentType extends Reso
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _local?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _published?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.Organization_RelArgs, 'type' | 'target'>>;
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.Organization_RelCountArgs, 'type' | 'target'>>;
@@ -550,6 +558,7 @@ export type ProfileResolvers<ContextType = Context, ParentType extends Resolvers
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _local?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _published?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.Profile_RelArgs, 'type' | 'target'>>;
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.Profile_RelCountArgs, 'type' | 'target'>>;
@@ -583,6 +592,7 @@ export type ResourceResolvers<ContextType = Context, ParentType extends Resolver
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _local?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _published?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.Resource_RelArgs, 'type' | 'target'>>;
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.Resource_RelCountArgs, 'type' | 'target'>>;
@@ -594,6 +604,7 @@ export type ResourceTypeResolvers<ContextType = Context, ParentType extends Reso
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _local?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _published?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _rel?: Resolver<ResolversTypes['RelPage'], ParentType, ContextType, RequireFields<Types.ResourceType_RelArgs, 'type' | 'target'>>;
   _relCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<Types.ResourceType_RelCountArgs, 'type' | 'target'>>;

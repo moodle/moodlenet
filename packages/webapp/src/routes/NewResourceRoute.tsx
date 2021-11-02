@@ -1,4 +1,4 @@
-import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { Routes } from '@moodlenet/common/dist/webapp/sitemap'
 import { useNewResourceCtrl } from '../ui/components/pages/NewResource/Ctrl/NewResourceCtrl'
 import { NewResource } from '../ui/components/pages/NewResource/NewResource'
 import { ctrlHook } from '../ui/lib/ctrl'

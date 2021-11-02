@@ -1,6 +1,7 @@
 import { contentSlug } from '../../../utils/content-graph/slug-id'
+import { time0 } from '../../types/common'
 import { License } from '../../types/node'
-import { localOrganizationAuthId, now } from '../content'
+import { __initialLocalOrgAuthId } from '../content'
 import licensesData from './licenses-DATA'
 
 export const getLicenses = () =>
@@ -13,10 +14,11 @@ export const getLicenses = () =>
       name: licenseData.desc,
       code: licenseData.code,
       description: licenseData.desc,
-      _created: now,
-      _edited: now,
+      _created: time0,
+      _edited: time0,
       _authKey: null,
-      _creator: localOrganizationAuthId,
+      _creator: __initialLocalOrgAuthId,
+      _local: true,
     }
 
     return license

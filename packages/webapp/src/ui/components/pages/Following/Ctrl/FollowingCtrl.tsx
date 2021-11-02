@@ -1,4 +1,4 @@
-import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
+import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
 import { useEffect, useMemo } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
@@ -24,7 +24,7 @@ export const useFollowingCtrl: CtrlHook<FollowingProps, {}> = () => {
     })
   }, [queryFollowing, session?.profile.id])
 
-  const profileNode = narrowNodeType(['Profile'])(followingQ.data?.node)
+  const profileNode = narrowNodeType(['Profile', 'Organization'])(followingQ.data?.node)
 
   const collections = useMemo(
     () => (profileNode?.collections.edges || []).filter(isEdgeNodeOfType(['Collection'])).map(({ node }) => node),

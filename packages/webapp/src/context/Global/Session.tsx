@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro'
-import { isGqlIdLocalOrganization } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { Maybe } from '@moodlenet/common/lib/utils/types'
+import { isGqlIdLocalOrganization } from '@moodlenet/common/dist/utils/content-graph/id-key-type-guards'
+import { Maybe } from '@moodlenet/common/dist/utils/types'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { createCtx } from '../../lib/context'
 import { setToken } from './Apollo/client'

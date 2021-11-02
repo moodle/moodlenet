@@ -8,10 +8,10 @@ import { AssetFileDesc, PersistTmpFileReq, TempAssetDesc, TempFileDesc } from '.
 
 export const persistTempAssetsAdapter = plug<
   <N extends number>(_: { persistTmpFilesReqs: Tuple<PersistTmpFileReq, N> }) => Promise<null | Tuple<AssetFileDesc, N>>
->(ns(__dirname, 'persist-temp-assets-adapter'))
+>(ns(module, 'persist-temp-assets-adapter'))
 
 export const persistTempAssets = plug(
-  ns(__dirname, 'persist-temp-assets'),
+  ns(module, 'persist-temp-assets'),
   async ({ persistTmpFilesReqs }: { persistTmpFilesReqs: PersistTmpFileReq[] }) => {
     if (!persistTmpFilesReqs.length) {
       return []
@@ -26,10 +26,10 @@ export const persistTempAssets = plug(
 
 export const createTempAssetAdapter = plug<
   (_: { stream: Readable; tempFileDesc: TempFileDesc }) => Promise<string | TempAssetDesc>
->(ns(__dirname, 'create-temp-asset-adapter'))
+>(ns(module, 'create-temp-asset-adapter'))
 
 export const createTempAsset = plug(
-  ns(__dirname, 'create-temp-asset'),
+  ns(module, 'create-temp-asset'),
   async ({ stream, tempFileDesc }: { stream: Readable; tempFileDesc: TempFileDesc }) => {
     const tempAssetDescOrError = await createTempAssetAdapter({ stream, tempFileDesc })
     return tempAssetDescOrError

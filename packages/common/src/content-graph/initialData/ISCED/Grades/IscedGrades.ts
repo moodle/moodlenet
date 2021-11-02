@@ -1,7 +1,8 @@
 import { getIscedGradePathByCode } from '../../../../utils/content-graph/isced-grade'
 import { contentSlug } from '../../../../utils/content-graph/slug-id'
+import { time0 } from '../../../types/common'
 import { IscedGrade } from '../../../types/node'
-import { localOrganizationAuthId, now } from '../../content'
+import { __initialLocalOrgAuthId } from '../../content'
 import isced_grades from './CL_ISCED11-Grades'
 
 export const getIscedGrades = () =>
@@ -15,10 +16,11 @@ export const getIscedGrades = () =>
       codePath: grade.code === 'ADT' ? [grade.code] : getIscedGradePathByCode(grade.code),
       code: grade.code,
       description: grade.desc,
-      _created: now,
-      _edited: now,
+      _created: time0,
+      _edited: time0,
       _authKey: null,
-      _creator: localOrganizationAuthId,
+      _creator: __initialLocalOrgAuthId,
+      _local: true,
     }
     return iscedGrade
   })

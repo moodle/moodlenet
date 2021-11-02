@@ -2,8 +2,8 @@ import db from './db'
 import fsAsset from './fs'
 import http from './http'
 import jwt from './jwt'
-import mnStatic from './mnStatic'
 import nodemailer from './nodemailer'
+import mnStatic from './webApp'
 
 const env = {
   db,
