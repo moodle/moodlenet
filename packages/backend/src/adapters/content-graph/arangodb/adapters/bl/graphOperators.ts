@@ -38,8 +38,7 @@ export const ARANGO_GRAPH_OPERATORS: GraphOperators = {
     const { _type, id } = identifier
     return _aqlBv(`${aqlGraphEdge2GraphEdge(`DOCUMENT("${_type}/${id}")`)}`)
   },
-  isCreator: ({ authNode, ofGlyph }) =>
-    _aqlBv<boolean>(`${ofGlyph}._creator == { _type:${authNode}._type, _authKey:${authNode}._authKey }`),
+  isCreator: ({ authNode, ofGlyph }) => _aqlBv<boolean>(`MATCHES( ${authNode}, ${ofGlyph}._creator )`),
   isPublished: glyph => _aqlBv<boolean>(`${glyph}._published == true`),
   isSameNode: (a, b) => _aqlBv<boolean>(`${graphNode2AqlId(a)} == ${graphNode2AqlId(b)}`),
 }

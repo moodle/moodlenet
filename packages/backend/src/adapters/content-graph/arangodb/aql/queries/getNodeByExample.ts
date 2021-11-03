@@ -14,10 +14,10 @@ export const getNodesByExampleQ = <Type extends GraphNodeType>({
   skip?: number
 }) => {
   const q = aq<GraphNode<Type>>(`
-    FOR node IN ${nodeType}
-      FILTER MATCHES(node , ${aqlstr(ex)})
+    FOR nodeByExample IN ${nodeType}
+      FILTER MATCHES(nodeByExample , ${aqlstr(ex)})
       LIMIT ${skip},${limit}
-    return ${aqlGraphEdge2GraphEdge('node')}
+    return ${aqlGraphEdge2GraphEdge('nodeByExample')}
   `)
   return q
 }

@@ -4,7 +4,7 @@ import { SockOf } from '../../../../../lib/plug'
 import { Operators, operators } from '../../../../../ports/content-graph/edge/del'
 import { Assertions, BV } from '../../../../../ports/content-graph/graph-lang/base'
 import { _aqlBv } from '../../adapters/bl/baseOperators'
-import { aqlGraphEdge2GraphEdge, getAqlAssertions } from '../helpers'
+import { aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode, getAqlAssertions, graphEdge2AqlIdentifier } from '../helpers'
 
 export const delEdgeQ = ({
   assertions,
@@ -19,13 +19,15 @@ export const delEdgeQ = ({
 
   const q = aq<GraphEdge | null>(`
     let delEdge = ${edge}
-    let aqlEdgeId = { _key: delEdge.id }
-    let fromNode = DOCUMENT(aqlEdgeId._from)
-    let toNode = DOCUMENT(aqlEdgeId._to)
+    let aqlEdge = DOCUMENT(${graphEdge2AqlIdentifier('delEdge')}._id)
+    let aqlFromNode = DOCUMENT(aqlEdge._from)
+    let aqlToNode = DOCUMENT(aqlEdge._to)
+    let fromNode = ${aqlGraphNode2GraphNode('aqlFromNode')}
+    let toNode = ${aqlGraphNode2GraphNode('aqlToNode')}
 
     FILTER ${aqlAssertions}
 
-    REMOVE aqlEdgeId
+    REMOVE aqlEdge
       IN ${type} 
       OPTIONS { ignoreErrors: true }
 

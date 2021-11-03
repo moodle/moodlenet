@@ -1,3 +1,4 @@
+import { GraphEdge } from '@moodlenet/common/dist/content-graph/types/edge'
 import { GraphNode } from '@moodlenet/common/dist/content-graph/types/node'
 import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/dist/content-graph/types/page'
 import { CollectionType } from 'arangojs'
@@ -143,28 +144,37 @@ export const forwardSkipLimitPage = <T>({ docs, skip }: { docs: T[]; skip: numbe
 //   return graphEdge
 // }
 
-export const aqlGraphEdge2GraphEdge = (edgeVar: string) => `${edgeVar} && MERGE(
-  UNSET(MERGE({},${edgeVar}), '_id', '_key', '_from', '_to' ),
-  { id: ${edgeVar}._key }
-)`
-
 export const graphNode2AqlIdentifier = (nodeVar: string | BV<GraphNode>) =>
   `{_id:${graphNode2AqlId(nodeVar)}, _key:${graphNode2AqlKey(nodeVar)}}`
 export const graphNode2AqlId = (nodeVar: string | BV<GraphNode>) => `CONCAT(${nodeVar}._type,'/',${nodeVar}._permId)`
 export const graphNode2AqlKey = (nodeVar: string | BV<GraphNode>) => `${nodeVar}._permId`
 export const graphNode2AqlGraphNode = (nodeVar: string | BV<GraphNode>) => `${nodeVar} && MERGE(
-  UNSET(MERGE({},${nodeVar}), '_permId', '_type' ),
+  UNSET(MERGE({},${nodeVar}), '_permId' ),
   {
     _key: ${nodeVar}._permId,
-    _id: CONCAT( ${nodeVar}.__type, '/', ${nodeVar}._permId)
+    _id: CONCAT( ${nodeVar}._type, '/', ${nodeVar}._permId)
   }
 )`
-
 export const aqlGraphNode2GraphNode = (nodeVar: string) => `${nodeVar} && MERGE(
 UNSET(MERGE({},${nodeVar}), '_id', '_key' ),
 { _permId: ${nodeVar}._key }
 )`
 
+export const graphEdge2AqlIdentifier = (edgeVar: string | BV<GraphEdge>) =>
+  `{_id:${graphEdge2AqlId(edgeVar)}, _key:${graphEdge2AqlKey(edgeVar)}}`
+export const graphEdge2AqlId = (edgeVar: string | BV<GraphEdge>) => `CONCAT(${edgeVar}._type,'/',${edgeVar}.id)`
+export const graphEdge2AqlKey = (edgeVar: string | BV<GraphEdge>) => `${edgeVar}.id`
+export const graphEdge2AqlGraphEdge = (edgeVar: string | BV<GraphEdge>) => `${edgeVar} && MERGE(
+  UNSET(MERGE({},${edgeVar}), 'id' ),
+  {
+    _key: ${edgeVar}.id,
+    _id: CONCAT( ${edgeVar}._type, '/', ${edgeVar}.id)
+  }
+)`
+export const aqlGraphEdge2GraphEdge = (edgeVar: string) => `${edgeVar} && MERGE(
+UNSET(MERGE({},${edgeVar}), '_id', '_key' ),
+{ id: ${edgeVar}._key }
+)`
 // export const getOneAQFrag = <T>(_aq: AQ<T>) => aq<T>(`((${_aq})[${0}])`)
 
 export const aqBV = <T>(q: BV<T>) => `RETURN ${q}` as AQ<T>

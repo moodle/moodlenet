@@ -17,12 +17,12 @@ export const getEdgeByNodesQ = <Type extends GraphEdgeType>({
     let fromNode = ${from}
     let toNode = ${to}
     
-    for e in ${edgeType}
-      filter e._from == fromNode._id 
-      && e._to == toNode._id 
+    for getEdgeByNodes in ${edgeType}
+      filter getEdgeByNodes._from == fromNode._id 
+      && getEdgeByNodes._to == toNode._id 
     limit 1
 
-    return ${aqlGraphEdge2GraphEdge('e')}
+    return ${aqlGraphEdge2GraphEdge('getEdgeByNodes')}
   )[0]`)
   return q
 }

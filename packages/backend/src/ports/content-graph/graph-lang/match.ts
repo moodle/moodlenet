@@ -8,8 +8,8 @@ export type RelMatch = [
   to: GraphNodeType[] | undefined,
 ]
 
-export const matchesRel = (rel: Rel, relMatch: RelMatch) =>
+export const matches = (rel: Rel, relMatch: RelMatch) =>
   relMatch.reduce((matches, _types, index) => matches && (_types ? _types.includes(rel[index] as never) : true), true)
 
-export const matchesRelOneOf = (rel: Rel, relMatches: RelMatch[]) =>
-  relMatches.reduce((matchesOneOf, relMatch) => matchesOneOf || matchesRel(rel, relMatch), false)
+export const matchesAny = (rel: Rel, relMatches: RelMatch[]) =>
+  relMatches.reduce((matchesOneOf, relMatch) => matchesOneOf || matches(rel, relMatch), false)
