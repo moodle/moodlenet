@@ -16,7 +16,7 @@ export const persistTempAssets = plug(
     if (!persistTmpFilesReqs.length) {
       return []
     }
-    console.log({ persistTmpFilesReqs })
+    // console.log({ persistTmpFilesReqs })
     const results = persistTempAssetsAdapter({ persistTmpFilesReqs })
     return results
   },

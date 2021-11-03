@@ -3,7 +3,7 @@ import { aq } from '../../../../../lib/helpers/arango/query'
 import { SockOf } from '../../../../../lib/plug'
 import { Operators, operators } from '../../../../../ports/content-graph/edge/del'
 import { Assertions, BV } from '../../../../../ports/content-graph/graph-lang/base'
-import { _aqlBv } from '../../adapters/bl/bv'
+import { _aqlBv } from '../../adapters/bl/baseOperators'
 import { aqlGraphEdge2GraphEdge, getAqlAssertions } from '../helpers'
 
 export const delEdgeQ = ({

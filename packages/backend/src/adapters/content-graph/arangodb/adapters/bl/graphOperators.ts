@@ -2,12 +2,10 @@ import { aqlstr } from '../../../../../lib/helpers/arango/query'
 import { SockOf } from '../../../../../lib/plug'
 import { graphOperators, GraphOperators } from '../../../../../ports/content-graph/graph-lang/graph'
 import { aqlGraphEdge2GraphEdge, aqlGraphNode2GraphNode, graphNode2AqlId } from '../../aql/helpers'
-import { _aqlBv } from './bv'
+import { _aqlBv } from './baseOperators'
 
 export const arangoGraphOperators: SockOf<typeof graphOperators> = async () => ARANGO_GRAPH_OPERATORS
 export const ARANGO_GRAPH_OPERATORS: GraphOperators = {
-  // edgeType: edgeType => ` ${edgeType} ` as BV<GraphEdgeType>,
-  // nodeType: nodeType => ` ${nodeType} ` as BV<GraphNodeType>,
   graphNode: identifier => {
     if (!identifier) {
       return _aqlBv('null')
@@ -26,10 +24,10 @@ export const ARANGO_GRAPH_OPERATORS: GraphOperators = {
 
     return _aqlBv(
       `(
-      FOR graphNode IN ${identifier._type}
-        FILTER graphNode[${aqlstr(idProp)}] == ${aqlstr(propVal)}
+      FOR opGraphNode IN ${identifier._type}
+        FILTER opGraphNode[${aqlstr(idProp)}] == ${aqlstr(propVal)}
         LIMIT 1
-      return ${aqlGraphNode2GraphNode('graphNode')}
+      return ${aqlGraphNode2GraphNode('opGraphNode')}
       )[0]`,
     )
   },
@@ -40,24 +38,8 @@ export const ARANGO_GRAPH_OPERATORS: GraphOperators = {
     const { _type, id } = identifier
     return _aqlBv(`${aqlGraphEdge2GraphEdge(`DOCUMENT("${_type}/${id}")`)}`)
   },
-  isCreator: ({ authNode, ofGlyph: ofNode }) =>
-    _aqlBv<boolean>(`${ofNode}._creator == { _type:${authNode}._type, _authKey:${authNode}._authKey }`),
-  isPublished: node => _aqlBv<boolean>(`${node}._published == true`),
-  // isCreator: ({ authNode, ofNode }) => {
-  //   const Created: EdgeType = 'Created'
-  //   return _<boolean>(`${authNode}._authKey && ${ofNode} ? ( LENGTH(
-  //     FOR e in ${Created}
-  //       FILTER  e._authKey == ${authNode}._authKey
-  //           &&  e._to == ${graphNode2AqlId(ofNode)}
-  //       LIMIT 1
-  //     RETURN e
-  //   ) == 1 ) : false`)
-  // },
+  isCreator: ({ authNode, ofGlyph }) =>
+    _aqlBv<boolean>(`${ofGlyph}._creator == { _type:${authNode}._type, _authKey:${authNode}._authKey }`),
+  isPublished: glyph => _aqlBv<boolean>(`${glyph}._published == true`),
   isSameNode: (a, b) => _aqlBv<boolean>(`${graphNode2AqlId(a)} == ${graphNode2AqlId(b)}`),
-  // nodeId(nodeId) {
-  //   return _(getAqlNodeByGraphNodeIdentifierQ(nodeId))
-  // },
-  // authId(authId, type) {
-  //   return _(authNodeByAuthIdQ({ authId, type }))
-  // },
 }

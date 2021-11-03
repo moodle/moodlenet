@@ -30,7 +30,7 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
       title: '',
       visibility: 'Private',
     },
-    onSubmit: console.log.bind(console, 'submit NewCollection'),
+    onSubmit: () => {}, //console.log.bind(console, 'submit NewCollection'),
   })
 
   const [sform] = formBag

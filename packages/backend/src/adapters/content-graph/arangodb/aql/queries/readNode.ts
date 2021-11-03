@@ -3,7 +3,7 @@ import { aq } from '../../../../../lib/helpers/arango/query'
 import { SockOf } from '../../../../../lib/plug'
 import { Assertions, BV } from '../../../../../ports/content-graph/graph-lang/base'
 import { Operators, operators } from '../../../../../ports/content-graph/node/read'
-import { _aqlBv } from '../../adapters/bl/bv'
+import { _aqlBv } from '../../adapters/bl/baseOperators'
 import { aqlGraphNode2GraphNode, getAqlAssertions } from '../helpers'
 
 export const readNodeQ = <Type extends GraphNodeType>({

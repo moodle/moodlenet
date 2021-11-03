@@ -1,9 +1,9 @@
 import { aqlstr, getOneResult } from '../../../../../lib/helpers/arango/query'
 import { SockOf } from '../../../../../lib/plug'
-import { BaseOperators, baseOperators, _T } from '../../../../../ports/content-graph/graph-lang/base'
+import { BaseOperators, baseOperators, BV, _T } from '../../../../../ports/content-graph/graph-lang/base'
 import { aqBV } from '../../aql/helpers'
 import { ContentGraphDB } from '../../types'
-import { _aqlBv } from './bv'
+export const _aqlBv = <T>(val: string) => `( ${val} )` as BV<T>
 
 export const arangoBaseOperators = (db: ContentGraphDB): SockOf<typeof baseOperators> => {
   const BASE_OPERATORS = getBaseOperators(db)

@@ -215,6 +215,6 @@ export const SessionProvider: FC = ({ children }) => {
       getSessionLazyQ,
     ],
   )
-  console.log({ __: ctx.userMustAcceptPolicies })
+  // console.log({ __: ctx.userMustAcceptPolicies })
   return <ProvideSession value={ctx}>{!sessionQResult.called ? null : children}</ProvideSession>
 }

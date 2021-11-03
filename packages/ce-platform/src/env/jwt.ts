@@ -5,7 +5,7 @@ const JWT_PUBLIC_KEY = process.env.JWT_PUBLIC_KEY
 
 if (!(JWT_PRIVATE_KEY && JWT_PUBLIC_KEY)) {
   console.error('JWT Env:')
-  console.log({ JWT_PRIVATE_KEY, JWT_PUBLIC_KEY })
+  console.error({ JWT_PRIVATE_KEY, JWT_PUBLIC_KEY })
   throw new Error(`some env missing or invalid`)
 }
 
