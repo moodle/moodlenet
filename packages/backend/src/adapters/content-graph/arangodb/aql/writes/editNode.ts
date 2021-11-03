@@ -3,7 +3,7 @@ import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
 import { SockOf } from '../../../../../lib/plug'
 import { Assertions, BV } from '../../../../../ports/content-graph/graph-lang/base'
 import { Data, Operators, operators } from '../../../../../ports/content-graph/node/edit'
-import { _aqlBv } from '../../adapters/bl/bv'
+import { _aqlBv } from '../../adapters/bl/baseOperators'
 import { aqlGraphNode2GraphNode, getAqlAssertions, graphNode2AqlIdentifier } from '../helpers'
 
 export const editNodeQ = <Type extends GraphNodeType>({

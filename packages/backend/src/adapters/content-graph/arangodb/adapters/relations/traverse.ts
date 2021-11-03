@@ -16,7 +16,7 @@ export const arangoTraverseNodeRelationsAdapter =
     const { afterPageQuery, beforePageQuery } = traverseEdgesQ(input)
     const afterItems = afterPageQuery ? await getAllResults(afterPageQuery, db) : []
     const beforeItems = beforePageQuery ? await getAllResults(beforePageQuery, db) : []
-    console.log('afterPageQuery\n', afterPageQuery)
+    // console.log('afterPageQuery\n', afterPageQuery)
     // const afterItems = afterItemsQres.map(pageItemMapper)
     // const beforeItems = beforeItemsQres.map(pageItemMapper)
     const page = makeAfterBeforePage({

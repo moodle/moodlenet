@@ -3,7 +3,7 @@ import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/dis
 import { CollectionType } from 'arangojs'
 import { AQ, aqlstr, getAllResults } from '../../../../lib/helpers/arango/query'
 import { Assertions, BV } from '../../../../ports/content-graph/graph-lang/base'
-import { _aqlBv } from '../adapters/bl/bv'
+import { _aqlBv } from '../adapters/bl/baseOperators'
 import { ContentGraphDB } from '../types'
 import { deleteBrokenEdgesQ } from './writes/deleteBrokenEdgesQ'
 

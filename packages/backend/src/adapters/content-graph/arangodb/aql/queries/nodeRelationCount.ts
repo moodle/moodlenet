@@ -5,7 +5,7 @@ import { aqlstr } from '../../../../../lib/helpers/arango/query'
 import { SockOf } from '../../../../../lib/plug'
 import { Assertions, BV } from '../../../../../ports/content-graph/graph-lang/base'
 import { Operators, operators } from '../../../../../ports/content-graph/relations/count'
-import { _aqlBv } from '../../adapters/bl/bv'
+import { _aqlBv } from '../../adapters/bl/baseOperators'
 import { getAqlAssertions, graphNode2AqlId } from '../helpers'
 
 export const nodeRelationCountQ = ({
@@ -40,7 +40,7 @@ export const nodeRelationCountQ = ({
     
     RETURN count
   )[0]`)
-  console.log('-----------------------------------------', q)
+  // console.log('-----------------------------------------', q)
   return q
 }
 

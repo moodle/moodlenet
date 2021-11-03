@@ -83,7 +83,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
       type: null,
       visibility: 'Private',
     },
-    onSubmit: console.log.bind(console, 'submit newResource'),
+    onSubmit: () => {}, // console.log.bind(console, 'submit newResource'),
   })
 
   const [sform] = formBag
@@ -374,7 +374,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
     }
   }, [nextStep, stepProps, imageUrl, formBag, form.values])
 
-  console.log('form.values', form.values)
+  // console.log('form.values', form.values)
 
   return newResourceProps && [newResourceProps]
 }

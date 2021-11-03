@@ -6,7 +6,7 @@ import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
 import { SockOf } from '../../../../../lib/plug'
 import { Assertions, BV } from '../../../../../ports/content-graph/graph-lang/base'
 import { AdapterArg, Operators, operators } from '../../../../../ports/content-graph/relations/traverse'
-import { _aqlBv } from '../../adapters/bl/bv'
+import { _aqlBv } from '../../adapters/bl/baseOperators'
 // import { getNodeOpAqlAssertions } from './assertions/node'
 import {
   aqlGraphEdge2GraphEdge,

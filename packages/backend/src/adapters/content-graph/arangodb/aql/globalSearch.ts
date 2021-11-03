@@ -3,7 +3,7 @@ import { GraphNode } from '@moodlenet/common/dist/content-graph/types/node'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { SockOf } from '../../../../lib/plug'
 import { AdapterArg, operators, Operators } from '../../../../ports/content-graph/search/byTerm'
-import { _aqlBv } from '../adapters/bl/bv'
+import { _aqlBv } from '../adapters/bl/baseOperators'
 import { aqlGraphNode2GraphNode, forwardSkipLimitPagination, getAqlAssertions } from './helpers'
 import { nodeRelationCountQ } from './queries/nodeRelationCount'
 
