@@ -2,7 +2,7 @@ import { SockOf } from '../../../lib/plug'
 import { BRules, operators } from '../../../ports/content-graph/edge/add'
 import { Assertions, baseOperators } from '../../../ports/content-graph/graph-lang/base'
 import { graphOperators } from '../../../ports/content-graph/graph-lang/graph'
-import { matchesRel, matchesRelOneOf, RelMatch } from '../../../ports/content-graph/graph-lang/match'
+import { matches, matchesAny, RelMatch } from '../../../ports/content-graph/graph-lang/match'
 import { isLocalOrganizationAuthId } from '../helpers'
 
 type Rules =
@@ -19,7 +19,7 @@ export const addEdgeBRules: SockOf<BRules> = async ({ arg, rel, sessionEnv /* , 
   if (await isLocalOrganizationAuthId(sessionEnv.authId)) {
     return { ...arg, assertions: {} }
   }
-  if (!matchesRelOneOf(rel, allowedRelations)) {
+  if (!matchesAny(rel, allowedRelations)) {
     return null
   }
 
@@ -29,17 +29,17 @@ export const addEdgeBRules: SockOf<BRules> = async ({ arg, rel, sessionEnv /* , 
   const { isCreator, graphNode, isSameNode } = await graphOperators()
   const { not } = await baseOperators()
 
-  if (matchesRelOneOf(rel, [collectionFeatures, resourceFeatures])) {
+  if (matchesAny(rel, [collectionFeatures, resourceFeatures])) {
     assertions.mustBeCreatorOfTarget = isCreator({
       authNode: graphNode(sessionEnv.authId),
       ofGlyph: fromNode,
     })
   }
 
-  if (matchesRelOneOf(rel, myOwnAllowedRelations)) {
+  if (matchesAny(rel, myOwnAllowedRelations)) {
     assertions.sourceMustBeYou = isSameNode(graphNode(sessionEnv.authId), fromNode)
 
-    if (matchesRel(rel, profileOrOrgLikes)) {
+    if (matches(rel, profileOrOrgLikes)) {
       assertions.cantBeCreatorOfTarget = not(
         isCreator({
           authNode: graphNode(sessionEnv.authId),
@@ -48,7 +48,7 @@ export const addEdgeBRules: SockOf<BRules> = async ({ arg, rel, sessionEnv /* , 
       )
     }
 
-    if (matchesRel(rel, profileOrOrgFollows)) {
+    if (matches(rel, profileOrOrgFollows)) {
       assertions.youCannotFollowYourself = not(isSameNode(graphNode(sessionEnv.authId), toNode))
     }
   }
