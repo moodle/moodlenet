@@ -212,7 +212,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       toggleBookmark,
       numFollowers: collectionData.followersCount,
       toggleFollow,
-      deleteCollection: isOwner ? deleteCollection : undefined,
+      deleteCollection: isOwner || isAdmin ? deleteCollection : undefined,
     }
     return props
   }, [
