@@ -25,8 +25,32 @@ const init_2_0_0: VersionUpdater = {
     await justExecute(saveConfigQ(DefaultConfig), db)
 
     console.log(`creating user-auth collection ${USER}`)
-    await db.createCollection(USER)
+    const userCollection = await db.createCollection(USER)
 
+    await userCollection.ensureIndex({
+      type: 'hash',
+      name: 'email',
+      fields: ['email'],
+      unique: true,
+    })
+    await userCollection.ensureIndex({
+      type: 'hash',
+      name: 'authId',
+      fields: ['authId'],
+      unique: true,
+    })
+    await userCollection.ensureIndex({
+      type: 'hash',
+      name: 'emailAuthId',
+      fields: ['authId', 'email'],
+      unique: true,
+    })
+    await userCollection.ensureIndex({
+      type: 'persistent',
+      name: 'authIdParts',
+      fields: ['authId._type', 'authId._authKey'],
+      unique: true,
+    })
     console.log(`creating organization-user`)
     const password = `---no-organization-user-password-set---${Math.random().toString(36).substr(2)}`
     await justExecute(
