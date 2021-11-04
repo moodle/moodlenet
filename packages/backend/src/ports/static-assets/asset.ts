@@ -26,5 +26,6 @@ export const getAsset = plug(ns(module, 'get-asset'), async ({ assetId }: { asse
 
 export const delAssetAdapter = plug<(_: { assetId: AssetId }) => Promise<void>>(ns(module, 'del-asset-adapter'))
 export const delAsset = plug(ns(module, 'del-asset'), async ({ assetId }: { assetId: AssetId }) => {
+  console.log(`deleting asset: ${assetId}`)
   await delAssetAdapter({ assetId })
 })
