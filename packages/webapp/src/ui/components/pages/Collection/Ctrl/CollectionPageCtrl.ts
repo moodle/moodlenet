@@ -2,7 +2,7 @@ import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlen
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
-import { useCallback, useEffect, useMemo } from 'react'
+import { createElement, useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
@@ -13,6 +13,8 @@ import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useFormikBag } from '../../../../lib/formik'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
+import { fallbackPageProps } from '../../FallbackPage/Ctrl/FallbackPageCtrl'
+import { FallbackPage } from '../../FallbackPage/FallbackPage'
 import { NewCollectionFormValues } from '../../NewCollection/types'
 import { VisibilityDropdown } from '../../NewResource/FieldsData'
 // import { useFormikBag } from '../../../lib/formik'
@@ -32,7 +34,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
   // const { org: localOrg } = useLocalInstance()
   const { session, isAdmin, isAuthenticated } = useSession()
 
-  const { data, refetch } = useCollectionPageDataQuery({
+  const { data, refetch, loading } = useCollectionPageDataQuery({
     variables: {
       collectionId: id,
       myProfileId: session ? [session.profile.id] : [],
@@ -229,5 +231,9 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     removeResource,
     isAdmin,
   ])
+  if (!loading && !data?.node) {
+    return createElement(FallbackPage, fallbackPageProps({ key: 'collection-not-found' }))
+  }
+
   return collectionProps && [collectionProps]
 }
