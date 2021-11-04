@@ -62,7 +62,7 @@ export const Landing = withCtrl<LandingProps>(
                 <Fragment>
                   {!isAuthenticated && (
                     <div className="moodle-title">
-                      <Trans>Welome to MoodleNet</Trans>
+                      <Trans>Welcome to MoodleNet</Trans>
                     </div>
                   )}
                   <div className="organization-title">{organization.name}</div>
