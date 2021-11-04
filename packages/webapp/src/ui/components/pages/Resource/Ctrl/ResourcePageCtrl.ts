@@ -3,7 +3,7 @@ import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { duration } from 'moment'
-import { useCallback, useEffect, useMemo } from 'react'
+import { createElement, useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
@@ -25,6 +25,8 @@ import { href } from '../../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useFormikBag } from '../../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
+import { fallbackPageProps } from '../../FallbackPage/Ctrl/FallbackPageCtrl'
+import { FallbackPage } from '../../FallbackPage/FallbackPage'
 import { useCreateResourceRelationMutation } from '../../NewResource/Ctrl/NewResourceCtrl.gen'
 import { VisibilityDropdown } from '../../NewResource/FieldsData'
 import { NewResourceFormValues } from '../../NewResource/types'
@@ -48,7 +50,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
   )
   // console.log({ allMyOwnCollectionEdges })
   // const { org: localOrg } = useLocalInstance()
-  const { data, refetch } = useResourcePageDataQuery({
+  const { data, refetch, loading } = useResourcePageDataQuery({
     variables: {
       resourceId: id,
       myProfileId: session ? [session.profile.id] : [],
@@ -408,5 +410,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     resourceTypeOptions,
     resourceGradeOptions,
   ])
+  if (!loading && !data?.node) {
+    return createElement(FallbackPage, fallbackPageProps({ key: 'resource-not-found' }))
+  }
   return resourceProps && [resourceProps]
 }
