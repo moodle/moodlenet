@@ -3,7 +3,7 @@ import promiseRetry from 'promise-retry'
 
 declare const AQS: unique symbol
 export type AqlVar = string
-export type AQ<T> = string & { readonly [AQS]?: T }
+export type AQ<T> = string & { readonly [AQS]: T }
 export const aq = <T>(q: string) => q as AQ<T>
 
 export const aqlstr = (_: any) => JSON.stringify(_)

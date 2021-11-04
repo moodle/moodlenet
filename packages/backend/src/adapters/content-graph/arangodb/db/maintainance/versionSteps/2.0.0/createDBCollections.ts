@@ -2,6 +2,7 @@ import { edgeTypes } from '@moodlenet/common/dist/content-graph/types/edge'
 import { nodeTypes } from '@moodlenet/common/dist/content-graph/types/node'
 import { Database } from 'arangojs'
 import { ensureEdgeIndexes } from './ensureEdgeIndexes'
+import { ensureNodeIndexes } from './ensureNodeIndexes'
 
 export const createDBCollections = async ({ db }: { db: Database }) => {
   console.log(`creating node collections`)
@@ -9,59 +10,7 @@ export const createDBCollections = async ({ db }: { db: Database }) => {
     nodeTypes.map(async nodeCollName => {
       const collection = await db.createCollection(nodeCollName)
       console.log(`created node collection ${nodeCollName}`)
-      await collection.ensureIndex({
-        type: 'persistent',
-        unique: true,
-        name: 'slug',
-        fields: ['_slug'],
-      })
-
-      if (nodeCollName === 'Profile') {
-        await collection.ensureIndex({
-          type: 'persistent',
-          unique: true,
-          name: 'authId',
-          fields: ['_authKey'],
-        })
-      }
-
-      if (nodeCollName === 'Language') {
-        await collection.ensureIndex({
-          type: 'persistent',
-          unique: true,
-          name: 'name',
-          fields: ['name'],
-        })
-        await collection.ensureIndex({
-          type: 'persistent',
-          unique: true,
-          name: 'part1',
-          sparse: true,
-          fields: ['part1'],
-        })
-      }
-
-      if (
-        nodeCollName === 'IscedField' ||
-        nodeCollName === 'IscedGrade' ||
-        nodeCollName === 'FileFormat' ||
-        nodeCollName === 'ResourceType'
-      ) {
-        await collection.ensureIndex({
-          type: 'persistent',
-          unique: true,
-          name: 'code',
-          fields: ['code'],
-        })
-
-        if (nodeCollName === 'IscedField' || nodeCollName === 'IscedGrade') {
-          await collection.ensureIndex({
-            type: 'persistent',
-            name: 'codePath',
-            fields: ['codePath[*]'],
-          })
-        }
-      }
+      await ensureNodeIndexes(collection, nodeCollName)
 
       return collection
     }),

@@ -8,6 +8,9 @@ export const contentAnalyzer: ArangoSearchViewLink = {
   fields: {
     description: {},
     name: {},
+    lastName: {},
+    firstName: {},
+    intro: {},
   },
   includeAllFields: false,
   storeValues: 'none',
@@ -19,7 +22,7 @@ export const setupSearchView = async ({ db }: { db: Database }) => {
   const textAnalyzer = db.analyzer('global-text-search')
   await textAnalyzer.create({
     type: 'text',
-    properties: { case: 'upper', locale: 'en', stemming: true, edgeNgram: { max: 8, min: 4, preserveOriginal: true } },
+    properties: { case: 'upper', locale: 'en', stemming: true, edgeNgram: { max: 8, min: 3, preserveOriginal: true } },
     features: ['frequency', 'norm', 'position'],
   })
 
