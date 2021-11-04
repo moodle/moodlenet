@@ -55,9 +55,13 @@ export const nodeGqlId2UrlPath = (id: string) => {
   const [_type, _slug] = id.split('/')
   // console.log({ _type, _slug })
 
-  return nodeIdentifierSlug2UrlPath({ _type: String(_type) as GraphNodeType, _slug: _slug! })
+  return nodeIdentifierSlug2HomeUrlPath({ _type: String(_type) as GraphNodeType, _slug: _slug! })
 }
-export const nodeIdentifierSlug2UrlPath = ({ _slug, _type }: GraphNodeIdentifierSlug) => {
+export const nodeIdentifierSlug2HomeUrlPath = (slugId: GraphNodeIdentifierSlug) => {
+  if (slugId._type === 'Organization') {
+    return '' // FIXME: for federation !! ;)
+  }
+  const { _slug, _type } = slugId
   const contentNodeHomePath = getContentNodeHomePageBasePath(_type)
   const contentNodeHomePathSlug = `${contentNodeHomePath}/${_slug}`
   // console.log({ _type, _slug, contentNodeHomePath, contentNodeHomePathSlug })

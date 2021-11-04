@@ -1,9 +1,9 @@
-import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
-import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
+import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { duration } from 'moment'
-import { useCallback, useEffect, useMemo } from 'react'
+import { createElement, useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
@@ -17,7 +17,7 @@ import {
   useLicensesOptions,
   useResourceGradeOptions,
   useResourceTypeOptions,
-  yearsOptions
+  yearsOptions,
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
 import { useLMS } from '../../../../../lib/moodleLMS/useSendToMoodle'
 import { href } from '../../../../elements/link'
@@ -25,6 +25,8 @@ import { href } from '../../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useFormikBag } from '../../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
+import { fallbackPageProps } from '../../FallbackPage/Ctrl/FallbackPageCtrl'
+import { FallbackPage } from '../../FallbackPage/FallbackPage'
 import { useCreateResourceRelationMutation } from '../../NewResource/Ctrl/NewResourceCtrl.gen'
 import { VisibilityDropdown } from '../../NewResource/FieldsData'
 import { NewResourceFormValues } from '../../NewResource/types'
@@ -35,7 +37,7 @@ import {
   useDelResourceMutation,
   useDelResourceRelationMutation,
   useEditResourceMutation,
-  useResourcePageDataQuery
+  useResourcePageDataQuery,
 } from './ResourcePage.gen'
 
 export type ResourceCtrlProps = { id: ID }
@@ -48,7 +50,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
   )
   // console.log({ allMyOwnCollectionEdges })
   // const { org: localOrg } = useLocalInstance()
-  const { data, refetch } = useResourcePageDataQuery({
+  const { data, refetch, loading } = useResourcePageDataQuery({
     variables: {
       resourceId: id,
       myProfileId: session ? [session.profile.id] : [],
@@ -247,7 +249,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     }
   }, [formikSetFieldValue, formik.values.image])
 
-  const creatorEdge = narrowEdgeNodeOfType(['Profile'])(resourceData?.creator.edges[0])
+  const creatorEdge = narrowEdgeNodeOfType(['Profile', 'Organization'])(resourceData?.creator.edges[0])
 
   const creator = creatorEdge?.node
 
@@ -312,7 +314,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       liked,
       visibility: VisibilityDropdown,
       contributorCardProps: {
-        avatarUrl: getMaybeAssetRefUrl(creator?.avatar),
+        avatarUrl: getMaybeAssetRefUrl(creator?.__typename === 'Profile' ? creator.avatar : creator?.logo),
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
         timeSinceCreation: creatorEdge
@@ -374,7 +376,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       bookmarked: !!myBookmarkedEdgeId,
       numLikes: resourceData.likesCount,
       toggleBookmark,
-      deleteResource,
+      deleteResource: isOwner || isAdmin ? deleteResource : undefined,
       sendToMoodleLms,
       lmsSite: currentLMSPrefs?.site,
       contentUrl: getJustAssetRefUrl(resourceData.content),
@@ -408,5 +410,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     resourceTypeOptions,
     resourceGradeOptions,
   ])
+  if (!loading && !data?.node) {
+    return createElement(FallbackPage, fallbackPageProps({ key: 'resource-not-found' }))
+  }
   return resourceProps && [resourceProps]
 }

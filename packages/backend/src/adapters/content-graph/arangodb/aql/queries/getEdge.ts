@@ -1,8 +1,7 @@
-import { BV } from '@moodlenet/common/lib/content-graph/bl/graph-lang'
-import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
-import { EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { _ } from '../../adapters/bl/_'
+import { GraphEdge, GraphEdgeType } from '@moodlenet/common/dist/content-graph/types/edge'
+import { GraphNode } from '@moodlenet/common/dist/content-graph/types/node'
+import { BV } from '../../../../../ports/content-graph/graph-lang/base'
+import { _aqlBv } from '../../adapters/bl/baseOperators'
 import { aqlGraphEdge2GraphEdge } from '../helpers'
 
 export const getEdgeByNodesQ = <Type extends GraphEdgeType>({
@@ -10,21 +9,20 @@ export const getEdgeByNodesQ = <Type extends GraphEdgeType>({
   from,
   to,
 }: {
-  edgeType: EdgeType
-  from: BV<GraphNode | null>
-  to: BV<GraphNode | null>
+  edgeType: Type
+  from: BV<GraphNode>
+  to: BV<GraphNode>
 }) => {
-  const q = _<GraphEdge<Type>>(`(
+  const q = _aqlBv<GraphEdge<Type>>(`(
     let fromNode = ${from}
     let toNode = ${to}
     
-    for e in ${edgeType}
-      filter e._from == fromNode._id 
-      && e._to == toNode._id 
+    for getEdgeByNodes in ${edgeType}
+      filter getEdgeByNodes._from == fromNode._id 
+      && getEdgeByNodes._to == toNode._id 
     limit 1
 
-    return ${aqlGraphEdge2GraphEdge('e')}
+    return ${aqlGraphEdge2GraphEdge('getEdgeByNodes')}
   )[0]`)
-  console.log(q)
   return q
 }

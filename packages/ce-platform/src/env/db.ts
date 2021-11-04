@@ -2,7 +2,7 @@ const ARANGO_URL = process.env.ARANGO_URL
 
 if (!ARANGO_URL) {
   console.error('DB Env:')
-  console.log({ ARANGO_URL })
+  console.error({ ARANGO_URL })
   throw new Error(`some env missing or invalid`)
 }
 

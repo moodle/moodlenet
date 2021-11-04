@@ -1,0 +1,37 @@
+query LandingPageLists($id: ID = "Organization/") {
+  node(id: $id) {
+    ... on INode {
+      id
+      trending: _rel(type: Follows, targetTypes: [Collection, IscedField], page: { first: 6 }) {
+        edges {
+          node {
+            id
+            name
+          }
+        }
+      }
+      bookmarkedCollections: _rel(type: Bookmarked, targetTypes: [Collection], page: { first: 6 }) {
+        edges {
+          node {
+            id
+            name
+            ... on Collection {
+              image
+            }
+          }
+        }
+      }
+      bookmarkedResources: _rel(type: Bookmarked, targetTypes: [Resource], page: { first: 6 }) {
+        edges {
+          node {
+            id
+            name
+            ... on Resource {
+              image
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,8 @@
 import { getIscedFieldPathByCode } from '../../../../utils/content-graph/isced-field'
 import { contentSlug } from '../../../../utils/content-graph/slug-id'
+import { time0 } from '../../../types/common'
 import { IscedField } from '../../../types/node'
+import { __initialLocalOrgAuthId } from '../../content'
 import isced_fields from './CL_ISCED13-Fields'
 
 export const getIscedFields = () =>
@@ -9,16 +11,21 @@ export const getIscedFields = () =>
       _type: 'IscedField',
       _permId: field.code,
       _slug: contentSlug({ name: field.desc, slugCode: field.code }),
-      _published: true,
+      _published: selectedIscedFields.includes(field.code),
       name: field.desc,
       codePath: getIscedFieldPathByCode(field.code),
       code: field.code,
       description: field.desc,
+      _created: time0,
+      _edited: time0,
+      _authKey: null,
+      _creator: __initialLocalOrgAuthId,
+      _local: true,
     }
     return iscedfield
   })
 
-export const getSelectedIscedFields = () => getIscedFields().filter(({ code }) => selectedIscedFields.includes(code))
+//export const getSelectedIscedFields = () => getIscedFields().filter(({ code }) => selectedIscedFields.includes(code))
 export const selectedIscedFields = [
   'F00',
   'F001',

@@ -9,7 +9,9 @@ import {
   LevelDropdown,
   LicenseDropdown,
   MonthDropdown,
-  TypeDropdown, VisibilityDropdown, YearsDropdown
+  TypeDropdown,
+  VisibilityDropdown,
+  YearsDropdown,
 } from './FieldsData'
 import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'
@@ -104,7 +106,7 @@ export const NewResourceStoryProps: NewResourceProps = {
   headerPageTemplateProps: {
     headerPageProps: {
       ...HeaderPageLoggedInStoryProps,
-      showSubHeader: false,
+      // showSubHeader: false,
     },
     isAuthenticated: true,
     showSubHeader: false,

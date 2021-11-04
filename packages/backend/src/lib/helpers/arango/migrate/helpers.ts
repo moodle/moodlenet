@@ -1,10 +1,10 @@
 import requireAll from 'require-all'
 import { VersionLadder } from './types'
 
-export const require_all_updaters = <Ctx>(opts_or_dir: Options | string): VersionLadder<Ctx> => {
+export const require_all_updaters = (opts_or_dir: Options | string): VersionLadder => {
   const opts = typeof opts_or_dir === 'string' ? { dirname: opts_or_dir } : opts_or_dir
   const steps = requireAll(opts)
-  const ladder = Object.entries(steps).reduce<VersionLadder<Ctx>>(
+  const ladder = Object.entries(steps).reduce<VersionLadder>(
     (_ladder, [version, step]) => ({ ..._ladder, [version]: step }),
     {},
   )

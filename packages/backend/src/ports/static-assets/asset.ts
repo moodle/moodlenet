@@ -9,22 +9,23 @@ export type ProcessTempAssetAdapter = (_: {
   tempAssetId: TempAssetId
 }) => Promise<[Readable, TempAssetDesc]>
 
-export const processTempAssetAdapter = plug<ProcessTempAssetAdapter>(ns(__dirname, 'process-temp-asset-adapter'))
+export const processTempAssetAdapter = plug<ProcessTempAssetAdapter>(ns(module, 'process-temp-asset-adapter'))
 
 // get asset
 
 export const getAssetAdapter = plug<(_: { assetId: AssetId }) => Promise<null | [Readable, AssetFileDesc]>>(
-  ns(__dirname, 'get-asset-adapter'),
+  ns(module, 'get-asset-adapter'),
 )
 
-export const getAsset = plug(ns(__dirname, 'get-asset'), async ({ assetId }: { assetId: AssetId }) => {
+export const getAsset = plug(ns(module, 'get-asset'), async ({ assetId }: { assetId: AssetId }) => {
   const result = await getAssetAdapter({ assetId })
   return result
 })
 
 // del asset
 
-export const delAssetAdapter = plug<(_: { assetId: AssetId }) => Promise<void>>(ns(__dirname, 'del-asset-adapter'))
-export const delAsset = plug(ns(__dirname, 'del-asset'), async ({ assetId }: { assetId: AssetId }) => {
+export const delAssetAdapter = plug<(_: { assetId: AssetId }) => Promise<void>>(ns(module, 'del-asset-adapter'))
+export const delAsset = plug(ns(module, 'del-asset'), async ({ assetId }: { assetId: AssetId }) => {
+  console.log(`deleting asset: ${assetId}`)
   await delAssetAdapter({ assetId })
 })

@@ -1,4 +1,4 @@
-import { ComponentType, FC, PropsWithChildren, ReactElement } from 'react'
+import { ComponentType, FC, isValidElement, PropsWithChildren, ReactElement } from 'react'
 
 export type UIPropsOf<UIProps, ExcludeKeys extends keyof UIProps = never> = Pick<UIProps, ExcludeKeys>
 declare const s: unique symbol
@@ -13,6 +13,7 @@ export type CtrlHookRetOf<UIProps, ExcludeKeys extends keyof UIProps = never> =
   | [feedProps: Omit<UIProps, ExcludeKeys>, opts?: Partial<CtrlHookRetOpts>]
   | null
   | undefined
+  | ReactElement
 
 export type CtrlHookRetOpts = {
   wrap(ui: ReactElement): ReactElement
@@ -63,6 +64,8 @@ export const RenderWithHook: FC<{
   const hookRet = useCtrlHook(hookArg)
   if (!hookRet) {
     return null
+  } else if (isValidElement(hookRet)) {
+    return hookRet
   }
   const [feedProps, opts] = hookRet
   const { wrap } = { ...defaultCtrlHookRetOpts, ...opts }

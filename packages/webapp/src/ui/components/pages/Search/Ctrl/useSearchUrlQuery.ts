@@ -1,5 +1,5 @@
-import { isGlobalSearchSortBy } from '@moodlenet/common/lib/content-graph/types/global-search'
-import { GlobalSearchSort, Maybe } from '@moodlenet/common/lib/graphql/types.graphql.gen'
+import { isGlobalSearchSortBy } from '@moodlenet/common/dist/content-graph/types/global-search'
+import { GlobalSearchSort, Maybe } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { useCallback, useMemo } from 'react'
 import { mainPath } from '../../../../../hooks/glob/nav'
 import { useUrlQuery } from '../../../../lib/useUrlQuery'

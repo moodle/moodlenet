@@ -1,15 +1,15 @@
-import * as GE from '@moodlenet/common/lib/content-graph/types/edge'
-import * as GN from '@moodlenet/common/lib/content-graph/types/node'
-import { AssetRef } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import * as GQL from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { UploadType } from '@moodlenet/common/lib/staticAsset/lib'
+import * as GE from '@moodlenet/common/dist/content-graph/types/edge'
+import * as GN from '@moodlenet/common/dist/content-graph/types/node'
+import { AssetRef } from '@moodlenet/common/dist/graphql/scalars.graphql'
+import * as GQL from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { UploadType } from '@moodlenet/common/dist/staticAsset/lib'
 import {
   gqlEdgeId2GraphEdgeIdentifier,
   gqlNodeId2GraphNodeIdentifier,
-} from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { assertNever } from '@moodlenet/common/lib/utils/misc'
-import { pick } from '@moodlenet/common/lib/utils/object'
-import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
+} from '@moodlenet/common/dist/utils/content-graph/id-key-type-guards'
+import { assertNever } from '@moodlenet/common/dist/utils/misc'
+import { pick } from '@moodlenet/common/dist/utils/object'
+import { DistOmit, Maybe } from '@moodlenet/common/dist/utils/types'
 import { Tuple } from 'tuple-type'
 import { persistTempAssets } from '../../ports/static-assets/temp'
 import { PersistTmpFileReq } from '../../ports/static-assets/types'
@@ -21,6 +21,7 @@ export const graphNode2GqlNode = (node: GN.GraphNode): GQL.Node => {
     name: node.name,
     description: node.description,
     _published: node._published,
+    _local: node._local,
     ...({} as Pick<GQL.Node, '_rel' | '_relCount'>),
   }
 
@@ -28,7 +29,7 @@ export const graphNode2GqlNode = (node: GN.GraphNode): GQL.Node => {
     const _node: GQL.Profile = {
       __typename: 'Profile',
       ...base,
-      ...pick(node, ['bio', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl', '_isAdmin']),
+      ...pick(node, ['bio', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl']),
     }
     return _node
   } else if (node._type === 'Collection') {
@@ -56,7 +57,7 @@ export const graphNode2GqlNode = (node: GN.GraphNode): GQL.Node => {
     const _node: GQL.Organization = {
       __typename: 'Organization',
       ...base,
-      ...pick(node, ['color', 'domain', 'logo', 'intro']),
+      ...pick(node, ['color', 'domain', 'logo', 'intro', 'introTitle']),
     }
     return _node
   } else if (node._type === 'Resource') {
@@ -98,7 +99,9 @@ export const graphNode2GqlNode = (node: GN.GraphNode): GQL.Node => {
     return assertNever(node, `graphNode2GqlNode: can't map unknown node type '${(node as any)?._type}'`)
   }
 }
-export const gqlNode2GraphNode = (node: GQL.Node): Omit<GN.GraphNode, '_permId' | '_status'> => {
+
+type OmitNodeProps = '_permId' | '_authKey' | '_created' | '_edited' | '_creator' | '_local'
+export const gqlNode2GraphNode = (node: GQL.Node): DistOmit<GN.GraphNode, OmitNodeProps> => {
   const parsed = gqlNodeId2GraphNodeIdentifier(node.id)
   if (!parsed) {
     throw new Error(`gqlNode2GraphNode: can't parse id '${node.id}'`)
@@ -112,80 +115,70 @@ export const gqlNode2GraphNode = (node: GQL.Node): Omit<GN.GraphNode, '_permId' 
   }
 
   if (node.__typename === 'Profile') {
-    const _node: Omit<GN.Profile, '_permId' | '_authId'> = {
+    const _node: Omit<GN.Profile, OmitNodeProps> = {
       _type: 'Profile',
       ...base,
-      ...pick(node, [
-        'bio',
-        'firstName',
-        'lastName',
-        'location',
-        'image',
-        'avatar',
-        'siteUrl',
-        'description',
-        '_isAdmin',
-      ]),
+      ...pick(node, ['bio', 'firstName', 'lastName', 'location', 'image', 'avatar', 'siteUrl', 'description']),
     }
     return _node
   } else if (node.__typename === 'Collection') {
-    const _node: Omit<GN.Collection, '_permId' | '_status'> = {
+    const _node: Omit<GN.Collection, OmitNodeProps> = {
       _type: 'Collection',
       ...base,
       ...pick(node, ['image', 'name']),
     }
     return _node
   } else if (node.__typename === 'IscedField') {
-    const _node: Omit<GN.GraphNode, '_permId' | '_status'> = {
+    const _node: Omit<GN.IscedField, OmitNodeProps> = {
       _type: 'IscedField',
       ...base,
       ...pick(node, ['codePath', 'image', 'code', 'image']),
     }
     return _node
   } else if (node.__typename === 'IscedGrade') {
-    const _node: Omit<GN.GraphNode, '_permId' | '_status'> = {
+    const _node: Omit<GN.IscedGrade, OmitNodeProps> = {
       _type: 'IscedGrade',
       ...base,
       ...pick(node, ['codePath', 'image', 'code', 'image']),
     }
     return _node
   } else if (node.__typename === 'Organization') {
-    const _node: Omit<GN.GraphNode, '_permId' | '_status'> = {
+    const _node: Omit<GN.Organization, OmitNodeProps> = {
       _type: 'Organization',
       ...base,
-      ...pick(node, ['color', 'domain', 'logo', 'intro']),
+      ...pick(node, ['color', 'domain', 'logo', 'intro', 'introTitle']),
     }
     return _node
   } else if (node.__typename === 'Resource') {
-    const _node: Omit<GN.GraphNode, '_permId' | '_status'> = {
+    const _node: Omit<GN.Resource, OmitNodeProps> = {
       _type: 'Resource',
       ...base,
       ...pick(node, ['content', 'kind', 'image', 'originalCreationDate']),
     }
     return _node
   } else if (node.__typename === 'FileFormat') {
-    const _node: Omit<GN.GraphNode, '_permId' | '_status'> = {
+    const _node: Omit<GN.FileFormat, OmitNodeProps> = {
       _type: 'FileFormat',
       ...base,
       ...pick(node, ['code', 'subtype', 'type']),
     }
     return _node
   } else if (node.__typename === 'Language') {
-    const _node: Omit<GN.GraphNode, '_permId' | '_status'> = {
+    const _node: Omit<GN.Language, OmitNodeProps> = {
       _type: 'Language',
       ...base,
       ...pick(node, ['langType', 'part1', 'part2b', 'part2t', 'scope']),
     }
     return _node
   } else if (node.__typename === 'License') {
-    const _node: Omit<GN.GraphNode, '_permId' | '_status'> = {
+    const _node: Omit<GN.License, OmitNodeProps> = {
       _type: 'License',
       ...base,
       ...pick(node, ['code']),
     }
     return _node
   } else if (node.__typename === 'ResourceType') {
-    const _node: Omit<GN.GraphNode, '_permId' | '_status'> = {
+    const _node: Omit<GN.ResourceType, OmitNodeProps> = {
       _type: 'ResourceType',
       ...base,
       ...pick(node, ['code']),
@@ -218,12 +211,6 @@ export const graphEdge2GqlEdge = (edge: GE.GraphEdge): GQL.Edge => {
       ...base,
     }
     return _edge
-  } else if (edge._type === 'Pinned') {
-    const _edge: GQL.Pinned = {
-      __typename: 'Pinned',
-      ...base,
-    }
-    return _edge
   } else if (edge._type === 'Likes') {
     const _edge: GQL.Likes = {
       __typename: 'Likes',
@@ -240,7 +227,9 @@ export const graphEdge2GqlEdge = (edge: GE.GraphEdge): GQL.Edge => {
     return assertNever(edge, `graphEdge2GqlEdge: can't map unknown edge type '${(edge as any)?._type}''`)
   }
 }
-export const gqlEdge2GraphEdge = (edge: GQL.Edge): DistOmit<GE.GraphEdge, '_authId'> => {
+
+type OmitEdgeProps = '_creator' | '_created' | '_edited'
+export const gqlEdge2GraphEdge = (edge: GQL.Edge): DistOmit<GE.GraphEdge, OmitEdgeProps> => {
   const parsed = gqlEdgeId2GraphEdgeIdentifier(edge.id)
   if (!parsed) {
     throw new Error(`gqlEdge2GraphEdge: can't parse id '${edge.id}'`)
@@ -249,37 +238,31 @@ export const gqlEdge2GraphEdge = (edge: GQL.Edge): DistOmit<GE.GraphEdge, '_auth
   const base = { id, _created: edge._created }
 
   if (edge.__typename === 'Created') {
-    const _edge: DistOmit<GE.Created, '_authId'> = {
+    const _edge: DistOmit<GE.Created, OmitEdgeProps> = {
       _type: 'Created',
       ...base,
     }
     return _edge
   } else if (edge.__typename === 'Features') {
-    const _edge: DistOmit<GE.Features, '_authId'> = {
+    const _edge: DistOmit<GE.Features, OmitEdgeProps> = {
       _type: 'Features',
       ...base,
     }
     return _edge
   } else if (edge.__typename === 'Follows') {
-    const _edge: DistOmit<GE.Follows, '_authId'> = {
+    const _edge: DistOmit<GE.Follows, OmitEdgeProps> = {
       _type: 'Follows',
       ...base,
     }
     return _edge
-  } else if (edge.__typename === 'Pinned') {
-    const _edge: DistOmit<GE.Pinned, '_authId'> = {
-      _type: 'Pinned',
-      ...base,
-    }
-    return _edge
   } else if (edge.__typename === 'Likes') {
-    const _edge: DistOmit<GE.Likes, '_authId'> = {
+    const _edge: DistOmit<GE.Likes, OmitEdgeProps> = {
       _type: 'Likes',
       ...base,
     }
     return _edge
   } else if (edge.__typename === 'Bookmarked') {
-    const _edge: DistOmit<GE.Bookmarked, '_authId'> = {
+    const _edge: DistOmit<GE.Bookmarked, OmitEdgeProps> = {
       _type: 'Bookmarked',
       ...base,
     }

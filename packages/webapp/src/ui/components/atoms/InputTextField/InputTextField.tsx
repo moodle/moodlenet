@@ -48,7 +48,7 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   const checkRowChange = useCallback(() => {
     if (textAreaAutoSize && textArea && textArea.current) {
       textArea.current.style.height = 'fit-content'
-      console.log(textArea.current.scrollHeight)
+      // console.log(textArea.current.scrollHeight)
       textArea.current.style.height = Math.ceil(textArea.current.scrollHeight / 10) * 10 + 'px'
     }
   }, [textAreaAutoSize])

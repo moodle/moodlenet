@@ -79,14 +79,14 @@ export const CollectionLoggedOutStoryProps: CollectionProps = {
   headerPageTemplateProps: {
     isAuthenticated: false,
     headerPageProps: {
-      isAuthenticated: false,
+      // isAuthenticated: false,
       headerProps: {
         ...HeaderLoggedOutStoryProps,
         me: null,
       },
-      subHeaderProps: {
-        tags: [],
-      },
+      // subHeaderProps: {
+      //   tags: [],
+      // },
     },
     mainPageWrapperProps: {
       userAcceptsPolicies: null,

@@ -2,7 +2,7 @@ const SMTP = process.env.SMTP
 
 if (!SMTP) {
   console.error('Nodemailer Env:')
-  console.log({ SMTP })
+  console.error({ SMTP })
   throw new Error(`some env missing or invalid`)
 }
 

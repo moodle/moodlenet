@@ -1,6 +1,6 @@
-import { isOfNodeType } from '@moodlenet/common/lib/graphql/helpers'
-import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { isOfNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { useSession } from '../../../../../context/Global/Session'
@@ -30,7 +30,7 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
       title: '',
       visibility: 'Private',
     },
-    onSubmit: console.log.bind(console, 'submit NewCollection'),
+    onSubmit: () => {}, //console.log.bind(console, 'submit NewCollection'),
   })
 
   const [sform] = formBag

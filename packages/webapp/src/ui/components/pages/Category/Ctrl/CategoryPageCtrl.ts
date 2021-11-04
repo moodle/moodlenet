@@ -1,6 +1,6 @@
-import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
-import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { useCallback, useMemo } from 'react'
+import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
+import { createElement, useCallback, useMemo } from 'react'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
 // import { useLocalInstance } from '../../../../context/Global/LocalInstance'
@@ -8,6 +8,8 @@ import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useCollectionCardCtrl } from '../../../molecules/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
+import { fallbackPageProps } from '../../FallbackPage/Ctrl/FallbackPageCtrl'
+import { FallbackPage } from '../../FallbackPage/FallbackPage'
 // import { useFormikBag } from '../../../lib/formik'
 // import { NewCategoryFormValues } from '../../NewCategory/types'
 import { CategoryProps } from '../Category'
@@ -23,7 +25,7 @@ export const useCategoryCtrl: CtrlHook<CategoryProps, CategoryCtrlProps> = ({ id
   const { session, isAuthenticated } = useSession()
   const [addCategoryRelation, addCategoryRelationRes] = useAddCategoryRelationMutation()
   const [delCategoryRelation, delCategoryRelationRes] = useDelCategoryRelationMutation()
-  const { data, refetch } = useCategoryPageDataQuery({
+  const { data, refetch, loading } = useCategoryPageDataQuery({
     variables: { categoryId: id, myProfileId: session ? [session.profile.id] : [] },
   })
 
@@ -87,5 +89,9 @@ export const useCategoryCtrl: CtrlHook<CategoryProps, CategoryCtrlProps> = ({ id
     }
     return props
   }, [categoryData, isAuthenticated, myFollowEdgeId, toggleFollow])
+  if (!loading && !data?.node) {
+    return createElement(FallbackPage, fallbackPageProps({ key: 'category-not-found' }))
+  }
+
   return categoryProps && [categoryProps]
 }

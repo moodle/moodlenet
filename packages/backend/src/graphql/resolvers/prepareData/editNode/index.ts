@@ -1,13 +1,13 @@
-import { EditNodeInput, EditNodeMutationError, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { DistOmit, Just } from '@moodlenet/common/lib/utils/types'
-import { EditNodeData, NewNodeData } from '../../../../ports/content-graph/node'
+import { EditNodeInput, EditNodeMutationError, NodeType } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { DistOmit, Just } from '@moodlenet/common/dist/utils/types'
+import { Data } from '../../../../ports/content-graph/node/edit'
 import { editNodeMutationError, getAssetRefInputAndType, mapAssetRefInputsToAssetRefs } from '../../helpers'
 
 const noTmpFilesEditNodeMutationError = () =>
   editNodeMutationError('UnexpectedInput', `couldn't find requested tempFiles`)
 
 const nodeDocumentDataBaker: {
-  [T in NodeType]: (input: Just<EditNodeInput[T]>) => Promise<EditNodeData | EditNodeMutationError>
+  [T in NodeType]: (input: Just<EditNodeInput[T]>) => Promise<Data | EditNodeMutationError>
 } = {
   async IscedField(/* input */) {
     throw new Error('GQL edit IscedField not implemented')
@@ -38,9 +38,9 @@ const nodeDocumentDataBaker: {
     }
     const [imageAssetRef] = assetRefs
 
-    const editResourceData: DistOmit<EditNodeData<'Resource'>, 'content' | 'kind'> = {
+    const editResourceData: DistOmit<Data<'Resource'>, 'content' | 'kind'> = {
       // FIXME: when assets are externalilzed to own nodes
-      _type: 'Resource',
+      // _type: 'Resource',
       image: imageAssetRef,
       description: input.description,
       name: input.name,
@@ -48,7 +48,7 @@ const nodeDocumentDataBaker: {
       _published: input._published,
     }
 
-    return editResourceData as EditNodeData<'Resource'> // FIXME: when assets are externalilzed to own nodes
+    return editResourceData as Data<'Resource'> // FIXME: when assets are externalilzed to own nodes
   },
   async Collection(input) {
     const assetRefs = await mapAssetRefInputsToAssetRefs([getAssetRefInputAndType(input.image, 'image')])
@@ -58,8 +58,8 @@ const nodeDocumentDataBaker: {
     }
     const [imageAssetRef] = assetRefs
 
-    const editCollectionData: EditNodeData<'Collection'> = {
-      _type: 'Collection',
+    const editCollectionData: Data<'Collection'> = {
+      // _type: 'Collection',
       image: imageAssetRef,
       description: input.description,
       name: input.name,
@@ -78,8 +78,8 @@ const nodeDocumentDataBaker: {
     }
     const [imageAssetRef, avatarAssetRef] = assetRefs
 
-    const editProfileData: EditNodeData<'Profile'> = {
-      _type: 'Profile',
+    const editProfileData: Data<'Profile'> = {
+      // _type: 'Profile',
       image: imageAssetRef,
       avatar: avatarAssetRef,
       description: input.description,
@@ -95,7 +95,7 @@ const nodeDocumentDataBaker: {
 export const bakeEditNodeDoumentData = async <T extends NodeType>(
   input: Just<EditNodeInput[T]>,
   nodeType: T,
-): Promise<NewNodeData | EditNodeMutationError> => {
+): Promise<Data | EditNodeMutationError> => {
   const baker = (nodeDocumentDataBaker as any)[nodeType]
   return baker(input)
 }
