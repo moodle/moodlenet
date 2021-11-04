@@ -1,11 +1,11 @@
 {
   "name": "@moodlenet/common",
   "version": "2.0.0-beta.0.30",
-  "license": "AGPL",
+  "license": "AGPL-3.0",
   "author": "https://github.com/aleclofabbro",
   "description": "backend and webapp shared libs and graphql",
   "files": [
-    "lib/"
+    "dist/"
   ],
   "homepage": "https://gitlab.com/moodlenet/moodlenet/-/tree/master/packages/common",
   "repository": {
@@ -41,7 +41,7 @@
     "typescript": "^4.4.3"
   },
   "scripts": {
-    "clean-build": "shx rm -rf lib && yarn build",
+    "clean-build": "shx rm -rf dist && yarn build",
     "build": "tsc && yarn gen:graphql:types && tsc",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
     "prepublish": "yarn clean-build"

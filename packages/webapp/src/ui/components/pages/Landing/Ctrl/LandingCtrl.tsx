@@ -1,7 +1,6 @@
-import { isEdgeNodeOfType } from '@moodlenet/common/lib/graphql/helpers'
-import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { isEdgeNodeOfType } from '@moodlenet/common/dist/graphql/helpers'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { useMemo } from 'react'
-import { useGlobalSearchQuery } from '../../../../../context/Global/GlobalSearch/globalSearch.gen'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../../context/Global/Session'
 import { mainPath } from '../../../../../hooks/glob/nav'
@@ -13,71 +12,56 @@ import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { useSearchUrlQuery } from '../../Search/Ctrl/useSearchUrlQuery'
 import { LandingProps } from '../Landing'
+import { useLandingPageListsQuery } from './LandingCtrl.gen'
 const signUpHref = href(mainPath.signUp)
 
 export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
   const { isAuthenticated } = useSession()
   const { setText: setSearchText } = useSearchUrlQuery()
-  const trendingQ = useGlobalSearchQuery({
-    variables: {
-      sort: { by: 'Popularity' },
-      nodeTypes: ['Collection', 'IscedField'],
-      text: '',
-      page: { first: 5 },
-    },
-  })
-  const collectionsQ = useGlobalSearchQuery({
-    variables: {
-      nodeTypes: ['Collection'],
-      text: '',
-      page: { first: 5 },
-    },
-  })
+  const LandingPageLists = useLandingPageListsQuery()
   const collectionCardPropsList = useMemo(
     () =>
-      collectionsQ.data?.globalSearch.edges.filter(isEdgeNodeOfType(['Collection'])).map(({ node: { id } }) =>
-        ctrlHook(
-          useCollectionCardCtrl,
-          {
+      LandingPageLists.data?.node?.bookmarkedCollections.edges
+        .filter(isEdgeNodeOfType(['Collection']))
+        .map(({ node: { id } }) =>
+          ctrlHook(
+            useCollectionCardCtrl,
+            {
+              id,
+            },
             id,
-          },
-          id,
+          ),
         ),
-      ),
-    [collectionsQ.data?.globalSearch.edges],
+    [LandingPageLists.data?.node?.bookmarkedCollections.edges],
   )
-  const resourcesQ = useGlobalSearchQuery({
-    variables: {
-      nodeTypes: ['Resource'],
-      text: '',
-      page: { first: 6 },
-    },
-  })
+
   const resourceCardPropsList = useMemo(
     () =>
-      resourcesQ.data?.globalSearch.edges.filter(isEdgeNodeOfType(['Resource'])).map(({ node: { id } }) =>
-        ctrlHook(
-          useResourceCardCtrl,
-          {
+      LandingPageLists.data?.node?.bookmarkedResources.edges
+        .filter(isEdgeNodeOfType(['Resource']))
+        .map(({ node: { id } }) =>
+          ctrlHook(
+            useResourceCardCtrl,
+            {
+              id,
+              removeAction: null,
+            },
             id,
-            removeAction: null,
-          },
-          id,
+          ),
         ),
-      ),
-    [resourcesQ.data?.globalSearch.edges],
+    [LandingPageLists.data?.node?.bookmarkedResources.edges],
   )
 
   const tags = useMemo(
     () =>
-      trendingQ.data?.globalSearch.edges
+      LandingPageLists.data?.node?.trending.edges
         .filter(isEdgeNodeOfType(['IscedField', 'Collection']))
         .map<FollowTag>(({ node }) => ({
           name: node.name,
           type: 'General',
           subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
         })),
-    [trendingQ.data?.globalSearch.edges],
+    [LandingPageLists.data?.node?.trending.edges],
   )
   const { org: localOrg } = useLocalInstance()
 

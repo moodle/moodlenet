@@ -1,7 +1,7 @@
 {
   "name": "@moodlenet/webapp",
   "version": "2.0.0-beta.0.33",
-  "license": "AGPL",
+  "license": "AGPL-3.0",
   "description": "MoodleNet Webapp",
   "author": "https://github.com/aleclofabbro",
   "repository": {

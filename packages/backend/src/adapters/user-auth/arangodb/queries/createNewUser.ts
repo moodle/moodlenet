@@ -1,4 +1,4 @@
-import { DistOmit } from '@moodlenet/common/lib/utils/types'
+import { DistOmit } from '@moodlenet/common/dist/utils/types'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
 import { User } from '../../../../ports/user-auth/types'
 import { USER } from '../types'

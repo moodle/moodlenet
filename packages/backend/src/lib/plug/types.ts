@@ -16,7 +16,7 @@ export type Signal = {
   namespace: Namespace
 }
 export type Socket = (...args: any[]) => Promise<any>
-export type Plug<S extends Socket> = S & { [PLUG_DEF_SYM]: PlugDef }
+export type Plug<S extends Socket> = S & { [PLUG_DEF_SYM]?: PlugDef }
 
 export type SockOf<Plg> = Plg extends Plug<infer S> ? S : never
 export type Umbrella = (signal: Signal) => Promise<any>

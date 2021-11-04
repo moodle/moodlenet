@@ -1,23 +1,24 @@
-import { GlobalSearchNodeType } from '@moodlenet/common/lib/content-graph/types/global-search'
-import { GraphNode } from '@moodlenet/common/lib/content-graph/types/node'
+import { GlobalSearchNodeType } from '@moodlenet/common/dist/content-graph/types/global-search'
+import { GraphNode } from '@moodlenet/common/dist/content-graph/types/node'
 import { aq, aqlstr } from '../../../../lib/helpers/arango/query'
-import { GlobalSearchInput } from '../../../../ports/content-graph/search'
-import { _ } from '../adapters/bl/_'
-import { aqlGraphNode2GraphNode, forwardSkipLimitPagination } from './helpers'
-import { nodeRelationCountQ } from './queries/traverseEdges'
+import { SockOf } from '../../../../lib/plug'
+import { AdapterArg, operators, Operators } from '../../../../ports/content-graph/search/byTerm'
+import { _aqlBv } from '../adapters/bl/baseOperators'
+import { aqlGraphNode2GraphNode, forwardSkipLimitPagination, getAqlAssertions } from './helpers'
+import { nodeRelationCountQ } from './queries/nodeRelationCount'
 
 export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSearchNodeType>({
   page,
   text,
   nodeTypes,
   sort,
-  env,
-}: GlobalSearchInput<NType>) => {
+  assertions,
+}: AdapterArg<NType>) => {
   const { limit, skip } = forwardSkipLimitPagination({ page })
-  const aql_txt = aqlstr(text)
+  const aqlAssertions = getAqlAssertions(assertions)
 
   const nodeTypeConditions = nodeTypes?.length
-    ? nodeTypes.map(nodeType => `node._type == ${aqlstr(nodeType)}`).join(' || ')
+    ? nodeTypes.map(nodeType => `searchNode._type == ${aqlstr(nodeType)}`).join(' || ')
     : null
 
   const filterConditions =
@@ -33,54 +34,58 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
         ( ${nodeRelationCountQ({
           edgeType: 'Follows',
           inverse: true,
-          targetNodeType: 'Profile',
-          parentNode: _('node._id'),
+          targetNodeTypes: ['Profile', 'Organization'],
+          parentNode: _aqlBv('searchNode._id'),
+          assertions: {},
         })} )
         +
         ( ${nodeRelationCountQ({
           edgeType: 'Likes',
           inverse: true,
-          targetNodeType: 'Profile',
-          parentNode: _('node._id'),
+          targetNodeTypes: ['Profile', 'Organization'],
+          parentNode: _aqlBv('searchNode._id'),
+          assertions: {},
         })} )
         )
         `
       : '1'
   const isSortRecent = sort?.by === 'Recent'
-  const issuerAuthId = env?.user.authId
   const query = aq<GraphNode<NType>>(`
-    let searchTerm = ${aql_txt}
-      FOR node IN SearchView
+    let searchTerm = ${aqlstr(text)}
+      FOR searchNode IN SearchView
         SEARCH ANALYZER(
           !searchTerm ? 1 : 
-          BOOST( PHRASE(node.name, searchTerm), 10 )
+          BOOST( PHRASE(searchNode.name, searchTerm), 10 )
           OR
-          BOOST( PHRASE(node.description, searchTerm), 5 )
+          BOOST( PHRASE(searchNode.description, searchTerm), 5 )
           OR
-          BOOST( node.name IN TOKENS(searchTerm), 3 )
+          BOOST( searchNode.name IN TOKENS(searchTerm), 3 )
           OR
-          BOOST( node.description IN TOKENS(searchTerm), 1 )
+          BOOST( searchNode.description IN TOKENS(searchTerm), 1 )
           OR
-          BOOST(  NGRAM_MATCH(node.name, searchTerm, 0.05, "global-text-search"), 0.2 )
+          BOOST( NGRAM_MATCH(searchNode.name, searchTerm, 0.05, "global-text-search"), 0.2 )
           OR
-          BOOST( NGRAM_MATCH(node.description, searchTerm, 0.05, "global-text-search"), 0.1 )
+          BOOST( NGRAM_MATCH(searchNode.description, searchTerm, 0.05, "global-text-search"), 0.1 )
         , "text_en")
       
-        FILTER ( node._published ${issuerAuthId ? `|| node._creatorAuthId == ${aqlstr(issuerAuthId)}` : ''} ) 
-                && ${filterConditions} 
+        FILTER ${aqlAssertions} && ${filterConditions} 
       
       let sortFactor = ${sortFactor}
-      let rank = ( (0.1 + TFIDF(node)) * sortFactor )
+      let rank = ( (0.1 + TFIDF(searchNode)) * sortFactor )
 
-      SORT rank ${isSortRecent ? 'desc' : sortDir}, node._created ${isSortRecent ? sortDir : 'desc'}
+      SORT rank ${isSortRecent ? 'desc' : sortDir}, searchNode._created ${isSortRecent ? sortDir : 'desc'}
       
       LIMIT ${skip}, ${limit}
       
-      RETURN ${aqlGraphNode2GraphNode('node')}
+      RETURN ${aqlGraphNode2GraphNode('searchNode')}
     `)
   // console.log(query)
   // console.log('**', inspect({ query, nodeTypeConditions, nodeTypes, filterConditions, sortDir, sortFactor }))
   return { limit, skip, query }
+}
+export const arangoSearchByTermOperators: SockOf<typeof operators> = async () => SEARCH_BY_TERM_OPERATORS
+export const SEARCH_BY_TERM_OPERATORS: Operators = {
+  searchNode: _aqlBv('searchNode'),
 }
 
 // export const makeGlobalSearchGQLSearchPage = ({

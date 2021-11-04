@@ -1,6 +1,7 @@
 import JWT from 'jsonwebtoken'
 import { SockOf } from '../../lib/plug'
-import { INVALID_JWT_TOKEN, jwtSignerAdapter, jwtVerifierAdapter } from '../../ports/user-auth/adapters'
+import { adapter as signerAdapter } from '../../ports/system/crypto/jwtSigner'
+import { adapter as verifiererAdapter, INVALID_JWT_TOKEN } from '../../ports/system/crypto/jwtVerifierAdapter'
 
 export type Config = {
   privateKey: string
@@ -14,8 +15,8 @@ export const getJwtCrypto = ({
   verifyOpts,
   signOpts,
 }: Config): {
-  signer: SockOf<typeof jwtSignerAdapter>
-  verifier: SockOf<typeof jwtVerifierAdapter>
+  signer: SockOf<typeof signerAdapter>
+  verifier: SockOf<typeof verifiererAdapter>
 } => {
   return {
     signer: async (obj, expiresSec) => JWT.sign(obj, privateKey, { ...signOpts, expiresIn: expiresSec }),

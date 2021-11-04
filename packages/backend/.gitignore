@@ -6,4 +6,4 @@ js
 *.gen.ts*
 yarn-error.log
 *.localnote
-/lib
+/dist

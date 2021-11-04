@@ -14,6 +14,7 @@
     "upgrade-version": "lerna run upgrade-version --parallel --stream",
     "start-dev": "cross-env lerna run start-dev --parallel --stream -- -- ",
     "build": "lerna run build --stream",
+    "clean-build": "lerna run clean-build --stream",
     "start": "lerna run start --parallel --stream"
   },
   "dependencies": {}

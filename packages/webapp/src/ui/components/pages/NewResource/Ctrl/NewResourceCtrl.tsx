@@ -1,7 +1,7 @@
-import { isOfNodeType } from '@moodlenet/common/lib/graphql/helpers'
-import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { DistOmit } from '@moodlenet/common/lib/utils/types'
-import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { isOfNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { DistOmit } from '@moodlenet/common/dist/utils/types'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { Reducer, useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { useHistory } from 'react-router'
 import { useSession } from '../../../../../context/Global/Session'
@@ -83,7 +83,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
       type: null,
       visibility: 'Private',
     },
-    onSubmit: console.log.bind(console, 'submit newResource'),
+    onSubmit: () => {}, // console.log.bind(console, 'submit newResource'),
   })
 
   const [sform] = formBag
@@ -374,7 +374,7 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
     }
   }, [nextStep, stepProps, imageUrl, formBag, form.values])
 
-  console.log('form.values', form.values)
+  // console.log('form.values', form.values)
 
   return newResourceProps && [newResourceProps]
 }

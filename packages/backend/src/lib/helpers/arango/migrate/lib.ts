@@ -90,8 +90,8 @@ export const getDBLatestVersion = async ({ db }: { db: Database }) => {
   return latestRecord.version
 }
 export const stepDB =
-  <Ctx>({ ladder, dir }: { ladder: VersionLadder<Ctx>; dir: 'up' | 'down' }) =>
-  async ({ db, ctx }: { db: Database; ctx: Ctx }) => {
+  ({ ladder, dir }: { ladder: VersionLadder; dir: 'up' | 'down' }) =>
+  async ({ db }: { db: Database }) => {
     const latestVersion = await getDBLatestVersion({ db })
     console.log(`stepDB: latest DB version: ${latestVersion}`)
     const latestUpdater = ladder[latestVersion]
@@ -112,7 +112,7 @@ export const stepDB =
 
     console.log(`stepDB: DB targetVersion: ${targetVersion}`)
 
-    let updater: DBWorker<Ctx>
+    let updater: DBWorker
 
     if (dir === 'up') {
       if ('initialSetUp' in targetVersionUpdater) {
@@ -127,7 +127,7 @@ export const stepDB =
     }
     console.log(`calling [${dir}] updater from version ${latestVersion} to ${targetVersion}`)
     try {
-      await updater({ db, ctx })
+      await updater({ db })
       console.log(`addding migration record`)
       await addMigrationRecord(targetVersion)({ db })
       return [latestVersion, targetVersion, true] as const
@@ -147,16 +147,16 @@ export const stepDB =
   }
 
 export const upgradeToLatest =
-  <Ctx>({ ladder }: { ladder: VersionLadder<Ctx> }) =>
-  async ({ db, ctx }: { db: Database; ctx: Ctx }) => {
+  ({ ladder }: { ladder: VersionLadder }) =>
+  async ({ db }: { db: Database }) => {
     const versions = getLadderVersionSorted(ladder)
     const lastVersion = versions[0]!
-    return stepDBTo({ ladder, targetVersion: lastVersion })({ db, ctx })
+    return stepDBTo({ ladder, targetVersion: lastVersion })({ db })
   }
 
 export const stepDBTo =
-  <Ctx>({ ladder, targetVersion }: { ladder: VersionLadder<Ctx>; targetVersion: Version }) =>
-  async ({ db, ctx }: { db: Database; ctx: Ctx }): Promise<Version> => {
+  ({ ladder, targetVersion }: { ladder: VersionLadder; targetVersion: Version }) =>
+  async ({ db }: { db: Database }): Promise<Version> => {
     if (!(targetVersion in ladder)) {
       throw new Error(`no [${targetVersion}] version in ladder`)
     }
@@ -171,7 +171,7 @@ export const stepDBTo =
     const dir = versionCompare === 1 ? 'up' : 'down'
     console.log(`updating direction : ${dir}`)
 
-    return stepDB({ dir, ladder })({ db, ctx }).then(([, toVersion, done]) => {
+    return stepDB({ dir, ladder })({ db }).then(([, toVersion, done]) => {
       if (!done) {
         console.log(`\nstepDBTo: didn't perform stopped at ${toVersion}`)
         return toVersion
@@ -180,21 +180,21 @@ export const stepDBTo =
         console.log(`\nstepDBTo: migrate properly to ${targetVersion}`)
         return targetVersion
       }
-      return stepDBTo({ ladder, targetVersion })({ db, ctx })
+      return stepDBTo({ ladder, targetVersion })({ db })
     })
   }
 
 export const initializeDB =
-  <Ctx>({
+  ({
     dbname,
     ladder,
     actionOnDBExists,
   }: {
     dbname: string
-    ladder: VersionLadder<Ctx>
+    ladder: VersionLadder
     actionOnDBExists: 'abort' | 'upgrade' // | 'drop'
   }) =>
-  async ({ sys_db, ctx }: { sys_db: Database; ctx: Ctx }) => {
+  async ({ sys_db }: { sys_db: Database }) => {
     const exists = await sys_db.database(dbname).exists()
     if (exists) {
       if (actionOnDBExists === 'abort') {
@@ -227,7 +227,7 @@ export const initializeDB =
       await setUpMigrationCollection({ db })
 
       console.log(`db initial version`)
-      await firstVersionUpdater.initialSetUp({ db, ctx }).catch(async e => {
+      await firstVersionUpdater.initialSetUp({ db }).catch(async e => {
         await sys_db.dropDatabase(dbname)
         throw e
       })
@@ -235,7 +235,7 @@ export const initializeDB =
       console.log(`adding migration record`)
       await addMigrationRecord(firstVersion)({ db })
     }
-    const version = await upgradeToLatest({ ladder })({ db, ctx })
+    const version = await upgradeToLatest({ ladder })({ db })
     await db.close()
     return version
   }

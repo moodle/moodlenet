@@ -1,8 +1,8 @@
-import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
-import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { nodeGqlId2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
-import { useCallback, useEffect, useMemo } from 'react'
+import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
+import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
+import { createElement, useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
@@ -13,6 +13,8 @@ import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useFormikBag } from '../../../../lib/formik'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
+import { fallbackPageProps } from '../../FallbackPage/Ctrl/FallbackPageCtrl'
+import { FallbackPage } from '../../FallbackPage/FallbackPage'
 import { NewCollectionFormValues } from '../../NewCollection/types'
 import { VisibilityDropdown } from '../../NewResource/FieldsData'
 // import { useFormikBag } from '../../../lib/formik'
@@ -32,12 +34,16 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
   // const { org: localOrg } = useLocalInstance()
   const { session, isAdmin, isAuthenticated } = useSession()
 
-  const { data, refetch } = useCollectionPageDataQuery({ variables: { collectionId: id } })
+  const { data, refetch, loading } = useCollectionPageDataQuery({
+    variables: {
+      collectionId: id,
+      myProfileId: session ? [session.profile.id] : [],
+    },
+  })
   const collectionData = narrowNodeType(['Collection'])(data?.node)
   const [addRelation, addRelationRes] = useAddCollectionRelationMutation()
   const [delRelation, delRelationRes] = useDelCollectionRelationMutation()
   const [edit, editRes] = useEditCollectionMutation()
-  const categoryEdge = narrowEdgeNodeOfType(['IscedField'])(collectionData?.categories.edges[0])
 
   const history = useHistory()
   const [delCollection, delCollectionRes] = useDelCollectionMutation()
@@ -88,7 +94,6 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     session,
   ])
 
-  const category = categoryEdge?.node.name ?? ''
   const uploadTempFile = useUploadTempFile()
 
   const [formik, formBag] = useFormikBag<NewCollectionFormValues>({
@@ -138,7 +143,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
         },
       })
     }
-  }, [collectionData, fresetForm, category, id])
+  }, [collectionData, fresetForm, id])
 
   const formikSetFieldValue = formik.setFieldValue
   useEffect(() => {
@@ -157,7 +162,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
 
   // console.log(formik.values)
 
-  const creatorEdge = narrowEdgeNodeOfType(['Profile'])(collectionData?.creator.edges[0])
+  const creatorEdge = narrowEdgeNodeOfType(['Profile', 'Organization'])(collectionData?.creator.edges[0])
   const creator = creatorEdge?.node
 
   const resourceEdges = useMemo(() => (collectionData?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])), [
@@ -197,7 +202,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
         ),
       ),
       contributorCardProps: {
-        avatarUrl: getMaybeAssetRefUrl(creator?.avatar),
+        avatarUrl: getMaybeAssetRefUrl(creator?.__typename === 'Profile' ? creator.avatar : creator?.logo),
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
       },
@@ -207,7 +212,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       toggleBookmark,
       numFollowers: collectionData.followersCount,
       toggleFollow,
-      deleteCollection: isOwner ? deleteCollection : undefined,
+      deleteCollection: isOwner || isAdmin ? deleteCollection : undefined,
     }
     return props
   }, [
@@ -226,5 +231,9 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     removeResource,
     isAdmin,
   ])
+  if (!loading && !data?.node) {
+    return createElement(FallbackPage, fallbackPageProps({ key: 'collection-not-found' }))
+  }
+
   return collectionProps && [collectionProps]
 }

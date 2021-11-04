@@ -1,7 +1,7 @@
-import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/lib/graphql/helpers'
-import { ID } from '@moodlenet/common/lib/graphql/scalars.graphql'
-import { AssetRefInput } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
+import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { createElement, useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
@@ -13,6 +13,8 @@ import { useFormikBag } from '../../../../lib/formik'
 import { useCollectionCardCtrl } from '../../../molecules/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
+import { fallbackPageProps } from '../../FallbackPage/Ctrl/FallbackPageCtrl'
+import { FallbackPage } from '../../FallbackPage/FallbackPage'
 import { ProfileProps } from '../Profile'
 import { ProfileFormValues } from '../types'
 import {
@@ -31,7 +33,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
   const { isAuthenticated, session, firstLogin } = useSession()
   const { org: localOrg } = useLocalInstance()
   const isMe = session?.profile && session.profile.id === id
-  const { data, refetch } = useProfilePageUserDataQuery({
+  const { data, refetch, loading } = useProfilePageUserDataQuery({
     variables: {
       profileId: id,
       myProfileId: session?.profile && !isMe ? [session.profile.id] : [],
@@ -225,7 +227,8 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
     sendEmailMutRes.loading,
     toggleFollow,
   ])
-  // console.log(profileProps?.profileCardProps)
-  // console.log(formik.values)
+  if (!loading && !data?.node) {
+    return createElement(FallbackPage, fallbackPageProps({ key: 'profile-not-found' }))
+  }
   return profileProps && [profileProps]
 }

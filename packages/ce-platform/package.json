@@ -2,7 +2,7 @@
   "name": "@moodlenet/ce-platform",
   "version": "2.0.0-beta.0.33",
   "main": "dist/main.js",
-  "license": "AGPL",
+  "license": "AGPL-3.0",
   "description": "MoodleNet CE Platform",
   "author": "https://github.com/aleclofabbro",
   "homepage": "https://gitlab.com/moodlenet/moodlenet/-/tree/master/packages/ce-platform",

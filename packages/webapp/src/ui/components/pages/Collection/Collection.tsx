@@ -165,13 +165,13 @@ export const Collection = withCtrl<CollectionProps>(
               <div className="info">
                 <div className="label">
                   <Trans>Collection</Trans>
-                  <div className={`actions ${isOwner ? 'edit-save' : ''}`}>
+                  <div className={`actions ${isAdmin || isOwner ? 'edit-save' : ''}`}>
                     {isAuthenticated && !isEditing && (
                       <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
                         {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                       </div>
                     )}
-                    {isOwner && isEditing && (
+                    {(isAdmin || isOwner) && isEditing && (
                       <PrimaryButton
                         color="green"
                         onHoverColor="orange"
@@ -183,7 +183,7 @@ export const Collection = withCtrl<CollectionProps>(
                         <SaveIcon />
                       </PrimaryButton>
                     )}
-                    {isOwner && !isEditing && (
+                    {(isAdmin || isOwner) && !isEditing && (
                       <SecondaryButton onClick={() => setIsEditing(true)} color="orange">
                         <EditIcon />
                       </SecondaryButton>
@@ -260,19 +260,19 @@ export const Collection = withCtrl<CollectionProps>(
                 <div className="collection-footer">
                   <div className="left-column">
                     {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
-                    {isOwner && extraDetails}
+                    {(isAdmin || isOwner) && extraDetails}
                   </div>
                   <div className="right-column">{/*actionsCard*/}</div>
                   <div className="one-column">
                     {/*actionsCard*/}
                     {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
-                    {isOwner && extraDetails}
+                    {(isAdmin || isOwner) && extraDetails}
                   </div>
                 </div>
               </div>
               <div className="side-column">
                 {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
-                {isOwner && extraDetails}
+                {(isAdmin || isOwner) && extraDetails}
                 {/*actionsCard*/}
               </div>
             </div>
