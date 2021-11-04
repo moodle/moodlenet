@@ -13,20 +13,28 @@ export const Footer: FC<FooterProps> = ({ isAuthenticated }) => {
         <div className="left"></div>
         <div className="center">
           {isAuthenticated ? (
-            <div className="extended"><Trans>
-              Should you encounter any bugs, glitches, lack of functionality or other problems, please post in the{' '} 
-              <a href="https://moodle.org/mod/forum/view.php?id=8726" target="_blank" rel="noreferrer">
-                MoodleNet community
-              </a>{' '}
-              or create an issue at{' '}
-              <a href="https://tracker.moodle.org/projects/MDLNET/summary" target="_blank" rel="noreferrer">
-                MoodleNet Tracker
-              </a>
-            </Trans></div>
+            <div className="extended">
+              <Trans>
+                Should you encounter any bugs, glitches, lack of functionality or other problems, please post in the{' '}
+                <a href="https://moodle.org/mod/forum/view.php?id=8726" target="_blank" rel="noreferrer">
+                  MoodleNet community
+                </a>{' '}
+                or create an issue at{' '}
+                <a
+                  href="https://tracker.moodle.org/secure/RapidBoard.jspa?projectKey=MDLNET&rapidView=167"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  MoodleNet Tracker
+                </a>
+              </Trans>
+            </div>
           ) : (
-            <div className="short"><a href="https://docs.moodle.org/dev/MoodleNet" target="_blank" rel="noreferrer">
-              <Trans>MoodleNet Beta</Trans>
-            </a></div>
+            <div className="short">
+              <a href="https://docs.moodle.org/dev/MoodleNet" target="_blank" rel="noreferrer">
+                <Trans>MoodleNet Beta</Trans>
+              </a>
+            </div>
           )}
         </div>
         <div className="right"></div>

@@ -23,5 +23,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-*.gen.ts
-src/graphql/gql-introspection.json
+*.gen.ts*
+gql-introspection.json
