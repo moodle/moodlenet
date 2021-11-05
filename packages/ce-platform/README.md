@@ -1,16 +1,22 @@
 # MoodleNet CE Platform
 
-## Quick start
+## System Requirements
 
-### Prerequisites
+### NodeJs
 
-#### Sharp package requirements
+This software runs on [nodejs](https://nodejs.org/) `>=14.14.0`.
+
+### Sharp package requirements
 
 This sofware leverages [sharp](https://www.npmjs.com/package/sharp) for uploaded image processing
 
-If you experience some weird issue on installation, you may want to [check out sharp system requisites](https://www.npmjs.com/package/sharp)
+The docs states that
 
-#### A running ArangoDB instance
+> Most modern macOS, Windows and Linux systems running Node.js >= 12.13.0 do not require any additional install or runtime dependencies.
+
+However, if you experience issues on installation or on upload functionalities, you may want to [check out sharp system requisites](https://github.com/lovell/sharp/tree/master/docs)
+
+### A running ArangoDB instance
 
 the easiest way is using docker:
 
@@ -19,66 +25,99 @@ the easiest way is using docker:
 $ docker run -e ARANGO_NO_AUTH=1 --name mnarango -p 8529:8529 -d arangodb
 ```
 
-#### install Moodlenet CE Platform globally
+## Quick start
+
+### install Moodlenet CE Platform globally
 
 ```sh
 npm i -g @moodlenet/ce-platform
 ```
 
-#### set environment variables
+### set environment variables
 
-the easiest way is to make sure a `.env` file is present in start command working directory
+MoodleNet needs a bunch of environment variable set for nodejs process
+
+[dotenv](https://www.npmjs.com/package/dotenv) and [dotenv-expand](https://www.npmjs.com/package/dotenv-expand) are supported, so the easiest way is to make sure a proper `.env` file is present in process working directory
 
 ```sh
 # sample .env file
 
-NODE_ENV=production
+NODE_ENV=development
+
 # DB
 ARANGO_URL=http://localhost:8529
 
-# HTTP config
+# ^HTTP config
+#
 HTTP_PORT=8080
-DOMAIN=localhost:${HTTP_PORT}
-PUBLIC_URL=http://${DOMAIN}
+PUBLIC_URL_PROTOCOL=http
+#
+# $HTTP config
 
+# Webapp config
+REACT_APP_CUSTOM_HEAD="<script>console.log('this env var string will be embedded as-is in HTML>HEAD')</script>"
 
 # smtp url
-SMTP=smtps://fullusername:password@smtp.domain.com/?pool=true
+#
 # will work with simple user:password authentication only
-# fancier auth methods should be properly configured and hooked to ports
 # if using gmail you need to set a full-user-name if email is not in gmail domain
 # SMTP=smtps://fullusername:password@smtp.gmail.com/?pool=true
 # and probably need to enable "less secure apps access"
 # https://myaccount.google.com/lesssecureapps
+SMTP=smtps://fullusername:password@smtp.domain.com/?pool=true
 
-# JWT config
-JWT_EXPIRATION_SECS=36000
-# ^ JWT keys with this format
+# ^ CRYPTO config
+#
+# RSA keys
 # https://gist.github.com/ygotthilf/baa58da5c3dd1f69fae9#gistcomment-2932501
-JWT_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\n##<keyrows separated by \n>##\n-----END PUBLIC KEY-----"
-JWT_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n##<keyrows separated by \n>##\n-----END RSA PRIVATE KEY-----"
-# $ JWT keys
+CRYPTO_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\n##<keyrows separated by \n>##\n-----END PUBLIC KEY-----"
+CRYPTO_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n##<keyrows separated by \n>##\n-----END RSA PRIVATE KEY-----"
+#
+# $ CRYPTO keys
 
 # Folder to save content static assets (images, resources ..)
 STATICASSETS_FS_ROOT_FOLDER=/any/path/to/uploads/directory
+
+
+#^SETUP VARS
+#
+# the following variables are necessary on first run as they will be used for initial DB population
+# they aren't required for subsequent system start
+
+SETUP_ORGANIZATION_NAME="My Awesome Moodlenet Organization Name"
+
+# in real world deployment would be something like: SETUP_ORGANIZATION_DOMAIN=my.example.domain.com
+SETUP_ORGANIZATION_DOMAIN=localhost:${HTTP_PORT}
+
+# this is an accessible email for the "organization user"
+# admins will use this for authenticating as org-user
+SETUP_ORGANIZATION_EMAIL=your.org.user@email.com
+
+#
+#$SETUP VARS
 ```
 
-#### Start Moodlenet CE Platform
+### Start Moodlenet CE Platform
 
 start the platform using `npx`
 
 ```sh
-# make sure env vars are set
-# or a proper .env file is present in cwd
+# make sure env vars are set or a proper .env file is present in cwd
 npx start-moodlenet-ce
 ```
 
-only on first run the process populate the DB
+Only on first run the process populate the DB, and use the `^SETUP VARS` section of env variables
 
 HTTP server starts on 8080.
 
-you can login as default admin with user="root@localhost:8080" and password="root",
+Browse your Moodlenet on page [http://localhost:8080/](http://localhost:8080/) enjoy MoodleNet ;)
 
-browse your Moodlenet on page [http://localhost:8080/](http://localhost:8080/)
+## Organization User
 
-enjoy MoodleNet ;)
+On first run, the organization user is ceated bound to `SETUP_ORGANIZATION_EMAIL` and without any valid password set.
+
+You can perform your first login as org-user by the recover password workflow, clicking `[or recover password]` link in login page
+
+Follow the instructions you'll receive @`SETUP_ORGANIZATION_EMAIL`, and choose a password for org-user
+
+For subsequent logins, you can fill in the login form with `SETUP_ORGANIZATION_EMAIL` and the choosen password
