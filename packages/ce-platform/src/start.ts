@@ -24,7 +24,7 @@ import { setupDb } from './setup/db'
 export type Config = {
   env: DefaultDeployEnv
 }
-export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nodemailer, mnStatic } }: Config) => {
+export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, crypto, nodemailer, mnStatic } }: Config) => {
   await setupDb({ env: db, actionOnDBExists: 'upgrade' })
 
   const userAuthDatabase = await getVersionedDBOrThrow({ version: '2.0.0' })({
@@ -37,7 +37,7 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, jwt, nod
 
   const pwdHashAdapters = cryptoAdapters.pwd.getPasswordCrypto()
   const jwtAdapters = cryptoAdapters.jwt.getJwtCrypto({
-    ...jwt,
+    ...crypto,
     signOpts: {
       algorithm: 'RS256',
     },
