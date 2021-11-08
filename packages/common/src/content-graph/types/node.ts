@@ -141,7 +141,9 @@ export type AssetRef = {
   mimetype: string
 }
 export const isAssetRef = (_: any): _ is AssetRef =>
-  _ && typeof _.ext === 'boolean' && typeof _.location === 'string' && typeof _.mimetype === 'string'
+  !!_ && typeof _.ext === 'boolean' && typeof _.location === 'string' && typeof _.mimetype === 'string'
+export const isSameAssetRef = (_: any, __: any) =>
+  isAssetRef(__) && isAssetRef(_) && __.ext === _.ext && __.location === _.location
 
 export type Resource = BaseGraphNode<'Resource'> & {
   image: Maybe<AssetRef>
