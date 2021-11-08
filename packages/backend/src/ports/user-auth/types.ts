@@ -21,7 +21,7 @@ type UserBase<S extends Status> = {
 
 export type ActiveUser = UserBase<'Active'> & {
   authId: GraphNodeIdentifierAuth
-  password: Password
+  password: HashedPassword
 }
 // export type WaitingFirstActivationUser = UserBase<'WaitingFirstActivation'> & {
 //   firstActivationToken: Token
@@ -59,6 +59,6 @@ export type Email = string
 export const isEmail = (_: any): _ is Email => 'string' === typeof _
 export type Link = string
 export type UserId = string
-export type Password = string
+export type HashedPassword = string
 export type Token = string
 export type TimeoutSecs = number
