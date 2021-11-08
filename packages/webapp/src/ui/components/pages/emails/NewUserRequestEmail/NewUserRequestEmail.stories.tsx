@@ -450,7 +450,12 @@ function html() {
 }
 
 export const Email: FC<{}> = () => {
-  return <div style={{ width: '100%', height: '100%' }} dangerouslySetInnerHTML={html()} />
+  return (
+    <div
+      style={{ width: '100%', height: '100%' }}
+      dangerouslySetInnerHTML={html()}
+    />
+  )
 }
 
 const meta: ComponentMeta<typeof Email> = {

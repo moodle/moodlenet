@@ -129,5 +129,9 @@
       "last 1 safari version"
     ]
   },
-  "gitHead": "53aac3f3bc4f9d4fcfe9f8a51eaa3e113ba57e44"
+  "gitHead": "53aac3f3bc4f9d4fcfe9f8a51eaa3e113ba57e44",
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  }
 }

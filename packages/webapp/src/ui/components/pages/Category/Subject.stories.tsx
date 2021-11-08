@@ -4,21 +4,21 @@ import { href } from '../../../elements/link'
 import { CollectionCardStoryProps } from '../../molecules/cards/CollectionCard/CollectionCard.stories'
 import { ResourceCardStoryProps } from '../../molecules/cards/ResourceCard/ResourceCard.stories'
 import { HeaderPageLoggedInStoryProps, HeaderPageLoggedOutStoryProps } from '../HeaderPage/HeaderPage.stories'
-import { Category, CategoryProps } from './Category'
+import { Subject, SubjectProps } from './Subject'
 
-const meta: ComponentMeta<typeof Category> = {
+const meta: ComponentMeta<typeof Subject> = {
   title: 'Pages/Subject',
-  component: Category,
+  component: Subject,
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: ['CategoryStoryProps', 'CategoryLoggedOutStoryProps', 'CategoryLoggedInStoryProps'],
+  excludeStories: ['SubjectStoryProps', 'SubjectLoggedOutStoryProps', 'SubjectLoggedInStoryProps'],
 }
 
-const CategoryStory: ComponentStory<typeof Category> = args => <Category {...args} />
+const SubjectStory: ComponentStory<typeof Subject> = args => <Subject {...args} />
 
-export const CategoryStoryProps: CategoryProps = {
+export const SubjectStoryProps: SubjectProps = {
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
@@ -55,8 +55,8 @@ export const CategoryStoryProps: CategoryProps = {
   toggleFollow: action('toggleFollow'),
 }
 
-export const CategoryLoggedOutStoryProps: CategoryProps = {
-  ...CategoryStoryProps,
+export const SubjectLoggedOutStoryProps: SubjectProps = {
+  ...SubjectStoryProps,
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedOutStoryProps,
     isAuthenticated: false,
@@ -65,21 +65,21 @@ export const CategoryLoggedOutStoryProps: CategoryProps = {
       cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
-  isAuthenticated: true,
+  isAuthenticated: false,
 }
 
-export const CategoryLoggedInStoryProps: CategoryProps = {
-  ...CategoryStoryProps,
+export const SubjectLoggedInStoryProps: SubjectProps = {
+  ...SubjectStoryProps,
   headerPageTemplateProps: {
-    ...CategoryStoryProps.headerPageTemplateProps,
+    ...SubjectStoryProps.headerPageTemplateProps,
     isAuthenticated: true,
   },
 }
 
-export const LoggedOut = CategoryStory.bind({})
-LoggedOut.args = CategoryLoggedOutStoryProps
+export const LoggedOut = SubjectStory.bind({})
+LoggedOut.args = SubjectLoggedOutStoryProps
 
-export const LoggedIn = CategoryStory.bind({})
-LoggedIn.args = CategoryLoggedInStoryProps
+export const LoggedIn = SubjectStory.bind({})
+LoggedIn.args = SubjectLoggedInStoryProps
 
 export default meta

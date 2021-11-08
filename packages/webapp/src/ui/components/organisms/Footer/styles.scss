@@ -1,4 +1,4 @@
-@import '../../../styles/utils/colors';
+@import "../../../styles/utils/colors";
 
 .footer {
   padding: 35px 0 40px 0;
@@ -30,7 +30,7 @@
       .short {
         > a {
           color: #717171;
-          font-size: 14px;
+          font-size: 15px;
           &:hover {
             text-decoration: underline;
           }
@@ -40,7 +40,7 @@
       .extended {
         text-align: center;
         color: #717171;
-          font-size: 13px;
+        font-size: 14px;
         > a {
           color: #337aff;
           &:hover {

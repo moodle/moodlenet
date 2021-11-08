@@ -1,12 +1,16 @@
 import { FollowTag } from '../types'
 import { href, Link } from './link'
 
-export const tagList = (tags: FollowTag[]) => {
+export const tagList = (tags: FollowTag[], click: boolean) => {
   return tags.map((tag, index) => {
-    return (
+    return click ? (
       <Link href={tag.subjectHomeHref} key={index}>
-        <div className={'tag tag' + tag.type}>{tag.name}</div>
+        <div className={`tag tag${tag.type} hover`}>{tag.name}</div>
       </Link>
+    ) : (
+      <div className={`tag tag${tag.type}`} key={index}>
+        {tag.name}
+      </div>
     )
   })
 }

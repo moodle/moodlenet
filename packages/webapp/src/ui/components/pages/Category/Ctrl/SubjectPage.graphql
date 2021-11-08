@@ -1,4 +1,4 @@
-query CategoryPageData($categoryId: ID!, $myProfileId: [ID!]) {
+query SubjectPageData($categoryId: ID!, $myProfileId: [ID!]) {
   node(id: $categoryId) {
     ... on IscedField {
       id
@@ -58,7 +58,7 @@ query CategoryPageData($categoryId: ID!, $myProfileId: [ID!]) {
   }
 }
 
-mutation delCategoryRelation($edge: DeleteEdgeInput!) {
+mutation delSubjectRelation($edge: DeleteEdgeInput!) {
   deleteEdge(input: $edge) {
     ... on DeleteEdgeMutationError {
       type
@@ -67,7 +67,7 @@ mutation delCategoryRelation($edge: DeleteEdgeInput!) {
   }
 }
 
-mutation addCategoryRelation($edge: CreateEdgeInput!) {
+mutation addSubjectRelation($edge: CreateEdgeInput!) {
   createEdge(input: $edge) {
     ... on CreateEdgeMutationError {
       type
