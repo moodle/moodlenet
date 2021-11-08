@@ -80,28 +80,32 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
         return
       }
 
-      const imageAssetRef: AssetRefInput = !vals.backgroundImage
-        ? { location: '', type: 'NoChange' }
-        : typeof vals.backgroundImage === 'string'
-        ? {
-            location: vals.backgroundImage,
-            type: 'ExternalUrl',
-          }
-        : {
-            location: await uploadTempFile('image', vals.backgroundImage),
-            type: 'TmpUpload',
-          }
-      const avatarAssetRef: AssetRefInput = !vals.avatarImage
-        ? { location: '', type: 'NoChange' }
-        : typeof vals.avatarImage === 'string'
-        ? {
-            location: vals.avatarImage,
-            type: 'ExternalUrl',
-          }
-        : {
-            location: await uploadTempFile('icon', vals.avatarImage),
-            type: 'TmpUpload',
-          }
+      const imageAssetRef: AssetRefInput =
+        !vals.backgroundImage || vals.backgroundImage === formik.initialValues.backgroundImage
+          ? { location: '', type: 'NoChange' }
+          : typeof vals.backgroundImage === 'string'
+          ? {
+              location: vals.backgroundImage,
+              type: 'ExternalUrl',
+            }
+          : {
+              location: await uploadTempFile('image', vals.backgroundImage),
+              type: 'TmpUpload',
+            }
+
+      const avatarAssetRef: AssetRefInput =
+        !vals.avatarImage || vals.avatarImage === formik.initialValues.avatarImage
+          ? { location: '', type: 'NoChange' }
+          : typeof vals.avatarImage === 'string'
+          ? {
+              location: vals.avatarImage,
+              type: 'ExternalUrl',
+            }
+          : {
+              location: await uploadTempFile('icon', vals.avatarImage),
+              type: 'TmpUpload',
+            }
+
       await edit({
         variables: {
           id,

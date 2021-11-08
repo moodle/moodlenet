@@ -52,11 +52,13 @@ export const port = plug<Port>(ns(module, 'port'), async ({ data, nodeId, sessio
     return null
   }
   const [older, newer] = result
-  Object.entries(older)
+  const modifiedInternalAssetRefs = Object.entries(older)
     .filter(([k, v]) => !isSameAssetRef(v, newer[k as keyof GraphNode]))
     .map(([, v]) => v)
     .filter(isAssetRef)
-    .forEach(modifiedInternalAssetRef => delAsset({ assetId: modifiedInternalAssetRef.location }))
-
+    .filter(_ => !_.ext)
+  modifiedInternalAssetRefs.forEach(modifiedInternalAssetRef =>
+    delAsset({ assetId: modifiedInternalAssetRef.location }),
+  )
   return newer
 })
