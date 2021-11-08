@@ -158,6 +158,8 @@ export const persistTemp = async ({
 }
 
 export const delOldTemps = async ({ tempDir, olderThanSecs }: { tempDir: string; olderThanSecs: number }) => {
+  console.log(`deleting old temp assets`)
+
   const tempAssets = await readdir(tempDir)
   const tempStats = await Promise.all(
     tempAssets.map(async tempAssetId => {
@@ -170,5 +172,6 @@ export const delOldTemps = async ({ tempDir, olderThanSecs }: { tempDir: string;
   const toDelete = tempStats
     .filter(({ stat: { birthtimeMs } }) => olderThanSecs < (now - birthtimeMs) / 1000)
     .map(({ filePath }) => forceRm(filePath))
+
   return toDelete.length
 }
