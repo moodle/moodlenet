@@ -10,6 +10,7 @@ import {
 } from '@moodlenet/common/dist/utils/content-graph/id-key-type-guards'
 import * as contentGraph from '../../ports/content-graph'
 import { localOrg } from '../../ports/system'
+import { encryptString } from '../../ports/system/crypto/encrypt'
 import * as userAuth from '../../ports/user-auth'
 import * as GQLResolvers from '../types.graphql.gen'
 import {
@@ -128,7 +129,10 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         }
       },
       async changeRecoverPassword(_root, { newPassword, token } /* , ctx */) {
-        const resp = await userAuth.user.changeRecoverPassword({ newPasswordClear: newPassword, token })
+        const resp = await userAuth.user.changeRecoverPassword({
+          newPasswordEnc: await encryptString(newPassword),
+          token,
+        })
         if (!resp) {
           return null
         }
@@ -142,7 +146,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         const sessionResp = await userAuth.user.createSession({
           email,
           activationEmailToken,
-          password,
+          encPassword: await encryptString(password),
           sessionEnv: sessionEnv,
         })
         if ('string' === typeof sessionResp) {
@@ -157,7 +161,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         }
       },
       async signUp(_root, { email, name, password } /* ,sessionEnv */) {
-        await userAuth.newUser.signUp({ email, displayName: name, password })
+        await userAuth.newUser.signUp({ email, displayName: name, encPassword: await encryptString(password) })
 
         return { __typename: 'SimpleResponse', success: true }
       },
