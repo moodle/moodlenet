@@ -45,7 +45,7 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, crypto, 
       algorithms: ['RS256'],
     },
   })
-  const fsAssetAdapters = await getFsAssetAdapters({ rootDir: fsAsset.rootFolder })
+  const fsAssetAdapters = await getFsAssetAdapters({ rootDir: fsAsset.rootFolder, keepTempsForSecs: 3600 })
 
   socket(system.http.publicUrlProtocol.adapter, async () => http.publicUrlProtocol)
 
