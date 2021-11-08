@@ -82,7 +82,7 @@
         overflow: hidden;
         flex-direction: column;
         display: flex;
-        gap: 10px;
+        gap: 7px;
         height: 100%;
 
         > .type-and-actions {
@@ -140,8 +140,8 @@
     &.disabled {
       pointer-events: none;
     }
-    > a > .tag {
-      font-size: 10px;
+    > .tag {
+      font-size: 11px;
       padding: 3px 10px;
       margin-right: 3px;
     }
