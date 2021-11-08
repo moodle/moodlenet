@@ -5,6 +5,7 @@ import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
 import { ns } from '../../lib/ns/namespace'
 import { plug } from '../../lib/plug'
 import * as sys from '../system'
+import { decryptString, EncryptedString } from '../system/crypto/encrypt'
 import { getLatestConfigAdapter } from './adapters'
 import { Email } from './types'
 
@@ -12,7 +13,7 @@ export type SignupIssue = 'email not available'
 
 export const signUp = plug(
   ns(module, 'sign-up'),
-  async ({ email, displayName, password }: { email: Email; password: string; displayName: string }) => {
+  async ({ email, displayName, encPassword }: { email: Email; encPassword: EncryptedString; displayName: string }) => {
     const { newUserRequestEmail, newUserVerificationWaitSecs } = await getLatestConfigAdapter()
     // const authId = newAuthKey()
     const authId: GraphNodeIdentifierAuth<'Profile'> = {
@@ -20,6 +21,10 @@ export const signUp = plug(
       _type: 'Profile',
     }
 
+    const password = await decryptString(encPassword)
+    if (!password) {
+      return null
+    }
     const hashedPassword = await sys.crypto.passwordHasher.adapter(password)
 
     const activationEmailToken = await sys.crypto.jwtSigner.adapter(
