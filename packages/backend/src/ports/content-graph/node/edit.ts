@@ -1,8 +1,15 @@
-import { GraphNode, GraphNodeIdentifier, GraphNodeType } from '@moodlenet/common/dist/content-graph/types/node'
+import {
+  GraphNode,
+  GraphNodeIdentifier,
+  GraphNodeType,
+  isAssetRef,
+  isSameAssetRef,
+} from '@moodlenet/common/dist/content-graph/types/node'
 import { SessionEnv } from '@moodlenet/common/dist/types'
 import { DistOmit } from '@moodlenet/common/dist/utils/types'
 import { ns } from '../../../lib/ns/namespace'
 import { plug, value } from '../../../lib/plug'
+import { delAsset } from '../../static-assets/asset'
 import { Assertions, BV } from '../graph-lang/base'
 
 export type Operators = { editNode: BV<GraphNode> }
@@ -17,7 +24,7 @@ export type AdapterArg = {
   nodeId: GraphNodeIdentifier
   assertions: Assertions
 }
-export type Adapter = (_: AdapterArg) => Promise<GraphNode | null>
+export type Adapter = (_: AdapterArg) => Promise<[old: GraphNode, new: GraphNode] | null>
 
 export type Data<T extends GraphNodeType = GraphNodeType> = Partial<
   DistOmit<GraphNode<T>, '_permId' | '_slug' | '_type' | '_authKey' | '_created' | '_creator'>
@@ -40,5 +47,16 @@ export const port = plug<Port>(ns(module, 'port'), async ({ data, nodeId, sessio
   if (!adapterArg) {
     return null
   }
-  return await adapter(adapterArg)
+  const result = await adapter(adapterArg)
+  if (!result) {
+    return null
+  }
+  const [older, newer] = result
+  Object.entries(older)
+    .filter(([k, v]) => !isSameAssetRef(v, newer[k as keyof GraphNode]))
+    .map(([, v]) => v)
+    .filter(isAssetRef)
+    .forEach(modifiedInternalAssetRef => delAsset({ assetId: modifiedInternalAssetRef.location }))
+
+  return newer
 })

@@ -19,7 +19,7 @@ export const editNodeQ = <Type extends GraphNodeType>({
 }) => {
   const aqlAssertions = getAqlAssertions(assertions)
 
-  const q = aq<GraphNode<Type>>(`
+  const q = aq<[old: GraphNode<Type>, new: GraphNode<Type>]>(`
     let editNode = ${nodeId}
     
     FILTER editNode 
@@ -27,7 +27,7 @@ export const editNodeQ = <Type extends GraphNodeType>({
     
     UPDATE ${graphNode2AqlIdentifier('editNode')} WITH ${aqlstr(data)} into ${type}
 
-    return ${aqlGraphNode2GraphNode('NEW')}
+    return [${aqlGraphNode2GraphNode('OLD')},${aqlGraphNode2GraphNode('NEW')}]
   `)
   // console.log(q)
   return q

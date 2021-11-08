@@ -17,6 +17,7 @@ export const fillEmailTemplate = <Vars>(_: { template: EmailTemplate<Vars>; to: 
 // TODO:
 // we need just EmailObj<Vars>
 // and templateFillIn maps EmailObj props against Vars
+declare const EMAIL_TPL_SYM: unique symbol
 export type EmailTemplate<Vars> = Pick<EmailObj, 'from' | 'subject' | 'html' | 'text'> & {
-  $fake?: Vars
+  [EMAIL_TPL_SYM]?: Vars
 }
