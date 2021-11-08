@@ -53,7 +53,7 @@ export const createEdgeQ = <Type extends GraphEdgeType>({
 
     return ${aqlGraphEdge2GraphEdge('NEW')}
   `)
-  console.log('**', q)
+  // console.log('**', q)
   return q
 }
 
