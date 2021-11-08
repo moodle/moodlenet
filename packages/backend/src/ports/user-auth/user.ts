@@ -7,6 +7,7 @@ import { ns } from '../../lib/ns/namespace'
 import { plug } from '../../lib/plug'
 import { port } from '../content-graph/node/add'
 import * as crypto from '../system/crypto'
+import { decryptString, EncryptedString } from '../system/crypto/encrypt'
 import * as localOrg from '../system/localOrg'
 import * as sendEmail from '../system/sendEmail'
 import {
@@ -19,13 +20,17 @@ import { ActiveUser, Email, isEmail } from './types'
 
 export const changeRecoverPassword = plug(
   ns(module, 'change-recover-password'),
-  async ({ token, newPasswordClear }: { newPasswordClear: string; token: string }) => {
+  async ({ token, newPasswordEnc }: { newPasswordEnc: EncryptedString; token: string }) => {
     const recoverPasswordJwt = await crypto.jwtVerifier.adapter(token)
 
     if (!isRecoverPasswordJwt(recoverPasswordJwt)) {
       return false
     }
-    const newPasswordHashed = await crypto.passwordHasher.adapter(newPasswordClear)
+    const newPassword = await decryptString(newPasswordEnc)
+    if (!newPassword) {
+      return false
+    }
+    const newPasswordHashed = await crypto.passwordHasher.adapter(newPassword)
 
     const activeUser = await changePasswordByAuthIdAdapter({
       authId: recoverPasswordJwt.authId,
@@ -86,13 +91,13 @@ const isActivationEmailTokenObj = (_: any): _ is ActivationEmailTokenObj =>
 export const createSession = plug(
   ns(module, 'create-session'),
   async ({
-    password,
+    encPassword,
     email,
     activationEmailToken,
     sessionEnv,
   }: {
     sessionEnv: SessionEnv
-    password: string
+    encPassword: EncryptedString
     email: string
     activationEmailToken: Maybe<string>
   }) => {
@@ -136,7 +141,11 @@ export const createSession = plug(
     if ('string' === typeof activeUser) {
       return activeUser
     }
-    const passwordMatches = await crypto.passwordVerifier.adapter({ plainPwd: password, pwdHash: activeUser.password })
+    const plainPwd = await decryptString(encPassword)
+    if (!plainPwd) {
+      return null
+    }
+    const passwordMatches = await crypto.passwordVerifier.adapter({ plainPwd, pwdHash: activeUser.password })
 
     if (!(activeUser && passwordMatches)) {
       return INVALID_CREDENTIALS
