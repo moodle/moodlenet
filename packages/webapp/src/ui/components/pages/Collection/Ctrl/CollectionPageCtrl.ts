@@ -102,17 +102,18 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       if (!formik.dirty || !collectionData || addRelationRes.loading || delRelationRes.loading || editRes.loading) {
         return
       }
-      const imageAssetRef: AssetRefInput = !vals.image
-        ? { location: '', type: 'NoChange' }
-        : typeof vals.image === 'string'
-        ? {
-            location: vals.image,
-            type: 'ExternalUrl',
-          }
-        : {
-            location: await uploadTempFile('image', vals.image),
-            type: 'TmpUpload',
-          }
+      const imageAssetRef: AssetRefInput =
+        !vals.image || vals.image === formik.initialValues.image
+          ? { location: '', type: 'NoChange' }
+          : typeof vals.image === 'string'
+          ? {
+              location: vals.image,
+              type: 'ExternalUrl',
+            }
+          : {
+              location: await uploadTempFile('image', vals.image),
+              type: 'TmpUpload',
+            }
       await edit({
         variables: {
           id,
