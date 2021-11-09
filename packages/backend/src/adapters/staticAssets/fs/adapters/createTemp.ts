@@ -3,6 +3,7 @@ import { ulid } from 'ulid'
 import { SockOf } from '../../../../lib/plug'
 import { processTempAssetAdapter } from '../../../../ports/static-assets/asset'
 import { createTempAssetAdapter } from '../../../../ports/static-assets/temp'
+import { TempAssetDesc } from '../../../../ports/static-assets/types'
 import { forceRmTemp, getDir, getTempAssetFSPaths, pipeToFile } from './lib'
 
 export const getCreateTempAssetAdapter =
@@ -12,14 +13,14 @@ export const getCreateTempAssetAdapter =
     const tempAssetId = ulid()
     const [tempAssetFullPath, tempAssetDescFullPath] = getTempAssetFSPaths({ tempDir, tempAssetId })
     const [stream, tempAssetDesc] = await processTempAssetAdapter({ originalAssetStream, tempFileDesc, tempAssetId })
-    return Promise.all([
-      pipeToFile({ destFilePath: tempAssetFullPath, stream }),
-      writeFile(tempAssetDescFullPath, JSON.stringify(tempAssetDesc)),
-    ]).then(
-      _ => tempAssetDesc,
-      err => {
+    return pipeToFile({ destFilePath: tempAssetFullPath, stream })
+      .then(async ({ filesize }) => {
+        const _tempAssetDesc: TempAssetDesc = { ...tempAssetDesc, size: filesize }
+        await writeFile(tempAssetDescFullPath, JSON.stringify(_tempAssetDesc))
+        return _tempAssetDesc
+      })
+      .catch(err => {
         forceRmTemp({ tempDir, tempAssetId })
         return String(err)
-      },
-    )
+      })
   }
