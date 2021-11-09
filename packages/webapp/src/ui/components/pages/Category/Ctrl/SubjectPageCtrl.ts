@@ -11,21 +11,19 @@ import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplate
 import { fallbackPageProps } from '../../FallbackPage/Ctrl/FallbackPageCtrl'
 import { FallbackPage } from '../../FallbackPage/FallbackPage'
 // import { useFormikBag } from '../../../lib/formik'
-// import { NewCategoryFormValues } from '../../NewCategory/types'
-import { CategoryProps } from '../Category'
+// import { NewSubjectFormValues } from '../../NewSubject/types'
+import { SubjectProps } from '../Subject'
 import {
-  useAddCategoryRelationMutation,
-  useCategoryPageDataQuery,
-  useDelCategoryRelationMutation,
-} from './CategoryPage.gen'
+  useAddSubjectRelationMutation, useDelSubjectRelationMutation, useSubjectPageDataQuery
+} from './SubjectPage.gen'
 
-export type CategoryCtrlProps = { id: ID }
-export const useCategoryCtrl: CtrlHook<CategoryProps, CategoryCtrlProps> = ({ id }) => {
+export type SubjectCtrlProps = { id: ID }
+export const useSubjectCtrl: CtrlHook<SubjectProps, SubjectCtrlProps> = ({ id }) => {
   useSeoContentId(id)
   const { session, isAuthenticated } = useSession()
-  const [addCategoryRelation, addCategoryRelationRes] = useAddCategoryRelationMutation()
-  const [delCategoryRelation, delCategoryRelationRes] = useDelCategoryRelationMutation()
-  const { data, refetch, loading } = useCategoryPageDataQuery({
+  const [addSubjectRelation, addSubjectRelationRes] = useAddSubjectRelationMutation()
+  const [delSubjectRelation, delSubjectRelationRes] = useDelSubjectRelationMutation()
+  const { data, refetch, loading } = useSubjectPageDataQuery({
     variables: { categoryId: id, myProfileId: session ? [session.profile.id] : [] },
   })
 
@@ -33,28 +31,28 @@ export const useCategoryCtrl: CtrlHook<CategoryProps, CategoryCtrlProps> = ({ id
   const myFollowEdgeId = categoryData?.myFollow.edges[0]?.edge.id
 
   const toggleFollow = useCallback(() => {
-    if (!session || addCategoryRelationRes.loading || delCategoryRelationRes.loading) {
+    if (!session || addSubjectRelationRes.loading || delSubjectRelationRes.loading) {
       return
     }
     if (myFollowEdgeId) {
-      return delCategoryRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(() => refetch())
+      return delSubjectRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(() => refetch())
     } else {
-      return addCategoryRelation({
+      return addSubjectRelation({
         variables: { edge: { edgeType: 'Follows', from: session.profile.id, to: id, Follows: {} } },
       }).then(() => refetch())
     }
   }, [
-    addCategoryRelation,
-    addCategoryRelationRes.loading,
-    delCategoryRelation,
-    delCategoryRelationRes.loading,
+    addSubjectRelation,
+    addSubjectRelationRes.loading,
+    delSubjectRelation,
+    delSubjectRelationRes.loading,
     id,
     myFollowEdgeId,
     refetch,
     session,
   ])
 
-  const categoryProps = useMemo<null | CategoryProps>(() => {
+  const categoryProps = useMemo<null | SubjectProps>(() => {
     if (!categoryData) {
       return null
     }
@@ -73,7 +71,7 @@ export const useCategoryCtrl: CtrlHook<CategoryProps, CategoryCtrlProps> = ({ id
       .filter(isEdgeNodeOfType(['Resource']))
       .map(({ node: { id } }) => ctrlHook(useResourceCardCtrl, { id, removeAction: false }, id))
 
-    const props: CategoryProps = {
+    const props: SubjectProps = {
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
       title: categoryData.name,
       collectionCardPropsList,

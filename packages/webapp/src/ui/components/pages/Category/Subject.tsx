@@ -9,7 +9,7 @@ import { ResourceCard, ResourceCardProps } from '../../molecules/cards/ResourceC
 import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 import './styles.scss'
 
-export type CategoryProps = {
+export type SubjectProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   isAuthenticated: boolean
   title: string
@@ -24,7 +24,7 @@ export type CategoryProps = {
   toggleFollow(): unknown
 }
 
-export const Category = withCtrl<CategoryProps>(
+export const Subject = withCtrl<SubjectProps>(
   ({
     headerPageTemplateProps,
     isAuthenticated,
@@ -41,7 +41,7 @@ export const Category = withCtrl<CategoryProps>(
   }) => {
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        <div className="category">
+        <div className="subject">
           <div className="content">
             <div className="category-header">
               <Card className="category-card" hideBorderWhenSmall={true}>
@@ -139,5 +139,4 @@ export const Category = withCtrl<CategoryProps>(
   },
 )
 
-Category.defaultProps = {
-}
+Subject.defaultProps = {}

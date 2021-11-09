@@ -95,7 +95,9 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
 
     return (
       <Card
-        className={`resource-card ${isSelected ? 'selected' : ''} ${direction} ${
+        className={`resource-card ${
+          isSelected ? 'selected' : ''
+        } ${direction} ${
           isOwner && visibility === 'Private' ? 'is-private' : ''
         }`}
         hover={true}
@@ -103,8 +105,17 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
       >
         <div className={`actions`}>
           {isOwner && (
-            <abbr className={`visibility ${visibility === 'Public' ? 'public' : 'private'}`} title={visibility}>
-              {visibility === 'Public' ? <VisibilityIcon /> : <VisibilityOffIcon />}
+            <abbr
+              className={`visibility ${
+                visibility === 'Public' ? 'public' : 'private'
+              }`}
+              title={visibility}
+            >
+              {visibility === 'Public' ? (
+                <VisibilityIcon />
+              ) : (
+                <VisibilityOffIcon />
+              )}
             </abbr>
           )}
           {isAuthenticated && !selectionMode && (
@@ -118,8 +129,12 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             </div>
           )}
           <div
-            className={`like ${liked && 'liked'} ${selectionMode || !isAuthenticated || isOwner ? 'disabled' : ''}`}
-            {...(isAuthenticated && !isOwner && !selectionMode && { onClick: toggleLike })}
+            className={`like ${liked && 'liked'} ${
+              selectionMode || !isAuthenticated || isOwner ? 'disabled' : ''
+            }`}
+            {...(isAuthenticated &&
+              !isOwner &&
+              !selectionMode && { onClick: toggleLike })}
           >
             {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
             <span>{numLikes}</span>
@@ -131,14 +146,24 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
           <div className="content-container">{content(color)}</div>
         )}
         {isEditing && (
-          <RoundButton className="delete" type="trash" color="red" onHoverColor="fill-red" onClick={onRemoveClick} />
+          <RoundButton
+            className="delete"
+            type="trash"
+            color="red"
+            onHoverColor="fill-red"
+            onClick={onRemoveClick}
+          />
         )}
-        <div className={`tags scroll ${selectionMode ? 'disabled' : ''} ${isEditing ? 'editing' : ''}`}>
-          {tags && tagList(tags)}
+        <div
+          className={`tags scroll ${selectionMode ? 'disabled' : ''} ${
+            isEditing ? 'editing' : ''
+          }`}
+        >
+          {tags && tagList(tags, false)}
         </div>
       </Card>
     )
-  },
+  }
 )
 
 ResourceCard.defaultProps = {
