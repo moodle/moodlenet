@@ -350,6 +350,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         //   selected: selectedCollItems.map(({ label }) => label).join(),
         // })
         //FIXME: enters once and makes 1 single promise array but does http calls twice ! :|
+        // ( because of packages/webapp/src/ui/components/molecules/cards/AddToCollectionsCard/AddToCollectionsCard.tsx#~30)
         const promises = [
           ...collIdsToAdd.map(collIdToAdd => {
             return addRelation({

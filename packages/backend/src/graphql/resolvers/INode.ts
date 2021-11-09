@@ -63,7 +63,7 @@ export const getINodeResolver = (): {
     async _relCount(node, { targetTypes, type, inverse }, ctx) {
       const parsed = gqlNodeId2GraphNodeIdentifier(node.id)
       if (!parsed) {
-        throw new Error(`FIXME _rel`)
+        throw new Error(`Can't parse node#id: ${node.id}`)
       }
       const { _type: fromType, _slug: fromSlug } = parsed
 

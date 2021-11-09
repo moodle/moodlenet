@@ -190,7 +190,7 @@ export const SessionProvider: FC = ({ children }) => {
       signUp,
       session,
       loading,
-      isAdmin: !!(session && isGqlIdLocalOrganization(session.profile.id)), //FIXME: before federation !! ;)
+      isAdmin: !!(session && isGqlIdLocalOrganization(session.profile.id)), //!FIXME: before federation !! ;)
       isAuthenticated,
       lastSessionEmail: lastSession.email ?? null,
       lastSessionJwt: lastSession.jwt ?? null,
