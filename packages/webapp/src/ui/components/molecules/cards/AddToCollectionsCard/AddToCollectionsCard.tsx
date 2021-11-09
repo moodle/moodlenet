@@ -29,9 +29,9 @@ export const AddToCollectionsCard: FC<AddToCollectionsCardProps> = ({
       const nextSelectedColl = prevSelected.map(({ id }) => id).includes(collection.id)
         ? prevSelected.filter(({ id }) => id !== collection.id)
         : [...prevSelected, collection]
-      // should not call this in useReducer,
+      // FIXME: should not call this in useReducer,
       // useReducer should not cause side effects
-      // otherways causes packages/webapp/src/ui/components/pages/Resource/Ctrl/ResourcePageCtrl.ts#349 (FIXME calls twice, at least in dev mode)
+      // otherways causes packages/webapp/src/ui/components/pages/Resource/Ctrl/ResourcePageCtrl.ts#~350 (calls twice, at least in dev mode)
       // https://github.com/facebook/react/issues/16295#issuecomment-609809355
       setAddToCollections(nextSelectedColl)
       return nextSelectedColl

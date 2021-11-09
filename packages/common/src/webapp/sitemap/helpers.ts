@@ -59,7 +59,7 @@ export const nodeGqlId2UrlPath = (id: string) => {
 }
 export const nodeIdentifierSlug2HomeUrlPath = (slugId: GraphNodeIdentifierSlug) => {
   if (slugId._type === 'Organization') {
-    return '' // FIXME: for federation !! ;)
+    return '' // !FIXME: for federation !! ;)
   }
   const { _slug, _type } = slugId
   const contentNodeHomePath = getContentNodeHomePageBasePath(_type)
