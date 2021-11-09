@@ -1,35 +1,35 @@
-import { t, Trans } from "@lingui/macro"
-import { Fragment, useState } from "react"
-import { Href, Link } from "../../../elements/link"
-import { CP, withCtrl } from "../../../lib/ctrl"
-import { Organization } from "../../../types"
-import PrimaryButton from "../../atoms/PrimaryButton/PrimaryButton"
-import Searchbox from "../../atoms/Searchbox/Searchbox"
-import SecondaryButton from "../../atoms/SecondaryButton/SecondaryButton"
+import { t, Trans } from '@lingui/macro'
+import { Fragment, useState } from 'react'
+import { Href, Link } from '../../../elements/link'
+import { CP, withCtrl } from '../../../lib/ctrl'
+import { Organization } from '../../../types'
+import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
+import Searchbox from '../../atoms/Searchbox/Searchbox'
+import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import {
   CollectionCard,
   CollectionCardProps,
-} from "../../molecules/cards/CollectionCard/CollectionCard"
-import ListCard from "../../molecules/cards/ListCard/ListCard"
+} from '../../molecules/cards/CollectionCard/CollectionCard'
+import ListCard from '../../molecules/cards/ListCard/ListCard'
 import ResourceCard, {
   ResourceCardProps,
-} from "../../molecules/cards/ResourceCard/ResourceCard"
-import TextCard from "../../molecules/cards/TextCard/TextCard"
+} from '../../molecules/cards/ResourceCard/ResourceCard'
+import TextCard from '../../molecules/cards/TextCard/TextCard'
 import TrendCard, {
   TrendCardProps,
-} from "../../molecules/cards/TrendCard/TrendCard"
+} from '../../molecules/cards/TrendCard/TrendCard'
 import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
-} from "../../templates/HeaderPageTemplate"
-import "./styles.scss"
+} from '../../templates/HeaderPageTemplate'
+import './styles.scss'
 
 export type LandingProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
   trendCardProps: TrendCardProps
-  organization: Pick<Organization, "name" | "intro">
+  organization: Pick<Organization, 'name' | 'intro'>
   image?: string
   isAuthenticated: boolean
   signUpHref: Href
@@ -44,7 +44,7 @@ export const Landing = withCtrl<LandingProps>(
     collectionCardPropsList,
     resourceCardPropsList,
     organization,
-    image,
+    //image,
     isAuthenticated,
     signUpHref,
     loadMoreResources,
@@ -57,7 +57,7 @@ export const Landing = withCtrl<LandingProps>(
         <div className="landing">
           <div className="landing-header">
             <div className="landing-title">
-              {organization.name === "MoodleNet" ? (
+              {organization.name === 'MoodleNet' ? (
                 <Fragment>
                   <div className="organization-title">
                     {!isAuthenticated ? (
@@ -200,4 +200,4 @@ export const Landing = withCtrl<LandingProps>(
   }
 )
 
-Landing.displayName = "LandingPage"
+Landing.displayName = 'LandingPage'

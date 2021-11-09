@@ -16,7 +16,7 @@ export const SubHeader: FC<SubHeaderProps> = ({ tags }) => {
         <div className="text">Following</div>
       </div>
       <div className="tags scroll">
-        {tagList(tags)}
+        {tagList(tags, true)}
         <div className="empty-space">&nbsp;</div>
       </div>
     </div>
