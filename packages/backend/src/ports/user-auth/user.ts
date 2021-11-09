@@ -5,7 +5,7 @@ import { Routes, webappPath } from '@moodlenet/common/dist/webapp/sitemap'
 import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
 import { ns } from '../../lib/ns/namespace'
 import { plug } from '../../lib/plug'
-import { port } from '../content-graph/node/add'
+import { port as addNodePort } from '../content-graph/node/add'
 import * as crypto from '../system/crypto'
 import { decryptString, EncryptedString } from '../system/crypto/encrypt'
 import * as localOrg from '../system/localOrg'
@@ -105,38 +105,51 @@ export const createSession = plug(
     const activeUser = await getActiveUserByEmailAdapter({ email }).then(async activeUser => {
       if (activeUser) {
         return activeUser
-      } else if (activationEmailToken) {
-        const activationEmailTokenObj = await crypto.jwtVerifier.adapter(activationEmailToken)
-        if (!isActivationEmailTokenObj(activationEmailTokenObj) || activationEmailTokenObj.email !== email) {
-          return INVALID_CREDENTIALS
-        }
-        const { displayName, hashedPassword, authId } = activationEmailTokenObj
-        const mActiveUser = await saveActiveUserAdapter({ authId, email, password: hashedPassword, status: 'Active' })
-        if ('string' == typeof mActiveUser) {
-          return mActiveUser
-        }
-        const { authId: orgAuthId } = await localOrg.info.adapter()
-        await port({
-          sessionEnv: { authId: orgAuthId, timestamp: sessionEnv.timestamp },
-          data: {
-            ...authId,
-            name: displayName,
-            _published: true,
-            description: '',
-            avatar: null,
-            bio: null,
-            firstName: null,
-            image: null,
-            lastName: null,
-            location: null,
-            siteUrl: null,
-            _local: true,
-          },
-        })
+      }
+      if (!activationEmailToken) {
+        return INVALID_CREDENTIALS
+      }
+
+      const activationEmailTokenObj = await crypto.jwtVerifier.adapter(activationEmailToken)
+      if (!isActivationEmailTokenObj(activationEmailTokenObj) || activationEmailTokenObj.email !== email) {
+        return INVALID_CREDENTIALS
+      }
+
+      const { displayName, hashedPassword, authId } = activationEmailTokenObj
+
+      const plainPwd = await decryptString(encPassword)
+      if (!plainPwd) {
+        return INVALID_CREDENTIALS
+      }
+      const passwordMatches = await crypto.passwordVerifier.adapter({ plainPwd, pwdHash: hashedPassword })
+      if (!passwordMatches) {
+        return INVALID_CREDENTIALS
+      }
+
+      const mActiveUser = await saveActiveUserAdapter({ authId, email, password: hashedPassword, status: 'Active' })
+      if ('string' == typeof mActiveUser) {
         return mActiveUser
       }
 
-      return INVALID_CREDENTIALS
+      const { authId: orgAuthId } = await localOrg.info.adapter()
+      await addNodePort({
+        sessionEnv: { authId: orgAuthId, timestamp: sessionEnv.timestamp },
+        data: {
+          ...authId,
+          name: displayName,
+          _published: true,
+          description: '',
+          avatar: null,
+          bio: null,
+          firstName: null,
+          image: null,
+          lastName: null,
+          location: null,
+          siteUrl: null,
+          _local: true,
+        },
+      })
+      return mActiveUser
     })
     if ('string' === typeof activeUser) {
       return activeUser
@@ -147,7 +160,7 @@ export const createSession = plug(
     }
     const passwordMatches = await crypto.passwordVerifier.adapter({ plainPwd, pwdHash: activeUser.password })
 
-    if (!(activeUser && passwordMatches)) {
+    if (!passwordMatches) {
       return INVALID_CREDENTIALS
     }
     const jwt = await authJWT(activeUser)
