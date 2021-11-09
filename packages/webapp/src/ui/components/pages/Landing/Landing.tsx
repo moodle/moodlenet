@@ -6,12 +6,22 @@ import { Organization } from '../../../types'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../atoms/Searchbox/Searchbox'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
-import { CollectionCard, CollectionCardProps } from '../../molecules/cards/CollectionCard/CollectionCard'
+import {
+  CollectionCard,
+  CollectionCardProps,
+} from '../../molecules/cards/CollectionCard/CollectionCard'
 import ListCard from '../../molecules/cards/ListCard/ListCard'
-import ResourceCard, { ResourceCardProps } from '../../molecules/cards/ResourceCard/ResourceCard'
+import ResourceCard, {
+  ResourceCardProps,
+} from '../../molecules/cards/ResourceCard/ResourceCard'
 import TextCard from '../../molecules/cards/TextCard/TextCard'
-import TrendCard, { TrendCardProps } from '../../molecules/cards/TrendCard/TrendCard'
-import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
+import TrendCard, {
+  TrendCardProps,
+} from '../../molecules/cards/TrendCard/TrendCard'
+import {
+  HeaderPageTemplate,
+  HeaderPageTemplateProps,
+} from '../../templates/HeaderPageTemplate'
 import './styles.scss'
 
 export type LandingProps = {
@@ -34,7 +44,7 @@ export const Landing = withCtrl<LandingProps>(
     collectionCardPropsList,
     resourceCardPropsList,
     organization,
-    image,
+    //image,
     isAuthenticated,
     signUpHref,
     loadMoreResources,
@@ -50,11 +60,18 @@ export const Landing = withCtrl<LandingProps>(
               {organization.name === 'MoodleNet' ? (
                 <Fragment>
                   <div className="organization-title">
-                    {!isAuthenticated ? <Trans>Welcome to MoodleNet Central</Trans> : <Trans>MoodleNet Central</Trans>}
+                    {!isAuthenticated ? (
+                      <Trans>Welcome to MoodleNet Central</Trans>
+                    ) : (
+                      <Trans>MoodleNet Central</Trans>
+                    )}
                   </div>
                   {!isAuthenticated && (
                     <div className="moodle-title">
-                      <Trans>Our global network to share and curate open educational resources</Trans>
+                      <Trans>
+                        Our global network to share and curate open educational
+                        resources
+                      </Trans>
                     </div>
                   )}
                 </Fragment>
@@ -80,16 +97,18 @@ export const Landing = withCtrl<LandingProps>(
             <div className="main-column">
               <TextCard className="intro-card">
                 <p>
-                  MoodleNet is currently in Public Beta version, meaning that this site is now live and being tested
-                  before its official release.
+                  MoodleNet is currently in Public Beta version, meaning that
+                  this site is now live and being tested before its official
+                  release.
                 </p>
                 <p>
-                  Feel free to add open educational resources and collections, follow subjects and collections plus send
-                  resources to your Moodle site.
+                  Feel free to add open educational resources and collections,
+                  follow subjects and collections plus send resources to your
+                  Moodle site.
                 </p>
-                {organization.name !== 'MoodleNet' && image && (
+                {/* {organization.name !== 'MoodleNet' && image && (
                   <img className="text-image" src={image} alt="Background" />
-                )}
+                )} */}
                 <div className="actions">
                   {!isAuthenticated && (
                     <Link href={signUpHref}>
@@ -98,7 +117,11 @@ export const Landing = withCtrl<LandingProps>(
                       </PrimaryButton>
                     </Link>
                   )}
-                  <a href="https://docs.moodle.org/moodlenet/Main_Page" target="_blank" rel="noreferrer">
+                  <a
+                    href="https://docs.moodle.org/moodlenet/Main_Page"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <SecondaryButton color="grey">
                       <Trans>Learn more</Trans>
                     </SecondaryButton>
@@ -113,9 +136,11 @@ export const Landing = withCtrl<LandingProps>(
             </div>
           </div>
           <ListCard
-            content={collectionCardPropsList.slice(0, 14).map(collectionCardProps => (
-              <CollectionCard {...collectionCardProps} />
-            ))}
+            content={collectionCardPropsList
+              .slice(0, 14)
+              .map((collectionCardProps) => (
+                <CollectionCard {...collectionCardProps} />
+              ))}
             title={
               <div className="card-header">
                 <div className="title">
@@ -131,11 +156,12 @@ export const Landing = withCtrl<LandingProps>(
             direction="horizontal"
           />
           <ListCard
-            content={(isLoadingMore ? resourceCardPropsList : resourceCardPropsList.slice(0, 12)).map(
-              resourcesCardProps => (
-                <ResourceCard {...resourcesCardProps} />
-              ),
-            )}
+            content={(isLoadingMore
+              ? resourceCardPropsList
+              : resourceCardPropsList.slice(0, 12)
+            ).map((resourcesCardProps) => (
+              <ResourceCard {...resourcesCardProps} />
+            ))}
             title={
               <div className="card-header">
                 <div className="title">
@@ -171,7 +197,7 @@ export const Landing = withCtrl<LandingProps>(
         </div>
       </HeaderPageTemplate>
     )
-  },
+  }
 )
 
 Landing.displayName = 'LandingPage'

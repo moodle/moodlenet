@@ -8,8 +8,7 @@
   font-weight: bold;
   font-size: 12px;
   height: 30px;
-  padding: 12px;
-  padding: 12px 18px;
+  padding: 0 18px;
   width: fit-content;
   cursor: pointer;
   white-space: nowrap;
@@ -22,7 +21,7 @@
   }
 
   &.black {
-    color: black;
+    color: #3c4043;
     border: 2px solid black;
   }
 

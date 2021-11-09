@@ -8,6 +8,7 @@
 }
 
 body {
+  color: #3c4043;
   background: white;
   /* Hide scrollbar for IE, Edge and Firefox */
   -ms-overflow-style: none; /* IE and Edge */
@@ -53,7 +54,7 @@ body::-webkit-scrollbar {
         }
       }
     }
-    
+
     > .close-button {
       color: $primary-color;
       &:hover {
