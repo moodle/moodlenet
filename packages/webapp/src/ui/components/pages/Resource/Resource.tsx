@@ -21,11 +21,20 @@ import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
-import { AddToCollectionsCard, CollectionItem } from '../../molecules/cards/AddToCollectionsCard/AddToCollectionsCard'
-import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
+import {
+  AddToCollectionsCard,
+  CollectionItem,
+} from '../../molecules/cards/AddToCollectionsCard/AddToCollectionsCard'
+import {
+  HeaderPageTemplate,
+  HeaderPageTemplateProps,
+} from '../../templates/HeaderPageTemplate'
 import { DropdownField, FormatDropdown } from '../NewResource/FieldsData'
 import { NewResourceFormValues } from '../NewResource/types'
-import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
+import {
+  ContributorCard,
+  ContributorCardProps,
+} from './ContributorCard/ContributorCard'
 import './styles.scss'
 
 export type ResourceProps = {
@@ -96,8 +105,12 @@ export const Resource = withCtrl<ResourceProps>(
     lmsSite,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
-    const [isAddingToCollection, setIsAddingToCollection] = useState<boolean>(false)
-    const [isAddingToMoodleLms, setIsAddingToMoodleLms] = useState<boolean>(false)
+    const [isAddingToCollection, setIsAddingToCollection] = useState<boolean>(
+      false
+    )
+    const [isAddingToMoodleLms, setIsAddingToMoodleLms] = useState<boolean>(
+      false
+    )
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
     const [moodleLmsSite, setMoodleLmsSite] = useState<string>(lmsSite ?? '')
@@ -114,16 +127,45 @@ export const Resource = withCtrl<ResourceProps>(
 
     const [form, formAttrs] = formBag
     const setFieldValue = form.setFieldValue
-    const setTitleField = useCallback((_: string) => setFieldValue('title', _), [setFieldValue])
-    const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
-    const setTypeField = useCallback((_: string) => setFieldValue('type', _), [setFieldValue])
-    const setLevelField = useCallback((_: string) => setFieldValue('level', _), [setFieldValue])
-    const setMonthField = useCallback((_: string) => setFieldValue('originalDateMonth', _), [setFieldValue])
-    const setYearField = useCallback((_: string) => setFieldValue('originalDateYear', _), [setFieldValue])
-    const setLangField = useCallback((_: string) => setFieldValue('language', _), [setFieldValue])
-    const setCategoryField = useCallback((_: string) => setFieldValue('category', _), [setFieldValue])
-    const setLicenseField = useCallback((_: string) => setFieldValue('license', _), [setFieldValue])
-    const setVisibilityField = useCallback((_: string) => setFieldValue('visibility', _), [setFieldValue])
+    const setTitleField = useCallback(
+      (_: string) => setFieldValue('title', _),
+      [setFieldValue]
+    )
+    const setDescriptionField = useCallback(
+      (_: string) => setFieldValue('description', _),
+      [setFieldValue]
+    )
+    const setTypeField = useCallback((_: string) => setFieldValue('type', _), [
+      setFieldValue,
+    ])
+    const setLevelField = useCallback(
+      (_: string) => setFieldValue('level', _),
+      [setFieldValue]
+    )
+    const setMonthField = useCallback(
+      (_: string) => setFieldValue('originalDateMonth', _),
+      [setFieldValue]
+    )
+    const setYearField = useCallback(
+      (_: string) => setFieldValue('originalDateYear', _),
+      [setFieldValue]
+    )
+    const setLangField = useCallback(
+      (_: string) => setFieldValue('language', _),
+      [setFieldValue]
+    )
+    const setCategoryField = useCallback(
+      (_: string) => setFieldValue('category', _),
+      [setFieldValue]
+    )
+    const setLicenseField = useCallback(
+      (_: string) => setFieldValue('license', _),
+      [setFieldValue]
+    )
+    const setVisibilityField = useCallback(
+      (_: string) => setFieldValue('visibility', _),
+      [setFieldValue]
+    )
     //const setCollectionsField = useCallback((_: string) => setFieldValue('collections', _), [setFieldValue])
     // console.log({ selectedCollections, collections })
 
@@ -136,13 +178,17 @@ export const Resource = withCtrl<ResourceProps>(
         const selectedFile = e?.currentTarget.files?.item(0)
         selectedFile && setFieldValue('image', selectedFile)
       },
-      [setFieldValue],
+      [setFieldValue]
     )
 
     const image = (
       <img
         className="image"
-        src={typeof form.values.imageUrl === 'string' ? form.values.imageUrl : defaultBackgroud}
+        src={
+          typeof form.values.imageUrl === 'string'
+            ? form.values.imageUrl
+            : defaultBackgroud
+        }
         alt="Background"
         {...(type === 'file' && { onClick: () => setIsShowingImage(true) })}
       />
@@ -158,7 +204,12 @@ export const Resource = withCtrl<ResourceProps>(
             <Trans>Add to Collection</Trans>
           </SecondaryButton>
         )}
-        <a href={contentUrl} target="_blank" rel="noreferrer" download={form.values.title}>
+        <a
+          href={contentUrl}
+          target="_blank"
+          rel="noreferrer"
+          download={form.values.title}
+        >
           <SecondaryButton>
             {type === 'file' ? (
               <>
@@ -309,7 +360,10 @@ export const Resource = withCtrl<ResourceProps>(
             <div className="title">
               <Trans>Original creation date</Trans>
             </div>
-            <abbr className="value date" title={`${form.values.originalDateMonth} ${form.values.originalDateYear}`}>
+            <abbr
+              className="value date"
+              title={`${form.values.originalDateMonth} ${form.values.originalDateYear}`}
+            >
               <span>{form.values.originalDateMonth}</span>
               <span>{form.values.originalDateYear}</span>
             </abbr>
@@ -443,7 +497,11 @@ export const Resource = withCtrl<ResourceProps>(
           {isAddingToCollection && collections && setAddToCollections && (
             <Modal
               title={t`Select Collections`}
-              actions={[<PrimaryButton onClick={() => setIsAddingToCollection(false)}>Done</PrimaryButton>]}
+              actions={[
+                <PrimaryButton onClick={() => setIsAddingToCollection(false)}>
+                  Done
+                </PrimaryButton>,
+              ]}
               onClose={() => setIsAddingToCollection(false)}
               style={{ maxWidth: '400px' }}
             >
@@ -465,25 +523,45 @@ export const Resource = withCtrl<ResourceProps>(
                       <Trans>Resource</Trans>
                       <div
                         style={{
-                          color: getResourceColorType(form.values.type ? form.values.type : form.values.contentType),
+                          color: getResourceColorType(
+                            form.values.type
+                              ? form.values.type
+                              : form.values.contentType
+                          ),
                         }}
                       >
-                        &nbsp;/ {form.values.type ? form.values.type : form.values.contentType}
+                        &nbsp;/{' '}
+                        {form.values.type
+                          ? form.values.type
+                          : form.values.contentType}
                       </div>
                     </span>
                     <div className="actions">
                       {!isEditing && (
                         <div
-                          className={`${isAuthenticated && !isOwner ? 'like' : 'like-disabled'} ${liked && 'liked'}`}
-                          onClick={isAuthenticated && !isOwner ? toggleLike : () => {}}
+                          className={`${
+                            isAuthenticated && !isOwner
+                              ? 'like'
+                              : 'like-disabled'
+                          } ${liked && 'liked'}`}
+                          onClick={
+                            isAuthenticated && !isOwner ? toggleLike : () => {}
+                          }
                         >
                           {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                           <span>{numLikes}</span>
                         </div>
                       )}
                       {isAuthenticated && !isEditing && (
-                        <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
-                          {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                        <div
+                          className={`bookmark ${bookmarked && 'bookmarked'}`}
+                          onClick={toggleBookmark}
+                        >
+                          {bookmarked ? (
+                            <BookmarkIcon />
+                          ) : (
+                            <BookmarkBorderIcon />
+                          )}
                         </div>
                       )}
                       {/*<div className="share">
@@ -492,11 +570,18 @@ export const Resource = withCtrl<ResourceProps>(
                       {(isAdmin || isOwner) && (
                         <div className="edit-save">
                           {isEditing ? (
-                            <PrimaryButton color="green" onHoverColor="orange" onClick={handleOnSaveClick}>
+                            <PrimaryButton
+                              color="green"
+                              onHoverColor="orange"
+                              onClick={handleOnSaveClick}
+                            >
                               <SaveIcon />
                             </PrimaryButton>
                           ) : (
-                            <SecondaryButton onClick={handleOnEditClick} color="orange">
+                            <SecondaryButton
+                              onClick={handleOnEditClick}
+                              color="orange"
+                            >
                               <EditIcon />
                             </SecondaryButton>
                           )}
@@ -517,7 +602,9 @@ export const Resource = withCtrl<ResourceProps>(
                   ) : (
                     <div className="title">{form.values.title}</div>
                   )}
-                  {tags.length > 0 && <div className="tags scroll">{tagList(tags)}</div>}
+                  {tags.length > 0 && (
+                    <div className="tags scroll">{tagList(tags, false)}</div>
+                  )}
                 </div>
                 {(typeof form.values.imageUrl === 'string' || isEditing) && (
                   <div className="image-container">
@@ -538,7 +625,13 @@ export const Resource = withCtrl<ResourceProps>(
                         hidden
                       />
                     )}
-                    {isEditing && <RoundButton className="change-image-button" type="edit" onClick={selectImage} />}
+                    {isEditing && (
+                      <RoundButton
+                        className="change-image-button"
+                        type="edit"
+                        onClick={selectImage}
+                      />
+                    )}
                   </div>
                 )}
                 {isOwner ? (
@@ -557,7 +650,11 @@ export const Resource = withCtrl<ResourceProps>(
                 )}
                 <div className="bottom">
                   {isEditing && (
-                    <SecondaryButton color="red" onHoverColor="filled-red" onClick={() => setIsToDelete(true)}>
+                    <SecondaryButton
+                      color="red"
+                      onHoverColor="filled-red"
+                      onClick={() => setIsToDelete(true)}
+                    >
                       <DeleteOutlineIcon />
                     </SecondaryButton>
                   )}
@@ -566,19 +663,25 @@ export const Resource = withCtrl<ResourceProps>(
               </Card>
               <div className="resource-footer">
                 <div className="left-column">
-                  {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
+                  {(!isOwner || isAdmin) && (
+                    <ContributorCard {...contributorCardProps} />
+                  )}
                   {actions}
                 </div>
                 <div className="right-column">{extraDetails}</div>
                 <div className="one-column">
-                  {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
+                  {(!isOwner || isAdmin) && (
+                    <ContributorCard {...contributorCardProps} />
+                  )}
                   {actions}
                   {extraDetails}
                 </div>
               </div>
             </div>
             <div className="side-column">
-              {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
+              {(!isOwner || isAdmin) && (
+                <ContributorCard {...contributorCardProps} />
+              )}
               {actions}
               {extraDetails}
             </div>
@@ -586,5 +689,5 @@ export const Resource = withCtrl<ResourceProps>(
         </div>
       </HeaderPageTemplate>
     )
-  },
+  }
 )
