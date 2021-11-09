@@ -52,15 +52,23 @@ export const getAssetFileDesc = async (assetDir: string, assetId: string) => {
   return assetFileDesc
 }
 
-export const pipeToFile = async ({ destFilePath, stream }: { stream: Readable; destFilePath: string }): Promise<void> =>
+export const pipeToFile = async ({
+  destFilePath,
+  stream,
+}: {
+  stream: Readable
+  destFilePath: string
+}): Promise<{ filesize: number }> =>
   new Promise((resolve, reject) => {
     const removeAndReject = async (e: any) => {
       reject(e)
       forceRm(destFilePath).catch()
     }
+    let filesize = 0
     const ws = createWriteStream(destFilePath, { autoClose: true })
     stream.on('error', removeAndReject)
-    ws.on('close', resolve)
+    stream.on('data', chunk => (filesize += chunk.length))
+    ws.on('close', () => resolve({ filesize }))
     stream.pipe(ws)
   })
 

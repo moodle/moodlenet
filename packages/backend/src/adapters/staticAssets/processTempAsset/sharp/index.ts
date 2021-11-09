@@ -13,23 +13,24 @@ export const sharpProcessTempAsset: SockOf<typeof processTempAssetAdapter> = asy
     return [originalAssetStream, tempAssetDesc]
   }
 
-  const imagePipeline = sharpImagePipeline[tempFileDesc.uploadType]()
+  const imagePipeline = sharpImagePipeline({ uploadType: tempFileDesc.uploadType })
   originalAssetStream.pipe(imagePipeline)
-  const jpgTmpAssetDesc = getImageTempAssetDesc(tempAssetDesc)
-  return [imagePipeline, jpgTmpAssetDesc]
+  return [imagePipeline, tempAssetDesc]
+  // const jpgTmpAssetDesc = getImageTempAssetDesc(tempAssetDesc)
+  // return [imagePipeline, jpgTmpAssetDesc]
 }
 
-const getImageTempAssetDesc = (tempAssetDesc: TempAssetDesc) => {
-  const jpgTmpAssetDesc: TempAssetDesc = {
-    ...tempAssetDesc,
-    mimetype: 'image/jpeg',
-    filename: {
-      ...tempAssetDesc.filename,
-      ext: 'jpg',
-    },
-  }
-  return jpgTmpAssetDesc
-}
+// const getImageTempAssetDesc = (tempAssetDesc: TempAssetDesc) => {
+//   const jpgTmpAssetDesc: TempAssetDesc = {
+//     ...tempAssetDesc,
+//     mimetype: 'image/jpeg',
+//     filename: {
+//       ...tempAssetDesc.filename,
+//       ext: 'jpg',
+//     },
+//   }
+//   return jpgTmpAssetDesc
+// }
 
 const getTempAssetDesc = (tempFileDesc: TempFileDesc, tempAssetId: TempAssetId) => {
   const _splitname = !tempFileDesc.name ? null : tempFileDesc.name.split('.')
@@ -50,7 +51,7 @@ const getTempAssetDesc = (tempFileDesc: TempFileDesc, tempAssetId: TempAssetId) 
   return tempAssetDesc
 }
 
-const sharpImagePipeline = {
-  icon: () => sharp({ sequentialRead: true }).resize(256, 256, { fit: 'inside' }).jpeg(),
-  image: () => sharp({ sequentialRead: true }).resize(800, 800, { fit: 'inside', withoutEnlargement: true }).jpeg(),
+const sharpImagePipeline = ({ uploadType }: { uploadType: 'icon' | 'image' }) => {
+  const size: [number, number] = uploadType === 'icon' ? [256, 256] : [800, 800]
+  return sharp({ sequentialRead: true }).resize(...size, { fit: 'inside', withoutEnlargement: true })
 }
