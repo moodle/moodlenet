@@ -116,9 +116,9 @@ export type IscedGrade = BaseGraphNode<'IscedGrade'> & {
 }
 
 export type Organization = BaseGraphNode<'Organization'> & {
-  introTitle: string
-  intro: string
-  logo: Maybe<AssetRef>
+  subtitle: string
+  logo: AssetRef
+  smallLogo: AssetRef
   color: string
   domain: string
 }

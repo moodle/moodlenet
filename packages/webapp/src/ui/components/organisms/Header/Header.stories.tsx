@@ -20,9 +20,10 @@ const meta: ComponentMeta<typeof Header> = {
 export const HeaderLoggedInStoryProps: HeaderPropsIdle = {
   status: 'idle',
   organization: {
-    name: 'MoodleNet',
     url: 'https://www.moodle.com/',
-    logo: '',
+    logo: '/moodlenet-logo.svg',
+    smallLogo: '/moodlenet-logo-small.svg',
+    name:'MoodleNet'
   },
   homeHref: href('Pages/Landing/Logged In'),
   me: {
@@ -50,9 +51,11 @@ export const HeaderLoggedInOrganizationStoryProps: HeaderPropsIdle = {
   ...HeaderLoggedInStoryProps,
   organization: {
     ...HeaderLoggedInStoryProps.organization,
-    name: 'BFH',
     url: 'https://www.bfh.ch/',
-    logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
+    logo:
+      'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
+    smallLogo:
+      'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
   },
 }
 
@@ -61,7 +64,9 @@ export const HeaderLoggedOutOrganizationStoryProps: HeaderPropsIdle = {
   me: null,
 }
 
-const HeaderStory: ComponentStory<typeof Header> = args => <Header {...args} />
+const HeaderStory: ComponentStory<typeof Header> = (args) => (
+  <Header {...args} />
+)
 
 export const LoggedIn = HeaderStory.bind({})
 LoggedIn.args = HeaderLoggedInStoryProps

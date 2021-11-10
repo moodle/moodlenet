@@ -3,18 +3,18 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../elements/link'
 import {
   CollectionCardLoggedOutStoryProps,
-  CollectionCardStoryProps
+  CollectionCardStoryProps,
 } from '../../molecules/cards/CollectionCard/CollectionCard.stories'
 import {
   ResourceCardLoggedOutStoryProps,
-  ResourceCardStoryProps
+  ResourceCardStoryProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard.stories'
 import { TrendCardStoryProps } from '../../molecules/cards/TrendCard/TrendCard.stories'
 import {
   HeaderPageTemplateLoggedInStoryProps,
   HeaderPageTemplateLoggedOutStoryProps,
   HeaderPageTemplateOrganizationLoggedInStoryProps,
-  HeaderPageTemplateOrganizationLoggedOutStoryProps
+  HeaderPageTemplateOrganizationLoggedOutStoryProps,
 } from '../HeaderPage/HeaderPage.stories'
 import { Landing, LandingProps } from './Landing'
 
@@ -91,20 +91,21 @@ const contentLoggedOut = {
   ],
 }
 
-const LandingStory: ComponentStory<typeof Landing> = args => <Landing {...args} />
+const LandingStory: ComponentStory<typeof Landing> = (args) => (
+  <Landing {...args} />
+)
 
 export const LandingLoggedInStoryProps: LandingProps = {
   headerPageTemplateProps: HeaderPageTemplateLoggedInStoryProps,
   ...contentLoggedIn,
   trendCardProps: TrendCardStoryProps,
   organization: {
-    name: 'MoodleNet',
-    intro: `Share and curate open educational resources.\n
-            Integrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.\n
-            Build your profile as an educator.`,
+    name: 'MoodleNet Central',
+    subtitle:
+      'Our global network to share and curate open educational resources',
+    description: `MoodleNet is currently in Public Beta version, meaning that this site is now live and being tested before its official release.\n
+                  Feel free to add open educational resources and collections, follow subjects and collections plus send resources to your Moodle site.`,
   },
-  image: 'https://picsum.photos/200/100',
-
   isAuthenticated: true,
   signUpHref: href('Pages/SignUp/Sign Up'),
   loadMoreResources: action('Load more'),
@@ -124,13 +125,14 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
   ...contentLoggedIn,
   organization: {
     name: 'Bern University of Applied Sciences',
-    intro: 'Diverse, sound, dynamic – these are the values that define BFH. And this is our MoodleNet server. ',
+    subtitle: 'A collection of our best resources',
+    description:
+      'Diverse, sound, dynamic – these are the values that define BFH. And this is ',
   },
-  image: 'https://picsum.photos/200/100',
   isAuthenticated: true,
   signUpHref: href('Pages/SignUp/Sign Up'),
   setSearchText: action('Search Text'),
-  loadMoreResources: action('Load more')
+  loadMoreResources: action('Load more'),
 }
 
 export const LandingOrganizationLoggedOutStoryProps: LandingProps = {

@@ -91,7 +91,8 @@
     "clean-build": "shx rm -rf build && yarn build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 6006 -s public",
+    "sb": "start-storybook -p 6006 -s ./public",
+    "storybook": "start-storybook -p 6006 -s ./public",
     "build-storybook": "build-storybook -s public",
     "prepublish": "yarn clean-build",
     "chromatic": "chromatic --project-token cae3595a750c"
