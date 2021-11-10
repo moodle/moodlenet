@@ -57,14 +57,14 @@ export const Landing = withCtrl<LandingProps>(
             <div className="landing-title">
               <div className="title">
                 {!isAuthenticated ? (
-                  <Trans>Welcome to {organization.name}</Trans>
+                  <>
+                    <Trans>Welcome to</Trans> {organization.name}
+                  </>
                 ) : (
                   organization.name
                 )}
               </div>
-              <div className="subtitle">
-                <Trans>{organization.subtitle}</Trans>
-              </div>
+              <div className="subtitle">{organization.subtitle}</div>
             </div>
             <Searchbox
               size="big"
