@@ -12,7 +12,7 @@ export const operators = value<Operators>(ns(module, 'operators'))
 
 export const bRules = plug<BRules>(ns(module, 'b-rules'))
 export type BRules = (
-  _: Input & {
+  _: Omit<Input, 'data'> & {
     arg: Omit<AdapterArg, 'assertions'>
   },
 ) => Promise<AdapterArg | null>
@@ -35,7 +35,6 @@ export const port = plug<Port>(ns(module, 'port'), async ({ data, sessionEnv }) 
     return null
   }
   const adapterArg = await bRules({
-    data,
     sessionEnv,
     arg: {
       node: {
