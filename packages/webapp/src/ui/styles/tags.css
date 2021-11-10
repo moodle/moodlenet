@@ -4,17 +4,26 @@
   justify-content: flex-start;
 }
 
+.tag,
+.tag-container {
+  max-width: 100%;
+}
+
 .tag {
   cursor: pointer;
   padding: 5px 10px;
   display: flex;
-  height: 100%;
   font-size: 13px;
   color: white;
   align-items: center;
-  margin-right: 10px;
   background-color: #b6bacb;
   border-radius: 15px;
+}
+
+.tag > abbr {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tag.hover:hover {

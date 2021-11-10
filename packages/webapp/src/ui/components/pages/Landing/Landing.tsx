@@ -1,5 +1,5 @@
 import { t, Trans } from '@lingui/macro'
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { Organization } from '../../../types'
@@ -29,8 +29,7 @@ export type LandingProps = {
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
   trendCardProps: TrendCardProps
-  organization: Pick<Organization, 'name' | 'intro'>
-  image?: string
+  organization: Pick<Organization, 'name' | 'subtitle' | 'description'>
   isAuthenticated: boolean
   signUpHref: Href
   setSearchText(text: string): unknown
@@ -44,7 +43,6 @@ export const Landing = withCtrl<LandingProps>(
     collectionCardPropsList,
     resourceCardPropsList,
     organization,
-    //image,
     isAuthenticated,
     signUpHref,
     loadMoreResources,
@@ -57,34 +55,16 @@ export const Landing = withCtrl<LandingProps>(
         <div className="landing">
           <div className="landing-header">
             <div className="landing-title">
-              {organization.name === 'MoodleNet' ? (
-                <Fragment>
-                  <div className="organization-title">
-                    {!isAuthenticated ? (
-                      <Trans>Welcome to MoodleNet Central</Trans>
-                    ) : (
-                      <Trans>MoodleNet Central</Trans>
-                    )}
-                  </div>
-                  {!isAuthenticated && (
-                    <div className="moodle-title">
-                      <Trans>
-                        Our global network to share and curate open educational
-                        resources
-                      </Trans>
-                    </div>
-                  )}
-                </Fragment>
-              ) : (
-                <Fragment>
-                  {!isAuthenticated && (
-                    <div className="moodle-title">
-                      <Trans>Welcome to MoodleNet</Trans>
-                    </div>
-                  )}
-                  <div className="organization-title">{organization.name}</div>
-                </Fragment>
-              )}
+              <div className="title">
+                {!isAuthenticated ? (
+                  <Trans>Welcome to {organization.name}</Trans>
+                ) : (
+                  organization.name
+                )}
+              </div>
+              <div className="subtitle">
+                <Trans>{organization.subtitle}</Trans>
+              </div>
             </div>
             <Searchbox
               size="big"
@@ -96,19 +76,7 @@ export const Landing = withCtrl<LandingProps>(
           <div className="columns-container">
             <div className="main-column">
               <TextCard className="intro-card">
-                <p>
-                  MoodleNet is currently in Public Beta version, meaning that
-                  this site is now live and being tested before its official
-                  release.
-                </p>
-                <p>
-                  Feel free to add open educational resources and collections,
-                  follow subjects and collections plus send resources to your
-                  Moodle site.
-                </p>
-                {/* {organization.name !== 'MoodleNet' && image && (
-                  <img className="text-image" src={image} alt="Background" />
-                )} */}
+                <div className="description">{organization.description}</div>
                 <div className="actions">
                   {!isAuthenticated && (
                     <Link href={signUpHref}>
