@@ -1,29 +1,29 @@
 import { FC } from 'react'
 import { Href, Link } from '../../../../elements/link'
-import SmallLogo from '../../../../static/img/moodlenet-logo-small.svg'
-import Logo from '../../../../static/img/moodlenet-logo.svg'
 import { Organization } from '../../../../types'
 import './styles.scss'
 
 export type HeaderTitleProps = {
-  organization: Pick<Organization, 'logo' | 'name' | 'url'>
+  organization: Pick<Organization, 'logo' | 'url' | 'smallLogo'>
   homeHref: Href
 }
 
-export const HeaderTitle: FC<HeaderTitleProps> = ({ organization, homeHref }) => {
+export const HeaderTitle: FC<HeaderTitleProps> = ({
+  organization,
+  homeHref,
+}) => {
+  console.log('HeaderTitle')
+  console.log(organization)
   return (
     <Link href={homeHref} style={{ textDecoration: 'none' }}>
-      {organization.name === 'MoodleNet' ? (
-        <div className="header-title">
-          <img className="logo big" src={Logo} alt="Logo" />
-          <img className="logo small" src={SmallLogo} alt="small Logo" />
-        </div>
-      ) : (
-        <div className="header-title">
-          <img className="logo" src={organization.logo} alt="Logo" />
-          <div className="text big">MoodleNet</div>
-        </div>
-      )}
+      <div className="header-title">
+        <img className="logo big" src={organization.logo} alt="Logo" />
+        <img
+          className="logo small"
+          src={organization.smallLogo}
+          alt="small Logo"
+        />
+      </div>
     </Link>
   )
 }

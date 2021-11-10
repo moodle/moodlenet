@@ -4,12 +4,14 @@ import { href, Link } from './link'
 export const tagList = (tags: FollowTag[], click: boolean) => {
   return tags.map((tag, index) => {
     return click ? (
-      <Link href={tag.subjectHomeHref} key={index}>
-        <div className={`tag tag${tag.type} hover`}>{tag.name}</div>
+      <Link href={tag.subjectHomeHref} className="tag-container" key={index}>
+        <div className={`tag tag${tag.type} hover`}>
+          <abbr title={tag.name}>{tag.name}</abbr>
+        </div>
       </Link>
     ) : (
       <div className={`tag tag${tag.type}`} key={index}>
-        {tag.name}
+        <abbr title={tag.name}>{tag.name}</abbr>
       </div>
     )
   })

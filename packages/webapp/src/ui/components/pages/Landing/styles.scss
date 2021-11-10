@@ -27,24 +27,24 @@
       flex-direction: column;
       text-align: center;
       gap: 10px;
-      > .moodle-title {
-        color: #b6bacb;
-        font-size: 25px;
-      }
-      > .organization-title {
+      > .title {
         line-height: 34px;
         color: #3c4043;
         font-size: 35px;
+      }
+      > .subtitle {
+        color: #b6bacb;
+        font-size: 25px;
       }
 
       @media screen and (max-width: 675px) and (min-width: 450px) {
         margin: 36px 0 0;
         font-weight: bold;
-        > .moodle-title {
-          font-size: 22px;
-        }
-        > .organization-title {
+        > .title {
           font-size: 33px;
+        }
+        > .subtitle {
+          font-size: 22px;
         }
       }
     }
@@ -85,23 +85,13 @@
         justify-content: space-between;
         font-size: 14px;
         line-height: 20px;
-        gap: 16px;
-        min-height: 200px;
-        > .title {
-          font-weight: bold;
-          font-size: 16px;
+        gap: 26px;
+        > .description {
+          width: 100%;
         }
         > .actions {
           display: flex;
           gap: 15px;
-
-          > .academy-button > div {
-            display: flex;
-            gap: 4px;
-            > img {
-              height: 16px;
-            }
-          }
         }
       }
 
@@ -121,8 +111,6 @@
         flex-grow: 1;
         overflow-y: auto;
         height: 100%;
-        > .content {
-        }
       }
     }
     @media screen and (max-width: 800px) {
@@ -142,8 +130,6 @@
         width: 325px;
         height: 100%;
         background-color: yellow;
-        .trend-card {
-        }
       }
     }
   }

@@ -23,26 +23,35 @@ const orgSeoMeta = ({ org }: { org: LocalInstanceContextType['org'] }) => {
   const meta: SeoMeta = {
     robotsMeta: defaultRobotsMeta,
     canonicalUrl: currentBrowserUrl,
-    description: org.intro,
-    title: `${org.name} - ${org.description}`,
+    description: org.description,
+    title: `${org.name} - ${org.subtitle}`,
   }
   return meta
 }
 
 export const [useSeo, ProvideSeo] = createCtx<SeoContextType>('Seo')
-export const defaultRobotsMeta: RobotsMeta[] = ['max-image-preview: standard', 'all']
+export const defaultRobotsMeta: RobotsMeta[] = [
+  'max-image-preview: standard',
+  'all',
+]
 export const SeoProvider: FC = ({ children }) => {
   const { org } = useLocalInstance()
   const { listen } = useHistory()
 
-  const [seoMeta, updateSeoMeta] = useReducer((prev: SeoMeta, next: Partial<SeoMeta>) => {
-    return {
-      ...prev,
-      ...next,
-    }
-  }, orgSeoMeta({ org }))
+  const [seoMeta, updateSeoMeta] = useReducer(
+    (prev: SeoMeta, next: Partial<SeoMeta>) => {
+      return {
+        ...prev,
+        ...next,
+      }
+    },
+    orgSeoMeta({ org })
+  )
 
-  useEffect(() => listen(() => updateSeoMeta(orgSeoMeta({ org }))), [listen, org])
+  useEffect(() => listen(() => updateSeoMeta(orgSeoMeta({ org }))), [
+    listen,
+    org,
+  ])
 
   const ctx = useMemo<SeoContextType>(() => {
     return {
@@ -53,9 +62,15 @@ export const SeoProvider: FC = ({ children }) => {
 
   return (
     <ProvideSeo value={ctx}>
-      <Helmet titleTemplate={`%s | ${org.name}`} defaultTitle={`${org.name} | ${org.intro}`}>
+      <Helmet
+        titleTemplate={`%s | ${org.name}`}
+        defaultTitle={`${org.name} | ${org.subtitle}`}
+      >
         <title>{seoMeta.title}</title>
-        <meta name="description" content={seoMeta.description || seoMeta.title} />
+        <meta
+          name="description"
+          content={seoMeta.description || seoMeta.title}
+        />
         <meta name="robots" content={seoMeta.robotsMeta.join(', ')} />
         <meta name="theme-color" content={org.color} />
         <link rel="canonical" href={seoMeta.canonicalUrl} />

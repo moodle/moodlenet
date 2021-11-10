@@ -81,18 +81,27 @@ STATICASSETS_FS_ROOT_FOLDER=/any/path/to/uploads/directory
 
 #^SETUP VARS
 #
+
 # the following variables are necessary on first run as they will be used for initial DB population
-# they aren't required for subsequent system start
+# *** _all_ SETUP_* variables are mandatory for a correct installation ***
+# they aren't required for subsequent system starts, though
 
-SETUP_ORGANIZATION_NAME="My Awesome Moodlenet Organization Name"
-
+# the domain hosting your MoodleNet installation
 # in real world deployment would be something like: SETUP_ORGANIZATION_DOMAIN=my.example.domain.com
 SETUP_ORGANIZATION_DOMAIN=localhost:${HTTP_PORT}
 
-# this is an accessible email for the "organization user"
-# admins will use this for authenticating as org-user
+# an accessible email for the "organization user"
+# super-admin will use this for authenticating as org-user
 SETUP_ORGANIZATION_EMAIL=your.org.user@email.com
 
+# following vars are used to fill the DB with your organization info,
+# displayed in various contexts, from webapp to email notifications
+SETUP_ORGANIZATION_NAME=My Awesome Organization
+SETUP_ORGANIZATION_DESCRIPTION="My organization description\nmultiline"
+SETUP_ORGANIZATION_SUBTITLE=My organization subtitle
+# logos point to accessible images of any browser-supported mimetype
+SETUP_ORGANIZATION_LOGO=https://url-to.any/logo.png
+SETUP_ORGANIZATION_SMALL_LOGO=https://url-to.any/small-logo.svg
 #
 #$SETUP VARS
 ```
@@ -106,11 +115,11 @@ start the platform using `npx`
 npx start-moodlenet-ce
 ```
 
-Only on first run the process populate the DB, and use the `^SETUP VARS` section of env variables
+Only on first run the process populates the DB, and use the `^SETUP VARS` section of env variables
 
 HTTP server starts on 8080.
 
-Browse your Moodlenet on page [http://localhost:8080/](http://localhost:8080/) enjoy MoodleNet ;)
+Browse your MoodleNet @ [http://localhost:8080/](http://localhost:8080/) enjoy MoodleNet ;)
 
 ## Organization User
 
@@ -120,4 +129,4 @@ You can perform your first login as org-user by the recover password workflow, c
 
 Follow the instructions you'll receive @`SETUP_ORGANIZATION_EMAIL`, and choose a password for org-user
 
-For subsequent logins, you can fill in the login form with `SETUP_ORGANIZATION_EMAIL` and the choosen password
+Subsequent logins, you can fill in the login form with `SETUP_ORGANIZATION_EMAIL` and the choosen password

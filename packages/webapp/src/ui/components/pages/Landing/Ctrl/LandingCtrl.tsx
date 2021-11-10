@@ -29,10 +29,10 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
             {
               id,
             },
-            id,
-          ),
+            id
+          )
         ),
-    [LandingPageLists.data?.node?.bookmarkedCollections.edges],
+    [LandingPageLists.data?.node?.bookmarkedCollections.edges]
   )
 
   const resourceCardPropsList = useMemo(
@@ -46,10 +46,10 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
               id,
               removeAction: null,
             },
-            id,
-          ),
+            id
+          )
         ),
-    [LandingPageLists.data?.node?.bookmarkedResources.edges],
+    [LandingPageLists.data?.node?.bookmarkedResources.edges]
   )
 
   const tags = useMemo(
@@ -61,20 +61,23 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
           type: 'General',
           subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
         })),
-    [LandingPageLists.data?.node?.trending.edges],
+    [LandingPageLists.data?.node?.trending.edges]
   )
   const { org: localOrg } = useLocalInstance()
 
   const landingProps = useMemo<LandingProps>(
     () => ({
       isAuthenticated,
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
+      headerPageTemplateProps: ctrlHook(
+        useHeaderPageTemplateCtrl,
+        {},
+        'header-page-template'
+      ),
       organization: {
         name: localOrg.name,
-        intro: localOrg.description,
-        introTitle: localOrg.intro,
+        description: localOrg.description,
+        subtitle: localOrg.subtitle,
       },
-      image: localOrg.icon ?? null,
       trendCardProps: { tags: tags || [] },
       setSearchText,
       collectionCardPropsList: collectionCardPropsList || [],
@@ -85,13 +88,12 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       isAuthenticated,
       localOrg.name,
       localOrg.description,
-      localOrg.intro,
-      localOrg.icon,
+      localOrg.subtitle,
       tags,
       setSearchText,
       collectionCardPropsList,
       resourceCardPropsList,
-    ],
+    ]
   )
   // console.log({ landingProps })
   return [landingProps]

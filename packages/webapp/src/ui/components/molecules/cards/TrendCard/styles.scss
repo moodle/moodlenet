@@ -1,5 +1,6 @@
 .trend-card {
   width: 100%;
+  min-height: 118px;
   background-color: #fff;
   border-radius: 16px;
   box-shadow: 0 0 6px #dedede;
@@ -34,6 +35,7 @@
       height: 100%;
 
       > a {
+        height: 39px;
         padding: 6px 10px 6px 3px;
       }
 
