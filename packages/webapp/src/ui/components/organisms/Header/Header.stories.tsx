@@ -23,6 +23,7 @@ export const HeaderLoggedInStoryProps: HeaderPropsIdle = {
     url: 'https://www.moodle.com/',
     logo: '/moodlenet-logo.svg',
     smallLogo: '/moodlenet-logo-small.svg',
+    name:'MoodleNet'
   },
   homeHref: href('Pages/Landing/Logged In'),
   me: {
