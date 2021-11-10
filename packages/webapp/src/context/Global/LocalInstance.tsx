@@ -18,13 +18,16 @@ export type LocalInstanceContextType = {
   }
 }
 
-export const [useLocalInstance, ProvideLocalInstance] = createCtx<LocalInstanceContextType>('LocalInstance')
+export const [
+  useLocalInstance,
+  ProvideLocalInstance,
+] = createCtx<LocalInstanceContextType>('LocalInstance')
 
 export const LocalInstanceProvider: FC = ({ children }) => {
   const localInstanceData = narrowNodeType(['Organization'])(
     useLocalInstanceQuery({
       fetchPolicy: 'cache-first',
-    }).data?.node,
+    }).data?.node
   )
   const ctx = useMemo<LocalInstanceContextType | null>(() => {
     return localInstanceData
@@ -34,12 +37,16 @@ export const LocalInstanceProvider: FC = ({ children }) => {
             color: localInstanceData.color,
             domain: localInstanceData.domain,
             icon: getMaybeAssetRefUrl(localInstanceData.logo) ?? moodlenet_logo,
-            image: getMaybeAssetRefUrl(localInstanceData.image) ?? moodlenet_front_image,
+            image:
+              getMaybeAssetRefUrl(localInstanceData.image) ??
+              moodlenet_front_image,
             name: localInstanceData.name,
             intro: localInstanceData.intro,
           },
         }
       : null
   }, [localInstanceData])
-  return ctx && <ProvideLocalInstance value={ctx}>{children}</ProvideLocalInstance>
+  return (
+    ctx && <ProvideLocalInstance value={ctx}>{children}</ProvideLocalInstance>
+  )
 }

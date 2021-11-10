@@ -20,24 +20,12 @@ export const TrendCard = withCtrl<TrendCardProps>(({ tags, maxRows }) => {
       const height = content.current?.clientHeight
       const numRows = height && Math.floor(height / 39)
       maxRows && numRows && maxRows < numRows && setNumRows(numRows)
-      console.log(
-        maxRows,
-        ' ',
-        numRows,
-        ' ',
-        maxRows && numRows && maxRows < numRows
-      )
     }
   }, [content, maxRows])
 
   const setNewNumRows = useCallback(() => {
     const containerHeight = card.current && card.current.clientHeight - 79 // 41px is the header height
-    console.log(
-      'card height - borders: ',
-      containerHeight ? containerHeight : ''
-    )
     const numRows = containerHeight && Math.floor(containerHeight / 39)
-    console.log('numRos: ', numRows)
     maxRows && !numRows && setNumRows(maxRows)
     maxRows && numRows && setNumRows(maxRows <= numRows ? maxRows : numRows)
     numRows && setNumRows(numRows)
