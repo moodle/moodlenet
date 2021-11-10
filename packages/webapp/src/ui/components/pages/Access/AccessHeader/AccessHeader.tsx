@@ -8,7 +8,7 @@ import HeaderTitle from '../../../organisms/Header/HeaderTitle/HeaderTitle'
 import './styles.scss'
 
 export type AccessHeaderProps = {
-  organization: Pick<Organization, 'logo' | 'name' | 'url'>
+  organization: Pick<Organization, 'logo' | 'url' | 'smallLogo'>
   homeHref: Href
   signupHref: Href
   loginHref: Href
@@ -27,17 +27,23 @@ export const AccessHeader = withCtrl<AccessHeaderProps>(
                 <Link href={signupHref}>
                   {' '}
                   {/* TODO Implement on Controller */}
-                  <SecondaryButton color="orange"><Trans>Sign up</Trans></SecondaryButton>
+                  <SecondaryButton color="orange">
+                    <Trans>Sign up</Trans>
+                  </SecondaryButton>
                 </Link>
               ) : (
                 <Link href={loginHref}>
                   {' '}
                   {/* TODO Implement on Controller */}
-                  <SecondaryButton color="orange"><Trans>Log in</Trans></SecondaryButton>
+                  <SecondaryButton color="orange">
+                    <Trans>Log in</Trans>
+                  </SecondaryButton>
                 </Link>
               )}
               <a href="https://moodle.com/moodlenet/" target="__blank">
-                <PrimaryButton><Trans>Learn more</Trans></PrimaryButton>
+                <PrimaryButton>
+                  <Trans>Learn more</Trans>
+                </PrimaryButton>
               </a>
             </div>
           ) : (
@@ -46,7 +52,7 @@ export const AccessHeader = withCtrl<AccessHeaderProps>(
         </div>
       </div>
     )
-  },
+  }
 )
 AccessHeader.displayName = 'AccessHeader'
 export default AccessHeader

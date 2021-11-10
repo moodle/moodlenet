@@ -2,7 +2,10 @@ import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers
 import { useMemo } from 'react'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSession } from '../../../../../context/Global/Session'
-import { getMaybeAssetRefUrl } from '../../../../../helpers/data'
+import {
+  getJustAssetRefUrl,
+  getMaybeAssetRefUrl,
+} from '../../../../../helpers/data'
 import { mainPath } from '../../../../../hooks/glob/nav'
 import { href } from '../../../../elements/link'
 import { CtrlHook } from '../../../../lib/ctrl'
@@ -22,7 +25,9 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
 
   const headerProps = useMemo<HeaderProps>(() => {
     const me: HeaderPropsIdle['me'] =
-      !session || (session.profile.__typename !== 'Profile' && session.profile.__typename !== 'Organization')
+      !session ||
+      (session.profile.__typename !== 'Profile' &&
+        session.profile.__typename !== 'Organization')
         ? null
         : {
             ...(session.profile.__typename === 'Profile'
@@ -48,7 +53,8 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
       organization: {
         name: localOrg.name,
         url: `//${localOrg.domain}`,
-        logo: localOrg.icon,
+        logo: getJustAssetRefUrl(localOrg.logo),
+        smallLogo: getJustAssetRefUrl(localOrg.smallLogo),
       },
       searchText,
       setSearchText,
@@ -57,6 +63,15 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
       signUpHref,
     }
     return headerProps
-  }, [localOrg.domain, localOrg.icon, localOrg.name, logout, searchText, session, setSearchText])
+  }, [
+    localOrg.domain,
+    localOrg.logo,
+    localOrg.name,
+    localOrg.smallLogo,
+    logout,
+    searchText,
+    session,
+    setSearchText,
+  ])
   return [headerProps]
 }

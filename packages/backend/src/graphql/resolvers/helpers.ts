@@ -57,7 +57,7 @@ export const graphNode2GqlNode = (node: GN.GraphNode): GQL.Node => {
     const _node: GQL.Organization = {
       __typename: 'Organization',
       ...base,
-      ...pick(node, ['color', 'domain', 'logo', 'intro', 'introTitle']),
+      ...pick(node, ['color', 'domain', 'logo', 'logo', 'smallLogo', 'subtitle']),
     }
     return _node
   } else if (node._type === 'Resource') {
@@ -146,7 +146,7 @@ export const gqlNode2GraphNode = (node: GQL.Node): DistOmit<GN.GraphNode, OmitNo
     const _node: Omit<GN.Organization, OmitNodeProps> = {
       _type: 'Organization',
       ...base,
-      ...pick(node, ['color', 'domain', 'logo', 'intro', 'introTitle']),
+      ...pick(node, ['color', 'domain', 'logo', 'logo', 'smallLogo', 'subtitle']),
     }
     return _node
   } else if (node.__typename === 'Resource') {

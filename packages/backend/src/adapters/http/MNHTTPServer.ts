@@ -35,6 +35,9 @@ export const startMNHttpServer = ({ startServices, httpPort: port, defaultGet }:
     }
     const mountPoint = `/${mountName}`
     console.log(`${nameTag}: mounting service [${mountPoint}]`)
+    if (typeof application === 'string') {
+      console.log('static ', application)
+    }
     const middleware = typeof application === 'string' ? express.static(application) : application
     subServicesApp.use(mountPoint, middleware)
   })

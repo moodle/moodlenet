@@ -20,7 +20,7 @@ import './styles.scss'
 
 export type HeaderPropsIdle = HeaderPropsBase & {
   status: 'idle'
-  organization: Pick<Organization, 'logo' | 'smallLogo' | 'url'>
+  organization: Pick<Organization, 'logo' | 'smallLogo' | 'url' |'name'>
   me: null | {
     avatar: string | null
     logout(): unknown
