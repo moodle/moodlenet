@@ -52,6 +52,6 @@ const getTempAssetDesc = (tempFileDesc: TempFileDesc, tempAssetId: TempAssetId) 
 }
 
 const sharpImagePipeline = ({ uploadType }: { uploadType: 'icon' | 'image' }) => {
-  const size: [number, number] = uploadType === 'icon' ? [256, 256] : [800, 800]
+  const size: [number, number] = uploadType === 'icon' ? [256, 256] : [1000, 1000]
   return sharp({ sequentialRead: true }).resize(...size, { fit: 'inside', withoutEnlargement: true })
 }
