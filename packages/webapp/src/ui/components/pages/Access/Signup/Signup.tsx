@@ -1,6 +1,7 @@
 import { t, Trans } from '@lingui/macro'
 import CallMadeIcon from '@material-ui/icons/CallMade'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
+import { useEffect, useState } from 'react'
 import { isEmailAddress } from '../../../../../helpers/utilities'
 import { Href, Link } from '../../../../elements/link'
 import { CP, withCtrl } from '../../../../lib/ctrl'
@@ -8,7 +9,10 @@ import { FormikBag } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
-import { MainPageWrapper, MainPageWrapperProps } from '../../../templates/MainPageWrapper'
+import {
+  MainPageWrapper,
+  MainPageWrapperProps,
+} from '../../../templates/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
@@ -35,6 +39,12 @@ export const Signup = withCtrl<SignupProps>(
     userAgreementHref,
   }) => {
     const [form, attrs] = formBag
+    const [
+      highlightMandatoryFields,
+      setHighlightMandatoryFields,
+    ] = useState<boolean>(false)
+    const [isNameValid, setIsNameValid] = useState<boolean>(false)
+    const [isEmailValid, setIsEmailValid] = useState<boolean>(false)
 
     // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     //   if (e.key === 'Enter') {
@@ -42,13 +52,26 @@ export const Signup = withCtrl<SignupProps>(
     //   }
     // }
 
+    useEffect(() => {
+      form.values.name &&
+        !isEmailAddress(form.values.name) &&
+        setIsNameValid(true)
+      form.values.email &&
+        isEmailAddress(form.values.email) &&
+        setIsEmailValid(true)
+    }, [form.values.name, form.values.email])
+
     const submitForm = () => {
-      if (isEmailAddress(form.values.name)) {
-        signupErrorMessage = 'Display name cannot be an email'
-      } else {
+      form.values.password.length < 6 &&
+        (signupErrorMessage = 'Password should have at least 6 characters')
+      if (isNameValid && isEmailValid && form.values.password) {
         form.submitForm()
+      } else {
+        setHighlightMandatoryFields(true)
       }
     }
+
+    console.log(form.values)
 
     return (
       <MainPageWrapper {...mainPageWrapperProps}>
@@ -69,14 +92,22 @@ export const Signup = withCtrl<SignupProps>(
                 </div>
                 <form onSubmit={form.handleSubmit}>
                   <input
-                    className="diplay-name"
+                    className={`diplay-name ${
+                      highlightMandatoryFields && !form.values.name
+                        ? 'highlight'
+                        : ''
+                    }`}
                     type="text"
                     placeholder={t`Display name`}
                     {...attrs.name}
                     onChange={form.handleChange}
                   />
                   <input
-                    className="email"
+                    className={`email ${
+                      highlightMandatoryFields && !form.values.email
+                        ? 'highlight'
+                        : ''
+                    }`}
                     id="username_input"
                     color="text"
                     type="text"
@@ -85,16 +116,26 @@ export const Signup = withCtrl<SignupProps>(
                     onChange={form.handleChange}
                   />
                   <input
-                    className="password"
+                    className={`password ${
+                      highlightMandatoryFields && !form.values.password
+                        ? 'highlight'
+                        : ''
+                    }`}
                     id="password_input"
                     type="password"
                     placeholder={t`Password`}
                     {...attrs.password}
                     onChange={form.handleChange}
                   />
-                  <button id="signup-button" type="submit" style={{ display: 'none' }} />
+                  <button
+                    id="signup-button"
+                    type="submit"
+                    style={{ display: 'none' }}
+                  />
                 </form>
-                {signupErrorMessage && <div className="error">{signupErrorMessage}</div>}
+                {signupErrorMessage && (
+                  <div className="error">{signupErrorMessage}</div>
+                )}
                 <div className="bottom">
                   <div className="left">
                     <PrimaryButton onClick={submitForm}>
@@ -140,5 +181,5 @@ export const Signup = withCtrl<SignupProps>(
         </div>
       </MainPageWrapper>
     )
-  },
+  }
 )
