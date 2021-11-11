@@ -38,7 +38,6 @@ export const Signup = withCtrl<SignupProps>(
   }) => {
     const [form, attrs] = formBag
 
-    const formErrors = Object.values(form.errors)
     const shouldShowErrors =
       !!form.submitCount && (!!signupErrorMessage || !form.isValid)
     return (
@@ -100,7 +99,7 @@ export const Signup = withCtrl<SignupProps>(
                 {shouldShowErrors && (
                   <div className="error">
                     {signupErrorMessage}
-                    {formErrors.map((error) => (
+                    {Object.values(form.errors).map((error) => (
                       <>
                         <br />
                         {error}
