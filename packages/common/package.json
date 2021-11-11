@@ -42,7 +42,7 @@
   },
   "scripts": {
     "clean-build": "shx rm -rf dist && yarn build",
-    "build": "tsc && yarn gen:graphql:types && tsc",
+    "build": "yarn gen:graphql:types && tsc",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
     "prepublish": "yarn clean-build"
   },
