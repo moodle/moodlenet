@@ -1,5 +1,5 @@
 'use strict'
-const { getScalarsGql } = require('./dist/graphql/scalars.graphql')
+const { getScalarsGql } = require('./getScalarsGql')
 const scalars = getScalarsGql('.')
 const baseDir = `${__dirname}/src/graphql`
 const globCommonSdl = `${baseDir}/**/*.graphql`
