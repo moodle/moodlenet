@@ -1,5 +1,5 @@
 // 'use strict'
-const { getScalarsGql } = require('@moodlenet/common/dist/graphql/scalars.graphql')
+const { getScalarsGql } = require('@moodlenet/common/getScalarsGql')
 const introspectionJson = `${__dirname}/../common/dist/graphql/gql-introspection.json`
 const scalars = getScalarsGql('@moodlenet/common/dist/graphql')
 
