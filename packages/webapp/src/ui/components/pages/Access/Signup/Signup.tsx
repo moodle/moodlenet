@@ -39,7 +39,8 @@ export const Signup = withCtrl<SignupProps>(
     const [form, attrs] = formBag
 
     const formErrors = Object.values(form.errors)
-
+    const shouldShowErrors =
+      !!form.submitCount && (!!signupErrorMessage || !form.isValid)
     return (
       <MainPageWrapper {...mainPageWrapperProps}>
         {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
@@ -60,7 +61,7 @@ export const Signup = withCtrl<SignupProps>(
                 <form onSubmit={form.handleSubmit}>
                   <input
                     className={`diplay-name ${
-                      form.errors.name ? 'highlight' : ''
+                      shouldShowErrors && form.errors.name ? 'highlight' : ''
                     }`}
                     type="text"
                     placeholder={t`Display name`}
@@ -68,7 +69,9 @@ export const Signup = withCtrl<SignupProps>(
                     onChange={form.handleChange}
                   />
                   <input
-                    className={`email ${form.errors.email ? 'highlight' : ''}`}
+                    className={`email ${
+                      shouldShowErrors && form.errors.email ? 'highlight' : ''
+                    }`}
                     id="username_input"
                     color="text"
                     type="text"
@@ -78,7 +81,9 @@ export const Signup = withCtrl<SignupProps>(
                   />
                   <input
                     className={`password ${
-                      form.errors.password ? 'highlight' : ''
+                      shouldShowErrors && form.errors.password
+                        ? 'highlight'
+                        : ''
                     }`}
                     id="password_input"
                     type="password"
@@ -92,9 +97,9 @@ export const Signup = withCtrl<SignupProps>(
                     style={{ display: 'none' }}
                   />
                 </form>
-                {(!!signupErrorMessage || !!formErrors.length) && (
+                {shouldShowErrors && (
                   <div className="error">
-                    {signupErrorMessage}{' '}
+                    {signupErrorMessage}
                     {formErrors.map((error) => (
                       <>
                         <br />
@@ -105,7 +110,10 @@ export const Signup = withCtrl<SignupProps>(
                 )}
                 <div className="bottom">
                   <div className="left">
-                    <PrimaryButton onClick={form.submitForm}>
+                    <PrimaryButton
+                      disabled={form.isSubmitting || form.isValidating}
+                      onClick={form.submitForm}
+                    >
                       <Trans>Sign up</Trans>
                     </PrimaryButton>
                     <Link href={userAgreementHref} target="__blank">
