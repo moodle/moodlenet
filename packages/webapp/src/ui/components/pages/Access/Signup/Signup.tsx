@@ -1,8 +1,6 @@
 import { t, Trans } from '@lingui/macro'
 import CallMadeIcon from '@material-ui/icons/CallMade'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
-import { useEffect, useState } from 'react'
-import { isEmailAddress } from '../../../../../helpers/utilities'
 import { Href, Link } from '../../../../elements/link'
 import { CP, withCtrl } from '../../../../lib/ctrl'
 import { FormikBag } from '../../../../lib/formik'
@@ -39,39 +37,8 @@ export const Signup = withCtrl<SignupProps>(
     userAgreementHref,
   }) => {
     const [form, attrs] = formBag
-    const [
-      highlightMandatoryFields,
-      setHighlightMandatoryFields,
-    ] = useState<boolean>(false)
-    const [isNameValid, setIsNameValid] = useState<boolean>(false)
-    const [isEmailValid, setIsEmailValid] = useState<boolean>(false)
 
-    // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    //   if (e.key === 'Enter') {
-    //     form.submitForm()
-    //   }
-    // }
-
-    useEffect(() => {
-      form.values.name &&
-        !isEmailAddress(form.values.name) &&
-        setIsNameValid(true)
-      form.values.email &&
-        isEmailAddress(form.values.email) &&
-        setIsEmailValid(true)
-    }, [form.values.name, form.values.email])
-
-    const submitForm = () => {
-      form.values.password.length < 6 &&
-        (signupErrorMessage = 'Password should have at least 6 characters')
-      if (isNameValid && isEmailValid && form.values.password) {
-        form.submitForm()
-      } else {
-        setHighlightMandatoryFields(true)
-      }
-    }
-
-    console.log(form.values)
+    const formErrors = Object.values(form.errors)
 
     return (
       <MainPageWrapper {...mainPageWrapperProps}>
@@ -93,9 +60,7 @@ export const Signup = withCtrl<SignupProps>(
                 <form onSubmit={form.handleSubmit}>
                   <input
                     className={`diplay-name ${
-                      highlightMandatoryFields && !form.values.name
-                        ? 'highlight'
-                        : ''
+                      form.errors.name ? 'highlight' : ''
                     }`}
                     type="text"
                     placeholder={t`Display name`}
@@ -103,11 +68,7 @@ export const Signup = withCtrl<SignupProps>(
                     onChange={form.handleChange}
                   />
                   <input
-                    className={`email ${
-                      highlightMandatoryFields && !form.values.email
-                        ? 'highlight'
-                        : ''
-                    }`}
+                    className={`email ${form.errors.email ? 'highlight' : ''}`}
                     id="username_input"
                     color="text"
                     type="text"
@@ -117,9 +78,7 @@ export const Signup = withCtrl<SignupProps>(
                   />
                   <input
                     className={`password ${
-                      highlightMandatoryFields && !form.values.password
-                        ? 'highlight'
-                        : ''
+                      form.errors.password ? 'highlight' : ''
                     }`}
                     id="password_input"
                     type="password"
@@ -133,12 +92,20 @@ export const Signup = withCtrl<SignupProps>(
                     style={{ display: 'none' }}
                   />
                 </form>
-                {signupErrorMessage && (
-                  <div className="error">{signupErrorMessage}</div>
+                {(!!signupErrorMessage || !!formErrors.length) && (
+                  <div className="error">
+                    {signupErrorMessage}{' '}
+                    {formErrors.map((error) => (
+                      <>
+                        <br />
+                        {error}
+                      </>
+                    ))}
+                  </div>
                 )}
                 <div className="bottom">
                   <div className="left">
-                    <PrimaryButton onClick={submitForm}>
+                    <PrimaryButton onClick={form.submitForm}>
                       <Trans>Sign up</Trans>
                     </PrimaryButton>
                     <Link href={userAgreementHref} target="__blank">
