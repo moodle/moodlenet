@@ -1,3 +1,5 @@
+@import '../../../../styles/application';
+
 .signup-page {
   display: flex;
   flex-direction: column;
@@ -80,6 +82,10 @@
             max-width: 300px;
             border: none;
 
+            &.highlight {
+              box-shadow: 0 0 0 2px $primary-color;
+            }
+
             &:focus,
             &:not(:focus) {
               outline: none;
@@ -144,6 +150,7 @@
           align-items: center;
           > .left {
             display: flex;
+            align-items: center;
             gap: 10px;
             width: 100%;
             @media (max-width: 450px) {
