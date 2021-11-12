@@ -6,7 +6,11 @@ import { Activation, ActivationProps } from './Activation'
 const meta: ComponentMeta<typeof Activation> = {
   title: 'Pages/Access/Activation',
   component: Activation,
-  excludeStories: ['SignupStoryProps', 'ActivationStoryProps'],
+  excludeStories: [
+    'ActivationPage',
+    'SignupStoryProps',
+    'ActivationStoryProps',
+  ],
 }
 
 const ActivationStory: ComponentStory<typeof Activation> = (args) => (

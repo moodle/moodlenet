@@ -87,10 +87,21 @@ export const Login = withCtrl<LoginProps>(
                     <div className="error">{form.errors.password}</div>
                   )}
                   <button type="submit" style={{ display: 'none' }} />
+                  {wrongCreds && (
+                    <div className="error">
+                      <Trans>Incorrect username or password</Trans>
+                    </div>
+                  )}
                 </form>
                 <div className="bottom">
                   <div className="left">
-                    <PrimaryButton onClick={form.submitForm}>
+                    <PrimaryButton
+                      onClick={
+                        form.isSubmitting || form.isValidating
+                          ? undefined
+                          : form.submitForm
+                      }
+                    >
                       <Trans>Log in</Trans>
                     </PrimaryButton>
                     <Link href={recoverPasswordHref}>
