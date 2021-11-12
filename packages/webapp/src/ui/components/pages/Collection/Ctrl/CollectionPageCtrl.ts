@@ -13,8 +13,8 @@ import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useFormikBag } from '../../../../lib/formik'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
-import { fallbackPageProps } from '../../FallbackPage/Ctrl/FallbackPageCtrl'
-import { FallbackPage } from '../../FallbackPage/FallbackPage'
+import { fallbackProps } from '../../Extra/Fallback/Ctrl/FallbackCtrl'
+import { Fallback } from '../../Extra/Fallback/Fallback'
 import { NewCollectionFormValues } from '../../NewCollection/types'
 import { VisibilityDropdown } from '../../NewResource/FieldsData'
 // import { useFormikBag } from '../../../lib/formik'
@@ -25,7 +25,7 @@ import {
   useCollectionPageDataQuery,
   useDelCollectionMutation,
   useDelCollectionRelationMutation,
-  useEditCollectionMutation,
+  useEditCollectionMutation
 } from './CollectionPage.gen'
 
 export type CollectionCtrlProps = { id: ID }
@@ -106,11 +106,11 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
         !vals.image || vals.image === formik.initialValues.image
           ? { location: '', type: 'NoChange' }
           : typeof vals.image === 'string'
-          ? {
+            ? {
               location: vals.image,
               type: 'ExternalUrl',
             }
-          : {
+            : {
               location: await uploadTempFile('image', vals.image),
               type: 'TmpUpload',
             }
@@ -233,7 +233,7 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     isAdmin,
   ])
   if (!loading && !data?.node) {
-    return createElement(FallbackPage, fallbackPageProps({ key: 'collection-not-found' }))
+    return createElement(Fallback, fallbackProps({ key: 'collection-not-found' }))
   }
 
   return collectionProps && [collectionProps]
