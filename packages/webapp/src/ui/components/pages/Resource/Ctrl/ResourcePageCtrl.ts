@@ -17,7 +17,7 @@ import {
   useLicensesOptions,
   useResourceGradeOptions,
   useResourceTypeOptions,
-  yearsOptions,
+  yearsOptions
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
 import { useLMS } from '../../../../../lib/moodleLMS/useSendToMoodle'
 import { href } from '../../../../elements/link'
@@ -25,8 +25,8 @@ import { href } from '../../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useFormikBag } from '../../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
-import { fallbackPageProps } from '../../FallbackPage/Ctrl/FallbackPageCtrl'
-import { FallbackPage } from '../../FallbackPage/FallbackPage'
+import { fallbackProps } from '../../Extra/Fallback/Ctrl/FallbackCtrl'
+import { Fallback } from '../../Extra/Fallback/Fallback'
 import { useCreateResourceRelationMutation } from '../../NewResource/Ctrl/NewResourceCtrl.gen'
 import { VisibilityDropdown } from '../../NewResource/FieldsData'
 import { NewResourceFormValues } from '../../NewResource/types'
@@ -37,7 +37,7 @@ import {
   useDelResourceMutation,
   useDelResourceRelationMutation,
   useEditResourceMutation,
-  useResourcePageDataQuery,
+  useResourcePageDataQuery
 } from './ResourcePage.gen'
 
 export type ResourceCtrlProps = { id: ID }
@@ -101,11 +101,11 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         !vals.image || vals.image === formik.initialValues.image
           ? { location: '', type: 'NoChange' }
           : typeof vals.image === 'string'
-          ? {
+            ? {
               location: vals.image,
               type: 'ExternalUrl',
             }
-          : {
+            : {
               location: await uploadTempFile('image', vals.image),
               type: 'TmpUpload',
             }
@@ -413,7 +413,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     resourceGradeOptions,
   ])
   if (!loading && !data?.node) {
-    return createElement(FallbackPage, fallbackPageProps({ key: 'resource-not-found' }))
+    return createElement(Fallback, fallbackProps({ key: 'resource-not-found' }))
   }
   return resourceProps && [resourceProps]
 }

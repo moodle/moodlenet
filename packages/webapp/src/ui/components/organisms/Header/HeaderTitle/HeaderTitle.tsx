@@ -12,8 +12,6 @@ export const HeaderTitle: FC<HeaderTitleProps> = ({
   organization,
   homeHref,
 }) => {
-  console.log('HeaderTitle')
-  console.log(organization)
   return (
     <Link href={homeHref} style={{ textDecoration: 'none' }}>
       <div className="header-title">

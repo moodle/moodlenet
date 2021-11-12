@@ -1,11 +1,17 @@
-import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import {
+  isEdgeNodeOfType,
+  narrowNodeType,
+} from '@moodlenet/common/dist/graphql/helpers'
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { createElement, useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
-import { getMaybeAssetRefUrl, useUploadTempFile } from '../../../../../helpers/data'
+import {
+  getMaybeAssetRefUrl,
+  useUploadTempFile,
+} from '../../../../../helpers/data'
 import { mainPath } from '../../../../../hooks/glob/nav'
 import { href } from '../../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
@@ -13,8 +19,8 @@ import { useFormikBag } from '../../../../lib/formik'
 import { useCollectionCardCtrl } from '../../../molecules/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
-import { fallbackPageProps } from '../../FallbackPage/Ctrl/FallbackPageCtrl'
-import { FallbackPage } from '../../FallbackPage/FallbackPage'
+import { fallbackProps } from '../../Extra/Fallback/Ctrl/FallbackCtrl'
+import { Fallback } from '../../Extra/Fallback/Fallback'
 import { ProfileProps } from '../Profile'
 import { ProfileFormValues } from '../types'
 import {
@@ -28,7 +34,9 @@ const newCollectionHref = href(mainPath.createNewCollection)
 const newResourceHref = href(mainPath.createNewResource)
 
 export type ProfileCtrlProps = { id: ID }
-export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id }) => {
+export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
+  id,
+}) => {
   useSeoContentId(id)
   const { isAuthenticated, session, firstLogin } = useSession()
   const { org: localOrg } = useLocalInstance()
@@ -42,8 +50,11 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
   const [sendEmailMut, sendEmailMutRes] = useSendEmailToProfileMutation()
   const profile = narrowNodeType(['Profile'])(data?.node)
   const collections = useMemo(
-    () => (profile?.collections.edges || []).filter(isEdgeNodeOfType(['Collection'])).map(({ node }) => node),
-    [profile?.collections.edges],
+    () =>
+      (profile?.collections.edges || [])
+        .filter(isEdgeNodeOfType(['Collection']))
+        .map(({ node }) => node),
+    [profile?.collections.edges]
   )
   const [edit, editProfile] = useEditProfileMutation()
   const [addRelation, addRelationRes] = useAddProfileRelationMutation()
@@ -51,13 +62,20 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
   const uploadTempFile = useUploadTempFile()
 
   const resources = useMemo(
-    () => (profile?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])).map(({ node }) => node),
-    [profile?.resources.edges],
+    () =>
+      (profile?.resources.edges || [])
+        .filter(isEdgeNodeOfType(['Resource']))
+        .map(({ node }) => node),
+    [profile?.resources.edges]
   )
 
   const kudos = useMemo(
-    () => [...resources, ...collections].reduce((allLikes, { likesCount }) => allLikes + likesCount, 0),
-    [collections, resources],
+    () =>
+      [...resources, ...collections].reduce(
+        (allLikes, { likesCount }) => allLikes + likesCount,
+        0
+      ),
+    [collections, resources]
   )
   const myFollowEdgeId = profile?.myFollow.edges[0]?.edge.id
   const toggleFollow = useCallback(() => {
@@ -65,23 +83,42 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
       return
     }
     if (myFollowEdgeId) {
-      return delRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(() => refetch())
+      return delRelation({
+        variables: { edge: { id: myFollowEdgeId } },
+      }).then(() => refetch())
     } else {
       return addRelation({
-        variables: { edge: { edgeType: 'Follows', from: session.profile.id, to: id, Follows: {} } },
+        variables: {
+          edge: {
+            edgeType: 'Follows',
+            from: session.profile.id,
+            to: id,
+            Follows: {},
+          },
+        },
       }).then(() => refetch())
     }
-  }, [addRelation, addRelationRes.loading, delRelation, delRelationRes.loading, id, myFollowEdgeId, refetch, session])
+  }, [
+    addRelation,
+    addRelationRes.loading,
+    delRelation,
+    delRelationRes.loading,
+    id,
+    myFollowEdgeId,
+    refetch,
+    session,
+  ])
 
   const [formik, formBag] = useFormikBag<ProfileFormValues>({
     initialValues: {} as any,
-    onSubmit: async vals => {
+    onSubmit: async (vals) => {
       if (!formik.dirty || !vals.username || editProfile.loading) {
         return
       }
 
       const imageAssetRef: AssetRefInput =
-        !vals.backgroundImage || vals.backgroundImage === formik.initialValues.backgroundImage
+        !vals.backgroundImage ||
+        vals.backgroundImage === formik.initialValues.backgroundImage
           ? { location: '', type: 'NoChange' }
           : typeof vals.backgroundImage === 'string'
           ? {
@@ -94,7 +131,8 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
             }
 
       const avatarAssetRef: AssetRefInput =
-        !vals.avatarImage || vals.avatarImage === formik.initialValues.avatarImage
+        !vals.avatarImage ||
+        vals.avatarImage === formik.initialValues.avatarImage
           ? { location: '', type: 'NoChange' }
           : typeof vals.avatarImage === 'string'
           ? {
@@ -129,7 +167,9 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
     if (!(formik.values.backgroundImage instanceof File)) {
       return
     }
-    const backgroundObjectUrl = URL.createObjectURL(formik.values.backgroundImage)
+    const backgroundObjectUrl = URL.createObjectURL(
+      formik.values.backgroundImage
+    )
     setBackgroundUrl(backgroundObjectUrl)
     return () => {
       // console.log(`revoking   ${backgroundObjectUrl}`)
@@ -182,9 +222,17 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
     }
 
     const props: ProfileProps = {
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
-      resourceCardPropsList: resources.map(({ id }) => ctrlHook(useResourceCardCtrl, { id, removeAction: false }, id)),
-      collectionCardPropsList: collections.map(({ id }) => ctrlHook(useCollectionCardCtrl, { id }, id)),
+      headerPageTemplateProps: ctrlHook(
+        useHeaderPageTemplateCtrl,
+        {},
+        'header-page-template'
+      ),
+      resourceCardPropsList: resources.map(({ id }) =>
+        ctrlHook(useResourceCardCtrl, { id, removeAction: false }, id)
+      ),
+      collectionCardPropsList: collections.map(({ id }) =>
+        ctrlHook(useCollectionCardCtrl, { id }, id)
+      ),
       overallCardProps: {
         followers: profile.followersCount,
         resources: profile.resourcesCount,
@@ -203,7 +251,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
         isFollowing: !!myFollowEdgeId,
         isOwner: isMe,
       },
-      sendEmail: text => {
+      sendEmail: (text) => {
         if (sendEmailMutRes.loading) {
           return
         }
@@ -232,7 +280,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({ id })
     toggleFollow,
   ])
   if (!loading && !data?.node) {
-    return createElement(FallbackPage, fallbackPageProps({ key: 'profile-not-found' }))
+    return createElement(Fallback, fallbackProps({ key: 'profile-not-found' }))
   }
   return profileProps && [profileProps]
 }

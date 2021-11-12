@@ -1,17 +1,18 @@
 import { Trans } from '@lingui/macro'
-import { ReactComponent as HatLogo } from '../../../assets/icons/hat-moodle.svg'
-import { CP, withCtrl } from '../../../lib/ctrl'
-import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
+import { ReactComponent as HatLogo } from '../../../../assets/icons/hat-moodle.svg'
+import { CP, withCtrl } from '../../../../lib/ctrl'
+import {
+  HeaderPageTemplate,
+  HeaderPageTemplateProps,
+} from '../../../templates/HeaderPageTemplate'
 import './styles.scss'
 
-export type FallbackPageProps = {
+export type FallbackProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
 }
 
-export const FallbackPage = withCtrl<FallbackPageProps>(
-  ({
-    headerPageTemplateProps,
-  }) => {
+export const Fallback = withCtrl<FallbackProps>(
+  ({ headerPageTemplateProps }) => {
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         <div className="fallback-page">
@@ -24,8 +25,7 @@ export const FallbackPage = withCtrl<FallbackPageProps>(
         </div>
       </HeaderPageTemplate>
     )
-  },
+  }
 )
 
-FallbackPage.defaultProps = {
-}
+Fallback.defaultProps = {}
