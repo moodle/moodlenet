@@ -67,6 +67,9 @@ export const Signup = withCtrl<SignupProps>(
                     {...attrs.name}
                     onChange={form.handleChange}
                   />
+                  {form.errors.name && (
+                    <div className="error">{form.errors.name}</div>
+                  )}
                   <input
                     className={`email ${
                       shouldShowErrors && form.errors.email ? 'highlight' : ''
@@ -78,6 +81,9 @@ export const Signup = withCtrl<SignupProps>(
                     {...attrs.email}
                     onChange={form.handleChange}
                   />
+                  {form.errors.email && (
+                    <div className="error">{form.errors.email}</div>
+                  )}
                   <input
                     className={`password ${
                       shouldShowErrors && form.errors.password
@@ -90,6 +96,9 @@ export const Signup = withCtrl<SignupProps>(
                     {...attrs.password}
                     onChange={form.handleChange}
                   />
+                  {form.errors.password && (
+                    <div className="error">{form.errors.password}</div>
+                  )}
                   <button
                     id="signup-button"
                     type="submit"

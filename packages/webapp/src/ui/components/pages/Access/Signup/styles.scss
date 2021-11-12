@@ -43,7 +43,8 @@
     > .card:last-child,
     .card:only-child {
       width: 525px;
-      height: 400px;
+      height: min-content;
+      min-height: 400px;
       background-color: #b6bacb;
 
       @media (max-width: 900px) {
@@ -58,6 +59,7 @@
         padding: 53px 65px;
         width: 100%;
         height: 100%;
+        gap: 32px;
 
         @media (max-width: 450px) {
           padding: 53px calc(25px + 5%);
@@ -83,7 +85,7 @@
             border: none;
 
             &.highlight {
-              box-shadow: 0 0 0 2px $primary-color;
+              box-shadow: 0 0 0 2px $error-color;
             }
 
             &:focus,
@@ -121,26 +123,26 @@
               color: #b6bacb;
             }
           }
-        }
-
-        > .error {
-          padding: 0 18px;
-          width: fit-content;
-          font-size: 14px;
-          color: white;
-          align-items: center;
-          display: flex;
-          background-color: #ff6262;
-          border-radius: 20px;
-          height: 35px;
-        }
-
-        @media (max-height: 425px) {
-          gap: 15px;
 
           > .error {
-            position: relative;
-            bottom: 0;
+            padding: 0 18px;
+            width: fit-content;
+            font-size: 14px;
+            color: white;
+            align-items: center;
+            display: flex;
+            background-color: $error-color;
+            border-radius: 20px;
+            height: 35px;
+          }
+
+          @media (max-height: 425px) {
+            gap: 15px;
+
+            > .error {
+              position: relative;
+              bottom: 0;
+            }
           }
         }
 

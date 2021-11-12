@@ -8,16 +8,24 @@ import { Signup, SignupFormValues, SignupProps } from './Signup'
 const meta: ComponentMeta<typeof Signup> = {
   title: 'Pages/SignUp',
   component: Signup,
-  excludeStories: ['SignupStoryProps', 'EmailSendStoryProps', 'SignupErrorStoryProps'],
+  excludeStories: [
+    'SignupStoryProps',
+    'EmailSendStoryProps',
+    'SignupErrorStoryProps',
+  ],
 }
 
-const SignupStory: ComponentStory<typeof Signup> = args => <Signup {...args} />
+const SignupStory: ComponentStory<typeof Signup> = (args) => (
+  <Signup {...args} />
+)
 
 export const SignupStoryProps: SignupProps = {
   accessHeaderProps: AccessHeaderStoryProps,
   formBag: SBFormikBag<SignupFormValues>(
     { name: '', email: '', password: '' },
-    { submitForm: linkTo('', 'Email Sent') },
+    {
+      submitForm: linkTo('', 'Email Sent'),
+    }
   ),
   signupErrorMessage: null,
   requestSent: false,
@@ -33,6 +41,17 @@ export const SignupStoryProps: SignupProps = {
 export const SignupErrorStoryProps: SignupProps = {
   ...SignupStoryProps,
   signupErrorMessage: 'A beautiful error message',
+  formBag: SBFormikBag<SignupFormValues>(
+    { name: '', email: '', password: '' },
+    {
+      submitForm: linkTo('', 'Email Sent'),
+      errors: {
+        name: 'Please provide a display name',
+        email: 'Please provide an email',
+        password: 'Please provide a password',
+      },
+    }
+  ),
 }
 
 export const EmailSendStoryProps: SignupProps = {
