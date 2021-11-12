@@ -8,8 +8,8 @@ import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useCollectionCardCtrl } from '../../../molecules/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
-import { fallbackPageProps } from '../../FallbackPage/Ctrl/FallbackPageCtrl'
-import { FallbackPage } from '../../FallbackPage/FallbackPage'
+import { fallbackProps } from '../../Extra/Fallback/Ctrl/FallbackCtrl'
+import { Fallback } from '../../Extra/Fallback/Fallback'
 // import { useFormikBag } from '../../../lib/formik'
 // import { NewSubjectFormValues } from '../../NewSubject/types'
 import { SubjectProps } from '../Subject'
@@ -88,7 +88,7 @@ export const useSubjectCtrl: CtrlHook<SubjectProps, SubjectCtrlProps> = ({ id })
     return props
   }, [categoryData, isAuthenticated, myFollowEdgeId, toggleFollow])
   if (!loading && !data?.node) {
-    return createElement(FallbackPage, fallbackPageProps({ key: 'category-not-found' }))
+    return createElement(Fallback, fallbackProps({ key: 'category-not-found' }))
   }
 
   return categoryProps && [categoryProps]
