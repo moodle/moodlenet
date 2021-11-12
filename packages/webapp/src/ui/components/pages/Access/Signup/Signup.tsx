@@ -112,8 +112,11 @@ export const Signup = withCtrl<SignupProps>(
                 <div className="bottom">
                   <div className="left">
                     <PrimaryButton
-                      disabled={form.isSubmitting || form.isValidating}
-                      onClick={form.submitForm}
+                      onClick={
+                        form.isSubmitting || form.isValidating
+                          ? undefined
+                          : form.submitForm
+                      }
                     >
                       <Trans>Sign up</Trans>
                     </PrimaryButton>

@@ -1,12 +1,16 @@
 import { t, Trans } from '@lingui/macro'
 import CallMadeIcon from '@material-ui/icons/CallMade'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
+import React from 'react'
 import { Href, Link } from '../../../../elements/link'
 import { CP, withCtrl } from '../../../../lib/ctrl'
 import { FormikBag } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
-import { MainPageWrapper, MainPageWrapperProps } from '../../../templates/MainPageWrapper'
+import {
+  MainPageWrapper,
+  MainPageWrapperProps,
+} from '../../../templates/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
@@ -22,21 +26,40 @@ export type RecoverPasswordProps = {
 }
 
 export const RecoverPassword = withCtrl<RecoverPasswordProps>(
-  ({ mainPageWrapperProps, accessHeaderProps, formBag, requestSent, loginHref, RecoverPasswordErrorMessage }) => {
+  ({
+    mainPageWrapperProps,
+    accessHeaderProps,
+    formBag,
+    requestSent,
+    loginHref,
+    RecoverPasswordErrorMessage,
+  }) => {
     const [form, attrs] = formBag
 
-    // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    //   if (e.key === 'Enter') {
-    //     form.submitForm()
-    //   }
-    // }
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'Enter') {
+        form.submitForm()
+      }
+    }
+
+    const shouldShowErrors =
+      !!form.submitCount && (RecoverPasswordErrorMessage || !form.isValid)
 
     return (
-      <MainPageWrapper {...mainPageWrapperProps}>
-        {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
-        <div className={`recover-password-page ${requestSent ? 'success' : ''}`}>
+      <MainPageWrapper
+        {...mainPageWrapperProps}
+        onKeyDown={handleKeyDown}
+        style={{ background: '#f4f5f7' }}
+      >
+        <div
+          className={`recover-password-page ${requestSent ? 'success' : ''}`}
+        >
           <AccessHeader {...accessHeaderProps} page={'login'} />
-          <div className={`recover-password-content ${requestSent ? 'success' : ''}`}>
+          <div
+            className={`recover-password-content ${
+              requestSent ? 'success' : ''
+            }`}
+          >
             <Card>
               <Link href={loginHref}>
                 <Trans>Log in</Trans>
@@ -50,18 +73,28 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
                 </div>
                 <form onSubmit={form.handleSubmit}>
                   <input
-                    className="email"
+                    className={`email ${
+                      shouldShowErrors && form.errors.email ? 'highlight' : ''
+                    }`}
                     color="text"
                     placeholder={t`Email`}
                     {...attrs.email}
                     onChange={form.handleChange}
                   />
+                  {shouldShowErrors && form.errors.email && (
+                    <div className="error">{form.errors.email}</div>
+                  )}
                   <button type="submit" style={{ display: 'none' }} />
-                  {RecoverPasswordErrorMessage && <div className="error">{RecoverPasswordErrorMessage}</div>}
                 </form>
                 <div className="bottom">
                   <div className="left">
-                    <PrimaryButton onClick={form.submitForm}>
+                    <PrimaryButton
+                      onClick={
+                        form.isSubmitting || form.isValidating
+                          ? undefined
+                          : form.submitForm
+                      }
+                    >
                       <Trans>Next</Trans>
                     </PrimaryButton>
                   </div>
@@ -89,8 +122,8 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
                 <MailOutlineIcon className="icon" />
                 <div className="subtitle">
                   <Trans>
-                    If the email you provided corresponds to a MoodleNet user, you'll receive an email with a change
-                    password link
+                    If the email you provided corresponds to a MoodleNet user,
+                    you'll receive an email with a change password link
                   </Trans>
                 </div>
               </div>
@@ -99,5 +132,5 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
         </div>
       </MainPageWrapper>
     )
-  },
+  }
 )

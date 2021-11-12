@@ -43,6 +43,16 @@ export const RecoverPasswordStoryProps: RecoverPasswordProps = {
 export const RecoverPasswordErrorStoryProps: RecoverPasswordProps = {
   ...RecoverPasswordStoryProps,
   RecoverPasswordErrorMessage: 'A beautiful error message',
+  formBag: SBFormikBag<RecoverPasswordFormValues>(
+    { email: '' },
+    {
+      submitForm: linkTo('', 'Email Sent'),
+      errors: {
+        email: 'Please provide an email',
+      },
+      submitCount: 1,
+    }
+  ),
 }
 
 export const EmailSendStoryProps: RecoverPasswordProps = {
@@ -50,11 +60,11 @@ export const EmailSendStoryProps: RecoverPasswordProps = {
   requestSent: true,
 }
 
-export const Recover = RecoverPasswordStory.bind({})
-Recover.args = RecoverPasswordStoryProps
+export const Default = RecoverPasswordStory.bind({})
+Default.args = RecoverPasswordStoryProps
 
-export const RecoverError = RecoverPasswordStory.bind({})
-RecoverError.args = RecoverPasswordErrorStoryProps
+export const Error = RecoverPasswordStory.bind({})
+Error.args = RecoverPasswordErrorStoryProps
 
 export const EmailSent = RecoverPasswordStory.bind({})
 EmailSent.args = EmailSendStoryProps

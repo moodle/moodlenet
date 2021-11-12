@@ -3,7 +3,10 @@ import { CP, withCtrl } from '../../../../lib/ctrl'
 import { FormikBag } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
-import { MainPageWrapper, MainPageWrapperProps } from '../../../templates/MainPageWrapper'
+import {
+  MainPageWrapper,
+  MainPageWrapperProps,
+} from '../../../templates/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
@@ -16,10 +19,22 @@ export type NewPasswordProps = {
 }
 
 export const NewPassword = withCtrl<NewPasswordProps>(
-  ({ mainPageWrapperProps, accessHeaderProps, newPasswordErrorMessage, formBag }) => {
+  ({
+    mainPageWrapperProps,
+    accessHeaderProps,
+    newPasswordErrorMessage,
+    formBag,
+  }) => {
     const [form, attrs] = formBag
+
+    const shouldShowErrors =
+      !!form.submitCount && (newPasswordErrorMessage || !form.isValid)
+
     return (
-      <MainPageWrapper {...mainPageWrapperProps}>
+      <MainPageWrapper
+        {...mainPageWrapperProps}
+        style={{ background: '#f4f5f7' }}
+      >
         <div className="new-password-page">
           <AccessHeader {...accessHeaderProps} page={'login'} />
           <div className="main-content">
@@ -30,17 +45,29 @@ export const NewPassword = withCtrl<NewPasswordProps>(
                 </div>
                 <form onSubmit={form.handleSubmit}>
                   <input
-                    className="password"
+                    className={`password ${
+                      shouldShowErrors && form.errors.newPassword
+                        ? 'highlight'
+                        : ''
+                    }`}
                     type="password"
                     placeholder={t`New password`}
                     {...attrs.newPassword}
                     onChange={form.handleChange}
                   />
-                  {newPasswordErrorMessage && <div className="error">{newPasswordErrorMessage}</div>}
+                  {shouldShowErrors && form.errors.newPassword && (
+                    <div className="error">{form.errors.newPassword}</div>
+                  )}
                 </form>
                 <div className="bottom">
                   <div className="left">
-                    <PrimaryButton onClick={form.submitForm}>
+                    <PrimaryButton
+                      onClick={
+                        form.isSubmitting || form.isValidating
+                          ? undefined
+                          : form.submitForm
+                      }
+                    >
                       <Trans>Change password</Trans>
                     </PrimaryButton>
                   </div>
@@ -51,6 +78,6 @@ export const NewPassword = withCtrl<NewPasswordProps>(
         </div>
       </MainPageWrapper>
     )
-  },
+  }
 )
 NewPassword.displayName = 'SignUpPage'

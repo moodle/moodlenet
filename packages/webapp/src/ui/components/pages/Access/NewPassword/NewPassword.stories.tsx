@@ -38,6 +38,15 @@ export const NewPasswordStoryProps: NewPasswordProps = {
 export const NewPasswordErrorStoryProps: NewPasswordProps = {
   ...NewPasswordStoryProps,
   newPasswordErrorMessage: 'At least 6 characters needed',
+  formBag: SBFormikBag<NewPasswordFormValues>(
+    { newPassword: '' },
+    {
+      errors: {
+        newPassword: 'Please provide a password',
+      },
+      submitCount: 1,
+    }
+  ),
 }
 
 export const Default = NewPasswordStory.bind({})

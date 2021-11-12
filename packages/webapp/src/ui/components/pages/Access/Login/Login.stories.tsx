@@ -7,7 +7,11 @@ import { Login, LoginFormValues, LoginProps } from './Login'
 const meta: ComponentMeta<typeof Login> = {
   title: 'Pages/Access/Login',
   component: Login,
-  excludeStories: ['LoginStoryProps', 'LoginErrorStoryProps'],
+  excludeStories: [
+    'LoginStoryProps',
+    'LoginErrorStoryProps',
+    'WrongCredentialsStoryProps',
+  ],
   parameters: { layout: 'fullscreen' },
 }
 
@@ -28,7 +32,6 @@ export const LoginStoryProps: LoginProps = {
 
 export const LoginErrorStoryProps: LoginProps = {
   ...LoginStoryProps,
-  wrongCreds: true,
   formBag: SBFormikBag<LoginFormValues>(
     { email: '', password: '' },
     {
@@ -40,11 +43,18 @@ export const LoginErrorStoryProps: LoginProps = {
     }
   ),
 }
+export const WrongCredentialsStoryProps: LoginProps = {
+  ...LoginStoryProps,
+  wrongCreds: true,
+}
 
 export const Default = LoginStory.bind({})
 Default.args = LoginStoryProps
 
 export const Error = LoginStory.bind({})
 Error.args = LoginErrorStoryProps
+
+export const WrongCredentials = LoginStory.bind({})
+WrongCredentials.args = WrongCredentialsStoryProps
 
 export default meta
