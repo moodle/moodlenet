@@ -1,12 +1,16 @@
 import { t, Trans } from '@lingui/macro'
 import CallMadeIcon from '@material-ui/icons/CallMade'
+import React from 'react'
 import { Href, Link } from '../../../../elements/link'
 import { CP, withCtrl } from '../../../../lib/ctrl'
 import { FormikBag } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
-import { MainPageWrapper, MainPageWrapperProps } from '../../../templates/MainPageWrapper'
+import {
+  MainPageWrapper,
+  MainPageWrapperProps,
+} from '../../../templates/MainPageWrapper'
 import AccessHeader, { AccessHeaderProps } from '../AccessHeader/AccessHeader'
 import './styles.scss'
 
@@ -22,18 +26,31 @@ export type LoginProps = {
 }
 
 export const Login = withCtrl<LoginProps>(
-  ({ accessHeaderProps, formBag, signupHref, recoverPasswordHref, wrongCreds, mainPageWrapperProps }) => {
+  ({
+    accessHeaderProps,
+    formBag,
+    signupHref,
+    wrongCreds,
+    recoverPasswordHref,
+    mainPageWrapperProps,
+  }) => {
     const [form, attrs] = formBag
 
-    // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    //   if (e.key === 'Enter') {
-    //     form.submitForm()
-    //   }
-    // }
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'Enter') {
+        form.submitForm()
+        console.log('submiting form')
+      }
+    }
+
+    const shouldShowErrors = !!form.submitCount && (wrongCreds || !form.isValid)
 
     return (
-      <MainPageWrapper {...mainPageWrapperProps}>
-        {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
+      <MainPageWrapper
+        {...mainPageWrapperProps}
+        onKeyDown={handleKeyDown}
+        style={{ background: '#f4f5f7' }}
+      >
         <div className="login-page">
           <AccessHeader {...accessHeaderProps} page={'login'} />
           <div className="content">
@@ -44,26 +61,33 @@ export const Login = withCtrl<LoginProps>(
                 </div>
                 <form onSubmit={form.handleSubmit}>
                   <input
-                    className="email"
+                    className={`email ${
+                      shouldShowErrors && form.errors.email ? 'highlight' : ''
+                    }`}
                     type="text"
                     placeholder={t`Email`}
                     {...attrs.email}
                     onChange={form.handleChange}
                   />
+                  {shouldShowErrors && form.errors.email && (
+                    <div className="error">{form.errors.email}</div>
+                  )}
                   <input
-                    className="password"
+                    className={`password ${
+                      shouldShowErrors && form.errors.password
+                        ? 'highlight'
+                        : ''
+                    }`}
                     type="password"
                     placeholder={t`Password`}
                     {...attrs.password}
                     onChange={form.handleChange}
                   />
+                  {shouldShowErrors && form.errors.password && (
+                    <div className="error">{form.errors.password}</div>
+                  )}
                   <button type="submit" style={{ display: 'none' }} />
                 </form>
-                {wrongCreds && (
-                  <div className="error">
-                    <Trans>Incorrect username or password</Trans>
-                  </div>
-                )}
                 <div className="bottom">
                   <div className="left">
                     <PrimaryButton onClick={form.submitForm}>
@@ -102,6 +126,6 @@ export const Login = withCtrl<LoginProps>(
         </div>
       </MainPageWrapper>
     )
-  },
+  }
 )
 Login.displayName = 'LoginPage'

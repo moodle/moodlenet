@@ -40,9 +40,12 @@ export const Signup = withCtrl<SignupProps>(
 
     const shouldShowErrors =
       !!form.submitCount && (!!signupErrorMessage || !form.isValid)
-    console.table(form)
+
     return (
-      <MainPageWrapper {...mainPageWrapperProps}>
+      <MainPageWrapper
+        {...mainPageWrapperProps}
+        style={{ background: '#f4f5f7' }}
+      >
         {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
         <div className={`signup-page ${requestSent ? 'success' : ''}`}>
           <AccessHeader {...accessHeaderProps} page={'signup'} />

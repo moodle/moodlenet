@@ -1,3 +1,5 @@
+@import '../../../../styles/application';
+
 .recover-password-page {
   display: flex;
   flex-direction: column;
@@ -140,7 +142,7 @@
 
           @media (max-height: 425px) {
             gap: 15px;
-            
+
             > .error {
               position: relative;
               bottom: 0;
