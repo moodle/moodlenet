@@ -1,8 +1,6 @@
 import { t, Trans } from '@lingui/macro'
 import CallMadeIcon from '@material-ui/icons/CallMade'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
-import { useEffect, useState } from 'react'
-import { isEmailAddress } from '../../../../../helpers/utilities'
 import { Href, Link } from '../../../../elements/link'
 import { CP, withCtrl } from '../../../../lib/ctrl'
 import { FormikBag } from '../../../../lib/formik'
@@ -39,42 +37,15 @@ export const Signup = withCtrl<SignupProps>(
     userAgreementHref,
   }) => {
     const [form, attrs] = formBag
-    const [
-      highlightMandatoryFields,
-      setHighlightMandatoryFields,
-    ] = useState<boolean>(false)
-    const [isNameValid, setIsNameValid] = useState<boolean>(false)
-    const [isEmailValid, setIsEmailValid] = useState<boolean>(false)
 
-    // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    //   if (e.key === 'Enter') {
-    //     form.submitForm()
-    //   }
-    // }
-
-    useEffect(() => {
-      form.values.name &&
-        !isEmailAddress(form.values.name) &&
-        setIsNameValid(true)
-      form.values.email &&
-        isEmailAddress(form.values.email) &&
-        setIsEmailValid(true)
-    }, [form.values.name, form.values.email])
-
-    const submitForm = () => {
-      form.values.password.length < 6 &&
-        (signupErrorMessage = 'Password should have at least 6 characters')
-      if (isNameValid && isEmailValid && form.values.password) {
-        form.submitForm()
-      } else {
-        setHighlightMandatoryFields(true)
-      }
-    }
-
-    console.log(form.values)
+    const shouldShowErrors =
+      !!form.submitCount && (!!signupErrorMessage || !form.isValid)
 
     return (
-      <MainPageWrapper {...mainPageWrapperProps}>
+      <MainPageWrapper
+        {...mainPageWrapperProps}
+        style={{ background: '#f4f5f7' }}
+      >
         {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
         <div className={`signup-page ${requestSent ? 'success' : ''}`}>
           <AccessHeader {...accessHeaderProps} page={'signup'} />
@@ -93,20 +64,19 @@ export const Signup = withCtrl<SignupProps>(
                 <form onSubmit={form.handleSubmit}>
                   <input
                     className={`diplay-name ${
-                      highlightMandatoryFields && !form.values.name
-                        ? 'highlight'
-                        : ''
+                      shouldShowErrors && form.errors.name ? 'highlight' : ''
                     }`}
                     type="text"
                     placeholder={t`Display name`}
                     {...attrs.name}
                     onChange={form.handleChange}
                   />
+                  {shouldShowErrors && form.errors.name && (
+                    <div className="error">{form.errors.name}</div>
+                  )}
                   <input
                     className={`email ${
-                      highlightMandatoryFields && !form.values.email
-                        ? 'highlight'
-                        : ''
+                      shouldShowErrors && form.errors.email ? 'highlight' : ''
                     }`}
                     id="username_input"
                     color="text"
@@ -115,9 +85,12 @@ export const Signup = withCtrl<SignupProps>(
                     {...attrs.email}
                     onChange={form.handleChange}
                   />
+                  {shouldShowErrors && form.errors.email && (
+                    <div className="error">{form.errors.email}</div>
+                  )}
                   <input
                     className={`password ${
-                      highlightMandatoryFields && !form.values.password
+                      shouldShowErrors && form.errors.password
                         ? 'highlight'
                         : ''
                     }`}
@@ -127,18 +100,24 @@ export const Signup = withCtrl<SignupProps>(
                     {...attrs.password}
                     onChange={form.handleChange}
                   />
+                  {shouldShowErrors && form.errors.password && (
+                    <div className="error">{form.errors.password}</div>
+                  )}
                   <button
                     id="signup-button"
                     type="submit"
                     style={{ display: 'none' }}
                   />
                 </form>
-                {signupErrorMessage && (
-                  <div className="error">{signupErrorMessage}</div>
-                )}
                 <div className="bottom">
                   <div className="left">
-                    <PrimaryButton onClick={submitForm}>
+                    <PrimaryButton
+                      onClick={
+                        form.isSubmitting || form.isValidating
+                          ? undefined
+                          : form.submitForm
+                      }
+                    >
                       <Trans>Sign up</Trans>
                     </PrimaryButton>
                     <Link href={userAgreementHref} target="__blank">

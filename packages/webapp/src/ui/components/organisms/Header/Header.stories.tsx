@@ -23,7 +23,7 @@ export const HeaderLoggedInStoryProps: HeaderPropsIdle = {
     url: 'https://www.moodle.com/',
     logo: '/moodlenet-logo.svg',
     smallLogo: '/moodlenet-logo-small.svg',
-    name:'MoodleNet'
+    name: 'MoodleNet',
   },
   homeHref: href('Pages/Landing/Logged In'),
   me: {
@@ -34,8 +34,8 @@ export const HeaderLoggedInStoryProps: HeaderPropsIdle = {
     avatar: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
     name: 'username',
   },
-  loginHref: href('Pages/Login/Login Page'),
-  signUpHref: href('Pages/SignUp/Sign Up Page'),
+  loginHref: href('Pages/Access/Login/Default'),
+  signUpHref: href('Pages/Access/SignUp/Default'),
   newResourceHref: href('Pages/New Resource/Start'),
   newCollectionHref: href('Pages/New Collection/Start'),
   searchText: '',

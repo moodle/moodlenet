@@ -27,7 +27,7 @@ export const SBFormikBag = <T>(initialValues: T, p_cfg?: Partial<SimplifiedFormi
     dirty: false,
     errors: {},
     isSubmitting: false,
-    isValid: true,
+    isValid: !Object.keys(p_cfg?.errors ?? {}).length,
     isValidating: false,
     submitCount: 0,
     touched: {},

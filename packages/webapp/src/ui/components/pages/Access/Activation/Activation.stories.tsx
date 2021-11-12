@@ -4,16 +4,22 @@ import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
 import { Activation, ActivationProps } from './Activation'
 
 const meta: ComponentMeta<typeof Activation> = {
-  title: 'Pages/Activation',
+  title: 'Pages/Access/Activation',
   component: Activation,
-  excludeStories: ['SignupStoryProps', 'ActivationStoryProps'],
+  excludeStories: [
+    'ActivationPage',
+    'SignupStoryProps',
+    'ActivationStoryProps',
+  ],
 }
 
-const ActivationStory: ComponentStory<typeof Activation> = args => <Activation {...args} />
+const ActivationStory: ComponentStory<typeof Activation> = (args) => (
+  <Activation {...args} />
+)
 
 export const ActivationStoryProps: ActivationProps = {
   accessHeaderProps: AccessHeaderStoryProps,
-  loginHref: href('Pages/Login/Default'),
+  loginHref: href('Pages/Access/Login/Default'),
   mainPageWrapperProps: {
     userAcceptsPolicies: null,
     cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),

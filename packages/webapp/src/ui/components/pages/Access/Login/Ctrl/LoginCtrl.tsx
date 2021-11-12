@@ -1,7 +1,12 @@
+import { t } from '@lingui/macro'
 import { Maybe } from '@moodlenet/common/dist/utils/types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { object, SchemaOf, string } from 'yup'
 import { useSession } from '../../../../../../context/Global/Session'
-import { mainPath, useRedirectProfileHomeIfLoggedIn } from '../../../../../../hooks/glob/nav'
+import {
+  mainPath,
+  useRedirectProfileHomeIfLoggedIn,
+} from '../../../../../../hooks/glob/nav'
 import { href } from '../../../../../elements/link'
 import { CtrlHook, ctrlHook } from '../../../../../lib/ctrl'
 import { SubmitForm, useFormikBag } from '../../../../../lib/formik'
@@ -10,23 +15,36 @@ import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { LoginFormValues, LoginProps } from '../Login'
 
 // const landingHref = href(mainPath.landing)
+
+const validationSchema: SchemaOf<LoginFormValues> = object({
+  email: string()
+    .required(t`Please provide your email address`)
+    .email(t`Please provide a valid email address`),
+  password: string().required(t`Please provide a password`),
+})
+
 const recoverPasswordHref = href(mainPath.recoverPassword)
 const signupHref = href(mainPath.signUp)
-export const useLoginCtrl: CtrlHook<LoginProps, { activationEmailToken: Maybe<string> }> = ({
-  activationEmailToken,
-}) => {
+export const useLoginCtrl: CtrlHook<
+  LoginProps,
+  { activationEmailToken: Maybe<string> }
+> = ({ activationEmailToken }) => {
   useRedirectProfileHomeIfLoggedIn()
   const { login } = useSession()
   const [wrongCreds, setWrongCreds] = useState(false)
   const onSubmit = useCallback<SubmitForm<LoginFormValues>>(
     ({ password, email }) =>
-      login({ password, email, activationEmailToken }).then(resp => {
+      login({ password, email, activationEmailToken }).then((resp) => {
         setWrongCreds(resp !== null)
       }),
-    [login, activationEmailToken],
+    [login, activationEmailToken]
   )
 
-  const [formik, formBag] = useFormikBag<LoginFormValues>({ initialValues: { email: '', password: '' }, onSubmit })
+  const [formik, formBag] = useFormikBag<LoginFormValues>({
+    initialValues: { email: '', password: '' },
+    onSubmit,
+    validationSchema,
+  })
 
   useEffect(() => {
     setWrongCreds(false)
@@ -34,13 +52,21 @@ export const useLoginCtrl: CtrlHook<LoginProps, { activationEmailToken: Maybe<st
 
   const loginProps = useMemo<LoginProps>(() => {
     const loginProps: LoginProps = {
-      accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'Login Access Header'),
+      accessHeaderProps: ctrlHook(
+        useAccessHeaderCtrl,
+        {},
+        'Login Access Header'
+      ),
       formBag,
       wrongCreds,
       // landingHref,
       signupHref,
       recoverPasswordHref,
-      mainPageWrapperProps: ctrlHook(useMainPageWrapperCtrl, {}, 'main-page-wrapper'),
+      mainPageWrapperProps: ctrlHook(
+        useMainPageWrapperCtrl,
+        {},
+        'main-page-wrapper'
+      ),
     }
     return loginProps
   }, [formBag, wrongCreds])
