@@ -5,7 +5,14 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  background: #f4f5f7;
+
+  @media (max-height: 700px) {
+    height: min-content;
+
+    > .signup-content {
+      margin-top: 2%;
+    }
+  }
 
   &.success {
     align-items: center;
@@ -125,7 +132,7 @@
           }
 
           > .error {
-            padding: 0 18px;
+            padding: 8px 18px;
             width: fit-content;
             font-size: 14px;
             color: white;

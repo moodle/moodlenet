@@ -2,16 +2,26 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../../elements/link'
 import { SBFormikBag } from '../../../../lib/storybook/SBFormikBag'
 import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
-import { NewPassword, NewPasswordFormValues, NewPasswordProps } from './NewPassword'
+import {
+  NewPassword,
+  NewPasswordFormValues,
+  NewPasswordProps,
+} from './NewPassword'
 
 const meta: ComponentMeta<typeof NewPassword> = {
-  title: 'Pages/New Password',
+  title: 'Pages/Access/New Password',
   component: NewPassword,
-  excludeStories: ['NewPasswordStory', 'NewPasswordStoryProps', 'NewPasswordErrorStoryProps'],
+  excludeStories: [
+    'NewPasswordStory',
+    'NewPasswordStoryProps',
+    'NewPasswordErrorStoryProps',
+  ],
   parameters: { layout: 'fullscreen' },
 }
 
-const NewPasswordStory: ComponentStory<typeof NewPassword> = args => <NewPassword {...args} />
+const NewPasswordStory: ComponentStory<typeof NewPassword> = (args) => (
+  <NewPassword {...args} />
+)
 
 export const NewPasswordStoryProps: NewPasswordProps = {
   accessHeaderProps: AccessHeaderStoryProps,

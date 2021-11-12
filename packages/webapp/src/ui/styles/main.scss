@@ -7,6 +7,12 @@
   font-family: Helvetica;
 }
 
+html,
+body,
+.main-page-wrapper {
+  overflow: auto;
+}
+
 body {
   color: #3c4043;
   background: white;

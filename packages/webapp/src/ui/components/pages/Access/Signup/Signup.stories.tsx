@@ -6,7 +6,7 @@ import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
 import { Signup, SignupFormValues, SignupProps } from './Signup'
 
 const meta: ComponentMeta<typeof Signup> = {
-  title: 'Pages/SignUp',
+  title: 'Pages/Access/SignUp',
   component: Signup,
   excludeStories: [
     'SignupStoryProps',
@@ -30,7 +30,7 @@ export const SignupStoryProps: SignupProps = {
   signupErrorMessage: null,
   requestSent: false,
   landingHref: href('Pages/Landing/Logged In'),
-  loginHref: href('Pages/Login/Default'),
+  loginHref: href('Pages/Access/Login/Default'),
   userAgreementHref: href('Pages/Policies/UserAgreement/Default'),
   mainPageWrapperProps: {
     userAcceptsPolicies: null,
@@ -50,6 +50,7 @@ export const SignupErrorStoryProps: SignupProps = {
         email: 'Please provide an email',
         password: 'Please provide a password',
       },
+      submitCount: 1,
     }
   ),
 }
@@ -59,13 +60,13 @@ export const EmailSendStoryProps: SignupProps = {
   requestSent: true,
 }
 
-export const SignUp = SignupStory.bind({})
-SignUp.args = SignupStoryProps
-SignUp.parameters = { layout: 'fullscreen' }
+export const Default = SignupStory.bind({})
+Default.args = SignupStoryProps
+Default.parameters = { layout: 'fullscreen' }
 
-export const SignUpError = SignupStory.bind({})
-SignUpError.args = SignupErrorStoryProps
-SignUpError.parameters = { layout: 'fullscreen' }
+export const Error = SignupStory.bind({})
+Error.args = SignupErrorStoryProps
+Error.parameters = { layout: 'fullscreen' }
 
 export const EmailSent = SignupStory.bind({})
 EmailSent.args = EmailSendStoryProps
