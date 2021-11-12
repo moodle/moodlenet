@@ -2,24 +2,27 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../../elements/link'
 import {
   HeaderLoggedOutOrganizationStoryProps,
-  HeaderLoggedOutStoryProps
+  HeaderLoggedOutStoryProps,
 } from '../../../organisms/Header/Header.stories'
 import { AccessHeader, AccessHeaderProps } from './AccessHeader'
 
 const meta: ComponentMeta<typeof AccessHeader> = {
-  title: 'Organisms/AccessHeader',
+  title: 'Organisms/Access/AccessHeader',
   component: AccessHeader,
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['AccessHeaderStoryProps', 'AccessOrganizationHeaderStoryProps'],
+  excludeStories: [
+    'AccessHeaderStoryProps',
+    'AccessOrganizationHeaderStoryProps',
+  ],
 }
 
 export const AccessHeaderStoryProps: AccessHeaderProps = {
   organization: HeaderLoggedOutStoryProps.organization,
   homeHref: href('Pages/Landing/Logged Out'),
-  signupHref: href('Pages/SignUp/Sign Up'),
-  loginHref: href('Pages/Login/Default'),
+  signupHref: href('Pages/Access/SignUp/Default'),
+  loginHref: href('Pages/Access/Login/Default'),
   page: 'login',
 }
 
@@ -30,7 +33,9 @@ export const AccessOrganizationHeaderStoryProps: AccessHeaderProps = {
   page: 'signup',
 }
 
-const AccessHeaderStory: ComponentStory<typeof AccessHeader> = args => <AccessHeader {...args} />
+const AccessHeaderStory: ComponentStory<typeof AccessHeader> = (args) => (
+  <AccessHeader {...args} />
+)
 
 export const Moodle = AccessHeaderStory.bind({})
 Moodle.args = AccessHeaderStoryProps

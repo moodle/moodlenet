@@ -107,7 +107,7 @@ export const LandingLoggedInStoryProps: LandingProps = {
                   Feel free to add open educational resources and collections, follow subjects and collections plus send resources to your Moodle site.`,
   },
   isAuthenticated: true,
-  signUpHref: href('Pages/SignUp/Sign Up'),
+  signUpHref: href('Pages/Access/SignUp/Default'),
   loadMoreResources: action('Load more'),
   setSearchText: action('Search Text'),
 }
@@ -130,7 +130,7 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
       'Diverse, sound, dynamic – these are the values that define BFH. And this is ',
   },
   isAuthenticated: true,
-  signUpHref: href('Pages/SignUp/Sign Up'),
+  signUpHref: href('Pages/Access/SignUp/Default'),
   setSearchText: action('Search Text'),
   loadMoreResources: action('Load more'),
 }
