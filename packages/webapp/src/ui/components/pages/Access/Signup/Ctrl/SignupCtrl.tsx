@@ -13,7 +13,7 @@ import { useMainPageWrapperCtrl } from '../../../../templates/MainPageWrapperCtr
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { SignupFormValues, SignupProps } from '../Signup'
 
-const formSchema: SchemaOf<SignupFormValues> = object({
+const validationSchema: SchemaOf<SignupFormValues> = object({
   name: string()
     .required(t`Please provide a display name`)
     .matches(
@@ -48,7 +48,7 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
   )
   const [formik, formBag] = useFormikBag<SignupFormValues>({
     initialValues: { name: '', email: '', password: '' },
-    validationSchema: formSchema,
+    validationSchema,
     onSubmit,
   })
   useEffect(() => {

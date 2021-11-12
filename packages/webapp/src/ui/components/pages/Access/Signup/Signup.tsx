@@ -40,6 +40,7 @@ export const Signup = withCtrl<SignupProps>(
 
     const shouldShowErrors =
       !!form.submitCount && (!!signupErrorMessage || !form.isValid)
+    console.table(form)
     return (
       <MainPageWrapper {...mainPageWrapperProps}>
         {/* <MainPageWrapper onKeyDown={handleKeyDown}> */}
@@ -67,7 +68,7 @@ export const Signup = withCtrl<SignupProps>(
                     {...attrs.name}
                     onChange={form.handleChange}
                   />
-                  {form.errors.name && (
+                  {shouldShowErrors && form.errors.name && (
                     <div className="error">{form.errors.name}</div>
                   )}
                   <input
@@ -81,7 +82,7 @@ export const Signup = withCtrl<SignupProps>(
                     {...attrs.email}
                     onChange={form.handleChange}
                   />
-                  {form.errors.email && (
+                  {shouldShowErrors && form.errors.email && (
                     <div className="error">{form.errors.email}</div>
                   )}
                   <input
@@ -96,7 +97,7 @@ export const Signup = withCtrl<SignupProps>(
                     {...attrs.password}
                     onChange={form.handleChange}
                   />
-                  {form.errors.password && (
+                  {shouldShowErrors && form.errors.password && (
                     <div className="error">{form.errors.password}</div>
                   )}
                   <button
