@@ -105,17 +105,6 @@ export const Signup = withCtrl<SignupProps>(
                     style={{ display: 'none' }}
                   />
                 </form>
-                {shouldShowErrors && (
-                  <div className="error">
-                    {signupErrorMessage}
-                    {Object.values(form.errors).map((error) => (
-                      <>
-                        <br />
-                        {error}
-                      </>
-                    ))}
-                  </div>
-                )}
                 <div className="bottom">
                   <div className="left">
                     <PrimaryButton
