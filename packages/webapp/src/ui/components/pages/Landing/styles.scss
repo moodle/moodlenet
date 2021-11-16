@@ -119,8 +119,11 @@
         height: max-content;
         .trend-card {
           display: block;
-          > .content > .gradient-bar {
-            padding-bottom: 78px;
+          > .content {
+            margin-left: 0;
+            > .gradient-bar {
+              padding-bottom: 78px;
+            }
           }
         }
       }

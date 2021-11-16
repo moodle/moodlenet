@@ -1,9 +1,13 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { randomIntFromInterval } from '../../../../helpers/utilities'
 import { href } from '../../../elements/link'
 import { CollectionCardStoryProps } from '../../molecules/cards/CollectionCard/CollectionCard.stories'
 import { ResourceCardStoryProps } from '../../molecules/cards/ResourceCard/ResourceCard.stories'
-import { HeaderPageLoggedInStoryProps, HeaderPageLoggedOutStoryProps } from '../HeaderPage/HeaderPage.stories'
+import {
+  HeaderPageLoggedInStoryProps,
+  HeaderPageLoggedOutStoryProps,
+} from '../HeaderPage/HeaderPage.stories'
 import { Subject, SubjectProps } from './Subject'
 
 const meta: ComponentMeta<typeof Subject> = {
@@ -13,10 +17,16 @@ const meta: ComponentMeta<typeof Subject> = {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: ['SubjectStoryProps', 'SubjectLoggedOutStoryProps', 'SubjectLoggedInStoryProps'],
+  excludeStories: [
+    'SubjectStoryProps',
+    'SubjectLoggedOutStoryProps',
+    'SubjectLoggedInStoryProps',
+  ],
 }
 
-const SubjectStory: ComponentStory<typeof Subject> = args => <Subject {...args} />
+const SubjectStory: ComponentStory<typeof Subject> = (args) => (
+  <Subject {...args} />
+)
 
 export const SubjectStoryProps: SubjectProps = {
   headerPageTemplateProps: {
@@ -33,16 +43,17 @@ export const SubjectStoryProps: SubjectProps = {
   numFollowers: 2387,
   numCollections: 43,
   numResources: 165,
-  iscedLink: 'http://uis.unesco.org/en/topic/international-standard-classification-education-isced',
+  iscedLink:
+    'http://uis.unesco.org/en/topic/international-standard-classification-education-isced',
   isIscedSubject: true,
   collectionCardPropsList: [
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
   ],
   resourceCardPropsList: [
     ResourceCardStoryProps,

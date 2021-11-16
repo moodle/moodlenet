@@ -159,7 +159,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             isEditing ? 'editing' : ''
           }`}
         >
-          {tags && tagList(tags, false)}
+          {tags && tagList(tags)}
         </div>
       </Card>
     )
@@ -168,6 +168,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
 
 ResourceCard.defaultProps = {
   direction: 'horizontal',
+  selectionMode: false,
 }
 
 export default ResourceCard

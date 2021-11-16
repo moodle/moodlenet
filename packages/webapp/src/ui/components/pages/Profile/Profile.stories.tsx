@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { randomIntFromInterval } from '../../../../helpers/utilities'
 import { href } from '../../../elements/link'
 import {
   CollectionCardLoggedOutStoryProps,
@@ -39,7 +40,9 @@ const meta: ComponentMeta<typeof Profile> = {
   ],
 }
 
-const ProfileStory: ComponentStory<typeof Profile> = args => <Profile {...args} />
+const ProfileStory: ComponentStory<typeof Profile> = (args) => (
+  <Profile {...args} />
+)
 
 export const ProfileStoryProps: ProfileProps = {
   save: action('save'),
@@ -56,7 +59,10 @@ export const ProfileStoryProps: ProfileProps = {
   overallCardProps: OverallCardStoryProps,
   profileCardProps: ProfileCardStoryProps,
   // scoreCardProps: ScoreCardStoryProps,
-  collectionCardPropsList: [CollectionCardStoryProps, CollectionCardStoryProps],
+  collectionCardPropsList: [
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+  ],
   resourceCardPropsList: [
     ResourceCardLoggedInStoryProps,
     ResourceCardLoggedInStoryProps,
@@ -85,11 +91,14 @@ export const ProfileLoggedOutStoryProps: ProfileProps = {
     },
   },
   collectionCardPropsList: [
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
   ],
-  resourceCardPropsList: [ResourceCardLoggedOutStoryProps, ResourceCardLoggedOutStoryProps],
+  resourceCardPropsList: [
+    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps,
+  ],
 }
 
 export const ProfileLoggedInStoryProps: ProfileProps = {
@@ -105,10 +114,10 @@ export const ProfileOwnerStoryProps: ProfileProps = {
   ...ProfileLoggedInStoryProps,
   profileCardProps: ProfileCardOwnerStoryProps,
   collectionCardPropsList: [
-    CollectionCardOwnerPrivateStoryProps,
-    CollectionCardOwnerStoryProps,
-    CollectionCardOwnerStoryProps,
-    CollectionCardOwnerPrivateStoryProps,
+    CollectionCardOwnerPrivateStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardOwnerStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardOwnerStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardOwnerPrivateStoryProps(randomIntFromInterval(1, 3)),
   ],
   resourceCardPropsList: [
     ResourceCardOwnerPrivateStoryProps,
