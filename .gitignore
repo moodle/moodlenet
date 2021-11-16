@@ -14,3 +14,4 @@ build-storybook.log*
 .ignore*
 
 .env
+.env.*

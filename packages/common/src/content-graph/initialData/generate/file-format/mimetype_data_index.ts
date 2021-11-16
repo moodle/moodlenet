@@ -1,4 +1,4 @@
-import { FileFormatType } from '../../types/node'
+import { FileFormatType } from '../../../types/node'
 import application from './data/application'
 import audio from './data/audio'
 import font from './data/font'

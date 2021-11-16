@@ -1,10 +1,9 @@
-import { slugify } from '../../../utils/content-graph/slug-id'
-import { time0 } from '../../types/common'
-import { ResourceType } from '../../types/node'
-import { __initialLocalOrgAuthId } from '../content'
+import { slugify } from '../../../../utils/content-graph/slug-id'
+import { time0 } from '../../../types/common'
+import { GraphNodeIdentifierAuth, ResourceType } from '../../../types/node'
 import resourceTypesData from './resource-type-DATA'
 
-export const getResourceTypes = () =>
+export const getResourceTypes = ({ _creator }: { _creator: GraphNodeIdentifierAuth }) =>
   resourceTypesData.map(resourceTypeStr => {
     const slugifiedType = slugify({ str: resourceTypeStr })
 
@@ -19,7 +18,7 @@ export const getResourceTypes = () =>
       _created: time0,
       _edited: time0,
       _authKey: null,
-      _creator: __initialLocalOrgAuthId,
+      _creator,
       _local: true,
     }
     return resourceType
