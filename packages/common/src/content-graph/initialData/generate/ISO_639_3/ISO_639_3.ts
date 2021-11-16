@@ -1,10 +1,9 @@
-import { contentSlug } from '../../../utils/content-graph/slug-id'
-import { time0 } from '../../types/common'
-import { Language } from '../../types/node'
-import { __initialLocalOrgAuthId } from '../content'
+import { contentSlug } from '../../../../utils/content-graph/slug-id'
+import { time0 } from '../../../types/common'
+import { GraphNodeIdentifierAuth, Language } from '../../../types/node'
 import iso_data_arr from './ISO_639_3_tab-DATA'
 
-export const getIso639_3 = () =>
+export const getIso639_3 = ({ _creator }: { _creator: GraphNodeIdentifierAuth }) =>
   iso_data_arr.map(iso_data => {
     const language: Language = {
       _type: 'Language',
@@ -20,7 +19,7 @@ export const getIso639_3 = () =>
       langType: iso_data.type,
       _created: time0,
       _edited: time0,
-      _creator: __initialLocalOrgAuthId,
+      _creator,
       _authKey: null,
       _local: true,
     }

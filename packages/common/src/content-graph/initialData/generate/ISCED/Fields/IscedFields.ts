@@ -1,11 +1,10 @@
-import { getIscedFieldPathByCode } from '../../../../utils/content-graph/isced-field'
-import { contentSlug } from '../../../../utils/content-graph/slug-id'
-import { time0 } from '../../../types/common'
-import { IscedField } from '../../../types/node'
-import { __initialLocalOrgAuthId } from '../../content'
+import { getIscedFieldPathByCode } from '../../../../../utils/content-graph/isced-field'
+import { contentSlug } from '../../../../../utils/content-graph/slug-id'
+import { time0 } from '../../../../types/common'
+import { GraphNodeIdentifierAuth, IscedField } from '../../../../types/node'
 import isced_fields from './CL_ISCED13-Fields'
 
-export const getIscedFields = () =>
+export const getIscedFields = ({ _creator }: { _creator: GraphNodeIdentifierAuth }) =>
   isced_fields.map(field => {
     const iscedfield: IscedField = {
       _type: 'IscedField',
@@ -19,7 +18,7 @@ export const getIscedFields = () =>
       _created: time0,
       _edited: time0,
       _authKey: null,
-      _creator: __initialLocalOrgAuthId,
+      _creator,
       _local: true,
     }
     return iscedfield
