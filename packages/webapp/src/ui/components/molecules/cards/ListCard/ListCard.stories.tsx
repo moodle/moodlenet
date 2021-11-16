@@ -1,4 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { randomIntFromInterval } from '../../../../../helpers/utilities'
 import { CollectionCard } from '../CollectionCard/CollectionCard'
 import { CollectionCardStoryProps } from '../CollectionCard/CollectionCard.stories'
 import { ResourceCard } from '../ResourceCard/ResourceCard'
@@ -22,11 +23,13 @@ const meta: ComponentMeta<typeof ListCard> = {
   ],
 }
 
-const ListCardStory: ComponentStory<typeof ListCard> = args => <ListCard {...args} />
+const ListCardStory: ComponentStory<typeof ListCard> = (args) => (
+  <ListCard {...args} />
+)
 
 export const SubjectListCardStoryProps: ListCardProps = {
   className: 'subjects',
-  content: ['#Education', '#Forestry', 'Enviromental Science'].map(x => (
+  content: ['#Education', '#Forestry', 'Enviromental Science'].map((x) => (
     <SubjectCard {...{ ...SubjectCardStoryProps, title: x }} />
   )),
   noCard: false,
@@ -35,7 +38,7 @@ export const SubjectListCardStoryProps: ListCardProps = {
 export const Subject = ListCardStory.bind({})
 Subject.args = SubjectListCardStoryProps
 Subject.decorators = [
-  Story => (
+  (Story) => (
     <div style={{ maxWidth: 800 }}>
       <Story />
     </div>
@@ -45,13 +48,17 @@ Subject.decorators = [
 export const CollectionListCardStoryProps: ListCardProps = {
   className: 'collections',
   title: 'Juanito',
-  content: [1, 2, 3].map(() => <CollectionCard {...CollectionCardStoryProps} />),
+  content: [1, 2, 3].map(() => (
+    <CollectionCard
+      {...CollectionCardStoryProps(randomIntFromInterval(1, 3))}
+    />
+  )),
 }
 
 export const Collection = ListCardStory.bind({})
 Collection.args = CollectionListCardStoryProps
 Collection.decorators = [
-  Story => (
+  (Story) => (
     <div style={{ width: 300 }}>
       <Story />
     </div>
@@ -68,7 +75,7 @@ export const ResourceListCardStoryProps: ListCardProps = {
 export const Resource = ListCardStory.bind({})
 Resource.args = ResourceListCardStoryProps
 Resource.decorators = [
-  Story => (
+  (Story) => (
     <div style={{ width: 450 }}>
       <Story />
     </div>
@@ -77,7 +84,9 @@ Resource.decorators = [
 
 export const PeopleListCardStoryProps: ListCardProps = {
   className: 'people',
-  content: [1, 2, 3, 4, 5, 6, 7, 8, 9].map(() => <SmallProfileCard {...SmallProfileCardLoggedInStoryProps(0)} />),
+  content: [1, 2, 3, 4, 5, 6, 7, 8, 9].map(() => (
+    <SmallProfileCard {...SmallProfileCardLoggedInStoryProps(0)} />
+  )),
   noCard: false,
   minGrid: 140,
 }
@@ -85,7 +94,7 @@ export const PeopleListCardStoryProps: ListCardProps = {
 export const People = ListCardStory.bind({})
 People.args = PeopleListCardStoryProps
 People.decorators = [
-  Story => (
+  (Story) => (
     <div style={{ width: '450' }}>
       <Story />
     </div>

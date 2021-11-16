@@ -1,7 +1,7 @@
 import { FollowTag } from '../types'
 import { href, Link } from './link'
 
-export const tagList = (tags: FollowTag[], click: boolean) => {
+export const tagList = (tags: FollowTag[], click = true) => {
   return tags.map((tag, index) => {
     return click ? (
       <Link href={tag.subjectHomeHref} className="tag-container" key={index}>
@@ -21,236 +21,106 @@ export const TagListStory: FollowTag[] = [
   {
     type: 'General',
     name: '#Agroforestry',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'General',
     name: '#Biology',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'Specific',
     name: 'Desertification',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'Specific',
     name: 'Rainforest',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'Specific',
     name: 'Monitoring',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'General',
     name: '#Reforestation',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'Specific',
     name: 'Brazilian Politics',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'Specific',
     name: 'Reserves',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'Specific',
     name: 'Indigenous People',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'General',
     name: '#Climate Change',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'General',
     name: '#Ecology',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'Specific',
     name: 'Silviculture',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'General',
     name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    name: '#Mathematics',
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    name: '#Politology',
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    name: '#Ethology',
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    name: '#Ideology',
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    name: '#Religions',
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    name: '#Meditation',
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    name: '#Data Bases',
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
   {
     type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
-  },
-  {
-    type: 'General',
-    name: '#Botanic',
-    subjectHomeHref: href('Pages/Category/Logged In'),
+    name: '#Machine Learning',
+    subjectHomeHref: href('Pages/Subject/Logged In'),
   },
 ]

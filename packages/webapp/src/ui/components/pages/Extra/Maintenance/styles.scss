@@ -31,11 +31,11 @@
     width: 180px;
     z-index: 1;
     bottom: 48px;
-    animation: move 4s infinite cubic-bezier(0.7, 0.44, 0.28, 0.52),
-      spin 1s infinite linear;
+    animation: maintenance-move 4s infinite cubic-bezier(0.7, 0.44, 0.28, 0.52),
+      maintenance-spin 1s infinite linear;
   }
 
-  @keyframes spin {
+  @keyframes maintenance-spin {
     from {
       transform: rotate(0deg);
     }
@@ -44,7 +44,7 @@
     }
   }
 
-  @keyframes move {
+  @keyframes maintenance-move {
     0% {
       left: -400px;
       bottom: 20%;
