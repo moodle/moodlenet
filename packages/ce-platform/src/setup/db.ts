@@ -13,13 +13,13 @@ export const setupDb = async ({
 }) => {
   const sys_db = new Database({ url: arangoUrl })
 
-  console.log(`initializing UserAuthDB`)
-  await initializeDB({ dbname: userAuthDBName, ladder: userAuthLadder, actionOnDBExists })({
+  console.log(`initializing ContentGraphDB`)
+  await initializeDB({ dbname: contentGraphDBName, ladder: contentGraphLadder, actionOnDBExists })({
     sys_db,
   })
 
-  console.log(`initializing ContentGraphDB`)
-  await initializeDB({ dbname: contentGraphDBName, ladder: contentGraphLadder, actionOnDBExists })({
+  console.log(`initializing UserAuthDB`)
+  await initializeDB({ dbname: userAuthDBName, ladder: userAuthLadder, actionOnDBExists })({
     sys_db,
   })
 }

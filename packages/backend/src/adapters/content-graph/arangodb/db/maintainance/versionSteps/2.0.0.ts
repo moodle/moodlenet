@@ -1,27 +1,21 @@
-import { LocalOrgInitialData } from '@moodlenet/common/dist/content-graph/initialData/content'
+import { setSetupLocalOrganizationData } from '@moodlenet/common/dist/content-graph/initialData/content'
 import { validateDomainString } from '@moodlenet/common/dist/utils/general'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
 import { createDBCollections } from './2.0.0/createDBCollections'
-import { createFileFormats } from './2.0.0/createFileFormats'
-import { createIscedFields } from './2.0.0/createIscedFields'
-import { createIscedGrades } from './2.0.0/createIscedGrades'
-import { createLanguges } from './2.0.0/createLanguages'
-import { createLicenses } from './2.0.0/createLicenses'
 import { createLocalOrg } from './2.0.0/createLocalOrg'
-import { createResourceTypes } from './2.0.0/createResourceTypes'
-// import { createRootUserProfile } from './0.0.1/createRootUserProfile'
+import { populateDBNodes } from './2.0.0/populateDBNodes'
 import { setupSearchView } from './2.0.0/setupSearchView'
 
 const init_2_0_0: VersionUpdater = {
   async initialSetUp({ db }) {
-    const org: LocalOrgInitialData = {
+    const org = setSetupLocalOrganizationData({
       domain: process.env.SETUP_ORGANIZATION_DOMAIN!,
       description: process.env.SETUP_ORGANIZATION_DESCRIPTION!,
       name: process.env.SETUP_ORGANIZATION_NAME!,
       subtitle: process.env.SETUP_ORGANIZATION_SUBTITLE!,
       logo: { ext: true, location: process.env.SETUP_ORGANIZATION_LOGO!, mimetype: 'image/*' },
       smallLogo: { ext: true, location: process.env.SETUP_ORGANIZATION_SMALL_LOGO!, mimetype: 'image/*' },
-    }
+    })
     if (!Object.values(org).every(_ => !!_)) {
       const varnames = [
         'SETUP_ORGANIZATION_DOMAIN',
@@ -39,15 +33,8 @@ const init_2_0_0: VersionUpdater = {
     }
 
     await createDBCollections({ db })
-    // await createRootUserProfile({ db })
     await createLocalOrg({ db, org })
-    await createIscedFields({ db })
-    await createIscedGrades({ db })
-    await createFileFormats({ db })
-    await createResourceTypes({ db })
-    await createLicenses({ db })
-    await createLanguges({ db })
-
+    await populateDBNodes({ db })
     await setupSearchView({ db })
   },
 }

@@ -1,10 +1,9 @@
-import { contentSlug } from '../../../utils/content-graph/slug-id'
-import { time0 } from '../../types/common'
-import { License } from '../../types/node'
-import { __initialLocalOrgAuthId } from '../content'
+import { contentSlug } from '../../../../utils/content-graph/slug-id'
+import { time0 } from '../../../types/common'
+import { GraphNodeIdentifierAuth, License } from '../../../types/node'
 import licensesData from './licenses-DATA'
 
-export const getLicenses = () =>
+export const getLicenses = ({ _creator }: { _creator: GraphNodeIdentifierAuth }) =>
   licensesData.map(licenseData => {
     const license: License = {
       _type: 'License',
@@ -17,7 +16,7 @@ export const getLicenses = () =>
       _created: time0,
       _edited: time0,
       _authKey: null,
-      _creator: __initialLocalOrgAuthId,
+      _creator,
       _local: true,
     }
 

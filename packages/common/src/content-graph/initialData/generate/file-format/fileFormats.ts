@@ -1,10 +1,9 @@
-import { slugify } from '../../../utils/content-graph/slug-id'
-import { time0 } from '../../types/common'
-import { FileFormat, FileFormatType } from '../../types/node'
-import { __initialLocalOrgAuthId } from '../content'
+import { slugify } from '../../../../utils/content-graph/slug-id'
+import { time0 } from '../../../types/common'
+import { FileFormat, FileFormatType, GraphNodeIdentifierAuth } from '../../../types/node'
 import { mimetypesMap } from './mimetype_data_index'
 
-export const getFileFormats = () =>
+export const getFileFormats = ({ _creator }: { _creator: GraphNodeIdentifierAuth }) =>
   Object.entries(mimetypesMap).reduce<FileFormat[]>((_formats, [type, mimetypesData]) => {
     const more = mimetypesData.map(mimetypeData => {
       const [, subtype] = mimetypeData.mimetype.split(`/`)
@@ -21,7 +20,7 @@ export const getFileFormats = () =>
         subtype: subtype!,
         _created: time0,
         _edited: time0,
-        _creator: __initialLocalOrgAuthId,
+        _creator,
         _authKey: null,
         _local: true,
       }

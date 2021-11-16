@@ -1,10 +1,7 @@
-import { localOrganizationData, LocalOrgInitialData } from '@moodlenet/common/dist/content-graph/initialData/content'
+import { Organization } from '@moodlenet/common/dist/content-graph/types/node'
 import { Database } from 'arangojs'
-import { justExecute } from '../../../../../../../lib/helpers/arango/query'
-import { addNodeQ } from '../../../../aql/writes/addNode'
 
-export const createLocalOrg = async ({ db, org }: { db: Database; org: LocalOrgInitialData }) => {
-  const node = localOrganizationData(org)
+export const createLocalOrg = async ({ db, org }: { db: Database; org: Organization }) => {
   console.log(`creating Local Organization ${org.name} @ ${org.domain}`)
-  await justExecute(addNodeQ({ node, assertions: {} }), db)
+  await db.collection(org._type).save(org)
 }

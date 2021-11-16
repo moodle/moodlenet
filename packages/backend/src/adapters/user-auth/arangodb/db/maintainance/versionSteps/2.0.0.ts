@@ -1,4 +1,4 @@
-import { __initialLocalOrgAuthId } from '@moodlenet/common/dist/content-graph/initialData/content'
+import { getSetupLocalOrgazation, localOrg_authId } from '@moodlenet/common/dist/content-graph/initialData/content'
 import { DefaultConfig } from '@moodlenet/common/dist/content-graph/initialData/user-auth/defaultConfig'
 import { DistOmit } from '@moodlenet/common/dist/utils/types'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
@@ -10,19 +10,23 @@ import { CONFIG, USER } from '../../../types'
 
 const rootUserActive: DistOmit<ActiveUser, 'email' | 'password' | 'id' | 'createdAt' | 'updatedAt'> = {
   status: 'Active',
-  authId: __initialLocalOrgAuthId,
+  authId: localOrg_authId,
 }
 
 const init_2_0_0: VersionUpdater = {
-  async initialSetUp({ db /* ctx: { domain }  */ }) {
+  async initialSetUp({ db }) {
     const orgEmail = process.env.SETUP_ORGANIZATION_EMAIL ?? ''
     if (!EMAILREGEX.test(orgEmail)) {
       throw new Error(`User Auth setup: need an env SETUP_ORGANIZATION_EMAIL to be a valid email`)
     }
+    const org = getSetupLocalOrgazation()
+    if (!org) {
+      throw new Error(`SetupLocalOrgazation not set !`)
+    }
 
     console.log(`creating user-auth collection ${CONFIG}`)
     await db.createCollection(CONFIG)
-    await justExecute(saveConfigQ(DefaultConfig), db)
+    await justExecute(saveConfigQ(DefaultConfig(org)), db)
 
     console.log(`creating user-auth collection ${USER}`)
     const userCollection = await db.createCollection(USER)
