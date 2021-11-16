@@ -1,11 +1,10 @@
-import { getIscedGradePathByCode } from '../../../../utils/content-graph/isced-grade'
-import { contentSlug } from '../../../../utils/content-graph/slug-id'
-import { time0 } from '../../../types/common'
-import { IscedGrade } from '../../../types/node'
-import { __initialLocalOrgAuthId } from '../../content'
+import { getIscedGradePathByCode } from '../../../../../utils/content-graph/isced-grade'
+import { contentSlug } from '../../../../../utils/content-graph/slug-id'
+import { time0 } from '../../../../types/common'
+import { GraphNodeIdentifierAuth, IscedGrade } from '../../../../types/node'
 import isced_grades from './CL_ISCED11-Grades'
 
-export const getIscedGrades = () =>
+export const getIscedGrades = ({ _creator }: { _creator: GraphNodeIdentifierAuth }) =>
   isced_grades.map(grade => {
     const iscedGrade: IscedGrade = {
       _type: 'IscedGrade',
@@ -19,7 +18,7 @@ export const getIscedGrades = () =>
       _created: time0,
       _edited: time0,
       _authKey: null,
-      _creator: __initialLocalOrgAuthId,
+      _creator,
       _local: true,
     }
     return iscedGrade
