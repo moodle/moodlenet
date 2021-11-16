@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { randomIntFromInterval } from '../../../../helpers/utilities'
 import { href } from '../../../elements/link'
 import {
   CollectionCardLoggedOutStoryProps,
@@ -36,13 +37,15 @@ const meta: ComponentMeta<typeof Landing> = {
 
 const contentLoggedIn = {
   collectionCardPropsList: [
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
-    CollectionCardStoryProps,
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
   ],
   resourceCardPropsList: [
     ResourceCardStoryProps,
@@ -62,15 +65,16 @@ const contentLoggedIn = {
 
 const contentLoggedOut = {
   collectionCardPropsList: [
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
   ],
   resourceCardPropsList: [
     ResourceCardLoggedOutStoryProps,

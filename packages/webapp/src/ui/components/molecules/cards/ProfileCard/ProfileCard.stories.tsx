@@ -19,7 +19,7 @@ const meta: ComponentMeta<typeof ProfileCard> = {
     'ProfileCardOwnerStoryProps',
   ],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ maxWidth: 500 }}>
         <Story />
       </div>
@@ -64,7 +64,9 @@ export const ProfileCardOwnerStoryProps: ProfileCardProps = {
   isOwner: true,
 }
 
-const ProfileCardStory: ComponentStory<typeof ProfileCard> = args => <ProfileCard {...args} />
+const ProfileCardStory: ComponentStory<typeof ProfileCard> = (args) => (
+  <ProfileCard {...args} />
+)
 
 export const LoggedOut = ProfileCardStory.bind({})
 LoggedOut.args = ProfileCardLoggedOutStoryProps

@@ -3,18 +3,17 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { randomIntFromInterval } from '../../../../helpers/utilities'
 import { href } from '../../../elements/link'
 import {
-    CollectionCardLoggedInStoryProps,
-    CollectionCardLoggedOutStoryProps
+  CollectionCardLoggedInStoryProps,
+  CollectionCardLoggedOutStoryProps,
 } from '../../molecules/cards/CollectionCard/CollectionCard.stories'
 import {
-    ResourceCardLoggedInStoryProps,
-    ResourceCardLoggedOutStoryProps
+  ResourceCardLoggedInStoryProps,
+  ResourceCardLoggedOutStoryProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard.stories'
 import {
-    SmallProfileCardFollowingStoryProps,
-    SmallProfileCardLoggedInStoryProps,
-
-    SmallProfileCardStoryProps
+  SmallProfileCardFollowingStoryProps,
+  SmallProfileCardLoggedInStoryProps,
+  SmallProfileCardStoryProps,
 } from '../../molecules/cards/SmallProfileCard/SmallProfileCard.stories'
 import { SubjectCardProps } from '../../molecules/cards/SubjectCard/SubjectCard'
 import { SubjectCardStoryProps } from '../../molecules/cards/SubjectCard/SubjectCard.stories'
@@ -34,7 +33,7 @@ const meta: ComponentMeta<typeof Browser> = {
     'BrowserFollowingStoryProps',
   ],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ margin: '50px' }}>
         <Story />
       </div>
@@ -42,7 +41,9 @@ const meta: ComponentMeta<typeof Browser> = {
   ],
 }
 
-const BrowserStory: ComponentStory<typeof Browser> = args => <Browser {...args} />
+const BrowserStory: ComponentStory<typeof Browser> = (args) => (
+  <Browser {...args} />
+)
 
 const subjectCardPropsList: SubjectCardProps[] = [
   '#Education',
@@ -52,7 +53,7 @@ const subjectCardPropsList: SubjectCardProps[] = [
   'Latin',
   'Hebrew',
   'NoShow',
-].map(x => ({
+].map((x) => ({
   organization: { ...SubjectCardStoryProps }.organization,
   title: x,
   subjectHomeHref: href('Subject/home'),
@@ -66,17 +67,20 @@ export const BrowserLoggedOutStoryProps: BrowserProps = {
   loadMorePeople: action(`load more people`),
   subjectCardPropsList: subjectCardPropsList,
   collectionCardPropsList: [
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
-    CollectionCardLoggedOutStoryProps,
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
   ],
   resourceCardPropsList: [
     ResourceCardLoggedOutStoryProps,
@@ -113,17 +117,17 @@ export const BrowserLoggedInStoryProps: BrowserProps = {
   setSortBy: action(`set sort by`),
   subjectCardPropsList: subjectCardPropsList,
   collectionCardPropsList: [
-    CollectionCardLoggedInStoryProps,
-    CollectionCardLoggedInStoryProps,
-    CollectionCardLoggedInStoryProps,
-    CollectionCardLoggedInStoryProps,
-    CollectionCardLoggedInStoryProps,
-    CollectionCardLoggedInStoryProps,
-    CollectionCardLoggedInStoryProps,
-    CollectionCardLoggedInStoryProps,
-    CollectionCardLoggedInStoryProps,
-    CollectionCardLoggedInStoryProps,
-    CollectionCardLoggedInStoryProps,
+    CollectionCardLoggedInStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedInStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedInStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedInStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedInStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedInStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedInStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedInStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedInStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedInStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedInStoryProps(randomIntFromInterval(1, 3)),
   ],
   resourceCardPropsList: [
     ResourceCardLoggedInStoryProps,
