@@ -21,12 +21,11 @@
     width: 180px;
     z-index: 1;
     bottom: 48px;
-    animation: 
-    move 2s infinite linear,
-    spin 1s infinite linear;
+    animation: fallback-move 2s infinite linear,
+      fallback-spin 1s infinite linear;
   }
 
-  @keyframes spin {
+  @keyframes fallback-spin {
     from {
       transform: rotate(0deg);
     }
@@ -35,7 +34,7 @@
     }
   }
 
-  @keyframes move {
+  @keyframes fallback-move {
     0% {
       left: -180px;
       bottom: 20%;

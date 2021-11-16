@@ -18,7 +18,7 @@ const meta: ComponentMeta<typeof ResourceCard> = {
     'ResourceCardOwnerPrivateStoryProps',
   ],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ height: 100, width: 300 }}>
         <Story />
       </div>
@@ -65,7 +65,9 @@ export const ResourceCardOwnerBookmarkedStoryProps: ResourceCardProps = {
   bookmarked: true,
 }
 
-const ResourceCardStory: ComponentStory<typeof ResourceCard> = args => <ResourceCard {...args} />
+const ResourceCardStory: ComponentStory<typeof ResourceCard> = (args) => (
+  <ResourceCard {...args} />
+)
 
 export const LoggedIn = ResourceCardStory.bind({})
 LoggedIn.args = ResourceCardLoggedInStoryProps
