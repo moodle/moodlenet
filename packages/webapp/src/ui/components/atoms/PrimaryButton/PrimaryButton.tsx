@@ -9,9 +9,21 @@ export type PrimaryButtonProps = {
   onHoverColor?: '' | 'green' | 'orange' | 'red' | 'green'
 }
 
-export const PrimaryButton: FC<PrimaryButtonProps> = ({ children, className, color, onHoverColor, onClick, disabled }) => {
+export const PrimaryButton: FC<PrimaryButtonProps> = ({
+  children,
+  className,
+  color,
+  onHoverColor,
+  onClick,
+  disabled,
+}) => {
   return (
-    <div className={`primary-button button ${className} ${disabled ? 'disabled' : ''} ${color} hover-${onHoverColor}`} onClick={!disabled ? onClick : () => {}}>
+    <div
+      className={`primary-button button ${className} ${
+        disabled ? 'disabled' : ''
+      } ${color} hover-${onHoverColor}`}
+      onClick={!disabled ? onClick : () => {}}
+    >
       {children}
     </div>
   )
@@ -19,7 +31,7 @@ export const PrimaryButton: FC<PrimaryButtonProps> = ({ children, className, col
 
 PrimaryButton.defaultProps = {
   color: '',
-  onHoverColor: ''
+  onHoverColor: '',
 }
 
 export default PrimaryButton

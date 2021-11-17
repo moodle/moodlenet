@@ -38,7 +38,7 @@ export const SubjectStoryProps: SubjectProps = {
     },
   },
   isAuthenticated: true,
-  title: 'Environment',
+  title: 'Complex Ecosystems',
   following: false,
   numFollowers: 2387,
   numCollections: 43,

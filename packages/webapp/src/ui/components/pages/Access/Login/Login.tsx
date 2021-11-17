@@ -127,7 +127,7 @@ export const Login = withCtrl<LoginProps>(
                 </div>
               </div>
             </Card>
-            <Card>
+            <Card hover={true}>
               <Link href={signupHref}>
                 Sign up
                 <CallMadeIcon />

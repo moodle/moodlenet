@@ -25,6 +25,7 @@
 
   &:hover {
     //background-color: #e37511;
+    //background-color: $primary-color-hover;
     background-color: #337aff;
 
     &.hover-orange {
@@ -38,6 +39,11 @@
     &.hover-red {
       background-color: red;
     }
+  }
+
+  &:active {
+    background-color: #00e096;
+    //background-color: $primary-color-active;
   }
 
   &.disabled {

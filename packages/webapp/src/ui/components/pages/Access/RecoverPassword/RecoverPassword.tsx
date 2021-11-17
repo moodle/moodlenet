@@ -60,7 +60,7 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
               requestSent ? 'success' : ''
             }`}
           >
-            <Card>
+            <Card hover={true}>
               <Link href={loginHref}>
                 <Trans>Log in</Trans>
                 <CallMadeIcon />
