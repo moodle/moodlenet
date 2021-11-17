@@ -20,7 +20,7 @@ import './styles.scss'
 
 export type HeaderPropsIdle = HeaderPropsBase & {
   status: 'idle'
-  organization: Pick<Organization, 'logo' | 'smallLogo' | 'url' |'name'>
+  organization: Pick<Organization, 'logo' | 'smallLogo' | 'url' | 'name'>
   me: null | {
     avatar: string | null
     logout(): unknown
@@ -46,7 +46,7 @@ export type HeaderPropsBase = {
 }
 export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
 
-export const Header = withCtrl<HeaderProps>(props => {
+export const Header = withCtrl<HeaderProps>((props) => {
   const {
     homeHref,
     loginHref,
@@ -63,7 +63,8 @@ export const Header = withCtrl<HeaderProps>(props => {
   const { me, organization } = props
 
   const avatar = {
-    backgroundImage: 'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
+    backgroundImage:
+      'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
     backgroundSize: 'cover',
   }
 
@@ -99,7 +100,9 @@ export const Header = withCtrl<HeaderProps>(props => {
                     </Link>
                   </div>
                 }
-                hoverElement={<img className="add-icon" src={addIcon} alt="Add" />}
+                hoverElement={
+                  <img className="add-icon" src={addIcon} alt="Add" />
+                }
               />
               <FloatingMenu
                 menuContent={
@@ -123,7 +126,11 @@ export const Header = withCtrl<HeaderProps>(props => {
                   </div>
                 }
                 hoverElement={
-                  <Link href={me.myProfileHref} style={avatar} className="avatar"/>
+                  <Link
+                    href={me.myProfileHref}
+                    style={avatar}
+                    className="avatar"
+                  />
                 }
               />
             </>

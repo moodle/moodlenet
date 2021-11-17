@@ -1,5 +1,5 @@
 import { t, Trans } from '@lingui/macro'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { Organization } from '../../../types'
@@ -49,9 +49,19 @@ export const Landing = withCtrl<LandingProps>(
     setSearchText,
   }) => {
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false)
+    const [isSearchboxInViewport, setIsSearchboxInViewport] = useState<boolean>(
+      true
+    )
+
+    useEffect(() => {
+      console.log(isSearchboxInViewport)
+    }, [isSearchboxInViewport])
 
     return (
-      <HeaderPageTemplate {...headerPageTemplateProps} hideSearchbox={true}>
+      <HeaderPageTemplate
+        {...headerPageTemplateProps}
+        hideSearchbox={isSearchboxInViewport}
+      >
         <div className="landing">
           <div className="landing-header">
             <div className="landing-title">
@@ -71,6 +81,8 @@ export const Landing = withCtrl<LandingProps>(
               setSearchText={setSearchText}
               searchText=""
               placeholder={t`Search for open educational content`}
+              setIsSearchboxInViewport={setIsSearchboxInViewport}
+              marginTop={13}
             />
           </div>
           <div className="columns-container">
