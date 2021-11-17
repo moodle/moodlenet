@@ -26,7 +26,7 @@ fragment UserSession on UserSession {
       avatar
     }
     ... on Organization {
-      logo
+      smallLogo
     }
   }
 }
