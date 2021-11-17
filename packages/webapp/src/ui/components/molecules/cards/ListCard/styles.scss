@@ -31,6 +31,14 @@
         border-radius: 15px;
         border: 1px solid #b6bacb;
         color: #b6bacb;
+        &:hover {
+          border: 1px solid #8b8e99;
+          color: #8b8e99;
+        }
+        &:active {
+          border: 1px solid #61646b;
+          color: #61646b;
+        }
       }
     }
   }

@@ -15,8 +15,13 @@ export const Footer: FC<FooterProps> = ({ isAuthenticated }) => {
           {isAuthenticated ? (
             <div className="extended">
               <Trans>
-                Should you encounter any bugs, glitches, lack of functionality or other problems, please post in the{' '}
-                <a href="https://moodle.org/mod/forum/view.php?id=8726" target="_blank" rel="noreferrer">
+                Should you encounter any bugs, glitches, lack of functionality
+                or other problems, please post in the{' '}
+                <a
+                  href="https://moodle.org/mod/forum/view.php?id=8726"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   MoodleNet community
                 </a>{' '}
                 or create an issue at{' '}
@@ -27,11 +32,16 @@ export const Footer: FC<FooterProps> = ({ isAuthenticated }) => {
                 >
                   MoodleNet Tracker
                 </a>
+                .
               </Trans>
             </div>
           ) : (
             <div className="short">
-              <a href="https://docs.moodle.org/dev/MoodleNet" target="_blank" rel="noreferrer">
+              <a
+                href="https://docs.moodle.org/dev/MoodleNet"
+                target="_blank"
+                rel="noreferrer"
+              >
                 <Trans>MoodleNet Beta</Trans>
               </a>
             </div>

@@ -1,5 +1,5 @@
 import { t, Trans } from '@lingui/macro'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { Organization } from '../../../types'
@@ -52,10 +52,6 @@ export const Landing = withCtrl<LandingProps>(
     const [isSearchboxInViewport, setIsSearchboxInViewport] = useState<boolean>(
       true
     )
-
-    useEffect(() => {
-      console.log(isSearchboxInViewport)
-    }, [isSearchboxInViewport])
 
     return (
       <HeaderPageTemplate
@@ -117,7 +113,7 @@ export const Landing = withCtrl<LandingProps>(
           </div>
           <ListCard
             content={collectionCardPropsList
-              .slice(0, 14)
+              .slice(0, 20)
               .map((collectionCardProps) => (
                 <CollectionCard {...collectionCardProps} />
               ))}
@@ -138,7 +134,7 @@ export const Landing = withCtrl<LandingProps>(
           <ListCard
             content={(isLoadingMore
               ? resourceCardPropsList
-              : resourceCardPropsList.slice(0, 12)
+              : resourceCardPropsList
             ).map((resourcesCardProps) => (
               <ResourceCard {...resourcesCardProps} />
             ))}

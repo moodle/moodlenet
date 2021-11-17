@@ -191,6 +191,10 @@
       background-color: #b6bacb;
       padding-left: 30px;
 
+      &:active {
+        background-color: #a6adca;
+      }
+
       @media (max-width: 650px) {
         display: none;
       }

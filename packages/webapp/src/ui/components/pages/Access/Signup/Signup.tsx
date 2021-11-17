@@ -50,7 +50,7 @@ export const Signup = withCtrl<SignupProps>(
         <div className={`signup-page ${requestSent ? 'success' : ''}`}>
           <AccessHeader {...accessHeaderProps} page={'signup'} />
           <div className={`signup-content ${requestSent ? 'success' : ''}`}>
-            <Card>
+            <Card hover={true}>
               <Link href={loginHref}>
                 <Trans>Log in</Trans>
                 <CallMadeIcon />
