@@ -50,7 +50,7 @@ query collectionPageData($collectionId: ID!, $myProfileId: [ID!]) {
               avatar
             }
             ... on Organization {
-              logo
+              smallLogo
             }
           }
         }

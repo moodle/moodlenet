@@ -37,7 +37,7 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
                 }
               : {
                   myProfileHref: homeHref,
-                  avatar: getMaybeAssetRefUrl(session.profile.logo),
+                  avatar: getMaybeAssetRefUrl(session.profile.smallLogo),
                 }),
             name: session.profile.name,
             logout,

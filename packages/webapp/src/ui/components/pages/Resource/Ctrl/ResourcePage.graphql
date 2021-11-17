@@ -52,7 +52,7 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
               avatar
             }
             ... on Organization {
-              logo
+              smallLogo
             }
           }
         }
