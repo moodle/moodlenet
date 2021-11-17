@@ -1,9 +1,9 @@
-import { SvgIconTypeMap } from "@material-ui/core"
-import ExpandLessIcon from "@material-ui/icons/ExpandLess"
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
-import React, { FC, useCallback, useEffect, useRef, useState } from "react"
-import "./styles.scss"
-import { setListPosition } from "./utils"
+import { SvgIconTypeMap } from '@material-ui/core'
+import ExpandLessIcon from '@material-ui/icons/ExpandLess'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import './styles.scss'
+import { setListPosition } from './utils'
 
 export type DropdownOptionsType = (
   | [string, React.ReactNode | SvgIconTypeMap]
@@ -41,7 +41,7 @@ export const Dropdown: FC<DropdownProps> = ({
   className,
 }) => {
   const type =
-    options && typeof options[0] === "string" ? "Text" : "IconAndText"
+    options && typeof options[0] === 'string' ? 'Text' : 'IconAndText'
 
   const [currentValue, setValue] = useState<string | undefined | null>(
     value ? value : undefined
@@ -75,7 +75,7 @@ export const Dropdown: FC<DropdownProps> = ({
       setIsIconVisible(false)
       setIsContentVisible(true)
       dropdownContent.current &&
-        (dropdownContent.current.style.visibility = "visible")
+        (dropdownContent.current.style.visibility = 'visible')
       setTimeout(
         () => dropdownButton.current && dropdownButton.current.focus(),
         100
@@ -88,11 +88,11 @@ export const Dropdown: FC<DropdownProps> = ({
   }, [dropdownContent, dropdownButton, label, displayMode])
 
   useEffect(() => {
-    window.addEventListener("scroll", setListOptionsPosition)
-    window.addEventListener("resize", setListOptionsPosition)
+    window.addEventListener('scroll', setListOptionsPosition, true)
+    window.addEventListener('resize', setListOptionsPosition, true)
     return () => {
-      window.removeEventListener("scroll", setListOptionsPosition)
-      window.removeEventListener("resize", setListOptionsPosition)
+      window.removeEventListener('scroll', setListOptionsPosition, true)
+      window.removeEventListener('resize', setListOptionsPosition, true)
     }
   }, [setListOptionsPosition])
 
@@ -107,9 +107,9 @@ export const Dropdown: FC<DropdownProps> = ({
       | React.KeyboardEvent<HTMLInputElement>
       | React.KeyboardEvent<HTMLDivElement>
   ) => {
-    if (e.key === "ArrowUp") {
+    if (e.key === 'ArrowUp') {
       // Up
-    } else if (e.key === "ArrowDown") {
+    } else if (e.key === 'ArrowDown') {
       // Down
       //dropdownButton.current?.isSameNode(e.currentTarget) &&
       //dropdownContent.current && (dropdownContent.current.firstChild as HTMLElement)?.focus()
@@ -123,7 +123,7 @@ export const Dropdown: FC<DropdownProps> = ({
     setValue((e.currentTarget as HTMLElement).innerText)
     setIndex(i)
     dropdownContent.current &&
-      (dropdownContent.current.style.visibility = "hidden")
+      (dropdownContent.current.style.visibility = 'hidden')
     setIsIconVisible(true)
     setIsContentVisible(false)
   }
@@ -131,15 +131,15 @@ export const Dropdown: FC<DropdownProps> = ({
   const handleOnBlur = () => {
     if (!isOnHover) {
       dropdownContent.current &&
-        (dropdownContent.current.style.visibility = "hidden")
+        (dropdownContent.current.style.visibility = 'hidden')
       index && setIsIconVisible(true)
       setIsContentVisible(false)
     }
   }
 
   useEffect(() => {
-    type === "IconAndText" &&
-      value === "string" &&
+    type === 'IconAndText' &&
+      value === 'string' &&
       value.length > 0 &&
       setIsIconVisible(true)
   }, [type, value, setIsIconVisible])
@@ -149,7 +149,7 @@ export const Dropdown: FC<DropdownProps> = ({
   }, [currentValue, getValue])
 
   useEffect(() => {
-    typeof index === "number" && setIsIconVisible(true)
+    typeof index === 'number' && setIsIconVisible(true)
   }, [index])
 
   const filterFunction = useCallback((value?: string) => {
@@ -163,34 +163,35 @@ export const Dropdown: FC<DropdownProps> = ({
     // Array.prototype.slice.call(null) throws
     // TSC can't detect issues on these hacks ( `this` substitution )
     Array.prototype.slice
-      .call(div?.getElementsByClassName("option"))
+      .call(div?.getElementsByClassName('option'))
       .forEach((e, i) => {
         const txtValue = e.innerText.toUpperCase()
         if (txtValue.indexOf(filter) > -1) {
           setValue(e.innerText)
           txtValue === filter ? setIndex(i) : setIndex(undefined)
-          e.style.display = ""
+          e.style.display = ''
           length++
         } else {
           setIndex(undefined)
-          e.style.display = "none"
+          e.style.display = 'none'
         }
       })
     length > 0
-      ? div && (div.style.visibility = "visible")
-      : div && (div.style.visibility = "hidden")
+      ? div && (div.style.visibility = 'visible')
+      : div && (div.style.visibility = 'hidden')
   }, [])
 
   useEffect(() => {
-    if (type === "IconAndText" && value && options) {
-      (options as any[]).every((e, i) => {
+    if (type === 'IconAndText' && value && options) {
+      const newOptions = options as any[]
+      newOptions.every((e, i) => {
         return value === e[0] && setIndex(i)
       })
     }
   }, [value, type, options])
 
   const optionsList =
-    type === "Text"
+    type === 'Text'
       ? options?.map((currentValue, i) => {
           return (
             <div
@@ -221,31 +222,31 @@ export const Dropdown: FC<DropdownProps> = ({
 
   return (
     <div
-      className={`dropdown ${hasSearch ? "search" : ""} ${
-        disabled ? "disabled" : ""
-      } ${displayMode ? "display-mode" : ""} ${
-        !edit ? "not-editing" : ""
+      className={`dropdown ${hasSearch ? 'search' : ''} ${
+        disabled ? 'disabled' : ''
+      } ${displayMode ? 'display-mode' : ''} ${
+        !edit ? 'not-editing' : ''
       } ${className}`}
-      style={{ visibility: hidden ? "hidden" : "visible" }}
+      style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
       {label && <label>{label}</label>}
       <div
-        className={`input-container${displayMode ? " display-mode" : ""}${
-          !edit ? " not-editing" : ""
-        }${highlight ? " highlight" : ""}`}
+        className={`input-container${displayMode ? ' display-mode' : ''}${
+          !edit ? ' not-editing' : ''
+        }${highlight ? ' highlight' : ''}`}
         onClick={handleOnClick}
       >
         <input
           ref={dropdownButton}
           className={`dropdown-button search-field ${
-            displayMode ? "display-mode" : ""
-          } ${!edit ? "not-editing" : ""}`}
+            displayMode ? 'display-mode' : ''
+          } ${!edit ? 'not-editing' : ''}`}
           type="input"
           style={
-            type === "Text" || !isIconVisible
-              ? { visibility: "visible", display: "block" }
-              : { visibility: "hidden", display: "none" }
+            type === 'Text' || !isIconVisible
+              ? { visibility: 'visible', display: 'block' }
+              : { visibility: 'hidden', display: 'none' }
           }
           placeholder={placeholder}
           onChange={handleOnChange}
@@ -253,10 +254,10 @@ export const Dropdown: FC<DropdownProps> = ({
           onKeyDown={handleOnKeyDown}
           onBlur={handleOnBlur}
           disabled={disabled || !edit}
-          value={currentValue ? currentValue : ""}
+          value={currentValue ? currentValue : ''}
         />
         {isIconVisible &&
-          typeof index === "number" &&
+          typeof index === 'number' &&
           index > -1 &&
           options &&
           options[index]?.length === 2 &&
