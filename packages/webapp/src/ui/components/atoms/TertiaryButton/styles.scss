@@ -6,9 +6,17 @@
   border-radius: 5px;
   font-size: 13px;
   height: 30px;
-  padding: 0 8px;
-  margin: 0 4px;
+  padding: 0 18px;
   cursor: pointer;
   white-space: nowrap;
   text-decoration: none;
+
+  &:hover {
+    border-radius: 45px;
+    background-color: #f1f3f4;
+  }
+
+  &:active {
+    background-color: #e6effc;
+  }
 }
