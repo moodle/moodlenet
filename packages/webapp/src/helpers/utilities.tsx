@@ -29,8 +29,6 @@ export const elementFullyInViewPort = (
 ): boolean => {
   let { left, top, right, bottom } = el.getBoundingClientRect()
 
-  console.log(top)
-
   const height = bottom - top
   const width = right - left
   if (options?.marginTop) {

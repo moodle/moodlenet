@@ -207,6 +207,10 @@
       background-color: white;
       padding-left: 30px;
 
+      &:active {
+        background-color: #e6effc;
+      }
+
       @media (max-width: 650px) {
         display: none;
       }

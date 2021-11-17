@@ -3,10 +3,19 @@ import { CP, withCtrl } from '../../../lib/ctrl'
 import Card from '../../atoms/Card/Card'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
-import { CollectionCard, CollectionCardProps } from '../../molecules/cards/CollectionCard/CollectionCard'
+import {
+  CollectionCard,
+  CollectionCardProps,
+} from '../../molecules/cards/CollectionCard/CollectionCard'
 import ListCard from '../../molecules/cards/ListCard/ListCard'
-import { ResourceCard, ResourceCardProps } from '../../molecules/cards/ResourceCard/ResourceCard'
-import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
+import {
+  ResourceCard,
+  ResourceCardProps,
+} from '../../molecules/cards/ResourceCard/ResourceCard'
+import {
+  HeaderPageTemplate,
+  HeaderPageTemplateProps,
+} from '../../templates/HeaderPageTemplate'
 import './styles.scss'
 
 export type SubjectProps = {
@@ -51,7 +60,12 @@ export const Subject = withCtrl<SubjectProps>(
                       {title}
                     </abbr>
                     {isIscedSubject && iscedLink && (
-                      <a href={iscedLink} target="_blank" rel="noreferrer" className="isced-pill">
+                      <a
+                        href={iscedLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="isced-pill"
+                      >
                         ISCED
                       </a>
                     )}
@@ -83,7 +97,10 @@ export const Subject = withCtrl<SubjectProps>(
                       <Trans>Unfollow</Trans>
                     </SecondaryButton>
                   ) : (
-                    <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow}>
+                    <PrimaryButton
+                      disabled={!isAuthenticated}
+                      onClick={toggleFollow}
+                    >
                       <Trans>Follow</Trans>
                     </PrimaryButton>
                   )}
@@ -93,17 +110,19 @@ export const Subject = withCtrl<SubjectProps>(
             <div className="main-content">
               {collectionCardPropsList && (
                 <ListCard
-                  content={collectionCardPropsList.map(collectionCardProps => (
-                    <CollectionCard {...collectionCardProps} />
-                  ))}
+                  content={collectionCardPropsList.map(
+                    (collectionCardProps) => (
+                      <CollectionCard {...collectionCardProps} />
+                    )
+                  )}
                   title={
                     <div className="card-header">
                       <div className="title">
                         <Trans>Collections</Trans>
                       </div>
-                      <SecondaryButton>
+                      {/* <SecondaryButton>
                         <Trans>See all</Trans>
-                      </SecondaryButton>
+                      </SecondaryButton> */}
                     </div>
                   }
                   className="collections"
@@ -113,7 +132,7 @@ export const Subject = withCtrl<SubjectProps>(
               )}
               {resourceCardPropsList && (
                 <ListCard
-                  content={resourceCardPropsList.map(resourcesCardProps => (
+                  content={resourceCardPropsList.map((resourcesCardProps) => (
                     <ResourceCard {...resourcesCardProps} />
                   ))}
                   title={
@@ -121,9 +140,9 @@ export const Subject = withCtrl<SubjectProps>(
                       <div className="title">
                         <Trans>Resources</Trans>
                       </div>
-                      <SecondaryButton>
+                      {/* <SecondaryButton>
                         <Trans>See all</Trans>
-                      </SecondaryButton>
+                      </SecondaryButton> */}
                     </div>
                   }
                   className="resources"
@@ -136,7 +155,7 @@ export const Subject = withCtrl<SubjectProps>(
         </div>
       </HeaderPageTemplate>
     )
-  },
+  }
 )
 
 Subject.defaultProps = {}
