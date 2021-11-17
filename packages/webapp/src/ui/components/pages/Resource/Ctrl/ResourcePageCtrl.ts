@@ -315,7 +315,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       liked,
       visibility: VisibilityDropdown,
       contributorCardProps: {
-        avatarUrl: getMaybeAssetRefUrl(creator?.__typename === 'Profile' ? creator.avatar : creator?.logo),
+        avatarUrl: getMaybeAssetRefUrl(creator?.__typename === 'Profile' ? creator.avatar : creator?.smallLogo),
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
         timeSinceCreation: creatorEdge
