@@ -11,7 +11,7 @@ export type Assertions<Rules extends string = string> =
     }
 
 export type BaseOperators = {
-  cmp<T>(a: BV<T>, cmp: BV<Cmp>, b: BV<T>): BV<boolean>
+  cmp<T>(a: BV<T>, cmp: Cmp, b: BV<T>): BV<boolean>
   cond<R, L>(condition: BV<boolean>, right: BV<R>, left: BV<L>): BV<R | L>
   and(...bools: [BV<boolean>, ...BV<boolean>[]]): BV<boolean>
   or(...bools: [BV<boolean>, ...BV<boolean>[]]): BV<boolean>
