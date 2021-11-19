@@ -20,7 +20,7 @@ export const ARANGO_GRAPH_OPERATORS: GraphOperators = {
         ? (['_slug', identifier._slug] as const)
         : '_authKey' in identifier
         ? (['_authKey', identifier._authKey] as const)
-        : (null as never)
+        : (null as never) //FIXME: either throw or return null bv
 
     return _aqlBv(
       `(
