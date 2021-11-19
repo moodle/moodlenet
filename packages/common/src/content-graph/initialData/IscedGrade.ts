@@ -1055,7 +1055,7 @@ const _: IscedGrade[] = [
     _permId: 'ADT',
     _type: 'IscedGrade',
     _slug: 'adt-adult-education',
-    _published: false,
+    _published: true,
     name: 'Adult Education',
     codePath: ['ADT'],
     code: 'ADT',
