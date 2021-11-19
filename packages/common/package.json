@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/common",
-  "version": "2.0.0-rc.9",
+  "version": "2.0.0-rc.10",
   "license": "AGPL-3.0",
   "author": "https://github.com/aleclofabbro",
   "description": "backend and webapp shared libs and graphql",
