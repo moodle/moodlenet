@@ -15,7 +15,7 @@ export const ARANGO_BASE_OPERATORS: Omit<BaseOperators, 'getBV'> = {
   or: (...bvals) => _aqlBv<boolean>(`${bvals.join(' || ')}`),
   cmp: (a, cmp, b) => _aqlBv<boolean>(`${a} ${cmp} ${b}`),
   cond: (condition, right, left) => _aqlBv<_T<typeof right | typeof left>>(`${condition} ? ${right} : ${left}`),
-  not: val => _aqlBv<boolean>(`! ${val}`),
+  not: bvVal => _aqlBv<boolean>(`! ${bvVal}`),
   bv: val => _aqlBv(`${aqlstr(val)}`),
 }
 
