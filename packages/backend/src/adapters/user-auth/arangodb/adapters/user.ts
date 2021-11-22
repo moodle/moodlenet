@@ -1,33 +1,36 @@
-import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
 import { getOneResult } from '../../../../lib/helpers/arango/query'
-import { GetActiveByEmailAdapter } from '../../../../ports/user-auth/user'
-import { SendEmailToProfileAdapter } from '../../../../ports/utils/utils'
+import { SockOf } from '../../../../lib/plug'
+import {
+  changePasswordByAuthIdAdapter,
+  getActiveUserByAuthAdapter,
+  getActiveUserByEmailAdapter,
+} from '../../../../ports/user-auth/adapters'
 import { getActiveUserByAuthIdQ, updateActiveUserPasswordByAuthIdQ } from '../queries/getUserByAuth'
 import { getUserByEmailQ } from '../queries/getUserByEmail'
 import { UserAuthDB } from '../types'
-export const byEmail = (db: UserAuthDB): Pick<GetActiveByEmailAdapter, 'getActiveUserByEmail'> => ({
-  getActiveUserByEmail: async ({ email }) => {
+export const getActiveUserByEmail =
+  (db: UserAuthDB): SockOf<typeof getActiveUserByEmailAdapter> =>
+  async ({ email }) => {
     const activeUserQ = getUserByEmailQ({ email })
     const mUser = await getOneResult(activeUserQ, db)
     if (!(mUser && mUser.status === 'Active')) {
       return null
     }
     return mUser
-  },
-})
+  }
 
-export const byAuthId = (db: UserAuthDB): Pick<SendEmailToProfileAdapter, 'getActiveUserByAuth'> => ({
-  getActiveUserByAuth: async ({ authId }) => {
+export const getActiveUserByAuth =
+  (db: UserAuthDB): SockOf<typeof getActiveUserByAuthAdapter> =>
+  async ({ authId }) => {
     const activeUserQ = getActiveUserByAuthIdQ({ authId })
     const mUser = await getOneResult(activeUserQ, db)
     return mUser
-  },
-})
+  }
 
-export const updateUserPasswordByAuthId =
-  (db: UserAuthDB) =>
-  async ({ authId, password }: { authId: AuthId; password: string }) => {
-    const changePasswordQ = updateActiveUserPasswordByAuthIdQ({ authId, password })
+export const changePasswordByAuthId =
+  (db: UserAuthDB): SockOf<typeof changePasswordByAuthIdAdapter> =>
+  async ({ authId, newPassword }) => {
+    const changePasswordQ = updateActiveUserPasswordByAuthIdQ({ authId, password: newPassword })
     const mUser = await getOneResult(changePasswordQ, db)
     return mUser
   }

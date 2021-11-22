@@ -11,11 +11,11 @@ export const contentSlug = ({ name, locale, slugCode }: { name: Slug; locale?: s
   return `${slug_code}-${slug_name}`
 }
 
-const idAlphabet = `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-`
+const idAlphabet = `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`
 const slugAlphabet = `0123456789abcdefghijklmnopqrstuvwxyz`
 export const newGlyphSlugId = customAlphabet(slugAlphabet, 12)
-export const newGlyphPermId = customAlphabet(idAlphabet, 25)
-export const newAuthId = customAlphabet(idAlphabet, 25)
+export const newGlyphPermId = customAlphabet(idAlphabet, 30)
+export const newAuthKey = customAlphabet(idAlphabet, 30)
 
 export const newGlyphIdentifiers = ({
   name,

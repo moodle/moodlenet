@@ -1,10 +1,11 @@
+@import '../../../styles/utils/colors';
+
 .progress-state {
   width: 100%;
   height: auto;
   margin: 40px 0;
 
   > .progress-header {
-    font-weight: bold;
     margin-bottom: 16px;
     > .number {
       border-radius: 50%;
@@ -17,10 +18,15 @@
       font-size: 15px;
     }
 
+    > .title, > .number {
+      font-weight: bold;
+    }
+
     > .subtitle {
       line-height: 26px;
       margin-left: 16px;
       color: #b6bacb;
+      font-size: 15px;
     }
   }
   > .progress-bar {

@@ -16,6 +16,7 @@ export type SnackbarProps = {
   type?: 'error' | 'warning' | 'info' | 'success'
   className?: string
   autoHideDuration?: number
+  position?: 'top' | 'bottom'
   onClose?: () => void
 }
 
@@ -31,14 +32,16 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   className,
   type,
   autoHideDuration,
+  position,
   children,
 }) => {
-  const [movementState, setMovementState] = useState<'opening' | 'closing'>('opening')
+  const [movementState, setMovementState] = useState<'opening' | 'closing' | 'closed'>('opening')
   const handleonClose = useCallback(
     (event?: React.MouseEvent) => {
       event?.stopPropagation()
       setMovementState('closing')
       setTimeout(() => {
+        setMovementState('closed')
         onClose && onClose()
       }, 100)
     },
@@ -56,7 +59,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   }, [autoHideDuration, handleonClose])
 
   return (
-    <Card className={`snackbar ${className} type-${type} state-${movementState}`} onClick={stopPropagation} style={style}>
+    <Card className={`snackbar ${className} type-${type} state-${movementState} position-${position}`} onClick={stopPropagation} style={style}>
       {showIcon && (icon || type) && (
         <div className="icon">
           {icon
@@ -88,6 +91,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
 Snackbar.defaultProps = {
   className: '',
   showIcon: true,
+  position: 'bottom'
 }
 
 export default Snackbar

@@ -2,7 +2,6 @@ import { FC } from 'react'
 import { Route, Switch } from 'react-router-dom'
 // import { ActivationRoute } from './ActivateNewUserRoute'
 import { BookmarksRoute } from './BookmarksRoute'
-import { CategoryRoute } from './CategoryRoute'
 import { CollectionRoute } from './CollectionRoute'
 import { CookiesPoliciesRoute } from './CookiesPolicyRoute'
 import { FollowingRoute } from './FollowingRoute'
@@ -12,11 +11,13 @@ import { LoginRoute } from './LoginRoute'
 import { NewCollectionRoute } from './NewCollectionRoute'
 import { NewPasswordRoute } from './NewPasswordRoute'
 import { NewResourceRoute } from './NewResourceRoute'
+import { NotFoundRoute } from './NotFoundRoute'
 import { ProfileRoute } from './ProfileRoute'
 import { RecoverPasswordRoute } from './RecoverPasswordRoute'
 import { ResourceRoute } from './ResourceRoute'
 import { SearchRoute } from './SearchRoute'
 import { SignupRoute } from './SignUpRoute'
+import { SubjectRoute } from './SubjectRoute'
 import { UserAgreementRoute } from './UserAgreementRoute'
 
 export const MNRouter: FC = (/* { children } */) => {
@@ -29,7 +30,7 @@ export const MNRouter: FC = (/* { children } */) => {
       <Route {...BookmarksRoute} />
       <Route {...FollowingRoute} />
       <Route {...ProfileRoute} />
-      <Route {...CategoryRoute} />
+      <Route {...SubjectRoute} />
       <Route {...ResourceRoute} />
       <Route {...CollectionRoute} />
       <Route {...RecoverPasswordRoute} />
@@ -40,6 +41,7 @@ export const MNRouter: FC = (/* { children } */) => {
       <Route {...LandingRoute} />
       <Route {...CookiesPoliciesRoute} />
       <Route {...UserAgreementRoute} />
+      <Route {...NotFoundRoute} />
     </Switch>
   )
 }

@@ -1,22 +1,60 @@
-import { ChangeEventHandler, FC, useCallback } from 'react'
+import {
+  ChangeEventHandler,
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react'
+import { elementFullyInViewPort } from '../../../../helpers/utilities'
 import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
 import './styles.scss'
 
 export type SearchboxProps = {
   searchText: string
   placeholder: string
+  size?: 'small' | 'big'
   setSearchText(text: string): unknown
+  setIsSearchboxInViewport?: Dispatch<SetStateAction<boolean>>
+  marginTop?: number
 }
 
-export const Searchbox: FC<SearchboxProps> = ({ searchText, placeholder, setSearchText }) => {
+export const Searchbox: FC<SearchboxProps> = ({
+  searchText,
+  placeholder,
+  size,
+  marginTop,
+  setSearchText,
+  setIsSearchboxInViewport,
+}) => {
   const setSearchTextCB = useCallback<ChangeEventHandler<HTMLInputElement>>(
-    ev => setSearchText(ev.currentTarget.value),
-    [setSearchText],
+    (ev) => setSearchText(ev.currentTarget.value),
+    [setSearchText]
   )
+  const searchboxRef = useRef<HTMLDivElement>(null)
+
+  const setElementFullyInViewPort = useCallback(() => {
+    if (setIsSearchboxInViewport) {
+      searchboxRef.current &&
+      elementFullyInViewPort(searchboxRef.current, { marginTop: marginTop })
+        ? setIsSearchboxInViewport(true)
+        : setIsSearchboxInViewport(false)
+    }
+  }, [searchboxRef, marginTop, setIsSearchboxInViewport])
+
+  useEffect(() => {
+    setIsSearchboxInViewport &&
+      window.addEventListener('scroll', setElementFullyInViewPort, true)
+    return () => {
+      setIsSearchboxInViewport &&
+        document.removeEventListener('scroll', setElementFullyInViewPort, true)
+    }
+  }, [setElementFullyInViewPort, setIsSearchboxInViewport])
 
   return (
-    <div className="searchbox">
-      <SearchIcon/>
+    <div className={`searchbox size-${size}`} ref={searchboxRef}>
+      <SearchIcon />
       <input
         className="search-text"
         placeholder={placeholder}
@@ -26,6 +64,10 @@ export const Searchbox: FC<SearchboxProps> = ({ searchText, placeholder, setSear
       />
     </div>
   )
+}
+
+Searchbox.defaultProps = {
+  size: 'small',
 }
 
 export default Searchbox

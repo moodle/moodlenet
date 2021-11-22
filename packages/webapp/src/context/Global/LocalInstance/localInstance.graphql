@@ -1,14 +1,16 @@
-query localInstance {
-  node(id: "Organization/--local--") {
-    ... on Organization {
-      id
-      name
-      description
-      intro
-      logo
-      image
-      color
-      domain
-    }
+query localInstance($id: ID = "Organization/") {
+  node(id: $id) {
+    ...LocalInstance
   }
+}
+
+fragment LocalInstance on Organization {
+  id
+  name
+  description
+  subtitle
+  logo
+  smallLogo
+  color
+  domain
 }

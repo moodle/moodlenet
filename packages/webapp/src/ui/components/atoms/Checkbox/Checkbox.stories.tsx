@@ -1,13 +1,28 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import Checkbox from './Checkbox'
+import Checkbox, { CheckboxProps } from './Checkbox'
 
 const meta: ComponentMeta<typeof Checkbox> = {
-  title: 'Components/Atoms/Checkbox',
+  title: 'Atoms/Checkbox',
   component: Checkbox,
+  excludeStories: ['CheckboxUnselected', 'CheckboxSelected'],
 }
 
-const CheckboxStory: ComponentStory<typeof Checkbox> = () => <Checkbox label="Resources" name="Resources"></Checkbox>
+const CheckboxStory: ComponentStory<typeof Checkbox> = args => <Checkbox {...args} />
 
-export const Default = CheckboxStory.bind({})
+export const CheckboxUnselected: CheckboxProps = {
+  label: 'Resources',
+  name: 'Resources',
+}
+
+export const CheckboxSelected: CheckboxProps = {
+  ...CheckboxUnselected,
+  checked: true,
+}
+
+export const Unselected = CheckboxStory.bind({})
+Unselected.args = CheckboxUnselected
+
+export const Selected = CheckboxStory.bind({})
+Selected.args = CheckboxSelected
 
 export default meta

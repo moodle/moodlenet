@@ -1,0 +1,9 @@
+.env
+.staticAssetFs
+node_modules
+js
+*.pem
+yarn-error.log
+*.localnote
+
+/dist

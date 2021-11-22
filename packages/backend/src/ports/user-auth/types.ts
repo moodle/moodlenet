@@ -1,5 +1,5 @@
-import { AuthId } from '@moodlenet/common/lib/content-graph/types/common'
-import { EmailTemplate } from '../../lib/emailSender/types'
+import { GraphNodeIdentifierAuth } from '@moodlenet/common/dist/content-graph/types/node'
+import { EmailTemplate } from '../../adapters/emailSender/helpers'
 
 export enum Messages {
   EmailNotAvailable = 'email-not-available',
@@ -20,8 +20,8 @@ type UserBase<S extends Status> = {
 }
 
 export type ActiveUser = UserBase<'Active'> & {
-  authId: AuthId
-  password: Password
+  authId: GraphNodeIdentifierAuth
+  password: HashedPassword
 }
 // export type WaitingFirstActivationUser = UserBase<'WaitingFirstActivation'> & {
 //   firstActivationToken: Token
@@ -37,9 +37,16 @@ export type UserAuthConfig = {
   recoverPasswordEmailExpiresSecs: TimeoutSecs
   newUserRequestEmail: EmailTemplate<NewUserRequestEmailVars>
   newUserVerificationWaitSecs: TimeoutSecs
+  messageToUserEmail: EmailTemplate<MessageToUserEmailVars>
 }
-
 // $ Config
+export type MessageToUserEmailVars = {
+  // recipientName: string
+  senderName: string
+  msgText: string
+  senderProfileUrl: Link
+  email: Email
+}
 export type NewUserRequestEmailVars = {
   email: Email
   link: Link
@@ -52,6 +59,6 @@ export type Email = string
 export const isEmail = (_: any): _ is Email => 'string' === typeof _
 export type Link = string
 export type UserId = string
-export type Password = string
+export type HashedPassword = string
 export type Token = string
 export type TimeoutSecs = number

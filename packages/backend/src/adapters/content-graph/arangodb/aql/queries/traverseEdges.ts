@@ -1,37 +1,44 @@
-import { GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNodeIdentifier, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
-import { PageItem } from '@moodlenet/common/lib/content-graph/types/page'
-import { Maybe } from '@moodlenet/common/lib/utils/types'
-import { aq, aqlstr, AqlVar } from '../../../../../lib/helpers/arango/query'
-import { TraverseFromNodeInput } from '../../../../../ports/content-graph/traverseNodeRel'
-import { AqlGraphEdge, AqlGraphNode } from '../../types'
+import { GraphEdge, GraphEdgeType } from '@moodlenet/common/dist/content-graph/types/edge'
+import { GraphNode, GraphNodeType } from '@moodlenet/common/dist/content-graph/types/node'
+import { PageItem } from '@moodlenet/common/dist/content-graph/types/page'
+import { Maybe } from '@moodlenet/common/dist/utils/types'
+import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
+import { SockOf } from '../../../../../lib/plug'
+import { Assertions, BV } from '../../../../../ports/content-graph/graph-lang/base'
+import { AdapterArg, Operators, operators } from '../../../../../ports/content-graph/relations/traverse'
+import { _aqlBv } from '../../adapters/bl/baseOperators'
 // import { getNodeOpAqlAssertions } from './assertions/node'
-import { cursorPaginatedQuery, getOneAQFrag } from '../helpers'
-import { getAqlNodeByGraphNodeIdentifierQ } from './getNode'
+import {
+  aqlGraphEdge2GraphEdge,
+  aqlGraphNode2GraphNode,
+  cursorPaginatedQuery,
+  getAqlAssertions,
+  graphNode2AqlId,
+} from '../helpers'
 
 export const traverseEdgesQ = ({
   edgeType,
   page,
-  targetNodeType,
+  targetNodeTypes,
   inverse,
-  /* env, */
   fromNode,
   targetIds,
-}: TraverseFromNodeInput) => {
+  assertions,
+}: AdapterArg) => {
   // const targetIdsFilter =
   //   targetNodeIds && targetNodeIds.length ? `&& edge._${targetSide} IN [${targetNodeIds.map(aqlstr).join(',')}]` : ''
-  // console.log('********************', { edgeType, targetNodeType, fromNode, targetIds })
 
   const queryMapper = traversePaginateMapQuery({
     edgeType,
     fromNode,
     inverse,
-    targetNodeType,
+    targetNodeTypes,
     targetIds,
+    assertions,
   })
 
   return cursorPaginatedQuery({
-    cursorProp: `edge._key`,
+    cursorProp: `traverseEdge._created`,
     page,
     inverseSort: true,
     mapQuery: queryMapper,
@@ -40,90 +47,64 @@ export const traverseEdgesQ = ({
 
 export const traversePaginateMapQuery =
   ({
-    // edgeAndNodeAssertionFilters,
     edgeType,
     fromNode,
-    additionalFilter,
-    targetNodeType,
+    assertions,
+    targetNodeTypes,
     inverse,
     targetIds,
   }: {
     edgeType: GraphEdgeType
-    targetNodeType: GraphNodeType
+    targetNodeTypes: Maybe<GraphNodeType[]>
     inverse: boolean
-    fromNode: GraphNodeIdentifier
-    additionalFilter?: string
-    targetIds: Maybe<GraphNodeIdentifier[]>
-    // edgeAndNodeAssertionFilters: string
+    fromNode: BV<GraphNode>
+    assertions: Assertions
+    targetIds: Maybe<BV<GraphNode>[]>
   }) =>
   (pageFilterSortLimit: string) => {
-    // console.log('********************', { targetIds })
     if (targetIds && !targetIds.length) {
-      return aq<PageItem<{ edge: AqlGraphEdge; node: AqlGraphNode }>>(`FOR x in [] RETURN x`)
+      return aq<PageItem<{ edge: GraphEdge; node: GraphNode }>>(`FOR x in [] RETURN x`)
     }
+    const aqlAssertions = getAqlAssertions(assertions)
+
     const targetSide = inverse ? 'from' : 'to'
     const parentSide = inverse ? 'to' : 'from'
+    const targetNodeTypesFilter = targetNodeTypes
+      ? `&& traverseEdge._${targetSide}Type IN ${aqlstr(targetNodeTypes)}`
+      : ``
 
+    //const aqlTargetIds = targetIds ? `[ ${targetIds.map(_ => `${_}._id`).join(',')} ]` : `null`
     const aqlTargetIds = targetIds
-      ? `[ ${targetIds
-          .map(getAqlNodeByGraphNodeIdentifierQ)
-          .map(getOneAQFrag)
-          .map(_ => `${_}._id`)
-          .join(',')} ]`
+      ? `(FOR trgtNode IN ${`[${targetIds.join(',')}]`} RETURN ${graphNode2AqlId('trgtNode')})`
       : `null`
 
-    const q = aq<PageItem<{ edge: AqlGraphEdge; node: AqlGraphNode }>>(`
-      let parentNode = ${getOneAQFrag(getAqlNodeByGraphNodeIdentifierQ(fromNode))}
+    const q = aq<PageItem<{ edge: GraphEdge; node: GraphNode }>>(`
+      let traverseParentNode = ${fromNode}
       let targetIds = ${aqlTargetIds}
 
-      FOR edge IN ${edgeType}
-        FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
-          && edge._${parentSide} == parentNode._id
-          && ( targetIds ? edge._${targetSide} IN targetIds : true )
-          ${additionalFilter ? `&& ${additionalFilter}` : ''}
+      FOR traverseEdge IN ${edgeType}
+        FILTER  traverseEdge._${parentSide} == ${graphNode2AqlId('traverseParentNode')}
+                ${targetNodeTypesFilter}
+                && ( targetIds ? traverseEdge._${targetSide} IN targetIds : true )
           
-          
-          LET targetNode = Document(edge._${targetSide})
-          FILTER !!targetNode 
+          LET traverseNode = Document(traverseEdge._${targetSide})
+          FILTER !!traverseNode && ${aqlAssertions}
           ${pageFilterSortLimit}
 
         RETURN  [
           cursor,
           {
-            edge,
-            node: targetNode
+            edge: ${aqlGraphEdge2GraphEdge('traverseEdge')},
+            node: ${aqlGraphNode2GraphNode('traverseNode')}
           }
         ]
       `)
-    // targetIds && console.log('*******traversePaginateMapQuery*************', targetIds, aqlTargetIds)
+    // console.log('traverseQ', q)
     return q
   }
 
-export const nodeRelationCountQ = ({
-  edgeType,
-  parentNodeId,
-  inverse,
-  targetNodeType /* , env */,
-}: {
-  parentNodeId: AqlVar
-  edgeType: GraphEdgeType
-  targetNodeType: GraphNodeType
-  inverse: Boolean
-}) => {
-  const targetSide = inverse ? 'from' : 'to'
-  const parentSide = inverse ? 'to' : 'from'
-  return aq<number>(`
-    
-    FOR edge IN ${edgeType}
-      FILTER edge._${targetSide}Type == ${aqlstr(targetNodeType)}
-        && edge._${parentSide} == ${parentNodeId} 
-
-        // LET targetNode = Document(edge._${targetSide})
-
-        // FILTER !!targetNode 
-        
-
-      COLLECT WITH COUNT INTO count
-    RETURN count
-`)
+export const arangoTraverseOperators: SockOf<typeof operators> = async () => TRAVERSE_OPERATORS
+export const TRAVERSE_OPERATORS: Operators = {
+  traverseNode: _aqlBv('traverseNode'),
+  traverseEdge: _aqlBv('traverseEdge'),
 }

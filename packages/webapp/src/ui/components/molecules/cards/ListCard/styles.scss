@@ -18,6 +18,29 @@
     font-size: 14px;
     font-weight: bold;
     width: 100%;
+    .card-header {
+      display: flex;
+      align-items: center;
+      .title {
+        font-size: 24px;
+        margin-right: 16px;
+      }
+      .secondary-button {
+        height: 26px;
+        padding: 10px;
+        border-radius: 15px;
+        border: 1px solid #b6bacb;
+        color: #b6bacb;
+        &:hover {
+          border: 1px solid #8b8e99;
+          color: #8b8e99;
+        }
+        &:active {
+          border: 1px solid #61646b;
+          color: #61646b;
+        }
+      }
+    }
   }
 
   > .content {
@@ -32,7 +55,7 @@
       &.vertical {
         flex-direction: column;
       }
-      
+
       &.horizontal {
         padding-right: 13px;
         -webkit-mask-image: linear-gradient(to left, transparent 0%, black 3%);
@@ -53,6 +76,9 @@
       grid-gap: 15px;
       gap: 15px;
       justify-content: center;
+      > * {
+        justify-self: center;
+      }
     }
   }
 

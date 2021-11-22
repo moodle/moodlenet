@@ -8,7 +8,6 @@ const inputObjectValidators: {
 } = {
   Created: neverCreate('Created'),
   Features: object().required(),
-  Pinned: object().required(),
   Follows: object().required(),
   Likes: object().required(),
   Bookmarked: object().required(),

@@ -1,5 +1,5 @@
 import { stringUnionList } from '../../utils/misc'
-import { AuthId, Timestamp } from './common'
+import { Timestamp } from './common'
 
 export type GraphNodeMap = {
   Collection: Collection
@@ -33,29 +33,47 @@ export type GraphNode<T extends GraphNodeType = GraphNodeType> = GraphNodeMap[T]
 export type PermId = string
 export type Slug = string
 
-export type GraphNodeIdentifierSlug<GNT extends GraphNodeType = GraphNodeType> = Pick<
-  BaseGraphNode<GNT>,
-  '_type' | '_slug'
->
-export type GraphNodeIdentifierPerm<GNT extends GraphNodeType = GraphNodeType> = Pick<
-  BaseGraphNode<GNT>,
-  '_type' | '_permId'
->
+export type GraphNodeIdentifierSlug<GNT extends GraphNodeType = GraphNodeType> = {
+  _type: GNT
+  _slug: Slug
+}
+export type GraphNodeIdentifierPerm<GNT extends GraphNodeType = GraphNodeType> = {
+  _type: GNT
+  _permId: PermId
+}
+
+export type GraphNodeIdentifierAuth<GNT extends GraphNodeType = GraphNodeType> = {
+  _type: GNT
+  _authKey: AuthKey
+}
+export type GraphNodeNonIdentifiedAuth<GNT extends GraphNodeType = GraphNodeType> = {
+  _type: GNT
+  _authKey: null
+}
 
 export type GraphNodeIdentifier<GNT extends GraphNodeType = GraphNodeType> =
   | GraphNodeIdentifierSlug<GNT>
   | GraphNodeIdentifierPerm<GNT>
+  | GraphNodeIdentifierAuth<GNT>
+
+export const isGraphNodeIdentifierAuth = (_: any): _ is GraphNodeIdentifierAuth =>
+  !!_ && 'string' === typeof _._authKey && nodeTypes.includes(_._type)
+export type AuthKey = string
 
 export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
   _type: GNT
   _permId: PermId
   _slug: Slug
+  _published: boolean
+  _created: Timestamp
+  _edited: Timestamp
+  _creator: GraphNodeIdentifierAuth
+  _local: boolean
   name: string
   description: string
-}
-export type AuthOp = {
-  _authId: AuthId
-}
+} & GraphNodeIdentifierSlug<GNT> &
+  GraphNodeIdentifierPerm<GNT> &
+  (GraphNodeIdentifierAuth<GNT> | GraphNodeNonIdentifiedAuth<GNT>)
 
 type Maybe<T> = T | null | undefined
 
@@ -98,23 +116,22 @@ export type IscedGrade = BaseGraphNode<'IscedGrade'> & {
 }
 
 export type Organization = BaseGraphNode<'Organization'> & {
-  introTitle: string
-  intro: string
-  logo: Maybe<AssetRef>
+  subtitle: string
+  logo: AssetRef
+  smallLogo: AssetRef
   color: string
   domain: string
 }
 
-export type Profile = AuthOp &
-  BaseGraphNode<'Profile'> & {
-    avatar: Maybe<AssetRef>
-    bio: Maybe<string>
-    image: Maybe<AssetRef>
-    firstName: Maybe<string>
-    lastName: Maybe<string>
-    siteUrl: Maybe<string>
-    location: Maybe<string>
-  }
+export type Profile = BaseGraphNode<'Profile'> & {
+  avatar: Maybe<AssetRef>
+  bio: Maybe<string>
+  image: Maybe<AssetRef>
+  firstName: Maybe<string>
+  lastName: Maybe<string>
+  siteUrl: Maybe<string>
+  location: Maybe<string>
+}
 
 export type ResourceKind = 'Upload' | 'Link'
 
@@ -123,6 +140,10 @@ export type AssetRef = {
   location: string
   mimetype: string
 }
+export const isAssetRef = (_: any): _ is AssetRef =>
+  !!_ && typeof _.ext === 'boolean' && typeof _.location === 'string' && typeof _.mimetype === 'string'
+export const isSameAssetRef = (_: any, __: any) =>
+  isAssetRef(__) && isAssetRef(_) && __.ext === _.ext && __.location === _.location
 
 export type Resource = BaseGraphNode<'Resource'> & {
   image: Maybe<AssetRef>

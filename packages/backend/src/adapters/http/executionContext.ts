@@ -1,32 +1,34 @@
+import { isGraphNodeIdentifierAuth } from '@moodlenet/common/dist/content-graph/types/node'
+import { SessionEnv } from '@moodlenet/common/dist/types'
+import { pick } from '@moodlenet/common/dist/utils/object'
 import { RequestHandler } from 'express'
-import { VerifyOptions } from 'jsonwebtoken'
-import { INVALID_TOKEN, verifyJwt } from '../../lib/auth/jwt'
-import { SessionEnv } from '../../lib/auth/types'
+import { adapter, INVALID_JWT_TOKEN } from '../../ports/system/crypto/jwtVerifierAdapter'
 
-export const getMNExecEnvMiddleware =
-  ({ jwtPublicKey, jwtVerifyOpts }: { jwtPublicKey: string; jwtVerifyOpts: VerifyOptions }): RequestHandler =>
-  (req, _res, next) => {
-    const headerToken = req.header('bearer')
-    req.mnHttpContext = {
-      authSessionEnv: getSessionEnv({ headerToken, jwtPublicKey, jwtVerifyOpts }),
-    }
-    // console.log({ mnHttpSessionEnv: req.mnHttpContext })
-    next()
+export const execEnvMiddleware: RequestHandler = async (req, _res, next) => {
+  const headerToken = req.header('bearer')
+  req.mnHttpContext = {
+    sessionEnv: await getSessionEnv({ headerToken }),
   }
+  // console.log({ mnHttpSessionEnv: req.mnHttpContext })
+  next()
+}
 
-export const getSessionEnv = ({
-  headerToken,
-  jwtPublicKey,
-  jwtVerifyOpts,
-}: {
-  headerToken: string | null | undefined
-  jwtPublicKey: string
-  jwtVerifyOpts: VerifyOptions
-}): SessionEnv | null => {
+export const getSessionEnv = async ({ headerToken }: { headerToken: string | null | undefined }) => {
+  const authId = await getAuthId(headerToken)
+  const sessionEnv: SessionEnv = {
+    authId,
+    timestamp: Number(new Date()),
+  }
+  return sessionEnv
+}
+
+export const getAuthId = async (headerToken: string | null | undefined) => {
   if (!headerToken) {
     return null
   }
-  const tokenVerification = verifyJwt({ jwtPublicKey, jwtVerifyOpts, token: headerToken })
-  // console.log({ tokenVerification })
-  return tokenVerification === INVALID_TOKEN ? null : tokenVerification
+  const mAuthId = await adapter(headerToken)
+  if (mAuthId === INVALID_JWT_TOKEN) {
+    return null
+  }
+  return isGraphNodeIdentifierAuth(mAuthId) ? pick(mAuthId, ['_authKey', '_type']) : null
 }

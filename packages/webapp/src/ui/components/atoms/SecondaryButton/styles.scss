@@ -4,13 +4,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid black;
   border-radius: 45px;
   font-weight: bold;
   font-size: 12px;
   height: 30px;
-  padding: 12px;
-  padding: 12px 18px;
+  padding: 0 18px;
   width: fit-content;
   cursor: pointer;
   white-space: nowrap;
@@ -20,6 +18,11 @@
     user-select: none;
     color: #e8e8e8;
     border: 2px solid #e8e8e8;
+  }
+
+  &.black {
+    color: #3c4043;
+    border: 2px solid black;
   }
 
   &.red {
@@ -38,12 +41,14 @@
   }
 
   &:not(.disabled):hover {
-    color: #337aff;
-    border: 2px solid #337aff;
+    &.hover-blue {
+      color: #337aff;
+      border: 2px solid #337aff;
+    }
 
-    &.grey {
-        color: #545761;
-        border: 2px solid #545761;
+    &.hover-grey {
+      color: #545761;
+      border: 2px solid #545761;
     }
 
     &.hover-red {

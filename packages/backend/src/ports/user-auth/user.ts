@@ -1,157 +1,177 @@
-import { AuthId, isAuthId } from '@moodlenet/common/lib/content-graph/types/common'
-import { DistOmit, Maybe } from '@moodlenet/common/lib/utils/types'
-import { Routes, webappPath } from '@moodlenet/common/lib/webapp/sitemap'
-import { SignOptions } from 'jsonwebtoken'
-import { isString } from 'lodash'
-import { JwtPrivateKey, signJwtActiveUser } from '../../lib/auth/jwt'
-import { PasswordVerifier } from '../../lib/auth/types'
-import { fillEmailTemplate } from '../../lib/emailSender/helpers'
-import { EmailObj } from '../../lib/emailSender/types'
-import { QMQuery } from '../../lib/qmino'
-import { QMCommand, QMModule } from '../../lib/qmino/lib'
-import { ActiveUser, Email, isEmail, UserAuthConfig } from './types'
+import { GraphNodeIdentifierAuth, isGraphNodeIdentifierAuth } from '@moodlenet/common/dist/content-graph/types/node'
+import { SessionEnv } from '@moodlenet/common/dist/types'
+import { Maybe } from '@moodlenet/common/dist/utils/types'
+import { Routes, webappPath } from '@moodlenet/common/dist/webapp/sitemap'
+import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
+import { ns } from '../../lib/ns/namespace'
+import { plug } from '../../lib/plug'
+import { port as addNodePort } from '../content-graph/node/add'
+import * as crypto from '../system/crypto'
+import { decryptString, EncryptedString } from '../system/crypto/encrypt'
+import * as localOrg from '../system/localOrg'
+import * as sendEmail from '../system/sendEmail'
+import {
+  changePasswordByAuthIdAdapter,
+  getActiveUserByEmailAdapter,
+  getLatestConfigAdapter,
+  saveActiveUserAdapter,
+} from './adapters'
+import { ActiveUser, Email, isEmail } from './types'
 
-export type GetActiveByEmailAdapter = {
-  getActiveUserByEmail(_: { email: string }): Promise<ActiveUser | null>
-}
+export const changeRecoverPassword = plug(
+  ns(module, 'change-recover-password'),
+  async ({ token, newPasswordEnc }: { newPasswordEnc: EncryptedString; token: string }) => {
+    const recoverPasswordJwt = await crypto.jwtVerifier.adapter(token)
 
-export const getActiveByEmail = QMQuery(
-  ({ email }: { email: string }) =>
-    async ({ getActiveUserByEmail }: GetActiveByEmailAdapter) => {
-      const activeUser = await getActiveUserByEmail({ email })
-      if (!activeUser) {
-        return null
-      }
-      return activeUser
-    },
+    if (!isRecoverPasswordJwt(recoverPasswordJwt)) {
+      return false
+    }
+    const newPassword = await decryptString(newPasswordEnc)
+    if (!newPassword) {
+      return false
+    }
+    const newPasswordHashed = await crypto.passwordHasher.adapter(newPassword)
+
+    const activeUser = await changePasswordByAuthIdAdapter({
+      authId: recoverPasswordJwt.authId,
+      newPassword: newPasswordHashed,
+    })
+    if (!activeUser) {
+      return null
+    }
+    const jwt = await authJWT(activeUser)
+    return { jwt }
+  },
 )
 
-export type ChangeRecoverPasswordAdapter = {
-  changePasswordByAuthId(_: { authId: AuthId; newPassword: string }): Promise<Maybe<ActiveUser>>
-  hasher(str: string): Promise<string>
-  jwtVerifier(recoverPasswordJwtString: string): Promise<unknown>
-}
-export const changeRecoverPassword = QMCommand(
-  ({ token, newPasswordClear }: { newPasswordClear: string; token: string }) =>
-    async ({ jwtVerifier, hasher, changePasswordByAuthId }: ChangeRecoverPasswordAdapter) => {
-      const recoverPasswordJwt = await jwtVerifier(token)
-
-      if (!isRecoverPasswordJwt(recoverPasswordJwt)) {
-        return false
-      }
-      const newPasswordHashed = await hasher(newPasswordClear)
-
-      const resp = await changePasswordByAuthId({
-        authId: recoverPasswordJwt.authId,
-        newPassword: newPasswordHashed,
-      })
-      return resp
-    },
-)
-
-export type RecoverPasswordEmailAdapter = {
-  getActiveUserByEmail(_: { email: string }): Promise<ActiveUser | null>
-  jwtSigner(recoverPasswordJwt: RecoverPasswordJwt, expiresSecs: number): Promise<string>
-  getConfig(): Promise<UserAuthConfig>
-  sendEmail(_: EmailObj): Promise<unknown>
-  publicBaseUrl: string
-}
 export type RecoverPasswordJwt = {
-  authId: AuthId
+  authId: GraphNodeIdentifierAuth
   email: Email
 }
-const isRecoverPasswordJwt = (_: any): _ is RecoverPasswordJwt => isAuthId(_?.authId) && isEmail(_?.email)
+const isRecoverPasswordJwt = (_: any): _ is RecoverPasswordJwt =>
+  !!_ && isGraphNodeIdentifierAuth(_.authId) && isEmail(_.email)
 
-export const recoverPasswordEmail = QMCommand(
-  ({ email }: { email: Email }) =>
-    async ({ sendEmail, publicBaseUrl, getConfig, getActiveUserByEmail, jwtSigner }: RecoverPasswordEmailAdapter) => {
-      const activeUser = await getActiveUserByEmail({ email })
-      if (!activeUser) {
-        return null
-      }
-      const { recoverPasswordEmail, recoverPasswordEmailExpiresSecs } = await getConfig()
-      const recoverPasswordJwt = await jwtSigner({ authId: activeUser.authId, email }, recoverPasswordEmailExpiresSecs)
-
-      const emailObj = fillEmailTemplate({
-        template: recoverPasswordEmail,
-        to: email,
-        vars: {
-          link: `${publicBaseUrl}${webappPath<Routes.NewPassword>('/new-password/:token', {
-            token: recoverPasswordJwt,
-          })}`,
-        },
-      })
-      sendEmail(emailObj)
-      return { recoverPasswordJwt }
+export const recoverPasswordEmail = plug(ns(module, 'recover-password-email'), async ({ email }: { email: Email }) => {
+  const activeUser = await getActiveUserByEmailAdapter({ email })
+  if (!activeUser) {
+    return null
+  }
+  const { recoverPasswordEmail, recoverPasswordEmailExpiresSecs } = await getLatestConfigAdapter()
+  const recoverPasswordJwt = await crypto.jwtSigner.adapter(
+    { authId: activeUser.authId, email },
+    recoverPasswordEmailExpiresSecs,
+  )
+  const { publicUrl } = await localOrg.info.adapter()
+  const emailObj = fillEmailTemplate({
+    template: recoverPasswordEmail,
+    to: email,
+    vars: {
+      link: `${publicUrl}${webappPath<Routes.NewPassword>('/new-password/:token', {
+        token: recoverPasswordJwt,
+      })}`,
     },
-)
+  })
+  await sendEmail.adapter(emailObj)
+  return { recoverPasswordJwt }
+})
 
 export type ActivationEmailTokenObj = {
   email: Email
   hashedPassword: string
   displayName: string
-  authId: AuthId
+  authId: GraphNodeIdentifierAuth<'Profile'>
 }
-const isActivationEmailTokenObj = (_: any): _ is ActivationEmailTokenObj =>
-  isEmail(_?.email) && isString(_?.hashedPassword) && isString(_?.displayName) && isString(_?.authId)
-export const createSession = QMCommand(
-  ({
-      password,
-      email,
-      activationEmailToken,
-    }: {
-      password: string
-      email: string
-      activationEmailToken: Maybe<string>
-    }) =>
-    async ({
-      getActiveUserByEmail,
-      jwtVerifier,
-      saveActiveUser,
-      createNewProfile,
-      passwordVerifier,
-      jwtPrivateKey,
-      jwtSignOptions,
-    }: {
-      saveActiveUser(_: DistOmit<ActiveUser, 'id' | 'createdAt' | 'updatedAt'>): Promise<ActiveUser | string>
-      getActiveUserByEmail(_: { email: string }): Promise<ActiveUser | null>
-      jwtVerifier(activationEmailToken: string): Promise<unknown>
-      createNewProfile(_: { name: string; authId: AuthId }): Promise<unknown>
-      passwordVerifier: PasswordVerifier
-      jwtSignOptions: SignOptions
-      jwtPrivateKey: JwtPrivateKey
-    }) => {
-      const INVALID_CREDENTIALS = 'invalid credentials' as const
-      const activeUser = await getActiveUserByEmail({ email }).then(async activeUser => {
-        if (activeUser) {
-          return activeUser
-        } else if (activationEmailToken) {
-          const activationEmailTokenObj = await jwtVerifier(activationEmailToken)
-          if (!isActivationEmailTokenObj(activationEmailTokenObj) || activationEmailTokenObj.email !== email) {
-            return INVALID_CREDENTIALS
-          }
-          const { displayName, hashedPassword, authId } = activationEmailTokenObj
-          const mActiveUser = await saveActiveUser({ authId, email, password: hashedPassword, status: 'Active' })
-          if ('string' == typeof mActiveUser) {
-            return mActiveUser
-          }
-          await createNewProfile({ name: displayName, authId })
-          return mActiveUser
-        }
 
-        return INVALID_CREDENTIALS
-      })
-      if ('string' === typeof activeUser) {
+const isActivationEmailTokenObj = (_: any): _ is ActivationEmailTokenObj =>
+  !!_ &&
+  isEmail(_.email) &&
+  'string' === typeof _.hashedPassword &&
+  'string' === typeof _.displayName &&
+  isGraphNodeIdentifierAuth(_.authId)
+export const createSession = plug(
+  ns(module, 'create-session'),
+  async ({
+    encPassword,
+    email,
+    activationEmailToken,
+    sessionEnv,
+  }: {
+    sessionEnv: SessionEnv
+    encPassword: EncryptedString
+    email: string
+    activationEmailToken: Maybe<string>
+  }) => {
+    const INVALID_CREDENTIALS = 'invalid credentials' as const
+    const activeUser = await getActiveUserByEmailAdapter({ email }).then(async activeUser => {
+      if (activeUser) {
         return activeUser
       }
-      const passwordMatches =
-        !!activeUser && (await passwordVerifier({ plainPwd: password, pwdHash: activeUser.password }))
-
-      if (!(activeUser && passwordMatches)) {
+      if (!activationEmailToken) {
         return INVALID_CREDENTIALS
       }
-      const jwt = signJwtActiveUser({ jwtPrivateKey, jwtSignOptions, user: activeUser })
-      return { jwt }
-    },
+
+      const activationEmailTokenObj = await crypto.jwtVerifier.adapter(activationEmailToken)
+      if (!isActivationEmailTokenObj(activationEmailTokenObj) || activationEmailTokenObj.email !== email) {
+        return INVALID_CREDENTIALS
+      }
+
+      const { displayName, hashedPassword, authId } = activationEmailTokenObj
+
+      const plainPwd = await decryptString(encPassword)
+      if (!plainPwd) {
+        return INVALID_CREDENTIALS
+      }
+      const passwordMatches = await crypto.passwordVerifier.adapter({ plainPwd, pwdHash: hashedPassword })
+      if (!passwordMatches) {
+        return INVALID_CREDENTIALS
+      }
+
+      const mActiveUser = await saveActiveUserAdapter({ authId, email, password: hashedPassword, status: 'Active' })
+      if ('string' == typeof mActiveUser) {
+        return mActiveUser
+      }
+
+      const { authId: orgAuthId } = await localOrg.info.adapter()
+      await addNodePort({
+        sessionEnv: { authId: orgAuthId, timestamp: sessionEnv.timestamp },
+        data: {
+          ...authId,
+          name: displayName,
+          _published: true,
+          description: '',
+          avatar: null,
+          bio: null,
+          firstName: null,
+          image: null,
+          lastName: null,
+          location: null,
+          siteUrl: null,
+          _local: true,
+        },
+      })
+      return mActiveUser
+    })
+    if ('string' === typeof activeUser) {
+      return activeUser
+    }
+    const plainPwd = await decryptString(encPassword)
+    if (!plainPwd) {
+      return null
+    }
+    const passwordMatches = await crypto.passwordVerifier.adapter({ plainPwd, pwdHash: activeUser.password })
+
+    if (!passwordMatches) {
+      return INVALID_CREDENTIALS
+    }
+    const jwt = await authJWT(activeUser)
+    return { jwt }
+  },
 )
-QMModule(module)
+
+const authJWT = async (activeUser: ActiveUser) => {
+  // TODO : add `jwtExpireSecs` in Config
+  // const {jwtExpireSecs}=await getLatestConfigAdapter()
+  const jwtExpireSecs = 30 * 24 * 60 * 60 * 1000
+  const jwt = crypto.jwtSigner.adapter(activeUser.authId, jwtExpireSecs)
+  return jwt
+}

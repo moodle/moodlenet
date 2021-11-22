@@ -29,7 +29,7 @@ export const op_chain = _op_chain as any as <Op extends string, T extends string
 
 export type AssertionOf<_> = _ extends K<infer Op, infer T> ? W<Op, T> : never
 export type BoolOp = 'AND' | 'OR'
-/**********
+/*
 type BoolAssert<T extends string> = K<BoolOp, T>
 
 type AssertionsType = 'A' | 'B' | 'C'
@@ -46,4 +46,4 @@ const d = A.or(A)
 
 const z = A.and.B.or(A.and.B)()
 
-***********/
+*/

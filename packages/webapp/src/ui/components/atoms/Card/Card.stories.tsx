@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { Card, CardProps } from './Card'
 
 const meta: ComponentMeta<typeof Card> = {
-  title: 'Components/Atoms/Card',
+  title: 'Atoms/Card',
   component: Card,
   argTypes: {
     // backgroundColor: { control: 'color' },

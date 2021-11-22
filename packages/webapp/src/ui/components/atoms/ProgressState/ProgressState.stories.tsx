@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { ProgressState, ProgressStateProps } from './ProgressState'
 
 const meta: ComponentMeta<typeof ProgressState> = {
-  title: 'Components/Atoms/ProgressState',
+  title: 'Atoms/ProgressState',
   component: ProgressState,
   excludeStories: ['ProgressStateStoryProps'],
   decorators: [

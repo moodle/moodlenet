@@ -1,7 +1,7 @@
-import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { Routes } from '@moodlenet/common/dist/webapp/sitemap'
+import { useLoginCtrl } from '../ui/components/pages/Access/Login/Ctrl/LoginCtrl'
+import { Login } from '../ui/components/pages/Access/Login/Login'
 import { ctrlHook } from '../ui/lib/ctrl'
-import { useLoginCtrl } from '../ui/pages/Access/Login/Ctrl/LoginCtrl'
-import { Login } from '../ui/pages/Access/Login/Login'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const LoginRouteComponent: RouteFC<Routes.Login> = ({

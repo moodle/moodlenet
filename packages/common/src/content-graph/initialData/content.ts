@@ -1,33 +1,44 @@
-import { newAuthId } from '../../utils/content-graph/slug-id'
-import { Organization, Profile } from '../types/node'
+import { newAuthKey, newGlyphPermId, slugify } from '../../utils/content-graph/slug-id'
+import { GraphNodeIdentifierAuth, Organization } from '../types/node'
 
-export const localOrganizationData: Omit<Organization, 'domain'> = {
-  _permId: 'local',
-  name: 'MoodleNet',
-  introTitle: 'Join our world-wide educators social network',
-  intro: `Join our social network to share and curate open educational resources with educators world-wide.
-Integrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.
-Build your profile as an educator.`,
-  description: `Our global network to share and curate open educational resources.`,
-  color: '#f98109',
-  _slug: '--local--',
+export type LocalOrgInitialData = Pick<
+  Organization,
+  'name' | 'description' | 'domain' | 'logo' | 'smallLogo' | 'subtitle'
+>
+
+export const localOrg_authId: GraphNodeIdentifierAuth<'Organization'> = {
+  _authKey: newAuthKey(),
   _type: 'Organization',
-  logo: null,
 }
-
-const rootAuthId = newAuthId()
-export const rootUserProfile: Profile = {
-  _slug: `__root__`,
-  _authId: rootAuthId,
-  _permId: 'ROOT',
-  _type: 'Profile',
-  avatar: null,
-  bio: '',
-  description: '',
-  name: 'ROOT',
-  firstName: null,
-  image: null,
-  lastName: null,
-  location: null,
-  siteUrl: null,
+export const localOrg_permId = newGlyphPermId()
+export const now = Number(new Date())
+let localOrg: Organization | null = null
+export const getSetupLocalOrgazation = () => localOrg
+export const setSetupLocalOrganizationData = ({
+  description,
+  domain,
+  logo,
+  name,
+  smallLogo,
+  subtitle,
+}: LocalOrgInitialData): Organization => {
+  const _slug = slugify({ str: name })
+  localOrg = {
+    ...localOrg_authId,
+    _permId: localOrg_permId,
+    _slug,
+    name,
+    description,
+    subtitle,
+    domain,
+    logo: logo,
+    smallLogo: smallLogo,
+    _creator: localOrg_authId,
+    _published: true,
+    color: '#f98109',
+    _created: now,
+    _edited: now,
+    _local: true,
+  }
+  return localOrg
 }
