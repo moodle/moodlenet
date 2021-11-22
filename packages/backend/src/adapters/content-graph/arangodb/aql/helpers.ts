@@ -1,8 +1,12 @@
-import { GraphEdge, GraphEdgeType } from '@moodlenet/common/lib/content-graph/types/edge'
-import { GraphNode, GraphNodeType } from '@moodlenet/common/lib/content-graph/types/node'
-import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/lib/content-graph/types/page'
-import { AQ, aqfrag, aqlstr } from '../../../../lib/helpers/arango/query'
-import { AqlGraphEdgeByType, AqlGraphNodeByType } from '../types'
+import { GraphEdge } from '@moodlenet/common/dist/content-graph/types/edge'
+import { GraphNode } from '@moodlenet/common/dist/content-graph/types/node'
+import { Page, PageInfo, PageItem, PaginationInput } from '@moodlenet/common/dist/content-graph/types/page'
+import { CollectionType } from 'arangojs'
+import { AQ, aqlstr, getAllResults } from '../../../../lib/helpers/arango/query'
+import { Assertions, BV } from '../../../../ports/content-graph/graph-lang/base'
+import { _aqlBv } from '../adapters/bl/baseOperators'
+import { ContentGraphDB } from '../types'
+import { deleteBrokenEdgesQ } from './writes/deleteBrokenEdgesQ'
 
 export const cursorPaginatedQuery = <T>({
   page,
@@ -107,39 +111,98 @@ export const forwardSkipLimitPage = <T>({ docs, skip }: { docs: T[]; skip: numbe
   return makePage({ items, hasNextPage: !!items.length, hasPreviousPage: false })
 }
 
-export const aqlGraphNode2GraphNode = <T extends GraphNodeType>(aqlGraphNode: AqlGraphNodeByType<T>) => {
-  // console.log(`aqlGraphNode2GraphNode `, aqlGraphNode)
-  // const {_type, _key}=aqlGraphNode  *****************
-  const [__type, __permId] = aqlGraphNode._id.split('/')
-  // *********************** */
+// export const aqlGraphNode2GraphNode = <T extends GraphNodeType>(aqlGraphNode: AqlGraphNodeByType<T>) => {
+//   // console.log(`aqlGraphNode2GraphNode `, aqlGraphNode)
+//   const [__type, __permId] = aqlGraphNode._id.split('/')
 
-  const graphNode: GraphNode<T> = {
-    _type: __type! as T,
-    _permId: __permId!,
-    ...(aqlGraphNode as any),
+//   const graphNode: GraphNode<T> = {
+//     _type: __type! as T,
+//     _permId: __permId!,
+//     ...(aqlGraphNode as any),
+//   }
+//   return graphNode
+// }
+
+// export const graphNode2AqlGraphNode = <T extends GraphNodeType>(graphNode: GraphNode<T>) => {
+//   const _key = graphNode._permId
+//   const _id = `${graphNode._type}/${graphNode._permId}`
+//   const aqlGraphNode: AqlGraphNodeByType<T> = {
+//     _key,
+//     _id,
+//     ...(graphNode as any),
+//   }
+//   return aqlGraphNode
+// }
+
+// export const aqlGraphEdge2GraphEdge = <T extends GraphEdgeType>(aqlGraphEdge: AqlGraphEdgeByType<T>) => {
+//   const [__type, id] = aqlGraphEdge._id.split('/')
+//   const graphEdge: GraphEdge<T> = {
+//     _type: __type! as T,
+//     id,
+//     ...(aqlGraphEdge as any),
+//   }
+//   return graphEdge
+// }
+
+export const graphNode2AqlIdentifier = (nodeVar: string | BV<GraphNode>) =>
+  `{_id:${graphNode2AqlId(nodeVar)}, _key:${graphNode2AqlKey(nodeVar)}}`
+export const graphNode2AqlId = (nodeVar: string | BV<GraphNode>) => `CONCAT(${nodeVar}._type,'/',${nodeVar}._permId)`
+export const graphNode2AqlKey = (nodeVar: string | BV<GraphNode>) => `${nodeVar}._permId`
+export const graphNode2AqlGraphNode = (nodeVar: string | BV<GraphNode>) => `${nodeVar} && MERGE(
+  UNSET(MERGE({},${nodeVar}), '_permId' ),
+  {
+    _key: ${nodeVar}._permId,
+    _id: CONCAT( ${nodeVar}._type, '/', ${nodeVar}._permId)
   }
-  return graphNode
+)`
+export const aqlGraphNode2GraphNode = (nodeVar: string) => `${nodeVar} && MERGE(
+UNSET(MERGE({},${nodeVar}), '_id', '_key' ),
+{ _permId: ${nodeVar}._key }
+)`
+
+export const graphEdge2AqlIdentifier = (edgeVar: string | BV<GraphEdge>) =>
+  `{_id:${graphEdge2AqlId(edgeVar)}, _key:${graphEdge2AqlKey(edgeVar)}}`
+export const graphEdge2AqlId = (edgeVar: string | BV<GraphEdge>) => `CONCAT(${edgeVar}._type,'/',${edgeVar}.id)`
+export const graphEdge2AqlKey = (edgeVar: string | BV<GraphEdge>) => `${edgeVar}.id`
+export const graphEdge2AqlGraphEdge = (edgeVar: string | BV<GraphEdge>) => `${edgeVar} && MERGE(
+  UNSET(MERGE({},${edgeVar}), 'id' ),
+  {
+    _key: ${edgeVar}.id,
+    _id: CONCAT( ${edgeVar}._type, '/', ${edgeVar}.id)
+  }
+)`
+export const aqlGraphEdge2GraphEdge = (edgeVar: string) => `${edgeVar} && MERGE(
+UNSET(MERGE({},${edgeVar}), '_id', '_key' ),
+{ id: ${edgeVar}._key }
+)`
+// export const getOneAQFrag = <T>(_aq: AQ<T>) => aq<T>(`((${_aq})[${0}])`)
+
+export const aqBV = <T>(q: BV<T>) => `RETURN ${q}` as AQ<T>
+
+export const cleanupBrokenEdges = async (db: ContentGraphDB) => {
+  const collections = await db.listCollections()
+  const edgeCollectionNames = collections
+    .filter(({ type }) => type === CollectionType.EDGE_COLLECTION)
+    .map(({ name }) => name)
+
+  console.log(`Cleaning up broken edges:`, edgeCollectionNames.join(' , '))
+  return Promise.all(
+    edgeCollectionNames.map(async name => {
+      const q = deleteBrokenEdgesQ(name)
+      const results = await getAllResults(q, db).catch(e => {
+        const msg = `Error while cleaning up ${name}: ${e}`
+        console.error(msg)
+        return msg
+      })
+      return [name, results] as const
+    }),
+  )
 }
 
-export const graphNode2AqlGraphNode = <T extends GraphNodeType>(graphNode: GraphNode<T>) => {
-  const _key = graphNode._permId
-  const _id = `${graphNode._type}/${graphNode._permId}`
-  const aqlGraphNode: AqlGraphNodeByType<T> = {
-    _key,
-    _id,
-    ...(graphNode as any),
-  }
-  return aqlGraphNode
-}
-
-export const aqlGraphEdge2GraphEdge = <T extends GraphEdgeType>(aqlGraphEdge: AqlGraphEdgeByType<T>) => {
-  const [__type, id] = aqlGraphEdge._id.split('/')
-  const graphEdge: GraphEdge<T> = {
-    _type: __type! as T,
-    id,
-    ...(aqlGraphEdge as any),
-  }
-  return graphEdge
-}
-
-export const getOneAQFrag = <T>(_aq: AQ<T>) => aqfrag<T>(`((${_aq})[${0}])`)
+export const getAqlAssertions = (assertions: Assertions) =>
+  _aqlBv<boolean>(
+    Object.entries(assertions)
+      .map(([, assertion]) => assertion)
+      .filter((assertion): assertion is BV<boolean> => !!assertion)
+      .join(' && ') || 'true',
+  )

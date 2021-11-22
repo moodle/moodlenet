@@ -1,7 +1,7 @@
-import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
+import { Routes } from '@moodlenet/common/dist/webapp/sitemap'
+import { useLmsMoodleLandingCtrl } from '../ui/components/pages/LmsMoodleLanding/Ctrl/LmsMoodleLandingCtrl'
+import { LMSMoodleLanding } from '../ui/components/pages/LmsMoodleLanding/LmsMoodleLanding'
 import { ctrlHook } from '../ui/lib/ctrl'
-import { useLmsMoodleLandingCtrl } from '../ui/pages/LmsMoodleLanding/Ctrl/LmsMoodleLandingCtrl'
-import { LMSMoodleLanding } from '../ui/pages/LmsMoodleLanding/LmsMoodleLanding'
 import { MNRouteProps, RouteFC } from './lib'
 
 const LMSMoodleLandingRouteComponent: RouteFC<Routes.LMSMoodleLanding> = () => {

@@ -1,44 +1,36 @@
-import { CreateEdgeInput, CreateEdgeMutationError, EdgeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { Just } from '@moodlenet/common/lib/utils/types'
-import { QMino } from '../../../../lib/qmino'
-import { NewEdgeInput } from '../../../../ports/content-graph/edge'
+import { CreateEdgeInput, CreateEdgeMutationError, EdgeType } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { Just } from '@moodlenet/common/dist/utils/types'
+import { Data } from '../../../../ports/content-graph/edge/add'
 
 const edgeDocumentDataBaker: {
-  [T in EdgeType]: (input: Just<CreateEdgeInput[T]>, qmino: QMino) => Promise<NewEdgeInput | CreateEdgeMutationError>
+  [T in EdgeType]: (input: Just<CreateEdgeInput[T]>) => Promise<Data | CreateEdgeMutationError>
 } = {
-  async Created(/* input, qmino */) {
+  async Created(/* input */) {
     throw new Error('GQL create Created not implemented')
   },
-  async Pinned(/* input, qmino */) {
-    const newPinnedEdgeInput: NewEdgeInput = {
-      _type: 'Pinned',
-    }
-
-    return newPinnedEdgeInput
-  },
-  async Follows(/* input, qmino */) {
-    const newFollowsEdgeInput: NewEdgeInput = {
+  async Follows(/* input */) {
+    const newFollowsEdgeInput: Data = {
       _type: 'Follows',
     }
 
     return newFollowsEdgeInput
   },
-  async Features(/* input, qmino */) {
-    const newFeaturesEdgeInput: NewEdgeInput = {
+  async Features(/* input */) {
+    const newFeaturesEdgeInput: Data = {
       _type: 'Features',
     }
 
     return newFeaturesEdgeInput
   },
-  async Likes(/* input, qmino */) {
-    const newLikesEdgeInput: NewEdgeInput = {
+  async Likes(/* input */) {
+    const newLikesEdgeInput: Data = {
       _type: 'Likes',
     }
 
     return newLikesEdgeInput
   },
-  async Bookmarked(/* input, qmino */) {
-    const newBookmarkedEdgeInput: NewEdgeInput = {
+  async Bookmarked(/* input */) {
+    const newBookmarkedEdgeInput: Data = {
       _type: 'Bookmarked',
     }
 
@@ -49,8 +41,7 @@ const edgeDocumentDataBaker: {
 export const bakeEdgeDoumentData = async <T extends EdgeType>(
   input: Just<CreateEdgeInput[T]>,
   edgeType: T,
-  qmino: QMino,
-): Promise<NewEdgeInput | CreateEdgeMutationError> => {
+): Promise<Data | CreateEdgeMutationError> => {
   const baker = (edgeDocumentDataBaker as any)[edgeType]
-  return baker(input, qmino)
+  return baker(input)
 }

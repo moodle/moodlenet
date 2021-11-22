@@ -2,10 +2,10 @@ import { FC } from "react";
 import "./styles.scss";
 
 export type SecondaryButtonProps = {
-  color?: '' | 'orange' | 'grey' | 'red'
+  color?: 'black' | 'orange' | 'grey' | 'red'
   className?: string
   disabled?: boolean
-  onHoverColor?: '' | 'red' | 'filled-red'
+  onHoverColor?: 'blue' | 'grey' | 'red' | 'filled-red'
   onClick?(arg0: unknown): unknown
 }
 
@@ -20,9 +20,8 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({children, color, clas
 }
 
 SecondaryButton.defaultProps = { 
-  color: '',
-  className: '',
-  onHoverColor: ''
+  color: 'black',
+  onHoverColor: 'blue'
 }
 
 export default SecondaryButton;

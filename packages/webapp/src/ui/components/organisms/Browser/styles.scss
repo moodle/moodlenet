@@ -1,0 +1,102 @@
+.browser {
+  margin-top: 50px;
+  > .content {
+    max-width: 1100px;
+    height: 100%;
+    display: flex;
+
+    > .main-column {
+      height: 100%;
+
+      &.full-width {
+        width: 100%;
+      }
+
+      &:not(.full-width) {
+        width: calc(100% - 190px);
+        margin-left: 190px;
+      }
+
+      > .filter-and-sort {
+        display: none;
+      }
+
+      > :not(:last-child) {
+        margin-bottom: 30px;
+      }
+
+      > .subjects:not(.see-all) {
+        max-height: 265px;
+        overflow: hidden;
+      }
+
+      > .collections:not(.see-all) {
+        max-height: 245px;
+        overflow: hidden;
+      }
+
+      > .resources:not(.see-all) {
+        max-height: 244px;
+        overflow: hidden;
+      }
+
+      > .people:not(.see-all) {
+        max-height: 585px;
+        overflow: hidden;
+      }
+
+      > .load-more {
+        display: flex;
+        justify-content: center;
+      }
+    }
+
+    > .side-column {
+      position: fixed;
+      width: 165px;
+      height: 100%;
+
+      > .filter-card {
+        margin-bottom: 15px;
+      }
+    }
+
+    @media screen and (max-width: 800px) {
+      > .main-column {
+        &:not(.full-width) {
+          margin-left: 0;
+          width: 100%;
+        }
+
+        > .filter-and-sort {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+        }
+      }
+
+      > .side-column {
+        display: none;
+        width: 325px;
+        height: 100%;
+        background-color: yellow;
+      }
+    }
+  }
+
+  @media (min-width: 450px) and (max-width: 1000px) {
+    .collections > .content > .collection-card {
+      font-size: 15px;
+    }
+  }
+
+  @media screen and (max-width: 450px) {
+    .search > .content {
+      margin: 25px;
+      .collections > .content > .collection-card {
+        font-size: 15px;
+        width: 100%;
+      }
+    }
+  }
+}

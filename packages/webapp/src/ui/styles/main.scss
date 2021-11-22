@@ -7,7 +7,14 @@
   font-family: Helvetica;
 }
 
+html,
+body,
+.main-page-wrapper {
+  overflow: auto;
+}
+
 body {
+  color: #3c4043;
   background: white;
   /* Hide scrollbar for IE, Edge and Firefox */
   -ms-overflow-style: none; /* IE and Edge */
@@ -40,14 +47,24 @@ body::-webkit-scrollbar {
   }
 
   > .policies-snackbar {
+    padding: 10px 14px 10px 25px;
+    gap: 24px;
     > .content {
       display: inline;
+      line-height: 22px;
       > a {
-        color: $base-moodle-color;
+        color: $info-color;
         margin: 0 5px;
         &:hover {
           text-decoration: underline;
         }
+      }
+    }
+
+    > .close-button {
+      color: $primary-color;
+      &:hover {
+        color: $base-light-green-color;
       }
     }
   }

@@ -8,7 +8,7 @@
   font-weight: bold;
   font-size: 12px;
   height: 30px;
-  padding: 12px 18px;
+  padding: 0 18px;
   width: fit-content;
   cursor: pointer;
   color: white;
@@ -25,6 +25,7 @@
 
   &:hover {
     //background-color: #e37511;
+    //background-color: $primary-color-hover;
     background-color: #337aff;
 
     &.hover-orange {
@@ -38,6 +39,11 @@
     &.hover-red {
       background-color: red;
     }
+  }
+
+  &:active {
+    background-color: #00e096;
+    //background-color: $primary-color-active;
   }
 
   &.disabled {

@@ -1,8 +1,9 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { href } from '../../../../elements/link'
 import { OverallCard, OverallCardProps } from './OverallCard'
 
 const meta: ComponentMeta<typeof OverallCard> = {
-  title: 'Components/Organisms/Cards/OverallCard',
+  title: 'Molecules/OverallCard',
   component: OverallCard,
   argTypes: {
     // backgroundColor: { control: 'color' },
@@ -22,6 +23,7 @@ export const OverallCardStoryProps: OverallCardProps = {
   resources: 23,
   kudos: 121,
   years: 20,
+  followingHref: href('Pages/Followers/Default'),
 }
 
 export const OverallCardNoCardStoryProps: OverallCardProps = {

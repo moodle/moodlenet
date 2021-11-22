@@ -1,84 +1,85 @@
-import { EditNodeInput, EditNodeMutationError, NodeType } from '@moodlenet/common/lib/graphql/types.graphql.gen'
-import { DistOmit, Just } from '@moodlenet/common/lib/utils/types'
-import { QMino } from '../../../../lib/qmino'
-import { EditNodeData, NewNodeData } from '../../../../ports/content-graph/node'
+import { EditNodeInput, EditNodeMutationError, NodeType } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { DistOmit, Just } from '@moodlenet/common/dist/utils/types'
+import { Data } from '../../../../ports/content-graph/node/edit'
 import { editNodeMutationError, getAssetRefInputAndType, mapAssetRefInputsToAssetRefs } from '../../helpers'
 
 const noTmpFilesEditNodeMutationError = () =>
   editNodeMutationError('UnexpectedInput', `couldn't find requested tempFiles`)
 
 const nodeDocumentDataBaker: {
-  [T in NodeType]: (input: Just<EditNodeInput[T]>, qmino: QMino) => Promise<EditNodeData | EditNodeMutationError>
+  [T in NodeType]: (input: Just<EditNodeInput[T]>) => Promise<Data | EditNodeMutationError>
 } = {
-  async IscedField(/* input, qmino */) {
+  async IscedField(/* input */) {
     throw new Error('GQL edit IscedField not implemented')
   },
-  async Organization(/* input, qmino */) {
+  async Organization(/* input */) {
     throw new Error('GQL edit Organization not implemented')
   },
-  async IscedGrade(/* input, qmino */) {
+  async IscedGrade(/* input */) {
     throw new Error('GQL edit IscedGrade not implemented')
   },
-  FileFormat(/* input, qmino */) {
+  FileFormat(/* input */) {
     throw new Error('GQL edit FileFormat not implemented')
   },
-  Language(/* input, qmino */) {
+  Language(/* input */) {
     throw new Error('GQL edit Language not implemented')
   },
-  License(/* input, qmino */) {
+  License(/* input */) {
     throw new Error('GQL edit License not implemented')
   },
-  ResourceType(/* input, qmino */) {
+  ResourceType(/* input */) {
     throw new Error('GQL edit ResourceType not implemented')
   },
-  async Resource(input, qmino) {
-    const assetRefs = await mapAssetRefInputsToAssetRefs([getAssetRefInputAndType(input.image, 'image')], qmino)
+  async Resource(input) {
+    const assetRefs = await mapAssetRefInputsToAssetRefs([getAssetRefInputAndType(input.image, 'image')])
 
     if (!assetRefs) {
       return noTmpFilesEditNodeMutationError()
     }
     const [imageAssetRef] = assetRefs
 
-    const editResourceData: DistOmit<EditNodeData<'Resource'>, 'content' | 'kind'> = {
+    const editResourceData: DistOmit<Data<'Resource'>, 'content' | 'kind'> = {
       // FIXME: when assets are externalilzed to own nodes
-      _type: 'Resource',
+      // _type: 'Resource',
       image: imageAssetRef,
       description: input.description,
       name: input.name,
       originalCreationDate: input.originalCreationDate,
+      _published: input._published,
     }
 
-    return editResourceData as EditNodeData<'Resource'> // FIXME: when assets are externalilzed to own nodes
+    return editResourceData as Data<'Resource'> // FIXME: when assets are externalilzed to own nodes
   },
-  async Collection(input, qmino) {
-    const assetRefs = await mapAssetRefInputsToAssetRefs([getAssetRefInputAndType(input.image, 'image')], qmino)
+  async Collection(input) {
+    const assetRefs = await mapAssetRefInputsToAssetRefs([getAssetRefInputAndType(input.image, 'image')])
 
     if (!assetRefs) {
       return noTmpFilesEditNodeMutationError()
     }
     const [imageAssetRef] = assetRefs
 
-    const editCollectionData: EditNodeData<'Collection'> = {
-      _type: 'Collection',
+    const editCollectionData: Data<'Collection'> = {
+      // _type: 'Collection',
       image: imageAssetRef,
       description: input.description,
       name: input.name,
+      _published: input._published,
     }
 
     return editCollectionData
   },
-  async Profile(input, qmino) {
-    const assetRefs = await mapAssetRefInputsToAssetRefs(
-      [getAssetRefInputAndType(input.image, 'image'), getAssetRefInputAndType(input.avatar, 'icon')],
-      qmino,
-    )
+  async Profile(input) {
+    const assetRefs = await mapAssetRefInputsToAssetRefs([
+      getAssetRefInputAndType(input.image, 'image'),
+      getAssetRefInputAndType(input.avatar, 'icon'),
+    ])
     if (!assetRefs) {
       return noTmpFilesEditNodeMutationError()
     }
     const [imageAssetRef, avatarAssetRef] = assetRefs
 
-    const editProfileData: EditNodeData<'Profile'> = {
-      _type: 'Profile',
+    const editProfileData: Data<'Profile'> = {
+      // _type: 'Profile',
       image: imageAssetRef,
       avatar: avatarAssetRef,
       description: input.description,
@@ -94,8 +95,7 @@ const nodeDocumentDataBaker: {
 export const bakeEditNodeDoumentData = async <T extends NodeType>(
   input: Just<EditNodeInput[T]>,
   nodeType: T,
-  qmino: QMino,
-): Promise<NewNodeData | EditNodeMutationError> => {
+): Promise<Data | EditNodeMutationError> => {
   const baker = (nodeDocumentDataBaker as any)[nodeType]
-  return baker(input, qmino)
+  return baker(input)
 }

@@ -1,7 +1,7 @@
-import Auth from '../lib/auth/types'
+import { SessionEnv } from '@moodlenet/common/dist/types'
 
 export type Context = {
-  authSessionEnv: Auth.SessionEnv | null
+  sessionEnv: SessionEnv
 }
 
 export type RootValue = {}

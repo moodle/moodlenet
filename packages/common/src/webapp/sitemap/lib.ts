@@ -2,7 +2,7 @@
 // @types/react-router/index.d.ts
 // react-router/cjs/react-router.js#306
 
-import { compile } from 'path-to-regexp'
+import { compile, PathFunction } from 'path-to-regexp'
 export type ExtractRouteParams<T extends string> = string extends T
   ? { [k in string]?: string | number | boolean }
   : T extends `${infer _Start}:${infer Param}/${infer Rest}`
@@ -14,12 +14,12 @@ export type ExtractRouteOptionalParam<T extends string> = T extends `${infer Par
   ? { [k in Param]?: string | number | boolean }
   : { [k in T]: string | number | boolean }
 
-const cache: Record<string, any> = {}
+const cache: Record<string, PathFunction<object>> = {}
 let cacheCount = 0
 let cacheLimit = 200
 
 function compilePath(path: string) {
-  if (cache[path]) return cache[path]
+  if (cache[path]) return cache[path]!
   var generator = compile(path)
 
   if (cacheCount < cacheLimit) {
@@ -34,9 +34,5 @@ function compilePath(path: string) {
  */
 
 export function generatePath<Path extends string>(path: Path, params: ExtractRouteParams<Path>): string {
-  return path === '/'
-    ? path
-    : compilePath(path)(params, {
-        pretty: true,
-      })
+  return path === '/' ? path : compilePath(path)(params)
 }

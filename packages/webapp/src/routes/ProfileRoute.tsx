@@ -1,9 +1,9 @@
-import { nodeSlugId } from '@moodlenet/common/lib/utils/content-graph/id-key-type-guards'
-import { Routes } from '@moodlenet/common/lib/webapp/sitemap'
-import { getContentNodeHomePageRoutePath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { nodeSlugId } from '@moodlenet/common/dist/utils/content-graph/id-key-type-guards'
+import { Routes } from '@moodlenet/common/dist/webapp/sitemap'
+import { getContentNodeHomePageRoutePath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
+import { useProfileCtrl } from '../ui/components/pages/Profile/Ctrl/ProfileCtrl'
+import { Profile } from '../ui/components/pages/Profile/Profile'
 import { ctrlHook } from '../ui/lib/ctrl'
-import { useProfileCtrl } from '../ui/pages/Profile/Ctrl/ProfileCtrl'
-import { Profile } from '../ui/pages/Profile/Profile'
 import { MNRouteProps, RouteFC } from './lib'
 
 export const ProfileRouteComponent: RouteFC<Routes.ContentNodeHomePage> = ({

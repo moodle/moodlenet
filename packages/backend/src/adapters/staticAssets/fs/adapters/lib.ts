@@ -52,15 +52,23 @@ export const getAssetFileDesc = async (assetDir: string, assetId: string) => {
   return assetFileDesc
 }
 
-export const pipeToFile = async ({ destFilePath, stream }: { stream: Readable; destFilePath: string }): Promise<void> =>
+export const pipeToFile = async ({
+  destFilePath,
+  stream,
+}: {
+  stream: Readable
+  destFilePath: string
+}): Promise<{ filesize: number }> =>
   new Promise((resolve, reject) => {
     const removeAndReject = async (e: any) => {
       reject(e)
       forceRm(destFilePath).catch()
     }
+    let filesize = 0
     const ws = createWriteStream(destFilePath, { autoClose: true })
     stream.on('error', removeAndReject)
-    ws.on('close', resolve)
+    stream.on('data', chunk => (filesize += chunk.length))
+    ws.on('close', () => resolve({ filesize }))
     stream.pipe(ws)
   })
 
@@ -127,7 +135,7 @@ export const persistTemp = async ({
   const tempDir = getDir(rootDir, 'temp')
   const assetDir = getDir(rootDir, 'assets')
   const tempAssetDesc = await getTempAssetDesc(tempDir, tempAssetId)
-  console.log({ tempAssetDesc, uploadType })
+  // console.log({ tempAssetDesc, uploadType })
 
   if (!tempAssetDesc || tempAssetDesc.uploadType !== uploadType) {
     return null
@@ -158,6 +166,8 @@ export const persistTemp = async ({
 }
 
 export const delOldTemps = async ({ tempDir, olderThanSecs }: { tempDir: string; olderThanSecs: number }) => {
+  console.log(`deleting old temp assets`)
+
   const tempAssets = await readdir(tempDir)
   const tempStats = await Promise.all(
     tempAssets.map(async tempAssetId => {
@@ -170,5 +180,6 @@ export const delOldTemps = async ({ tempDir, olderThanSecs }: { tempDir: string;
   const toDelete = tempStats
     .filter(({ stat: { birthtimeMs } }) => olderThanSecs < (now - birthtimeMs) / 1000)
     .map(({ filePath }) => forceRm(filePath))
+
   return toDelete.length
 }

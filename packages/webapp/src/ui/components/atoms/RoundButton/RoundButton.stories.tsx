@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { RoundButton } from './RoundButton'
 
 const meta: ComponentMeta<typeof RoundButton> = {
-  title: 'Components/Atoms/RoundButton',
+  title: 'Atoms/RoundButton',
   component: RoundButton
 }
 

@@ -5,7 +5,7 @@ import addIcon from '../../../assets/icons/add.svg'
 import { FloatingMenu, FloatingMenuProps } from './FloatingMenu'
 
 const meta: ComponentMeta<typeof FloatingMenu> = {
-  title: 'Components/Atoms/FloatingMenu',
+  title: 'Atoms/FloatingMenu',
   component: FloatingMenu,
   argTypes: {
     // backgroundColor: { control: 'color' },

@@ -1,7 +1,7 @@
-import { nodeIdentifierSlug2UrlPath } from '@moodlenet/common/lib/webapp/sitemap/helpers'
+import { nodeIdentifierSlug2HomeUrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import express from 'express'
-import { QMino } from '../../lib/qmino'
-import { getBySlug } from '../../ports/content-graph/node'
+import { port as getNodePort } from '../../ports/content-graph/node/read'
+import * as localOrgInfo from '../../ports/system/localOrg/info'
 
 export type WebFingerResp = {
   subject: string
@@ -14,12 +14,13 @@ export type WebFingerResp = {
   ]
 }
 
-export type GQLAppConfig = {
-  qmino: QMino
-  domain: string
-}
-export const createWebfingerApp = ({ qmino, domain }: GQLAppConfig) => {
+export type GQLAppConfig = {}
+export const createWebfingerApp = async () => {
   const app = express()
+  const {
+    localOrg: { domain },
+    publicUrl,
+  } = await localOrgInfo.adapter()
   const acctResourceParam = new RegExp(`^acct:[a-zA-Z0-9\.\_\-]+@${domain}$`)
   app.get<{}, WebFingerResp | string, any, { resource: string }>('/webfinger', async (req, res) => {
     const resParam = req.query.resource
@@ -31,19 +32,17 @@ export const createWebfingerApp = ({ qmino, domain }: GQLAppConfig) => {
     const acct = resParam.split(':')[1]!
     const userSlug = acct.split('@')[0]!
 
-    const profile = await qmino.query(
-      getBySlug({ _slug: userSlug, _type: 'Profile', env: req.mnHttpContext.authSessionEnv }),
-      {
-        timeout: 5000,
-      },
-    )
+    const profile = await getNodePort({
+      sessionEnv: req.mnHttpContext.sessionEnv,
+      identifier: { _slug: userSlug, _type: 'Profile' },
+    })
 
     if (!profile) {
       res.sendStatus(404).send(`user ${acct} not found`)
       return
     }
-    const profilePagePath = nodeIdentifierSlug2UrlPath(profile)
-    const profileUrl = `https://${domain}${profilePagePath}` //FIXME: hardcoded protocol for MVP !!
+    const profilePagePath = nodeIdentifierSlug2HomeUrlPath(profile)
+    const profileUrl = `${publicUrl}${profilePagePath}`
     const resp: WebFingerResp = {
       subject: profileUrl,
       aliases: [profileUrl],

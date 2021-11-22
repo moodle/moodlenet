@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SecondaryButton } from './SecondaryButton'
 
 const meta: ComponentMeta<typeof SecondaryButton> = {
-  title: 'Components/Atoms/SecondaryButton',
+  title: 'Atoms/SecondaryButton',
   component: SecondaryButton,
 }
 
