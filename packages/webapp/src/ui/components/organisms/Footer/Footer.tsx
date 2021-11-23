@@ -6,7 +6,7 @@ export type FooterProps = {
   isAuthenticated: boolean
 }
 
-export const Footer: FC<FooterProps> = ({ isAuthenticated }) => {
+export const Footer: FC<FooterProps> = (/*FIXME: unused { isAuthenticated } */) => {
   return (
     <div className={`footer`}>
       <div className="content">
