@@ -238,7 +238,6 @@ export const Resource = withCtrl<ResourceProps>(
           getValue={setVisibilityField}
         />
         <Dropdown
-          className="scroll"
           value={form.values.category}
           {...categories}
           {...formAttrs.category}
