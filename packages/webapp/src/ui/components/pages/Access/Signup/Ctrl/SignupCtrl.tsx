@@ -17,8 +17,8 @@ const validationSchema: SchemaOf<SignupFormValues> = object({
   name: string()
     .required(t`Please provide a display name`)
     .matches(
-      /^[A-z0-9 ]+$/,
-      t`Display name can contain only alphanumerics and spaces`
+      /^[\p{L}\p{M}\p{N}\p{Zs}]+$/u,
+      t`Display name can contain only unicode alphanumerics and spaces`
     ),
   email: string()
     .required(t`Please provide an email address`)

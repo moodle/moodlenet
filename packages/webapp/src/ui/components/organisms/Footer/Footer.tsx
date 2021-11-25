@@ -34,7 +34,6 @@ export const Footer: FC<FooterProps> = (/*FIXME: unused { isAuthenticated } */) 
                 .
               </Trans>
             </div>
-          )
         </div>
         <div className="right"></div>
       </div>
