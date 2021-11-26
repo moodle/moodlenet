@@ -34,6 +34,10 @@ export const port = plug<Port>(ns(module, 'port'), async ({ data, sessionEnv }) 
   if (!sessionEnv.authId) {
     return null
   }
+  if (!/^[\p{L}\p{M}\p{N}\p{Zs}]+$/u.test(data.name)) {
+    return null
+  }
+
   const adapterArg = await bRules({
     sessionEnv,
     arg: {
