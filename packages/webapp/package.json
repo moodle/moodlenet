@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/webapp",
-  "version": "2.0.0",
+  "version": "2.0.1-dev.1",
   "license": "AGPL-3.0",
   "description": "MoodleNet Webapp",
   "author": "https://github.com/aleclofabbro",
@@ -22,7 +22,7 @@
     "@lingui/react": "^3.5.0",
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
-    "@moodlenet/common": "^2.0.0",
+    "@moodlenet/common": "^2.0.1-dev.1",
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-link-context": "^1.0.20",
     "apollo-link-logger": "^2.0.0",
