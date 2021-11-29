@@ -6,13 +6,12 @@ export type FooterProps = {
   isAuthenticated: boolean
 }
 
-export const Footer: FC<FooterProps> = ({ isAuthenticated }) => {
+export const Footer: FC<FooterProps> = (/*FIXME: unused { isAuthenticated } */) => {
   return (
     <div className={`footer`}>
       <div className="content">
         <div className="left"></div>
         <div className="center">
-          {isAuthenticated ? (
             <div className="extended">
               <Trans>
                 Should you encounter any bugs, glitches, lack of functionality
@@ -35,17 +34,6 @@ export const Footer: FC<FooterProps> = ({ isAuthenticated }) => {
                 .
               </Trans>
             </div>
-          ) : (
-            <div className="short">
-              <a
-                href="https://docs.moodle.org/dev/MoodleNet"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <Trans>MoodleNet Beta</Trans>
-              </a>
-            </div>
-          )}
         </div>
         <div className="right"></div>
       </div>
