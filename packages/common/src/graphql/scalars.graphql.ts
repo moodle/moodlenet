@@ -5,7 +5,7 @@ export type AssetRef = {
 }
 
 export type Timestamp = number
-export type Empty = {}
+export type Empty = Record<string, never>
 export type Cursor = string
 export type Never = never
 export type ID = string

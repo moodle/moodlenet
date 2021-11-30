@@ -4,4 +4,4 @@ export type Context = {
   sessionEnv: SessionEnv
 }
 
-export type RootValue = {}
+export type RootValue = Record<string, never>
