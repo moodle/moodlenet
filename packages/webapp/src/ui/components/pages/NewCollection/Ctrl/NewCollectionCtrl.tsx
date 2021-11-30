@@ -15,11 +15,15 @@ import { useCreateCollectionMutation } from './NewCollectionCtrl.gen'
 
 export type NewCollectionCtrlProps = {}
 
-export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtrlProps> = () => {
+export const useNewCollectionCtrl: CtrlHook<
+  NewCollectionProps,
+  NewCollectionCtrlProps
+> = () => {
   const history = useHistory()
   const uploadTempFile = useUploadTempFile()
   const { refetch } = useSession()
-  const [createCollectionMut /* , createCollectionMutRes */] = useCreateCollectionMutation()
+  const [createCollectionMut /* , createCollectionMutRes */] =
+    useCreateCollectionMutation()
   // const [createCollectionRelMut /* , createCollectionRelMutRes */] = useCreateCollectionRelationMutation()
 
   const [, /* form */ formBag] = useFormikBag<NewCollectionFormValues>({
@@ -39,7 +43,8 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
 
   const [imageUrl, setImageUrl] = useState('')
   useEffect(() => {
-    const imageObjectUrl = image instanceof File ? URL.createObjectURL(image) : ''
+    const imageObjectUrl =
+      image instanceof File ? URL.createObjectURL(image) : ''
     setImageUrl(imageObjectUrl)
     return () => URL.revokeObjectURL(imageObjectUrl)
   }, [image, setImageUrl])
@@ -66,7 +71,12 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
       variables: {
         res: {
           nodeType: 'Collection',
-          Collection: { description, image: imageAssetRef, name: title, _published: visibility === 'Public' },
+          Collection: {
+            description,
+            image: imageAssetRef,
+            name: title,
+            _published: visibility === 'Public',
+          },
         },
       },
     })
@@ -86,11 +96,25 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
 
       history.push(nodeGqlId2UrlPath(collId))
     }
-  }, [refetch, createCollectionMut, description, visibility, history, image, saving, title, uploadTempFile])
+  }, [
+    refetch,
+    createCollectionMut,
+    description,
+    visibility,
+    history,
+    image,
+    saving,
+    title,
+    uploadTempFile,
+  ])
 
   const NewCollectionProps = useMemo<NewCollectionProps>(() => {
     const props: NewCollectionProps = {
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
+      headerPageTemplateProps: ctrlHook(
+        useHeaderPageTemplateCtrl,
+        {},
+        'header-page-template'
+      ),
       stepProps: {
         step: 'CreateCollectionStep',
         imageUrl,
@@ -100,7 +124,7 @@ export const useNewCollectionCtrl: CtrlHook<NewCollectionProps, NewCollectionCtr
       },
     }
     return props
-  }, [imageUrl, formBag, title, description, visibility, save])
+  }, [description, formBag, imageUrl, save, title, visibility])
 
   // console.log({ vals: form.values, step: NewCollectionProps.stepProps })
   // console.log(formBag[0].touched, { NewCollectionProps })
