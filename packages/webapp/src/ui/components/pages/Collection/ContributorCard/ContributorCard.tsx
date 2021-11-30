@@ -11,15 +11,22 @@ export type ContributorCardProps = {
   creatorProfileHref: Href
 }
 
-export const ContributorCard = withCtrl<ContributorCardProps>(({ avatarUrl, displayName, creatorProfileHref }) => {
-  return (
-    <Card className="contributor-card" hideBorderWhenSmall={true}>
-      <Link href={creatorProfileHref}>
-        <img className="avatar" src={avatarUrl || defaultBackgroud} alt="Avatar" />
-      </Link>
-      <div className="description">
-        Collection Curated by <Link href={creatorProfileHref}>{displayName}</Link>
-      </div>
-    </Card>
-  )
-})
+export const ContributorCard = withCtrl<ContributorCardProps>(
+  ({ avatarUrl, displayName, creatorProfileHref }) => {
+    return (
+      <Card className="contributor-card" hideBorderWhenSmall={true}>
+        <Link href={creatorProfileHref}>
+          <img
+            className="avatar"
+            src={avatarUrl || defaultBackgroud}
+            alt="Avatar"
+          />
+        </Link>
+        <div className="description">
+          Collection Curated by{' '}
+          <Link href={creatorProfileHref}>{displayName}</Link>
+        </div>
+      </Card>
+    )
+  }
+)

@@ -22,11 +22,16 @@ export const AddResourcesCard: FC<AddResourcesCardProps> = ({
   toggleResource,
   setSearchText,
 }) => {
-
   const resourceList =
     resourceCardPropsList &&
     resourceCardPropsList.map((resourceCardProps, index) => {
-      return <ResourceCard key={index} onClick={() => toggleResource(resourceCardProps)} {...resourceCardProps} />
+      return (
+        <ResourceCard
+          key={index}
+          onClick={() => toggleResource(resourceCardProps)}
+          {...resourceCardProps}
+        />
+      )
     })
 
   return (
@@ -39,7 +44,11 @@ export const AddResourcesCard: FC<AddResourcesCardProps> = ({
             </div>
           )}
           {setSearchText && (
-            <Searchbox setSearchText={setSearchText} searchText="" placeholder={t`Find more resources`} />
+            <Searchbox
+              setSearchText={setSearchText}
+              searchText=""
+              placeholder={t`Find more resources`}
+            />
           )}
         </div>
       )}

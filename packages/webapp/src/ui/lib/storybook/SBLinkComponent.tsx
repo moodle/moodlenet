@@ -3,13 +3,17 @@ import { FC } from 'react'
 import { LinkComponentType, ProvideLinkComponentCtx } from '../../elements/link'
 
 // HACK: it seems '@storybook/addon-links' typings are not accurate
-const SBLinkTo = (_LinkTo as any) as typeof LinkTo
+const SBLinkTo = _LinkTo as any as typeof LinkTo
 
 export const ProvideStorybookLinkComponent: FC = ({ children }) => {
-  return <ProvideLinkComponentCtx value={StorybookLinkComponent}>{children}</ProvideLinkComponentCtx>
+  return (
+    <ProvideLinkComponentCtx value={StorybookLinkComponent}>
+      {children}
+    </ProvideLinkComponentCtx>
+  )
 }
 
-const StorybookLinkComponent: LinkComponentType = props => {
+const StorybookLinkComponent: LinkComponentType = (props) => {
   const isExternal = props.href.ext
   const asExternal = props.asExt
   const splitHref = props.href.url.split('/')
@@ -23,7 +27,14 @@ const StorybookLinkComponent: LinkComponentType = props => {
   })*/
   if (isExternal || asExternal || !(kind && story)) {
     //console.log('external !!')
-    const { href, externalClassName, externalStyle, activeClassName, activeStyle, ...restProps } = props
+    const {
+      href,
+      externalClassName,
+      externalStyle,
+      activeClassName,
+      activeStyle,
+      ...restProps
+    } = props
     return (
       <a
         {...restProps}
@@ -38,7 +49,8 @@ const StorybookLinkComponent: LinkComponentType = props => {
     )
   } else {
     //console.log('internal !!')
-    const { href, externalClassName, externalStyle, children, ...restProps } = props
+    const { href, externalClassName, externalStyle, children, ...restProps } =
+      props
     // props.activeClassName || props.activeStyle
     return (
       <SBLinkTo {...restProps} kind={kind} story={story} ref={null}>

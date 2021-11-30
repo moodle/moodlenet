@@ -49,9 +49,8 @@ export const Landing = withCtrl<LandingProps>(
     setSearchText,
   }) => {
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false)
-    const [isSearchboxInViewport, setIsSearchboxInViewport] = useState<boolean>(
-      true
-    )
+    const [isSearchboxInViewport, setIsSearchboxInViewport] =
+      useState<boolean>(true)
 
     return (
       <HeaderPageTemplate

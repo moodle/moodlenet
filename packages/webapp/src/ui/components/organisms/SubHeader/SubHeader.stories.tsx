@@ -9,19 +9,25 @@ const meta: ComponentMeta<typeof SubHeader> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: ['SubHeaderStoryProps'],
-  decorators:[
-    (Story)=>(<div style={{position: 'relative', top:-60}}><Story/></div>)
-  ]
+  decorators: [
+    (Story) => (
+      <div style={{ position: 'relative', top: -60 }}>
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export const SubHeaderStoryProps: SubHeaderProps = {
-  tags: TagListStory
+  tags: TagListStory,
 }
 
-const SubHeaderStory: ComponentStory<typeof SubHeader> = args => <SubHeader {...args} />
+const SubHeaderStory: ComponentStory<typeof SubHeader> = (args) => (
+  <SubHeader {...args} />
+)
 
 export const Default = SubHeaderStory.bind({})
 Default.args = SubHeaderStoryProps
-Default.parameters = {layout: 'fullscreen'}
+Default.parameters = { layout: 'fullscreen' }
 
 export default meta

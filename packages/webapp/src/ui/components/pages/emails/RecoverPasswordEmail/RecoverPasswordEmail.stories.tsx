@@ -1,5 +1,5 @@
-import { ComponentMeta, ComponentStory } from "@storybook/react"
-import { FC } from "react"
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { FC } from 'react'
 
 function html() {
   return {
@@ -455,16 +455,16 @@ function html() {
 export const Email: FC<{}> = () => {
   return (
     <div
-      style={{ width: "100%", height: "100%" }}
+      style={{ width: '100%', height: '100%' }}
       dangerouslySetInnerHTML={html()}
     />
   )
 }
 
 const meta: ComponentMeta<typeof Email> = {
-  title: "Pages/Emails/Access/RecoverPasswordEmail",
-  excludeStories: ["Email"],
-  parameters: { layout: "fullscreen" },
+  title: 'Pages/Emails/Access/RecoverPasswordEmail',
+  excludeStories: ['Email'],
+  parameters: { layout: 'fullscreen' },
 }
 
 const RecoverPasswordEmailStory: ComponentStory<typeof Email> = () => <Email />

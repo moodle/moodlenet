@@ -24,7 +24,10 @@ export const useLanguages = () => {
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
-  return useMemo(() => (langs || []).filter(isEdgeNodeOfType(['Language'])), [langs])
+  return useMemo(
+    () => (langs || []).filter(isEdgeNodeOfType(['Language'])),
+    [langs]
+  )
 }
 export const useLangOptions = () => {
   const langs = useLanguages()
@@ -35,17 +38,19 @@ export const useLangOptions = () => {
         options: langs
           .slice()
           .sort((a, b) => (a.node.name > b.node.name ? 1 : -1))
-          .map(lang => lang.node.name),
+          .map((lang) => lang.node.name),
       },
       getLang: (language: string) => {
-        const Lang = (langs || []).find(_ => _.node.name === language)?.node
+        const Lang = (langs || []).find((_) => _.node.name === language)?.node
         if (!Lang) {
-          throw new Error(`RESOURCE-RELATION-DATA-STATIC: should never happen: Lang not found: ${language}`)
+          throw new Error(
+            `RESOURCE-RELATION-DATA-STATIC: should never happen: Lang not found: ${language}`
+          )
         }
         return Lang
       },
     }),
-    [langs],
+    [langs]
   )
 }
 
@@ -58,7 +63,10 @@ export const useIscedFields = () => {
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
-  return useMemo(() => (fields || []).filter(isEdgeNodeOfType(['IscedField'])), [fields])
+  return useMemo(
+    () => (fields || []).filter(isEdgeNodeOfType(['IscedField'])),
+    [fields]
+  )
 }
 export const useIscedFieldsOptions = () => {
   const iscedFields = useIscedFields()
@@ -69,17 +77,19 @@ export const useIscedFieldsOptions = () => {
         options: iscedFields
           .slice()
           .sort((a, b) => (a.node.code > b.node.code ? 1 : -1))
-          .map(cat => cat.node.name),
+          .map((cat) => cat.node.name),
       },
       getIscedF: (category: string) => {
-        const IscedF = iscedFields.find(_ => _.node.name === category)?.node
+        const IscedF = iscedFields.find((_) => _.node.name === category)?.node
         if (!IscedF) {
-          throw new Error(`RESOURCE-RELATION-DATA-STATIC: should never happen: IscedF not found: ${category}`)
+          throw new Error(
+            `RESOURCE-RELATION-DATA-STATIC: should never happen: IscedF not found: ${category}`
+          )
         }
         return IscedF
       },
     }),
-    [iscedFields],
+    [iscedFields]
   )
 }
 
@@ -92,7 +102,10 @@ export const useResourceTypes = () => {
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
-  return useMemo(() => (types || []).filter(isEdgeNodeOfType(['ResourceType'])), [types])
+  return useMemo(
+    () => (types || []).filter(isEdgeNodeOfType(['ResourceType'])),
+    [types]
+  )
 }
 
 export const useResourceTypeOptions = () => {
@@ -100,9 +113,11 @@ export const useResourceTypeOptions = () => {
   return useMemo(
     () => ({
       getResourceType: (type: string) => {
-        const Type = resourceTypes.find(_ => _.node.name === type)?.node
+        const Type = resourceTypes.find((_) => _.node.name === type)?.node
         if (!Type) {
-          throw new Error(`RESOURCE-RELATION-DATA-STATIC: should never happen: Type not found: ${type}`)
+          throw new Error(
+            `RESOURCE-RELATION-DATA-STATIC: should never happen: Type not found: ${type}`
+          )
         }
         return Type
       },
@@ -111,10 +126,10 @@ export const useResourceTypeOptions = () => {
         options: resourceTypes
           .slice()
           .sort((a, b) => (a.node.name > b.node.name ? 1 : -1))
-          .map(restype => restype.node.name),
+          .map((restype) => restype.node.name),
       },
     }),
-    [resourceTypes],
+    [resourceTypes]
   )
 }
 
@@ -127,7 +142,10 @@ export const useIscedGrades = () => {
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
-  return useMemo(() => (grades || []).filter(isEdgeNodeOfType(['IscedGrade'])), [grades])
+  return useMemo(
+    () => (grades || []).filter(isEdgeNodeOfType(['IscedGrade'])),
+    [grades]
+  )
 }
 export const useResourceGradeOptions = () => {
   const iscedGrades = useIscedGrades()
@@ -138,20 +156,28 @@ export const useResourceGradeOptions = () => {
         options: iscedGrades
           .slice()
           .sort((a, b) =>
-            a.node.code === 'ADT' ? +2 : b.node.code === 'ADT' ? -2 : a.node.code > b.node.code ? 1 : -1,
+            a.node.code === 'ADT'
+              ? +2
+              : b.node.code === 'ADT'
+              ? -2
+              : a.node.code > b.node.code
+              ? 1
+              : -1
           )
-          .map(grade => grade.node.name),
+          .map((grade) => grade.node.name),
       },
       getGrade: (level: string) => {
-        const Grade = iscedGrades.find(_ => _.node.name === level)?.node
+        const Grade = iscedGrades.find((_) => _.node.name === level)?.node
         if (!Grade) {
-          throw new Error(`RESOURCE-RELATION-DATA-STATIC: should never happen: Grade not found: ${level}`)
+          throw new Error(
+            `RESOURCE-RELATION-DATA-STATIC: should never happen: Grade not found: ${level}`
+          )
         }
 
         return Grade
       },
     }),
-    [iscedGrades],
+    [iscedGrades]
   )
 }
 
@@ -164,7 +190,10 @@ export const useLicenses = () => {
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
-  return useMemo(() => (licenses || []).filter(isEdgeNodeOfType(['License'])), [licenses])
+  return useMemo(
+    () => (licenses || []).filter(isEdgeNodeOfType(['License'])),
+    [licenses]
+  )
 }
 export const useLicensesOptions = () => {
   const licenses = useLicenses()
@@ -176,20 +205,28 @@ export const useLicensesOptions = () => {
         options: licenses
           .slice()
           .sort((a, b) => (a.node.code.length > b.node.code.length ? 1 : -1))
-          .map(license => {
+          .map((license) => {
             const codeSplit = license.node.code.split('-')
             const firstToken = codeSplit.shift()
             const icons =
-              firstToken === 'cc' ? codeSplit.map(cctype => licenseIconMap[cctype as LicenseTypes]).filter(Boolean) : []
+              firstToken === 'cc'
+                ? codeSplit
+                    .map((cctype) => licenseIconMap[cctype as LicenseTypes])
+                    .filter(Boolean)
+                : []
 
-            const ddField: DropdownOptionsType = [[license.node.name, React.createElement('div', {}, ...icons)]]
+            const ddField: DropdownOptionsType = [
+              [license.node.name, React.createElement('div', {}, ...icons)],
+            ]
             return ddField[0]!
           }),
       },
       getLicense: (license: string) => {
-        const License = licenses.find(_ => _.node.name === license)?.node
+        const License = licenses.find((_) => _.node.name === license)?.node
         if (!License) {
-          throw new Error(`RESOURCE-RELATION-DATA-STATIC: should never happen: License not found: ${license}`)
+          throw new Error(
+            `RESOURCE-RELATION-DATA-STATIC: should never happen: License not found: ${license}`
+          )
         }
         return License
       },
@@ -227,7 +264,9 @@ export const getOriginalCreationTimestampByStrings = ({
   if (!(originalDateMonth && originalDateYear)) {
     return null
   }
-  const ts = new Date(`${originalDateMonth} 1 ${originalDateYear} GMT`).valueOf()
+  const ts = new Date(
+    `${originalDateMonth} 1 ${originalDateYear} GMT`
+  ).valueOf()
   if (isNaN(ts)) {
     return null
   }

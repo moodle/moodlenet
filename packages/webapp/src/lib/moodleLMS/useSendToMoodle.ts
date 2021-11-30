@@ -4,7 +4,10 @@ import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers
 import { useCallback, useMemo, useState } from 'react'
 import { License, Resource } from '../../graphql/pub.graphql.link'
 import { getMaybeAssetRefUrl } from '../../helpers/data'
-import { createLocalSessionKVStorage, LOCAL } from '../keyvaluestore/localSessionStorage'
+import {
+  createLocalSessionKVStorage,
+  LOCAL,
+} from '../keyvaluestore/localSessionStorage'
 import { LMSPrefs, sendToMoodle } from './LMSintegration'
 
 const storage = createLocalSessionKVStorage(LOCAL)('LMS_')
@@ -15,7 +18,7 @@ export const useLMS = (
     resource: Pick<Resource, 'id' | 'image' | 'name' | 'description'>
     license: Pick<License, 'code'>
     asset: AssetRef
-  }>,
+  }>
 ) => {
   const { updateLMSPrefs, currentLMSPrefs } = useLMSPrefs()
   const sendToLMS = useCallback(
@@ -35,7 +38,9 @@ export const useLMS = (
         : `${window.location.protocol}//${window.location.host}/assets/${asset.location}`
 
       const resource_info = {
-        canonicalUrl: `${window.location.protocol}//${window.location.host}${nodeGqlId2UrlPath(resource.id)}`,
+        canonicalUrl: `${window.location.protocol}//${
+          window.location.host
+        }${nodeGqlId2UrlPath(resource.id)}`,
         icon: getMaybeAssetRefUrl(resource.image) ?? '',
         licence: license.code.toUpperCase(),
         name: resource.name,
@@ -46,10 +51,13 @@ export const useLMS = (
 
       const type = asset.ext ? 'link' : 'file'
       // console.log({ resUrl, resource_info, type, LMS })
-      sendToMoodle(resUrl, resource_info_stringified, type, { ...currentLMSPrefs, site })
+      sendToMoodle(resUrl, resource_info_stringified, type, {
+        ...currentLMSPrefs,
+        site,
+      })
       return true
     },
-    [currentLMSPrefs, obj, updateLMSPrefs],
+    [currentLMSPrefs, obj, updateLMSPrefs]
   )
 
   return useMemo(
@@ -58,12 +66,14 @@ export const useLMS = (
       sendToLMS,
       currentLMSPrefs,
     }),
-    [updateLMSPrefs, sendToLMS, currentLMSPrefs],
+    [updateLMSPrefs, sendToLMS, currentLMSPrefs]
   )
 }
 
 export const useLMSPrefs = () => {
-  const [currentLMSPrefs, setCurrentLMSPrefs] = useState(storage.get(LMS_PREFS_KEY) as LMSPrefs | null)
+  const [currentLMSPrefs, setCurrentLMSPrefs] = useState(
+    storage.get(LMS_PREFS_KEY) as LMSPrefs | null
+  )
 
   const updateLMSPrefs = useCallback(async (LMS: LMSPrefs) => {
     setCurrentLMSPrefs(LMS)
@@ -74,6 +84,6 @@ export const useLMSPrefs = () => {
       updateLMSPrefs,
       currentLMSPrefs,
     }),
-    [updateLMSPrefs, currentLMSPrefs],
+    [updateLMSPrefs, currentLMSPrefs]
   )
 }

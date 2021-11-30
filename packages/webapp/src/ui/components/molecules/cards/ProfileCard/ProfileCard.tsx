@@ -44,14 +44,29 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     toggleIsEditing,
   }) => {
     const [form, formAttrs] = formBag
-    const [profileCardErrorMessage, setProfileCardErrorMessage] = useState<string | null>(null)
+    const [profileCardErrorMessage, setProfileCardErrorMessage] = useState<
+      string | null
+    >(null)
     const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
-    const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
+    const [isShowingBackground, setIsShowingBackground] =
+      useState<boolean>(false)
     const setFieldValue = form.setFieldValue
-    const setDisplayNameField = useCallback((_: string) => setFieldValue('displayName', _), [setFieldValue])
-    const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
-    const setLocationField = useCallback((_: string) => setFieldValue('location', _), [setFieldValue])
-    const setSiteUrlField = useCallback((_: string) => setFieldValue('siteUrl', _), [setFieldValue])
+    const setDisplayNameField = useCallback(
+      (_: string) => setFieldValue('displayName', _),
+      [setFieldValue]
+    )
+    const setDescriptionField = useCallback(
+      (_: string) => setFieldValue('description', _),
+      [setFieldValue]
+    )
+    const setLocationField = useCallback(
+      (_: string) => setFieldValue('location', _),
+      [setFieldValue]
+    )
+    const setSiteUrlField = useCallback(
+      (_: string) => setFieldValue('siteUrl', _),
+      [setFieldValue]
+    )
 
     const setDisplayNameFieldCtrl = (displayName: string) => {
       if (isEmailAddress(form.values.displayName)) {
@@ -84,14 +99,17 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     const uploadImage = useCallback(
       (file: File, type: 'background' | 'avatar') => {
         if (file) {
-          type === 'background' ? setFieldValue('backgroundImage', file) : setFieldValue('avatarImage', file)
+          type === 'background'
+            ? setFieldValue('backgroundImage', file)
+            : setFieldValue('avatarImage', file)
         }
       },
-      [setFieldValue],
+      [setFieldValue]
     )
 
     const background = {
-      backgroundImage: 'url(' + (backgroundUrl ? backgroundUrl : defaultBackgroud) + ')',
+      backgroundImage:
+        'url(' + (backgroundUrl ? backgroundUrl : defaultBackgroud) + ')',
       backgroundSize: 'cover',
     }
 
@@ -122,7 +140,11 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             <img src={avatarUrl} alt="Avatar" />
           </Modal>
         )}
-        <div className="background" style={background} onClick={() => !isEditing && setIsShowingBackground(true)}>
+        <div
+          className="background"
+          style={background}
+          onClick={() => !isEditing && setIsShowingBackground(true)}
+        >
           {isEditing && (
             <input
               id="upload-background"
@@ -132,20 +154,46 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               hidden
             />
           )}
-          {isEditing && <RoundButton className="change-background-button" type="edit" onClick={selectBackground} />}
+          {isEditing && (
+            <RoundButton
+              className="change-background-button"
+              type="edit"
+              onClick={selectBackground}
+            />
+          )}
         </div>
 
         <div className="avatar-and-actions">
-          <div className="avatar" style={avatar} onClick={() => !isEditing && setIsShowingAvatar(true)}>
+          <div
+            className="avatar"
+            style={avatar}
+            onClick={() => !isEditing && setIsShowingAvatar(true)}
+          >
             {isEditing && (
-              <input id="upload-avatar" type="file" accept=".jpg,.jpeg,.png,.gif" onChange={uploadAvatar} hidden />
+              <input
+                id="upload-avatar"
+                type="file"
+                accept=".jpg,.jpeg,.png,.gif"
+                onChange={uploadAvatar}
+                hidden
+              />
             )}
-            {isEditing && <RoundButton className="change-avatar-button" type="edit" onClick={selectAvatar} />}
+            {isEditing && (
+              <RoundButton
+                className="change-avatar-button"
+                type="edit"
+                onClick={selectAvatar}
+              />
+            )}
           </div>
           {isOwner && (
             <div className="actions edit-save">
               {isEditing ? (
-                <PrimaryButton color="green" onHoverColor="orange" onClick={toggleIsEditing}>
+                <PrimaryButton
+                  color="green"
+                  onHoverColor="orange"
+                  onClick={toggleIsEditing}
+                >
                   <SaveIcon />
                 </PrimaryButton>
               ) : (
@@ -228,17 +276,29 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               </div>
             ) : (
               <div className="subtitle">
-                {form.values.username !== '' && <span>@{form.values.username}</span>}
-                {form.values.organizationName !== '' && <span>{form.values.organizationName}</span>}
-                {form.values.location !== '' && <span>{form.values.location}</span>}
+                {form.values.username !== '' && (
+                  <span>@{form.values.username}</span>
+                )}
+                {form.values.organizationName !== '' && (
+                  <span>{form.values.organizationName}</span>
+                )}
+                {form.values.location !== '' && (
+                  <span>{form.values.location}</span>
+                )}
                 {form.values.siteUrl !== '' && (
-                  <a href={form.values.siteUrl} target="_blank" rel="noreferrer">
+                  <a
+                    href={form.values.siteUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     {form.values.siteUrl}
                   </a>
                 )}
               </div>
             )}
-            {profileCardErrorMessage && <div className="error">{profileCardErrorMessage}</div>}
+            {profileCardErrorMessage && (
+              <div className="error">{profileCardErrorMessage}</div>
+            )}
           </div>
           {isOwner ? (
             <InputTextField
@@ -262,11 +322,17 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                   <Trans>Unfollow</Trans>
                 </SecondaryButton>
               ) : (
-                <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow}>
+                <PrimaryButton
+                  disabled={!isAuthenticated}
+                  onClick={toggleFollow}
+                >
                   <Trans>Follow</Trans>
                 </PrimaryButton>
               )}
-              <div className={`message ${isAuthenticated ? '' : 'font-disabled'}`} onClick={openSendMessage}>
+              <div
+                className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
+                onClick={openSendMessage}
+              >
                 <MailOutlineIcon />
               </div>
             </div>
@@ -274,5 +340,5 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
         </div>
       </div>
     )
-  },
+  }
 )

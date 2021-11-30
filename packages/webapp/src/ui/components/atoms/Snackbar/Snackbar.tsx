@@ -35,7 +35,9 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   position,
   children,
 }) => {
-  const [movementState, setMovementState] = useState<'opening' | 'closing' | 'closed'>('opening')
+  const [movementState, setMovementState] = useState<
+    'opening' | 'closing' | 'closed'
+  >('opening')
   const handleonClose = useCallback(
     (event?: React.MouseEvent) => {
       event?.stopPropagation()
@@ -45,7 +47,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
         onClose && onClose()
       }, 100)
     },
-    [onClose],
+    [onClose]
   )
 
   useEffect(() => {
@@ -59,7 +61,11 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   }, [autoHideDuration, handleonClose])
 
   return (
-    <Card className={`snackbar ${className} type-${type} state-${movementState} position-${position}`} onClick={stopPropagation} style={style}>
+    <Card
+      className={`snackbar ${className} type-${type} state-${movementState} position-${position}`}
+      onClick={stopPropagation}
+      style={style}
+    >
       {showIcon && (icon || type) && (
         <div className="icon">
           {icon
@@ -91,7 +97,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
 Snackbar.defaultProps = {
   className: '',
   showIcon: true,
-  position: 'bottom'
+  position: 'bottom',
 }
 
 export default Snackbar

@@ -12,7 +12,15 @@ export type ListCardProps = {
   actions?: ReactNode
 }
 
-export const ListCard: FC<ListCardProps> = ({ className, content, direction, title, minGrid, noCard, actions }) => {
+export const ListCard: FC<ListCardProps> = ({
+  className,
+  content,
+  direction,
+  title,
+  minGrid,
+  noCard,
+  actions,
+}) => {
   const contentWithKeys = content.map((element, i) => {
     return [<React.Fragment key={i}>{element}</React.Fragment>]
   })
@@ -21,8 +29,13 @@ export const ListCard: FC<ListCardProps> = ({ className, content, direction, tit
       {title && <div className="title">{title}</div>}
       {contentWithKeys && contentWithKeys.length > 0 && (
         <div
-          className={`content ${direction} ${direction === 'horizontal' ? 'scroll' : ''} ${minGrid ? 'grid' : ''}`}
-          style={{ gridTemplateColumns: minGrid && `repeat(auto-fit, minmax(${minGrid}px, 1fr))` }}
+          className={`content ${direction} ${
+            direction === 'horizontal' ? 'scroll' : ''
+          } ${minGrid ? 'grid' : ''}`}
+          style={{
+            gridTemplateColumns:
+              minGrid && `repeat(auto-fit, minmax(${minGrid}px, 1fr))`,
+          }}
         >
           {contentWithKeys}
         </div>

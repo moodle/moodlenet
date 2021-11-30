@@ -3,17 +3,37 @@ import { ChangeEventHandler, useCallback, useMemo, useReducer } from 'react'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import Checkbox from '../../atoms/Checkbox/Checkbox'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
-import { CollectionCard, CollectionCardProps } from '../../molecules/cards/CollectionCard/CollectionCard'
-import FilterCard, { FilterCardDirection } from '../../molecules/cards/FilterCard/FilterCard'
+import {
+  CollectionCard,
+  CollectionCardProps,
+} from '../../molecules/cards/CollectionCard/CollectionCard'
+import FilterCard, {
+  FilterCardDirection,
+} from '../../molecules/cards/FilterCard/FilterCard'
 import ListCard from '../../molecules/cards/ListCard/ListCard'
-import { ResourceCard, ResourceCardProps } from '../../molecules/cards/ResourceCard/ResourceCard'
-import { SmallProfileCard, SmallProfileCardProps } from '../../molecules/cards/SmallProfileCard/SmallProfileCard'
+import {
+  ResourceCard,
+  ResourceCardProps,
+} from '../../molecules/cards/ResourceCard/ResourceCard'
+import {
+  SmallProfileCard,
+  SmallProfileCardProps,
+} from '../../molecules/cards/SmallProfileCard/SmallProfileCard'
 import { SortState } from '../../molecules/cards/SortCard/SortButton/SortButton'
-import SortCard, { SortCardDirection } from '../../molecules/cards/SortCard/SortCard'
-import SubjectCard, { SubjectCardProps } from '../../molecules/cards/SubjectCard/SubjectCard'
+import SortCard, {
+  SortCardDirection,
+} from '../../molecules/cards/SortCard/SortCard'
+import SubjectCard, {
+  SubjectCardProps,
+} from '../../molecules/cards/SubjectCard/SubjectCard'
 import './styles.scss'
 
-export const filterTypes = ['Subjects', 'Collections', 'Resources', 'People'] as const
+export const filterTypes = [
+  'Subjects',
+  'Collections',
+  'Resources',
+  'People',
+] as const
 export type FilterType = typeof filterTypes[number]
 type SortType = 'Relevance' | 'Recent' | 'Popularity'
 export type BrowserProps = {
@@ -44,7 +64,10 @@ export const Browser = withCtrl<BrowserProps>(
     loadMorePeople,
   }) => {
     const [filters, setFilter] = useReducer(
-      (prev: Record<FilterType, boolean>, [type, checked]: readonly [FilterType, boolean]) => ({
+      (
+        prev: Record<FilterType, boolean>,
+        [type, checked]: readonly [FilterType, boolean]
+      ) => ({
         ...prev,
         [type]: checked,
       }),
@@ -53,7 +76,7 @@ export const Browser = withCtrl<BrowserProps>(
         Collections: collectionCardPropsList ? true : false,
         Resources: resourceCardPropsList ? true : false,
         People: smallProfileCardPropsList ? true : false,
-      },
+      }
     )
 
     const seeAll = (type: FilterType) => {
@@ -104,11 +127,23 @@ export const Browser = withCtrl<BrowserProps>(
           return null
         }
       }
-    }, [loadMoreCollections, loadMorePeople, loadMoreResources, loadMoreSubjects, singleActiveFilter])
+    }, [
+      loadMoreCollections,
+      loadMorePeople,
+      loadMoreResources,
+      loadMoreSubjects,
+      singleActiveFilter,
+    ])
 
-    const setFilterCB = useCallback<ChangeEventHandler<HTMLInputElement>>(ev => {
-      setFilter([ev.currentTarget.name as FilterType, ev.currentTarget.checked])
-    }, [])
+    const setFilterCB = useCallback<ChangeEventHandler<HTMLInputElement>>(
+      (ev) => {
+        setFilter([
+          ev.currentTarget.name as FilterType,
+          ev.currentTarget.checked,
+        ])
+      },
+      []
+    )
 
     const filterCard = (direction: FilterCardDirection) => (
       <FilterCard
@@ -144,7 +179,13 @@ export const Browser = withCtrl<BrowserProps>(
             />
           ),
           smallProfileCardPropsList && (
-            <Checkbox onChange={setFilterCB} label={t`People`} name="People" key="People" checked={filters.People} />
+            <Checkbox
+              onChange={setFilterCB}
+              label={t`People`}
+              name="People"
+              key="People"
+              checked={filters.People}
+            />
           ),
         ]}
       />
@@ -174,7 +215,9 @@ export const Browser = withCtrl<BrowserProps>(
               {sortCard('vertical')}
             </div>
           )}
-          <div className={`main-column ${hideSortAndFilter ? 'full-width' : ''}`}>
+          <div
+            className={`main-column ${hideSortAndFilter ? 'full-width' : ''}`}
+          >
             {!hideSortAndFilter && (
               <div className="filter-and-sort">
                 {filterCard('horizontal')}
@@ -183,11 +226,12 @@ export const Browser = withCtrl<BrowserProps>(
             )}
             {subjectCardPropsList && filters.Subjects && (
               <ListCard
-                content={(shouldShowSeeAll('Subjects') ? subjectCardPropsList.slice(0, 8) : subjectCardPropsList).map(
-                  subjectCardProps => (
-                    <SubjectCard {...subjectCardProps} />
-                  ),
-                )}
+                content={(shouldShowSeeAll('Subjects')
+                  ? subjectCardPropsList.slice(0, 8)
+                  : subjectCardPropsList
+                ).map((subjectCardProps) => (
+                  <SubjectCard {...subjectCardProps} />
+                ))}
                 title={
                   <div className="card-header">
                     <div className="title">
@@ -200,7 +244,9 @@ export const Browser = withCtrl<BrowserProps>(
                     )}
                   </div>
                 }
-                className={`subjects ${!shouldShowSeeAll('Subjects') ? 'see-all' : ''}`}
+                className={`subjects ${
+                  !shouldShowSeeAll('Subjects') ? 'see-all' : ''
+                }`}
                 noCard={true}
                 direction="wrap"
               />
@@ -210,7 +256,7 @@ export const Browser = withCtrl<BrowserProps>(
                 content={(shouldShowSeeAll('Collections')
                   ? collectionCardPropsList.slice(0, 6)
                   : collectionCardPropsList
-                ).map(collectionCardProps => (
+                ).map((collectionCardProps) => (
                   <CollectionCard {...collectionCardProps} />
                 ))}
                 title={
@@ -225,7 +271,9 @@ export const Browser = withCtrl<BrowserProps>(
                     )}
                   </div>
                 }
-                className={`collections ${!shouldShowSeeAll('Collections') ? 'see-all' : ''}`}
+                className={`collections ${
+                  !shouldShowSeeAll('Collections') ? 'see-all' : ''
+                }`}
                 noCard={true}
                 minGrid={240}
               />
@@ -235,7 +283,7 @@ export const Browser = withCtrl<BrowserProps>(
                 content={(shouldShowSeeAll('Resources')
                   ? resourceCardPropsList.slice(0, 6)
                   : resourceCardPropsList
-                ).map(resourceCardProps => (
+                ).map((resourceCardProps) => (
                   <ResourceCard {...resourceCardProps} />
                 ))}
                 title={
@@ -250,7 +298,9 @@ export const Browser = withCtrl<BrowserProps>(
                     )}
                   </div>
                 }
-                className={`resources ${!shouldShowSeeAll('Resources') ? 'see-all' : ''}`}
+                className={`resources ${
+                  !shouldShowSeeAll('Resources') ? 'see-all' : ''
+                }`}
                 noCard={true}
                 minGrid={280}
               />
@@ -260,13 +310,13 @@ export const Browser = withCtrl<BrowserProps>(
                 content={(shouldShowSeeAll('People')
                   ? smallProfileCardPropsList.slice(0, 11)
                   : smallProfileCardPropsList
-                ).map(smallProfileCardProps => (
+                ).map((smallProfileCardProps) => (
                   <SmallProfileCard {...smallProfileCardProps} />
                 ))}
                 title={
                   <div className="card-header">
                     <div className="title">
-                      {peopleTitle? t`${peopleTitle}` : <Trans>People</Trans>}
+                      {peopleTitle ? t`${peopleTitle}` : <Trans>People</Trans>}
                     </div>
                     {shouldShowSeeAll('People') && (
                       <SecondaryButton onClick={() => seeAll('People')}>
@@ -275,7 +325,9 @@ export const Browser = withCtrl<BrowserProps>(
                     )}
                   </div>
                 }
-                className={`people ${!shouldShowSeeAll('People') ? 'see-all' : ''}`}
+                className={`people ${
+                  !shouldShowSeeAll('People') ? 'see-all' : ''
+                }`}
                 noCard={true}
                 minGrid={160}
               />
@@ -291,6 +343,6 @@ export const Browser = withCtrl<BrowserProps>(
         </div>
       </div>
     )
-  },
+  }
 )
 Browser.displayName = 'BrowserPage'

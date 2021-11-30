@@ -6,7 +6,11 @@ import { CookiesPolicyProps } from '../CookiesPolicy'
 export const useCookiesPolicyCtrl: CtrlHook<CookiesPolicyProps, {}> = () => {
   const cookiesPolicyProps: CookiesPolicyProps = {
     accessHeaderProps: ctrlHook(useAccessHeaderCtrl, {}, 'access-header'),
-    mainPageWrapperProps: ctrlHook(useMainPageWrapperCtrl, {}, 'main-page-wrapper'),
+    mainPageWrapperProps: ctrlHook(
+      useMainPageWrapperCtrl,
+      {},
+      'main-page-wrapper'
+    ),
   }
   return [cookiesPolicyProps]
 }

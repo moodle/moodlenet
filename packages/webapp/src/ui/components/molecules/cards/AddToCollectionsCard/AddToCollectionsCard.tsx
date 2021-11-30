@@ -19,14 +19,21 @@ export const AddToCollectionsCard: FC<AddToCollectionsCardProps> = ({
   noCard,
   setAddToCollections,
 }) => {
-  const [selectedCollections, setSelectedCollections] = useState<CollectionItem[]>(value ? value : [])
+  const [selectedCollections, setSelectedCollections] = useState<
+    CollectionItem[]
+  >(value ? value : [])
 
   const [selectCollections, toggleSelectedCollection] = useReducer(
-    (prevSelected: CollectionItem[] = selectedCollections, collection: CollectionItem | CollectionItem[]) => {
+    (
+      prevSelected: CollectionItem[] = selectedCollections,
+      collection: CollectionItem | CollectionItem[]
+    ) => {
       if (Array.isArray(collection)) {
         return collection
       }
-      const nextSelectedColl = prevSelected.map(({ id }) => id).includes(collection.id)
+      const nextSelectedColl = prevSelected
+        .map(({ id }) => id)
+        .includes(collection.id)
         ? prevSelected.filter(({ id }) => id !== collection.id)
         : [...prevSelected, collection]
       // FIXME: should not call this in useReducer,
@@ -36,7 +43,7 @@ export const AddToCollectionsCard: FC<AddToCollectionsCardProps> = ({
       setAddToCollections(nextSelectedColl)
       return nextSelectedColl
     },
-    [],
+    []
   )
 
   useEffect(() => {
@@ -51,7 +58,11 @@ export const AddToCollectionsCard: FC<AddToCollectionsCardProps> = ({
     return (
       <div
         key={index}
-        className={`collection-name tag ${selectCollections.map(({ id }) => id).includes(value.id) ? 'selected' : ''}`}
+        className={`collection-name tag ${
+          selectCollections.map(({ id }) => id).includes(value.id)
+            ? 'selected'
+            : ''
+        }`}
         onClick={() => toggleSelectedCollection(value)}
       >
         {value.label}

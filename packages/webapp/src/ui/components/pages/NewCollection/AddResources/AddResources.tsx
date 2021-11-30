@@ -17,20 +17,31 @@ export type AddResourcesProps = {
 }
 
 export const AddResources = withCtrl<AddResourcesProps>(
-  ({ collections, setAddResources, setSearchText = () => {}, nextStep, previousStep }) => {
-    const [selectCollections, toggleSelectedCollection] = useReducer((prevSelected: string[], coll: string) => {
-      const nextSelectedColl = prevSelected.includes(coll)
-        ? prevSelected.filter(_ => _ !== coll)
-        : [...prevSelected, coll]
-      setAddResources(nextSelectedColl)
-      return nextSelectedColl
-    }, [])
+  ({
+    collections,
+    setAddResources,
+    setSearchText = () => {},
+    nextStep,
+    previousStep,
+  }) => {
+    const [selectCollections, toggleSelectedCollection] = useReducer(
+      (prevSelected: string[], coll: string) => {
+        const nextSelectedColl = prevSelected.includes(coll)
+          ? prevSelected.filter((_) => _ !== coll)
+          : [...prevSelected, coll]
+        setAddResources(nextSelectedColl)
+        return nextSelectedColl
+      },
+      []
+    )
 
     const collectionList = collections.map((value, index) => {
       return (
         <div
           key={index}
-          className={`collection-name tag ${selectCollections.includes(value) ? 'selected' : ''}`}
+          className={`collection-name tag ${
+            selectCollections.includes(value) ? 'selected' : ''
+          }`}
           onClick={() => toggleSelectedCollection(value)}
         >
           {value}
@@ -44,7 +55,11 @@ export const AddResources = withCtrl<AddResourcesProps>(
           <Card>
             <div className="collections-header">
               <Trans>Select Collections</Trans>
-              <Searchbox setSearchText={setSearchText} searchText="" placeholder={t`Find more collections`} />
+              <Searchbox
+                setSearchText={setSearchText}
+                searchText=""
+                placeholder={t`Find more collections`}
+              />
             </div>
             <div className="collections tags">{collectionList}</div>
           </Card>
@@ -59,5 +74,5 @@ export const AddResources = withCtrl<AddResourcesProps>(
         </div>
       </div>
     )
-  },
+  }
 )

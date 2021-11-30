@@ -14,7 +14,9 @@ export const SearchboxStoryProps: SearchboxProps = {
   setSearchText: action('Search Text'),
 }
 
-const SearchboxStory: ComponentStory<typeof Searchbox> = args => <Searchbox {...args} />
+const SearchboxStory: ComponentStory<typeof Searchbox> = (args) => (
+  <Searchbox {...args} />
+)
 
 export const Default = SearchboxStory.bind({})
 Default.args = SearchboxStoryProps

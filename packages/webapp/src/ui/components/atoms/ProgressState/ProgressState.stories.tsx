@@ -6,7 +6,7 @@ const meta: ComponentMeta<typeof ProgressState> = {
   component: ProgressState,
   excludeStories: ['ProgressStateStoryProps'],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ width: 900 }}>
         <Story />
       </div>
@@ -14,12 +14,18 @@ const meta: ComponentMeta<typeof ProgressState> = {
   ],
 }
 
-const ProgressStateStory: ComponentStory<typeof ProgressState> = args => <ProgressState {...args} />
+const ProgressStateStory: ComponentStory<typeof ProgressState> = (args) => (
+  <ProgressState {...args} />
+)
 
 export const ProgressStateStoryProps: ProgressStateProps = {
   stateNames: [`Upload resource`, `Add to collections`, `Add details`],
   currentIndex: 1,
-  progressSubtitles: [`sub:Upload resource`, `sub:Add to collections`, `sub:Add details`],
+  progressSubtitles: [
+    `sub:Upload resource`,
+    `sub:Add to collections`,
+    `sub:Add details`,
+  ],
 }
 
 export const Default = ProgressStateStory.bind({})

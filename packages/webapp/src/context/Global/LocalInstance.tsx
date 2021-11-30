@@ -13,10 +13,8 @@ export type LocalInstanceContextType = {
   org: LocalInstanceFragment
 }
 
-export const [
-  useLocalInstance,
-  ProvideLocalInstance,
-] = createCtx<LocalInstanceContextType>('LocalInstance')
+export const [useLocalInstance, ProvideLocalInstance] =
+  createCtx<LocalInstanceContextType>('LocalInstance')
 
 export const LocalInstanceProvider: FC = ({ children }) => {
   const org = narrowNodeType(['Organization'])(

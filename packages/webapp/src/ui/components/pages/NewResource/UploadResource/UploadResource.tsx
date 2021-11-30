@@ -32,9 +32,19 @@ export type UploadResourceProps = {
 }
 
 export const UploadResource = withCtrl<UploadResourceProps>(
-  ({ formBag, state, imageUrl, licenses, visibility, categories, nextStep, deleteContent }) => {
+  ({
+    formBag,
+    state,
+    imageUrl,
+    licenses,
+    visibility,
+    categories,
+    nextStep,
+    deleteContent,
+  }) => {
     const [form, formAttrs] = formBag
-    const [highlightMandatoryFields, setHighlightMandatoryFields] = useState<boolean>(false)
+    const [highlightMandatoryFields, setHighlightMandatoryFields] =
+      useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isToDrop, setIsToDrop] = useState<boolean>(false)
     const setFieldValue = form.setFieldValue
@@ -51,7 +61,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           setFieldValue('contentType', 'File')
         }
       },
-      [setFieldValue],
+      [setFieldValue]
     )
 
     const uploadImage = useCallback(
@@ -59,21 +69,21 @@ export const UploadResource = withCtrl<UploadResourceProps>(
         const selectedFile = file ? file : e?.currentTarget.files?.item(0)
         setFieldValue('image', selectedFile ?? null)
       },
-      [setFieldValue],
+      [setFieldValue]
     )
 
     const setLicenseVal = useCallback(
       (v: string) => {
         setFieldValue('license', v)
       },
-      [setFieldValue],
+      [setFieldValue]
     )
 
     const setVisibilityVal = useCallback(
       (v: string) => {
         setFieldValue('visibility', v)
       },
-      [setFieldValue],
+      [setFieldValue]
     )
 
     const deleteImage = useCallback(() => {
@@ -87,7 +97,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
         urlMatchesImage(link) && setFieldValue('image', link)
         !canLoadUrlToImgTag(link) && deleteImage()
       },
-      [setFieldValue, deleteImage],
+      [setFieldValue, deleteImage]
     )
 
     const deleteFileOrLink = useCallback(() => {
@@ -99,7 +109,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       (v: string) => {
         setFieldValue('category', v)
       },
-      [setFieldValue],
+      [setFieldValue]
     )
     const dataInputs = (
       <div className="data-inputs">
@@ -108,7 +118,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           label="Title"
           placeholder=""
           disabled={state === 'ChooseResource'}
-          getText={text => form.setFieldValue('title', text)}
+          getText={(text) => form.setFieldValue('title', text)}
           value={form.values.title}
           highlight={highlightMandatoryFields && !form.values.title}
         />
@@ -119,7 +129,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           placeholder=""
           disabled={state === 'ChooseResource'}
           value={form.values.description}
-          getText={text => form.setFieldValue('description', text)}
+          getText={(text) => form.setFieldValue('description', text)}
           highlight={highlightMandatoryFields && !form.values.description}
         />
         <div className="subject-and-visibility">
@@ -131,7 +141,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             getValue={setCategoryValue}
             disabled={state === 'ChooseResource'}
             highlight={highlightMandatoryFields && !form.values.category}
-            />
+          />
           <Dropdown
             {...visibility}
             getValue={setVisibilityVal}
@@ -197,15 +207,16 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       e.preventDefault()
     }
 
-    const next = () => (nextStep ? nextStep() : setHighlightMandatoryFields(true))
+    const next = () =>
+      nextStep ? nextStep() : setHighlightMandatoryFields(true)
 
     return (
       <div className="upload-resource">
         {isToDelete && (
           <Modal
             title={t`Alert`}
-            actions={
-              [<PrimaryButton
+            actions={[
+              <PrimaryButton
                 onClick={() => {
                   setHighlightMandatoryFields(false)
                   deleteContent()
@@ -214,8 +225,8 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                 color="red"
               >
                 <Trans>Delete</Trans>
-              </PrimaryButton>]
-            }
+              </PrimaryButton>,
+            ]}
             onClose={() => setIsToDelete(false)}
             style={{ maxWidth: '400px' }}
             className="delete-message"
@@ -240,7 +251,13 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                   >
                     {state === 'ChooseResource' ? (
                       <div className="file upload" onClick={selectFile}>
-                        <input id="uploadFile" type="file" name="myFile" onChange={uploadFile} hidden />
+                        <input
+                          id="uploadFile"
+                          type="file"
+                          name="myFile"
+                          onChange={uploadFile}
+                          hidden
+                        />
                         <UploadFileIcon />
                         <span>
                           <Trans>Drop or click to upload a file!</Trans>
@@ -281,9 +298,17 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                 </div>
               ) : (
                 <div className="bottom-container">
-                  <div className={`uploaded-name subcontainer ${form.values.contentType === 'File' ? 'file' : 'link'}`}>
+                  <div
+                    className={`uploaded-name subcontainer ${
+                      form.values.contentType === 'File' ? 'file' : 'link'
+                    }`}
+                  >
                     <div className="content-icon">
-                      {form.values.contentType === 'File' ? <InsertDriveFileIcon /> : <LinkIcon />}
+                      {form.values.contentType === 'File' ? (
+                        <InsertDriveFileIcon />
+                      ) : (
+                        <LinkIcon />
+                      )}
                     </div>
                     <abbr className="scroll" title={form.values.name}>
                       {form.values.name}
@@ -296,7 +321,9 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                       {...licenses}
                       getValue={setLicenseVal}
                       value={form.values.license}
-                      highlight={highlightMandatoryFields && !form.values.license}
+                      highlight={
+                        highlightMandatoryFields && !form.values.license
+                      }
                     />
                   )}
                 </div>
@@ -308,7 +335,11 @@ export const UploadResource = withCtrl<UploadResourceProps>(
         </div>
         <div className="footer">
           {state === 'EditData' && (
-            <SecondaryButton onHoverColor="red" onClick={() => setIsToDelete(true)} color="grey">
+            <SecondaryButton
+              onHoverColor="red"
+              onClick={() => setIsToDelete(true)}
+              color="grey"
+            >
               <Trans>Delete</Trans>
             </SecondaryButton>
           )}
@@ -318,5 +349,5 @@ export const UploadResource = withCtrl<UploadResourceProps>(
         </div>
       </div>
     )
-  },
+  }
 )

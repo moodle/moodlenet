@@ -14,7 +14,9 @@ const meta: ComponentMeta<typeof Followers> = {
   excludeStories: ['FollowersLoggedInStoryProps'],
 }
 
-const FollowersStory: ComponentStory<typeof Followers> = args => <Followers {...args} />
+const FollowersStory: ComponentStory<typeof Followers> = (args) => (
+  <Followers {...args} />
+)
 
 export const FollowersLoggedInStoryProps: FollowersProps = {
   displayName: 'Juanito Rodriguez',

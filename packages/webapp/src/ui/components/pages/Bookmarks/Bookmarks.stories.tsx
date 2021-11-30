@@ -1,7 +1,13 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../elements/link'
-import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '../../organisms/Browser/Browser.stories'
-import { HeaderPageLoggedInStoryProps, HeaderPageLoggedOutStoryProps } from '../HeaderPage/HeaderPage.stories'
+import {
+  BrowserLoggedInStoryProps,
+  BrowserLoggedOutStoryProps,
+} from '../../organisms/Browser/Browser.stories'
+import {
+  HeaderPageLoggedInStoryProps,
+  HeaderPageLoggedOutStoryProps,
+} from '../HeaderPage/HeaderPage.stories'
 import { Bookmarks, BookmarksProps } from './Bookmarks'
 
 const meta: ComponentMeta<typeof Bookmarks> = {
@@ -11,10 +17,15 @@ const meta: ComponentMeta<typeof Bookmarks> = {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: ['BookmarksLoggedOutStoryProps', 'BookmarksLoggedInStoryProps'],
+  excludeStories: [
+    'BookmarksLoggedOutStoryProps',
+    'BookmarksLoggedInStoryProps',
+  ],
 }
 
-const BookmarksStory: ComponentStory<typeof Bookmarks> = args => <Bookmarks {...args} />
+const BookmarksStory: ComponentStory<typeof Bookmarks> = (args) => (
+  <Bookmarks {...args} />
+)
 
 export const BookmarksLoggedInStoryProps: BookmarksProps = {
   headerPageTemplateProps: {

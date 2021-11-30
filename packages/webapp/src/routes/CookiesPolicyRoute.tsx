@@ -4,8 +4,14 @@ import { useCookiesPolicyCtrl } from '../ui/components/pages/Policies/CookiesPol
 import { ctrlHook } from '../ui/lib/ctrl'
 import { MNRouteProps, RouteFC } from './lib'
 
-const CookiesPolicyComponent: RouteFC<Routes.CookiesPolicy> = (/* { match } */) => {
-  const cookiesPolicyProps = ctrlHook(useCookiesPolicyCtrl, {}, 'cookies-policies-page')
+const CookiesPolicyComponent: RouteFC<
+  Routes.CookiesPolicy
+> = (/* { match } */) => {
+  const cookiesPolicyProps = ctrlHook(
+    useCookiesPolicyCtrl,
+    {},
+    'cookies-policies-page'
+  )
   return <CookiesPolicy {...cookiesPolicyProps} />
 }
 

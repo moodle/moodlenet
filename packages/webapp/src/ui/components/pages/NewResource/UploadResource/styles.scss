@@ -192,10 +192,13 @@
       }
     }
 
-    > .main-column > .small-screen-details > .data-inputs > .subject-and-visibility,
+    > .main-column
+      > .small-screen-details
+      > .data-inputs
+      > .subject-and-visibility,
     > .side-column > .data-inputs > .subject-and-visibility {
       display: flex;
-      gap: 15px; 
+      gap: 15px;
       .visibility-dropdown {
         max-width: 125px;
       }
