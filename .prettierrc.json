@@ -1,8 +1,6 @@
 {
   "arrowParens": "avoid",
   "singleQuote": true,
-  "eslintIntegration": true,
-  "tslintIntegration": true,
   "printWidth": 120,
   "trailingComma": "all",
   "semi": false,

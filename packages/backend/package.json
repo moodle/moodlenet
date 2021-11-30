@@ -120,8 +120,10 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "src/**/*.ts": "eslint --fix",
-    "src/**/*.{ts,graphql,json}": "prettier -w"
+    "src/**/*.ts": [
+      "eslint --fix",
+      "prettier -w"
+    ]
   },
   "eslintConfig": {
     "root": true,
