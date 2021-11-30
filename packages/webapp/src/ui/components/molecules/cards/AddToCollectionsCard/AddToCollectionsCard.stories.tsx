@@ -1,6 +1,9 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { AddToCollectionsCard, AddToCollectionsCardProps } from './AddToCollectionsCard'
+import {
+  AddToCollectionsCard,
+  AddToCollectionsCardProps,
+} from './AddToCollectionsCard'
 
 const meta: ComponentMeta<typeof AddToCollectionsCard> = {
   title: 'Molecules/AddToCollectionsCard',
@@ -10,7 +13,7 @@ const meta: ComponentMeta<typeof AddToCollectionsCard> = {
   },
   excludeStories: ['AddToCollectionsCardStoryProps'],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ maxWidth: 1100 }}>
         <Story />
       </div>
@@ -28,12 +31,12 @@ export const AddToCollectionsCardStoryProps: AddToCollectionsCardProps = {
     'Phylosophy',
     'Sociology',
     'English Literature',
-  ].map(label => ({ label, id: label })),
+  ].map((label) => ({ label, id: label })),
 }
 
-const AddToCollectionsCardStory: ComponentStory<typeof AddToCollectionsCard> = args => (
-  <AddToCollectionsCard {...args} />
-)
+const AddToCollectionsCardStory: ComponentStory<typeof AddToCollectionsCard> = (
+  args
+) => <AddToCollectionsCard {...args} />
 
 export const Default = AddToCollectionsCardStory.bind({})
 Default.args = AddToCollectionsCardStoryProps

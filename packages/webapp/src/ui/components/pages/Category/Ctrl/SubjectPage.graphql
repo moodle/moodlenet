@@ -7,7 +7,12 @@ query SubjectPageData($categoryId: ID!, $myProfileId: [ID!]) {
       image
 
       followersCount: _relCount(type: Follows, inverse: true)
-      myFollow: _rel(type: Follows, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
+      myFollow: _rel(
+        type: Follows
+        inverse: true
+        page: { first: 1 }
+        targetIds: $myProfileId
+      ) {
         edges {
           edge {
             id
@@ -15,8 +20,17 @@ query SubjectPageData($categoryId: ID!, $myProfileId: [ID!]) {
         }
       }
 
-      collectionsCount: _relCount(type: Features, targetTypes: [Collection], inverse: true)
-      collections: _rel(type: Features, targetTypes: [Collection], page: { first: 5 }, inverse: true) {
+      collectionsCount: _relCount(
+        type: Features
+        targetTypes: [Collection]
+        inverse: true
+      )
+      collections: _rel(
+        type: Features
+        targetTypes: [Collection]
+        page: { first: 5 }
+        inverse: true
+      ) {
         edges {
           node {
             ... on Collection {
@@ -28,8 +42,17 @@ query SubjectPageData($categoryId: ID!, $myProfileId: [ID!]) {
         }
       }
 
-      resourcesCount: _relCount(type: Features, targetTypes: [Resource], inverse: true)
-      resources: _rel(type: Features, targetTypes: [Resource], page: { first: 15 }, inverse: true) {
+      resourcesCount: _relCount(
+        type: Features
+        targetTypes: [Resource]
+        inverse: true
+      )
+      resources: _rel(
+        type: Features
+        targetTypes: [Resource]
+        page: { first: 15 }
+        inverse: true
+      ) {
         edges {
           node {
             ... on Resource {

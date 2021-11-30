@@ -13,7 +13,7 @@ const meta: ComponentMeta<typeof CreateCollection> = {
   },
   excludeStories: ['CreateCollectionStoryProps', 'Default'],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ maxWidth: 1100 }}>
         <Story />
       </div>
@@ -36,7 +36,9 @@ export const CreateCollectionStoryProps: CreateCollectionProps = {
   step: 'CreateCollectionStep',
 }
 
-const CreateCollectionStory: ComponentStory<typeof CreateCollection> = args => <CreateCollection {...args} />
+const CreateCollectionStory: ComponentStory<typeof CreateCollection> = (
+  args
+) => <CreateCollection {...args} />
 
 export const Default = CreateCollectionStory.bind({})
 Default.args = CreateCollectionStoryProps

@@ -1,11 +1,19 @@
-import { AnchorHTMLAttributes, ComponentType, CSSProperties, DetailedHTMLProps } from 'react'
+import {
+  AnchorHTMLAttributes,
+  ComponentType,
+  CSSProperties,
+  DetailedHTMLProps,
+} from 'react'
 import { createCtx } from '../../lib/context'
 export type Href = {
   ext: boolean
   url: string
 }
 export type LinkComponentElementProps = DetailedHTMLProps<
-  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> & { href: Href; asExt?: boolean },
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> & {
+    href: Href
+    asExt?: boolean
+  },
   HTMLAnchorElement
 > & {
   exact?: boolean
@@ -17,7 +25,7 @@ export type LinkComponentElementProps = DetailedHTMLProps<
 }
 export type LinkComponentType = ComponentType<LinkComponentElementProps>
 
-export const Link: LinkComponentType = props => {
+export const Link: LinkComponentType = (props) => {
   const LinkComp = useLinkComponentCtx()
   return <LinkComp {...props}>{props.children}</LinkComp>
 }
@@ -40,7 +48,8 @@ export const Link: LinkComponentType = props => {
 //   )
 // }
 
-export const [useLinkComponentCtx, ProvideLinkComponentCtx] = createCtx<LinkComponentType>('LinkComponentCtx')
+export const [useLinkComponentCtx, ProvideLinkComponentCtx] =
+  createCtx<LinkComponentType>('LinkComponentCtx')
 
 export const href = (url: string, ext = false): Href => ({
   ext,

@@ -4,12 +4,19 @@ import { useHeaderPageTemplateCtrl } from '../../../../templates/HeaderPageTempl
 import { FallbackProps } from '../Fallback'
 
 export type FallbackCtrlProps = {}
-export const useFallbackCtrl: CtrlHook<FallbackProps, FallbackCtrlProps> = () => {
+export const useFallbackCtrl: CtrlHook<
+  FallbackProps,
+  FallbackCtrlProps
+> = () => {
   return [fallbackProps({ key: 'fallback-page' })]
 }
 
 export const fallbackProps = ({ key }: { key: string }): FallbackProps => {
   return {
-    headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, `${ key }-header-page-template`),
+    headerPageTemplateProps: ctrlHook(
+      useHeaderPageTemplateCtrl,
+      {},
+      `${key}-header-page-template`
+    ),
   }
 }

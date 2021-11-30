@@ -19,7 +19,9 @@ export const FooterLoggedInProps: FooterProps = {
   isAuthenticated: true,
 }
 
-const FooterStory: ComponentStory<typeof Footer> = args => <Footer {...args} />
+const FooterStory: ComponentStory<typeof Footer> = (args) => (
+  <Footer {...args} />
+)
 
 export const LoggedOut = FooterStory.bind({})
 LoggedOut.args = FooterStoryProps

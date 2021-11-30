@@ -10,7 +10,12 @@ export type FilterCardProps = {
   direction?: FilterCardDirection
 }
 
-export const FilterCard: FC<FilterCardProps> = ({ className, direction, content, title }) => {
+export const FilterCard: FC<FilterCardProps> = ({
+  className,
+  direction,
+  content,
+  title,
+}) => {
   className += ' ' + direction
   return (
     <div className={'filter-card ' + className}>
@@ -21,7 +26,7 @@ export const FilterCard: FC<FilterCardProps> = ({ className, direction, content,
 }
 
 FilterCard.defaultProps = {
-  direction: 'vertical'
+  direction: 'vertical',
 }
 
 export default FilterCard

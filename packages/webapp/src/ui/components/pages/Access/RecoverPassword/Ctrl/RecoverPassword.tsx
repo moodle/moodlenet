@@ -28,10 +28,8 @@ export const useRecoverPasswordCtrl: CtrlHook<
 > = () => {
   useRedirectHomeIfLoggedIn()
   const { recoverPassword } = useSession()
-  const [
-    RecoverPasswordErrorMessage,
-    setRecoverPasswordErrorMessage,
-  ] = useState<string | null>(null)
+  const [RecoverPasswordErrorMessage, setRecoverPasswordErrorMessage] =
+    useState<string | null>(null)
   const [requestSent, setRequestSent] = useState(false)
   const onSubmit = useCallback<SubmitForm<RecoverPasswordFormValues>>(
     ({ email }) =>

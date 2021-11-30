@@ -17,11 +17,20 @@ import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import ListCard from '../../molecules/cards/ListCard/ListCard'
-import { ResourceCard, ResourceCardProps } from '../../molecules/cards/ResourceCard/ResourceCard'
-import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
+import {
+  ResourceCard,
+  ResourceCardProps,
+} from '../../molecules/cards/ResourceCard/ResourceCard'
+import {
+  HeaderPageTemplate,
+  HeaderPageTemplateProps,
+} from '../../templates/HeaderPageTemplate'
 import { DropdownField } from '../NewCollection/FieldsData'
 import { NewCollectionFormValues } from '../NewCollection/types'
-import { ContributorCard, ContributorCardProps } from './ContributorCard/ContributorCard'
+import {
+  ContributorCard,
+  ContributorCardProps,
+} from './ContributorCard/ContributorCard'
 import './styles.scss'
 
 export type CollectionProps = {
@@ -73,16 +82,28 @@ export const Collection = withCtrl<CollectionProps>(
 
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
-    const [isShowingBackground, setIsShowingBackground] = useState<boolean>(false)
+    const [isShowingBackground, setIsShowingBackground] =
+      useState<boolean>(false)
 
     const [form, formAttrs] = formBag
     const setFieldValue = form.setFieldValue
-    const setTitleField = useCallback((_: string) => setFieldValue('title', _), [setFieldValue])
-    const setDescriptionField = useCallback((_: string) => setFieldValue('description', _), [setFieldValue])
-    const setVisibilityField = useCallback((_: string) => setFieldValue('visibility', _), [setFieldValue])
+    const setTitleField = useCallback(
+      (_: string) => setFieldValue('title', _),
+      [setFieldValue]
+    )
+    const setDescriptionField = useCallback(
+      (_: string) => setFieldValue('description', _),
+      [setFieldValue]
+    )
+    const setVisibilityField = useCallback(
+      (_: string) => setFieldValue('visibility', _),
+      [setFieldValue]
+    )
 
     const background = {
-      backgroundImage: form.values.imageUrl ? 'url(' + form.values.imageUrl + ')' : 'url(' + defaultBackgroud + ')',
+      backgroundImage: form.values.imageUrl
+        ? 'url(' + form.values.imageUrl + ')'
+        : 'url(' + defaultBackgroud + ')',
       backgroundSize: 'cover',
     }
 
@@ -95,7 +116,7 @@ export const Collection = withCtrl<CollectionProps>(
         const selectedFile = e?.currentTarget.files?.item(0)
         selectedFile && setFieldValue('image', selectedFile)
       },
-      [setFieldValue],
+      [setFieldValue]
     )
 
     const extraDetails = (
@@ -156,18 +177,41 @@ export const Collection = withCtrl<CollectionProps>(
         <div className="collection">
           <div className="content">
             <Card className="main-collection-card" hideBorderWhenSmall={true}>
-              <div className="image" style={background} onClick={() => !isEditing && setIsShowingBackground(true)}>
+              <div
+                className="image"
+                style={background}
+                onClick={() => !isEditing && setIsShowingBackground(true)}
+              >
                 {isEditing && (
-                  <input id="upload-image" type="file" accept=".jpg,.jpeg,.png,.gif" onChange={uploadImage} hidden />
+                  <input
+                    id="upload-image"
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.gif"
+                    onChange={uploadImage}
+                    hidden
+                  />
                 )}
-                {isEditing && <RoundButton className="change-image-button" type="edit" onClick={selectImage} />}
+                {isEditing && (
+                  <RoundButton
+                    className="change-image-button"
+                    type="edit"
+                    onClick={selectImage}
+                  />
+                )}
               </div>
               <div className="info">
                 <div className="label">
                   <Trans>Collection</Trans>
-                  <div className={`actions ${isAdmin || isOwner ? 'edit-save' : ''}`}>
+                  <div
+                    className={`actions ${
+                      isAdmin || isOwner ? 'edit-save' : ''
+                    }`}
+                  >
                     {isAuthenticated && !isEditing && (
-                      <div className={`bookmark ${bookmarked && 'bookmarked'}`} onClick={toggleBookmark}>
+                      <div
+                        className={`bookmark ${bookmarked && 'bookmarked'}`}
+                        onClick={toggleBookmark}
+                      >
                         {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                       </div>
                     )}
@@ -184,7 +228,10 @@ export const Collection = withCtrl<CollectionProps>(
                       </PrimaryButton>
                     )}
                     {(isAdmin || isOwner) && !isEditing && (
-                      <SecondaryButton onClick={() => setIsEditing(true)} color="orange">
+                      <SecondaryButton
+                        onClick={() => setIsEditing(true)}
+                        color="orange"
+                      >
                         <EditIcon />
                       </SecondaryButton>
                     )}
@@ -241,7 +288,11 @@ export const Collection = withCtrl<CollectionProps>(
                   </div>
                   <div className="right">
                     {isEditing && (
-                      <SecondaryButton color="red" onHoverColor="filled-red" onClick={() => setIsToDelete(true)}>
+                      <SecondaryButton
+                        color="red"
+                        onHoverColor="filled-red"
+                        onClick={() => setIsToDelete(true)}
+                      >
                         <DeleteOutlineIcon />
                       </SecondaryButton>
                     )}
@@ -252,26 +303,37 @@ export const Collection = withCtrl<CollectionProps>(
             <div className="main-content">
               <div className={`main-column`}>
                 <ListCard
-                  content={resourceCardPropsList.map(resourceCardProps => {
-                    return <ResourceCard {...resourceCardProps} isEditing={isEditing} />
+                  content={resourceCardPropsList.map((resourceCardProps) => {
+                    return (
+                      <ResourceCard
+                        {...resourceCardProps}
+                        isEditing={isEditing}
+                      />
+                    )
                   })}
                   className="resources no-card"
                 />
                 <div className="collection-footer">
                   <div className="left-column">
-                    {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
+                    {(!isOwner || isAdmin) && (
+                      <ContributorCard {...contributorCardProps} />
+                    )}
                     {(isAdmin || isOwner) && extraDetails}
                   </div>
                   <div className="right-column">{/*actionsCard*/}</div>
                   <div className="one-column">
                     {/*actionsCard*/}
-                    {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
+                    {(!isOwner || isAdmin) && (
+                      <ContributorCard {...contributorCardProps} />
+                    )}
                     {(isAdmin || isOwner) && extraDetails}
                   </div>
                 </div>
               </div>
               <div className="side-column">
-                {(!isOwner || isAdmin) && <ContributorCard {...contributorCardProps} />}
+                {(!isOwner || isAdmin) && (
+                  <ContributorCard {...contributorCardProps} />
+                )}
                 {(isAdmin || isOwner) && extraDetails}
                 {/*actionsCard*/}
               </div>
@@ -280,5 +342,5 @@ export const Collection = withCtrl<CollectionProps>(
         </div>
       </HeaderPageTemplate>
     )
-  },
+  }
 )

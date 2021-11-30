@@ -58,9 +58,19 @@ export type SessionContextType = {
   logout(): unknown
   refetch(): unknown
   // activateNewUser(_: { password: string; activationToken: string; name: string }): Promise<ActivateWarnMessage | null>
-  signUp(_: { email: string; password: string; name: string }): Promise<SignupWarnMessage | null>
-  login(_: { email: string; password: string; activationEmailToken: Maybe<string> }): Promise<LoginWarnMessage | null>
-  recoverPassword(_: { email: string }): Promise<RecoverPasswordWarnMessage | null>
+  signUp(_: {
+    email: string
+    password: string
+    name: string
+  }): Promise<SignupWarnMessage | null>
+  login(_: {
+    email: string
+    password: string
+    activationEmailToken: Maybe<string>
+  }): Promise<LoginWarnMessage | null>
+  recoverPassword(_: {
+    email: string
+  }): Promise<RecoverPasswordWarnMessage | null>
   changeRecoverPassword(_: {
     newPassword: string
     recoverPasswordToken: string
@@ -69,17 +79,24 @@ export type SessionContextType = {
   userMustAcceptPolicies: (() => unknown) | null
 }
 
-export const [useSession, ProvideSession] = createCtx<SessionContextType>('Session')
+export const [useSession, ProvideSession] =
+  createCtx<SessionContextType>('Session')
 
 const WRONG_CREDS_MSG = t`wrong credentials`
 
 export const SessionProvider: FC = ({ children }) => {
   // const [activateUserMut /* , activateResult */] = useActivateNewUserMutation()
   const [signUpMut /* , activateResult */] = useSignUpMutation()
-  const [lastSession, setLastSession] = useState<Partial<LastSession>>(getLastSession())
-  const [getSessionLazyQ, sessionQResult] = useGetCurrentSessionLazyQuery({ fetchPolicy: 'network-only' })
-  const [recoverPasswordMut, recoverPasswordMutResp] = useRecoverPasswordMutation()
-  const [changeRecoverPasswordMut, changeRecoverPasswordMutResp] = useChangeRecoverPasswordMutation()
+  const [lastSession, setLastSession] = useState<Partial<LastSession>>(
+    getLastSession()
+  )
+  const [getSessionLazyQ, sessionQResult] = useGetCurrentSessionLazyQuery({
+    fetchPolicy: 'network-only',
+  })
+  const [recoverPasswordMut, recoverPasswordMutResp] =
+    useRecoverPasswordMutation()
+  const [changeRecoverPasswordMut, changeRecoverPasswordMutResp] =
+    useChangeRecoverPasswordMutation()
   const [loginMut /* , loginResult */] = useLoginMutation()
   const [firstLogin, setFirstLogin] = useState(false)
   useEffect(() => {
@@ -89,16 +106,20 @@ export const SessionProvider: FC = ({ children }) => {
   }, [firstLogin])
   const login = useCallback<SessionContextType['login']>(
     ({ email, password, activationEmailToken }) => {
-      return loginMut({ variables: { password, email, activationEmailToken } }).then(res => {
+      return loginMut({
+        variables: { password, email, activationEmailToken },
+      }).then((res) => {
         const jwt = res.data?.createSession.jwt ?? null
         setLastSession({ jwt, email })
         if (jwt && activationEmailToken) {
           setFirstLogin(true)
         }
-        return res.data?.createSession.message ?? ((!jwt && WRONG_CREDS_MSG) || null)
+        return (
+          res.data?.createSession.message ?? ((!jwt && WRONG_CREDS_MSG) || null)
+        )
       })
     },
-    [loginMut, setFirstLogin],
+    [loginMut, setFirstLogin]
   )
   // const activateNewUser = useCallback<SessionContextType['activateNewUser']>(
   //   ({ password, activationToken, name }) => {
@@ -114,8 +135,10 @@ export const SessionProvider: FC = ({ children }) => {
 
   const signUp = useCallback<SessionContextType['signUp']>(
     ({ email, name, password }) =>
-      signUpMut({ variables: { email, name, password } }).then(res => res.data?.signUp.message ?? null),
-    [signUpMut],
+      signUpMut({ variables: { email, name, password } }).then(
+        (res) => res.data?.signUp.message ?? null
+      ),
+    [signUpMut]
   )
 
   const logout = useCallback<SessionContextType['logout']>(() => {
@@ -130,14 +153,20 @@ export const SessionProvider: FC = ({ children }) => {
       if (recoverPasswordMutResp.loading) {
         return 'executinging ...'
       }
-      const { data, errors } = await recoverPasswordMut({ variables: { email } })
+      const { data, errors } = await recoverPasswordMut({
+        variables: { email },
+      })
       return data?.recoverPassword.success
         ? null
-        : data?.recoverPassword.message ?? errors?.join(';') ?? 'Unexpected error'
+        : data?.recoverPassword.message ??
+            errors?.join(';') ??
+            'Unexpected error'
     },
-    [recoverPasswordMut, recoverPasswordMutResp.loading],
+    [recoverPasswordMut, recoverPasswordMutResp.loading]
   )
-  const changeRecoverPassword = useCallback<SessionContextType['changeRecoverPassword']>(
+  const changeRecoverPassword = useCallback<
+    SessionContextType['changeRecoverPassword']
+  >(
     async ({ newPassword, recoverPasswordToken }) => {
       if (changeRecoverPasswordMutResp.loading) {
         return 'executinging ...'
@@ -150,13 +179,18 @@ export const SessionProvider: FC = ({ children }) => {
         setLastSession({ jwt })
         return null
       }
-      return data?.changeRecoverPassword?.message ?? errors?.join(';') ?? 'Unexpected error'
+      return (
+        data?.changeRecoverPassword?.message ??
+        errors?.join(';') ??
+        'Unexpected error'
+      )
     },
-    [changeRecoverPasswordMut, changeRecoverPasswordMutResp.loading],
+    [changeRecoverPasswordMut, changeRecoverPasswordMutResp.loading]
   )
 
   const [userAcceptedPolicies, setUserAcceptedPolicies] = useState(
-    localStorage.getItem(USER_ACCEPTED_POLICIES_STORAGE_KEY) === USER_ACCEPTED_POLICIES_STORAGE_VAL,
+    localStorage.getItem(USER_ACCEPTED_POLICIES_STORAGE_KEY) ===
+      USER_ACCEPTED_POLICIES_STORAGE_VAL
   )
   useEffect(() => {
     window.addEventListener('storage', handler)
@@ -165,13 +199,18 @@ export const SessionProvider: FC = ({ children }) => {
     }
     function handler(_: StorageEvent) {
       if (_.key === USER_ACCEPTED_POLICIES_STORAGE_KEY) {
-        setUserAcceptedPolicies(_.newValue === USER_ACCEPTED_POLICIES_STORAGE_VAL)
+        setUserAcceptedPolicies(
+          _.newValue === USER_ACCEPTED_POLICIES_STORAGE_VAL
+        )
       }
     }
   }, [])
 
   const userAcceptPoliciesCb = useCallback(() => {
-    localStorage.setItem(USER_ACCEPTED_POLICIES_STORAGE_KEY, USER_ACCEPTED_POLICIES_STORAGE_VAL)
+    localStorage.setItem(
+      USER_ACCEPTED_POLICIES_STORAGE_KEY,
+      USER_ACCEPTED_POLICIES_STORAGE_VAL
+    )
     setUserAcceptedPolicies(true)
   }, [])
 
@@ -196,7 +235,8 @@ export const SessionProvider: FC = ({ children }) => {
       lastSessionJwt: lastSession.jwt ?? null,
       recoverPassword,
       changeRecoverPassword,
-      userMustAcceptPolicies: isAuthenticated || userAcceptedPolicies ? null : userAcceptPoliciesCb,
+      userMustAcceptPolicies:
+        isAuthenticated || userAcceptedPolicies ? null : userAcceptPoliciesCb,
     }),
     [
       isAuthenticated,
@@ -213,8 +253,12 @@ export const SessionProvider: FC = ({ children }) => {
       userAcceptedPolicies,
       userAcceptPoliciesCb,
       getSessionLazyQ,
-    ],
+    ]
   )
   // console.log({ __: ctx.userMustAcceptPolicies })
-  return <ProvideSession value={ctx}>{!sessionQResult.called ? null : children}</ProvideSession>
+  return (
+    <ProvideSession value={ctx}>
+      {!sessionQResult.called ? null : children}
+    </ProvideSession>
+  )
 }

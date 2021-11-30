@@ -1,6 +1,9 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { href } from '../../../elements/link'
-import { BrowserLoggedInStoryProps, BrowserLoggedOutStoryProps } from '../../organisms/Browser/Browser.stories'
+import {
+  BrowserLoggedInStoryProps,
+  BrowserLoggedOutStoryProps,
+} from '../../organisms/Browser/Browser.stories'
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Search, SearchProps } from './Search'
@@ -12,10 +15,16 @@ const meta: ComponentMeta<typeof Search> = {
     // backgroundColor: { control: 'color' },
   },
   parameters: { layout: 'fullscreen' },
-  excludeStories: ['SearchStoryProps', 'SearchLoggedOutStoryProps', 'SearchLoggedInStoryProps'],
+  excludeStories: [
+    'SearchStoryProps',
+    'SearchLoggedOutStoryProps',
+    'SearchLoggedInStoryProps',
+  ],
 }
 
-const SearchStory: ComponentStory<typeof Search> = args => <Search {...args} />
+const SearchStory: ComponentStory<typeof Search> = (args) => (
+  <Search {...args} />
+)
 
 export const SearchStoryProps: SearchProps = {
   headerPageTemplateProps: {

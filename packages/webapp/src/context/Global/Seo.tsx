@@ -48,10 +48,10 @@ export const SeoProvider: FC = ({ children }) => {
     orgSeoMeta({ org })
   )
 
-  useEffect(() => listen(() => updateSeoMeta(orgSeoMeta({ org }))), [
-    listen,
-    org,
-  ])
+  useEffect(
+    () => listen(() => updateSeoMeta(orgSeoMeta({ org }))),
+    [listen, org]
+  )
 
   const ctx = useMemo<SeoContextType>(() => {
     return {

@@ -2,7 +2,11 @@ query LandingPageLists($id: ID = "Organization/") {
   node(id: $id) {
     ... on INode {
       id
-      trending: _rel(type: Follows, targetTypes: [Collection, IscedField], page: { first: 8 }) {
+      trending: _rel(
+        type: Follows
+        targetTypes: [Collection, IscedField]
+        page: { first: 8 }
+      ) {
         edges {
           node {
             id
@@ -10,7 +14,11 @@ query LandingPageLists($id: ID = "Organization/") {
           }
         }
       }
-      bookmarkedCollections: _rel(type: Bookmarked, targetTypes: [Collection], page: { first: 8 }) {
+      bookmarkedCollections: _rel(
+        type: Bookmarked
+        targetTypes: [Collection]
+        page: { first: 8 }
+      ) {
         edges {
           node {
             id
@@ -21,7 +29,11 @@ query LandingPageLists($id: ID = "Organization/") {
           }
         }
       }
-      bookmarkedResources: _rel(type: Bookmarked, targetTypes: [Resource], page: { first: 8 }) {
+      bookmarkedResources: _rel(
+        type: Bookmarked
+        targetTypes: [Resource]
+        page: { first: 8 }
+      ) {
         edges {
           node {
             id

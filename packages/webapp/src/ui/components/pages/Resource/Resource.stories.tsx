@@ -38,12 +38,15 @@ const meta: ComponentMeta<typeof Resource> = {
   ],
 }
 
-const ResourceStory: ComponentStory<typeof Resource> = args => <Resource {...args} />
+const ResourceStory: ComponentStory<typeof Resource> = (args) => (
+  <Resource {...args} />
+)
 
 export const resourceFormBag: NewResourceFormValues = {
-  collections: ['Biology'].map(label => ({ label, id: label })),
+  collections: ['Biology'].map((label) => ({ label, id: label })),
   visibility: 'Private',
-  category: '0188 Inter-disciplinary programmes and qualifications involving education',
+  category:
+    '0188 Inter-disciplinary programmes and qualifications involving education',
   content: '',
   contentType: 'Link',
   description:
@@ -90,7 +93,7 @@ export const ResourceStoryProps: ResourceProps = {
     'Phylosophy',
     'Sociology',
     'English Literature',
-  ].map(label => ({ label, id: label })),
+  ].map((label) => ({ label, id: label })),
   selectedCollections: [{ label: 'Education', id: 'Education' }],
   visibility: VisibilityDropdown,
   types: TypeDropdown,
@@ -135,7 +138,11 @@ export const ResourceFileLoggedOutStoryProps: ResourceProps = {
   ...ResourceLinkLoggedOutStoryProps,
   type: 'file',
   contentUrl: 'https://picsum.photos/200/100',
-  formBag: SBFormikBag<NewResourceFormValues>({ ...resourceFormBag, contentType: 'File', type: 'Video' }),
+  formBag: SBFormikBag<NewResourceFormValues>({
+    ...resourceFormBag,
+    contentType: 'File',
+    type: 'Video',
+  }),
 }
 
 export const ResourceLoggedInStoryProps: ResourceProps = {

@@ -15,8 +15,14 @@ export type InputTextFieldProps = {
   displayMode?: boolean
   value?: string | undefined | null
   getText?(text: string): void
-  textAreaAttrs?: React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>
-  inputAttrs?: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
+  textAreaAttrs?: React.DetailedHTMLProps<
+    React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    HTMLTextAreaElement
+  >
+  inputAttrs?: React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  >
   textAreaAutoSize?: boolean
   highlightWhenEmpty?: boolean
   highlight?: boolean
@@ -49,11 +55,16 @@ export const InputTextField: FC<InputTextFieldProps> = ({
     if (textAreaAutoSize && textArea && textArea.current) {
       textArea.current.style.height = 'fit-content'
       // console.log(textArea.current.scrollHeight)
-      textArea.current.style.height = Math.ceil(textArea.current.scrollHeight / 10) * 10 + 'px'
+      textArea.current.style.height =
+        Math.ceil(textArea.current.scrollHeight / 10) * 10 + 'px'
     }
   }, [textAreaAutoSize])
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (
+    e:
+      | React.KeyboardEvent<HTMLInputElement>
+      | React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
     if (e.key === 'Enter') {
       getText && getText(text ? text : '')
     }
@@ -64,7 +75,11 @@ export const InputTextField: FC<InputTextFieldProps> = ({
     getText && getText(text ? text : '')
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setText(e.currentTarget.value)
     autoUpdate && getText && getText(e.currentTarget.value)
   }
@@ -87,10 +102,16 @@ export const InputTextField: FC<InputTextFieldProps> = ({
     >
       {label ? <label>{label}</label> : <></>}
       {textarea ? (
-        <div className={`textarea-container ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}>
+        <div
+          className={`textarea-container ${displayMode && 'display-mode'} ${
+            !edit && 'not-editing'
+          }`}
+        >
           <textarea
             ref={textArea}
-            className={`${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
+            className={`${displayMode && 'display-mode'} ${
+              !edit && 'not-editing'
+            }`}
             value={text ? text : ''}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
@@ -103,10 +124,16 @@ export const InputTextField: FC<InputTextFieldProps> = ({
           />
         </div>
       ) : (
-        <div className={`input-container ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}>
+        <div
+          className={`input-container ${displayMode && 'display-mode'} ${
+            !edit && 'not-editing'
+          }`}
+        >
           {edit !== undefined}
           <input
-            className={`${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
+            className={`${displayMode && 'display-mode'} ${
+              !edit && 'not-editing'
+            }`}
             value={text ? text : ''}
             onChange={handleChange}
             {...(buttonName && { onKeyDown: handleKeyDown })}
@@ -115,7 +142,11 @@ export const InputTextField: FC<InputTextFieldProps> = ({
             placeholder={placeholder}
             {...inputAttrs}
           />
-          {buttonName ? <PrimaryButton onClick={handleClick}>{buttonName}</PrimaryButton> : <></>}
+          {buttonName ? (
+            <PrimaryButton onClick={handleClick}>{buttonName}</PrimaryButton>
+          ) : (
+            <></>
+          )}
         </div>
       )}
     </div>

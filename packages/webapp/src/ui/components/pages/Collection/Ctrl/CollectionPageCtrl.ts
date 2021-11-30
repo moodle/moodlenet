@@ -1,4 +1,8 @@
-import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import {
+  isEdgeNodeOfType,
+  narrowEdgeNodeOfType,
+  narrowNodeType,
+} from '@moodlenet/common/dist/graphql/helpers'
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
@@ -6,7 +10,10 @@ import { createElement, useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
-import { getMaybeAssetRefUrl, useUploadTempFile } from '../../../../../helpers/data'
+import {
+  getMaybeAssetRefUrl,
+  useUploadTempFile,
+} from '../../../../../helpers/data'
 import { href } from '../../../../elements/link'
 // import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
@@ -25,11 +32,14 @@ import {
   useCollectionPageDataQuery,
   useDelCollectionMutation,
   useDelCollectionRelationMutation,
-  useEditCollectionMutation
+  useEditCollectionMutation,
 } from './CollectionPage.gen'
 
 export type CollectionCtrlProps = { id: ID }
-export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> = ({ id }) => {
+export const useCollectionCtrl: CtrlHook<
+  CollectionProps,
+  CollectionCtrlProps
+> = ({ id }) => {
   useSeoContentId(id)
   // const { org: localOrg } = useLocalInstance()
   const { session, isAdmin, isAuthenticated } = useSession()
@@ -52,9 +62,11 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     if (!myId || delCollectionRes.loading) {
       return
     }
-    delCollection({ variables: { node: { id, nodeType: 'Collection' } } }).then(() => {
-      history.replace(nodeGqlId2UrlPath(myId))
-    })
+    delCollection({ variables: { node: { id, nodeType: 'Collection' } } }).then(
+      () => {
+        history.replace(nodeGqlId2UrlPath(myId))
+      }
+    )
   }, [delCollection, delCollectionRes.loading, history, id, myId])
 
   const myFollowEdgeId = collectionData?.myFollow.edges[0]?.edge.id
@@ -63,13 +75,31 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       return
     }
     if (myFollowEdgeId) {
-      return delRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(() => refetch())
+      return delRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(
+        () => refetch()
+      )
     } else {
       return addRelation({
-        variables: { edge: { edgeType: 'Follows', from: session.profile.id, to: id, Follows: {} } },
+        variables: {
+          edge: {
+            edgeType: 'Follows',
+            from: session.profile.id,
+            to: id,
+            Follows: {},
+          },
+        },
       }).then(() => refetch())
     }
-  }, [addRelation, addRelationRes.loading, delRelation, delRelationRes.loading, id, myFollowEdgeId, refetch, session])
+  }, [
+    addRelation,
+    addRelationRes.loading,
+    delRelation,
+    delRelationRes.loading,
+    id,
+    myFollowEdgeId,
+    refetch,
+    session,
+  ])
 
   const myBookmarkedEdgeId = collectionData?.myBookmarked.edges[0]?.edge.id
   const toggleBookmark = useCallback(() => {
@@ -77,10 +107,19 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       return
     }
     if (myBookmarkedEdgeId) {
-      return delRelation({ variables: { edge: { id: myBookmarkedEdgeId } } }).then(() => refetch())
+      return delRelation({
+        variables: { edge: { id: myBookmarkedEdgeId } },
+      }).then(() => refetch())
     } else {
       return addRelation({
-        variables: { edge: { edgeType: 'Bookmarked', from: session.profile.id, to: id, Bookmarked: {} } },
+        variables: {
+          edge: {
+            edgeType: 'Bookmarked',
+            from: session.profile.id,
+            to: id,
+            Bookmarked: {},
+          },
+        },
       }).then(() => refetch())
     }
   }, [
@@ -98,19 +137,25 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
 
   const [formik, formBag] = useFormikBag<NewCollectionFormValues>({
     initialValues: {} as any,
-    onSubmit: async vals => {
-      if (!formik.dirty || !collectionData || addRelationRes.loading || delRelationRes.loading || editRes.loading) {
+    onSubmit: async (vals) => {
+      if (
+        !formik.dirty ||
+        !collectionData ||
+        addRelationRes.loading ||
+        delRelationRes.loading ||
+        editRes.loading
+      ) {
         return
       }
       const imageAssetRef: AssetRefInput =
         !vals.image || vals.image === formik.initialValues.image
           ? { location: '', type: 'NoChange' }
           : typeof vals.image === 'string'
-            ? {
+          ? {
               location: vals.image,
               type: 'ExternalUrl',
             }
-            : {
+          : {
               location: await uploadTempFile('image', vals.image),
               type: 'TmpUpload',
             }
@@ -163,12 +208,18 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
 
   // console.log(formik.values)
 
-  const creatorEdge = narrowEdgeNodeOfType(['Profile', 'Organization'])(collectionData?.creator.edges[0])
+  const creatorEdge = narrowEdgeNodeOfType(['Profile', 'Organization'])(
+    collectionData?.creator.edges[0]
+  )
   const creator = creatorEdge?.node
 
-  const resourceEdges = useMemo(() => (collectionData?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])), [
-    collectionData?.resources.edges,
-  ])
+  const resourceEdges = useMemo(
+    () =>
+      (collectionData?.resources.edges || []).filter(
+        isEdgeNodeOfType(['Resource'])
+      ),
+    [collectionData?.resources.edges]
+  )
   const isOwner = creator && session ? creator.id === session.profile.id : false
 
   const removeResource = useCallback(
@@ -176,9 +227,11 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       if (delRelationRes.loading) {
         return
       }
-      return delRelation({ variables: { edge: { id: edgeId } } }).then(() => refetch())
+      return delRelation({ variables: { edge: { id: edgeId } } }).then(() =>
+        refetch()
+      )
     },
-    [delRelation, delRelationRes.loading, refetch],
+    [delRelation, delRelationRes.loading, refetch]
   )
 
   const collectionProps = useMemo<null | CollectionProps>(() => {
@@ -186,7 +239,11 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
       return null
     }
     const props: CollectionProps = {
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
+      headerPageTemplateProps: ctrlHook(
+        useHeaderPageTemplateCtrl,
+        {},
+        'header-page-template'
+      ),
       formBag,
       isOwner,
       isAdmin,
@@ -199,11 +256,15 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
             id,
             removeAction: isOwner && (() => removeResource(edge.id)),
           },
-          id,
-        ),
+          id
+        )
       ),
       contributorCardProps: {
-        avatarUrl: getMaybeAssetRefUrl(creator?.__typename === 'Profile' ? creator.avatar : creator?.smallLogo),
+        avatarUrl: getMaybeAssetRefUrl(
+          creator?.__typename === 'Profile'
+            ? creator.avatar
+            : creator?.smallLogo
+        ),
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
       },
@@ -233,7 +294,10 @@ export const useCollectionCtrl: CtrlHook<CollectionProps, CollectionCtrlProps> =
     isAdmin,
   ])
   if (!loading && !data?.node) {
-    return createElement(Fallback, fallbackProps({ key: 'collection-not-found' }))
+    return createElement(
+      Fallback,
+      fallbackProps({ key: 'collection-not-found' })
+    )
   }
 
   return collectionProps && [collectionProps]

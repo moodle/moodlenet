@@ -10,7 +10,7 @@ const meta: ComponentMeta<typeof SortCard> = {
   },
   excludeStories: ['SortCardStoryProps'],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ width: 200 }}>
         <Story />
       </div>
@@ -18,7 +18,9 @@ const meta: ComponentMeta<typeof SortCard> = {
   ],
 }
 
-const SortCardStory: ComponentStory<typeof SortCard> = args => <SortCard {...args} />
+const SortCardStory: ComponentStory<typeof SortCard> = (args) => (
+  <SortCard {...args} />
+)
 
 const content: SortCardProps['content'] = [
   ['Relevance', 'Relevance', 'inactive'],

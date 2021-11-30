@@ -23,20 +23,54 @@ export type ExtraDetailsProps = {
 }
 
 export const ExtraDetails = withCtrl<ExtraDetailsProps>(
-  ({ formBag, types, levels, months, years, languages, /* formats,  */ nextStep, previousStep }) => {
+  ({
+    formBag,
+    types,
+    levels,
+    months,
+    years,
+    languages,
+    /* formats,  */ nextStep,
+    previousStep,
+  }) => {
     const [form, formAttrs] = formBag
     const setFieldValue = form.setFieldValue
-    const setTypeField = useCallback((_: string) => setFieldValue('type', _), [setFieldValue])
-    const setLevelField = useCallback((_: string) => setFieldValue('level', _), [setFieldValue])
-    const setMonthField = useCallback((_: string) => setFieldValue('originalDateMonth', _), [setFieldValue])
-    const setYearField = useCallback((_: string) => setFieldValue('originalDateYear', _), [setFieldValue])
-    const setLangField = useCallback((_: string) => setFieldValue('language', _), [setFieldValue])
+    const setTypeField = useCallback(
+      (_: string) => setFieldValue('type', _),
+      [setFieldValue]
+    )
+    const setLevelField = useCallback(
+      (_: string) => setFieldValue('level', _),
+      [setFieldValue]
+    )
+    const setMonthField = useCallback(
+      (_: string) => setFieldValue('originalDateMonth', _),
+      [setFieldValue]
+    )
+    const setYearField = useCallback(
+      (_: string) => setFieldValue('originalDateYear', _),
+      [setFieldValue]
+    )
+    const setLangField = useCallback(
+      (_: string) => setFieldValue('language', _),
+      [setFieldValue]
+    )
     // const setFormatField = useCallback((_: string) => setFieldValue('format', _), [setFieldValue])
 
     const dataInputs = (
       <div className="data-inputs">
-        <Dropdown value={form.values.type} {...types} {...formAttrs.type} getValue={setTypeField} />
-        <Dropdown value={form.values.level} {...levels} {...formAttrs.level} getValue={setLevelField} />
+        <Dropdown
+          value={form.values.type}
+          {...types}
+          {...formAttrs.type}
+          getValue={setTypeField}
+        />
+        <Dropdown
+          value={form.values.level}
+          {...levels}
+          {...formAttrs.level}
+          getValue={setLevelField}
+        />
         <div className="date">
           <label>
             <Trans>Original creation date</Trans>
@@ -56,7 +90,11 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
             />
           </div>
         </div>
-        <Dropdown {...languages} {...formAttrs.language} getValue={setLangField} />
+        <Dropdown
+          {...languages}
+          {...formAttrs.language}
+          getValue={setLangField}
+        />
         {/* <Dropdown {...formats} {...formAttrs.format} getValue={setFormatField} /> */}
       </div>
     )
@@ -74,5 +112,5 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
         </div>
       </div>
     )
-  },
+  }
 )

@@ -33,8 +33,10 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
   })
   const collections = useMemo(
     () =>
-      (collectionsQ.data?.globalSearch.edges || []).filter(isEdgeNodeOfType(['Collection'])).map(({ node }) => node),
-    [collectionsQ.data?.globalSearch.edges],
+      (collectionsQ.data?.globalSearch.edges || [])
+        .filter(isEdgeNodeOfType(['Collection']))
+        .map(({ node }) => node),
+    [collectionsQ.data?.globalSearch.edges]
   )
   const {
     formiks: [loadMoreCollections],
@@ -49,8 +51,11 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
     },
   })
   const profiles = useMemo(
-    () => (profilesQ.data?.globalSearch.edges || []).filter(isEdgeNodeOfType(['Profile'])).map(({ node }) => node),
-    [profilesQ.data?.globalSearch.edges],
+    () =>
+      (profilesQ.data?.globalSearch.edges || [])
+        .filter(isEdgeNodeOfType(['Profile']))
+        .map(({ node }) => node),
+    [profilesQ.data?.globalSearch.edges]
   )
   const {
     formiks: [loadMoreProfiles],
@@ -68,8 +73,11 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
     formiks: [loadMoreResources],
   } = usePaginateSearch(resourcesQ)
   const resources = useMemo(
-    () => (resourcesQ.data?.globalSearch.edges || []).filter(isEdgeNodeOfType(['Resource'])).map(({ node }) => node),
-    [resourcesQ.data?.globalSearch.edges],
+    () =>
+      (resourcesQ.data?.globalSearch.edges || [])
+        .filter(isEdgeNodeOfType(['Resource']))
+        .map(({ node }) => node),
+    [resourcesQ.data?.globalSearch.edges]
   )
 
   const subjectsQ = useGlobalSearchQuery({
@@ -84,29 +92,48 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
     formiks: [loadMoreSubjects],
   } = usePaginateSearch(subjectsQ)
   const subjects = useMemo(
-    () => (subjectsQ.data?.globalSearch.edges || []).filter(isEdgeNodeOfType(['IscedField'])).map(({ node }) => node),
-    [subjectsQ.data?.globalSearch.edges],
+    () =>
+      (subjectsQ.data?.globalSearch.edges || [])
+        .filter(isEdgeNodeOfType(['IscedField']))
+        .map(({ node }) => node),
+    [subjectsQ.data?.globalSearch.edges]
   )
 
   const searchUIProps: SearchProps = useMemo(
     () => ({
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
+      headerPageTemplateProps: ctrlHook(
+        useHeaderPageTemplateCtrl,
+        {},
+        'header-page-template'
+      ),
       browserProps: {
-        smallProfileCardPropsList: profiles.map(profile =>
-          ctrlHook(useSmallProfileCardCtrl, { id: profile.id }, `Search Profile ${profile.id} Card`),
+        smallProfileCardPropsList: profiles.map((profile) =>
+          ctrlHook(
+            useSmallProfileCardCtrl,
+            { id: profile.id },
+            `Search Profile ${profile.id} Card`
+          )
         ),
-        collectionCardPropsList: collections.map(collection =>
-          ctrlHook(useCollectionCardCtrl, { id: collection.id }, `Search Collection ${collection.id} Card`),
+        collectionCardPropsList: collections.map((collection) =>
+          ctrlHook(
+            useCollectionCardCtrl,
+            { id: collection.id },
+            `Search Collection ${collection.id} Card`
+          )
         ),
-        resourceCardPropsList: resources.map(resource =>
+        resourceCardPropsList: resources.map((resource) =>
           ctrlHook(
             useResourceCardCtrl,
             { id: resource.id, removeAction: false },
-            `Search Resource ${resource.id} Card`,
-          ),
+            `Search Resource ${resource.id} Card`
+          )
         ),
-        subjectCardPropsList: subjects.map(subject =>
-          ctrlHook(useIscedfCardCtrl, { id: subject.id }, `Search Subject ${subject.id} Card`),
+        subjectCardPropsList: subjects.map((subject) =>
+          ctrlHook(
+            useIscedfCardCtrl,
+            { id: subject.id },
+            `Search Subject ${subject.id} Card`
+          )
         ),
         setSortBy: (by, dir) => {
           // console.log({ by, dir })
@@ -128,7 +155,7 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
       loadMoreResources?.submitForm,
       loadMoreSubjects?.submitForm,
       setSort,
-    ],
+    ]
   )
   return [searchUIProps]
 }

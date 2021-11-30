@@ -1,5 +1,8 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { LevelDropdown, LicenseDropdown } from '../../pages/NewResource/FieldsData'
+import {
+  LevelDropdown,
+  LicenseDropdown,
+} from '../../pages/NewResource/FieldsData'
 import { Dropdown, DropdownProps } from './Dropdown'
 
 const meta: ComponentMeta<typeof Dropdown> = {
@@ -9,19 +12,26 @@ const meta: ComponentMeta<typeof Dropdown> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: ['DropdownTextStoryProps', 'DropdownTextAndIconsStoryProps'],
-  decorators:[
-    (Story)=>(<div style={{width: '300px'/*, height: '1200px', position: 'absolute'*/}}><Story/></div>)
-  ]
+  decorators: [
+    (Story) => (
+      <div
+        style={{ width: '300px' /*, height: '1200px', position: 'absolute'*/ }}
+      >
+        <Story />
+      </div>
+    ),
+  ],
 }
 
 export const DropdownTextStoryProps: DropdownProps = LevelDropdown
-
 
 //const by = <img src={uploadImageIcon} alt="Link"/>
 
 export const DropdownTextAndIconsStoryProps: DropdownProps = LicenseDropdown
 
-const DropdownStory: ComponentStory<typeof Dropdown> = args => <Dropdown {...args}></Dropdown>
+const DropdownStory: ComponentStory<typeof Dropdown> = (args) => (
+  <Dropdown {...args}></Dropdown>
+)
 
 export const Text = DropdownStory.bind({})
 Text.args = DropdownTextStoryProps
