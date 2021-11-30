@@ -12,9 +12,18 @@ export type SortCardProps = {
   onChange(sortby: string, state: SortState): unknown
 }
 
-export const SortCard: FC<SortCardProps> = ({ className, direction, content, title, onChange }) => {
+export const SortCard: FC<SortCardProps> = ({
+  className,
+  direction,
+  content,
+  title,
+  onChange,
+}) => {
   className += ' ' + direction
-  const [currentSort, setCurrentSort] = useState<{ name: string; state: SortState }>({
+  const [currentSort, setCurrentSort] = useState<{
+    name: string
+    state: SortState
+  }>({
     name: content[1] ? content[1][0] : 'none',
     state: 'inactive',
   })
@@ -24,7 +33,7 @@ export const SortCard: FC<SortCardProps> = ({ className, direction, content, tit
       onChange(name, state)
       setCurrentSort({ name, state })
     },
-    [onChange],
+    [onChange]
   )
 
   const inContent = content.map(([name, label, state]) => (
@@ -46,7 +55,7 @@ export const SortCard: FC<SortCardProps> = ({ className, direction, content, tit
 }
 
 SortCard.defaultProps = {
-  direction: 'vertical'
+  direction: 'vertical',
 }
 
 export default SortCard

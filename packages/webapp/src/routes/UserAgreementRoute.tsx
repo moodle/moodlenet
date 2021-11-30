@@ -4,8 +4,14 @@ import { UserAgreement } from '../ui/components/pages/Policies/UserAgreement/Use
 import { ctrlHook } from '../ui/lib/ctrl'
 import { MNRouteProps, RouteFC } from './lib'
 
-const UserAgreementComponent: RouteFC<Routes.UserAgreement> = (/* { match } */) => {
-  const userAgreementProps = ctrlHook(useUserAgreementCtrl, {}, 'user-agreement-page')
+const UserAgreementComponent: RouteFC<
+  Routes.UserAgreement
+> = (/* { match } */) => {
+  const userAgreementProps = ctrlHook(
+    useUserAgreementCtrl,
+    {},
+    'user-agreement-page'
+  )
   return <UserAgreement {...userAgreementProps} />
 }
 

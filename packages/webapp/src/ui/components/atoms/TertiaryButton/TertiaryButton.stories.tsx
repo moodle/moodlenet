@@ -6,7 +6,9 @@ const meta: ComponentMeta<typeof TertiaryButton> = {
   component: TertiaryButton,
 }
 
-const TertiaryButtonStory: ComponentStory<typeof TertiaryButton> = () => <TertiaryButton>Tertiary Button</TertiaryButton>
+const TertiaryButtonStory: ComponentStory<typeof TertiaryButton> = () => (
+  <TertiaryButton>Tertiary Button</TertiaryButton>
+)
 
 export const Default = TertiaryButtonStory.bind({})
 

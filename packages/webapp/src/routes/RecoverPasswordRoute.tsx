@@ -4,7 +4,9 @@ import { RecoverPassword } from '../ui/components/pages/Access/RecoverPassword/R
 import { ctrlHook } from '../ui/lib/ctrl'
 import { MNRouteProps, RouteFC } from './lib'
 
-export const RecoverPasswordRouteComponent: RouteFC<Routes.RecoverPassword> = (/* { match } */) => {
+export const RecoverPasswordRouteComponent: RouteFC<
+  Routes.RecoverPassword
+> = (/* { match } */) => {
   const props = ctrlHook(useRecoverPasswordCtrl, {}, 'recoverpassword-route')
   return <RecoverPassword {...props} />
 }

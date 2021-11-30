@@ -153,9 +153,8 @@ export const Dropdown: FC<DropdownProps> = ({
   }, [index])
 
   const filterFunction = useCallback((value?: string) => {
-    const filter = (value
-      ? value
-      : dropdownButton.current?.value
+    const filter = (
+      value ? value : dropdownButton.current?.value
     )?.toUpperCase()
     const div = dropdownContent.current
     let length = 0

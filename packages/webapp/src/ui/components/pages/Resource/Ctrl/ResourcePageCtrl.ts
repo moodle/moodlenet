@@ -1,4 +1,8 @@
-import { isEdgeNodeOfType, narrowEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import {
+  isEdgeNodeOfType,
+  narrowEdgeNodeOfType,
+  narrowNodeType,
+} from '@moodlenet/common/dist/graphql/helpers'
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
@@ -7,7 +11,11 @@ import { createElement, useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
-import { getJustAssetRefUrl, getMaybeAssetRefUrl, useUploadTempFile } from '../../../../../helpers/data'
+import {
+  getJustAssetRefUrl,
+  getMaybeAssetRefUrl,
+  useUploadTempFile,
+} from '../../../../../helpers/data'
 import {
   getOriginalCreationStringsByTimestamp,
   getOriginalCreationTimestampByStrings,
@@ -17,7 +25,7 @@ import {
   useLicensesOptions,
   useResourceGradeOptions,
   useResourceTypeOptions,
-  yearsOptions
+  yearsOptions,
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
 import { useLMS } from '../../../../../lib/moodleLMS/useSendToMoodle'
 import { href } from '../../../../elements/link'
@@ -37,16 +45,21 @@ import {
   useDelResourceMutation,
   useDelResourceRelationMutation,
   useEditResourceMutation,
-  useResourcePageDataQuery
+  useResourcePageDataQuery,
 } from './ResourcePage.gen'
 
 export type ResourceCtrlProps = { id: ID }
-export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id }) => {
+export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
+  id,
+}) => {
   useSeoContentId(id)
   const { session, isAdmin, isAuthenticated } = useSession()
   const allMyOwnCollectionEdges = useMemo(
-    () => session?.profile.myOwnCollections.edges.filter(isEdgeNodeOfType(['Collection'])) ?? [],
-    [session?.profile.myOwnCollections.edges],
+    () =>
+      session?.profile.myOwnCollections.edges.filter(
+        isEdgeNodeOfType(['Collection'])
+      ) ?? [],
+    [session?.profile.myOwnCollections.edges]
   )
   // console.log({ allMyOwnCollectionEdges })
   // const { org: localOrg } = useLocalInstance()
@@ -54,7 +67,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     variables: {
       resourceId: id,
       myProfileId: session ? [session.profile.id] : [],
-      myCollectionsIds: allMyOwnCollectionEdges.map(_ => _.node.id),
+      myCollectionsIds: allMyOwnCollectionEdges.map((_) => _.node.id),
     },
   })
   const resourceData = narrowNodeType(['Resource'])(data?.node)
@@ -65,19 +78,31 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     if (!myId || delResourceRes.loading) {
       return
     }
-    delResource({ variables: { node: { id, nodeType: 'Resource' } } }).then(() => {
-      history.replace(nodeGqlId2UrlPath(myId))
-    })
+    delResource({ variables: { node: { id, nodeType: 'Resource' } } }).then(
+      () => {
+        history.replace(nodeGqlId2UrlPath(myId))
+      }
+    )
   }, [delResource, delResourceRes.loading, history, id, myId])
 
   const [addRelation, addRelationRes] = useCreateResourceRelationMutation()
   const [delRelation, delRelationRes] = useDelResourceRelationMutation()
   const [edit, editRes] = useEditResourceMutation()
-  const categoryEdge = narrowEdgeNodeOfType(['IscedField'])(resourceData?.categories.edges[0])
-  const levelEdge = narrowEdgeNodeOfType(['IscedGrade'])(resourceData?.grades.edges[0])
-  const typeEdge = narrowEdgeNodeOfType(['ResourceType'])(resourceData?.types.edges[0])
-  const languageEdge = narrowEdgeNodeOfType(['Language'])(resourceData?.languages.edges[0])
-  const licenseEdge = narrowEdgeNodeOfType(['License'])(resourceData?.licenses.edges[0])
+  const categoryEdge = narrowEdgeNodeOfType(['IscedField'])(
+    resourceData?.categories.edges[0]
+  )
+  const levelEdge = narrowEdgeNodeOfType(['IscedGrade'])(
+    resourceData?.grades.edges[0]
+  )
+  const typeEdge = narrowEdgeNodeOfType(['ResourceType'])(
+    resourceData?.types.edges[0]
+  )
+  const languageEdge = narrowEdgeNodeOfType(['Language'])(
+    resourceData?.languages.edges[0]
+  )
+  const licenseEdge = narrowEdgeNodeOfType(['License'])(
+    resourceData?.licenses.edges[0]
+  )
 
   const category = categoryEdge?.node.name ?? ''
   const level = levelEdge?.node.name ?? ''
@@ -93,19 +118,25 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
   const uploadTempFile = useUploadTempFile()
   const [formik, formBag] = useFormikBag<NewResourceFormValues>({
     initialValues: {} as any,
-    onSubmit: async vals => {
-      if (!formik.dirty || !resourceData || addRelationRes.loading || delRelationRes.loading || editRes.loading) {
+    onSubmit: async (vals) => {
+      if (
+        !formik.dirty ||
+        !resourceData ||
+        addRelationRes.loading ||
+        delRelationRes.loading ||
+        editRes.loading
+      ) {
         return
       }
       const imageAssetRef: AssetRefInput =
         !vals.image || vals.image === formik.initialValues.image
           ? { location: '', type: 'NoChange' }
           : typeof vals.image === 'string'
-            ? {
+          ? {
               location: vals.image,
               type: 'ExternalUrl',
             }
-            : {
+          : {
               location: await uploadTempFile('image', vals.image),
               type: 'TmpUpload',
             }
@@ -130,9 +161,17 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { id: langId } = getLang(vals.language)
         return Promise.all([
-          languageEdge && delRelation({ variables: { edge: { id: languageEdge.edge.id } } }),
+          languageEdge &&
+            delRelation({ variables: { edge: { id: languageEdge.edge.id } } }),
           addRelation({
-            variables: { edge: { edgeType: 'Features', from: id, to: langId, Features: {} } },
+            variables: {
+              edge: {
+                edgeType: 'Features',
+                from: id,
+                to: langId,
+                Features: {},
+              },
+            },
           }),
         ])
       })()
@@ -143,9 +182,17 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { id: licenseId } = getLicense(vals.license)
         return Promise.all([
-          licenseEdge && delRelation({ variables: { edge: { id: licenseEdge.edge.id } } }),
+          licenseEdge &&
+            delRelation({ variables: { edge: { id: licenseEdge.edge.id } } }),
           addRelation({
-            variables: { edge: { edgeType: 'Features', from: id, to: licenseId, Features: {} } },
+            variables: {
+              edge: {
+                edgeType: 'Features',
+                from: id,
+                to: licenseId,
+                Features: {},
+              },
+            },
           }),
         ])
       })()
@@ -156,9 +203,17 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { id: typeId } = getResourceType(vals.type)
         return Promise.all([
-          typeEdge && delRelation({ variables: { edge: { id: typeEdge.edge.id } } }),
+          typeEdge &&
+            delRelation({ variables: { edge: { id: typeEdge.edge.id } } }),
           addRelation({
-            variables: { edge: { edgeType: 'Features', from: id, to: typeId, Features: {} } },
+            variables: {
+              edge: {
+                edgeType: 'Features',
+                from: id,
+                to: typeId,
+                Features: {},
+              },
+            },
           }),
         ])
       })()
@@ -169,9 +224,17 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { id: gradeId } = getGrade(vals.level)
         return Promise.all([
-          levelEdge && delRelation({ variables: { edge: { id: levelEdge.edge.id } } }),
+          levelEdge &&
+            delRelation({ variables: { edge: { id: levelEdge.edge.id } } }),
           addRelation({
-            variables: { edge: { edgeType: 'Features', from: id, to: gradeId, Features: {} } },
+            variables: {
+              edge: {
+                edgeType: 'Features',
+                from: id,
+                to: gradeId,
+                Features: {},
+              },
+            },
           }),
         ])
       })()
@@ -182,14 +245,29 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         }
         const { id: iscedFId } = getIscedF(vals.category)
         return Promise.all([
-          categoryEdge && delRelation({ variables: { edge: { id: categoryEdge.edge.id } } }),
+          categoryEdge &&
+            delRelation({ variables: { edge: { id: categoryEdge.edge.id } } }),
           addRelation({
-            variables: { edge: { edgeType: 'Features', from: id, to: iscedFId, Features: {} } },
+            variables: {
+              edge: {
+                edgeType: 'Features',
+                from: id,
+                to: iscedFId,
+                Features: {},
+              },
+            },
           }),
         ])
       })()
 
-      await Promise.all([editResPr, editLangRelPr, editLicenseRelPr, editTypeRelPr, editGradeRelPr, editIscedFRelPr])
+      await Promise.all([
+        editResPr,
+        editLangRelPr,
+        editLicenseRelPr,
+        editTypeRelPr,
+        editGradeRelPr,
+        editIscedFRelPr,
+      ])
       return refetch()
     },
   })
@@ -197,8 +275,16 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
 
   useEffect(() => {
     if (resourceData) {
-      const { name: title, description, image, content, _published } = resourceData
-      const orgDateStrings = getOriginalCreationStringsByTimestamp(resourceData.originalCreationDate)
+      const {
+        name: title,
+        description,
+        image,
+        content,
+        _published,
+      } = resourceData
+      const orgDateStrings = getOriginalCreationStringsByTimestamp(
+        resourceData.originalCreationDate
+      )
       fresetForm({
         touched: {},
         values: {
@@ -208,7 +294,10 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
           license,
           type,
 
-          collections: allMyOwnCollectionEdges.map(edge => ({ label: edge.node.name, id: edge.node.id })),
+          collections: allMyOwnCollectionEdges.map((edge) => ({
+            label: edge.node.name,
+            id: edge.node.id,
+          })),
           content: getJustAssetRefUrl(content),
           description,
           format: content.mimetype,
@@ -250,7 +339,9 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
     }
   }, [formikSetFieldValue, formik.values.image])
 
-  const creatorEdge = narrowEdgeNodeOfType(['Profile', 'Organization'])(resourceData?.creator.edges[0])
+  const creatorEdge = narrowEdgeNodeOfType(['Profile', 'Organization'])(
+    resourceData?.creator.edges[0]
+  )
 
   const creator = creatorEdge?.node
 
@@ -262,10 +353,19 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       return
     }
     if (myBookmarkedEdgeId) {
-      return delRelation({ variables: { edge: { id: myBookmarkedEdgeId } } }).then(() => refetch())
+      return delRelation({
+        variables: { edge: { id: myBookmarkedEdgeId } },
+      }).then(() => refetch())
     } else {
       return addRelation({
-        variables: { edge: { edgeType: 'Bookmarked', from: session.profile.id, to: id, Bookmarked: {} } },
+        variables: {
+          edge: {
+            edgeType: 'Bookmarked',
+            from: session.profile.id,
+            to: id,
+            Bookmarked: {},
+          },
+        },
       }).then(() => refetch())
     }
   }, [
@@ -289,19 +389,42 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       await delRelation({ variables: { edge: { id: likedEdge.edge.id } } })
     } else {
       await addRelation({
-        variables: { edge: { edgeType: 'Likes', from: session.profile.id, to: id, Likes: {} } },
+        variables: {
+          edge: {
+            edgeType: 'Likes',
+            from: session.profile.id,
+            to: id,
+            Likes: {},
+          },
+        },
       })
     }
     refetch()
-  }, [session, addRelationRes.loading, delRelationRes.loading, likedEdge, refetch, delRelation, addRelation, id])
+  }, [
+    session,
+    addRelationRes.loading,
+    delRelationRes.loading,
+    likedEdge,
+    refetch,
+    delRelation,
+    addRelation,
+    id,
+  ])
 
   const { sendToLMS, currentLMSPrefs } = useLMS(
     licenseEdge && resourceData
-      ? { asset: resourceData.content, resource: resourceData, license: licenseEdge.node }
-      : null,
+      ? {
+          asset: resourceData.content,
+          resource: resourceData,
+          license: licenseEdge.node,
+        }
+      : null
   )
 
-  const sendToMoodleLms = useCallback((site?: string) => sendToLMS(site), [sendToLMS])
+  const sendToMoodleLms = useCallback(
+    (site?: string) => sendToLMS(site),
+    [sendToLMS]
+  )
   const resourceProps = useMemo<null | ResourceProps>(() => {
     if (!resourceData) {
       return null
@@ -315,33 +438,55 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
       liked,
       visibility: VisibilityDropdown,
       contributorCardProps: {
-        avatarUrl: getMaybeAssetRefUrl(creator?.__typename === 'Profile' ? creator.avatar : creator?.smallLogo),
+        avatarUrl: getMaybeAssetRefUrl(
+          creator?.__typename === 'Profile'
+            ? creator.avatar
+            : creator?.smallLogo
+        ),
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
         timeSinceCreation: creatorEdge
-          ? duration(creatorEdge.edge._created - new Date().valueOf(), 'milliseconds').humanize(true)
+          ? duration(
+              creatorEdge.edge._created - new Date().valueOf(),
+              'milliseconds'
+            ).humanize(true)
           : '?',
       },
       isAuthenticated,
-      tags: resourceData.categories.edges.filter(isEdgeNodeOfType(['IscedField'])).map(({ node }) => ({
-        name: node.name,
-        type: 'General',
-        subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
+      tags: resourceData.categories.edges
+        .filter(isEdgeNodeOfType(['IscedField']))
+        .map(({ node }) => ({
+          name: node.name,
+          type: 'General',
+          subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
+        })),
+      collections: allMyOwnCollectionEdges.map(({ node: { id, name } }) => ({
+        label: name,
+        id,
       })),
-      collections: allMyOwnCollectionEdges.map(({ node: { id, name } }) => ({ label: name, id })),
       selectedCollections: resourceData.inMyCollections.edges
         .filter(isEdgeNodeOfType(['Collection']))
         .map(({ node: { name: label, id } }) => ({ label, id })),
-      setAddToCollections: async selectedCollItems => {
+      setAddToCollections: async (selectedCollItems) => {
         const selectedIds = selectedCollItems.map(({ id }) => id as string)
-        const myCollectionsIds = allMyOwnCollectionEdges.map(({ node: { id } }) => id)
-        const containedInCollEdges = resourceData.inMyCollections.edges.filter(isEdgeNodeOfType(['Collection']))
+        const myCollectionsIds = allMyOwnCollectionEdges.map(
+          ({ node: { id } }) => id
+        )
+        const containedInCollEdges = resourceData.inMyCollections.edges.filter(
+          isEdgeNodeOfType(['Collection'])
+        )
 
-        const containedInCollIds = containedInCollEdges.map(({ node: { id } }) => id)
-        const collIdsToAdd = selectedIds.filter(selectedId => !containedInCollIds.includes(selectedId))
+        const containedInCollIds = containedInCollEdges.map(
+          ({ node: { id } }) => id
+        )
+        const collIdsToAdd = selectedIds.filter(
+          (selectedId) => !containedInCollIds.includes(selectedId)
+        )
 
         const collEdgesToRem = containedInCollEdges.filter(
-          myColEdge => !selectedIds.includes(myColEdge.node.id) && myCollectionsIds.includes(myColEdge.node.id),
+          (myColEdge) =>
+            !selectedIds.includes(myColEdge.node.id) &&
+            myCollectionsIds.includes(myColEdge.node.id)
         )
 
         // console.log( {
@@ -352,12 +497,19 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({ id
         //FIXME: enters once and makes 1 single promise array but does http calls twice ! :|
         // ( because of packages/webapp/src/ui/components/molecules/cards/AddToCollectionsCard/AddToCollectionsCard.tsx#~30)
         const promises = [
-          ...collIdsToAdd.map(collIdToAdd => {
+          ...collIdsToAdd.map((collIdToAdd) => {
             return addRelation({
-              variables: { edge: { edgeType: 'Features', from: collIdToAdd, to: id, Features: {} } },
+              variables: {
+                edge: {
+                  edgeType: 'Features',
+                  from: collIdToAdd,
+                  to: id,
+                  Features: {},
+                },
+              },
             })
           }),
-          ...collEdgesToRem.map(selectedCollEdgeToAdd => {
+          ...collEdgesToRem.map((selectedCollEdgeToAdd) => {
             return delRelation({
               variables: { edge: { id: selectedCollEdgeToAdd.edge.id } },
             })

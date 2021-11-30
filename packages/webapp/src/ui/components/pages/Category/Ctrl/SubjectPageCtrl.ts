@@ -1,4 +1,7 @@
-import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import {
+  isEdgeNodeOfType,
+  narrowNodeType,
+} from '@moodlenet/common/dist/graphql/helpers'
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { createElement, useCallback, useMemo } from 'react'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
@@ -14,31 +17,53 @@ import { Fallback } from '../../Extra/Fallback/Fallback'
 // import { NewSubjectFormValues } from '../../NewSubject/types'
 import { SubjectProps } from '../Subject'
 import {
-  useAddSubjectRelationMutation, useDelSubjectRelationMutation, useSubjectPageDataQuery
+  useAddSubjectRelationMutation,
+  useDelSubjectRelationMutation,
+  useSubjectPageDataQuery,
 } from './SubjectPage.gen'
 
 export type SubjectCtrlProps = { id: ID }
-export const useSubjectCtrl: CtrlHook<SubjectProps, SubjectCtrlProps> = ({ id }) => {
+export const useSubjectCtrl: CtrlHook<SubjectProps, SubjectCtrlProps> = ({
+  id,
+}) => {
   useSeoContentId(id)
   const { session, isAuthenticated } = useSession()
-  const [addSubjectRelation, addSubjectRelationRes] = useAddSubjectRelationMutation()
-  const [delSubjectRelation, delSubjectRelationRes] = useDelSubjectRelationMutation()
+  const [addSubjectRelation, addSubjectRelationRes] =
+    useAddSubjectRelationMutation()
+  const [delSubjectRelation, delSubjectRelationRes] =
+    useDelSubjectRelationMutation()
   const { data, refetch, loading } = useSubjectPageDataQuery({
-    variables: { categoryId: id, myProfileId: session ? [session.profile.id] : [] },
+    variables: {
+      categoryId: id,
+      myProfileId: session ? [session.profile.id] : [],
+    },
   })
 
   const categoryData = narrowNodeType(['IscedField'])(data?.node)
   const myFollowEdgeId = categoryData?.myFollow.edges[0]?.edge.id
 
   const toggleFollow = useCallback(() => {
-    if (!session || addSubjectRelationRes.loading || delSubjectRelationRes.loading) {
+    if (
+      !session ||
+      addSubjectRelationRes.loading ||
+      delSubjectRelationRes.loading
+    ) {
       return
     }
     if (myFollowEdgeId) {
-      return delSubjectRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(() => refetch())
+      return delSubjectRelation({
+        variables: { edge: { id: myFollowEdgeId } },
+      }).then(() => refetch())
     } else {
       return addSubjectRelation({
-        variables: { edge: { edgeType: 'Follows', from: session.profile.id, to: id, Follows: {} } },
+        variables: {
+          edge: {
+            edgeType: 'Follows',
+            from: session.profile.id,
+            to: id,
+            Follows: {},
+          },
+        },
       }).then(() => refetch())
     }
   }, [
@@ -69,10 +94,16 @@ export const useSubjectCtrl: CtrlHook<SubjectProps, SubjectCtrlProps> = ({ id })
 
     const resourceCardPropsList = categoryData.resources.edges
       .filter(isEdgeNodeOfType(['Resource']))
-      .map(({ node: { id } }) => ctrlHook(useResourceCardCtrl, { id, removeAction: false }, id))
+      .map(({ node: { id } }) =>
+        ctrlHook(useResourceCardCtrl, { id, removeAction: false }, id)
+      )
 
     const props: SubjectProps = {
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
+      headerPageTemplateProps: ctrlHook(
+        useHeaderPageTemplateCtrl,
+        {},
+        'header-page-template'
+      ),
       title: categoryData.name,
       collectionCardPropsList,
       following,
@@ -83,7 +114,8 @@ export const useSubjectCtrl: CtrlHook<SubjectProps, SubjectCtrlProps> = ({ id })
       resourceCardPropsList,
       toggleFollow,
       isIscedSubject: true,
-      iscedLink: 'http://uis.unesco.org/en/topic/international-standard-classification-education-isced',
+      iscedLink:
+        'http://uis.unesco.org/en/topic/international-standard-classification-education-isced',
     }
     return props
   }, [categoryData, isAuthenticated, myFollowEdgeId, toggleFollow])

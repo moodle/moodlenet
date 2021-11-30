@@ -7,7 +7,9 @@ const meta: ComponentMeta<typeof Checkbox> = {
   excludeStories: ['CheckboxUnselected', 'CheckboxSelected'],
 }
 
-const CheckboxStory: ComponentStory<typeof Checkbox> = args => <Checkbox {...args} />
+const CheckboxStory: ComponentStory<typeof Checkbox> = (args) => (
+  <Checkbox {...args} />
+)
 
 export const CheckboxUnselected: CheckboxProps = {
   label: 'Resources',

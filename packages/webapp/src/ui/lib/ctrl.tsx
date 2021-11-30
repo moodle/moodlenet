@@ -1,14 +1,29 @@
-import { ComponentType, FC, isValidElement, PropsWithChildren, ReactElement } from 'react'
+import {
+  ComponentType,
+  FC,
+  isValidElement,
+  PropsWithChildren,
+  ReactElement,
+} from 'react'
 
-export type UIPropsOf<UIProps, ExcludeKeys extends keyof UIProps = never> = Pick<UIProps, ExcludeKeys>
+export type UIPropsOf<
+  UIProps,
+  ExcludeKeys extends keyof UIProps = never
+> = Pick<UIProps, ExcludeKeys>
 declare const s: unique symbol
-const CTRL_SYMB: typeof s = `___CTRL_SYMBOL___${Number(`${Math.random()}`.substring(2)).toString(36)}` as any
+const CTRL_SYMB: typeof s = `___CTRL_SYMBOL___${Number(
+  `${Math.random()}`.substring(2)
+).toString(36)}` as any
 
-export type CtrlHook<UIProps, HookArg, ExcludeKeys extends keyof UIProps = never> = (
-  hookArg: HookArg,
-) => CtrlHookRetOf<UIProps, ExcludeKeys>
+export type CtrlHook<
+  UIProps,
+  HookArg,
+  ExcludeKeys extends keyof UIProps = never
+> = (hookArg: HookArg) => CtrlHookRetOf<UIProps, ExcludeKeys>
 
-export type Wrapper<C = ComponentType<any>> = C extends ComponentType<infer T> ? [ComponentType<T>, T] : never
+export type Wrapper<C = ComponentType<any>> = C extends ComponentType<infer T>
+  ? [ComponentType<T>, T]
+  : never
 export type CtrlHookRetOf<UIProps, ExcludeKeys extends keyof UIProps = never> =
   | [feedProps: Omit<UIProps, ExcludeKeys>, opts?: Partial<CtrlHookRetOpts>]
   | null
@@ -19,10 +34,14 @@ export type CtrlHookRetOpts = {
   wrap(ui: ReactElement): ReactElement
 }
 
-export const ctrlHook = <UIProps, HookArg, ExcludeKeys extends keyof UIProps = never>(
+export const ctrlHook = <
+  UIProps,
+  HookArg,
+  ExcludeKeys extends keyof UIProps = never
+>(
   useCtrlHook: CtrlHook<UIProps, HookArg, ExcludeKeys>,
   hookArg: HookArg,
-  key: CKey,
+  key: CKey
 ): ControlledProps<UIProps, ExcludeKeys, HookArg> => {
   return {
     key,
@@ -33,26 +52,35 @@ export const ctrlHook = <UIProps, HookArg, ExcludeKeys extends keyof UIProps = n
   }
 }
 
-export type CP<UIProps, ExcludeKeys extends keyof UIProps = never, HookArg = any> = ControlledProps<
+export type CP<
   UIProps,
-  ExcludeKeys,
-  HookArg
->
-export type ControlledProps<UIProps, ExcludeKeys extends keyof UIProps = never, HookArg = any> = { key?: CKey } & (
-  | CtrlHookWrap<UIProps, ExcludeKeys, HookArg>
-  | UIProps
-)
+  ExcludeKeys extends keyof UIProps = never,
+  HookArg = any
+> = ControlledProps<UIProps, ExcludeKeys, HookArg>
+export type ControlledProps<
+  UIProps,
+  ExcludeKeys extends keyof UIProps = never,
+  HookArg = any
+> = { key?: CKey } & (CtrlHookWrap<UIProps, ExcludeKeys, HookArg> | UIProps)
 
-export type CtrlHookWrap<UIProps, ExcludeKeys extends keyof UIProps = never, HookArg = unknown> = {
+export type CtrlHookWrap<
+  UIProps,
+  ExcludeKeys extends keyof UIProps = never,
+  HookArg = unknown
+> = {
   [s]: CtrlHookBag<UIProps, ExcludeKeys, HookArg>
 }
-export type CtrlHookBag<UIProps, ExcludeKeys extends keyof UIProps = never, HookArg = unknown> = {
+export type CtrlHookBag<
+  UIProps,
+  ExcludeKeys extends keyof UIProps = never,
+  HookArg = unknown
+> = {
   useCtrlHook: CtrlHook<UIProps, HookArg, ExcludeKeys>
   hookArg: HookArg
 }
 
 const defaultCtrlHookRetOpts: CtrlHookRetOpts = {
-  wrap: _ => _,
+  wrap: (_) => _,
 }
 export const RenderWithHook: FC<{
   chw: CtrlHookWrap<any>
@@ -74,18 +102,20 @@ export const RenderWithHook: FC<{
   return wrap(
     <UIComp key={key} {...feedProps} {...chw}>
       {children}
-    </UIComp>,
+    </UIComp>
   )
 }
 
-export type WithCtrlProps<UIProps, ExcludeKeys extends keyof UIProps = never> = ControlledProps<UIProps, ExcludeKeys> &
-  Pick<UIProps, ExcludeKeys>
+export type WithCtrlProps<
+  UIProps,
+  ExcludeKeys extends keyof UIProps = never
+> = ControlledProps<UIProps, ExcludeKeys> & Pick<UIProps, ExcludeKeys>
 export const withCtrl = <UIProps,>(
-  UIComp: ComponentType<UIProps>,
+  UIComp: ComponentType<UIProps>
 ): {
   <ExcludeKeys extends never | keyof UIProps>(
     props: PropsWithChildren<WithCtrlProps<UIProps, ExcludeKeys>>,
-    context?: any,
+    context?: any
   ): ReactElement<any, any> | null
   displayName?: string
   defaultProps?: Partial<UIProps>
@@ -108,7 +138,9 @@ export const withCtrl = <UIProps,>(
         </RenderWithHook>
       )
     } else {
-      return <UIComp {...(props as PropsWithChildren<UIProps>)}>{children}</UIComp>
+      return (
+        <UIComp {...(props as PropsWithChildren<UIProps>)}>{children}</UIComp>
+      )
     }
   }
   Render.displayName = ''

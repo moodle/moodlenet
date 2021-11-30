@@ -39,7 +39,11 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
   }) => {
     return (
       <Card className="small-profile-card" hover={true}>
-        <img className="background" src={backgroundUrl || defaultBackgroud} alt="Background" />
+        <img
+          className="background"
+          src={backgroundUrl || defaultBackgroud}
+          alt="Background"
+        />
         <Link className="avatar" href={profileHref}>
           <img src={avatarUrl || defaultAvatar} alt="Avatar" />
         </Link>
@@ -60,7 +64,11 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
                   <Trans>Unfollow</Trans>
                 </SecondaryButton>
               ) : (
-                <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow} className="follow">
+                <PrimaryButton
+                  disabled={!isAuthenticated}
+                  onClick={toggleFollow}
+                  className="follow"
+                >
                   <Trans>Follow</Trans>
                 </PrimaryButton>
               )}
@@ -69,5 +77,5 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
         </div>
       </Card>
     )
-  },
+  }
 )

@@ -10,7 +10,9 @@ const meta: ComponentMeta<typeof CookiesPolicy> = {
   excludeStories: ['CookiesPolicyStoryProps'],
 }
 
-const CookiesPolicyStory: ComponentStory<typeof CookiesPolicy> = args => <CookiesPolicy {...args} />
+const CookiesPolicyStory: ComponentStory<typeof CookiesPolicy> = (args) => (
+  <CookiesPolicy {...args} />
+)
 
 export const CookiesPolicyStoryProps: CookiesPolicyProps = {
   accessHeaderProps: AccessHeaderStoryProps,
@@ -19,7 +21,6 @@ export const CookiesPolicyStoryProps: CookiesPolicyProps = {
     cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
   },
 }
-
 
 export const Default = CookiesPolicyStory.bind({})
 Default.args = CookiesPolicyStoryProps

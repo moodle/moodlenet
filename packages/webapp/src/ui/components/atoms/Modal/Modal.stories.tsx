@@ -7,7 +7,7 @@ const meta: ComponentMeta<typeof Modal> = {
   component: Modal,
 }
 
-const ModalStory: ComponentStory<typeof Modal> = args => <Modal {...args} />
+const ModalStory: ComponentStory<typeof Modal> = (args) => <Modal {...args} />
 
 export const Default = ModalStory.bind({})
 Default.args = {

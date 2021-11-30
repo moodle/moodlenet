@@ -26,7 +26,7 @@ export const HeaderPage = withCtrl<HeaderPageProps>(
         {/* Uncomment when Tags implemented*/}
       </div>
     )
-  },
+  }
 )
 HeaderPage.displayName = 'HeaderPage'
 HeaderPage.defaultProps = {}

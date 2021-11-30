@@ -12,17 +12,26 @@ export type SortButtonProps = {
   clicked: (label: string, state: SortState) => void
 }
 
-export const SortButton: FC<SortButtonProps> = ({ label, state, clicked, active }) => {
+export const SortButton: FC<SortButtonProps> = ({
+  label,
+  state,
+  clicked,
+  active,
+}) => {
   const [inState, setInState] = useState(state)
 
   const onClick = useCallback(() => {
-    const nextState = inState === 'inactive' ? 'more' : inState === 'more' ? 'less' : 'inactive'
+    const nextState =
+      inState === 'inactive' ? 'more' : inState === 'more' ? 'less' : 'inactive'
     setInState(nextState)
     clicked(label, nextState)
   }, [clicked, inState, label])
 
   return (
-    <div className={`check-button ${active ? inState : 'inactive'}`} onClick={onClick}>
+    <div
+      className={`check-button ${active ? inState : 'inactive'}`}
+      onClick={onClick}
+    >
       <div className="icon inactive-icon">
         <SwapVertIcon />
       </div>

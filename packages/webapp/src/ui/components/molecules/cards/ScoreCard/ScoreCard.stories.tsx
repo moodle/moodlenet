@@ -8,10 +8,14 @@ const meta: ComponentMeta<typeof ScoreCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  decorators:[
-    (Story)=>(<div style={{height:100,width:300}}><Story/></div>)
+  decorators: [
+    (Story) => (
+      <div style={{ height: 100, width: 300 }}>
+        <Story />
+      </div>
+    ),
   ],
-  excludeStories:['ScoreCardStoryProps']
+  excludeStories: ['ScoreCardStoryProps'],
 }
 
 export const ScoreCardStoryProps: ScoreCardProps = {
@@ -19,7 +23,9 @@ export const ScoreCardStoryProps: ScoreCardProps = {
   points: 2,
 }
 
-const ScoreCardStory: ComponentStory<typeof ScoreCard> = args => <ScoreCard {...args} />
+const ScoreCardStory: ComponentStory<typeof ScoreCard> = (args) => (
+  <ScoreCard {...args} />
+)
 
 export const Default = ScoreCardStory.bind({})
 Default.args = ScoreCardStoryProps

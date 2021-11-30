@@ -13,7 +13,7 @@ const meta: ComponentMeta<typeof AddResourcesCard> = {
   excludeStories: ['AddResourceCard', 'AddResourcesCardStoryProps'],
   parameters: { layout: 'fullscreen' },
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ maxWidth: 800, width: '100%', padding: 20 }}>
         <Story />
       </div>
@@ -41,7 +41,9 @@ export const AddResourcesCardStoryProps: AddResourcesCardProps = {
   ],
 }
 
-const AddResourcesCardStory: ComponentStory<typeof AddResourcesCard> = args => <AddResourcesCard {...args} />
+const AddResourcesCardStory: ComponentStory<typeof AddResourcesCard> = (
+  args
+) => <AddResourcesCard {...args} />
 
 export const Default = AddResourcesCardStory.bind({})
 Default.args = AddResourcesCardStoryProps

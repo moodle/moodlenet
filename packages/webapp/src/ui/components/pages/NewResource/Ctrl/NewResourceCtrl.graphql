@@ -1,7 +1,11 @@
 query newResourceDataPage($myId: ID!) {
   node(id: $myId) {
     ... on INode {
-      myCollections: _rel(type: Created, targetTypes: [Collection], page: { first: 100 }) {
+      myCollections: _rel(
+        type: Created
+        targetTypes: [Collection]
+        page: { first: 100 }
+      ) {
         edges {
           node {
             id

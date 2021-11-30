@@ -105,12 +105,10 @@ export const Resource = withCtrl<ResourceProps>(
     lmsSite,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
-    const [isAddingToCollection, setIsAddingToCollection] = useState<boolean>(
-      false
-    )
-    const [isAddingToMoodleLms, setIsAddingToMoodleLms] = useState<boolean>(
-      false
-    )
+    const [isAddingToCollection, setIsAddingToCollection] =
+      useState<boolean>(false)
+    const [isAddingToMoodleLms, setIsAddingToMoodleLms] =
+      useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
     const [moodleLmsSite, setMoodleLmsSite] = useState<string>(lmsSite ?? '')
@@ -135,9 +133,10 @@ export const Resource = withCtrl<ResourceProps>(
       (_: string) => setFieldValue('description', _),
       [setFieldValue]
     )
-    const setTypeField = useCallback((_: string) => setFieldValue('type', _), [
-      setFieldValue,
-    ])
+    const setTypeField = useCallback(
+      (_: string) => setFieldValue('type', _),
+      [setFieldValue]
+    )
     const setLevelField = useCallback(
       (_: string) => setFieldValue('level', _),
       [setFieldValue]

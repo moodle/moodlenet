@@ -17,7 +17,10 @@ import {
 
 export type CollectionCardCtrlArg = { id: ID }
 type ProvidesProps = DistOmit<CollectionCardProps, 'isEditing'>
-export const useCollectionCardCtrl: CtrlHook<ProvidesProps, CollectionCardCtrlArg> = ({ id }) => {
+export const useCollectionCardCtrl: CtrlHook<
+  ProvidesProps,
+  CollectionCardCtrlArg
+> = ({ id }) => {
   const { org: localOrg } = useLocalInstance()
   const { session, isAuthenticated } = useSession()
 
@@ -36,13 +39,31 @@ export const useCollectionCardCtrl: CtrlHook<ProvidesProps, CollectionCardCtrlAr
       return
     }
     if (myFollowEdgeId) {
-      return delRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(() => refetch())
+      return delRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(
+        () => refetch()
+      )
     } else {
       return addRelation({
-        variables: { edge: { edgeType: 'Follows', from: session.profile.id, to: id, Follows: {} } },
+        variables: {
+          edge: {
+            edgeType: 'Follows',
+            from: session.profile.id,
+            to: id,
+            Follows: {},
+          },
+        },
       }).then(() => refetch())
     }
-  }, [addRelation, addRelationRes.loading, delRelation, delRelationRes.loading, id, myFollowEdgeId, refetch, session])
+  }, [
+    addRelation,
+    addRelationRes.loading,
+    delRelation,
+    delRelationRes.loading,
+    id,
+    myFollowEdgeId,
+    refetch,
+    session,
+  ])
 
   const myBookmarkedEdgeId = collectionNode?.myBookmarked.edges[0]?.edge.id
   const toggleBookmark = useCallback(() => {
@@ -50,10 +71,19 @@ export const useCollectionCardCtrl: CtrlHook<ProvidesProps, CollectionCardCtrlAr
       return
     }
     if (myBookmarkedEdgeId) {
-      return delRelation({ variables: { edge: { id: myBookmarkedEdgeId } } }).then(() => refetch())
+      return delRelation({
+        variables: { edge: { id: myBookmarkedEdgeId } },
+      }).then(() => refetch())
     } else {
       return addRelation({
-        variables: { edge: { edgeType: 'Bookmarked', from: session.profile.id, to: id, Bookmarked: {} } },
+        variables: {
+          edge: {
+            edgeType: 'Bookmarked',
+            from: session.profile.id,
+            to: id,
+            Bookmarked: {},
+          },
+        },
       }).then(() => refetch())
     }
   }, [
@@ -95,7 +125,7 @@ export const useCollectionCardCtrl: CtrlHook<ProvidesProps, CollectionCardCtrlAr
       toggleBookmark,
       toggleFollow,
       isOwner,
-    ],
+    ]
   )
 
   return collectionCardUIProps && [collectionCardUIProps]
