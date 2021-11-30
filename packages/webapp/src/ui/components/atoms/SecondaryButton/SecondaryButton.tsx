@@ -1,5 +1,5 @@
-import { FC } from "react";
-import "./styles.scss";
+import { FC } from 'react'
+import './styles.scss'
 
 export type SecondaryButtonProps = {
   color?: 'black' | 'orange' | 'grey' | 'red'
@@ -9,19 +9,29 @@ export type SecondaryButtonProps = {
   onClick?(arg0: unknown): unknown
 }
 
-export const SecondaryButton: FC<SecondaryButtonProps> = ({children, color, className, onHoverColor, disabled, onClick}) => {
-  
-
+export const SecondaryButton: FC<SecondaryButtonProps> = ({
+  children,
+  color,
+  className,
+  onHoverColor,
+  disabled,
+  onClick,
+}) => {
   return (
-    <div className={`secondary-button button ${className} ${color} hover-${onHoverColor} ${disabled ? 'disabled' : ''}`} onClick={!disabled ? onClick : () => {}}>
+    <div
+      className={`secondary-button button ${className} ${color} hover-${onHoverColor} ${
+        disabled ? 'disabled' : ''
+      }`}
+      onClick={!disabled ? onClick : () => {}}
+    >
       {children}
     </div>
-  );
+  )
 }
 
-SecondaryButton.defaultProps = { 
+SecondaryButton.defaultProps = {
   color: 'black',
-  onHoverColor: 'blue'
+  onHoverColor: 'blue',
 }
 
-export default SecondaryButton;
+export default SecondaryButton

@@ -1,4 +1,8 @@
-query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds: [ID!]!) {
+query ResourcePageData(
+  $resourceId: ID!
+  $myProfileId: [ID!]
+  $myCollectionsIds: [ID!]!
+) {
   node(id: $resourceId) {
     ... on Resource {
       id
@@ -8,7 +12,12 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
       content
       originalCreationDate
       _published
-      myBookmarked: _rel(type: Bookmarked, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
+      myBookmarked: _rel(
+        type: Bookmarked
+        inverse: true
+        page: { first: 1 }
+        targetIds: $myProfileId
+      ) {
         edges {
           edge {
             id
@@ -17,7 +26,12 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
       }
 
       likesCount: _relCount(type: Likes, inverse: true)
-      myLike: _rel(type: Likes, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
+      myLike: _rel(
+        type: Likes
+        inverse: true
+        page: { first: 1 }
+        targetIds: $myProfileId
+      ) {
         edges {
           edge {
             id
@@ -25,7 +39,12 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
         }
       }
 
-      inMyCollections: _rel(type: Features, targetTypes: [Collection], inverse: true, targetIds: $myCollectionsIds) {
+      inMyCollections: _rel(
+        type: Features
+        targetTypes: [Collection]
+        inverse: true
+        targetIds: $myCollectionsIds
+      ) {
         edges {
           edge {
             id
@@ -58,7 +77,11 @@ query ResourcePageData($resourceId: ID!, $myProfileId: [ID!], $myCollectionsIds:
         }
       }
 
-      categories: _rel(type: Features, targetTypes: [IscedField], page: { first: 1 }) {
+      categories: _rel(
+        type: Features
+        targetTypes: [IscedField]
+        page: { first: 1 }
+      ) {
         edges {
           edge {
             id

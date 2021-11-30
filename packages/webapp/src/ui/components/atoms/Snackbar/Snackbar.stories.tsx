@@ -7,7 +7,9 @@ const meta: ComponentMeta<typeof Snackbar> = {
   component: Snackbar,
 }
 
-const SnackbarStory: ComponentStory<typeof Snackbar> = args => <Snackbar {...args} />
+const SnackbarStory: ComponentStory<typeof Snackbar> = (args) => (
+  <Snackbar {...args} />
+)
 
 export const Default = SnackbarStory.bind({})
 Default.args = {

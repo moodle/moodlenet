@@ -30,7 +30,9 @@ const meta: ComponentMeta<typeof Collection> = {
   ],
 }
 
-const CollectionStory: ComponentStory<typeof Collection> = args => <Collection {...args} />
+const CollectionStory: ComponentStory<typeof Collection> = (args) => (
+  <Collection {...args} />
+)
 
 export const CollectionLoggedInStoryProps: CollectionProps = {
   headerPageTemplateProps: {
@@ -67,7 +69,11 @@ export const CollectionLoggedInStoryProps: CollectionProps = {
     title: 'Best collection ever',
     visibility: 'Public',
   }),
-  resourceCardPropsList: [ResourceCardOwnerStoryProps, ResourceCardOwnerBookmarkedStoryProps, ResourceCardStoryProps],
+  resourceCardPropsList: [
+    ResourceCardOwnerStoryProps,
+    ResourceCardOwnerBookmarkedStoryProps,
+    ResourceCardStoryProps,
+  ],
   updateCollection: action('updateCollection'),
   toggleFollow: action('toggleFollow'),
   deleteCollection: action('deleteCollection'),

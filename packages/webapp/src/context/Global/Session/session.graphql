@@ -9,7 +9,11 @@ fragment UserSession on UserSession {
     #FIXME: keep the id only as useSession won't update during app mutations
     id
     name
-    myOwnCollections: _rel(type: Created, targetTypes: [Collection], page: { first: 100 }) {
+    myOwnCollections: _rel(
+      type: Created
+      targetTypes: [Collection]
+      page: { first: 100 }
+    ) {
       edges {
         edge {
           id
@@ -31,8 +35,16 @@ fragment UserSession on UserSession {
   }
 }
 
-mutation login($email: String!, $password: String!, $activationEmailToken: String) {
-  createSession(email: $email, password: $password, activationEmailToken: $activationEmailToken) {
+mutation login(
+  $email: String!
+  $password: String!
+  $activationEmailToken: String
+) {
+  createSession(
+    email: $email
+    password: $password
+    activationEmailToken: $activationEmailToken
+  ) {
     jwt
     message
   }

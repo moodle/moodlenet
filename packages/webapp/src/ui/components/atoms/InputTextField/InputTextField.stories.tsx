@@ -7,15 +7,17 @@ const meta: ComponentMeta<typeof InputTextField> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['InputTextFieldStoryProps']
+  excludeStories: ['InputTextFieldStoryProps'],
 }
 
 export const InputTextFieldStoryProps: InputTextFieldProps = {
   label: 'Just a text field',
-  placeholder: 'Start typing to fill it'
+  placeholder: 'Start typing to fill it',
 }
 
-const InputTextFieldStory: ComponentStory<typeof InputTextField> = args => <InputTextField {...args}></InputTextField>
+const InputTextFieldStory: ComponentStory<typeof InputTextField> = (args) => (
+  <InputTextField {...args}></InputTextField>
+)
 
 export const Default = InputTextFieldStory.bind({})
 Default.args = InputTextFieldStoryProps

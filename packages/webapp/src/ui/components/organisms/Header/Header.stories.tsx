@@ -52,8 +52,7 @@ export const HeaderLoggedInOrganizationStoryProps: HeaderPropsIdle = {
   organization: {
     ...HeaderLoggedInStoryProps.organization,
     url: 'https://www.bfh.ch/',
-    logo:
-      'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
+    logo: 'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
     smallLogo:
       'https://www.bfh.ch/dam/jcr:eaa68853-a1f9-4198-a2a5-e19eae244092/bfh-logo.svg',
   },

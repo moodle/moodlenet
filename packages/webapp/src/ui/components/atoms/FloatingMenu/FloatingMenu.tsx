@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import "./styles.scss";
+import React, { FC } from 'react'
+import './styles.scss'
 
 export type FloatingMenuProps = {
   menuContent: React.ReactNode
@@ -7,23 +7,23 @@ export type FloatingMenuProps = {
   visible?: boolean
 }
 
-export const FloatingMenu: FC<FloatingMenuProps> = ({visible, menuContent, hoverElement}) => {
-  
-
+export const FloatingMenu: FC<FloatingMenuProps> = ({
+  visible,
+  menuContent,
+  hoverElement,
+}) => {
   return (
     <div className="floating-menu">
       {hoverElement}
       <div className={`menu ${visible ? 'visible' : ''}`}>
-        <div className="content">
-          {menuContent}
-        </div>
+        <div className="content">{menuContent}</div>
       </div>
     </div>
-  );
+  )
 }
 
 FloatingMenu.defaultProps = {
-  visible: false
+  visible: false,
 }
 
-export default FloatingMenu;
+export default FloatingMenu

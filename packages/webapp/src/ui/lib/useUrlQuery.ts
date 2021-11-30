@@ -6,7 +6,7 @@ const getQueryString = <QPar extends QueryParamsArray<string>>(qPar: QPar) => {
 
   Object.entries(qPar).forEach(([pname, pvals]) => {
     params.delete(pname)
-    ;(pvals as string[]).forEach(pval => params.append(pname, pval))
+    ;(pvals as string[]).forEach((pval) => params.append(pname, pval))
   })
   const qstring = params.toString()
   return qstring
@@ -20,7 +20,7 @@ export const useUrlQuery = <ParamNames extends string>(
     baseUrl?: string
     delay?: number
     sep?: string
-  },
+  }
 ) => {
   type QParamsArray = QueryParamsArray<ParamNames>
   type QParams = QueryParams<ParamNames>
@@ -49,11 +49,13 @@ export const useUrlQuery = <ParamNames extends string>(
           },
         ]
       },
-      [{}, {}] as [QParamsArray, QParams],
+      [{}, {}] as [QParamsArray, QParams]
     )
   }, [opts?.sep, urlSearch])
 
-  const [queryString, setQueryString] = useState(getQueryString(queryParamsArray))
+  const [queryString, setQueryString] = useState(
+    getQueryString(queryParamsArray)
+  )
 
   const setQueryParams = useCallback(
     (newQueryParams: Partial<QParamsArray>) => {
@@ -61,7 +63,7 @@ export const useUrlQuery = <ParamNames extends string>(
       const qstring = getQueryString({ ...queryParamsArray, ...newQueryParams })
       setQueryString(qstring)
     },
-    [queryParamsArray],
+    [queryParamsArray]
   )
 
   useEffect(() => {
@@ -78,7 +80,14 @@ export const useUrlQuery = <ParamNames extends string>(
       })
     }, opts?.delay || 300)
     return () => clearTimeout(to)
-  }, [history, baseUrl, queryString, opts?.delay, opts?.baseUrl, location.pathname])
+  }, [
+    history,
+    baseUrl,
+    queryString,
+    opts?.delay,
+    opts?.baseUrl,
+    location.pathname,
+  ])
 
   // useEffect(() => {
   //   if (firstIn.current) {

@@ -17,12 +17,17 @@ export const ContributorCard = withCtrl<ContributorCardProps>(
     return (
       <Card className="contributor-card" hideBorderWhenSmall={true}>
         <Link href={creatorProfileHref}>
-          <img className="avatar" src={avatarUrl || defaultBackgroud} alt="Avatar" />
+          <img
+            className="avatar"
+            src={avatarUrl || defaultBackgroud}
+            alt="Avatar"
+          />
         </Link>
         <div className="description">
-          Uploaded {timeSinceCreation} by <Link href={creatorProfileHref}>{displayName}</Link>
+          Uploaded {timeSinceCreation} by{' '}
+          <Link href={creatorProfileHref}>{displayName}</Link>
         </div>
       </Card>
     )
-  },
+  }
 )

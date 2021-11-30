@@ -1,4 +1,3 @@
-
 export const defaultOrganization = {
   name: 'MoodleNet',
   url: 'https://www.moodle.com/',

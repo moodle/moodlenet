@@ -1,7 +1,9 @@
 import { usePagination } from '../../../hooks/usePagination'
 import { GlobalSearchQueryResult } from './globalSearch.gen'
 
-export const usePaginateSearch = (globalSearchQueryResult: GlobalSearchQueryResult) => {
+export const usePaginateSearch = (
+  globalSearchQueryResult: GlobalSearchQueryResult
+) => {
   const { data, variables, fetchMore } = globalSearchQueryResult
   return usePagination(data?.globalSearch, ({ cursor, update }) => {
     return fetchMore({

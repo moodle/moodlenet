@@ -6,7 +6,10 @@ import { useLMSPrefs } from '../../../../../lib/moodleLMS/useSendToMoodle'
 import { CtrlHook } from '../../../../lib/ctrl'
 import { LMSMoodleLandingProps } from '../LmsMoodleLanding'
 
-export const useLmsMoodleLandingCtrl: CtrlHook<LMSMoodleLandingProps, {}> = () => {
+export const useLmsMoodleLandingCtrl: CtrlHook<
+  LMSMoodleLandingProps,
+  {}
+> = () => {
   const params = useRef(getUrlParamsFromEntryPointForMoodleLMS()).current
   const { updateLMSPrefs } = useLMSPrefs()
   const { replace } = useHistory()

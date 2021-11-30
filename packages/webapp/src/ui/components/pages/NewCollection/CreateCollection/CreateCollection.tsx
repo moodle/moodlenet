@@ -22,7 +22,8 @@ export type CreateCollectionProps = {
 
 export const CreateCollection = withCtrl<CreateCollectionProps>(
   ({ formBag, imageUrl, visibility, finish }) => {
-    const [highlightMandatoryFields, setHighlightMandatoryFields] = useState<boolean>(false)
+    const [highlightMandatoryFields, setHighlightMandatoryFields] =
+      useState<boolean>(false)
     const [form] = formBag
     const setFieldValue = form.setFieldValue
     const background = {
@@ -30,25 +31,26 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
       backgroundSize: 'cover',
     }
 
-    const createCollection = () => (finish ? finish() : setHighlightMandatoryFields(true))
+    const createCollection = () =>
+      finish ? finish() : setHighlightMandatoryFields(true)
 
     const uploadImage = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.currentTarget.files?.item(0)
         setFieldValue('image', selectedFile ?? null)
       },
-      [setFieldValue],
+      [setFieldValue]
     )
 
     const deleteImage = useCallback(() => {
       setFieldValue('image', null)
     }, [setFieldValue])
-    
+
     const setVisibilityVal = useCallback(
       (v: string) => {
         setFieldValue('visibility', v)
       },
-      [setFieldValue],
+      [setFieldValue]
     )
 
     const dataInputs = (
@@ -57,7 +59,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           autoUpdate={true}
           label="Title"
           placeholder=""
-          getText={text => form.setFieldValue('title', text)}
+          getText={(text) => form.setFieldValue('title', text)}
           value={form.values.title}
           highlight={highlightMandatoryFields && !form.values.title}
         />
@@ -67,17 +69,17 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           label="Description"
           placeholder=""
           value={form.values.description}
-          getText={text => form.setFieldValue('description', text)}
+          getText={(text) => form.setFieldValue('description', text)}
           highlight={highlightMandatoryFields && !form.values.description}
         />
         <Dropdown
-            {...visibility}
-            getValue={setVisibilityVal}
-            label="Visibility"
-            value={form.values.visibility}
-            className="visibility-dropdown"
-            highlight={highlightMandatoryFields && !form.values.visibility}
-          />
+          {...visibility}
+          getValue={setVisibilityVal}
+          label="Visibility"
+          value={form.values.visibility}
+          className="visibility-dropdown"
+          highlight={highlightMandatoryFields && !form.values.visibility}
+        />
       </div>
     )
 
@@ -88,7 +90,9 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
 
     return (
       <div className="upload-resource">
-        <div className="title"><Trans>Create Collection</Trans></div>
+        <div className="title">
+          <Trans>Create Collection</Trans>
+        </div>
         <div className="content">
           <div className="main-column">
             <div className="card-title">
@@ -133,5 +137,5 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
         </div>
       </div>
     )
-  },
+  }
 )
