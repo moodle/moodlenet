@@ -1,4 +1,5 @@
 import { object, ObjectSchema, ValidationError } from 'yup'
+import { Empty } from '../../../scalars.graphql'
 import { CreateEdgeInput, EdgeType } from '../../../types.graphql.gen'
 import { neverCreate } from '../helpers'
 
@@ -7,10 +8,10 @@ const inputObjectValidators: {
   [T in EdgeType]: ObjectSchema<Just<CreateEdgeInput[T]>>
 } = {
   Created: neverCreate('Created'),
-  Features: object().required(),
-  Follows: object().required(),
-  Likes: object().required(),
-  Bookmarked: object().required(),
+  Features: object<Empty>().required(),
+  Follows: object<Empty>().required(),
+  Likes: object<Empty>().required(),
+  Bookmarked: object<Empty>().required(),
 }
 
 export const validateCreateEdgeInput = (input: CreateEdgeInput): Just<CreateEdgeInput[EdgeType]> | Error => {
