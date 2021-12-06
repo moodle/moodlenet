@@ -19,6 +19,7 @@ import * as userAuth from '@moodlenet/backend/dist/ports/user-auth'
 import { configure as webappConfigure } from '@moodlenet/webapp/serverConfigure'
 import { Database } from 'arangojs'
 import { DefaultDeployEnv } from './env'
+import assetUploaderEnv from './env/assetUploader'
 import { setupDb } from './setup/db'
 
 export type Config = {
@@ -127,7 +128,7 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, crypto, 
   const graphqlApp = createGraphQLApp({
     additionalResolvers: null,
   })
-  const assetsApp = createStaticAssetsApp({})
+  const assetsApp = createStaticAssetsApp(assetUploaderEnv)
   const webfingerApp = await createWebfingerApp()
   const webappConfig = webappConfigure({ customHead: mnStatic.customHead })
   await startMNHttpServer({

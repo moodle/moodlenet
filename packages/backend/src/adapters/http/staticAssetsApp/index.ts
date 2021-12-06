@@ -1,3 +1,4 @@
+import { UploadMaxSizes } from '@moodlenet/common/dist/staticAsset/lib'
 import express, { Response } from 'express'
 import { createReadStream } from 'fs'
 import { rm } from 'fs/promises'
@@ -7,16 +8,19 @@ import * as help from './helpers'
 
 const sendErrorResponse = (res: Response, [status, err]: help.RespError) => res.status(status).send(err)
 
-export type Config = {}
-export const createStaticAssetsApp = (_: Config) => {
+export type Config = {
+  uploadMaxSizes: UploadMaxSizes
+}
+export const createStaticAssetsApp = ({ uploadMaxSizes }: Config) => {
   const app = express()
+
   app.post('/upload-temp', async (req, res) => {
     // this check could get more accurate (context assertions engine)
     if (!req.mnHttpContext) {
       return sendErrorResponse(res, help.respError(401, 'logged users only can upload'))
     }
 
-    const upload = await help.getUploadedFile(req)
+    const upload = await help.getUploadedFile(req, { maxSizes: uploadMaxSizes })
 
     if (help.isRespError(upload)) {
       return sendErrorResponse(res, upload)
