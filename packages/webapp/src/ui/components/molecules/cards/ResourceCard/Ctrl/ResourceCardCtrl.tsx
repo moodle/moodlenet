@@ -113,7 +113,7 @@ export const useResourceCardCtrl: CtrlHook<
               .filter(isEdgeNodeOfType(['IscedField']))
               .map(({ node }) => ({
                 name: node.name,
-                type: 'General',
+                type: 'subject',
                 subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
               })),
             resourceHomeHref: href(nodeGqlId2UrlPath(resourceNode.id)),
