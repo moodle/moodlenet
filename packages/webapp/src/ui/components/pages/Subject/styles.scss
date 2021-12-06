@@ -78,10 +78,18 @@
 
         @media screen and (max-width: 450px) {
           justify-content: center;
-          padding: 10px 0 14px 0;
+          padding: 0;
           > .info {
             > .title {
+              flex-direction: column-reverse;
+              align-items: center;
               text-align: center;
+              justify-content: center;
+              gap: 7px;
+              > .isced-pill {
+                margin-top: 0;
+                margin-left: auto;
+              }
             }
             > .overall {
               justify-content: center;
