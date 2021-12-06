@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import Card from '../Card/Card'
 import './styles.scss'
 
 export type FloatingMenuProps = {
@@ -16,7 +17,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
     <div className="floating-menu">
       {hoverElement}
       <div className={`menu ${visible ? 'visible' : ''}`}>
-        <div className="content">{menuContent}</div>
+        <Card className="content">{menuContent}</Card>
       </div>
     </div>
   )
