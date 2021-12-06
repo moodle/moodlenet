@@ -77,7 +77,8 @@ CRYPTO_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n##<keyrows separated by \n>
 
 # Folder to save content static assets (images, resources ..)
 STATICASSETS_FS_ROOT_FOLDER=/any/path/to/uploads/directory
-
+# Max upload size in bytes - applies to images and resources
+ASSET_UPLOADER_MAX_SIZE=10485760 # 10MB
 
 #^SETUP VARS
 #
