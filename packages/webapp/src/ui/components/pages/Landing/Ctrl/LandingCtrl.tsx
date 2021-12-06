@@ -58,7 +58,7 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
         .filter(isEdgeNodeOfType(['IscedField', 'Collection']))
         .map<FollowTag>(({ node }) => ({
           name: node.name,
-          type: 'General',
+          type: node.__typename === 'Collection' ? 'collection' : 'subject',
           subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
         })),
     [LandingPageLists.data?.node?.trending.edges]

@@ -457,7 +457,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
         .filter(isEdgeNodeOfType(['IscedField']))
         .map(({ node }) => ({
           name: node.name,
-          type: 'General',
+          type: 'subject',
           subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
         })),
       collections: allMyOwnCollectionEdges.map(({ node: { id, name } }) => ({
