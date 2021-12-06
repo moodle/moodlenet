@@ -1,4 +1,4 @@
-import { isUploadType, UploadType } from '@moodlenet/common/dist/staticAsset/lib'
+import { isUploadType, UploadMaxSizes, UploadType } from '@moodlenet/common/dist/staticAsset/lib'
 import { pick } from '@moodlenet/common/dist/utils/object'
 import { Request } from 'express'
 import { fromFile } from 'file-type'
@@ -14,9 +14,10 @@ export const isRespError = (_: any): _ is RespError => Array.isArray(_) && _.len
 type FileD = Pick<File, 'hash' | 'lastModifiedDate' | 'name' | 'path' | 'size' | 'type'>
 // type FileWithHash = FileD& { hash: string }
 type GetUploadFileResp = RespError | [FileD & { mimetype: string }, UploadType] //WithHash
-export const getUploadedFile = (req: Request) =>
+export type Opts = { maxSizes: UploadMaxSizes }
+export const getUploadedFile = (req: Request, opts: Opts) =>
   new Promise<GetUploadFileResp>(resolve => {
-    Formidable({ multiples: false /* , hash: 'md5' */ }).parse(req, async (err, fields, files) => {
+    Formidable({ multiples: false, allowEmptyFiles: false }).parse(req, async (err, fields, files) => {
       if (err) {
         return resolve(respError(400, `cannot accept files: ${String(err)}`))
       }
@@ -42,6 +43,10 @@ export const getUploadedFile = (req: Request) =>
       const _file = Array.isArray(mFile) ? mFile[0] : mFile
       if (!_file) {
         return resolve(badReq(`post one file`))
+      }
+      const maxSize = opts.maxSizes[`${uploadType}MaxSize`]
+      if (_file.size > maxSize) {
+        return resolve(badReq(`file too large ${_file.size}, max size for ${uploadType} is ${maxSize}`))
       }
       const file = pick(_file, ['hash', 'lastModifiedDate', 'name', 'path', 'size', 'type'])
       // file.type : Formidable.File.type: string | null :: The mime type of this file, according to the uploading client.
