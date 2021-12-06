@@ -43,3 +43,13 @@ export const elementFullyInViewPort = (
     left + width <= window.pageXOffset + window.innerWidth
   )
 }
+
+export const getElementSize = (
+  el: Element
+): { width: number; height: number } => {
+  const { left, top, right, bottom } = el.getBoundingClientRect()
+  return {
+    width: right - left,
+    height: bottom - top,
+  }
+}
