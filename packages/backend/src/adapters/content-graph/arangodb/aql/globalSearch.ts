@@ -35,7 +35,7 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
           edgeType: 'Follows',
           inverse: true,
           targetNodeTypes: ['Profile', 'Organization'],
-          parentNode: _aqlBv('searchNode._id'),
+          parentNode: _aqlBv(aqlGraphNode2GraphNode('searchNode')),
           assertions: {},
         })} )
         +
@@ -43,7 +43,7 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
           edgeType: 'Likes',
           inverse: true,
           targetNodeTypes: ['Profile', 'Organization'],
-          parentNode: _aqlBv('searchNode._id'),
+          parentNode: _aqlBv(aqlGraphNode2GraphNode('searchNode')),
           assertions: {},
         })} )
         )
