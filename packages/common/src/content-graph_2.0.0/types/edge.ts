@@ -34,8 +34,8 @@ export type BaseGraphEdge<GET extends GraphEdgeType> = EdgeIdentifier<GET> & {
   _creator: GraphNodeIdentifierAuth
 }
 
-export type Created = BaseGraphEdge<'Created'>
-export type Features = BaseGraphEdge<'Features'>
-export type Likes = BaseGraphEdge<'Likes'>
-export type Follows = BaseGraphEdge<'Follows'>
-export type Bookmarked = BaseGraphEdge<'Bookmarked'>
+export type Created = BaseGraphEdge<'Created'> & {}
+export type Features = BaseGraphEdge<'Features'> & {}
+export type Likes = BaseGraphEdge<'Likes'> & {}
+export type Follows = BaseGraphEdge<'Follows'> & {}
+export type Bookmarked = BaseGraphEdge<'Bookmarked'> & {}

@@ -60,7 +60,6 @@ export const uploadTempFile =
         method: 'POST',
         body: formData as any,
         headers: {
-          //@ts-ignore
           bearer: apiKey,
           // 'Content-Type': 'multipart/form-data',
         },

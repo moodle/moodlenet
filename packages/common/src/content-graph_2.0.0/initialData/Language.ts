@@ -1,6 +1,6 @@
 import { Language } from '../types/node'
 import { localOrg_authId } from './content'
-//@ts-ignore
+
 const _: Language[] = [
   {
     _permId: 'aaa',

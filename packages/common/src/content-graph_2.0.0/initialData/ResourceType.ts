@@ -1,6 +1,6 @@
 import { ResourceType } from '../types/node'
 import { localOrg_authId } from './content'
-//@ts-ignore
+
 const _: ResourceType[] = [
   {
     _permId: 'assessment',

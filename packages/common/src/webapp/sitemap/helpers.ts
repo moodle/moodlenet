@@ -55,7 +55,7 @@ export const nodeGqlId2UrlPath = (id: string) => {
   const [_type, _slug] = id.split('/')
   // console.log({ _type, _slug })
 
-  return nodeIdentifierSlug2HomeUrlPath({ _type: String(_type) as GraphNodeType, _slug: _slug! })
+  return nodeIdentifierSlug2HomeUrlPath({ _type: String(_type) as GraphNodeType, _slug: String(_slug) })
 }
 export const nodeIdentifierSlug2HomeUrlPath = (slugId: GraphNodeIdentifierSlug) => {
   if (slugId._type === 'Organization') {

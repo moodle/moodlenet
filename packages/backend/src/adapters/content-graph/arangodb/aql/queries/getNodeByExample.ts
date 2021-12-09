@@ -1,6 +1,6 @@
 import { GraphNode, GraphNodeType } from '@moodlenet/common/dist/content-graph/types/node'
 import { aq, aqlstr } from '../../../../../lib/helpers/arango/query'
-import { aqlGraphEdge2GraphEdge } from '../helpers'
+import { aqlGraphNode2GraphNode } from '../helpers'
 
 export const getNodesByExampleQ = <Type extends GraphNodeType>({
   nodeType,
@@ -17,7 +17,7 @@ export const getNodesByExampleQ = <Type extends GraphNodeType>({
     FOR nodeByExample IN ${nodeType}
       FILTER MATCHES(nodeByExample , ${aqlstr(ex)})
       LIMIT ${skip},${limit}
-    return ${aqlGraphEdge2GraphEdge('nodeByExample')}
+    return ${aqlGraphNode2GraphNode('nodeByExample')}
   `)
   return q
 }
