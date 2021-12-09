@@ -107,14 +107,12 @@
   "eslintConfig": {
     "extends": [
       "react-app",
-      "eslint:recommended",
       "plugin:react-hooks/recommended"
     ],
     "rules": {
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "error"
     },
-    "ignorePatterns": "*.gen.*",
     "overrides": [
       {
         "files": [

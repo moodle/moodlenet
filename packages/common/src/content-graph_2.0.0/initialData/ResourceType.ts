@@ -1,6 +1,7 @@
 import { ResourceType } from '../types/node'
 import { localOrg_authId } from './content'
 
+// @ts-ignore: this is a static initial population array, no need to ts check
 const _: ResourceType[] = [
   {
     _permId: 'assessment',
