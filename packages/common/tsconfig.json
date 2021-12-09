@@ -10,5 +10,5 @@
     "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
     "outDir": "./dist" /* Redirect output structure to the directory. */
   },
-  "exclude": ["./dist"]
+  "exclude": ["./dist", "./src/content-graph_2.0.0/initialData"]
 }

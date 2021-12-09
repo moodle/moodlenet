@@ -28,11 +28,11 @@ export type Config = {
 export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, crypto, nodemailer, mnStatic } }: Config) => {
   await setupDb({ env: db, actionOnDBExists: 'upgrade' })
 
-  const contentGraphDatabase = await getVersionedDBOrThrow({ version: '2.0.0' })({
+  const contentGraphDatabase = await getVersionedDBOrThrow({ version: '2.0.1' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.contentGraphDBName }),
   })
 
-  const userAuthDatabase = await getVersionedDBOrThrow({ version: '2.0.0' })({
+  const userAuthDatabase = await getVersionedDBOrThrow({ version: '2.0.1' })({
     db: new Database({ url: db.arangoUrl, databaseName: db.userAuthDBName }),
   })
 

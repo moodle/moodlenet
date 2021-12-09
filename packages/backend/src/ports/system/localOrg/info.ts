@@ -9,7 +9,9 @@ export const adapter = plug(ns(module, 'adapter'), async () => {
   const publicUrlProtocol = await publicUrlProtocolAdapter()
   const publicUrl = `${publicUrlProtocol}://${localOrg.domain}`
   const authId: GraphNodeIdentifierAuth<'Organization'> = {
+    //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     _authKey: localOrg._authKey!,
+    _permId: localOrg._permId,
     _type: localOrg._type,
   }
 

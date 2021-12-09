@@ -1,7 +1,6 @@
 import { FileFormat } from '../types/node'
 import { localOrg_authId } from './content'
 
-//@ts-ignore
 const _: FileFormat[] = [
   {
     _permId: 'application-3gpdash-qoe-report-plus-xml',
