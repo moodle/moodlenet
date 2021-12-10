@@ -98,7 +98,7 @@
     "build-storybook": "build-storybook -s public",
     "prepublish": "yarn clean-build",
     "chromatic": "chromatic --project-token cae3595a750c",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged  --concurrent=false"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": "eslint --fix",

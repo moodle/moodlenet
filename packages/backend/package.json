@@ -114,7 +114,7 @@
     "build": "yarn gen:graphql:types && tsc",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
     "prepublish": "yarn clean-build",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged  --concurrent=false"
   },
   "lint-staged": {
     "src/**/*.ts": [
