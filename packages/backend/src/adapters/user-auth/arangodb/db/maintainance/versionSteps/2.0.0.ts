@@ -1,14 +1,20 @@
-import { getSetupLocalOrgazation, localOrg_authId } from '@moodlenet/common/dist/content-graph/initialData/content'
-import { DefaultConfig } from '@moodlenet/common/dist/content-graph/initialData/user-auth/defaultConfig'
-import { DistOmit } from '@moodlenet/common/dist/utils/types'
+import {
+  getSetupLocalOrgazation,
+  localOrg_authId,
+} from '@moodlenet/common/dist/content-graph_2.0.0/initialData/content'
+import { DefaultConfig } from '@moodlenet/common/dist/content-graph_2.0.0/initialData/user-auth/defaultConfig'
+import { GraphNodeIdentifierAuth } from '@moodlenet/common/dist/content-graph_2.0.0/types/node'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
-import { justExecute } from '../../../../../../lib/helpers/arango/query'
-import { ActiveUser } from '../../../../../../ports/user-auth/types'
+import { aqlstr, justExecute } from '../../../../../../lib/helpers/arango/query'
+import { Status } from '../../../../../../ports/user-auth/types'
 import { saveConfigQ } from '../../../queries/config'
-import { createNewUserQ } from '../../../queries/createNewUser'
 import { CONFIG, USER } from '../../../types'
 
-const rootUserActive: DistOmit<ActiveUser, 'email' | 'password' | 'id' | 'createdAt' | 'updatedAt'> = {
+// const rootUserActive: DistOmit<ActiveUser, 'email' | 'password' | 'id' | 'createdAt' | 'updatedAt'> = {
+const rootUserActive: {
+  authId: GraphNodeIdentifierAuth
+  status: Status
+} = {
   status: 'Active',
   authId: localOrg_authId,
 }
@@ -58,11 +64,22 @@ const init_2_0_0: VersionUpdater = {
     console.log(`creating organization-user`)
     const password = `---no-organization-user-password-set---${Math.random().toString(36).substr(2)}`
     await justExecute(
-      createNewUserQ({
+      `
+    INSERT MERGE(
+      ${aqlstr({
         ...rootUserActive,
         email: orgEmail,
         password,
-      }),
+      })},
+      { 
+        createdAt: DATE_NOW(),
+        updatedAt: DATE_NOW()
+      } 
+    )
+
+    INTO ${USER}
+    RETURN MERGE( { id:NEW._key } , NEW )
+  `,
       db,
     )
   },
