@@ -11,11 +11,15 @@ const init_2_0_1: VersionUpdater = {
       collectionsInfo.map(async ({ name }) => {
         console.log(`updating collection ${name} _creator`)
         const creatorColl = ['Collection', 'Resource'].includes(name) ? 'Profile' : 'Organization'
+        const isProfile = name === 'Profile'
         const q = `
           FOR node in ${name}
             let creatorAuthNode = (FOR c in ${creatorColl} FILTER MATCHES(c, node._creator) LIMIT 1 RETURN c)[0]
             let creatorAuthPermId = creatorAuthNode._key
-            UPDATE node WITH { _creator:{ _permId: creatorAuthPermId }} IN ${name} 
+            UPDATE node WITH { 
+${isProfile ? `_published: false` : ''}
+              _creator:{ _permId: creatorAuthPermId }
+            } IN ${name} 
           RETURN NEW
         `
         await justExecute(q, db)
