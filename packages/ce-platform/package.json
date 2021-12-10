@@ -47,7 +47,7 @@
     "build": "tsc",
     "start": "node ./start.js",
     "start-dev": "node-dev --trace-warnings --inspect --deps 4 --respawn --notify=false ./start.js ",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged  --concurrent=false"
   },
   "lint-staged": {
     "src/**/*.ts": "eslint --fix",

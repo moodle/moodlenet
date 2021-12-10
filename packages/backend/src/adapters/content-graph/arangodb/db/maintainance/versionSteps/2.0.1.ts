@@ -17,7 +17,7 @@ const init_2_0_1: VersionUpdater = {
             let creatorAuthNode = (FOR c in ${creatorColl} FILTER MATCHES(c, node._creator) LIMIT 1 RETURN c)[0]
             let creatorAuthPermId = creatorAuthNode._key
             UPDATE node WITH { 
-${isProfile ? `_published: false` : ''}
+${isProfile ? `_published: false,` : ''}
               _creator:{ _permId: creatorAuthPermId }
             } IN ${name} 
           RETURN NEW
