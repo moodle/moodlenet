@@ -19,6 +19,10 @@ import './styles.scss'
 
 export type ProfileCardProps = {
   isOwner?: boolean
+  isAdmin?: boolean
+  isApproved?: boolean
+  isElegibleForApproval?: boolean
+  isWaitingApproval?: boolean
   isFollowing?: boolean
   isEditing?: boolean
   isAuthenticated: boolean
@@ -35,6 +39,10 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     avatarUrl,
     backgroundUrl,
     isOwner,
+    isAdmin,
+    isApproved,
+    isElegibleForApproval,
+    isWaitingApproval,
     isAuthenticated,
     isEditing,
     isFollowing,
@@ -222,7 +230,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               ) : (
                 <div className="title">{form.values.displayName}</div>
               )}
-              {!isEditing && (
+              {!isEditing && !isAdmin && isApproved && (
                 <div className="verified-icon">
                   <img src={verifiedIcon} alt="Verified" />
                 </div>
@@ -315,28 +323,56 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
           ) : (
             <div className="description">{form.values.description}</div>
           )}
-          {!isOwner && (
-            <div className="buttons">
-              {isFollowing ? (
-                <SecondaryButton onClick={toggleFollow}>
-                  <Trans>Unfollow</Trans>
-                </SecondaryButton>
-              ) : (
-                <PrimaryButton
-                  disabled={!isAuthenticated}
-                  onClick={toggleFollow}
-                >
-                  <Trans>Follow</Trans>
-                </PrimaryButton>
-              )}
+          {isOwner && !isApproved && (
+            <div className="not-approved-warning">
+              <Trans>
+                {isElegibleForApproval
+                  ? 'Your content is not yet public. Request for approval to make it accessible to everyone.'
+                  : 'Your content is not yet public. Upload 5 open educational resources and request for approval to make it accessible to everyone.'}
+              </Trans>
+            </div>
+          )}
+          <div className="buttons">
+            {isOwner && !isApproved && !isWaitingApproval && (
+              <PrimaryButton
+                disabled={!isElegibleForApproval}
+                onClick={toggleFollow}
+              >
+                <Trans>Request approval</Trans>
+              </PrimaryButton>
+            )}
+            {isOwner && isWaitingApproval && (
+              <SecondaryButton
+                disabled={!isAuthenticated}
+                onClick={toggleFollow}
+              >
+                <Trans>Pending</Trans>
+              </SecondaryButton>
+            )}
+            {isAdmin && !isApproved && (
+              <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow}>
+                <Trans>Approve</Trans>
+              </PrimaryButton>
+            )}
+            {!isOwner && !isAdmin && isFollowing && (
+              <SecondaryButton onClick={toggleFollow}>
+                <Trans>Unfollow</Trans>
+              </SecondaryButton>
+            )}
+            {!isOwner && !isAdmin && !isFollowing && (
+              <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow}>
+                <Trans>Follow</Trans>
+              </PrimaryButton>
+            )}
+            {!isOwner && (
               <div
                 className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
                 onClick={openSendMessage}
               >
                 <MailOutlineIcon />
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     )
