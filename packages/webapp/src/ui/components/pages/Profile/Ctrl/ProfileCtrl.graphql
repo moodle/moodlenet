@@ -10,6 +10,7 @@ query ProfilePageUserData($profileId: ID!, $myProfileId: [ID!]) {
       lastName
       siteUrl
       location
+      _published
 
       followersCount: _relCount(type: Follows, inverse: true)
       myFollow: _rel(
@@ -72,6 +73,7 @@ mutation editProfile($id: ID!, $profileInput: EditProfileInput!) {
     ... on EditNodeMutationSuccess {
       node {
         ... on Profile {
+          id
           name
           avatar
           description
@@ -80,6 +82,7 @@ mutation editProfile($id: ID!, $profileInput: EditProfileInput!) {
           lastName
           siteUrl
           location
+          _published
         }
       }
     }

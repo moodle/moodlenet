@@ -37,6 +37,7 @@ input EditProfileInput {
   lastName: String
   siteUrl: String
   location: String
+  _published: Boolean
 }
 input EditNodeInput {
   Profile: EditProfileInput

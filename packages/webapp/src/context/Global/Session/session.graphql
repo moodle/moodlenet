@@ -9,6 +9,7 @@ fragment UserSession on UserSession {
     #FIXME: keep the id only as useSession won't update during app mutations
     id
     name
+    _published
     myOwnCollections: _rel(
       type: Created
       targetTypes: [Collection]

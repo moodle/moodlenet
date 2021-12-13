@@ -61,10 +61,10 @@ export const apolloClient = new ApolloClient({
       fetchPolicy: 'network-only',
     },
     mutate: {
-      fetchPolicy: 'no-cache',
+      fetchPolicy: 'network-only',
     },
     watchQuery: {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-and-network',
     },
   },
 })

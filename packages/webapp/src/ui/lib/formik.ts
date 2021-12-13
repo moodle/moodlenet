@@ -25,7 +25,7 @@ export const formikInputAttrs = <Values>(values: Values) =>
 export const useFormikInputAttrs = <Values>(values: Values) =>
   useMemo(() => formikInputAttrs(values), [values])
 
-export type FormikBag<Values = {}> = [
+export type FormikBag<Values = {}> = readonly [
   SimplifiedFormik<Values>,
   FormikInputAttrs<Values>
 ]

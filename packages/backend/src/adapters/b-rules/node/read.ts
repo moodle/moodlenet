@@ -10,13 +10,14 @@ export const readNodeBRules: SockOf<typeof bRules> = async ({ arg, sessionEnv })
   if (await isLocalOrganizationAuthId(sessionEnv.authId)) {
     return { ...arg, assertions: {} }
   }
-  const { or } = await baseOperators()
-  const { isCreator, graphNode, isPublished } = await graphOperators()
+  const { and, or } = await baseOperators()
+  const { creatorOf, isCreator, graphNode, isPublished, isSameNode } = await graphOperators()
   const { readNode } = await operators()
   const assertions: Assertions<Rules> = {
     mustBePublishedOrIssuerIsCreatorOfNode: or(
-      isPublished(readNode),
+      isSameNode(readNode, graphNode(sessionEnv.authId)),
       isCreator({ authNode: graphNode(sessionEnv.authId), ofGlyph: readNode }),
+      and(isPublished(creatorOf(readNode)), isPublished(readNode)),
     ),
   }
 
