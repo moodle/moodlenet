@@ -22,6 +22,9 @@ export const editNodeBRules: SockOf<typeof bRules> = async ({ arg, sessionEnv })
 
   const { isCreator, graphNode, isSameNode } = await graphOperators()
   const { editNode } = await operators()
+  if (arg.nodeId._type === 'Profile') {
+    arg.data._published = undefined
+  }
 
   assertions.mustBeCreatorOfNodeOrSelf = or(
     isSameNode(graphNode(sessionEnv.authId), editNode),

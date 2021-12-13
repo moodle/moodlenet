@@ -10,12 +10,12 @@ export const relationCountBRules: SockOf<typeof bRules> = async ({ arg, sessionE
   if (await isLocalOrganizationAuthId(sessionEnv.authId)) {
     return { ...arg, assertions: {} }
   }
-  const { or } = await baseOperators()
-  const { isCreator, graphNode, isPublished } = await graphOperators()
+  const { or, and } = await baseOperators()
+  const { isCreator, graphNode, isPublished, creatorOf } = await graphOperators()
   const { countingNode } = await operators()
   const assertions: Assertions<Rules> = {
     mustBePublishedOrIssuerIsCreatorOfNode: or(
-      isPublished(countingNode),
+      and(isPublished(creatorOf(countingNode)), isPublished(countingNode)),
       isCreator({ authNode: graphNode(sessionEnv.authId), ofGlyph: countingNode }),
     ),
   }

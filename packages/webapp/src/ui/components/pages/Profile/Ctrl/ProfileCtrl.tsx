@@ -5,6 +5,7 @@ import {
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { createElement, useCallback, useEffect, useMemo, useState } from 'react'
+import { MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS } from '../../../../../constants'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
@@ -38,7 +39,14 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
   id,
 }) => {
   useSeoContentId(id)
-  const { isAuthenticated, session, firstLogin } = useSession()
+  const {
+    isAuthenticated,
+    session,
+    firstLogin,
+    isAdmin,
+    isWaitingApproval,
+    userRequestedApproval,
+  } = useSession()
   const { org: localOrg } = useLocalInstance()
   const isMe = session?.profile && session.profile.id === id
   const { data, refetch, loading } = useProfilePageUserDataQuery({
@@ -46,7 +54,10 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
       profileId: id,
       myProfileId: session?.profile && !isMe ? [session.profile.id] : [],
     },
+    fetchPolicy: 'cache-and-network',
   })
+
+  // TODO: move this service and abstraction to SessionCtx
   const [sendEmailMut, sendEmailMutRes] = useSendEmailToProfileMutation()
   const profile = narrowNodeType(['Profile'])(data?.node)
   const collections = useMemo(
@@ -109,6 +120,23 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     session,
   ])
 
+  // TODO: move this service to SessionCtx
+  const [, requestApprovalFormBag] = useFormikBag<{}>({
+    initialValues: {},
+    onSubmit: async () => {
+      const { data } = await sendEmailMut({
+        variables: {
+          text: 'please consider approving my profile !',
+          toProfileId: localOrg.id,
+        },
+      })
+      if (!data || !data.sendEmailToProfile) {
+        return
+      }
+      userRequestedApproval()
+    },
+  })
+
   const [formik, formBag] = useFormikBag<ProfileFormValues>({
     initialValues: {} as any,
     onSubmit: async (vals) => {
@@ -157,7 +185,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
           },
         },
       })
-      refetch()
+      // refetch()
     },
   })
   const { resetForm: fresetForm } = formik
@@ -216,6 +244,25 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
       })
     }
   }, [fresetForm, id, profile, localOrg.name /* avatarUrl, backgroundUrl */])
+  const approveUserFormBag = useFormikBag<{}>({
+    initialValues: {},
+    onSubmit: () => {
+      if (!(isAdmin && profile)) {
+        return
+      }
+      edit({
+        variables: {
+          id: profile.id,
+          profileInput: {
+            _published: true,
+            name: profile.name,
+            description: profile.description,
+          },
+        },
+      })
+    },
+  })
+
   const profileProps = useMemo<ProfileProps | null>(() => {
     if (!profile) {
       return null
@@ -243,6 +290,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
       newResourceHref,
       showAccountCreationSuccessAlert: firstLogin,
       profileCardProps: {
+        approveUserFormBag,
         formBag,
         isAuthenticated,
         toggleFollow,
@@ -250,6 +298,12 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
         backgroundUrl,
         isFollowing: !!myFollowEdgeId,
         isOwner: isMe,
+        isAdmin,
+        isApproved: profile._published,
+        requestApprovalFormBag,
+        isElegibleForApproval:
+          profile.resourcesCount >= MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS,
+        isWaitingApproval,
       },
       sendEmail: (text) => {
         if (sendEmailMutRes.loading) {
@@ -260,24 +314,29 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
       displayName: profile.name,
       save: () => formik.submitForm(),
     }
+    console.log(props)
     return props
   }, [
-    avatarUrl,
-    backgroundUrl,
-    collections,
-    firstLogin,
-    formBag,
-    formik,
-    id,
-    isAuthenticated,
-    isMe,
-    kudos,
-    myFollowEdgeId,
     profile,
     resources,
-    sendEmailMut,
-    sendEmailMutRes.loading,
+    collections,
+    kudos,
+    firstLogin,
+    approveUserFormBag,
+    formBag,
+    isAuthenticated,
     toggleFollow,
+    avatarUrl,
+    backgroundUrl,
+    myFollowEdgeId,
+    isMe,
+    isAdmin,
+    requestApprovalFormBag,
+    isWaitingApproval,
+    sendEmailMutRes.loading,
+    sendEmailMut,
+    id,
+    formik,
   ])
   if (!loading && !data?.node) {
     return createElement(Fallback, fallbackProps({ key: 'profile-not-found' }))

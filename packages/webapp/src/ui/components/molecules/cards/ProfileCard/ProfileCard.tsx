@@ -19,6 +19,10 @@ import './styles.scss'
 
 export type ProfileCardProps = {
   isOwner?: boolean
+  isAdmin?: boolean
+  isApproved?: boolean
+  isElegibleForApproval?: boolean
+  isWaitingApproval?: boolean
   isFollowing?: boolean
   isEditing?: boolean
   isAuthenticated: boolean
@@ -28,6 +32,8 @@ export type ProfileCardProps = {
   openSendMessage(): unknown
   avatarUrl: string | null
   backgroundUrl: string | null
+  requestApprovalFormBag: FormikBag<{}>
+  approveUserFormBag: FormikBag<{}>
 }
 
 export const ProfileCard = withCtrl<ProfileCardProps>(
@@ -35,6 +41,10 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     avatarUrl,
     backgroundUrl,
     isOwner,
+    isAdmin,
+    isApproved,
+    isElegibleForApproval,
+    isWaitingApproval,
     isAuthenticated,
     isEditing,
     isFollowing,
@@ -42,6 +52,8 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     openSendMessage,
     toggleFollow,
     toggleIsEditing,
+    requestApprovalFormBag: [requestApprovalForm],
+    approveUserFormBag: [approveUserForm],
   }) => {
     const [form, formAttrs] = formBag
     const [profileCardErrorMessage, setProfileCardErrorMessage] = useState<
@@ -222,7 +234,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               ) : (
                 <div className="title">{form.values.displayName}</div>
               )}
-              {!isEditing && (
+              {!isEditing && isApproved && (
                 <div className="verified-icon">
                   <img src={verifiedIcon} alt="Verified" />
                 </div>
@@ -315,28 +327,56 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
           ) : (
             <div className="description">{form.values.description}</div>
           )}
-          {!isOwner && (
-            <div className="buttons">
-              {isFollowing ? (
-                <SecondaryButton onClick={toggleFollow}>
-                  <Trans>Unfollow</Trans>
-                </SecondaryButton>
-              ) : (
-                <PrimaryButton
-                  disabled={!isAuthenticated}
-                  onClick={toggleFollow}
-                >
-                  <Trans>Follow</Trans>
-                </PrimaryButton>
-              )}
+          {isOwner && !isApproved && (
+            <div className="not-approved-warning">
+              <Trans>
+                {isElegibleForApproval
+                  ? 'Your content is not yet public. Request approval to make it accessible to everyone.'
+                  : 'Your content is not yet public. Upload 5 open educational resources and request approval to make it accessible to everyone.'}
+              </Trans>
+            </div>
+          )}
+          <div className="buttons">
+            {isOwner && !isApproved && !isWaitingApproval && (
+              <PrimaryButton
+                disabled={!isElegibleForApproval}
+                onClick={requestApprovalForm.submitForm}
+              >
+                <Trans>Request approval</Trans>
+              </PrimaryButton>
+            )}
+            {isOwner && isWaitingApproval && (
+              <SecondaryButton disabled={true}>
+                <Trans>Pending</Trans>
+              </SecondaryButton>
+            )}
+            {isAdmin && !isApproved && (
+              <PrimaryButton
+                disabled={!isAuthenticated}
+                onClick={approveUserForm.submitForm}
+              >
+                <Trans>Approve</Trans>
+              </PrimaryButton>
+            )}
+            {!isOwner && isFollowing && (
+              <SecondaryButton onClick={toggleFollow}>
+                <Trans>Unfollow</Trans>
+              </SecondaryButton>
+            )}
+            {!isOwner && !isFollowing && (
+              <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow}>
+                <Trans>Follow</Trans>
+              </PrimaryButton>
+            )}
+            {!isOwner && (
               <div
                 className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
                 onClick={openSendMessage}
               >
                 <MailOutlineIcon />
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     )

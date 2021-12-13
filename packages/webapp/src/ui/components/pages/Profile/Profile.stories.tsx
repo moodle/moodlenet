@@ -10,6 +10,8 @@ import {
 } from '../../molecules/cards/CollectionCard/CollectionCard.stories'
 import { OverallCardStoryProps } from '../../molecules/cards/OverallCard/OverallCard.stories'
 import {
+  ProfileCardAdminStoryProps,
+  ProfileCardApprovedStoryProps,
   ProfileCardLoggedInStoryProps,
   ProfileCardOwnerStoryProps,
   ProfileCardStoryProps,
@@ -37,6 +39,8 @@ const meta: ComponentMeta<typeof Profile> = {
     'ProfileLoggedInStoryProps',
     'ProfileOwnerStoryProps',
     'ProfileActivatedStoryProps',
+    'ProfileAdminStoryProps',
+    'ProfileApprovedStoryProps',
   ],
 }
 
@@ -128,9 +132,22 @@ export const ProfileOwnerStoryProps: ProfileProps = {
   ],
 }
 
+export const ProfileApprovedStoryProps: ProfileProps = {
+  ...ProfileOwnerStoryProps,
+  profileCardProps: ProfileCardApprovedStoryProps,
+}
+
 export const ProfileActivatedStoryProps: ProfileProps = {
   ...ProfileOwnerStoryProps,
   profileCardProps: ProfileCardOwnerStoryProps,
+  collectionCardPropsList: [],
+  resourceCardPropsList: [],
+  showAccountCreationSuccessAlert: true,
+}
+
+export const ProfileAdminStoryProps: ProfileProps = {
+  ...ProfileLoggedInStoryProps,
+  profileCardProps: ProfileCardAdminStoryProps,
   collectionCardPropsList: [],
   resourceCardPropsList: [],
   showAccountCreationSuccessAlert: true,
@@ -145,7 +162,13 @@ LoggedIn.args = ProfileLoggedInStoryProps
 export const Owner = ProfileStory.bind({})
 Owner.args = ProfileOwnerStoryProps
 
+export const Approved = ProfileStory.bind({})
+Approved.args = ProfileApprovedStoryProps
+
 export const Activated = ProfileStory.bind({})
 Activated.args = ProfileActivatedStoryProps
+
+export const Admin = ProfileStory.bind({})
+Admin.args = ProfileAdminStoryProps
 
 export default meta

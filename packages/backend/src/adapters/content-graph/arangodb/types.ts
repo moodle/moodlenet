@@ -4,7 +4,7 @@ import { DistOmit } from '@moodlenet/common/dist/utils/types'
 import { Document, Edge } from 'arangojs/documents'
 import { VersionedDB } from '../../../lib/helpers/arango/migrate/types'
 
-export type ContentGraphDB = VersionedDB<'2.0.0'>
+export type ContentGraphDB = VersionedDB<'2.0.1'>
 
 export type AqlGraphEdge<E extends GraphEdge = GraphEdge> = Edge<DistOmit<E, 'id' | '_type'>> & {
   _fromType: string

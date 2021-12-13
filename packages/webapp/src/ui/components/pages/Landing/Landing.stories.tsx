@@ -107,8 +107,9 @@ export const LandingLoggedInStoryProps: LandingProps = {
     name: 'MoodleNet Central',
     subtitle:
       'Our global network to share and curate open educational resources',
-    description: `MoodleNet is currently in Public Beta version, meaning that this site is now live and being tested before its official release.\n
-                  Feel free to add open educational resources and collections, follow subjects and collections plus send resources to your Moodle site.`,
+    //     description: `Build your educator profile by sharing and curating open educational resources with educators world-wide.\n\nIntegrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.`,
+    //description: `Join our social network to share and curate open educational resources with educators world-wide.\n\nIntegrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.\n\nBuild your profile as an educator.`,
+    description: `Join our social network to share and curate open educational resources with educators world-wide.\n\nIntegrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.\n\nBuild your profile as an educator.`,
   },
   isAuthenticated: true,
   signUpHref: href('Pages/Access/SignUp/Default'),

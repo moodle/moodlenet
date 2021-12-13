@@ -71,6 +71,7 @@ export const recoverPasswordEmail = plug(ns(module, 'recover-password-email'), a
       })}`,
     },
   })
+  console.log({ __: emailObj })
   await sendEmail.adapter(emailObj)
   return { recoverPasswordJwt }
 })
