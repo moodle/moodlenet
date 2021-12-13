@@ -38,7 +38,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
   id,
 }) => {
   useSeoContentId(id)
-  const { isAuthenticated, session, firstLogin } = useSession()
+  const { isAuthenticated, session, firstLogin, isAdmin } = useSession()
   const { org: localOrg } = useLocalInstance()
   const isMe = session?.profile && session.profile.id === id
   const { data, refetch, loading } = useProfilePageUserDataQuery({
@@ -108,6 +108,18 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     refetch,
     session,
   ])
+
+  const [, requestApprovalFormBag] = useFormikBag<{}>({
+    initialValues: {},
+    onSubmit: () => {
+      sendEmailMut({
+        variables: {
+          text: 'please consider approving my profile !',
+          toProfileId: localOrg.id,
+        },
+      })
+    },
+  })
 
   const [formik, formBag] = useFormikBag<ProfileFormValues>({
     initialValues: {} as any,
@@ -250,6 +262,11 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
         backgroundUrl,
         isFollowing: !!myFollowEdgeId,
         isOwner: isMe,
+        isAdmin,
+        isApproved: !!session?.profile._published,
+        requestApprovalFormBag,
+        isElegibleForApproval: true,
+        isWaitingApproval: false,
       },
       sendEmail: (text) => {
         if (sendEmailMutRes.loading) {
@@ -269,14 +286,17 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     formBag,
     formik,
     id,
+    isAdmin,
     isAuthenticated,
     isMe,
     kudos,
     myFollowEdgeId,
     profile,
+    requestApprovalFormBag,
     resources,
     sendEmailMut,
     sendEmailMutRes.loading,
+    session?.profile._published,
     toggleFollow,
   ])
   if (!loading && !data?.node) {

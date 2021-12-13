@@ -6,7 +6,6 @@ import * as GQLTypes from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import {
   gqlEdgeId2GraphEdgeIdentifier,
   gqlNodeId2GraphNodeIdentifier,
-  gqlNodeId2GraphNodeIdentifierOfType,
 } from '@moodlenet/common/dist/utils/content-graph/id-key-type-guards'
 import * as contentGraph from '../../ports/content-graph'
 import { localOrg } from '../../ports/system'
@@ -308,7 +307,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         return successResult
       },
       async sendEmailToProfile(_root, { text, toProfileId }, ctx) {
-        const toProfileIdentifier = gqlNodeId2GraphNodeIdentifierOfType(toProfileId, 'Profile')
+        const toProfileIdentifier = gqlNodeId2GraphNodeIdentifier(toProfileId)
         if (!toProfileIdentifier) {
           return false
         }

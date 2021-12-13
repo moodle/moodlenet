@@ -32,6 +32,7 @@ export type ProfileCardProps = {
   openSendMessage(): unknown
   avatarUrl: string | null
   backgroundUrl: string | null
+  requestApprovalFormBag: FormikBag<{}>
 }
 
 export const ProfileCard = withCtrl<ProfileCardProps>(
@@ -50,6 +51,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     openSendMessage,
     toggleFollow,
     toggleIsEditing,
+    requestApprovalFormBag: [requestApprovalForm],
   }) => {
     const [form, formAttrs] = formBag
     const [profileCardErrorMessage, setProfileCardErrorMessage] = useState<
@@ -336,7 +338,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             {isOwner && !isApproved && !isWaitingApproval && (
               <PrimaryButton
                 disabled={!isElegibleForApproval}
-                onClick={toggleFollow}
+                onClick={requestApprovalForm.submitForm}
               >
                 <Trans>Request approval</Trans>
               </PrimaryButton>

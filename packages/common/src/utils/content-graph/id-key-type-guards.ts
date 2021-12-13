@@ -17,20 +17,20 @@ export const gqlNodeId2GraphNodeIdentifier = (_id: string): GraphNodeIdentifierS
   }
   return { _type, _slug }
 }
-export const gqlNodeId2GraphNodeIdentifierOfType = <NT extends GraphNodeType = GraphNodeType>(
-  _id: string,
-  ofType: NT,
-): GraphNodeIdentifierSlug<NT> | null => {
-  const identifier = gqlNodeId2GraphNodeIdentifier(_id)
-  if (!identifier) {
-    return null
-  }
-  const { _slug, _type } = identifier
-  if (ofType !== _type) {
-    return null
-  }
-  return { _slug, _type: ofType }
-}
+// export const gqlNodeId2GraphNodeIdentifierOfType = <NT extends GraphNodeType = GraphNodeType>(
+//   _id: string,
+//   ofType: NT,
+// ): GraphNodeIdentifierSlug<NT> | null => {
+//   const identifier = gqlNodeId2GraphNodeIdentifier(_id)
+//   if (!identifier) {
+//     return null
+//   }
+//   const { _slug, _type } = identifier
+//   if (ofType !== _type) {
+//     return null
+//   }
+//   return { _slug, _type: ofType }
+// }
 
 export const gqlEdgeId2GraphEdgeIdentifier = (_id: string): GraphEdgeIdentifier | null => {
   const splitted = _id.split('/')
