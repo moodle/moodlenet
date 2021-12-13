@@ -50,6 +50,7 @@ export const ProfileCardStoryProps: ProfileCardProps = {
     backgroundImage: null,
     username: people[randomProfileIndex]?.username!,
   }),
+  requestApprovalFormBag: SBFormikBag({}),
 }
 
 export const ProfileCardLoggedOutStoryProps: ProfileCardProps = {

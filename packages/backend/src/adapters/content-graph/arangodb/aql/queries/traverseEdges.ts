@@ -99,7 +99,7 @@ export const traversePaginateMapQuery =
           }
         ]
       `)
-    console.log('traverseQ', q)
+    // console.log('traverseQ', q)
     return q
   }
 
