@@ -4,7 +4,7 @@ import { value } from '../../../lib/plug'
 declare const _TSym: unique symbol
 export type _T<__> = __ extends BV<infer T> ? T : never
 export type BV<T> = { readonly [_TSym]?: T }
-export type GetBV = <T extends any>(bv: BV<T>, assertions: Assertions) => Promise<T | null>
+export type GetBV = <T>(bv: BV<T>, assertions: Assertions) => Promise<T | null>
 export type Assertions<Rules extends string = string> =
   | {
       [r in Rules]?: BV<boolean>

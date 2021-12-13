@@ -1,4 +1,4 @@
-import { Organization } from '@moodlenet/common/dist/content-graph/types/node'
+import { Organization } from '@moodlenet/common/dist/content-graph_2.0.0/types/node'
 import { Database } from 'arangojs'
 
 export const createLocalOrg = async ({ db, org }: { db: Database; org: Organization }) => {

@@ -11,5 +11,9 @@ export const getNodemailerSendEmailAdapter = ({ smtp }: Config): SockOf<typeof a
     emailSender
       .sendMail(emailObj)
       .then(resp => ({ success: true, emailId: resp.messageId } as const))
-      .catch(err => ({ success: false, error: String(err) } as const))
+      //.catch(err => ({ success: false, error: String(err) } as const))
+      .catch(err => {
+        console.error(`NodeMailer failed to send email`, emailObj, err)
+        return { success: false, error: String(err) } as const
+      })
 }

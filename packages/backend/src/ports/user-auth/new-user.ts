@@ -1,5 +1,5 @@
 import { GraphNodeIdentifierAuth } from '@moodlenet/common/dist/content-graph/types/node'
-import { newAuthKey } from '@moodlenet/common/dist/utils/content-graph/slug-id'
+import { newAuthKey, newGlyphPermId } from '@moodlenet/common/dist/utils/content-graph/slug-id'
 import { Routes, webappPath } from '@moodlenet/common/dist/webapp/sitemap'
 import { fillEmailTemplate } from '../../adapters/emailSender/helpers'
 import { ns } from '../../lib/ns/namespace'
@@ -18,6 +18,7 @@ export const signUp = plug(
     // const authId = newAuthKey()
     const authId: GraphNodeIdentifierAuth<'Profile'> = {
       _authKey: newAuthKey(),
+      _permId: newGlyphPermId(),
       _type: 'Profile',
     }
 
