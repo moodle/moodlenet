@@ -2,6 +2,7 @@ import { t } from '@lingui/macro'
 import { isGqlIdLocalOrganization } from '@moodlenet/common/dist/utils/content-graph/id-key-type-guards'
 import { Maybe } from '@moodlenet/common/dist/utils/types'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
+import { TIME_BETWEEN_USER_APPROVAL_REQUESTS } from '../../constants'
 import { createCtx } from '../../lib/context'
 import { setToken } from './Apollo/client'
 import {
@@ -15,6 +16,14 @@ import {
   UserSessionFragment,
   useSignUpMutation,
 } from './Session/session.gen'
+
+const LAST_USER_APPROVAL_REQUEST_STORAGE_KEY = 'LAST_USER_APPROVAL_REQUEST'
+const getLastUserApprovalRequest = (): number => {
+  const lastDateStr = localStorage.getItem(
+    LAST_USER_APPROVAL_REQUEST_STORAGE_KEY
+  )
+  return lastDateStr ? Number(lastDateStr) : 0
+}
 
 const USER_ACCEPTED_POLICIES_STORAGE_KEY = 'USER_ACCEPTED_POLICIES'
 const USER_ACCEPTED_POLICIES_STORAGE_VAL = 'true'
@@ -77,6 +86,9 @@ export type SessionContextType = {
   }): Promise<ChangePasswordWarnMessage | null>
   firstLogin: boolean
   userMustAcceptPolicies: (() => unknown) | null
+  lastUserApprovalRequest: number
+  userRequestedApproval: () => void
+  isWaitingApproval: boolean
 }
 
 export const [useSession, ProvideSession] =
@@ -85,6 +97,18 @@ export const [useSession, ProvideSession] =
 const WRONG_CREDS_MSG = t`wrong credentials`
 
 export const SessionProvider: FC = ({ children }) => {
+  const [lastUserApprovalRequest, setLastUserApprovalRequest] = useState(
+    getLastUserApprovalRequest()
+  )
+  const userRequestedApproval = useCallback(() => {
+    const now = Number(new Date())
+    localStorage.setItem(LAST_USER_APPROVAL_REQUEST_STORAGE_KEY, `${now}`)
+    setLastUserApprovalRequest(now)
+  }, [])
+
+  const isWaitingApproval =
+    Number(new Date()) - lastUserApprovalRequest <
+    TIME_BETWEEN_USER_APPROVAL_REQUESTS
   // const [activateUserMut /* , activateResult */] = useActivateNewUserMutation()
   const [signUpMut /* , activateResult */] = useSignUpMutation()
   const [lastSession, setLastSession] = useState<Partial<LastSession>>(
@@ -237,21 +261,27 @@ export const SessionProvider: FC = ({ children }) => {
       changeRecoverPassword,
       userMustAcceptPolicies:
         isAuthenticated || userAcceptedPolicies ? null : userAcceptPoliciesCb,
+      lastUserApprovalRequest,
+      userRequestedApproval,
+      isWaitingApproval,
     }),
     [
-      isAuthenticated,
       logout,
       login,
       firstLogin,
       signUp,
       session,
       loading,
+      isAuthenticated,
       lastSession.email,
       lastSession.jwt,
       recoverPassword,
       changeRecoverPassword,
       userAcceptedPolicies,
       userAcceptPoliciesCb,
+      lastUserApprovalRequest,
+      userRequestedApproval,
+      isWaitingApproval,
       getSessionLazyQ,
     ]
   )

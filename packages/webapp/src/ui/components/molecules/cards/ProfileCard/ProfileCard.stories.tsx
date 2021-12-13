@@ -36,6 +36,7 @@ export const ProfileCardStoryProps: ProfileCardProps = {
   avatarUrl: people[randomProfileIndex]?.avatarUrl!,
   isOwner: false,
   isAuthenticated: false,
+  approveUserFormBag: SBFormikBag({}),
   toggleFollow: action('toogleFollow'),
   toggleIsEditing: action('toogleIsEditing'),
   openSendMessage: action('openSendMessage'),

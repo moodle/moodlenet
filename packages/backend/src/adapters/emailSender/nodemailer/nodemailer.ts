@@ -6,7 +6,6 @@ import { adapter } from '../../../ports/system/sendEmail'
 type Config = { smtp: string }
 export const getNodemailerSendEmailAdapter = ({ smtp }: Config): SockOf<typeof adapter> => {
   const emailSender = createTransport(smtp)
-
   return emailObj =>
     emailSender
       .sendMail(emailObj)

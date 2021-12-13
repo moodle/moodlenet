@@ -33,6 +33,7 @@ export type ProfileCardProps = {
   avatarUrl: string | null
   backgroundUrl: string | null
   requestApprovalFormBag: FormikBag<{}>
+  approveUserFormBag: FormikBag<{}>
 }
 
 export const ProfileCard = withCtrl<ProfileCardProps>(
@@ -52,6 +53,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     toggleFollow,
     toggleIsEditing,
     requestApprovalFormBag: [requestApprovalForm],
+    approveUserFormBag: [approveUserForm],
   }) => {
     const [form, formAttrs] = formBag
     const [profileCardErrorMessage, setProfileCardErrorMessage] = useState<
@@ -232,7 +234,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               ) : (
                 <div className="title">{form.values.displayName}</div>
               )}
-              {!isEditing && !isAdmin && isApproved && (
+              {!isEditing && isApproved && (
                 <div className="verified-icon">
                   <img src={verifiedIcon} alt="Verified" />
                 </div>
@@ -344,24 +346,24 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               </PrimaryButton>
             )}
             {isOwner && isWaitingApproval && (
-              <SecondaryButton
-                disabled={!isAuthenticated}
-                onClick={toggleFollow}
-              >
+              <SecondaryButton disabled={true}>
                 <Trans>Pending</Trans>
               </SecondaryButton>
             )}
             {isAdmin && !isApproved && (
-              <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow}>
+              <PrimaryButton
+                disabled={!isAuthenticated}
+                onClick={approveUserForm.submitForm}
+              >
                 <Trans>Approve</Trans>
               </PrimaryButton>
             )}
-            {!isOwner && !isAdmin && isFollowing && (
+            {!isOwner && isFollowing && (
               <SecondaryButton onClick={toggleFollow}>
                 <Trans>Unfollow</Trans>
               </SecondaryButton>
             )}
-            {!isOwner && !isAdmin && !isFollowing && (
+            {!isOwner && !isFollowing && (
               <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow}>
                 <Trans>Follow</Trans>
               </PrimaryButton>
