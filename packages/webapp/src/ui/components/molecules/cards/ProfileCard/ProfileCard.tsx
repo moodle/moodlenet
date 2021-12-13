@@ -329,11 +329,18 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
           )}
           {isOwner && !isApproved && (
             <div className="not-approved-warning">
-              <Trans>
-                {isElegibleForApproval
-                  ? 'Your content is not yet public. Request approval to make it accessible to everyone.'
-                  : 'Your content is not yet public. Upload 5 open educational resources and request approval to make it accessible to everyone.'}
-              </Trans>
+              {isElegibleForApproval ? (
+                <Trans>
+                  Your content is not yet public. Request approval to make it
+                  accessible to everyone
+                </Trans>
+              ) : (
+                <Trans>
+                  Your content is not yet public. Upload 5 open educational
+                  resources and request approval to make it accessible to
+                  everyone
+                </Trans>
+              )}
             </div>
           )}
           <div className="buttons">
