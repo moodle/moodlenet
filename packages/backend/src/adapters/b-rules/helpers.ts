@@ -6,5 +6,5 @@ export const isLocalOrganizationAuthId = async (_?: GraphNodeIdentifierAuth | nu
     return false
   }
   const { authId } = await localOrg.info.adapter()
-  return _._authKey === authId._authKey
+  return _._permId === authId._permId && _._authKey === authId._authKey && _._type === authId._type
 }

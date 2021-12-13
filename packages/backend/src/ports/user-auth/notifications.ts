@@ -19,7 +19,7 @@ export const sendTextAdapter: SockOf<typeof adapter> = async ({ recipient, sende
     return false
   }
   const recipientUser = await getActiveUserByAuthAdapter({
-    authId: pick(recipient, ['_authKey', '_type']),
+    authId: pick(recipient, ['_authKey', '_type', '_permId']),
   })
 
   if (!recipientUser) {
