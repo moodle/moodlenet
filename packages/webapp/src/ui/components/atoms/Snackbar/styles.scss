@@ -1,6 +1,6 @@
 @import '../../../styles/application';
 
-.card.snackbar {
+.snackbar.card {
   min-height: 40px;
   color: #fff;
   font-size: 0.875rem;
@@ -13,13 +13,16 @@
   margin: 0 20px;
   border-radius: 4px;
   gap: 10px;
-  position: fixed;
   z-index: 5;
   width: fit-content;
   box-shadow: none;
 
   > * {
     display: flex;
+  }
+
+  .content {
+    padding-right: 8px;
   }
 
   > .close-button {
@@ -68,14 +71,6 @@
     display: none;
   }
 
-  &.position-top {
-    top: 68px;
-  }
-
-  &.position-bottom {
-    bottom: 20px;
-  }
-
   @keyframes fadeOut {
     from {
       opacity: 1;
@@ -83,5 +78,25 @@
     to {
       opacity: 0;
     }
+  }
+}
+
+.view > .snackbar-stack,
+.snackbar-stack {
+  z-index: 9;
+  display: flex;
+  gap: 12px;
+  position: fixed;
+  align-items: center;
+  height: fit-content;
+  flex-direction: column;
+  width: 100%;
+
+  &.position-top {
+    top: 68px;
+  }
+
+  &.position-bottom {
+    bottom: 20px;
   }
 }

@@ -8,6 +8,7 @@ import InputTextField from '../../atoms/InputTextField/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import Snackbar from '../../atoms/Snackbar/Snackbar'
+import SnackbarStack from '../../atoms/Snackbar/SnackbarStack'
 import {
   CollectionCard,
   CollectionCardProps,
@@ -44,6 +45,7 @@ export type ProfileProps = {
   newCollectionHref: Href
   newResourceHref: Href
   showAccountCreationSuccessAlert?: boolean
+  showAccountApprovedSuccessAlert?: boolean
   sendEmail?: (text: string) => unknown
   save: () => unknown
 }
@@ -59,15 +61,12 @@ export const Profile = withCtrl<ProfileProps>(
     newCollectionHref,
     newResourceHref,
     showAccountCreationSuccessAlert,
+    showAccountApprovedSuccessAlert,
     sendEmail,
     save,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
-    const [
-      isShowingAccountCreationSuccessAlert,
-      setIsShowingAccountCreationSuccessAlert,
-    ] = useState<boolean>(showAccountCreationSuccessAlert ? true : false)
 
     const toggleIsEditing = () => {
       setIsEditing(!isEditing)
@@ -99,18 +98,22 @@ export const Profile = withCtrl<ProfileProps>(
     const [emailText, setEmailText] = useState('')
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        {showAccountCreationSuccessAlert &&
-          isShowingAccountCreationSuccessAlert && (
-            <Snackbar
-              type="success"
-              autoHideDuration={6000}
-              onClose={() => setIsShowingAccountCreationSuccessAlert(false)}
-            >
-              <Trans>
-                Account activated! Feel free to complete your profile
-              </Trans>
-            </Snackbar>
-          )}
+        <SnackbarStack
+          snackbarList={[
+            showAccountCreationSuccessAlert ? (
+              <Snackbar type="success" autoHideDuration={6000}>
+                <Trans>
+                  Account activated! Feel free to complete your profile
+                </Trans>
+              </Snackbar>
+            ) : null,
+            showAccountApprovedSuccessAlert ? (
+              <Snackbar type="success" autoHideDuration={6000}>
+                <Trans>Congratulations! Your account has been approved</Trans>
+              </Snackbar>
+            ) : null,
+          ]}
+        />
         {isSendingMessage && sendEmail && (
           <Modal
             title={`${t`Send a message to`} ${displayName}`}

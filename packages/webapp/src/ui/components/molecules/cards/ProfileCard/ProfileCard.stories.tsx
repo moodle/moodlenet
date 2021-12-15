@@ -37,6 +37,7 @@ export const ProfileCardStoryProps: ProfileCardProps = {
   isOwner: false,
   isAuthenticated: false,
   approveUserFormBag: SBFormikBag({}),
+  unapproveUserForm: SBFormikBag({}),
   toggleFollow: action('toogleFollow'),
   toggleIsEditing: action('toogleIsEditing'),
   openSendMessage: action('openSendMessage'),
@@ -66,7 +67,7 @@ export const ProfileCardLoggedInStoryProps: ProfileCardProps = {
 export const ProfileCardOwnerStoryProps: ProfileCardProps = {
   ...ProfileCardLoggedInStoryProps,
   isOwner: true,
-  isElegibleForApproval: true,
+  //isElegibleForApproval: true,
   //isWaitingApproval: true,
 }
 
