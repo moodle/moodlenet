@@ -135,6 +135,7 @@ export const ProfileOwnerStoryProps: ProfileProps = {
 export const ProfileApprovedStoryProps: ProfileProps = {
   ...ProfileOwnerStoryProps,
   profileCardProps: ProfileCardApprovedStoryProps,
+  showAccountApprovedSuccessAlert: true,
 }
 
 export const ProfileActivatedStoryProps: ProfileProps = {

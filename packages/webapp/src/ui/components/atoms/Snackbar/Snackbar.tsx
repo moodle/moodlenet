@@ -17,6 +17,7 @@ export type SnackbarProps = {
   className?: string
   autoHideDuration?: number
   position?: 'top' | 'bottom'
+  showCloseButton?: boolean
   onClose?: () => void
 }
 
@@ -24,6 +25,7 @@ const stopPropagation = (event: React.MouseEvent) => event.stopPropagation()
 
 export const Snackbar: React.FC<SnackbarProps> = ({
   onClose,
+  showCloseButton,
   actions,
   icon,
   showIcon,
@@ -88,9 +90,11 @@ export const Snackbar: React.FC<SnackbarProps> = ({
       )}
       <div className="content">{children}</div>
       {actions && <div className="actions">{actions}</div>}
-      <div className="close-button" onClick={handleonClose}>
-        {buttonText ? <span>{buttonText}</span> : <CloseRoundedIcon />}
-      </div>
+      {showCloseButton && (
+        <div className="close-button" onClick={handleonClose}>
+          {buttonText ? <span>{buttonText}</span> : <CloseRoundedIcon />}
+        </div>
+      )}
     </Card>
   )
 }
@@ -98,6 +102,7 @@ Snackbar.defaultProps = {
   className: '',
   showIcon: true,
   position: 'bottom',
+  //showCloseButton: true,
 }
 
 export default Snackbar

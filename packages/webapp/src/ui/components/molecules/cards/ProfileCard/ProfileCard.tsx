@@ -34,6 +34,7 @@ export type ProfileCardProps = {
   backgroundUrl: string | null
   requestApprovalFormBag: FormikBag<{}>
   approveUserFormBag: FormikBag<{}>
+  unapproveUserForm: FormikBag<{}>
 }
 
 export const ProfileCard = withCtrl<ProfileCardProps>(
@@ -54,6 +55,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     toggleIsEditing,
     requestApprovalFormBag: [requestApprovalForm],
     approveUserFormBag: [approveUserForm],
+    unapproveUserForm: [unapproveUserForm],
   }) => {
     const [form, formAttrs] = formBag
     const [profileCardErrorMessage, setProfileCardErrorMessage] = useState<
@@ -331,14 +333,14 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             <div className="not-approved-warning">
               {isElegibleForApproval ? (
                 <Trans>
-                  Your content is not yet public. Request approval to make it
-                  accessible to everyone
+                  We need to approve your account to make your content public.
+                  Press the button below for account approval.
                 </Trans>
               ) : (
                 <Trans>
-                  Your content is not yet public. Upload 5 open educational
-                  resources and request approval to make it accessible to
-                  everyone
+                  We need to approve your account to make your content public.
+                  Upload 5 good-quality resources and click the button below for
+                  account approval.
                 </Trans>
               )}
             </div>
@@ -358,12 +360,17 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               </SecondaryButton>
             )}
             {isAdmin && !isApproved && (
-              <PrimaryButton
-                disabled={!isAuthenticated}
-                onClick={approveUserForm.submitForm}
-              >
+              <PrimaryButton onClick={approveUserForm.submitForm} color="green">
                 <Trans>Approve</Trans>
               </PrimaryButton>
+            )}
+            {isAdmin && isApproved && (
+              <SecondaryButton
+                onClick={unapproveUserForm.submitForm}
+                color="red"
+              >
+                <Trans>Unapprove</Trans>
+              </SecondaryButton>
             )}
             {!isOwner && isFollowing && (
               <SecondaryButton onClick={toggleFollow}>
