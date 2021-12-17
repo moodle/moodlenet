@@ -1,9 +1,9 @@
 import { customAlphabet } from 'nanoid'
+import Slugify from 'slugify'
 import { PermId, Slug } from '../../content-graph/types/node'
 
-const Slugify = require('slugifyjs')
-export const slugify = ({ str, locale = 'en' }: { str: string; locale?: string }): Slug =>
-  Slugify.fromLocale(locale).parse(str)
+export const slugify = ({ str, locale }: { str: string; locale?: string }): Slug =>
+  Slugify(str, { locale, trim: true, lower: true })
 
 export const contentSlug = ({ name, locale, slugCode }: { name: Slug; locale?: string; slugCode?: string }) => {
   const slug_code = slugCode ? slugify({ str: slugCode, locale }) : newGlyphSlugId()
