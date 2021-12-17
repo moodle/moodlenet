@@ -4,6 +4,7 @@ import { Maybe } from '@moodlenet/common/dist/utils/types'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { TIME_BETWEEN_USER_APPROVAL_REQUESTS } from '../../constants'
 import { createCtx } from '../../lib/context'
+import { useLocalStorage } from '../../lib/keyvaluestore/useStorage'
 import { setToken } from './Apollo/client'
 import {
   // useActivateNewUserMutation,
@@ -17,55 +18,22 @@ import {
   useSignUpMutation,
 } from './Session/session.gen'
 
-const LAST_USER_APPROVAL_REQUEST_STORAGE_KEY = 'LAST_USER_APPROVAL_REQUEST'
-const getLastUserApprovalRequest = (): number => {
-  const lastDateStr = localStorage.getItem(
-    LAST_USER_APPROVAL_REQUEST_STORAGE_KEY
-  )
-  return lastDateStr ? Number(lastDateStr) : 0
-}
-
-const USER_ACCEPTED_POLICIES_STORAGE_KEY = 'USER_ACCEPTED_POLICIES'
-const USER_ACCEPTED_POLICIES_STORAGE_VAL = 'true'
-
-const LAST_SESSION_EMAIL_STORAGE_KEY = 'LAST_SESSION_EMAIL'
-const LAST_SESSION_TOKEN_STORAGE_KEY = 'LAST_SESSION_TOKEN'
-const getLastSession = (): LastSession => {
-  const jwt = localStorage.getItem(LAST_SESSION_TOKEN_STORAGE_KEY)
-  const email = localStorage.getItem(LAST_SESSION_EMAIL_STORAGE_KEY)
-  return { jwt, email }
-}
-const storeLastSession = ({ jwt, email }: Partial<LastSession>) => {
-  jwt !== undefined &&
-    (jwt
-      ? localStorage.setItem(LAST_SESSION_TOKEN_STORAGE_KEY, jwt)
-      : localStorage.removeItem(LAST_SESSION_TOKEN_STORAGE_KEY))
-  email !== undefined &&
-    (email
-      ? localStorage.setItem(LAST_SESSION_EMAIL_STORAGE_KEY, email)
-      : localStorage.removeItem(LAST_SESSION_EMAIL_STORAGE_KEY))
-}
-
 type LoginWarnMessage = string
 type RecoverPasswordWarnMessage = string
 // type ActivateWarnMessage = string
 type SignupWarnMessage = string
 type ChangePasswordWarnMessage = string
 
-type LastSession = {
-  jwt: string | null
-  email: string | null
-}
-
 export type SessionContextType = {
   session: UserSessionFragment | null
-  lastSessionEmail: string | null
   lastSessionJwt: string | null
   isAuthenticated: boolean
   loading: boolean
   isAdmin: boolean
   logout(): unknown
   refetch(): unknown
+  firstLoginReset(): unknown
+  hasJustBeenApprovedReset(): unknown
   // activateNewUser(_: { password: string; activationToken: string; name: string }): Promise<ActivateWarnMessage | null>
   signUp(_: {
     email: string
@@ -89,6 +57,7 @@ export type SessionContextType = {
   lastUserApprovalRequest: number
   userRequestedApproval: () => void
   isWaitingApproval: boolean
+  hasJustBeenApproved: boolean
 }
 
 export const [useSession, ProvideSession] =
@@ -97,22 +66,9 @@ export const [useSession, ProvideSession] =
 const WRONG_CREDS_MSG = t`wrong credentials`
 
 export const SessionProvider: FC = ({ children }) => {
-  const [lastUserApprovalRequest, setLastUserApprovalRequest] = useState(
-    getLastUserApprovalRequest()
-  )
-  const userRequestedApproval = useCallback(() => {
-    const now = Number(new Date())
-    localStorage.setItem(LAST_USER_APPROVAL_REQUEST_STORAGE_KEY, `${now}`)
-    setLastUserApprovalRequest(now)
-  }, [])
-
-  const isWaitingApproval =
-    Number(new Date()) - lastUserApprovalRequest <
-    TIME_BETWEEN_USER_APPROVAL_REQUESTS
-  // const [activateUserMut /* , activateResult */] = useActivateNewUserMutation()
-  const [signUpMut /* , activateResult */] = useSignUpMutation()
-  const [lastSession, setLastSession] = useState<Partial<LastSession>>(
-    getLastSession()
+  const [signUpMut /* , signUpMutResult */] = useSignUpMutation()
+  const [lastSessionJwt, setLastSession] = useLocalStorage<string | null>(
+    `LAST_SESSION`
   )
   const [getSessionLazyQ, sessionQResult] = useGetCurrentSessionLazyQuery({
     fetchPolicy: 'network-only',
@@ -123,39 +79,24 @@ export const SessionProvider: FC = ({ children }) => {
     useChangeRecoverPasswordMutation()
   const [loginMut /* , loginResult */] = useLoginMutation()
   const [firstLogin, setFirstLogin] = useState(false)
-  useEffect(() => {
-    if (firstLogin) {
-      setTimeout(() => setFirstLogin(false), 15000)
-    }
-  }, [firstLogin])
   const login = useCallback<SessionContextType['login']>(
     ({ email, password, activationEmailToken }) => {
       return loginMut({
         variables: { password, email, activationEmailToken },
       }).then((res) => {
         const jwt = res.data?.createSession.jwt ?? null
-        setLastSession({ jwt, email })
+        setLastSession(jwt)
         if (jwt && activationEmailToken) {
           setFirstLogin(true)
+          // setTimeout(() => setFirstLogin(false), 15000)
         }
         return (
           res.data?.createSession.message ?? ((!jwt && WRONG_CREDS_MSG) || null)
         )
       })
     },
-    [loginMut, setFirstLogin]
+    [loginMut, setLastSession]
   )
-  // const activateNewUser = useCallback<SessionContextType['activateNewUser']>(
-  //   ({ password, activationToken, name }) => {
-  //     return activateUserMut({ variables: { password, activationToken, name } }).then(res => {
-  //       const jwt = res.data?.activateUser.jwt ?? null
-
-  //       setLastSession({ jwt })
-  //       return res.data?.activateUser.message ?? null
-  //     })
-  //   },
-  //   [activateUserMut],
-  // )
 
   const signUp = useCallback<SessionContextType['signUp']>(
     ({ email, name, password }) =>
@@ -166,12 +107,25 @@ export const SessionProvider: FC = ({ children }) => {
   )
 
   const logout = useCallback<SessionContextType['logout']>(() => {
-    setLastSession({ ...lastSession, jwt: null })
-  }, [lastSession])
+    setLastSession(null)
+  }, [setLastSession])
 
   const session = sessionQResult.data?.getSession ?? null
   const isAuthenticated = !!session
   const loading = sessionQResult.loading
+
+  const [lastUserApprovalRequest, setLastUserApprovalRequest] =
+    useLocalStorage<number>(`LAST_USER_APPROVAL_REQUEST_${session?.profile.id}`)
+
+  const userRequestedApproval = useCallback(
+    () => setLastUserApprovalRequest(Number(new Date())),
+    [setLastUserApprovalRequest]
+  )
+
+  const isWaitingApproval =
+    Number(new Date()) - (lastUserApprovalRequest ?? 0) <
+    TIME_BETWEEN_USER_APPROVAL_REQUESTS
+
   const recoverPassword = useCallback<SessionContextType['recoverPassword']>(
     async ({ email }) => {
       if (recoverPasswordMutResp.loading) {
@@ -199,93 +153,91 @@ export const SessionProvider: FC = ({ children }) => {
         variables: { newPassword, token: recoverPasswordToken },
       })
       const jwt = data?.changeRecoverPassword?.jwt
-      if (jwt) {
-        setLastSession({ jwt })
-        return null
-      }
+      setLastSession(jwt ?? null)
       return (
         data?.changeRecoverPassword?.message ??
         errors?.join(';') ??
         'Unexpected error'
       )
     },
-    [changeRecoverPasswordMut, changeRecoverPasswordMutResp.loading]
+    [
+      changeRecoverPasswordMut,
+      changeRecoverPasswordMutResp.loading,
+      setLastSession,
+    ]
   )
 
-  const [userAcceptedPolicies, setUserAcceptedPolicies] = useState(
-    localStorage.getItem(USER_ACCEPTED_POLICIES_STORAGE_KEY) ===
-      USER_ACCEPTED_POLICIES_STORAGE_VAL
+  const [userAcceptedPolicies, setUserAcceptedPolicies] = useLocalStorage(
+    `USER_ACCEPTED_POLICIES`
   )
-  useEffect(() => {
-    window.addEventListener('storage', handler)
-    return () => {
-      window.removeEventListener('storage', handler)
-    }
-    function handler(_: StorageEvent) {
-      if (_.key === USER_ACCEPTED_POLICIES_STORAGE_KEY) {
-        setUserAcceptedPolicies(
-          _.newValue === USER_ACCEPTED_POLICIES_STORAGE_VAL
-        )
-      }
-    }
-  }, [])
-
-  const userAcceptPoliciesCb = useCallback(() => {
-    localStorage.setItem(
-      USER_ACCEPTED_POLICIES_STORAGE_KEY,
-      USER_ACCEPTED_POLICIES_STORAGE_VAL
-    )
-    setUserAcceptedPolicies(true)
-  }, [])
 
   useEffect(() => {
-    setToken(lastSession.jwt ?? null)
-    storeLastSession(lastSession)
+    setToken(lastSessionJwt)
     getSessionLazyQ()
-  }, [getSessionLazyQ, lastSession])
+  }, [lastSessionJwt, getSessionLazyQ])
+
+  const [hasJustBeenApproved, setHasJustBeenApproved] = useState(false)
+  useEffect(() => {
+    setHasJustBeenApproved(
+      !!(lastUserApprovalRequest && session?.profile._published)
+    )
+  }, [lastUserApprovalRequest, session?.profile._published])
+
+  const firstLoginReset = useCallback(() => setFirstLogin(false), [])
+  const hasJustBeenApprovedReset = useCallback(
+    () => setLastUserApprovalRequest(null),
+    [setLastUserApprovalRequest]
+  )
+
   const ctx = useMemo<SessionContextType>(
     () => ({
       refetch: () => getSessionLazyQ(),
       logout,
       login,
       firstLogin,
+      firstLoginReset,
+      hasJustBeenApprovedReset,
       // activateNewUser,
       signUp,
       session,
       loading,
       isAdmin: !!(session && isGqlIdLocalOrganization(session.profile.id)), //!FIXME: before federation !! ;)
       isAuthenticated,
-      lastSessionEmail: lastSession.email ?? null,
-      lastSessionJwt: lastSession.jwt ?? null,
+      lastSessionJwt,
       recoverPassword,
       changeRecoverPassword,
       userMustAcceptPolicies:
-        isAuthenticated || userAcceptedPolicies ? null : userAcceptPoliciesCb,
-      lastUserApprovalRequest,
+        isAuthenticated || userAcceptedPolicies
+          ? null
+          : () => setUserAcceptedPolicies(true),
+      lastUserApprovalRequest: lastUserApprovalRequest ?? 0,
       userRequestedApproval,
       isWaitingApproval,
+      hasJustBeenApproved,
     }),
     [
       logout,
       login,
       firstLogin,
+      firstLoginReset,
+      hasJustBeenApprovedReset,
       signUp,
       session,
       loading,
       isAuthenticated,
-      lastSession.email,
-      lastSession.jwt,
+      lastSessionJwt,
       recoverPassword,
       changeRecoverPassword,
       userAcceptedPolicies,
-      userAcceptPoliciesCb,
       lastUserApprovalRequest,
       userRequestedApproval,
       isWaitingApproval,
+      hasJustBeenApproved,
       getSessionLazyQ,
+      setUserAcceptedPolicies,
     ]
   )
-  // console.log({ __: ctx.userMustAcceptPolicies })
+  // console.log({ ctx })
   return (
     <ProvideSession value={ctx}>
       {!sessionQResult.called ? null : children}

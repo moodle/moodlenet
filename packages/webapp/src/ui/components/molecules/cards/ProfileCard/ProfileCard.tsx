@@ -4,7 +4,7 @@ import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import SaveIcon from '@material-ui/icons/Save'
 import React, { useCallback, useState } from 'react'
 import { isEmailAddress } from '../../../../../helpers/utilities'
-import verifiedIcon from '../../../../assets/icons/verified.svg'
+import approvedIcon from '../../../../assets/icons/approved.svg'
 import { withCtrl } from '../../../../lib/ctrl'
 import { FormikBag } from '../../../../lib/formik'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
@@ -34,6 +34,8 @@ export type ProfileCardProps = {
   backgroundUrl: string | null
   requestApprovalFormBag: FormikBag<{}>
   approveUserFormBag: FormikBag<{}>
+  unapproveUserForm: FormikBag<{}>
+  showAccountApprovedSuccessAlert?: boolean
 }
 
 export const ProfileCard = withCtrl<ProfileCardProps>(
@@ -44,6 +46,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     isAdmin,
     isApproved,
     isElegibleForApproval,
+    showAccountApprovedSuccessAlert,
     isWaitingApproval,
     isAuthenticated,
     isEditing,
@@ -54,6 +57,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     toggleIsEditing,
     requestApprovalFormBag: [requestApprovalForm],
     approveUserFormBag: [approveUserForm],
+    unapproveUserForm: [unapproveUserForm],
   }) => {
     const [form, formAttrs] = formBag
     const [profileCardErrorMessage, setProfileCardErrorMessage] = useState<
@@ -235,8 +239,16 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 <div className="title">{form.values.displayName}</div>
               )}
               {!isEditing && isApproved && (
-                <div className="verified-icon">
-                  <img src={verifiedIcon} alt="Verified" />
+                <div className={`approved-icon`}>
+                  <img
+                    src={approvedIcon}
+                    className={`${
+                      showAccountApprovedSuccessAlert
+                        ? 'zooom-in-enter-animation'
+                        : ''
+                    }`}
+                    alt="Approved"
+                  />
                 </div>
               )}
             </div>
@@ -331,14 +343,14 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             <div className="not-approved-warning">
               {isElegibleForApproval ? (
                 <Trans>
-                  Your content is not yet public. Request approval to make it
-                  accessible to everyone
+                  We need to approve your account to make your content public.
+                  Press the button below for account approval.
                 </Trans>
               ) : (
                 <Trans>
-                  Your content is not yet public. Upload 5 open educational
-                  resources and request approval to make it accessible to
-                  everyone
+                  We need to approve your account to make your content public.
+                  Upload 5 good-quality resources and click the button below for
+                  account approval.
                 </Trans>
               )}
             </div>
@@ -358,12 +370,17 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               </SecondaryButton>
             )}
             {isAdmin && !isApproved && (
-              <PrimaryButton
-                disabled={!isAuthenticated}
-                onClick={approveUserForm.submitForm}
-              >
+              <PrimaryButton onClick={approveUserForm.submitForm} color="green">
                 <Trans>Approve</Trans>
               </PrimaryButton>
+            )}
+            {isAdmin && isApproved && (
+              <SecondaryButton
+                onClick={unapproveUserForm.submitForm}
+                color="red"
+              >
+                <Trans>Unapprove</Trans>
+              </SecondaryButton>
             )}
             {!isOwner && isFollowing && (
               <SecondaryButton onClick={toggleFollow}>
