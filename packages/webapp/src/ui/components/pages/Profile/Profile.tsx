@@ -8,7 +8,6 @@ import InputTextField from '../../atoms/InputTextField/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import Snackbar from '../../atoms/Snackbar/Snackbar'
-import SnackbarStack from '../../atoms/Snackbar/SnackbarStack'
 import {
   CollectionCard,
   CollectionCardProps,
@@ -98,22 +97,27 @@ export const Profile = withCtrl<ProfileProps>(
     const [emailText, setEmailText] = useState('')
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        <SnackbarStack
-          snackbarList={[
-            showAccountCreationSuccessAlert ? (
-              <Snackbar type="success" autoHideDuration={6000}>
-                <Trans>
-                  Account activated! Feel free to complete your profile
-                </Trans>
-              </Snackbar>
-            ) : null,
-            showAccountApprovedSuccessAlert ? (
-              <Snackbar type="success" autoHideDuration={6000}>
-                <Trans>Congratulations! Your account has been approved</Trans>
-              </Snackbar>
-            ) : null,
-          ]}
-        />
+        {showAccountCreationSuccessAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Account activated! Feel free to complete your profile</Trans>
+          </Snackbar>
+        )}
+        {showAccountApprovedSuccessAlert && (
+          <Snackbar
+            position="bottom"
+            type="success"
+            autoHideDuration={6000}
+            waitDuration={1000}
+            showCloseButton={false}
+          >
+            <Trans>Congratulations! Your account has been approved</Trans>
+          </Snackbar>
+        )}
         {isSendingMessage && sendEmail && (
           <Modal
             title={`${t`Send a message to`} ${displayName}`}

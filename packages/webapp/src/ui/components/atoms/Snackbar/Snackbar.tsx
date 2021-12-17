@@ -16,6 +16,7 @@ export type SnackbarProps = {
   type?: 'error' | 'warning' | 'info' | 'success'
   className?: string
   autoHideDuration?: number
+  waitDuration?: number
   position?: 'top' | 'bottom'
   showCloseButton?: boolean
   onClose?: () => void
@@ -34,6 +35,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   className,
   type,
   autoHideDuration,
+  waitDuration,
   position,
   children,
 }) => {
@@ -53,14 +55,28 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   )
 
   useEffect(() => {
-    if (autoHideDuration) {
+    if (waitDuration) {
+      setMovementState('closed')
       const timer = setTimeout(() => {
-        handleonClose()
-      }, autoHideDuration)
+        setMovementState('opening')
+      }, waitDuration)
       return () => clearTimeout(timer)
     }
     return
-  }, [autoHideDuration, handleonClose])
+  }, [waitDuration, setMovementState])
+
+  useEffect(() => {
+    if (autoHideDuration) {
+      const timer = setTimeout(
+        () => {
+          handleonClose()
+        },
+        waitDuration ? autoHideDuration + waitDuration : autoHideDuration
+      )
+      return () => clearTimeout(timer)
+    }
+    return
+  }, [autoHideDuration, waitDuration, handleonClose])
 
   return (
     <Card
@@ -102,7 +118,7 @@ Snackbar.defaultProps = {
   className: '',
   showIcon: true,
   position: 'bottom',
-  //showCloseButton: true,
+  showCloseButton: true,
 }
 
 export default Snackbar

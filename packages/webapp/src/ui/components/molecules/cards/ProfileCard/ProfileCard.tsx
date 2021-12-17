@@ -4,7 +4,7 @@ import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import SaveIcon from '@material-ui/icons/Save'
 import React, { useCallback, useState } from 'react'
 import { isEmailAddress } from '../../../../../helpers/utilities'
-import verifiedIcon from '../../../../assets/icons/verified.svg'
+import approvedIcon from '../../../../assets/icons/approved.svg'
 import { withCtrl } from '../../../../lib/ctrl'
 import { FormikBag } from '../../../../lib/formik'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
@@ -35,6 +35,7 @@ export type ProfileCardProps = {
   requestApprovalFormBag: FormikBag<{}>
   approveUserFormBag: FormikBag<{}>
   unapproveUserForm: FormikBag<{}>
+  showAccountApprovedSuccessAlert?: boolean
 }
 
 export const ProfileCard = withCtrl<ProfileCardProps>(
@@ -45,6 +46,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     isAdmin,
     isApproved,
     isElegibleForApproval,
+    showAccountApprovedSuccessAlert,
     isWaitingApproval,
     isAuthenticated,
     isEditing,
@@ -237,8 +239,16 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 <div className="title">{form.values.displayName}</div>
               )}
               {!isEditing && isApproved && (
-                <div className="verified-icon">
-                  <img src={verifiedIcon} alt="Verified" />
+                <div className={`approved-icon`}>
+                  <img
+                    src={approvedIcon}
+                    className={`${
+                      showAccountApprovedSuccessAlert
+                        ? 'zooom-in-enter-animation'
+                        : ''
+                    }`}
+                    alt="Approved"
+                  />
                 </div>
               )}
             </div>

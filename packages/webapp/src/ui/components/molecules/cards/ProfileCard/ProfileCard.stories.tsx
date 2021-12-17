@@ -73,6 +73,7 @@ export const ProfileCardOwnerStoryProps: ProfileCardProps = {
 
 export const ProfileCardApprovedStoryProps: ProfileCardProps = {
   ...ProfileCardOwnerStoryProps,
+  showAccountApprovedSuccessAlert: true,
   isApproved: true,
 }
 

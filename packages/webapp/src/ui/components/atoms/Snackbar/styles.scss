@@ -17,6 +17,18 @@
   width: fit-content;
   box-shadow: none;
 
+  &:not(.inside-snackbar) {
+    &.position-top {
+      top: 68px;
+    }
+
+    &.position-bottom {
+      bottom: 20px;
+    }
+
+    position: fixed;
+  }
+
   > * {
     display: flex;
   }
