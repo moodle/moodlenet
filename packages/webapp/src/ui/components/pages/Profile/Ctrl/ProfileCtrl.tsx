@@ -56,9 +56,11 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
   useEffect(() => {
     isMe && firstLogin && setTimeout(firstLoginReset, 10000)
   }, [firstLogin, firstLoginReset, isMe])
+
   useEffect(() => {
     isMe && hasJustBeenApproved && setTimeout(hasJustBeenApprovedReset, 10000)
   }, [hasJustBeenApproved, hasJustBeenApprovedReset, isMe])
+
   const { data, refetch, loading } = useProfilePageUserDataQuery({
     variables: {
       profileId: id,
@@ -265,11 +267,12 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
   })
 
   const editPublished = useCallback(
-    (_published: boolean) => {
+    async (_published: boolean) => {
       if (!(isAdmin && profile)) {
         return
       }
-      return edit({
+      // TODO: move this service to SessionCtx
+      const editResp = await edit({
         variables: {
           id: profile.id,
           profileInput: {
@@ -279,8 +282,16 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
           },
         },
       })
+      if (editResp.data?.editNode.__typename === 'EditNodeMutationSuccess') {
+        await sendEmailMut({
+          variables: {
+            text: 'Congratulations! Your account has been approved!',
+            toProfileId: profile.id,
+          },
+        })
+      }
     },
-    [edit, isAdmin, profile]
+    [edit, isAdmin, profile, sendEmailMut]
   )
 
   const profileProps = useMemo<ProfileProps | null>(() => {
