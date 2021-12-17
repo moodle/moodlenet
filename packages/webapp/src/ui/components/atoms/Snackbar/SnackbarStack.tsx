@@ -13,7 +13,14 @@ export const SnackbarStack: React.FC<SnackbarStackProps> = ({
 }) => {
   return (
     <div className={`snackbar-stack ${className} position-${position}`}>
-      {snackbarList}
+      {snackbarList &&
+        snackbarList.map((snackbar, i) => {
+          return (
+            <div className="inside-snackbar" key={i}>
+              {snackbar}
+            </div>
+          )
+        })}
     </div>
   )
 }
@@ -22,4 +29,5 @@ export default SnackbarStack
 
 SnackbarStack.defaultProps = {
   position: 'bottom',
+  className: '',
 }
