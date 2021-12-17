@@ -22,7 +22,7 @@
     "path-to-regexp": "^6.2.0",
     "prettier": "^2.5.0",
     "run-script-os": "^1.1.5",
-    "slugifyjs": "^0.0.7",
+    "slugify": "^1.6.4",
     "yup": "^0.32.8"
   },
   "devDependencies": {
