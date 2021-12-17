@@ -42,13 +42,25 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
   const {
     isAuthenticated,
     session,
-    firstLogin,
     isAdmin,
     isWaitingApproval,
     userRequestedApproval,
+    hasJustBeenApproved,
+    hasJustBeenApprovedReset,
+    firstLogin,
+    firstLoginReset,
   } = useSession()
+
   const { org: localOrg } = useLocalInstance()
   const isMe = session?.profile && session.profile.id === id
+  useEffect(() => {
+    isMe && firstLogin && setTimeout(firstLoginReset, 10000)
+  }, [firstLogin, firstLoginReset, isMe])
+
+  useEffect(() => {
+    isMe && hasJustBeenApproved && setTimeout(hasJustBeenApprovedReset, 10000)
+  }, [hasJustBeenApproved, hasJustBeenApprovedReset, isMe])
+
   const { data, refetch, loading } = useProfilePageUserDataQuery({
     variables: {
       profileId: id,
@@ -246,22 +258,41 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
   }, [fresetForm, id, profile, localOrg.name /* avatarUrl, backgroundUrl */])
   const approveUserFormBag = useFormikBag<{}>({
     initialValues: {},
-    onSubmit: () => {
+    onSubmit: () => editPublished(true),
+  })
+
+  const unapproveUserForm = useFormikBag<{}>({
+    initialValues: {},
+    onSubmit: () => editPublished(false),
+  })
+
+  const editPublished = useCallback(
+    async (_published: boolean) => {
       if (!(isAdmin && profile)) {
         return
       }
-      edit({
+      // TODO: move this service to SessionCtx
+      const editResp = await edit({
         variables: {
           id: profile.id,
           profileInput: {
-            _published: true,
+            _published,
             name: profile.name,
             description: profile.description,
           },
         },
       })
+      if (editResp.data?.editNode.__typename === 'EditNodeMutationSuccess') {
+        await sendEmailMut({
+          variables: {
+            text: 'Congratulations! Your account has been approved!',
+            toProfileId: profile.id,
+          },
+        })
+      }
     },
-  })
+    [edit, isAdmin, profile, sendEmailMut]
+  )
 
   const profileProps = useMemo<ProfileProps | null>(() => {
     if (!profile) {
@@ -304,7 +335,10 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
         isElegibleForApproval:
           profile.resourcesCount >= MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS,
         isWaitingApproval,
+        showAccountApprovedSuccessAlert: hasJustBeenApproved,
+        unapproveUserForm,
       },
+      showAccountApprovedSuccessAlert: hasJustBeenApproved,
       sendEmail: (text) => {
         if (sendEmailMutRes.loading) {
           return
@@ -333,6 +367,8 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     isAdmin,
     requestApprovalFormBag,
     isWaitingApproval,
+    hasJustBeenApproved,
+    unapproveUserForm,
     sendEmailMutRes.loading,
     sendEmailMut,
     id,

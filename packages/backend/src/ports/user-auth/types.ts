@@ -46,6 +46,7 @@ export type MessageToUserEmailVars = {
   msgText: string
   senderProfileUrl: Link
   email: Email
+  fromLocalOrg: boolean
 }
 export type NewUserRequestEmailVars = {
   email: Email

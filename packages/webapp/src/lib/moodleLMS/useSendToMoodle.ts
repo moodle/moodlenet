@@ -1,17 +1,11 @@
 import { AssetRef } from '@moodlenet/common/dist/content-graph/types/node'
 import { Maybe } from '@moodlenet/common/dist/utils/types'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { License, Resource } from '../../graphql/pub.graphql.link'
 import { getMaybeAssetRefUrl } from '../../helpers/data'
-import {
-  createLocalSessionKVStorage,
-  LOCAL,
-} from '../keyvaluestore/localSessionStorage'
+import { useLocalStorage } from '../keyvaluestore/useStorage'
 import { LMSPrefs, sendToMoodle } from './LMSintegration'
-
-const storage = createLocalSessionKVStorage(LOCAL)('LMS_')
-const LMS_PREFS_KEY = 'Prefs'
 
 export const useLMS = (
   obj: Maybe<{
@@ -71,14 +65,10 @@ export const useLMS = (
 }
 
 export const useLMSPrefs = () => {
-  const [currentLMSPrefs, setCurrentLMSPrefs] = useState(
-    storage.get(LMS_PREFS_KEY) as LMSPrefs | null
+  const [currentLMSPrefs, updateLMSPrefs] = useLocalStorage<null | LMSPrefs>(
+    `LMS_PREFS`
   )
 
-  const updateLMSPrefs = useCallback(async (LMS: LMSPrefs) => {
-    setCurrentLMSPrefs(LMS)
-    storage.set(LMS_PREFS_KEY, LMS)
-  }, [])
   return useMemo(
     () => ({
       updateLMSPrefs,

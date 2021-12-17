@@ -1,44 +1,11 @@
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
-import { aqlstr, getOneResult } from '../../../../../../lib/helpers/arango/query'
-import { USER } from '../../../types'
+import { patchConfig } from './2.0.1/patchConfig'
+import { setPermIdInUserAuthId } from './2.0.1/setPermIdInUserAuthId'
 
 const init_2_0_1: VersionUpdater = {
   async pullUp({ db }) {
-    const contentDB = db.database('ContentGraph')
-    const q = `FOR u in ${USER} RETURN u`
-    const userCursor = await db.query(q, {}, { batchSize: 200 })
-    let batchCount = 0
-    for await (const batch of userCursor.batches) {
-      const from = ++batchCount * batch.length
-      const to = from + batch.length
-      console.log(`updating ${from}-${to} users batch ...`)
-      await Promise.all(
-        batch.map(async user => {
-          const {
-            authId: { _type, _authKey },
-            email,
-            _id,
-          } = user
-
-          const creatorPermIdQ = `
-          FOR v in ${_type}
-          FILTER v._authKey == ${aqlstr(_authKey)}
-          LIMIT 1
-          RETURN v._key
-          `
-
-          const creatorPermId = await getOneResult(creatorPermIdQ, contentDB)
-          if (!creatorPermId) {
-            throw new Error(`Couldn't find creator of ${email}`)
-          }
-          const updateQ = `
-            UPDATE DOCUMENT(${aqlstr(_id)}) WITH { authId: { _permId: ${aqlstr(creatorPermId)} } } IN ${USER}
-            RETURN null
-          `
-          await db.query(updateQ)
-        }),
-      )
-    }
+    await setPermIdInUserAuthId({ db })
+    await patchConfig({ db })
   },
   pushDown() {
     throw new Error('not implemented')

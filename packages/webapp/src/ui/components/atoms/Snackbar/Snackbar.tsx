@@ -16,7 +16,9 @@ export type SnackbarProps = {
   type?: 'error' | 'warning' | 'info' | 'success'
   className?: string
   autoHideDuration?: number
+  waitDuration?: number
   position?: 'top' | 'bottom'
+  showCloseButton?: boolean
   onClose?: () => void
 }
 
@@ -24,6 +26,7 @@ const stopPropagation = (event: React.MouseEvent) => event.stopPropagation()
 
 export const Snackbar: React.FC<SnackbarProps> = ({
   onClose,
+  showCloseButton,
   actions,
   icon,
   showIcon,
@@ -32,6 +35,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   className,
   type,
   autoHideDuration,
+  waitDuration,
   position,
   children,
 }) => {
@@ -51,14 +55,28 @@ export const Snackbar: React.FC<SnackbarProps> = ({
   )
 
   useEffect(() => {
-    if (autoHideDuration) {
+    if (waitDuration) {
+      setMovementState('closed')
       const timer = setTimeout(() => {
-        handleonClose()
-      }, autoHideDuration)
+        setMovementState('opening')
+      }, waitDuration)
       return () => clearTimeout(timer)
     }
     return
-  }, [autoHideDuration, handleonClose])
+  }, [waitDuration, setMovementState])
+
+  useEffect(() => {
+    if (autoHideDuration) {
+      const timer = setTimeout(
+        () => {
+          handleonClose()
+        },
+        waitDuration ? autoHideDuration + waitDuration : autoHideDuration
+      )
+      return () => clearTimeout(timer)
+    }
+    return
+  }, [autoHideDuration, waitDuration, handleonClose])
 
   return (
     <Card
@@ -88,9 +106,11 @@ export const Snackbar: React.FC<SnackbarProps> = ({
       )}
       <div className="content">{children}</div>
       {actions && <div className="actions">{actions}</div>}
-      <div className="close-button" onClick={handleonClose}>
-        {buttonText ? <span>{buttonText}</span> : <CloseRoundedIcon />}
-      </div>
+      {showCloseButton && (
+        <div className="close-button" onClick={handleonClose}>
+          {buttonText ? <span>{buttonText}</span> : <CloseRoundedIcon />}
+        </div>
+      )}
     </Card>
   )
 }
@@ -98,6 +118,7 @@ Snackbar.defaultProps = {
   className: '',
   showIcon: true,
   position: 'bottom',
+  showCloseButton: true,
 }
 
 export default Snackbar
