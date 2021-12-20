@@ -91,8 +91,9 @@
           height: 22px;
           display: flex;
           align-items: center;
-          > img {
+          > svg {
             height: 18px;
+            width: 18px;
             &.zooom-in-enter-animation {
               animation: enter 1s;
             }
@@ -100,13 +101,12 @@
             @keyframes enter {
               0% {
                 position: absolute;
-                height: 120vh;
+                transform: scale(25);
                 z-index: 10;
               }
               50% {
-                height: 10px;
+                transform: scale(0.5);
                 position: absolute;
-                z-index: 10;
                 z-index: 10;
               }
               74% {

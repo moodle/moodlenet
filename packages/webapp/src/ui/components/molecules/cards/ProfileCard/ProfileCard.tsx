@@ -4,7 +4,7 @@ import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import SaveIcon from '@material-ui/icons/Save'
 import React, { useCallback, useState } from 'react'
 import { isEmailAddress } from '../../../../../helpers/utilities'
-import approvedIcon from '../../../../assets/icons/approved.svg'
+import { ReactComponent as ApprovedIcon } from '../../../../assets/icons/approved.svg'
 import { withCtrl } from '../../../../lib/ctrl'
 import { FormikBag } from '../../../../lib/formik'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
@@ -240,14 +240,12 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               )}
               {!isEditing && isApproved && (
                 <div className={`approved-icon`}>
-                  <img
-                    src={approvedIcon}
+                  <ApprovedIcon
                     className={`${
                       showAccountApprovedSuccessAlert
                         ? 'zooom-in-enter-animation'
                         : ''
                     }`}
-                    alt="Approved"
                   />
                 </div>
               )}
@@ -339,7 +337,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
           ) : (
             <div className="description">{form.values.description}</div>
           )}
-          {isOwner && !isApproved && (
+          {isOwner && !isApproved && !isWaitingApproval && (
             <div className="not-approved-warning">
               {isElegibleForApproval ? (
                 <Trans>
@@ -366,7 +364,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             )}
             {isOwner && isWaitingApproval && (
               <SecondaryButton disabled={true}>
-                <Trans>Pending</Trans>
+                <Trans>Waiting for approval</Trans>
               </SecondaryButton>
             )}
             {isAdmin && !isApproved && (

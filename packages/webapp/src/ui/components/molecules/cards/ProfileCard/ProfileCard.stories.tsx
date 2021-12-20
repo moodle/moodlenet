@@ -67,7 +67,7 @@ export const ProfileCardLoggedInStoryProps: ProfileCardProps = {
 export const ProfileCardOwnerStoryProps: ProfileCardProps = {
   ...ProfileCardLoggedInStoryProps,
   isOwner: true,
-  //isElegibleForApproval: true,
+  isElegibleForApproval: true,
   //isWaitingApproval: true,
 }
 
