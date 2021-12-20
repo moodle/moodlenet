@@ -133,12 +133,14 @@ export const createSession = plug(
       }
 
       const { authId: orgAuthId } = await localOrg.info.adapter()
+      const { newUserPublished } = await getLatestConfigAdapter()
+
       await addNodePort({
         sessionEnv: { authId: orgAuthId, timestamp: sessionEnv.timestamp },
         data: {
           ...authId,
           name: displayName,
-          _published: true,
+          _published: newUserPublished,
           description: '',
           avatar: null,
           bio: null,

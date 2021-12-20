@@ -7,7 +7,6 @@ import { GraphNodeIdentifierAuth } from '@moodlenet/common/dist/content-graph_2.
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
 import { aqlstr, justExecute } from '../../../../../../lib/helpers/arango/query'
 import { Status } from '../../../../../../ports/user-auth/types'
-import { saveConfigQ } from '../../../queries/config'
 import { CONFIG, USER } from '../../../types'
 
 // const rootUserActive: DistOmit<ActiveUser, 'email' | 'password' | 'id' | 'createdAt' | 'updatedAt'> = {
@@ -32,7 +31,13 @@ const init_2_0_0: VersionUpdater = {
 
     console.log(`creating user-auth collection ${CONFIG}`)
     await db.createCollection(CONFIG)
-    await justExecute(saveConfigQ(DefaultConfig(org)), db)
+    await justExecute(
+      `INSERT 
+      ${aqlstr(DefaultConfig(org))}
+      INTO ${CONFIG}
+      RETURN null`,
+      db,
+    )
 
     console.log(`creating user-auth collection ${USER}`)
     const userCollection = await db.createCollection(USER)
