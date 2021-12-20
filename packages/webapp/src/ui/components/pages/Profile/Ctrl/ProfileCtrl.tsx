@@ -282,7 +282,10 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
           },
         },
       })
-      if (editResp.data?.editNode.__typename === 'EditNodeMutationSuccess') {
+      if (
+        _published &&
+        editResp.data?.editNode.__typename === 'EditNodeMutationSuccess'
+      ) {
         await sendEmailMut({
           variables: {
             text: 'Congratulations! Your account has been approved!',
