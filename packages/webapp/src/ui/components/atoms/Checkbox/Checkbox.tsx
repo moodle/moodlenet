@@ -8,10 +8,20 @@ export type CheckboxProps = {
   onChange?: ChangeEventHandler<HTMLInputElement>
 }
 
-export const Checkbox: FC<CheckboxProps> = ({ label, checked, name, onChange }) => {
+export const Checkbox: FC<CheckboxProps> = ({
+  label,
+  checked,
+  name,
+  onChange,
+}) => {
   return (
-    <label className="container">
-      <input name={name || label} onChange={onChange} type="checkbox" checked={checked} />
+    <label className={`container ${checked ? 'checked' : 'not-checked'}`}>
+      <input
+        name={name || label}
+        onChange={onChange}
+        type="checkbox"
+        checked={checked}
+      />
       <span className="checkmark"></span>
       <span className="label">{label}</span>
     </label>

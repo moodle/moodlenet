@@ -1,4 +1,7 @@
-import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import {
+  isEdgeNodeOfType,
+  narrowNodeType,
+} from '@moodlenet/common/dist/graphql/helpers'
 import { useEffect, useMemo } from 'react'
 import { useSession } from '../../../../../context/Global/Session'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
@@ -23,31 +26,47 @@ export const useBookmarksCtrl: CtrlHook<BookmarksProps, {}> = () => {
     })
   }, [queryBookmarks, session?.profile.id])
 
-  const profileNode = narrowNodeType(['Profile', 'Organization'])(bookmarksQ.data?.node)
+  const profileNode = narrowNodeType(['Profile', 'Organization'])(
+    bookmarksQ.data?.node
+  )
 
   const collections = useMemo(
-    () => (profileNode?.collections.edges || []).filter(isEdgeNodeOfType(['Collection'])).map(({ node }) => node),
-    [profileNode?.collections.edges],
+    () =>
+      (profileNode?.collections.edges || [])
+        .filter(isEdgeNodeOfType(['Collection']))
+        .map(({ node }) => node),
+    [profileNode?.collections.edges]
   )
   const resources = useMemo(
-    () => (profileNode?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])).map(({ node }) => node),
-    [profileNode?.resources.edges],
+    () =>
+      (profileNode?.resources.edges || [])
+        .filter(isEdgeNodeOfType(['Resource']))
+        .map(({ node }) => node),
+    [profileNode?.resources.edges]
   )
 
   const bookmarksUIProps = useMemo(() => {
     const props: BookmarksProps = {
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
+      headerPageTemplateProps: ctrlHook(
+        useHeaderPageTemplateCtrl,
+        {},
+        'header-page-template'
+      ),
 
       browserProps: {
-        collectionCardPropsList: collections.map(collection =>
-          ctrlHook(useCollectionCardCtrl, { id: collection.id }, `Bookmarks Collection ${collection.id} Card`),
+        collectionCardPropsList: collections.map((collection) =>
+          ctrlHook(
+            useCollectionCardCtrl,
+            { id: collection.id },
+            `Bookmarks Collection ${collection.id} Card`
+          )
         ),
-        resourceCardPropsList: resources.map(resource =>
+        resourceCardPropsList: resources.map((resource) =>
           ctrlHook(
             useResourceCardCtrl,
             { id: resource.id, removeAction: false },
-            `Bookmarks Resource ${resource.id} Card`,
-          ),
+            `Bookmarks Resource ${resource.id} Card`
+          )
         ),
         subjectCardPropsList: null,
         setSortBy: null,

@@ -23,8 +23,11 @@ export const Card: FC<CardProps> = ({
 }) => {
   return (
     <div
-      className={`card ${className ? className : ''} ${hideBorderWhenSmall ? 'hide-border' : ''} ${
-        noCard ? 'no-card' : ''} ${removePaddingWhenSmall ? 'remove-padding' : ''} ${hover ? 'hover' : ''}`}
+      className={`card ${className ? className : ''} ${
+        hideBorderWhenSmall ? 'hide-border' : ''
+      } ${noCard ? 'no-card' : ''} ${
+        removePaddingWhenSmall ? 'remove-padding' : ''
+      } ${hover ? 'hover' : ''}`}
       style={style}
       onClick={onClick}
     >

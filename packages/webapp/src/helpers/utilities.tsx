@@ -12,7 +12,8 @@ export const isURL = (str: string): boolean => {
 }
 
 export const isEmailAddress = (email: string): boolean => {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   return re.test(String(email).toLowerCase())
 }
 
@@ -41,4 +42,14 @@ export const elementFullyInViewPort = (
     top + height <= window.pageYOffset + window.innerHeight &&
     left + width <= window.pageXOffset + window.innerWidth
   )
+}
+
+export const getElementSize = (
+  el: Element
+): { width: number; height: number } => {
+  const { left, top, right, bottom } = el.getBoundingClientRect()
+  return {
+    width: right - left,
+    height: bottom - top,
+  }
 }

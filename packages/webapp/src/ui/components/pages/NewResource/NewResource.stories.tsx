@@ -13,7 +13,11 @@ import {
   VisibilityDropdown,
   YearsDropdown,
 } from './FieldsData'
-import { NewResource, NewResourceProgressState, NewResourceProps } from './NewResource'
+import {
+  NewResource,
+  NewResourceProgressState,
+  NewResourceProps,
+} from './NewResource'
 import { NewResourceFormValues } from './types'
 import { UploadResourceProps } from './UploadResource/UploadResource'
 
@@ -37,7 +41,9 @@ const meta: ComponentMeta<typeof NewResource> = {
   ],
 }
 
-const NewResourceStory: ComponentStory<typeof NewResource> = args => <NewResource {...args} />
+const NewResourceStory: ComponentStory<typeof NewResource> = (args) => (
+  <NewResource {...args} />
+)
 
 export const NewResourceProgressStateStory: NewResourceProgressState = [
   ['UploadResource', `Upload resource`],
@@ -88,8 +94,12 @@ const advancedDataFormValue: NewResourceFormValues = {
 
 const formBag = SBFormikBag<NewResourceFormValues>(initialFormValues)
 const formBagBasic = SBFormikBag<NewResourceFormValues>(basicDataFormValue)
-const formBagLinkBasic = SBFormikBag<NewResourceFormValues>(basicLinkDataFormValue)
-const formBagAdvanced = SBFormikBag<NewResourceFormValues>(advancedDataFormValue)
+const formBagLinkBasic = SBFormikBag<NewResourceFormValues>(
+  basicLinkDataFormValue
+)
+const formBagAdvanced = SBFormikBag<NewResourceFormValues>(
+  advancedDataFormValue
+)
 
 const uploadResourceProps: UploadResourceProps = {
   step: 'UploadResourceStep',
@@ -169,7 +179,7 @@ export const NewResourceAddToCollectionsStoryProps: NewResourceProps = {
       'Nano Engineering',
       'Macro Economy',
       'Animal Rights',
-    ].map(label => ({ label, id: label })),
+    ].map((label) => ({ label, id: label })),
     setAddToCollections: action('setAddToCollections'),
     previousStep: action('previousStep'),
     setSearchText: action('setSearchText'),

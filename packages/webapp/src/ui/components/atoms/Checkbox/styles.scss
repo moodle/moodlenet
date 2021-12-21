@@ -10,6 +10,19 @@
   font-family: Helvetica;
   font-size: 14px;
   color: #afb3c4;
+
+  &:hover {
+    &.not-checked {
+      color: #afb3c4;
+    }
+    &.checked {
+      color: #5e86ff;
+    }
+  }
+
+  &:active {
+    color: #e6effc;
+  }
 }
 
 /* Hide the browser's default checkbox */
@@ -21,7 +34,7 @@
 }
 
 .container > .label {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 /* Create a custom checkbox */
@@ -45,15 +58,15 @@
   background-color: #c0c7d5;
 }
 
-.container:hover input ~ .label {
-  color: #afb3c4;
-}
-
 /* When the checkbox is checked, add a blue background */
 .container input:checked ~ .checkmark {
   background-color: #3366ff;
   border-radius: 3px;
   border: none;
+
+  &:hover {
+    background-color: #5e86ff;
+  }
 }
 
 .container input:checked ~ .label {

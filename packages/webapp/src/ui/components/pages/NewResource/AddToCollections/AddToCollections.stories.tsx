@@ -10,7 +10,7 @@ const meta: ComponentMeta<typeof AddToCollections> = {
   },
   excludeStories: ['AddToCollectionsStoryProps', 'Default'],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ maxWidth: 1100 }}>
         <Story />
       </div>
@@ -32,11 +32,13 @@ export const AddToCollectionsStoryProps: AddToCollectionsProps = {
     'Phylosophy',
     'Sociology',
     'English Literature',
-  ].map(label => ({ label, id: label })),
+  ].map((label) => ({ label, id: label })),
   selectedCollections: [],
 }
 
-const AddToCollectionsStory: ComponentStory<typeof AddToCollections> = args => <AddToCollections {...args} />
+const AddToCollectionsStory: ComponentStory<typeof AddToCollections> = (
+  args
+) => <AddToCollections {...args} />
 
 export const Default = AddToCollectionsStory.bind({})
 Default.args = AddToCollectionsStoryProps

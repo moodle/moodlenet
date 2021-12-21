@@ -10,7 +10,9 @@ const meta: ComponentMeta<typeof UserAgreement> = {
   excludeStories: ['userAgreementtoryProps'],
 }
 
-const userAgreementtory: ComponentStory<typeof UserAgreement> = args => <UserAgreement {...args} />
+const userAgreementtory: ComponentStory<typeof UserAgreement> = (args) => (
+  <UserAgreement {...args} />
+)
 
 export const userAgreementtoryProps: UserAgreementProps = {
   accessHeaderProps: AccessHeaderStoryProps,

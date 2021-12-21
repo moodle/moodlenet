@@ -86,6 +86,7 @@ const nodeDocumentDataBaker: {
       name: input.name,
       siteUrl: input.siteUrl,
       location: input.location,
+      _published: input._published ?? undefined,
     }
 
     return editProfileData

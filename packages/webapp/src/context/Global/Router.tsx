@@ -14,7 +14,10 @@ export const RouterProvider: FC = ({ children }) => {
 // https://github.com/ReactTraining/react-router/issues/5362#issuecomment-552174266
 let done = false
 let currentLocation = window.location.pathname + window.location.search
-const preventPushSameLocation: History.TransitionPromptHook = (location, action) => {
+const preventPushSameLocation: History.TransitionPromptHook = (
+  location,
+  action
+) => {
   const nextLocation = location.pathname + location.search
   if (action === 'PUSH') {
     if (currentLocation === nextLocation) {

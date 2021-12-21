@@ -1,5 +1,5 @@
-import { Type } from "./components/pages/NewResource/types"
-import { Href } from "./elements/link"
+import { Type } from './components/pages/NewResource/types'
+import { Href } from './elements/link'
 
 export type Organization = {
   name: string
@@ -13,7 +13,7 @@ export type Organization = {
 }
 
 export type FollowTag = {
-  type: 'General' | 'Specific'
+  type: 'subject' | 'collection'
   name: string
   subjectHomeHref: Href
 }

@@ -4,7 +4,9 @@ import { useBookmarksCtrl } from '../ui/components/pages/Bookmarks/Ctrl/Bookmark
 import { ctrlHook } from '../ui/lib/ctrl'
 import { MNRouteProps, RouteFC } from './lib'
 
-export const BookmarksRouteComponent: RouteFC<Routes.BookmarksPage> = (/* { match } */) => {
+export const BookmarksRouteComponent: RouteFC<
+  Routes.BookmarksPage
+> = (/* { match } */) => {
   const props = ctrlHook(useBookmarksCtrl, {}, 'bookmarks-route')
   return <Bookmarks {...props} />
 }

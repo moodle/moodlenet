@@ -1,21 +1,41 @@
 {
   "name": "moodlenet",
   "version": "0.0.1",
-  "license": "AGPL",
+  "license": "AGPL-3.0",
   "description": "MoodleNet monorepo system",
   "author": "https://github.com/aleclofabbro",
   "devDependencies": {
+    "@octokit/core": "^3.5.1",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
+    "eslint": "^7.11.0",
+    "husky": "^7.0.4",
     "lerna": "^3.22.1",
-    "cross-env": "^7.0.3"
+    "typescript": "^4.5.2"
   },
   "scripts": {
-    "bs": "lerna bootstrap --nohoist=babel-* --nohoist=*react*",
+    "bs": "husky install && lerna bootstrap --nohoist=babel-* --nohoist=*react*",
     "setup": "lerna run setup --parallel --stream",
     "upgrade-version": "lerna run upgrade-version --parallel --stream",
-    "start-dev": "cross-env lerna run start-dev --parallel --stream -- -- ",
+    "start-dev": "lerna run start-dev --parallel --stream -- -- ",
     "build": "lerna run build --stream",
     "clean-build": "lerna run clean-build --stream",
-    "start": "lerna run start --parallel --stream"
+    "start": "lerna run start --parallel --stream",
+    "pre-commit": "lerna run --concurrency 1 --stream precommit --since HEAD --exclude-dependents"
   },
-  "dependencies": {}
+  "eslintConfig": {
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "ignorePatterns": "*.gen.*",
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "rules": {
+      "@typescript-eslint/no-explicit-any": "warn"
+    }
+  }
 }

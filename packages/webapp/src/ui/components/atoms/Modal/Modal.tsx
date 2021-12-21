@@ -36,13 +36,21 @@ export type ModalProps = {
 
 const stopPropagation = (event: React.MouseEvent) => event.stopPropagation()
 
-export const Modal: React.FC<ModalProps> = ({ onClose, title, actions, style, className, closeButton, children }) => {
+export const Modal: React.FC<ModalProps> = ({
+  onClose,
+  title,
+  actions,
+  style,
+  className,
+  closeButton,
+  children,
+}) => {
   const handleonClose = useCallback(
     (event: React.MouseEvent) => {
       event.stopPropagation()
       onClose()
     },
-    [onClose],
+    [onClose]
   )
 
   useEffect(() => {

@@ -1,4 +1,7 @@
-import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import {
+  isEdgeNodeOfType,
+  narrowNodeType,
+} from '@moodlenet/common/dist/graphql/helpers'
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { useCallback, useMemo } from 'react'
@@ -15,14 +18,21 @@ import {
 import { SmallProfileCardProps } from '../SmallProfileCard'
 
 export type SmallProfileCardCtrlArg = { id: ID }
-export const useSmallProfileCardCtrl: CtrlHook<SmallProfileCardProps, SmallProfileCardCtrlArg> = ({ id }) => {
+export const useSmallProfileCardCtrl: CtrlHook<
+  SmallProfileCardProps,
+  SmallProfileCardCtrlArg
+> = ({ id }) => {
   const { session, isAuthenticated } = useSession()
   const { org } = useLocalInstance()
   const { data, refetch } = useProfilePageUserDataQuery({
-    variables: { profileId: id, myProfileId: session ? [session.profile.id] : [] },
+    variables: {
+      profileId: id,
+      myProfileId: session ? [session.profile.id] : [],
+    },
   })
   const profileNode = narrowNodeType(['Profile'])(data?.node)
-  const isOwner = !!session && !!profileNode && profileNode.id === session.profile.id
+  const isOwner =
+    !!session && !!profileNode && profileNode.id === session.profile.id
 
   const [addRelation, addRelationRes] = useAddProfileRelationMutation()
   const [delRelation, delRelationRes] = useDelProfileRelationMutation()
@@ -33,25 +43,53 @@ export const useSmallProfileCardCtrl: CtrlHook<SmallProfileCardProps, SmallProfi
       return
     }
     if (myFollowEdgeId) {
-      return delRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(() => refetch())
+      return delRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(
+        () => refetch()
+      )
     } else {
       return addRelation({
-        variables: { edge: { edgeType: 'Follows', from: session.profile.id, to: id, Follows: {} } },
+        variables: {
+          edge: {
+            edgeType: 'Follows',
+            from: session.profile.id,
+            to: id,
+            Follows: {},
+          },
+        },
       }).then(() => refetch())
     }
-  }, [addRelation, addRelationRes.loading, delRelation, delRelationRes.loading, id, myFollowEdgeId, refetch, session])
+  }, [
+    addRelation,
+    addRelationRes.loading,
+    delRelation,
+    delRelationRes.loading,
+    id,
+    myFollowEdgeId,
+    refetch,
+    session,
+  ])
 
   const collections = useMemo(
-    () => (profileNode?.collections.edges || []).filter(isEdgeNodeOfType(['Collection'])).map(({ node }) => node),
-    [profileNode?.collections.edges],
+    () =>
+      (profileNode?.collections.edges || [])
+        .filter(isEdgeNodeOfType(['Collection']))
+        .map(({ node }) => node),
+    [profileNode?.collections.edges]
   )
   const resources = useMemo(
-    () => (profileNode?.resources.edges || []).filter(isEdgeNodeOfType(['Resource'])).map(({ node }) => node),
-    [profileNode?.resources.edges],
+    () =>
+      (profileNode?.resources.edges || [])
+        .filter(isEdgeNodeOfType(['Resource']))
+        .map(({ node }) => node),
+    [profileNode?.resources.edges]
   )
   const kudos = useMemo(
-    () => [...resources, ...collections].reduce((allLikes, { likesCount }) => allLikes + likesCount, 0),
-    [collections, resources],
+    () =>
+      [...resources, ...collections].reduce(
+        (allLikes, { likesCount }) => allLikes + likesCount,
+        0
+      ),
+    [collections, resources]
   )
   const SmallProfileCardUIProps = useMemo<SmallProfileCardProps | null>(
     () =>
@@ -76,7 +114,16 @@ export const useSmallProfileCardCtrl: CtrlHook<SmallProfileCardProps, SmallProfi
             profileHref: href(nodeGqlId2UrlPath(id)),
           }
         : null,
-    [profileNode, id, myFollowEdgeId, kudos, org.name, toggleFollow, isAuthenticated, isOwner],
+    [
+      profileNode,
+      id,
+      myFollowEdgeId,
+      kudos,
+      org.name,
+      toggleFollow,
+      isAuthenticated,
+      isOwner,
+    ]
   )
   return SmallProfileCardUIProps && [SmallProfileCardUIProps]
 }

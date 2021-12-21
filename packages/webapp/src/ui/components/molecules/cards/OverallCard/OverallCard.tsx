@@ -28,7 +28,11 @@ export const OverallCard: FC<OverallCardProps> = ({
   noCard,
 }) => {
   return (
-    <Card className="overall-card" hideBorderWhenSmall={hideBorderWhenSmall} noCard={noCard}>
+    <Card
+      className="overall-card"
+      hideBorderWhenSmall={hideBorderWhenSmall}
+      noCard={noCard}
+    >
       {showIcons ? (
         <div className="overall-container">
           <div className="data">

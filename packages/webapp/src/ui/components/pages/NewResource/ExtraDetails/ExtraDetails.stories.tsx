@@ -1,7 +1,13 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SBFormikBag } from '../../../../lib/storybook/SBFormikBag'
-import { LanguagesDropdown, LevelDropdown, MonthDropdown, TypeDropdown, YearsDropdown } from '../FieldsData'
+import {
+  LanguagesDropdown,
+  LevelDropdown,
+  MonthDropdown,
+  TypeDropdown,
+  YearsDropdown,
+} from '../FieldsData'
 import { NewResourceFormValues } from '../types'
 import { ExtraDetails, ExtraDetailsProps } from './ExtraDetails'
 
@@ -13,7 +19,7 @@ const meta: ComponentMeta<typeof ExtraDetails> = {
   },
   excludeStories: ['ExtraDetailsStoryProps', 'Default'],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ maxWidth: 1100 }}>
         <Story />
       </div>
@@ -52,7 +58,9 @@ export const ExtraDetailsStoryProps: ExtraDetailsProps = {
   // formats: FormatDropdown,
 }
 
-const ExtraDetailsStory: ComponentStory<typeof ExtraDetails> = args => <ExtraDetails {...args} />
+const ExtraDetailsStory: ComponentStory<typeof ExtraDetails> = (args) => (
+  <ExtraDetails {...args} />
+)
 
 export const Default = ExtraDetailsStory.bind({})
 Default.args = ExtraDetailsStoryProps

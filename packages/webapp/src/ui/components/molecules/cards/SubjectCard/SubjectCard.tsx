@@ -11,30 +11,34 @@ export type SubjectCardProps = {
   subjectHomeHref: Href
 }
 
-export const SubjectCard = withCtrl<SubjectCardProps>(({ title, organization, subjectHomeHref }) => {
-  return (
-    <Card
-      style={{
-        width: 'auto',
-        maxWidth: '100%',
-      }}
-      hover={true}
-    >
-      <div className="subject-card">
-        <div className="title">
-          <Link href={subjectHomeHref}>
-            <abbr title={title}>{title}</abbr>
-          </Link>
+export const SubjectCard = withCtrl<SubjectCardProps>(
+  ({ title, organization, subjectHomeHref }) => {
+    return (
+      <Card
+        style={{
+          width: 'auto',
+          maxWidth: '100%',
+        }}
+        hover={true}
+      >
+        <div className="subject-card">
+          <div className="title">
+            <Link href={subjectHomeHref}>
+              <abbr title={title}>{title}</abbr>
+            </Link>
+          </div>
+          <div className="subtitle">
+            <div className="url">{organization.url}</div>
+            <div
+              className="color"
+              style={{
+                backgroundImage: `linear-gradient(to right, ${organization.color}, ${organization.color}65)`,
+              }}
+            ></div>
+          </div>
         </div>
-        <div className="subtitle">
-          <div className="url">{organization.url}</div>
-          <div
-            className="color"
-            style={{ backgroundImage: `linear-gradient(to right, ${organization.color}, ${organization.color}65)` }}
-          ></div>
-        </div>
-      </div>
-    </Card>
-  )
-})
+      </Card>
+    )
+  }
+)
 export default SubjectCard

@@ -9,13 +9,21 @@ import { UserSessionFragment } from '../../context/Global/Session/session.gen'
 export const mainPath = {
   login: webappPath<Routes.Login>('/login/:activationEmailToken?', {}),
   firstLogin: (activationEmailToken: string) =>
-    webappPath<Routes.Login>('/login/:activationEmailToken?', { activationEmailToken }),
+    webappPath<Routes.Login>('/login/:activationEmailToken?', {
+      activationEmailToken,
+    }),
   recoverPassword: webappPath<Routes.RecoverPassword>('/recover-password', {}),
   signUp: webappPath<Routes.Signup>('/signup', {}),
   landing: webappPath<Routes.Landing>('/', {}),
   search: webappPath<Routes.GlobalSearch>('/search', {}),
-  createNewResource: webappPath<Routes.CreateNewResource>('/create-new-resource', {}),
-  createNewCollection: webappPath<Routes.CreateNewCollection>('/create-new-collection', {}),
+  createNewResource: webappPath<Routes.CreateNewResource>(
+    '/create-new-resource',
+    {}
+  ),
+  createNewCollection: webappPath<Routes.CreateNewCollection>(
+    '/create-new-collection',
+    {}
+  ),
   bookmarks: webappPath<Routes.BookmarksPage>('/bookmarks', {}),
   following: webappPath<Routes.FollowingPage>('/following', {}),
   cookiesPolicy: webappPath<Routes.CookiesPolicy>('/cookies-policy', {}),

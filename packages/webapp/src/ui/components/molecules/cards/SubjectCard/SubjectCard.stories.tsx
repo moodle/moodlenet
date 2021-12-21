@@ -10,7 +10,7 @@ const meta: ComponentMeta<typeof SubjectCard> = {
   },
   excludeStories: ['SubjectCardStoryProps'],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ height: 100, width: 'auto' }}>
         <Story />
       </div>
@@ -27,7 +27,9 @@ export const SubjectCardStoryProps: SubjectCardProps = {
   subjectHomeHref: href('Subject/home'),
 }
 
-const SubjectCardStory: ComponentStory<typeof SubjectCard> = args => <SubjectCard {...args} />
+const SubjectCardStory: ComponentStory<typeof SubjectCard> = (args) => (
+  <SubjectCard {...args} />
+)
 
 export const Default = SubjectCardStory.bind({})
 Default.args = SubjectCardStoryProps

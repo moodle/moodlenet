@@ -1,6 +1,9 @@
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { Browser, BrowserProps } from '../../organisms/Browser/Browser'
-import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
+import {
+  HeaderPageTemplate,
+  HeaderPageTemplateProps,
+} from '../../templates/HeaderPageTemplate'
 import './styles.scss'
 
 export type FollowersProps = {
@@ -8,11 +11,13 @@ export type FollowersProps = {
   browserProps: BrowserProps
   displayName: string
 }
-export const Followers = withCtrl<FollowersProps>(({ headerPageTemplateProps, displayName, browserProps }) => {
-  return (
-    <HeaderPageTemplate {...headerPageTemplateProps}>
-      <Browser {...browserProps } peopleTitle={`${displayName}'s followers`} />
-    </HeaderPageTemplate>
-  )
-})
+export const Followers = withCtrl<FollowersProps>(
+  ({ headerPageTemplateProps, displayName, browserProps }) => {
+    return (
+      <HeaderPageTemplate {...headerPageTemplateProps}>
+        <Browser {...browserProps} peopleTitle={`${displayName}'s followers`} />
+      </HeaderPageTemplate>
+    )
+  }
+)
 Followers.displayName = 'FollowersPage'

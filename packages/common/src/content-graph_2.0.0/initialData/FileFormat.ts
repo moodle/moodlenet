@@ -1,7 +1,7 @@
 import { FileFormat } from '../types/node'
 import { localOrg_authId } from './content'
 
-//@ts-ignore
+// @ts-ignore: this is a static initial population array, no need to ts check
 const _: FileFormat[] = [
   {
     _permId: 'application-3gpdash-qoe-report-plus-xml',

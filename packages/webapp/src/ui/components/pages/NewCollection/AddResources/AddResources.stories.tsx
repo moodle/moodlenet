@@ -11,7 +11,7 @@ const meta: ComponentMeta<typeof AddResources> = {
   excludeStories: ['AddResourcesStoryProps', 'Default'],
   parameters: { layout: 'fullscreen' },
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ maxWidth: 1100, width: '100%' }}>
         <Story />
       </div>
@@ -25,10 +25,20 @@ export const AddResourcesStoryProps: AddResourcesProps = {
   nextStep: action('nextStep'),
   step: 'AddResourcesStep',
   setAddResources: action('setAddResources'),
-  collections: ['Education', 'Biology', 'Algebra', 'Phycology', 'Phylosophy', 'Sociology', 'English Literature'],
+  collections: [
+    'Education',
+    'Biology',
+    'Algebra',
+    'Phycology',
+    'Phylosophy',
+    'Sociology',
+    'English Literature',
+  ],
 }
 
-const AddResourcesStory: ComponentStory<typeof AddResources> = args => <AddResources {...args} />
+const AddResourcesStory: ComponentStory<typeof AddResources> = (args) => (
+  <AddResources {...args} />
+)
 
 export const Default = AddResourcesStory.bind({})
 Default.args = AddResourcesStoryProps

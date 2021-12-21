@@ -9,7 +9,11 @@ export const NewPasswordRouteComponent: RouteFC<Routes.NewPassword> = ({
     params: { token },
   },
 }) => {
-  const props = ctrlHook(useNewPasswordCtrl, { recoverPasswordToken: token }, token)
+  const props = ctrlHook(
+    useNewPasswordCtrl,
+    { recoverPasswordToken: token },
+    token
+  )
   return <NewPassword {...props} />
 }
 

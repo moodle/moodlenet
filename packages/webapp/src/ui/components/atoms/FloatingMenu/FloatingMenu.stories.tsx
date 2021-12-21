@@ -12,7 +12,7 @@ const meta: ComponentMeta<typeof FloatingMenu> = {
   },
   excludeStories: ['FloatingMenuStoryProps'],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ position: 'relative' }}>
         <Story />
       </div>
@@ -37,7 +37,7 @@ export const FloatingMenuStoryProps: FloatingMenuProps = {
   visible: true,
 }
 
-const FloatingMenuStory: ComponentStory<typeof FloatingMenu> = args => (
+const FloatingMenuStory: ComponentStory<typeof FloatingMenu> = (args) => (
   <FloatingMenu {...args}>
     <div>This</div>
     <div>And that</div>

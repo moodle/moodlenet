@@ -7,7 +7,11 @@ export type ProgressStateProps = {
   currentIndex: number
 }
 
-export const ProgressState: FC<ProgressStateProps> = ({ stateNames, progressSubtitles, currentIndex }) => {
+export const ProgressState: FC<ProgressStateProps> = ({
+  stateNames,
+  progressSubtitles,
+  currentIndex,
+}) => {
   const title = stateNames[currentIndex]
   const subtitle = progressSubtitles && progressSubtitles[currentIndex]
 
@@ -23,7 +27,13 @@ export const ProgressState: FC<ProgressStateProps> = ({ stateNames, progressSubt
           return (
             <div
               key={state}
-              className={index === currentIndex ? 'current' : currentIndex > index ? 'done' : 'todo'}
+              className={
+                index === currentIndex
+                  ? 'current'
+                  : currentIndex > index
+                  ? 'done'
+                  : 'todo'
+              }
             ></div>
           )
         })}

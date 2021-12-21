@@ -8,16 +8,21 @@ const meta: ComponentMeta<typeof TrendCard> = {
     // backgroundColor: { control: 'color' },
   },
   excludeStories: ['TrendCardStoryProps'],
-  decorators:[
-    (Story)=>(<div style={{height:100,width:500}}><Story/></div>)
-  ]
+  decorators: [
+    (Story) => (
+      <div style={{ height: 100, width: 500 }}>
+        <Story />
+      </div>
+    ),
+  ],
 }
 
-
-const TrendCardStory: ComponentStory<typeof TrendCard> = args => <TrendCard {...args} />
+const TrendCardStory: ComponentStory<typeof TrendCard> = (args) => (
+  <TrendCard {...args} />
+)
 
 export const TrendCardStoryProps: TrendCardProps = {
-  tags: TagListStory
+  tags: TagListStory,
 }
 
 export const Default = TrendCardStory.bind({})

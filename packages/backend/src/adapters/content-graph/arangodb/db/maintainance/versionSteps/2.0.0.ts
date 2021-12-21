@@ -1,4 +1,4 @@
-import { setSetupLocalOrganizationData } from '@moodlenet/common/dist/content-graph/initialData/content'
+import { setSetupLocalOrganizationData } from '@moodlenet/common/dist/content-graph_2.0.0/initialData/content'
 import { validateDomainString } from '@moodlenet/common/dist/utils/general'
 import { VersionUpdater } from '../../../../../../lib/helpers/arango/migrate/types'
 import { createDBCollections } from './2.0.0/createDBCollections'
@@ -9,12 +9,12 @@ import { setupSearchView } from './2.0.0/setupSearchView'
 const init_2_0_0: VersionUpdater = {
   async initialSetUp({ db }) {
     const org = setSetupLocalOrganizationData({
-      domain: process.env.SETUP_ORGANIZATION_DOMAIN!,
-      description: process.env.SETUP_ORGANIZATION_DESCRIPTION!,
-      name: process.env.SETUP_ORGANIZATION_NAME!,
-      subtitle: process.env.SETUP_ORGANIZATION_SUBTITLE!,
-      logo: { ext: true, location: process.env.SETUP_ORGANIZATION_LOGO!, mimetype: 'image/*' },
-      smallLogo: { ext: true, location: process.env.SETUP_ORGANIZATION_SMALL_LOGO!, mimetype: 'image/*' },
+      domain: process.env.SETUP_ORGANIZATION_DOMAIN ?? '',
+      description: process.env.SETUP_ORGANIZATION_DESCRIPTION ?? '',
+      name: process.env.SETUP_ORGANIZATION_NAME ?? '',
+      subtitle: process.env.SETUP_ORGANIZATION_SUBTITLE ?? '',
+      logo: { ext: true, location: process.env.SETUP_ORGANIZATION_LOGO ?? '', mimetype: 'image/*' },
+      smallLogo: { ext: true, location: process.env.SETUP_ORGANIZATION_SMALL_LOGO ?? '', mimetype: 'image/*' },
     })
     if (!Object.values(org).every(_ => !!_)) {
       const varnames = [

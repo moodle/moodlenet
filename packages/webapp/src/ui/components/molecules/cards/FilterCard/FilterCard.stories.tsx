@@ -10,7 +10,7 @@ const meta: ComponentMeta<typeof FilterCard> = {
   },
   excludeStories: ['FilterCardStoryProps'],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ width: 200 }}>
         <Story />
       </div>
@@ -18,7 +18,9 @@ const meta: ComponentMeta<typeof FilterCard> = {
   ],
 }
 
-const FilterCardStory: ComponentStory<typeof FilterCard> = args => <FilterCard {...args} />
+const FilterCardStory: ComponentStory<typeof FilterCard> = (args) => (
+  <FilterCard {...args} />
+)
 
 const content: [string, boolean][] = [
   ['Subjects', true],
@@ -33,7 +35,9 @@ const content: [string, boolean][] = [
 export const FilterCardStoryProps: FilterCardProps = {
   className: 'filter',
   title: 'Filters',
-  content: content.map(([label, checked]) => <Checkbox name={label} label={label} checked={checked} />),
+  content: content.map(([label, checked]) => (
+    <Checkbox name={label} label={label} checked={checked} />
+  )),
 }
 
 export const Default = FilterCardStory.bind({})

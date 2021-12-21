@@ -43,13 +43,12 @@ export type GraphNodeIdentifierPerm<GNT extends GraphNodeType = GraphNodeType> =
 }
 
 export type GraphNodeIdentifierAuth<GNT extends GraphNodeType = GraphNodeType> = {
-  _type: GNT
   _authKey: AuthKey
-}
+} & GraphNodeIdentifierPerm<GNT>
+
 export type GraphNodeNonIdentifiedAuth<GNT extends GraphNodeType = GraphNodeType> = {
-  _type: GNT
   _authKey: null
-}
+} & GraphNodeIdentifierPerm<GNT>
 
 export type GraphNodeIdentifier<GNT extends GraphNodeType = GraphNodeType> =
   | GraphNodeIdentifierSlug<GNT>
@@ -61,9 +60,6 @@ export const isGraphNodeIdentifierAuth = (_: any): _ is GraphNodeIdentifierAuth 
 export type AuthKey = string
 
 export type BaseGraphNode<GNT extends GraphNodeType = GraphNodeType> = {
-  _type: GNT
-  _permId: PermId
-  _slug: Slug
   _published: boolean
   _created: Timestamp
   _edited: Timestamp

@@ -1,16 +1,30 @@
 import { FC } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { LinkComponentType, ProvideLinkComponentCtx } from '../../../ui/elements/link'
+import {
+  LinkComponentType,
+  ProvideLinkComponentCtx,
+} from '../../../ui/elements/link'
 
 export const ProvideReactRouterLinkComponent: FC = ({ children }) => {
-  return <ProvideLinkComponentCtx value={ReactRouterLinkComponent}>{children}</ProvideLinkComponentCtx>
+  return (
+    <ProvideLinkComponentCtx value={ReactRouterLinkComponent}>
+      {children}
+    </ProvideLinkComponentCtx>
+  )
 }
 
-const ReactRouterLinkComponent: LinkComponentType = props => {
+const ReactRouterLinkComponent: LinkComponentType = (props) => {
   const isExternal = props.href.ext
   const asExternal = props.asExt
   if (isExternal || asExternal) {
-    const { href, externalClassName, externalStyle, activeClassName, activeStyle, ...restProps } = props
+    const {
+      href,
+      externalClassName,
+      externalStyle,
+      activeClassName,
+      activeStyle,
+      ...restProps
+    } = props
     return (
       <a
         {...restProps}

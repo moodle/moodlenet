@@ -17,6 +17,8 @@ const meta: ComponentMeta<typeof ProfileCard> = {
     'ProfileCardLoggedOutStoryProps',
     'ProfileCardLoggedInStoryProps',
     'ProfileCardOwnerStoryProps',
+    'ProfileCardAdminStoryProps',
+    'ProfileCardApprovedStoryProps',
   ],
   decorators: [
     (Story) => (
@@ -34,6 +36,8 @@ export const ProfileCardStoryProps: ProfileCardProps = {
   avatarUrl: people[randomProfileIndex]?.avatarUrl!,
   isOwner: false,
   isAuthenticated: false,
+  approveUserFormBag: SBFormikBag({}),
+  unapproveUserForm: SBFormikBag({}),
   toggleFollow: action('toogleFollow'),
   toggleIsEditing: action('toogleIsEditing'),
   openSendMessage: action('openSendMessage'),
@@ -48,6 +52,7 @@ export const ProfileCardStoryProps: ProfileCardProps = {
     backgroundImage: null,
     username: people[randomProfileIndex]?.username!,
   }),
+  requestApprovalFormBag: SBFormikBag({}),
 }
 
 export const ProfileCardLoggedOutStoryProps: ProfileCardProps = {
@@ -62,6 +67,20 @@ export const ProfileCardLoggedInStoryProps: ProfileCardProps = {
 export const ProfileCardOwnerStoryProps: ProfileCardProps = {
   ...ProfileCardLoggedInStoryProps,
   isOwner: true,
+  isElegibleForApproval: true,
+  //isWaitingApproval: true,
+}
+
+export const ProfileCardApprovedStoryProps: ProfileCardProps = {
+  ...ProfileCardOwnerStoryProps,
+  showAccountApprovedSuccessAlert: true,
+  isApproved: true,
+}
+
+export const ProfileCardAdminStoryProps: ProfileCardProps = {
+  ...ProfileCardStoryProps,
+  isAuthenticated: true,
+  isAdmin: true,
 }
 
 const ProfileCardStory: ComponentStory<typeof ProfileCard> = (args) => (
@@ -76,5 +95,11 @@ LoggedIn.args = ProfileCardLoggedInStoryProps
 
 export const Owner = ProfileCardStory.bind({})
 Owner.args = ProfileCardOwnerStoryProps
+
+export const Approved = ProfileCardStory.bind({})
+Approved.args = ProfileCardApprovedStoryProps
+
+export const Admin = ProfileCardStory.bind({})
+Admin.args = ProfileCardAdminStoryProps
 
 export default meta

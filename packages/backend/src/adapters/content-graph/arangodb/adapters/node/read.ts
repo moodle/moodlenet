@@ -10,6 +10,5 @@ export const arangoReadNodeAdapter =
     const q = readNodeQ({ nodeId, assertions })
 
     const result = await getOneResult(q, db)
-
     return result as any
   }

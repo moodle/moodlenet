@@ -1,3 +1,5 @@
+@import '../../../../styles/application';
+
 .profile-card {
   width: 100%;
   background-color: #fff;
@@ -85,12 +87,43 @@
         font-size: 19px;
         font-weight: bold;
 
-        > .verified-icon {
+        > .approved-icon {
           height: 22px;
           display: flex;
           align-items: center;
-          > img {
+          > svg {
             height: 18px;
+            width: 18px;
+            &.zooom-in-enter-animation {
+              animation: enter 1s;
+            }
+
+            @keyframes enter {
+              0% {
+                position: absolute;
+                transform: scale(25);
+                z-index: 10;
+              }
+              50% {
+                transform: scale(0.5);
+                position: absolute;
+                z-index: 10;
+              }
+              74% {
+                transform: scaleX(1);
+                opacity: 1;
+              }
+              75% {
+                transform: scaleX(-1);
+                opacity: 0.3;
+              }
+              100% {
+                opacity: 1;
+                position: relative;
+                height: 18px;
+                z-index: inherit;
+              }
+            }
           }
         }
       }
@@ -146,6 +179,13 @@
     .description > .input-container > textarea {
       font-size: 14px;
       line-height: 20px;
+    }
+
+    > .not-approved-warning {
+      font-size: 13px;
+      background-color: rgb(255 244 229);
+      padding: 14px 18px;
+      border-radius: 6px;
     }
 
     > .buttons {

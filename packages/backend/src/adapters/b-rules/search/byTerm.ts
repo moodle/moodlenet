@@ -4,26 +4,26 @@ import { graphOperators } from '../../../ports/content-graph/graph-lang/graph'
 import { BRules, operators } from '../../../ports/content-graph/search/byTerm'
 import { isLocalOrganizationAuthId } from '../helpers'
 
-type Rules = 'mustBePublished' | 'mustBePublishedOrIssuerIsCreatorOfNode'
+type Rules = /* 'mustBePublished' | */ 'nodeAndCreatorMustBePublished' //'nodeAndCreatorMustBePublishedOrIssuerIsCreatorOfNode'
 
 export const searchNodeBRules: SockOf<BRules> = async ({ arg, sessionEnv }) => {
-  const { isCreator, graphNode, isPublished } = await graphOperators()
+  const { /* isCreator, graphNode, */ isPublished, creatorOf } = await graphOperators()
   const { searchNode } = await operators()
 
   if (await isLocalOrganizationAuthId(sessionEnv.authId)) {
     return {
       ...arg,
       assertions: {
-        mustBePublished: isPublished(searchNode),
+        // mustBePublished: isPublished(searchNode),
       },
     }
   }
-  const { or } = await baseOperators()
+  const { /* or, */ and } = await baseOperators()
   const assertions: Assertions<Rules> = {
-    mustBePublishedOrIssuerIsCreatorOfNode: or(
-      isPublished(searchNode),
-      isCreator({ authNode: graphNode(sessionEnv.authId), ofGlyph: searchNode }),
-    ),
+    /* or(
+      isCreator({ authNode: graphNode(sessionEnv.authId), ofGlyph: searchNode }), */
+    nodeAndCreatorMustBePublished: and(isPublished(creatorOf(searchNode)), isPublished(searchNode)),
+    /*  ), */
   }
 
   return { ...arg, assertions }

@@ -159,5 +159,5 @@ export const CategoriesDropdown: DropdownField = {
         1099 Services not elsewhere classified
         9999 Field unknown`
     .split(/\r?\n/)
-    .map(s => t`${s}`),
+    .map((s) => t`${s}`),
 }
