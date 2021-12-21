@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import EditIcon from '@material-ui/icons/Edit'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import SaveIcon from '@material-ui/icons/Save'
@@ -239,7 +239,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 <div className="title">{form.values.displayName}</div>
               )}
               {!isEditing && isApproved && (
-                <div className={`approved-icon`}>
+                <abbr className={`approved-icon`} title={t`Approved user`}>
                   <ApprovedIcon
                     className={`${
                       showAccountApprovedSuccessAlert
@@ -247,7 +247,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                         : ''
                     }`}
                   />
-                </div>
+                </abbr>
               )}
             </div>
             {isOwner && isEditing ? (
