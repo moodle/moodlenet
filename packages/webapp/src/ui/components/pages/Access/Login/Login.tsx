@@ -5,6 +5,7 @@ import { Href, Link } from '../../../../elements/link'
 import { CP, withCtrl } from '../../../../lib/ctrl'
 import { FormikBag } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
+import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import {
@@ -60,68 +61,63 @@ export const Login = withCtrl<LoginProps>(
                   <Trans>Log in</Trans>
                 </div>
                 <form onSubmit={form.handleSubmit}>
-                  <input
-                    className={`email ${
-                      shouldShowErrors && form.errors.email ? 'highlight' : ''
-                    }`}
-                    type="text"
+                  <InputTextField
+                    className="email"
+                    autoUpdate={true}
                     placeholder={t`Email`}
                     {...attrs.email}
-                    onChange={form.handleChange}
+                    error={{
+                      msg: shouldShowErrors ? form.errors.email : undefined,
+                    }}
                   />
-                  {shouldShowErrors && form.errors.email && (
-                    <div className="error">{form.errors.email}</div>
-                  )}
-                  <input
-                    className={`password ${
-                      shouldShowErrors && form.errors.password
-                        ? 'highlight'
-                        : ''
-                    }`}
+                  <InputTextField
+                    className="password"
+                    autoUpdate={true}
                     type="password"
                     placeholder={t`Password`}
-                    {...attrs.password}
-                    onChange={form.handleChange}
+                    {...attrs.email}
+                    error={{
+                      msg: shouldShowErrors ? form.errors.password : undefined,
+                    }}
                   />
-                  {shouldShowErrors && form.errors.password && (
-                    <div className="error">{form.errors.password}</div>
-                  )}
                   <button type="submit" style={{ display: 'none' }} />
-                  {wrongCreds && (
-                    <div className="error">
-                      <Trans>Incorrect username or password</Trans>
-                    </div>
-                  )}
                 </form>
                 <div className="bottom">
-                  <div className="left">
-                    <PrimaryButton
-                      onClick={
-                        form.isSubmitting || form.isValidating
-                          ? undefined
-                          : form.submitForm
-                      }
-                    >
-                      <Trans>Log in</Trans>
-                    </PrimaryButton>
-                    <Link href={recoverPasswordHref}>
-                      <TertiaryButton>
-                        <Trans>or recover password</Trans>
-                      </TertiaryButton>
-                    </Link>
+                  <div className="error">
+                    {wrongCreds && (
+                      <Trans>Incorrect username or password</Trans>
+                    )}
                   </div>
-                  <div className="right" hidden>
-                    <div className="icon">
-                      <img
-                        alt="apple login"
-                        src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
-                      />
+                  <div className="content">
+                    <div className="left">
+                      <PrimaryButton
+                        onClick={
+                          form.isSubmitting || form.isValidating
+                            ? undefined
+                            : form.submitForm
+                        }
+                      >
+                        <Trans>Log in</Trans>
+                      </PrimaryButton>
+                      <Link href={recoverPasswordHref}>
+                        <TertiaryButton>
+                          <Trans>or recover password</Trans>
+                        </TertiaryButton>
+                      </Link>
                     </div>
-                    <div className="icon">
-                      <img
-                        alt="google login"
-                        src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-                      />
+                    <div className="right" hidden>
+                      <div className="icon">
+                        <img
+                          alt="apple login"
+                          src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
+                        />
+                      </div>
+                      <div className="icon">
+                        <img
+                          alt="google login"
+                          src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

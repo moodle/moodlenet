@@ -1,5 +1,4 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
-import PrimaryButton from '../PrimaryButton/PrimaryButton'
 import './styles.scss'
 
 export type InputTextFieldProps = {
@@ -9,9 +8,10 @@ export type InputTextFieldProps = {
   disabled?: boolean
   hidden?: boolean
   autoUpdate?: boolean
-  buttonName?: string
   className?: string
   edit?: boolean
+  type?: 'text' | 'password' | 'email' | 'number' | 'url'
+  error?: { msg: string | null | undefined }
   displayMode?: boolean
   value?: string | undefined | null
   getText?(text: string): void
@@ -33,11 +33,12 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   placeholder,
   textarea,
   disabled,
-  buttonName,
   hidden,
   autoUpdate,
   className,
+  error,
   edit,
+  type,
   displayMode,
   value,
   getText,
@@ -71,10 +72,6 @@ export const InputTextField: FC<InputTextFieldProps> = ({
     setRows(rows)
   }
 
-  const handleClick = () => {
-    getText && getText(text ? text : '')
-  }
-
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
@@ -95,18 +92,20 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   return (
     <div
       className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${
-        (highlightWhenEmpty && !text) || highlight ? ' highlight' : ''
+        (highlightWhenEmpty && !text) || highlight || error?.msg
+          ? ' highlight'
+          : ''
       }`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
       {label ? <label>{label}</label> : <></>}
-      {textarea ? (
-        <div
-          className={`textarea-container ${displayMode && 'display-mode'} ${
-            !edit && 'not-editing'
-          }`}
-        >
+      <div
+        className={`${textarea ? 'textarea-container' : 'input-container'}  ${
+          displayMode && 'display-mode'
+        } ${!edit && 'not-editing'}`}
+      >
+        {textarea ? (
           <textarea
             ref={textArea}
             className={`${displayMode && 'display-mode'} ${
@@ -122,33 +121,21 @@ export const InputTextField: FC<InputTextFieldProps> = ({
             rows={rows}
             {...textAreaAttrs}
           />
-        </div>
-      ) : (
-        <div
-          className={`input-container ${displayMode && 'display-mode'} ${
-            !edit && 'not-editing'
-          }`}
-        >
-          {edit !== undefined}
+        ) : (
           <input
             className={`${displayMode && 'display-mode'} ${
               !edit && 'not-editing'
             }`}
             value={text ? text : ''}
             onChange={handleChange}
-            {...(buttonName && { onKeyDown: handleKeyDown })}
             disabled={disabled || !edit}
-            type="input"
+            type={type}
             placeholder={placeholder}
             {...inputAttrs}
           />
-          {buttonName ? (
-            <PrimaryButton onClick={handleClick}>{buttonName}</PrimaryButton>
-          ) : (
-            <></>
-          )}
-        </div>
-      )}
+        )}
+      </div>
+      {error && <div className="error-msg">{error.msg}</div>}
     </div>
   )
 }
@@ -162,6 +149,7 @@ InputTextField.defaultProps = {
   edit: true,
   getText: () => '',
   textAreaAutoSize: false,
+  type: 'text',
 }
 
 export default InputTextField
