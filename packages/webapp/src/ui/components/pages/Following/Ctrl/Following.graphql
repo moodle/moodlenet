@@ -2,7 +2,11 @@ query followingPage($profileId: ID!) {
   node(id: $profileId) {
     ... on INode {
       id
-      collections: _rel(type: Follows, targetTypes: [Collection], page: { first: 100 }) {
+      collections: _rel(
+        type: Follows
+        targetTypes: [Collection]
+        page: { first: 100 }
+      ) {
         edges {
           edge {
             id
@@ -14,7 +18,11 @@ query followingPage($profileId: ID!) {
           }
         }
       }
-      profiles: _rel(type: Follows, targetTypes: [Profile], page: { first: 100 }) {
+      profiles: _rel(
+        type: Follows
+        targetTypes: [Profile]
+        page: { first: 100 }
+      ) {
         edges {
           edge {
             id
@@ -26,7 +34,11 @@ query followingPage($profileId: ID!) {
           }
         }
       }
-      subjects: _rel(type: Follows, targetTypes: [IscedField], page: { first: 100 }) {
+      subjects: _rel(
+        type: Follows
+        targetTypes: [IscedField]
+        page: { first: 100 }
+      ) {
         edges {
           edge {
             id

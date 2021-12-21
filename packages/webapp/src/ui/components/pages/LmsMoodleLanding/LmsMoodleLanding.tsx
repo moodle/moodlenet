@@ -9,7 +9,7 @@ export type LMSMoodleLandingProps = {} & (
     }
 )
 
-export const LMSMoodleLanding = withCtrl<LMSMoodleLandingProps>(props => {
+export const LMSMoodleLanding = withCtrl<LMSMoodleLandingProps>((props) => {
   if (props.badParams) {
     return (
       <div>

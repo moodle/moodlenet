@@ -5,7 +5,11 @@ import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { VisibilityDropdown } from '../NewResource/FieldsData'
 import { CreateCollectionProps } from './CreateCollection/CreateCollection'
-import { NewCollection, NewCollectionProgressState, NewCollectionProps } from './NewCollection'
+import {
+  NewCollection,
+  NewCollectionProgressState,
+  NewCollectionProps,
+} from './NewCollection'
 import { NewCollectionFormValues } from './types'
 
 const meta: ComponentMeta<typeof NewCollection> = {
@@ -27,7 +31,9 @@ const meta: ComponentMeta<typeof NewCollection> = {
   ],
 }
 
-const NewCollectionStory: ComponentStory<typeof NewCollection> = args => <NewCollection {...args} />
+const NewCollectionStory: ComponentStory<typeof NewCollection> = (args) => (
+  <NewCollection {...args} />
+)
 
 export const NewCollectionProgressStateStory: NewCollectionProgressState = [
   ['CreateCollection', `Create Collection`],
@@ -50,7 +56,8 @@ const basicDataFormValue: NewCollectionFormValues = {
 }
 
 const formBag = SBFormikBag<NewCollectionFormValues>(initialFormValues)
-const formBagBasicData = SBFormikBag<NewCollectionFormValues>(basicDataFormValue)
+const formBagBasicData =
+  SBFormikBag<NewCollectionFormValues>(basicDataFormValue)
 
 const CreateCollectionStoryProps: CreateCollectionProps = {
   step: 'CreateCollectionStep',

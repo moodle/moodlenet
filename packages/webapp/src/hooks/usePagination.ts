@@ -17,7 +17,10 @@ interface PreviousPageCursor {
   before: PageInfo['startCursor']
   after: undefined
 }
-type PageUpdater<EdgeType> = (_: { prev: Page<EdgeType>; fetched: Page<EdgeType> }) => any //Page<EdgeType>;
+type PageUpdater<EdgeType> = (_: {
+  prev: Page<EdgeType>
+  fetched: Page<EdgeType>
+}) => any //Page<EdgeType>;
 
 // type FollowPageCursor = NextPageCursor | PreviousPageCursor
 // type Fetch<EdgeType, Cursor extends FollowPageCursor> = (_: {
@@ -37,13 +40,15 @@ type Fetch<EdgeType> = (
       }
   ) & {
     update: PageUpdater<EdgeType>
-  },
+  }
 ) => Promise<unknown>
 
 type BaseMngPage<Ready extends boolean> = {
   ready: Ready
 }
-interface MngPageInitialized<EdgeType> extends Page<EdgeType>, BaseMngPage<true> {
+interface MngPageInitialized<EdgeType>
+  extends Page<EdgeType>,
+    BaseMngPage<true> {
   next(): Promise<unknown>
   previous(): Promise<unknown>
 }
@@ -51,17 +56,30 @@ interface MngPageUninitialized<EdgeType> extends BaseMngPage<false> {
   edges: EdgeType[]
 }
 
-export type MngPage<EdgeType> = MngPageUninitialized<EdgeType> | MngPageInitialized<EdgeType>
+export type MngPage<EdgeType> =
+  | MngPageUninitialized<EdgeType>
+  | MngPageInitialized<EdgeType>
 
-export type FormikPaging = readonly [SimplifiedFormik | null, SimplifiedFormik | null]
-export const useFormikPaging = <EdgeType>(page: MngPage<EdgeType>): FormikPaging => {
+export type FormikPaging = readonly [
+  SimplifiedFormik | null,
+  SimplifiedFormik | null
+]
+export const useFormikPaging = <EdgeType>(
+  page: MngPage<EdgeType>
+): FormikPaging => {
   const nextPageFormik = useFormik({
     initialValues: {},
-    onSubmit: useCallback(() => (page?.ready ? page.next() : undefined), [page]),
+    onSubmit: useCallback(
+      () => (page?.ready ? page.next() : undefined),
+      [page]
+    ),
   })
   const previousPageFormik = useFormik({
     initialValues: {},
-    onSubmit: useCallback(() => (page?.ready ? page.previous() : undefined), [page]),
+    onSubmit: useCallback(
+      () => (page?.ready ? page.previous() : undefined),
+      [page]
+    ),
   })
   return useMemo(
     () =>
@@ -69,28 +87,31 @@ export const useFormikPaging = <EdgeType>(page: MngPage<EdgeType>): FormikPaging
         page.ready && page.pageInfo.hasNextPage ? nextPageFormik : null,
         page.ready && page.pageInfo.hasPreviousPage ? previousPageFormik : null,
       ] as const,
-    [nextPageFormik, previousPageFormik, page],
+    [nextPageFormik, previousPageFormik, page]
   )
 }
 
 export const usePagination = <EdgeType>(
   gqlPage: Maybe<Page<EdgeType>>,
-  fetch: Fetch<EdgeType /* , NextPageCursor */>, // = () => Promise.resolve()
+  fetch: Fetch<EdgeType /* , NextPageCursor */> // = () => Promise.resolve()
 ): MngPage<EdgeType> & { formiks: FormikPaging } => {
-  const page = useMemo<MngPage<EdgeType>>(() => mngPage(gqlPage, fetch), [gqlPage, fetch])
+  const page = useMemo<MngPage<EdgeType>>(
+    () => mngPage(gqlPage, fetch),
+    [gqlPage, fetch]
+  )
   const formiks = useFormikPaging(page)
   return useMemo(
     () => ({
       ...page,
       formiks,
     }),
-    [formiks, page],
+    [formiks, page]
   )
 }
 
 export const mngPage = <EdgeType>(
   page: Maybe<Page<EdgeType>>,
-  fetch: Fetch<EdgeType /* , NextPageCursor */> = () => Promise.resolve(),
+  fetch: Fetch<EdgeType /* , NextPageCursor */> = () => Promise.resolve()
 ): MngPage<EdgeType> => {
   if (!page) {
     return {
@@ -129,7 +150,13 @@ export const mngPage = <EdgeType>(
   return pageMng
 }
 
-const updatePageNext = <EdgeType>({ fetched, prev }: { fetched: Page<EdgeType>; prev: Page<EdgeType> }) => {
+const updatePageNext = <EdgeType>({
+  fetched,
+  prev,
+}: {
+  fetched: Page<EdgeType>
+  prev: Page<EdgeType>
+}) => {
   return {
     ...fetched,
     edges: prev.edges.concat(fetched.edges),
@@ -141,7 +168,13 @@ const updatePageNext = <EdgeType>({ fetched, prev }: { fetched: Page<EdgeType>; 
     },
   }
 }
-const updatePagePrev = <EdgeType>({ fetched, prev }: { fetched: Page<EdgeType>; prev: Page<EdgeType> }) => {
+const updatePagePrev = <EdgeType>({
+  fetched,
+  prev,
+}: {
+  fetched: Page<EdgeType>
+  prev: Page<EdgeType>
+}) => {
   return {
     ...fetched,
     edges: fetched.edges.concat(prev.edges),

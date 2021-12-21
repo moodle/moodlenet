@@ -1,7 +1,11 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { SBFormikBag } from '../../../../lib/storybook/SBFormikBag'
-import { CategoriesDropdown, LicenseDropdown, VisibilityDropdown } from '../FieldsData'
+import {
+  CategoriesDropdown,
+  LicenseDropdown,
+  VisibilityDropdown,
+} from '../FieldsData'
 import { NewResourceFormValues } from '../types'
 import { UploadResource, UploadResourceProps } from './UploadResource'
 const meta: ComponentMeta<typeof UploadResource> = {
@@ -12,7 +16,7 @@ const meta: ComponentMeta<typeof UploadResource> = {
   },
   excludeStories: ['UploadResourceStoryProps', 'Default'],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ maxWidth: 1100 }}>
         <Story />
       </div>
@@ -47,10 +51,12 @@ export const UploadResourceStoryProps: UploadResourceProps = {
   step: 'UploadResourceStep',
   categories: CategoriesDropdown,
   licenses: LicenseDropdown,
-  visibility: VisibilityDropdown
+  visibility: VisibilityDropdown,
 }
 
-const UploadResourceStory: ComponentStory<typeof UploadResource> = args => <UploadResource {...args} />
+const UploadResourceStory: ComponentStory<typeof UploadResource> = (args) => (
+  <UploadResource {...args} />
+)
 
 export const Default = UploadResourceStory.bind({})
 Default.args = UploadResourceStoryProps

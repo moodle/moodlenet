@@ -4,7 +4,9 @@ import { Landing } from '../ui/components/pages/Landing/Landing'
 import { ctrlHook } from '../ui/lib/ctrl'
 import { MNRouteProps, RouteFC } from './lib'
 
-export const LandingRouteComponent: RouteFC<Routes.Landing> = (/* { match } */) => {
+export const LandingRouteComponent: RouteFC<
+  Routes.Landing
+> = (/* { match } */) => {
   const props = ctrlHook(useLandingCtrl, {}, 'landing-route')
   return <Landing {...props} />
 }

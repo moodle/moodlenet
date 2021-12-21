@@ -1,5 +1,7 @@
 import { License } from '../types/node'
 import { localOrg_authId } from './content'
+
+// @ts-ignore: this is a static initial population array, no need to ts check
 const _: License[] = [
   {
     _permId: 'cc-0',

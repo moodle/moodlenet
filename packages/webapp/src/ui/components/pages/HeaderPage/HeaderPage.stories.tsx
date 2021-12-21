@@ -69,11 +69,12 @@ export const HeaderPageTemplateLoggedOutStoryProps: HeaderPageTemplateProps = {
   },
 }
 
-export const HeaderPageTemplateOrganizationLoggedOutStoryProps: HeaderPageTemplateProps = {
-  ...HeaderPageTemplateLoggedOutStoryProps,
-  // isAuthenticated: false,
-  headerPageProps: HeaderPageOrganizationLoggedOutStoryProps,
-}
+export const HeaderPageTemplateOrganizationLoggedOutStoryProps: HeaderPageTemplateProps =
+  {
+    ...HeaderPageTemplateLoggedOutStoryProps,
+    // isAuthenticated: false,
+    headerPageProps: HeaderPageOrganizationLoggedOutStoryProps,
+  }
 
 export const HeaderPageTemplateLoggedInStoryProps: HeaderPageTemplateProps = {
   headerPageProps: HeaderPageLoggedInStoryProps,
@@ -84,15 +85,18 @@ export const HeaderPageTemplateLoggedInStoryProps: HeaderPageTemplateProps = {
   },
 }
 
-export const HeaderPageTemplateOrganizationLoggedInStoryProps: HeaderPageTemplateProps = {
-  ...HeaderPageTemplateLoggedInStoryProps,
-  // isAuthenticated: false,
-  headerPageProps: HeaderPageOrganizationLoggedInStoryProps,
-}
+export const HeaderPageTemplateOrganizationLoggedInStoryProps: HeaderPageTemplateProps =
+  {
+    ...HeaderPageTemplateLoggedInStoryProps,
+    // isAuthenticated: false,
+    headerPageProps: HeaderPageOrganizationLoggedInStoryProps,
+  }
 
 // STORIES
 
-const HeaderPageStory: ComponentStory<typeof HeaderPage> = args => <HeaderPage {...args} />
+const HeaderPageStory: ComponentStory<typeof HeaderPage> = (args) => (
+  <HeaderPage {...args} />
+)
 
 export const LoggedOut = HeaderPageStory.bind({})
 LoggedOut.args = HeaderPageLoggedOutStoryProps

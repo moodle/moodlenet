@@ -57,6 +57,7 @@
     {
       "label": "common-gql-gen",
       "command": "yarn",
+      "type": "shell",
       "args": ["gen:graphql:types", "-w"],
       "options": {
         "cwd": "packages/common"
@@ -66,6 +67,7 @@
     {
       "label": "backend-gql-gen",
       "command": "yarn",
+      "type": "shell",
       "args": ["gen:graphql:types", "-w"],
       "options": {
         "cwd": "packages/backend"
@@ -75,6 +77,7 @@
     {
       "label": "webapp-gql-gen",
       "command": "yarn",
+      "type": "shell",
       "args": ["gen:graphql:types", "-w"],
       "options": {
         "cwd": "packages/webapp"

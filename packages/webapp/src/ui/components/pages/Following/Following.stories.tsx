@@ -14,7 +14,9 @@ const meta: ComponentMeta<typeof Following> = {
   excludeStories: ['FollowingLoggedInStoryProps'],
 }
 
-const FollowingStory: ComponentStory<typeof Following> = args => <Following {...args} />
+const FollowingStory: ComponentStory<typeof Following> = (args) => (
+  <Following {...args} />
+)
 
 export const FollowingLoggedInStoryProps: FollowingProps = {
   headerPageTemplateProps: {

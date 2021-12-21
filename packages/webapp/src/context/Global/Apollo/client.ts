@@ -1,4 +1,9 @@
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client'
+import {
+  ApolloClient,
+  ApolloLink,
+  HttpLink,
+  InMemoryCache,
+} from '@apollo/client'
 import { gqlNodeId2GraphNodeIdentifier } from '@moodlenet/common/dist/utils/content-graph/id-key-type-guards'
 import { setContext } from 'apollo-link-context'
 import apolloLogger from 'apollo-link-logger'
@@ -41,7 +46,11 @@ const authLink = setContext((_, { headers }) => {
   }
 })
 
-const link = ApolloLink.from([...(isProduction ? [] : [apolloLogger]), authLink, httpLink])
+const link = ApolloLink.from([
+  ...(isProduction ? [] : [apolloLogger]),
+  authLink,
+  httpLink,
+])
 
 export const apolloClient = new ApolloClient({
   cache,
@@ -52,10 +61,10 @@ export const apolloClient = new ApolloClient({
       fetchPolicy: 'network-only',
     },
     mutate: {
-      fetchPolicy: 'no-cache',
+      fetchPolicy: 'network-only',
     },
     watchQuery: {
-      fetchPolicy: 'network-only',
+      fetchPolicy: 'cache-and-network',
     },
   },
 })

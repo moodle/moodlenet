@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/common",
-  "version": "2.0.0",
+  "version": "2.0.1-dev.6",
   "license": "AGPL-3.0",
   "author": "https://github.com/aleclofabbro",
   "description": "backend and webapp shared libs and graphql",
@@ -20,9 +20,9 @@
     "graphql": "^15.6.1",
     "nanoid": "^3.1.23",
     "path-to-regexp": "^6.2.0",
+    "prettier": "^2.5.0",
     "run-script-os": "^1.1.5",
-    "shx": "^0.3.3",
-    "slugifyjs": "^0.0.7",
+    "slugify": "^1.6.4",
     "yup": "^0.32.8"
   },
   "devDependencies": {
@@ -38,13 +38,32 @@
     "@types/nanoid": "^3.0.0",
     "@types/path-to-regexp": "^1.7.0",
     "@types/yup": "^0.29.11",
-    "typescript": "^4.4.3"
+    "lint-staged": "^12.1.2",
+    "shx": "^0.3.3",
+    "typescript": "^4.5.2"
   },
   "scripts": {
     "clean-build": "shx rm -rf dist && yarn build",
     "build": "yarn gen:graphql:types && tsc",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
-    "prepublish": "yarn clean-build"
+    "prepublish": "yarn clean-build",
+    "precommit": "lint-staged  --concurrent=false"
+  },
+  "lint-staged": {
+    "src/**/*.ts": "eslint --fix",
+    "src/**/*.{ts,graphql,json}": "prettier -w"
+  },
+  "eslintConfig": {
+    "overrides": [
+      {
+        "files": [
+          "src/content-graph_2.0.0/initialData/**/*"
+        ],
+        "rules": {
+          "@typescript-eslint/ban-ts-comment": "warn"
+        }
+      }
+    ]
   },
   "gitHead": "53aac3f3bc4f9d4fcfe9f8a51eaa3e113ba57e44"
 }

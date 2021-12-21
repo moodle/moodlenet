@@ -1,4 +1,5 @@
 import { Trans } from '@lingui/macro'
+import { ReactComponent as ApprovedIcon } from '../../../../assets/icons/approved.svg'
 import { Href, Link } from '../../../../elements/link'
 import { withCtrl } from '../../../../lib/ctrl'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
@@ -39,15 +40,22 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
   }) => {
     return (
       <Card className="small-profile-card" hover={true}>
-        <img className="background" src={backgroundUrl || defaultBackgroud} alt="Background" />
+        <img
+          className="background"
+          src={backgroundUrl || defaultBackgroud}
+          alt="Background"
+        />
         <Link className="avatar" href={profileHref}>
           <img src={avatarUrl || defaultAvatar} alt="Avatar" />
         </Link>
         <div className="info">
           <Link className="profile-card-header" href={profileHref}>
-            <abbr className="title" title={displayName}>
-              {displayName}
-            </abbr>
+            <div className="title-header">
+              <abbr className="title" title={displayName}>
+                {displayName}
+              </abbr>
+              <ApprovedIcon />
+            </div>
             <abbr className="subtitle" title={organizationName}>
               {organizationName}
             </abbr>
@@ -56,11 +64,15 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
           {!isOwner && (
             <div className="buttons">
               {isFollowing ? (
-                <SecondaryButton onClick={toggleFollow}>
+                <SecondaryButton onClick={toggleFollow} color="grey">
                   <Trans>Unfollow</Trans>
                 </SecondaryButton>
               ) : (
-                <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow} className="follow">
+                <PrimaryButton
+                  disabled={!isAuthenticated}
+                  onClick={toggleFollow}
+                  className="follow"
+                >
                   <Trans>Follow</Trans>
                 </PrimaryButton>
               )}
@@ -69,5 +81,5 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
         </div>
       </Card>
     )
-  },
+  }
 )

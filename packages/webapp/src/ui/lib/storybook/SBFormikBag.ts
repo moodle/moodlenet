@@ -13,7 +13,10 @@ type SBFormikBagCfgKeys =
 export type SBFormikBagCfg<T> = {
   [Key in SBFormikBagCfgKeys]: SimplifiedFormik<T>[Key]
 }
-export const SBFormikBag = <T>(initialValues: T, p_cfg?: Partial<SimplifiedFormik<T>>): FormikBag<T> => {
+export const SBFormikBag = <T>(
+  initialValues: T,
+  p_cfg?: Partial<SimplifiedFormik<T>>
+): FormikBag<T> => {
   const form: SimplifiedFormik<T> = {
     initialValues,
     values: initialValues,

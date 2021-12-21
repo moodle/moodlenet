@@ -1,5 +1,5 @@
-import { FC } from 'react';
-import './styles.scss';
+import { FC } from 'react'
+import './styles.scss'
 
 export type ScoreCardProps = {
   kudos: number
@@ -9,9 +9,15 @@ export type ScoreCardProps = {
 export const ScoreCard: FC<ScoreCardProps> = ({ kudos, points }) => {
   return (
     <div className="score-card">
-        <div className="score">{points}<span>Points</span></div>
-        <div className="separator"></div>
-        <div className="score">{kudos}<span>Kudos</span></div>
+      <div className="score">
+        {points}
+        <span>Points</span>
+      </div>
+      <div className="separator"></div>
+      <div className="score">
+        {kudos}
+        <span>Kudos</span>
+      </div>
     </div>
-  );
+  )
 }

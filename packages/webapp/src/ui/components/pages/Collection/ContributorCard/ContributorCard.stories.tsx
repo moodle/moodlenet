@@ -10,7 +10,7 @@ const meta: ComponentMeta<typeof ContributorCard> = {
   },
   excludeStories: ['ContributorCardStoryProps', 'Default'],
   decorators: [
-    Story => (
+    (Story) => (
       <div style={{ height: 100, width: 300 }}>
         <Story />
       </div>
@@ -24,7 +24,9 @@ export const ContributorCardStoryProps: ContributorCardProps = {
   creatorProfileHref: href('Pages/Profile/LoggedIn'),
 }
 
-const ContributorCardStory: ComponentStory<typeof ContributorCard> = args => <ContributorCard {...args} />
+const ContributorCardStory: ComponentStory<typeof ContributorCard> = (args) => (
+  <ContributorCard {...args} />
+)
 
 export const Default = ContributorCardStory.bind({})
 Default.args = ContributorCardStoryProps

@@ -38,6 +38,7 @@ export type UserAuthConfig = {
   newUserRequestEmail: EmailTemplate<NewUserRequestEmailVars>
   newUserVerificationWaitSecs: TimeoutSecs
   messageToUserEmail: EmailTemplate<MessageToUserEmailVars>
+  newUserPublished: boolean
 }
 // $ Config
 export type MessageToUserEmailVars = {
@@ -46,6 +47,7 @@ export type MessageToUserEmailVars = {
   msgText: string
   senderProfileUrl: Link
   email: Email
+  fromLocalOrg: boolean
 }
 export type NewUserRequestEmailVars = {
   email: Email

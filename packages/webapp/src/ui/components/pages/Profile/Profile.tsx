@@ -8,24 +8,43 @@ import InputTextField from '../../atoms/InputTextField/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import Snackbar from '../../atoms/Snackbar/Snackbar'
-import { CollectionCard, CollectionCardProps } from '../../molecules/cards/CollectionCard/CollectionCard'
+import {
+  CollectionCard,
+  CollectionCardProps,
+} from '../../molecules/cards/CollectionCard/CollectionCard'
 import { ListCard } from '../../molecules/cards/ListCard/ListCard'
-import { OverallCard, OverallCardProps } from '../../molecules/cards/OverallCard/OverallCard'
-import { ProfileCard, ProfileCardProps } from '../../molecules/cards/ProfileCard/ProfileCard'
-import { ResourceCard, ResourceCardProps } from '../../molecules/cards/ResourceCard/ResourceCard'
-import { HeaderPageTemplate, HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
+import {
+  OverallCard,
+  OverallCardProps,
+} from '../../molecules/cards/OverallCard/OverallCard'
+import {
+  ProfileCard,
+  ProfileCardProps,
+} from '../../molecules/cards/ProfileCard/ProfileCard'
+import {
+  ResourceCard,
+  ResourceCardProps,
+} from '../../molecules/cards/ResourceCard/ResourceCard'
+import {
+  HeaderPageTemplate,
+  HeaderPageTemplateProps,
+} from '../../templates/HeaderPageTemplate'
 import './styles.scss'
 
 export type ProfileProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   overallCardProps: OverallCardProps
-  profileCardProps: Omit<ProfileCardProps, 'isEditing' | 'toggleIsEditing' | 'openSendMessage'>
+  profileCardProps: Omit<
+    ProfileCardProps,
+    'isEditing' | 'toggleIsEditing' | 'openSendMessage'
+  >
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
   displayName: string
   newCollectionHref: Href
   newResourceHref: Href
   showAccountCreationSuccessAlert?: boolean
+  showAccountApprovedSuccessAlert?: boolean
   sendEmail?: (text: string) => unknown
   save: () => unknown
 }
@@ -41,14 +60,12 @@ export const Profile = withCtrl<ProfileProps>(
     newCollectionHref,
     newResourceHref,
     showAccountCreationSuccessAlert,
+    showAccountApprovedSuccessAlert,
     sendEmail,
     save,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
-    const [isShowingAccountCreationSuccessAlert, setIsShowingAccountCreationSuccessAlert] = useState<boolean>(
-      showAccountCreationSuccessAlert ? true : false,
-    )
 
     const toggleIsEditing = () => {
       setIsEditing(!isEditing)
@@ -61,7 +78,7 @@ export const Profile = withCtrl<ProfileProps>(
       <ListCard
         className="collections"
         title={`${t`Collections curated by`} ${displayName}`}
-        content={collectionCardPropsList.map(collectionCardProps => (
+        content={collectionCardPropsList.map((collectionCardProps) => (
           <CollectionCard {...collectionCardProps} isEditing={isEditing} />
         ))}
         actions={
@@ -80,13 +97,25 @@ export const Profile = withCtrl<ProfileProps>(
     const [emailText, setEmailText] = useState('')
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        {showAccountCreationSuccessAlert && isShowingAccountCreationSuccessAlert && (
+        {showAccountCreationSuccessAlert && (
           <Snackbar
             type="success"
+            position="bottom"
             autoHideDuration={6000}
-            onClose={() => setIsShowingAccountCreationSuccessAlert(false)}
+            showCloseButton={false}
           >
             <Trans>Account activated! Feel free to complete your profile</Trans>
+          </Snackbar>
+        )}
+        {showAccountApprovedSuccessAlert && (
+          <Snackbar
+            position="bottom"
+            type="success"
+            autoHideDuration={6000}
+            waitDuration={1000}
+            showCloseButton={false}
+          >
+            <Trans>Congratulations! Your account has been approved</Trans>
           </Snackbar>
         )}
         {isSendingMessage && sendEmail && (
@@ -100,7 +129,7 @@ export const Profile = withCtrl<ProfileProps>(
                 }}
               >
                 <Trans>Send</Trans>
-              </PrimaryButton>
+              </PrimaryButton>,
             ]}
             onClose={() => setIsSendingMessage(false)}
             style={{ maxWidth: '400px' }}
@@ -119,8 +148,13 @@ export const Profile = withCtrl<ProfileProps>(
               />
               <ListCard
                 className="resources"
-                content={resourceCardPropsList.map(resourcesCardProps => {
-                  return <ResourceCard {...resourcesCardProps} isEditing={isEditing} />
+                content={resourceCardPropsList.map((resourcesCardProps) => {
+                  return (
+                    <ResourceCard
+                      {...resourcesCardProps}
+                      isEditing={isEditing}
+                    />
+                  )
                 })}
                 title={t`Latest resources`}
                 actions={
@@ -144,6 +178,6 @@ export const Profile = withCtrl<ProfileProps>(
         </div>
       </HeaderPageTemplate>
     )
-  },
+  }
 )
 Profile.displayName = 'ProfilePage'

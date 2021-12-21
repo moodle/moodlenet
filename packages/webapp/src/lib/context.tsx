@@ -1,7 +1,10 @@
 import { createContext, PropsWithChildren, Provider, useContext } from 'react'
 const NEVER_INITIALIZED_VALUE = Symbol() as any
 
-export const createCtx = <Value,>(ctxName: string, initialValue: Value = NEVER_INITIALIZED_VALUE) => {
+export const createCtx = <Value,>(
+  ctxName: string,
+  initialValue: Value = NEVER_INITIALIZED_VALUE
+) => {
   const _context = createContext<Value>(initialValue)
 
   const _useContext = () => {
@@ -18,16 +21,24 @@ export const createCtx = <Value,>(ctxName: string, initialValue: Value = NEVER_I
 type ValueGetterHook<Value> = () => Value
 
 declare const CTX_VALUE_SYMBOL: unique symbol
-export type CtxValue<Value> = () => Value & { readonly [CTX_VALUE_SYMBOL]: unique symbol }
-export type ProviderBag<Value> = readonly [key: string, ctxValue: CtxValue<Value>]
+export type CtxValue<Value> = () => Value & {
+  readonly [CTX_VALUE_SYMBOL]: unique symbol
+}
+export type ProviderBag<Value> = readonly [
+  key: string,
+  ctxValue: CtxValue<Value>
+]
 
-export const useValue = <Value,>(useValue: CtxValue<Value>): Value => (useValue as ValueGetterHook<Value>)()
+export const useValue = <Value,>(useValue: CtxValue<Value>): Value =>
+  (useValue as ValueGetterHook<Value>)()
 
-export const ctxValueHookOver = <Value,>(useValue: ValueGetterHook<Value>): CtxValue<Value> =>
-  useValue as CtxValue<Value>
+export const ctxValueHookOver = <Value,>(
+  useValue: ValueGetterHook<Value>
+): CtxValue<Value> => useValue as CtxValue<Value>
 export const ucvhOver = ctxValueHookOver
 
-export const ctxValueHookOf = <Value,>(value: Value) => (() => value) as CtxValue<Value>
+export const ctxValueHookOf = <Value,>(value: Value) =>
+  (() => value) as CtxValue<Value>
 export const ucvhOf = ctxValueHookOf
 
 export const Provide = <Value,>({

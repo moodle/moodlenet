@@ -12,15 +12,17 @@ export const relationTraverseBRules: SockOf<typeof bRules> = async ({ arg, sessi
   if (await isLocalOrganizationAuthId(sessionEnv.authId)) {
     return { ...arg, assertions: {} }
   }
-  const { or } = await baseOperators()
-  const { isCreator, graphNode, isPublished } = await graphOperators()
+  const { or, and } = await baseOperators()
+  const { creatorOf, isSameNode, isCreator, graphNode, isPublished } = await graphOperators()
   const { traverseNode } = await operators()
   const assertions: Assertions<Rules> = {
     mustBePublishedOrIssuerIsCreatorOfNode: or(
-      isPublished(traverseNode),
+      isSameNode(traverseNode, graphNode(sessionEnv.authId)),
+      and(isPublished(creatorOf(traverseNode)), isPublished(traverseNode)),
       isCreator({ authNode: graphNode(sessionEnv.authId), ofGlyph: traverseNode }),
     ),
   }
-
+  // console.log({ assertions })
+  delete assertions.mustBePublishedOrIssuerIsCreatorOfNode
   return { ...arg, assertions }
 }

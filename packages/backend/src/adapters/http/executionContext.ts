@@ -30,5 +30,5 @@ export const getAuthId = async (headerToken: string | null | undefined) => {
   if (mAuthId === INVALID_JWT_TOKEN) {
     return null
   }
-  return isGraphNodeIdentifierAuth(mAuthId) ? pick(mAuthId, ['_authKey', '_type']) : null
+  return isGraphNodeIdentifierAuth(mAuthId) ? pick(mAuthId, ['_authKey', '_type', '_permId']) : null
 }

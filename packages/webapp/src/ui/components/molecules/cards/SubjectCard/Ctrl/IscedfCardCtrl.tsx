@@ -8,8 +8,12 @@ import { CtrlHook } from '../../../../../lib/ctrl'
 import { SubjectCardProps } from '../SubjectCard'
 import { useIscedfCardQuery } from './IscedfCard.gen'
 
-export const useIscedfCardCtrl: CtrlHook<SubjectCardProps, { id: ID }> = ({ id }) => {
-  const subjectNode = narrowNodeType(['IscedField'])(useIscedfCardQuery({ variables: { id } }).data?.node)
+export const useIscedfCardCtrl: CtrlHook<SubjectCardProps, { id: ID }> = ({
+  id,
+}) => {
+  const subjectNode = narrowNodeType(['IscedField'])(
+    useIscedfCardQuery({ variables: { id } }).data?.node
+  )
   const { org: localOrg } = useLocalInstance()
   const subjectCardUIProps = useMemo<SubjectCardProps | null>(() => {
     if (!subjectNode) {

@@ -4,7 +4,12 @@ import { ns } from '../../../lib/ns/namespace'
 import { plug } from '../../../lib/plug'
 
 export const adapter = plug<
-  (_: { sender: GraphNodeIdentifierAuth; recipient: GraphNodeIdentifierAuth; text: string }) => Promise<boolean>
+  (_: {
+    sender: GraphNodeIdentifierAuth
+    recipient: GraphNodeIdentifierAuth
+    text: string
+    fromLocalOrg: boolean
+  }) => Promise<boolean>
 >(ns(module, 'adapter'))
 
 export type SendTextToAuthNode = {
@@ -16,5 +21,6 @@ export const port = plug(ns(module, 'port'), async ({ sessionEnv, recipientId, t
   if (!sessionEnv.authId) {
     return false
   }
-  return adapter({ sender: sessionEnv.authId, recipient: recipientId, text })
+  const fromLocalOrg = sessionEnv.authId._type === 'Organization'
+  return adapter({ sender: sessionEnv.authId, recipient: recipientId, text, fromLocalOrg })
 })

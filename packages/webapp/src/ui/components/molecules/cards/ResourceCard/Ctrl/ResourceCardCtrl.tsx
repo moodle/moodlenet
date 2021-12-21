@@ -1,4 +1,7 @@
-import { isEdgeNodeOfType, narrowNodeType } from '@moodlenet/common/dist/graphql/helpers'
+import {
+  isEdgeNodeOfType,
+  narrowNodeType,
+} from '@moodlenet/common/dist/graphql/helpers'
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { useCallback, useMemo } from 'react'
@@ -13,8 +16,14 @@ import {
   useResourceCardQuery,
 } from './ResourceCard.gen'
 
-export type ResourceCardCtrlArg = { id: ID; removeAction: false | null | (() => unknown) }
-export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlArg> = ({ id, removeAction }) => {
+export type ResourceCardCtrlArg = {
+  id: ID
+  removeAction: false | null | (() => unknown)
+}
+export const useResourceCardCtrl: CtrlHook<
+  ResourceCardProps,
+  ResourceCardCtrlArg
+> = ({ id, removeAction }) => {
   const { session, isAuthenticated } = useSession()
   const { data, refetch } = useResourceCardQuery({
     variables: { id, myProfileId: session ? [session.profile.id] : [] },
@@ -32,10 +41,19 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
       return
     }
     if (myBookmarkedEdgeId) {
-      return delRelation({ variables: { edge: { id: myBookmarkedEdgeId } } }).then(() => refetch())
+      return delRelation({
+        variables: { edge: { id: myBookmarkedEdgeId } },
+      }).then(() => refetch())
     } else {
       return addRelation({
-        variables: { edge: { edgeType: 'Bookmarked', from: session.profile.id, to: id, Bookmarked: {} } },
+        variables: {
+          edge: {
+            edgeType: 'Bookmarked',
+            from: session.profile.id,
+            to: id,
+            Bookmarked: {},
+          },
+        },
       }).then(() => refetch())
     }
   }, [
@@ -55,26 +73,49 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
       return
     }
     if (myLikeEdgeId) {
-      return delRelation({ variables: { edge: { id: myLikeEdgeId } } }).then(() => refetch())
+      return delRelation({ variables: { edge: { id: myLikeEdgeId } } }).then(
+        () => refetch()
+      )
     } else {
       return addRelation({
-        variables: { edge: { edgeType: 'Likes', from: session.profile.id, to: id, Likes: {} } },
+        variables: {
+          edge: {
+            edgeType: 'Likes',
+            from: session.profile.id,
+            to: id,
+            Likes: {},
+          },
+        },
       }).then(() => refetch())
     }
-  }, [addRelation, addRelationRes.loading, delRelation, delRelationRes.loading, id, myLikeEdgeId, refetch, session])
+  }, [
+    addRelation,
+    addRelationRes.loading,
+    delRelation,
+    delRelationRes.loading,
+    id,
+    myLikeEdgeId,
+    refetch,
+    session,
+  ])
 
   const resourceCardUIProps = useMemo<ResourceCardProps | null>(
     () =>
       resourceNode
         ? {
-            type: resourceNode.kind === 'Link' ? 'Web Page' : resourceNode.content.mimetype,
+            type:
+              resourceNode.kind === 'Link'
+                ? 'Web Page'
+                : resourceNode.content.mimetype,
             image: getMaybeAssetRefUrl(resourceNode.image),
             title: resourceNode.name,
-            tags: resourceNode.categories.edges.filter(isEdgeNodeOfType(['IscedField'])).map(({ node }) => ({
-              name: node.name,
-              type: 'General',
-              subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
-            })),
+            tags: resourceNode.categories.edges
+              .filter(isEdgeNodeOfType(['IscedField']))
+              .map(({ node }) => ({
+                name: node.name,
+                type: 'subject',
+                subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
+              })),
             resourceHomeHref: href(nodeGqlId2UrlPath(resourceNode.id)),
             liked: !!myLikeEdgeId,
             numLikes: resourceNode.likesCount,
@@ -97,7 +138,7 @@ export const useResourceCardCtrl: CtrlHook<ResourceCardProps, ResourceCardCtrlAr
       toggleLike,
       toggleBookmark,
       isAuthenticated,
-    ],
+    ]
   )
   return resourceCardUIProps && [resourceCardUIProps]
 }

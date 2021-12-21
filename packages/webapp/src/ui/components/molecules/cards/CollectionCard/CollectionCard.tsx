@@ -48,26 +48,42 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
 
     return (
       <Card
-        className={`collection-card ${isOwner && visibility === 'Private' ? 'is-private' : ''}`}
+        className={`collection-card ${
+          isOwner && visibility === 'Private' ? 'is-private' : ''
+        }`}
         style={background}
         hover={true}
       >
         <div className={`actions`}>
           <div
-            className={`follow ${following ? 'following' : ''} ${!isAuthenticated || isOwner ? 'disabled' : ''}`}
-            {...(isAuthenticated && !isOwner && {onClick: toggleFollow})}
+            className={`follow ${following ? 'following' : ''} ${
+              !isAuthenticated || isOwner ? 'disabled' : ''
+            }`}
+            {...(isAuthenticated && !isOwner && { onClick: toggleFollow })}
           >
             {following ? <PersonIcon /> : <PermIdentityIcon />}
             <span>{numFollowers}</span>
           </div>
           <div className="right">
             {isOwner && (
-              <abbr className={`visibility ${visibility === 'Public' ? 'public' : 'private'}`} title={visibility}>
-                {visibility === 'Public' ? <VisibilityIcon /> : <VisibilityOffIcon />}
+              <abbr
+                className={`visibility ${
+                  visibility === 'Public' ? 'public' : 'private'
+                }`}
+                title={visibility}
+              >
+                {visibility === 'Public' ? (
+                  <VisibilityIcon />
+                ) : (
+                  <VisibilityOffIcon />
+                )}
               </abbr>
             )}
             {isAuthenticated && (
-              <div className={`bookmark ${bookmarked ? 'bookmarked' : ''}`} onClick={toggleBookmark}>
+              <div
+                className={`bookmark ${bookmarked ? 'bookmarked' : ''}`}
+                onClick={toggleBookmark}
+              >
                 {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
               </div>
             )}
@@ -80,7 +96,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
         </Link>
       </Card>
     )
-  },
+  }
 )
 CollectionCard.displayName = 'CollectionCard'
 CollectionCard.defaultProps = {}

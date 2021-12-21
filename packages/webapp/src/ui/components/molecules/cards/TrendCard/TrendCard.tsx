@@ -1,5 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { getElementSize } from '../../../../../helpers/utilities'
 import { tagList } from '../../../../elements/tags'
 import { withCtrl } from '../../../../lib/ctrl'
 import { FollowTag } from '../../../../types'
@@ -13,7 +14,9 @@ export type TrendCardProps = {
 export const TrendCard = withCtrl<TrendCardProps>(({ tags, maxRows }) => {
   const [numRows, setNumRows] = useState<number | undefined>(maxRows)
   const card = useRef<HTMLDivElement>(null)
+  const title = useRef<HTMLDivElement>(null)
   const content = useRef<HTMLDivElement>(null)
+  const margin = 18
 
   useEffect(() => {
     if (maxRows) {
@@ -24,7 +27,12 @@ export const TrendCard = withCtrl<TrendCardProps>(({ tags, maxRows }) => {
   }, [content, maxRows])
 
   const setNewNumRows = useCallback(() => {
-    const containerHeight = card.current && card.current.clientHeight - 79 // 41px is the header height
+    const containerTakenSpace =
+      title.current && getElementSize(title.current).height + margin * 2
+    const containerHeight =
+      card.current &&
+      card.current.clientHeight -
+        (containerTakenSpace ? containerTakenSpace : 0)
     const numRows = containerHeight && Math.floor(containerHeight / 39)
     maxRows && !numRows && setNumRows(maxRows)
     maxRows && numRows && setNumRows(maxRows <= numRows ? maxRows : numRows)
@@ -47,7 +55,7 @@ export const TrendCard = withCtrl<TrendCardProps>(({ tags, maxRows }) => {
 
   return (
     <div className={`trend-card max-rows-${numRows}`} ref={card}>
-      <div className="title">
+      <div className="title" ref={title}>
         <Trans>Trending subjects and collections</Trans>
       </div>
       <div className="content" ref={content}>

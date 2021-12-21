@@ -4,7 +4,7 @@ import { SockOf } from '../../../../../lib/plug'
 import { Assertions, BV } from '../../../../../ports/content-graph/graph-lang/base'
 import { Operators, operators } from '../../../../../ports/content-graph/node/read'
 import { _aqlBv } from '../../adapters/bl/baseOperators'
-import { aqlGraphNode2GraphNode, getAqlAssertions } from '../helpers'
+import { /* aqlGraphNode2GraphNode, */ getAqlAssertions } from '../helpers'
 
 export const readNodeQ = <Type extends GraphNodeType>({
   nodeId,
@@ -21,9 +21,9 @@ export const readNodeQ = <Type extends GraphNodeType>({
     FILTER readNode 
           && ${aqlAssertions}
 
-    RETURN ${aqlGraphNode2GraphNode('readNode')}
-  `)
-  // console.log(q)
+    RETURN readNode
+    `)
+  /*RETURN ${aqlGraphNode2GraphNode('readNode')}*/
   return q
 }
 

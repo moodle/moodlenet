@@ -3,8 +3,8 @@ import { withCtrl } from '../../../../lib/ctrl'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
 import {
-    AddToCollectionsCard,
-    CollectionItem
+  AddToCollectionsCard,
+  CollectionItem,
 } from '../../../molecules/cards/AddToCollectionsCard/AddToCollectionsCard'
 import './styles.scss'
 
@@ -19,7 +19,13 @@ export type AddToCollectionsProps = {
 }
 
 export const AddToCollections = withCtrl<AddToCollectionsProps>(
-  ({ collections, setAddToCollections, nextStep, previousStep, selectedCollections }) => {
+  ({
+    collections,
+    setAddToCollections,
+    nextStep,
+    previousStep,
+    selectedCollections,
+  }) => {
     return (
       <div className="add-to-collections">
         <AddToCollectionsCard
@@ -37,5 +43,5 @@ export const AddToCollections = withCtrl<AddToCollectionsProps>(
         </div>
       </div>
     )
-  },
+  }
 )

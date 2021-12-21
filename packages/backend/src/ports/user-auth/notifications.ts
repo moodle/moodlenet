@@ -14,12 +14,12 @@ import { getActiveUserByAuthAdapter, getLatestConfigAdapter } from './adapters'
 //   text: string
 // }
 
-export const sendTextAdapter: SockOf<typeof adapter> = async ({ recipient, sender, text }) => {
+export const sendTextAdapter: SockOf<typeof adapter> = async ({ recipient, sender, text, fromLocalOrg }) => {
   if (!recipient._authKey) {
     return false
   }
   const recipientUser = await getActiveUserByAuthAdapter({
-    authId: pick(recipient, ['_authKey', '_type']),
+    authId: pick(recipient, ['_authKey', '_type', '_permId']),
   })
 
   if (!recipientUser) {
@@ -42,6 +42,7 @@ export const sendTextAdapter: SockOf<typeof adapter> = async ({ recipient, sende
       msgText: text,
       senderName: senderNode.name,
       senderProfileUrl: senderProfileUrl,
+      fromLocalOrg,
     },
   })
   const { success } = await sys.sendEmail.adapter(emailObj)

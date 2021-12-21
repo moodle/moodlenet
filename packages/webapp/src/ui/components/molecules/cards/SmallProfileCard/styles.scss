@@ -37,15 +37,27 @@
       align-items: center;
       text-align: center;
 
-      > .title {
+      > .title-header {
+        display: flex;
         width: 100%;
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
         font-size: 15px;
         font-weight: bold;
-        &:hover {
-          text-decoration: underline;
+        gap: 6px;
+        justify-content: center;
+        > .title {
+          width: fit-content;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+        > svg {
+          min-height: 16px;
+          min-width: 16px;
+          max-height: 16px;
+          max-width: 16px;
         }
       }
 

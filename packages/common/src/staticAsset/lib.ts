@@ -1,5 +1,6 @@
 import { AssetRef } from '../graphql/scalars.graphql'
 
+export type UploadMaxSizes = { [k in `${UploadType}MaxSize`]: number }
 export type UploadType = 'icon' | 'image' | 'resource'
 export const uploadTypes: UploadType[] = ['icon', 'image', 'resource']
 export const isUploadType = (_: any): _ is UploadType => uploadTypes.includes(_)

@@ -5,6 +5,7 @@ import {
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { createElement, useCallback, useEffect, useMemo, useState } from 'react'
+import { MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS } from '../../../../../constants'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
@@ -38,15 +39,37 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
   id,
 }) => {
   useSeoContentId(id)
-  const { isAuthenticated, session, firstLogin } = useSession()
+  const {
+    isAuthenticated,
+    session,
+    isAdmin,
+    isWaitingApproval,
+    userRequestedApproval,
+    hasJustBeenApproved,
+    hasJustBeenApprovedReset,
+    firstLogin,
+    firstLoginReset,
+  } = useSession()
+
   const { org: localOrg } = useLocalInstance()
   const isMe = session?.profile && session.profile.id === id
+  useEffect(() => {
+    isMe && firstLogin && setTimeout(firstLoginReset, 10000)
+  }, [firstLogin, firstLoginReset, isMe])
+
+  useEffect(() => {
+    isMe && hasJustBeenApproved && setTimeout(hasJustBeenApprovedReset, 10000)
+  }, [hasJustBeenApproved, hasJustBeenApprovedReset, isMe])
+
   const { data, refetch, loading } = useProfilePageUserDataQuery({
     variables: {
       profileId: id,
       myProfileId: session?.profile && !isMe ? [session.profile.id] : [],
     },
+    fetchPolicy: 'cache-and-network',
   })
+
+  // TODO: move this service and abstraction to SessionCtx
   const [sendEmailMut, sendEmailMutRes] = useSendEmailToProfileMutation()
   const profile = narrowNodeType(['Profile'])(data?.node)
   const collections = useMemo(
@@ -109,6 +132,23 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     session,
   ])
 
+  // TODO: move this service to SessionCtx
+  const [, requestApprovalFormBag] = useFormikBag<{}>({
+    initialValues: {},
+    onSubmit: async () => {
+      const { data } = await sendEmailMut({
+        variables: {
+          text: 'please consider approving my profile !',
+          toProfileId: localOrg.id,
+        },
+      })
+      if (!data || !data.sendEmailToProfile) {
+        return
+      }
+      userRequestedApproval()
+    },
+  })
+
   const [formik, formBag] = useFormikBag<ProfileFormValues>({
     initialValues: {} as any,
     onSubmit: async (vals) => {
@@ -157,7 +197,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
           },
         },
       })
-      refetch()
+      // refetch()
     },
   })
   const { resetForm: fresetForm } = formik
@@ -216,6 +256,47 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
       })
     }
   }, [fresetForm, id, profile, localOrg.name /* avatarUrl, backgroundUrl */])
+  const approveUserFormBag = useFormikBag<{}>({
+    initialValues: {},
+    onSubmit: () => editPublished(true),
+  })
+
+  const unapproveUserForm = useFormikBag<{}>({
+    initialValues: {},
+    onSubmit: () => editPublished(false),
+  })
+
+  const editPublished = useCallback(
+    async (_published: boolean) => {
+      if (!(isAdmin && profile)) {
+        return
+      }
+      // TODO: move this service to SessionCtx
+      const editResp = await edit({
+        variables: {
+          id: profile.id,
+          profileInput: {
+            _published,
+            name: profile.name,
+            description: profile.description,
+          },
+        },
+      })
+      if (
+        _published &&
+        editResp.data?.editNode.__typename === 'EditNodeMutationSuccess'
+      ) {
+        await sendEmailMut({
+          variables: {
+            text: 'Congratulations! Your account has been approved!',
+            toProfileId: profile.id,
+          },
+        })
+      }
+    },
+    [edit, isAdmin, profile, sendEmailMut]
+  )
+
   const profileProps = useMemo<ProfileProps | null>(() => {
     if (!profile) {
       return null
@@ -243,6 +324,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
       newResourceHref,
       showAccountCreationSuccessAlert: firstLogin,
       profileCardProps: {
+        approveUserFormBag,
         formBag,
         isAuthenticated,
         toggleFollow,
@@ -250,7 +332,16 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
         backgroundUrl,
         isFollowing: !!myFollowEdgeId,
         isOwner: isMe,
+        isAdmin,
+        isApproved: profile._published,
+        requestApprovalFormBag,
+        isElegibleForApproval:
+          profile.resourcesCount >= MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS,
+        isWaitingApproval,
+        showAccountApprovedSuccessAlert: hasJustBeenApproved,
+        unapproveUserForm,
       },
+      showAccountApprovedSuccessAlert: hasJustBeenApproved,
       sendEmail: (text) => {
         if (sendEmailMutRes.loading) {
           return
@@ -260,24 +351,31 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
       displayName: profile.name,
       save: () => formik.submitForm(),
     }
+    console.log(props)
     return props
   }, [
-    avatarUrl,
-    backgroundUrl,
-    collections,
-    firstLogin,
-    formBag,
-    formik,
-    id,
-    isAuthenticated,
-    isMe,
-    kudos,
-    myFollowEdgeId,
     profile,
     resources,
-    sendEmailMut,
-    sendEmailMutRes.loading,
+    collections,
+    kudos,
+    firstLogin,
+    approveUserFormBag,
+    formBag,
+    isAuthenticated,
     toggleFollow,
+    avatarUrl,
+    backgroundUrl,
+    myFollowEdgeId,
+    isMe,
+    isAdmin,
+    requestApprovalFormBag,
+    isWaitingApproval,
+    hasJustBeenApproved,
+    unapproveUserForm,
+    sendEmailMutRes.loading,
+    sendEmailMut,
+    id,
+    formik,
   ])
   if (!loading && !data?.node) {
     return createElement(Fallback, fallbackProps({ key: 'profile-not-found' }))

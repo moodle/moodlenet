@@ -10,9 +10,15 @@ query ProfilePageUserData($profileId: ID!, $myProfileId: [ID!]) {
       lastName
       siteUrl
       location
+      _published
 
       followersCount: _relCount(type: Follows, inverse: true)
-      myFollow: _rel(type: Follows, inverse: true, page: { first: 1 }, targetIds: $myProfileId) {
+      myFollow: _rel(
+        type: Follows
+        inverse: true
+        page: { first: 1 }
+        targetIds: $myProfileId
+      ) {
         edges {
           edge {
             id
@@ -20,7 +26,11 @@ query ProfilePageUserData($profileId: ID!, $myProfileId: [ID!]) {
         }
       }
       collectionsCount: _relCount(type: Created, targetTypes: [Collection])
-      collections: _rel(type: Created, targetTypes: [Collection], page: { first: 100 }) {
+      collections: _rel(
+        type: Created
+        targetTypes: [Collection]
+        page: { first: 100 }
+      ) {
         edges {
           node {
             ... on Collection {
@@ -34,7 +44,11 @@ query ProfilePageUserData($profileId: ID!, $myProfileId: [ID!]) {
       }
 
       resourcesCount: _relCount(type: Created, targetTypes: [Resource])
-      resources: _rel(type: Created, targetTypes: [Resource], page: { first: 100 }) {
+      resources: _rel(
+        type: Created
+        targetTypes: [Resource]
+        page: { first: 100 }
+      ) {
         edges {
           node {
             ... on Resource {
@@ -59,6 +73,7 @@ mutation editProfile($id: ID!, $profileInput: EditProfileInput!) {
     ... on EditNodeMutationSuccess {
       node {
         ... on Profile {
+          id
           name
           avatar
           description
@@ -67,6 +82,7 @@ mutation editProfile($id: ID!, $profileInput: EditProfileInput!) {
           lastName
           siteUrl
           location
+          _published
         }
       }
     }

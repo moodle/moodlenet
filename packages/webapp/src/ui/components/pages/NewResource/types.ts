@@ -1,4 +1,4 @@
-import { CollectionItem } from '../../molecules/cards/AddToCollectionsCard/AddToCollectionsCard';
+import { CollectionItem } from '../../molecules/cards/AddToCollectionsCard/AddToCollectionsCard'
 
 export type ContentType = 'File' | 'Link'
 export type Url = string
@@ -9,7 +9,7 @@ export type Language = string
 export type Format = string
 export type License = string
 export type Collection = string
-export type Visibility = string;
+export type Visibility = string
 export type NewResourceFormValues = {
   name: string
   contentType: ContentType

@@ -2,7 +2,14 @@ import { isOfNodeType } from '@moodlenet/common/dist/graphql/helpers'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { DistOmit } from '@moodlenet/common/dist/utils/types'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
-import { Reducer, useCallback, useEffect, useMemo, useReducer, useState } from 'react'
+import {
+  Reducer,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react'
 import { useHistory } from 'react-router'
 import { useSession } from '../../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../../helpers/data'
@@ -31,7 +38,12 @@ import {
 
 const initialSetStepProps: DistOmit<
   UploadResourceProps,
-  'formBag' | 'deleteContent' | 'nextStep' | 'categories' | 'licenses' | 'visibility'
+  | 'formBag'
+  | 'deleteContent'
+  | 'nextStep'
+  | 'categories'
+  | 'licenses'
+  | 'visibility'
 > = {
   step: 'UploadResourceStep',
   state: 'ChooseResource',
@@ -40,23 +52,31 @@ const initialSetStepProps: DistOmit<
 
 export type NewResourceCtrlProps = {}
 
-export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps> = () => {
+export const useNewResourceCtrl: CtrlHook<
+  NewResourceProps,
+  NewResourceCtrlProps
+> = () => {
   const { session } = useSession()
   const history = useHistory()
   const myId = session?.profile.id
   const [loadMyColl, mycollectionsQRes] = useNewResourceDataPageLazyQuery()
   const uploadTempFile = useUploadTempFile()
-  const [createResourceMut /* , createResourceMutRes */] = useCreateResourceMutation()
-  const [createResourceRelMut /* , createResourceRelMutRes */] = useCreateResourceRelationMutation()
+  const [createResourceMut /* , createResourceMutRes */] =
+    useCreateResourceMutation()
+  const [createResourceRelMut /* , createResourceRelMutRes */] =
+    useCreateResourceRelationMutation()
   const { langOptions, getLang } = useLangOptions()
   const { getIscedF, iscedFieldsOptions } = useIscedFieldsOptions()
   const { resourceTypeOptions, getResourceType } = useResourceTypeOptions()
   const { getGrade, resourceGradeOptions } = useResourceGradeOptions()
   const { getLicense, licensesOptions } = useLicensesOptions()
 
-  const mycollections = useMemo(() => mycollectionsQRes.data?.node?.myCollections.edges.map(_ => _.node) ?? [], [
-    mycollectionsQRes.data?.node?.myCollections,
-  ])
+  const mycollections = useMemo(
+    () =>
+      mycollectionsQRes.data?.node?.myCollections.edges.map((_) => _.node) ??
+      [],
+    [mycollectionsQRes.data?.node?.myCollections]
+  )
 
   useEffect(() => {
     if (myId) {
@@ -100,8 +120,13 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
   // }, [sform.values.content, sform.values.image, sformSetField])
 
   type StepProps = DistOmit<NewResourceProps['stepProps'], 'nextStep'>
-  type StepPropsHistoryItem = [curr: StepProps, prev: StepPropsHistoryItem | null]
-  const [[stepProps, prevStepProps], setNextStepProps] = useReducer<Reducer<StepPropsHistoryItem, StepProps | 'back'>>(
+  type StepPropsHistoryItem = [
+    curr: StepProps,
+    prev: StepPropsHistoryItem | null
+  ]
+  const [[stepProps, prevStepProps], setNextStepProps] = useReducer<
+    Reducer<StepPropsHistoryItem, StepProps | 'back'>
+  >(
     ([curr, prev], next) => {
       if (next === 'back') {
         return prev ?? [curr, prev]
@@ -118,17 +143,21 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
         visibility: VisibilityDropdown,
       },
       null,
-    ],
+    ]
   )
   const { content, name, image } = sform.values
   const [imageUrl, setImageUrl] = useState('')
   useEffect(() => {
-    const imageObjectUrl = image instanceof File ? URL.createObjectURL(image) : ''
+    const imageObjectUrl =
+      image instanceof File ? URL.createObjectURL(image) : ''
     setImageUrl(imageObjectUrl)
     return () => URL.revokeObjectURL(imageObjectUrl)
   }, [image, setImageUrl])
 
-  const previousStep = useCallback(() => setNextStepProps('back'), [setNextStepProps])
+  const previousStep = useCallback(
+    () => setNextStepProps('back'),
+    [setNextStepProps]
+  )
 
   const [saving, setSaving] = useState(false)
   const nextStep = useMemo(() => {
@@ -137,7 +166,10 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
       if (stepProps.state === 'ChooseResource') {
         if (form.values.content) {
           return () => {
-            if (form.values.content instanceof File && form.values.content.type.toLowerCase().startsWith('image')) {
+            if (
+              form.values.content instanceof File &&
+              form.values.content.type.toLowerCase().startsWith('image')
+            ) {
               sformSetField('image', form.values.content)
             }
             setNextStepProps({
@@ -165,9 +197,13 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           return () => {
             setNextStepProps({
               step: 'AddToCollectionsStep',
-              collections: mycollections.map(_ => ({ label: _.name, id: _.id })),
+              collections: mycollections.map((_) => ({
+                label: _.name,
+                id: _.id,
+              })),
               previousStep,
-              setAddToCollections: collections => sformSetField('collections', collections),
+              setAddToCollections: (collections) =>
+                sformSetField('collections', collections),
               selectedCollections: form.values.collections,
             })
           }
@@ -244,7 +280,10 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
                 _published: visibility === 'Public',
                 name: title,
                 image: imageAssetRef,
-                originalCreationDate: getOriginalCreationTimestampByStrings({ originalDateMonth, originalDateYear }),
+                originalCreationDate: getOriginalCreationTimestampByStrings({
+                  originalDateMonth,
+                  originalDateYear,
+                }),
               },
             },
           },
@@ -261,16 +300,30 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
           const { id: iscedFId } = getIscedF(category)
           waitFor.push(
             createResourceRelMut({
-              variables: { edge: { edgeType: 'Features', from: resId, to: iscedFId, Features: {} } },
-            }),
+              variables: {
+                edge: {
+                  edgeType: 'Features',
+                  from: resId,
+                  to: iscedFId,
+                  Features: {},
+                },
+              },
+            })
           )
 
           if (language) {
             const { id: langId } = getLang(language)
             waitFor.push(
               createResourceRelMut({
-                variables: { edge: { edgeType: 'Features', from: resId, to: langId, Features: {} } },
-              }),
+                variables: {
+                  edge: {
+                    edgeType: 'Features',
+                    from: resId,
+                    to: langId,
+                    Features: {},
+                  },
+                },
+              })
             )
           }
 
@@ -278,8 +331,15 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
             const { id: licenseId } = getLicense(license)
             waitFor.push(
               createResourceRelMut({
-                variables: { edge: { edgeType: 'Features', from: resId, to: licenseId, Features: {} } },
-              }),
+                variables: {
+                  edge: {
+                    edgeType: 'Features',
+                    from: resId,
+                    to: licenseId,
+                    Features: {},
+                  },
+                },
+              })
             )
           }
 
@@ -287,8 +347,15 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
             const { id: typeId } = getResourceType(type)
             waitFor.push(
               createResourceRelMut({
-                variables: { edge: { edgeType: 'Features', from: resId, to: typeId, Features: {} } },
-              }),
+                variables: {
+                  edge: {
+                    edgeType: 'Features',
+                    from: resId,
+                    to: typeId,
+                    Features: {},
+                  },
+                },
+              })
             )
           }
 
@@ -296,18 +363,34 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
             const { id: gradeId } = getGrade(level)
             waitFor.push(
               createResourceRelMut({
-                variables: { edge: { edgeType: 'Features', from: resId, to: gradeId, Features: {} } },
-              }),
+                variables: {
+                  edge: {
+                    edgeType: 'Features',
+                    from: resId,
+                    to: gradeId,
+                    Features: {},
+                  },
+                },
+              })
             )
           }
 
           waitFor.push(
-            ...collections.map(async collItem => {
-              const collectionId = mycollections.find(_ => _.id === collItem.id)!.id
+            ...collections.map(async (collItem) => {
+              const collectionId = mycollections.find(
+                (_) => _.id === collItem.id
+              )!.id
               return createResourceRelMut({
-                variables: { edge: { edgeType: 'Features', to: resId, from: collectionId, Features: {} } },
+                variables: {
+                  edge: {
+                    edgeType: 'Features',
+                    to: resId,
+                    from: collectionId,
+                    Features: {},
+                  },
+                },
               })
-            }),
+            })
           )
           await Promise.all(waitFor).finally(() => setSaving(false))
 
@@ -358,7 +441,9 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
   useEffect(() => {
     if (content) {
       if (content instanceof File) {
-        return name !== content.name ? sformSetField('name', content.name) : null
+        return name !== content.name
+          ? sformSetField('name', content.name)
+          : null
       } else {
         return name !== content ? sformSetField('name', content) : null
       }
@@ -369,8 +454,18 @@ export const useNewResourceCtrl: CtrlHook<NewResourceProps, NewResourceCtrlProps
 
   const newResourceProps = useMemo<NewResourceProps>(() => {
     return {
-      headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, 'header-page-template'),
-      stepProps: { ...stepProps, nextStep, imageUrl, formBag, selectedCollections: form.values.collections }, //FIXME: stepProps are created in `nextStep()`, so they're static
+      headerPageTemplateProps: ctrlHook(
+        useHeaderPageTemplateCtrl,
+        {},
+        'header-page-template'
+      ),
+      stepProps: {
+        ...stepProps,
+        nextStep,
+        imageUrl,
+        formBag,
+        selectedCollections: form.values.collections,
+      }, //FIXME: stepProps are created in `nextStep()`, so they're static
     }
   }, [nextStep, stepProps, imageUrl, formBag, form.values])
 
