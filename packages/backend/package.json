@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/backend",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "homepage": "https://gitlab.com/moodlenet/moodlenet/-/tree/master/packages/backend",
   "repository": {
     "type": "git",
