@@ -14,22 +14,23 @@ export type WebFingerResp = {
   ]
 }
 
-export type GQLAppConfig = {}
 export const createWebfingerApp = async () => {
   const app = express()
   const {
     localOrg: { domain },
     publicUrl,
   } = await localOrgInfo.adapter()
-  const acctResourceParam = new RegExp(`^acct:[a-zA-Z0-9\.\_\-]+@${domain}$`)
-  app.get<{}, WebFingerResp | string, any, { resource: string }>('/webfinger', async (req, res) => {
+  const acctResourceParam = new RegExp(`^acct:[a-zA-Z0-9._-]+@${domain}$`)
+  app.get<unknown, WebFingerResp | string, unknown, { resource: string }>('/webfinger', async (req, res) => {
     const resParam = req.query.resource
     if ('string' !== typeof resParam || !acctResourceParam.test(resParam)) {
-      res.sendStatus(400).send(`Bad Request resource:${JSON.stringify(resParam)}`)
+      res.status(400).send(`Bad Request resource:${JSON.stringify(resParam)}`)
       return
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const acct = resParam.split(':')[1]!
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const userSlug = acct.split('@')[0]!
 
     const profile = await getNodePort({
@@ -38,7 +39,7 @@ export const createWebfingerApp = async () => {
     })
 
     if (!profile) {
-      res.sendStatus(404).send(`user ${acct} not found`)
+      res.status(404).send(`user ${acct} not found`)
       return
     }
     const profilePagePath = nodeIdentifierSlug2HomeUrlPath(profile)
