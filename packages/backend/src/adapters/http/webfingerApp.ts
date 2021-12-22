@@ -1,6 +1,7 @@
 import { nodeIdentifierSlug2HomeUrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import express from 'express'
-import { port as getNodePort } from '../../ports/content-graph/node/read'
+import { graphOperators } from '../../ports/content-graph/graph-lang/graph'
+import { adapter as getNodeAdapter } from '../../ports/content-graph/node/read'
 import * as localOrgInfo from '../../ports/system/localOrg/info'
 
 export type WebFingerResp = {
@@ -32,10 +33,11 @@ export const createWebfingerApp = async () => {
     const acct = resParam.split(':')[1]!
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const userSlug = acct.split('@')[0]!
+    const { graphNode } = await graphOperators()
 
-    const profile = await getNodePort({
-      sessionEnv: req.mnHttpContext.sessionEnv,
-      identifier: { _slug: userSlug, _type: 'Profile' },
+    const profile = await getNodeAdapter({
+      nodeId: graphNode({ _slug: userSlug, _type: 'Profile' }),
+      assertions: {},
     })
 
     if (!profile) {
