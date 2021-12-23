@@ -27,8 +27,8 @@ input CreateNodeInput {
 }
 
 input EditProfileInput {
-  name: String!
-  description: String!
+  name: String
+  description: String
   avatar: AssetRefInput
   image: AssetRefInput
   bio: String
