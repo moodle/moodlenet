@@ -7,7 +7,7 @@ import { plug, value } from '../../../lib/plug'
 import { adapter as addEdgeAdapter } from '../edge/add'
 import { Assertions } from '../graph-lang/base'
 
-export type Operators = {}
+export type Operators = unknown
 export const operators = value<Operators>(ns(module, 'operators'))
 
 export const bRules = plug<BRules>(ns(module, 'b-rules'))
@@ -34,9 +34,7 @@ export const port = plug<Port>(ns(module, 'port'), async ({ data, sessionEnv }) 
   if (!sessionEnv.authId) {
     return null
   }
-  if (!/^[\p{L}\p{M}\p{N}\p{Zs}]+$/u.test(data.name)) {
-    return null
-  }
+  // /^[\p{L}\p{M}\p{N}\p{Zs}]+$/u.test(data.name))
 
   const adapterArg = await bRules({
     sessionEnv,

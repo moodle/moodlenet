@@ -3,15 +3,13 @@ import Slugify from 'slugify'
 import { PermId, Slug } from '../../content-graph/types/node'
 
 export const slugify = ({ str, locale }: { str: string; locale?: string }): Slug =>
-  Slugify(str, { locale, trim: true, lower: true })
+  Slugify(str, { locale, trim: true, lower: true, strict: true, remove: /[*+~.()'"!:@]/g })
 
 export const contentSlug = ({ name, locale, slugCode }: { name: Slug; locale?: string; slugCode?: string }) => {
   const slug_code = slugCode ? slugify({ str: slugCode, locale }) : newGlyphSlugId()
-  const slug_name = slugifyName({ str: name })
+  const slug_name = slugify({ str: name, locale })
   return `${slug_code}-${slug_name}`
 }
-
-export const slugifyName = ({ str }: { str: string }): Slug => str.replace(/\s+/g, '-')
 
 const idAlphabet = `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`
 const slugAlphabet = `0123456789abcdefghijklmnopqrstuvwxyz`

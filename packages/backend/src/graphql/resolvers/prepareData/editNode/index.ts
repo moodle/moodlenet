@@ -82,8 +82,8 @@ const nodeDocumentDataBaker: {
       // _type: 'Profile',
       image: imageAssetRef,
       avatar: avatarAssetRef,
-      description: input.description,
-      name: input.name,
+      description: input.description ?? undefined,
+      name: input.name ?? undefined,
       siteUrl: input.siteUrl,
       location: input.location,
       _published: input._published ?? undefined,
@@ -97,6 +97,7 @@ export const bakeEditNodeDoumentData = async <T extends NodeType>(
   input: Just<EditNodeInput[T]>,
   nodeType: T,
 ): Promise<Data | EditNodeMutationError> => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const baker = (nodeDocumentDataBaker as any)[nodeType]
   return baker(input)
 }
