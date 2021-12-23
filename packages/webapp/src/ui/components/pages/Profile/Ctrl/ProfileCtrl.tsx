@@ -277,8 +277,6 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
           id: profile.id,
           profileInput: {
             _published,
-            name: profile.name,
-            description: profile.description,
           },
         },
       })
