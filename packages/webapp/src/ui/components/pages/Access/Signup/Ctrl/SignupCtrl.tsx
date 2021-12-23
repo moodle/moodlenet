@@ -14,13 +14,11 @@ import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { SignupFormValues, SignupProps } from '../Signup'
 
 const validationSchema: SchemaOf<SignupFormValues> = object({
-  name: string()
-    .required(t`Please provide a display name`)
-    .matches(
+  name: string().required(t`Please provide a display name`),
+  /* .matches(
       /^[\p{L}\p{M}\p{N}\p{Zs}]+$/u,
       t`Display name can contain only unicode alphanumerics and spaces`
-    ),
-  email: string()
+    ) */ email: string()
     .required(t`Please provide an email address`)
     .email(t`Please provide a valid email address`),
   password: string()

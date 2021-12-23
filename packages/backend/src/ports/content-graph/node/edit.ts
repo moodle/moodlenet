@@ -36,9 +36,7 @@ export type Input = {
 }
 export type Port = (_: Input) => Promise<GraphNode | null>
 export const port = plug<Port>(ns(module, 'port'), async ({ data, nodeId, sessionEnv }) => {
-  if ('string' == typeof data.name && !/^[\p{L}\p{M}\p{N}\p{Zs}]+$/u.test(data.name)) {
-    return null
-  }
+  // /^[\p{L}\p{M}\p{N}\p{Zs}]+$/u.test(data.name))
   const adapterArg = await bRules({
     sessionEnv,
     nodeId,
