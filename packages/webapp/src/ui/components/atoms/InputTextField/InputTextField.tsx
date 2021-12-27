@@ -1,4 +1,5 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import PrimaryButton from '../PrimaryButton/PrimaryButton'
 import './styles.scss'
 
 export type InputTextFieldProps = {
@@ -9,6 +10,7 @@ export type InputTextFieldProps = {
   hidden?: boolean
   autoUpdate?: boolean
   className?: string
+  buttonName?: string
   edit?: boolean
   type?: 'text' | 'password' | 'email' | 'number' | 'url'
   error?: { msg: string | null | undefined }
@@ -41,6 +43,7 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   type,
   displayMode,
   value,
+  buttonName,
   getText,
   inputAttrs,
   textAreaAttrs,
@@ -49,8 +52,12 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   highlight,
 }) => {
   const [text, setText] = useState<string | undefined | null>(value)
+  const [errorLeaves, setErrorLeave] = useState<boolean>(false)
+  const [hasError, setHasError] = useState<boolean>(false)
   const [rows, setRows] = useState<number>(textAreaAutoSize ? 1 : 5)
+  const [isFocused, setIsFocused] = useState<boolean>(false)
   const textArea = useRef<HTMLTextAreaElement>(null)
+  const input = useRef<HTMLInputElement>(null)
 
   const checkRowChange = useCallback(() => {
     if (textAreaAutoSize && textArea && textArea.current) {
@@ -72,6 +79,10 @@ export const InputTextField: FC<InputTextFieldProps> = ({
     setRows(rows)
   }
 
+  const handleClick = () => {
+    getText && getText(text ? text : '')
+  }
+
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
@@ -89,13 +100,24 @@ export const InputTextField: FC<InputTextFieldProps> = ({
     setText(value)
   }, [value])
 
+  useEffect(() => {
+    !error?.msg
+      ? hasError
+        ? setErrorLeave(true)
+        : setErrorLeave(false)
+      : setErrorLeave(false)
+    !error?.msg ? setHasError(false) : setHasError(true)
+  }, [error?.msg, error, setErrorLeave, hasError, setHasError])
+
   return (
     <div
       className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${
         (highlightWhenEmpty && !text) || highlight || error?.msg
           ? ' highlight'
           : ''
-      }`}
+      } ${!errorLeaves && error?.msg ? 'enter-error' : ''} ${
+        errorLeaves ? 'leave-error' : ''
+      } ${isFocused ? 'focused' : ''}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
@@ -114,6 +136,8 @@ export const InputTextField: FC<InputTextFieldProps> = ({
             value={text ? text : ''}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             disabled={disabled || !edit}
             placeholder={placeholder}
             name="textarea"
@@ -123,19 +147,26 @@ export const InputTextField: FC<InputTextFieldProps> = ({
           />
         ) : (
           <input
+            ref={input}
             className={`${displayMode && 'display-mode'} ${
               !edit && 'not-editing'
             }`}
             value={text ? text : ''}
             onChange={handleChange}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            {...(buttonName && { onKeyDown: handleKeyDown })}
             disabled={disabled || !edit}
             type={type}
             placeholder={placeholder}
             {...inputAttrs}
           />
         )}
+        {buttonName && (
+          <PrimaryButton onClick={handleClick}>{buttonName}</PrimaryButton>
+        )}
       </div>
-      {error && <div className="error-msg">{error.msg}</div>}
+      {error && error.msg && <div className={`error-msg`}>{error.msg}</div>}
     </div>
   )
 }

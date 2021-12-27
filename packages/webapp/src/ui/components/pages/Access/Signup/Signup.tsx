@@ -5,6 +5,7 @@ import { Href, Link } from '../../../../elements/link'
 import { CP, withCtrl } from '../../../../lib/ctrl'
 import { FormikBag } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
+import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import {
@@ -62,47 +63,35 @@ export const Signup = withCtrl<SignupProps>(
                   <Trans>Sign up</Trans>
                 </div>
                 <form onSubmit={form.handleSubmit}>
-                  <input
-                    className={`diplay-name ${
-                      shouldShowErrors && form.errors.name ? 'highlight' : ''
-                    }`}
-                    type="text"
+                  <InputTextField
+                    className="display-name"
+                    autoUpdate={true}
                     placeholder={t`Display name`}
                     {...attrs.name}
-                    onChange={form.handleChange}
+                    error={{
+                      msg: shouldShowErrors ? form.errors.name : undefined,
+                    }}
                   />
-                  {shouldShowErrors && form.errors.name && (
-                    <div className="error">{form.errors.name}</div>
-                  )}
-                  <input
-                    className={`email ${
-                      shouldShowErrors && form.errors.email ? 'highlight' : ''
-                    }`}
-                    id="username_input"
-                    color="text"
-                    type="text"
+                  <InputTextField
+                    className="email"
+                    autoUpdate={true}
+                    type="email"
                     placeholder={t`Email`}
                     {...attrs.email}
-                    onChange={form.handleChange}
+                    error={{
+                      msg: shouldShowErrors ? form.errors.email : undefined,
+                    }}
                   />
-                  {shouldShowErrors && form.errors.email && (
-                    <div className="error">{form.errors.email}</div>
-                  )}
-                  <input
-                    className={`password ${
-                      shouldShowErrors && form.errors.password
-                        ? 'highlight'
-                        : ''
-                    }`}
-                    id="password_input"
+                  <InputTextField
+                    className="password"
+                    autoUpdate={true}
                     type="password"
                     placeholder={t`Password`}
                     {...attrs.password}
-                    onChange={form.handleChange}
+                    error={{
+                      msg: shouldShowErrors ? form.errors.password : undefined,
+                    }}
                   />
-                  {shouldShowErrors && form.errors.password && (
-                    <div className="error">{form.errors.password}</div>
-                  )}
                   <button
                     id="signup-button"
                     type="submit"

@@ -67,16 +67,15 @@
           justify-content: flex-start;
           gap: 15px;
           > .input-text-field > .input-container {
-            border: none;
             box-shadow: none;
-            padding: 0;
-            > input {
-              height: 46px;
-              border-style: solid;
-              border-width: 0.5px;
-              border-radius: 45px;
-              padding: 0 25px;
+            height: 46px;
+            border-style: solid;
+            border-width: 0.5px;
+            border-radius: 45px;
+            padding: 0 25px;
 
+            > input {
+              padding: 0;
               &::placeholder {
                 font-weight: 500;
                 font-size: 17px;
@@ -103,36 +102,31 @@
               }
             }
           }
-          > .input-text-field.highlight > .input-container > input {
-            box-shadow: 0 0 0 2px $error-color;
+          > .input-text-field.highlight > .input-container {
+            box-shadow: 0 0 0 2px red;
             border: none;
           }
 
           > .email {
             max-width: 335px;
-            &:not(.highlight) > .input-container > input {
+            &:not(.highlight) > .input-container {
               border-color: $primary-color;
-              &:focus {
-                box-shadow: 0 0 5px $primary-color;
-              }
+            }
+            &:not(.highlight).focused > .input-container {
+              box-shadow: 0 0 5px $primary-color;
             }
           }
 
           > .password {
             max-width: 250px;
-            &:not(.highlight) > .input-container > input {
-              &:focus {
-                box-shadow: 0 0 5px #b6bacb;
-              }
+            &:not(.highlight) > .input-container {
+              border-color: #b6bacb;
+            }
+            &:not(.highlight).focused > .input-container {
+              box-shadow: 0 0 5px #b6bacb;
             }
           }
-        }
 
-        > .bottom {
-          margin-top: -36px;
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
           > .error {
             width: fit-content;
             font-size: 12px;
@@ -140,7 +134,27 @@
             display: flex;
             color: $error-color;
             height: 14px;
+            animation: enter-move 0.5s ease-out;
+
+            @keyframes enter-move {
+              from {
+                height: 0;
+                opacity: 0;
+              }
+              to {
+                font-size: 12px;
+                color: red;
+                height: 14px;
+                opacity: 1;
+              }
+            }
           }
+        }
+
+        > .bottom {
+          display: flex;
+          flex-direction: column;
+
           > .content {
             display: flex;
             justify-content: space-between;
