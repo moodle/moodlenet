@@ -11,11 +11,6 @@
     margin-bottom: 8px;
   }
 
-  &.highlight > .input-container,
-  &.highlight > .textarea-container {
-    box-shadow: 0 0 0 2px $primary-color;
-  }
-
   > .input-container,
   > .textarea-container {
     width: 100%;
@@ -74,10 +69,12 @@
   }
 
   > .textarea-container,
-  .input-container {
+  > .input-container {
     display: flex;
     align-items: center;
     padding: 12px 0;
+    box-shadow: 0 0 6px #dedede;
+
     > textarea,
     input {
       width: 100%;
@@ -90,15 +87,10 @@
         padding: 0 12px;
       }
     }
+
     > :last-child:not(input) {
       margin-right: 10px;
     }
-  }
-
-  .error-msg {
-    height: 14px;
-    font-size: 12px;
-    color: $error-color;
   }
 }
 
@@ -116,5 +108,79 @@
   > .input-container > input,
   > .textarea-container > textarea {
     background-color: #e8e8e8;
+  }
+}
+
+.enter-error {
+  > .input-container,
+  > .input-container {
+    box-shadow: 0 0 0 2px red;
+    animation: shadow-fade-in 0.5s ease-out;
+
+    @keyframes shadow-fade-in {
+      from {
+        box-shadow: 0 0 6px #dedede;
+      }
+      to {
+        box-shadow: 0 0 0 2px red;
+      }
+    }
+  }
+
+  > .error-msg {
+    animation: enter-move 0.5s ease-out;
+    font-size: 12px;
+    color: red;
+    height: 14px;
+
+    @keyframes enter-move {
+      from {
+        height: 0;
+        opacity: 0;
+      }
+      to {
+        font-size: 12px;
+        color: red;
+        height: 14px;
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.leave-error {
+  > .input-container,
+  > .textarea-container {
+    box-shadow: 0 0 6px #dedede;
+    animation: shadow-fade-out 0.5s ease-out;
+
+    @keyframes shadow-fade-out {
+      from {
+        box-shadow: 0 0 0 2px red;
+      }
+      to {
+        box-shadow: 0 0 6px #dedede;
+      }
+    }
+  }
+
+  > .error-msg {
+    height: 0;
+    opacity: 0;
+    animation: leave 0.5s ease-out;
+
+    @keyframes leave {
+      from {
+        height: 14px;
+        opacity: 1;
+        font-size: 12px;
+        color: red;
+      }
+      to {
+        height: 0;
+        opacity: 0;
+        font-size: 12px;
+      }
+    }
   }
 }

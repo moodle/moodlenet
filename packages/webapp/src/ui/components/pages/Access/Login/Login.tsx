@@ -64,6 +64,7 @@ export const Login = withCtrl<LoginProps>(
                   <InputTextField
                     className="email"
                     autoUpdate={true}
+                    type="email"
                     placeholder={t`Email`}
                     {...attrs.email}
                     error={{
@@ -75,19 +76,19 @@ export const Login = withCtrl<LoginProps>(
                     autoUpdate={true}
                     type="password"
                     placeholder={t`Password`}
-                    {...attrs.email}
+                    {...attrs.password}
                     error={{
                       msg: shouldShowErrors ? form.errors.password : undefined,
                     }}
                   />
+                  {wrongCreds && (
+                    <div className="error">
+                      <Trans>Incorrect username or password</Trans>
+                    </div>
+                  )}
                   <button type="submit" style={{ display: 'none' }} />
                 </form>
                 <div className="bottom">
-                  <div className="error">
-                    {wrongCreds && (
-                      <Trans>Incorrect username or password</Trans>
-                    )}
-                  </div>
                   <div className="content">
                     <div className="left">
                       <PrimaryButton

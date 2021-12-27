@@ -7,12 +7,18 @@ const meta: ComponentMeta<typeof InputTextField> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['InputTextFieldStoryProps'],
+  excludeStories: ['InputTextFieldStoryProps', 'InputTextFieldErrorStoryProps'],
 }
 
 export const InputTextFieldStoryProps: InputTextFieldProps = {
   label: 'Just a text field',
   placeholder: 'Start typing to fill it',
+}
+
+export const InputTextFieldErrorStoryProps: InputTextFieldProps = {
+  label: 'Just a text field',
+  placeholder: 'Start typing to fill it',
+  error: { msg: 'Just an error message' },
 }
 
 const InputTextFieldStory: ComponentStory<typeof InputTextField> = (args) => (
@@ -21,5 +27,8 @@ const InputTextFieldStory: ComponentStory<typeof InputTextField> = (args) => (
 
 export const Default = InputTextFieldStory.bind({})
 Default.args = InputTextFieldStoryProps
+
+export const Error = InputTextFieldStory.bind({})
+Error.args = InputTextFieldErrorStoryProps
 
 export default meta
