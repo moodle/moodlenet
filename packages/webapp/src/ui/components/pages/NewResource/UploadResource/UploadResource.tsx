@@ -123,6 +123,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           getText={(text) => form.setFieldValue('title', text)}
           value={form.values.title}
           highlight={highlightMandatoryFields && !form.values.title}
+          error={{ msg: 'just another error' }}
         />
         <InputTextField
           autoUpdate={true}
@@ -302,6 +303,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     placeholder={t`Paste or type a link`}
                     getText={setLink}
                     buttonName={t`Add`}
+                    error={{ msg: 'justanothererror' }}
                   />
                 </div>
               ) : (
