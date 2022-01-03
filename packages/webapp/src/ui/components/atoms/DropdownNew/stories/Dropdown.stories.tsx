@@ -46,7 +46,7 @@ export const Text: ComponentStory<typeof Dropdown> = () => {
       multiple
     >
       {LevelDropdown.options.map(([value, label]) => (
-        <TextOption label={label} value={value} />
+        <TextOption label={label} value={value} key={value} />
       ))}
     </Dropdown>
   )
