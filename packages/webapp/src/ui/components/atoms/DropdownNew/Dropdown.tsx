@@ -62,7 +62,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
 
   return (
     <div
-      className={`dropdown ${searchByText ? 'search' : ''} ${
+      className={`dropdown-new ${searchByText ? 'search' : ''} ${
         disabled ? 'disabled' : ''
       } ${!edit ? 'not-editing' : ''} ${className ?? ''}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
