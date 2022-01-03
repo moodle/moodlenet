@@ -12,3 +12,11 @@ export type NewCollectionFormValues = {
   imageUrl: Url | null
   // resources: Pick<NewResourceFormValues, 'title' | 'type' | 'image' | 'description'>[]
 }
+
+export type NewCollectionFormValuesNew = {
+  title: string
+  description: string
+  published: Visibility
+  image: Url | File | null
+  imageUrl: Url | null
+}

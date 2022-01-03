@@ -17,6 +17,14 @@ export const SBFormikBag = <T>(
   initialValues: T,
   p_cfg?: Partial<SimplifiedFormik<T>>
 ): FormikBag<T> => {
+  const form = SBSimplifiedForm(initialValues, p_cfg)
+  const attrs = {} as any
+  return [form, attrs]
+}
+export const SBSimplifiedForm = <T>(
+  initialValues: T,
+  p_cfg?: Partial<SimplifiedFormik<T>>
+): SimplifiedFormik<T> => {
   const form: SimplifiedFormik<T> = {
     initialValues,
     values: initialValues,
@@ -37,6 +45,5 @@ export const SBFormikBag = <T>(
     ///
     ...p_cfg,
   }
-  const attrs = {} as any
-  return [form, attrs]
+  return form
 }
