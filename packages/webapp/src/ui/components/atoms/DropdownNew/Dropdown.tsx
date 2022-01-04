@@ -1,7 +1,15 @@
 // import { SvgIconTypeMap } from '@material-ui/core'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { FC, ReactNode, useReducer } from 'react'
+import {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useReducer,
+  useRef,
+} from 'react'
 import {
   Selector,
   SelectorProps,
@@ -9,24 +17,27 @@ import {
   useSelectorOption,
 } from '../../../lib/selector'
 import './styles.scss'
+import { setListPosition } from './utils'
 
 export type DropdownProps = SelectorProps & {
-  getOptionHeader(key: string): string
+  getOptionHeader(key: string): readonly [label: string, icon?: ReactNode]
   searchByText?: ((text: string) => unknown) | undefined
   className?: string
   label: string
   edit?: boolean
   highlight?: boolean
+  headerOnly?: 'icon' | 'label'
 }
 export const Dropdown: FC<DropdownProps> = (props) => {
   const {
+    children,
     getOptionHeader,
     edit,
     searchByText,
     className,
-    children,
     label,
     highlight,
+    headerOnly,
     ...selectorProps
   } = props
   return (
@@ -46,10 +57,14 @@ const DropdownComp: FC<DropdownProps> = (props) => {
     disabled,
     className,
     hidden,
+    headerOnly,
     children,
+    multiple,
   } = props
-  const selections = useSelections()
-  const [isOpen, toggleOpen] = useReducer((_) => !_, false)
+
+  const [showContentFlag, toggleOpen] = useReducer((_) => !_, false)
+
+  const showContent = edit ? showContentFlag : false
 
   const valueArr =
     props.value === undefined
@@ -58,10 +73,50 @@ const DropdownComp: FC<DropdownProps> = (props) => {
       ? props.value
       : [props.value]
 
-  const inputValue = valueArr?.map(getOptionHeader).join(' , ')
+  const inputValue = valueArr?.map((val) => getOptionHeader(val)[0]).join(' , ')
+
+  useEffect(() => {
+    const clickOutListener = ({ target }: MouseEvent) => {
+      if (
+        mainElemRef.current === target ||
+        mainElemRef.current?.contains(target as any)
+      ) {
+        return
+      }
+      showContentFlag && toggleOpen()
+    }
+    window.addEventListener('click', clickOutListener)
+    return () => window.removeEventListener('click', clickOutListener)
+  }, [showContentFlag])
+
+  const setLayout = useCallback(() => {
+    showContent &&
+      setListPosition({
+        displayMode: false,
+        dropdownButton,
+        dropdownContent,
+        label,
+        window,
+      })
+  }, [label, showContent])
+
+  useLayoutEffect(() => {
+    showContent && setLayout()
+    window.addEventListener('scroll', setLayout)
+    window.addEventListener('resize', setLayout)
+    return () => {
+      window.removeEventListener('scroll', setLayout)
+      window.removeEventListener('resize', setLayout)
+    }
+  }, [setLayout, showContent])
+
+  const mainElemRef = useRef<HTMLDivElement>(null)
+  const dropdownButton = useRef<HTMLInputElement>(null)
+  const dropdownContent = useRef<HTMLInputElement>(null)
 
   return (
     <div
+      ref={mainElemRef}
       className={`dropdown-new ${searchByText ? 'search' : ''} ${
         disabled ? 'disabled' : ''
       } ${!edit ? 'not-editing' : ''} ${className ?? ''}`}
@@ -70,14 +125,15 @@ const DropdownComp: FC<DropdownProps> = (props) => {
     >
       <label>{label}</label>
       <div
+        onClick={showContent ? undefined : toggleOpen}
         className={`input-container${!edit ? ' not-editing' : ''}${
           highlight ? ' highlight' : ''
         }`}
-        onClick={isOpen ? undefined : toggleOpen}
       >
-        {isOpen ? (
+        {showContent ? (
           <>
             <input
+              ref={dropdownButton}
               className={`dropdown-button search-field  ${
                 !edit ? 'not-editing' : ''
               }`}
@@ -85,28 +141,58 @@ const DropdownComp: FC<DropdownProps> = (props) => {
               onInput={({ currentTarget }) =>
                 searchByText?.(currentTarget.value)
               }
+              onBlur={toggleOpen}
               disabled={disabled || !edit}
               defaultValue={inputValue}
             />
-            <ExpandLessIcon />
+            <ExpandLessIcon onClickCapture={toggleOpen} />
           </>
         ) : (
           <>
-            {selections.map((value) => (
-              <div key={value} className="icons scroll">
-                {getOptionHeader(value)}
-              </div>
-            ))}
+            <DDHeader
+              headerOnly={headerOnly}
+              getOptionHeader={getOptionHeader}
+            />
             <ExpandMoreIcon />
           </>
         )}
       </div>
 
-      {isOpen && (
-        <div className="dropdown-content" tabIndex={-1} onClick={toggleOpen}>
+      {showContent && (
+        <div
+          ref={dropdownContent}
+          className="dropdown-content"
+          tabIndex={-1}
+          onClick={multiple ? undefined : toggleOpen}
+        >
           {children}
         </div>
       )}
+    </div>
+  )
+}
+
+const DDHeader: FC<Pick<DropdownProps, 'getOptionHeader' | 'headerOnly'>> = ({
+  getOptionHeader,
+  headerOnly,
+}) => {
+  const selections = useSelections()
+  return (
+    <div className="dropdown-button">
+      {selections.map((optValue) => {
+        const [label, icon] = getOptionHeader(optValue)
+        const icon_node =
+          typeof icon === 'string' ? <img src={icon} alt={label}></img> : icon
+
+        return (
+          <>
+            {(!headerOnly || headerOnly === 'icon') && icon_node}
+            <div key={optValue} className="icons scroll">
+              {(!headerOnly || headerOnly === 'label') && label}
+            </div>
+          </>
+        )
+      })}
     </div>
   )
 }
@@ -115,9 +201,13 @@ export const TextOption: FC<{ value: string; label: ReactNode }> = ({
   value,
   label,
 }) => {
-  const { toggle /* , selected  */ } = useSelectorOption(value)
+  const { toggle, selected } = useSelectorOption(value)
   return (
-    <div key={value} className="option only-text" onClick={toggle}>
+    <div
+      key={value}
+      className={`${selected ? 'selected ' : ''}option only-text`}
+      onClick={toggle}
+    >
       {label}
     </div>
   )
@@ -128,9 +218,13 @@ export const IconTextOption: FC<{
   label: ReactNode
   icon: ReactNode
 }> = ({ value, label, icon }) => {
-  const { toggle /* , selected  */ } = useSelectorOption(value)
+  const { toggle, selected } = useSelectorOption(value)
   return (
-    <div key={value} className="option icon-and-text" onClick={toggle}>
+    <div
+      key={value}
+      className={`${selected ? 'selected ' : ''}option icon-and-text`}
+      onClick={toggle}
+    >
       {icon}
       <span>{label}</span>
     </div>

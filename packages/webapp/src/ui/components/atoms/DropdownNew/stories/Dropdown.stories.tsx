@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useState } from 'react'
-import { Dropdown, TextOption } from '../Dropdown'
-import { LevelDropdown, LicenseDropdown } from './data'
+import { Dropdown, IconTextOption, TextOption } from '../Dropdown'
+import { LevelDropdown, LicenseDropdown } from './storiesData'
+import { useStoriesDDCtrl } from './storiesUtil'
 
 const meta: ComponentMeta<typeof Dropdown> = {
   title: 'Atoms/DropdownNew',
@@ -21,43 +21,74 @@ const meta: ComponentMeta<typeof Dropdown> = {
   ],
 }
 
-// export const DropdownTextStoryProps: DropdownProps = LevelDropdown
-
-//const by = <img src={uploadImageIcon} alt="Link"/>
-
-// export const DropdownTextAndIconsStoryProps: DropdownProps = LicenseDropdown
-
 export const Text: ComponentStory<typeof Dropdown> = () => {
-  const [value, setValue] = useState(['0.1', '0.2'])
+  const { filteredOpts, setFilter, value, getOptionHeader, onChange } =
+    useStoriesDDCtrl({
+      initialSelectionIndexes: [3],
+      options: LevelDropdown.options,
+    })
+
   return (
     <Dropdown
-      getOptionHeader={(value) =>
-        LevelDropdown.options.find(([val]) => val === value)![1]
-      }
-      onChange={({ currentTarget }) => {
-        setValue(
-          Array.from(currentTarget.selectedOptions).map(({ value }) => value)
-        )
-      }}
+      getOptionHeader={getOptionHeader}
+      onChange={onChange}
       label={LevelDropdown.label}
-      searchByText={() => null}
-      value={value}
+      searchByText={setFilter}
+      value={value[0]}
       edit
-      multiple
     >
-      {LevelDropdown.options.map(([value, label]) => (
+      {filteredOpts.map(([value, label]) => (
         <TextOption label={label} value={value} key={value} />
       ))}
     </Dropdown>
   )
 }
 
-const LicenseDropdownStory: ComponentStory<typeof Dropdown> = (args) => (
-  <Dropdown {...args}></Dropdown>
-)
-export const TextAndIcons = LicenseDropdownStory.bind({})
-TextAndIcons.args = {
-  getOptionHeader: (value) =>
-    LicenseDropdown.options.find(([val]) => val === value)![1],
+export const TextMulti: ComponentStory<typeof Dropdown> = () => {
+  const { filteredOpts, setFilter, value, getOptionHeader, onChange } =
+    useStoriesDDCtrl({
+      initialSelectionIndexes: [3],
+      options: LevelDropdown.options,
+    })
+
+  return (
+    <Dropdown
+      getOptionHeader={getOptionHeader}
+      onChange={onChange}
+      label={LevelDropdown.label}
+      searchByText={setFilter}
+      value={value}
+      multiple
+      edit
+    >
+      {filteredOpts.map(([value, label]) => (
+        <TextOption label={label} value={value} key={value} />
+      ))}
+    </Dropdown>
+  )
 }
+
+export const TextAndIcons: ComponentStory<typeof Dropdown> = () => {
+  const { filteredOpts, setFilter, value, getOptionHeader, onChange } =
+    useStoriesDDCtrl({
+      initialSelectionIndexes: [0],
+      options: LicenseDropdown.options,
+    })
+
+  return (
+    <Dropdown
+      getOptionHeader={getOptionHeader}
+      onChange={onChange}
+      label={LicenseDropdown.label}
+      searchByText={setFilter}
+      value={value[0]}
+      edit
+    >
+      {filteredOpts.map(([value, label, icon]) => (
+        <IconTextOption icon={icon} label={label} value={value} key={value} />
+      ))}
+    </Dropdown>
+  )
+}
+
 export default meta
