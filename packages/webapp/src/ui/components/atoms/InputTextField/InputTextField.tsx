@@ -13,7 +13,7 @@ export type InputTextFieldProps = {
   buttonName?: string
   edit?: boolean
   type?: 'text' | 'password' | 'email' | 'number' | 'url'
-  error?: { msg: string | null | undefined }
+  error?: string | undefined
   displayMode?: boolean
   value?: string | undefined | null
   getText?(text: string): void
@@ -53,7 +53,9 @@ export const InputTextField: FC<InputTextFieldProps> = ({
 }) => {
   const [text, setText] = useState<string | undefined | null>(value)
   const [errorLeaves, setErrorLeave] = useState<boolean>(false)
-  const [hasError, setHasError] = useState<boolean>(false)
+  const [currentError, setcurrentError] = useState<string | undefined>(
+    undefined
+  )
   const [rows, setRows] = useState<number>(textAreaAutoSize ? 1 : 5)
   const [isFocused, setIsFocused] = useState<boolean>(false)
   const textArea = useRef<HTMLTextAreaElement>(null)
@@ -101,21 +103,26 @@ export const InputTextField: FC<InputTextFieldProps> = ({
   }, [value])
 
   useEffect(() => {
-    !error?.msg
-      ? hasError
-        ? setErrorLeave(true)
-        : setErrorLeave(false)
-      : setErrorLeave(false)
-    !error?.msg ? setHasError(false) : setHasError(true)
-  }, [error?.msg, error, setErrorLeave, hasError, setHasError])
+    if (error) {
+      setErrorLeave(false)
+      setcurrentError(error)
+    } else {
+      if (currentError) {
+        setErrorLeave(true)
+        setTimeout(() => {
+          setcurrentError(undefined)
+        }, 500)
+      } else {
+        setcurrentError(undefined)
+      }
+    }
+  }, [error, setErrorLeave, currentError])
 
   return (
     <div
       className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${
-        (highlightWhenEmpty && !text) || highlight || error?.msg
-          ? ' highlight'
-          : ''
-      } ${!errorLeaves && error?.msg ? 'enter-error' : ''} ${
+        (highlightWhenEmpty && !text) || highlight || error ? ' highlight' : ''
+      } ${!errorLeaves && error ? 'enter-error' : ''} ${
         errorLeaves ? 'leave-error' : ''
       } ${isFocused ? 'focused' : ''}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
@@ -166,7 +173,9 @@ export const InputTextField: FC<InputTextFieldProps> = ({
           <PrimaryButton onClick={handleClick}>{buttonName}</PrimaryButton>
         )}
       </div>
-      {error && error.msg && <div className={`error-msg`}>{error.msg}</div>}
+      {currentError && !disabled && (
+        <div className={`error-msg`}>{currentError}</div>
+      )}
     </div>
   )
 }

@@ -68,9 +68,7 @@ export const Signup = withCtrl<SignupProps>(
                     autoUpdate={true}
                     placeholder={t`Display name`}
                     {...attrs.name}
-                    error={{
-                      msg: shouldShowErrors ? form.errors.name : undefined,
-                    }}
+                    error={form.errors.name}
                   />
                   <InputTextField
                     className="email"
@@ -78,9 +76,7 @@ export const Signup = withCtrl<SignupProps>(
                     type="email"
                     placeholder={t`Email`}
                     {...attrs.email}
-                    error={{
-                      msg: shouldShowErrors ? form.errors.email : undefined,
-                    }}
+                    error={form.errors.email}
                   />
                   <InputTextField
                     className="password"
@@ -88,9 +84,7 @@ export const Signup = withCtrl<SignupProps>(
                     type="password"
                     placeholder={t`Password`}
                     {...attrs.password}
-                    error={{
-                      msg: shouldShowErrors ? form.errors.password : undefined,
-                    }}
+                    error={form.errors.password}
                   />
                   <button
                     id="signup-button"

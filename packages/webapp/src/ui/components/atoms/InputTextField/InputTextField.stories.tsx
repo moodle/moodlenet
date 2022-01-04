@@ -18,7 +18,7 @@ export const InputTextFieldStoryProps: InputTextFieldProps = {
 export const InputTextFieldErrorStoryProps: InputTextFieldProps = {
   label: 'Just a text field',
   placeholder: 'Start typing to fill it',
-  error: { msg: 'Just an error message' },
+  error: 'Just a cute error',
 }
 
 const InputTextFieldStory: ComponentStory<typeof InputTextField> = (args) => (

@@ -62,6 +62,8 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           getText={(text) => form.setFieldValue('title', text)}
           value={form.values.title}
           highlight={highlightMandatoryFields && !form.values.title}
+          //error={form.errors.title}
+          error="dsadasdsadsad"
         />
         <InputTextField
           autoUpdate={true}
@@ -71,6 +73,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           value={form.values.description}
           getText={(text) => form.setFieldValue('description', text)}
           highlight={highlightMandatoryFields && !form.values.description}
+          error={form.errors.description}
         />
         <Dropdown
           {...visibility}
@@ -89,7 +92,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
     }
 
     return (
-      <div className="upload-resource">
+      <div className="create-collection">
         <div className="title">
           <Trans>Create Collection</Trans>
         </div>

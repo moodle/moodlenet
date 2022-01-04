@@ -111,11 +111,11 @@
   }
 }
 
-.enter-error {
+.enter-error:not(.disabled) {
   > .input-container,
-  > .input-container {
-    box-shadow: 0 0 0 2px red;
+  > .textarea-container {
     animation: shadow-fade-in 0.5s ease-out;
+    box-shadow: 0 0 0 2px red;
 
     @keyframes shadow-fade-in {
       from {
@@ -148,7 +148,7 @@
   }
 }
 
-.leave-error {
+.leave-error:not(.disabled) {
   > .input-container,
   > .textarea-container {
     box-shadow: 0 0 6px #dedede;
