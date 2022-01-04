@@ -67,7 +67,7 @@ export const Login = withCtrl<LoginProps>(
                     type="email"
                     placeholder={t`Email`}
                     {...attrs.email}
-                    error={shouldShowErrors ? form.errors.email : undefined}
+                    error={shouldShowErrors && form.errors.email}
                   />
                   <InputTextField
                     className="password"
@@ -75,7 +75,7 @@ export const Login = withCtrl<LoginProps>(
                     type="password"
                     placeholder={t`Password`}
                     {...attrs.password}
-                    error={shouldShowErrors ? form.errors.password : undefined}
+                    error={shouldShowErrors && form.errors.password}
                   />
                   {wrongCreds && (
                     <div className="error">

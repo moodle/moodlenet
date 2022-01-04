@@ -51,9 +51,7 @@ export const NewPassword = withCtrl<NewPasswordProps>(
                     type="password"
                     placeholder={t`New password`}
                     {...attrs.newPassword}
-                    error={
-                      shouldShowErrors ? form.errors.newPassword : undefined
-                    }
+                    error={shouldShowErrors && form.errors.newPassword}
                   />
                 </form>
                 <div className="bottom">

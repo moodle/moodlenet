@@ -22,8 +22,7 @@ export type CreateCollectionProps = {
 
 export const CreateCollection = withCtrl<CreateCollectionProps>(
   ({ formBag, imageUrl, visibility, finish }) => {
-    const [highlightMandatoryFields, setHighlightMandatoryFields] =
-      useState<boolean>(false)
+    const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [form] = formBag
     const setFieldValue = form.setFieldValue
     const background = {
@@ -32,7 +31,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
     }
 
     const createCollection = () =>
-      finish ? finish() : setHighlightMandatoryFields(true)
+      finish ? finish() : setShouldShowErrors(true)
 
     const uploadImage = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,8 +60,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           placeholder=""
           getText={(text) => form.setFieldValue('title', text)}
           value={form.values.title}
-          highlight={highlightMandatoryFields && !form.values.title}
-          error={form.errors.title}
+          error={shouldShowErrors && form.errors.title}
         />
         <InputTextField
           autoUpdate={true}
@@ -71,8 +69,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           placeholder=""
           value={form.values.description}
           getText={(text) => form.setFieldValue('description', text)}
-          highlight={highlightMandatoryFields && !form.values.description}
-          error={form.errors.description}
+          error={shouldShowErrors && form.errors.description}
         />
         <Dropdown
           {...visibility}
@@ -80,7 +77,6 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           label="Visibility"
           value={form.values.visibility}
           className="visibility-dropdown"
-          highlight={highlightMandatoryFields && !form.values.visibility}
         />
       </div>
     )

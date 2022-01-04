@@ -51,8 +51,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
     deleteContent,
   }) => {
     const [form, formAttrs] = formBag
-    const [highlightMandatoryFields, setHighlightMandatoryFields] =
-      useState<boolean>(false)
+    const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isToDrop, setIsToDrop] = useState<boolean>(false)
     const setFieldValue = form.setFieldValue
@@ -122,8 +121,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           disabled={state === 'ChooseResource'}
           getText={(text) => form.setFieldValue('title', text)}
           value={form.values.title}
-          highlight={highlightMandatoryFields && !form.values.title}
-          error={form.errors.title}
+          error={shouldShowErrors && form.errors.title}
         />
         <InputTextField
           autoUpdate={true}
@@ -132,9 +130,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           placeholder=""
           disabled={state === 'ChooseResource'}
           value={form.values.description}
-          getText={(text) => form.setFieldValue('description', text)}
-          highlight={highlightMandatoryFields && !form.values.description}
-          error={form.errors.description}
+          error={shouldShowErrors && form.errors.description}
         />
         <div className="subject-and-visibility">
           <DropdownNew
@@ -143,7 +139,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             disabled={state === 'ChooseResource'}
             label="Subject"
             edit
-            highlight={highlightMandatoryFields && !form.values.category}
+            highlight={shouldShowErrors && !!form.errors.category}
             pills={categories.selected.map(([value, label]) => (
               <SimplePill key={value} value={value} label={label} />
             ))}
@@ -159,7 +155,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             value={form.values.visibility}
             disabled={state === 'ChooseResource'}
             className="visibility-dropdown"
-            highlight={highlightMandatoryFields && !form.values.visibility}
+            highlight={shouldShowErrors && !form.values.visibility}
           />
         </div>
       </div>
@@ -217,8 +213,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       e.preventDefault()
     }
 
-    const next = () =>
-      nextStep ? nextStep() : setHighlightMandatoryFields(true)
+    const next = () => (nextStep ? nextStep() : setShouldShowErrors(true))
 
     return (
       <div className="upload-resource">
@@ -228,7 +223,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             actions={[
               <PrimaryButton
                 onClick={() => {
-                  setHighlightMandatoryFields(false)
+                  setShouldShowErrors(false)
                   deleteContent()
                   setIsToDelete(false)
                 }}
@@ -332,9 +327,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                       {...licenses}
                       getValue={setLicenseVal}
                       value={form.values.license}
-                      highlight={
-                        highlightMandatoryFields && !form.values.license
-                      }
+                      highlight={shouldShowErrors && !form.values.license}
                     />
                   )}
                 </div>

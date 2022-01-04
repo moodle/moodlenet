@@ -79,7 +79,7 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
                     type="email"
                     placeholder={t`Email`}
                     {...attrs.email}
-                    error={shouldShowErrors ? form.errors.email : undefined}
+                    error={shouldShowErrors && form.errors.email}
                   />
                   <button type="submit" style={{ display: 'none' }} />
                 </form>
