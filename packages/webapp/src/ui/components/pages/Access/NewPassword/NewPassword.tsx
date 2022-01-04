@@ -2,6 +2,7 @@ import { t, Trans } from '@lingui/macro'
 import { CP, withCtrl } from '../../../../lib/ctrl'
 import { FormikBag } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
+import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import {
   MainPageWrapper,
@@ -44,20 +45,16 @@ export const NewPassword = withCtrl<NewPasswordProps>(
                   <Trans>Update password</Trans>
                 </div>
                 <form onSubmit={form.handleSubmit}>
-                  <input
-                    className={`password ${
-                      shouldShowErrors && form.errors.newPassword
-                        ? 'highlight'
-                        : ''
-                    }`}
+                  <InputTextField
+                    className="password"
+                    autoUpdate={true}
                     type="password"
                     placeholder={t`New password`}
                     {...attrs.newPassword}
-                    onChange={form.handleChange}
+                    error={
+                      shouldShowErrors ? form.errors.newPassword : undefined
+                    }
                   />
-                  {shouldShowErrors && form.errors.newPassword && (
-                    <div className="error">{form.errors.newPassword}</div>
-                  )}
                 </form>
                 <div className="bottom">
                   <div className="left">
