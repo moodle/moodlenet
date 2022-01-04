@@ -20,6 +20,7 @@ export const LevelDropdown = {
 
 export const LicenseDropdown = {
   placeholder: `License`,
+  label: `License`,
   options: [
     ['CC-0', 'Public domains', <div>{zero}</div>],
     [
