@@ -1,4 +1,11 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import React, {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import PrimaryButton from '../PrimaryButton/PrimaryButton'
 import './styles.scss'
 
@@ -13,7 +20,7 @@ export type InputTextFieldProps = {
   buttonName?: string
   edit?: boolean
   type?: 'text' | 'password' | 'email' | 'number' | 'url'
-  error?: string | undefined
+  error?: ReactNode
   displayMode?: boolean
   value?: string | undefined | null
   getText?(text: string): void
@@ -53,9 +60,7 @@ export const InputTextField: FC<InputTextFieldProps> = ({
 }) => {
   const [text, setText] = useState<string | undefined | null>(value)
   const [errorLeaves, setErrorLeave] = useState<boolean>(false)
-  const [currentError, setcurrentError] = useState<string | undefined>(
-    undefined
-  )
+  const [currentError, setcurrentError] = useState<ReactNode>(undefined)
   const [rows, setRows] = useState<number>(textAreaAutoSize ? 1 : 5)
   const [isFocused, setIsFocused] = useState<boolean>(false)
   const textArea = useRef<HTMLTextAreaElement>(null)
@@ -130,9 +135,9 @@ export const InputTextField: FC<InputTextFieldProps> = ({
     >
       {label ? <label>{label}</label> : <></>}
       <div
-        className={`${textarea ? 'textarea-container' : 'input-container'}  ${
-          displayMode && 'display-mode'
-        } ${!edit && 'not-editing'}`}
+        className={`input-text-field-container ${
+          textarea ? 'textarea-container' : 'input-container'
+        }  ${displayMode && 'display-mode'} ${!edit && 'not-editing'}`}
       >
         {textarea ? (
           <textarea

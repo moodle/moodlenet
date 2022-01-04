@@ -105,6 +105,7 @@ export const Resource = withCtrl<ResourceProps>(
     lmsSite,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
+    const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isAddingToCollection, setIsAddingToCollection] =
       useState<boolean>(false)
     const [isAddingToMoodleLms, setIsAddingToMoodleLms] =
@@ -120,7 +121,10 @@ export const Resource = withCtrl<ResourceProps>(
     }
     const handleOnSaveClick = () => {
       updateResource()
-      setIsEditing(false)
+      if (form.isValid) {
+      } else {
+        setShouldShowErrors(true)
+      }
     }
 
     const [form, formAttrs] = formBag
@@ -596,6 +600,8 @@ export const Resource = withCtrl<ResourceProps>(
                       edit={isEditing}
                       {...formAttrs.title}
                       getText={setTitleField}
+                      //error={isEditing && shouldShowErrors && form.errors.title}
+                      error={isEditing && shouldShowErrors && 'dsadsadsad'}
                     />
                   ) : (
                     <div className="title">{form.values.title}</div>
@@ -641,6 +647,8 @@ export const Resource = withCtrl<ResourceProps>(
                     displayMode={true}
                     edit={isEditing}
                     {...formAttrs.description}
+                    //error={isEditing && form.errors.description}
+                    error={isEditing && shouldShowErrors && 'dsadsadsad'}
                     getText={setDescriptionField}
                   />
                 ) : (
