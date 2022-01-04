@@ -62,8 +62,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           getText={(text) => form.setFieldValue('title', text)}
           value={form.values.title}
           highlight={highlightMandatoryFields && !form.values.title}
-          //error={form.errors.title}
-          error="dsadasdsadsad"
+          error={form.errors.title}
         />
         <InputTextField
           autoUpdate={true}
