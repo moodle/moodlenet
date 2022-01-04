@@ -123,6 +123,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           getText={(text) => form.setFieldValue('title', text)}
           value={form.values.title}
           highlight={highlightMandatoryFields && !form.values.title}
+          error={form.errors.title}
         />
         <InputTextField
           autoUpdate={true}
@@ -133,6 +134,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           value={form.values.description}
           getText={(text) => form.setFieldValue('description', text)}
           highlight={highlightMandatoryFields && !form.values.description}
+          error={form.errors.description}
         />
         <div className="subject-and-visibility">
           <DropdownNew
@@ -297,11 +299,12 @@ export const UploadResource = withCtrl<UploadResourceProps>(
               {state === 'ChooseResource' ? (
                 <div className="bottom-container">
                   <InputTextField
-                    className="link subcontainer"
+                    className="link"
                     value={form.values.name}
                     placeholder={t`Paste or type a link`}
                     getText={setLink}
                     buttonName={t`Add`}
+                    error={form.errors.content}
                   />
                 </div>
               ) : (
