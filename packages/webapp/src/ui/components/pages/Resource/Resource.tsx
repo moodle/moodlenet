@@ -122,6 +122,8 @@ export const Resource = withCtrl<ResourceProps>(
     const handleOnSaveClick = () => {
       updateResource()
       if (form.isValid) {
+        setShouldShowErrors(false)
+        setIsEditing(false)
       } else {
         setShouldShowErrors(true)
       }
@@ -600,8 +602,12 @@ export const Resource = withCtrl<ResourceProps>(
                       edit={isEditing}
                       {...formAttrs.title}
                       getText={setTitleField}
-                      //error={isEditing && shouldShowErrors && form.errors.title}
-                      error={isEditing && shouldShowErrors && 'dsadsadsad'}
+                      error={isEditing && shouldShowErrors && form.errors.title}
+                      // error={
+                      //   isEditing &&
+                      //   shouldShowErrors &&
+                      //   'Error with the title field'
+                      // }
                     />
                   ) : (
                     <div className="title">{form.values.title}</div>
@@ -647,8 +653,12 @@ export const Resource = withCtrl<ResourceProps>(
                     displayMode={true}
                     edit={isEditing}
                     {...formAttrs.description}
-                    //error={isEditing && form.errors.description}
-                    error={isEditing && shouldShowErrors && 'dsadsadsad'}
+                    error={isEditing && form.errors.description}
+                    // error={
+                    //   isEditing &&
+                    //   shouldShowErrors &&
+                    //   'Error with the description field'
+                    // }
                     getText={setDescriptionField}
                   />
                 ) : (

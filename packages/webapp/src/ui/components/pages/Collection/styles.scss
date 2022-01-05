@@ -61,6 +61,26 @@
         flex-direction: column;
         gap: 10px;
 
+        > .input-text-field > .input-text-field-container {
+          box-shadow: none;
+          animation: none;
+        }
+
+        > .enter-error {
+          > .error-msg {
+            font-weight: initial;
+          }
+          > .input-container,
+          > .textarea-container {
+            box-shadow: none;
+            border-width: 2px;
+            border-bottom-width: 2px;
+            border-radius: 0;
+            border-bottom-color: red;
+            border-bottom-style: solid;
+          }
+        }
+
         > .label {
           font-size: 19px;
           font-weight: bold;

@@ -68,10 +68,8 @@ export const Profile = withCtrl<ProfileProps>(
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
 
     const toggleIsEditing = () => {
+      isEditing && save()
       setIsEditing(!isEditing)
-      if (isEditing) {
-        save()
-      }
     }
 
     const collectionList = (

@@ -64,6 +64,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
       string | null
     >(null)
     const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
+    const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isShowingBackground, setIsShowingBackground] =
       useState<boolean>(false)
     const setFieldValue = form.setFieldValue
@@ -83,6 +84,15 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
       (_: string) => setFieldValue('siteUrl', _),
       [setFieldValue]
     )
+
+    const handleOnSaveClick = () => {
+      if (form.isValid) {
+        setShouldShowErrors(false)
+        toggleIsEditing()
+      } else {
+        setShouldShowErrors(true)
+      }
+    }
 
     const setDisplayNameFieldCtrl = (displayName: string) => {
       if (isEmailAddress(form.values.displayName)) {
@@ -208,7 +218,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 <PrimaryButton
                   color="green"
                   onHoverColor="orange"
-                  onClick={toggleIsEditing}
+                  onClick={handleOnSaveClick}
                 >
                   <SaveIcon />
                 </PrimaryButton>
@@ -234,6 +244,14 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                   edit={isEditing}
                   {...formAttrs.displayName}
                   getText={setDisplayNameFieldCtrl}
+                  // error={
+                  //   isEditing &&
+                  //   shouldShowErrors &&
+                  //   'Error with the display name field'
+                  // }
+                  error={
+                    isEditing && shouldShowErrors && form.errors.displayName
+                  }
                 />
               ) : (
                 <div className="title">{form.values.displayName}</div>
@@ -261,6 +279,14 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                     placeholder="Username"
                     edit={false}
                     {...formAttrs.username}
+                    // error={
+                    //   isEditing &&
+                    //   shouldShowErrors &&
+                    //   'Error with the username field'
+                    // }
+                    error={
+                      isEditing && shouldShowErrors && form.errors.username
+                    }
                   />
                 </span>
                 <span>
@@ -271,6 +297,16 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                     placeholder="Organization"
                     edit={false}
                     {...formAttrs.organizationName}
+                    // error={
+                    //   isEditing &&
+                    //   shouldShowErrors &&
+                    //   'Error with the title field'
+                    // }
+                    error={
+                      isEditing &&
+                      shouldShowErrors &&
+                      form.errors.organizationName
+                    }
                   />
                 </span>
                 <span>
@@ -282,6 +318,14 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                     edit={isEditing}
                     {...formAttrs.location}
                     getText={setLocationField}
+                    // error={
+                    //   isEditing &&
+                    //   shouldShowErrors &&
+                    //   'Error with the location field'
+                    // }
+                    error={
+                      isEditing && shouldShowErrors && form.errors.location
+                    }
                   />
                 </span>
                 <span>
@@ -293,6 +337,12 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                     edit={isEditing}
                     {...formAttrs.siteUrl}
                     getText={setSiteUrlField}
+                    // error={
+                    //   isEditing &&
+                    //   shouldShowErrors &&
+                    //   'Error with the siteUrl field'
+                    // }
+                    error={isEditing && shouldShowErrors && form.errors.siteUrl}
                   />
                 </span>
               </div>
@@ -333,6 +383,12 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               edit={isEditing}
               {...formAttrs.description}
               getText={setDescriptionField}
+              // error={
+              //   isEditing &&
+              //   shouldShowErrors &&
+              //   'Error with the description field'
+              // }
+              error={isEditing && shouldShowErrors && form.errors.description}
             />
           ) : (
             <div className="description">{form.values.description}</div>
