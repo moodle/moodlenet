@@ -74,6 +74,32 @@
     flex-direction: column;
     gap: 20px;
 
+    > .input-text-field,
+    > .profile-card-header > .title > .input-text-field,
+    > .profile-card-header > .subtitle > span > .input-text-field {
+      > .input-text-field-container {
+        box-shadow: none;
+        animation: none;
+      }
+    }
+
+    > .enter-error,
+    > .profile-card-header > .title > .enter-error,
+    > .profile-card-header > .subtitle > span > .enter-error {
+      > .error-msg {
+        font-weight: initial;
+      }
+      > .input-container,
+      > .textarea-container {
+        box-shadow: none;
+        border-width: 2px;
+        border-bottom-width: 2px;
+        border-radius: 0;
+        border-bottom-color: red;
+        border-bottom-style: solid;
+      }
+    }
+
     > .profile-card-header {
       > .title > .display-name {
         width: 100%;

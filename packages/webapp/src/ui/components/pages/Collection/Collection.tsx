@@ -82,6 +82,7 @@ export const Collection = withCtrl<CollectionProps>(
 
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
+    const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isShowingBackground, setIsShowingBackground] =
       useState<boolean>(false)
 
@@ -99,6 +100,19 @@ export const Collection = withCtrl<CollectionProps>(
       (_: string) => setFieldValue('visibility', _),
       [setFieldValue]
     )
+
+    const handleOnEditClick = () => {
+      setIsEditing(true)
+    }
+    const handleOnSaveClick = () => {
+      updateCollection()
+      if (form.isValid) {
+        setShouldShowErrors(false)
+        setIsEditing(false)
+      } else {
+        setShouldShowErrors(true)
+      }
+    }
 
     const background = {
       backgroundImage: form.values.imageUrl
@@ -219,17 +233,14 @@ export const Collection = withCtrl<CollectionProps>(
                       <PrimaryButton
                         color="green"
                         onHoverColor="orange"
-                        onClick={() => {
-                          updateCollection()
-                          setIsEditing(false)
-                        }}
+                        onClick={handleOnSaveClick}
                       >
                         <SaveIcon />
                       </PrimaryButton>
                     )}
                     {(isAdmin || isOwner) && !isEditing && (
                       <SecondaryButton
-                        onClick={() => setIsEditing(true)}
+                        onClick={handleOnEditClick}
                         color="orange"
                       >
                         <EditIcon />
@@ -246,6 +257,12 @@ export const Collection = withCtrl<CollectionProps>(
                     edit={isEditing}
                     {...formAttrs.title}
                     getText={setTitleField}
+                    // error={
+                    //   isEditing &&
+                    //   shouldShowErrors &&
+                    //   'Error with the title field'
+                    // }
+                    error={isEditing && shouldShowErrors && form.errors.title}
                   />
                 ) : (
                   <div className="title">{form.values.title}</div>
@@ -260,6 +277,14 @@ export const Collection = withCtrl<CollectionProps>(
                     edit={isEditing}
                     {...formAttrs.description}
                     getText={setDescriptionField}
+                    error={
+                      isEditing && shouldShowErrors && form.errors.description
+                    }
+                    // error={
+                    //   isEditing &&
+                    //   shouldShowErrors &&
+                    //   'Error with the description field'
+                    // }
                   />
                 ) : (
                   <div className="description">{form.values.description}</div>
