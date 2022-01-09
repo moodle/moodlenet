@@ -134,8 +134,8 @@ export const Landing = withCtrl<LandingProps>(
             content={(isLoadingMore
               ? resourceCardPropsList
               : resourceCardPropsList
-            ).map((resourcesCardProps) => (
-              <ResourceCard {...resourcesCardProps} />
+            ).map((resourceCardProps) => (
+              <ResourceCard {...resourceCardProps} />
             ))}
             title={
               <div className="card-header">
