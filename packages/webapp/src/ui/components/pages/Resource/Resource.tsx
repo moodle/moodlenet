@@ -67,7 +67,8 @@ export type ResourceProps = {
   toggleLike: () => unknown
   toggleBookmark: () => unknown
   deleteResource?: () => unknown
-  sendToMoodleLms: (site?: string) => unknown
+  sendToMoodleLms: (site?: string) => boolean
+  sendToMoodleLmsError?: string | undefined
   lmsSite?: string
 }
 
@@ -94,6 +95,7 @@ export const Resource = withCtrl<ResourceProps>(
     categories,
     collections,
     selectedCollections,
+    sendToMoodleLmsError,
     setAddToCollections,
     updateResource,
     toggleLike,
@@ -106,6 +108,8 @@ export const Resource = withCtrl<ResourceProps>(
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
+    const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
+      useState<boolean>(false)
     const [isAddingToCollection, setIsAddingToCollection] =
       useState<boolean>(false)
     const [isAddingToMoodleLms, setIsAddingToMoodleLms] =
@@ -126,6 +130,15 @@ export const Resource = withCtrl<ResourceProps>(
         setIsEditing(false)
       } else {
         setShouldShowErrors(true)
+      }
+    }
+
+    const handleOnSendToMoodleClick = () => {
+      if (sendToMoodleLms(moodleLmsSite)) {
+        setIsAddingToMoodleLms(false)
+        setShouldShowSendToMoodleLmsError(false)
+      } else {
+        setShouldShowSendToMoodleLmsError(true)
       }
     }
 
@@ -457,14 +470,16 @@ export const Resource = withCtrl<ResourceProps>(
             actions={[
               <PrimaryButton
                 onClick={() => {
-                  sendToMoodleLms(moodleLmsSite)
-                  setIsAddingToMoodleLms(false)
+                  handleOnSendToMoodleClick()
                 }}
               >
                 <Trans>Send</Trans>
               </PrimaryButton>,
             ]}
-            onClose={() => setIsAddingToMoodleLms(false)}
+            onClose={() => {
+              setIsAddingToMoodleLms(false)
+              setShouldShowSendToMoodleLmsError(false)
+            }}
             style={{ maxWidth: '350px', width: '100%' }}
           >
             {console.log(formAttrs.collections)}
@@ -473,6 +488,7 @@ export const Resource = withCtrl<ResourceProps>(
               value={moodleLmsSite}
               getText={setMoodleLmsSite}
               autoUpdate
+              error={shouldShowSendToMoodleLmsError && sendToMoodleLmsError}
             />
           </Modal>
         )}
