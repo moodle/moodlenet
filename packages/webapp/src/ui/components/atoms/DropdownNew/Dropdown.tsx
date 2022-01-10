@@ -9,6 +9,7 @@ import {
   useLayoutEffect,
   useReducer,
   useRef,
+  useState,
 } from 'react'
 import {
   Selector,
@@ -63,6 +64,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
   } = props
 
   const [showContentFlag, toggleOpen] = useReducer((_) => !_, false)
+  const [isHoveringOptions, setHoveringOptions] = useState(false)
 
   const showContent = edit ? showContentFlag : false
 
@@ -141,7 +143,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
               onInput={({ currentTarget }) =>
                 searchByText?.(currentTarget.value)
               }
-              onBlur={toggleOpen}
+              onBlur={showContent && isHoveringOptions ? undefined : toggleOpen}
               disabled={disabled || !edit}
               defaultValue={inputValue}
             />
@@ -161,6 +163,8 @@ const DropdownComp: FC<DropdownProps> = (props) => {
       {showContent && (
         <div
           ref={dropdownContent}
+          onMouseEnter={() => setHoveringOptions(true)}
+          onMouseLeave={() => setHoveringOptions(false)}
           className="dropdown-content"
           tabIndex={-1}
           onClick={multiple ? undefined : toggleOpen}
