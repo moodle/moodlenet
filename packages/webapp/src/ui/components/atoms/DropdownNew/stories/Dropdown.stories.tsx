@@ -22,18 +22,25 @@ const meta: ComponentMeta<typeof Dropdown> = {
 }
 
 export const Text: ComponentStory<typeof Dropdown> = () => {
-  const { filteredOpts, setFilter, value, getOptionHeader, onChange } =
-    useStoriesDDCtrl({
-      initialSelectionIndexes: [3],
-      options: LevelDropdown.options,
-    })
+  const {
+    filteredOpts,
+    setFilter,
+    value,
+    headerLabels,
+    onChange,
+    filterString,
+  } = useStoriesDDCtrl({
+    initialSelectionIndexes: [3],
+    options: LevelDropdown.options,
+  })
 
   return (
     <Dropdown
-      getOptionHeader={getOptionHeader}
+      headerLabels={headerLabels}
       onChange={onChange}
       label={LevelDropdown.label}
       searchByText={setFilter}
+      searchText={filterString}
       value={value[0]}
       edit
     >
@@ -45,18 +52,25 @@ export const Text: ComponentStory<typeof Dropdown> = () => {
 }
 
 export const TextMulti: ComponentStory<typeof Dropdown> = () => {
-  const { filteredOpts, setFilter, value, getOptionHeader, onChange } =
-    useStoriesDDCtrl({
-      initialSelectionIndexes: [3],
-      options: LevelDropdown.options,
-    })
+  const {
+    filteredOpts,
+    setFilter,
+    value,
+    headerLabels,
+    onChange,
+    filterString,
+  } = useStoriesDDCtrl({
+    initialSelectionIndexes: [3],
+    options: LevelDropdown.options,
+  })
 
   return (
     <Dropdown
-      getOptionHeader={getOptionHeader}
+      headerLabels={headerLabels}
       onChange={onChange}
       label={LevelDropdown.label}
       searchByText={setFilter}
+      searchText={filterString}
       value={value}
       multiple
       edit
@@ -69,18 +83,25 @@ export const TextMulti: ComponentStory<typeof Dropdown> = () => {
 }
 
 export const TextAndIcons: ComponentStory<typeof Dropdown> = () => {
-  const { filteredOpts, setFilter, value, getOptionHeader, onChange } =
-    useStoriesDDCtrl({
-      initialSelectionIndexes: [0],
-      options: LicenseDropdown.options,
-    })
+  const {
+    filteredOpts,
+    setFilter,
+    value,
+    headerLabels,
+    onChange,
+    filterString,
+  } = useStoriesDDCtrl({
+    initialSelectionIndexes: [0],
+    options: LicenseDropdown.options,
+  })
 
   return (
     <Dropdown
-      getOptionHeader={getOptionHeader}
+      headerLabels={headerLabels}
       onChange={onChange}
       label={LicenseDropdown.label}
       searchByText={setFilter}
+      searchText={filterString}
       value={value[0]}
       edit
     >

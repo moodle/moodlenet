@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions'
-import { ChangeEvent, ReactNode, useMemo, useState } from 'react'
+import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from 'react'
 
 export const useStoriesDDCtrl = ({
   options,
@@ -13,39 +13,45 @@ export const useStoriesDDCtrl = ({
   )
   const [filterString, setFilterString] = useState<string>('')
 
-  return useMemo(() => {
-    const filteredOpts = options.filter(
-      ([value, label]) =>
-        new RegExp(filterString, 'ig').test(label) ||
-        new RegExp(filterString, 'ig').test(value)
-    )
+  const headerLabels = useMemo(
+    () => options.filter(([val]) => value.includes(val)),
+    [options, value]
+  )
+  const filteredOpts = useMemo(
+    () =>
+      options.filter(
+        ([value, label]) =>
+          new RegExp(filterString, 'ig').test(label) ||
+          new RegExp(filterString, 'ig').test(value)
+      ),
+    [filterString, options]
+  )
 
-    const onChange = ({ currentTarget }: ChangeEvent<HTMLSelectElement>) => {
+  const onChange = useCallback(
+    ({ currentTarget }: ChangeEvent<HTMLSelectElement>) => {
       const newVal = Array.from(currentTarget.selectedOptions).map(
         ({ value }) => value
       )
       action('useStoriesDDCtrl onChange')(newVal)
       setValue(newVal)
-    }
+    },
+    []
+  )
 
-    const getOptionHeader = (value: string) =>
-      options
-        .filter(([val]) => val === value)
-        .map(([, value, icon]) => [value, icon] as const)[0]!
+  const setFilter = useCallback((filter: string) => {
+    action('useStoriesDDCtrl setFilter')(filter)
+    setFilterString(filter)
+  }, [])
 
-    const setFilter = (filter: string) => {
-      action('useStoriesDDCtrl setFilter')(filter)
-      setFilterString(filter)
-    }
-
+  return useMemo(() => {
     return {
       onChange,
-      getOptionHeader,
+      headerLabels,
       value,
       setValue,
-      filter: filterString,
+      filterString,
       setFilter,
       filteredOpts,
     }
-  }, [filterString, options, value])
+  }, [filterString, filteredOpts, headerLabels, onChange, setFilter, value])
 }
