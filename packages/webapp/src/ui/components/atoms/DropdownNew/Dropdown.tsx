@@ -14,15 +14,15 @@ import {
 import {
   Selector,
   SelectorProps,
-  useSelections,
   useSelectorOption,
 } from '../../../lib/selector'
 import './styles.scss'
 import { setListPosition } from './utils'
 
 export type DropdownProps = SelectorProps & {
-  getOptionHeader(key: string): readonly [label: string, icon?: ReactNode]
+  headerLabels: readonly [key: string, label: string, icon?: ReactNode][]
   searchByText?: ((text: string) => unknown) | undefined
+  searchText?: string
   className?: string
   label: string
   edit?: boolean
@@ -32,13 +32,14 @@ export type DropdownProps = SelectorProps & {
 export const Dropdown: FC<DropdownProps> = (props) => {
   const {
     children,
-    getOptionHeader,
+    headerLabels,
     edit,
     searchByText,
     className,
     label,
     highlight,
     headerOnly,
+    searchText,
     ...selectorProps
   } = props
   return (
@@ -50,7 +51,7 @@ export const Dropdown: FC<DropdownProps> = (props) => {
 
 const DropdownComp: FC<DropdownProps> = (props) => {
   const {
-    getOptionHeader,
+    headerLabels,
     highlight,
     edit,
     label,
@@ -61,6 +62,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
     headerOnly,
     children,
     multiple,
+    searchText,
   } = props
 
   const [showContentFlag, toggleOpen] = useReducer((_) => !_, false)
@@ -68,14 +70,14 @@ const DropdownComp: FC<DropdownProps> = (props) => {
 
   const showContent = edit ? showContentFlag : false
 
-  const valueArr =
-    props.value === undefined
-      ? undefined
-      : props.multiple
-      ? props.value
-      : [props.value]
+  // const valueArr =
+  //   props.value === undefined
+  //     ? undefined
+  //     : props.multiple
+  //     ? props.value
+  //     : [props.value]
 
-  const inputValue = valueArr?.map((val) => getOptionHeader(val)[0]).join(' , ')
+  //const inputValue = valueArr?.map((val) => getOptionHeader(val)[0]).join(' , ')
 
   useEffect(() => {
     const clickOutListener = ({ target }: MouseEvent) => {
@@ -145,16 +147,13 @@ const DropdownComp: FC<DropdownProps> = (props) => {
               }
               onBlur={showContent && isHoveringOptions ? undefined : toggleOpen}
               disabled={disabled || !edit}
-              defaultValue={inputValue}
+              defaultValue={searchText}
             />
             <ExpandLessIcon onClickCapture={toggleOpen} />
           </>
         ) : (
           <>
-            <DDHeader
-              headerOnly={headerOnly}
-              getOptionHeader={getOptionHeader}
-            />
+            <DDHeader headerOnly={headerOnly} headerLabels={headerLabels} />
             <ExpandMoreIcon />
           </>
         )}
@@ -176,22 +175,20 @@ const DropdownComp: FC<DropdownProps> = (props) => {
   )
 }
 
-const DDHeader: FC<Pick<DropdownProps, 'getOptionHeader' | 'headerOnly'>> = ({
-  getOptionHeader,
+const DDHeader: FC<Pick<DropdownProps, 'headerLabels' | 'headerOnly'>> = ({
+  headerLabels,
   headerOnly,
 }) => {
-  const selections = useSelections()
   return (
     <div className="dropdown-button">
-      {selections.map((optValue) => {
-        const [label, icon] = getOptionHeader(optValue)
+      {headerLabels.map(([key, label, icon]) => {
         const icon_node =
           typeof icon === 'string' ? <img src={icon} alt={label}></img> : icon
 
         return (
           <>
             {(!headerOnly || headerOnly === 'icon') && icon_node}
-            <div key={optValue} className="icons scroll">
+            <div key={key} className="icons scroll">
               {(!headerOnly || headerOnly === 'label') && label}
             </div>
           </>
