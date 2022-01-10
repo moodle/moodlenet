@@ -1,3 +1,4 @@
+import { action } from '@storybook/addon-actions'
 import { ChangeEvent, ReactNode, useMemo, useState } from 'react'
 
 export const useStoriesDDCtrl = ({
@@ -10,19 +11,21 @@ export const useStoriesDDCtrl = ({
   const [value, setValue] = useState(
     initialSelectionIndexes.map((index) => options[index]![0])
   )
-  const [filter, setFilter] = useState<string>('')
+  const [filterString, setFilterString] = useState<string>('')
 
   return useMemo(() => {
     const filteredOpts = options.filter(
       ([value, label]) =>
-        new RegExp(filter, 'ig').test(label) ||
-        new RegExp(filter, 'ig').test(value)
+        new RegExp(filterString, 'ig').test(label) ||
+        new RegExp(filterString, 'ig').test(value)
     )
 
     const onChange = ({ currentTarget }: ChangeEvent<HTMLSelectElement>) => {
-      setValue(
-        Array.from(currentTarget.selectedOptions).map(({ value }) => value)
+      const newVal = Array.from(currentTarget.selectedOptions).map(
+        ({ value }) => value
       )
+      action('useStoriesDDCtrl onChange')(newVal)
+      setValue(newVal)
     }
 
     const getOptionHeader = (value: string) =>
@@ -30,14 +33,19 @@ export const useStoriesDDCtrl = ({
         .filter(([val]) => val === value)
         .map(([, value, icon]) => [value, icon] as const)[0]!
 
+    const setFilter = (filter: string) => {
+      action('useStoriesDDCtrl setFilter')(filter)
+      setFilterString(filter)
+    }
+
     return {
       onChange,
       getOptionHeader,
       value,
       setValue,
-      filter,
+      filter: filterString,
       setFilter,
       filteredOpts,
     }
-  }, [filter, options, value])
+  }, [filterString, options, value])
 }
