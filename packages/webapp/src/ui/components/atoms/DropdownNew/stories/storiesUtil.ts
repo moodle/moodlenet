@@ -13,8 +13,8 @@ export const useStoriesDDCtrl = ({
   )
   const [filterString, setFilterString] = useState<string>('')
 
-  const headerLabels = useMemo(
-    () => options.filter(([val]) => value.includes(val)),
+  const selectedOpts = useMemo(
+    () => value.map((val) => options.find(([optVal]) => optVal === val)!),
     [options, value]
   )
   const filteredOpts = useMemo(
@@ -46,12 +46,12 @@ export const useStoriesDDCtrl = ({
   return useMemo(() => {
     return {
       onChange,
-      headerLabels,
+      selectedOpts,
       value,
       setValue,
       filterString,
       setFilter,
       filteredOpts,
     }
-  }, [filterString, filteredOpts, headerLabels, onChange, setFilter, value])
+  }, [filterString, filteredOpts, selectedOpts, onChange, setFilter, value])
 }

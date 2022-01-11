@@ -4,7 +4,6 @@ import { href } from '../../../elements/link'
 import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import {
-  CategoriesDropdown,
   LanguagesDropdown,
   LevelDropdown,
   LicenseDropdown,
@@ -18,6 +17,7 @@ import {
   NewResourceProgressState,
   NewResourceProps,
 } from './NewResource'
+import { CategoriesDropdown } from './storiesData'
 import { NewResourceFormValues } from './types'
 import { UploadResourceProps } from './UploadResource/UploadResource'
 
@@ -108,7 +108,10 @@ const uploadResourceProps: UploadResourceProps = {
   imageUrl: '',
   nextStep: undefined,
   deleteContent: action('deleteContent'),
-  categories: CategoriesDropdown,
+  categories: {
+    opts: CategoriesDropdown,
+    selected: [CategoriesDropdown[2]!],
+  },
   licenses: LicenseDropdown,
   visibility: VisibilityDropdown,
 }

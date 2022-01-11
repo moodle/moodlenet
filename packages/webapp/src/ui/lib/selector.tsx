@@ -6,6 +6,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react'
 
 export type SelectorProps = Omit<
@@ -13,21 +14,28 @@ export type SelectorProps = Omit<
     React.SelectHTMLAttributes<HTMLSelectElement>,
     HTMLSelectElement
   >,
-  'value' | 'multiple'
+  'value' | 'defaultValue' | 'multiple'
 > &
   (
     | {
         multiple: true
-        value?: string[]
+        value?: string[] | undefined
+        defaultValue?: string[] | undefined
       }
     | {
         multiple?: false | undefined
         value?: string | undefined
+        defaultValue?: string | undefined
       }
   )
 export type SelectorCtxType = {
   selections: string[]
-  useSelectorOption(_: string): { toggle(): unknown; selected: boolean }
+  useSelectorOption(_: string): {
+    toggle(): unknown
+    select(): unknown
+    deselect(): unknown
+    selected: boolean
+  }
 }
 export const SelectorContext = createContext<SelectorCtxType>(null as any)
 
@@ -36,78 +44,31 @@ export const useSelectorOption = (value: string) =>
 
 export const useSelections = () => useContext(SelectorContext).selections
 
-export const Selector: FC<SelectorProps> = ({ children, ...selectProps }) => {
-  // console.log(selectProps.value)
-  const { multiple, value: selectPropsValue } = selectProps
+type RawValueType = undefined | string | string[]
+const normalizeValue = (val: RawValueType) =>
+  Array.isArray(val) ? val : typeof val === 'undefined' ? [] : [val]
+
+const doRawValuesEquals = (ra1: RawValueType, ra2: RawValueType) => {
+  const a1 = normalizeValue(ra1)
+  const a2 = normalizeValue(ra2)
+  return (
+    a1.length === a2.length &&
+    a1.reduce((eq, a1_el, index) => eq && a1_el === a2[index], true)
+  )
+}
+export const Selector: FC<SelectorProps> = (props) => {
   const selectRef = useRef<HTMLSelectElement>(null)
 
-  const ctx: SelectorCtxType = useMemo(() => {
-    const selections = Array.isArray(selectPropsValue)
-      ? selectPropsValue
-      : typeof selectPropsValue === 'string'
-      ? [selectPropsValue]
-      : []
-    return {
-      selections,
-      useSelectorOption: (optionValue) => {
-        //console.log("reg", opt);
-        const selected = !!selections.includes(optionValue)
-
-        const toggle = useCallback(() => {
-          //  console.log("select-action", value, selectRef.current);
-          const selectElem = selectRef.current
-          if (!selectElem) {
-            return
-          }
-          if (multiple) {
-            if (selected) {
-              const optionEl = Array.from(selectElem.options).find(
-                ({ value }) => value === optionValue
-              )
-              optionEl && selectElem.removeChild(optionEl)
-            } else {
-              const optElem = createOptionElem(optionValue)
-              selectElem.appendChild(optElem)
-            }
-          } else {
-            if (!selected) {
-              Array.from(selectElem.options).forEach((opt) =>
-                selectElem.removeChild(opt)
-              )
-              // if (!selected && !SelectorSingleSelectionOption.toggleSelected)
-              const optElem = createOptionElem(optionValue)
-              selectElem.appendChild(optElem)
-            }
-          }
-
-          fireEvent(selectElem, 'change')
-          fireEvent(selectElem, 'input')
-        }, [optionValue, selected])
-
-        return {
-          toggle,
-          selected,
-        }
-      },
-    }
-  }, [selectPropsValue, multiple])
+  const [selections, setSelections] = useState(() =>
+    normalizeValue(props.defaultValue)
+  )
 
   useEffect(() => {
     const selectElem = selectRef.current
     if (!selectElem) {
       return
     }
-    const currValuesSortedStr = JSON.stringify(ctx.selections)
-
-    const optionValuesStr = JSON.stringify(
-      Array.from(selectElem.options).map(({ value }) => value)
-    )
-
-    if (currValuesSortedStr === optionValuesStr) {
-      return
-    }
-
-    ctx.selections.forEach((selectionValue: string) => {
+    selections.forEach((selectionValue: string) => {
       const optElem = createOptionElem(selectionValue)
       selectElem.appendChild(optElem)
     })
@@ -117,31 +78,112 @@ export const Selector: FC<SelectorProps> = ({ children, ...selectProps }) => {
         selectElem.removeChild(opt)
       )
     }
-  }, [ctx.selections])
+  }, [selections])
+
+  useEffect(() => {
+    const selectElem = selectRef.current
+    if (!selectElem) {
+      return
+    }
+
+    const normalizedPropsValue = normalizeValue(props.value)
+
+    if (doRawValuesEquals(normalizedPropsValue, selections)) {
+      return
+    }
+
+    setSelections(normalizedPropsValue)
+  }, [props.value, selections])
+
+  const ctx: SelectorCtxType = useMemo(() => {
+    return {
+      selections,
+      useSelectorOption: (optionValue) => {
+        const selected = selections.includes(optionValue)
+        const selectElem = selectRef.current
+        const fire = useCallback(() => {
+          if (!selectElem) {
+            return
+          }
+          fireEvent(selectElem, 'change')
+          fireEvent(selectElem, 'input')
+        }, [selectElem])
+
+        const deselect = useCallback(() => {
+          if (!selectElem) {
+            return
+          }
+          const optionEl = Array.from(selectElem.options).find(
+            ({ value }) => value === optionValue
+          )
+          optionEl && selectElem.removeChild(optionEl)
+          fire()
+        }, [fire, optionValue, selectElem])
+
+        const select = useCallback(() => {
+          if (!selectElem) {
+            return
+          }
+          const alreadySelectedOptionEl = Array.from(selectElem.options).find(
+            ({ value }) => value === optionValue
+          )
+          if (alreadySelectedOptionEl) {
+            return
+          }
+          const optElem = createOptionElem(optionValue)
+          selectElem.appendChild(optElem)
+          fire()
+        }, [fire, optionValue, selectElem])
+
+        const toggle = useCallback(() => {
+          if (!selectElem) {
+            return
+          }
+          if (props.multiple) {
+            selected ? deselect() : select()
+          } else {
+            if (!selected) {
+              Array.from(selectElem.options).forEach((opt) =>
+                selectElem.removeChild(opt)
+              )
+              select()
+            }
+          }
+        }, [deselect, select, selectElem, selected])
+
+        return {
+          toggle,
+          selected,
+          select,
+          deselect,
+        }
+      },
+    }
+  }, [selections, props.multiple])
 
   return (
-    <>
-      <SelectorContext.Provider value={ctx}>
-        {children}
-        <select
-          {...selectProps}
-          value={multiple ? ctx.selections : ctx.selections[0]}
-          ref={selectRef}
-          children={undefined}
-          style={{ display: 'none' }}
-        ></select>
-      </SelectorContext.Provider>
-    </>
+    <SelectorContext.Provider value={ctx}>
+      {props.children}
+      <select
+        {...props}
+        value={props.multiple ? ctx.selections : ctx.selections[0]}
+        ref={selectRef}
+        children={undefined}
+        style={{ display: 'none', visibility: 'hidden' }}
+        hidden
+      ></select>
+    </SelectorContext.Provider>
   )
 }
 
 function createOptionElem(value: string) {
   const optElem = document.createElement('option')
-  optElem.value = optElem.innerText = value
+  // optElem.value = optElem.innerText = value
+  optElem.value = value
   optElem.selected = true
   return optElem
 }
-// export const getValues = (_:string|string[]|undefined)=>Array.isArray(_)?_:'string' === typeof _?[_]:[]
+
 function fireEvent(element: HTMLSelectElement, event: string) {
   const ieDoc = document as any
   if (ieDoc.createEventObject) {
@@ -149,10 +191,6 @@ function fireEvent(element: HTMLSelectElement, event: string) {
     const evt = ieDoc.createEventObject()
     return (element as any).fireEvent('on' + event, evt)
   } else {
-    // dispatch for firefox + others
-    // const evt = document.createEvent('HTMLEvents')
-    // evt.initEvent(event, true, true) // event type,bubbling,cancelable
-
     const evt = new Event(event, { bubbles: true, cancelable: true })
     return !element.dispatchEvent(evt)
   }

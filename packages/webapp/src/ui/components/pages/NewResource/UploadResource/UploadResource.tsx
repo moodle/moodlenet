@@ -8,6 +8,11 @@ import { ReactComponent as UploadFileIcon } from '../../../../static/icons/uploa
 import { ReactComponent as UploadImageIcon } from '../../../../static/icons/upload-image.svg'
 import Card from '../../../atoms/Card/Card'
 import Dropdown from '../../../atoms/Dropdown/Dropdown'
+import {
+  Dropdown as DropdownNew,
+  SimplePill,
+  TextOption,
+} from '../../../atoms/DropdownNew/Dropdown'
 import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import Modal from '../../../atoms/Modal/Modal'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
@@ -24,7 +29,10 @@ export type UploadResourceProps = {
   state: UploadResourceState
   formBag: FormikBag<NewResourceFormValues>
   imageUrl: string
-  categories: DropdownField
+  categories: {
+    opts: [key: string, label: string][]
+    selected: [key: string, label: string][]
+  }
   licenses: DropdownField
   visibility: DropdownField
   nextStep: (() => unknown) | undefined
@@ -105,12 +113,6 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       setFieldValue('contentType', 'Link')
     }, [setFieldValue])
 
-    const setCategoryValue = useCallback(
-      (v: string) => {
-        setFieldValue('category', v)
-      },
-      [setFieldValue]
-    )
     const dataInputs = (
       <div className="data-inputs">
         <InputTextField
@@ -133,15 +135,21 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           highlight={highlightMandatoryFields && !form.values.description}
         />
         <div className="subject-and-visibility">
-          <Dropdown
-            {...categories}
+          <DropdownNew
             {...formAttrs.category}
-            label="Subject"
-            value={form.values.category}
-            getValue={setCategoryValue}
+            onChange={form.handleChange}
             disabled={state === 'ChooseResource'}
+            label="Subject"
+            edit
             highlight={highlightMandatoryFields && !form.values.category}
-          />
+            pills={categories.selected.map(([value, label]) => (
+              <SimplePill key={value} value={value} label={label} />
+            ))}
+          >
+            {categories.opts.map(([key, label]) => (
+              <TextOption key={key} value={key} label={label} />
+            ))}
+          </DropdownNew>
           <Dropdown
             {...visibility}
             getValue={setVisibilityVal}
