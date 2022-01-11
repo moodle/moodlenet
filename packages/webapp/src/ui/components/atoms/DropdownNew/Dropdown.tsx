@@ -20,25 +20,21 @@ import './styles.scss'
 import { setListPosition } from './utils'
 
 export type DropdownProps = SelectorProps & {
-  headerLabels: readonly [key: string, label: string, icon?: ReactNode][]
+  pills: ReactNode[]
   searchByText?: ((text: string) => unknown) | undefined
   searchText?: string
-  className?: string
   label: string
   edit?: boolean
   highlight?: boolean
-  headerOnly?: 'icon' | 'label'
 }
 export const Dropdown: FC<DropdownProps> = (props) => {
   const {
     children,
-    headerLabels,
+    pills,
     edit,
     searchByText,
-    className,
     label,
     highlight,
-    headerOnly,
     searchText,
     ...selectorProps
   } = props
@@ -51,7 +47,7 @@ export const Dropdown: FC<DropdownProps> = (props) => {
 
 const DropdownComp: FC<DropdownProps> = (props) => {
   const {
-    headerLabels,
+    pills,
     highlight,
     edit,
     label,
@@ -59,7 +55,6 @@ const DropdownComp: FC<DropdownProps> = (props) => {
     disabled,
     className,
     hidden,
-    headerOnly,
     children,
     multiple,
     searchText,
@@ -68,16 +63,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
   const [showContentFlag, toggleOpen] = useReducer((_) => !_, false)
   const [isHoveringOptions, setHoveringOptions] = useState(false)
 
-  const showContent = edit ? showContentFlag : false
-
-  // const valueArr =
-  //   props.value === undefined
-  //     ? undefined
-  //     : props.multiple
-  //     ? props.value
-  //     : [props.value]
-
-  //const inputValue = valueArr?.map((val) => getOptionHeader(val)[0]).join(' , ')
+  const showContent = edit && showContentFlag
 
   useEffect(() => {
     const clickOutListener = ({ target }: MouseEvent) => {
@@ -153,8 +139,8 @@ const DropdownComp: FC<DropdownProps> = (props) => {
           </>
         ) : (
           <>
-            <DDHeader headerOnly={headerOnly} headerLabels={headerLabels} />
-            <ExpandMoreIcon />
+            <div className="dropdown-button">{pills}</div>
+            {edit && <ExpandMoreIcon />}
           </>
         )}
       </div>
@@ -175,25 +161,40 @@ const DropdownComp: FC<DropdownProps> = (props) => {
   )
 }
 
-const DDHeader: FC<Pick<DropdownProps, 'headerLabels' | 'headerOnly'>> = ({
-  headerLabels,
-  headerOnly,
-}) => {
+export const SimplePill: FC<{
+  value: string
+  label: string
+  edit?: boolean
+}> = ({ label, value, edit }) => {
+  const { deselect } = useSelectorOption(value)
   return (
-    <div className="dropdown-button">
-      {headerLabels.map(([key, label, icon]) => {
-        const icon_node =
-          typeof icon === 'string' ? <img src={icon} alt={label}></img> : icon
-
-        return (
-          <>
-            {(!headerOnly || headerOnly === 'icon') && icon_node}
-            <div key={key} className="icons scroll">
-              {(!headerOnly || headerOnly === 'label') && label}
-            </div>
-          </>
-        )
-      })}
+    <div
+      style={{
+        border: 'thin black solid',
+        borderRadius: '2px',
+        padding: '2px 3px',
+      }}
+      className="icons scroll"
+    >
+      {edit && (
+        <span
+          style={{
+            cursor: 'pointer',
+            border: '2px grey solid',
+            borderRadius: '100%',
+            height: '18px',
+            width: '18px',
+            display: 'block',
+            float: 'left',
+            textAlign: 'center',
+            lineHeight: '14px',
+          }}
+          onClick={deselect}
+        >
+          x
+        </span>
+      )}
+      {label}
     </div>
   )
 }
