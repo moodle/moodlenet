@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import PrimaryButton from '../PrimaryButton/PrimaryButton'
 import { InputTextField, InputTextFieldProps } from './InputTextField'
 
 const meta: ComponentMeta<typeof InputTextField> = {
@@ -20,6 +21,14 @@ export const InputTextFieldStoryProps: InputTextFieldProps = {
     onChange: action('input change'),
   },
 }
+
+export const InputTextFieldWithButtonStory: ComponentStory<
+  typeof InputTextField
+> = () => (
+  <InputTextField {...InputTextFieldStoryProps}>
+    <PrimaryButton onClick={action('Primary button click')}>go</PrimaryButton>
+  </InputTextField>
+)
 
 const InputTextFieldStory: ComponentStory<typeof InputTextField> = (args) => (
   <InputTextField {...args}></InputTextField>
