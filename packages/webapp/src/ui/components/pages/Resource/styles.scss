@@ -144,20 +144,18 @@
             }
           }
 
-          .tags {
-            margin-top: 7px;
-          }
-
           .tags > a > .tag {
-            font-size: 10px;
-            padding: 3px 10px;
-            margin-right: 3px;
+            font-size: 12px;
+            padding: 4px 10px;
+            margin: 8px 0;
           }
         }
 
         > .image-container {
           position: relative;
           width: 100%;
+          margin-top: -8px;
+
           > .image,
           > a > .image {
             cursor: pointer;
