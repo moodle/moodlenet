@@ -1,4 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { people } from '../../../../../helpers/factories'
+import { randomIntFromInterval } from '../../../../../helpers/utilities'
 import { href } from '../../../../elements/link'
 import { ContributorCard, ContributorCardProps } from './ContributorCard'
 
@@ -18,10 +20,21 @@ const meta: ComponentMeta<typeof ContributorCard> = {
   ],
 }
 
+const randomProfileIndex = randomIntFromInterval(0, 3)
+const randomUploadedHours = randomIntFromInterval(1, 12)
+
 export const ContributorCardStoryProps: ContributorCardProps = {
-  avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
-  displayName: 'Juanito Rodriguez',
-  timeSinceCreation: '4 hours ago',
+  avatarUrl: people[randomProfileIndex]?.avatarUrl!,
+  displayName: people[randomProfileIndex]?.displayName!,
+  timeSinceCreation: `${randomUploadedHours} ${
+    randomProfileIndex === 0
+      ? 'hours'
+      : randomProfileIndex === 1
+      ? 'days'
+      : randomProfileIndex === 2
+      ? 'months'
+      : 'years'
+  } ago`,
   creatorProfileHref: href('Pages/Profile/LoggedIn'),
 }
 
