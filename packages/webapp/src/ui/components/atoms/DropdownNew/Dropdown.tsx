@@ -100,6 +100,11 @@ const DropdownComp: FC<DropdownProps> = (props) => {
     }
   }, [setLayout, showContent])
 
+  useLayoutEffect(() => dropdownButton.current?.focus())
+  useEffect(() => {
+    showContent && searchByText?.('')
+  }, [showContent, searchByText])
+
   const mainElemRef = useRef<HTMLDivElement>(null)
   const dropdownButton = useRef<HTMLInputElement>(null)
   const dropdownContent = useRef<HTMLInputElement>(null)

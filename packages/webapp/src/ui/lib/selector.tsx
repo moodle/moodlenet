@@ -139,16 +139,7 @@ export const Selector: FC<SelectorProps> = (props) => {
           if (!selectElem) {
             return
           }
-          if (props.multiple) {
-            selected ? deselect() : select()
-          } else {
-            if (!selected) {
-              Array.from(selectElem.options).forEach((opt) =>
-                selectElem.removeChild(opt)
-              )
-              select()
-            }
-          }
+          selected ? deselect() : select()
         }, [deselect, select, selectElem, selected])
 
         return {
@@ -159,7 +150,7 @@ export const Selector: FC<SelectorProps> = (props) => {
         }
       },
     }
-  }, [selections, props.multiple])
+  }, [selections])
 
   return (
     <SelectorContext.Provider value={ctx}>
@@ -178,8 +169,7 @@ export const Selector: FC<SelectorProps> = (props) => {
 
 function createOptionElem(value: string) {
   const optElem = document.createElement('option')
-  // optElem.value = optElem.innerText = value
-  optElem.value = value
+  optElem.value = optElem.innerText = value
   optElem.selected = true
   return optElem
 }
