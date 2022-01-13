@@ -16,16 +16,18 @@ import {
   SelectorProps,
   useSelectorOption,
 } from '../../../lib/selector'
+import RoundButton from '../RoundButton/RoundButton'
 import './styles.scss'
 import { setListPosition } from './utils'
 
 export type DropdownProps = SelectorProps & {
-  pills: ReactNode[]
+  pills: ReactNode[] | undefined
   searchByText?: ((text: string) => unknown) | undefined
   searchText?: string
   label: string
   edit?: boolean
   highlight?: boolean
+  multilines?: boolean
 }
 export const Dropdown: FC<DropdownProps> = (props) => {
   const {
@@ -35,6 +37,7 @@ export const Dropdown: FC<DropdownProps> = (props) => {
     searchByText,
     label,
     highlight,
+    multilines,
     searchText,
     ...selectorProps
   } = props
@@ -49,6 +52,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
   const {
     pills,
     highlight,
+    multilines,
     edit,
     label,
     searchByText,
@@ -144,7 +148,14 @@ const DropdownComp: FC<DropdownProps> = (props) => {
           </>
         ) : (
           <>
-            <div className="dropdown-button">{pills}</div>
+            <div
+              className={`dropdown-button ${multiple ? 'multiple' : 'single'} 
+              ${multilines ? 'multilines' : ''} 
+              ${multiple && !multilines ? 'scroll' : ''}
+              `}
+            >
+              {pills}
+            </div>
             {edit && <ExpandMoreIcon />}
           </>
         )}
@@ -171,35 +182,11 @@ export const SimplePill: FC<{
   label: string
   edit?: boolean
 }> = ({ label, value, edit }) => {
-  const { deselect } = useSelectorOption(value)
+  const { toggle } = useSelectorOption(value)
   return (
-    <div
-      style={{
-        border: 'thin black solid',
-        borderRadius: '2px',
-        padding: '2px 3px',
-      }}
-      className="icons scroll"
-    >
-      {edit && (
-        <span
-          style={{
-            cursor: 'pointer',
-            border: '2px grey solid',
-            borderRadius: '100%',
-            height: '18px',
-            width: '18px',
-            display: 'block',
-            float: 'left',
-            textAlign: 'center',
-            lineHeight: '14px',
-          }}
-          onClick={deselect}
-        >
-          x
-        </span>
-      )}
-      {label}
+    <div className="dropdown-pill icons">
+      <div className="label">{label}</div>
+      {edit && <RoundButton onClick={toggle} />}
     </div>
   )
 }

@@ -6,15 +6,17 @@ export const useStoriesDDCtrl = ({
   initialSelectionIndexes,
 }: {
   options: [key: string, label: string, icon?: ReactNode][]
-  initialSelectionIndexes: number[]
+  initialSelectionIndexes: number[] | undefined
 }) => {
   const [value, setValue] = useState(
-    initialSelectionIndexes.map((index) => options[index]![0])
+    initialSelectionIndexes &&
+      initialSelectionIndexes.map((index) => options[index]![0])
   )
   const [filterString, setFilterString] = useState<string>('')
 
   const selectedOpts = useMemo(
-    () => value.map((val) => options.find(([optVal]) => optVal === val)!),
+    () =>
+      value && value.map((val) => options.find(([optVal]) => optVal === val)!),
     [options, value]
   )
   const filteredOpts = useMemo(
