@@ -22,49 +22,42 @@ const meta: ComponentMeta<typeof Dropdown> = {
 }
 
 export const Text: ComponentStory<typeof Dropdown> = () => {
-  const {
-    filteredOpts,
-    setFilter,
-    selectedOpts,
-    onChange,
-    filterString,
-    value,
-  } = useStoriesDDCtrl({
-    initialSelectionIndexes: [1],
-    options: LevelDropdown.options,
-  })
+  const { filteredOpts, setFilter, selectedOpts, onChange, value } =
+    useStoriesDDCtrl({
+      initialSelectionIndexes: [],
+      options: LevelDropdown.options,
+    })
   const edit = true
   return (
     <Dropdown
       value={value[0]}
       pills={selectedOpts.map(([value, label]) => (
-        <SimplePill label={label} value={value} edit={edit} />
+        <SimplePill label={label} value={value} />
       ))}
       onChange={onChange}
       label={LevelDropdown.label}
       searchByText={setFilter}
-      searchText={filterString}
       edit={edit}
     >
-      {filteredOpts.map(([value, label]) => (
+      {selectedOpts.map(([value, label]) => (
         <TextOption label={label} value={value} key={value} />
       ))}
+
+      {filteredOpts
+        .filter(([value]) => !selectedOpts.map(([v]) => v).includes(value))
+        .map(([value, label]) => (
+          <TextOption label={label} value={value} key={value} />
+        ))}
     </Dropdown>
   )
 }
 
 export const TextMulti: ComponentStory<typeof Dropdown> = () => {
-  const {
-    filteredOpts,
-    setFilter,
-    value,
-    selectedOpts,
-    onChange,
-    filterString,
-  } = useStoriesDDCtrl({
-    initialSelectionIndexes: [3],
-    options: LevelDropdown.options,
-  })
+  const { filteredOpts, setFilter, value, selectedOpts, onChange } =
+    useStoriesDDCtrl({
+      initialSelectionIndexes: [3],
+      options: LevelDropdown.options,
+    })
   const edit = true
 
   return (
@@ -75,30 +68,29 @@ export const TextMulti: ComponentStory<typeof Dropdown> = () => {
       onChange={onChange}
       label={LevelDropdown.label}
       searchByText={setFilter}
-      searchText={filterString}
       value={value}
       multiple
       edit={edit}
     >
-      {filteredOpts.map(([value, label]) => (
+      {selectedOpts.map(([value, label]) => (
         <TextOption label={label} value={value} key={value} />
       ))}
+
+      {filteredOpts
+        .filter(([value]) => !selectedOpts.map(([v]) => v).includes(value))
+        .map(([value, label]) => (
+          <TextOption label={label} value={value} key={value} />
+        ))}
     </Dropdown>
   )
 }
 
 export const TextAndIcons: ComponentStory<typeof Dropdown> = () => {
-  const {
-    filteredOpts,
-    setFilter,
-    value,
-    selectedOpts,
-    onChange,
-    filterString,
-  } = useStoriesDDCtrl({
-    initialSelectionIndexes: [],
-    options: LicenseDropdown.options,
-  })
+  const { filteredOpts, setFilter, value, selectedOpts, onChange } =
+    useStoriesDDCtrl({
+      initialSelectionIndexes: [],
+      options: LicenseDropdown.options,
+    })
   const edit = true
 
   return (
@@ -109,7 +101,6 @@ export const TextAndIcons: ComponentStory<typeof Dropdown> = () => {
       onChange={onChange}
       label={LicenseDropdown.label}
       searchByText={setFilter}
-      searchText={filterString}
       value={value[0]}
       edit={edit}
     >
