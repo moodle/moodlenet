@@ -3,7 +3,8 @@ const { readFileSync, writeFileSync, mkdtempSync } = require('fs');
 const { tmpdir } = require('os');
 const { resolve } = require('path')
 module.exports.configure = configure
-function configure({ mnEnv = {}, customHead = '' }) {
+
+function configure({ mnEnv, customHead = '' }) {
   const INDEX_HTML = 'index.html'
   const origBuildFolder = resolve(__dirname, 'build')
   const runtimeBuildFolder = mkdtempSync(resolve(tmpdir(), 'moodlenet-webapp-runtime-build-folder'))
