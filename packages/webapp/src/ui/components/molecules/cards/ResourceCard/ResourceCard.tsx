@@ -159,7 +159,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             isEditing ? 'editing' : ''
           }`}
         >
-          {tags && tagList(tags)}
+          {tags && tagList(tags, 'small')}
         </div>
       </Card>
     )
