@@ -14,12 +14,13 @@
   > .input-container {
     height: 100%;
     width: 100%;
+    min-height: 44px;
     background: #ffffff;
     border: none;
     box-shadow: 0 0 6px #dedede;
     border-radius: 7px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     resize: none;
     color: rgba(0, 0, 0, 0.8);
@@ -70,7 +71,7 @@
       border: none;
       background-color: transparent;
       align-items: center;
-      padding: 12px 12px;
+      padding: 8px 0 8px 12px;
       line-height: 20px;
       resize: none;
       color: rgba(0, 0, 0, 0.8);
@@ -98,6 +99,65 @@
         font-weight: 500;
         font-size: 15px;
         color: #c0c4d6;
+      }
+
+      &.single {
+        overflow: hidden;
+        > .dropdown-pill {
+          text-overflow: ellipsis;
+          width: 100%;
+          > .label {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          > .round-button {
+            display: none;
+          }
+        }
+      }
+
+      &.multiple {
+        gap: 6px;
+        > .dropdown-pill {
+          display: flex;
+          align-items: center;
+          padding: 4px 5px 4px 14px;
+          background-color: rgba(0, 0, 0, 0.08);
+          color: black;
+          cursor: pointer;
+          border-radius: 30px;
+          gap: 6px;
+
+          > .label {
+            white-space: nowrap;
+          }
+
+          > .round-button > svg {
+            height: 19px;
+            width: 19px;
+            padding: 2px;
+            border: none;
+            background: #b3b3b3;
+            color: white;
+
+            &:hover {
+              background: #8d8b8b;
+            }
+          }
+        }
+
+        &.multilines {
+          flex-wrap: wrap;
+          width: calc(100% - 36px);
+          > .dropdown-pill {
+            max-width: 100%;
+            > .label {
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+        }
       }
 
       &.display-mode {
@@ -134,7 +194,7 @@
 
     > svg {
       display: block;
-      margin-right: 6px;
+      margin: 0 6px;
       color: #b6bacb;
     }
   }
@@ -160,10 +220,19 @@
       font-size: 14px;
       &:hover,
       &:focus {
-        background-color: #f5f5f5;
+        background-color: rgba(0, 0, 0, 0.04);
+      }
+      &:active {
+        background-color: rgba(0, 0, 0, 0.12);
       }
       &.selected {
-        background-color: #dedede;
+        background-color: rgba(25, 118, 210, 0.08);
+        &:hover {
+          background-color: rgba(25, 118, 210, 0.12);
+        }
+        &:active {
+          background-color: rgba(25, 118, 210, 0.24);
+        }
       }
       &.icon-and-text {
         display: flex;

@@ -18,7 +18,6 @@ export type Visibility = 'Public' | 'Private'
 
 export const LevelDropdown: DropdownField = {
   label: t`Level`,
-  placeholder: t`Educational level`,
   options: [
     t`0.1 Early childhood educational development`,
     t`0.2 Pre-primary education`,
