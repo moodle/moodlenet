@@ -601,7 +601,7 @@ export const Resource = withCtrl<ResourceProps>(
                     <div className="title">{form.values.title}</div>
                   )}
                   {tags.length > 0 && (
-                    <div className="tags scroll">{tagList(tags, false)}</div>
+                    <div className="tags scroll">{tagList(tags, 'medium')}</div>
                   )}
                 </div>
                 {(typeof form.values.imageUrl === 'string' || isEditing) && (
