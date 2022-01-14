@@ -4,7 +4,7 @@ import PrimaryButton from '../PrimaryButton/PrimaryButton'
 import { InputTextField, InputTextFieldProps } from './InputTextField'
 
 const meta: ComponentMeta<typeof InputTextField> = {
-  title: 'Atoms/InputTextField',
+  title: 'Atoms/InputTextFieldNew',
   component: InputTextField,
   argTypes: {
     // backgroundColor: { control: 'color' },
@@ -16,18 +16,19 @@ export const InputTextFieldStoryProps: InputTextFieldProps = {
   label: 'Just a text field',
   edit: true,
   highlight: true,
-  fieldProps: {
-    placeholder: 'Start typing to fill it',
-    onChange: action('input change'),
-  },
+  placeholder: 'Start typing to fill it',
+  onChange: action('input change'),
 }
 
 export const InputTextFieldWithButtonStory: ComponentStory<
   typeof InputTextField
 > = () => (
-  <InputTextField {...InputTextFieldStoryProps}>
-    <PrimaryButton onClick={action('Primary button click')}>go</PrimaryButton>
-  </InputTextField>
+  <InputTextField
+    {...InputTextFieldStoryProps}
+    action={
+      <PrimaryButton onClick={action('Primary button click')}>go</PrimaryButton>
+    }
+  />
 )
 
 const InputTextFieldStory: ComponentStory<typeof InputTextField> = (args) => (
@@ -43,10 +44,8 @@ export const TextAreaFieldStoryProps: InputTextFieldProps = {
   highlight: true,
   textarea: true,
   textAreaAutoSize: true,
-  fieldProps: {
-    placeholder: 'Start typing to fill it',
-    onChange: action('text area change'),
-  },
+  placeholder: 'Start typing to fill it',
+  onChange: action('text area change'),
 }
 
 export const TextAreaField = InputTextFieldStory.bind({})

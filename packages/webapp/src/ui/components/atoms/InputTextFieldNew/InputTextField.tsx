@@ -1,46 +1,44 @@
-import React, { FC, useEffect, useRef } from 'react'
+import React, { FC, ReactNode, useEffect, useRef } from 'react'
 import './styles.scss'
 
 export type InputTextFieldProps = {
   label?: string
-  className?: string
   edit?: boolean
   displayMode?: boolean
   textAreaAutoSize?: boolean
   highlight?: boolean
+  action?: ReactNode
 } & (
-  | {
+  | ({
       textarea?: undefined | false
-      fieldProps?: React.DetailedHTMLProps<
-        React.InputHTMLAttributes<HTMLInputElement>,
-        HTMLInputElement
-      >
-    }
-  | {
+    } & React.DetailedHTMLProps<
+      React.InputHTMLAttributes<HTMLInputElement>,
+      HTMLInputElement
+    >)
+  | ({
       textarea: true
-      fieldProps?: React.DetailedHTMLProps<
-        React.TextareaHTMLAttributes<HTMLTextAreaElement>,
-        HTMLTextAreaElement
-      >
-    }
+    } & React.DetailedHTMLProps<
+      React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+      HTMLTextAreaElement
+    >)
 )
 
 export const InputTextField: FC<InputTextFieldProps> = (props) => {
   const {
     label,
-    className,
     edit,
     displayMode,
     textAreaAutoSize,
     highlight,
-    children,
+    action,
+    ...fieldProps
   } = props
-  const { disabled, hidden, value } = props.fieldProps ?? {}
-  const fieldElementGivenClassName = props.fieldProps?.className ?? ''
+  const { disabled, hidden, value, className = '' } = fieldProps ?? {}
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
 
   const currTextAreaValue =
     textAreaRef.current && (value ?? textAreaRef.current?.value)
+
   useEffect(() => {
     const textAreaElem = textAreaRef.current
     if (!(textAreaAutoSize && textAreaElem)) {
@@ -66,7 +64,7 @@ export const InputTextField: FC<InputTextFieldProps> = (props) => {
       hidden={hidden}
     >
       {label ? <label>{label}</label> : <></>}
-      {props.textarea ? (
+      {fieldProps.textarea ? (
         <div
           className={`textarea-container ${displayMode && 'display-mode'} ${
             !edit && 'not-editing'
@@ -74,14 +72,14 @@ export const InputTextField: FC<InputTextFieldProps> = (props) => {
         >
           <textarea
             ref={textAreaRef}
-            className={`${fieldElementGivenClassName} ${
-              displayMode && 'display-mode'
-            } ${!edit && 'not-editing'}`}
+            className={`${className} ${displayMode && 'display-mode'} ${
+              !edit && 'not-editing'
+            }`}
             cols={40}
             rows={textAreaAutoSize ? 1 : 5}
-            {...props.fieldProps}
+            {...fieldProps}
           />
-          {children}
+          {action}
         </div>
       ) : (
         <div
@@ -90,13 +88,13 @@ export const InputTextField: FC<InputTextFieldProps> = (props) => {
           }`}
         >
           <input
-            className={`${fieldElementGivenClassName} ${
-              displayMode && 'display-mode'
-            } ${!edit && 'not-editing'}`}
+            className={`${className} ${displayMode && 'display-mode'} ${
+              !edit && 'not-editing'
+            }`}
             disabled={disabled || !edit}
-            {...props.fieldProps}
+            {...fieldProps}
           />
-          {children}
+          {action}
         </div>
       )}
     </div>
