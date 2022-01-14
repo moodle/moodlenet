@@ -72,12 +72,13 @@ export const InputTextField: FC<InputTextFieldProps> = (props) => {
         >
           <textarea
             ref={textAreaRef}
-            className={`${className} ${displayMode && 'display-mode'} ${
-              !edit && 'not-editing'
-            }`}
             cols={40}
             rows={textAreaAutoSize ? 1 : 5}
             {...fieldProps}
+            className={`${className} ${displayMode && 'display-mode'} ${
+              !edit && 'not-editing'
+            }`}
+            disabled={disabled || !edit}
           />
           {action}
         </div>
@@ -88,11 +89,11 @@ export const InputTextField: FC<InputTextFieldProps> = (props) => {
           }`}
         >
           <input
+            {...fieldProps}
             className={`${className} ${displayMode && 'display-mode'} ${
               !edit && 'not-editing'
             }`}
             disabled={disabled || !edit}
-            {...fieldProps}
           />
           {action}
         </div>
