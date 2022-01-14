@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect, useRef } from 'react'
+import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
 import './styles.scss'
 
 export type InputTextFieldProps = {
@@ -7,6 +7,7 @@ export type InputTextFieldProps = {
   displayMode?: boolean
   textAreaAutoSize?: boolean
   highlight?: boolean
+  error?: ReactNode
   action?: ReactNode
 } & (
   | ({
@@ -30,11 +31,15 @@ export const InputTextField: FC<InputTextFieldProps> = (props) => {
     displayMode,
     textAreaAutoSize,
     highlight,
+    error,
     action,
     ...fieldProps
   } = props
   const { disabled, hidden, value, className = '' } = fieldProps ?? {}
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
+
+  const [errorLeaves, setErrorLeave] = useState<boolean>(false)
+  const [currentError, setcurrentError] = useState<ReactNode>(undefined)
 
   const currTextAreaValue =
     textAreaRef.current && (value ?? textAreaRef.current?.value)
@@ -55,10 +60,28 @@ export const InputTextField: FC<InputTextFieldProps> = (props) => {
     }
   }, [textAreaAutoSize, currTextAreaValue])
 
+  useEffect(() => {
+    if (error) {
+      setErrorLeave(false)
+      setcurrentError(error)
+    } else {
+      if (currentError) {
+        setErrorLeave(true)
+        setTimeout(() => {
+          setcurrentError(undefined)
+        }, 500)
+      } else {
+        setcurrentError(undefined)
+      }
+    }
+  }, [error, setErrorLeave, currentError])
+
   return (
     <div
       className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${
-        highlight ? ' highlight' : ''
+        highlight || error ? ' highlight' : ''
+      } ${!errorLeaves && error ? 'enter-error' : ''} ${
+        errorLeaves ? 'leave-error' : ''
       }`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
@@ -97,6 +120,9 @@ export const InputTextField: FC<InputTextFieldProps> = (props) => {
           />
           {action}
         </div>
+      )}
+      {currentError && !disabled && (
+        <div className={`error-msg`}>{currentError}</div>
       )}
     </div>
   )

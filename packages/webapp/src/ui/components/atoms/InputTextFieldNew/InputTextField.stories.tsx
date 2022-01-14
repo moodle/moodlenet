@@ -9,24 +9,32 @@ const meta: ComponentMeta<typeof InputTextField> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['InputTextFieldStoryProps', 'TextAreaFieldStoryProps'],
+  excludeStories: [
+    'InputTextFieldStoryProps',
+    'InputTextFieldErrorStoryProps',
+    'TextAreaFieldStoryProps',
+  ],
 }
 
 export const InputTextFieldStoryProps: InputTextFieldProps = {
   label: 'Just a text field',
   edit: true,
-  highlight: true,
   placeholder: 'Start typing to fill it',
   onChange: action('input change'),
 }
 
-export const InputTextFieldWithButtonStory: ComponentStory<
-  typeof InputTextField
-> = () => (
+export const InputTextFieldErrorStoryProps: InputTextFieldProps = {
+  ...InputTextFieldStoryProps,
+  error: 'Just a cute error',
+}
+
+export const InputButton: ComponentStory<typeof InputTextField> = () => (
   <InputTextField
     {...InputTextFieldStoryProps}
     action={
-      <PrimaryButton onClick={action('Primary button click')}>go</PrimaryButton>
+      <PrimaryButton onClick={action('Primary button click')}>
+        Add
+      </PrimaryButton>
     }
   />
 )
@@ -35,8 +43,11 @@ const InputTextFieldStory: ComponentStory<typeof InputTextField> = (args) => (
   <InputTextField {...args}></InputTextField>
 )
 
-export const InputField = InputTextFieldStory.bind({})
-InputField.args = InputTextFieldStoryProps
+export const Input = InputTextFieldStory.bind({})
+Input.args = InputTextFieldStoryProps
+
+export const Error = InputTextFieldStory.bind({})
+Error.args = InputTextFieldErrorStoryProps
 
 export const TextAreaFieldStoryProps: InputTextFieldProps = {
   label: 'Just a text area',
@@ -48,7 +59,7 @@ export const TextAreaFieldStoryProps: InputTextFieldProps = {
   onChange: action('text area change'),
 }
 
-export const TextAreaField = InputTextFieldStory.bind({})
-TextAreaField.args = TextAreaFieldStoryProps
+export const TextArea = InputTextFieldStory.bind({})
+TextArea.args = TextAreaFieldStoryProps
 
 export default meta

@@ -71,6 +71,51 @@ export const Text: ComponentStory<typeof Dropdown> = () => {
   )
 }
 
+export const Error: ComponentStory<typeof Dropdown> = () => {
+  const {
+    filteredOpts,
+    setFilter,
+    selectedOpts,
+    onChange,
+    //filterString,
+    value,
+  } = useStoriesDDCtrl({
+    initialSelectionIndexes: undefined,
+    options: LevelDropdown.options,
+  })
+  const edit = true
+  return (
+    <Dropdown
+      value={value && value[0]}
+      pills={
+        selectedOpts &&
+        selectedOpts.map(([value, label], i) => (
+          <SimplePill label={label} value={value} edit={edit} key={i} />
+        ))
+      }
+      onChange={onChange}
+      label={LevelDropdown.label}
+      searchByText={setFilter}
+      edit={edit}
+      error="You must select and option"
+    >
+      {selectedOpts &&
+        selectedOpts.map(([value, label]) => (
+          <TextOption label={label} value={value} key={value} />
+        ))}
+
+      {filteredOpts
+        .filter(
+          ([value]) =>
+            !(selectedOpts && selectedOpts.map(([v]) => v).includes(value))
+        )
+        .map(([value, label]) => (
+          <TextOption label={label} value={value} key={value} />
+        ))}
+    </Dropdown>
+  )
+}
+
 export const TextMulti: ComponentStory<typeof Dropdown> = () => {
   const { filteredOpts, setFilter, value, selectedOpts, onChange } =
     useStoriesDDCtrl({
