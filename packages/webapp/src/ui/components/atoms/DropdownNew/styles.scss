@@ -5,10 +5,12 @@
   flex-direction: column;
   position: relative;
   width: 100%;
+  gap: 6px;
+
   > label {
     font-weight: bold;
     font-size: 14px;
-    margin-bottom: 8px;
+    margin-bottom: 2px;
   }
 
   > .input-container {
@@ -28,6 +30,12 @@
     font-weight: 500;
     font-size: 14px;
 
+    > svg {
+      display: block;
+      margin-right: 6px;
+      color: #b6bacb;
+    }
+
     &.highlight {
       box-shadow: 0 0 0 2px $primary-color;
     }
@@ -45,24 +53,6 @@
           fill: #3c4043;
         }
       }
-
-      &:not(.not-editing) {
-        > .icons > div > svg > g {
-          fill: rgba(0, 0, 0, 0.5);
-        }
-      }
-    }
-
-    &.not-editing {
-      color: #3c4043;
-
-      > svg {
-        display: none;
-      }
-    }
-
-    &:not(.not-editing:not(:focus)) {
-      color: rgba(0, 0, 0, 0.5);
     }
 
     > .dropdown-button {
@@ -254,6 +244,10 @@
         }
       }
     }
+  }
+
+  > .error-msg {
+    margin-left: 3px;
   }
 }
 

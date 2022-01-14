@@ -26,6 +26,7 @@ export type DropdownProps = SelectorProps & {
   searchText?: string
   label: string
   edit?: boolean
+  error?: ReactNode
   highlight?: boolean
   multilines?: boolean
 }
@@ -36,6 +37,7 @@ export const Dropdown: FC<DropdownProps> = (props) => {
     edit,
     searchByText,
     label,
+    error,
     highlight,
     multilines,
     searchText,
@@ -52,6 +54,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
   const {
     pills,
     highlight,
+    error,
     multilines,
     edit,
     label,
@@ -66,6 +69,8 @@ const DropdownComp: FC<DropdownProps> = (props) => {
 
   const [showContentFlag, toggleOpen] = useReducer((_) => !_, false)
   const [isHoveringOptions, setHoveringOptions] = useState(false)
+  const [errorLeaves, setErrorLeave] = useState<boolean>(false)
+  const [currentError, setcurrentError] = useState<ReactNode>(undefined)
 
   const showContent = edit && showContentFlag
 
@@ -109,6 +114,22 @@ const DropdownComp: FC<DropdownProps> = (props) => {
     showContent && searchByText?.('')
   }, [showContent, searchByText])
 
+  useEffect(() => {
+    if (error) {
+      setErrorLeave(false)
+      setcurrentError(error)
+    } else {
+      if (currentError) {
+        setErrorLeave(true)
+        setTimeout(() => {
+          setcurrentError(undefined)
+        }, 500)
+      } else {
+        setcurrentError(undefined)
+      }
+    }
+  }, [error, setErrorLeave, currentError])
+
   const mainElemRef = useRef<HTMLDivElement>(null)
   const dropdownButton = useRef<HTMLInputElement>(null)
   const dropdownContent = useRef<HTMLInputElement>(null)
@@ -116,9 +137,11 @@ const DropdownComp: FC<DropdownProps> = (props) => {
   return (
     <div
       ref={mainElemRef}
-      className={`dropdown-new ${searchByText ? 'search' : ''} ${
-        disabled ? 'disabled' : ''
-      } ${!edit ? 'not-editing' : ''} ${className ?? ''}`}
+      className={`dropdown-new ${className} ${searchByText ? 'search' : ''}${
+        disabled ? ' disabled' : ''
+      } ${highlight || error ? ' highlight' : ''} ${
+        !errorLeaves && error ? 'enter-error' : ''
+      } ${errorLeaves ? 'leave-error' : ''}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
@@ -160,6 +183,9 @@ const DropdownComp: FC<DropdownProps> = (props) => {
           </>
         )}
       </div>
+      {currentError && !disabled && (
+        <div className={`error-msg`}>{currentError}</div>
+      )}
 
       {showContent && (
         <div

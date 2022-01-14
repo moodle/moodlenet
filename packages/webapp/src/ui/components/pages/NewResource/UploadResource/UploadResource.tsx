@@ -22,6 +22,7 @@ import { canLoadUrlToImgTag, urlMatchesImage } from '../Ctrl/NewResourceCtrl'
 import { DropdownField } from '../FieldsData'
 import { NewResourceFormValues } from '../types'
 import './styles.scss'
+
 type UploadResourceState = 'ChooseResource' | 'EditData'
 
 export type UploadResourceProps = {
