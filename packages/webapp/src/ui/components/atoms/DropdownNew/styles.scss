@@ -168,34 +168,35 @@
           color: rgba(0, 0, 0, 0.5);
         }
       }
-    }
 
-    > .icons {
-      width: 100%;
-      height: 100%;
-      margin-left: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      div {
-        height: 20px;
+      > .icon,
+      > .icons {
+        width: 100%;
+        height: 100%;
+        margin-left: 10px;
         display: flex;
+        justify-content: center;
         align-items: center;
-        gap: 3px;
-        > svg {
-          width: fit-content;
-          height: 100%;
-          > g {
-            fill: rgba(0, 0, 0, 0.8);
+        div {
+          height: 20px;
+          display: flex;
+          align-items: center;
+          gap: 3px;
+          > svg {
+            width: fit-content;
+            height: 100%;
+            > g {
+              fill: rgba(0, 0, 0, 0.8);
+            }
           }
         }
       }
-    }
 
-    > svg {
-      display: block;
-      margin: 0 6px;
-      color: #b6bacb;
+      > svg {
+        display: block;
+        margin: 0 6px;
+        color: #b6bacb;
+      }
     }
   }
 

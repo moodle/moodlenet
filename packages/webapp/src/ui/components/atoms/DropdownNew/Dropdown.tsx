@@ -184,11 +184,16 @@ export const SimplePill: FC<{
 }> = ({ label, value, edit }) => {
   const { toggle } = useSelectorOption(value)
   return (
-    <div className="dropdown-pill icons">
+    <div className="dropdown-pill">
       <div className="label">{label}</div>
       {edit && <RoundButton onClick={toggle} />}
     </div>
   )
+}
+export const IconPill: FC<{
+  icon: ReactNode
+}> = ({ icon }) => {
+  return <div className="dropdown-pill icon">{icon}</div>
 }
 
 export const TextOption: FC<{ value: string; label: ReactNode }> = ({
