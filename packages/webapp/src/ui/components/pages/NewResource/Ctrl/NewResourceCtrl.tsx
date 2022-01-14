@@ -16,7 +16,7 @@ import { useUploadTempFile } from '../../../../../helpers/data'
 import {
   getOriginalCreationTimestampByStrings,
   monthOptions,
-  useIscedFieldsOptions,
+  useIscedFields,
   useLangOptions,
   useLicensesOptions,
   useResourceGradeOptions,
@@ -66,7 +66,8 @@ export const useNewResourceCtrl: CtrlHook<
   const [createResourceRelMut /* , createResourceRelMutRes */] =
     useCreateResourceRelationMutation()
   const { langOptions, getLang } = useLangOptions()
-  const { getIscedF, iscedFieldsOptions } = useIscedFieldsOptions()
+  const iscedFields = useIscedFields()
+  // const { getIscedF, iscedFieldsOptions } = useIscedFieldsOptions()
   const { resourceTypeOptions, getResourceType } = useResourceTypeOptions()
   const { getGrade, resourceGradeOptions } = useResourceGradeOptions()
   const { getLicense, licensesOptions } = useLicensesOptions()
@@ -136,7 +137,10 @@ export const useNewResourceCtrl: CtrlHook<
     [
       {
         ...initialSetStepProps,
-        categories: iscedFieldsOptions,
+        categories: {
+          opts: iscedFields.map((_) => [_.node.id, _.node.name]),
+          selected: [],
+        },
         formBag,
         deleteContent,
         licenses: licensesOptions,
@@ -158,6 +162,7 @@ export const useNewResourceCtrl: CtrlHook<
     () => setNextStepProps('back'),
     [setNextStepProps]
   )
+  console.log({ 'form.values': form.values })
 
   const [saving, setSaving] = useState(false)
   const nextStep = useMemo(() => {
@@ -179,7 +184,20 @@ export const useNewResourceCtrl: CtrlHook<
               deleteContent,
               formBag,
               imageUrl,
-              categories: iscedFieldsOptions,
+              categories: {
+                opts: iscedFields.map((_) => [_.node.id, _.node.name]),
+                selected: (() => {
+                  const node = iscedFields.find(
+                    (fld) => fld.node.id === form.values.category
+                  )?.node
+                  const selected: [string, string][] = node
+                    ? [[node.id, node.name]]
+                    : []
+                  console.log({ selected })
+                  return selected
+                })(),
+              },
+
               licenses: licensesOptions,
               visibility: VisibilityDropdown,
             })
@@ -297,14 +315,13 @@ export const useNewResourceCtrl: CtrlHook<
 
           const waitFor: Promise<any>[] = []
 
-          const { id: iscedFId } = getIscedF(category)
           waitFor.push(
             createResourceRelMut({
               variables: {
                 edge: {
                   edgeType: 'Features',
                   from: resId,
-                  to: iscedFId,
+                  to: category,
                   Features: {},
                 },
               },
@@ -400,29 +417,28 @@ export const useNewResourceCtrl: CtrlHook<
     }
     return undefined
   }, [
-    resourceTypeOptions,
     stepProps,
     form.values,
     deleteContent,
     formBag,
     imageUrl,
+    iscedFields,
+    licensesOptions,
     sformSetField,
     mycollections,
     previousStep,
+    langOptions,
+    resourceGradeOptions,
+    resourceTypeOptions,
     saving,
     uploadTempFile,
     createResourceMut,
     createResourceRelMut,
     history,
-    langOptions,
     getLang,
-    getIscedF,
-    getResourceType,
-    iscedFieldsOptions,
-    resourceGradeOptions,
-    getGrade,
     getLicense,
-    licensesOptions,
+    getResourceType,
+    getGrade,
   ])
 
   useEffect(() => {
