@@ -1,5 +1,11 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { Dropdown, IconTextOption, SimplePill, TextOption } from '../Dropdown'
+import {
+  Dropdown,
+  IconPill,
+  IconTextOption,
+  SimplePill,
+  TextOption,
+} from '../Dropdown'
 import { LevelDropdown, LicenseDropdown } from './storiesData'
 import { useStoriesDDCtrl } from './storiesUtil'
 
@@ -124,9 +130,7 @@ export const TextAndIcons: ComponentStory<typeof Dropdown> = () => {
     <Dropdown
       pills={
         selectedOpts &&
-        selectedOpts.map(([value, label], i) => (
-          <SimplePill label={label} value={value} key={i} />
-        ))
+        selectedOpts.map(([_, __, icon]) => <IconPill icon={icon} />)
       }
       onChange={onChange}
       label={LicenseDropdown.label}
