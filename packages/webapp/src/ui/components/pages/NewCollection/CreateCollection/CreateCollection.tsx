@@ -1,4 +1,4 @@
-import { Trans } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
 import React, { useCallback, useState } from 'react'
 import { withCtrl } from '../../../../lib/ctrl'
@@ -67,7 +67,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(
           autoUpdate={true}
           textarea={true}
           label="Description"
-          placeholder=""
+          placeholder={t`Tell us about your collection and how it could be used.`}
           value={form.values.description}
           getText={(text) => form.setFieldValue('description', text)}
           highlight={highlightMandatoryFields && !form.values.description}
