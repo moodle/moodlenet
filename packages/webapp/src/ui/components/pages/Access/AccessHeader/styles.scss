@@ -30,9 +30,6 @@
         > .secondary-button:first-child {
           display: none;
         }
-        > .primary-button:last-child {
-          background-color: #7f8393;
-        }
         @media (max-width: 650px) {
           > .secondary-button:first-child {
             display: flex;
