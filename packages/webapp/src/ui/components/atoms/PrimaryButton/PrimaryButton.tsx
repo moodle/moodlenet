@@ -5,7 +5,7 @@ export type PrimaryButtonProps = {
   onClick?(arg0: unknown): unknown | any
   className?: string
   disabled?: boolean
-  color?: '' | 'green' | 'red'
+  color?: '' | 'green' | 'red' | 'grey' | 'blue'
   onHoverColor?: '' | 'green' | 'orange' | 'red' | 'green'
 }
 
@@ -14,14 +14,14 @@ export const PrimaryButton: FC<PrimaryButtonProps> = ({
   className,
   color,
   onHoverColor,
-  onClick,
   disabled,
+  onClick,
 }) => {
   return (
     <div
-      className={`primary-button button ${className} ${
+      className={`primary-button button ${className} ${onHoverColor} ${
         disabled ? 'disabled' : ''
-      } ${color} hover-${onHoverColor}`}
+      } ${color}`}
       onClick={!disabled ? onClick : () => {}}
     >
       {children}

@@ -570,7 +570,6 @@ export const Resource = withCtrl<ResourceProps>(
                           {isEditing ? (
                             <PrimaryButton
                               color="green"
-                              onHoverColor="orange"
                               onClick={handleOnSaveClick}
                             >
                               <SaveIcon />
@@ -650,7 +649,7 @@ export const Resource = withCtrl<ResourceProps>(
                   {isEditing && (
                     <SecondaryButton
                       color="red"
-                      onHoverColor="filled-red"
+                      onHoverColor="fill-red"
                       onClick={() => setIsToDelete(true)}
                     >
                       <DeleteOutlineIcon />

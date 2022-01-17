@@ -8,7 +8,8 @@ export const people: {
 }[] = [
   {
     displayName: 'Juanito Rodriguez',
-    avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
+    avatarUrl:
+      'https://images.pexels.com/photos/3746326/pexels-photo-3746326.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200',
     backgroundUrl:
       'https://upload.wikimedia.org/wikipedia/commons/3/37/Chualluma_La_Paz.jpg',
     organization: 'Universidad de la Paz',
