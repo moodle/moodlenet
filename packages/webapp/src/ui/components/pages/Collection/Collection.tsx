@@ -218,7 +218,6 @@ export const Collection = withCtrl<CollectionProps>(
                     {(isAdmin || isOwner) && isEditing && (
                       <PrimaryButton
                         color="green"
-                        onHoverColor="orange"
                         onClick={() => {
                           updateCollection()
                           setIsEditing(false)
@@ -290,7 +289,7 @@ export const Collection = withCtrl<CollectionProps>(
                     {isEditing && (
                       <SecondaryButton
                         color="red"
-                        onHoverColor="filled-red"
+                        onHoverColor="fill-red"
                         onClick={() => setIsToDelete(true)}
                       >
                         <DeleteOutlineIcon />
