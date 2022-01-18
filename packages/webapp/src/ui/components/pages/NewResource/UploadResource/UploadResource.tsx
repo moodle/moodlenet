@@ -64,7 +64,6 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       form.values.content instanceof File
         ? form.values.content.name
         : form.values.content
-    console.log('contentName', contentName)
     const subStep =
       form.values.content && !form.errors.content
         ? 'EditData'
