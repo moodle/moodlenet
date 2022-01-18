@@ -33,7 +33,10 @@ export const InputTextField = forwardRef<
     action,
     ...fieldProps
   } = props
-  const { disabled, hidden, /* value, */ className = '' } = fieldProps ?? {}
+  const { disabled, hidden, /* value, */ className = '' } = fieldProps
+  if ('value' in fieldProps) {
+    fieldProps.value = fieldProps.value ?? ''
+  }
   const fieldElementRef = useForwardedRef(forwRef)
   const fieldElem = fieldElementRef.current
   const [errorLeaves, setErrorLeave] = useState<boolean>(false)
