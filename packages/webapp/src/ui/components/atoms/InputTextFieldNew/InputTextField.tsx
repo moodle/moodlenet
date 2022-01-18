@@ -1,4 +1,5 @@
-import React, { FC, ReactNode, useEffect, useRef, useState } from 'react'
+import React, { forwardRef, ReactNode, useEffect, useState } from 'react'
+import { useForwardedRef } from '../../../lib/useForwardedRef'
 import './styles.scss'
 
 export type InputTextFieldProps = {
@@ -12,19 +13,16 @@ export type InputTextFieldProps = {
 } & (
   | ({
       textarea?: undefined | false
-    } & React.DetailedHTMLProps<
-      React.InputHTMLAttributes<HTMLInputElement>,
-      HTMLInputElement
-    >)
+    } & React.InputHTMLAttributes<HTMLInputElement>)
   | ({
       textarea: true
-    } & React.DetailedHTMLProps<
-      React.TextareaHTMLAttributes<HTMLTextAreaElement>,
-      HTMLTextAreaElement
-    >)
+    } & React.TextareaHTMLAttributes<HTMLTextAreaElement>)
 )
 
-export const InputTextField: FC<InputTextFieldProps> = (props) => {
+export const InputTextField = forwardRef<
+  HTMLTextAreaElement | HTMLInputElement | null | undefined,
+  InputTextFieldProps
+>((props, forwRef) => {
   const {
     label,
     edit,
@@ -35,30 +33,36 @@ export const InputTextField: FC<InputTextFieldProps> = (props) => {
     action,
     ...fieldProps
   } = props
-  const { disabled, hidden, value, className = '' } = fieldProps ?? {}
-  const textAreaRef = useRef<HTMLTextAreaElement>(null)
-
+  const { disabled, hidden, /* value, */ className = '' } = fieldProps ?? {}
+  const fieldElementRef = useForwardedRef(forwRef)
+  const fieldElem = fieldElementRef.current
   const [errorLeaves, setErrorLeave] = useState<boolean>(false)
   const [currentError, setcurrentError] = useState<ReactNode>(undefined)
 
-  const currTextAreaValue =
-    textAreaRef.current && (value ?? textAreaRef.current?.value)
+  // const currTextAreaValue =
+  //   fieldElementRef.current && (value ?? fieldElementRef.current?.value)
+  const currTextAreaValue = fieldElementRef.current?.value
 
   useEffect(() => {
-    const textAreaElem = textAreaRef.current
-    if (!(textAreaAutoSize && textAreaElem)) {
+    if (
+      !(
+        textAreaAutoSize &&
+        fieldElem &&
+        fieldElem instanceof HTMLTextAreaElement
+      )
+    ) {
       return
     }
     const fitTextArea = () => {
-      textAreaElem.style.height = 'fit-content'
-      textAreaElem.style.height =
-        Math.ceil(textAreaElem.scrollHeight / 10) * 10 + 'px'
+      fieldElem.style.height = 'fit-content'
+      fieldElem.style.height =
+        Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'
     }
-    textAreaElem.addEventListener('input', fitTextArea)
+    fieldElem.addEventListener('input', fitTextArea)
     return () => {
-      textAreaElem.removeEventListener('input', fitTextArea)
+      fieldElem.removeEventListener('input', fitTextArea)
     }
-  }, [textAreaAutoSize, currTextAreaValue])
+  }, [textAreaAutoSize, currTextAreaValue, fieldElem])
 
   useEffect(() => {
     if (error) {
@@ -94,7 +98,7 @@ export const InputTextField: FC<InputTextFieldProps> = (props) => {
           }`}
         >
           <textarea
-            ref={textAreaRef}
+            ref={fieldElementRef as any}
             cols={40}
             rows={textAreaAutoSize ? 1 : 5}
             {...fieldProps}
@@ -113,6 +117,7 @@ export const InputTextField: FC<InputTextFieldProps> = (props) => {
         >
           <input
             {...fieldProps}
+            ref={fieldElementRef as any}
             className={`${className} ${displayMode && 'display-mode'} ${
               !edit && 'not-editing'
             }`}
@@ -126,6 +131,6 @@ export const InputTextField: FC<InputTextFieldProps> = (props) => {
       )}
     </div>
   )
-}
+})
 
 export default InputTextField

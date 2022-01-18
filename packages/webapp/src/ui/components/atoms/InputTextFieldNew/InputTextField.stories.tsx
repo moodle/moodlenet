@@ -20,7 +20,8 @@ export const InputTextFieldStoryProps: InputTextFieldProps = {
   label: 'Just a text field',
   edit: true,
   placeholder: 'Start typing to fill it',
-  onChange: action('input change'),
+  onChange: action('text area change'),
+  // onChange: action('input change'),
 }
 
 export const InputTextFieldErrorStoryProps: InputTextFieldProps = {

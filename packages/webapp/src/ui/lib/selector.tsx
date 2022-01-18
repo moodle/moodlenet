@@ -43,10 +43,14 @@ export const useSelectorOption = (value: string) =>
   useContext(SelectorContext).useSelectorOption(value)
 
 export const useSelections = () => useContext(SelectorContext).selections
-
+const empty: string[] = []
 type RawValueType = undefined | string | string[]
 const normalizeValue = (val: RawValueType) =>
-  Array.isArray(val) ? val : typeof val === 'undefined' ? [] : [val]
+  Array.isArray(val)
+    ? val
+    : !val // consider empty string as no value
+    ? empty
+    : [val]
 
 const doRawValuesEquals = (ra1: RawValueType, ra2: RawValueType) => {
   const a1 = normalizeValue(ra1)
@@ -58,7 +62,7 @@ const doRawValuesEquals = (ra1: RawValueType, ra2: RawValueType) => {
 }
 export const Selector: FC<SelectorProps> = (props) => {
   const selectRef = useRef<HTMLSelectElement>(null)
-
+  const { multiple } = props
   const [selections, setSelections] = useState(() =>
     normalizeValue(props.defaultValue)
   )
@@ -68,6 +72,7 @@ export const Selector: FC<SelectorProps> = (props) => {
     if (!selectElem) {
       return
     }
+    console.log(`selections`, selections)
     selections.forEach((selectionValue: string) => {
       const optElem = createOptionElem(selectionValue)
       selectElem.appendChild(optElem)
@@ -87,6 +92,7 @@ export const Selector: FC<SelectorProps> = (props) => {
     }
 
     const normalizedPropsValue = normalizeValue(props.value)
+    console.log(`normalizedPropsValue`, normalizedPropsValue)
 
     if (doRawValuesEquals(normalizedPropsValue, selections)) {
       return
@@ -113,10 +119,13 @@ export const Selector: FC<SelectorProps> = (props) => {
           if (!selectElem) {
             return
           }
-          const optionEl = Array.from(selectElem.options).find(
+          const optionToDeselect = Array.from(selectElem.options).find(
             ({ value }) => value === optionValue
           )
-          optionEl && selectElem.removeChild(optionEl)
+          if (!optionToDeselect) {
+            return
+          }
+          selectElem.removeChild(optionToDeselect)
           fire()
         }, [fire, optionValue, selectElem])
 
@@ -131,6 +140,11 @@ export const Selector: FC<SelectorProps> = (props) => {
             return
           }
           const optElem = createOptionElem(optionValue)
+          if (!multiple) {
+            Array.from(selectElem.options).forEach((opt) =>
+              selectElem.removeChild(opt)
+            )
+          }
           selectElem.appendChild(optElem)
           fire()
         }, [fire, optionValue, selectElem])
@@ -150,7 +164,7 @@ export const Selector: FC<SelectorProps> = (props) => {
         }
       },
     }
-  }, [selections])
+  }, [selections, multiple])
 
   return (
     <SelectorContext.Provider value={ctx}>

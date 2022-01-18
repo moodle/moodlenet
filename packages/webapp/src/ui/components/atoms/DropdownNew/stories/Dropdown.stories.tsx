@@ -36,7 +36,7 @@ export const Text: ComponentStory<typeof Dropdown> = () => {
     //filterString,
     value,
   } = useStoriesDDCtrl({
-    initialSelectionIndexes: undefined,
+    initialSelectionIndexes: [],
     options: LevelDropdown.options,
   })
   const edit = true
@@ -80,7 +80,7 @@ export const Error: ComponentStory<typeof Dropdown> = () => {
     //filterString,
     value,
   } = useStoriesDDCtrl({
-    initialSelectionIndexes: undefined,
+    initialSelectionIndexes: [],
     options: LevelDropdown.options,
   })
   const edit = true
