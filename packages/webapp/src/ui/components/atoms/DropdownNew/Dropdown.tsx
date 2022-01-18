@@ -250,7 +250,6 @@ export const IconTextOption: FC<IconTextOptionProps> = ({
   icon,
 }) => {
   const { toggle, selected } = useSelectorOption(value)
-  console.log({ value, icon, label })
   return (
     <div
       key={value}
