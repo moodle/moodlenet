@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions'
-import { FormikBag, SimplifiedFormik } from '../formik'
+import { FormikBag, FormikHandle } from '../formik'
 
 type SBFormikBagCfgKeys =
   | 'dirty'
@@ -11,11 +11,11 @@ type SBFormikBagCfgKeys =
   | 'touched'
   | 'values'
 export type SBFormikBagCfg<T> = {
-  [Key in SBFormikBagCfgKeys]: SimplifiedFormik<T>[Key]
+  [Key in SBFormikBagCfgKeys]: FormikHandle<T>[Key]
 }
 export const SBFormikBag = <T>(
   initialValues: T,
-  p_cfg?: Partial<SimplifiedFormik<T>>
+  p_cfg?: Partial<FormikHandle<T>>
 ): FormikBag<T> => {
   const form = SBSimplifiedForm(initialValues, p_cfg)
   const attrs = {} as any
@@ -23,9 +23,9 @@ export const SBFormikBag = <T>(
 }
 export const SBSimplifiedForm = <T>(
   initialValues: T,
-  p_cfg?: Partial<SimplifiedFormik<T>>
-): SimplifiedFormik<T> => {
-  const form: SimplifiedFormik<T> = {
+  p_cfg?: Partial<FormikHandle<T>>
+): FormikHandle<T> => {
+  const form: FormikHandle<T> = {
     initialValues,
     values: initialValues,
     setFieldValue: action('setFieldValue'),
