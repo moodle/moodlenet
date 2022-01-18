@@ -141,8 +141,8 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             edit={subStep === 'EditData'}
             label="Visibility"
             highlight={shouldShowErrors && !!form.errors.visibility}
-            pills={[
-              form.values.visibility === undefined ? null : (
+            pills={
+              form.values.visibility && (
                 <IconPill
                   icon={
                     form.values.visibility === 'public' ? (
@@ -152,8 +152,8 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     )
                   }
                 />
-              ),
-            ]}
+              )
+            }
             className="visibility-dropdown"
           >
             {form.values.visibility !== 'public' && (
