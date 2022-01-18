@@ -23,7 +23,7 @@ import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import {
   AddToCollectionsCard,
-  CollectionItem,
+  TextOptionProps,
 } from '../../molecules/cards/AddToCollectionsCard/AddToCollectionsCard'
 import {
   HeaderPageTemplate,
@@ -60,9 +60,9 @@ export type ResourceProps = {
   licenses: DropdownField
   visibility: DropdownField
   categories: DropdownField
-  setAddToCollections?: (selectedCollections: CollectionItem[]) => unknown
-  collections?: CollectionItem[]
-  selectedCollections?: CollectionItem[]
+  setAddToCollections?: (selectedCollections: TextOptionProps[]) => unknown
+  collections?: TextOptionProps[]
+  selectedCollections?: TextOptionProps[]
   updateResource: () => unknown
   toggleLike: () => unknown
   toggleBookmark: () => unknown

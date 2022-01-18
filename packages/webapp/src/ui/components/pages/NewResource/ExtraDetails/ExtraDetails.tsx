@@ -1,101 +1,151 @@
-import { Trans } from '@lingui/macro'
-import { useCallback } from 'react'
+import { t, Trans } from '@lingui/macro'
 import { withCtrl } from '../../../../lib/ctrl'
-import { FormikBag } from '../../../../lib/formik'
-import Dropdown from '../../../atoms/Dropdown/Dropdown'
+import {
+  Dropdown,
+  SimplePill,
+  TextOption,
+  TextOptionProps,
+} from '../../../atoms/DropdownNew/Dropdown'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
-import { DropdownField } from '../FieldsData'
-import { NewResourceFormValues } from '../types'
+import { useNewResourcePageCtx } from '../NewResource'
+import { MonthTextOptionProps, YearsProps } from './storiesData'
 import './styles.scss'
 
 export type ExtraDetailsProps = {
-  step: 'ExtraDetailsStep'
-  formBag: FormikBag<NewResourceFormValues>
-  nextStep: (() => unknown) | undefined
-  previousStep: (() => unknown) | undefined
-  types: DropdownField
-  levels: DropdownField
-  months: DropdownField
-  years: DropdownField
-  languages: DropdownField
-  // formats: DropdownField
+  types: {
+    opts: TextOptionProps[]
+    selected?: TextOptionProps
+  }
+  levels: {
+    opts: TextOptionProps[]
+    selected?: TextOptionProps
+  }
+  languages: {
+    opts: TextOptionProps[]
+    selected?: TextOptionProps
+  }
 }
+// const usingFields: (keyof NewResourceFormValues)[] = [
+//   'type',
+//   'level',
+//   'month',
+//   'year',
+//   'language',
+// ]
 
 export const ExtraDetails = withCtrl<ExtraDetailsProps>(
-  ({
-    formBag,
-    types,
-    levels,
-    months,
-    years,
-    languages,
-    /* formats,  */ nextStep,
-    previousStep,
-  }) => {
-    const [form, formAttrs] = formBag
-    const setFieldValue = form.setFieldValue
-    const setTypeField = useCallback(
-      (_: string) => setFieldValue('type', _),
-      [setFieldValue]
-    )
-    const setLevelField = useCallback(
-      (_: string) => setFieldValue('level', _),
-      [setFieldValue]
-    )
-    const setMonthField = useCallback(
-      (_: string) => setFieldValue('originalDateMonth', _),
-      [setFieldValue]
-    )
-    const setYearField = useCallback(
-      (_: string) => setFieldValue('originalDateYear', _),
-      [setFieldValue]
-    )
-    const setLangField = useCallback(
-      (_: string) => setFieldValue('language', _),
-      [setFieldValue]
-    )
-    // const setFormatField = useCallback((_: string) => setFieldValue('format', _), [setFieldValue])
+  ({ types, levels, languages }) => {
+    const { prevForm, form } = useNewResourcePageCtx()
 
     const dataInputs = (
       <div className="data-inputs">
         <Dropdown
+          name="type"
+          label={t`Type`}
           value={form.values.type}
-          {...types}
-          {...formAttrs.type}
-          getValue={setTypeField}
-        />
+          onChange={form.handleChange}
+          edit
+          pills={
+            types.selected && (
+              <SimplePill
+                label={types.selected.label}
+                value={types.selected.value}
+              />
+            )
+          }
+        >
+          {types.opts.map(({ label, value }) => (
+            <TextOption label={label} value={value} />
+          ))}
+        </Dropdown>
         <Dropdown
+          name="level"
+          label={t`Level`}
           value={form.values.level}
-          {...levels}
-          {...formAttrs.level}
-          getValue={setLevelField}
-        />
+          onChange={form.handleChange}
+          edit
+          pills={
+            levels.selected && (
+              <SimplePill
+                label={levels.selected.label}
+                value={levels.selected.value}
+              />
+            )
+          }
+        >
+          {levels.opts.map(({ label, value }) => (
+            <TextOption label={label} value={value} />
+          ))}
+        </Dropdown>
         <div className="date">
           <label>
             <Trans>Original creation date</Trans>
           </label>
           <div className="fields">
             <Dropdown
-              value={form.values.originalDateMonth}
-              {...months}
-              {...formAttrs.originalDateMonth}
-              getValue={setMonthField}
-            />
+              name="month"
+              onChange={form.handleChange}
+              label=""
+              value={form.values.month}
+              edit
+              pills={
+                form.values.month && (
+                  <SimplePill
+                    label={
+                      MonthTextOptionProps.find(
+                        ({ value }) => value === form.values.month
+                      )!.label
+                    }
+                    value={form.values.month}
+                  />
+                )
+              }
+            >
+              {MonthTextOptionProps.map(({ label, value }) => (
+                <TextOption label={label} value={value} />
+              ))}
+            </Dropdown>
             <Dropdown
-              value={form.values.originalDateYear}
-              {...years}
-              {...formAttrs.originalDateYear}
-              getValue={setYearField}
-            />
+              name="year"
+              label=""
+              onChange={form.handleChange}
+              value={form.values.year}
+              edit
+              pills={
+                form.values.year && (
+                  <SimplePill
+                    label={form.values.year}
+                    value={form.values.year}
+                  />
+                )
+              }
+            >
+              {YearsProps.map((year) => (
+                <TextOption label={year} value={year} />
+              ))}
+            </Dropdown>
           </div>
         </div>
         <Dropdown
-          {...languages}
-          {...formAttrs.language}
-          getValue={setLangField}
-        />
-        {/* <Dropdown {...formats} {...formAttrs.format} getValue={setFormatField} /> */}
+          name="language"
+          label={t`Language`}
+          value={form.values.language}
+          onChange={form.handleChange}
+          edit
+          pills={
+            languages.selected && (
+              <SimplePill
+                label={languages.selected.label}
+                value={languages.selected.value}
+              />
+            )
+          }
+        >
+          {languages.opts.map(({ label, value }) => (
+            <TextOption label={label} value={value} />
+          ))}
+        </Dropdown>
       </div>
     )
 
@@ -103,10 +153,10 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
       <div className="extra-details">
         <div className="content">{dataInputs}</div>
         <div className="footer">
-          <SecondaryButton onClick={previousStep} color="grey">
+          <SecondaryButton onClick={prevForm} color="grey">
             <Trans>Back</Trans>
           </SecondaryButton>
-          <PrimaryButton disabled={!nextStep} onClick={nextStep}>
+          <PrimaryButton disabled={!form.isValid} onClick={form.submitForm}>
             <Trans>Create resource</Trans>
           </PrimaryButton>
         </div>

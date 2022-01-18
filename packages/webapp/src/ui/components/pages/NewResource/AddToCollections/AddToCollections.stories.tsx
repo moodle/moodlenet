@@ -1,6 +1,6 @@
-import { action } from '@storybook/addon-actions'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { ComponentMeta } from '@storybook/react'
 import { AddToCollections, AddToCollectionsProps } from './AddToCollections'
+import { CollectionTextOptionProps } from './storiesData'
 
 const meta: ComponentMeta<typeof AddToCollections> = {
   title: 'Pages/New Resource/Add To Collections',
@@ -8,7 +8,7 @@ const meta: ComponentMeta<typeof AddToCollections> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['AddToCollectionsStoryProps', 'Default'],
+  excludeStories: ['AddToCollectionsStoryProps'],
   decorators: [
     (Story) => (
       <div style={{ maxWidth: 1100 }}>
@@ -19,28 +19,10 @@ const meta: ComponentMeta<typeof AddToCollections> = {
 }
 
 export const AddToCollectionsStoryProps: AddToCollectionsProps = {
-  setSearchText: action('setSearchText'),
-  previousStep: action('previousStep'),
-  nextStep: action('nextStep'),
-  step: 'AddToCollectionsStep',
-  setAddToCollections: action('setAddToCollections'),
-  collections: [
-    'Education',
-    'Biology',
-    'Algebra',
-    'Phycology',
-    'Phylosophy',
-    'Sociology',
-    'English Literature',
-  ].map((label) => ({ label, id: label })),
-  selectedCollections: [],
+  collections: {
+    opts: CollectionTextOptionProps,
+    selected: CollectionTextOptionProps.slice(3, 5),
+  },
 }
-
-const AddToCollectionsStory: ComponentStory<typeof AddToCollections> = (
-  args
-) => <AddToCollections {...args} />
-
-export const Default = AddToCollectionsStory.bind({})
-Default.args = AddToCollectionsStoryProps
 
 export default meta
