@@ -101,7 +101,7 @@ export const InputTextField = forwardRef<
             ref={fieldElementRef as any}
             cols={40}
             rows={textAreaAutoSize ? 1 : 5}
-            {...fieldProps}
+            {..._removeTextAreaProp(fieldProps)}
             className={`${className} ${displayMode && 'display-mode'} ${
               !edit && 'not-editing'
             }`}
@@ -116,7 +116,7 @@ export const InputTextField = forwardRef<
           }`}
         >
           <input
-            {...fieldProps}
+            {..._removeTextAreaProp(fieldProps)}
             ref={fieldElementRef as any}
             className={`${className} ${displayMode && 'display-mode'} ${
               !edit && 'not-editing'
@@ -132,5 +132,8 @@ export const InputTextField = forwardRef<
     </div>
   )
 })
-
+const _removeTextAreaProp = (_ = {}) => {
+  const { textarea, ...rest } = _ as any
+  return rest
+}
 export default InputTextField

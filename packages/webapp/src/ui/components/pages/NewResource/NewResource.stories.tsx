@@ -1,25 +1,16 @@
 import { action } from '@storybook/addon-actions'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { ComponentMeta } from '@storybook/react'
+import { useFormik } from 'formik'
 import { href } from '../../../elements/link'
-import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
+import { SBSimplifiedForm } from '../../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
-import {
-  LanguagesDropdown,
-  LevelDropdown,
-  LicenseDropdown,
-  MonthDropdown,
-  TypeDropdown,
-  VisibilityDropdown,
-  YearsDropdown,
-} from './FieldsData'
-import {
-  NewResource,
-  NewResourceProgressState,
-  NewResourceProps,
-} from './NewResource'
-import { CategoriesDropdown } from './storiesData'
+import { AddToCollectionsStoryProps } from './AddToCollections/AddToCollections.stories'
+import { CollectionTextOptionProps } from './AddToCollections/storiesData'
+import { ExtraDetailsStoryProps } from './ExtraDetails/ExtraDetails.stories'
+import { MonthTextOptionProps, YearsProps } from './ExtraDetails/storiesData'
+import { NewResource, NewResourceProps } from './NewResource'
 import { NewResourceFormValues } from './types'
-import { UploadResourceProps } from './UploadResource/UploadResource'
+import { UploadResourceStoryProps } from './UploadResource/UploadResource.stories'
 
 const meta: ComponentMeta<typeof NewResource> = {
   title: 'Pages/New Resource',
@@ -29,7 +20,6 @@ const meta: ComponentMeta<typeof NewResource> = {
   },
   parameters: { layout: 'fullscreen' },
   excludeStories: [
-    'NewResourceProgressStateStory',
     'NewResourceStoryProps',
     'NewResourceContentUploadedStoryProps',
     'NewResourceImageUploadedStoryProps',
@@ -41,86 +31,9 @@ const meta: ComponentMeta<typeof NewResource> = {
   ],
 }
 
-const NewResourceStory: ComponentStory<typeof NewResource> = (args) => (
-  <NewResource {...args} />
-)
-
-export const NewResourceProgressStateStory: NewResourceProgressState = [
-  ['UploadResource', `Upload resource`],
-  ['AddToCollections', `Add to collections`],
-  ['ExtraDetails', `Add details`],
-]
-
-const initialFormValues: NewResourceFormValues = {
-  collections: [],
-  category: '',
-  content: 'content',
-  contentType: 'File',
-  description: '',
-  format: '',
-  image: 'image',
-  imageUrl: 'image',
-  language: '',
-  level: '',
-  license: '',
-  name: 'https://moodle.com/awesome-content',
-  originalDateMonth: '',
-  originalDateYear: '',
-  title: '',
-  type: '',
-  visibility: '',
-}
-
-const basicDataFormValue: NewResourceFormValues = {
-  ...initialFormValues,
-  title: 'The Best Content Ever',
-  description:
-    'This is the description that tells you that this a not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-  category: 'Important Matters',
-  visibility: 'Public',
-}
-
-const basicLinkDataFormValue: NewResourceFormValues = {
-  ...initialFormValues,
-  content: 'https://moodle.com/awesome-content',
-  contentType: 'Link',
-}
-
-const advancedDataFormValue: NewResourceFormValues = {
-  ...initialFormValues,
-  license: 'CC-BY-NC (Attribution-NonCommercial)',
-  category: '0021 Literacy and numeracy',
-}
-
-const formBag = SBFormikBag<NewResourceFormValues>(initialFormValues)
-const formBagBasic = SBFormikBag<NewResourceFormValues>(basicDataFormValue)
-const formBagLinkBasic = SBFormikBag<NewResourceFormValues>(
-  basicLinkDataFormValue
-)
-const formBagAdvanced = SBFormikBag<NewResourceFormValues>(
-  advancedDataFormValue
-)
-
-const uploadResourceProps: UploadResourceProps = {
-  step: 'UploadResourceStep',
-  formBag,
-  state: 'ChooseResource',
-  imageUrl: '',
-  nextStep: undefined,
-  deleteContent: action('deleteContent'),
-  categories: {
-    opts: CategoriesDropdown,
-    selected: [CategoriesDropdown[2]!],
-  },
-  licenses: LicenseDropdown,
-  visibility: VisibilityDropdown,
-}
 export const NewResourceStoryProps: NewResourceProps = {
   headerPageTemplateProps: {
-    headerPageProps: {
-      ...HeaderPageLoggedInStoryProps,
-      // showSubHeader: false,
-    },
+    headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
     showSubHeader: false,
     mainPageWrapperProps: {
@@ -128,100 +41,107 @@ export const NewResourceStoryProps: NewResourceProps = {
       cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
     },
   },
-  stepProps: uploadResourceProps,
+  uploadResourceProps: UploadResourceStoryProps,
+  addToCollectionsProps: AddToCollectionsStoryProps,
+  extraDetailsProps: ExtraDetailsStoryProps,
+  form: SBSimplifiedForm({}),
 }
 
-export const NewResourceContentUploadedStoryProps: NewResourceProps = {
-  ...NewResourceStoryProps,
-  stepProps: {
-    ...uploadResourceProps,
-    state: 'EditData',
-    formBag: formBagBasic,
-  },
+export const Start = () => {
+  const form = useFormik<NewResourceFormValues>({
+    onSubmit: action('submit'),
+    initialValues: {},
+  })
+
+  return <NewResource {...NewResourceStoryProps} form={form} />
 }
 
-export const NewResourceLinkUploadedStoryProps: NewResourceProps = {
-  ...NewResourceStoryProps,
-  stepProps: {
-    ...uploadResourceProps,
-    state: 'EditData',
-    formBag: formBagLinkBasic,
-  },
+export const FileUploaded = () => {
+  const form = useFormik<NewResourceFormValues>({
+    onSubmit: action('submit'),
+    initialValues: {
+      content: new File([], 'uploaded-file.ext'),
+    },
+  })
+  return <NewResource {...NewResourceStoryProps} form={form} />
 }
 
-export const NewResourceImageUploadedStoryProps: NewResourceProps = {
-  ...NewResourceContentUploadedStoryProps,
-  stepProps: {
-    ...uploadResourceProps,
-    state: 'EditData',
-    imageUrl: 'https://picsum.photos/200/100',
-    formBag: formBagAdvanced,
-  },
+export const LinkUploaded = () => {
+  const form = useFormik<NewResourceFormValues>({
+    onSubmit: action('submit'),
+    initialValues: {
+      content: 'example.com',
+    },
+  })
+  return <NewResource {...NewResourceStoryProps} form={form} />
 }
 
-export const NewResourceAddToCollectionsStoryProps: NewResourceProps = {
-  ...NewResourceContentUploadedStoryProps,
-  stepProps: {
-    ...NewResourceContentUploadedStoryProps.stepProps,
-    step: 'AddToCollectionsStep',
-    collections: [
-      'Education',
-      'Biology',
-      'Algebra',
-      'Phycology',
-      'Phylosophy',
-      'Sociology',
-      'English Literature',
-      'Marketing',
-      'Physiotherapy',
-      'Agriculture',
-      'Taxonomy',
-      'Law',
-      'Interpretation',
-      'Molecular Biology',
-      'Nano Engineering',
-      'Macro Economy',
-      'Animal Rights',
-    ].map((label) => ({ label, id: label })),
-    setAddToCollections: action('setAddToCollections'),
-    previousStep: action('previousStep'),
-    setSearchText: action('setSearchText'),
-    selectedCollections: [],
-  },
+export const ImageUploaded = () => {
+  const form = useFormik<NewResourceFormValues>({
+    onSubmit: action('submit'),
+    initialValues: {
+      content: 'example.com',
+      image: 'https://picsum.photos/200/100',
+    },
+  })
+  return <NewResource {...NewResourceStoryProps} form={form} />
 }
 
-export const NewResourceExtraDetailsStoryProps: NewResourceProps = {
-  ...NewResourceContentUploadedStoryProps,
-  stepProps: {
-    step: 'ExtraDetailsStep',
-    formBag,
-    nextStep: action('nextStep'),
-    previousStep: action('previousStep'),
-    types: TypeDropdown,
-    levels: LevelDropdown,
-    months: MonthDropdown,
-    years: YearsDropdown,
-    languages: LanguagesDropdown,
-    // formats: FormatDropdown,
-  },
+export const AddToCollections = () => {
+  const selected = [
+    CollectionTextOptionProps[2]!,
+    CollectionTextOptionProps[5]!,
+  ]
+  const form = useFormik<NewResourceFormValues>({
+    onSubmit: action('submit'),
+    initialValues: {
+      addToCollections: selected.map(({ value }) => value),
+      content: 'example.com',
+      name: 'resource name',
+      description: 'resource description',
+      visibility: 'private',
+    },
+  })
+  return (
+    <NewResource
+      {...NewResourceStoryProps}
+      form={form}
+      initialProgressIndex={1}
+      addToCollectionsProps={{
+        collections: {
+          opts: CollectionTextOptionProps,
+          selected:
+            form.values.addToCollections?.map(
+              (val) => CollectionTextOptionProps.find((_) => _.value === val)!
+            ) ?? [],
+        },
+      }}
+    />
+  )
 }
 
-export const Start = NewResourceStory.bind({})
-Start.args = NewResourceStoryProps
-
-export const FileUploaded = NewResourceStory.bind({})
-FileUploaded.args = NewResourceContentUploadedStoryProps
-
-export const LinkUploaded = NewResourceStory.bind({})
-LinkUploaded.args = NewResourceLinkUploadedStoryProps
-
-export const ImageUploaded = NewResourceStory.bind({})
-ImageUploaded.args = NewResourceImageUploadedStoryProps
-
-export const AddToCollections = NewResourceStory.bind({})
-AddToCollections.args = NewResourceAddToCollectionsStoryProps
-
-export const ExtraDetails = NewResourceStory.bind({})
-ExtraDetails.args = NewResourceExtraDetailsStoryProps
+export const ExtraDetails = () => {
+  const form = useFormik<NewResourceFormValues>({
+    onSubmit: action('submit'),
+    initialValues: {
+      addToCollections: CollectionTextOptionProps.slice(1, 2).map(
+        ({ value }) => value
+      ),
+      name: 'resource name',
+      description: 'resource description',
+      content: 'example.com',
+      visibility: 'private',
+      month: MonthTextOptionProps[2]?.value,
+      year: YearsProps[2],
+    },
+  })
+  return (
+    <NewResource
+      {...NewResourceStoryProps}
+      form={form}
+      initialProgressIndex={2}
+    />
+  )
+}
 
 export default meta

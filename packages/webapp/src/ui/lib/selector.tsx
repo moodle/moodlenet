@@ -72,7 +72,6 @@ export const Selector: FC<SelectorProps> = (props) => {
     if (!selectElem) {
       return
     }
-    console.log(`selections`, selections)
     selections.forEach((selectionValue: string) => {
       const optElem = createOptionElem(selectionValue)
       selectElem.appendChild(optElem)
@@ -92,7 +91,6 @@ export const Selector: FC<SelectorProps> = (props) => {
     }
 
     const normalizedPropsValue = normalizeValue(props.value)
-    console.log(`normalizedPropsValue`, normalizedPropsValue)
 
     if (doRawValuesEquals(normalizedPropsValue, selections)) {
       return
