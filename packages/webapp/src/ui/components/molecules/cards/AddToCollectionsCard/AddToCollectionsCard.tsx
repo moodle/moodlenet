@@ -17,7 +17,6 @@ export const OptionItem: FC<OptionItemProp> = ({ label, value }) => {
   const { selected, toggle } = useSelectorOption(value)
   return (
     <div
-      key={value}
       className={`collection-name tag ${selected ? 'selected' : ''}`}
       onClick={toggle}
     >
@@ -27,7 +26,7 @@ export const OptionItem: FC<OptionItemProp> = ({ label, value }) => {
 }
 
 export const AddToCollectionsCard: FC<AddToCollectionsCardProps> = (props) => {
-  const { header, noCard, ...selectorProps } = props
+  const { header, noCard, children, ...selectorProps } = props
 
   return (
     <Selector {...selectorProps}>
@@ -40,7 +39,7 @@ export const AddToCollectionsCard: FC<AddToCollectionsCardProps> = (props) => {
                 {/*<Searchbox setSearchText={setSearchText} searchText="" placeholder={t`Find more collections`} />*/}
               </div>
             )}
-            <div className="collections tags">{props.children}</div>
+            <div className="collections tags">{children}</div>
           </Card>
         </div>
       </div>

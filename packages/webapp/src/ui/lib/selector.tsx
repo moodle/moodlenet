@@ -3,7 +3,7 @@ import {
   FC,
   useCallback,
   useContext,
-  useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -67,26 +67,8 @@ export const Selector: FC<SelectorProps> = (props) => {
     normalizeValue(props.defaultValue)
   )
 
-  useEffect(() => {
-    const selectElem = selectRef.current
-    if (!selectElem) {
-      return
-    }
-    selections.forEach((selectionValue: string) => {
-      const optElem = createOptionElem(selectionValue)
-      selectElem.appendChild(optElem)
-    })
-
-    return () => {
-      Array.from(selectElem.options).forEach((opt) =>
-        selectElem.removeChild(opt)
-      )
-    }
-  }, [selections])
-
-  useEffect(() => {
-    const selectElem = selectRef.current
-    if (!selectElem) {
+  useLayoutEffect(() => {
+    if (!selectRef.current) {
       return
     }
 
@@ -98,61 +80,77 @@ export const Selector: FC<SelectorProps> = (props) => {
 
     setSelections(normalizedPropsValue)
   }, [props.value, selections])
+  useLayoutEffect(() => {
+    if (!selectRef.current) {
+      return
+    }
+    const empty = () => {
+      selectRef.current &&
+        Array.from(selectRef.current.options).forEach((opt) =>
+          selectRef.current?.removeChild(opt)
+        )
+    }
+
+    empty()
+    selections.forEach((selectionValue: string) => {
+      const optElem = createOptionElem(selectionValue)
+      selectRef.current?.appendChild(optElem)
+    })
+    return empty
+  }, [selections])
 
   const ctx: SelectorCtxType = useMemo(() => {
     return {
       selections,
       useSelectorOption: (optionValue) => {
         const selected = selections.includes(optionValue)
-        const selectElem = selectRef.current
         const fire = useCallback(() => {
-          if (!selectElem) {
+          if (!selectRef.current) {
             return
           }
-          fireEvent(selectElem, 'change')
-          fireEvent(selectElem, 'input')
-        }, [selectElem])
+          fireEvent(selectRef.current, 'change')
+        }, [])
 
         const deselect = useCallback(() => {
-          if (!selectElem) {
+          if (!selectRef.current) {
             return
           }
-          const optionToDeselect = Array.from(selectElem.options).find(
+          const optionToDeselect = Array.from(selectRef.current.options).find(
             ({ value }) => value === optionValue
           )
           if (!optionToDeselect) {
             return
           }
-          selectElem.removeChild(optionToDeselect)
+          selectRef.current.removeChild(optionToDeselect)
           fire()
-        }, [fire, optionValue, selectElem])
+        }, [fire, optionValue])
 
         const select = useCallback(() => {
-          if (!selectElem) {
+          if (!selectRef.current) {
             return
           }
-          const alreadySelectedOptionEl = Array.from(selectElem.options).find(
-            ({ value }) => value === optionValue
-          )
+          const alreadySelectedOptionEl = Array.from(
+            selectRef.current.options
+          ).find(({ value }) => value === optionValue)
           if (alreadySelectedOptionEl) {
             return
           }
           const optElem = createOptionElem(optionValue)
           if (!multiple) {
-            Array.from(selectElem.options).forEach((opt) =>
-              selectElem.removeChild(opt)
+            Array.from(selectRef.current.options).forEach((opt) =>
+              selectRef.current?.removeChild(opt)
             )
           }
-          selectElem.appendChild(optElem)
+          selectRef.current.appendChild(optElem)
           fire()
-        }, [fire, optionValue, selectElem])
+        }, [fire, optionValue])
 
         const toggle = useCallback(() => {
-          if (!selectElem) {
+          if (!selectRef.current) {
             return
           }
           selected ? deselect() : select()
-        }, [deselect, select, selectElem, selected])
+        }, [deselect, select, selected])
 
         return {
           toggle,
