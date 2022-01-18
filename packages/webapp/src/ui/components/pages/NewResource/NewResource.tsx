@@ -2,7 +2,7 @@ import { t } from '@lingui/macro'
 import { Dispatch, Reducer, useMemo, useReducer } from 'react'
 import { createCtx } from '../../../../lib/context'
 import { CP, withCtrl } from '../../../lib/ctrl'
-import { SimplifiedFormik } from '../../../lib/formik'
+import { FormikHandle } from '../../../lib/formik'
 import ProgressState from '../../atoms/ProgressState/ProgressState'
 import {
   HeaderPageTemplate,
@@ -33,7 +33,7 @@ const progressSubtitles = [
 
 export type NewResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
-  form: SimplifiedFormik<NewResourceFormValues>
+  form: FormikHandle<NewResourceFormValues>
   uploadResourceProps: CP<UploadResourceProps>
   addToCollectionsProps: CP<AddToCollectionsProps>
   extraDetailsProps: CP<ExtraDetailsProps>
@@ -42,7 +42,7 @@ export type NewResourceProps = {
 
 type Ctx = {
   dispatch: Dispatch<Action>
-  form: SimplifiedFormik<NewResourceFormValues>
+  form: FormikHandle<NewResourceFormValues>
   nextForm(): unknown
   prevForm(): unknown
 }

@@ -56,7 +56,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           }
         >
           {types.opts.map(({ label, value }) => (
-            <TextOption label={label} value={value} />
+            <TextOption key={value} label={label} value={value} />
           ))}
         </Dropdown>
         <Dropdown
@@ -75,7 +75,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           }
         >
           {levels.opts.map(({ label, value }) => (
-            <TextOption label={label} value={value} />
+            <TextOption key={value} label={label} value={value} />
           ))}
         </Dropdown>
         <div className="date">
@@ -103,7 +103,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
               }
             >
               {MonthTextOptionProps.map(({ label, value }) => (
-                <TextOption label={label} value={value} />
+                <TextOption key={value} label={label} value={value} />
               ))}
             </Dropdown>
             <Dropdown
@@ -122,7 +122,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
               }
             >
               {YearsProps.map((year) => (
-                <TextOption label={year} value={year} />
+                <TextOption key={year} label={year} value={year} />
               ))}
             </Dropdown>
           </div>
@@ -143,7 +143,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           }
         >
           {languages.opts.map(({ label, value }) => (
-            <TextOption label={label} value={value} />
+            <TextOption key={value} label={label} value={value} />
           ))}
         </Dropdown>
       </div>

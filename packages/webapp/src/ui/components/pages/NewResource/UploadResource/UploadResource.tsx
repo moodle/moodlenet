@@ -238,8 +238,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
               <PrimaryButton
                 onClick={() => {
                   setShouldShowErrors(false)
-                  form.setFieldValue('content', undefined)
-                  form.setFieldValue('license', undefined)
+                  form.resetForm()
                   setIsToDelete(false)
                 }}
                 color="red"
