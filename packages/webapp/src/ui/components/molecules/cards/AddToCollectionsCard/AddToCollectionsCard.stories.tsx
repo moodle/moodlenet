@@ -1,9 +1,7 @@
 import { action } from '@storybook/addon-actions'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import {
-  AddToCollectionsCard,
-  AddToCollectionsCardProps,
-} from './AddToCollectionsCard'
+import { ComponentMeta } from '@storybook/react'
+import { useFormik } from 'formik'
+import { AddToCollectionsCard, OptionItem } from './AddToCollectionsCard'
 
 const meta: ComponentMeta<typeof AddToCollectionsCard> = {
   title: 'Molecules/AddToCollectionsCard',
@@ -21,24 +19,33 @@ const meta: ComponentMeta<typeof AddToCollectionsCard> = {
   ],
 }
 
-export const AddToCollectionsCardStoryProps: AddToCollectionsCardProps = {
-  setAddToCollections: action('setAddToCollectionsCard'),
-  allCollections: [
-    'Education',
-    'Biology',
-    'Algebra',
-    'Phycology',
-    'Phylosophy',
-    'Sociology',
-    'English Literature',
-  ].map((label) => ({ label, id: label })),
+const collections = [
+  'Education',
+  'Biology',
+  'Algebra',
+  'Phycology',
+  'Phylosophy',
+  'Sociology',
+  'English Literature',
+]
+export const Default = () => {
+  const form = useFormik<{ collections?: string[] }>({
+    initialValues: { collections: collections.slice(3, 5) },
+    onSubmit: action('submit'),
+  })
+  console.log(form.values)
+  return (
+    <AddToCollectionsCard
+      name="collections"
+      multiple
+      value={form.values.collections}
+      onChange={form.handleChange}
+    >
+      {collections.map((label) => (
+        <OptionItem key={label} label={label} value={label} />
+      ))}
+    </AddToCollectionsCard>
+  )
 }
-
-const AddToCollectionsCardStory: ComponentStory<typeof AddToCollectionsCard> = (
-  args
-) => <AddToCollectionsCard {...args} />
-
-export const Default = AddToCollectionsCardStory.bind({})
-Default.args = AddToCollectionsCardStoryProps
 
 export default meta

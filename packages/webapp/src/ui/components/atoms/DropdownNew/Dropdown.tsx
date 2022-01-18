@@ -148,7 +148,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
       <label>{label}</label>
       <div
         onClick={showContent ? undefined : toggleOpen}
-        className={`input-container${!edit ? ' not-editing' : ''}${
+        className={`input-container${disabled || !edit ? ' not-editing' : ''}${
           highlight ? ' highlight' : ''
         }`}
       >
@@ -157,7 +157,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
             <input
               ref={dropdownButton}
               className={`dropdown-button search-field  ${
-                !edit ? 'not-editing' : ''
+                disabled || !edit ? 'not-editing' : ''
               }`}
               placeholder={label}
               onInput={({ currentTarget }) =>
@@ -179,7 +179,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
             >
               {pills}
             </div>
-            {edit && <ExpandMoreIcon />}
+            {!disabled && edit && <ExpandMoreIcon />}
           </>
         )}
       </div>

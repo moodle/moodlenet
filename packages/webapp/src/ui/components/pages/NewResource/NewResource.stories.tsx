@@ -1,16 +1,22 @@
+import { t } from '@lingui/macro'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { useFormik } from 'formik'
+import { array, mixed, object, SchemaOf, string } from 'yup'
 import { href } from '../../../elements/link'
-import { SBSimplifiedForm } from '../../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
-import { AddToCollectionsStoryProps } from './AddToCollections/AddToCollections.stories'
 import { CollectionTextOptionProps } from './AddToCollections/storiesData'
-import { ExtraDetailsStoryProps } from './ExtraDetails/ExtraDetails.stories'
-import { MonthTextOptionProps, YearsProps } from './ExtraDetails/storiesData'
-import { NewResource, NewResourceProps } from './NewResource'
+import {
+  LanguagesTextOptionProps,
+  LevelTextOptionProps,
+  TypeTextOptionProps,
+} from './ExtraDetails/storiesData'
+import { NewResource } from './NewResource'
 import { NewResourceFormValues } from './types'
-import { UploadResourceStoryProps } from './UploadResource/UploadResource.stories'
+import {
+  CategoriesTextOptionProps,
+  LicenseIconTextOptionProps,
+} from './UploadResource/storiesData'
 
 const meta: ComponentMeta<typeof NewResource> = {
   title: 'Pages/New Resource',
@@ -31,115 +37,91 @@ const meta: ComponentMeta<typeof NewResource> = {
   ],
 }
 
-export const NewResourceStoryProps: NewResourceProps = {
-  headerPageTemplateProps: {
-    headerPageProps: HeaderPageLoggedInStoryProps,
-    isAuthenticated: true,
-    showSubHeader: false,
-    mainPageWrapperProps: {
-      userAcceptsPolicies: null,
-      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-    },
-  },
-  uploadResourceProps: UploadResourceStoryProps,
-  addToCollectionsProps: AddToCollectionsStoryProps,
-  extraDetailsProps: ExtraDetailsStoryProps,
-  form: SBSimplifiedForm({}),
-}
+const validationSchema: SchemaOf<NewResourceFormValues> = object({
+  category: string().required(t`Please provide a Category`),
+  license: string().when('content', (content, schema) => {
+    return content instanceof Blob
+      ? schema.required(t`Need a License for uploaded content`)
+      : schema.optional()
+  }),
+  content: mixed().required(),
+  description: string().required(t`Please provide a Description`),
+  name: string().required(t`Please provide a title`),
+  addToCollections: array().of(string()).optional(),
+  image: mixed().optional(),
+  language: string().optional(),
+  level: string().optional(),
+  month: string().optional(),
+  type: string().optional(),
+  visibility: mixed().required(),
+  year: string().when('month', (month, schema) => {
+    return month
+      ? schema.required(t`Need an year if you choosed month`)
+      : schema.optional()
+  }),
+})
 
-export const Start = () => {
+export const Default = () => {
   const form = useFormik<NewResourceFormValues>({
     onSubmit: action('submit'),
+    validationSchema,
     initialValues: {},
   })
 
-  return <NewResource {...NewResourceStoryProps} form={form} />
-}
-
-export const FileUploaded = () => {
-  const form = useFormik<NewResourceFormValues>({
-    onSubmit: action('submit'),
-    initialValues: {
-      content: new File([], 'uploaded-file.ext'),
-    },
-  })
-  return <NewResource {...NewResourceStoryProps} form={form} />
-}
-
-export const LinkUploaded = () => {
-  const form = useFormik<NewResourceFormValues>({
-    onSubmit: action('submit'),
-    initialValues: {
-      content: 'example.com',
-    },
-  })
-  return <NewResource {...NewResourceStoryProps} form={form} />
-}
-
-export const ImageUploaded = () => {
-  const form = useFormik<NewResourceFormValues>({
-    onSubmit: action('submit'),
-    initialValues: {
-      content: 'example.com',
-      image: 'https://picsum.photos/200/100',
-    },
-  })
-  return <NewResource {...NewResourceStoryProps} form={form} />
-}
-
-export const AddToCollections = () => {
-  const selected = [
-    CollectionTextOptionProps[2]!,
-    CollectionTextOptionProps[5]!,
-  ]
-  const form = useFormik<NewResourceFormValues>({
-    onSubmit: action('submit'),
-    initialValues: {
-      addToCollections: selected.map(({ value }) => value),
-      content: 'example.com',
-      name: 'resource name',
-      description: 'resource description',
-      visibility: 'private',
-    },
-  })
   return (
     <NewResource
-      {...NewResourceStoryProps}
       form={form}
-      initialProgressIndex={1}
+      headerPageTemplateProps={{
+        headerPageProps: HeaderPageLoggedInStoryProps,
+        isAuthenticated: true,
+        showSubHeader: false,
+        mainPageWrapperProps: {
+          userAcceptsPolicies: null,
+          cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+        },
+      }}
       addToCollectionsProps={{
         collections: {
           opts: CollectionTextOptionProps,
-          selected:
-            form.values.addToCollections?.map(
-              (val) => CollectionTextOptionProps.find((_) => _.value === val)!
-            ) ?? [],
+          selected: CollectionTextOptionProps.filter(
+            ({ value }) => !!form.values.addToCollections?.includes(value)
+          ),
         },
       }}
-    />
-  )
-}
-
-export const ExtraDetails = () => {
-  const form = useFormik<NewResourceFormValues>({
-    onSubmit: action('submit'),
-    initialValues: {
-      addToCollections: CollectionTextOptionProps.slice(1, 2).map(
-        ({ value }) => value
-      ),
-      name: 'resource name',
-      description: 'resource description',
-      content: 'example.com',
-      visibility: 'private',
-      month: MonthTextOptionProps[2]?.value,
-      year: YearsProps[2],
-    },
-  })
-  return (
-    <NewResource
-      {...NewResourceStoryProps}
-      form={form}
-      initialProgressIndex={2}
+      extraDetailsProps={{
+        types: {
+          opts: TypeTextOptionProps,
+          selected: TypeTextOptionProps.find(
+            ({ value }) => value === form.values.type
+          ),
+        },
+        levels: {
+          opts: LevelTextOptionProps,
+          selected: LevelTextOptionProps.find(
+            ({ value }) => value === form.values.level
+          ),
+        },
+        languages: {
+          opts: LanguagesTextOptionProps,
+          selected: LanguagesTextOptionProps.find(
+            ({ value }) => value === form.values.language
+          ),
+        },
+      }}
+      uploadResourceProps={{
+        categories: {
+          opts: CategoriesTextOptionProps,
+          selected: CategoriesTextOptionProps.find(
+            ({ value }) => value === form.values.category
+          ),
+        },
+        licenses: {
+          opts: LicenseIconTextOptionProps,
+          selected: LicenseIconTextOptionProps.find(
+            ({ value }) => value === form.values.license
+          ),
+        },
+      }}
     />
   )
 }

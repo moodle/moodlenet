@@ -84,6 +84,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
     }, [form])
 
     const deleteFileOrLink = useCallback(() => {
+      form.setFieldValue('license', undefined)
       form.setFieldValue('content', undefined)
     }, [form])
 
@@ -117,7 +118,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             onChange={form.handleChange}
             disabled={subStep === 'ChooseResource'}
             label="Subject"
-            edit
+            edit={subStep === 'EditData'}
             highlight={shouldShowErrors && !!form.errors.category}
             pills={
               categories.selected && (
@@ -138,8 +139,8 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             value={form.values.visibility}
             onChange={form.handleChange}
             disabled={subStep === 'ChooseResource'}
+            edit={subStep === 'EditData'}
             label="Visibility"
-            edit
             highlight={shouldShowErrors && !!form.errors.visibility}
             pills={[
               form.values.visibility === undefined ? null : (
@@ -239,6 +240,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                 onClick={() => {
                   setShouldShowErrors(false)
                   form.setFieldValue('content', undefined)
+                  form.setFieldValue('license', undefined)
                   setIsToDelete(false)
                 }}
                 color="red"
