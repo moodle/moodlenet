@@ -21,7 +21,7 @@ import './styles.scss'
 import { setListPosition } from './utils'
 
 export type DropdownProps = SelectorProps & {
-  pills: ReactNode[] | undefined
+  pills: ReactNode
   searchByText?: ((text: string) => unknown) | undefined
   searchText?: string
   label: string
@@ -205,7 +205,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
 
 export const SimplePill: FC<{
   value: string
-  label: string
+  label: ReactNode
   edit?: boolean
 }> = ({ label, value, edit }) => {
   const { toggle } = useSelectorOption(value)
@@ -222,10 +222,11 @@ export const IconPill: FC<{
   return <div className="dropdown-pill icon">{icon}</div>
 }
 
-export const TextOption: FC<{ value: string; label: ReactNode }> = ({
-  value,
-  label,
-}) => {
+export type TextOptionProps = {
+  value: string
+  label: ReactNode
+}
+export const TextOption: FC<TextOptionProps> = ({ value, label }) => {
   const { toggle, selected } = useSelectorOption(value)
   return (
     <div
@@ -238,12 +239,18 @@ export const TextOption: FC<{ value: string; label: ReactNode }> = ({
   )
 }
 
-export const IconTextOption: FC<{
+export type IconTextOptionProps = {
   value: string
   label: ReactNode
   icon: ReactNode
-}> = ({ value, label, icon }) => {
+}
+export const IconTextOption: FC<IconTextOptionProps> = ({
+  value,
+  label,
+  icon,
+}) => {
   const { toggle, selected } = useSelectorOption(value)
+  console.log({ value, icon, label })
   return (
     <div
       key={value}
