@@ -8,7 +8,6 @@ import {
   OptionItemProp,
 } from '../../../molecules/cards/AddToCollectionsCard/AddToCollectionsCard'
 import { useNewResourcePageCtx } from '../NewResource'
-import { NewResourceFormValues } from '../types'
 import './styles.scss'
 
 export type AddToCollectionsProps = {
@@ -17,15 +16,10 @@ export type AddToCollectionsProps = {
     selected: OptionItemProp[]
   }
 }
-const usingFields: (keyof NewResourceFormValues)[] = ['addToCollections']
 
 export const AddToCollections = withCtrl<AddToCollectionsProps>(
   ({ collections }) => {
     const { nextForm, prevForm, form } = useNewResourcePageCtx()
-    const isValid = usingFields.reduce(
-      (valid, fldName) => valid && !form.errors[fldName],
-      true
-    )
     return (
       <div className="add-to-collections">
         <AddToCollectionsCard
@@ -42,7 +36,7 @@ export const AddToCollections = withCtrl<AddToCollectionsProps>(
           <SecondaryButton onClick={prevForm} color="grey">
             <Trans>Back</Trans>
           </SecondaryButton>
-          <PrimaryButton disabled={!isValid} onClick={nextForm}>
+          <PrimaryButton onClick={nextForm}>
             <Trans>Next</Trans>
           </PrimaryButton>
         </div>
