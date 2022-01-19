@@ -111,6 +111,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
               label=""
               onChange={form.handleChange}
               value={form.values.year}
+              error={form.errors.year}
               edit
               pills={
                 form.values.year && (
@@ -156,7 +157,9 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           <SecondaryButton onClick={prevForm} color="grey">
             <Trans>Back</Trans>
           </SecondaryButton>
-          <PrimaryButton disabled={!form.isValid} onClick={form.submitForm}>
+          <PrimaryButton
+            onClick={form.isValid ? form.submitForm : () => form.validateForm()}
+          >
             <Trans>Create resource</Trans>
           </PrimaryButton>
         </div>

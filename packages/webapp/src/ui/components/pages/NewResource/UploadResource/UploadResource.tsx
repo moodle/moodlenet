@@ -119,6 +119,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             label="Subject"
             edit={subStep === 'EditData'}
             highlight={shouldShowErrors && !!form.errors.category}
+            error={form.errors.category}
             pills={
               categories.selected && (
                 <SimplePill
@@ -141,6 +142,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             edit={subStep === 'EditData'}
             label="Visibility"
             highlight={shouldShowErrors && !!form.errors.visibility}
+            error={form.errors.visibility}
             pills={
               form.values.visibility && (
                 <IconPill
@@ -319,12 +321,12 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     edit
                     action={
                       <PrimaryButton
-                        onClick={() =>
+                        onClick={() => {
                           form.setFieldValue(
                             'content',
                             addLinkFieldRef.current?.value
                           )
-                        }
+                        }}
                       >
                         <Trans>Add</Trans>
                       </PrimaryButton>
@@ -356,6 +358,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                       label={t`License`}
                       edit
                       highlight={shouldShowErrors && !!form.errors.license}
+                      error={form.errors.license}
                       pills={
                         licenses.selected && (
                           <IconPill
@@ -392,8 +395,15 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             </SecondaryButton>
           )}
           <PrimaryButton
-            disabled={subStep === 'ChooseResource' || !isValid}
-            onClick={nextForm}
+            disabled={subStep === 'ChooseResource'}
+            onClick={
+              !isValid
+                ? () => {
+                    setShouldShowErrors(true)
+                    form.validateForm()
+                  }
+                : nextForm
+            }
           >
             <Trans>Next</Trans>
           </PrimaryButton>
