@@ -37,7 +37,7 @@ export type NewResourceProps = {
   uploadResourceProps: CP<UploadResourceProps>
   addToCollectionsProps: CP<AddToCollectionsProps>
   extraDetailsProps: CP<ExtraDetailsProps>
-  // initialProgressIndex?: number
+  _initialProgressIndex?: number
 }
 
 type Ctx = {
@@ -72,16 +72,18 @@ export const NewResource = withCtrl<NewResourceProps>(
     uploadResourceProps,
     headerPageTemplateProps,
     form,
-    // initialProgressIndex = 0,
+    _initialProgressIndex = 0,
   }) => {
     const [pageState, dispatch] = useReducer(reducer, {
-      progressIndex: 0, //initialProgressIndex,
+      progressIndex: _initialProgressIndex,
     })
+
     const content = [
       <UploadResource {...uploadResourceProps} />,
       <AddToCollections {...addToCollectionsProps} />,
       <ExtraDetails {...extraDetailsProps} />,
     ][pageState.progressIndex]
+
     const ctx = useMemo<Ctx>(
       () => ({
         dispatch,
@@ -91,6 +93,7 @@ export const NewResource = withCtrl<NewResourceProps>(
       }),
       [form]
     )
+
     return (
       <NewResourcePageCtxProvider value={ctx}>
         <HeaderPageTemplate

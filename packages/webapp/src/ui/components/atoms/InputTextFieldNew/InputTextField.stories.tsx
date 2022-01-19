@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useState } from 'react'
 import PrimaryButton from '../PrimaryButton/PrimaryButton'
 import { InputTextField, InputTextFieldProps } from './InputTextField'
 
@@ -16,6 +17,15 @@ const meta: ComponentMeta<typeof InputTextField> = {
   ],
 }
 
+export const TransStory = () => {
+  const [error, setError] = useState('')
+
+  return (
+    <div onClick={() => (error ? setError('') : setError('errore'))}>
+      <InputTextField error={error}></InputTextField>
+    </div>
+  )
+}
 export const InputTextFieldStoryProps: InputTextFieldProps = {
   label: 'Just a text field',
   edit: true,
