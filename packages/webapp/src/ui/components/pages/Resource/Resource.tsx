@@ -10,7 +10,7 @@ import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { tagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
@@ -53,6 +53,7 @@ import {
 } from './ContributorCard/ContributorCard'
 import './styles.scss'
 
+export type ResourceFormValues = Omit<NewResourceFormValues, 'addToCollections'>
 export type ResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   isAuthenticated: boolean
@@ -64,7 +65,7 @@ export type ResourceProps = {
   bookmarked: boolean
   tags: FollowTag[]
   contributorCardProps: ContributorCardProps
-  form: FormikHandle<NewResourceFormValues>
+  form: FormikHandle<Omit<ResourceFormValues, 'addToCollections'>>
   categories: SelectOptions<TextOptionProps>
   licenses: SelectOptions<IconTextOptionProps>
   types: SelectOptions<TextOptionProps>
@@ -74,6 +75,7 @@ export type ResourceProps = {
   toggleLike: FormikHandle
   toggleBookmark: FormikHandle
   deleteResource?: FormikHandle
+  addToCollectionsForm: FormikHandle<{ collections: string[] }>
   sendToMoodleLms: FormikHandle<{ site?: string }>
   sendToMoodleLmsError?: string | undefined
   resourceFormat: string
@@ -106,6 +108,7 @@ export const Resource = withCtrl<ResourceProps>(
     contentUrl,
     resourceFormat,
     contentType,
+    addToCollectionsForm,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
@@ -144,9 +147,9 @@ export const Resource = withCtrl<ResourceProps>(
       }
     }
 
+    const uploadImageRef = useRef<HTMLInputElement>(null)
     const selectImage = () => {
-      //FIXME! useRef
-      document.getElementById('upload-image')?.click()
+      uploadImageRef.current?.click()
     }
 
     const uploadImage = useCallback(
@@ -626,9 +629,9 @@ export const Resource = withCtrl<ResourceProps>(
                   header={false}
                   noCard={true}
                   multiple
-                  name="addToCollections"
-                  onChange={form.handleChange}
-                  value={collections.selected.map(({ value }) => value)}
+                  name="collections"
+                  onChange={addToCollectionsForm.handleChange}
+                  value={addToCollectionsForm.values.collections}
                 >
                   {collections.opts.map(({ label, value }) => (
                     <OptionItem key={value} label={label} value={value} />
@@ -646,13 +649,10 @@ export const Resource = withCtrl<ResourceProps>(
                       <Trans>Resource</Trans>
                       <div
                         style={{
-                          color: getResourceColorType(
-                            form.values.type ? form.values.type : contentType
-                          ),
+                          color: getResourceColorType(contentType),
                         }}
                       >
-                        &nbsp;/{' '}
-                        {form.values.type ? form.values.type : contentType}
+                        &nbsp;/ {contentType}
                       </div>
                     </span>
                     <div className="actions">
@@ -712,7 +712,7 @@ export const Resource = withCtrl<ResourceProps>(
                   </div>
                   {isOwner ? (
                     <InputTextField
-                      name="title"
+                      name="name"
                       className="title"
                       value={form.values.name}
                       edit={isEditing}
@@ -743,7 +743,7 @@ export const Resource = withCtrl<ResourceProps>(
 
                     {isEditing && (
                       <input
-                        id="upload-image"
+                        ref={uploadImageRef}
                         type="file"
                         accept=".jpg,.jpeg,.png,.gif"
                         onChange={uploadImage}
