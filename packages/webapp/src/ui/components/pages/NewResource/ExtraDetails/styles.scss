@@ -32,11 +32,13 @@
 
         > .fields {
           display: flex;
+          width: 100%;
           gap: 12px;
-          > :first-child {
-            flex: 1;
+          > .month-dropdown {
+            width: 100%;
+            // flex: 1;
           }
-          > :last-child {
+          > .year-dropdown {
             min-width: 85px;
             width: 40%;
           }
