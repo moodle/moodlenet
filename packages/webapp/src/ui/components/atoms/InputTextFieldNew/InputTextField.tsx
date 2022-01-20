@@ -85,11 +85,11 @@ export const InputTextField = forwardRef<
 
   return (
     <div
-      className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${
-        highlight || error ? ' highlight' : ''
-      } ${!errorLeaves && error ? 'enter-error' : ''} ${
-        errorLeaves ? 'leave-error' : ''
-      }`}
+      className={`new-input-text-field ${className}${
+        disabled ? ' disabled' : ''
+      } ${highlight || error ? ' highlight' : ''} ${
+        !errorLeaves && error ? 'enter-error' : ''
+      } ${errorLeaves ? 'leave-error' : ''}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
