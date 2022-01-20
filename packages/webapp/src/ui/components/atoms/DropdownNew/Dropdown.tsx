@@ -24,7 +24,7 @@ export type DropdownProps = SelectorProps & {
   pills: ReactNode
   searchByText?: ((text: string) => unknown) | undefined
   searchText?: string
-  label: string
+  label?: string
   edit?: boolean
   error?: ReactNode
   highlight?: boolean
@@ -65,6 +65,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
     children,
     multiple,
     searchText,
+    placeholder,
   } = props
 
   const [showContentFlag, toggleOpen] = useReducer((_) => !_, false)
@@ -137,29 +138,31 @@ const DropdownComp: FC<DropdownProps> = (props) => {
   return (
     <div
       ref={mainElemRef}
-      className={`dropdown-new ${className} ${searchByText ? 'search' : ''}${
-        disabled ? ' disabled' : ''
-      } ${highlight || error ? ' highlight' : ''} ${
-        !errorLeaves && error ? 'enter-error' : ''
-      } ${errorLeaves ? 'leave-error' : ''}`}
+      className={`dropdown-new ${className ? className : ''} ${
+        searchByText ? 'search' : ''
+      }${disabled ? ' disabled' : ''} ${
+        highlight || error ? ' highlight' : ''
+      } ${!errorLeaves && error ? 'enter-error' : ''} ${
+        errorLeaves ? 'leave-error' : ''
+      }`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
-      <label>{label}</label>
+      {label && <label>{label}</label>}
       <div
         onClick={showContent ? undefined : toggleOpen}
         className={`input-container${disabled || !edit ? ' not-editing' : ''}${
           highlight ? ' highlight' : ''
         }`}
       >
-        {showContent ? (
+        {showContent || !pills ? (
           <>
             <input
               ref={dropdownButton}
               className={`dropdown-button search-field  ${
                 disabled || !edit ? 'not-editing' : ''
               }`}
-              placeholder={label}
+              placeholder={placeholder}
               onInput={({ currentTarget }) =>
                 searchByText?.(currentTarget.value)
               }

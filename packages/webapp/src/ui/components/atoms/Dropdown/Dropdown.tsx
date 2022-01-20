@@ -223,9 +223,9 @@ export const Dropdown: FC<DropdownProps> = ({
     <div
       className={`dropdown ${hasSearch ? 'search' : ''} ${
         disabled ? 'disabled' : ''
-      } ${displayMode ? 'display-mode' : ''} ${
-        !edit ? 'not-editing' : ''
-      } ${className}`}
+      } ${displayMode ? 'display-mode' : ''} ${!edit ? 'not-editing' : ''} ${
+        className ? className : ''
+      }`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
