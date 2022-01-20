@@ -104,6 +104,10 @@
           display: flex;
           gap: 15px;
 
+          > .license-dropdown {
+            max-width: 132px;
+          }
+
           > .subcontainer,
           > .new-input-text-field,
           .dropdown > input {
@@ -204,8 +208,13 @@
     > .side-column > .data-inputs > .subject-and-visibility {
       display: flex;
       gap: 15px;
-      .visibility-dropdown {
-        max-width: 125px;
+      > .subject-dropdown {
+        max-width: max(calc(100% - 150px), calc(100% - 91px));
+      }
+
+      > .visibility-dropdown {
+        max-width: (min(125px, 100% - 250px));
+        min-width: 76px;
       }
     }
 

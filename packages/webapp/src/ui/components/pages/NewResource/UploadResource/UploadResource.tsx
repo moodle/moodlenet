@@ -129,6 +129,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                 />
               )
             }
+            className="subject-dropdown"
           >
             {categories.opts.map(({ label, value }) => (
               <TextOption key={value} value={value} label={label} />
@@ -353,9 +354,9 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                   {contentIsFile && (
                     <Dropdown
                       name="license"
+                      className="license-dropdown"
                       onChange={form.handleChange}
                       value={form.values.license}
-                      label={t`License`}
                       edit
                       highlight={shouldShowErrors && !!form.errors.license}
                       error={form.errors.license}
