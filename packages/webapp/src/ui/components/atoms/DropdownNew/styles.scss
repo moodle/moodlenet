@@ -14,7 +14,7 @@
   }
 
   > .input-container {
-    height: 100%;
+    height: 46px;
     width: 100%;
     min-height: 44px;
     background: #ffffff;
@@ -163,7 +163,7 @@
       > .icons {
         width: 100%;
         height: 100%;
-        margin-left: 10px;
+        //margin-left: 10px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -251,7 +251,7 @@
   }
 }
 
-.dropdown.disabled {
+.dropdown-new.disabled {
   > label {
     color: #c6c6c6;
   }

@@ -53,7 +53,7 @@ const validationSchema: SchemaOf<NewResourceFormValues> = object({
   level: string().optional(),
   month: string().optional(),
   type: string().optional(),
-  visibility: mixed().required(),
+  visibility: mixed().required(t`Visibility is required`),
   year: string().when('month', (month, schema) => {
     return month
       ? schema.required(t`Need an year if you choosed month`)
