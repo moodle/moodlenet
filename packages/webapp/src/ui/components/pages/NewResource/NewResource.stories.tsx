@@ -44,7 +44,7 @@ const validationSchema: SchemaOf<NewResourceFormValues> = object({
       ? schema.required(t`Need a License for uploaded content`)
       : schema.optional()
   }),
-  content: mixed().required(),
+  content: mixed().required(t`Content is a required field`),
   description: string().required(t`Please provide a Description`),
   name: string().required(t`Please provide a title`),
   addToCollections: array().of(string()).optional(),
