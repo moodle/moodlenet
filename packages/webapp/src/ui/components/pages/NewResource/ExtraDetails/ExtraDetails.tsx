@@ -42,6 +42,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
       <div className="data-inputs">
         <Dropdown
           name="type"
+          placeholder={t`Content type`}
           label={t`Type`}
           value={form.values.type}
           onChange={form.handleChange}
@@ -61,6 +62,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
         </Dropdown>
         <Dropdown
           name="level"
+          placeholder={t`Education level`}
           label={t`Level`}
           value={form.values.level}
           onChange={form.handleChange}
@@ -84,7 +86,9 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           </label>
           <div className="fields">
             <Dropdown
+              className="month-dropdown"
               name="month"
+              placeholder={t`Month`}
               onChange={form.handleChange}
               label=""
               value={form.values.month}
@@ -107,6 +111,8 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
               ))}
             </Dropdown>
             <Dropdown
+              className="year-dropdown"
+              placeholder={t`Year`}
               name="year"
               label=""
               onChange={form.handleChange}
@@ -130,6 +136,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
         </div>
         <Dropdown
           name="language"
+          placeholder={t`Content language`}
           label={t`Language`}
           value={form.values.language}
           onChange={form.handleChange}

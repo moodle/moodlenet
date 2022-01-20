@@ -29,6 +29,7 @@ export type DropdownProps = SelectorProps & {
   error?: ReactNode
   highlight?: boolean
   multilines?: boolean
+  placeholder?: string
 }
 export const Dropdown: FC<DropdownProps> = (props) => {
   const {
@@ -41,6 +42,7 @@ export const Dropdown: FC<DropdownProps> = (props) => {
     highlight,
     multilines,
     searchText,
+    placeholder,
     ...selectorProps
   } = props
   return (
@@ -65,6 +67,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
     children,
     multiple,
     searchText,
+    placeholder,
   } = props
 
   const [showContentFlag, toggleOpen] = useReducer((_) => !_, false)
@@ -154,14 +157,14 @@ const DropdownComp: FC<DropdownProps> = (props) => {
           highlight ? ' highlight' : ''
         }`}
       >
-        {showContent ? (
+        {showContent || !pills ? (
           <>
             <input
               ref={dropdownButton}
               className={`dropdown-button search-field  ${
                 disabled || !edit ? 'not-editing' : ''
               }`}
-              placeholder={label}
+              placeholder={placeholder}
               onInput={({ currentTarget }) =>
                 searchByText?.(currentTarget.value)
               }
