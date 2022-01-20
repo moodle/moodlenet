@@ -70,7 +70,7 @@ export const Default = () => {
 
   return (
     <NewResource
-      _initialProgressIndex={2}
+      // _initialProgressIndex={2}
       form={form}
       headerPageTemplateProps={{
         headerPageProps: HeaderPageLoggedInStoryProps,
