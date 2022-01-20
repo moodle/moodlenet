@@ -224,7 +224,7 @@ export const IconPill: FC<{
 
 export type TextOptionProps = {
   value: string
-  label: ReactNode
+  label: string
 }
 export const TextOption: FC<TextOptionProps> = ({ value, label }) => {
   const { toggle, selected } = useSelectorOption(value)
@@ -241,7 +241,7 @@ export const TextOption: FC<TextOptionProps> = ({ value, label }) => {
 
 export type IconTextOptionProps = {
   value: string
-  label: ReactNode
+  label: string
   icon: ReactNode
 }
 export const IconTextOption: FC<IconTextOptionProps> = ({

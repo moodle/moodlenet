@@ -37,7 +37,7 @@ const meta: ComponentMeta<typeof NewResource> = {
   ],
 }
 
-const validationSchema: SchemaOf<NewResourceFormValues> = object({
+export const validationSchema: SchemaOf<NewResourceFormValues> = object({
   category: string().required(t`Please provide a Category`),
   license: string().when('content', (content, schema) => {
     return content instanceof Blob

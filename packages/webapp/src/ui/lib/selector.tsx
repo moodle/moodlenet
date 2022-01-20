@@ -28,14 +28,16 @@ export type SelectorProps = Omit<
         defaultValue?: string | undefined
       }
   )
+
+export type SelectorOption = {
+  toggle(): unknown
+  select(): unknown
+  deselect(): unknown
+  selected: boolean
+}
 export type SelectorCtxType = {
   selections: string[]
-  useSelectorOption(_: string): {
-    toggle(): unknown
-    select(): unknown
-    deselect(): unknown
-    selected: boolean
-  }
+  useSelectorOption(value: string): SelectorOption
 }
 export const SelectorContext = createContext<SelectorCtxType>(null as any)
 

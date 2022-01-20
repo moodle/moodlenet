@@ -5,6 +5,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility'
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
 import React, { useCallback, useRef, useState } from 'react'
 import { withCtrl } from '../../../../lib/ctrl'
+import { SelectOptions } from '../../../../lib/types'
 import { useImageUrl } from '../../../../lib/useImageUrl'
 import { ReactComponent as UploadFileIcon } from '../../../../static/icons/upload-file.svg'
 import { ReactComponent as UploadImageIcon } from '../../../../static/icons/upload-image.svg'
@@ -29,14 +30,8 @@ import './styles.scss'
 
 // type SubStep = 'ChooseResource' | 'EditData'
 export type UploadResourceProps = {
-  categories: {
-    opts: TextOptionProps[]
-    selected?: TextOptionProps
-  }
-  licenses: {
-    opts: IconTextOptionProps[]
-    selected?: IconTextOptionProps
-  }
+  categories: SelectOptions<TextOptionProps>
+  licenses: SelectOptions<IconTextOptionProps>
 }
 
 const usingFields: (keyof NewResourceFormValues)[] = [
