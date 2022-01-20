@@ -1,6 +1,7 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { FormikConfig, useFormik } from 'formik'
+import { useEffect } from 'react'
 import { href } from '../../../elements/link'
 import { TagListStory } from '../../../elements/tags'
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
@@ -14,13 +15,12 @@ import {
   TypeTextOptionProps,
   YearsProps,
 } from '../NewResource/ExtraDetails/storiesData'
-import { NewResourceFormValues } from '../NewResource/types'
 import {
   CategoriesTextOptionProps,
   LicenseIconTextOptionProps,
 } from '../NewResource/UploadResource/storiesData'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
-import { Resource, ResourceProps } from './Resource'
+import { Resource, ResourceFormValues, ResourceProps } from './Resource'
 
 const meta: ComponentMeta<typeof Resource> = {
   title: 'Pages/Resource',
@@ -42,7 +42,7 @@ const meta: ComponentMeta<typeof Resource> = {
   ],
 }
 
-export const resourceFormValues: NewResourceFormValues = {
+export const resourceFormValues: ResourceFormValues = {
   visibility: 'private',
   category: CategoriesTextOptionProps[2]!.value,
   content: '',
@@ -63,13 +63,25 @@ export const ResourceStoryProps = ({
   propsOverrides,
 }: {
   propsOverrides?: Partial<ResourceProps>
-  formikOverrides?: Partial<FormikConfig<NewResourceFormValues>>
+  formikOverrides?: Partial<FormikConfig<ResourceFormValues>>
 }): ResourceProps => {
-  const form = useFormik<NewResourceFormValues>({
+  const form = useFormik<ResourceFormValues>({
     onSubmit: action('submit edit'),
     initialValues: resourceFormValues,
     ...formikOverrides,
   })
+  const addToCollectionsForm = useFormik<{ collections: string[] }>({
+    initialValues: { collections: [] },
+    onSubmit() {},
+  })
+  useEffect(
+    () =>
+      action('changed addToCollectionsForm.values')(
+        addToCollectionsForm.values
+      ),
+    [addToCollectionsForm.values]
+  )
+
   return {
     form,
     headerPageTemplateProps: {
@@ -94,7 +106,8 @@ export const ResourceStoryProps = ({
     collections: {
       opts: CollectionTextOptionProps,
       selected: CollectionTextOptionProps.filter(
-        ({ value }) => !!form.values.addToCollections?.includes(value)
+        ({ value }) =>
+          !!addToCollectionsForm.values.collections?.includes(value)
       ),
     },
     types: {
@@ -143,6 +156,7 @@ export const ResourceStoryProps = ({
       initialValues: { site: 'http://my-lms.org' },
       onSubmit: action('Send to Moodle LMS'),
     }),
+    addToCollectionsForm,
     ...propsOverrides,
   }
 }
