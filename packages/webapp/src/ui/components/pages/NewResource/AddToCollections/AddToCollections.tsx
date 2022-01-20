@@ -1,5 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { withCtrl } from '../../../../lib/ctrl'
+import { SelectOptionsMulti } from '../../../../lib/types'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
 import {
@@ -11,10 +12,7 @@ import { useNewResourcePageCtx } from '../NewResource'
 import './styles.scss'
 
 export type AddToCollectionsProps = {
-  collections: {
-    opts: OptionItemProp[]
-    selected: OptionItemProp[]
-  }
+  collections: SelectOptionsMulti<OptionItemProp>
 }
 
 export const AddToCollections = withCtrl<AddToCollectionsProps>(

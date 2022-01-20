@@ -8,28 +8,44 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
+import VisibilityIcon from '@material-ui/icons/Visibility'
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
 import React, { useCallback, useState } from 'react'
 import { tagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
-import { FormikBag } from '../../../lib/formik'
+import { FormikHandle } from '../../../lib/formik'
+import { SelectOptions, SelectOptionsMulti } from '../../../lib/types'
+import { useImageUrl } from '../../../lib/useImageUrl'
 import defaultBackgroud from '../../../static/img/default-background.svg'
 import { FollowTag, getResourceColorType } from '../../../types'
 import Card from '../../atoms/Card/Card'
-import Dropdown from '../../atoms/Dropdown/Dropdown'
-import InputTextField from '../../atoms/InputTextField/InputTextField'
+import {
+  Dropdown,
+  IconPill,
+  IconTextOption,
+  IconTextOptionProps,
+  SimplePill,
+  TextOption,
+  TextOptionProps,
+} from '../../atoms/DropdownNew/Dropdown'
+import { InputTextField } from '../../atoms/InputTextFieldNew/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import {
   AddToCollectionsCard,
-  TextOptionProps,
+  OptionItem,
+  OptionItemProp,
 } from '../../molecules/cards/AddToCollectionsCard/AddToCollectionsCard'
 import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
 } from '../../templates/HeaderPageTemplate'
-import { DropdownField, FormatDropdown } from '../NewResource/FieldsData'
+import {
+  MonthTextOptionProps,
+  YearsProps,
+} from '../NewResource/ExtraDetails/storiesData'
 import { NewResourceFormValues } from '../NewResource/types'
 import {
   ContributorCard,
@@ -42,34 +58,26 @@ export type ResourceProps = {
   isAuthenticated: boolean
   isOwner: boolean
   isAdmin: boolean
-  title: string
-  liked: boolean
   numLikes: number
+  collections: SelectOptionsMulti<OptionItemProp>
+  liked: boolean
   bookmarked: boolean
   tags: FollowTag[]
   contributorCardProps: ContributorCardProps
-  formBag: FormikBag<NewResourceFormValues>
-  types: DropdownField
-  levels: DropdownField
-  months: DropdownField
-  years: DropdownField
-  languages: DropdownField
+  form: FormikHandle<NewResourceFormValues>
+  categories: SelectOptions<TextOptionProps>
+  licenses: SelectOptions<IconTextOptionProps>
+  types: SelectOptions<TextOptionProps>
+  levels: SelectOptions<TextOptionProps>
+  languages: SelectOptions<TextOptionProps>
   contentUrl: string
-  type: 'link' | 'file'
-  // formats: DropdownField
-  licenses: DropdownField
-  visibility: DropdownField
-  categories: DropdownField
-  setAddToCollections?: (selectedCollections: TextOptionProps[]) => unknown
-  collections?: TextOptionProps[]
-  selectedCollections?: TextOptionProps[]
-  updateResource: () => unknown
-  toggleLike: () => unknown
-  toggleBookmark: () => unknown
-  deleteResource?: () => unknown
-  sendToMoodleLms: (site?: string) => boolean
+  toggleLike: FormikHandle
+  toggleBookmark: FormikHandle
+  deleteResource?: FormikHandle
+  sendToMoodleLms: FormikHandle<{ site?: string }>
   sendToMoodleLmsError?: string | undefined
-  lmsSite?: string
+  resourceFormat: string
+  contentType: 'link' | 'file'
 }
 
 export const Resource = withCtrl<ResourceProps>(
@@ -83,28 +91,21 @@ export const Resource = withCtrl<ResourceProps>(
     bookmarked,
     tags,
     contributorCardProps,
-    formBag,
     types,
     levels,
-    months,
-    years,
     languages,
-    // formats,
     licenses,
-    visibility,
     categories,
     collections,
-    selectedCollections,
+    form,
     sendToMoodleLmsError,
-    setAddToCollections,
-    updateResource,
     toggleLike,
     toggleBookmark,
     deleteResource,
     sendToMoodleLms,
     contentUrl,
-    type,
-    lmsSite,
+    resourceFormat,
+    contentType,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
@@ -116,7 +117,7 @@ export const Resource = withCtrl<ResourceProps>(
       useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-    const [moodleLmsSite, setMoodleLmsSite] = useState<string>(lmsSite ?? '')
+
     //const [isLeaving, setIsLeaving] = useState<boolean>(false)
     //const [hasMadeChanges, setHasMadeChanges] = useState<string>(lmsSite ?? '')
 
@@ -124,8 +125,8 @@ export const Resource = withCtrl<ResourceProps>(
       setIsEditing(true)
     }
     const handleOnSaveClick = () => {
-      updateResource()
       if (form.isValid) {
+        form.submitForm()
         setShouldShowErrors(false)
         setIsEditing(false)
       } else {
@@ -134,7 +135,8 @@ export const Resource = withCtrl<ResourceProps>(
     }
 
     const handleOnSendToMoodleClick = () => {
-      if (sendToMoodleLms(moodleLmsSite)) {
+      if (sendToMoodleLms.isValid) {
+        sendToMoodleLms.submitForm()
         setIsAddingToMoodleLms(false)
         setShouldShowSendToMoodleLmsError(false)
       } else {
@@ -142,73 +144,27 @@ export const Resource = withCtrl<ResourceProps>(
       }
     }
 
-    const [form, formAttrs] = formBag
-    const setFieldValue = form.setFieldValue
-    const setTitleField = useCallback(
-      (_: string) => setFieldValue('title', _),
-      [setFieldValue]
-    )
-    const setDescriptionField = useCallback(
-      (_: string) => setFieldValue('description', _),
-      [setFieldValue]
-    )
-    const setTypeField = useCallback(
-      (_: string) => setFieldValue('type', _),
-      [setFieldValue]
-    )
-    const setLevelField = useCallback(
-      (_: string) => setFieldValue('level', _),
-      [setFieldValue]
-    )
-    const setMonthField = useCallback(
-      (_: string) => setFieldValue('originalDateMonth', _),
-      [setFieldValue]
-    )
-    const setYearField = useCallback(
-      (_: string) => setFieldValue('originalDateYear', _),
-      [setFieldValue]
-    )
-    const setLangField = useCallback(
-      (_: string) => setFieldValue('language', _),
-      [setFieldValue]
-    )
-    const setCategoryField = useCallback(
-      (_: string) => setFieldValue('category', _),
-      [setFieldValue]
-    )
-    const setLicenseField = useCallback(
-      (_: string) => setFieldValue('license', _),
-      [setFieldValue]
-    )
-    const setVisibilityField = useCallback(
-      (_: string) => setFieldValue('visibility', _),
-      [setFieldValue]
-    )
-    //const setCollectionsField = useCallback((_: string) => setFieldValue('collections', _), [setFieldValue])
-    // console.log({ selectedCollections, collections })
-
     const selectImage = () => {
+      //FIXME! useRef
       document.getElementById('upload-image')?.click()
     }
 
     const uploadImage = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e?.currentTarget.files?.item(0)
-        selectedFile && setFieldValue('image', selectedFile)
+        const selectedFile = e.currentTarget.files?.item(0)
+        selectedFile && form.setFieldValue('image', selectedFile)
       },
-      [setFieldValue]
+      [form]
     )
-
+    const [imageUrl] = useImageUrl(form.values.image, defaultBackgroud)
     const image = (
       <img
         className="image"
-        src={
-          typeof form.values.imageUrl === 'string'
-            ? form.values.imageUrl
-            : defaultBackgroud
-        }
+        src={imageUrl}
         alt="Background"
-        {...(type === 'file' && { onClick: () => setIsShowingImage(true) })}
+        {...(contentType === 'file' && {
+          onClick: () => setIsShowingImage(true),
+        })}
       />
     )
 
@@ -226,10 +182,10 @@ export const Resource = withCtrl<ResourceProps>(
           href={contentUrl}
           target="_blank"
           rel="noreferrer"
-          download={form.values.title}
+          download={form.values.name}
         >
           <SecondaryButton>
-            {type === 'file' ? (
+            {contentType === 'file' ? (
               <>
                 <InsertDriveFileIcon />
                 <Trans>Download File</Trans>
@@ -248,83 +204,204 @@ export const Resource = withCtrl<ResourceProps>(
     const extraDetails = isEditing ? (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
         <Dropdown
+          name="visibility"
           value={form.values.visibility}
-          {...visibility}
-          {...formAttrs.visibility}
-          displayMode={true}
+          onChange={form.handleChange}
+          disabled={!isEditing}
           edit={isEditing}
-          getValue={setVisibilityField}
-        />
+          label="Visibility"
+          highlight={shouldShowErrors && !!form.errors.visibility}
+          error={form.errors.visibility}
+          pills={
+            form.values.visibility && (
+              <IconPill
+                icon={
+                  form.values.visibility === 'public' ? (
+                    <VisibilityIcon />
+                  ) : (
+                    <VisibilityOffIcon />
+                  )
+                }
+              />
+            )
+          }
+          className="visibility-dropdown"
+        >
+          {form.values.visibility !== 'public' && (
+            <IconTextOption
+              key={'public'}
+              value={'public'}
+              label={t`Public`}
+              icon={<VisibilityIcon />}
+            />
+          )}
+          {form.values.visibility !== 'private' && (
+            <IconTextOption
+              key={'private'}
+              value={'private'}
+              label={t`Private`}
+              icon={<VisibilityOffIcon />}
+            />
+          )}
+        </Dropdown>
         <Dropdown
+          name="category"
           value={form.values.category}
-          {...categories}
-          {...formAttrs.category}
-          displayMode={true}
+          onChange={form.handleChange}
+          label="Subject"
+          disabled={!isEditing}
           edit={isEditing}
-          getValue={setCategoryField}
-        />
+          highlight={shouldShowErrors && !!form.errors.category}
+          error={form.errors.category}
+          pills={
+            categories.selected && (
+              <SimplePill
+                key={categories.selected.value}
+                value={categories.selected.value}
+                label={categories.selected.label}
+              />
+            )
+          }
+        >
+          {categories.opts.map(({ label, value }) => (
+            <TextOption key={value} value={value} label={label} />
+          ))}
+        </Dropdown>
         <Dropdown
+          name="license"
+          onChange={form.handleChange}
           value={form.values.license}
-          {...licenses}
-          {...formAttrs.license}
-          displayMode={true}
-          edit={isEditing}
-          getValue={setLicenseField}
-        />
+          label={t`License`}
+          edit
+          highlight={shouldShowErrors && !!form.errors.license}
+          error={form.errors.license}
+          pills={
+            licenses.selected && (
+              <IconPill
+                key={licenses.selected.value}
+                icon={licenses.selected.icon}
+              />
+            )
+          }
+        >
+          {licenses.opts.map(({ icon, label, value }) => (
+            <IconTextOption icon={icon} label={label} value={value} />
+          ))}
+        </Dropdown>
         <Dropdown
+          name="type"
+          label={t`Type`}
           value={form.values.type}
-          {...types}
-          {...formAttrs.type}
-          displayMode={true}
-          edit={isEditing}
-          getValue={setTypeField}
-        />
+          onChange={form.handleChange}
+          edit
+          pills={
+            types.selected && (
+              <SimplePill
+                label={types.selected.label}
+                value={types.selected.value}
+              />
+            )
+          }
+        >
+          {types.opts.map(({ label, value }) => (
+            <TextOption key={value} label={label} value={value} />
+          ))}
+        </Dropdown>
         <Dropdown
+          name="level"
+          label={t`Level`}
           value={form.values.level}
-          {...levels}
-          {...formAttrs.level}
-          displayMode={true}
-          edit={isEditing}
-          getValue={setLevelField}
-        />
+          onChange={form.handleChange}
+          edit
+          pills={
+            levels.selected && (
+              <SimplePill
+                label={levels.selected.label}
+                value={levels.selected.value}
+              />
+            )
+          }
+        >
+          {levels.opts.map(({ label, value }) => (
+            <TextOption key={value} label={label} value={value} />
+          ))}
+        </Dropdown>{' '}
         <div className="date">
           <label>
             <Trans>Original creation date</Trans>
           </label>
           <div className="fields">
             <Dropdown
-              value={form.values.originalDateMonth}
-              {...months}
-              {...formAttrs.originalDateMonth}
-              displayMode={true}
-              edit={isEditing}
-              getValue={setMonthField}
-            />
+              name="month"
+              onChange={form.handleChange}
+              label=""
+              value={form.values.month}
+              edit
+              pills={
+                form.values.month && (
+                  <SimplePill
+                    label={
+                      MonthTextOptionProps.find(
+                        ({ value }) => value === form.values.month
+                      )!.label
+                    }
+                    value={form.values.month}
+                  />
+                )
+              }
+            >
+              {MonthTextOptionProps.map(({ label, value }) => (
+                <TextOption key={value} label={label} value={value} />
+              ))}
+            </Dropdown>
             <Dropdown
-              value={form.values.originalDateYear}
-              {...years}
-              {...formAttrs.originalDateYear}
-              displayMode={true}
-              edit={isEditing}
-              getValue={setYearField}
-            />
+              name="year"
+              label=""
+              onChange={form.handleChange}
+              value={form.values.year}
+              error={form.errors.year}
+              edit
+              pills={
+                form.values.year && (
+                  <SimplePill
+                    label={form.values.year}
+                    value={form.values.year}
+                  />
+                )
+              }
+            >
+              {YearsProps.map((year) => (
+                <TextOption key={year} label={year} value={year} />
+              ))}
+            </Dropdown>
           </div>
         </div>
         <Dropdown
+          name="language"
+          label={t`Language`}
           value={form.values.language}
-          {...languages}
-          {...formAttrs.language}
-          displayMode={true}
-          edit={isEditing}
-          getValue={setLangField}
-        />
+          onChange={form.handleChange}
+          edit
+          pills={
+            languages.selected && (
+              <SimplePill
+                label={languages.selected.label}
+                value={languages.selected.value}
+              />
+            )
+          }
+        >
+          {languages.opts.map(({ label, value }) => (
+            <TextOption key={value} label={label} value={value} />
+          ))}
+        </Dropdown>
         <Dropdown
-          value={form.values.format}
-          {...FormatDropdown}
-          {...formAttrs.format}
-          displayMode={true}
-          edit={false}
-        />
+          name="format"
+          label={t`Format`}
+          defaultValue={resourceFormat}
+          disabled
+          pills={<SimplePill label={resourceFormat} value={resourceFormat} />}
+        ></Dropdown>
       </Card>
     ) : (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
@@ -340,69 +417,79 @@ export const Resource = withCtrl<ResourceProps>(
           <div className="title">
             <Trans>Subject</Trans>
           </div>
-          <abbr className="value">{form.values.category}</abbr>
+          <abbr className="value">{categories.selected?.label}</abbr>
         </div>
-        {form.values.license && (
+        {licenses.selected && (
           <div className="detail">
             <div className="title">
               <Trans>License</Trans>
             </div>
-            <abbr className="value" title={form.values.license}>
-              {form.values.license}
+            <abbr className="value" title={licenses.selected.label}>
+              {licenses.selected.icon}
             </abbr>
           </div>
         )}
-        {form.values.type && (
+        {types.selected && (
           <div className="detail">
             <div className="title">
               <Trans>Type</Trans>
             </div>
-            <abbr className="value" title={form.values.type}>
-              {form.values.type}
+            <abbr className="value" title={types.selected.label}>
+              {types.selected.label}
             </abbr>
           </div>
         )}
-        {form.values.level && (
+        {levels.selected && (
           <div className="detail">
             <div className="title">
               <Trans>Level</Trans>
             </div>
-            <abbr className="value" title={form.values.level}>
-              {form.values.level}
+            <abbr className="value" title={levels.selected.label}>
+              {levels.selected.label}
             </abbr>
           </div>
         )}
-        {(form.values.originalDateMonth || form.values.originalDateYear) && (
+        {(form.values.month || form.values.year) && (
           <div className="detail">
             <div className="title">
               <Trans>Original creation date</Trans>
             </div>
             <abbr
               className="value date"
-              title={`${form.values.originalDateMonth} ${form.values.originalDateYear}`}
+              title={`${
+                MonthTextOptionProps.find(
+                  ({ value }) => value === form.values.month
+                )!.label
+              } ${form.values.year}`}
             >
-              <span>{form.values.originalDateMonth}</span>
-              <span>{form.values.originalDateYear}</span>
+              <span>
+                {
+                  MonthTextOptionProps.find(
+                    ({ value }) => value === form.values.month
+                  )!.label
+                }
+              </span>
+              <span>{form.values.year}</span>
             </abbr>
           </div>
         )}
-        {form.values.language && (
+        {languages.selected && (
           <div className="detail">
             <div className="title">
               <Trans>Language</Trans>
             </div>
-            <abbr className="value" title={form.values.language}>
-              {form.values.language}
+            <abbr className="value" title={languages.selected.label}>
+              {languages.selected.label}
             </abbr>
           </div>
         )}
-        {form.values.format && (
+        {resourceFormat && (
           <div className="detail">
             <div className="title">
               <Trans>Format</Trans>
             </div>
-            <abbr className="value" title={form.values.format}>
-              {form.values.format}
+            <abbr className="value" title={resourceFormat}>
+              {resourceFormat}
             </abbr>
           </div>
         )}
@@ -434,36 +521,44 @@ export const Resource = withCtrl<ResourceProps>(
             <Trans>Are you sure you want to discard the changes you made?</Trans>
           </Modal>
         )} */}
-        {isShowingImage && typeof form.values.imageUrl === 'string' && (
+        {isShowingImage && typeof imageUrl === 'string' && (
           <Modal
             className="image-modal"
             closeButton={false}
             onClose={() => setIsShowingImage(false)}
             style={{ maxWidth: '90%', maxHeight: '90%' }}
           >
-            <img src={form.values.imageUrl} alt="Resource" />
+            <img src={imageUrl} alt="Resource" />
           </Modal>
         )}
-        {isAddingToCollection && collections && setAddToCollections && (
-          <Modal
-            title={t`Select Collections`}
-            actions={[
-              <PrimaryButton>
-                <Trans>Done</Trans>
-              </PrimaryButton>,
-            ]}
-            onClose={() => setIsAddingToCollection(false)}
-            style={{ maxWidth: '400px' }}
-          >
-            {console.log(formAttrs.collections)}
-            <AddToCollectionsCard
-              allCollections={collections}
-              setAddToCollections={setAddToCollections}
-              header={false}
-              noCard={true}
-            />
-          </Modal>
-        )}
+        {
+          //FIXME: there are two identical Modal for `Select Collections` ( look down )
+          isAddingToCollection && collections && (
+            <Modal
+              title={t`Select Collections`}
+              actions={[
+                <PrimaryButton>
+                  <Trans>Done</Trans>
+                </PrimaryButton>,
+              ]}
+              onClose={() => setIsAddingToCollection(false)}
+              style={{ maxWidth: '400px' }}
+            >
+              <AddToCollectionsCard
+                header={false}
+                noCard={true}
+                multiple
+                name="addToCollections"
+                onChange={form.handleChange}
+                value={collections.selected.map(({ value }) => value)}
+              >
+                {collections.opts.map(({ label, value }) => (
+                  <OptionItem key={value} label={label} value={value} />
+                ))}
+              </AddToCollectionsCard>
+            </Modal>
+          )
+        }
         {isAddingToMoodleLms && (
           <Modal
             title={t`Your Moodle LMS Site`}
@@ -482,12 +577,11 @@ export const Resource = withCtrl<ResourceProps>(
             }}
             style={{ maxWidth: '350px', width: '100%' }}
           >
-            {console.log(formAttrs.collections)}
             <InputTextField
               placeholder="http://your-moodle-lms-site.com"
-              value={moodleLmsSite}
-              getText={setMoodleLmsSite}
-              autoUpdate
+              value={sendToMoodleLms.values.site}
+              name="site"
+              onChange={sendToMoodleLms.handleChange}
               error={shouldShowSendToMoodleLmsError && sendToMoodleLmsError}
             />
           </Modal>
@@ -498,7 +592,7 @@ export const Resource = withCtrl<ResourceProps>(
             actions={[
               <PrimaryButton
                 onClick={() => {
-                  deleteResource()
+                  deleteResource.submitForm()
                   setIsToDelete(false)
                 }}
                 color="red"
@@ -514,26 +608,35 @@ export const Resource = withCtrl<ResourceProps>(
           </Modal>
         )}
         <div className="resource">
-          {isAddingToCollection && collections && setAddToCollections && (
-            <Modal
-              title={t`Select Collections`}
-              actions={[
-                <PrimaryButton onClick={() => setIsAddingToCollection(false)}>
-                  Done
-                </PrimaryButton>,
-              ]}
-              onClose={() => setIsAddingToCollection(false)}
-              style={{ maxWidth: '400px' }}
-            >
-              <AddToCollectionsCard
-                allCollections={collections}
-                setAddToCollections={setAddToCollections}
-                header={false}
-                noCard={true}
-                value={selectedCollections}
-              />
-            </Modal>
-          )}
+          {
+            //FIXME: there are two identical Modal for `Select Collections` ( look up )
+            //(this one is rendered)
+            isAddingToCollection && collections && (
+              <Modal
+                title={t`Select Collections`}
+                actions={[
+                  <PrimaryButton onClick={() => setIsAddingToCollection(false)}>
+                    Done
+                  </PrimaryButton>,
+                ]}
+                onClose={() => setIsAddingToCollection(false)}
+                style={{ maxWidth: '400px' }}
+              >
+                <AddToCollectionsCard
+                  header={false}
+                  noCard={true}
+                  multiple
+                  name="addToCollections"
+                  onChange={form.handleChange}
+                  value={collections.selected.map(({ value }) => value)}
+                >
+                  {collections.opts.map(({ label, value }) => (
+                    <OptionItem key={value} label={label} value={value} />
+                  ))}
+                </AddToCollectionsCard>
+              </Modal>
+            )
+          }
           <div className="content">
             <div className="main-column">
               <Card className="main-resource-card" hideBorderWhenSmall={true}>
@@ -544,16 +647,12 @@ export const Resource = withCtrl<ResourceProps>(
                       <div
                         style={{
                           color: getResourceColorType(
-                            form.values.type
-                              ? form.values.type
-                              : form.values.contentType
+                            form.values.type ? form.values.type : contentType
                           ),
                         }}
                       >
                         &nbsp;/{' '}
-                        {form.values.type
-                          ? form.values.type
-                          : form.values.contentType}
+                        {form.values.type ? form.values.type : contentType}
                       </div>
                     </span>
                     <div className="actions">
@@ -565,7 +664,9 @@ export const Resource = withCtrl<ResourceProps>(
                               : 'like-disabled'
                           } ${liked && 'liked'}`}
                           onClick={
-                            isAuthenticated && !isOwner ? toggleLike : () => {}
+                            isAuthenticated && !isOwner
+                              ? toggleLike.submitForm
+                              : () => {}
                           }
                         >
                           {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
@@ -575,7 +676,7 @@ export const Resource = withCtrl<ResourceProps>(
                       {isAuthenticated && !isEditing && (
                         <div
                           className={`bookmark ${bookmarked && 'bookmarked'}`}
-                          onClick={toggleBookmark}
+                          onClick={toggleBookmark.submitForm}
                         >
                           {bookmarked ? (
                             <BookmarkIcon />
@@ -611,14 +712,12 @@ export const Resource = withCtrl<ResourceProps>(
                   </div>
                   {isOwner ? (
                     <InputTextField
+                      name="title"
                       className="title"
-                      autoUpdate={true}
-                      value={form.values.title}
-                      displayMode={true}
+                      value={form.values.name}
                       edit={isEditing}
-                      {...formAttrs.title}
-                      getText={setTitleField}
-                      error={isEditing && shouldShowErrors && form.errors.title}
+                      onChange={form.handleChange}
+                      error={isEditing && shouldShowErrors && form.errors.name}
                       // error={
                       //   isEditing &&
                       //   shouldShowErrors &&
@@ -626,15 +725,15 @@ export const Resource = withCtrl<ResourceProps>(
                       // }
                     />
                   ) : (
-                    <div className="title">{form.values.title}</div>
+                    <div className="title">{form.values.name}</div>
                   )}
                   {tags.length > 0 && (
                     <div className="tags scroll">{tagList(tags, 'medium')}</div>
                   )}
                 </div>
-                {(typeof form.values.imageUrl === 'string' || isEditing) && (
+                {(typeof imageUrl === 'string' || isEditing) && (
                   <div className="image-container">
-                    {type === 'link' ? (
+                    {contentType === 'link' ? (
                       <a href={contentUrl} target="_blank" rel="noreferrer">
                         {image}
                       </a>
@@ -662,20 +761,19 @@ export const Resource = withCtrl<ResourceProps>(
                 )}
                 {isOwner ? (
                   <InputTextField
-                    autoUpdate={true}
-                    textAreaAutoSize={true}
+                    name="description"
+                    textarea
+                    textAreaAutoSize
                     value={form.values.description}
-                    textarea={true}
-                    displayMode={true}
+                    displayMode
                     edit={isEditing}
-                    {...formAttrs.description}
+                    onChange={form.handleChange}
                     error={isEditing && form.errors.description}
                     // error={
                     //   isEditing &&
                     //   shouldShowErrors &&
                     //   'Error with the description field'
                     // }
-                    getText={setDescriptionField}
                   />
                 ) : (
                   <div className="description">{form.values.description}</div>

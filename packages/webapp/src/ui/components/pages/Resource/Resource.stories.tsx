@@ -1,22 +1,24 @@
-import { t } from '@lingui/macro'
 import { action } from '@storybook/addon-actions'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { ComponentMeta } from '@storybook/react'
+import { FormikConfig, useFormik } from 'formik'
 import { href } from '../../../elements/link'
 import { TagListStory } from '../../../elements/tags'
-import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
+import { HeaderPageTemplateProps } from '../../templates/HeaderPageTemplate'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
+import { CollectionTextOptionProps } from '../NewResource/AddToCollections/storiesData'
 import {
-  CategoriesDropdown,
-  LanguagesDropdown,
-  LevelDropdown,
-  LicenseDropdown,
-  MonthDropdown,
-  TypeDropdown,
-  VisibilityDropdown,
-  YearsDropdown,
-} from '../NewResource/FieldsData'
+  LanguagesTextOptionProps,
+  LevelTextOptionProps,
+  MonthTextOptionProps,
+  TypeTextOptionProps,
+  YearsProps,
+} from '../NewResource/ExtraDetails/storiesData'
 import { NewResourceFormValues } from '../NewResource/types'
+import {
+  CategoriesTextOptionProps,
+  LicenseIconTextOptionProps,
+} from '../NewResource/UploadResource/storiesData'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
 import { Resource, ResourceProps } from './Resource'
 
@@ -28,6 +30,8 @@ const meta: ComponentMeta<typeof Resource> = {
   },
   parameters: { layout: 'fullscreen' },
   excludeStories: [
+    'resourceFormValues',
+    'ResourceStoryProps',
     'resourceFormBag',
     'ResourceStoryProps',
     'ResourceLinkLoggedOutStoryProps',
@@ -38,141 +42,170 @@ const meta: ComponentMeta<typeof Resource> = {
   ],
 }
 
-const ResourceStory: ComponentStory<typeof Resource> = (args) => (
-  <Resource {...args} />
-)
-
-export const resourceFormBag: NewResourceFormValues = {
-  collections: ['Biology'].map((label) => ({ label, id: label })),
-  visibility: 'Private',
-  category:
-    '0188 Inter-disciplinary programmes and qualifications involving education',
+export const resourceFormValues: NewResourceFormValues = {
+  visibility: 'private',
+  category: CategoriesTextOptionProps[2]!.value,
   content: '',
-  contentType: 'Link',
   description:
     'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-  format: 'Portal / main site',
   image: 'https://picsum.photos/200/100',
-  imageUrl: 'https://picsum.photos/200/100',
-  language: 'Spanish',
-  level: '1 Primary education',
-  license: 'CCO (Public domain)',
-  name: '',
-  originalDateMonth: 'September',
-  originalDateYear: '2021',
-  title: 'The Best Resource Ever',
-  type: 'Web Site',
+  language: LanguagesTextOptionProps[2]!.value,
+  level: LevelTextOptionProps[2]!.value,
+  license: LicenseIconTextOptionProps[2]!.value,
+  month: MonthTextOptionProps[8]!.value,
+  year: YearsProps[20],
+  name: 'The Best Resource Ever',
+  type: TypeTextOptionProps[2]!.value,
 }
 
-export const ResourceStoryProps: ResourceProps = {
-  headerPageTemplateProps: {
-    headerPageProps: HeaderPageLoggedInStoryProps,
-    isAuthenticated: true,
-    mainPageWrapperProps: {
-      userAcceptsPolicies: null,
-      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-    },
-  },
-  isAuthenticated: true,
-  isOwner: false,
-  isAdmin: false,
-  title: 'The Best Resource Ever',
-  liked: false,
-  numLikes: 23,
-  bookmarked: true,
-  tags: TagListStory,
-  contributorCardProps: ContributorCardStoryProps,
-  formBag: SBFormikBag<NewResourceFormValues>(resourceFormBag),
-  contentUrl: '#',
-  type: 'link',
-  collections: [
-    'Education',
-    'Biology',
-    'Algebra',
-    'Phycology',
-    'Phylosophy',
-    'Sociology',
-    'English Literature',
-  ].map((label) => ({ label, id: label })),
-  selectedCollections: [{ label: 'Education', id: 'Education' }],
-  visibility: VisibilityDropdown,
-  types: TypeDropdown,
-  levels: LevelDropdown,
-  months: MonthDropdown,
-  years: YearsDropdown,
-  languages: LanguagesDropdown,
-  // formats: FormatDropdown,
-  categories: CategoriesDropdown,
-  licenses: { ...LicenseDropdown, label: t`License` },
-  updateResource: action('updateResource'),
-  toggleLike: action('toggleLike'),
-  toggleBookmark: action('toggleBookmark'),
-  setAddToCollections: action('setAddToCollection'),
-  sendToMoodleLms: action('Send to Moodle LMS'),
-  deleteResource: action('Delete Resource'),
-}
-
-export const ResourceLinkLoggedOutStoryProps: ResourceProps = {
-  ...ResourceStoryProps,
-  headerPageTemplateProps: {
-    isAuthenticated: false,
-    headerPageProps: {
-      // isAuthenticated: false,
-      headerProps: {
-        ...HeaderLoggedOutStoryProps,
-        me: null,
+export const ResourceStoryProps = ({
+  formikOverrides,
+  propsOverrides,
+}: {
+  propsOverrides?: Partial<ResourceProps>
+  formikOverrides?: Partial<FormikConfig<NewResourceFormValues>>
+}): ResourceProps => {
+  const form = useFormik<NewResourceFormValues>({
+    onSubmit: action('submit edit'),
+    initialValues: resourceFormValues,
+    ...formikOverrides,
+  })
+  return {
+    form,
+    headerPageTemplateProps: {
+      headerPageProps: HeaderPageLoggedInStoryProps,
+      isAuthenticated: true,
+      mainPageWrapperProps: {
+        userAcceptsPolicies: null,
+        cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
       },
-      // subHeaderProps: {
-      //   tags: [],
-      // },
     },
-    mainPageWrapperProps: {
-      userAcceptsPolicies: null,
-      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+    isAuthenticated: true,
+    isOwner: false,
+    isAdmin: false,
+    liked: false,
+    numLikes: 23,
+    bookmarked: true,
+    tags: TagListStory,
+    contributorCardProps: ContributorCardStoryProps,
+    contentUrl: '#',
+    contentType: 'link',
+    resourceFormat: 'Video',
+    collections: {
+      opts: CollectionTextOptionProps,
+      selected: CollectionTextOptionProps.filter(
+        ({ value }) => !!form.values.addToCollections?.includes(value)
+      ),
+    },
+    types: {
+      opts: TypeTextOptionProps,
+      selected: TypeTextOptionProps.find(
+        ({ value }) => value === form.values.type
+      ),
+    },
+    levels: {
+      opts: LevelTextOptionProps,
+      selected: LevelTextOptionProps.find(
+        ({ value }) => value === form.values.level
+      ),
+    },
+    languages: {
+      opts: LanguagesTextOptionProps,
+      selected: LanguagesTextOptionProps.find(
+        ({ value }) => value === form.values.language
+      ),
+    },
+    categories: {
+      opts: CategoriesTextOptionProps,
+      selected: CategoriesTextOptionProps.find(
+        ({ value }) => value === form.values.category
+      ),
+    },
+    licenses: {
+      opts: LicenseIconTextOptionProps,
+      selected: LicenseIconTextOptionProps.find(
+        ({ value }) => value === form.values.license
+      ),
+    },
+    toggleLike: useFormik({
+      initialValues: {},
+      onSubmit: action('toggleLike'),
+    }),
+    toggleBookmark: useFormik({
+      initialValues: {},
+      onSubmit: action('toggleBookmark'),
+    }),
+    deleteResource: useFormik({
+      initialValues: {},
+      onSubmit: action('Delete Resource'),
+    }),
+    sendToMoodleLms: useFormik<{ site?: string }>({
+      initialValues: { site: 'http://my-lms.org' },
+      onSubmit: action('Send to Moodle LMS'),
+    }),
+    ...propsOverrides,
+  }
+}
+
+const headerPageTemplatePropsUnauth: HeaderPageTemplateProps = {
+  isAuthenticated: false,
+  headerPageProps: {
+    headerProps: {
+      ...HeaderLoggedOutStoryProps,
+      me: null,
     },
   },
-  isAuthenticated: false,
+  mainPageWrapperProps: {
+    userAcceptsPolicies: null,
+    cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+  },
+}
+export const LinkLoggedOut = () => {
+  const props = ResourceStoryProps({
+    propsOverrides: {
+      headerPageTemplateProps: headerPageTemplatePropsUnauth,
+      isAuthenticated: false,
+    },
+  })
+
+  return <Resource {...props} />
 }
 
-export const ResourceFileLoggedOutStoryProps: ResourceProps = {
-  ...ResourceLinkLoggedOutStoryProps,
-  type: 'file',
-  contentUrl: 'https://picsum.photos/200/100',
-  formBag: SBFormikBag<NewResourceFormValues>({
-    ...resourceFormBag,
-    contentType: 'File',
-    type: 'Video',
-  }),
+export const FileLoggedOut = () => {
+  const props = ResourceStoryProps({
+    propsOverrides: {
+      headerPageTemplateProps: headerPageTemplatePropsUnauth,
+      isAuthenticated: false,
+      contentType: 'file',
+      contentUrl: 'https://picsum.photos/200/100',
+      resourceFormat: 'Video',
+    },
+  })
+  return <Resource {...props} />
 }
 
-export const ResourceLoggedInStoryProps: ResourceProps = {
-  ...ResourceStoryProps,
+export const LoggedIn = () => {
+  const props = ResourceStoryProps({})
+  return <Resource {...props} />
 }
 
-export const ResourceOwnerStoryProps: ResourceProps = {
-  ...ResourceStoryProps,
-  isOwner: true,
+export const Owner = () => {
+  const props = ResourceStoryProps({
+    propsOverrides: {
+      isOwner: true,
+    },
+  })
+  return <Resource {...props} />
 }
 
-export const ResourceAdminStoryProps: ResourceProps = {
-  ...ResourceStoryProps,
-  isOwner: true,
-  isAdmin: true,
+export const Admin = () => {
+  const props = ResourceStoryProps({
+    propsOverrides: {
+      isOwner: true,
+      isAdmin: true,
+    },
+  })
+  return <Resource {...props} />
 }
-
-export const LinkLoggedOut = ResourceStory.bind({})
-LinkLoggedOut.args = ResourceLinkLoggedOutStoryProps
-
-export const FileLoggedOut = ResourceStory.bind({})
-FileLoggedOut.args = ResourceFileLoggedOutStoryProps
-
-export const LoggedIn = ResourceStory.bind({})
-LoggedIn.args = ResourceLoggedInStoryProps
-
-export const Owner = ResourceStory.bind({})
-Owner.args = ResourceOwnerStoryProps
-
-export const Admin = ResourceStory.bind({})
-Admin.args = ResourceAdminStoryProps
 
 export default meta

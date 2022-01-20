@@ -1,5 +1,6 @@
 import { t, Trans } from '@lingui/macro'
 import { withCtrl } from '../../../../lib/ctrl'
+import { SelectOptions } from '../../../../lib/types'
 import {
   Dropdown,
   SimplePill,
@@ -13,18 +14,9 @@ import { MonthTextOptionProps, YearsProps } from './storiesData'
 import './styles.scss'
 
 export type ExtraDetailsProps = {
-  types: {
-    opts: TextOptionProps[]
-    selected?: TextOptionProps
-  }
-  levels: {
-    opts: TextOptionProps[]
-    selected?: TextOptionProps
-  }
-  languages: {
-    opts: TextOptionProps[]
-    selected?: TextOptionProps
-  }
+  types: SelectOptions<TextOptionProps>
+  levels: SelectOptions<TextOptionProps>
+  languages: SelectOptions<TextOptionProps>
 }
 // const usingFields: (keyof NewResourceFormValues)[] = [
 //   'type',
