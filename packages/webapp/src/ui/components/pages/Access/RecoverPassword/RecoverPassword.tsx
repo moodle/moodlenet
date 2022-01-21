@@ -35,7 +35,6 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
     loginHref,
     RecoverPasswordErrorMessage,
   }) => {
-    console.log({ isSubmitting: form.isSubmitting })
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Enter') {
         form.submitForm()
