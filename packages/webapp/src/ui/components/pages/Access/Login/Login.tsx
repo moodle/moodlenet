@@ -3,9 +3,9 @@ import CallMadeIcon from '@material-ui/icons/CallMade'
 import React from 'react'
 import { Href, Link } from '../../../../elements/link'
 import { CP, withCtrl } from '../../../../lib/ctrl'
-import { FormikBag } from '../../../../lib/formik'
+import { FormikHandle } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
-import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import { InputTextField } from '../../../atoms/InputTextFieldNew/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import {
@@ -19,7 +19,7 @@ export type LoginFormValues = { email: string; password: string }
 export type LoginProps = {
   mainPageWrapperProps: CP<MainPageWrapperProps>
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
-  formBag: FormikBag<LoginFormValues>
+  form: FormikHandle<LoginFormValues>
   wrongCreds: boolean
   signupHref: Href
   // landingHref: Href
@@ -29,22 +29,24 @@ export type LoginProps = {
 export const Login = withCtrl<LoginProps>(
   ({
     accessHeaderProps,
-    formBag,
+    form,
     signupHref,
     wrongCreds,
     recoverPasswordHref,
     mainPageWrapperProps,
   }) => {
-    const [form, attrs] = formBag
-
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Enter') {
         form.submitForm()
-        console.log('submiting form')
       }
     }
 
     const shouldShowErrors = !!form.submitCount && (wrongCreds || !form.isValid)
+    console.log({
+      submitCount: form.submitCount,
+      wrongCreds,
+      isValid: form.isValid,
+    })
 
     return (
       <MainPageWrapper
@@ -63,18 +65,21 @@ export const Login = withCtrl<LoginProps>(
                 <form onSubmit={form.handleSubmit}>
                   <InputTextField
                     className="email"
-                    autoUpdate={true}
                     type="email"
+                    name="email"
+                    edit
+                    value={form.values.email}
+                    onChange={form.handleChange}
                     placeholder={t`Email`}
-                    {...attrs.email}
                     error={shouldShowErrors && form.errors.email}
                   />
                   <InputTextField
                     className="password"
-                    autoUpdate={true}
                     type="password"
-                    placeholder={t`Password`}
-                    {...attrs.password}
+                    name="password"
+                    edit
+                    value={form.values.password}
+                    onChange={form.handleChange}
                     error={shouldShowErrors && form.errors.password}
                   />
                   {wrongCreds && (
