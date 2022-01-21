@@ -163,7 +163,7 @@ export const Resource = withCtrl<ResourceProps>(
     const image = (
       <img
         className="image"
-        src={imageUrl}
+        src={imageUrl ? imageUrl : undefined}
         alt="Background"
         {...(contentType === 'file' && {
           onClick: () => setIsShowingImage(true),
@@ -778,8 +778,8 @@ export const Resource = withCtrl<ResourceProps>(
                 ) : (
                   <div className="description">{form.values.description}</div>
                 )}
-                <div className="bottom">
-                  {isEditing && (
+                {isEditing && (
+                  <div className="bottom">
                     <SecondaryButton
                       color="red"
                       onHoverColor="filled-red"
@@ -787,8 +787,8 @@ export const Resource = withCtrl<ResourceProps>(
                     >
                       <DeleteOutlineIcon />
                     </SecondaryButton>
-                  )}
-                </div>
+                  </div>
+                )}
                 {/* <div className="comments"></div> */}
               </Card>
               <div className="resource-footer">

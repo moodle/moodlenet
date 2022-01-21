@@ -55,7 +55,7 @@
       > .main-resource-card {
         display: flex;
         flex-direction: column;
-        gap: 24px;
+        gap: 22px;
         padding: 26px 34px 34px 34px;
         position: relative;
 
@@ -137,7 +137,9 @@
             font-size: 26px;
 
             > .input-container {
+              height: fit-content;
               > input {
+                padding: 0;
                 font-weight: bold;
                 font-size: 26px;
               }
@@ -151,9 +153,10 @@
           }
         }
 
-        > .resource-header > .input-text-field,
-        > .input-text-field {
-          > .input-text-field-container {
+        > .resource-header > .new-input-text-field,
+        > .new-input-text-field {
+          > .input-container {
+            padding: 0;
             box-shadow: none;
             animation: none;
           }
@@ -166,6 +169,7 @@
           }
           > .input-container,
           > .textarea-container {
+            min-height: fit-content;
             box-shadow: none;
             border-width: 2px;
             border-bottom-width: 2px;
@@ -178,7 +182,6 @@
         > .image-container {
           position: relative;
           width: 100%;
-          margin-top: -8px;
 
           > .image,
           > a > .image {
