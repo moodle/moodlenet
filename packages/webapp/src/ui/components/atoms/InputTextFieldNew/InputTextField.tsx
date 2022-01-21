@@ -61,6 +61,7 @@ export const InputTextField = forwardRef<
       fieldElem.style.height =
         Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'
     }
+    fitTextArea()
     fieldElem.addEventListener('input', fitTextArea)
     return () => {
       fieldElem.removeEventListener('input', fitTextArea)
