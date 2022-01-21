@@ -1,8 +1,8 @@
 import { t, Trans } from '@lingui/macro'
 import { CP, withCtrl } from '../../../../lib/ctrl'
-import { FormikBag } from '../../../../lib/formik'
+import { FormikHandle } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
-import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import { InputTextField } from '../../../atoms/InputTextFieldNew/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import {
   MainPageWrapper,
@@ -15,7 +15,7 @@ export type NewPasswordFormValues = { newPassword: string }
 export type NewPasswordProps = {
   mainPageWrapperProps: CP<MainPageWrapperProps>
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
-  formBag: FormikBag<NewPasswordFormValues>
+  form: FormikHandle<NewPasswordFormValues>
   newPasswordErrorMessage: string | null
 }
 
@@ -24,10 +24,8 @@ export const NewPassword = withCtrl<NewPasswordProps>(
     mainPageWrapperProps,
     accessHeaderProps,
     newPasswordErrorMessage,
-    formBag,
+    form,
   }) => {
-    const [form, attrs] = formBag
-
     const shouldShowErrors =
       !!form.submitCount && (newPasswordErrorMessage || !form.isValid)
 
@@ -47,10 +45,12 @@ export const NewPassword = withCtrl<NewPasswordProps>(
                 <form onSubmit={form.handleSubmit}>
                   <InputTextField
                     className="password"
-                    autoUpdate={true}
                     type="password"
+                    name="newPassword"
+                    edit
+                    value={form.values.newPassword}
+                    onChange={form.handleChange}
                     placeholder={t`New password`}
-                    {...attrs.newPassword}
                     error={shouldShowErrors && form.errors.newPassword}
                   />
                 </form>
