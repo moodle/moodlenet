@@ -65,12 +65,12 @@ export const Login = withCtrl<LoginProps>(
                 <form onSubmit={form.handleSubmit}>
                   <InputTextField
                     className="email"
+                    placeholder={t`Email`}
                     type="email"
                     name="email"
                     edit
                     value={form.values.email}
                     onChange={form.handleChange}
-                    placeholder={t`Email`}
                     error={shouldShowErrors && form.errors.email}
                   />
                   <InputTextField

@@ -3,9 +3,9 @@ import CallMadeIcon from '@material-ui/icons/CallMade'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import { Href, Link } from '../../../../elements/link'
 import { CP, withCtrl } from '../../../../lib/ctrl'
-import { FormikBag } from '../../../../lib/formik'
+import { FormikHandle } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
-import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import { InputTextField } from '../../../atoms/InputTextFieldNew/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import {
@@ -19,7 +19,7 @@ export type SignupFormValues = { name: string; email: string; password: string }
 export type SignupProps = {
   mainPageWrapperProps: CP<MainPageWrapperProps>
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
-  formBag: FormikBag<SignupFormValues>
+  form: FormikHandle<SignupFormValues>
   signupErrorMessage: string | null
   requestSent: boolean
   loginHref: Href
@@ -31,14 +31,12 @@ export const Signup = withCtrl<SignupProps>(
   ({
     mainPageWrapperProps,
     accessHeaderProps,
-    formBag,
+    form,
     requestSent,
     loginHref,
     signupErrorMessage,
     userAgreementHref,
   }) => {
-    const [form, attrs] = formBag
-
     const shouldShowErrors =
       !!form.submitCount && (!!signupErrorMessage || !form.isValid)
 
@@ -65,25 +63,31 @@ export const Signup = withCtrl<SignupProps>(
                 <form onSubmit={form.handleSubmit}>
                   <InputTextField
                     className="display-name"
-                    autoUpdate={true}
                     placeholder={t`Display name`}
-                    {...attrs.name}
+                    name="name"
+                    edit
+                    value={form.values.name}
+                    onChange={form.handleChange}
                     error={shouldShowErrors && form.errors.name}
                   />
                   <InputTextField
                     className="email"
-                    autoUpdate={true}
                     type="email"
                     placeholder={t`Email`}
-                    {...attrs.email}
+                    name="email"
+                    edit
+                    value={form.values.email}
+                    onChange={form.handleChange}
                     error={shouldShowErrors && form.errors.email}
                   />
                   <InputTextField
                     className="password"
-                    autoUpdate={true}
                     type="password"
                     placeholder={t`Password`}
-                    {...attrs.password}
+                    name="password"
+                    edit
+                    value={form.values.password}
+                    onChange={form.handleChange}
                     error={shouldShowErrors && form.errors.password}
                   />
                   <button
