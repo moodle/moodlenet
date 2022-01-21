@@ -2,14 +2,14 @@ import { t, Trans } from '@lingui/macro'
 import EditIcon from '@material-ui/icons/Edit'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import SaveIcon from '@material-ui/icons/Save'
-import React, { useCallback, useState } from 'react'
-import { isEmailAddress } from '../../../../../helpers/utilities'
+import React, { useRef, useState } from 'react'
 import { ReactComponent as ApprovedIcon } from '../../../../assets/icons/approved.svg'
 import { withCtrl } from '../../../../lib/ctrl'
-import { FormikBag } from '../../../../lib/formik'
+import { FormikHandle } from '../../../../lib/formik'
+import { useImageUrl } from '../../../../lib/useImageUrl'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
 import defaultBackgroud from '../../../../static/img/default-background.svg'
-import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import { InputTextField } from '../../../atoms/InputTextFieldNew/InputTextField'
 import Modal from '../../../atoms/Modal/Modal'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../../atoms/RoundButton/RoundButton'
@@ -26,22 +26,18 @@ export type ProfileCardProps = {
   isFollowing?: boolean
   isEditing?: boolean
   isAuthenticated: boolean
-  formBag: FormikBag<ProfileFormValues>
+  editForm: FormikHandle<ProfileFormValues>
   toggleIsEditing(): unknown
-  toggleFollow(): unknown
   openSendMessage(): unknown
-  avatarUrl: string | null
-  backgroundUrl: string | null
-  requestApprovalFormBag: FormikBag<{}>
-  approveUserFormBag: FormikBag<{}>
-  unapproveUserForm: FormikBag<{}>
+  toggleFollowForm: FormikHandle<{}>
+  requestApprovalForm: FormikHandle<{}>
+  approveUserForm: FormikHandle<{}>
+  unapproveUserForm: FormikHandle<{}>
   showAccountApprovedSuccessAlert?: boolean
 }
 
 export const ProfileCard = withCtrl<ProfileCardProps>(
   ({
-    avatarUrl,
-    backgroundUrl,
     isOwner,
     isAdmin,
     isApproved,
@@ -51,42 +47,21 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     isAuthenticated,
     isEditing,
     isFollowing,
-    formBag,
+    editForm,
     openSendMessage,
-    toggleFollow,
+    toggleFollowForm,
     toggleIsEditing,
-    requestApprovalFormBag: [requestApprovalForm],
-    approveUserFormBag: [approveUserForm],
-    unapproveUserForm: [unapproveUserForm],
+    approveUserForm,
+    requestApprovalForm,
+    unapproveUserForm,
   }) => {
-    const [form, formAttrs] = formBag
-    const [profileCardErrorMessage, setProfileCardErrorMessage] = useState<
-      string | null
-    >(null)
     const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isShowingBackground, setIsShowingBackground] =
       useState<boolean>(false)
-    const setFieldValue = form.setFieldValue
-    const setDisplayNameField = useCallback(
-      (_: string) => setFieldValue('displayName', _),
-      [setFieldValue]
-    )
-    const setDescriptionField = useCallback(
-      (_: string) => setFieldValue('description', _),
-      [setFieldValue]
-    )
-    const setLocationField = useCallback(
-      (_: string) => setFieldValue('location', _),
-      [setFieldValue]
-    )
-    const setSiteUrlField = useCallback(
-      (_: string) => setFieldValue('siteUrl', _),
-      [setFieldValue]
-    )
 
     const handleOnSaveClick = () => {
-      if (form.isValid) {
+      if (editForm.isValid) {
         setShouldShowErrors(false)
         toggleIsEditing()
       } else {
@@ -94,53 +69,36 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
       }
     }
 
-    const setDisplayNameFieldCtrl = (displayName: string) => {
-      if (isEmailAddress(form.values.displayName)) {
-        setProfileCardErrorMessage('Display name cannot be an email')
-      } else {
-        setDisplayNameField(displayName)
-      }
-    }
-
+    const uploadBackgroundRef = useRef<HTMLInputElement>(null)
     const selectBackground = (e: React.MouseEvent<HTMLElement>) => {
       e.stopPropagation()
-      document.getElementById('upload-background')?.click()
+      uploadBackgroundRef.current?.click()
     }
 
+    const uploadAvatarRef = useRef<HTMLInputElement>(null)
     const selectAvatar = (e: React.MouseEvent<HTMLElement>) => {
       e.stopPropagation()
-      document.getElementById('upload-avatar')?.click()
+      uploadAvatarRef.current?.click()
     }
 
-    const uploadBackground = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const selectedFile = e.currentTarget.files?.item(0)
-      selectedFile && uploadImage(selectedFile, 'background')
-    }
+    const uploadBackground = (e: React.ChangeEvent<HTMLInputElement>) =>
+      editForm.setFieldValue('backgroundImage', e.currentTarget.files?.item(0))
 
-    const uploadAvatar = (e?: React.ChangeEvent<HTMLInputElement>) => {
-      const selectedFile = e?.currentTarget.files?.item(0)
-      selectedFile && uploadImage(selectedFile, 'avatar')
-    }
+    const uploadAvatar = (e: React.ChangeEvent<HTMLInputElement>) =>
+      editForm.setFieldValue('avatarImage', e.currentTarget.files?.item(0))
 
-    const uploadImage = useCallback(
-      (file: File, type: 'background' | 'avatar') => {
-        if (file) {
-          type === 'background'
-            ? setFieldValue('backgroundImage', file)
-            : setFieldValue('avatarImage', file)
-        }
-      },
-      [setFieldValue]
+    const [backgroundUrl] = useImageUrl(
+      editForm.values.backgroundImage,
+      defaultBackgroud
     )
-
     const background = {
-      backgroundImage:
-        'url(' + (backgroundUrl ? backgroundUrl : defaultBackgroud) + ')',
+      backgroundImage: 'url(' + backgroundUrl + ')',
       backgroundSize: 'cover',
     }
 
+    const [avatarUrl] = useImageUrl(editForm.values.avatarImage, defaultAvatar)
     const avatar = {
-      backgroundImage: 'url(' + (avatarUrl ? avatarUrl : defaultAvatar) + ')',
+      backgroundImage: 'url(' + avatarUrl + ')',
       backgroundSize: 'cover',
     }
 
@@ -173,7 +131,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
         >
           {isEditing && (
             <input
-              id="upload-background"
+              ref={uploadBackgroundRef}
               type="file"
               accept=".jpg,.jpeg,.png,.gif"
               onChange={uploadBackground}
@@ -197,7 +155,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
           >
             {isEditing && (
               <input
-                id="upload-avatar"
+                ref={uploadAvatarRef}
                 type="file"
                 accept=".jpg,.jpeg,.png,.gif"
                 onChange={uploadAvatar}
@@ -237,24 +195,18 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               {isOwner && isEditing ? (
                 <InputTextField
                   className="display-name"
-                  autoUpdate={true}
-                  value={form.values.displayName}
-                  displayMode={true}
                   placeholder="Display name"
+                  value={editForm.values.displayName}
+                  onChange={editForm.handleChange}
+                  name="displayName"
+                  displayMode={true}
                   edit={isEditing}
-                  {...formAttrs.displayName}
-                  getText={setDisplayNameFieldCtrl}
-                  // error={
-                  //   isEditing &&
-                  //   shouldShowErrors &&
-                  //   'Error with the display name field'
-                  // }
                   error={
-                    isEditing && shouldShowErrors && form.errors.displayName
+                    isEditing && shouldShowErrors && editForm.errors.displayName
                   }
                 />
               ) : (
-                <div className="title">{form.values.displayName}</div>
+                <div className="title">{editForm.values.displayName}</div>
               )}
               {!isEditing && isApproved && (
                 <abbr className={`approved-icon`} title={t`Approved user`}>
@@ -273,125 +225,101 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 <span>
                   @
                   <InputTextField
-                    autoUpdate={true}
-                    value={form.values.username}
-                    displayMode={true}
                     placeholder="Username"
-                    edit={false}
-                    {...formAttrs.username}
-                    // error={
-                    //   isEditing &&
-                    //   shouldShowErrors &&
-                    //   'Error with the username field'
-                    // }
+                    value={editForm.values.username}
+                    onChange={editForm.handleChange}
+                    displayMode={true}
+                    name="username"
+                    edit={isEditing}
                     error={
-                      isEditing && shouldShowErrors && form.errors.username
+                      isEditing && shouldShowErrors && editForm.errors.username
                     }
                   />
                 </span>
                 <span>
                   <InputTextField
-                    autoUpdate={true}
-                    value={form.values.organizationName}
                     displayMode={true}
+                    value={editForm.values.organizationName}
+                    onChange={editForm.handleChange}
                     placeholder="Organization"
-                    edit={false}
-                    {...formAttrs.organizationName}
-                    // error={
-                    //   isEditing &&
-                    //   shouldShowErrors &&
-                    //   'Error with the title field'
-                    // }
+                    name="organizationName"
+                    edit={isEditing}
                     error={
                       isEditing &&
                       shouldShowErrors &&
-                      form.errors.organizationName
+                      editForm.errors.organizationName
                     }
                   />
                 </span>
                 <span>
                   <InputTextField
-                    autoUpdate={true}
-                    value={form.values.location}
-                    displayMode={true}
                     placeholder="Location"
+                    value={editForm.values.location}
+                    onChange={editForm.handleChange}
+                    displayMode={true}
+                    name="location"
                     edit={isEditing}
-                    {...formAttrs.location}
-                    getText={setLocationField}
-                    // error={
-                    //   isEditing &&
-                    //   shouldShowErrors &&
-                    //   'Error with the location field'
-                    // }
                     error={
-                      isEditing && shouldShowErrors && form.errors.location
+                      isEditing && shouldShowErrors && editForm.errors.location
                     }
                   />
                 </span>
                 <span>
                   <InputTextField
-                    autoUpdate={true}
-                    value={form.values.siteUrl}
+                    value={editForm.values.siteUrl}
+                    onChange={editForm.handleChange}
                     displayMode={true}
                     placeholder="Website"
+                    name="siteUrl"
                     edit={isEditing}
-                    {...formAttrs.siteUrl}
-                    getText={setSiteUrlField}
-                    // error={
-                    //   isEditing &&
-                    //   shouldShowErrors &&
-                    //   'Error with the siteUrl field'
-                    // }
-                    error={isEditing && shouldShowErrors && form.errors.siteUrl}
+                    error={
+                      isEditing && shouldShowErrors && editForm.errors.siteUrl
+                    }
                   />
                 </span>
               </div>
             ) : (
               <div className="subtitle">
-                {form.values.username !== '' && (
-                  <span>@{form.values.username}</span>
+                {editForm.values.username !== '' && (
+                  <span>@{editForm.values.username}</span>
                 )}
-                {form.values.organizationName !== '' && (
-                  <span>{form.values.organizationName}</span>
+                {editForm.values.organizationName !== '' && (
+                  <span>{editForm.values.organizationName}</span>
                 )}
-                {form.values.location !== '' && (
-                  <span>{form.values.location}</span>
+                {editForm.values.location !== '' && (
+                  <span>{editForm.values.location}</span>
                 )}
-                {form.values.siteUrl !== '' && (
+                {editForm.values.siteUrl !== '' && (
                   <a
-                    href={form.values.siteUrl}
+                    href={editForm.values.siteUrl}
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {form.values.siteUrl}
+                    {editForm.values.siteUrl}
                   </a>
                 )}
               </div>
             )}
-            {profileCardErrorMessage && (
+            {/* {profileCardErrorMessage && (
               <div className="error">{profileCardErrorMessage}</div>
-            )}
+            )} */}
           </div>
           {isOwner ? (
             <InputTextField
-              autoUpdate={true}
               textAreaAutoSize={true}
-              value={form.values.description}
+              value={editForm.values.description}
+              onChange={editForm.handleChange}
               textarea={true}
               displayMode={true}
               placeholder="What should others know about you?"
+              name="description"
               edit={isEditing}
-              {...formAttrs.description}
-              getText={setDescriptionField}
-              // error={
-              //   isEditing &&
-              //   shouldShowErrors &&
-              //   'Error with the description field'
-              // }
-              error={isEditing && shouldShowErrors && form.errors.description}
+              error={
+                isEditing && shouldShowErrors && editForm.errors.description
+              }
             />
           ) : (
-            <div className="description">{form.values.description}</div>
+            <div className="description">{editForm.values.description}</div>
           )}
           {isOwner && !isApproved && !isWaitingApproval && (
             <div className="not-approved-warning">
@@ -437,12 +365,15 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               </SecondaryButton>
             )}
             {!isOwner && isFollowing && (
-              <SecondaryButton onClick={toggleFollow}>
+              <SecondaryButton onClick={toggleFollowForm.submitForm}>
                 <Trans>Unfollow</Trans>
               </SecondaryButton>
             )}
             {!isOwner && !isFollowing && (
-              <PrimaryButton disabled={!isAuthenticated} onClick={toggleFollow}>
+              <PrimaryButton
+                disabled={!isAuthenticated}
+                onClick={toggleFollowForm.submitForm}
+              >
                 <Trans>Follow</Trans>
               </PrimaryButton>
             )}
