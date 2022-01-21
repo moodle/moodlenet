@@ -225,14 +225,16 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 <span>
                   @
                   <InputTextField
-                    placeholder="Username"
-                    value={editForm.values.username}
+                    placeholder="Display Name"
+                    value={editForm.values.displayName}
                     onChange={editForm.handleChange}
                     displayMode={true}
-                    name="username"
+                    name="displayName"
                     edit={isEditing}
                     error={
-                      isEditing && shouldShowErrors && editForm.errors.username
+                      isEditing &&
+                      shouldShowErrors &&
+                      editForm.errors.displayName
                     }
                   />
                 </span>
@@ -280,8 +282,8 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               </div>
             ) : (
               <div className="subtitle">
-                {editForm.values.username !== '' && (
-                  <span>@{editForm.values.username}</span>
+                {editForm.values.displayName && (
+                  <span>@{editForm.values.displayName}</span>
                 )}
                 {editForm.values.organizationName !== '' && (
                   <span>{editForm.values.organizationName}</span>
