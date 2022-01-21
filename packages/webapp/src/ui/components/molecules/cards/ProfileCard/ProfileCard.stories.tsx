@@ -1,6 +1,8 @@
+import { t } from '@lingui/macro'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { useFormik } from 'formik'
+import { mixed, object, SchemaOf, string } from 'yup'
 import { people } from '../../../../../helpers/factories'
 import { randomIntFromInterval } from '../../../../../helpers/utilities'
 import { ProfileFormValues } from '../../../pages/Profile/types'
@@ -22,12 +24,20 @@ const meta: ComponentMeta<typeof ProfileCard> = {
   ],
 }
 
-const randomProfileIndex = randomIntFromInterval(0, 3)
-
+export const validationSchema: SchemaOf<ProfileFormValues> = object({
+  avatarImage: mixed().optional(),
+  backgroundImage: mixed().optional(),
+  displayName: string().required(t`Please provide a display name`),
+  location: string().optional(),
+  organizationName: string().optional(),
+  siteUrl: string().url().optional(),
+  description: string().required(t`Please provide a Description`),
+})
 export const useProfileCardStoryProps = (overrides?: {
   editFormValues?: Partial<ProfileFormValues>
   props?: Partial<ProfileCardProps>
 }): ProfileCardProps => {
+  const person = people[randomIntFromInterval(0, 3)]
   return {
     isOwner: false,
     isAuthenticated: false,
@@ -51,16 +61,16 @@ export const useProfileCardStoryProps = (overrides?: {
     openSendMessage: action('open Send Message'),
     editForm: useFormik<ProfileFormValues>({
       onSubmit: action('submit edit'),
+      validationSchema,
       initialValues: {
-        displayName: people[randomProfileIndex]?.displayName!,
+        displayName: person?.username!,
         description:
           'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
-        organizationName: people[randomProfileIndex]?.organization!,
-        location: people[randomProfileIndex]?.location!,
+        organizationName: person?.organization!,
+        location: person?.location!,
         siteUrl: 'https://iuri.is/',
         avatarImage: null,
         backgroundImage: null,
-        username: people[randomProfileIndex]?.username!,
         ...overrides?.editFormValues,
       },
     }),
