@@ -1,7 +1,9 @@
+import { t } from '@lingui/macro'
 import { action } from '@storybook/addon-actions'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { ComponentMeta } from '@storybook/react'
+import { FormikConfig, useFormik } from 'formik'
+import { mixed, object, SchemaOf, string } from 'yup'
 import { href } from '../../../elements/link'
-import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
 import {
   ResourceCardOwnerBookmarkedStoryProps,
   ResourceCardOwnerStoryProps,
@@ -10,7 +12,6 @@ import {
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { NewCollectionFormValues } from '../NewCollection/types'
-import { VisibilityDropdown } from '../NewResource/FieldsData'
 import { Collection, CollectionProps } from './Collection'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
 
@@ -27,101 +28,112 @@ const meta: ComponentMeta<typeof Collection> = {
     'CollectionLoggedInStoryProps',
     'CollectionOwnerStoryProps',
     'CollectionAdminStoryProps',
+    'validationSchema',
   ],
 }
 
-const CollectionStory: ComponentStory<typeof Collection> = (args) => (
-  <Collection {...args} />
-)
-
-export const CollectionLoggedInStoryProps: CollectionProps = {
-  headerPageTemplateProps: {
-    headerPageProps: HeaderPageLoggedInStoryProps,
-    isAuthenticated: true,
-    mainPageWrapperProps: {
-      userAcceptsPolicies: null,
-      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-    },
-  },
-  toggleBookmark: action('toggleBookmark'),
-  isAuthenticated: true,
-  isOwner: false,
-  isAdmin: false,
-  following: false,
-  numFollowers: 23,
-  bookmarked: false,
-  visibility: VisibilityDropdown,
-  contributorCardProps: ContributorCardStoryProps,
-  formBag: SBFormikBag<NewCollectionFormValues>({
-    // resources: [
-    //   {
-    //     type: 'Video',
-    //     description: 'Another great Resource',
-    //     image: 'https://picsum.photos/200/100',
-    //     title: 'The little pearl of all'
-    //   }
-    // ],
-    // category: '0215 Music and performing arts',
-    description:
-      'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-    image: 'https://picsum.photos/200/100',
-    imageUrl: 'https://picsum.photos/200/100',
-    title: 'Best collection ever',
-    visibility: 'Public',
-  }),
-  resourceCardPropsList: [
-    ResourceCardOwnerStoryProps,
-    ResourceCardOwnerBookmarkedStoryProps,
-    ResourceCardStoryProps,
-  ],
-  updateCollection: action('updateCollection'),
-  toggleFollow: action('toggleFollow'),
-  deleteCollection: action('deleteCollection'),
-}
-
-export const CollectionLoggedOutStoryProps: CollectionProps = {
-  ...CollectionLoggedInStoryProps,
-  isAuthenticated: false,
-  headerPageTemplateProps: {
-    isAuthenticated: false,
-    headerPageProps: {
-      // isAuthenticated: false,
-      headerProps: {
-        ...HeaderLoggedOutStoryProps,
-        me: null,
+export const validationSchema: SchemaOf<NewCollectionFormValues> = object({
+  description: string().required(t`Please provide a Description`),
+  title: string().required(t`Please provide a title`),
+  image: mixed().optional(),
+  visibility: mixed().required(t`Visibility is required`),
+})
+export const CollectionStoryProps = (overrides?: {
+  props?: Partial<CollectionProps>
+  formConfig?: Partial<FormikConfig<NewCollectionFormValues>>
+  formValues?: Partial<NewCollectionFormValues>
+}): CollectionProps => {
+  return {
+    headerPageTemplateProps: {
+      headerPageProps: HeaderPageLoggedInStoryProps,
+      isAuthenticated: true,
+      mainPageWrapperProps: {
+        userAcceptsPolicies: null,
+        cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
       },
-      // subHeaderProps: {
-      //   tags: [],
-      // },
     },
-    mainPageWrapperProps: {
-      userAcceptsPolicies: null,
-      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+    isAuthenticated: true,
+    isOwner: false,
+    isAdmin: false,
+    following: false,
+    numFollowers: 23,
+    bookmarked: false,
+    contributorCardProps: ContributorCardStoryProps,
+    form: useFormik<NewCollectionFormValues>({
+      validationSchema,
+      onSubmit: action(' update collection'),
+      initialValues: {
+        description:
+          'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
+        image: 'https://picsum.photos/200/100',
+        title: 'Best collection ever',
+        visibility: 'public',
+        ...overrides?.formValues,
+      },
+      ...overrides?.formConfig,
+    }),
+    resourceCardPropsList: [
+      ResourceCardOwnerStoryProps,
+      ResourceCardOwnerBookmarkedStoryProps,
+      ResourceCardStoryProps,
+    ],
+    toggleFollow: useFormik({
+      initialValues: {},
+      onSubmit: action('toggle Follow'),
+    }),
+    toggleBookmark: useFormik({
+      initialValues: {},
+      onSubmit: action('toggle Bookmark'),
+    }),
+    deleteCollection: useFormik({
+      initialValues: {},
+      onSubmit: action('delete Collection'),
+    }),
+    ...overrides?.props,
+  }
+}
+
+export const LoggedOut = () => {
+  const props = CollectionStoryProps({
+    props: {
+      isAuthenticated: false,
+      headerPageTemplateProps: {
+        isAuthenticated: false,
+        headerPageProps: {
+          headerProps: {
+            ...HeaderLoggedOutStoryProps,
+            me: null,
+          },
+        },
+        mainPageWrapperProps: {
+          userAcceptsPolicies: null,
+          cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+        },
+      },
     },
-  },
+  })
+  return <Collection {...props} />
 }
 
-export const CollectionOwnerStoryProps: CollectionProps = {
-  ...CollectionLoggedInStoryProps,
-  isOwner: true,
+export const LoggedIn = () => {
+  const props = CollectionStoryProps()
+  return <Collection {...props} />
 }
-
-export const CollectionAdminStoryProps: CollectionProps = {
-  ...CollectionLoggedInStoryProps,
-  isOwner: true,
-  isAdmin: true,
+export const Owner = () => {
+  const props = CollectionStoryProps({
+    props: {
+      isOwner: true,
+    },
+  })
+  return <Collection {...props} />
 }
-
-export const LoggedOut = CollectionStory.bind({})
-LoggedOut.args = CollectionLoggedOutStoryProps
-
-export const LoggedIn = CollectionStory.bind({})
-LoggedIn.args = CollectionLoggedInStoryProps
-
-export const Owner = CollectionStory.bind({})
-Owner.args = CollectionOwnerStoryProps
-
-export const Admin = CollectionStory.bind({})
-Admin.args = CollectionAdminStoryProps
-
+export const Admin = () => {
+  const props = CollectionStoryProps({
+    props: {
+      isOwner: true,
+      isAdmin: true,
+    },
+  })
+  return <Collection {...props} />
+}
 export default meta

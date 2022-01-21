@@ -5,13 +5,20 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import SaveIcon from '@material-ui/icons/Save'
-import React, { useCallback, useState } from 'react'
+import VisibilityIcon from '@material-ui/icons/Visibility'
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
+import React, { useCallback, useRef, useState } from 'react'
 import { CP, withCtrl } from '../../../lib/ctrl'
-import { FormikBag } from '../../../lib/formik'
+import { FormikHandle } from '../../../lib/formik'
+import { useImageUrl } from '../../../lib/useImageUrl'
 import defaultBackgroud from '../../../static/img/default-background.svg'
 import Card from '../../atoms/Card/Card'
-import Dropdown from '../../atoms/Dropdown/Dropdown'
-import InputTextField from '../../atoms/InputTextField/InputTextField'
+import {
+  Dropdown,
+  IconPill,
+  IconTextOption,
+} from '../../atoms/DropdownNew/Dropdown'
+import { InputTextField } from '../../atoms/InputTextFieldNew/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
@@ -25,7 +32,6 @@ import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
 } from '../../templates/HeaderPageTemplate'
-import { DropdownField } from '../NewCollection/FieldsData'
 import { NewCollectionFormValues } from '../NewCollection/types'
 import {
   ContributorCard,
@@ -40,14 +46,12 @@ export type CollectionProps = {
   isAdmin: boolean
   numFollowers: number
   bookmarked: boolean
-  visibility: DropdownField
   contributorCardProps: ContributorCardProps
-  formBag: FormikBag<NewCollectionFormValues>
+  form: FormikHandle<NewCollectionFormValues>
   resourceCardPropsList: CP<ResourceCardProps>[]
-  updateCollection: () => unknown
-  toggleBookmark: () => unknown
-  toggleFollow: () => unknown
-  deleteCollection?: () => unknown
+  toggleBookmark: FormikHandle
+  toggleFollow: FormikHandle
+  deleteCollection?: FormikHandle
   following: boolean
 }
 
@@ -60,90 +64,92 @@ export const Collection = withCtrl<CollectionProps>(
     following,
     numFollowers,
     bookmarked,
-    visibility,
     contributorCardProps,
-    formBag,
+    form,
     resourceCardPropsList,
     toggleBookmark,
-    updateCollection,
     deleteCollection,
     toggleFollow,
   }) => {
-    /*const actionsCard = (
-      <Card className="collection-actions-card" hideBorderWhenSmall={true}>
-                 <PrimaryButton disabled={!isAuthenticated}>
-          <Trans>Send all to Moodle</Trans>
-        </PrimaryButton> 
-        <SecondaryButton disabled={!isAuthenticated}>
-          <Trans>Suggest Resource</Trans>
-        </SecondaryButton>
-      </Card>
-    )*/
-
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isShowingBackground, setIsShowingBackground] =
       useState<boolean>(false)
 
-    const [form, formAttrs] = formBag
-    const setFieldValue = form.setFieldValue
-    const setTitleField = useCallback(
-      (_: string) => setFieldValue('title', _),
-      [setFieldValue]
-    )
-    const setDescriptionField = useCallback(
-      (_: string) => setFieldValue('description', _),
-      [setFieldValue]
-    )
-    const setVisibilityField = useCallback(
-      (_: string) => setFieldValue('visibility', _),
-      [setFieldValue]
-    )
-
     const handleOnEditClick = () => {
       setIsEditing(true)
     }
     const handleOnSaveClick = () => {
-      updateCollection()
       if (form.isValid) {
+        form.submitForm()
         setShouldShowErrors(false)
         setIsEditing(false)
       } else {
         setShouldShowErrors(true)
       }
     }
-
+    const [imageUrl] = useImageUrl(form.values.image, defaultBackgroud)
     const background = {
-      backgroundImage: form.values.imageUrl
-        ? 'url(' + form.values.imageUrl + ')'
-        : 'url(' + defaultBackgroud + ')',
+      backgroundImage: 'url(' + imageUrl + ')',
       backgroundSize: 'cover',
     }
-
+    const uploadImageRef = useRef<HTMLInputElement>(null)
     const selectImage = () => {
-      document.getElementById('upload-image')?.click()
+      uploadImageRef.current?.click()
     }
 
     const uploadImage = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e?.currentTarget.files?.item(0)
-        selectedFile && setFieldValue('image', selectedFile)
+        form.setFieldValue('image', e.currentTarget.files?.item(0))
       },
-      [setFieldValue]
+      [form]
     )
 
     const extraDetails = (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
         {isEditing ? (
           <Dropdown
+            name="visibility"
             value={form.values.visibility}
-            {...visibility}
-            {...formAttrs.visibility}
-            displayMode={true}
+            onChange={form.handleChange}
+            disabled={!isEditing}
             edit={isEditing}
-            getValue={setVisibilityField}
-          />
+            label="Visibility"
+            highlight={shouldShowErrors && !!form.errors.visibility}
+            error={form.errors.visibility}
+            pills={
+              form.values.visibility && (
+                <IconPill
+                  icon={
+                    form.values.visibility === 'public' ? (
+                      <VisibilityIcon />
+                    ) : (
+                      <VisibilityOffIcon />
+                    )
+                  }
+                />
+              )
+            }
+            className="visibility-dropdown"
+          >
+            {form.values.visibility !== 'public' && (
+              <IconTextOption
+                key={'public'}
+                value={'public'}
+                label={t`Public`}
+                icon={<VisibilityIcon />}
+              />
+            )}
+            {form.values.visibility !== 'private' && (
+              <IconTextOption
+                key={'private'}
+                value={'private'}
+                label={t`Private`}
+                icon={<VisibilityOffIcon />}
+              />
+            )}
+          </Dropdown>
         ) : (
           <div className="detail">
             <div className="title">
@@ -173,7 +179,7 @@ export const Collection = withCtrl<CollectionProps>(
             actions={[
               <PrimaryButton
                 onClick={() => {
-                  deleteCollection()
+                  deleteCollection.submitForm()
                   setIsToDelete(false)
                 }}
                 color="red"
@@ -198,7 +204,7 @@ export const Collection = withCtrl<CollectionProps>(
               >
                 {isEditing && (
                   <input
-                    id="upload-image"
+                    ref={uploadImageRef}
                     type="file"
                     accept=".jpg,.jpeg,.png,.gif"
                     onChange={uploadImage}
@@ -224,7 +230,7 @@ export const Collection = withCtrl<CollectionProps>(
                     {isAuthenticated && !isEditing && (
                       <div
                         className={`bookmark ${bookmarked && 'bookmarked'}`}
-                        onClick={toggleBookmark}
+                        onClick={toggleBookmark.submitForm}
                       >
                         {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
                       </div>
@@ -251,17 +257,11 @@ export const Collection = withCtrl<CollectionProps>(
                 {isOwner ? (
                   <InputTextField
                     className="title"
-                    autoUpdate={true}
+                    name="title"
                     value={form.values.title}
                     displayMode={true}
+                    onChange={form.handleChange}
                     edit={isEditing}
-                    {...formAttrs.title}
-                    getText={setTitleField}
-                    // error={
-                    //   isEditing &&
-                    //   shouldShowErrors &&
-                    //   'Error with the title field'
-                    // }
                     error={isEditing && shouldShowErrors && form.errors.title}
                   />
                 ) : (
@@ -269,22 +269,16 @@ export const Collection = withCtrl<CollectionProps>(
                 )}
                 {isOwner ? (
                   <InputTextField
-                    autoUpdate={true}
-                    textAreaAutoSize={true}
                     value={form.values.description}
-                    textarea={true}
+                    name="description"
                     displayMode={true}
+                    onChange={form.handleChange}
                     edit={isEditing}
-                    {...formAttrs.description}
-                    getText={setDescriptionField}
                     error={
                       isEditing && shouldShowErrors && form.errors.description
                     }
-                    // error={
-                    //   isEditing &&
-                    //   shouldShowErrors &&
-                    //   'Error with the description field'
-                    // }
+                    textAreaAutoSize={true}
+                    textarea={true}
                   />
                 ) : (
                   <div className="description">{form.values.description}</div>
@@ -295,13 +289,13 @@ export const Collection = withCtrl<CollectionProps>(
                       !isOwner &&
                       (following ? (
                         <div className="follow-and-followers">
-                          <SecondaryButton onClick={toggleFollow}>
+                          <SecondaryButton onClick={toggleFollow.submitForm}>
                             <Trans>Unfollow</Trans>
                           </SecondaryButton>
                         </div>
                       ) : (
                         <div className="follow-and-followers">
-                          <PrimaryButton onClick={toggleFollow}>
+                          <PrimaryButton onClick={toggleFollow.submitForm}>
                             <Trans>Follow</Trans>
                           </PrimaryButton>
                         </div>

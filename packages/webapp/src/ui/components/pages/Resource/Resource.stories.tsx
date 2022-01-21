@@ -1,7 +1,9 @@
+import { t } from '@lingui/macro'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { FormikConfig, useFormik } from 'formik'
 import { useEffect } from 'react'
+import { mixed, object, SchemaOf, string } from 'yup'
 import { href } from '../../../elements/link'
 import { TagListStory } from '../../../elements/tags'
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
@@ -39,36 +41,58 @@ const meta: ComponentMeta<typeof Resource> = {
     'ResourceLoggedInStoryProps',
     'ResourceOwnerStoryProps',
     'ResourceAdminStoryProps',
+    'validationSchema',
   ],
 }
 
-export const resourceFormValues: ResourceFormValues = {
-  visibility: 'private',
-  category: CategoriesTextOptionProps[2]!.value,
-  content: '',
-  description:
-    'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-  image: 'https://picsum.photos/200/100',
-  language: LanguagesTextOptionProps[2]!.value,
-  level: LevelTextOptionProps[2]!.value,
-  license: LicenseIconTextOptionProps[2]!.value,
-  month: MonthTextOptionProps[8]!.value,
-  year: YearsProps[20],
-  name: 'The Best Resource Ever',
-  type: TypeTextOptionProps[2]!.value,
-}
+export const validationSchema: SchemaOf<ResourceFormValues> = object({
+  category: string().required(t`Please provide a Category`),
+  license: string().when('content', (content, schema) => {
+    return content instanceof Blob
+      ? schema.required(t`Need a License for uploaded content`)
+      : schema.optional()
+  }),
+  content: mixed().required(t`Content is a required field`),
+  description: string().required(t`Please provide a Description`),
+  name: string().required(t`Please provide a title`),
+  image: mixed().optional(),
+  language: string().optional(),
+  level: string().optional(),
+  month: string().optional(),
+  type: string().optional(),
+  visibility: mixed().required(t`Visibility is required`),
+  year: string().when('month', (month, schema) => {
+    return month
+      ? schema.required(t`Need an year if you choosed month`)
+      : schema.optional()
+  }),
+})
 
-export const ResourceStoryProps = ({
-  formikOverrides,
-  propsOverrides,
-}: {
-  propsOverrides?: Partial<ResourceProps>
-  formikOverrides?: Partial<FormikConfig<ResourceFormValues>>
+export const ResourceStoryProps = (overrides?: {
+  props?: Partial<ResourceProps>
+  formConfig?: Partial<FormikConfig<ResourceFormValues>>
+  formValues?: Partial<ResourceFormValues>
 }): ResourceProps => {
   const form = useFormik<ResourceFormValues>({
+    validationSchema,
     onSubmit: action('submit edit'),
-    initialValues: resourceFormValues,
-    ...formikOverrides,
+    initialValues: {
+      visibility: 'private',
+      category: CategoriesTextOptionProps[2]!.value,
+      content: '',
+      description:
+        'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
+      image: 'https://picsum.photos/200/100',
+      language: LanguagesTextOptionProps[2]!.value,
+      level: LevelTextOptionProps[2]!.value,
+      license: LicenseIconTextOptionProps[2]!.value,
+      month: MonthTextOptionProps[8]!.value,
+      year: YearsProps[20],
+      name: 'The Best Resource Ever',
+      type: TypeTextOptionProps[2]!.value,
+      ...overrides?.formValues,
+    },
+    ...overrides?.formConfig,
   })
   const addToCollectionsForm = useFormik<{ collections: string[] }>({
     initialValues: { collections: [] },
@@ -157,7 +181,7 @@ export const ResourceStoryProps = ({
       onSubmit: action('Send to Moodle LMS'),
     }),
     addToCollectionsForm,
-    ...propsOverrides,
+    ...overrides?.props,
   }
 }
 
@@ -176,7 +200,7 @@ const headerPageTemplatePropsUnauth: HeaderPageTemplateProps = {
 }
 export const LinkLoggedOut = () => {
   const props = ResourceStoryProps({
-    propsOverrides: {
+    props: {
       headerPageTemplateProps: headerPageTemplatePropsUnauth,
       isAuthenticated: false,
     },
@@ -187,7 +211,7 @@ export const LinkLoggedOut = () => {
 
 export const FileLoggedOut = () => {
   const props = ResourceStoryProps({
-    propsOverrides: {
+    props: {
       headerPageTemplateProps: headerPageTemplatePropsUnauth,
       isAuthenticated: false,
       contentType: 'file',
@@ -205,7 +229,7 @@ export const LoggedIn = () => {
 
 export const Owner = () => {
   const props = ResourceStoryProps({
-    propsOverrides: {
+    props: {
       isOwner: true,
     },
   })
@@ -214,7 +238,7 @@ export const Owner = () => {
 
 export const Admin = () => {
   const props = ResourceStoryProps({
-    propsOverrides: {
+    props: {
       isOwner: true,
       isAdmin: true,
     },
