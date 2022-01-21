@@ -65,6 +65,8 @@ export const TextAreaFieldStoryProps: InputTextFieldProps = {
   edit: true,
   highlight: true,
   textarea: true,
+  value:
+    'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
   textAreaAutoSize: true,
   placeholder: 'Start typing to fill it',
   onChange: action('text area change'),

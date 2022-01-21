@@ -1,6 +1,8 @@
 import { CSSProperties, FC, ReactNode, useEffect, useState } from 'react'
 import './styles.scss'
 
+// REFERENCE FOR REFACTOR https://codesandbox.io/s/useerrorclass-qpgdn?file=/src/ErrorCtx.tsx:215-223
+
 export type ErrorWrapperProps = {
   error: ReactNode
   className?: string
