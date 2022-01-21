@@ -1,7 +1,11 @@
+import { t } from '@lingui/macro'
+import { action } from '@storybook/addon-actions'
 import { linkTo } from '@storybook/addon-links'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { ComponentMeta } from '@storybook/react'
+import { FormikConfig, useFormik } from 'formik'
+import { useEffect } from 'react'
+import { object, SchemaOf, string } from 'yup'
 import { href } from '../../../../elements/link'
-import { SBFormikBag } from '../../../../lib/storybook/SBFormikBag'
 import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
 import {
   RecoverPassword,
@@ -12,61 +16,61 @@ import {
 const meta: ComponentMeta<typeof RecoverPassword> = {
   title: 'Pages/Access/Recover Password',
   component: RecoverPassword,
-  excludeStories: [
-    'RecoverPasswordErrorStoryProps',
-    'RecoverPasswordStoryProps',
-    'EmailSendStoryProps',
-  ],
+  excludeStories: ['RecoverPasswordStoryProps', 'validationSchema'],
   parameters: { layout: 'fullscreen' },
 }
 
-const RecoverPasswordStory: ComponentStory<typeof RecoverPassword> = (args) => (
-  <RecoverPassword {...args} />
-)
-
-export const RecoverPasswordStoryProps: RecoverPasswordProps = {
-  accessHeaderProps: AccessHeaderStoryProps,
-  formBag: SBFormikBag<RecoverPasswordFormValues>(
-    { email: '' },
-    { submitForm: linkTo('', 'Email Sent') }
-  ),
-  RecoverPasswordErrorMessage: null,
-  requestSent: false,
-  landingHref: href('Pages/Landing/Logged In'),
-  loginHref: href('Pages/Access/Login/Default'),
-  mainPageWrapperProps: {
-    userAcceptsPolicies: null,
-    cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-  },
-}
-
-export const RecoverPasswordErrorStoryProps: RecoverPasswordProps = {
-  ...RecoverPasswordStoryProps,
-  RecoverPasswordErrorMessage: 'A beautiful error message',
-  formBag: SBFormikBag<RecoverPasswordFormValues>(
-    { email: '' },
-    {
-      submitForm: linkTo('', 'Email Sent'),
-      errors: {
-        email: 'Please provide an email',
+export const validationSchema: SchemaOf<RecoverPasswordFormValues> = object({
+  email: string()
+    .email()
+    .required(t`Please provide your email`),
+})
+export const RecoverPasswordStoryProps = (override?: {
+  props?: Partial<RecoverPasswordProps>
+  formValues?: Partial<RecoverPasswordFormValues>
+  formConfig?: Partial<FormikConfig<RecoverPasswordFormValues>>
+}): RecoverPasswordProps => {
+  return {
+    accessHeaderProps: AccessHeaderStoryProps,
+    form: useFormik<RecoverPasswordFormValues>({
+      validationSchema,
+      onSubmit: (values) => {
+        action('submit change password')(values)
+        linkTo('', 'Email Sent')()
       },
-      submitCount: 1,
-    }
-  ),
+      initialValues: {
+        email: '',
+        ...override?.formValues,
+      },
+      ...override?.formConfig,
+    }),
+    RecoverPasswordErrorMessage: null,
+    requestSent: false,
+    landingHref: href('Pages/Landing/Logged In'),
+    loginHref: href('Pages/Access/Login/Default'),
+    mainPageWrapperProps: {
+      userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+    },
+    ...override?.props,
+  }
 }
 
-export const EmailSendStoryProps: RecoverPasswordProps = {
-  ...RecoverPasswordStoryProps,
-  requestSent: true,
+export const Default = () => {
+  const props = RecoverPasswordStoryProps()
+  return <RecoverPassword {...props} />
+}
+export const Error = () => {
+  const props = RecoverPasswordStoryProps()
+  useEffect(() => {
+    props.form.submitForm()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  return <RecoverPassword {...props} />
 }
 
-export const Default = RecoverPasswordStory.bind({})
-Default.args = RecoverPasswordStoryProps
-
-export const Error = RecoverPasswordStory.bind({})
-Error.args = RecoverPasswordErrorStoryProps
-
-export const EmailSent = RecoverPasswordStory.bind({})
-EmailSent.args = EmailSendStoryProps
-
+export const EmailSent = () => {
+  const props = RecoverPasswordStoryProps({ props: { requestSent: true } })
+  return <RecoverPassword {...props} />
+}
 export default meta
