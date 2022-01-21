@@ -55,7 +55,6 @@ export const Error = () => {
   const props = NewPasswordStoryProps()
   useEffect(() => {
     props.form.submitForm()
-    props.form.validateForm()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return <NewPassword {...props} />

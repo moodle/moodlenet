@@ -61,7 +61,6 @@ export const Error = () => {
   })
   useEffect(() => {
     props.form.submitForm()
-    props.form.validateForm()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return <Login {...props} />
@@ -72,7 +71,10 @@ export const WrongCredentials = () => {
       wrongCreds: true,
     },
   })
-  props.form.submitForm()
+  useEffect(() => {
+    props.form.submitForm()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   return <Login {...props} />
 }
 
