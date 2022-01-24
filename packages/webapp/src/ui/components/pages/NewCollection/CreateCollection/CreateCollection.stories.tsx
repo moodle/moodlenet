@@ -1,17 +1,22 @@
+import { t } from '@lingui/macro'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { SBFormikBag } from '../../../../lib/storybook/SBFormikBag'
-import { VisibilityDropdown } from '../../NewResource/FieldsData'
+import { FormikConfig, useFormik } from 'formik'
+import { mixed, object, SchemaOf, string } from 'yup'
 import { NewCollectionFormValues } from '../types'
 import { CreateCollection, CreateCollectionProps } from './CreateCollection'
 
 const meta: ComponentMeta<typeof CreateCollection> = {
-  title: 'Pages/New Resource/Create Collection',
+  title: 'Pages/New Collection/Create Collection',
   component: CreateCollection,
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: ['CreateCollectionStoryProps', 'Default'],
+  excludeStories: [
+    'useCreateCollectionStoryProps',
+    'Default',
+    'validationSchema',
+  ],
   decorators: [
     (Story) => (
       <div style={{ maxWidth: 1100 }}>
@@ -21,26 +26,35 @@ const meta: ComponentMeta<typeof CreateCollection> = {
   ],
 }
 
-export const CreateCollectionStoryProps: CreateCollectionProps = {
-  finish: action('nextStep'),
-  formBag: SBFormikBag<NewCollectionFormValues>({
-    title: '',
-    visibility: 'Private',
-    description: '',
-    imageUrl: '',
-    image: '',
-    // resources: [],
-  }),
-  imageUrl: '',
-  visibility: VisibilityDropdown,
-  step: 'CreateCollectionStep',
+export const validationSchema: SchemaOf<NewCollectionFormValues> = object({
+  description: string().required(t`Please provide a Description`),
+  title: string().required(t`Please provide a title`),
+  image: mixed().optional(),
+  visibility: mixed().required(t`Visibility is required`),
+})
+
+export const useCreateCollectionStoryProps = (overrides?: {
+  formValues?: Partial<NewCollectionFormValues>
+  formConfig?: Partial<FormikConfig<NewCollectionFormValues>>
+  props?: Partial<CreateCollectionProps>
+}): CreateCollectionProps => {
+  return {
+    step: 'CreateCollectionStep',
+    form: useFormik<NewCollectionFormValues>({
+      onSubmit: action('create Collection'),
+      validationSchema,
+      initialValues: {
+        ...overrides?.formValues,
+      },
+      ...overrides?.formConfig,
+    }),
+    ...overrides?.props,
+  }
 }
-
-const CreateCollectionStory: ComponentStory<typeof CreateCollection> = (
-  args
-) => <CreateCollection {...args} />
-
-export const Default = CreateCollectionStory.bind({})
-Default.args = CreateCollectionStoryProps
+type CreateCollectionStory = ComponentStory<typeof CreateCollection>
+export const Default: CreateCollectionStory = () => {
+  const props = useCreateCollectionStoryProps()
+  return <CreateCollection {...props} />
+}
 
 export default meta

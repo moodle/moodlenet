@@ -83,11 +83,11 @@ const DropdownComp: FC<DropdownProps> = (props) => {
       ) {
         return
       }
-      showContentFlag && toggleOpen()
+      showContent && toggleOpen()
     }
     window.addEventListener('click', clickOutListener)
     return () => window.removeEventListener('click', clickOutListener)
-  }, [showContentFlag])
+  }, [showContent])
 
   const setLayout = useCallback(() => {
     showContent &&
@@ -110,7 +110,10 @@ const DropdownComp: FC<DropdownProps> = (props) => {
     }
   }, [setLayout, showContent])
 
-  useLayoutEffect(() => dropdownButton.current?.focus())
+  showContent && searchByText?.('')
+  useLayoutEffect(() => {
+    showContent && dropdownButton.current?.focus()
+  }, [showContent])
   useEffect(() => {
     showContent && searchByText?.('')
   }, [showContent, searchByText])

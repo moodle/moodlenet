@@ -1,139 +1,164 @@
-import { Trans } from '@lingui/macro'
+import { t, Trans } from '@lingui/macro'
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
-import React, { useCallback, useState } from 'react'
+import VisibilityIcon from '@material-ui/icons/Visibility'
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
+import React, { useCallback } from 'react'
 import { withCtrl } from '../../../../lib/ctrl'
-import { FormikBag } from '../../../../lib/formik'
+import { FormikHandle } from '../../../../lib/formik'
+import { useImageUrl } from '../../../../lib/useImageUrl'
 import { ReactComponent as UploadImageIcon } from '../../../../static/icons/upload-image.svg'
 import Card from '../../../atoms/Card/Card'
-import Dropdown from '../../../atoms/Dropdown/Dropdown'
-import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import {
+  Dropdown,
+  IconPill,
+  IconTextOption,
+} from '../../../atoms/DropdownNew/Dropdown'
+import { InputTextField } from '../../../atoms/InputTextFieldNew/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
-import { DropdownField } from '../../NewResource/FieldsData'
 import { NewCollectionFormValues } from '../types'
 import './styles.scss'
 
 export type CreateCollectionProps = {
   step: 'CreateCollectionStep'
-  formBag: FormikBag<NewCollectionFormValues>
-  imageUrl: string
-  visibility: DropdownField
-  finish: (() => unknown) | undefined
+  form: FormikHandle<NewCollectionFormValues>
 }
 
-export const CreateCollection = withCtrl<CreateCollectionProps>(
-  ({ formBag, imageUrl, visibility, finish }) => {
-    const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
-    const [form] = formBag
-    const setFieldValue = form.setFieldValue
-    const background = {
-      backgroundImage: 'url(' + imageUrl + ')',
-      backgroundSize: 'cover',
-    }
-
-    const createCollection = () =>
-      finish ? finish() : setShouldShowErrors(true)
-
-    const uploadImage = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e.currentTarget.files?.item(0)
-        setFieldValue('image', selectedFile ?? null)
-      },
-      [setFieldValue]
-    )
-
-    const deleteImage = useCallback(() => {
-      setFieldValue('image', null)
-    }, [setFieldValue])
-
-    const setVisibilityVal = useCallback(
-      (v: string) => {
-        setFieldValue('visibility', v)
-      },
-      [setFieldValue]
-    )
-
-    const dataInputs = (
-      <div>
-        <InputTextField
-          autoUpdate={true}
-          label="Title"
-          placeholder=""
-          getText={(text) => form.setFieldValue('title', text)}
-          value={form.values.title}
-          error={shouldShowErrors && form.errors.title}
-        />
-        <InputTextField
-          autoUpdate={true}
-          textarea={true}
-          label="Description"
-          placeholder=""
-          value={form.values.description}
-          getText={(text) => form.setFieldValue('description', text)}
-          error={shouldShowErrors && form.errors.description}
-        />
-        <Dropdown
-          {...visibility}
-          getValue={setVisibilityVal}
-          label="Visibility"
-          value={form.values.visibility}
-          className="visibility-dropdown"
-        />
-      </div>
-    )
-
-    const selectImage = () => {
-      //FIXME: useRef()s
-      document.getElementById('uploadImage')?.click()
-    }
-
-    return (
-      <div className="create-collection">
-        <div className="title">
-          <Trans>Create Collection</Trans>
-        </div>
-        <div className="content">
-          <div className="main-column">
-            <div className="card-title">
-              <Trans>Cover Image</Trans>
-            </div>
-            <Card>
-              <div className="main-container">
-                {!imageUrl ? (
-                  <div className="uploader">
-                    <div className="image upload" onClick={selectImage}>
-                      <input
-                        id="uploadImage"
-                        type="file"
-                        accept=".jpg,.jpeg,.png,.gif"
-                        name="myImage"
-                        onChange={uploadImage}
-                        hidden
-                      />
-                      <UploadImageIcon />
-                      <span>
-                        <Trans>Click to upload an image!</Trans>
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="image-container" style={background}>
-                    <div className="delete-image" onClick={deleteImage}>
-                      <CloseRoundedIcon />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </Card>
-            <div className="small-screen-details">{dataInputs}</div>
-          </div>
-          <div className="side-column">{dataInputs}</div>
-        </div>
-        <div className="footer">
-          <PrimaryButton onClick={createCollection}>
-            <Trans>Create collection</Trans>
-          </PrimaryButton>
-        </div>
-      </div>
-    )
+export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
+  const shouldShowErrors = !!form.submitCount && !form.isValid
+  const [imageUrl] = useImageUrl(form.values.image)
+  const background = {
+    backgroundImage: 'url(' + imageUrl + ')',
+    backgroundSize: 'cover',
   }
-)
+
+  const uploadImage = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedFile = e.currentTarget.files?.item(0)
+      form.setFieldValue('image', selectedFile)
+    },
+    [form]
+  )
+
+  const deleteImage = useCallback(() => {
+    form.setFieldValue('image', null)
+  }, [form])
+
+  const dataInputs = (
+    <div>
+      <InputTextField
+        name="title"
+        label="Title"
+        value={form.values.title}
+        placeholder=""
+        edit
+        onChange={form.handleChange}
+        error={shouldShowErrors && form.errors.title}
+      />
+      <InputTextField
+        textarea
+        name="description"
+        label="Description"
+        value={form.values.description}
+        placeholder=""
+        edit
+        onChange={form.handleChange}
+        error={shouldShowErrors && form.errors.description}
+      />
+      <Dropdown
+        name="visibility"
+        value={form.values.visibility}
+        onChange={form.handleChange}
+        edit
+        label="Visibility"
+        highlight={shouldShowErrors && !!form.errors.visibility}
+        error={form.errors.visibility}
+        pills={
+          form.values.visibility && (
+            <IconPill
+              icon={
+                form.values.visibility === 'public' ? (
+                  <VisibilityIcon />
+                ) : (
+                  <VisibilityOffIcon />
+                )
+              }
+            />
+          )
+        }
+        className="visibility-dropdown"
+      >
+        {form.values.visibility !== 'public' && (
+          <IconTextOption
+            key={'public'}
+            value={'public'}
+            label={t`Public`}
+            icon={<VisibilityIcon />}
+          />
+        )}
+        {form.values.visibility !== 'private' && (
+          <IconTextOption
+            key={'private'}
+            value={'private'}
+            label={t`Private`}
+            icon={<VisibilityOffIcon />}
+          />
+        )}
+      </Dropdown>
+    </div>
+  )
+
+  const selectImage = () => {
+    //FIXME: useRef()s
+    document.getElementById('uploadImage')?.click()
+  }
+
+  return (
+    <div className="create-collection">
+      <div className="title">
+        <Trans>Create Collection</Trans>
+      </div>
+      <div className="content">
+        <div className="main-column">
+          <div className="card-title">
+            <Trans>Cover Image</Trans>
+          </div>
+          <Card>
+            <div className="main-container">
+              {!imageUrl ? (
+                <div className="uploader">
+                  <div className="image upload" onClick={selectImage}>
+                    <input
+                      id="uploadImage"
+                      type="file"
+                      accept=".jpg,.jpeg,.png,.gif"
+                      name="myImage"
+                      onChange={uploadImage}
+                      hidden
+                    />
+                    <UploadImageIcon />
+                    <span>
+                      <Trans>Click to upload an image!</Trans>
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="image-container" style={background}>
+                  <div className="delete-image" onClick={deleteImage}>
+                    <CloseRoundedIcon />
+                  </div>
+                </div>
+              )}
+            </div>
+          </Card>
+          <div className="small-screen-details">{dataInputs}</div>
+        </div>
+        <div className="side-column">{dataInputs}</div>
+      </div>
+      <div className="footer">
+        <PrimaryButton onClick={form.submitForm}>
+          <Trans>Create collection</Trans>
+        </PrimaryButton>
+      </div>
+    </div>
+  )
+})
