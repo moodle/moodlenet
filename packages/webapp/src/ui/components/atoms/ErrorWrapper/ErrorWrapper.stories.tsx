@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import InputTextField from '../InputTextFieldNew/InputTextField'
+import InputTextField from '../InputTextField/InputTextField'
 import { ErrorWrapper, ErrorWrapperProps } from './ErrorWrapper'
 
 const meta: ComponentMeta<typeof ErrorWrapper> = {

@@ -12,8 +12,8 @@ import {
   Dropdown,
   IconPill,
   IconTextOption,
-} from '../../../atoms/DropdownNew/Dropdown'
-import { InputTextField } from '../../../atoms/InputTextFieldNew/InputTextField'
+} from '../../../atoms/Dropdown/Dropdown'
+import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import { NewCollectionFormValues } from '../types'
 import './styles.scss'
