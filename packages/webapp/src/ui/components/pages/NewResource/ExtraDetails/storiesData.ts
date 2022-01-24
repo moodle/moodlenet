@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro'
-import { TextOptionProps } from '../../../atoms/DropdownNew/Dropdown'
+import { TextOptionProps } from '../../../atoms/Dropdown/Dropdown'
 
 export const MonthTextOptionProps: TextOptionProps[] = [
   { value: `0`, label: t`January` },

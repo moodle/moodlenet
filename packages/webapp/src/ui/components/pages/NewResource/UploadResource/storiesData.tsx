@@ -1,7 +1,7 @@
 import {
   IconTextOptionProps,
   TextOptionProps,
-} from '../../../atoms/DropdownNew/Dropdown'
+} from '../../../atoms/Dropdown/Dropdown'
 import { LicenseNodes } from '../FieldsData'
 
 export const LicenseIconTextOptionProps: IconTextOptionProps[] = [

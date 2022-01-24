@@ -6,7 +6,7 @@ import {
   SimplePill,
   TextOption,
   TextOptionProps,
-} from '../../../atoms/DropdownNew/Dropdown'
+} from '../../../atoms/Dropdown/Dropdown'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
 import { useNewResourcePageCtx } from '../NewResource'

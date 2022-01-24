@@ -18,8 +18,8 @@ import {
   SimplePill,
   TextOption,
   TextOptionProps,
-} from '../../../atoms/DropdownNew/Dropdown'
-import InputTextField from '../../../atoms/InputTextFieldNew/InputTextField'
+} from '../../../atoms/Dropdown/Dropdown'
+import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import Modal from '../../../atoms/Modal/Modal'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../../atoms/RoundButton/RoundButton'

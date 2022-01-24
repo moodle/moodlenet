@@ -2,7 +2,7 @@ import { t, Trans } from '@lingui/macro'
 import { CP, withCtrl } from '../../../../lib/ctrl'
 import { FormikHandle } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
-import { InputTextField } from '../../../atoms/InputTextFieldNew/InputTextField'
+import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import {
   MainPageWrapper,
