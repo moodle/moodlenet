@@ -1,3 +1,5 @@
+import VisibilityIcon from '@material-ui/icons/Visibility'
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
 import { ReactComponent as ByIcon } from '../../../static/icons/license/by.svg'
 import { ReactComponent as NcIcon } from '../../../static/icons/license/nc.svg'
 import { ReactComponent as NdIcon } from '../../../static/icons/license/nd.svg'
@@ -22,7 +24,19 @@ export const licenseIconMap = {
 }
 export type LicenseTypes = keyof typeof licenseIconMap
 
-export type LicenseNodeKey = keyof typeof LicenseNodes
+export const VisibilityNodes = {
+  Private: (
+    <div>
+      <VisibilityOffIcon />
+    </div>
+  ),
+  Public: (
+    <div>
+      <VisibilityIcon />
+    </div>
+  ),
+}
+
 export const LicenseNodes = {
   0: <div>{zero}</div>,
   by: (
