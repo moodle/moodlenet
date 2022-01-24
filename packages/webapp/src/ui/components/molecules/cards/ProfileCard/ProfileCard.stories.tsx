@@ -63,11 +63,11 @@ export const useProfileCardStoryProps = (overrides?: {
       onSubmit: action('submit edit'),
       validationSchema,
       initialValues: {
-        displayName: person?.username!,
+        displayName: person!.username,
         description:
           'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
-        organizationName: person?.organization!,
-        location: person?.location!,
+        organizationName: person!.organization,
+        location: person!.location,
         siteUrl: 'https://iuri.is/',
         avatarImage: null,
         backgroundImage: null,

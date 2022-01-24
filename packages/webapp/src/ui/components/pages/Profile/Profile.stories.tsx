@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useFormik } from 'formik'
 import { randomIntFromInterval } from '../../../../helpers/utilities'
 import { href } from '../../../elements/link'
 import {
@@ -9,13 +10,7 @@ import {
   CollectionCardStoryProps,
 } from '../../molecules/cards/CollectionCard/CollectionCard.stories'
 import { OverallCardStoryProps } from '../../molecules/cards/OverallCard/OverallCard.stories'
-import {
-  ProfileCardAdminStoryProps,
-  ProfileCardApprovedStoryProps,
-  ProfileCardLoggedInStoryProps,
-  ProfileCardOwnerStoryProps,
-  ProfileCardStoryProps,
-} from '../../molecules/cards/ProfileCard/ProfileCard.stories'
+import { useProfileCardStoryProps } from '../../molecules/cards/ProfileCard/ProfileCard.stories'
 import {
   ResourceCardLoggedInStoryProps,
   ResourceCardLoggedOutStoryProps,
@@ -25,6 +20,7 @@ import {
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { Profile, ProfileProps } from './Profile'
+import { ProfileFormValues } from './types'
 
 const meta: ComponentMeta<typeof Profile> = {
   title: 'Pages/Profile',
@@ -34,7 +30,7 @@ const meta: ComponentMeta<typeof Profile> = {
   },
   parameters: { layout: 'fullscreen' },
   excludeStories: [
-    'ProfileStoryProps',
+    'useProfileStoryProps',
     'ProfileLoggedOutStoryProps',
     'ProfileLoggedInStoryProps',
     'ProfileOwnerStoryProps',
@@ -44,132 +40,181 @@ const meta: ComponentMeta<typeof Profile> = {
   ],
 }
 
-const ProfileStory: ComponentStory<typeof Profile> = (args) => (
-  <Profile {...args} />
-)
+type ProfileStory = ComponentStory<typeof Profile>
 
-export const ProfileStoryProps: ProfileProps = {
-  save: action('save'),
-  newResourceHref: href('Pages/New Resource/Start'),
-  newCollectionHref: href('Pages/New Collection/Start'),
-  headerPageTemplateProps: {
-    headerPageProps: HeaderPageLoggedInStoryProps,
-    isAuthenticated: true,
-    mainPageWrapperProps: {
-      userAcceptsPolicies: null,
-      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-    },
-  },
-  overallCardProps: OverallCardStoryProps,
-  profileCardProps: ProfileCardStoryProps,
-  // scoreCardProps: ScoreCardStoryProps,
-  collectionCardPropsList: [
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-  ],
-  resourceCardPropsList: [
-    ResourceCardLoggedInStoryProps,
-    ResourceCardLoggedInStoryProps,
-    ResourceCardLoggedInStoryProps,
-  ],
-  displayName: 'Juanito',
-}
+export const useProfileStoryProps = (overrides?: {
+  props?: Partial<ProfileProps>
+  isAuthenticated?: boolean
+  editFormValues?: Partial<ProfileFormValues>
+}): ProfileProps => {
+  const isAuthenticated = overrides?.isAuthenticated ?? true
+  const ProfileCardStoryProps = useProfileCardStoryProps({
+    props: { isAuthenticated },
+    editFormValues: overrides?.editFormValues,
+  })
 
-export const ProfileLoggedOutStoryProps: ProfileProps = {
-  ...ProfileStoryProps,
-  headerPageTemplateProps: {
-    isAuthenticated: false,
-    headerPageProps: {
-      // isAuthenticated: false,
-      headerProps: {
-        ...HeaderLoggedOutStoryProps,
-        me: null,
+  return {
+    editForm: ProfileCardStoryProps.editForm,
+    sendEmailForm: useFormik<{ text?: string }>({
+      initialValues: {},
+      onSubmit: action('submit send Email Form'),
+    }),
+    newResourceHref: href('Pages/New Resource/Start'),
+    newCollectionHref: href('Pages/New Collection/Start'),
+    headerPageTemplateProps: {
+      headerPageProps: HeaderPageLoggedInStoryProps,
+      isAuthenticated,
+      mainPageWrapperProps: {
+        userAcceptsPolicies: null,
+        cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
       },
-      // subHeaderProps: {
-      //   tags: [],
-      // },
     },
-    mainPageWrapperProps: {
-      userAcceptsPolicies: null,
-      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+    overallCardProps: OverallCardStoryProps,
+    profileCardProps: ProfileCardStoryProps,
+    // scoreCardProps: ScoreCardStoryProps,
+    collectionCardPropsList: [
+      CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+      CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    ],
+    resourceCardPropsList: [
+      ResourceCardLoggedInStoryProps,
+      ResourceCardLoggedInStoryProps,
+      ResourceCardLoggedInStoryProps,
+    ],
+    displayName: 'Juanito',
+    ...overrides?.props,
+  }
+}
+
+export const ProfileLoggedOutStory: ProfileStory = () => {
+  const props = useProfileStoryProps({
+    isAuthenticated: false,
+    props: {
+      headerPageTemplateProps: {
+        isAuthenticated: false,
+        headerPageProps: {
+          // isAuthenticated: false,
+          headerProps: {
+            ...HeaderLoggedOutStoryProps,
+            me: null,
+          },
+          // subHeaderProps: {
+          //   tags: [],
+          // },
+        },
+        mainPageWrapperProps: {
+          userAcceptsPolicies: null,
+          cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+        },
+      },
+      collectionCardPropsList: [
+        CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+        CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+        CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+      ],
+      resourceCardPropsList: [
+        ResourceCardLoggedOutStoryProps,
+        ResourceCardLoggedOutStoryProps,
+      ],
     },
-  },
-  collectionCardPropsList: [
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-  ],
-  resourceCardPropsList: [
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-  ],
+  })
+
+  return <Profile {...props} />
 }
 
-export const ProfileLoggedInStoryProps: ProfileProps = {
-  ...ProfileStoryProps,
-  headerPageTemplateProps: {
-    ...ProfileStoryProps.headerPageTemplateProps,
-    isAuthenticated: true,
-  },
-  profileCardProps: ProfileCardLoggedInStoryProps,
+export const ProfileLoggedInStory: ProfileStory = () => {
+  const props = useProfileStoryProps({
+    props: {
+      profileCardProps: useProfileCardStoryProps({
+        props: { isAuthenticated: true },
+      }),
+    },
+  })
+  return <Profile {...props} />
 }
 
-export const ProfileOwnerStoryProps: ProfileProps = {
-  ...ProfileLoggedInStoryProps,
-  profileCardProps: ProfileCardOwnerStoryProps,
-  collectionCardPropsList: [
-    CollectionCardOwnerPrivateStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardOwnerStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardOwnerStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardOwnerPrivateStoryProps(randomIntFromInterval(1, 3)),
-  ],
-  resourceCardPropsList: [
-    ResourceCardOwnerPrivateStoryProps,
-    ResourceCardOwnerStoryProps,
-    ResourceCardOwnerStoryProps,
-    ResourceCardOwnerPrivateStoryProps,
-    ResourceCardOwnerStoryProps,
-  ],
+export const ProfileOwnerStory: ProfileStory = () => {
+  const props = useProfileStoryProps({
+    props: {
+      profileCardProps: useProfileCardStoryProps({ props: { isOwner: true } }),
+      collectionCardPropsList: [
+        CollectionCardOwnerPrivateStoryProps(randomIntFromInterval(1, 3)),
+        CollectionCardOwnerStoryProps(randomIntFromInterval(1, 3)),
+        CollectionCardOwnerStoryProps(randomIntFromInterval(1, 3)),
+        CollectionCardOwnerPrivateStoryProps(randomIntFromInterval(1, 3)),
+      ],
+      resourceCardPropsList: [
+        ResourceCardOwnerPrivateStoryProps,
+        ResourceCardOwnerStoryProps,
+        ResourceCardOwnerStoryProps,
+        ResourceCardOwnerPrivateStoryProps,
+        ResourceCardOwnerStoryProps,
+      ],
+    },
+  })
+  return <Profile {...props} />
 }
 
-export const ProfileApprovedStoryProps: ProfileProps = {
-  ...ProfileOwnerStoryProps,
-  profileCardProps: ProfileCardApprovedStoryProps,
-  showAccountApprovedSuccessAlert: true,
+export const ProfileApprovedStory: ProfileStory = () => {
+  const props = useProfileStoryProps({
+    props: {
+      profileCardProps: useProfileCardStoryProps({
+        props: { isOwner: true, isApproved: true },
+      }),
+      collectionCardPropsList: [
+        CollectionCardOwnerPrivateStoryProps(randomIntFromInterval(1, 3)),
+        CollectionCardOwnerStoryProps(randomIntFromInterval(1, 3)),
+        CollectionCardOwnerStoryProps(randomIntFromInterval(1, 3)),
+        CollectionCardOwnerPrivateStoryProps(randomIntFromInterval(1, 3)),
+      ],
+      resourceCardPropsList: [
+        ResourceCardOwnerPrivateStoryProps,
+        ResourceCardOwnerStoryProps,
+        ResourceCardOwnerStoryProps,
+        ResourceCardOwnerPrivateStoryProps,
+        ResourceCardOwnerStoryProps,
+      ],
+      showAccountApprovedSuccessAlert: true,
+    },
+  })
+  return <Profile {...props} />
 }
 
-export const ProfileActivatedStoryProps: ProfileProps = {
-  ...ProfileOwnerStoryProps,
-  profileCardProps: ProfileCardOwnerStoryProps,
-  collectionCardPropsList: [],
-  resourceCardPropsList: [],
-  showAccountCreationSuccessAlert: true,
+export const ProfileActivatedStory: ProfileStory = () => {
+  const props = useProfileStoryProps({
+    editFormValues: {
+      description: '',
+      location: '',
+      avatarImage: null,
+      backgroundImage: null,
+      organizationName: '',
+      siteUrl: '',
+    },
+    props: {
+      collectionCardPropsList: [],
+      resourceCardPropsList: [],
+      showAccountCreationSuccessAlert: true,
+    },
+  })
+  return <Profile {...props} />
 }
 
-export const ProfileAdminStoryProps: ProfileProps = {
-  ...ProfileLoggedInStoryProps,
-  profileCardProps: ProfileCardAdminStoryProps,
-  collectionCardPropsList: [],
-  resourceCardPropsList: [],
-  showAccountCreationSuccessAlert: true,
+export const ProfileAdminStory: ProfileStory = () => {
+  const props = useProfileStoryProps({
+    props: {
+      profileCardProps: useProfileCardStoryProps({
+        props: {
+          isAdmin: true,
+          isAuthenticated: true,
+          isApproved: false,
+        },
+      }),
+      collectionCardPropsList: [],
+      resourceCardPropsList: [],
+      showAccountApprovedSuccessAlert: true,
+    },
+  })
+  return <Profile {...props} />
 }
-
-export const LoggedOut = ProfileStory.bind({})
-LoggedOut.args = ProfileLoggedOutStoryProps
-
-export const LoggedIn = ProfileStory.bind({})
-LoggedIn.args = ProfileLoggedInStoryProps
-
-export const Owner = ProfileStory.bind({})
-Owner.args = ProfileOwnerStoryProps
-
-export const Approved = ProfileStory.bind({})
-Approved.args = ProfileApprovedStoryProps
-
-export const Activated = ProfileStory.bind({})
-Activated.args = ProfileActivatedStoryProps
-
-export const Admin = ProfileStory.bind({})
-Admin.args = ProfileAdminStoryProps
 
 export default meta
