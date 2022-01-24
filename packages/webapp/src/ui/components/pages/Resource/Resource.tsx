@@ -68,7 +68,8 @@ export type ResourceProps = {
   bookmarked: boolean
   tags: FollowTag[]
   contributorCardProps: ContributorCardProps
-  form: FormikHandle<ResourceFormValues>
+  form: FormikHandle<Omit<ResourceFormValues, 'addToCollections'>>
+  visibilities: SelectOptions<IconTextOptionProps>
   categories: SelectOptions<TextOptionProps>
   licenses: SelectOptions<IconTextOptionProps>
   types: SelectOptions<TextOptionProps>
@@ -99,6 +100,7 @@ export const Resource = withCtrl<ResourceProps>(
     levels,
     languages,
     licenses,
+    visibilities,
     categories,
     collections,
     form,
@@ -220,11 +222,10 @@ export const Resource = withCtrl<ResourceProps>(
             form.values.visibility && (
               <IconPill
                 icon={
-                  form.values.visibility === 'Public' ? (
-                    <VisibilityIcon />
-                  ) : (
-                    <VisibilityOffIcon />
-                  )
+                  <div className="icon-text">
+                    {visibilities.selected?.icon}
+                    {visibilities.selected?.label}
+                  </div>
                 }
               />
             )
@@ -273,6 +274,7 @@ export const Resource = withCtrl<ResourceProps>(
         </Dropdown>
         <Dropdown
           name="license"
+          className="license-dropdown"
           onChange={form.handleChange}
           value={form.values.license}
           label={t`License`}
@@ -414,7 +416,10 @@ export const Resource = withCtrl<ResourceProps>(
             <div className="title">
               <Trans>Visibility</Trans>
             </div>
-            <abbr className="value">{form.values.visibility}</abbr>
+            <abbr className="value icons">
+              {visibilities.selected?.icon}
+              {visibilities.selected?.label}
+            </abbr>
           </div>
         )}
         <div className="detail">
@@ -424,11 +429,11 @@ export const Resource = withCtrl<ResourceProps>(
           <abbr className="value">{categories.selected?.label}</abbr>
         </div>
         {licenses.selected && (
-          <div className="detail">
+          <div className="detail license">
             <div className="title">
               <Trans>License</Trans>
             </div>
-            <abbr className="value" title={licenses.selected.label}>
+            <abbr className="value icons" title={licenses.selected.label}>
               {licenses.selected.icon}
             </abbr>
           </div>

@@ -268,6 +268,38 @@
       flex-wrap: wrap;
       justify-content: center;
 
+      > .dropdown-new {
+        gap: 4px;
+        &.disabled {
+          > .input-container {
+            background-color: transparent;
+            border: none;
+            > .dropdown-button {
+              color: #c6c6c6;
+            }
+          }
+        }
+
+        > label {
+          margin-bottom: 0;
+        }
+        > .input-container {
+          background-color: transparent;
+          border: none;
+          > .dropdown-button {
+            > .dropdown-pill {
+              > div {
+                //gap: 6px;
+              }
+            }
+          }
+        }
+      }
+
+      > .license-dropdown {
+        margin-bottom: 2px;
+      }
+
       > *,
       .date > .fields > * {
         > label {
@@ -290,6 +322,7 @@
         width: 100%;
         display: flex;
         flex-direction: column;
+        gap: 2px;
         > label {
           font-weight: bold;
           font-size: 14px;
@@ -311,7 +344,10 @@
           font-size: 14px;
         }
         > .value {
+          display: flex;
+          align-items: center;
           color: rgba(0, 0, 0, 0.5);
+          fill: rgba(0, 0, 0, 0.5);
           height: 24px;
           width: 100%;
           line-height: 20px;
@@ -325,6 +361,24 @@
             display: flex;
             gap: 8px;
           }
+
+          &.icons {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            > div {
+              display: flex;
+              gap: 3px;
+              > * {
+                width: 20px;
+                height: 20px;
+              }
+            }
+          }
+        }
+
+        &.license {
+          margin-bottom: 2px;
         }
       }
 

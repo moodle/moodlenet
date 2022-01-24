@@ -20,6 +20,7 @@ import {
 import {
   CategoriesTextOptionProps,
   LicenseIconTextOptionProps,
+  VisbilityIconTextOptionProps,
 } from '../NewResource/UploadResource/storiesData'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
 import { Resource, ResourceFormValues, ResourceProps } from './Resource'
@@ -67,6 +68,21 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
       : schema.optional()
   }),
 })
+export const resourceFormValues: ResourceFormValues = {
+  visibility: VisbilityIconTextOptionProps[0]!.value,
+  category: CategoriesTextOptionProps[2]!.value,
+  content: '',
+  description:
+    'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
+  image: 'https://picsum.photos/200/100',
+  language: LanguagesTextOptionProps[2]!.value,
+  level: LevelTextOptionProps[2]!.value,
+  license: LicenseIconTextOptionProps[2]!.value,
+  month: MonthTextOptionProps[8]!.value,
+  year: YearsProps[20],
+  name: 'The Best Resource Ever',
+  type: TypeTextOptionProps[2]!.value,
+}
 
 export const ResourceStoryProps = (overrides?: {
   props?: Partial<ResourceProps>
@@ -162,6 +178,12 @@ export const ResourceStoryProps = (overrides?: {
       opts: CategoriesTextOptionProps,
       selected: CategoriesTextOptionProps.find(
         ({ value }) => value === form.values.category
+      ),
+    },
+    visibilities: {
+      opts: VisbilityIconTextOptionProps,
+      selected: VisbilityIconTextOptionProps.find(
+        ({ value }) => value === form.values.visibility
       ),
     },
     licenses: {
