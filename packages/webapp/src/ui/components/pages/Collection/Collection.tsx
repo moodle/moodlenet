@@ -5,11 +5,10 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import SaveIcon from '@material-ui/icons/Save'
-import VisibilityIcon from '@material-ui/icons/Visibility'
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
 import React, { useCallback, useRef, useState } from 'react'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
+import { SelectOptions } from '../../../lib/types'
 import { useImageUrl } from '../../../lib/useImageUrl'
 import defaultBackgroud from '../../../static/img/default-background.svg'
 import Card from '../../atoms/Card/Card'
@@ -17,7 +16,8 @@ import {
   Dropdown,
   IconPill,
   IconTextOption,
-} from '../../atoms/Dropdown/Dropdown'
+  IconTextOptionProps,
+} from '../../atoms/DropdownNew/Dropdown'
 import { InputTextField } from '../../atoms/InputTextField/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
@@ -47,6 +47,7 @@ export type CollectionProps = {
   numFollowers: number
   bookmarked: boolean
   contributorCardProps: ContributorCardProps
+  visibilities: SelectOptions<IconTextOptionProps>
   form: FormikHandle<NewCollectionFormValues>
   resourceCardPropsList: CP<ResourceCardProps>[]
   toggleBookmark: FormikHandle
@@ -64,6 +65,7 @@ export const Collection = withCtrl<CollectionProps>(
     following,
     numFollowers,
     bookmarked,
+    visibilities,
     contributorCardProps,
     form,
     resourceCardPropsList,
@@ -118,44 +120,38 @@ export const Collection = withCtrl<CollectionProps>(
             label="Visibility"
             highlight={shouldShowErrors && !!form.errors.visibility}
             error={form.errors.visibility}
+            position={{ top: 50, bottom: 25 }}
             pills={
               form.values.visibility && (
                 <IconPill
                   icon={
-                    form.values.visibility === 'Public' ? (
-                      <VisibilityIcon />
-                    ) : (
-                      <VisibilityOffIcon />
-                    )
+                    <div className="icon-text">
+                      {visibilities.selected?.icon}
+                      {visibilities.selected?.label}
+                    </div>
                   }
                 />
               )
             }
             className="visibility-dropdown"
           >
-            {form.values.visibility !== 'Public' && (
+            {visibilities.opts.map(({ icon, label, value }) => (
               <IconTextOption
-                key={'Public'}
-                value={'Public'}
-                label={t`Public`}
-                icon={<VisibilityIcon />}
+                icon={icon}
+                label={label}
+                value={value}
+                key={value}
               />
-            )}
-            {form.values.visibility !== 'Private' && (
-              <IconTextOption
-                key={'Private'}
-                value={'Private'}
-                label={t`Private`}
-                icon={<VisibilityOffIcon />}
-              />
-            )}
+            ))}
           </Dropdown>
         ) : (
           <div className="detail">
             <div className="title">
               <Trans>Visibility</Trans>
             </div>
-            <abbr className="value">{form.values.visibility}</abbr>
+            <abbr className="value">
+              <Trans>{form.values.visibility}</Trans>
+            </abbr>
           </div>
         )}
       </Card>
@@ -337,9 +333,11 @@ export const Collection = withCtrl<CollectionProps>(
                     {(!isOwner || isAdmin) && (
                       <ContributorCard {...contributorCardProps} />
                     )}
-                    {(isAdmin || isOwner) && extraDetails}
                   </div>
-                  <div className="right-column">{/*actionsCard*/}</div>
+                  <div className="right-column">
+                    {(isAdmin || isOwner) && extraDetails}
+                    {/*actionsCard*/}
+                  </div>
                   <div className="one-column">
                     {/*actionsCard*/}
                     {(!isOwner || isAdmin) && (

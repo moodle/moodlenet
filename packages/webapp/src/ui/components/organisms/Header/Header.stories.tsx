@@ -31,7 +31,7 @@ export const HeaderLoggedInStoryProps: HeaderPropsIdle = {
     followingHref: href('Pages/Following/Default'),
     myProfileHref: href('Pages/Profile/Logged In'),
     logout: action('logout'),
-    avatar: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
+    avatar: 'https://randomuser.me/api/portraits/men/39.jpg',
     name: 'username',
   },
   loginHref: href('Pages/Access/Login/Default'),

@@ -19,7 +19,7 @@ const meta: ComponentMeta<typeof ContributorCard> = {
 }
 
 export const ContributorCardStoryProps: ContributorCardProps = {
-  avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
+  avatarUrl: 'https://randomuser.me/api/portraits/men/39.jpg',
   displayName: 'Juanito Rodriguez',
   creatorProfileHref: href('Pages/Profile/LoggedIn'),
 }

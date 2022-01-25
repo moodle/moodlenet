@@ -2,7 +2,7 @@ import {
   IconTextOptionProps,
   TextOptionProps,
 } from '../../../atoms/Dropdown/Dropdown'
-import { LicenseNodes } from '../FieldsData'
+import { LicenseNodes, VisibilityNodes } from '../FieldsData'
 
 export const LicenseIconTextOptionProps: IconTextOptionProps[] = [
   {
@@ -39,6 +39,23 @@ export const LicenseIconTextOptionProps: IconTextOptionProps[] = [
     label: 'CC-BY-NC-ND (Attribution-NonCommercial-NoDerivatives)',
     value: 'CC-BY-NC-ND (Attribution-NonCommercial-NoDerivatives)',
     icon: LicenseNodes['by-nc-nd'],
+  },
+]
+
+type VisbilityIconTextOptionProps = IconTextOptionProps & {
+  value: 'Private' | 'Public'
+}
+
+export const VisbilityIconTextOptionProps: VisbilityIconTextOptionProps[] = [
+  {
+    label: 'Private',
+    value: 'Private',
+    icon: VisibilityNodes['Private'],
+  },
+  {
+    label: 'Public',
+    value: 'Public',
+    icon: VisibilityNodes['Public'],
   },
 ]
 
