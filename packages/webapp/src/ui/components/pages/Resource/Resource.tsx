@@ -585,6 +585,7 @@ export const Resource = withCtrl<ResourceProps>(
               placeholder="http://your-moodle-lms-site.com"
               value={sendToMoodleLmsForm.values.site}
               name="site"
+              edit
               onChange={sendToMoodleLmsForm.handleChange}
               error={
                 shouldShowSendToMoodleLmsError &&
