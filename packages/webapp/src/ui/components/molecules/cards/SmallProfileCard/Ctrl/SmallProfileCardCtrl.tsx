@@ -29,6 +29,7 @@ export const useSmallProfileCardCtrl: CtrlHook<
       profileId: id,
       myProfileId: session ? [session.profile.id] : [],
     },
+    fetchPolicy: 'cache-and-network',
   })
   const profileNode = narrowNodeType(['Profile'])(data?.node)
   const isOwner =

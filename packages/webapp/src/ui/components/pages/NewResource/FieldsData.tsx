@@ -3,13 +3,6 @@ import { ReactComponent as NcIcon } from '../../../static/icons/license/nc.svg'
 import { ReactComponent as NdIcon } from '../../../static/icons/license/nd.svg'
 import { ReactComponent as SaIcon } from '../../../static/icons/license/sa.svg'
 import { ReactComponent as ZeroIcon } from '../../../static/icons/license/zero.svg'
-import { DropdownOptionsType } from '../../atoms/Dropdown/Dropdown'
-
-export type DropdownField = {
-  label?: string
-  options: DropdownOptionsType
-  placeholder?: string
-}
 
 export type Visibility = 'Public' | 'Private'
 
@@ -29,6 +22,7 @@ export const licenseIconMap = {
 }
 export type LicenseTypes = keyof typeof licenseIconMap
 
+export type LicenseNodeKey = keyof typeof LicenseNodes
 export const LicenseNodes = {
   0: <div>{zero}</div>,
   by: (

@@ -77,9 +77,8 @@ export const ResourceStoryProps = (overrides?: {
     validationSchema,
     onSubmit: action('submit edit'),
     initialValues: {
-      visibility: 'private',
+      visibility: 'Private',
       category: CategoriesTextOptionProps[2]!.value,
-      content: '',
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
       image: 'https://picsum.photos/200/100',
@@ -97,13 +96,20 @@ export const ResourceStoryProps = (overrides?: {
   const addToCollectionsForm = useFormik<{ collections: string[] }>({
     initialValues: { collections: [] },
     onSubmit() {},
+    validate({ collections: curr }) {
+      const prev = addToCollectionsForm.values.collections
+      const toAdd = curr.filter((_) => !prev.includes(_))[0]
+      const toRemove = prev.filter((_) => !curr.includes(_))[0]
+      toAdd && action('Add ')(toAdd)
+      toRemove && action('Remove ')(toRemove)
+    },
   })
   useEffect(
     () =>
       action('changed addToCollectionsForm.values')(
-        addToCollectionsForm.values
+        addToCollectionsForm.values.collections.join(';')
       ),
-    [addToCollectionsForm.values]
+    [addToCollectionsForm.values.collections]
   )
 
   return {
@@ -164,19 +170,19 @@ export const ResourceStoryProps = (overrides?: {
         ({ value }) => value === form.values.license
       ),
     },
-    toggleLike: useFormik({
+    toggleLikeForm: useFormik({
       initialValues: {},
       onSubmit: action('toggleLike'),
     }),
-    toggleBookmark: useFormik({
+    toggleBookmarkForm: useFormik({
       initialValues: {},
       onSubmit: action('toggleBookmark'),
     }),
-    deleteResource: useFormik({
+    deleteResourceForm: useFormik({
       initialValues: {},
       onSubmit: action('Delete Resource'),
     }),
-    sendToMoodleLms: useFormik<{ site?: string }>({
+    sendToMoodleLmsForm: useFormik<{ site?: string }>({
       initialValues: { site: 'http://my-lms.org' },
       onSubmit: action('Send to Moodle LMS'),
     }),

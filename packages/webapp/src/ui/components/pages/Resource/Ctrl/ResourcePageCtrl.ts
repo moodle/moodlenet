@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro'
 import {
   isEdgeNodeOfType,
   narrowEdgeNodeOfType,
@@ -6,8 +7,9 @@ import {
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
+import { useFormik } from 'formik'
 import { duration } from 'moment'
-import { createElement, useCallback, useEffect, useMemo } from 'react'
+import { createElement, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
@@ -17,30 +19,24 @@ import {
   useUploadTempFile,
 } from '../../../../../helpers/data'
 import {
-  getOriginalCreationStringsByTimestamp,
   getOriginalCreationTimestampByStrings,
-  monthOptions,
-  useIscedFieldsOptions,
-  useLangOptions,
-  useLicensesOptions,
-  useResourceGradeOptions,
-  useResourceTypeOptions,
-  yearsOptions,
+  useIscedFields,
+  useIscedGrades,
+  useLanguages,
+  useLicenses,
+  useResourceTypes,
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
 import { useLMS } from '../../../../../lib/moodleLMS/useSendToMoodle'
 import { href } from '../../../../elements/link'
 // import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
-import { useFormikBag } from '../../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { fallbackProps } from '../../Extra/Fallback/Ctrl/FallbackCtrl'
 import { Fallback } from '../../Extra/Fallback/Fallback'
 import { useCreateResourceRelationMutation } from '../../NewResource/Ctrl/NewResourceCtrl.gen'
-import { VisibilityDropdown } from '../../NewResource/FieldsData'
-import { NewResourceFormValues } from '../../NewResource/types'
 // import { useFormikBag } from '../../../lib/formik'
 // import { NewResourceFormValues } from '../../NewResource/types'
-import { ResourceProps } from '../Resource'
+import { ResourceFormValues, ResourceProps } from '../Resource'
 import {
   useDelResourceMutation,
   useDelResourceRelationMutation,
@@ -69,21 +65,25 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       myProfileId: session ? [session.profile.id] : [],
       myCollectionsIds: allMyOwnCollectionEdges.map((_) => _.node.id),
     },
+    fetchPolicy: 'cache-and-network',
   })
   const resourceData = narrowNodeType(['Resource'])(data?.node)
   const history = useHistory()
   const [delResource, delResourceRes] = useDelResourceMutation()
   const myId = session?.profile.id
-  const deleteResource = useCallback(() => {
-    if (!myId || delResourceRes.loading) {
-      return
-    }
-    delResource({ variables: { node: { id, nodeType: 'Resource' } } }).then(
-      () => {
-        history.replace(nodeGqlId2UrlPath(myId))
+  const deleteResourceForm = useFormik({
+    initialValues: {},
+    async onSubmit() {
+      if (!myId || delResourceRes.loading) {
+        return
       }
-    )
-  }, [delResource, delResourceRes.loading, history, id, myId])
+      delResource({ variables: { node: { id, nodeType: 'Resource' } } }).then(
+        () => {
+          history.replace(nodeGqlId2UrlPath(myId))
+        }
+      )
+    },
+  })
 
   const [addRelation, addRelationRes] = useCreateResourceRelationMutation()
   const [delRelation, delRelationRes] = useDelResourceRelationMutation()
@@ -91,37 +91,40 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
   const categoryEdge = narrowEdgeNodeOfType(['IscedField'])(
     resourceData?.categories.edges[0]
   )
-  const levelEdge = narrowEdgeNodeOfType(['IscedGrade'])(
-    resourceData?.grades.edges[0]
-  )
-  const typeEdge = narrowEdgeNodeOfType(['ResourceType'])(
-    resourceData?.types.edges[0]
-  )
-  const languageEdge = narrowEdgeNodeOfType(['Language'])(
-    resourceData?.languages.edges[0]
-  )
-  const licenseEdge = narrowEdgeNodeOfType(['License'])(
-    resourceData?.licenses.edges[0]
-  )
+  const levelEdge = resourceData?.grades.edges.filter(
+    isEdgeNodeOfType(['IscedGrade'])
+  )[0]
 
-  const category = categoryEdge?.node.name ?? ''
-  const level = levelEdge?.node.name ?? ''
-  const type = typeEdge?.node.name ?? ''
-  const language = languageEdge?.node.name ?? ''
-  const license = licenseEdge?.node.name ?? ''
-  const { langOptions, getLang } = useLangOptions()
-  const { getIscedF, iscedFieldsOptions } = useIscedFieldsOptions()
-  const { resourceTypeOptions, getResourceType } = useResourceTypeOptions()
-  const { getGrade, resourceGradeOptions } = useResourceGradeOptions()
-  const { getLicense, licensesOptions } = useLicensesOptions()
+  const typeEdge = resourceData?.types.edges.filter(
+    isEdgeNodeOfType(['ResourceType'])
+  )[0]
+
+  const languageEdge = resourceData?.languages.edges.filter(
+    isEdgeNodeOfType(['Language'])
+  )[0]
+
+  const licenseEdge = resourceData?.licenses.edges.filter(
+    isEdgeNodeOfType(['License'])
+  )[0]
 
   const uploadTempFile = useUploadTempFile()
-  const [formik, formBag] = useFormikBag<NewResourceFormValues>({
+  const form = useFormik<ResourceFormValues>({
     initialValues: {} as any,
-    onSubmit: async (vals) => {
+    onSubmit: async ({
+      category,
+      description,
+      image,
+      language,
+      level,
+      license,
+      month,
+      name,
+      type,
+      visibility,
+      year,
+    }) => {
       if (
-        !formik.dirty ||
-        !resourceData ||
+        !form.dirty ||
         addRelationRes.loading ||
         delRelationRes.loading ||
         editRes.loading
@@ -129,134 +132,134 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
         return
       }
       const imageAssetRef: AssetRefInput =
-        !vals.image || vals.image === formik.initialValues.image
+        !image || image === form.initialValues.image
           ? { location: '', type: 'NoChange' }
-          : typeof vals.image === 'string'
+          : typeof image === 'string'
           ? {
-              location: vals.image,
+              location: image,
               type: 'ExternalUrl',
             }
           : {
-              location: await uploadTempFile('image', vals.image),
+              location: await uploadTempFile('image', image),
               type: 'TmpUpload',
             }
       const editResPr = edit({
         variables: {
           id,
           resInput: {
-            description: vals.description,
-            name: vals.title,
+            description,
+            name,
             originalCreationDate: getOriginalCreationTimestampByStrings({
-              originalDateMonth: vals.originalDateMonth,
-              originalDateYear: vals.originalDateYear,
+              month,
+              year,
             }),
             image: imageAssetRef,
-            _published: vals.visibility === 'Public',
+            _published: visibility === 'Public',
           },
         },
       })
       const editLangRelPr = (() => {
-        if (!vals.language || vals.language === language) {
+        if (form.initialValues.language === language) {
           return
         }
-        const { id: langId } = getLang(vals.language)
         return Promise.all([
           languageEdge &&
             delRelation({ variables: { edge: { id: languageEdge.edge.id } } }),
-          addRelation({
-            variables: {
-              edge: {
-                edgeType: 'Features',
-                from: id,
-                to: langId,
-                Features: {},
+          language &&
+            addRelation({
+              variables: {
+                edge: {
+                  edgeType: 'Features',
+                  from: id,
+                  to: language,
+                  Features: {},
+                },
               },
-            },
-          }),
+            }),
         ])
       })()
 
       const editLicenseRelPr = (() => {
-        if (!vals.license || vals.license === license) {
+        if (form.initialValues.license === license) {
           return
         }
-        const { id: licenseId } = getLicense(vals.license)
         return Promise.all([
           licenseEdge &&
             delRelation({ variables: { edge: { id: licenseEdge.edge.id } } }),
-          addRelation({
-            variables: {
-              edge: {
-                edgeType: 'Features',
-                from: id,
-                to: licenseId,
-                Features: {},
+          license &&
+            addRelation({
+              variables: {
+                edge: {
+                  edgeType: 'Features',
+                  from: id,
+                  to: license,
+                  Features: {},
+                },
               },
-            },
-          }),
+            }),
         ])
       })()
 
       const editTypeRelPr = (() => {
-        if (!vals.type || vals.type === type) {
+        if (form.initialValues.type === type) {
           return
         }
-        const { id: typeId } = getResourceType(vals.type)
         return Promise.all([
           typeEdge &&
             delRelation({ variables: { edge: { id: typeEdge.edge.id } } }),
-          addRelation({
-            variables: {
-              edge: {
-                edgeType: 'Features',
-                from: id,
-                to: typeId,
-                Features: {},
+          type &&
+            addRelation({
+              variables: {
+                edge: {
+                  edgeType: 'Features',
+                  from: id,
+                  to: type,
+                  Features: {},
+                },
               },
-            },
-          }),
+            }),
         ])
       })()
 
       const editGradeRelPr = (() => {
-        if (!vals.level || vals.level === level) {
+        if (form.initialValues.level === level) {
           return
         }
-        const { id: gradeId } = getGrade(vals.level)
         return Promise.all([
           levelEdge &&
             delRelation({ variables: { edge: { id: levelEdge.edge.id } } }),
-          addRelation({
-            variables: {
-              edge: {
-                edgeType: 'Features',
-                from: id,
-                to: gradeId,
-                Features: {},
+          level &&
+            addRelation({
+              variables: {
+                edge: {
+                  edgeType: 'Features',
+                  from: id,
+                  to: level,
+                  Features: {},
+                },
               },
-            },
-          }),
+            }),
         ])
       })()
 
       const editIscedFRelPr = (() => {
-        if (!vals.category || vals.category === category) {
+        if (form.initialValues.category === category) {
           return
         }
-        const { id: iscedFId } = getIscedF(vals.category)
         return Promise.all([
           categoryEdge &&
             delRelation({ variables: { edge: { id: categoryEdge.edge.id } } }),
-          addRelation({
-            variables: {
-              edge: {
-                edgeType: 'Features',
-                from: id,
-                to: iscedFId,
-                Features: {},
+          category &&
+            addRelation({
+              variables: {
+                edge: {
+                  edgeType: 'Features',
+                  from: id,
+                  to: category,
+                  Features: {},
+                },
               },
-            },
-          }),
+            }),
         ])
       })()
 
@@ -271,21 +274,21 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       return refetch()
     },
   })
-  const { resetForm: fresetForm } = formik
 
+  const _resetform = form.resetForm
   useEffect(() => {
     if (resourceData) {
-      const {
-        name: title,
-        description,
-        image,
-        content,
-        _published,
-      } = resourceData
-      const orgDateStrings = getOriginalCreationStringsByTimestamp(
-        resourceData.originalCreationDate
-      )
-      fresetForm({
+      const category = categoryEdge?.node.id!
+      const level = levelEdge?.node.id
+      const type = typeEdge?.node.id
+      const language = languageEdge?.node.id
+      const license = licenseEdge?.node.id
+      const { name, description, image, _published } = resourceData
+      const orgDate =
+        typeof resourceData.originalCreationDate === 'number'
+          ? new Date(resourceData.originalCreationDate)
+          : null
+      _resetform({
         touched: {},
         values: {
           category,
@@ -293,51 +296,24 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
           level,
           license,
           type,
-
-          collections: allMyOwnCollectionEdges.map((edge) => ({
-            label: edge.node.name,
-            id: edge.node.id,
-          })),
-          content: getJustAssetRefUrl(content),
           description,
-          format: content.mimetype,
           image: getMaybeAssetRefUrl(image),
-          imageUrl: getMaybeAssetRefUrl(image),
-          contentType: content.ext ? 'Link' : 'File',
-          name: '',
+          name,
           visibility: _published ? 'Public' : 'Private',
-          ...orgDateStrings,
-          title,
+          month: `${orgDate?.getMonth()}`,
+          year: `${orgDate?.getFullYear()}`,
         },
       })
     }
   }, [
+    _resetform,
+    categoryEdge?.node.id,
+    languageEdge?.node.id,
+    levelEdge?.node.id,
+    licenseEdge?.node.id,
     resourceData,
-    fresetForm,
-    category,
-    language,
-    level,
-    license,
-    type,
-    id,
-    session?.profile.myOwnCollections.edges,
-    allMyOwnCollectionEdges,
+    typeEdge?.node.id,
   ])
-
-  const formikSetFieldValue = formik.setFieldValue
-  useEffect(() => {
-    if (!(formik.values.image instanceof File)) {
-      formikSetFieldValue('imageUrl', formik.values.image)
-      return
-    }
-    const imageObjectUrl = URL.createObjectURL(formik.values.image)
-    // console.log(`CreatTING`, imageObjectUrl)
-    formikSetFieldValue('imageUrl', imageObjectUrl)
-    return () => {
-      // console.log(`reVOKING   `, imageObjectUrl)
-      imageObjectUrl && URL.revokeObjectURL(imageObjectUrl)
-    }
-  }, [formikSetFieldValue, formik.values.image])
 
   const creatorEdge = narrowEdgeNodeOfType(['Profile', 'Organization'])(
     resourceData?.creator.edges[0]
@@ -348,70 +324,58 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
   const isOwner = creator && session ? creator.id === session.profile.id : false
 
   const myBookmarkedEdgeId = resourceData?.myBookmarked.edges[0]?.edge.id
-  const toggleBookmark = useCallback(() => {
-    if (!session || addRelationRes.loading || delRelationRes.loading) {
-      return
-    }
-    if (myBookmarkedEdgeId) {
-      return delRelation({
-        variables: { edge: { id: myBookmarkedEdgeId } },
-      }).then(() => refetch())
-    } else {
-      return addRelation({
-        variables: {
-          edge: {
-            edgeType: 'Bookmarked',
-            from: session.profile.id,
-            to: id,
-            Bookmarked: {},
+  const toggleBookmarkForm = useFormik({
+    initialValues: {},
+    async onSubmit() {
+      if (!session || addRelationRes.loading || delRelationRes.loading) {
+        return
+      }
+      if (myBookmarkedEdgeId) {
+        return delRelation({
+          variables: { edge: { id: myBookmarkedEdgeId } },
+        }).then(() => refetch())
+      } else {
+        return addRelation({
+          variables: {
+            edge: {
+              edgeType: 'Bookmarked',
+              from: session.profile.id,
+              to: id,
+              Bookmarked: {},
+            },
           },
-        },
-      }).then(() => refetch())
-    }
-  }, [
-    addRelation,
-    addRelationRes.loading,
-    delRelation,
-    delRelationRes.loading,
-    id,
-    myBookmarkedEdgeId,
-    refetch,
-    session,
-  ])
+        }).then(() => refetch())
+      }
+    },
+  })
 
   const likedEdge = resourceData?.myLike.edges[0]
   const liked = !!likedEdge
-  const toggleLike = useCallback(async () => {
-    if (!session || addRelationRes.loading || delRelationRes.loading) {
-      return
-    }
-    if (likedEdge) {
-      await delRelation({ variables: { edge: { id: likedEdge.edge.id } } })
-    } else {
-      await addRelation({
-        variables: {
-          edge: {
-            edgeType: 'Likes',
-            from: session.profile.id,
-            to: id,
-            Likes: {},
+  const toggleLikeForm = useFormik({
+    initialValues: {},
+    async onSubmit() {
+      if (!session || addRelationRes.loading || delRelationRes.loading) {
+        return
+      }
+      if (likedEdge) {
+        await delRelation({ variables: { edge: { id: likedEdge.edge.id } } })
+      } else {
+        await addRelation({
+          variables: {
+            edge: {
+              edgeType: 'Likes',
+              from: session.profile.id,
+              to: id,
+              Likes: {},
+            },
           },
-        },
-      })
-    }
-    refetch()
-  }, [
-    session,
-    addRelationRes.loading,
-    delRelationRes.loading,
-    likedEdge,
-    refetch,
-    delRelation,
-    addRelation,
-    id,
-  ])
+        })
+      }
+      refetch()
+    },
+  })
 
-  const { sendToLMS, currentLMSPrefs } = useLMS(
+  const { sendToLMS /* , currentLMSPrefs */ } = useLMS(
     licenseEdge && resourceData
       ? {
           asset: resourceData.content,
@@ -421,22 +385,85 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       : null
   )
 
-  const sendToMoodleLms = useCallback(
-    (site?: string) => sendToLMS(site),
-    [sendToLMS]
+  const inMyCollectionsEdges = useMemo(
+    () =>
+      resourceData?.inMyCollections.edges.filter(
+        isEdgeNodeOfType(['Collection'])
+      ) ?? [],
+    [resourceData?.inMyCollections.edges]
   )
+
+  const addToCollectionsForm = useFormik<{ collections: string[] }>({
+    initialValues: {
+      collections: [],
+    },
+    onSubmit() {},
+    async validate({ collections: curr }) {
+      const prev = addToCollectionsForm.values.collections
+      const toAdd = curr.filter((_) => !prev.includes(_))
+      const toRemove = prev.filter((_) => !curr.includes(_))
+      const toRemoveEdges = inMyCollectionsEdges.filter(({ node: { id } }) =>
+        toRemove.includes(id)
+      )
+      const promises = [
+        ...toAdd.map((toAddId) =>
+          addRelation({
+            variables: {
+              edge: {
+                edgeType: 'Features',
+                from: toAddId,
+                to: id,
+                Features: {},
+              },
+            },
+          })
+        ),
+        ...toRemoveEdges.map(({ edge: { id } }) =>
+          delRelation({
+            variables: { edge: { id } },
+          })
+        ),
+      ]
+      await Promise.all<any>(promises)
+      refetch()
+    },
+  })
+  const _resetAddToCollectionsForm = addToCollectionsForm.resetForm
+  useEffect(() => {
+    _resetAddToCollectionsForm({
+      touched: {},
+      values: {
+        collections: inMyCollectionsEdges.map(({ node: { id } }) => id),
+      },
+    })
+  }, [_resetAddToCollectionsForm, inMyCollectionsEdges])
+
+  const sendToMoodleLmsForm = useFormik<{ site?: string }>({
+    initialValues: {},
+    onSubmit: async ({ site }, { setErrors }) => {
+      const r = await sendToLMS(site)
+      if (!r) {
+        setErrors({ site: t`Couldn't send to your MoodleLMS` })
+      }
+    },
+  })
+
+  const languagesNodes = useLanguages()
+  const levelsNodes = useIscedGrades()
+  const typesNodes = useResourceTypes()
+  const categoriesNodes = useIscedFields()
+  const licensesNodes = useLicenses()
+
   const resourceProps = useMemo<null | ResourceProps>(() => {
     if (!resourceData) {
       return null
     }
     const props: ResourceProps = {
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, id),
-      formBag,
-      title: resourceData.name,
+      form,
       isOwner,
       isAdmin,
       liked,
-      visibility: VisibilityDropdown,
       contributorCardProps: {
         avatarUrl: getMaybeAssetRefUrl(
           creator?.__typename === 'Profile'
@@ -460,109 +487,90 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
           type: 'subject',
           subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
         })),
-      collections: allMyOwnCollectionEdges.map(({ node: { id, name } }) => ({
-        label: name,
-        id,
-      })),
-      selectedCollections: resourceData.inMyCollections.edges
-        .filter(isEdgeNodeOfType(['Collection']))
-        .map(({ node: { name: label, id } }) => ({ label, id })),
-      setAddToCollections: async (selectedCollItems) => {
-        const selectedIds = selectedCollItems.map(({ id }) => id as string)
-        const myCollectionsIds = allMyOwnCollectionEdges.map(
-          ({ node: { id } }) => id
-        )
-        const containedInCollEdges = resourceData.inMyCollections.edges.filter(
-          isEdgeNodeOfType(['Collection'])
-        )
-
-        const containedInCollIds = containedInCollEdges.map(
-          ({ node: { id } }) => id
-        )
-        const collIdsToAdd = selectedIds.filter(
-          (selectedId) => !containedInCollIds.includes(selectedId)
-        )
-
-        const collEdgesToRem = containedInCollEdges.filter(
-          (myColEdge) =>
-            !selectedIds.includes(myColEdge.node.id) &&
-            myCollectionsIds.includes(myColEdge.node.id)
-        )
-
-        // console.log( {
-        //   add: collIdsToAdd.join(),
-        //   rem: collEdgesToRem.map(({ node: { name } }) => name).join(),
-        //   selected: selectedCollItems.map(({ label }) => label).join(),
-        // })
-        //FIXME: enters once and makes 1 single promise array but does http calls twice ! :|
-        // ( because of packages/webapp/src/ui/components/molecules/cards/AddToCollectionsCard/AddToCollectionsCard.tsx#~30)
-        const promises = [
-          ...collIdsToAdd.map((collIdToAdd) => {
-            return addRelation({
-              variables: {
-                edge: {
-                  edgeType: 'Features',
-                  from: collIdToAdd,
-                  to: id,
-                  Features: {},
-                },
-              },
-            })
-          }),
-          ...collEdgesToRem.map((selectedCollEdgeToAdd) => {
-            return delRelation({
-              variables: { edge: { id: selectedCollEdgeToAdd.edge.id } },
-            })
-          }),
-        ]
-        await Promise.all<any>(promises)
-        refetch()
+      collections: {
+        opts: allMyOwnCollectionEdges.map(({ node: { id, name } }) => ({
+          value: id,
+          label: name,
+        })),
+        selected: resourceData.inMyCollections.edges
+          .filter(isEdgeNodeOfType(['Collection']))
+          .map(({ node: { name: label, id: value } }) => ({ label, value })),
       },
-      languages: langOptions,
-      levels: resourceGradeOptions,
-      types: resourceTypeOptions,
-      months: monthOptions,
-      years: yearsOptions,
-      categories: iscedFieldsOptions,
-      licenses: licensesOptions,
-      updateResource: formik.submitForm,
-      toggleLike,
+      languages: {
+        opts: languagesNodes.map(({ name, id }) => ({
+          value: id,
+          label: name,
+        })),
+        selected: languagesNodes
+          .filter((node) => node.id === form.values.language)
+          .map(({ name, id }) => ({ value: id, label: name }))[0],
+      },
+      levels: {
+        opts: levelsNodes.map(({ name, id }) => ({ value: id, label: name })),
+        selected: levelsNodes
+          .filter((node) => node.id === form.values.level)
+          .map(({ name, id }) => ({ value: id, label: name }))[0],
+      },
+      types: {
+        opts: typesNodes.map(({ name, id }) => ({ value: id, label: name })),
+        selected: typesNodes
+          .filter((node) => node.id === form.values.type)
+          .map(({ name, id }) => ({ value: id, label: name }))[0],
+      },
+      categories: {
+        opts: categoriesNodes.map(({ name, id }) => ({
+          value: id,
+          label: name,
+        })),
+        selected: categoriesNodes
+          .filter((node) => node.id === form.values.category)
+          .map(({ name, id }) => ({ value: id, label: name }))[0],
+      },
+      licenses: {
+        opts: licensesNodes.map(([{ name, id }, icon]) => ({
+          value: id,
+          label: name,
+          icon,
+        })),
+        selected: licensesNodes
+          .filter(([node]) => node.id === form.values.license)
+          .map(([{ name, id }, icon]) => ({ value: id, label: name, icon }))[0],
+      },
+      toggleLikeForm: toggleLikeForm,
       bookmarked: !!myBookmarkedEdgeId,
       numLikes: resourceData.likesCount,
-      toggleBookmark,
-      deleteResource: isOwner || isAdmin ? deleteResource : undefined,
-      sendToMoodleLms,
-      lmsSite: currentLMSPrefs?.site,
+      toggleBookmarkForm: toggleBookmarkForm,
+      deleteResourceForm: isOwner || isAdmin ? deleteResourceForm : undefined,
+      sendToMoodleLmsForm: sendToMoodleLmsForm,
+      // lmsSite: currentLMSPrefs?.site,
       contentUrl: getJustAssetRefUrl(resourceData.content),
-      type: resourceData.content.ext ? 'link' : 'file',
+      addToCollectionsForm,
+      contentType: resourceData.content.ext ? 'link' : 'file',
+      resourceFormat: resourceData.content.mimetype,
     }
     return props
   }, [
-    licensesOptions,
     resourceData,
     id,
-    isAdmin,
-    formBag,
+    form,
     isOwner,
+    isAdmin,
     liked,
     creator,
     creatorEdge,
     isAuthenticated,
     allMyOwnCollectionEdges,
-    formik.submitForm,
-    toggleLike,
+    languagesNodes,
+    levelsNodes,
+    typesNodes,
+    categoriesNodes,
+    licensesNodes,
+    toggleLikeForm,
     myBookmarkedEdgeId,
-    toggleBookmark,
-    deleteResource,
-    currentLMSPrefs,
-    sendToMoodleLms,
-    addRelation,
-    delRelation,
-    refetch,
-    langOptions,
-    iscedFieldsOptions,
-    resourceTypeOptions,
-    resourceGradeOptions,
+    toggleBookmarkForm,
+    deleteResourceForm,
+    sendToMoodleLmsForm,
+    addToCollectionsForm,
   ])
   if (!loading && !data?.node) {
     return createElement(Fallback, fallbackProps({ key: 'resource-not-found' }))

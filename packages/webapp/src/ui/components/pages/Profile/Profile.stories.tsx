@@ -55,8 +55,8 @@ export const useProfileStoryProps = (overrides?: {
 
   return {
     editForm: ProfileCardStoryProps.editForm,
-    sendEmailForm: useFormik<{ text?: string }>({
-      initialValues: {},
+    sendEmailForm: useFormik<{ text: string }>({
+      initialValues: { text: '' },
       onSubmit: action('submit send Email Form'),
     }),
     newResourceHref: href('Pages/New Resource/Start'),

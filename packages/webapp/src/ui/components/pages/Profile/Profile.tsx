@@ -47,7 +47,7 @@ export type ProfileProps = {
   newResourceHref: Href
   showAccountCreationSuccessAlert?: boolean
   showAccountApprovedSuccessAlert?: boolean
-  sendEmailForm?: FormikHandle<{ text?: string }>
+  sendEmailForm?: FormikHandle<{ text: string }>
   editForm: FormikHandle<ProfileFormValues>
 }
 

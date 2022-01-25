@@ -53,7 +53,10 @@ import {
 } from './ContributorCard/ContributorCard'
 import './styles.scss'
 
-export type ResourceFormValues = Omit<NewResourceFormValues, 'addToCollections'>
+export type ResourceFormValues = Omit<
+  NewResourceFormValues,
+  'addToCollections' | 'content'
+>
 export type ResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   isAuthenticated: boolean
@@ -65,19 +68,18 @@ export type ResourceProps = {
   bookmarked: boolean
   tags: FollowTag[]
   contributorCardProps: ContributorCardProps
-  form: FormikHandle<Omit<ResourceFormValues, 'addToCollections'>>
+  form: FormikHandle<ResourceFormValues>
   categories: SelectOptions<TextOptionProps>
   licenses: SelectOptions<IconTextOptionProps>
   types: SelectOptions<TextOptionProps>
   levels: SelectOptions<TextOptionProps>
   languages: SelectOptions<TextOptionProps>
   contentUrl: string
-  toggleLike: FormikHandle
-  toggleBookmark: FormikHandle
-  deleteResource?: FormikHandle
+  toggleLikeForm: FormikHandle
+  toggleBookmarkForm: FormikHandle
+  deleteResourceForm?: FormikHandle
   addToCollectionsForm: FormikHandle<{ collections: string[] }>
-  sendToMoodleLms: FormikHandle<{ site?: string }>
-  sendToMoodleLmsError?: string | undefined
+  sendToMoodleLmsForm: FormikHandle<{ site?: string }>
   resourceFormat: string
   contentType: 'link' | 'file'
 }
@@ -100,11 +102,10 @@ export const Resource = withCtrl<ResourceProps>(
     categories,
     collections,
     form,
-    sendToMoodleLmsError,
-    toggleLike,
-    toggleBookmark,
-    deleteResource,
-    sendToMoodleLms,
+    toggleLikeForm,
+    toggleBookmarkForm,
+    deleteResourceForm,
+    sendToMoodleLmsForm,
     contentUrl,
     resourceFormat,
     contentType,
@@ -138,8 +139,8 @@ export const Resource = withCtrl<ResourceProps>(
     }
 
     const handleOnSendToMoodleClick = () => {
-      if (sendToMoodleLms.isValid) {
-        sendToMoodleLms.submitForm()
+      if (sendToMoodleLmsForm.isValid) {
+        sendToMoodleLmsForm.submitForm()
         setIsAddingToMoodleLms(false)
         setShouldShowSendToMoodleLmsError(false)
       } else {
@@ -219,7 +220,7 @@ export const Resource = withCtrl<ResourceProps>(
             form.values.visibility && (
               <IconPill
                 icon={
-                  form.values.visibility === 'public' ? (
+                  form.values.visibility === 'Public' ? (
                     <VisibilityIcon />
                   ) : (
                     <VisibilityOffIcon />
@@ -230,7 +231,7 @@ export const Resource = withCtrl<ResourceProps>(
           }
           className="visibility-dropdown"
         >
-          {form.values.visibility !== 'public' && (
+          {form.values.visibility !== 'Public' && (
             <IconTextOption
               key={'public'}
               value={'public'}
@@ -238,7 +239,7 @@ export const Resource = withCtrl<ResourceProps>(
               icon={<VisibilityIcon />}
             />
           )}
-          {form.values.visibility !== 'private' && (
+          {form.values.visibility !== 'Private' && (
             <IconTextOption
               key={'private'}
               value={'private'}
@@ -582,20 +583,23 @@ export const Resource = withCtrl<ResourceProps>(
           >
             <InputTextField
               placeholder="http://your-moodle-lms-site.com"
-              value={sendToMoodleLms.values.site}
+              value={sendToMoodleLmsForm.values.site}
               name="site"
-              onChange={sendToMoodleLms.handleChange}
-              error={shouldShowSendToMoodleLmsError && sendToMoodleLmsError}
+              onChange={sendToMoodleLmsForm.handleChange}
+              error={
+                shouldShowSendToMoodleLmsError &&
+                sendToMoodleLmsForm.errors.site
+              }
             />
           </Modal>
         )}
-        {isToDelete && deleteResource && (
+        {isToDelete && deleteResourceForm && (
           <Modal
             title={t`Alert`}
             actions={[
               <PrimaryButton
                 onClick={() => {
-                  deleteResource.submitForm()
+                  deleteResourceForm.submitForm()
                   setIsToDelete(false)
                 }}
                 color="red"
@@ -665,7 +669,7 @@ export const Resource = withCtrl<ResourceProps>(
                           } ${liked && 'liked'}`}
                           onClick={
                             isAuthenticated && !isOwner
-                              ? toggleLike.submitForm
+                              ? toggleLikeForm.submitForm
                               : () => {}
                           }
                         >
@@ -676,7 +680,7 @@ export const Resource = withCtrl<ResourceProps>(
                       {isAuthenticated && !isEditing && (
                         <div
                           className={`bookmark ${bookmarked && 'bookmarked'}`}
-                          onClick={toggleBookmark.submitForm}
+                          onClick={toggleBookmarkForm.submitForm}
                         >
                           {bookmarked ? (
                             <BookmarkIcon />

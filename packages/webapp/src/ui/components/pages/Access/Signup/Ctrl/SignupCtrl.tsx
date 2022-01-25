@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro'
+import { useFormik } from 'formik'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { object, SchemaOf, string } from 'yup'
 import { useSession } from '../../../../../../context/Global/Session'
@@ -8,7 +9,7 @@ import {
 } from '../../../../../../hooks/glob/nav'
 import { href } from '../../../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../../../lib/ctrl'
-import { SubmitForm, useFormikBag } from '../../../../../lib/formik'
+import { SubmitForm } from '../../../../../lib/formik'
 import { useMainPageWrapperCtrl } from '../../../../templates/MainPageWrapperCtrl.tsx/MainPageWrapperCtrl'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { SignupFormValues, SignupProps } from '../Signup'
@@ -44,14 +45,14 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
       }),
     [signUp]
   )
-  const [formik, formBag] = useFormikBag<SignupFormValues>({
+  const form = useFormik<SignupFormValues>({
     initialValues: { name: '', email: '', password: '' },
     validationSchema,
     onSubmit,
   })
   useEffect(() => {
     setSignupErrorMessage(null)
-  }, [formik.values])
+  }, [form.values])
 
   const signupProps = useMemo<SignupProps>(() => {
     const signupProps: SignupProps = {
@@ -60,7 +61,7 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
         {},
         'Signup Access Header'
       ),
-      formBag,
+      form,
       signupErrorMessage,
       requestSent,
       landingHref,
@@ -73,7 +74,7 @@ export const useSignupCtrl: CtrlHook<SignupProps, {}> = () => {
       ),
     }
     return signupProps
-  }, [formBag, signupErrorMessage, requestSent])
+  }, [form, signupErrorMessage, requestSent])
 
   return signupProps && [signupProps]
 }

@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro'
+import { useFormik } from 'formik'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { object, SchemaOf, string } from 'yup'
 import { useSession } from '../../../../../../context/Global/Session'
@@ -8,7 +9,7 @@ import {
 } from '../../../../../../hooks/glob/nav'
 import { href } from '../../../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../../../lib/ctrl'
-import { SubmitForm, useFormikBag } from '../../../../../lib/formik'
+import { SubmitForm } from '../../../../../lib/formik'
 import { useMainPageWrapperCtrl } from '../../../../templates/MainPageWrapperCtrl.tsx/MainPageWrapperCtrl'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import {
@@ -39,14 +40,14 @@ export const useRecoverPasswordCtrl: CtrlHook<
       }),
     [recoverPassword]
   )
-  const [formik, formBag] = useFormikBag<RecoverPasswordFormValues>({
+  const form = useFormik<RecoverPasswordFormValues>({
     initialValues: { email: '' },
     onSubmit,
     validationSchema,
   })
   useEffect(() => {
     setRecoverPasswordErrorMessage(null)
-  }, [formik.values])
+  }, [form.values])
 
   const RecoverPasswordProps = useMemo<RecoverPasswordProps>(() => {
     const RecoverPasswordProps: RecoverPasswordProps = {
@@ -55,7 +56,7 @@ export const useRecoverPasswordCtrl: CtrlHook<
         {},
         'Recover Password Access Header'
       ),
-      formBag,
+      form,
       RecoverPasswordErrorMessage,
       requestSent,
       landingHref,
@@ -67,7 +68,7 @@ export const useRecoverPasswordCtrl: CtrlHook<
       ),
     }
     return RecoverPasswordProps
-  }, [formBag, RecoverPasswordErrorMessage, requestSent])
+  }, [form, RecoverPasswordErrorMessage, requestSent])
 
   return RecoverPasswordProps && [RecoverPasswordProps]
 }

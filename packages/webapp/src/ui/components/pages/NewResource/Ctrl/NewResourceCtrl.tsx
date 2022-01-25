@@ -1,54 +1,31 @@
-import { isOfNodeType } from '@moodlenet/common/dist/graphql/helpers'
-import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
-import { DistOmit } from '@moodlenet/common/dist/utils/types'
-import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import {
-  Reducer,
-  useCallback,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-} from 'react'
+  isEdgeNodeOfType,
+  isOfNodeType,
+} from '@moodlenet/common/dist/graphql/helpers'
+import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
+import { useFormik } from 'formik'
+import { useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useSession } from '../../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../../helpers/data'
 import {
   getOriginalCreationTimestampByStrings,
-  monthOptions,
   useIscedFields,
-  useLangOptions,
-  useLicensesOptions,
-  useResourceGradeOptions,
-  useResourceTypeOptions,
-  yearsOptions,
+  useIscedGrades,
+  useLanguages,
+  useLicenses,
+  useResourceTypes,
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
-import { useFormikBag } from '../../../../lib/formik'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
-import { VisibilityDropdown } from '../FieldsData'
 import { NewResourceProps } from '../NewResource'
 import { NewResourceFormValues } from '../types'
-import { UploadResourceProps } from '../UploadResource/UploadResource'
 import {
   useCreateResourceMutation,
   useCreateResourceRelationMutation,
   useNewResourceDataPageLazyQuery,
 } from './NewResourceCtrl.gen'
-
-const initialSetStepProps: DistOmit<
-  UploadResourceProps,
-  | 'formBag'
-  | 'deleteContent'
-  | 'nextStep'
-  | 'categories'
-  | 'licenses'
-  | 'visibility'
-> = {
-  step: 'UploadResourceStep',
-  state: 'ChooseResource',
-  imageUrl: '',
-}
 
 export type NewResourceCtrlProps = {}
 
@@ -58,25 +35,26 @@ export const useNewResourceCtrl: CtrlHook<
 > = () => {
   const { session } = useSession()
   const history = useHistory()
-  const myId = session?.profile.id
-  const [loadMyColl, mycollectionsQRes] = useNewResourceDataPageLazyQuery()
-  const uploadTempFile = useUploadTempFile()
-  const [createResourceMut /* , createResourceMutRes */] =
-    useCreateResourceMutation()
-  const [createResourceRelMut /* , createResourceRelMutRes */] =
-    useCreateResourceRelationMutation()
-  const { langOptions, getLang } = useLangOptions()
   const iscedFields = useIscedFields()
-  // const { getIscedF, iscedFieldsOptions } = useIscedFieldsOptions()
-  const { resourceTypeOptions, getResourceType } = useResourceTypeOptions()
-  const { getGrade, resourceGradeOptions } = useResourceGradeOptions()
-  const { getLicense, licensesOptions } = useLicensesOptions()
+  const iscedGrades = useIscedGrades()
+  const languages = useLanguages()
+  const licenses = useLicenses()
+  const resourceTypes = useResourceTypes()
+  const myId = session?.profile.id
+  const [loadMyColl, mycollectionsQRes] = useNewResourceDataPageLazyQuery({
+    fetchPolicy: 'cache-and-network',
+  })
+  const uploadTempFile = useUploadTempFile()
+  const [createResourceMut, createResourceMutRes] = useCreateResourceMutation()
+  const [createResourceRelMut, addRelationRes] =
+    useCreateResourceRelationMutation()
 
-  const mycollections = useMemo(
+  const myCollections = useMemo(
     () =>
-      mycollectionsQRes.data?.node?.myCollections.edges.map((_) => _.node) ??
-      [],
-    [mycollectionsQRes.data?.node?.myCollections]
+      mycollectionsQRes.data?.node?.myCollections.edges
+        .filter(isEdgeNodeOfType(['Collection']))
+        .map(({ node }) => node) ?? [],
+    [mycollectionsQRes]
   )
 
   useEffect(() => {
@@ -84,409 +62,265 @@ export const useNewResourceCtrl: CtrlHook<
       loadMyColl({ variables: { myId } })
     }
   }, [myId, loadMyColl])
-  const [form, formBag] = useFormikBag<NewResourceFormValues>({
-    initialValues: {
-      collections: [],
-      category: '',
-      content: '',
-      description: '',
-      format: null,
-      image: null,
-      imageUrl: null,
-      language: null,
-      level: null,
-      license: null,
-      name: '',
-      originalDateMonth: null,
-      originalDateYear: null,
-      title: '',
-      contentType: 'Link',
-      type: null,
-      visibility: 'Private',
-    },
-    onSubmit: () => {}, // console.log.bind(console, 'submit newResource'),
-  })
 
-  const [sform] = formBag
-  const sformSetField = sform.setFieldValue
-
-  const deleteContent = useCallback(() => {
-    sform.handleReset(null) // TODO Originally sform.handleReset, changed because was throwing errors
-    // if (sform.values.image === sform.values.content) {
-    // sformSetField('image', '')
-    // setImageUrl('')
-    // }
-    // sformSetField('content', '')
-  }, [sform /*sformSetField*/]) //TODO Added sform as it was asking it and throwing error otherwise
-  // }, [sform.values.content, sform.values.image, sformSetField])
-
-  type StepProps = DistOmit<NewResourceProps['stepProps'], 'nextStep'>
-  type StepPropsHistoryItem = [
-    curr: StepProps,
-    prev: StepPropsHistoryItem | null
-  ]
-  const [[stepProps, prevStepProps], setNextStepProps] = useReducer<
-    Reducer<StepPropsHistoryItem, StepProps | 'back'>
-  >(
-    ([curr, prev], next) => {
-      if (next === 'back') {
-        return prev ?? [curr, prev]
+  const form = useFormik<NewResourceFormValues>({
+    initialValues: {} as any,
+    onSubmit: async ({
+      content,
+      category,
+      image,
+      description,
+      visibility,
+      level,
+      language,
+      license,
+      type,
+      addToCollections,
+      name,
+      month,
+      year,
+    }) => {
+      if (addRelationRes.loading || createResourceMutRes.loading) {
+        return
       }
-      return [next, [curr, prev]]
-    },
-    [
-      {
-        ...initialSetStepProps,
-        categories: {
-          opts: iscedFields.map((_) => [_.node.id, _.node.name]),
-          selected: [],
-        },
-        formBag,
-        deleteContent,
-        licenses: licensesOptions,
-        visibility: VisibilityDropdown,
-      },
-      null,
-    ]
-  )
-  const { content, name, image } = sform.values
-  const [imageUrl, setImageUrl] = useState('')
-  useEffect(() => {
-    const imageObjectUrl =
-      image instanceof File ? URL.createObjectURL(image) : ''
-    setImageUrl(imageObjectUrl)
-    return () => URL.revokeObjectURL(imageObjectUrl)
-  }, [image, setImageUrl])
-
-  const previousStep = useCallback(
-    () => setNextStepProps('back'),
-    [setNextStepProps]
-  )
-  console.log({ 'form.values': form.values })
-
-  const [saving, setSaving] = useState(false)
-  const nextStep = useMemo(() => {
-    // console.log('nextStep', { deleteContent, formBag, previousStep, sform, stepProps, formValues: form.values })
-    if (stepProps.step === 'UploadResourceStep') {
-      if (stepProps.state === 'ChooseResource') {
-        if (form.values.content) {
-          return () => {
-            if (
-              form.values.content instanceof File &&
-              form.values.content.type.toLowerCase().startsWith('image')
-            ) {
-              sformSetField('image', form.values.content)
-            }
-            setNextStepProps({
-              ...initialSetStepProps,
-              step: 'UploadResourceStep',
-              state: 'EditData',
-              deleteContent,
-              formBag,
-              imageUrl,
-              categories: {
-                opts: iscedFields.map((_) => [_.node.id, _.node.name]),
-                selected: (() => {
-                  const node = iscedFields.find(
-                    (fld) => fld.node.id === form.values.category
-                  )?.node
-                  const selected: [string, string][] = node
-                    ? [[node.id, node.name]]
-                    : []
-                  console.log({ selected })
-                  return selected
-                })(),
-              },
-
-              licenses: licensesOptions,
-              visibility: VisibilityDropdown,
-            })
-          }
-          //   categories,
-        }
-      } else if (stepProps.state === 'EditData') {
-        if (
-          form.values.title &&
-          form.values.description &&
-          form.values.visibility &&
-          form.values.category &&
-          (form.values.contentType === 'File' ? form.values.license : true)
-        ) {
-          return () => {
-            setNextStepProps({
-              step: 'AddToCollectionsStep',
-              collections: mycollections.map((_) => ({
-                label: _.name,
-                id: _.id,
-              })),
-              previousStep,
-              setAddToCollections: (collections) =>
-                sformSetField('collections', collections),
-              selectedCollections: form.values.collections,
-            })
-          }
-        }
-      }
-    } else if (stepProps.step === 'AddToCollectionsStep') {
-      return () => {
-        setNextStepProps({
-          step: 'ExtraDetailsStep',
-          // formats: resFormatOptions,
-          languages: langOptions,
-          levels: resourceGradeOptions,
-          types: resourceTypeOptions,
-          months: monthOptions,
-          years: yearsOptions,
-          previousStep,
-          formBag,
-        })
-      }
-    } else if (stepProps.step === 'ExtraDetailsStep') {
-      return async () => {
-        const {
-          content,
-          category,
-          image,
-          title,
-          description,
-          visibility,
-          level,
-          language,
-          license,
-          type,
-          collections,
-          originalDateMonth,
-          originalDateYear,
-        } = form.values
-        if (!content) {
-          return previousStep()
-        }
-        if (saving) {
-          return
-        }
-        setSaving(true)
-        const contentAssetRef: AssetRefInput =
-          typeof content === 'string'
-            ? {
-                location: content,
-                type: 'ExternalUrl',
-              }
-            : {
-                location: await uploadTempFile('resource', content),
-                type: 'TmpUpload',
-              }
-
-        const imageAssetRef: AssetRefInput = !image
-          ? { location: '', type: 'NoAsset' }
-          : typeof image === 'string'
+      const contentAssetRef: AssetRefInput =
+        typeof content === 'string'
           ? {
-              location: image,
+              location: content,
               type: 'ExternalUrl',
             }
           : {
-              location: await uploadTempFile('image', image),
+              location: await uploadTempFile('resource', content),
               type: 'TmpUpload',
             }
 
-        const resourceCreationResp = await createResourceMut({
+      const imageAssetRef: AssetRefInput = !image
+        ? { location: '', type: 'NoAsset' }
+        : typeof image === 'string'
+        ? {
+            location: image,
+            type: 'ExternalUrl',
+          }
+        : {
+            location: await uploadTempFile('image', image),
+            type: 'TmpUpload',
+          }
+
+      const resourceCreationResp = await createResourceMut({
+        variables: {
+          res: {
+            nodeType: 'Resource',
+            Resource: {
+              content: contentAssetRef,
+              description,
+              _published: visibility === 'Public',
+              name,
+              image: imageAssetRef,
+              originalCreationDate: getOriginalCreationTimestampByStrings({
+                month,
+                year,
+              }),
+            },
+          },
+        },
+      })
+      const createRespData = resourceCreationResp.data?.resource
+      if (
+        !(
+          createRespData?.__typename === 'CreateNodeMutationSuccess' &&
+          isOfNodeType(['Resource'])(createRespData.node)
+        )
+      ) {
+        const err =
+          (createRespData?.__typename === 'CreateNodeMutationError' &&
+            createRespData.details) ||
+          'Unexpected error whlie creating Resource'
+        form.setErrors({ content: err })
+        return
+      }
+
+      const {
+        node: { id: resId },
+      } = createRespData
+      const waitFor: Promise<any>[] = []
+
+      waitFor.push(
+        createResourceRelMut({
           variables: {
-            res: {
-              nodeType: 'Resource',
-              Resource: {
-                content: contentAssetRef,
-                description,
-                _published: visibility === 'Public',
-                name: title,
-                image: imageAssetRef,
-                originalCreationDate: getOriginalCreationTimestampByStrings({
-                  originalDateMonth,
-                  originalDateYear,
-                }),
-              },
+            edge: {
+              edgeType: 'Features',
+              from: resId,
+              to: category,
+              Features: {},
             },
           },
         })
-        const createRespData = resourceCreationResp.data?.resource
-        if (
-          createRespData?.__typename === 'CreateNodeMutationSuccess' &&
-          isOfNodeType(['Resource'])(createRespData.node)
-        ) {
-          const resId = createRespData.node.id
+      )
 
-          const waitFor: Promise<any>[] = []
-
-          waitFor.push(
-            createResourceRelMut({
-              variables: {
-                edge: {
-                  edgeType: 'Features',
-                  from: resId,
-                  to: category,
-                  Features: {},
-                },
+      if (language) {
+        waitFor.push(
+          createResourceRelMut({
+            variables: {
+              edge: {
+                edgeType: 'Features',
+                from: resId,
+                to: language,
+                Features: {},
               },
-            })
-          )
-
-          if (language) {
-            const { id: langId } = getLang(language)
-            waitFor.push(
-              createResourceRelMut({
-                variables: {
-                  edge: {
-                    edgeType: 'Features',
-                    from: resId,
-                    to: langId,
-                    Features: {},
-                  },
-                },
-              })
-            )
-          }
-
-          if (license) {
-            const { id: licenseId } = getLicense(license)
-            waitFor.push(
-              createResourceRelMut({
-                variables: {
-                  edge: {
-                    edgeType: 'Features',
-                    from: resId,
-                    to: licenseId,
-                    Features: {},
-                  },
-                },
-              })
-            )
-          }
-
-          if (type) {
-            const { id: typeId } = getResourceType(type)
-            waitFor.push(
-              createResourceRelMut({
-                variables: {
-                  edge: {
-                    edgeType: 'Features',
-                    from: resId,
-                    to: typeId,
-                    Features: {},
-                  },
-                },
-              })
-            )
-          }
-
-          if (level) {
-            const { id: gradeId } = getGrade(level)
-            waitFor.push(
-              createResourceRelMut({
-                variables: {
-                  edge: {
-                    edgeType: 'Features',
-                    from: resId,
-                    to: gradeId,
-                    Features: {},
-                  },
-                },
-              })
-            )
-          }
-
-          waitFor.push(
-            ...collections.map(async (collItem) => {
-              const collectionId = mycollections.find(
-                (_) => _.id === collItem.id
-              )!.id
-              return createResourceRelMut({
-                variables: {
-                  edge: {
-                    edgeType: 'Features',
-                    to: resId,
-                    from: collectionId,
-                    Features: {},
-                  },
-                },
-              })
-            })
-          )
-          await Promise.all(waitFor).finally(() => setSaving(false))
-
-          history.push(nodeGqlId2UrlPath(resId))
-        }
+            },
+          })
+        )
       }
-    }
-    return undefined
-  }, [
-    stepProps,
-    form.values,
-    deleteContent,
-    formBag,
-    imageUrl,
-    iscedFields,
-    licensesOptions,
-    sformSetField,
-    mycollections,
-    previousStep,
-    langOptions,
-    resourceGradeOptions,
-    resourceTypeOptions,
-    saving,
-    uploadTempFile,
-    createResourceMut,
-    createResourceRelMut,
-    history,
-    getLang,
-    getLicense,
-    getResourceType,
-    getGrade,
-  ])
 
-  useEffect(() => {
-    if (!sform.values.content && prevStepProps) {
-      setNextStepProps('back')
-    } else if (
-      sform.values.content &&
-      stepProps.step === 'UploadResourceStep' &&
-      stepProps.state === 'ChooseResource' &&
-      nextStep
-    ) {
-      nextStep()
-    }
-  }, [sform.values.content, prevStepProps, stepProps, nextStep])
-
-  useEffect(() => {
-    if (content) {
-      if (content instanceof File) {
-        return name !== content.name
-          ? sformSetField('name', content.name)
-          : null
-      } else {
-        return name !== content ? sformSetField('name', content) : null
+      if (license) {
+        waitFor.push(
+          createResourceRelMut({
+            variables: {
+              edge: {
+                edgeType: 'Features',
+                from: resId,
+                to: license,
+                Features: {},
+              },
+            },
+          })
+        )
       }
-    } else {
-      return sformSetField('name', '')
-    }
-  }, [content, sformSetField, name, image])
+
+      if (type) {
+        waitFor.push(
+          createResourceRelMut({
+            variables: {
+              edge: {
+                edgeType: 'Features',
+                from: resId,
+                to: type,
+                Features: {},
+              },
+            },
+          })
+        )
+      }
+
+      if (level) {
+        waitFor.push(
+          createResourceRelMut({
+            variables: {
+              edge: {
+                edgeType: 'Features',
+                from: resId,
+                to: level,
+                Features: {},
+              },
+            },
+          })
+        )
+      }
+
+      waitFor.push(
+        ...addToCollections.map(async (collectionId) => {
+          return createResourceRelMut({
+            variables: {
+              edge: {
+                edgeType: 'Features',
+                to: resId,
+                from: collectionId,
+                Features: {},
+              },
+            },
+          })
+        })
+      )
+      await Promise.all(waitFor)
+
+      history.push(nodeGqlId2UrlPath(resId))
+    },
+  })
 
   const newResourceProps = useMemo<NewResourceProps>(() => {
-    return {
+    const props: NewResourceProps = {
       headerPageTemplateProps: ctrlHook(
         useHeaderPageTemplateCtrl,
         {},
         'header-page-template'
       ),
-      stepProps: {
-        ...stepProps,
-        nextStep,
-        imageUrl,
-        formBag,
-        selectedCollections: form.values.collections,
-      }, //FIXME: stepProps are created in `nextStep()`, so they're static
+      addToCollectionsProps: {
+        collections: {
+          opts: myCollections.map(({ id: value, name: label }) => ({
+            label,
+            value,
+          })),
+          selected: myCollections
+            .filter(({ id }) => form.values.addToCollections.includes(id))
+            .map(({ id: value, name: label }) => ({ label, value })),
+        },
+      },
+      extraDetailsProps: {
+        languages: {
+          opts: languages.map(({ id: value, name: label }) => ({
+            label,
+            value,
+          })),
+          selected: languages
+            .filter(({ id }) => form.values.language === id)
+            .map(({ id: value, name: label }) => ({ label, value }))[0],
+        },
+        levels: {
+          opts: iscedGrades.map(({ id: value, name: label }) => ({
+            label,
+            value,
+          })),
+          selected: iscedGrades
+            .filter(({ id }) => form.values.level === id)
+            .map(({ id: value, name: label }) => ({ label, value }))[0],
+        },
+        types: {
+          opts: resourceTypes.map(({ id: value, name: label }) => ({
+            label,
+            value,
+          })),
+          selected: resourceTypes
+            .filter(({ id }) => form.values.type === id)
+            .map(({ id: value, name: label }) => ({ label, value }))[0],
+        },
+      },
+      uploadResourceProps: {
+        categories: {
+          opts: iscedFields.map(({ id: value, name: label }) => ({
+            label,
+            value,
+          })),
+          selected: iscedFields
+            .filter(({ id }) => form.values.category === id)
+            .map(({ id: value, name: label }) => ({ label, value }))[0],
+        },
+        licenses: {
+          opts: licenses.map(([{ id: value, name: label }, icon]) => ({
+            label,
+            value,
+            icon,
+          })),
+          selected: licenses
+            .filter(([{ id }]) => form.values.license === id)
+            .map(([{ id: value, name: label }, icon]) => ({
+              label,
+              value,
+              icon,
+            }))[0],
+        },
+      },
+      form,
     }
-  }, [nextStep, stepProps, imageUrl, formBag, form.values])
-
-  // console.log('form.values', form.values)
-
+    return props
+  }, [
+    form,
+    iscedFields,
+    iscedGrades,
+    languages,
+    licenses,
+    myCollections,
+    resourceTypes,
+  ])
   return newResourceProps && [newResourceProps]
 }
 
