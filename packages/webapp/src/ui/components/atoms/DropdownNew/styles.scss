@@ -160,7 +160,8 @@
       }
 
       > .icon,
-      > .icons {
+      > .icon-text,
+      .icons {
         width: 100%;
         height: 100%;
         //margin-left: 10px;
@@ -182,6 +183,11 @@
           &.icon-text {
             gap: 6px;
           }
+        }
+
+        &:is(.icon-text) {
+          justify-content: flex-start;
+          gap: 6px;
         }
       }
 

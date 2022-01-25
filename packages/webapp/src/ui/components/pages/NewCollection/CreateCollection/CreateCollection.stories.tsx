@@ -3,6 +3,7 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { FormikConfig, useFormik } from 'formik'
 import { mixed, object, SchemaOf, string } from 'yup'
+import { VisbilityIconTextOptionProps } from '../../NewResource/UploadResource/storiesData'
 import { NewCollectionFormValues } from '../types'
 import { CreateCollection, CreateCollectionProps } from './CreateCollection'
 
@@ -38,19 +39,26 @@ export const useCreateCollectionStoryProps = (overrides?: {
   formConfig?: Partial<FormikConfig<NewCollectionFormValues>>
   props?: Partial<CreateCollectionProps>
 }): CreateCollectionProps => {
+  const form = useFormik<NewCollectionFormValues>({
+    onSubmit: action('create Collection'),
+    validationSchema,
+    initialValues: {
+      description: '',
+      title: '',
+      visibility: 'Private',
+      ...overrides?.formValues,
+    },
+    ...overrides?.formConfig,
+  })
   return {
     step: 'CreateCollectionStep',
-    form: useFormik<NewCollectionFormValues>({
-      onSubmit: action('create Collection'),
-      validationSchema,
-      initialValues: {
-        description: '',
-        title: '',
-        visibility: 'Private',
-        ...overrides?.formValues,
-      },
-      ...overrides?.formConfig,
-    }),
+    form,
+    visibilities: {
+      opts: VisbilityIconTextOptionProps,
+      selected: VisbilityIconTextOptionProps.find(
+        ({ value }) => value === form.values.visibility
+      ),
+    },
     ...overrides?.props,
   }
 }

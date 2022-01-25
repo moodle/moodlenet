@@ -120,6 +120,7 @@ export const Collection = withCtrl<CollectionProps>(
             label="Visibility"
             highlight={shouldShowErrors && !!form.errors.visibility}
             error={form.errors.visibility}
+            position={{ top: 50, bottom: 25 }}
             pills={
               form.values.visibility && (
                 <IconPill

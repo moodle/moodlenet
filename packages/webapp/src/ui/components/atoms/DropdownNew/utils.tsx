@@ -3,11 +3,14 @@ import React from 'react'
 export const setListPosition = ({
   dropdownButton,
   dropdownContent,
+  topPosition,
+  bottomPosition,
   window,
 }: {
   dropdownContent: React.RefObject<HTMLDivElement | null>
   dropdownButton: React.RefObject<HTMLInputElement | null>
-  label: string | undefined
+  topPosition?: number
+  bottomPosition?: number
   window: Window
 }): void => {
   const viewportOffset =
@@ -24,7 +27,9 @@ export const setListPosition = ({
         bottom && bottom - 20 < 160 ? bottom - 20 + 'px' : '160px')
     dropdownContent.current &&
       dropdownContent.current &&
-      (dropdownContent.current.style.top = '50px')
+      (dropdownContent.current.style.top = topPosition
+        ? `${topPosition}px`
+        : '75px')
     dropdownContent.current && (dropdownContent.current.style.bottom = 'auto')
     // dropdownContent.current &&
     //   (dropdownContent.current.style.transform = ' translate(-50%, 0px)')
@@ -34,7 +39,10 @@ export const setListPosition = ({
     dropdownContent.current &&
       (dropdownContent.current.style.maxHeight =
         top && top < 160 ? top - 20 + 'px' : '160px')
-    dropdownContent.current && (dropdownContent.current.style.bottom = '25px')
+    dropdownContent.current &&
+      (dropdownContent.current.style.bottom = bottomPosition
+        ? `${bottomPosition}px`
+        : '50px')
     dropdownContent.current && (dropdownContent.current.style.top = 'auto')
     // dropdownContent.current &&
     //   (dropdownContent.current.style.transform = ' translate(-50%, 0px)')
