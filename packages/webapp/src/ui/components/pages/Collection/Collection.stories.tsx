@@ -12,6 +12,7 @@ import {
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { NewCollectionFormValues } from '../NewCollection/types'
+import { VisbilityIconTextOptionProps } from '../NewResource/UploadResource/storiesData'
 import { Collection, CollectionProps } from './Collection'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
 
@@ -43,6 +44,19 @@ export const CollectionStoryProps = (overrides?: {
   formConfig?: Partial<FormikConfig<NewCollectionFormValues>>
   formValues?: Partial<NewCollectionFormValues>
 }): CollectionProps => {
+  const form = useFormik<NewCollectionFormValues>({
+    validationSchema,
+    onSubmit: action(' update collection'),
+    initialValues: {
+      description:
+        'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
+      image: 'https://picsum.photos/200/100',
+      title: 'Best collection ever',
+      visibility: 'Public',
+      ...overrides?.formValues,
+    },
+    ...overrides?.formConfig,
+  })
   return {
     headerPageTemplateProps: {
       headerPageProps: HeaderPageLoggedInStoryProps,
@@ -59,19 +73,13 @@ export const CollectionStoryProps = (overrides?: {
     numFollowers: 23,
     bookmarked: false,
     contributorCardProps: ContributorCardStoryProps,
-    form: useFormik<NewCollectionFormValues>({
-      validationSchema,
-      onSubmit: action(' update collection'),
-      initialValues: {
-        description:
-          'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-        image: 'https://picsum.photos/200/100',
-        title: 'Best collection ever',
-        visibility: 'Public',
-        ...overrides?.formValues,
-      },
-      ...overrides?.formConfig,
-    }),
+    visibilities: {
+      opts: VisbilityIconTextOptionProps,
+      selected: VisbilityIconTextOptionProps.find(
+        ({ value }) => value === form.values.visibility
+      ),
+    },
+    form,
     resourceCardPropsList: [
       ResourceCardOwnerStoryProps,
       ResourceCardOwnerBookmarkedStoryProps,
