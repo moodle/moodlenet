@@ -16,7 +16,10 @@ import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
-import { VisibilityDropdown } from '../../atoms/VisibilityDropdown/VisibilityDropdown'
+import {
+  VisibilityDropdown,
+  VisibilityNodes,
+} from '../../atoms/VisibilityDropdown/VisibilityDropdown'
 import ListCard from '../../molecules/cards/ListCard/ListCard'
 import {
   ResourceCard,
@@ -119,8 +122,9 @@ export const Collection = withCtrl<CollectionProps>(
             <div className="title">
               <Trans>Visibility</Trans>
             </div>
-            <abbr className="value">
-              <Trans>{form.values.visibility}</Trans>
+            <abbr className="value icons">
+              {VisibilityNodes[form.values.visibility]}
+              {form.values.visibility}
             </abbr>
           </div>
         )}
