@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro'
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
-import React, { useCallback } from 'react'
+import React, { useCallback, useRef } from 'react'
 import { withCtrl } from '../../../../lib/ctrl'
 import { FormikHandle } from '../../../../lib/formik'
 import { useImageUrl } from '../../../../lib/useImageUrl'
@@ -25,6 +25,10 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
     backgroundSize: 'cover',
   }
 
+  const uploadImageRef = useRef<HTMLInputElement>(null)
+  const selectImage = () => {
+    uploadImageRef.current?.click()
+  }
   const uploadImage = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const selectedFile = e.currentTarget.files?.item(0)
@@ -70,11 +74,6 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
     </div>
   )
 
-  const selectImage = () => {
-    //FIXME: useRef()s
-    document.getElementById('uploadImage')?.click()
-  }
-
   return (
     <div className="create-collection">
       <div className="title">
@@ -91,7 +90,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
                 <div className="uploader">
                   <div className="image upload" onClick={selectImage}>
                     <input
-                      id="uploadImage"
+                      ref={uploadImageRef}
                       type="file"
                       accept=".jpg,.jpeg,.png,.gif"
                       name="myImage"

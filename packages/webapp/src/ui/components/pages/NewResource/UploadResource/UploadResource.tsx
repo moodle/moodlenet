@@ -143,13 +143,14 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       </div>
     )
 
+    const uploadImageRef = useRef<HTMLInputElement>(null)
     const selectImage = () => {
-      //FIXME: useRef()s
-      document.getElementById('uploadImage')?.click()
+      uploadImageRef.current?.click()
     }
+
+    const uploadFileRef = useRef<HTMLInputElement>(null)
     const selectFile = () => {
-      //FIXME: useRef()s
-      document.getElementById('uploadFile')?.click()
+      uploadFileRef.current?.click()
     }
 
     const dropHandler = (e: React.DragEvent<HTMLDivElement>) => {
@@ -237,7 +238,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     {subStep === 'ChooseResource' ? (
                       <div className="file upload" onClick={selectFile}>
                         <input
-                          id="uploadFile"
+                          ref={uploadFileRef}
                           type="file"
                           name="content"
                           onChange={({ target }) =>
@@ -253,7 +254,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     ) : (
                       <div className="image upload" onClick={selectImage}>
                         <input
-                          id="uploadImage"
+                          ref={uploadImageRef}
                           type="file"
                           accept=".jpg,.jpeg,.png,.gif"
                           name="image"
