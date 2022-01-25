@@ -375,7 +375,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
     },
   })
 
-  const { sendToLMS /* , currentLMSPrefs */ } = useLMS(
+  const { sendToLMS, currentLMSPrefs } = useLMS(
     licenseEdge && resourceData
       ? {
           asset: resourceData.content,
@@ -439,7 +439,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
   }, [_resetAddToCollectionsForm, inMyCollectionsEdges])
 
   const sendToMoodleLmsForm = useFormik<{ site?: string }>({
-    initialValues: {},
+    initialValues: { site: currentLMSPrefs?.site },
     onSubmit: async ({ site }, { setErrors }) => {
       const r = await sendToLMS(site)
       if (!r) {
@@ -542,7 +542,6 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       toggleBookmarkForm: toggleBookmarkForm,
       deleteResourceForm: isOwner || isAdmin ? deleteResourceForm : undefined,
       sendToMoodleLmsForm: sendToMoodleLmsForm,
-      // lmsSite: currentLMSPrefs?.site,
       contentUrl: getJustAssetRefUrl(resourceData.content),
       addToCollectionsForm,
       contentType: resourceData.content.ext ? 'link' : 'file',
