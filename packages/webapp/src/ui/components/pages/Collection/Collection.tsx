@@ -17,7 +17,7 @@ import {
   IconPill,
   IconTextOption,
   IconTextOptionProps,
-} from '../../atoms/DropdownNew/Dropdown'
+} from '../../atoms/Dropdown/Dropdown'
 import { InputTextField } from '../../atoms/InputTextField/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
@@ -149,8 +149,9 @@ export const Collection = withCtrl<CollectionProps>(
             <div className="title">
               <Trans>Visibility</Trans>
             </div>
-            <abbr className="value">
-              <Trans>{form.values.visibility}</Trans>
+            <abbr className="value icons">
+              {visibilities.selected?.icon}
+              {visibilities.selected?.label}
             </abbr>
           </div>
         )}
