@@ -2,7 +2,8 @@ import {
   IconTextOptionProps,
   TextOptionProps,
 } from '../../../atoms/Dropdown/Dropdown'
-import { LicenseNodes, VisibilityNodes } from '../FieldsData'
+import { VisibilityNodes } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
+import { LicenseNodes } from '../FieldsData'
 
 export const LicenseIconTextOptionProps: IconTextOptionProps[] = [
   {
@@ -42,20 +43,20 @@ export const LicenseIconTextOptionProps: IconTextOptionProps[] = [
   },
 ]
 
-type VisbilityIconTextOptionProps = IconTextOptionProps & {
+type VisbilityIconTextOptionPropsT = IconTextOptionProps & {
   value: 'Private' | 'Public'
 }
 
-export const VisbilityIconTextOptionProps: VisbilityIconTextOptionProps[] = [
+export const VisbilityIconTextOptionProps: VisbilityIconTextOptionPropsT[] = [
   {
     label: 'Private',
     value: 'Private',
-    icon: VisibilityNodes['Private'],
+    icon: VisibilityNodes.Private,
   },
   {
     label: 'Public',
     value: 'Public',
-    icon: VisibilityNodes['Public'],
+    icon: VisibilityNodes.Public,
   },
 ]
 

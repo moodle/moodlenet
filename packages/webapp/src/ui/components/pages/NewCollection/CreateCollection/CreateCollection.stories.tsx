@@ -3,7 +3,6 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { FormikConfig, useFormik } from 'formik'
 import { mixed, object, SchemaOf, string } from 'yup'
-import { VisbilityIconTextOptionProps } from '../../NewResource/UploadResource/storiesData'
 import { NewCollectionFormValues } from '../types'
 import { CreateCollection, CreateCollectionProps } from './CreateCollection'
 
@@ -53,12 +52,7 @@ export const useCreateCollectionStoryProps = (overrides?: {
   return {
     step: 'CreateCollectionStep',
     form,
-    visibilities: {
-      opts: VisbilityIconTextOptionProps,
-      selected: VisbilityIconTextOptionProps.find(
-        ({ value }) => value === form.values.visibility
-      ),
-    },
+
     ...overrides?.props,
   }
 }

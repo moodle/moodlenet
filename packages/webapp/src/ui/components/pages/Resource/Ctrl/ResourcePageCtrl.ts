@@ -376,11 +376,11 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
   })
 
   const { sendToLMS, currentLMSPrefs } = useLMS(
-    licenseEdge && resourceData
+    resourceData
       ? {
           asset: resourceData.content,
           resource: resourceData,
-          license: licenseEdge.node,
+          license: licenseEdge?.node,
         }
       : null
   )

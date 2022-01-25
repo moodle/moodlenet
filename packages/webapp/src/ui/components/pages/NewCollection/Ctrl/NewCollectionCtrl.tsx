@@ -4,7 +4,7 @@ import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers
 import { useFormik } from 'formik'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router'
-import { useSession } from '../../../../../context/Global/Session'
+// import { useSession } from '../../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../../helpers/data'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
@@ -20,7 +20,7 @@ export const useNewCollectionCtrl: CtrlHook<
 > = () => {
   const history = useHistory()
   const uploadTempFile = useUploadTempFile()
-  const { refetch } = useSession()
+  // const { refetch } = useSession()
   const [createCollectionMut /* , createCollectionMutRes */] =
     useCreateCollectionMutation()
   // const [createCollectionRelMut /* , createCollectionRelMutRes */] = useCreateCollectionRelationMutation()
@@ -59,17 +59,23 @@ export const useNewCollectionCtrl: CtrlHook<
       })
       const createRespData = collectionCreationResp.data?.collection
       if (
-        createRespData?.__typename === 'CreateNodeMutationSuccess' &&
-        isOfNodeType(['Collection'])(createRespData.node)
+        !(
+          createRespData?.__typename === 'CreateNodeMutationSuccess' &&
+          isOfNodeType(['Collection'])(createRespData.node)
+        )
       ) {
-        const collId = createRespData.node.id
-
-        const waitFor: Promise<any>[] = []
-
-        await Promise.all(waitFor).finally(refetch)
-
-        history.push(nodeGqlId2UrlPath(collId))
+        form.setErrors({
+          title: `couldn't create: ${
+            createRespData?.__typename === 'CreateNodeMutationError'
+              ? createRespData.details
+              : ''
+          }`,
+        })
+        return
       }
+      const collId = createRespData.node.id
+      // refetch()
+      history.push(nodeGqlId2UrlPath(collId))
     },
   })
 
