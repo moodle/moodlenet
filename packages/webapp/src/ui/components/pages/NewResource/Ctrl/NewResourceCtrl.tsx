@@ -64,7 +64,14 @@ export const useNewResourceCtrl: CtrlHook<
   }, [myId, loadMyColl])
 
   const form = useFormik<NewResourceFormValues>({
-    initialValues: {} as any,
+    initialValues: {
+      addToCollections: [],
+      category: '',
+      content: '',
+      description: '',
+      name: '',
+      visibility: 'Private',
+    },
     onSubmit: async ({
       content,
       category,

@@ -300,8 +300,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
           image: getMaybeAssetRefUrl(image),
           name,
           visibility: _published ? 'Public' : 'Private',
-          month: `${orgDate?.getMonth()}`,
-          year: `${orgDate?.getFullYear()}`,
+          month: orgDate ? `${orgDate.getMonth()}` : undefined,
+          year: orgDate ? `${orgDate.getFullYear()}` : undefined,
         },
       })
     }
