@@ -144,7 +144,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
   })
 
   const form = useFormik<ProfileFormValues>({
-    initialValues: {} as any,
+    initialValues: { description: '', displayName: '' },
     onSubmit: async (vals) => {
       if (!form.dirty || editProfile.loading) {
         return

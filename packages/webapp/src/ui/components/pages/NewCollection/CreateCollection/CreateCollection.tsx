@@ -89,16 +89,16 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
       >
         {form.values.visibility !== 'Public' && (
           <IconTextOption
-            key={'public'}
-            value={'public'}
+            key={'Public'}
+            value={'Public'}
             label={t`Public`}
             icon={<VisibilityIcon />}
           />
         )}
         {form.values.visibility !== 'Private' && (
           <IconTextOption
-            key={'private'}
-            value={'private'}
+            key={'Private'}
+            value={'Private'}
             label={t`Private`}
             icon={<VisibilityOffIcon />}
           />

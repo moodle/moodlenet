@@ -233,16 +233,16 @@ export const Resource = withCtrl<ResourceProps>(
         >
           {form.values.visibility !== 'Public' && (
             <IconTextOption
-              key={'public'}
-              value={'public'}
+              key={'Public'}
+              value={'Public'}
               label={t`Public`}
               icon={<VisibilityIcon />}
             />
           )}
           {form.values.visibility !== 'Private' && (
             <IconTextOption
-              key={'private'}
-              value={'private'}
+              key={'Private'}
+              value={'Private'}
               label={t`Private`}
               icon={<VisibilityOffIcon />}
             />
@@ -463,17 +463,15 @@ export const Resource = withCtrl<ResourceProps>(
               title={`${
                 MonthTextOptionProps.find(
                   ({ value }) => value === form.values.month
-                )!.label
-              } ${form.values.year}`}
+                )?.label ?? ''
+              } ${form.values.year ?? ''}`}
             >
               <span>
-                {
-                  MonthTextOptionProps.find(
-                    ({ value }) => value === form.values.month
-                  )!.label
-                }
+                {MonthTextOptionProps.find(
+                  ({ value }) => value === form.values.month
+                )?.label ?? ''}
               </span>
-              <span>{form.values.year}</span>
+              <span>{form.values.year ?? ''}</span>
             </abbr>
           </div>
         )}

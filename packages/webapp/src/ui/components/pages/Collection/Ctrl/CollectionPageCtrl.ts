@@ -134,7 +134,7 @@ export const useCollectionCtrl: CtrlHook<
   const uploadTempFile = useUploadTempFile()
 
   const form = useFormik<NewCollectionFormValues>({
-    initialValues: {} as any,
+    initialValues: { description: '', title: '', visibility: 'Private' },
     onSubmit: async (vals) => {
       if (
         !form.dirty ||
@@ -172,11 +172,11 @@ export const useCollectionCtrl: CtrlHook<
       return refetch()
     },
   })
-  const { resetForm: fresetForm } = form
+  const { resetForm: _resetForm } = form
   useEffect(() => {
     if (collectionData) {
       const { name: title, description, _published, image } = collectionData
-      fresetForm({
+      _resetForm({
         touched: {},
         values: {
           title,
@@ -186,7 +186,7 @@ export const useCollectionCtrl: CtrlHook<
         },
       })
     }
-  }, [collectionData, fresetForm, id])
+  }, [collectionData, _resetForm, id])
 
   const formikSetFieldValue = form.setFieldValue
   useEffect(() => {
