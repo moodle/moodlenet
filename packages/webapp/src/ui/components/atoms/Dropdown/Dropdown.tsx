@@ -144,7 +144,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
   return (
     <div
       ref={mainElemRef}
-      className={`dropdown-new ${className ? className : ''} ${
+      className={`dropdown ${className ? className : ''} ${
         searchByText ? 'search' : ''
       }${disabled ? ' disabled' : ''} ${
         highlight || error ? ' highlight' : ''

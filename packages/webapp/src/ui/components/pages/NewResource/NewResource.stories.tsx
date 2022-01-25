@@ -34,6 +34,7 @@ const meta: ComponentMeta<typeof NewResource> = {
     'NewResourceAddToCollectionsStoryProps',
     'NewResourceExtraDetailsStoryProps',
     'NewResourceLinkUploadedStoryProps',
+    'validationSchema',
   ],
 }
 
