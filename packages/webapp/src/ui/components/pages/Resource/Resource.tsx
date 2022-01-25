@@ -22,7 +22,6 @@ import {
   IconPill,
   IconTextOption,
   IconTextOptionProps,
-  IconTextPill,
   SimplePill,
   TextOption,
   TextOptionProps,
@@ -32,6 +31,10 @@ import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
+import {
+  VisibilityDropdown,
+  VisibilityNodes,
+} from '../../atoms/VisibilityDropdown/VisibilityDropdown'
 import {
   AddToCollectionsCard,
   OptionItem,
@@ -68,7 +71,6 @@ export type ResourceProps = {
   tags: FollowTag[]
   contributorCardProps: ContributorCardProps
   form: FormikHandle<Omit<ResourceFormValues, 'addToCollections'>>
-  visibilities: SelectOptions<IconTextOptionProps>
   categories: SelectOptions<TextOptionProps>
   licenses: SelectOptions<IconTextOptionProps>
   types: SelectOptions<TextOptionProps>
@@ -99,7 +101,6 @@ export const Resource = withCtrl<ResourceProps>(
     levels,
     languages,
     licenses,
-    visibilities,
     categories,
     collections,
     form,
@@ -208,7 +209,7 @@ export const Resource = withCtrl<ResourceProps>(
 
     const extraDetails = isEditing ? (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
-        <Dropdown
+        <VisibilityDropdown
           name="visibility"
           value={form.values.visibility}
           onChange={form.handleChange}
@@ -218,26 +219,7 @@ export const Resource = withCtrl<ResourceProps>(
           highlight={shouldShowErrors && !!form.errors.visibility}
           error={form.errors.visibility}
           position={{ top: 50, bottom: 25 }}
-          pills={
-            form.values.visibility &&
-            visibilities.selected?.label && (
-              <IconTextPill
-                label={visibilities.selected?.label}
-                icon={visibilities.selected?.icon}
-              />
-            )
-          }
-          className="visibility-dropdown"
-        >
-          {visibilities.opts.map(({ icon, label, value }) => (
-            <IconTextOption
-              icon={icon}
-              label={label}
-              value={value}
-              key={value}
-            />
-          ))}
-        </Dropdown>
+        />
         <Dropdown
           name="category"
           value={form.values.category}
@@ -419,8 +401,8 @@ export const Resource = withCtrl<ResourceProps>(
               <Trans>Visibility</Trans>
             </div>
             <abbr className="value icons">
-              {visibilities.selected?.icon}
-              {visibilities.selected?.label}
+              {VisibilityNodes[form.values.visibility]}
+              {form.values.visibility}
             </abbr>
           </div>
         )}

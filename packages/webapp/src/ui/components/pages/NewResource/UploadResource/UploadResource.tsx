@@ -1,8 +1,6 @@
 import { t, Trans } from '@lingui/macro'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
-import VisibilityIcon from '@material-ui/icons/Visibility'
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
 import React, { useCallback, useRef, useState } from 'react'
 import { withCtrl } from '../../../../lib/ctrl'
 import { SelectOptions } from '../../../../lib/types'
@@ -24,6 +22,7 @@ import Modal from '../../../atoms/Modal/Modal'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
+import { VisibilityDropdown } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import { useNewResourcePageCtx } from '../NewResource'
 import { NewResourceFormValues } from '../types'
 import './styles.scss'
@@ -130,7 +129,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
               <TextOption key={value} value={value} label={label} />
             ))}
           </Dropdown>
-          <Dropdown
+          <VisibilityDropdown
             name="visibility"
             value={form.values.visibility}
             onChange={form.handleChange}
@@ -139,38 +138,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             label="Visibility"
             highlight={shouldShowErrors && !!form.errors.visibility}
             error={form.errors.visibility}
-            pills={
-              form.values.visibility && (
-                <IconPill
-                  icon={
-                    form.values.visibility === 'Public' ? (
-                      <VisibilityIcon />
-                    ) : (
-                      <VisibilityOffIcon />
-                    )
-                  }
-                />
-              )
-            }
-            className="visibility-dropdown"
-          >
-            {form.values.visibility !== 'Public' && (
-              <IconTextOption
-                key={'public'}
-                value={'public'}
-                label={t`Public`}
-                icon={<VisibilityIcon />}
-              />
-            )}
-            {form.values.visibility !== 'Private' && (
-              <IconTextOption
-                key={'private'}
-                value={'private'}
-                label={t`Private`}
-                icon={<VisibilityOffIcon />}
-              />
-            )}
-          </Dropdown>
+          />
         </div>
       </div>
     )

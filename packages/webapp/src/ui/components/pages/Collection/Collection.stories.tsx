@@ -12,7 +12,6 @@ import {
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { NewCollectionFormValues } from '../NewCollection/types'
-import { VisbilityIconTextOptionProps } from '../NewResource/UploadResource/storiesData'
 import { Collection, CollectionProps } from './Collection'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
 
@@ -73,12 +72,7 @@ export const CollectionStoryProps = (overrides?: {
     numFollowers: 23,
     bookmarked: false,
     contributorCardProps: ContributorCardStoryProps,
-    visibilities: {
-      opts: VisbilityIconTextOptionProps,
-      selected: VisbilityIconTextOptionProps.find(
-        ({ value }) => value === form.values.visibility
-      ),
-    },
+
     form,
     resourceCardPropsList: [
       ResourceCardOwnerStoryProps,

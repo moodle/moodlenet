@@ -10,7 +10,7 @@ import { LMSPrefs, sendToMoodle } from './LMSintegration'
 export const useLMS = (
   obj: Maybe<{
     resource: Pick<Resource, 'id' | 'image' | 'name' | 'description'>
-    license: Pick<License, 'code'>
+    license?: Pick<License, 'code'>
     asset: AssetRef
   }>
 ) => {
@@ -36,7 +36,7 @@ export const useLMS = (
           window.location.host
         }${nodeGqlId2UrlPath(resource.id)}`,
         icon: getMaybeAssetRefUrl(resource.image) ?? '',
-        licence: license.code.toUpperCase(),
+        licence: license?.code.toUpperCase() ?? 'N/A',
         name: resource.name,
         summary: resource.description,
         url: resUrl,

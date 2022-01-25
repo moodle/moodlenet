@@ -53,7 +53,6 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
       ? schema.required(t`Need a License for uploaded content`)
       : schema.optional()
   }),
-  content: mixed().required(t`Content is a required field`),
   description: string().required(t`Please provide a Description`),
   name: string().required(t`Please provide a title`),
   image: mixed().optional(),
@@ -71,7 +70,6 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
 export const resourceFormValues: ResourceFormValues = {
   visibility: VisbilityIconTextOptionProps[0]!.value,
   category: CategoriesTextOptionProps[2]!.value,
-  content: '',
   description:
     'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
   image: 'https://picsum.photos/200/100',
@@ -178,12 +176,6 @@ export const ResourceStoryProps = (overrides?: {
       opts: CategoriesTextOptionProps,
       selected: CategoriesTextOptionProps.find(
         ({ value }) => value === form.values.category
-      ),
-    },
-    visibilities: {
-      opts: VisbilityIconTextOptionProps,
-      selected: VisbilityIconTextOptionProps.find(
-        ({ value }) => value === form.values.visibility
       ),
     },
     licenses: {

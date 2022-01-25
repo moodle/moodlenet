@@ -8,21 +8,15 @@ import SaveIcon from '@material-ui/icons/Save'
 import React, { useCallback, useRef, useState } from 'react'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
-import { SelectOptions } from '../../../lib/types'
 import { useImageUrl } from '../../../lib/useImageUrl'
 import defaultBackgroud from '../../../static/img/default-background.svg'
 import Card from '../../atoms/Card/Card'
-import {
-  Dropdown,
-  IconPill,
-  IconTextOption,
-  IconTextOptionProps,
-} from '../../atoms/DropdownNew/Dropdown'
 import { InputTextField } from '../../atoms/InputTextField/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
+import { VisibilityDropdown } from '../../atoms/VisibilityDropdown/VisibilityDropdown'
 import ListCard from '../../molecules/cards/ListCard/ListCard'
 import {
   ResourceCard,
@@ -47,7 +41,6 @@ export type CollectionProps = {
   numFollowers: number
   bookmarked: boolean
   contributorCardProps: ContributorCardProps
-  visibilities: SelectOptions<IconTextOptionProps>
   form: FormikHandle<NewCollectionFormValues>
   resourceCardPropsList: CP<ResourceCardProps>[]
   toggleBookmark: FormikHandle
@@ -65,7 +58,6 @@ export const Collection = withCtrl<CollectionProps>(
     following,
     numFollowers,
     bookmarked,
-    visibilities,
     contributorCardProps,
     form,
     resourceCardPropsList,
@@ -111,7 +103,7 @@ export const Collection = withCtrl<CollectionProps>(
     const extraDetails = (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
         {isEditing ? (
-          <Dropdown
+          <VisibilityDropdown
             name="visibility"
             value={form.values.visibility}
             onChange={form.handleChange}
@@ -121,29 +113,7 @@ export const Collection = withCtrl<CollectionProps>(
             highlight={shouldShowErrors && !!form.errors.visibility}
             error={form.errors.visibility}
             position={{ top: 50, bottom: 25 }}
-            pills={
-              form.values.visibility && (
-                <IconPill
-                  icon={
-                    <div className="icon-text">
-                      {visibilities.selected?.icon}
-                      {visibilities.selected?.label}
-                    </div>
-                  }
-                />
-              )
-            }
-            className="visibility-dropdown"
-          >
-            {visibilities.opts.map(({ icon, label, value }) => (
-              <IconTextOption
-                icon={icon}
-                label={label}
-                value={value}
-                key={value}
-              />
-            ))}
-          </Dropdown>
+          />
         ) : (
           <div className="detail">
             <div className="title">
