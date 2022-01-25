@@ -277,13 +277,6 @@
         > .input-container {
           background-color: transparent;
           border: none;
-          > .dropdown-button {
-            > .dropdown-pill {
-              > div {
-                //gap: 6px;
-              }
-            }
-          }
         }
 
         &.disabled {
@@ -294,10 +287,6 @@
               color: #c6c6c6;
             }
           }
-        }
-
-        > .dropdown-content {
-          top: 50px;
         }
       }
 
@@ -334,11 +323,8 @@
         }
         > .fields {
           display: flex;
-          :first-child.display-mode.not-editing {
+          > :first-child.display-mode.not-editing {
             width: 60px;
-          }
-          .dropdown-new > .dropdown-content.display-on-the-bottom {
-            top: 25px !important;
           }
         }
       }

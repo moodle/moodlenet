@@ -29,6 +29,7 @@ export type DropdownProps = SelectorProps & {
   error?: ReactNode
   highlight?: boolean
   multilines?: boolean
+  position?: { top?: number; bottom?: number }
 }
 export const Dropdown: FC<DropdownProps> = (props) => {
   const {
@@ -41,6 +42,7 @@ export const Dropdown: FC<DropdownProps> = (props) => {
     highlight,
     multilines,
     searchText,
+    position,
     ...selectorProps
   } = props
   return (
@@ -66,6 +68,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
     multiple,
     searchText,
     placeholder,
+    position,
   } = props
 
   const [showContentFlag, toggleOpen] = useReducer((_) => !_, false)
@@ -94,10 +97,11 @@ const DropdownComp: FC<DropdownProps> = (props) => {
       setListPosition({
         dropdownButton,
         dropdownContent,
-        label,
+        topPosition: position && position.top,
+        bottomPosition: position && position.bottom,
         window,
       })
-  }, [label, showContent])
+  }, [showContent, position])
 
   useLayoutEffect(() => {
     showContent && setLayout()
@@ -225,6 +229,18 @@ export const IconPill: FC<{
   icon: ReactNode
 }> = ({ icon }) => {
   return <div className="dropdown-pill icon">{icon}</div>
+}
+
+export const IconTextPill: FC<{
+  icon: ReactNode
+  label: string
+}> = ({ icon, label }) => {
+  return (
+    <div className="dropdown-pill icon-text">
+      {icon}
+      <span>{label}</span>
+    </div>
+  )
 }
 
 export type TextOptionProps = {

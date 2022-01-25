@@ -8,8 +8,6 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
-import VisibilityIcon from '@material-ui/icons/Visibility'
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
 import React, { useCallback, useRef, useState } from 'react'
 import { tagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
@@ -24,6 +22,7 @@ import {
   IconPill,
   IconTextOption,
   IconTextOptionProps,
+  IconTextPill,
   SimplePill,
   TextOption,
   TextOptionProps,
@@ -218,36 +217,26 @@ export const Resource = withCtrl<ResourceProps>(
           label="Visibility"
           highlight={shouldShowErrors && !!form.errors.visibility}
           error={form.errors.visibility}
+          position={{ top: 50, bottom: 25 }}
           pills={
-            form.values.visibility && (
-              <IconPill
-                icon={
-                  <div className="icon-text">
-                    {visibilities.selected?.icon}
-                    {visibilities.selected?.label}
-                  </div>
-                }
+            form.values.visibility &&
+            visibilities.selected?.label && (
+              <IconTextPill
+                label={visibilities.selected?.label}
+                icon={visibilities.selected?.icon}
               />
             )
           }
           className="visibility-dropdown"
         >
-          {form.values.visibility !== 'Public' && (
+          {visibilities.opts.map(({ icon, label, value }) => (
             <IconTextOption
-              key={'Public'}
-              value={'Public'}
-              label={t`Public`}
-              icon={<VisibilityIcon />}
+              icon={icon}
+              label={label}
+              value={value}
+              key={value}
             />
-          )}
-          {form.values.visibility !== 'Private' && (
-            <IconTextOption
-              key={'Private'}
-              value={'Private'}
-              label={t`Private`}
-              icon={<VisibilityOffIcon />}
-            />
-          )}
+          ))}
         </Dropdown>
         <Dropdown
           name="category"
@@ -258,6 +247,7 @@ export const Resource = withCtrl<ResourceProps>(
           edit={isEditing}
           highlight={shouldShowErrors && !!form.errors.category}
           error={form.errors.category}
+          position={{ top: 50, bottom: 25 }}
           pills={
             categories.selected && (
               <SimplePill
@@ -281,6 +271,7 @@ export const Resource = withCtrl<ResourceProps>(
           edit
           highlight={shouldShowErrors && !!form.errors.license}
           error={form.errors.license}
+          position={{ top: 50, bottom: 25 }}
           pills={
             licenses.selected && (
               <IconPill
@@ -291,7 +282,12 @@ export const Resource = withCtrl<ResourceProps>(
           }
         >
           {licenses.opts.map(({ icon, label, value }) => (
-            <IconTextOption icon={icon} label={label} value={value} />
+            <IconTextOption
+              icon={icon}
+              label={label}
+              value={value}
+              key={value}
+            />
           ))}
         </Dropdown>
         <Dropdown
@@ -300,6 +296,7 @@ export const Resource = withCtrl<ResourceProps>(
           value={form.values.type}
           onChange={form.handleChange}
           edit
+          position={{ top: 50, bottom: 25 }}
           pills={
             types.selected && (
               <SimplePill
@@ -319,6 +316,7 @@ export const Resource = withCtrl<ResourceProps>(
           value={form.values.level}
           onChange={form.handleChange}
           edit
+          position={{ top: 50, bottom: 25 }}
           pills={
             levels.selected && (
               <SimplePill
@@ -343,6 +341,7 @@ export const Resource = withCtrl<ResourceProps>(
               label=""
               value={form.values.month}
               edit
+              position={{ top: 25, bottom: 25 }}
               pills={
                 form.values.month && (
                   <SimplePill
@@ -367,6 +366,7 @@ export const Resource = withCtrl<ResourceProps>(
               value={form.values.year}
               error={form.errors.year}
               edit
+              position={{ top: 25, bottom: 25 }}
               pills={
                 form.values.year && (
                   <SimplePill
@@ -388,6 +388,7 @@ export const Resource = withCtrl<ResourceProps>(
           value={form.values.language}
           onChange={form.handleChange}
           edit
+          position={{ top: 50, bottom: 25 }}
           pills={
             languages.selected && (
               <SimplePill
@@ -406,6 +407,7 @@ export const Resource = withCtrl<ResourceProps>(
           label={t`Format`}
           defaultValue={resourceFormat}
           disabled
+          position={{ top: 50, bottom: 25 }}
           pills={<SimplePill label={resourceFormat} value={resourceFormat} />}
         ></Dropdown>
       </Card>
