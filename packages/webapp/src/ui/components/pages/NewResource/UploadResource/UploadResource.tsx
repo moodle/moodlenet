@@ -58,7 +58,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
     const contentName =
       form.values.content instanceof File
         ? form.values.content.name
-        : form.values.content
+        : form.values.content ?? ''
     const subStep =
       form.values.content && !form.errors.content
         ? 'EditData'
@@ -143,7 +143,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
               form.values.visibility && (
                 <IconPill
                   icon={
-                    form.values.visibility === 'public' ? (
+                    form.values.visibility === 'Public' ? (
                       <VisibilityIcon />
                     ) : (
                       <VisibilityOffIcon />
@@ -154,7 +154,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             }
             className="visibility-dropdown"
           >
-            {form.values.visibility !== 'public' && (
+            {form.values.visibility !== 'Public' && (
               <IconTextOption
                 key={'public'}
                 value={'public'}
@@ -162,7 +162,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                 icon={<VisibilityIcon />}
               />
             )}
-            {form.values.visibility !== 'private' && (
+            {form.values.visibility !== 'Private' && (
               <IconTextOption
                 key={'private'}
                 value={'private'}

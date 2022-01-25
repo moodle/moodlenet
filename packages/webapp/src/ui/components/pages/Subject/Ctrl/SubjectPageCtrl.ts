@@ -37,6 +37,7 @@ export const useSubjectCtrl: CtrlHook<SubjectProps, SubjectCtrlProps> = ({
       categoryId: id,
       myProfileId: session ? [session.profile.id] : [],
     },
+    fetchPolicy: 'cache-and-network',
   })
 
   const categoryData = narrowNodeType(['IscedField'])(data?.node)

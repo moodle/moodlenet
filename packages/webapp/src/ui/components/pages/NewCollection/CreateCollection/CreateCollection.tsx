@@ -76,7 +76,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
           form.values.visibility && (
             <IconPill
               icon={
-                form.values.visibility === 'public' ? (
+                form.values.visibility === 'Public' ? (
                   <VisibilityIcon />
                 ) : (
                   <VisibilityOffIcon />
@@ -87,7 +87,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
         }
         className="visibility-dropdown"
       >
-        {form.values.visibility !== 'public' && (
+        {form.values.visibility !== 'Public' && (
           <IconTextOption
             key={'public'}
             value={'public'}
@@ -95,7 +95,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
             icon={<VisibilityIcon />}
           />
         )}
-        {form.values.visibility !== 'private' && (
+        {form.values.visibility !== 'Private' && (
           <IconTextOption
             key={'private'}
             value={'private'}

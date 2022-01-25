@@ -26,6 +26,7 @@ export const useCollectionCardCtrl: CtrlHook<
 
   const { data, refetch } = useCollectionCardQuery({
     variables: { id, myProfileId: session ? [session.profile.id] : [] },
+    fetchPolicy: 'cache-and-network',
   })
   const collectionNode = narrowNodeType(['Collection'])(data?.node)
   const creatorId = collectionNode?.creator.edges[0]?.node.id

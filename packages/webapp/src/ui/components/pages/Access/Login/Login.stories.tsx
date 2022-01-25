@@ -15,12 +15,13 @@ const meta: ComponentMeta<typeof Login> = {
   parameters: { layout: 'fullscreen' },
 }
 
-export const validationSchema: SchemaOf<LoginFormValues> = object({
+const validationSchema: SchemaOf<LoginFormValues> = object({
   email: string()
-    .email()
-    .required(t`Please provide your email`),
-  password: string().required(t`Please provide your password`),
+    .required(t`Please provide your email address`)
+    .email(t`Please provide a valid email address`),
+  password: string().required(t`Please provide a password`),
 })
+
 export const LoginStoryProps = (override?: {
   props?: Partial<LoginProps>
   formValues?: Partial<LoginFormValues>

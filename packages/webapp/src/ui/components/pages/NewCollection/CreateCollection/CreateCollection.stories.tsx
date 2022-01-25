@@ -44,6 +44,9 @@ export const useCreateCollectionStoryProps = (overrides?: {
       onSubmit: action('create Collection'),
       validationSchema,
       initialValues: {
+        description: '',
+        title: '',
+        visibility: 'Private',
         ...overrides?.formValues,
       },
       ...overrides?.formConfig,

@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro'
 import {
   isEdgeNodeOfType,
   narrowEdgeNodeOfType,
@@ -6,8 +7,10 @@ import {
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
+import { useFormik } from 'formik'
 import { createElement, useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
+import { mixed, object, SchemaOf, string } from 'yup'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
 import {
@@ -17,15 +20,11 @@ import {
 import { href } from '../../../../elements/link'
 // import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
-import { useFormikBag } from '../../../../lib/formik'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { fallbackProps } from '../../Extra/Fallback/Ctrl/FallbackCtrl'
 import { Fallback } from '../../Extra/Fallback/Fallback'
 import { NewCollectionFormValues } from '../../NewCollection/types'
-import { VisibilityDropdown } from '../../NewResource/FieldsData'
-// import { useFormikBag } from '../../../lib/formik'
-// import { NewCollectionFormValues } from '../../NewCollection/types'
 import { CollectionProps } from '../Collection'
 import {
   useAddCollectionRelationMutation,
@@ -34,6 +33,13 @@ import {
   useDelCollectionRelationMutation,
   useEditCollectionMutation,
 } from './CollectionPage.gen'
+
+export const validationSchema: SchemaOf<NewCollectionFormValues> = object({
+  description: string().required(t`Please provide a Description`),
+  title: string().required(t`Please provide a title`),
+  image: mixed().optional(),
+  visibility: mixed().required(t`Visibility is required`),
+})
 
 export type CollectionCtrlProps = { id: ID }
 export const useCollectionCtrl: CtrlHook<
@@ -49,6 +55,7 @@ export const useCollectionCtrl: CtrlHook<
       collectionId: id,
       myProfileId: session ? [session.profile.id] : [],
     },
+    fetchPolicy: 'cache-and-network',
   })
   const collectionData = narrowNodeType(['Collection'])(data?.node)
   const [addRelation, addRelationRes] = useAddCollectionRelationMutation()
@@ -58,88 +65,79 @@ export const useCollectionCtrl: CtrlHook<
   const history = useHistory()
   const [delCollection, delCollectionRes] = useDelCollectionMutation()
   const myId = session?.profile.id
-  const deleteCollection = useCallback(() => {
-    if (!myId || delCollectionRes.loading) {
-      return
-    }
-    delCollection({ variables: { node: { id, nodeType: 'Collection' } } }).then(
-      () => {
-        history.replace(nodeGqlId2UrlPath(myId))
+  const deleteCollection = useFormik({
+    initialValues: {},
+    onSubmit: () => {
+      if (!myId || delCollectionRes.loading) {
+        return
       }
-    )
-  }, [delCollection, delCollectionRes.loading, history, id, myId])
+      delCollection({
+        variables: { node: { id, nodeType: 'Collection' } },
+      }).then(() => {
+        history.replace(nodeGqlId2UrlPath(myId))
+      })
+    },
+  })
 
   const myFollowEdgeId = collectionData?.myFollow.edges[0]?.edge.id
-  const toggleFollow = useCallback(() => {
-    if (!session || addRelationRes.loading || delRelationRes.loading) {
-      return
-    }
-    if (myFollowEdgeId) {
-      return delRelation({ variables: { edge: { id: myFollowEdgeId } } }).then(
-        () => refetch()
-      )
-    } else {
-      return addRelation({
-        variables: {
-          edge: {
-            edgeType: 'Follows',
-            from: session.profile.id,
-            to: id,
-            Follows: {},
+  const toggleFollow = useFormik({
+    initialValues: {},
+    onSubmit: () => {
+      if (!session || addRelationRes.loading || delRelationRes.loading) {
+        return
+      }
+      if (myFollowEdgeId) {
+        return delRelation({
+          variables: { edge: { id: myFollowEdgeId } },
+        }).then(() => refetch())
+      } else {
+        return addRelation({
+          variables: {
+            edge: {
+              edgeType: 'Follows',
+              from: session.profile.id,
+              to: id,
+              Follows: {},
+            },
           },
-        },
-      }).then(() => refetch())
-    }
-  }, [
-    addRelation,
-    addRelationRes.loading,
-    delRelation,
-    delRelationRes.loading,
-    id,
-    myFollowEdgeId,
-    refetch,
-    session,
-  ])
+        }).then(() => refetch())
+      }
+    },
+  })
 
   const myBookmarkedEdgeId = collectionData?.myBookmarked.edges[0]?.edge.id
-  const toggleBookmark = useCallback(() => {
-    if (!session || addRelationRes.loading || delRelationRes.loading) {
-      return
-    }
-    if (myBookmarkedEdgeId) {
-      return delRelation({
-        variables: { edge: { id: myBookmarkedEdgeId } },
-      }).then(() => refetch())
-    } else {
-      return addRelation({
-        variables: {
-          edge: {
-            edgeType: 'Bookmarked',
-            from: session.profile.id,
-            to: id,
-            Bookmarked: {},
+  const toggleBookmark = useFormik({
+    initialValues: {},
+    onSubmit: () => {
+      if (!session || addRelationRes.loading || delRelationRes.loading) {
+        return
+      }
+      if (myBookmarkedEdgeId) {
+        return delRelation({
+          variables: { edge: { id: myBookmarkedEdgeId } },
+        }).then(() => refetch())
+      } else {
+        return addRelation({
+          variables: {
+            edge: {
+              edgeType: 'Bookmarked',
+              from: session.profile.id,
+              to: id,
+              Bookmarked: {},
+            },
           },
-        },
-      }).then(() => refetch())
-    }
-  }, [
-    addRelation,
-    addRelationRes.loading,
-    delRelation,
-    delRelationRes.loading,
-    id,
-    myBookmarkedEdgeId,
-    refetch,
-    session,
-  ])
+        }).then(() => refetch())
+      }
+    },
+  })
 
   const uploadTempFile = useUploadTempFile()
 
-  const [formik, formBag] = useFormikBag<NewCollectionFormValues>({
+  const form = useFormik<NewCollectionFormValues>({
     initialValues: {} as any,
     onSubmit: async (vals) => {
       if (
-        !formik.dirty ||
+        !form.dirty ||
         !collectionData ||
         addRelationRes.loading ||
         delRelationRes.loading ||
@@ -148,7 +146,7 @@ export const useCollectionCtrl: CtrlHook<
         return
       }
       const imageAssetRef: AssetRefInput =
-        !vals.image || vals.image === formik.initialValues.image
+        !vals.image || vals.image === form.initialValues.image
           ? { location: '', type: 'NoChange' }
           : typeof vals.image === 'string'
           ? {
@@ -174,7 +172,7 @@ export const useCollectionCtrl: CtrlHook<
       return refetch()
     },
   })
-  const { resetForm: fresetForm } = formik
+  const { resetForm: fresetForm } = form
   useEffect(() => {
     if (collectionData) {
       const { name: title, description, _published, image } = collectionData
@@ -185,26 +183,25 @@ export const useCollectionCtrl: CtrlHook<
           description,
           visibility: _published ? 'Public' : 'Private',
           image: getMaybeAssetRefUrl(image),
-          imageUrl: getMaybeAssetRefUrl(image),
         },
       })
     }
   }, [collectionData, fresetForm, id])
 
-  const formikSetFieldValue = formik.setFieldValue
+  const formikSetFieldValue = form.setFieldValue
   useEffect(() => {
-    if (!(formik.values.image instanceof File)) {
-      formikSetFieldValue('imageUrl', formik.values.image)
+    if (!(form.values.image instanceof File)) {
+      formikSetFieldValue('imageUrl', form.values.image)
       return
     }
-    const imageObjectUrl = URL.createObjectURL(formik.values.image)
+    const imageObjectUrl = URL.createObjectURL(form.values.image)
     // console.log(`CreatTING`, imageObjectUrl)
     formikSetFieldValue('imageUrl', imageObjectUrl)
     return () => {
       // console.log(`reVOKING   `, imageObjectUrl)
       imageObjectUrl && URL.revokeObjectURL(imageObjectUrl)
     }
-  }, [formikSetFieldValue, formik.values.image])
+  }, [formikSetFieldValue, form.values.image])
 
   // console.log(formik.values)
 
@@ -244,11 +241,10 @@ export const useCollectionCtrl: CtrlHook<
         {},
         'header-page-template'
       ),
-      formBag,
+      form,
       isOwner,
       isAdmin,
       isAuthenticated,
-      visibility: VisibilityDropdown,
       resourceCardPropsList: resourceEdges.map(({ edge, node: { id } }) =>
         ctrlHook(
           useResourceCardCtrl,
@@ -268,7 +264,6 @@ export const useCollectionCtrl: CtrlHook<
         creatorProfileHref: href(creator ? nodeGqlId2UrlPath(creator.id) : ''),
         displayName: creator?.name ?? '',
       },
-      updateCollection: formik.submitForm,
       bookmarked: !!myBookmarkedEdgeId,
       following: !!myFollowEdgeId,
       toggleBookmark,
@@ -279,12 +274,11 @@ export const useCollectionCtrl: CtrlHook<
     return props
   }, [
     collectionData,
-    formBag,
+    form,
     isOwner,
     isAuthenticated,
     resourceEdges,
     creator,
-    formik.submitForm,
     myBookmarkedEdgeId,
     myFollowEdgeId,
     toggleBookmark,

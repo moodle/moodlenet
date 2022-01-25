@@ -27,6 +27,7 @@ export const useResourceCardCtrl: CtrlHook<
   const { session, isAuthenticated } = useSession()
   const { data, refetch } = useResourceCardQuery({
     variables: { id, myProfileId: session ? [session.profile.id] : [] },
+    fetchPolicy: 'cache-and-network',
   })
   const resourceNode = narrowNodeType(['Resource'])(data?.node)
   const creatorId = resourceNode?.creator.edges[0]?.node.id

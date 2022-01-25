@@ -1,10 +1,11 @@
 import { t } from '@lingui/macro'
+import { useFormik } from 'formik'
 import { useCallback, useMemo, useState } from 'react'
 import { object, SchemaOf, string } from 'yup'
 import { useSession } from '../../../../../../context/Global/Session'
 import { useRedirectProfileHomeIfLoggedIn } from '../../../../../../hooks/glob/nav'
 import { ctrlHook, CtrlHook } from '../../../../../lib/ctrl'
-import { SubmitForm, useFormikBag } from '../../../../../lib/formik'
+import { SubmitForm } from '../../../../../lib/formik'
 import { useMainPageWrapperCtrl } from '../../../../templates/MainPageWrapperCtrl.tsx/MainPageWrapperCtrl'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { NewPasswordFormValues, NewPasswordProps } from '../NewPassword'
@@ -32,7 +33,7 @@ export const useNewPasswordCtrl: CtrlHook<
       ),
     [changeRecoverPassword, recoverPasswordToken]
   )
-  const [, formBag] = useFormikBag<NewPasswordFormValues>({
+  const form = useFormik<NewPasswordFormValues>({
     initialValues: { newPassword: '' },
     onSubmit,
     validationSchema,
@@ -44,7 +45,7 @@ export const useNewPasswordCtrl: CtrlHook<
         {},
         'New Password Access Header'
       ),
-      formBag,
+      form,
       newPasswordErrorMessage,
       mainPageWrapperProps: ctrlHook(
         useMainPageWrapperCtrl,
@@ -53,7 +54,7 @@ export const useNewPasswordCtrl: CtrlHook<
       ),
     }
     return newPasswordProps
-  }, [formBag, newPasswordErrorMessage])
+  }, [form, newPasswordErrorMessage])
 
   return newPasswordProps && [newPasswordProps]
 }

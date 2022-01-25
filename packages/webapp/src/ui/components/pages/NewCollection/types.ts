@@ -1,6 +1,6 @@
-export type NewCollectionFormValues = Partial<{
+export type NewCollectionFormValues = {
   title: string
   description: string
-  visibility: 'public' | 'private'
-  image: string | File
-}>
+  visibility: 'Public' | 'Private'
+  image?: string | File | null
+}

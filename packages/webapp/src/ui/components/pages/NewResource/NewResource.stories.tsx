@@ -65,7 +65,7 @@ export const Default = () => {
   const form = useFormik<NewResourceFormValues>({
     onSubmit: action('submit'),
     validationSchema,
-    initialValues: {},
+    initialValues: {} as any,
   })
 
   return (

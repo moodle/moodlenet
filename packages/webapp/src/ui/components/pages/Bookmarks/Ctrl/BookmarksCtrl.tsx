@@ -14,7 +14,9 @@ import { useBookmarksPageLazyQuery } from './Bookmarks.gen'
 export const useBookmarksCtrl: CtrlHook<BookmarksProps, {}> = () => {
   // const [sortBy, setSortBy] = useState<GlobalBookmarksSort>('Popularity')
   const { session } = useSession()
-  const [queryBookmarks, bookmarksQ] = useBookmarksPageLazyQuery()
+  const [queryBookmarks, bookmarksQ] = useBookmarksPageLazyQuery({
+    fetchPolicy: 'cache-and-network',
+  })
   useEffect(() => {
     if (!session?.profile.id) {
       return

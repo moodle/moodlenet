@@ -12,7 +12,8 @@ export const useIscedfCardCtrl: CtrlHook<SubjectCardProps, { id: ID }> = ({
   id,
 }) => {
   const subjectNode = narrowNodeType(['IscedField'])(
-    useIscedfCardQuery({ variables: { id } }).data?.node
+    useIscedfCardQuery({ variables: { id }, fetchPolicy: 'cache-and-network' })
+      .data?.node
   )
   const { org: localOrg } = useLocalInstance()
   const subjectCardUIProps = useMemo<SubjectCardProps | null>(() => {
