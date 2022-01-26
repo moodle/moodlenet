@@ -21,6 +21,7 @@ const meta: ComponentMeta<typeof UploadResource> = {
 }
 
 export const UploadResourceStoryProps: UploadResourceProps = {
+  fileMaxSize: 50 * 1024 * 1024,
   categories: {
     opts: CategoriesTextOptionProps,
     selected: CategoriesTextOptionProps[2],

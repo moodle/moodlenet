@@ -338,6 +338,7 @@ export const useNewResourceCtrl: CtrlHook<
         },
       },
       uploadResourceProps: {
+        fileMaxSize: MNEnv.maxUploadSize,
         categories: {
           opts: iscedFields.map(({ id: value, name: label }) => ({
             label,
