@@ -35,8 +35,14 @@ import {
 } from './CollectionPage.gen'
 
 export const validationSchema: SchemaOf<NewCollectionFormValues> = object({
-  description: string().required(t`Please provide a Description`),
-  title: string().required(t`Please provide a title`),
+  description: string()
+    .max(4096)
+    .min(3)
+    .required(t`Please provide a Description`),
+  title: string()
+    .min(3)
+    .max(30)
+    .required(t`Please provide a title`),
   image: mixed().optional(),
   visibility: mixed().required(t`Visibility is required`),
 })
@@ -135,6 +141,7 @@ export const useCollectionCtrl: CtrlHook<
 
   const form = useFormik<NewCollectionFormValues>({
     initialValues: { description: '', title: '', visibility: 'Private' },
+    validationSchema,
     onSubmit: async (vals) => {
       if (
         !form.dirty ||

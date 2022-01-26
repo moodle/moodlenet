@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro'
 import {
   isEdgeNodeOfType,
   narrowNodeType,
@@ -6,6 +7,7 @@ import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { useFormik } from 'formik'
 import { createElement, useCallback, useEffect, useMemo } from 'react'
+import { mixed, object, SchemaOf, string } from 'yup'
 import { MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS } from '../../../../../constants'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
@@ -31,6 +33,22 @@ import {
   useProfilePageUserDataQuery,
   useSendEmailToProfileMutation,
 } from './ProfileCtrl.gen'
+
+const validationSchema: SchemaOf<ProfileFormValues> = object({
+  avatarImage: mixed().optional(),
+  backgroundImage: mixed().optional(),
+  displayName: string()
+    .required(t`Please provide a display name`)
+    .min(3)
+    .max(30),
+  location: string().optional(),
+  organizationName: string().min(3).max(30).optional(),
+  siteUrl: string().url().optional(),
+  description: string()
+    .required(t`Please provide a Description`)
+    .min(3)
+    .max(4096),
+})
 const newCollectionHref = href(mainPath.createNewCollection)
 const newResourceHref = href(mainPath.createNewResource)
 
@@ -144,6 +162,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
   })
 
   const form = useFormik<ProfileFormValues>({
+    validationSchema,
     initialValues: { description: '', displayName: '' },
     onSubmit: async (vals) => {
       if (!form.dirty || editProfile.loading) {
@@ -251,6 +270,12 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
   )
   const sendEmailForm = useFormik<{ text: string }>({
     initialValues: { text: '' },
+    validationSchema: object({
+      text: string()
+        .required(t`Please provide a text to send`)
+        .min(3)
+        .max(4096),
+    }),
     onSubmit: ({ text }) => {
       if (sendEmailMutRes.loading) {
         return

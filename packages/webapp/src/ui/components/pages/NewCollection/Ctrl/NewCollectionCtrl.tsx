@@ -1,9 +1,11 @@
+import { t } from '@lingui/macro'
 import { isOfNodeType } from '@moodlenet/common/dist/graphql/helpers'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { useFormik } from 'formik'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router'
+import { mixed, object, SchemaOf, string } from 'yup'
 // import { useSession } from '../../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../../helpers/data'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
@@ -11,6 +13,19 @@ import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplate
 import { NewCollectionProps } from '../NewCollection'
 import { NewCollectionFormValues } from '../types'
 import { useCreateCollectionMutation } from './NewCollectionCtrl.gen'
+
+const validationSchema: SchemaOf<NewCollectionFormValues> = object({
+  description: string()
+    .max(4096)
+    .min(3)
+    .required(t`Please provide a Description`),
+  title: string()
+    .max(30)
+    .min(3)
+    .required(t`Please provide a title`),
+  image: mixed().optional(),
+  visibility: mixed().required(t`Visibility is required`),
+})
 
 export type NewCollectionCtrlProps = {}
 
@@ -26,6 +41,7 @@ export const useNewCollectionCtrl: CtrlHook<
   // const [createCollectionRelMut /* , createCollectionRelMutRes */] = useCreateCollectionRelationMutation()
 
   const form = useFormik<NewCollectionFormValues>({
+    validationSchema,
     initialValues: {
       description: '',
       image: null,

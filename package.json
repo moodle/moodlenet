@@ -37,8 +37,5 @@
     "rules": {
       "@typescript-eslint/no-explicit-any": "warn"
     }
-  },
-  "dependencies": {
-    "@moodlenet/ce-platform": "^2.0.4"
   }
 }

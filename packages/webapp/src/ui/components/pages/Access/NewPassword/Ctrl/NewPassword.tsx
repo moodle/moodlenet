@@ -12,7 +12,8 @@ import { NewPasswordFormValues, NewPasswordProps } from '../NewPassword'
 
 const validationSchema: SchemaOf<NewPasswordFormValues> = object({
   newPassword: string()
-    .required(t`Please provide a password`)
+    .required(t`Please provide your new password`)
+    .max(30)
     .min(6, 'Password is too short should be 6 chars minimum.'),
 })
 export const useNewPasswordCtrl: CtrlHook<

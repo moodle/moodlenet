@@ -27,11 +27,17 @@ const meta: ComponentMeta<typeof ProfileCard> = {
 export const validationSchema: SchemaOf<ProfileFormValues> = object({
   avatarImage: mixed().optional(),
   backgroundImage: mixed().optional(),
-  displayName: string().required(t`Please provide a display name`),
+  displayName: string()
+    .max(30)
+    .min(3)
+    .required(t`Please provide a display name`),
   location: string().optional(),
-  organizationName: string().optional(),
+  organizationName: string().max(30).min(3).optional(),
   siteUrl: string().url().optional(),
-  description: string().required(t`Please provide a Description`),
+  description: string()
+    .max(4096)
+    .min(3)
+    .required(t`Please provide a Description`),
 })
 export const useProfileCardStoryProps = (overrides?: {
   editFormValues?: Partial<ProfileFormValues>

@@ -53,8 +53,14 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
       ? schema.required(t`Need a License for uploaded content`)
       : schema.optional()
   }),
-  description: string().required(t`Please provide a Description`),
-  name: string().required(t`Please provide a title`),
+  description: string()
+    .max(4096)
+    .min(3)
+    .required(t`Please provide a Description`),
+  name: string()
+    .max(30)
+    .min(3)
+    .required(t`Please provide a title`),
   image: mixed().optional(),
   language: string().optional(),
   level: string().optional(),

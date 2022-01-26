@@ -46,8 +46,14 @@ export const validationSchema: SchemaOf<NewResourceFormValues> = object({
       : schema.optional()
   }),
   content: mixed().required(t`Content is a required field`),
-  description: string().required(t`Please provide a Description`),
-  name: string().required(t`Please provide a title`),
+  description: string()
+    .max(4096)
+    .min(3)
+    .required(t`Please provide a Description`),
+  name: string()
+    .max(30)
+    .min(3)
+    .required(t`Please provide a title`),
   addToCollections: array().of(string()).optional(),
   image: mixed().optional(),
   language: string().optional(),
