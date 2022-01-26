@@ -206,11 +206,7 @@ export const Collection = withCtrl<CollectionProps>(
                       </div>
                     )}
                     {(isAdmin || isOwner) && isEditing && (
-                      <PrimaryButton
-                        color="green"
-                        onHoverColor="orange"
-                        onClick={handleOnSaveClick}
-                      >
+                      <PrimaryButton color="green" onClick={handleOnSaveClick}>
                         <SaveIcon />
                       </PrimaryButton>
                     )}
@@ -279,7 +275,7 @@ export const Collection = withCtrl<CollectionProps>(
                     {isEditing && (
                       <SecondaryButton
                         color="red"
-                        onHoverColor="filled-red"
+                        onHoverColor="fill-red"
                         onClick={() => setIsToDelete(true)}
                       >
                         <DeleteOutlineIcon />

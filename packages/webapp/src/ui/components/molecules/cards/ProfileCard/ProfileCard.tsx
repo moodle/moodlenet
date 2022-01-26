@@ -173,11 +173,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
           {isOwner && (
             <div className="actions edit-save">
               {isEditing ? (
-                <PrimaryButton
-                  color="green"
-                  onHoverColor="orange"
-                  onClick={handleOnSaveClick}
-                >
+                <PrimaryButton color="green" onClick={toggleIsEditing}>
                   <SaveIcon />
                 </PrimaryButton>
               ) : (
