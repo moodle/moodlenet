@@ -97,6 +97,12 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           name="description"
           textarea={true}
           label="Description"
+          placeholder={
+            state === 'ChooseResource'
+              ? ''
+              : t`Tell us about your resource and how it could be used.`
+          }
+          disabled={state === 'ChooseResource'}
           value={form.values.description}
           placeholder=""
           disabled={subStep === 'ChooseResource'}
