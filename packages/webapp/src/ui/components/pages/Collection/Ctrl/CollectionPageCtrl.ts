@@ -41,7 +41,7 @@ export const validationSchema: SchemaOf<NewCollectionFormValues> = object({
     .required(t`Please provide a Description`),
   title: string()
     .min(3)
-    .max(30)
+    .max(160)
     .required(t`Please provide a title`),
   image: mixed().optional(),
   visibility: mixed().required(t`Visibility is required`),
@@ -179,7 +179,7 @@ export const useCollectionCtrl: CtrlHook<
       return refetch()
     },
   })
-  const { resetForm: _resetForm } = form
+  const _resetForm = form.resetForm
   useEffect(() => {
     if (collectionData) {
       const { name: title, description, _published, image } = collectionData

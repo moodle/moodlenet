@@ -28,7 +28,7 @@ export const validationSchema: SchemaOf<ProfileFormValues> = object({
   avatarImage: mixed().optional(),
   backgroundImage: mixed().optional(),
   displayName: string()
-    .max(30)
+    .max(160)
     .min(3)
     .required(t`Please provide a display name`),
   location: string().optional(),

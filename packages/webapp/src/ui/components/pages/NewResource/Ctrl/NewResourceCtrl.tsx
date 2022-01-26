@@ -42,7 +42,7 @@ const validationSchema: SchemaOf<NewResourceFormValues> = object({
     .required(t`Please provide a Description`),
   name: string()
     .min(3)
-    .max(30)
+    .max(160)
     .required(t`Please provide a title`),
   addToCollections: array().of(string()).optional(),
   image: mixed().optional(),

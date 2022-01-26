@@ -58,7 +58,7 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
     .required(t`Please provide a Description`),
   name: string()
     .min(3)
-    .max(30)
+    .max(160)
     .required(t`Please provide a title`),
   image: mixed().optional(),
   language: string().optional(),

@@ -42,7 +42,7 @@ const validationSchema: SchemaOf<ProfileFormValues> = object({
     .min(3)
     .max(30),
   location: string().optional(),
-  organizationName: string().min(3).max(30).optional(),
+  organizationName: string().min(3).max(160).optional(),
   siteUrl: string().url().optional(),
   description: string()
     .required(t`Please provide a Description`)
@@ -213,10 +213,11 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     },
   })
 
+  const _resetform = form.resetForm
   useEffect(() => {
     if (profile) {
       const { name, description, location, siteUrl, avatar, image } = profile
-      form.resetForm({
+      _resetform({
         touched: {},
         values: {
           displayName: name,
@@ -229,7 +230,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
         },
       })
     }
-  }, [form, id, profile, localOrg.name /* avatarUrl, backgroundUrl */])
+  }, [_resetform, id, profile, localOrg.name /* avatarUrl, backgroundUrl */])
   const approveUserForm = useFormik({
     initialValues: {},
     onSubmit: () => editPublished(true),
