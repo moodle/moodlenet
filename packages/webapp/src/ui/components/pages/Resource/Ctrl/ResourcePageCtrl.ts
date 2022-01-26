@@ -46,6 +46,9 @@ import {
   useResourcePageDataQuery,
 } from './ResourcePage.gen'
 
+export const lmsValidationSchema: SchemaOf<{ site?: string }> = object({
+  site: string().url().required(),
+})
 export const validationSchema: SchemaOf<ResourceFormValues> = object({
   category: string().required(t`Please provide a Category`),
   license: string().when('content', (content, schema) => {
@@ -476,6 +479,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
 
   const sendToMoodleLmsForm = useFormik<{ site?: string }>({
     initialValues: { site: currentLMSPrefs?.site },
+    validationSchema: lmsValidationSchema,
     onSubmit: async ({ site }, { setErrors }) => {
       const r = await sendToLMS(site)
       if (!r) {
