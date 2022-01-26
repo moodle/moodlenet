@@ -80,6 +80,9 @@ export const Default = () => {
     onSubmit: action('submit'),
     validationSchema,
     initialValues: {} as any,
+    initialErrors: {
+      content: 'The file exceeds the max size',
+    },
   })
 
   return (
@@ -136,6 +139,7 @@ export const Default = () => {
             ({ value }) => value === form.values.license
           ),
         },
+        fileMaxSize: 200000000,
       }}
     />
   )
