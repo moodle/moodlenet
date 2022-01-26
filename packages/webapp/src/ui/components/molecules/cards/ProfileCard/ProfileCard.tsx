@@ -190,7 +190,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             <div className="title">
               {isOwner && isEditing ? (
                 <InputTextField
-                  className="display-name"
+                  className="display-name underline"
                   placeholder="Display name"
                   value={editForm.values.displayName}
                   onChange={editForm.handleChange}
@@ -202,7 +202,9 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                   }
                 />
               ) : (
-                <div className="title">{editForm.values.displayName}</div>
+                <div className="display-name">
+                  {editForm.values.displayName}
+                </div>
               )}
               {!isEditing && isApproved && (
                 <abbr className={`approved-icon`} title={t`Approved user`}>
@@ -217,10 +219,11 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               )}
             </div>
             {isOwner && isEditing ? (
-              <div className="subtitle">
+              <div className="subtitle edit">
                 <span>
-                  @
+                  <span className="at-symbol">@</span>
                   <InputTextField
+                    className="underline"
                     placeholder="Display Name"
                     value={editForm.values.displayName}
                     onChange={editForm.handleChange}
@@ -236,6 +239,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 </span>
                 <span>
                   <InputTextField
+                    className="underline"
                     displayMode={true}
                     value={editForm.values.organizationName}
                     onChange={editForm.handleChange}
@@ -251,6 +255,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 </span>
                 <span>
                   <InputTextField
+                    className="underline"
                     placeholder="Location"
                     value={editForm.values.location}
                     onChange={editForm.handleChange}
@@ -264,6 +269,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 </span>
                 <span>
                   <InputTextField
+                    className="underline"
                     value={editForm.values.siteUrl}
                     onChange={editForm.handleChange}
                     displayMode={true}
@@ -279,7 +285,10 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             ) : (
               <div className="subtitle">
                 {editForm.values.displayName && (
-                  <span>@{editForm.values.displayName}</span>
+                  <span>
+                    <span className="at-symbol">@</span>
+                    {editForm.values.displayName}
+                  </span>
                 )}
                 {editForm.values.organizationName !== '' && (
                   <span>{editForm.values.organizationName}</span>
@@ -309,6 +318,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               onChange={editForm.handleChange}
               textarea={true}
               displayMode={true}
+              className="underline"
               placeholder="What should others know about you?"
               name="description"
               edit={isEditing}
