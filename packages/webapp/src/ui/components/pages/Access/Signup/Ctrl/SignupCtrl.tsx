@@ -15,7 +15,10 @@ import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { SignupFormValues, SignupProps } from '../Signup'
 
 const validationSchema: SchemaOf<SignupFormValues> = object({
-  name: string().required(t`Please provide a display name`),
+  name: string()
+    .max(30)
+    .min(3)
+    .required(t`Please provide a display name`),
   /* .matches(
       /^[\p{L}\p{M}\p{N}\p{Zs}]+$/u,
       t`Display name can contain only unicode alphanumerics and spaces`
@@ -24,6 +27,7 @@ const validationSchema: SchemaOf<SignupFormValues> = object({
     .email(t`Please provide a valid email address`),
   password: string()
     .required(t`Please provide a password`)
+    .max(30)
     .min(6, 'Password is too short should be 6 chars minimum.'),
 })
 

@@ -27,8 +27,14 @@ const meta: ComponentMeta<typeof CreateCollection> = {
 }
 
 export const validationSchema: SchemaOf<NewCollectionFormValues> = object({
-  description: string().required(t`Please provide a Description`),
-  title: string().required(t`Please provide a title`),
+  description: string()
+    .max(4096)
+    .min(3)
+    .required(t`Please provide a Description`),
+  title: string()
+    .max(30)
+    .min(3)
+    .required(t`Please provide a title`),
   image: mixed().optional(),
   visibility: mixed().required(t`Visibility is required`),
 })

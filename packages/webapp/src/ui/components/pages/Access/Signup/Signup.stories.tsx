@@ -18,8 +18,14 @@ export const validationSchema: SchemaOf<SignupFormValues> = object({
   email: string()
     .email()
     .required(t`Please provide your email`),
-  name: string().required(t`Please provide a display name`),
-  password: string().required(t`Please provide a password`),
+  name: string()
+    .max(30)
+    .min(3)
+    .required(t`Please provide a display name`),
+  password: string()
+    .required(t`Please provide a password`)
+    .max(30)
+    .min(6, 'Password is too short should be 6 chars minimum.'),
 })
 
 export const SignupStoryProps = (override?: {

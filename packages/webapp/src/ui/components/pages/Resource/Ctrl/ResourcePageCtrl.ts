@@ -11,6 +11,7 @@ import { useFormik } from 'formik'
 import { duration } from 'moment'
 import { createElement, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
+import { mixed, object, SchemaOf, string } from 'yup'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
 import {
@@ -44,6 +45,33 @@ import {
   useResourcePageDataQuery,
 } from './ResourcePage.gen'
 
+export const validationSchema: SchemaOf<ResourceFormValues> = object({
+  category: string().required(t`Please provide a Category`),
+  license: string().when('content', (content, schema) => {
+    return content instanceof Blob
+      ? schema.required(t`Need a License for uploaded content`)
+      : schema.optional()
+  }),
+  description: string()
+    .min(3)
+    .max(4096)
+    .required(t`Please provide a Description`),
+  name: string()
+    .min(3)
+    .max(30)
+    .required(t`Please provide a title`),
+  image: mixed().optional(),
+  language: string().optional(),
+  level: string().optional(),
+  month: string().optional(),
+  type: string().optional(),
+  visibility: mixed().required(t`Visibility is required`),
+  year: string().when('month', (month, schema) => {
+    return month
+      ? schema.required(t`Need an year if you choosed month`)
+      : schema.optional()
+  }),
+})
 export type ResourceCtrlProps = { id: ID }
 export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
   id,
@@ -109,6 +137,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
 
   const uploadTempFile = useUploadTempFile()
   const form = useFormik<ResourceFormValues>({
+    validationSchema,
     initialValues: {} as any,
     onSubmit: async ({
       category,

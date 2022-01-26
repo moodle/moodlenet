@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro'
 import {
   isEdgeNodeOfType,
   isOfNodeType,
@@ -7,6 +8,7 @@ import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers
 import { useFormik } from 'formik'
 import { useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
+import { array, mixed, object, SchemaOf, string } from 'yup'
 import { useSession } from '../../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../../helpers/data'
 import {
@@ -26,7 +28,35 @@ import {
   useCreateResourceRelationMutation,
   useNewResourceDataPageLazyQuery,
 } from './NewResourceCtrl.gen'
-
+const validationSchema: SchemaOf<NewResourceFormValues> = object({
+  category: string().required(t`Please provide a Category`),
+  license: string().when('content', (content, schema) => {
+    return content instanceof Blob
+      ? schema.required(t`Need a License for uploaded content`)
+      : schema.optional()
+  }),
+  content: mixed().required(t`Content is a required field`),
+  description: string()
+    .max(4096)
+    .min(3)
+    .required(t`Please provide a Description`),
+  name: string()
+    .min(3)
+    .max(30)
+    .required(t`Please provide a title`),
+  addToCollections: array().of(string()).optional(),
+  image: mixed().optional(),
+  language: string().optional(),
+  level: string().optional(),
+  month: string().optional(),
+  type: string().optional(),
+  visibility: mixed().required(t`Visibility is required`),
+  year: string().when('month', (month, schema) => {
+    return month
+      ? schema.required(t`Need an year if you choosed month`)
+      : schema.optional()
+  }),
+})
 export type NewResourceCtrlProps = {}
 
 export const useNewResourceCtrl: CtrlHook<
@@ -64,6 +94,7 @@ export const useNewResourceCtrl: CtrlHook<
   }, [myId, loadMyColl])
 
   const form = useFormik<NewResourceFormValues>({
+    validationSchema,
     initialValues: {
       addToCollections: [],
       category: '',
