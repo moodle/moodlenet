@@ -3,7 +3,7 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { FormikConfig, useFormik } from 'formik'
 import { useEffect } from 'react'
-import { mixed, object, SchemaOf, string } from 'yup'
+import { boolean, mixed, object, SchemaOf, string } from 'yup'
 import { MNEnv } from '../../../../constants'
 import { href } from '../../../elements/link'
 import { TagListStory } from '../../../elements/tags'
@@ -49,11 +49,12 @@ const meta: ComponentMeta<typeof Resource> = {
 
 export const validationSchema: SchemaOf<ResourceFormValues> = object({
   category: string().required(t`Please provide a Category`),
-  license: string().when('content', (content, schema) => {
-    return content instanceof Blob
+  license: string().when('isFile', (isFile, schema) => {
+    return isFile
       ? schema.required(t`Need a License for uploaded content`)
       : schema.optional()
   }),
+  isFile: boolean().required(),
   description: string()
     .max(4096)
     .min(3)
@@ -81,6 +82,7 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
   }),
 })
 export const resourceFormValues: ResourceFormValues = {
+  isFile: true,
   visibility: VisbilityIconTextOptionProps[0]!.value,
   category: CategoriesTextOptionProps[2]!.value,
   description:
@@ -104,7 +106,8 @@ export const ResourceStoryProps = (overrides?: {
     validationSchema,
     onSubmit: action('submit edit'),
     initialValues: {
-      visibility: 'Private',
+      isFile: true,
+      visibility: undefined as any,
       category: CategoriesTextOptionProps[2]!.value,
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',

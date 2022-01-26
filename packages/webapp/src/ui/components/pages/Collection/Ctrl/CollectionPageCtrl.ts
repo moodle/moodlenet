@@ -147,7 +147,7 @@ export const useCollectionCtrl: CtrlHook<
   const uploadTempFile = useUploadTempFile()
 
   const form = useFormik<NewCollectionFormValues>({
-    initialValues: { description: '', title: '', visibility: 'Private' },
+    initialValues: { description: '', title: '', visibility: undefined as any },
     validationSchema,
     onSubmit: async (vals) => {
       if (

@@ -117,7 +117,7 @@ export const useNewResourceCtrl: CtrlHook<
       content: '',
       description: '',
       name: '',
-      visibility: 'Private',
+      visibility: undefined as any,
     },
     onSubmit: async ({
       content,

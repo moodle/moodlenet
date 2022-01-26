@@ -57,7 +57,7 @@ export const useCreateCollectionStoryProps = (overrides?: {
     initialValues: {
       description: '',
       title: '',
-      visibility: 'Private',
+      visibility: undefined as any,
       ...overrides?.formValues,
     },
     ...overrides?.formConfig,

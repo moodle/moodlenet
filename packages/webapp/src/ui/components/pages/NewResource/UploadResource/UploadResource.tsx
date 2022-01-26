@@ -29,6 +29,7 @@ import Modal from '../../../atoms/Modal/Modal'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
+import Snackbar from '../../../atoms/Snackbar/Snackbar'
 import { VisibilityDropdown } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import { useNewResourcePageCtx } from '../NewResource'
 import { NewResourceFormValues } from '../types'
@@ -91,6 +92,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
     const deleteFileOrLink = useCallback(() => {
       form.setFieldValue('license', undefined)
       form.setFieldValue('content', undefined)
+      setShouldShowErrors(false)
     }, [form])
 
     const dataInputs = (
@@ -214,6 +216,17 @@ export const UploadResource = withCtrl<UploadResourceProps>(
 
     return (
       <div className="upload-resource">
+        {shouldShowErrors && form.errors.content && (
+          <Snackbar
+            position="bottom"
+            type="error"
+            autoHideDuration={5000}
+            showCloseButton={false}
+          >
+            {form.errors.content}
+          </Snackbar>
+        )}
+
         {isToDelete && (
           <Modal
             title={t`Alert`}
@@ -246,7 +259,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                 {!imageUrl ? (
                   <div
                     className={`uploader ${isToDrop ? 'hover' : ''} ${
-                      form.errors.content ? 'error' : ''
+                      shouldShowErrors && form.errors.content ? 'error' : ''
                     }`}
                     id="drop_zone"
                     onDrop={dropHandler}
@@ -261,7 +274,9 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                           name="content"
                           key="content"
                           onChange={({ target }) =>
-                            form.setFieldValue('content', target.files?.[0])
+                            form
+                              .setFieldValue('content', target.files?.[0])
+                              .then((_) => setShouldShowErrors(!!_?.content))
                           }
                           hidden
                         />
@@ -272,7 +287,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                           </span>
                           <br />
                           <span style={{ fontSize: '12px' }}>
-                            <Trans>Max size {prettyBytes(fileMaxSize)}</Trans>
+                            <Trans>Max size</Trans> {prettyBytes(fileMaxSize)}
                           </span>
                         </span>
                       </div>
@@ -323,16 +338,19 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     action={
                       <PrimaryButton
                         onClick={() => {
-                          form.setFieldValue(
-                            'content',
-                            addLinkFieldRef.current?.value
-                          )
+                          form
+                            .setFieldValue(
+                              'content',
+                              addLinkFieldRef.current?.value,
+                              true
+                            )
+                            .then((_) => setShouldShowErrors(!!_?.content))
                         }}
                       >
                         <Trans>Add</Trans>
                       </PrimaryButton>
                     }
-                    error={form.errors.content}
+                    error={shouldShowErrors && form.errors.content}
                   />
                 </div>
               ) : (

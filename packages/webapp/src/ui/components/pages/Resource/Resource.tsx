@@ -58,7 +58,7 @@ import './styles.scss'
 export type ResourceFormValues = Omit<
   NewResourceFormValues,
   'addToCollections' | 'content'
->
+> & { isFile: boolean }
 export type ResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   isAuthenticated: boolean
@@ -244,34 +244,36 @@ export const Resource = withCtrl<ResourceProps>(
             <TextOption key={value} value={value} label={label} />
           ))}
         </Dropdown>
-        <Dropdown
-          name="license"
-          className="license-dropdown"
-          onChange={form.handleChange}
-          value={form.values.license}
-          label={t`License`}
-          edit
-          highlight={shouldShowErrors && !!form.errors.license}
-          error={form.errors.license}
-          position={{ top: 50, bottom: 25 }}
-          pills={
-            licenses.selected && (
-              <IconPill
-                key={licenses.selected.value}
-                icon={licenses.selected.icon}
+        {contentType === 'file' && (
+          <Dropdown
+            name="license"
+            className="license-dropdown"
+            onChange={form.handleChange}
+            value={form.values.license}
+            label={t`License`}
+            edit
+            highlight={shouldShowErrors && !!form.errors.license}
+            error={form.errors.license}
+            position={{ top: 50, bottom: 25 }}
+            pills={
+              licenses.selected && (
+                <IconPill
+                  key={licenses.selected.value}
+                  icon={licenses.selected.icon}
+                />
+              )
+            }
+          >
+            {licenses.opts.map(({ icon, label, value }) => (
+              <IconTextOption
+                icon={icon}
+                label={label}
+                value={value}
+                key={value}
               />
-            )
-          }
-        >
-          {licenses.opts.map(({ icon, label, value }) => (
-            <IconTextOption
-              icon={icon}
-              label={label}
-              value={value}
-              key={value}
-            />
-          ))}
-        </Dropdown>
+            ))}
+          </Dropdown>
+        )}
         <Dropdown
           name="type"
           label={t`Type`}
