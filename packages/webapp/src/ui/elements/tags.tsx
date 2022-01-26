@@ -1,16 +1,20 @@
 import { FollowTag } from '../types'
 import { href, Link } from './link'
 
-export const tagList = (tags: FollowTag[], click = true) => {
+export const tagList = (
+  tags: FollowTag[],
+  size: 'small' | 'medium',
+  click = true
+) => {
   return tags.map((tag, index) => {
     return click ? (
       <Link href={tag.subjectHomeHref} className="tag-container" key={index}>
-        <div className={`tag tag${tag.type} hover`}>
+        <div className={`tag tag${tag.type} hover ${size}`}>
           <abbr title={tag.name}>{tag.name}</abbr>
         </div>
       </Link>
     ) : (
-      <div className={`tag tag${tag.type}`} key={index}>
+      <div className={`tag tag${tag.type} ${size}`} key={index}>
         <abbr title={tag.name}>{tag.name}</abbr>
       </div>
     )

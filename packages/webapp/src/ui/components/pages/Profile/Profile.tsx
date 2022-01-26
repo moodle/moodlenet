@@ -4,7 +4,8 @@ import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import { useState } from 'react'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
-import InputTextField from '../../atoms/InputTextField/InputTextField'
+import { FormikHandle } from '../../../lib/formik'
+import { InputTextField } from '../../atoms/InputTextField/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import Snackbar from '../../atoms/Snackbar/Snackbar'
@@ -30,13 +31,14 @@ import {
   HeaderPageTemplateProps,
 } from '../../templates/HeaderPageTemplate'
 import './styles.scss'
+import { ProfileFormValues } from './types'
 
 export type ProfileProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   overallCardProps: OverallCardProps
   profileCardProps: Omit<
     ProfileCardProps,
-    'isEditing' | 'toggleIsEditing' | 'openSendMessage'
+    'isEditing' | 'toggleIsEditing' | 'openSendMessage' | 'editForm'
   >
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
@@ -45,8 +47,8 @@ export type ProfileProps = {
   newResourceHref: Href
   showAccountCreationSuccessAlert?: boolean
   showAccountApprovedSuccessAlert?: boolean
-  sendEmail?: (text: string) => unknown
-  save: () => unknown
+  sendEmailForm?: FormikHandle<{ text: string }>
+  editForm: FormikHandle<ProfileFormValues>
 }
 
 export const Profile = withCtrl<ProfileProps>(
@@ -61,17 +63,15 @@ export const Profile = withCtrl<ProfileProps>(
     newResourceHref,
     showAccountCreationSuccessAlert,
     showAccountApprovedSuccessAlert,
-    sendEmail,
-    save,
+    sendEmailForm,
+    editForm,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
 
     const toggleIsEditing = () => {
+      isEditing && editForm.dirty && editForm.submitForm()
       setIsEditing(!isEditing)
-      if (isEditing) {
-        save()
-      }
     }
 
     const collectionList = (
@@ -94,7 +94,6 @@ export const Profile = withCtrl<ProfileProps>(
       ></ListCard>
     )
 
-    const [emailText, setEmailText] = useState('')
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
         {showAccountCreationSuccessAlert && (
@@ -118,23 +117,28 @@ export const Profile = withCtrl<ProfileProps>(
             <Trans>Congratulations! Your account has been approved</Trans>
           </Snackbar>
         )}
-        {isSendingMessage && sendEmail && (
+        {isSendingMessage && sendEmailForm && (
           <Modal
             title={`${t`Send a message to`} ${displayName}`}
-            actions={[
+            actions={
               <PrimaryButton
                 onClick={() => {
-                  sendEmail(emailText)
+                  sendEmailForm.submitForm()
                   setIsSendingMessage(false)
                 }}
               >
                 <Trans>Send</Trans>
-              </PrimaryButton>,
-            ]}
+              </PrimaryButton>
+            }
             onClose={() => setIsSendingMessage(false)}
             style={{ maxWidth: '400px' }}
           >
-            <InputTextField textarea={true} getText={setEmailText} autoUpdate />
+            <InputTextField
+              textarea={true}
+              name="text"
+              edit
+              onChange={sendEmailForm.handleChange}
+            />
           </Modal>
         )}
         <div className="profile">
@@ -142,9 +146,10 @@ export const Profile = withCtrl<ProfileProps>(
             <div className="main-column">
               <ProfileCard
                 {...profileCardProps}
+                editForm={editForm}
                 isEditing={isEditing}
                 toggleIsEditing={toggleIsEditing}
-                openSendMessage={() => setIsSendingMessage(!!sendEmail && true)}
+                openSendMessage={() => setIsSendingMessage(!!sendEmailForm)}
               />
               <ListCard
                 className="resources"

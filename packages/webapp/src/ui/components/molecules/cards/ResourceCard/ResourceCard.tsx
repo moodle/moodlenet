@@ -12,7 +12,7 @@ import '../../../../styles/tags.css'
 import { FollowTag } from '../../../../types'
 import Card from '../../../atoms/Card/Card'
 import RoundButton from '../../../atoms/RoundButton/RoundButton'
-import { Visibility } from '../../../pages/NewResource/FieldsData'
+import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import './styles.scss'
 
 export type ResourceCardProps = {
@@ -159,7 +159,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             isEditing ? 'editing' : ''
           }`}
         >
-          {tags && tagList(tags)}
+          {tags && tagList(tags, 'small')}
         </div>
       </Card>
     )

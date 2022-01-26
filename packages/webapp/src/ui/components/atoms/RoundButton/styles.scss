@@ -1,6 +1,7 @@
 .round-button {
   cursor: pointer;
   height: fit-content;
+  display: flex;
 
   > svg {
     box-sizing: border-box;

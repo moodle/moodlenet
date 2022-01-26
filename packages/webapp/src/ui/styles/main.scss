@@ -101,3 +101,112 @@ abbr {
   color: #e8e8e8;
   pointer-events: none;
 }
+
+.enter-error:not(.disabled) {
+  > .input-container,
+  > .textarea-container {
+    animation: shadow-fade-in 0.5s ease-out;
+    box-shadow: 0 0 0 2px red;
+
+    @keyframes shadow-fade-in {
+      // from {
+      //   box-shadow: 0 0 6px #dedede;
+      // }
+      to {
+        box-shadow: inherit;
+      }
+    }
+  }
+
+  > .error-msg {
+    animation: enter-move 0.5s ease-out;
+    font-size: 12px;
+    color: red;
+    height: 14px;
+
+    @keyframes enter-move {
+      from {
+        height: 0;
+        opacity: 0;
+      }
+      to {
+        font-size: 12px;
+        color: red;
+        height: 14px;
+        opacity: 1;
+      }
+    }
+  }
+
+  &.underline {
+    > .input-container,
+    > .textarea-container {
+      animation: border-fade-in-underline 0.5s ease-out;
+      box-shadow: none;
+      border-radius: 0;
+      border-bottom: 2px solid rgba(255, 0, 0, 1);
+      height: auto;
+      padding: 0 0 2px 0;
+
+      @keyframes border-fade-in-underline {
+        from {
+          border-bottom: 2px solid rgba(255, 0, 0, 0);
+        }
+      }
+    }
+  }
+}
+
+.leave-error:not(.disabled) {
+  > .input-container,
+  > .textarea-container {
+    box-shadow: 0 0 6px #dedede;
+    animation: shadow-fade-out 0.5s ease-out;
+
+    @keyframes shadow-fade-out {
+      from {
+        box-shadow: inherit;
+      }
+      to {
+        box-shadow: inherit;
+      }
+    }
+  }
+
+  > .error-msg {
+    height: 0;
+    opacity: 0;
+    animation: leave 0.5s ease-out;
+
+    @keyframes leave {
+      from {
+        height: 14px;
+        opacity: 1;
+        font-size: 12px;
+        color: red;
+      }
+      to {
+        height: 0;
+        opacity: 0;
+        font-size: 12px;
+      }
+    }
+  }
+
+  &.underline {
+    > .input-container,
+    > .textarea-container {
+      animation: border-fade-out-underline 0.5s ease-out;
+      box-shadow: none;
+      border-radius: 0;
+      border-bottom: 2px solid rgba(255, 0, 0, 0);
+      height: auto;
+
+      @keyframes border-fade-out-underline {
+        from {
+          border-bottom: 2px solid rgba(255, 0, 0, 1);
+        }
+      }
+    }
+  }
+}

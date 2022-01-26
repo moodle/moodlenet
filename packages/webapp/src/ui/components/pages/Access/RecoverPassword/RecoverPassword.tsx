@@ -4,8 +4,9 @@ import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import React from 'react'
 import { Href, Link } from '../../../../elements/link'
 import { CP, withCtrl } from '../../../../lib/ctrl'
-import { FormikBag } from '../../../../lib/formik'
+import { FormikHandle } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
+import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import {
   MainPageWrapper,
@@ -18,7 +19,7 @@ export type RecoverPasswordFormValues = { email: string }
 export type RecoverPasswordProps = {
   mainPageWrapperProps: CP<MainPageWrapperProps>
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
-  formBag: FormikBag<RecoverPasswordFormValues>
+  form: FormikHandle<RecoverPasswordFormValues>
   RecoverPasswordErrorMessage: string | null
   requestSent: boolean
   loginHref: Href
@@ -29,13 +30,11 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
   ({
     mainPageWrapperProps,
     accessHeaderProps,
-    formBag,
+    form,
     requestSent,
     loginHref,
     RecoverPasswordErrorMessage,
   }) => {
-    const [form, attrs] = formBag
-
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Enter') {
         form.submitForm()
@@ -72,18 +71,16 @@ export const RecoverPassword = withCtrl<RecoverPasswordProps>(
                   <Trans>Recover password</Trans>
                 </div>
                 <form onSubmit={form.handleSubmit}>
-                  <input
-                    className={`email ${
-                      shouldShowErrors && form.errors.email ? 'highlight' : ''
-                    }`}
-                    color="text"
-                    placeholder={t`Email`}
-                    {...attrs.email}
+                  <InputTextField
+                    className="email"
+                    type="email"
+                    name="email"
+                    edit
+                    value={form.values.email}
                     onChange={form.handleChange}
+                    placeholder={t`Email`}
+                    error={shouldShowErrors && form.errors.email}
                   />
-                  {shouldShowErrors && form.errors.email && (
-                    <div className="error">{form.errors.email}</div>
-                  )}
                   <button type="submit" style={{ display: 'none' }} />
                 </form>
                 <div className="bottom">

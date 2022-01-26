@@ -10,4 +10,6 @@ export const TIME_BETWEEN_USER_APPROVAL_REQUESTS =
 export const MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS =
   window.__MN_ENV__.minResourcesForUserApprovalRequests
 
+export const MNEnv = window.__MN_ENV__
+
 console.log(`ENV:`, { process: process.env, mnEnv: window.__MN_ENV__ })

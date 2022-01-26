@@ -1,7 +1,8 @@
 import { t, Trans } from '@lingui/macro'
 import { CP, withCtrl } from '../../../../lib/ctrl'
-import { FormikBag } from '../../../../lib/formik'
+import { FormikHandle } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
+import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import {
   MainPageWrapper,
@@ -14,7 +15,7 @@ export type NewPasswordFormValues = { newPassword: string }
 export type NewPasswordProps = {
   mainPageWrapperProps: CP<MainPageWrapperProps>
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
-  formBag: FormikBag<NewPasswordFormValues>
+  form: FormikHandle<NewPasswordFormValues>
   newPasswordErrorMessage: string | null
 }
 
@@ -23,10 +24,8 @@ export const NewPassword = withCtrl<NewPasswordProps>(
     mainPageWrapperProps,
     accessHeaderProps,
     newPasswordErrorMessage,
-    formBag,
+    form,
   }) => {
-    const [form, attrs] = formBag
-
     const shouldShowErrors =
       !!form.submitCount && (newPasswordErrorMessage || !form.isValid)
 
@@ -44,20 +43,16 @@ export const NewPassword = withCtrl<NewPasswordProps>(
                   <Trans>Update password</Trans>
                 </div>
                 <form onSubmit={form.handleSubmit}>
-                  <input
-                    className={`password ${
-                      shouldShowErrors && form.errors.newPassword
-                        ? 'highlight'
-                        : ''
-                    }`}
+                  <InputTextField
+                    className="password"
                     type="password"
-                    placeholder={t`New password`}
-                    {...attrs.newPassword}
+                    name="newPassword"
+                    edit
+                    value={form.values.newPassword}
                     onChange={form.handleChange}
+                    placeholder={t`New password`}
+                    error={shouldShowErrors && form.errors.newPassword}
                   />
-                  {shouldShowErrors && form.errors.newPassword && (
-                    <div className="error">{form.errors.newPassword}</div>
-                  )}
                 </form>
                 <div className="bottom">
                   <div className="left">

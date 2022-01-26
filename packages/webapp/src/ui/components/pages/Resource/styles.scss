@@ -55,7 +55,7 @@
       > .main-resource-card {
         display: flex;
         flex-direction: column;
-        gap: 24px;
+        gap: 22px;
         padding: 26px 34px 34px 34px;
         position: relative;
 
@@ -137,27 +137,35 @@
             font-size: 26px;
 
             > .input-container {
+              height: fit-content;
               > input {
+                padding: 0;
                 font-weight: bold;
                 font-size: 26px;
               }
             }
           }
 
-          .tags {
-            margin-top: 7px;
-          }
-
           .tags > a > .tag {
-            font-size: 10px;
-            padding: 3px 10px;
-            margin-right: 3px;
+            font-size: 12px;
+            padding: 4px 10px;
+            margin: 8px 0;
+          }
+        }
+
+        > .resource-header > .input-text-field,
+        > .input-text-field {
+          > .input-container {
+            padding: 0;
+            box-shadow: none;
+            animation: none;
           }
         }
 
         > .image-container {
           position: relative;
           width: 100%;
+
           > .image,
           > a > .image {
             cursor: pointer;
@@ -243,9 +251,47 @@
       flex-wrap: wrap;
       justify-content: center;
 
-      > * {
+      > .dropdown {
+        gap: 4px;
+
+        > label {
+          margin-bottom: 0;
+        }
+        > .input-container {
+          background-color: transparent;
+          border: none;
+        }
+
+        &.disabled {
+          > .input-container {
+            background-color: transparent;
+            border: none;
+            > .dropdown-button {
+              color: #c6c6c6;
+            }
+          }
+        }
+      }
+
+      > .license-dropdown {
+        margin-bottom: 2px;
+      }
+
+      > *,
+      .date > .fields > * {
         > label {
           margin-bottom: 2px;
+        }
+        > .input-container {
+          min-height: 24px;
+          height: 24px;
+          box-shadow: none;
+          > .dropdown-button {
+            padding: 0;
+            > .dropdown-pill {
+              justify-content: flex-start;
+            }
+          }
         }
       }
 
@@ -253,13 +299,14 @@
         width: 100%;
         display: flex;
         flex-direction: column;
+        gap: 2px;
         > label {
           font-weight: bold;
           font-size: 14px;
         }
         > .fields {
           display: flex;
-          :first-child.display-mode.not-editing {
+          > :first-child.display-mode.not-editing {
             width: 60px;
           }
         }
@@ -274,7 +321,10 @@
           font-size: 14px;
         }
         > .value {
+          display: flex;
+          align-items: center;
           color: rgba(0, 0, 0, 0.5);
+          fill: rgba(0, 0, 0, 0.5);
           height: 24px;
           width: 100%;
           line-height: 20px;
@@ -288,11 +338,25 @@
             display: flex;
             gap: 8px;
           }
-        }
-      }
 
-      > .dropdown:not(:last-child) {
-        margin-bottom: 2px;
+          &.icons {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            > div {
+              display: flex;
+              gap: 3px;
+              > * {
+                width: 20px;
+                height: 20px;
+              }
+            }
+          }
+        }
+
+        &.license {
+          margin-bottom: 2px;
+        }
       }
     }
 
