@@ -11,7 +11,7 @@ import { useFormik } from 'formik'
 import { duration } from 'moment'
 import { createElement, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
-import { mixed, object, SchemaOf, string } from 'yup'
+import { boolean, mixed, object, SchemaOf, string } from 'yup'
 import { MNEnv } from '../../../../../constants'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
@@ -51,11 +51,12 @@ export const lmsValidationSchema: SchemaOf<{ site?: string }> = object({
 })
 export const validationSchema: SchemaOf<ResourceFormValues> = object({
   category: string().required(t`Please provide a Category`),
-  license: string().when('content', (content, schema) => {
-    return content instanceof Blob
+  license: string().when('isFile', (isFile, schema) => {
+    return isFile
       ? schema.required(t`Need a License for uploaded content`)
       : schema.optional()
   }),
+  isFile: boolean().required(),
   description: string()
     .min(3)
     .max(4096)
@@ -322,7 +323,13 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       const type = typeEdge?.node.id
       const language = languageEdge?.node.id
       const license = licenseEdge?.node.id
-      const { name, description, image, _published } = resourceData
+      const {
+        name,
+        description,
+        image,
+        _published,
+        content: { ext },
+      } = resourceData
       const orgDate =
         typeof resourceData.originalCreationDate === 'number'
           ? new Date(resourceData.originalCreationDate)
@@ -330,6 +337,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       _resetform({
         touched: {},
         values: {
+          isFile: !ext,
           category,
           language,
           level,

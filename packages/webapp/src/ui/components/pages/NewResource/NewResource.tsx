@@ -1,10 +1,9 @@
-import { t, Trans } from '@lingui/macro'
+import { t } from '@lingui/macro'
 import { Dispatch, Reducer, useMemo, useReducer } from 'react'
 import { createCtx } from '../../../../lib/context'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
 import ProgressState from '../../atoms/ProgressState/ProgressState'
-import Snackbar from '../../atoms/Snackbar/Snackbar'
 import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
@@ -97,16 +96,6 @@ export const NewResource = withCtrl<NewResourceProps>(
 
     return (
       <NewResourcePageCtxProvider value={ctx}>
-        {form.errors.content && (
-          <Snackbar
-            position="bottom"
-            type="error"
-            autoHideDuration={5000}
-            showCloseButton={false}
-          >
-            <Trans>{form.errors.content}</Trans>
-          </Snackbar>
-        )}
         <HeaderPageTemplate
           {...headerPageTemplateProps}
           style={{ backgroundColor: '#f4f5f7' }}
