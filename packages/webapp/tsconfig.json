@@ -17,6 +17,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"],
+  "include": ["src", "./serverConfigure.*"],
   "exclude": ["./src/hooks/_props"]
 }
