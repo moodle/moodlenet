@@ -56,18 +56,18 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     unapproveUserForm,
   }) => {
     const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
-    const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
+    const shouldShowErrors = !!editForm.submitCount
     const [isShowingBackground, setIsShowingBackground] =
       useState<boolean>(false)
 
-    const handleOnSaveClick = () => {
-      if (editForm.isValid) {
-        setShouldShowErrors(false)
-        toggleIsEditing()
-      } else {
-        setShouldShowErrors(true)
-      }
-    }
+    // const handleOnSaveClick = () => {
+    //   if (editForm.isValid) {
+    //     setShouldShowErrors(false)
+    //     toggleIsEditing()
+    //   } else {
+    //     setShouldShowErrors(true)
+    //   }
+    // }
 
     const uploadBackgroundRef = useRef<HTMLInputElement>(null)
     const selectBackground = (e: React.MouseEvent<HTMLElement>) => {

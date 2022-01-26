@@ -98,14 +98,12 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           textarea={true}
           label="Description"
           placeholder={
-            state === 'ChooseResource'
+            subStep === 'ChooseResource'
               ? ''
               : t`Tell us about your resource and how it could be used.`
           }
-          disabled={state === 'ChooseResource'}
-          value={form.values.description}
-          placeholder=""
           disabled={subStep === 'ChooseResource'}
+          value={form.values.description}
           edit
           onChange={form.handleChange}
           error={shouldShowErrors && form.errors.description}
