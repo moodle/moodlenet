@@ -38,16 +38,13 @@ const validationSchema: SchemaOf<NewResourceFormValues> = object({
       : schema.optional()
   }),
   content: mixed()
-    .test((v, { createError }) => {
-      const r =
-        v instanceof Blob && v.size > MNEnv.maxUploadSize
-          ? createError({ message: t`This file is too big for uploading` })
-          : 'string' === typeof v && !urlRegex.test(v)
-          ? createError({ message: t`Please provide a proper url` })
-          : true
-      console.log({ v, r })
-      return r
-    })
+    .test((v, { createError }) =>
+      v instanceof Blob && v.size > MNEnv.maxUploadSize
+        ? createError({ message: t`This file is too big for uploading` })
+        : 'string' === typeof v && !urlRegex.test(v)
+        ? createError({ message: t`Please provide a proper url` })
+        : true
+    )
     .required(t`Content is a required field`),
   description: string()
     .max(4096)
@@ -293,7 +290,6 @@ export const useNewResourceCtrl: CtrlHook<
       history.push(nodeGqlId2UrlPath(resId))
     },
   })
-  console.log(form.errors, form.values)
   const newResourceProps = useMemo<NewResourceProps>(() => {
     const props: NewResourceProps = {
       headerPageTemplateProps: ctrlHook(

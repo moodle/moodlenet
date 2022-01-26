@@ -249,6 +249,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                           ref={uploadFileRef}
                           type="file"
                           name="content"
+                          key="content"
                           onChange={({ target }) =>
                             form.setFieldValue('content', target.files?.[0])
                           }
@@ -266,6 +267,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                           type="file"
                           accept=".jpg,.jpeg,.png,.gif"
                           name="image"
+                          key="image"
                           onChange={({ target }) =>
                             form.setFieldValue('image', target.files?.[0])
                           }
