@@ -3,6 +3,7 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { useFormik } from 'formik'
 import { array, mixed, object, SchemaOf, string } from 'yup'
+import { MNEnv } from '../../../../constants'
 import { href } from '../../../elements/link'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { CollectionTextOptionProps } from './AddToCollections/storiesData'
@@ -55,7 +56,13 @@ export const validationSchema: SchemaOf<NewResourceFormValues> = object({
     .min(3)
     .required(t`Please provide a title`),
   addToCollections: array().of(string()).optional(),
-  image: mixed().optional(),
+  image: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && v.size > MNEnv.maxUploadSize
+        ? createError({ message: t`This file is too big for uploading` })
+        : true
+    )
+    .optional(),
   language: string().optional(),
   level: string().optional(),
   month: string().optional(),

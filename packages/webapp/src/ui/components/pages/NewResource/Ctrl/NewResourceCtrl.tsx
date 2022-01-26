@@ -4,11 +4,13 @@ import {
   isOfNodeType,
 } from '@moodlenet/common/dist/graphql/helpers'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { urlRegex } from '@moodlenet/common/dist/utils/general'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { useFormik } from 'formik'
 import { useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { array, mixed, object, SchemaOf, string } from 'yup'
+import { MNEnv } from '../../../../../constants'
 import { useSession } from '../../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../../helpers/data'
 import {
@@ -35,7 +37,18 @@ const validationSchema: SchemaOf<NewResourceFormValues> = object({
       ? schema.required(t`Need a License for uploaded content`)
       : schema.optional()
   }),
-  content: mixed().required(t`Content is a required field`),
+  content: mixed()
+    .test((v, { createError }) => {
+      const r =
+        v instanceof Blob && v.size > MNEnv.maxUploadSize
+          ? createError({ message: t`This file is too big for uploading` })
+          : 'string' === typeof v && !urlRegex.test(v)
+          ? createError({ message: t`Please provide a proper url` })
+          : true
+      console.log({ v, r })
+      return r
+    })
+    .required(t`Content is a required field`),
   description: string()
     .max(4096)
     .min(3)
@@ -45,7 +58,13 @@ const validationSchema: SchemaOf<NewResourceFormValues> = object({
     .max(160)
     .required(t`Please provide a title`),
   addToCollections: array().of(string()).optional(),
-  image: mixed().optional(),
+  image: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && v.size > MNEnv.maxUploadSize
+        ? createError({ message: t`This file is too big for uploading` })
+        : true
+    )
+    .optional(),
   language: string().optional(),
   level: string().optional(),
   month: string().optional(),
@@ -274,7 +293,7 @@ export const useNewResourceCtrl: CtrlHook<
       history.push(nodeGqlId2UrlPath(resId))
     },
   })
-
+  console.log(form.errors, form.values)
   const newResourceProps = useMemo<NewResourceProps>(() => {
     const props: NewResourceProps = {
       headerPageTemplateProps: ctrlHook(
