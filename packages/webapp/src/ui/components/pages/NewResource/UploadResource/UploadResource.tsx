@@ -1,7 +1,7 @@
 import { t, Trans } from '@lingui/macro'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { withCtrl } from '../../../../lib/ctrl'
 import { SelectOptions } from '../../../../lib/types'
 import { useImageUrl } from '../../../../lib/useImageUrl'
@@ -63,6 +63,10 @@ export const UploadResource = withCtrl<UploadResourceProps>(
         ? 'EditData'
         : 'ChooseResource'
 
+    useEffect(() => {
+      subStep === 'EditData' && setShouldShowErrors(false)
+    }, [subStep])
+
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isToDrop, setIsToDrop] = useState<boolean>(false)
@@ -117,7 +121,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             label="Subject"
             edit={subStep === 'EditData'}
             highlight={shouldShowErrors && !!form.errors.category}
-            error={form.errors.category}
+            error={shouldShowErrors && form.errors.category}
             pills={
               categories.selected && (
                 <SimplePill
@@ -141,7 +145,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             edit={subStep === 'EditData'}
             label="Visibility"
             highlight={shouldShowErrors && !!form.errors.visibility}
-            error={form.errors.visibility}
+            error={shouldShowErrors && form.errors.visibility}
           />
         </div>
       </div>
@@ -288,6 +292,16 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     placeholder={t`Paste or type a link`}
                     ref={addLinkFieldRef}
                     edit
+                    defaultValue={
+                      typeof form.values.content === 'string'
+                        ? form.values.content
+                        : ''
+                    }
+                    onChange={
+                      shouldShowErrors
+                        ? () => form.validateField('content')
+                        : undefined
+                    }
                     action={
                       <PrimaryButton
                         onClick={() => {

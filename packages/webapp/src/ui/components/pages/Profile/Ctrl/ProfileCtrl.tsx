@@ -8,7 +8,10 @@ import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
 import { useFormik } from 'formik'
 import { createElement, useCallback, useEffect, useMemo } from 'react'
 import { mixed, object, SchemaOf, string } from 'yup'
-import { MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS } from '../../../../../constants'
+import {
+  MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS,
+  MNEnv,
+} from '../../../../../constants'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
@@ -35,8 +38,20 @@ import {
 } from './ProfileCtrl.gen'
 
 const validationSchema: SchemaOf<ProfileFormValues> = object({
-  avatarImage: mixed().optional(),
-  backgroundImage: mixed().optional(),
+  avatarImage: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && v.size > MNEnv.maxUploadSize
+        ? createError({ message: t`This file is too big for uploading` })
+        : true
+    )
+    .optional(),
+  backgroundImage: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && v.size > MNEnv.maxUploadSize
+        ? createError({ message: t`This file is too big for uploading` })
+        : true
+    )
+    .optional(),
   displayName: string()
     .required(t`Please provide a display name`)
     .min(3)

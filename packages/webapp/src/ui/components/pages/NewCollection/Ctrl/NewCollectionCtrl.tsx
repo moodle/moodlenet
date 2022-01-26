@@ -6,6 +6,7 @@ import { useFormik } from 'formik'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { mixed, object, SchemaOf, string } from 'yup'
+import { MNEnv } from '../../../../../constants'
 // import { useSession } from '../../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../../helpers/data'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
@@ -23,7 +24,13 @@ const validationSchema: SchemaOf<NewCollectionFormValues> = object({
     .max(160)
     .min(3)
     .required(t`Please provide a title`),
-  image: mixed().optional(),
+  image: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && v.size > MNEnv.maxUploadSize
+        ? createError({ message: t`This file is too big for uploading` })
+        : true
+    )
+    .optional(),
   visibility: mixed().required(t`Visibility is required`),
 })
 

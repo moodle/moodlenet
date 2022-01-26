@@ -3,6 +3,7 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { useFormik } from 'formik'
 import { mixed, object, SchemaOf, string } from 'yup'
+import { MNEnv } from '../../../../../constants'
 import { people } from '../../../../../helpers/factories'
 import { randomIntFromInterval } from '../../../../../helpers/utilities'
 import { ProfileFormValues } from '../../../pages/Profile/types'
@@ -25,8 +26,20 @@ const meta: ComponentMeta<typeof ProfileCard> = {
 }
 
 export const validationSchema: SchemaOf<ProfileFormValues> = object({
-  avatarImage: mixed().optional(),
-  backgroundImage: mixed().optional(),
+  avatarImage: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && v.size > MNEnv.maxUploadSize
+        ? createError({ message: t`This file is too big for uploading` })
+        : true
+    )
+    .optional(),
+  backgroundImage: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && v.size > MNEnv.maxUploadSize
+        ? createError({ message: t`This file is too big for uploading` })
+        : true
+    )
+    .optional(),
   displayName: string()
     .max(160)
     .min(3)

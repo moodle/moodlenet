@@ -4,6 +4,7 @@ import { ComponentMeta } from '@storybook/react'
 import { FormikConfig, useFormik } from 'formik'
 import { useEffect } from 'react'
 import { mixed, object, SchemaOf, string } from 'yup'
+import { MNEnv } from '../../../../constants'
 import { href } from '../../../elements/link'
 import { TagListStory } from '../../../elements/tags'
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
@@ -61,7 +62,13 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
     .max(160)
     .min(3)
     .required(t`Please provide a title`),
-  image: mixed().optional(),
+  image: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && v.size > MNEnv.maxUploadSize
+        ? createError({ message: t`This file is too big for uploading` })
+        : true
+    )
+    .optional(),
   language: string().optional(),
   level: string().optional(),
   month: string().optional(),
