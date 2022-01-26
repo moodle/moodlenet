@@ -162,23 +162,6 @@
           }
         }
 
-        > .resource-header > .enter-error,
-        > .enter-error {
-          > .error-msg {
-            font-weight: initial;
-          }
-          > .input-container,
-          > .textarea-container {
-            min-height: fit-content;
-            box-shadow: none;
-            border-width: 2px;
-            border-bottom-width: 2px;
-            border-radius: 0;
-            border-bottom-color: red;
-            border-bottom-style: solid;
-          }
-        }
-
         > .image-container {
           position: relative;
           width: 100%;
@@ -268,7 +251,7 @@
       flex-wrap: wrap;
       justify-content: center;
 
-      > .dropdown-new {
+      > .dropdown {
         gap: 4px;
 
         > label {
@@ -374,10 +357,6 @@
         &.license {
           margin-bottom: 2px;
         }
-      }
-
-      > .dropdown:not(:last-child) {
-        margin-bottom: 2px;
       }
     }
 
