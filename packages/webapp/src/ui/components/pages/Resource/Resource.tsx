@@ -527,11 +527,11 @@ export const Resource = withCtrl<ResourceProps>(
           isAddingToCollection && collections && (
             <Modal
               title={t`Select Collections`}
-              actions={[
+              actions={
                 <PrimaryButton>
                   <Trans>Done</Trans>
-                </PrimaryButton>,
-              ]}
+                </PrimaryButton>
+              }
               onClose={() => setIsAddingToCollection(false)}
               style={{ maxWidth: '400px' }}
             >
@@ -553,15 +553,15 @@ export const Resource = withCtrl<ResourceProps>(
         {isAddingToMoodleLms && (
           <Modal
             title={t`Your Moodle LMS Site`}
-            actions={[
+            actions={
               <PrimaryButton
                 onClick={() => {
                   handleOnSendToMoodleClick()
                 }}
               >
                 <Trans>Send</Trans>
-              </PrimaryButton>,
-            ]}
+              </PrimaryButton>
+            }
             onClose={() => {
               setIsAddingToMoodleLms(false)
               setShouldShowSendToMoodleLmsError(false)
@@ -584,7 +584,7 @@ export const Resource = withCtrl<ResourceProps>(
         {isToDelete && deleteResourceForm && (
           <Modal
             title={t`Alert`}
-            actions={[
+            actions={
               <PrimaryButton
                 onClick={() => {
                   deleteResourceForm.submitForm()
@@ -593,8 +593,8 @@ export const Resource = withCtrl<ResourceProps>(
                 color="red"
               >
                 <Trans>Delete</Trans>
-              </PrimaryButton>,
-            ]}
+              </PrimaryButton>
+            }
             onClose={() => setIsToDelete(false)}
             style={{ maxWidth: '400px' }}
             className="delete-message"
@@ -609,11 +609,11 @@ export const Resource = withCtrl<ResourceProps>(
             isAddingToCollection && collections && (
               <Modal
                 title={t`Select Collections`}
-                actions={[
+                actions={
                   <PrimaryButton onClick={() => setIsAddingToCollection(false)}>
                     Done
-                  </PrimaryButton>,
-                ]}
+                  </PrimaryButton>
+                }
                 onClose={() => setIsAddingToCollection(false)}
                 style={{ maxWidth: '400px' }}
               >
