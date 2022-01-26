@@ -84,6 +84,25 @@
                 padding: 0 18px;
               }
             }
+
+            &.error {
+              animation: border-blink 3s ease-out;
+
+              @keyframes border-blink {
+                0% {
+                  border: 4px dashed #d1d4e0;
+                }
+                30% {
+                  border: 4px dashed red;
+                }
+                80% {
+                  border: 4px dashed red;
+                }
+                100% {
+                  border: 4px dashed #d1d4e0;
+                }
+              }
+            }
           }
           > .image-container {
             display: flex;

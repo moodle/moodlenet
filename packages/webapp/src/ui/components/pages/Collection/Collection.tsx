@@ -222,7 +222,7 @@ export const Collection = withCtrl<CollectionProps>(
                 </div>
                 {isOwner ? (
                   <InputTextField
-                    className="title"
+                    className="title underline"
                     name="title"
                     value={form.values.title}
                     displayMode={true}
@@ -235,6 +235,7 @@ export const Collection = withCtrl<CollectionProps>(
                 )}
                 {isOwner ? (
                   <InputTextField
+                    className="underline"
                     value={form.values.description}
                     name="description"
                     displayMode={true}

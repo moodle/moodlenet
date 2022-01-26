@@ -1,7 +1,14 @@
 import { t, Trans } from '@lingui/macro'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import prettyBytes from 'pretty-bytes'
+import {
+  default as React,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { withCtrl } from '../../../../lib/ctrl'
 import { SelectOptions } from '../../../../lib/types'
 import { useImageUrl } from '../../../../lib/useImageUrl'
@@ -31,6 +38,7 @@ import './styles.scss'
 export type UploadResourceProps = {
   categories: SelectOptions<TextOptionProps>
   licenses: SelectOptions<IconTextOptionProps>
+  fileMaxSize: number
 }
 
 const usingFields: (keyof NewResourceFormValues)[] = [
@@ -44,7 +52,7 @@ const usingFields: (keyof NewResourceFormValues)[] = [
 ]
 
 export const UploadResource = withCtrl<UploadResourceProps>(
-  ({ categories, licenses }) => {
+  ({ categories, licenses, fileMaxSize }) => {
     const { nextForm, form } = useNewResourcePageCtx()
     const isValid = usingFields.reduce(
       (valid, fldName) => valid && !form.errors[fldName],
@@ -237,7 +245,9 @@ export const UploadResource = withCtrl<UploadResourceProps>(
               <div className="main-container">
                 {!imageUrl ? (
                   <div
-                    className={`uploader ${isToDrop ? 'hover' : ''}`}
+                    className={`uploader ${isToDrop ? 'hover' : ''} ${
+                      form.errors.content ? 'error' : ''
+                    }`}
                     id="drop_zone"
                     onDrop={dropHandler}
                     onDragOver={dragOverHandler}
@@ -256,7 +266,13 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                         />
                         <UploadFileIcon />
                         <span>
-                          <Trans>Drop or click to upload a file!</Trans>
+                          <span>
+                            <Trans>Drop or click to upload a file!</Trans>
+                          </span>
+                          <br />
+                          <span style={{ fontSize: '12px' }}>
+                            <Trans>Max size {prettyBytes(fileMaxSize)}</Trans>
+                          </span>
                         </span>
                       </div>
                     ) : (
