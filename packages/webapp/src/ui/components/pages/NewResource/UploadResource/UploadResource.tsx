@@ -1,171 +1,174 @@
 import { t, Trans } from '@lingui/macro'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
-import React, { useCallback, useState } from 'react'
+import prettyBytes from 'pretty-bytes'
+import {
+  default as React,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { withCtrl } from '../../../../lib/ctrl'
-import { FormikBag } from '../../../../lib/formik'
+import { SelectOptions } from '../../../../lib/types'
+import { useImageUrl } from '../../../../lib/useImageUrl'
 import { ReactComponent as UploadFileIcon } from '../../../../static/icons/upload-file.svg'
 import { ReactComponent as UploadImageIcon } from '../../../../static/icons/upload-image.svg'
 import Card from '../../../atoms/Card/Card'
-import Dropdown from '../../../atoms/Dropdown/Dropdown'
+import {
+  Dropdown,
+  IconPill,
+  IconTextOption,
+  IconTextOptionProps,
+  SimplePill,
+  TextOption,
+  TextOptionProps,
+} from '../../../atoms/Dropdown/Dropdown'
 import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import Modal from '../../../atoms/Modal/Modal'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
-import { canLoadUrlToImgTag, urlMatchesImage } from '../Ctrl/NewResourceCtrl'
-import { DropdownField } from '../FieldsData'
+import Snackbar from '../../../atoms/Snackbar/Snackbar'
+import { VisibilityDropdown } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
+import { useNewResourcePageCtx } from '../NewResource'
 import { NewResourceFormValues } from '../types'
 import './styles.scss'
-type UploadResourceState = 'ChooseResource' | 'EditData'
 
+// type SubStep = 'ChooseResource' | 'EditData'
 export type UploadResourceProps = {
-  step: 'UploadResourceStep'
-  state: UploadResourceState
-  formBag: FormikBag<NewResourceFormValues>
-  imageUrl: string
-  categories: DropdownField
-  licenses: DropdownField
-  visibility: DropdownField
-  nextStep: (() => unknown) | undefined
-  deleteContent: () => unknown
+  categories: SelectOptions<TextOptionProps>
+  licenses: SelectOptions<IconTextOptionProps>
+  fileMaxSize: number
 }
 
+const usingFields: (keyof NewResourceFormValues)[] = [
+  'name',
+  'description',
+  'category',
+  'license',
+  'visibility',
+  'image',
+  'content',
+]
+
 export const UploadResource = withCtrl<UploadResourceProps>(
-  ({
-    formBag,
-    state,
-    imageUrl,
-    licenses,
-    visibility,
-    categories,
-    nextStep,
-    deleteContent,
-  }) => {
-    const [form, formAttrs] = formBag
-    const [highlightMandatoryFields, setHighlightMandatoryFields] =
-      useState<boolean>(false)
+  ({ categories, licenses, fileMaxSize }) => {
+    const { nextForm, form } = useNewResourcePageCtx()
+    const isValid = usingFields.reduce(
+      (valid, fldName) => valid && !form.errors[fldName],
+      true
+    )
+
+    const [imageUrl] = useImageUrl(form.values.image)
+
+    const contentIsFile = form.values.content instanceof File
+    const contentName =
+      form.values.content instanceof File
+        ? form.values.content.name
+        : form.values.content ?? ''
+    const subStep =
+      form.values.content && !form.errors.content
+        ? 'EditData'
+        : 'ChooseResource'
+
+    useEffect(() => {
+      subStep === 'EditData' && setShouldShowErrors(false)
+    }, [subStep])
+
+    const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isToDrop, setIsToDrop] = useState<boolean>(false)
-    const setFieldValue = form.setFieldValue
+
     const background = {
       backgroundImage: 'url(' + imageUrl + ')',
       backgroundSize: 'cover',
     }
-
-    const uploadFile = useCallback(
-      (e?: React.ChangeEvent<HTMLInputElement>, file?: File) => {
-        const selectedFile = file ? file : e?.currentTarget.files?.item(0)
-        if (selectedFile) {
-          setFieldValue('content', selectedFile)
-          setFieldValue('contentType', 'File')
-        }
-      },
-      [setFieldValue]
-    )
-
-    const uploadImage = useCallback(
-      (e?: React.ChangeEvent<HTMLInputElement>, file?: File) => {
-        const selectedFile = file ? file : e?.currentTarget.files?.item(0)
-        setFieldValue('image', selectedFile ?? null)
-      },
-      [setFieldValue]
-    )
-
-    const setLicenseVal = useCallback(
-      (v: string) => {
-        setFieldValue('license', v)
-      },
-      [setFieldValue]
-    )
-
-    const setVisibilityVal = useCallback(
-      (v: string) => {
-        setFieldValue('visibility', v)
-      },
-      [setFieldValue]
-    )
-
+    const addLinkFieldRef = useRef<HTMLInputElement>()
     const deleteImage = useCallback(() => {
-      setFieldValue('image', null)
-    }, [setFieldValue])
-
-    const setLink = useCallback(
-      (link: string) => {
-        setFieldValue('content', link)
-        setFieldValue('contentType', 'Link')
-        urlMatchesImage(link) && setFieldValue('image', link)
-        !canLoadUrlToImgTag(link) && deleteImage()
-      },
-      [setFieldValue, deleteImage]
-    )
+      form.setFieldValue('image', undefined)
+    }, [form])
 
     const deleteFileOrLink = useCallback(() => {
-      setFieldValue('content', '')
-      setFieldValue('contentType', 'Link')
-    }, [setFieldValue])
+      form.setFieldValue('license', undefined)
+      form.setFieldValue('content', undefined)
+      setShouldShowErrors(false)
+    }, [form])
 
-    const setCategoryValue = useCallback(
-      (v: string) => {
-        setFieldValue('category', v)
-      },
-      [setFieldValue]
-    )
     const dataInputs = (
       <div className="data-inputs">
         <InputTextField
-          autoUpdate={true}
+          name="name"
           label="Title"
+          value={form.values.name}
           placeholder=""
-          disabled={state === 'ChooseResource'}
-          getText={(text) => form.setFieldValue('title', text)}
-          value={form.values.title}
-          highlight={highlightMandatoryFields && !form.values.title}
+          disabled={subStep === 'ChooseResource'}
+          edit
+          onChange={form.handleChange}
+          error={shouldShowErrors && form.errors.name}
         />
         <InputTextField
-          autoUpdate={true}
+          name="description"
           textarea={true}
           label="Description"
           placeholder={
-            state === 'ChooseResource'
+            subStep === 'ChooseResource'
               ? ''
               : t`Tell us about your resource and how it could be used.`
           }
-          disabled={state === 'ChooseResource'}
+          disabled={subStep === 'ChooseResource'}
           value={form.values.description}
-          getText={(text) => form.setFieldValue('description', text)}
-          highlight={highlightMandatoryFields && !form.values.description}
+          edit
+          onChange={form.handleChange}
+          error={shouldShowErrors && form.errors.description}
         />
         <div className="subject-and-visibility">
           <Dropdown
-            {...categories}
-            {...formAttrs.category}
-            label="Subject"
+            name="category"
             value={form.values.category}
-            getValue={setCategoryValue}
-            disabled={state === 'ChooseResource'}
-            highlight={highlightMandatoryFields && !form.values.category}
-          />
-          <Dropdown
-            {...visibility}
-            getValue={setVisibilityVal}
-            label="Visibility"
+            onChange={form.handleChange}
+            disabled={subStep === 'ChooseResource'}
+            label="Subject"
+            edit={subStep === 'EditData'}
+            highlight={shouldShowErrors && !!form.errors.category}
+            error={shouldShowErrors && form.errors.category}
+            pills={
+              categories.selected && (
+                <SimplePill
+                  key={categories.selected.value}
+                  value={categories.selected.value}
+                  label={categories.selected.label}
+                />
+              )
+            }
+            className="subject-dropdown"
+          >
+            {categories.opts.map(({ label, value }) => (
+              <TextOption key={value} value={value} label={label} />
+            ))}
+          </Dropdown>
+          <VisibilityDropdown
+            name="visibility"
             value={form.values.visibility}
-            disabled={state === 'ChooseResource'}
-            className="visibility-dropdown"
-            highlight={highlightMandatoryFields && !form.values.visibility}
+            onChange={form.handleChange}
+            disabled={subStep === 'ChooseResource'}
+            edit={subStep === 'EditData'}
+            label="Visibility"
+            highlight={shouldShowErrors && !!form.errors.visibility}
+            error={shouldShowErrors && form.errors.visibility}
           />
         </div>
       </div>
     )
 
+    const uploadImageRef = useRef<HTMLInputElement>(null)
     const selectImage = () => {
-      //FIXME: useRef()s
-      document.getElementById('uploadImage')?.click()
+      uploadImageRef.current?.click()
     }
+
+    const uploadFileRef = useRef<HTMLInputElement>(null)
     const selectFile = () => {
-      //FIXME: useRef()s
-      document.getElementById('uploadFile')?.click()
+      uploadFileRef.current?.click()
     }
 
     const dropHandler = (e: React.DragEvent<HTMLDivElement>) => {
@@ -197,10 +200,10 @@ export const UploadResource = withCtrl<UploadResourceProps>(
         }
       }
 
-      if (state === 'ChooseResource') {
-        uploadFile(undefined, selectedFile)
+      if (subStep === 'ChooseResource') {
+        form.setFieldValue('content', selectedFile)
       } else {
-        uploadImage(undefined, selectedFile)
+        form.setFieldValue('image', selectedFile)
       }
     }
 
@@ -211,26 +214,34 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       e.preventDefault()
     }
 
-    const next = () =>
-      nextStep ? nextStep() : setHighlightMandatoryFields(true)
-
     return (
       <div className="upload-resource">
+        {shouldShowErrors && form.errors.content && (
+          <Snackbar
+            position="bottom"
+            type="error"
+            autoHideDuration={5000}
+            showCloseButton={false}
+          >
+            {form.errors.content}
+          </Snackbar>
+        )}
+
         {isToDelete && (
           <Modal
             title={t`Alert`}
-            actions={[
+            actions={
               <PrimaryButton
                 onClick={() => {
-                  setHighlightMandatoryFields(false)
-                  deleteContent()
+                  setShouldShowErrors(false)
+                  form.resetForm()
                   setIsToDelete(false)
                 }}
                 color="red"
               >
                 <Trans>Delete</Trans>
-              </PrimaryButton>,
-            ]}
+              </PrimaryButton>
+            }
             onClose={() => setIsToDelete(false)}
             style={{ maxWidth: '400px' }}
             className="delete-message"
@@ -247,34 +258,50 @@ export const UploadResource = withCtrl<UploadResourceProps>(
               <div className="main-container">
                 {!imageUrl ? (
                   <div
-                    className={`uploader ${isToDrop ? 'hover' : ''}`}
+                    className={`uploader ${isToDrop ? 'hover' : ''} ${
+                      shouldShowErrors && form.errors.content ? 'error' : ''
+                    }`}
                     id="drop_zone"
                     onDrop={dropHandler}
                     onDragOver={dragOverHandler}
                     onDragLeave={() => setIsToDrop(false)}
                   >
-                    {state === 'ChooseResource' ? (
+                    {subStep === 'ChooseResource' ? (
                       <div className="file upload" onClick={selectFile}>
                         <input
-                          id="uploadFile"
+                          ref={uploadFileRef}
                           type="file"
-                          name="myFile"
-                          onChange={uploadFile}
+                          name="content"
+                          key="content"
+                          onChange={({ target }) =>
+                            form
+                              .setFieldValue('content', target.files?.[0])
+                              .then((_) => setShouldShowErrors(!!_?.content))
+                          }
                           hidden
                         />
                         <UploadFileIcon />
                         <span>
-                          <Trans>Drop or click to upload a file!</Trans>
+                          <span>
+                            <Trans>Drop or click to upload a file!</Trans>
+                          </span>
+                          <br />
+                          <span style={{ fontSize: '12px' }}>
+                            <Trans>Max size</Trans> {prettyBytes(fileMaxSize)}
+                          </span>
                         </span>
                       </div>
                     ) : (
                       <div className="image upload" onClick={selectImage}>
                         <input
-                          id="uploadImage"
+                          ref={uploadImageRef}
                           type="file"
                           accept=".jpg,.jpeg,.png,.gif"
-                          name="myImage"
-                          onChange={uploadImage}
+                          name="image"
+                          key="image"
+                          onChange={({ target }) =>
+                            form.setFieldValue('image', target.files?.[0])
+                          }
                           hidden
                         />
                         <UploadImageIcon />
@@ -290,45 +317,84 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                   </div>
                 )}
               </div>
-              {state === 'ChooseResource' ? (
+              {subStep === 'ChooseResource' ? (
                 <div className="bottom-container">
                   <InputTextField
-                    className="link subcontainer"
-                    value={form.values.name}
+                    className="link"
+                    name="content"
                     placeholder={t`Paste or type a link`}
-                    getText={setLink}
-                    buttonName={t`Add`}
+                    ref={addLinkFieldRef}
+                    edit
+                    defaultValue={
+                      typeof form.values.content === 'string'
+                        ? form.values.content
+                        : ''
+                    }
+                    onChange={
+                      shouldShowErrors
+                        ? () => form.validateField('content')
+                        : undefined
+                    }
+                    action={
+                      <PrimaryButton
+                        onClick={() => {
+                          form
+                            .setFieldValue(
+                              'content',
+                              addLinkFieldRef.current?.value,
+                              true
+                            )
+                            .then((_) => setShouldShowErrors(!!_?.content))
+                        }}
+                      >
+                        <Trans>Add</Trans>
+                      </PrimaryButton>
+                    }
+                    error={shouldShowErrors && form.errors.content}
                   />
                 </div>
               ) : (
                 <div className="bottom-container">
                   <div
                     className={`uploaded-name subcontainer ${
-                      form.values.contentType === 'File' ? 'file' : 'link'
+                      contentIsFile ? 'file' : 'link'
                     }`}
                   >
                     <div className="content-icon">
-                      {form.values.contentType === 'File' ? (
-                        <InsertDriveFileIcon />
-                      ) : (
-                        <LinkIcon />
-                      )}
+                      {contentIsFile ? <InsertDriveFileIcon /> : <LinkIcon />}
                     </div>
-                    <abbr className="scroll" title={form.values.name}>
-                      {form.values.name}
+                    <abbr className="scroll" title={contentName}>
+                      {contentName}
                     </abbr>
                     <RoundButton onClick={deleteFileOrLink} />
                   </div>
 
-                  {form.values.contentType === 'File' && (
+                  {contentIsFile && (
                     <Dropdown
-                      {...licenses}
-                      getValue={setLicenseVal}
+                      name="license"
+                      className="license-dropdown"
+                      onChange={form.handleChange}
                       value={form.values.license}
-                      highlight={
-                        highlightMandatoryFields && !form.values.license
+                      edit
+                      highlight={shouldShowErrors && !!form.errors.license}
+                      error={form.errors.license}
+                      pills={
+                        licenses.selected && (
+                          <IconPill
+                            key={licenses.selected.value}
+                            icon={licenses.selected.icon}
+                          />
+                        )
                       }
-                    />
+                    >
+                      {licenses.opts.map(({ icon, label, value }) => (
+                        <IconTextOption
+                          icon={icon}
+                          label={label}
+                          value={value}
+                        />
+                      ))}
+                    </Dropdown>
                   )}
                 </div>
               )}
@@ -338,7 +404,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           <div className="side-column">{dataInputs}</div>
         </div>
         <div className="footer">
-          {state === 'EditData' && (
+          {subStep === 'EditData' && (
             <SecondaryButton
               onHoverColor="red"
               onClick={() => setIsToDelete(true)}
@@ -347,7 +413,17 @@ export const UploadResource = withCtrl<UploadResourceProps>(
               <Trans>Delete</Trans>
             </SecondaryButton>
           )}
-          <PrimaryButton disabled={state === 'ChooseResource'} onClick={next}>
+          <PrimaryButton
+            disabled={subStep === 'ChooseResource'}
+            onClick={
+              !isValid
+                ? () => {
+                    setShouldShowErrors(true)
+                    form.validateForm()
+                  }
+                : nextForm
+            }
+          >
             <Trans>Next</Trans>
           </PrimaryButton>
         </div>

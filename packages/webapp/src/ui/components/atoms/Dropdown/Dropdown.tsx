@@ -1,290 +1,284 @@
-import { SvgIconTypeMap } from '@material-ui/core'
+// import { SvgIconTypeMap } from '@material-ui/core'
 import ExpandLessIcon from '@material-ui/icons/ExpandLess'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
+import {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react'
+import {
+  Selector,
+  SelectorProps,
+  useSelectorOption,
+} from '../../../lib/selector'
+import RoundButton from '../RoundButton/RoundButton'
 import './styles.scss'
 import { setListPosition } from './utils'
 
-export type DropdownOptionsType = (
-  | [string, React.ReactNode | SvgIconTypeMap]
-  | string
-)[]
-
-export type DropdownProps = {
+export type DropdownProps = SelectorProps & {
+  pills: ReactNode
+  searchByText?: ((text: string) => unknown) | undefined
+  searchText?: string
   label?: string
-  placeholder?: string
-  disabled?: boolean
-  hidden?: boolean
-  autoUpdate?: boolean
-  value?: string | null
-  highlight?: boolean
   edit?: boolean
-  displayMode?: boolean
-  className?: string
-  getValue?(currentValue: string): void
-  hasSearch?: boolean
-  options: DropdownOptionsType
+  error?: ReactNode
+  highlight?: boolean
+  multilines?: boolean
+  position?: { top?: number; bottom?: number }
+}
+export const Dropdown: FC<DropdownProps> = (props) => {
+  const {
+    children,
+    pills,
+    edit,
+    searchByText,
+    label,
+    error,
+    highlight,
+    multilines,
+    searchText,
+    position,
+    ...selectorProps
+  } = props
+  return (
+    <Selector {...selectorProps}>
+      <DropdownComp {...props}>{children}</DropdownComp>
+    </Selector>
+  )
 }
 
-export const Dropdown: FC<DropdownProps> = ({
-  label,
-  placeholder,
-  hidden,
-  getValue,
-  hasSearch,
-  value,
-  edit,
-  displayMode,
-  highlight,
-  options,
-  disabled,
-  className,
-}) => {
-  const type =
-    options && typeof options[0] === 'string' ? 'Text' : 'IconAndText'
+const DropdownComp: FC<DropdownProps> = (props) => {
+  const {
+    pills,
+    highlight,
+    error,
+    multilines,
+    edit,
+    label,
+    searchByText,
+    disabled,
+    className,
+    hidden,
+    children,
+    multiple,
+    searchText,
+    placeholder,
+    position,
+  } = props
 
-  const [currentValue, setValue] = useState<string | undefined | null>(
-    value ? value : undefined
-  )
-  const [index, setIndex] = useState<number | undefined | null>(undefined)
-  const [isOnHover, setIsOnHover] = useState<boolean>(false)
-  const [isIconVisible, setIsIconVisible] = useState<boolean>(false)
-  const [isContentVisible, setIsContentVisible] = useState<boolean>(false)
-  const dropdownButton = useRef<HTMLInputElement>(null)
-  const dropdownContent = useRef<HTMLDivElement>(null)
+  const [showContentFlag, toggleOpen] = useReducer((_) => !_, false)
+  const [isHoveringOptions, setHoveringOptions] = useState(false)
+  const [errorLeaves, setErrorLeave] = useState<boolean>(false)
+  const [currentError, setcurrentError] = useState<ReactNode>(undefined)
 
-  // const _set = useRef(false)
+  const showContent = edit && showContentFlag
+
   useEffect(() => {
-    // if(value /* && !_set.current */){
-    setValue(value)
-    // _set.current=true
-    // }
-  }, [value])
-
-  const handleOnChange = (
-    e:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    filterFunction()
-    setValue(e.currentTarget.value)
-  }
-
-  const handleOnClick = () => {
-    if (edit) {
-      setIsIconVisible(false)
-      setIsContentVisible(true)
-      dropdownContent.current &&
-        (dropdownContent.current.style.visibility = 'visible')
-      setTimeout(
-        () => dropdownButton.current && dropdownButton.current.focus(),
-        100
-      )
+    const clickOutListener = ({ target }: MouseEvent) => {
+      if (
+        mainElemRef.current === target ||
+        mainElemRef.current?.contains(target as any)
+      ) {
+        return
+      }
+      showContent && toggleOpen()
     }
-  }
+    window.addEventListener('click', clickOutListener)
+    return () => window.removeEventListener('click', clickOutListener)
+  }, [showContent])
 
-  const setListOptionsPosition = useCallback(() => {
-    setListPosition(dropdownContent, dropdownButton, label, displayMode, window)
-  }, [dropdownContent, dropdownButton, label, displayMode])
+  const setLayout = useCallback(() => {
+    showContent &&
+      setListPosition({
+        dropdownButton,
+        dropdownContent,
+        topPosition: position && position.top,
+        bottomPosition: position && position.bottom,
+        window,
+      })
+  }, [showContent, position])
 
-  useEffect(() => {
-    window.addEventListener('scroll', setListOptionsPosition, true)
-    window.addEventListener('resize', setListOptionsPosition, true)
+  useLayoutEffect(() => {
+    showContent && setLayout()
+    window.addEventListener('scroll', setLayout)
+    window.addEventListener('resize', setLayout)
     return () => {
-      window.removeEventListener('scroll', setListOptionsPosition, true)
-      window.removeEventListener('resize', setListOptionsPosition, true)
+      window.removeEventListener('scroll', setLayout)
+      window.removeEventListener('resize', setLayout)
     }
-  }, [setListOptionsPosition])
+  }, [setLayout, showContent])
+
+  showContent && searchByText?.('')
+  useLayoutEffect(() => {
+    showContent && dropdownButton.current?.focus()
+  }, [showContent])
+  useEffect(() => {
+    showContent && searchByText?.('')
+  }, [showContent, searchByText])
 
   useEffect(() => {
-    setListPosition(dropdownContent, dropdownButton, label, displayMode, window)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // TODO
-  const handleOnKeyDown = (
-    e:
-      | React.KeyboardEvent<HTMLInputElement>
-      | React.KeyboardEvent<HTMLDivElement>
-  ) => {
-    if (e.key === 'ArrowUp') {
-      // Up
-    } else if (e.key === 'ArrowDown') {
-      // Down
-      //dropdownButton.current?.isSameNode(e.currentTarget) &&
-      //dropdownContent.current && (dropdownContent.current.firstChild as HTMLElement)?.focus()
+    if (error) {
+      setErrorLeave(false)
+      setcurrentError(error)
+    } else {
+      if (currentError) {
+        setErrorLeave(true)
+        setTimeout(() => {
+          setcurrentError(undefined)
+        }, 500)
+      } else {
+        setcurrentError(undefined)
+      }
     }
-  }
+  }, [error, setErrorLeave, currentError])
 
-  const handleOnSelection = (
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    i: number
-  ) => {
-    setValue((e.currentTarget as HTMLElement).innerText)
-    setIndex(i)
-    dropdownContent.current &&
-      (dropdownContent.current.style.visibility = 'hidden')
-    setIsIconVisible(true)
-    setIsContentVisible(false)
-  }
-
-  const handleOnBlur = () => {
-    if (!isOnHover) {
-      dropdownContent.current &&
-        (dropdownContent.current.style.visibility = 'hidden')
-      index && setIsIconVisible(true)
-      setIsContentVisible(false)
-    }
-  }
-
-  useEffect(() => {
-    type === 'IconAndText' &&
-      value === 'string' &&
-      value.length > 0 &&
-      setIsIconVisible(true)
-  }, [type, value, setIsIconVisible])
-
-  useEffect(() => {
-    getValue && currentValue && getValue(currentValue)
-  }, [currentValue, getValue])
-
-  useEffect(() => {
-    typeof index === 'number' && setIsIconVisible(true)
-  }, [index])
-
-  const filterFunction = useCallback((value?: string) => {
-    const filter = (
-      value ? value : dropdownButton.current?.value
-    )?.toUpperCase()
-    const div = dropdownContent.current
-    let length = 0
-    //FIXME: can't call this way as div may be null
-    // Array.prototype.slice.call(null) throws
-    // TSC can't detect issues on these hacks ( `this` substitution )
-    Array.prototype.slice
-      .call(div?.getElementsByClassName('option'))
-      .forEach((e, i) => {
-        const txtValue = e.innerText.toUpperCase()
-        if (txtValue.indexOf(filter) > -1) {
-          setValue(e.innerText)
-          txtValue === filter ? setIndex(i) : setIndex(undefined)
-          e.style.display = ''
-          length++
-        } else {
-          setIndex(undefined)
-          e.style.display = 'none'
-        }
-      })
-    length > 0
-      ? div && (div.style.visibility = 'visible')
-      : div && (div.style.visibility = 'hidden')
-  }, [])
-
-  useEffect(() => {
-    if (type === 'IconAndText' && value && options) {
-      const newOptions = options as any[]
-      newOptions.every((e, i) => {
-        return value === e[0] && setIndex(i)
-      })
-    }
-  }, [value, type, options])
-
-  const optionsList =
-    type === 'Text'
-      ? options?.map((currentValue, i) => {
-          return (
-            <div
-              key={i}
-              data-key={i}
-              className="option only-text"
-              onClick={(e) => handleOnSelection(e, i)}
-              onKeyUp={handleOnKeyDown}
-            >
-              {currentValue}
-            </div>
-          )
-        })
-      : options?.map((currentValue, i) => {
-          return (
-            <div
-              key={i}
-              data-key={i}
-              className="option icon-and-text"
-              onClick={(e) => handleOnSelection(e, i)}
-              onKeyUp={handleOnKeyDown}
-            >
-              {currentValue[1]}
-              <span>{currentValue[0]}</span>
-            </div>
-          )
-        })
+  const mainElemRef = useRef<HTMLDivElement>(null)
+  const dropdownButton = useRef<HTMLInputElement>(null)
+  const dropdownContent = useRef<HTMLInputElement>(null)
 
   return (
     <div
-      className={`dropdown ${hasSearch ? 'search' : ''} ${
-        disabled ? 'disabled' : ''
-      } ${displayMode ? 'display-mode' : ''} ${
-        !edit ? 'not-editing' : ''
-      } ${className}`}
+      ref={mainElemRef}
+      className={`dropdown ${className ? className : ''} ${
+        searchByText ? 'search' : ''
+      }${disabled ? ' disabled' : ''} ${
+        highlight || error ? ' highlight' : ''
+      } ${!errorLeaves && error ? 'enter-error' : ''} ${
+        errorLeaves ? 'leave-error' : ''
+      }`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
       {label && <label>{label}</label>}
       <div
-        className={`input-container${displayMode ? ' display-mode' : ''}${
-          !edit ? ' not-editing' : ''
-        }${highlight ? ' highlight' : ''}`}
-        onClick={handleOnClick}
+        onClick={showContent ? undefined : toggleOpen}
+        className={`input-container${disabled || !edit ? ' not-editing' : ''}${
+          highlight ? ' highlight' : ''
+        }`}
       >
-        <input
-          ref={dropdownButton}
-          className={`dropdown-button search-field ${
-            displayMode ? 'display-mode' : ''
-          } ${!edit ? 'not-editing' : ''}`}
-          type="input"
-          style={
-            type === 'Text' || !isIconVisible
-              ? { visibility: 'visible', display: 'block' }
-              : { visibility: 'hidden', display: 'none' }
-          }
-          placeholder={placeholder}
-          onChange={handleOnChange}
-          onClick={handleOnClick}
-          onKeyDown={handleOnKeyDown}
-          onBlur={handleOnBlur}
-          disabled={disabled || !edit}
-          value={currentValue ? currentValue : ''}
-        />
-        {isIconVisible &&
-          typeof index === 'number' &&
-          index > -1 &&
-          options &&
-          options[index]?.length === 2 &&
-          options.map(
-            (currentValue, i) =>
-              i === index && (
-                <div key={i} className="icons scroll">
-                  {currentValue[1]}
-                </div>
-              )
-          )}
-        {isContentVisible ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        {showContent || !pills ? (
+          <>
+            <input
+              ref={dropdownButton}
+              className={`dropdown-button search-field  ${
+                disabled || !edit ? 'not-editing' : ''
+              }`}
+              placeholder={placeholder}
+              onInput={({ currentTarget }) =>
+                searchByText?.(currentTarget.value)
+              }
+              onBlur={showContent && isHoveringOptions ? undefined : toggleOpen}
+              disabled={disabled || !edit}
+              defaultValue={searchText}
+            />
+            <ExpandLessIcon onClickCapture={toggleOpen} />
+          </>
+        ) : (
+          <>
+            <div
+              className={`dropdown-button ${multiple ? 'multiple' : 'single'} 
+              ${multilines ? 'multilines' : ''} 
+              ${multiple && !multilines ? 'scroll' : ''}
+              `}
+            >
+              {pills}
+            </div>
+            {!disabled && edit && <ExpandMoreIcon />}
+          </>
+        )}
       </div>
-      <div
-        ref={dropdownContent}
-        className="dropdown-content"
-        onMouseEnter={() => setIsOnHover(true)}
-        onMouseLeave={() => setIsOnHover(false)}
-        tabIndex={-1}
-      >
-        {optionsList}
-      </div>
+      {currentError && !disabled && (
+        <div className={`error-msg`}>{currentError}</div>
+      )}
+
+      {showContent && (
+        <div
+          ref={dropdownContent}
+          onMouseEnter={() => setHoveringOptions(true)}
+          onMouseLeave={() => setHoveringOptions(false)}
+          className="dropdown-content"
+          tabIndex={-1}
+          onClick={multiple ? undefined : toggleOpen}
+        >
+          {children}
+        </div>
+      )}
     </div>
   )
 }
 
-Dropdown.defaultProps = {
-  edit: true,
+export const SimplePill: FC<{
+  value: string
+  label: ReactNode
+  edit?: boolean
+}> = ({ label, value, edit }) => {
+  const { toggle } = useSelectorOption(value)
+  return (
+    <div className="dropdown-pill">
+      <div className="label">{label}</div>
+      {edit && <RoundButton onClick={toggle} />}
+    </div>
+  )
+}
+export const IconPill: FC<{
+  icon: ReactNode
+}> = ({ icon }) => {
+  return <div className="dropdown-pill icon">{icon}</div>
 }
 
-export default Dropdown
+export const IconTextPill: FC<{
+  icon: ReactNode
+  label: string
+}> = ({ icon, label }) => {
+  return (
+    <div className="dropdown-pill icon-text">
+      {icon}
+      <span>{label}</span>
+    </div>
+  )
+}
+
+export type TextOptionProps = {
+  value: string
+  label: string
+}
+export const TextOption: FC<TextOptionProps> = ({ value, label }) => {
+  const { toggle, selected } = useSelectorOption(value)
+  return (
+    <div
+      key={value}
+      className={`${selected ? 'selected ' : ''}option only-text`}
+      onClick={toggle}
+    >
+      {label}
+    </div>
+  )
+}
+
+export type IconTextOptionProps = {
+  value: string
+  label: string
+  icon: ReactNode
+}
+export const IconTextOption: FC<IconTextOptionProps> = ({
+  value,
+  label,
+  icon,
+}) => {
+  const { toggle, selected } = useSelectorOption(value)
+  return (
+    <div
+      key={value}
+      className={`${selected ? 'selected ' : ''}option icon-and-text`}
+      onClick={toggle}
+    >
+      {icon}
+      <span>{label}</span>
+    </div>
+  )
+}

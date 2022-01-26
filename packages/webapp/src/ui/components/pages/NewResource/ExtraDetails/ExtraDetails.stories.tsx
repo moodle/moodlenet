@@ -1,15 +1,10 @@
-import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { SBFormikBag } from '../../../../lib/storybook/SBFormikBag'
-import {
-  LanguagesDropdown,
-  LevelDropdown,
-  MonthDropdown,
-  TypeDropdown,
-  YearsDropdown,
-} from '../FieldsData'
-import { NewResourceFormValues } from '../types'
 import { ExtraDetails, ExtraDetailsProps } from './ExtraDetails'
+import {
+  LanguagesTextOptionProps,
+  LevelTextOptionProps,
+  TypeTextOptionProps,
+} from './storiesData'
 
 const meta: ComponentMeta<typeof ExtraDetails> = {
   title: 'Pages/Extra Details',
@@ -28,34 +23,12 @@ const meta: ComponentMeta<typeof ExtraDetails> = {
 }
 
 export const ExtraDetailsStoryProps: ExtraDetailsProps = {
-  previousStep: action('previousStep'),
-  nextStep: action('nextStep'),
-  formBag: SBFormikBag<NewResourceFormValues>({
-    collections: [],
-    category: '',
-    content: '',
-    contentType: 'Link',
-    description: '',
-    format: '',
-    image: '',
-    imageUrl: '',
-    language: '',
-    level: '',
-    license: '',
-    name: '',
-    originalDateMonth: '',
-    originalDateYear: '',
-    title: '',
-    type: '',
-    visibility: 'Public',
-  }),
-  step: 'ExtraDetailsStep',
-  types: TypeDropdown,
-  levels: LevelDropdown,
-  months: MonthDropdown,
-  years: YearsDropdown,
-  languages: LanguagesDropdown,
-  // formats: FormatDropdown,
+  types: { opts: TypeTextOptionProps, selected: TypeTextOptionProps[1] },
+  levels: { opts: LevelTextOptionProps, selected: LevelTextOptionProps[1] },
+  languages: {
+    opts: LanguagesTextOptionProps,
+    selected: LanguagesTextOptionProps[1],
+  },
 }
 
 const ExtraDetailsStory: ComponentStory<typeof ExtraDetails> = (args) => (

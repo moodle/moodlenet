@@ -1,8 +1,11 @@
+import { t } from '@lingui/macro'
 import { action } from '@storybook/addon-actions'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { ComponentMeta } from '@storybook/react'
+import { useFormik } from 'formik'
+import { mixed, object, SchemaOf, string } from 'yup'
+import { MNEnv } from '../../../../../constants'
 import { people } from '../../../../../helpers/factories'
 import { randomIntFromInterval } from '../../../../../helpers/utilities'
-import { SBFormikBag } from '../../../../lib/storybook/SBFormikBag'
 import { ProfileFormValues } from '../../../pages/Profile/types'
 import { ProfileCard, ProfileCardProps } from './ProfileCard'
 
@@ -12,14 +15,7 @@ const meta: ComponentMeta<typeof ProfileCard> = {
   argTypes: {
     // backgroundColor: { control: 'color' },
   },
-  excludeStories: [
-    'ProfileCardStoryProps',
-    'ProfileCardLoggedOutStoryProps',
-    'ProfileCardLoggedInStoryProps',
-    'ProfileCardOwnerStoryProps',
-    'ProfileCardAdminStoryProps',
-    'ProfileCardApprovedStoryProps',
-  ],
+  excludeStories: ['useProfileCardStoryProps'],
   decorators: [
     (Story) => (
       <div style={{ maxWidth: 500 }}>
@@ -29,77 +25,121 @@ const meta: ComponentMeta<typeof ProfileCard> = {
   ],
 }
 
-const randomProfileIndex = randomIntFromInterval(0, 3)
-
-export const ProfileCardStoryProps: ProfileCardProps = {
-  backgroundUrl: people[randomProfileIndex]?.backgroundUrl!,
-  avatarUrl: people[randomProfileIndex]?.avatarUrl!,
-  isOwner: false,
-  isAuthenticated: false,
-  approveUserFormBag: SBFormikBag({}),
-  unapproveUserForm: SBFormikBag({}),
-  toggleFollow: action('toogleFollow'),
-  toggleIsEditing: action('toogleIsEditing'),
-  openSendMessage: action('openSendMessage'),
-  formBag: SBFormikBag<ProfileFormValues>({
-    displayName: people[randomProfileIndex]?.displayName!,
-    description:
-      'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
-    organizationName: people[randomProfileIndex]?.organization!,
-    location: people[randomProfileIndex]?.location!,
-    siteUrl: 'https://iuri.is/',
-    avatarImage: null,
-    backgroundImage: null,
-    username: people[randomProfileIndex]?.username!,
-  }),
-  requestApprovalFormBag: SBFormikBag({}),
+export const validationSchema: SchemaOf<ProfileFormValues> = object({
+  avatarImage: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && v.size > MNEnv.maxUploadSize
+        ? createError({ message: t`This file is too big for uploading` })
+        : true
+    )
+    .optional(),
+  backgroundImage: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && v.size > MNEnv.maxUploadSize
+        ? createError({ message: t`This file is too big for uploading` })
+        : true
+    )
+    .optional(),
+  displayName: string()
+    .max(160)
+    .min(3)
+    .required(t`Please provide a display name`),
+  location: string().optional(),
+  organizationName: string().max(30).min(3).optional(),
+  siteUrl: string().url().optional(),
+  description: string()
+    .max(4096)
+    .min(3)
+    .required(t`Please provide a Description`),
+})
+export const useProfileCardStoryProps = (overrides?: {
+  editFormValues?: Partial<ProfileFormValues>
+  props?: Partial<ProfileCardProps>
+}): ProfileCardProps => {
+  const person = people[randomIntFromInterval(0, 3)]
+  return {
+    isOwner: false,
+    isAuthenticated: false,
+    approveUserForm: useFormik({
+      initialValues: {},
+      onSubmit: action('approve User'),
+    }),
+    unapproveUserForm: useFormik({
+      initialValues: {},
+      onSubmit: action('unapprove User'),
+    }),
+    toggleFollowForm: useFormik({
+      initialValues: {},
+      onSubmit: action('toggle Follow'),
+    }),
+    requestApprovalForm: useFormik({
+      initialValues: {},
+      onSubmit: action('request Approval'),
+    }),
+    toggleIsEditing: action('toogle Is Editing'),
+    openSendMessage: action('open Send Message'),
+    editForm: useFormik<ProfileFormValues>({
+      onSubmit: action('submit edit'),
+      validationSchema,
+      initialValues: {
+        displayName: person!.username,
+        description:
+          'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
+        organizationName: person!.organization,
+        location: person!.location,
+        siteUrl: 'https://iuri.is/',
+        avatarImage: null,
+        backgroundImage: null,
+        ...overrides?.editFormValues,
+      },
+    }),
+    ...overrides?.props,
+  }
 }
 
-export const ProfileCardLoggedOutStoryProps: ProfileCardProps = {
-  ...ProfileCardStoryProps,
+export const LoggedOut = () => {
+  const props = useProfileCardStoryProps()
+  return <ProfileCard {...props} />
 }
 
-export const ProfileCardLoggedInStoryProps: ProfileCardProps = {
-  ...ProfileCardStoryProps,
-  isAuthenticated: true,
+export const LoggedIn = () => {
+  const props = useProfileCardStoryProps({
+    props: {
+      isAuthenticated: true,
+    },
+  })
+  return <ProfileCard {...props} />
 }
 
-export const ProfileCardOwnerStoryProps: ProfileCardProps = {
-  ...ProfileCardLoggedInStoryProps,
-  isOwner: true,
-  isElegibleForApproval: true,
-  //isWaitingApproval: true,
+export const Owner = () => {
+  const props = useProfileCardStoryProps({
+    props: {
+      showAccountApprovedSuccessAlert: true,
+      isApproved: true,
+    },
+  })
+  return <ProfileCard {...props} />
+}
+export const Approved = () => {
+  const props = useProfileCardStoryProps({
+    props: {
+      isOwner: true,
+      isElegibleForApproval: true,
+      showAccountApprovedSuccessAlert: true,
+      isApproved: true,
+    },
+  })
+  return <ProfileCard {...props} />
 }
 
-export const ProfileCardApprovedStoryProps: ProfileCardProps = {
-  ...ProfileCardOwnerStoryProps,
-  showAccountApprovedSuccessAlert: true,
-  isApproved: true,
+export const Admin = () => {
+  const props = useProfileCardStoryProps({
+    props: {
+      isAuthenticated: true,
+      isAdmin: true,
+    },
+  })
+  return <ProfileCard {...props} />
 }
-
-export const ProfileCardAdminStoryProps: ProfileCardProps = {
-  ...ProfileCardStoryProps,
-  isAuthenticated: true,
-  isAdmin: true,
-}
-
-const ProfileCardStory: ComponentStory<typeof ProfileCard> = (args) => (
-  <ProfileCard {...args} />
-)
-
-export const LoggedOut = ProfileCardStory.bind({})
-LoggedOut.args = ProfileCardLoggedOutStoryProps
-
-export const LoggedIn = ProfileCardStory.bind({})
-LoggedIn.args = ProfileCardLoggedInStoryProps
-
-export const Owner = ProfileCardStory.bind({})
-Owner.args = ProfileCardOwnerStoryProps
-
-export const Approved = ProfileCardStory.bind({})
-Approved.args = ProfileCardApprovedStoryProps
-
-export const Admin = ProfileCardStory.bind({})
-Admin.args = ProfileCardAdminStoryProps
 
 export default meta

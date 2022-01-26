@@ -9,7 +9,7 @@ import { withCtrl } from '../../../../lib/ctrl'
 import defaultBackgroud from '../../../../static/img/default-background.svg'
 import '../../../../styles/tags.css'
 import Card from '../../../atoms/Card/Card'
-import { Visibility } from '../../../pages/NewResource/FieldsData'
+import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import './styles.scss'
 
 export type CollectionCardProps = {

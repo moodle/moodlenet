@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro'
 import { Maybe } from '@moodlenet/common/dist/utils/types'
+import { useFormik } from 'formik'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { object, SchemaOf, string } from 'yup'
 import { useSession } from '../../../../../../context/Global/Session'
@@ -9,7 +10,7 @@ import {
 } from '../../../../../../hooks/glob/nav'
 import { href } from '../../../../../elements/link'
 import { CtrlHook, ctrlHook } from '../../../../../lib/ctrl'
-import { SubmitForm, useFormikBag } from '../../../../../lib/formik'
+import { SubmitForm } from '../../../../../lib/formik'
 import { useMainPageWrapperCtrl } from '../../../../templates/MainPageWrapperCtrl.tsx/MainPageWrapperCtrl'
 import { useAccessHeaderCtrl } from '../../AccessHeader/Ctrl/AccessHeaderCtrl'
 import { LoginFormValues, LoginProps } from '../Login'
@@ -40,7 +41,7 @@ export const useLoginCtrl: CtrlHook<
     [login, activationEmailToken]
   )
 
-  const [formik, formBag] = useFormikBag<LoginFormValues>({
+  const form = useFormik<LoginFormValues>({
     initialValues: { email: '', password: '' },
     onSubmit,
     validationSchema,
@@ -48,7 +49,7 @@ export const useLoginCtrl: CtrlHook<
 
   useEffect(() => {
     setWrongCreds(false)
-  }, [formik.values])
+  }, [form.values])
 
   const loginProps = useMemo<LoginProps>(() => {
     const loginProps: LoginProps = {
@@ -57,7 +58,7 @@ export const useLoginCtrl: CtrlHook<
         {},
         'Login Access Header'
       ),
-      formBag,
+      form,
       wrongCreds,
       // landingHref,
       signupHref,
@@ -69,7 +70,7 @@ export const useLoginCtrl: CtrlHook<
       ),
     }
     return loginProps
-  }, [formBag, wrongCreds])
+  }, [form, wrongCreds])
 
   return loginProps && [loginProps]
 }

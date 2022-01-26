@@ -11,10 +11,16 @@ export const getLocalAssetUrl = (_: { baseStaticAssetUrl: string; assetId: strin
 export const getAssetRefUrl = ({
   assetRef,
   baseStaticAssetUrl,
+  noFixProtocol,
 }: {
   baseStaticAssetUrl: string
   assetRef: AssetRef
+  noFixProtocol?: boolean
 }): string => {
   const { location, ext } = assetRef
-  return ext ? location : getLocalAssetUrl({ baseStaticAssetUrl, assetId: location })
+  return ext
+    ? noFixProtocol || /\w+:\/\//.test(location)
+      ? location
+      : `//${location}`
+    : getLocalAssetUrl({ baseStaticAssetUrl, assetId: location })
 }

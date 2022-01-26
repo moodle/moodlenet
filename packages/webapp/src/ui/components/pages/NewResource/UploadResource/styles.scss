@@ -11,7 +11,7 @@
 
     > .main-column {
       width: 60%;
-      height: fit-content;
+      height: auto;
       display: flex;
       flex-direction: column;
 
@@ -26,7 +26,7 @@
       }
 
       > .card {
-        height: 300px;
+        min-height: 300px;
         width: 100%;
         display: flex;
         flex-direction: column;
@@ -36,7 +36,8 @@
         > .main-container {
           height: 100%;
           width: 100%;
-          min-height: 200px;
+          display: flex;
+          flex: 1;
 
           > .uploader {
             width: 100%;
@@ -83,6 +84,25 @@
                 padding: 0 18px;
               }
             }
+
+            &.error {
+              animation: border-blink 3s ease-out;
+
+              @keyframes border-blink {
+                0% {
+                  border: 4px dashed #d1d4e0;
+                }
+                30% {
+                  border: 4px dashed red;
+                }
+                80% {
+                  border: 4px dashed red;
+                }
+                100% {
+                  border: 4px dashed #d1d4e0;
+                }
+              }
+            }
           }
           > .image-container {
             display: flex;
@@ -103,23 +123,31 @@
           display: flex;
           gap: 15px;
 
+          > .license-dropdown {
+            max-width: 132px;
+          }
+
           > .subcontainer,
+          > .input-text-field,
           .dropdown > input {
             width: 100%;
             height: fit-content;
-            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.0509804);
-            border: 1px solid #e4e5eb;
+          }
+
+          > .subcontainer,
+          > .input-text-field > input,
+          .dropdown > input {
+            width: 100%;
+            height: fit-content;
+            box-shadow: 0 0 6px #dedede;
             border-radius: 10px;
           }
 
           > .link {
-            height: 100%;
-            height: 46px;
             > .input-container {
               padding: 8px 0;
               height: 100%;
               background-color: transparent;
-              box-shadow: none;
               > :last-child:not(input) {
                 margin-right: 10px;
               }
@@ -199,8 +227,13 @@
     > .side-column > .data-inputs > .subject-and-visibility {
       display: flex;
       gap: 15px;
-      .visibility-dropdown {
-        max-width: 125px;
+      > .subject-dropdown {
+        max-width: max(calc(100% - 150px), calc(100% - 91px));
+      }
+
+      > .visibility-dropdown {
+        max-width: (min(125px, 100% - 250px));
+        min-width: 76px;
       }
     }
 
@@ -209,6 +242,10 @@
         width: 100%;
         height: 100%;
         height: fit-content;
+
+        > .card {
+          height: 300px;
+        }
 
         > .small-screen-details {
           display: block;
