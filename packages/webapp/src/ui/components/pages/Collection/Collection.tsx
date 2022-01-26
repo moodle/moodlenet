@@ -146,7 +146,7 @@ export const Collection = withCtrl<CollectionProps>(
         {isToDelete && deleteCollection && (
           <Modal
             title={t`Alert`}
-            actions={[
+            actions={
               <PrimaryButton
                 onClick={() => {
                   deleteCollection.submitForm()
@@ -155,8 +155,8 @@ export const Collection = withCtrl<CollectionProps>(
                 color="red"
               >
                 <Trans>Delete</Trans>
-              </PrimaryButton>,
-            ]}
+              </PrimaryButton>
+            }
             onClose={() => setIsToDelete(false)}
             style={{ maxWidth: '400px' }}
             className="delete-message"

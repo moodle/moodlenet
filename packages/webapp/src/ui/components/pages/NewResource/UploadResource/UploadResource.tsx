@@ -209,7 +209,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
         {isToDelete && (
           <Modal
             title={t`Alert`}
-            actions={[
+            actions={
               <PrimaryButton
                 onClick={() => {
                   setShouldShowErrors(false)
@@ -219,8 +219,8 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                 color="red"
               >
                 <Trans>Delete</Trans>
-              </PrimaryButton>,
-            ]}
+              </PrimaryButton>
+            }
             onClose={() => setIsToDelete(false)}
             style={{ maxWidth: '400px' }}
             className="delete-message"
