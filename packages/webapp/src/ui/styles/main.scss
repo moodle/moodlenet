@@ -109,11 +109,11 @@ abbr {
     box-shadow: 0 0 0 2px red;
 
     @keyframes shadow-fade-in {
-      from {
-        box-shadow: 0 0 6px #dedede;
-      }
+      // from {
+      //   box-shadow: 0 0 6px #dedede;
+      // }
       to {
-        box-shadow: 0 0 0 2px red;
+        box-shadow: inherit;
       }
     }
   }
@@ -137,6 +137,24 @@ abbr {
       }
     }
   }
+
+  &.underline {
+    > .input-container,
+    > .textarea-container {
+      animation: border-fade-in-underline 0.5s ease-out;
+      box-shadow: none;
+      border-radius: 0;
+      border-bottom: 2px solid rgba(255, 0, 0, 1);
+      height: auto;
+      padding: 0 0 2px 0;
+
+      @keyframes border-fade-in-underline {
+        from {
+          border-bottom: 2px solid rgba(255, 0, 0, 0);
+        }
+      }
+    }
+  }
 }
 
 .leave-error:not(.disabled) {
@@ -147,10 +165,10 @@ abbr {
 
     @keyframes shadow-fade-out {
       from {
-        box-shadow: 0 0 0 2px red;
+        box-shadow: inherit;
       }
       to {
-        box-shadow: 0 0 6px #dedede;
+        box-shadow: inherit;
       }
     }
   }
@@ -171,6 +189,23 @@ abbr {
         height: 0;
         opacity: 0;
         font-size: 12px;
+      }
+    }
+  }
+
+  &.underline {
+    > .input-container,
+    > .textarea-container {
+      animation: border-fade-out-underline 0.5s ease-out;
+      box-shadow: none;
+      border-radius: 0;
+      border-bottom: 2px solid rgba(255, 0, 0, 0);
+      height: auto;
+
+      @keyframes border-fade-out-underline {
+        from {
+          border-bottom: 2px solid rgba(255, 0, 0, 1);
+        }
       }
     }
   }
