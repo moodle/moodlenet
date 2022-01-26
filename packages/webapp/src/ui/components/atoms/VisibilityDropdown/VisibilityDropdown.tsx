@@ -5,8 +5,8 @@ import { FC } from 'react'
 import {
   Dropdown,
   DropdownProps,
-  IconPill,
   IconTextOption,
+  IconTextPill,
 } from '../Dropdown/Dropdown'
 export type Visibility = 'Public' | 'Private'
 export const Private: Visibility = `Private`
@@ -30,7 +30,7 @@ export const VisibilityDropdown: FC<
     <Dropdown
       pills={
         props.value && (
-          <IconPill
+          <IconTextPill
             icon={
               props.value === Public
                 ? VisibilityNodes.Public
@@ -38,6 +38,7 @@ export const VisibilityDropdown: FC<
                 ? VisibilityNodes.Private
                 : null
             }
+            label={props.value}
           />
         )
       }

@@ -704,7 +704,7 @@ export const Resource = withCtrl<ResourceProps>(
                   {isOwner ? (
                     <InputTextField
                       name="name"
-                      className="title"
+                      className="title underline"
                       value={form.values.name}
                       edit={isEditing}
                       onChange={form.handleChange}
@@ -752,6 +752,7 @@ export const Resource = withCtrl<ResourceProps>(
                 )}
                 {isOwner ? (
                   <InputTextField
+                    className="underline"
                     name="description"
                     textarea
                     textAreaAutoSize

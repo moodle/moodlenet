@@ -89,65 +89,67 @@
       > .error-msg {
         font-weight: initial;
       }
-      > .input-container,
-      > .textarea-container {
-        box-shadow: none;
-        border-width: 2px;
-        border-bottom-width: 2px;
-        border-radius: 0;
-        border-bottom-color: red;
-        border-bottom-style: solid;
+    }
+
+    > .profile-card-header > .subtitle > span > .enter-error {
+      > .input-container {
+        margin-top: 1px;
       }
     }
 
     > .profile-card-header {
       > .title > .display-name {
         width: 100%;
+        font-size: 19px;
+        font-weight: 700;
       }
       > .title,
-      .display-name > .input-container > input {
-        display: flex;
-        align-items: flex-start;
-        width: 100%;
-        gap: 10px;
-        font-size: 19px;
-        font-weight: bold;
-
-        > .approved-icon {
-          height: 22px;
+      .display-name > .input-container {
+        height: auto;
+        > input {
           display: flex;
-          align-items: center;
-          > svg {
-            height: 18px;
-            width: 18px;
-            &.zooom-in-enter-animation {
-              animation: enter 1s;
-            }
+          align-items: flex-start;
+          width: 100%;
+          gap: 10px;
+          font-size: 19px;
+          font-weight: bold;
 
-            @keyframes enter {
-              0% {
-                position: absolute;
-                transform: scale(25);
-                z-index: 10;
+          > .approved-icon {
+            height: 22px;
+            display: flex;
+            align-items: center;
+            > svg {
+              height: 18px;
+              width: 18px;
+              &.zooom-in-enter-animation {
+                animation: enter 1s;
               }
-              50% {
-                transform: scale(0.5);
-                position: absolute;
-                z-index: 10;
-              }
-              74% {
-                transform: scaleX(1);
-                opacity: 1;
-              }
-              75% {
-                transform: scaleX(-1);
-                opacity: 0.3;
-              }
-              100% {
-                opacity: 1;
-                position: relative;
-                height: 18px;
-                z-index: inherit;
+
+              @keyframes enter {
+                0% {
+                  position: absolute;
+                  transform: scale(25);
+                  z-index: 10;
+                }
+                50% {
+                  transform: scale(0.5);
+                  position: absolute;
+                  z-index: 10;
+                }
+                74% {
+                  transform: scaleX(1);
+                  opacity: 1;
+                }
+                75% {
+                  transform: scaleX(-1);
+                  opacity: 0.3;
+                }
+                100% {
+                  opacity: 1;
+                  position: relative;
+                  height: 18px;
+                  z-index: inherit;
+                }
               }
             }
           }
@@ -166,23 +168,36 @@
         }
 
         @media (min-width: 450px) {
-          > *:not(:first-child):before {
+          &:not(.edit) > *:not(:first-child):before {
             content: '·';
+          }
+          &.edit {
+            gap: 12px;
           }
         }
 
-        > * {
+        > span,
+        > a {
           display: flex;
-          align-items: center;
-          gap: 6px;
-        }
+          align-items: flex-start;
+          > .input-text-field > .input-container {
+            height: 14px;
+            > input {
+              font-size: 12px;
 
-        > span > .input-text-field > .input-container > input {
-          font-size: 12px;
+              &::placeholder {
+                font-size: 12px;
+                color: #b6bacb;
+              }
+            }
+          }
 
-          &::placeholder {
-            font-size: 12px;
-            color: #b6bacb;
+          &:not(:first-child) {
+            gap: 6px;
+          }
+
+          > .at-symbol {
+            margin-right: 2px;
           }
         }
       }
