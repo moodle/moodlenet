@@ -13,6 +13,7 @@ import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown
 import './styles.scss'
 
 export type CollectionCardProps = {
+  toggleVisible?(): unknown
   imageUrl: string | null
   title: string
   visibility: Visibility
@@ -31,6 +32,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
   ({
     imageUrl,
     title,
+    toggleVisible,
     visibility,
     isAuthenticated,
     isOwner,
@@ -67,6 +69,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
           <div className="right">
             {isOwner && (
               <abbr
+                onClick={toggleVisible}
                 className={`visibility ${
                   visibility === 'Public' ? 'public' : 'private'
                 }`}
