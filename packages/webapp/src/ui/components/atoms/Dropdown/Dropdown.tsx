@@ -163,7 +163,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
               onInput={({ currentTarget }) =>
                 searchByText?.(currentTarget.value)
               }
-              onClick={(_) => _.stopPropagation()}
+              onClick={showContent ? (_) => _.stopPropagation() : undefined}
               onBlur={showContent && isHoveringOptions ? undefined : toggleOpen}
               disabled={disabled || !edit}
               defaultValue={searchText}
