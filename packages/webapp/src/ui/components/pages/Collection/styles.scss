@@ -299,6 +299,12 @@
             }
           }
 
+          &.enter-error {
+            > .input-container {
+              box-shadow: 0 0 0 2px red;
+            }
+          }
+
           > label {
             margin-bottom: 0;
           }

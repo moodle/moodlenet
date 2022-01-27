@@ -29,7 +29,6 @@ import Modal from '../../../atoms/Modal/Modal'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
-import Snackbar from '../../../atoms/Snackbar/Snackbar'
 import { VisibilityDropdown } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import { useNewResourcePageCtx } from '../NewResource'
 import { NewResourceFormValues } from '../types'
@@ -233,17 +232,6 @@ export const UploadResource = withCtrl<UploadResourceProps>(
 
     return (
       <div className="upload-resource">
-        {shouldShowErrors && form.errors.content && (
-          <Snackbar
-            position="bottom"
-            type="error"
-            autoHideDuration={5000}
-            showCloseButton={false}
-          >
-            {form.errors.content}
-          </Snackbar>
-        )}
-
         {isToDelete && (
           <Modal
             title={t`Alert`}

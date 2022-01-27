@@ -75,6 +75,7 @@ export const Login = withCtrl<LoginProps>(
                   />
                   <InputTextField
                     className="password"
+                    placeholder={t`Password`}
                     type="password"
                     name="password"
                     edit
