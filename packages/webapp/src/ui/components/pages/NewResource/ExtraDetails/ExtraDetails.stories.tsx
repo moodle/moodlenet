@@ -1,3 +1,4 @@
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { ExtraDetails, ExtraDetailsProps } from './ExtraDetails'
 import {
@@ -29,6 +30,9 @@ export const ExtraDetailsStoryProps: ExtraDetailsProps = {
     opts: LanguagesTextOptionProps,
     selected: LanguagesTextOptionProps[1],
   },
+  setLanguageFilter: action('setLanguageFilter'),
+  setLevelFilter: action('setLevelFilter'),
+  setTypeFilter: action('setTypeFilter'),
 }
 
 const ExtraDetailsStory: ComponentStory<typeof ExtraDetails> = (args) => (

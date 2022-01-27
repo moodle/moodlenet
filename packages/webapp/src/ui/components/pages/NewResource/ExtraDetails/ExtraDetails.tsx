@@ -15,8 +15,11 @@ import './styles.scss'
 
 export type ExtraDetailsProps = {
   types: SelectOptions<TextOptionProps>
+  setTypeFilter(text: string): unknown
   levels: SelectOptions<TextOptionProps>
+  setLevelFilter(text: string): unknown
   languages: SelectOptions<TextOptionProps>
+  setLanguageFilter(text: string): unknown
 }
 // const usingFields: (keyof NewResourceFormValues)[] = [
 //   'type',
@@ -27,7 +30,14 @@ export type ExtraDetailsProps = {
 // ]
 
 export const ExtraDetails = withCtrl<ExtraDetailsProps>(
-  ({ types, levels, languages }) => {
+  ({
+    types,
+    levels,
+    languages,
+    setLanguageFilter,
+    setLevelFilter,
+    setTypeFilter,
+  }) => {
     const { prevForm, form } = useNewResourcePageCtx()
 
     const dataInputs = (
@@ -39,6 +49,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           value={form.values.type}
           onChange={form.handleChange}
           edit
+          searchByText={setTypeFilter}
           pills={
             types.selected && (
               <SimplePill
@@ -48,9 +59,19 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
             )
           }
         >
-          {types.opts.map(({ label, value }) => (
-            <TextOption key={value} label={label} value={value} />
-          ))}
+          {types.selected && (
+            <TextOption
+              key={types.selected.value}
+              value={types.selected.value}
+              label={types.selected.label}
+            />
+          )}
+          {types.opts.map(
+            ({ label, value }) =>
+              types.selected?.value !== value && (
+                <TextOption key={value} label={label} value={value} />
+              )
+          )}
         </Dropdown>
         <Dropdown
           name="level"
@@ -59,6 +80,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           value={form.values.level}
           onChange={form.handleChange}
           edit
+          searchByText={setLevelFilter}
           pills={
             levels.selected && (
               <SimplePill
@@ -68,9 +90,19 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
             )
           }
         >
-          {levels.opts.map(({ label, value }) => (
-            <TextOption key={value} label={label} value={value} />
-          ))}
+          {levels.selected && (
+            <TextOption
+              key={levels.selected.value}
+              value={levels.selected.value}
+              label={levels.selected.label}
+            />
+          )}
+          {levels.opts.map(
+            ({ label, value }) =>
+              levels.selected?.value !== value && (
+                <TextOption key={value} label={label} value={value} />
+              )
+          )}
         </Dropdown>
         <div className="date">
           <label>
@@ -133,6 +165,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           value={form.values.language}
           onChange={form.handleChange}
           edit
+          searchByText={setLanguageFilter}
           pills={
             languages.selected && (
               <SimplePill
@@ -142,9 +175,19 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
             )
           }
         >
-          {languages.opts.map(({ label, value }) => (
-            <TextOption key={value} label={label} value={value} />
-          ))}
+          {languages.selected && (
+            <TextOption
+              key={languages.selected.value}
+              label={languages.selected.label}
+              value={languages.selected.value}
+            />
+          )}
+          {languages.opts.map(
+            ({ label, value }) =>
+              languages.selected?.value !== value && (
+                <TextOption key={value} label={label} value={value} />
+              )
+          )}
         </Dropdown>
       </div>
     )
