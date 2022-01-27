@@ -4,6 +4,7 @@ query CollectionCard($id: ID!, $myProfileId: [ID!]) {
       id
       name
       image
+      description
       _published
       followersCount: _relCount(type: Follows, inverse: true)
       creator: _rel(

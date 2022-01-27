@@ -8,6 +8,7 @@ import { useSession } from '../../../../../../context/Global/Session'
 import { getMaybeAssetRefUrl } from '../../../../../../helpers/data'
 import { href } from '../../../../../elements/link'
 import { CtrlHook } from '../../../../../lib/ctrl'
+import { useEditCollectionMutation } from '../../../../pages/Collection/Ctrl/CollectionPage.gen'
 import { CollectionCardProps } from '../CollectionCard'
 import {
   useAddCollectionCardRelationMutation,
@@ -34,6 +35,24 @@ export const useCollectionCardCtrl: CtrlHook<
 
   const [addRelation, addRelationRes] = useAddCollectionCardRelationMutation()
   const [delRelation, delRelationRes] = useDelCollectionCardRelationMutation()
+
+  const [edit, editColl] = useEditCollectionMutation()
+  const toggleVisible = useCallback(() => {
+    if (!(collectionNode && session && !editColl.loading)) {
+      return
+    }
+    return edit({
+      variables: {
+        id,
+        collInput: {
+          _published: !collectionNode._published,
+          description: collectionNode.description,
+          name: collectionNode.name,
+        },
+      },
+    })
+  }, [collectionNode, edit, editColl.loading, id, session])
+
   const myFollowEdgeId = collectionNode?.myFollow.edges[0]?.edge.id
   const toggleFollow = useCallback(() => {
     if (!session || addRelationRes.loading || delRelationRes.loading) {
@@ -102,6 +121,7 @@ export const useCollectionCardCtrl: CtrlHook<
     () =>
       collectionNode
         ? {
+            toggleVisible,
             organization: localOrg.name,
             title: collectionNode.name,
             imageUrl: getMaybeAssetRefUrl(collectionNode.image),
@@ -117,6 +137,7 @@ export const useCollectionCardCtrl: CtrlHook<
           }
         : null,
     [
+      toggleVisible,
       collectionNode,
       id,
       isAuthenticated,
