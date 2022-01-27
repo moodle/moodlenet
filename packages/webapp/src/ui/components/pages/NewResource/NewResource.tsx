@@ -101,10 +101,21 @@ export const NewResource = withCtrl<NewResourceProps>(
           <Snackbar
             position="bottom"
             type="error"
-            autoHideDuration={5000}
+            autoHideDuration={6000}
             showCloseButton={false}
           >
             <Trans>{form.errors.content}</Trans>
+          </Snackbar>
+        )}
+        {form.isSubmitting && (
+          <Snackbar
+            position="bottom"
+            type="info"
+            waitDuration={200}
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Content uploading, please don't close the tab</Trans>
           </Snackbar>
         )}
         <HeaderPageTemplate

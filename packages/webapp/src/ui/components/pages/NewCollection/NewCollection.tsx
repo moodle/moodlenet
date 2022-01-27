@@ -1,4 +1,6 @@
+import { Trans } from '@lingui/macro'
 import { CP, withCtrl } from '../../../lib/ctrl'
+import Snackbar from '../../atoms/Snackbar/Snackbar'
 import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
@@ -40,6 +42,17 @@ export const NewCollection = withCtrl<NewCollectionProps>(
         {...headerPageTemplateProps}
         style={{ backgroundColor: '#f4f5f7' }}
       >
+        {stepProps.form.isSubmitting && (
+          <Snackbar
+            position="bottom"
+            type="info"
+            waitDuration={200}
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Content uploading, please don't close the tab</Trans>
+          </Snackbar>
+        )}
         <div className="new-collection">
           {/*<ProgressState
           stateNames={progressStates}
