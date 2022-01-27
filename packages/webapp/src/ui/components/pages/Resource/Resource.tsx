@@ -71,11 +71,6 @@ export type ResourceProps = {
   tags: FollowTag[]
   contributorCardProps: ContributorCardProps
   form: FormikHandle<Omit<ResourceFormValues, 'addToCollections'>>
-  categories: SelectOptions<TextOptionProps>
-  licenses: SelectOptions<IconTextOptionProps>
-  types: SelectOptions<TextOptionProps>
-  levels: SelectOptions<TextOptionProps>
-  languages: SelectOptions<TextOptionProps>
   contentUrl: string
   toggleLikeForm: FormikHandle
   toggleBookmarkForm: FormikHandle
@@ -84,8 +79,17 @@ export type ResourceProps = {
   sendToMoodleLmsForm: FormikHandle<{ site?: string }>
   resourceFormat: string
   contentType: 'link' | 'file'
-}
 
+  licenses: SelectOptions<IconTextOptionProps>
+  setCategoryFilter(text: string): unknown
+  categories: SelectOptions<TextOptionProps>
+  setTypeFilter(text: string): unknown
+  types: SelectOptions<TextOptionProps>
+  setLevelFilter(text: string): unknown
+  levels: SelectOptions<TextOptionProps>
+  setLanguageFilter(text: string): unknown
+  languages: SelectOptions<TextOptionProps>
+}
 export const Resource = withCtrl<ResourceProps>(
   ({
     headerPageTemplateProps,
@@ -112,6 +116,10 @@ export const Resource = withCtrl<ResourceProps>(
     resourceFormat,
     contentType,
     addToCollectionsForm,
+    setCategoryFilter,
+    setLanguageFilter,
+    setLevelFilter,
+    setTypeFilter,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
@@ -230,6 +238,7 @@ export const Resource = withCtrl<ResourceProps>(
           highlight={shouldShowErrors && !!form.errors.category}
           error={form.errors.category}
           position={{ top: 50, bottom: 25 }}
+          searchByText={setCategoryFilter}
           pills={
             categories.selected && (
               <SimplePill
@@ -240,9 +249,19 @@ export const Resource = withCtrl<ResourceProps>(
             )
           }
         >
-          {categories.opts.map(({ label, value }) => (
-            <TextOption key={value} value={value} label={label} />
-          ))}
+          {categories.selected && (
+            <TextOption
+              key={categories.selected.value}
+              value={categories.selected.value}
+              label={categories.selected.label}
+            />
+          )}
+          {categories.opts.map(
+            ({ label, value }) =>
+              categories.selected?.value !== value && (
+                <TextOption key={value} label={label} value={value} />
+              )
+          )}
         </Dropdown>
         {contentType === 'file' && (
           <Dropdown
@@ -281,6 +300,7 @@ export const Resource = withCtrl<ResourceProps>(
           onChange={form.handleChange}
           edit
           position={{ top: 50, bottom: 25 }}
+          searchByText={setTypeFilter}
           pills={
             types.selected && (
               <SimplePill
@@ -290,9 +310,19 @@ export const Resource = withCtrl<ResourceProps>(
             )
           }
         >
-          {types.opts.map(({ label, value }) => (
-            <TextOption key={value} label={label} value={value} />
-          ))}
+          {types.selected && (
+            <TextOption
+              key={types.selected.value}
+              value={types.selected.value}
+              label={types.selected.label}
+            />
+          )}
+          {types.opts.map(
+            ({ label, value }) =>
+              types.selected?.value !== value && (
+                <TextOption key={value} label={label} value={value} />
+              )
+          )}
         </Dropdown>
         <Dropdown
           name="level"
@@ -301,6 +331,7 @@ export const Resource = withCtrl<ResourceProps>(
           onChange={form.handleChange}
           edit
           position={{ top: 50, bottom: 25 }}
+          searchByText={setLevelFilter}
           pills={
             levels.selected && (
               <SimplePill
@@ -310,9 +341,19 @@ export const Resource = withCtrl<ResourceProps>(
             )
           }
         >
-          {levels.opts.map(({ label, value }) => (
-            <TextOption key={value} label={label} value={value} />
-          ))}
+          {levels.selected && (
+            <TextOption
+              key={levels.selected.value}
+              value={levels.selected.value}
+              label={levels.selected.label}
+            />
+          )}
+          {levels.opts.map(
+            ({ label, value }) =>
+              levels.selected?.value !== value && (
+                <TextOption key={value} label={label} value={value} />
+              )
+          )}
         </Dropdown>{' '}
         <div className="date">
           <label>
@@ -373,6 +414,7 @@ export const Resource = withCtrl<ResourceProps>(
           onChange={form.handleChange}
           edit
           position={{ top: 50, bottom: 25 }}
+          searchByText={setLanguageFilter}
           pills={
             languages.selected && (
               <SimplePill
@@ -382,9 +424,19 @@ export const Resource = withCtrl<ResourceProps>(
             )
           }
         >
-          {languages.opts.map(({ label, value }) => (
-            <TextOption key={value} label={label} value={value} />
-          ))}
+          {languages.selected && (
+            <TextOption
+              key={languages.selected.value}
+              value={languages.selected.value}
+              label={languages.selected.label}
+            />
+          )}
+          {languages.opts.map(
+            ({ label, value }) =>
+              languages.selected?.value !== value && (
+                <TextOption key={value} label={label} value={value} />
+              )
+          )}
         </Dropdown>
         <Dropdown
           name="format"
