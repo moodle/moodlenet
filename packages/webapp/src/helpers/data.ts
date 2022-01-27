@@ -107,6 +107,7 @@ export const useFiltered = <T>(list: T[], keys: string) => {
         ? list
         : new Fuse(list, {
             keys: keys.split(';'),
+            shouldSort: true,
           }).search(filterText),
     [filterText, list, keys]
   )
