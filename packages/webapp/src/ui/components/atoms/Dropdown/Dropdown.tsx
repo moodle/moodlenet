@@ -113,12 +113,12 @@ const DropdownComp: FC<DropdownProps> = (props) => {
     }
   }, [setLayout, showContent])
 
-  showContent && searchByText?.('')
+  // showContent && searchByText?.('')
   useLayoutEffect(() => {
     showContent && dropdownButton.current?.focus()
   }, [showContent])
   useEffect(() => {
-    showContent && searchByText?.('')
+    !showContent && searchByText?.('')
   }, [showContent, searchByText])
 
   useEffect(() => {
