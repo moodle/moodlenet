@@ -12,7 +12,7 @@ import { useHistory } from 'react-router'
 import { array, mixed, object, SchemaOf, string } from 'yup'
 import { MNEnv } from '../../../../../constants'
 import { useSession } from '../../../../../context/Global/Session'
-import { useUploadTempFile } from '../../../../../helpers/data'
+import { useFiltered, useUploadTempFile } from '../../../../../helpers/data'
 import {
   getOriginalCreationTimestampByStrings,
   useIscedFields,
@@ -81,11 +81,28 @@ export const useNewResourceCtrl: CtrlHook<
 > = () => {
   const { session } = useSession()
   const history = useHistory()
-  const iscedFields = useIscedFields()
-  const iscedGrades = useIscedGrades()
-  const languages = useLanguages()
+  const [fliteredIscedFields, setCategoryFilter, iscedFields] = useFiltered(
+    useIscedFields(),
+    'id;name'
+  )
+
+  const [filteredIscedGrades, setLevelFilter, iscedGrades] = useFiltered(
+    useIscedGrades(),
+    'id;name'
+  )
+
+  const [filteredLanguages, setLanguageFilter, languages] = useFiltered(
+    useLanguages(),
+    'id;name'
+  )
+
+  const [fliteredResourceTypes, setTypeFilter, resourceTypes] = useFiltered(
+    useResourceTypes(),
+    'id;name'
+  )
+
   const licenses = useLicenses()
-  const resourceTypes = useResourceTypes()
+
   const myId = session?.profile.id
   const [loadMyColl, mycollectionsQRes] = useNewResourceDataPageLazyQuery({
     fetchPolicy: 'cache-and-network',
@@ -309,8 +326,9 @@ export const useNewResourceCtrl: CtrlHook<
         },
       },
       extraDetailsProps: {
+        setLanguageFilter,
         languages: {
-          opts: languages.map(({ id: value, name: label }) => ({
+          opts: filteredLanguages.map(({ id: value, name: label }) => ({
             label,
             value,
           })),
@@ -318,8 +336,9 @@ export const useNewResourceCtrl: CtrlHook<
             .filter(({ id }) => form.values.language === id)
             .map(({ id: value, name: label }) => ({ label, value }))[0],
         },
+        setLevelFilter,
         levels: {
-          opts: iscedGrades.map(({ id: value, name: label }) => ({
+          opts: filteredIscedGrades.map(({ id: value, name: label }) => ({
             label,
             value,
           })),
@@ -327,8 +346,9 @@ export const useNewResourceCtrl: CtrlHook<
             .filter(({ id }) => form.values.level === id)
             .map(({ id: value, name: label }) => ({ label, value }))[0],
         },
+        setTypeFilter,
         types: {
-          opts: resourceTypes.map(({ id: value, name: label }) => ({
+          opts: fliteredResourceTypes.map(({ id: value, name: label }) => ({
             label,
             value,
           })),
@@ -339,8 +359,10 @@ export const useNewResourceCtrl: CtrlHook<
       },
       uploadResourceProps: {
         fileMaxSize: MNEnv.maxUploadSize,
+
+        setCategoryFilter,
         categories: {
-          opts: iscedFields.map(({ id: value, name: label }) => ({
+          opts: fliteredIscedFields.map(({ id: value, name: label }) => ({
             label,
             value,
           })),
@@ -348,6 +370,7 @@ export const useNewResourceCtrl: CtrlHook<
             .filter(({ id }) => form.values.category === id)
             .map(({ id: value, name: label }) => ({ label, value }))[0],
         },
+
         licenses: {
           opts: licenses.map(([{ id: value, name: label }, icon]) => ({
             label,
@@ -367,6 +390,10 @@ export const useNewResourceCtrl: CtrlHook<
     }
     return props
   }, [
+    filteredIscedGrades,
+    filteredLanguages,
+    fliteredIscedFields,
+    fliteredResourceTypes,
     form,
     iscedFields,
     iscedGrades,
@@ -374,6 +401,10 @@ export const useNewResourceCtrl: CtrlHook<
     licenses,
     myCollections,
     resourceTypes,
+    setCategoryFilter,
+    setLanguageFilter,
+    setLevelFilter,
+    setTypeFilter,
   ])
   return newResourceProps && [newResourceProps]
 }

@@ -69,7 +69,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
         edit
         label="Visibility"
         highlight={shouldShowErrors && !!form.errors.visibility}
-        error={form.errors.visibility}
+        error={shouldShowErrors && form.errors.visibility}
       />
     </div>
   )

@@ -1,3 +1,4 @@
+import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import {
   CategoriesTextOptionProps,
@@ -30,6 +31,7 @@ export const UploadResourceStoryProps: UploadResourceProps = {
     opts: LicenseIconTextOptionProps,
     selected: LicenseIconTextOptionProps[3],
   },
+  setCategoryFilter: action('search Category'),
 }
 
 export default meta
