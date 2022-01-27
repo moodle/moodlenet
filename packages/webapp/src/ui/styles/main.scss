@@ -189,6 +189,7 @@ abbr {
         height: 0;
         opacity: 0;
         font-size: 12px;
+        margin-top: -5px;
       }
     }
   }
@@ -199,12 +200,13 @@ abbr {
       animation: border-fade-out-underline 0.5s ease-out;
       box-shadow: none;
       border-radius: 0;
-      border-bottom: 2px solid rgba(255, 0, 0, 0);
-      height: auto;
 
       @keyframes border-fade-out-underline {
         from {
           border-bottom: 2px solid rgba(255, 0, 0, 1);
+        }
+        to {
+          border-bottom: 2px solid rgba(255, 0, 0, 0);
         }
       }
     }

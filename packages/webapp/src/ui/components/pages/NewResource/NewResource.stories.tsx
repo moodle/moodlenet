@@ -79,10 +79,12 @@ export const Default = () => {
   const form = useFormik<NewResourceFormValues>({
     onSubmit: action('submit'),
     validationSchema,
-    initialValues: {} as any,
-    initialErrors: {
-      content: 'The file exceeds the max size',
-    },
+    initialValues: {
+      // content: new Blob(),
+    } as any,
+    // initialErrors: {
+    //   content: 'The file exceeds the max size',
+    // },
   })
 
   return (
