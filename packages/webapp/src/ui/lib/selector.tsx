@@ -1,6 +1,8 @@
 import {
   createContext,
+  DetailedHTMLProps,
   FC,
+  SelectHTMLAttributes,
   useCallback,
   useContext,
   useLayoutEffect,
@@ -164,17 +166,41 @@ export const Selector: FC<SelectorProps> = (props) => {
     }
   }, [selections, multiple])
 
+  // NOTE: Is it correct (let control select up if value is set ) ?
+  // or remove defaultValue and force it to be controlled here ?
+
+  const value_prop =
+    'value' in props
+      ? {
+          value: props.value,
+        }
+      : 'defaultValue' in props
+      ? {}
+      : {
+          value: props.multiple ? ctx.selections : ctx.selections[0],
+        }
+  const defaultValue_prop =
+    'defaultValue' in props
+      ? {
+          defaultValue: props.defaultValue,
+        }
+      : {}
+  const { defaultValue, value: _value, children, ...restProps } = props
+  const selectProps: DetailedHTMLProps<
+    SelectHTMLAttributes<HTMLSelectElement>,
+    HTMLSelectElement
+  > = {
+    ref: selectRef,
+    style: { display: 'none', visibility: 'hidden' },
+    hidden: true,
+    ...restProps,
+    ...value_prop,
+    ...defaultValue_prop,
+  }
   return (
     <SelectorContext.Provider value={ctx}>
       {props.children}
-      <select
-        {...props}
-        value={props.multiple ? ctx.selections : ctx.selections[0]}
-        ref={selectRef}
-        children={undefined}
-        style={{ display: 'none', visibility: 'hidden' }}
-        hidden
-      ></select>
+      <select {...selectProps} />
     </SelectorContext.Provider>
   )
 }

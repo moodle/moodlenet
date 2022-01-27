@@ -79,13 +79,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
   const showContent = edit && showContentFlag
 
   useEffect(() => {
-    const clickOutListener = ({ target }: MouseEvent) => {
-      if (
-        mainElemRef.current === target ||
-        mainElemRef.current?.contains(target as any)
-      ) {
-        return
-      }
+    const clickOutListener = () => {
       showContent && toggleOpen()
     }
     window.addEventListener('click', clickOutListener)
@@ -113,7 +107,6 @@ const DropdownComp: FC<DropdownProps> = (props) => {
     }
   }, [setLayout, showContent])
 
-  // showContent && searchByText?.('')
   useLayoutEffect(() => {
     showContent && dropdownButton.current?.focus()
   }, [showContent])
@@ -137,13 +130,11 @@ const DropdownComp: FC<DropdownProps> = (props) => {
     }
   }, [error, setErrorLeave, currentError])
 
-  const mainElemRef = useRef<HTMLDivElement>(null)
   const dropdownButton = useRef<HTMLInputElement>(null)
   const dropdownContent = useRef<HTMLInputElement>(null)
 
   return (
     <div
-      ref={mainElemRef}
       className={`dropdown ${className ? className : ''} ${
         searchByText ? 'search' : ''
       }${disabled ? ' disabled' : ''} ${
@@ -172,6 +163,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
               onInput={({ currentTarget }) =>
                 searchByText?.(currentTarget.value)
               }
+              onClick={(_) => _.stopPropagation()}
               onBlur={showContent && isHoveringOptions ? undefined : toggleOpen}
               disabled={disabled || !edit}
               defaultValue={searchText}
@@ -203,7 +195,10 @@ const DropdownComp: FC<DropdownProps> = (props) => {
           onMouseLeave={() => setHoveringOptions(false)}
           className="dropdown-content"
           tabIndex={-1}
-          onClick={multiple ? undefined : toggleOpen}
+          onClick={(_) => {
+            _.stopPropagation()
+            !multiple && toggleOpen()
+          }}
         >
           {children}
         </div>
