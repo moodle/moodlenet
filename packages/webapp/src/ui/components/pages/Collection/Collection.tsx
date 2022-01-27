@@ -12,6 +12,7 @@ import { useImageUrl } from '../../../lib/useImageUrl'
 import defaultBackgroud from '../../../static/img/default-background.svg'
 import Card from '../../atoms/Card/Card'
 import { InputTextField } from '../../atoms/InputTextField/InputTextField'
+import Loading from '../../atoms/Loading/Loading'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
@@ -206,8 +207,31 @@ export const Collection = withCtrl<CollectionProps>(
                       </div>
                     )}
                     {(isAdmin || isOwner) && isEditing && (
-                      <PrimaryButton color="green" onClick={handleOnSaveClick}>
-                        <SaveIcon />
+                      <PrimaryButton
+                        className={`${form.isSubmitting ? 'loading' : ''}`}
+                        color="green"
+                        onClick={handleOnSaveClick}
+                      >
+                        <div
+                          className="loading"
+                          style={{
+                            visibility: form.isSubmitting
+                              ? 'visible'
+                              : 'hidden',
+                          }}
+                        >
+                          <Loading color="white" />
+                        </div>
+                        <div
+                          className="label"
+                          style={{
+                            visibility: form.isSubmitting
+                              ? 'hidden'
+                              : 'visible',
+                          }}
+                        >
+                          <SaveIcon />
+                        </div>
                       </PrimaryButton>
                     )}
                     {(isAdmin || isOwner) && !isEditing && (

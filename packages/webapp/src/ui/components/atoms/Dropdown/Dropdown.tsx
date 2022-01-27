@@ -168,7 +168,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
               disabled={disabled || !edit}
               defaultValue={searchText}
             />
-            <ExpandLessIcon onClickCapture={toggleOpen} />
+            <ExpandMoreIcon onClickCapture={toggleOpen} />
           </>
         ) : (
           <>
@@ -180,7 +180,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
             >
               {pills}
             </div>
-            {!disabled && edit && <ExpandMoreIcon />}
+            {!disabled && edit && <ExpandLessIcon />}
           </>
         )}
       </div>

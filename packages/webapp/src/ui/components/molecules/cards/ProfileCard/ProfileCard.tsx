@@ -10,6 +10,7 @@ import { useImageUrl } from '../../../../lib/useImageUrl'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
 import defaultBackgroud from '../../../../static/img/default-background.svg'
 import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
+import Loading from '../../../atoms/Loading/Loading'
 import Modal from '../../../atoms/Modal/Modal'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../../atoms/RoundButton/RoundButton'
@@ -173,8 +174,27 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
           {isOwner && (
             <div className="actions edit-save">
               {isEditing ? (
-                <PrimaryButton color="green" onClick={toggleIsEditing}>
-                  <SaveIcon />
+                <PrimaryButton
+                  className={`${editForm.isSubmitting ? 'loading' : ''}`}
+                  color="green"
+                  onClick={toggleIsEditing}
+                >
+                  <div
+                    className="loading"
+                    style={{
+                      visibility: editForm.isSubmitting ? 'visible' : 'hidden',
+                    }}
+                  >
+                    <Loading color="white" />
+                  </div>
+                  <div
+                    className="label"
+                    style={{
+                      visibility: editForm.isSubmitting ? 'hidden' : 'visible',
+                    }}
+                  >
+                    <SaveIcon />
+                  </div>
                 </PrimaryButton>
               ) : (
                 <SecondaryButton onClick={toggleIsEditing} color="orange">

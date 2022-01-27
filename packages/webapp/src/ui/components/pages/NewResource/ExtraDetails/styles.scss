@@ -82,6 +82,10 @@
           justify-content: center;
         }
       }
+
+      &.loading {
+        pointer-events: none;
+      }
     }
   }
 }
