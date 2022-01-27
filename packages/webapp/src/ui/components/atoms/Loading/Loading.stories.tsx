@@ -10,14 +10,22 @@ const meta: ComponentMeta<typeof Loading> = {
   excludeStories: ['LoadingStoryProps'],
   decorators: [
     (Story) => (
-      <div style={{ height: 100, width: 300 }}>
+      <div
+        style={{
+          height: 100,
+          width: 300,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <Story />
       </div>
     ),
   ],
 }
 
-export const LoadingStoryProps: LoadingProps = { color: 'orange' }
+export const LoadingStoryProps: LoadingProps = { color: 'orange', size: 40 }
 
 const LoadingStory: ComponentStory<typeof Loading> = (args) => (
   <Loading {...args}></Loading>
