@@ -86,16 +86,16 @@
             }
 
             &.error {
-              animation: border-blink 5s ease-out;
+              animation: border-blink 6s ease-out;
 
               @keyframes border-blink {
                 0% {
                   border: 4px dashed #d1d4e0;
                 }
-                10% {
+                3% {
                   border: 4px dashed red;
                 }
-                95% {
+                97% {
                   border: 4px dashed red;
                 }
                 100% {

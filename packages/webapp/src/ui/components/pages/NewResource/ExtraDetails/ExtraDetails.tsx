@@ -197,7 +197,11 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
       <div className="extra-details">
         <div className="content">{dataInputs}</div>
         <div className="footer">
-          <SecondaryButton onClick={prevForm} color="grey">
+          <SecondaryButton
+            onClick={prevForm}
+            color="grey"
+            disabled={form.isSubmitting}
+          >
             <Trans>Back</Trans>
           </SecondaryButton>
           <PrimaryButton

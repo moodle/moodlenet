@@ -17,6 +17,7 @@ import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
+import Snackbar from '../../atoms/Snackbar/Snackbar'
 import {
   VisibilityDropdown,
   VisibilityNodes,
@@ -164,6 +165,17 @@ export const Collection = withCtrl<CollectionProps>(
           >
             <Trans>The collection will be deleted</Trans>
           </Modal>
+        )}
+        {form.isSubmitting && (
+          <Snackbar
+            position="bottom"
+            type="info"
+            waitDuration={200}
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Content uploading, please don't close the tab</Trans>
+          </Snackbar>
         )}
         <div className="collection">
           <div className="content">
