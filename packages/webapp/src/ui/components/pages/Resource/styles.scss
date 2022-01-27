@@ -128,6 +128,26 @@
                 > * {
                   width: 100%;
                 }
+                > .primary-button {
+                  display: grid;
+                  grid-template-columns: 1fr;
+                  > div {
+                    grid-row-start: 1;
+                    grid-column-start: 1;
+
+                    &.loading {
+                      display: flex;
+                      visibility: visible;
+                      width: 100%;
+                      align-items: center;
+                      justify-content: center;
+                    }
+                  }
+
+                  &.loading {
+                    pointer-events: none;
+                  }
+                }
               }
             }
           }
@@ -158,7 +178,7 @@
           > .input-container {
             padding: 0;
             box-shadow: none;
-            animation: none;
+            // animation: none;
           }
         }
 
@@ -269,6 +289,12 @@
             > .dropdown-button {
               color: #c6c6c6;
             }
+          }
+        }
+
+        &.enter-error {
+          > .input-container {
+            box-shadow: 0 0 0 2px red;
           }
         }
       }

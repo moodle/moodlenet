@@ -29,7 +29,6 @@ import Modal from '../../../atoms/Modal/Modal'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
-import Snackbar from '../../../atoms/Snackbar/Snackbar'
 import { VisibilityDropdown } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import { useNewResourcePageCtx } from '../NewResource'
 import { NewResourceFormValues } from '../types'
@@ -96,6 +95,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
     }, [form])
 
     const deleteFileOrLink = useCallback(() => {
+      form.setFieldValue('image', undefined)
       form.setFieldValue('license', undefined)
       form.setFieldValue('content', undefined)
       setShouldShowErrors(false)
@@ -188,62 +188,71 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       uploadFileRef.current?.click()
     }
 
-    const dropHandler = (e: React.DragEvent<HTMLDivElement>) => {
-      setIsToDrop(false)
+    const setContent = useCallback(
+      (file: File | undefined) => {
+        const isImage = file?.type.toLowerCase().startsWith('image')
+        form.setFieldValue('content', file).then((errors) => {
+          if (errors?.content) {
+            setShouldShowErrors(!!errors?.content)
+          } else if (isImage) {
+            form.setFieldValue('image', file)
+          }
+        })
+      },
+      [form]
+    )
 
-      // Prevent default behavior (Prevent file from being opened)
-      e.preventDefault()
+    const dropHandler = useCallback(
+      (e: React.DragEvent<HTMLDivElement>) => {
+        setIsToDrop(false)
 
-      let selectedFile
+        // Prevent default behavior (Prevent file from being opened)
+        e.preventDefault()
 
-      if (e.dataTransfer.items) {
-        // Use DataTransferItemList interface to access the file(s)
-        for (let i = 0; i < e.dataTransfer.items.length; i++) {
-          // If dropped items aren't files, reject them
-          const item = e.dataTransfer.items[i]
-          if (item && item.kind === 'file') {
-            var file = item.getAsFile()
-            console.log('... file[' + i + '].name = ' + file?.name)
-            file && (selectedFile = file)
-            break
+        let selectedFile
+
+        if (e.dataTransfer.items) {
+          // Use DataTransferItemList interface to access the file(s)
+          for (let i = 0; i < e.dataTransfer.items.length; i++) {
+            // If dropped items aren't files, reject them
+            const item = e.dataTransfer.items[i]
+            if (item && item.kind === 'file') {
+              var file = item.getAsFile()
+              console.log('... file[' + i + '].name = ' + file?.name)
+              file && (selectedFile = file)
+              break
+            }
+          }
+        } else {
+          // Use DataTransfer interface to access the file(s)
+          for (let i = 0; i < e.dataTransfer.files.length; i++) {
+            const item = e.dataTransfer.files[i]
+            console.log('... file[' + i + '].name = ' + item?.name)
+            item && (selectedFile = item)
           }
         }
-      } else {
-        // Use DataTransfer interface to access the file(s)
-        for (let i = 0; i < e.dataTransfer.files.length; i++) {
-          const item = e.dataTransfer.files[i]
-          console.log('... file[' + i + '].name = ' + item?.name)
-          item && (selectedFile = item)
+
+        if (subStep === 'ChooseResource') {
+          setContent(selectedFile)
+        } else {
+          form.setFieldValue('image', selectedFile)
         }
-      }
+      },
+      [form, setContent, subStep]
+    )
 
-      if (subStep === 'ChooseResource') {
-        form.setFieldValue('content', selectedFile)
-      } else {
-        form.setFieldValue('image', selectedFile)
-      }
-    }
+    const dragOverHandler = useCallback(
+      (e: React.DragEvent<HTMLDivElement>) => {
+        setIsToDrop(true)
 
-    const dragOverHandler = (e: React.DragEvent<HTMLDivElement>) => {
-      setIsToDrop(true)
-
-      // Prevent default behavior (Prevent file from being opened)
-      e.preventDefault()
-    }
+        // Prevent default behavior (Prevent file from being opened)
+        e.preventDefault()
+      },
+      []
+    )
 
     return (
       <div className="upload-resource">
-        {shouldShowErrors && form.errors.content && (
-          <Snackbar
-            position="bottom"
-            type="error"
-            autoHideDuration={5000}
-            showCloseButton={false}
-          >
-            {form.errors.content}
-          </Snackbar>
-        )}
-
         {isToDelete && (
           <Modal
             title={t`Alert`}
@@ -276,7 +285,9 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                 {!imageUrl ? (
                   <div
                     className={`uploader ${isToDrop ? 'hover' : ''} ${
-                      shouldShowErrors && form.errors.content ? 'error' : ''
+                      form.values.content instanceof Blob && form.errors.content
+                        ? 'error'
+                        : ''
                     }`}
                     id="drop_zone"
                     onDrop={dropHandler}
@@ -290,11 +301,9 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                           type="file"
                           name="content"
                           key="content"
-                          onChange={({ target }) =>
-                            form
-                              .setFieldValue('content', target.files?.[0])
-                              .then((_) => setShouldShowErrors(!!_?.content))
-                          }
+                          onChange={({ target }) => {
+                            setContent(target.files?.[0])
+                          }}
                           hidden
                         />
                         <UploadFileIcon />
@@ -367,7 +376,10 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                         <Trans>Add</Trans>
                       </PrimaryButton>
                     }
-                    error={shouldShowErrors && form.errors.content}
+                    error={
+                      !(form.values.content instanceof Blob) &&
+                      form.errors.content
+                    }
                   />
                 </div>
               ) : (

@@ -7,6 +7,7 @@ import {
   TextOption,
   TextOptionProps,
 } from '../../../atoms/Dropdown/Dropdown'
+import Loading from '../../../atoms/Loading/Loading'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
 import { useNewResourcePageCtx } from '../NewResource'
@@ -200,9 +201,21 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
             <Trans>Back</Trans>
           </SecondaryButton>
           <PrimaryButton
+            className={`${form.isSubmitting ? 'loading' : ''}`}
             onClick={form.isValid ? form.submitForm : () => form.validateForm()}
           >
-            <Trans>Create resource</Trans>
+            <div
+              className="loading"
+              style={{ visibility: form.isSubmitting ? 'visible' : 'hidden' }}
+            >
+              <Loading color="white" />
+            </div>
+            <div
+              className="label"
+              style={{ visibility: form.isSubmitting ? 'hidden' : 'visible' }}
+            >
+              <Trans>Create resource</Trans>
+            </div>
           </PrimaryButton>
         </div>
       </div>
