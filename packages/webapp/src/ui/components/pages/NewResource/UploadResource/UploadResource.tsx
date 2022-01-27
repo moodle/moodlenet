@@ -421,6 +421,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                           icon={icon}
                           label={label}
                           value={value}
+                          key={value}
                         />
                       ))}
                     </Dropdown>

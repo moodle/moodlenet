@@ -49,7 +49,8 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           label={t`Type`}
           value={form.values.type}
           onChange={form.handleChange}
-          edit
+          edit={!form.isSubmitting}
+          disabled={form.isSubmitting}
           searchByText={setTypeFilter}
           pills={
             types.selected && (
@@ -80,7 +81,8 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           label={t`Level`}
           value={form.values.level}
           onChange={form.handleChange}
-          edit
+          edit={!form.isSubmitting}
+          disabled={form.isSubmitting}
           searchByText={setLevelFilter}
           pills={
             levels.selected && (
@@ -117,7 +119,8 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
               onChange={form.handleChange}
               label=""
               value={form.values.month}
-              edit
+              edit={!form.isSubmitting}
+              disabled={form.isSubmitting}
               pills={
                 form.values.month && (
                   <SimplePill
@@ -143,7 +146,8 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
               onChange={form.handleChange}
               value={form.values.year}
               error={form.errors.year}
-              edit
+              edit={!form.isSubmitting}
+              disabled={form.isSubmitting}
               pills={
                 form.values.year && (
                   <SimplePill
@@ -165,7 +169,8 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           label={t`Language`}
           value={form.values.language}
           onChange={form.handleChange}
-          edit
+          edit={!form.isSubmitting}
+          disabled={form.isSubmitting}
           searchByText={setLanguageFilter}
           pills={
             languages.selected && (
