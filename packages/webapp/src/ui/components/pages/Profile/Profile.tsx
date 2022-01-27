@@ -117,6 +117,17 @@ export const Profile = withCtrl<ProfileProps>(
             <Trans>Congratulations! Your account has been approved</Trans>
           </Snackbar>
         )}
+        {editForm.isSubmitting && (
+          <Snackbar
+            position="bottom"
+            type="info"
+            waitDuration={200}
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Content uploading, please don't close the tab</Trans>
+          </Snackbar>
+        )}
         {isSendingMessage && sendEmailForm && (
           <Modal
             title={`${t`Send a message to`} ${displayName}`}
