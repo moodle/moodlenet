@@ -16,6 +16,7 @@ import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown
 import './styles.scss'
 
 export type ResourceCardProps = {
+  toggleVisible?(): unknown
   tags?: FollowTag[]
   className?: string
   direction?: 'vertical' | 'horizontal'
@@ -42,6 +43,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
   ({
     direction,
     isSelected,
+    toggleVisible,
     tags,
     image,
     type,
@@ -106,6 +108,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
         <div className={`actions`}>
           {isOwner && (
             <abbr
+              onClick={toggleVisible}
               className={`visibility ${
                 visibility === 'Public' ? 'public' : 'private'
               }`}
