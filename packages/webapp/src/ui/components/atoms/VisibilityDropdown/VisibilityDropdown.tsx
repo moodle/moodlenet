@@ -45,22 +45,18 @@ export const VisibilityDropdown: FC<
       className="visibility-dropdown"
       {...props}
     >
-      {props.value !== Public && (
-        <IconTextOption
-          key={Public}
-          value={Public}
-          label={t`Public`}
-          icon={VisibilityNodes.Public}
-        />
-      )}
-      {props.value !== Private && (
-        <IconTextOption
-          key={Private}
-          value={Private}
-          label={t`Private`}
-          icon={VisibilityNodes.Private}
-        />
-      )}
+      <IconTextOption
+        key={Public}
+        value={Public}
+        label={t`Public`}
+        icon={VisibilityNodes.Public}
+      />
+      <IconTextOption
+        key={Private}
+        value={Private}
+        label={t`Private`}
+        icon={VisibilityNodes.Private}
+      />
     </Dropdown>
   )
 }
