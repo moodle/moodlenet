@@ -276,7 +276,9 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                 {!imageUrl ? (
                   <div
                     className={`uploader ${isToDrop ? 'hover' : ''} ${
-                      shouldShowErrors && form.errors.content ? 'error' : ''
+                      form.values.content instanceof Blob && form.errors.content
+                        ? 'error'
+                        : ''
                     }`}
                     id="drop_zone"
                     onDrop={dropHandler}
@@ -367,7 +369,10 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                         <Trans>Add</Trans>
                       </PrimaryButton>
                     }
-                    error={shouldShowErrors && form.errors.content}
+                    error={
+                      !(form.values.content instanceof Blob) &&
+                      form.errors.content
+                    }
                   />
                 </div>
               ) : (
