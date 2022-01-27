@@ -217,6 +217,11 @@ export const ResourceStoryProps = (overrides?: {
       onSubmit: action('Send to Moodle LMS'),
     }),
     addToCollectionsForm,
+    setCategoryFilter: action('setCategoryFilter'),
+    setTypeFilter: action('setTypeFilter'),
+    setLevelFilter: action('setLevelFilter'),
+    setLanguageFilter: action('setLanguageFilter'),
+
     ...overrides?.props,
   }
 }

@@ -38,6 +38,7 @@ import './styles.scss'
 // type SubStep = 'ChooseResource' | 'EditData'
 export type UploadResourceProps = {
   categories: SelectOptions<TextOptionProps>
+  setCategoryFilter(text: string): unknown
   licenses: SelectOptions<IconTextOptionProps>
   fileMaxSize: number
 }
@@ -53,7 +54,12 @@ const usingFields: (keyof NewResourceFormValues)[] = [
 ]
 
 export const UploadResource = withCtrl<UploadResourceProps>(
-  ({ categories, licenses, fileMaxSize }) => {
+  ({
+    categories,
+    licenses,
+    fileMaxSize,
+    setCategoryFilter: searchCategory,
+  }) => {
     const { nextForm, form } = useNewResourcePageCtx()
     const isValid = usingFields.reduce(
       (valid, fldName) => valid && !form.errors[fldName],
@@ -132,6 +138,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             edit={subStep === 'EditData'}
             highlight={shouldShowErrors && !!form.errors.category}
             error={shouldShowErrors && form.errors.category}
+            searchByText={searchCategory}
             pills={
               categories.selected && (
                 <SimplePill
@@ -143,9 +150,19 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             }
             className="subject-dropdown"
           >
-            {categories.opts.map(({ label, value }) => (
-              <TextOption key={value} value={value} label={label} />
-            ))}
+            {categories.selected && (
+              <TextOption
+                key={categories.selected.value}
+                value={categories.selected.value}
+                label={categories.selected.label}
+              />
+            )}
+            {categories.opts.map(
+              ({ label, value }) =>
+                categories.selected?.value !== value && (
+                  <TextOption key={value} value={value} label={label} />
+                )
+            )}
           </Dropdown>
           <VisibilityDropdown
             name="visibility"

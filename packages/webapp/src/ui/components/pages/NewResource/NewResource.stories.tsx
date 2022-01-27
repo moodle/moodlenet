@@ -125,8 +125,12 @@ export const Default = () => {
             ({ value }) => value === form.values.language
           ),
         },
+        setLanguageFilter: action('setLanguageFilter'),
+        setLevelFilter: action('setLevelFilter'),
+        setTypeFilter: action('setTypeFilter'),
       }}
       uploadResourceProps={{
+        setCategoryFilter: action('search Category'),
         categories: {
           opts: CategoriesTextOptionProps,
           selected: CategoriesTextOptionProps.find(

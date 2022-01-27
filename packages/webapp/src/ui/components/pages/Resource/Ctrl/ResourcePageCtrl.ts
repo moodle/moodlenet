@@ -18,6 +18,7 @@ import { useSession } from '../../../../../context/Global/Session'
 import {
   getJustAssetRefUrl,
   getMaybeAssetRefUrl,
+  useFiltered,
   useUploadTempFile,
 } from '../../../../../helpers/data'
 import {
@@ -496,12 +497,26 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
     },
   })
 
-  const languagesNodes = useLanguages()
-  const levelsNodes = useIscedGrades()
-  const typesNodes = useResourceTypes()
-  const categoriesNodes = useIscedFields()
-  const licensesNodes = useLicenses()
+  const [fliteredIscedFields, setCategoryFilter, iscedFields] = useFiltered(
+    useIscedFields(),
+    'id;name'
+  )
 
+  const [filteredIscedGrades, setLevelFilter, iscedGrades] = useFiltered(
+    useIscedGrades(),
+    'id;name'
+  )
+
+  const [filteredLanguages, setLanguageFilter, languages] = useFiltered(
+    useLanguages(),
+    'id;name'
+  )
+
+  const [fliteredResourceTypes, setTypeFilter, resourceTypes] = useFiltered(
+    useResourceTypes(),
+    'id;name'
+  )
+  const licenses = useLicenses()
   const resourceProps = useMemo<null | ResourceProps>(() => {
     if (!resourceData) {
       return null
@@ -544,43 +559,53 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
           .filter(isEdgeNodeOfType(['Collection']))
           .map(({ node: { name: label, id: value } }) => ({ label, value })),
       },
+      setLanguageFilter,
       languages: {
-        opts: languagesNodes.map(({ name, id }) => ({
+        opts: filteredLanguages.map(({ name, id }) => ({
           value: id,
           label: name,
         })),
-        selected: languagesNodes
+        selected: languages
           .filter((node) => node.id === form.values.language)
           .map(({ name, id }) => ({ value: id, label: name }))[0],
       },
+      setLevelFilter,
       levels: {
-        opts: levelsNodes.map(({ name, id }) => ({ value: id, label: name })),
-        selected: levelsNodes
-          .filter((node) => node.id === form.values.level)
-          .map(({ name, id }) => ({ value: id, label: name }))[0],
-      },
-      types: {
-        opts: typesNodes.map(({ name, id }) => ({ value: id, label: name })),
-        selected: typesNodes
-          .filter((node) => node.id === form.values.type)
-          .map(({ name, id }) => ({ value: id, label: name }))[0],
-      },
-      categories: {
-        opts: categoriesNodes.map(({ name, id }) => ({
+        opts: filteredIscedGrades.map(({ name, id }) => ({
           value: id,
           label: name,
         })),
-        selected: categoriesNodes
+        selected: iscedGrades
+          .filter((node) => node.id === form.values.level)
+          .map(({ name, id }) => ({ value: id, label: name }))[0],
+      },
+      setTypeFilter,
+      types: {
+        opts: fliteredResourceTypes.map(({ name, id }) => ({
+          value: id,
+          label: name,
+        })),
+        selected: resourceTypes
+          .filter((node) => node.id === form.values.type)
+          .map(({ name, id }) => ({ value: id, label: name }))[0],
+      },
+      setCategoryFilter,
+      categories: {
+        opts: fliteredIscedFields.map(({ name, id }) => ({
+          value: id,
+          label: name,
+        })),
+        selected: iscedFields
           .filter((node) => node.id === form.values.category)
           .map(({ name, id }) => ({ value: id, label: name }))[0],
       },
       licenses: {
-        opts: licensesNodes.map(([{ name, id }, icon]) => ({
+        opts: licenses.map(([{ name, id }, icon]) => ({
           value: id,
           label: name,
           icon,
         })),
-        selected: licensesNodes
+        selected: licenses
           .filter(([node]) => node.id === form.values.license)
           .map(([{ name, id }, icon]) => ({ value: id, label: name, icon }))[0],
       },
@@ -607,11 +632,19 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
     creatorEdge,
     isAuthenticated,
     allMyOwnCollectionEdges,
-    languagesNodes,
-    levelsNodes,
-    typesNodes,
-    categoriesNodes,
-    licensesNodes,
+    setLanguageFilter,
+    filteredLanguages,
+    languages,
+    setLevelFilter,
+    filteredIscedGrades,
+    iscedGrades,
+    setTypeFilter,
+    fliteredResourceTypes,
+    resourceTypes,
+    setCategoryFilter,
+    fliteredIscedFields,
+    iscedFields,
+    licenses,
     toggleLikeForm,
     myBookmarkedEdgeId,
     toggleBookmarkForm,
