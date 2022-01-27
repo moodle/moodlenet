@@ -7,6 +7,7 @@ import { useImageUrl } from '../../../../lib/useImageUrl'
 import { ReactComponent as UploadImageIcon } from '../../../../static/icons/upload-image.svg'
 import Card from '../../../atoms/Card/Card'
 import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
+import Loading from '../../../atoms/Loading/Loading'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import { VisibilityDropdown } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import { NewCollectionFormValues } from '../types'
@@ -117,8 +118,22 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
         <div className="side-column">{dataInputs}</div>
       </div>
       <div className="footer">
-        <PrimaryButton onClick={form.submitForm}>
-          <Trans>Create collection</Trans>
+        <PrimaryButton
+          className={`${form.isSubmitting ? 'loading' : ''}`}
+          onClick={form.isValid ? form.submitForm : () => form.validateForm()}
+        >
+          <div
+            className="loading"
+            style={{ visibility: form.isSubmitting ? 'visible' : 'hidden' }}
+          >
+            <Loading color="white" />
+          </div>
+          <div
+            className="label"
+            style={{ visibility: form.isSubmitting ? 'hidden' : 'visible' }}
+          >
+            <Trans>Create collection</Trans>
+          </div>
         </PrimaryButton>
       </div>
     </div>
