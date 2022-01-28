@@ -22,6 +22,7 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({
       className={`secondary-button button ${className} ${color} hover-${onHoverColor} ${
         disabled ? 'disabled' : ''
       }`}
+      tabIndex={!disabled ? 0 : undefined}
       onClick={!disabled ? onClick : () => {}}
     >
       {children}

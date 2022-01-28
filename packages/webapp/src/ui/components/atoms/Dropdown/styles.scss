@@ -67,6 +67,7 @@
 
       &:focus {
         color: rgba(0, 0, 0, 0.87);
+        box-shadow: none;
       }
 
       &::placeholder {
@@ -256,7 +257,7 @@
   }
 }
 
-.dropdown-new.disabled {
+.dropdown.disabled {
   > label {
     color: #c6c6c6;
   }

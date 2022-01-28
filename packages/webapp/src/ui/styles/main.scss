@@ -102,6 +102,13 @@ abbr {
   pointer-events: none;
 }
 
+:not(input):focus {
+  border: none;
+  outline: none;
+  transition: 0.1s;
+  box-shadow: 0 0 3pt 2pt #337affb0;
+}
+
 .enter-error:not(.disabled) {
   > .input-container,
   > .textarea-container {
