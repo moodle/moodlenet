@@ -72,18 +72,39 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       form.values.content instanceof File
         ? form.values.content.name
         : form.values.content ?? ''
-    const subStep =
-      form.values.content && !form.errors.content
-        ? 'EditData'
-        : 'ChooseResource'
-
-    useEffect(() => {
-      subStep === 'EditData' && setShouldShowErrors(false)
-    }, [subStep])
 
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isToDrop, setIsToDrop] = useState<boolean>(false)
+
+    const [subStep, setSubStep] = useState<'ChooseResource' | 'EditData'>(
+      form.values.content && !form.errors.content
+        ? 'EditData'
+        : 'ChooseResource'
+    )
+
+    const [deleteFileLinkPressed, setDeleteFileLinkPressed] = useState(false)
+
+    useEffect(() => {
+      if (deleteFileLinkPressed) {
+        setShouldShowErrors(false)
+        setDeleteFileLinkPressed(false)
+      }
+      form.values.content && !form.errors.content && setShouldShowErrors(false)
+
+      setSubStep(
+        form.values.content && !form.errors.content
+          ? 'EditData'
+          : 'ChooseResource'
+      )
+    }, [
+      form.values.content,
+      form.errors.content,
+      deleteFileLinkPressed,
+      subStep,
+      setSubStep,
+      setDeleteFileLinkPressed,
+    ])
 
     const background = {
       backgroundImage: 'url(' + imageUrl + ')',
@@ -95,10 +116,12 @@ export const UploadResource = withCtrl<UploadResourceProps>(
         .setFieldValue('content', addLinkFieldRef.current?.value, true)
         .then((_) => setShouldShowErrors(!!_?.content))
     const deleteImage = useCallback(() => {
+      setDeleteFileLinkPressed(true)
       form.setFieldValue('image', undefined)
     }, [form])
 
     const deleteFileOrLink = useCallback(() => {
+      setDeleteFileLinkPressed(true)
       form.setFieldValue('image', undefined)
       form.setFieldValue('license', undefined)
       form.setFieldValue('content', undefined)
@@ -130,7 +153,11 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           value={form.values.description}
           edit
           onChange={form.handleChange}
-          error={shouldShowErrors && form.errors.description}
+          error={
+            subStep === 'EditData' &&
+            shouldShowErrors &&
+            form.errors.description
+          }
         />
         <div className="subject-and-visibility">
           <Dropdown
@@ -140,8 +167,9 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             disabled={subStep === 'ChooseResource'}
             label="Subject"
             edit={subStep === 'EditData'}
-            highlight={shouldShowErrors && !!form.errors.category}
-            error={shouldShowErrors && form.errors.category}
+            error={
+              subStep === 'EditData' && shouldShowErrors && form.errors.category
+            }
             searchByText={searchCategory}
             pills={
               categories.selected && (
@@ -175,8 +203,11 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             disabled={subStep === 'ChooseResource'}
             edit={subStep === 'EditData'}
             label="Visibility"
-            highlight={shouldShowErrors && !!form.errors.visibility}
-            error={shouldShowErrors && form.errors.visibility}
+            error={
+              subStep === 'EditData' &&
+              shouldShowErrors &&
+              form.errors.visibility
+            }
           />
         </div>
       </div>
