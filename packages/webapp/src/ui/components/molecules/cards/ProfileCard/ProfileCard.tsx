@@ -127,48 +127,54 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
         )}
         <div
           className="background"
-          style={background}
+          style={{
+            ...background,
+            pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
+          }}
           onClick={() => !isEditing && setIsShowingBackground(true)}
         >
           {isEditing && (
-            <input
-              ref={uploadBackgroundRef}
-              type="file"
-              accept=".jpg,.jpeg,.png,.gif"
-              onChange={uploadBackground}
-              hidden
-            />
-          )}
-          {isEditing && (
-            <RoundButton
-              className="change-background-button"
-              type="edit"
-              onClick={selectBackground}
-            />
+            <>
+              <input
+                ref={uploadBackgroundRef}
+                type="file"
+                accept=".jpg,.jpeg,.png,.gif"
+                onChange={uploadBackground}
+                hidden
+              />
+              <RoundButton
+                className="change-background-button"
+                type="edit"
+                onClick={selectBackground}
+              />
+            </>
           )}
         </div>
 
         <div className="avatar-and-actions">
           <div
             className="avatar"
-            style={avatar}
+            style={{
+              ...avatar,
+              pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
+            }}
             onClick={() => !isEditing && setIsShowingAvatar(true)}
           >
             {isEditing && (
-              <input
-                ref={uploadAvatarRef}
-                type="file"
-                accept=".jpg,.jpeg,.png,.gif"
-                onChange={uploadAvatar}
-                hidden
-              />
-            )}
-            {isEditing && (
-              <RoundButton
-                className="change-avatar-button"
-                type="edit"
-                onClick={selectAvatar}
-              />
+              <>
+                <input
+                  ref={uploadAvatarRef}
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.gif"
+                  onChange={uploadAvatar}
+                  hidden
+                />
+                <RoundButton
+                  className="change-avatar-button"
+                  type="edit"
+                  onClick={selectAvatar}
+                />
+              </>
             )}
           </div>
           {isOwner && (
@@ -217,6 +223,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                   name="displayName"
                   displayMode={true}
                   edit={isEditing}
+                  disabled={editForm.isSubmitting}
                   error={
                     isEditing && shouldShowErrors && editForm.errors.displayName
                   }
@@ -250,6 +257,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                     displayMode={true}
                     name="displayName"
                     edit={isEditing}
+                    disabled={editForm.isSubmitting}
                     error={
                       isEditing &&
                       shouldShowErrors &&
@@ -266,6 +274,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                     placeholder="Organization"
                     name="organizationName"
                     edit={isEditing}
+                    disabled={editForm.isSubmitting}
                     error={
                       isEditing &&
                       shouldShowErrors &&
@@ -282,6 +291,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                     displayMode={true}
                     name="location"
                     edit={isEditing}
+                    disabled={editForm.isSubmitting}
                     error={
                       isEditing && shouldShowErrors && editForm.errors.location
                     }
@@ -296,6 +306,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                     placeholder="Website"
                     name="siteUrl"
                     edit={isEditing}
+                    disabled={editForm.isSubmitting}
                     error={
                       isEditing && shouldShowErrors && editForm.errors.siteUrl
                     }
@@ -342,6 +353,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               placeholder="What should others know about you?"
               name="description"
               edit={isEditing}
+              disabled={editForm.isSubmitting}
               error={
                 isEditing && shouldShowErrors && editForm.errors.description
               }

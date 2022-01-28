@@ -112,7 +112,7 @@ export const Collection = withCtrl<CollectionProps>(
             name="visibility"
             value={form.values.visibility}
             onChange={form.handleChange}
-            disabled={!isEditing}
+            disabled={form.isSubmitting}
             edit={isEditing}
             label="Visibility"
             highlight={shouldShowErrors && !!form.errors.visibility}
@@ -186,20 +186,22 @@ export const Collection = withCtrl<CollectionProps>(
                 onClick={() => !isEditing && setIsShowingBackground(true)}
               >
                 {isEditing && (
-                  <input
-                    ref={uploadImageRef}
-                    type="file"
-                    accept=".jpg,.jpeg,.png,.gif"
-                    onChange={uploadImage}
-                    hidden
-                  />
-                )}
-                {isEditing && (
-                  <RoundButton
-                    className="change-image-button"
-                    type="edit"
-                    onClick={selectImage}
-                  />
+                  <>
+                    <input
+                      ref={uploadImageRef}
+                      type="file"
+                      accept=".jpg,.jpeg,.png,.gif"
+                      onChange={uploadImage}
+                      hidden
+                    />
+                    <RoundButton
+                      className={`change-image-button ${
+                        form.isSubmitting ? 'disabled' : ''
+                      }`}
+                      type="edit"
+                      onClick={selectImage}
+                    />
+                  </>
                 )}
               </div>
               <div className="info">
@@ -264,6 +266,7 @@ export const Collection = withCtrl<CollectionProps>(
                     displayMode={true}
                     onChange={form.handleChange}
                     edit={isEditing}
+                    disabled={form.isSubmitting}
                     error={isEditing && shouldShowErrors && form.errors.title}
                   />
                 ) : (
@@ -277,6 +280,7 @@ export const Collection = withCtrl<CollectionProps>(
                     displayMode={true}
                     onChange={form.handleChange}
                     edit={isEditing}
+                    disabled={form.isSubmitting}
                     error={
                       isEditing && shouldShowErrors && form.errors.description
                     }
