@@ -212,7 +212,7 @@ export const SimplePill: FC<{
   label: ReactNode
   edit?: boolean
 }> = ({ label, value, edit }) => {
-  const { toggle } = useSelectorOption(value)
+  const { toggle } = useSelectorOption(value) ?? {}
   return (
     <div className="dropdown-pill">
       <div className="label">{label}</div>
@@ -243,7 +243,7 @@ export type TextOptionProps = {
   label: string
 }
 export const TextOption: FC<TextOptionProps> = ({ value, label }) => {
-  const { toggle, selected } = useSelectorOption(value)
+  const { toggle, selected } = useSelectorOption(value) ?? {}
   return (
     <div
       key={value}
@@ -265,7 +265,7 @@ export const IconTextOption: FC<IconTextOptionProps> = ({
   label,
   icon,
 }) => {
-  const { toggle, selected } = useSelectorOption(value)
+  const { toggle, selected } = useSelectorOption(value) ?? {}
   return (
     <div
       key={value}
