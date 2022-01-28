@@ -51,6 +51,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
         placeholder=""
         edit
         onChange={form.handleChange}
+        disabled={form.isSubmitting}
         error={shouldShowErrors && form.errors.title}
       />
       <InputTextField
@@ -61,6 +62,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
         placeholder=""
         edit
         onChange={form.handleChange}
+        disabled={form.isSubmitting}
         error={shouldShowErrors && form.errors.description}
       />
       <VisibilityDropdown
@@ -70,6 +72,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
         edit
         label="Visibility"
         highlight={shouldShowErrors && !!form.errors.visibility}
+        disabled={form.isSubmitting}
         error={shouldShowErrors && form.errors.visibility}
       />
     </div>
@@ -106,7 +109,13 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
                 </div>
               ) : (
                 <div className="image-container" style={background}>
-                  <div className="delete-image" onClick={deleteImage}>
+                  <div
+                    className="delete-image"
+                    onClick={deleteImage}
+                    style={{
+                      pointerEvents: form.isSubmitting ? 'none' : 'inherit',
+                    }}
+                  >
                     <CloseRoundedIcon />
                   </div>
                 </div>
