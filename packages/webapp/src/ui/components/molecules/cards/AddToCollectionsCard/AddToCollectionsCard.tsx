@@ -14,7 +14,7 @@ export type AddToCollectionsCardProps = SelectorProps & {
 }
 export type OptionItemProp = { value: string; label: ReactNode }
 export const OptionItem: FC<OptionItemProp> = ({ label, value }) => {
-  const { selected, toggle } = useSelectorOption(value)
+  const { selected, toggle } = useSelectorOption(value) ?? {}
   return (
     <div
       className={`collection-name tag ${selected ? 'selected' : ''}`}
