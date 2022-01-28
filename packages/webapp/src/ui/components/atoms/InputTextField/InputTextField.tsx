@@ -69,7 +69,8 @@ export const InputTextField = forwardRef<
   }, [textAreaAutoSize, currTextAreaValue, fieldElem])
 
   useEffect(() => {
-    if (error) {
+    console.log(error && `${label} I have an error`)
+    if (error && !disabled) {
       setErrorLeave(false)
       setcurrentError(error)
     } else {
@@ -82,14 +83,14 @@ export const InputTextField = forwardRef<
         setcurrentError(undefined)
       }
     }
-  }, [error, setErrorLeave, currentError])
+  }, [error, label, disabled, setErrorLeave, currentError])
 
   return (
     <div
       className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${
         highlight || error ? ' highlight' : ''
-      } ${!errorLeaves && error ? 'enter-error' : ''} ${
-        errorLeaves ? 'leave-error' : ''
+      } ${!disabled && !errorLeaves && error ? 'enter-error' : ''} ${
+        !disabled && errorLeaves ? 'leave-error' : ''
       }`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
