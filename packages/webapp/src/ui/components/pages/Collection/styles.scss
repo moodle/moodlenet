@@ -48,6 +48,9 @@
           display: flex;
           justify-content: flex-end;
           padding: 15px 20px;
+          &.disabled {
+            pointer-events: none;
+          }
         }
       }
 

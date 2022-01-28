@@ -223,7 +223,7 @@ export const Resource = withCtrl<ResourceProps>(
           name="visibility"
           value={form.values.visibility}
           onChange={form.handleChange}
-          disabled={!isEditing}
+          disabled={form.isSubmitting}
           edit={isEditing}
           label="Visibility"
           highlight={shouldShowErrors && !!form.errors.visibility}
@@ -235,7 +235,7 @@ export const Resource = withCtrl<ResourceProps>(
           value={form.values.category}
           onChange={form.handleChange}
           label="Subject"
-          disabled={!isEditing}
+          disabled={form.isSubmitting}
           edit={isEditing}
           highlight={shouldShowErrors && !!form.errors.category}
           error={form.errors.category}
@@ -274,6 +274,7 @@ export const Resource = withCtrl<ResourceProps>(
             label={t`License`}
             edit
             highlight={shouldShowErrors && !!form.errors.license}
+            disabled={form.isSubmitting}
             error={form.errors.license}
             position={{ top: 50, bottom: 25 }}
             pills={
@@ -302,6 +303,8 @@ export const Resource = withCtrl<ResourceProps>(
           onChange={form.handleChange}
           edit
           position={{ top: 50, bottom: 25 }}
+          disabled={form.isSubmitting}
+          error={form.errors.type}
           searchByText={setTypeFilter}
           pills={
             types.selected && (
@@ -334,6 +337,8 @@ export const Resource = withCtrl<ResourceProps>(
           edit
           position={{ top: 50, bottom: 25 }}
           searchByText={setLevelFilter}
+          disabled={form.isSubmitting}
+          error={form.errors.level}
           pills={
             levels.selected && (
               <SimplePill
@@ -367,6 +372,8 @@ export const Resource = withCtrl<ResourceProps>(
               onChange={form.handleChange}
               label=""
               value={form.values.month}
+              disabled={form.isSubmitting}
+              error={form.errors.month}
               edit
               position={{ top: 25, bottom: 25 }}
               pills={
@@ -391,6 +398,7 @@ export const Resource = withCtrl<ResourceProps>(
               label=""
               onChange={form.handleChange}
               value={form.values.year}
+              disabled={form.isSubmitting}
               error={form.errors.year}
               edit
               position={{ top: 25, bottom: 25 }}
@@ -415,6 +423,8 @@ export const Resource = withCtrl<ResourceProps>(
           value={form.values.language}
           onChange={form.handleChange}
           edit
+          disabled={form.isSubmitting}
+          error={form.errors.language}
           position={{ top: 50, bottom: 25 }}
           searchByText={setLanguageFilter}
           pills={
@@ -630,6 +640,7 @@ export const Resource = withCtrl<ResourceProps>(
               name="site"
               edit
               onChange={sendToMoodleLmsForm.handleChange}
+              disabled={form.isSubmitting}
               error={
                 shouldShowSendToMoodleLmsError &&
                 sendToMoodleLmsForm.errors.site
@@ -797,6 +808,7 @@ export const Resource = withCtrl<ResourceProps>(
                       value={form.values.name}
                       edit={isEditing}
                       onChange={form.handleChange}
+                      disabled={form.isSubmitting}
                       error={isEditing && shouldShowErrors && form.errors.name}
                       // error={
                       //   isEditing &&
@@ -820,22 +832,23 @@ export const Resource = withCtrl<ResourceProps>(
                     ) : (
                       image
                     )}
-
-                    {isEditing && (
-                      <input
-                        ref={uploadImageRef}
-                        type="file"
-                        accept=".jpg,.jpeg,.png,.gif"
-                        onChange={uploadImage}
-                        hidden
-                      />
-                    )}
-                    {isEditing && (
-                      <RoundButton
-                        className="change-image-button"
-                        type="edit"
-                        onClick={selectImage}
-                      />
+                    {isEditing && !form.isSubmitting && (
+                      <>
+                        <input
+                          ref={uploadImageRef}
+                          type="file"
+                          accept=".jpg,.jpeg,.png,.gif"
+                          onChange={uploadImage}
+                          hidden
+                        />
+                        <RoundButton
+                          className={`change-image-button ${
+                            form.isSubmitting ? 'disabled' : ''
+                          }`}
+                          type="edit"
+                          onClick={selectImage}
+                        />
+                      </>
                     )}
                   </div>
                 )}
@@ -849,6 +862,7 @@ export const Resource = withCtrl<ResourceProps>(
                     displayMode
                     edit={isEditing}
                     onChange={form.handleChange}
+                    disabled={form.isSubmitting}
                     error={isEditing && form.errors.description}
                     // error={
                     //   isEditing &&
