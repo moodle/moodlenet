@@ -101,7 +101,12 @@ export const Header = withCtrl<HeaderProps>((props) => {
                   </div>
                 }
                 hoverElement={
-                  <img className="add-icon" src={addIcon} alt="Add" />
+                  <img
+                    className="add-icon"
+                    src={addIcon}
+                    alt="Add"
+                    tabIndex={0}
+                  />
                 }
               />
               <FloatingMenu
