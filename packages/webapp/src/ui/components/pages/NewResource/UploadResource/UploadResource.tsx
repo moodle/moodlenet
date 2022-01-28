@@ -72,29 +72,56 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       form.values.content instanceof File
         ? form.values.content.name
         : form.values.content ?? ''
-    const subStep =
-      form.values.content && !form.errors.content
-        ? 'EditData'
-        : 'ChooseResource'
-
-    useEffect(() => {
-      subStep === 'EditData' && setShouldShowErrors(false)
-    }, [subStep])
 
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isToDrop, setIsToDrop] = useState<boolean>(false)
+
+    const [subStep, setSubStep] = useState<'ChooseResource' | 'EditData'>(
+      form.values.content && !form.errors.content
+        ? 'EditData'
+        : 'ChooseResource'
+    )
+
+    const [deleteFileLinkPressed, setDeleteFileLinkPressed] = useState(false)
+
+    useEffect(() => {
+      if (deleteFileLinkPressed) {
+        setShouldShowErrors(false)
+        setDeleteFileLinkPressed(false)
+      }
+      form.values.content && !form.errors.content && setShouldShowErrors(false)
+
+      setSubStep(
+        form.values.content && !form.errors.content
+          ? 'EditData'
+          : 'ChooseResource'
+      )
+    }, [
+      form.values.content,
+      form.errors.content,
+      deleteFileLinkPressed,
+      subStep,
+      setSubStep,
+      setDeleteFileLinkPressed,
+    ])
 
     const background = {
       backgroundImage: 'url(' + imageUrl + ')',
       backgroundSize: 'cover',
     }
     const addLinkFieldRef = useRef<HTMLInputElement>()
+    const addLink = () =>
+      form
+        .setFieldValue('content', addLinkFieldRef.current?.value, true)
+        .then((_) => setShouldShowErrors(!!_?.content))
     const deleteImage = useCallback(() => {
+      setDeleteFileLinkPressed(true)
       form.setFieldValue('image', undefined)
     }, [form])
 
     const deleteFileOrLink = useCallback(() => {
+      setDeleteFileLinkPressed(true)
       form.setFieldValue('image', undefined)
       form.setFieldValue('license', undefined)
       form.setFieldValue('content', undefined)
@@ -126,7 +153,11 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           value={form.values.description}
           edit
           onChange={form.handleChange}
-          error={shouldShowErrors && form.errors.description}
+          error={
+            subStep === 'EditData' &&
+            shouldShowErrors &&
+            form.errors.description
+          }
         />
         <div className="subject-and-visibility">
           <Dropdown
@@ -136,8 +167,9 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             disabled={subStep === 'ChooseResource'}
             label="Subject"
             edit={subStep === 'EditData'}
-            highlight={shouldShowErrors && !!form.errors.category}
-            error={shouldShowErrors && form.errors.category}
+            error={
+              subStep === 'EditData' && shouldShowErrors && form.errors.category
+            }
             searchByText={searchCategory}
             pills={
               categories.selected && (
@@ -171,8 +203,11 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             disabled={subStep === 'ChooseResource'}
             edit={subStep === 'EditData'}
             label="Visibility"
-            highlight={shouldShowErrors && !!form.errors.visibility}
-            error={shouldShowErrors && form.errors.visibility}
+            error={
+              subStep === 'EditData' &&
+              shouldShowErrors &&
+              form.errors.visibility
+            }
           />
         </div>
       </div>
@@ -295,7 +330,12 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     onDragLeave={() => setIsToDrop(false)}
                   >
                     {subStep === 'ChooseResource' ? (
-                      <div className="file upload" onClick={selectFile}>
+                      <div
+                        className="file upload"
+                        onClick={selectFile}
+                        onKeyUp={(e) => e.key === 'Enter' && selectFile()}
+                        tabIndex={0}
+                      >
                         <input
                           ref={uploadFileRef}
                           type="file"
@@ -361,22 +401,14 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                         ? () => form.validateField('content')
                         : undefined
                     }
+                    onKeyPress={(e) => e.key === 'Enter' && addLink()}
                     action={
-                      <PrimaryButton
-                        onClick={() => {
-                          form
-                            .setFieldValue(
-                              'content',
-                              addLinkFieldRef.current?.value,
-                              true
-                            )
-                            .then((_) => setShouldShowErrors(!!_?.content))
-                        }}
-                      >
+                      <PrimaryButton onClick={addLink}>
                         <Trans>Add</Trans>
                       </PrimaryButton>
                     }
                     error={
+                      shouldShowErrors &&
                       !(form.values.content instanceof Blob) &&
                       form.errors.content
                     }
@@ -405,8 +437,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                       onChange={form.handleChange}
                       value={form.values.license}
                       edit
-                      highlight={shouldShowErrors && !!form.errors.license}
-                      error={form.errors.license}
+                      error={shouldShowErrors && form.errors.license}
                       pills={
                         licenses.selected && (
                           <IconPill
@@ -416,14 +447,16 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                         )
                       }
                     >
-                      {licenses.opts.map(({ icon, label, value }) => (
-                        <IconTextOption
-                          icon={icon}
-                          label={label}
-                          value={value}
-                          key={value}
-                        />
-                      ))}
+                      {licenses.opts.map(({ icon, label, value }) => {
+                        return (
+                          <IconTextOption
+                            icon={icon}
+                            label={label}
+                            value={value}
+                            key={value}
+                          />
+                        )
+                      })}
                     </Dropdown>
                   )}
                 </div>

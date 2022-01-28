@@ -26,6 +26,7 @@
       }
 
       > .card {
+        height: 100%;
         min-height: 300px;
         width: 100%;
         display: flex;
@@ -228,12 +229,17 @@
       display: flex;
       gap: 15px;
       > .subject-dropdown {
-        max-width: max(calc(100% - 150px), calc(100% - 91px));
+        max-width: calc(100% - 125px);
+        @media (min-width: 800px) and (max-width: 1100px), (max-width: 400px) {
+          max-width: calc(100% - 75px);
+        }
       }
 
       > .visibility-dropdown {
-        max-width: (min(125px, 100% - 250px));
-        min-width: 76px;
+        width: 110px;
+        @media (min-width: 800px) and (max-width: 1100px), (max-width: 400px) {
+          max-width: 60px;
+        }
       }
     }
 

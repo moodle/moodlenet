@@ -22,6 +22,7 @@ export const PrimaryButton: FC<PrimaryButtonProps> = ({
       className={`primary-button button ${className} ${onHoverColor} ${
         disabled ? 'disabled' : ''
       } ${color}`}
+      tabIndex={!disabled ? 0 : undefined}
       onClick={!disabled ? onClick : () => {}}
     >
       {children}
