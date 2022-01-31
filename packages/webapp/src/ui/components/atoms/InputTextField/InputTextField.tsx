@@ -69,7 +69,7 @@ export const InputTextField = forwardRef<
   }, [textAreaAutoSize, currTextAreaValue, fieldElem])
 
   useEffect(() => {
-    console.log(error && `${label} I have an error`)
+    // console.log(error && `${label} I have an error`)
     if (error && !disabled) {
       setErrorLeave(false)
       setcurrentError(error)

@@ -211,7 +211,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           </SecondaryButton>
           <PrimaryButton
             className={`${form.isSubmitting ? 'loading' : ''}`}
-            onClick={form.isValid ? form.submitForm : () => form.validateForm()}
+            onClick={form.submitForm}
           >
             <div
               className="loading"
