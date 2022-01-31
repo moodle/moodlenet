@@ -53,7 +53,7 @@ export const useNewCollectionCtrl: CtrlHook<
       description: '',
       image: null,
       title: '',
-      visibility: undefined as any,
+      visibility: 'Private',
     },
     onSubmit: async ({ description, title, visibility, image }) => {
       const imageAssetRef: AssetRefInput = !image
