@@ -107,7 +107,7 @@ export const ResourceStoryProps = (overrides?: {
     onSubmit: action('submit edit'),
     initialValues: {
       isFile: true,
-      visibility: undefined as any,
+      visibility: 'Public',
       category: CategoriesTextOptionProps[2]!.value,
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
