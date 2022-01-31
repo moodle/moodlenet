@@ -80,8 +80,13 @@ export const Default = () => {
     onSubmit: action('submit'),
     validationSchema,
     initialValues: {
-      // content: new Blob(),
-    } as any,
+      addToCollections: [],
+      category: '',
+      content: '',
+      description: '',
+      name: '',
+      visibility: 'Private',
+    },
     // initialErrors: {
     //   content: 'The file exceeds the max size',
     // },
