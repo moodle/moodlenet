@@ -129,7 +129,7 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
       <div className="footer">
         <PrimaryButton
           className={`${form.isSubmitting ? 'loading' : ''}`}
-          onClick={form.isValid ? form.submitForm : () => form.validateForm()}
+          onClick={form.submitForm}
         >
           <div
             className="loading"
