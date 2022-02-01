@@ -2,23 +2,23 @@ import { t } from '@lingui/macro'
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
 import { mixed, object, SchemaOf, string } from 'yup'
-import { MNEnv } from '../../../../../constants'
 import { people } from '../../../../../helpers/factories'
 import { randomIntFromInterval } from '../../../../../helpers/utilities'
 import { ProfileFormValues } from '../../../pages/Profile/types'
 import { ProfileCardProps } from './ProfileCard'
 
+const maxUploadSize = 1024 * 1024 * 50
 export const validationSchema: SchemaOf<ProfileFormValues> = object({
   avatarImage: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > MNEnv.maxUploadSize
+      v instanceof Blob && v.size > maxUploadSize
         ? createError({ message: t`This file is too big for uploading` })
         : true
     )
     .optional(),
   backgroundImage: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > MNEnv.maxUploadSize
+      v instanceof Blob && v.size > maxUploadSize
         ? createError({ message: t`This file is too big for uploading` })
         : true
     )
@@ -35,6 +35,7 @@ export const validationSchema: SchemaOf<ProfileFormValues> = object({
     .min(3)
     .required(t`Please provide a Description`),
 })
+
 export const useProfileCardStoryProps = (overrides?: {
   editFormValues?: Partial<ProfileFormValues>
   props?: Partial<ProfileCardProps>
