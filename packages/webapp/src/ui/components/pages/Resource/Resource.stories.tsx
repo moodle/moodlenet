@@ -4,7 +4,6 @@ import { ComponentMeta } from '@storybook/react'
 import { FormikConfig, useFormik } from 'formik'
 import { useEffect } from 'react'
 import { boolean, mixed, object, SchemaOf, string } from 'yup'
-import { MNEnv } from '../../../../constants'
 import { href } from '../../../elements/link'
 import { TagListStory } from '../../../elements/tags'
 import { HeaderLoggedOutStoryProps } from '../../organisms/Header/Header.stories'
@@ -25,6 +24,8 @@ import {
 } from '../NewResource/UploadResource/storiesData'
 import { ContributorCardStoryProps } from './ContributorCard/ContributorCard.stories'
 import { Resource, ResourceFormValues, ResourceProps } from './Resource'
+
+const maxUploadSize = 1024 * 1024 * 50
 
 const meta: ComponentMeta<typeof Resource> = {
   title: 'Pages/Resource',
@@ -65,7 +66,7 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
     .required(t`Please provide a title`),
   image: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > MNEnv.maxUploadSize
+      v instanceof Blob && v.size > maxUploadSize
         ? createError({ message: t`This file is too big for uploading` })
         : true
     )
