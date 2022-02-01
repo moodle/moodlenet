@@ -3,8 +3,15 @@ query globalSearch(
   $sort: GlobalSearchSort
   $nodeTypes: [GlobalSearchNodeType!]
   $page: PaginationInput
+  $publishedOnly: Boolean
 ) {
-  globalSearch(text: $text, sort: $sort, nodeTypes: $nodeTypes, page: $page) {
+  globalSearch(
+    text: $text
+    sort: $sort
+    nodeTypes: $nodeTypes
+    page: $page
+    publishedOnly: $publishedOnly
+  ) {
     edges {
       ...GlobalSearchEdge
     }

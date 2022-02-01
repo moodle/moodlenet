@@ -8,11 +8,11 @@ import { ContentGraphDB } from '../../types'
 
 export const arangoSearchByTermAdapter =
   (db: ContentGraphDB): SockOf<typeof adapter> =>
-  async ({ nodeTypes, page, sort, text, assertions }) => {
+  async ({ nodeTypes, page, sort, text, assertions, publishedOnly }) => {
     type _NodeType = typeof nodeTypes
     type NodeType = _NodeType extends GlobalSearchNodeType[] ? _NodeType[number] : GlobalSearchNodeType
     // console.log({ nodeTypes, page, sort, text })
-    const { query, skip } = globalSearchQuery<NodeType>({ nodeTypes, page, sort, text, assertions })
+    const { query, skip } = globalSearchQuery<NodeType>({ nodeTypes, page, sort, text, assertions, publishedOnly })
     const docs = await getAllResults(query, db)
     // const docs = aqlGraphNodes.map(_ => aqlGraphNode2GraphNode<NodeType>(_))
     const globSearchPage = forwardSkipLimitPage({ docs, skip })
