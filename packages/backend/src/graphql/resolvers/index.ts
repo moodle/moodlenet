@@ -43,7 +43,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
         return maybeNode ? graphNode2GqlNode(maybeNode) : null
       },
 
-      async globalSearch(_root, { sort, text, nodeTypes, page }, ctx) {
+      async globalSearch(_root, { sort, text, nodeTypes, page, publishedOnly }, ctx) {
         const searchInput: contentGraph.search.byTerm.Input = {
           sessionEnv: ctx.sessionEnv,
           nodeTypes: (nodeTypes ?? globalSearchNodeTypes).filter(isGlobalSearchNodeType),
@@ -55,6 +55,7 @@ export const getGQLResolvers = (): GQLResolvers.Resolvers => {
           },
           sort,
           text,
+          publishedOnly: !!publishedOnly,
         }
 
         const { items, pageInfo } = await contentGraph.search.byTerm.port(searchInput)

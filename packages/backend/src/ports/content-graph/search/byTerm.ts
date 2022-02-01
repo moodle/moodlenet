@@ -29,11 +29,12 @@ export type Input<NodeType extends GlobalSearchNodeType = GlobalSearchNodeType> 
   nodeTypes: Maybe<NodeType[]>
   page: PaginationInput
   sessionEnv: SessionEnv
+  publishedOnly: boolean
 }
 
 export const port = plug(ns(module, 'port'), async <NodeType extends GlobalSearchNodeType>(input: Input<NodeType>) => {
-  const { nodeTypes, page, sort, text } = input
-  const adapterArg = await bRules({ ...input, arg: { sort, text, nodeTypes, page } })
+  const { nodeTypes, page, sort, text, publishedOnly } = input
+  const adapterArg = await bRules({ ...input, arg: { sort, text, nodeTypes, page, publishedOnly } })
   if (!adapterArg) {
     const emptySearhPage: SearchPage = {
       items: [],
