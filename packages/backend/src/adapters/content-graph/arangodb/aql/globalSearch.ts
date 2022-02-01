@@ -13,6 +13,7 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
   nodeTypes,
   sort,
   assertions,
+  publishedOnly,
 }: AdapterArg<NType>) => {
   const { limit, skip } = forwardSkipLimitPagination({ page })
   const aqlAssertions = getAqlAssertions(assertions)
@@ -68,7 +69,7 @@ export const globalSearchQuery = <NType extends GlobalSearchNodeType = GlobalSea
           BOOST( NGRAM_MATCH(searchNode.description, searchTerm, 0.05, "global-text-search"), 0.1 )
         , "text_en")
       
-        FILTER ${aqlAssertions} && ${filterConditions} 
+        FILTER ${publishedOnly ? `searchNode._published &&` : ``} ${aqlAssertions} && ${filterConditions} 
       
       let sortFactor = ${sortFactor}
       let rank = ( (0.1 + TFIDF(searchNode)) * sortFactor )
