@@ -3,9 +3,10 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { FormikConfig, useFormik } from 'formik'
 import { mixed, object, SchemaOf, string } from 'yup'
-import { MNEnv } from '../../../../../constants'
 import { NewCollectionFormValues } from '../types'
 import { CreateCollection, CreateCollectionProps } from './CreateCollection'
+
+const maxUploadSize = 1024 * 1024 * 50
 
 const meta: ComponentMeta<typeof CreateCollection> = {
   title: 'Pages/New Collection/Create Collection',
@@ -38,7 +39,7 @@ export const validationSchema: SchemaOf<NewCollectionFormValues> = object({
     .required(t`Please provide a title`),
   image: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > MNEnv.maxUploadSize
+      v instanceof Blob && v.size > maxUploadSize
         ? createError({ message: t`This file is too big for uploading` })
         : true
     )

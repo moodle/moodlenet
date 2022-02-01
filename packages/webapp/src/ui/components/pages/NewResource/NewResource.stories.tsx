@@ -3,7 +3,6 @@ import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { useFormik } from 'formik'
 import { array, mixed, object, SchemaOf, string } from 'yup'
-import { MNEnv } from '../../../../constants'
 import { href } from '../../../elements/link'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { CollectionTextOptionProps } from './AddToCollections/storiesData'
@@ -18,6 +17,8 @@ import {
   CategoriesTextOptionProps,
   LicenseIconTextOptionProps,
 } from './UploadResource/storiesData'
+
+const maxUploadSize = 1024 * 1024 * 50
 
 const meta: ComponentMeta<typeof NewResource> = {
   title: 'Pages/New Resource',
@@ -58,7 +59,7 @@ export const validationSchema: SchemaOf<NewResourceFormValues> = object({
   addToCollections: array().of(string()).optional(),
   image: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > MNEnv.maxUploadSize
+      v instanceof Blob && v.size > maxUploadSize
         ? createError({ message: t`This file is too big for uploading` })
         : true
     )
