@@ -4,6 +4,7 @@ type Query {
     nodeTypes: [GlobalSearchNodeType!]
     sort: GlobalSearchSort
     page: PaginationInput
+    publishedOnly: Boolean
   ): SearchPage!
 }
 

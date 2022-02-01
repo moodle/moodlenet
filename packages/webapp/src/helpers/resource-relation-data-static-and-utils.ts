@@ -13,6 +13,7 @@ export const useLanguages = () => {
       text: '',
       nodeTypes: ['Language'],
       page: { first: 200 },
+      publishedOnly: true,
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
@@ -32,6 +33,7 @@ export const useIscedFields = () => {
       text: '',
       nodeTypes: ['IscedField'],
       page: { first: 200 },
+      publishedOnly: true,
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
@@ -51,6 +53,7 @@ export const useResourceTypes = () => {
       text: '',
       nodeTypes: ['ResourceType'],
       page: { first: 200 },
+      publishedOnly: true,
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
@@ -70,6 +73,7 @@ export const useIscedGrades = () => {
       text: '',
       nodeTypes: ['IscedGrade'],
       page: { first: 200 },
+      publishedOnly: true,
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
@@ -97,6 +101,7 @@ export const useLicenses = () => {
       text: '',
       nodeTypes: ['License'],
       page: { first: 200 },
+      publishedOnly: true,
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
