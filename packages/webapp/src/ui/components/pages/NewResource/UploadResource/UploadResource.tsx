@@ -39,7 +39,7 @@ export type UploadResourceProps = {
   categories: SelectOptions<TextOptionProps>
   setCategoryFilter(text: string): unknown
   licenses: SelectOptions<IconTextOptionProps>
-  fileMaxSize: number
+  fileMaxSize: number | null
 }
 
 const usingFields: (keyof NewResourceFormValues)[] = [
@@ -352,9 +352,11 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                             <Trans>Drop or click to upload a file!</Trans>
                           </span>
                           <br />
-                          <span style={{ fontSize: '12px' }}>
-                            <Trans>Max size</Trans> {prettyBytes(fileMaxSize)}
-                          </span>
+                          {fileMaxSize && (
+                            <span style={{ fontSize: '12px' }}>
+                              <Trans>Max size</Trans> {prettyBytes(fileMaxSize)}
+                            </span>
+                          )}
                         </span>
                       </div>
                     ) : (

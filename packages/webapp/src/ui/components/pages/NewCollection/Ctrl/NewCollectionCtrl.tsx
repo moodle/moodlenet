@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro'
 import { isOfNodeType } from '@moodlenet/common/dist/graphql/helpers'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { fileExceedsMaxUploadSize } from '@moodlenet/common/dist/staticAsset/lib'
 import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import { useFormik } from 'formik'
 import { useMemo } from 'react'
@@ -26,7 +27,7 @@ const validationSchema: SchemaOf<NewCollectionFormValues> = object({
     .required(t`Please provide a title`),
   image: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > MNEnv.maxUploadSize
+      v instanceof Blob && fileExceedsMaxUploadSize(v.size, MNEnv.maxUploadSize)
         ? createError({ message: t`This file is too big for uploading` })
         : true
     )
