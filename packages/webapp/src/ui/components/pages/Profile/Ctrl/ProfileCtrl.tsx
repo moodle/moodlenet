@@ -5,6 +5,7 @@ import {
 } from '@moodlenet/common/dist/graphql/helpers'
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import { fileExceedsMaxUploadSize } from '@moodlenet/common/dist/staticAsset/lib'
 import { useFormik } from 'formik'
 import { createElement, useCallback, useEffect, useMemo } from 'react'
 import { mixed, object, SchemaOf, string } from 'yup'
@@ -40,14 +41,14 @@ import {
 const validationSchema: SchemaOf<ProfileFormValues> = object({
   avatarImage: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > MNEnv.maxUploadSize
+      v instanceof Blob && fileExceedsMaxUploadSize(v.size, MNEnv.maxUploadSize)
         ? createError({ message: t`This file is too big for uploading` })
         : true
     )
     .optional(),
   backgroundImage: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > MNEnv.maxUploadSize
+      v instanceof Blob && fileExceedsMaxUploadSize(v.size, MNEnv.maxUploadSize)
         ? createError({ message: t`This file is too big for uploading` })
         : true
     )
@@ -335,7 +336,8 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
         isApproved: profile._published,
         requestApprovalForm,
         isElegibleForApproval:
-          profile.resourcesCount >= MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS,
+          profile.resourcesCount >=
+          (MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS ?? 0),
         isWaitingApproval,
         showAccountApprovedSuccessAlert: hasJustBeenApproved,
         unapproveUserForm,

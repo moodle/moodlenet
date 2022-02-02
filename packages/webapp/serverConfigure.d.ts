@@ -1,7 +1,7 @@
 type MNEnv = {
-  maxUploadSize: number
-  minResourcesForUserApprovalRequests: number
-  timeBetweenApprovalRequests: number
+  maxUploadSize: number | null
+  minResourcesForUserApprovalRequests: number | null
+  timeBetweenApprovalRequests: number | null
   graphqlEndpoint: string
   staticAssetBase: string
 }

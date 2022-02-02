@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro'
+import { fileExceedsMaxUploadSize } from '@moodlenet/common/dist/staticAsset/lib'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { useFormik } from 'formik'
@@ -18,7 +19,7 @@ import {
   LicenseIconTextOptionProps,
 } from './UploadResource/storiesData'
 
-const maxUploadSize = 1024 * 1024 * 50
+const maxUploadSize = 1024 * 1024 * 100
 
 const meta: ComponentMeta<typeof NewResource> = {
   title: 'Pages/New Resource',
@@ -47,7 +48,13 @@ export const validationSchema: SchemaOf<NewResourceFormValues> = object({
       ? schema.required(t`Need a License for uploaded content`)
       : schema.optional()
   }),
-  content: mixed().required(t`Content is a required field`),
+  content: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
+        ? createError({ message: t`This file is too big for uploading` })
+        : true
+    )
+    .required(t`Content is a required field`),
   description: string()
     .max(4096)
     .min(3)
@@ -59,7 +66,7 @@ export const validationSchema: SchemaOf<NewResourceFormValues> = object({
   addToCollections: array().of(string()).optional(),
   image: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > maxUploadSize
+      v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
         ? createError({ message: t`This file is too big for uploading` })
         : true
     )
@@ -151,7 +158,7 @@ export const Default = () => {
             ({ value }) => value === form.values.license
           ),
         },
-        fileMaxSize: 200000000,
+        fileMaxSize: maxUploadSize,
       }}
     />
   )

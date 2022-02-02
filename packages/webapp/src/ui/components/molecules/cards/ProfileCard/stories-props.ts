@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro'
+import { fileExceedsMaxUploadSize } from '@moodlenet/common/dist/staticAsset/lib'
 import { action } from '@storybook/addon-actions'
 import { useFormik } from 'formik'
 import { mixed, object, SchemaOf, string } from 'yup'
@@ -11,14 +12,14 @@ const maxUploadSize = 1024 * 1024 * 50
 export const validationSchema: SchemaOf<ProfileFormValues> = object({
   avatarImage: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > maxUploadSize
+      v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
         ? createError({ message: t`This file is too big for uploading` })
         : true
     )
     .optional(),
   backgroundImage: mixed()
     .test((v, { createError }) =>
-      v instanceof Blob && v.size > maxUploadSize
+      v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
         ? createError({ message: t`This file is too big for uploading` })
         : true
     )
