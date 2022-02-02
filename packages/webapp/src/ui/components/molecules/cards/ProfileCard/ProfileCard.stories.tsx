@@ -1,6 +1,6 @@
 import { ComponentMeta } from '@storybook/react'
 import { ProfileCard } from './ProfileCard'
-import { useProfileCardStoryProps } from './props'
+import { useProfileCardStoryProps } from './stories-props'
 
 const meta: ComponentMeta<typeof ProfileCard> = {
   title: 'Molecules/ProfileCard',
