@@ -152,7 +152,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
           highlight ? ' highlight' : ''
         }`}
       >
-        {showContent || !pills ? (
+        {showContent ? (
           <>
             <input
               ref={dropdownButton}
