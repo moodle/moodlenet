@@ -8,7 +8,7 @@ export const slugify = ({ str, locale }: { str: string; locale?: string }): Slug
 export const contentSlug = ({ name, locale, slugCode }: { name: Slug; locale?: string; slugCode?: string }) => {
   const slug_code = slugCode ? slugify({ str: slugCode, locale }) : newGlyphSlugId()
   const slug_name = slugify({ str: name, locale })
-  return `${slug_code}-${slug_name}`
+  return `${slug_code}-${slug_name}`.substring(0, 75)
 }
 
 const idAlphabet = `0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`
