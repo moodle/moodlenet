@@ -124,7 +124,7 @@ export const SessionProvider: FC = ({ children }) => {
 
   const isWaitingApproval =
     Number(new Date()) - (lastUserApprovalRequest ?? 0) <
-    TIME_BETWEEN_USER_APPROVAL_REQUESTS
+    (TIME_BETWEEN_USER_APPROVAL_REQUESTS ?? 0)
 
   const recoverPassword = useCallback<SessionContextType['recoverPassword']>(
     async ({ email }) => {
