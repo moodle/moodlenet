@@ -2,7 +2,7 @@ import { FC } from 'react'
 import './styles.scss'
 
 export type TertiaryButtonProps = {
-  className: string
+  className?: string
   disabled?: boolean
   onClick?(arg0: unknown): unknown | any
 }
