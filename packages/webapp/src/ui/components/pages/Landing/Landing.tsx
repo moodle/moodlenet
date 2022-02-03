@@ -51,6 +51,19 @@ export const Landing = withCtrl<LandingProps>(
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false)
     const [isSearchboxInViewport, setIsSearchboxInViewport] =
       useState<boolean>(true)
+    const [numResources, setNumResources] = useState<number>(9)
+
+    const calcNumResources = () => {
+      if (window.innerWidth > 820 && window.innerWidth <= 1135) {
+        const remainder = resourceCardPropsList.length % 2
+        setNumResources(resourceCardPropsList.length - remainder)
+      } else if (window.innerWidth > 1135) {
+        const remainder = resourceCardPropsList.length % 3
+        setNumResources(resourceCardPropsList.length - remainder)
+      }
+    }
+
+    window.addEventListener('resize', calcNumResources)
 
     return (
       <HeaderPageTemplate
@@ -134,9 +147,11 @@ export const Landing = withCtrl<LandingProps>(
             content={(isLoadingMore
               ? resourceCardPropsList
               : resourceCardPropsList
-            ).map((resourceCardProps) => (
-              <ResourceCard {...resourceCardProps} />
-            ))}
+            )
+              .slice(0, numResources)
+              .map((resourceCardProps) => (
+                <ResourceCard {...resourceCardProps} />
+              ))}
             title={
               <div className="card-header">
                 <div className="title">
