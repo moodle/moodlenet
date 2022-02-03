@@ -15,6 +15,7 @@ import Modal from '../../../atoms/Modal/Modal'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
+import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import { ProfileFormValues } from '../../../pages/Profile/types'
 import './styles.scss'
 
@@ -418,12 +419,12 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               </PrimaryButton>
             )}
             {!isOwner && (
-              <div
+              <TertiaryButton
                 className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
                 onClick={openSendMessage}
               >
                 <MailOutlineIcon />
-              </div>
+              </TertiaryButton>
             )}
           </div>
         </div>

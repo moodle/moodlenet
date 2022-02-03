@@ -32,7 +32,7 @@ query LandingPageLists($id: ID = "Organization/") {
       bookmarkedResources: _rel(
         type: Bookmarked
         targetTypes: [Resource]
-        page: { first: 8 }
+        page: { first: 15 }
       ) {
         edges {
           node {
