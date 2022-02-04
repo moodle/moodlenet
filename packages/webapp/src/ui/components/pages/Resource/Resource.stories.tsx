@@ -51,7 +51,7 @@ const meta: ComponentMeta<typeof Resource> = {
 export const validationSchema: SchemaOf<ResourceFormValues> = object({
   category: string().required(t`Please select a subject`),
   license: string().when('isFile', (isFile, schema) => {
-    return isFile ? schema.required(t`Select a License`) : schema.optional()
+    return isFile ? schema.required(t`Select a license`) : schema.optional()
   }),
   isFile: boolean().required(),
   description: string()
