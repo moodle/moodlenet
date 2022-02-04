@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro'
-import { fileExceedsMaxUploadSize } from '@moodlenet/common/dist/staticAsset/lib'
+import { fileExceedsMaxUploadSize } from '@moodlenet/common/src/staticAsset/lib'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { useFormik } from 'formik'
@@ -42,10 +42,10 @@ const meta: ComponentMeta<typeof NewResource> = {
 }
 
 export const validationSchema: SchemaOf<NewResourceFormValues> = object({
-  category: string().required(t`Please provide a Category`),
+  category: string().required(t`Please select a subject`),
   license: string().when('content', (content, schema) => {
     return content instanceof Blob
-      ? schema.required(t`Need a License for uploaded content`)
+      ? schema.required(t`Select a License`)
       : schema.optional()
   }),
   content: mixed()
@@ -54,11 +54,11 @@ export const validationSchema: SchemaOf<NewResourceFormValues> = object({
         ? createError({ message: t`This file is too big for uploading` })
         : true
     )
-    .required(t`Content is a required field`),
+    .required(t`Please provide a content`),
   description: string()
     .max(4096)
     .min(3)
-    .required(t`Please provide a Description`),
+    .required(t`Please provide a description`),
   name: string()
     .max(160)
     .min(3)
@@ -77,9 +77,7 @@ export const validationSchema: SchemaOf<NewResourceFormValues> = object({
   type: string().optional(),
   visibility: mixed().required(t`Visibility is required`),
   year: string().when('month', (month, schema) => {
-    return month
-      ? schema.required(t`Need an year if you choosed month`)
-      : schema.optional()
+    return month ? schema.required(t`Please select a year`) : schema.optional()
   }),
 })
 
@@ -90,14 +88,15 @@ export const Default = () => {
     initialValues: {
       addToCollections: [],
       category: '',
+      // content: new File([], ''),
       content: '',
       description: '',
       name: '',
       visibility: 'Private',
     },
-    // initialErrors: {
-    //   content: 'The file exceeds the max size',
-    // },
+    initialErrors: {
+      content: 'The file exceeds the max size',
+    },
   })
 
   return (

@@ -32,7 +32,7 @@ export const validationSchema: SchemaOf<NewCollectionFormValues> = object({
   description: string()
     .max(4096)
     .min(3)
-    .required(t`Please provide a Description`),
+    .required(t`Please provide a description`),
   title: string()
     .max(160)
     .min(3)

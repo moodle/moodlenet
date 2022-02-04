@@ -34,7 +34,7 @@ export const validationSchema: SchemaOf<ProfileFormValues> = object({
   description: string()
     .max(4096)
     .min(3)
-    .required(t`Please provide a Description`),
+    .required(t`Please provide a description`),
 })
 
 export const useProfileCardStoryProps = (overrides?: {

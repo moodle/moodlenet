@@ -177,6 +177,7 @@ const DropdownComp: FC<DropdownProps> = (props) => {
               ${multilines ? 'multilines' : ''} 
               ${multiple && !multilines ? 'scroll' : ''}
               `}
+              tabIndex={!disabled ? 0 : undefined}
             >
               {pills}
             </div>
