@@ -52,17 +52,15 @@ export const lmsValidationSchema: SchemaOf<{ site?: string }> = object({
   site: string().url().required(),
 })
 export const validationSchema: SchemaOf<ResourceFormValues> = object({
-  category: string().required(t`Please provide a Category`),
+  category: string().required(t`Please select a subject`),
   license: string().when('isFile', (isFile, schema) => {
-    return isFile
-      ? schema.required(t`Need a License for uploaded content`)
-      : schema.optional()
+    return isFile ? schema.required(t`Select a License`) : schema.optional()
   }),
   isFile: boolean().required(),
   description: string()
     .min(3)
     .max(4096)
-    .required(t`Please provide a Description`),
+    .required(t`Please provide a description`),
   name: string()
     .min(3)
     .max(160)
@@ -80,9 +78,7 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
   type: string().optional(),
   visibility: mixed().required(t`Visibility is required`),
   year: string().when('month', (month, schema) => {
-    return month
-      ? schema.required(t`Need an year if you choosed month`)
-      : schema.optional()
+    return month ? schema.required(t`Please select a year`) : schema.optional()
   }),
 })
 export type ResourceCtrlProps = { id: ID }

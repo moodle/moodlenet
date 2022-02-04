@@ -1,4 +1,5 @@
 import { t, Trans } from '@lingui/macro'
+import { useState } from 'react'
 import { withCtrl } from '../../../../lib/ctrl'
 import { SelectOptions } from '../../../../lib/types'
 import {
@@ -11,6 +12,7 @@ import Loading from '../../../atoms/Loading/Loading'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
 import { useNewResourcePageCtx } from '../NewResource'
+import { NewResourceFormValues } from '../types'
 import { MonthTextOptionProps, YearsProps } from './storiesData'
 import './styles.scss'
 
@@ -22,13 +24,14 @@ export type ExtraDetailsProps = {
   languages: SelectOptions<TextOptionProps>
   setLanguageFilter(text: string): unknown
 }
-// const usingFields: (keyof NewResourceFormValues)[] = [
-//   'type',
-//   'level',
-//   'month',
-//   'year',
-//   'language',
-// ]
+
+const usingFields: (keyof NewResourceFormValues)[] = [
+  'type',
+  'level',
+  'month',
+  'year',
+  'language',
+]
 
 export const ExtraDetails = withCtrl<ExtraDetailsProps>(
   ({
@@ -40,6 +43,11 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
     setTypeFilter,
   }) => {
     const { prevForm, form } = useNewResourcePageCtx()
+    const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
+    const isValid = usingFields.reduce(
+      (valid, fldName) => valid && !form.errors[fldName],
+      true
+    )
 
     const dataInputs = (
       <div className="data-inputs">
@@ -50,6 +58,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           value={form.values.type}
           onChange={form.handleChange}
           edit={!form.isSubmitting}
+          error={shouldShowErrors && form.errors.type}
           disabled={form.isSubmitting}
           searchByText={setTypeFilter}
           pills={
@@ -82,6 +91,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           value={form.values.level}
           onChange={form.handleChange}
           edit={!form.isSubmitting}
+          error={shouldShowErrors && form.errors.level}
           disabled={form.isSubmitting}
           searchByText={setLevelFilter}
           pills={
@@ -120,6 +130,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
               label=""
               value={form.values.month}
               edit={!form.isSubmitting}
+              error={shouldShowErrors && form.errors.month}
               disabled={form.isSubmitting}
               pills={
                 form.values.month && (
@@ -145,7 +156,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
               label=""
               onChange={form.handleChange}
               value={form.values.year}
-              error={form.errors.year}
+              error={shouldShowErrors && form.errors.year}
               edit={!form.isSubmitting}
               disabled={form.isSubmitting}
               pills={
@@ -170,6 +181,7 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           value={form.values.language}
           onChange={form.handleChange}
           edit={!form.isSubmitting}
+          error={shouldShowErrors && form.errors.language}
           disabled={form.isSubmitting}
           searchByText={setLanguageFilter}
           pills={
@@ -211,7 +223,14 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
           </SecondaryButton>
           <PrimaryButton
             className={`${form.isSubmitting ? 'loading' : ''}`}
-            onClick={form.submitForm}
+            onClick={
+              !isValid
+                ? () => {
+                    setShouldShowErrors(true)
+                    form.validateForm()
+                  }
+                : form.submitForm
+            }
           >
             <div
               className="loading"

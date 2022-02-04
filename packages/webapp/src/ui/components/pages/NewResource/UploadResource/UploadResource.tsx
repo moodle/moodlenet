@@ -147,7 +147,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           placeholder={
             subStep === 'ChooseResource'
               ? ''
-              : t`Tell us about your resource and how it could be used.`
+              : t`Tell us about your resource and how you have used it`
           }
           disabled={subStep === 'ChooseResource'}
           value={form.values.description}
@@ -198,7 +198,14 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           </Dropdown>
           <VisibilityDropdown
             name="visibility"
-            value={form.values.visibility}
+            value={
+              form.values.name != '' ||
+              form.values.description != '' ||
+              form.values.category !== '' ||
+              subStep === 'EditData'
+                ? form.values.visibility
+                : undefined
+            }
             onChange={form.handleChange}
             disabled={subStep === 'ChooseResource'}
             edit={subStep === 'EditData'}
