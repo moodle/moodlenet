@@ -51,7 +51,9 @@ export const validationSchema: SchemaOf<NewResourceFormValues> = object({
   content: mixed()
     .test((v, { createError }) =>
       v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
-        ? createError({ message: t`This file is too big for uploading` })
+        ? createError({
+            message: t`The image is too big, reduce the size or use another image`,
+          })
         : true
     )
     .required(t`Please provide a content`),
@@ -67,7 +69,9 @@ export const validationSchema: SchemaOf<NewResourceFormValues> = object({
   image: mixed()
     .test((v, { createError }) =>
       v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
-        ? createError({ message: t`This file is too big for uploading` })
+        ? createError({
+            message: t`The image is too big, reduce the size or use another image`,
+          })
         : true
     )
     .optional(),
