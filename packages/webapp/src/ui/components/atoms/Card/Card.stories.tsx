@@ -23,7 +23,7 @@ const CardStory: ComponentStory<typeof Card> = (args) => (
   <Card {...args}>
     <div style={{ padding: 24 }}>
       Diverse, vibrant, dynamic. The cornerstone values that define our amazing{' '}
-      <span style={{ color: '#72729D' }}>Cards</span>
+      <span style={{ color: '#6C6C99' }}>Cards</span>
     </div>
   </Card>
 )
