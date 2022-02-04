@@ -32,10 +32,10 @@ import {
   useNewResourceDataPageLazyQuery,
 } from './NewResourceCtrl.gen'
 const validationSchema: SchemaOf<NewResourceFormValues> = object({
-  category: string().required(t`Please provide a Category`),
+  category: string().required(t`Please select a subject`),
   license: string().when('content', (content, schema) => {
     return content instanceof Blob
-      ? schema.required(t`Need a License for uploaded content`)
+      ? schema.required(t`Select a License`)
       : schema.optional()
   }),
   content: mixed()
@@ -46,11 +46,11 @@ const validationSchema: SchemaOf<NewResourceFormValues> = object({
         ? createError({ message: t`Please provide a proper url` })
         : true
     )
-    .required(t`Content is a required field`),
+    .required(t`Please provide a content`),
   description: string()
     .max(4096)
     .min(3)
-    .required(t`Please provide a Description`),
+    .required(t`Please provide a description`),
   name: string()
     .min(3)
     .max(160)
@@ -69,9 +69,7 @@ const validationSchema: SchemaOf<NewResourceFormValues> = object({
   type: string().optional(),
   visibility: mixed().required(t`Visibility is required`),
   year: string().when('month', (month, schema) => {
-    return month
-      ? schema.required(t`Need an year if you choosed month`)
-      : schema.optional()
+    return month ? schema.required(t`Please select a year`) : schema.optional()
   }),
 })
 export type NewResourceCtrlProps = {}

@@ -104,14 +104,14 @@ export const NewResource = withCtrl<NewResourceProps>(
             autoHideDuration={6000}
             showCloseButton={false}
           >
-            <Trans>{form.errors.content}</Trans>
+            {form.errors.content}
           </Snackbar>
         )}
         {form.isSubmitting && (
           <Snackbar
             position="bottom"
             type="info"
-            waitDuration={200}
+            waitDuration={2000}
             autoHideDuration={6000}
             showCloseButton={false}
           >
