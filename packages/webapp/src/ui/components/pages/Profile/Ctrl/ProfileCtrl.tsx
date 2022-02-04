@@ -61,7 +61,7 @@ const validationSchema: SchemaOf<ProfileFormValues> = object({
   organizationName: string().min(3).max(160).optional(),
   siteUrl: string().url().optional(),
   description: string()
-    .required(t`Please provide a Description`)
+    .required(t`Please provide a description`)
     .min(3)
     .max(4096),
 })
