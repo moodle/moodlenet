@@ -26,7 +26,7 @@
     > .subtitle {
       line-height: 26px;
       margin-left: 16px;
-      color: #b6bacb;
+      color: #6c6c99;
       font-size: 15px;
     }
   }
@@ -41,13 +41,13 @@
       height: 9px;
       border-radius: 7px;
       &.done {
-        background-color: #00e096;
+        background-color: #00bd7e;
       }
       &.current {
-        background-color: #337aff;
+        background-color: #1a6aff;
       }
       &.todo {
-        background: #b6bacb;
+        background: #6c6c99;
       }
     }
   }

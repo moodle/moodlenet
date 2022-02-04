@@ -22,11 +22,11 @@ export type ResourceType = 'Video' | 'Web Page' | 'Moodle Book'
 export const getResourceColorType = (type?: string) => {
   switch (type) {
     case 'Video':
-      return '#2c7bcb'
+      return '#2A75C0'
     case 'Web Page':
-      return '#cc4fd1'
+      return '##C233C7'
     default:
-      return '#20c184'
+      return '#15845A'
   }
 }
 
