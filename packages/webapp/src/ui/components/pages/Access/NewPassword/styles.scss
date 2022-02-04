@@ -39,7 +39,7 @@
       height: min-content;
       width: 100%;
       min-height: 305px;
-      background-color: #72729d;
+      background-color: #b6bacb;
 
       > .content {
         flex-direction: column;
@@ -84,30 +84,30 @@
                 &::placeholder {
                   font-weight: 500;
                   font-size: 17px;
-                  color: #72729d;
+                  color: #b6bacb;
                   opacity: 1;
                 }
                 &::-ms-input-placeholder {
                   font-weight: 500;
                   font-size: 17px;
-                  color: #72729d;
+                  color: #b6bacb;
                 }
                 &:-ms-input-placeholder {
                   font-weight: 500;
                   font-size: 17px;
-                  color: #72729d;
+                  color: #b6bacb;
                 }
               }
             }
 
             &.focused > .input-container {
               box-shadow: 0 0 5px #fff;
-              border: 0.5px solid #72729d;
+              border: 0.5px solid #b6bacb;
               color: #9598a7;
             }
 
             &:not(.focused) > .input-container {
-              color: #72729d;
+              color: #b6bacb;
             }
 
             > .error-msg {

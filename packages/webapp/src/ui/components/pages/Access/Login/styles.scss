@@ -57,7 +57,7 @@
         }
 
         > .title {
-          color: #72729d;
+          color: #b6bacb;
           font-size: 28px;
         }
 
@@ -79,18 +79,18 @@
               &::placeholder {
                 font-weight: 500;
                 font-size: 17px;
-                color: #72729d;
+                color: #b6bacb;
                 opacity: 1;
               }
               &::-ms-input-placeholder {
                 font-weight: 500;
                 font-size: 17px;
-                color: #72729d;
+                color: #b6bacb;
               }
               &:-ms-input-placeholder {
                 font-weight: 500;
                 font-size: 17px;
-                color: #72729d;
+                color: #b6bacb;
               }
 
               &:focus {
@@ -98,7 +98,7 @@
               }
 
               &:not(:focus) {
-                color: #72729d;
+                color: #b6bacb;
               }
             }
           }
@@ -120,10 +120,10 @@
           > .password {
             max-width: 250px;
             &:not(.highlight) > .input-container {
-              border-color: #72729d;
+              border-color: #b6bacb;
             }
             &:not(.highlight).focused > .input-container {
-              box-shadow: 0 0 5px #72729d;
+              box-shadow: 0 0 5px #b6bacb;
             }
           }
 
@@ -201,7 +201,7 @@
       flex: 1;
       min-width: 185px;
       border-radius: 16px 0 0 16px;
-      background-color: #72729d;
+      background-color: #b6bacb;
       padding-left: 30px;
 
       &:active {

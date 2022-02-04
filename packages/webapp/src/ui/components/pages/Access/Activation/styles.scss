@@ -31,7 +31,7 @@
     > .card {
       height: fit-content;
       width: fit-content;
-      background-color: #00e096;
+      background-color: #00bd7e;
 
       > .content {
         flex-direction: column;
@@ -77,29 +77,29 @@
 
             &:focus {
               box-shadow: 0 0 5px white;
-              border: 0.5px solid #72729d;
+              border: 0.5px solid #6c6c99;
               color: #9598a7;
             }
 
             &:not(:focus) {
-              color: #72729d;
+              color: #6c6c99;
             }
 
             &::placeholder {
               font-weight: 500;
               font-size: 17px;
-              color: #72729d;
+              color: #6c6c99;
               opacity: 1;
             }
             &::-ms-input-placeholder {
               font-weight: 500;
               font-size: 17px;
-              color: #72729d;
+              color: #6c6c99;
             }
             &:-ms-input-placeholder {
               font-weight: 500;
               font-size: 17px;
-              color: #72729d;
+              color: #6c6c99;
             }
           }
         }

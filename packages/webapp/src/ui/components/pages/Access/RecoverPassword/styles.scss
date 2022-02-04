@@ -57,7 +57,7 @@
     .card:only-child {
       width: 525px;
       min-height: 340px;
-      background-color: #72729d;
+      background-color: #b6bacb;
 
       @media (max-width: 900px) {
         max-width: 525px;
@@ -107,30 +107,30 @@
                 &::placeholder {
                   font-weight: 500;
                   font-size: 17px;
-                  color: #72729d;
+                  color: #b6bacb;
                   opacity: 1;
                 }
                 &::-ms-input-placeholder {
                   font-weight: 500;
                   font-size: 17px;
-                  color: #72729d;
+                  color: #b6bacb;
                 }
                 &:-ms-input-placeholder {
                   font-weight: 500;
                   font-size: 17px;
-                  color: #72729d;
+                  color: #b6bacb;
                 }
               }
             }
 
             &.focused > .input-container {
               box-shadow: 0 0 5px #fff;
-              border: 0.5px solid #72729d;
+              border: 0.5px solid #b6bacb;
               color: #9598a7;
             }
 
             &:not(.focused) > .input-container {
-              color: #72729d;
+              color: #b6bacb;
             }
 
             > .error-msg {
@@ -225,7 +225,7 @@
       }
 
       > a {
-        color: #72729d;
+        color: #b6bacb;
         font-size: 28px;
         justify-content: center;
         display: flex;
@@ -263,7 +263,7 @@
     > .card {
       height: 340px;
       max-width: 390px;
-      background-color: #72729d;
+      background-color: #b6bacb;
       flex-direction: column;
       justify-content: space-between;
       display: flex;
