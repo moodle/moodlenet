@@ -24,7 +24,7 @@
   }
 
   &.grey {
-    background-color: #7f8393;
+    background-color: #8a8a8a;
   }
 
   &.blue {
@@ -74,6 +74,20 @@
     &.blue {
       background-color: #2658b4;
     }
+  }
+
+  &:focus {
+    border: none;
+    outline: none;
+    transition: 0.1s;
+    box-shadow: 0 0 3pt 2pt #337affb0;
+  }
+
+  &:focus-visible {
+    border: none;
+    outline: none;
+    transition: 0.1s;
+    box-shadow: 0 0 3pt 2pt #337affb0;
   }
 
   &.disabled {

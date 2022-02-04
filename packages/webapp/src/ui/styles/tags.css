@@ -15,9 +15,9 @@
   padding: 5px 10px;
   display: flex;
   font-size: 13px;
-  color: white;
+  color: #636363;
   align-items: center;
-  background-color: #b6bacb;
+  background-color: #e3e5ef;
   border-radius: 15px;
 }
 
@@ -30,18 +30,13 @@
 .tag.hover:hover {
   box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%),
     0px 2px 6px 2px rgb(60 64 67 / 15%);
-  background-color: #9b9fb1;
+  background-color: #cbcdd7;
 }
 
 .tag.hover:active {
   box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%),
     0px 2px 6px 2px rgb(60 64 67 / 15%);
-  background-color: #7b7f8f;
-}
-
-.tag-subject {
-  background-color: #7f8393;
-  border-radius: 6px;
+  background-color: #b5b7c0;
 }
 
 .empty-space {

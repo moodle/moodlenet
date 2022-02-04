@@ -86,13 +86,13 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     let color: string = ''
     switch (type) {
       case 'Video':
-        color = '#2c7bcb'
+        color = '#2A75C0'
         break
       case 'Web Page':
-        color = '#cc4fd1'
+        color = '#C233C7'
         break
       default:
-        color = '#20c184'
+        color = '#15845A'
     }
 
     return (
