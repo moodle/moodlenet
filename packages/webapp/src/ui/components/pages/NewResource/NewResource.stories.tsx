@@ -88,8 +88,8 @@ export const Default = () => {
     initialValues: {
       addToCollections: [],
       category: '',
-      // content: new File([], ''),
-      content: '',
+      content: new File([], ''),
+      // content: '',
       description: '',
       name: '',
       visibility: 'Private',
