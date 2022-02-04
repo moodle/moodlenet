@@ -51,7 +51,7 @@ const meta: ComponentMeta<typeof Resource> = {
 export const validationSchema: SchemaOf<ResourceFormValues> = object({
   category: string().required(t`Please select a subject`),
   license: string().when('isFile', (isFile, schema) => {
-    return isFile ? schema.required(t`Select a License`) : schema.optional()
+    return isFile ? schema.required(t`Select a license`) : schema.optional()
   }),
   isFile: boolean().required(),
   description: string()
@@ -65,7 +65,9 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
   image: mixed()
     .test((v, { createError }) =>
       v instanceof Blob && v.size > maxUploadSize
-        ? createError({ message: t`This file is too big for uploading` })
+        ? createError({
+            message: t`The file is too big, reduce the size or provide a url`,
+          })
         : true
     )
     .optional(),

@@ -16,7 +16,7 @@
   white-space: nowrap;
 
   &.green {
-    background-color: #00e096;
+    background-color: #00bd7e;
   }
 
   &.red {
@@ -24,17 +24,17 @@
   }
 
   &.grey {
-    background-color: #7f8393;
+    background-color: #8a8a8a;
   }
 
   &.blue {
-    background-color: #337aff;
+    background-color: #1a6aff;
   }
 
   &:hover {
     //background-color: #e37511;
     background-color: $primary-color-hover;
-    // background-color: #337aff;
+    // background-color: #1A6AFF;
     box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%),
       0px 2px 6px 2px rgb(60 64 67 / 15%);
 
@@ -56,7 +56,7 @@
   }
 
   &:active {
-    // background-color: #00e096;
+    // background-color: #00bd7e;
     background-color: $primary-color-active;
 
     &.green {
@@ -74,6 +74,20 @@
     &.blue {
       background-color: #2658b4;
     }
+  }
+
+  &:focus {
+    border: none;
+    outline: none;
+    transition: 0.1s;
+    box-shadow: 0 0 3pt 2pt #1a6affb0;
+  }
+
+  &:focus-visible {
+    border: none;
+    outline: none;
+    transition: 0.1s;
+    box-shadow: 0 0 3pt 2pt #1a6affb0;
   }
 
   &.disabled {

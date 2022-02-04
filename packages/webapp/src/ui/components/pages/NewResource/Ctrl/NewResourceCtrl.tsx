@@ -35,13 +35,15 @@ const validationSchema: SchemaOf<NewResourceFormValues> = object({
   category: string().required(t`Please select a subject`),
   license: string().when('content', (content, schema) => {
     return content instanceof Blob
-      ? schema.required(t`Select a License`)
+      ? schema.required(t`Select a license`)
       : schema.optional()
   }),
   content: mixed()
     .test((v, { createError }) =>
       v instanceof Blob && fileExceedsMaxUploadSize(v.size, MNEnv.maxUploadSize)
-        ? createError({ message: t`This file is too big for uploading` })
+        ? createError({
+            message: t`The file is too big, reduce the size or provide a url`,
+          })
         : 'string' === typeof v && !urlRegex.test(v)
         ? createError({ message: t`Please provide a proper url` })
         : true
@@ -59,7 +61,9 @@ const validationSchema: SchemaOf<NewResourceFormValues> = object({
   image: mixed()
     .test((v, { createError }) =>
       v instanceof Blob && fileExceedsMaxUploadSize(v.size, MNEnv.maxUploadSize)
-        ? createError({ message: t`This file is too big for uploading` })
+        ? createError({
+            message: t`The image is too big, reduce the size or use another image`,
+          })
         : true
     )
     .optional(),
