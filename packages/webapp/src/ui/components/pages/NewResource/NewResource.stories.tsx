@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro'
-import { fileExceedsMaxUploadSize } from '@moodlenet/common/src/staticAsset/lib'
+import { fileExceedsMaxUploadSize } from '@moodlenet/common/dist/staticAsset/lib'
 import { action } from '@storybook/addon-actions'
 import { ComponentMeta } from '@storybook/react'
 import { useFormik } from 'formik'
