@@ -68,7 +68,9 @@ export const validationSchema: SchemaOf<ResourceFormValues> = object({
   image: mixed()
     .test((v, { createError }) =>
       v instanceof Blob && fileExceedsMaxUploadSize(v.size, MNEnv.maxUploadSize)
-        ? createError({ message: t`This file is too big for uploading` })
+        ? createError({
+            message: t`The file is too big, reduce the size or provide a url`,
+          })
         : true
     )
     .optional(),

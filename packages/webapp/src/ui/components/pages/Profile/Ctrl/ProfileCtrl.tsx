@@ -42,14 +42,16 @@ const validationSchema: SchemaOf<ProfileFormValues> = object({
   avatarImage: mixed()
     .test((v, { createError }) =>
       v instanceof Blob && fileExceedsMaxUploadSize(v.size, MNEnv.maxUploadSize)
-        ? createError({ message: t`This file is too big for uploading` })
+        ? createError({ message: t`The image file is too big for uploading` })
         : true
     )
     .optional(),
   backgroundImage: mixed()
     .test((v, { createError }) =>
       v instanceof Blob && fileExceedsMaxUploadSize(v.size, MNEnv.maxUploadSize)
-        ? createError({ message: t`This file is too big for uploading` })
+        ? createError({
+            message: t`The image is too big, reduce the size or use another image`,
+          })
         : true
     )
     .optional(),
