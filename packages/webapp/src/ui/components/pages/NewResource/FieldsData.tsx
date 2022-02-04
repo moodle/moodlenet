@@ -10,6 +10,17 @@ export const nc = <NcIcon style={{ width: '20px' }} />
 export const nd = <NdIcon style={{ width: '20px' }} />
 export const sa = <SaIcon style={{ width: '20px' }} />
 
+export const getYearList = (startYear: number): string[] => {
+  const currentYear = new Date().getFullYear()
+  const years = []
+  while (startYear <= currentYear) {
+    years.push((startYear++).toString())
+  }
+  return years.reverse()
+}
+
+export const yearList = getYearList(1750)
+
 export const licenseIconMap = {
   by,
   zero,
