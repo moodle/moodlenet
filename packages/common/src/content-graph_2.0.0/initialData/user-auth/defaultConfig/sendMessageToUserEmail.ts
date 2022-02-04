@@ -239,7 +239,7 @@ const html = `
 
       .disclaimer {
         font-size: 12px;
-        color: #a3a6b5;
+        color: #687082;
       }
 
       .text-author {

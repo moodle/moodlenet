@@ -107,12 +107,17 @@ abbr {
   pointer-events: none;
 }
 
-:not(input):focus {
-  border: none;
-  outline: none;
-  transition: 0.1s;
-  box-shadow: 0 0 3pt 2pt #337affb0;
-}
+// :not(input):focus {
+//   border: none;
+//   outline: none;
+//   transition: 0.1s;
+//   box-shadow: 0 0 3pt 2pt #337affb0;
+// }
+
+// *:focus-visible {
+//   border: none;
+//   outline: none;
+// }
 
 .enter-error:not(.disabled) {
   > .input-container,
