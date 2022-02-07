@@ -23,7 +23,7 @@ const TextCardStory: ComponentStory<typeof TextCard> = (args) => (
   <TextCard {...args}>
     Diverse, sound, dynamic – these are the values that define BFH. And this is
     our MoodleNet server.&nbsp;
-    <span style={{ color: '#6C6C99' }}>Welcome!</span>
+    <span style={{ color: '#757575' }}>Welcome!</span>
   </TextCard>
 )
 

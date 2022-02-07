@@ -14,7 +14,8 @@ body,
 }
 
 body {
-  color: #3c4043;
+  color: #4d5156;
+  fill: #4d5156;
   background: white;
   /* Hide scrollbar for IE, Edge and Firefox */
   -ms-overflow-style: none; /* IE and Edge */
@@ -107,17 +108,12 @@ abbr {
   pointer-events: none;
 }
 
-// :not(input):focus {
-//   border: none;
-//   outline: none;
-//   transition: 0.1s;
-//   box-shadow: 0 0 3pt 2pt #1A6AFFb0;
-// }
-
-// *:focus-visible {
-//   border: none;
-//   outline: none;
-// }
+:focus-visible {
+  border: none;
+  outline: none;
+  transition: 0.1s;
+  box-shadow: 0 0 3pt 2pt #1a6affb0;
+}
 
 .enter-error:not(.disabled) {
   > .input-container,

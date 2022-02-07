@@ -17,8 +17,8 @@
       > .collections-header {
         display: flex;
         justify-content: space-between;
-        font-weight: bold;
         font-size: 14px;
+        font-weight: bold;
         margin-bottom: 12px;
 
         > .searchbox {
@@ -47,22 +47,9 @@
           margin: 7px 10px 7px 3px;
         }
 
-        > :hover {
-          box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%),
-            0px 2px 6px 2px rgb(60 64 67 / 15%);
-        }
-
-        > :not(.selected) {
-          &:hover {
-            background-color: #989cad;
-          }
-          &:active {
-            background-color: #858999;
-          }
-        }
-
         > .selected {
           background-color: #1a6aff;
+          color: white;
           &:hover {
             background-color: #2b69db;
           }

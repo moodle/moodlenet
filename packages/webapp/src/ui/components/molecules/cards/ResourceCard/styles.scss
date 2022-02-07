@@ -16,7 +16,7 @@
     display: flex;
     gap: 10px;
     font-size: 13px;
-    color: #6c6c99;
+    color: #757575;
 
     > * {
       cursor: pointer;
@@ -27,6 +27,9 @@
       * > svg {
         width: 18px;
         height: 18px;
+      }
+      &.disabled {
+        color: #919191;
       }
     }
 
@@ -47,11 +50,11 @@
     }
 
     > .bookmarked {
-      color: rgb(32, 193, 132);
+      color: #00bd7e;
     }
 
     > .bookmark:hover:not(.disabled) {
-      color: rgb(32, 193, 132);
+      color: #00bd7e;
     }
   }
 
@@ -126,11 +129,10 @@
   > .tags {
     position: absolute;
     bottom: 2px;
-    padding-bottom: 8px;
     margin-left: 110px;
     z-index: 2;
     gap: 6px;
-    padding-right: 7px;
+    padding: 5px 7px 8px 1px;
     -webkit-mask-image: linear-gradient(to left, transparent 0%, black 3%);
     mask-image: linear-gradient(to left, transparent 0%, black 3%);
 

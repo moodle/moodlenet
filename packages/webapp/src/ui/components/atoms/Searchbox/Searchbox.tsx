@@ -55,7 +55,7 @@ export const Searchbox: FC<SearchboxProps> = ({
   return (
     <div className={`searchbox size-${size}`} ref={searchboxRef}>
       <SearchIcon />
-      <label htmlFor="search-text" className="sr-only">
+      <label htmlFor="search-text" className="sr-only" hidden>
         Search
       </label>
       <input

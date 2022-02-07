@@ -148,9 +148,11 @@ const DropdownComp: FC<DropdownProps> = (props) => {
       {label && <label>{label}</label>}
       <div
         onClick={showContent ? undefined : toggleOpen}
+        onFocus={showContent ? undefined : toggleOpen}
         className={`input-container${disabled || !edit ? ' not-editing' : ''}${
           highlight ? ' highlight' : ''
         }`}
+        tabIndex={!disabled && !showContent ? 0 : undefined}
       >
         {showContent ? (
           <>
@@ -177,9 +179,10 @@ const DropdownComp: FC<DropdownProps> = (props) => {
               ${multilines ? 'multilines' : ''} 
               ${multiple && !multilines ? 'scroll' : ''}
               `}
-              tabIndex={!disabled ? 0 : undefined}
             >
-              {pills}
+              {pills
+                ? pills
+                : !disabled && <div className="placeholder">{placeholder}</div>}
             </div>
             {!disabled && edit && <ExpandLessIcon />}
           </>
