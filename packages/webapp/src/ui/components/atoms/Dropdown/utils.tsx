@@ -6,12 +6,14 @@ export const setListPosition = ({
   topPosition,
   bottomPosition,
   window,
+  label,
 }: {
   dropdownContent: React.RefObject<HTMLDivElement | null>
   dropdownButton: React.RefObject<HTMLInputElement | null>
   topPosition?: number
   bottomPosition?: number
   window: Window
+  label?: boolean
 }): void => {
   const viewportOffset =
     dropdownButton.current && dropdownButton.current.getBoundingClientRect()
@@ -29,7 +31,9 @@ export const setListPosition = ({
       dropdownContent.current &&
       (dropdownContent.current.style.top = topPosition
         ? `${topPosition}px`
-        : '75px')
+        : label
+        ? '75px'
+        : '55px')
     dropdownContent.current && (dropdownContent.current.style.bottom = 'auto')
     // dropdownContent.current &&
     //   (dropdownContent.current.style.transform = ' translate(-50%, 0px)')

@@ -94,8 +94,9 @@ const DropdownComp: FC<DropdownProps> = (props) => {
         topPosition: position && position.top,
         bottomPosition: position && position.bottom,
         window,
+        label: !!label,
       })
-  }, [showContent, position])
+  }, [showContent, position, label])
 
   useLayoutEffect(() => {
     showContent && setLayout()

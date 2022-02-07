@@ -362,7 +362,7 @@ export const Resource = withCtrl<ResourceProps>(
               )
           )}
         </Dropdown>{' '}
-        <div className="date">
+        <div className={`date ${form.isSubmitting ? 'disabled' : ''}`}>
           <label>
             <Trans>Original creation date</Trans>
           </label>
@@ -514,7 +514,7 @@ export const Resource = withCtrl<ResourceProps>(
               <Trans>Original creation date</Trans>
             </div>
             <abbr
-              className="value date"
+              className={`value date`}
               title={`${
                 MonthTextOptionProps.find(
                   ({ value }) => value === form.values.month
@@ -808,13 +808,12 @@ export const Resource = withCtrl<ResourceProps>(
                       value={form.values.name}
                       edit={isEditing}
                       onChange={form.handleChange}
-                      disabled={form.isSubmitting}
+                      style={{
+                        pointerEvents: `${
+                          form.isSubmitting ? 'none' : 'inherit'
+                        }`,
+                      }}
                       error={isEditing && shouldShowErrors && form.errors.name}
-                      // error={
-                      //   isEditing &&
-                      //   shouldShowErrors &&
-                      //   'Error with the title field'
-                      // }
                     />
                   ) : (
                     <div className="title">{form.values.name}</div>
@@ -854,7 +853,7 @@ export const Resource = withCtrl<ResourceProps>(
                 )}
                 {isOwner ? (
                   <InputTextField
-                    className="underline"
+                    className="description underline"
                     name="description"
                     textarea
                     textAreaAutoSize
@@ -862,7 +861,11 @@ export const Resource = withCtrl<ResourceProps>(
                     displayMode
                     edit={isEditing}
                     onChange={form.handleChange}
-                    disabled={form.isSubmitting}
+                    style={{
+                      pointerEvents: `${
+                        form.isSubmitting ? 'none' : 'inherit'
+                      }`,
+                    }}
                     error={isEditing && form.errors.description}
                     // error={
                     //   isEditing &&

@@ -266,7 +266,11 @@ export const Collection = withCtrl<CollectionProps>(
                     displayMode={true}
                     onChange={form.handleChange}
                     edit={isEditing}
-                    disabled={form.isSubmitting}
+                    style={{
+                      pointerEvents: `${
+                        form.isSubmitting ? 'none' : 'inherit'
+                      }`,
+                    }}
                     error={isEditing && shouldShowErrors && form.errors.title}
                   />
                 ) : (
@@ -280,7 +284,11 @@ export const Collection = withCtrl<CollectionProps>(
                     displayMode={true}
                     onChange={form.handleChange}
                     edit={isEditing}
-                    disabled={form.isSubmitting}
+                    style={{
+                      pointerEvents: `${
+                        form.isSubmitting ? 'none' : 'inherit'
+                      }`,
+                    }}
                     error={
                       isEditing && shouldShowErrors && form.errors.description
                     }
