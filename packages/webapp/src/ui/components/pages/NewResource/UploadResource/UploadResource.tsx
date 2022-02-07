@@ -166,6 +166,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             onChange={form.handleChange}
             disabled={subStep === 'ChooseResource'}
             label="Subject"
+            placeholder={t`Content category`}
             edit={subStep === 'EditData'}
             error={
               subStep === 'EditData' && shouldShowErrors && form.errors.category
@@ -367,7 +368,12 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                         </span>
                       </div>
                     ) : (
-                      <div className="image upload" onClick={selectImage}>
+                      <div
+                        className="image upload"
+                        onClick={selectImage}
+                        tabIndex={0}
+                        onKeyUp={(e) => e.key === 'Enter' && selectImage()}
+                      >
                         <input
                           ref={uploadImageRef}
                           type="file"
@@ -388,7 +394,11 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                   </div>
                 ) : (
                   <div className="image-container" style={background}>
-                    <RoundButton onClick={deleteImage} />
+                    <RoundButton
+                      onClick={deleteImage}
+                      tabIndex={0}
+                      onKeyUp={{ key: 'Enter', func: deleteImage }}
+                    />
                   </div>
                 )}
               </div>
@@ -436,7 +446,11 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     <abbr className="scroll" title={contentName}>
                       {contentName}
                     </abbr>
-                    <RoundButton onClick={deleteFileOrLink} />
+                    <RoundButton
+                      onClick={deleteFileOrLink}
+                      tabIndex={0}
+                      onKeyUp={{ key: 'Enter', func: deleteFileOrLink }}
+                    />
                   </div>
 
                   {contentIsFile && (

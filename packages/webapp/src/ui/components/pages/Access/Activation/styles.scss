@@ -77,29 +77,29 @@
 
             &:focus {
               box-shadow: 0 0 5px white;
-              border: 0.5px solid #6c6c99;
+              border: 0.5px solid #757575;
               color: #9598a7;
             }
 
             &:not(:focus) {
-              color: #6c6c99;
+              color: #757575;
             }
 
             &::placeholder {
               font-weight: 500;
               font-size: 17px;
-              color: #6c6c99;
+              color: #757575;
               opacity: 1;
             }
             &::-ms-input-placeholder {
               font-weight: 500;
               font-size: 17px;
-              color: #6c6c99;
+              color: #757575;
             }
             &:-ms-input-placeholder {
               font-weight: 500;
               font-size: 17px;
-              color: #6c6c99;
+              color: #757575;
             }
           }
         }

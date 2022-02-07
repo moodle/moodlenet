@@ -27,16 +27,16 @@
   text-overflow: ellipsis;
 }
 
-.tag.hover:hover {
-  box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%),
-    0px 2px 6px 2px rgb(60 64 67 / 15%);
-  background-color: #cbcdd7;
+.tag.hover:hover,
+.tag:hover {
+  box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 50%);
+  background-color: #dfe1ec;
 }
 
-.tag.hover:active {
-  box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%),
-    0px 2px 6px 2px rgb(60 64 67 / 15%);
-  background-color: #b5b7c0;
+.tag.hover:active,
+.tag:active {
+  box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 70%);
+  background-color: #d6d8e6;
 }
 
 .empty-space {

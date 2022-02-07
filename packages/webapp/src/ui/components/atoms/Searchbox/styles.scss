@@ -20,8 +20,9 @@
   > svg {
     width: 17px;
     height: 21px;
+    margin-top: -4px;
     > g > g > path {
-      fill: #6c6c99;
+      fill: #757575;
     }
   }
 
@@ -30,15 +31,14 @@
     width: 100%;
     font-size: 15px;
     border: none;
-    color: #3c4043;
+    color: #4d5156;
     &::placeholder {
-      color: #6c6c99;
+      color: #757575;
     }
-  }
-
-  > .search-text:focus-visible {
-    outline: none;
-    border: none;
+    &:focus-visible,
+    &:focus {
+      box-shadow: none;
+    }
   }
 
   &.size-big {
