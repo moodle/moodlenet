@@ -274,7 +274,8 @@
       flex-wrap: wrap;
       justify-content: center;
 
-      > .dropdown {
+      > .dropdown,
+      > .date > .fields > .dropdown {
         gap: 4px;
 
         > label {
@@ -321,6 +322,11 @@
               justify-content: flex-start;
             }
           }
+          &.not-editing {
+            background-color: transparent;
+            border: none;
+            color: #c6c6c6;
+          }
         }
       }
 
@@ -339,6 +345,9 @@
             width: 60px;
           }
         }
+        &.disabled {
+          color: #c6c6c6;
+        }
       }
       > .detail {
         width: 100%;
@@ -352,8 +361,8 @@
         > .value {
           display: flex;
           align-items: center;
-          color: rgba(0, 0, 0, 0.5);
-          fill: rgba(0, 0, 0, 0.5);
+          color: #4d5156;
+          fill: #4d5156;
           height: 24px;
           width: 100%;
           line-height: 20px;
