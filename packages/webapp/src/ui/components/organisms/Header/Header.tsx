@@ -88,18 +88,16 @@ export const Header = withCtrl<HeaderProps>((props) => {
           {me ? (
             <>
               <FloatingMenu
-                menuContent={
-                  <div>
-                    <Link href={newResourceHref}>
-                      <NoteAddIcon />
-                      <Trans>New Resource</Trans>
-                    </Link>
-                    <Link href={newCollectionHref}>
-                      <LibraryAddIcon />
-                      <Trans>New Collection</Trans>
-                    </Link>
-                  </div>
-                }
+                menuContent={[
+                  <Link href={newResourceHref} tabIndex={0}>
+                    <NoteAddIcon />
+                    <Trans>New Resource</Trans>
+                  </Link>,
+                  <Link href={newCollectionHref} tabIndex={0}>
+                    <LibraryAddIcon />
+                    <Trans>New Collection</Trans>
+                  </Link>,
+                ]}
                 hoverElement={
                   <img
                     className="add-icon"
@@ -110,26 +108,24 @@ export const Header = withCtrl<HeaderProps>((props) => {
                 }
               />
               <FloatingMenu
-                menuContent={
-                  <div>
-                    <Link href={me.bookmarksHref}>
-                      <BookmarksIcon />
-                      <Trans>Bookmarks</Trans>
-                    </Link>
-                    <Link href={me.followingHref}>
-                      <ArrowsIcon />
-                      <Trans>Following</Trans>
-                    </Link>
-                    <Link href={me.myProfileHref}>
-                      <AccountCircleIcon />
-                      <Trans>Profile</Trans>
-                    </Link>
-                    <Link onClick={me.logout} href={homeHref}>
-                      <ExitToAppIcon />
-                      <Trans>Log out</Trans>
-                    </Link>
-                  </div>
-                }
+                menuContent={[
+                  <Link href={me.bookmarksHref}>
+                    <BookmarksIcon />
+                    <Trans>Bookmarks</Trans>
+                  </Link>,
+                  <Link href={me.followingHref}>
+                    <ArrowsIcon />
+                    <Trans>Following</Trans>
+                  </Link>,
+                  <Link href={me.myProfileHref}>
+                    <AccountCircleIcon />
+                    <Trans>Profile</Trans>
+                  </Link>,
+                  <Link onClick={me.logout} href={homeHref}>
+                    <ExitToAppIcon />
+                    <Trans>Log out</Trans>
+                  </Link>,
+                ]}
                 hoverElement={
                   <Link
                     href={me.myProfileHref}
@@ -143,16 +139,14 @@ export const Header = withCtrl<HeaderProps>((props) => {
             <>
               <div className="signin-btn">
                 <FloatingMenu
-                  menuContent={
-                    <div>
-                      <Link href={loginHref}>
-                        <Trans>Log in</Trans>
-                      </Link>
-                      <Link href={signUpHref}>
-                        <Trans>Sign up</Trans>
-                      </Link>
-                    </div>
-                  }
+                  menuContent={[
+                    <Link href={loginHref}>
+                      <Trans>Log in</Trans>
+                    </Link>,
+                    <Link href={signUpHref}>
+                      <Trans>Sign up</Trans>
+                    </Link>,
+                  ]}
                   hoverElement={
                     <Link href={loginHref}>
                       <PrimaryButton>

@@ -57,7 +57,8 @@
 
       &.edit-save {
         width: 40px;
-        > * {
+        > *,
+        > * > * {
           width: 100%;
           > svg {
             width: 18px;

@@ -37,7 +37,7 @@ export const HeaderLoggedInStoryProps: HeaderPropsIdle = {
   },
   loginHref: href('Pages/Access/Login/Default'),
   signUpHref: href('Pages/Access/SignUp/Default'),
-  newResourceHref: href('Pages/New Resource/Start'),
+  newResourceHref: href('Pages/New Resource/Default'),
   newCollectionHref: href('Pages/New Collection/Start'),
   searchText: '',
   setSearchText: action('setSearchText'),

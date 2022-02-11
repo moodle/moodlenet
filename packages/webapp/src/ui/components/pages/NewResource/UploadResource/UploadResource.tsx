@@ -200,8 +200,8 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           <VisibilityDropdown
             name="visibility"
             value={
-              form.values.name != '' ||
-              form.values.description != '' ||
+              form.values.name !== '' ||
+              form.values.description !== '' ||
               form.values.category !== '' ||
               subStep === 'EditData'
                 ? form.values.visibility
