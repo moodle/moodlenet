@@ -322,13 +322,15 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                     {editForm.values.displayName}
                   </span>
                 )}
-                {editForm.values.organizationName !== '' && (
-                  <span>{editForm.values.organizationName}</span>
-                )}
-                {editForm.values.location !== '' && (
-                  <span>{editForm.values.location}</span>
-                )}
-                {editForm.values.siteUrl !== '' && (
+                {editForm.values.organizationName &&
+                  editForm.values.organizationName !== '' && (
+                    <span>{editForm.values.organizationName}</span>
+                  )}
+                {editForm.values.location &&
+                  editForm.values.location !== '' && (
+                    <span>{editForm.values.location}</span>
+                  )}
+                {editForm.values.siteUrl && editForm.values.siteUrl !== '' && (
                   <a
                     href={editForm.values.siteUrl}
                     target="_blank"
@@ -360,7 +362,10 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               }
             />
           ) : (
-            <div className="description">{editForm.values.description}</div>
+            editForm.values.description &&
+            editForm.values.description !== '' && (
+              <div className="description">{editForm.values.description}</div>
+            )
           )}
           {isOwner && !isApproved && !isWaitingApproval && (
             <div className="not-approved-warning">

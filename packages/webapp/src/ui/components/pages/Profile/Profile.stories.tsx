@@ -59,7 +59,7 @@ export const useProfileStoryProps = (overrides?: {
       initialValues: { text: '' },
       onSubmit: action('submit send Email Form'),
     }),
-    newResourceHref: href('Pages/New Resource/Start'),
+    newResourceHref: href('Pages/New Resource/Default'),
     newCollectionHref: href('Pages/New Collection/Start'),
     headerPageTemplateProps: {
       headerPageProps: HeaderPageLoggedInStoryProps,
