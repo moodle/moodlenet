@@ -22,7 +22,7 @@ const meta: ComponentMeta<typeof FloatingMenu> = {
 
 export const FloatingMenuStoryProps: FloatingMenuProps = {
   hoverElement: <img className="add-icon" src={addIcon} alt="Add" />,
-  menuContent: (
+  menuContent: [
     <div>
       <div>
         <NoteAddIcon />
@@ -32,8 +32,8 @@ export const FloatingMenuStoryProps: FloatingMenuProps = {
         <LibraryAddIcon />
         New Collection
       </div>
-    </div>
-  ),
+    </div>,
+  ],
   visible: true,
 }
 
