@@ -5,7 +5,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import PersonIcon from '@material-ui/icons/Person'
-import addIcon from '../../../assets/icons/add.svg'
+import { ReactComponent as AddIcon } from '../../../assets/icons/add.svg'
 import { ReactComponent as ArrowsIcon } from '../../../assets/icons/arrows.svg'
 import { Href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
@@ -98,14 +98,7 @@ export const Header = withCtrl<HeaderProps>((props) => {
                     <Trans>New Collection</Trans>
                   </Link>,
                 ]}
-                hoverElement={
-                  <img
-                    className="add-icon"
-                    src={addIcon}
-                    alt="Add"
-                    tabIndex={0}
-                  />
-                }
+                hoverElement={<AddIcon className="add-icon" tabIndex={0} />}
               />
               <FloatingMenu
                 menuContent={[

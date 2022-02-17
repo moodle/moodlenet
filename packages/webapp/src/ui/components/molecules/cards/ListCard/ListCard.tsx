@@ -9,7 +9,7 @@ export type ListCardProps = {
   noCard?: boolean
   maxWidth?: string | undefined | 'auto'
   direction?: 'vertical' | 'horizontal' | 'wrap'
-  actions?: ReactNode
+  actions?: { element: ReactNode; position: 'start' | 'end' }
 }
 
 export const ListCard: FC<ListCardProps> = ({
@@ -27,6 +27,9 @@ export const ListCard: FC<ListCardProps> = ({
   return (
     <div className={`list-card ${className} ${noCard ? 'no-card' : ''}`}>
       {title && <div className="title">{title}</div>}
+      {actions?.element && actions.position === 'start' && (
+        <div className="action">{actions.element}</div>
+      )}
       {contentWithKeys && contentWithKeys.length > 0 && (
         <div
           className={`content ${direction} ${
@@ -40,7 +43,9 @@ export const ListCard: FC<ListCardProps> = ({
           {contentWithKeys}
         </div>
       )}
-      {actions && <div className="action">{actions}</div>}
+      {actions?.element && actions.position === 'end' && (
+        <div className="action">{actions.element}</div>
+      )}
     </div>
   )
 }
