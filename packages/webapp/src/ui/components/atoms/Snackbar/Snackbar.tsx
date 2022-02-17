@@ -106,7 +106,7 @@ export const Snackbar: React.FC<SnackbarProps> = ({
       )}
       <div className="content">{children}</div>
       {actions && <div className="actions">{actions}</div>}
-      {showCloseButton && (
+      {showCloseButton && buttonText && (
         <div className="close-button" onClick={handleonClose}>
           {buttonText ? <span>{buttonText}</span> : <CloseRoundedIcon />}
         </div>

@@ -1,6 +1,5 @@
 import { t, Trans } from '@lingui/macro'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
-import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import { useState } from 'react'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
@@ -82,14 +81,19 @@ export const Profile = withCtrl<ProfileProps>(
           <CollectionCard {...collectionCardProps} isEditing={isEditing} />
         ))}
         actions={
-          profileCardProps.isOwner && (
-            <Link href={newCollectionHref}>
-              <PrimaryButton className="action">
-                <LibraryAddIcon />
-                <Trans>New collection</Trans>
-              </PrimaryButton>
-            </Link>
-          )
+          profileCardProps.isOwner
+            ? {
+                element: (
+                  <Link href={newCollectionHref}>
+                    <PrimaryButton className="action">
+                      <LibraryAddIcon />
+                      <Trans>New collection</Trans>
+                    </PrimaryButton>
+                  </Link>
+                ),
+                position: 'start',
+              }
+            : undefined
         }
       ></ListCard>
     )
@@ -174,14 +178,19 @@ export const Profile = withCtrl<ProfileProps>(
                 })}
                 title={t`Latest resources`}
                 actions={
-                  profileCardProps.isOwner && (
-                    <Link href={newResourceHref}>
-                      <PrimaryButton className="action">
-                        <NoteAddIcon />
-                        <Trans>New resource</Trans>
-                      </PrimaryButton>
-                    </Link>
-                  )
+                  profileCardProps.isOwner
+                    ? {
+                        element: (
+                          <Link href={newResourceHref}>
+                            <PrimaryButton className="action">
+                              <LibraryAddIcon />
+                              <Trans>New resource</Trans>
+                            </PrimaryButton>
+                          </Link>
+                        ),
+                        position: 'start',
+                      }
+                    : undefined
                 }
               ></ListCard>
               {collectionList}

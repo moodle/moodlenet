@@ -1,10 +1,10 @@
 import { t, Trans } from '@lingui/macro'
 import { CSSProperties } from 'react'
-// import { useCallback, useState } from 'react'
 import useWhatInput from 'react-use-what-input'
 import Snackbar from '../../components/atoms/Snackbar/Snackbar'
 import { Href, Link } from '../../elements/link'
 import { withCtrl } from '../../lib/ctrl'
+import { baseStyle } from '../../styles/config'
 import '../../styles/main.scss'
 import '../../styles/view.scss'
 
@@ -17,18 +17,37 @@ export type MainPageWrapperProps = {
 export const MainPageWrapper = withCtrl<MainPageWrapperProps>(
   ({ cookiesPolicyHref, style, children, userAcceptsPolicies, onKeyDown }) => {
     const [currentInput, currentIntent] = useWhatInput()
-    // const [isShowingPoliciesPrompt, setIsShowingPoliciesPrompt] = useState<boolean>(!!userAcceptsPolicies)
-    // const userAcceptsPoliciesCb = useCallback(() => {
-    //   setIsShowingPoliciesPrompt(false)
-    //   userAcceptsPolicies && userAcceptsPolicies()
-    // }, [userAcceptsPolicies])
+    // const [newStyle, setNewStyle] =
+    // useState({
+    //   ...style,
+    //   ...baseStyle,
+    // })
+    const newStyle = {
+      ...style,
+      ...baseStyle,
+    }
+
+    // const changeColors = () => {
+    //   setNewStyle({
+    //     ...newStyle,
+    //     ...randomStyle(),
+    //   })
+    // }
 
     return (
       <div
         className={`main-page-wrapper current-input-${currentInput} current-intent-${currentIntent}`}
-        style={style}
+        style={newStyle}
         onKeyDown={onKeyDown}
       >
+        {/* {true && (
+          <Snackbar
+            className="primary-color-snackbar"
+            style={{ backgroundColor: 'white' }}
+          >
+            <PrimaryButton onClick={changeColors}>Change color</PrimaryButton>
+          </Snackbar>
+        )} */}
         {userAcceptsPolicies && (
           <Snackbar
             className="policies-snackbar"
