@@ -27,7 +27,7 @@ export const OverallCardStoryProps: OverallCardProps = {
   resources: 23,
   kudos: 121,
   years: 20,
-  followingHref: href('Pages/Followers/Default'),
+  followersHref: href('Pages/Followers/Default'),
 }
 
 export const OverallCardNoCardStoryProps: OverallCardProps = {

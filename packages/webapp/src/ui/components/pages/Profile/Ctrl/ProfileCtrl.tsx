@@ -37,6 +37,7 @@ import {
   useProfilePageUserDataQuery,
   useSendEmailToProfileMutation,
 } from './ProfileCtrl.gen'
+const followersHref = href(mainPath.followers)
 
 const validationSchema: SchemaOf<ProfileFormValues> = object({
   avatarImage: mixed()
@@ -326,6 +327,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
         resources: profile.resourcesCount,
         years: 1,
         kudos,
+        followersHref,
       },
       newCollectionHref,
       newResourceHref,
