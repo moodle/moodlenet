@@ -86,7 +86,7 @@ export const useProfileStoryProps = (overrides?: {
   }
 }
 
-export const ProfileLoggedOutStory: ProfileStory = () => {
+export const LoggedOut: ProfileStory = () => {
   const props = useProfileStoryProps({
     isAuthenticated: false,
     props: {
@@ -122,7 +122,7 @@ export const ProfileLoggedOutStory: ProfileStory = () => {
   return <Profile {...props} />
 }
 
-export const ProfileLoggedInStory: ProfileStory = () => {
+export const LoggedIn: ProfileStory = () => {
   const props = useProfileStoryProps({
     props: {
       profileCardProps: useProfileCardStoryProps({
@@ -133,7 +133,7 @@ export const ProfileLoggedInStory: ProfileStory = () => {
   return <Profile {...props} />
 }
 
-export const ProfileOwnerStory: ProfileStory = () => {
+export const Owner: ProfileStory = () => {
   const props = useProfileStoryProps({
     props: {
       profileCardProps: useProfileCardStoryProps({ props: { isOwner: true } }),
@@ -155,7 +155,7 @@ export const ProfileOwnerStory: ProfileStory = () => {
   return <Profile {...props} />
 }
 
-export const ProfileApprovedStory: ProfileStory = () => {
+export const Approved: ProfileStory = () => {
   const props = useProfileStoryProps({
     props: {
       profileCardProps: useProfileCardStoryProps({
@@ -180,7 +180,7 @@ export const ProfileApprovedStory: ProfileStory = () => {
   return <Profile {...props} />
 }
 
-export const ProfileActivatedStory: ProfileStory = () => {
+export const Activated: ProfileStory = () => {
   const props = useProfileStoryProps({
     editFormValues: {
       description: '',
@@ -199,7 +199,7 @@ export const ProfileActivatedStory: ProfileStory = () => {
   return <Profile {...props} />
 }
 
-export const ProfileAdminStory: ProfileStory = () => {
+export const Admin: ProfileStory = () => {
   const props = useProfileStoryProps({
     props: {
       profileCardProps: useProfileCardStoryProps({
