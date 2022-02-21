@@ -19,7 +19,6 @@ const FollowersStory: ComponentStory<typeof Followers> = (args) => (
 )
 
 export const FollowersLoggedInStoryProps: FollowersProps = {
-  displayName: 'Juanito Rodriguez',
   headerPageTemplateProps: {
     headerPageProps: HeaderPageLoggedInStoryProps,
     isAuthenticated: true,
