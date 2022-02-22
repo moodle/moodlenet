@@ -235,7 +235,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 </div>
               )}
               {!isEditing && isApproved && (
-                <abbr className={`approved-icon`} title={t`Approved user`}>
+                <abbr className={`approved-icon`} title={t`Approved`}>
                   <ApprovedIcon
                     className={`${
                       showAccountApprovedSuccessAlert
@@ -266,7 +266,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                     }
                   />
                 </span>
-                <span>
+                {/* <span>
                   <InputTextField
                     className="underline"
                     displayMode={true}
@@ -282,7 +282,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                       editForm.errors.organizationName
                     }
                   />
-                </span>
+                </span> */}
                 <span>
                   <InputTextField
                     className="underline"
@@ -322,10 +322,10 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                     {editForm.values.displayName}
                   </span>
                 )}
-                {editForm.values.organizationName &&
+                {/* {editForm.values.organizationName &&
                   editForm.values.organizationName !== '' && (
                     <span>{editForm.values.organizationName}</span>
-                  )}
+                  )} */}
                 {editForm.values.location &&
                   editForm.values.location !== '' && (
                     <span>{editForm.values.location}</span>
