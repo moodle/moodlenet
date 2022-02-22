@@ -1,23 +1,19 @@
 .trend-card {
   width: 100%;
   min-height: 118px;
-  background-color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 0 6px #dedede;
   display: flex;
   flex-direction: column;
 
   > .title {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: bold;
-    padding: 22px 20px 0 20px;
+    padding: 0px 0px 18px 0;
   }
 
   > .content {
     display: flex;
     height: 100%;
     align-items: center;
-    margin: 18px 20px;
 
     > .gradient-bar {
       width: 4px;
@@ -37,6 +33,10 @@
       > a {
         height: 39px;
         padding: 6px 10px 6px 3px;
+        > .tag {
+          background-color: #fff;
+          box-shadow: 0 0 6px #dedede;
+        }
       }
 
       @for $i from 1 through 20 {

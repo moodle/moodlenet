@@ -20,10 +20,11 @@ export type CollectionCardProps = {
   collectionHref: Href
   isAuthenticated: boolean
   isOwner: boolean
-  isEditing?: boolean
   bookmarked: boolean
   following: boolean
   numFollowers: number
+  isEditing?: boolean
+  width?: number
   toggleFollow?: () => unknown
   toggleBookmark?: () => unknown
 }
@@ -37,6 +38,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
     isAuthenticated,
     isOwner,
     bookmarked,
+    width,
     following,
     numFollowers,
     toggleBookmark,
@@ -53,7 +55,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
         className={`collection-card ${
           isOwner && visibility === 'Private' ? 'is-private' : ''
         }`}
-        style={background}
+        style={{ ...background, minWidth: `${width}px` }}
         hover={true}
       >
         <div className={`actions`}>

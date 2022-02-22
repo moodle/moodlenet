@@ -1,5 +1,6 @@
 import { t, Trans } from '@lingui/macro'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
+import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import { useState } from 'react'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
@@ -91,7 +92,7 @@ export const Profile = withCtrl<ProfileProps>(
                     </PrimaryButton>
                   </Link>
                 ),
-                position: 'start',
+                position: 'end',
               }
             : undefined
         }
@@ -183,12 +184,12 @@ export const Profile = withCtrl<ProfileProps>(
                         element: (
                           <Link href={newResourceHref}>
                             <PrimaryButton className="action">
-                              <LibraryAddIcon />
+                              <NoteAddIcon />
                               <Trans>New resource</Trans>
                             </PrimaryButton>
                           </Link>
                         ),
-                        position: 'start',
+                        position: 'end',
                       }
                     : undefined
                 }
