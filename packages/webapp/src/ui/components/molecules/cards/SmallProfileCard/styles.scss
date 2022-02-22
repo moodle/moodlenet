@@ -1,7 +1,8 @@
 .small-profile-card {
   width: 100%;
   max-width: 245px;
-  height: 258px;
+  // height: 258px;
+  height: fit-content;
   display: flex;
   flex-direction: column;
   align-items: center;
