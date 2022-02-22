@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { Browser, BrowserProps } from '../../organisms/Browser/Browser'
 import {
@@ -9,13 +10,12 @@ import './styles.scss'
 export type FollowersProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   browserProps: BrowserProps
-  displayName: string
 }
 export const Followers = withCtrl<FollowersProps>(
-  ({ headerPageTemplateProps, displayName, browserProps }) => {
+  ({ headerPageTemplateProps, browserProps }) => {
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        <Browser {...browserProps} peopleTitle={`${displayName}'s followers`} />
+        <Browser {...browserProps} title={t`Followers`} peopleTitle={null} />
       </HeaderPageTemplate>
     )
   }

@@ -3,14 +3,14 @@ import GradeIcon from '@material-ui/icons/Grade'
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import { FC } from 'react'
-import { Href } from '../../../../elements/link'
+import { Href, Link } from '../../../../elements/link'
 import { Card } from '../../../atoms/Card/Card'
 import './styles.scss'
 
 export type OverallCardProps = {
   followers: number
   resources: number
-  followingHref?: Href
+  followersHref: Href
   years: number | string
   kudos: number
   hideBorderWhenSmall?: boolean
@@ -22,7 +22,7 @@ export const OverallCard: FC<OverallCardProps> = ({
   followers,
   resources,
   kudos,
-  // followingHref,
+  followersHref,
   hideBorderWhenSmall,
   showIcons,
   noCard,
@@ -56,16 +56,12 @@ export const OverallCard: FC<OverallCardProps> = ({
         </div>
       ) : (
         <div className="overall-container">
-          <div className="data">
+          <Link href={followersHref} className="data">
             {followers}
             <span>
               <Trans>Followers</Trans>
             </span>
-          </div>
-          {/* <Link className="data" href={followingHref}>
-            {followers}
-            <span><Trans>Followers</Trans></span>
-          </Link> */}
+          </Link>
           <div className="data">
             {kudos}
             <span>
