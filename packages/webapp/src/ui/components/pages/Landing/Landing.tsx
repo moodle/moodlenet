@@ -1,9 +1,8 @@
 import { t, Trans } from '@lingui/macro'
-import { useState } from 'react'
-import { Href, Link } from '../../../elements/link'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { Href } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { Organization } from '../../../types'
-import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../atoms/Searchbox/Searchbox'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import {
@@ -14,7 +13,6 @@ import ListCard from '../../molecules/cards/ListCard/ListCard'
 import ResourceCard, {
   ResourceCardProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard'
-import TextCard from '../../molecules/cards/TextCard/TextCard'
 import TrendCard, {
   TrendCardProps,
 } from '../../molecules/cards/TrendCard/TrendCard'
@@ -44,26 +42,61 @@ export const Landing = withCtrl<LandingProps>(
     resourceCardPropsList,
     organization,
     isAuthenticated,
-    signUpHref,
     loadMoreResources,
     setSearchText,
   }) => {
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false)
+    const [widthCollectionCard, setWidthCollectionCard] = useState<number>(170)
     const [isSearchboxInViewport, setIsSearchboxInViewport] =
       useState<boolean>(true)
     const [numResources, setNumResources] = useState<number>(9)
 
     const calcNumResources = () => {
-      if (window.innerWidth > 820 && window.innerWidth <= 1135) {
+      if (window.innerWidth > 820 && window.innerWidth <= 1125) {
         const remainder = resourceCardPropsList.length % 2
         setNumResources(resourceCardPropsList.length - remainder)
-      } else if (window.innerWidth > 1135) {
+      } else if (window.innerWidth > 1125) {
         const remainder = resourceCardPropsList.length % 3
         setNumResources(resourceCardPropsList.length - remainder)
       }
     }
 
     window.addEventListener('resize', calcNumResources)
+
+    const getCollectionCardWidth = () => {
+      const widthDoc = document.documentElement.clientWidth
+      const margin =
+        widthDoc < 675 ? 50 : widthDoc < 1250 ? 200 : widthDoc - 1100
+      const containerWidth = widthDoc - margin
+      var numElements = Math.trunc(containerWidth / (170 + 12))
+      const overflow = 170 - (containerWidth - numElements * (170 + 12))
+      if (overflow > -12 && overflow < 140) numElements++
+      var partToGrow = 0
+      var percentatgeToGrow = 0
+      if (numElements === 1) {
+        partToGrow = containerWidth - 50
+        percentatgeToGrow = containerWidth / partToGrow
+      } else {
+        partToGrow = (numElements - 1) * (170 + 12) + 170 / 2
+        percentatgeToGrow = containerWidth / partToGrow
+      }
+      return 170 * percentatgeToGrow
+    }
+
+    const setCollectionCardWidth = useCallback(() => {
+      setWidthCollectionCard(getCollectionCardWidth())
+    }, [setWidthCollectionCard])
+
+    useLayoutEffect(() => {
+      window.addEventListener('resize', setCollectionCardWidth)
+      return () => {
+        window.removeEventListener('resize', setCollectionCardWidth)
+      }
+    }, [setCollectionCardWidth])
+
+    useEffect(() => {
+      setCollectionCardWidth()
+    })
 
     return (
       <HeaderPageTemplate
@@ -75,11 +108,14 @@ export const Landing = withCtrl<LandingProps>(
             <div className="landing-title">
               <div className="title">
                 {!isAuthenticated ? (
-                  <>{organization.subtitle}</>
+                  <>
+                    <Trans>Welcome to</Trans> {organization.name}
+                  </>
                 ) : (
                   organization.name
                 )}
               </div>
+              <div className="subtitle">{organization.subtitle}</div>
             </div>
             <Searchbox
               size="big"
@@ -87,44 +123,22 @@ export const Landing = withCtrl<LandingProps>(
               searchText=""
               placeholder={t`Search for open educational content`}
               setIsSearchboxInViewport={setIsSearchboxInViewport}
-              marginTop={13}
+              marginTop={12}
             />
           </div>
           <div className="columns-container">
             <div className="main-column">
-              <TextCard className="intro-card">
-                <div className="description">{organization.description}</div>
-                <div className="actions">
-                  {!isAuthenticated && (
-                    <Link href={signUpHref}>
-                      <PrimaryButton>
-                        <Trans>Join now</Trans>
-                      </PrimaryButton>
-                    </Link>
-                  )}
-                  <a
-                    href="https://docs.moodle.org/moodlenet/Main_Page"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <SecondaryButton color="grey">
-                      <Trans>Learn more</Trans>
-                    </SecondaryButton>
-                  </a>
-                </div>
-              </TextCard>
               <TrendCard {...trendCardProps} maxRows={2} />
-            </div>
-            <div className="side-column">
-              {/* <div className="trends-title"><Trans>Trendy content</Trans></div> */}
-              <TrendCard {...trendCardProps} />
             </div>
           </div>
           <ListCard
             content={collectionCardPropsList
               .slice(0, 20)
               .map((collectionCardProps) => (
-                <CollectionCard {...collectionCardProps} />
+                <CollectionCard
+                  {...collectionCardProps}
+                  width={widthCollectionCard}
+                />
               ))}
             title={
               <div className="card-header">

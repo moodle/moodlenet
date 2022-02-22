@@ -13,10 +13,6 @@
   bottom: 0;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
-
-  @media (max-width: 450px) {
-    background-color: white;
-  }
 }
 
 .view::-webkit-scrollbar {
