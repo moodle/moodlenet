@@ -319,15 +319,13 @@ export const Browser = withCtrl<BrowserProps>(
                 title={
                   peopleTitle !== null && (
                     <div className="card-header">
-                      (
                       <div className="title">
                         {peopleTitle ? (
-                          <Trans>People</Trans>
-                        ) : (
                           t`${peopleTitle}`
+                        ) : (
+                          <Trans>People</Trans>
                         )}
                       </div>
-                      )
                       {shouldShowSeeAll('People') && (
                         <SecondaryButton onClick={() => seeAll('People')}>
                           <Trans>See all</Trans>
