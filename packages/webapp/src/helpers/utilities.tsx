@@ -1,3 +1,4 @@
+import { createApi } from 'unsplash-js'
 import { ContentBackupImages } from '../ui/assets/data/images'
 
 export const isURL = (str: string): boolean => {
@@ -96,4 +97,32 @@ export const getBackupImage = (id: string) => {
       backgroundImage: 'url(' + image?.image + ')',
     },
   }
+}
+export const getRandomInt = (max: number) => {
+  return Math.floor(Math.random() * max)
+}
+
+export const getNewRandomImage = (query: string) => {
+  const unsplash = createApi({
+    accessKey: 'M-Iko8LWeVCJT4DdSFjbWDG0MyYqk8GmI0LoYjVSGrk',
+    //...other fetch options
+  })
+  return unsplash.search
+    .getPhotos({
+      query: query,
+      page: 1,
+      perPage: 200,
+      orientation: 'landscape',
+    })
+    .then((result) => {
+      if (result.type === 'success') {
+        const photos = result.response.results
+        const photosWithLink = photos.filter((e) => e.urls.regular)
+        const randomNum = getRandomInt(photosWithLink.length - 1)
+        var photo = photosWithLink[randomNum]
+        return photo
+      } else {
+        return undefined
+      }
+    })
 }

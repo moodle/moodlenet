@@ -397,6 +397,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     <RoundButton
                       onClick={deleteImage}
                       tabIndex={0}
+                      abbrTitle={t`Delete image`}
                       onKeyUp={{ key: 'Enter', func: deleteImage }}
                     />
                   </div>
@@ -449,6 +450,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                     <RoundButton
                       onClick={deleteFileOrLink}
                       tabIndex={0}
+                      abbrTitle={t`Delete`}
                       onKeyUp={{ key: 'Enter', func: deleteFileOrLink }}
                     />
                   </div>

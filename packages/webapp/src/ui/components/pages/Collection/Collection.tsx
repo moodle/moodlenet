@@ -229,6 +229,7 @@ export const Collection = withCtrl<CollectionProps>(
                         form.isSubmitting ? 'disabled' : ''
                       }`}
                       type="edit"
+                      abbrTitle={t`Change image`}
                       onClick={selectImage}
                     />
                   </>

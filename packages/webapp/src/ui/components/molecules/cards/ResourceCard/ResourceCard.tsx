@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro'
 import BookmarkIcon from '@material-ui/icons/Bookmark'
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
 import FavoriteIcon from '@material-ui/icons/Favorite'
@@ -198,6 +199,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             className="delete"
             type="trash"
             color="red"
+            abbrTitle={t`Remove from collection`}
             onHoverColor="fill-red"
             onClick={onRemoveClick}
           />
