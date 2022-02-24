@@ -158,6 +158,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               <RoundButton
                 className="change-background-button"
                 type="edit"
+                abbrTitle={t`Edit background`}
                 onClick={selectBackground}
               />
             </>
@@ -185,6 +186,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 <RoundButton
                   className="change-avatar-button"
                   type="edit"
+                  abbrTitle={t`Edit profile picture`}
                   onClick={selectAvatar}
                 />
               </>
