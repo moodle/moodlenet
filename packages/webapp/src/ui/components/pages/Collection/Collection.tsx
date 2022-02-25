@@ -6,7 +6,12 @@ import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import SaveIcon from '@material-ui/icons/Save'
 import React, { useCallback, useRef, useState } from 'react'
-import { getBackupImage } from '../../../../helpers/utilities'
+import { Basic } from 'unsplash-js/dist/methods/photos/types'
+import {
+  getBackupImage,
+  getFirstWord,
+  getNewRandomImage,
+} from '../../../../helpers/utilities'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
 import { useImageUrl } from '../../../lib/useImageUrl'
@@ -77,6 +82,9 @@ export const Collection = withCtrl<CollectionProps>(
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isShowingBackground, setIsShowingBackground] =
       useState<boolean>(false)
+    const [unsplashImage, setUnsplashImage] = useState<Basic | undefined>(
+      undefined
+    )
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -122,6 +130,22 @@ export const Collection = withCtrl<CollectionProps>(
         </a>
       </div>
     )
+    const deleteImage = () => {
+      form.setFieldValue('image', null)
+      setUnsplashImage(undefined)
+    }
+
+    const setNewRandomImage = () => {
+      const subjectFirstWord = getFirstWord(form.values.title)
+      const query = subjectFirstWord !== '' ? subjectFirstWord : 'education'
+      const photo = getNewRandomImage(query)
+      photo.then((photo) => {
+        if (photo) {
+          photo && setUnsplashImage(photo)
+          form.setFieldValue('image', photo?.urls.regular)
+        }
+      })
+    }
 
     const extraDetails = (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
@@ -216,7 +240,7 @@ export const Collection = withCtrl<CollectionProps>(
                 onClick={() => !isEditing && setIsShowingBackground(true)}
               >
                 {isEditing && (
-                  <>
+                  <div className="image-actions">
                     <input
                       ref={uploadImageRef}
                       type="file"
@@ -232,7 +256,23 @@ export const Collection = withCtrl<CollectionProps>(
                       abbrTitle={t`Change image`}
                       onClick={selectImage}
                     />
-                  </>
+                    <RoundButton
+                      className={`use-new-random-image-button ${
+                        form.isSubmitting ? 'disabled' : ''
+                      }`}
+                      type="refresh"
+                      abbrTitle={t`Get random image`}
+                      onClick={setNewRandomImage}
+                    />
+                    <RoundButton
+                      className={`delete-image ${
+                        form.isSubmitting ? 'disabled' : ''
+                      }`}
+                      type="cross"
+                      abbrTitle={t`Delete image`}
+                      onClick={deleteImage}
+                    />
+                  </div>
                 )}
                 {imageCredits}
               </div>
@@ -361,6 +401,26 @@ export const Collection = withCtrl<CollectionProps>(
                       >
                         <DeleteOutlineIcon />
                       </SecondaryButton>
+                    )}
+                    {!isEditing && unsplashImage && (
+                      <div className="image-credits scroll">
+                        Photo by
+                        <a
+                          href={
+                            unsplashImage.user.portfolio_url ||
+                            unsplashImage.user.links.portfolio
+                          }
+                        >
+                          {unsplashImage.user.first_name}{' '}
+                          {unsplashImage.user.last_name}
+                        </a>
+                        on
+                        <a
+                          href={`https://unsplash.com/?utm_source=moodlenet&utm_medium=referral`}
+                        >
+                          Unsplash
+                        </a>
+                      </div>
                     )}
                   </div>
                 </div>

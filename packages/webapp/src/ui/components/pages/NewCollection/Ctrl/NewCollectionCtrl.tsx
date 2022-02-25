@@ -10,6 +10,10 @@ import { mixed, object, SchemaOf, string } from 'yup'
 import { MNEnv } from '../../../../../constants'
 // import { useSession } from '../../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../../helpers/data'
+import {
+  getFirstWord,
+  getNewRandomImage,
+} from '../../../../../helpers/utilities'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { NewCollectionProps } from '../NewCollection'
@@ -50,6 +54,19 @@ export const useNewCollectionCtrl: CtrlHook<
     useCreateCollectionMutation()
   // const [createCollectionRelMut /* , createCollectionRelMutRes */] = useCreateCollectionRelationMutation()
 
+  const setNewRandomImage = (title: string): AssetRefInput => {
+    const subjectFirstWord = getFirstWord(title)
+    const query = subjectFirstWord !== '' ? subjectFirstWord : 'education'
+    const photo = getNewRandomImage(query)
+    photo.then((photo) => {
+      const photoUrl = photo?.urls.regular
+      return {
+        location: photoUrl ? photoUrl : '',
+        type: photoUrl ? 'ExternalUrl' : 'NoAsset',
+      }
+    })
+  }
+
   const form = useFormik<NewCollectionFormValues>({
     validationSchema,
     initialValues: {
@@ -60,7 +77,7 @@ export const useNewCollectionCtrl: CtrlHook<
     },
     onSubmit: async ({ description, title, visibility, image }) => {
       const imageAssetRef: AssetRefInput = !image
-        ? { location: '', type: 'NoAsset' }
+        ? await setNewRandomImage(title)
         : typeof image === 'string'
         ? {
             location: image,

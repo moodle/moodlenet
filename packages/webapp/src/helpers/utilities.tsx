@@ -126,3 +126,8 @@ export const getNewRandomImage = (query: string) => {
       }
     })
 }
+
+export const getFirstWord = (word: string) => {
+  const array = word.split(' ')
+  return array[0] ? array[0] : ''
+}
