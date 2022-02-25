@@ -12,6 +12,7 @@ import React, { useCallback, useRef, useState } from 'react'
 import { Basic } from 'unsplash-js/dist/methods/photos/types'
 import {
   getBackupImage,
+  getFirstWord,
   getNewRandomImage,
 } from '../../../../helpers/utilities'
 import { getTagList } from '../../../elements/tags'
@@ -213,8 +214,8 @@ export const Resource = withCtrl<ResourceProps>(
     }
 
     const setNewRandomImage = () => {
-      const query =
-        typeof form.values.category === 'string' ? 'nature' : 'education'
+      const subjectFirstWord = getFirstWord(form.values.category)
+      const query = subjectFirstWord !== '' ? subjectFirstWord : 'education'
       const photo = getNewRandomImage(query)
       photo.then((photo) => {
         if (photo) {
