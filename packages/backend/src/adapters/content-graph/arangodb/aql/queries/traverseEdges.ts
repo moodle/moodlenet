@@ -87,7 +87,7 @@ export const traversePaginateMapQuery =
                 ${targetNodeTypesFilter}
                 && ( targetIds ? traverseEdge._${targetSide} IN targetIds : true )
           
-          LET traverseNode = Document(traverseEdge._${targetSide})
+          LET traverseNode = ${aqlGraphNode2GraphNode(`Document(traverseEdge._${targetSide})`)}
           FILTER !!traverseNode && ${aqlAssertions}
           ${pageFilterSortLimit}
 
