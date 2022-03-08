@@ -1,0 +1,43 @@
+.appearance {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  > .card {
+    display: flex;
+    flex-direction: column;
+    padding: 26px 40px;
+    gap: 20px;
+  }
+
+  > .logos > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    > .big {
+      height: 28px;
+    }
+    > .small {
+      height: 38px;
+    }
+  }
+
+  > .color {
+    > .field {
+      display: flex;
+      gap: 12px;
+
+      > input {
+        height: 46px;
+        width: 46px;
+      }
+      > .input-text-field {
+        width: 120px;
+      }
+    }
+  }
+
+  > .scss {
+    padding-bottom: 40px;
+  }
+}
