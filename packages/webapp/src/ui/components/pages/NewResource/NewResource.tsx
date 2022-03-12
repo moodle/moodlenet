@@ -118,10 +118,7 @@ export const NewResource = withCtrl<NewResourceProps>(
             <Trans>Content uploading, please don't close the tab</Trans>
           </Snackbar>
         )}
-        <HeaderPageTemplate
-          {...headerPageTemplateProps}
-          style={{ backgroundColor: '#f4f5f7' }}
-        >
+        <HeaderPageTemplate {...headerPageTemplateProps}>
           <div className="new-resource">
             <ProgressState
               stateNames={progressTitles}

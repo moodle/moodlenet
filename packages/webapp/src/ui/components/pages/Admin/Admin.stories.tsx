@@ -1,11 +1,11 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { CSSProperties, useState } from 'react'
 import { BaseStyleType } from '../../../styles/config'
+import { StyleContextDefault, StyleProvider } from '../../../styles/Style'
 import { HeaderPageTemplateLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 import { AccountStoryProps } from './Account/Account.stories'
 import { Admin, AdminProps } from './Admin'
 import { AppearanceStoryProps } from './Appearance/Appearance.stories'
-import { StyleContextDefault, StyleProvider } from './Style'
 
 const meta: ComponentMeta<typeof Admin> = {
   title: 'Pages/Admin',
