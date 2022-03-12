@@ -22,7 +22,6 @@ const Appearance = withCtrl<AppearanceProps>(({ organization }) => {
   const [compactLogo, setCompactLogo] = useState(true)
 
   const setColor = (color: string) => {
-    console.log('SETING NEW APPAREANCE COLOR')
     styleContext.setStyle({
       ...styleContext.style,
       ...getColorPalette(color),

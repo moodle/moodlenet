@@ -1,5 +1,5 @@
 import { t, Trans } from '@lingui/macro'
-import { CSSProperties, useContext, useEffect } from 'react'
+import { CSSProperties, useContext } from 'react'
 import useWhatInput from 'react-use-what-input'
 import Snackbar from '../../components/atoms/Snackbar/Snackbar'
 import { Href, Link } from '../../elements/link'
@@ -20,19 +20,13 @@ export const MainPageWrapper = withCtrl<MainPageWrapperProps>(
   ({ cookiesPolicyHref, style, children, userAcceptsPolicies, onKeyDown }) => {
     const [currentInput, currentIntent] = useWhatInput()
     const styleContext = useContext(StyleContext)
-    console.log('MAIN PAGE WRAPPER COLOR')
-
-    useEffect(() => {
-      console.log('Enter Here')
-      styleContext.style = getColorPalette(baseMoodleColor)
-    })
-
     return (
       <div
         className={`main-page-wrapper current-input-${currentInput} current-intent-${currentIntent}`}
         style={{
           ...style,
           ...baseStyle(),
+          ...getColorPalette(baseMoodleColor),
           ...styleContext.style,
         }}
         onKeyDown={onKeyDown}
