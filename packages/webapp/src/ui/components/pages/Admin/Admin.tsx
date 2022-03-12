@@ -53,10 +53,7 @@ export const Admin = withCtrl<AdminProps>(
       : null
 
     return (
-      <HeaderPageTemplate
-        {...headerPageTemplateProps}
-        style={{ backgroundColor: '#f4f5f7' }}
-      >
+      <HeaderPageTemplate {...headerPageTemplateProps}>
         <div className="admin">
           <div className="left-menu">
             <Card>{menu}</Card>

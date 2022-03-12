@@ -5,7 +5,9 @@
 :not(.no-card).card {
   width: 100%;
   background-color: #fff;
-  box-shadow: 0 0 6px #dedede;
+  // box-shadow: 0 0 6px #dedede;
+  border-radius: 16px;
+  box-shadow: 0 0 6px var(--color-light-gray-11);
 
   @media (max-width: 450px) {
     &.hide-border {

@@ -7,7 +7,7 @@ const meta: ComponentMeta<typeof FileUploader> = {
 }
 
 const FileUploaderStory: ComponentStory<typeof FileUploader> = () => (
-  <FileUploader>Primary Button</FileUploader>
+  <FileUploader></FileUploader>
 )
 
 export const Default = FileUploaderStory.bind({})

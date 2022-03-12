@@ -70,7 +70,7 @@ export const Header = withCtrl<HeaderProps>((props) => {
 
   // console.log({ avatarUrl })
   return (
-    <div className="header">
+    <div className="header" id="page-header">
       <div className="content">
         <div className="left">
           <HeaderTitle organization={organization} homeHref={homeHref} />
