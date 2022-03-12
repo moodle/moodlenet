@@ -10,7 +10,7 @@ export const headerBackgroundColor = 'white'
 export const baseStyle = () => {
   return {
     '--primary-color': baseMoodleColor,
-    '--primary-background-color': setOpacity(baseMoodleColor, 0.25),
+    '--primary-background-color': setOpacity(baseMoodleColor, 0.12),
     '--primary-color-hover': primaryColorHover,
     '--primary-color-active': primaryColorActive,
     '--header-background': headerBackgroundColor,
