@@ -76,6 +76,7 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       organization: {
         name: localOrg.name,
         description: localOrg.description,
+        title: localOrg.title,
         subtitle: localOrg.subtitle,
       },
       trendCardProps: { tags: tags || [] },
@@ -88,6 +89,7 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       isAuthenticated,
       localOrg.name,
       localOrg.description,
+      localOrg.title,
       localOrg.subtitle,
       tags,
       setSearchText,
