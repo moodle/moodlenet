@@ -11,7 +11,6 @@ import { Organization } from '../../../types'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../atoms/Searchbox/Searchbox'
-import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import {
   CollectionCard,
   CollectionCardProps,
@@ -222,34 +221,6 @@ export const Landing = withCtrl<LandingProps>(
               <Trans>Share content</Trans>
             </PrimaryButton>
           </div>
-          <div className="columns-container">
-            <div className="main-column">
-              <TrendCard {...trendCardProps} maxRows={2} />
-            </div>
-          </div>
-          <ListCard
-            content={collectionCardPropsList
-              .slice(0, 20)
-              .map((collectionCardProps) => (
-                <CollectionCard
-                  {...collectionCardProps}
-                  width={widthCollectionCard}
-                />
-              ))}
-            title={
-              <div className="card-header">
-                <div className="title">
-                  <Trans>Featured collections</Trans>
-                </div>
-                {/* <SecondaryButton>
-                  <Trans>See all</Trans>
-                </SecondaryButton> */}
-              </div>
-            }
-            className="collections"
-            noCard={true}
-            direction="horizontal"
-          />
           <ListCard
             content={(isLoadingMore
               ? resourceCardPropsList
@@ -273,24 +244,30 @@ export const Landing = withCtrl<LandingProps>(
             noCard={true}
             minGrid={300}
           />
-          {loadMoreResources && (
-            <div className="load-more">
-              <SecondaryButton
-                onClick={() => {
-                  setIsLoadingMore(true)
-                  loadMoreResources()
-                }}
-                color="grey"
-              >
-                <Trans>Load more</Trans>
-              </SecondaryButton>
-            </div>
-          )}
-          {/* <div className="content">
-            <div className="main-column">
-            </div>
-            <div className="side-column"><TrendCard {...trendCardProps} /></div>
-          </div> */}
+          <ListCard
+            content={collectionCardPropsList
+              .slice(0, 20)
+              .map((collectionCardProps) => (
+                <CollectionCard
+                  {...collectionCardProps}
+                  width={widthCollectionCard}
+                />
+              ))}
+            title={
+              <div className="card-header">
+                <div className="title">
+                  <Trans>Featured collections</Trans>
+                </div>
+                {/* <SecondaryButton>
+                  <Trans>See all</Trans>
+                </SecondaryButton> */}
+              </div>
+            }
+            className="collections"
+            noCard={true}
+            direction="horizontal"
+          />
+          <TrendCard {...trendCardProps} maxRows={2} />
         </div>
       </HeaderPageTemplate>
     )
