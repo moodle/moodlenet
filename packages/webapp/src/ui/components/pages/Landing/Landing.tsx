@@ -2,6 +2,7 @@ import { t, Trans } from '@lingui/macro'
 import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { Href } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
+import defaultBackgroud from '../../../static/img/default-landing-background.png'
 import { Organization } from '../../../types'
 import Searchbox from '../../atoms/Searchbox/Searchbox'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
@@ -27,7 +28,7 @@ export type LandingProps = {
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
   trendCardProps: TrendCardProps
-  organization: Pick<Organization, 'name' | 'subtitle' | 'description'>
+  organization: Pick<Organization, 'name' | 'title' | 'subtitle'>
   isAuthenticated: boolean
   signUpHref: Href
   setSearchText(text: string): unknown
@@ -41,7 +42,6 @@ export const Landing = withCtrl<LandingProps>(
     collectionCardPropsList,
     resourceCardPropsList,
     organization,
-    isAuthenticated,
     loadMoreResources,
     setSearchText,
   }) => {
@@ -50,6 +50,11 @@ export const Landing = withCtrl<LandingProps>(
     const [isSearchboxInViewport, setIsSearchboxInViewport] =
       useState<boolean>(true)
     const [numResources, setNumResources] = useState<number>(9)
+
+    const background = {
+      backgroundImage: 'url(' + /* imageUrl ||  */ defaultBackgroud + ')',
+      backgroundSize: 'cover',
+    }
 
     const calcNumResources = () => {
       if (window.innerWidth > 820 && window.innerWidth <= 1125) {
@@ -101,21 +106,14 @@ export const Landing = withCtrl<LandingProps>(
     return (
       <HeaderPageTemplate
         {...headerPageTemplateProps}
+        style={{ backgroundColor: 'white' }}
         hideSearchbox={isSearchboxInViewport}
       >
         <div className="landing">
-          <div className="landing-header">
+          <div className="landing-header" style={background}>
             <div className="landing-title">
-              <div className="title">
-                {!isAuthenticated ? (
-                  <>
-                    <Trans>Welcome to</Trans> {organization.name}
-                  </>
-                ) : (
-                  organization.name
-                )}
-              </div>
-              <div className="subtitle">{organization.subtitle}</div>
+              <div className="title">{t`${organization.title}`}</div>
+              <div className="subtitle">{t`${organization.subtitle}`}</div>
             </div>
             <Searchbox
               size="big"

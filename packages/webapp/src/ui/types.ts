@@ -3,11 +3,12 @@ import { Href } from './elements/link'
 export type Organization = {
   name: string
   shortName: string
+  title: string
   subtitle: string
   url: string
   logo: string
   smallLogo: string
-  description: string
+  // description: string
   color: string
 }
 

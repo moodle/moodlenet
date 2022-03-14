@@ -75,8 +75,8 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       ),
       organization: {
         name: localOrg.name,
-        description: localOrg.description,
-        subtitle: localOrg.subtitle,
+        title: localOrg.subtitle,
+        subtitle: localOrg.description,
       },
       trendCardProps: { tags: tags || [] },
       setSearchText,
