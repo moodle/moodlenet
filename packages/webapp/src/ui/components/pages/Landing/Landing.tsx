@@ -112,8 +112,8 @@ export const Landing = withCtrl<LandingProps>(
         <div className="landing">
           <div className="landing-header" style={background}>
             <div className="landing-title">
-              <div className="title">{t`${organization.title}`}</div>
-              <div className="subtitle">{t`${organization.subtitle}`}</div>
+              <div className="title">{organization.title}</div>
+              <div className="subtitle">{organization.subtitle}</div>
             </div>
             <Searchbox
               size="big"
