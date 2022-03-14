@@ -8,7 +8,7 @@ export type Organization = {
   url: string
   logo: string
   smallLogo: string
-  description: string
+  // description: string
   color: string
 }
 

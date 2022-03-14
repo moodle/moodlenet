@@ -28,10 +28,7 @@ export type LandingProps = {
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
   trendCardProps: TrendCardProps
-  organization: Pick<
-    Organization,
-    'name' | 'title' | 'subtitle' | 'description'
-  >
+  organization: Pick<Organization, 'name' | 'title' | 'subtitle'>
   isAuthenticated: boolean
   signUpHref: Href
   setSearchText(text: string): unknown
