@@ -1,52 +1,88 @@
-.text {
-  color: #212529;
-}
-
 .landing {
   display: flex;
   flex-direction: column;
   gap: 30px;
   padding-top: 30px;
 
+  @media screen and (max-width: 900px) {
+    padding-top: 0;
+  }
+
   > .landing-header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 36px;
-    padding: 55px 0;
+    gap: 60px;
+    padding: 110px 60px 130px 60px;
+    border-radius: 40px;
 
-    @media (max-width: 450px) {
-      padding: 20px;
-      gap: 26px;
+    @media screen and (max-width: 650px) {
+      gap: 25px;
+      padding: 60px 25px 70px 25px;
+    }
+
+    @media screen and (max-width: 900px) {
+      border-radius: 0;
+    }
+
+    @media screen and (min-width: 450px) and (max-width: 675px) {
+      margin: 0 -25px;
+    }
+    @media screen and (min-width: 675px) and (max-width: 900px) {
+      margin: 0 -100px;
+    }
+
+    @media screen and (min-width: 675px) and (max-width: 900px) {
+      gap: 45px;
+      padding: 80px 80px 90px 80px;
     }
 
     > .landing-title {
-      font-weight: bold;
       display: inline-flex;
+      max-width: 900px;
       flex-wrap: wrap;
       flex-direction: column;
       text-align: center;
-      gap: 10px;
-      > .title {
-        line-height: 34px;
-        color: #4d5156;
-        font-size: 35px;
-      }
-      > .subtitle {
-        color: #8a8a8a;
-        font-size: 25px;
+      font-family: Open;
+      gap: 25px;
+      color: white;
+      font-family: 'Open Sans';
+      @media screen and (max-width: 900px) {
+        gap: 12px;
       }
 
-      @media screen and (max-width: 675px) and (min-width: 450px) {
-        margin: 36px 0 0;
-        font-weight: bold;
+      > .title {
+        font-style: normal;
+        font-weight: 700;
+        font-size: 50px;
+      }
+      > .subtitle {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 22px;
+      }
+
+      @media screen and (max-width: 500px) {
+        > .title {
+          font-size: 24px;
+        }
+        > .subtitle {
+          font-size: 16px;
+        }
+      }
+
+      @media screen and (min-width: 500px) and (max-width: 900px) {
         > .title {
           font-size: 33px;
         }
         > .subtitle {
-          font-size: 22px;
+          font-size: 18px;
         }
       }
+    }
+
+    > .searchbox {
+      max-width: 585px;
     }
   }
 
