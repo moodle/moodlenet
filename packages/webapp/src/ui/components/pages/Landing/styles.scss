@@ -1,7 +1,7 @@
 .landing {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 64px;
   padding-top: 30px;
 
   @media screen and (max-width: 900px) {
@@ -93,13 +93,55 @@
     }
   }
 
-  > .list-card > .title .card-header .title {
-    font-size: 18px;
+  > .list-card {
+    gap: 46px;
+    > .title > .card-header {
+      display: flex;
+      justify-content: space-between;
+      > .info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        font-family: 'Lato';
+        font-style: normal;
+        font-weight: 700;
+
+        > .title {
+          font-size: 28px;
+          line-height: 34px;
+          color: #223b6a;
+        }
+        > .subtitle {
+          font-size: 16px;
+          color: #91939f;
+        }
+      }
+      > .more {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 0 26px;
+        border: 1px solid #194866;
+        font-family: 'Open Sans';
+        font-weight: 600;
+        font-size: 14px;
+        color: #194866;
+        border-radius: 50px;
+        height: 48px;
+      }
+    }
   }
 
-  > .load-more {
-    display: flex;
-    justify-content: center;
+  > .resources > .content {
+    overflow: hidden;
+    max-height: 735px;
+    margin-bottom: -10px;
+  }
+
+  > .people > .content {
+    overflow: hidden;
+    max-height: 242px;
+    margin-bottom: -10px;
   }
 
   > .content {

@@ -1,4 +1,5 @@
 import { t, Trans } from '@lingui/macro'
+import ArrowForwardRoundedIcon from '@material-ui/icons/ArrowForwardRounded'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
@@ -11,6 +12,7 @@ import { Organization } from '../../../types'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../atoms/Searchbox/Searchbox'
+import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import {
   CollectionCard,
   CollectionCardProps,
@@ -19,9 +21,11 @@ import ListCard from '../../molecules/cards/ListCard/ListCard'
 import ResourceCard, {
   ResourceCardProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard'
-import TrendCard, {
-  TrendCardProps,
-} from '../../molecules/cards/TrendCard/TrendCard'
+import {
+  SmallProfileCard,
+  SmallProfileCardProps,
+} from '../../molecules/cards/SmallProfileCard/SmallProfileCard'
+import { TrendCardProps } from '../../molecules/cards/TrendCard/TrendCard'
 import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
@@ -32,6 +36,7 @@ export type LandingProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
+  smallProfileCardPropsList: CP<SmallProfileCardProps>[]
   trendCardProps: TrendCardProps
   organization: Pick<Organization, 'name' | 'title' | 'subtitle'>
   isAuthenticated: boolean
@@ -45,9 +50,10 @@ export type LandingProps = {
 export const Landing = withCtrl<LandingProps>(
   ({
     headerPageTemplateProps,
-    trendCardProps,
+    // trendCardProps,
     collectionCardPropsList,
     resourceCardPropsList,
+    smallProfileCardPropsList,
     organization,
     isAuthenticated,
     loginHref,
@@ -59,25 +65,26 @@ export const Landing = withCtrl<LandingProps>(
     const [widthCollectionCard, setWidthCollectionCard] = useState<number>(170)
     const [isSearchboxInViewport, setIsSearchboxInViewport] =
       useState<boolean>(true)
-    const [numResources, setNumResources] = useState<number>(9)
+    // const [numResources, setNumResources] = useState<number>(9)
     const [isCreatingContent, setIsCreatingContent] = useState<boolean>(false)
+    // const [numResources, setNumResources] = useState<number>(9)
 
     const background = {
       backgroundImage: 'url(' + /* imageUrl ||  */ defaultBackgroud + ')',
       backgroundSize: 'cover',
     }
 
-    const calcNumResources = () => {
-      if (window.innerWidth > 820 && window.innerWidth <= 1125) {
-        const remainder = resourceCardPropsList.length % 2
-        setNumResources(resourceCardPropsList.length - remainder)
-      } else if (window.innerWidth > 1125) {
-        const remainder = resourceCardPropsList.length % 3
-        setNumResources(resourceCardPropsList.length - remainder)
-      }
-    }
+    // const calcNumResources = () => {
+    //   if (window.innerWidth > 820 && window.innerWidth <= 1125) {
+    //     const remainder = resourceCardPropsList.length % 2
+    //     setNumResources(resourceCardPropsList.length - remainder)
+    //   } else if (window.innerWidth > 1125) {
+    //     const remainder = resourceCardPropsList.length % 3
+    //     setNumResources(resourceCardPropsList.length - remainder)
+    //   }
+    // }
 
-    window.addEventListener('resize', calcNumResources)
+    // window.addEventListener('resize', calcNumResources)
 
     const getCollectionCardWidth = () => {
       const widthDoc = document.documentElement.clientWidth
@@ -219,26 +226,35 @@ export const Landing = withCtrl<LandingProps>(
             </PrimaryButton>
           </div>
           <ListCard
+            className="resources"
             content={resourceCardPropsList
-              .slice(0, numResources)
+              .slice(0, 10)
               .map((resourceCardProps) => (
                 <ResourceCard {...resourceCardProps} orientation="vertical" />
               ))}
             title={
               <div className="card-header">
-                <div className="title">
-                  <Trans>Featured resources</Trans>
+                <div className="info">
+                  <div className="title">
+                    <Trans>Featured resources</Trans>
+                  </div>
+                  <div className="subtitle">
+                    <Trans>Resources grouped by topic</Trans>
+                  </div>
                 </div>
-                {/* <SecondaryButton>
-                  <Trans>See all</Trans>
-                </SecondaryButton> */}
+                {
+                  <SecondaryButton className="more">
+                    <Trans>See more resources</Trans>
+                    <ArrowForwardRoundedIcon />
+                  </SecondaryButton>
+                }
               </div>
             }
-            className="resources"
             noCard={true}
             minGrid={245}
           />
           <ListCard
+            className="collections"
             content={collectionCardPropsList
               .slice(0, 20)
               .map((collectionCardProps) => (
@@ -249,19 +265,54 @@ export const Landing = withCtrl<LandingProps>(
               ))}
             title={
               <div className="card-header">
-                <div className="title">
-                  <Trans>Featured collections</Trans>
+                <div className="info">
+                  <div className="title">
+                    <Trans>Featured collections</Trans>
+                  </div>
+                  <div className="subtitle">
+                    <Trans>Collections grouped by topic</Trans>
+                  </div>
                 </div>
-                {/* <SecondaryButton>
-                  <Trans>See all</Trans>
-                </SecondaryButton> */}
+                {
+                  <SecondaryButton className="more">
+                    <Trans>See more collections</Trans>
+                    <ArrowForwardRoundedIcon />
+                  </SecondaryButton>
+                }
               </div>
             }
-            className="collections"
             noCard={true}
             direction="horizontal"
           />
-          <TrendCard {...trendCardProps} maxRows={2} />
+          <ListCard
+            content={smallProfileCardPropsList
+              .slice(0, 11)
+              .map((smallProfileCardProps) => (
+                <SmallProfileCard {...smallProfileCardProps} />
+              ))}
+            title={
+              <div className="card-header">
+                <div className="info">
+                  <div className="title">
+                    <Trans>Featured authors</Trans>
+                  </div>
+                  <div className="subtitle">
+                    <Trans>Authors with outstanding contributions</Trans>
+                  </div>
+                </div>
+                {
+                  <SecondaryButton className="more">
+                    <Trans>See more collections</Trans>
+                    <ArrowForwardRoundedIcon />
+                  </SecondaryButton>
+                }
+              </div>
+            }
+            className={`people`}
+            noCard={true}
+            minGrid={160}
+          />
+          {/* <TrendCard {...trendCardProps} maxRows={2} /> */}
         </div>
       </HeaderPageTemplate>
     )
