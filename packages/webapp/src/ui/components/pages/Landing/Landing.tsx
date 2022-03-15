@@ -40,7 +40,6 @@ export type LandingProps = {
   newResourceHref: Href
   newCollectionHref: Href
   setSearchText(text: string): unknown
-  loadMoreResources?: (() => unknown) | null
 }
 
 export const Landing = withCtrl<LandingProps>(
@@ -55,10 +54,8 @@ export const Landing = withCtrl<LandingProps>(
     signUpHref,
     newResourceHref,
     newCollectionHref,
-    loadMoreResources,
     setSearchText,
   }) => {
-    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false)
     const [widthCollectionCard, setWidthCollectionCard] = useState<number>(170)
     const [isSearchboxInViewport, setIsSearchboxInViewport] =
       useState<boolean>(true)
@@ -222,13 +219,10 @@ export const Landing = withCtrl<LandingProps>(
             </PrimaryButton>
           </div>
           <ListCard
-            content={(isLoadingMore
-              ? resourceCardPropsList
-              : resourceCardPropsList
-            )
+            content={resourceCardPropsList
               .slice(0, numResources)
               .map((resourceCardProps) => (
-                <ResourceCard {...resourceCardProps} />
+                <ResourceCard {...resourceCardProps} orientation="vertical" />
               ))}
             title={
               <div className="card-header">
@@ -242,7 +236,7 @@ export const Landing = withCtrl<LandingProps>(
             }
             className="resources"
             noCard={true}
-            minGrid={300}
+            minGrid={245}
           />
           <ListCard
             content={collectionCardPropsList

@@ -13,9 +13,9 @@ export type Organization = {
 }
 
 export type FollowTag = {
-  type: 'subject' | 'collection'
+  type: 'subject' | 'collection' | 'type'
   name: string
-  subjectHomeHref: Href
+  subjectHomeHref?: Href
 }
 
 export type ResourceType = 'Video' | 'Web Page' | 'Moodle Book'

@@ -1,35 +1,46 @@
+import { CSSProperties } from 'react'
 import { FollowTag } from '../types'
 import { href, Link } from './link'
 
-export const tagList = (
+export const getTag = (
+  tag: FollowTag,
+  size?: 'small' | 'medium' | 'big',
+  click = true,
+  index = 0,
+  style?: CSSProperties
+) => {
+  return click && tag.subjectHomeHref ? (
+    <Link href={tag.subjectHomeHref} className="tag-container" key={index}>
+      <div className={`tag ${tag.type} hover ${size}`} style={style}>
+        <abbr title={tag.name}>{tag.name}</abbr>
+      </div>
+    </Link>
+  ) : (
+    <div className={`tag ${tag.type} ${size}`} key={index} style={style}>
+      <abbr title={tag.name}>{tag.name}</abbr>
+    </div>
+  )
+}
+
+export const getTagList = (
   tags: FollowTag[],
-  size: 'small' | 'medium',
+  size: 'small' | 'medium' | 'big',
   click = true
 ) => {
   return tags.map((tag, index) => {
-    return click ? (
-      <Link href={tag.subjectHomeHref} className="tag-container" key={index}>
-        <div className={`tag tag${tag.type} hover ${size}`}>
-          <abbr title={tag.name}>{tag.name}</abbr>
-        </div>
-      </Link>
-    ) : (
-      <div className={`tag tag${tag.type} ${size}`} key={index}>
-        <abbr title={tag.name}>{tag.name}</abbr>
-      </div>
-    )
+    return getTag(tag, size, click, index)
   })
 }
 
 export const TagListStory: FollowTag[] = [
   {
     type: 'subject',
-    name: '#Agroforestry',
+    name: 'Agroforestry',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
   {
     type: 'subject',
-    name: '#Biology',
+    name: 'Biology',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
   {
@@ -49,7 +60,7 @@ export const TagListStory: FollowTag[] = [
   },
   {
     type: 'subject',
-    name: '#Reforestation',
+    name: 'Reforestation',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
   {
@@ -69,12 +80,12 @@ export const TagListStory: FollowTag[] = [
   },
   {
     type: 'subject',
-    name: '#Climate Change',
+    name: 'Climate Change',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
   {
     type: 'subject',
-    name: '#Ecology',
+    name: 'Ecology',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
   {
@@ -84,47 +95,47 @@ export const TagListStory: FollowTag[] = [
   },
   {
     type: 'subject',
-    name: '#Botanic',
+    name: 'Botanic',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
   {
     type: 'subject',
-    name: '#Mathematics',
+    name: 'Mathematics',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
   {
     type: 'subject',
-    name: '#Politology',
+    name: 'Politology',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
   {
     type: 'subject',
-    name: '#Ethology',
+    name: 'Ethology',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
   {
     type: 'subject',
-    name: '#Ideology',
+    name: 'Ideology',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
   {
     type: 'subject',
-    name: '#Religions',
+    name: 'Religions',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
   {
     type: 'subject',
-    name: '#Meditation',
+    name: 'Meditation',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
   {
     type: 'subject',
-    name: '#Data Bases',
+    name: 'Data Bases',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
   {
     type: 'subject',
-    name: '#Machine Learning',
+    name: 'Machine Learning',
     subjectHomeHref: href('Pages/subject/Logged In'),
   },
 ]

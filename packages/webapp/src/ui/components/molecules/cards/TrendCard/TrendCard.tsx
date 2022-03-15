@@ -1,7 +1,7 @@
 import { Trans } from '@lingui/macro'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { getElementSize } from '../../../../../helpers/utilities'
-import { tagList } from '../../../../elements/tags'
+import { getTagList } from '../../../../elements/tags'
 import { withCtrl } from '../../../../lib/ctrl'
 import { FollowTag } from '../../../../types'
 import './styles.scss'
@@ -61,7 +61,7 @@ export const TrendCard = withCtrl<TrendCardProps>(({ tags, maxRows }) => {
       <div className="content" ref={content}>
         <div className="gradient-bar"></div>
         <div className={`tags hover max-rows-${numRows}`}>
-          {tagList(tags, 'medium')}
+          {getTagList(tags, 'medium')}
         </div>
       </div>
     </div>
