@@ -10,6 +10,7 @@ import {
   ResourceCardLoggedOutStoryProps,
   ResourceCardStoryProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard.stories'
+import { SmallProfileCardStoryProps } from '../../molecules/cards/SmallProfileCard/SmallProfileCard.stories'
 import { TrendCardStoryProps } from '../../molecules/cards/TrendCard/TrendCard.stories'
 import {
   HeaderPageTemplateLoggedInStoryProps,
@@ -60,6 +61,22 @@ const contentLoggedIn = {
     ResourceCardStoryProps,
     ResourceCardStoryProps,
     ResourceCardStoryProps,
+  ],
+  smallProfileCardPropsList: [
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
   ],
 }
 

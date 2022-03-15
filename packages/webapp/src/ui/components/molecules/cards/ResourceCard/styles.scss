@@ -13,8 +13,9 @@
     position: absolute;
     pointer-events: none;
     left: 25px;
+    right: 25px;
     height: 20px;
-    width: calc(100% - 50px);
+    // width: 100%;
     bottom: 18px;
     z-index: 1;
     display: flex;
@@ -40,6 +41,15 @@
         }
         > span {
           color: #c1c1c1;
+          width: calc(100% - 34px);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          word-wrap: normal;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
       }
       > :not(.disabled) {
