@@ -9,7 +9,7 @@ import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
 import React, { useCallback, useRef, useState } from 'react'
-import { tagList } from '../../../elements/tags'
+import { getTagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
 import { SelectOptions, SelectOptionsMulti } from '../../../lib/types'
@@ -819,7 +819,9 @@ export const Resource = withCtrl<ResourceProps>(
                     <div className="title">{form.values.name}</div>
                   )}
                   {tags.length > 0 && (
-                    <div className="tags scroll">{tagList(tags, 'medium')}</div>
+                    <div className="tags scroll">
+                      {getTagList(tags, 'medium')}
+                    </div>
                   )}
                 </div>
                 {(typeof imageUrl === 'string' || isEditing) && (

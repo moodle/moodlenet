@@ -116,7 +116,6 @@ export const LandingLoggedInStoryProps: LandingProps = {
   signUpHref: href('Pages/Access/SignUp/Default'),
   newResourceHref: href('Pages/New Resource/Default'),
   newCollectionHref: href('Pages/New Collection/Start'),
-  loadMoreResources: action('Load more'),
   setSearchText: action('Search Text'),
 }
 
@@ -144,7 +143,6 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
   newResourceHref: href('Pages/New Resource/Default'),
   newCollectionHref: href('Pages/New Collection/Start'),
   setSearchText: action('Search Text'),
-  loadMoreResources: action('Load more'),
 }
 
 export const LandingOrganizationLoggedOutStoryProps: LandingProps = {

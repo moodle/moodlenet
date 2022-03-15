@@ -29,8 +29,10 @@ const meta: ComponentMeta<typeof ResourceCard> = {
 export const ResourceCardStoryProps: ResourceCardProps = {
   tags: TagListStory,
   isOwner: false,
-  title: 'Best resource ever forever',
-  image: 'https://picsum.photos/200/100',
+  title: `Why the Tropical rainforest ${
+    Math.random() < 0.5 ? 'stands as' : 'is'
+  } the world's most important ecosystem`,
+  image: 'https://picsum.photos/400/400',
   type: 'Video',
   resourceHomeHref: href('Pages/Resource/Logged In'),
   isAuthenticated: true,
@@ -38,6 +40,12 @@ export const ResourceCardStoryProps: ResourceCardProps = {
   liked: false,
   numLikes: 23,
   visibility: 'Public',
+  owner: {
+    profileHref: href('Pages/Profile/Logged In'),
+    avatar:
+      'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80',
+    displayName: 'Karl Phosler',
+  },
 }
 
 export const ResourceCardLoggedInStoryProps: ResourceCardProps = {
@@ -83,5 +91,33 @@ Public.args = ResourceCardOwnerStoryProps
 
 export const Private = ResourceCardStory.bind({})
 Private.args = ResourceCardOwnerPrivateStoryProps
+
+export const VerticalLoggedIn = ResourceCardStory.bind({})
+VerticalLoggedIn.args = {
+  ...ResourceCardLoggedInStoryProps,
+  orientation: 'vertical',
+  liked: true,
+}
+
+export const VerticalLoggedOut = ResourceCardStory.bind({})
+VerticalLoggedOut.args = {
+  ...ResourceCardLoggedOutStoryProps,
+  orientation: 'vertical',
+}
+
+export const VerticalOwner = ResourceCardStory.bind({})
+VerticalOwner.args = { ...ResourceCardOwnerStoryProps, orientation: 'vertical' }
+
+export const VerticalPublic = ResourceCardStory.bind({})
+VerticalPublic.args = {
+  ...ResourceCardOwnerStoryProps,
+  orientation: 'vertical',
+}
+
+export const VerticalPrivate = ResourceCardStory.bind({})
+VerticalPrivate.args = {
+  ...ResourceCardOwnerPrivateStoryProps,
+  orientation: 'vertical',
+}
 
 export default meta
