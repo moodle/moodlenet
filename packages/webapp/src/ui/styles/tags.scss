@@ -2,11 +2,13 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 6px;
+  height: fit-content;
+  padding: 3px 0 3px 5px;
 }
 
 .tag {
   cursor: pointer;
+  height: fit-content;
   padding: 5px 10px;
   display: flex;
   font-size: 13px;
@@ -19,7 +21,11 @@
   &.small {
     font-size: 12px;
     padding: 4px 10px;
-    margin-right: 3px;
+    margin-right: 9px;
+  }
+
+  &.medium {
+    margin-right: 10px;
   }
 
   &.big {

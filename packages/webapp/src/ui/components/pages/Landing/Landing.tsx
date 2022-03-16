@@ -239,7 +239,7 @@ export const Landing = withCtrl<LandingProps>(
                     <Trans>Featured resources</Trans>
                   </div>
                   <div className="subtitle">
-                    <Trans>Resources grouped by topic</Trans>
+                    <Trans>Highlights on top quality content</Trans>
                   </div>
                 </div>
                 {
@@ -270,7 +270,7 @@ export const Landing = withCtrl<LandingProps>(
                     <Trans>Featured collections</Trans>
                   </div>
                   <div className="subtitle">
-                    <Trans>Collections grouped by topic</Trans>
+                    <Trans>Great collections of curated resources</Trans>
                   </div>
                 </div>
                 {
@@ -302,7 +302,7 @@ export const Landing = withCtrl<LandingProps>(
                 </div>
                 {
                   <SecondaryButton className="more">
-                    <Trans>See more collections</Trans>
+                    <Trans>See more authors</Trans>
                     <ArrowForwardRoundedIcon />
                   </SecondaryButton>
                 }
