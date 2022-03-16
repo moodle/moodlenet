@@ -129,7 +129,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
         onClick={onClick}
         style={orientation === 'vertical' ? background : {}}
       >
-        <div className={`resource-card-footer`}>
+        <div className={`resource-card-footer ${orientation}`}>
           <div className="left-side">
             <Link href={owner.profileHref}>
               <div style={avatar} className="avatar" />
@@ -191,32 +191,28 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             onClick={onRemoveClick}
           />
         )}
-        <div
-          className={`tags scroll ${
-            selectionMode ? 'disabled' : ''
-          } ${orientation} ${isEditing ? 'editing' : ''}`}
-        >
+        <div className={`tags-row ${orientation}`}>
           {getTag(
             {
               type: 'type',
               name: type,
             },
-            orientation === 'horizontal' ? 'small' : 'big',
+            'big',
             undefined,
             undefined,
             { backgroundColor: color }
           )}
-          {tags &&
-            getTagList(tags, orientation === 'horizontal' ? 'small' : 'big')}
+          <div
+            className={`tags scroll ${selectionMode ? 'disabled' : ''}  ${
+              isEditing ? 'editing' : ''
+            }`}
+          >
+            {tags && getTagList(tags, 'big')}
+          </div>
         </div>
       </Card>
     )
   }
 )
-
-ResourceCard.defaultProps = {
-  orientation: 'horizontal',
-  selectionMode: false,
-}
 
 export default ResourceCard

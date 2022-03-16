@@ -193,6 +193,7 @@ export const Profile = withCtrl<ProfileProps>(
                     <ResourceCard
                       {...resourcesCardProps}
                       isEditing={isEditing}
+                      orientation="horizontal"
                     />
                   )
                 })}
