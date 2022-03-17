@@ -213,7 +213,7 @@ export const Profile = withCtrl<ProfileProps>(
                       }
                     : undefined
                 }
-              ></ListCard>
+              />
               {collectionList}
             </div>
             <div className="side-column">

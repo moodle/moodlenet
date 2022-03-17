@@ -342,6 +342,7 @@ export const Collection = withCtrl<CollectionProps>(
                       <ResourceCard
                         {...resourceCardProps}
                         isEditing={isEditing}
+                        orientation="horizontal"
                       />
                     )
                   })}
