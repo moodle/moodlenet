@@ -258,10 +258,7 @@ export const Landing = withCtrl<LandingProps>(
             content={collectionCardPropsList
               .slice(0, 20)
               .map((collectionCardProps) => (
-                <CollectionCard
-                  {...collectionCardProps}
-                  width={widthCollectionCard}
-                />
+                <CollectionCard {...collectionCardProps} />
               ))}
             title={
               <div className="card-header">
@@ -281,8 +278,8 @@ export const Landing = withCtrl<LandingProps>(
                 }
               </div>
             }
+            minGrid={245}
             noCard={true}
-            direction="horizontal"
           />
           <ListCard
             content={smallProfileCardPropsList

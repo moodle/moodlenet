@@ -110,44 +110,42 @@ export const Subject = withCtrl<SubjectProps>(
             <div className="main-content">
               {collectionCardPropsList && (
                 <ListCard
-                  content={collectionCardPropsList.map(
-                    (collectionCardProps) => (
+                  className="collections"
+                  content={collectionCardPropsList
+                    .slice(0, 20)
+                    .map((collectionCardProps) => (
                       <CollectionCard {...collectionCardProps} />
-                    )
-                  )}
+                    ))}
                   title={
                     <div className="card-header">
                       <div className="title">
                         <Trans>Collections</Trans>
                       </div>
-                      {/* <SecondaryButton>
-                        <Trans>See all</Trans>
-                      </SecondaryButton> */}
                     </div>
                   }
-                  className="collections"
+                  minGrid={245}
                   noCard={true}
-                  direction="horizontal"
                 />
               )}
               {resourceCardPropsList && (
                 <ListCard
-                  content={resourceCardPropsList.map((resourcesCardProps) => (
-                    <ResourceCard {...resourcesCardProps} />
-                  ))}
+                  className="resources"
+                  noCard={true}
+                  content={resourceCardPropsList.map((resourcesCardProps) => {
+                    return (
+                      <ResourceCard
+                        {...resourcesCardProps}
+                        orientation="horizontal"
+                      />
+                    )
+                  })}
                   title={
                     <div className="card-header">
                       <div className="title">
                         <Trans>Resources</Trans>
                       </div>
-                      {/* <SecondaryButton>
-                        <Trans>See all</Trans>
-                      </SecondaryButton> */}
                     </div>
                   }
-                  className="resources"
-                  noCard={true}
-                  minGrid={300}
                 />
               )}
             </div>

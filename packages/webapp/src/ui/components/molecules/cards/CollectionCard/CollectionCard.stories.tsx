@@ -30,12 +30,14 @@ const meta: ComponentMeta<typeof CollectionCard> = {
 
 export const CollectionCardStoryProps = (i: number): CollectionCardProps => {
   return {
-    title: 'Best collection ever created '.split(' ').slice(0, i).join(' '),
-    imageUrl: 'https://picsum.photos/200/100',
+    title:
+      'Best collection ever created Best collection ever created Best collection ever created ',
+    imageUrl: 'https://picsum.photos/300/200',
     collectionHref: href('Pages/Collection/LoggedIn'),
     bookmarked: false,
     following: false,
     numFollowers: 32,
+    numResource: 5,
     isAuthenticated: true,
     isOwner: false,
     visibility: 'Public',
