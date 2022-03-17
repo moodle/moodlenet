@@ -307,7 +307,7 @@ export const Landing = withCtrl<LandingProps>(
             }
             className={`people`}
             noCard={true}
-            minGrid={160}
+            minGrid={170}
           />
           {/* <TrendCard {...trendCardProps} maxRows={2} /> */}
         </div>
