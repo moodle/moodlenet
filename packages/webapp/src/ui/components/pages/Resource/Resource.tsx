@@ -9,7 +9,7 @@ import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
 import React, { useCallback, useRef, useState } from 'react'
-import { Basic } from 'unsplash-js/dist/methods/photos/types'
+import { Random } from 'unsplash-js/dist/methods/photos/types'
 import {
   getBackupImage,
   getFirstWord,
@@ -140,7 +140,7 @@ export const Resource = withCtrl<ResourceProps>(
       useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-    const [unsplashImage, setUnsplashImage] = useState<Basic | undefined>(
+    const [unsplashImage, setUnsplashImage] = useState<Random | undefined>(
       undefined
     )
 
