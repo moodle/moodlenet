@@ -234,7 +234,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                   {editForm.values.displayName}
                 </div>
               )}
-              {!isEditing && isApproved && (
+              {!isEditing && isOwner && isApproved && (
                 <abbr className={`approved-icon`} title={t`Approved`}>
                   <ApprovedIcon
                     className={`${
@@ -243,6 +243,14 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                         : ''
                     }`}
                   />
+                </abbr>
+              )}
+              {!isEditing && isOwner && (
+                <abbr
+                  className={`user-id`}
+                  title={t`Click to copy your ID to the Clipboard`}
+                >
+                  <TertiaryButton className="copy-id">Copy ID</TertiaryButton>
                 </abbr>
               )}
             </div>
