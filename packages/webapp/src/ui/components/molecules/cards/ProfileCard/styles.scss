@@ -121,9 +121,8 @@
     > .profile-card-header {
       > .title {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         width: 100%;
-        gap: 10px;
         font-size: 19px;
 
         > .display-name {
@@ -136,6 +135,7 @@
           height: 22px;
           display: flex;
           align-items: center;
+          margin: 0 6px;
           > svg {
             height: 18px;
             width: 18px;
@@ -169,6 +169,13 @@
                 z-index: inherit;
               }
             }
+          }
+        }
+
+        > .user-id {
+          > .copy-id {
+            padding: 0 10px;
+            height: fit-content;
           }
         }
       }
