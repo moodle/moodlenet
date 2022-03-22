@@ -49,6 +49,8 @@ export const useProfileCardStoryProps = (overrides?: {
   return {
     isOwner: false,
     isAuthenticated: false,
+    userId: '@396qamf8hfol-Bru-Mas-Ribera@moodle.net',
+    setShowUserIdCopiedAlert: action('SetShowUserIdCopiedAlert'),
     approveUserForm: useFormik({
       initialValues: {},
       onSubmit: action('approve User'),
@@ -71,14 +73,14 @@ export const useProfileCardStoryProps = (overrides?: {
       onSubmit: action('submit edit'),
       validationSchema,
       initialValues: {
-        displayName: person!.username,
+        displayName: person!.displayName,
         description:
           'Italian biologist specialized in endangered rainforest monitoring. Cooperating with local organizations to improve nature reserves politics.',
         organizationName: person!.organization,
         location: person!.location,
         siteUrl: 'https://iuri.is/',
-        avatarImage: null,
-        backgroundImage: null,
+        avatarImage: person!.avatarUrl,
+        backgroundImage: person!.backgroundUrl,
         ...overrides?.editFormValues,
       },
     }),

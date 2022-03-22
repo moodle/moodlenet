@@ -309,6 +309,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     if (!profile) {
       return null
     }
+    const userId = `${profile.id.split('/')![1]}@${localOrg.domain}`
 
     const props: ProfileProps = {
       headerPageTemplateProps: ctrlHook(
@@ -333,6 +334,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
       newResourceHref,
       showAccountCreationSuccessAlert: firstLogin,
       profileCardProps: {
+        userId,
         approveUserForm,
         isAuthenticated,
         toggleFollowForm,
@@ -356,6 +358,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     return props
   }, [
     profile,
+    localOrg.domain,
     resources,
     collections,
     kudos,
