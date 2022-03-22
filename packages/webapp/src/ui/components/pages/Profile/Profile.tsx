@@ -68,6 +68,8 @@ export const Profile = withCtrl<ProfileProps>(
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
+    const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] =
+      useState<boolean>(false)
 
     const toggleIsEditing = () => {
       isEditing && editForm.dirty && editForm.submitForm()
@@ -101,6 +103,19 @@ export const Profile = withCtrl<ProfileProps>(
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        {showUserIdCopiedAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={10000000}
+            showCloseButton={false}
+          >
+            <Trans>
+              User ID copied to your clipboard, use it to connect with Moodle
+              LMS
+            </Trans>
+          </Snackbar>
+        )}
         {showAccountCreationSuccessAlert && (
           <Snackbar
             type="success"
@@ -165,6 +180,7 @@ export const Profile = withCtrl<ProfileProps>(
                 editForm={editForm}
                 isEditing={isEditing}
                 toggleIsEditing={toggleIsEditing}
+                setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
                 openSendMessage={() => setIsSendingMessage(!!sendEmailForm)}
               />
               <ListCard
