@@ -38,7 +38,11 @@ export type ProfileProps = {
   overallCardProps: OverallCardProps
   profileCardProps: Omit<
     ProfileCardProps,
-    'isEditing' | 'toggleIsEditing' | 'openSendMessage' | 'editForm'
+    | 'isEditing'
+    | 'toggleIsEditing'
+    | 'openSendMessage'
+    | 'editForm'
+    | 'setShowUserIdCopiedAlert'
   >
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
