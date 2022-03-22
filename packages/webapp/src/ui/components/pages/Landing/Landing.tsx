@@ -1,9 +1,13 @@
 import { t, Trans } from '@lingui/macro'
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
+import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
-import { Href } from '../../../elements/link'
+import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import defaultBackgroud from '../../../static/img/default-landing-background.png'
 import { Organization } from '../../../types'
+import Modal from '../../atoms/Modal/Modal'
+import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import Searchbox from '../../atoms/Searchbox/Searchbox'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import {
@@ -30,7 +34,8 @@ export type LandingProps = {
   trendCardProps: TrendCardProps
   organization: Pick<Organization, 'name' | 'title' | 'subtitle'>
   isAuthenticated: boolean
-  signUpHref: Href
+  newResourceHref: Href
+  newCollectionHref: Href
   setSearchText(text: string): unknown
   loadMoreResources?: (() => unknown) | null
 }
@@ -42,6 +47,9 @@ export const Landing = withCtrl<LandingProps>(
     collectionCardPropsList,
     resourceCardPropsList,
     organization,
+    isAuthenticated,
+    newResourceHref,
+    newCollectionHref,
     loadMoreResources,
     setSearchText,
   }) => {
@@ -50,6 +58,7 @@ export const Landing = withCtrl<LandingProps>(
     const [isSearchboxInViewport, setIsSearchboxInViewport] =
       useState<boolean>(true)
     const [numResources, setNumResources] = useState<number>(9)
+    const [isCreatingContent, setIsCreatingContent] = useState<boolean>(false)
 
     const background = {
       backgroundImage: 'url(' + /* imageUrl ||  */ defaultBackgroud + ')',
@@ -109,6 +118,44 @@ export const Landing = withCtrl<LandingProps>(
         style={{ backgroundColor: 'white' }}
         hideSearchbox={isSearchboxInViewport}
       >
+        {isCreatingContent && (
+          <Modal
+            className="create-content-modal"
+            title={t`What would you like to create?`}
+            closeButton={false}
+            onClose={() => {
+              setIsCreatingContent(false)
+            }}
+            style={{ maxWidth: '500px', width: '100%', gap: '22px' }}
+          >
+            <Link href={newCollectionHref}>
+              <PrimaryButton className="" color="card">
+                <LibraryAddIcon />
+                <div className="content">
+                  <div className="title">
+                    <Trans>Create a new collection</Trans>
+                  </div>
+                  <div className="subtitle">
+                    <Trans>Collections are groups of resources</Trans>
+                  </div>
+                </div>
+              </PrimaryButton>
+            </Link>
+            <Link href={newResourceHref}>
+              <PrimaryButton className="" color="card">
+                <NoteAddIcon />
+                <div className="content">
+                  <div className="title">
+                    <Trans>Create a new resource</Trans>
+                  </div>
+                  <div className="subtitle">
+                    <Trans>A resource is a single item of content</Trans>
+                  </div>
+                </div>
+              </PrimaryButton>
+            </Link>
+          </Modal>
+        )}
         <div className="landing">
           <div className="landing-header" style={background}>
             <div className="landing-title">
@@ -123,6 +170,15 @@ export const Landing = withCtrl<LandingProps>(
               setIsSearchboxInViewport={setIsSearchboxInViewport}
               marginTop={12}
             />
+            {isAuthenticated && (
+              <PrimaryButton
+                className="share-content"
+                color="blue"
+                onClick={() => setIsCreatingContent(true)}
+              >
+                <Trans>Share content</Trans>
+              </PrimaryButton>
+            )}
           </div>
           <div className="columns-container">
             <div className="main-column">

@@ -112,7 +112,8 @@ export const LandingLoggedInStoryProps: LandingProps = {
     //description: `Join our social network to share and curate open educational resources with educators world-wide.\n\nIntegrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.\n\nBuild your profile as an educator.`,
   },
   isAuthenticated: true,
-  signUpHref: href('Pages/Access/SignUp/Default'),
+  newResourceHref: href('Pages/New Resource/Default'),
+  newCollectionHref: href('Pages/New Collection/Start'),
   loadMoreResources: action('Load more'),
   setSearchText: action('Search Text'),
 }
@@ -136,7 +137,8 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
     //   'Diverse, sound, dynamic – these are the values that define BFH. And this is ',
   },
   isAuthenticated: true,
-  signUpHref: href('Pages/Access/SignUp/Default'),
+  newResourceHref: href('Pages/New Resource/Default'),
+  newCollectionHref: href('Pages/New Collection/Start'),
   setSearchText: action('Search Text'),
   loadMoreResources: action('Load more'),
 }

@@ -91,11 +91,11 @@ export const Header = withCtrl<HeaderProps>((props) => {
                 menuContent={[
                   <Link href={newResourceHref} tabIndex={0}>
                     <NoteAddIcon />
-                    <Trans>New Resource</Trans>
+                    <Trans>New resource</Trans>
                   </Link>,
                   <Link href={newCollectionHref} tabIndex={0}>
                     <LibraryAddIcon />
-                    <Trans>New Collection</Trans>
+                    <Trans>New collection</Trans>
                   </Link>,
                 ]}
                 hoverElement={<AddIcon className="add-icon" tabIndex={0} />}
