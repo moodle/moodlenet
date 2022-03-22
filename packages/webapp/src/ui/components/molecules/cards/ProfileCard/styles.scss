@@ -124,18 +124,21 @@
         align-items: center;
         width: 100%;
         font-size: 19px;
+        gap: 6px;
 
         > .display-name {
           width: fit-content;
           font-size: 19px;
           font-weight: 700;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
 
         > .approved-icon {
           height: 22px;
           display: flex;
           align-items: center;
-          margin: 0 6px;
           > svg {
             height: 18px;
             width: 18px;
@@ -174,7 +177,8 @@
 
         > .user-id {
           > .copy-id {
-            padding: 0 10px;
+            padding: 5px 12px;
+            margin: -5px 0;
             height: fit-content;
           }
         }
@@ -217,7 +221,7 @@
           display: flex;
           align-items: flex-start;
           > .input-text-field > .input-container {
-            height: 14px;
+            height: fit-content;
             > input {
               font-size: 12px;
 

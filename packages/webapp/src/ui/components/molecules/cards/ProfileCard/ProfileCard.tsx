@@ -2,7 +2,7 @@ import { t, Trans } from '@lingui/macro'
 import EditIcon from '@material-ui/icons/Edit'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import SaveIcon from '@material-ui/icons/Save'
-import React, { useRef, useState } from 'react'
+import React, { Dispatch, SetStateAction, useRef, useState } from 'react'
 import { ReactComponent as ApprovedIcon } from '../../../../assets/icons/approved.svg'
 import { withCtrl } from '../../../../lib/ctrl'
 import { FormikHandle } from '../../../../lib/formik'
@@ -29,13 +29,15 @@ export type ProfileCardProps = {
   isEditing?: boolean
   isAuthenticated: boolean
   editForm: FormikHandle<ProfileFormValues>
-  toggleIsEditing(): unknown
-  openSendMessage(): unknown
   toggleFollowForm: FormikHandle<{}>
   requestApprovalForm: FormikHandle<{}>
   approveUserForm: FormikHandle<{}>
   unapproveUserForm: FormikHandle<{}>
+  userId: string
   showAccountApprovedSuccessAlert?: boolean
+  toggleIsEditing(): unknown
+  openSendMessage(): unknown
+  setShowUserIdCopiedAlert: Dispatch<SetStateAction<boolean>>
 }
 
 export const ProfileCard = withCtrl<ProfileCardProps>(
@@ -50,12 +52,14 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     isEditing,
     isFollowing,
     editForm,
-    openSendMessage,
     toggleFollowForm,
-    toggleIsEditing,
     approveUserForm,
     requestApprovalForm,
+    userId,
     unapproveUserForm,
+    openSendMessage,
+    toggleIsEditing,
+    setShowUserIdCopiedAlert,
   }) => {
     const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
     const shouldShowErrors = !!editForm.submitCount
@@ -102,6 +106,14 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     const avatar = {
       backgroundImage: 'url(' + avatarUrl + ')',
       backgroundSize: 'cover',
+    }
+
+    const copyId = () => {
+      navigator.clipboard.writeText(userId)
+      setShowUserIdCopiedAlert(false)
+      setTimeout(() => {
+        setShowUserIdCopiedAlert(true)
+      }, 100)
     }
 
     return (
@@ -250,13 +262,15 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                   className={`user-id`}
                   title={t`Click to copy your ID to the Clipboard`}
                 >
-                  <TertiaryButton className="copy-id">Copy ID</TertiaryButton>
+                  <TertiaryButton className="copy-id" onClick={copyId}>
+                    Copy ID
+                  </TertiaryButton>
                 </abbr>
               )}
             </div>
             {isOwner && isEditing ? (
               <div className="subtitle edit">
-                <span>
+                {/* <span>
                   <span className="at-symbol">@</span>
                   <InputTextField
                     className="underline"
@@ -273,8 +287,8 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                       editForm.errors.displayName
                     }
                   />
-                </span>
-                {/* <span>
+                </span> 
+                <span>
                   <InputTextField
                     className="underline"
                     displayMode={true}
@@ -324,13 +338,13 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               </div>
             ) : (
               <div className="subtitle">
-                {editForm.values.displayName && (
+                {/* editForm.values.displayName && (
                   <span>
                     <span className="at-symbol">@</span>
                     {editForm.values.displayName}
                   </span>
                 )}
-                {/* {editForm.values.organizationName &&
+                 {editForm.values.organizationName &&
                   editForm.values.organizationName !== '' && (
                     <span>{editForm.values.organizationName}</span>
                   )} */}
