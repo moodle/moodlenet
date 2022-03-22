@@ -14,6 +14,8 @@ import { useSearchUrlQuery } from '../../Search/Ctrl/useSearchUrlQuery'
 import { LandingProps } from '../Landing'
 import { useLandingPageListsQuery } from './LandingCtrl.gen'
 const signUpHref = href(mainPath.signUp)
+const newCollectionHref = href(mainPath.createNewCollection)
+const newResourceHref = href(mainPath.createNewResource)
 
 export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
   const { isAuthenticated } = useSession()
@@ -82,7 +84,8 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       setSearchText,
       collectionCardPropsList: collectionCardPropsList || [],
       resourceCardPropsList: resourceCardPropsList || [],
-      signUpHref,
+      newCollectionHref,
+      newResourceHref,
     }),
     [
       isAuthenticated,
