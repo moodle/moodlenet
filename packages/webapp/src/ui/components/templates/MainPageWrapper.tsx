@@ -71,6 +71,7 @@ export const MainPageWrapper = withCtrl<MainPageWrapperProps>(
             </Trans>
           </Snackbar>
         )}
+        <div className="env-flag" />
         {children}
       </div>
     )
