@@ -26,10 +26,10 @@
     > .right > *,
     > .follow {
       padding: 1px 3px;
-      background-color: #b6bacb;
+      background-color: #e3e5ef;
       border-radius: 6px;
       font-size: 13px;
-      color: white;
+      color: #636363;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -41,6 +41,10 @@
       }
     }
 
+    > .follow:hover:not(.disabled) {
+      background-color: #cbcdd7;
+    }
+
     > :not(.disabled) {
       pointer-events: auto;
     }
@@ -50,26 +54,22 @@
       color: white;
     }
 
-    > .follow:hover:not(.disabled) {
-      background-color: $primary-color;
-    }
-
     .right {
       display: flex;
       gap: 5px;
 
       > .visibility.public {
         color: white;
-        background-color: $primary-color;
+        background-color: #cbcdd7;
       }
 
       > .bookmarked {
-        background-color: rgb(32, 193, 132);
+        background-color: #00bd7e;
         color: white;
       }
 
       > .bookmark:hover {
-        background-color: rgb(32, 193, 132);
+        background-color: #cbcdd7;
       }
     }
   }
@@ -85,8 +85,8 @@
     > .title {
       margin-top: 16px;
       max-width: 100%;
-      color: white;
-      background-color: #b6bacb;
+      color: #636363;
+      background-color: #e3e5ef;
       border-radius: 35px;
       padding: 5px 12px;
       font-size: 14px;

@@ -1,101 +1,213 @@
-import { Trans } from '@lingui/macro'
-import { useCallback } from 'react'
+import { t, Trans } from '@lingui/macro'
+import { useState } from 'react'
 import { withCtrl } from '../../../../lib/ctrl'
-import { FormikBag } from '../../../../lib/formik'
-import Dropdown from '../../../atoms/Dropdown/Dropdown'
+import { SelectOptions } from '../../../../lib/types'
+import {
+  Dropdown,
+  SimplePill,
+  TextOption,
+  TextOptionProps,
+} from '../../../atoms/Dropdown/Dropdown'
+import Loading from '../../../atoms/Loading/Loading'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import SecondaryButton from '../../../atoms/SecondaryButton/SecondaryButton'
-import { DropdownField } from '../FieldsData'
+import { yearList } from '../FieldsData'
+import { useNewResourcePageCtx } from '../NewResource'
 import { NewResourceFormValues } from '../types'
+import { MonthTextOptionProps } from './storiesData'
 import './styles.scss'
 
 export type ExtraDetailsProps = {
-  step: 'ExtraDetailsStep'
-  formBag: FormikBag<NewResourceFormValues>
-  nextStep: (() => unknown) | undefined
-  previousStep: (() => unknown) | undefined
-  types: DropdownField
-  levels: DropdownField
-  months: DropdownField
-  years: DropdownField
-  languages: DropdownField
-  // formats: DropdownField
+  types: SelectOptions<TextOptionProps>
+  setTypeFilter(text: string): unknown
+  levels: SelectOptions<TextOptionProps>
+  setLevelFilter(text: string): unknown
+  languages: SelectOptions<TextOptionProps>
+  setLanguageFilter(text: string): unknown
 }
+
+const usingFields: (keyof NewResourceFormValues)[] = [
+  'type',
+  'level',
+  'month',
+  'year',
+  'language',
+]
 
 export const ExtraDetails = withCtrl<ExtraDetailsProps>(
   ({
-    formBag,
     types,
     levels,
-    months,
-    years,
     languages,
-    /* formats,  */ nextStep,
-    previousStep,
+    setLanguageFilter,
+    setLevelFilter,
+    setTypeFilter,
   }) => {
-    const [form, formAttrs] = formBag
-    const setFieldValue = form.setFieldValue
-    const setTypeField = useCallback(
-      (_: string) => setFieldValue('type', _),
-      [setFieldValue]
+    const { prevForm, form } = useNewResourcePageCtx()
+    const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
+    const isValid = usingFields.reduce(
+      (valid, fldName) => valid && !form.errors[fldName],
+      true
     )
-    const setLevelField = useCallback(
-      (_: string) => setFieldValue('level', _),
-      [setFieldValue]
-    )
-    const setMonthField = useCallback(
-      (_: string) => setFieldValue('originalDateMonth', _),
-      [setFieldValue]
-    )
-    const setYearField = useCallback(
-      (_: string) => setFieldValue('originalDateYear', _),
-      [setFieldValue]
-    )
-    const setLangField = useCallback(
-      (_: string) => setFieldValue('language', _),
-      [setFieldValue]
-    )
-    // const setFormatField = useCallback((_: string) => setFieldValue('format', _), [setFieldValue])
 
     const dataInputs = (
       <div className="data-inputs">
         <Dropdown
+          name="type"
+          placeholder={t`Content type`}
+          label={t`Type`}
           value={form.values.type}
-          {...types}
-          {...formAttrs.type}
-          getValue={setTypeField}
-        />
+          onChange={form.handleChange}
+          edit={!form.isSubmitting}
+          error={shouldShowErrors && form.errors.type}
+          disabled={form.isSubmitting}
+          searchByText={setTypeFilter}
+          pills={
+            types.selected && (
+              <SimplePill
+                label={types.selected.label}
+                value={types.selected.value}
+              />
+            )
+          }
+        >
+          {types.selected && (
+            <TextOption
+              key={types.selected.value}
+              value={types.selected.value}
+              label={types.selected.label}
+            />
+          )}
+          {types.opts.map(
+            ({ label, value }) =>
+              types.selected?.value !== value && (
+                <TextOption key={value} label={label} value={value} />
+              )
+          )}
+        </Dropdown>
         <Dropdown
+          name="level"
+          placeholder={t`Education level`}
+          label={t`Level`}
           value={form.values.level}
-          {...levels}
-          {...formAttrs.level}
-          getValue={setLevelField}
-        />
+          onChange={form.handleChange}
+          edit={!form.isSubmitting}
+          error={shouldShowErrors && form.errors.level}
+          disabled={form.isSubmitting}
+          searchByText={setLevelFilter}
+          pills={
+            levels.selected && (
+              <SimplePill
+                label={levels.selected.label}
+                value={levels.selected.value}
+              />
+            )
+          }
+        >
+          {levels.selected && (
+            <TextOption
+              key={levels.selected.value}
+              value={levels.selected.value}
+              label={levels.selected.label}
+            />
+          )}
+          {levels.opts.map(
+            ({ label, value }) =>
+              levels.selected?.value !== value && (
+                <TextOption key={value} label={label} value={value} />
+              )
+          )}
+        </Dropdown>
         <div className="date">
           <label>
             <Trans>Original creation date</Trans>
           </label>
           <div className="fields">
             <Dropdown
-              value={form.values.originalDateMonth}
-              {...months}
-              {...formAttrs.originalDateMonth}
-              getValue={setMonthField}
-            />
+              className="month-dropdown"
+              name="month"
+              placeholder={t`Month`}
+              onChange={form.handleChange}
+              label=""
+              value={form.values.month}
+              edit={!form.isSubmitting}
+              error={shouldShowErrors && form.errors.month}
+              disabled={form.isSubmitting}
+              pills={
+                form.values.month && (
+                  <SimplePill
+                    label={
+                      MonthTextOptionProps.find(
+                        ({ value }) => value === form.values.month
+                      )!.label
+                    }
+                    value={form.values.month}
+                  />
+                )
+              }
+            >
+              {MonthTextOptionProps.map(({ label, value }) => (
+                <TextOption key={value} label={label} value={value} />
+              ))}
+            </Dropdown>
             <Dropdown
-              value={form.values.originalDateYear}
-              {...years}
-              {...formAttrs.originalDateYear}
-              getValue={setYearField}
-            />
+              className="year-dropdown"
+              placeholder={t`Year`}
+              name="year"
+              label=""
+              onChange={form.handleChange}
+              value={form.values.year}
+              error={shouldShowErrors && form.errors.year}
+              edit={!form.isSubmitting}
+              disabled={form.isSubmitting}
+              pills={
+                form.values.year && (
+                  <SimplePill
+                    label={form.values.year}
+                    value={form.values.year}
+                  />
+                )
+              }
+            >
+              {yearList.map((year) => (
+                <TextOption key={year} label={year} value={year} />
+              ))}
+            </Dropdown>
           </div>
         </div>
         <Dropdown
-          {...languages}
-          {...formAttrs.language}
-          getValue={setLangField}
-        />
-        {/* <Dropdown {...formats} {...formAttrs.format} getValue={setFormatField} /> */}
+          name="language"
+          placeholder={t`Content language`}
+          label={t`Language`}
+          value={form.values.language}
+          onChange={form.handleChange}
+          edit={!form.isSubmitting}
+          error={shouldShowErrors && form.errors.language}
+          disabled={form.isSubmitting}
+          searchByText={setLanguageFilter}
+          pills={
+            languages.selected && (
+              <SimplePill
+                label={languages.selected.label}
+                value={languages.selected.value}
+              />
+            )
+          }
+        >
+          {languages.selected && (
+            <TextOption
+              key={languages.selected.value}
+              label={languages.selected.label}
+              value={languages.selected.value}
+            />
+          )}
+          {languages.opts.map(
+            ({ label, value }) =>
+              languages.selected?.value !== value && (
+                <TextOption key={value} label={label} value={value} />
+              )
+          )}
+        </Dropdown>
       </div>
     )
 
@@ -103,11 +215,36 @@ export const ExtraDetails = withCtrl<ExtraDetailsProps>(
       <div className="extra-details">
         <div className="content">{dataInputs}</div>
         <div className="footer">
-          <SecondaryButton onClick={previousStep} color="grey">
+          <SecondaryButton
+            onClick={prevForm}
+            color="grey"
+            disabled={form.isSubmitting}
+          >
             <Trans>Back</Trans>
           </SecondaryButton>
-          <PrimaryButton disabled={!nextStep} onClick={nextStep}>
-            <Trans>Create resource</Trans>
+          <PrimaryButton
+            className={`${form.isSubmitting ? 'loading' : ''}`}
+            onClick={
+              !isValid
+                ? () => {
+                    setShouldShowErrors(true)
+                    form.validateForm()
+                  }
+                : form.submitForm
+            }
+          >
+            <div
+              className="loading"
+              style={{ visibility: form.isSubmitting ? 'visible' : 'hidden' }}
+            >
+              <Loading color="white" />
+            </div>
+            <div
+              className="label"
+              style={{ visibility: form.isSubmitting ? 'hidden' : 'visible' }}
+            >
+              <Trans>Create resource</Trans>
+            </div>
           </PrimaryButton>
         </div>
       </div>

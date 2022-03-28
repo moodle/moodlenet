@@ -1,5 +1,4 @@
 import { Trans } from '@lingui/macro'
-import { ReactComponent as ApprovedIcon } from '../../../../assets/icons/approved.svg'
 import { Href, Link } from '../../../../elements/link'
 import { withCtrl } from '../../../../lib/ctrl'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
@@ -18,7 +17,6 @@ export type SmallProfileCardProps = {
   organizationName: string
   profileHref: Href
   isOwner?: boolean
-  isVerified?: boolean
   isFollowing?: boolean
   isAuthenticated: boolean
   overallCardProps: OverallCardProps
@@ -30,7 +28,7 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
     avatarUrl,
     backgroundUrl,
     displayName,
-    organizationName,
+    // organizationName,
     profileHref,
     isOwner,
     isFollowing,
@@ -54,11 +52,10 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
               <abbr className="title" title={displayName}>
                 {displayName}
               </abbr>
-              <ApprovedIcon />
             </div>
-            <abbr className="subtitle" title={organizationName}>
+            {/* <abbr className="subtitle" title={organizationName}>
               {organizationName}
-            </abbr>
+            </abbr> */}
           </Link>
           <OverallCard noCard={true} showIcons={true} {...overallCardProps} />
           {!isOwner && (

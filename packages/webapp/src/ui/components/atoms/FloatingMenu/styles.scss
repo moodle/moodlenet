@@ -1,10 +1,13 @@
 .floating-menu {
   position: relative;
 
-  > :first-child {
+  > .hover-element {
     cursor: pointer;
     position: relative;
     float: right;
+    > * {
+      display: flex;
+    }
   }
 
   > .menu {
@@ -20,38 +23,35 @@
 
     > .content {
       background-color: white;
-      //border: 1px solid #b6b6b6;
       border-radius: 9px;
       padding: 8px 0;
 
-      > div {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      > div > * {
+        padding: 7px 15px;
+        cursor: pointer;
+        text-decoration: inherit;
+        color: inherit;
+        font-size: 14px;
+        font-family: inherit;
         display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
-        > * {
-          padding: 7px 15px;
-          cursor: pointer;
-          text-decoration: inherit;
-          color: inherit;
-          font-size: 14px;
-          font-family: inherit;
-          display: flex;
-          align-items: center;
-          color: #3c4043;
+        align-items: center;
+        color: #4d5156;
 
-          &:hover {
-            background-color: #f1f3f4;
-          }
+        &:hover {
+          background-color: #f1f3f4;
+        }
 
-          &:active {
-            background-color: #e6effc;
-          }
+        &:active {
+          background-color: #e6effc;
+        }
 
-          > svg {
-            margin-right: 14px;
-            color: #a7a7a7;
-            fill: #a7a7a7;
-          }
+        > svg {
+          margin-right: 14px;
+          color: #a7a7a7;
+          fill: #a7a7a7;
         }
       }
     }

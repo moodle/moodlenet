@@ -8,7 +8,8 @@ export const people: {
 }[] = [
   {
     displayName: 'Juanito Rodriguez',
-    avatarUrl: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
+    avatarUrl:
+      'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
     backgroundUrl:
       'https://upload.wikimedia.org/wikipedia/commons/3/37/Chualluma_La_Paz.jpg',
     organization: 'Universidad de la Paz',
@@ -18,7 +19,7 @@ export const people: {
   {
     displayName: 'Finaritra Randevoson',
     avatarUrl:
-      'https://images.pexels.com/photos/3746326/pexels-photo-3746326.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=200&w=200',
+      'https://images.unsplash.com/photo-1586351012965-861624544334?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
     backgroundUrl:
       'https://www.tropenbos.org/image.php/2229/project/AdobeStock_301188707.jpeg?format=lightwindow',
     organization: 'University of Toamasina',
@@ -27,7 +28,8 @@ export const people: {
   },
   {
     displayName: 'Alberto Curcella',
-    avatarUrl: 'https://randomuser.me/api/portraits/men/4.jpg',
+    avatarUrl:
+      'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
     backgroundUrl:
       'https://media.fisheries.noaa.gov/dam-migration/vaquita_barbtaylorartist.jpg',
     organization: 'Univercità di Bologna',
@@ -37,7 +39,7 @@ export const people: {
   {
     displayName: 'Katy Greentree',
     avatarUrl:
-      'https://images.pexels.com/photos/598745/pexels-photo-598745.jpeg?crop=faces&fit=crop&h=200&w=200&auto=compress&cs=tinysrgb',
+      'https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80',
     backgroundUrl:
       'https://www.visitcos.com/images/made/images/remote/https_files.idssasp.com/public/C88/6abc181e-9791-4408-8a25-1002189f31bd/aeddeec0-d577-4485-9470-7bdcf6a1b779_820_450_70auto_s_c1.jpg',
     organization: 'University of Colorado Boulder',

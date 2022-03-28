@@ -2,7 +2,7 @@ import { Maybe } from '@moodlenet/common/dist/utils/types'
 import { useFormik } from 'formik'
 import { useCallback, useMemo } from 'react'
 import { PageInfo } from '../graphql/pub.graphql.link'
-import { SimplifiedFormik } from '../ui/lib/formik'
+import { FormikHandle } from '../ui/lib/formik'
 
 interface Page<EdgeType> {
   edges: EdgeType[]
@@ -60,10 +60,7 @@ export type MngPage<EdgeType> =
   | MngPageUninitialized<EdgeType>
   | MngPageInitialized<EdgeType>
 
-export type FormikPaging = readonly [
-  SimplifiedFormik | null,
-  SimplifiedFormik | null
-]
+export type FormikPaging = readonly [FormikHandle | null, FormikHandle | null]
 export const useFormikPaging = <EdgeType>(
   page: MngPage<EdgeType>
 ): FormikPaging => {

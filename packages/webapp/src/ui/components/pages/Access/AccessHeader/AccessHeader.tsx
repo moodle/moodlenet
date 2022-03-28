@@ -41,7 +41,7 @@ export const AccessHeader = withCtrl<AccessHeaderProps>(
                 </Link>
               )}
               <a href="https://moodle.com/moodlenet/" target="__blank">
-                <PrimaryButton>
+                <PrimaryButton color="grey">
                   <Trans>Learn more</Trans>
                 </PrimaryButton>
               </a>

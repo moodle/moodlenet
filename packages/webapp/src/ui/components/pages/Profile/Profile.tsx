@@ -4,7 +4,8 @@ import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import { useState } from 'react'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
-import InputTextField from '../../atoms/InputTextField/InputTextField'
+import { FormikHandle } from '../../../lib/formik'
+import { InputTextField } from '../../atoms/InputTextField/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import Snackbar from '../../atoms/Snackbar/Snackbar'
@@ -30,13 +31,18 @@ import {
   HeaderPageTemplateProps,
 } from '../../templates/HeaderPageTemplate'
 import './styles.scss'
+import { ProfileFormValues } from './types'
 
 export type ProfileProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   overallCardProps: OverallCardProps
   profileCardProps: Omit<
     ProfileCardProps,
-    'isEditing' | 'toggleIsEditing' | 'openSendMessage'
+    | 'isEditing'
+    | 'toggleIsEditing'
+    | 'openSendMessage'
+    | 'editForm'
+    | 'setShowUserIdCopiedAlert'
   >
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
@@ -45,8 +51,8 @@ export type ProfileProps = {
   newResourceHref: Href
   showAccountCreationSuccessAlert?: boolean
   showAccountApprovedSuccessAlert?: boolean
-  sendEmail?: (text: string) => unknown
-  save: () => unknown
+  sendEmailForm?: FormikHandle<{ text: string }>
+  editForm: FormikHandle<ProfileFormValues>
 }
 
 export const Profile = withCtrl<ProfileProps>(
@@ -61,17 +67,17 @@ export const Profile = withCtrl<ProfileProps>(
     newResourceHref,
     showAccountCreationSuccessAlert,
     showAccountApprovedSuccessAlert,
-    sendEmail,
-    save,
+    sendEmailForm,
+    editForm,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
+    const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] =
+      useState<boolean>(false)
 
     const toggleIsEditing = () => {
+      isEditing && editForm.dirty && editForm.submitForm()
       setIsEditing(!isEditing)
-      if (isEditing) {
-        save()
-      }
     }
 
     const collectionList = (
@@ -82,21 +88,38 @@ export const Profile = withCtrl<ProfileProps>(
           <CollectionCard {...collectionCardProps} isEditing={isEditing} />
         ))}
         actions={
-          profileCardProps.isOwner && (
-            <Link href={newCollectionHref}>
-              <PrimaryButton className="action">
-                <LibraryAddIcon />
-                <Trans>New collection</Trans>
-              </PrimaryButton>
-            </Link>
-          )
+          profileCardProps.isOwner
+            ? {
+                element: (
+                  <Link href={newCollectionHref}>
+                    <PrimaryButton className="action">
+                      <LibraryAddIcon />
+                      <Trans>New collection</Trans>
+                    </PrimaryButton>
+                  </Link>
+                ),
+                position: 'end',
+              }
+            : undefined
         }
       ></ListCard>
     )
 
-    const [emailText, setEmailText] = useState('')
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        {showUserIdCopiedAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={10000000}
+            showCloseButton={false}
+          >
+            <Trans>
+              User ID copied to your clipboard, use it to connect with Moodle
+              LMS
+            </Trans>
+          </Snackbar>
+        )}
         {showAccountCreationSuccessAlert && (
           <Snackbar
             type="success"
@@ -118,23 +141,39 @@ export const Profile = withCtrl<ProfileProps>(
             <Trans>Congratulations! Your account has been approved</Trans>
           </Snackbar>
         )}
-        {isSendingMessage && sendEmail && (
+        {editForm.isSubmitting && (
+          <Snackbar
+            position="bottom"
+            type="info"
+            waitDuration={200}
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Content uploading, please don't close the tab</Trans>
+          </Snackbar>
+        )}
+        {isSendingMessage && sendEmailForm && (
           <Modal
             title={`${t`Send a message to`} ${displayName}`}
-            actions={[
+            actions={
               <PrimaryButton
                 onClick={() => {
-                  sendEmail(emailText)
+                  sendEmailForm.submitForm()
                   setIsSendingMessage(false)
                 }}
               >
                 <Trans>Send</Trans>
-              </PrimaryButton>,
-            ]}
+              </PrimaryButton>
+            }
             onClose={() => setIsSendingMessage(false)}
             style={{ maxWidth: '400px' }}
           >
-            <InputTextField textarea={true} getText={setEmailText} autoUpdate />
+            <InputTextField
+              textarea={true}
+              name="text"
+              edit
+              onChange={sendEmailForm.handleChange}
+            />
           </Modal>
         )}
         <div className="profile">
@@ -142,9 +181,11 @@ export const Profile = withCtrl<ProfileProps>(
             <div className="main-column">
               <ProfileCard
                 {...profileCardProps}
+                editForm={editForm}
                 isEditing={isEditing}
                 toggleIsEditing={toggleIsEditing}
-                openSendMessage={() => setIsSendingMessage(!!sendEmail && true)}
+                setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
+                openSendMessage={() => setIsSendingMessage(!!sendEmailForm)}
               />
               <ListCard
                 className="resources"
@@ -158,14 +199,19 @@ export const Profile = withCtrl<ProfileProps>(
                 })}
                 title={t`Latest resources`}
                 actions={
-                  profileCardProps.isOwner && (
-                    <Link href={newResourceHref}>
-                      <PrimaryButton className="action">
-                        <NoteAddIcon />
-                        <Trans>New resource</Trans>
-                      </PrimaryButton>
-                    </Link>
-                  )
+                  profileCardProps.isOwner
+                    ? {
+                        element: (
+                          <Link href={newResourceHref}>
+                            <PrimaryButton className="action">
+                              <NoteAddIcon />
+                              <Trans>New resource</Trans>
+                            </PrimaryButton>
+                          </Link>
+                        ),
+                        position: 'end',
+                      }
+                    : undefined
                 }
               ></ListCard>
               {collectionList}

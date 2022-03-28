@@ -13,7 +13,9 @@ import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplate
 import { useSearchUrlQuery } from '../../Search/Ctrl/useSearchUrlQuery'
 import { LandingProps } from '../Landing'
 import { useLandingPageListsQuery } from './LandingCtrl.gen'
-const signUpHref = href(mainPath.signUp)
+// const signUpHref = href(mainPath.signUp)
+const newCollectionHref = href(mainPath.createNewCollection)
+const newResourceHref = href(mainPath.createNewResource)
 
 export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
   const { isAuthenticated } = useSession()
@@ -75,14 +77,15 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       ),
       organization: {
         name: localOrg.name,
-        description: localOrg.description,
-        subtitle: localOrg.subtitle,
+        title: localOrg.subtitle,
+        subtitle: localOrg.description,
       },
       trendCardProps: { tags: tags || [] },
       setSearchText,
       collectionCardPropsList: collectionCardPropsList || [],
       resourceCardPropsList: resourceCardPropsList || [],
-      signUpHref,
+      newCollectionHref,
+      newResourceHref,
     }),
     [
       isAuthenticated,

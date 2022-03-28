@@ -1,18 +1,10 @@
 import { isEdgeNodeOfType } from '@moodlenet/common/dist/graphql/helpers'
 import { Maybe } from '@moodlenet/common/dist/utils/types'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { useGlobalSearchQuery } from '../context/Global/GlobalSearch/globalSearch.gen'
-import { DropdownOptionsType } from '../ui/components/atoms/Dropdown/Dropdown'
 import {
-  CategoriesDropdown,
-  LanguagesDropdown,
-  LevelDropdown,
-  LicenseDropdown,
-  licenseIconMap,
-  LicenseTypes,
-  MonthDropdown,
-  TypeDropdown,
-  YearsDropdown,
+  LicenseNodeKey,
+  LicenseNodes,
 } from '../ui/components/pages/NewResource/FieldsData'
 
 export const useLanguages = () => {
@@ -21,35 +13,16 @@ export const useLanguages = () => {
       text: '',
       nodeTypes: ['Language'],
       page: { first: 200 },
+      publishedOnly: true,
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
   return useMemo(
-    () => (langs || []).filter(isEdgeNodeOfType(['Language'])),
-    [langs]
-  )
-}
-export const useLangOptions = () => {
-  const langs = useLanguages()
-  return useMemo(
-    () => ({
-      langOptions: {
-        ...LanguagesDropdown,
-        options: langs
-          .slice()
-          .sort((a, b) => (a.node.name > b.node.name ? 1 : -1))
-          .map((lang) => lang.node.name),
-      },
-      getLang: (language: string) => {
-        const Lang = (langs || []).find((_) => _.node.name === language)?.node
-        if (!Lang) {
-          throw new Error(
-            `RESOURCE-RELATION-DATA-STATIC: should never happen: Lang not found: ${language}`
-          )
-        }
-        return Lang
-      },
-    }),
+    () =>
+      (langs || [])
+        .filter(isEdgeNodeOfType(['Language']))
+        .sort((a, b) => (a.node.name > b.node.name ? 1 : -1))
+        .map(({ node }) => node),
     [langs]
   )
 }
@@ -60,36 +33,17 @@ export const useIscedFields = () => {
       text: '',
       nodeTypes: ['IscedField'],
       page: { first: 200 },
+      publishedOnly: true,
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
   return useMemo(
-    () => (fields || []).filter(isEdgeNodeOfType(['IscedField'])),
+    () =>
+      (fields || [])
+        .filter(isEdgeNodeOfType(['IscedField']))
+        .sort((a, b) => (a.node.code > b.node.code ? 1 : -1))
+        .map(({ node }) => node),
     [fields]
-  )
-}
-export const useIscedFieldsOptions = () => {
-  const iscedFields = useIscedFields()
-  return useMemo(
-    () => ({
-      iscedFieldsOptions: {
-        ...CategoriesDropdown,
-        options: iscedFields
-          .slice()
-          .sort((a, b) => (a.node.code > b.node.code ? 1 : -1))
-          .map((cat) => cat.node.name),
-      },
-      getIscedF: (category: string) => {
-        const IscedF = iscedFields.find((_) => _.node.name === category)?.node
-        if (!IscedF) {
-          throw new Error(
-            `RESOURCE-RELATION-DATA-STATIC: should never happen: IscedF not found: ${category}`
-          )
-        }
-        return IscedF
-      },
-    }),
-    [iscedFields]
   )
 }
 
@@ -99,37 +53,17 @@ export const useResourceTypes = () => {
       text: '',
       nodeTypes: ['ResourceType'],
       page: { first: 200 },
+      publishedOnly: true,
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
   return useMemo(
-    () => (types || []).filter(isEdgeNodeOfType(['ResourceType'])),
+    () =>
+      (types || [])
+        .filter(isEdgeNodeOfType(['ResourceType']))
+        .sort((a, b) => (a.node.name > b.node.name ? 1 : -1))
+        .map(({ node }) => node),
     [types]
-  )
-}
-
-export const useResourceTypeOptions = () => {
-  const resourceTypes = useResourceTypes()
-  return useMemo(
-    () => ({
-      getResourceType: (type: string) => {
-        const Type = resourceTypes.find((_) => _.node.name === type)?.node
-        if (!Type) {
-          throw new Error(
-            `RESOURCE-RELATION-DATA-STATIC: should never happen: Type not found: ${type}`
-          )
-        }
-        return Type
-      },
-      resourceTypeOptions: {
-        ...TypeDropdown,
-        options: resourceTypes
-          .slice()
-          .sort((a, b) => (a.node.name > b.node.name ? 1 : -1))
-          .map((restype) => restype.node.name),
-      },
-    }),
-    [resourceTypes]
   )
 }
 
@@ -139,45 +73,25 @@ export const useIscedGrades = () => {
       text: '',
       nodeTypes: ['IscedGrade'],
       page: { first: 200 },
+      publishedOnly: true,
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
   return useMemo(
-    () => (grades || []).filter(isEdgeNodeOfType(['IscedGrade'])),
+    () =>
+      (grades || [])
+        .filter(isEdgeNodeOfType(['IscedGrade']))
+        .sort((a, b) =>
+          a.node.code === 'ADT'
+            ? +2
+            : b.node.code === 'ADT'
+            ? -2
+            : a.node.code > b.node.code
+            ? 1
+            : -1
+        )
+        .map(({ node }) => node),
     [grades]
-  )
-}
-export const useResourceGradeOptions = () => {
-  const iscedGrades = useIscedGrades()
-  return useMemo(
-    () => ({
-      resourceGradeOptions: {
-        ...LevelDropdown,
-        options: iscedGrades
-          .slice()
-          .sort((a, b) =>
-            a.node.code === 'ADT'
-              ? +2
-              : b.node.code === 'ADT'
-              ? -2
-              : a.node.code > b.node.code
-              ? 1
-              : -1
-          )
-          .map((grade) => grade.node.name),
-      },
-      getGrade: (level: string) => {
-        const Grade = iscedGrades.find((_) => _.node.name === level)?.node
-        if (!Grade) {
-          throw new Error(
-            `RESOURCE-RELATION-DATA-STATIC: should never happen: Grade not found: ${level}`
-          )
-        }
-
-        return Grade
-      },
-    }),
-    [iscedGrades]
   )
 }
 
@@ -187,105 +101,57 @@ export const useLicenses = () => {
       text: '',
       nodeTypes: ['License'],
       page: { first: 200 },
+      publishedOnly: true,
     },
     fetchPolicy: 'cache-first',
   }).data?.globalSearch.edges
   return useMemo(
-    () => (licenses || []).filter(isEdgeNodeOfType(['License'])),
+    () =>
+      (licenses || [])
+        .filter(isEdgeNodeOfType(['License']))
+        .sort((a, b) => (a.node.code.length > b.node.code.length ? 1 : -1))
+        .map(({ node }) => {
+          const maybeCCType = node.code.split('-').slice(1).join('-')
+          const icon = LicenseNodes[maybeCCType as LicenseNodeKey] ?? null
+          return [node, icon] as const
+        }),
     [licenses]
   )
 }
-export const useLicensesOptions = () => {
-  const licenses = useLicenses()
-
-  return useMemo(() => {
-    return {
-      licensesOptions: {
-        ...LicenseDropdown,
-        options: licenses
-          .slice()
-          .sort((a, b) => (a.node.code.length > b.node.code.length ? 1 : -1))
-          .map((license) => {
-            const codeSplit = license.node.code.split('-')
-            const firstToken = codeSplit.shift()
-            const icons =
-              firstToken === 'cc'
-                ? codeSplit
-                    .map((cctype) => licenseIconMap[cctype as LicenseTypes])
-                    .filter(Boolean)
-                : []
-
-            const ddField: DropdownOptionsType = [
-              [license.node.name, React.createElement('div', {}, ...icons)],
-            ]
-            return ddField[0]!
-          }),
-      },
-      getLicense: (license: string) => {
-        const License = licenses.find((_) => _.node.name === license)?.node
-        if (!License) {
-          throw new Error(
-            `RESOURCE-RELATION-DATA-STATIC: should never happen: License not found: ${license}`
-          )
-        }
-        return License
-      },
-    }
-  }, [licenses])
-}
-export const monthOptions = {
-  ...MonthDropdown,
-}
-
-export const yearsOptions = {
-  ...YearsDropdown,
-}
-
-// export const getLicenseOptField = (licenseCode: string) => {
-//   if (!licenseCode) {
-//     return ''
-//   }
-//   const license = LicenseDropdown.options.find(
-//     _ => !!(licenseCode && _[0]!.toLowerCase().startsWith(licenseCode.toLowerCase())),
-//   )
-//   if (!license) {
-//     throw new Error(`RESOURCE-RELATION-DATA-STATIC: should never happen: LicenseCode not found: ${licenseCode}`)
-//   }
-//   return license[0]!
-// }
 
 export const getOriginalCreationTimestampByStrings = ({
-  originalDateMonth,
-  originalDateYear,
+  month,
+  year,
 }: {
-  originalDateMonth: string | null
-  originalDateYear: string | null
+  month: string | null | undefined
+  year: string | null | undefined
 }) => {
-  if (!(originalDateMonth && originalDateYear)) {
+  if (!year) {
     return null
   }
-  const ts = new Date(
-    `${originalDateMonth} 1 ${originalDateYear} GMT`
-  ).valueOf()
+  const ts = Date.UTC(Number(year), Number(month ?? 0))
   if (isNaN(ts)) {
     return null
   }
   return ts
 }
 
-export const getOriginalCreationStringsByTimestamp = (ts: Maybe<number>) => {
+export const getOriginalCreationLocaleStringsByTimestamp = (
+  ts: Maybe<number>
+) => {
   const date = new Date(ts ?? 'no date')
   if (isNaN(date.valueOf())) {
     return {
-      originalDateMonth: '',
-      originalDateYear: '',
+      month: '',
+      year: '',
     }
   }
-  const originalDateMonth = (monthOptions.options as string[])[date.getMonth()]!
-  const originalDateYear = `${date.getFullYear()}`
+  const _locale = navigator?.language ?? 'en-GB'
+  const month = date.toLocaleString(_locale, { month: 'long' })
+  const year = date.toLocaleString(_locale, { year: 'numeric' })
 
   return {
-    originalDateMonth,
-    originalDateYear,
+    month,
+    year,
   }
 }

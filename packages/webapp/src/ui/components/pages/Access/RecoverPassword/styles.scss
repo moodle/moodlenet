@@ -89,51 +89,57 @@
           border-color: transparent;
           gap: 15px;
 
-          > input {
-            height: 46px;
-            border-style: solid;
-            border-width: 0.5px;
-            border-radius: 45px;
+          > .input-text-field {
             max-width: 300px;
-            border: none;
-
-            &.highlight {
-              box-shadow: 0 0 0 2px $error-color;
-            }
-
-            &:focus,
-            &:not(:focus) {
-              outline: none;
+            > .input-container {
+              background: none;
+              box-shadow: none;
+              border-style: solid;
+              border-width: 0.5px;
+              border-radius: 45px;
               padding: 0 25px;
-              font-weight: 500;
-              font-size: 17px;
+              height: 46px;
+              background-color: white;
+              border: none;
+              > input {
+                padding: 0;
+
+                &::placeholder {
+                  font-weight: 500;
+                  font-size: 17px;
+                  color: #b6bacb;
+                  opacity: 1;
+                }
+                &::-ms-input-placeholder {
+                  font-weight: 500;
+                  font-size: 17px;
+                  color: #b6bacb;
+                }
+                &:-ms-input-placeholder {
+                  font-weight: 500;
+                  font-size: 17px;
+                  color: #b6bacb;
+                }
+              }
             }
 
-            &:focus {
-              box-shadow: 0 0 5px white;
+            &.focused > .input-container {
+              box-shadow: 0 0 5px #fff;
               border: 0.5px solid #b6bacb;
               color: #9598a7;
             }
 
-            &:not(:focus) {
+            &:not(.focused) > .input-container {
               color: #b6bacb;
             }
 
-            &::placeholder {
-              font-weight: 500;
-              font-size: 17px;
-              color: #b6bacb;
-              opacity: 1;
+            > .error-msg {
+              color: red;
             }
-            &::-ms-input-placeholder {
-              font-weight: 500;
-              font-size: 17px;
-              color: #b6bacb;
-            }
-            &:-ms-input-placeholder {
-              font-weight: 500;
-              font-size: 17px;
-              color: #b6bacb;
+
+            &.highlight > .input-container {
+              box-shadow: 0 0 0 2px red;
+              border: none;
             }
           }
 

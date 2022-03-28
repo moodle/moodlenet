@@ -42,7 +42,8 @@ export type BrowserProps = {
   resourceCardPropsList: CP<ResourceCardProps>[] | null
   smallProfileCardPropsList: CP<SmallProfileCardProps>[] | null
   hideSortAndFilter?: boolean
-  peopleTitle?: string
+  peopleTitle?: string | null
+  title?: string
   setSortBy: ((sortType: SortType, dir: SortState) => unknown) | null
   loadMoreSubjects?: (() => unknown) | null
   loadMoreCollections?: (() => unknown) | null
@@ -57,6 +58,7 @@ export const Browser = withCtrl<BrowserProps>(
     smallProfileCardPropsList,
     hideSortAndFilter,
     peopleTitle,
+    title,
     setSortBy,
     loadMoreSubjects,
     loadMoreCollections,
@@ -208,6 +210,7 @@ export const Browser = withCtrl<BrowserProps>(
 
     return (
       <div className="browser">
+        {title && <div className="title">{title}</div>}
         <div className="content">
           {!hideSortAndFilter && (
             <div className="side-column">
@@ -314,16 +317,22 @@ export const Browser = withCtrl<BrowserProps>(
                   <SmallProfileCard {...smallProfileCardProps} />
                 ))}
                 title={
-                  <div className="card-header">
-                    <div className="title">
-                      {peopleTitle ? t`${peopleTitle}` : <Trans>People</Trans>}
+                  peopleTitle !== null && (
+                    <div className="card-header">
+                      <div className="title">
+                        {peopleTitle ? (
+                          t`${peopleTitle}`
+                        ) : (
+                          <Trans>People</Trans>
+                        )}
+                      </div>
+                      {shouldShowSeeAll('People') && (
+                        <SecondaryButton onClick={() => seeAll('People')}>
+                          <Trans>See all</Trans>
+                        </SecondaryButton>
+                      )}
                     </div>
-                    {shouldShowSeeAll('People') && (
-                      <SecondaryButton onClick={() => seeAll('People')}>
-                        <Trans>See all</Trans>
-                      </SecondaryButton>
-                    )}
-                  </div>
+                  )
                 }
                 className={`people ${
                   !shouldShowSeeAll('People') ? 'see-all' : ''

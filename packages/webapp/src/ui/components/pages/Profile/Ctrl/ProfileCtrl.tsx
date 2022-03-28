@@ -1,11 +1,18 @@
+import { t } from '@lingui/macro'
 import {
   isEdgeNodeOfType,
   narrowNodeType,
 } from '@moodlenet/common/dist/graphql/helpers'
 import { ID } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
-import { createElement, useCallback, useEffect, useMemo, useState } from 'react'
-import { MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS } from '../../../../../constants'
+import { fileExceedsMaxUploadSize } from '@moodlenet/common/dist/staticAsset/lib'
+import { useFormik } from 'formik'
+import { createElement, useCallback, useEffect, useMemo } from 'react'
+import { mixed, object, SchemaOf, string } from 'yup'
+import {
+  MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS,
+  MNEnv,
+} from '../../../../../constants'
 import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
@@ -16,7 +23,6 @@ import {
 import { mainPath } from '../../../../../hooks/glob/nav'
 import { href } from '../../../../elements/link'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
-import { useFormikBag } from '../../../../lib/formik'
 import { useCollectionCardCtrl } from '../../../molecules/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
@@ -31,6 +37,39 @@ import {
   useProfilePageUserDataQuery,
   useSendEmailToProfileMutation,
 } from './ProfileCtrl.gen'
+const followersHref = href(mainPath.followers)
+
+const validationSchema: SchemaOf<ProfileFormValues> = object({
+  avatarImage: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && fileExceedsMaxUploadSize(v.size, MNEnv.maxUploadSize)
+        ? createError({
+            message: t`The image is too big, reduce the size or use another image`,
+          })
+        : true
+    )
+    .optional(),
+  backgroundImage: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && fileExceedsMaxUploadSize(v.size, MNEnv.maxUploadSize)
+        ? createError({
+            message: t`The image is too big, reduce the size or use another image`,
+          })
+        : true
+    )
+    .optional(),
+  displayName: string()
+    .required(t`Please provide a display name`)
+    .min(3)
+    .max(30),
+  location: string().optional(),
+  organizationName: string().min(3).max(160).optional(),
+  siteUrl: string().url().optional(),
+  description: string()
+    .required(t`Please provide a description`)
+    .min(3)
+    .max(4096),
+})
 const newCollectionHref = href(mainPath.createNewCollection)
 const newResourceHref = href(mainPath.createNewResource)
 
@@ -101,39 +140,33 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     [collections, resources]
   )
   const myFollowEdgeId = profile?.myFollow.edges[0]?.edge.id
-  const toggleFollow = useCallback(() => {
-    if (!session || addRelationRes.loading || delRelationRes.loading) {
-      return
-    }
-    if (myFollowEdgeId) {
-      return delRelation({
-        variables: { edge: { id: myFollowEdgeId } },
-      }).then(() => refetch())
-    } else {
-      return addRelation({
-        variables: {
-          edge: {
-            edgeType: 'Follows',
-            from: session.profile.id,
-            to: id,
-            Follows: {},
+  const toggleFollowForm = useFormik({
+    initialValues: {},
+    onSubmit: () => {
+      if (!session || addRelationRes.loading || delRelationRes.loading) {
+        return
+      }
+      if (myFollowEdgeId) {
+        return delRelation({
+          variables: { edge: { id: myFollowEdgeId } },
+        }).then(() => refetch())
+      } else {
+        return addRelation({
+          variables: {
+            edge: {
+              edgeType: 'Follows',
+              from: session.profile.id,
+              to: id,
+              Follows: {},
+            },
           },
-        },
-      }).then(() => refetch())
-    }
-  }, [
-    addRelation,
-    addRelationRes.loading,
-    delRelation,
-    delRelationRes.loading,
-    id,
-    myFollowEdgeId,
-    refetch,
-    session,
-  ])
+        }).then(() => refetch())
+      }
+    },
+  })
 
   // TODO: move this service to SessionCtx
-  const [, requestApprovalFormBag] = useFormikBag<{}>({
+  const requestApprovalForm = useFormik({
     initialValues: {},
     onSubmit: async () => {
       const { data } = await sendEmailMut({
@@ -149,16 +182,17 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     },
   })
 
-  const [formik, formBag] = useFormikBag<ProfileFormValues>({
-    initialValues: {} as any,
+  const form = useFormik<ProfileFormValues>({
+    validationSchema,
+    initialValues: { description: '', displayName: '' },
     onSubmit: async (vals) => {
-      if (!formik.dirty || !vals.username || editProfile.loading) {
+      if (!form.dirty || editProfile.loading) {
         return
       }
 
       const imageAssetRef: AssetRefInput =
         !vals.backgroundImage ||
-        vals.backgroundImage === formik.initialValues.backgroundImage
+        vals.backgroundImage === form.initialValues.backgroundImage
           ? { location: '', type: 'NoChange' }
           : typeof vals.backgroundImage === 'string'
           ? {
@@ -171,8 +205,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
             }
 
       const avatarAssetRef: AssetRefInput =
-        !vals.avatarImage ||
-        vals.avatarImage === formik.initialValues.avatarImage
+        !vals.avatarImage || vals.avatarImage === form.initialValues.avatarImage
           ? { location: '', type: 'NoChange' }
           : typeof vals.avatarImage === 'string'
           ? {
@@ -200,68 +233,31 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
       // refetch()
     },
   })
-  const { resetForm: fresetForm } = formik
 
-  const [backgroundUrl, setBackgroundUrl] = useState('')
-  useEffect(() => {
-    if (!(formik.values.backgroundImage instanceof File)) {
-      return
-    }
-    const backgroundObjectUrl = URL.createObjectURL(
-      formik.values.backgroundImage
-    )
-    setBackgroundUrl(backgroundObjectUrl)
-    return () => {
-      // console.log(`revoking   ${backgroundObjectUrl}`)
-      URL.revokeObjectURL(backgroundObjectUrl)
-    }
-  }, [formik.values.backgroundImage])
-
-  const [avatarUrl, setAvatarUrl] = useState('')
-  useEffect(() => {
-    if (!(formik.values.avatarImage instanceof File)) {
-      return
-    }
-    const avatarObjectUrl = URL.createObjectURL(formik.values.avatarImage)
-    setAvatarUrl(avatarObjectUrl)
-    return () => {
-      // console.log(`revoking   ${avatarObjectUrl}`)
-      URL.revokeObjectURL(avatarObjectUrl)
-    }
-  }, [formik.values.avatarImage])
-
-  const { image, avatar } = profile || {}
-  useEffect(() => {
-    setAvatarUrl(getMaybeAssetRefUrl(avatar) ?? '')
-  }, [id, avatar])
-  useEffect(() => {
-    setBackgroundUrl(getMaybeAssetRefUrl(image) ?? '')
-  }, [id, image])
-
+  const _resetform = form.resetForm
   useEffect(() => {
     if (profile) {
-      const { name, description, location, siteUrl } = profile
-      fresetForm({
+      const { name, description, location, siteUrl, avatar, image } = profile
+      _resetform({
         touched: {},
         values: {
           displayName: name,
           organizationName: localOrg.name,
-          location: location ?? '',
-          siteUrl: siteUrl ?? '',
-          username: name,
+          location: location ?? undefined,
+          siteUrl: siteUrl ?? undefined,
           description,
-          avatarImage: '',
-          backgroundImage: '',
+          avatarImage: getMaybeAssetRefUrl(avatar),
+          backgroundImage: getMaybeAssetRefUrl(image),
         },
       })
     }
-  }, [fresetForm, id, profile, localOrg.name /* avatarUrl, backgroundUrl */])
-  const approveUserFormBag = useFormikBag<{}>({
+  }, [_resetform, id, profile, localOrg.name /* avatarUrl, backgroundUrl */])
+  const approveUserForm = useFormik({
     initialValues: {},
     onSubmit: () => editPublished(true),
   })
 
-  const unapproveUserForm = useFormikBag<{}>({
+  const unapproveUserForm = useFormik({
     initialValues: {},
     onSubmit: () => editPublished(false),
   })
@@ -294,11 +290,26 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     },
     [edit, isAdmin, profile, sendEmailMut]
   )
-
+  const sendEmailForm = useFormik<{ text: string }>({
+    initialValues: { text: '' },
+    validationSchema: object({
+      text: string()
+        .required(t`Please provide a text to send`)
+        .min(3)
+        .max(4096),
+    }),
+    onSubmit: ({ text }) => {
+      if (sendEmailMutRes.loading) {
+        return
+      }
+      return sendEmailMut({ variables: { text, toProfileId: id } })
+    },
+  })
   const profileProps = useMemo<ProfileProps | null>(() => {
     if (!profile) {
       return null
     }
+    const userId = `${profile.id.split('/')![1]}@${localOrg.domain}`
 
     const props: ProfileProps = {
       headerPageTemplateProps: ctrlHook(
@@ -317,63 +328,53 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
         resources: profile.resourcesCount,
         years: 1,
         kudos,
+        followersHref,
       },
       newCollectionHref,
       newResourceHref,
       showAccountCreationSuccessAlert: firstLogin,
       profileCardProps: {
-        approveUserFormBag,
-        formBag,
+        userId,
+        approveUserForm,
         isAuthenticated,
-        toggleFollow,
-        avatarUrl,
-        backgroundUrl,
+        toggleFollowForm,
         isFollowing: !!myFollowEdgeId,
         isOwner: isMe,
         isAdmin,
         isApproved: profile._published,
-        requestApprovalFormBag,
+        requestApprovalForm,
         isElegibleForApproval:
-          profile.resourcesCount >= MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS,
+          profile.resourcesCount >=
+          (MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS ?? 0),
         isWaitingApproval,
         showAccountApprovedSuccessAlert: hasJustBeenApproved,
         unapproveUserForm,
       },
       showAccountApprovedSuccessAlert: hasJustBeenApproved,
-      sendEmail: (text) => {
-        if (sendEmailMutRes.loading) {
-          return
-        }
-        sendEmailMut({ variables: { text, toProfileId: id } })
-      },
+      sendEmailForm,
+      editForm: form,
       displayName: profile.name,
-      save: () => formik.submitForm(),
     }
-    console.log(props)
     return props
   }, [
     profile,
+    localOrg.domain,
     resources,
     collections,
     kudos,
     firstLogin,
-    approveUserFormBag,
-    formBag,
+    approveUserForm,
     isAuthenticated,
-    toggleFollow,
-    avatarUrl,
-    backgroundUrl,
+    toggleFollowForm,
     myFollowEdgeId,
     isMe,
     isAdmin,
-    requestApprovalFormBag,
+    requestApprovalForm,
     isWaitingApproval,
     hasJustBeenApproved,
     unapproveUserForm,
-    sendEmailMutRes.loading,
-    sendEmailMut,
-    id,
-    formik,
+    sendEmailForm,
+    form,
   ])
   if (!loading && !data?.node) {
     return createElement(Fallback, fallbackProps({ key: 'profile-not-found' }))

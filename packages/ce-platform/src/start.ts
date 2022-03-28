@@ -130,7 +130,10 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, crypto, 
   })
   const assetsApp = createStaticAssetsApp(assetUploaderEnv)
   const webfingerApp = await createWebfingerApp()
-  const webappConfig = webappConfigure({ customHead: mnStatic.customHead })
+  const webappConfig = webappConfigure({
+    customHead: mnStatic.customHead,
+    mnEnv: mnStatic.webappEnv,
+  })
   await startMNHttpServer({
     httpPort: http.port,
     startServices: {

@@ -9,20 +9,22 @@ import { withCtrl } from '../../../../lib/ctrl'
 import defaultBackgroud from '../../../../static/img/default-background.svg'
 import '../../../../styles/tags.css'
 import Card from '../../../atoms/Card/Card'
-import { Visibility } from '../../../pages/NewResource/FieldsData'
+import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import './styles.scss'
 
 export type CollectionCardProps = {
+  toggleVisible?(): unknown
   imageUrl: string | null
   title: string
   visibility: Visibility
   collectionHref: Href
   isAuthenticated: boolean
   isOwner: boolean
-  isEditing?: boolean
   bookmarked: boolean
   following: boolean
   numFollowers: number
+  isEditing?: boolean
+  width?: number
   toggleFollow?: () => unknown
   toggleBookmark?: () => unknown
 }
@@ -31,10 +33,12 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
   ({
     imageUrl,
     title,
+    toggleVisible,
     visibility,
     isAuthenticated,
     isOwner,
     bookmarked,
+    width,
     following,
     numFollowers,
     toggleBookmark,
@@ -51,7 +55,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
         className={`collection-card ${
           isOwner && visibility === 'Private' ? 'is-private' : ''
         }`}
-        style={background}
+        style={{ ...background, minWidth: `${width}px` }}
         hover={true}
       >
         <div className={`actions`}>
@@ -67,6 +71,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
           <div className="right">
             {isOwner && (
               <abbr
+                onClick={toggleVisible}
                 className={`visibility ${
                   visibility === 'Public' ? 'public' : 'private'
                 }`}

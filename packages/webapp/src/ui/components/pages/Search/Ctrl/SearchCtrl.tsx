@@ -30,6 +30,7 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
       text,
       page: { first: 20 },
     },
+    fetchPolicy: 'cache-and-network',
   })
   const collections = useMemo(
     () =>
@@ -49,6 +50,7 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
       text,
       page: { first: 20 },
     },
+    fetchPolicy: 'cache-and-network',
   })
   const profiles = useMemo(
     () =>
@@ -68,6 +70,7 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
       text,
       page: { first: 20 },
     },
+    fetchPolicy: 'cache-and-network',
   })
   const {
     formiks: [loadMoreResources],
@@ -87,6 +90,7 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
       text,
       page: { first: 20 },
     },
+    fetchPolicy: 'cache-and-network',
   })
   const {
     formiks: [loadMoreSubjects],

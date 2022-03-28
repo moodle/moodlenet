@@ -1,25 +1,25 @@
+import { t } from '@lingui/macro'
+import { fileExceedsMaxUploadSize } from '@moodlenet/common/dist/staticAsset/lib'
 import { action } from '@storybook/addon-actions'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { ComponentMeta } from '@storybook/react'
+import { useFormik } from 'formik'
+import { array, mixed, object, SchemaOf, string } from 'yup'
 import { href } from '../../../elements/link'
-import { SBFormikBag } from '../../../lib/storybook/SBFormikBag'
 import { HeaderPageLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
+import { CollectionTextOptionProps } from './AddToCollections/storiesData'
 import {
-  CategoriesDropdown,
-  LanguagesDropdown,
-  LevelDropdown,
-  LicenseDropdown,
-  MonthDropdown,
-  TypeDropdown,
-  VisibilityDropdown,
-  YearsDropdown,
-} from './FieldsData'
-import {
-  NewResource,
-  NewResourceProgressState,
-  NewResourceProps,
-} from './NewResource'
+  LanguagesTextOptionProps,
+  LevelTextOptionProps,
+  TypeTextOptionProps,
+} from './ExtraDetails/storiesData'
+import { NewResource } from './NewResource'
 import { NewResourceFormValues } from './types'
-import { UploadResourceProps } from './UploadResource/UploadResource'
+import {
+  CategoriesTextOptionProps,
+  LicenseIconTextOptionProps,
+} from './UploadResource/storiesData'
+
+const maxUploadSize = 1024 * 1024 * 100
 
 const meta: ComponentMeta<typeof NewResource> = {
   title: 'Pages/New Resource',
@@ -29,7 +29,6 @@ const meta: ComponentMeta<typeof NewResource> = {
   },
   parameters: { layout: 'fullscreen' },
   excludeStories: [
-    'NewResourceProgressStateStory',
     'NewResourceStoryProps',
     'NewResourceContentUploadedStoryProps',
     'NewResourceImageUploadedStoryProps',
@@ -38,187 +37,134 @@ const meta: ComponentMeta<typeof NewResource> = {
     'NewResourceAddToCollectionsStoryProps',
     'NewResourceExtraDetailsStoryProps',
     'NewResourceLinkUploadedStoryProps',
+    'validationSchema',
   ],
 }
 
-const NewResourceStory: ComponentStory<typeof NewResource> = (args) => (
-  <NewResource {...args} />
-)
+export const validationSchema: SchemaOf<NewResourceFormValues> = object({
+  category: string().required(t`Please select a subject`),
+  license: string().when('content', (content, schema) => {
+    return content instanceof Blob
+      ? schema.required(t`Select a license`)
+      : schema.optional()
+  }),
+  content: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
+        ? createError({
+            message: t`The image is too big, reduce the size or use another image`,
+          })
+        : true
+    )
+    .required(t`Please provide a content`),
+  description: string()
+    .max(4096)
+    .min(3)
+    .required(t`Please provide a description`),
+  name: string()
+    .max(160)
+    .min(3)
+    .required(t`Please provide a title`),
+  addToCollections: array().of(string()).optional(),
+  image: mixed()
+    .test((v, { createError }) =>
+      v instanceof Blob && fileExceedsMaxUploadSize(v.size, maxUploadSize)
+        ? createError({
+            message: t`The image is too big, reduce the size or use another image`,
+          })
+        : true
+    )
+    .optional(),
+  language: string().optional(),
+  level: string().optional(),
+  month: string().optional(),
+  type: string().optional(),
+  visibility: mixed().required(t`Visibility is required`),
+  year: string().when('month', (month, schema) => {
+    return month ? schema.required(t`Please select a year`) : schema.optional()
+  }),
+})
 
-export const NewResourceProgressStateStory: NewResourceProgressState = [
-  ['UploadResource', `Upload resource`],
-  ['AddToCollections', `Add to collections`],
-  ['ExtraDetails', `Add details`],
-]
-
-const initialFormValues: NewResourceFormValues = {
-  collections: [],
-  category: '',
-  content: 'content',
-  contentType: 'File',
-  description: '',
-  format: '',
-  image: 'image',
-  imageUrl: 'image',
-  language: '',
-  level: '',
-  license: '',
-  name: 'https://moodle.com/awesome-content',
-  originalDateMonth: '',
-  originalDateYear: '',
-  title: '',
-  type: '',
-  visibility: '',
-}
-
-const basicDataFormValue: NewResourceFormValues = {
-  ...initialFormValues,
-  title: 'The Best Content Ever',
-  description:
-    'This is the description that tells you that this a not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-  category: 'Important Matters',
-  visibility: 'Public',
-}
-
-const basicLinkDataFormValue: NewResourceFormValues = {
-  ...initialFormValues,
-  content: 'https://moodle.com/awesome-content',
-  contentType: 'Link',
-}
-
-const advancedDataFormValue: NewResourceFormValues = {
-  ...initialFormValues,
-  license: 'CC-BY-NC (Attribution-NonCommercial)',
-  category: '0021 Literacy and numeracy',
-}
-
-const formBag = SBFormikBag<NewResourceFormValues>(initialFormValues)
-const formBagBasic = SBFormikBag<NewResourceFormValues>(basicDataFormValue)
-const formBagLinkBasic = SBFormikBag<NewResourceFormValues>(
-  basicLinkDataFormValue
-)
-const formBagAdvanced = SBFormikBag<NewResourceFormValues>(
-  advancedDataFormValue
-)
-
-const uploadResourceProps: UploadResourceProps = {
-  step: 'UploadResourceStep',
-  formBag,
-  state: 'ChooseResource',
-  imageUrl: '',
-  nextStep: undefined,
-  deleteContent: action('deleteContent'),
-  categories: CategoriesDropdown,
-  licenses: LicenseDropdown,
-  visibility: VisibilityDropdown,
-}
-export const NewResourceStoryProps: NewResourceProps = {
-  headerPageTemplateProps: {
-    headerPageProps: {
-      ...HeaderPageLoggedInStoryProps,
-      // showSubHeader: false,
+export const Default = () => {
+  const form = useFormik<NewResourceFormValues>({
+    onSubmit: action('submit'),
+    validationSchema,
+    initialValues: {
+      addToCollections: [],
+      category: '',
+      // content: new File([], ''),
+      content: '',
+      description: '',
+      name: '',
+      visibility: 'Private',
     },
-    isAuthenticated: true,
-    showSubHeader: false,
-    mainPageWrapperProps: {
-      userAcceptsPolicies: null,
-      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+    initialErrors: {
+      content: 'The file exceeds the max size',
     },
-  },
-  stepProps: uploadResourceProps,
+  })
+
+  return (
+    <NewResource
+      // _initialProgressIndex={2}
+      form={form}
+      headerPageTemplateProps={{
+        headerPageProps: HeaderPageLoggedInStoryProps,
+        isAuthenticated: true,
+        showSubHeader: false,
+        mainPageWrapperProps: {
+          userAcceptsPolicies: null,
+          cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+        },
+      }}
+      addToCollectionsProps={{
+        collections: {
+          opts: CollectionTextOptionProps,
+          selected: CollectionTextOptionProps.filter(
+            ({ value }) => !!form.values.addToCollections?.includes(value)
+          ),
+        },
+      }}
+      extraDetailsProps={{
+        types: {
+          opts: TypeTextOptionProps,
+          selected: TypeTextOptionProps.find(
+            ({ value }) => value === form.values.type
+          ),
+        },
+        levels: {
+          opts: LevelTextOptionProps,
+          selected: LevelTextOptionProps.find(
+            ({ value }) => value === form.values.level
+          ),
+        },
+        languages: {
+          opts: LanguagesTextOptionProps,
+          selected: LanguagesTextOptionProps.find(
+            ({ value }) => value === form.values.language
+          ),
+        },
+        setLanguageFilter: action('setLanguageFilter'),
+        setLevelFilter: action('setLevelFilter'),
+        setTypeFilter: action('setTypeFilter'),
+      }}
+      uploadResourceProps={{
+        setCategoryFilter: action('search Category'),
+        categories: {
+          opts: CategoriesTextOptionProps,
+          selected: CategoriesTextOptionProps.find(
+            ({ value }) => value === form.values.category
+          ),
+        },
+        licenses: {
+          opts: LicenseIconTextOptionProps,
+          selected: LicenseIconTextOptionProps.find(
+            ({ value }) => value === form.values.license
+          ),
+        },
+        fileMaxSize: maxUploadSize,
+      }}
+    />
+  )
 }
-
-export const NewResourceContentUploadedStoryProps: NewResourceProps = {
-  ...NewResourceStoryProps,
-  stepProps: {
-    ...uploadResourceProps,
-    state: 'EditData',
-    formBag: formBagBasic,
-  },
-}
-
-export const NewResourceLinkUploadedStoryProps: NewResourceProps = {
-  ...NewResourceStoryProps,
-  stepProps: {
-    ...uploadResourceProps,
-    state: 'EditData',
-    formBag: formBagLinkBasic,
-  },
-}
-
-export const NewResourceImageUploadedStoryProps: NewResourceProps = {
-  ...NewResourceContentUploadedStoryProps,
-  stepProps: {
-    ...uploadResourceProps,
-    state: 'EditData',
-    imageUrl: 'https://picsum.photos/200/100',
-    formBag: formBagAdvanced,
-  },
-}
-
-export const NewResourceAddToCollectionsStoryProps: NewResourceProps = {
-  ...NewResourceContentUploadedStoryProps,
-  stepProps: {
-    ...NewResourceContentUploadedStoryProps.stepProps,
-    step: 'AddToCollectionsStep',
-    collections: [
-      'Education',
-      'Biology',
-      'Algebra',
-      'Phycology',
-      'Phylosophy',
-      'Sociology',
-      'English Literature',
-      'Marketing',
-      'Physiotherapy',
-      'Agriculture',
-      'Taxonomy',
-      'Law',
-      'Interpretation',
-      'Molecular Biology',
-      'Nano Engineering',
-      'Macro Economy',
-      'Animal Rights',
-    ].map((label) => ({ label, id: label })),
-    setAddToCollections: action('setAddToCollections'),
-    previousStep: action('previousStep'),
-    setSearchText: action('setSearchText'),
-    selectedCollections: [],
-  },
-}
-
-export const NewResourceExtraDetailsStoryProps: NewResourceProps = {
-  ...NewResourceContentUploadedStoryProps,
-  stepProps: {
-    step: 'ExtraDetailsStep',
-    formBag,
-    nextStep: action('nextStep'),
-    previousStep: action('previousStep'),
-    types: TypeDropdown,
-    levels: LevelDropdown,
-    months: MonthDropdown,
-    years: YearsDropdown,
-    languages: LanguagesDropdown,
-    // formats: FormatDropdown,
-  },
-}
-
-export const Start = NewResourceStory.bind({})
-Start.args = NewResourceStoryProps
-
-export const FileUploaded = NewResourceStory.bind({})
-FileUploaded.args = NewResourceContentUploadedStoryProps
-
-export const LinkUploaded = NewResourceStory.bind({})
-LinkUploaded.args = NewResourceLinkUploadedStoryProps
-
-export const ImageUploaded = NewResourceStory.bind({})
-ImageUploaded.args = NewResourceImageUploadedStoryProps
-
-export const AddToCollections = NewResourceStory.bind({})
-AddToCollections.args = NewResourceAddToCollectionsStoryProps
-
-export const ExtraDetails = NewResourceStory.bind({})
-ExtraDetails.args = NewResourceExtraDetailsStoryProps
 
 export default meta

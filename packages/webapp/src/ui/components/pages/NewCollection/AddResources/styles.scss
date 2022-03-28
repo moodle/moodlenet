@@ -45,16 +45,16 @@
         }
 
         > :not(.selected):hover {
-          background-color: #00e096;
+          background-color: #00bd7e;
         }
 
         > .selected {
-          background-color: #337aff;
+          background-color: #1a6aff;
         }
 
         > .selected:hover {
           background-color: #f4f5f7;
-          color: #b6bacb;
+          color: #757575;
         }
       }
     }

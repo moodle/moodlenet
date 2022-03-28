@@ -1,4 +1,9 @@
-import { isUploadType, UploadMaxSizes, UploadType } from '@moodlenet/common/dist/staticAsset/lib'
+import {
+  fileExceedsMaxUploadSize,
+  isUploadType,
+  UploadMaxSizes,
+  UploadType,
+} from '@moodlenet/common/dist/staticAsset/lib'
 import { pick } from '@moodlenet/common/dist/utils/object'
 import { Request } from 'express'
 import { fromFile } from 'file-type'
@@ -6,9 +11,12 @@ import Formidable, { File } from 'formidable'
 import { readFile } from 'fs/promises'
 import { isText } from 'istextorbinary'
 
-export type RespError = [errCode: number, msg: any, _: typeof _RespError]
 const _RespError = Symbol('RespError')
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type RespError = [errCode: number, msg: any, _: typeof _RespError]
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const respError = (errCode: number, msg: any): RespError => [errCode, msg, _RespError]
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isRespError = (_: any): _ is RespError => Array.isArray(_) && _.length === 3 && _[2] === _RespError
 
 type FileD = Pick<File, 'hash' | 'lastModifiedDate' | 'name' | 'path' | 'size' | 'type'>
@@ -45,7 +53,7 @@ export const getUploadedFile = (req: Request, opts: Opts) =>
         return resolve(badReq(`post one file`))
       }
       const maxSize = opts.maxSizes[`${uploadType}MaxSize`]
-      if (_file.size > maxSize) {
+      if (fileExceedsMaxUploadSize(_file.size, maxSize)) {
         return resolve(badReq(`file too large ${_file.size}, max size for ${uploadType} is ${maxSize}`))
       }
       const file = pick(_file, ['hash', 'lastModifiedDate', 'name', 'path', 'size', 'type'])

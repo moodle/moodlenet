@@ -56,12 +56,12 @@ export const TrendCard = withCtrl<TrendCardProps>(({ tags, maxRows }) => {
   return (
     <div className={`trend-card max-rows-${numRows}`} ref={card}>
       <div className="title" ref={title}>
-        <Trans>Trending subjects and collections</Trans>
+        <Trans>Trending subjects</Trans>
       </div>
       <div className="content" ref={content}>
         <div className="gradient-bar"></div>
         <div className={`tags hover max-rows-${numRows}`}>
-          {tagList(tags, true)}
+          {tagList(tags, 'medium')}
         </div>
       </div>
     </div>

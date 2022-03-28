@@ -1,4 +1,4 @@
-@import '../../../styles/application';
+@import '../../../styles/application.scss';
 
 .primary-button {
   display: flex;
@@ -16,34 +16,86 @@
   white-space: nowrap;
 
   &.green {
-    background-color: #00e096;
+    background-color: #00bd7e;
   }
 
   &.red {
     background-color: red;
   }
 
+  &.grey {
+    background-color: #8a8a8a;
+  }
+
+  &.blue {
+    background-color: #1a6aff;
+  }
+
+  &.card {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 0 6px #dedede;
+    color: #4d5156;
+  }
+
   &:hover {
-    //background-color: #e37511;
-    //background-color: $primary-color-hover;
-    background-color: #337aff;
+    background-color: $primary-color-hover;
+    box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%),
+      0px 2px 6px 2px rgb(60 64 67 / 15%);
 
-    &.hover-orange {
-      background-color: $primary-color;
+    &.green {
+      background-color: #04ce8a;
     }
 
-    &.hover-green {
-      background-color: #00e096;
+    &.red {
+      background-color: rgb(231, 2, 2);
     }
 
-    &.hover-red {
-      background-color: red;
+    &.grey {
+      background-color: #7c8091;
+    }
+
+    &.blue {
+      background-color: #2d6de2;
+    }
+
+    &.card {
+      background-color: white;
+      box-shadow: 0 0 0 2px #2c5cf8eb;
     }
   }
 
   &:active {
-    background-color: #00e096;
-    //background-color: $primary-color-active;
+    background-color: $primary-color-active;
+
+    &.green {
+      background-color: #01c483;
+    }
+
+    &.red {
+      background-color: rgb(196, 1, 1);
+    }
+
+    &.grey {
+      background-color: #707483;
+    }
+
+    &.blue {
+      background-color: #2658b4;
+    }
+
+    &.card {
+      background-color: rgb(240, 240, 240);
+      box-shadow: 0 0 0 2px #2c5cf8;
+    }
+  }
+
+  &:focus-visible {
+    border: none;
+    outline: none;
+    transition: 0.1s;
+    box-shadow: 0 0 3pt 2pt #1a6affb0;
   }
 
   &.disabled {
