@@ -173,6 +173,7 @@ mutation editResource($id: ID!, $resInput: EditResourceInput!) {
           image
           content
           originalCreationDate
+          _published
         }
       }
     }

@@ -3,8 +3,9 @@ import CallMadeIcon from '@material-ui/icons/CallMade'
 import React from 'react'
 import { Href, Link } from '../../../../elements/link'
 import { CP, withCtrl } from '../../../../lib/ctrl'
-import { FormikBag } from '../../../../lib/formik'
+import { FormikHandle } from '../../../../lib/formik'
 import Card from '../../../atoms/Card/Card'
+import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import {
@@ -18,7 +19,7 @@ export type LoginFormValues = { email: string; password: string }
 export type LoginProps = {
   mainPageWrapperProps: CP<MainPageWrapperProps>
   accessHeaderProps: CP<AccessHeaderProps, 'page'>
-  formBag: FormikBag<LoginFormValues>
+  form: FormikHandle<LoginFormValues>
   wrongCreds: boolean
   signupHref: Href
   // landingHref: Href
@@ -28,22 +29,24 @@ export type LoginProps = {
 export const Login = withCtrl<LoginProps>(
   ({
     accessHeaderProps,
-    formBag,
+    form,
     signupHref,
     wrongCreds,
     recoverPasswordHref,
     mainPageWrapperProps,
   }) => {
-    const [form, attrs] = formBag
-
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Enter') {
         form.submitForm()
-        console.log('submiting form')
       }
     }
 
     const shouldShowErrors = !!form.submitCount && (wrongCreds || !form.isValid)
+    console.log({
+      submitCount: form.submitCount,
+      wrongCreds,
+      isValid: form.isValid,
+    })
 
     return (
       <MainPageWrapper
@@ -60,68 +63,64 @@ export const Login = withCtrl<LoginProps>(
                   <Trans>Log in</Trans>
                 </div>
                 <form onSubmit={form.handleSubmit}>
-                  <input
-                    className={`email ${
-                      shouldShowErrors && form.errors.email ? 'highlight' : ''
-                    }`}
-                    type="text"
+                  <InputTextField
+                    className="email"
                     placeholder={t`Email`}
-                    {...attrs.email}
+                    type="email"
+                    name="email"
+                    edit
+                    value={form.values.email}
                     onChange={form.handleChange}
+                    error={shouldShowErrors && form.errors.email}
                   />
-                  {shouldShowErrors && form.errors.email && (
-                    <div className="error">{form.errors.email}</div>
-                  )}
-                  <input
-                    className={`password ${
-                      shouldShowErrors && form.errors.password
-                        ? 'highlight'
-                        : ''
-                    }`}
-                    type="password"
+                  <InputTextField
+                    className="password"
                     placeholder={t`Password`}
-                    {...attrs.password}
+                    type="password"
+                    name="password"
+                    edit
+                    value={form.values.password}
                     onChange={form.handleChange}
+                    error={shouldShowErrors && form.errors.password}
                   />
-                  {shouldShowErrors && form.errors.password && (
-                    <div className="error">{form.errors.password}</div>
-                  )}
-                  <button type="submit" style={{ display: 'none' }} />
                   {wrongCreds && (
                     <div className="error">
                       <Trans>Incorrect username or password</Trans>
                     </div>
                   )}
+                  <button type="submit" style={{ display: 'none' }} />
                 </form>
                 <div className="bottom">
-                  <div className="left">
-                    <PrimaryButton
-                      onClick={
-                        form.isSubmitting || form.isValidating
-                          ? undefined
-                          : form.submitForm
-                      }
-                    >
-                      <Trans>Log in</Trans>
-                    </PrimaryButton>
-                    <Link href={recoverPasswordHref}>
-                      <TertiaryButton>
-                        <Trans>or recover password</Trans>
-                      </TertiaryButton>
-                    </Link>
-                  </div>
-                  <div className="right" hidden>
-                    <div className="icon">
-                      <img
-                        alt="apple login"
-                        src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
-                      />
+                  <div className="content">
+                    <div className="left">
+                      <PrimaryButton
+                        onClick={
+                          form.isSubmitting || form.isValidating
+                            ? undefined
+                            : form.submitForm
+                        }
+                      >
+                        <Trans>Log in</Trans>
+                      </PrimaryButton>
+                      <Link href={recoverPasswordHref}>
+                        <TertiaryButton>
+                          <Trans>or recover password</Trans>
+                        </TertiaryButton>
+                      </Link>
                     </div>
-                    <div className="icon">
-                      <img
-                        alt="google login"
-                        src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-                      />
+                    <div className="right" hidden>
+                      <div className="icon">
+                        <img
+                          alt="apple login"
+                          src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
+                        />
+                      </div>
+                      <div className="icon">
+                        <img
+                          alt="google login"
+                          src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -3,7 +3,8 @@ import {
   getAssetRefUrl,
   UploadType,
 } from '@moodlenet/common/dist/staticAsset/lib'
-import { useMemo } from 'react'
+import Fuse from 'fuse.js'
+import { useMemo, useState } from 'react'
 import { Tuple } from 'tuple-type'
 import { STATIC_ASSET_BASE } from '../constants'
 import { useSession } from '../context/Global/Session'
@@ -96,3 +97,22 @@ export const getMaybeAssetRefUrl = (
 // ): string =>
 //   getMaybeAssetRefUrl(assetRef) ??
 //   `https://picsum.photos/seed/${id.replaceAll('/', '_')}_${type}_/${type === 'icon' ? '200/200' : '800/600'}`
+
+export const useFiltered = <T>(list: T[], keys: string) => {
+  const [filterText, setFilterText] = useState('')
+
+  const filteredList = useMemo(
+    () =>
+      !filterText
+        ? list
+        : new Fuse(list, {
+            keys: keys.split(';'),
+            shouldSort: true,
+          }).search(filterText),
+    [filterText, list, keys]
+  )
+  return useMemo(
+    () => [filteredList, setFilterText, list] as const,
+    [filteredList, setFilterText, list]
+  )
+}

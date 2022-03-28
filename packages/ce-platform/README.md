@@ -103,8 +103,8 @@ SETUP_ORGANIZATION_SUBTITLE=My organization subtitle
 # logos point to accessible images of any browser-supported mimetype
 SETUP_ORGANIZATION_LOGO=https://url-to.any/logo.png
 SETUP_ORGANIZATION_SMALL_LOGO=https://url-to.any/small-logo.svg
-# whether a newly signed up user is marked as published or not
-SETUP_2_0_1_NEW_USER_PUBLISHED=true # or false
+# whether a newly signed up user is marked as published or not [true|false]
+SETUP_2_0_1_NEW_USER_PUBLISHED=true 
 #
 #$SETUP VARS
 ```

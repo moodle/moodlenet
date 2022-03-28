@@ -66,7 +66,7 @@ export const Subject = withCtrl<SubjectProps>(
                         rel="noreferrer"
                         className="isced-pill"
                       >
-                        ISCED
+                        <PrimaryButton color="blue">ISCED</PrimaryButton>
                       </a>
                     )}
                   </div>

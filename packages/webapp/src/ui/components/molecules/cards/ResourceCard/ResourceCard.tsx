@@ -12,10 +12,11 @@ import '../../../../styles/tags.css'
 import { FollowTag } from '../../../../types'
 import Card from '../../../atoms/Card/Card'
 import RoundButton from '../../../atoms/RoundButton/RoundButton'
-import { Visibility } from '../../../pages/NewResource/FieldsData'
+import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import './styles.scss'
 
 export type ResourceCardProps = {
+  toggleVisible?(): unknown
   tags?: FollowTag[]
   className?: string
   direction?: 'vertical' | 'horizontal'
@@ -42,6 +43,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
   ({
     direction,
     isSelected,
+    toggleVisible,
     tags,
     image,
     type,
@@ -84,13 +86,13 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     let color: string = ''
     switch (type) {
       case 'Video':
-        color = '#2c7bcb'
+        color = '#2A75C0'
         break
       case 'Web Page':
-        color = '#cc4fd1'
+        color = '#C233C7'
         break
       default:
-        color = '#20c184'
+        color = '#15845A'
     }
 
     return (
@@ -106,6 +108,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
         <div className={`actions`}>
           {isOwner && (
             <abbr
+              onClick={toggleVisible}
               className={`visibility ${
                 visibility === 'Public' ? 'public' : 'private'
               }`}
@@ -159,7 +162,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             isEditing ? 'editing' : ''
           }`}
         >
-          {tags && tagList(tags)}
+          {tags && tagList(tags, 'small')}
         </div>
       </Card>
     )

@@ -105,14 +105,15 @@ export const LandingLoggedInStoryProps: LandingProps = {
   trendCardProps: TrendCardStoryProps,
   organization: {
     name: 'MoodleNet Central',
-    subtitle:
-      'Our global network to share and curate open educational resources',
-    description: `Participate improving global education by crafting, sharing and using high-quality resources and collections.\n\nIntegrated with Moodle LMS and Moodle WorkPlace and may work with any LMS, making resources easy to use.`,
+    title: 'Find, share and curate open educational resources',
+    subtitle: 'Search for resources, subjects, collections or people',
+    // description: `Participate improving global education by crafting, sharing and using high-quality resources and collections.\n\nIntegrated with Moodle LMS and Moodle WorkPlace and may work with any LMS, making resources easy to use.`,
     //description: `Join our social network to share and curate open educational resources with educators world-wide.\n\nIntegrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.\n\nBuild your profile as an educator.`,
     //description: `Join our social network to share and curate open educational resources with educators world-wide.\n\nIntegrated with Moodle LMS and Moodle Workplace to make resources easy to find and use.\n\nBuild your profile as an educator.`,
   },
   isAuthenticated: true,
-  signUpHref: href('Pages/Access/SignUp/Default'),
+  newResourceHref: href('Pages/New Resource/Default'),
+  newCollectionHref: href('Pages/New Collection/Start'),
   loadMoreResources: action('Load more'),
   setSearchText: action('Search Text'),
 }
@@ -130,12 +131,14 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
   ...contentLoggedIn,
   organization: {
     name: 'Bern University of Applied Sciences',
-    subtitle: 'A collection of our best resources',
-    description:
-      'Diverse, sound, dynamic – these are the values that define BFH. And this is ',
+    title: 'A collection of our best resources',
+    subtitle: 'Search for resources, subjects, collections or people',
+    // description:
+    //   'Diverse, sound, dynamic – these are the values that define BFH. And this is ',
   },
   isAuthenticated: true,
-  signUpHref: href('Pages/Access/SignUp/Default'),
+  newResourceHref: href('Pages/New Resource/Default'),
+  newCollectionHref: href('Pages/New Collection/Start'),
   setSearchText: action('Search Text'),
   loadMoreResources: action('Load more'),
 }

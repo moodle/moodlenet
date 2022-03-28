@@ -1,14 +1,14 @@
-import { Type } from './components/pages/NewResource/types'
 import { Href } from './elements/link'
 
 export type Organization = {
   name: string
   shortName: string
+  title: string
   subtitle: string
   url: string
   logo: string
   smallLogo: string
-  description: string
+  // description: string
   color: string
 }
 
@@ -20,14 +20,14 @@ export type FollowTag = {
 
 export type ResourceType = 'Video' | 'Web Page' | 'Moodle Book'
 
-export const getResourceColorType = (type: Type) => {
+export const getResourceColorType = (type?: string) => {
   switch (type) {
     case 'Video':
-      return '#2c7bcb'
+      return '#2A75C0'
     case 'Web Page':
-      return '#cc4fd1'
+      return '##C233C7'
     default:
-      return '#20c184'
+      return '#15845A'
   }
 }
 

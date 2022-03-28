@@ -15,7 +15,9 @@ import { useFollowingPageLazyQuery } from './Following.gen'
 export const useFollowingCtrl: CtrlHook<FollowingProps, {}> = () => {
   // const [sortBy, setSortBy] = useState<GlobalFollowingSort>('Popularity')
   const { session } = useSession()
-  const [queryFollowing, followingQ] = useFollowingPageLazyQuery()
+  const [queryFollowing, followingQ] = useFollowingPageLazyQuery({
+    fetchPolicy: 'cache-and-network',
+  })
   useEffect(() => {
     if (!session?.profile.id) {
       return

@@ -1,60 +1,82 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { t } from '@lingui/macro'
+import { action } from '@storybook/addon-actions'
+import { ComponentMeta } from '@storybook/react'
+import { FormikConfig, useFormik } from 'formik'
+import { useEffect } from 'react'
+import { object, SchemaOf, string } from 'yup'
 import { href } from '../../../../elements/link'
-import { SBFormikBag } from '../../../../lib/storybook/SBFormikBag'
 import { AccessHeaderStoryProps } from '../AccessHeader/AccessHeader.stories'
 import { Login, LoginFormValues, LoginProps } from './Login'
 
 const meta: ComponentMeta<typeof Login> = {
   title: 'Pages/Access/Login',
   component: Login,
-  excludeStories: [
-    'LoginStoryProps',
-    'LoginErrorStoryProps',
-    'WrongCredentialsStoryProps',
-  ],
+  excludeStories: ['LoginStoryProps', 'validationSchema'],
   parameters: { layout: 'fullscreen' },
 }
 
-const LoginStory: ComponentStory<typeof Login> = (args) => <Login {...args} />
+const validationSchema: SchemaOf<LoginFormValues> = object({
+  email: string()
+    .required(t`Please provide your email address`)
+    .email(t`Please provide a valid email address`),
+  password: string().required(t`Please provide a password`),
+})
 
-export const LoginStoryProps: LoginProps = {
-  accessHeaderProps: AccessHeaderStoryProps,
-  formBag: SBFormikBag<LoginFormValues>({ email: '', password: '' }),
-  wrongCreds: false,
-  // landingHref: href('Pages/Landing/Logged In'),
-  signupHref: href('Pages/Access/SignUp/Default'),
-  recoverPasswordHref: href('Pages/Recover Password/Recover'),
-  mainPageWrapperProps: {
-    userAcceptsPolicies: null,
-    cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
-  },
+export const LoginStoryProps = (override?: {
+  props?: Partial<LoginProps>
+  formValues?: Partial<LoginFormValues>
+  formConfig?: Partial<FormikConfig<LoginFormValues>>
+}): LoginProps => {
+  return {
+    accessHeaderProps: AccessHeaderStoryProps,
+    form: useFormik<LoginFormValues>({
+      validationSchema,
+      initialValues: { email: '', password: '', ...override?.formValues },
+      onSubmit: action('submit login'),
+      ...override?.formConfig,
+    }),
+    wrongCreds: false,
+    signupHref: href('Pages/Access/SignUp/Default'),
+    recoverPasswordHref: href('Pages/Recover Password/Recover'),
+    mainPageWrapperProps: {
+      userAcceptsPolicies: null,
+      cookiesPolicyHref: href('Pages/Policies/CookiesPolicy/Default'),
+    },
+    ...override?.props,
+  }
 }
 
-export const LoginErrorStoryProps: LoginProps = {
-  ...LoginStoryProps,
-  formBag: SBFormikBag<LoginFormValues>(
-    { email: '', password: '' },
-    {
-      errors: {
+export const Default = () => {
+  const props = LoginStoryProps()
+  return <Login {...props} />
+}
+
+export const Error = () => {
+  const props = LoginStoryProps({
+    formConfig: {
+      initialErrors: {
         email: 'Please provide an email',
         password: 'Please provide a password',
       },
-      submitCount: 1,
-    }
-  ),
+    },
+  })
+  useEffect(() => {
+    props.form.submitForm()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  return <Login {...props} />
 }
-export const WrongCredentialsStoryProps: LoginProps = {
-  ...LoginStoryProps,
-  wrongCreds: true,
+export const WrongCredentials = () => {
+  const props = LoginStoryProps({
+    props: {
+      wrongCreds: true,
+    },
+  })
+  useEffect(() => {
+    props.form.submitForm()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  return <Login {...props} />
 }
-
-export const Default = LoginStory.bind({})
-Default.args = LoginStoryProps
-
-export const Error = LoginStory.bind({})
-Error.args = LoginErrorStoryProps
-
-export const WrongCredentials = LoginStory.bind({})
-WrongCredentials.args = WrongCredentialsStoryProps
 
 export default meta

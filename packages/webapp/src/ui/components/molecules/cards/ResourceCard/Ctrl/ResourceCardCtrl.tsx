@@ -9,6 +9,7 @@ import { useSession } from '../../../../../../context/Global/Session'
 import { getMaybeAssetRefUrl } from '../../../../../../helpers/data'
 import { href } from '../../../../../elements/link'
 import { CtrlHook } from '../../../../../lib/ctrl'
+import { useEditResourceMutation } from '../../../../pages/Resource/Ctrl/ResourcePage.gen'
 import { ResourceCardProps } from '../ResourceCard'
 import {
   useAddResourceCardRelationMutation,
@@ -27,6 +28,7 @@ export const useResourceCardCtrl: CtrlHook<
   const { session, isAuthenticated } = useSession()
   const { data, refetch } = useResourceCardQuery({
     variables: { id, myProfileId: session ? [session.profile.id] : [] },
+    fetchPolicy: 'cache-and-network',
   })
   const resourceNode = narrowNodeType(['Resource'])(data?.node)
   const creatorId = resourceNode?.creator.edges[0]?.node.id
@@ -34,6 +36,22 @@ export const useResourceCardCtrl: CtrlHook<
 
   const [addRelation, addRelationRes] = useAddResourceCardRelationMutation()
   const [delRelation, delRelationRes] = useDelResourceCardRelationMutation()
+  const [edit, editRes] = useEditResourceMutation()
+  const toggleVisible = useCallback(() => {
+    if (!(resourceNode && session && !editRes.loading)) {
+      return
+    }
+    return edit({
+      variables: {
+        id,
+        resInput: {
+          _published: !resourceNode._published,
+          description: resourceNode.description,
+          name: resourceNode.name,
+        },
+      },
+    })
+  }, [edit, editRes.loading, id, resourceNode, session])
 
   const myBookmarkedEdgeId = resourceNode?.myBookmarked.edges[0]?.edge.id
   const toggleBookmark = useCallback(() => {
@@ -103,6 +121,7 @@ export const useResourceCardCtrl: CtrlHook<
     () =>
       resourceNode
         ? {
+            toggleVisible,
             type:
               resourceNode.kind === 'Link'
                 ? 'Web Page'
@@ -131,13 +150,14 @@ export const useResourceCardCtrl: CtrlHook<
         : null,
     [
       resourceNode,
-      isOwner,
-      removeAction,
+      toggleVisible,
       myLikeEdgeId,
       myBookmarkedEdgeId,
       toggleLike,
       toggleBookmark,
       isAuthenticated,
+      removeAction,
+      isOwner,
     ]
   )
   return resourceCardUIProps && [resourceCardUIProps]

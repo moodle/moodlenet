@@ -39,10 +39,11 @@
               font-weight: bold;
               font-size: 26px;
             }
-            > .isced-pill {
+
+            > .isced-pill > .primary-button {
+              height: auto;
+              font-weight: initial;
               cursor: pointer;
-              color: white;
-              background-color: #337aff;
               font-size: 10px;
               padding: 4px 8px;
               border-radius: 5px;
@@ -141,8 +142,8 @@
             height: 26px;
             padding: 8px 10px;
             border-radius: 15px;
-            border: 1px solid #b6bacb;
-            color: #b6bacb;
+            border: 1px solid #757575;
+            color: #757575;
           }
         }
       }

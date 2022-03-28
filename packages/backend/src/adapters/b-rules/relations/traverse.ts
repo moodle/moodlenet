@@ -23,6 +23,5 @@ export const relationTraverseBRules: SockOf<typeof bRules> = async ({ arg, sessi
     ),
   }
   // console.log({ assertions })
-  delete assertions.mustBePublishedOrIssuerIsCreatorOfNode
   return { ...arg, assertions }
 }

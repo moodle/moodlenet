@@ -16,7 +16,7 @@
     display: flex;
     gap: 10px;
     font-size: 13px;
-    color: #b6bacb;
+    color: #757575;
 
     > * {
       cursor: pointer;
@@ -27,6 +27,9 @@
       * > svg {
         width: 18px;
         height: 18px;
+      }
+      &.disabled {
+        color: #919191;
       }
     }
 
@@ -47,11 +50,11 @@
     }
 
     > .bookmarked {
-      color: rgb(32, 193, 132);
+      color: #00bd7e;
     }
 
     > .bookmark:hover:not(.disabled) {
-      color: rgb(32, 193, 132);
+      color: #00bd7e;
     }
   }
 
@@ -82,7 +85,7 @@
         overflow: hidden;
         flex-direction: column;
         display: flex;
-        gap: 8px;
+        gap: 4px;
         height: 100%;
 
         > .type-and-actions {
@@ -106,7 +109,9 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
-          font-weight: bold;
+          font-family: 'Lato';
+          font-style: normal;
+          font-weight: 700;
           font-size: 14px;
         }
       }
@@ -118,7 +123,7 @@
     right: 0;
     bottom: 0px;
     z-index: 2;
-    padding: 2px 2px 2px 6px;
+    padding: 2px 2px 6px 6px;
     background: white;
     margin: 7px 7px 3px;
   }
@@ -126,11 +131,10 @@
   > .tags {
     position: absolute;
     bottom: 2px;
-    padding-bottom: 8px;
     margin-left: 110px;
     z-index: 2;
     gap: 6px;
-    padding-right: 3px;
+    padding: 5px 7px 8px 1px;
     -webkit-mask-image: linear-gradient(to left, transparent 0%, black 3%);
     mask-image: linear-gradient(to left, transparent 0%, black 3%);
 
@@ -146,8 +150,8 @@
       pointer-events: none;
     }
     > a > .tag {
-      font-size: 12px;
-      padding: 4px 10px;
+      font-size: 11px;
+      padding: 2px 10px 4px 10px;
       margin-right: 3px;
     }
   }

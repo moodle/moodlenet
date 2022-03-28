@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  gap: 6px;
 }
 
 .tag,
@@ -14,9 +15,9 @@
   padding: 5px 10px;
   display: flex;
   font-size: 13px;
-  color: white;
+  color: #636363;
   align-items: center;
-  background-color: #b6bacb;
+  background-color: #e3e5ef;
   border-radius: 15px;
 }
 
@@ -26,14 +27,16 @@
   text-overflow: ellipsis;
 }
 
-.tag.hover:hover {
-  box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%),
-    0px 2px 6px 2px rgb(60 64 67 / 15%);
+.tag.hover:hover,
+.tag:hover {
+  box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 50%);
+  background-color: #dfe1ec;
 }
 
-.tag-subject {
-  background-color: #7f8393;
-  border-radius: 6px;
+.tag.hover:active,
+.tag:active {
+  box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 70%);
+  background-color: #d6d8e6;
 }
 
 .empty-space {

@@ -27,7 +27,7 @@ class Portal extends React.Component {
 
 export type ModalProps = {
   title?: string
-  actions?: React.ReactNode[]
+  actions?: React.ReactNode
   style?: React.CSSProperties
   className?: string
   closeButton?: boolean

@@ -1,5 +1,5 @@
 .tertiary-button {
-  color: #a3a6b5;
+  color: #687082;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -17,6 +17,13 @@
   }
 
   &:active {
-    background-color: #e6effc;
+    background-color: #e2e5e5;
+  }
+
+  &:focus-visible {
+    border: none;
+    outline: none;
+    transition: 0.1s;
+    box-shadow: 0 0 3pt 2pt #1a6affb0;
   }
 }

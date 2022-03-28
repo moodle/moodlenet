@@ -5,7 +5,7 @@ export type SecondaryButtonProps = {
   color?: 'black' | 'orange' | 'grey' | 'red'
   className?: string
   disabled?: boolean
-  onHoverColor?: 'blue' | 'grey' | 'red' | 'filled-red'
+  onHoverColor?: 'blue' | 'grey' | 'red' | 'fill-red'
   onClick?(arg0: unknown): unknown
 }
 
@@ -13,8 +13,8 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({
   children,
   color,
   className,
-  onHoverColor,
   disabled,
+  onHoverColor,
   onClick,
 }) => {
   return (
@@ -22,6 +22,7 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({
       className={`secondary-button button ${className} ${color} hover-${onHoverColor} ${
         disabled ? 'disabled' : ''
       }`}
+      tabIndex={!disabled ? 0 : undefined}
       onClick={!disabled ? onClick : () => {}}
     >
       {children}
@@ -31,7 +32,6 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({
 
 SecondaryButton.defaultProps = {
   color: 'black',
-  onHoverColor: 'blue',
 }
 
 export default SecondaryButton
