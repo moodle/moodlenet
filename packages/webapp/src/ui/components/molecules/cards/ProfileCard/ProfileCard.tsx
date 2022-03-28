@@ -260,7 +260,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               {!isEditing && isOwner && (
                 <abbr
                   className={`user-id`}
-                  title={t`Click to copy your ID to the Clipboard`}
+                  title={t`Click to copy your ID to the clipboard`}
                 >
                   <TertiaryButton className="copy-id" onClick={copyId}>
                     Copy ID

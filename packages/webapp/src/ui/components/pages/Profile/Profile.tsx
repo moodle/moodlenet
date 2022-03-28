@@ -111,12 +111,11 @@ export const Profile = withCtrl<ProfileProps>(
           <Snackbar
             type="success"
             position="bottom"
-            autoHideDuration={10000000}
+            autoHideDuration={6000}
             showCloseButton={false}
           >
             <Trans>
-              User ID copied to your clipboard, use it to connect with Moodle
-              LMS
+              User ID copied to the clipboard, use it to connect with Moodle LMS
             </Trans>
           </Snackbar>
         )}
