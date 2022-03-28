@@ -228,4 +228,17 @@ abbr {
 
 .env-flag {
   display: none;
+  position: absolute;
+  z-index: 100;
+  right: 0;
+  border-right: 30px solid;
+  border-bottom: 30px solid transparent;
+}
+.env-flag::before {
+  font-weight: bold;
+  color: white;
+  position: absolute;
+  font-size: 15px;
+  top: -3px;
+  right: -25px;
 }
