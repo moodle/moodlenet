@@ -36,12 +36,12 @@ export type HeaderPropsLoading = HeaderPropsBase & {
 
 export type HeaderPropsBase = {
   homeHref: Href
-  loginHref: Href
   newResourceHref: Href
   newCollectionHref: Href
   hideSearchbox?: boolean
   setSearchText(text: string): unknown
   searchText: string
+  loginHref: Href
   signUpHref: Href
 }
 export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
