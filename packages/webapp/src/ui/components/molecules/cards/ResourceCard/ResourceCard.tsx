@@ -5,7 +5,6 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
 import { Href, Link } from '../../../../elements/link'
-import { getTag, getTagList } from '../../../../elements/tags'
 import { withCtrl } from '../../../../lib/ctrl'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
 import defaultBackgroud from '../../../../static/img/default-background.svg'
@@ -50,7 +49,6 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     orientation,
     isSelected,
     toggleVisible,
-    tags,
     image,
     type,
     title,
@@ -129,6 +127,16 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
         onClick={onClick}
         style={orientation === 'vertical' ? background : {}}
       >
+        <div className={`resource-card-header ${orientation}`}>
+          <div className={`type`} style={{ background: color }}>
+            {type}
+          </div>
+          {/* <div className={`level`}>
+            <div className="name">
+              Primary schoooooooooooooooooooooooooooooooooooooooooooool
+            </div>
+          </div> */}
+        </div>
         <div className={`resource-card-footer ${orientation}`}>
           <div className="left-side">
             <Link href={owner.profileHref}>
@@ -191,25 +199,6 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             onClick={onRemoveClick}
           />
         )}
-        <div className={`tags-row ${orientation}`}>
-          {getTag(
-            {
-              type: 'type',
-              name: type,
-            },
-            'big',
-            undefined,
-            undefined,
-            { backgroundColor: color }
-          )}
-          <div
-            className={`tags scroll ${selectionMode ? 'disabled' : ''}  ${
-              isEditing ? 'editing' : ''
-            }`}
-          >
-            {tags && getTagList(tags, 'big')}
-          </div>
-        </div>
       </Card>
     )
   }
