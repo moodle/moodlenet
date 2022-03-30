@@ -1,6 +1,8 @@
 import { t, Trans } from '@lingui/macro'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 import NoteAddIcon from '@material-ui/icons/NoteAdd'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import StreamOutlinedIcon from '@mui/icons-material/StreamOutlined'
 import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
@@ -34,6 +36,8 @@ export type LandingProps = {
   trendCardProps: TrendCardProps
   organization: Pick<Organization, 'name' | 'title' | 'subtitle'>
   isAuthenticated: boolean
+  loginHref: Href
+  signUpHref: Href
   newResourceHref: Href
   newCollectionHref: Href
   setSearchText(text: string): unknown
@@ -48,6 +52,8 @@ export const Landing = withCtrl<LandingProps>(
     resourceCardPropsList,
     organization,
     isAuthenticated,
+    loginHref,
+    signUpHref,
     newResourceHref,
     newCollectionHref,
     loadMoreResources,
@@ -118,7 +124,45 @@ export const Landing = withCtrl<LandingProps>(
         style={{ backgroundColor: 'white' }}
         hideSearchbox={isSearchboxInViewport}
       >
-        {isCreatingContent && (
+        {!isAuthenticated && isCreatingContent && (
+          <Modal
+            className="create-content-modal"
+            title={t`Log in or create an account to start sharing content`}
+            closeButton={false}
+            onClose={() => {
+              setIsCreatingContent(false)
+            }}
+            style={{ maxWidth: '500px', width: '100%', gap: '22px' }}
+          >
+            <Link href={loginHref}>
+              <PrimaryButton className="" color="card">
+                <ArrowForwardIcon />
+                <div className="content">
+                  <div className="title">
+                    <Trans>Log in</Trans>
+                  </div>
+                  <div className="subtitle">
+                    <Trans>Enter to your account</Trans>
+                  </div>
+                </div>
+              </PrimaryButton>
+            </Link>
+            <Link href={signUpHref}>
+              <PrimaryButton className="" color="card">
+                <StreamOutlinedIcon />
+                <div className="content">
+                  <div className="title">
+                    <Trans>Join now</Trans>
+                  </div>
+                  <div className="subtitle">
+                    <Trans>Create a new account</Trans>
+                  </div>
+                </div>
+              </PrimaryButton>
+            </Link>
+          </Modal>
+        )}
+        {isAuthenticated && isCreatingContent && (
           <Modal
             className="create-content-modal"
             title={t`What would you like to create?`}
@@ -170,15 +214,13 @@ export const Landing = withCtrl<LandingProps>(
               setIsSearchboxInViewport={setIsSearchboxInViewport}
               marginTop={12}
             />
-            {isAuthenticated && (
-              <PrimaryButton
-                className="share-content"
-                color="blue"
-                onClick={() => setIsCreatingContent(true)}
-              >
-                <Trans>Share content</Trans>
-              </PrimaryButton>
-            )}
+            <PrimaryButton
+              className="share-content"
+              color="blue"
+              onClick={() => setIsCreatingContent(true)}
+            >
+              <Trans>Share content</Trans>
+            </PrimaryButton>
           </div>
           <div className="columns-container">
             <div className="main-column">
