@@ -4,10 +4,10 @@ import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
+import { getBackupImage } from '../../../../../helpers/utilities'
 import { Href, Link } from '../../../../elements/link'
 import { withCtrl } from '../../../../lib/ctrl'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
-import defaultBackgroud from '../../../../static/img/default-background.svg'
 import '../../../../styles/tags.scss'
 import { FollowTag } from '../../../../types'
 import Card from '../../../atoms/Card/Card'
@@ -16,11 +16,12 @@ import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown
 import './styles.scss'
 
 export type ResourceCardProps = {
+  resourceId: string
   toggleVisible?(): unknown
   tags?: FollowTag[]
   className?: string
   orientation?: 'vertical' | 'horizontal'
-  image: string | null
+  image?: string | null
   type: string //'Video' | 'Web Page' | 'Moodle Book'
   title: string
   visibility: Visibility
@@ -46,6 +47,7 @@ export type ResourceCardProps = {
 
 export const ResourceCard = withCtrl<ResourceCardProps>(
   ({
+    resourceId,
     orientation,
     isSelected,
     toggleVisible,
@@ -75,13 +77,14 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     let background = {}
     if (orientation === 'horizontal') {
       background = {
-        background: 'url(' + (image ? image : defaultBackgroud) + ')',
+        background:
+          'url(' + (image ? image : getBackupImage(resourceId).image) + ')',
       }
     } else {
       background = {
         background:
           'linear-gradient(0deg, rgba(0, 0, 0, 0.91) 0%, rgba(0, 0, 0, 0.1729) 45.15%, rgba(0, 0, 0, 0) 100%), url(' +
-          (image ? image : defaultBackgroud) +
+          (image ? image : getBackupImage(resourceId).image) +
           ')',
       }
     }

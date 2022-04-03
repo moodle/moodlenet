@@ -1,6 +1,7 @@
 import { linkTo } from '@storybook/addon-links'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { randomIntFromInterval } from '../../../../../helpers/utilities'
+import { ContentBackupImages } from '../../../../assets/data/images'
 import { href } from '../../../../elements/link'
 import { CollectionCard, CollectionCardProps } from './CollectionCard'
 
@@ -28,11 +29,12 @@ const meta: ComponentMeta<typeof CollectionCard> = {
   ],
 }
 
-export const CollectionCardStoryProps = (i: number): CollectionCardProps => {
+export const CollectionCardStoryProps = (i: 1 | 0): CollectionCardProps => {
   return {
+    collectionId: `${Math.floor(Math.random() * ContentBackupImages.length)}`,
     title:
-      'Best collection ever created Best collection ever created Best collection ever created ',
-    imageUrl: 'https://picsum.photos/300/200',
+      'Best collection ever created Best collection ever created Best collection ever created',
+    imageUrl: i === 0 ? 'https://picsum.photos/300/200' : null,
     collectionHref: href('Pages/Collection/LoggedIn'),
     bookmarked: false,
     following: false,
@@ -47,13 +49,13 @@ export const CollectionCardStoryProps = (i: number): CollectionCardProps => {
 }
 
 export const CollectionCardLoggedInStoryProps = (
-  i: number
+  i: 1 | 0
 ): CollectionCardProps => {
   return { ...CollectionCardStoryProps(i) }
 }
 
 export const CollectionCardFollowingStoryProps = (
-  i: number
+  i: 0 | 1
 ): CollectionCardProps => {
   return {
     ...CollectionCardLoggedInStoryProps(i),
@@ -63,7 +65,7 @@ export const CollectionCardFollowingStoryProps = (
 }
 
 export const CollectionCardBookmarkedStoryProps = (
-  i: number
+  i: 1 | 0
 ): CollectionCardProps => {
   return {
     ...CollectionCardLoggedInStoryProps(i),
@@ -73,7 +75,7 @@ export const CollectionCardBookmarkedStoryProps = (
 }
 
 export const CollectionCardLoggedOutStoryProps = (
-  i: number
+  i: 1 | 0
 ): CollectionCardProps => {
   return {
     ...CollectionCardStoryProps(i),
@@ -83,7 +85,7 @@ export const CollectionCardLoggedOutStoryProps = (
 }
 
 export const CollectionCardOwnerStoryProps = (
-  i: number
+  i: 1 | 0
 ): CollectionCardProps => {
   return {
     ...CollectionCardLoggedInStoryProps(i),
@@ -94,7 +96,7 @@ export const CollectionCardOwnerStoryProps = (
 }
 
 export const CollectionCardOwnerPrivateStoryProps = (
-  i: number
+  i: 1 | 0
 ): CollectionCardProps => {
   return { ...CollectionCardOwnerStoryProps(i), visibility: 'Private' }
 }
@@ -103,27 +105,39 @@ const CollectionCardStory: ComponentStory<typeof CollectionCard> = (args) => (
   <CollectionCard {...args} />
 )
 
-const i = randomIntFromInterval(1, 3)
-
 export const LoggedIn = CollectionCardStory.bind({})
-LoggedIn.args = CollectionCardLoggedInStoryProps(i)
+LoggedIn.args = CollectionCardLoggedInStoryProps(
+  randomIntFromInterval(0, 1) === 0 ? 0 : 1
+)
 
 export const Following = CollectionCardStory.bind({})
-Following.args = CollectionCardFollowingStoryProps(i)
+Following.args = CollectionCardFollowingStoryProps(
+  randomIntFromInterval(0, 1) === 0 ? 0 : 1
+)
 
 export const Bookmarked = CollectionCardStory.bind({})
-Bookmarked.args = CollectionCardBookmarkedStoryProps(i)
+Bookmarked.args = CollectionCardBookmarkedStoryProps(
+  randomIntFromInterval(0, 1) === 0 ? 0 : 1
+)
 
 export const LoggedOut = CollectionCardStory.bind({})
-LoggedOut.args = CollectionCardLoggedOutStoryProps(i)
+LoggedOut.args = CollectionCardLoggedOutStoryProps(
+  randomIntFromInterval(0, 1) === 0 ? 0 : 1
+)
 
 export const Owner = CollectionCardStory.bind({})
-Owner.args = CollectionCardOwnerStoryProps(i)
+Owner.args = CollectionCardOwnerStoryProps(
+  randomIntFromInterval(0, 1) === 0 ? 0 : 1
+)
 
 export const Public = CollectionCardStory.bind({})
-Public.args = CollectionCardOwnerStoryProps(i)
+Public.args = CollectionCardOwnerStoryProps(
+  randomIntFromInterval(0, 1) === 0 ? 0 : 1
+)
 
 export const Private = CollectionCardStory.bind({})
-Private.args = CollectionCardOwnerPrivateStoryProps(i)
+Private.args = CollectionCardOwnerPrivateStoryProps(
+  randomIntFromInterval(0, 1) === 0 ? 0 : 1
+)
 
 export default meta

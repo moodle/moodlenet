@@ -65,7 +65,7 @@ export const CollectionStoryProps = (overrides?: {
     initialValues: {
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-      image: 'https://picsum.photos/200/100',
+      // image: 'https://picsum.photos/200/100',
       title: 'Best collection ever',
       visibility: 'Public',
       ...overrides?.formValues,
@@ -73,6 +73,7 @@ export const CollectionStoryProps = (overrides?: {
     ...overrides?.formConfig,
   })
   return {
+    collectionId: 'pzif03wwssaa-histo',
     headerPageTemplateProps: {
       headerPageProps: HeaderPageLoggedInStoryProps,
       isAuthenticated: true,
@@ -93,7 +94,7 @@ export const CollectionStoryProps = (overrides?: {
     resourceCardPropsList: [
       ResourceCardOwnerStoryProps,
       ResourceCardOwnerBookmarkedStoryProps,
-      ResourceCardStoryProps,
+      ResourceCardStoryProps(),
     ],
     toggleFollow: useFormik({
       initialValues: {},
