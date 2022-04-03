@@ -20,10 +20,6 @@
       gap: 20px;
 
       @media (min-width: 450px) {
-        > .image {
-          border-radius: 16px 16px 0 0;
-        }
-
         > :last-child {
           margin-bottom: 20px;
         }
@@ -38,10 +34,15 @@
       align-items: flex-start;
 
       > .image {
-        cursor: pointer;
-        height: 250px;
+        height: 300px;
         width: 100%;
         position: inherit;
+        position: relative;
+        cursor: pointer;
+
+        @media (max-width: 500px) {
+          height: 175px;
+        }
 
         > .change-image-button {
           z-index: 5;
@@ -50,6 +51,23 @@
           padding: 15px 20px;
           &.disabled {
             pointer-events: none;
+          }
+        }
+
+        > .image-credits {
+          position: absolute;
+          bottom: 9px;
+          color: white;
+          background: #00000054;
+          padding: 2px 7px;
+          border-radius: 6px;
+          right: 15px;
+          display: flex;
+          justify-content: flex-end;
+          font-size: 11px;
+          gap: 3px;
+          > a:hover {
+            text-decoration: underline;
           }
         }
       }
@@ -108,6 +126,12 @@
                 > div {
                   grid-row-start: 1;
                   grid-column-start: 1;
+                  display: flex;
+
+                  > svg {
+                    width: 18px;
+                    height: 18px;
+                  }
 
                   &.loading {
                     display: flex;
@@ -428,6 +452,22 @@
         padding: 11px;
         flex: 1;
       }
+    }
+  }
+}
+
+.image-modal > .modal > .content {
+  > .image-credits {
+    bottom: 9px;
+    padding: 2px 7px;
+    border-radius: 6px;
+    right: 5px;
+    display: flex;
+    justify-content: flex-end;
+    font-size: 11px;
+    gap: 3px;
+    > a:hover {
+      text-decoration: underline;
     }
   }
 }

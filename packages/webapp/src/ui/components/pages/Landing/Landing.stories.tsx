@@ -38,29 +38,31 @@ const meta: ComponentMeta<typeof Landing> = {
 
 const contentLoggedIn = {
   collectionCardPropsList: [
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
   ],
   resourceCardPropsList: [
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
   ],
   smallProfileCardPropsList: [
     SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
@@ -82,33 +84,52 @@ const contentLoggedIn = {
 
 const contentLoggedOut = {
   collectionCardPropsList: [
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
   ],
   resourceCardPropsList: [
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
   ],
 }
 

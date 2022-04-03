@@ -9,9 +9,23 @@
   box-shadow: 0 0 6px #dedede;
   display: flex;
   flex-direction: column;
+  background-size: cover;
 
   &.is-private {
     opacity: 1;
+  }
+
+  > .collection-card-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    // top: 0;
+    // right: 0;
+    // bottom: 0;
+    // left: 0;
+    // transform: rotateX(-180deg);
+    transform-origin: top right;
   }
 
   > .collection-card-header {
@@ -113,7 +127,8 @@
       }
     }
   }
-  > a {
+  > .collection-card-content {
+    position: absolute;
     cursor: pointer;
     width: 100%;
     height: 100%;

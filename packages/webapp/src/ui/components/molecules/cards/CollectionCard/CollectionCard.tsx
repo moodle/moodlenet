@@ -5,17 +5,17 @@ import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import PersonIcon from '@material-ui/icons/Person'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
+import { getBackupImage } from '../../../../../helpers/utilities'
 import { Href, Link } from '../../../../elements/link'
 import { withCtrl } from '../../../../lib/ctrl'
-import defaultBackgroud from '../../../../static/img/default-background.svg'
 import '../../../../styles/tags.scss'
 import Card from '../../../atoms/Card/Card'
 import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import './styles.scss'
 
 export type CollectionCardProps = {
-  toggleVisible?(): unknown
-  imageUrl: string | null
+  collectionId: string
+  imageUrl?: string | null
   title: string
   visibility: Visibility
   collectionHref: Href
@@ -26,12 +26,14 @@ export type CollectionCardProps = {
   numFollowers: number
   numResource: number
   isEditing?: boolean
+  toggleVisible?(): unknown
   toggleFollow?: () => unknown
   toggleBookmark?: () => unknown
 }
 
 export const CollectionCard = withCtrl<CollectionCardProps>(
   ({
+    collectionId,
     imageUrl,
     title,
     toggleVisible,
@@ -48,8 +50,8 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
   }) => {
     const background = {
       background:
-        'linear-gradient(1deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.54) 37%, rgba(0, 0, 0, 0.54) 100%), url(' +
-        (imageUrl || defaultBackgroud) +
+        'radial-gradient(120% 132px at 50% 55%, rgba(0, 0, 0, 0.4) 0%,  rgba(0, 0, 0, 0.2) 73%) 0% 0% / cover, url(' +
+        (imageUrl || getBackupImage(collectionId).image) +
         ')',
       backgroundSize: 'cover',
     }
@@ -59,7 +61,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
         className={`collection-card ${
           isOwner && visibility === 'Private' ? 'is-private' : ''
         }`}
-        style={{ ...background }}
+        style={background}
         hover={true}
       >
         <div className={`collection-card-header`}>
@@ -67,7 +69,6 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
             <div className="num-resources">
               <FilterNoneIcon />
               {numResource}
-              {/* <Trans>{numResource} items</Trans> */}
             </div>
           </div>
           <div className="right">
@@ -105,7 +106,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
             </div>
           </div>
         </div>
-        <Link href={collectionHref}>
+        <Link href={collectionHref} className="collection-card-content">
           <abbr className="title" title={title}>
             {title}
           </abbr>
@@ -115,4 +116,3 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
   }
 )
 CollectionCard.displayName = 'CollectionCard'
-CollectionCard.defaultProps = {}

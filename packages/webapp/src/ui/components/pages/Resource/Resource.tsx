@@ -9,12 +9,12 @@ import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
 import React, { useCallback, useRef, useState } from 'react'
+import { getBackupImage } from '../../../../helpers/utilities'
 import { getTagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
 import { SelectOptions, SelectOptionsMulti } from '../../../lib/types'
 import { useImageUrl } from '../../../lib/useImageUrl'
-import defaultBackgroud from '../../../static/img/default-background.svg'
 import { FollowTag, getResourceColorType } from '../../../types'
 import Card from '../../atoms/Card/Card'
 import {
@@ -63,6 +63,7 @@ export type ResourceFormValues = Omit<
 > & { isFile: boolean }
 export type ResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
+  resourceId: string
   isAuthenticated: boolean
   isOwner: boolean
   isAdmin: boolean
@@ -95,6 +96,7 @@ export type ResourceProps = {
 export const Resource = withCtrl<ResourceProps>(
   ({
     headerPageTemplateProps,
+    resourceId,
     isAuthenticated,
     isOwner,
     isAdmin,
@@ -172,16 +174,31 @@ export const Resource = withCtrl<ResourceProps>(
       },
       [form]
     )
-    const [imageUrl] = useImageUrl(form.values.image, defaultBackgroud)
+    const backupImage = form.values.image ? null : getBackupImage(resourceId)
+    const [imageUrl] = useImageUrl(form.values.image, backupImage?.image)
     const image = (
       <img
         className="image"
-        src={imageUrl ? imageUrl : undefined}
+        src={imageUrl ? imageUrl : backupImage?.image}
         alt="Background"
         {...(contentType === 'file' && {
           onClick: () => setIsShowingImage(true),
         })}
+        style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
       />
+    )
+
+    const imageCredits = backupImage && (
+      <div className="image-credits">
+        Photo by
+        <a href={backupImage.creatorUrl}>{backupImage.creatorName}</a>
+        on
+        <a
+          href={`https://unsplash.com/?utm_source=moodlenet&utm_medium=referral`}
+        >
+          Unsplash
+        </a>
+      </div>
     )
 
     const actions = (
@@ -583,9 +600,13 @@ export const Resource = withCtrl<ResourceProps>(
             className="image-modal"
             closeButton={false}
             onClose={() => setIsShowingImage(false)}
-            style={{ maxWidth: '90%', maxHeight: '90%' }}
+            style={{
+              maxWidth: '90%',
+              maxHeight: backupImage ? 'calc(90% + 20px)' : '90%',
+            }}
           >
             <img src={imageUrl} alt="Resource" />
+            {imageCredits}
           </Modal>
         )}
         {
@@ -824,14 +845,18 @@ export const Resource = withCtrl<ResourceProps>(
                     </div>
                   )}
                 </div>
-                {(typeof imageUrl === 'string' || isEditing) && (
+                {(typeof imageUrl === 'string' || backupImage || isEditing) && (
                   <div className="image-container">
                     {contentType === 'link' ? (
                       <a href={contentUrl} target="_blank" rel="noreferrer">
                         {image}
+                        {imageCredits}
                       </a>
                     ) : (
-                      image
+                      <>
+                        {image}
+                        {imageCredits}
+                      </>
                     )}
                     {isEditing && !form.isSubmitting && (
                       <>

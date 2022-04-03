@@ -6,10 +6,10 @@ import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import SaveIcon from '@material-ui/icons/Save'
 import React, { useCallback, useRef, useState } from 'react'
+import { getBackupImage } from '../../../../helpers/utilities'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
 import { useImageUrl } from '../../../lib/useImageUrl'
-import defaultBackgroud from '../../../static/img/default-background.svg'
 import Card from '../../atoms/Card/Card'
 import { InputTextField } from '../../atoms/InputTextField/InputTextField'
 import Loading from '../../atoms/Loading/Loading'
@@ -39,6 +39,7 @@ import {
 import './styles.scss'
 
 export type CollectionProps = {
+  collectionId: string
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   isAuthenticated: boolean
   isOwner: boolean
@@ -56,6 +57,7 @@ export type CollectionProps = {
 
 export const Collection = withCtrl<CollectionProps>(
   ({
+    collectionId,
     headerPageTemplateProps,
     isAuthenticated,
     isOwner,
@@ -88,11 +90,14 @@ export const Collection = withCtrl<CollectionProps>(
         setShouldShowErrors(true)
       }
     }
-    const [imageUrl] = useImageUrl(form.values.image, defaultBackgroud)
-    const background = {
-      backgroundImage: 'url(' + imageUrl + ')',
-      backgroundSize: 'cover',
-    }
+    const [imageUrl] = useImageUrl(form.values.image)
+    const backupImage = imageUrl ? null : getBackupImage(collectionId)
+    const background = imageUrl
+      ? {
+          backgroundImage: 'url(' + imageUrl + ')',
+          backgroundSize: 'cover',
+        }
+      : backupImage?.style
     const uploadImageRef = useRef<HTMLInputElement>(null)
     const selectImage = () => {
       uploadImageRef.current?.click()
@@ -103,6 +108,19 @@ export const Collection = withCtrl<CollectionProps>(
         form.setFieldValue('image', e.currentTarget.files?.item(0))
       },
       [form]
+    )
+
+    const imageCredits = backupImage && (
+      <div className="image-credits">
+        Photo by
+        <a href={backupImage.creatorUrl}>{backupImage.creatorName}</a>
+        on
+        <a
+          href={`https://unsplash.com/?utm_source=moodlenet&utm_medium=referral`}
+        >
+          Unsplash
+        </a>
+      </div>
     )
 
     const extraDetails = (
@@ -135,16 +153,28 @@ export const Collection = withCtrl<CollectionProps>(
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        {isShowingBackground && typeof form.values.image === 'string' && (
-          <Modal
-            className="image-modal"
-            closeButton={false}
-            onClose={() => setIsShowingBackground(false)}
-            style={{ maxWidth: '90%', maxHeight: '90%' }}
-          >
-            <img src={form.values.image} alt="Cover" />
-          </Modal>
-        )}
+        {isShowingBackground &&
+          (typeof form.values.image === 'string' || backupImage) && (
+            <Modal
+              className="image-modal"
+              closeButton={false}
+              onClose={() => setIsShowingBackground(false)}
+              style={{
+                maxWidth: '90%',
+                maxHeight: `${backupImage ? 'calc(90% + 20px)' : '90%'}`,
+              }}
+            >
+              <img
+                src={
+                  typeof form.values.image === 'string'
+                    ? form.values.image
+                    : backupImage?.image
+                }
+                alt="Cover"
+              />
+              {imageCredits}
+            </Modal>
+          )}
         {isToDelete && deleteCollection && (
           <Modal
             title={t`Alert`}
@@ -181,7 +211,7 @@ export const Collection = withCtrl<CollectionProps>(
           <div className="content">
             <Card className="main-collection-card" hideBorderWhenSmall={true}>
               <div
-                className="image"
+                className={`image`}
                 style={background}
                 onClick={() => !isEditing && setIsShowingBackground(true)}
               >
@@ -203,6 +233,7 @@ export const Collection = withCtrl<CollectionProps>(
                     />
                   </>
                 )}
+                {imageCredits}
               </div>
               <div className="info">
                 <div className="label">
