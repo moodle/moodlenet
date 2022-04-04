@@ -9,6 +9,7 @@ import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { FollowTag } from '../../../../types'
 import { useCollectionCardCtrl } from '../../../molecules/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
+import { useSmallProfileCardCtrl } from '../../../molecules/cards/SmallProfileCard/Ctrl/SmallProfileCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { useSearchUrlQuery } from '../../Search/Ctrl/useSearchUrlQuery'
 import { LandingProps } from '../Landing'
@@ -36,6 +37,21 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
           )
         ),
     [LandingPageLists.data?.node?.bookmarkedCollections.edges]
+  )
+  const smallProfileCardPropsList = useMemo(
+    () =>
+      LandingPageLists.data?.node?.followedProfiles.edges
+        .filter(isEdgeNodeOfType(['Profile']))
+        .map(({ node: { id } }) =>
+          ctrlHook(
+            useSmallProfileCardCtrl,
+            {
+              id,
+            },
+            id
+          )
+        ),
+    [LandingPageLists.data?.node?.followedProfiles.edges]
   )
 
   const resourceCardPropsList = useMemo(
@@ -83,6 +99,7 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       },
       trendCardProps: { tags: tags || [] },
       setSearchText,
+      smallProfileCardPropsList: smallProfileCardPropsList || [],
       collectionCardPropsList: collectionCardPropsList || [],
       resourceCardPropsList: resourceCardPropsList || [],
       // smallProfileCardPropsList: SmallProfileCardPropsList ||  []
@@ -94,10 +111,11 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
     [
       isAuthenticated,
       localOrg.name,
-      localOrg.description,
       localOrg.subtitle,
+      localOrg.description,
       tags,
       setSearchText,
+      smallProfileCardPropsList,
       collectionCardPropsList,
       resourceCardPropsList,
     ]

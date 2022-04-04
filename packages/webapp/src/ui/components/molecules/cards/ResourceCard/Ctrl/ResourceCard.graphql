@@ -17,7 +17,11 @@ query ResourceCard($id: ID!, $myProfileId: [ID!]) {
       ) {
         edges {
           node {
-            id
+            ... on Profile {
+              id
+              avatar
+              name
+            }
           }
         }
       }

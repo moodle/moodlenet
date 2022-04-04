@@ -29,6 +29,19 @@ query LandingPageLists($id: ID = "Organization/") {
           }
         }
       }
+      followedProfiles: _rel(
+        type: Follows
+        targetTypes: [Profile]
+        page: { first: 8 }
+      ) {
+        edges {
+          node {
+            ... on Profile {
+              id
+            }
+          }
+        }
+      }
       bookmarkedResources: _rel(
         type: Bookmarked
         targetTypes: [Resource]
