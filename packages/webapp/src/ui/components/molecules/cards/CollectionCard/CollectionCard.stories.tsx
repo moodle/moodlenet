@@ -35,7 +35,7 @@ export const CollectionCardStoryProps = (i: 1 | 0): CollectionCardProps => {
     title:
       'Best collection ever created Best collection ever created Best collection ever created',
     imageUrl: i === 0 ? 'https://picsum.photos/300/200' : null,
-    collectionHref: href('Pages/Collection/LoggedIn'),
+    collectionHref: href('Pages/Collection/Logged In'),
     bookmarked: false,
     following: false,
     numFollowers: 32,
@@ -79,7 +79,7 @@ export const CollectionCardLoggedOutStoryProps = (
 ): CollectionCardProps => {
   return {
     ...CollectionCardStoryProps(i),
-    collectionHref: href('Pages/Collection/LoggedOut'),
+    collectionHref: href('Pages/Collection/Logged Out'),
     isAuthenticated: false,
   }
 }

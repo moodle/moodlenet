@@ -85,6 +85,7 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       setSearchText,
       collectionCardPropsList: collectionCardPropsList || [],
       resourceCardPropsList: resourceCardPropsList || [],
+      // smallProfileCardPropsList: SmallProfileCardPropsList ||  []
       newCollectionHref,
       newResourceHref,
       loginHref,
