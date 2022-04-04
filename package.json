@@ -14,7 +14,8 @@
     "typescript": "^4.5.2"
   },
   "scripts": {
-    "bs": "husky install && lerna bootstrap --nohoist=babel-* --nohoist=*react*",
+    "ibs": "husky install && yarn bs",
+    "bs": "lerna bootstrap --nohoist=babel-* --nohoist=*react*",
     "setup": "lerna run setup --parallel --stream",
     "upgrade-version": "lerna run upgrade-version --parallel --stream",
     "start-dev": "lerna run start-dev --parallel --stream -- -- ",

@@ -1,3 +1,5 @@
+import { ContentBackupImages } from '../ui/assets/data/images'
+
 export const isURL = (str: string): boolean => {
   const pattern = new RegExp(
     '^(https?:\\/\\/)?' + // protocol
@@ -70,3 +72,28 @@ export const adjustColor = (color: string, amount: number) => {
 
 export const randomColor = () =>
   `#${Math.floor(Math.random() * 16777215).toString(16)}`
+
+export const getNumberFromString = (s: string) =>
+  parseInt(
+    s
+      .split('')
+      .map((l) => {
+        return l.charCodeAt(0)
+      })
+      .join(''),
+    10
+  )
+
+export const getBackupImage = (id: string) => {
+  const numId = getNumberFromString(id)
+  const image = ContentBackupImages[numId % ContentBackupImages.length]
+
+  return {
+    image: image?.image,
+    creatorName: image?.creatorName,
+    creatorUrl: image?.creatorUrl,
+    style: {
+      backgroundImage: 'url(' + image?.image + ')',
+    },
+  }
+}

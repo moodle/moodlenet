@@ -521,6 +521,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       return null
     }
     const props: ResourceProps = {
+      resourceId: resourceData.id,
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, id),
       form,
       isOwner,

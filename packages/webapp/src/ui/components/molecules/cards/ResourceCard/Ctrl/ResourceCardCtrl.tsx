@@ -31,8 +31,10 @@ export const useResourceCardCtrl: CtrlHook<
     fetchPolicy: 'cache-and-network',
   })
   const resourceNode = narrowNodeType(['Resource'])(data?.node)
-  const creatorId = resourceNode?.creator.edges[0]?.node.id
-  const isOwner = !!session && creatorId === session.profile.id
+  const creator = narrowNodeType(['Profile'])(
+    resourceNode?.creator.edges[0]?.node
+  )!
+  const isOwner = !!session && creator?.id === session.profile.id
 
   const [addRelation, addRelationRes] = useAddResourceCardRelationMutation()
   const [delRelation, delRelationRes] = useDelResourceCardRelationMutation()
@@ -117,48 +119,58 @@ export const useResourceCardCtrl: CtrlHook<
     session,
   ])
 
-  const resourceCardUIProps = useMemo<ResourceCardProps | null>(
-    () =>
-      resourceNode
-        ? {
-            toggleVisible,
-            type:
-              resourceNode.kind === 'Link'
-                ? 'Web Page'
-                : resourceNode.content.mimetype,
-            image: getMaybeAssetRefUrl(resourceNode.image),
-            title: resourceNode.name,
-            tags: resourceNode.categories.edges
-              .filter(isEdgeNodeOfType(['IscedField']))
-              .map(({ node }) => ({
-                name: node.name,
-                type: 'subject',
-                subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
-              })),
-            resourceHomeHref: href(nodeGqlId2UrlPath(resourceNode.id)),
-            liked: !!myLikeEdgeId,
-            numLikes: resourceNode.likesCount,
-            bookmarked: !!myBookmarkedEdgeId,
-            toggleLike,
-            toggleBookmark,
-            isAuthenticated,
-            onRemoveClick: removeAction || undefined,
-            showRemoveButton: !!removeAction,
-            isOwner,
-            visibility: resourceNode._published ? 'Public' : 'Private',
-          }
-        : null,
-    [
-      resourceNode,
+  const resourceCardUIProps = useMemo<ResourceCardProps | null>(() => {
+    if (!resourceNode) {
+      return null
+    }
+
+    return {
+      owner: {
+        avatar: getMaybeAssetRefUrl(creator.avatar),
+        displayName: creator.name,
+        profileHref: href(nodeGqlId2UrlPath(creator.id)),
+      },
+      resourceId: resourceNode.id,
+      // owner: resourceNode.creator,
       toggleVisible,
-      myLikeEdgeId,
-      myBookmarkedEdgeId,
+      type:
+        resourceNode.kind === 'Link'
+          ? 'Web Page'
+          : resourceNode.content.mimetype,
+      image: getMaybeAssetRefUrl(resourceNode.image),
+      title: resourceNode.name,
+      tags: resourceNode.categories.edges
+        .filter(isEdgeNodeOfType(['IscedField']))
+        .map(({ node }) => ({
+          name: node.name,
+          type: 'subject',
+          subjectHomeHref: href(nodeGqlId2UrlPath(node.id)),
+        })),
+      resourceHomeHref: href(nodeGqlId2UrlPath(resourceNode.id)),
+      liked: !!myLikeEdgeId,
+      numLikes: resourceNode.likesCount,
+      bookmarked: !!myBookmarkedEdgeId,
       toggleLike,
       toggleBookmark,
       isAuthenticated,
-      removeAction,
+      onRemoveClick: removeAction || undefined,
+      showRemoveButton: !!removeAction,
       isOwner,
-    ]
-  )
+      visibility: resourceNode._published ? 'Public' : 'Private',
+    }
+  }, [
+    resourceNode,
+    creator.avatar,
+    creator.name,
+    creator.id,
+    toggleVisible,
+    myLikeEdgeId,
+    myBookmarkedEdgeId,
+    toggleLike,
+    toggleBookmark,
+    isAuthenticated,
+    removeAction,
+    isOwner,
+  ])
   return resourceCardUIProps && [resourceCardUIProps]
 }
