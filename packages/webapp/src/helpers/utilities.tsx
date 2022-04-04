@@ -85,13 +85,8 @@ export const getNumberFromString = (s: string) =>
   )
 
 export const getBackupImage = (id: string) => {
-  console.log('id ', id)
   const numId = getNumberFromString(id)
   const image = ContentBackupImages[numId % ContentBackupImages.length]
-  const mirror = numId % 4
-  const r = numId % ContentBackupImages.length
-  console.log(numId)
-  console.log(r)
 
   return {
     image: image?.image,
@@ -99,9 +94,6 @@ export const getBackupImage = (id: string) => {
     creatorUrl: image?.creatorUrl,
     style: {
       backgroundImage: 'url(' + image?.image + ')',
-      // backgroundSize: 'cover',
-      // transform: `scale${mirror > 2 ? 'X' : 'Y'}(${mirror > 2 ? '' : '-'}1)`,
-      // transformOrigin: `top(${mirror > 2 ? '' : '-'}1)`,
     },
   }
 }

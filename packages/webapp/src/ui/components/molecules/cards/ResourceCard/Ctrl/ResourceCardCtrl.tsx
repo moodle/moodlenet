@@ -121,6 +121,8 @@ export const useResourceCardCtrl: CtrlHook<
     () =>
       resourceNode
         ? {
+            resourceId: resourceNode.id,
+            // owner: resourceNode.creator,
             toggleVisible,
             type:
               resourceNode.kind === 'Link'

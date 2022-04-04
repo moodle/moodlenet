@@ -10,7 +10,7 @@ import { getMaybeAssetRefUrl } from '../../../../../../helpers/data'
 import { href } from '../../../../../elements/link'
 import { CtrlHook } from '../../../../../lib/ctrl'
 import { useEditResourceMutation } from '../../../../pages/Resource/Ctrl/ResourcePage.gen'
-import { ResourceCardLegacyProps } from '../ResourceCardLegacyLegacy'
+import { ResourceCardLegacyProps } from '../ResourceCardLegacy'
 import {
   useAddResourceCardLegacyRelationMutation,
   useDelResourceCardLegacyRelationMutation,

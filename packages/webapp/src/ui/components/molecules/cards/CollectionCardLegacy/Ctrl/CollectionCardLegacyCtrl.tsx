@@ -9,7 +9,7 @@ import { getMaybeAssetRefUrl } from '../../../../../../helpers/data'
 import { href } from '../../../../../elements/link'
 import { CtrlHook } from '../../../../../lib/ctrl'
 import { useEditCollectionMutation } from '../../../../pages/Collection/Ctrl/CollectionPage.gen'
-import { CollectionCardLegacyProps } from '../CollectionCardLegacyLegacy'
+import { CollectionCardLegacyProps } from '../CollectionCardLegacy'
 import {
   useAddCollectionCardLegacyRelationMutation,
   useCollectionCardLegacyQuery,

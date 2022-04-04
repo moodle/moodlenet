@@ -121,6 +121,8 @@ export const useCollectionCardCtrl: CtrlHook<
     () =>
       collectionNode
         ? {
+            collectionId: collectionNode.id,
+            // numResource: collectionNode,
             toggleVisible,
             organization: localOrg.name,
             title: collectionNode.name,
