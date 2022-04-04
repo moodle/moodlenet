@@ -258,6 +258,7 @@ export const useCollectionCtrl: CtrlHook<
         {},
         'header-page-template'
       ),
+      collectionId: collectionData.id,
       form,
       isOwner,
       isAdmin,

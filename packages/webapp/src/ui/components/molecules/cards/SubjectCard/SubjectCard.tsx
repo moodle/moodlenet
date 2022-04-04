@@ -1,6 +1,6 @@
 import { Href, Link } from '../../../../elements/link'
 import { withCtrl } from '../../../../lib/ctrl'
-import '../../../../styles/tags.css'
+import '../../../../styles/tags.scss'
 import { Organization } from '../../../../types'
 import Card from '../../../atoms/Card/Card'
 import './styles.scss'

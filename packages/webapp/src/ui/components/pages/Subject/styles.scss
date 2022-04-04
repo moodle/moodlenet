@@ -149,12 +149,8 @@
       }
 
       > .collections > .content {
-        justify-content: flex-start;
-        > .collection-card {
-          max-width: 200px;
-          min-width: 180px;
-          height: 100px;
-        }
+        max-height: 395px;
+        overflow: hidden;
       }
 
       @media (min-width: 450px) and (max-width: 800px) {

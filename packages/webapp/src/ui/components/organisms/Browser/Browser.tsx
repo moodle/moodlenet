@@ -287,7 +287,7 @@ export const Browser = withCtrl<BrowserProps>(
                   ? resourceCardPropsList.slice(0, 6)
                   : resourceCardPropsList
                 ).map((resourceCardProps) => (
-                  <ResourceCard {...resourceCardProps} />
+                  <ResourceCard {...resourceCardProps} orientation="vertical" />
                 ))}
                 title={
                   <div className="card-header">
@@ -305,7 +305,7 @@ export const Browser = withCtrl<BrowserProps>(
                   !shouldShowSeeAll('Resources') ? 'see-all' : ''
                 }`}
                 noCard={true}
-                minGrid={280}
+                minGrid={245}
               />
             )}
             {smallProfileCardPropsList && filters.People && (

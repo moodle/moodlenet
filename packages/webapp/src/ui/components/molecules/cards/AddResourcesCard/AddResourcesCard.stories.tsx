@@ -22,10 +22,9 @@ const meta: ComponentMeta<typeof AddResourcesCard> = {
 }
 
 export const AddResourceCard: ResourceCardProps = {
-  ...ResourceCardStoryProps,
+  ...ResourceCardStoryProps(),
   isSelected: false,
   resourceHomeHref: undefined,
-  direction: 'vertical',
   selectionMode: true,
 }
 

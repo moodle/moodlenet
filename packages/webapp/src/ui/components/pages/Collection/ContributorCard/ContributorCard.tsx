@@ -1,7 +1,7 @@
 import { Href, Link } from '../../../../elements/link'
 import { withCtrl } from '../../../../lib/ctrl'
 import defaultBackgroud from '../../../../static/img/default-background.svg'
-import '../../../../styles/tags.css'
+import '../../../../styles/tags.scss'
 import Card from '../../../atoms/Card/Card'
 import './styles.scss'
 

@@ -10,6 +10,7 @@ import {
   ResourceCardLoggedOutStoryProps,
   ResourceCardStoryProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard.stories'
+import { SmallProfileCardStoryProps } from '../../molecules/cards/SmallProfileCard/SmallProfileCard.stories'
 import { TrendCardStoryProps } from '../../molecules/cards/TrendCard/TrendCard.stories'
 import {
   HeaderPageTemplateLoggedInStoryProps,
@@ -37,61 +38,98 @@ const meta: ComponentMeta<typeof Landing> = {
 
 const contentLoggedIn = {
   collectionCardPropsList: [
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
   ],
   resourceCardPropsList: [
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
-    ResourceCardStoryProps,
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+  ],
+  smallProfileCardPropsList: [
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
+    SmallProfileCardStoryProps(randomIntFromInterval(0, 3)),
   ],
 }
 
 const contentLoggedOut = {
   collectionCardPropsList: [
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-    CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
+    CollectionCardLoggedOutStoryProps(
+      randomIntFromInterval(0, 1) === 0 ? 0 : 1
+    ),
   ],
   resourceCardPropsList: [
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
-    ResourceCardLoggedOutStoryProps,
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+    ResourceCardLoggedOutStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
   ],
 }
 
@@ -116,7 +154,6 @@ export const LandingLoggedInStoryProps: LandingProps = {
   signUpHref: href('Pages/Access/SignUp/Default'),
   newResourceHref: href('Pages/New Resource/Default'),
   newCollectionHref: href('Pages/New Collection/Start'),
-  loadMoreResources: action('Load more'),
   setSearchText: action('Search Text'),
 }
 
@@ -144,7 +181,6 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
   newResourceHref: href('Pages/New Resource/Default'),
   newCollectionHref: href('Pages/New Collection/Start'),
   setSearchText: action('Search Text'),
-  loadMoreResources: action('Load more'),
 }
 
 export const LandingOrganizationLoggedOutStoryProps: LandingProps = {

@@ -110,7 +110,7 @@ export const ResourceStoryProps = (overrides?: {
       category: CategoriesTextOptionProps[2]!.value,
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-      image: 'https://picsum.photos/200/100',
+      // image: 'https://picsum.photos/600/300',
       language: LanguagesTextOptionProps[2]!.value,
       level: LevelTextOptionProps[2]!.value,
       license: LicenseIconTextOptionProps[2]!.value,
@@ -143,6 +143,7 @@ export const ResourceStoryProps = (overrides?: {
 
   return {
     form,
+    resourceId: 'qjnwglkd69io-sports',
     headerPageTemplateProps: {
       headerPageProps: HeaderPageLoggedInStoryProps,
       isAuthenticated: true,

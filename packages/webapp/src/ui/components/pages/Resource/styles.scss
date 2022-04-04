@@ -134,6 +134,7 @@
                   > div {
                     grid-row-start: 1;
                     grid-column-start: 1;
+                    display: flex;
 
                     &.loading {
                       display: flex;
@@ -192,6 +193,21 @@
             width: 100%;
             object-fit: cover;
             border-radius: 20px;
+          }
+
+          > .image-credits,
+          > a > .image-credits {
+            bottom: 9px;
+            padding: 2px 7px;
+            border-radius: 6px;
+            right: 5px;
+            display: flex;
+            justify-content: flex-end;
+            font-size: 11px;
+            gap: 3px;
+            > a:hover {
+              text-decoration: underline;
+            }
           }
 
           > .change-image-button {

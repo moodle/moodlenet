@@ -193,6 +193,7 @@ export const Profile = withCtrl<ProfileProps>(
                     <ResourceCard
                       {...resourcesCardProps}
                       isEditing={isEditing}
+                      orientation="horizontal"
                     />
                   )
                 })}
@@ -212,7 +213,7 @@ export const Profile = withCtrl<ProfileProps>(
                       }
                     : undefined
                 }
-              ></ListCard>
+              />
               {collectionList}
             </div>
             <div className="side-column">
