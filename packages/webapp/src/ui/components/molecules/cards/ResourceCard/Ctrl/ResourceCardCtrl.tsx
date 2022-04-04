@@ -31,10 +31,6 @@ export const useResourceCardCtrl: CtrlHook<
     fetchPolicy: 'cache-and-network',
   })
   const resourceNode = narrowNodeType(['Resource'])(data?.node)
-  const creator = narrowNodeType(['Profile'])(
-    resourceNode?.creator.edges[0]?.node
-  )!
-  const isOwner = !!session && creator?.id === session.profile.id
 
   const [addRelation, addRelationRes] = useAddResourceCardRelationMutation()
   const [delRelation, delRelationRes] = useDelResourceCardRelationMutation()
@@ -120,9 +116,20 @@ export const useResourceCardCtrl: CtrlHook<
   ])
 
   const resourceCardUIProps = useMemo<ResourceCardProps | null>(() => {
+    const creator = narrowNodeType(['Profile'])(
+      resourceNode?.creator.edges[0]?.node
+    )
     if (!resourceNode) {
       return null
     }
+    if (!creator) {
+      console.error(
+        'beware, foound a resource without creator !! ',
+        resourceNode
+      )
+      return null
+    }
+    const isOwner = !!session && creator.id === session.profile.id
 
     return {
       owner: {
@@ -160,9 +167,7 @@ export const useResourceCardCtrl: CtrlHook<
     }
   }, [
     resourceNode,
-    creator.avatar,
-    creator.name,
-    creator.id,
+    session,
     toggleVisible,
     myLikeEdgeId,
     myBookmarkedEdgeId,
@@ -170,7 +175,6 @@ export const useResourceCardCtrl: CtrlHook<
     toggleBookmark,
     isAuthenticated,
     removeAction,
-    isOwner,
   ])
   return resourceCardUIProps && [resourceCardUIProps]
 }
