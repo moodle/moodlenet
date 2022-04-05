@@ -10,18 +10,26 @@ import { FollowTag } from '../../../../types'
 import { useCollectionCardCtrl } from '../../../molecules/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
 import { useSmallProfileCardCtrl } from '../../../molecules/cards/SmallProfileCard/Ctrl/SmallProfileCardCtrl'
+import { FilterType, filterTypes } from '../../../organisms/Browser/Browser'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
-import { useSearchUrlQuery } from '../../Search/Ctrl/useSearchUrlQuery'
+import { useBrowserUrlQuery } from '../../Search/Ctrl/useSearchUrlQuery'
 import { LandingProps } from '../Landing'
 import { useLandingPageListsQuery } from './LandingCtrl.gen'
 const newCollectionHref = href(mainPath.createNewCollection)
 const newResourceHref = href(mainPath.createNewResource)
 const loginHref = href(mainPath.login)
 const signUpHref = href(mainPath.signUp)
+const searchHref = (filterType: FilterType) =>
+  href(
+    `${mainPath.search}?${filterTypes
+      .filter((fltTyp) => fltTyp !== filterType)
+      .map((fltTyp) => `hideTypes=${fltTyp}`)
+      .join('&')}`
+  )
 
 export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
   const { isAuthenticated } = useSession()
-  const { setText: setSearchText } = useSearchUrlQuery()
+  const { setText: setSearchText } = useBrowserUrlQuery()
   const LandingPageLists = useLandingPageListsQuery()
   const collectionCardPropsList = useMemo(
     () =>
@@ -107,6 +115,9 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       newResourceHref,
       loginHref,
       signUpHref,
+      searchResourcesHref: searchHref('Resources'),
+      searchCollectionsHref: searchHref('Collections'),
+      searchAuthorsHref: searchHref('People'),
     }),
     [
       isAuthenticated,

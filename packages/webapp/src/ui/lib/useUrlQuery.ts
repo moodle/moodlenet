@@ -28,10 +28,14 @@ export const useUrlQuery = <ParamNames extends string>(
   const firstIn = useRef(true)
   const neverSet = useRef(true)
   const history = useHistory()
-  const location = history.location
 
-  const urlSearch = location.search
-  const baseUrl = opts?.baseUrl || location.pathname
+  const [urlSearch, setUrlSearch] = useState(history.location.search)
+  useEffect(
+    () => history.listen(({ search }) => setUrlSearch(search)),
+    [history]
+  )
+
+  const baseUrl = opts?.baseUrl || history.location.pathname
 
   const [queryParamsArray, queryParams] = useMemo(() => {
     const urlSearchParams = new URLSearchParams(urlSearch)
@@ -72,7 +76,8 @@ export const useUrlQuery = <ParamNames extends string>(
       return
     }
     const to = setTimeout(() => {
-      const action = opts?.baseUrl === location.pathname ? 'replace' : 'push'
+      const action =
+        opts?.baseUrl === history.location.pathname ? 'replace' : 'push'
       neverSet.current = false
       history[action]({
         pathname: opts?.baseUrl,
@@ -80,14 +85,7 @@ export const useUrlQuery = <ParamNames extends string>(
       })
     }, opts?.delay || 300)
     return () => clearTimeout(to)
-  }, [
-    history,
-    baseUrl,
-    queryString,
-    opts?.delay,
-    opts?.baseUrl,
-    location.pathname,
-  ])
+  }, [history, baseUrl, queryString, opts?.delay, opts?.baseUrl])
 
   // useEffect(() => {
   //   if (firstIn.current) {

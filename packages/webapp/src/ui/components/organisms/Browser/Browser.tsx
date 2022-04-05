@@ -1,5 +1,11 @@
 import { t, Trans } from '@lingui/macro'
-import { ChangeEventHandler, useCallback, useMemo, useReducer } from 'react'
+import {
+  ChangeEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+} from 'react'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import Checkbox from '../../atoms/Checkbox/Checkbox'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
@@ -45,6 +51,8 @@ export type BrowserProps = {
   peopleTitle?: string | null
   title?: string
   setSortBy: ((sortType: SortType, dir: SortState) => unknown) | null
+  setFilters: ((showTypes: Record<FilterType, boolean>) => unknown) | null
+  initialFilters?: Record<FilterType, boolean>
   loadMoreSubjects?: (() => unknown) | null
   loadMoreCollections?: (() => unknown) | null
   loadMoreResources?: (() => unknown) | null
@@ -64,6 +72,8 @@ export const Browser = withCtrl<BrowserProps>(
     loadMoreCollections,
     loadMoreResources,
     loadMorePeople,
+    setFilters,
+    initialFilters,
   }) => {
     const [filters, setFilter] = useReducer(
       (
@@ -73,14 +83,16 @@ export const Browser = withCtrl<BrowserProps>(
         ...prev,
         [type]: checked,
       }),
-      {
+      initialFilters ?? {
         Subjects: subjectCardPropsList ? true : false,
         Collections: collectionCardPropsList ? true : false,
         Resources: resourceCardPropsList ? true : false,
         People: smallProfileCardPropsList ? true : false,
       }
     )
-
+    useEffect(() => {
+      setFilters?.(filters)
+    }, [filters, setFilters])
     const seeAll = (type: FilterType) => {
       filterTypes.forEach((filterType: FilterType) => {
         filterType !== type && setFilter([filterType, false])
