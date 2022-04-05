@@ -9,7 +9,7 @@ import {
 import { mainPath } from '../../../../../hooks/glob/nav'
 import { href } from '../../../../elements/link'
 import { CtrlHook } from '../../../../lib/ctrl'
-import { useSearchUrlQuery } from '../../../pages/Search/Ctrl/useSearchUrlQuery'
+import { useBrowserUrlQuery } from '../../../pages/Search/Ctrl/useSearchUrlQuery'
 import { HeaderProps, HeaderPropsIdle } from '../Header'
 const homeHref = href(mainPath.landing)
 const loginHref = href(mainPath.login)
@@ -20,7 +20,7 @@ const bookmarksHref = href(mainPath.bookmarks)
 
 export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
   const { session, logout } = useSession()
-  const { setText: setSearchText, text: searchText } = useSearchUrlQuery()
+  const { setText: setSearchText, text: searchText } = useBrowserUrlQuery()
   const { org: localOrg } = useLocalInstance()
 
   const headerProps = useMemo<HeaderProps>(() => {

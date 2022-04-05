@@ -87,6 +87,7 @@ export const useFollowingCtrl: CtrlHook<FollowingProps, {}> = () => {
         ),
         resourceCardPropsList: null,
         setSortBy: null,
+        setFilters: null,
       },
     }
     return props

@@ -155,6 +155,9 @@ export const LandingLoggedInStoryProps: LandingProps = {
   newResourceHref: href('Pages/New Resource/Default'),
   newCollectionHref: href('Pages/New Collection/Start'),
   setSearchText: action('Search Text'),
+  searchResourcesHref: href(''), //FIXME
+  searchCollectionsHref: href(''), //FIXME
+  searchAuthorsHref: href(''), //FIXME
 }
 
 export const LandingLoggedOutStoryProps: LandingProps = {
@@ -181,6 +184,9 @@ export const LandingOrganizationLoggedInStoryProps: LandingProps = {
   newResourceHref: href('Pages/New Resource/Default'),
   newCollectionHref: href('Pages/New Collection/Start'),
   setSearchText: action('Search Text'),
+  searchResourcesHref: href(''), //FIXME
+  searchCollectionsHref: href(''), //FIXME
+  searchAuthorsHref: href(''), //FIXME
 }
 
 export const LandingOrganizationLoggedOutStoryProps: LandingProps = {

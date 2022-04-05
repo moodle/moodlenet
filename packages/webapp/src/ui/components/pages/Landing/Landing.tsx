@@ -45,10 +45,16 @@ export type LandingProps = {
   newResourceHref: Href
   newCollectionHref: Href
   setSearchText(text: string): unknown
+  searchResourcesHref: Href
+  searchCollectionsHref: Href
+  searchAuthorsHref: Href
 }
 
 export const Landing = withCtrl<LandingProps>(
   ({
+    searchResourcesHref,
+    searchAuthorsHref,
+    searchCollectionsHref,
     headerPageTemplateProps,
     // trendCardProps,
     collectionCardPropsList,
@@ -244,7 +250,9 @@ export const Landing = withCtrl<LandingProps>(
                 </div>
                 {
                   <SecondaryButton className="more">
-                    <Trans>See more resources</Trans>
+                    <Link href={searchResourcesHref}>
+                      <Trans>See more resources</Trans>
+                    </Link>
                     <ArrowForwardRoundedIcon />
                   </SecondaryButton>
                 }
@@ -272,7 +280,9 @@ export const Landing = withCtrl<LandingProps>(
                 </div>
                 {
                   <SecondaryButton className="more">
-                    <Trans>See more collections</Trans>
+                    <Link href={searchCollectionsHref}>
+                      <Trans>See more collections</Trans>
+                    </Link>
                     <ArrowForwardRoundedIcon />
                   </SecondaryButton>
                 }
@@ -299,7 +309,9 @@ export const Landing = withCtrl<LandingProps>(
                 </div>
                 {
                   <SecondaryButton className="more">
-                    <Trans>See more authors</Trans>
+                    <Link href={searchAuthorsHref}>
+                      <Trans>See more authors</Trans>
+                    </Link>
                     <ArrowForwardRoundedIcon />
                   </SecondaryButton>
                 }
