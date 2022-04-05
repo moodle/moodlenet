@@ -1,5 +1,5 @@
 import { createApi } from 'unsplash-js'
-import { Random } from 'unsplash-js/dist/methods/photos/types'
+import { Basic, Random } from 'unsplash-js/dist/methods/photos/types'
 import { ContentBackupImages } from '../ui/assets/data/images'
 
 export const isURL = (str: string): boolean => {
@@ -118,6 +118,27 @@ export const getNewRandomImage = (
     .then((result) => {
       if (result.type === 'success' && !Array.isArray(result.response)) {
         return result.response
+      } else {
+        return undefined
+      }
+    })
+}
+
+export const getUnsplashImages = (
+  query: string
+): Promise<Basic[] | undefined> => {
+  const unsplash = createApi({
+    accessKey: 'M-Iko8LWeVCJT4DdSFjbWDG0MyYqk8GmI0LoYjVSGrk',
+    //...other fetch options
+  })
+  return unsplash.search
+    .getPhotos({
+      query: query,
+      perPage: 30,
+    })
+    .then((result) => {
+      if (result.type === 'success' && !Array.isArray(result.response)) {
+        return result.response.results
       } else {
         return undefined
       }
