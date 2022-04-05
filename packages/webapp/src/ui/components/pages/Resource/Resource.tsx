@@ -9,12 +9,8 @@ import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
 import React, { useCallback, useRef, useState } from 'react'
-import { Random } from 'unsplash-js/dist/methods/photos/types'
-import {
-  getBackupImage,
-  getFirstWord,
-  getNewRandomImage,
-} from '../../../../helpers/utilities'
+import { Basic } from 'unsplash-js/dist/methods/photos/types'
+import { getBackupImage } from '../../../../helpers/utilities'
 import { getTagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
@@ -47,6 +43,7 @@ import {
   OptionItem,
   OptionItemProp,
 } from '../../molecules/cards/AddToCollectionsCard/AddToCollectionsCard'
+import SearchImage from '../../organisms/SearchImage/SearchImage'
 import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
@@ -132,6 +129,7 @@ export const Resource = withCtrl<ResourceProps>(
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
+    const [isSearchingImage, setIsSearchingImage] = useState<boolean>(false)
     const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
       useState<boolean>(false)
     const [isAddingToCollection, setIsAddingToCollection] =
@@ -140,7 +138,7 @@ export const Resource = withCtrl<ResourceProps>(
       useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-    const [unsplashImage, setUnsplashImage] = useState<Random | undefined>(
+    const [unsplashImage, setUnsplashImage] = useState<Basic | undefined>(
       undefined
     )
 
@@ -213,16 +211,12 @@ export const Resource = withCtrl<ResourceProps>(
       setUnsplashImage(undefined)
     }
 
-    const setNewRandomImage = () => {
-      const subjectFirstWord = getFirstWord(form.values.category)
-      const query = subjectFirstWord !== '' ? subjectFirstWord : 'education'
-      const photo = getNewRandomImage(query)
-      photo.then((photo) => {
-        if (photo) {
-          photo && setUnsplashImage(photo)
-          form.setFieldValue('image', photo?.urls.regular)
-        }
-      })
+    const setImage = (photo: Basic | undefined) => {
+      if (photo) {
+        photo && form.setFieldValue('image', photo.urls.regular)
+      } else {
+        deleteImage()
+      }
     }
 
     const actions = (
@@ -619,6 +613,13 @@ export const Resource = withCtrl<ResourceProps>(
             <Trans>Are you sure you want to discard the changes you made?</Trans>
           </Modal>
         )} */}
+        {isSearchingImage && (
+          <SearchImage
+            onClose={() => setIsSearchingImage(false)}
+            setUnsplashImage={setUnsplashImage}
+            setImage={setImage}
+          />
+        )}
         {isShowingImage && typeof imageUrl === 'string' && (
           <Modal
             className="image-modal"
@@ -900,12 +901,13 @@ export const Resource = withCtrl<ResourceProps>(
                           onClick={selectImage}
                         />
                         <RoundButton
-                          className={`use-new-random-image-button ${
+                          className={`search-image-button ${
                             form.isSubmitting ? 'disabled' : ''
                           }`}
-                          type="refresh"
+                          type="search"
                           abbrTitle={t`Get random image`}
-                          onClick={setNewRandomImage}
+                          onClick={() => setIsSearchingImage(true)}
+                          // onClick={setNewRandomImage}
                         />
                         <RoundButton
                           className={`delete-image ${

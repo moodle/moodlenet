@@ -48,7 +48,7 @@
           z-index: 5;
           padding: 10px;
           display: flex;
-          justify-content: end;
+          justify-content: flex-end;
           gap: 6px;
           > * {
             &.disabled {

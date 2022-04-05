@@ -213,8 +213,6 @@
             }
           }
 
-          > .change-image-button {
-          }
           > .image-actions {
             position: absolute;
             top: 0;
@@ -226,6 +224,15 @@
             > * {
               &.disabled {
                 pointer-events: none;
+              }
+            }
+
+            > .change-image-button {
+            }
+
+            > .search-image-button {
+              > .content > svg {
+                padding: 3px;
               }
             }
           }
