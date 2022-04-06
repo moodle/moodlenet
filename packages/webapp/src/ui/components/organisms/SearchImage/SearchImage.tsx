@@ -1,16 +1,13 @@
 import React, { ReactElement, useCallback, useEffect, useState } from 'react'
 import { Basic } from 'unsplash-js/dist/methods/photos/types'
 import { getUnsplashImages } from '../../../../helpers/utilities'
+import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
+import InputTextField from '../../atoms/InputTextField/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
+import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import './styles.scss'
 
 export type SearchImageProps = {
-  title?: string
-  actions?: React.ReactNode
-  style?: React.CSSProperties
-  className?: string
-  closeButton?: boolean
-
   setImage: (photo: Basic | undefined) => void
   setUnsplashImage: React.Dispatch<React.SetStateAction<Basic | undefined>>
   onClose: () => void
@@ -22,23 +19,19 @@ export const SearchImage: React.FC<SearchImageProps> = ({
   onClose,
   setImage,
   setUnsplashImage,
-  // title,
-  // actions,
-  // style,
-  // className,
-  // closeButton,
-  // children,
 }) => {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [tmpSearchQuery, setTmpSearchQuery] = useState('')
   const [unsplashImages, setUnsplashImages] = useState<Basic[]>()
   const [column1, setColumn1] = useState<ReactElement[] | undefined>()
   const [column2, setColumn2] = useState<ReactElement[] | undefined>()
-  const getNewUnsplashImages = () => {
-    const query = 'nature'
+
+  const searchUnsplashImages = (query: string) => {
+    setSearchQuery(query)
     const photos = getUnsplashImages(query)
     photos.then((photos) => photos && setUnsplashImages(photos))
   }
 
-  getNewUnsplashImages()
   const getImagesColumn = useCallback(
     (photos: Basic[] | undefined) => {
       return photos?.map((photo, i) => (
@@ -55,12 +48,16 @@ export const SearchImage: React.FC<SearchImageProps> = ({
           >
             <img src={`${(photo as Basic).urls.small}`} alt="" />
             <div className="active-overlay" />
+            <a className="credits" href={photo.user.links.portfolio}>
+              {photo.user.first_name} {photo.user.last_name}
+            </a>
           </div>
         </div>
       ))
     },
     [setUnsplashImage, setImage, onClose]
   )
+
   useEffect(() => {
     let totalHeight = 0
     unsplashImages?.map((photo) => {
@@ -79,18 +76,80 @@ export const SearchImage: React.FC<SearchImageProps> = ({
     setColumn2(getImagesColumn(unsplashImages?.slice(i)))
   }, [unsplashImages, getImagesColumn])
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      searchUnsplashImages(tmpSearchQuery)
+    }
+  }
+
+  const sampleQuerySet = () => {
+    const querySet = [
+      'abstract',
+      'animal',
+      'architecture',
+      'art',
+      'interior',
+      'business',
+      'colorful',
+      'food',
+      'interior',
+      'minimal',
+      'nature',
+      'plant',
+      'portrait',
+      'space',
+      'technology',
+      'texture',
+      'wallpaper',
+    ]
+    return querySet.map((query) => {
+      return (
+        <PrimaryButton
+          color="card"
+          onClick={() => {
+            setSearchQuery(query)
+            searchUnsplashImages(query)
+          }}
+        >
+          {query}
+        </PrimaryButton>
+      )
+    })
+  }
+
+  const searchBox = (
+    <div className="image-search-box">
+      <InputTextField
+        edit={true}
+        onKeyDown={handleKeyDown}
+        value={tmpSearchQuery}
+        onChange={(v) => setTmpSearchQuery(v.currentTarget.value)}
+      />
+      <PrimaryButton
+        className="search-button"
+        color="blue"
+        disabled={tmpSearchQuery === ''}
+        onClick={() => searchUnsplashImages(tmpSearchQuery)}
+      >
+        <SearchIcon />
+      </PrimaryButton>
+    </div>
+  )
+
   return (
     <Modal className="search-image" onClose={onClose} closeButton={false}>
-      <div className="images-container">
-        <div className="column-1">{column1}</div>
-        <div className="column-2">{column2}</div>
-      </div>
+      {searchBox}
+      {searchQuery === '' ? (
+        <div className="sample-queries-container">{sampleQuerySet()}</div>
+      ) : (
+        <div className="images-container">
+          <div className="column-1">{column1}</div>
+          <div className="column-2">{column2}</div>
+        </div>
+      )}
     </Modal>
   )
 }
-SearchImage.defaultProps = {
-  className: '',
-  closeButton: true,
-}
+SearchImage.defaultProps = {}
 
 export default SearchImage
