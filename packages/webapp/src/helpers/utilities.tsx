@@ -1,6 +1,6 @@
 import { createApi } from 'unsplash-js'
 import { Basic, Random } from 'unsplash-js/dist/methods/photos/types'
-import { ContentBackupImages } from '../ui/assets/data/images'
+import { ContentBackupImages, RecursivePartial } from '../ui/assets/data/images'
 
 export const isURL = (str: string): boolean => {
   const pattern = new RegExp(
@@ -86,19 +86,13 @@ export const getNumberFromString = (s: string) =>
     10
   )
 
-export const getBackupImage = (id: string) => {
+export const getBackupImage = (
+  id: string
+): RecursivePartial<Basic> | undefined => {
   const numId = getNumberFromString(id)
-  const image = ContentBackupImages[numId % ContentBackupImages.length]
-
-  return {
-    image: image?.image,
-    creatorName: image?.creatorName,
-    creatorUrl: image?.creatorUrl,
-    style: {
-      backgroundImage: 'url(' + image?.image + ')',
-    },
-  }
+  return ContentBackupImages[numId % ContentBackupImages.length]
 }
+
 export const getRandomInt = (max: number) => {
   return Math.floor(Math.random() * max)
 }
