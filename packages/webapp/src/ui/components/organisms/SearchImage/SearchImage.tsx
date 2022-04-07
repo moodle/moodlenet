@@ -3,6 +3,7 @@ import { Basic } from 'unsplash-js/dist/methods/photos/types'
 import { getUnsplashImages } from '../../../../helpers/utilities'
 import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
 import InputTextField from '../../atoms/InputTextField/InputTextField'
+import Loading from '../../atoms/Loading/Loading'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import './styles.scss'
@@ -24,11 +25,18 @@ export const SearchImage: React.FC<SearchImageProps> = ({
   const [unsplashImages, setUnsplashImages] = useState<Basic[]>()
   const [column1, setColumn1] = useState<ReactElement[] | undefined>()
   const [column2, setColumn2] = useState<ReactElement[] | undefined>()
+  const [showImages, setShowImages] = useState(false)
+  const [loadedImages, setLoadedImages] = useState(0)
 
   const searchUnsplashImages = (query: string) => {
-    setSearchQuery(query)
     const photos = getUnsplashImages(query)
-    photos.then((photos) => photos && setUnsplashImages(photos))
+    photos.then((photos) => {
+      if (photos) {
+        setUnsplashImages(photos)
+        setShowImages(false)
+        setLoadedImages(0)
+      }
+    })
   }
 
   const getImagesColumn = useCallback(
@@ -42,7 +50,11 @@ export const SearchImage: React.FC<SearchImageProps> = ({
               onClose()
             }}
           >
-            <img src={`${(photo as Basic).urls.small}`} alt="" />
+            <img
+              src={`${(photo as Basic).urls.small}`}
+              alt=""
+              onLoad={() => setLoadedImages((prevState) => prevState + 1)}
+            />
             <div className="active-overlay" />
             <a
               className="credits"
@@ -56,8 +68,18 @@ export const SearchImage: React.FC<SearchImageProps> = ({
         </div>
       ))
     },
-    [setImage, onClose]
+    [setImage, onClose, setLoadedImages]
   )
+
+  useEffect(() => {
+    console.log('totalImages ', unsplashImages?.length)
+    console.log('loadedImages ', loadedImages)
+    loadedImages === unsplashImages?.length && setShowImages(true)
+  }, [loadedImages, unsplashImages])
+
+  // useEffect(() => {
+  //   unsplashImages && setTimeout(() => setShowImages(true), 200)
+  // }, [unsplashImages])
 
   useEffect(() => {
     let totalHeight = 0
@@ -68,7 +90,6 @@ export const SearchImage: React.FC<SearchImageProps> = ({
     let i = 0
     let height = 0
     unsplashImages?.every((photo) => {
-      console.log(photo)
       height += photo.height / (photo.width / 100)
       i++
       if (height < columnMaxHeight) return true
@@ -79,8 +100,15 @@ export const SearchImage: React.FC<SearchImageProps> = ({
   }, [unsplashImages, getImagesColumn])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter') {
-      searchUnsplashImages(tmpSearchQuery)
+    if (
+      e.key === 'Enter' &&
+      !(
+        (tmpSearchQuery === '' && searchQuery === '') ||
+        tmpSearchQuery === searchQuery
+      )
+    ) {
+      setSearchQuery(tmpSearchQuery)
+      tmpSearchQuery !== '' && searchUnsplashImages(tmpSearchQuery)
     }
   }
 
@@ -110,6 +138,7 @@ export const SearchImage: React.FC<SearchImageProps> = ({
           key={i}
           color="card"
           onClick={() => {
+            setTmpSearchQuery(query)
             setSearchQuery(query)
             searchUnsplashImages(query)
           }}
@@ -132,7 +161,10 @@ export const SearchImage: React.FC<SearchImageProps> = ({
       <PrimaryButton
         className="search-button"
         color="blue"
-        disabled={tmpSearchQuery === ''}
+        disabled={
+          (tmpSearchQuery === '' && searchQuery === '') ||
+          tmpSearchQuery === searchQuery
+        }
         onClick={() => searchUnsplashImages(tmpSearchQuery)}
       >
         <SearchIcon />
@@ -146,10 +178,16 @@ export const SearchImage: React.FC<SearchImageProps> = ({
       {searchQuery === '' ? (
         <div className="sample-queries-container">{sampleQuerySet()}</div>
       ) : (
-        <div className="images-container">
-          <div className="column-1">{column1}</div>
-          <div className="column-2">{column2}</div>
-        </div>
+        <>
+          <div
+            className="images-container"
+            style={{ display: showImages ? 'flex' : 'none' }}
+          >
+            <div className="column-1">{column1}</div>
+            <div className="column-2">{column2}</div>
+          </div>
+          {!showImages && <Loading size={30} />}
+        </>
       )}
     </Modal>
   )

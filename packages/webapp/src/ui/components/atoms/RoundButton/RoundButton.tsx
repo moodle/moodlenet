@@ -2,6 +2,7 @@ import CachedIcon from '@material-ui/icons/Cached'
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import EditIcon from '@material-ui/icons/Edit'
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import SearchIcon from '@mui/icons-material/Search'
 import { FC } from 'react'
 import './styles.scss'
@@ -11,7 +12,7 @@ export type RoundButtonProps = {
   onKeyUp?: { key: string; func: () => void }
   className?: string
   tabIndex?: number
-  type?: 'cross' | 'trash' | 'edit' | 'refresh' | 'search'
+  type?: 'cross' | 'trash' | 'edit' | 'refresh' | 'search' | 'file'
   color?: 'gray' | 'red'
   onHoverColor?: 'gray' | 'red' | 'fill-red'
   abbrTitle?: string
@@ -41,6 +42,7 @@ export const RoundButton: FC<RoundButtonProps> = ({
         {type === 'edit' && <EditIcon className={svgClassName} />}
         {type === 'refresh' && <CachedIcon className={svgClassName} />}
         {type === 'search' && <SearchIcon className={svgClassName} />}
+        {type === 'file' && <InsertDriveFileIcon className={svgClassName} />}
       </div>
     </abbr>
   )
