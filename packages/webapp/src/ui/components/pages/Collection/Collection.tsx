@@ -5,13 +5,10 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import SaveIcon from '@material-ui/icons/Save'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Basic } from 'unsplash-js/dist/methods/photos/types'
-import {
-  getBackupImage,
-  getFirstWord,
-  getNewRandomImage,
-} from '../../../../helpers/utilities'
+import { getBackupImage } from '../../../../helpers/utilities'
+import { RecursivePartial } from '../../../assets/data/images'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
 import { useImageUrl } from '../../../lib/useImageUrl'
@@ -32,6 +29,7 @@ import {
   ResourceCard,
   ResourceCardProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard'
+import SearchImage from '../../organisms/SearchImage/SearchImage'
 import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
@@ -82,9 +80,15 @@ export const Collection = withCtrl<CollectionProps>(
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isShowingBackground, setIsShowingBackground] =
       useState<boolean>(false)
-    const [unsplashImage, setUnsplashImage] = useState<Basic | undefined>(
-      undefined
-    )
+    const [isSearchingImage, setIsSearchingImage] = useState<boolean>(false)
+    const backupImage: RecursivePartial<Basic> | undefined =
+      getBackupImage(collectionId)
+    const [currentImage, setCurrentImage] = useState<
+      RecursivePartial<Basic> | Basic | string | File | null | undefined
+    >(form.values.image || backupImage)
+    const [completeImage, setCompleteImage] = useState<
+      Basic | null | undefined
+    >(currentImage as Basic)
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -99,13 +103,10 @@ export const Collection = withCtrl<CollectionProps>(
       }
     }
     const [imageUrl] = useImageUrl(form.values.image)
-    const backupImage = imageUrl ? null : getBackupImage(collectionId)
-    const background = imageUrl
-      ? {
-          backgroundImage: 'url(' + imageUrl + ')',
-          backgroundSize: 'cover',
-        }
-      : backupImage?.style
+    const background = {
+      backgroundImage: `url(${imageUrl || backupImage?.urls?.regular})`,
+      backgroundSize: 'cover',
+    }
     const uploadImageRef = useRef<HTMLInputElement>(null)
     const selectImage = () => {
       uploadImageRef.current?.click()
@@ -118,10 +119,30 @@ export const Collection = withCtrl<CollectionProps>(
       [form]
     )
 
-    const imageCredits = backupImage && (
+    const setImage = (photo: Basic | undefined) => {
+      if (photo) {
+        form.setFieldValue('image', photo.urls.regular)
+        setCurrentImage(photo)
+      } else {
+        deleteImage()
+      }
+    }
+
+    const deleteImage = () => {
+      form.setFieldValue('image', null)
+      setCurrentImage(backupImage)
+    }
+
+    useEffect(() => {
+      setCompleteImage(currentImage as Basic)
+    }, [currentImage])
+
+    const imageCredits = completeImage && (
       <div className="image-credits">
         Photo by
-        <a href={backupImage.creatorUrl}>{backupImage.creatorName}</a>
+        <a href={completeImage.user?.links?.html}>
+          {completeImage.user?.first_name}
+        </a>
         on
         <a
           href={`https://unsplash.com/?utm_source=moodlenet&utm_medium=referral`}
@@ -130,22 +151,6 @@ export const Collection = withCtrl<CollectionProps>(
         </a>
       </div>
     )
-    const deleteImage = () => {
-      form.setFieldValue('image', null)
-      setUnsplashImage(undefined)
-    }
-
-    const setNewRandomImage = () => {
-      const subjectFirstWord = getFirstWord(form.values.title)
-      const query = subjectFirstWord !== '' ? subjectFirstWord : 'education'
-      const photo = getNewRandomImage(query)
-      photo.then((photo) => {
-        if (photo) {
-          photo && setUnsplashImage(photo)
-          form.setFieldValue('image', photo?.urls.regular)
-        }
-      })
-    }
 
     const extraDetails = (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
@@ -177,6 +182,12 @@ export const Collection = withCtrl<CollectionProps>(
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        {isSearchingImage && (
+          <SearchImage
+            onClose={() => setIsSearchingImage(false)}
+            setImage={setImage}
+          />
+        )}
         {isShowingBackground &&
           (typeof form.values.image === 'string' || backupImage) && (
             <Modal
@@ -192,7 +203,7 @@ export const Collection = withCtrl<CollectionProps>(
                 src={
                   typeof form.values.image === 'string'
                     ? form.values.image
-                    : backupImage?.image
+                    : backupImage?.urls?.regular
                 }
                 alt="Cover"
               />
@@ -252,17 +263,17 @@ export const Collection = withCtrl<CollectionProps>(
                       className={`change-image-button ${
                         form.isSubmitting ? 'disabled' : ''
                       }`}
-                      type="edit"
-                      abbrTitle={t`Change image`}
+                      type="file"
+                      abbrTitle={t`Look for a file`}
                       onClick={selectImage}
                     />
                     <RoundButton
-                      className={`use-new-random-image-button ${
+                      className={`search-image-button ${
                         form.isSubmitting ? 'disabled' : ''
                       }`}
-                      type="refresh"
-                      abbrTitle={t`Get random image`}
-                      onClick={setNewRandomImage}
+                      type="search"
+                      abbrTitle={t`Search for an image`}
+                      onClick={() => setIsSearchingImage(true)}
                     />
                     <RoundButton
                       className={`delete-image ${
@@ -401,26 +412,6 @@ export const Collection = withCtrl<CollectionProps>(
                       >
                         <DeleteOutlineIcon />
                       </SecondaryButton>
-                    )}
-                    {!isEditing && unsplashImage && (
-                      <div className="image-credits scroll">
-                        Photo by
-                        <a
-                          href={
-                            unsplashImage.user.portfolio_url ||
-                            unsplashImage.user.links.portfolio
-                          }
-                        >
-                          {unsplashImage.user.first_name}{' '}
-                          {unsplashImage.user.last_name}
-                        </a>
-                        on
-                        <a
-                          href={`https://unsplash.com/?utm_source=moodlenet&utm_medium=referral`}
-                        >
-                          Unsplash
-                        </a>
-                      </div>
                     )}
                   </div>
                 </div>

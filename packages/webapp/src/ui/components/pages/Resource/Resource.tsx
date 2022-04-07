@@ -183,6 +183,19 @@ export const Resource = withCtrl<ResourceProps>(
       },
       [form]
     )
+    const deleteImage = () => {
+      form.setFieldValue('image', null)
+      setCurrentImage(backupImage)
+    }
+
+    const setImage = (photo: Basic | undefined) => {
+      if (photo) {
+        form.setFieldValue('image', photo.urls.regular)
+        setCurrentImage(photo)
+      } else {
+        deleteImage()
+      }
+    }
     const [imageUrl] = useImageUrl(
       form.values.image,
       backupImage?.urls?.regular
@@ -228,20 +241,6 @@ export const Resource = withCtrl<ResourceProps>(
           </div>
         )
       )
-    }
-
-    const deleteImage = () => {
-      form.setFieldValue('image', null)
-      setCurrentImage(undefined)
-    }
-
-    const setImage = (photo: Basic | undefined) => {
-      if (photo) {
-        form.setFieldValue('image', photo.urls.regular)
-        setCurrentImage(photo)
-      } else {
-        deleteImage()
-      }
     }
 
     const actions = (
@@ -917,8 +916,8 @@ export const Resource = withCtrl<ResourceProps>(
                           className={`change-image-button ${
                             form.isSubmitting ? 'disabled' : ''
                           }`}
-                          type="edit"
-                          abbrTitle={t`Change image`}
+                          type="file"
+                          abbrTitle={t`Look for a file`}
                           onClick={selectImage}
                         />
                         <RoundButton
@@ -926,9 +925,8 @@ export const Resource = withCtrl<ResourceProps>(
                             form.isSubmitting ? 'disabled' : ''
                           }`}
                           type="search"
-                          abbrTitle={t`Get random image`}
+                          abbrTitle={t`Search for an image`}
                           onClick={() => setIsSearchingImage(true)}
-                          // onClick={setNewRandomImage}
                         />
                         <RoundButton
                           className={`delete-image ${

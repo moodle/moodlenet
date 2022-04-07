@@ -11,6 +11,9 @@
       position: relative;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      height: 100%;
+      width: 100%;
       gap: 20px;
       margin-top: 80px;
       > .image-search-box {
@@ -105,13 +108,20 @@
                 font-size: 12px;
                 color: #5a5a5a;
                 &:hover {
-                  opacity: 0.6;
                   text-decoration: underline;
+                  opacity: 0.6;
                 }
               }
             }
           }
         }
+      }
+      > .loading {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     }
   }

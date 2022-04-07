@@ -167,10 +167,13 @@
             }
           }
 
-          .tags > a > .tag {
-            font-size: 12px;
-            padding: 4px 10px;
-            margin: 8px 0;
+          .tags {
+            gap: 5px;
+            > a > .tag {
+              font-size: 12px;
+              padding: 4px 10px;
+              margin: 8px 0;
+            }
           }
         }
 

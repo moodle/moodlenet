@@ -51,7 +51,7 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
     const background = {
       background:
         'radial-gradient(120% 132px at 50% 55%, rgba(0, 0, 0, 0.4) 0%,  rgba(0, 0, 0, 0.2) 73%) 0% 0% / cover, url(' +
-        (imageUrl || getBackupImage(collectionId).image) +
+        (imageUrl || getBackupImage(collectionId)?.urls?.regular) +
         ')',
       backgroundSize: 'cover',
     }
