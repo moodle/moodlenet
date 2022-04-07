@@ -9,7 +9,7 @@ import './styles.scss'
 
 export type SearchImageProps = {
   setImage: (photo: Basic | undefined) => void
-  setUnsplashImage: React.Dispatch<React.SetStateAction<Basic | undefined>>
+
   onClose: () => void
 }
 
@@ -18,7 +18,6 @@ export type SearchImageProps = {
 export const SearchImage: React.FC<SearchImageProps> = ({
   onClose,
   setImage,
-  setUnsplashImage,
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [tmpSearchQuery, setTmpSearchQuery] = useState('')
@@ -35,27 +34,29 @@ export const SearchImage: React.FC<SearchImageProps> = ({
   const getImagesColumn = useCallback(
     (photos: Basic[] | undefined) => {
       return photos?.map((photo, i) => (
-        <div className="image-container">
+        <div className="image-container" key={i}>
           <div
             className="image"
             onClick={() => {
-              setUnsplashImage(photo)
-              setImage(undefined)
               setImage(photo)
               onClose()
             }}
-            key={i}
           >
             <img src={`${(photo as Basic).urls.small}`} alt="" />
             <div className="active-overlay" />
-            <a className="credits" href={photo.user.links.portfolio}>
+            <a
+              className="credits"
+              href={photo.user.links.html}
+              target="_blank"
+              rel="noreferrer"
+            >
               {photo.user.first_name} {photo.user.last_name}
             </a>
           </div>
         </div>
       ))
     },
-    [setUnsplashImage, setImage, onClose]
+    [setImage, onClose]
   )
 
   useEffect(() => {
@@ -67,6 +68,7 @@ export const SearchImage: React.FC<SearchImageProps> = ({
     let i = 0
     let height = 0
     unsplashImages?.every((photo) => {
+      console.log(photo)
       height += photo.height / (photo.width / 100)
       i++
       if (height < columnMaxHeight) return true
@@ -102,9 +104,10 @@ export const SearchImage: React.FC<SearchImageProps> = ({
       'texture',
       'wallpaper',
     ]
-    return querySet.map((query) => {
+    return querySet.map((query, i) => {
       return (
         <PrimaryButton
+          key={i}
           color="card"
           onClick={() => {
             setSearchQuery(query)
@@ -120,6 +123,7 @@ export const SearchImage: React.FC<SearchImageProps> = ({
   const searchBox = (
     <div className="image-search-box">
       <InputTextField
+        placeholder="Search Unsplash photos"
         edit={true}
         onKeyDown={handleKeyDown}
         value={tmpSearchQuery}

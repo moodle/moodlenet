@@ -1,3 +1,4 @@
+import { Basic } from 'unsplash-js/dist/methods/photos/types'
 import ashleywhitlatch from '../../static/img/contentBackup/ashleywhitlatch.jpg'
 import dvlden from '../../static/img/contentBackup/dvlden.jpg'
 import dvlden2 from '../../static/img/contentBackup/dvlden2.jpg'
@@ -18,100 +19,146 @@ import mymind2 from '../../static/img/contentBackup/mymind2.jpg'
 import seanwsinclair from '../../static/img/contentBackup/seanwsinclair.jpg'
 import vackground from '../../static/img/contentBackup/vackground.jpg'
 
-export const ContentBackupImages = [
+export type RecursivePartial<T> = {
+  [P in keyof T]?: RecursivePartial<T[P]>
+}
+
+export const ContentBackupImages: RecursivePartial<Basic>[] = [
   {
-    image: mymind,
-    creatorName: 'mymind',
-    creatorUrl: 'https://unsplash.com/@mymind',
+    user: {
+      first_name: 'mymind',
+      links: {
+        html: 'https://unsplash.com/@mymind',
+      },
+    },
+    urls: {
+      regular: mymind,
+    },
   },
   {
-    image: seanwsinclair,
-    creatorName: 'Sean Sinclair',
-    creatorUrl: 'https://unsplash.com/@seanwsinclair',
+    urls: { regular: seanwsinclair },
+    user: {
+      first_name: 'Sean Sinclair',
+      links: { html: 'https://unsplash.com/@seanwsinclair' },
+    },
   },
   {
-    image: fakurian,
-    creatorName: 'Milad Fakurian',
-    creatorUrl: 'https://unsplash.com/@fakurian',
+    urls: { regular: fakurian },
+    user: {
+      first_name: 'Milad Fakurian',
+      links: { html: 'https://unsplash.com/@fakurian' },
+    },
   },
   {
-    image: fakurian2,
-    creatorName: 'Milad Fakurian',
-    creatorUrl: 'https://unsplash.com/@fakurian',
+    urls: { regular: fakurian2 },
+    user: {
+      first_name: 'Milad Fakurian',
+      links: { html: 'https://unsplash.com/@fakurian' },
+    },
   },
   {
-    image: mymind2,
-    creatorName: 'mymind',
-    creatorUrl: 'https://unsplash.com/@mymind',
+    urls: { regular: mymind2 },
+    user: {
+      first_name: 'mymind',
+      links: { html: 'https://unsplash.com/@mymind' },
+    },
   },
   {
-    image: ashleywhitlatch,
-    creatorName: 'Ashley Whitlatch',
-    creatorUrl: 'https://unsplash.com/@ashleywhitlatch',
+    urls: { regular: ashleywhitlatch },
+    user: {
+      first_name: 'Ashley Whitlatch',
+      links: { html: 'https://unsplash.com/@ashleywhitlatch' },
+    },
   },
   {
-    image: gradienta,
-    creatorName: 'Gradienta',
-    creatorUrl: 'https://unsplash.com/@gradienta',
+    urls: { regular: gradienta },
+    user: {
+      first_name: 'Gradienta',
+      links: { html: 'https://unsplash.com/@gradienta' },
+    },
   },
   {
-    image: gradienta2,
-    creatorName: 'Gradienta',
-    creatorUrl: 'https://unsplash.com/@gradienta',
+    urls: { regular: gradienta2 },
+    user: {
+      first_name: 'Gradienta',
+      links: { html: 'https://unsplash.com/@gradienta' },
+    },
   },
   {
-    image: gradienta3,
-    creatorName: 'Gradienta',
-    creatorUrl: 'https://unsplash.com/@gradienta',
+    urls: { regular: gradienta3 },
+    user: {
+      first_name: 'Gradienta',
+      links: { html: 'https://unsplash.com/@gradienta' },
+    },
   },
   {
-    image: gradienta4,
-    creatorName: 'Gradienta',
-    creatorUrl: 'https://unsplash.com/@gradienta',
+    urls: { regular: gradienta4 },
+    user: {
+      first_name: 'Gradienta',
+      links: { html: 'https://unsplash.com/@gradienta' },
+    },
   },
   {
-    image: gradienta5,
-    creatorName: 'Gradienta',
-    creatorUrl: 'https://unsplash.com/@gradienta',
+    urls: { regular: gradienta5 },
+    user: {
+      first_name: 'Gradienta',
+      links: { html: 'https://unsplash.com/@gradienta' },
+    },
   },
   {
-    image: fakurian,
-    creatorName: 'Milad Fakurian',
-    creatorUrl: 'https://unsplash.com/@fakurian',
+    urls: { regular: fakurian },
+    user: {
+      first_name: 'Milad Fakurian',
+      links: { html: 'https://unsplash.com/@fakurian' },
+    },
   },
   {
-    image: fakurian,
-    creatorName: 'Milad Fakurian',
-    creatorUrl: 'https://unsplash.com/@fakurian',
+    urls: { regular: fakurian },
+    user: {
+      first_name: 'Milad Fakurian',
+      links: { html: 'https://unsplash.com/@fakurian' },
+    },
   },
   {
-    image: hendrikkay,
-    creatorName: 'Hendrik Kespohl',
-    creatorUrl: 'https://unsplash.com/@hendrikkay',
+    urls: { regular: hendrikkay },
+    user: {
+      first_name: 'Hendrik Kespohl',
+      links: { html: 'https://unsplash.com/@hendrikkay' },
+    },
   },
   {
-    image: lukechesser,
-    creatorName: 'Luke Chesser',
-    creatorUrl: 'https://unsplash.com/@lukechesser',
+    urls: { regular: lukechesser },
+    user: {
+      first_name: 'Luke Chesser',
+      links: { html: 'https://unsplash.com/@lukechesser' },
+    },
   },
   {
-    image: lukechesser2,
-    creatorName: 'Luke Chesser',
-    creatorUrl: 'https://unsplash.com/@lukechesser',
+    urls: { regular: lukechesser2 },
+    user: {
+      first_name: 'Luke Chesser',
+      links: { html: 'https://unsplash.com/@lukechesser' },
+    },
   },
   {
-    image: vackground,
-    creatorName: 'Vackground',
-    creatorUrl: 'https://unsplash.com/@vackground',
+    urls: { regular: vackground },
+    user: {
+      first_name: 'Vackground',
+      links: { html: 'https://unsplash.com/@vackground' },
+    },
   },
   {
-    image: dvlden,
-    creatorName: 'Nenad Novaković',
-    creatorUrl: 'https://unsplash.com/@dvlden',
+    urls: { regular: dvlden },
+    user: {
+      first_name: 'Nenad Novaković',
+      links: { html: 'https://unsplash.com/@dvlden' },
+    },
   },
   {
-    image: dvlden2,
-    creatorName: 'Nenad Novaković',
-    creatorUrl: 'https://unsplash.com/@dvlden',
+    urls: { regular: dvlden2 },
+    user: {
+      first_name: 'Nenad Novaković',
+      links: { html: 'https://unsplash.com/@dvlden' },
+    },
   },
 ]
