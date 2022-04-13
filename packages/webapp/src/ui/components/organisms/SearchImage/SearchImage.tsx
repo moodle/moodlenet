@@ -123,16 +123,13 @@ export const SearchImage: React.FC<SearchImageProps> = ({
     setLeftColumnHeight((prev) =>
       newQuery ? newLeftColumHeight : prev + newLeftColumHeight
     )
-
     setRightColumnHeight((prev) =>
       newQuery
         ? totalHeight - newLeftColumHeight
         : prev + totalHeight - newLeftColumHeight
     )
-
     let column1Images = photos?.slice(0, i)
     let column2Images = photos?.slice(i)
-
     if (newQuery) {
       setColumnBreakIndex(i)
       setUnsplashImages(photos)
@@ -150,7 +147,6 @@ export const SearchImage: React.FC<SearchImageProps> = ({
       setColumnBreakIndex((prevIndex) => prevIndex + i)
       setUnsplashImages(column1Images.concat(column2Images))
     }
-
     setColumn1(getImagesColumn(column1Images))
     setColumn2(getImagesColumn(column2Images))
   }
@@ -159,14 +155,16 @@ export const SearchImage: React.FC<SearchImageProps> = ({
     loadedImages === unsplashImages?.length &&
       unsplashImages?.length !== 0 &&
       setShowImages(true)
+    // setLoadedPages((currentState) => currentState++)
   }, [loadedImages, unsplashImages])
 
   useEffect(() => {
-    if (tmpSearchQuery === '' && setSearchQuery('')) {
+    if (tmpSearchQuery === '') {
+      setSearchQuery('')
       setColumn1([])
       setColumn2([])
     }
-  }, [tmpSearchQuery])
+  }, [tmpSearchQuery, searchQuery])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' && tmpSearchQuery !== searchQuery) {
