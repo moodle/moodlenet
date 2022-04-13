@@ -114,6 +114,7 @@ export const Collection = withCtrl<CollectionProps>(
 
     const uploadImage = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCompleteImage(null)
         form.setFieldValue('image', e.currentTarget.files?.item(0))
       },
       [form]
@@ -188,28 +189,29 @@ export const Collection = withCtrl<CollectionProps>(
             setImage={setImage}
           />
         )}
-        {isShowingBackground &&
-          (typeof form.values.image === 'string' || backupImage) && (
-            <Modal
-              className="image-modal"
-              closeButton={false}
-              onClose={() => setIsShowingBackground(false)}
-              style={{
-                maxWidth: '90%',
-                maxHeight: `${backupImage ? 'calc(90% + 20px)' : '90%'}`,
-              }}
-            >
-              <img
-                src={
-                  typeof form.values.image === 'string'
-                    ? form.values.image
-                    : backupImage?.urls?.regular
-                }
-                alt="Cover"
-              />
-              {imageCredits}
-            </Modal>
-          )}
+        {isShowingBackground && (imageUrl || completeImage) && (
+          <Modal
+            className="image-modal"
+            closeButton={false}
+            onClose={() => setIsShowingBackground(false)}
+            style={{
+              maxWidth: '90%',
+              maxHeight: `${backupImage ? 'calc(90% + 20px)' : '90%'}`,
+            }}
+          >
+            <img
+              src={
+                imageUrl
+                  ? imageUrl
+                  : backupImage
+                  ? backupImage?.urls?.regular
+                  : ''
+              }
+              alt="Cover"
+            />
+            {imageCredits}
+          </Modal>
+        )}
         {isToDelete && deleteCollection && (
           <Modal
             title={t`Alert`}

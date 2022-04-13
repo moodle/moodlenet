@@ -272,6 +272,9 @@ export const Owner = () => {
   const props = ResourceStoryProps({
     props: {
       isOwner: true,
+      contentType: 'file',
+      contentUrl: 'https://picsum.photos/200/100',
+      resourceFormat: 'Video',
     },
   })
   return <Resource {...props} />

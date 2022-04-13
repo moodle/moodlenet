@@ -178,6 +178,7 @@ export const Resource = withCtrl<ResourceProps>(
 
     const uploadImage = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCompleteImage(null)
         const selectedFile = e.currentTarget.files?.item(0)
         selectedFile && form.setFieldValue('image', selectedFile)
       },
