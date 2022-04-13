@@ -64,8 +64,11 @@ export const Modal: React.FC<ModalProps> = ({
   }, [onClose])
   return (
     <Portal>
-      <div className={`modal-container ${className}`} onClick={handleonClose}>
-        <Card className={`modal`} onClick={stopPropagation} style={style}>
+      <div
+        className={`modal-container ${className}`}
+        onMouseDown={handleonClose}
+      >
+        <Card className={`modal`} onMouseDown={stopPropagation} style={style}>
           {(title || closeButton) && (
             <div className="modal-header">
               {title && <div className="title">{title}</div>}

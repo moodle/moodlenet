@@ -119,7 +119,8 @@ export const getNewRandomImage = (
 }
 
 export const getUnsplashImages = (
-  query: string
+  query: string,
+  page: number
 ): Promise<Basic[] | undefined> => {
   const unsplash = createApi({
     accessKey: 'M-Iko8LWeVCJT4DdSFjbWDG0MyYqk8GmI0LoYjVSGrk',
@@ -129,8 +130,10 @@ export const getUnsplashImages = (
     .getPhotos({
       query: query,
       perPage: 30,
+      page: page,
     })
     .then((result) => {
+      // throw new Error('max request exceeded')
       if (result.type === 'success' && !Array.isArray(result.response)) {
         return result.response.results
       } else {

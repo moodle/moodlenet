@@ -1,4 +1,11 @@
-import React, { ReactElement, useCallback, useEffect, useState } from 'react'
+import { Trans } from '@lingui/macro'
+import React, {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { Basic } from 'unsplash-js/dist/methods/photos/types'
 import { getUnsplashImages } from '../../../../helpers/utilities'
 import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
@@ -6,6 +13,7 @@ import InputTextField from '../../atoms/InputTextField/InputTextField'
 import Loading from '../../atoms/Loading/Loading'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
+import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import './styles.scss'
 
 export type SearchImageProps = {
@@ -22,22 +30,40 @@ export const SearchImage: React.FC<SearchImageProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [tmpSearchQuery, setTmpSearchQuery] = useState('')
-  const [unsplashImages, setUnsplashImages] = useState<Basic[]>()
+  const [unsplashImages, setUnsplashImages] = useState<Basic[] | null>()
   const [column1, setColumn1] = useState<ReactElement[] | undefined>()
   const [column2, setColumn2] = useState<ReactElement[] | undefined>()
+  const [columnBreakIndex, setColumnBreakIndex] = useState(0)
+  const [leftColumnHeight, setLeftColumnHeight] = useState(0)
+  const [rightColumnHeight, setRightColumnHeight] = useState(0)
   const [showImages, setShowImages] = useState(false)
   const [loadedImages, setLoadedImages] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
 
-  const searchUnsplashImages = (query: string) => {
-    const photos = getUnsplashImages(query)
-    photos.then((photos) => {
-      if (photos) {
-        setUnsplashImages(photos)
-        setShowImages(false)
-        setLoadedImages(0)
-      }
-    })
+  const searchInput = useRef<HTMLInputElement>(null)
+
+  const searchUnsplashImages = (query: string, newQuery: boolean) => {
+    const page = newQuery ? 1 : totalPages + 1
+    setTotalPages(page)
+    const photos = getUnsplashImages(query, page)
+    photos
+      .then((photos) => {
+        if (photos) {
+          updateImages(photos, newQuery)
+          newQuery && setShowImages(false)
+          setLoadedImages(0)
+        }
+      })
+      .catch(() => {
+        window.open(`https://unsplash.com/s/photos/${query}`, '_blank')
+        onClose()
+      })
   }
+
+  useEffect(() => {
+    searchInput.current?.focus()
+    searchInput.current?.select()
+  }, [])
 
   const getImagesColumn = useCallback(
     (photos: Basic[] | undefined) => {
@@ -56,66 +82,105 @@ export const SearchImage: React.FC<SearchImageProps> = ({
               onLoad={() => setLoadedImages((prevState) => prevState + 1)}
             />
             <div className="active-overlay" />
-            <a
-              className="credits"
-              href={photo.user.links.html}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {photo.user.first_name} {photo.user.last_name}
-            </a>
           </div>
+          <a
+            className="credits"
+            href={photo.user.links.html}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {photo.user.first_name} {photo.user.last_name}
+          </a>
         </div>
       ))
     },
     [setImage, onClose, setLoadedImages]
   )
 
-  useEffect(() => {
-    console.log('totalImages ', unsplashImages?.length)
-    console.log('loadedImages ', loadedImages)
-    loadedImages === unsplashImages?.length && setShowImages(true)
-  }, [loadedImages, unsplashImages])
-
-  // useEffect(() => {
-  //   unsplashImages && setTimeout(() => setShowImages(true), 200)
-  // }, [unsplashImages])
-
-  useEffect(() => {
+  const updateImages = (photos: Basic[], newQuery: boolean) => {
     let totalHeight = 0
-    unsplashImages?.map((photo) => {
-      return (totalHeight += photo.height / (photo.width / 100))
+    photos?.map((photo) => {
+      return (totalHeight += photo.height / (photo.width / 100) + 21) // 21px of credits
     })
-    const columnMaxHeight = totalHeight / 2
+
+    const columnHeightDifference = Math.abs(
+      leftColumnHeight - rightColumnHeight
+    )
+
+    const leftColumnMaxHeight = newQuery
+      ? totalHeight / 2
+      : totalHeight / 2 - columnHeightDifference / 2
+
     let i = 0
-    let height = 0
-    unsplashImages?.every((photo) => {
-      height += photo.height / (photo.width / 100)
+    let newLeftColumHeight = 0
+    photos?.every((photo) => {
+      newLeftColumHeight += photo.height / (photo.width / 100) + 21
       i++
-      if (height < columnMaxHeight) return true
+      if (newLeftColumHeight < leftColumnMaxHeight) return true
       return false
     })
-    setColumn1(getImagesColumn(unsplashImages?.slice(0, i)))
-    setColumn2(getImagesColumn(unsplashImages?.slice(i)))
-  }, [unsplashImages, getImagesColumn])
+
+    setLeftColumnHeight((prev) =>
+      newQuery ? newLeftColumHeight : prev + newLeftColumHeight
+    )
+
+    setRightColumnHeight((prev) =>
+      newQuery
+        ? totalHeight - newLeftColumHeight
+        : prev + totalHeight - newLeftColumHeight
+    )
+
+    let column1Images = photos?.slice(0, i)
+    let column2Images = photos?.slice(i)
+
+    if (newQuery) {
+      setColumnBreakIndex(i)
+      setUnsplashImages(photos)
+    } else {
+      column1Images = unsplashImages
+        ? unsplashImages
+            .slice(0, columnBreakIndex)
+            .concat(column1Images ? column1Images : [])
+        : []
+      column2Images = unsplashImages
+        ? unsplashImages
+            .slice(columnBreakIndex)
+            .concat(column2Images ? column2Images : [])
+        : []
+      setColumnBreakIndex((prevIndex) => prevIndex + i)
+      setUnsplashImages(column1Images.concat(column2Images))
+    }
+
+    setColumn1(getImagesColumn(column1Images))
+    setColumn2(getImagesColumn(column2Images))
+  }
+
+  useEffect(() => {
+    loadedImages === unsplashImages?.length &&
+      unsplashImages?.length !== 0 &&
+      setShowImages(true)
+  }, [loadedImages, unsplashImages])
+
+  useEffect(() => {
+    if (tmpSearchQuery === '' && setSearchQuery('')) {
+      setColumn1([])
+      setColumn2([])
+    }
+  }, [tmpSearchQuery])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (
-      e.key === 'Enter' &&
-      !(
-        (tmpSearchQuery === '' && searchQuery === '') ||
-        tmpSearchQuery === searchQuery
-      )
-    ) {
+    if (e.key === 'Enter' && tmpSearchQuery !== searchQuery) {
       setSearchQuery(tmpSearchQuery)
-      tmpSearchQuery !== '' && searchUnsplashImages(tmpSearchQuery)
+      tmpSearchQuery !== '' && searchUnsplashImages(tmpSearchQuery, true)
+      setColumn1([])
+      setColumn2([])
     }
   }
 
   const sampleQuerySet = () => {
     const querySet = [
-      'abstract',
-      'animal',
+      'mathematics',
+      'politics',
       'architecture',
       'art',
       'interior',
@@ -129,8 +194,9 @@ export const SearchImage: React.FC<SearchImageProps> = ({
       'portrait',
       'space',
       'technology',
-      'texture',
-      'wallpaper',
+      'physics',
+      'biology',
+      'environment',
     ]
     return querySet.map((query, i) => {
       return (
@@ -140,7 +206,12 @@ export const SearchImage: React.FC<SearchImageProps> = ({
           onClick={() => {
             setTmpSearchQuery(query)
             setSearchQuery(query)
-            searchUnsplashImages(query)
+            setUnsplashImages(undefined)
+            setColumn1([])
+            setColumn2([])
+            searchUnsplashImages(query, true)
+            searchInput.current?.focus()
+            searchInput.current?.select()
           }}
         >
           {query}
@@ -157,6 +228,7 @@ export const SearchImage: React.FC<SearchImageProps> = ({
         onKeyDown={handleKeyDown}
         value={tmpSearchQuery}
         onChange={(v) => setTmpSearchQuery(v.currentTarget.value)}
+        ref={searchInput}
       />
       <PrimaryButton
         className="search-button"
@@ -165,7 +237,7 @@ export const SearchImage: React.FC<SearchImageProps> = ({
           (tmpSearchQuery === '' && searchQuery === '') ||
           tmpSearchQuery === searchQuery
         }
-        onClick={() => searchUnsplashImages(tmpSearchQuery)}
+        onClick={() => searchUnsplashImages(tmpSearchQuery, true)}
       >
         <SearchIcon />
       </PrimaryButton>
@@ -183,10 +255,28 @@ export const SearchImage: React.FC<SearchImageProps> = ({
             className="images-container"
             style={{ display: showImages ? 'flex' : 'none' }}
           >
-            <div className="column-1">{column1}</div>
-            <div className="column-2">{column2}</div>
+            <div className="images">
+              <div className="column-1">{column1}</div>
+              <div className="column-2">{column2}</div>
+            </div>
+            {column1 && column1.length > 0 && (
+              <SecondaryButton
+                className="load-more"
+                color="grey"
+                onClick={() => searchUnsplashImages(tmpSearchQuery, false)}
+              >
+                <Trans>Load more</Trans>
+              </SecondaryButton>
+            )}
           </div>
-          {!showImages && <Loading size={30} />}
+
+          {unsplashImages?.length !== 0 && !showImages && <Loading size={30} />}
+          {!unsplashImages ||
+            (unsplashImages?.length === 0 && (
+              <div className="error-msg">
+                <Trans>No matching images, try with another word</Trans>
+              </div>
+            ))}
         </>
       )}
     </Modal>
