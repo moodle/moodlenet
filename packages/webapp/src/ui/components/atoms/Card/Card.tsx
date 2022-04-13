@@ -9,10 +9,12 @@ export type CardProps = {
   hover?: boolean
   removePaddingWhenSmall?: boolean
   onClick?(arg0: unknown): unknown
+  onMouseDown?(arg0: unknown): unknown
 }
 
 export const Card: FC<CardProps> = ({
   onClick,
+  onMouseDown,
   className,
   noCard,
   hover,
@@ -30,6 +32,7 @@ export const Card: FC<CardProps> = ({
       } ${hover ? 'hover' : ''}`}
       style={style}
       onClick={onClick}
+      onMouseDown={onMouseDown}
     >
       {children}
     </div>

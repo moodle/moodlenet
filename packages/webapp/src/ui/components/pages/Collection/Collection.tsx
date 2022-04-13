@@ -5,8 +5,10 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import SaveIcon from '@material-ui/icons/Save'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { Basic } from 'unsplash-js/dist/methods/photos/types'
 import { getBackupImage } from '../../../../helpers/utilities'
+import { RecursivePartial } from '../../../assets/data/images'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
 import { useImageUrl } from '../../../lib/useImageUrl'
@@ -27,6 +29,7 @@ import {
   ResourceCard,
   ResourceCardProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard'
+import SearchImage from '../../organisms/SearchImage/SearchImage'
 import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
@@ -77,6 +80,15 @@ export const Collection = withCtrl<CollectionProps>(
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isShowingBackground, setIsShowingBackground] =
       useState<boolean>(false)
+    const [isSearchingImage, setIsSearchingImage] = useState<boolean>(false)
+    const backupImage: RecursivePartial<Basic> | undefined =
+      getBackupImage(collectionId)
+    const [currentImage, setCurrentImage] = useState<
+      RecursivePartial<Basic> | Basic | string | File | null | undefined
+    >(form.values.image || backupImage)
+    const [completeImage, setCompleteImage] = useState<
+      Basic | null | undefined
+    >(currentImage as Basic)
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -91,13 +103,10 @@ export const Collection = withCtrl<CollectionProps>(
       }
     }
     const [imageUrl] = useImageUrl(form.values.image)
-    const backupImage = imageUrl ? null : getBackupImage(collectionId)
-    const background = imageUrl
-      ? {
-          backgroundImage: 'url(' + imageUrl + ')',
-          backgroundSize: 'cover',
-        }
-      : backupImage?.style
+    const background = {
+      backgroundImage: `url(${imageUrl || backupImage?.urls?.regular})`,
+      backgroundSize: 'cover',
+    }
     const uploadImageRef = useRef<HTMLInputElement>(null)
     const selectImage = () => {
       uploadImageRef.current?.click()
@@ -105,15 +114,36 @@ export const Collection = withCtrl<CollectionProps>(
 
     const uploadImage = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCompleteImage(null)
         form.setFieldValue('image', e.currentTarget.files?.item(0))
       },
       [form]
     )
 
-    const imageCredits = backupImage && (
+    const setImage = (photo: Basic | undefined) => {
+      if (photo) {
+        form.setFieldValue('image', photo.urls.regular)
+        setCurrentImage(photo)
+      } else {
+        deleteImage()
+      }
+    }
+
+    const deleteImage = () => {
+      form.setFieldValue('image', null)
+      setCurrentImage(backupImage)
+    }
+
+    useEffect(() => {
+      setCompleteImage(currentImage as Basic)
+    }, [currentImage])
+
+    const imageCredits = completeImage && (
       <div className="image-credits">
         Photo by
-        <a href={backupImage.creatorUrl}>{backupImage.creatorName}</a>
+        <a href={completeImage.user?.links?.html}>
+          {completeImage.user?.first_name}
+        </a>
         on
         <a
           href={`https://unsplash.com/?utm_source=moodlenet&utm_medium=referral`}
@@ -153,28 +183,35 @@ export const Collection = withCtrl<CollectionProps>(
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        {isShowingBackground &&
-          (typeof form.values.image === 'string' || backupImage) && (
-            <Modal
-              className="image-modal"
-              closeButton={false}
-              onClose={() => setIsShowingBackground(false)}
-              style={{
-                maxWidth: '90%',
-                maxHeight: `${backupImage ? 'calc(90% + 20px)' : '90%'}`,
-              }}
-            >
-              <img
-                src={
-                  typeof form.values.image === 'string'
-                    ? form.values.image
-                    : backupImage?.image
-                }
-                alt="Cover"
-              />
-              {imageCredits}
-            </Modal>
-          )}
+        {isSearchingImage && (
+          <SearchImage
+            onClose={() => setIsSearchingImage(false)}
+            setImage={setImage}
+          />
+        )}
+        {isShowingBackground && (imageUrl || completeImage) && (
+          <Modal
+            className="image-modal"
+            closeButton={false}
+            onClose={() => setIsShowingBackground(false)}
+            style={{
+              maxWidth: '90%',
+              maxHeight: `${backupImage ? 'calc(90% + 20px)' : '90%'}`,
+            }}
+          >
+            <img
+              src={
+                imageUrl
+                  ? imageUrl
+                  : backupImage
+                  ? backupImage?.urls?.regular
+                  : ''
+              }
+              alt="Cover"
+            />
+            {imageCredits}
+          </Modal>
+        )}
         {isToDelete && deleteCollection && (
           <Modal
             title={t`Alert`}
@@ -216,7 +253,7 @@ export const Collection = withCtrl<CollectionProps>(
                 onClick={() => !isEditing && setIsShowingBackground(true)}
               >
                 {isEditing && (
-                  <>
+                  <div className="image-actions">
                     <input
                       ref={uploadImageRef}
                       type="file"
@@ -228,10 +265,27 @@ export const Collection = withCtrl<CollectionProps>(
                       className={`change-image-button ${
                         form.isSubmitting ? 'disabled' : ''
                       }`}
-                      type="edit"
+                      type="file"
+                      abbrTitle={t`Look for a file`}
                       onClick={selectImage}
                     />
-                  </>
+                    <RoundButton
+                      className={`search-image-button ${
+                        form.isSubmitting ? 'disabled' : ''
+                      }`}
+                      type="search"
+                      abbrTitle={t`Search for an image`}
+                      onClick={() => setIsSearchingImage(true)}
+                    />
+                    <RoundButton
+                      className={`delete-image ${
+                        form.isSubmitting ? 'disabled' : ''
+                      }`}
+                      type="cross"
+                      abbrTitle={t`Delete image`}
+                      onClick={deleteImage}
+                    />
+                  </div>
                 )}
                 {imageCredits}
               </div>
