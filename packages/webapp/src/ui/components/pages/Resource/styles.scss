@@ -167,10 +167,13 @@
             }
           }
 
-          .tags > a > .tag {
-            font-size: 12px;
-            padding: 4px 10px;
-            margin: 8px 0;
+          .tags {
+            gap: 5px;
+            > a > .tag {
+              font-size: 12px;
+              padding: 4px 10px;
+              margin: 8px 0;
+            }
           }
         }
 
@@ -186,13 +189,16 @@
         > .image-container {
           position: relative;
           width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 1px;
 
           > .image,
           > a > .image {
             cursor: pointer;
             width: 100%;
             object-fit: cover;
-            border-radius: 20px;
+            border-radius: 10px;
           }
 
           > .image-credits,
@@ -210,14 +216,27 @@
             }
           }
 
-          > .change-image-button {
+          > .image-actions {
             position: absolute;
-            right: 0;
             top: 0;
+            right: 0;
             z-index: 5;
             padding: 10px;
-            &.disabled {
-              pointer-events: none;
+            display: flex;
+            gap: 6px;
+            > * {
+              &.disabled {
+                pointer-events: none;
+              }
+            }
+
+            > .change-image-button {
+            }
+
+            > .search-image-button {
+              > .content > svg {
+                padding: 3px;
+              }
             }
           }
         }

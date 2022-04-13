@@ -5,7 +5,7 @@ export type PrimaryButtonProps = {
   onClick?(arg0: unknown): unknown | any
   className?: string
   disabled?: boolean
-  color?: '' | 'green' | 'red' | 'grey' | 'blue' | 'card'
+  color?: '' | 'green' | 'red' | 'grey' | 'blue' | 'card' | 'light-gray'
   onHoverColor?: '' | 'green' | 'orange' | 'red' | 'green'
 }
 

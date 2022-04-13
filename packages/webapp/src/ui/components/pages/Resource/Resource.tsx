@@ -8,8 +8,10 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { Basic } from 'unsplash-js/dist/methods/photos/types'
 import { getBackupImage } from '../../../../helpers/utilities'
+import { RecursivePartial } from '../../../assets/data/images'
 import { getTagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
@@ -42,6 +44,7 @@ import {
   OptionItem,
   OptionItemProp,
 } from '../../molecules/cards/AddToCollectionsCard/AddToCollectionsCard'
+import SearchImage from '../../organisms/SearchImage/SearchImage'
 import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
@@ -127,6 +130,7 @@ export const Resource = withCtrl<ResourceProps>(
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
+    const [isSearchingImage, setIsSearchingImage] = useState<boolean>(false)
     const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
       useState<boolean>(false)
     const [isAddingToCollection, setIsAddingToCollection] =
@@ -135,9 +139,14 @@ export const Resource = withCtrl<ResourceProps>(
       useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-
-    //const [isLeaving, setIsLeaving] = useState<boolean>(false)
-    //const [hasMadeChanges, setHasMadeChanges] = useState<string>(lmsSite ?? '')
+    const backupImage: RecursivePartial<Basic> | undefined =
+      getBackupImage(resourceId)
+    const [currentImage, setCurrentImage] = useState<
+      RecursivePartial<Basic> | Basic | string | File | null | undefined
+    >(form.values.image || backupImage)
+    const [completeImage, setCompleteImage] = useState<
+      Basic | null | undefined
+    >(currentImage as Basic)
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -169,17 +178,33 @@ export const Resource = withCtrl<ResourceProps>(
 
     const uploadImage = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCompleteImage(null)
         const selectedFile = e.currentTarget.files?.item(0)
         selectedFile && form.setFieldValue('image', selectedFile)
       },
       [form]
     )
-    const backupImage = form.values.image ? null : getBackupImage(resourceId)
-    const [imageUrl] = useImageUrl(form.values.image, backupImage?.image)
+    const deleteImage = () => {
+      form.setFieldValue('image', null)
+      setCurrentImage(backupImage)
+    }
+
+    const setImage = (photo: Basic | undefined) => {
+      if (photo) {
+        form.setFieldValue('image', photo.urls.regular)
+        setCurrentImage(photo)
+      } else {
+        deleteImage()
+      }
+    }
+    const [imageUrl] = useImageUrl(
+      form.values.image,
+      backupImage?.urls?.regular
+    )
     const image = (
       <img
         className="image"
-        src={imageUrl ? imageUrl : backupImage?.image}
+        src={imageUrl ? imageUrl : backupImage?.urls?.regular}
         alt="Background"
         {...(contentType === 'file' && {
           onClick: () => setIsShowingImage(true),
@@ -188,18 +213,36 @@ export const Resource = withCtrl<ResourceProps>(
       />
     )
 
-    const imageCredits = backupImage && (
-      <div className="image-credits">
-        Photo by
-        <a href={backupImage.creatorUrl}>{backupImage.creatorName}</a>
-        on
-        <a
-          href={`https://unsplash.com/?utm_source=moodlenet&utm_medium=referral`}
-        >
-          Unsplash
-        </a>
-      </div>
-    )
+    useEffect(() => {
+      setCompleteImage(currentImage as Basic)
+    }, [currentImage])
+
+    const imageCredits = () => {
+      // const image = currentImage as Basic
+      // if (image !== null && image?.user) {
+      return (
+        completeImage && (
+          <div className="image-credits">
+            Photo by
+            <a
+              href={completeImage.user.links.html}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {completeImage.user.first_name} {completeImage.user.last_name}
+            </a>
+            on
+            <a
+              href={`https://unsplash.com/?utm_source=moodlenet&utm_medium=referral`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Unsplash
+            </a>
+          </div>
+        )
+      )
+    }
 
     const actions = (
       <Card className="resource-action-card" hideBorderWhenSmall={true}>
@@ -595,6 +638,12 @@ export const Resource = withCtrl<ResourceProps>(
             <Trans>Are you sure you want to discard the changes you made?</Trans>
           </Modal>
         )} */}
+        {isSearchingImage && (
+          <SearchImage
+            onClose={() => setIsSearchingImage(false)}
+            setImage={setImage}
+          />
+        )}
         {isShowingImage && typeof imageUrl === 'string' && (
           <Modal
             className="image-modal"
@@ -606,7 +655,7 @@ export const Resource = withCtrl<ResourceProps>(
             }}
           >
             <img src={imageUrl} alt="Resource" />
-            {imageCredits}
+            {imageCredits()}
           </Modal>
         )}
         {
@@ -850,16 +899,13 @@ export const Resource = withCtrl<ResourceProps>(
                     {contentType === 'link' ? (
                       <a href={contentUrl} target="_blank" rel="noreferrer">
                         {image}
-                        {imageCredits}
                       </a>
                     ) : (
-                      <>
-                        {image}
-                        {imageCredits}
-                      </>
+                      <>{image}</>
                     )}
+                    {imageCredits()}
                     {isEditing && !form.isSubmitting && (
-                      <>
+                      <div className="image-actions">
                         <input
                           ref={uploadImageRef}
                           type="file"
@@ -871,10 +917,27 @@ export const Resource = withCtrl<ResourceProps>(
                           className={`change-image-button ${
                             form.isSubmitting ? 'disabled' : ''
                           }`}
-                          type="edit"
+                          type="file"
+                          abbrTitle={t`Look for a file`}
                           onClick={selectImage}
                         />
-                      </>
+                        <RoundButton
+                          className={`search-image-button ${
+                            form.isSubmitting ? 'disabled' : ''
+                          }`}
+                          type="search"
+                          abbrTitle={t`Search for an image`}
+                          onClick={() => setIsSearchingImage(true)}
+                        />
+                        <RoundButton
+                          className={`delete-image ${
+                            form.isSubmitting ? 'disabled' : ''
+                          }`}
+                          type="cross"
+                          abbrTitle={t`Delete image`}
+                          onClick={deleteImage}
+                        />
+                      </div>
                     )}
                   </div>
                 )}

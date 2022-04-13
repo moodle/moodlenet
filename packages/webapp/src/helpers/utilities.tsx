@@ -1,4 +1,6 @@
-import { ContentBackupImages } from '../ui/assets/data/images'
+import { createApi } from 'unsplash-js'
+import { Basic, Random } from 'unsplash-js/dist/methods/photos/types'
+import { ContentBackupImages, RecursivePartial } from '../ui/assets/data/images'
 
 export const isURL = (str: string): boolean => {
   const pattern = new RegExp(
@@ -84,16 +86,63 @@ export const getNumberFromString = (s: string) =>
     10
   )
 
-export const getBackupImage = (id: string) => {
+export const getBackupImage = (
+  id: string
+): RecursivePartial<Basic> | undefined => {
   const numId = getNumberFromString(id)
-  const image = ContentBackupImages[numId % ContentBackupImages.length]
+  return ContentBackupImages[numId % ContentBackupImages.length]
+}
 
-  return {
-    image: image?.image,
-    creatorName: image?.creatorName,
-    creatorUrl: image?.creatorUrl,
-    style: {
-      backgroundImage: 'url(' + image?.image + ')',
-    },
-  }
+export const getRandomInt = (max: number) => {
+  return Math.floor(Math.random() * max)
+}
+
+export const getNewRandomImage = (
+  query: string
+): Promise<Random | undefined> => {
+  const unsplash = createApi({
+    accessKey: 'M-Iko8LWeVCJT4DdSFjbWDG0MyYqk8GmI0LoYjVSGrk',
+    //...other fetch options
+  })
+  return unsplash.photos
+    .getRandom({
+      query: query,
+      orientation: 'landscape',
+    })
+    .then((result) => {
+      if (result.type === 'success' && !Array.isArray(result.response)) {
+        return result.response
+      } else {
+        return undefined
+      }
+    })
+}
+
+export const getUnsplashImages = (
+  query: string,
+  page: number
+): Promise<Basic[] | undefined> => {
+  const unsplash = createApi({
+    accessKey: 'M-Iko8LWeVCJT4DdSFjbWDG0MyYqk8GmI0LoYjVSGrk',
+    //...other fetch options
+  })
+  return unsplash.search
+    .getPhotos({
+      query: query,
+      perPage: 30,
+      page: page,
+    })
+    .then((result) => {
+      // throw new Error('max request exceeded')
+      if (result.type === 'success' && !Array.isArray(result.response)) {
+        return result.response.results
+      } else {
+        return undefined
+      }
+    })
+}
+
+export const getFirstWord = (word: string) => {
+  const array = word.split(' ')
+  return array[0] ? array[0] : ''
 }

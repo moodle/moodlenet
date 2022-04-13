@@ -22,6 +22,10 @@ import {
   useLicenses,
   useResourceTypes,
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
+import {
+  getFirstWord,
+  getNewRandomImage,
+} from '../../../../../helpers/utilities'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { NewResourceProps } from '../NewResource'
@@ -168,8 +172,21 @@ export const useNewResourceCtrl: CtrlHook<
               type: 'TmpUpload',
             }
 
+      const setNewRandomImage = (): AssetRefInput => {
+        const subjectFirstWord = getFirstWord(category)
+        const query = subjectFirstWord !== '' ? subjectFirstWord : 'education'
+        const photo = getNewRandomImage(query)
+        photo.then((photo) => {
+          const photoUrl = photo?.urls.regular
+          return {
+            location: photoUrl ? photoUrl : '',
+            type: photoUrl ? 'ExternalUrl' : 'NoAsset',
+          }
+        })
+      }
+
       const imageAssetRef: AssetRefInput = !image
-        ? { location: '', type: 'NoAsset' }
+        ? await setNewRandomImage()
         : typeof image === 'string'
         ? {
             location: image,
