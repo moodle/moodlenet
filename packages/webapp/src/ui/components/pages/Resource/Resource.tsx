@@ -10,7 +10,10 @@ import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Basic } from 'unsplash-js/dist/methods/photos/types'
-import { getBackupImage } from '../../../../helpers/utilities'
+import {
+  getBackupImage,
+  getImageFromKeywords,
+} from '../../../../helpers/utilities'
 import { RecursivePartial } from '../../../assets/data/images'
 import { getTagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
@@ -151,6 +154,7 @@ export const Resource = withCtrl<ResourceProps>(
     const handleOnEditClick = () => {
       setIsEditing(true)
     }
+
     const handleOnSaveClick = () => {
       if (form.isValid) {
         form.submitForm()
@@ -176,20 +180,19 @@ export const Resource = withCtrl<ResourceProps>(
       uploadImageRef.current?.click()
     }
 
-    const uploadImage = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCompleteImage(null)
-        const selectedFile = e.currentTarget.files?.item(0)
-        selectedFile && form.setFieldValue('image', selectedFile)
-      },
-      [form]
-    )
-    const deleteImage = () => {
-      form.setFieldValue('image', null)
-      setCurrentImage(backupImage)
+    const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setCompleteImage(null)
+      const selectedFile = e.currentTarget.files?.item(0)
+      selectedFile && form.setFieldValue('image', selectedFile)
     }
 
+    const deleteImage = useCallback(() => {
+      form.setFieldValue('image', null)
+      setCurrentImage(backupImage)
+    }, [backupImage, form])
+
     const setImage = (photo: Basic | undefined) => {
+      console.log('Setting image')
       if (photo) {
         form.setFieldValue('image', photo.urls.regular)
         setCurrentImage(photo)
@@ -197,6 +200,18 @@ export const Resource = withCtrl<ResourceProps>(
         deleteImage()
       }
     }
+
+    useEffect(() => {
+      getImageFromKeywords(
+        form.values.name,
+        form.values.description,
+        form.values.category
+      ).then((photo) => {
+        photo && setImage(photo)
+      })
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [form.values.name])
+
     const [imageUrl] = useImageUrl(
       form.values.image,
       backupImage?.urls?.regular

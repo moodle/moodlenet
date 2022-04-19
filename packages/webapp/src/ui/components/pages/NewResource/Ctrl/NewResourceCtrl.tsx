@@ -22,10 +22,7 @@ import {
   useLicenses,
   useResourceTypes,
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
-import {
-  getFirstWord,
-  getNewRandomImage,
-} from '../../../../../helpers/utilities'
+import { getImageFromKeywords } from '../../../../../helpers/utilities'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { NewResourceProps } from '../NewResource'
@@ -173,16 +170,17 @@ export const useNewResourceCtrl: CtrlHook<
             }
 
       const setNewRandomImage = (): AssetRefInput => {
-        const subjectFirstWord = getFirstWord(category)
-        const query = subjectFirstWord !== '' ? subjectFirstWord : 'education'
-        const photo = getNewRandomImage(query)
-        photo.then((photo) => {
+        getImageFromKeywords(name, description, category).then((photo) => {
           const photoUrl = photo?.urls.regular
           return {
             location: photoUrl ? photoUrl : '',
             type: photoUrl ? 'ExternalUrl' : 'NoAsset',
           }
         })
+        return {
+          location: '',
+          type: 'NoAsset',
+        }
       }
 
       const imageAssetRef: AssetRefInput = !image
