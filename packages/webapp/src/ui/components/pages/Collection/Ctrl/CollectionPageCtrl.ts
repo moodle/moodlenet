@@ -263,6 +263,7 @@ export const useCollectionCtrl: CtrlHook<
       isOwner,
       isAdmin,
       isAuthenticated,
+      autoImageAdded: false, //TO FIX
       resourceCardPropsList: resourceEdges.map(({ edge, node: { id } }) =>
         ctrlHook(
           useResourceCardCtrl,
