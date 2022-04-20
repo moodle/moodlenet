@@ -527,6 +527,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       isOwner,
       isAdmin,
       liked,
+      autoImageAdded: false, //TO FIX
       contributorCardProps: {
         avatarUrl: getMaybeAssetRefUrl(
           creator?.__typename === 'Profile'
