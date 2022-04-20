@@ -56,6 +56,7 @@ export type CollectionProps = {
   toggleFollow: FormikHandle
   deleteCollection?: FormikHandle
   following: boolean
+  autoImageAdded: boolean
 }
 
 export const Collection = withCtrl<CollectionProps>(
@@ -74,6 +75,7 @@ export const Collection = withCtrl<CollectionProps>(
     toggleBookmark,
     deleteCollection,
     toggleFollow,
+    autoImageAdded,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
@@ -232,6 +234,19 @@ export const Collection = withCtrl<CollectionProps>(
           >
             <Trans>The collection will be deleted</Trans>
           </Modal>
+        )}
+        {autoImageAdded && (
+          <Snackbar
+            position="bottom"
+            type="info"
+            waitDuration={200}
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>
+              We found an image for your collection, feel free to edit it
+            </Trans>
+          </Snackbar>
         )}
         {form.isSubmitting && (
           <Snackbar
