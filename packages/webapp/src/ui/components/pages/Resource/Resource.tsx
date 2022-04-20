@@ -10,10 +10,7 @@ import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Basic } from 'unsplash-js/dist/methods/photos/types'
-import {
-  getBackupImage,
-  getImageFromKeywords,
-} from '../../../../helpers/utilities'
+import { getBackupImage } from '../../../../helpers/utilities'
 import { RecursivePartial } from '../../../assets/data/images'
 import { getTagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
@@ -73,6 +70,7 @@ export type ResourceProps = {
   isAuthenticated: boolean
   isOwner: boolean
   isAdmin: boolean
+  autoImageAdded: boolean
   numLikes: number
   collections: SelectOptionsMulti<OptionItemProp>
   liked: boolean
@@ -126,6 +124,7 @@ export const Resource = withCtrl<ResourceProps>(
     resourceFormat,
     contentType,
     addToCollectionsForm,
+    autoImageAdded,
     setCategoryFilter,
     setLanguageFilter,
     setLevelFilter,
@@ -200,17 +199,6 @@ export const Resource = withCtrl<ResourceProps>(
         deleteImage()
       }
     }
-
-    useEffect(() => {
-      getImageFromKeywords(
-        form.values.name,
-        form.values.description,
-        form.values.category
-      ).then((photo) => {
-        photo && setImage(photo)
-      })
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [form.values.name])
 
     const [imageUrl] = useImageUrl(
       form.values.image,
@@ -754,6 +742,19 @@ export const Resource = withCtrl<ResourceProps>(
           >
             <Trans>The resource will be deleted</Trans>
           </Modal>
+        )}
+        {autoImageAdded && (
+          <Snackbar
+            position="bottom"
+            type="info"
+            waitDuration={200}
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>
+              We found an image for your resource, feel free to edit it
+            </Trans>
+          </Snackbar>
         )}
         {form.isSubmitting && (
           <Snackbar

@@ -110,16 +110,15 @@ export const ResourceStoryProps = (overrides?: {
     initialValues: {
       isFile: true,
       visibility: 'Public',
-      category: CategoriesTextOptionProps[2]!.value,
+      name: 'The Best Resource Ever',
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-      // image: 'https://picsum.photos/600/300',
+      category: CategoriesTextOptionProps[2]!.value,
       language: LanguagesTextOptionProps[2]!.value,
       level: LevelTextOptionProps[2]!.value,
       license: LicenseIconTextOptionProps[2]!.value,
       month: MonthTextOptionProps[8]!.value,
       year: YearsProps[20],
-      name: 'The Best Resource Ever',
       type: TypeTextOptionProps[2]!.value,
       ...overrides?.formValues,
     },
@@ -224,6 +223,7 @@ export const ResourceStoryProps = (overrides?: {
     setTypeFilter: action('setTypeFilter'),
     setLevelFilter: action('setLevelFilter'),
     setLanguageFilter: action('setLanguageFilter'),
+    autoImageAdded: false,
 
     ...overrides?.props,
   }
