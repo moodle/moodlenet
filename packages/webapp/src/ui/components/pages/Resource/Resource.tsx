@@ -8,7 +8,7 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Basic } from 'unsplash-js/dist/methods/photos/types'
 import { getBackupImage } from '../../../../helpers/utilities'
 import { RecursivePartial } from '../../../assets/data/images'
@@ -141,8 +141,10 @@ export const Resource = withCtrl<ResourceProps>(
       useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-    const backupImage: RecursivePartial<Basic> | undefined =
-      getBackupImage(resourceId)
+    const backupImage: RecursivePartial<Basic> | undefined = useMemo(
+      () => getBackupImage(resourceId),
+      [resourceId]
+    )
     const [currentImage, setCurrentImage] = useState<
       RecursivePartial<Basic> | Basic | string | File | null | undefined
     >(form.values.image || backupImage)
