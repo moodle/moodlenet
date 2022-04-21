@@ -37,7 +37,7 @@ export const ListCard: FC<ListCardProps> = ({
           } ${minGrid ? 'grid' : ''}`}
           style={{
             gridTemplateColumns:
-              minGrid && `repeat(auto-fit, minmax(${minGrid}px, 1fr))`,
+              minGrid && `repeat(auto-fill, minmax(${minGrid}px, 1fr))`,
           }}
         >
           {contentWithKeys}
