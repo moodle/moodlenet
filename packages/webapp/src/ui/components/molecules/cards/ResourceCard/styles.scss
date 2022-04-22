@@ -10,6 +10,7 @@
 
   > .resource-card-header {
     position: absolute;
+    z-index: 1;
     left: 25px;
     right: 25px;
     top: 25px;
@@ -25,11 +26,24 @@
       white-space: nowrap;
     }
 
-    > .type {
-      padding: 4px 10px;
-      width: 100%;
-      max-width: fit-content;
-      color: white;
+    > .left-side {
+      > .type {
+        pointer-events: none;
+        padding: 4px 10px;
+        width: 100%;
+        max-width: fit-content;
+        color: white;
+      }
+    }
+
+    > .right-side {
+      margin-right: -10px;
+      > .delete {
+        padding: 2px 5px;
+        > svg {
+          font-size: 20px;
+        }
+      }
     }
 
     > .level {
