@@ -84,10 +84,12 @@ export const useNewCollectionCtrl: CtrlHook<
             location: image,
             type: 'ExternalUrl',
           }
-        : {
-            location: await uploadTempFile('image', image),
+        : image.location instanceof File
+        ? {
+            location: await uploadTempFile('image', image.location),
             type: 'TmpUpload',
           }
+        : await setNewRandomImage(title, description)
       const collectionCreationResp = await createCollectionMut({
         variables: {
           res: {

@@ -5,7 +5,8 @@ import retextPos from 'retext-pos'
 import { createApi } from 'unsplash-js'
 import { Basic, Random } from 'unsplash-js/dist/methods/photos/types'
 import vfile from 'vfile'
-import { ContentBackupImages, RecursivePartial } from '../ui/assets/data/images'
+import { ContentBackupImages } from '../ui/assets/data/images'
+import { AssetInfo } from '../ui/types'
 
 export const isURL = (str: string): boolean => {
   const pattern = new RegExp(
@@ -91,15 +92,29 @@ export const getNumberFromString = (s: string) =>
     10
   )
 
-export const getBackupImage = (
-  id: string
-): RecursivePartial<Basic> | undefined => {
+export const getBackupImage = (id: string): AssetInfo | undefined => {
   const numId = getNumberFromString(id)
   return ContentBackupImages[numId % ContentBackupImages.length]
 }
 
 export const getRandomInt = (max: number) => {
   return Math.floor(Math.random() * max)
+}
+
+export const parseUnsplashImage = (photo: Basic | Random): AssetInfo => {
+  return {
+    location: photo.urls.regular,
+    credits: {
+      owner: {
+        name: photo.user.first_name,
+        url: photo.user.links.html,
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
+    },
+  }
 }
 
 export const getRandomUnsplashImage = (
@@ -134,6 +149,7 @@ export const getUnsplashImages = (
   return unsplash.search
     .getPhotos({
       query: query,
+      orientation: 'landscape',
       perPage: 30,
       page: page,
     })

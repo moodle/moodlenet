@@ -67,7 +67,7 @@ export const ImageUploaded: NewCollectionStory = () => {
     ...useNewCollectionStoryProps(),
     stepProps: useCreateCollectionStoryProps({
       formValues: {
-        image: 'https://picsum.photos/200/100',
+        image: { location: 'https://picsum.photos/200/100' },
         title: 'The best collection ever',
         description:
           'This is the description that tells you that this a not only the best collection ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',

@@ -8,16 +8,14 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Basic } from 'unsplash-js/dist/methods/photos/types'
+import React, { useMemo, useRef, useState } from 'react'
 import { getBackupImage } from '../../../../helpers/utilities'
-import { RecursivePartial } from '../../../assets/data/images'
 import { getTagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
 import { SelectOptions, SelectOptionsMulti } from '../../../lib/types'
 import { useImageUrl } from '../../../lib/useImageUrl'
-import { FollowTag, getResourceColorType } from '../../../types'
+import { AssetInfo, FollowTag, getResourceColorType } from '../../../types'
 import Card from '../../atoms/Card/Card'
 import {
   Dropdown,
@@ -141,16 +139,14 @@ export const Resource = withCtrl<ResourceProps>(
       useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-    const backupImage: RecursivePartial<Basic> | undefined = useMemo(
+    const backupImage: AssetInfo | null | undefined = useMemo(
       () => getBackupImage(resourceId),
       [resourceId]
     )
-    const [currentImage, setCurrentImage] = useState<
-      RecursivePartial<Basic> | Basic | string | File | null | undefined
-    >(form.values.image || backupImage)
-    const [completeImage, setCompleteImage] = useState<
-      Basic | null | undefined
-    >(currentImage as Basic)
+    const [imageUrl] = useImageUrl(
+      form.values?.image?.location,
+      backupImage?.location
+    )
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -182,34 +178,25 @@ export const Resource = withCtrl<ResourceProps>(
     }
 
     const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setCompleteImage(null)
       const selectedFile = e.currentTarget.files?.item(0)
-      selectedFile && form.setFieldValue('image', selectedFile)
-    }
-
-    const deleteImage = useCallback(() => {
-      form.setFieldValue('image', null)
-      setCurrentImage(backupImage)
-    }, [backupImage, form])
-
-    const setImage = (photo: Basic | undefined) => {
-      console.log('Setting image')
-      if (photo) {
-        form.setFieldValue('image', photo.urls.regular)
-        setCurrentImage(photo)
-      } else {
-        deleteImage()
+      console.log('FILE ', selectedFile)
+      if (selectedFile) {
+        form.setFieldValue('image', { location: selectedFile })
       }
     }
 
-    const [imageUrl] = useImageUrl(
-      form.values.image,
-      backupImage?.urls?.regular
-    )
-    const image = (
+    const setImage = (image: AssetInfo | undefined) => {
+      form.setFieldValue('image', image)
+    }
+
+    const deleteImage = () => {
+      form.setFieldValue('image', null)
+    }
+
+    const imageDiv = (
       <img
         className="image"
-        src={imageUrl ? imageUrl : backupImage?.urls?.regular}
+        src={imageUrl}
         alt="Background"
         {...(contentType === 'file' && {
           onClick: () => setIsShowingImage(true),
@@ -219,32 +206,25 @@ export const Resource = withCtrl<ResourceProps>(
       />
     )
 
-    useEffect(() => {
-      setCompleteImage(currentImage as Basic)
-    }, [currentImage])
-
-    const imageCredits = () => {
-      // const image = currentImage as Basic
-      // if (image !== null && image?.user) {
+    const getImageCredits = (image: AssetInfo | undefined | null) => {
+      const credits = image
+        ? image.credits
+          ? image.credits
+          : undefined
+        : backupImage?.credits
       return (
-        completeImage && (
+        credits && (
           <div className="image-credits">
             Photo by
-            <a
-              href={completeImage.user.links.html}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {completeImage.user.first_name} {completeImage.user.last_name}
+            <a href={credits.owner.url} target="_blank" rel="noreferrer">
+              {credits.owner.name}
             </a>
             on
-            <a
-              href={`https://unsplash.com/?utm_source=moodlenet&utm_medium=referral`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Unsplash
-            </a>
+            {
+              <a href={credits.owner.url} target="_blank" rel="noreferrer">
+                {credits.provider?.name}
+              </a>
+            }
           </div>
         )
       )
@@ -650,18 +630,18 @@ export const Resource = withCtrl<ResourceProps>(
             setImage={setImage}
           />
         )}
-        {isShowingImage && typeof imageUrl === 'string' && (
+        {isShowingImage && imageUrl && (
           <Modal
             className="image-modal"
             closeButton={false}
             onClose={() => setIsShowingImage(false)}
             style={{
               maxWidth: '90%',
-              maxHeight: backupImage ? 'calc(90% + 20px)' : '90%',
+              maxHeight: form.values.type !== '' ? 'calc(90% + 20px)' : '90%',
             }}
           >
             <img src={imageUrl} alt="Resource" />
-            {imageCredits()}
+            {getImageCredits(form.values.image)}
           </Modal>
         )}
         {
@@ -917,12 +897,12 @@ export const Resource = withCtrl<ResourceProps>(
                   <div className="image-container">
                     {contentType === 'link' ? (
                       <a href={contentUrl} target="_blank" rel="noreferrer">
-                        {image}
+                        {imageDiv}
                       </a>
                     ) : (
-                      <>{image}</>
+                      <>{imageDiv}</>
                     )}
-                    {imageCredits()}
+                    {getImageCredits(form.values.image)}
                     {isEditing && !form.isSubmitting && (
                       <div className="image-actions">
                         <input
