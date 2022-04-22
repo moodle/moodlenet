@@ -1,6 +1,6 @@
-import { t } from '@lingui/macro'
 import BookmarkIcon from '@material-ui/icons/Bookmark'
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import VisibilityIcon from '@material-ui/icons/Visibility'
@@ -12,7 +12,7 @@ import defaultAvatar from '../../../../static/img/default-avatar.svg'
 import '../../../../styles/tags.scss'
 import { FollowTag } from '../../../../types'
 import Card from '../../../atoms/Card/Card'
-import RoundButton from '../../../atoms/RoundButton/RoundButton'
+import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import './styles.scss'
 
@@ -134,12 +134,21 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
         style={orientation === 'vertical' ? background : {}}
       >
         <div className={`resource-card-header ${orientation}`}>
-          <div className={`type`} style={{ background: color }}>
-            {type}
+          <div className="left-side">
+            <div className="type" style={{ background: color }}>
+              {type}
+            </div>
+          </div>
+          <div className="right-side">
+            {isEditing && (
+              <TertiaryButton onClick={onRemoveClick} className="delete">
+                <CloseRoundedIcon />
+              </TertiaryButton>
+            )}
           </div>
           {/* <div className={`level`}>
             <div className="name">
-              Primary schoooooooooooooooooooooooooooooooooooooooooooool
+              L1
             </div>
           </div> */}
         </div>
@@ -195,16 +204,6 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
           <Link href={resourceHomeHref}>{content()}</Link>
         ) : (
           <div className="content-container">{content()}</div>
-        )}
-        {isEditing && (
-          <RoundButton
-            className="delete"
-            type="trash"
-            color="red"
-            abbrTitle={t`Remove from collection`}
-            onHoverColor="fill-red"
-            onClick={onRemoveClick}
-          />
         )}
       </Card>
     )
