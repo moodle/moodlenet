@@ -79,15 +79,13 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     if (orientation === 'horizontal') {
       background = {
         background:
-          'url(' +
-          (image ? image : getBackupImage(resourceId)?.urls?.regular) +
-          ')',
+          'url(' + (image ? image : getBackupImage(resourceId)?.location) + ')',
       }
     } else {
       background = {
         background:
           'linear-gradient(0deg, rgba(0, 0, 0, 0.91) 0%, rgba(0, 0, 0, 0.1729) 45.15%, rgba(0, 0, 0, 0) 100%), url(' +
-          (image ? image : getBackupImage(resourceId)?.urls?.regular) +
+          (image ? image : getBackupImage(resourceId)?.location) +
           ')',
       }
     }

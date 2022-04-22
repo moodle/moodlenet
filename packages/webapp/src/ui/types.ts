@@ -45,7 +45,7 @@ export type AssetInfo = {
 
 export type Credits = {
   owner: { url: string; name: string }
-  provider: { name: string; url: string }
+  provider?: { name: string; url: string }
 }
 
 export type CollectionInfo = {

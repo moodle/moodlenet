@@ -179,10 +179,12 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
               location: image,
               type: 'ExternalUrl',
             }
-          : {
-              location: await uploadTempFile('image', image),
+          : image.location instanceof File
+          ? {
+              location: await uploadTempFile('image', image.location),
               type: 'TmpUpload',
             }
+          : { location: '', type: 'NoChange' }
       const editResPr = edit({
         variables: {
           id,
@@ -334,6 +336,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
         typeof resourceData.originalCreationDate === 'number'
           ? new Date(resourceData.originalCreationDate)
           : null
+      const _image = getMaybeAssetRefUrl(image)
       _resetform({
         touched: {},
         values: {
@@ -344,7 +347,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
           license,
           type,
           description,
-          image: getMaybeAssetRefUrl(image),
+          image: _image ? { location: _image } : undefined,
           name,
           visibility: _published ? 'Public' : 'Private',
           month: orgDate ? `${orgDate.getMonth()}` : undefined,

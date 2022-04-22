@@ -170,10 +170,12 @@ export const useCollectionCtrl: CtrlHook<
               location: vals.image,
               type: 'ExternalUrl',
             }
-          : {
-              location: await uploadTempFile('image', vals.image),
+          : vals.image.location instanceof File
+          ? {
+              location: await uploadTempFile('image', vals.image.location),
               type: 'TmpUpload',
             }
+          : { location: '', type: 'NoChange' }
       await edit({
         variables: {
           id,
@@ -193,13 +195,14 @@ export const useCollectionCtrl: CtrlHook<
   useEffect(() => {
     if (collectionData) {
       const { name: title, description, _published, image } = collectionData
+      const _image = image ? getMaybeAssetRefUrl(image) : undefined
       _resetForm({
         touched: {},
         values: {
           title,
           description,
           visibility: _published ? 'Public' : 'Private',
-          image: getMaybeAssetRefUrl(image),
+          image: _image ? { location: _image } : undefined,
         },
       })
     }

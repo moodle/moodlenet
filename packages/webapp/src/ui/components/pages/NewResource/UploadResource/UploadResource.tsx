@@ -65,7 +65,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
       true
     )
 
-    const [imageUrl] = useImageUrl(form.values.image)
+    const [imageUrl] = useImageUrl(form.values.image?.location)
 
     const contentIsFile = form.values.content instanceof File
     const contentName =

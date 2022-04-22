@@ -183,17 +183,19 @@ export const useNewResourceCtrl: CtrlHook<
         }
       }
 
-      const imageAssetRef: AssetRefInput = !image
-        ? await setNewRandomImage()
-        : typeof image === 'string'
-        ? {
-            location: image,
-            type: 'ExternalUrl',
-          }
-        : {
-            location: await uploadTempFile('image', image),
-            type: 'TmpUpload',
-          }
+      const imageAssetRef: AssetRefInput = image
+        ? typeof image.location === 'string'
+          ? {
+              location: image.location,
+              type: 'ExternalUrl',
+            }
+          : image.location instanceof File
+          ? {
+              location: await uploadTempFile('image', image.location),
+              type: 'TmpUpload',
+            }
+          : await setNewRandomImage()
+        : await setNewRandomImage()
 
       const resourceCreationResp = await createResourceMut({
         variables: {
