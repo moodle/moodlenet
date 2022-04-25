@@ -363,22 +363,20 @@ export const Collection = withCtrl<CollectionProps>(
                 )}
                 {isOwner ? (
                   <InputTextField
-                    className="underline"
-                    value={form.values.description}
+                    className="description underline"
                     name="description"
-                    displayMode={true}
-                    onChange={form.handleChange}
+                    textarea
+                    textAreaAutoSize
+                    displayMode
                     edit={isEditing}
+                    value={form.values.description}
+                    onChange={form.handleChange}
                     style={{
                       pointerEvents: `${
                         form.isSubmitting ? 'none' : 'inherit'
                       }`,
                     }}
-                    error={
-                      isEditing && shouldShowErrors && form.errors.description
-                    }
-                    textAreaAutoSize={true}
-                    textarea={true}
+                    error={isEditing && form.errors.description}
                   />
                 ) : (
                   <div className="description">{form.values.description}</div>
