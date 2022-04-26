@@ -163,19 +163,30 @@ export const useCollectionCtrl: CtrlHook<
         return
       }
       const imageAssetRef: AssetRefInput =
-        !vals.image || vals.image === form.initialValues.image
-          ? { location: '', type: 'NoChange' }
-          : typeof vals.image === 'string'
+        !vals.image ||
+        vals.image.location === form.initialValues.image?.location
           ? {
-              location: vals.image,
+              location: '',
+              type: 'NoChange',
+              credits: form.initialValues.image?.credits,
+            }
+          : typeof vals.image.location === 'string'
+          ? {
+              location: vals.image.location,
               type: 'ExternalUrl',
+              credits: vals.image.credits,
             }
           : vals.image.location instanceof File
           ? {
               location: await uploadTempFile('image', vals.image.location),
               type: 'TmpUpload',
+              credits: vals.image.credits,
             }
-          : { location: '', type: 'NoChange' }
+          : {
+              location: '',
+              type: 'NoChange',
+              credits: form.initialValues.image?.credits,
+            }
       await edit({
         variables: {
           id,
@@ -202,7 +213,9 @@ export const useCollectionCtrl: CtrlHook<
           title,
           description,
           visibility: _published ? 'Public' : 'Private',
-          image: _image ? { location: _image } : undefined,
+          image: _image
+            ? { location: _image, credits: image?.credits }
+            : undefined,
         },
       })
     }

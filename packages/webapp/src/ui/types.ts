@@ -40,7 +40,7 @@ export type ResourceInfo = {
 
 export type AssetInfo = {
   location: string | File
-  credits?: Credits
+  credits?: Credits | null
 }
 
 export type Credits = {

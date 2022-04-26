@@ -101,7 +101,9 @@ export const getRandomInt = (max: number) => {
   return Math.floor(Math.random() * max)
 }
 
-export const parseUnsplashImage = (photo: Basic | Random): AssetInfo => {
+export const parseUnsplashImage = (
+  photo: Basic | Random
+): AssetInfo & { location: string } => {
   return {
     location: photo.urls.regular,
     credits: {
@@ -190,7 +192,7 @@ export const getImageFromKeywords = async (
   name: string,
   description: string,
   subject?: string
-): Promise<Random | undefined> => {
+): Promise<(AssetInfo & { location: string }) | undefined> => {
   const getPhoto = async (keys: string[]): Promise<Random | undefined> => {
     let result = undefined
     let i = 0
@@ -257,5 +259,5 @@ export const getImageFromKeywords = async (
       }))
     i++
   }
-  return result
+  return result && parseUnsplashImage(result)
 }
