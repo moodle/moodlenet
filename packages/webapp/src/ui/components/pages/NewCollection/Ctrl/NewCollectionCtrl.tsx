@@ -51,21 +51,18 @@ export const useNewCollectionCtrl: CtrlHook<
     useCreateCollectionMutation()
   // const [createCollectionRelMut /* , createCollectionRelMutRes */] = useCreateCollectionRelationMutation()
 
-  const setNewRandomImage = (
+  const setNewRandomImage = async (
     name: string,
     description: string
-  ): AssetRefInput => {
-    getImageFromKeywords(name, description).then((photo) => {
-      const photoUrl = photo?.urls.regular
-      return {
-        location: photoUrl ? photoUrl : '',
-        type: photoUrl ? 'ExternalUrl' : 'NoAsset',
-      }
-    })
-    return {
-      location: '',
-      type: 'NoAsset',
-    }
+  ): Promise<AssetRefInput> => {
+    const assetInfo = await getImageFromKeywords(name, description)
+    const assetRefInput: AssetRefInput = assetInfo
+      ? {
+          ...assetInfo,
+          type: 'ExternalUrl',
+        }
+      : { location: '', type: 'NoAsset' }
+    return assetRefInput
   }
 
   const form = useFormik<NewCollectionFormValues>({

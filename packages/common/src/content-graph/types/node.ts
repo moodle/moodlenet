@@ -1,3 +1,4 @@
+import { Credits } from '../../graphql/scalars.graphql'
 import { stringUnionList } from '../../utils/misc'
 import { Timestamp } from './common'
 
@@ -135,6 +136,7 @@ export type AssetRef = {
   ext: boolean
   location: string
   mimetype: string
+  credits?: Credits | null
 }
 export const isAssetRef = (_: any): _ is AssetRef =>
   !!_ && typeof _.ext === 'boolean' && typeof _.location === 'string' && typeof _.mimetype === 'string'

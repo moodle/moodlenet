@@ -77,6 +77,21 @@ const validationSchema: SchemaOf<NewResourceFormValues> = object({
     return month ? schema.required(t`Please select a year`) : schema.optional()
   }),
 })
+
+const setNewRandomImage = async (
+  name: string,
+  description: string
+): Promise<AssetRefInput> => {
+  const assetInfo = await getImageFromKeywords(name, description)
+  const assetRefInput: AssetRefInput = assetInfo
+    ? {
+        ...assetInfo,
+        type: 'ExternalUrl',
+      }
+    : { location: '', type: 'NoAsset' }
+  return assetRefInput
+}
+
 export type NewResourceCtrlProps = {}
 
 export const useNewResourceCtrl: CtrlHook<
@@ -169,20 +184,6 @@ export const useNewResourceCtrl: CtrlHook<
               type: 'TmpUpload',
             }
 
-      const setNewRandomImage = (): AssetRefInput => {
-        getImageFromKeywords(name, description, category).then((photo) => {
-          const photoUrl = photo?.urls.regular
-          return {
-            location: photoUrl ? photoUrl : '',
-            type: photoUrl ? 'ExternalUrl' : 'NoAsset',
-          }
-        })
-        return {
-          location: '',
-          type: 'NoAsset',
-        }
-      }
-
       const imageAssetRef: AssetRefInput = image
         ? typeof image.location === 'string'
           ? {
@@ -194,8 +195,8 @@ export const useNewResourceCtrl: CtrlHook<
               location: await uploadTempFile('image', image.location),
               type: 'TmpUpload',
             }
-          : await setNewRandomImage()
-        : await setNewRandomImage()
+          : await setNewRandomImage(name, description)
+        : await setNewRandomImage(name, description)
 
       const resourceCreationResp = await createResourceMut({
         variables: {

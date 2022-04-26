@@ -1,5 +1,6 @@
 scalar Cursor
 scalar AssetRef
+scalar Credits
 
 enum AssetRefInputType {
   TmpUpload
@@ -11,6 +12,7 @@ enum AssetRefInputType {
 input AssetRefInput {
   type: AssetRefInputType!
   location: String!
+  credits: Credits
 }
 
 interface INode {
