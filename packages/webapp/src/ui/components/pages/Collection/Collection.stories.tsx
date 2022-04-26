@@ -73,7 +73,7 @@ export const CollectionStoryProps = (overrides?: {
     ...overrides?.formConfig,
   })
   return {
-    collectionId: 'pzif03wwssaa-histo',
+    collectionId: 'wj0e6mv6j8om-test',
     headerPageTemplateProps: {
       headerPageProps: HeaderPageLoggedInStoryProps,
       isAuthenticated: true,

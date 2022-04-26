@@ -171,8 +171,6 @@
             gap: 5px;
             > a > .tag {
               font-size: 12px;
-              padding: 4px 10px;
-              margin: 8px 0;
             }
           }
         }
@@ -192,6 +190,15 @@
           display: flex;
           flex-direction: column;
           gap: 1px;
+
+          & > .loading,
+          > a > .loading {
+            position: absolute;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+          }
 
           > .image,
           > a > .image {

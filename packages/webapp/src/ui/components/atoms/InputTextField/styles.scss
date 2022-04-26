@@ -49,11 +49,13 @@
       background: none;
     }
 
-    &.not-editing {
+    &:not(.editing) {
       color: #4d5156;
+      pointer-events: none;
+      cursor: default;
     }
 
-    &:not(.not-editing):not(:focus) {
+    .editing:not(:focus) {
       color: #4d5156;
     }
 
