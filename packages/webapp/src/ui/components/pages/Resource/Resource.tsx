@@ -210,6 +210,7 @@ export const Resource = withCtrl<ResourceProps>(
           onClick: () => setIsShowingImage(true),
         })}
         style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
+        onLoad={() => setIsImageLoaded(true)}
       />
     )
 
@@ -894,7 +895,7 @@ export const Resource = withCtrl<ResourceProps>(
                     </div>
                   )}
                 </div>
-                {(typeof imageUrl === 'string' || backupImage || isEditing) && (
+                {(form.values.image || isEditing) && (
                   <div className="image-container">
                     {contentType === 'link' ? (
                       <a href={contentUrl} target="_blank" rel="noreferrer">
@@ -947,9 +948,9 @@ export const Resource = withCtrl<ResourceProps>(
                     name="description"
                     textarea
                     textAreaAutoSize
-                    value={form.values.description}
                     displayMode
                     edit={isEditing}
+                    value={form.values.description}
                     onChange={form.handleChange}
                     style={{
                       pointerEvents: `${
@@ -957,11 +958,6 @@ export const Resource = withCtrl<ResourceProps>(
                       }`,
                     }}
                     error={isEditing && form.errors.description}
-                    // error={
-                    //   isEditing &&
-                    //   shouldShowErrors &&
-                    //   'Error with the description field'
-                    // }
                   />
                 ) : (
                   <div className="description">{form.values.description}</div>
