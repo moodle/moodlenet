@@ -224,7 +224,7 @@ export const ResourceStoryProps = (overrides?: {
     setLevelFilter: action('setLevelFilter'),
     setLanguageFilter: action('setLanguageFilter'),
     autoImageAdded: false,
-
+    canSearchImage: true,
     ...overrides?.props,
   }
 }
