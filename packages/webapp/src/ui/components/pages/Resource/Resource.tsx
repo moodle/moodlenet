@@ -69,6 +69,7 @@ export type ResourceProps = {
   isOwner: boolean
   isAdmin: boolean
   autoImageAdded: boolean
+  canSearchImage: boolean
   numLikes: number
   collections: SelectOptionsMulti<OptionItemProp>
   liked: boolean
@@ -123,12 +124,15 @@ export const Resource = withCtrl<ResourceProps>(
     contentType,
     addToCollectionsForm,
     autoImageAdded,
+    canSearchImage,
     setCategoryFilter,
     setLanguageFilter,
     setLevelFilter,
     setTypeFilter,
   }) => {
-    const [isEditing, setIsEditing] = useState<boolean>(autoImageAdded)
+    const [isEditing, setIsEditing] = useState<boolean>(
+      canSearchImage && autoImageAdded
+    )
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isSearchingImage, setIsSearchingImage] = useState<boolean>(false)
     const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
@@ -179,7 +183,6 @@ export const Resource = withCtrl<ResourceProps>(
 
     const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
       const selectedFile = e.currentTarget.files?.item(0)
-      console.log('FILE ', selectedFile)
       if (selectedFile) {
         form.setFieldValue('image', { location: selectedFile })
       }
@@ -202,7 +205,6 @@ export const Resource = withCtrl<ResourceProps>(
           onClick: () => setIsShowingImage(true),
         })}
         style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
-        onLoad={() => setIsImageLoaded(true)}
       />
     )
 
@@ -725,7 +727,7 @@ export const Resource = withCtrl<ResourceProps>(
             <Trans>The resource will be deleted</Trans>
           </Modal>
         )}
-        {autoImageAdded && (
+        {canSearchImage && autoImageAdded && (
           <Snackbar
             position="bottom"
             type="info"
@@ -913,14 +915,16 @@ export const Resource = withCtrl<ResourceProps>(
                           onChange={uploadImage}
                           hidden
                         />
-                        <RoundButton
-                          className={`search-image-button ${
-                            form.isSubmitting ? 'disabled' : ''
-                          } ${autoImageAdded ? 'highlight' : ''}`}
-                          type="search"
-                          abbrTitle={t`Search for an image`}
-                          onClick={() => setIsSearchingImage(true)}
-                        />
+                        {canSearchImage && (
+                          <RoundButton
+                            className={`search-image-button ${
+                              form.isSubmitting ? 'disabled' : ''
+                            } ${autoImageAdded ? 'highlight' : ''}`}
+                            type="search"
+                            abbrTitle={t`Search for an image`}
+                            onClick={() => setIsSearchingImage(true)}
+                          />
+                        )}
                         <RoundButton
                           className={`change-image-button ${
                             form.isSubmitting ? 'disabled' : ''

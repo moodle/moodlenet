@@ -109,6 +109,7 @@ export const CollectionStoryProps = (overrides?: {
       onSubmit: action('delete Collection'),
     }),
     autoImageAdded: false,
+    canSearchImage: true,
     ...overrides?.props,
   }
 }
@@ -143,6 +144,7 @@ export const Owner = () => {
   const props = CollectionStoryProps({
     props: {
       isOwner: true,
+      autoImageAdded: true,
     },
   })
   return <Collection {...props} />

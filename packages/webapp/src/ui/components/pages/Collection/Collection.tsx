@@ -56,6 +56,7 @@ export type CollectionProps = {
   deleteCollection?: FormikHandle
   following: boolean
   autoImageAdded: boolean
+  canSearchImage: boolean
 }
 
 export const Collection = withCtrl<CollectionProps>(
@@ -75,8 +76,11 @@ export const Collection = withCtrl<CollectionProps>(
     deleteCollection,
     toggleFollow,
     autoImageAdded,
+    canSearchImage,
   }) => {
-    const [isEditing, setIsEditing] = useState<boolean>(false)
+    const [isEditing, setIsEditing] = useState<boolean>(
+      canSearchImage && autoImageAdded
+    )
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isShowingImage, setisShowingImage] = useState<boolean>(false)
@@ -225,7 +229,7 @@ export const Collection = withCtrl<CollectionProps>(
             <Trans>The collection will be deleted</Trans>
           </Modal>
         )}
-        {autoImageAdded && (
+        {canSearchImage && autoImageAdded && (
           <Snackbar
             position="bottom"
             type="info"
@@ -234,7 +238,8 @@ export const Collection = withCtrl<CollectionProps>(
             showCloseButton={false}
           >
             <Trans>
-              We found an image for your collection, feel free to edit it
+              We found an image for you, use the search button to find a better
+              one
             </Trans>
           </Snackbar>
         )}
@@ -269,14 +274,16 @@ export const Collection = withCtrl<CollectionProps>(
                       onChange={uploadImage}
                       hidden
                     />
-                    <RoundButton
-                      className={`search-image-button ${
-                        form.isSubmitting ? 'disabled' : ''
-                      }`}
-                      type="search"
-                      abbrTitle={t`Search for an image`}
-                      onClick={() => setIsSearchingImage(true)}
-                    />
+                    {canSearchImage && (
+                      <RoundButton
+                        className={`search-image-button ${
+                          form.isSubmitting ? 'disabled' : ''
+                        } ${autoImageAdded ? 'highlight' : ''}`}
+                        type="search"
+                        abbrTitle={t`Search for an image`}
+                        onClick={() => setIsSearchingImage(true)}
+                      />
+                    )}
                     <RoundButton
                       className={`change-image-button ${
                         form.isSubmitting ? 'disabled' : ''
