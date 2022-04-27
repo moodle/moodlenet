@@ -270,20 +270,20 @@ export const Collection = withCtrl<CollectionProps>(
                       hidden
                     />
                     <RoundButton
-                      className={`change-image-button ${
-                        form.isSubmitting ? 'disabled' : ''
-                      }`}
-                      type="file"
-                      abbrTitle={t`Look for a file`}
-                      onClick={selectImage}
-                    />
-                    <RoundButton
                       className={`search-image-button ${
                         form.isSubmitting ? 'disabled' : ''
                       }`}
                       type="search"
                       abbrTitle={t`Search for an image`}
                       onClick={() => setIsSearchingImage(true)}
+                    />
+                    <RoundButton
+                      className={`change-image-button ${
+                        form.isSubmitting ? 'disabled' : ''
+                      }`}
+                      type="upload"
+                      abbrTitle={t`Upload and image`}
+                      onClick={selectImage}
                     />
                     <RoundButton
                       className={`delete-image ${

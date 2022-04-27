@@ -278,6 +278,7 @@ export const Owner = () => {
       contentType: 'file',
       contentUrl: 'https://picsum.photos/200/100',
       resourceFormat: 'Video',
+      autoImageAdded: true,
     },
   })
   return <Resource {...props} />

@@ -244,6 +244,27 @@
               > .content > svg {
                 padding: 3px;
               }
+              &.highlight {
+                > .content > svg {
+                  animation: color-change 1.5s ease 0.5s 6;
+
+                  @keyframes color-change {
+                    0% {
+                      // color: inherit;
+                      // background-color: inherit;
+                    }
+                    50% {
+                      color: white;
+                      background-color: #1a6aff;
+                      border: 1px solid #3179ff;
+                    }
+                    100% {
+                      // color: inherit;
+                      // background-color: inherit;
+                    }
+                  }
+                }
+              }
             }
           }
         }

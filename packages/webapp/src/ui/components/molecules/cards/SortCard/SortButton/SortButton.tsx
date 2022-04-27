@@ -1,6 +1,8 @@
 import ArrowAltIcon from '@material-ui/icons/ArrowRightAltRounded'
 import SwapVertIcon from '@material-ui/icons/SwapVertRounded'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
+import PrimaryButton from '../../../../atoms/PrimaryButton/PrimaryButton'
+import SecondaryButton from '../../../../atoms/SecondaryButton/SecondaryButton'
 import './styles.scss'
 
 export type SortState = 'inactive' | 'more' | 'less'
@@ -20,6 +22,10 @@ export const SortButton: FC<SortButtonProps> = ({
 }) => {
   const [inState, setInState] = useState(state)
 
+  useEffect(() => {
+    !active && setInState('inactive')
+  }, [active, inState])
+
   const onClick = useCallback(() => {
     const nextState =
       inState === 'inactive' ? 'more' : inState === 'more' ? 'less' : 'inactive'
@@ -27,21 +33,22 @@ export const SortButton: FC<SortButtonProps> = ({
     clicked(label, nextState)
   }, [clicked, inState, label])
 
+  const labelElement = <span className="label">{label}</span>
+
   return (
-    <div
-      className={`check-button ${active ? inState : 'inactive'}`}
-      onClick={onClick}
-    >
-      <div className="icon inactive-icon">
-        <SwapVertIcon />
-      </div>
-      <div className="icon more-icon">
-        <ArrowAltIcon />
-      </div>
-      <div className="icon less-icon">
-        <ArrowAltIcon />
-      </div>
-      <span className="label">{label}</span>
+    <div className={`sort-button ${inState}`}>
+      {inState === 'inactive' ? (
+        <SecondaryButton color="grey" onClick={onClick}>
+          <SwapVertIcon />
+          {labelElement}
+        </SecondaryButton>
+      ) : (
+        <PrimaryButton color="blue" onClick={onClick}>
+          {inState === 'more' && <ArrowAltIcon />}
+          {inState === 'less' && <ArrowAltIcon />}
+          {labelElement}
+        </PrimaryButton>
+      )}
     </div>
   )
 }
