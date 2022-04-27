@@ -128,7 +128,7 @@ export const Resource = withCtrl<ResourceProps>(
     setLevelFilter,
     setTypeFilter,
   }) => {
-    const [isEditing, setIsEditing] = useState<boolean>(false)
+    const [isEditing, setIsEditing] = useState<boolean>(autoImageAdded)
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isSearchingImage, setIsSearchingImage] = useState<boolean>(false)
     const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
@@ -734,7 +734,8 @@ export const Resource = withCtrl<ResourceProps>(
             showCloseButton={false}
           >
             <Trans>
-              We found an image for your resource, feel free to edit it
+              We found an image for you, use the search button to find a better
+              one
             </Trans>
           </Snackbar>
         )}
@@ -913,20 +914,20 @@ export const Resource = withCtrl<ResourceProps>(
                           hidden
                         />
                         <RoundButton
-                          className={`change-image-button ${
-                            form.isSubmitting ? 'disabled' : ''
-                          }`}
-                          type="file"
-                          abbrTitle={t`Look for a file`}
-                          onClick={selectImage}
-                        />
-                        <RoundButton
                           className={`search-image-button ${
                             form.isSubmitting ? 'disabled' : ''
-                          }`}
+                          } ${autoImageAdded ? 'highlight' : ''}`}
                           type="search"
                           abbrTitle={t`Search for an image`}
                           onClick={() => setIsSearchingImage(true)}
+                        />
+                        <RoundButton
+                          className={`change-image-button ${
+                            form.isSubmitting ? 'disabled' : ''
+                          }`}
+                          type="upload"
+                          abbrTitle={t`Upload an image`}
+                          onClick={selectImage}
                         />
                         <RoundButton
                           className={`delete-image ${
