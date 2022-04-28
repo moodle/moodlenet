@@ -12,7 +12,7 @@ import { useFormik } from 'formik'
 import { createElement, useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { mixed, object, SchemaOf, string } from 'yup'
-import { MNEnv } from '../../../../../constants'
+import { MNEnv, UNSPLASH_ENDPOINT } from '../../../../../constants'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
 import {
@@ -274,6 +274,7 @@ export const useCollectionCtrl: CtrlHook<
         {},
         'header-page-template'
       ),
+      canSearchImage: !!UNSPLASH_ENDPOINT,
       collectionId: collectionData.id,
       form,
       isOwner,

@@ -9,7 +9,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-export type MountServiceName = 'graphql' | 'assets' | '.well-known' | ''
+export type MountServiceName = 'graphql' | 'assets' | '.well-known' | 'unsplash' | ''
 export type MountServices = {
   [name in MountServiceName]: Application | null | string
 }
