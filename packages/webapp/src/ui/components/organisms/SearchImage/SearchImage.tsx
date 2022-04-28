@@ -7,8 +7,12 @@ import React, {
   useState,
 } from 'react'
 import { Basic } from 'unsplash-js/dist/methods/photos/types'
-import { getUnsplashImages } from '../../../../helpers/utilities'
+import {
+  getUnsplashImages,
+  parseUnsplashImage,
+} from '../../../../helpers/utilities'
 import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
+import { AssetInfo } from '../../../types'
 import InputTextField from '../../atoms/InputTextField/InputTextField'
 import Loading from '../../atoms/Loading/Loading'
 import Modal from '../../atoms/Modal/Modal'
@@ -17,8 +21,7 @@ import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import './styles.scss'
 
 export type SearchImageProps = {
-  setImage: (photo: Basic | undefined) => void
-
+  setImage: (photo: AssetInfo | undefined) => void
   onClose: () => void
 }
 
@@ -67,32 +70,35 @@ export const SearchImage: React.FC<SearchImageProps> = ({
 
   const getImagesColumn = useCallback(
     (photos: Basic[] | undefined) => {
-      return photos?.map((photo, i) => (
-        <div className="image-container" key={i}>
-          <div
-            className="image"
-            onClick={() => {
-              setImage(photo)
-              onClose()
-            }}
-          >
-            <img
-              src={`${(photo as Basic).urls.small}`}
-              alt=""
-              onLoad={() => setLoadedImages((prevState) => prevState + 1)}
-            />
-            <div className="active-overlay" />
+      return photos?.map((unsplashPhoto, i) => {
+        const photo = parseUnsplashImage(unsplashPhoto)
+        return (
+          <div className="image-container" key={i}>
+            <div
+              className="image"
+              onClick={() => {
+                setImage(photo)
+                onClose()
+              }}
+            >
+              <img
+                src={unsplashPhoto.urls.small}
+                alt=""
+                onLoad={() => setLoadedImages((prevState) => prevState + 1)}
+              />
+              <div className="active-overlay" />
+            </div>
+            <a
+              className="credits"
+              href={photo.credits?.owner.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {photo.credits?.owner.name}
+            </a>
           </div>
-          <a
-            className="credits"
-            href={photo.user.links.html}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {photo.user.first_name} {photo.user.last_name}
-          </a>
-        </div>
-      ))
+        )
+      })
     },
     [setImage, onClose, setLoadedImages]
   )

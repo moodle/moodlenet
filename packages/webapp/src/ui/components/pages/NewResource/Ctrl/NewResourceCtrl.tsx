@@ -22,10 +22,7 @@ import {
   useLicenses,
   useResourceTypes,
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
-import {
-  getFirstWord,
-  getNewRandomImage,
-} from '../../../../../helpers/utilities'
+import { getImageFromKeywords } from '../../../../../helpers/utilities'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { NewResourceProps } from '../NewResource'
@@ -80,6 +77,21 @@ const validationSchema: SchemaOf<NewResourceFormValues> = object({
     return month ? schema.required(t`Please select a year`) : schema.optional()
   }),
 })
+
+const setNewRandomImage = async (
+  name: string,
+  description: string
+): Promise<AssetRefInput> => {
+  const assetInfo = await getImageFromKeywords(name, description)
+  const assetRefInput: AssetRefInput = assetInfo
+    ? {
+        ...assetInfo,
+        type: 'ExternalUrl',
+      }
+    : { location: '', type: 'NoAsset' }
+  return assetRefInput
+}
+
 export type NewResourceCtrlProps = {}
 
 export const useNewResourceCtrl: CtrlHook<
@@ -172,30 +184,19 @@ export const useNewResourceCtrl: CtrlHook<
               type: 'TmpUpload',
             }
 
-      const setNewRandomImage = (): AssetRefInput => {
-        const subjectFirstWord = getFirstWord(category)
-        const query = subjectFirstWord !== '' ? subjectFirstWord : 'education'
-        const photo = getNewRandomImage(query)
-        photo.then((photo) => {
-          const photoUrl = photo?.urls.regular
-          return {
-            location: photoUrl ? photoUrl : '',
-            type: photoUrl ? 'ExternalUrl' : 'NoAsset',
-          }
-        })
-      }
-
-      const imageAssetRef: AssetRefInput = !image
-        ? await setNewRandomImage()
-        : typeof image === 'string'
-        ? {
-            location: image,
-            type: 'ExternalUrl',
-          }
-        : {
-            location: await uploadTempFile('image', image),
-            type: 'TmpUpload',
-          }
+      const imageAssetRef: AssetRefInput = image
+        ? typeof image.location === 'string'
+          ? {
+              location: image.location,
+              type: 'ExternalUrl',
+            }
+          : image.location instanceof File
+          ? {
+              location: await uploadTempFile('image', image.location),
+              type: 'TmpUpload',
+            }
+          : await setNewRandomImage(name, description)
+        : await setNewRandomImage(name, description)
 
       const resourceCreationResp = await createResourceMut({
         variables: {

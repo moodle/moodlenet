@@ -4,7 +4,8 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import EditIcon from '@material-ui/icons/Edit'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import SearchIcon from '@mui/icons-material/Search'
-import { FC } from 'react'
+import UploadIcon from '@mui/icons-material/Upload'
+import { FC, ReactNode } from 'react'
 import './styles.scss'
 
 export type RoundButtonProps = {
@@ -12,10 +13,11 @@ export type RoundButtonProps = {
   onKeyUp?: { key: string; func: () => void }
   className?: string
   tabIndex?: number
-  type?: 'cross' | 'trash' | 'edit' | 'refresh' | 'search' | 'file'
+  type?: 'cross' | 'trash' | 'edit' | 'refresh' | 'search' | 'file' | 'upload'
   color?: 'gray' | 'red'
   onHoverColor?: 'gray' | 'red' | 'fill-red'
   abbrTitle?: string
+  icon?: ReactNode
 }
 
 export const RoundButton: FC<RoundButtonProps> = ({
@@ -26,6 +28,7 @@ export const RoundButton: FC<RoundButtonProps> = ({
   tabIndex,
   abbrTitle,
   onKeyUp,
+  icon,
   onClick,
 }) => {
   const svgClassName = `color-${color} hover-${onHoverColor}`
@@ -37,12 +40,20 @@ export const RoundButton: FC<RoundButtonProps> = ({
         onKeyUp={(e) => e.key === onKeyUp?.key && onKeyUp.func()}
         tabIndex={tabIndex}
       >
-        {type === 'cross' && <CloseRoundedIcon className={svgClassName} />}
-        {type === 'trash' && <DeleteOutlineIcon className={svgClassName} />}
-        {type === 'edit' && <EditIcon className={svgClassName} />}
-        {type === 'refresh' && <CachedIcon className={svgClassName} />}
-        {type === 'search' && <SearchIcon className={svgClassName} />}
-        {type === 'file' && <InsertDriveFileIcon className={svgClassName} />}
+        {icon && icon}
+        {!icon && (
+          <>
+            {type === 'cross' && <CloseRoundedIcon className={svgClassName} />}
+            {type === 'trash' && <DeleteOutlineIcon className={svgClassName} />}
+            {type === 'edit' && <EditIcon className={svgClassName} />}
+            {type === 'refresh' && <CachedIcon className={svgClassName} />}
+            {type === 'search' && <SearchIcon className={svgClassName} />}
+            {type === 'upload' && <UploadIcon className={svgClassName} />}
+            {type === 'file' && (
+              <InsertDriveFileIcon className={svgClassName} />
+            )}
+          </>
+        )}
       </div>
     </abbr>
   )

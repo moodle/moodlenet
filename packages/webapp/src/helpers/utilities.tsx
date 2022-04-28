@@ -1,6 +1,12 @@
+import { toString } from 'nlcst-to-string'
+import { retext } from 'retext'
+import retextKeywords from 'retext-keywords'
+import retextPos from 'retext-pos'
 import { createApi } from 'unsplash-js'
 import { Basic, Random } from 'unsplash-js/dist/methods/photos/types'
-import { ContentBackupImages, RecursivePartial } from '../ui/assets/data/images'
+import vfile from 'vfile'
+import { ContentBackupImages } from '../ui/assets/data/images'
+import { AssetInfo } from '../ui/types'
 
 export const isURL = (str: string): boolean => {
   const pattern = new RegExp(
@@ -86,9 +92,7 @@ export const getNumberFromString = (s: string) =>
     10
   )
 
-export const getBackupImage = (
-  id: string
-): RecursivePartial<Basic> | undefined => {
+export const getBackupImage = (id: string): AssetInfo | undefined => {
   const numId = getNumberFromString(id)
   return ContentBackupImages[numId % ContentBackupImages.length]
 }
@@ -97,7 +101,25 @@ export const getRandomInt = (max: number) => {
   return Math.floor(Math.random() * max)
 }
 
-export const getNewRandomImage = (
+export const parseUnsplashImage = (
+  photo: Basic | Random
+): AssetInfo & { location: string } => {
+  return {
+    location: photo.urls.regular,
+    credits: {
+      owner: {
+        name: photo.user.first_name,
+        url: photo.user.links.html,
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
+    },
+  }
+}
+
+export const getRandomUnsplashImage = (
   query: string
 ): Promise<Random | undefined> => {
   const unsplash = createApi({
@@ -129,6 +151,7 @@ export const getUnsplashImages = (
   return unsplash.search
     .getPhotos({
       query: query,
+      orientation: 'landscape',
       perPage: 30,
       page: page,
     })
@@ -145,4 +168,96 @@ export const getUnsplashImages = (
 export const getFirstWord = (word: string) => {
   const array = word.split(' ')
   return array[0] ? array[0] : ''
+}
+
+export const getKeywords = (
+  text: string
+): Promise<{ keywords: string[]; keyPhrases: string[] }> => {
+  return retext()
+    .use(retextPos) // Make sure to use `retext-pos` before `retext-keywords`.
+    .use(retextKeywords)
+    .process(vfile(text) as any)
+    .then((file: any) => {
+      const keywords = file.data.keywords.map((keyword: any) => {
+        return toString(keyword.matches[0].node)
+      })
+      const keyPhrases = file.data.keyphrases.map((phrase: any) => {
+        return phrase.matches[0].nodes.map((d: any) => toString(d)).join('')
+      })
+      return { keywords, keyPhrases }
+    })
+}
+
+export const getImageFromKeywords = async (
+  name: string,
+  description: string,
+  subject?: string
+): Promise<(AssetInfo & { location: string }) | undefined> => {
+  const getPhoto = async (keys: string[]): Promise<Random | undefined> => {
+    let result = undefined
+    let i = 0
+    while (result === undefined && i < keys.length) {
+      let key = keys[i]
+      result = key
+        ? await getRandomUnsplashImage(key).then((photo) => {
+            return photo
+          })
+        : undefined
+      i++
+    }
+    return result
+  }
+
+  const getKeywordPhotos = async (
+    text: string
+  ): Promise<Random | undefined> => {
+    return getKeywords(text).then(async (k) => {
+      const keywords = [k.keyPhrases, k.keywords]
+      let result = undefined
+      let i = 0
+      while (i < keywords.length && result === undefined) {
+        const keys = keywords[i]
+        result =
+          keys && keys.length > 0
+            ? await getPhoto(keys).then((photo) => {
+                if (photo) {
+                  return photo
+                }
+                return undefined
+              })
+            : undefined
+        i++
+      }
+      return result
+    })
+  }
+
+  const queries = [
+    name,
+    description,
+    subject && [subject],
+    subject && subject.split(''),
+  ]
+
+  let result = undefined
+  let i = 0
+  while (i < queries.length && result === undefined) {
+    const key = queries[i]
+    const getPhotoPromise = key
+      ? typeof key === 'string'
+        ? getKeywordPhotos(key)
+        : getPhoto(key)
+      : undefined
+
+    result =
+      getPhotoPromise &&
+      (await getPhotoPromise.then((photo) => {
+        if (photo) {
+          return photo
+        }
+        return undefined
+      }))
+    i++
+  }
+  return result && parseUnsplashImage(result)
 }

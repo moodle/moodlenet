@@ -172,16 +172,28 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
         return
       }
       const imageAssetRef: AssetRefInput =
-        !image || image === form.initialValues.image
-          ? { location: '', type: 'NoChange' }
-          : typeof image === 'string'
+        !image || image.location === form.initialValues.image?.location
           ? {
-              location: image,
+              location: '',
+              type: 'NoChange',
+              credits: form.initialValues.image?.credits,
+            }
+          : typeof image.location === 'string'
+          ? {
+              location: image.location,
               type: 'ExternalUrl',
+              credits: image.credits,
+            }
+          : image.location instanceof File
+          ? {
+              location: await uploadTempFile('image', image.location),
+              type: 'TmpUpload',
+              credits: image.credits,
             }
           : {
-              location: await uploadTempFile('image', image),
-              type: 'TmpUpload',
+              location: '',
+              type: 'NoChange',
+              credits: form.initialValues.image?.credits,
             }
       const editResPr = edit({
         variables: {
@@ -334,6 +346,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
         typeof resourceData.originalCreationDate === 'number'
           ? new Date(resourceData.originalCreationDate)
           : null
+      const _image = getMaybeAssetRefUrl(image)
       _resetform({
         touched: {},
         values: {
@@ -344,7 +357,9 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
           license,
           type,
           description,
-          image: getMaybeAssetRefUrl(image),
+          image: _image
+            ? { location: _image, credits: image?.credits }
+            : undefined,
           name,
           visibility: _published ? 'Public' : 'Private',
           month: orgDate ? `${orgDate.getMonth()}` : undefined,
@@ -527,6 +542,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       isOwner,
       isAdmin,
       liked,
+      autoImageAdded: false, //TO FIX
       contributorCardProps: {
         avatarUrl: getMaybeAssetRefUrl(
           creator?.__typename === 'Profile'

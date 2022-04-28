@@ -65,7 +65,7 @@ export const CollectionStoryProps = (overrides?: {
     initialValues: {
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-      // image: 'https://picsum.photos/200/100',
+      image: { location: 'https://picsum.photos/200/100' },
       title: 'Best collection ever',
       visibility: 'Public',
       ...overrides?.formValues,
@@ -108,6 +108,8 @@ export const CollectionStoryProps = (overrides?: {
       initialValues: {},
       onSubmit: action('delete Collection'),
     }),
+    autoImageAdded: false,
+    canSearchImage: true,
     ...overrides?.props,
   }
 }
@@ -142,6 +144,7 @@ export const Owner = () => {
   const props = CollectionStoryProps({
     props: {
       isOwner: true,
+      autoImageAdded: true,
     },
   })
   return <Collection {...props} />
