@@ -8,16 +8,14 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Basic } from 'unsplash-js/dist/methods/photos/types'
+import React, { useMemo, useRef, useState } from 'react'
 import { getBackupImage } from '../../../../helpers/utilities'
-import { RecursivePartial } from '../../../assets/data/images'
 import { getTagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
 import { SelectOptions, SelectOptionsMulti } from '../../../lib/types'
 import { useImageUrl } from '../../../lib/useImageUrl'
-import { FollowTag, getResourceColorType } from '../../../types'
+import { AssetInfo, FollowTag, getResourceColorType } from '../../../types'
 import Card from '../../atoms/Card/Card'
 import {
   Dropdown,
@@ -70,6 +68,8 @@ export type ResourceProps = {
   isAuthenticated: boolean
   isOwner: boolean
   isAdmin: boolean
+  autoImageAdded: boolean
+  canSearchImage: boolean
   numLikes: number
   collections: SelectOptionsMulti<OptionItemProp>
   liked: boolean
@@ -123,12 +123,16 @@ export const Resource = withCtrl<ResourceProps>(
     resourceFormat,
     contentType,
     addToCollectionsForm,
+    autoImageAdded,
+    canSearchImage,
     setCategoryFilter,
     setLanguageFilter,
     setLevelFilter,
     setTypeFilter,
   }) => {
-    const [isEditing, setIsEditing] = useState<boolean>(false)
+    const [isEditing, setIsEditing] = useState<boolean>(
+      canSearchImage && autoImageAdded
+    )
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isSearchingImage, setIsSearchingImage] = useState<boolean>(false)
     const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
@@ -139,18 +143,19 @@ export const Resource = withCtrl<ResourceProps>(
       useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
-    const backupImage: RecursivePartial<Basic> | undefined =
-      getBackupImage(resourceId)
-    const [currentImage, setCurrentImage] = useState<
-      RecursivePartial<Basic> | Basic | string | File | null | undefined
-    >(form.values.image || backupImage)
-    const [completeImage, setCompleteImage] = useState<
-      Basic | null | undefined
-    >(currentImage as Basic)
+    const backupImage: AssetInfo | null | undefined = useMemo(
+      () => getBackupImage(resourceId),
+      [resourceId]
+    )
+    const [imageUrl] = useImageUrl(
+      form.values?.image?.location,
+      backupImage?.location
+    )
 
     const handleOnEditClick = () => {
       setIsEditing(true)
     }
+
     const handleOnSaveClick = () => {
       if (form.isValid) {
         form.submitForm()
@@ -176,70 +181,52 @@ export const Resource = withCtrl<ResourceProps>(
       uploadImageRef.current?.click()
     }
 
-    const uploadImage = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCompleteImage(null)
-        const selectedFile = e.currentTarget.files?.item(0)
-        selectedFile && form.setFieldValue('image', selectedFile)
-      },
-      [form]
-    )
-    const deleteImage = () => {
-      form.setFieldValue('image', null)
-      setCurrentImage(backupImage)
-    }
-
-    const setImage = (photo: Basic | undefined) => {
-      if (photo) {
-        form.setFieldValue('image', photo.urls.regular)
-        setCurrentImage(photo)
-      } else {
-        deleteImage()
+    const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedFile = e.currentTarget.files?.item(0)
+      if (selectedFile) {
+        form.setFieldValue('image', { location: selectedFile })
       }
     }
-    const [imageUrl] = useImageUrl(
-      form.values.image,
-      backupImage?.urls?.regular
-    )
-    const image = (
+
+    const setImage = (image: AssetInfo | undefined) => {
+      form.setFieldValue('image', image)
+    }
+
+    const deleteImage = () => {
+      form.setFieldValue('image', null)
+    }
+
+    const imageDiv = (
       <img
         className="image"
-        src={imageUrl ? imageUrl : backupImage?.urls?.regular}
+        src={imageUrl}
         alt="Background"
         {...(contentType === 'file' && {
           onClick: () => setIsShowingImage(true),
         })}
         style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
-        onLoad={() => setIsImageLoaded(true)}
       />
     )
 
-    useEffect(() => {
-      setCompleteImage(currentImage as Basic)
-    }, [currentImage])
-
-    const imageCredits = () => {
-      // const image = currentImage as Basic
-      // if (image !== null && image?.user) {
+    const getImageCredits = (image: AssetInfo | undefined | null) => {
+      const credits = image
+        ? image.credits
+          ? image.credits
+          : undefined
+        : backupImage?.credits
       return (
-        completeImage && (
+        credits && (
           <div className="image-credits">
             Photo by
-            <a
-              href={completeImage.user.links.html}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {completeImage.user.first_name} {completeImage.user.last_name}
+            <a href={credits.owner.url} target="_blank" rel="noreferrer">
+              {credits.owner.name}
             </a>
             on
-            <a
-              href={`https://unsplash.com/?utm_source=moodlenet&utm_medium=referral`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Unsplash
-            </a>
+            {
+              <a href={credits.owner.url} target="_blank" rel="noreferrer">
+                {credits.provider?.name}
+              </a>
+            }
           </div>
         )
       )
@@ -645,18 +632,18 @@ export const Resource = withCtrl<ResourceProps>(
             setImage={setImage}
           />
         )}
-        {isShowingImage && typeof imageUrl === 'string' && (
+        {isShowingImage && imageUrl && (
           <Modal
             className="image-modal"
             closeButton={false}
             onClose={() => setIsShowingImage(false)}
             style={{
               maxWidth: '90%',
-              maxHeight: backupImage ? 'calc(90% + 20px)' : '90%',
+              maxHeight: form.values.type !== '' ? 'calc(90% + 20px)' : '90%',
             }}
           >
             <img src={imageUrl} alt="Resource" />
-            {imageCredits()}
+            {getImageCredits(form.values.image)}
           </Modal>
         )}
         {
@@ -739,6 +726,20 @@ export const Resource = withCtrl<ResourceProps>(
           >
             <Trans>The resource will be deleted</Trans>
           </Modal>
+        )}
+        {canSearchImage && autoImageAdded && (
+          <Snackbar
+            position="bottom"
+            type="info"
+            waitDuration={200}
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>
+              We found an image for you, use the search button to find a better
+              one
+            </Trans>
+          </Snackbar>
         )}
         {form.isSubmitting && (
           <Snackbar
@@ -899,12 +900,12 @@ export const Resource = withCtrl<ResourceProps>(
                   <div className="image-container">
                     {contentType === 'link' ? (
                       <a href={contentUrl} target="_blank" rel="noreferrer">
-                        {image}
+                        {imageDiv}
                       </a>
                     ) : (
-                      <>{image}</>
+                      <>{imageDiv}</>
                     )}
-                    {imageCredits()}
+                    {getImageCredits(form.values.image)}
                     {isEditing && !form.isSubmitting && (
                       <div className="image-actions">
                         <input
@@ -914,21 +915,23 @@ export const Resource = withCtrl<ResourceProps>(
                           onChange={uploadImage}
                           hidden
                         />
+                        {canSearchImage && (
+                          <RoundButton
+                            className={`search-image-button ${
+                              form.isSubmitting ? 'disabled' : ''
+                            } ${autoImageAdded ? 'highlight' : ''}`}
+                            type="search"
+                            abbrTitle={t`Search for an image`}
+                            onClick={() => setIsSearchingImage(true)}
+                          />
+                        )}
                         <RoundButton
                           className={`change-image-button ${
                             form.isSubmitting ? 'disabled' : ''
                           }`}
-                          type="file"
-                          abbrTitle={t`Look for a file`}
+                          type="upload"
+                          abbrTitle={t`Upload an image`}
                           onClick={selectImage}
-                        />
-                        <RoundButton
-                          className={`search-image-button ${
-                            form.isSubmitting ? 'disabled' : ''
-                          }`}
-                          type="search"
-                          abbrTitle={t`Search for an image`}
-                          onClick={() => setIsSearchingImage(true)}
                         />
                         <RoundButton
                           className={`delete-image ${

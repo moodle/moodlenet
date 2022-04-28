@@ -20,7 +20,7 @@ export type CreateCollectionProps = {
 
 export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
   const shouldShowErrors = !!form.submitCount && !form.isValid
-  const [imageUrl] = useImageUrl(form.values.image)
+  const [imageUrl] = useImageUrl(form.values.image?.location)
   const background = {
     backgroundImage: 'url(' + imageUrl + ')',
     backgroundSize: 'cover',

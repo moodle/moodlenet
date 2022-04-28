@@ -1,4 +1,3 @@
-import { Basic } from 'unsplash-js/dist/methods/photos/types'
 import ashleywhitlatch from '../../static/img/contentBackup/ashleywhitlatch.jpg'
 import dvlden from '../../static/img/contentBackup/dvlden.jpg'
 import dvlden2 from '../../static/img/contentBackup/dvlden2.jpg'
@@ -15,150 +14,234 @@ import hendrikkay from '../../static/img/contentBackup/hendrikkay.jpg'
 import lukechesser from '../../static/img/contentBackup/lukechesser.jpg'
 import lukechesser2 from '../../static/img/contentBackup/lukechesser2.jpg'
 import mymind from '../../static/img/contentBackup/mymind.jpg'
-import mymind2 from '../../static/img/contentBackup/mymind2.jpg'
 import seanwsinclair from '../../static/img/contentBackup/seanwsinclair.jpg'
 import vackground from '../../static/img/contentBackup/vackground.jpg'
+import { AssetInfo } from '../../types'
 
 export type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>
 }
 
-export const ContentBackupImages: RecursivePartial<Basic>[] = [
+export const ContentBackupImages: AssetInfo[] = [
   {
-    user: {
-      first_name: 'mymind',
-      links: {
-        html: 'https://unsplash.com/@mymind',
+    location: 'static/media/mymind.a4646614.jpg',
+    credits: {
+      owner: {
+        name: 'mymind',
+        url: 'https://unsplash.com/@mymind',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
       },
     },
-    urls: {
-      regular: mymind,
+  },
+  {
+    location: seanwsinclair,
+    credits: {
+      owner: {
+        name: 'Sean Sinclair',
+        url: 'https://unsplash.com/@seanwsinclair',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: seanwsinclair },
-    user: {
-      first_name: 'Sean Sinclair',
-      links: { html: 'https://unsplash.com/@seanwsinclair' },
+    location: fakurian,
+    credits: {
+      owner: {
+        name: 'Milad Fakurian',
+        url: 'https://unsplash.com/@fakurian',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: fakurian },
-    user: {
-      first_name: 'Milad Fakurian',
-      links: { html: 'https://unsplash.com/@fakurian' },
+    location: fakurian2,
+    credits: {
+      owner: {
+        name: 'Milad Fakurian',
+        url: 'https://unsplash.com/@fakurian',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: fakurian2 },
-    user: {
-      first_name: 'Milad Fakurian',
-      links: { html: 'https://unsplash.com/@fakurian' },
+    location: mymind,
+    credits: {
+      owner: {
+        name: 'mymind',
+        url: 'https://unsplash.com/@mymind',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: mymind2 },
-    user: {
-      first_name: 'mymind',
-      links: { html: 'https://unsplash.com/@mymind' },
+    location: ashleywhitlatch,
+    credits: {
+      owner: {
+        name: 'Ashley Whitlatch',
+        url: 'https://unsplash.com/@ashleywhitlatch',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: ashleywhitlatch },
-    user: {
-      first_name: 'Ashley Whitlatch',
-      links: { html: 'https://unsplash.com/@ashleywhitlatch' },
+    location: gradienta,
+    credits: {
+      owner: {
+        name: 'Gradienta',
+        url: 'https://unsplash.com/@gradienta',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: gradienta },
-    user: {
-      first_name: 'Gradienta',
-      links: { html: 'https://unsplash.com/@gradienta' },
+    location: gradienta2,
+    credits: {
+      owner: {
+        name: 'Gradienta',
+        url: 'https://unsplash.com/@gradienta',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: gradienta2 },
-    user: {
-      first_name: 'Gradienta',
-      links: { html: 'https://unsplash.com/@gradienta' },
+    location: gradienta3,
+    credits: {
+      owner: {
+        name: 'Gradienta',
+        url: 'https://unsplash.com/@gradienta',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: gradienta3 },
-    user: {
-      first_name: 'Gradienta',
-      links: { html: 'https://unsplash.com/@gradienta' },
+    location: gradienta4,
+    credits: {
+      owner: {
+        name: 'Gradienta',
+        url: 'https://unsplash.com/@gradienta',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: gradienta4 },
-    user: {
-      first_name: 'Gradienta',
-      links: { html: 'https://unsplash.com/@gradienta' },
+    location: gradienta5,
+    credits: {
+      owner: {
+        name: 'Gradienta',
+        url: 'https://unsplash.com/@gradienta',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: gradienta5 },
-    user: {
-      first_name: 'Gradienta',
-      links: { html: 'https://unsplash.com/@gradienta' },
+    location: hendrikkay,
+    credits: {
+      owner: {
+        name: 'Hendrik Kespohl',
+        url: 'https://unsplash.com/@hendrikkay',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: fakurian },
-    user: {
-      first_name: 'Milad Fakurian',
-      links: { html: 'https://unsplash.com/@fakurian' },
+    location: lukechesser,
+    credits: {
+      owner: {
+        name: 'Luke Chesser',
+        url: 'https://unsplash.com/@lukechesser',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: fakurian },
-    user: {
-      first_name: 'Milad Fakurian',
-      links: { html: 'https://unsplash.com/@fakurian' },
+    location: lukechesser2,
+    credits: {
+      owner: {
+        name: 'Luke Chesser',
+        url: 'https://unsplash.com/@lukechesser',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: hendrikkay },
-    user: {
-      first_name: 'Hendrik Kespohl',
-      links: { html: 'https://unsplash.com/@hendrikkay' },
+    location: vackground,
+    credits: {
+      owner: {
+        name: 'Vackground',
+        url: 'https://unsplash.com/@vackground',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: lukechesser },
-    user: {
-      first_name: 'Luke Chesser',
-      links: { html: 'https://unsplash.com/@lukechesser' },
+    location: dvlden,
+    credits: {
+      owner: {
+        name: 'Nenad Novaković',
+        url: 'https://unsplash.com/@dvlden',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
   {
-    urls: { regular: lukechesser2 },
-    user: {
-      first_name: 'Luke Chesser',
-      links: { html: 'https://unsplash.com/@lukechesser' },
-    },
-  },
-  {
-    urls: { regular: vackground },
-    user: {
-      first_name: 'Vackground',
-      links: { html: 'https://unsplash.com/@vackground' },
-    },
-  },
-  {
-    urls: { regular: dvlden },
-    user: {
-      first_name: 'Nenad Novaković',
-      links: { html: 'https://unsplash.com/@dvlden' },
-    },
-  },
-  {
-    urls: { regular: dvlden2 },
-    user: {
-      first_name: 'Nenad Novaković',
-      links: { html: 'https://unsplash.com/@dvlden' },
+    location: dvlden2,
+    credits: {
+      owner: {
+        name: 'Nenad Novaković',
+        url: 'https://unsplash.com/@dvlden',
+      },
+      provider: {
+        name: 'Unsplash',
+        url: 'https://unsplash.com/?utm_source=moodlenet&utm_medium=referral',
+      },
     },
   },
 ]

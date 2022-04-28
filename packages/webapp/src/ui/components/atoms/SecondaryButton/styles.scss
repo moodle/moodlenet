@@ -16,7 +16,7 @@
   &:not(.disabled) {
     &.black {
       color: #4d5156;
-      border: 2px solid rgb(60 64 67);
+      border: 2px solid #4d5156;
     }
 
     &.red {
@@ -34,6 +34,11 @@
       border: 2px solid #707070;
     }
 
+    &.light-grey {
+      color: #b9b9b9;
+      border: 2px solid #b9b9b9;
+    }
+
     &:hover {
       box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%),
         0px 2px 6px 2px rgb(60 64 67 / 15%);
@@ -47,6 +52,11 @@
       &.grey &.hover-grey {
         color: #7c8091;
         border: 2px solid #7c8091;
+      }
+
+      &.light-grey &.hover-light-grey {
+        color: #b9b9b9;
+        border: 2px solid #b9b9b9;
       }
 
       &.red &.hover-grey {
@@ -92,7 +102,7 @@
       &.black,
       &.hover-black {
         color: #4d5156;
-        border: 2px solid black;
+        border: 2px solid #4d5156;
       }
 
       &.hover-fill-red {

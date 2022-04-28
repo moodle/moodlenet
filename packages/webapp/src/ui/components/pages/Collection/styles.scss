@@ -33,6 +33,10 @@
       flex-direction: column;
       align-items: flex-start;
 
+      @media (max-width: 500px) {
+        border-radius: 0;
+      }
+
       > .image {
         height: 300px;
         width: 100%;
@@ -45,6 +49,8 @@
         }
 
         > .image-actions {
+          // width: fit-content;
+          // float: right;
           z-index: 5;
           padding: 10px;
           display: flex;
@@ -53,6 +59,25 @@
           > * {
             &.disabled {
               pointer-events: none;
+            }
+          }
+
+          > .search-image-button {
+            > .content > svg {
+              padding: 3px;
+            }
+            &.highlight {
+              > .content > svg {
+                animation: color-change 1.5s ease 0.5s 6;
+
+                @keyframes color-change {
+                  50% {
+                    color: white;
+                    background-color: #1a6aff;
+                    border: 1px solid #3179ff;
+                  }
+                }
+              }
             }
           }
         }

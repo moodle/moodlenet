@@ -10,10 +10,7 @@ import { mixed, object, SchemaOf, string } from 'yup'
 import { MNEnv } from '../../../../../constants'
 // import { useSession } from '../../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../../helpers/data'
-import {
-  getFirstWord,
-  getNewRandomImage,
-} from '../../../../../helpers/utilities'
+import { getImageFromKeywords } from '../../../../../helpers/utilities'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { NewCollectionProps } from '../NewCollection'
@@ -54,17 +51,18 @@ export const useNewCollectionCtrl: CtrlHook<
     useCreateCollectionMutation()
   // const [createCollectionRelMut /* , createCollectionRelMutRes */] = useCreateCollectionRelationMutation()
 
-  const setNewRandomImage = (title: string): AssetRefInput => {
-    const subjectFirstWord = getFirstWord(title)
-    const query = subjectFirstWord !== '' ? subjectFirstWord : 'education'
-    const photo = getNewRandomImage(query)
-    photo.then((photo) => {
-      const photoUrl = photo?.urls.regular
-      return {
-        location: photoUrl ? photoUrl : '',
-        type: photoUrl ? 'ExternalUrl' : 'NoAsset',
-      }
-    })
+  const setNewRandomImage = async (
+    name: string,
+    description: string
+  ): Promise<AssetRefInput> => {
+    const assetInfo = await getImageFromKeywords(name, description)
+    const assetRefInput: AssetRefInput = assetInfo
+      ? {
+          ...assetInfo,
+          type: 'ExternalUrl',
+        }
+      : { location: '', type: 'NoAsset' }
+    return assetRefInput
   }
 
   const form = useFormik<NewCollectionFormValues>({
@@ -77,16 +75,18 @@ export const useNewCollectionCtrl: CtrlHook<
     },
     onSubmit: async ({ description, title, visibility, image }) => {
       const imageAssetRef: AssetRefInput = !image
-        ? await setNewRandomImage(title)
+        ? await setNewRandomImage(title, description)
         : typeof image === 'string'
         ? {
             location: image,
             type: 'ExternalUrl',
           }
-        : {
-            location: await uploadTempFile('image', image),
+        : image.location instanceof File
+        ? {
+            location: await uploadTempFile('image', image.location),
             type: 'TmpUpload',
           }
+        : await setNewRandomImage(title, description)
       const collectionCreationResp = await createCollectionMut({
         variables: {
           res: {
