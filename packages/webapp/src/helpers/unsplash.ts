@@ -1,13 +1,15 @@
 import { UNSPLASH_ENDPOINT } from '../constants'
-import { AssetInfo } from '../ui/types'
+import { AssetRefInput } from '../graphql/pub.graphql.link'
 
 export const getUnsplashImages = async (
   query: string,
   page: number
 ): Promise<
-  | (AssetInfo & { location: string; height: number; width: number })[]
-  | undefined
+  (AssetRefInput & { height: number; width: number })[] | undefined
 > => {
+  if (!UNSPLASH_ENDPOINT) {
+    return
+  }
   const params = new URLSearchParams({
     query,
     page: String(page),
@@ -23,7 +25,11 @@ export const getImageFromKeywords = async (
   name: string,
   description: string,
   subject = ''
-): Promise<(AssetInfo & { location: string }) | undefined> => {
+): Promise<AssetRefInput | null> => {
+  if (!UNSPLASH_ENDPOINT) {
+    return null
+  }
+
   const params = new URLSearchParams({
     name,
     description,
@@ -31,7 +37,7 @@ export const getImageFromKeywords = async (
   }).toString()
 
   const result = await fetch(
-    `${UNSPLASH_ENDPOINT}/getImageFromKeywords&${params}`
+    `${UNSPLASH_ENDPOINT}/getImageFromKeywords?${params}`
   ).catch(() => undefined)
   return result?.json()
 }
