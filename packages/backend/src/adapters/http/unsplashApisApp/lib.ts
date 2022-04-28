@@ -1,16 +1,14 @@
-import { AssetRef } from '@moodlenet/common/dist/graphql/scalars.graphql'
-import { toString } from 'nlcst-to-string'
-import { retext } from 'retext'
+import { AssetRefInput } from '@moodlenet/common/dist/graphql/types.graphql.gen'
+import nlcst from 'nlcst-to-string'
+import retext from 'retext'
 import retextKeywords from 'retext-keywords'
 import retextPos from 'retext-pos'
 import { createApi } from 'unsplash-js'
 import { Basic, Random } from 'unsplash-js/dist/methods/photos/types'
-import VFile from 'vfile'
 
-const parseUnsplashImage = (photo: Basic | Random): AssetRef => {
+const parseUnsplashImage = (photo: Basic | Random): AssetRefInput => {
   return {
-    ext: true,
-    mimetype: 'image/*',
+    type: 'ExternalUrl',
     location: photo.urls.regular,
     credits: {
       owner: {
@@ -24,7 +22,6 @@ const parseUnsplashImage = (photo: Basic | Random): AssetRef => {
     },
   }
 }
-
 const getRandomUnsplashImage = ({
   accessKey,
   query,
@@ -43,36 +40,45 @@ const getRandomUnsplashImage = ({
     })
     .then(result => {
       if (result.type === 'success' && !Array.isArray(result.response)) {
+        // console.log({ result })
         return result.response
       } else {
         return undefined
       }
-    }) /* 
+    })
     .catch(e => {
       console.error(e)
       throw e
-    }) */
+    })
 }
 
-//  const getFirstWord = (word: string) => {
+//  const getFirstWord = (word: string) => {npm i retext-pos
 //   const array = word.split(' ')
 //   return array[0] ? array[0] : ''
 // }
 
 const getKeywords = (text: string): Promise<{ keywords: string[]; keyPhrases: string[] }> => {
-  return retext()
-    .use(retextPos) // Make sure to use `retext-pos` before `retext-keywords`.
-    .use(retextKeywords)
-    .process(VFile(text))
-    .then((file: any) => {
-      const keywords = (file.data.keywords as any).map((keyword: any) => {
-        return toString(keyword.matches[0].node)
+  return (
+    retext()
+      .use(retextPos) // Make sure to use `retext-pos` before `retext-keywords`.
+      .use(retextKeywords)
+      .process(text)
+      // .process(VFile(text))
+      // .process((...args: any[]) => {
+      //   console.log({ args })
+      //   return VFile(text)
+      // })
+      .then((file: any) => {
+        console.log({ file, text })
+        const keywords = (file.data.keywords as any).map((keyword: any) => {
+          return (nlcst as any)(keyword.matches[0].node)
+        })
+        const keyPhrases = (file.data.keyphrases as any).map((phrase: any) => {
+          return phrase.matches[0].nodes.map((d: any) => (nlcst as any)(d)).join('')
+        })
+        return { keywords, keyPhrases }
       })
-      const keyPhrases = (file.data.keyphrases as any).map((phrase: any) => {
-        return phrase.matches[0].nodes.map((d: any) => toString(d)).join('')
-      })
-      return { keywords, keyPhrases }
-    })
+  )
 }
 export const getUnsplashImages = ({
   query,
@@ -82,7 +88,7 @@ export const getUnsplashImages = ({
   query: string
   page: number
   accessKey: string
-}): Promise<(AssetRef & { location: string; height: number; width: number })[] | undefined> => {
+}): Promise<(AssetRefInput & { location: string; height: number; width: number })[] | undefined> => {
   const unsplash = createApi({
     accessKey,
     //...other fetch options
@@ -115,7 +121,7 @@ export const getImageFromKeywords = async ({
   name: string
   description: string
   subject?: string
-}): Promise<AssetRef | undefined> => {
+}): Promise<AssetRefInput | null> => {
   const getPhoto = async (keys: string[]): Promise<Random | undefined> => {
     let result = undefined
     let i = 0
@@ -133,6 +139,8 @@ export const getImageFromKeywords = async ({
 
   const getKeywordPhotos = async (text: string): Promise<Random | undefined> => {
     return getKeywords(text).then(async k => {
+      console.log({ k })
+
       const keywords = [k.keyPhrases, k.keywords]
       let result = undefined
       let i = 0
@@ -171,5 +179,6 @@ export const getImageFromKeywords = async ({
       }))
     i++
   }
-  return result && parseUnsplashImage(result)
+  return (result && parseUnsplashImage(result)) ?? null
 }
+// console.log(inspect({ retext, retextPos, retextKeywords, VFile, nlcst }, true, 5, true))

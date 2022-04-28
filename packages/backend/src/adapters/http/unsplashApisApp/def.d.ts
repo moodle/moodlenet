@@ -3,6 +3,7 @@ declare module 'nlcst-to-string' {
 }
 declare module 'retext' {
   export const retext: any
+  export default any
 }
 declare module 'retext-keywords' {}
 declare module 'retext-pos' {}
