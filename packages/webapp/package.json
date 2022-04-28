@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/webapp",
-  "version": "2.0.8-alpha.4",
+  "version": "2.0.8-alpha.5",
   "license": "AGPL-3.0",
   "description": "MoodleNet Webapp",
   "author": "https://github.com/aleclofabbro",
@@ -24,7 +24,7 @@
     "@lingui/react": "^3.5.0",
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
-    "@moodlenet/common": "^2.0.8-alpha.4",
+    "@moodlenet/common": "^2.0.8-alpha.5",
     "@mui/icons-material": "^5.5.1",
     "@mui/material": "^5.3.1",
     "apollo-cache-inmemory": "^1.6.6",
@@ -43,11 +43,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-use-what-input": "^1.2.0",
-    "retext": "^8.1.0",
-    "retext-keywords": "^7.1.0",
-    "retext-pos": "^4.1.0",
     "shelljs": "^0.8.4",
-    "unsplash-js": "^7.0.15",
     "web-vitals": "^0.2.4",
     "yup": "^0.32.8"
   },
