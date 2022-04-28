@@ -285,14 +285,18 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
       }
       const { input, uploadType } = assRefInpAndType
       if (input.type === 'TmpUpload') {
-        const persTmpFileReq: PersistTmpFileReq = { tempAssetId: input.location, uploadType, credits: input.credits }
+        const persTmpFileReq: PersistTmpFileReq = {
+          tempAssetId: input.location,
+          uploadType,
+          credits: input.credits ?? null,
+        }
         return persTmpFileReq
       } else if (input.type === 'ExternalUrl') {
         const assetRef: AssetRef = {
           ext: true,
           location: input.location,
           mimetype: 'text/html',
-          credits: input.credits,
+          credits: input.credits ?? null,
         } // TODO: define mimetype for links
         return assetRef
       } else if (input.type === 'NoAsset') {
@@ -326,7 +330,7 @@ export const mapAssetRefInputsToAssetRefs = async <N extends number>(
         ext: false,
         location: assetId,
         mimetype: tempAssetDesc.mimetype,
-        credits: maybePersistTmpFileReqOrAssetRef.credits,
+        credits: maybePersistTmpFileReqOrAssetRef.credits ?? null,
       }
       return assetRef
     },
