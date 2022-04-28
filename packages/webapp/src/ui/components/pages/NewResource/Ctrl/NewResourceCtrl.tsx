@@ -22,7 +22,7 @@ import {
   useLicenses,
   useResourceTypes,
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
-import { getImageFromKeywords } from '../../../../../helpers/utilities'
+import { getImageFromKeywords } from '../../../../../helpers/unsplash'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { NewResourceProps } from '../NewResource'

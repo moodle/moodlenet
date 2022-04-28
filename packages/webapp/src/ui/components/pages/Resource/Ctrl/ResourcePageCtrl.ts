@@ -13,7 +13,7 @@ import { duration } from 'moment'
 import { createElement, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { boolean, mixed, object, SchemaOf, string } from 'yup'
-import { MNEnv } from '../../../../../constants'
+import { MNEnv, UNSPLASH_ENDPOINT } from '../../../../../constants'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
 import {
@@ -538,6 +538,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
     const props: ResourceProps = {
       resourceId: resourceData.id,
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, id),
+      canSearchImage: !!UNSPLASH_ENDPOINT,
       form,
       isOwner,
       isAdmin,
