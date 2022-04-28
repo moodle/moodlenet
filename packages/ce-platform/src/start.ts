@@ -6,6 +6,7 @@ import { getNodemailerSendEmailAdapter } from '@moodlenet/backend/dist/adapters/
 import { createGraphQLApp } from '@moodlenet/backend/dist/adapters/http/graphqlApp'
 import { startMNHttpServer } from '@moodlenet/backend/dist/adapters/http/MNHTTPServer'
 import { createStaticAssetsApp } from '@moodlenet/backend/dist/adapters/http/staticAssetsApp'
+import { createUnsplashApisApp } from '@moodlenet/backend/dist/adapters/http/unsplashApisApp'
 import { createWebfingerApp } from '@moodlenet/backend/dist/adapters/http/webfingerApp'
 import { getFsAssetAdapters } from '@moodlenet/backend/dist/adapters/staticAssets/fs/setup'
 import { sharpProcessTempAsset } from '@moodlenet/backend/dist/adapters/staticAssets/processTempAsset/sharp'
@@ -20,6 +21,7 @@ import { configure as webappConfigure } from '@moodlenet/webapp/serverConfigure'
 import { Database } from 'arangojs'
 import { DefaultDeployEnv } from './env'
 import assetUploaderEnv from './env/assetUploader'
+import unsplashApisEnv from './env/unsplashApis'
 import { setupDb } from './setup/db'
 
 export type Config = {
@@ -129,6 +131,7 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, crypto, 
     additionalResolvers: null,
   })
   const assetsApp = createStaticAssetsApp(assetUploaderEnv)
+  const unsplashApp = createUnsplashApisApp(unsplashApisEnv)
   const webfingerApp = await createWebfingerApp()
   const webappConfig = webappConfigure({
     customHead: mnStatic.customHead,
@@ -138,6 +141,7 @@ export const startDefaultMoodlenet = async ({ env: { db, fsAsset, http, crypto, 
     httpPort: http.port,
     startServices: {
       'graphql': graphqlApp,
+      'unsplash': unsplashApp,
       'assets': assetsApp,
       '.well-known': webfingerApp,
       '': webappConfig.staticFolder,

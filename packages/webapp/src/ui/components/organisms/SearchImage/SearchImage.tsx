@@ -6,11 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { Basic } from 'unsplash-js/dist/methods/photos/types'
-import {
-  getUnsplashImages,
-  parseUnsplashImage,
-} from '../../../../helpers/utilities'
+import { getUnsplashImages } from '../../../../helpers/unsplash'
 import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
 import { AssetInfo } from '../../../types'
 import InputTextField from '../../atoms/InputTextField/InputTextField'
@@ -33,7 +29,9 @@ export const SearchImage: React.FC<SearchImageProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [tmpSearchQuery, setTmpSearchQuery] = useState('')
-  const [unsplashImages, setUnsplashImages] = useState<Basic[] | null>()
+  const [unsplashImages, setUnsplashImages] = useState<
+    (AssetInfo & { location: string; height: number; width: number })[] | null
+  >()
   const [column1, setColumn1] = useState<ReactElement[] | undefined>()
   const [column2, setColumn2] = useState<ReactElement[] | undefined>()
   const [columnBreakIndex, setColumnBreakIndex] = useState(0)
@@ -55,6 +53,9 @@ export const SearchImage: React.FC<SearchImageProps> = ({
           updateImages(photos, newQuery)
           newQuery && setShowImages(false)
           setLoadedImages(0)
+        } else {
+          alert('sss')
+          throw new Error('just to fallback into catch')
         }
       })
       .catch(() => {
@@ -69,9 +70,8 @@ export const SearchImage: React.FC<SearchImageProps> = ({
   }, [])
 
   const getImagesColumn = useCallback(
-    (photos: Basic[] | undefined) => {
-      return photos?.map((unsplashPhoto, i) => {
-        const photo = parseUnsplashImage(unsplashPhoto)
+    (photos: (AssetInfo & { location: string })[] | undefined) => {
+      return photos?.map((photo, i) => {
         return (
           <div className="image-container" key={i}>
             <div
@@ -82,7 +82,7 @@ export const SearchImage: React.FC<SearchImageProps> = ({
               }}
             >
               <img
-                src={unsplashPhoto.urls.small}
+                src={photo.location}
                 alt=""
                 onLoad={() => setLoadedImages((prevState) => prevState + 1)}
               />
@@ -103,10 +103,13 @@ export const SearchImage: React.FC<SearchImageProps> = ({
     [setImage, onClose, setLoadedImages]
   )
 
-  const updateImages = (photos: Basic[], newQuery: boolean) => {
+  const updateImages = (
+    photos: (AssetInfo & { location: string; height: number; width: number })[],
+    newQuery: boolean
+  ) => {
     let totalHeight = 0
     photos?.map((photo) => {
-      return (totalHeight += photo.height / (photo.width / 100) + 21) // 21px of credits
+      return (totalHeight += photo.height / photo.width / 100 + 21) // 21px of credits
     })
 
     const columnHeightDifference = Math.abs(
@@ -120,7 +123,7 @@ export const SearchImage: React.FC<SearchImageProps> = ({
     let i = 0
     let newLeftColumHeight = 0
     photos?.every((photo) => {
-      newLeftColumHeight += photo.height / (photo.width / 100) + 21
+      newLeftColumHeight += photo.height / photo.width / 100 + 21
       i++
       if (newLeftColumHeight < leftColumnMaxHeight) return true
       return false
