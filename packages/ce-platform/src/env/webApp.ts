@@ -8,7 +8,7 @@ const mnStatic: { customHead?: string; webappEnv: MNEnv } = {
     minResourcesForUserApprovalRequests: parseIntOrNull(process.env.MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS),
     staticAssetBase: process.env.STATIC_ASSET_BASE ?? '/assets',
     graphqlEndpoint: process.env.GRAPHQL_ENDPOINT ?? '/graphql',
-    unsplashEndpoint: process.env.UNSPLASH_ENDPOINT ?? '/unsplash',
+    unsplashEndpoint: process.env.UNSPLASH_ENDPOINT ?? null,
   },
 }
 
