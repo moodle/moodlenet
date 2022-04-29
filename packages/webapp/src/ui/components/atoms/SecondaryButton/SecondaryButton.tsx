@@ -6,7 +6,7 @@ export type SecondaryButtonProps = {
   className?: string
   disabled?: boolean
   onHoverColor?: 'blue' | 'grey' | 'red' | 'fill-red'
-  onClick?(arg0: unknown): unknown
+  onClick?(arg0?: unknown): unknown
 }
 
 export const SecondaryButton: FC<SecondaryButtonProps> = ({
@@ -24,6 +24,7 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({
       }`}
       tabIndex={!disabled ? 0 : undefined}
       onClick={!disabled ? onClick : () => {}}
+      onKeyDown={(e) => onClick && e.key === 'Enter' && onClick()}
     >
       {children}
     </div>
