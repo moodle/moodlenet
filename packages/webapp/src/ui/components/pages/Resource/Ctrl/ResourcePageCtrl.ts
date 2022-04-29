@@ -30,6 +30,7 @@ import {
   useLicenses,
   useResourceTypes,
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
+import { useAutoImageAdded } from '../../../../../helpers/utilities'
 import { useLMS } from '../../../../../lib/moodleLMS/useSendToMoodle'
 import { href } from '../../../../elements/link'
 // import { useLocalInstance } from '../../../../context/Global/LocalInstance'
@@ -89,6 +90,8 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
 }) => {
   useSeoContentId(id)
   const { session, isAdmin, isAuthenticated } = useSession()
+  const autoImageAdded = useAutoImageAdded().get()
+
   const allMyOwnCollectionEdges = useMemo(
     () =>
       session?.profile.myOwnCollections.edges.filter(
@@ -548,7 +551,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       isOwner,
       isAdmin,
       liked,
-      autoImageAdded: false, //TO FIX
+      autoImageAdded,
       contributorCardProps: {
         avatarUrl: getMaybeAssetRefUrl(
           creator?.__typename === 'Profile'
@@ -650,6 +653,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
     isOwner,
     isAdmin,
     liked,
+    autoImageAdded,
     creator,
     creatorEdge,
     isAuthenticated,

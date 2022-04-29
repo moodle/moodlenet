@@ -14,6 +14,7 @@ import { SelectOptions } from '../../../../lib/types'
 import { useImageUrl } from '../../../../lib/useImageUrl'
 import { ReactComponent as UploadFileIcon } from '../../../../static/icons/upload-file.svg'
 import { ReactComponent as UploadImageIcon } from '../../../../static/icons/upload-image.svg'
+import { AssetInfo } from '../../../../types'
 import Card from '../../../atoms/Card/Card'
 import {
   Dropdown,
@@ -238,7 +239,10 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           if (errors?.content) {
             setShouldShowErrors(!!errors?.content)
           } else if (isImage) {
-            form.setFieldValue('image', file)
+            if (file) {
+              const fileAssetInfo: AssetInfo = { location: file }
+              form.setFieldValue('image', fileAssetInfo)
+            }
           }
         })
       },
@@ -248,7 +252,6 @@ export const UploadResource = withCtrl<UploadResourceProps>(
     const dropHandler = useCallback(
       (e: React.DragEvent<HTMLDivElement>) => {
         setIsToDrop(false)
-
         // Prevent default behavior (Prevent file from being opened)
         e.preventDefault()
 
@@ -274,11 +277,13 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             item && (selectedFile = item)
           }
         }
-
         if (subStep === 'ChooseResource') {
           setContent(selectedFile)
         } else {
-          form.setFieldValue('image', selectedFile)
+          if (selectedFile) {
+            const fileAssetInfo: AssetInfo = { location: selectedFile }
+            form.setFieldValue('image', fileAssetInfo)
+          }
         }
       },
       [form, setContent, subStep]
@@ -380,9 +385,15 @@ export const UploadResource = withCtrl<UploadResourceProps>(
                           accept=".jpg,.jpeg,.png,.gif"
                           name="image"
                           key="image"
-                          onChange={({ target }) =>
-                            form.setFieldValue('image', target.files?.[0])
-                          }
+                          onChange={({ target }) => {
+                            const file = target.files?.[0]
+                            if (file) {
+                              const fileAssetInfo: AssetInfo = {
+                                location: file,
+                              }
+                              form.setFieldValue('image', fileAssetInfo)
+                            }
+                          }}
                           hidden
                         />
                         <UploadImageIcon />

@@ -10,7 +10,8 @@ import { mixed, object, SchemaOf, string } from 'yup'
 import { MNEnv } from '../../../../../constants'
 // import { useSession } from '../../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../../helpers/data'
-import { getImageFromKeywords } from '../../../../../helpers/unsplash'
+import { useUnsplash } from '../../../../../helpers/unsplash'
+import { useAutoImageAdded } from '../../../../../helpers/utilities'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { NewCollectionProps } from '../NewCollection'
@@ -44,6 +45,9 @@ export const useNewCollectionCtrl: CtrlHook<
   NewCollectionProps,
   NewCollectionCtrlProps
 > = () => {
+  const autoImageAdded = useAutoImageAdded()
+
+  const { getImageFromKeywords } = useUnsplash()
   const history = useHistory()
   const uploadTempFile = useUploadTempFile()
   // const { refetch } = useSession()
@@ -74,8 +78,10 @@ export const useNewCollectionCtrl: CtrlHook<
       visibility: 'Private',
     },
     onSubmit: async ({ description, title, visibility, image }) => {
+      let isAutoImageAdded = false
       const imageAssetRef: AssetRefInput = !image
-        ? await setNewRandomImage(title, description)
+        ? ((isAutoImageAdded = true),
+          await setNewRandomImage(title, description))
         : typeof image === 'string'
         ? {
             location: image,
@@ -86,7 +92,8 @@ export const useNewCollectionCtrl: CtrlHook<
             location: await uploadTempFile('image', image.location),
             type: 'TmpUpload',
           }
-        : await setNewRandomImage(title, description)
+        : ((isAutoImageAdded = true),
+          await setNewRandomImage(title, description))
       const collectionCreationResp = await createCollectionMut({
         variables: {
           res: {
@@ -118,7 +125,10 @@ export const useNewCollectionCtrl: CtrlHook<
       }
       const collId = createRespData.node.id
       // refetch()
-      history.push(nodeGqlId2UrlPath(collId))
+      history.push(
+        nodeGqlId2UrlPath(collId),
+        autoImageAdded.set(isAutoImageAdded)
+      )
     },
   })
 

@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { getUnsplashImages } from '../../../../helpers/unsplash'
+import { useUnsplash } from '../../../../helpers/unsplash'
 import { ReactComponent as SearchIcon } from '../../../assets/icons/search.svg'
 import { AssetInfo } from '../../../types'
 import InputTextField from '../../atoms/InputTextField/InputTextField'
@@ -27,6 +27,7 @@ export const SearchImage: React.FC<SearchImageProps> = ({
   onClose,
   setImage,
 }) => {
+  const { getUnsplashImages } = useUnsplash()
   const [searchQuery, setSearchQuery] = useState('')
   const [tmpSearchQuery, setTmpSearchQuery] = useState('')
   const [unsplashImages, setUnsplashImages] = useState<
