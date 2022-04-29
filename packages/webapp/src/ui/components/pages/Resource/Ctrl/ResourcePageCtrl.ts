@@ -171,30 +171,35 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       ) {
         return
       }
-      const imageAssetRef: AssetRefInput =
-        !image || image.location === form.initialValues.image?.location
-          ? {
-              location: '',
-              type: 'NoChange',
-              credits: form.initialValues.image?.credits,
-            }
-          : typeof image.location === 'string'
-          ? {
-              location: image.location,
-              type: 'ExternalUrl',
-              credits: image.credits,
-            }
-          : image.location instanceof File
-          ? {
-              location: await uploadTempFile('image', image.location),
-              type: 'TmpUpload',
-              credits: image.credits,
-            }
-          : {
-              location: '',
-              type: 'NoChange',
-              credits: form.initialValues.image?.credits,
-            }
+      const imageAssetRef: AssetRefInput = !image
+        ? {
+            location: '',
+            type: 'NoAsset',
+            credits: form.initialValues.image?.credits,
+          }
+        : image.location === form.initialValues.image?.location
+        ? {
+            location: '',
+            type: 'NoChange',
+            credits: form.initialValues.image?.credits,
+          }
+        : typeof image.location === 'string'
+        ? {
+            location: image.location,
+            type: 'ExternalUrl',
+            credits: image.credits,
+          }
+        : image.location instanceof File
+        ? {
+            location: await uploadTempFile('image', image.location),
+            type: 'TmpUpload',
+            credits: image.credits,
+          }
+        : {
+            location: '',
+            type: 'NoChange',
+            credits: form.initialValues.image?.credits,
+          }
       const editResPr = edit({
         variables: {
           id,
