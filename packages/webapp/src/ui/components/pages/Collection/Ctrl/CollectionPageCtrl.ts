@@ -162,31 +162,34 @@ export const useCollectionCtrl: CtrlHook<
       ) {
         return
       }
-      const imageAssetRef: AssetRefInput =
-        !vals.image ||
-        vals.image.location === form.initialValues.image?.location
-          ? {
-              location: '',
-              type: 'NoChange',
-              credits: form.initialValues.image?.credits,
-            }
-          : typeof vals.image.location === 'string'
-          ? {
-              location: vals.image.location,
-              type: 'ExternalUrl',
-              credits: vals.image.credits,
-            }
-          : vals.image.location instanceof File
-          ? {
-              location: await uploadTempFile('image', vals.image.location),
-              type: 'TmpUpload',
-              credits: vals.image.credits,
-            }
-          : {
-              location: '',
-              type: 'NoChange',
-              credits: form.initialValues.image?.credits,
-            }
+      // debugger
+      const imageAssetRef: AssetRefInput = !vals.image
+        ? {
+            location: '',
+            type: 'NoAsset',
+            credits: form.initialValues.image?.credits,
+          }
+        : vals.image.location === form.initialValues.image?.location
+        ? {
+            location: '',
+            type: 'NoChange',
+          }
+        : typeof vals.image.location === 'string'
+        ? {
+            location: vals.image.location,
+            type: 'ExternalUrl',
+            credits: vals.image.credits,
+          }
+        : vals.image.location instanceof File
+        ? {
+            location: await uploadTempFile('image', vals.image.location),
+            type: 'TmpUpload',
+            credits: vals.image.credits,
+          }
+        : {
+            location: '',
+            type: 'NoChange',
+          }
       await edit({
         variables: {
           id,
