@@ -1,43 +1,53 @@
 import { UNSPLASH_ENDPOINT } from '../constants'
+import { useSession } from '../context/Global/Session'
 import { AssetRefInput } from '../graphql/pub.graphql.link'
 
-export const getUnsplashImages = async (
-  query: string,
-  page: number
-): Promise<
-  (AssetRefInput & { height: number; width: number })[] | undefined
-> => {
-  if (!UNSPLASH_ENDPOINT) {
-    return
-  }
-  const params = new URLSearchParams({
-    query,
-    page: String(page),
-  }).toString()
+export const useUnsplash = () => {
+  const { lastSessionJwt } = useSession()
 
-  const result = await fetch(
-    `${UNSPLASH_ENDPOINT}/getUnsplashImages?${params}`
-  ).catch(() => undefined)
-  return result?.json()
-}
+  const available = !!(lastSessionJwt && UNSPLASH_ENDPOINT)
 
-export const getImageFromKeywords = async (
-  name: string,
-  description: string,
-  subject = ''
-): Promise<AssetRefInput | null> => {
-  if (!UNSPLASH_ENDPOINT) {
-    return null
+  const getUnsplashImages = async (
+    query: string,
+    page: number
+  ): Promise<
+    (AssetRefInput & { height: number; width: number })[] | undefined
+  > => {
+    if (!available) {
+      return
+    }
+    const params = new URLSearchParams({
+      query,
+      page: String(page),
+    }).toString()
+
+    const result = await fetch(
+      `${UNSPLASH_ENDPOINT}/getUnsplashImages?${params}`,
+      { headers: { bearer: lastSessionJwt } }
+    ).catch(() => undefined)
+    return result?.json()
   }
 
-  const params = new URLSearchParams({
-    name,
-    description,
-    subject,
-  }).toString()
+  const getImageFromKeywords = async (
+    name: string,
+    description: string,
+    subject = ''
+  ): Promise<AssetRefInput | null> => {
+    if (!available) {
+      return null
+    }
 
-  const result = await fetch(
-    `${UNSPLASH_ENDPOINT}/getImageFromKeywords?${params}`
-  ).catch(() => undefined)
-  return result?.json()
+    const params = new URLSearchParams({
+      name,
+      description,
+      subject,
+    }).toString()
+
+    const result = await fetch(
+      `${UNSPLASH_ENDPOINT}/getImageFromKeywords?${params}`,
+      { headers: { bearer: lastSessionJwt } }
+    ).catch(() => undefined)
+    return result?.json()
+  }
+  return { getUnsplashImages, getImageFromKeywords }
 }

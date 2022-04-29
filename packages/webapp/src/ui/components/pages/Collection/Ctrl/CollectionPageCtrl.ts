@@ -19,6 +19,7 @@ import {
   getMaybeAssetRefUrl,
   useUploadTempFile,
 } from '../../../../../helpers/data'
+import { useAutoImageAdded } from '../../../../../helpers/utilities'
 import { href } from '../../../../elements/link'
 // import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
@@ -65,7 +66,6 @@ export const useCollectionCtrl: CtrlHook<
   useSeoContentId(id)
   // const { org: localOrg } = useLocalInstance()
   const { session, isAdmin, isAuthenticated } = useSession()
-
   const { data, refetch, loading } = useCollectionPageDataQuery({
     variables: {
       collectionId: id,
@@ -79,6 +79,7 @@ export const useCollectionCtrl: CtrlHook<
   const [edit, editRes] = useEditCollectionMutation()
 
   const history = useHistory()
+  const autoImageAdded = useAutoImageAdded().get()
   const [delCollection, delCollectionRes] = useDelCollectionMutation()
   const myId = session?.profile.id
   const deleteCollection = useFormik({
@@ -283,7 +284,7 @@ export const useCollectionCtrl: CtrlHook<
       isOwner,
       isAdmin,
       isAuthenticated,
-      autoImageAdded: false, //TO FIX
+      autoImageAdded,
       resourceCardPropsList: resourceEdges.map(({ edge, node: { id } }) =>
         ctrlHook(
           useResourceCardCtrl,
@@ -315,7 +316,9 @@ export const useCollectionCtrl: CtrlHook<
     collectionData,
     form,
     isOwner,
+    isAdmin,
     isAuthenticated,
+    autoImageAdded,
     resourceEdges,
     creator,
     myBookmarkedEdgeId,
@@ -324,7 +327,6 @@ export const useCollectionCtrl: CtrlHook<
     toggleFollow,
     deleteCollection,
     removeResource,
-    isAdmin,
   ])
   if (!loading && !data?.node) {
     return createElement(

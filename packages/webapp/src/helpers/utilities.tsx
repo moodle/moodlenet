@@ -1,3 +1,4 @@
+import { useHistory } from 'react-router'
 import { ContentBackupImages } from '../ui/assets/data/images'
 import { AssetInfo } from '../ui/types'
 
@@ -92,4 +93,12 @@ export const getBackupImage = (id: string): AssetInfo | undefined => {
 
 export const getRandomInt = (max: number) => {
   return Math.floor(Math.random() * max)
+}
+
+export function useAutoImageAdded() {
+  const history = useHistory()
+  console.log({ __: history.location.state })
+  const get = () => !!(history.location.state as any)?.autoImageAdded
+  const set = (autoImageAdded: boolean) => ({ autoImageAdded })
+  return { get, set }
 }
