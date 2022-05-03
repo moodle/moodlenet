@@ -43,6 +43,7 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-use-what-input": "^1.2.0",
+    "scss-parser": "^1.0.5",
     "shelljs": "^0.8.4",
     "web-vitals": "^0.2.4",
     "yup": "^0.32.8"
