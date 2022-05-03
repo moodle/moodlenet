@@ -5,7 +5,6 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import PersonIcon from '@material-ui/icons/Person'
-import SettingsIcon from '@mui/icons-material/Settings'
 import { ReactComponent as AddIcon } from '../../../assets/icons/add.svg'
 import { ReactComponent as ArrowsIcon } from '../../../assets/icons/arrows.svg'
 import { Href, Link } from '../../../elements/link'
@@ -58,7 +57,7 @@ export const Header = withCtrl<HeaderProps>((props) => {
     newCollectionHref,
     newResourceHref,
     signUpHref,
-    settingsHref,
+    // settingsHref,
   } = props
   if (props.status === 'loading') {
     return null
@@ -113,10 +112,10 @@ export const Header = withCtrl<HeaderProps>((props) => {
                     <ArrowsIcon />
                     <Trans>Following</Trans>
                   </Link>,
-                  <Link href={settingsHref}>
-                    <SettingsIcon />
-                    <Trans>Settings</Trans>
-                  </Link>,
+                  // <Link href={settingsHref}>
+                  //   <SettingsIcon />
+                  //   <Trans>Settings</Trans>
+                  // </Link>,
                   <Link href={me.myProfileHref}>
                     <AccountCircleIcon />
                     <Trans>Profile</Trans>
