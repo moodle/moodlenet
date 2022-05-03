@@ -68,64 +68,14 @@ export const Landing = withCtrl<LandingProps>(
     newCollectionHref,
     setSearchText,
   }) => {
-    // const [widthCollectionCard, setWidthCollectionCard] = useState<number>(170)
     const [isSearchboxInViewport, setIsSearchboxInViewport] =
       useState<boolean>(true)
-    // const [numResources, setNumResources] = useState<number>(9)
     const [isCreatingContent, setIsCreatingContent] = useState<boolean>(false)
-    // const [numResources, setNumResources] = useState<number>(9)
 
     const background = {
       backgroundImage: 'url(' + /* imageUrl ||  */ defaultBackgroud + ')',
       backgroundSize: 'cover',
     }
-
-    // const calcNumResources = () => {
-    //   if (window.innerWidth > 820 && window.innerWidth <= 1125) {
-    //     const remainder = resourceCardPropsList.length % 2
-    //     setNumResources(resourceCardPropsList.length - remainder)
-    //   } else if (window.innerWidth > 1125) {
-    //     const remainder = resourceCardPropsList.length % 3
-    //     setNumResources(resourceCardPropsList.length - remainder)
-    //   }
-    // }
-
-    // window.addEventListener('resize', calcNumResources)
-
-    // const getCollectionCardWidth = () => {
-    //   const widthDoc = document.documentElement.clientWidth
-    //   const margin =
-    //     widthDoc < 675 ? 50 : widthDoc < 1250 ? 200 : widthDoc - 1100
-    //   const containerWidth = widthDoc - margin
-    //   var numElements = Math.trunc(containerWidth / (170 + 12))
-    //   const overflow = 170 - (containerWidth - numElements * (170 + 12))
-    //   if (overflow > -12 && overflow < 140) numElements++
-    //   var partToGrow = 0
-    //   var percentatgeToGrow = 0
-    //   if (numElements === 1) {
-    //     partToGrow = containerWidth - 50
-    //     percentatgeToGrow = containerWidth / partToGrow
-    //   } else {
-    //     partToGrow = (numElements - 1) * (170 + 12) + 170 / 2
-    //     percentatgeToGrow = containerWidth / partToGrow
-    //   }
-    //   return 170 * percentatgeToGrow
-    // }
-
-    // const setCollectionCardWidth = useCallback(() => {
-    //   setWidthCollectionCard(getCollectionCardWidth())
-    // }, [setWidthCollectionCard])
-
-    // useLayoutEffect(() => {
-    //   window.addEventListener('resize', setCollectionCardWidth)
-    //   return () => {
-    //     window.removeEventListener('resize', setCollectionCardWidth)
-    //   }
-    // }, [setCollectionCardWidth])
-
-    // useEffect(() => {
-    //   setCollectionCardWidth()
-    // })
 
     return (
       <HeaderPageTemplate
@@ -260,6 +210,7 @@ export const Landing = withCtrl<LandingProps>(
             }
             noCard={true}
             minGrid={245}
+            maxRows={2}
           />
           <ListCard
             className="collections"
@@ -290,6 +241,7 @@ export const Landing = withCtrl<LandingProps>(
             }
             minGrid={245}
             noCard={true}
+            maxRows={2}
           />
           <ListCard
             content={smallProfileCardPropsList
@@ -320,6 +272,7 @@ export const Landing = withCtrl<LandingProps>(
             className={`people`}
             noCard={true}
             minGrid={170}
+            maxRows={1}
           />
           {/* <TrendCard {...trendCardProps} maxRows={2} /> */}
         </div>

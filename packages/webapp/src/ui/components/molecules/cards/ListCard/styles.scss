@@ -46,6 +46,10 @@
   > .content {
     padding: 0 3px 10px 3px;
 
+    > .element {
+      width: 100%;
+    }
+
     &:not(.grid) {
       width: 100%;
       height: 100%;
