@@ -38,6 +38,7 @@ export type HeaderPropsBase = {
   homeHref: Href
   newResourceHref: Href
   newCollectionHref: Href
+  settingsHref: Href
   hideSearchbox?: boolean
   setSearchText(text: string): unknown
   searchText: string
@@ -56,6 +57,7 @@ export const Header = withCtrl<HeaderProps>((props) => {
     newCollectionHref,
     newResourceHref,
     signUpHref,
+    // settingsHref,
   } = props
   if (props.status === 'loading') {
     return null
@@ -70,7 +72,7 @@ export const Header = withCtrl<HeaderProps>((props) => {
 
   // console.log({ avatarUrl })
   return (
-    <div className="header">
+    <div className="header" id="page-header">
       <div className="content">
         <div className="left">
           <HeaderTitle organization={organization} homeHref={homeHref} />
@@ -110,6 +112,10 @@ export const Header = withCtrl<HeaderProps>((props) => {
                     <ArrowsIcon />
                     <Trans>Following</Trans>
                   </Link>,
+                  // <Link href={settingsHref}>
+                  //   <SettingsIcon />
+                  //   <Trans>Settings</Trans>
+                  // </Link>,
                   <Link href={me.myProfileHref}>
                     <AccountCircleIcon />
                     <Trans>Profile</Trans>
