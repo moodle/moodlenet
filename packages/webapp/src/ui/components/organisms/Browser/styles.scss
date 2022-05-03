@@ -31,9 +31,16 @@
         margin-bottom: 30px;
       }
 
-      > .subjects:not(.see-all) {
-        max-height: 265px;
-        overflow: hidden;
+      > .subjects {
+        > .content > .element {
+          max-width: 100%;
+          width: auto;
+        }
+
+        &:not(.see-all) {
+          max-height: 265px;
+          overflow: hidden;
+        }
       }
 
       > .collections:not(.see-all) {
