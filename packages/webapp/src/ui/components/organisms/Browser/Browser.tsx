@@ -165,13 +165,13 @@ export const Browser = withCtrl<BrowserProps>(
         title={t`Filters`}
         direction={direction}
         content={[
-          subjectCardPropsList && (
+          resourceCardPropsList && (
             <Checkbox
               onChange={setFilterCB}
-              label={t`Subjects`}
-              name="Subjects"
-              key="Subjects"
-              checked={filters.Subjects}
+              label={t`Resources`}
+              name="Resources"
+              key="Resources"
+              checked={filters.Resources}
             />
           ),
           collectionCardPropsList && (
@@ -183,13 +183,13 @@ export const Browser = withCtrl<BrowserProps>(
               checked={filters.Collections}
             />
           ),
-          resourceCardPropsList && (
+          subjectCardPropsList && (
             <Checkbox
               onChange={setFilterCB}
-              label={t`Resources`}
-              name="Resources"
-              key="Resources"
-              checked={filters.Resources}
+              label={t`Subjects`}
+              name="Subjects"
+              key="Subjects"
+              checked={filters.Subjects}
             />
           ),
           smallProfileCardPropsList && (
@@ -239,60 +239,7 @@ export const Browser = withCtrl<BrowserProps>(
                 {sortCard('horizontal')}
               </div>
             )}
-            {subjectCardPropsList && filters.Subjects && (
-              <ListCard
-                content={(shouldShowSeeAll('Subjects')
-                  ? subjectCardPropsList.slice(0, 8)
-                  : subjectCardPropsList
-                ).map((subjectCardProps) => (
-                  <SubjectCard {...subjectCardProps} />
-                ))}
-                title={
-                  <div className="card-header">
-                    <div className="title">
-                      <Trans>Subjects</Trans>
-                    </div>
-                    {shouldShowSeeAll('Subjects') && (
-                      <SecondaryButton onClick={() => seeAll('Subjects')}>
-                        <Trans>See all</Trans>
-                      </SecondaryButton>
-                    )}
-                  </div>
-                }
-                className={`subjects ${
-                  !shouldShowSeeAll('Subjects') ? 'see-all' : ''
-                }`}
-                noCard={true}
-                direction="wrap"
-              />
-            )}
-            {collectionCardPropsList && filters.Collections && (
-              <ListCard
-                content={(shouldShowSeeAll('Collections')
-                  ? collectionCardPropsList.slice(0, 6)
-                  : collectionCardPropsList
-                ).map((collectionCardProps) => (
-                  <CollectionCard {...collectionCardProps} />
-                ))}
-                title={
-                  <div className="card-header">
-                    <div className="title">
-                      <Trans>Collections</Trans>
-                    </div>
-                    {shouldShowSeeAll('Collections') && (
-                      <SecondaryButton onClick={() => seeAll('Collections')}>
-                        <Trans>See all</Trans>
-                      </SecondaryButton>
-                    )}
-                  </div>
-                }
-                className={`collections ${
-                  !shouldShowSeeAll('Collections') ? 'see-all' : ''
-                }`}
-                noCard={true}
-                minGrid={240}
-              />
-            )}
+
             {resourceCardPropsList && filters.Resources && (
               <ListCard
                 content={(shouldShowSeeAll('Resources')
@@ -320,6 +267,63 @@ export const Browser = withCtrl<BrowserProps>(
                 minGrid={245}
               />
             )}
+
+            {collectionCardPropsList && filters.Collections && (
+              <ListCard
+                content={(shouldShowSeeAll('Collections')
+                  ? collectionCardPropsList.slice(0, 6)
+                  : collectionCardPropsList
+                ).map((collectionCardProps) => (
+                  <CollectionCard {...collectionCardProps} />
+                ))}
+                title={
+                  <div className="card-header">
+                    <div className="title">
+                      <Trans>Collections</Trans>
+                    </div>
+                    {shouldShowSeeAll('Collections') && (
+                      <SecondaryButton onClick={() => seeAll('Collections')}>
+                        <Trans>See all</Trans>
+                      </SecondaryButton>
+                    )}
+                  </div>
+                }
+                className={`collections ${
+                  !shouldShowSeeAll('Collections') ? 'see-all' : ''
+                }`}
+                noCard={true}
+                minGrid={240}
+              />
+            )}
+
+            {subjectCardPropsList && filters.Subjects && (
+              <ListCard
+                content={(shouldShowSeeAll('Subjects')
+                  ? subjectCardPropsList.slice(0, 8)
+                  : subjectCardPropsList
+                ).map((subjectCardProps) => (
+                  <SubjectCard {...subjectCardProps} />
+                ))}
+                title={
+                  <div className="card-header">
+                    <div className="title">
+                      <Trans>Subjects</Trans>
+                    </div>
+                    {shouldShowSeeAll('Subjects') && (
+                      <SecondaryButton onClick={() => seeAll('Subjects')}>
+                        <Trans>See all</Trans>
+                      </SecondaryButton>
+                    )}
+                  </div>
+                }
+                className={`subjects ${
+                  !shouldShowSeeAll('Subjects') ? 'see-all' : ''
+                }`}
+                noCard={true}
+                direction="wrap"
+              />
+            )}
+
             {smallProfileCardPropsList && filters.People && (
               <ListCard
                 content={(shouldShowSeeAll('People')
