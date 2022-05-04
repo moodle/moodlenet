@@ -43,6 +43,7 @@ export const useHeaderCtrl: CtrlHook<HeaderProps, {}> = () => {
             logout,
             bookmarksHref,
             followingHref: href(mainPath.following),
+            // settingsHref: href(mainPath.settings),
           }
 
     const headerProps: HeaderPropsIdle = {
