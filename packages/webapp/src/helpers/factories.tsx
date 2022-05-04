@@ -41,7 +41,7 @@ export const people: {
     avatarUrl:
       'https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80',
     backgroundUrl:
-      'https://www.visitcos.com/images/made/images/remote/https_files.idssasp.com/public/C88/6abc181e-9791-4408-8a25-1002189f31bd/aeddeec0-d577-4485-9470-7bdcf6a1b779_820_450_70auto_s_c1.jpg',
+      'https://images.unsplash.com/photo-1440342359743-84fcb8c21f21?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
     organization: 'University of Colorado Boulder',
     username: 'katygreetree',
     location: 'USA',

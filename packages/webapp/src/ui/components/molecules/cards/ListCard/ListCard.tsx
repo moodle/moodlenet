@@ -23,33 +23,42 @@ export const ListCard: FC<ListCardProps> = ({
   noCard,
   actions,
 }) => {
-  const [maxHeight, setMaxHeight] = useState<number | null>(null)
   const contentDiv = useRef<HTMLDivElement>(null)
   const element = useRef<HTMLDivElement>(null)
   const contentWithKeys = content.map((el, i) => {
     const elementWithKey = [
-      <div
-        className={'element'}
-        key={i}
-        {...(maxRows && i === 0 && { ref: element })}
-      >
+      <div className={'element'} key={i} {...(i === 0 && { ref: element })}>
         {el}
       </div>,
     ]
     return elementWithKey
   })
+  const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined)
 
   useEffect(() => {
-    const gap = contentDiv.current
-      ? getComputedStyle(contentDiv.current).gap
-      : '0'
-    const elementHeight = element.current?.clientHeight
-    const totalMaxHeight =
-      maxRows && elementHeight
+    console.log('###### CLASS - ', className.toUpperCase())
+    console.log('max rows updated ', maxRows)
+    let totalMaxHeight = undefined
+    if (maxRows) {
+      console.log('Should not be here')
+      const gap = contentDiv.current
+        ? getComputedStyle(contentDiv.current).gap
+        : '0'
+      const elementHeight = element.current?.clientHeight
+      console.log(
+        className.toUpperCase() + ' - ' + element.current?.clientHeight + 'px'
+      )
+      totalMaxHeight = elementHeight
         ? maxRows * elementHeight + parseInt(gap) * (maxRows - 1) + 10
-        : null
-    totalMaxHeight && setMaxHeight(totalMaxHeight)
-  }, [setMaxHeight, maxRows])
+        : undefined
+    }
+    console.log('Total max height ', totalMaxHeight)
+    setMaxHeight(totalMaxHeight)
+  }, [element, setMaxHeight, className, contentDiv, maxRows])
+
+  useEffect(() => {
+    console.log(className.toUpperCase(), ' - MAX HEIGHT ', maxHeight)
+  }, [maxHeight, className])
 
   return (
     <div className={`list-card ${className} ${noCard ? 'no-card' : ''}`}>
@@ -63,7 +72,8 @@ export const ListCard: FC<ListCardProps> = ({
             direction === 'horizontal' ? 'scroll' : ''
           } ${minGrid ? 'grid' : ''}`}
           style={{
-            maxHeight: maxHeight ? `${maxHeight}px` : 'auto',
+            ...(maxHeight && { maxHeight: `${maxHeight}px` }),
+            // maxHeight: maxHeight ? `${maxHeight}px` : 'auto',
             gridTemplateColumns:
               minGrid && `repeat(auto-fill, minmax(${minGrid}px, 1fr))`,
           }}
