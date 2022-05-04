@@ -7,6 +7,14 @@ export const primaryColorHover = '#e2750f'
 export const primaryColorActive = '#d46d0d'
 export const headerBackgroundColor = 'white'
 
+export type BaseStyleType = {
+  '--primary-color': string
+  '--primary-background-color': string
+  '--primary-color-hover': string
+  '--primary-color-active': string
+  '--header-background': string
+}
+
 export const baseStyle = () => {
   return {
     '--primary-color': baseMoodleColor,

@@ -28,6 +28,7 @@ export type HeaderPropsIdle = HeaderPropsBase & {
     myProfileHref: Href
     bookmarksHref: Href
     followingHref: Href
+    settingsHref?: Href
   }
 }
 export type HeaderPropsLoading = HeaderPropsBase & {
@@ -38,7 +39,6 @@ export type HeaderPropsBase = {
   homeHref: Href
   newResourceHref: Href
   newCollectionHref: Href
-  settingsHref: Href
   hideSearchbox?: boolean
   setSearchText(text: string): unknown
   searchText: string
