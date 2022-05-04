@@ -2,7 +2,7 @@ import { FC } from 'react'
 import './styles.scss'
 
 export type SecondaryButtonProps = {
-  color?: 'black' | 'orange' | 'grey' | 'red' | 'light-grey'
+  color?: 'black' | 'orange' | 'grey' | 'red' | 'light-grey' | 'dark-blue'
   className?: string
   disabled?: boolean
   onHoverColor?: 'blue' | 'grey' | 'red' | 'fill-red'

@@ -37,7 +37,7 @@ export const CollectionCardStoryProps = (i: 1 | 0): CollectionCardProps => {
     imageUrl: i === 0 ? 'https://picsum.photos/300/200' : null,
     collectionHref: href('Pages/Collection/Logged In'),
     bookmarked: false,
-    following: true,
+    following: false,
     numFollowers: 32,
     numResource: 5,
     isAuthenticated: true,
@@ -91,6 +91,7 @@ export const CollectionCardOwnerStoryProps = (
     ...CollectionCardLoggedInStoryProps(i),
     collectionHref: href('Pages/Collection/Owner'),
     isOwner: true,
+    following: true,
     visibility: 'Public',
   }
 }

@@ -41,10 +41,10 @@
         display: flex;
         gap: 5px;
 
-        &:hover {
+        &:hover:not(.disabled) {
           color: rgb(199, 199, 199);
         }
-        &:active {
+        &:active:not(.disabled) {
           color: rgb(146, 146, 146);
         }
       }

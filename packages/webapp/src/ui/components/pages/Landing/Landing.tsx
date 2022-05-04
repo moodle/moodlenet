@@ -199,7 +199,7 @@ export const Landing = withCtrl<LandingProps>(
                   </div>
                 </div>
                 {
-                  <SecondaryButton className="more">
+                  <SecondaryButton className="more" color="dark-blue">
                     <Link href={searchResourcesHref}>
                       <Trans>See more resources</Trans>
                     </Link>
@@ -230,7 +230,7 @@ export const Landing = withCtrl<LandingProps>(
                   </div>
                 </div>
                 {
-                  <SecondaryButton className="more">
+                  <SecondaryButton className="more" color="dark-blue">
                     <Link href={searchCollectionsHref}>
                       <Trans>See more collections</Trans>
                     </Link>
@@ -260,7 +260,7 @@ export const Landing = withCtrl<LandingProps>(
                   </div>
                 </div>
                 {
-                  <SecondaryButton className="more">
+                  <SecondaryButton className="more" color="dark-blue">
                     <Link href={searchAuthorsHref}>
                       <Trans>See more authors</Trans>
                     </Link>
