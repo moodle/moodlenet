@@ -38,7 +38,7 @@ const getRandomUnsplashImage = ({
       query: query,
       orientation: 'landscape',
     })
-    .then(result => {
+    .then((result: any) => {
       if (result.type === 'success' && !Array.isArray(result.response)) {
         // console.log({ result })
         return result.response
@@ -46,7 +46,7 @@ const getRandomUnsplashImage = ({
         return undefined
       }
     })
-    .catch(e => {
+    .catch((e: any) => {
       console.error(e)
       throw e
     })
@@ -100,10 +100,10 @@ export const getUnsplashImages = ({
       perPage: 30,
       page: page,
     })
-    .then(result => {
+    .then((result: any) => {
       // throw new Error('max request exceeded')
       if (result.type === 'success' && !Array.isArray(result.response)) {
-        return result.response.results.map(_ => {
+        return result.response.results.map((_: Basic | Random) => {
           return { ...parseUnsplashImage(_), width: _.width, height: _.height }
         })
       } else {
