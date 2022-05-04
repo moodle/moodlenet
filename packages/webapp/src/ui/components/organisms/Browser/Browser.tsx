@@ -90,6 +90,17 @@ export const Browser = withCtrl<BrowserProps>(
         People: smallProfileCardPropsList ? true : false,
       }
     )
+
+    const showAll = useMemo<boolean>(() => {
+      let counter = 0
+      filterTypes.forEach(
+        (filterType: FilterType) => filters[filterType] && counter++,
+        []
+      )
+      console.log('showing all ', counter)
+      return counter === 1 ? true : false
+    }, [filters])
+
     useEffect(() => {
       setFilters?.(filters)
     }, [filters, setFilters])
@@ -97,17 +108,6 @@ export const Browser = withCtrl<BrowserProps>(
       filterTypes.forEach((filterType: FilterType) => {
         filterType !== type && setFilter([filterType, false])
       })
-    }
-
-    const shouldShowSeeAll = (type: FilterType): boolean => {
-      let shouldShowSeeAll = false
-      filterTypes.forEach((filterType: FilterType) => {
-        if (filterType !== type && filters[filterType]) {
-          shouldShowSeeAll = true
-        }
-      }, [])
-      // TODO If shouldShowSeeAll === false we should activate infinite scroll
-      return shouldShowSeeAll
     }
 
     const singleActiveFilter = useCallback((): FilterType | undefined => {
@@ -242,9 +242,9 @@ export const Browser = withCtrl<BrowserProps>(
 
             {resourceCardPropsList && filters.Resources && (
               <ListCard
-                content={(shouldShowSeeAll('Resources')
-                  ? resourceCardPropsList.slice(0, 6)
-                  : resourceCardPropsList
+                content={(showAll
+                  ? resourceCardPropsList
+                  : resourceCardPropsList.slice(0, 6)
                 ).map((resourceCardProps) => (
                   <ResourceCard {...resourceCardProps} orientation="vertical" />
                 ))}
@@ -253,26 +253,28 @@ export const Browser = withCtrl<BrowserProps>(
                     <div className="title">
                       <Trans>Resources</Trans>
                     </div>
-                    {shouldShowSeeAll('Resources') && (
-                      <SecondaryButton onClick={() => seeAll('Resources')}>
+                    {!showAll && (
+                      <SecondaryButton
+                        onClick={() => seeAll('Resources')}
+                        color="dark-blue"
+                      >
                         <Trans>See all</Trans>
                       </SecondaryButton>
                     )}
                   </div>
                 }
-                className={`resources ${
-                  !shouldShowSeeAll('Resources') ? 'see-all' : ''
-                }`}
+                className={`resources ${showAll ? 'see-all' : ''}`}
                 noCard={true}
                 minGrid={245}
+                maxRows={showAll ? undefined : 2}
               />
             )}
 
             {collectionCardPropsList && filters.Collections && (
               <ListCard
-                content={(shouldShowSeeAll('Collections')
-                  ? collectionCardPropsList.slice(0, 6)
-                  : collectionCardPropsList
+                content={(showAll
+                  ? collectionCardPropsList
+                  : collectionCardPropsList.slice(0, 6)
                 ).map((collectionCardProps) => (
                   <CollectionCard {...collectionCardProps} />
                 ))}
@@ -281,26 +283,28 @@ export const Browser = withCtrl<BrowserProps>(
                     <div className="title">
                       <Trans>Collections</Trans>
                     </div>
-                    {shouldShowSeeAll('Collections') && (
-                      <SecondaryButton onClick={() => seeAll('Collections')}>
+                    {!showAll && (
+                      <SecondaryButton
+                        onClick={() => seeAll('Collections')}
+                        color="dark-blue"
+                      >
                         <Trans>See all</Trans>
                       </SecondaryButton>
                     )}
                   </div>
                 }
-                className={`collections ${
-                  !shouldShowSeeAll('Collections') ? 'see-all' : ''
-                }`}
+                className={`collections ${showAll ? 'see-all' : ''}`}
                 noCard={true}
                 minGrid={240}
+                maxRows={showAll ? undefined : 2}
               />
             )}
 
             {subjectCardPropsList && filters.Subjects && (
               <ListCard
-                content={(shouldShowSeeAll('Subjects')
-                  ? subjectCardPropsList.slice(0, 8)
-                  : subjectCardPropsList
+                content={(showAll
+                  ? subjectCardPropsList
+                  : subjectCardPropsList.slice(0, 8)
                 ).map((subjectCardProps) => (
                   <SubjectCard {...subjectCardProps} />
                 ))}
@@ -309,26 +313,28 @@ export const Browser = withCtrl<BrowserProps>(
                     <div className="title">
                       <Trans>Subjects</Trans>
                     </div>
-                    {shouldShowSeeAll('Subjects') && (
-                      <SecondaryButton onClick={() => seeAll('Subjects')}>
+                    {!showAll && (
+                      <SecondaryButton
+                        onClick={() => seeAll('Subjects')}
+                        color="dark-blue"
+                      >
                         <Trans>See all</Trans>
                       </SecondaryButton>
                     )}
                   </div>
                 }
-                className={`subjects ${
-                  !shouldShowSeeAll('Subjects') ? 'see-all' : ''
-                }`}
+                className={`subjects ${showAll ? 'see-all' : ''}`}
                 noCard={true}
                 direction="wrap"
+                maxRows={showAll ? undefined : 2}
               />
             )}
 
             {smallProfileCardPropsList && filters.People && (
               <ListCard
-                content={(shouldShowSeeAll('People')
-                  ? smallProfileCardPropsList.slice(0, 11)
-                  : smallProfileCardPropsList
+                content={(showAll
+                  ? smallProfileCardPropsList
+                  : smallProfileCardPropsList.slice(0, 11)
                 ).map((smallProfileCardProps) => (
                   <SmallProfileCard {...smallProfileCardProps} />
                 ))}
@@ -342,7 +348,7 @@ export const Browser = withCtrl<BrowserProps>(
                           <Trans>People</Trans>
                         )}
                       </div>
-                      {shouldShowSeeAll('People') && (
+                      {!showAll && (
                         <SecondaryButton onClick={() => seeAll('People')}>
                           <Trans>See all</Trans>
                         </SecondaryButton>
@@ -350,11 +356,10 @@ export const Browser = withCtrl<BrowserProps>(
                     </div>
                   )
                 }
-                className={`people ${
-                  !shouldShowSeeAll('People') ? 'see-all' : ''
-                }`}
+                className={`people ${showAll ? 'see-all' : ''}`}
                 noCard={true}
                 minGrid={160}
+                maxRows={showAll ? undefined : 2}
               />
             )}
             {loadMore && (

@@ -38,10 +38,13 @@
       color: #b9b9b9;
       border: 2px solid #b9b9b9;
     }
+    &.dark-blue {
+      color: #194866;
+      border: 2px solid #194866;
+    }
 
     &:hover {
-      box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%),
-        0px 2px 6px 2px rgb(60 64 67 / 15%);
+      box-shadow: 0 1px 1px rgb(0 0 0 / 35%);
 
       &.orange,
       &.hover-orange {
