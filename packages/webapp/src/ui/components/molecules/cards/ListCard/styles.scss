@@ -21,24 +21,16 @@
     .card-header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       .title {
         font-size: 24px;
         margin-right: 16px;
+        color: #194866;
       }
       .secondary-button {
         height: 26px;
-        padding: 10px;
-        border-radius: 15px;
-        border: 1px solid #757575;
-        color: #757575;
-        &:hover {
-          border: 1px solid #8b8e99;
-          color: #8b8e99;
-        }
-        &:active {
-          border: 1px solid #61646b;
-          color: #61646b;
-        }
+        padding: 14px;
+        border-radius: 20px;
       }
     }
   }

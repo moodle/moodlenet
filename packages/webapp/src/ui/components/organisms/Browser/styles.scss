@@ -1,7 +1,7 @@
 .browser {
   margin-top: 50px;
   > .title {
-    color: #4d5156;
+    color: #223b6a;
     font-size: 30px;
     font-weight: bold;
     margin-bottom: 26px;
@@ -31,6 +31,14 @@
         margin-bottom: 30px;
       }
 
+      > .resources:not(.see-all) {
+        overflow: hidden;
+      }
+
+      > .collections:not(.see-all) {
+        overflow: hidden;
+      }
+
       > .subjects {
         > .content > .element {
           max-width: 100%;
@@ -38,23 +46,11 @@
         }
 
         &:not(.see-all) {
-          max-height: 265px;
           overflow: hidden;
         }
       }
 
-      > .collections:not(.see-all) {
-        max-height: 245px;
-        overflow: hidden;
-      }
-
-      > .resources:not(.see-all) {
-        max-height: 780px;
-        overflow: hidden;
-      }
-
       > .people:not(.see-all) {
-        max-height: 577px;
         overflow: hidden;
       }
 
