@@ -448,7 +448,8 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             {!isOwner && (
               <SecondaryButton
                 color="grey"
-                className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
+                className={`message`}
+                disabled={!isAuthenticated}
                 onClick={openSendMessage}
               >
                 <Trans>Message</Trans>
@@ -460,20 +461,19 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               //   <MailOutlineIcon />
               // </TertiaryButton>
             )}
-            {isShowingSmallCard ? (
+            {isAuthenticated && !isOwner && isShowingSmallCard && (
               <SecondaryButton
                 color="grey"
-                className={`more small ${
-                  isAuthenticated ? '' : 'font-disabled'
-                }`}
+                className={`more small`}
                 onClick={openSendMessage}
               >
                 <div className="three-dots">...</div>
               </SecondaryButton>
-            ) : (
+            )}
+            {isAuthenticated && !isOwner && !isShowingSmallCard && (
               <SecondaryButton
                 color="grey"
-                className={`more big ${isAuthenticated ? '' : 'font-disabled'}`}
+                className={`more big`}
                 onClick={openSendMessage}
               >
                 <div className="text">More</div>

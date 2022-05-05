@@ -99,8 +99,8 @@
   }
 
   &.disabled {
-    cursor: default;
     user-select: none;
+    pointer-events: none;
     background-color: #e8e8e8;
   }
 
