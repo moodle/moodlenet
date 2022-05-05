@@ -24,7 +24,7 @@ export const PrimaryButton: FC<PrimaryButtonProps> = ({
       } ${color}`}
       tabIndex={!disabled ? 0 : undefined}
       onClick={!disabled ? onClick : () => {}}
-      onKeyDown={(e) => onClick && e.key === 'Enter' && onClick()}
+      onKeyDown={(e) => !disabled && onClick && e.key === 'Enter' && onClick()}
     >
       {children}
     </div>

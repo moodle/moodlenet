@@ -28,4 +28,9 @@
     transition: 0.1s;
     box-shadow: 0 0 3pt 2pt #1a6affb0;
   }
+
+  &:disabled {
+    user-select: none;
+    pointer-events: none;
+  }
 }
