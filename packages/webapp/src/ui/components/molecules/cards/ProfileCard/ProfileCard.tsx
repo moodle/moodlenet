@@ -1,8 +1,13 @@
 import { t, Trans } from '@lingui/macro'
 import EditIcon from '@material-ui/icons/Edit'
-import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import SaveIcon from '@material-ui/icons/Save'
-import React, { Dispatch, SetStateAction, useRef, useState } from 'react'
+import React, {
+  Dispatch,
+  SetStateAction,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { ReactComponent as ApprovedIcon } from '../../../../assets/icons/approved.svg'
 import { withCtrl } from '../../../../lib/ctrl'
 import { FormikHandle } from '../../../../lib/formik'
@@ -65,15 +70,18 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     const shouldShowErrors = !!editForm.submitCount
     const [isShowingBackground, setIsShowingBackground] =
       useState<boolean>(false)
+    const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
 
-    // const handleOnSaveClick = () => {
-    //   if (editForm.isValid) {
-    //     setShouldShowErrors(false)
-    //     toggleIsEditing()
-    //   } else {
-    //     setShouldShowErrors(true)
-    //   }
-    // }
+    const setIsShowingSmallCardHelper = () => {
+      setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
+    }
+
+    useLayoutEffect(() => {
+      window.addEventListener('resize', setIsShowingSmallCardHelper)
+      return () => {
+        window.removeEventListener('resize', setIsShowingSmallCardHelper)
+      }
+    }, [])
 
     const uploadBackgroundRef = useRef<HTMLInputElement>(null)
     const selectBackground = (e: React.MouseEvent<HTMLElement>) => {
@@ -438,12 +446,38 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               </PrimaryButton>
             )}
             {!isOwner && (
-              <TertiaryButton
+              <SecondaryButton
+                color="grey"
                 className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
                 onClick={openSendMessage}
               >
-                <MailOutlineIcon />
-              </TertiaryButton>
+                <Trans>Message</Trans>
+              </SecondaryButton>
+              // <TertiaryButton
+              //   className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
+              //   onClick={openSendMessage}
+              // >
+              //   <MailOutlineIcon />
+              // </TertiaryButton>
+            )}
+            {isShowingSmallCard ? (
+              <SecondaryButton
+                color="grey"
+                className={`more small ${
+                  isAuthenticated ? '' : 'font-disabled'
+                }`}
+                onClick={openSendMessage}
+              >
+                <div className="three-dots">...</div>
+              </SecondaryButton>
+            ) : (
+              <SecondaryButton
+                color="grey"
+                className={`more big ${isAuthenticated ? '' : 'font-disabled'}`}
+                onClick={openSendMessage}
+              >
+                <div className="text">More</div>
+              </SecondaryButton>
             )}
           </div>
         </div>
