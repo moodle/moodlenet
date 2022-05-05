@@ -257,7 +257,7 @@ export const Resource = withCtrl<ResourceProps>(
             ) : (
               <>
                 <LinkIcon />
-                <Trans>Open Link</Trans>
+                <Trans>Open link</Trans>
               </>
             )}
           </SecondaryButton>

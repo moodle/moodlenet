@@ -164,58 +164,48 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             </>
           )}
         </div>
-
-        <div className="avatar-and-actions">
-          <div
-            className="avatar"
-            style={{
-              ...avatar,
-              pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
-            }}
-            onClick={() => !isEditing && setIsShowingAvatar(true)}
-          >
-            {isEditing && (
-              <>
-                <input
-                  ref={uploadAvatarRef}
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.gif"
-                  onChange={uploadAvatar}
-                  hidden
-                />
-                <RoundButton
-                  className="change-avatar-button"
-                  type="edit"
-                  abbrTitle={t`Edit profile picture`}
-                  onClick={selectAvatar}
-                />
-              </>
-            )}
-          </div>
-          {isOwner && (
-            <div className="actions edit-save">
+        <div
+          className="avatar"
+          style={{
+            ...avatar,
+            pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
+          }}
+          onClick={() => !isEditing && setIsShowingAvatar(true)}
+        >
+          {isEditing && (
+            <>
+              <input
+                ref={uploadAvatarRef}
+                type="file"
+                accept=".jpg,.jpeg,.png,.gif"
+                onChange={uploadAvatar}
+                hidden
+              />
+              <RoundButton
+                className="change-avatar-button"
+                type="edit"
+                abbrTitle={t`Edit profile picture`}
+                onClick={selectAvatar}
+              />
+            </>
+          )}
+        </div>
+        {isOwner && (
+          <div className="actions">
+            <div className="edit-save">
               {isEditing ? (
                 <PrimaryButton
                   className={`${editForm.isSubmitting ? 'loading' : ''}`}
                   color="green"
                   onClick={toggleIsEditing}
                 >
-                  <div
-                    className="loading"
-                    style={{
-                      visibility: editForm.isSubmitting ? 'visible' : 'hidden',
-                    }}
-                  >
-                    <Loading color="white" />
-                  </div>
-                  <div
-                    className="label"
-                    style={{
-                      visibility: editForm.isSubmitting ? 'hidden' : 'visible',
-                    }}
-                  >
+                  {editForm.isSubmitting ? (
+                    <div className="loading">
+                      <Loading color="white" />
+                    </div>
+                  ) : (
                     <SaveIcon />
-                  </div>
+                  )}
                 </PrimaryButton>
               ) : (
                 <SecondaryButton onClick={toggleIsEditing} color="orange">
@@ -223,8 +213,8 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 </SecondaryButton>
               )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         <div className="info">
           <div className="profile-card-header">
