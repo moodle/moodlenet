@@ -220,6 +220,12 @@ export const Activated: ProfileStory = () => {
       collectionCardPropsList: [],
       resourceCardPropsList: [],
       showAccountCreationSuccessAlert: true,
+      profileCardProps: useProfileCardStoryProps({
+        props: {
+          isAuthenticated: true,
+          isOwner: true,
+        },
+      }),
     },
   })
   return <Profile {...props} />
