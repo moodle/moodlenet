@@ -22,7 +22,7 @@
     @media (max-width: 450px) {
       border-radius: 0;
     }
-    @media (max-width: 550px), (min-width: 800px) and (max-width: 1000px) {
+    @media (max-width: 550px) {
       height: 100px;
     }
     display: flex;
@@ -35,7 +35,7 @@
 
   > .avatar {
     position: absolute;
-    @media (max-width: 550px), (min-width: 800px) and (max-width: 1000px) {
+    @media (max-width: 550px) {
       width: 120px;
       height: 120px;
       margin-top: -85px;
@@ -54,7 +54,7 @@
 
     > .change-avatar-button {
       padding: 13px 5px 5px 5px;
-      @media (max-width: 550px), (min-width: 800px) and (max-width: 1000px) {
+      @media (max-width: 550px) {
         padding: 5px;
       }
     }
@@ -101,7 +101,7 @@
     flex-direction: column;
     gap: 20px;
 
-    @media (max-width: 550px), (min-width: 800px) and (max-width: 1000px) {
+    @media (max-width: 550px) {
       padding-top: 5px;
     }
 
@@ -289,6 +289,16 @@
         padding-right: 12px;
         display: flex;
         align-items: center;
+      }
+
+      > .more {
+        &.small {
+          padding: 0 6px;
+        }
+        > .three-dots {
+          margin-top: -12px;
+          font-size: 20px;
+        }
       }
     }
   }
