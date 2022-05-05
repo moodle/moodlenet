@@ -190,8 +190,8 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             </>
           )}
         </div>
-        {isOwner && (
-          <div className="actions">
+        <div className="actions">
+          {isOwner && (
             <div className="edit-save">
               {isEditing ? (
                 <PrimaryButton
@@ -213,8 +213,8 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 </SecondaryButton>
               )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         <div className="info">
           <div className="profile-card-header">
