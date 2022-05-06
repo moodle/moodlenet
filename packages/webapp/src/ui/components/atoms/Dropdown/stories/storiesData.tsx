@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { by, nc, nd, sa, zero } from '../../../pages/NewResource/FieldsData'
+import { by, cc, nc, nd, sa, zero } from '../../../pages/NewResource/FieldsData'
 
 export const LevelDropdown = {
   label: `Level`,
@@ -22,12 +22,20 @@ export const LicenseDropdown = {
   placeholder: `License`,
   label: `License`,
   options: [
-    ['CC-0', 'Public domains', <div>{zero}</div>],
+    [
+      'CC-0',
+      'Public domains',
+
+      <div>
+        {cc}
+        {zero}
+      </div>,
+    ],
     [
       'CC-BY',
       'Attribution',
       <div>
-        {zero}
+        {cc}
         {by}
       </div>,
     ],
@@ -35,7 +43,7 @@ export const LicenseDropdown = {
       'CC-BY-SA',
       'Attribution-ShareAlike',
       <div>
-        {zero}
+        {cc}
         {by}
         {sa}
       </div>,
@@ -44,7 +52,7 @@ export const LicenseDropdown = {
       'CC-BY-NC',
       'Attribution-NonCommercial',
       <div>
-        {zero}
+        {cc}
         {by}
         {nc}
       </div>,
@@ -53,7 +61,7 @@ export const LicenseDropdown = {
       'CC-BY-NC-SA',
       'Attribution-NonCommercial-ShareAlike',
       <div>
-        {zero}
+        {cc}
         {by}
         {nc}
         {sa}
@@ -61,9 +69,9 @@ export const LicenseDropdown = {
     ],
     [
       'CC-BY-ND',
-      'Attribution-NonCommercial',
+      'Attribution-NoDerivatives',
       <div>
-        {zero}
+        {cc}
         {by}
         {nd}
       </div>,
@@ -72,7 +80,7 @@ export const LicenseDropdown = {
       'CC-BY-NC-ND',
       'Attribution-NonCommercial-NoDerivatives',
       <div>
-        {zero}
+        {cc}
         {by}
         {nc}
         {nd}
