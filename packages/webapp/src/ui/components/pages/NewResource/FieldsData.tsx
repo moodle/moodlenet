@@ -1,4 +1,5 @@
 import { ReactComponent as ByIcon } from '../../../static/icons/license/by.svg'
+import { ReactComponent as CcIcon } from '../../../static/icons/license/cc.svg'
 import { ReactComponent as NcIcon } from '../../../static/icons/license/nc.svg'
 import { ReactComponent as NdIcon } from '../../../static/icons/license/nd.svg'
 import { ReactComponent as SaIcon } from '../../../static/icons/license/sa.svg'
@@ -9,6 +10,7 @@ export const zero = <ZeroIcon style={{ width: '20px' }} />
 export const nc = <NcIcon style={{ width: '20px' }} />
 export const nd = <NdIcon style={{ width: '20px' }} />
 export const sa = <SaIcon style={{ width: '20px' }} />
+export const cc = <CcIcon style={{ width: '20px' }} />
 
 export const getYearList = (startYear: number): string[] => {
   const currentYear = new Date().getFullYear()
@@ -26,6 +28,7 @@ export const licenseIconMap = {
   zero,
   '0': zero,
   nc,
+  cc,
   nd,
   sa,
 }
@@ -33,30 +36,35 @@ export type LicenseTypes = keyof typeof licenseIconMap
 
 export type LicenseNodeKey = keyof typeof LicenseNodes
 export const LicenseNodes = {
-  0: <div>{zero}</div>,
+  0: (
+    <div>
+      {cc}
+      {zero}
+    </div>
+  ),
   by: (
     <div>
-      {zero}
+      {cc}
       {by}
     </div>
   ),
   'by-sa': (
     <div>
-      {zero}
+      {cc}
       {by}
       {sa}
     </div>
   ),
   'by-nc': (
     <div>
-      {zero}
+      {cc}
       {by}
       {nc}
     </div>
   ),
   'by-nc-sa': (
     <div>
-      {zero}
+      {cc}
       {by}
       {nc}
       {sa}
@@ -64,14 +72,14 @@ export const LicenseNodes = {
   ),
   'by-nd': (
     <div>
-      {zero}
+      {cc}
       {by}
       {nd}
     </div>
   ),
   'by-nc-nd': (
     <div>
-      {zero}
+      {cc}
       {by}
       {nc}
       {nd}
