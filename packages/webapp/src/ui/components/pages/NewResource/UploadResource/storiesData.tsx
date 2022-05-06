@@ -32,8 +32,8 @@ export const LicenseIconTextOptionProps: IconTextOptionProps[] = [
     icon: LicenseNodes['by-nc-sa'],
   },
   {
-    label: 'CC-BY-ND (Attribution-NonCommercial)',
-    value: 'CC-BY-ND (Attribution-NonCommercial)',
+    label: 'CC-BY-ND (Attribution-NoDerivatives)',
+    value: 'CC-BY-ND (Attribution-NoDerivatives)',
     icon: LicenseNodes['by-nd'],
   },
   {
