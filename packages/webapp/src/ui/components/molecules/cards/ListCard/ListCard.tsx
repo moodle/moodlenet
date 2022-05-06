@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useRef, useState } from 'react'
+import { FC, ReactNode, useLayoutEffect, useRef, useState } from 'react'
 import './styles.scss'
 
 export type ListCardProps = {
@@ -35,30 +35,20 @@ export const ListCard: FC<ListCardProps> = ({
   })
   const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined)
 
-  useEffect(() => {
-    console.log('###### CLASS - ', className.toUpperCase())
-    console.log('max rows updated ', maxRows)
-    let totalMaxHeight = undefined
-    if (maxRows) {
-      console.log('Should not be here')
-      const gap = contentDiv.current
-        ? getComputedStyle(contentDiv.current).gap
-        : '0'
-      const elementHeight = element.current?.clientHeight
-      console.log(
-        className.toUpperCase() + ' - ' + element.current?.clientHeight + 'px'
-      )
-      totalMaxHeight = elementHeight
-        ? maxRows * elementHeight + parseInt(gap) * (maxRows - 1) + 10
-        : undefined
-    }
-    console.log('Total max height ', totalMaxHeight)
-    setMaxHeight(totalMaxHeight)
-  }, [element, setMaxHeight, className, contentDiv, maxRows])
+  const contentDivCurr = contentDiv.current
+  const elementCurr = element.current
 
-  useEffect(() => {
-    console.log(className.toUpperCase(), ' - MAX HEIGHT ', maxHeight)
-  }, [maxHeight, className])
+  useLayoutEffect(() => {
+    if (!(maxRows && contentDivCurr && elementCurr)) {
+      return
+    }
+    const gap = getComputedStyle(contentDivCurr).gap
+    const elementHeight = elementCurr.clientHeight
+    const totalMaxHeight = elementHeight
+      ? maxRows * elementHeight + parseInt(gap) * (maxRows - 1) + 10
+      : undefined
+    setMaxHeight(totalMaxHeight)
+  }, [elementCurr, setMaxHeight, className, contentDivCurr, maxRows])
 
   return (
     <div className={`list-card ${className} ${noCard ? 'no-card' : ''}`}>
