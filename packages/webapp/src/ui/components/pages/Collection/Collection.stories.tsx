@@ -96,6 +96,11 @@ export const CollectionStoryProps = (overrides?: {
       ResourceCardOwnerBookmarkedStoryProps,
       ResourceCardStoryProps(),
     ],
+    reportForm: useFormik<{}>({
+      initialValues: {},
+      onSubmit: action('submit report Form'),
+    }),
+    collectionUrl: 'collection.url',
     toggleFollow: useFormik({
       initialValues: {},
       onSubmit: action('toggle Follow'),

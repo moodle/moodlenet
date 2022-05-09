@@ -43,6 +43,7 @@
         position: inherit;
         position: relative;
         cursor: pointer;
+        border-radius: 16px 16px 0 0;
 
         @media (max-width: 450px) {
           height: 175px;
@@ -155,6 +156,12 @@
                 width: 28px;
                 height: 28px;
               }
+            }
+
+            > .more-button > .hover-element > .more {
+              font-size: 20px;
+              padding-bottom: -11px;
+              padding: 0 8px 11px 8px;
             }
 
             &.edit-save {
