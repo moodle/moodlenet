@@ -27,6 +27,7 @@ export const LoggedIn = () => {
   const props = useProfileCardStoryProps({
     props: {
       isAuthenticated: true,
+      isFollowing: true,
     },
   })
   return <ProfileCard {...props} />

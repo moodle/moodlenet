@@ -59,6 +59,10 @@ export const useProfileStoryProps = (overrides?: {
       initialValues: { text: '' },
       onSubmit: action('submit send Email Form'),
     }),
+    reportForm: useFormik<{}>({
+      initialValues: {},
+      onSubmit: action('submit report Form'),
+    }),
     newResourceHref: href('Pages/New Resource/Default'),
     newCollectionHref: href('Pages/New Collection/Start'),
     headerPageTemplateProps: {

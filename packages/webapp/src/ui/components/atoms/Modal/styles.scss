@@ -26,7 +26,7 @@
         align-items: center;
 
         > .title {
-          font-size: 14px;
+          font-size: 15px;
           font-weight: bold;
         }
 
@@ -50,6 +50,7 @@
       > .actions {
         display: flex;
         justify-content: flex-end;
+        gap: 8px;
       }
     }
   }

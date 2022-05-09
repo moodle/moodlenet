@@ -1,7 +1,7 @@
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import addIcon from '../../../assets/icons/add.svg'
+import addIcon from '../../../assets/icons/add-round.svg'
 import { FloatingMenu, FloatingMenuProps } from './FloatingMenu'
 
 const meta: ComponentMeta<typeof FloatingMenu> = {
