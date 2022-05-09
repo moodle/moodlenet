@@ -51,10 +51,13 @@ export const useProfileCardStoryProps = (overrides?: {
     isAuthenticated: false,
     userId: '@396qamf8hfol-Bru-Mas-Ribera@moodle.net',
     setShowUserIdCopiedAlert: action('SetShowUserIdCopiedAlert'),
+    setShowUrlCopiedAlert: action('setShowUrlCopiedAlert'),
+    setIsReporting: action('setIsReporting'),
     approveUserForm: useFormik({
       initialValues: {},
       onSubmit: action('approve User'),
     }),
+    profileUrl: 'profile.url',
     unapproveUserForm: useFormik({
       initialValues: {},
       onSubmit: action('unapprove User'),

@@ -500,19 +500,11 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 ]}
                 hoverElement={
                   isShowingSmallCard ? (
-                    <SecondaryButton
-                      color="grey"
-                      className={`more small`}
-                      onClick={openSendMessage}
-                    >
+                    <SecondaryButton color="grey" className={`more small`}>
                       <div className="three-dots">...</div>
                     </SecondaryButton>
                   ) : (
-                    <SecondaryButton
-                      color="grey"
-                      className={`more big`}
-                      onClick={openSendMessage}
-                    >
+                    <SecondaryButton color="grey" className={`more big`}>
                       <div className="text">More</div>
                     </SecondaryButton>
                   )

@@ -7,6 +7,9 @@
     float: right;
     > * {
       display: flex;
+      &:focus {
+        outline: none;
+      }
     }
   }
 
@@ -20,6 +23,7 @@
     padding-right: 32px;
     top: 28px;
     padding-top: 10px;
+    z-index: 3;
 
     > .content {
       background-color: white;

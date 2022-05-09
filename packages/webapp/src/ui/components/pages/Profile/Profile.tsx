@@ -231,16 +231,7 @@ export const Profile = withCtrl<ProfileProps>(
             }
             onClose={() => setIsReporting(false)}
             style={{ maxWidth: '400px' }}
-          >
-            {/* <span>Why would you like to report this profile? (Optional)</span>
-            <InputTextField
-              textarea={true}
-              name="text"
-              edit
-
-              onChange={sendEmailForm.handleChange}
-            /> */}
-          </Modal>
+          />
         )}
         <div className="profile">
           <div className="content">

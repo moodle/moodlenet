@@ -120,6 +120,10 @@ export const ResourceStoryProps = (overrides?: {
       month: MonthTextOptionProps[8]!.value,
       year: YearsProps[20],
       type: TypeTextOptionProps[2]!.value,
+      image: {
+        location:
+          'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+      },
       ...overrides?.formValues,
     },
     ...overrides?.formConfig,
