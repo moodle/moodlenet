@@ -1,6 +1,10 @@
 import { t, Trans } from '@lingui/macro'
 import EditIcon from '@material-ui/icons/Edit'
 import SaveIcon from '@material-ui/icons/Save'
+import AddIcon from '@mui/icons-material/Add'
+import CheckIcon from '@mui/icons-material/Check'
+import FlagIcon from '@mui/icons-material/Flag'
+import ShareIcon from '@mui/icons-material/Share'
 import React, {
   Dispatch,
   SetStateAction,
@@ -8,12 +12,14 @@ import React, {
   useRef,
   useState,
 } from 'react'
+// import { ReactComponent as AddIcon } from '../../../../assets/icons/add.svg'
 import { ReactComponent as ApprovedIcon } from '../../../../assets/icons/approved.svg'
 import { withCtrl } from '../../../../lib/ctrl'
 import { FormikHandle } from '../../../../lib/formik'
 import { useImageUrl } from '../../../../lib/useImageUrl'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
 import defaultBackgroud from '../../../../static/img/default-background.svg'
+import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
 import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
 import Loading from '../../../atoms/Loading/Loading'
 import Modal from '../../../atoms/Modal/Modal'
@@ -39,10 +45,13 @@ export type ProfileCardProps = {
   approveUserForm: FormikHandle<{}>
   unapproveUserForm: FormikHandle<{}>
   userId: string
+  profileUrl: string
   showAccountApprovedSuccessAlert?: boolean
   toggleIsEditing(): unknown
   openSendMessage(): unknown
   setShowUserIdCopiedAlert: Dispatch<SetStateAction<boolean>>
+  setShowUrlCopiedAlert: Dispatch<SetStateAction<boolean>>
+  setIsReporting: Dispatch<SetStateAction<boolean>>
 }
 
 export const ProfileCard = withCtrl<ProfileCardProps>(
@@ -61,10 +70,13 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     approveUserForm,
     requestApprovalForm,
     userId,
+    profileUrl,
     unapproveUserForm,
     openSendMessage,
     toggleIsEditing,
     setShowUserIdCopiedAlert,
+    setShowUrlCopiedAlert,
+    setIsReporting,
   }) => {
     const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
     const shouldShowErrors = !!editForm.submitCount
@@ -121,6 +133,14 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
       setShowUserIdCopiedAlert(false)
       setTimeout(() => {
         setShowUserIdCopiedAlert(true)
+      }, 100)
+    }
+
+    const copyUrl = () => {
+      navigator.clipboard.writeText(profileUrl)
+      setShowUrlCopiedAlert(false)
+      setTimeout(() => {
+        setShowUrlCopiedAlert(true)
       }, 100)
     }
 
@@ -432,17 +452,22 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 <Trans>Unapprove</Trans>
               </SecondaryButton>
             )}
-            {!isOwner && isFollowing && (
-              <SecondaryButton onClick={toggleFollowForm.submitForm}>
-                <Trans>Unfollow</Trans>
-              </SecondaryButton>
-            )}
             {!isOwner && !isFollowing && (
               <PrimaryButton
                 disabled={!isAuthenticated}
                 onClick={toggleFollowForm.submitForm}
               >
+                <AddIcon />
                 <Trans>Follow</Trans>
+              </PrimaryButton>
+            )}
+            {!isOwner && isFollowing && (
+              <PrimaryButton
+                onClick={toggleFollowForm.submitForm}
+                className="following-button"
+              >
+                <CheckIcon />
+                <Trans>Following</Trans>
               </PrimaryButton>
             )}
             {!isOwner && (
@@ -461,23 +486,38 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               //   <MailOutlineIcon />
               // </TertiaryButton>
             )}
-            {isAuthenticated && !isOwner && isShowingSmallCard && (
-              <SecondaryButton
-                color="grey"
-                className={`more small`}
-                onClick={openSendMessage}
-              >
-                <div className="three-dots">...</div>
-              </SecondaryButton>
-            )}
-            {isAuthenticated && !isOwner && !isShowingSmallCard && (
-              <SecondaryButton
-                color="grey"
-                className={`more big`}
-                onClick={openSendMessage}
-              >
-                <div className="text">More</div>
-              </SecondaryButton>
+            {isAuthenticated && !isOwner && (
+              <FloatingMenu
+                menuContent={[
+                  <div tabIndex={0} onClick={copyUrl}>
+                    <ShareIcon />
+                    <Trans>Share</Trans>
+                  </div>,
+                  <div tabIndex={0} onClick={() => setIsReporting(true)}>
+                    <FlagIcon />
+                    <Trans>Report</Trans>
+                  </div>,
+                ]}
+                hoverElement={
+                  isShowingSmallCard ? (
+                    <SecondaryButton
+                      color="grey"
+                      className={`more small`}
+                      onClick={openSendMessage}
+                    >
+                      <div className="three-dots">...</div>
+                    </SecondaryButton>
+                  ) : (
+                    <SecondaryButton
+                      color="grey"
+                      className={`more big`}
+                      onClick={openSendMessage}
+                    >
+                      <div className="text">More</div>
+                    </SecondaryButton>
+                  )
+                }
+              />
             )}
           </div>
         </div>

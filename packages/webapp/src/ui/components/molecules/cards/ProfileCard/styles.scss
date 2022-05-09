@@ -283,6 +283,21 @@
       justify-content: flex-start;
       gap: 10px;
 
+      > .primary-button {
+        > svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      > .following-button {
+        gap: 2px;
+        > svg {
+          width: 17px;
+          height: 17px;
+        }
+      }
+
       > .message {
         cursor: pointer;
         padding-left: 12px;
@@ -291,7 +306,7 @@
         align-items: center;
       }
 
-      > .more {
+      > .floating-menu > .hover-element > .more {
         &.small {
           padding: 0 6px;
         }

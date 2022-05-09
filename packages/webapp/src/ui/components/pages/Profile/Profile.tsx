@@ -8,6 +8,7 @@ import { FormikHandle } from '../../../lib/formik'
 import { InputTextField } from '../../atoms/InputTextField/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
+import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import Snackbar from '../../atoms/Snackbar/Snackbar'
 import {
   CollectionCard,
@@ -52,6 +53,7 @@ export type ProfileProps = {
   showAccountCreationSuccessAlert?: boolean
   showAccountApprovedSuccessAlert?: boolean
   sendEmailForm?: FormikHandle<{ text: string }>
+  reportForm?: FormikHandle<{}>
   editForm: FormikHandle<ProfileFormValues>
 }
 
@@ -68,12 +70,16 @@ export const Profile = withCtrl<ProfileProps>(
     showAccountCreationSuccessAlert,
     showAccountApprovedSuccessAlert,
     sendEmailForm,
+    reportForm,
     editForm,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
     const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] =
       useState<boolean>(false)
+    const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
+    const [showReportedAlert, setShowReportedAlert] = useState<boolean>(false)
+    const [isReporting, setIsReporting] = useState<boolean>(false)
 
     const toggleIsEditing = () => {
       isEditing && editForm.dirty && editForm.submitForm()
@@ -107,6 +113,26 @@ export const Profile = withCtrl<ProfileProps>(
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        {showReportedAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Profile reported</Trans>
+          </Snackbar>
+        )}
+        {showUrlCopiedAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Copied to clipoard</Trans>
+          </Snackbar>
+        )}
         {showUserIdCopiedAlert && (
           <Snackbar
             type="success"
@@ -175,6 +201,47 @@ export const Profile = withCtrl<ProfileProps>(
             />
           </Modal>
         )}
+        {isReporting && reportForm && (
+          <Modal
+            title={`${t`Confirm reporting`} ${displayName}'s profile`}
+            closeButton={false}
+            actions={
+              <>
+                <SecondaryButton
+                  color="grey"
+                  onClick={() => {
+                    setIsReporting(false)
+                  }}
+                >
+                  <Trans>Cancel</Trans>
+                </SecondaryButton>
+                <PrimaryButton
+                  onClick={() => {
+                    reportForm.submitForm()
+                    setIsReporting(false)
+                    setShowReportedAlert(false)
+                    setTimeout(() => {
+                      setShowReportedAlert(true)
+                    }, 100)
+                  }}
+                >
+                  <Trans>Report</Trans>
+                </PrimaryButton>
+              </>
+            }
+            onClose={() => setIsReporting(false)}
+            style={{ maxWidth: '400px' }}
+          >
+            {/* <span>Why would you like to report this profile? (Optional)</span>
+            <InputTextField
+              textarea={true}
+              name="text"
+              edit
+
+              onChange={sendEmailForm.handleChange}
+            /> */}
+          </Modal>
+        )}
         <div className="profile">
           <div className="content">
             <div className="main-column">
@@ -184,6 +251,8 @@ export const Profile = withCtrl<ProfileProps>(
                 isEditing={isEditing}
                 toggleIsEditing={toggleIsEditing}
                 setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
+                setShowUrlCopiedAlert={setShowUrlCopiedAlert}
+                setIsReporting={setIsReporting}
                 openSendMessage={() => setIsSendingMessage(!!sendEmailForm)}
               />
               <ListCard
