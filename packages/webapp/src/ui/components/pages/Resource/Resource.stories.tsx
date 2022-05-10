@@ -150,6 +150,7 @@ export const ResourceStoryProps = (overrides?: {
   return {
     form,
     resourceId: 'qjnwglkd69io-sports',
+    resourceUrl: 'resource.url',
     headerPageTemplateProps: {
       headerPageProps: HeaderPageLoggedInStoryProps,
       isAuthenticated: true,
@@ -169,6 +170,10 @@ export const ResourceStoryProps = (overrides?: {
     contentUrl: '#',
     contentType: 'link',
     resourceFormat: 'Video',
+    reportForm: useFormik<{ comment: string }>({
+      initialValues: { comment: '' },
+      onSubmit: action('submit report Form'),
+    }),
     collections: {
       opts: CollectionTextOptionProps,
       selected: CollectionTextOptionProps.filter(
