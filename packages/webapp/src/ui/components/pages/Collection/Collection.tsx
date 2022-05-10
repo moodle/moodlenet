@@ -32,6 +32,7 @@ import {
   ResourceCard,
   ResourceCardProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard'
+import ReportModal from '../../molecules/modals/ReportModal/ReportModal'
 import SearchImage from '../../organisms/SearchImage/SearchImage'
 import {
   HeaderPageTemplate,
@@ -55,7 +56,7 @@ export type CollectionProps = {
   contributorCardProps: ContributorCardProps
   form: FormikHandle<NewCollectionFormValues>
   resourceCardPropsList: CP<ResourceCardProps>[]
-  reportForm?: FormikHandle<{}>
+  reportForm: FormikHandle<{ comment: string }>
   toggleBookmark: FormikHandle
   toggleFollow: FormikHandle
   deleteCollection?: FormikHandle
@@ -231,35 +232,11 @@ export const Collection = withCtrl<CollectionProps>(
           />
         )}
         {isReporting && reportForm && (
-          <Modal
+          <ReportModal
+            reportForm={reportForm}
             title={`${t`Confirm reporting this collection`}`}
-            closeButton={false}
-            actions={
-              <>
-                <SecondaryButton
-                  color="grey"
-                  onClick={() => {
-                    setIsReporting(false)
-                  }}
-                >
-                  <Trans>Cancel</Trans>
-                </SecondaryButton>
-                <PrimaryButton
-                  onClick={() => {
-                    reportForm.submitForm()
-                    setIsReporting(false)
-                    setShowReportedAlert(false)
-                    setTimeout(() => {
-                      setShowReportedAlert(true)
-                    }, 100)
-                  }}
-                >
-                  <Trans>Report</Trans>
-                </PrimaryButton>
-              </>
-            }
-            onClose={() => setIsReporting(false)}
-            style={{ maxWidth: '400px' }}
+            setIsReporting={setIsReporting}
+            setShowReportedAlert={setShowReportedAlert}
           />
         )}
         {isShowingImage && imageUrl && (
