@@ -86,7 +86,7 @@
             }
             > .actions {
               display: flex;
-              gap: 20px;
+              gap: 12px;
 
               > * {
                 display: flex;
@@ -101,6 +101,12 @@
 
               > *:not(.like-disabled) {
                 cursor: pointer;
+              }
+
+              > .more-button > .hover-element > .more {
+                font-size: 20px;
+                padding-bottom: -11px;
+                padding: 0 8px 11px 8px;
               }
 
               .liked {
@@ -232,8 +238,8 @@
               }
             }
 
-            > .change-image-button {
-            }
+            // > .change-image-button {
+            // }
 
             > .search-image-button {
               > .content > svg {

@@ -8,6 +8,8 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
+import FlagIcon from '@mui/icons-material/Flag'
+import ShareIcon from '@mui/icons-material/Share'
 import React, { useMemo, useRef, useState } from 'react'
 import { getBackupImage } from '../../../../helpers/utilities'
 import { getTagList } from '../../../elements/tags'
@@ -26,6 +28,7 @@ import {
   TextOption,
   TextOptionProps,
 } from '../../atoms/Dropdown/Dropdown'
+import FloatingMenu from '../../atoms/FloatingMenu/FloatingMenu'
 import { InputTextField } from '../../atoms/InputTextField/InputTextField'
 import Loading from '../../atoms/Loading/Loading'
 import Modal from '../../atoms/Modal/Modal'
@@ -33,6 +36,7 @@ import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import Snackbar from '../../atoms/Snackbar/Snackbar'
+import TertiaryButton from '../../atoms/TertiaryButton/TertiaryButton'
 import {
   VisibilityDropdown,
   VisibilityNodes,
@@ -42,6 +46,7 @@ import {
   OptionItem,
   OptionItemProp,
 } from '../../molecules/cards/AddToCollectionsCard/AddToCollectionsCard'
+import ReportModal from '../../molecules/modals/ReportModal/ReportModal'
 import SearchImage from '../../organisms/SearchImage/SearchImage'
 import {
   HeaderPageTemplate,
@@ -65,6 +70,7 @@ export type ResourceFormValues = Omit<
 export type ResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   resourceId: string
+  resourceUrl: string
   isAuthenticated: boolean
   isOwner: boolean
   isAdmin: boolean
@@ -83,6 +89,7 @@ export type ResourceProps = {
   deleteResourceForm?: FormikHandle
   addToCollectionsForm: FormikHandle<{ collections: string[] }>
   sendToMoodleLmsForm: FormikHandle<{ site?: string }>
+  reportForm: FormikHandle<{ comment: string }>
   resourceFormat: string
   contentType: 'link' | 'file'
 
@@ -100,6 +107,7 @@ export const Resource = withCtrl<ResourceProps>(
   ({
     headerPageTemplateProps,
     resourceId,
+    resourceUrl,
     isAuthenticated,
     isOwner,
     isAdmin,
@@ -115,6 +123,7 @@ export const Resource = withCtrl<ResourceProps>(
     categories,
     collections,
     form,
+    reportForm,
     toggleLikeForm,
     toggleBookmarkForm,
     deleteResourceForm,
@@ -147,6 +156,10 @@ export const Resource = withCtrl<ResourceProps>(
       () => getBackupImage(resourceId),
       [resourceId]
     )
+    const [isReporting, setIsReporting] = useState<boolean>(false)
+    const [showReportedAlert, setShowReportedAlert] = useState<boolean>(false)
+    const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
+
     const [imageUrl] = useImageUrl(
       form.values?.image?.location,
       backupImage?.location
@@ -164,6 +177,14 @@ export const Resource = withCtrl<ResourceProps>(
       } else {
         setShouldShowErrors(true)
       }
+    }
+
+    const copyUrl = () => {
+      navigator.clipboard.writeText(resourceUrl)
+      setShowUrlCopiedAlert(false)
+      setTimeout(() => {
+        setShowUrlCopiedAlert(true)
+      }, 100)
     }
 
     const handleOnSendToMoodleClick = () => {
@@ -603,29 +624,34 @@ export const Resource = withCtrl<ResourceProps>(
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        {/* {isLeaving && hasMadeChanges && (
-          <Modal
-            title={t`Discard changes`}
-            actions={[
-              <SecondaryButton
-                onClick={() => {
-                }}
-              >
-                <Trans>Cancel</Trans>
-              </SecondaryButton>,
-              <PrimaryButton
-                onClick={() => {
-                }}
-              >
-                <Trans>Discard</Trans>
-              </PrimaryButton>,
-            ]}
-            onClose={() => setIsAddingToMoodleLms(false)}
-            style={{ maxWidth: '350px', width: '100%' }}
+        {showUrlCopiedAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={6000}
+            showCloseButton={false}
           >
-            <Trans>Are you sure you want to discard the changes you made?</Trans>
-          </Modal>
-        )} */}
+            <Trans>Copied to clipoard</Trans>
+          </Snackbar>
+        )}
+        {showReportedAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Collection reported</Trans>
+          </Snackbar>
+        )}
+        {isReporting && reportForm && (
+          <ReportModal
+            reportForm={reportForm}
+            title={`${t`Confirm reporting this collection`}`}
+            setIsReporting={setIsReporting}
+            setShowReportedAlert={setShowReportedAlert}
+          />
+        )}
         {isSearchingImage && (
           <SearchImage
             onClose={() => setIsSearchingImage(false)}
@@ -827,9 +853,29 @@ export const Resource = withCtrl<ResourceProps>(
                           )}
                         </div>
                       )}
-                      {/*<div className="share">
-                        <ShareIcon />
-                      </div>*/}
+                      {isAuthenticated && !isOwner && (
+                        <FloatingMenu
+                          className="more-button"
+                          menuContent={[
+                            <div tabIndex={0} onClick={copyUrl}>
+                              <ShareIcon />
+                              <Trans>Share</Trans>
+                            </div>,
+                            <div
+                              tabIndex={0}
+                              onClick={() => setIsReporting(true)}
+                            >
+                              <FlagIcon />
+                              <Trans>Report</Trans>
+                            </div>,
+                          ]}
+                          hoverElement={
+                            <TertiaryButton className={`more`}>
+                              ...
+                            </TertiaryButton>
+                          }
+                        />
+                      )}
                       {(isAdmin || isOwner) && (
                         <div className="edit-save">
                           {isEditing ? (

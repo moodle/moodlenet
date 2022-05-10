@@ -205,16 +205,6 @@ export const Collection = withCtrl<CollectionProps>(
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        {showReportedAlert && (
-          <Snackbar
-            type="success"
-            position="bottom"
-            autoHideDuration={6000}
-            showCloseButton={false}
-          >
-            <Trans>Collection reported</Trans>
-          </Snackbar>
-        )}
         {showUrlCopiedAlert && (
           <Snackbar
             type="success"
@@ -230,6 +220,16 @@ export const Collection = withCtrl<CollectionProps>(
             onClose={() => setIsSearchingImage(false)}
             setImage={setImage}
           />
+        )}
+        {showReportedAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Collection reported</Trans>
+          </Snackbar>
         )}
         {isReporting && reportForm && (
           <ReportModal
