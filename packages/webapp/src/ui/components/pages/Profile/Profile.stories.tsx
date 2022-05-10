@@ -59,8 +59,8 @@ export const useProfileStoryProps = (overrides?: {
       initialValues: { text: '' },
       onSubmit: action('submit send Email Form'),
     }),
-    reportForm: useFormik<{}>({
-      initialValues: {},
+    reportForm: useFormik<{ comment: string }>({
+      initialValues: { comment: '' },
       onSubmit: action('submit report Form'),
     }),
     newResourceHref: href('Pages/New Resource/Default'),
@@ -75,7 +75,6 @@ export const useProfileStoryProps = (overrides?: {
     },
     overallCardProps: OverallCardStoryProps,
     profileCardProps: ProfileCardStoryProps,
-    // scoreCardProps: ScoreCardStoryProps,
     collectionCardPropsList: [
       CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
       CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
