@@ -453,8 +453,10 @@ export const Collection = withCtrl<CollectionProps>(
                   <InputTextField
                     className="title underline"
                     name="title"
+                    textarea
+                    textAreaAutoSize
+                    displayMode
                     value={form.values.title}
-                    displayMode={true}
                     onChange={form.handleChange}
                     edit={isEditing}
                     style={{

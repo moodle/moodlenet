@@ -110,7 +110,7 @@ export const ResourceStoryProps = (overrides?: {
     initialValues: {
       isFile: true,
       visibility: 'Public',
-      name: 'The Best Resource Ever',
+      name: 'Best resource ever',
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
       category: CategoriesTextOptionProps[2]!.value,
@@ -282,7 +282,7 @@ export const Owner = () => {
       contentType: 'file',
       contentUrl: 'https://picsum.photos/200/100',
       resourceFormat: 'Video',
-      autoImageAdded: true,
+      // autoImageAdded: true,
     },
   })
   return <Resource {...props} />

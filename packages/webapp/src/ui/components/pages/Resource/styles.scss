@@ -153,17 +153,12 @@
             }
           }
 
-          .title {
-            font-weight: bold;
-            font-size: 26px;
-
-            > .input-container {
-              height: fit-content;
-              > input {
-                padding: 0;
-                font-weight: bold;
-                font-size: 26px;
-              }
+          > .title {
+            &,
+            > .textarea-container > textarea {
+              font-size: 26px;
+              line-height: 30px;
+              font-weight: bold;
             }
           }
 

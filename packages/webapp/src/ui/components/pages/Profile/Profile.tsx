@@ -8,7 +8,6 @@ import { FormikHandle } from '../../../lib/formik'
 import { InputTextField } from '../../atoms/InputTextField/InputTextField'
 import Modal from '../../atoms/Modal/Modal'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
-import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import Snackbar from '../../atoms/Snackbar/Snackbar'
 import {
   CollectionCard,
@@ -27,6 +26,7 @@ import {
   ResourceCard,
   ResourceCardProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard'
+import ReportModal from '../../molecules/modals/ReportModal/ReportModal'
 import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
@@ -53,7 +53,7 @@ export type ProfileProps = {
   showAccountCreationSuccessAlert?: boolean
   showAccountApprovedSuccessAlert?: boolean
   sendEmailForm?: FormikHandle<{ text: string }>
-  reportForm?: FormikHandle<{}>
+  reportForm: FormikHandle<{ comment: string }>
   editForm: FormikHandle<ProfileFormValues>
 }
 
@@ -202,35 +202,11 @@ export const Profile = withCtrl<ProfileProps>(
           </Modal>
         )}
         {isReporting && reportForm && (
-          <Modal
+          <ReportModal
+            reportForm={reportForm}
             title={`${t`Confirm reporting`} ${displayName}'s profile`}
-            closeButton={false}
-            actions={
-              <>
-                <SecondaryButton
-                  color="grey"
-                  onClick={() => {
-                    setIsReporting(false)
-                  }}
-                >
-                  <Trans>Cancel</Trans>
-                </SecondaryButton>
-                <PrimaryButton
-                  onClick={() => {
-                    reportForm.submitForm()
-                    setIsReporting(false)
-                    setShowReportedAlert(false)
-                    setTimeout(() => {
-                      setShowReportedAlert(true)
-                    }, 100)
-                  }}
-                >
-                  <Trans>Report</Trans>
-                </PrimaryButton>
-              </>
-            }
-            onClose={() => setIsReporting(false)}
-            style={{ maxWidth: '400px' }}
+            setIsReporting={setIsReporting}
+            setShowReportedAlert={setShowReportedAlert}
           />
         )}
         <div className="profile">

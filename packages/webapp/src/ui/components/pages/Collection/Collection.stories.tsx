@@ -149,7 +149,7 @@ export const Owner = () => {
   const props = CollectionStoryProps({
     props: {
       isOwner: true,
-      autoImageAdded: true,
+      // autoImageAdded: true,
     },
   })
   return <Collection {...props} />
