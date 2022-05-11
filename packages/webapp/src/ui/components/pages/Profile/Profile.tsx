@@ -123,7 +123,7 @@ export const Profile = withCtrl<ProfileProps>(
             autoHideDuration={6000}
             showCloseButton={false}
           >
-            <Trans>Profile reported</Trans>
+            <Trans>Reported</Trans>
           </Snackbar>
         )}
         {showUrlCopiedAlert && (
@@ -207,7 +207,7 @@ export const Profile = withCtrl<ProfileProps>(
         {isReporting && reportForm && (
           <ReportModal
             reportForm={reportForm}
-            title={`${t`Confirm reporting`} ${displayName}'s profile`}
+            title={t`Confirm reporting this profile`}
             setIsReporting={setIsReporting}
             setShowReportedAlert={setShowReportedAlert}
           />

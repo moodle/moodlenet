@@ -90,6 +90,7 @@ export const Header = withCtrl<HeaderProps>((props) => {
           {me ? (
             <>
               <FloatingMenu
+                className="add-menu"
                 menuContent={[
                   <Link href={newResourceHref} tabIndex={0}>
                     <NoteAddIcon />
@@ -103,6 +104,7 @@ export const Header = withCtrl<HeaderProps>((props) => {
                 hoverElement={<AddIcon className="add-icon" tabIndex={0} />}
               />
               <FloatingMenu
+                className="avatar-menu"
                 menuContent={[
                   <Link href={me.bookmarksHref}>
                     <BookmarksIcon />

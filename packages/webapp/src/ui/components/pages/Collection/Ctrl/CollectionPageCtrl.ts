@@ -320,7 +320,7 @@ export const useCollectionCtrl: CtrlHook<
         displayName: creator?.name ?? '',
       },
       bookmarked: !!myBookmarkedEdgeId,
-      following: !!myFollowEdgeId,
+      isFollowing: !!myFollowEdgeId,
       toggleBookmark,
       numFollowers: collectionData.followersCount,
       toggleFollow,

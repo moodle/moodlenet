@@ -34,7 +34,6 @@ export const FloatingMenuStoryProps: FloatingMenuProps = {
       </div>
     </div>,
   ],
-  visible: true,
 }
 
 const FloatingMenuStory: ComponentStory<typeof FloatingMenu> = (args) => (

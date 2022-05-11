@@ -544,7 +544,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
 
   const reportForm = useFormik({
     initialValues: { comment: '' },
-    validationSchema: object({ comment: string().required() }),
+    validationSchema: object({ comment: string().required(t`Required field`) }),
     validateOnMount: true,
     onSubmit: async ({ comment }) => {
       await reportEntity({

@@ -456,6 +456,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               <PrimaryButton
                 disabled={!isAuthenticated}
                 onClick={toggleFollowForm.submitForm}
+                className="following-button"
               >
                 <AddIcon />
                 <Trans>Follow</Trans>
@@ -463,6 +464,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             )}
             {!isOwner && isFollowing && (
               <PrimaryButton
+                disabled={!isAuthenticated}
                 onClick={toggleFollowForm.submitForm}
                 className="following-button"
               >
