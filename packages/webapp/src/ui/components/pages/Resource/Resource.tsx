@@ -89,7 +89,7 @@ export type ResourceProps = {
   deleteResourceForm?: FormikHandle
   addToCollectionsForm: FormikHandle<{ collections: string[] }>
   sendToMoodleLmsForm: FormikHandle<{ site?: string }>
-  reportForm: FormikHandle<{ comment: string }>
+  reportForm?: FormikHandle<{ comment: string }>
   resourceFormat: string
   contentType: 'link' | 'file'
 

@@ -56,7 +56,7 @@ export type CollectionProps = {
   contributorCardProps: ContributorCardProps
   form: FormikHandle<NewCollectionFormValues>
   resourceCardPropsList: CP<ResourceCardProps>[]
-  reportForm: FormikHandle<{ comment: string }>
+  reportForm?: FormikHandle<{ comment: string }>
   toggleBookmark: FormikHandle
   toggleFollow: FormikHandle
   deleteCollection?: FormikHandle
