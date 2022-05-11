@@ -1,4 +1,4 @@
-import React, { FC, KeyboardEvent, useEffect, useState } from 'react'
+import React, { FC, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import Card from '../Card/Card'
 import './styles.scss'
 
@@ -6,19 +6,18 @@ export type FloatingMenuProps = {
   menuContent: React.ReactElement[]
   hoverElement: React.ReactNode
   className?: string
-  visible?: boolean
 }
 
 export const FloatingMenu: FC<FloatingMenuProps> = ({
-  visible,
   menuContent,
   className,
   hoverElement,
 }) => {
   const [currentVisible, setCurrentVisible] = useState<Boolean | undefined>(
-    visible
+    false
   )
-  const [isOnHover, setIsOnHover] = useState<Boolean>(false)
+  const hoverElementRef = useRef<HTMLDivElement>(null)
+  // const [isOnHover, setIsOnHover] = useState<Boolean>(false)
   const switchMenu = (e: KeyboardEvent<HTMLDivElement>) => {
     ;['ArrowDown', 'ArrowUp'].includes(e.key) && setCurrentVisible(true)
     ;['Enter'].includes(e.key) && setCurrentVisible(!currentVisible)
@@ -76,20 +75,29 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   }, [currentVisible])
 
   return (
-    <div className={`floating-menu ${className}`}>
+    <div
+      className={`floating-menu ${className}`}
+      onClick={() => setCurrentVisible(!currentVisible)}
+    >
       <div
         className="hover-element"
+        ref={hoverElementRef}
         onKeyUp={switchMenu}
         onKeyDown={closeMenu}
-        onMouseEnter={() => setCurrentVisible(true)}
-        onMouseLeave={() => setCurrentVisible(false)}
+        // onMouseEnter={() => setCurrentVisible(true)}
+        // onMouseLeave={() => setCurrentVisible(false)}
       >
         {hoverElement}
       </div>
       <div
-        className={`menu ${currentVisible || isOnHover ? 'visible' : ''}`}
-        onMouseEnter={() => setIsOnHover(true)}
-        onMouseLeave={() => setIsOnHover(false)}
+        className={`menu ${currentVisible /* || isOnHover */ ? 'visible' : ''}`}
+        style={{
+          top:
+            hoverElementRef.current?.clientHeight &&
+            `${hoverElementRef.current?.clientHeight}px`,
+        }}
+        // onMouseEnter={() => setIsOnHover(true)}
+        // onMouseLeave={() => setIsOnHover(false)}
       >
         <Card className="content">{updatedMenuContent}</Card>
       </div>

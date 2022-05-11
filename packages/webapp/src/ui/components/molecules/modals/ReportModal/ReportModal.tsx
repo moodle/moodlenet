@@ -65,8 +65,10 @@ export const ReportModal: FC<ReportModalProps> = ({
         edit
         placeholder={t`This is spam / commercial / not educational / fraud / copyrighted / other reason.`}
         onChange={reportForm.handleChange}
-        error={reportForm.errors.comment}
       />
+      <div className="required">
+        <Trans>Required field</Trans>
+      </div>
     </Modal>
   )
 }
