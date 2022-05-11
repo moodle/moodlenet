@@ -69,7 +69,6 @@
           display: flex;
           width: 100%;
           height: fit-content;
-          display: flex;
           flex-direction: column;
           gap: 8px;
 
@@ -78,24 +77,47 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 16px;
             > * {
               display: flex;
             }
-            > .type {
+            > .resource-type {
+              flex: 1 1 auto;
+              overflow: hidden;
+              font-size: 19px;
               font-weight: bold;
+              align-items: center;
+              gap: 10px;
+              > .type {
+                border-radius: 16px;
+                font-size: 13px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                pointer-events: none;
+                padding: 2px 10px;
+                width: 100%;
+                height: fit-content;
+                max-width: -moz-fit-content;
+                max-width: fit-content;
+                color: white;
+              }
             }
             > .actions {
               display: flex;
+              flex: 1 0 auto;
               gap: 12px;
+              justify-content: flex-end;
 
               > * {
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: 2px;
+                font-size: 15px;
                 > svg,
                 * > svg {
-                  width: 18px;
-                  height: 18px;
+                  width: 24px;
+                  height: 24px;
                 }
               }
 
@@ -107,6 +129,13 @@
                 font-size: 20px;
                 padding-bottom: -11px;
                 padding: 0 8px 11px 8px;
+              }
+
+              > .like {
+                > svg {
+                  width: 21px;
+                  height: 21px;
+                }
               }
 
               .liked {
@@ -133,6 +162,11 @@
                 width: 40px;
                 > * {
                   width: 100%;
+                  > svg,
+                  * > svg {
+                    width: 18px;
+                    height: 18px;
+                  }
                 }
                 > .primary-button {
                   display: grid;

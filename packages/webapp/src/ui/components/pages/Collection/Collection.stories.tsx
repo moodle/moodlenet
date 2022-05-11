@@ -85,7 +85,7 @@ export const CollectionStoryProps = (overrides?: {
     isAuthenticated: true,
     isOwner: false,
     isAdmin: false,
-    following: false,
+    isFollowing: false,
     numFollowers: 23,
     bookmarked: false,
     contributorCardProps: ContributorCardStoryProps,
