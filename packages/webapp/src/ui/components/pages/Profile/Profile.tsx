@@ -44,6 +44,9 @@ export type ProfileProps = {
     | 'openSendMessage'
     | 'editForm'
     | 'setShowUserIdCopiedAlert'
+    | 'setShowUrlCopiedAlert'
+    | 'setIsReporting'
+    | 'setShowUserIdCopiedAlert'
   >
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
@@ -53,7 +56,7 @@ export type ProfileProps = {
   showAccountCreationSuccessAlert?: boolean
   showAccountApprovedSuccessAlert?: boolean
   sendEmailForm?: FormikHandle<{ text: string }>
-  reportForm: FormikHandle<{ comment: string }>
+  reportForm?: FormikHandle<{ comment: string }>
   editForm: FormikHandle<ProfileFormValues>
 }
 
