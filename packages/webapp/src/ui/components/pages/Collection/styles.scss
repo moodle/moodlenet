@@ -153,8 +153,8 @@
               align-items: center;
 
               > svg {
-                width: 28px;
-                height: 28px;
+                width: 24px;
+                height: 24px;
               }
             }
 
@@ -246,14 +246,21 @@
             align-items: center;
             gap: 10px;
 
-            > .follow-and-followers {
-              display: flex;
-              align-items: center;
-              gap: 5px;
-              > :first-child {
-                width: 84px;
+            > .follow-button {
+              > svg {
+                width: 20px;
+                height: 20px;
               }
             }
+
+            > .following-button {
+              gap: 2px;
+              > svg {
+                width: 17px;
+                height: 17px;
+              }
+            }
+
             .followers {
               display: flex;
               align-items: center;

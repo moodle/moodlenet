@@ -5,6 +5,8 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import SaveIcon from '@material-ui/icons/Save'
+import AddIcon from '@mui/icons-material/Add'
+import CheckIcon from '@mui/icons-material/Check'
 import FlagIcon from '@mui/icons-material/Flag'
 import ShareIcon from '@mui/icons-material/Share'
 import React, { useMemo, useRef, useState } from 'react'
@@ -60,7 +62,7 @@ export type CollectionProps = {
   toggleBookmark: FormikHandle
   toggleFollow: FormikHandle
   deleteCollection?: FormikHandle
-  following: boolean
+  isFollowing: boolean
   autoImageAdded: boolean
   canSearchImage: boolean
   collectionUrl: string
@@ -73,7 +75,7 @@ export const Collection = withCtrl<CollectionProps>(
     isAuthenticated,
     isOwner,
     isAdmin,
-    following,
+    isFollowing,
     numFollowers,
     reportForm,
     bookmarked,
@@ -228,7 +230,7 @@ export const Collection = withCtrl<CollectionProps>(
             autoHideDuration={6000}
             showCloseButton={false}
           >
-            <Trans>Collection reported</Trans>
+            <Trans>Reported</Trans>
           </Snackbar>
         )}
         {isReporting && reportForm && (
@@ -357,6 +359,14 @@ export const Collection = withCtrl<CollectionProps>(
                       isAdmin || isOwner ? 'edit-save' : ''
                     }`}
                   >
+                    {isAuthenticated && !isEditing && (
+                      <div
+                        className={`bookmark ${bookmarked && 'bookmarked'}`}
+                        onClick={toggleBookmark.submitForm}
+                      >
+                        {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+                      </div>
+                    )}
                     {isAuthenticated && !isOwner && (
                       <FloatingMenu
                         className="more-button"
@@ -379,14 +389,6 @@ export const Collection = withCtrl<CollectionProps>(
                           </TertiaryButton>
                         }
                       />
-                    )}
-                    {isAuthenticated && !isEditing && (
-                      <div
-                        className={`bookmark ${bookmarked && 'bookmarked'}`}
-                        onClick={toggleBookmark.submitForm}
-                      >
-                        {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-                      </div>
                     )}
                     {(isAdmin || isOwner) && isEditing && (
                       <PrimaryButton
@@ -468,22 +470,26 @@ export const Collection = withCtrl<CollectionProps>(
                 )}
                 <div className="actions">
                   <div className="left">
-                    {isAuthenticated &&
-                      !isOwner &&
-                      (following ? (
-                        <div className="follow-and-followers">
-                          <SecondaryButton onClick={toggleFollow.submitForm}>
-                            <Trans>Unfollow</Trans>
-                          </SecondaryButton>
-                        </div>
-                      ) : (
-                        <div className="follow-and-followers">
-                          <PrimaryButton onClick={toggleFollow.submitForm}>
-                            <Trans>Follow</Trans>
-                          </PrimaryButton>
-                        </div>
-                      ))}
-
+                    {!isOwner && !isFollowing && (
+                      <PrimaryButton
+                        disabled={!isAuthenticated}
+                        onClick={toggleFollow.submitForm}
+                        className="following-button"
+                      >
+                        <AddIcon />
+                        <Trans>Follow</Trans>
+                      </PrimaryButton>
+                    )}
+                    {!isOwner && isFollowing && (
+                      <PrimaryButton
+                        disabled={!isAuthenticated}
+                        onClick={toggleFollow.submitForm}
+                        className="following-button"
+                      >
+                        <CheckIcon />
+                        <Trans>Following</Trans>
+                      </PrimaryButton>
+                    )}
                     <div className={`followers`}>
                       <PermIdentityIcon />
                       <span>{numFollowers}</span>

@@ -641,7 +641,7 @@ export const Resource = withCtrl<ResourceProps>(
             autoHideDuration={6000}
             showCloseButton={false}
           >
-            <Trans>Collection reported</Trans>
+            <Trans>Reported</Trans>
           </Snackbar>
         )}
         {isReporting && reportForm && (
@@ -813,15 +813,29 @@ export const Resource = withCtrl<ResourceProps>(
               <Card className="main-resource-card" hideBorderWhenSmall={true}>
                 <div className="resource-header">
                   <div className="type-and-actions">
-                    <span className="type">
-                      <Trans>Resource</Trans>
+                    <span className="resource-type">
+                      <div className="resource">
+                        <Trans>Resource</Trans>
+                      </div>
                       <div
+                        className="type"
+                        style={{
+                          background: getResourceColorType(contentType),
+                        }}
+                      >
+                        {contentType}
+                      </div>
+                      {/* <div
+                        className="type"
                         style={{
                           color: getResourceColorType(contentType),
                         }}
                       >
-                        &nbsp;/ {contentType}
-                      </div>
+                        &nbsp;/ a very
+                        loooooooooooooooooooooooooooooooooooooooooooooooooooooong
+                        type
+                         &nbsp;/ {contentType} 
+                      </div> */}
                     </span>
                     <div className="actions">
                       {!isEditing && (
