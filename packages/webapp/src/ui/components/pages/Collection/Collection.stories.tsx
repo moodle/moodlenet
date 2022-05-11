@@ -96,6 +96,11 @@ export const CollectionStoryProps = (overrides?: {
       ResourceCardOwnerBookmarkedStoryProps,
       ResourceCardStoryProps(),
     ],
+    reportForm: useFormik<{ comment: string }>({
+      initialValues: { comment: '' },
+      onSubmit: action('submit report Form'),
+    }),
+    collectionUrl: 'collection.url',
     toggleFollow: useFormik({
       initialValues: {},
       onSubmit: action('toggle Follow'),
@@ -144,7 +149,7 @@ export const Owner = () => {
   const props = CollectionStoryProps({
     props: {
       isOwner: true,
-      autoImageAdded: true,
+      // autoImageAdded: true,
     },
   })
   return <Collection {...props} />

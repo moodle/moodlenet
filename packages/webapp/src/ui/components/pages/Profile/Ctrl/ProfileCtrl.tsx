@@ -17,6 +17,7 @@ import { useLocalInstance } from '../../../../../context/Global/LocalInstance'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
 import {
+  fullLocalEntityUrlByGqlId,
   getMaybeAssetRefUrl,
   useUploadTempFile,
 } from '../../../../../helpers/data'
@@ -82,6 +83,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     isAuthenticated,
     session,
     isAdmin,
+    reportEntity,
     isWaitingApproval,
     userRequestedApproval,
     hasJustBeenApproved,
@@ -162,6 +164,18 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
           },
         }).then(() => refetch())
       }
+    },
+  })
+
+  const profileUrl = fullLocalEntityUrlByGqlId(id)
+
+  const reportForm = useFormik({
+    initialValues: { comment: '' },
+    onSubmit: async ({ comment }) => {
+      await reportEntity({
+        comment,
+        entityUrl: profileUrl,
+      })
     },
   })
 
@@ -349,7 +363,9 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
         isWaitingApproval,
         showAccountApprovedSuccessAlert: hasJustBeenApproved,
         unapproveUserForm,
+        profileUrl,
       },
+      reportForm,
       showAccountApprovedSuccessAlert: hasJustBeenApproved,
       sendEmailForm,
       editForm: form,
@@ -373,6 +389,8 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
     isWaitingApproval,
     hasJustBeenApproved,
     unapproveUserForm,
+    profileUrl,
+    reportForm,
     sendEmailForm,
     form,
   ])

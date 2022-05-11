@@ -86,7 +86,7 @@
             }
             > .actions {
               display: flex;
-              gap: 20px;
+              gap: 12px;
 
               > * {
                 display: flex;
@@ -101,6 +101,12 @@
 
               > *:not(.like-disabled) {
                 cursor: pointer;
+              }
+
+              > .more-button > .hover-element > .more {
+                font-size: 20px;
+                padding-bottom: -11px;
+                padding: 0 8px 11px 8px;
               }
 
               .liked {
@@ -153,17 +159,12 @@
             }
           }
 
-          .title {
-            font-weight: bold;
-            font-size: 26px;
-
-            > .input-container {
-              height: fit-content;
-              > input {
-                padding: 0;
-                font-weight: bold;
-                font-size: 26px;
-              }
+          > .title {
+            &,
+            > .textarea-container > textarea {
+              font-size: 26px;
+              line-height: 30px;
+              font-weight: bold;
             }
           }
 
@@ -237,8 +238,8 @@
               }
             }
 
-            > .change-image-button {
-            }
+            // > .change-image-button {
+            // }
 
             > .search-image-button {
               > .content > svg {

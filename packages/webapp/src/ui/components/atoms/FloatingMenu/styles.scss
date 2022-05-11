@@ -7,6 +7,9 @@
     float: right;
     > * {
       display: flex;
+      &:focus {
+        outline: none;
+      }
     }
   }
 
@@ -20,6 +23,7 @@
     padding-right: 32px;
     top: 28px;
     padding-top: 10px;
+    z-index: 3;
 
     > .content {
       background-color: white;
@@ -35,6 +39,7 @@
         text-decoration: inherit;
         color: inherit;
         font-size: 14px;
+        font-weight: normal;
         font-family: inherit;
         display: flex;
         align-items: center;

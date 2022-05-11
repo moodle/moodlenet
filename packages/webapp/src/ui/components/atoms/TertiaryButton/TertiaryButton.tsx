@@ -15,10 +15,10 @@ export const TertiaryButton: FC<TertiaryButtonProps> = ({
 }) => {
   return (
     <div
-      className={`tertiary-button ${className}`}
+      className={`tertiary-button ${className} ${disabled ? 'disabled' : ''}`}
       tabIndex={!disabled ? 0 : undefined}
       onClick={!disabled ? onClick : () => {}}
-      onKeyDown={(e) => onClick && e.key === 'Enter' && onClick()}
+      onKeyDown={(e) => !disabled && onClick && e.key === 'Enter' && onClick()}
     >
       {children}
     </div>
