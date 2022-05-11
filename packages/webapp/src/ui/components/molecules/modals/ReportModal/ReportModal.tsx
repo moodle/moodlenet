@@ -50,6 +50,7 @@ export const ReportModal: FC<ReportModalProps> = ({
                 setShowReportedAlert(true)
               }, 100)
             }}
+            disabled={!!reportForm.errors.comment}
           >
             <Trans>Report</Trans>
           </PrimaryButton>
