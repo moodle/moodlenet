@@ -272,6 +272,8 @@ export const useCollectionCtrl: CtrlHook<
 
   const reportForm = useFormik({
     initialValues: { comment: '' },
+    validationSchema: object({ comment: string().required() }),
+    validateOnMount: true,
     onSubmit: async ({ comment }) => {
       await reportEntity({
         comment,
