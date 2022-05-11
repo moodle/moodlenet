@@ -17,6 +17,7 @@ import { MNEnv, UNSPLASH_ENDPOINT } from '../../../../../constants'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
 import {
+  fullLocalEntityUrlByGqlId,
   getJustAssetRefUrl,
   getMaybeAssetRefUrl,
   useFiltered,
@@ -89,7 +90,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
   id,
 }) => {
   useSeoContentId(id)
-  const { session, isAdmin, isAuthenticated } = useSession()
+  const { session, isAdmin, isAuthenticated, reportEntity } = useSession()
   const autoImageAdded = useAutoImageAdded().get()
 
   const allMyOwnCollectionEdges = useMemo(
@@ -539,11 +540,23 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
     'id;name'
   )
   const licenses = useLicenses()
+  const resourceUrl = fullLocalEntityUrlByGqlId(id)
+
+  const reportForm = useFormik({
+    initialValues: { comment: '' },
+    onSubmit: async ({ comment }) => {
+      await reportEntity({
+        comment,
+        entityUrl: resourceUrl,
+      })
+    },
+  })
   const resourceProps = useMemo<null | ResourceProps>(() => {
     if (!resourceData) {
       return null
     }
     const props: ResourceProps = {
+      resourceUrl,
       resourceId: resourceData.id,
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, id),
       canSearchImage: !!UNSPLASH_ENDPOINT,
@@ -551,6 +564,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       isOwner,
       isAdmin,
       liked,
+      reportForm,
       autoImageAdded,
       contributorCardProps: {
         avatarUrl: getMaybeAssetRefUrl(
@@ -648,11 +662,13 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
     return props
   }, [
     resourceData,
+    resourceUrl,
     id,
     form,
     isOwner,
     isAdmin,
     liked,
+    reportForm,
     autoImageAdded,
     creator,
     creatorEdge,

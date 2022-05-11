@@ -5,12 +5,14 @@ import './styles.scss'
 export type FloatingMenuProps = {
   menuContent: React.ReactElement[]
   hoverElement: React.ReactNode
+  className?: string
   visible?: boolean
 }
 
 export const FloatingMenu: FC<FloatingMenuProps> = ({
   visible,
   menuContent,
+  className,
   hoverElement,
 }) => {
   const [currentVisible, setCurrentVisible] = useState<Boolean | undefined>(
@@ -74,7 +76,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   }, [currentVisible])
 
   return (
-    <div className="floating-menu">
+    <div className={`floating-menu ${className}`}>
       <div
         className="hover-element"
         onKeyUp={switchMenu}

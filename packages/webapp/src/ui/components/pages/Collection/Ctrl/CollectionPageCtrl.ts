@@ -16,6 +16,7 @@ import { MNEnv, UNSPLASH_ENDPOINT } from '../../../../../constants'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
 import {
+  fullLocalEntityUrlByGqlId,
   getMaybeAssetRefUrl,
   useUploadTempFile,
 } from '../../../../../helpers/data'
@@ -65,7 +66,7 @@ export const useCollectionCtrl: CtrlHook<
 > = ({ id }) => {
   useSeoContentId(id)
   // const { org: localOrg } = useLocalInstance()
-  const { session, isAdmin, isAuthenticated } = useSession()
+  const { reportEntity, session, isAdmin, isAuthenticated } = useSession()
   const { data, refetch, loading } = useCollectionPageDataQuery({
     variables: {
       collectionId: id,
@@ -267,12 +268,24 @@ export const useCollectionCtrl: CtrlHook<
     },
     [delRelation, delRelationRes.loading, refetch]
   )
+  const collectionUrl = fullLocalEntityUrlByGqlId(id)
 
+  const reportForm = useFormik({
+    initialValues: { comment: '' },
+    onSubmit: async ({ comment }) => {
+      await reportEntity({
+        comment,
+        entityUrl: collectionUrl,
+      })
+    },
+  })
   const collectionProps = useMemo<null | CollectionProps>(() => {
     if (!collectionData) {
       return null
     }
     const props: CollectionProps = {
+      collectionUrl,
+      reportForm,
       headerPageTemplateProps: ctrlHook(
         useHeaderPageTemplateCtrl,
         {},
@@ -314,6 +327,8 @@ export const useCollectionCtrl: CtrlHook<
     return props
   }, [
     collectionData,
+    collectionUrl,
+    reportForm,
     form,
     isOwner,
     isAdmin,

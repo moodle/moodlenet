@@ -59,6 +59,10 @@ export const useProfileStoryProps = (overrides?: {
       initialValues: { text: '' },
       onSubmit: action('submit send Email Form'),
     }),
+    reportForm: useFormik<{ comment: string }>({
+      initialValues: { comment: '' },
+      onSubmit: action('submit report Form'),
+    }),
     newResourceHref: href('Pages/New Resource/Default'),
     newCollectionHref: href('Pages/New Collection/Start'),
     headerPageTemplateProps: {
@@ -71,7 +75,6 @@ export const useProfileStoryProps = (overrides?: {
     },
     overallCardProps: OverallCardStoryProps,
     profileCardProps: ProfileCardStoryProps,
-    // scoreCardProps: ScoreCardStoryProps,
     collectionCardPropsList: [
       CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
       CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
@@ -220,6 +223,12 @@ export const Activated: ProfileStory = () => {
       collectionCardPropsList: [],
       resourceCardPropsList: [],
       showAccountCreationSuccessAlert: true,
+      profileCardProps: useProfileCardStoryProps({
+        props: {
+          isAuthenticated: true,
+          isOwner: true,
+        },
+      }),
     },
   })
   return <Profile {...props} />

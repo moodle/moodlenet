@@ -110,7 +110,7 @@ export const ResourceStoryProps = (overrides?: {
     initialValues: {
       isFile: true,
       visibility: 'Public',
-      name: 'The Best Resource Ever',
+      name: 'Best resource ever',
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
       category: CategoriesTextOptionProps[2]!.value,
@@ -120,6 +120,10 @@ export const ResourceStoryProps = (overrides?: {
       month: MonthTextOptionProps[8]!.value,
       year: YearsProps[20],
       type: TypeTextOptionProps[2]!.value,
+      image: {
+        location:
+          'https://images.unsplash.com/photo-1543964198-d54e4f0e44e3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80',
+      },
       ...overrides?.formValues,
     },
     ...overrides?.formConfig,
@@ -146,6 +150,7 @@ export const ResourceStoryProps = (overrides?: {
   return {
     form,
     resourceId: 'qjnwglkd69io-sports',
+    resourceUrl: 'resource.url',
     headerPageTemplateProps: {
       headerPageProps: HeaderPageLoggedInStoryProps,
       isAuthenticated: true,
@@ -165,6 +170,10 @@ export const ResourceStoryProps = (overrides?: {
     contentUrl: '#',
     contentType: 'link',
     resourceFormat: 'Video',
+    reportForm: useFormik<{ comment: string }>({
+      initialValues: { comment: '' },
+      onSubmit: action('submit report Form'),
+    }),
     collections: {
       opts: CollectionTextOptionProps,
       selected: CollectionTextOptionProps.filter(
@@ -278,7 +287,7 @@ export const Owner = () => {
       contentType: 'file',
       contentUrl: 'https://picsum.photos/200/100',
       resourceFormat: 'Video',
-      autoImageAdded: true,
+      // autoImageAdded: true,
     },
   })
   return <Resource {...props} />

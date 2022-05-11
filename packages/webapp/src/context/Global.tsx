@@ -11,15 +11,15 @@ export const GlobalContexts: FC = ({ children }) => {
   return (
     <LocalizationProvider>
       <ApolloClientProvider>
-        <SessionProvider>
-          <LocalInstanceProvider>
+        <LocalInstanceProvider>
+          <SessionProvider>
             <RouterProvider>
               <SeoProvider>
                 <UICtxProviders>{children}</UICtxProviders>
               </SeoProvider>
             </RouterProvider>
-          </LocalInstanceProvider>
-        </SessionProvider>
+          </SessionProvider>
+        </LocalInstanceProvider>
       </ApolloClientProvider>
     </LocalizationProvider>
   )

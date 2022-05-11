@@ -5,6 +5,8 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import SaveIcon from '@material-ui/icons/Save'
+import FlagIcon from '@mui/icons-material/Flag'
+import ShareIcon from '@mui/icons-material/Share'
 import React, { useMemo, useRef, useState } from 'react'
 import { getBackupImage } from '../../../../helpers/utilities'
 import { CP, withCtrl } from '../../../lib/ctrl'
@@ -12,6 +14,7 @@ import { FormikHandle } from '../../../lib/formik'
 import { useImageUrl } from '../../../lib/useImageUrl'
 import { AssetInfo } from '../../../types'
 import Card from '../../atoms/Card/Card'
+import FloatingMenu from '../../atoms/FloatingMenu/FloatingMenu'
 import { InputTextField } from '../../atoms/InputTextField/InputTextField'
 import Loading from '../../atoms/Loading/Loading'
 import Modal from '../../atoms/Modal/Modal'
@@ -19,6 +22,7 @@ import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import Snackbar from '../../atoms/Snackbar/Snackbar'
+import TertiaryButton from '../../atoms/TertiaryButton/TertiaryButton'
 import {
   VisibilityDropdown,
   VisibilityNodes,
@@ -28,6 +32,7 @@ import {
   ResourceCard,
   ResourceCardProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard'
+import ReportModal from '../../molecules/modals/ReportModal/ReportModal'
 import SearchImage from '../../organisms/SearchImage/SearchImage'
 import {
   HeaderPageTemplate,
@@ -51,12 +56,14 @@ export type CollectionProps = {
   contributorCardProps: ContributorCardProps
   form: FormikHandle<NewCollectionFormValues>
   resourceCardPropsList: CP<ResourceCardProps>[]
+  reportForm?: FormikHandle<{ comment: string }>
   toggleBookmark: FormikHandle
   toggleFollow: FormikHandle
   deleteCollection?: FormikHandle
   following: boolean
   autoImageAdded: boolean
   canSearchImage: boolean
+  collectionUrl: string
 }
 
 export const Collection = withCtrl<CollectionProps>(
@@ -68,6 +75,7 @@ export const Collection = withCtrl<CollectionProps>(
     isAdmin,
     following,
     numFollowers,
+    reportForm,
     bookmarked,
     contributorCardProps,
     form,
@@ -77,6 +85,7 @@ export const Collection = withCtrl<CollectionProps>(
     toggleFollow,
     autoImageAdded,
     canSearchImage,
+    collectionUrl,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(
       canSearchImage && autoImageAdded
@@ -85,6 +94,9 @@ export const Collection = withCtrl<CollectionProps>(
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
     const [isShowingImage, setisShowingImage] = useState<boolean>(false)
     const [isSearchingImage, setIsSearchingImage] = useState<boolean>(false)
+    const [isReporting, setIsReporting] = useState<boolean>(false)
+    const [showReportedAlert, setShowReportedAlert] = useState<boolean>(false)
+    const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
     const backupImage: AssetInfo | null | undefined = useMemo(
       () => getBackupImage(collectionId),
       [collectionId]
@@ -132,14 +144,11 @@ export const Collection = withCtrl<CollectionProps>(
     }
 
     const getImageCredits = (image: AssetInfo | undefined | null) => {
-      console.log('CREDITS BACKUP: ', backupImage?.credits)
-      console.log('CREDITS IMAGE: ', image)
       const credits = image
         ? image.credits
           ? image.credits
           : undefined
         : backupImage?.credits
-      console.log('CREDITS BACKUP: ', credits)
       return (
         credits && (
           <div className="image-credits">
@@ -156,6 +165,14 @@ export const Collection = withCtrl<CollectionProps>(
           </div>
         )
       )
+    }
+
+    const copyUrl = () => {
+      navigator.clipboard.writeText(collectionUrl)
+      setShowUrlCopiedAlert(false)
+      setTimeout(() => {
+        setShowUrlCopiedAlert(true)
+      }, 100)
     }
 
     const extraDetails = (
@@ -188,10 +205,38 @@ export const Collection = withCtrl<CollectionProps>(
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        {showUrlCopiedAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Copied to clipoard</Trans>
+          </Snackbar>
+        )}
         {isSearchingImage && (
           <SearchImage
             onClose={() => setIsSearchingImage(false)}
             setImage={setImage}
+          />
+        )}
+        {showReportedAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Collection reported</Trans>
+          </Snackbar>
+        )}
+        {isReporting && reportForm && (
+          <ReportModal
+            reportForm={reportForm}
+            title={`${t`Confirm reporting this collection`}`}
+            setIsReporting={setIsReporting}
+            setShowReportedAlert={setShowReportedAlert}
           />
         )}
         {isShowingImage && imageUrl && (
@@ -312,6 +357,29 @@ export const Collection = withCtrl<CollectionProps>(
                       isAdmin || isOwner ? 'edit-save' : ''
                     }`}
                   >
+                    {isAuthenticated && !isOwner && (
+                      <FloatingMenu
+                        className="more-button"
+                        menuContent={[
+                          <div tabIndex={0} onClick={copyUrl}>
+                            <ShareIcon />
+                            <Trans>Share</Trans>
+                          </div>,
+                          <div
+                            tabIndex={0}
+                            onClick={() => setIsReporting(true)}
+                          >
+                            <FlagIcon />
+                            <Trans>Report</Trans>
+                          </div>,
+                        ]}
+                        hoverElement={
+                          <TertiaryButton className={`more`}>
+                            ...
+                          </TertiaryButton>
+                        }
+                      />
+                    )}
                     {isAuthenticated && !isEditing && (
                       <div
                         className={`bookmark ${bookmarked && 'bookmarked'}`}
@@ -362,8 +430,10 @@ export const Collection = withCtrl<CollectionProps>(
                   <InputTextField
                     className="title underline"
                     name="title"
+                    textarea
+                    textAreaAutoSize
+                    displayMode
                     value={form.values.title}
-                    displayMode={true}
                     onChange={form.handleChange}
                     edit={isEditing}
                     style={{
@@ -413,6 +483,7 @@ export const Collection = withCtrl<CollectionProps>(
                           </PrimaryButton>
                         </div>
                       ))}
+
                     <div className={`followers`}>
                       <PermIdentityIcon />
                       <span>{numFollowers}</span>

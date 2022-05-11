@@ -33,7 +33,7 @@
       flex-direction: column;
       align-items: flex-start;
 
-      @media (max-width: 500px) {
+      @media (max-width: 450px) {
         border-radius: 0;
       }
 
@@ -43,8 +43,9 @@
         position: inherit;
         position: relative;
         cursor: pointer;
+        border-radius: 16px 16px 0 0;
 
-        @media (max-width: 500px) {
+        @media (max-width: 450px) {
           height: 175px;
         }
 
@@ -157,6 +158,12 @@
               }
             }
 
+            > .more-button > .hover-element > .more {
+              font-size: 20px;
+              padding-bottom: -11px;
+              padding: 0 8px 11px 8px;
+            }
+
             &.edit-save {
               > :last-child {
                 width: 40px;
@@ -212,16 +219,12 @@
           }
         }
 
-        .title {
-          height: 46px;
-          font-weight: bold;
-          font-size: 26px;
-
-          > .input-container {
-            > input {
-              font-weight: bold;
-              font-size: 26px;
-            }
+        > .title {
+          &,
+          > .textarea-container > textarea {
+            font-size: 26px;
+            line-height: 30px;
+            font-weight: bold;
           }
         }
 
@@ -234,9 +237,8 @@
           display: flex;
           margin-top: 8px;
           width: 100%;
-          height: 30px;
+          height: 32px;
           align-items: center;
-          overflow: hidden;
           justify-content: space-between;
 
           > .left {
