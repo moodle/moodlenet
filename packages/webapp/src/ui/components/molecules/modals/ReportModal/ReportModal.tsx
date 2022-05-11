@@ -60,7 +60,7 @@ export const ReportModal: FC<ReportModalProps> = ({
     >
       <InputTextField
         textarea={true}
-        name="text"
+        name="comment"
         edit
         placeholder={t`This is spam / commercial / not educational / fraud / copyrighted / other reason.`}
         onChange={reportForm.handleChange}

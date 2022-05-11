@@ -6,6 +6,7 @@ import {
   getAssetRefUrl,
   UploadType,
 } from '@moodlenet/common/dist/staticAsset/lib'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import Fuse from 'fuse.js'
 import { useMemo, useState } from 'react'
 import { Tuple } from 'tuple-type'
@@ -123,3 +124,6 @@ export const useFiltered = <T>(list: T[], keys: string) => {
     [filteredList, setFilterText, list]
   )
 }
+
+export const fullLocalEntityUrlByGqlId = (gqlId: string) =>
+  `${window.location.origin}${nodeGqlId2UrlPath(gqlId)}`
