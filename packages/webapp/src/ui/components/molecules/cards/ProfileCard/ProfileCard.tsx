@@ -1,8 +1,6 @@
 import { t, Trans } from '@lingui/macro'
 import EditIcon from '@material-ui/icons/Edit'
 import SaveIcon from '@material-ui/icons/Save'
-import AddIcon from '@mui/icons-material/Add'
-import CheckIcon from '@mui/icons-material/Check'
 import FlagIcon from '@mui/icons-material/Flag'
 import ShareIcon from '@mui/icons-material/Share'
 import React, {
@@ -458,19 +456,20 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 onClick={toggleFollowForm.submitForm}
                 className="following-button"
               >
-                <AddIcon />
+                {/* <AddIcon /> */}
                 <Trans>Follow</Trans>
               </PrimaryButton>
             )}
             {!isOwner && isFollowing && (
-              <PrimaryButton
+              <SecondaryButton
                 disabled={!isAuthenticated}
                 onClick={toggleFollowForm.submitForm}
                 className="following-button"
+                color="orange"
               >
-                <CheckIcon />
+                {/* <CheckIcon /> */}
                 <Trans>Following</Trans>
-              </PrimaryButton>
+              </SecondaryButton>
             )}
             {!isOwner && (
               <SecondaryButton

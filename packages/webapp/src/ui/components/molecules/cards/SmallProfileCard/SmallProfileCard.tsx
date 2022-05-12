@@ -61,8 +61,8 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
           {!isOwner && (
             <div className="buttons">
               {isFollowing ? (
-                <SecondaryButton onClick={toggleFollow} color="grey">
-                  <Trans>Unfollow</Trans>
+                <SecondaryButton onClick={toggleFollow} color="orange">
+                  <Trans>Following</Trans>
                 </SecondaryButton>
               ) : (
                 <PrimaryButton

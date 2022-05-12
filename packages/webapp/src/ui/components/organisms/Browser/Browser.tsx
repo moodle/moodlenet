@@ -177,6 +177,9 @@ export const Browser = withCtrl<BrowserProps>(
               name="Resources"
               key="Resources"
               checked={filters.Resources}
+              disabled={
+                !resourceCardPropsList || resourceCardPropsList.length <= 0
+              }
             />
           ),
           collectionCardPropsList && (
@@ -186,6 +189,9 @@ export const Browser = withCtrl<BrowserProps>(
               name="Collections"
               key="Collections"
               checked={filters.Collections}
+              disabled={
+                !collectionCardPropsList || collectionCardPropsList.length <= 0
+              }
             />
           ),
           subjectCardPropsList && (
@@ -195,6 +201,9 @@ export const Browser = withCtrl<BrowserProps>(
               name="Subjects"
               key="Subjects"
               checked={filters.Subjects}
+              disabled={
+                !subjectCardPropsList || subjectCardPropsList.length <= 0
+              }
             />
           ),
           smallProfileCardPropsList && (
@@ -204,6 +213,10 @@ export const Browser = withCtrl<BrowserProps>(
               name="People"
               key="People"
               checked={filters.People}
+              disabled={
+                !smallProfileCardPropsList ||
+                smallProfileCardPropsList.length <= 0
+              }
             />
           ),
         ]}
@@ -227,7 +240,6 @@ export const Browser = withCtrl<BrowserProps>(
 
     return (
       <div className="browser">
-        {title && <div className="title">{title}</div>}
         <div className="content">
           {!hideSortAndFilter && (
             <div className="side-column">
@@ -238,6 +250,7 @@ export const Browser = withCtrl<BrowserProps>(
           <div
             className={`main-column ${hideSortAndFilter ? 'full-width' : ''}`}
           >
+            {title && <div className="title">{title}</div>}
             {!hideSortAndFilter && (
               <div className="filter-and-sort">
                 {filterCard('horizontal')}
@@ -245,134 +258,145 @@ export const Browser = withCtrl<BrowserProps>(
               </div>
             )}
 
-            {resourceCardPropsList && filters.Resources && (
-              <ListCard
-                content={(seeAll
-                  ? resourceCardPropsList
-                  : resourceCardPropsList.slice(0, 6)
-                ).map((resourceCardProps) => (
-                  <ResourceCard {...resourceCardProps} orientation="vertical" />
-                ))}
-                title={
-                  <div className="card-header">
-                    <div className="title">
-                      <Trans>Resources</Trans>
-                    </div>
-                    {!seeAll && (
-                      <SecondaryButton
-                        onClick={() => activateSeeAll('Resources')}
-                        color="dark-blue"
-                      >
-                        <Trans>See all</Trans>
-                      </SecondaryButton>
-                    )}
-                  </div>
-                }
-                className={`resources ${seeAll ? 'see-all' : ''}`}
-                noCard={true}
-                minGrid={245}
-                maxHeight={seeAll ? undefined : 736}
-                // maxRows={seeAll ? undefined : 2}
-              />
-            )}
-
-            {collectionCardPropsList && filters.Collections && (
-              <ListCard
-                content={(seeAll
-                  ? collectionCardPropsList
-                  : collectionCardPropsList.slice(0, 6)
-                ).map((collectionCardProps) => (
-                  <CollectionCard {...collectionCardProps} />
-                ))}
-                title={
-                  <div className="card-header">
-                    <div className="title">
-                      <Trans>Collections</Trans>
-                    </div>
-                    {!seeAll && (
-                      <SecondaryButton
-                        onClick={() => activateSeeAll('Collections')}
-                        color="dark-blue"
-                      >
-                        <Trans>See all</Trans>
-                      </SecondaryButton>
-                    )}
-                  </div>
-                }
-                className={`collections ${seeAll ? 'see-all' : ''}`}
-                noCard={true}
-                minGrid={240}
-                maxHeight={seeAll ? undefined : 397}
-                // maxRows={seeAll ? undefined : 2}
-              />
-            )}
-
-            {subjectCardPropsList && filters.Subjects && (
-              <ListCard
-                content={(seeAll
-                  ? subjectCardPropsList
-                  : subjectCardPropsList.slice(0, 8)
-                ).map((subjectCardProps) => (
-                  <SubjectCard {...subjectCardProps} />
-                ))}
-                title={
-                  <div className="card-header">
-                    <div className="title">
-                      <Trans>Subjects</Trans>
-                    </div>
-                    {!seeAll && (
-                      <SecondaryButton
-                        onClick={() => activateSeeAll('Subjects')}
-                        color="dark-blue"
-                      >
-                        <Trans>See all</Trans>
-                      </SecondaryButton>
-                    )}
-                  </div>
-                }
-                className={`subjects ${seeAll ? 'see-all' : ''}`}
-                noCard={true}
-                direction="wrap"
-                maxHeight={seeAll ? undefined : 221}
-                // maxRows={seeAll ? undefined : 2}
-              />
-            )}
-
-            {smallProfileCardPropsList && filters.People && (
-              <ListCard
-                content={(seeAll
-                  ? smallProfileCardPropsList
-                  : smallProfileCardPropsList.slice(0, 11)
-                ).map((smallProfileCardProps) => (
-                  <SmallProfileCard {...smallProfileCardProps} />
-                ))}
-                title={
-                  peopleTitle !== null && (
+            {resourceCardPropsList &&
+              resourceCardPropsList.length > 0 &&
+              filters.Resources && (
+                <ListCard
+                  content={(seeAll
+                    ? resourceCardPropsList
+                    : resourceCardPropsList.slice(0, 6)
+                  ).map((resourceCardProps) => (
+                    <ResourceCard
+                      {...resourceCardProps}
+                      orientation="vertical"
+                    />
+                  ))}
+                  title={
                     <div className="card-header">
                       <div className="title">
-                        {peopleTitle ? (
-                          t`${peopleTitle}`
-                        ) : (
-                          <Trans>People</Trans>
-                        )}
+                        <Trans>Resources</Trans>
                       </div>
                       {!seeAll && (
                         <SecondaryButton
-                          onClick={() => activateSeeAll('People')}
+                          onClick={() => activateSeeAll('Resources')}
+                          color="dark-blue"
                         >
                           <Trans>See all</Trans>
                         </SecondaryButton>
                       )}
                     </div>
-                  )
-                }
-                className={`people ${seeAll ? 'see-all' : ''}`}
-                noCard={true}
-                minGrid={160}
-                maxHeight={seeAll ? undefined : 483}
-                // maxRows={seeAll ? undefined : 2}
-              />
-            )}
+                  }
+                  className={`resources ${seeAll ? 'see-all' : ''}`}
+                  noCard={true}
+                  minGrid={245}
+                  maxHeight={seeAll ? undefined : 736}
+                  // maxRows={seeAll ? undefined : 2}
+                />
+              )}
+
+            {collectionCardPropsList &&
+              collectionCardPropsList.length > 0 &&
+              filters.Collections && (
+                <ListCard
+                  content={(seeAll
+                    ? collectionCardPropsList
+                    : collectionCardPropsList.slice(0, 6)
+                  ).map((collectionCardProps) => (
+                    <CollectionCard {...collectionCardProps} />
+                  ))}
+                  title={
+                    <div className="card-header">
+                      <div className="title">
+                        <Trans>Collections</Trans>
+                      </div>
+                      {!seeAll && (
+                        <SecondaryButton
+                          onClick={() => activateSeeAll('Collections')}
+                          color="dark-blue"
+                        >
+                          <Trans>See all</Trans>
+                        </SecondaryButton>
+                      )}
+                    </div>
+                  }
+                  className={`collections ${seeAll ? 'see-all' : ''}`}
+                  noCard={true}
+                  minGrid={240}
+                  maxHeight={seeAll ? undefined : 397}
+                  // maxRows={seeAll ? undefined : 2}
+                />
+              )}
+
+            {subjectCardPropsList &&
+              subjectCardPropsList.length > 0 &&
+              filters.Subjects && (
+                <ListCard
+                  content={(seeAll
+                    ? subjectCardPropsList
+                    : subjectCardPropsList.slice(0, 8)
+                  ).map((subjectCardProps) => (
+                    <SubjectCard {...subjectCardProps} />
+                  ))}
+                  title={
+                    <div className="card-header">
+                      <div className="title">
+                        <Trans>Subjects</Trans>
+                      </div>
+                      {!seeAll && (
+                        <SecondaryButton
+                          onClick={() => activateSeeAll('Subjects')}
+                          color="dark-blue"
+                        >
+                          <Trans>See all</Trans>
+                        </SecondaryButton>
+                      )}
+                    </div>
+                  }
+                  className={`subjects ${seeAll ? 'see-all' : ''}`}
+                  noCard={true}
+                  direction="wrap"
+                  maxHeight={seeAll ? undefined : 221}
+                  // maxRows={seeAll ? undefined : 2}
+                />
+              )}
+
+            {smallProfileCardPropsList &&
+              smallProfileCardPropsList.length > 0 &&
+              filters.People && (
+                <ListCard
+                  content={(seeAll
+                    ? smallProfileCardPropsList
+                    : smallProfileCardPropsList.slice(0, 11)
+                  ).map((smallProfileCardProps) => (
+                    <SmallProfileCard {...smallProfileCardProps} />
+                  ))}
+                  title={
+                    peopleTitle !== null && (
+                      <div className="card-header">
+                        <div className="title">
+                          {peopleTitle ? (
+                            t`${peopleTitle}`
+                          ) : (
+                            <Trans>People</Trans>
+                          )}
+                        </div>
+                        {!seeAll && (
+                          <SecondaryButton
+                            onClick={() => activateSeeAll('People')}
+                          >
+                            <Trans>See all</Trans>
+                          </SecondaryButton>
+                        )}
+                      </div>
+                    )
+                  }
+                  className={`people ${seeAll ? 'see-all' : ''}`}
+                  noCard={true}
+                  minGrid={160}
+                  maxHeight={seeAll ? undefined : 483}
+                  // maxRows={seeAll ? undefined : 2}
+                />
+              )}
             {loadMore && (
               <div className="load-more">
                 <SecondaryButton onClick={loadMore} color="grey">

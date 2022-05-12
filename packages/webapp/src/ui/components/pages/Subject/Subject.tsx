@@ -1,9 +1,8 @@
 import { Trans } from '@lingui/macro'
-import AddIcon from '@mui/icons-material/Add'
-import CheckIcon from '@mui/icons-material/Check'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import Card from '../../atoms/Card/Card'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
+import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import {
   CollectionCard,
   CollectionCardProps,
@@ -99,18 +98,19 @@ export const Subject = withCtrl<SubjectProps>(
                       onClick={toggleFollow}
                       className="following-button"
                     >
-                      <AddIcon />
+                      {/* <AddIcon /> */}
                       <Trans>Follow</Trans>
                     </PrimaryButton>
                   ) : (
-                    <PrimaryButton
+                    <SecondaryButton
                       disabled={!isAuthenticated}
                       onClick={toggleFollow}
                       className="following-button"
+                      color="orange"
                     >
-                      <CheckIcon />
+                      {/* <CheckIcon /> */}
                       <Trans>Following</Trans>
-                    </PrimaryButton>
+                    </SecondaryButton>
                   )}
                 </div>
               </Card>
