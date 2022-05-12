@@ -210,7 +210,8 @@ export const Landing = withCtrl<LandingProps>(
             }
             noCard={true}
             minGrid={245}
-            maxRows={2}
+            maxHeight={736}
+            // maxRows={2}
           />
           <ListCard
             className="collections"
@@ -241,7 +242,8 @@ export const Landing = withCtrl<LandingProps>(
             }
             minGrid={245}
             noCard={true}
-            maxRows={2}
+            maxHeight={397}
+            // maxRows={2}
           />
           <ListCard
             content={smallProfileCardPropsList
@@ -272,7 +274,8 @@ export const Landing = withCtrl<LandingProps>(
             className={`people`}
             noCard={true}
             minGrid={170}
-            maxRows={1}
+            maxHeight={267}
+            // maxRows={1}
           />
           {/* <TrendCard {...trendCardProps} maxRows={2} /> */}
         </div>

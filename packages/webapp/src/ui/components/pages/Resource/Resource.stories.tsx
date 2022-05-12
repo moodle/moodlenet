@@ -165,7 +165,7 @@ export const ResourceStoryProps = (overrides?: {
     liked: false,
     numLikes: 23,
     bookmarked: true,
-    tags: TagListStory,
+    tags: TagListStory.slice(0, 1),
     contributorCardProps: ContributorCardStoryProps,
     contentUrl: '#',
     contentType: 'link',
