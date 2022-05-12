@@ -143,7 +143,7 @@ export const useResourceCardCtrl: CtrlHook<
       type:
         resourceNode.kind === 'Link'
           ? 'Web Page'
-          : resourceNode.content.mimetype,
+          : resourceNode.content.mimetype.replace('application/', ''),
       image: getMaybeAssetRefUrl(resourceNode.image),
       title: resourceNode.name,
       tags: resourceNode.categories.edges

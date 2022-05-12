@@ -5,6 +5,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useState,
 } from 'react'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import Checkbox from '../../atoms/Checkbox/Checkbox'
@@ -91,20 +92,24 @@ export const Browser = withCtrl<BrowserProps>(
       }
     )
 
-    const showAll = useMemo<boolean>(() => {
+    useEffect(() => {
+      setFilters?.(filters)
+    }, [filters, setFilters])
+
+    useEffect(() => {
       let counter = 0
       filterTypes.forEach(
         (filterType: FilterType) => filters[filterType] && counter++,
         []
       )
       console.log('showing all ', counter)
-      return counter === 1 ? true : false
+      setSeeAll(counter === 1 ? true : false)
     }, [filters])
 
-    useEffect(() => {
-      setFilters?.(filters)
-    }, [filters, setFilters])
-    const seeAll = (type: FilterType) => {
+    const [seeAll, setSeeAll] = useState<boolean>(false)
+
+    const activateSeeAll = (type: FilterType) => {
+      setSeeAll(true)
       filterTypes.forEach((filterType: FilterType) => {
         filterType !== type && setFilter([filterType, false])
       })
@@ -242,7 +247,7 @@ export const Browser = withCtrl<BrowserProps>(
 
             {resourceCardPropsList && filters.Resources && (
               <ListCard
-                content={(showAll
+                content={(seeAll
                   ? resourceCardPropsList
                   : resourceCardPropsList.slice(0, 6)
                 ).map((resourceCardProps) => (
@@ -253,9 +258,9 @@ export const Browser = withCtrl<BrowserProps>(
                     <div className="title">
                       <Trans>Resources</Trans>
                     </div>
-                    {!showAll && (
+                    {!seeAll && (
                       <SecondaryButton
-                        onClick={() => seeAll('Resources')}
+                        onClick={() => activateSeeAll('Resources')}
                         color="dark-blue"
                       >
                         <Trans>See all</Trans>
@@ -263,16 +268,17 @@ export const Browser = withCtrl<BrowserProps>(
                     )}
                   </div>
                 }
-                className={`resources ${showAll ? 'see-all' : ''}`}
+                className={`resources ${seeAll ? 'see-all' : ''}`}
                 noCard={true}
                 minGrid={245}
-                maxRows={showAll ? undefined : 2}
+                maxHeight={seeAll ? undefined : 736}
+                // maxRows={seeAll ? undefined : 2}
               />
             )}
 
             {collectionCardPropsList && filters.Collections && (
               <ListCard
-                content={(showAll
+                content={(seeAll
                   ? collectionCardPropsList
                   : collectionCardPropsList.slice(0, 6)
                 ).map((collectionCardProps) => (
@@ -283,9 +289,9 @@ export const Browser = withCtrl<BrowserProps>(
                     <div className="title">
                       <Trans>Collections</Trans>
                     </div>
-                    {!showAll && (
+                    {!seeAll && (
                       <SecondaryButton
-                        onClick={() => seeAll('Collections')}
+                        onClick={() => activateSeeAll('Collections')}
                         color="dark-blue"
                       >
                         <Trans>See all</Trans>
@@ -293,16 +299,17 @@ export const Browser = withCtrl<BrowserProps>(
                     )}
                   </div>
                 }
-                className={`collections ${showAll ? 'see-all' : ''}`}
+                className={`collections ${seeAll ? 'see-all' : ''}`}
                 noCard={true}
                 minGrid={240}
-                maxRows={showAll ? undefined : 2}
+                maxHeight={seeAll ? undefined : 397}
+                // maxRows={seeAll ? undefined : 2}
               />
             )}
 
             {subjectCardPropsList && filters.Subjects && (
               <ListCard
-                content={(showAll
+                content={(seeAll
                   ? subjectCardPropsList
                   : subjectCardPropsList.slice(0, 8)
                 ).map((subjectCardProps) => (
@@ -313,9 +320,9 @@ export const Browser = withCtrl<BrowserProps>(
                     <div className="title">
                       <Trans>Subjects</Trans>
                     </div>
-                    {!showAll && (
+                    {!seeAll && (
                       <SecondaryButton
-                        onClick={() => seeAll('Subjects')}
+                        onClick={() => activateSeeAll('Subjects')}
                         color="dark-blue"
                       >
                         <Trans>See all</Trans>
@@ -323,16 +330,17 @@ export const Browser = withCtrl<BrowserProps>(
                     )}
                   </div>
                 }
-                className={`subjects ${showAll ? 'see-all' : ''}`}
+                className={`subjects ${seeAll ? 'see-all' : ''}`}
                 noCard={true}
                 direction="wrap"
-                maxRows={showAll ? undefined : 2}
+                maxHeight={seeAll ? undefined : 221}
+                // maxRows={seeAll ? undefined : 2}
               />
             )}
 
             {smallProfileCardPropsList && filters.People && (
               <ListCard
-                content={(showAll
+                content={(seeAll
                   ? smallProfileCardPropsList
                   : smallProfileCardPropsList.slice(0, 11)
                 ).map((smallProfileCardProps) => (
@@ -348,18 +356,21 @@ export const Browser = withCtrl<BrowserProps>(
                           <Trans>People</Trans>
                         )}
                       </div>
-                      {!showAll && (
-                        <SecondaryButton onClick={() => seeAll('People')}>
+                      {!seeAll && (
+                        <SecondaryButton
+                          onClick={() => activateSeeAll('People')}
+                        >
                           <Trans>See all</Trans>
                         </SecondaryButton>
                       )}
                     </div>
                   )
                 }
-                className={`people ${showAll ? 'see-all' : ''}`}
+                className={`people ${seeAll ? 'see-all' : ''}`}
                 noCard={true}
                 minGrid={160}
-                maxRows={showAll ? undefined : 2}
+                maxHeight={seeAll ? undefined : 483}
+                // maxRows={seeAll ? undefined : 2}
               />
             )}
             {loadMore && (

@@ -10,7 +10,7 @@ import { Href, Link } from '../../../../elements/link'
 import { withCtrl } from '../../../../lib/ctrl'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
 import '../../../../styles/tags.scss'
-import { FollowTag } from '../../../../types'
+import { FollowTag, getResourceColorType } from '../../../../types'
 import Card from '../../../atoms/Card/Card'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
@@ -108,18 +108,6 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
       </div>
     )
 
-    let color: string = ''
-    switch (type) {
-      case 'Video':
-        color = '#2A75C0'
-        break
-      case 'Web Page':
-        color = '#C233C7'
-        break
-      default:
-        color = '#15845A'
-    }
-
     return (
       <Card
         className={`resource-card ${
@@ -133,7 +121,10 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
       >
         <div className={`resource-card-header ${orientation}`}>
           <div className="left-side">
-            <div className="type" style={{ background: color }}>
+            <div
+              className="type"
+              style={{ background: getResourceColorType(type) }}
+            >
               {type}
             </div>
           </div>

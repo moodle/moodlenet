@@ -519,14 +519,14 @@ export const Resource = withCtrl<ResourceProps>(
               )
           )}
         </Dropdown>
-        <Dropdown
+        {/* <Dropdown
           name="format"
           label={t`Format`}
           defaultValue={resourceFormat}
           disabled
           position={{ top: 50, bottom: 25 }}
           pills={<SimplePill label={resourceFormat} value={resourceFormat} />}
-        ></Dropdown>
+        ></Dropdown> */}
       </Card>
     ) : (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
@@ -541,12 +541,14 @@ export const Resource = withCtrl<ResourceProps>(
             </abbr>
           </div>
         )}
-        <div className="detail">
-          <div className="title">
-            <Trans>Subject</Trans>
+        {isOwner && (
+          <div className="detail subject">
+            <div className="title">
+              <Trans>Subject</Trans>
+            </div>
+            <abbr className="value">{categories.selected?.label}</abbr>
           </div>
-          <abbr className="value">{categories.selected?.label}</abbr>
-        </div>
+        )}
         {licenses.selected && (
           <div className="detail license">
             <div className="title">
@@ -609,7 +611,7 @@ export const Resource = withCtrl<ResourceProps>(
             </abbr>
           </div>
         )}
-        {resourceFormat && (
+        {/* {resourceFormat && (
           <div className="detail">
             <div className="title">
               <Trans>Format</Trans>
@@ -618,7 +620,7 @@ export const Resource = withCtrl<ResourceProps>(
               {resourceFormat}
             </abbr>
           </div>
-        )}
+        )} */}
       </Card>
     )
 
@@ -820,10 +822,10 @@ export const Resource = withCtrl<ResourceProps>(
                       <div
                         className="type"
                         style={{
-                          background: getResourceColorType(contentType),
+                          background: getResourceColorType(resourceFormat),
                         }}
                       >
-                        {contentType}
+                        {resourceFormat}
                       </div>
                       {/* <div
                         className="type"
@@ -831,9 +833,6 @@ export const Resource = withCtrl<ResourceProps>(
                           color: getResourceColorType(contentType),
                         }}
                       >
-                        &nbsp;/ a very
-                        loooooooooooooooooooooooooooooooooooooooooooooooooooooong
-                        type
                          &nbsp;/ {contentType} 
                       </div> */}
                     </span>

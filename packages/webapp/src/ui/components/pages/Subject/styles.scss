@@ -64,6 +64,23 @@
           }
         }
 
+        > .actions {
+          > .follow-button {
+            > svg {
+              width: 20px;
+              height: 20px;
+            }
+          }
+
+          > .following-button {
+            gap: 2px;
+            > svg {
+              width: 17px;
+              height: 17px;
+            }
+          }
+        }
+
         @media screen and (min-width: 850px) {
           > .info {
             max-width: calc(100% - 95px);
