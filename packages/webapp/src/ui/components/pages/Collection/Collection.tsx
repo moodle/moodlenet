@@ -5,8 +5,6 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import SaveIcon from '@material-ui/icons/Save'
-import AddIcon from '@mui/icons-material/Add'
-import CheckIcon from '@mui/icons-material/Check'
 import FlagIcon from '@mui/icons-material/Flag'
 import ShareIcon from '@mui/icons-material/Share'
 import React, { useMemo, useRef, useState } from 'react'
@@ -476,19 +474,20 @@ export const Collection = withCtrl<CollectionProps>(
                         onClick={toggleFollow.submitForm}
                         className="follow-button"
                       >
-                        <AddIcon />
+                        {/* <AddIcon /> */}
                         <Trans>Follow</Trans>
                       </PrimaryButton>
                     )}
                     {!isOwner && isFollowing && (
-                      <PrimaryButton
+                      <SecondaryButton
                         disabled={!isAuthenticated}
                         onClick={toggleFollow.submitForm}
                         className="following-button"
+                        color="orange"
                       >
-                        <CheckIcon />
+                        {/* <CheckIcon /> */}
                         <Trans>Following</Trans>
-                      </PrimaryButton>
+                      </SecondaryButton>
                     )}
                     <div className={`followers`}>
                       <PermIdentityIcon />

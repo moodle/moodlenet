@@ -5,19 +5,21 @@ import './styles.scss'
 export type FloatingMenuProps = {
   menuContent: React.ReactElement[]
   hoverElement: React.ReactNode
+  hover?: boolean
   className?: string
 }
 
 export const FloatingMenu: FC<FloatingMenuProps> = ({
   menuContent,
   className,
+  hover,
   hoverElement,
 }) => {
   const [currentVisible, setCurrentVisible] = useState<Boolean | undefined>(
     false
   )
   const hoverElementRef = useRef<HTMLDivElement>(null)
-  // const [isOnHover, setIsOnHover] = useState<Boolean>(false)
+  const [isOnHover, setIsOnHover] = useState<Boolean>(false)
   const switchMenu = (e: KeyboardEvent<HTMLDivElement>) => {
     ;['ArrowDown', 'ArrowUp'].includes(e.key) && setCurrentVisible(true)
     ;['Enter'].includes(e.key) && setCurrentVisible(!currentVisible)
@@ -84,20 +86,22 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
         ref={hoverElementRef}
         onKeyUp={switchMenu}
         onKeyDown={closeMenu}
-        // onMouseEnter={() => setCurrentVisible(true)}
-        // onMouseLeave={() => setCurrentVisible(false)}
+        onMouseEnter={() => hover && setCurrentVisible(true)}
+        onMouseLeave={() => hover && setCurrentVisible(false)}
       >
         {hoverElement}
       </div>
       <div
-        className={`menu ${currentVisible /* || isOnHover */ ? 'visible' : ''}`}
+        className={`menu ${
+          currentVisible || (hover && isOnHover) ? 'visible' : ''
+        }`}
         style={{
           top:
             hoverElementRef.current?.clientHeight &&
             `${hoverElementRef.current?.clientHeight}px`,
         }}
-        // onMouseEnter={() => setIsOnHover(true)}
-        // onMouseLeave={() => setIsOnHover(false)}
+        onMouseEnter={() => hover && setIsOnHover(true)}
+        onMouseLeave={() => hover && setIsOnHover(false)}
       >
         <Card className="content">{updatedMenuContent}</Card>
       </div>
@@ -105,4 +109,7 @@ export const FloatingMenu: FC<FloatingMenuProps> = ({
   )
 }
 
+FloatingMenu.defaultProps = {
+  hover: false,
+}
 export default FloatingMenu
