@@ -24,8 +24,10 @@ export const getResourceColorType = (type?: string) => {
   switch (type) {
     case 'Video':
       return '#2A75C0'
+    case 'pdf':
+      return '#dd0000'
     case 'Web Page':
-      return '##C233C7'
+      return '#C233C7'
     default:
       return '#15845A'
   }

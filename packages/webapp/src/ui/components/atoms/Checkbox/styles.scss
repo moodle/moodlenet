@@ -11,6 +11,19 @@
   font-size: 14px;
   // color: #afb3c4;
 
+  &.disabled {
+    pointer-events: none;
+    input:checked ~,
+    input:not(:checked) ~ {
+      .checkmark {
+        background-color: rgb(185, 185, 185);
+      }
+      .label {
+        color: rgb(185, 185, 185);
+      }
+    }
+  }
+
   &:hover {
     &.not-checked {
       color: #afb3c4;

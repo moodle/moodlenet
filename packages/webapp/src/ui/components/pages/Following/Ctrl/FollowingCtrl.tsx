@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro'
 import {
   isEdgeNodeOfType,
   narrowNodeType,
@@ -88,6 +89,7 @@ export const useFollowingCtrl: CtrlHook<FollowingProps, {}> = () => {
         resourceCardPropsList: null,
         setSortBy: null,
         setFilters: null,
+        title: t`Following`,
       },
     }
     return props

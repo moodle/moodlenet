@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro'
 import {
   isEdgeNodeOfType,
   narrowNodeType,
@@ -74,6 +75,7 @@ export const useBookmarksCtrl: CtrlHook<BookmarksProps, {}> = () => {
         setSortBy: null,
         smallProfileCardPropsList: null,
         setFilters: null,
+        title: t`Bookmarks`,
       },
     }
     return props

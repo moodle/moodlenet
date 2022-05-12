@@ -31,6 +31,7 @@ export const FollowingLoggedInStoryProps: FollowingProps = {
     ...BrowserFollowingStoryProps,
     resourceCardPropsList: null,
     setSortBy: null,
+    title: 'Following',
   },
 }
 
