@@ -474,7 +474,7 @@ export const Collection = withCtrl<CollectionProps>(
                       <PrimaryButton
                         disabled={!isAuthenticated}
                         onClick={toggleFollow.submitForm}
-                        className="following-button"
+                        className="follow-button"
                       >
                         <AddIcon />
                         <Trans>Follow</Trans>

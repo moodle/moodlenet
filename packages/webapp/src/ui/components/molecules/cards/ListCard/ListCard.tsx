@@ -1,4 +1,4 @@
-import { FC, ReactNode, useLayoutEffect, useRef, useState } from 'react'
+import { FC, ReactNode, useRef } from 'react'
 import './styles.scss'
 
 export type ListCardProps = {
@@ -8,7 +8,8 @@ export type ListCardProps = {
   minGrid?: number
   noCard?: boolean
   maxWidth?: string | undefined | 'auto'
-  maxRows?: number
+  maxHeight?: number | undefined
+  // maxRows?: number
   direction?: 'vertical' | 'horizontal' | 'wrap'
   actions?: { element: ReactNode; position: 'start' | 'end' }
 }
@@ -19,7 +20,8 @@ export const ListCard: FC<ListCardProps> = ({
   direction,
   title,
   minGrid,
-  maxRows,
+  maxHeight,
+  // maxRows,
   noCard,
   actions,
 }) => {
@@ -33,22 +35,22 @@ export const ListCard: FC<ListCardProps> = ({
     ]
     return elementWithKey
   })
-  const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined)
+  // const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined)
 
-  const contentDivCurr = contentDiv.current
-  const elementCurr = element.current
+  // const contentDivCurr = contentDiv.current
+  // const elementCurr = element.current
 
-  useLayoutEffect(() => {
-    if (!(maxRows && contentDivCurr && elementCurr)) {
-      return
-    }
-    const gap = getComputedStyle(contentDivCurr).gap
-    const elementHeight = elementCurr.clientHeight
-    const totalMaxHeight = elementHeight
-      ? maxRows * elementHeight + parseInt(gap) * (maxRows - 1) + 10
-      : undefined
-    setMaxHeight(totalMaxHeight)
-  }, [elementCurr, setMaxHeight, className, contentDivCurr, maxRows])
+  // useLayoutEffect(() => {
+  //   if (!(maxRows && contentDivCurr && elementCurr)) {
+  //     return
+  //   }
+  //   const gap = getComputedStyle(contentDivCurr).gap
+  //   const elementHeight = elementCurr.clientHeight
+  //   const totalMaxHeight = elementHeight
+  //     ? maxRows * elementHeight + parseInt(gap) * (maxRows - 1) + 10
+  //     : undefined
+  //   setMaxHeight(totalMaxHeight)
+  // }, [elementCurr, setMaxHeight, className, contentDivCurr, maxRows])
 
   return (
     <div className={`list-card ${className} ${noCard ? 'no-card' : ''}`}>
