@@ -1,8 +1,9 @@
 import { Trans } from '@lingui/macro'
+import AddIcon from '@mui/icons-material/Add'
+import CheckIcon from '@mui/icons-material/Check'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import Card from '../../atoms/Card/Card'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
-import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import {
   CollectionCard,
   CollectionCardProps,
@@ -22,7 +23,7 @@ export type SubjectProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   isAuthenticated: boolean
   title: string
-  following: boolean
+  isFollowing: boolean
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
   numFollowers: number
@@ -38,7 +39,7 @@ export const Subject = withCtrl<SubjectProps>(
     headerPageTemplateProps,
     isAuthenticated,
     title,
-    following,
+    isFollowing,
     toggleFollow,
     resourceCardPropsList,
     collectionCardPropsList,
@@ -92,23 +93,30 @@ export const Subject = withCtrl<SubjectProps>(
                   </div>
                 </div>
                 <div className="actions">
-                  {following ? (
-                    <SecondaryButton onClick={toggleFollow}>
-                      <Trans>Unfollow</Trans>
-                    </SecondaryButton>
+                  {!isFollowing ? (
+                    <PrimaryButton
+                      disabled={!isAuthenticated}
+                      onClick={toggleFollow}
+                      className="following-button"
+                    >
+                      <AddIcon />
+                      <Trans>Follow</Trans>
+                    </PrimaryButton>
                   ) : (
                     <PrimaryButton
                       disabled={!isAuthenticated}
                       onClick={toggleFollow}
+                      className="following-button"
                     >
-                      <Trans>Follow</Trans>
+                      <CheckIcon />
+                      <Trans>Following</Trans>
                     </PrimaryButton>
                   )}
                 </div>
               </Card>
             </div>
             <div className="main-content">
-              {collectionCardPropsList && (
+              {collectionCardPropsList && collectionCardPropsList.length > 0 && (
                 <ListCard
                   className="collections"
                   content={collectionCardPropsList
@@ -127,7 +135,7 @@ export const Subject = withCtrl<SubjectProps>(
                   noCard={true}
                 />
               )}
-              {resourceCardPropsList && (
+              {resourceCardPropsList && resourceCardPropsList.length > 0 && (
                 <ListCard
                   className="resources"
                   noCard={true}

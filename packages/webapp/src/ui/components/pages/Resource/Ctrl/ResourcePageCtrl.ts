@@ -659,7 +659,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       contentUrl: getJustAssetRefUrl(resourceData.content),
       addToCollectionsForm,
       contentType: resourceData.content.ext ? 'link' : 'file',
-      resourceFormat: resourceData.content.mimetype,
+      resourceFormat: resourceData.content.mimetype.replace('application/', ''),
     }
     return props
   }, [
