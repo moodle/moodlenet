@@ -1,5 +1,4 @@
 import { t, Trans } from '@lingui/macro'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import BookmarksIcon from '@material-ui/icons/Bookmarks'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
@@ -70,7 +69,6 @@ export const Header = withCtrl<HeaderProps>((props) => {
     backgroundSize: 'cover',
   }
 
-  // console.log({ avatarUrl })
   return (
     <div className="header" id="page-header">
       <div className="content">
@@ -106,6 +104,10 @@ export const Header = withCtrl<HeaderProps>((props) => {
               <FloatingMenu
                 className="avatar-menu"
                 menuContent={[
+                  <Link href={me.myProfileHref} className="profile">
+                    <div style={avatar} className="avatar" />
+                    <Trans>Profile</Trans>
+                  </Link>,
                   <Link href={me.bookmarksHref}>
                     <BookmarksIcon />
                     <Trans>Bookmarks</Trans>
@@ -118,21 +120,18 @@ export const Header = withCtrl<HeaderProps>((props) => {
                   //   <SettingsIcon />
                   //   <Trans>Settings</Trans>
                   // </Link>,
-                  <Link href={me.myProfileHref}>
-                    <AccountCircleIcon />
-                    <Trans>Profile</Trans>
-                  </Link>,
                   <Link onClick={me.logout} href={homeHref}>
                     <ExitToAppIcon />
                     <Trans>Log out</Trans>
                   </Link>,
                 ]}
                 hoverElement={
-                  <Link
-                    href={me.myProfileHref}
-                    style={avatar}
-                    className="avatar"
-                  />
+                  <div style={avatar} className="avatar" />
+                  // <Link
+                  //   href={me.myProfileHref}
+                  //   style={avatar}
+                  //   className="avatar"
+                  // />
                 }
               />
             </>

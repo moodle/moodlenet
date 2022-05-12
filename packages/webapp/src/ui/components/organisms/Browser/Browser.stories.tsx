@@ -60,6 +60,7 @@ const subjectCardPropsList: SubjectCardProps[] = [
 }))
 
 export const BrowserLoggedOutStoryProps: BrowserProps = {
+  title: 'Bookmarks',
   setSortBy: action(`set sort by`),
   setFilters: action(`set Filters`),
   loadMoreSubjects: action(`load more subjects`),

@@ -41,6 +41,7 @@ export const BookmarksLoggedInStoryProps: BookmarksProps = {
     subjectCardPropsList: null,
     smallProfileCardPropsList: null,
     setSortBy: null,
+    title: 'Bookmarks',
   },
 }
 
