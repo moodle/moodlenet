@@ -98,6 +98,14 @@
     > .title > .card-header {
       display: flex;
       justify-content: space-between;
+
+      @media (max-width: 580px) {
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: flex-start;
+      }
+
       > .info {
         display: flex;
         flex-direction: column;
