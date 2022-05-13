@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/ce-platform",
-  "version": "2.0.8-alpha.21",
+  "version": "2.0.8-alpha.22",
   "main": "dist/main.js",
   "license": "AGPL-3.0",
   "description": "MoodleNet CE Platform",
@@ -27,7 +27,7 @@
   "dependencies": {
     "@moodlenet/backend": "^2.0.8-alpha.15",
     "@moodlenet/common": "^2.0.8-alpha.15",
-    "@moodlenet/webapp": "^2.0.8-alpha.21",
+    "@moodlenet/webapp": "^2.0.8-alpha.22",
     "arangojs": "^7.1.0",
     "dotenv": "^8.2.0",
     "dotenv-expand": "^5.1.0",
