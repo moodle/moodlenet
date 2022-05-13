@@ -393,7 +393,7 @@ export const Browser = withCtrl<BrowserProps>(
                   className={`people ${seeAll ? 'see-all' : ''}`}
                   noCard={true}
                   minGrid={160}
-                  maxHeight={seeAll ? undefined : 483}
+                  maxHeight={seeAll ? undefined : 535}
                   // maxRows={seeAll ? undefined : 2}
                 />
               )}
