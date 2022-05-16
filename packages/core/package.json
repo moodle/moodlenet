@@ -1,0 +1,31 @@
+{
+  "name": "@moodlenet/core",
+  "version": "0.0.1",
+  "license": "AGPL-3.0",
+  "moodlenet": {
+    "name": "core moodlenet",
+    "shortDesc": "a desc for core moodlenet"
+  },
+  "files": [
+    "pkg/",
+    "index.js"
+  ],
+  "main": "pkg/index.js",
+  "description": "moodlenet core package",
+  "repository": "https://gitlab.com/moodlenet/moodlenet",
+  "author": "https://github.com/aleclofabbro",
+  "dependencies": {
+    "@moodlenet/kernel": "^0.0.1",
+    "@moodlenet/pri-http": "^0.0.1",
+    "@moodlenet/webapp": "^0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.18",
+    "shx": "^0.3.4",
+    "typescript": "^4.6.3"
+  },
+  "scripts": {
+    "build-dev": "tsc --watch",
+    "clean": "shx rm -rf pkg"
+  }
+}

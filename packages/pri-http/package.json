@@ -1,0 +1,33 @@
+{
+  "name": "@moodlenet/pri-http",
+  "version": "0.0.1",
+  "license": "AGPL-3.0",
+  "moodlenet": {
+    "name": "pri http moodlenet",
+    "shortDesc": "a desc for pri http moodlenet"
+  },
+  "files": [
+    "pkg/",
+    "index.js"
+  ],
+  "main": "pkg/index.js",
+  "description": "moodlenet http primary adapter package",
+  "repository": "https://gitlab.com/moodlenet/moodlenet",
+  "author": "https://github.com/aleclofabbro",
+  "dependencies": {
+    "body-parser": "^1.19.2",
+    "express": "^4.17.2",
+    "rxjs": "^7.5.5"
+  },
+  "devDependencies": {
+    "@moodlenet/kernel": "^0.0.1",
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.18",
+    "shx": "^0.3.4",
+    "typescript": "^4.6.3"
+  },
+  "scripts": {
+    "build-dev": "tsc --watch",
+    "clean": "shx rm -rf pkg"
+  }
+}
