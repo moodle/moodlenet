@@ -87,7 +87,7 @@ export const useSubjectCtrl: CtrlHook<SubjectProps, SubjectCtrlProps> = ({
     const numCollections = categoryData.collectionsCount
     const numResources = categoryData.resourcesCount
 
-    const following = !!myFollowEdgeId
+    const isFollowing = !!myFollowEdgeId
 
     const collectionCardPropsList = categoryData.collections.edges
       .filter(isEdgeNodeOfType(['Collection']))
@@ -107,7 +107,7 @@ export const useSubjectCtrl: CtrlHook<SubjectProps, SubjectCtrlProps> = ({
       ),
       title: categoryData.name,
       collectionCardPropsList,
-      following,
+      isFollowing,
       isAuthenticated,
       numCollections,
       numFollowers,

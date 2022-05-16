@@ -11,10 +11,10 @@ import { useSmallProfileCardCtrl } from '../../../molecules/cards/SmallProfileCa
 import { useIscedfCardCtrl } from '../../../molecules/cards/SubjectCard/Ctrl/IscedfCardCtrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { SearchProps } from '../Search'
-import { useSearchUrlQuery } from './useSearchUrlQuery'
+import { useBrowserUrlQuery } from './useSearchUrlQuery'
 
 export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
-  const { text, sort, setSort } = useSearchUrlQuery()
+  const { text, filters, setFilters, sort, setSort } = useBrowserUrlQuery()
   // const [sort, setSort] = useState<GlobalSearchSort>({ by: 'Popularity' })
   const { updateSeoMeta } = useSeo()
   useEffect(() => {
@@ -147,6 +147,8 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
         loadMoreCollections: loadMoreCollections?.submitForm,
         loadMoreResources: loadMoreResources?.submitForm,
         loadMoreSubjects: loadMoreSubjects?.submitForm,
+        setFilters,
+        initialFilters: filters,
       },
     }),
     [
@@ -154,10 +156,12 @@ export const useSearchCtrl: CtrlHook<SearchProps, {}> = () => {
       collections,
       resources,
       subjects,
-      loadMoreProfiles,
+      loadMoreProfiles?.submitForm,
       loadMoreCollections?.submitForm,
       loadMoreResources?.submitForm,
       loadMoreSubjects?.submitForm,
+      setFilters,
+      filters,
       setSort,
     ]
   )

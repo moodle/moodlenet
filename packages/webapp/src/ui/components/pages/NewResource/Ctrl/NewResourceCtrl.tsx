@@ -22,6 +22,8 @@ import {
   useLicenses,
   useResourceTypes,
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
+import { useUnsplash } from '../../../../../helpers/unsplash'
+import { useAutoImageAdded } from '../../../../../helpers/utilities'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { NewResourceProps } from '../NewResource'
@@ -76,12 +78,16 @@ const validationSchema: SchemaOf<NewResourceFormValues> = object({
     return month ? schema.required(t`Please select a year`) : schema.optional()
   }),
 })
+
 export type NewResourceCtrlProps = {}
 
 export const useNewResourceCtrl: CtrlHook<
   NewResourceProps,
   NewResourceCtrlProps
 > = () => {
+  const autoImageAdded = useAutoImageAdded()
+
+  const { getImageFromKeywords } = useUnsplash()
   const { session } = useSession()
   const history = useHistory()
   const [fliteredIscedFields, setCategoryFilter, iscedFields] = useFiltered(
@@ -129,6 +135,19 @@ export const useNewResourceCtrl: CtrlHook<
     }
   }, [myId, loadMyColl])
 
+  const setNewRandomImage = async (
+    name: string,
+    description: string
+  ): Promise<AssetRefInput> => {
+    const assetInfo = await getImageFromKeywords(name, description)
+    const assetRefInput: AssetRefInput = assetInfo
+      ? {
+          ...assetInfo,
+          type: 'ExternalUrl',
+        }
+      : { location: '', type: 'NoAsset' }
+    return assetRefInput
+  }
   const form = useFormik<NewResourceFormValues>({
     validationSchema,
     initialValues: {
@@ -167,18 +186,23 @@ export const useNewResourceCtrl: CtrlHook<
               location: await uploadTempFile('resource', content),
               type: 'TmpUpload',
             }
+      let isAutoImageAdded = false
 
-      const imageAssetRef: AssetRefInput = !image
-        ? { location: '', type: 'NoAsset' }
-        : typeof image === 'string'
-        ? {
-            location: image,
-            type: 'ExternalUrl',
-          }
-        : {
-            location: await uploadTempFile('image', image),
-            type: 'TmpUpload',
-          }
+      const imageAssetRef: AssetRefInput = image
+        ? typeof image.location === 'string'
+          ? {
+              location: image.location,
+              type: 'ExternalUrl',
+            }
+          : image.location instanceof File
+          ? {
+              location: await uploadTempFile('image', image.location),
+              type: 'TmpUpload',
+            }
+          : ((isAutoImageAdded = true),
+            await setNewRandomImage(name, description))
+        : ((isAutoImageAdded = true),
+          await setNewRandomImage(name, description))
 
       const resourceCreationResp = await createResourceMut({
         variables: {
@@ -307,7 +331,10 @@ export const useNewResourceCtrl: CtrlHook<
       )
       await Promise.all(waitFor)
 
-      history.push(nodeGqlId2UrlPath(resId))
+      history.push(
+        nodeGqlId2UrlPath(resId),
+        autoImageAdded.set(isAutoImageAdded)
+      )
     },
   })
   const newResourceProps = useMemo<NewResourceProps>(() => {

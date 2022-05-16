@@ -27,8 +27,11 @@
         margin-bottom: 10px;
       }
 
-      > .check-button {
-        min-width: 110px;
+      > .sort-button {
+        width: 100%;
+        > * {
+          width: 100%;
+        }
       }
     }
   }

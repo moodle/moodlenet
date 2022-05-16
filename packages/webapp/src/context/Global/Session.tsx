@@ -5,7 +5,9 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { TIME_BETWEEN_USER_APPROVAL_REQUESTS } from '../../constants'
 import { createCtx } from '../../lib/context'
 import { useLocalStorage } from '../../lib/keyvaluestore/useStorage'
+import { useSendEmailToProfileMutation } from '../../ui/components/pages/Profile/Ctrl/ProfileCtrl.gen'
 import { setToken } from './Apollo/client'
+import { useLocalInstance } from './LocalInstance'
 import {
   // useActivateNewUserMutation,
   useChangeRecoverPasswordMutation,
@@ -58,6 +60,7 @@ export type SessionContextType = {
   userRequestedApproval: () => void
   isWaitingApproval: boolean
   hasJustBeenApproved: boolean
+  reportEntity(_: { comment: string; entityUrl: string }): Promise<void>
 }
 
 export const [useSession, ProvideSession] =
@@ -189,8 +192,29 @@ export const SessionProvider: FC = ({ children }) => {
     [setLastUserApprovalRequest]
   )
 
+  const { org: localOrg } = useLocalInstance()
+
+  const [sendEmailMut /* , sendEmailMutRes */] = useSendEmailToProfileMutation()
+
+  const reportEntity = useCallback(
+    async ({ comment, entityUrl }) => {
+      const { data } = await sendEmailMut({
+        variables: {
+          text: `report abuse for content: #REPORT_ENTITY#${entityUrl}#REPORT_ENTITY/#
+          #REPORT_TEXT#${comment}#REPORT_TEXT/#`,
+          toProfileId: localOrg.id,
+        },
+      })
+      if (!data || !data.sendEmailToProfile) {
+        return
+      }
+    },
+    [localOrg.id, sendEmailMut]
+  )
+
   const ctx = useMemo<SessionContextType>(
     () => ({
+      reportEntity,
       refetch: () => getSessionLazyQ(),
       logout,
       login,
@@ -228,6 +252,7 @@ export const SessionProvider: FC = ({ children }) => {
       lastSessionJwt,
       recoverPassword,
       changeRecoverPassword,
+      reportEntity,
       userAcceptedPolicies,
       lastUserApprovalRequest,
       userRequestedApproval,

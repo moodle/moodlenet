@@ -54,8 +54,8 @@ export const Modal: React.FC<ModalProps> = ({
   )
 
   useEffect(() => {
-    const handleEvent = ({ keyCode }: KeyboardEvent) => {
-      if (keyCode === 27) {
+    const handleEvent = ({ key }: KeyboardEvent) => {
+      if (key === 'Escape') {
         onClose()
       }
     }
@@ -64,8 +64,15 @@ export const Modal: React.FC<ModalProps> = ({
   }, [onClose])
   return (
     <Portal>
-      <div className={`modal-container ${className}`} onClick={handleonClose}>
-        <Card className={`modal`} onClick={stopPropagation} style={style}>
+      <div
+        className={`modal-container ${className}`}
+        onMouseDown={handleonClose}
+      >
+        <Card
+          className={`modal`}
+          onMouseDown={stopPropagation}
+          style={{ ...style, ...(!children && { gap: '25px' }) }}
+        >
           {(title || closeButton) && (
             <div className="modal-header">
               {title && <div className="title">{title}</div>}

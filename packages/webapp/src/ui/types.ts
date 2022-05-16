@@ -13,9 +13,9 @@ export type Organization = {
 }
 
 export type FollowTag = {
-  type: 'subject' | 'collection'
+  type: 'subject' | 'collection' | 'type'
   name: string
-  subjectHomeHref: Href
+  subjectHomeHref?: Href
 }
 
 export type ResourceType = 'Video' | 'Web Page' | 'Moodle Book'
@@ -24,8 +24,10 @@ export const getResourceColorType = (type?: string) => {
   switch (type) {
     case 'Video':
       return '#2A75C0'
+    case 'pdf':
+      return '#dd0000'
     case 'Web Page':
-      return '##C233C7'
+      return '#C233C7'
     default:
       return '#15845A'
   }
@@ -36,6 +38,16 @@ export type ResourceInfo = {
   title: string
   tags: Pick<FollowTag, 'name'>[]
   image: string
+}
+
+export type AssetInfo = {
+  location: string | File
+  credits?: Credits | null
+}
+
+export type Credits = {
+  owner: { url: string; name: string }
+  provider?: { name: string; url: string }
 }
 
 export type CollectionInfo = {

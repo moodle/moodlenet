@@ -242,3 +242,18 @@ abbr {
   top: -3px;
   right: -25px;
 }
+
+.animate-enter {
+  animation: enter 0.5s ease-in;
+
+  @keyframes leave {
+    from {
+      height: 0;
+      width: 100%;
+    }
+    to {
+      height: inherit;
+      width: 100%;
+    }
+  }
+}

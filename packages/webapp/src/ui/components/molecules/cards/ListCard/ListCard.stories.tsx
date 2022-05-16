@@ -50,7 +50,7 @@ export const CollectionListCardStoryProps: ListCardProps = {
   title: 'Juanito',
   content: [1, 2, 3].map(() => (
     <CollectionCard
-      {...CollectionCardStoryProps(randomIntFromInterval(1, 3))}
+      {...CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1)}
     />
   )),
 }
@@ -68,7 +68,7 @@ Collection.decorators = [
 export const ResourceListCardStoryProps: ListCardProps = {
   className: 'resources',
   title: 'Lastest Resources',
-  content: [1, 2, 3].map(() => <ResourceCard {...ResourceCardStoryProps} />),
+  content: [1, 2, 3].map(() => <ResourceCard {...ResourceCardStoryProps()} />),
   noCard: true,
 }
 

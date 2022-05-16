@@ -13,10 +13,11 @@ import { duration } from 'moment'
 import { createElement, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { boolean, mixed, object, SchemaOf, string } from 'yup'
-import { MNEnv } from '../../../../../constants'
+import { MNEnv, UNSPLASH_ENDPOINT } from '../../../../../constants'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
 import {
+  fullLocalEntityUrlByGqlId,
   getJustAssetRefUrl,
   getMaybeAssetRefUrl,
   useFiltered,
@@ -30,6 +31,7 @@ import {
   useLicenses,
   useResourceTypes,
 } from '../../../../../helpers/resource-relation-data-static-and-utils'
+import { useAutoImageAdded } from '../../../../../helpers/utilities'
 import { useLMS } from '../../../../../lib/moodleLMS/useSendToMoodle'
 import { href } from '../../../../elements/link'
 // import { useLocalInstance } from '../../../../context/Global/LocalInstance'
@@ -88,7 +90,9 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
   id,
 }) => {
   useSeoContentId(id)
-  const { session, isAdmin, isAuthenticated } = useSession()
+  const { session, isAdmin, isAuthenticated, reportEntity } = useSession()
+  const autoImageAdded = useAutoImageAdded().get()
+
   const allMyOwnCollectionEdges = useMemo(
     () =>
       session?.profile.myOwnCollections.edges.filter(
@@ -171,18 +175,35 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       ) {
         return
       }
-      const imageAssetRef: AssetRefInput =
-        !image || image === form.initialValues.image
-          ? { location: '', type: 'NoChange' }
-          : typeof image === 'string'
-          ? {
-              location: image,
-              type: 'ExternalUrl',
-            }
-          : {
-              location: await uploadTempFile('image', image),
-              type: 'TmpUpload',
-            }
+      const imageAssetRef: AssetRefInput = !image
+        ? {
+            location: '',
+            type: 'NoAsset',
+            credits: form.initialValues.image?.credits,
+          }
+        : image.location === form.initialValues.image?.location
+        ? {
+            location: '',
+            type: 'NoChange',
+            credits: form.initialValues.image?.credits,
+          }
+        : typeof image.location === 'string'
+        ? {
+            location: image.location,
+            type: 'ExternalUrl',
+            credits: image.credits,
+          }
+        : image.location instanceof File
+        ? {
+            location: await uploadTempFile('image', image.location),
+            type: 'TmpUpload',
+            credits: image.credits,
+          }
+        : {
+            location: '',
+            type: 'NoChange',
+            credits: form.initialValues.image?.credits,
+          }
       const editResPr = edit({
         variables: {
           id,
@@ -334,6 +355,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
         typeof resourceData.originalCreationDate === 'number'
           ? new Date(resourceData.originalCreationDate)
           : null
+      const _image = getMaybeAssetRefUrl(image)
       _resetform({
         touched: {},
         values: {
@@ -344,7 +366,9 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
           license,
           type,
           description,
-          image: getMaybeAssetRefUrl(image),
+          image: _image
+            ? { location: _image, credits: image?.credits }
+            : undefined,
           name,
           visibility: _published ? 'Public' : 'Private',
           month: orgDate ? `${orgDate.getMonth()}` : undefined,
@@ -516,16 +540,34 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
     'id;name'
   )
   const licenses = useLicenses()
+  const resourceUrl = fullLocalEntityUrlByGqlId(id)
+
+  const reportForm = useFormik({
+    initialValues: { comment: '' },
+    validationSchema: object({ comment: string().required(t`Required field`) }),
+    validateOnMount: true,
+    onSubmit: async ({ comment }) => {
+      await reportEntity({
+        comment,
+        entityUrl: resourceUrl,
+      })
+    },
+  })
   const resourceProps = useMemo<null | ResourceProps>(() => {
     if (!resourceData) {
       return null
     }
     const props: ResourceProps = {
+      resourceUrl,
+      resourceId: resourceData.id,
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, id),
+      canSearchImage: !!UNSPLASH_ENDPOINT,
       form,
       isOwner,
       isAdmin,
       liked,
+      reportForm,
+      autoImageAdded,
       contributorCardProps: {
         avatarUrl: getMaybeAssetRefUrl(
           creator?.__typename === 'Profile'
@@ -617,16 +659,19 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
       contentUrl: getJustAssetRefUrl(resourceData.content),
       addToCollectionsForm,
       contentType: resourceData.content.ext ? 'link' : 'file',
-      resourceFormat: resourceData.content.mimetype,
+      resourceFormat: resourceData.content.mimetype.replace('application/', ''),
     }
     return props
   }, [
     resourceData,
+    resourceUrl,
     id,
     form,
     isOwner,
     isAdmin,
     liked,
+    reportForm,
+    autoImageAdded,
     creator,
     creatorEdge,
     isAuthenticated,

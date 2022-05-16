@@ -1,3 +1,7 @@
+import { useHistory } from 'react-router'
+import { ContentBackupImages } from '../ui/assets/data/images'
+import { AssetInfo } from '../ui/types'
+
 export const isURL = (str: string): boolean => {
   const pattern = new RegExp(
     '^(https?:\\/\\/)?' + // protocol
@@ -68,5 +72,39 @@ export const adjustColor = (color: string, amount: number) => {
   )
 }
 
+export const setOpacity = (color: string, opacity: number): string => {
+  // coerce values so ti is between 0 and 1.
+  const _opacity = Math.round(Math.min(Math.max(opacity || 1, 0), 1) * 255)
+  return color + _opacity.toString(16).toUpperCase()
+}
+
 export const randomColor = () =>
   `#${Math.floor(Math.random() * 16777215).toString(16)}`
+
+export const getNumberFromString = (s: string) =>
+  parseInt(
+    s
+      .split('')
+      .map((l) => {
+        return l.charCodeAt(0)
+      })
+      .join(''),
+    10
+  )
+
+export const getBackupImage = (id: string): AssetInfo | undefined => {
+  const numId = getNumberFromString(id)
+  return ContentBackupImages[numId % ContentBackupImages.length]
+}
+
+export const getRandomInt = (max: number) => {
+  return Math.floor(Math.random() * max)
+}
+
+export function useAutoImageAdded() {
+  const history = useHistory()
+  console.log({ __: history.location.state })
+  const get = () => !!(history.location.state as any)?.autoImageAdded
+  const set = (autoImageAdded: boolean) => ({ autoImageAdded })
+  return { get, set }
+}

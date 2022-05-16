@@ -1,7 +1,7 @@
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { FC } from 'react'
-import { tagList } from '../../../elements/tags'
-import '../../../styles/tags.css'
+import { getTagList } from '../../../elements/tags'
+import '../../../styles/tags.scss'
 import { FollowTag } from '../../../types'
 import './styles.scss'
 
@@ -16,7 +16,7 @@ export const SubHeader: FC<SubHeaderProps> = ({ tags }) => {
         <div className="text">Following</div>
       </div>
       <div className="tags scroll">
-        {tagList(tags, 'small', true)}
+        {getTagList(tags, 'small', true)}
         <div className="empty-space">&nbsp;</div>
       </div>
     </div>

@@ -1,5 +1,12 @@
 import { t, Trans } from '@lingui/macro'
-import { ChangeEventHandler, useCallback, useMemo, useReducer } from 'react'
+import {
+  ChangeEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import Checkbox from '../../atoms/Checkbox/Checkbox'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
@@ -45,6 +52,8 @@ export type BrowserProps = {
   peopleTitle?: string | null
   title?: string
   setSortBy: ((sortType: SortType, dir: SortState) => unknown) | null
+  setFilters: ((showTypes: Record<FilterType, boolean>) => unknown) | null
+  initialFilters?: Record<FilterType, boolean>
   loadMoreSubjects?: (() => unknown) | null
   loadMoreCollections?: (() => unknown) | null
   loadMoreResources?: (() => unknown) | null
@@ -64,6 +73,8 @@ export const Browser = withCtrl<BrowserProps>(
     loadMoreCollections,
     loadMoreResources,
     loadMorePeople,
+    setFilters,
+    initialFilters,
   }) => {
     const [filters, setFilter] = useReducer(
       (
@@ -73,7 +84,7 @@ export const Browser = withCtrl<BrowserProps>(
         ...prev,
         [type]: checked,
       }),
-      {
+      initialFilters ?? {
         Subjects: subjectCardPropsList ? true : false,
         Collections: collectionCardPropsList ? true : false,
         Resources: resourceCardPropsList ? true : false,
@@ -81,21 +92,27 @@ export const Browser = withCtrl<BrowserProps>(
       }
     )
 
-    const seeAll = (type: FilterType) => {
+    useEffect(() => {
+      setFilters?.(filters)
+    }, [filters, setFilters])
+
+    useEffect(() => {
+      let counter = 0
+      filterTypes.forEach(
+        (filterType: FilterType) => filters[filterType] && counter++,
+        []
+      )
+      console.log('showing all ', counter)
+      setSeeAll(counter === 1 ? true : false)
+    }, [filters])
+
+    const [seeAll, setSeeAll] = useState<boolean>(false)
+
+    const activateSeeAll = (type: FilterType) => {
+      setSeeAll(true)
       filterTypes.forEach((filterType: FilterType) => {
         filterType !== type && setFilter([filterType, false])
       })
-    }
-
-    const shouldShowSeeAll = (type: FilterType): boolean => {
-      let shouldShowSeeAll = false
-      filterTypes.forEach((filterType: FilterType) => {
-        if (filterType !== type && filters[filterType]) {
-          shouldShowSeeAll = true
-        }
-      }, [])
-      // TODO If shouldShowSeeAll === false we should activate infinite scroll
-      return shouldShowSeeAll
     }
 
     const singleActiveFilter = useCallback((): FilterType | undefined => {
@@ -153,13 +170,16 @@ export const Browser = withCtrl<BrowserProps>(
         title={t`Filters`}
         direction={direction}
         content={[
-          subjectCardPropsList && (
+          resourceCardPropsList && (
             <Checkbox
               onChange={setFilterCB}
-              label={t`Subjects`}
-              name="Subjects"
-              key="Subjects"
-              checked={filters.Subjects}
+              label={t`Resources`}
+              name="Resources"
+              key="Resources"
+              checked={filters.Resources}
+              disabled={
+                !resourceCardPropsList || resourceCardPropsList.length <= 0
+              }
             />
           ),
           collectionCardPropsList && (
@@ -169,15 +189,21 @@ export const Browser = withCtrl<BrowserProps>(
               name="Collections"
               key="Collections"
               checked={filters.Collections}
+              disabled={
+                !collectionCardPropsList || collectionCardPropsList.length <= 0
+              }
             />
           ),
-          resourceCardPropsList && (
+          subjectCardPropsList && (
             <Checkbox
               onChange={setFilterCB}
-              label={t`Resources`}
-              name="Resources"
-              key="Resources"
-              checked={filters.Resources}
+              label={t`Subjects`}
+              name="Subjects"
+              key="Subjects"
+              checked={filters.Subjects}
+              disabled={
+                !subjectCardPropsList || subjectCardPropsList.length <= 0
+              }
             />
           ),
           smallProfileCardPropsList && (
@@ -187,6 +213,10 @@ export const Browser = withCtrl<BrowserProps>(
               name="People"
               key="People"
               checked={filters.People}
+              disabled={
+                !smallProfileCardPropsList ||
+                smallProfileCardPropsList.length <= 0
+              }
             />
           ),
         ]}
@@ -210,7 +240,6 @@ export const Browser = withCtrl<BrowserProps>(
 
     return (
       <div className="browser">
-        {title && <div className="title">{title}</div>}
         <div className="content">
           {!hideSortAndFilter && (
             <div className="side-column">
@@ -221,126 +250,153 @@ export const Browser = withCtrl<BrowserProps>(
           <div
             className={`main-column ${hideSortAndFilter ? 'full-width' : ''}`}
           >
+            {title && <div className="title">{title}</div>}
             {!hideSortAndFilter && (
               <div className="filter-and-sort">
                 {filterCard('horizontal')}
                 {sortCard('horizontal')}
               </div>
             )}
-            {subjectCardPropsList && filters.Subjects && (
-              <ListCard
-                content={(shouldShowSeeAll('Subjects')
-                  ? subjectCardPropsList.slice(0, 8)
-                  : subjectCardPropsList
-                ).map((subjectCardProps) => (
-                  <SubjectCard {...subjectCardProps} />
-                ))}
-                title={
-                  <div className="card-header">
-                    <div className="title">
-                      <Trans>Subjects</Trans>
-                    </div>
-                    {shouldShowSeeAll('Subjects') && (
-                      <SecondaryButton onClick={() => seeAll('Subjects')}>
-                        <Trans>See all</Trans>
-                      </SecondaryButton>
-                    )}
-                  </div>
-                }
-                className={`subjects ${
-                  !shouldShowSeeAll('Subjects') ? 'see-all' : ''
-                }`}
-                noCard={true}
-                direction="wrap"
-              />
-            )}
-            {collectionCardPropsList && filters.Collections && (
-              <ListCard
-                content={(shouldShowSeeAll('Collections')
-                  ? collectionCardPropsList.slice(0, 6)
-                  : collectionCardPropsList
-                ).map((collectionCardProps) => (
-                  <CollectionCard {...collectionCardProps} />
-                ))}
-                title={
-                  <div className="card-header">
-                    <div className="title">
-                      <Trans>Collections</Trans>
-                    </div>
-                    {shouldShowSeeAll('Collections') && (
-                      <SecondaryButton onClick={() => seeAll('Collections')}>
-                        <Trans>See all</Trans>
-                      </SecondaryButton>
-                    )}
-                  </div>
-                }
-                className={`collections ${
-                  !shouldShowSeeAll('Collections') ? 'see-all' : ''
-                }`}
-                noCard={true}
-                minGrid={240}
-              />
-            )}
-            {resourceCardPropsList && filters.Resources && (
-              <ListCard
-                content={(shouldShowSeeAll('Resources')
-                  ? resourceCardPropsList.slice(0, 6)
-                  : resourceCardPropsList
-                ).map((resourceCardProps) => (
-                  <ResourceCard {...resourceCardProps} />
-                ))}
-                title={
-                  <div className="card-header">
-                    <div className="title">
-                      <Trans>Resources</Trans>
-                    </div>
-                    {shouldShowSeeAll('Resources') && (
-                      <SecondaryButton onClick={() => seeAll('Resources')}>
-                        <Trans>See all</Trans>
-                      </SecondaryButton>
-                    )}
-                  </div>
-                }
-                className={`resources ${
-                  !shouldShowSeeAll('Resources') ? 'see-all' : ''
-                }`}
-                noCard={true}
-                minGrid={280}
-              />
-            )}
-            {smallProfileCardPropsList && filters.People && (
-              <ListCard
-                content={(shouldShowSeeAll('People')
-                  ? smallProfileCardPropsList.slice(0, 11)
-                  : smallProfileCardPropsList
-                ).map((smallProfileCardProps) => (
-                  <SmallProfileCard {...smallProfileCardProps} />
-                ))}
-                title={
-                  peopleTitle !== null && (
+
+            {resourceCardPropsList &&
+              resourceCardPropsList.length > 0 &&
+              filters.Resources && (
+                <ListCard
+                  content={(seeAll
+                    ? resourceCardPropsList
+                    : resourceCardPropsList.slice(0, 6)
+                  ).map((resourceCardProps) => (
+                    <ResourceCard
+                      {...resourceCardProps}
+                      orientation="vertical"
+                    />
+                  ))}
+                  title={
                     <div className="card-header">
                       <div className="title">
-                        {peopleTitle ? (
-                          t`${peopleTitle}`
-                        ) : (
-                          <Trans>People</Trans>
-                        )}
+                        <Trans>Resources</Trans>
                       </div>
-                      {shouldShowSeeAll('People') && (
-                        <SecondaryButton onClick={() => seeAll('People')}>
+                      {!seeAll && (
+                        <SecondaryButton
+                          onClick={() => activateSeeAll('Resources')}
+                          color="dark-blue"
+                        >
                           <Trans>See all</Trans>
                         </SecondaryButton>
                       )}
                     </div>
-                  )
-                }
-                className={`people ${
-                  !shouldShowSeeAll('People') ? 'see-all' : ''
-                }`}
-                noCard={true}
-                minGrid={160}
-              />
-            )}
+                  }
+                  className={`resources ${seeAll ? 'see-all' : ''}`}
+                  noCard={true}
+                  minGrid={245}
+                  maxHeight={seeAll ? undefined : 736}
+                  // maxRows={seeAll ? undefined : 2}
+                />
+              )}
+
+            {collectionCardPropsList &&
+              collectionCardPropsList.length > 0 &&
+              filters.Collections && (
+                <ListCard
+                  content={(seeAll
+                    ? collectionCardPropsList
+                    : collectionCardPropsList.slice(0, 6)
+                  ).map((collectionCardProps) => (
+                    <CollectionCard {...collectionCardProps} />
+                  ))}
+                  title={
+                    <div className="card-header">
+                      <div className="title">
+                        <Trans>Collections</Trans>
+                      </div>
+                      {!seeAll && (
+                        <SecondaryButton
+                          onClick={() => activateSeeAll('Collections')}
+                          color="dark-blue"
+                        >
+                          <Trans>See all</Trans>
+                        </SecondaryButton>
+                      )}
+                    </div>
+                  }
+                  className={`collections ${seeAll ? 'see-all' : ''}`}
+                  noCard={true}
+                  minGrid={240}
+                  maxHeight={seeAll ? undefined : 397}
+                  // maxRows={seeAll ? undefined : 2}
+                />
+              )}
+
+            {subjectCardPropsList &&
+              subjectCardPropsList.length > 0 &&
+              filters.Subjects && (
+                <ListCard
+                  content={(seeAll
+                    ? subjectCardPropsList
+                    : subjectCardPropsList.slice(0, 8)
+                  ).map((subjectCardProps) => (
+                    <SubjectCard {...subjectCardProps} />
+                  ))}
+                  title={
+                    <div className="card-header">
+                      <div className="title">
+                        <Trans>Subjects</Trans>
+                      </div>
+                      {!seeAll && (
+                        <SecondaryButton
+                          onClick={() => activateSeeAll('Subjects')}
+                          color="dark-blue"
+                        >
+                          <Trans>See all</Trans>
+                        </SecondaryButton>
+                      )}
+                    </div>
+                  }
+                  className={`subjects ${seeAll ? 'see-all' : ''}`}
+                  noCard={true}
+                  direction="wrap"
+                  maxHeight={seeAll ? undefined : 221}
+                  // maxRows={seeAll ? undefined : 2}
+                />
+              )}
+
+            {smallProfileCardPropsList &&
+              smallProfileCardPropsList.length > 0 &&
+              filters.People && (
+                <ListCard
+                  content={(seeAll
+                    ? smallProfileCardPropsList
+                    : smallProfileCardPropsList.slice(0, 11)
+                  ).map((smallProfileCardProps) => (
+                    <SmallProfileCard {...smallProfileCardProps} />
+                  ))}
+                  title={
+                    peopleTitle !== null && (
+                      <div className="card-header">
+                        <div className="title">
+                          {peopleTitle ? (
+                            t`${peopleTitle}`
+                          ) : (
+                            <Trans>People</Trans>
+                          )}
+                        </div>
+                        {!seeAll && (
+                          <SecondaryButton
+                            onClick={() => activateSeeAll('People')}
+                          >
+                            <Trans>See all</Trans>
+                          </SecondaryButton>
+                        )}
+                      </div>
+                    )
+                  }
+                  className={`people ${seeAll ? 'see-all' : ''}`}
+                  noCard={true}
+                  minGrid={160}
+                  maxHeight={seeAll ? undefined : 535}
+                  // maxRows={seeAll ? undefined : 2}
+                />
+              )}
             {loadMore && (
               <div className="load-more">
                 <SecondaryButton onClick={loadMore} color="grey">

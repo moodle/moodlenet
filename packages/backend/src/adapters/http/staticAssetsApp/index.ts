@@ -16,7 +16,7 @@ export const createStaticAssetsApp = ({ uploadMaxSizes }: Config) => {
 
   app.post('/upload-temp', async (req, res) => {
     // this check could get more accurate (context assertions engine)
-    if (!req.mnHttpContext) {
+    if (!req.mnHttpContext.sessionEnv.authId) {
       return sendErrorResponse(res, help.respError(401, 'logged users only can upload'))
     }
 

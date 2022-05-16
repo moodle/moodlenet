@@ -9,14 +9,27 @@
   user-select: none;
   font-family: Helvetica;
   font-size: 14px;
-  color: #afb3c4;
+  // color: #afb3c4;
+
+  &.disabled {
+    pointer-events: none;
+    input:checked ~,
+    input:not(:checked) ~ {
+      .checkmark {
+        background-color: rgb(185, 185, 185);
+      }
+      .label {
+        color: rgb(185, 185, 185);
+      }
+    }
+  }
 
   &:hover {
     &.not-checked {
       color: #afb3c4;
     }
     &.checked {
-      color: #5e86ff;
+      color: #25272a;
     }
   }
 
@@ -70,7 +83,7 @@
 }
 
 .container input:checked ~ .label {
-  color: #3366ff;
+  color: inherit;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */

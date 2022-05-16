@@ -8,14 +8,16 @@ import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile'
 import LinkIcon from '@material-ui/icons/Link'
 import SaveIcon from '@material-ui/icons/Save'
-import React, { useCallback, useRef, useState } from 'react'
-import { tagList } from '../../../elements/tags'
+import FlagIcon from '@mui/icons-material/Flag'
+import ShareIcon from '@mui/icons-material/Share'
+import React, { useMemo, useRef, useState } from 'react'
+import { getBackupImage } from '../../../../helpers/utilities'
+import { getTagList } from '../../../elements/tags'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
 import { SelectOptions, SelectOptionsMulti } from '../../../lib/types'
 import { useImageUrl } from '../../../lib/useImageUrl'
-import defaultBackgroud from '../../../static/img/default-background.svg'
-import { FollowTag, getResourceColorType } from '../../../types'
+import { AssetInfo, FollowTag, getResourceColorType } from '../../../types'
 import Card from '../../atoms/Card/Card'
 import {
   Dropdown,
@@ -26,6 +28,7 @@ import {
   TextOption,
   TextOptionProps,
 } from '../../atoms/Dropdown/Dropdown'
+import FloatingMenu from '../../atoms/FloatingMenu/FloatingMenu'
 import { InputTextField } from '../../atoms/InputTextField/InputTextField'
 import Loading from '../../atoms/Loading/Loading'
 import Modal from '../../atoms/Modal/Modal'
@@ -33,6 +36,7 @@ import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import RoundButton from '../../atoms/RoundButton/RoundButton'
 import SecondaryButton from '../../atoms/SecondaryButton/SecondaryButton'
 import Snackbar from '../../atoms/Snackbar/Snackbar'
+import TertiaryButton from '../../atoms/TertiaryButton/TertiaryButton'
 import {
   VisibilityDropdown,
   VisibilityNodes,
@@ -42,6 +46,8 @@ import {
   OptionItem,
   OptionItemProp,
 } from '../../molecules/cards/AddToCollectionsCard/AddToCollectionsCard'
+import ReportModal from '../../molecules/modals/ReportModal/ReportModal'
+import SearchImage from '../../organisms/SearchImage/SearchImage'
 import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
@@ -63,9 +69,13 @@ export type ResourceFormValues = Omit<
 > & { isFile: boolean }
 export type ResourceProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
+  resourceId: string
+  resourceUrl: string
   isAuthenticated: boolean
   isOwner: boolean
   isAdmin: boolean
+  autoImageAdded: boolean
+  canSearchImage: boolean
   numLikes: number
   collections: SelectOptionsMulti<OptionItemProp>
   liked: boolean
@@ -79,6 +89,7 @@ export type ResourceProps = {
   deleteResourceForm?: FormikHandle
   addToCollectionsForm: FormikHandle<{ collections: string[] }>
   sendToMoodleLmsForm: FormikHandle<{ site?: string }>
+  reportForm?: FormikHandle<{ comment: string }>
   resourceFormat: string
   contentType: 'link' | 'file'
 
@@ -95,6 +106,8 @@ export type ResourceProps = {
 export const Resource = withCtrl<ResourceProps>(
   ({
     headerPageTemplateProps,
+    resourceId,
+    resourceUrl,
     isAuthenticated,
     isOwner,
     isAdmin,
@@ -110,6 +123,7 @@ export const Resource = withCtrl<ResourceProps>(
     categories,
     collections,
     form,
+    reportForm,
     toggleLikeForm,
     toggleBookmarkForm,
     deleteResourceForm,
@@ -118,13 +132,18 @@ export const Resource = withCtrl<ResourceProps>(
     resourceFormat,
     contentType,
     addToCollectionsForm,
+    autoImageAdded,
+    canSearchImage,
     setCategoryFilter,
     setLanguageFilter,
     setLevelFilter,
     setTypeFilter,
   }) => {
-    const [isEditing, setIsEditing] = useState<boolean>(false)
+    const [isEditing, setIsEditing] = useState<boolean>(
+      canSearchImage && autoImageAdded
+    )
     const [shouldShowErrors, setShouldShowErrors] = useState<boolean>(false)
+    const [isSearchingImage, setIsSearchingImage] = useState<boolean>(false)
     const [shouldShowSendToMoodleLmsError, setShouldShowSendToMoodleLmsError] =
       useState<boolean>(false)
     const [isAddingToCollection, setIsAddingToCollection] =
@@ -133,13 +152,23 @@ export const Resource = withCtrl<ResourceProps>(
       useState<boolean>(false)
     const [isToDelete, setIsToDelete] = useState<boolean>(false)
     const [isShowingImage, setIsShowingImage] = useState<boolean>(false)
+    const backupImage: AssetInfo | null | undefined = useMemo(
+      () => getBackupImage(resourceId),
+      [resourceId]
+    )
+    const [isReporting, setIsReporting] = useState<boolean>(false)
+    const [showReportedAlert, setShowReportedAlert] = useState<boolean>(false)
+    const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
 
-    //const [isLeaving, setIsLeaving] = useState<boolean>(false)
-    //const [hasMadeChanges, setHasMadeChanges] = useState<string>(lmsSite ?? '')
+    const [imageUrl] = useImageUrl(
+      form.values?.image?.location,
+      backupImage?.location
+    )
 
     const handleOnEditClick = () => {
       setIsEditing(true)
     }
+
     const handleOnSaveClick = () => {
       if (form.isValid) {
         form.submitForm()
@@ -148,6 +177,14 @@ export const Resource = withCtrl<ResourceProps>(
       } else {
         setShouldShowErrors(true)
       }
+    }
+
+    const copyUrl = () => {
+      navigator.clipboard.writeText(resourceUrl)
+      setShowUrlCopiedAlert(false)
+      setTimeout(() => {
+        setShowUrlCopiedAlert(true)
+      }, 100)
     }
 
     const handleOnSendToMoodleClick = () => {
@@ -165,24 +202,56 @@ export const Resource = withCtrl<ResourceProps>(
       uploadImageRef.current?.click()
     }
 
-    const uploadImage = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e.currentTarget.files?.item(0)
-        selectedFile && form.setFieldValue('image', selectedFile)
-      },
-      [form]
-    )
-    const [imageUrl] = useImageUrl(form.values.image, defaultBackgroud)
-    const image = (
+    const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedFile = e.currentTarget.files?.item(0)
+      if (selectedFile) {
+        form.setFieldValue('image', { location: selectedFile })
+      }
+    }
+
+    const setImage = (image: AssetInfo | undefined) => {
+      form.setFieldValue('image', image)
+    }
+
+    const deleteImage = () => {
+      form.setFieldValue('image', null)
+    }
+
+    const imageDiv = (
       <img
         className="image"
-        src={imageUrl ? imageUrl : undefined}
+        src={imageUrl}
         alt="Background"
         {...(contentType === 'file' && {
           onClick: () => setIsShowingImage(true),
         })}
+        style={{ maxHeight: form.values.image ? 'fit-content' : '150px' }}
       />
     )
+
+    const getImageCredits = (image: AssetInfo | undefined | null) => {
+      const credits = image
+        ? image.credits
+          ? image.credits
+          : undefined
+        : backupImage?.credits
+      return (
+        credits && (
+          <div className="image-credits">
+            Photo by
+            <a href={credits.owner.url} target="_blank" rel="noreferrer">
+              {credits.owner.name}
+            </a>
+            on
+            {
+              <a href={credits.owner.url} target="_blank" rel="noreferrer">
+                {credits.provider?.name}
+              </a>
+            }
+          </div>
+        )
+      )
+    }
 
     const actions = (
       <Card className="resource-action-card" hideBorderWhenSmall={true}>
@@ -209,7 +278,7 @@ export const Resource = withCtrl<ResourceProps>(
             ) : (
               <>
                 <LinkIcon />
-                <Trans>Open Link</Trans>
+                <Trans>Open link</Trans>
               </>
             )}
           </SecondaryButton>
@@ -450,14 +519,14 @@ export const Resource = withCtrl<ResourceProps>(
               )
           )}
         </Dropdown>
-        <Dropdown
+        {/* <Dropdown
           name="format"
           label={t`Format`}
           defaultValue={resourceFormat}
           disabled
           position={{ top: 50, bottom: 25 }}
           pills={<SimplePill label={resourceFormat} value={resourceFormat} />}
-        ></Dropdown>
+        ></Dropdown> */}
       </Card>
     ) : (
       <Card className="extra-details-card" hideBorderWhenSmall={true}>
@@ -472,12 +541,14 @@ export const Resource = withCtrl<ResourceProps>(
             </abbr>
           </div>
         )}
-        <div className="detail">
-          <div className="title">
-            <Trans>Subject</Trans>
+        {isOwner && (
+          <div className="detail subject">
+            <div className="title">
+              <Trans>Subject</Trans>
+            </div>
+            <abbr className="value">{categories.selected?.label}</abbr>
           </div>
-          <abbr className="value">{categories.selected?.label}</abbr>
-        </div>
+        )}
         {licenses.selected && (
           <div className="detail license">
             <div className="title">
@@ -540,7 +611,7 @@ export const Resource = withCtrl<ResourceProps>(
             </abbr>
           </div>
         )}
-        {resourceFormat && (
+        {/* {resourceFormat && (
           <div className="detail">
             <div className="title">
               <Trans>Format</Trans>
@@ -549,43 +620,58 @@ export const Resource = withCtrl<ResourceProps>(
               {resourceFormat}
             </abbr>
           </div>
-        )}
+        )} */}
       </Card>
     )
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
-        {/* {isLeaving && hasMadeChanges && (
-          <Modal
-            title={t`Discard changes`}
-            actions={[
-              <SecondaryButton
-                onClick={() => {
-                }}
-              >
-                <Trans>Cancel</Trans>
-              </SecondaryButton>,
-              <PrimaryButton
-                onClick={() => {
-                }}
-              >
-                <Trans>Discard</Trans>
-              </PrimaryButton>,
-            ]}
-            onClose={() => setIsAddingToMoodleLms(false)}
-            style={{ maxWidth: '350px', width: '100%' }}
+        {showUrlCopiedAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={6000}
+            showCloseButton={false}
           >
-            <Trans>Are you sure you want to discard the changes you made?</Trans>
-          </Modal>
-        )} */}
-        {isShowingImage && typeof imageUrl === 'string' && (
+            <Trans>Copied to clipoard</Trans>
+          </Snackbar>
+        )}
+        {showReportedAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Reported</Trans>
+          </Snackbar>
+        )}
+        {isReporting && reportForm && (
+          <ReportModal
+            reportForm={reportForm}
+            title={`${t`Confirm reporting this collection`}`}
+            setIsReporting={setIsReporting}
+            setShowReportedAlert={setShowReportedAlert}
+          />
+        )}
+        {isSearchingImage && (
+          <SearchImage
+            onClose={() => setIsSearchingImage(false)}
+            setImage={setImage}
+          />
+        )}
+        {isShowingImage && imageUrl && (
           <Modal
             className="image-modal"
             closeButton={false}
             onClose={() => setIsShowingImage(false)}
-            style={{ maxWidth: '90%', maxHeight: '90%' }}
+            style={{
+              maxWidth: '90%',
+              maxHeight: form.values.type !== '' ? 'calc(90% + 20px)' : '90%',
+            }}
           >
             <img src={imageUrl} alt="Resource" />
+            {getImageCredits(form.values.image)}
           </Modal>
         )}
         {
@@ -669,6 +755,20 @@ export const Resource = withCtrl<ResourceProps>(
             <Trans>The resource will be deleted</Trans>
           </Modal>
         )}
+        {canSearchImage && autoImageAdded && (
+          <Snackbar
+            position="bottom"
+            type="info"
+            waitDuration={200}
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>
+              We found an image for you, use the search button to find a better
+              one
+            </Trans>
+          </Snackbar>
+        )}
         {form.isSubmitting && (
           <Snackbar
             position="bottom"
@@ -715,15 +815,26 @@ export const Resource = withCtrl<ResourceProps>(
               <Card className="main-resource-card" hideBorderWhenSmall={true}>
                 <div className="resource-header">
                   <div className="type-and-actions">
-                    <span className="type">
-                      <Trans>Resource</Trans>
+                    <span className="resource-type">
+                      <div className="resource">
+                        <Trans>Resource</Trans>
+                      </div>
                       <div
+                        className="type"
+                        style={{
+                          background: getResourceColorType(resourceFormat),
+                        }}
+                      >
+                        {resourceFormat}
+                      </div>
+                      {/* <div
+                        className="type"
                         style={{
                           color: getResourceColorType(contentType),
                         }}
                       >
-                        &nbsp;/ {contentType}
-                      </div>
+                         &nbsp;/ {contentType} 
+                      </div> */}
                     </span>
                     <div className="actions">
                       {!isEditing && (
@@ -755,9 +866,29 @@ export const Resource = withCtrl<ResourceProps>(
                           )}
                         </div>
                       )}
-                      {/*<div className="share">
-                        <ShareIcon />
-                      </div>*/}
+                      {isAuthenticated && !isOwner && (
+                        <FloatingMenu
+                          className="more-button"
+                          menuContent={[
+                            <div tabIndex={0} onClick={copyUrl}>
+                              <ShareIcon />
+                              <Trans>Share</Trans>
+                            </div>,
+                            <div
+                              tabIndex={0}
+                              onClick={() => setIsReporting(true)}
+                            >
+                              <FlagIcon />
+                              <Trans>Report</Trans>
+                            </div>,
+                          ]}
+                          hoverElement={
+                            <TertiaryButton className={`more`}>
+                              ...
+                            </TertiaryButton>
+                          }
+                        />
+                      )}
                       {(isAdmin || isOwner) && (
                         <div className="edit-save">
                           {isEditing ? (
@@ -804,6 +935,9 @@ export const Resource = withCtrl<ResourceProps>(
                   {isOwner ? (
                     <InputTextField
                       name="name"
+                      textarea
+                      textAreaAutoSize
+                      displayMode
                       className="title underline"
                       value={form.values.name}
                       edit={isEditing}
@@ -819,20 +953,23 @@ export const Resource = withCtrl<ResourceProps>(
                     <div className="title">{form.values.name}</div>
                   )}
                   {tags.length > 0 && (
-                    <div className="tags scroll">{tagList(tags, 'medium')}</div>
+                    <div className="tags scroll">
+                      {getTagList(tags, 'medium')}
+                    </div>
                   )}
                 </div>
-                {(typeof imageUrl === 'string' || isEditing) && (
+                {(form.values.image || isEditing) && (
                   <div className="image-container">
                     {contentType === 'link' ? (
                       <a href={contentUrl} target="_blank" rel="noreferrer">
-                        {image}
+                        {imageDiv}
                       </a>
                     ) : (
-                      image
+                      <>{imageDiv}</>
                     )}
+                    {getImageCredits(form.values.image)}
                     {isEditing && !form.isSubmitting && (
-                      <>
+                      <div className="image-actions">
                         <input
                           ref={uploadImageRef}
                           type="file"
@@ -840,14 +977,33 @@ export const Resource = withCtrl<ResourceProps>(
                           onChange={uploadImage}
                           hidden
                         />
+                        {canSearchImage && (
+                          <RoundButton
+                            className={`search-image-button ${
+                              form.isSubmitting ? 'disabled' : ''
+                            } ${autoImageAdded ? 'highlight' : ''}`}
+                            type="search"
+                            abbrTitle={t`Search for an image`}
+                            onClick={() => setIsSearchingImage(true)}
+                          />
+                        )}
                         <RoundButton
                           className={`change-image-button ${
                             form.isSubmitting ? 'disabled' : ''
                           }`}
-                          type="edit"
+                          type="upload"
+                          abbrTitle={t`Upload an image`}
                           onClick={selectImage}
                         />
-                      </>
+                        <RoundButton
+                          className={`delete-image ${
+                            form.isSubmitting ? 'disabled' : ''
+                          }`}
+                          type="cross"
+                          abbrTitle={t`Delete image`}
+                          onClick={deleteImage}
+                        />
+                      </div>
                     )}
                   </div>
                 )}
@@ -857,9 +1013,9 @@ export const Resource = withCtrl<ResourceProps>(
                     name="description"
                     textarea
                     textAreaAutoSize
-                    value={form.values.description}
                     displayMode
                     edit={isEditing}
+                    value={form.values.description}
                     onChange={form.handleChange}
                     style={{
                       pointerEvents: `${
@@ -867,11 +1023,6 @@ export const Resource = withCtrl<ResourceProps>(
                       }`,
                     }}
                     error={isEditing && form.errors.description}
-                    // error={
-                    //   isEditing &&
-                    //   shouldShowErrors &&
-                    //   'Error with the description field'
-                    // }
                   />
                 ) : (
                   <div className="description">{form.values.description}</div>

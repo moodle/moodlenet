@@ -14,6 +14,6 @@ module.exports = {
     "storybook-addon-linguijs"
   ],
   typescript: {
-    check: false
+    // check: false
   }
 }

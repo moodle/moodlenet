@@ -6,11 +6,12 @@ import {
 import { useCallback, useMemo } from 'react'
 import { mainPath } from '../../../../../hooks/glob/nav'
 import { useUrlQuery } from '../../../../lib/useUrlQuery'
+import { FilterType, filterTypes } from '../../../organisms/Browser/Browser'
 
-const paramNames = ['text', 'sortBy', 'sortDir'] as const
-export const useSearchUrlQuery = () => {
+const browserParamNames = ['text', 'sortBy', 'sortDir', 'hideTypes'] as const
+export const useBrowserUrlQuery = () => {
   const { queryParams, setQueryParams, queryParamsArray } = useUrlQuery(
-    paramNames,
+    browserParamNames,
     {
       baseUrl: mainPath.search,
     }
@@ -25,13 +26,40 @@ export const useSearchUrlQuery = () => {
     }
   }, [queryParams.sortBy, queryParams.sortDir])
 
-  const setText = useCallback(
-    (text: string) => setQueryParams({ text: [text] }),
-    [setQueryParams]
-  )
   const setSort = useCallback(
     ({ by, asc }: GlobalSearchSort) =>
       setQueryParams({ sortBy: [by], sortDir: [asc ? 'asc' : 'desc'] }),
+    [setQueryParams]
+  )
+
+  const filters = useMemo<Record<FilterType, boolean>>(() => {
+    const hideTypes = queryParamsArray.hideTypes
+    // .filter<FilterType>((_): _ is FilterType =>
+    //   filterTypes.includes(_ as any)
+    // )
+    return {
+      Collections: !hideTypes.includes('Collections'),
+      Resources: !hideTypes.includes('Resources'),
+      People: !hideTypes.includes('People'),
+      Subjects: !hideTypes.includes('Subjects'),
+    }
+  }, [queryParamsArray.hideTypes])
+
+  const setFilters = useCallback(
+    (filters: Record<FilterType, boolean>) => {
+      const showTypesArr = Object.entries(filters).reduce(
+        (_filters, [type, show]) =>
+          show ? [..._filters, type as FilterType] : _filters,
+        [] as FilterType[]
+      )
+      const hideTypesArr = filterTypes.filter((_) => !showTypesArr.includes(_))
+      setQueryParams({ hideTypes: hideTypesArr })
+    },
+    [setQueryParams]
+  )
+
+  const setText = useCallback(
+    (text: string) => setQueryParams({ text: [text] }),
     [setQueryParams]
   )
 
@@ -39,10 +67,13 @@ export const useSearchUrlQuery = () => {
     () => queryParamsArray.text.join(' '),
     [queryParamsArray]
   )
+
   return {
-    paramNames,
+    browserParamNames,
     setText,
     text,
+    filters,
+    setFilters,
     sort,
     setSort,
   }

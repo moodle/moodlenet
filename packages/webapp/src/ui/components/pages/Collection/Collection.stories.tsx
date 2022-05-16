@@ -65,7 +65,7 @@ export const CollectionStoryProps = (overrides?: {
     initialValues: {
       description:
         'This is the description that tells you that this is not only the best content ever, but also the most dynamic and enjoyable you will never ever find. Trust us.',
-      image: 'https://picsum.photos/200/100',
+      image: { location: 'https://picsum.photos/200/100' },
       title: 'Best collection ever',
       visibility: 'Public',
       ...overrides?.formValues,
@@ -73,6 +73,7 @@ export const CollectionStoryProps = (overrides?: {
     ...overrides?.formConfig,
   })
   return {
+    collectionId: 'wj0e6mv6j8om-test',
     headerPageTemplateProps: {
       headerPageProps: HeaderPageLoggedInStoryProps,
       isAuthenticated: true,
@@ -84,7 +85,7 @@ export const CollectionStoryProps = (overrides?: {
     isAuthenticated: true,
     isOwner: false,
     isAdmin: false,
-    following: false,
+    isFollowing: false,
     numFollowers: 23,
     bookmarked: false,
     contributorCardProps: ContributorCardStoryProps,
@@ -93,8 +94,13 @@ export const CollectionStoryProps = (overrides?: {
     resourceCardPropsList: [
       ResourceCardOwnerStoryProps,
       ResourceCardOwnerBookmarkedStoryProps,
-      ResourceCardStoryProps,
+      ResourceCardStoryProps(),
     ],
+    reportForm: useFormik<{ comment: string }>({
+      initialValues: { comment: '' },
+      onSubmit: action('submit report Form'),
+    }),
+    collectionUrl: 'collection.url',
     toggleFollow: useFormik({
       initialValues: {},
       onSubmit: action('toggle Follow'),
@@ -107,6 +113,8 @@ export const CollectionStoryProps = (overrides?: {
       initialValues: {},
       onSubmit: action('delete Collection'),
     }),
+    autoImageAdded: false,
+    canSearchImage: true,
     ...overrides?.props,
   }
 }
@@ -141,6 +149,7 @@ export const Owner = () => {
   const props = CollectionStoryProps({
     props: {
       isOwner: true,
+      // autoImageAdded: true,
     },
   })
   return <Collection {...props} />

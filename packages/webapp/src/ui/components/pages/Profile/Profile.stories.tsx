@@ -59,6 +59,10 @@ export const useProfileStoryProps = (overrides?: {
       initialValues: { text: '' },
       onSubmit: action('submit send Email Form'),
     }),
+    reportForm: useFormik<{ comment: string }>({
+      initialValues: { comment: '' },
+      onSubmit: action('submit report Form'),
+    }),
     newResourceHref: href('Pages/New Resource/Default'),
     newCollectionHref: href('Pages/New Collection/Start'),
     headerPageTemplateProps: {
@@ -71,10 +75,9 @@ export const useProfileStoryProps = (overrides?: {
     },
     overallCardProps: OverallCardStoryProps,
     profileCardProps: ProfileCardStoryProps,
-    // scoreCardProps: ScoreCardStoryProps,
     collectionCardPropsList: [
-      CollectionCardStoryProps(randomIntFromInterval(1, 3)),
-      CollectionCardStoryProps(randomIntFromInterval(1, 3)),
+      CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
+      CollectionCardStoryProps(randomIntFromInterval(0, 1) === 0 ? 0 : 1),
     ],
     resourceCardPropsList: [
       ResourceCardLoggedInStoryProps,
@@ -108,13 +111,23 @@ export const LoggedOut: ProfileStory = () => {
         },
       },
       collectionCardPropsList: [
-        CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-        CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
-        CollectionCardLoggedOutStoryProps(randomIntFromInterval(1, 3)),
+        CollectionCardLoggedOutStoryProps(
+          randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        ),
+        CollectionCardLoggedOutStoryProps(
+          randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        ),
+        CollectionCardLoggedOutStoryProps(
+          randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        ),
       ],
       resourceCardPropsList: [
-        ResourceCardLoggedOutStoryProps,
-        ResourceCardLoggedOutStoryProps,
+        ResourceCardLoggedOutStoryProps(
+          randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        ),
+        ResourceCardLoggedOutStoryProps(
+          randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        ),
       ],
     },
   })
@@ -138,10 +151,18 @@ export const Owner: ProfileStory = () => {
     props: {
       profileCardProps: useProfileCardStoryProps({ props: { isOwner: true } }),
       collectionCardPropsList: [
-        CollectionCardOwnerPrivateStoryProps(randomIntFromInterval(1, 3)),
-        CollectionCardOwnerStoryProps(randomIntFromInterval(1, 3)),
-        CollectionCardOwnerStoryProps(randomIntFromInterval(1, 3)),
-        CollectionCardOwnerPrivateStoryProps(randomIntFromInterval(1, 3)),
+        CollectionCardOwnerPrivateStoryProps(
+          randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        ),
+        CollectionCardOwnerStoryProps(
+          randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        ),
+        CollectionCardOwnerStoryProps(
+          randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        ),
+        CollectionCardOwnerPrivateStoryProps(
+          randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        ),
       ],
       resourceCardPropsList: [
         ResourceCardOwnerPrivateStoryProps,
@@ -162,10 +183,18 @@ export const Approved: ProfileStory = () => {
         props: { isOwner: true, isApproved: true },
       }),
       collectionCardPropsList: [
-        CollectionCardOwnerPrivateStoryProps(randomIntFromInterval(1, 3)),
-        CollectionCardOwnerStoryProps(randomIntFromInterval(1, 3)),
-        CollectionCardOwnerStoryProps(randomIntFromInterval(1, 3)),
-        CollectionCardOwnerPrivateStoryProps(randomIntFromInterval(1, 3)),
+        CollectionCardOwnerPrivateStoryProps(
+          randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        ),
+        CollectionCardOwnerStoryProps(
+          randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        ),
+        CollectionCardOwnerStoryProps(
+          randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        ),
+        CollectionCardOwnerPrivateStoryProps(
+          randomIntFromInterval(0, 1) === 0 ? 0 : 1
+        ),
       ],
       resourceCardPropsList: [
         ResourceCardOwnerPrivateStoryProps,
@@ -194,6 +223,12 @@ export const Activated: ProfileStory = () => {
       collectionCardPropsList: [],
       resourceCardPropsList: [],
       showAccountCreationSuccessAlert: true,
+      profileCardProps: useProfileCardStoryProps({
+        props: {
+          isAuthenticated: true,
+          isOwner: true,
+        },
+      }),
     },
   })
   return <Profile {...props} />
