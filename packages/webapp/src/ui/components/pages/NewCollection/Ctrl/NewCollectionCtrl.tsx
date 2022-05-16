@@ -10,6 +10,8 @@ import { mixed, object, SchemaOf, string } from 'yup'
 import { MNEnv } from '../../../../../constants'
 // import { useSession } from '../../../../../context/Global/Session'
 import { useUploadTempFile } from '../../../../../helpers/data'
+import { useUnsplash } from '../../../../../helpers/unsplash'
+import { useAutoImageAdded } from '../../../../../helpers/utilities'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
 import { NewCollectionProps } from '../NewCollection'
@@ -43,12 +45,29 @@ export const useNewCollectionCtrl: CtrlHook<
   NewCollectionProps,
   NewCollectionCtrlProps
 > = () => {
+  const autoImageAdded = useAutoImageAdded()
+
+  const { getImageFromKeywords } = useUnsplash()
   const history = useHistory()
   const uploadTempFile = useUploadTempFile()
   // const { refetch } = useSession()
   const [createCollectionMut /* , createCollectionMutRes */] =
     useCreateCollectionMutation()
   // const [createCollectionRelMut /* , createCollectionRelMutRes */] = useCreateCollectionRelationMutation()
+
+  const setNewRandomImage = async (
+    name: string,
+    description: string
+  ): Promise<AssetRefInput> => {
+    const assetInfo = await getImageFromKeywords(name, description)
+    const assetRefInput: AssetRefInput = assetInfo
+      ? {
+          ...assetInfo,
+          type: 'ExternalUrl',
+        }
+      : { location: '', type: 'NoAsset' }
+    return assetRefInput
+  }
 
   const form = useFormik<NewCollectionFormValues>({
     validationSchema,
@@ -59,17 +78,22 @@ export const useNewCollectionCtrl: CtrlHook<
       visibility: 'Private',
     },
     onSubmit: async ({ description, title, visibility, image }) => {
+      let isAutoImageAdded = false
       const imageAssetRef: AssetRefInput = !image
-        ? { location: '', type: 'NoAsset' }
+        ? ((isAutoImageAdded = true),
+          await setNewRandomImage(title, description))
         : typeof image === 'string'
         ? {
             location: image,
             type: 'ExternalUrl',
           }
-        : {
-            location: await uploadTempFile('image', image),
+        : image.location instanceof File
+        ? {
+            location: await uploadTempFile('image', image.location),
             type: 'TmpUpload',
           }
+        : ((isAutoImageAdded = true),
+          await setNewRandomImage(title, description))
       const collectionCreationResp = await createCollectionMut({
         variables: {
           res: {
@@ -101,7 +125,10 @@ export const useNewCollectionCtrl: CtrlHook<
       }
       const collId = createRespData.node.id
       // refetch()
-      history.push(nodeGqlId2UrlPath(collId))
+      history.push(
+        nodeGqlId2UrlPath(collId),
+        autoImageAdded.set(isAutoImageAdded)
+      )
     },
   })
 

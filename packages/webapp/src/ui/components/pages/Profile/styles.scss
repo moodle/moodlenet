@@ -46,9 +46,12 @@
       display: flex;
       flex-direction: column;
       gap: 15px;
+      > .collections > .title {
+        font-size: 15px;
+      }
     }
 
-    @media screen and (max-width: 800px) {
+    @media screen and (max-width: 1000px) {
       > .main-column {
         width: 100%;
         height: 100%;

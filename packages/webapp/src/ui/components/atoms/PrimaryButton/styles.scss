@@ -6,8 +6,9 @@
   justify-content: center;
   border-radius: 45px;
   font-weight: bold;
-  font-size: 12px;
-  height: 30px;
+  font-size: 13.5px;
+  letter-spacing: 0.4px;
+  height: 32px;
   padding: 0 18px;
   width: fit-content;
   cursor: pointer;
@@ -41,8 +42,7 @@
 
   &:hover {
     background-color: $primary-color-hover;
-    box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%),
-      0px 2px 6px 2px rgb(60 64 67 / 15%);
+    box-shadow: 0 1px 1px rgb(0 0 0 / 35%);
 
     &.green {
       background-color: #04ce8a;
@@ -99,8 +99,8 @@
   }
 
   &.disabled {
-    cursor: default;
     user-select: none;
+    pointer-events: none;
     background-color: #e8e8e8;
   }
 

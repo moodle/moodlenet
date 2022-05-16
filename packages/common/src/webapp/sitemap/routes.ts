@@ -13,6 +13,7 @@ export type CreateNewCollection = RouteDef<'/create-new-collection', EmptyParams
 export type BookmarksPage = RouteDef<'/bookmarks', EmptyParams>
 export type FollowersPage = RouteDef<'/followers', EmptyParams>
 export type FollowingPage = RouteDef<'/following', EmptyParams>
+export type SettingsPage = RouteDef<'/settings', EmptyParams>
 export type LMSMoodleLanding = RouteDef<'/lms/moodle/search', EmptyParams>
 export type CookiesPolicy = RouteDef<'/cookies-policy', EmptyParams>
 export type UserAgreement = RouteDef<'/user-agreement', EmptyParams>

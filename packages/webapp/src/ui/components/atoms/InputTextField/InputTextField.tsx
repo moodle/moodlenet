@@ -69,7 +69,6 @@ export const InputTextField = forwardRef<
   }, [textAreaAutoSize, currTextAreaValue, fieldElem])
 
   useEffect(() => {
-    // console.log(error && `${label} I have an error`)
     if (error && !disabled) {
       setErrorLeave(false)
       setcurrentError(error)
@@ -99,7 +98,7 @@ export const InputTextField = forwardRef<
       {fieldProps.textarea ? (
         <div
           className={`textarea-container ${displayMode && 'display-mode'} ${
-            !edit && 'not-editing'
+            edit && 'editing'
           }`}
         >
           <textarea
@@ -107,9 +106,9 @@ export const InputTextField = forwardRef<
             cols={40}
             rows={textAreaAutoSize ? 1 : 5}
             {..._removeTextAreaProp(fieldProps)}
-            className={`${className} ${displayMode && 'display-mode'} ${
-              !edit && 'not-editing'
-            }`}
+            className={`${className} ${displayMode && 'display-mode'} 
+               ${edit && 'editing'}
+            `}
             disabled={disabled || !edit}
           />
           {action}
@@ -117,14 +116,14 @@ export const InputTextField = forwardRef<
       ) : (
         <div
           className={`input-container ${displayMode && 'display-mode'} ${
-            !edit && 'not-editing'
+            edit && 'editing'
           }`}
         >
           <input
             {..._removeTextAreaProp(fieldProps)}
             ref={fieldElementRef as any}
             className={`${className} ${displayMode && 'display-mode'} ${
-              !edit && 'not-editing'
+              edit && 'editing'
             }`}
             disabled={disabled || !edit}
           />

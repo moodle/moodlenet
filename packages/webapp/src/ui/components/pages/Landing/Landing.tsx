@@ -1,7 +1,10 @@
 import { t, Trans } from '@lingui/macro'
+import ArrowForwardRoundedIcon from '@material-ui/icons/ArrowForwardRounded'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 import NoteAddIcon from '@material-ui/icons/NoteAdd'
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import StreamOutlinedIcon from '@mui/icons-material/StreamOutlined'
+import { useState } from 'react'
 import { Href, Link } from '../../../elements/link'
 import { CP, withCtrl } from '../../../lib/ctrl'
 import defaultBackgroud from '../../../static/img/default-landing-background.png'
@@ -18,9 +21,11 @@ import ListCard from '../../molecules/cards/ListCard/ListCard'
 import ResourceCard, {
   ResourceCardProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard'
-import TrendCard, {
-  TrendCardProps,
-} from '../../molecules/cards/TrendCard/TrendCard'
+import {
+  SmallProfileCard,
+  SmallProfileCardProps,
+} from '../../molecules/cards/SmallProfileCard/SmallProfileCard'
+import { TrendCardProps } from '../../molecules/cards/TrendCard/TrendCard'
 import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
@@ -31,33 +36,40 @@ export type LandingProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
+  smallProfileCardPropsList: CP<SmallProfileCardProps>[]
   trendCardProps: TrendCardProps
   organization: Pick<Organization, 'name' | 'title' | 'subtitle'>
   isAuthenticated: boolean
+  loginHref: Href
+  signUpHref: Href
   newResourceHref: Href
   newCollectionHref: Href
   setSearchText(text: string): unknown
-  loadMoreResources?: (() => unknown) | null
+  searchResourcesHref: Href
+  searchCollectionsHref: Href
+  searchAuthorsHref: Href
 }
 
 export const Landing = withCtrl<LandingProps>(
   ({
+    searchResourcesHref,
+    searchAuthorsHref,
+    searchCollectionsHref,
     headerPageTemplateProps,
-    trendCardProps,
+    // trendCardProps,
     collectionCardPropsList,
     resourceCardPropsList,
+    smallProfileCardPropsList,
     organization,
     isAuthenticated,
+    loginHref,
+    signUpHref,
     newResourceHref,
     newCollectionHref,
-    loadMoreResources,
     setSearchText,
   }) => {
-    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false)
-    const [widthCollectionCard, setWidthCollectionCard] = useState<number>(170)
     const [isSearchboxInViewport, setIsSearchboxInViewport] =
       useState<boolean>(true)
-    const [numResources, setNumResources] = useState<number>(9)
     const [isCreatingContent, setIsCreatingContent] = useState<boolean>(false)
 
     const background = {
@@ -65,60 +77,51 @@ export const Landing = withCtrl<LandingProps>(
       backgroundSize: 'cover',
     }
 
-    const calcNumResources = () => {
-      if (window.innerWidth > 820 && window.innerWidth <= 1125) {
-        const remainder = resourceCardPropsList.length % 2
-        setNumResources(resourceCardPropsList.length - remainder)
-      } else if (window.innerWidth > 1125) {
-        const remainder = resourceCardPropsList.length % 3
-        setNumResources(resourceCardPropsList.length - remainder)
-      }
-    }
-
-    window.addEventListener('resize', calcNumResources)
-
-    const getCollectionCardWidth = () => {
-      const widthDoc = document.documentElement.clientWidth
-      const margin =
-        widthDoc < 675 ? 50 : widthDoc < 1250 ? 200 : widthDoc - 1100
-      const containerWidth = widthDoc - margin
-      var numElements = Math.trunc(containerWidth / (170 + 12))
-      const overflow = 170 - (containerWidth - numElements * (170 + 12))
-      if (overflow > -12 && overflow < 140) numElements++
-      var partToGrow = 0
-      var percentatgeToGrow = 0
-      if (numElements === 1) {
-        partToGrow = containerWidth - 50
-        percentatgeToGrow = containerWidth / partToGrow
-      } else {
-        partToGrow = (numElements - 1) * (170 + 12) + 170 / 2
-        percentatgeToGrow = containerWidth / partToGrow
-      }
-      return 170 * percentatgeToGrow
-    }
-
-    const setCollectionCardWidth = useCallback(() => {
-      setWidthCollectionCard(getCollectionCardWidth())
-    }, [setWidthCollectionCard])
-
-    useLayoutEffect(() => {
-      window.addEventListener('resize', setCollectionCardWidth)
-      return () => {
-        window.removeEventListener('resize', setCollectionCardWidth)
-      }
-    }, [setCollectionCardWidth])
-
-    useEffect(() => {
-      setCollectionCardWidth()
-    })
-
     return (
       <HeaderPageTemplate
         {...headerPageTemplateProps}
         style={{ backgroundColor: 'white' }}
         hideSearchbox={isSearchboxInViewport}
       >
-        {isCreatingContent && (
+        {!isAuthenticated && isCreatingContent && (
+          <Modal
+            className="create-content-modal"
+            title={t`Log in or create an account to start sharing content`}
+            closeButton={false}
+            onClose={() => {
+              setIsCreatingContent(false)
+            }}
+            style={{ maxWidth: '500px', width: '100%', gap: '22px' }}
+          >
+            <Link href={loginHref}>
+              <PrimaryButton className="" color="card">
+                <ArrowForwardIcon />
+                <div className="content">
+                  <div className="title">
+                    <Trans>Log in</Trans>
+                  </div>
+                  <div className="subtitle">
+                    <Trans>Enter to your account</Trans>
+                  </div>
+                </div>
+              </PrimaryButton>
+            </Link>
+            <Link href={signUpHref}>
+              <PrimaryButton className="" color="card">
+                <StreamOutlinedIcon />
+                <div className="content">
+                  <div className="title">
+                    <Trans>Join now</Trans>
+                  </div>
+                  <div className="subtitle">
+                    <Trans>Create a new account</Trans>
+                  </div>
+                </div>
+              </PrimaryButton>
+            </Link>
+          </Modal>
+        )}
+        {isAuthenticated && isCreatingContent && (
           <Modal
             className="create-content-modal"
             title={t`What would you like to create?`}
@@ -170,85 +173,111 @@ export const Landing = withCtrl<LandingProps>(
               setIsSearchboxInViewport={setIsSearchboxInViewport}
               marginTop={12}
             />
-            {isAuthenticated && (
-              <PrimaryButton
-                className="share-content"
-                color="blue"
-                onClick={() => setIsCreatingContent(true)}
-              >
-                <Trans>Share content</Trans>
-              </PrimaryButton>
-            )}
-          </div>
-          <div className="columns-container">
-            <div className="main-column">
-              <TrendCard {...trendCardProps} maxRows={2} />
-            </div>
+            <PrimaryButton
+              className="share-content"
+              color="blue"
+              onClick={() => setIsCreatingContent(true)}
+            >
+              <Trans>Share content</Trans>
+            </PrimaryButton>
           </div>
           <ListCard
+            className="resources"
+            content={resourceCardPropsList
+              .slice(0, 10)
+              .map((resourceCardProps) => (
+                <ResourceCard {...resourceCardProps} orientation="vertical" />
+              ))}
+            title={
+              <div className="card-header">
+                <div className="info">
+                  <div className="title">
+                    <Trans>Featured resources</Trans>
+                  </div>
+                  <div className="subtitle">
+                    <Trans>Highlights on top quality content</Trans>
+                  </div>
+                </div>
+                {
+                  <SecondaryButton className="more" color="dark-blue">
+                    <Link href={searchResourcesHref}>
+                      <Trans>See more resources</Trans>
+                    </Link>
+                    <ArrowForwardRoundedIcon />
+                  </SecondaryButton>
+                }
+              </div>
+            }
+            noCard={true}
+            minGrid={245}
+            maxHeight={736}
+            // maxRows={2}
+          />
+          <ListCard
+            className="collections"
             content={collectionCardPropsList
               .slice(0, 20)
               .map((collectionCardProps) => (
-                <CollectionCard
-                  {...collectionCardProps}
-                  width={widthCollectionCard}
-                />
+                <CollectionCard {...collectionCardProps} />
               ))}
             title={
               <div className="card-header">
-                <div className="title">
-                  <Trans>Featured collections</Trans>
+                <div className="info">
+                  <div className="title">
+                    <Trans>Featured collections</Trans>
+                  </div>
+                  <div className="subtitle">
+                    <Trans>Great collections of curated resources</Trans>
+                  </div>
                 </div>
-                {/* <SecondaryButton>
-                  <Trans>See all</Trans>
-                </SecondaryButton> */}
+                {
+                  <SecondaryButton className="more" color="dark-blue">
+                    <Link href={searchCollectionsHref}>
+                      <Trans>See more collections</Trans>
+                    </Link>
+                    <ArrowForwardRoundedIcon />
+                  </SecondaryButton>
+                }
               </div>
             }
-            className="collections"
+            minGrid={245}
             noCard={true}
-            direction="horizontal"
+            maxHeight={397}
+            // maxRows={2}
           />
           <ListCard
-            content={(isLoadingMore
-              ? resourceCardPropsList
-              : resourceCardPropsList
-            )
-              .slice(0, numResources)
-              .map((resourceCardProps) => (
-                <ResourceCard {...resourceCardProps} />
+            content={smallProfileCardPropsList
+              .slice(0, 11)
+              .map((smallProfileCardProps) => (
+                <SmallProfileCard {...smallProfileCardProps} />
               ))}
             title={
               <div className="card-header">
-                <div className="title">
-                  <Trans>Featured resources</Trans>
+                <div className="info">
+                  <div className="title">
+                    <Trans>Featured authors</Trans>
+                  </div>
+                  <div className="subtitle">
+                    <Trans>Authors with outstanding contributions</Trans>
+                  </div>
                 </div>
-                {/* <SecondaryButton>
-                  <Trans>See all</Trans>
-                </SecondaryButton> */}
+                {
+                  <SecondaryButton className="more" color="dark-blue">
+                    <Link href={searchAuthorsHref}>
+                      <Trans>See more authors</Trans>
+                    </Link>
+                    <ArrowForwardRoundedIcon />
+                  </SecondaryButton>
+                }
               </div>
             }
-            className="resources"
+            className={`people`}
             noCard={true}
-            minGrid={300}
+            minGrid={170}
+            maxHeight={267}
+            // maxRows={1}
           />
-          {loadMoreResources && (
-            <div className="load-more">
-              <SecondaryButton
-                onClick={() => {
-                  setIsLoadingMore(true)
-                  loadMoreResources()
-                }}
-                color="grey"
-              >
-                <Trans>Load more</Trans>
-              </SecondaryButton>
-            </div>
-          )}
-          {/* <div className="content">
-            <div className="main-column">
-            </div>
-            <div className="side-column"><TrendCard {...trendCardProps} /></div>
-          </div> */}
+          {/* <TrendCard {...trendCardProps} maxRows={2} /> */}
         </div>
       </HeaderPageTemplate>
     )

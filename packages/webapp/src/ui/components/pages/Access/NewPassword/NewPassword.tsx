@@ -30,10 +30,7 @@ export const NewPassword = withCtrl<NewPasswordProps>(
       !!form.submitCount && (newPasswordErrorMessage || !form.isValid)
 
     return (
-      <MainPageWrapper
-        {...mainPageWrapperProps}
-        style={{ background: '#f4f5f7' }}
-      >
+      <MainPageWrapper {...mainPageWrapperProps}>
         <div className="new-password-page">
           <AccessHeader {...accessHeaderProps} page={'login'} />
           <div className="main-content">

@@ -7,6 +7,9 @@
     float: right;
     > * {
       display: flex;
+      &:focus {
+        outline: none;
+      }
     }
   }
 
@@ -18,8 +21,8 @@
     display: flex;
     right: -40px;
     padding-right: 32px;
-    top: 28px;
-    padding-top: 10px;
+    padding-top: 6px;
+    z-index: 3;
 
     > .content {
       background-color: white;
@@ -35,6 +38,7 @@
         text-decoration: inherit;
         color: inherit;
         font-size: 14px;
+        font-weight: normal;
         font-family: inherit;
         display: flex;
         align-items: center;
@@ -58,8 +62,9 @@
   }
 }
 
-.menu.visible,
-.floating-menu:hover .menu,
-.floating-menu:active .menu {
+.menu.visible
+// ,.floating-menu:hover .menu,
+// .floating-menu:active .menu
+{
   visibility: visible;
 }

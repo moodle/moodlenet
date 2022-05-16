@@ -5,6 +5,7 @@ import { withCtrl } from '../../../../lib/ctrl'
 import { FormikHandle } from '../../../../lib/formik'
 import { useImageUrl } from '../../../../lib/useImageUrl'
 import { ReactComponent as UploadImageIcon } from '../../../../static/icons/upload-image.svg'
+import { AssetInfo } from '../../../../types'
 import Card from '../../../atoms/Card/Card'
 import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
 import Loading from '../../../atoms/Loading/Loading'
@@ -20,7 +21,7 @@ export type CreateCollectionProps = {
 
 export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
   const shouldShowErrors = !!form.submitCount && !form.isValid
-  const [imageUrl] = useImageUrl(form.values.image)
+  const [imageUrl] = useImageUrl(form.values.image?.location)
   const background = {
     backgroundImage: 'url(' + imageUrl + ')',
     backgroundSize: 'cover',
@@ -33,7 +34,10 @@ export const CreateCollection = withCtrl<CreateCollectionProps>(({ form }) => {
   const uploadImage = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const selectedFile = e.currentTarget.files?.item(0)
-      form.setFieldValue('image', selectedFile)
+      if (selectedFile) {
+        const fileAssetInfo: AssetInfo = { location: selectedFile }
+        form.setFieldValue('image', fileAssetInfo)
+      }
     },
     [form]
   )

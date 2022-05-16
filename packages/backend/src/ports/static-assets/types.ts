@@ -1,3 +1,4 @@
+import { Credits } from '@moodlenet/common/dist/graphql/scalars.graphql'
 import { UploadType } from '@moodlenet/common/dist/staticAsset/lib'
 
 export type AssetId = string
@@ -32,4 +33,4 @@ export type TempAssetDesc = {
 
 export type Ulid = string
 
-export type PersistTmpFileReq = { uploadType: UploadType; tempAssetId: TempAssetId }
+export type PersistTmpFileReq = { uploadType: UploadType; tempAssetId: TempAssetId; credits?: Credits | null }

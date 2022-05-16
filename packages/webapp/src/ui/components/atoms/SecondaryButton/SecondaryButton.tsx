@@ -2,11 +2,11 @@ import { FC } from 'react'
 import './styles.scss'
 
 export type SecondaryButtonProps = {
-  color?: 'black' | 'orange' | 'grey' | 'red'
+  color?: 'black' | 'orange' | 'grey' | 'red' | 'light-grey' | 'dark-blue'
   className?: string
   disabled?: boolean
   onHoverColor?: 'blue' | 'grey' | 'red' | 'fill-red'
-  onClick?(arg0: unknown): unknown
+  onClick?(arg0?: unknown): unknown
 }
 
 export const SecondaryButton: FC<SecondaryButtonProps> = ({
@@ -24,6 +24,7 @@ export const SecondaryButton: FC<SecondaryButtonProps> = ({
       }`}
       tabIndex={!disabled ? 0 : undefined}
       onClick={!disabled ? onClick : () => {}}
+      onKeyDown={(e) => !disabled && onClick && e.key === 'Enter' && onClick()}
     >
       {children}
     </div>

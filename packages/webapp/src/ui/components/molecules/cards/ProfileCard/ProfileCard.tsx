@@ -1,14 +1,23 @@
 import { t, Trans } from '@lingui/macro'
 import EditIcon from '@material-ui/icons/Edit'
-import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import SaveIcon from '@material-ui/icons/Save'
-import React, { Dispatch, SetStateAction, useRef, useState } from 'react'
+import FlagIcon from '@mui/icons-material/Flag'
+import ShareIcon from '@mui/icons-material/Share'
+import React, {
+  Dispatch,
+  SetStateAction,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
+// import { ReactComponent as AddIcon } from '../../../../assets/icons/add.svg'
 import { ReactComponent as ApprovedIcon } from '../../../../assets/icons/approved.svg'
 import { withCtrl } from '../../../../lib/ctrl'
 import { FormikHandle } from '../../../../lib/formik'
 import { useImageUrl } from '../../../../lib/useImageUrl'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
 import defaultBackgroud from '../../../../static/img/default-background.svg'
+import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
 import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
 import Loading from '../../../atoms/Loading/Loading'
 import Modal from '../../../atoms/Modal/Modal'
@@ -34,10 +43,13 @@ export type ProfileCardProps = {
   approveUserForm: FormikHandle<{}>
   unapproveUserForm: FormikHandle<{}>
   userId: string
+  profileUrl: string
   showAccountApprovedSuccessAlert?: boolean
   toggleIsEditing(): unknown
   openSendMessage(): unknown
   setShowUserIdCopiedAlert: Dispatch<SetStateAction<boolean>>
+  setShowUrlCopiedAlert: Dispatch<SetStateAction<boolean>>
+  setIsReporting: Dispatch<SetStateAction<boolean>>
 }
 
 export const ProfileCard = withCtrl<ProfileCardProps>(
@@ -56,24 +68,30 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     approveUserForm,
     requestApprovalForm,
     userId,
+    profileUrl,
     unapproveUserForm,
     openSendMessage,
     toggleIsEditing,
     setShowUserIdCopiedAlert,
+    setShowUrlCopiedAlert,
+    setIsReporting,
   }) => {
     const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
     const shouldShowErrors = !!editForm.submitCount
     const [isShowingBackground, setIsShowingBackground] =
       useState<boolean>(false)
+    const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
 
-    // const handleOnSaveClick = () => {
-    //   if (editForm.isValid) {
-    //     setShouldShowErrors(false)
-    //     toggleIsEditing()
-    //   } else {
-    //     setShouldShowErrors(true)
-    //   }
-    // }
+    const setIsShowingSmallCardHelper = () => {
+      setIsShowingSmallCard(window.innerWidth < 550 ? true : false)
+    }
+
+    useLayoutEffect(() => {
+      window.addEventListener('resize', setIsShowingSmallCardHelper)
+      return () => {
+        window.removeEventListener('resize', setIsShowingSmallCardHelper)
+      }
+    }, [])
 
     const uploadBackgroundRef = useRef<HTMLInputElement>(null)
     const selectBackground = (e: React.MouseEvent<HTMLElement>) => {
@@ -113,6 +131,14 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
       setShowUserIdCopiedAlert(false)
       setTimeout(() => {
         setShowUserIdCopiedAlert(true)
+      }, 100)
+    }
+
+    const copyUrl = () => {
+      navigator.clipboard.writeText(profileUrl)
+      setShowUrlCopiedAlert(false)
+      setTimeout(() => {
+        setShowUrlCopiedAlert(true)
       }, 100)
     }
 
@@ -158,62 +184,54 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               <RoundButton
                 className="change-background-button"
                 type="edit"
+                abbrTitle={t`Edit background`}
                 onClick={selectBackground}
               />
             </>
           )}
         </div>
-
-        <div className="avatar-and-actions">
-          <div
-            className="avatar"
-            style={{
-              ...avatar,
-              pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
-            }}
-            onClick={() => !isEditing && setIsShowingAvatar(true)}
-          >
-            {isEditing && (
-              <>
-                <input
-                  ref={uploadAvatarRef}
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.gif"
-                  onChange={uploadAvatar}
-                  hidden
-                />
-                <RoundButton
-                  className="change-avatar-button"
-                  type="edit"
-                  onClick={selectAvatar}
-                />
-              </>
-            )}
-          </div>
+        <div
+          className="avatar"
+          style={{
+            ...avatar,
+            pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
+          }}
+          onClick={() => !isEditing && setIsShowingAvatar(true)}
+        >
+          {isEditing && (
+            <>
+              <input
+                ref={uploadAvatarRef}
+                type="file"
+                accept=".jpg,.jpeg,.png,.gif"
+                onChange={uploadAvatar}
+                hidden
+              />
+              <RoundButton
+                className="change-avatar-button"
+                type="edit"
+                abbrTitle={t`Edit profile picture`}
+                onClick={selectAvatar}
+              />
+            </>
+          )}
+        </div>
+        <div className="actions">
           {isOwner && (
-            <div className="actions edit-save">
+            <div className="edit-save">
               {isEditing ? (
                 <PrimaryButton
                   className={`${editForm.isSubmitting ? 'loading' : ''}`}
                   color="green"
                   onClick={toggleIsEditing}
                 >
-                  <div
-                    className="loading"
-                    style={{
-                      visibility: editForm.isSubmitting ? 'visible' : 'hidden',
-                    }}
-                  >
-                    <Loading color="white" />
-                  </div>
-                  <div
-                    className="label"
-                    style={{
-                      visibility: editForm.isSubmitting ? 'hidden' : 'visible',
-                    }}
-                  >
+                  {editForm.isSubmitting ? (
+                    <div className="loading">
+                      <Loading color="white" />
+                    </div>
+                  ) : (
                     <SaveIcon />
-                  </div>
+                  )}
                 </PrimaryButton>
               ) : (
                 <SecondaryButton onClick={toggleIsEditing} color="orange">
@@ -260,7 +278,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               {!isEditing && isOwner && (
                 <abbr
                   className={`user-id`}
-                  title={t`Click to copy your ID to the Clipboard`}
+                  title={t`Click to copy your ID to the clipboard`}
                 >
                   <TertiaryButton className="copy-id" onClick={copyId}>
                     Copy ID
@@ -432,26 +450,67 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 <Trans>Unapprove</Trans>
               </SecondaryButton>
             )}
-            {!isOwner && isFollowing && (
-              <SecondaryButton onClick={toggleFollowForm.submitForm}>
-                <Trans>Unfollow</Trans>
-              </SecondaryButton>
-            )}
             {!isOwner && !isFollowing && (
               <PrimaryButton
                 disabled={!isAuthenticated}
                 onClick={toggleFollowForm.submitForm}
+                className="following-button"
               >
+                {/* <AddIcon /> */}
                 <Trans>Follow</Trans>
               </PrimaryButton>
             )}
+            {!isOwner && isFollowing && (
+              <SecondaryButton
+                disabled={!isAuthenticated}
+                onClick={toggleFollowForm.submitForm}
+                className="following-button"
+                color="orange"
+              >
+                {/* <CheckIcon /> */}
+                <Trans>Following</Trans>
+              </SecondaryButton>
+            )}
             {!isOwner && (
-              <TertiaryButton
-                className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
+              <SecondaryButton
+                color="grey"
+                className={`message`}
+                disabled={!isAuthenticated}
                 onClick={openSendMessage}
               >
-                <MailOutlineIcon />
-              </TertiaryButton>
+                <Trans>Message</Trans>
+              </SecondaryButton>
+              // <TertiaryButton
+              //   className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
+              //   onClick={openSendMessage}
+              // >
+              //   <MailOutlineIcon />
+              // </TertiaryButton>
+            )}
+            {isAuthenticated && !isOwner && (
+              <FloatingMenu
+                menuContent={[
+                  <div tabIndex={0} onClick={copyUrl}>
+                    <ShareIcon />
+                    <Trans>Share</Trans>
+                  </div>,
+                  <div tabIndex={0} onClick={() => setIsReporting(true)}>
+                    <FlagIcon />
+                    <Trans>Report</Trans>
+                  </div>,
+                ]}
+                hoverElement={
+                  isShowingSmallCard ? (
+                    <SecondaryButton color="grey" className={`more small`}>
+                      <div className="three-dots">...</div>
+                    </SecondaryButton>
+                  ) : (
+                    <SecondaryButton color="grey" className={`more big`}>
+                      <div className="text">More</div>
+                    </SecondaryButton>
+                  )
+                }
+              />
             )}
           </div>
         </div>

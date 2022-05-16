@@ -6,8 +6,9 @@
   justify-content: center;
   border-radius: 45px;
   font-weight: bold;
-  font-size: 12px;
-  height: 30px;
+  font-size: 13.5px;
+  letter-spacing: 0.4px;
+  height: 32px;
   padding: 0 18px;
   width: fit-content;
   cursor: pointer;
@@ -16,7 +17,7 @@
   &:not(.disabled) {
     &.black {
       color: #4d5156;
-      border: 2px solid rgb(60 64 67);
+      border: 2px solid #4d5156;
     }
 
     &.red {
@@ -30,13 +31,21 @@
     }
 
     &.grey {
-      color: #707070;
-      border: 2px solid #707070;
+      color: #727588;
+      border: 2px solid #727588;
+    }
+
+    &.light-grey {
+      color: #b9b9b9;
+      border: 2px solid #b9b9b9;
+    }
+    &.dark-blue {
+      color: #194866;
+      border: 2px solid #194866;
     }
 
     &:hover {
-      box-shadow: 0px 1px 2px 0px rgb(60 64 67 / 30%),
-        0px 2px 6px 2px rgb(60 64 67 / 15%);
+      box-shadow: 0 1px 1px rgb(0 0 0 / 35%);
 
       &.orange,
       &.hover-orange {
@@ -45,8 +54,13 @@
       }
 
       &.grey &.hover-grey {
-        color: #7c8091;
-        border: 2px solid #7c8091;
+        color: darken(#727588, 5%);
+        border: 2px solid darken(#727588, 5%);
+      }
+
+      &.light-grey &.hover-light-grey {
+        color: #b9b9b9;
+        border: 2px solid #b9b9b9;
       }
 
       &.red &.hover-grey {
@@ -92,7 +106,7 @@
       &.black,
       &.hover-black {
         color: #4d5156;
-        border: 2px solid black;
+        border: 2px solid #4d5156;
       }
 
       &.hover-fill-red {
@@ -111,8 +125,8 @@
   }
 
   &.disabled {
-    cursor: default;
     user-select: none;
+    pointer-events: none;
     color: #e8e8e8;
     border: 2px solid #e8e8e8;
   }

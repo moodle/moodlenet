@@ -4,7 +4,7 @@ import './styles.scss'
 export type TertiaryButtonProps = {
   className?: string
   disabled?: boolean
-  onClick?(arg0: unknown): unknown | any
+  onClick?(arg0?: unknown): unknown | any
 }
 
 export const TertiaryButton: FC<TertiaryButtonProps> = ({
@@ -15,9 +15,10 @@ export const TertiaryButton: FC<TertiaryButtonProps> = ({
 }) => {
   return (
     <div
-      className={`tertiary-button ${className}`}
+      className={`tertiary-button ${className} ${disabled ? 'disabled' : ''}`}
       tabIndex={!disabled ? 0 : undefined}
       onClick={!disabled ? onClick : () => {}}
+      onKeyDown={(e) => !disabled && onClick && e.key === 'Enter' && onClick()}
     >
       {children}
     </div>

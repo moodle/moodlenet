@@ -6,4 +6,5 @@ module.exports.getScalarsGql = (root) => ({
   Empty: `${root}/scalars.graphql#Empty`,
   Cursor: `${root}/scalars.graphql#Cursor`,
   Never: `${root}/scalars.graphql#Never`,
+  Credits: `${root}/scalars.graphql#Credits`,
 });

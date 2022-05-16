@@ -12,13 +12,15 @@ import { useFormik } from 'formik'
 import { createElement, useCallback, useEffect, useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { mixed, object, SchemaOf, string } from 'yup'
-import { MNEnv } from '../../../../../constants'
+import { MNEnv, UNSPLASH_ENDPOINT } from '../../../../../constants'
 import { useSeoContentId } from '../../../../../context/Global/Seo'
 import { useSession } from '../../../../../context/Global/Session'
 import {
+  fullLocalEntityUrlByGqlId,
   getMaybeAssetRefUrl,
   useUploadTempFile,
 } from '../../../../../helpers/data'
+import { useAutoImageAdded } from '../../../../../helpers/utilities'
 import { href } from '../../../../elements/link'
 // import { useLocalInstance } from '../../../../context/Global/LocalInstance'
 import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
@@ -64,8 +66,7 @@ export const useCollectionCtrl: CtrlHook<
 > = ({ id }) => {
   useSeoContentId(id)
   // const { org: localOrg } = useLocalInstance()
-  const { session, isAdmin, isAuthenticated } = useSession()
-
+  const { reportEntity, session, isAdmin, isAuthenticated } = useSession()
   const { data, refetch, loading } = useCollectionPageDataQuery({
     variables: {
       collectionId: id,
@@ -79,6 +80,7 @@ export const useCollectionCtrl: CtrlHook<
   const [edit, editRes] = useEditCollectionMutation()
 
   const history = useHistory()
+  const autoImageAdded = useAutoImageAdded().get()
   const [delCollection, delCollectionRes] = useDelCollectionMutation()
   const myId = session?.profile.id
   const deleteCollection = useFormik({
@@ -162,18 +164,34 @@ export const useCollectionCtrl: CtrlHook<
       ) {
         return
       }
-      const imageAssetRef: AssetRefInput =
-        !vals.image || vals.image === form.initialValues.image
-          ? { location: '', type: 'NoChange' }
-          : typeof vals.image === 'string'
-          ? {
-              location: vals.image,
-              type: 'ExternalUrl',
-            }
-          : {
-              location: await uploadTempFile('image', vals.image),
-              type: 'TmpUpload',
-            }
+      // debugger
+      const imageAssetRef: AssetRefInput = !vals.image
+        ? {
+            location: '',
+            type: 'NoAsset',
+            credits: form.initialValues.image?.credits,
+          }
+        : vals.image.location === form.initialValues.image?.location
+        ? {
+            location: '',
+            type: 'NoChange',
+          }
+        : typeof vals.image.location === 'string'
+        ? {
+            location: vals.image.location,
+            type: 'ExternalUrl',
+            credits: vals.image.credits,
+          }
+        : vals.image.location instanceof File
+        ? {
+            location: await uploadTempFile('image', vals.image.location),
+            type: 'TmpUpload',
+            credits: vals.image.credits,
+          }
+        : {
+            location: '',
+            type: 'NoChange',
+          }
       await edit({
         variables: {
           id,
@@ -193,13 +211,16 @@ export const useCollectionCtrl: CtrlHook<
   useEffect(() => {
     if (collectionData) {
       const { name: title, description, _published, image } = collectionData
+      const _image = image ? getMaybeAssetRefUrl(image) : undefined
       _resetForm({
         touched: {},
         values: {
           title,
           description,
           visibility: _published ? 'Public' : 'Private',
-          image: getMaybeAssetRefUrl(image),
+          image: _image
+            ? { location: _image, credits: image?.credits }
+            : undefined,
         },
       })
     }
@@ -247,21 +268,38 @@ export const useCollectionCtrl: CtrlHook<
     },
     [delRelation, delRelationRes.loading, refetch]
   )
+  const collectionUrl = fullLocalEntityUrlByGqlId(id)
 
+  const reportForm = useFormik({
+    initialValues: { comment: '' },
+    validationSchema: object({ comment: string().required() }),
+    validateOnMount: true,
+    onSubmit: async ({ comment }) => {
+      await reportEntity({
+        comment,
+        entityUrl: collectionUrl,
+      })
+    },
+  })
   const collectionProps = useMemo<null | CollectionProps>(() => {
     if (!collectionData) {
       return null
     }
     const props: CollectionProps = {
+      collectionUrl,
+      reportForm,
       headerPageTemplateProps: ctrlHook(
         useHeaderPageTemplateCtrl,
         {},
         'header-page-template'
       ),
+      canSearchImage: !!UNSPLASH_ENDPOINT,
+      collectionId: collectionData.id,
       form,
       isOwner,
       isAdmin,
       isAuthenticated,
+      autoImageAdded,
       resourceCardPropsList: resourceEdges.map(({ edge, node: { id } }) =>
         ctrlHook(
           useResourceCardCtrl,
@@ -282,7 +320,7 @@ export const useCollectionCtrl: CtrlHook<
         displayName: creator?.name ?? '',
       },
       bookmarked: !!myBookmarkedEdgeId,
-      following: !!myFollowEdgeId,
+      isFollowing: !!myFollowEdgeId,
       toggleBookmark,
       numFollowers: collectionData.followersCount,
       toggleFollow,
@@ -291,9 +329,13 @@ export const useCollectionCtrl: CtrlHook<
     return props
   }, [
     collectionData,
+    collectionUrl,
+    reportForm,
     form,
     isOwner,
+    isAdmin,
     isAuthenticated,
+    autoImageAdded,
     resourceEdges,
     creator,
     myBookmarkedEdgeId,
@@ -302,7 +344,6 @@ export const useCollectionCtrl: CtrlHook<
     toggleFollow,
     deleteCollection,
     removeResource,
-    isAdmin,
   ])
   if (!loading && !data?.node) {
     return createElement(

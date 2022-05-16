@@ -26,6 +26,7 @@ import {
   ResourceCard,
   ResourceCardProps,
 } from '../../molecules/cards/ResourceCard/ResourceCard'
+import ReportModal from '../../molecules/modals/ReportModal/ReportModal'
 import {
   HeaderPageTemplate,
   HeaderPageTemplateProps,
@@ -43,6 +44,9 @@ export type ProfileProps = {
     | 'openSendMessage'
     | 'editForm'
     | 'setShowUserIdCopiedAlert'
+    | 'setShowUrlCopiedAlert'
+    | 'setIsReporting'
+    | 'setShowUserIdCopiedAlert'
   >
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
@@ -52,6 +56,7 @@ export type ProfileProps = {
   showAccountCreationSuccessAlert?: boolean
   showAccountApprovedSuccessAlert?: boolean
   sendEmailForm?: FormikHandle<{ text: string }>
+  reportForm?: FormikHandle<{ comment: string }>
   editForm: FormikHandle<ProfileFormValues>
 }
 
@@ -68,12 +73,16 @@ export const Profile = withCtrl<ProfileProps>(
     showAccountCreationSuccessAlert,
     showAccountApprovedSuccessAlert,
     sendEmailForm,
+    reportForm,
     editForm,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
     const [showUserIdCopiedAlert, setShowUserIdCopiedAlert] =
       useState<boolean>(false)
+    const [showUrlCopiedAlert, setShowUrlCopiedAlert] = useState<boolean>(false)
+    const [showReportedAlert, setShowReportedAlert] = useState<boolean>(false)
+    const [isReporting, setIsReporting] = useState<boolean>(false)
 
     const toggleIsEditing = () => {
       isEditing && editForm.dirty && editForm.submitForm()
@@ -107,16 +116,35 @@ export const Profile = withCtrl<ProfileProps>(
 
     return (
       <HeaderPageTemplate {...headerPageTemplateProps}>
+        {showReportedAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Reported</Trans>
+          </Snackbar>
+        )}
+        {showUrlCopiedAlert && (
+          <Snackbar
+            type="success"
+            position="bottom"
+            autoHideDuration={6000}
+            showCloseButton={false}
+          >
+            <Trans>Copied to clipoard</Trans>
+          </Snackbar>
+        )}
         {showUserIdCopiedAlert && (
           <Snackbar
             type="success"
             position="bottom"
-            autoHideDuration={10000000}
+            autoHideDuration={6000}
             showCloseButton={false}
           >
             <Trans>
-              User ID copied to your clipboard, use it to connect with Moodle
-              LMS
+              User ID copied to the clipboard, use it to connect with Moodle LMS
             </Trans>
           </Snackbar>
         )}
@@ -176,6 +204,14 @@ export const Profile = withCtrl<ProfileProps>(
             />
           </Modal>
         )}
+        {isReporting && reportForm && (
+          <ReportModal
+            reportForm={reportForm}
+            title={t`Confirm reporting this profile`}
+            setIsReporting={setIsReporting}
+            setShowReportedAlert={setShowReportedAlert}
+          />
+        )}
         <div className="profile">
           <div className="content">
             <div className="main-column">
@@ -185,6 +221,8 @@ export const Profile = withCtrl<ProfileProps>(
                 isEditing={isEditing}
                 toggleIsEditing={toggleIsEditing}
                 setShowUserIdCopiedAlert={setShowUserIdCopiedAlert}
+                setShowUrlCopiedAlert={setShowUrlCopiedAlert}
+                setIsReporting={setIsReporting}
                 openSendMessage={() => setIsSendingMessage(!!sendEmailForm)}
               />
               <ListCard
@@ -194,6 +232,7 @@ export const Profile = withCtrl<ProfileProps>(
                     <ResourceCard
                       {...resourcesCardProps}
                       isEditing={isEditing}
+                      orientation="horizontal"
                     />
                   )
                 })}
@@ -213,7 +252,7 @@ export const Profile = withCtrl<ProfileProps>(
                       }
                     : undefined
                 }
-              ></ListCard>
+              />
               {collectionList}
             </div>
             <div className="side-column">

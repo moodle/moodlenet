@@ -22,7 +22,7 @@ export type SubjectProps = {
   headerPageTemplateProps: CP<HeaderPageTemplateProps>
   isAuthenticated: boolean
   title: string
-  following: boolean
+  isFollowing: boolean
   collectionCardPropsList: CP<CollectionCardProps>[]
   resourceCardPropsList: CP<ResourceCardProps>[]
   numFollowers: number
@@ -38,7 +38,7 @@ export const Subject = withCtrl<SubjectProps>(
     headerPageTemplateProps,
     isAuthenticated,
     title,
-    following,
+    isFollowing,
     toggleFollow,
     resourceCardPropsList,
     collectionCardPropsList,
@@ -92,62 +92,68 @@ export const Subject = withCtrl<SubjectProps>(
                   </div>
                 </div>
                 <div className="actions">
-                  {following ? (
-                    <SecondaryButton onClick={toggleFollow}>
-                      <Trans>Unfollow</Trans>
-                    </SecondaryButton>
-                  ) : (
+                  {!isFollowing ? (
                     <PrimaryButton
                       disabled={!isAuthenticated}
                       onClick={toggleFollow}
+                      className="following-button"
                     >
+                      {/* <AddIcon /> */}
                       <Trans>Follow</Trans>
                     </PrimaryButton>
+                  ) : (
+                    <SecondaryButton
+                      disabled={!isAuthenticated}
+                      onClick={toggleFollow}
+                      className="following-button"
+                      color="orange"
+                    >
+                      {/* <CheckIcon /> */}
+                      <Trans>Following</Trans>
+                    </SecondaryButton>
                   )}
                 </div>
               </Card>
             </div>
             <div className="main-content">
-              {collectionCardPropsList && (
+              {collectionCardPropsList && collectionCardPropsList.length > 0 && (
                 <ListCard
-                  content={collectionCardPropsList.map(
-                    (collectionCardProps) => (
+                  className="collections"
+                  content={collectionCardPropsList
+                    .slice(0, 20)
+                    .map((collectionCardProps) => (
                       <CollectionCard {...collectionCardProps} />
-                    )
-                  )}
+                    ))}
                   title={
                     <div className="card-header">
                       <div className="title">
                         <Trans>Collections</Trans>
                       </div>
-                      {/* <SecondaryButton>
-                        <Trans>See all</Trans>
-                      </SecondaryButton> */}
                     </div>
                   }
-                  className="collections"
+                  minGrid={245}
                   noCard={true}
-                  direction="horizontal"
                 />
               )}
-              {resourceCardPropsList && (
+              {resourceCardPropsList && resourceCardPropsList.length > 0 && (
                 <ListCard
-                  content={resourceCardPropsList.map((resourcesCardProps) => (
-                    <ResourceCard {...resourcesCardProps} />
-                  ))}
+                  className="resources"
+                  noCard={true}
+                  content={resourceCardPropsList.map((resourcesCardProps) => {
+                    return (
+                      <ResourceCard
+                        {...resourcesCardProps}
+                        orientation="horizontal"
+                      />
+                    )
+                  })}
                   title={
                     <div className="card-header">
                       <div className="title">
                         <Trans>Resources</Trans>
                       </div>
-                      {/* <SecondaryButton>
-                        <Trans>See all</Trans>
-                      </SecondaryButton> */}
                     </div>
                   }
-                  className="resources"
-                  noCard={true}
-                  minGrid={300}
                 />
               )}
             </div>

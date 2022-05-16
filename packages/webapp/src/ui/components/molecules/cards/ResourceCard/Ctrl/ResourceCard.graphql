@@ -9,15 +9,14 @@ query ResourceCard($id: ID!, $myProfileId: [ID!]) {
       description
       image
       _published
-      creator: _rel(
-        type: Created
-        inverse: true
-        page: { first: 1 }
-        targetIds: $myProfileId
-      ) {
+      creator: _rel(type: Created, inverse: true, page: { first: 1 }) {
         edges {
           node {
-            id
+            ... on Profile {
+              id
+              avatar
+              name
+            }
           }
         }
       }

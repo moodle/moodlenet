@@ -38,14 +38,16 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
   }) => {
     return (
       <Card className="small-profile-card" hover={true}>
-        <img
-          className="background"
-          src={backgroundUrl || defaultBackgroud}
-          alt="Background"
-        />
-        <Link className="avatar" href={profileHref}>
-          <img src={avatarUrl || defaultAvatar} alt="Avatar" />
-        </Link>
+        <div className="images">
+          <img
+            className="background"
+            src={backgroundUrl || defaultBackgroud}
+            alt="Background"
+          />
+          <Link className="avatar" href={profileHref}>
+            <img src={avatarUrl || defaultAvatar} alt="Avatar" />
+          </Link>
+        </div>
         <div className="info">
           <Link className="profile-card-header" href={profileHref}>
             <div className="title-header">
@@ -58,23 +60,24 @@ export const SmallProfileCard = withCtrl<SmallProfileCardProps>(
             </abbr> */}
           </Link>
           <OverallCard noCard={true} showIcons={true} {...overallCardProps} />
-          {!isOwner && (
-            <div className="buttons">
-              {isFollowing ? (
-                <SecondaryButton onClick={toggleFollow} color="grey">
-                  <Trans>Unfollow</Trans>
-                </SecondaryButton>
-              ) : (
-                <PrimaryButton
-                  disabled={!isAuthenticated}
-                  onClick={toggleFollow}
-                  className="follow"
-                >
-                  <Trans>Follow</Trans>
-                </PrimaryButton>
-              )}
-            </div>
-          )}
+
+          <div className="buttons">
+            {!isOwner && isFollowing && (
+              <SecondaryButton onClick={toggleFollow} color="orange">
+                <Trans>Following</Trans>
+              </SecondaryButton>
+            )}
+            {!isOwner && !isFollowing && (
+              <PrimaryButton
+                disabled={!isAuthenticated}
+                onClick={toggleFollow}
+                className="follow"
+              >
+                <Trans>Follow</Trans>
+              </PrimaryButton>
+            )}
+            {isOwner && <div className="empty" />}
+          </div>
         </div>
       </Card>
     )

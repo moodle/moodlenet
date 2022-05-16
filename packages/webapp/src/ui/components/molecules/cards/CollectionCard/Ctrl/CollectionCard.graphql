@@ -7,6 +7,7 @@ query CollectionCard($id: ID!, $myProfileId: [ID!]) {
       description
       _published
       followersCount: _relCount(type: Follows, inverse: true)
+      resourcesCount: _relCount(type: Features, targetTypes: [Resource])
       creator: _rel(
         type: Created
         inverse: true

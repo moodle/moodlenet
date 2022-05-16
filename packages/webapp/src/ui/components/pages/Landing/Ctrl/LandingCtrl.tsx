@@ -9,17 +9,27 @@ import { ctrlHook, CtrlHook } from '../../../../lib/ctrl'
 import { FollowTag } from '../../../../types'
 import { useCollectionCardCtrl } from '../../../molecules/cards/CollectionCard/Ctrl/CollectionCardCtrl'
 import { useResourceCardCtrl } from '../../../molecules/cards/ResourceCard/Ctrl/ResourceCardCtrl'
+import { useSmallProfileCardCtrl } from '../../../molecules/cards/SmallProfileCard/Ctrl/SmallProfileCardCtrl'
+import { FilterType, filterTypes } from '../../../organisms/Browser/Browser'
 import { useHeaderPageTemplateCtrl } from '../../../templates/HeaderPageTemplateCtrl/HeaderPageTemplateCtrl'
-import { useSearchUrlQuery } from '../../Search/Ctrl/useSearchUrlQuery'
+import { useBrowserUrlQuery } from '../../Search/Ctrl/useSearchUrlQuery'
 import { LandingProps } from '../Landing'
 import { useLandingPageListsQuery } from './LandingCtrl.gen'
-// const signUpHref = href(mainPath.signUp)
 const newCollectionHref = href(mainPath.createNewCollection)
 const newResourceHref = href(mainPath.createNewResource)
+const loginHref = href(mainPath.login)
+const signUpHref = href(mainPath.signUp)
+const searchHref = (filterType: FilterType) =>
+  href(
+    `${mainPath.search}?${filterTypes
+      .filter((fltTyp) => fltTyp !== filterType)
+      .map((fltTyp) => `hideTypes=${fltTyp}`)
+      .join('&')}`
+  )
 
 export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
   const { isAuthenticated } = useSession()
-  const { setText: setSearchText } = useSearchUrlQuery()
+  const { setText: setSearchText } = useBrowserUrlQuery()
   const LandingPageLists = useLandingPageListsQuery()
   const collectionCardPropsList = useMemo(
     () =>
@@ -35,6 +45,21 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
           )
         ),
     [LandingPageLists.data?.node?.bookmarkedCollections.edges]
+  )
+  const smallProfileCardPropsList = useMemo(
+    () =>
+      LandingPageLists.data?.node?.followedProfiles.edges
+        .filter(isEdgeNodeOfType(['Profile']))
+        .map(({ node: { id } }) =>
+          ctrlHook(
+            useSmallProfileCardCtrl,
+            {
+              id,
+            },
+            id
+          )
+        ),
+    [LandingPageLists.data?.node?.followedProfiles.edges]
   )
 
   const resourceCardPropsList = useMemo(
@@ -82,18 +107,26 @@ export const useLandingCtrl: CtrlHook<LandingProps, {}> = () => {
       },
       trendCardProps: { tags: tags || [] },
       setSearchText,
+      smallProfileCardPropsList: smallProfileCardPropsList || [],
       collectionCardPropsList: collectionCardPropsList || [],
       resourceCardPropsList: resourceCardPropsList || [],
+      // smallProfileCardPropsList: SmallProfileCardPropsList ||  []
       newCollectionHref,
       newResourceHref,
+      loginHref,
+      signUpHref,
+      searchResourcesHref: searchHref('Resources'),
+      searchCollectionsHref: searchHref('Collections'),
+      searchAuthorsHref: searchHref('People'),
     }),
     [
       isAuthenticated,
       localOrg.name,
-      localOrg.description,
       localOrg.subtitle,
+      localOrg.description,
       tags,
       setSearchText,
+      smallProfileCardPropsList,
       collectionCardPropsList,
       resourceCardPropsList,
     ]

@@ -1,4 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { ContentBackupImages } from '../../../../assets/data/images'
 import { href } from '../../../../elements/link'
 import { TagListStory } from '../../../../elements/tags'
 import { ResourceCard, ResourceCardProps } from './ResourceCard'
@@ -26,27 +27,42 @@ const meta: ComponentMeta<typeof ResourceCard> = {
   ],
 }
 
-export const ResourceCardStoryProps: ResourceCardProps = {
-  tags: TagListStory,
-  isOwner: false,
-  title: 'Best resource ever forever',
-  image: 'https://picsum.photos/200/100',
-  type: 'Video',
-  resourceHomeHref: href('Pages/Resource/Logged In'),
-  isAuthenticated: true,
-  bookmarked: false,
-  liked: false,
-  numLikes: 23,
-  visibility: 'Public',
+export const ResourceCardStoryProps = (i?: 0 | 1): ResourceCardProps => {
+  return {
+    resourceId: `${Math.floor(Math.random() * ContentBackupImages.length)}`,
+    tags: TagListStory,
+    isOwner: false,
+    title: `Why the Tropical rainforest ${
+      Math.random() < 0.5 ? 'stands as' : 'is'
+    } the world's most important ecosystem`,
+    image: i === 0 ? 'https://picsum.photos/400/400' : null,
+    type: 'Video',
+    resourceHomeHref: href('Pages/Resource/Logged In'),
+    isAuthenticated: true,
+    bookmarked: false,
+    liked: false,
+    numLikes: 23,
+    visibility: 'Public',
+    owner: {
+      profileHref: href('Pages/Profile/Logged In'),
+      avatar:
+        'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80',
+      displayName: 'Karl Phosler',
+    },
+  }
 }
 
 export const ResourceCardLoggedInStoryProps: ResourceCardProps = {
-  ...ResourceCardStoryProps,
+  ...ResourceCardStoryProps(),
 }
 
-export const ResourceCardLoggedOutStoryProps: ResourceCardProps = {
-  ...ResourceCardStoryProps,
-  isAuthenticated: false,
+export const ResourceCardLoggedOutStoryProps = (
+  i?: 0 | 1
+): ResourceCardProps => {
+  return {
+    ...ResourceCardStoryProps(i),
+    isAuthenticated: false,
+  }
 }
 
 export const ResourceCardOwnerStoryProps: ResourceCardProps = {
@@ -73,7 +89,7 @@ export const LoggedIn = ResourceCardStory.bind({})
 LoggedIn.args = ResourceCardLoggedInStoryProps
 
 export const LoggedOut = ResourceCardStory.bind({})
-LoggedOut.args = ResourceCardLoggedOutStoryProps
+LoggedOut.args = ResourceCardLoggedOutStoryProps()
 
 export const Owner = ResourceCardStory.bind({})
 Owner.args = ResourceCardOwnerStoryProps
@@ -83,5 +99,33 @@ Public.args = ResourceCardOwnerStoryProps
 
 export const Private = ResourceCardStory.bind({})
 Private.args = ResourceCardOwnerPrivateStoryProps
+
+export const VerticalLoggedIn = ResourceCardStory.bind({})
+VerticalLoggedIn.args = {
+  ...ResourceCardLoggedInStoryProps,
+  orientation: 'vertical',
+  liked: true,
+}
+
+export const VerticalLoggedOut = ResourceCardStory.bind({})
+VerticalLoggedOut.args = {
+  ...ResourceCardLoggedOutStoryProps,
+  orientation: 'vertical',
+}
+
+export const VerticalOwner = ResourceCardStory.bind({})
+VerticalOwner.args = { ...ResourceCardOwnerStoryProps, orientation: 'vertical' }
+
+export const VerticalPublic = ResourceCardStory.bind({})
+VerticalPublic.args = {
+  ...ResourceCardOwnerStoryProps,
+  orientation: 'vertical',
+}
+
+export const VerticalPrivate = ResourceCardStory.bind({})
+VerticalPrivate.args = {
+  ...ResourceCardOwnerPrivateStoryProps,
+  orientation: 'vertical',
+}
 
 export default meta

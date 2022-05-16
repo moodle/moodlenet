@@ -27,6 +27,7 @@ export const mainPath = {
   bookmarks: webappPath<Routes.BookmarksPage>('/bookmarks', {}),
   following: webappPath<Routes.FollowingPage>('/following', {}),
   followers: webappPath<Routes.FollowersPage>('/followers', {}),
+  settings: webappPath<Routes.SettingsPage>('/settings', {}),
   cookiesPolicy: webappPath<Routes.CookiesPolicy>('/cookies-policy', {}),
   userAgreement: webappPath<Routes.UserAgreement>('/user-agreement', {}),
 }

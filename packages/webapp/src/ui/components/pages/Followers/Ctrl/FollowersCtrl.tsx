@@ -59,6 +59,7 @@ export const useFollowersCtrl: CtrlHook<FollowersProps, {}> = () => {
         resourceCardPropsList: null,
         subjectCardPropsList: null,
         setSortBy: null,
+        setFilters: null,
       },
     }
     return props

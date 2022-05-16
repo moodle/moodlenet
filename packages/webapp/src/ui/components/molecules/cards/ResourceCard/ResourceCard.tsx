@@ -1,26 +1,28 @@
 import BookmarkIcon from '@material-ui/icons/Bookmark'
 import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
+import CloseRoundedIcon from '@material-ui/icons/CloseRounded'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
+import { getBackupImage } from '../../../../../helpers/utilities'
 import { Href, Link } from '../../../../elements/link'
-import { tagList } from '../../../../elements/tags'
 import { withCtrl } from '../../../../lib/ctrl'
-import defaultBackgroud from '../../../../static/img/default-background.svg'
-import '../../../../styles/tags.css'
-import { FollowTag } from '../../../../types'
+import defaultAvatar from '../../../../static/img/default-avatar.svg'
+import '../../../../styles/tags.scss'
+import { FollowTag, getResourceColorType } from '../../../../types'
 import Card from '../../../atoms/Card/Card'
-import RoundButton from '../../../atoms/RoundButton/RoundButton'
+import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
 import './styles.scss'
 
 export type ResourceCardProps = {
+  resourceId: string
   toggleVisible?(): unknown
   tags?: FollowTag[]
   className?: string
-  direction?: 'vertical' | 'horizontal'
-  image: string | null
+  orientation?: 'vertical' | 'horizontal'
+  image?: string | null
   type: string //'Video' | 'Web Page' | 'Moodle Book'
   title: string
   visibility: Visibility
@@ -33,6 +35,11 @@ export type ResourceCardProps = {
   liked: boolean
   numLikes: number
   bookmarked: boolean
+  owner: {
+    displayName: string
+    avatar: string | null
+    profileHref: Href
+  }
   onClick?(arg0: unknown): unknown
   onRemoveClick?(arg0: unknown): unknown
   toggleLike?: () => unknown
@@ -41,10 +48,10 @@ export type ResourceCardProps = {
 
 export const ResourceCard = withCtrl<ResourceCardProps>(
   ({
-    direction,
+    resourceId,
+    orientation,
     isSelected,
     toggleVisible,
-    tags,
     image,
     type,
     title,
@@ -57,121 +64,139 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     bookmarked,
     isOwner,
     visibility,
+    owner,
     onClick,
     onRemoveClick,
     toggleLike,
     toggleBookmark,
   }) => {
-    const background = {
-      backgroundImage: 'url(' + (image ? image : defaultBackgroud) + ')',
+    const avatar = {
+      backgroundImage:
+        'url(' + (owner.avatar ? owner.avatar : defaultAvatar) + ')',
       backgroundSize: 'cover',
     }
+    let background = {}
+    if (orientation === 'horizontal') {
+      background = {
+        background:
+          'url(' + (image ? image : getBackupImage(resourceId)?.location) + ')',
+      }
+    } else {
+      background = {
+        background:
+          'linear-gradient(0deg, rgba(0, 0, 0, 0.91) 0%, rgba(0, 0, 0, 0.1729) 45.15%, rgba(0, 0, 0, 0) 100%), url(' +
+          (image ? image : getBackupImage(resourceId)?.location) +
+          ')',
+      }
+    }
+    background = { ...background, backgroundSize: 'cover' }
 
-    const content = (color: string) => (
+    const content = () => (
       <div className="content">
-        <div className="image" style={background} />
-        <div className="resource-card-header">
-          <div className="type-and-actions">
-            <div className="type" style={{ color: color }}>
-              {type}
-            </div>
-          </div>
-          <div className="title">
-            <abbr title={title}>{title}</abbr>
-          </div>
+        {orientation === 'horizontal' && (
+          <div className="image" style={background} />
+        )}
+        <div
+          className={`resource-card-content ${
+            orientation === 'horizontal' ? 'horizontal' : 'vertical'
+          }`}
+        >
+          <abbr className="title" title={title}>
+            {title}
+          </abbr>
         </div>
       </div>
     )
-
-    let color: string = ''
-    switch (type) {
-      case 'Video':
-        color = '#2A75C0'
-        break
-      case 'Web Page':
-        color = '#C233C7'
-        break
-      default:
-        color = '#15845A'
-    }
 
     return (
       <Card
         className={`resource-card ${
           isSelected ? 'selected' : ''
-        } ${direction} ${
+        } ${orientation} ${
           isOwner && visibility === 'Private' ? 'is-private' : ''
         }`}
         hover={true}
         onClick={onClick}
+        style={orientation === 'vertical' ? background : {}}
       >
-        <div className={`actions`}>
-          {isOwner && (
-            <abbr
-              onClick={toggleVisible}
-              className={`visibility ${
-                visibility === 'Public' ? 'public' : 'private'
-              }`}
-              title={visibility}
-            >
-              {visibility === 'Public' ? (
-                <VisibilityIcon />
-              ) : (
-                <VisibilityOffIcon />
-              )}
-            </abbr>
-          )}
-          {isAuthenticated && !selectionMode && (
+        <div className={`resource-card-header ${orientation}`}>
+          <div className="left-side">
             <div
-              className={`bookmark ${bookmarked && 'bookmarked'} ${
-                selectionMode || !isAuthenticated || isEditing ? 'disabled' : ''
-              }`}
-              onClick={toggleBookmark}
+              className="type"
+              style={{ background: getResourceColorType(type) }}
             >
-              {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+              {type}
             </div>
-          )}
-          <div
-            className={`like ${liked && 'liked'} ${
-              selectionMode || !isAuthenticated || isOwner ? 'disabled' : ''
-            }`}
-            {...(isAuthenticated &&
-              !isOwner &&
-              !selectionMode && { onClick: toggleLike })}
-          >
-            {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-            <span>{numLikes}</span>
+          </div>
+          <div className="right-side">
+            {isEditing && (
+              <TertiaryButton onClick={onRemoveClick} className="delete">
+                <CloseRoundedIcon />
+              </TertiaryButton>
+            )}
+          </div>
+          {/* <div className={`level`}>
+            <div className="name">
+              L1
+            </div>
+          </div> */}
+        </div>
+        <div className={`resource-card-footer ${orientation}`}>
+          <div className="left-side">
+            <Link href={owner.profileHref}>
+              <div style={avatar} className="avatar" />
+              <span>{owner.displayName}</span>
+            </Link>
+          </div>
+          <div className="right-side">
+            {isOwner && (
+              <abbr
+                onClick={toggleVisible}
+                className={`visibility ${
+                  visibility === 'Public' ? 'public' : 'private'
+                }`}
+                title={visibility}
+              >
+                {visibility === 'Public' ? (
+                  <VisibilityIcon />
+                ) : (
+                  <VisibilityOffIcon />
+                )}
+              </abbr>
+            )}
+            {isAuthenticated && !selectionMode && (
+              <div
+                className={`bookmark ${bookmarked && 'bookmarked'} ${
+                  selectionMode || !isAuthenticated || isEditing
+                    ? 'disabled'
+                    : ''
+                }`}
+                onClick={toggleBookmark}
+              >
+                {bookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+              </div>
+            )}
+            <div
+              className={`like ${liked && 'liked'} ${
+                selectionMode || !isAuthenticated || isOwner ? 'disabled' : ''
+              }`}
+              {...(isAuthenticated &&
+                !isOwner &&
+                !selectionMode && { onClick: toggleLike })}
+            >
+              {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+              <span>{numLikes}</span>
+            </div>
           </div>
         </div>
         {resourceHomeHref && !selectionMode ? (
-          <Link href={resourceHomeHref}>{content(color)}</Link>
+          <Link href={resourceHomeHref}>{content()}</Link>
         ) : (
-          <div className="content-container">{content(color)}</div>
+          <div className="content-container">{content()}</div>
         )}
-        {isEditing && (
-          <RoundButton
-            className="delete"
-            type="trash"
-            color="red"
-            onHoverColor="fill-red"
-            onClick={onRemoveClick}
-          />
-        )}
-        <div
-          className={`tags scroll ${selectionMode ? 'disabled' : ''} ${
-            isEditing ? 'editing' : ''
-          }`}
-        >
-          {tags && tagList(tags, 'small')}
-        </div>
       </Card>
     )
   }
 )
-
-ResourceCard.defaultProps = {
-  direction: 'horizontal',
-  selectionMode: false,
-}
 
 export default ResourceCard

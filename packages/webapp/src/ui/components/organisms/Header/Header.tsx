@@ -1,11 +1,10 @@
 import { t, Trans } from '@lingui/macro'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import BookmarksIcon from '@material-ui/icons/Bookmarks'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 import NoteAddIcon from '@material-ui/icons/NoteAdd'
 import PersonIcon from '@material-ui/icons/Person'
-import { ReactComponent as AddIcon } from '../../../assets/icons/add.svg'
+import { ReactComponent as AddIcon } from '../../../assets/icons/add-round.svg'
 import { ReactComponent as ArrowsIcon } from '../../../assets/icons/arrows.svg'
 import { Href, Link } from '../../../elements/link'
 import { withCtrl } from '../../../lib/ctrl'
@@ -28,6 +27,7 @@ export type HeaderPropsIdle = HeaderPropsBase & {
     myProfileHref: Href
     bookmarksHref: Href
     followingHref: Href
+    settingsHref?: Href
   }
 }
 export type HeaderPropsLoading = HeaderPropsBase & {
@@ -36,12 +36,12 @@ export type HeaderPropsLoading = HeaderPropsBase & {
 
 export type HeaderPropsBase = {
   homeHref: Href
-  loginHref: Href
   newResourceHref: Href
   newCollectionHref: Href
   hideSearchbox?: boolean
   setSearchText(text: string): unknown
   searchText: string
+  loginHref: Href
   signUpHref: Href
 }
 export type HeaderProps = HeaderPropsIdle | HeaderPropsLoading
@@ -56,6 +56,7 @@ export const Header = withCtrl<HeaderProps>((props) => {
     newCollectionHref,
     newResourceHref,
     signUpHref,
+    // settingsHref,
   } = props
   if (props.status === 'loading') {
     return null
@@ -68,9 +69,8 @@ export const Header = withCtrl<HeaderProps>((props) => {
     backgroundSize: 'cover',
   }
 
-  // console.log({ avatarUrl })
   return (
-    <div className="header">
+    <div className="header" id="page-header">
       <div className="content">
         <div className="left">
           <HeaderTitle organization={organization} homeHref={homeHref} />
@@ -88,6 +88,7 @@ export const Header = withCtrl<HeaderProps>((props) => {
           {me ? (
             <>
               <FloatingMenu
+                className="add-menu"
                 menuContent={[
                   <Link href={newResourceHref} tabIndex={0}>
                     <NoteAddIcon />
@@ -101,7 +102,12 @@ export const Header = withCtrl<HeaderProps>((props) => {
                 hoverElement={<AddIcon className="add-icon" tabIndex={0} />}
               />
               <FloatingMenu
+                className="avatar-menu"
                 menuContent={[
+                  <Link href={me.myProfileHref} className="profile">
+                    <div style={avatar} className="avatar" />
+                    <Trans>Profile</Trans>
+                  </Link>,
                   <Link href={me.bookmarksHref}>
                     <BookmarksIcon />
                     <Trans>Bookmarks</Trans>
@@ -110,21 +116,22 @@ export const Header = withCtrl<HeaderProps>((props) => {
                     <ArrowsIcon />
                     <Trans>Following</Trans>
                   </Link>,
-                  <Link href={me.myProfileHref}>
-                    <AccountCircleIcon />
-                    <Trans>Profile</Trans>
-                  </Link>,
+                  // <Link href={settingsHref}>
+                  //   <SettingsIcon />
+                  //   <Trans>Settings</Trans>
+                  // </Link>,
                   <Link onClick={me.logout} href={homeHref}>
                     <ExitToAppIcon />
                     <Trans>Log out</Trans>
                   </Link>,
                 ]}
                 hoverElement={
-                  <Link
-                    href={me.myProfileHref}
-                    style={avatar}
-                    className="avatar"
-                  />
+                  <div style={avatar} className="avatar" />
+                  // <Link
+                  //   href={me.myProfileHref}
+                  //   style={avatar}
+                  //   className="avatar"
+                  // />
                 }
               />
             </>

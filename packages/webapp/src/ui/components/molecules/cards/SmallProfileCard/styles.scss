@@ -1,28 +1,34 @@
 .small-profile-card {
   width: 100%;
   max-width: 245px;
-  // height: 258px;
-  height: fit-content;
+  height: 254px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
 
-  > .background {
-    cursor: pointer;
+  > .images {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 16px 16px 0 0;
-  }
+    > .background {
+      cursor: pointer;
+      width: 100%;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 16px 16px 0 0;
+    }
 
-  > .avatar > img {
-    z-index: 3;
-    border: 2px solid white;
-    border-radius: 15px;
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    margin-top: -45px;
+    > .avatar > img {
+      z-index: 3;
+      border: 2px solid white;
+      border-radius: 50px;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-top: -55px;
+    }
   }
 
   > .info {
@@ -102,6 +108,7 @@
       width: 100%;
 
       > * {
+        height: 32px;
         width: 100%;
       }
     }

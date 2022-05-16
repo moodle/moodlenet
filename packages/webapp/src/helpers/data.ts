@@ -1,8 +1,12 @@
-import { AssetRef } from '@moodlenet/common/dist/graphql/scalars.graphql'
+import {
+  AssetRef,
+  Credits,
+} from '@moodlenet/common/dist/graphql/scalars.graphql'
 import {
   getAssetRefUrl,
   UploadType,
 } from '@moodlenet/common/dist/staticAsset/lib'
+import { nodeGqlId2UrlPath } from '@moodlenet/common/dist/webapp/sitemap/helpers'
 import Fuse from 'fuse.js'
 import { useMemo, useState } from 'react'
 import { Tuple } from 'tuple-type'
@@ -11,8 +15,9 @@ import { useSession } from '../context/Global/Session'
 import { AssetRefInput } from '../graphql/pub.graphql.link'
 
 type UIAssetInput = {
-  data: File | null | undefined
+  data: string | File | null | undefined
   type: UploadType
+  credits: Credits
 }
 
 export const mapUIAssetInputToAssetRefInput =
@@ -20,13 +25,16 @@ export const mapUIAssetInputToAssetRefInput =
     const { data, type } = input
     const assetRefInput: AssetRefInput | Promise<AssetRefInput> =
       data === undefined
-        ? { type: 'NoChange', location: '' }
+        ? { type: 'NoChange', location: '', credits: input.credits }
         : data === null
-        ? { type: 'NoAsset', location: '' }
+        ? { type: 'NoAsset', location: '', credits: input.credits }
+        : 'string' === typeof data
+        ? { type: 'ExternalUrl', location: data, credits: input.credits }
         : uploadTempFile(apiKey)(type, data).then<AssetRefInput>(
             (location) => ({
               location,
               type: 'TmpUpload',
+              credits: input.credits,
             })
           )
     return assetRefInput
@@ -116,3 +124,6 @@ export const useFiltered = <T>(list: T[], keys: string) => {
     [filteredList, setFilterText, list]
   )
 }
+
+export const fullLocalEntityUrlByGqlId = (gqlId: string) =>
+  `${window.location.origin}${nodeGqlId2UrlPath(gqlId)}`

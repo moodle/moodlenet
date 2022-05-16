@@ -40,7 +40,7 @@ export const NewCollection = withCtrl<NewCollectionProps>(
     return (
       <HeaderPageTemplate
         {...headerPageTemplateProps}
-        style={{ backgroundColor: '#f4f5f7' }}
+        className="light-background"
       >
         {stepProps.form.isSubmitting && (
           <Snackbar
