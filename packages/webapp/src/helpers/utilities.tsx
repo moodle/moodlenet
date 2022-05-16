@@ -103,7 +103,7 @@ export const getRandomInt = (max: number) => {
 
 export function useAutoImageAdded() {
   const history = useHistory()
-  console.log({ __: history.location.state })
+  // console.log({ __: history.location.state })
   const get = () => !!(history.location.state as any)?.autoImageAdded
   const set = (autoImageAdded: boolean) => ({ autoImageAdded })
   return { get, set }
