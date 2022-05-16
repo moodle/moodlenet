@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "lib": ["esnext"],
+    "target": "ES5",
+    "allowSyntheticDefaultImports": true,
+    "outDir": "lib"
+    // "jsx": "react-jsx"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "@moodlenet/bare-metal",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "AGPL-3.0",
+  "description": "moodlenet bare-metal package",
+  "repository": "https://gitlab.com/moodlenet/moodlenet",
+  "author": "https://github.com/aleclofabbro",
+  "dependencies": {
+    "@types/esm": "^3.2.0",
+    "dotenv": "^16.0.0",
+    "dotenv-expand": "^8.0.1",
+    "esm": "^3.2.25",
+    "pkg-dir": "^5"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/node": "^17.0.18",
+    "@types/npm": "^7.19.0",
+    "node-dev": "^7.1.0",
+    "shx": "^0.3.4",
+    "typescript": "^4.6.3"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "start-dev": "node-dev --trace-warnings --inspect --deps 4 --respawn --notify=false ./index.js"
+  }
+}

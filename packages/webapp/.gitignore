@@ -1,0 +1,7 @@
+node_modules
+build
+latest-build
+.DS_Store
+.vscode
+
+lib
