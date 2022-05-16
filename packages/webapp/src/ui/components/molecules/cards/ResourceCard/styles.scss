@@ -199,10 +199,9 @@
         height: 100%;
         gap: 8px;
 
-        > .title {
+        > .title > span {
           overflow: hidden;
           display: -webkit-box;
-          -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           font-family: 'Lato';
           line-height: 145%;
@@ -211,7 +210,8 @@
         }
         &.horizontal {
           width: calc(100% - 180px);
-          > .title {
+          > .title > span {
+            -webkit-line-clamp: 1;
             font-size: 18px;
           }
         }
@@ -221,9 +221,17 @@
           height: 100%;
           padding: 0 25px 58px 25px;
           > .title {
+            position: relative;
             color: white;
+            height: 87px;
             font-size: 20px;
-            height: 58px;
+            > span {
+              position: absolute;
+              -webkit-line-clamp: 3;
+              height: fit-content;
+              max-height: 100%;
+              bottom: 0;
+            }
           }
         }
         // > .title {

@@ -33,7 +33,7 @@ export const Default = () => {
     initialValues: { collections: collections.slice(3, 5) },
     onSubmit: action('submit'),
   })
-  console.log(form.values)
+
   return (
     <AddToCollectionsCard
       name="collections"
