@@ -18,7 +18,7 @@ export function boot() {
     .map(pkgDiskInfo => {
       const exts: Ext[] = req(pkgDiskInfo.name).default
       // console.log({ exts })
-      return exts.map(ext => K.deployExtension({ ext, pkgInfo: pkgDiskInfo }))
+      return exts.map(ext => K.deployExtension({ ext, pkgDiskInfo }))
     })
 
   console.log(
