@@ -1,7 +1,8 @@
 import type { Observable, Subscription } from 'rxjs'
 import type * as K from '../k'
 import type { DataMessage, MessagePush } from './message'
-import { PkgInfo, RegDeployment } from './reg'
+import { PkgDiskInfo } from './pkg'
+import { RegDeployment } from './reg'
 import type { PortBinding, PortPathData, PortPaths, Topo } from './topo'
 
 type KLib = typeof K
@@ -53,7 +54,7 @@ export interface Shell<Def extends ExtDef = ExtDef> {
   send: SendMessage
   env: RawExtEnv
   extId: ExtId<Def>
-  pkgInfo: PkgInfo
+  pkgDiskInfo: PkgDiskInfo
   expose: ExposePointers<Def>
   lib: KLib
 }

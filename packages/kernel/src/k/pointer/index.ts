@@ -36,9 +36,7 @@ export function isVerBWC(target: Version, requested: Version) {
 export function isExtIdBWC(target: ExtId, requested: ExtId) {
   const targetSplit = splitExtId(target)
   const requestedSplit = splitExtId(requested)
-  return (
-    targetSplit.extName === requestedSplit.extName && satisfies(requestedSplit.version, `^${requestedSplit.version}`)
-  )
+  return targetSplit.extName === requestedSplit.extName && isVerBWC(targetSplit.version, requestedSplit.version)
 }
 
 export function isBWCSemanticallySamePointers(target: Pointer, requested: Pointer) {

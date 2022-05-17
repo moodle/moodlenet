@@ -4,7 +4,8 @@ import { depGraphAddNodes } from './dep-graph'
 import * as K from './k'
 import { matchMessage } from './k/message'
 import { isExtIdBWC, joinPointer, splitExtId } from './k/pointer'
-import { createLocalDeploymentRegistry } from './registry'
+import { pkgDiskInfoOf } from './npm-pkg'
+import { createLocalDeploymentRegistry } from './registry/node'
 import type {
   DataMessage,
   DepGraphData,
@@ -20,7 +21,6 @@ import type {
   MessagePush,
   MWFn,
   PkgDiskInfo,
-  PkgInfo,
   PushMessage,
   PushOptions,
   RawExtEnv,
@@ -30,7 +30,7 @@ import type {
 
 export type CreateCfg = { global_env: Record<ExtName, RawExtEnv> }
 
-export const kernelPkgInfo: PkgInfo = { name: 'moodlenet.kernel', version: '0.1.10' }
+// export const kernelPkgInfo: PkgInfo = { name: 'moodlenet.kernel', version: '0.1.10' }
 export const kernelExtId: ExtId<KernelExt> = 'kernel.core@0.1.10'
 
 // type Env = {
@@ -79,7 +79,8 @@ export const create = ({ global_env }: CreateCfg) => {
     },
   }
   depGraphAddNodes(depGraph, [kernelExt])
-  const KDeployment = deployExtension<KernelExt>({ ext: kernelExt, pkgInfo: kernelPkgInfo })
+  const pkgDiskInfo = pkgDiskInfoOf(__filename)
+  const KDeployment = deployExtension<KernelExt>({ ext: kernelExt, pkgDiskInfo })
 
   return {
     deployExtension,
@@ -96,11 +97,11 @@ export const create = ({ global_env }: CreateCfg) => {
 
   function deployExtension<Def extends ExtDef>({
     ext,
-    pkgInfo,
+    pkgDiskInfo,
     deployWith,
   }: {
     ext: Ext<Def>
-    pkgInfo: PkgInfo | PkgDiskInfo
+    pkgDiskInfo: PkgDiskInfo
     deployWith?: (shell: Shell<Def>, deplShell: DeploymentShell) => ExtDeployment<Def>
   }) {
     const extId = ext.id
@@ -176,7 +177,7 @@ export const create = ({ global_env }: CreateCfg) => {
       onExtDeployment,
       getExt,
       onExt,
-      pkgInfo,
+      pkgDiskInfo,
       expose,
       lib: K,
     }
@@ -195,9 +196,8 @@ export const create = ({ global_env }: CreateCfg) => {
     } else {
       extDeployment = extDeployable.deploy(deploymentShell)
     }
-    const pkgDiskInfo = 'rootDir' in pkgInfo ? pkgInfo : undefined
     const depl: RegDeployment<Def> = {
-      ...{ at: new Date(), ext, $msg$, pkgDiskInfo },
+      ...{ at: new Date(), ext, $msg$, pkgInfo: pkgDiskInfo },
       ...deploymentShell,
       ...shell,
       ...extDeployment,
