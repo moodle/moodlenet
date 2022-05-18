@@ -267,17 +267,17 @@ export const SearchImage: React.FC<SearchImageProps> = ({
               <div className="column-1">{column1}</div>
               <div className="column-2">{column2}</div>
             </div>
-            {column1 && column1.length > 0 && (
-              <SecondaryButton
-                className="load-more"
-                color="grey"
-                onClick={() => searchUnsplashImages(tmpSearchQuery, false)}
-              >
-                {unsplashImages && unsplashImages.length % 30 === 0 && (
+            {unsplashImages &&
+              unsplashImages.length > 0 &&
+              unsplashImages.length % 30 === 0 && (
+                <SecondaryButton
+                  className="load-more"
+                  color="grey"
+                  onClick={() => searchUnsplashImages(tmpSearchQuery, false)}
+                >
                   <Trans>Load more</Trans>
-                )}
-              </SecondaryButton>
-            )}
+                </SecondaryButton>
+              )}
           </div>
 
           {unsplashImages?.length !== 0 && !showImages && <Loading size={30} />}
