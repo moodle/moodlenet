@@ -102,7 +102,6 @@ export const Browser = withCtrl<BrowserProps>(
         (filterType: FilterType) => filters[filterType] && counter++,
         []
       )
-      console.log('showing all ', counter)
       setSeeAll(counter === 1 ? true : false)
     }, [filters])
 

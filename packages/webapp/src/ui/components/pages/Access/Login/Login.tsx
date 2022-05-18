@@ -42,11 +42,11 @@ export const Login = withCtrl<LoginProps>(
     }
 
     const shouldShowErrors = !!form.submitCount && (wrongCreds || !form.isValid)
-    console.log({
-      submitCount: form.submitCount,
-      wrongCreds,
-      isValid: form.isValid,
-    })
+    // console.log({
+    //   submitCount: form.submitCount,
+    //   wrongCreds,
+    //   isValid: form.isValid,
+    // })
 
     return (
       <MainPageWrapper
