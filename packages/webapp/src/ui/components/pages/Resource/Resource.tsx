@@ -102,6 +102,8 @@ export type ResourceProps = {
   levels: SelectOptions<TextOptionProps>
   setLanguageFilter(text: string): unknown
   languages: SelectOptions<TextOptionProps>
+  downloadFilename: string
+  type: string
 }
 export const Resource = withCtrl<ResourceProps>(
   ({
@@ -138,6 +140,8 @@ export const Resource = withCtrl<ResourceProps>(
     setLanguageFilter,
     setLevelFilter,
     setTypeFilter,
+    downloadFilename,
+    type,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(
       canSearchImage && autoImageAdded
@@ -266,8 +270,8 @@ export const Resource = withCtrl<ResourceProps>(
         <a
           href={contentUrl}
           target="_blank"
-          rel="noreferrer"
-          download={form.values.name}
+          rel="norefserrer noreferrer"
+          download={downloadFilename}
         >
           <SecondaryButton>
             {contentType === 'file' ? (
@@ -825,7 +829,7 @@ export const Resource = withCtrl<ResourceProps>(
                           background: getResourceColorType(resourceFormat),
                         }}
                       >
-                        {resourceFormat}
+                        {type}
                       </div>
                       {/* <div
                         className="type"

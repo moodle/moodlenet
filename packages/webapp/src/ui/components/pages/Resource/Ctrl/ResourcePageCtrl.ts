@@ -557,8 +557,20 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
     if (!resourceData) {
       return null
     }
+    const _ext = resourceData.content.location
+      .split('.')
+      .reverse()[0]
+      ?.toLowerCase()
+
+    const type = resourceData.kind === 'Link' ? 'Web Page' : _ext ?? 'file'
+
+    const downloadFilename = _ext
+      ? `${resourceData.name}.${_ext}`
+      : resourceData.name
     const props: ResourceProps = {
       resourceUrl,
+      downloadFilename,
+      type,
       resourceId: resourceData.id,
       headerPageTemplateProps: ctrlHook(useHeaderPageTemplateCtrl, {}, id),
       canSearchImage: !!UNSPLASH_ENDPOINT,
