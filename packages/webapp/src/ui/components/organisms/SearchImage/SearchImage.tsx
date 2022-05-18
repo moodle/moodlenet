@@ -273,7 +273,9 @@ export const SearchImage: React.FC<SearchImageProps> = ({
                 color="grey"
                 onClick={() => searchUnsplashImages(tmpSearchQuery, false)}
               >
-                <Trans>Load more</Trans>
+                {unsplashImages && unsplashImages.length % 30 === 0 && (
+                  <Trans>Load more</Trans>
+                )}
               </SecondaryButton>
             )}
           </div>

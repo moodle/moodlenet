@@ -129,7 +129,6 @@ export const Collection = withCtrl<CollectionProps>(
 
     const uploadImage = (e: React.ChangeEvent<HTMLInputElement>) => {
       const selectedFile = e.currentTarget.files?.item(0)
-      console.log('FILE ', selectedFile)
       if (selectedFile) {
         form.setFieldValue('image', { location: selectedFile })
       }

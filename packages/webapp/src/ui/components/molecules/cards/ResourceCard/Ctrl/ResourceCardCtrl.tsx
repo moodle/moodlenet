@@ -130,7 +130,11 @@ export const useResourceCardCtrl: CtrlHook<
       return null
     }
     const isOwner = !!session && creator.id === session.profile.id
-
+    const _ext = resourceNode.content.location
+      .split('.')
+      .reverse()[0]
+      ?.toLowerCase()
+    const type = resourceNode.kind === 'Link' ? 'Web Page' : _ext ?? 'file'
     return {
       owner: {
         avatar: getMaybeAssetRefUrl(creator.avatar),
@@ -140,10 +144,7 @@ export const useResourceCardCtrl: CtrlHook<
       resourceId: resourceNode.id,
       // owner: resourceNode.creator,
       toggleVisible,
-      type:
-        resourceNode.kind === 'Link'
-          ? 'Web Page'
-          : resourceNode.content.mimetype.replace('application/', ''),
+      type,
       image: getMaybeAssetRefUrl(resourceNode.image),
       title: resourceNode.name,
       tags: resourceNode.categories.edges

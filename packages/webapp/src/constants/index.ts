@@ -13,4 +13,4 @@ export const MIN_RESOURCES_FOR_USER_APPROVAL_REQUESTS =
 
 export const MNEnv = window.__MN_ENV__
 
-console.log(`ENV:`, { process: process.env, mnEnv: window.__MN_ENV__ })
+// console.log(`ENV:`, { process: process.env, mnEnv: window.__MN_ENV__ })

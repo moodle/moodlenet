@@ -264,7 +264,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
             const item = e.dataTransfer.items[i]
             if (item && item.kind === 'file') {
               var file = item.getAsFile()
-              console.log('... file[' + i + '].name = ' + file?.name)
+              // console.log('... file[' + i + '].name = ' + file?.name)
               file && (selectedFile = file)
               break
             }
@@ -273,7 +273,7 @@ export const UploadResource = withCtrl<UploadResourceProps>(
           // Use DataTransfer interface to access the file(s)
           for (let i = 0; i < e.dataTransfer.files.length; i++) {
             const item = e.dataTransfer.files[i]
-            console.log('... file[' + i + '].name = ' + item?.name)
+            // console.log('... file[' + i + '].name = ' + item?.name)
             item && (selectedFile = item)
           }
         }
