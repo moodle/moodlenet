@@ -567,6 +567,7 @@ export const useResourceCtrl: CtrlHook<ResourceProps, ResourceCtrlProps> = ({
     const downloadFilename = _ext
       ? `${resourceData.name}.${_ext}`
       : resourceData.name
+
     const props: ResourceProps = {
       resourceUrl,
       downloadFilename,
