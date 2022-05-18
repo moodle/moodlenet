@@ -270,7 +270,7 @@ export const Resource = withCtrl<ResourceProps>(
         <a
           href={contentUrl}
           target="_blank"
-          rel="norefserrer noreferrer"
+          rel="noreferrer"
           download={downloadFilename}
         >
           <SecondaryButton>
