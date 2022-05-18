@@ -9,6 +9,7 @@ query ResourcePageData(
       name
       description
       image
+      kind
       content
       originalCreationDate
       _published

@@ -151,6 +151,8 @@ export const ResourceStoryProps = (overrides?: {
     form,
     resourceId: 'qjnwglkd69io-sports',
     resourceUrl: 'resource.url',
+    downloadFilename: 'resource.pdf',
+    type: 'pdf',
     headerPageTemplateProps: {
       headerPageProps: HeaderPageLoggedInStoryProps,
       isAuthenticated: true,
