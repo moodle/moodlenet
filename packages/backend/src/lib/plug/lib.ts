@@ -34,7 +34,7 @@ export function socket<Sock extends Socket>(plugOrNamespace: Namespace | Plug<So
     console.error(error)
     throw new ReferenceError(error)
   }
-  console.log(`Plug [${namespaceString(plugNamespace)}] to socket`)
+  // console.log(`Plug [${namespaceString(plugNamespace)}] to socket`)
   plugRegistration.socket = sock
 }
 
