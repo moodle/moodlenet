@@ -102,7 +102,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
           }`}
         >
           <abbr className="title" title={title}>
-            {title}
+            <span>{title}</span>
           </abbr>
         </div>
       </div>
