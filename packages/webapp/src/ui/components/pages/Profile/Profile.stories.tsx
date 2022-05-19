@@ -50,7 +50,11 @@ export const useProfileStoryProps = (overrides?: {
   const isAuthenticated = overrides?.isAuthenticated ?? true
   const ProfileCardStoryProps = useProfileCardStoryProps({
     props: { isAuthenticated },
-    editFormValues: overrides?.editFormValues,
+    editFormValues: {
+      ...overrides?.editFormValues,
+      // avatarImage: null,
+      // backgroundImage: null,
+    },
   })
 
   return {
