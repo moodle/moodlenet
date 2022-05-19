@@ -17,7 +17,7 @@ import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
 import { SelectOptions, SelectOptionsMulti } from '../../../lib/types'
 import { useImageUrl } from '../../../lib/useImageUrl'
-import { AssetInfo, FollowTag, getResourceColorType } from '../../../types'
+import { AssetInfo, FollowTag, getResourceTypeInfo } from '../../../types'
 import Card from '../../atoms/Card/Card'
 import {
   Dropdown,
@@ -141,7 +141,7 @@ export const Resource = withCtrl<ResourceProps>(
     setLevelFilter,
     setTypeFilter,
     downloadFilename,
-    type,
+    // type,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(
       canSearchImage && autoImageAdded
@@ -168,6 +168,8 @@ export const Resource = withCtrl<ResourceProps>(
       form.values?.image?.location,
       backupImage?.location
     )
+
+    const { typeName, typeColor } = getResourceTypeInfo(resourceFormat)
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -200,6 +202,15 @@ export const Resource = withCtrl<ResourceProps>(
         setShouldShowSendToMoodleLmsError(true)
       }
     }
+
+    const shouldShowExtraDetails =
+      form.values.visibility ||
+      licenses.selected ||
+      types.selected ||
+      levels.selected ||
+      form.values.month ||
+      form.values.year ||
+      languages.selected
 
     const uploadImageRef = useRef<HTMLInputElement>(null)
     const selectImage = () => {
@@ -533,89 +544,90 @@ export const Resource = withCtrl<ResourceProps>(
         ></Dropdown> */}
       </Card>
     ) : (
-      <Card className="extra-details-card" hideBorderWhenSmall={true}>
-        {(isAdmin || isOwner) && (
-          <div className="detail">
-            <div className="title">
-              <Trans>Visibility</Trans>
+      shouldShowExtraDetails && (
+        <Card className="extra-details-card" hideBorderWhenSmall={true}>
+          {(isAdmin || isOwner) && (
+            <div className="detail">
+              <div className="title">
+                <Trans>Visibility</Trans>
+              </div>
+              <abbr className="value icons">
+                {VisibilityNodes[form.values.visibility]}
+                {form.values.visibility}
+              </abbr>
             </div>
-            <abbr className="value icons">
-              {VisibilityNodes[form.values.visibility]}
-              {form.values.visibility}
-            </abbr>
-          </div>
-        )}
-        {isOwner && (
-          <div className="detail subject">
-            <div className="title">
-              <Trans>Subject</Trans>
+          )}
+          {isOwner && (
+            <div className="detail subject">
+              <div className="title">
+                <Trans>Subject</Trans>
+              </div>
+              <abbr className="value">{categories.selected?.label}</abbr>
             </div>
-            <abbr className="value">{categories.selected?.label}</abbr>
-          </div>
-        )}
-        {licenses.selected && (
-          <div className="detail license">
-            <div className="title">
-              <Trans>License</Trans>
+          )}
+          {licenses.selected && (
+            <div className="detail license">
+              <div className="title">
+                <Trans>License</Trans>
+              </div>
+              <abbr className="value icons" title={licenses.selected.label}>
+                {licenses.selected.icon}
+              </abbr>
             </div>
-            <abbr className="value icons" title={licenses.selected.label}>
-              {licenses.selected.icon}
-            </abbr>
-          </div>
-        )}
-        {types.selected && (
-          <div className="detail">
-            <div className="title">
-              <Trans>Type</Trans>
+          )}
+          {types.selected && (
+            <div className="detail">
+              <div className="title">
+                <Trans>Type</Trans>
+              </div>
+              <abbr className="value" title={types.selected.label}>
+                {types.selected.label}
+              </abbr>
             </div>
-            <abbr className="value" title={types.selected.label}>
-              {types.selected.label}
-            </abbr>
-          </div>
-        )}
-        {levels.selected && (
-          <div className="detail">
-            <div className="title">
-              <Trans>Level</Trans>
+          )}
+          {levels.selected && (
+            <div className="detail">
+              <div className="title">
+                <Trans>Level</Trans>
+              </div>
+              <abbr className="value" title={levels.selected.label}>
+                {levels.selected.label}
+              </abbr>
             </div>
-            <abbr className="value" title={levels.selected.label}>
-              {levels.selected.label}
-            </abbr>
-          </div>
-        )}
-        {(form.values.month || form.values.year) && (
-          <div className="detail">
-            <div className="title">
-              <Trans>Original creation date</Trans>
+          )}
+          {(form.values.month || form.values.year) && (
+            <div className="detail">
+              <div className="title">
+                <Trans>Original creation date</Trans>
+              </div>
+              <abbr
+                className={`value date`}
+                title={`${
+                  MonthTextOptionProps.find(
+                    ({ value }) => value === form.values.month
+                  )?.label ?? ''
+                } ${form.values.year ?? ''}`}
+              >
+                <span>
+                  {MonthTextOptionProps.find(
+                    ({ value }) => value === form.values.month
+                  )?.label ?? ''}
+                </span>
+                <span>{form.values.year ?? ''}</span>
+              </abbr>
             </div>
-            <abbr
-              className={`value date`}
-              title={`${
-                MonthTextOptionProps.find(
-                  ({ value }) => value === form.values.month
-                )?.label ?? ''
-              } ${form.values.year ?? ''}`}
-            >
-              <span>
-                {MonthTextOptionProps.find(
-                  ({ value }) => value === form.values.month
-                )?.label ?? ''}
-              </span>
-              <span>{form.values.year ?? ''}</span>
-            </abbr>
-          </div>
-        )}
-        {languages.selected && (
-          <div className="detail">
-            <div className="title">
-              <Trans>Language</Trans>
+          )}
+          {languages.selected && (
+            <div className="detail">
+              <div className="title">
+                <Trans>Language</Trans>
+              </div>
+              <abbr className="value" title={languages.selected.label}>
+                {languages.selected.label}
+              </abbr>
             </div>
-            <abbr className="value" title={languages.selected.label}>
-              {languages.selected.label}
-            </abbr>
-          </div>
-        )}
-        {/* {resourceFormat && (
+          )}
+          {/* {resourceFormat && (
           <div className="detail">
             <div className="title">
               <Trans>Format</Trans>
@@ -625,7 +637,8 @@ export const Resource = withCtrl<ResourceProps>(
             </abbr>
           </div>
         )} */}
-      </Card>
+        </Card>
+      )
     )
 
     return (
@@ -826,10 +839,10 @@ export const Resource = withCtrl<ResourceProps>(
                       <div
                         className="type"
                         style={{
-                          background: getResourceColorType(resourceFormat),
+                          background: typeColor,
                         }}
                       >
-                        {type}
+                        {typeName}
                       </div>
                       {/* <div
                         className="type"

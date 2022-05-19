@@ -168,9 +168,20 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
           className="background"
           style={{
             ...background,
-            pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
+            pointerEvents:
+              editForm.isSubmitting || !editForm.values.backgroundImage
+                ? 'none'
+                : 'inherit',
+            cursor:
+              editForm.isSubmitting || !editForm.values.backgroundImage
+                ? 'auto'
+                : 'pointer',
           }}
-          onClick={() => !isEditing && setIsShowingBackground(true)}
+          onClick={() =>
+            !isEditing &&
+            editForm.values.backgroundImage &&
+            setIsShowingBackground(true)
+          }
         >
           {isEditing && (
             <>
@@ -194,9 +205,20 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
           className="avatar"
           style={{
             ...avatar,
-            pointerEvents: editForm.isSubmitting ? 'none' : 'inherit',
+            pointerEvents:
+              editForm.isSubmitting || !editForm.values.avatarImage
+                ? 'auto'
+                : 'inherit',
+            cursor:
+              editForm.isSubmitting || !editForm.values.avatarImage
+                ? 'auto'
+                : 'pointer',
           }}
-          onClick={() => !isEditing && setIsShowingAvatar(true)}
+          onClick={() =>
+            !isEditing &&
+            editForm.values.avatarImage &&
+            setIsShowingAvatar(true)
+          }
         >
           {isEditing && (
             <>
