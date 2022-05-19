@@ -1,4 +1,4 @@
-import type { RouterCtx } from '@moodlenet/webapp/lib/webapp/routes'
+import type { RouterCtx } from '@moodlenet/react-app/lib/webapp/routes'
 import { FC, useContext, useEffect } from 'react'
 import { TestExtPage } from './TestExtPage'
 

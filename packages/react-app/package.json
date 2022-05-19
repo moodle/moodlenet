@@ -1,10 +1,10 @@
 {
-  "name": "@moodlenet/webapp",
+  "name": "@moodlenet/react-app",
   "version": "0.0.1",
   "description": "",
   "moodlenet": {
-    "name": "moodlenet webapp",
-    "shortDesc": "a desc for moodlenet webapp"
+    "name": "moodlenet react-app",
+    "shortDesc": "a desc for moodlenet react-app"
   },
   "main": "lib/index.js",
   "node_engine": {

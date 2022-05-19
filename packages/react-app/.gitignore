@@ -4,4 +4,6 @@ latest-build
 .DS_Store
 .vscode
 
+extensions.js
+
 lib

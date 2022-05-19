@@ -2,7 +2,7 @@ module.exports = {
   "kernel.core.node": {
     "activatePkgs": [
       "@moodlenet/test-extension",
-      "@moodlenet/webapp",
+      "@moodlenet/react-app",
       "@moodlenet/pri-http",
     ]
   }

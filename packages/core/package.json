@@ -17,7 +17,7 @@
   "dependencies": {
     "@moodlenet/kernel": "^0.0.1",
     "@moodlenet/pri-http": "^0.0.1",
-    "@moodlenet/webapp": "^0.0.1"
+    "@moodlenet/react-app": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "^17.0.18",
