@@ -43,7 +43,6 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt]> = {
           })
           mount({ mountApp, absMountPath: '/' })
         })
-        generateExtensionListModule()
         webpackWatch()
         return {
           inst({ depl }) {
@@ -69,7 +68,6 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt]> = {
 
 export default [extImpl]
 
-const wp = webpack(config)
 async function generateExtensionListModule() {
   console.log(`generate extensions.ts ....`)
 
@@ -116,6 +114,7 @@ async function generateExtensionListModule() {
 // }
 
 async function webpackWatch() {
+  const wp = webpack(config)
   wp.hooks.afterDone.tap('swap folders', async wpStats => {
     if (wpStats?.hasErrors()) {
       throw new Error(`Webpack build error: ${wpStats.toString()}`)
