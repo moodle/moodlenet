@@ -1,12 +1,13 @@
 import type { Ext, ExtDef, KernelExt } from '@moodlenet/kernel'
 import type { MNPriHttpExt } from '@moodlenet/pri-http'
 import { mkdirSync } from 'fs'
-import { cp, writeFile } from 'fs/promises'
-import { join, resolve } from 'path'
+import { cp } from 'fs/promises'
+import { join } from 'path'
 import { inspect } from 'util'
 import { Configuration, webpack } from 'webpack'
 
-const config: Configuration = require('../webpack.config')({}, { mode: 'development' })
+const wpcfg = require('../webpack.config')
+const config: Configuration = wpcfg({}, { mode: 'development' })
 
 const latestBuildFolder = join(__dirname, '..', 'latest-build')
 mkdirSync(latestBuildFolder, { recursive: true })
@@ -68,16 +69,13 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt]> = {
 
 export default [extImpl]
 
+const wp = webpack(config)
 async function generateExtensionListModule() {
-  const extensionsJsFileName = resolve(
-    __dirname,
-    '..',
-    'src',
-    'webapp',
-    'extensions.ts' /* 'src', 'webapp', 'extensions.ts' */,
-  )
-  console.log(`generate extensions.ts ....`, { extensionsJsFileName })
-  await writeFile(extensionsJsFileName, extensionsJsString(), { encoding: 'utf8' })
+  console.log(`generate extensions.ts ....`)
+
+  const extensionsDirectoryModule = makeExtensionsDirectoryModule()
+  console.log({ extensionsDirectoryModule })
+  wpcfg.virtualModules.writeModule('src/webapp/extensions.ts', extensionsDirectoryModule)
 
   const webpackAliases = Object.entries(extAliases).reduce(
     (aliases, [extName, { moduleLoc }]) => ({
@@ -92,9 +90,32 @@ async function generateExtensionListModule() {
   //   console.log('--BUILD WEBAPP', _)
   // })
 }
+// async function generateExtensionListModule() {
+//   const extensionsJsFileName = resolve(
+//     __dirname,
+//     '..',
+//     'src',
+//     'webapp',
+//     'extensions.ts' /* 'src', 'webapp', 'extensions.ts' */,
+//   )
+//   console.log(`generate extensions.ts ....`, { extensionsJsFileName })
+//   await writeFile(extensionsJsFileName, extensionsJsString(), { encoding: 'utf8' })
+
+//   const webpackAliases = Object.entries(extAliases).reduce(
+//     (aliases, [extName, { moduleLoc }]) => ({
+//       ...aliases,
+//       [extName]: moduleLoc,
+//     }),
+//     {},
+//   )
+//   config.resolve!.alias = { ...config.resolve!.alias, ...webpackAliases }
+//   console.log(`Extension aliases ....`, inspect({ /* config,  */ extAliases, webpackAliases }, false, 6, true))
+//   // wp.compile(_ => {
+//   //   console.log('--BUILD WEBAPP', _)
+//   // })
+// }
 
 async function webpackWatch() {
-  const wp = webpack(config)
   wp.hooks.afterDone.tap('swap folders', async wpStats => {
     if (wpStats?.hasErrors()) {
       throw new Error(`Webpack build error: ${wpStats.toString()}`)
@@ -103,16 +124,27 @@ async function webpackWatch() {
     await cp(config.output!.path!, latestBuildFolder, { recursive: true })
     console.log(`done`)
   })
+  wp.hooks.compilation.tap('ExtensionsModulePlugin', (/* compilation */) => {
+    // const extensionsJsFileName = resolve(
+    //   __dirname,
+    //   '..',
+    //   'src',
+    //   'webapp',
+    //   'extensions.ts' /* 'src', 'webapp', 'extensions.ts' */,
+    // )
+    // const baseExtensionModule = readFileSync(extensionsJsFileName, { encoding: 'utf8' })
+    wpcfg.virtualModules.writeModule('src/webapp/extensions.ts', makeExtensionsDirectoryModule())
+  })
   wp.watch({}, () => {
     console.log(`Webpack watched`)
   })
 }
 
-function extensionsJsString() {
+function makeExtensionsDirectoryModule() {
   // const requiresAndPush = Object.entries(extAliases)
   //   .map(([pkgName, { cmpPath }]) => `extensions.push( [ '${pkgName}', require('${pkgName}/${cmpPath}').Cmp ] )`)
   //   .join('\n')
-
+  console.log({ extAliases })
   return `
 import { ExtCmp } from './types'
 

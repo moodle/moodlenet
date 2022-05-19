@@ -1,11 +1,12 @@
+const VirtualModulesPlugin = require('webpack-virtual-modules');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const path = require('path');
-const webpack = require('webpack');
+// const webpack = require('webpack');
 const CompressionPlugin = require('compression-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 // const { jsonBeautify } = require('beautify-json');
-
+const virtualModules = new VirtualModulesPlugin()
 const configTemplate = () => {
 
   return {
@@ -76,6 +77,7 @@ const configTemplate = () => {
         template: './index.html',
         favicon: './favicon.png',
       }),
+      virtualModules
     ],
   };
 }
@@ -126,9 +128,9 @@ const getConfig = (env = {}, argv = {}) => {
     },
   };
   config.plugins.push(
-    new BundleAnalyzerPlugin({
-      analyzerMode: 'json',
-    }),
+    // new BundleAnalyzerPlugin({
+    //   analyzerMode: 'json',
+    // }),
     new CompressionPlugin({
       test: /\.js(\?.*)?$/i,
     }),
@@ -154,3 +156,4 @@ const getConfig = (env = {}, argv = {}) => {
 
 module.exports = getConfig
 module.exports.default = getConfig
+module.exports.virtualModules = virtualModules 
