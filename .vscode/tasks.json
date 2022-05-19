@@ -2,18 +2,18 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "dev-tasks",
       "group": "build",
+      "problemMatcher": [],
+      "label": "dev-tasks",
       "dependsOn": [
         "bare-metal dev-build",
         "core dev-build",
         "dev-machine dev-build",
-        "kernal dev-build",
+        "kernel dev-build",
         "pri-http dev-build",
         "react-app dev-build",
         "test-extension dev-build"
-      ],
-      "problemMatcher": []
+      ]
     },
     {
       "type": "typescript",
@@ -21,7 +21,9 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "bare-metal dev-build"
+      "label": "bare-metal dev-build",
+      "dependsOn": [
+      ]
     },
     {
       "type": "typescript",
@@ -29,7 +31,10 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "core dev-build"
+      "label": "core dev-build",
+      "dependsOn": [
+        "kernel dev-build",
+      ]
     },
     {
       "type": "typescript",
@@ -37,15 +42,19 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "dev-machine dev-build"
+      "label": "dev-machine dev-build",
+      "dependsOn": [
+      ]
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/kernal/tsconfig.json",
+      "tsconfig": "packages/kernel/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "kernal dev-build"
+      "label": "kernel dev-build",
+      "dependsOn": [
+      ]
     },
     {
       "type": "typescript",
@@ -53,7 +62,10 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "pri-http dev-build"
+      "label": "pri-http dev-build",
+      "dependsOn": [
+        "kernel dev-build",
+      ]
     },
     {
       "type": "typescript",
@@ -61,7 +73,11 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "react-app dev-build"
+      "label": "react-app dev-build",
+      "dependsOn": [
+        "kernel dev-build",
+        "pri-http dev-build",
+      ]
     },
     {
       "type": "typescript",
@@ -69,7 +85,11 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "test-extension dev-build"
+      "label": "test-extension dev-build",
+      "dependsOn": [
+        "kernel dev-build",
+        "react-app dev-build",
+      ]
     }
   ]
 }
