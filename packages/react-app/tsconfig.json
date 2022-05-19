@@ -1,5 +1,6 @@
 {
   "extends": "../../tsconfig.json",
+  "exclude": ["lib/**/*"],
   "compilerOptions": {
     "rootDir": "src",
     "moduleResolution": "Node",

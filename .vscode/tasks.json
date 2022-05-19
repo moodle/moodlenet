@@ -6,14 +6,21 @@
       "problemMatcher": [],
       "label": "dev-tasks",
       "dependsOn": [
-        "bare-metal dev-build",
-        "core dev-build",
-        "dev-machine dev-build",
         "kernel dev-build",
+        "bare-metal dev-build",
         "pri-http dev-build",
         "react-app dev-build",
+        "core dev-build",
         "test-extension dev-build"
-      ]
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      }
     },
     {
       "type": "typescript",
@@ -22,8 +29,7 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "bare-metal dev-build",
-      "dependsOn": [
-      ]
+      "dependsOn": []
     },
     {
       "type": "typescript",
@@ -32,12 +38,7 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "core dev-build",
-      "dependsOn": [
-        "kernel dev-build",
-        "pri-http dev-build",
-        "react-app dev-build",
-      ]        
-
+      "dependsOn": []
     },
     {
       "type": "typescript",
@@ -46,8 +47,7 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "kernel dev-build",
-      "dependsOn": [
-      ]
+      "dependsOn": []
     },
     {
       "type": "typescript",
@@ -56,9 +56,8 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "pri-http dev-build",
-      "dependsOn": [
-        "kernel dev-build",
-      ]
+      // "dependsOn": ["kernel dev-build"],
+      "dependsOn": []
     },
     {
       "type": "typescript",
@@ -67,10 +66,8 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "react-app dev-build",
-      "dependsOn": [
-        "kernel dev-build",
-        "pri-http dev-build",
-      ]
+      // "dependsOn": ["kernel dev-build", "pri-http dev-build"],
+      "dependsOn": []
     },
     {
       "type": "typescript",
@@ -79,10 +76,8 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "test-extension dev-build",
-      "dependsOn": [
-        "kernel dev-build",
-        "react-app dev-build",
-      ]
+      // "dependsOn": ["kernel dev-build", "react-app dev-build"],
+      "dependsOn": []
     }
   ]
 }
