@@ -3,6 +3,7 @@ import { PkgInfo } from './reg'
 
 export type PkgDiskInfo = PkgInfo & {
   rootDir: string
+  rootDirPosix: string
   mainModPath: string
 }
 export type PackageExt = {

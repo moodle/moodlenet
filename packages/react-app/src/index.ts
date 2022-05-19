@@ -53,7 +53,7 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt]> = {
                 }
                 extAliases[depl.extId] = {
                   cmpPath,
-                  moduleLoc: depl.pkgDiskInfo.rootDir,
+                  moduleLoc: depl.pkgDiskInfo.rootDirPosix,
                 }
                 buildAndClean()
               },

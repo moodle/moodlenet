@@ -1,4 +1,4 @@
-import { dirname, resolve } from 'path'
+import { dirname, posix, resolve, sep } from 'path'
 import { sync as packageDirectorySync } from 'pkg-dir'
 import type { PackageJson as NodePackageJson } from 'type-fest'
 import type { PkgDiskInfo } from '../types'
@@ -20,7 +20,8 @@ export function pkgDiskInfoOf(mainModPath: string): PkgDiskInfo {
     if (!version) {
       throw new Error(`package.json for module ${rootDir} has no version set`)
     }
-    const pkgInfo: PkgDiskInfo = { rootDir, mainModPath, name, version }
+    const rootDirPosix = rootDir.split(sep).join(posix.sep)
+    const pkgInfo: PkgDiskInfo = { rootDir, rootDirPosix, mainModPath, name, version }
     return pkgInfo
   } catch (e) {
     const cause = e instanceof Error ? e : new Error(String(e))
