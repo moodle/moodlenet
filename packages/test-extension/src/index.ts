@@ -1,5 +1,5 @@
 import type { Ext, ExtDef, KernelExt, SubTopo } from '@moodlenet/kernel'
-import type { WebappExt } from '@moodlenet/webapp'
+import type { WebappExt } from '@moodlenet/react-app'
 
 export type TestExt = ExtDef<
   'moodlenet.test-extension',

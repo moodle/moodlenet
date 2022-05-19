@@ -1,5 +1,6 @@
 import type { Ext, ExtDef, KernelExt } from '@moodlenet/kernel'
 import type { MNPriHttpExt } from '@moodlenet/pri-http'
+import { mkdirSync } from 'fs'
 import { rename, rm, stat, writeFile } from 'fs/promises'
 import { join, resolve } from 'path'
 import { inspect, promisify } from 'util'
@@ -8,6 +9,7 @@ import { Configuration, webpack } from 'webpack'
 const wpCfg = require('../webpack.config')
 
 const latestBuildFolder = join(__dirname, '..', 'latest-build')
+mkdirSync(latestBuildFolder, { recursive: true })
 const oldLatestBuildFolder = `${latestBuildFolder}__old`
 // const buildFolder = join(__dirname, '..', 'build')
 const extAliases: {

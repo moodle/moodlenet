@@ -12,7 +12,7 @@
     "@moodlenet/kernel": "^0.0.1",
     "@moodlenet/pri-http": "^0.0.1",
     "@moodlenet/test-extension": "^0.0.1",
-    "@moodlenet/webapp": "^0.0.1",
+    "@moodlenet/react-app": "^0.0.1",
     "dotenv": "^16.0.0",
     "dotenv-expand": "^8.0.1"
   },
