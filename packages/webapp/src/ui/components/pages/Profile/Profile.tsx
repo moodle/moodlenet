@@ -89,10 +89,10 @@ export const Profile = withCtrl<ProfileProps>(
       setIsEditing(!isEditing)
     }
 
-    const collectionList = (
+    const collectionList = collectionCardPropsList.length > 0 && (
       <ListCard
         className="collections"
-        title={`${t`Collections curated by`} ${displayName}`}
+        title={t`Curated collections`}
         content={collectionCardPropsList.map((collectionCardProps) => (
           <CollectionCard {...collectionCardProps} isEditing={isEditing} />
         ))}
@@ -225,34 +225,37 @@ export const Profile = withCtrl<ProfileProps>(
                 setIsReporting={setIsReporting}
                 openSendMessage={() => setIsSendingMessage(!!sendEmailForm)}
               />
-              <ListCard
-                className="resources"
-                content={resourceCardPropsList.map((resourcesCardProps) => {
-                  return (
-                    <ResourceCard
-                      {...resourcesCardProps}
-                      isEditing={isEditing}
-                      orientation="horizontal"
-                    />
-                  )
-                })}
-                title={t`Latest resources`}
-                actions={
-                  profileCardProps.isOwner
-                    ? {
-                        element: (
-                          <Link href={newResourceHref}>
-                            <PrimaryButton className="action">
-                              <NoteAddIcon />
-                              <Trans>New resource</Trans>
-                            </PrimaryButton>
-                          </Link>
-                        ),
-                        position: 'end',
-                      }
-                    : undefined
-                }
-              />
+              {(profileCardProps.isOwner ||
+                resourceCardPropsList.length > 0) && (
+                <ListCard
+                  className="resources"
+                  content={resourceCardPropsList.map((resourcesCardProps) => {
+                    return (
+                      <ResourceCard
+                        {...resourcesCardProps}
+                        isEditing={isEditing}
+                        orientation="horizontal"
+                      />
+                    )
+                  })}
+                  title={t`Latest resources`}
+                  actions={
+                    profileCardProps.isOwner
+                      ? {
+                          element: (
+                            <Link href={newResourceHref}>
+                              <PrimaryButton className="action">
+                                <NoteAddIcon />
+                                <Trans>New resource</Trans>
+                              </PrimaryButton>
+                            </Link>
+                          ),
+                          position: 'end',
+                        }
+                      : undefined
+                  }
+                />
+              )}
               {collectionList}
             </div>
             <div className="side-column">
