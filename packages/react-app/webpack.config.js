@@ -10,6 +10,10 @@ const configTemplate = () => {
 
   return {
     context: path.resolve(__dirname, ''),
+    watch: true,
+    watchOptions: {
+      aggregateTimeout: 500,
+    },
     output: {
       path: path.resolve(__dirname, 'build'),
       publicPath: '/',
@@ -77,68 +81,68 @@ const configTemplate = () => {
 const getConfig = (env = {}, argv = {}) => {
   const config = configTemplate()
   config.mode = argv.mode;
-  if (argv.mode === 'development') {
-    config.entry = ['react-hot-loader/patch', './src/webapp'];
-    config.devtool = 'inline-source-map';
-    config.resolve.alias['react-dom'] = '@hot-loader/react-dom';
-    config.plugins.push(new webpack.HotModuleReplacementPlugin());
-    config.devServer = {
-      compress: true,
-      hot: true,
-      historyApiFallback: true, // For react router
-      static: {
-        serveIndex: true,
-        watch: true,
-        directory: './build',
-      },
-    };
-  }
+  // if (argv.mode === 'development') {
+  //   config.entry = ['react-hot-loader/patch', './src/webapp'];
+  //   config.devtool = 'inline-source-map';
+  //   config.resolve.alias['react-dom'] = '@hot-loader/react-dom';
+  //   config.plugins.push(new webpack.HotModuleReplacementPlugin());
+  //   config.devServer = {
+  //     compress: true,
+  //     hot: true,
+  //     historyApiFallback: true, // For react router
+  //     static: {
+  //       serveIndex: true,
+  //       watch: true,
+  //       directory: './build',
+  //     },
+  //   };
+  // }
 
-  if (argv.mode === 'production') {
-    config.entry = ['./src/webapp'];
-    config.devtool = 'source-map';
-    config.output.filename = '[name].[chunkhash].bundle.js';
-    config.output.chunkFilename = '[name].[chunkhash].bundle.js';
-    config.optimization = {
-      moduleIds: 'hashed',
-      runtimeChunk: {
-        name: 'manifest',
-      },
-      splitChunks: {
-        cacheGroups: {
-          vendors: {
-            test: /node_modules\/(?!antd\/).*/,
-            name: 'vendors',
-            chunks: 'all',
-          },
-          // This can be your own design library.
-          antd: {
-            test: /node_modules\/(antd\/).*/,
-            name: 'antd',
-            chunks: 'all',
-          },
+  // if (argv.mode === 'production') {
+  config.entry = ['./src/webapp'];
+  config.devtool = 'source-map';
+  config.output.filename = '[name].[chunkhash].bundle.js';
+  config.output.chunkFilename = '[name].[chunkhash].bundle.js';
+  config.optimization = {
+    moduleIds: 'hashed',
+    runtimeChunk: {
+      name: 'manifest',
+    },
+    splitChunks: {
+      cacheGroups: {
+        vendors: {
+          test: /node_modules\/(?!antd\/).*/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+        // This can be your own design library.
+        antd: {
+          test: /node_modules\/(antd\/).*/,
+          name: 'antd',
+          chunks: 'all',
         },
       },
-    };
-    config.plugins.push(
-      new BundleAnalyzerPlugin({
-        analyzerMode: 'static',
-      }),
-      new CompressionPlugin({
-        test: /\.js(\?.*)?$/i,
-      }),
-      new CopyPlugin({
-        patterns: [{ from: './_redirects' }],
-      }),
-    );
-    config.performance = {
-      hints: 'warning',
-      // Calculates sizes of gziped bundles.
-      assetFilter(assetFilename) {
-        return assetFilename.endsWith('.js.gz');
-      },
-    };
-  }
+    },
+  };
+  config.plugins.push(
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'json',
+    }),
+    new CompressionPlugin({
+      test: /\.js(\?.*)?$/i,
+    }),
+    new CopyPlugin({
+      patterns: [{ from: './_redirects' }],
+    }),
+  );
+  config.performance = {
+    hints: 'warning',
+    // Calculates sizes of gziped bundles.
+    assetFilter(assetFilename) {
+      return assetFilename.endsWith('.js.gz');
+    },
+  };
+  // }
 
   // console.log('Webpack config\n');
 

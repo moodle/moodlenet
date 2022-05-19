@@ -74,7 +74,7 @@
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-react": "^7.29.3",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "html-webpack-plugin": "^4.5.2",
+    "html-webpack-plugin": "^5.5.0",
     "husky": "^4.3.8",
     "less": "^3.13.1",
     "less-loader": "^6.2.0",
