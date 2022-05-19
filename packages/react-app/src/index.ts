@@ -1,16 +1,16 @@
 import type { Ext, ExtDef, KernelExt } from '@moodlenet/kernel'
 import type { MNPriHttpExt } from '@moodlenet/pri-http'
 import { mkdirSync } from 'fs'
-import { rename, rm, stat, writeFile } from 'fs/promises'
+import { cp, writeFile } from 'fs/promises'
 import { join, resolve } from 'path'
-import { inspect, promisify } from 'util'
+import { inspect } from 'util'
 import { Configuration, webpack } from 'webpack'
 
-const wpCfg = require('../webpack.config')
+const config: Configuration = require('../webpack.config')({}, { mode: 'development', watch: false })
 
 const latestBuildFolder = join(__dirname, '..', 'latest-build')
 mkdirSync(latestBuildFolder, { recursive: true })
-const oldLatestBuildFolder = `${latestBuildFolder}__old`
+// const oldLatestBuildFolder = `${latestBuildFolder}__old`
 // const buildFolder = join(__dirname, '..', 'build')
 const extAliases: {
   [extId: string]: { moduleLoc: string; cmpPath: string }
@@ -42,7 +42,8 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt]> = {
           })
           mount({ mountApp, absMountPath: '/' })
         })
-        buildAndClean()
+        generateExtensionListModule()
+        webpackWatch()
         return {
           inst({ depl }) {
             return {
@@ -55,7 +56,7 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt]> = {
                   cmpPath,
                   moduleLoc: depl.pkgDiskInfo.rootDirPosix,
                 }
-                buildAndClean()
+                generateExtensionListModule()
               },
             }
           },
@@ -67,19 +68,11 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt]> = {
 
 export default [extImpl]
 
-async function buildAndClean() {
-  await build()
-  await removeOldLatestBuildFolder()
-}
-
-async function build() {
-  console.log('--BUILD WEBAPP')
-
+async function generateExtensionListModule() {
   const extensionsJsFileName = resolve(__dirname, '..', 'extensions.js' /* 'src', 'webapp', 'extensions.ts' */)
   console.log(`generate extensions.js ....`, { extensionsJsFileName })
   await writeFile(extensionsJsFileName, extensionsJsString(), { encoding: 'utf8' })
 
-  const config: Configuration = wpCfg({}, { mode: 'production', watch: false })
   const webpackAliases = Object.entries(extAliases).reduce(
     (aliases, [extName, { moduleLoc }]) => ({
       ...aliases,
@@ -89,28 +82,24 @@ async function build() {
   )
   config.resolve!.alias = { ...config.resolve!.alias, ...webpackAliases }
   console.log(`Extension aliases ....`, inspect({ /* config,  */ extAliases, webpackAliases }, false, 6, true))
-
-  const wp = webpack(config)
-  const runWp = promisify(wp.run.bind(wp))
-  const wpStats = await runWp()
-  if (wpStats?.hasErrors()) {
-    throw new Error(`Webpack build error: ${wpStats.toString()}`)
-  }
-  console.log(`Webpack build done`)
-  const latestBuildFolderStat = await stat(latestBuildFolder)
-  await removeOldLatestBuildFolder()
-  if (latestBuildFolderStat.isDirectory()) {
-    await rename(latestBuildFolder, oldLatestBuildFolder)
-  }
-  console.log(`renaming output to latestBuildFolder..`)
-  await rename(config.output!.path!, latestBuildFolder)
-  await removeOldLatestBuildFolder()
-  console.log(`build done`)
+  // wp.compile(_ => {
+  //   console.log('--BUILD WEBAPP', _)
+  // })
 }
 
-async function removeOldLatestBuildFolder() {
-  console.log(`removing oldLatestBuildFolder...`)
-  return rm(oldLatestBuildFolder, { maxRetries: 5, retryDelay: 500, force: true, recursive: true })
+async function webpackWatch() {
+  const wp = webpack(config)
+  wp.hooks.afterDone.tap('swap folders', async wpStats => {
+    if (wpStats?.hasErrors()) {
+      throw new Error(`Webpack build error: ${wpStats.toString()}`)
+    }
+    console.log(`Webpack build done`)
+    await cp(config.output!.path!, latestBuildFolder, { recursive: true })
+    console.log(`done`)
+  })
+  wp.watch({}, () => {
+    console.log(`Webpack watched`)
+  })
 }
 
 function extensionsJsString() {
