@@ -1,4 +1,5 @@
-import { CSSProperties, FC } from 'react'
+import { CSSProperties, forwardRef, ReactNode } from 'react'
+import { useForwardedRef } from '../../../lib/useForwardedRef'
 import './styles.scss'
 
 export type CardProps = {
@@ -8,36 +9,44 @@ export type CardProps = {
   noCard?: boolean
   hover?: boolean
   removePaddingWhenSmall?: boolean
+  children?: ReactNode
   onClick?(arg0: unknown): unknown
   onMouseDown?(arg0: unknown): unknown
 }
 
-export const Card: FC<CardProps> = ({
-  onClick,
-  onMouseDown,
-  className,
-  noCard,
-  hover,
-  style,
-  hideBorderWhenSmall,
-  removePaddingWhenSmall,
-  children,
-}) => {
-  return (
-    <div
-      className={`card ${className ? className : ''} ${
-        hideBorderWhenSmall ? 'hide-border' : ''
-      } ${noCard ? 'no-card' : ''} ${
-        removePaddingWhenSmall ? 'remove-padding' : ''
-      } ${hover ? 'hover' : ''}`}
-      style={style}
-      onClick={onClick}
-      onMouseDown={onMouseDown}
-    >
-      {children}
-    </div>
-  )
-}
+export const Card = forwardRef<HTMLDivElement | null | undefined, CardProps>(
+  (props, ref) => {
+    const {
+      onClick,
+      onMouseDown,
+      className,
+      noCard,
+      hover,
+      style,
+      hideBorderWhenSmall,
+      removePaddingWhenSmall,
+      children,
+    } = props
+
+    const cardElementRef = useForwardedRef(ref)
+
+    return (
+      <div
+        ref={cardElementRef as any}
+        className={`card ${className ? className : ''} ${
+          hideBorderWhenSmall ? 'hide-border' : ''
+        } ${noCard ? 'no-card' : ''} ${
+          removePaddingWhenSmall ? 'remove-padding' : ''
+        } ${hover ? 'hover' : ''}`}
+        style={style}
+        onClick={onClick}
+        onMouseDown={onMouseDown}
+      >
+        {children}
+      </div>
+    )
+  }
+)
 
 Card.defaultProps = {
   removePaddingWhenSmall: false,

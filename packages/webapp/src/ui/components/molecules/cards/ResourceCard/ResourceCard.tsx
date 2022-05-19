@@ -5,6 +5,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
+import { useEffect, useRef, useState } from 'react'
 import { getBackupImage } from '../../../../../helpers/utilities'
 import { Href, Link } from '../../../../elements/link'
 import { withCtrl } from '../../../../lib/ctrl'
@@ -70,6 +71,9 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     toggleLike,
     toggleBookmark,
   }) => {
+    const resourceCard = useRef<HTMLDivElement>(null)
+    const [size, setSize] = useState<'small' | 'medium' | 'big'>('medium')
+
     const { typeName, typeColor } = getResourceTypeInfo(type)
 
     const avatar = {
@@ -96,12 +100,12 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     const content = () => (
       <div className="content">
         {orientation === 'horizontal' && (
-          <div className="image" style={background} />
+          <div className={`image ${size}`} style={background} />
         )}
         <div
           className={`resource-card-content ${
             orientation === 'horizontal' ? 'horizontal' : 'vertical'
-          }`}
+          } ${size}`}
         >
           <abbr className="title" title={title}>
             <span>{title}</span>
@@ -110,8 +114,24 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
       </div>
     )
 
+    useEffect(() => {
+      const updateSize = () => {
+        setSize(
+          resourceCard.current && resourceCard.current.clientWidth < 385
+            ? 'small'
+            : resourceCard.current && resourceCard.current.clientWidth > 575
+            ? 'big'
+            : 'medium'
+        )
+      }
+      updateSize()
+      window.addEventListener('resize', updateSize)
+      return () => window.removeEventListener('resize', updateSize)
+    }, [resourceCard])
+
     return (
       <Card
+        ref={resourceCard}
         className={`resource-card ${
           isSelected ? 'selected' : ''
         } ${orientation} ${
@@ -121,7 +141,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
         onClick={onClick}
         style={orientation === 'vertical' ? background : {}}
       >
-        <div className={`resource-card-header ${orientation}`}>
+        <div className={`resource-card-header ${orientation} ${size}`}>
           <div className="left-side">
             <div className="type" style={{ background: typeColor }}>
               {typeName}
@@ -140,7 +160,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             </div>
           </div> */}
         </div>
-        <div className={`resource-card-footer ${orientation}`}>
+        <div className={`resource-card-footer ${orientation} ${size}`}>
           <div className="left-side">
             <Link href={owner.profileHref}>
               <div style={avatar} className="avatar" />
