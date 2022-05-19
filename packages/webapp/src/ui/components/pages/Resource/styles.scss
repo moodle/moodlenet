@@ -138,12 +138,17 @@
                 }
               }
 
-              .liked {
-                color: red;
+              > .liked {
+                &:not(:hover) > svg {
+                  color: #fc0071;
+                }
+                &:hover > * {
+                  color: #ce005d;
+                }
               }
 
               > .like:hover {
-                color: red;
+                color: #ce005d;
               }
 
               .bookmarked {
@@ -151,7 +156,7 @@
               }
 
               > .bookmark:hover {
-                color: #00bd7e;
+                color: #009966;
               }
 
               > .share:hover {
