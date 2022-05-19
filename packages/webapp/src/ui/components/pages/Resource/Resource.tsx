@@ -17,7 +17,7 @@ import { CP, withCtrl } from '../../../lib/ctrl'
 import { FormikHandle } from '../../../lib/formik'
 import { SelectOptions, SelectOptionsMulti } from '../../../lib/types'
 import { useImageUrl } from '../../../lib/useImageUrl'
-import { AssetInfo, FollowTag, getResourceColorType } from '../../../types'
+import { AssetInfo, FollowTag, getResourceTypeInfo } from '../../../types'
 import Card from '../../atoms/Card/Card'
 import {
   Dropdown,
@@ -141,7 +141,7 @@ export const Resource = withCtrl<ResourceProps>(
     setLevelFilter,
     setTypeFilter,
     downloadFilename,
-    type,
+    // type,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(
       canSearchImage && autoImageAdded
@@ -168,6 +168,8 @@ export const Resource = withCtrl<ResourceProps>(
       form.values?.image?.location,
       backupImage?.location
     )
+
+    const { typeName, typeColor } = getResourceTypeInfo(resourceFormat)
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -826,10 +828,10 @@ export const Resource = withCtrl<ResourceProps>(
                       <div
                         className="type"
                         style={{
-                          background: getResourceColorType(resourceFormat),
+                          background: typeColor,
                         }}
                       >
-                        {type}
+                        {typeName}
                       </div>
                       {/* <div
                         className="type"

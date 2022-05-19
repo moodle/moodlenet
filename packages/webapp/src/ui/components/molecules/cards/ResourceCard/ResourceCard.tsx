@@ -10,7 +10,7 @@ import { Href, Link } from '../../../../elements/link'
 import { withCtrl } from '../../../../lib/ctrl'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
 import '../../../../styles/tags.scss'
-import { FollowTag, getResourceColorType } from '../../../../types'
+import { FollowTag, getResourceTypeInfo } from '../../../../types'
 import Card from '../../../atoms/Card/Card'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
@@ -70,6 +70,8 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     toggleLike,
     toggleBookmark,
   }) => {
+    const { typeName, typeColor } = getResourceTypeInfo(type)
+
     const avatar = {
       backgroundImage:
         'url(' + (owner.avatar ? owner.avatar : defaultAvatar) + ')',
@@ -121,11 +123,8 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
       >
         <div className={`resource-card-header ${orientation}`}>
           <div className="left-side">
-            <div
-              className="type"
-              style={{ background: getResourceColorType(type) }}
-            >
-              {type}
+            <div className="type" style={{ background: typeColor }}>
+              {typeName}
             </div>
           </div>
           <div className="right-side">
