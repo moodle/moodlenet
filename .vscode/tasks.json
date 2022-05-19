@@ -1,0 +1,75 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dev-tasks",
+      "group": "build",
+      "dependsOn": [
+        "bare-metal dev-build",
+        "core dev-build",
+        "dev-machine dev-build",
+        "kernal dev-build",
+        "pri-http dev-build",
+        "react-app dev-build",
+        "test-extension dev-build"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/bare-metal/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "bare-metal dev-build"
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/core/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "core dev-build"
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/dev-machine/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "dev-machine dev-build"
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/kernal/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "kernal dev-build"
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/pri-http/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "pri-http dev-build"
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/react-app/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "react-app dev-build"
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/test-extension/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "test-extension dev-build"
+    }
+  ]
+}
