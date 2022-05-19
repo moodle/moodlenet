@@ -6,7 +6,7 @@ import { join, resolve } from 'path'
 import { inspect } from 'util'
 import { Configuration, webpack } from 'webpack'
 
-const config: Configuration = require('../webpack.config')({}, { mode: 'development', watch: false })
+const config: Configuration = require('../webpack.config')({}, { mode: 'development' })
 
 const latestBuildFolder = join(__dirname, '..', 'latest-build')
 mkdirSync(latestBuildFolder, { recursive: true })
@@ -69,8 +69,14 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt]> = {
 export default [extImpl]
 
 async function generateExtensionListModule() {
-  const extensionsJsFileName = resolve(__dirname, '..', 'extensions.js' /* 'src', 'webapp', 'extensions.ts' */)
-  console.log(`generate extensions.js ....`, { extensionsJsFileName })
+  const extensionsJsFileName = resolve(
+    __dirname,
+    '..',
+    'src',
+    'webapp',
+    'extensions.ts' /* 'src', 'webapp', 'extensions.ts' */,
+  )
+  console.log(`generate extensions.ts ....`, { extensionsJsFileName })
   await writeFile(extensionsJsFileName, extensionsJsString(), { encoding: 'utf8' })
 
   const webpackAliases = Object.entries(extAliases).reduce(
@@ -107,12 +113,20 @@ function extensionsJsString() {
   //   .map(([pkgName, { cmpPath }]) => `extensions.push( [ '${pkgName}', require('${pkgName}/${cmpPath}').Cmp ] )`)
   //   .join('\n')
 
-  return `  
+  return `
+import { ExtCmp } from './types'
+
 ${Object.entries(extAliases)
-  .map(
-    ([pkgName, { cmpPath, moduleLoc }]) => `module.exports['${pkgName}']= require('${moduleLoc}/${cmpPath}').default`,
-  )
+  .map(([, { cmpPath, moduleLoc }], index) => `import ext${index} from '${moduleLoc}/${cmpPath}'`)
   // .map(([pkgName, { cmpPath }], index) => `export { Cmp as Cmp_${index} } from '${pkgName}/${cmpPath}' //pkgName`)
   .join('\n')}
+    
+const extensions:Record<string, ExtCmp>  = {
+  ${Object.entries(extAliases)
+    .map(([pkgName], index) => `  ['${pkgName}']:  ext${index}`)
+    // .map(([pkgName, { cmpPath }], index) => `export { Cmp as Cmp_${index} } from '${pkgName}/${cmpPath}' //pkgName`)
+    .join('\n')}
+}
+export default extensions
 `
 }

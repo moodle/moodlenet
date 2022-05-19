@@ -13,6 +13,7 @@ const configTemplate = () => {
     watch: true,
     watchOptions: {
       aggregateTimeout: 500,
+      followSymlinks: true
     },
     output: {
       path: path.resolve(__dirname, 'build'),
