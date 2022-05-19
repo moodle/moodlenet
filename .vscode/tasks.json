@@ -34,17 +34,10 @@
       "label": "core dev-build",
       "dependsOn": [
         "kernel dev-build",
-      ]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/dev-machine/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "dev-machine dev-build",
-      "dependsOn": [
-      ]
+        "pri-http dev-build",
+        "react-app dev-build",
+      ]        
+
     },
     {
       "type": "typescript",
