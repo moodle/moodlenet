@@ -114,15 +114,13 @@
                 align-items: center;
                 gap: 2px;
                 font-size: 15px;
+                cursor: pointer;
+                color: #8c8e95;
                 > svg,
                 * > svg {
                   width: 24px;
                   height: 24px;
                 }
-              }
-
-              > *:not(.like-disabled) {
-                cursor: pointer;
               }
 
               > .more-button > .hover-element > .more {
@@ -135,6 +133,12 @@
                 > svg {
                   width: 21px;
                   height: 21px;
+                }
+
+                &.disabled {
+                  pointer-events: none;
+                  cursor: auto;
+                  color: #d0d1db;
                 }
               }
 
