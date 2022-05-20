@@ -1,6 +1,10 @@
 @import '../../../styles/application';
 
 .collection {
+  @media screen and (max-width: 450px) {
+    background-color: white;
+  }
+
   > .content {
     width: 100%;
     max-width: 1100px;
@@ -12,7 +16,7 @@
 
     @media screen and (max-width: 450px) {
       margin-top: 0;
-      padding: 0;
+      padding: 34px;
     }
 
     > .main-collection-card {
@@ -46,6 +50,7 @@
         border-radius: 16px 16px 0 0;
 
         @media (max-width: 450px) {
+          border-radius: 0;
           height: 175px;
         }
 
@@ -121,6 +126,9 @@
 
       > .info {
         padding: 0 20px 0 20px;
+        @media screen and (max-width: 450px) {
+          padding: 0;
+        }
       }
 
       > .info {
@@ -146,6 +154,8 @@
             gap: 12px;
             width: fit-content;
             align-items: center;
+            font-size: 15px;
+            font-weight: normal;
 
             > * {
               cursor: pointer;
@@ -157,6 +167,49 @@
                 height: 24px;
               }
             }
+
+            > .follow {
+              padding: 1px 3px;
+              cursor: pointer;
+              display: flex;
+              align-items: center;
+              color: #757575;
+
+              &.disabled {
+                color: #d0d1db;
+                cursor: auto;
+              }
+
+              &:hover:not(.disabled) {
+                color: #5c5c5c;
+              }
+              &.following {
+                &:hover {
+                  &,
+                  > svg {
+                    color: $primary-color-hover;
+                  }
+                }
+                > svg {
+                  color: $primary-color;
+                }
+              }
+            }
+
+            // > .follow {
+            //   display: flex;
+            //   align-items: center;
+            //   gap: 2px;
+            //   font-size: 15px;
+
+            //   > .following {
+            //     color: $primary-color;
+            //   }
+
+            //   > .follow:hover {
+            //     color: $primary-color;
+            //   }
+            // }
 
             > .more-button > .hover-element > .more {
               font-size: 20px;
@@ -260,21 +313,6 @@
                 height: 17px;
               }
             }
-
-            .followers {
-              display: flex;
-              align-items: center;
-              gap: 2px;
-              font-size: 15px;
-
-              > .following {
-                color: $primary-color;
-              }
-
-              > .follow:hover {
-                color: $primary-color;
-              }
-            }
           }
 
           .right {
@@ -331,7 +369,7 @@
       @media screen and (max-width: 450px) {
         > .main-column {
           > .list-card {
-            padding: 0 15px;
+            padding: 0;
           }
 
           > .collection-footer {
@@ -341,6 +379,14 @@
             .one-column {
               display: flex;
               flex-direction: column;
+              width: 100%;
+              > * {
+                padding: 0;
+              }
+
+              > .extra-details-card {
+                padding: 0;
+              }
             }
           }
         }
@@ -392,21 +438,20 @@
 
       > .side-column > .extra-details-card,
       > .main-column > .collection-footer > .right-column > .extra-details-card,
-      > .main-column
-        > .collection-footer
-        > .one-column
-        > .extra-details-card
-        > .side-column
-        > .extra-details-card {
+      > .main-column > .collection-footer > .one-column > .extra-details-card,
+      > .side-column > .extra-details-card {
         width: 100%;
         height: fit-content;
-        padding: 25px;
         display: flex;
 
         flex-direction: column;
         gap: 13px;
         flex-wrap: wrap;
         justify-content: center;
+
+        @media screen and (min-width: 450px) {
+          padding: 25px;
+        }
 
         > .dropdown {
           gap: 4px;
