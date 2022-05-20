@@ -333,6 +333,7 @@ export const useProfileCtrl: CtrlHook<ProfileProps, ProfileCtrlProps> = ({
         {},
         'header-page-template'
       ),
+      isOwner: isMe,
       resourceCardPropsList: resources.map(({ id }) =>
         ctrlHook(useResourceCardCtrl, { id, removeAction: false }, id)
       ),
