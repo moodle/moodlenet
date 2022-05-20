@@ -59,6 +59,7 @@
     &.horizontal {
       right: 22px;
 
+      &.tiny,
       &.small {
         left: 120px;
       }
@@ -103,6 +104,7 @@
       > .left-side > a > span {
         color: #8c8e95;
       }
+      &.tiny,
       &.small {
         left: 120px;
       }
@@ -215,6 +217,7 @@
       > .image {
         object-fit: cover;
         border-radius: 9px 0 0 9px;
+        &.tiny,
         &.small {
           width: 100px;
         }
@@ -247,6 +250,7 @@
           overflow-wrap: break-word;
         }
         &.horizontal {
+          &.tiny,
           &.small {
             width: calc(100% - 100px);
           }
