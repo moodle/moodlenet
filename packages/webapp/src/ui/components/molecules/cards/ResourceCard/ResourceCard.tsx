@@ -5,12 +5,13 @@ import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
+import { useEffect, useRef, useState } from 'react'
 import { getBackupImage } from '../../../../../helpers/utilities'
 import { Href, Link } from '../../../../elements/link'
 import { withCtrl } from '../../../../lib/ctrl'
 import defaultAvatar from '../../../../static/img/default-avatar.svg'
 import '../../../../styles/tags.scss'
-import { FollowTag, getResourceColorType } from '../../../../types'
+import { FollowTag, getResourceTypeInfo } from '../../../../types'
 import Card from '../../../atoms/Card/Card'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import { Visibility } from '../../../atoms/VisibilityDropdown/VisibilityDropdown'
@@ -27,6 +28,7 @@ export type ResourceCardProps = {
   title: string
   visibility: Visibility
   resourceHomeHref?: Href
+  allowDeletion?: boolean
   isOwner: boolean
   isEditing?: boolean
   isAuthenticated?: boolean
@@ -64,12 +66,20 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     bookmarked,
     isOwner,
     visibility,
+    allowDeletion,
     owner,
     onClick,
     onRemoveClick,
     toggleLike,
     toggleBookmark,
   }) => {
+    const resourceCard = useRef<HTMLDivElement>(null)
+    const [size, setSize] = useState<'tiny' | 'small' | 'medium' | 'big'>(
+      'medium'
+    )
+
+    const { typeName, typeColor } = getResourceTypeInfo(type)
+
     const avatar = {
       backgroundImage:
         'url(' + (owner.avatar ? owner.avatar : defaultAvatar) + ')',
@@ -94,12 +104,12 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     const content = () => (
       <div className="content">
         {orientation === 'horizontal' && (
-          <div className="image" style={background} />
+          <div className={`image ${size}`} style={background} />
         )}
         <div
           className={`resource-card-content ${
             orientation === 'horizontal' ? 'horizontal' : 'vertical'
-          }`}
+          } ${size}`}
         >
           <abbr className="title" title={title}>
             <span>{title}</span>
@@ -108,8 +118,26 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
       </div>
     )
 
+    useEffect(() => {
+      const updateSize = () => {
+        setSize(
+          resourceCard.current && resourceCard.current.clientWidth < 300
+            ? 'tiny'
+            : resourceCard.current && resourceCard.current.clientWidth < 385
+            ? 'small'
+            : resourceCard.current && resourceCard.current.clientWidth < 575
+            ? 'medium'
+            : 'big'
+        )
+      }
+      updateSize()
+      window.addEventListener('resize', updateSize)
+      return () => window.removeEventListener('resize', updateSize)
+    }, [resourceCard])
+
     return (
       <Card
+        ref={resourceCard}
         className={`resource-card ${
           isSelected ? 'selected' : ''
         } ${orientation} ${
@@ -119,17 +147,14 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
         onClick={onClick}
         style={orientation === 'vertical' ? background : {}}
       >
-        <div className={`resource-card-header ${orientation}`}>
+        <div className={`resource-card-header ${orientation} ${size}`}>
           <div className="left-side">
-            <div
-              className="type"
-              style={{ background: getResourceColorType(type) }}
-            >
-              {type}
+            <div className="type" style={{ background: typeColor }}>
+              {typeName}
             </div>
           </div>
           <div className="right-side">
-            {isEditing && (
+            {isEditing && allowDeletion && (
               <TertiaryButton onClick={onRemoveClick} className="delete">
                 <CloseRoundedIcon />
               </TertiaryButton>
@@ -141,11 +166,11 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             </div>
           </div> */}
         </div>
-        <div className={`resource-card-footer ${orientation}`}>
+        <div className={`resource-card-footer ${orientation} ${size}`}>
           <div className="left-side">
             <Link href={owner.profileHref}>
               <div style={avatar} className="avatar" />
-              <span>{owner.displayName}</span>
+              {size !== 'tiny' && <span>{owner.displayName}</span>}
             </Link>
           </div>
           <div className="right-side">
@@ -167,9 +192,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             {isAuthenticated && !selectionMode && (
               <div
                 className={`bookmark ${bookmarked && 'bookmarked'} ${
-                  selectionMode || !isAuthenticated || isEditing
-                    ? 'disabled'
-                    : ''
+                  selectionMode || !isAuthenticated ? 'disabled' : ''
                 }`}
                 onClick={toggleBookmark}
               >
@@ -180,9 +203,13 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
               className={`like ${liked && 'liked'} ${
                 selectionMode || !isAuthenticated || isOwner ? 'disabled' : ''
               }`}
-              {...(isAuthenticated &&
-                !isOwner &&
-                !selectionMode && { onClick: toggleLike })}
+              {...(isAuthenticated && !isOwner && !selectionMode
+                ? { onClick: toggleLike }
+                : {
+                    onClick: (e) => {
+                      e.stopPropagation()
+                    },
+                  })}
             >
               {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
               <span>{numLikes}</span>

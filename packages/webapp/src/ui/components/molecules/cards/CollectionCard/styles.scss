@@ -67,39 +67,10 @@
       }
     }
 
-    > .right > *,
-    > .follow {
-      padding: 1px 3px;
-      // background-color: #e3e5ef;
-      // border-radius: 6px;
-      font-size: 13px;
-      // color: #636363;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      > svg,
-      * > svg {
-        width: 18px;
-        height: 18px;
-      }
-    }
-
-    > .follow:hover:not(.disabled) {
-      color: #cbcdd7;
-    }
-
-    > :not(.disabled) {
-      pointer-events: auto;
-    }
-
-    .following > svg {
-      color: $primary-color;
-    }
-
     .right {
       display: flex;
       gap: 5px;
+      pointer-events: auto;
 
       > .visibility {
         &.public {
@@ -115,13 +86,59 @@
         }
       }
 
-      > .bookmarked,
-      .bookmark:hover:not(.disabled) {
-        color: #00bd7e;
+      > .bookmark {
+        &.bookmarked,
+        &:hover:not(.disabled) {
+          color: #00bd7e;
+        }
+
+        &.bookmarked:hover {
+          color: #009966;
+        }
       }
 
       > .follow:hover:not(.disabled) {
         color: $primary-color;
+      }
+
+      > .follow {
+        padding: 1px 3px;
+        // background-color: #e3e5ef;
+        // border-radius: 6px;
+        font-size: 13px;
+        // color: #636363;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        > svg,
+        * > svg {
+          width: 18px;
+          height: 18px;
+        }
+        &.disabled {
+          color: #d0d1db;
+          cursor: auto;
+        }
+
+        &:hover:not(.disabled) {
+          color: #cbcdd7;
+        }
+        &.following {
+          &:hover {
+            &,
+            > svg {
+              color: $primary-color-hover;
+            }
+          }
+          > svg {
+            color: $primary-color;
+          }
+        }
+      }
+
+      > :not(.disabled) {
+        cursor: pointer;
       }
     }
   }

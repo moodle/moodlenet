@@ -11,32 +11,31 @@
       padding: 0;
 
       > .main-column {
+        background-color: white;
+
         > .list-card {
           padding: 15px 40px;
         }
 
-        > :not(:last-child) {
-          margin-bottom: 0;
+        > :first-child {
+          padding-bottom: 0;
+        }
+
+        > :last-child {
+          margin-bottom: 36px;
         }
       }
     }
 
     > .main-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
       width: 65%;
       height: 100%;
 
       > .collections {
         display: none;
-      }
-
-      > :not(:last-child) {
-        margin-bottom: 16px;
-      }
-
-      > :first-child {
-        @media screen and (max-width: 450px) {
-          margin-bottom: 0;
-        }
       }
     }
 
