@@ -28,6 +28,7 @@ export type ResourceCardProps = {
   title: string
   visibility: Visibility
   resourceHomeHref?: Href
+  allowDeletion?: boolean
   isOwner: boolean
   isEditing?: boolean
   isAuthenticated?: boolean
@@ -65,6 +66,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     bookmarked,
     isOwner,
     visibility,
+    allowDeletion,
     owner,
     onClick,
     onRemoveClick,
@@ -152,7 +154,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             </div>
           </div>
           <div className="right-side">
-            {isEditing && (
+            {isEditing && allowDeletion && (
               <TertiaryButton onClick={onRemoveClick} className="delete">
                 <CloseRoundedIcon />
               </TertiaryButton>
