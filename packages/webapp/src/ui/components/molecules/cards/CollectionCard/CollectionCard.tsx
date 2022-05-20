@@ -99,7 +99,17 @@ export const CollectionCard = withCtrl<CollectionCardProps>(
               className={`follow ${following ? 'following' : ''} ${
                 !isAuthenticated || isOwner ? 'disabled' : ''
               }`}
-              {...(isAuthenticated && !isOwner && { onClick: toggleFollow })}
+              {...(isAuthenticated && !isOwner
+                ? {
+                    onClick: () => {
+                      toggleFollow && toggleFollow()
+                    },
+                  }
+                : {
+                    onClick: (e) => {
+                      e.stopPropagation()
+                    },
+                  })}
             >
               {following ? <PersonIcon /> : <PermIdentityIcon />}
               <span>{numFollowers}</span>
