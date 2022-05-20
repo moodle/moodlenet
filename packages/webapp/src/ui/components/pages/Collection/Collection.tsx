@@ -4,6 +4,7 @@ import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder'
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 import EditIcon from '@material-ui/icons/Edit'
 import PermIdentityIcon from '@material-ui/icons/PermIdentity'
+import PersonIcon from '@material-ui/icons/Person'
 import SaveIcon from '@material-ui/icons/Save'
 import FlagIcon from '@mui/icons-material/Flag'
 import ShareIcon from '@mui/icons-material/Share'
@@ -356,6 +357,26 @@ export const Collection = withCtrl<CollectionProps>(
                       isAdmin || isOwner ? 'edit-save' : ''
                     }`}
                   >
+                    <div
+                      className={`follow ${isFollowing ? 'following' : ''} ${
+                        !isAuthenticated || isOwner ? 'disabled' : ''
+                      }`}
+                      {...(isAuthenticated && !isOwner
+                        ? {
+                            onClick: () => {
+                              toggleFollow && toggleFollow.submitForm()
+                            },
+                          }
+                        : {
+                            onClick: (e) => {
+                              e.stopPropagation()
+                            },
+                          })}
+                    >
+                      {isFollowing ? <PersonIcon /> : <PermIdentityIcon />}
+                      <span>{numFollowers}</span>
+                    </div>
+
                     {isAuthenticated && !isEditing && (
                       <div
                         className={`bookmark ${bookmarked && 'bookmarked'}`}
@@ -465,46 +486,44 @@ export const Collection = withCtrl<CollectionProps>(
                 ) : (
                   <div className="description">{form.values.description}</div>
                 )}
-                <div className="actions">
-                  <div className="left">
-                    {!isOwner && !isFollowing && (
-                      <PrimaryButton
-                        disabled={!isAuthenticated}
-                        onClick={toggleFollow.submitForm}
-                        className="follow-button"
-                      >
-                        {/* <AddIcon /> */}
-                        <Trans>Follow</Trans>
-                      </PrimaryButton>
-                    )}
-                    {!isOwner && isFollowing && (
-                      <SecondaryButton
-                        disabled={!isAuthenticated}
-                        onClick={toggleFollow.submitForm}
-                        className="following-button"
-                        color="orange"
-                      >
-                        {/* <CheckIcon /> */}
-                        <Trans>Following</Trans>
-                      </SecondaryButton>
-                    )}
-                    <div className={`followers`}>
-                      <PermIdentityIcon />
-                      <span>{numFollowers}</span>
+                {!isOwner && !isAdmin && (
+                  <div className="actions">
+                    <div className="left">
+                      {!isOwner && !isFollowing && (
+                        <PrimaryButton
+                          disabled={!isAuthenticated}
+                          onClick={toggleFollow.submitForm}
+                          className="follow-button"
+                        >
+                          {/* <AddIcon /> */}
+                          <Trans>Follow</Trans>
+                        </PrimaryButton>
+                      )}
+                      {!isOwner && isFollowing && (
+                        <SecondaryButton
+                          disabled={!isAuthenticated}
+                          onClick={toggleFollow.submitForm}
+                          className="following-button"
+                          color="orange"
+                        >
+                          {/* <CheckIcon /> */}
+                          <Trans>Following</Trans>
+                        </SecondaryButton>
+                      )}
+                    </div>
+                    <div className="right">
+                      {isEditing && (
+                        <SecondaryButton
+                          color="red"
+                          onHoverColor="fill-red"
+                          onClick={() => setIsToDelete(true)}
+                        >
+                          <DeleteOutlineIcon />
+                        </SecondaryButton>
+                      )}
                     </div>
                   </div>
-                  <div className="right">
-                    {isEditing && (
-                      <SecondaryButton
-                        color="red"
-                        onHoverColor="fill-red"
-                        onClick={() => setIsToDelete(true)}
-                      >
-                        <DeleteOutlineIcon />
-                      </SecondaryButton>
-                    )}
-                  </div>
-                </div>
+                )}
               </div>
             </Card>
             <div className="main-content">
@@ -515,7 +534,6 @@ export const Collection = withCtrl<CollectionProps>(
                       <ResourceCard
                         {...resourceCardProps}
                         isEditing={isEditing}
-                        allowDeletion={true}
                         orientation="horizontal"
                       />
                     )
