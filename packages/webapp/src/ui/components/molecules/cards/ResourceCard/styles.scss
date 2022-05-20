@@ -163,8 +163,10 @@
         align-items: center;
         gap: 4px;
       }
-      > :not(.disabled) {
-        pointer-events: auto;
+      pointer-events: auto;
+
+      > .disabled {
+        cursor: auto;
       }
 
       > .visibility {

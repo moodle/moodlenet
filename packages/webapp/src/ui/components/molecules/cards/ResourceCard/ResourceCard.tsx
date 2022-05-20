@@ -203,9 +203,13 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
               className={`like ${liked && 'liked'} ${
                 selectionMode || !isAuthenticated || isOwner ? 'disabled' : ''
               }`}
-              {...(isAuthenticated &&
-                !isOwner &&
-                !selectionMode && { onClick: toggleLike })}
+              {...(isAuthenticated && !isOwner && !selectionMode
+                ? { onClick: toggleLike }
+                : {
+                    onClick: (e) => {
+                      e.stopPropagation()
+                    },
+                  })}
             >
               {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
               <span>{numLikes}</span>
