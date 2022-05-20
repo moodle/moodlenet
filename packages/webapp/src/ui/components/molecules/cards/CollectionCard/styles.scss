@@ -86,9 +86,15 @@
         }
       }
 
-      > .bookmarked,
-      .bookmark:hover:not(.disabled) {
-        color: #00bd7e;
+      > .bookmark {
+        &.bookmarked,
+        &:hover:not(.disabled) {
+          color: #00bd7e;
+        }
+
+        &.bookmarked:hover {
+          color: #009966;
+        }
       }
 
       > .follow:hover:not(.disabled) {
