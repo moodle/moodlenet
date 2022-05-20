@@ -14,7 +14,7 @@
     z-index: 1;
     left: 25px;
     right: 25px;
-    top: 25px;
+    top: 18px;
     display: flex;
     justify-content: space-between;
     gap: 10px;
@@ -39,8 +39,15 @@
 
     > .right-side {
       margin-right: -10px;
+      flex-grow: 0;
+      flex-shrink: 0;
       > .delete {
-        padding: 2px 5px;
+        pointer-events: all;
+        height: 26px;
+        width: 25px;
+        padding: 0 5px;
+        display: flex;
+        justify-content: center;
         > svg {
           font-size: 20px;
         }
