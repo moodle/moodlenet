@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro'
 import { Href } from './elements/link'
 
 export type Organization = {
@@ -20,16 +21,52 @@ export type FollowTag = {
 
 export type ResourceType = 'Video' | 'Web Page' | 'Moodle Book'
 
-export const getResourceColorType = (type?: string) => {
+export const getResourceTypeInfo = (
+  type: string
+): { typeName: string; typeColor: string } => {
   switch (type) {
-    case 'Video':
-      return '#2A75C0'
+    case 'mp4':
+    case 'avi':
+    case 'mov':
+    case 'wmv':
+    case 'mkv':
+    case 'webm':
+    case 'avchd':
+    case 'flv':
+    case 'f4v':
+    case 'swf':
+      return { typeName: t`Video`, typeColor: '#2A75C0' }
+    case 'mp3':
+    case 'wav':
+    case 'wma':
+    case 'aac':
+    case 'm4a':
+      return { typeName: t`Audio`, typeColor: '#8033c7' }
+    case 'jpeg':
+    case 'jpg':
+    case 'png':
+    case 'gif':
+      return { typeName: t`Image`, typeColor: '#27a930' }
     case 'pdf':
-      return '#dd0000'
+      return { typeName: 'pdf', typeColor: '#df3131' }
+    case 'xls':
+    case 'xlsx':
+    case 'ods':
+      return { typeName: t`Spreadsheet`, typeColor: '#0f9d58' }
+    case 'doc':
+    case 'docx':
+    case 'odt':
+      return { typeName: 'Word', typeColor: '#4285f4' }
+    case 'ppt':
+    case 'pptx':
+    case 'odp':
+      return { typeName: t`Presentation`, typeColor: '#dfa600' }
+    case 'mbz':
+      return { typeName: 'Moodle file', typeColor: '#f88012' }
     case 'Web Page':
-      return '#C233C7'
+      return { typeName: t`Web page`, typeColor: '#C233C7' }
     default:
-      return '#15845A'
+      return { typeName: type, typeColor: '#15845A' }
   }
 }
 

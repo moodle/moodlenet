@@ -114,15 +114,13 @@
                 align-items: center;
                 gap: 2px;
                 font-size: 15px;
+                cursor: pointer;
+                color: #8c8e95;
                 > svg,
                 * > svg {
                   width: 24px;
                   height: 24px;
                 }
-              }
-
-              > *:not(.like-disabled) {
-                cursor: pointer;
               }
 
               > .more-button > .hover-element > .more {
@@ -136,14 +134,25 @@
                   width: 21px;
                   height: 21px;
                 }
+
+                &.disabled {
+                  pointer-events: none;
+                  cursor: auto;
+                  color: #d0d1db;
+                }
               }
 
-              .liked {
-                color: red;
+              > .liked {
+                &:not(:hover) > svg {
+                  color: #fc0071;
+                }
+                &:hover > * {
+                  color: #ce005d;
+                }
               }
 
               > .like:hover {
-                color: red;
+                color: #ce005d;
               }
 
               .bookmarked {
@@ -151,7 +160,7 @@
               }
 
               > .bookmark:hover {
-                color: #00bd7e;
+                color: #009966;
               }
 
               > .share:hover {
