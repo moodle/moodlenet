@@ -7,7 +7,9 @@
 
     > .main-column {
       height: 100%;
-
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
       > .title {
         color: #223b6a;
         font-size: 30px;
@@ -26,10 +28,6 @@
 
       > .filter-and-sort {
         display: none;
-      }
-
-      > :not(:last-child) {
-        margin-bottom: 30px;
       }
 
       > .resources:not(.see-all) {
@@ -73,6 +71,7 @@
 
     @media screen and (max-width: 800px) {
       > .main-column {
+        margin-bottom: 20px;
         &:not(.full-width) {
           margin-left: 0;
           width: 100%;

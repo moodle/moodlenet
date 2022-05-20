@@ -131,7 +131,7 @@ export const Resource = withCtrl<ResourceProps>(
     deleteResourceForm,
     sendToMoodleLmsForm,
     contentUrl,
-    resourceFormat,
+    // resourceFormat,
     contentType,
     addToCollectionsForm,
     autoImageAdded,
@@ -141,7 +141,7 @@ export const Resource = withCtrl<ResourceProps>(
     setLevelFilter,
     setTypeFilter,
     downloadFilename,
-    // type,
+    type,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(
       canSearchImage && autoImageAdded
@@ -169,7 +169,7 @@ export const Resource = withCtrl<ResourceProps>(
       backupImage?.location
     )
 
-    const { typeName, typeColor } = getResourceTypeInfo(resourceFormat)
+    const { typeName, typeColor } = getResourceTypeInfo(type)
 
     const handleOnEditClick = () => {
       setIsEditing(true)
@@ -844,22 +844,12 @@ export const Resource = withCtrl<ResourceProps>(
                       >
                         {typeName}
                       </div>
-                      {/* <div
-                        className="type"
-                        style={{
-                          color: getResourceColorType(contentType),
-                        }}
-                      >
-                         &nbsp;/ {contentType} 
-                      </div> */}
                     </span>
                     <div className="actions">
                       {!isEditing && (
                         <div
-                          className={`${
-                            isAuthenticated && !isOwner
-                              ? 'like'
-                              : 'like-disabled'
+                          className={`like ${
+                            isAuthenticated && !isOwner ? '' : 'disabled'
                           } ${liked && 'liked'}`}
                           onClick={
                             isAuthenticated && !isOwner
