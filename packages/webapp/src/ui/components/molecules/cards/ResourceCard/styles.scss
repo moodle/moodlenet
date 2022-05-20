@@ -167,8 +167,18 @@
         pointer-events: auto;
       }
 
-      > .visibility.public {
-        color: $primary-color;
+      > .visibility {
+        &.public {
+          color: $primary-color;
+          &:hover {
+            color: $primary-color-hover;
+          }
+        }
+        &.private {
+          &:hover {
+            color: #63656a;
+          }
+        }
       }
 
       > .liked {
@@ -181,6 +191,11 @@
         }
       }
 
+      > .like {
+        &.disabled {
+          color: #d0d1db;
+        }
+      }
       > .like:hover:not(.disabled) {
         color: #ce005d;
       }
