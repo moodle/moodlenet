@@ -14,7 +14,7 @@
     z-index: 1;
     left: 25px;
     right: 25px;
-    top: 25px;
+    top: 18px;
     display: flex;
     justify-content: space-between;
     gap: 10px;
@@ -39,8 +39,15 @@
 
     > .right-side {
       margin-right: -10px;
+      flex-grow: 0;
+      flex-shrink: 0;
       > .delete {
-        padding: 2px 5px;
+        pointer-events: all;
+        height: 26px;
+        width: 25px;
+        padding: 0 5px;
+        display: flex;
+        justify-content: center;
         > svg {
           font-size: 20px;
         }
@@ -59,6 +66,7 @@
     &.horizontal {
       right: 22px;
 
+      &.tiny,
       &.small {
         left: 120px;
       }
@@ -103,6 +111,7 @@
       > .left-side > a > span {
         color: #8c8e95;
       }
+      &.tiny,
       &.small {
         left: 120px;
       }
@@ -215,6 +224,7 @@
       > .image {
         object-fit: cover;
         border-radius: 9px 0 0 9px;
+        &.tiny,
         &.small {
           width: 100px;
         }
@@ -247,6 +257,7 @@
           overflow-wrap: break-word;
         }
         &.horizontal {
+          &.tiny,
           &.small {
             width: calc(100% - 100px);
           }

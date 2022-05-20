@@ -58,6 +58,7 @@ export type ProfileProps = {
   sendEmailForm?: FormikHandle<{ text: string }>
   reportForm?: FormikHandle<{ comment: string }>
   editForm: FormikHandle<ProfileFormValues>
+  isOwner?: boolean
 }
 
 export const Profile = withCtrl<ProfileProps>(
@@ -75,6 +76,7 @@ export const Profile = withCtrl<ProfileProps>(
     sendEmailForm,
     reportForm,
     editForm,
+    isOwner,
   }) => {
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false)
@@ -89,7 +91,7 @@ export const Profile = withCtrl<ProfileProps>(
       setIsEditing(!isEditing)
     }
 
-    const collectionList = collectionCardPropsList.length > 0 && (
+    const collectionList = (isOwner || collectionCardPropsList.length > 0) && (
       <ListCard
         className="collections"
         title={t`Curated collections`}
@@ -97,7 +99,7 @@ export const Profile = withCtrl<ProfileProps>(
           <CollectionCard {...collectionCardProps} isEditing={isEditing} />
         ))}
         actions={
-          profileCardProps.isOwner
+          isOwner
             ? {
                 element: (
                   <Link href={newCollectionHref}>
@@ -225,8 +227,7 @@ export const Profile = withCtrl<ProfileProps>(
                 setIsReporting={setIsReporting}
                 openSendMessage={() => setIsSendingMessage(!!sendEmailForm)}
               />
-              {(profileCardProps.isOwner ||
-                resourceCardPropsList.length > 0) && (
+              {(isOwner || resourceCardPropsList.length > 0) && (
                 <ListCard
                   className="resources"
                   content={resourceCardPropsList.map((resourcesCardProps) => {
@@ -240,7 +241,7 @@ export const Profile = withCtrl<ProfileProps>(
                   })}
                   title={t`Latest resources`}
                   actions={
-                    profileCardProps.isOwner
+                    isOwner
                       ? {
                           element: (
                             <Link href={newResourceHref}>

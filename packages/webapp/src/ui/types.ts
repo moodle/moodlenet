@@ -47,22 +47,22 @@ export const getResourceTypeInfo = (
     case 'png':
     case 'gif':
       return { typeName: t`Image`, typeColor: '#27a930' }
-    case 'ppt':
-    case 'pptx':
-    case 'odp':
-      return { typeName: 'Word', typeColor: '#4285f4' }
     case 'pdf':
-      return { typeName: t`Spreadsheet`, typeColor: '#dfa600' }
+      return { typeName: 'pdf', typeColor: '#df3131' }
     case 'xls':
     case 'xlsx':
     case 'ods':
-      return { typeName: t`Presentation`, typeColor: '#0f9d58' }
+      return { typeName: t`Spreadsheet`, typeColor: '#0f9d58' }
     case 'doc':
     case 'docx':
     case 'odt':
-      return { typeName: 'pdf', typeColor: '#df3131' }
+      return { typeName: 'Word', typeColor: '#4285f4' }
+    case 'ppt':
+    case 'pptx':
+    case 'odp':
+      return { typeName: t`Presentation`, typeColor: '#dfa600' }
     case 'mbz':
-      return { typeName: 'Moodle file', typeColor: '#f88012' }
+      return { typeName: 'Moodle', typeColor: '#f88012' }
     case 'Web Page':
       return { typeName: t`Web page`, typeColor: '#C233C7' }
     default:
