@@ -190,9 +190,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
             {isAuthenticated && !selectionMode && (
               <div
                 className={`bookmark ${bookmarked && 'bookmarked'} ${
-                  selectionMode || !isAuthenticated || isEditing
-                    ? 'disabled'
-                    : ''
+                  selectionMode || !isAuthenticated ? 'disabled' : ''
                 }`}
                 onClick={toggleBookmark}
               >
