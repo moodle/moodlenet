@@ -2,6 +2,11 @@
 
 .resource {
   z-index: 10;
+
+  @media screen and (max-width: 450px) {
+    background-color: white;
+  }
+
   > .content {
     z-index: 3;
     width: 100%;
@@ -14,8 +19,18 @@
     @media screen and (max-width: 450px) {
       margin-top: 0;
       padding: 0;
+      > .main-column {
+        padding: 34px;
+      }
     }
 
+    @media screen and (min-width: 450px) {
+      > .main-column {
+        > .main-resource-card {
+          padding: 26px 34px 34px 34px;
+        }
+      }
+    }
     @media (min-width: 450px) and (max-width: 800px) {
       > .main-column {
         gap: 15px;
@@ -35,6 +50,10 @@
 
     @media screen and (max-width: 450px) {
       > .main-column {
+        > .main-resource-card {
+          padding-top: 0;
+          padding-bottom: 0;
+        }
         > .resource-footer {
           > :not(.one-column) {
             display: none;
@@ -42,13 +61,14 @@
           .one-column {
             display: flex;
             flex-direction: column;
+            gap: 30px;
           }
         }
       }
     }
 
     > .main-column {
-      gap: 15px;
+      gap: 30px;
       width: 65%;
       height: 100%;
 
@@ -56,7 +76,6 @@
         display: flex;
         flex-direction: column;
         gap: 22px;
-        padding: 26px 34px 34px 34px;
         position: relative;
 
         > .info-card {
@@ -325,6 +344,16 @@
 
       > .resource-footer {
         display: none;
+
+        > .one-column {
+          width: 100%;
+
+          > .contributor-card {
+            @media screen and (max-width: 450px) {
+              padding: 0;
+            }
+          }
+        }
       }
     }
 
@@ -365,13 +394,15 @@
     > .main-column > .resource-footer > * > .extra-details-card {
       width: 100%;
       height: fit-content;
-      padding: 25px;
       display: flex;
-
       flex-direction: column;
       gap: 13px;
       flex-wrap: wrap;
       justify-content: center;
+
+      @media screen and (min-width: 450px) {
+        padding: 25px;
+      }
 
       > .dropdown,
       > .date > .fields > .dropdown {
@@ -399,6 +430,54 @@
           > .input-container {
             box-shadow: 0 0 0 2px red;
           }
+        }
+      }
+
+      > .detail {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        > .title {
+          font-weight: bold;
+          font-size: 14px;
+        }
+        > .value {
+          display: flex;
+          align-items: center;
+          color: #4d5156;
+          fill: #4d5156;
+          height: 24px;
+          width: 100%;
+          line-height: 20px;
+          font-weight: 500;
+          font-size: 14px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+
+          &.date {
+            display: flex;
+            gap: 8px;
+          }
+
+          &.icons {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            > div {
+              display: flex;
+              gap: 3px;
+              > * {
+                width: 20px;
+                height: 20px;
+              }
+            }
+          }
+        }
+
+        &.license {
+          margin-bottom: 2px;
         }
       }
 
@@ -448,63 +527,19 @@
           color: #c6c6c6;
         }
       }
-      > .detail {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        > .title {
-          font-weight: bold;
-          font-size: 14px;
-        }
-        > .value {
-          display: flex;
-          align-items: center;
-          color: #4d5156;
-          fill: #4d5156;
-          height: 24px;
-          width: 100%;
-          line-height: 20px;
-          font-weight: 500;
-          font-size: 14px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-
-          &.date {
-            display: flex;
-            gap: 8px;
-          }
-
-          &.icons {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            > div {
-              display: flex;
-              gap: 3px;
-              > * {
-                width: 20px;
-                height: 20px;
-              }
-            }
-          }
-        }
-
-        &.license {
-          margin-bottom: 2px;
-        }
-      }
     }
 
     .resource-action-card {
       width: 100%;
       height: fit-content;
-      padding: 25px;
       display: flex;
       gap: 10px;
       flex-direction: column;
       align-items: center;
+
+      @media screen and (min-width: 450px) {
+        padding: 25px;
+      }
 
       @media screen and (min-width: 1000px) {
         > .button,
