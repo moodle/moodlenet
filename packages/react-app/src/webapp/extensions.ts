@@ -1,4 +1,4 @@
-import { ExtCmp } from './types'
+import { ReactAppExt } from './types'
 
-const extensions: Record<string, ExtCmp> = {}
+const extensions: Record<string, ReactAppExt> = {}
 export default extensions

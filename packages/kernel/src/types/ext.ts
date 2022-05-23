@@ -90,7 +90,10 @@ export interface DeploymentShell {
 export type MWFn = (msg: IMessage, index: number) => ObservableInput<IMessage>
 
 export type ExtEnable<Def extends ExtDef = ExtDef> = (_: Shell<Def>) => ExtDeployable<Def>
-export type Deploy<Def extends ExtDef> = (dShell: DeploymentShell, shell: Shell<Def>) => ExtDeployment<Def>
+export type Deploy<Def extends ExtDef> = (
+  dShell: DeploymentShell,
+  shell: Shell<Def>,
+) => ExtDeployment<Def> | Promise<ExtDeployment<Def>>
 export type ExtDeployable<Def extends ExtDef = ExtDef> = {
   deploy: Deploy<Def>
   mw?: MWFn

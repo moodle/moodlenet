@@ -4,7 +4,7 @@ import { inspect } from 'util'
 import { create } from './kernel-core'
 import { pkgDiskInfoOf } from './npm-pkg'
 import { Ext } from './types'
-export function boot() {
+export async function boot() {
   const cwd = process.cwd()
   const cfgPath = process.env.KERNEL_ENV_MOD ?? `${cwd}/kernel-env-mod`
   const global_env: Record<string, any> = require(cfgPath)
@@ -13,13 +13,15 @@ export function boot() {
   console.log({ activatePkgs, cwd, global_env })
   const req = createRequire(join(cwd, 'node_modules'))
 
-  const deployments = activatePkgs
-    .map(mainModPath => pkgDiskInfoOf(req.resolve(mainModPath)))
-    .map(pkgDiskInfo => {
-      const exts: Ext[] = req(pkgDiskInfo.name).default
-      // console.log({ exts })
-      return exts.map(ext => K.deployExtension({ ext, pkgDiskInfo }))
-    })
+  const deployments = await Promise.all(
+    activatePkgs
+      .map(mainModPath => pkgDiskInfoOf(req.resolve(mainModPath)))
+      .map(async pkgDiskInfo => {
+        const exts: Ext[] = req(pkgDiskInfo.name).default
+        // console.log({ exts })
+        return Promise.all(exts.map(ext => K.deployExtension({ ext, pkgDiskInfo })))
+      }),
+  )
 
   console.log(
     inspect(

@@ -1,5 +1,6 @@
-import { FC } from 'react'
-import { RouterCtx } from './routes'
+import type { ExtId } from '@moodlenet/kernel'
+import type { FC } from 'react'
+import type { RouterCtx } from './routes'
 
 export type AppRoute = {
   label: string
@@ -8,3 +9,8 @@ export type AppRoute = {
 }
 
 export type ExtCmp = FC<{ RouterCtx: RouterCtx }>
+
+export type ReactAppExt = {
+  MainComponent: ExtCmp
+  extId: ExtId
+}
