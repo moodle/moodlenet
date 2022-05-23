@@ -9,12 +9,12 @@ import { createLocalDeploymentRegistry } from './registry/node'
 import type {
   DataMessage,
   DepGraphData,
+  Deploy,
   DeploymentShell,
   ExposedPointerMap,
   ExposePointers,
   Ext,
   ExtDef,
-  ExtDeployment,
   ExtId,
   ExtName,
   KernelExt,
@@ -102,10 +102,10 @@ export const create = ({ global_env }: CreateCfg) => {
   }: {
     ext: Ext<Def>
     pkgDiskInfo: PkgDiskInfo
-    deployWith?: (shell: Shell<Def>, deplShell: DeploymentShell) => ExtDeployment<Def>
+    deployWith?: Deploy<Def>
   }) {
     const extId = ext.id
-    const extIdSplit = splitExtId(ext.id)
+    const extIdSplit = splitExtId(extId)
     const env = extEnv(extId)
     const $msg$ = new Subject<DataMessage<any>>()
 
@@ -168,9 +168,8 @@ export const create = ({ global_env }: CreateCfg) => {
       extId,
       env,
       msg$: $msg$.asObservable(),
-      // removing "as any" generates  "Error: Debug Failure. No error for last overload signature" ->https://github.com/microsoft/TypeScript/issues/33133  ... related:https://github.com/microsoft/TypeScript/issues/37974
-      emit: path => (data, opts) => (pushMsg as any)(extId)('out')(extId)(path)(data, opts),
-      send: destExtId => path => (data, opts) => (pushMsg as any)(extId)('in')(destExtId)(path)(data, opts),
+      emit: path => (data, opts) => (push as any)('out')(extId)(path)(data, opts),
+      send: destExtId => path => (data, opts) => (push as any)('in')(destExtId)(path)(data, opts),
       push,
       libOf,
       onExtInstance,
@@ -190,14 +189,12 @@ export const create = ({ global_env }: CreateCfg) => {
 
     const extDeployable = ext.enable(shell)
 
-    let extDeployment: ExtDeployment<Def> = { inst: () => undefined }
-    if (deployWith) {
-      extDeployment = deployWith(shell, deploymentShell)
-    } else {
-      extDeployment = extDeployable.deploy(deploymentShell)
-    }
+    const deployer = deployWith ?? extDeployable.deploy
+
+    const extDeployment = deployer(deploymentShell, shell)
+
     const depl: RegDeployment<Def> = {
-      ...{ at: new Date(), ext, $msg$, pkgInfo: pkgDiskInfo },
+      ...{ deployedWith: deployWith, at: new Date(), ext, $msg$, pkgInfo: pkgDiskInfo },
       ...deploymentShell,
       ...shell,
       ...extDeployment,
@@ -216,7 +213,7 @@ export const create = ({ global_env }: CreateCfg) => {
     deplReg.deploy<Def>({ depl })
     return depl
   }
-  function pushMsg<Def extends ExtDef>(extId: ExtId<Def>): PushMessage<Def> {
+  function pushMsg<Def extends ExtDef>(srcExtId: ExtId<Def>): PushMessage<Def> {
     return bound => destExtId => path => (data, _opts) => {
       console.log('PUSH', { bound, destExtId, path, data, _opts })
       const opts: PushOptions = {
@@ -243,11 +240,11 @@ export const create = ({ global_env }: CreateCfg) => {
 
       const parentMsgId = opts.parent?.id
       // type DestDef = typeof destExtId extends ExtId<infer Def> ? Def : never
-      deplReg.assertDeployed(extId) // assert me deployed
+      deplReg.assertDeployed(srcExtId) // assert me deployed
 
       const msg: MessagePush /* <typeof bound, Def, DestDef, typeof path>  */ = {
         id: newMsgId(),
-        source: extId,
+        source: srcExtId,
         bound,
         pointer,
         data: data as any,
@@ -257,7 +254,7 @@ export const create = ({ global_env }: CreateCfg) => {
         activeDest: destRegDeployment.ext.id,
       }
 
-      setTimeout(() => $MAIN_MSGS$.next(msg), 10)
+      setTimeout(() => $MAIN_MSGS$.next(msg), 10) //FIXME: 😱 why ?
       return msg as any
     }
   }
