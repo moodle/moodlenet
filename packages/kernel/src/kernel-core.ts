@@ -95,7 +95,7 @@ export const create = ({ global_env }: CreateCfg) => {
     KDeployment,
   }
 
-  function deployExtension<Def extends ExtDef>({
+  async function deployExtension<Def extends ExtDef>({
     ext,
     pkgDiskInfo,
     deployWith,
@@ -168,6 +168,8 @@ export const create = ({ global_env }: CreateCfg) => {
       extId,
       env,
       msg$: $msg$.asObservable(),
+      // removing `as any` on `push` compiler crashes with "Error: Debug Failure. No error for last overload signature"
+      // ::: https://github.com/microsoft/TypeScript/issues/33133  ... related:https://github.com/microsoft/TypeScript/issues/37974
       emit: path => (data, opts) => (push as any)('out')(extId)(path)(data, opts),
       send: destExtId => path => (data, opts) => (push as any)('in')(destExtId)(path)(data, opts),
       push,
@@ -191,7 +193,7 @@ export const create = ({ global_env }: CreateCfg) => {
 
     const deployer = deployWith ?? extDeployable.deploy
 
-    const extDeployment = deployer(deploymentShell, shell)
+    const extDeployment = await deployer(deploymentShell, shell)
 
     const depl: RegDeployment<Def> = {
       ...{ deployedWith: deployWith, at: new Date(), ext, $msg$, pkgInfo: pkgDiskInfo },
