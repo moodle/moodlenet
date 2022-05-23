@@ -74,9 +74,9 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     toggleBookmark,
   }) => {
     const resourceCard = useRef<HTMLDivElement>(null)
-    const [size, setSize] = useState<'tiny' | 'small' | 'medium' | 'big'>(
-      'medium'
-    )
+    const [size, setSize] = useState<
+      'micro' | 'tiny' | 'small' | 'medium' | 'big'
+    >('medium')
 
     const { typeName, typeColor } = getResourceTypeInfo(type)
 
@@ -121,7 +121,9 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
     useEffect(() => {
       const updateSize = () => {
         setSize(
-          resourceCard.current && resourceCard.current.clientWidth < 300
+          resourceCard.current && resourceCard.current.clientWidth < 200
+            ? 'micro'
+            : resourceCard.current && resourceCard.current.clientWidth < 300
             ? 'tiny'
             : resourceCard.current && resourceCard.current.clientWidth < 385
             ? 'small'
@@ -170,7 +172,7 @@ export const ResourceCard = withCtrl<ResourceCardProps>(
           <div className="left-side">
             <Link href={owner.profileHref}>
               <div style={avatar} className="avatar" />
-              {size !== 'tiny' && <span>{owner.displayName}</span>}
+              {size !== 'micro' && <span>{owner.displayName}</span>}
             </Link>
           </div>
           <div className="right-side">
