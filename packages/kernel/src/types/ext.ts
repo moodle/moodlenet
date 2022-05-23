@@ -1,6 +1,6 @@
-import type { Observable, Subscription } from 'rxjs'
+import type { Observable, ObservableInput, Subscription } from 'rxjs'
 import type * as K from '../k'
-import type { DataMessage, MessagePush } from './message'
+import type { DataMessage, IMessage, MessagePush } from './message'
 import { PkgDiskInfo } from './pkg'
 import { RegDeployment } from './reg'
 import type { PortBinding, PortPathData, PortPaths, Topo } from './topo'
@@ -52,11 +52,12 @@ export interface Shell<Def extends ExtDef = ExtDef> {
   push: PushMessage<Def>
   emit: EmitMessage<Def>
   send: SendMessage
+  expose: ExposePointers<Def>
   env: RawExtEnv
+
+  lib: KLib
   extId: ExtId<Def>
   pkgDiskInfo: PkgDiskInfo
-  expose: ExposePointers<Def>
-  lib: KLib
 }
 
 export type OnExtDeployment = <Def extends ExtDef>(
@@ -85,7 +86,7 @@ export interface DeploymentShell {
   tearDown: Subscription
 }
 
-export type MWFn = (msg: DataMessage<any>, index: number) => Observable<DataMessage<any>>
+export type MWFn = (msg: IMessage, index: number) => ObservableInput<IMessage>
 
 export type ExtEnable<Def extends ExtDef = ExtDef> = (_: Shell<Def>) => ExtDeployable<Def>
 export type ExtDeployable<Def extends ExtDef = ExtDef> = {

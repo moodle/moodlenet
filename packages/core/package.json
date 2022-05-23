@@ -7,8 +7,7 @@
     "shortDesc": "a desc for core moodlenet"
   },
   "files": [
-    "pkg/",
-    "index.js"
+    "pkg/"
   ],
   "main": "pkg/index.js",
   "description": "moodlenet core package",
