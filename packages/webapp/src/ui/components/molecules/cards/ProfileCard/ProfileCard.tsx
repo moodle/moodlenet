@@ -400,101 +400,97 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               )}
             </div>
           )}
-          {!isApproved && (
-            <div className="buttons">
-              {isOwner && !isApproved && !isWaitingApproval && (
-                <PrimaryButton
-                  disabled={!isElegibleForApproval}
-                  onClick={requestApprovalForm.submitForm}
-                >
-                  <Trans>Request approval</Trans>
-                </PrimaryButton>
-              )}
-              {isOwner && isWaitingApproval && (
-                <SecondaryButton disabled={true}>
-                  <Trans>Waiting for approval</Trans>
-                </SecondaryButton>
-              )}
-              {isAdmin && !isApproved && (
-                <PrimaryButton
-                  onClick={approveUserForm.submitForm}
-                  color="green"
-                >
-                  <Trans>Approve</Trans>
-                </PrimaryButton>
-              )}
-              {isAdmin && isApproved && (
-                <SecondaryButton
-                  onClick={unapproveUserForm.submitForm}
-                  color="red"
-                >
-                  <Trans>Unapprove</Trans>
-                </SecondaryButton>
-              )}
-              {!isOwner && !isFollowing && (
-                <PrimaryButton
-                  disabled={!isAuthenticated}
-                  onClick={toggleFollowForm.submitForm}
-                  className="following-button"
-                >
-                  {/* <AddIcon /> */}
-                  <Trans>Follow</Trans>
-                </PrimaryButton>
-              )}
-              {!isOwner && isFollowing && (
-                <SecondaryButton
-                  disabled={!isAuthenticated}
-                  onClick={toggleFollowForm.submitForm}
-                  className="following-button"
-                  color="orange"
-                >
-                  {/* <CheckIcon /> */}
-                  <Trans>Following</Trans>
-                </SecondaryButton>
-              )}
-              {!isOwner && (
-                <SecondaryButton
-                  color="grey"
-                  className={`message`}
-                  disabled={!isAuthenticated}
-                  onClick={openSendMessage}
-                >
-                  <Trans>Message</Trans>
-                </SecondaryButton>
-                // <TertiaryButton
-                //   className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
-                //   onClick={openSendMessage}
-                // >
-                //   <MailOutlineIcon />
-                // </TertiaryButton>
-              )}
-              {isAuthenticated && !isOwner && (
-                <FloatingMenu
-                  menuContent={[
-                    <div tabIndex={0} onClick={copyUrl}>
-                      <ShareIcon />
-                      <Trans>Share</Trans>
-                    </div>,
-                    <div tabIndex={0} onClick={() => setIsReporting(true)}>
-                      <FlagIcon />
-                      <Trans>Report</Trans>
-                    </div>,
-                  ]}
-                  hoverElement={
-                    isShowingSmallCard ? (
-                      <SecondaryButton color="grey" className={`more small`}>
-                        <div className="three-dots">...</div>
-                      </SecondaryButton>
-                    ) : (
-                      <SecondaryButton color="grey" className={`more big`}>
-                        <div className="text">More</div>
-                      </SecondaryButton>
-                    )
-                  }
-                />
-              )}
-            </div>
-          )}
+
+          <div className="buttons">
+            {isOwner && !isApproved && !isWaitingApproval && (
+              <PrimaryButton
+                disabled={!isElegibleForApproval}
+                onClick={requestApprovalForm.submitForm}
+              >
+                <Trans>Request approval</Trans>
+              </PrimaryButton>
+            )}
+            {isOwner && isWaitingApproval && (
+              <SecondaryButton disabled={true}>
+                <Trans>Waiting for approval</Trans>
+              </SecondaryButton>
+            )}
+            {isAdmin && !isApproved && (
+              <PrimaryButton onClick={approveUserForm.submitForm} color="green">
+                <Trans>Approve</Trans>
+              </PrimaryButton>
+            )}
+            {isAdmin && isApproved && (
+              <SecondaryButton
+                onClick={unapproveUserForm.submitForm}
+                color="red"
+              >
+                <Trans>Unapprove</Trans>
+              </SecondaryButton>
+            )}
+            {!isOwner && !isFollowing && (
+              <PrimaryButton
+                disabled={!isAuthenticated}
+                onClick={toggleFollowForm.submitForm}
+                className="following-button"
+              >
+                {/* <AddIcon /> */}
+                <Trans>Follow</Trans>
+              </PrimaryButton>
+            )}
+            {!isOwner && isFollowing && (
+              <SecondaryButton
+                disabled={!isAuthenticated}
+                onClick={toggleFollowForm.submitForm}
+                className="following-button"
+                color="orange"
+              >
+                {/* <CheckIcon /> */}
+                <Trans>Following</Trans>
+              </SecondaryButton>
+            )}
+            {!isOwner && (
+              <SecondaryButton
+                color="grey"
+                className={`message`}
+                disabled={!isAuthenticated}
+                onClick={openSendMessage}
+              >
+                <Trans>Message</Trans>
+              </SecondaryButton>
+              // <TertiaryButton
+              //   className={`message ${isAuthenticated ? '' : 'font-disabled'}`}
+              //   onClick={openSendMessage}
+              // >
+              //   <MailOutlineIcon />
+              // </TertiaryButton>
+            )}
+            {isAuthenticated && !isOwner && (
+              <FloatingMenu
+                menuContent={[
+                  <div tabIndex={0} onClick={copyUrl}>
+                    <ShareIcon />
+                    <Trans>Share</Trans>
+                  </div>,
+                  <div tabIndex={0} onClick={() => setIsReporting(true)}>
+                    <FlagIcon />
+                    <Trans>Report</Trans>
+                  </div>,
+                ]}
+                hoverElement={
+                  isShowingSmallCard ? (
+                    <SecondaryButton color="grey" className={`more small`}>
+                      <div className="three-dots">...</div>
+                    </SecondaryButton>
+                  ) : (
+                    <SecondaryButton color="grey" className={`more big`}>
+                      <div className="text">More</div>
+                    </SecondaryButton>
+                  )
+                }
+              />
+            )}
+          </div>
         </div>
       </div>
     )
