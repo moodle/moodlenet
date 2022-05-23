@@ -45,18 +45,19 @@ export type RawExtEnv = Record<string, unknown> | undefined
 export interface Shell<Def extends ExtDef = ExtDef> {
   msg$: Observable<DataMessage<any>>
   libOf: GetExtLib
-  onExtDeployment: OnExtDeployment
-  onExtInstance: OnExtInstance
-  onExt: OnExt
   getExt: GetExt
   push: PushMessage<Def>
   emit: EmitMessage<Def>
   send: SendMessage
-  expose: ExposePointers<Def>
   env: RawExtEnv
-
   lib: KLib
   extId: ExtId<Def>
+
+  onExtDeployment: OnExtDeployment
+  onExtInstance: OnExtInstance
+  onExt: OnExt
+
+  expose: ExposePointers<Def>
   pkgDiskInfo: PkgDiskInfo
 }
 
@@ -89,8 +90,9 @@ export interface DeploymentShell {
 export type MWFn = (msg: IMessage, index: number) => ObservableInput<IMessage>
 
 export type ExtEnable<Def extends ExtDef = ExtDef> = (_: Shell<Def>) => ExtDeployable<Def>
+export type Deploy<Def extends ExtDef> = (dShell: DeploymentShell, shell: Shell<Def>) => ExtDeployment<Def>
 export type ExtDeployable<Def extends ExtDef = ExtDef> = {
-  deploy: (_: DeploymentShell) => ExtDeployment<Def>
+  deploy: Deploy<Def>
   mw?: MWFn
 } & (ExtLib<Def> extends undefined | null | void
   ? { lib?(_: { depl: RegDeployment }): ExtLib<Def> }
