@@ -3,6 +3,7 @@ const prompt = require('prompt');
 const path = require('path');
 const fs = require('fs');
 
+const RESTART_EXIT_CODE = 9999
 const DEPLOYMENTS_FOLDER_BASE = path.resolve(__dirname, '.deployments')
 const LAST_DEPLOYMENT_FOLDERNAME_FILE = path.resolve(DEPLOYMENTS_FOLDER_BASE, '.LAST_DEPLOYMENT_FOLDER')
 const DEV_LOCK_FILE = path.resolve(DEPLOYMENTS_FOLDER_BASE, '.DEV_LOCK_FILE ')
@@ -17,11 +18,14 @@ prompt.start();
 (async () => {
   let __rest = false
   process.on('message', (message) => {
-    process.exit(9999)
+    console.log('Restarting...')
+    process.exit(RESTART_EXIT_CODE)
   });
   process.on('exit', (code) => {
-    console.log('#### EXIT ####', code)
-    if (code !== 9999) { fs.unlinkSync(DEV_LOCK_FILE) }
+    if (code !== RESTART_EXIT_CODE) {
+      console.log('#### EXIT ####')
+      fs.unlinkSync(DEV_LOCK_FILE)
+    }
   });
 
   console.log({ hasLock, lastDeploymentFolderName });
