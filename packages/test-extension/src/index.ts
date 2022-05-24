@@ -19,7 +19,7 @@ const ext: Ext<TestExt, [KernelExt, WebappExt]> = {
     shell.onExtInstance<WebappExt>('moodlenet.webapp@0.1.10', inst => {
       console.log(`onExtInstance<WebappExt>('moodlenet.webapp@0.1.10`, inst)
       inst.ensureExtension({
-        cmpPath: 'pkg/webapp',
+        cmpPath: 'lib/webapp',
       })
     })
     shell.expose({

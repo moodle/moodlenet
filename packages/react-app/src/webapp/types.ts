@@ -1,5 +1,5 @@
 import type { ExtName, Version } from '@moodlenet/kernel'
-import type { FC } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 import type { RouterCtx } from './routes'
 
 export type AppRoute = {
@@ -13,7 +13,7 @@ export interface RactAppContainer {
 
 export interface RactAppExtInstance<T> {
   handle: T
-  Comp?: FC
+  Comp?: FC<PropsWithChildren<{}>>
 }
 export type ReactAppExtMain<T> = (ractAppContainer: RactAppContainer) => RactAppExtInstance<T>
 export type ReactAppExt<T> = {

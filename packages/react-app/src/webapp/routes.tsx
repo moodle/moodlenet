@@ -1,4 +1,4 @@
-import { createContext, FC, Suspense, useContext, useMemo, useReducer } from 'react'
+import { createContext, FC, PropsWithChildren, Suspense, useContext, useMemo, useReducer } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import MainLayout from './layout/MainLayout'
 import { AppRoute } from './types'
@@ -14,12 +14,15 @@ export type RouterCtxT = {
 export type RouterCtx = typeof RouterCtx
 export const RouterCtx = createContext<RouterCtxT>({ addRoute() {}, routes: [] })
 
-export const AppRouterContextProvider: FC = ({ children }) => {
-  const [routes, addRoute] = useReducer((prev:AppRoute[], route:AppRoute)=>[...prev,route], [])
-  const ctx = useMemo<RouterCtxT>(() => ({
-    addRoute,
-    routes,
-  }), [routes])
+export const AppRouterContextProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
+  const [routes, addRoute] = useReducer((prev: AppRoute[], route: AppRoute) => [...prev, route], [])
+  const ctx = useMemo<RouterCtxT>(
+    () => ({
+      addRoute,
+      routes,
+    }),
+    [routes],
+  )
   return <RouterCtx.Provider value={ctx}>{children}</RouterCtx.Provider>
 }
 const AppRouter = () => {
@@ -33,7 +36,7 @@ const AppRouter = () => {
               path={path}
               key={k}
               element={
-                <Suspense fallback={<div className="lazy-loading">Loading...</div>}>
+                <Suspense fallback={<div className="lazy-loading">Loading....</div>}>
                   <Component />
                 </Suspense>
               }

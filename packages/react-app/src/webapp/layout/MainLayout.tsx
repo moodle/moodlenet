@@ -1,12 +1,12 @@
 import { Layout, Menu } from 'antd'
-import { FC, useContext, useState } from 'react'
+import { FC, PropsWithChildren, useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { RouterCtx } from '../routes'
 import './MainLayout.less'
 
 const { Footer, Sider } = Layout
 
-const MainLayout: FC = ({ children }) => {
+const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
   const [collapsed, onCollapse] = useState(false)
   const { routes } = useContext(RouterCtx)
   console.log({ routes })

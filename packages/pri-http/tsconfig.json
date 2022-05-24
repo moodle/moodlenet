@@ -7,6 +7,6 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "target": "ES5",
     "allowSyntheticDefaultImports": true,
-    "outDir": "pkg"
+    "outDir": "lib"
   }
 }

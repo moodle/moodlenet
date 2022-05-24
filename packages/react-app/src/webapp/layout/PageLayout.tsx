@@ -1,16 +1,16 @@
-import { Layout, PageHeader } from 'antd';
-import { FC } from 'react';
-import './PageLayout.less';
+import { Layout, PageHeader } from 'antd'
+import { FC, PropsWithChildren } from 'react'
+import './PageLayout.less'
 
-const { Content } = Layout;
+const { Content } = Layout
 
-const PageLayout: FC<{ title: string }> = ({ title, children }) => {
+const PageLayout: FC<PropsWithChildren<{ title: string }>> = ({ title, children }) => {
   return (
     <>
       <PageHeader title={title} />
       <Content className="page-content">{children}</Content>
     </>
-  );
-};
+  )
+}
 
-export default PageLayout;
+export default PageLayout

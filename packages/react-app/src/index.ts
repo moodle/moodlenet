@@ -1,7 +1,7 @@
 import type { Ext, ExtDef, ExtId, KernelExt } from '@moodlenet/kernel'
 import { splitExtId } from '@moodlenet/kernel'
 import type { MNPriHttpExt } from '@moodlenet/pri-http'
-import { renameSync, rmSync } from 'fs'
+import { cp, rm } from 'fs/promises'
 import { join } from 'path'
 import { inspect } from 'util'
 import { Configuration, webpack } from 'webpack'
@@ -96,21 +96,23 @@ async function generateExtensionListModule() {
 //rm(buildFolder, { recursive: true, force: true }).then(() => mkdir(buildFolder, { recursive: true }))
 
 async function webpackWatch() {
-  const wp = webpack(config)
+  await rm(buildFolder, { recursive: true, force: true })
 
-  wp.hooks.beforeCompile.tap('del make build', () => {
-    rmSync(buildFolder, { recursive: true, force: true })
+  const wp = webpack(config, () => {
+    console.log(`webpack(config) cb (DEP_WEBPACK_WATCH_WITHOUT_CALLBACK)`)
   })
-  wp.hooks.shouldEmit.tap('del make latest', () => {
-    rmSync(latestBuildFolder, { recursive: true, force: true })
-    return true
-  })
+
+  // wp.hooks.beforeCompile.tap('del build', () => {
+  //   rmSync(buildFolder, { recursive: true, force: true })
+  // })
   wp.hooks.afterDone.tap('swap folders', async wpStats => {
     if (wpStats?.hasErrors()) {
       throw new Error(`Webpack build error: ${wpStats.toString()}`)
     }
     console.log(`Webpack build done`)
-    renameSync(buildFolder, latestBuildFolder)
+    await rm(latestBuildFolder, { recursive: true, force: true })
+
+    await cp(buildFolder, latestBuildFolder, { recursive: true })
     console.log(`done`)
   })
   wp.hooks.compilation.tap('ExtensionsModulePlugin', (/* compilation */) => {
