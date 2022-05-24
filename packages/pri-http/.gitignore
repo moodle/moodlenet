@@ -1,7 +1,7 @@
 node_modules
 yarn-error.log
 /lib
-/pkg
+/lib
 /*.ts
 /*.js
 /*.ts.map
