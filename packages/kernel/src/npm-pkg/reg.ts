@@ -1,5 +1,5 @@
 import { areSameExtName, isVerBWC, splitExtId } from '../k/pointer'
-import type { ExtDef, ExtId, PackageExt, PkgRegistry } from '../types'
+import type { ExtDef, ExtId, ExtPackage, PkgRegistry } from '../types'
 
 export function findExt<Def extends ExtDef>(pkgRegistry: PkgRegistry, findExtId: ExtId<Def>) {
   return pkgRegistry
@@ -19,13 +19,13 @@ export function findExt<Def extends ExtDef>(pkgRegistry: PkgRegistry, findExtId:
       if (!matchingExts.length) {
         return null
       }
-      const match: PackageExt = {
+      const match: ExtPackage = {
         ...pkgReg,
         exts: matchingExts,
       }
       return match
     })
-    .filter((_): _ is PackageExt => !!_)
+    .filter((_): _ is ExtPackage => !!_)
 }
 
 export function assertFindExt<Def extends ExtDef>(pkgRegistry: PkgRegistry, findExtId: ExtId<Def>) {

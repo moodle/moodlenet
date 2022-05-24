@@ -28,7 +28,7 @@ import type {
   Shell,
 } from './types'
 
-export type CreateCfg = { global_env: Record<ExtName, RawExtEnv> }
+export type CreateCfg = { extEnvVars: Record<ExtName, RawExtEnv> }
 
 // export const kernelPkgInfo: PkgInfo = { name: 'moodlenet.kernel', version: '0.1.10' }
 export const kernelExtId: ExtId<KernelExt> = 'kernel.core@0.1.10'
@@ -39,7 +39,7 @@ export const kernelExtId: ExtId<KernelExt> = 'kernel.core@0.1.10'
 //   return rawExtEnv as any //implement checks
 // }
 
-export const create = ({ global_env }: CreateCfg) => {
+export const create = ({ extEnvVars }: CreateCfg) => {
   const EXPOSED_POINTERS_REG: Record<ExtName, ExposedPointerMap> = {}
   // const _env = getEnv(global_env['kernel.core'])
 
@@ -87,7 +87,7 @@ export const create = ({ global_env }: CreateCfg) => {
     undeployExtension,
     depOrderDeployments,
     extEnv,
-    global_env,
+    global_env: extEnvVars,
     deplReg,
     depGraph,
     $MAIN_MSGS$,
@@ -217,7 +217,7 @@ export const create = ({ global_env }: CreateCfg) => {
   }
   function pushMsg<Def extends ExtDef>(srcExtId: ExtId<Def>): PushMessage<Def> {
     return bound => destExtId => path => (data, _opts) => {
-      console.log('PUSH', { bound, destExtId, path, data, _opts })
+      console.log('PUSH ---', { bound, destExtId, path, data, _opts }, '--- PUSH')
       const opts: PushOptions = {
         parent: null,
         primary: false,
@@ -265,7 +265,7 @@ export const create = ({ global_env }: CreateCfg) => {
     //FIXME: should check version compat ?
     const { extName /* , version  */ } = splitExtId(extId)
     // console.log('extEnv', extId, extName, global_env, global_env[extName])
-    return global_env[extName]
+    return extEnvVars[extName]
   }
 
   function undeployExtension(extName: ExtName) {

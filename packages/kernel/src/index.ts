@@ -1,4 +1,5 @@
 export * from './k'
 export * as core from './kernel-core'
 export * as coreNode from './kernel-node'
+export * as extPkg from './npm-pkg'
 export * from './types'

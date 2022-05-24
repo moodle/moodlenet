@@ -17,13 +17,18 @@ const extImpl: Ext<MoodlenetCoreExt> = {
   description: '',
   enable(shell) {
     console.log('I am core extension')
+    shell.expose({
+      '_test/sub': {
+        validate: () => ({ valid: true }),
+      },
+    })
     return {
       deploy({}) {
         pubAll<MoodlenetCoreExt>('moodlenet.core@0.1.10', shell, {
           _test({ msg }) {
-            msg.pointer
-            msg.data.req.a.at
-            return [{ a: 1 }]
+            // msg.pointer
+            // msg.data.req.a.at
+            return [{ a: msg.data.req.a.length }]
           },
         })
 
