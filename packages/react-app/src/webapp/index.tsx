@@ -16,12 +16,9 @@ import { AppRouterContextProvider, RouterCtx } from './routes'
 ReactDOM.render(
   <React.StrictMode>
     <AppRouterContextProvider>
-      {Object.entries(extensions).reduce<ReactNode>((child, [pkgName, { /* extId, */ MainComponent }]) => {
-        return (
-          <MainComponent key={pkgName} RouterCtx={RouterCtx}>
-            {child}
-          </MainComponent>
-        )
+      {Object.entries(extensions).reduce<ReactNode>((child, [extName, { /* extId, */ main }]) => {
+        const extInstance = main({ RouterCtx })
+        return extInstance.Comp && <extInstance.Comp key={extName}>{child}</extInstance.Comp>
       }, <App />)}
     </AppRouterContextProvider>
   </React.StrictMode>,
