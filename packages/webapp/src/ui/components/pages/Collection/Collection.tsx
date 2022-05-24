@@ -534,6 +534,7 @@ export const Collection = withCtrl<CollectionProps>(
                       <ResourceCard
                         {...resourceCardProps}
                         isEditing={isEditing}
+                        allowDeletion={isOwner}
                         orientation="horizontal"
                       />
                     )
