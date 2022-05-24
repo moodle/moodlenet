@@ -1,17 +1,16 @@
 import type { Ext, ExtDef, ExtId, KernelExt } from '@moodlenet/kernel'
 import { splitExtId } from '@moodlenet/kernel'
 import type { MNPriHttpExt } from '@moodlenet/pri-http'
-import { mkdirSync, rmSync } from 'fs'
-import { cp } from 'fs/promises'
+import { renameSync, rmSync } from 'fs'
 import { join } from 'path'
 import { inspect } from 'util'
 import { Configuration, webpack } from 'webpack'
 
 const wpcfg = require('../webpack.config')
 const config: Configuration = wpcfg({}, { mode: 'development' })
-
+const buildFolder = config.output!.path!
 const latestBuildFolder = join(__dirname, '..', 'latest-build')
-const buildFolder = join(__dirname, '..', 'build')
+
 const extAliases: {
   [extId: string]: { moduleLoc: string; cmpPath: string }
 } = {}
@@ -101,12 +100,9 @@ async function webpackWatch() {
 
   wp.hooks.beforeCompile.tap('del make build', () => {
     rmSync(buildFolder, { recursive: true, force: true })
-    mkdirSync(buildFolder, { recursive: true })
   })
   wp.hooks.shouldEmit.tap('del make latest', () => {
     rmSync(latestBuildFolder, { recursive: true, force: true })
-    mkdirSync(latestBuildFolder, { recursive: true })
-
     return true
   })
   wp.hooks.afterDone.tap('swap folders', async wpStats => {
@@ -114,7 +110,7 @@ async function webpackWatch() {
       throw new Error(`Webpack build error: ${wpStats.toString()}`)
     }
     console.log(`Webpack build done`)
-    await cp(config.output!.path!, latestBuildFolder, { recursive: true })
+    renameSync(buildFolder, latestBuildFolder)
     console.log(`done`)
   })
   wp.hooks.compilation.tap('ExtensionsModulePlugin', (/* compilation */) => {
@@ -134,14 +130,15 @@ ${Object.entries(extAliases)
   .map(([, { cmpPath, moduleLoc }], index) => `import ext${index} from '${moduleLoc}/${cmpPath}'`)
   .join('\n')}
     
-const extensions:Record<string, ReactAppExt> = {
+const extensions:Record<string, ReactAppExt<any>> = {
   ${Object.entries(extAliases)
     .map(([extId], index) => {
-      const { extName } = splitExtId(extId as ExtId)
+      const { extName, version } = splitExtId(extId as ExtId)
       return `
   ['${extName}']:  {
-    MainComponent: ext${index},
-    extId: '${extId}'
+    main: ext${index},
+    version: '${version}',
+    extName: '${extName}'
   }`
     })
 

@@ -1,4 +1,4 @@
-import { ReactAppExt } from './types'
+import type { ReactAppExt } from './types'
 
-const extensions: Record<string, ReactAppExt> = {}
+const extensions: Record<string, ReactAppExt<any>> = {}
 export default extensions
