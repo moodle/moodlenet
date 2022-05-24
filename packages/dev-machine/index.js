@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 
 const RESTART_EXIT_CODE = 9999
-const DEPLOYMENTS_FOLDER_BASE = path.resolve(__dirname, '.deployments')
+const DEPLOYMENTS_FOLDER_BASE = path.resolve(__dirname, '.machines')
 const LAST_DEPLOYMENT_FOLDERNAME_FILE = path.resolve(DEPLOYMENTS_FOLDER_BASE, '.LAST_DEPLOYMENT_FOLDER')
 const DEV_LOCK_FILE = path.resolve(DEPLOYMENTS_FOLDER_BASE, '.DEV_LOCK_FILE ')
 

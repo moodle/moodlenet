@@ -3,4 +3,5 @@ yarn-error.log
 lib
 mn-kernel-config.js
 .ignore-dir
-.deployments
+.machines/**/*
+!.machines/ext-env.js
