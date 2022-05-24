@@ -1,29 +1,40 @@
 import execa from 'execa'
+import { existsSync } from 'fs'
 import { createRequire } from 'module'
-import { Ext, PackageExt } from '../types'
+import { resolve } from 'path'
+import { Ext, ExtPackage } from '../types'
 import { pkgDiskInfoOf } from './info'
 export type PkgMngLib = ReturnType<typeof makePkgMng>
 
-export function makePkgMng(cwd: string) {
-  const execa_opts: execa.Options = { cwd }
-  const localRequire = createRequire(cwd)
+export function makePkgMng({ wd }: { wd: string }) {
+  const execa_opts: execa.Options = { cwd: wd }
+  const wdRequire = createRequire(resolve(wd, 'node_modules'))
 
   return {
     info,
     install,
     uninstall,
-    localRequire,
+    require: wdRequire,
+    initWd,
   }
 
-  async function install(pkgName: string, strict = true): Promise<PackageExt> {
-    await execa('npm', ['i', '--force --save', ...(strict ? ['--strict-peer-deps'] : []), pkgName], execa_opts)
-    const mainModPath = localRequire.resolve(pkgName)
+  type InitResponse = 'first' | 'nochange'
+  async function initWd(): Promise<InitResponse> {
+    const wasInitialized = existsSync(resolve(wd, 'package.json'))
+    if (!wasInitialized) {
+      await execa('npm', ['init', '-y'], execa_opts)
+    }
+    return wasInitialized ? 'nochange' : 'first'
+  }
+  async function install(pkgLocator: string, strict = true): Promise<ExtPackage> {
+    await execa('npm', ['i', '--force', '--save', ...(strict ? ['--strict-peer-deps'] : []), pkgLocator], execa_opts)
+    const mainModPath = wdRequire.resolve(pkgLocator)
     const pkgDiskInfo = pkgDiskInfoOf(mainModPath)
     if (pkgDiskInfo instanceof Error) {
       throw pkgDiskInfo
     }
-    const exts: Ext[] = localRequire(pkgName).default
-    const pkgRegistryRecord: PackageExt = {
+    const exts: Ext[] = wdRequire(pkgLocator).default
+    const pkgRegistryRecord: ExtPackage = {
       pkgDiskInfo,
       exts,
     }

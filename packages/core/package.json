@@ -7,24 +7,23 @@
     "shortDesc": "a desc for core moodlenet"
   },
   "files": [
-    "pkg/"
+    "lib/"
   ],
-  "main": "pkg/index.js",
+  "main": "lib/index.js",
   "description": "moodlenet core package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@moodlenet/kernel": "^0.0.1",
     "@moodlenet/pri-http": "^0.0.1",
-    "@moodlenet/react-app": "^0.0.1"
-  },
-  "devDependencies": {
+    "@moodlenet/react-app": "^0.0.1",
     "@types/node": "^17.0.18",
     "shx": "^0.3.4",
     "typescript": "^4.6.3"
   },
   "scripts": {
     "build-dev": "tsc --watch",
-    "clean": "shx rm -rf pkg"
+    "clean": "shx rm -rf lib"
   }
 }
