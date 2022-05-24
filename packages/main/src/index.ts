@@ -9,6 +9,7 @@ interface BootCfg {
 }
 
 async function boot({ deploymentFolder }: BootCfg) {
+  console.log('boot', { deploymentFolder })
   const { extEnvVars, devMode } = prepareConfigs()
   const K = kernel.core.create({ extEnvVars })
   const pkgMng = kernel.extPkg.makePkgMng({ wd: deploymentFolder })
@@ -18,16 +19,9 @@ async function boot({ deploymentFolder }: BootCfg) {
 
   async function prepareWd() {
     const initResponse = await pkgMng.initWd()
+    console.log('prepareWd : ', { initResponse })
     if (initResponse === 'first') {
       await initialInstallCoreExtPackages()
-      /* const installedCorePkgs = */ await Promise.all(
-        coreExtPkgs.map(async coreExtPkg => {
-          console.log({ coreExtPkg })
-          const pkgDiskInfo = pkgDiskInfoOf(coreExtPkg.pkgId)
-          const extPkg = await pkgMng.install(pkgDiskInfo.rootDir)
-          return { ...coreExtPkg, extPkg }
-        }),
-      )
     }
 
     return await Promise.all(
@@ -53,7 +47,7 @@ async function boot({ deploymentFolder }: BootCfg) {
         })
         .map(async coreExtPkg => {
           const pkgInfo = pkgDiskInfoOf(coreExtPkg.pkgLocator)
-          await pkgMng.install(pkgInfo.rootDir)
+          return pkgMng.install(pkgInfo.rootDir)
         }),
     )
   }
