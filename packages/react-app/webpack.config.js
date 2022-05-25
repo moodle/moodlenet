@@ -1,20 +1,19 @@
-const VirtualModulesPlugin = require('webpack-virtual-modules');
-const HtmlWebPackPlugin = require('html-webpack-plugin');
+const VirtualModulesPlugin = require('webpack-virtual-modules')
+const HtmlWebPackPlugin = require('html-webpack-plugin')
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const path = require('path');
+const path = require('path')
 // const webpack = require('webpack');
-const CompressionPlugin = require('compression-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 // const { jsonBeautify } = require('beautify-json');
 const virtualModules = new VirtualModulesPlugin()
 const configTemplate = () => {
-
   return {
     context: path.resolve(__dirname, ''),
     watch: true,
     watchOptions: {
       aggregateTimeout: 500,
-      followSymlinks: true
+      followSymlinks: true,
     },
     output: {
       path: path.resolve(__dirname, 'build'),
@@ -41,6 +40,10 @@ const configTemplate = () => {
               loader: 'css-loader',
             },
           ],
+        },
+        {
+          test: /\.scss$/,
+          use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
         },
         {
           test: /\.less$/,
@@ -77,13 +80,13 @@ const configTemplate = () => {
         template: './index.html',
         favicon: './favicon.png',
       }),
-      virtualModules
+      virtualModules,
     ],
-  };
+  }
 }
 const getConfig = (env = {}, argv = {}) => {
   const config = configTemplate()
-  config.mode = argv.mode;
+  config.mode = argv.mode
   // if (argv.mode === 'development') {
   //   config.entry = ['react-hot-loader/patch', './src/webapp'];
   //   config.devtool = 'inline-source-map';
@@ -102,10 +105,10 @@ const getConfig = (env = {}, argv = {}) => {
   // }
 
   // if (argv.mode === 'production') {
-  config.entry = ['./src/webapp'];
-  config.devtool = 'source-map';
-  config.output.filename = '[name].[chunkhash].bundle.js';
-  config.output.chunkFilename = '[name].[chunkhash].bundle.js';
+  config.entry = ['./src/webapp']
+  config.devtool = 'source-map'
+  config.output.filename = '[name].[chunkhash].bundle.js'
+  config.output.chunkFilename = '[name].[chunkhash].bundle.js'
   config.optimization = {
     moduleIds: 'hashed',
     runtimeChunk: {
@@ -126,7 +129,7 @@ const getConfig = (env = {}, argv = {}) => {
         },
       },
     },
-  };
+  }
   config.plugins.push(
     // new BundleAnalyzerPlugin({
     //   analyzerMode: 'json',
@@ -137,23 +140,23 @@ const getConfig = (env = {}, argv = {}) => {
     new CopyPlugin({
       patterns: [{ from: './_redirects' }],
     }),
-  );
+  )
   config.performance = {
     hints: 'warning',
     // Calculates sizes of gziped bundles.
     assetFilter(assetFilename) {
-      return assetFilename.endsWith('.js.gz');
+      return assetFilename.endsWith('.js.gz')
     },
-  };
+  }
   // }
 
   // console.log('Webpack config\n');
 
   // jsonBeautify(config);
 
-  return config;
-};
+  return config
+}
 
 module.exports = getConfig
 module.exports.default = getConfig
-module.exports.virtualModules = virtualModules 
+module.exports.virtualModules = virtualModules
