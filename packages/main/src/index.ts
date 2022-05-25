@@ -36,20 +36,23 @@ async function boot({ deploymentFolder }: BootCfg) {
   }
 
   async function initialInstallCoreExtPackages() {
-    return Promise.all(
-      coreExtPkgs
-        .map(_ => {
-          const pkgLocator = devMode ? require.resolve(_.pkgId) : _.pkgId
-          return {
-            ..._,
-            pkgLocator,
-          }
-        })
-        .map(async coreExtPkg => {
-          const pkgInfo = pkgDiskInfoOf(coreExtPkg.pkgLocator)
-          return pkgMng.install(pkgInfo.rootDir)
-        }),
-    )
+    const installers = coreExtPkgs
+      .map(_ => {
+        const pkgLocator = devMode ? require.resolve(_.pkgId) : _.pkgId
+        return {
+          ..._,
+          pkgLocator,
+        }
+      })
+      .map(coreExtPkg => async () => {
+        const pkgInfo = pkgDiskInfoOf(coreExtPkg.pkgLocator)
+        await pkgMng.install(pkgInfo.rootDir)
+      })
+
+    return installers.reduce(
+      (prev, next) => () => prev().then(next),
+      async () => {},
+    )()
   }
 
   function prepareConfigs() {

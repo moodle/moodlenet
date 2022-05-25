@@ -13,14 +13,20 @@ import { AppRouterContextProvider, RouterCtx } from './routes'
 //   method: 'post',
 // }).then(async r => console.log(await r.json()))
 
+// export const i18n = setupI18n({
+//   locales: [],
+// })
+
 ReactDOM.render(
   <React.StrictMode>
+    {/* <I18nProvider i18n={i18n}> */}
     <AppRouterContextProvider>
       {Object.entries(extensions).reduce<ReactNode>((child, [extName, { /* extId, */ main }]) => {
         const extInstance = main({ RouterCtx })
         return extInstance.Comp && <extInstance.Comp key={extName}>{child}</extInstance.Comp>
       }, <App />)}
     </AppRouterContextProvider>
+    {/* </I18nProvider> */}
   </React.StrictMode>,
   document.querySelector('#root'),
 )
