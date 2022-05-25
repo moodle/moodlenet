@@ -1,7 +1,7 @@
 import { createContext, FC, PropsWithChildren, Suspense, useContext, useMemo, useReducer } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import MainLayout from './layout/MainLayout'
 import { AppRoute } from './types'
+import MainLayout from './ui/components/layout/MainLayout'
 
 // const Home = lazy(() => import('./pages/home/Home'))
 // const About = lazy(() => import('./pages/about/About'))
