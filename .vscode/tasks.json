@@ -7,7 +7,6 @@
       "label": "dev-tasks",
       "dependsOn": [
         "kernel dev-build",
-        "bare-metal dev-build",
         "pri-http dev-build",
         "react-app dev-build",
         "core dev-build",
@@ -22,15 +21,6 @@
         "showReuseMessage": true,
         "clear": false
       }
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/bare-metal/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "bare-metal dev-build",
-      "dependsOn": []
     },
     {
       "type": "typescript",
