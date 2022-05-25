@@ -4,10 +4,7 @@
   "license": "AGPL-3.0",
   "moodlenet": {
     "name": "Moodlenet content-graph",
-    "shortDesc": "Moodlenet content-graph",
-    "requires": [
-      "@moodlenet/kernel@0.0.1"
-    ]
+    "shortDesc": "Moodlenet content-graph"
   },
   "files": [
     "lib/",
