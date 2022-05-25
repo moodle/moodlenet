@@ -1,7 +1,8 @@
 import { Layout, Menu } from 'antd'
 import { FC, PropsWithChildren, useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { RouterCtx } from '../routes'
+import { RouterCtx } from '../../../routes'
+import Card from '../atoms/Card/Card'
 import './MainLayout.less'
 
 const { Footer, Sider } = Layout
@@ -13,7 +14,7 @@ const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
   return (
     <Layout>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-        {collapsed ? <div className="logo">N</div> : <div className="logo">Nikhil Kumaran S</div>}
+        {collapsed ? <div className="logo">N</div> : <div className="logo">Cumino</div>}
         <Menu theme="dark" mode="inline">
           {routes.map(({ path, label }, i) => (
             <Menu.Item key={`${path}_${i}`}>
@@ -25,7 +26,7 @@ const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
         </Menu>
       </Sider>
       <Layout>
-        {children}
+        <Card>{children}</Card>
         <Footer>
           <a target="_blank" rel="noopener noreferrer" href="https::github.com/Nikhil-Kumaran/reactjs-boilerplate">
             GitHub
