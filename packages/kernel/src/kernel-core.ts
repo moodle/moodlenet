@@ -1,9 +1,9 @@
 import { DepGraph } from 'dependency-graph'
 import { mergeMap, of, share, Subject } from 'rxjs'
 import { depGraphAddNodes } from './dep-graph'
-import * as K from './k'
-import { matchMessage } from './k/message'
-import { isExtIdBWC, joinPointer, splitExtId } from './k/pointer'
+import * as KLib from './k-lib'
+import { matchMessage } from './k-lib/message'
+import { isExtIdBWC, joinPointer, splitExtId } from './k-lib/pointer'
 import { pkgDiskInfoOf } from './npm-pkg'
 import { createLocalDeploymentRegistry } from './registry/node'
 import type {
@@ -28,6 +28,7 @@ import type {
   Shell,
 } from './types'
 
+export type K = ReturnType<typeof create>
 export type CreateCfg = { extEnvVars: Record<ExtName, RawExtEnv> }
 
 // export const kernelPkgInfo: PkgInfo = { name: 'moodlenet.kernel', version: '0.1.10' }
@@ -180,7 +181,7 @@ export const create = ({ extEnvVars }: CreateCfg) => {
       onExt,
       pkgDiskInfo,
       expose,
-      lib: K,
+      lib: KLib,
     }
 
     const tearDown = pipedMessages$.subscribe($msg$)

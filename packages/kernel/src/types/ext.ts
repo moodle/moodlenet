@@ -1,5 +1,5 @@
 import type { Observable, ObservableInput, Subscription } from 'rxjs'
-import type * as K from '../k'
+import type * as K from '../k-lib'
 import type { DataMessage, IMessage, MessagePush } from './message'
 import { PkgDiskInfo } from './pkg'
 import { RegDeployment } from './reg'

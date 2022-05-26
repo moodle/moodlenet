@@ -1,4 +1,4 @@
-import { isVerBWC, splitExtId } from '../k/pointer'
+import { isVerBWC, splitExtId } from '../k-lib/pointer'
 import type { ExtId, ExtName, PkgInfo } from '../types'
 
 export type ExtBaseRegistry = ReturnType<typeof createBaseExtRegistry>

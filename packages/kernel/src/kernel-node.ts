@@ -5,7 +5,7 @@ import { create } from './kernel-core'
 import { pkgDiskInfoOf } from './npm-pkg'
 import { Ext } from './types'
 export async function boot() {
-  console.log('*****')
+  // console.log('*****')
   const cwd = process.cwd()
   const cfgPath = process.env.EXT_ENV ?? `${cwd}/ext-env`
   const global_env: Record<string, any> = require(cfgPath)

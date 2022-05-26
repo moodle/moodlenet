@@ -1,4 +1,4 @@
-{	  
+{
   "name": "@moodlenet/core",
   "version": "0.0.1",
   "license": "AGPL-3.0",
@@ -7,18 +7,25 @@
     "shortDesc": "a desc for core moodlenet"
   },
   "files": [
-    "lib/"
+    "lib/",
+    "ext-env-sample.js"
   ],
+  "bin": "./lib/bin/cli.js",
   "main": "lib/index.js",
   "description": "moodlenet core package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
-  "dependencies": {},
+  "dependencies": {
+    "@types/yargs": "^17.0.10",
+    "dotenv": "^16.0.0",
+    "dotenv-expand": "^8.0.1"
+  },
   "devDependencies": {
     "@moodlenet/kernel": "^0.0.1",
     "@moodlenet/pri-http": "^0.0.1",
     "@moodlenet/react-app": "^0.0.1",
     "@types/node": "^17.0.35",
+    "@types/prompt": "^1.1.2",
     "shx": "^0.3.4",
     "typescript": "^4.7.2"
   },

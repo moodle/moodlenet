@@ -1,10 +1,11 @@
 import execa from 'execa'
 import { existsSync } from 'fs'
 import { createRequire } from 'module'
-import { resolve } from 'path'
-import { Ext, ExtPackage } from '../types'
+import { resolve, sep } from 'path'
+import { Ext, ExtPackage, PkgDiskInfo } from '../types'
 import { pkgDiskInfoOf } from './info'
 export type PkgMngLib = ReturnType<typeof makePkgMng>
+export type InitResponse = 'newly-initialized-folder' | 'folder-was-already-npm-initialized'
 
 export function makePkgMng({ wd }: { wd: string }) {
   const execa_opts: execa.Options = { cwd: wd }
@@ -12,28 +13,48 @@ export function makePkgMng({ wd }: { wd: string }) {
 
   return {
     info,
+    installAndExtract,
     install,
+    extract,
     uninstall,
     require: wdRequire,
     initWd,
   }
 
-  type InitResponse = 'first' | 'nochange'
   async function initWd(): Promise<InitResponse> {
     const wasInitialized = existsSync(resolve(wd, 'package.json'))
     if (!wasInitialized) {
       await execa('npm', ['init', '-y'], execa_opts)
     }
-    return wasInitialized ? 'nochange' : 'first'
+    return wasInitialized ? 'folder-was-already-npm-initialized' : 'newly-initialized-folder'
   }
-  async function install(pkgLocator: string, strict = true): Promise<ExtPackage> {
+
+  async function installAndExtract({
+    pkgLocator,
+    strict = true,
+  }: {
+    pkgLocator: string
+    strict?: boolean
+  }): Promise<ExtPackage> {
+    const pkgDiskInfo = await install({ strict, pkgLocator })
+    return await extract(pkgDiskInfo)
+  }
+
+  async function install({ pkgLocator, strict = true }: { pkgLocator: string; strict?: boolean }) {
     await execa('npm', ['i', '--force', '--save', ...(strict ? ['--strict-peer-deps'] : []), pkgLocator], execa_opts)
-    const mainModPath = wdRequire.resolve(pkgLocator)
+    const mainModPath = pkgLocator.startsWith('file:')
+      ? `${pkgLocator.replace('file:', '')}${sep}package.json`
+      : wdRequire.resolve(pkgLocator)
     const pkgDiskInfo = pkgDiskInfoOf(mainModPath)
     if (pkgDiskInfo instanceof Error) {
       throw pkgDiskInfo
     }
-    const exts: Ext[] = wdRequire(pkgLocator).default
+    return pkgDiskInfo
+  }
+
+  async function extract(pkgDiskInfo: PkgDiskInfo) {
+    // console.log(mainModPath, pkgDiskInfo)
+    const exts: Ext[] = wdRequire(pkgDiskInfo.name).default
     const pkgRegistryRecord: ExtPackage = {
       pkgDiskInfo,
       exts,
