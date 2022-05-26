@@ -1,4 +1,4 @@
-export * from './k'
+export * from './k-lib'
 export * as core from './kernel-core'
 export * as coreNode from './kernel-node'
 export * as extPkg from './npm-pkg'

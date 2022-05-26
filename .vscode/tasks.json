@@ -6,11 +6,13 @@
       "problemMatcher": [],
       "label": "dev-tasks",
       "dependsOn": [
+        "dev-machine dev-build",
         "kernel dev-build",
         "pri-http dev-build",
         "react-app dev-build",
         "core dev-build",
         "main dev-build",
+        "installer dev-build",
         "test-extension dev-build"
       ],
       "presentation": {
@@ -21,6 +23,24 @@
         "showReuseMessage": true,
         "clear": false
       }
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/dev-machine/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "dev-machine dev-build",
+      "dependsOn": []
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/installer/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "installer dev-build",
+      "dependsOn": []
     },
     {
       "type": "typescript",

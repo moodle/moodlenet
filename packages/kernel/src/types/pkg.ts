@@ -8,7 +8,7 @@ export type PkgDiskInfo = PkgInfo & {
 }
 export type ExtPackage = {
   pkgDiskInfo: PkgDiskInfo
-  exts: Ext[]
+  exts: Ext<any>[]
 }
 
 export type PkgRegistry = ExtPackage[]
