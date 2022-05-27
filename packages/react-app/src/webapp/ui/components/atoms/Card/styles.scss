@@ -1,14 +1,14 @@
-.card {
+import .card {
   border-radius: 16px;
 }
 
 :not(.no-card).card {
-  width: 100%;
+  width: auto;
   background-color: #fff;
   // overflow: hidden;
   // box-shadow: 0 0 6px #dedede;
   border-radius: 16px;
-  box-shadow: 0 0 6px var(--color-light-gray-11);
+  box-shadow: 0 0 6px #e1dedb;
 
   @media (max-width: 450px) {
     &.hide-border {
@@ -21,8 +21,7 @@
   }
 
   &.hover:hover {
-    box-shadow: 0px 1px 2px 0px rgb(36 39 41 / 32%),
-      0px 2px 6px 2px rgb(41 44 46 / 15%);
+    box-shadow: 0px 1px 2px 0px rgb(36 39 41 / 32%), 0px 2px 6px 2px rgb(41 44 46 / 15%);
   }
 }
 

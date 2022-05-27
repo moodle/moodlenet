@@ -1,4 +1,3 @@
-import 'antd/dist/antd.css'
 import React, { ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
@@ -23,7 +22,7 @@ ReactDOM.render(
     <AppRouterContextProvider>
       {Object.entries(extensions).reduce<ReactNode>((child, [extName, { /* extId, */ main }]) => {
         const extInstance = main({ RouterCtx })
-        return extInstance.Comp && <extInstance.Comp key={extName}>{child}</extInstance.Comp>
+        return extInstance.Comp ? <extInstance.Comp key={extName}>{child}</extInstance.Comp> : child
       }, <App />)}
     </AppRouterContextProvider>
     {/* </I18nProvider> */}
