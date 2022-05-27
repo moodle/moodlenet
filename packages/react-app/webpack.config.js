@@ -78,7 +78,7 @@ const configTemplate = () => {
     plugins: [
       new HtmlWebPackPlugin({
         template: './index.html',
-        favicon: './favicon.png',
+        favicon: './favicon.svg',
       }),
       virtualModules,
     ],
@@ -122,11 +122,11 @@ const getConfig = (env = {}, argv = {}) => {
           chunks: 'all',
         },
         // This can be your own design library.
-        antd: {
-          test: /node_modules\/(antd\/).*/,
-          name: 'antd',
-          chunks: 'all',
-        },
+        // antd: {
+        //   test: /node_modules\/(antd\/).*/,
+        //   name: 'antd',
+        //   chunks: 'all',
+        // },
       },
     },
   }

@@ -1,43 +1,38 @@
-import { Layout, Menu } from 'antd'
-import { FC, PropsWithChildren, useContext, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { RouterCtx } from '../../../routes'
-import Card from '../atoms/Card/Card'
-import './MainLayout.less'
-
-const { Footer, Sider } = Layout
+import { FC, PropsWithChildren } from 'react'
+import './MainLayout.scss'
 
 const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
-  const [collapsed, onCollapse] = useState(false)
-  const { routes } = useContext(RouterCtx)
-  console.log({ routes })
+  // const [collapsed, onCollapse] = useState(false)
+  // const { routes } = useContext(RouterCtx)
+  // console.log({ routes })
   return (
-    <Layout>
-      <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-        {collapsed ? <div className="logo">N</div> : <div className="logo">Cumino</div>}
-        <Menu theme="dark" mode="inline">
+    <div className="main-layout">
+      <div className="header">
+        <div className="content">
+          <div className="left">
+            <div className="title">
+              <span>_</span>MoodleNet
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* <div className="side-menu">
+        <div className="logo">Cumino</div>
+        <div className="dark">
           {routes.map(({ path, label }, i) => (
-            <Menu.Item key={`${path}_${i}`}>
+            <div key={`${path}_${i}`}>
               <Link to={path}>
                 <span className="menu-item-link">{label}</span>
               </Link>
-            </Menu.Item>
+            </div>
           ))}
-        </Menu>
-      </Sider>
-      <Layout>
-        <Card>{children}</Card>
-        <Footer>
-          <a target="_blank" rel="noopener noreferrer" href="https::github.com/Nikhil-Kumaran/reactjs-boilerplate">
-            GitHub
-          </a>
-          <span> | </span>
-          <a target="_blank" rel="noopener noreferrer" href="https::www.npmjs.com/package/reactjs-boilerplate">
-            npm
-          </a>
-        </Footer>
-      </Layout>
-    </Layout>
+        </div>
+      </div> */}
+      <div className="content">
+        {children}
+        <div className="footer"></div>
+      </div>
+    </div>
   )
 }
 

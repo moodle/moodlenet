@@ -1,4 +1,4 @@
-.packages {
+.extensions {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -7,6 +7,10 @@
     flex-direction: column;
     padding: 26px 40px;
     gap: 20px;
+    > .title {
+      font-size: 23px;
+      font-weight: bold;
+    }
     > p > .input-text-field {
       max-width: 350px;
     }
