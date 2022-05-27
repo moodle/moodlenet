@@ -1,4 +1,4 @@
-import type { Observable, ObservableInput, Subscription } from 'rxjs'
+import type { Observable, ObservableInput, Subject, Subscription } from 'rxjs'
 import type * as K from '../k-lib'
 import type { DataMessage, IMessage, MessagePush } from './message'
 import { PkgDiskInfo } from './pkg'
@@ -87,10 +87,22 @@ export interface DeploymentShell {
   tearDown: Subscription
 }
 
+export type ExtBag = { ext: Ext<any>; pkgDiskInfo: PkgDiskInfo; deployWith?: Deploy }
+export type DeployableBag = {
+  ext: Ext
+  extDeployable: ExtDeployable
+  shell: Shell
+  $msg$: Subject<IMessage>
+  deployWith?: Deploy
+}
+export type DeploymentBag = {
+  depl: RegDeployment
+}
+
 export type MWFn = (msg: IMessage, index: number) => ObservableInput<IMessage>
 
 export type ExtEnable<Def extends ExtDef = ExtDef> = (_: Shell<Def>) => ExtDeployable<Def>
-export type Deploy<Def extends ExtDef> = (
+export type Deploy<Def extends ExtDef = ExtDef> = (
   dShell: DeploymentShell,
   shell: Shell<Def>,
 ) => ExtDeployment<Def> | Promise<ExtDeployment<Def>>

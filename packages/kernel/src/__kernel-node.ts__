@@ -20,7 +20,7 @@ export async function boot() {
       .map(async pkgDiskInfo => {
         const exts: Ext[] = req(pkgDiskInfo.name).default
         // console.log({ exts })
-        return Promise.all(exts.map(ext => K.deployExtension({ ext, pkgDiskInfo })))
+        return Promise.all(exts.map(ext => K.deployExtensions({ exts: ext, pkgDiskInfo })))
       }),
   )
 

@@ -1,6 +1,5 @@
 import * as kernel from '@moodlenet/kernel'
-import { ExtPackage } from '@moodlenet/kernel'
-import { inspect } from 'util'
+import { ExtBag, ExtPackage } from '@moodlenet/kernel'
 import { getCoreExt } from './ext'
 import './main/env'
 import * as peerDeps from './peer-deps'
@@ -15,12 +14,12 @@ interface BootCfg {
 }
 
 export async function boot({ deploymentFolder, initialPeerPkgsInstallRes }: BootCfg) {
-  // console.log('boot ... ', { kernel, deploymentFolder, initialPeerPkgsInstallRes })
+  console.log('boot ... ', { deploymentFolder, initialPeerPkgsInstallRes })
   const { extEnvVars /* , devMode  */ } = prepareConfigs()
-  const K = kernel.core.create({ extEnvVars })
+  const K = await kernel.core.create({ extEnvVars })
+  // console.log('KKKKKKK ... ', { K })
   const pkgMng = kernel.extPkg.makePkgMng({ wd: deploymentFolder })
   await deployEventualFirstInstall({ REMOVE_ME: true })
-  // console.log('KKKKKKK ... ', { K })
   return
 
   async function deployEventualFirstInstall({ REMOVE_ME }: { REMOVE_ME: true }) {
@@ -43,6 +42,7 @@ export async function boot({ deploymentFolder, initialPeerPkgsInstallRes }: Boot
         }
         return installRes
       })
+      // console.log('**********', { initialPeerPkgsInstallRes })
     }
     /*FIXME: REMOVE_ME */
     ///
@@ -61,17 +61,30 @@ export async function boot({ deploymentFolder, initialPeerPkgsInstallRes }: Boot
     const coreInstallRes: InstallRes = {
       extPkg: coreExtPackage,
     }
+    // console.log('**********', {
+    //   initialPeerPkgsInstallRes: (initialPeerPkgsInstallRes ?? []).map(_ => _.extPkg.pkgDiskInfo.name),
+    // })
     initialPeerPkgsInstallRes = (initialPeerPkgsInstallRes ?? []).filter(
       ({ extPkg }) => extPkg.pkgDiskInfo.name !== '@moodlenet/kernel', //HACK: hardcoded ! acceptable ?
     )
+    // console.log('**********', {
+    //   initialPeerPkgsInstallRes: (initialPeerPkgsInstallRes ?? []).map(_ => _.extPkg.pkgDiskInfo.name),
+    // })
+
     const deployExts = [coreInstallRes, ...(initialPeerPkgsInstallRes ?? [])]
-    console.log('deployExts ', inspect(deployExts, false, 10, true))
-    const regDeployments = await Promise.all(
-      deployExts.flatMap(({ extPkg: { pkgDiskInfo, exts } }) => {
-        console.log({ pkgDiskInfo, exts })
-        return exts.map(ext => K.deployExtension({ ext, pkgDiskInfo }))
-      }),
-    )
+    const extBags = deployExts.flatMap(({ extPkg: { pkgDiskInfo, exts } }) => {
+      // console.log({ pkgDiskInfo, exts })
+      return exts.map(ext => {
+        const bag: ExtBag = {
+          ext,
+          pkgDiskInfo,
+        }
+        return bag
+      })
+    })
+    // console.log('deployExts ', inspect(deployExts, false, 10, true))
+    const regDeployments = await K.enableAndDeployExtensions({ extBags })
+
     return regDeployments
   }
 

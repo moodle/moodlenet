@@ -11,12 +11,12 @@ export const createLocalDeploymentRegistry = () => {
     get,
     getByName,
     reg,
-    undeploy,
+    unregister,
     assertDeployed,
-    deploy,
+    register,
   }
 
-  function deploy<Def extends ExtDef>({ depl }: { depl: RegDeployment<Def> }) {
+  function register<Def extends ExtDef>({ depl }: { depl: RegDeployment<Def> }) {
     const { extName } = splitExtId(depl.extId)
     const currDeployment = getByName(extName)
     if (currDeployment) {
@@ -26,10 +26,9 @@ export const createLocalDeploymentRegistry = () => {
     }
 
     reg[extName] = depl as any
-    return depl
   }
 
-  function undeploy(extName: ExtName) {
+  function unregister(extName: ExtName) {
     const currDeployment = getByName(extName)
     // currDeployable?.$msg$.complete()
     // currDeployable?.tearDown.unsubscribe()
