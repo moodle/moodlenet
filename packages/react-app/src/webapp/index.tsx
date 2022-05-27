@@ -1,4 +1,3 @@
-import 'antd/dist/antd.css'
 import React, { ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'

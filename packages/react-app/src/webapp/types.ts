@@ -6,7 +6,7 @@ import type { RouterCtx } from './routes'
 export type AppRoute = {
   label: string
   path: string
-  Component: FC
+  Component: FC<any>
 }
 export interface RactAppContainer {
   RouterCtx: RouterCtx
