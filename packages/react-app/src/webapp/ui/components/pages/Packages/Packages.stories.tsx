@@ -4,17 +4,17 @@
 // import { StyleContextDefault, StyleProvider } from '../../../styles/Style'
 // import { HeaderPageTemplateLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 // import { AccountStoryProps } from './Account/Account.stories'
-// import { Admin, AdminProps } from './Admin'
+// import { Packages, PackagesProps } from './Packages'
 // import { AppearanceStoryProps } from './Appearance/Appearance.stories'
 
-// const meta: ComponentMeta<typeof Admin> = {
-//   title: 'Pages/Admin',
-//   component: Admin,
+// const meta: ComponentMeta<typeof Packages> = {
+//   title: 'Pages/Packages',
+//   component: Packages,
 //   argTypes: {
 //     // backgroundColor: { control: 'color' },
 //   },
 //   parameters: { layout: 'fullscreen' },
-//   excludeStories: ['AdminStory'],
+//   excludeStories: ['PackagesStory'],
 //   decorators: [
 //     (Story) => {
 //       const [style, setStyle] = useState<BaseStyleType & CSSProperties>(
@@ -29,24 +29,24 @@
 //   ],
 // }
 
-// type AdminStory = ComponentStory<typeof Admin>
+// type PackagesStory = ComponentStory<typeof Packages>
 
-// export const Account: AdminStory = () => {
-//   const props: AdminProps = {
+// export const Account: PackagesStory = () => {
+//   const props: PackagesProps = {
 //     headerPageTemplateProps: HeaderPageTemplateLoggedInStoryProps,
 //     sectionProps: AccountStoryProps,
 //     section: 'Account',
 //   }
-//   return <Admin {...props} />
+//   return <Packages {...props} />
 // }
 
-// export const Appearance: AdminStory = () => {
-//   const props: AdminProps = {
+// export const Appearance: PackagesStory = () => {
+//   const props: PackagesProps = {
 //     headerPageTemplateProps: HeaderPageTemplateLoggedInStoryProps,
 //     sectionProps: AppearanceStoryProps,
 //     section: 'Appearance',
 //   }
-//   return <Admin {...props} />
+//   return <Packages {...props} />
 // }
 
 // export default meta
