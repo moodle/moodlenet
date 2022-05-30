@@ -1,5 +1,5 @@
 import { makePkgMng, pkgDiskInfoOf } from '@moodlenet/kernel/lib/npm-pkg'
-import { InitResponse } from '@moodlenet/kernel/src/npm-pkg/mng'
+import { InitResponse } from '@moodlenet/kernel/lib/npm-pkg/mng'
 import { cp } from 'fs/promises'
 import { resolve } from 'path'
 import * as peerDeps from './peer-deps'

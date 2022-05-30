@@ -34,7 +34,14 @@ export function getCoreExt(cfg: Cfg) {
             _test({ msg }) {
               // msg.pointer
               // msg.data.req.a.at
-              return [{ a: msg.data.req.a.length }]
+              const rx = shell.lib.rx
+              return rx.interval(1000).pipe(
+                rx.take(3),
+                rx.map(n => {
+                  return { a: msg.data.req.a.length + n }
+                }),
+                rx.delay(1000),
+              )
             },
           })
 

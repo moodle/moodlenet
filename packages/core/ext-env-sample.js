@@ -1,5 +1,5 @@
 module.exports = {
-  "moodlenet.pri-http": {
+  "moodlenet.http-server": {
     port: 8888
   }
 }

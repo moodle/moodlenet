@@ -51,7 +51,9 @@
     "@babel/plugin-proposal-class-properties": "^7.17.12",
     "@babel/preset-env": "^7.18.0",
     "@babel/preset-react": "^7.17.12",
+    "@moodlenet/core": "^0.0.1",
     "@moodlenet/kernel": "^0.0.1",
+    "@moodlenet/http-server": "^0.0.1",
     "@moodlenet/pri-http": "^0.0.1",
     "@svgr/webpack": "^6.2.1",
     "@types/jest": "^27.5.1",
@@ -104,6 +106,7 @@
     "react-dom": "^18.1.0",
     "react-hot-loader": "^4.13.0",
     "react-router-dom": "^6.3.0",
+    "rxjs": "^7.5.5",
     "sass": "^1.52.1",
     "sass-loader": "^13.0.0"
   }

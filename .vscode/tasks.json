@@ -11,8 +11,6 @@
         "pri-http dev-build",
         "react-app dev-build",
         "core dev-build",
-        "main dev-build",
-        "installer dev-build",
         "test-extension dev-build"
       ],
       "presentation": {
@@ -35,29 +33,11 @@
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/installer/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "installer dev-build",
-      "dependsOn": []
-    },
-    {
-      "type": "typescript",
       "tsconfig": "packages/core/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "core dev-build",
-      "dependsOn": []
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/main/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "main dev-build",
       "dependsOn": []
     },
     {
