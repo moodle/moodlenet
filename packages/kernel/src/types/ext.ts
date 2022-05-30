@@ -7,17 +7,17 @@ import type { PortBinding, PortPathData, PortPaths, Topo } from './topo'
 
 type KLib = typeof K
 // export type KernelLib = typeof K
-export type ExtVersion = string
 
-export type ExtId<Def extends ExtDef = ExtDef> = `${Def['name']}@${Def['version']}` //` ;)
+export type ExtId<Def extends ExtDef = ExtDef> = `${ExtName<Def>}@${ExtVersion<Def>}` //` ;)
 export type ExtName<Def extends ExtDef = ExtDef> = `${Def['name']}` //` ;)
+export type ExtVersion<Def extends ExtDef = ExtDef> = Def['version']
 export type ExtInst<Def extends ExtDef = ExtDef> = Def['inst']
 export type ExtLib<Def extends ExtDef = ExtDef> = Def['lib']
 export type ExtTopo<Def extends ExtDef = ExtDef> = Def['topo']
 
 export type ExtDef<
   Name extends string = string,
-  Version extends ExtVersion = ExtVersion,
+  Version extends ExtVersion = string,
   ExtTopo extends Topo = Topo,
   Lib extends any = any,
   Instance extends any = any,

@@ -1,85 +1,25 @@
-import * as K from '@moodlenet/kernel'
+import type { MNHttpServerExt } from '@moodlenet/http-server'
+import type * as K from '@moodlenet/kernel'
 import { json } from 'body-parser'
-// import * as xlib from 'express'
-import express, { Application } from 'express'
-import { Server } from 'http'
+export * from './types'
 
-interface Instance {
-  mount(_: { mountApp: Application; absMountPath?: string }): void
-  express: typeof express
-  // xlib: typeof xlib
-}
-
-export type MNPriHttpExt = K.ExtDef<'moodlenet.pri-http', '0.1.10', {}, void, Instance>
+export type MNPriHttpExt = K.ExtDef<'moodlenet.pri-http', '0.1.10'>
 
 // const ext: K.Ext<MNPriHttpExt, [K.KernelExt, coreExt.sysLog.MoodlenetSysLogExt]> = {
-const ext: K.Ext<MNPriHttpExt, [K.KernelExt]> = {
+const ext: K.Ext<MNPriHttpExt, [K.KernelExt, MNHttpServerExt]> = {
   id: 'moodlenet.pri-http@0.1.10',
-  displayName: 'pri htth',
-  requires: ['kernel.core@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
+  displayName: 'pri http',
+  requires: ['kernel.core@0.1.10', 'moodlenet.http-server@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
   enable(shell) {
     return {
       deploy(/* {  tearDown } */) {
-        const logger = console
-        // const logger = coreExt.sysLog.moodlenetSysLogLib(shell)
-        const env = getEnv(shell.env)
-        const app = express().use(`/`, (_, __, next) => next())
+        shell.onExtInstance<MNHttpServerExt>('moodlenet.http-server@0.1.10', httpServerInst => {
+          httpServerInst.mount({ absMountPath: `/_`, mountApp: makeExtPortsApp(httpServerInst) })
+        })
+        return {}
 
-        let server: Server | undefined
-
-        app.use(`/_`, makeExtPortsApp())
-        // app.use(`/`, express.static(__dirname))
-
-        // K.pubAll<MNPriHttpExt>('moodlenet.pri-http@0.1.10', shell, {
-        //   setWebAppRootFolder: _shell => async p => {
-        //     console.log({ p })
-        //     const staticApp = express.static(p.folder)
-        //     app.get(`/*`, staticApp)
-        //     app.get(`/*`, (req, res, next) => staticApp(((req.url = '/'), req), res, next))
-        //   },
-        // })
-
-        if (env.port) {
-          restartServer(env.port)
-        } else {
-          logger.info(`No port defined in env, won't start HTTP server at startup`)
-        }
-        return {
-          inst({ depl }) {
-            return {
-              mount({ mountApp, absMountPath }) {
-                console.log('MOUNT', { absMountPath })
-                const { extName /* , version */ } = K.splitExtId(depl.extId)
-                const mountPath = absMountPath ?? `/_/${extName}`
-                app.use(mountPath, mountApp)
-              },
-              express,
-              // xlib,
-            }
-          },
-        }
-
-        async function stopServer() {
-          return new Promise<void>((resolve, reject) => {
-            if (!server) {
-              return resolve()
-            }
-            logger.info(`Stopping HTTP server`)
-            server.close(err => (err ? reject(err) : resolve()))
-          })
-        }
-        async function restartServer(port: number) {
-          await stopServer()
-          return new Promise<void>((resolve, reject) => {
-            logger.info(`Starting HTTP server on port ${port}`)
-            server = app.listen(port, function () {
-              arguments[0] ? reject(arguments[0]) : resolve()
-            })
-            logger.info(`HTTP listening on port ${port} :)`)
-          })
-        }
-        function makeExtPortsApp() {
-          const srvApp = express()
+        function makeExtPortsApp(httpServerInst: K.ExtInst<MNHttpServerExt>) {
+          const srvApp = httpServerInst.express()
           srvApp.use(json())
           srvApp.post('*', async (req, res, next) => {
             /*
@@ -96,7 +36,7 @@ const ext: K.Ext<MNPriHttpExt, [K.KernelExt]> = {
             if (!(extId && path)) {
               return next()
             }
-            const pointer = K.joinPointer(extId, path)
+            const pointer = shell.lib.joinPointer(extId, path)
             const extDeployment = shell.getExt(extId)
             console.log('Exposed Api pointer', { pointer, extDeployment: extDeployment?.extId })
 
@@ -108,9 +48,10 @@ const ext: K.Ext<MNPriHttpExt, [K.KernelExt]> = {
             console.log('*********body', req.body)
             try {
               console.log(`http sub ${pointer}`)
-              const apiSub = K.subDemat(shell)(pointer as never)(req.body, {
-                primary: true,
-              })
+              const apiSub = shell.lib
+                .subDemat(shell)(pointer as never)(req.body, {
+                  primary: true,
+                })
                 // .pipe(take(4))
                 .subscribe({
                   //K.ValValueOf<K.SubTopo<any, any>>
@@ -148,11 +89,3 @@ const ext: K.Ext<MNPriHttpExt, [K.KernelExt]> = {
   },
 }
 export default [ext]
-
-type Env = {
-  port: number
-}
-function getEnv(rawExtEnv: K.RawExtEnv): Env {
-  console.log({ rawExtEnv })
-  return rawExtEnv as any //FIXME: implement checks
-}

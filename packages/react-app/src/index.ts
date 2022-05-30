@@ -1,6 +1,7 @@
-import type { Ext, ExtDef, ExtId, KernelExt } from '@moodlenet/kernel'
-import { splitExtId } from '@moodlenet/kernel'
+import type { MNHttpServerExt } from '@moodlenet/http-server'
+import type { Ext, ExtDef, ExtId, KernelExt, Shell } from '@moodlenet/kernel'
 import type { MNPriHttpExt } from '@moodlenet/pri-http'
+
 import { cp, rm } from 'fs/promises'
 import { join } from 'path'
 import { inspect } from 'util'
@@ -33,14 +34,14 @@ export type WebappExt = ExtDef<
     rm(buildFolder, { recursive: true, force: true }).then(() => mkdir(buildFolder, { recursive: true })),
   ])
 } */
-const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt]> = {
+const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
   id: 'moodlenet.webapp@0.1.10',
   displayName: 'webapp',
-  requires: ['kernel.core@0.1.10', 'moodlenet.pri-http@0.1.10'],
+  requires: ['kernel.core@0.1.10', 'moodlenet.pri-http@0.1.10', 'moodlenet.http-server@0.1.10'],
   enable(shell) {
     return {
       deploy(/* { tearDown } */) {
-        shell.onExtInstance<MNPriHttpExt>('moodlenet.pri-http@0.1.10', (inst /* , depl */) => {
+        shell.onExtInstance<MNHttpServerExt>('moodlenet.http-server@0.1.10', (inst /* , depl */) => {
           const { express, mount } = inst
           const mountApp = express()
           const staticWebApp = express.static(latestBuildFolder, {})
@@ -50,7 +51,7 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt]> = {
           })
           mount({ mountApp, absMountPath: '/' })
         })
-        webpackWatch()
+        webpackWatch(shell)
         return {
           inst({ depl }) {
             return {
@@ -63,7 +64,7 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt]> = {
                   cmpPath,
                   moduleLoc: depl.pkgDiskInfo.rootDirPosix,
                 }
-                generateExtensionListModule()
+                generateExtensionListModule(shell)
               },
             }
           },
@@ -75,10 +76,10 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt]> = {
 
 export default [extImpl]
 
-async function generateExtensionListModule() {
+async function generateExtensionListModule(shell: Shell<WebappExt>) {
   console.log(`generate extensions.ts ....`)
 
-  const extensionsDirectoryModule = makeExtensionsDirectoryModule()
+  const extensionsDirectoryModule = makeExtensionsDirectoryModule(shell)
   console.log({ extensionsDirectoryModule })
   wpcfg.virtualModules.writeModule('src/webapp/extensions.ts', extensionsDirectoryModule)
 
@@ -95,7 +96,7 @@ async function generateExtensionListModule() {
 //rm(latestBuildFolder, { recursive: true, force: true }).then(() => mkdir(latestBuildFolder, { recursive: true }))
 //rm(buildFolder, { recursive: true, force: true }).then(() => mkdir(buildFolder, { recursive: true }))
 
-async function webpackWatch() {
+async function webpackWatch(shell: Shell<WebappExt>) {
   await rm(buildFolder, { recursive: true, force: true })
 
   const wp = webpack(config, () => {
@@ -116,14 +117,14 @@ async function webpackWatch() {
     console.log(`done`)
   })
   wp.hooks.compilation.tap('ExtensionsModulePlugin', (/* compilation */) => {
-    wpcfg.virtualModules.writeModule('src/webapp/extensions.ts', makeExtensionsDirectoryModule())
+    wpcfg.virtualModules.writeModule('src/webapp/extensions.ts', makeExtensionsDirectoryModule(shell))
   })
   wp.watch({}, () => {
     console.log(`Webpack watched`)
   })
 }
 
-function makeExtensionsDirectoryModule() {
+function makeExtensionsDirectoryModule(shell: Shell<WebappExt>) {
   console.log({ extAliases })
   return `
 import { ReactAppExt } from './types'
@@ -135,7 +136,7 @@ ${Object.entries(extAliases)
 const extensions:Record<string, ReactAppExt<any>> = {
   ${Object.entries(extAliases)
     .map(([extId], index) => {
-      const { extName, version } = splitExtId(extId as ExtId)
+      const { extName, version } = shell.lib.splitExtId(extId as ExtId)
       return `
   ['${extName}']:  {
     main: ext${index},
