@@ -1,5 +1,5 @@
 import * as core from '@moodlenet/core'
-import { sub } from './sub'
+import { sub } from './xhr-adapter'
 sub<core.ext.MoodlenetCoreExt>(
   'moodlenet.core',
   '0.1.10',

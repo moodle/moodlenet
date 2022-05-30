@@ -14,7 +14,7 @@ export type RouterCtxT = {
 export type RouterCtx = typeof RouterCtx
 export const RouterCtx = createContext<RouterCtxT>({ addRoute() {}, routes: [] })
 
-export const AppRouterContextProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
+export const ProvideAppRouterContext: FC<PropsWithChildren<{}>> = ({ children }) => {
   const [routes, addRoute] = useReducer((prev: AppRoute[], route: AppRoute) => [...prev, route], [])
   const ctx = useMemo<RouterCtxT>(
     () => ({
