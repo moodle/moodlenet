@@ -3,13 +3,11 @@ import {
   filter,
   firstValueFrom,
   from,
-  isObservable,
   map,
   materialize,
   merge,
   mergeMap,
   Observable,
-  of,
   Subject,
   Subscription,
   takeUntil,
@@ -17,12 +15,10 @@ import {
   tap,
   throwError,
 } from 'rxjs'
-import { isPromise } from 'util/types'
 import type { DataMessage, ExtDef, ExtId, ExtTopo, Pointer, Port, PushOptions, Shell, TypeofPath } from '../../types'
 import { manageMsg, matchMessage } from '../message'
 import { isBWCSemanticallySamePointers, joinPointer, splitPointer } from '../pointer'
 import {
-  ProvidedValOf,
   SubcriptionPaths,
   SubcriptionReq,
   SubMsgObsOf,
@@ -33,17 +29,6 @@ import {
   ValueData,
 } from './types'
 export * from './types'
-
-function providedValToObsAndTeardown(providedValOf: ProvidedValOf<SubTopo<any, any>>) {
-  const [valObs$_or_valPromise_orVal, tearDownLogic] = Array.isArray(providedValOf) ? providedValOf : [providedValOf]
-
-  const valObs$ =
-    isPromise(valObs$_or_valPromise_orVal) || isObservable(valObs$_or_valPromise_orVal)
-      ? from(valObs$_or_valPromise_orVal)
-      : of(valObs$_or_valPromise_orVal)
-
-  return [valObs$, tearDownLogic] as const
-}
 
 const PUB_SYM = Symbol()
 export function pub<Def extends ExtDef>(shell: Pick<Shell<Def>, 'emit' | 'msg$' | 'extId'>) {
@@ -68,7 +53,7 @@ export function pub<Def extends ExtDef>(shell: Pick<Shell<Def>, 'emit' | 'msg$' 
           mergeMap(subReqMsg => {
             manageMsg(subReqMsg, shell.extId)
             try {
-              const [valObs$, tearDownLogic] = providedValToObsAndTeardown(
+              const valObs$ = from(
                 valObsProvider({
                   msg: subReqMsg as any,
                 }),
@@ -78,12 +63,6 @@ export function pub<Def extends ExtDef>(shell: Pick<Shell<Def>, 'emit' | 'msg$' 
               }
               const $UNSUB_THIS$ = new Subject()
               SUBSCRIPTIONS[subReqMsg.id] = () => {
-                'function' === typeof tearDownLogic
-                  ? tearDownLogic()
-                  : tearDownLogic
-                  ? tearDownLogic.unsubscribe()
-                  : void 0
-
                 $UNSUB_THIS$.next(0)
                 $UNSUB_THIS$.complete()
               }
