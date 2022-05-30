@@ -1,4 +1,4 @@
-import { Observable, ObservableInput, ObservableNotification, TeardownLogic } from 'rxjs'
+import { Observable, ObservableInput, ObservableNotification } from 'rxjs'
 import { DataMessage, ExtDef, ExtTopo, Port, TopoNode, TopoPaths, TypeofPath } from '../../types'
 
 export type SubcriptionPaths<Def extends ExtDef> = TopoPaths<Def, SubTopo<any, any>> & TopoPaths<Def>
@@ -42,9 +42,6 @@ export type ValPromiseOf<Topo> = Promise<{ msg: DataMessage<ValOf<Topo>> }>
 export type ObsNotifValOf<Topo> = ValueData<ValOf<Topo>>
 export type ValOf<Topo> = Topo extends SubTopo<any, infer Val> ? Val : unknown
 export type ReqOf<Topo> = Topo extends SubTopo<infer Req, any> ? Req : unknown
-export type ProviderValObsInputOf<Topo> = ObservableInput<ValOf<Topo>>
-export type ProvidedValOf<Topo> =
-  | ProviderValObsInputOf<Topo>
-  | [valObsinput: ProviderValObsInputOf<Topo>, tearDownLogic?: TeardownLogic]
+export type ProvidedValOf<Topo> = ObservableInput<ValOf<Topo>>
 
 export type ValObsProviderOf<Topo> = (_: { msg: DataMessage<SubReqData<ReqOf<Topo>>> }) => ProvidedValOf<Topo>
