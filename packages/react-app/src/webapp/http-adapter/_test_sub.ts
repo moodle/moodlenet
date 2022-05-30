@@ -3,9 +3,9 @@ import { sub } from './xhr-adapter'
 sub<core.ext.MoodlenetCoreExt>(
   'moodlenet.core',
   '0.1.10',
-)('_test')({ a: 'ksssdjjdsa' }).subscribe({
+)('deployedExtensions')().subscribe({
   next: ({ msg }) => {
-    console.log(msg.data.a.toPrecision(10), msg)
+    console.log(msg)
   },
   error: console.error,
   complete: console.log.bind(null, 'complete'),

@@ -120,6 +120,7 @@ export const create = async ({ extEnvVars }: CreateCfg) => {
   }
   async function enableExtensions({ extBags }: { extBags: ExtBag[] }) {
     //FIXME: dependency ordered
+    // console.log('enableExtensions', extBags)
     const deployableBags = extBags.map<DeployableBag>(({ ext, pkgDiskInfo, deployWith }) => {
       const extId = ext.id
       const extIdSplit = splitExtId(extId)
@@ -210,7 +211,13 @@ export const create = async ({ extEnvVars }: CreateCfg) => {
       }
 
       const extDeployable = ext.enable(shell)
-      const deployableBag: DeployableBag = { extDeployable, shell, $msg$, deployWith, ext }
+      const deployableBag: DeployableBag = {
+        extDeployable,
+        shell,
+        $msg$,
+        deployWith,
+        ext,
+      }
       return deployableBag
     })
     return deployableBags
@@ -231,7 +238,7 @@ export const create = async ({ extEnvVars }: CreateCfg) => {
           const extDeployment = await deployer(deploymentShell, shell)
 
           const depl: RegDeployment = {
-            ...{ deployedWith: deployWith, at: new Date(), ext, $msg$, pkgInfo: pkgDiskInfo },
+            ...{ deployedWith: deployWith, at: new Date(), ext, $msg$, pkgInfo: shell.pkgDiskInfo },
             ...deploymentShell,
             ...shell,
             ...extDeployment,
