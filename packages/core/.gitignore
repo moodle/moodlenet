@@ -1,6 +1,1 @@
-node_modules
-yarn-error.log
 /lib
-/*.ts
-/*.ts.map
-/*.js.map
