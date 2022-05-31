@@ -4,7 +4,9 @@ import { cp, rm } from 'fs/promises'
 import HtmlWebPackPlugin from 'html-webpack-plugin'
 import path from 'path'
 import webpack, { Configuration } from 'webpack'
+import WebpackDevServer from 'webpack-dev-server'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
+
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 // const { jsonBeautify } = require('beautify-json');
 
@@ -19,22 +21,30 @@ async function start({
   overrideCfg = _ => _,
   buildFolder,
   latestBuildFolder,
+  getExtensionsBag,
 }: {
   latestBuildFolder: string
   buildFolder: string
   overrideCfg?: (_: Configuration) => Configuration
+  getExtensionsBag(): ExtensionsBag
 }) {
-  const config = overrideCfg(defaultConfig({ outputPath: buildFolder }))
+  const webpackConfig = overrideCfg(defaultConfig({ outputPath: buildFolder }))
+  // console.log({ webpackConfig })
 
-  await rm(buildFolder, { recursive: true, force: true })
-
-  const wp = webpack(config, () => {
+  const wp = webpack(webpackConfig, () => {
     console.log(`webpack(config) cb (DEP_WEBPACK_WATCH_WITHOUT_CALLBACK)`)
   })
+  const server = new WebpackDevServer(
+    {
+      ...webpackConfig.devServer!,
+      open: true,
+    },
+    wp,
+  )
+  server.startCallback(() => {
+    console.log('Successfully started server on http://localhost:8080')
+  })
 
-  // wp.hooks.beforeCompile.tap('del build', () => {
-  //   rmSync(buildFolder, { recursive: true, force: true })
-  // })
   wp.hooks.afterDone.tap('swap folders', async wpStats => {
     if (wpStats?.hasErrors()) {
       throw new Error(`Webpack build error: ${wpStats.toString()}`)
@@ -46,45 +56,26 @@ async function start({
     console.log(`done`)
   })
 
-  // wp.hooks.compilation.tap('ExtensionsModulePlugin', (/* compilation */) => {
-  //   virtualModules.writeModule('src/webapp/extensions.ts', makeExtensionsDirectoryModule(shell))
-  // })
-
   wp.watch({}, () => {
     console.log(`Webpack watched`)
   })
 
   return {
-    config,
+    webpackConfig,
     refresh,
   }
-  function refresh({ extensionsDirectoryModule, webpackAliases }: ExtensionsBag) {
-    config.resolve!.alias = { ...baseResolveAlias, ...webpackAliases }
+  function refresh() {
+    const { extensionsDirectoryModule, webpackAliases } = getExtensionsBag()
+    webpackConfig.resolve!.alias = { ...baseResolveAlias, ...webpackAliases }
     virtualModules.writeModule('src/webapp/extensions.ts', extensionsDirectoryModule)
   }
 }
-// if (argv.mode === 'development') {
-//   config.entry = ['react-hot-loader/patch', './src/webapp'];
-//   config.devtool = 'inline-source-map';
-//   config.resolve.alias['react-dom'] = '@hot-loader/react-dom';
-//   config.plugins.push(new webpack.HotModuleReplacementPlugin());
-//   config.devServer = {
-//     compress: true,
-//     hot: true,
-//     historyApiFallback: true, // For react router
-//     static: {
-//       serveIndex: true,
-//       watch: true,
-//       directory: './build',
-//     },
-//   };
-// }
-
-// jsonBeautify(config);
 
 const defaultConfig = ({ outputPath }: { outputPath: string }): Configuration => ({
   mode: 'development',
-  entry: ['./src/webapp'],
+  // entry: ['./src/webapp'],
+  entry: ['react-hot-loader/patch', './src/webapp'],
+  // devtool: 'inline-source-map',
   devtool: 'source-map',
   context: path.resolve(__dirname, '..'),
   watch: true,
@@ -92,8 +83,32 @@ const defaultConfig = ({ outputPath }: { outputPath: string }): Configuration =>
     aggregateTimeout: 500,
     followSymlinks: true,
   },
+  devServer: {
+    liveReload: true,
+    compress: true,
+    hot: true,
+    historyApiFallback: true, // For react router
+    static: {
+      serveIndex: true,
+      watch: true,
+      directory: outputPath,
+    },
+    proxy: {
+      '/_': {
+        target: 'http://localhost:8888',
+      },
+    },
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
+    },
+  },
   output: {
+    clean: true,
     path: outputPath,
+    pathinfo: 'verbose',
     publicPath: '/',
     // filename: 'bundle.js',
     filename: '[name].[chunkhash].bundle.js',
@@ -103,7 +118,10 @@ const defaultConfig = ({ outputPath }: { outputPath: string }): Configuration =>
     // extensions: ['.js', '.jsx'],
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     modules: [__dirname, 'node_modules'],
-    // alias: { react: path.join(__dirname, 'node_modules', 'react') },
+    alias: {
+      'react': path.join(__dirname, '..', 'node_modules', 'react'),
+      'react-dom': '@hot-loader/react-dom',
+    },
   },
   optimization: {
     moduleIds: 'deterministic',
