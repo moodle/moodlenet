@@ -20,11 +20,11 @@ export type PackagesProps = {
 type SectionType = {
   name: SectionNameType
   component: typeof Install | typeof Extensions
-  displayName: 'Install packages' | 'Account' | 'Extensions'
+  displayName: 'Packages' | 'Account' | 'Extensions'
 }
 
 const sections: SectionType[] = [
-  { name: 'Install', component: Install, displayName: 'Install packages' },
+  { name: 'Install', component: Install, displayName: 'Packages' },
   { name: 'Extensions', component: Extensions, displayName: 'Extensions' },
 ]
 

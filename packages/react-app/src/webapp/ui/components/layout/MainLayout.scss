@@ -25,7 +25,8 @@ body {
 
   > .header {
     height: 60px;
-    width: 100%;
+    padding: 0 100px;
+    width: -webkit-fill-available;
     display: flex;
     justify-content: center;
     background: white;
@@ -86,10 +87,11 @@ body {
 
   > .content {
     height: 100%;
-    width: 100%;
-    max-width: 1100px;
+    width: -webkit-fill-available;
+    padding: 0 100px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: space-between;
 
     > .footer {

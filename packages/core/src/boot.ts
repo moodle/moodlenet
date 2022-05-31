@@ -92,7 +92,7 @@ export async function boot({ deploymentFolder, initialPeerPkgsInstallRes }: Boot
     const DEV_MODE_VALUE = 'development'
     const NODE_ENV = process.env.NODE_ENV ?? DEV_MODE_VALUE
     const devMode = NODE_ENV === DEV_MODE_VALUE
-    const EXT_ENV_PATH = process.env.EXT_ENV ?? `${deploymentFolder}/ext-env`
+    const EXT_ENV_PATH = process.env.EXT_ENV ?? `${ deploymentFolder }/ext-env`
     const extEnvVars: Record<string, any> = require(EXT_ENV_PATH)
 
     return {

@@ -9,14 +9,15 @@ import './styles.scss'
 export type InstallProps = {}
 
 const Install: FC<InstallProps> = () => {
-  const [npmField, setNpmField] = useState('')
+  // const [npmField, setNpmField] = useState('')
   const [localPathField, setLocalPathField] = useState('')
+
   return (
     <div className="install">
       <Card>
-        <div className="title">New package</div>
+        <div className="title">Install package</div>
         <div>Use the more suitable install option</div>
-        <div className="option">
+        {/* <div className="option">
           <div className="name">Npm</div>
           <div className="actions">
             <InputTextField
@@ -30,7 +31,7 @@ const Install: FC<InstallProps> = () => {
             />
             <PrimaryButton disabled={npmField === ''}>Install</PrimaryButton>
           </div>
-        </div>
+        </div> */}
         <div className="option">
           <div className="name">Local path</div>
           <div className="actions">
@@ -50,7 +51,7 @@ const Install: FC<InstallProps> = () => {
       </Card>
       <Card className="installed-packages">
         <div className="title">Installed packages</div>
-        <div>A list of installed packages</div>
+        <div>A list of the installed packages</div>
         <div className="list"></div>
       </Card>
     </div>

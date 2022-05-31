@@ -10,12 +10,12 @@ const Extensions: FC<ExtensionsProps> = () => {
   return (
     <div className="extensions">
       <Card>
-        <div className="title">Enabled extensions</div>
-        <div>A list of your active extensions</div>
+        <div className="title">Extensions</div>
+        <div>Manage your extensions</div>
       </Card>
       <Card>
-        <div className="title">Disabled Extensions</div>
-        <div>A list of your inactive extensions</div>
+        {/* <div className="title">Disabled Extensions</div>
+        <div>A list of your inactive extensions</div> */}
       </Card>
     </div>
   )
