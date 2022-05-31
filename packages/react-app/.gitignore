@@ -1,9 +1,3 @@
-node_modules
-build
-latest-build
-.DS_Store
-.vscode
-
-extensions.js
-
-lib
+/build
+/latest-build
+/lib

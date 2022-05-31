@@ -1,7 +1,3 @@
-node_modules
-yarn-error.log
-lib
-mn-kernel-config.js
-.ignore-dir
-.machines/**/*
-!.machines/ext-env.js
+/lib
+/.machines/**/*
+!/.machines/ext-env.js
