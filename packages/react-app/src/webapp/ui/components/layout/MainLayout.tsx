@@ -17,8 +17,6 @@ const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
         </div>
       </div>
       {/* <div className="side-menu">
-        <div className="logo">Cumino</div>
-        <div className="dark">
           {routes.map(({ path, label }, i) => (
             <div key={`${path}_${i}`}>
               <Link to={path}>
@@ -26,7 +24,6 @@ const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
               </Link>
             </div>
           ))}
-        </div>
       </div> */}
       <div className="content">
         {children}

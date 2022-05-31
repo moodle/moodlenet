@@ -19,7 +19,7 @@ export const RouterCtx = createContext<RouterCtxT>({
   routes: [],
 })
 
-export const AppRouterContextProvider: FC<PropsWithChildren<{}>> = ({ children }) => {
+export const ProvideAppRouterContext: FC<PropsWithChildren<{}>> = ({ children }) => {
   const [routes, addRoute] = useReducer(
     (prev: AppRoute[], route: AppRoute) => [...prev, route],
     [{ label: 'Packages', path: '/packages', Component: Packages }],
