@@ -1,5 +1,6 @@
 import * as core from '@moodlenet/core'
 import fs, { mkdirSync } from 'fs'
+import { debounce } from 'lodash'
 import path from 'path'
 import prompt from 'prompt'
 import { inspect } from 'util'
@@ -23,10 +24,17 @@ fs.writeFileSync(DEV_LOCK_FILE, '')
 prompt.start()
 ;(async () => {
   // let __rest = false
-  process.on('message', message => {
-    console.log(`Restarting... ${message}`)
-    process.exit(RESTART_EXIT_CODE)
-  })
+  process.on(
+    'message',
+    debounce(
+      message => {
+        console.log(`Restarting... ${message}`)
+        process.exit(RESTART_EXIT_CODE)
+      },
+      200,
+      { trailing: true },
+    ),
+  )
   process.on('exit', code => {
     if (code !== RESTART_EXIT_CODE) {
       console.log('#### EXIT ####')

@@ -2,16 +2,14 @@ import type { MNHttpServerExt } from '@moodlenet/http-server'
 import type { Ext, ExtDef, ExtId, KernelExt, Shell } from '@moodlenet/kernel'
 import type { MNPriHttpExt } from '@moodlenet/pri-http'
 
-import { cp, rm } from 'fs/promises'
 import { join } from 'path'
 import { inspect } from 'util'
-import { Configuration, webpack } from 'webpack'
+import startWebpack, { ExtensionsBag } from './webpackWatch'
 
-const wpcfg = require('../webpack.config')
-const config: Configuration = wpcfg({}, { mode: 'development' })
-const buildFolder = config.output!.path!
+// const wpcfg = require('../webpack.config')
+// const config: Configuration = wpcfg({}, { mode: 'development' })
+const buildFolder = join(__dirname, '..', 'build')
 const latestBuildFolder = join(__dirname, '..', 'latest-build')
-
 const extAliases: {
   [extId: string]: { moduleLoc: string; cmpPath: string }
 } = {}
@@ -40,7 +38,7 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
   requires: ['kernel.core@0.1.10', 'moodlenet.pri-http@0.1.10', 'moodlenet.http-server@0.1.10'],
   enable(shell) {
     return {
-      deploy(/* { tearDown } */) {
+      async deploy(/* { tearDown } */) {
         shell.onExtInstance<MNHttpServerExt>('moodlenet.http-server@0.1.10', (inst /* , depl */) => {
           const { express, mount } = inst
           const mountApp = express()
@@ -51,7 +49,8 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
           })
           mount({ mountApp, absMountPath: '/' })
         })
-        webpackWatch(shell)
+        const wp = await startWebpack({ buildFolder, latestBuildFolder })
+        wp.refresh(generateExtensionsBag(shell))
         return {
           inst({ depl }) {
             return {
@@ -64,7 +63,7 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
                   cmpPath,
                   moduleLoc: depl.pkgDiskInfo.rootDirPosix,
                 }
-                generateExtensionListModule(shell)
+                wp.refresh(generateExtensionsBag(shell))
               },
             }
           },
@@ -76,12 +75,11 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
 
 export default [extImpl]
 
-async function generateExtensionListModule(shell: Shell<WebappExt>) {
+function generateExtensionsBag(shell: Shell<WebappExt>): ExtensionsBag {
   console.log(`generate extensions.ts ....`)
 
   const extensionsDirectoryModule = makeExtensionsDirectoryModule(shell)
   console.log({ extensionsDirectoryModule })
-  wpcfg.virtualModules.writeModule('src/webapp/extensions.ts', extensionsDirectoryModule)
 
   const webpackAliases = Object.entries(extAliases).reduce(
     (aliases, [extId, { moduleLoc }]) => ({
@@ -90,39 +88,11 @@ async function generateExtensionListModule(shell: Shell<WebappExt>) {
     }),
     {},
   )
-  config.resolve!.alias = { ...config.resolve!.alias, ...webpackAliases }
   console.log(`Extension aliases ....`, inspect({ /* config,  */ extAliases, webpackAliases }, false, 6, true))
+  return { extensionsDirectoryModule, webpackAliases }
 }
 //rm(latestBuildFolder, { recursive: true, force: true }).then(() => mkdir(latestBuildFolder, { recursive: true }))
 //rm(buildFolder, { recursive: true, force: true }).then(() => mkdir(buildFolder, { recursive: true }))
-
-async function webpackWatch(shell: Shell<WebappExt>) {
-  await rm(buildFolder, { recursive: true, force: true })
-
-  const wp = webpack(config, () => {
-    console.log(`webpack(config) cb (DEP_WEBPACK_WATCH_WITHOUT_CALLBACK)`)
-  })
-
-  // wp.hooks.beforeCompile.tap('del build', () => {
-  //   rmSync(buildFolder, { recursive: true, force: true })
-  // })
-  wp.hooks.afterDone.tap('swap folders', async wpStats => {
-    if (wpStats?.hasErrors()) {
-      throw new Error(`Webpack build error: ${wpStats.toString()}`)
-    }
-    console.log(`Webpack build done`)
-    await rm(latestBuildFolder, { recursive: true, force: true })
-
-    await cp(buildFolder, latestBuildFolder, { recursive: true })
-    console.log(`done`)
-  })
-  wp.hooks.compilation.tap('ExtensionsModulePlugin', (/* compilation */) => {
-    wpcfg.virtualModules.writeModule('src/webapp/extensions.ts', makeExtensionsDirectoryModule(shell))
-  })
-  wp.watch({}, () => {
-    console.log(`Webpack watched`)
-  })
-}
 
 function makeExtensionsDirectoryModule(shell: Shell<WebappExt>) {
   console.log({ extAliases })
