@@ -23,16 +23,7 @@ export const InputTextField = forwardRef<
   HTMLTextAreaElement | HTMLInputElement | null | undefined,
   InputTextFieldProps
 >((props, forwRef) => {
-  const {
-    label,
-    edit,
-    displayMode,
-    textAreaAutoSize,
-    highlight,
-    error,
-    action,
-    ...fieldProps
-  } = props
+  const { label, edit, displayMode, textAreaAutoSize, highlight, error, action, ...fieldProps } = props
   const { disabled, hidden, /* value, */ className = '' } = fieldProps
   if ('value' in fieldProps) {
     fieldProps.value = fieldProps.value ?? ''
@@ -47,19 +38,12 @@ export const InputTextField = forwardRef<
   const currTextAreaValue = fieldElementRef.current?.value
 
   useEffect(() => {
-    if (
-      !(
-        textAreaAutoSize &&
-        fieldElem &&
-        fieldElem instanceof HTMLTextAreaElement
-      )
-    ) {
+    if (!(textAreaAutoSize && fieldElem && fieldElem instanceof HTMLTextAreaElement)) {
       return
     }
     const fitTextArea = () => {
       fieldElem.style.height = 'fit-content'
-      fieldElem.style.height =
-        Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'
+      fieldElem.style.height = Math.ceil(fieldElem.scrollHeight / 10) * 10 + 'px'
     }
     fitTextArea()
     fieldElem.addEventListener('input', fitTextArea)
@@ -88,19 +72,13 @@ export const InputTextField = forwardRef<
     <div
       className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${
         highlight || error ? ' highlight' : ''
-      } ${!disabled && !errorLeaves && error ? 'enter-error' : ''} ${
-        !disabled && errorLeaves ? 'leave-error' : ''
-      }`}
+      } ${!disabled && !errorLeaves && error ? 'enter-error' : ''} ${!disabled && errorLeaves ? 'leave-error' : ''}`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
       {label ? <label>{label}</label> : <></>}
       {fieldProps.textarea ? (
-        <div
-          className={`textarea-container ${displayMode && 'display-mode'} ${
-            edit && 'editing'
-          }`}
-        >
+        <div className={`textarea-container ${displayMode && 'display-mode'} ${edit && 'editing'}`}>
           <textarea
             ref={fieldElementRef as any}
             cols={40}
@@ -114,25 +92,17 @@ export const InputTextField = forwardRef<
           {action}
         </div>
       ) : (
-        <div
-          className={`input-container ${displayMode && 'display-mode'} ${
-            edit && 'editing'
-          }`}
-        >
+        <div className={`input-container ${displayMode && 'display-mode'} ${edit && 'editing'}`}>
           <input
             {..._removeTextAreaProp(fieldProps)}
             ref={fieldElementRef as any}
-            className={`${className} ${displayMode && 'display-mode'} ${
-              edit && 'editing'
-            }`}
+            className={`${className} ${displayMode && 'display-mode'} ${edit && 'editing'}`}
             disabled={disabled || !edit}
           />
           {action}
         </div>
       )}
-      {currentError && !disabled && (
-        <div className={`error-msg`}>{currentError}</div>
-      )}
+      {currentError && !disabled && <div className={`error-msg`}>{currentError}</div>}
     </div>
   )
 })
