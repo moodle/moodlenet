@@ -1,11 +1,11 @@
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import type { Ext, ExtDef, ExtId, KernelExt, Shell } from '@moodlenet/kernel'
 import type { MNPriHttpExt } from '@moodlenet/pri-http'
-
 import { cp, rm } from 'fs/promises'
 import { join } from 'path'
 import { inspect } from 'util'
 import { Configuration, webpack } from 'webpack'
+
 
 const wpcfg = require('../webpack.config')
 const config: Configuration = wpcfg({}, { mode: 'development' })
@@ -41,6 +41,8 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
   enable(shell) {
     return {
       deploy(/* { tearDown } */) {
+        // async deploy(/* { tearDown } */) {
+        //   await mkdir(buildFolder, { recursive: true })
         shell.onExtInstance<MNHttpServerExt>('moodlenet.http-server@0.1.10', (inst /* , depl */) => {
           const { express, mount } = inst
           const mountApp = express()
@@ -58,7 +60,7 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
               ensureExtension({ cmpPath }) {
                 console.log('....ensureExtension', depl.extId, cmpPath)
                 if (!depl.pkgDiskInfo) {
-                  throw new Error(`ensureExtension: extId ${depl.extId} not deployed`)
+                  throw new Error(`ensureExtension: extId ${ depl.extId } not deployed`)
                 }
                 extAliases[depl.extId] = {
                   cmpPath,
@@ -108,7 +110,7 @@ async function webpackWatch(shell: Shell<WebappExt>) {
   // })
   wp.hooks.afterDone.tap('swap folders', async wpStats => {
     if (wpStats?.hasErrors()) {
-      throw new Error(`Webpack build error: ${wpStats.toString()}`)
+      throw new Error(`Webpack build error: ${ wpStats.toString() }`)
     }
     console.log(`Webpack build done`)
     await rm(latestBuildFolder, { recursive: true, force: true })
@@ -129,23 +131,23 @@ function makeExtensionsDirectoryModule(shell: Shell<WebappExt>) {
   return `
 import { ReactAppExt } from './types'
 
-${Object.entries(extAliases)
-  .map(([, { cmpPath, moduleLoc }], index) => `import ext${index} from '${moduleLoc}/${cmpPath}'`)
-  .join('\n')}
+${ Object.entries(extAliases)
+      .map(([, { cmpPath, moduleLoc }], index) => `import ext${ index } from '${ moduleLoc }/${ cmpPath }'`)
+      .join('\n') }
     
 const extensions:Record<string, ReactAppExt<any>> = {
-  ${Object.entries(extAliases)
-    .map(([extId], index) => {
-      const { extName, version } = shell.lib.splitExtId(extId as ExtId)
-      return `
-  ['${extName}']:  {
-    main: ext${index},
-    version: '${version}',
-    extName: '${extName}'
+  ${ Object.entries(extAliases)
+      .map(([extId], index) => {
+        const { extName, version } = shell.lib.splitExtId(extId as ExtId)
+        return `
+  ['${ extName }']:  {
+    main: ext${ index },
+    version: '${ version }',
+    extName: '${ extName }'
   }`
-    })
+      })
 
-    .join('\n')}
+      .join('\n') }
 }
 export default extensions
 `
