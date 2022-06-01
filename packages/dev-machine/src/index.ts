@@ -4,6 +4,8 @@ import path from 'path'
 import prompt from 'prompt'
 import { inspect } from 'util'
 
+process.env.NODE_ENV = 'development'
+
 const RESTART_EXIT_CODE = 9999
 const DEPLOYMENTS_FOLDER_BASE = path.resolve(__dirname, '..', '.machines')
 const LAST_DEPLOYMENT_FOLDERNAME_FILE = path.resolve(DEPLOYMENTS_FOLDER_BASE, '.LAST_DEPLOYMENT_FOLDER')
