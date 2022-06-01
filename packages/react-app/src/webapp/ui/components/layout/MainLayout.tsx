@@ -11,7 +11,8 @@ const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
         <div className="content">
           <div className="left">
             <div className="title">
-              <span>_</span>MoodleNet
+              <span className="mn">MoodleNet</span>
+              <span className="bar">|</span>
             </div>
           </div>
         </div>

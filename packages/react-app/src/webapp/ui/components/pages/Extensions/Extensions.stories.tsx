@@ -4,17 +4,17 @@
 // import { StyleContextDefault, StyleProvider } from '../../../styles/Style'
 // import { HeaderPageTemplateLoggedInStoryProps } from '../HeaderPage/HeaderPage.stories'
 // import { AccountStoryProps } from './Account/Account.stories'
-// import { Packages, PackagesProps } from './Packages'
+// import { Extensions, ExtensionsProps } from './Extensions'
 // import { AppearanceStoryProps } from './Appearance/Appearance.stories'
 
-// const meta: ComponentMeta<typeof Packages> = {
-//   title: 'Pages/Packages',
-//   component: Packages,
+// const meta: ComponentMeta<typeof Extensions> = {
+//   title: 'Pages/Extensions',
+//   component: Extensions,
 //   argTypes: {
 //     // backgroundColor: { control: 'color' },
 //   },
 //   parameters: { layout: 'fullscreen' },
-//   excludeStories: ['PackagesStory'],
+//   excludeStories: ['ExtensionsStory'],
 //   decorators: [
 //     (Story) => {
 //       const [style, setStyle] = useState<BaseStyleType & CSSProperties>(
@@ -29,24 +29,24 @@
 //   ],
 // }
 
-// type PackagesStory = ComponentStory<typeof Packages>
+// type ExtensionsStory = ComponentStory<typeof Extensions>
 
-// export const Account: PackagesStory = () => {
-//   const props: PackagesProps = {
+// export const Account: ExtensionsStory = () => {
+//   const props: ExtensionsProps = {
 //     headerPageTemplateProps: HeaderPageTemplateLoggedInStoryProps,
 //     sectionProps: AccountStoryProps,
 //     section: 'Account',
 //   }
-//   return <Packages {...props} />
+//   return <Extensions {...props} />
 // }
 
-// export const Appearance: PackagesStory = () => {
-//   const props: PackagesProps = {
+// export const Appearance: ExtensionsStory = () => {
+//   const props: ExtensionsProps = {
 //     headerPageTemplateProps: HeaderPageTemplateLoggedInStoryProps,
 //     sectionProps: AppearanceStoryProps,
 //     section: 'Appearance',
 //   }
-//   return <Packages {...props} />
+//   return <Extensions {...props} />
 // }
 
 // export default meta
