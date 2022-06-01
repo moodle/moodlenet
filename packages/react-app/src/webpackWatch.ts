@@ -1,6 +1,6 @@
 import CompressionPlugin from 'compression-webpack-plugin'
 import CopyPlugin from 'copy-webpack-plugin'
-import { cp, rm } from 'fs/promises'
+import { cp } from 'fs/promises'
 import HtmlWebPackPlugin from 'html-webpack-plugin'
 import path from 'path'
 import webpack, { Configuration } from 'webpack'
@@ -47,10 +47,10 @@ async function start({
 
   wp.hooks.afterDone.tap('swap folders', async wpStats => {
     if (wpStats?.hasErrors()) {
-      throw new Error(`Webpack build error: ${wpStats.toString()}`)
+      throw new Error(`Webpack build error: ${ wpStats.toString() }`)
     }
     console.log(`Webpack build done`)
-    await rm(latestBuildFolder, { recursive: true, force: true })
+    // await rm(latestBuildFolder, { recursive: true, force: true })
 
     await cp(buildFolder, latestBuildFolder, { recursive: true })
     console.log(`done`)
