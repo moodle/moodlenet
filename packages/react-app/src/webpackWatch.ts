@@ -2,21 +2,23 @@ import CompressionPlugin from 'compression-webpack-plugin'
 import CopyPlugin from 'copy-webpack-plugin'
 import { cp } from 'fs/promises'
 import HtmlWebPackPlugin from 'html-webpack-plugin'
-import path from 'path'
+import { resolve } from 'path'
+import { inspect } from 'util'
 import webpack, { Configuration } from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
-
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
+const ReactRefreshTypeScript = require('react-refresh-typescript')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 // const { jsonBeautify } = require('beautify-json');
 
 export default start
-
+const EXTENSIONS_MODULE = 'src/webapp/extensions.ts'
 export type ExtensionsBag = {
   extensionsDirectoryModule: string
   webpackAliases: Record<string, string>
 }
-const virtualModules = new VirtualModulesPlugin()
 async function start({
   overrideCfg = _ => _,
   buildFolder,
@@ -28,22 +30,32 @@ async function start({
   overrideCfg?: (_: Configuration) => Configuration
   getExtensionsBag(): ExtensionsBag
 }) {
-  const webpackConfig = overrideCfg(defaultConfig({ outputPath: buildFolder }))
-  // console.log({ webpackConfig })
+  const mode: Configuration['mode'] = process.env.NODE_ENV as any
+  const isDevelopment = mode === 'development'
+  const virtualModules = new VirtualModulesPlugin()
+  const webpackConfig = overrideCfg(defaultConfig())
 
+  console.log(inspect(webpackConfig, false, 10, true))
   const wp = webpack(webpackConfig, () => {
     console.log(`webpack(config) cb (DEP_WEBPACK_WATCH_WITHOUT_CALLBACK)`)
   })
-  const server = new WebpackDevServer(
-    {
-      ...webpackConfig.devServer!,
-      open: true,
-    },
-    wp,
-  )
-  server.startCallback(() => {
-    console.log('Successfully started server on http://localhost:8080')
+  wp.hooks.compilation.tap('init ext virtual module', function () {
+    console.log(`doinit ext virtual modulene`)
+    refresh()
   })
+  if (isDevelopment) {
+    const wsConfig = webpackConfig.devServer!
+    const server = new WebpackDevServer(
+      {
+        ...wsConfig,
+        open: true,
+      },
+      wp,
+    )
+    server.startCallback(() => {
+      console.log(`Successfully started server on http://localhost:${wsConfig.port!} `)
+    })
+  }
 
   wp.hooks.afterDone.tap('swap folders', async wpStats => {
     if (wpStats?.hasErrors()) {
@@ -65,157 +77,182 @@ async function start({
     refresh,
   }
   function refresh() {
-    const { extensionsDirectoryModule, webpackAliases } = getExtensionsBag()
-    webpackConfig.resolve!.alias = { ...baseResolveAlias, ...webpackAliases }
-    virtualModules.writeModule('src/webapp/extensions.ts', extensionsDirectoryModule)
+    const { webpackAliases, extensionsDirectoryModule } = getExtensionsBag()
+    webpackConfig.resolve!.alias = {
+      ...baseResolveAlias,
+      ...webpackAliases,
+    }
+    virtualModules.writeModule(EXTENSIONS_MODULE, extensionsDirectoryModule)
+  }
+
+  function defaultConfig(): Configuration {
+    return {
+      mode,
+      entry: ['./src/webapp/index.tsx', ...(isDevelopment ? [require.resolve('react-refresh/runtime')] : [])],
+      // devtool: 'inline-source-map',
+      devtool: 'source-map',
+      context: resolve(__dirname, '..'),
+      watch: true,
+      watchOptions: {
+        aggregateTimeout: 100,
+        followSymlinks: true,
+      },
+      devServer: isDevelopment
+        ? {
+            port: 3000,
+            liveReload: true,
+            compress: true,
+            hot: true,
+            historyApiFallback: true, // For react router
+            static: {
+              serveIndex: true,
+              watch: true,
+              directory: buildFolder,
+            },
+            proxy: {
+              '/_': {
+                target: 'http://localhost:8080',
+              },
+            },
+            client: {
+              overlay: {
+                errors: true,
+                warnings: false,
+              },
+            },
+          }
+        : undefined,
+      output: {
+        clean: true,
+        path: buildFolder,
+        pathinfo: 'verbose',
+        publicPath: '/',
+        ...(isDevelopment
+          ? {
+              filename: '[name].bundle.js',
+              chunkFilename: '[name].chunk.js',
+            }
+          : {
+              filename: '[name].[chunkhash].bundle.js',
+              chunkFilename: '[name].[chunkhash].chunk.js',
+            }),
+      },
+      resolve: {
+        extensions: ['.ts', '.tsx', '.js', '.jsx'],
+        //modules: [__dirname, 'node_modules'],
+        alias: baseResolveAlias,
+      },
+      optimization: {
+        moduleIds: 'deterministic',
+        runtimeChunk: 'single',
+        splitChunks: {
+          cacheGroups: {
+            vendors: {
+              test: /node_modules\/(?!antd\/).*/,
+              name: 'vendors',
+              chunks: 'all',
+            },
+            // This can be your own design library.
+            // antd: {
+            //   test: /node_modules\/(antd\/).*/,
+            //   name: 'antd',
+            //   chunks: 'all',
+            // },
+          },
+        },
+      },
+      performance: {
+        hints: 'warning',
+        // Calculates sizes of gziped bundles.
+        assetFilter(assetFilename: string) {
+          return assetFilename.endsWith('.js.gz')
+        },
+      },
+      module: {
+        rules: [
+          {
+            test: /\.css$/,
+            use: [
+              {
+                loader: 'style-loader',
+              },
+              {
+                loader: 'css-loader',
+              },
+            ],
+          },
+          {
+            test: /\.scss$/,
+            use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
+          },
+          {
+            test: /\.less$/,
+            use: [
+              {
+                loader: 'style-loader',
+              },
+              {
+                loader: 'css-loader',
+              },
+              {
+                loader: 'less-loader',
+              },
+            ],
+          },
+          {
+            test: /\.svg$/,
+            use: ['@svgr/webpack'],
+          },
+          {
+            test: /\.[jt]sx?$/,
+            exclude: /node_modules/,
+            use: [
+              {
+                loader: require.resolve('ts-loader'),
+                options: {
+                  getCustomTransformers: () => ({
+                    before: [isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
+                  }),
+                  transpileOnly: isDevelopment,
+                },
+              },
+              {
+                loader: require.resolve('babel-loader'),
+                options: {
+                  presets: [
+                    require.resolve('@babel/preset-env'),
+                    require.resolve('@babel/preset-typescript'),
+                    [require.resolve('@babel/preset-react'), { development: isDevelopment, runtime: 'automatic' }],
+                  ],
+                  plugins: [[isDevelopment && require.resolve('react-refresh/babel')]].filter(Boolean),
+                },
+              },
+            ],
+          },
+        ],
+      },
+      plugins: [
+        virtualModules,
+        isDevelopment && new ReactRefreshWebpackPlugin(),
+        new ForkTsCheckerWebpackPlugin(),
+        new HtmlWebPackPlugin({
+          template: './index.html',
+          favicon: './favicon.svg',
+        }),
+        new CompressionPlugin({
+          test: /\.js(\?.*)?$/i,
+        }),
+        new CopyPlugin({
+          patterns: [{ from: './_redirects' }],
+        }),
+        // new BundleAnalyzerPlugin({
+        //   analyzerMode: 'json',
+        // }),
+      ].filter(Boolean),
+    }
   }
 }
 
-const defaultConfig = ({ outputPath }: { outputPath: string }): Configuration => ({
-  mode: 'development',
-  // entry: ['./src/webapp'],
-  entry: ['react-hot-loader/patch', './src/webapp'],
-  // devtool: 'inline-source-map',
-  devtool: 'source-map',
-  context: path.resolve(__dirname, '..'),
-  watch: true,
-  watchOptions: {
-    aggregateTimeout: 500,
-    followSymlinks: true,
-  },
-  devServer: {
-    liveReload: true,
-    compress: true,
-    hot: true,
-    historyApiFallback: true, // For react router
-    static: {
-      serveIndex: true,
-      watch: true,
-      directory: outputPath,
-    },
-    proxy: {
-      '/_': {
-        target: 'http://localhost:8888',
-      },
-    },
-    client: {
-      overlay: {
-        errors: true,
-        warnings: false,
-      },
-    },
-  },
-  output: {
-    clean: true,
-    path: outputPath,
-    pathinfo: 'verbose',
-    publicPath: '/',
-    // filename: 'bundle.js',
-    filename: '[name].[chunkhash].bundle.js',
-    chunkFilename: '[name].[chunkhash].bundle.js',
-  },
-  resolve: {
-    // extensions: ['.js', '.jsx'],
-    extensions: ['.ts', '.tsx', '.js', '.jsx'],
-    modules: [__dirname, 'node_modules'],
-    alias: {
-      'react': path.join(__dirname, '..', 'node_modules', 'react'),
-      'react-dom': '@hot-loader/react-dom',
-    },
-  },
-  optimization: {
-    moduleIds: 'deterministic',
-    runtimeChunk: {
-      name: 'manifest',
-    },
-    splitChunks: {
-      cacheGroups: {
-        vendors: {
-          test: /node_modules\/(?!antd\/).*/,
-          name: 'vendors',
-          chunks: 'all',
-        },
-        // This can be your own design library.
-        // antd: {
-        //   test: /node_modules\/(antd\/).*/,
-        //   name: 'antd',
-        //   chunks: 'all',
-        // },
-      },
-    },
-  },
-  performance: {
-    hints: 'warning',
-    // Calculates sizes of gziped bundles.
-    assetFilter(assetFilename: string) {
-      return assetFilename.endsWith('.js.gz')
-    },
-  },
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-          },
-        ],
-      },
-      {
-        test: /\.scss$/,
-        use: [{ loader: 'style-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }],
-      },
-      {
-        test: /\.less$/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-          },
-          {
-            loader: 'less-loader',
-          },
-        ],
-      },
-      {
-        test: /\.svg$/,
-        use: ['@svgr/webpack'],
-      },
-      {
-        test: /\.(ts|tsx)$/,
-        exclude: /node_modules/,
-        use: 'ts-loader',
-      },
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: 'babel-loader',
-      },
-    ],
-  },
-  plugins: [
-    virtualModules,
-    new HtmlWebPackPlugin({
-      template: './index.html',
-      favicon: './favicon.svg',
-    }),
-    new CompressionPlugin({
-      test: /\.js(\?.*)?$/i,
-    }),
-    new CopyPlugin({
-      patterns: [{ from: './_redirects' }],
-    }),
-    // new BundleAnalyzerPlugin({
-    //   analyzerMode: 'json',
-    // }),
-  ],
-})
-
 const baseResolveAlias = {
-  react: path.join('node_modules', 'react'),
+  react: resolve(__dirname, '..', 'node_modules', 'react'),
 }

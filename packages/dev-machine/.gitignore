@@ -1,3 +1,3 @@
 /lib
 /.machines/**/*
-!/.machines/ext-env.js
+!/.machines/.gitkeep
