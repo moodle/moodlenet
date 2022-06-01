@@ -1,6 +1,7 @@
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import type { Ext, ExtDef, ExtId, KernelExt } from '@moodlenet/kernel'
 import type { MNPriHttpExt } from '@moodlenet/pri-http'
+import { mkdir } from 'fs/promises'
 
 import { join, resolve } from 'path'
 import { inspect } from 'util'
@@ -39,6 +40,7 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
   enable(shell) {
     return {
       async deploy(/* { tearDown } */) {
+        await mkdir(buildFolder, { recursive: true })
         shell.onExtInstance<MNHttpServerExt>('moodlenet.http-server@0.1.10', (inst /* , depl */) => {
           const { express, mount } = inst
           const mountApp = express()

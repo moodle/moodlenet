@@ -41,22 +41,17 @@ const AppRouter = () => {
     <Router>
       <MainLayout>
         <Routes>
-          {routes
-            .map(r => {
-              console.log('route ', r)
-              return r
-            })
-            .map(({ Component, path }, k) => (
-              <Route
-                path={path}
-                key={k}
-                element={
-                  <Suspense fallback={<div className="lazy-loading">Loading....</div>}>
-                    <Component />
-                  </Suspense>
-                }
-              />
-            ))}
+          {routes.map(({ Component, path }, k) => (
+            <Route
+              path={path}
+              key={k}
+              element={
+                <Suspense fallback={<div className="lazy-loading">Loading....</div>}>
+                  <Component />
+                </Suspense>
+              }
+            />
+          ))}
         </Routes>
       </MainLayout>
     </Router>

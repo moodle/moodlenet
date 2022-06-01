@@ -1,10 +1,11 @@
 import React, { ReactNode } from 'react'
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom/client'
 import App from './App'
 import { ContainerContextsProviders, RactAppContainer } from './container-contexts-providers'
 import extensions from './extensions'
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById('root')!)
+root.render(
   <React.StrictMode>
     {/* <I18nProvider i18n={i18n}> */}
     <ContainerContextsProviders>
@@ -15,5 +16,4 @@ ReactDOM.render(
     </ContainerContextsProviders>
     {/* </I18nProvider> */}
   </React.StrictMode>,
-  document.querySelector('#root'),
 )
