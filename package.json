@@ -6,11 +6,13 @@
   "author": "https://github.com/aleclofabbro",
   "devDependencies": {
     "@octokit/core": "^3.5.1",
+    "@types/rimraf": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
     "eslint": "^7.11.0",
     "husky": "^7.0.0",
     "lerna": "^5.0.0",
+    "rimraf": "^3.0.2",
     "shx": "^0.3.4",
     "typescript": "^4.6.3"
   },
@@ -21,7 +23,7 @@
     "start-dev": "lerna run start-dev --parallel --stream -- -- ",
     "build": "lerna run build --stream",
     "clean-build": "lerna run clean-build --stream",
-    "clean-dirs": "shx rm -rf packages/*/yarn.lock && shx rm -rf packages/*/package-lock.json && shx rm -rf packages/*/node_modules && shx rm -rf packages/*/lib",
+    "clean-dirs": "rimraf packages/*/yarn.lock && rimraf packages/*/package-lock.json && rimraf packages/*/node_modules && rimraf packages/*/lib",
     "clean-bs": "yarn clean-dirs && yarn bs",
     "start": "lerna run start --parallel --stream",
     "test": "",

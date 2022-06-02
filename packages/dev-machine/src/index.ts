@@ -1,7 +1,8 @@
 import * as core from '@moodlenet/core'
-import fs, { mkdirSync } from 'fs'
+import { existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
 import prompt from 'prompt'
+import { sync as rimrafSync } from 'rimraf'
 import { inspect } from 'util'
 
 process.env.NODE_ENV = 'development'
@@ -13,14 +14,14 @@ const DEV_LOCK_FILE = path.resolve(DEPLOYMENTS_FOLDER_BASE, '.DEV_LOCK_FILE')
 
 const lastDeploymentFolderName = (() => {
   try {
-    return fs.readFileSync(LAST_DEPLOYMENT_FOLDERNAME_FILE, { encoding: 'utf-8' })
+    return readFileSync(LAST_DEPLOYMENT_FOLDERNAME_FILE, { encoding: 'utf-8' })
   } catch {
     return ''
   }
 })()
-const hasLock = fs.existsSync(DEV_LOCK_FILE)
+const hasLock = existsSync(DEV_LOCK_FILE)
 
-fs.writeFileSync(DEV_LOCK_FILE, '')
+writeFileSync(DEV_LOCK_FILE, '')
 
 prompt.start()
 ;(async () => {
@@ -32,7 +33,7 @@ prompt.start()
   process.on('exit', code => {
     if (code !== RESTART_EXIT_CODE) {
       console.log('#### EXIT ####')
-      fs.unlinkSync(DEV_LOCK_FILE)
+      rimrafSync(DEV_LOCK_FILE, { disableGlob: true })
     }
   })
 
@@ -56,18 +57,18 @@ prompt.start()
   const deploymentFolder = path.resolve(DEPLOYMENTS_FOLDER_BASE, deploymentFolderName)
 
   console.log({ deploymentFolder })
-  const deploymentFolderPathExists = fs.existsSync(deploymentFolder)
+  const deploymentFolderPathExists = existsSync(deploymentFolder)
   if (!deploymentFolderPathExists) {
     mkdirSync(deploymentFolder, { recursive: true })
   } else {
-    const deploymentFolderPathIsDir = fs.lstatSync(deploymentFolder).isDirectory()
+    const deploymentFolderPathIsDir = lstatSync(deploymentFolder).isDirectory()
     if (!deploymentFolderPathIsDir) {
       throw new Error(`${deploymentFolder} is not a dir`)
     }
   }
 
   if (lastDeploymentFolderName !== deploymentFolderName) {
-    fs.writeFileSync(LAST_DEPLOYMENT_FOLDERNAME_FILE, deploymentFolderName)
+    writeFileSync(LAST_DEPLOYMENT_FOLDERNAME_FILE, deploymentFolderName)
   }
 
   const [initResponse, initialPeerPkgsInstallRes] = await core.install({
