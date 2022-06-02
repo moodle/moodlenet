@@ -63,7 +63,7 @@ export function makePkgMng({ wd }: { wd: string }) {
   }
 
   async function uninstall(pkgName: string) {
-    return execa('npm', ['rm', '--josn', pkgName], execa_opts)
+    return execa('npm', ['rm', pkgName], execa_opts)
   }
 
   async function info(pkgId: string) {

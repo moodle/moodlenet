@@ -3,6 +3,7 @@ import CopyPlugin from 'copy-webpack-plugin'
 import { cp } from 'fs/promises'
 import HtmlWebPackPlugin from 'html-webpack-plugin'
 import { resolve } from 'path'
+import rimraf from 'rimraf'
 import { inspect } from 'util'
 import webpack, { Configuration } from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
@@ -37,12 +38,10 @@ async function start({
 
   console.log(inspect(webpackConfig, false, 10, true))
   const wp = webpack(webpackConfig, () => {
-    console.log(`webpack(config) cb (DEP_WEBPACK_WATCH_WITHOUT_CALLBACK)`)
+    // a cb .. otherways err:DEP_WEBPACK_WATCH_WITHOUT_CALLBACK
+    console.log(`WP CB`)
   })
-  wp.hooks.compilation.tap('init ext virtual module', function () {
-    console.log(`doinit ext virtual modulene`)
-    refresh()
-  })
+
   if (isDevelopment) {
     const wsConfig = webpackConfig.devServer!
     const server = new WebpackDevServer(
@@ -59,24 +58,24 @@ async function start({
 
   wp.hooks.afterDone.tap('swap folders', async wpStats => {
     if (wpStats?.hasErrors()) {
-      throw new Error(`Webpack build error: ${ wpStats.toString() }`)
+      throw new Error(`Webpack build error: ${wpStats.toString()}`)
     }
     console.log(`Webpack build done`)
-    // await rm(latestBuildFolder, { recursive: true, force: true })
+    await new Promise<void>((resolve, reject) =>
+      rimraf(latestBuildFolder, { disableGlob: true }, e => (e ? reject(e) : resolve())),
+    )
 
     await cp(buildFolder, latestBuildFolder, { recursive: true })
     console.log(`done`)
   })
 
-  wp.watch({}, () => {
-    console.log(`Webpack watched`)
-  })
+  wp.watch({}, () => console.log(`Webpack watched`))
 
   return {
     webpackConfig,
-    refresh,
+    reconfigExtAndAliases,
   }
-  function refresh() {
+  function reconfigExtAndAliases() {
     const { webpackAliases, extensionsDirectoryModule } = getExtensionsBag()
     webpackConfig.resolve!.alias = {
       ...baseResolveAlias,
@@ -87,6 +86,7 @@ async function start({
 
   function defaultConfig(): Configuration {
     return {
+      stats: isDevelopment ? 'detailed' : 'errors-only',
       mode,
       entry: ['./src/webapp/index.tsx', ...(isDevelopment ? [require.resolve('react-refresh/runtime')] : [])],
       // devtool: 'inline-source-map',
@@ -208,6 +208,17 @@ async function start({
             exclude: /node_modules/,
             use: [
               {
+                loader: require.resolve('babel-loader'),
+                options: {
+                  presets: [
+                    require.resolve('@babel/preset-env'),
+                    require.resolve('@babel/preset-typescript'),
+                    [require.resolve('@babel/preset-react'), { development: isDevelopment, runtime: 'automatic' }],
+                  ],
+                  plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean),
+                },
+              },
+              {
                 loader: require.resolve('ts-loader'),
                 options: {
                   getCustomTransformers: () => ({
@@ -216,18 +227,7 @@ async function start({
                   transpileOnly: isDevelopment,
                 },
               },
-              {
-                loader: require.resolve('babel-loader'),
-                options: {
-                  presets: [
-                    require.resolve('@babel/preset-env'),
-                    require.resolve('@babel/preset-typescript'),
-                    [require.resolve('@babel/preset-react'), { development: isDevelopment, runtime: 'automatic' }],
-                  ],
-                  plugins: [[isDevelopment && require.resolve('react-refresh/babel')]].filter(Boolean),
-                },
-              },
-            ],
+            ][isDevelopment ? 'reverse' : 'slice'](), //https://github.com/ezolenko/rollup-plugin-typescript2/issues/256#issuecomment-1126969565
           },
         ],
       },

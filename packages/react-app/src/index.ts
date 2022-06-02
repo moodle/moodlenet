@@ -25,14 +25,6 @@ export type WebappExt = ExtDef<
   }
 >
 
-/* async function cleanBuildFolders(_: { build?: boolean; latest?: boolean }) {
-  return Promise.all([
-    _.latest &&
-      rm(latestBuildFolder, { recursive: true, force: true }).then(() => mkdir(latestBuildFolder, { recursive: true })),
-    _.build && 
-    rm(buildFolder, { recursive: true, force: true }).then(() => mkdir(buildFolder, { recursive: true })),
-  ])
-} */
 const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
   id: 'moodlenet.webapp@0.1.10',
   displayName: 'webapp',
@@ -64,7 +56,7 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
                   cmpPath,
                   moduleLoc: depl.pkgDiskInfo.rootDirPosix,
                 }
-                wp.refresh()
+                wp.reconfigExtAndAliases()
               },
             }
           },
@@ -86,9 +78,6 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
           console.log(`Extension aliases ....`, inspect({ /* config,  */ extAliases, webpackAliases }, false, 6, true))
           return { extensionsDirectoryModule, webpackAliases }
         }
-
-        //rm(latestBuildFolder, { recursive: true, force: true }).then(() => mkdir(latestBuildFolder, { recursive: true }))
-        //rm(buildFolder, { recursive: true, force: true }).then(() => mkdir(buildFolder, { recursive: true }))
 
         function makeExtensionsDirectoryModule() {
           console.log({ extAliases })
