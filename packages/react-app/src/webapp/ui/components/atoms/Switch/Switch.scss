@@ -1,0 +1,28 @@
+.switch {
+  width: 40px;
+  height: 24px;
+  border-radius: 100px;
+  display: flex;
+  padding: 2px;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+  &.on {
+    justify-content: flex-end;
+    background-color: #00e096;
+  }
+  &.off {
+    background-color: #c0c7d5;
+  }
+
+  &.disabled {
+    opacity: 0.25;
+    cursor: initial;
+  }
+  > .moving-part {
+    width: 22px;
+    height: 22px;
+    border-radius: 100px;
+    background-color: white;
+  }
+}
