@@ -43,7 +43,7 @@
     "typescript": "^4.5.2"
   },
   "scripts": {
-    "clean-build": "shx rm -rf dist && yarn build",
+    "clean-build": "rimraf dist && yarn build",
     "build": "yarn gen:graphql:types && tsc",
     "gen:graphql:types": "graphql-codegen --config ./graphql.codegen.config.js",
     "prepublish": "yarn clean-build",
