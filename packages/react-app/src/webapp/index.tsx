@@ -9,7 +9,7 @@ root.render(
   <React.StrictMode>
     {/* <I18nProvider i18n={i18n}> */}
     <ContainerContextsProviders>
-      {Object.entries(extensions).reduce<ReactNode>((child, [extName, { /* extId, */ main }]) => {
+      {extensions.reduce<ReactNode>((child, { main, extName /* ,version */ }) => {
         const extInstance = main(RactAppContainer)
         return extInstance.Comp && <extInstance.Comp key={extName}>{child}</extInstance.Comp>
       }, <App />)}

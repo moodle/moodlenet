@@ -1,6 +1,6 @@
 import type { ExtName, Version } from '@moodlenet/kernel'
 import type { FC, PropsWithChildren } from 'react'
-import { HttpAdapterCtx } from './http-adapter'
+import type { HttpAdapterCtx } from './http-adapter'
 import type { RouterCtx } from './routes'
 
 export type AppRoute = {

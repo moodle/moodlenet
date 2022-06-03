@@ -1,5 +1,5 @@
 import type { MNHttpServerExt } from '@moodlenet/http-server'
-import type { Ext, ExtDef, ExtId, KernelExt } from '@moodlenet/kernel'
+import { Ext, ExtDef, KernelExt } from '@moodlenet/kernel'
 import type { MNPriHttpExt } from '@moodlenet/pri-http'
 import { mkdir } from 'fs/promises'
 
@@ -64,16 +64,20 @@ const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
 
         function getExtensionsBag(): ExtensionsBag {
           console.log(`generate extensions.ts ....`)
-
+          const kernelExtDepl = shell.getExt<KernelExt>('kernel.core@0.1.10')
+          if (!kernelExtDepl) {
+            throw new Error(`getExtensionsBag() : should not be possible, KernelExt not deployed`)
+          }
           const extensionsDirectoryModule = makeExtensionsDirectoryModule()
           console.log({ extensionsDirectoryModule })
-
           const webpackAliases = Object.entries(extAliases).reduce(
             (aliases, [extId, { moduleLoc }]) => ({
               ...aliases,
               [extId]: moduleLoc,
             }),
-            {},
+            {
+              [kernelExtDepl.pkgDiskInfo.name]: kernelExtDepl.pkgDiskInfo.rootDir,
+            },
           )
           console.log(`Extension aliases ....`, inspect({ /* config,  */ extAliases, webpackAliases }, false, 6, true))
           return { extensionsDirectoryModule, webpackAliases }
@@ -88,20 +92,17 @@ ${Object.entries(extAliases)
   .map(([, { cmpPath, moduleLoc }], index) => `import ext${index} from '${moduleLoc}/${cmpPath}'`)
   .join('\n')}
     
-const extensions:Record<string, ReactAppExt<any>> = {
+const extensions:ReactAppExt<any>[] = [
   ${Object.entries(extAliases)
     .map(([extId], index) => {
-      const { extName, version } = shell.lib.splitExtId(extId as ExtId)
       return `
-  ['${extName}']:  {
+  {
     main: ext${index},
-    version: '${version}',
-    extName: '${extName}'
+    extId: '${extId}'
   }`
     })
-
-    .join('\n')}
-}
+    .join(',\n')}
+]
 export default extensions
 `
         }
