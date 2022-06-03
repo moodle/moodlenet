@@ -76,6 +76,8 @@
         flex-direction: column;
         gap: 10px;
         > .module {
+          display: flex;
+          justify-content: space-between;
           // cursor: pointer;
           &:hover {
             // opacity: 0.6;
