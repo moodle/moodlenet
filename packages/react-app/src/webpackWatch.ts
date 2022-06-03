@@ -4,7 +4,6 @@ import { cp } from 'fs/promises'
 import HtmlWebPackPlugin from 'html-webpack-plugin'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
-import { inspect } from 'util'
 import webpack, { Configuration } from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
@@ -36,7 +35,6 @@ async function start({
   const virtualModules = new VirtualModulesPlugin()
   const webpackConfig = overrideCfg(defaultConfig())
 
-  console.log(inspect(webpackConfig, false, 10, true))
   const wp = webpack(webpackConfig, () => {
     // a cb .. otherways err:DEP_WEBPACK_WATCH_WITHOUT_CALLBACK
     console.log(`WP CB`)
@@ -70,6 +68,7 @@ async function start({
   })
 
   wp.watch({}, () => console.log(`Webpack watched`))
+  logConfig()
 
   return {
     webpackConfig,
@@ -82,6 +81,10 @@ async function start({
       ...webpackAliases,
     }
     virtualModules.writeModule(EXTENSIONS_MODULE, extensionsDirectoryModule)
+    logConfig()
+  }
+  function logConfig() {
+    //console.log('webpackConfig:', inspect(webpackConfig, false, 3, true))
   }
 
   function defaultConfig(): Configuration {
@@ -89,8 +92,8 @@ async function start({
       stats: isDevelopment ? 'normal' : 'errors-only',
       mode,
       entry: ['./src/webapp/index.tsx', ...(isDevelopment ? [require.resolve('react-refresh/runtime')] : [])],
-      // devtool: 'inline-source-map',
-      devtool: 'source-map',
+      devtool: isDevelopment ? 'inline-source-map' : undefined,
+      // devtool: 'source-map',
       context: resolve(__dirname, '..'),
       watch: true,
       watchOptions: {
