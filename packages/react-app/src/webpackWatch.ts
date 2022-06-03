@@ -10,7 +10,7 @@ import WebpackDevServer from 'webpack-dev-server'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const ReactRefreshTypeScript = require('react-refresh-typescript')
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
+// const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 // const { jsonBeautify } = require('beautify-json');
 
@@ -86,7 +86,7 @@ async function start({
 
   function defaultConfig(): Configuration {
     return {
-      stats: isDevelopment ? 'detailed' : 'errors-only',
+      stats: isDevelopment ? 'normal' : 'errors-only',
       mode,
       entry: ['./src/webapp/index.tsx', ...(isDevelopment ? [require.resolve('react-refresh/runtime')] : [])],
       // devtool: 'inline-source-map',
@@ -100,8 +100,8 @@ async function start({
       devServer: isDevelopment
         ? {
             port: 3000,
-            liveReload: true,
-            compress: true,
+            // liveReload: true,
+            // compress: true,
             hot: true,
             historyApiFallback: true, // For react router
             static: {
@@ -234,7 +234,7 @@ async function start({
       plugins: [
         virtualModules,
         isDevelopment && new ReactRefreshWebpackPlugin(),
-        new ForkTsCheckerWebpackPlugin(),
+        // new ForkTsCheckerWebpackPlugin(),
         new HtmlWebPackPlugin({
           template: './index.html',
           favicon: './favicon.svg',
