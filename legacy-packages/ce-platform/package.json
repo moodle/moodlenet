@@ -42,7 +42,7 @@
     "typescript": "^4.5.2"
   },
   "scripts": {
-    "clean-build": "shx rm -rf dist && yarn build",
+    "clean-build": "rimraf dist && yarn build",
     "prepublish": "yarn clean-build",
     "build": "tsc",
     "start": "node ./start.js",
