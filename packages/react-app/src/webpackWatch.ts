@@ -3,13 +3,13 @@ import CopyPlugin from 'copy-webpack-plugin'
 import { cp } from 'fs/promises'
 import HtmlWebPackPlugin from 'html-webpack-plugin'
 import { resolve } from 'path'
-import { inspect } from 'util'
+import rimraf from 'rimraf'
 import webpack, { Configuration } from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const ReactRefreshTypeScript = require('react-refresh-typescript')
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
+// const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 // const { jsonBeautify } = require('beautify-json');
 
@@ -35,14 +35,11 @@ async function start({
   const virtualModules = new VirtualModulesPlugin()
   const webpackConfig = overrideCfg(defaultConfig())
 
-  console.log(inspect(webpackConfig, false, 10, true))
   const wp = webpack(webpackConfig, () => {
-    console.log(`webpack(config) cb (DEP_WEBPACK_WATCH_WITHOUT_CALLBACK)`)
+    // a cb .. otherways err:DEP_WEBPACK_WATCH_WITHOUT_CALLBACK
+    console.log(`WP CB`)
   })
-  wp.hooks.compilation.tap('init ext virtual module', function () {
-    console.log(`doinit ext virtual modulene`)
-    refresh()
-  })
+
   if (isDevelopment) {
     const wsConfig = webpackConfig.devServer!
     const server = new WebpackDevServer(
@@ -59,38 +56,44 @@ async function start({
 
   wp.hooks.afterDone.tap('swap folders', async wpStats => {
     if (wpStats?.hasErrors()) {
-      throw new Error(`Webpack build error: ${ wpStats.toString() }`)
+      throw new Error(`Webpack build error: ${wpStats.toString()}`)
     }
     console.log(`Webpack build done`)
-    // await rm(latestBuildFolder, { recursive: true, force: true })
+    await new Promise<void>((resolve, reject) =>
+      rimraf(latestBuildFolder, { disableGlob: true }, e => (e ? reject(e) : resolve())),
+    )
 
     await cp(buildFolder, latestBuildFolder, { recursive: true })
     console.log(`done`)
   })
 
-  wp.watch({}, () => {
-    console.log(`Webpack watched`)
-  })
+  wp.watch({}, () => console.log(`Webpack watched`))
+  logConfig()
 
   return {
     webpackConfig,
-    refresh,
+    reconfigExtAndAliases,
   }
-  function refresh() {
+  function reconfigExtAndAliases() {
     const { webpackAliases, extensionsDirectoryModule } = getExtensionsBag()
     webpackConfig.resolve!.alias = {
       ...baseResolveAlias,
       ...webpackAliases,
     }
     virtualModules.writeModule(EXTENSIONS_MODULE, extensionsDirectoryModule)
+    logConfig()
+  }
+  function logConfig() {
+    //console.log('webpackConfig:', inspect(webpackConfig, false, 3, true))
   }
 
   function defaultConfig(): Configuration {
     return {
+      stats: isDevelopment ? 'normal' : 'errors-only',
       mode,
       entry: ['./src/webapp/index.tsx', ...(isDevelopment ? [require.resolve('react-refresh/runtime')] : [])],
-      // devtool: 'inline-source-map',
-      devtool: 'source-map',
+      devtool: isDevelopment ? 'inline-source-map' : undefined,
+      // devtool: 'source-map',
       context: resolve(__dirname, '..'),
       watch: true,
       watchOptions: {
@@ -100,8 +103,8 @@ async function start({
       devServer: isDevelopment
         ? {
             port: 3000,
-            liveReload: true,
-            compress: true,
+            // liveReload: true,
+            // compress: true,
             hot: true,
             historyApiFallback: true, // For react router
             static: {
@@ -208,6 +211,17 @@ async function start({
             exclude: /node_modules/,
             use: [
               {
+                loader: require.resolve('babel-loader'),
+                options: {
+                  presets: [
+                    require.resolve('@babel/preset-env'),
+                    require.resolve('@babel/preset-typescript'),
+                    [require.resolve('@babel/preset-react'), { development: isDevelopment, runtime: 'automatic' }],
+                  ],
+                  plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean),
+                },
+              },
+              {
                 loader: require.resolve('ts-loader'),
                 options: {
                   getCustomTransformers: () => ({
@@ -216,25 +230,14 @@ async function start({
                   transpileOnly: isDevelopment,
                 },
               },
-              {
-                loader: require.resolve('babel-loader'),
-                options: {
-                  presets: [
-                    require.resolve('@babel/preset-env'),
-                    require.resolve('@babel/preset-typescript'),
-                    [require.resolve('@babel/preset-react'), { development: isDevelopment, runtime: 'automatic' }],
-                  ],
-                  plugins: [[isDevelopment && require.resolve('react-refresh/babel')]].filter(Boolean),
-                },
-              },
-            ],
+            ][isDevelopment ? 'reverse' : 'slice'](), //https://github.com/ezolenko/rollup-plugin-typescript2/issues/256#issuecomment-1126969565
           },
         ],
       },
       plugins: [
         virtualModules,
         isDevelopment && new ReactRefreshWebpackPlugin(),
-        new ForkTsCheckerWebpackPlugin(),
+        // new ForkTsCheckerWebpackPlugin(),
         new HtmlWebPackPlugin({
           template: './index.html',
           favicon: './favicon.svg',

@@ -97,7 +97,7 @@
     "start-dev": "cross-env NODE_ENV=development react-scripts start --incremental",
     "start": "cross-env NODE_ENV=production serve -s -l 3000 build",
     "build": "cross-env yarn gen:graphql:types && react-scripts build",
-    "clean-build": "shx rm -rf build && yarn build",
+    "clean-build": "rimraf build && yarn build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "sb": "start-storybook -p 6006 -s ./public",
