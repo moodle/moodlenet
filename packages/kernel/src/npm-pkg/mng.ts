@@ -1,5 +1,5 @@
 import execa from 'execa'
-import { existsSync } from 'fs'
+import { stat } from 'fs/promises'
 import { createRequire } from 'module'
 import { resolve, sep } from 'path'
 import { Ext, ExtPackage, PkgDiskInfo } from '../types'
@@ -22,7 +22,7 @@ export function makePkgMng({ wd }: { wd: string }) {
   }
 
   async function initWd(): Promise<InitResponse> {
-    const wasInitialized = existsSync(resolve(wd, 'package.json'))
+    const wasInitialized = (await stat(resolve(wd, 'package.json'))).isFile()
     if (!wasInitialized) {
       await execa('npm', ['init', '-y'], execa_opts)
     }

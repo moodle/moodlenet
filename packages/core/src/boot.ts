@@ -1,6 +1,5 @@
 import * as kernel from '@moodlenet/kernel'
-import { ExtBag, ExtPackage } from '@moodlenet/kernel'
-import { getCoreExt } from './ext'
+import { ExtBag, ExtPackage, PkgRegistry } from '@moodlenet/kernel'
 import './main/env'
 import * as peerDeps from './peer-deps'
 import { InstallRes } from './types'
@@ -16,9 +15,11 @@ interface BootCfg {
 export async function boot({ deploymentFolder, initialPeerPkgsInstallRes }: BootCfg) {
   console.log('boot ... ', { deploymentFolder, initialPeerPkgsInstallRes })
   const { extEnvVars /* , devMode  */ } = prepareConfigs()
-  const K = await kernel.core.create({ extEnvVars })
+  const pkgReg: PkgRegistry = []
+  const getPkgReg = async () => pkgReg
+  const K = await kernel.core.create({ extEnvVars, wd: deploymentFolder, getPkgReg })
   // console.log('KKKKKKK ... ', { K })
-  const pkgMng = kernel.extPkg.makePkgMng({ wd: deploymentFolder })
+  pkgReg.push(K.extPkg)
   await deployEventualFirstInstall({ REMOVE_ME: true })
   return
 
@@ -31,17 +32,20 @@ export async function boot({ deploymentFolder, initialPeerPkgsInstallRes }: Boot
     ///
     /*FIXME: REMOVE_ME */
     if (!initialPeerPkgsInstallRes?.length && REMOVE_ME) {
-      initialPeerPkgsInstallRes = peerDeps.pkgsInfoList().map(pkgInfo => {
-        const pkgDiskInfo = kernel.extPkg.pkgDiskInfoOf(pkgMng.require.resolve(pkgInfo.name))
-        const exts = pkgMng.require(pkgInfo.name).default
-        const installRes: InstallRes = {
-          extPkg: {
+      initialPeerPkgsInstallRes = peerDeps
+        .pkgsInfoList()
+        .filter(({ name }) => name !== K.extPkg.pkgDiskInfo.name)
+        .map(pkgInfo => {
+          const pkgDiskInfo = kernel.extPkg.pkgDiskInfoOf(K.pkgMng.require.resolve(pkgInfo.name))
+          const exts = K.pkgMng.require(pkgInfo.name).default
+          const extPkg: ExtPackage = {
             exts,
             pkgDiskInfo,
-          },
-        }
-        return installRes
-      })
+          }
+          pkgReg.push(extPkg)
+          const installRes: InstallRes = { extPkg }
+          return installRes
+        })
       // console.log('**********', { initialPeerPkgsInstallRes })
     }
     /*FIXME: REMOVE_ME */
@@ -52,15 +56,6 @@ export async function boot({ deploymentFolder, initialPeerPkgsInstallRes }: Boot
     ///
     ///
 
-    const corePkgDiskInfo_me = kernel.extPkg.pkgDiskInfoOf(__dirname)
-    const coreExt = getCoreExt({ pkgMng, K })
-    const coreExtPackage: ExtPackage = {
-      exts: [coreExt],
-      pkgDiskInfo: corePkgDiskInfo_me,
-    }
-    const coreInstallRes: InstallRes = {
-      extPkg: coreExtPackage,
-    }
     // console.log('**********', {
     //   initialPeerPkgsInstallRes: (initialPeerPkgsInstallRes ?? []).map(_ => _.extPkg.pkgDiskInfo.name),
     // })
@@ -71,8 +66,7 @@ export async function boot({ deploymentFolder, initialPeerPkgsInstallRes }: Boot
     //   initialPeerPkgsInstallRes: (initialPeerPkgsInstallRes ?? []).map(_ => _.extPkg.pkgDiskInfo.name),
     // })
 
-    const deployExts = [coreInstallRes, ...(initialPeerPkgsInstallRes ?? [])]
-    const extBags = deployExts.flatMap(({ extPkg: { pkgDiskInfo, exts } }) => {
+    const extBags = initialPeerPkgsInstallRes.flatMap(({ extPkg: { pkgDiskInfo, exts } }) => {
       // console.log({ pkgDiskInfo, exts })
       return exts.map(ext => {
         const bag: ExtBag = {
@@ -92,7 +86,7 @@ export async function boot({ deploymentFolder, initialPeerPkgsInstallRes }: Boot
     const DEV_MODE_VALUE = 'development'
     const NODE_ENV = process.env.NODE_ENV ?? DEV_MODE_VALUE
     const devMode = NODE_ENV === DEV_MODE_VALUE
-    const EXT_ENV_PATH = process.env.EXT_ENV ?? `${ deploymentFolder }/ext-env`
+    const EXT_ENV_PATH = process.env.EXT_ENV ?? `${deploymentFolder}/ext-env`
     const extEnvVars: Record<string, any> = require(EXT_ENV_PATH)
 
     return {

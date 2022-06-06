@@ -4,7 +4,7 @@ import { depGraphAddNodes } from './dep-graph'
 import * as KLib from './k-lib'
 import { matchMessage } from './k-lib/message'
 import { isExtIdBWC, joinPointer, splitExtId, splitPointer } from './k-lib/pointer'
-import { pkgDiskInfoOf } from './npm-pkg'
+import { makePkgMng, pkgDiskInfoOf } from './npm-pkg'
 import { createLocalDeploymentRegistry } from './registry/node'
 import type {
   DataMessage,
@@ -19,9 +19,12 @@ import type {
   ExtDef,
   ExtId,
   ExtName,
+  ExtPackage,
+  ExtPkgInfo,
   KernelExt,
   MessagePush,
   MWFn,
+  PkgRegistry,
   PushMessage,
   PushOptions,
   RawExtEnv,
@@ -30,10 +33,14 @@ import type {
 } from './types'
 
 export type K = Awaited<ReturnType<typeof create>>
-export type CreateCfg = { extEnvVars: Record<ExtName, RawExtEnv> }
+export type CreateCfg = {
+  getPkgReg(): Promise<PkgRegistry>
+  extEnvVars: Record<ExtName, RawExtEnv>
+  wd: string
+}
 
 // export const kernelPkgInfo: PkgInfo = { name: 'moodlenet.kernel', version: '0.1.10' }
-export const kernelExtId: ExtId<KernelExt> = 'kernel.core@0.1.10'
+export const kernelExtId: ExtId<KernelExt> = 'moodlenet.kernel@0.1.10'
 
 // type Env = {
 // }
@@ -41,9 +48,10 @@ export const kernelExtId: ExtId<KernelExt> = 'kernel.core@0.1.10'
 //   return rawExtEnv as any //implement checks
 // }
 
-export const create = async ({ extEnvVars }: CreateCfg) => {
+export const create = async ({ extEnvVars, wd, getPkgReg }: CreateCfg) => {
+  const pkgMng = makePkgMng({ wd })
   const EXPOSED_POINTERS_REG: Record<ExtName, ExposedPointerMap> = {}
-  // const _env = getEnv(global_env['kernel.core'])
+  // const _env = getEnv(global_env['moodlenet.kernel'])
 
   const deplReg = createLocalDeploymentRegistry()
   const depGraph = new DepGraph<DepGraphData>()
@@ -81,14 +89,39 @@ export const create = async ({ extEnvVars }: CreateCfg) => {
     displayName: 'K',
     description: 'K',
     requires: [],
-    enable: (/* shell */) => {
+    enable: shell => {
       return {
-        mw: msg => [msg], //of(msg).pipe(delay(msg.bound === 'in' ? 4000 : 0)),
         deploy(
           {
             /* , tearDown  */
           },
         ) {
+          shell.expose({
+            'pkgs/all/sub': {
+              validate() {
+                return { valid: true }
+              },
+            },
+          })
+          shell.lib.pubAll<KernelExt>('moodlenet.kernel@0.1.10', shell, {
+            async 'pkgs/all'() {
+              const reg = await getPkgReg()
+              console.log(reg.map(_ => ({ exts: _.exts, __: _.pkgDiskInfo.name })))
+              const allInfo = reg.map<ExtPkgInfo>(_ => ({
+                pkgInfo: {
+                  name: _.pkgDiskInfo.name,
+                  version: _.pkgDiskInfo.version,
+                },
+                exts: _.exts.map(_ => ({
+                  id: _.id,
+                  displayName: _.displayName,
+                  description: _.description,
+                  requires: _.requires,
+                })),
+              }))
+              return allInfo
+            },
+          })
           return {}
         },
       }
@@ -98,6 +131,10 @@ export const create = async ({ extEnvVars }: CreateCfg) => {
   const pkgDiskInfo = pkgDiskInfoOf(__filename)
   const KDeployment = (await enableAndDeployExtensions({ extBags: [{ ext: kernelExt, pkgDiskInfo }] }))[0]!
 
+  const extPkg: ExtPackage = {
+    exts: [kernelExt],
+    pkgDiskInfo,
+  }
   return {
     enableAndDeployExtensions,
     enableExtensions,
@@ -111,6 +148,8 @@ export const create = async ({ extEnvVars }: CreateCfg) => {
     $MAIN_MSGS$,
     pipedMessages$,
     KDeployment,
+    pkgMng,
+    extPkg,
   }
 
   async function enableAndDeployExtensions({ extBags }: { extBags: ExtBag[] }) {
@@ -138,7 +177,8 @@ export const create = async ({ extEnvVars }: CreateCfg) => {
 
           if (
             !(
-              (match(msg, 'kernel.core@0.1.10::ext/deployed') || match(msg, 'kernel.core@0.1.10::ext/undeployed')) &&
+              (match(msg, 'moodlenet.kernel@0.1.10::ext/deployed') ||
+                match(msg, 'moodlenet.kernel@0.1.10::ext/undeployed')) &&
               isExtIdBWC(msg.data.extId, extId)
             )
           ) {
@@ -246,9 +286,9 @@ export const create = async ({ extEnvVars }: CreateCfg) => {
           } as any
 
           setImmediate(() => {
-            /* const msg = */ pushMsg<KernelExt>('kernel.core@0.1.10')('out')<KernelExt>('kernel.core@0.1.10')(
-              'ext/deployed',
-            )({
+            /* const msg = */ pushMsg<KernelExt>('moodlenet.kernel@0.1.10')('out')<KernelExt>(
+              'moodlenet.kernel@0.1.10',
+            )('ext/deployed')({
               extId,
             })
             // console.log('ext/deployed msg', msg)

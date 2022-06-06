@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import { ContainerContextsProviders, reactAppContainer } from './container-contexts-providers'
 import extensions from './extensions'
+import './http-adapter/_test_sub'
 
 const extensionInstances: Record<ExtId, any> = {}
 const root = ReactDOM.createRoot(document.getElementById('root')!)

@@ -13,7 +13,7 @@ export type MNHttpServerExt = K.ExtDef<'moodlenet.http-server', '0.1.10', {}, vo
 const ext: K.Ext<MNHttpServerExt, [K.KernelExt]> = {
   id: 'moodlenet.http-server@0.1.10',
   displayName: 'http server',
-  requires: ['kernel.core@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
+  requires: ['moodlenet.kernel@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
   enable(shell) {
     return {
       deploy(/* {  tearDown } */) {

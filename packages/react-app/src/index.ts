@@ -15,8 +15,8 @@ const extAliases: {
   [extId: string]: { moduleLoc: string; cmpPath: string }
 } = {}
 
-export type WebappExt = ExtDef<
-  'moodlenet.webapp',
+export type ReactAppExt = ExtDef<
+  'moodlenet.react-app',
   '0.1.10',
   {},
   null,
@@ -25,10 +25,10 @@ export type WebappExt = ExtDef<
   }
 >
 
-const extImpl: Ext<WebappExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
-  id: 'moodlenet.webapp@0.1.10',
+const extImpl: Ext<ReactAppExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
+  id: 'moodlenet.react-app@0.1.10',
   displayName: 'webapp',
-  requires: ['kernel.core@0.1.10', 'moodlenet.pri-http@0.1.10', 'moodlenet.http-server@0.1.10'],
+  requires: ['moodlenet.kernel@0.1.10', 'moodlenet.pri-http@0.1.10', 'moodlenet.http-server@0.1.10'],
   enable(shell) {
     return {
       async deploy(/* { tearDown } */) {
