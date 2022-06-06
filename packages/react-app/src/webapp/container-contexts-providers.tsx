@@ -1,7 +1,6 @@
 import type { ExtId } from '@moodlenet/kernel'
 import type { FC, PropsWithChildren } from 'react'
 import { ExtInstancesCtx, ProvideExtInstancesContext } from './ext-instances'
-import { HttpAdapterCtx, ProvideHttpAdapterCtx } from './http-adapter'
 import { ProvideAppRouterContext, RouterCtx } from './routes'
 import { ReactAppContainer } from './types'
 
@@ -11,15 +10,12 @@ export const ContainerContextsProviders: FC<PropsWithChildren<{ extensionInstanc
 }) => {
   return (
     <ProvideExtInstancesContext extensionInstances={extensionInstances}>
-      <ProvideAppRouterContext>
-        <ProvideHttpAdapterCtx>{children}</ProvideHttpAdapterCtx>
-      </ProvideAppRouterContext>
+      <ProvideAppRouterContext>{children}</ProvideAppRouterContext>
     </ProvideExtInstancesContext>
   )
 }
 
 export const reactAppContainer: ReactAppContainer = {
-  HttpAdapterCtx,
   RouterCtx,
   ExtInstancesCtx,
 }

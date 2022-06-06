@@ -51,7 +51,7 @@ export const kernelExtId: ExtId<KernelExt> = 'moodlenet.kernel@0.1.10'
 export const create = async ({ extEnvVars, wd, getPkgReg }: CreateCfg) => {
   const pkgMng = makePkgMng({ wd })
   const EXPOSED_POINTERS_REG: Record<ExtName, ExposedPointerMap> = {}
-  // const _env = getEnv(global_env['moodlenet.kernel'])
+  // const _env = getEnv(extEnvVars['moodlenet.kernel'])
 
   const deplReg = createLocalDeploymentRegistry()
   const depGraph = new DepGraph<DepGraphData>()
@@ -142,7 +142,7 @@ export const create = async ({ extEnvVars, wd, getPkgReg }: CreateCfg) => {
     undeployAndDisableExtension,
     depOrderDeployments,
     extEnv,
-    global_env: extEnvVars,
+    extEnvVars,
     deplReg,
     depGraph,
     $MAIN_MSGS$,
@@ -357,7 +357,7 @@ export const create = async ({ extEnvVars, wd, getPkgReg }: CreateCfg) => {
   function extEnv(extId: ExtId) {
     //FIXME: should check version compat ?
     const { extName /* , version  */ } = splitExtId(extId)
-    // console.log('extEnv', extId, extName, global_env, global_env[extName])
+    // console.log('extEnv', extId, extName, extEnvVars, extEnvVars[extName])
     return extEnvVars[extName]
   }
 

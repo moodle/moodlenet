@@ -7,6 +7,7 @@ import { join, resolve } from 'path'
 import { inspect } from 'util'
 import startWebpack, { ExtensionsBag } from './webpackWatch'
 
+export * from './types'
 // const wpcfg = require('../webpack.config')
 // const config: Configuration = wpcfg({}, { mode: 'development' })
 const buildFolder = resolve(__dirname, '..', 'build')
@@ -63,7 +64,7 @@ const extImpl: Ext<ReactAppExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
         }
 
         function getExtensionsBag(): ExtensionsBag {
-          console.log(`generate extensions.ts ....`)
+          console.log(`generate extensions.ts ..`)
 
           const extensionsDirectoryModule = makeExtensionsDirectoryModule()
           console.log({ extensionsDirectoryModule })
