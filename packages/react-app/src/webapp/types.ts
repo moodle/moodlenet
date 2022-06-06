@@ -1,7 +1,6 @@
 import type { ExtDef, ExtId } from '@moodlenet/kernel'
 import type { FC, PropsWithChildren } from 'react'
 import { ExtInstancesCtx } from './ext-instances'
-import type { HttpAdapterCtx } from './http-adapter'
 import type { RouterCtx } from './routes'
 
 export type AppRoute = {
@@ -11,7 +10,6 @@ export type AppRoute = {
 }
 export interface ReactAppContainer {
   RouterCtx: RouterCtx
-  HttpAdapterCtx: HttpAdapterCtx
   ExtInstancesCtx: ExtInstancesCtx
 }
 

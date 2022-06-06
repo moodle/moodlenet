@@ -1,5 +1,6 @@
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import type * as K from '@moodlenet/kernel'
+import type { ReactAppExt } from '@moodlenet/react-app'
 import { json } from 'body-parser'
 export * from './types'
 
@@ -11,6 +12,11 @@ const ext: K.Ext<MNPriHttpExt, [K.KernelExt, MNHttpServerExt]> = {
   displayName: 'pri http',
   requires: ['moodlenet.kernel@0.1.10', 'moodlenet.http-server@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
   enable(shell) {
+    shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
+      inst.ensureExtension({
+        cmpPath: 'lib/webapp',
+      })
+    })
     return {
       deploy(/* {  tearDown } */) {
         shell.onExtInstance<MNHttpServerExt>('moodlenet.http-server@0.1.10', httpServerInst => {
