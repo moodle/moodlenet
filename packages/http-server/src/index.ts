@@ -1,5 +1,4 @@
 import type * as K from '@moodlenet/kernel'
-// import * as xlib from 'express'
 import express, { Application } from 'express'
 import { Server } from 'http'
 
