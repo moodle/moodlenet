@@ -12,6 +12,7 @@
         "pri-http dev-build",
         "react-app dev-build",
         "core dev-build",
+        "arangodb dev-build",
         "test-extension dev-build"
       ],
       "presentation": {
@@ -30,6 +31,15 @@
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
       "label": "dev-machine dev-build",
+      "dependsOn": []
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/arangodb/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "arangodb dev-build",
       "dependsOn": []
     },
     {
