@@ -1,17 +1,24 @@
+import { ExtId } from '@moodlenet/kernel'
 import React, { ReactNode } from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import { ContainerContextsProviders, RactAppContainer } from './container-contexts-providers'
+import { ContainerContextsProviders, reactAppContainer } from './container-contexts-providers'
 import extensions from './extensions'
 
+const extensionInstances: Record<ExtId, any> = {}
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 root.render(
   <React.StrictMode>
     {/* <I18nProvider i18n={i18n}> */}
-    <ContainerContextsProviders>
-      {Object.entries(extensions).reduce<ReactNode>((child, [extName, { /* extId, */ main }]) => {
-        const extInstance = main(RactAppContainer)
-        return extInstance.Comp && <extInstance.Comp key={extName}>{child}</extInstance.Comp>
+    <ContainerContextsProviders extensionInstances={extensionInstances}>
+      {Object.entries(extensions).reduce<ReactNode>((aggreagateChild, [extName, { extId, main }]) => {
+        const { instance, Comp } = main({ reactAppContainer })
+        if (extensionInstances[extId]) {
+          console.error({ extId, main })
+          throw new Error(`shouldn't happen, ${extId} already present in extensionInstances record`)
+        }
+        extensionInstances[extId] = instance
+        return Comp && <Comp key={extName}>{aggreagateChild}</Comp>
       }, <App />)}
     </ContainerContextsProviders>
     {/* </I18nProvider> */}

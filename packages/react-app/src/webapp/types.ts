@@ -1,6 +1,7 @@
-import type { ExtName, Version } from '@moodlenet/kernel'
+import type { ExtDef, ExtId } from '@moodlenet/kernel'
 import type { FC, PropsWithChildren } from 'react'
-import { HttpAdapterCtx } from './http-adapter'
+import { ExtInstancesCtx } from './ext-instances'
+import type { HttpAdapterCtx } from './http-adapter'
 import type { RouterCtx } from './routes'
 
 export type AppRoute = {
@@ -8,19 +9,19 @@ export type AppRoute = {
   path: string
   Component: FC<any>
 }
-export interface RactAppContainer {
+export interface ReactAppContainer {
   RouterCtx: RouterCtx
   HttpAdapterCtx: HttpAdapterCtx
+  ExtInstancesCtx: ExtInstancesCtx
 }
 
 export interface RactAppExtInstance<T> {
-  handle: T
+  instance: T
   Comp?: FC<PropsWithChildren<{}>>
 }
 
-export type ReactAppExtMain<T> = (ractAppContainer: RactAppContainer) => RactAppExtInstance<T>
-export type ReactAppExt<T> = {
+export type ReactAppExtMain<T> = (_: { reactAppContainer: ReactAppContainer }) => RactAppExtInstance<T>
+export type ReactAppExt<Def extends ExtDef = ExtDef, T = any> = {
+  extId: ExtId<Def>
   main: ReactAppExtMain<T>
-  version: Version
-  extName: ExtName
 }
