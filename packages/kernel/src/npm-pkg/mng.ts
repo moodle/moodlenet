@@ -22,7 +22,10 @@ export function makePkgMng({ wd }: { wd: string }) {
   }
 
   async function initWd(): Promise<InitResponse> {
-    const wasInitialized = (await stat(resolve(wd, 'package.json'))).isFile()
+    const wasInitialized = await stat(resolve(wd, 'package.json')).then(
+      _ => _.isFile(),
+      () => false,
+    )
     if (!wasInitialized) {
       await execa('npm', ['init', '-y'], execa_opts)
     }
