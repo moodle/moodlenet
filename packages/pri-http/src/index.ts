@@ -9,7 +9,7 @@ export type MNPriHttpExt = K.ExtDef<'moodlenet.pri-http', '0.1.10'>
 const ext: K.Ext<MNPriHttpExt, [K.KernelExt, MNHttpServerExt]> = {
   id: 'moodlenet.pri-http@0.1.10',
   displayName: 'pri http',
-  requires: ['kernel.core@0.1.10', 'moodlenet.http-server@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
+  requires: ['moodlenet.kernel@0.1.10', 'moodlenet.http-server@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
   enable(shell) {
     return {
       deploy(/* {  tearDown } */) {
