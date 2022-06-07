@@ -46,9 +46,34 @@
         flex-direction: column;
         gap: 10px;
         > .package {
+          display: flex;
+          align-items: center;
+          gap: 14px;
           cursor: pointer;
           &:hover {
             opacity: 0.6;
+          }
+          > .logo {
+            border-radius: 5px;
+            height: 40px;
+            width: 40px;
+            padding: 5px;
+            background-color: #fdb068;
+            > .circle {
+              height: 100%;
+              width: 100%;
+              border-radius: 100px;
+              background-color: #ff8e24;
+            }
+          }
+          > .info {
+            > .title {
+              font-size: 18px;
+            }
+            > .details {
+              font-size: 13px;
+              color: rgb(100, 100, 100);
+            }
           }
         }
       }
