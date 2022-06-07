@@ -19,10 +19,16 @@ const Packages: FC<PackagesProps> = () => {
   const [localPathField, setLocalPathField] = useState('')
   const [selectedPackage, setSelectedPackage] = useState<string | undefined>(undefined)
 
-  const packagesList = packagesFake.map((packages, i) => (
-    <div className="package" key={i} onClick={() => setSelectedPackage(packages.name)}>
+  const packagesList = packagesFake.map((p, i) => (
+    <div className="package" key={i} onClick={() => setSelectedPackage(p.name)}>
       {/* <PackageIcon /> */}
-      {packages.name}
+      <div className="logo">
+        <div className="circle" />
+      </div>
+      <div className="info">
+        <div className="title">{p.name}</div>
+        <div className="details">{p.creator}</div>
+      </div>
     </div>
   ))
 

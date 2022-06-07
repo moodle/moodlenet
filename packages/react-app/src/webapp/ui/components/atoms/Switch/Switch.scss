@@ -1,10 +1,10 @@
 .switch {
+  position: relative;
   width: 40px;
   height: 24px;
   border-radius: 100px;
   display: flex;
   padding: 2px;
-  justify-content: flex-start;
   align-items: center;
   cursor: pointer;
   &.on {
@@ -20,9 +20,38 @@
     cursor: initial;
   }
   > .moving-part {
+    position: absolute;
     width: 22px;
     height: 22px;
     border-radius: 100px;
     background-color: white;
+    &.on {
+      left: calc(100% - 24px);
+    }
+    &.off {
+      left: 2px;
+    }
+    &.to-on {
+      animation: switchOn 100ms linear forwards;
+      @keyframes switchOn {
+        from {
+          left: 2px;
+        }
+        to {
+          left: calc(100% - 24px);
+        }
+      }
+    }
+    &.to-off {
+      animation: switchOff 100ms linear backwards;
+      @keyframes switchOff {
+        from {
+          left: calc(100% - 24px);
+        }
+        to {
+          left: 2px;
+        }
+      }
+    }
   }
 }
