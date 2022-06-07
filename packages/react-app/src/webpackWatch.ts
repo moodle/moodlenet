@@ -210,6 +210,19 @@ async function start({
             test: /\.[jt]sx?$/,
             exclude: /node_modules/,
             use: [
+              ...(isDevelopment
+                ? [
+                    {
+                      loader: require.resolve('ts-loader'),
+                      options: {
+                        getCustomTransformers: () => ({
+                          before: [isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
+                        }),
+                        transpileOnly: isDevelopment,
+                      },
+                    },
+                  ]
+                : []),
               {
                 loader: require.resolve('babel-loader'),
                 options: {
@@ -221,16 +234,7 @@ async function start({
                   plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean),
                 },
               },
-              {
-                loader: require.resolve('ts-loader'),
-                options: {
-                  getCustomTransformers: () => ({
-                    before: [isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
-                  }),
-                  transpileOnly: isDevelopment,
-                },
-              },
-            ][isDevelopment ? 'reverse' : 'slice'](), //https://github.com/ezolenko/rollup-plugin-typescript2/issues/256#issuecomment-1126969565
+            ], //[isDevelopment ? 'reverse' : 'slice'](), //https://github.com/ezolenko/rollup-plugin-typescript2/issues/256#issuecomment-1126969565
           },
         ],
       },

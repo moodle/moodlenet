@@ -11,14 +11,14 @@ root.render(
   <React.StrictMode>
     {/* <I18nProvider i18n={i18n}> */}
     <ContainerContextsProviders extensionInstances={extensionInstances}>
-      {Object.entries(extensions).reduce<ReactNode>((aggreagateChild, [extName, { extId, main }]) => {
+      {extensions.reduce<ReactNode>((aggreagateChild, { extId, main }) => {
         const { instance, Comp } = main({ reactAppContainer })
         if (extensionInstances[extId]) {
           console.error({ extId, main })
           throw new Error(`shouldn't happen, ${extId} already present in extensionInstances record`)
         }
         extensionInstances[extId] = instance
-        return Comp && <Comp key={extName}>{aggreagateChild}</Comp>
+        return Comp && <Comp key={extId}>{aggreagateChild}</Comp>
       }, <App />)}
     </ContainerContextsProviders>
     {/* </I18nProvider> */}

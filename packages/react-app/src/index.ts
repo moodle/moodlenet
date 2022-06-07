@@ -1,6 +1,5 @@
 import type { MNHttpServerExt } from '@moodlenet/http-server'
-import type { Ext, ExtDef, ExtId, KernelExt } from '@moodlenet/kernel'
-import type { MNPriHttpExt } from '@moodlenet/pri-http'
+import type { Ext, ExtDef, KernelExt } from '@moodlenet/kernel'
 import { mkdir } from 'fs/promises'
 
 import { join, resolve } from 'path'
@@ -26,10 +25,10 @@ export type ReactAppExt = ExtDef<
   }
 >
 
-const extImpl: Ext<ReactAppExt, [KernelExt, MNPriHttpExt, MNHttpServerExt]> = {
+const extImpl: Ext<ReactAppExt, [KernelExt, MNHttpServerExt]> = {
   id: 'moodlenet.react-app@0.1.10',
   displayName: 'webapp',
-  requires: ['moodlenet.kernel@0.1.10', 'moodlenet.pri-http@0.1.10', 'moodlenet.http-server@0.1.10'],
+  requires: ['moodlenet.kernel@0.1.10', 'moodlenet.http-server@0.1.10'],
   enable(shell) {
     return {
       async deploy(/* { tearDown } */) {
@@ -88,21 +87,18 @@ import { ReactAppExt } from './types'
 ${Object.entries(extAliases)
   .map(([, { cmpPath, moduleLoc }], index) => `import ext${index} from '${moduleLoc}/${cmpPath}'`)
   .join('\n')}
-    
-const extensions:Record<string, ReactAppExt<any>> = {
+
+const extensions: ReactAppExt[] = [
   ${Object.entries(extAliases)
     .map(([extId], index) => {
-      const { extName, version } = shell.lib.splitExtId(extId as ExtId)
       return `
-  ['${extName}']:  {
+    {
     main: ext${index},
-    version: '${version}',
-    extName: '${extName}'
+    extId: '${extId}',
   }`
     })
-
     .join('\n')}
-}
+]
 export default extensions
 `
         }
