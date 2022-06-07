@@ -1,5 +1,6 @@
 import type { Ext, ExtDef, KernelExt, SubTopo } from '@moodlenet/kernel'
 import type { ReactAppExt } from '@moodlenet/react-app'
+import { resolve } from 'path'
 
 export type TestExt = ExtDef<
   'moodlenet.test-extension',
@@ -19,7 +20,7 @@ const ext: Ext<TestExt, [KernelExt, ReactAppExt]> = {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
       console.log(`onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10`, inst)
       inst.ensureExtension({
-        cmpPath: 'lib/webapp',
+        moduleLoc: resolve(__dirname, 'webapp'),
       })
     })
     shell.expose({

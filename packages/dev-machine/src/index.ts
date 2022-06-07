@@ -73,9 +73,9 @@ prompt.start()
 
   const [initResponse, initialPeerPkgsInstallRes] = await core.install({
     installFolder: deploymentFolder,
-    initDevInstallFromLocalRepo: true,
+    _DEV_MODE_CORE_PKGS_FROM_FOLDER: true,
   })
 
   console.log('init response:', initResponse, inspect(initialPeerPkgsInstallRes, false, 6, true))
-  core.boot({ deploymentFolder, initialPeerPkgsInstallRes })
+  core.boot({ deploymentFolder })
 })()

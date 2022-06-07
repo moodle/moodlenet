@@ -1,10 +1,10 @@
 import { DepGraph } from 'dependency-graph'
+import { resolve } from 'path'
 import { mergeMap, of, share, Subject } from 'rxjs'
 import { depGraphAddNodes } from './dep-graph'
 import * as KLib from './k-lib'
 import { matchMessage } from './k-lib/message'
 import { isExtIdBWC, joinPointer, splitExtId, splitPointer } from './k-lib/pointer'
-import { makePkgMng, pkgDiskInfoOf } from './npm-pkg'
 import { createLocalDeploymentRegistry } from './registry/node'
 import type {
   DataMessage,
@@ -18,13 +18,12 @@ import type {
   ExtBag,
   ExtDef,
   ExtId,
+  ExtInfo,
   ExtName,
-  ExtPackage,
-  ExtPkgInfo,
   KernelExt,
   MessagePush,
   MWFn,
-  PkgRegistry,
+  PkgInfo,
   PushMessage,
   PushOptions,
   RawExtEnv,
@@ -34,9 +33,7 @@ import type {
 
 export type K = Awaited<ReturnType<typeof create>>
 export type CreateCfg = {
-  getPkgReg(): Promise<PkgRegistry>
   extEnvVars: Record<ExtName, RawExtEnv>
-  wd: string
 }
 
 // export const kernelPkgInfo: PkgInfo = { name: 'moodlenet.kernel', version: '0.1.10' }
@@ -48,8 +45,7 @@ export const kernelExtId: ExtId<KernelExt> = 'moodlenet.kernel@0.1.10'
 //   return rawExtEnv as any //implement checks
 // }
 
-export const create = async ({ extEnvVars, wd, getPkgReg }: CreateCfg) => {
-  const pkgMng = makePkgMng({ wd })
+export const create = async ({ extEnvVars }: CreateCfg) => {
   const EXPOSED_POINTERS_REG: Record<ExtName, ExposedPointerMap> = {}
   // const _env = getEnv(extEnvVars['moodlenet.kernel'])
 
@@ -97,27 +93,23 @@ export const create = async ({ extEnvVars, wd, getPkgReg }: CreateCfg) => {
           },
         ) {
           shell.expose({
-            'pkgs/all/sub': {
+            'ext/listDeployed/sub': {
               validate() {
                 return { valid: true }
               },
             },
           })
           shell.lib.pubAll<KernelExt>('moodlenet.kernel@0.1.10', shell, {
-            async 'pkgs/all'() {
-              const reg = await getPkgReg()
-              console.log(reg.map(_ => ({ exts: _.exts, __: _.pkgDiskInfo.name })))
-              const allInfo = reg.map<ExtPkgInfo>(_ => ({
-                pkgInfo: {
-                  name: _.pkgDiskInfo.name,
-                  version: _.pkgDiskInfo.version,
+            async 'ext/listDeployed'() {
+              // console.log({ deplReg: deplReg.reg })
+              const allInfo = Object.values(deplReg.reg).map<ExtInfo>(({ ext, pkgInfo }) => ({
+                pkgInfo,
+                ext: {
+                  id: ext.id,
+                  displayName: ext.displayName,
+                  description: ext.description,
+                  requires: ext.requires,
                 },
-                exts: _.exts.map(_ => ({
-                  id: _.id,
-                  displayName: _.displayName,
-                  description: _.description,
-                  requires: _.requires,
-                })),
               }))
               return allInfo
             },
@@ -128,14 +120,13 @@ export const create = async ({ extEnvVars, wd, getPkgReg }: CreateCfg) => {
     },
   }
   // depGraphAddNodes(depGraph, [kernelExt])
-  const pkgDiskInfo = pkgDiskInfoOf(__filename)
-  const KDeployment = (await enableAndDeployExtensions({ extBags: [{ ext: kernelExt, pkgDiskInfo }] }))[0]!
+  // const pkgDiskInfo = pkgDiskInfoOf(__filename)
+  const pkgJson = require(resolve(__dirname, '..', 'package.json'))
+  const pkgInfo: PkgInfo = { name: pkgJson.name, version: pkgJson.version }
+  const KDeployment = (await enableAndDeployExtensions({ extBags: [{ ext: kernelExt, pkgInfo }] }))[0]!
 
-  const extPkg: ExtPackage = {
-    exts: [kernelExt],
-    pkgDiskInfo,
-  }
   return {
+    kernelExt,
     enableAndDeployExtensions,
     enableExtensions,
     deployExtensions,
@@ -148,8 +139,6 @@ export const create = async ({ extEnvVars, wd, getPkgReg }: CreateCfg) => {
     $MAIN_MSGS$,
     pipedMessages$,
     KDeployment,
-    pkgMng,
-    extPkg,
   }
 
   async function enableAndDeployExtensions({ extBags }: { extBags: ExtBag[] }) {
@@ -160,7 +149,7 @@ export const create = async ({ extEnvVars, wd, getPkgReg }: CreateCfg) => {
   async function enableExtensions({ extBags }: { extBags: ExtBag[] }) {
     //FIXME: dependency ordered
     // console.log('enableExtensions', extBags)
-    const deployableBags = extBags.map<DeployableBag>(({ ext, pkgDiskInfo, deployWith }) => {
+    const deployableBags = extBags.map<DeployableBag>(({ ext, pkgInfo, deployWith }) => {
       const extId = ext.id
       const extIdSplit = splitExtId(extId)
       const env = extEnv(extId)
@@ -245,7 +234,7 @@ export const create = async ({ extEnvVars, wd, getPkgReg }: CreateCfg) => {
         onExtDeployment,
         getExt,
         onExt,
-        pkgDiskInfo,
+        pkgInfo,
         expose,
         lib: KLib,
       }
@@ -278,7 +267,7 @@ export const create = async ({ extEnvVars, wd, getPkgReg }: CreateCfg) => {
           const extDeployment = await deployer(deploymentShell, shell)
 
           const depl: RegDeployment = {
-            ...{ deployedWith: deployWith, at: new Date(), ext, $msg$, pkgInfo: shell.pkgDiskInfo },
+            ...{ deployedWith: deployWith, at: new Date(), ext, $msg$, pkgInfo: shell.pkgInfo },
             ...deploymentShell,
             ...shell,
             ...extDeployment,
