@@ -5,7 +5,7 @@ import { createBaseExtRegistry } from './base'
 export type ExtLocalDeploymentRegistry = ReturnType<typeof createLocalDeploymentRegistry>
 
 export const createLocalDeploymentRegistry = () => {
-  const { get, getByName, reg } = createBaseExtRegistry<RegDeployment>()
+  const { get, getByName, reg } = createBaseExtRegistry()
 
   return {
     get,

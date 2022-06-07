@@ -9,7 +9,7 @@ console.log({ cmd, deploymentFolder })
 if (cmd === 'boot') {
   boot({ deploymentFolder })
 } else if (cmd === 'install') {
-  install({ installFolder: deploymentFolder, initDevInstallFromLocalRepo: true })
+  install({ installFolder: deploymentFolder, _DEV_MODE_CORE_PKGS_FROM_FOLDER: true })
 } else {
   throw new Error(`no valid cmd:${cmd}`)
 }

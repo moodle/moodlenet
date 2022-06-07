@@ -1,34 +1,35 @@
-import { makePkgMng, pkgDiskInfoOf } from '@moodlenet/kernel/lib/npm-pkg'
+import { makePkgMng } from '@moodlenet/kernel/lib/npm-pkg'
 import { InitResponse } from '@moodlenet/kernel/lib/npm-pkg/mng'
 import { cp } from 'fs/promises'
 import { resolve } from 'path'
-import * as peerDeps from './peer-deps'
+import * as coreDeps from './core-pkgs'
 import { InstallRes } from './types'
 
 interface InstallCfg {
   installFolder: string
-  initDevInstallFromLocalRepo: boolean
+  _DEV_MODE_CORE_PKGS_FROM_FOLDER: boolean
 }
 
 export async function install(_cfg?: Partial<InstallCfg>): Promise<[InitResponse, InstallRes[]]> {
   const cfg: InstallCfg = {
     installFolder: _cfg?.installFolder ?? process.cwd(),
-    initDevInstallFromLocalRepo: _cfg?.initDevInstallFromLocalRepo ?? false,
+    _DEV_MODE_CORE_PKGS_FROM_FOLDER: _cfg?._DEV_MODE_CORE_PKGS_FROM_FOLDER ?? false,
   }
 
   // console.log('install cfg', cfg)
-  const { initDevInstallFromLocalRepo, installFolder } = cfg
+  const { _DEV_MODE_CORE_PKGS_FROM_FOLDER, installFolder } = cfg
   const pkgMng = makePkgMng({ wd: installFolder })
   const initResponse = await pkgMng.initWd()
 
   if (initResponse === 'newly-initialized-folder') {
-    const pkgDiskInfo = pkgDiskInfoOf(__dirname)
-    await pkgMng.install({ pkgLocator: pkgDiskInfo.rootDir })
-    const peerInstallDeployRes = await installPeerDeps()
-    const coreInstallRes: InstallRes = { extPkg: { exts: [], pkgDiskInfo } }
+    // const pkgDiskInfo = pkgDiskInfoOf(__dirname)
+    // await pkgMng.install({ pkgLocator: pkgDiskInfo.rootDir })
+    const coreInstallDeployRes = await installCorePackages()
+    // console.log({ coreInstallDeployRes: coreInstallDeployRes.map(_ => _.extPkg.pkgDiskInfo.name) })
+    // const coreInstallRes: InstallRes = { extPkg: { exts: [], pkgDiskInfo } }
     await cp(resolve(__dirname, '..', 'ext-env-sample.js'), resolve(installFolder, 'ext-env.js'))
 
-    return [initResponse, [coreInstallRes, ...peerInstallDeployRes]]
+    return [initResponse, /* [coreInstallRes, ...*/ coreInstallDeployRes /* ] */]
   } else if (initResponse === 'folder-was-already-npm-initialized') {
     console.log(`installation folder ${installFolder} already has an initialized package`)
     return [initResponse, []]
@@ -36,25 +37,21 @@ export async function install(_cfg?: Partial<InstallCfg>): Promise<[InitResponse
     throwNever(initResponse, `unknown option for initResponse:${initResponse}`)
   }
 
-  return initResponse
+  return null as never
 
-  async function installPeerDeps(): Promise<InstallRes[]> {
-    const corePkgsFromFolder = initDevInstallFromLocalRepo
-      ? resolve(__dirname, '..', '..', '..', 'packages')
-      : undefined
-    // console.log('**npmInstallList:', JSON.stringify(npmInstallList({ corePkgsFromFolder })))
-
-    const peerInstallThunks = peerDeps
-      .npmInstallList({ corePkgsFromFolder })
+  async function installCorePackages(): Promise<InstallRes[]> {
+    _DEV_MODE_CORE_PKGS_FROM_FOLDER
+    const corePkgsInstallThunks = coreDeps
+      .npmCorePkgList({ _DEV_MODE_CORE_PKGS_FROM_FOLDER })
       .map(pkgLocator => async (_: InstallRes[]) => {
         console.log('install', pkgLocator)
         const extPkg = await pkgMng.installAndExtract({ pkgLocator })
         return [..._, { extPkg }]
       })
 
-    const peerInstallRes = await peerInstallThunks.reduce((prev, next) => _ => prev(_).then(next))([])
+    const corePkgsInstallRes = await corePkgsInstallThunks.reduce((prev, next) => _ => prev(_).then(next))([])
 
-    return peerInstallRes
+    return corePkgsInstallRes
   }
 }
 

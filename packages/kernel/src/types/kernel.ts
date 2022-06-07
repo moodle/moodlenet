@@ -10,14 +10,12 @@ export type KernelExt = ExtDef<
     ext: {
       deployed: Port<'out', { extId: ExtId }>
       undeployed: Port<'out', { extId: ExtId }>
-    }
-    pkgs: {
-      all: SubTopo<void, ExtPkgInfo[]>
+      listDeployed: SubTopo<void, ExtInfo[]>
     }
   }
 >
 
-export type ExtPkgInfo = {
+export type ExtInfo = {
+  ext: Omit<Ext, 'enable'>
   pkgInfo: PkgInfo
-  exts: Omit<Ext, 'enable'>[]
 }

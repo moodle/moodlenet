@@ -1,86 +1,45 @@
-import * as kernel from '@moodlenet/kernel'
-import { ExtBag, ExtPackage, PkgRegistry } from '@moodlenet/kernel'
+import type { Ext, ExtBag, PkgInfo } from '@moodlenet/kernel'
+import { core as k } from '@moodlenet/kernel'
+import { createRequire } from 'module'
+import { dirname, resolve } from 'path'
 import './main/env'
-import * as peerDeps from './peer-deps'
-import { InstallRes } from './types'
 
-export const INITIAL_INSTALL_CFG_FILE_NAME = 'MN_INITIAL_INSTALL_CFG_FILE.json'
+const { sync: packageDirectorySync } = require('pkg-dir')
 export type InitialInstallCfg = {}
 
+// console.log({ pkgDir })
 interface BootCfg {
   deploymentFolder: string
-  initialPeerPkgsInstallRes?: InstallRes[]
+  // initialPeerPkgsInstallRes?: InstallRes[]
 }
 
-export async function boot({ deploymentFolder, initialPeerPkgsInstallRes }: BootCfg) {
-  console.log('boot ... ', { deploymentFolder, initialPeerPkgsInstallRes })
+export async function boot({ deploymentFolder /* , initialPeerPkgsInstallRes  */ }: BootCfg) {
+  console.log('boot ... ', { deploymentFolder /* , initialPeerPkgsInstallRes  */ })
   const { extEnvVars /* , devMode  */ } = prepareConfigs()
-  const pkgReg: PkgRegistry = []
-  const getPkgReg = async () => pkgReg
-  const K = await kernel.core.create({ extEnvVars, wd: deploymentFolder, getPkgReg })
-  // console.log('KKKKKKK ... ', { K })
-  pkgReg.push(K.extPkg)
-  await deployEventualFirstInstall({ REMOVE_ME: true })
-  return
-
-  async function deployEventualFirstInstall({ REMOVE_ME }: { REMOVE_ME: true }) {
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-    /*FIXME: REMOVE_ME */
-    if (!initialPeerPkgsInstallRes?.length && REMOVE_ME) {
-      initialPeerPkgsInstallRes = peerDeps
-        .pkgsInfoList()
-        .filter(({ name }) => name !== K.extPkg.pkgDiskInfo.name)
-        .map(pkgInfo => {
-          const pkgDiskInfo = kernel.extPkg.pkgDiskInfoOf(K.pkgMng.require.resolve(pkgInfo.name))
-          const exts = K.pkgMng.require(pkgInfo.name).default
-          const extPkg: ExtPackage = {
-            exts,
-            pkgDiskInfo,
-          }
-          pkgReg.push(extPkg)
-          const installRes: InstallRes = { extPkg }
-          return installRes
-        })
-      // console.log('**********', { initialPeerPkgsInstallRes })
+  const K = await k.create({ extEnvVars })
+  const req = createRequire(resolve(deploymentFolder, 'node_modules'))
+  const pkgJson = require(resolve(deploymentFolder, 'package.json'))
+  const deps: string[] = Object.keys(pkgJson.dependencies).filter(_ => _ !== '@moodlenet/kernel')
+  // console.log({ deps })
+  const extBags: ExtBag[] = deps.flatMap(dep => {
+    const depMainPath = req.resolve(dep)
+    const depMainPathDir = dirname(depMainPath)
+    const depRootFolder = packageDirectorySync(depMainPathDir)
+    // console.log({ dep, depRootFolder, depMainPathDir, depMainPath })
+    const depPkgJson = req(resolve(depRootFolder, 'package.json'))
+    const depPkgInfo: PkgInfo = {
+      name: depPkgJson.name,
+      version: depPkgJson.version,
     }
-    /*FIXME: REMOVE_ME */
-    ///
-    ///
-    ///
-    ///
-    ///
-    ///
-
-    // console.log('**********', {
-    //   initialPeerPkgsInstallRes: (initialPeerPkgsInstallRes ?? []).map(_ => _.extPkg.pkgDiskInfo.name),
-    // })
-    initialPeerPkgsInstallRes = (initialPeerPkgsInstallRes ?? []).filter(
-      ({ extPkg }) => extPkg.pkgDiskInfo.name !== '@moodlenet/kernel', //HACK: hardcoded ! acceptable ?
-    )
-    // console.log('**********', {
-    //   initialPeerPkgsInstallRes: (initialPeerPkgsInstallRes ?? []).map(_ => _.extPkg.pkgDiskInfo.name),
-    // })
-
-    const extBags = initialPeerPkgsInstallRes.flatMap(({ extPkg: { pkgDiskInfo, exts } }) => {
-      // console.log({ pkgDiskInfo, exts })
-      return exts.map(ext => {
-        const bag: ExtBag = {
-          ext,
-          pkgDiskInfo,
-        }
-        return bag
-      })
-    })
-    // console.log('deployExts ', inspect(deployExts, false, 10, true))
-    const regDeployments = await K.enableAndDeployExtensions({ extBags })
-
-    return regDeployments
-  }
+    const exts: Ext[] = req(dep).default
+    const x = exts.map<ExtBag>(ext => ({
+      pkgInfo: depPkgInfo,
+      ext,
+    }))
+    return x
+  })
+  K.enableAndDeployExtensions({ extBags })
+  return
 
   function prepareConfigs() {
     const DEV_MODE_VALUE = 'development'

@@ -3,7 +3,6 @@ import type { Ext, ExtDef, KernelExt } from '@moodlenet/kernel'
 import { mkdir } from 'fs/promises'
 
 import { join, resolve } from 'path'
-import { inspect } from 'util'
 import startWebpack, { ExtensionsBag } from './webpackWatch'
 
 export * from './types'
@@ -12,7 +11,7 @@ export * from './types'
 const buildFolder = resolve(__dirname, '..', 'build')
 const latestBuildFolder = resolve(__dirname, '..', 'latest-build')
 const extAliases: {
-  [extId: string]: { moduleLoc: string; cmpPath: string }
+  [extId: string]: { moduleLoc: string }
 } = {}
 
 export type ReactAppExt = ExtDef<
@@ -21,7 +20,7 @@ export type ReactAppExt = ExtDef<
   {},
   null,
   {
-    ensureExtension(_: { cmpPath: string }): void
+    ensureExtension(_: { moduleLoc: string }): void
   }
 >
 
@@ -47,14 +46,13 @@ const extImpl: Ext<ReactAppExt, [KernelExt, MNHttpServerExt]> = {
         return {
           inst({ depl }) {
             return {
-              ensureExtension({ cmpPath }) {
-                console.log('....ensureExtension', depl.extId, cmpPath)
-                if (!depl.pkgDiskInfo) {
+              ensureExtension({ moduleLoc }) {
+                console.log('....ensureExtension', depl.extId, moduleLoc)
+                if (!depl.pkgInfo) {
                   throw new Error(`ensureExtension: extId ${depl.extId} not deployed`)
                 }
                 extAliases[depl.extId] = {
-                  cmpPath,
-                  moduleLoc: depl.pkgDiskInfo.rootDirPosix,
+                  moduleLoc,
                 }
                 wp.reconfigExtAndAliases()
               },
@@ -66,7 +64,7 @@ const extImpl: Ext<ReactAppExt, [KernelExt, MNHttpServerExt]> = {
           console.log(`generate extensions.ts ..`)
 
           const extensionsDirectoryModule = makeExtensionsDirectoryModule()
-          console.log({ extensionsDirectoryModule })
+          // console.log({ extensionsDirectoryModule })
 
           const webpackAliases = Object.entries(extAliases).reduce(
             (aliases, [extId, { moduleLoc }]) => ({
@@ -75,7 +73,7 @@ const extImpl: Ext<ReactAppExt, [KernelExt, MNHttpServerExt]> = {
             }),
             {},
           )
-          console.log(`Extension aliases ....`, inspect({ /* config,  */ extAliases, webpackAliases }, false, 6, true))
+          // console.log(`Extension aliases ....`, inspect({ /* config,  */ extAliases, webpackAliases }, false, 6, true))
           return { extensionsDirectoryModule, webpackAliases }
         }
 
@@ -84,8 +82,8 @@ const extImpl: Ext<ReactAppExt, [KernelExt, MNHttpServerExt]> = {
           return `
 import { ReactAppExt } from './types'
 
-${Object.entries(extAliases)
-  .map(([, { cmpPath, moduleLoc }], index) => `import ext${index} from '${moduleLoc}/${cmpPath}'`)
+${Object.values(extAliases)
+  .map(({ moduleLoc }, index) => `import ext${index} from '${moduleLoc}'`)
   .join('\n')}
 
 const extensions: ReactAppExt[] = [

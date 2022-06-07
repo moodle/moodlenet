@@ -2,6 +2,7 @@ import type { MNHttpServerExt } from '@moodlenet/http-server'
 import type * as K from '@moodlenet/kernel'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { json } from 'body-parser'
+import { resolve } from 'path'
 export * from './types'
 
 export type MNPriHttpExt = K.ExtDef<'moodlenet.pri-http', '0.1.10'>
@@ -14,7 +15,7 @@ const ext: K.Ext<MNPriHttpExt, [K.KernelExt, MNHttpServerExt]> = {
   enable(shell) {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
       inst.ensureExtension({
-        cmpPath: 'lib/webapp',
+        moduleLoc: resolve(__dirname, 'webapp'),
       })
     })
     return {

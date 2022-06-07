@@ -1,11 +1,10 @@
 import { isVerBWC, splitExtId } from '../k-lib/pointer'
-import type { ExtId, ExtName, PkgInfo } from '../types'
+import type { ExtId, ExtName, RegDeployment } from '../types'
 
 export type ExtBaseRegistry = ReturnType<typeof createBaseExtRegistry>
-export type BaseReg = { extId: ExtId; pkgInfo: PkgInfo }
-export const createBaseExtRegistry = <RegType extends BaseReg>() => {
+export const createBaseExtRegistry = () => {
   const reg: {
-    [Name in ExtName]: RegType
+    [Name in ExtName]: RegDeployment
   } = {}
 
   return {
