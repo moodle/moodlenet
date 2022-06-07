@@ -5,7 +5,8 @@ import { FC, useState } from 'react'
 import Card from '../../../atoms/Card/Card'
 import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
-import packages from '../factories.json'
+import Switch from '../../../atoms/Switch/Switch'
+import { packagesFake } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import './styles.scss'
 
@@ -18,23 +19,28 @@ const Packages: FC<PackagesProps> = () => {
   const [localPathField, setLocalPathField] = useState('')
   const [selectedPackage, setSelectedPackage] = useState<string | undefined>(undefined)
 
-  const packagesList = packages.map((packages, i) => (
-    <div className="package" key={i} onClick={() => setSelectedPackage(packages.name)}>
+  const packagesList = packagesFake.map((p, i) => (
+    <div className="package" key={i} onClick={() => setSelectedPackage(p.name)}>
       {/* <PackageIcon /> */}
-      {packages.name}
+      <div className="logo">
+        <div className="circle" />
+      </div>
+      <div className="info">
+        <div className="title">{p.name}</div>
+        <div className="details">{p.creator}</div>
+      </div>
     </div>
   ))
 
-  const modulesList =
-    packages &&
-    packages
-      .find(n => n.name === selectedPackage)
-      ?.modules.map((module, i) => (
-        <div className="module" key={i}>
-          {/* <PackageIcon /> */}
-          {module.name}
-        </div>
-      ))
+  const modulesList = packagesFake
+    .find(n => n.name === selectedPackage)
+    ?.modules.map((module, i) => (
+      <div className="module" key={i}>
+        {/* <PackageIcon /> */}
+        <div className="name">{module.name}</div>
+        <Switch enabled={module.enabled} mandatory={module.mandatory} />
+      </div>
+    ))
 
   // useEffect(() => {
 
@@ -69,7 +75,7 @@ const Packages: FC<PackagesProps> = () => {
                   className="local-path"
                   placeholder="Local path to package"
                   value={localPathField}
-                  onChange={t => setLocalPathField(t.currentTarget.value)}
+                  onChange={(t: any) => setLocalPathField(t.currentTarget.value)}
                   name="package-name"
                   // displayMode={true}
                   edit
