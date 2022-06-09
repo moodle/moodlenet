@@ -6,7 +6,7 @@ import type {
   SubcriptionPaths,
   SubcriptionReq,
   SubcriptionVal,
-} from '@moodlenet/kernel'
+} from '@moodlenet/core'
 
 export type PriHttpSub<Def extends ExtDef, Path extends SubcriptionPaths<Def>> = {
   method: 'POST'

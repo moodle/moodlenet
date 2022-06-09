@@ -1,7 +1,7 @@
-import { KernelExt } from '@moodlenet/kernel'
+import { CoreExt } from '@moodlenet/core'
 import { sub } from './xhr-adapter'
-sub<KernelExt>(
-  'moodlenet.kernel',
+sub<CoreExt>(
+  'moodlenet-core',
   '0.1.10',
 )('ext/listDeployed')().subscribe({
   next: ({ msg }) => {

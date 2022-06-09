@@ -1,2 +1,6 @@
-export { boot } from './boot'
-export { install } from './install'
+export * as core from './core'
+export * from './core-lib'
+export * as main from './main'
+// export * as coreNode from './__core-node.ts__'
+export * as extPkg from './npm-pkg'
+export * from './types'

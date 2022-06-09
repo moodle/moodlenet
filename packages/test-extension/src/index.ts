@@ -1,4 +1,4 @@
-import type { Ext, ExtDef, KernelExt, SubTopo } from '@moodlenet/kernel'
+import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
 
@@ -11,10 +11,10 @@ export type TestExt = ExtDef<
   }
 >
 
-const ext: Ext<TestExt, [KernelExt, ReactAppExt]> = {
+const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
   id: 'moodlenet.test-extension@0.1.10',
   displayName: 'test ext',
-  requires: ['moodlenet.kernel@0.1.10', 'moodlenet.react-app@0.1.10'],
+  requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
   enable(shell) {
     console.log('I am test extension')
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {

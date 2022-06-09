@@ -36,7 +36,7 @@ export function pub<Def extends ExtDef>(shell: Pick<Shell<Def>, 'emit' | 'msg$' 
     (valObsProvider: ValObsProviderOf<TypeofPath<ExtTopo<Def>, Path>>) => /* new Observable(subscriber =>  */ {
       const mainSub = new Subscription(killAllAndDelSUB)
 
-      const SUBSCRIPTIONS: { [k in string]: () => void /* TeardownLogic | undefined  */ } = {}
+      const SUBSCRIPTIONS: { [core in string]: () => void /* TeardownLogic | undefined  */ } = {}
       const $ALL_SUBSCRIPTIONS_KILLER$ = new Subject<never>()
       const subP = sub_pointers<Def, Path>(pointer)
       const unsubsSub = shell.msg$
@@ -177,13 +177,13 @@ export function sub<Def extends ExtDef>(shell: Pick<Shell, 'send' | 'msg$' | 'pu
   return <Path extends SubcriptionPaths<Def>>(pointer: Pointer<Def, Path>) =>
     (req: SubcriptionReq<Def, Path>, _opts?: Partial<PushOptions>) =>
       new Observable(subscriber => {
-        console.log(`K sub`, pointer, req)
+        console.log(`Core sub`, pointer, req)
         const mainSub = new Subscription()
         try {
           const subP = sub_pointers<Def, Path>(pointer)
           const reqSplitP = splitPointer(subP.subPointer)
           const reqMsg = shell.send<Def>(reqSplitP.extId)(reqSplitP.path as never)({ req }, { ..._opts, sub: true })
-          console.log(`K sub sent reqMsg `, String(reqMsg))
+          console.log(`Core sub sent reqMsg `, String(reqMsg))
           const subscriberSub = shell.msg$
             .pipe(
               // tap(____ => console.log({ ____, reqMsg, valuePointer: subP.valuePointer })),

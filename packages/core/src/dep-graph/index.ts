@@ -1,5 +1,5 @@
 import { DepGraph, DepGraphCycleError } from 'dependency-graph'
-import { areSameExtName, isVerBWC, splitExtId } from '../k-lib/pointer'
+import { areSameExtName, isVerBWC, splitExtId } from '../core-lib/pointer'
 import type { CheckCycleRes, CheckDepGraphRes, DepGraphData, Ext, ExtDef } from '../types'
 
 export function checkDepGraph(dg: DepGraph<DepGraphData>): CheckDepGraphRes {

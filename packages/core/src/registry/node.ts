@@ -1,4 +1,4 @@
-import { splitExtId } from '../k-lib/pointer'
+import { splitExtId } from '../core-lib/pointer'
 import type { ExtDef, ExtId, ExtName, RegDeployment } from '../types'
 import { createBaseExtRegistry } from './base'
 

@@ -1,4 +1,4 @@
-import * as core from '@moodlenet/core'
+import { main } from '@moodlenet/core'
 import { existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
 import prompt from 'prompt'
@@ -71,11 +71,11 @@ prompt.start()
     writeFileSync(LAST_DEPLOYMENT_FOLDERNAME_FILE, deploymentFolderName)
   }
 
-  const [initResponse, initialPeerPkgsInstallRes] = await core.install({
+  const [initResponse, initialPeerPkgsInstallRes] = await main.install({
     installFolder: deploymentFolder,
     _DEV_MODE_CORE_PKGS_FROM_FOLDER: true,
   })
 
   console.log('init response:', initResponse, inspect(initialPeerPkgsInstallRes, false, 6, true))
-  core.boot({ deploymentFolder })
+  main.boot({ deploymentFolder })
 })()

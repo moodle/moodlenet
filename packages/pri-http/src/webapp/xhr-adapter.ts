@@ -1,4 +1,4 @@
-import type { ExtDef, ExtName, ExtVersion, SubcriptionPaths } from '@moodlenet/kernel'
+import type { ExtDef, ExtName, ExtVersion, SubcriptionPaths } from '@moodlenet/core'
 import { Observable } from 'rxjs'
 import { PriHttpSub } from '../types'
 export type Sub = typeof sub
