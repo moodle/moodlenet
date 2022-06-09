@@ -1,7 +1,6 @@
-import { makePkgMng } from '@moodlenet/kernel/lib/npm-pkg'
-import { InitResponse } from '@moodlenet/kernel/lib/npm-pkg/mng'
 import { cp } from 'fs/promises'
 import { resolve } from 'path'
+import { InitResponse, makePkgMng } from '../npm-pkg'
 import * as coreDeps from './core-pkgs'
 import { InstallRes } from './types'
 
@@ -27,7 +26,7 @@ export async function install(_cfg?: Partial<InstallCfg>): Promise<[InitResponse
     const coreInstallDeployRes = await installCorePackages()
     // console.log({ coreInstallDeployRes: coreInstallDeployRes.map(_ => _.extPkg.pkgDiskInfo.name) })
     // const coreInstallRes: InstallRes = { extPkg: { exts: [], pkgDiskInfo } }
-    await cp(resolve(__dirname, '..', 'ext-env-sample.js'), resolve(installFolder, 'ext-env.js'))
+    await cp(resolve(__dirname, '..', '..', 'ext-env-sample.js'), resolve(installFolder, 'ext-env.js'))
 
     return [initResponse, /* [coreInstallRes, ...*/ coreInstallDeployRes /* ] */]
   } else if (initResponse === 'folder-was-already-npm-initialized') {

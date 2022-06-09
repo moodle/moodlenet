@@ -42,13 +42,7 @@ async function start({
 
   if (isDevelopment) {
     const wsConfig = webpackConfig.devServer!
-    const server = new WebpackDevServer(
-      {
-        ...wsConfig,
-        open: true,
-      },
-      wp,
-    )
+    const server = new WebpackDevServer(wsConfig, wp)
     server.startCallback(() => {
       console.log(`Successfully started server on http://localhost:${wsConfig.port!} `)
     })
@@ -103,6 +97,7 @@ async function start({
       devServer: isDevelopment
         ? {
             port: 3000,
+            open: false,
             // liveReload: true,
             // compress: true,
             hot: true,

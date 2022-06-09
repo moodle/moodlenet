@@ -1,17 +1,17 @@
+import type * as Core from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
-import type * as K from '@moodlenet/kernel'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { json } from 'body-parser'
 import { resolve } from 'path'
 export * from './types'
 
-export type MNPriHttpExt = K.ExtDef<'moodlenet.pri-http', '0.1.10'>
+export type MNPriHttpExt = Core.ExtDef<'moodlenet.pri-http', '0.1.10'>
 
-// const ext: K.Ext<MNPriHttpExt, [K.KernelExt, coreExt.sysLog.MoodlenetSysLogExt]> = {
-const ext: K.Ext<MNPriHttpExt, [K.KernelExt, MNHttpServerExt]> = {
+// const ext: Core.Ext<MNPriHttpExt, [Core.CoreExt, coreExt.sysLog.MoodlenetSysLogExt]> = {
+const ext: Core.Ext<MNPriHttpExt, [Core.CoreExt, MNHttpServerExt]> = {
   id: 'moodlenet.pri-http@0.1.10',
   displayName: 'pri http',
-  requires: ['moodlenet.kernel@0.1.10', 'moodlenet.http-server@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
+  requires: ['moodlenet-core@0.1.10', 'moodlenet.http-server@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
   enable(shell) {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
       inst.ensureExtension({
@@ -25,20 +25,20 @@ const ext: K.Ext<MNPriHttpExt, [K.KernelExt, MNHttpServerExt]> = {
         })
         return {}
 
-        function makeExtPortsApp(httpServerInst: K.ExtInst<MNHttpServerExt>) {
+        function makeExtPortsApp(httpServerInst: Core.ExtInst<MNHttpServerExt>) {
           const srvApp = httpServerInst.express()
           srvApp.use(json())
           srvApp.post('*', async (req, res, next) => {
             /*
             gets ext name&ver 
-            checks ext enabled and version match (kernel port)
+            checks ext enabled and version match (core port)
             checks port is guarded
             pushes msg
             */
 
             const tokens = req.path.split('/').slice(1)
-            const extId = tokens.slice(0, 2).join('@') as K.ExtId
-            const path = tokens.slice(2).join('/') as K.TopoPath
+            const extId = tokens.slice(0, 2).join('@') as Core.ExtId
+            const path = tokens.slice(2).join('/') as Core.TopoPath
             console.log('Exposed Api call', extId, path, req.path)
             if (!(extId && path)) {
               return next()
@@ -61,7 +61,7 @@ const ext: K.Ext<MNPriHttpExt, [K.KernelExt, MNHttpServerExt]> = {
                 })
                 // .pipe(take(4))
                 .subscribe({
-                  //K.ValValueOf<K.SubTopo<any, any>>
+                  //Core.ValValueOf<Core.SubTopo<any, any>>
                   next({ msg }) {
                     console.log('HTTP', { parMsgId: msg.parentMsgId, val: msg.data })
                     res.cork()

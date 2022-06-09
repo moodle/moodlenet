@@ -1,8 +1,8 @@
-import type { Ext, ExtBag, PkgInfo } from '@moodlenet/kernel'
-import { core as k } from '@moodlenet/kernel'
 import { createRequire } from 'module'
 import { dirname, resolve } from 'path'
-import './main/env'
+import { core } from '..'
+import type { Ext, ExtBag, PkgInfo } from '../types'
+import './env'
 
 const { sync: packageDirectorySync } = require('pkg-dir')
 export type InitialInstallCfg = {}
@@ -16,10 +16,10 @@ interface BootCfg {
 export async function boot({ deploymentFolder /* , initialPeerPkgsInstallRes  */ }: BootCfg) {
   console.log('boot ... ', { deploymentFolder /* , initialPeerPkgsInstallRes  */ })
   const { extEnvVars /* , devMode  */ } = prepareConfigs()
-  const K = await k.create({ extEnvVars })
+  const Core = await core.create({ extEnvVars })
   const req = createRequire(resolve(deploymentFolder, 'node_modules'))
   const pkgJson = require(resolve(deploymentFolder, 'package.json'))
-  const deps: string[] = Object.keys(pkgJson.dependencies).filter(_ => _ !== '@moodlenet/kernel')
+  const deps: string[] = Object.keys(pkgJson.dependencies).filter(_ => _ !== '@moodlenet/core')
   // console.log({ deps })
   const extBags: ExtBag[] = deps.flatMap(dep => {
     const depMainPath = req.resolve(dep)
@@ -38,7 +38,7 @@ export async function boot({ deploymentFolder /* , initialPeerPkgsInstallRes  */
     }))
     return x
   })
-  K.enableAndDeployExtensions({ extBags })
+  Core.enableAndDeployExtensions({ extBags })
   return
 
   function prepareConfigs() {

@@ -1,10 +1,10 @@
-import { SubTopo } from '../k-lib'
+import { SubTopo } from '../core-lib'
 import type { Ext, ExtDef, ExtId } from './ext'
 import { PkgInfo } from './reg'
 import type { Port } from './topo'
 
-export type KernelExt = ExtDef<
-  'moodlenet.kernel',
+export type CoreExt = ExtDef<
+  'moodlenet-core',
   '0.1.10',
   {
     ext: {

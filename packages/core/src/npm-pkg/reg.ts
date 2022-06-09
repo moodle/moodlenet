@@ -1,4 +1,4 @@
-import { areSameExtName, isVerBWC, splitExtId } from '../k-lib/pointer'
+import { areSameExtName, isVerBWC, splitExtId } from '../core-lib/pointer'
 import type { ExtDef, ExtId, ExtPackage, PkgRegistry } from '../types'
 
 export function findExt<Def extends ExtDef>(pkgRegistry: PkgRegistry, findExtId: ExtId<Def>) {

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { resolve } from 'path'
-import { boot } from '../boot'
-import { install } from '../install'
+import { boot } from '../main/boot'
+import { install } from '../main/install'
 
 const [cmd, _deploymentFolder] = process.argv.slice(2)
 const deploymentFolder = _deploymentFolder ? resolve(process.cwd(), _deploymentFolder) : process.cwd()

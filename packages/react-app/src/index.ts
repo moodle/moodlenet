@@ -1,5 +1,5 @@
+import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
-import type { Ext, ExtDef, KernelExt } from '@moodlenet/kernel'
 import { mkdir } from 'fs/promises'
 
 import { join, resolve } from 'path'
@@ -24,10 +24,10 @@ export type ReactAppExt = ExtDef<
   }
 >
 
-const extImpl: Ext<ReactAppExt, [KernelExt, MNHttpServerExt]> = {
+const extImpl: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
   id: 'moodlenet.react-app@0.1.10',
   displayName: 'webapp',
-  requires: ['moodlenet.kernel@0.1.10', 'moodlenet.http-server@0.1.10'],
+  requires: ['moodlenet-core@0.1.10', 'moodlenet.http-server@0.1.10'],
   enable(shell) {
     return {
       async deploy(/* { tearDown } */) {
