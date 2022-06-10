@@ -164,6 +164,23 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             <img src={avatarUrl} alt="Avatar" />
           </Modal>
         )}
+        {isEditing && (
+          <div className="background-actions">
+            <input
+              ref={uploadBackgroundRef}
+              type="file"
+              accept=".jpg,.jpeg,.png,.gif"
+              onChange={uploadBackground}
+              hidden
+            />
+            <RoundButton
+              className="change-background-button"
+              type="edit"
+              abbrTitle={t`Edit background`}
+              onClick={selectBackground}
+            />
+          </div>
+        )}
         <div
           className="background"
           style={{
@@ -182,25 +199,8 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             editForm.values.backgroundImage &&
             setIsShowingBackground(true)
           }
-        >
-          {isEditing && (
-            <>
-              <input
-                ref={uploadBackgroundRef}
-                type="file"
-                accept=".jpg,.jpeg,.png,.gif"
-                onChange={uploadBackground}
-                hidden
-              />
-              <RoundButton
-                className="change-background-button"
-                type="edit"
-                abbrTitle={t`Edit background`}
-                onClick={selectBackground}
-              />
-            </>
-          )}
-        </div>
+        />
+
         <div
           className="avatar"
           style={{
