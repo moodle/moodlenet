@@ -24,7 +24,7 @@ export type ReactAppExt = ExtDef<
   }
 >
 
-const extImpl: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
+const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
   id: 'moodlenet.react-app@0.1.10',
   displayName: 'webapp',
   requires: ['moodlenet-core@0.1.10', 'moodlenet.http-server@0.1.10'],
@@ -105,4 +105,4 @@ export default extensions
   },
 }
 
-export default [extImpl]
+export default { exts: [ext] }

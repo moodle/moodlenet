@@ -1,6 +1,16 @@
-export * as core from './core'
+import { coreExtId } from './main/pkgJson'
+import { CoreExt, Ext } from './types'
 export * from './core-lib'
 export * as main from './main'
-// export * as coreNode from './__core-node.ts__'
-export * as extPkg from './npm-pkg'
 export * from './types'
+
+export const coreExtDef: Omit<Ext<CoreExt>, 'enable'> = {
+  id: coreExtId,
+  displayName: 'Core',
+  description: 'Core',
+  requires: [],
+}
+
+export default {
+  exts: [coreExtDef],
+}

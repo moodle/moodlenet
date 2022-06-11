@@ -58,4 +58,4 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
   },
 }
 
-export default [ext]
+export default { exts: [ext] }

@@ -36,7 +36,7 @@ const ext: Core.Ext<MNArangoDBExt, [Core.CoreExt]> = {
     }
   },
 }
-export default [ext]
+export default { exts: [ext] }
 
 type Env = {
   config: Config
