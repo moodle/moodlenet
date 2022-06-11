@@ -8,9 +8,10 @@ import type {
   SubcriptionVal,
 } from '@moodlenet/core'
 
+export type PriHttpSubUrlPrefix = '/_/sub'
 export type PriHttpSub<Def extends ExtDef, Path extends SubcriptionPaths<Def>> = {
   method: 'POST'
-  path: `_/${ExtName<Def>}/${ExtVersion<Def>}/${Path}`
+  path: `${PriHttpSubUrlPrefix}/${ExtName<Def>}/${ExtVersion<Def>}/${Path}`
   req: SubcriptionReq<Def, Path>
   obsType: { msg: DataMessage<SubcriptionVal<Def, Path>> }
 }

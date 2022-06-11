@@ -66,12 +66,17 @@ const ext: Core.Ext<MNHttpServerExt, [Core.CoreExt]> = {
     }
   },
 }
-export default [ext]
+export default { exts: [ext] }
 
 type Env = {
   port: number
 }
 function getEnv(rawExtEnv: Core.RawExtEnv): Env {
-  console.log({ rawExtEnv })
-  return rawExtEnv as any //FIXME: implement checks
+  const env: Env = {
+    port: 8080,
+    ...rawExtEnv,
+  }
+  console.log({ httpServerEnv: env })
+  //FIXME: implement checks ?
+  return env
 }
