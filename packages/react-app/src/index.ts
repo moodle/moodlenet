@@ -95,7 +95,7 @@ const extensions: ReactAppExt[] = [
     extId: '${extId}',
   }`
     })
-    .join('\n')}
+    .join(',\n')}
 ]
 export default extensions
 `

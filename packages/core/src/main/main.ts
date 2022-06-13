@@ -1,13 +1,13 @@
-import { makePkgMng } from '../npm-pkg'
-import { createLocalDeploymentRegistry } from '../registry'
 import { MainFolders, SysConfig, SysPackages } from '../types/sys'
 import { getConfigs } from './configs'
+import { createLocalDeploymentRegistry } from './ext-deployment-registry'
+import { makePkgMng } from './npm-pkg-mng'
 
 type Cfg = {
   folders: MainFolders
 }
 
-export async function getMain(cfg: Cfg) {
+export function getMain(cfg: Cfg) {
   const configs = getConfigs({ folders: cfg.folders })
 
   const pkgMng = makePkgMng(configs.folders)

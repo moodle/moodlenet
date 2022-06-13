@@ -1,5 +1,5 @@
-import { isVerBWC, splitExtId } from './core-lib/pointer'
-import type { ExtDef, ExtId, ExtName, RegDeployment } from './types'
+import { isVerBWC, splitExtId } from '../core-lib/pointer'
+import type { ExtDef, ExtId, ExtName, RegDeployment } from '../types'
 
 export type ExtLocalDeploymentRegistry = ReturnType<typeof createLocalDeploymentRegistry>
 

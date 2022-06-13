@@ -51,7 +51,7 @@ export type PkgVersion = string
 export type NpmRegistry = string
 export type FilePkgLocation = string
 
-export type SysConfigFileModName = 'sys-config'
-export type LocalDeplConfigFileModName = 'local-deployment-config'
+export type SysConfigFileName = 'sys-config.json'
+export type LocalDeplConfigFileName = 'local-deployment-config.json'
 export type SysPkgStorageFolder = 'pkgs-storage'
 export type DefaultNpmRegistry = 'https://registry.npmjs.org/'
