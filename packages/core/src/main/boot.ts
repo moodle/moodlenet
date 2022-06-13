@@ -30,13 +30,14 @@ import type {
 } from '../types'
 import { MainFolders } from '../types/sys'
 import { ext2ExtInfo } from '../util/ext'
+import { ChangedConfigArg } from './configs'
 import { getMain } from './main'
 import { coreExtName, pkgInfo } from './pkgJson'
 
 export type Core = Awaited<ReturnType<typeof boot>>
 export type BootCfg = {
   folders: MainFolders
-  devMode?: boolean
+  devMode: boolean
 }
 // export const corePkgInfo: PkgInfo = { name: 'moodlenet-core', version: '0.1.10' }
 
@@ -49,18 +50,8 @@ export default async function boot(cfg: BootCfg) {
   console.log('boot .... ', cfg)
   const EXPOSED_POINTERS_REG: Record<ExtName, ExposedPointerMap> = {}
   // const _env = getEnv(extEnvVars['moodlenet-core'])
-  const main = await getMain({ folders: cfg.folders })
 
-  const sysConfig = main.configs.getSysConfig()
-  if (sysConfig.__FIRST_INSTALL) {
-    /// SOME FIRST INSTALL OPS ?
-    console.log(`sysConfig.__FIRST_INSTALL`)
-
-    main.configs.writeSysConfig({
-      ...sysConfig,
-      __FIRST_INSTALL: undefined,
-    })
-  }
+  const main = getMain({ folders: cfg.folders })
 
   const depGraph = new DepGraph<DepGraphData>()
   const $MAIN_MSGS$ = new Subject<DataMessage<any>>()
@@ -145,11 +136,20 @@ export default async function boot(cfg: BootCfg) {
                 },
               },
             }) {
-              const { pkgDiskInfo, pkgExport } = await main.pkgMng.extractPackage(pkgName)
+              const { /* pkgDiskInfo,  */ pkgExport } = await main.pkgMng.extractPackage(pkgName)
               const ext = pkgExport.exts.find(ext => ext.id === extId)
               assert(ext, `Couldn't find extId:${extId} in package:${pkgName}`)
-              await deployExtensions({
-                extBags: [{ ext, pkgInfo: pkgDiskInfo }],
+              // await deployExtensions({
+              //   extBags: [{ ext, pkgInfo: pkgDiskInfo }],
+              // })
+              const { extName, version } = splitExtId(ext.id)
+              const curr = main.configs.getSysConfig()
+              main.configs.writeSysConfig({
+                ...curr,
+                enabledExtensions: {
+                  ...curr.enabledExtensions,
+                  [extName]: { pkg: pkgName, order: -1, version },
+                },
               })
               return
             },
@@ -162,20 +162,7 @@ export default async function boot(cfg: BootCfg) {
   // depGraphAddNodes(depGraph, [coreExt])
   // const pkgDiskInfo = pkgDiskInfoOf(__filename)
   const KDeployment = (await deployExtensions({ extBags: [{ ext: coreExt, pkgInfo }] }))[0]!
-
-  const extBags = Object.entries(sysConfig.enabledExtensions)
-    .filter(([extName]) => extName !== coreExtName)
-    .map<ExtBag>(([extName, sysEnabledExtDecl]) => {
-      const { pkgDiskInfo, pkgExport } = main.pkgMng.extractPackage(sysEnabledExtDecl.pkg)
-      const ext = pkgExport.exts.find(({ id }) => splitExtId(id).extName === extName)
-      assert(ext, `could not find ext:${extName} in pkg:${sysEnabledExtDecl.pkg}`)
-      return {
-        ext,
-        pkgInfo: pkgDiskInfo,
-      }
-    })
-  const deployments = await deployExtensions({ extBags })
-  console.log({ deployments })
+  main.configs.setupWatcher(configWatcher)
   return {
     coreExt,
     KDeployment,
@@ -187,11 +174,49 @@ export default async function boot(cfg: BootCfg) {
     $MAIN_MSGS$,
     pipedMessages$,
   }
+  async function configWatcher({ curr, prev, type }: ChangedConfigArg) {
+    if (type === 'sys') {
+      if (curr.__FIRST_INSTALL) {
+        console.log(`sysConfig.__FIRST_INSTALL`)
 
-  async function deployExtensions({ extBags }: { extBags: ExtBag[] }) {
+        main.configs.writeSysConfig({
+          ...curr,
+          __FIRST_INSTALL: undefined,
+        })
+      }
+
+      const deployEntries = Object.entries(curr.enabledExtensions)
+        .filter(([extName]) => extName !== coreExtName)
+        .filter(([extName]) => !prev || !(extName in prev.enabledExtensions))
+      console.log({ deployEntries })
+
+      const deployments = await deployExtensions({
+        extBags: deployEntries.map<ExtBag>(([extName, sysEnabledExtDecl]) => {
+          const { pkgDiskInfo, pkgExport } = main.pkgMng.extractPackage(sysEnabledExtDecl.pkg)
+          const ext = pkgExport.exts.find(({ id }) => splitExtId(id).extName === extName)
+          assert(ext, `could not find ext:${extName} in pkg:${sysEnabledExtDecl.pkg}`)
+          return {
+            ext,
+            pkgInfo: pkgDiskInfo,
+          }
+        }),
+      })
+      console.log({ deployments })
+      if (prev) {
+        const undeployEntries = Object.entries(prev.enabledExtensions)
+          .filter(([extName]) => extName !== coreExtName)
+          .filter(([extName]) => !(extName in curr.enabledExtensions))
+        console.log({ undeployEntries })
+      }
+    }
+  }
+  async function deployExtensions({ extBags }: { extBags: ExtBag[] }): Promise<DeploymentBag[]> {
+    if (!extBags.length) {
+      return []
+    }
     //FIXME: dependency ordered
-    // console.log('enableExtensions', extBags)
     const deployableBags = extBags.map<DeployableBag>(({ ext, pkgInfo, deployWith }) => {
+      console.log('deployExtension', ext.id)
       const extId = ext.id
       const extIdSplit = splitExtId(extId)
       const env = extEnv(extId)

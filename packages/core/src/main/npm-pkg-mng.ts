@@ -5,15 +5,17 @@ import { createRequire } from 'module'
 import { dirname, posix, resolve, sep } from 'path'
 import { sync as packageDirectorySync } from 'pkg-dir'
 import type { PackageJson as NodePackageJson } from 'type-fest'
-import type { PkgDiskInfo } from './types'
-import { PkgExport } from './types'
-import { MainFolders, PkgName, SysPkgDecl, SysPkgDeclNamed } from './types/sys'
+import type { PkgDiskInfo } from '../types'
+import { PkgExport } from '../types'
+import { MainFolders, PkgName, SysPkgDecl, SysPkgDeclNamed } from '../types/sys'
 export type PkgMngLib = ReturnType<typeof makePkgMng>
 export type InitResponse = 'newly-initialized-folder' | 'folder-was-already-npm-initialized'
 
 export function makePkgMng(mainFolders: MainFolders) {
   const execa_opts: execa.Options = { cwd: mainFolders.deployment }
-  const sysRequire = createRequire(resolve(mainFolders.deployment, 'node_modules'))
+  const sysRequirePath = resolve(mainFolders.deployment, 'node_modules')
+  console.log({ sysRequirePath })
+  const sysRequire = createRequire(sysRequirePath)
 
   return {
     // info,
@@ -56,7 +58,7 @@ export function makePkgMng(mainFolders: MainFolders) {
   async function install(sysPkgDeclNamed: SysPkgDeclNamed) {
     const args = ['i', '--json', '--force', '--save', ...getPackageLocatorOpts(sysPkgDeclNamed.name, sysPkgDeclNamed)]
     console.log(`installing ${sysPkgDeclNamed.name} from ${sysPkgDeclNamed.type}`)
-    await execa('npm', args, execa_opts).then(console.log)
+    await execa('npm', args, execa_opts) //.then(console.log)
     return extractPackage(sysPkgDeclNamed.name)
   }
 

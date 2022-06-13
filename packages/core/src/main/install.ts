@@ -1,12 +1,13 @@
 import assert from 'assert'
 import { resolve } from 'path'
 import { splitExtId } from '../core-lib'
-import { InitResponse, makePkgMng } from '../npm-pkg'
 import { MainFolders, SysConfig, SysEnabledExtDecl, SysEnabledExtensions, SysPackages, SysPkgDecl } from '../types/sys'
 import { sysPackages2SysPkgDeclNamed } from '../util/packages'
+import { sequencePromises } from '../util/promises'
 import { getConfigs } from './configs'
 import corePkgs from './core-pkgs'
 import { getRegistry } from './default-consts'
+import { InitResponse, makePkgMng } from './npm-pkg-mng'
 
 type InstallCfg = {
   folders: MainFolders
@@ -30,16 +31,18 @@ export default async function install({
   }
   assert(initResponse === 'newly-initialized-folder')
 
-  await configs.createSysPkgStorageFolder()
+  configs.createSysPkgStorageFolder()
   const installedPackages = getCoreSysPackages()
 
-  await Promise.all(sysPackages2SysPkgDeclNamed(installedPackages).map(pkgMng.install))
+  const pkgDeclNameds = sysPackages2SysPkgDeclNamed(installedPackages)
+  const installThunks = pkgDeclNameds.map(pkgDeclNamed => () => pkgMng.install(pkgDeclNamed))
+  await sequencePromises(installThunks)
 
   const enabledExtensions = Object.keys(installedPackages)
     // .filter(pkgName => pkgName !== pkgInfo.name)
     .map(pkgName => {
-      const { pkgDiskInfo, pkgExport } = pkgMng.extractPackage(pkgName)
-      console.log({ pkgDiskInfo, pkgExport })
+      const { /* pkgDiskInfo, */ pkgExport } = pkgMng.extractPackage(pkgName)
+      // console.log({ pkgDiskInfo, pkgExport })
       return pkgExport.exts.reduce<SysEnabledExtensions>((_acc, ext) => {
         const { extName, version } = splitExtId(ext.id)
         const sysEnabledExtDecl: SysEnabledExtDecl = {
