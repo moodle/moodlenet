@@ -3,7 +3,7 @@ import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
 
 export type TestExt = ExtDef<
-  'moodlenet.test-extension',
+  'moodlenet-test-extension',
   '0.1.10',
   {
     testSub: SubTopo<{ XX: string }, { a: string }>
@@ -12,7 +12,7 @@ export type TestExt = ExtDef<
 >
 
 const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
-  id: 'moodlenet.test-extension@0.1.10',
+  id: 'moodlenet-test-extension@0.1.10',
   displayName: 'test ext',
   requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
   enable(shell) {
@@ -37,7 +37,7 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
     })
     return {
       deploy() {
-        shell.lib.pubAll<TestExt>('moodlenet.test-extension@0.1.10', shell, {
+        shell.lib.pubAll<TestExt>('moodlenet-test-extension@0.1.10', shell, {
           _test: ({
             msg: {
               data: {

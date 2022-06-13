@@ -3,6 +3,7 @@ import { resolve } from 'path'
 import { splitExtId } from '../core-lib'
 import { InitResponse, makePkgMng } from '../npm-pkg'
 import { MainFolders, SysConfig, SysEnabledExtDecl, SysEnabledExtensions, SysPackages, SysPkgDecl } from '../types/sys'
+import { sysPackages2SysPkgDeclNamed } from '../util/packages'
 import { getConfigs } from './configs'
 import corePkgs from './core-pkgs'
 import { getRegistry } from './default-consts'
@@ -32,7 +33,7 @@ export default async function install({
   await configs.createSysPkgStorageFolder()
   const installedPackages = getCoreSysPackages()
 
-  await pkgMng.install(installedPackages)
+  await Promise.all(sysPackages2SysPkgDeclNamed(installedPackages).map(pkgMng.install))
 
   const enabledExtensions = Object.keys(installedPackages)
     // .filter(pkgName => pkgName !== pkgInfo.name)

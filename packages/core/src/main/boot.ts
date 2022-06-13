@@ -29,6 +29,7 @@ import type {
   Shell,
 } from '../types'
 import { MainFolders } from '../types/sys'
+import { ext2ExtInfo } from '../util/ext'
 import { getMain } from './main'
 import { coreExtName, pkgInfo } from './pkgJson'
 
@@ -106,20 +107,51 @@ export default async function boot(cfg: BootCfg) {
                 return { valid: true }
               },
             },
+            'pkg/install/sub': {
+              validate() {
+                return { valid: true }
+              },
+            },
+            'ext/deploy/sub': {
+              validate() {
+                return { valid: true }
+              },
+            },
           })
           shell.lib.pubAll<CoreExt>('moodlenet-core@0.1.10', shell, {
             async 'ext/listDeployed'() {
               // console.log({ main.deployments: main.deployments.reg })
-              const allInfo = Object.values(main.deployments.reg).map<ExtInfo>(({ ext, pkgInfo }) => ({
-                pkgInfo,
-                ext: {
-                  id: ext.id,
-                  displayName: ext.displayName,
-                  description: ext.description,
-                  requires: ext.requires,
-                },
-              }))
+              const allInfo = Object.values(main.deployments.reg).map<ExtInfo>(({ ext, pkgInfo }) =>
+                ext2ExtInfo({
+                  pkgInfo,
+                  ext,
+                }),
+              )
               return allInfo
+            },
+            async 'pkg/install'({
+              msg: {
+                data: { req: sysPkg },
+              },
+            }) {
+              const { pkgDiskInfo, pkgExport } = await main.pkgMng.install(sysPkg)
+              const extInfos = pkgExport.exts.map<ExtInfo>(ext => ext2ExtInfo({ ext, pkgInfo: pkgDiskInfo }))
+              return { extInfos }
+            },
+            async 'ext/deploy'({
+              msg: {
+                data: {
+                  req: { pkgName, extId },
+                },
+              },
+            }) {
+              const { pkgDiskInfo, pkgExport } = await main.pkgMng.extractPackage(pkgName)
+              const ext = pkgExport.exts.find(ext => ext.id === extId)
+              assert(ext, `Couldn't find extId:${extId} in package:${pkgName}`)
+              await deployExtensions({
+                extBags: [{ ext, pkgInfo: pkgDiskInfo }],
+              })
+              return
             },
           })
           return {}
