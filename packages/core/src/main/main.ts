@@ -28,7 +28,6 @@ export async function getMain(cfg: Cfg) {
   // }
 
   async function installPackages(packages: SysPackages) {
-    await pkgMng.install(packages)
     const _sysConfig = await configs.getSysConfig()
     const newSysConfig: SysConfig = {
       ..._sysConfig,

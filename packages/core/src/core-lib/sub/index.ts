@@ -157,7 +157,7 @@ export function dematMessage<T>() {
           msg: DataMessage<T>
         }[])
       : notif.kind === 'E'
-      ? (throwError(() => new Error(notif.error)) as unknown as { msg: DataMessage<T> }[])
+      ? (throwError(() => new Error(notif.error, { cause: notif.error })) as unknown as { msg: DataMessage<T> }[])
       : notif.kind === 'N'
       ? [{ msg: { ...msg, data: notif.value } }]
       : notif.kind === 'C'

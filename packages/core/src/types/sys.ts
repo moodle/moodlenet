@@ -20,6 +20,7 @@ export type SysEnabledExtDecl = {
 
 export type SysPackages = Record<PkgName, SysPkgDecl>
 
+export type SysPkgDeclNamed = SysPkgDecl & { name: PkgName }
 export type SysPkgDecl =
   | {
       type: 'npm'
