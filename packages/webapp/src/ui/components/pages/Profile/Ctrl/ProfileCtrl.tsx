@@ -66,10 +66,7 @@ const validationSchema: SchemaOf<ProfileFormValues> = object({
   location: string().optional(),
   organizationName: string().min(3).max(160).optional(),
   siteUrl: string().url().optional(),
-  description: string()
-    .required(t`Please provide a description`)
-    .min(3)
-    .max(4096),
+  description: string().default('').max(4096),
 })
 const newCollectionHref = href(mainPath.createNewCollection)
 const newResourceHref = href(mainPath.createNewResource)

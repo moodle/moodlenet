@@ -77,7 +77,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
     setIsReporting,
   }) => {
     const [isShowingAvatar, setIsShowingAvatar] = useState<boolean>(false)
-    const shouldShowErrors = !!editForm.submitCount
+    const shouldShowErrors = !!editForm.submitCount && !editForm.isValid
     const [isShowingBackground, setIsShowingBackground] =
       useState<boolean>(false)
     const [isShowingSmallCard, setIsShowingSmallCard] = useState<boolean>(false)
@@ -245,7 +245,9 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 <PrimaryButton
                   className={`${editForm.isSubmitting ? 'loading' : ''}`}
                   color="green"
-                  onClick={toggleIsEditing}
+                  onClick={() =>
+                    (!shouldShowErrors || editForm.isValid) && toggleIsEditing()
+                  }
                 >
                   {editForm.isSubmitting ? (
                     <div className="loading">
@@ -269,14 +271,15 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
             <div className="title">
               {isOwner && isEditing ? (
                 <InputTextField
-                  className="display-name underline"
+                  className={`display-name underline ${
+                    editForm.isSubmitting ? 'no-edit' : ''
+                  }`}
                   placeholder="Display name"
                   value={editForm.values.displayName}
                   onChange={editForm.handleChange}
                   name="displayName"
                   displayMode={true}
                   edit={isEditing}
-                  disabled={editForm.isSubmitting}
                   error={
                     isEditing && shouldShowErrors && editForm.errors.displayName
                   }
@@ -342,8 +345,7 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
                 </span>
               </div>
             ) : (
-              editForm.values.location &&
-              editForm.values.siteUrl && (
+              (editForm.values.location || editForm.values.siteUrl) && (
                 <div className="subtitle">
                   {editForm.values.location &&
                     editForm.values.location !== '' && (
@@ -369,11 +371,12 @@ export const ProfileCard = withCtrl<ProfileCardProps>(
               onChange={editForm.handleChange}
               textarea={true}
               displayMode={true}
-              className="underline"
+              className={`description underline ${
+                editForm.isSubmitting ? 'no-edit' : ''
+              }`}
               placeholder="What should others know about you?"
               name="description"
               edit={isEditing}
-              disabled={editForm.isSubmitting}
               error={
                 isEditing && shouldShowErrors && editForm.errors.description
               }
