@@ -87,8 +87,14 @@ export const Profile = withCtrl<ProfileProps>(
     const [isReporting, setIsReporting] = useState<boolean>(false)
 
     const toggleIsEditing = () => {
-      isEditing && editForm.dirty && editForm.submitForm()
-      setIsEditing(!isEditing)
+      if (isEditing && editForm.dirty) {
+        editForm.submitForm()
+        editForm.isValid && setIsEditing(false)
+      } else if (isEditing && !editForm.dirty) {
+        setIsEditing(false)
+      } else if (!isEditing) {
+        setIsEditing(true)
+      }
     }
 
     const collectionList = (isOwner || collectionCardPropsList.length > 0) && (
