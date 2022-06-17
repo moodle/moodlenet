@@ -1,7 +1,6 @@
 import { Subject } from 'rxjs'
 import type { Deploy, DeploymentShell, Ext, ExtDef, ExtDeployable, ExtDeployment, Shell } from './ext'
 import { DataMessage } from './message'
-export type { ExtLocalDeploymentRegistry as ExtLocalDeploymentRegistry } from '../registry'
 export type PkgInfo = {
   name: string
   version: string

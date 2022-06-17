@@ -228,6 +228,10 @@ export default async function boot(cfg: BootCfg) {
       const onExt: Shell['onExt'] = (extId, cb) => {
         const match = matchMessage<CoreExt>()
         // console.log('onExt', extId)
+        const deployment = main.deployments.get(extId)
+        if (deployment) {
+          setImmediate(() => cb(deployment as any))
+        }
         const subscription = pipedMessages$.subscribe(msg => {
           // console.log('onExt', msg)
 

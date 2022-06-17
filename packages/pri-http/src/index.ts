@@ -6,12 +6,12 @@ import { resolve } from 'path'
 import { PriHttpSubUrlPrefix } from './types'
 export * from './types'
 
-export type MNPriHttpExt = Core.ExtDef<'moodlenet.pri-http', '0.1.10'>
+export type MNPriHttpExt = Core.ExtDef<'moodlenet-pri-http', '0.1.10'>
 
 const mountSubUrl: PriHttpSubUrlPrefix = '/_/sub'
 // const ext: Core.Ext<MNPriHttpExt, [Core.CoreExt, coreExt.sysLog.MoodlenetSysLogExt]> = {
 const ext: Core.Ext<MNPriHttpExt, [Core.CoreExt, MNHttpServerExt]> = {
-  id: 'moodlenet.pri-http@0.1.10',
+  id: 'moodlenet-pri-http@0.1.10',
   displayName: 'pri http',
   requires: ['moodlenet-core@0.1.10', 'moodlenet.http-server@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
   enable(shell) {

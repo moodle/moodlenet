@@ -18,7 +18,7 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
   enable(shell) {
     console.log('I am test extension')
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
-      console.log(`onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10`, inst)
+      console.log(`moodlenet-test-extension: onExtInstance<ReactAppExt>`, inst)
       inst.ensureExtension({
         moduleLoc: resolve(__dirname, 'webapp'),
       })
