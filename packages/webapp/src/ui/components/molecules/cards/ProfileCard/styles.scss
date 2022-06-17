@@ -113,6 +113,10 @@
     > .input-text-field,
     > .profile-card-header > .title > .input-text-field,
     > .profile-card-header > .subtitle > span > .input-text-field {
+      > .no-edit {
+        pointer-events: none;
+        cursor: none;
+      }
       > .input-text-field-container {
         box-shadow: none;
         animation: none;
@@ -123,6 +127,7 @@
     > .profile-card-header > .title > .enter-error,
     > .profile-card-header > .subtitle > span > .enter-error {
       > .error-msg {
+        height: 100%;
         font-weight: initial;
       }
     }
@@ -198,6 +203,7 @@
           }
         }
       }
+
       > .title,
       .display-name > .input-container {
         height: auto;
