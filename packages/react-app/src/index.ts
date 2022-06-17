@@ -48,9 +48,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
             return {
               ensureExtension({ moduleLoc }) {
                 console.log('....ensureExtension', depl.extId, moduleLoc)
-                if (!depl.pkgInfo) {
-                  throw new Error(`ensureExtension: extId ${depl.extId} not deployed`)
-                }
+
                 extAliases[depl.extId] = {
                   moduleLoc,
                 }
