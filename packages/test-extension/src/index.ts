@@ -1,8 +1,9 @@
-import type { Ext, ExtDef, KernelExt, SubTopo } from '@moodlenet/kernel'
+import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import type { ReactAppExt } from '@moodlenet/react-app'
+import { resolve } from 'path'
 
 export type TestExt = ExtDef<
-  'moodlenet.test-extension',
+  'moodlenet-test-extension',
   '0.1.10',
   {
     testSub: SubTopo<{ XX: string }, { a: string }>
@@ -10,16 +11,16 @@ export type TestExt = ExtDef<
   }
 >
 
-const ext: Ext<TestExt, [KernelExt, ReactAppExt]> = {
-  id: 'moodlenet.test-extension@0.1.10',
+const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
+  id: 'moodlenet-test-extension@0.1.10',
   displayName: 'test ext',
-  requires: ['moodlenet.kernel@0.1.10', 'moodlenet.react-app@0.1.10'],
+  requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
   enable(shell) {
     console.log('I am test extension')
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
-      console.log(`onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10`, inst)
+      console.log(`moodlenet-test-extension: onExtInstance<ReactAppExt>`, inst)
       inst.ensureExtension({
-        cmpPath: 'lib/webapp',
+        moduleLoc: resolve(__dirname, 'webapp'),
       })
     })
     shell.expose({
@@ -36,7 +37,7 @@ const ext: Ext<TestExt, [KernelExt, ReactAppExt]> = {
     })
     return {
       deploy() {
-        shell.lib.pubAll<TestExt>('moodlenet.test-extension@0.1.10', shell, {
+        shell.lib.pubAll<TestExt>('moodlenet-test-extension@0.1.10', shell, {
           _test: ({
             msg: {
               data: {
@@ -57,4 +58,4 @@ const ext: Ext<TestExt, [KernelExt, ReactAppExt]> = {
   },
 }
 
-export default [ext]
+export default { exts: [ext] }

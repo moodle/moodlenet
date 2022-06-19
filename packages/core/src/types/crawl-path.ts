@@ -1,9 +1,9 @@
 // prettier-ignore
 type Prev = [never, 0, 1, 2, 3, 4, 5, 6,  7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...0[]]
 
-type Join<K, P> = K extends string /* | number */
+type Join<Core, P> = Core extends string /* | number */
   ? P extends string /* | number */
-    ? `${K}${'' extends P ? '' : '/'}${P}`
+    ? `${Core}${'' extends P ? '' : '/'}${P}`
     : never
   : never
 
@@ -13,7 +13,7 @@ type Join<K, P> = K extends string /* | number */
 //   ? ''
 //   : Obj extends object
 //   ? {
-//       [K in keyof Obj]-?: TypePaths<Obj[K], SearchType, Prev[Depth]> extends infer R ? Join<K, R> : never
+//       [Core in keyof Obj]-?: TypePaths<Obj[Core], SearchType, Prev[Depth]> extends infer R ? Join<Core, R> : never
 //     }[keyof Obj]
 //   : never
 
@@ -28,8 +28,8 @@ export type TypePaths<Obj, SearchType, Primitive, Depth extends number = 10> = O
       | ''
       | (Obj extends object
           ? {
-              [K in keyof Obj]-?: TypePaths<Obj[K], SearchType, Primitive, Prev[Depth]> extends infer R
-                ? Join<K, R>
+              [Core in keyof Obj]-?: TypePaths<Obj[Core], SearchType, Primitive, Prev[Depth]> extends infer R
+                ? Join<Core, R>
                 : never
             }[keyof Obj]
           : '')
@@ -39,7 +39,9 @@ export type TypePaths<Obj, SearchType, Primitive, Depth extends number = 10> = O
   : // ^^ added this block
   Obj extends object
   ? {
-      [K in keyof Obj]-?: TypePaths<Obj[K], SearchType, Primitive, Prev[Depth]> extends infer R ? Join<K, R> : never
+      [Core in keyof Obj]-?: TypePaths<Obj[Core], SearchType, Primitive, Prev[Depth]> extends infer R
+        ? Join<Core, R>
+        : never
     }[keyof Obj]
   : never
 
@@ -71,5 +73,5 @@ export type TypeofPath<T, L extends string> = L extends `${infer P}/${infer Rest
 
 // type Q = TypeofPath<X, 'a'>
 
-// declare const fn: <T, K>() => <TP extends TypePaths<X, K>>(p: TP) => { z: TypeofPath<T, TP> }
+// declare const fn: <T, Core>() => <TP extends TypePaths<X, Core>>(p: TP) => { z: TypeofPath<T, TP> }
 // const x = fn<X, { c: number }>()('b')

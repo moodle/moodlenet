@@ -1,11 +1,12 @@
-import { splitExtId } from '../k-lib/pointer'
+import { isVerBWC, splitExtId } from '../core-lib/pointer'
 import type { ExtDef, ExtId, ExtName, RegDeployment } from '../types'
-import { createBaseExtRegistry } from './base'
 
 export type ExtLocalDeploymentRegistry = ReturnType<typeof createLocalDeploymentRegistry>
 
 export const createLocalDeploymentRegistry = () => {
-  const { get, getByName, reg } = createBaseExtRegistry<RegDeployment>()
+  const reg: {
+    [Name in ExtName]: RegDeployment
+  } = {}
 
   return {
     get,
@@ -16,6 +17,21 @@ export const createLocalDeploymentRegistry = () => {
     register,
   }
 
+  function get(extId: ExtId) {
+    const { extName, version } = splitExtId(extId)
+    const regDeployment = getByName(extName)
+    if (!regDeployment) {
+      return undefined
+    }
+    const { version: deployedVersion } = splitExtId(regDeployment.extId)
+    const isCompat = isVerBWC(deployedVersion, version)
+    return isCompat ? regDeployment : undefined
+  }
+
+  function getByName(extName: ExtName) {
+    const regDeployment = reg[extName]
+    return regDeployment
+  }
   function register<Def extends ExtDef>({ depl }: { depl: RegDeployment<Def> }) {
     const { extName } = splitExtId(depl.extId)
     const currDeployment = getByName(extName)

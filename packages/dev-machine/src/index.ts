@@ -1,9 +1,8 @@
-import * as core from '@moodlenet/core'
+import { main } from '@moodlenet/core'
 import { existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import path from 'path'
 import prompt from 'prompt'
 import { sync as rimrafSync } from 'rimraf'
-import { inspect } from 'util'
 
 process.env.NODE_ENV = 'development'
 
@@ -70,12 +69,15 @@ prompt.start()
   if (lastDeploymentFolderName !== deploymentFolderName) {
     writeFileSync(LAST_DEPLOYMENT_FOLDERNAME_FILE, deploymentFolderName)
   }
-
-  const [initResponse, initialPeerPkgsInstallRes] = await core.install({
-    installFolder: deploymentFolder,
-    initDevInstallFromLocalRepo: true,
+  const folders = main.prepareFolders({
+    deployment: deploymentFolder,
   })
 
-  console.log('init response:', initResponse, inspect(initialPeerPkgsInstallRes, false, 6, true))
-  core.boot({ deploymentFolder, initialPeerPkgsInstallRes })
+  const initResponse = await main.install({
+    folders,
+    _DEV_MODE_CORE_PKGS_FROM_FOLDER: true,
+  })
+
+  console.log('init response:', initResponse)
+  main.boot({ folders, devMode: true })
 })()

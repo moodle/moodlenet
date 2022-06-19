@@ -1,4 +1,4 @@
-import type { ExtDef, ExtName, ExtVersion, SubcriptionPaths } from '@moodlenet/kernel'
+import type { ExtDef, ExtName, ExtVersion, SubcriptionPaths } from '@moodlenet/core'
 import { Observable } from 'rxjs'
 import { PriHttpSub } from '../types'
 export type Sub = typeof sub
@@ -6,7 +6,7 @@ export const sub =
   <Def extends ExtDef>(extName: ExtName<Def>, extVersion: ExtVersion<Def>) =>
   <Path extends SubcriptionPaths<Def>>(path: Path) => {
     type HttpSubType = PriHttpSub<Def, Path>
-    const httpPath: HttpSubType['path'] = `_/${extName}/${extVersion}/${path}`
+    const httpPath: HttpSubType['path'] = `/_/sub/${extName}/${extVersion}/${path}`
     const method: HttpSubType['method'] = `POST`
     return (req: HttpSubType['req'] /* , opts?: Opts */) =>
       new Observable<HttpSubType['obsType']>(subscriber => {
