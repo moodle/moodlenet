@@ -5,6 +5,7 @@
       "group": "build",
       "problemMatcher": [],
       "label": "dev-tasks",
+      "dependsOrder": "parallel",
       "dependsOn": [
         "dev-machine dev-build",
         "http-server dev-build",
@@ -29,8 +30,8 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "dev-machine dev-build",
-      "dependsOn": []
+      "label": "dev-machine dev-build"
+      // "dependsOn": ["core dev-build"]
     },
     {
       "type": "typescript",
@@ -38,8 +39,8 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "arangodb dev-build",
-      "dependsOn": []
+      "label": "arangodb dev-build"
+      // "dependsOn": ["core dev-build"]
     },
     {
       "type": "typescript",
@@ -47,8 +48,8 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "core dev-build",
-      "dependsOn": []
+      "label": "core dev-build"
+      // "dependsOn": []
     },
     {
       "type": "typescript",
@@ -56,9 +57,8 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "http-server dev-build",
-      // "dependsOn": ["kernel dev-build"],
-      "dependsOn": []
+      "label": "http-server dev-build"
+      // "dependsOn": ["core dev-build"]
     },
     {
       "type": "typescript",
@@ -66,9 +66,8 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "pri-http dev-build",
-      // "dependsOn": ["kernel dev-build"],
-      "dependsOn": []
+      "label": "pri-http dev-build"
+      // "dependsOn": ["core dev-build", "http-server dev-build", "react-app dev-build"]
     },
     {
       "type": "typescript",
@@ -76,9 +75,8 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "react-app dev-build",
-      // "dependsOn": ["kernel dev-build", "pri-http dev-build"],
-      "dependsOn": []
+      "label": "react-app dev-build"
+      // "dependsOn": ["core dev-build", "http-server dev-build"]
     },
     {
       "type": "typescript",
@@ -86,9 +84,8 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "test-extension dev-build",
-      // "dependsOn": ["kernel dev-build", "react-app dev-build"],
-      "dependsOn": []
+      "label": "test-extension dev-build"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]
 }
