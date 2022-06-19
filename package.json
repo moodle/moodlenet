@@ -23,7 +23,7 @@
     "start-dev": "lerna run start-dev --parallel --stream -- -- ",
     "build": "lerna run build --stream",
     "clean-build": "lerna run clean-build --stream",
-    "clean-dirs": "rimraf packages/*/yarn.lock && rimraf packages/*/package-lock.json && rimraf packages/*/node_modules && rimraf packages/*/lib",
+    "clean-dirs": "rimraf packages/*/node_modules && rimraf packages/*/lib",
     "clean-bs": "yarn clean-dirs && yarn bs",
     "start": "lerna run start --parallel --stream",
     "test": "",
