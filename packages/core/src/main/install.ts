@@ -46,7 +46,6 @@ export default async function install({
       return pkgExport.exts.reduce<SysEnabledExtensions>((_acc, ext) => {
         const { extName, version } = splitExtId(ext.id)
         const sysEnabledExtDecl: SysEnabledExtDecl = {
-          order: -1,
           pkg: pkgName,
           version,
         }

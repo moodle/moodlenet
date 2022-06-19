@@ -14,7 +14,6 @@ export type SysEnabledExtensions = Record<ExtName, SysEnabledExtDecl>
 export type SysEnabledExtDecl = {
   version: ExtVersion
   pkg: PkgName
-  order: number
   config?: any
 }
 

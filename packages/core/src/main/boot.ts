@@ -125,9 +125,16 @@ export default async function boot(cfg: BootCfg) {
                 data: { req: sysPkg },
               },
             }) {
-              const { pkgDiskInfo, pkgExport } = await main.pkgMng.install(sysPkg)
-              const extInfos = pkgExport.exts.map<ExtInfo>(ext => ext2ExtInfo({ ext, pkgInfo: pkgDiskInfo }))
-              return { extInfos }
+              const curr = main.configs.getSysConfig()
+              const { name, ...sysPkgDecl } = sysPkg
+              main.configs.writeSysConfig({
+                ...curr,
+                installedPackages: {
+                  ...curr.installedPackages,
+                  [name]: sysPkgDecl,
+                },
+              })
+              return
             },
             async 'ext/deploy'({
               msg: {
@@ -148,7 +155,7 @@ export default async function boot(cfg: BootCfg) {
                 ...curr,
                 enabledExtensions: {
                   ...curr.enabledExtensions,
-                  [extName]: { pkg: pkgName, order: -1, version },
+                  [extName]: { pkg: pkgName, version },
                 },
               })
               return
@@ -202,6 +209,20 @@ export default async function boot(cfg: BootCfg) {
         }),
       })
       console.log({ deployments })
+
+      const installEntries = Object.entries(curr.installedPackages)
+        .filter(([pkgName]) => pkgName !== pkgInfo.name)
+        .filter(([pkgName]) => !prev || !(pkgName in prev.installedPackages))
+      console.log({ installEntries })
+      const extInfos = await Promise.all(
+        installEntries.map(async ([pkgName, sysPkgDecl]) => {
+          const { pkgDiskInfo, pkgExport } = await main.pkgMng.install({ ...sysPkgDecl, name: pkgName })
+          const extInfos = pkgExport.exts.map<ExtInfo>(ext => ext2ExtInfo({ ext, pkgInfo: pkgDiskInfo }))
+          return { extInfos }
+        }),
+      )
+
+      console.log({ extInfosInstalll: extInfos })
       if (prev) {
         const undeployEntries = Object.entries(prev.enabledExtensions)
           .filter(([extName]) => extName !== coreExtName)
