@@ -16,7 +16,7 @@ export const packagesFake: Package[] = [
     creator: 'Moodle',
     logo: '../../../../assets/logos/moodlenet-logo-small.svg',
     modules: [
-      { name: 'Kernel', enabled: true, mandatory: true },
+      { name: 'Core', enabled: true, mandatory: true },
       { name: 'Main', enabled: true, mandatory: true },
       { name: 'Web app', enabled: true, mandatory: true },
       { name: 'Http server', enabled: false, mandatory: true },

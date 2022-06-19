@@ -1,4 +1,4 @@
-import type { ExtId } from '@moodlenet/kernel'
+import type { ExtId } from '@moodlenet/core'
 import type { FC, PropsWithChildren } from 'react'
 import { ExtInstancesCtx, ProvideExtInstancesContext } from './ext-instances'
 import { ProvideAppRouterContext, RouterCtx } from './routes'

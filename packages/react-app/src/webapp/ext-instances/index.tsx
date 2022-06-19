@@ -1,4 +1,4 @@
-import { ExtId } from '@moodlenet/kernel'
+import { ExtId } from '@moodlenet/core'
 import { createContext, FC, PropsWithChildren, useMemo } from 'react'
 import { ReactAppExt } from '../types'
 

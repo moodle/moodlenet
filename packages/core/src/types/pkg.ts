@@ -6,9 +6,7 @@ export type PkgDiskInfo = PkgInfo & {
   rootDirPosix: string
   mainModPath: string
 }
-export type ExtPackage = {
-  pkgDiskInfo: PkgDiskInfo
-  exts: Ext<any>[]
-}
 
-export type PkgRegistry = ExtPackage[]
+export type PkgExport = {
+  exts: Ext[]
+}

@@ -14,7 +14,7 @@ const ReactRefreshTypeScript = require('react-refresh-typescript')
 // const { jsonBeautify } = require('beautify-json');
 
 export default start
-const EXTENSIONS_MODULE = 'src/webapp/extensions.ts'
+const EXTENSIONS_MODULE = './src/webapp/extensions.ts'
 export type ExtensionsBag = {
   extensionsDirectoryModule: string
   webpackAliases: Record<string, string>
@@ -30,61 +30,54 @@ async function start({
   overrideCfg?: (_: Configuration) => Configuration
   getExtensionsBag(): ExtensionsBag
 }) {
-  const mode: Configuration['mode'] = process.env.NODE_ENV as any
+  const mode: Configuration['mode'] = process.env.NODE_ENV ?? ('production' as any)
   const isDevelopment = mode === 'development'
   const virtualModules = new VirtualModulesPlugin()
-  const webpackConfig = overrideCfg(defaultConfig())
-
-  const wp = webpack(webpackConfig, () => {
+  const wp = webpack(overrideCfg(defaultConfig()), () => {
     // a cb .. otherways err:DEP_WEBPACK_WATCH_WITHOUT_CALLBACK
     console.log(`WP CB`)
   })
 
   if (isDevelopment) {
-    const wsConfig = webpackConfig.devServer!
-    const server = new WebpackDevServer(
-      {
-        ...wsConfig,
-        open: true,
-      },
-      wp,
-    )
+    const wsConfig = wp.options.devServer!
+    const server = new WebpackDevServer(wsConfig, wp)
     server.startCallback(() => {
       console.log(`Successfully started server on http://localhost:${wsConfig.port!} `)
     })
+  } else {
+    wp.hooks.afterDone.tap('swap folders', async wpStats => {
+      if (wpStats?.hasErrors()) {
+        throw new Error(`Webpack build error: ${wpStats.toString()}`)
+      }
+      console.log(`Webpack build done`)
+      await new Promise<void>((resolve, reject) =>
+        rimraf(latestBuildFolder, { disableGlob: true }, e => (e ? reject(e) : resolve())),
+      )
+      await cp(buildFolder, latestBuildFolder, { recursive: true })
+      console.log(`done`)
+    })
   }
-
-  wp.hooks.afterDone.tap('swap folders', async wpStats => {
-    if (wpStats?.hasErrors()) {
-      throw new Error(`Webpack build error: ${wpStats.toString()}`)
-    }
-    console.log(`Webpack build done`)
-    await new Promise<void>((resolve, reject) =>
-      rimraf(latestBuildFolder, { disableGlob: true }, e => (e ? reject(e) : resolve())),
-    )
-
-    await cp(buildFolder, latestBuildFolder, { recursive: true })
-    console.log(`done`)
-  })
-
-  wp.watch({}, () => console.log(`Webpack watched`))
+  wp.watch({}, () => console.log(`Webpack  watched`))
   logConfig()
 
   return {
-    webpackConfig,
+    wp,
     reconfigExtAndAliases,
   }
+
   function reconfigExtAndAliases() {
     const { webpackAliases, extensionsDirectoryModule } = getExtensionsBag()
-    webpackConfig.resolve!.alias = {
+    wp.options.resolve!.alias = {
       ...baseResolveAlias,
       ...webpackAliases,
     }
     virtualModules.writeModule(EXTENSIONS_MODULE, extensionsDirectoryModule)
     logConfig()
+    console.log('virtualModules.writeModule', extensionsDirectoryModule)
+    wp.watching.invalidate(() => console.log('INVALIDATED'))
   }
   function logConfig() {
-    //console.log('webpackConfig:', inspect(webpackConfig, false, 3, true))
+    console.log('wp aliases:', wp.options.resolve.alias)
   }
 
   function defaultConfig(): Configuration {
@@ -103,6 +96,7 @@ async function start({
       devServer: isDevelopment
         ? {
             port: 3000,
+            open: false,
             // liveReload: true,
             // compress: true,
             hot: true,
@@ -164,6 +158,7 @@ async function start({
           },
         },
       },
+      cache: false,
       performance: {
         hints: 'warning',
         // Calculates sizes of gziped bundles.
@@ -239,7 +234,6 @@ async function start({
         ],
       },
       plugins: [
-        virtualModules,
         isDevelopment && new ReactRefreshWebpackPlugin(),
         // new ForkTsCheckerWebpackPlugin(),
         new HtmlWebPackPlugin({
@@ -255,6 +249,7 @@ async function start({
         // new BundleAnalyzerPlugin({
         //   analyzerMode: 'json',
         // }),
+        virtualModules,
       ].filter(Boolean),
     }
   }

@@ -1,5 +1,0 @@
-export * from './k-lib'
-export * as core from './kernel-core'
-// export * as coreNode from './__kernel-node.ts__'
-export * as extPkg from './npm-pkg'
-export * from './types'

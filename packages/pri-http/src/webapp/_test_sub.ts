@@ -1,12 +1,12 @@
-import { KernelExt } from '@moodlenet/kernel'
+import { CoreExt } from '@moodlenet/core'
 import { sub } from './xhr-adapter'
-sub<KernelExt>(
-  'moodlenet.kernel',
+sub<CoreExt>(
+  'moodlenet-core',
   '0.1.10',
-)('pkgs/all')().subscribe({
+)('ext/listDeployed')().subscribe({
   next: ({ msg }) => {
     console.log(msg)
   },
   error: console.error,
-  complete: console.log.bind(null, 'complete'),
+  complete: () => console.log('complete'),
 })

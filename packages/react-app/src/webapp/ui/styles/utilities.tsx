@@ -3,12 +3,7 @@ export const adjustColor = (color: string, amount: number) => {
     '#' +
     color
       .replace(/^#/, '')
-      .replace(/../g, (color) =>
-        (
-          '0' +
-          Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)
-        ).substr(-2)
-      )
+      .replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2))
   )
 }
 
@@ -18,8 +13,7 @@ export const setOpacity = (color: string, opacity: number): string => {
   return color + _opacity.toString(16).toUpperCase()
 }
 
-export const randomColor = () =>
-  `#${Math.floor(Math.random() * 16777215).toString(16)}`
+export const randomColor = () => `#${Math.floor(Math.random() * 16777215).toString(16)}`
 
 type RgbType = { r: number; g: number; b: number }
 
@@ -42,10 +36,7 @@ export const hexToRgb = (hex: string): RgbType => {
 
 export const rgbToHex = (rgb: RgbType): string => {
   const { r, g, b } = rgb
-  return (
-    '#' +
-    ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).toUpperCase().slice(1)
-  )
+  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).toUpperCase().slice(1)
 }
 
 export const rgbToHsl = (rgbColor: RgbType): HslType => {
@@ -93,10 +84,9 @@ const hslToRgb = (hsl: HslType): RgbType => {
   s /= 100
   l /= 100
 
-  const k = (n: number) => (n + h / 30) % 12
+  const core = (n: number) => (n + h / 30) % 12
   const a = s * Math.min(l, 1 - l)
-  const f = (n: number) =>
-    l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)))
+  const f = (n: number) => l - a * Math.max(-1, Math.min(core(n) - 3, Math.min(9 - core(n), 1)))
   return {
     r: Math.round(255 * f(0)),
     g: Math.round(255 * f(8)),
@@ -185,14 +175,10 @@ export const getGrayScale = (color: HslType) => {
   const desaturatedColor = changeSaturation(color, 10)
   let grayScaleSet = {} as any
   for (let i = 14; i > 0; i--) {
-    grayScaleSet[`--color-light-gray-${i}`] = hslToHex(
-      changeLightness(desaturatedColor, 54 + ratio * i)
-    )
+    grayScaleSet[`--color-light-gray-${i}`] = hslToHex(changeLightness(desaturatedColor, 54 + ratio * i))
   }
   for (let i = 1; i < 14; i++) {
-    grayScaleSet[`--color-dark-gray-${i}`] = hslToHex(
-      changeLightness(desaturatedColor, 46 - ratio * i)
-    )
+    grayScaleSet[`--color-dark-gray-${i}`] = hslToHex(changeLightness(desaturatedColor, 46 - ratio * i))
   }
   return grayScaleSet
 }

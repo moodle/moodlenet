@@ -1,12 +1,11 @@
 import type { Observable, ObservableInput, Subject, Subscription } from 'rxjs'
-import type * as K from '../k-lib'
+import type * as Core from '../core-lib'
 import type { DataMessage, IMessage, MessagePush } from './message'
-import { PkgDiskInfo } from './pkg'
-import { RegDeployment } from './reg'
+import { PkgInfo, RegDeployment } from './reg'
 import type { PortBinding, PortPathData, PortPaths, Topo } from './topo'
 
-type KLib = typeof K
-// export type KernelLib = typeof K
+type CoreLib = typeof Core
+// export type CoreLib = typeof Core
 
 export type ExtId<Def extends ExtDef = ExtDef> = `${ExtName<Def>}@${ExtVersion<Def>}` //` ;)
 export type ExtName<Def extends ExtDef = ExtDef> = `${Def['name']}` //` ;)
@@ -50,7 +49,7 @@ export interface Shell<Def extends ExtDef = ExtDef> {
   emit: EmitMessage<Def>
   send: SendMessage
   env: RawExtEnv
-  lib: KLib
+  lib: CoreLib
   extId: ExtId<Def>
 
   onExtDeployment: OnExtDeployment
@@ -58,7 +57,7 @@ export interface Shell<Def extends ExtDef = ExtDef> {
   onExt: OnExt
 
   expose: ExposePointers<Def>
-  pkgDiskInfo: PkgDiskInfo
+  pkgInfo: PkgInfo
 }
 
 export type OnExtDeployment = <Def extends ExtDef>(
@@ -87,7 +86,7 @@ export interface DeploymentShell {
   tearDown: Subscription
 }
 
-export type ExtBag = { ext: Ext<any>; pkgDiskInfo: PkgDiskInfo; deployWith?: Deploy }
+export type ExtBag = { ext: Ext<any>; pkgInfo: PkgInfo; deployWith?: Deploy }
 export type DeployableBag = {
   ext: Ext
   extDeployable: ExtDeployable

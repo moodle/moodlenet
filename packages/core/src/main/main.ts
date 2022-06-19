@@ -1,6 +1,39 @@
-import { boot } from '../boot'
-import './env'
+import { MainFolders, SysConfig, SysPackages } from '../types/sys'
+import { getConfigs } from './configs'
+import { createLocalDeploymentRegistry } from './ext-deployment-registry'
+import { makePkgMng } from './npm-pkg-mng'
 
-const deploymentFolder = process.env.WD_DEPLOYMENT_FOLDER ?? process.cwd()
+type Cfg = {
+  folders: MainFolders
+}
 
-boot({ deploymentFolder })
+export function getMain(cfg: Cfg) {
+  const configs = getConfigs({ folders: cfg.folders })
+
+  const pkgMng = makePkgMng(configs.folders)
+  const deployments = createLocalDeploymentRegistry()
+
+  // await ensureInstallPackages()
+  return {
+    deployments,
+    pkgMng,
+    configs,
+    installPackages,
+    // ensureInstallPackages,
+  }
+
+  // async function ensureInstallPackages() {
+  //   const _sysConfig = await configs.getSysConfig()
+  //   await installPackages(_sysConfig.installedPackages)
+  // }
+
+  async function installPackages(packages: SysPackages) {
+    const _sysConfig = await configs.getSysConfig()
+    const newSysConfig: SysConfig = {
+      ..._sysConfig,
+      installedPackages: { ..._sysConfig.installedPackages, ...packages },
+    }
+    await configs.writeSysConfig(newSysConfig)
+    return newSysConfig
+  }
+}

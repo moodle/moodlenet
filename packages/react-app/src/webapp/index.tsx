@@ -1,4 +1,4 @@
-import { ExtId } from '@moodlenet/kernel'
+import { ExtId } from '@moodlenet/core'
 import React, { ReactNode } from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'

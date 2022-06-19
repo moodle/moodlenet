@@ -7,7 +7,7 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "scripts": {
-    "start-dev": "node-dev --trace-warnings --inspect --deps 4 --respawn --graceful_ipc=\"Restarting dev\" --notify=false lib/index.js --enable-source-maps --max-old-space-size=8192"
+    "start-dev": "node-dev lib/index.js --fork=false --trace-warnings --inspect --deps=\"-1\" --respawn --graceful_ipc=\"Restarting dev\" --notify=false --enable-source-maps"
   },
   "devDependencies": {
     "@moodlenet/core": "^0.0.1",
