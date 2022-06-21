@@ -125,6 +125,9 @@ export default async function boot(cfg: BootCfg) {
                 data: { req: sysPkg },
               },
             }) {
+              const { pkgDiskInfo, pkgExport } = await main.pkgMng.install(sysPkg)
+              const extInfos = pkgExport.exts.map<ExtInfo>(ext => ext2ExtInfo({ ext, pkgInfo: pkgDiskInfo }))
+
               const curr = main.configs.getSysConfig()
               const { name, ...sysPkgDecl } = sysPkg
               main.configs.writeSysConfig({
@@ -134,7 +137,7 @@ export default async function boot(cfg: BootCfg) {
                   [name]: sysPkgDecl,
                 },
               })
-              return
+              return { extInfos }
             },
             async 'ext/deploy'({
               msg: {

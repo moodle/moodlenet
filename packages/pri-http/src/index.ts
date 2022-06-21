@@ -58,9 +58,12 @@ const ext: Core.Ext<MNPriHttpExt, [Core.CoreExt, MNHttpServerExt]> = {
             try {
               console.log(`http sub ${pointer}`)
               const apiSub = shell.lib
-                .subDemat(shell)(pointer as never)(req.body, {
+                .sub(shell)(pointer as never)(req.body, {
                   primary: true,
                 })
+                // .subDemat(shell)(pointer as never)(req.body, {
+                //   primary: true,
+                // })
                 // .pipe(take(4))
                 .subscribe({
                   //Core.ValValueOf<Core.SubTopo<any, any>>

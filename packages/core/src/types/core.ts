@@ -21,7 +21,7 @@ export type CoreExt = ExtDef<
       >
     }
     pkg: {
-      install: SubTopo<SysPkgDeclNamed, void> //{ extInfos: ExtInfo[] }>
+      install: SubTopo<SysPkgDeclNamed, { extInfos: ExtInfo[] }>
     }
   }
 >

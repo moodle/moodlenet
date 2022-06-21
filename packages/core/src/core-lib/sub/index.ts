@@ -191,7 +191,7 @@ export function sub<Def extends ExtDef>(shell: Pick<Shell, 'send' | 'msg$' | 'pu
                 (msg): msg is DataMessage<ValueData<any>> =>
                   msg.parentMsgId === reqMsg.id && isBWCSemanticallySamePointers(subP.valuePointer, msg.pointer),
               ),
-              takeWhile(msg => msg.data.value.kind !== 'C', true),
+              takeWhile(msg => msg.data.value.kind === 'N', true),
               map(msg => ({ msg })),
             )
             .subscribe(subscriber)
