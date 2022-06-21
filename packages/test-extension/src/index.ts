@@ -19,9 +19,12 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
     console.log('I am test extension')
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
       console.log(`moodlenet-test-extension: onExtInstance<ReactAppExt>`, inst)
-      inst.ensureExtension({
-        moduleLoc: resolve(__dirname, 'webapp'),
-      })
+      inst.setModuleRoutes([
+        {
+          moduleLoc: resolve(__dirname, 'webapp', 'TestExtPage'),
+          label: 'my-test',
+        },
+      ])
     })
     shell.expose({
       '_test/sub': {

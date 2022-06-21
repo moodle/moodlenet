@@ -1,6 +1,6 @@
 import { FC } from 'react'
 
-export const TestExtPage: FC = () => {
+const TestExtPage: FC = () => {
   return (
     <div>
       <h2>Test nice Extension</h2>
@@ -9,3 +9,5 @@ export const TestExtPage: FC = () => {
     </div>
   )
 }
+
+export default TestExtPage
