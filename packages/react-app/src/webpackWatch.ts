@@ -14,7 +14,6 @@ const ReactRefreshTypeScript = require('react-refresh-typescript')
 // const { jsonBeautify } = require('beautify-json');
 
 export default start
-const EXTENSIONS_MODULE = './src/webapp/extensions.ts'
 export type ExtensionsBag = {
   extensionsDirectoryModule: string
   webpackAliases: Record<string, string>
@@ -23,16 +22,15 @@ async function start({
   overrideCfg = _ => _,
   buildFolder,
   latestBuildFolder,
-  getExtensionsBag,
+  virtualModules,
 }: {
   latestBuildFolder: string
   buildFolder: string
   overrideCfg?: (_: Configuration) => Configuration
-  getExtensionsBag(): ExtensionsBag
+  virtualModules: VirtualModulesPlugin
 }) {
   const mode: Configuration['mode'] = process.env.NODE_ENV ?? ('production' as any)
   const isDevelopment = mode === 'development'
-  const virtualModules = new VirtualModulesPlugin()
   const wp = webpack(overrideCfg(defaultConfig()), () => {
     // a cb .. otherways err:DEP_WEBPACK_WATCH_WITHOUT_CALLBACK
     console.log(`WP CB`)
@@ -61,21 +59,21 @@ async function start({
   logConfig()
 
   return {
-    wp,
-    reconfigExtAndAliases,
+    compiler: wp,
+    // reconfigExtAndAliases,
   }
 
-  function reconfigExtAndAliases() {
-    const { webpackAliases, extensionsDirectoryModule } = getExtensionsBag()
-    wp.options.resolve!.alias = {
-      ...baseResolveAlias,
-      ...webpackAliases,
-    }
-    virtualModules.writeModule(EXTENSIONS_MODULE, extensionsDirectoryModule)
-    logConfig()
-    console.log('virtualModules.writeModule', extensionsDirectoryModule)
-    wp.watching.invalidate(() => console.log('INVALIDATED'))
-  }
+  // function reconfigExtAndAliases() {
+  //   const { webpackAliases, extensionsDirectoryModule } = getExtensionsBag()
+  //   wp.options.resolve!.alias = {
+  //     ...baseResolveAlias,
+  //     ...webpackAliases,
+  //   }
+  //   virtualModules.writeModule(EXTENSIONS_MODULE, extensionsDirectoryModule)
+  //   logConfig()
+  //   console.log('virtualModules.writeModule', extensionsDirectoryModule)
+  //   wp.watching.invalidate(() => console.log('INVALIDATED'))
+  // }
   function logConfig() {
     console.log('wp aliases:', wp.options.resolve.alias)
   }

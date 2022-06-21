@@ -1,29 +1,31 @@
-import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
+import { CoreExt, Ext, ExtDef, ExtId, splitExtId } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import { mkdir } from 'fs/promises'
 
 import { join, resolve } from 'path'
-import startWebpack, { ExtensionsBag } from './webpackWatch'
+import VirtualModulesPlugin from 'webpack-virtual-modules'
+import startWebpack from './webpackWatch'
 
 export * from './types'
 // const wpcfg = require('../webpack.config')
 // const config: Configuration = wpcfg({}, { mode: 'development' })
 const buildFolder = resolve(__dirname, '..', 'build')
 const latestBuildFolder = resolve(__dirname, '..', 'latest-build')
-const extAliases: {
-  [extId: string]: { moduleLoc: string }
-} = {}
 
+type ModuleRouteDef = { moduleLoc: string; label: string; path?: string }
 export type ReactAppExt = ExtDef<
   'moodlenet.react-app',
   '0.1.10',
   {},
   null,
   {
-    ensureExtension(_: { moduleLoc: string }): void
+    setModuleRoutes(_: ModuleRouteDef[]): void
   }
 >
 
+type VirtualModulesMap = {
+  './src/webapp/routes.ts': string
+}
 const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
   id: 'moodlenet.react-app@0.1.10',
   displayName: 'webapp',
@@ -42,60 +44,58 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
           })
           mount({ mountApp, absMountPath: '/' })
         })
-        const wp = await startWebpack({ buildFolder, latestBuildFolder, getExtensionsBag })
+
+        const moduleRoutes: Record<ExtId, { routes: ModuleRouteDef[] }> = {}
+
+        const virtualModulesMap: VirtualModulesMap = {
+          './src/webapp/routes.ts': generateRoutesVirtualModuleContent(),
+        }
+
+        const virtualModules = new VirtualModulesPlugin(virtualModulesMap)
+
+        const wp = await startWebpack({ buildFolder, latestBuildFolder, virtualModules })
         return {
           inst({ depl }) {
             return {
-              ensureExtension({ moduleLoc }) {
-                console.log('....ensureExtension', depl.extId, moduleLoc)
-
-                extAliases[depl.extId] = {
-                  moduleLoc,
-                }
-                wp.reconfigExtAndAliases()
+              setModuleRoutes(routes) {
+                console.log('...setModuleRoutes', depl.extId, routes)
+                moduleRoutes[depl.extId] = { routes }
+                const routesModuleContent = generateRoutesVirtualModuleContent()
+                const routesModule: keyof VirtualModulesMap = './src/webapp/routes.ts'
+                virtualModules.writeModule(routesModule, routesModuleContent)
+                wp.compiler.watching.invalidate(() => console.log('INVALIDATED'))
               },
             }
           },
         }
 
-        function getExtensionsBag(): ExtensionsBag {
-          console.log(`generate extensions.ts ..`)
+        function generateRoutesVirtualModuleContent() {
+          console.log(`generate routes.ts ..`)
 
-          const extensionsDirectoryModule = makeExtensionsDirectoryModule()
-          // console.log({ extensionsDirectoryModule })
-
-          const webpackAliases = Object.entries(extAliases).reduce(
-            (aliases, [extId, { moduleLoc }]) => ({
-              ...aliases,
-              [extId]: moduleLoc,
-            }),
-            {},
-          )
-          // console.log(`Extension aliases ....`, inspect({ /* config,  */ extAliases, webpackAliases }, false, 6, true))
-          return { extensionsDirectoryModule, webpackAliases }
-        }
-
-        function makeExtensionsDirectoryModule() {
-          console.log({ extAliases })
           return `
-import { ReactAppExt } from './types'
-
-${Object.values(extAliases)
-  .map(({ moduleLoc }, index) => `import ext${index} from '${moduleLoc}'`)
-  .join('\n')}
-
-const extensions: ReactAppExt[] = [
-  ${Object.entries(extAliases)
-    .map(([extId], index) => {
-      return `
-    {
-    main: ext${index},
-    extId: '${extId}',
-  }`
+import { lazy } from 'react'
+import { PathRouteProps } from 'react-router-dom'
+type RoutePath = string
+const routes: Record<RoutePath, {props:PathRouteProps}> = [
+  ${Object.entries(moduleRoutes)
+    .flatMap(([extId, { routes }]) => {
+      return routes.map(moduleRouteDef => {
+        const { label, moduleLoc, path: _mPath } = moduleRouteDef
+        const { extName } = splitExtId(extId as ExtId)
+        const path = _mPath ?? `${extName}/${label}`
+        return `
+  {
+    extId:'${extId}',
+    path:'${path}',
+    Component: lazy(() => import('${moduleLoc}'))
+  }
+`
+      })
     })
     .join(',\n')}
 ]
-export default extensions
+export default routes
+          
 `
         }
       },
