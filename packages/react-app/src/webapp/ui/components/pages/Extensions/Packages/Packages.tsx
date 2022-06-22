@@ -109,5 +109,4 @@ const Packages: FC<PackagesProps> = () => {
     </div>
   )
 }
-Packages.displayName = 'Packages'
 export default Packages
