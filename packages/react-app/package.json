@@ -1,6 +1,6 @@
 {
   "name": "@moodlenet/react-app",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "moodlenet": {
     "name": "moodlenet react-app",
@@ -29,8 +29,8 @@
     "@babel/plugin-proposal-class-properties": "^7.17.12",
     "@babel/preset-env": "^7.18.0",
     "@babel/preset-react": "^7.17.12",
-    "@moodlenet/core": "^0.0.1",
-    "@moodlenet/http-server": "^0.0.1",
+    "@moodlenet/core": "^0.0.2",
+    "@moodlenet/http-server": "^0.0.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@svgr/webpack": "^6.2.1",
     "@types/jest": "^27.5.1",
