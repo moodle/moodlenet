@@ -203,15 +203,17 @@ async function start({
             test: /\.[jt]sx?$/,
             exclude: /node_modules/,
             use: [
-              // {
-              //   loader: require.resolve('ts-loader'),
-              //   options: {
-              //     getCustomTransformers: () => ({
-              //       before: [isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
-              //     }),
-              //     transpileOnly: isDevelopment,
-              //   },
-              // },
+              {
+                loader: require.resolve('ts-loader'),
+                options: isDevelopment
+                  ? {
+                      getCustomTransformers: () => ({
+                        before: [ReactRefreshTypeScript()],
+                      }),
+                      transpileOnly: isDevelopment,
+                    }
+                  : {},
+              },
               {
                 loader: require.resolve('babel-loader'),
                 options: {
