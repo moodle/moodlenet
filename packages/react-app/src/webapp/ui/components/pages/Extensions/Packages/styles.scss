@@ -1,111 +1,54 @@
 .packages {
-  > * {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  > .card {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    padding: 26px 40px;
+    gap: 20px;
 
-    > .card {
+    > .title {
+      font-size: 23px;
+      font-weight: bold;
+    }
+  }
+
+  > .installed-packages {
+    > .list {
+      min-height: 30px;
       display: flex;
       flex-direction: column;
-      padding: 26px 40px;
-      gap: 20px;
-
-      > .title {
-        font-size: 23px;
-        font-weight: bold;
-      }
-    }
-  }
-  > .home-packages-view {
-    > .install {
-      > .option {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-
-        > .name {
-          font-weight: bold;
-        }
-        > .actions {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 22px;
-
-          > .input-text-field {
-            height: 36px;
-            width: 100%;
-          }
-        }
-      }
-    }
-    > .installed-packages {
-      > .list {
-        min-height: 30px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        > .package {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          cursor: pointer;
-          &:hover {
-            opacity: 0.6;
-          }
-          > .logo {
-            border-radius: 5px;
-            height: 40px;
-            width: 40px;
-            padding: 5px;
-            background-color: #fdb068;
-            > .circle {
-              height: 100%;
-              width: 100%;
-              border-radius: 100px;
-              background-color: #ff8e24;
-            }
-          }
-          > .info {
-            > .title {
-              font-size: 18px;
-            }
-            > .details {
-              font-size: 13px;
-              color: rgb(100, 100, 100);
-            }
-          }
-        }
-      }
-    }
-  }
-
-  > .single-package-view {
-    > .header {
-      .title {
+      gap: 10px;
+      > .package {
         display: flex;
         align-items: center;
-        gap: 10px;
-        > .back {
-          cursor: pointer;
-          &:hover {
-            opacity: 0.6;
+        gap: 14px;
+        cursor: pointer;
+        &:hover {
+          opacity: 0.6;
+        }
+        > .logo {
+          border-radius: 5px;
+          height: 40px;
+          width: 40px;
+          padding: 5px;
+          background-color: #fdb068;
+          > .circle {
+            height: 100%;
+            width: 100%;
+            border-radius: 100px;
+            background-color: #ff8e24;
           }
         }
-      }
-    }
-    > .modules {
-      > .list {
-        min-height: 30px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        > .module {
-          display: flex;
-          justify-content: space-between;
-          // cursor: pointer;
-          &:hover {
-            // opacity: 0.6;
+        > .info {
+          > .title {
+            font-size: 18px;
+          }
+          > .details {
+            font-size: 13px;
+            color: rgb(100, 100, 100);
           }
         }
       }

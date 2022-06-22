@@ -37,6 +37,7 @@ body {
       max-width: 1100px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       > .left {
         > .title {
           line-height: 20px;
@@ -94,6 +95,19 @@ body {
             );
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+          }
+        }
+      }
+
+      > .right {
+        display: flex;
+        > .dev-mode {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          > .label {
+            font-size: 13px;
+            color: #7e7e7e;
           }
         }
       }

@@ -1,11 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import MainLayout from './ui/components/layout/MainLayout'
-// import { Admin } from './ui/components/pages/Admin/Admin'
 import routes from './routes'
-// const Home = lazy(() => import('./pages/home/Home'))
-// const About = lazy(() => import('./pages/about/About'))
-// const Contact = lazy(() => import('./pages/contact/Contact'))
+import MainLayout from './ui/components/layout/MainLayout'
 const Extensions = lazy(() => import('./ui/components/pages/Extensions/Extensions'))
 
 const AppRouter = () => {

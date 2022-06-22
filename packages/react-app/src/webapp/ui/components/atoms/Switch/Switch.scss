@@ -1,12 +1,16 @@
 .switch {
   position: relative;
-  width: 40px;
-  height: 24px;
+  width: 44px;
+  height: 26px;
   border-radius: 100px;
   display: flex;
-  padding: 2px;
   align-items: center;
   cursor: pointer;
+  &.medium {
+    width: 28px;
+    height: 16px;
+  }
+
   &.on {
     justify-content: flex-end;
     background-color: #00e096;
@@ -25,6 +29,10 @@
     height: 22px;
     border-radius: 100px;
     background-color: white;
+    &.medium {
+      width: 12px;
+      height: 12px;
+    }
     &.on {
       left: calc(100% - 24px);
     }
@@ -39,6 +47,17 @@
         }
         to {
           left: calc(100% - 24px);
+        }
+      }
+      &.medium {
+        animation: switchOnMedium 100ms linear forwards;
+        @keyframes switchOnMedium {
+          from {
+            left: 2px;
+          }
+          to {
+            left: calc(100% - 14px);
+          }
         }
       }
     }

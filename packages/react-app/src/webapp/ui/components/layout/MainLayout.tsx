@@ -1,22 +1,19 @@
-import { FC, PropsWithChildren } from 'react'
+import { FC, PropsWithChildren, useContext } from 'react'
+import Header from '../organisms/Header/Header'
+import { StateContext } from './ContextProvider'
 import './MainLayout.scss'
+// import { StateContext } from './Providers'
 
 const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
   // const [collapsed, onCollapse] = useState(false)
   // const { routes } = useContext(RouterCtx)
   // console.log({ routes })
+
+  const stateContext = useContext(StateContext)
+
   return (
     <div className="main-layout">
-      <div className="header">
-        <div className="content">
-          <div className="left">
-            <div className="title">
-              <span className="mn">MoodleNet</span>
-              <span className="bar">|</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Header devMode={stateContext?.devMode} setDevMode={stateContext?.setDevMode} />
       {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (
             <div key={`${path}_${i}`}>
