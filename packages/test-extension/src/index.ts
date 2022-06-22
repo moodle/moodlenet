@@ -21,7 +21,7 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
       console.log(`moodlenet-test-extension: onExtInstance<ReactAppExt>`, inst)
       inst.setModuleRoutes([
         {
-          moduleLoc: resolve(__dirname, 'webapp', 'TestExtPage'),
+          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'TestExtPage'),
           label: 'my-test',
         },
       ])
