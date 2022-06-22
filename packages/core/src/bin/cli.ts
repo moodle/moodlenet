@@ -14,7 +14,10 @@ if (cmd === 'boot') {
 
   boot({ folders, devMode })
 } else if (cmd === 'install') {
-  install({ folders, _DEV_MODE_CORE_PKGS_FROM_FOLDER: true })
+  install({
+    folders,
+    _DEV_MODE_CORE_PKGS_FROM_FOLDER: process.env._DEV_MODE_CORE_PKGS_FROM_FOLDER === '_DEV_MODE_CORE_PKGS_FROM_FOLDER',
+  })
 } else {
   throw new Error(`no valid cmd:${cmd}`)
 }

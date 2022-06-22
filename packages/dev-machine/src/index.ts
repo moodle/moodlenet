@@ -5,6 +5,7 @@ import prompt from 'prompt'
 import { sync as rimrafSync } from 'rimraf'
 
 process.env.NODE_ENV = 'development'
+process.env._DEV_MODE_CORE_PKGS_FROM_FOLDER = '_DEV_MODE_CORE_PKGS_FROM_FOLDER'
 
 const RESTART_EXIT_CODE = 9999
 const DEPLOYMENTS_FOLDER_BASE = path.resolve(__dirname, '..', '.machines')
