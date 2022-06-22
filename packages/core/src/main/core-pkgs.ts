@@ -1,6 +1,6 @@
 export default {
-  'core': '0.0.6',
-  'http-server': '0.0.6',
-  'react-app': '0.0.6',
-  'pri-http': '0.0.6',
+  'core': '0.0.7',
+  'http-server': '0.0.7',
+  'react-app': '0.0.7',
+  'pri-http': '0.0.7',
 }
