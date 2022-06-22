@@ -16,6 +16,7 @@ if (cmd === 'boot') {
 } else if (cmd === 'install') {
   install({
     folders,
+    registry: process.env.npm_config_registry,
     _DEV_MODE_CORE_PKGS_FROM_FOLDER: process.env._DEV_MODE_CORE_PKGS_FROM_FOLDER === '_DEV_MODE_CORE_PKGS_FROM_FOLDER',
   })
 } else {
