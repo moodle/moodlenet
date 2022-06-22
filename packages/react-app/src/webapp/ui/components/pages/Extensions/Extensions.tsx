@@ -1,7 +1,9 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import Card from '../../atoms/Card/Card'
+import { StateContext } from '../../layout/ContextProvider'
 import Modules, { ModulesProps } from './Modules/Modules'
 import Packages from './Packages/Packages'
+import SearchExtensions from './SearchExtensions/SearchExtensions'
 // import {
 //   HeaderPageTemplate,
 //   HeaderPageTemplateProps,
@@ -9,7 +11,7 @@ import Packages from './Packages/Packages'
 // import Extensions, { ExtensionsProps } from './Extensions/Extensions'
 import './styles.scss'
 
-type SectionNameType = 'Account' | 'Extension' | 'Packages' | 'Modules'
+type SectionNameType = 'Account' | 'Extension' | 'Packages' | 'Modules' | 'SearchExtensions'
 
 export type ExtensionsProps = {
   sectionProps: ModulesProps | ExtensionsProps
@@ -20,35 +22,40 @@ export type ExtensionsProps = {
 type SectionType = {
   name: SectionNameType
   component: typeof Packages | typeof Modules
-  displayName: 'Account' | 'Modules' | 'Packages'
+  displayName: 'Account' | 'Modules' | 'Extensions' | 'Install'
 }
 
 const sections: SectionType[] = [
-  { name: 'Packages', component: Packages, displayName: 'Packages' },
+  { name: 'SearchExtensions', component: SearchExtensions, displayName: 'Install' },
+  { name: 'Packages', component: Packages, displayName: 'Extensions' },
   { name: 'Modules', component: Modules, displayName: 'Modules' },
 ]
 
 export const Extensions: FC<ExtensionsProps> = ({
   sectionProps,
-  section = 'Packages' /* , headerPageTemplateProps */,
+  section = 'SearchExtensions' /* , headerPageTemplateProps */,
 }) => {
+  const stateContext = useContext(StateContext)
   const [currentSection, setCurrentSection] = useState(section)
   const [currentContent, setCurrentContent] = useState<any>(null)
   // const [menuItemPressed, setMenuItemPressed] = useState<any>(false)
-  const menu = sections.map((e, i) => (
-    <div
-      key={i}
-      className={`section ${e.name === currentSection ? 'selected' : ''}`}
-      onClick={() => {
-        setCurrentSection(e.name)
-        // setMenuItemPressed(true)
-        // setMenuItemPressed(false)
-      }}
-    >
-      {e.displayName}
-      {/* <Trans>{e.displayName}</Trans> */}
-    </div>
-  ))
+  const menu = sections.map(
+    (e, i) =>
+      (stateContext?.devMode || e.name !== 'Modules') && (
+        <div
+          key={i}
+          className={`section ${e.name === currentSection ? 'selected' : ''}`}
+          onClick={() => {
+            setCurrentSection(e.name)
+            // setMenuItemPressed(true)
+            // setMenuItemPressed(false)
+          }}
+        >
+          {e.displayName}
+          {/* <Trans>{e.displayName}</Trans> */}
+        </div>
+      ),
+  )
 
   useEffect(() => {
     const sectionComponent = sections.filter(e => e.name === currentSection)
