@@ -1,21 +1,33 @@
-.modules {
+.extension-config {
   display: flex;
   flex-direction: column;
   gap: 16px;
+
   > .card {
     display: flex;
     flex-direction: column;
     padding: 26px 40px;
     gap: 20px;
+
     > .title {
       font-size: 23px;
       font-weight: bold;
     }
-    > p > .input-text-field {
-      max-width: 350px;
+  }
+
+  > .header {
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      > .back {
+        width: fit-content;
+        padding: 0 4px;
+        margin-left: -6px;
+      }
     }
   }
-  > .modules-list {
+  > .modules {
     > .list {
       min-height: 30px;
       display: flex;

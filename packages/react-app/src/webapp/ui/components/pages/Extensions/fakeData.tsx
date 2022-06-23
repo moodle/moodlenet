@@ -1,8 +1,12 @@
 export type Package = {
   name: string
   creator: string
+  description?: string
   logo?: string
   modules: Module[]
+  links?: {
+    homepage?: string
+  }
 }
 export type Module = {
   name: string
