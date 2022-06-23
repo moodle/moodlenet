@@ -1,0 +1,108 @@
+.search-extensions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  > .card {
+    display: flex;
+    flex-direction: column;
+    padding: 26px 40px;
+    gap: 20px;
+
+    > .title {
+      font-size: 23px;
+      font-weight: bold;
+    }
+  }
+
+  > .install {
+    > .option {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      > .name {
+        font-weight: bold;
+      }
+      > .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 22px;
+
+        > .input-text-field {
+          height: 36px;
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  > .available-extensions {
+    > .list {
+      min-height: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      > .package {
+        display: flex;
+        align-items: center;
+        position: relative;
+        gap: 14px;
+
+        > .left {
+          display: flex;
+          gap: 14px;
+          cursor: pointer;
+          &:hover {
+            opacity: 0.6;
+          }
+          > .logo {
+            position: relative;
+            border-radius: 5px;
+            height: 40px;
+            width: 40px;
+            padding: 5px;
+            background-color: #fdb068;
+            > .circle {
+              height: 100%;
+              width: 100%;
+              border-radius: 100px;
+              background-color: #ff8e24;
+            }
+            > .letter {
+              position: absolute;
+              left: 4px;
+              right: 0;
+              top: 10px;
+              bottom: 0;
+              font-size: 28px;
+              text-align: center;
+              border-radius: 100px;
+              color: #ffffff;
+              font-weight: bolder;
+              // font-family: 'Varela Round', sans-serif;
+              font-family: 'Press Start 2P';
+              transform-style: preserve-3d;
+            }
+          }
+
+          > .info {
+            > .title {
+              font-size: 18px;
+            }
+            > .details {
+              font-size: 13px;
+              color: rgb(100, 100, 100);
+            }
+          }
+        }
+
+        > .install-btn {
+          position: absolute;
+          right: 0;
+        }
+      }
+    }
+  }
+}
