@@ -41,7 +41,7 @@ const SearchExtensions: FC<SearchExtensionsProps> = () => {
               {/* <PackageIcon /> */}
               <div className="left" onClick={() => setSelectedPackage(p)}>
                 <div className="logo" style={{ background: getPastelColor(id, 0.5) }}>
-                  {/* <div className="letter">{name && name[0]?.toLocaleLowerCase()}</div> */}
+                  <div className="letter">{p.name && p.name[0]?.toLocaleLowerCase()}</div>
                   <div className="circle" style={{ background: getPastelColor(id) }} />
                 </div>
                 <div className="info">

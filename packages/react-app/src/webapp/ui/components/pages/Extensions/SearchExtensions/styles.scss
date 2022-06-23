@@ -72,16 +72,18 @@
             }
             > .letter {
               position: absolute;
-              left: 0;
+              left: 4px;
               right: 0;
-              top: 5px;
+              top: 10px;
               bottom: 0;
-              font-size: 32px;
+              font-size: 28px;
               text-align: center;
               border-radius: 100px;
               color: #ffffff;
               font-weight: bolder;
-              font-family: 'Varela Round', sans-serif;
+              // font-family: 'Varela Round', sans-serif;
+              font-family: 'Press Start 2P';
+              transform-style: preserve-3d;
             }
           }
 

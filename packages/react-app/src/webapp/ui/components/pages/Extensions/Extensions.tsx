@@ -15,7 +15,7 @@ type SectionNameType = 'Account' | 'Extension' | 'Packages' | 'Modules' | 'Searc
 
 export type ExtensionsProps = {
   sectionProps: ModulesProps | ExtensionsProps
-  section: SectionNameType
+  section?: SectionNameType
   // headerPageTemplateProps: CP<HeaderPageTemplateProps>
 }
 

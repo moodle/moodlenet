@@ -1,5 +1,7 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { FC } from 'react'
+import { FC, ReactNode, useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import { getReadmeFromRepo } from '../../../../../helpers/utilities'
 // import { searchNpmExtensionInfo } from '../../../../../helpers/utilities'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
@@ -16,21 +18,11 @@ export type ExtensionInfoProps = {
 
 const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, onClickBackBtn }) => {
   // const stateContext = useContext(StateContext)
-  // const [readme, setReadme] = useState<ReactNode | undefined>()
+  const [readme, setReadme] = useState<ReactNode | undefined>()
 
-  // useEffect(() => {
-  //   getReadmeFromRepo((extension.links && extension.links.homepage) ?? '').then(response => {
-  //     setReadme(
-  // response.objects.map((o: any) => {
-  //   console.log(o)
-  //   return
-  //     undefined
-
-  // }),
-  //       undefined,
-  //     )
-  //   })
-  // }, [])
+  useEffect(() => {
+    getReadmeFromRepo((extension.links && extension.links.homepage) ?? '').then(response => setReadme(response))
+  }, [])
 
   // const modulesList = extension?.modules.map(
   //   (module: Module, i) =>
@@ -41,6 +33,19 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, onClickBackBtn }) =>
   //       </div>
   //     ),
   // )
+
+  const testmd = `
+    # MoodleNet CE Platform 
+          
+    ## System Requirements
+
+    ### NodeJs However, if you experience issues on installation or
+    on upload functionalities, you may want to [check out sharp system
+    requisites](https://github.com/lovell/sharp/tree/master/docs) 
+    
+    ### A running ArangoDB instance the easiest way
+    is using docker:
+  `
 
   return (
     <div className="extension-config">
@@ -53,7 +58,10 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, onClickBackBtn }) =>
         </div>
         <div>{extension.description}</div>
       </Card>
-      {/* <Card>{readme}</Card> */}
+      <Card>
+        <ReactMarkdown children={testmd} />
+        {readme}
+      </Card>
       {/* <Card className="modules">
         <div className="title">Modules</div>
         <div className="list">{modulesList}</div>
