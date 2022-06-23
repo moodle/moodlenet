@@ -13,7 +13,8 @@
         "react-app dev-build",
         "core dev-build",
         "arangodb dev-build",
-        "test-extension dev-build"
+        "test-extension dev-build",
+        "authentication-manager dev-build"
       ],
       "presentation": {
         "echo": true,
@@ -23,6 +24,15 @@
         "showReuseMessage": true,
         "clear": false
       }
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/authentication-manager/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "authentication-manager dev-build"
+      // "dependsOn": ["core dev-build"]
     },
     {
       "type": "typescript",
