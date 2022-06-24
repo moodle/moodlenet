@@ -1,4 +1,4 @@
-import { CoreExt, Ext, ExtDef, ExtId, splitExtId } from '@moodlenet/core'
+import type { CoreExt, Ext, ExtDef, ExtId, ExtName, ExtVersion } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import { mkdir } from 'fs/promises'
 
@@ -12,20 +12,17 @@ export * from './types'
 const buildFolder = resolve(__dirname, '..', 'build')
 const latestBuildFolder = resolve(__dirname, '..', 'latest-build')
 
-type ModuleRouteDef = { moduleLoc: string; label: string; path?: string }
+type ModuleRouteDef = { moduleLoc: string; rootPath?: string }
 export type ReactAppExt = ExtDef<
   'moodlenet.react-app',
   '0.1.10',
   {},
   null,
   {
-    setModuleRoutes(_: ModuleRouteDef[]): void
+    setModuleRoutes(_: ModuleRouteDef): void
   }
 >
-
-type VirtualModulesMap = {
-  './src/webapp/routes.ts': string
-}
+const RoutesModuleFile = './src/webapp/routes.ts'
 const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
   id: 'moodlenet.react-app@0.1.10',
   displayName: 'webapp',
@@ -45,24 +42,30 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
           mount({ mountApp, absMountPath: '/' })
         })
 
-        const moduleRoutes: Record<ExtId, { routes: ModuleRouteDef[] }> = {}
+        const moduleRoutes: Record<ExtId, { routeDef: ModuleRouteDef; extName: ExtName; extVersion: ExtVersion }> = {}
 
-        const virtualModulesMap: VirtualModulesMap = {
-          './src/webapp/routes.ts': generateRoutesVirtualModuleContent(),
+        const virtualModulesMap /* : VirtualModulesMap  */ = {
+          [RoutesModuleFile]: generateRoutesVirtualModuleContent(),
+          '../node_modules/moodlenet-react-app-lib.ts': `
+            import def from '${resolve(__dirname, 'react-app-lib')}'
+            export default def
+          `,
         }
 
         const virtualModules = new VirtualModulesPlugin(virtualModulesMap)
-
         const wp = await startWebpack({ buildFolder, latestBuildFolder, virtualModules })
         return {
           inst({ depl }) {
             return {
-              setModuleRoutes(routes) {
-                console.log('...setModuleRoutes', depl.extId, routes)
-                moduleRoutes[depl.extId] = { routes }
+              setModuleRoutes(routeDef) {
+                console.log('...setModuleRoutes', depl.extName, routeDef)
+                moduleRoutes[depl.extId] = {
+                  routeDef,
+                  extName: depl.extName,
+                  extVersion: depl.extVersion,
+                }
                 const routesModuleContent = generateRoutesVirtualModuleContent()
-                const routesModule: keyof VirtualModulesMap = './src/webapp/routes.ts'
-                virtualModules.writeModule(routesModule, routesModuleContent)
+                virtualModules.writeModule(RoutesModuleFile, routesModuleContent)
                 wp.compiler.watching.invalidate(() => console.log('INVALIDATED'))
               },
             }
@@ -74,24 +77,30 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
 
           return `
 import { lazy } from 'react'
-import { PathRouteProps } from 'react-router-dom'
 type RoutePath = string
-const routes: Record<RoutePath, {props:PathRouteProps}> = [
+const routes: ModRoute[]= [
   ${Object.entries(moduleRoutes)
-    .flatMap(([extId, { routes }]) => {
-      return routes.map(moduleRouteDef => {
-        const { label, moduleLoc, path: _mPath } = moduleRouteDef
-        const { extName } = splitExtId(extId as ExtId)
-        const path = _mPath ?? `${extName}/${label}`
+    .map(
+      ([
+        extId,
+        {
+          extName,
+          extVersion,
+          routeDef: { moduleLoc, rootPath },
+        },
+      ]) => {
+        //const modRoute:ModRoute={}
         return `
   {
+    rootPath: '${rootPath}',
+    extName: '${extName}',
+    extVersion:'${extVersion}',
     extId:'${extId}',
-    path:'${path}',
-    Component: lazy(() => import('${moduleLoc}'))
+    extRoutingElement: require('${moduleLoc}').default,
   }
 `
-      })
-    })
+      },
+    )
     .join(',\n')}
 ]
 export default routes

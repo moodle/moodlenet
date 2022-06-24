@@ -51,6 +51,8 @@ export interface Shell<Def extends ExtDef = ExtDef> {
   env: RawExtEnv
   lib: CoreLib
   extId: ExtId<Def>
+  extName: ExtName<Def>
+  extVersion: ExtVersion<Def>
 
   onExtDeployment: OnExtDeployment
   onExtInstance: OnExtInstance

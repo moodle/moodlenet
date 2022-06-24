@@ -6,7 +6,7 @@ import Providers from './ui/components/layout/Providers'
 const Extensions = lazy(() => import('./ui/components/pages/Extensions/Extensions'))
 
 const AppRouter = () => {
-  console.log('Routes: ', routes)
+  //console.log('Routes: ', routes)
   return (
     <Router>
       <Providers>
@@ -20,18 +20,11 @@ const AppRouter = () => {
                 </Suspense>
               }
             />
-            {routes.map(({ extId, Component, path }) => {
+            {routes.map(({ extId, extRoutingElement, extName, rootPath }) => {
               return (
-                <Route
-                  path={path}
-                  key={`${extId}#${path}`}
-                  caseSensitive
-                  element={
-                    <Suspense fallback={<div className="lazy-loading">Loading....</div>}>
-                      <Component />
-                    </Suspense>
-                  }
-                />
+                <Route path={rootPath ?? extName} key={`${extId}`} caseSensitive>
+                  {extRoutingElement}
+                </Route>
               )
             })}
           </Routes>
