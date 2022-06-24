@@ -23,6 +23,7 @@ export type ReactAppExt = ExtDef<
   }
 >
 const RoutesModuleFile = './src/webapp/routes.ts'
+const ExposeModuleFile = './lib/webapp/react-app-lib/exposedExtModules.ts'
 const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
   id: 'moodlenet.react-app@0.1.10',
   displayName: 'webapp',
@@ -46,9 +47,10 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
 
         const virtualModulesMap /* : VirtualModulesMap  */ = {
           [RoutesModuleFile]: generateRoutesVirtualModuleContent(),
+          [ExposeModuleFile]: generateExposed(),
           '../node_modules/moodlenet-react-app-lib.ts': `
-            import def from '${resolve(__dirname, 'react-app-lib')}'
-            export default def
+            import lib from '${resolve(__dirname, 'webapp', 'react-app-lib')}'
+            export default lib
           `,
         }
 
@@ -58,30 +60,58 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
           inst({ depl }) {
             return {
               setup(plugin) {
-                console.log('...setup')
+                console.log('...setup', depl.extId, plugin)
                 extPluginsMap[depl.extId] = {
                   ...plugin,
                   extName: depl.extName,
                   extVersion: depl.extVersion,
                   extId: depl.extId,
                 }
+
                 const routesModuleContent = generateRoutesVirtualModuleContent()
                 virtualModules.writeModule(RoutesModuleFile, routesModuleContent)
+
+                const exposedModuleContent = generateExposed()
+                virtualModules.writeModule(ExposeModuleFile, exposedModuleContent)
+
                 wp.compiler.watching.invalidate(() => console.log('INVALIDATED'))
               },
             }
           },
         }
 
+        function generateExposed() {
+          console.log(`generate exposed.ts ..`)
+
+          return `// - generated -
+const exp: Record<string, any> = {
+  ${Object.values(extPluginsMap)
+    .map(extPlugin => {
+      return !extPlugin.expose
+        ? null
+        : `
+  '${extPlugin.extName}': require('${extPlugin.expose.moduleLoc}').default
+    `
+    })
+    .filter(Boolean)
+    .join(',\n')}
+}
+//module.exports=exp
+export default exp
+`
+        }
+
         function generateRoutesVirtualModuleContent() {
           console.log(`generate routes.ts ..`)
 
-          return `
+          return `// - generated -
 import { lazy } from 'react'
 const routes: ExtRoute[]= [
   ${Object.values(extPluginsMap)
     .map(extPlugin => {
-      return `
+      return !extPlugin.routes
+        ? null
+        : `
   {
     rootPath: '${extPlugin.routes.rootPath}',
     extName: '${extPlugin.extName}',
@@ -91,6 +121,7 @@ const routes: ExtRoute[]= [
   }
 `
     })
+    .filter(Boolean)
     .join(',\n')}
 ]
 export default routes
