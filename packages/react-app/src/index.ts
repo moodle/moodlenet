@@ -1,9 +1,10 @@
-import type { CoreExt, Ext, ExtDef, ExtId, ExtName, ExtVersion } from '@moodlenet/core'
+import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import { mkdir } from 'fs/promises'
 
 import { join, resolve } from 'path'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
+import { ExtPluginDef, ExtPluginsMap } from './types'
 import startWebpack from './webpackWatch'
 
 export * from './types'
@@ -12,14 +13,13 @@ export * from './types'
 const buildFolder = resolve(__dirname, '..', 'build')
 const latestBuildFolder = resolve(__dirname, '..', 'latest-build')
 
-type ModuleRouteDef = { moduleLoc: string; rootPath?: string }
 export type ReactAppExt = ExtDef<
   'moodlenet.react-app',
   '0.1.10',
   {},
   null,
   {
-    setModuleRoutes(_: ModuleRouteDef): void
+    setup(_: ExtPluginDef): void
   }
 >
 const RoutesModuleFile = './src/webapp/routes.ts'
@@ -42,7 +42,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
           mount({ mountApp, absMountPath: '/' })
         })
 
-        const moduleRoutes: Record<ExtId, { routeDef: ModuleRouteDef; extName: ExtName; extVersion: ExtVersion }> = {}
+        const extPluginsMap: ExtPluginsMap = {}
 
         const virtualModulesMap /* : VirtualModulesMap  */ = {
           [RoutesModuleFile]: generateRoutesVirtualModuleContent(),
@@ -57,12 +57,13 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
         return {
           inst({ depl }) {
             return {
-              setModuleRoutes(routeDef) {
-                console.log('...setModuleRoutes', depl.extName, routeDef)
-                moduleRoutes[depl.extId] = {
-                  routeDef,
+              setup(plugin) {
+                console.log('...setup')
+                extPluginsMap[depl.extId] = {
+                  ...plugin,
                   extName: depl.extName,
                   extVersion: depl.extVersion,
+                  extId: depl.extId,
                 }
                 const routesModuleContent = generateRoutesVirtualModuleContent()
                 virtualModules.writeModule(RoutesModuleFile, routesModuleContent)
@@ -77,30 +78,19 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
 
           return `
 import { lazy } from 'react'
-type RoutePath = string
-const routes: ModRoute[]= [
-  ${Object.entries(moduleRoutes)
-    .map(
-      ([
-        extId,
-        {
-          extName,
-          extVersion,
-          routeDef: { moduleLoc, rootPath },
-        },
-      ]) => {
-        //const modRoute:ModRoute={}
-        return `
+const routes: ExtRoute[]= [
+  ${Object.values(extPluginsMap)
+    .map(extPlugin => {
+      return `
   {
-    rootPath: '${rootPath}',
-    extName: '${extName}',
-    extVersion:'${extVersion}',
-    extId:'${extId}',
-    extRoutingElement: require('${moduleLoc}').default,
+    rootPath: '${extPlugin.routes.rootPath}',
+    extName: '${extPlugin.extName}',
+    extVersion:'${extPlugin.extVersion}',
+    extId:'${extPlugin.extId}',
+    extRoutingElement: require('${extPlugin.routes.moduleLoc}').default,
   }
 `
-      },
-    )
+    })
     .join(',\n')}
 ]
 export default routes
