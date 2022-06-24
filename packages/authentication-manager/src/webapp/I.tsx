@@ -22,4 +22,8 @@ priHttp
     'moodlenet-core',
     '0.1.10',
   )('ext/listDeployed')()
-  .subscribe((callFromAuth: any) => console.log({ callFromAuth }))
+  .pipe(
+    priHttp.rx.op.dematMessage(),
+    priHttp.rx.op.map(_ => _.msg.data.map(_ => _.ext.id).join('\n')),
+  )
+  .subscribe(extId => console.log(extId))

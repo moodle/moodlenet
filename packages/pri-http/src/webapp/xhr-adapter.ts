@@ -1,5 +1,6 @@
-import type { ExtDef, ExtName, ExtVersion, SubcriptionPaths } from '@moodlenet/core'
-import { Observable } from 'rxjs'
+import type { DataMessage, ExtDef, ExtName, ExtVersion, SubcriptionPaths, ValueData } from '@moodlenet/core'
+import { Observable, throwError } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
 import { PriHttpSub } from '../types'
 export type Sub = typeof sub
 export const sub =
@@ -61,4 +62,29 @@ function parsedOrString(s: string) {
   } catch {
     return s
   }
+}
+
+export function dematMessage<T>() {
+  return mergeMap<{ msg: DataMessage<ValueData<T>> }, { msg: DataMessage<T> }[]>(({ msg }) => {
+    const notif = msg.data.value
+    // console.log({ msg, notif, ________________________: '' })
+    return typeof notif.kind !== 'string'
+      ? (throwError(() => new TypeError('Invalid notification, missing "kind"')) as unknown as {
+          msg: DataMessage<T>
+        }[])
+      : notif.kind === 'E'
+      ? (throwError(() => new Error(notif.error, { cause: notif.error })) as unknown as { msg: DataMessage<T> }[])
+      : notif.kind === 'N'
+      ? [{ msg: { ...msg, data: notif.value } }]
+      : notif.kind === 'C'
+      ? []
+      : (throwError(
+          () =>
+            new TypeError(
+              `Invalid notification, unknown "kind" ` +
+                // @ts-expect-error
+                notif.kind,
+            ),
+        ) as unknown as { msg: DataMessage<T> }[])
+  })
 }
