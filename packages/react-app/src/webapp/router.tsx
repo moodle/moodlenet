@@ -15,7 +15,8 @@ const AppRouter = () => {
             <Route
               path="/"
               element={
-                <Suspense fallback={<div className="lazy-loading">Loading....</div>}>
+                // <Suspense fallback={<div className="lazy-loading">Loading....</div>}>
+                <Suspense>
                   <Extensions sectionProps={{}} />
                 </Suspense>
               }
@@ -27,7 +28,8 @@ const AppRouter = () => {
                   key={`${extId}#${path}`}
                   caseSensitive
                   element={
-                    <Suspense fallback={<div className="lazy-loading">Loading....</div>}>
+                    <Suspense>
+                      {/* <Suspense fallback={<div className="lazy-loading">Loading....</div>}> */}
                       <Component />
                     </Suspense>
                   }
