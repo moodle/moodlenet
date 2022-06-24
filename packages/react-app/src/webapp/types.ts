@@ -1,11 +1,6 @@
-import type { ExtDef, ExtId } from '@moodlenet/core'
-import type { FC, PropsWithChildren } from 'react'
+import type { ExtDef, ExtId, ExtName, ExtVersion } from '@moodlenet/core'
+import type { FC, PropsWithChildren, ReactElement } from 'react'
 
-export type AppRoute = {
-  label: string
-  path: string
-  Component: FC<any>
-}
 export interface ReactAppContainer {}
 
 export interface RactAppExtInstance<T> {
@@ -16,7 +11,15 @@ export interface RactAppExtInstance<T> {
 export type ReactAppExtMain<T> = (_: { reactAppContainer: ReactAppContainer }) => RactAppExtInstance<T>
 export type ReactAppExt<Def extends ExtDef = ExtDef, T = any> = {
   extId: ExtId<Def>
+  extName: ExtName<Def>
+  extVersion: ExtVersion<Def>
   main: ReactAppExtMain<T>
 }
 
-export type ModRoute = { extId: ExtId; Component: React.ComponentType; path: string }
+export type ModRoute = {
+  rootPath?: string
+  extId: ExtId
+  extName: ExtName
+  extVersion: ExtVersion
+  extRoutingElement: ReactElement
+}

@@ -3,4 +3,5 @@ export default {
   'http-server': '0.0.1',
   'react-app': '0.0.1',
   'pri-http': '0.0.1',
+  'authentication-manager': '0.0.1',
 }

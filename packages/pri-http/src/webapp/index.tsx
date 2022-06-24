@@ -1,4 +1,4 @@
-import { ReactAppExtMain } from '@moodlenet/react-app'
+import type { ReactAppExtMain } from '@moodlenet/react-app'
 import { Context, createContext, FC, PropsWithChildren, useMemo } from 'react'
 import { HttpAdapterCtx } from './types'
 import { sub } from './xhr-adapter'
