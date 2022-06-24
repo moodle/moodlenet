@@ -23,7 +23,7 @@ export type ReactAppExt = ExtDef<
   }
 >
 const RoutesModuleFile = './src/webapp/routes.ts'
-const ExposeModuleFile = './lib/webapp/react-app-lib/exposedExtModules.ts'
+const ExposeModuleFile = './lib/react-app-lib/exposedExtModules.ts'
 const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
   id: 'moodlenet.react-app@0.1.10',
   displayName: 'webapp',
@@ -49,7 +49,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
           [RoutesModuleFile]: generateRoutesVirtualModuleContent(),
           [ExposeModuleFile]: generateExposed(),
           '../node_modules/moodlenet-react-app-lib.ts': `
-            import lib from '${resolve(__dirname, 'webapp', 'react-app-lib')}'
+            import lib from '${resolve(__dirname, 'react-app-lib')}'
             export default lib
           `,
         }
