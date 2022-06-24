@@ -8,7 +8,7 @@ type CoreLib = typeof Core
 // export type CoreLib = typeof Core
 
 export type ExtId<Def extends ExtDef = ExtDef> = `${ExtName<Def>}@${ExtVersion<Def>}` //` ;)
-export type ExtName<Def extends ExtDef = ExtDef> = `${Def['name']}` //` ;)
+export type ExtName<Def extends ExtDef = ExtDef> = Def['name']
 export type ExtVersion<Def extends ExtDef = ExtDef> = Def['version']
 export type ExtInst<Def extends ExtDef = ExtDef> = Def['inst']
 export type ExtLib<Def extends ExtDef = ExtDef> = Def['lib']

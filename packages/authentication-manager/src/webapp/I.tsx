@@ -1,3 +1,5 @@
+import { CoreExt } from '@moodlenet/core'
+import { PriHttpExtMod } from '@moodlenet/pri-http/lib/webapp/expose'
 import lib from 'moodlenet-react-app-lib'
 import { FC } from 'react'
 const Index: FC = () => {
@@ -12,9 +14,11 @@ const Index: FC = () => {
   )
 }
 export default Index
-lib
-  .getExposed('moodlenet-pri-http')
-  .sub(
+
+const priHttp = lib.getExposed<PriHttpExtMod>('moodlenet-pri-http')
+
+priHttp
+  ?.sub<CoreExt>(
     'moodlenet-core',
     '0.1.10',
   )('ext/listDeployed')()

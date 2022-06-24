@@ -1,4 +1,4 @@
-import type { ExtId, ExtName, ExtVersion } from '@moodlenet/core'
+import type { ExtDef, ExtId, ExtName, ExtVersion } from '@moodlenet/core'
 import { ReactElement } from 'react'
 
 export type ExtRoute = ExtInfo & {
@@ -29,3 +29,5 @@ export type ExtInfo = {
 }
 
 export type ExtPluginsMap = Record<ExtId, ExtPlugin>
+
+export type ExtModule<Def extends ExtDef, T> = [ExtName<Def>, T]
