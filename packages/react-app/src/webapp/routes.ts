@@ -1,4 +1,4 @@
-import { ModRoute } from './types'
+import { ExtRoute } from '../types'
 
-const routes: ModRoute[] = []
+const routes: ExtRoute[] = []
 export default routes
