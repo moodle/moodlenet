@@ -27,7 +27,6 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
   const [extensions, setExtensions] = useState<ReactNode | undefined>()
 
   useEffect(() => {
-    console.log('GETTING IN USE EFFECT')
     searchNpmPackages('moodlenet').then(response => {
       setExtensions(
         response.objects.map((o: any, i: number) => {
@@ -101,7 +100,9 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
           </Card>
           <Card className="available-extensions">
             <div className="title">Compatible extensions</div>
-            <div className="list">{extensions}</div>
+            <div className="list">
+              {extensions ? extensions : [1, 2, 3, 4].map(_ => <div className="package loading"></div>)}
+            </div>
           </Card>
         </div>
       )}
