@@ -7,6 +7,7 @@ export type Package = {
   links?: {
     homepage?: string
   }
+  readme?: Promise<string>
 }
 export type Module = {
   name: string

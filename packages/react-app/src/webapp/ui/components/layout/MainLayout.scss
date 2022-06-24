@@ -13,6 +13,7 @@ body {
 }
 
 #root {
+  width: 100%;
   height: 100%;
 }
 .main-layout {
@@ -21,7 +22,7 @@ body {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
 
   > .header {
     height: 60px;
@@ -101,6 +102,7 @@ body {
 
       > .right {
         display: flex;
+
         > .dev-mode {
           display: flex;
           align-items: center;

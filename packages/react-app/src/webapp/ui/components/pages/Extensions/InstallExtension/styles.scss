@@ -49,14 +49,19 @@
         align-items: center;
         position: relative;
         gap: 14px;
+        padding: 11px;
+        border: 1px solid #ededed;
+        border-radius: 10px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #f9f9f9;
+        }
 
         > .left {
           display: flex;
+          width: 100%;
           gap: 14px;
-          cursor: pointer;
-          &:hover {
-            opacity: 0.6;
-          }
           > .logo {
             position: relative;
             border-radius: 5px;
@@ -100,7 +105,7 @@
 
         > .install-btn {
           position: absolute;
-          right: 0;
+          right: 11px;
         }
       }
     }
