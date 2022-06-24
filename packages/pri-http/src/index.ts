@@ -1,8 +1,8 @@
 import type * as Core from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
-// import type { ReactAppExt } from '@moodlenet/react-app'
+import type { ReactAppExt } from '@moodlenet/react-app'
 import { json } from 'body-parser'
-// import { resolve } from 'path'
+import { resolve } from 'path'
 import { PriHttpSubUrlPrefix } from './types'
 export * from './types'
 
@@ -15,11 +15,13 @@ const ext: Core.Ext<MNPriHttpExt, [Core.CoreExt, MNHttpServerExt]> = {
   displayName: 'pri http',
   requires: ['moodlenet-core@0.1.10', 'moodlenet.http-server@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
   enable(shell) {
-    // shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
-    //   inst.ensureExtension({
-    //     moduleLoc: resolve(__dirname, 'webapp'),
-    //   })
-    // })
+    shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
+      inst.setup({
+        expose: {
+          moduleLoc: resolve(__dirname, 'webapp', 'expose'),
+        },
+      })
+    })
     return {
       deploy(/* {  tearDown } */) {
         shell.onExtInstance<MNHttpServerExt>('moodlenet.http-server@0.1.10', httpServerInst => {

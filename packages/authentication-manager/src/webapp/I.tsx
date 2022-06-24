@@ -12,3 +12,10 @@ const Index: FC = () => {
   )
 }
 export default Index
+lib
+  .getExposed('moodlenet-pri-http')
+  .sub(
+    'moodlenet-core',
+    '0.1.10',
+  )('ext/listDeployed')()
+  .subscribe((callFromAuth: any) => console.log({ callFromAuth }))

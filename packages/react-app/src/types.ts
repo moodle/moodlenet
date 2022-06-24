@@ -10,8 +10,14 @@ export type ExtRouteDef = {
   moduleLoc: string
   rootPath?: string
 }
+
 export type ExtPluginDef = {
-  routes: ExtRouteDef
+  routes?: ExtRouteDef
+  expose?: ExtExposeDef
+}
+
+export type ExtExposeDef = {
+  moduleLoc: string
 }
 
 export type ExtPlugin = ExtPluginDef & ExtInfo
