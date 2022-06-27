@@ -4,6 +4,7 @@ import { FC, useContext } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import Card from '../../../atoms/Card/Card'
+import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import Switch from '../../../atoms/Switch/Switch'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import { StateContext } from '../../../layout/ContextProvider'
@@ -31,14 +32,20 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extension, onClickBackBtn }
 
   return (
     <div className="extension-config">
-      <Card className="header">
+      <Card className="header-card">
         <div className="title">
-          <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
-            <ArrowBackIcon />
-          </TertiaryButton>
-          {extension.name}
+          <div className="title-and-back">
+            <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
+              <ArrowBackIcon />
+            </TertiaryButton>
+            {extension.name}
+          </div>
+          <PrimaryButton className="install-btn" disabled={extension.mandatory} onClick={() => alert('installing')}>
+            Uninstall
+          </PrimaryButton>
         </div>
-        <div>Manage package and modules</div>
+
+        <div>{extension.creator}</div>
       </Card>
       <Card className="modules">
         <div className="title">Modules</div>
