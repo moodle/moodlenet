@@ -15,18 +15,24 @@
     }
   }
 
-  > .header {
-    .title {
+  > .header-card {
+    > .title {
       display: flex;
-      align-items: center;
+      justify-content: space-between;
       gap: 10px;
-      > .back {
-        width: fit-content;
-        padding: 0 4px;
-        margin-left: -6px;
+      > .title-and-back {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        > .back {
+          width: fit-content;
+          padding: 0 4px;
+          margin-left: -6px;
+        }
       }
     }
   }
+
   > .modules {
     > .list {
       min-height: 30px;

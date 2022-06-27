@@ -31,8 +31,6 @@
         }
       }
     }
-    > .install-btn {
-    }
   }
 
   > .modules {
@@ -44,10 +42,6 @@
       > .module {
         display: flex;
         justify-content: space-between;
-        // cursor: pointer;
-        &:hover {
-          // opacity: 0.6;
-        }
       }
     }
   }

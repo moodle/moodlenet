@@ -50,7 +50,7 @@
         align-items: center;
         position: relative;
         gap: 14px;
-        padding: 11px;
+        padding: 0 11px;
         border: 1px solid #ededed;
         border-radius: 10px;
         cursor: pointer;
@@ -87,7 +87,6 @@
               border-radius: 100px;
               color: #ffffff;
               font-weight: bolder;
-              // font-family: 'Varela Round', sans-serif;
               font-family: 'Press Start 2P';
               transform-style: preserve-3d;
             }

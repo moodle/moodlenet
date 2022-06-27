@@ -8,6 +8,8 @@ export type Package = {
     homepage?: string
   }
   readme?: Promise<string>
+
+  mandatory?: boolean
 }
 export type Module = {
   name: string
@@ -19,6 +21,7 @@ export const packagesFake: Package[] = [
   {
     name: 'Core',
     creator: 'Moodle',
+    mandatory: true,
     logo: '../../../../assets/logos/moodlenet-logo-small.svg',
     modules: [
       { name: 'Core', enabled: true, mandatory: true },
