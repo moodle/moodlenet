@@ -1,5 +1,6 @@
-import lib from 'moodlenet-react-app-lib'
 import { FC, PropsWithChildren } from 'react'
+import { StateProvider } from '../react-app-lib/devModeContextProvider'
+import { TestCtx } from '../react-app-lib/testLib'
 import ctxProviders from './extContextProvidersModules'
 
 export const ProvideMainContexts: FC<PropsWithChildren> = ({ children }) => {
@@ -9,12 +10,12 @@ export const ProvideMainContexts: FC<PropsWithChildren> = ({ children }) => {
   )
 
   return (
-    <lib.devMode.StateProvider>
-      <lib.TestCtx.Provider value={{ _: 'provided test value' }}>
+    <StateProvider>
+      <TestCtx.Provider value={{ _: 'provided test value' }}>
         {/* <I18nProvider i18n={i18n}> */}
         {ctxProviderWrap}
         {/* </I18nProvider> */}
-      </lib.TestCtx.Provider>
-    </lib.devMode.StateProvider>
+      </TestCtx.Provider>
+    </StateProvider>
   )
 }

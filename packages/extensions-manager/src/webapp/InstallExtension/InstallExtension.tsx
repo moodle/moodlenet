@@ -1,4 +1,5 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
+import lib from 'moodlenet-react-app-lib'
 import { FC, ReactNode, useEffect, useState } from 'react'
 import {
   capitalize,
@@ -6,12 +7,9 @@ import {
   getPastelColor,
   getReadmeFromRepo,
   searchNpmPackages,
-} from '../../../../../helpers/utilities'
+} from '../helpers/utilities'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
-import Card from '../../../atoms/Card/Card'
-import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
 import { Package } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
@@ -20,6 +18,10 @@ import './styles.scss'
 export type InstallExtensionProps = {
   // menuItemPressed: boolean
 }
+
+const Card = lib.ui.components.atoms.Card
+const InputTextField = lib.ui.components.atoms.InputTextField
+const PrimaryButton = lib.ui.components.atoms.PrimaryButton
 
 const InstallExtension: FC<InstallExtensionProps> = () => {
   const [localPathField, setLocalPathField] = useState('')

@@ -1,13 +1,14 @@
 import { FC, useContext } from 'react'
 // import { withCtrl } from '../../../../lib/ctrl'
 import lib from 'moodlenet-react-app-lib'
-import Card from '../../../atoms/Card/Card'
-import Switch from '../../../atoms/Switch/Switch'
 import { packagesFake } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import './styles.scss'
 
 export type ModulesProps = {}
+
+const Card = lib.ui.components.atoms.Card
+const Switch = lib.ui.components.atoms.Switch
 
 const Modules: FC<ModulesProps> = () => {
   const stateContext = useContext(lib.devMode.StateContext)
