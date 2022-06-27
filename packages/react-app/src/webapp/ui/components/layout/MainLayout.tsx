@@ -1,6 +1,6 @@
+import lib from 'moodlenet-react-app-lib'
 import { FC, PropsWithChildren, useContext } from 'react'
 import Header from '../organisms/Header/Header'
-import { StateContext } from './ContextProvider'
 import './MainLayout.scss'
 // import { StateContext } from './Providers'
 
@@ -9,7 +9,7 @@ const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
   // const { routes } = useContext(RouterCtx)
   // console.log({ routes })
 
-  const stateContext = useContext(StateContext)
+  const stateContext = useContext(lib.devMode.StateContext)
 
   return (
     <div className="main-layout">

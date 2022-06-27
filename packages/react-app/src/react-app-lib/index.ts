@@ -1,5 +1,6 @@
 import react from 'react'
 import * as router from 'react-router-dom'
+import { StateContext, StateProvider } from './devModeContextProvider'
 import { getExposed } from './getExposed'
 import { TestCtx, useTest } from './testLib'
 
@@ -8,6 +9,10 @@ declare global {
 }
 
 const lib = {
+  devMode: {
+    StateProvider,
+    StateContext,
+  },
   useTest,
   react,
   router,

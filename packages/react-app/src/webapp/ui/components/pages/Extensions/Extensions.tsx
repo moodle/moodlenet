@@ -1,6 +1,6 @@
+import lib from 'moodlenet-react-app-lib'
 import React, { FC, useContext, useEffect, useState } from 'react'
 import Card from '../../atoms/Card/Card'
-import { StateContext } from '../../layout/ContextProvider'
 import InstallExtension from './InstallExtension/InstallExtension'
 import Modules, { ModulesProps } from './Modules/Modules'
 import Packages from './Packages/Packages'
@@ -35,7 +35,7 @@ export const Extensions: FC<ExtensionsProps> = ({
   sectionProps,
   section = 'InstallExtension' /* , headerPageTemplateProps */,
 }) => {
-  const stateContext = useContext(StateContext)
+  const stateContext = useContext(lib.devMode.StateContext)
   const [currentSection, setCurrentSection] = useState(section)
   const [currentContent, setCurrentContent] = useState<any>(null)
   // const [menuItemPressed, setMenuItemPressed] = useState<any>(false)
