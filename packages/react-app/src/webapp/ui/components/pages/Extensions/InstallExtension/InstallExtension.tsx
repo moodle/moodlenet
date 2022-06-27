@@ -59,15 +59,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
                   <div className="details">{p.description}</div>
                 </div>
               </div>
-              <PrimaryButton
-                className="install-btn"
-                onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                  alert('installing')
-                  e.stopPropagation()
-                }}
-              >
-                Install
-              </PrimaryButton>
+              <PrimaryButton className="install-btn">Details</PrimaryButton>
             </div>
           )
         }),
