@@ -4,10 +4,6 @@ import { FC, useContext } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import lib from 'moodlenet-react-app-lib'
-import Card from '../../../atoms/Card/Card'
-import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
-import Switch from '../../../atoms/Switch/Switch'
-import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import { Module, Package } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import './styles.scss'
@@ -16,6 +12,11 @@ export type ExtensionConfigProps = {
   extension: Package
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
+
+const PrimaryButton = lib.ui.components.atoms.PrimaryButton
+const Switch = lib.ui.components.atoms.Switch
+const Card = lib.ui.components.atoms.Card
+const TertiaryButton = lib.ui.components.atoms.TertiaryButton
 
 const ExtensionConfig: FC<ExtensionConfigProps> = ({ extension, onClickBackBtn }) => {
   const stateContext = useContext(lib.devMode.StateContext)

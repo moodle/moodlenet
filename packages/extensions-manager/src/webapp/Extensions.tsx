@@ -1,6 +1,5 @@
 import lib from 'moodlenet-react-app-lib'
 import React, { FC, useContext, useEffect, useState } from 'react'
-import Card from '../../atoms/Card/Card'
 import InstallExtension from './InstallExtension/InstallExtension'
 import Modules, { ModulesProps } from './Modules/Modules'
 import Packages from './Packages/Packages'
@@ -10,6 +9,8 @@ import Packages from './Packages/Packages'
 // } from '../../templates/HeaderPageTemplate'
 // import Extensions, { ExtensionsProps } from './Extensions/Extensions'
 import './styles.scss'
+
+const Card = lib.ui.components.atoms.Card
 
 type SectionNameType = 'Account' | 'Extension' | 'Packages' | 'Modules' | 'InstallExtension'
 
@@ -80,6 +81,6 @@ export const Extensions: FC<ExtensionsProps> = ({
   )
 }
 
-export default Extensions
-
 Extensions.displayName = 'ExtensionsPage'
+
+export default Extensions
