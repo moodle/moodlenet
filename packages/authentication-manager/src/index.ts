@@ -17,6 +17,9 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt, ReactAppExt, MNPriHttpExt]> =
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'AuthRoutes'),
           rootPath: 'login/',
         },
+        ctxProvider: {
+          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'AuthProvider'),
+        },
       })
     })
     shell.expose({})
