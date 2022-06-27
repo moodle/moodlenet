@@ -4,5 +4,5 @@ import exp from './exposedExtModules'
 
 export function getExposed<ExtMod extends ExtModule<ExtDef, any> = ExtModule<ExtDef, any>>(name: ExtMod[0]): ExtMod[1] {
   // console.log({ exp, name })
-  return exp[name as any]
+  return exp[name]?.lib
 }

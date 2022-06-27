@@ -1,5 +1,9 @@
 import { ExtRoute } from '../types'
-// console.log(`static: RoutesModuleFile`)
+_throw()
 
 const routes: ExtRoute[] = []
 export default routes
+
+function _throw() {
+  throw new Error('static routes.ts should never be referenced runtime !')
+}
