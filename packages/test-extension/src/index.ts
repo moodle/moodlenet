@@ -1,6 +1,5 @@
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import type { ReactAppExt } from '@moodlenet/react-app'
-import { resolve } from 'path'
 
 export type TestExt = ExtDef<
   'moodlenet-test-extension',
@@ -17,15 +16,15 @@ const ext: Ext<TestExt, [CoreExt, ReactAppExt]> = {
   requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
   enable(shell) {
     console.log('I am test extension')
-    shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
-      console.log(`moodlenet-test-extension: onExtInstance<ReactAppExt>`, inst)
-      inst.setModuleRoutes([
-        {
-          moduleLoc: resolve(__dirname, 'webapp', 'TestExtPage'),
-          label: 'my-test',
-        },
-      ])
-    })
+    // shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
+    //   console.log(`moodlenet-test-extension: onExtInstance<ReactAppExt>`, inst)
+    //   inst.setup([
+    //     {
+    //       moduleLoc: resolve(__dirname, 'webapp', 'TestExtPage'),
+    //       label: 'my-test',
+    //     },
+    //   ])
+    // })
     shell.expose({
       '_test/sub': {
         validate(/* data */) {

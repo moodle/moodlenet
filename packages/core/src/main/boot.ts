@@ -317,6 +317,8 @@ export default async function boot(cfg: BootCfg) {
 
       const shell: Shell = {
         extId,
+        extName: extIdSplit.extName,
+        extVersion: extIdSplit.version,
         env,
         msg$: $msg$.asObservable(),
         // removing `as any` on `push` compiler crashes with "Error: Debug Failure. No error for last overload signature"
