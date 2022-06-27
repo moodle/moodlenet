@@ -9,10 +9,12 @@ export const ProvideMainContexts: FC<PropsWithChildren> = ({ children }) => {
   )
 
   return (
-    <lib.TestCtx.Provider value={{ _: 'provided test value' }}>
-      {/* <I18nProvider i18n={i18n}> */}
-      {ctxProviderWrap}
-      {/* </I18nProvider> */}
-    </lib.TestCtx.Provider>
+    <lib.devMode.StateProvider>
+      <lib.TestCtx.Provider value={{ _: 'provided test value' }}>
+        {/* <I18nProvider i18n={i18n}> */}
+        {ctxProviderWrap}
+        {/* </I18nProvider> */}
+      </lib.TestCtx.Provider>
+    </lib.devMode.StateProvider>
   )
 }
