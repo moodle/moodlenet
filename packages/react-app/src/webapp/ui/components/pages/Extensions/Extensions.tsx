@@ -1,9 +1,9 @@
 import React, { FC, useContext, useEffect, useState } from 'react'
 import Card from '../../atoms/Card/Card'
 import { StateContext } from '../../layout/ContextProvider'
+import InstallExtension from './InstallExtension/InstallExtension'
 import Modules, { ModulesProps } from './Modules/Modules'
 import Packages from './Packages/Packages'
-import SearchExtensions from './SearchExtensions/SearchExtensions'
 // import {
 //   HeaderPageTemplate,
 //   HeaderPageTemplateProps,
@@ -11,7 +11,7 @@ import SearchExtensions from './SearchExtensions/SearchExtensions'
 // import Extensions, { ExtensionsProps } from './Extensions/Extensions'
 import './styles.scss'
 
-type SectionNameType = 'Account' | 'Extension' | 'Packages' | 'Modules' | 'SearchExtensions'
+type SectionNameType = 'Account' | 'Extension' | 'Packages' | 'Modules' | 'InstallExtension'
 
 export type ExtensionsProps = {
   sectionProps: ModulesProps | ExtensionsProps
@@ -22,18 +22,18 @@ export type ExtensionsProps = {
 type SectionType = {
   name: SectionNameType
   component: typeof Packages | typeof Modules
-  displayName: 'Account' | 'Modules' | 'Extensions' | 'Install'
+  displayName: 'Account' | 'Modules' | 'Extensions' | 'Add extensions'
 }
 
 const sections: SectionType[] = [
-  { name: 'SearchExtensions', component: SearchExtensions, displayName: 'Install' },
+  { name: 'InstallExtension', component: InstallExtension, displayName: 'Add extensions' },
   { name: 'Packages', component: Packages, displayName: 'Extensions' },
   { name: 'Modules', component: Modules, displayName: 'Modules' },
 ]
 
 export const Extensions: FC<ExtensionsProps> = ({
   sectionProps,
-  section = 'SearchExtensions' /* , headerPageTemplateProps */,
+  section = 'InstallExtension' /* , headerPageTemplateProps */,
 }) => {
   const stateContext = useContext(StateContext)
   const [currentSection, setCurrentSection] = useState(section)

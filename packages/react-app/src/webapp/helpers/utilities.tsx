@@ -4,19 +4,14 @@ export const searchNpmPackages = async (text: string) => {
   return await res.json()
 }
 
-export const getReadmeFromRepo = async (text: string) => {
-  console.log(text)
-  const endpoint = text.replace('tree', 'raw').concat('/README.md')
-  console.log(endpoint)
-  const res = await fetch(endpoint, {
-    // mode: 'no-cors',
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'X-Requested-With',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    },
-  })
-  console.log(res)
+export const getReadmeFromRepo = async (endpoint: string) => {
+  if (endpoint.includes('tree')) {
+    endpoint = endpoint.replace('tree', 'raw').concat('/README.md')
+  } else if (endpoint.includes('#readme')) {
+    endpoint = endpoint.replace('#readme', '/-/raw/master/README.md')
+  }
+  const corsEndpoint = 'https://moodlenet-redirect.herokuapp.com/'.concat(endpoint)
+  const res = await fetch(corsEndpoint)
   return await res.text()
 }
 
