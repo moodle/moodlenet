@@ -26,8 +26,11 @@
         align-items: center;
         gap: 14px;
         cursor: pointer;
+        padding: 11px;
+        border: 1px solid #ededed;
+        border-radius: 10px;
         &:hover {
-          opacity: 0.6;
+          background-color: #f9f9f9;
         }
         > .logo {
           border-radius: 5px;

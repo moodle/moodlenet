@@ -15,7 +15,8 @@ const AppRouter = () => {
             <Route
               path="/"
               element={
-                <Suspense fallback={<div className="lazy-loading">Loading....</div>}>
+                // <Suspense fallback={<div className="lazy-loading">Loading....</div>}>
+                <Suspense>
                   <Extensions sectionProps={{}} />
                 </Suspense>
               }

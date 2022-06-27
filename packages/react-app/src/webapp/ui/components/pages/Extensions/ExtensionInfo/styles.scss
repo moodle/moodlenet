@@ -1,4 +1,4 @@
-.extension-config {
+.extension-info {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -15,16 +15,23 @@
     }
   }
 
-  > .header {
-    .title {
+  > .header-card {
+    > .title {
       display: flex;
-      align-items: center;
+      justify-content: space-between;
       gap: 10px;
-      > .back {
-        width: fit-content;
-        padding: 0 4px;
-        margin-left: -6px;
+      > .title-and-back {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        > .back {
+          width: fit-content;
+          padding: 0 4px;
+          margin-left: -6px;
+        }
       }
+    }
+    > .install-btn {
     }
   }
 
