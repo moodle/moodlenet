@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren } from 'react'
-import './PageLayout.less'
+import './PageLayout.scss'
 
 const PageLayout: FC<PropsWithChildren<{ title: string }>> = ({ title, children }) => {
   return (

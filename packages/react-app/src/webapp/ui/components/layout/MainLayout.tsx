@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useContext } from 'react'
+import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import Header from '../organisms/Header/Header'
-import { StateContext } from './ContextProvider'
 import './MainLayout.scss'
 // import { StateContext } from './Providers'
 

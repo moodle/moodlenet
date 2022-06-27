@@ -1,10 +1,9 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
+import lib from 'moodlenet-react-app-lib'
 import { FC, useState } from 'react'
-import { getNumberFromString, getPastelColor } from '../../../../../helpers/utilities'
+import { getNumberFromString, getPastelColor } from '../helpers/utilities'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
-import Card from '../../../atoms/Card/Card'
-import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import ExtensionConfig from '../ExtensionConfig/ExtensionConfig'
 import { Package, packagesFake } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
@@ -13,6 +12,9 @@ import './styles.scss'
 export type PackagesProps = {
   // menuItemPressed: boolean
 }
+
+const Card = lib.ui.components.atoms.Card
+const PrimaryButton = lib.ui.components.atoms.PrimaryButton
 
 const Packages: FC<PackagesProps> = () => {
   const [selectedPackage, setSelectedPackage] = useState<Package | undefined>(undefined)

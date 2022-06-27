@@ -2,5 +2,5 @@
 
 declare module 'moodlenet-react-app-lib' {
   const lib: MoodlenetLib
-  export = lib
+  export default lib
 }

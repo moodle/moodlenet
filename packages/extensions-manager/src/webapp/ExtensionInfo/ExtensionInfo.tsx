@@ -6,18 +6,19 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 // import { searchNpmExtensionInfo } from '../../../../../helpers/utilities'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
-import Card from '../../../atoms/Card/Card'
-import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
+import lib from 'moodlenet-react-app-lib'
 import { Package } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import rehypeRaw from 'rehype-raw'
-import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import './styles.scss'
 
 export type ExtensionInfoProps = {
   extension: Package
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
+const TertiaryButton = lib.ui.components.atoms.TertiaryButton
+const PrimaryButton = lib.ui.components.atoms.PrimaryButton
+const Card = lib.ui.components.atoms.Card
 
 const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, onClickBackBtn }) => {
   // const stateContext = useContext(StateContext)
