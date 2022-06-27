@@ -1,9 +1,13 @@
-import { CoreExt, Ext, ExtDef, ExtId, splitExtId } from '@moodlenet/core'
+import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import { mkdir } from 'fs/promises'
 
 import { join, resolve } from 'path'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
+import { generateCtxProvidersModule } from './generateCtxProvidersModule'
+import { generateExposedModule } from './generateExposedModule'
+import { generateRoutesModule } from './generateRoutesModule'
+import { ExtPluginDef, ExtPluginsMap } from './types'
 import startWebpack from './webpackWatch'
 
 export * from './types'
@@ -12,20 +16,18 @@ export * from './types'
 const buildFolder = resolve(__dirname, '..', 'build')
 const latestBuildFolder = resolve(__dirname, '..', 'latest-build')
 
-type ModuleRouteDef = { moduleLoc: string; label: string; path?: string }
 export type ReactAppExt = ExtDef<
   'moodlenet.react-app',
   '0.1.10',
   {},
   null,
   {
-    setModuleRoutes(_: ModuleRouteDef[]): void
+    setup(_: ExtPluginDef): void
   }
 >
-
-type VirtualModulesMap = {
-  './src/webapp/routes.ts': string
-}
+const RoutesModuleFile = './src/webapp/routes.ts'
+const ExposeModuleFile = './lib/react-app-lib/exposedExtModules.ts'
+const ExtContextProvidersModuleFile = './src/webapp/extContextProvidersModules.tsx'
 const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
   id: 'moodlenet.react-app@0.1.10',
   displayName: 'webapp',
@@ -45,58 +47,45 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
           mount({ mountApp, absMountPath: '/' })
         })
 
-        const moduleRoutes: Record<ExtId, { routes: ModuleRouteDef[] }> = {}
+        const extPluginsMap: ExtPluginsMap = {}
 
-        const virtualModulesMap: VirtualModulesMap = {
-          './src/webapp/routes.ts': generateRoutesVirtualModuleContent(),
+        const virtualModulesMap /* : VirtualModulesMap  */ = {
+          [RoutesModuleFile]: generateRoutesModule({ extPluginsMap }),
+          [ExposeModuleFile]: generateExposedModule({ extPluginsMap }),
+          [ExtContextProvidersModuleFile]: generateCtxProvidersModule({ extPluginsMap }),
+          '../node_modules/moodlenet-react-app-lib.ts': `
+            import lib from '${resolve(__dirname, 'react-app-lib')}'
+            export default lib
+          `,
         }
 
         const virtualModules = new VirtualModulesPlugin(virtualModulesMap)
-
         const wp = await startWebpack({ buildFolder, latestBuildFolder, virtualModules })
         return {
           inst({ depl }) {
             return {
-              setModuleRoutes(routes) {
-                console.log('...setModuleRoutes', depl.extId, routes)
-                moduleRoutes[depl.extId] = { routes }
-                const routesModuleContent = generateRoutesVirtualModuleContent()
-                const routesModule: keyof VirtualModulesMap = './src/webapp/routes.ts'
-                virtualModules.writeModule(routesModule, routesModuleContent)
+              setup(plugin) {
+                console.log('...setup', depl.extId, plugin)
+                extPluginsMap[depl.extId] = {
+                  ...plugin,
+                  extName: depl.extName,
+                  extVersion: depl.extVersion,
+                  extId: depl.extId,
+                }
+
+                const routesModuleContent = generateRoutesModule({ extPluginsMap })
+                virtualModules.writeModule(RoutesModuleFile, routesModuleContent)
+
+                const exposedModuleContent = generateExposedModule({ extPluginsMap })
+                virtualModules.writeModule(ExposeModuleFile, exposedModuleContent)
+
+                const ctxProvidersModuleContent = generateCtxProvidersModule({ extPluginsMap })
+                virtualModules.writeModule(ExtContextProvidersModuleFile, ctxProvidersModuleContent)
+
                 wp.compiler.watching.invalidate(() => console.log('INVALIDATED'))
               },
             }
           },
-        }
-
-        function generateRoutesVirtualModuleContent() {
-          console.log(`generate routes.ts ..`)
-
-          return `
-import { lazy } from 'react'
-import { PathRouteProps } from 'react-router-dom'
-type RoutePath = string
-const routes: Record<RoutePath, {props:PathRouteProps}> = [
-  ${Object.entries(moduleRoutes)
-    .flatMap(([extId, { routes }]) => {
-      return routes.map(moduleRouteDef => {
-        const { label, moduleLoc, path: _mPath } = moduleRouteDef
-        const { extName } = splitExtId(extId as ExtId)
-        const path = _mPath ?? `${extName}/${label}`
-        return `
-  {
-    extId:'${extId}',
-    path:'${path}',
-    Component: lazy(() => import('${moduleLoc}'))
-  }
-`
-      })
-    })
-    .join(',\n')}
-]
-export default routes
-          
-`
         }
       },
     }

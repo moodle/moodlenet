@@ -88,7 +88,7 @@ async function start({
       context: resolve(__dirname, '..'),
       watch: true,
       watchOptions: {
-        aggregateTimeout: 100,
+        aggregateTimeout: 10,
         followSymlinks: true,
       },
       devServer: isDevelopment
