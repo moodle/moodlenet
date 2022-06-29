@@ -3,6 +3,7 @@ import { FC, useContext } from 'react'
 import lib from 'moodlenet-react-app-lib'
 import { packagesFake } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import { StateContext } from '../devModeContextProvider'
 import './styles.scss'
 
 export type ModulesProps = {}
@@ -11,12 +12,12 @@ const Card = lib.ui.components.atoms.Card
 const Switch = lib.ui.components.atoms.Switch
 
 const Modules: FC<ModulesProps> = () => {
-  const stateContext = useContext(lib.devMode.StateContext)
+  const stateContext = useContext(StateContext)
 
   const modulesList = packagesFake.map(p => {
     return p.modules.map(
       (module, i) =>
-        (!module.mandatory || stateContext?.devMode) && (
+        (!module.mandatory || stateContext.devMode) && (
           <div className="module" key={i}>
             {/* <PackageIcon /> */}
             <div className="name">{module.name}</div>

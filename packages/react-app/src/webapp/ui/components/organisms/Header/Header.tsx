@@ -1,13 +1,12 @@
-import { FC, PropsWithChildren } from 'react'
-import Switch from '../../atoms/Switch/Switch'
+import { FC, PropsWithChildren, useContext } from 'react'
+// import Switch from '../../atoms/Switch/Switch'
+import { AddonCtx } from './addons'
 import './Header.scss'
 
-type HeaderProps = {
-  devMode?: boolean
-  setDevMode?: React.Dispatch<React.SetStateAction<boolean>>
-}
+type HeaderProps = {}
 
-const Header: FC<PropsWithChildren<HeaderProps>> = ({ devMode, setDevMode }) => {
+const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
+  const addonCtx = useContext(AddonCtx)
   return (
     <div className="header">
       <div className="content">
@@ -18,10 +17,9 @@ const Header: FC<PropsWithChildren<HeaderProps>> = ({ devMode, setDevMode }) => 
           </div>
         </div>
         <div className="right">
-          <div className="dev-mode">
-            <span className="label">Developer mode</span>
-            <Switch enabled={!!devMode} size="medium" onClick={() => setDevMode && setDevMode(p => !p)} />
-          </div>
+          {addonCtx.rightComponents.map(({ addon: { Comp } }, index) => {
+            return <Comp key={index} />
+          })}
         </div>
       </div>
     </div>

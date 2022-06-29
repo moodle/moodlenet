@@ -1,14 +1,15 @@
-import lib from 'moodlenet-react-app-lib'
-const Index = lib.react.lazy(() => import('./Extensions'))
+import { lazy, Suspense } from 'react'
+import { Route } from 'react-router-dom'
+const Index = lazy(() => import('./Extensions'))
 
 const ExtensionsRoutes = (
   <>
-    <lib.router.Route
+    <Route
       index
       element={
-        <lib.react.Suspense fallback="loading...">
+        <Suspense fallback="loading...">
           <Index sectionProps={{}} />
-        </lib.react.Suspense>
+        </Suspense>
       }
     />
   </>

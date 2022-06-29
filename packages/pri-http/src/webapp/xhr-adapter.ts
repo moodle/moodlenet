@@ -1,5 +1,5 @@
 import type { DataMessage, ExtDef, ExtName, ExtVersion, SubcriptionPaths, ValueData } from '@moodlenet/core'
-import { Observable, throwError } from 'rxjs'
+import { Observable, ObservableInput, throwError } from 'rxjs'
 import { mergeMap } from 'rxjs/operators'
 import { PriHttpSub } from '../types'
 export type Sub = typeof sub
@@ -65,7 +65,7 @@ function parsedOrString(s: string) {
 }
 
 export function dematMessage<T>() {
-  return mergeMap<{ msg: DataMessage<ValueData<T>> }, { msg: DataMessage<T> }[]>(({ msg }) => {
+  return mergeMap<{ msg: DataMessage<ValueData<T>> }, ObservableInput<{ msg: DataMessage<T> }>>(({ msg }) => {
     const notif = msg.data.value
     // console.log({ msg, notif, ________________________: '' })
     return typeof notif.kind !== 'string'

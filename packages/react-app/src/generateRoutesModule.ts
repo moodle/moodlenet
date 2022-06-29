@@ -12,10 +12,10 @@ ${Object.values(extPluginsMap)
       : `
 {
 rootPath: '${extPlugin.routes.rootPath}',
+extRoutingElement: require('${extPlugin.routes.moduleLoc}').default,
 extName: '${extPlugin.extName}',
 extVersion:'${extPlugin.extVersion}',
 extId:'${extPlugin.extId}',
-extRoutingElement: require('${extPlugin.routes.moduleLoc}').default,
 }
 `
   })

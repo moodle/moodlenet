@@ -3,6 +3,7 @@ import type { MNHttpServerExt } from '@moodlenet/http-server'
 import { mkdir } from 'fs/promises'
 
 import { join, resolve } from 'path'
+import { ResolveOptions } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
 import { generateCtxProvidersModule } from './generateCtxProvidersModule'
 import { generateExposedModule } from './generateExposedModule'
@@ -60,7 +61,12 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
         }
 
         const virtualModules = new VirtualModulesPlugin(virtualModulesMap)
-        const wp = await startWebpack({ buildFolder, latestBuildFolder, virtualModules })
+        const baseResolveAlias: ResolveOptions['alias'] = {
+          'react': resolve(__dirname, '..', 'node_modules', 'react'),
+          'react-router-dom': resolve(__dirname, '..', 'node_modules', 'react-router-dom'),
+        }
+
+        const wp = await startWebpack({ buildFolder, latestBuildFolder, virtualModules, baseResolveAlias })
         return {
           inst({ depl }) {
             return {
@@ -72,7 +78,14 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
                   extVersion: depl.extVersion,
                   extId: depl.extId,
                 }
-
+                // console.log({ '***': wp.compiler.options.resolve.alias })
+                if (plugin.addPackageAlias) {
+                  const { loc, name } = plugin.addPackageAlias
+                  wp.compiler.options.resolve.alias = {
+                    ...baseResolveAlias,
+                    [name]: loc,
+                  }
+                }
                 const routesModuleContent = generateRoutesModule({ extPluginsMap })
                 virtualModules.writeModule(RoutesModuleFile, routesModuleContent)
 

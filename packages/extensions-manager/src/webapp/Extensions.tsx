@@ -1,6 +1,8 @@
 import lib from 'moodlenet-react-app-lib'
-import React, { FC, useContext, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
+import { StateContext } from './devModeContextProvider'
 import InstallExtension from './InstallExtension/InstallExtension'
+import { ExtMngMainLayout } from './MainLayout'
 import Modules, { ModulesProps } from './Modules/Modules'
 import Packages from './Packages/Packages'
 // import {
@@ -32,30 +34,42 @@ const sections: SectionType[] = [
   { name: 'Modules', component: Modules, displayName: 'Modules' },
 ]
 
-export const Extensions: FC<ExtensionsProps> = ({
+const sectionProps = {}
+export const Extensions: FC<ExtensionsProps> = () => {
+  return (
+    <ExtMngMainLayout>
+      <ExtensionsBody sectionProps={sectionProps} />
+    </ExtMngMainLayout>
+  )
+}
+export const ExtensionsBody: FC<ExtensionsProps> = ({
   sectionProps,
   section = 'InstallExtension' /* , headerPageTemplateProps */,
 }) => {
-  const stateContext = useContext(lib.devMode.StateContext)
+  const stateContext = useContext(StateContext)
   const [currentSection, setCurrentSection] = useState(section)
   const [currentContent, setCurrentContent] = useState<any>(null)
   // const [menuItemPressed, setMenuItemPressed] = useState<any>(false)
-  const menu = sections.map(
-    (e, i) =>
-      (stateContext?.devMode || e.name !== 'Modules') && (
-        <div
-          key={i}
-          className={`section ${e.name === currentSection ? 'selected' : ''}`}
-          onClick={() => {
-            setCurrentSection(e.name)
-            // setMenuItemPressed(true)
-            // setMenuItemPressed(false)
-          }}
-        >
-          {e.displayName}
-          {/* <Trans>{e.displayName}</Trans> */}
-        </div>
+  const menu = useMemo(
+    () =>
+      sections.map(
+        (e, i) =>
+          (stateContext.devMode || e.name !== 'Modules') && (
+            <div
+              key={i}
+              className={`section ${e.name === currentSection ? 'selected' : ''}`}
+              onClick={() => {
+                setCurrentSection(e.name)
+                // setMenuItemPressed(true)
+                // setMenuItemPressed(false)
+              }}
+            >
+              {e.displayName}
+              {/* <Trans>{e.displayName}</Trans> */}
+            </div>
+          ),
       ),
+    [stateContext.devMode],
   )
 
   useEffect(() => {

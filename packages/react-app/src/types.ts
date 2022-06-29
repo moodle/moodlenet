@@ -15,6 +15,12 @@ export type ExtPluginDef = {
   routes?: ExtRouteDef
   expose?: ExtExposeDef
   ctxProvider?: ExtContextProviderDef
+  addPackageAlias?: ExtAddPackageAlias
+}
+
+export type ExtAddPackageAlias = {
+  loc: string
+  name: string
 }
 
 export type ExtExposeDef = {

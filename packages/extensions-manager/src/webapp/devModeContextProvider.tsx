@@ -1,13 +1,13 @@
 import React, { createContext, useState } from 'react'
 
-export type StateContextType = null | { devMode: boolean; setDevMode: React.Dispatch<React.SetStateAction<boolean>> }
+export type StateContextType = { devMode: boolean; setDevMode: React.Dispatch<React.SetStateAction<boolean>> }
 
-export const StateContext = createContext<null | StateContextType>(null)
+export const StateContext = createContext<StateContextType>(null as any)
 
 export const StateProvider = ({ children }: { children: any }) => {
   const [devMode, setDevMode] = useState(false)
 
-  return <StateContext.Provider value={{ devMode: devMode, setDevMode: setDevMode }}>{children}</StateContext.Provider>
+  return <StateContext.Provider value={{ devMode, setDevMode }}>{children}</StateContext.Provider>
 }
 
 // export const useContextState = () => {

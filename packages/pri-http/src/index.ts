@@ -20,6 +20,10 @@ const ext: Core.Ext<MNPriHttpExt, [Core.CoreExt, MNHttpServerExt]> = {
         expose: {
           moduleLoc: resolve(__dirname, 'webapp', 'expose'),
         },
+        addPackageAlias: {
+          loc: resolve(__dirname, '..', 'node_modules', 'rxjs'),
+          name: 'rxjs',
+        },
       })
     })
     return {
