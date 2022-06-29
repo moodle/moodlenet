@@ -1,23 +1,24 @@
-import lib from 'moodlenet-react-app-lib'
-const A = lib.react.lazy(() => import('./A'))
-const Index = lib.react.lazy(() => import('./I'))
+import { lazy, Suspense } from 'react'
+import { Route } from 'react-router-dom'
+const A = lazy(() => import('./A'))
+const Index = lazy(() => import('./I'))
 
 const AuthRoutes = (
   <>
-    <lib.router.Route
+    <Route
       index
       element={
-        <lib.react.Suspense fallback="loading...">
+        <Suspense fallback="loading...">
           <Index />
-        </lib.react.Suspense>
+        </Suspense>
       }
     />
-    <lib.router.Route
+    <Route
       path="a"
       element={
-        <lib.react.Suspense fallback="loading...">
+        <Suspense fallback="loading...">
           <A />
-        </lib.react.Suspense>
+        </Suspense>
       }
     />
   </>

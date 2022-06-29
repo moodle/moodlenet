@@ -3,13 +3,19 @@ export function generateExposedModule({ extPluginsMap }: { extPluginsMap: ExtPlu
   console.log(`generate exposed.ts ..`)
 
   return `// - generated -
-const exp: Record<string, any> = {
+import { ExtExpose } from '../types'
+const exp: Record<string, ExtExpose> = {
 ${Object.values(extPluginsMap)
   .map(extPlugin => {
     return !extPlugin.expose
       ? null
       : `
-'${extPlugin.extName}': require('${extPlugin.expose.moduleLoc}').default
+  '${extPlugin.extName}': {
+    lib: require('${extPlugin.expose.moduleLoc}').default,
+    extName: '${extPlugin.extName}',
+    extVersion:'${extPlugin.extVersion}',
+    extId:'${extPlugin.extId}',    
+  }
 `
   })
   .filter(Boolean)

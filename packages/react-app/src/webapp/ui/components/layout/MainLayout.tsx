@@ -1,5 +1,5 @@
-import { FC, PropsWithChildren, useContext } from 'react'
-import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
+import { FC, PropsWithChildren } from 'react'
+// import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import Header from '../organisms/Header/Header'
 import './MainLayout.scss'
 // import { StateContext } from './Providers'
@@ -9,11 +9,11 @@ const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
   // const { routes } = useContext(RouterCtx)
   // console.log({ routes })
 
-  const stateContext = useContext(StateContext)
+  // const stateContext = useContext(StateContext)
 
   return (
     <div className="main-layout">
-      <Header devMode={stateContext?.devMode} setDevMode={stateContext?.setDevMode} />
+      <Header />
       {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (
             <div key={`${path}_${i}`}>

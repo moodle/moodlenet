@@ -4,7 +4,7 @@ import { cp } from 'fs/promises'
 import HtmlWebPackPlugin from 'html-webpack-plugin'
 import { resolve } from 'path'
 import rimraf from 'rimraf'
-import webpack, { Configuration } from 'webpack'
+import webpack, { Configuration, ResolveOptions } from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
@@ -23,7 +23,9 @@ async function start({
   buildFolder,
   latestBuildFolder,
   virtualModules,
+  baseResolveAlias,
 }: {
+  baseResolveAlias: ResolveOptions['alias']
   latestBuildFolder: string
   buildFolder: string
   overrideCfg?: (_: Configuration) => Configuration
@@ -122,17 +124,18 @@ async function start({
         path: buildFolder,
         pathinfo: 'verbose',
         publicPath: '/',
-        ...(isDevelopment
+        /*  ...(isDevelopment
           ? {
               filename: '[name].bundle.js',
               chunkFilename: '[name].chunk.js',
             }
-          : {
-              filename: '[name].[chunkhash].bundle.js',
-              chunkFilename: '[name].[chunkhash].chunk.js',
-            }),
+          : { */
+        filename: '[name].[chunkhash].bundle.js',
+        chunkFilename: '[name].[chunkhash].chunk.js',
+        /*  }), */
       },
       resolve: {
+        cache: true,
         extensions: ['.ts', '.tsx', '.js', '.jsx'],
         //modules: [__dirname, 'node_modules'],
         alias: baseResolveAlias,
@@ -156,7 +159,7 @@ async function start({
           },
         },
       },
-      cache: false,
+      cache: true,
       performance: {
         hints: 'warning',
         // Calculates sizes of gziped bundles.
@@ -219,6 +222,7 @@ async function start({
               {
                 loader: require.resolve('babel-loader'),
                 options: {
+                  sourceType: 'unambiguous',
                   presets: [
                     require.resolve('@babel/preset-env'),
                     require.resolve('@babel/preset-typescript'),
@@ -251,8 +255,4 @@ async function start({
       ].filter(Boolean),
     }
   }
-}
-
-const baseResolveAlias = {
-  react: resolve(__dirname, '..', 'node_modules', 'react'),
 }

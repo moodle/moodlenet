@@ -6,6 +6,7 @@ import { FC, useContext } from 'react'
 import lib from 'moodlenet-react-app-lib'
 import { Module, Package } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import { StateContext } from '../devModeContextProvider'
 import './styles.scss'
 
 export type ExtensionConfigProps = {
@@ -19,11 +20,11 @@ const Card = lib.ui.components.atoms.Card
 const TertiaryButton = lib.ui.components.atoms.TertiaryButton
 
 const ExtensionConfig: FC<ExtensionConfigProps> = ({ extension, onClickBackBtn }) => {
-  const stateContext = useContext(lib.devMode.StateContext)
+  const stateContext = useContext(StateContext)
 
   const modulesList = extension?.modules.map(
     (module: Module, i) =>
-      (!module.mandatory || stateContext?.devMode) && (
+      (!module.mandatory || stateContext.devMode) && (
         <div className="module" key={i}>
           <div className="name">{module.name}</div>
           <Switch enabled={module.enabled} mandatory={module.mandatory} />
