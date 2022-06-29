@@ -1,16 +1,18 @@
 import lib from 'moodlenet-react-app-lib'
 import { FC } from 'react'
+import { useSearchParams } from 'react-router-dom'
+const MainLayout = lib.ui.components.layout.MainLayout
 
 const A: FC = () => {
-  const [params] = lib.router.useSearchParams()
+  const [params] = useSearchParams()
   const xParam = params.get('x')
   const testStr = lib.useTest('aaa').join(':::')
   return (
-    <div>
+    <MainLayout>
       <h2>
-        AAA {testStr} ** {xParam}
+        login/a useTest0{testStr} ** x={xParam}
       </h2>
-    </div>
+    </MainLayout>
   )
 }
 
