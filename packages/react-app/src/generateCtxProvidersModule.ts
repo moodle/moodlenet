@@ -1,4 +1,5 @@
 import { ExtPluginsMap } from './types'
+import { fixModuleLocForWebpackByOS } from './util'
 export function generateCtxProvidersModule({ extPluginsMap }: { extPluginsMap: ExtPluginsMap }) {
   console.log(`generateCtxProvidersModule ..`)
 
@@ -14,7 +15,7 @@ ${Object.values(extPluginsMap)
     extName: '${extPlugin.extName}',
     extVersion:'${extPlugin.extVersion}',
     extId:'${extPlugin.extId}',
-    Provider: require('${extPlugin.ctxProvider.moduleLoc}').default
+    Provider: require('file:${fixModuleLocForWebpackByOS(extPlugin.ctxProvider.moduleLoc)}').default
   }
 `
   })

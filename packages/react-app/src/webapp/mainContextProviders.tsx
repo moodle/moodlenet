@@ -3,7 +3,7 @@ import { TestCtx } from '../react-app-lib/testLib'
 import extCtxProviders from './extContextProvidersModules'
 import * as header from './ui/components/organisms/Header'
 
-export const ProvideMainContexts: FC<PropsWithChildren> = ({ children }) => {
+export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => {
   const ctxProviderWrap = Object.values(extCtxProviders).reduce(
     (_children, { Provider, extId }) => <Provider key={extId}>{_children}</Provider>,
     <>{children}</>,

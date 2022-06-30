@@ -4,7 +4,7 @@ import { StateContext, StateProvider } from './devModeContextProvider'
 const MainLayout = lib.ui.components.layout.MainLayout
 const Switch = lib.ui.components.atoms.Switch
 
-export const ExtMngMainLayout: FC<PropsWithChildren> = ({ children }) => {
+export const ExtMngMainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
   lib.ui.components.organism.Header.useRightComponent({ Comp: DevModeBtn })
   // lib.ui.components.organism.Header.useRightComponent({ Comp: DevModeBtn })
   return (

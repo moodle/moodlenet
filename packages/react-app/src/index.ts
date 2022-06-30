@@ -1,7 +1,6 @@
 import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import { mkdir } from 'fs/promises'
-
 import { join, resolve } from 'path'
 import { ResolveOptions } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
@@ -9,7 +8,9 @@ import { generateCtxProvidersModule } from './generateCtxProvidersModule'
 import { generateExposedModule } from './generateExposedModule'
 import { generateRoutesModule } from './generateRoutesModule'
 import { ExtPluginDef, ExtPluginsMap } from './types'
+import { fixModuleLocForWebpackByOS } from './util'
 import startWebpack from './webpackWatch'
+
 
 export * from './types'
 // const wpcfg = require('../webpack.config')
@@ -55,7 +56,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
           [ExposeModuleFile]: generateExposedModule({ extPluginsMap }),
           [ExtContextProvidersModuleFile]: generateCtxProvidersModule({ extPluginsMap }),
           '../node_modules/moodlenet-react-app-lib.ts': `
-            import lib from '${resolve(__dirname, '..', 'src', 'react-app-lib')}'
+            import lib from '${fixModuleLocForWebpackByOS(resolve(__dirname, '..', 'src', 'react-app-lib'))}'
             export default lib
           `,
         }
@@ -91,10 +92,10 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
 
                 const exposedModuleContent = generateExposedModule({ extPluginsMap })
                 virtualModules.writeModule(ExposeModuleFile, exposedModuleContent)
+                //console.log({exposedModuleContent})
 
                 const ctxProvidersModuleContent = generateCtxProvidersModule({ extPluginsMap })
                 virtualModules.writeModule(ExtContextProvidersModuleFile, ctxProvidersModuleContent)
-
                 wp.compiler.watching.invalidate(() => console.log('INVALIDATED'))
               },
             }

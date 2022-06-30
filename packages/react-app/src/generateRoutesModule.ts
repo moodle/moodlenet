@@ -1,4 +1,5 @@
 import { ExtPluginsMap } from './types'
+import { fixModuleLocForWebpackByOS } from './util'
 export function generateRoutesModule({ extPluginsMap }: { extPluginsMap: ExtPluginsMap }) {
   console.log(`generate routes.ts ..`)
 
@@ -12,7 +13,7 @@ ${Object.values(extPluginsMap)
       : `
 {
 rootPath: '${extPlugin.routes.rootPath}',
-extRoutingElement: require('${extPlugin.routes.moduleLoc}').default,
+extRoutingElement: require('file:${fixModuleLocForWebpackByOS(extPlugin.routes.moduleLoc)}').default,
 extName: '${extPlugin.extName}',
 extVersion:'${extPlugin.extVersion}',
 extId:'${extPlugin.extId}',
@@ -26,3 +27,4 @@ export default routes
   
 `
 }
+
