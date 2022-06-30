@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useContext } from 'react'
 // import Switch from '../../atoms/Switch/Switch'
-import { AddonCtx } from './addons'
+import { AddonCtx } from '../addons'
 import './Header.scss'
 
 type HeaderProps = {}
@@ -17,8 +17,8 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
           </div>
         </div>
         <div className="right">
-          {addonCtx.rightComponents.map(({ addon: { Comp } }, index) => {
-            return <Comp key={index} />
+          {addonCtx.rightComponents.flatMap(({ addon: { StdHeaderItems } }, index) => {
+            return (StdHeaderItems ?? []).map((Item, subIndex) => <Item key={`${index}:${subIndex}`} />)
           })}
         </div>
       </div>

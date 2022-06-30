@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useContext } from 'react'
 // import Switch from '../../atoms/Switch/Switch'
-import { AddonCtx } from './addons'
+import { AddonCtx } from '../addons'
 import './MinimalisticHeader.scss'
 
 type MinimalisticHeaderProps = {}
@@ -17,8 +17,8 @@ const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = (/* {
           </div>
         </div>
         <div className="right">
-          {addonCtx.rightComponents.map(({ addon: { Comp } }, index) => {
-            return <Comp key={index} />
+          {addonCtx.rightComponents.flatMap(({ addon: { MinHeaderItems } }, index) => {
+            return (MinHeaderItems ?? []).map((Item, subIndex) => <Item key={`${index}:${subIndex}`} />)
           })}
         </div>
       </div>
