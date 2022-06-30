@@ -1,10 +1,16 @@
-import { FC, PropsWithChildren } from 'react'
+import { FC, ReactNode } from 'react'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import Header from '../organisms/Header/Header'
+import MinimalisticHeader from '../organisms/MinimalisticHeader/MinimalisticHeader'
 import './MainLayout.scss'
 // import { StateContext } from './Providers'
 
-const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
+export type MainLayoutProps = {
+  headerType?: 'default' | 'minimalistic'
+  children?: ReactNode
+}
+
+const MainLayout: FC<MainLayoutProps> = ({ headerType, children }) => {
   // const [collapsed, onCollapse] = useState(false)
   // const { routes } = useContext(RouterCtx)
   // console.log({ routes })
@@ -13,7 +19,8 @@ const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   return (
     <div className="main-layout">
-      <Header />
+      {headerType === 'default' && <Header />}
+      {headerType === 'minimalistic' && <MinimalisticHeader />}
       {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (
             <div key={`${path}_${i}`}>
@@ -31,4 +38,5 @@ const MainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
   )
 }
 
+MainLayout.defaultProps = { headerType: 'default' }
 export default MainLayout

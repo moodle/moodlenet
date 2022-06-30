@@ -8,7 +8,7 @@ const MainLayout = lib.ui.components.layout.MainLayout
 const Index: FC = () => {
   const testStr = lib.useTest('iindex').join('---')
   return (
-    <MainLayout>
+    <MainLayout headerType='minimalistic'>
       <h2>
         Authentication Page {testStr} {useAuthValue()}
       </h2>
