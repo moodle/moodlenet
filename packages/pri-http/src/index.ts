@@ -18,7 +18,7 @@ const ext: Core.Ext<MNPriHttpExt, [Core.CoreExt, MNHttpServerExt]> = {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
       inst.setup({
         expose: {
-          moduleLoc: resolve(__dirname, 'webapp', 'expose'),
+          moduleLoc: resolve(__dirname,'..', 'src', 'webapp', 'expose.ts'),
         },
         addPackageAlias: {
           loc: resolve(__dirname, '..', 'node_modules', 'rxjs'),

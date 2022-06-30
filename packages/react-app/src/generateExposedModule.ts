@@ -1,4 +1,5 @@
 import { ExtPluginsMap } from './types'
+import { fixModuleLocForWebpackByOS } from './util'
 export function generateExposedModule({ extPluginsMap }: { extPluginsMap: ExtPluginsMap }) {
   console.log(`generate exposed.ts ..`)
 
@@ -11,7 +12,7 @@ ${Object.values(extPluginsMap)
       ? null
       : `
   '${extPlugin.extName}': {
-    lib: require('${extPlugin.expose.moduleLoc}').default,
+    lib: require('file:${fixModuleLocForWebpackByOS(extPlugin.expose.moduleLoc)}').default,
     extName: '${extPlugin.extName}',
     extVersion:'${extPlugin.extVersion}',
     extId:'${extPlugin.extId}',    

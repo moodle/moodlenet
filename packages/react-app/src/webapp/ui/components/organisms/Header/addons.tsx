@@ -7,7 +7,7 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState,
+  useState
 } from 'react'
 
 export type RightComponentAddonDef = { Comp: ComponentType }
@@ -17,7 +17,7 @@ export type AddonCtxT = {
   rightComponents: RightComponentAddon[]
 }
 export const AddonCtx = createContext<AddonCtxT>(null as any)
-export const Provider: FC<PropsWithChildren> = ({ children }) => {
+export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const [rightComponents, setRightComponents] = useState<AddonCtxT['rightComponents']>([])
   const addRightComponent: AddonCtxT['addRightComponent'] = useCallback(addon => {
     const rightComponentAddon: RightComponentAddon = { addon }

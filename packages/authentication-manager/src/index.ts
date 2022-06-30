@@ -14,11 +14,11 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt, ReactAppExt, MNPriHttpExt]> =
       console.log(`moodlenet-authentication-manager: onExtInstance<ReactAppExt>`, inst)
       inst.setup({
         routes: {
-          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'AuthRoutes'),
+          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'AuthRoutes.tsx'),
           rootPath: 'login/',
         },
         ctxProvider: {
-          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'AuthProvider'),
+          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'AuthProvider.tsx'),
         },
       })
     })

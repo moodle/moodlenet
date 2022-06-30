@@ -1,17 +1,17 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
 import lib from 'moodlenet-react-app-lib'
 import { FC, ReactNode, useEffect, useState } from 'react'
+// import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
+// import { withCtrl } from '../../../../lib/ctrl'
+import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
+import { Package } from '../fakeData'
 import {
   capitalize,
   getNumberFromString,
   getPastelColor,
   getReadmeFromRepo,
-  searchNpmPackages,
+  searchNpmPackages
 } from '../helpers/utilities'
-// import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
-// import { withCtrl } from '../../../../lib/ctrl'
-import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
-import { Package } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import './styles.scss'
 
@@ -74,7 +74,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
       {!selectedPackage && (
         <div className="search-extensions">
           <Card className="install">
-            <div className="title">Add extension</div>
+            <div className="title">Add extension...</div>
 
             <div className="option">
               <div className="name">Local path</div>
