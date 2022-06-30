@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
-import Header from '../organisms/Header/Header'
-import MinimalisticHeader from '../organisms/MinimalisticHeader/MinimalisticHeader'
+import MinimalisticHeader from '../organisms/Header/Minimalistic/MinimalisticHeader'
+import StandardHeader from '../organisms/Header/Standard/Header'
 import './MainLayout.scss'
 // import { StateContext } from './Providers'
 
@@ -19,7 +19,7 @@ const MainLayout: FC<MainLayoutProps> = ({ headerType, children }) => {
 
   return (
     <div className="main-layout">
-      {headerType === 'default' && <Header />}
+      {headerType === 'default' && <StandardHeader />}
       {headerType === 'minimalistic' && <MinimalisticHeader />}
       {/* <div className="side-menu">
           {routes.map(({ path, label }, i) => (

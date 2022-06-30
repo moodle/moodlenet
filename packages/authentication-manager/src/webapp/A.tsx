@@ -8,7 +8,7 @@ const A: FC = () => {
   const xParam = params.get('x')
   const testStr = lib.useTest('aaa').join(':::')
   return (
-    <MainLayout>
+    <MainLayout headerType="minimalistic">
       <h2>
         login/a useTest0{testStr} ** x={xParam}
       </h2>

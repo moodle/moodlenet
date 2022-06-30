@@ -7,10 +7,10 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useState
+  useState,
 } from 'react'
 
-export type RightComponentAddonDef = { Comp: ComponentType }
+export type RightComponentAddonDef = { StdHeaderItems?: ComponentType[]; MinHeaderItems?: ComponentType[] }
 export type RightComponentAddon = { addon: RightComponentAddonDef }
 export type AddonCtxT = {
   addRightComponent(_: RightComponentAddonDef): () => void
