@@ -3,12 +3,10 @@ import type { MNHttpServerExt } from '@moodlenet/http-server'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { json } from 'body-parser'
 import { resolve } from 'path'
-import { PriHttpSubUrlPrefix } from './types'
 export * from './types'
 
 export type MNPriHttpExt = Core.ExtDef<'moodlenet-pri-http', '0.1.10'>
 
-const mountSubUrl: PriHttpSubUrlPrefix = '/_/sub'
 // const ext: Core.Ext<MNPriHttpExt, [Core.CoreExt, coreExt.sysLog.MoodlenetSysLogExt]> = {
 const ext: Core.Ext<MNPriHttpExt, [Core.CoreExt, MNHttpServerExt]> = {
   id: 'moodlenet-pri-http@0.1.10',
@@ -18,7 +16,7 @@ const ext: Core.Ext<MNPriHttpExt, [Core.CoreExt, MNHttpServerExt]> = {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
       inst.setup({
         expose: {
-          moduleLoc: resolve(__dirname,'..', 'src', 'webapp', 'expose.ts'),
+          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'expose.ts'),
         },
         addPackageAlias: {
           loc: resolve(__dirname, '..', 'node_modules', 'rxjs'),
@@ -29,7 +27,7 @@ const ext: Core.Ext<MNPriHttpExt, [Core.CoreExt, MNHttpServerExt]> = {
     return {
       deploy(/* {  tearDown } */) {
         shell.onExtInstance<MNHttpServerExt>('moodlenet.http-server@0.1.10', httpServerInst => {
-          httpServerInst.mount({ absMountPath: mountSubUrl, mountApp: makeExtPortsApp(httpServerInst) })
+          httpServerInst.mount({ mountApp: makeExtPortsApp(httpServerInst) })
         })
         return {}
 
