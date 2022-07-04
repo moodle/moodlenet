@@ -15,7 +15,9 @@
         "arangodb dev-build",
         "test-extension dev-build",
         "authentication-manager dev-build",
-        "extensions-manager dev-build"
+        "extensions-manager dev-build",
+        "test-etto dev-build"
+
       ],
       "presentation": {
         "echo": true,
@@ -104,7 +106,16 @@
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "test-extension dev-build"
+      "label": "test-extension dev-build xx xy"
+      // "dependsOn": ["core dev-build", "react-app dev-build"]
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/test-etto/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "test-etto dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]

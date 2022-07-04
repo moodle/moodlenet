@@ -1,17 +1,17 @@
 {
-  "name": "@moodlenet/extensions-manager",
+  "name": "@moodlenet/test-etto",
   "version": "0.0.1",
   "license": "AGPL-3.0",
   "moodlenet": {
     "name": "extensions-manager moodlenet",
-    "shortDesc": "a desc for extensions-manager moodlenet"
+    "shortDesc": "a desc for test-etto moodlenet"
   },
   "files": [
     "lib/",
     "src/"
   ],
   "main": "lib/index.js",
-  "description": "moodlenet extensions-manager package",
+  "description": "moodlenet test-etto package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
@@ -19,6 +19,10 @@
     "@emotion/styled": "^11.8.1",
     "@mui/icons-material": "^5.8.2",
     "@mui/material": "^5.8.2",
+    "axios": "^0.21.1",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^8.5.1",
     "react-markdown": "^8.0.3",
     "react-syntax-highlighter": "^15.5.0",
     "rehype-raw": "^6.1.1"
@@ -28,6 +32,11 @@
     "@moodlenet/http-server": "^0.0.1",
     "@moodlenet/pri-http": "^0.0.1",
     "@moodlenet/react-app": "^0.0.1",
+    "@types/axios": "^0.14.0",
+    "@types/cookie-parser": "^1.4.2",
+    "@types/cors": "^2.8.9",
+    "@types/express": "^4.17.11",
+    "@types/jsonwebtoken": "^8.5.0",
     "@types/node": "^17.0.35",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",
