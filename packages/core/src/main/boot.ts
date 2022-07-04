@@ -252,13 +252,15 @@ export default async function boot(cfg: BootCfg) {
       const onExt: Shell['onExt'] = (extId, cb) => {
         const match = matchMessage<CoreExt>()
         // console.log('onExt', extId)
-        const deployment = main.deployments.get(extId)
-        if (deployment) {
-          setImmediate(() => cb(deployment as any))
+        // FIXME: beware that immediate_deployment stays in memoruy this way - fix it
+        const immediate_deployment = getExt(extId)
+        if (immediate_deployment) {
+          setImmediate(() => {
+            // console.log('onExt::', extId, 'immediate')
+            cb(immediate_deployment as any)
+          })
         }
         const subscription = pipedMessages$.subscribe(msg => {
-          // console.log('onExt', msg)
-
           if (
             !(
               (match(msg, 'moodlenet-core@0.1.10::ext/deployed') ||
@@ -269,6 +271,11 @@ export default async function boot(cfg: BootCfg) {
             return
           }
 
+          const def_deployment = getExt(extId)
+          if (immediate_deployment === def_deployment) {
+            return
+          }
+          // console.log('onExt::', extId, 'pipedMessages$', msg.pointer)
           cb(getExt(extId))
         })
         return subscription

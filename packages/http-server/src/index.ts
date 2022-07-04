@@ -32,9 +32,9 @@ const ext: Core.Ext<MNHttpServerExt, [Core.CoreExt]> = {
           inst({ depl }) {
             return {
               mount({ mountApp, absMountPath }) {
-                console.log('MOUNT', { absMountPath })
                 const { extName /* , version */ } = shell.lib.splitExtId(depl.extId)
                 const mountPath = absMountPath ?? `/_/${extName}`
+                console.log('MOUNT', { extName, mountPath, absMountPath })
                 app.use(mountPath, mountApp)
               },
               express,
