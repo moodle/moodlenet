@@ -11,7 +11,6 @@ import { ExtPluginDef, ExtPluginsMap } from './types'
 import { fixModuleLocForWebpackByOS } from './util'
 import startWebpack from './webpackWatch'
 
-
 export * from './types'
 // const wpcfg = require('../webpack.config')
 // const config: Configuration = wpcfg({}, { mode: 'development' })
@@ -43,7 +42,11 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
           const mountApp = express()
           const staticWebApp = express.static(latestBuildFolder, {})
           mountApp.use(staticWebApp)
-          mountApp.get('*', (_req, res) => {
+          mountApp.get(`*`, (req, res, next) => {
+            if (req.url.startsWith('/_/')) {
+              next()
+              return
+            }
             res.sendFile(join(latestBuildFolder, 'index.html'))
           })
           mount({ mountApp, absMountPath: '/' })
