@@ -2,7 +2,6 @@ import { CoreExt } from '@moodlenet/core'
 import { PriHttpExtMod } from '@moodlenet/pri-http/lib/webapp/expose'
 import lib from 'moodlenet-react-app-lib'
 import { FC } from 'react'
-import { map } from 'rxjs/operators'
 import { useAuthValue } from './lib'
 const MainLayout = lib.ui.components.layout.MainLayout
 const Index: FC = () => {
@@ -29,6 +28,6 @@ priHttp
   )('ext/listDeployed')()
   .pipe(
     priHttp.dematMessage(),
-    map(_ => _.msg.data.map(_ => _.ext.id).join('\n')),
+    //map(_ => _.msg.data.map(_ => _.ext.id).join('\n')),
   )
-  .subscribe(extId => console.log(extId))
+  .subscribe(({ msg }) => console.log(msg.data.ext.id))
