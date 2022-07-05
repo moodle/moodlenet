@@ -1,11 +1,10 @@
 .minimalistic-header {
-  height: 30px;
+  height: 60px;
   padding: 0 100px;
   width: -webkit-fill-available;
   display: flex;
   justify-content: center;
-  background: white;
-  // box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%);
+  background: none;
   > .content {
     height: 100%;
     width: 100%;
