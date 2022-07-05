@@ -1,5 +1,4 @@
 import { CoreExt } from '@moodlenet/core'
-import { PriHttpExtMod } from '@moodlenet/pri-http/lib/webapp/expose'
 import lib from 'moodlenet-react-app-lib'
 import { FC } from 'react'
 import { useAuthValue } from './lib'
@@ -19,15 +18,13 @@ const Index: FC = () => {
 }
 export default Index
 
-const priHttp = lib.getExposed<PriHttpExtMod>('moodlenet-pri-http')
-console.log({ priHttp })
-priHttp
-  ?.sub<CoreExt>(
+lib.priHttp
+  .sub<CoreExt>(
     'moodlenet-core',
     '0.1.10',
   )('ext/listDeployed')()
   .pipe(
-    priHttp.dematMessage(),
+    lib.priHttp.dematMessage(),
     //map(_ => _.msg.data.map(_ => _.ext.id).join('\n')),
   )
   .subscribe(({ msg }) => console.log(msg.data.ext.id))

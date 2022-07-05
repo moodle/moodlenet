@@ -1,5 +1,5 @@
 module.exports = {
-  'moodlenet.http-server': {
+  'moodlenet-http-server': {
     port: 8080,
   },
 }

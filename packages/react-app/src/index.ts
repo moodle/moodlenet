@@ -33,12 +33,12 @@ const ExtContextProvidersModuleFile = './src/webapp/extContextProvidersModules.t
 const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
   id: 'moodlenet.react-app@0.1.10',
   displayName: 'webapp',
-  requires: ['moodlenet-core@0.1.10', 'moodlenet.http-server@0.1.10'],
+  requires: ['moodlenet-core@0.1.10', 'moodlenet-http-server@0.1.10'],
   enable(shell) {
     return {
       async deploy(/* { tearDown } */) {
         await mkdir(buildFolder, { recursive: true })
-        shell.onExtInstance<MNHttpServerExt>('moodlenet.http-server@0.1.10', (inst /* , depl */) => {
+        shell.onExtInstance<MNHttpServerExt>('moodlenet-http-server@0.1.10', (inst /* , depl */) => {
           const { express, mount } = inst
           const mountApp = express()
           const staticWebApp = express.static(latestBuildFolder, {})
@@ -67,6 +67,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
 
         const virtualModules = new VirtualModulesPlugin(virtualModulesMap)
         const baseResolveAlias: ResolveOptions['alias'] = {
+          'rxjs': resolve(__dirname, '..', 'node_modules', 'rxjs'),
           'react': resolve(__dirname, '..', 'node_modules', 'react'),
           'react-router-dom': resolve(__dirname, '..', 'node_modules', 'react-router-dom'),
         }

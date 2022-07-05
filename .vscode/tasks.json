@@ -9,7 +9,6 @@
       "dependsOn": [
         "dev-machine dev-build",
         "http-server dev-build",
-        "pri-http dev-build",
         "react-app dev-build",
         "core dev-build",
         "arangodb dev-build",
@@ -79,15 +78,6 @@
       "group": "build",
       "label": "http-server dev-build"
       // "dependsOn": ["core dev-build"]
-    },
-    {
-      "type": "typescript",
-      "tsconfig": "packages/pri-http/tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": "build",
-      "label": "pri-http dev-build"
-      // "dependsOn": ["core dev-build", "http-server dev-build", "react-app dev-build"]
     },
     {
       "type": "typescript",
