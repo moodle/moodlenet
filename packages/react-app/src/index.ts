@@ -1,3 +1,4 @@
+/// <reference path="../moodlenet-react-app-lib.d.ts" />
 import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import { mkdir } from 'fs/promises'
