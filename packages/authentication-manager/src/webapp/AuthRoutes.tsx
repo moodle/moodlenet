@@ -1,11 +1,9 @@
-import { lazy, Suspense } from 'react'
-import { Route } from 'react-router-dom'
-const A = lazy(() => import('./A'))
-const Index = lazy(() => import('./I'))
+// const A = lazy(() => import('./A'))
+// const Index = lazy(() => import('./I'))
 
 const AuthRoutes = (
   <>
-    <Route
+    {/* <Route
       index
       element={
         <Suspense fallback="loading...">
@@ -20,7 +18,7 @@ const AuthRoutes = (
           <A />
         </Suspense>
       }
-    />
+    /> */}
   </>
 )
 
