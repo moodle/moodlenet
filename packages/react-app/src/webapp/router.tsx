@@ -13,11 +13,11 @@ const AppRouter = () => {
     <Router>
       <Routes>
         <Route path="login">
+          <Route index element={<Login />} />
           <Route path="root" element={<RootLogin />} />
-          <Route path="email" element={<Login />} />
         </Route>
         <Route path="signup">
-          <Route path="email" element={<Signup />} />
+          <Route index element={<Signup />} />
         </Route>
         <Route path="/" element={<Landing />} />
         {/* <Route
