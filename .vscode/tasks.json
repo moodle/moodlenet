@@ -16,7 +16,7 @@
         "test-extension dev-build",
         "authentication-manager dev-build",
         "extensions-manager dev-build",
-        "test-etto dev-build"
+        "gauth dev-build"
 
       ],
       "presentation": {
@@ -111,11 +111,11 @@
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/test-etto/tsconfig.json",
+      "tsconfig": "packages/gauth/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "test-etto dev-build"
+      "label": "gauth dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]

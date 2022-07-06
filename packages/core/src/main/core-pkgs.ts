@@ -5,6 +5,6 @@ export default {
   'pri-http': '0.0.1',
   'authentication-manager': '0.0.1',
   'extensions-manager': '0.0.1',
-  'test-etto': '0.0.1',
+  'gauth': '0.0.1',
 
 }
