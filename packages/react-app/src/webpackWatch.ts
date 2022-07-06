@@ -31,7 +31,8 @@ async function start({
   overrideCfg?: (_: Configuration) => Configuration
   virtualModules: VirtualModulesPlugin
 }) {
-  const mode: Configuration['mode'] = process.env.NODE_ENV ?? ('production' as any)
+  const mode: Configuration['mode'] =
+    process.env.NODE_ENV === 'test' ? 'none' : process.env.NODE_ENV ?? ('production' as any)
   const isDevelopment = mode === 'development'
   const wp = webpack(overrideCfg(defaultConfig()), () => {
     // a cb .. otherways err:DEP_WEBPACK_WATCH_WITHOUT_CALLBACK
@@ -195,6 +196,17 @@ async function start({
               },
               {
                 loader: 'less-loader',
+              },
+            ],
+          },
+          {
+            test: /\.(png|jpg|gif)$/i,
+            use: [
+              {
+                loader: 'url-loader',
+                options: {
+                  limit: 10000,
+                },
               },
             ],
           },

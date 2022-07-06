@@ -50,7 +50,7 @@ export default function userStore({ folder }: { folder: string }) {
   }
 
   async function write(users: Users) {
-    await writeFile(file(), JSON.stringify(users))
+    await writeFile(file(), JSON.stringify(users, null, 2))
   }
 
   function file() {
