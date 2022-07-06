@@ -1,13 +1,13 @@
 import type { DataMessage, ExtDef, ExtName, ExtVersion, SubcriptionPaths, ValueData } from '@moodlenet/core'
+import type { RawSubOpts } from '@moodlenet/http-server'
 import { Observable, ObservableInput, throwError } from 'rxjs'
 import { mergeMap } from 'rxjs/operators'
-import { PriHttpSub } from '../types'
-export type Sub = typeof sub
-export const sub =
+export type Sub = typeof subRaw
+export const subRaw =
   <Def extends ExtDef>(extName: ExtName<Def>, extVersion: ExtVersion<Def>) =>
   <Path extends SubcriptionPaths<Def>>(path: Path) => {
-    type HttpSubType = PriHttpSub<Def, Path>
-    const httpPath: HttpSubType['path'] = `/_/moodlenet-pri-http/${extName}/${extVersion}/${path}`
+    type HttpSubType = RawSubOpts<Def, Path>
+    const httpPath: HttpSubType['path'] = `/_/_/raw-sub/${extName}/${extVersion}/${path}`
     const method: HttpSubType['method'] = `POST`
     return (req: HttpSubType['req'] /* , opts?: Opts */) =>
       new Observable<HttpSubType['obsType']>(subscriber => {
