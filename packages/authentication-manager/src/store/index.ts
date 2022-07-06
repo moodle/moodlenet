@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
 import { resolve } from 'path'
-import { User, UserId, Users } from './types'
+import { ProviderId, User, UserId, Users } from './types'
 
 export default function userStore({ folder }: { folder: string }) {
   mkdirSync(folder, { recursive: true })
@@ -17,6 +17,12 @@ export default function userStore({ folder }: { folder: string }) {
     write,
     create,
     getById,
+    getByProviderId,
+  }
+
+  async function getByProviderId(pId: ProviderId): Promise<User | undefined> {
+    const users = await read()
+    return Object.values(users).find(({ providerId: { ext, uid } }) => ext === pId.ext && uid === pId.uid)
   }
 
   async function getById(id: UserId): Promise<User | undefined> {
@@ -24,9 +30,10 @@ export default function userStore({ folder }: { folder: string }) {
     return users[id]
   }
 
-  async function create(newUser: Omit<User, 'id'>): Promise<User> {
+  async function create(newUser: Omit<User, 'id' | 'created'>): Promise<User> {
     const id = Math.random().toString(36).substring(2)
-    const user: User = { id, ...newUser }
+    const created = new Date().toISOString()
+    const user: User = { ...newUser, id, created }
     await patchUsers({ [id]: user })
     return user
   }
