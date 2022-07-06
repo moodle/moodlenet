@@ -20,11 +20,11 @@ export const Login: FC<LoginProps> = () => {
   )
 }
 export const LoginBody: FC<LoginProps> = ({}) => {
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter') {
-      // form.submitForm()
-    }
-  }
+  // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  //   if (e.key === 'Enter') {
+  //     // form.submitForm()
+  //   }
+  // }
 
   // const shouldShowErrors = !!form.submitCount && (wrongCreds || !form.isValid)
   // console.log({
