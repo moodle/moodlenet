@@ -1,10 +1,8 @@
 import CallMadeIcon from '@material-ui/icons/CallMade'
-import MailOutlineIcon from '@material-ui/icons/MailOutline'
-import { FC } from 'react'
+import { CSSProperties, FC, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { AuthCtx } from '../../../../../../react-app-lib/auth'
 import Card from '../../../atoms/Card/Card'
-import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
-import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
 import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import { MainLayout } from '../../../layout'
 import './Signup.scss'
@@ -23,63 +21,51 @@ export const SignupBody: FC<SignupProps> = ({}) => {
   // const shouldShowErrors =
   //   !!form.submitCount && (!!signupErrorMessage || !form.isValid)
 
+  const authCtx = useContext(AuthCtx)
+  const defaultSignupItem = authCtx.signupItems[0]
+  const [currSignupItem, chooseSignupItem] = useState(defaultSignupItem)
+  useEffect(() => chooseSignupItem(defaultSignupItem), [defaultSignupItem])
+
   return (
     <div className={`signup-page`}>
       {/* <div className={`signup-page ${requestSent ? 'success' : ''}`} onKeyDown={handleKeyDown}> */}
       <div className={`signup-content`}>
         {/* <div className={`signup-content ${requestSent ? 'success' : ''}`}> */}
         <Card hover={true}>
-          <Link to={`/login/email`}>
+          <Link to={`/login`}>
             Log in
             <CallMadeIcon />
           </Link>
         </Card>
         <Card>
           <div className="content">
+            {authCtx.signupItems.length > 1 && (
+              <>
+                <div>
+                  <span style={{ float: 'left', marginRight: '10px' }}>use:</span>
+                  {authCtx.signupItems.map((signupItem, index) => {
+                    const isCurrent = signupItem === currSignupItem
+                    const css: CSSProperties = {
+                      float: 'left',
+                      cursor: isCurrent ? undefined : 'pointer',
+                      fontWeight: isCurrent ? 'bold' : undefined,
+                    }
+                    const onClick = isCurrent ? undefined : () => chooseSignupItem(signupItem)
+
+                    return (
+                      <div key={index} style={css} onClick={onClick}>
+                        <signupItem.def.Icon />
+                      </div>
+                    )
+                  })}
+                </div>
+              </>
+            )}
             <div className="title">Sign up</div>
-            <form /* onSubmit={form.handleSubmit} */>
-              <InputTextField
-                className="display-name"
-                placeholder={`Display name`}
-                name="name"
-                edit
-                // value={form.values.name}
-                // onChange={form.handleChange}
-                // error={shouldShowErrors && form.errors.name}
-              />
-              <InputTextField
-                className="email"
-                type="email"
-                placeholder={`Email`}
-                name="email"
-                edit
-                // value={form.values.email}
-                // onChange={form.handleChange}
-                // error={shouldShowErrors && form.errors.email}
-              />
-              <InputTextField
-                className="password"
-                type="password"
-                placeholder={`Password`}
-                name="password"
-                edit
-                // value={form.values.password}
-                // onChange={form.handleChange}
-                // error={shouldShowErrors && form.errors.password}
-              />
-              <button id="signup-button" type="submit" style={{ display: 'none' }} />
-            </form>
+            {currSignupItem ? <currSignupItem.def.Panel /> : <div>No Auth available</div>}
+
             <div className="bottom">
               <div className="left">
-                <PrimaryButton
-                /* onClick={
-                        form.isSubmitting || form.isValidating
-                          ? undefined
-                          : form.submitForm
-                      } */
-                >
-                  Sign up
-                </PrimaryButton>
                 {/* <Link href={userAgreementHref} target="__blank"> */}
                 <a>
                   <TertiaryButton>You agree to our Terms &amp; Conditions</TertiaryButton>
@@ -101,16 +87,6 @@ export const SignupBody: FC<SignupProps> = ({}) => {
                 </div>
               </div> */}
             </div>
-          </div>
-        </Card>
-      </div>
-      <div className={`success-content`}>
-        {/* <div className={`success-content ${requestSent ? 'success' : ''}`}> */}
-        <Card>
-          <div className="content">
-            <div className="title">Email sent!</div>
-            <MailOutlineIcon className="icon" />
-            <div className="subtitle">Check out your inbox and activate your account</div>
           </div>
         </Card>
       </div>

@@ -1,15 +1,12 @@
 import CallMadeIcon from '@material-ui/icons/CallMade'
-import { FC } from 'react'
+import { CSSProperties, FC, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { AuthCtx } from '../../../../../../react-app-lib/auth'
 // import { Link } from '../../../../elements/link'
 import Card from '../../../atoms/Card/Card'
-import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
-import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
-import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import { MainLayout } from '../../../layout'
 import './Login.scss'
 
-export type LoginFormValues = { email: string; password: string }
 export type LoginProps = {}
 
 export const Login: FC<LoginProps> = () => {
@@ -20,6 +17,7 @@ export const Login: FC<LoginProps> = () => {
   )
 }
 export const LoginBody: FC<LoginProps> = ({}) => {
+  const authCtx = useContext(AuthCtx)
   // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
   //   if (e.key === 'Enter') {
   //     // form.submitForm()
@@ -33,79 +31,42 @@ export const LoginBody: FC<LoginProps> = ({}) => {
   //   isValid: form.isValid,
   // })
 
+  const defaultLoginItem = authCtx.loginItems[0]
+  const [currLoginItem, chooseLoginItem] = useState(defaultLoginItem)
+  useEffect(() => chooseLoginItem(defaultLoginItem), [defaultLoginItem])
   return (
     <div className="login-page">
       <div className="content">
         <Card>
           <div className="content">
-            <div className="title">Log in</div>
-            <form
-            // onSubmit={form.handleSubmit}
-            >
-              <InputTextField
-                className="email"
-                placeholder={`Email`}
-                type="email"
-                name="email"
-                edit
-                // value={form.values.email}
-                // onChange={form.handleChange}
-                // error={shouldShowErrors && form.errors.email}
-              />
-              <InputTextField
-                className="password"
-                placeholder={`Password`}
-                type="password"
-                name="password"
-                edit
-                // value={form.values.password}
-                // onChange={form.handleChange}
-                // error={shouldShowErrors && form.errors.password}
-              />
-              {/* {wrongCreds && (
-                    <div className="error">
-                      <Trans>Incorrect username or password</Trans>
-                    </div>
-                  )} */}
-              <button type="submit" style={{ display: 'none' }} />
-            </form>
-            <div className="bottom">
-              <div className="content">
-                <div className="left">
-                  <PrimaryButton
-                    onClick={() => alert('Nothing to see here, for the moment 🤫')}
-                    // onClick={
-                    //   form.isSubmitting || form.isValidating
-                    //     ? undefined
-                    //     : form.submitForm
-                    // }
-                  >
-                    Log in
-                  </PrimaryButton>
-                  {/* <Link href={``}> */}
-                  <TertiaryButton>or recover password</TertiaryButton>
-                  {/* </Link> */}
-                </div>
-                {/* <div className="right" hidden>
-                  <div className="icon">
-                    <img
-                      alt="apple login"
-                      src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
-                    />
-                  </div>
-                  <div className="icon">
-                    <img
-                      alt="google login"
-                      src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-                    />
-                  </div>
-                </div> */}
-              </div>
+            <div>
+              {authCtx.loginItems.length > 1 && (
+                <>
+                  <span style={{ float: 'left', marginRight: '10px' }}>use:</span>
+                  {authCtx.loginItems.map((loginItem, index) => {
+                    const isCurrent = loginItem === currLoginItem
+                    const css: CSSProperties = {
+                      float: 'left',
+                      cursor: isCurrent ? undefined : 'pointer',
+                      fontWeight: isCurrent ? 'bold' : undefined,
+                    }
+                    const onClick = isCurrent ? undefined : () => chooseLoginItem(loginItem)
+
+                    return (
+                      <div key={index} style={css} onClick={onClick}>
+                        <loginItem.def.Icon />
+                      </div>
+                    )
+                  })}
+                </>
+              )}
             </div>
+            <div className="title">Log in</div>
+            {currLoginItem ? <currLoginItem.def.Panel /> : <div>No Auth available</div>}
           </div>
         </Card>
         <Card hover={true}>
-          <Link to={`/signup/email`}>
+          <Link to={`/signup`}>
             Sign up
             <CallMadeIcon />
           </Link>

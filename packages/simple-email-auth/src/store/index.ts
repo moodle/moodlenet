@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
 import { resolve } from 'path'
-import { ProviderId, User, UserId, Users } from './types'
+import { Email, User, UserId, Users } from './types'
 
 export default function userStore({ folder }: { folder: string }) {
   mkdirSync(folder, { recursive: true })
@@ -17,12 +17,12 @@ export default function userStore({ folder }: { folder: string }) {
     write,
     create,
     getById,
-    getByProviderId,
+    getByEmail,
   }
 
-  async function getByProviderId(pId: ProviderId): Promise<User | undefined> {
+  async function getByEmail(searchEmail: Email): Promise<User | undefined> {
     const users = await read()
-    return Object.values(users).find(({ providerId: { ext, uid } }) => ext === pId.ext && uid === pId.uid)
+    return Object.values(users).find(({ email }) => email === searchEmail)
   }
 
   async function getById(id: UserId): Promise<User | undefined> {
