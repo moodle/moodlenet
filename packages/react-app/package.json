@@ -78,6 +78,7 @@
     "react-dom": "^18.1.0",
     "react-router-dom": "^6.3.0",
     "sass": "^1.52.1",
-    "sass-loader": "^13.0.0"
+    "sass-loader": "^13.0.0",
+    "rxjs": "^7.5.5"
   }
 }
