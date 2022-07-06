@@ -1,2 +1,3 @@
 export * from './addons'
-export * from './Header'
+export * as Minimalistic from './Minimalistic'
+export * as Standard from './Standard'

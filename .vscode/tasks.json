@@ -14,6 +14,7 @@
         "arangodb dev-build",
         "test-extension dev-build",
         "authentication-manager dev-build",
+        "simple-email-auth dev-build",
         "extensions-manager dev-build"
       ],
       "presentation": {
@@ -24,6 +25,15 @@
         "showReuseMessage": true,
         "clear": false
       }
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "packages/simple-email-auth/tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"],
+      "group": "build",
+      "label": "simple-email-auth dev-build"
+      // "dependsOn": ["core dev-build"]
     },
     {
       "type": "typescript",
