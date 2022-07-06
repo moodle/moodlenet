@@ -1,16 +1,19 @@
 import type * as Core from '@moodlenet/core'
 import express, { Application } from 'express'
 import { Server } from 'http'
+import { makeExtPortsApp } from './ext-ports-app'
+import { PriMsgBaseUrl } from './types'
+export * from './types'
 
 interface Instance {
   mount(_: { mountApp: Application; absMountPath?: string }): void
   express: typeof express
 }
 
-export type MNHttpServerExt = Core.ExtDef<'moodlenet.http-server', '0.1.10', {}, void, Instance>
+export type MNHttpServerExt = Core.ExtDef<'moodlenet-http-server', '0.1.10', {}, void, Instance>
 
 const ext: Core.Ext<MNHttpServerExt, [Core.CoreExt]> = {
-  id: 'moodlenet.http-server@0.1.10',
+  id: 'moodlenet-http-server@0.1.10',
   displayName: 'http server',
   requires: ['moodlenet-core@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
   enable(shell) {
@@ -32,9 +35,9 @@ const ext: Core.Ext<MNHttpServerExt, [Core.CoreExt]> = {
           inst({ depl }) {
             return {
               mount({ mountApp, absMountPath }) {
-                console.log('MOUNT', { absMountPath })
                 const { extName /* , version */ } = shell.lib.splitExtId(depl.extId)
                 const mountPath = absMountPath ?? `/_/${extName}`
+                console.log('MOUNT', { extName, mountPath, absMountPath })
                 app.use(mountPath, mountApp)
               },
               express,
@@ -59,6 +62,9 @@ const ext: Core.Ext<MNHttpServerExt, [Core.CoreExt]> = {
             server = app.listen(port, function () {
               arguments[0] ? reject(arguments[0]) : resolve()
             })
+            const extPortsApp = makeExtPortsApp(shell)
+            const basePriMsgUrl: PriMsgBaseUrl = '/_/_'
+            app.use(basePriMsgUrl, extPortsApp)
             logger.info(`HTTP listening on port ${port} :)`)
           })
         }

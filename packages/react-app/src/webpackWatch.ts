@@ -107,7 +107,7 @@ async function start({
               directory: buildFolder,
             },
             proxy: {
-              '/_': {
+              '/_/*': {
                 target: 'http://localhost:8080',
               },
             },
@@ -130,8 +130,8 @@ async function start({
               chunkFilename: '[name].chunk.js',
             }
           : { */
-        filename: '[name].[chunkhash].bundle.js',
-        chunkFilename: '[name].[chunkhash].chunk.js',
+        filename: `[name].[chunkhash].bundle.js`,
+        chunkFilename: `[name].[chunkhash].chunk.js`,
         /*  }), */
       },
       resolve: {

@@ -1,3 +1,4 @@
+/// <reference path="../moodlenet-react-app-lib.d.ts" />
 import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import { mkdir } from 'fs/promises'
@@ -10,7 +11,6 @@ import { generateRoutesModule } from './generateRoutesModule'
 import { ExtPluginDef, ExtPluginsMap } from './types'
 import { fixModuleLocForWebpackByOS } from './util'
 import startWebpack from './webpackWatch'
-
 
 export * from './types'
 // const wpcfg = require('../webpack.config')
@@ -33,17 +33,21 @@ const ExtContextProvidersModuleFile = './src/webapp/extContextProvidersModules.t
 const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
   id: 'moodlenet.react-app@0.1.10',
   displayName: 'webapp',
-  requires: ['moodlenet-core@0.1.10', 'moodlenet.http-server@0.1.10'],
+  requires: ['moodlenet-core@0.1.10', 'moodlenet-http-server@0.1.10'],
   enable(shell) {
     return {
       async deploy(/* { tearDown } */) {
         await mkdir(buildFolder, { recursive: true })
-        shell.onExtInstance<MNHttpServerExt>('moodlenet.http-server@0.1.10', (inst /* , depl */) => {
+        shell.onExtInstance<MNHttpServerExt>('moodlenet-http-server@0.1.10', (inst /* , depl */) => {
           const { express, mount } = inst
           const mountApp = express()
           const staticWebApp = express.static(latestBuildFolder, {})
           mountApp.use(staticWebApp)
-          mountApp.get('*', (_req, res) => {
+          mountApp.get(`*`, (req, res, next) => {
+            if (req.url.startsWith('/_/')) {
+              next()
+              return
+            }
             res.sendFile(join(latestBuildFolder, 'index.html'))
           })
           mount({ mountApp, absMountPath: '/' })
@@ -63,6 +67,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
 
         const virtualModules = new VirtualModulesPlugin(virtualModulesMap)
         const baseResolveAlias: ResolveOptions['alias'] = {
+          'rxjs': resolve(__dirname, '..', 'node_modules', 'rxjs'),
           'react': resolve(__dirname, '..', 'node_modules', 'react'),
           'react-router-dom': resolve(__dirname, '..', 'node_modules', 'react-router-dom'),
         }
