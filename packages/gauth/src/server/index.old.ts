@@ -5,12 +5,15 @@ import type { Express } from 'express';
 import jwt from "jsonwebtoken";
 import querystring from "querystring";
 
+// import * as exApp from module('./app');
+const exApp:any={};
+
 import {
   COOKIE_NAME, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JWT_SECRET, SERVER_ROOT_URI, UI_ROOT_URI
 } from "./config";
 
 export function creatApp(app:Express) {
-
+  exApp.init(app)
   app.use(
     cors({
       // Sets Access-Control-Allow-Origin to the UI URI
@@ -136,7 +139,7 @@ export function creatApp(app:Express) {
       res.send(decoded);
     } catch (err) {
       console.log(err);
-      res.send(null);
+      res.send('has error');
     }
   });
 }
