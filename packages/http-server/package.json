@@ -15,6 +15,7 @@
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
+    "body-parser": "^1.19.2",
     "express": "^4.17.2"
   },
   "devDependencies": {
