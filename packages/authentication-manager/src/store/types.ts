@@ -1,13 +1,16 @@
 import { ExtName } from '@moodlenet/core'
 
 export type UserId = string
+
+export type ProviderId = {
+  ext: ExtName
+  uid: string
+}
+
 export type User = {
   id: UserId
   displayName: string
-  provider: {
-    ext: ExtName
-    id: string
-  }
+  providerId: ProviderId
   created: string
 }
 
