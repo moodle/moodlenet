@@ -1,6 +1,7 @@
 import CallMadeIcon from '@material-ui/icons/CallMade'
 import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import { FC } from 'react'
+import { Link } from 'react-router-dom'
 import Card from '../../../atoms/Card/Card'
 import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
 import PrimaryButton from '../../../atoms/PrimaryButton/PrimaryButton'
@@ -28,12 +29,10 @@ export const SignupBody: FC<SignupProps> = ({}) => {
       <div className={`signup-content`}>
         {/* <div className={`signup-content ${requestSent ? 'success' : ''}`}> */}
         <Card hover={true}>
-          {/* <Link href={SignupHref}> */}
-          <a>
+          <Link to={`/login/email`}>
             Log in
             <CallMadeIcon />
-          </a>
-          {/* </Link> */}
+          </Link>
         </Card>
         <Card>
           <div className="content">

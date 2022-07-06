@@ -1,5 +1,6 @@
 import CallMadeIcon from '@material-ui/icons/CallMade'
 import { FC } from 'react'
+import { Link } from 'react-router-dom'
 // import { Link } from '../../../../elements/link'
 import Card from '../../../atoms/Card/Card'
 import { InputTextField } from '../../../atoms/InputTextField/InputTextField'
@@ -72,11 +73,12 @@ export const LoginBody: FC<LoginProps> = ({}) => {
               <div className="content">
                 <div className="left">
                   <PrimaryButton
-                  // onClick={
-                  //   form.isSubmitting || form.isValidating
-                  //     ? undefined
-                  //     : form.submitForm
-                  // }
+                    onClick={() => alert('Nothing to see here, for the moment 🤫')}
+                    // onClick={
+                    //   form.isSubmitting || form.isValidating
+                    //     ? undefined
+                    //     : form.submitForm
+                    // }
                   >
                     Log in
                   </PrimaryButton>
@@ -103,12 +105,10 @@ export const LoginBody: FC<LoginProps> = ({}) => {
           </div>
         </Card>
         <Card hover={true}>
-          {/* <Link href={signupHref}> */}
-          <a>
+          <Link to={`/signup/email`}>
             Sign up
             <CallMadeIcon />
-          </a>
-          {/* </Link> */}
+          </Link>
         </Card>
       </div>
     </div>

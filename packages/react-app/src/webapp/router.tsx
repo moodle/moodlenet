@@ -3,6 +3,7 @@ import routes from './routes'
 import { Login } from './ui/components/pages/Access/Login/Login'
 import { RootLogin } from './ui/components/pages/Access/RootLogin/RootLogin'
 import { Signup } from './ui/components/pages/Access/Signup/Signup'
+import { Landing } from './ui/components/pages/Landing/Landing'
 
 // const A = lazy(() => import('./A'))
 
@@ -18,6 +19,7 @@ const AppRouter = () => {
         <Route path="signup">
           <Route path="email" element={<Signup />} />
         </Route>
+        <Route path="/" element={<Landing />} />
         {/* <Route
       path="a"
       element={
