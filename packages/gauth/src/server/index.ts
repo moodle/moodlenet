@@ -1,5 +1,6 @@
 
 import ConnSqLite from 'connect-sqlite3';
+import csrf from 'csurf';
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
@@ -10,12 +11,13 @@ import path from 'path';
 import authRouter from './routes/auth';
 import indexRouter from './routes/index';
 
+const dbPath = path.resolve(__dirname, '..', '..', 'var', 'db');
+
 const SQLiteStore = ConnSqLite(session)
 export function creatApp(app: express.Express) {
   app.use(express.static(path.resolve(__dirname, '..', '..', 'public')))
   app.engine('ejs', require('ejs').__express)
   app.set('views', path.resolve(__dirname, '..', '..', 'views'))
-  console.log('yyyyyyyyyyyyy', path.join(__dirname, 'views'))
   app.set('view engine', 'ejs')
 
 
@@ -23,10 +25,17 @@ export function creatApp(app: express.Express) {
     secret: 'keyboard cat',
     resave: false, // don't save session if unmodified
     saveUninitialized: false, // don't create session until something stored
-    store: new SQLiteStore({ db: 'sessions.db', dir: 'var/db' })
+    store: new SQLiteStore({ db: 'sessions.db', dir: dbPath })
   }))
 
   app.use(passport.authenticate('session'));
+
+  app.use(csrf());
+
+  app.use(function(req, res, next) {
+    res.locals.csrfToken = req.csrfToken();
+    next();
+  });
 
   app.use(function (req, res, next) {
     var msgs = (req.session as any).messages || [];
