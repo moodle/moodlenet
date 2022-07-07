@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren } from 'react'
-import { TestCtx } from '../react-app-lib/testLib'
+import * as auth from '../react-app-lib/auth'
 import extCtxProviders from './extContextProvidersModules'
 import * as header from './ui/components/organisms/Header'
 
@@ -11,11 +11,11 @@ export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => 
 
   return (
     <header.Provider>
-      <TestCtx.Provider value={{ _: 'provided test value' }}>
+      <auth.Provider>
         {/* <I18nProvider i18n={i18n}> */}
         {ctxProviderWrap}
         {/* </I18nProvider> */}
-      </TestCtx.Provider>
+      </auth.Provider>
     </header.Provider>
   )
 }

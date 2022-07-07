@@ -1,15 +1,16 @@
 {
   "extends": "../../tsconfig.json",
   // "include": ["src/ui", "src/custom.d.ts"],
-  "exclude": ["lib/**/*"],
+  "exclude": ["lib/**/*", "build", "latest-build"],
   "compilerOptions": {
-    "rootDirs": ["src", "react-app-lib"],
+    "rootDir": "src",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "target": "ES5",
     "allowSyntheticDefaultImports": true,
     "outDir": "lib",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "allowJs": true
   }
 }

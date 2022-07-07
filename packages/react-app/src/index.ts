@@ -1,3 +1,5 @@
+/// <reference path="../moodlenet-react-app-lib.d.ts" />
+import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import { mkdir } from 'fs/promises'
@@ -10,7 +12,6 @@ import { generateRoutesModule } from './generateRoutesModule'
 import { ExtPluginDef, ExtPluginsMap } from './types'
 import { fixModuleLocForWebpackByOS } from './util'
 import startWebpack from './webpackWatch'
-
 
 export * from './types'
 // const wpcfg = require('../webpack.config')
@@ -27,29 +28,36 @@ export type ReactAppExt = ExtDef<
     setup(_: ExtPluginDef): void
   }
 >
-const RoutesModuleFile = './src/webapp/routes.ts'
+const ExtRoutesModuleFile = './src/webapp/ext-routes.ts'
 const ExposeModuleFile = './src/react-app-lib/exposedExtModules.ts'
 const ExtContextProvidersModuleFile = './src/webapp/extContextProvidersModules.tsx'
-const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
+const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]> = {
   id: 'moodlenet.react-app@0.1.10',
   displayName: 'webapp',
-  requires: ['moodlenet-core@0.1.10', 'moodlenet.http-server@0.1.10'],
+  requires: ['moodlenet-core@0.1.10', 'moodlenet-http-server@0.1.10', 'moodlenet-authentication-manager@0.1.10'],
   enable(shell) {
     return {
       async deploy(/* { tearDown } */) {
         await mkdir(buildFolder, { recursive: true })
-        shell.onExtInstance<MNHttpServerExt>('moodlenet.http-server@0.1.10', (inst /* , depl */) => {
+        shell.onExtInstance<MNHttpServerExt>('moodlenet-http-server@0.1.10', (inst /* , depl */) => {
           const { express, mount } = inst
           const mountApp = express()
-          const staticWebApp = express.static(latestBuildFolder, {index:'index.html'})
+          const staticWebApp = express.static(latestBuildFolder, { index: 'index.html' })
           mountApp.use(staticWebApp)
+          mountApp.get(`*`, (req, res, next) => {
+            if (req.url.startsWith('/_/')) {
+              next()
+              return
+            }
+            res.sendFile(resolve(latestBuildFolder, 'index.html'))
+          })
           mount({ mountApp, absMountPath: '/' })
         })
 
         const extPluginsMap: ExtPluginsMap = {}
 
         const virtualModulesMap /* : VirtualModulesMap  */ = {
-          [RoutesModuleFile]: generateRoutesModule({ extPluginsMap }),
+          [ExtRoutesModuleFile]: generateRoutesModule({ extPluginsMap }),
           [ExposeModuleFile]: generateExposedModule({ extPluginsMap }),
           [ExtContextProvidersModuleFile]: generateCtxProvidersModule({ extPluginsMap }),
           '../node_modules/moodlenet-react-app-lib.ts': `
@@ -60,6 +68,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
 
         const virtualModules = new VirtualModulesPlugin(virtualModulesMap)
         const baseResolveAlias: ResolveOptions['alias'] = {
+          'rxjs': resolve(__dirname, '..', 'node_modules', 'rxjs'),
           'react': resolve(__dirname, '..', 'node_modules', 'react'),
           'react-router-dom': resolve(__dirname, '..', 'node_modules', 'react-router-dom'),
         }
@@ -85,7 +94,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt]> = {
                   }
                 }
                 const routesModuleContent = generateRoutesModule({ extPluginsMap })
-                virtualModules.writeModule(RoutesModuleFile, routesModuleContent)
+                virtualModules.writeModule(ExtRoutesModuleFile, routesModuleContent)
 
                 const exposedModuleContent = generateExposedModule({ extPluginsMap })
                 virtualModules.writeModule(ExposeModuleFile, exposedModuleContent)
