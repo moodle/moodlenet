@@ -1,10 +1,13 @@
 import express from 'express';
 // var ensureLogIn = require('connect-ensure-login').ensureLoggedIn;
-import { db } from '../db';
+import { getUsers, getUsersUsers } from '../db';
 
 // var ensureLoggedIn = ensureLogIn();
+function middleWare(_: any, __: any, next: any) {
+  next();
+}
 
-function fetchTodos(req:any, res:any, next:any) {
+/* function fetchTodos(req:any, res:any, next:any) {
   db.all('SELECT rowid AS id, * FROM todos WHERE owner_id = ?', [
     req.user.id
   ], function(err:any, rows:any) {
@@ -21,23 +24,36 @@ function fetchTodos(req:any, res:any, next:any) {
     res.locals.activeCount = todos.filter(function(todo:any) { return !todo.completed; }).length;
     res.locals.completedCount = todos.length - res.locals.activeCount;
     next();
-  });
+  }); 
 }
-
-const router:express.Router = express.Router();
+ */
+const router: express.Router = express.Router();
 
 /* GET home page. */
-router.get('/', function(req:any, res:any, next:any) {
+router.get('/', function (req: any, res: any, next: any) {
   if (!req.user) { return res.render('home'); }
   next();
-}, fetchTodos, function(req:any, res:any) {
+}, middleWare, function (req: any, res: any) {
   res.locals.filter = null;
+  res.render('index', { user: req.user || {} });
+});
+
+router.get('/a', function (req: any, res: any) {
+  console.log('user xxx', req.user);
   res.render('index', { user: req.user });
 });
 
-router.get('/a', function(_:any, res:any) {
 
-  res.send('im a ');
+router.get('/users', function (_: any, res: any) {
+  console.log('xxxxxxx res.locals csfr', res.locals)
+  // res.send('im a ');
+  const render = (users: Array<any>) => getUsers((err: any, usersFed: Array<any>) => {
+   // console.log('xxxxx render usersFed', usersFed)
+   // console.log('xxxxx render users', users)
+    return !!err ? res.send('sql error ') : res.render('users', { locals:res.locals, user: null, users, usersFed })
+  })
+  getUsersUsers((err: any, rows: any) => !err ? render(rows) : res.send('no data'))
+  // res.render('users', { user: req.user });
 });
 
 export default router // const indexRouter:Router = router

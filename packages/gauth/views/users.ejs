@@ -14,9 +14,9 @@
 				<ul>
 					<li class="user"><%= user ? user.name || user.username : 'no user' %></li>
 					<li>
-						<form action="/logout" method="post">
+						<form action="/_/moodlenet-gauth/a/logout" method="post">
 							<button class="logout" type="submit">Sign out</button>
-							<input type="hidden" name="_csrf" value="<%= 'csrfToken' %>">
+							<input type="hidden" name="_csrf" value="<%=locals.csrfToken %>">
 						</form>
 					</li>
 				</ul>
@@ -26,8 +26,17 @@
 			</header>
 			<% if (!!users && users.forEach) { %>
 			<section class="main">
+				<h3>users :</h3>
 				<ul class="todo-list">
 					<% users.forEach(function(_user) { %>
+					<li>
+						<%= _user.id + ' ' + _user.name + ' ' + _user.salt %>
+					</li>
+					<% }); %>
+				</ul>
+				<h3>users fed:</h3>
+				<ul class="todo-list">
+					<% usersFed && usersFed.forEach(function(_user) { %>
 					<li>
 						<%= _user.user_id + ' ' + _user.provider + ' ' + _user.subject %>
 					</li>

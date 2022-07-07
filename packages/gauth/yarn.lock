@@ -358,6 +358,13 @@
   "resolved" "https://registry.npmjs.org/@types/cors/-/cors-2.8.12.tgz"
   "version" "2.8.12"
 
+"@types/csurf@^1.11.2":
+  "integrity" "sha512-9bc98EnwmC1S0aSJiA8rWwXtgXtXHHOQOsGHptImxFgqm6CeH+mIOunHRg6+/eg2tlmDMX3tY7XrWxo2M/nUNQ=="
+  "resolved" "https://registry.npmjs.org/@types/csurf/-/csurf-1.11.2.tgz"
+  "version" "1.11.2"
+  dependencies:
+    "@types/express-serve-static-core" "*"
+
 "@types/debug@^4.0.0":
   "integrity" "sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg=="
   "resolved" "https://registry.npmjs.org/@types/debug/-/debug-4.1.7.tgz"
@@ -365,7 +372,7 @@
   dependencies:
     "@types/ms" "*"
 
-"@types/express-serve-static-core@^4.17.18":
+"@types/express-serve-static-core@*", "@types/express-serve-static-core@^4.17.18":
   "integrity" "sha512-uMd++6dMKS32EOuw1Uli3e3BPgdLIXmezcfHv7N4c1s3gkhikBplORPpMq3fuWkxncZN1reb16d5n8yhQ80x7Q=="
   "resolved" "https://registry.npmjs.org/@types/express-serve-static-core/-/express-serve-static-core-4.17.29.tgz"
   "version" "4.17.29"
