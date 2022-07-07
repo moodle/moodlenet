@@ -1,6 +1,6 @@
 import { useFormik } from 'formik'
 import lib from 'moodlenet-react-app-lib'
-import { FC, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 import { firstValueFrom } from 'rxjs'
 import { SimpleEmailAuthExt } from '..'
 
@@ -10,11 +10,14 @@ export type LoginFormValues = { email: string; password: string }
 export const Icon: FC = () => <span>email</span>
 export const Panel: FC = () => {
   const [wrongCreds, setWrongCreds] = useState(false)
+  const auth = useContext(lib.auth.AuthCtx)
   const form = useFormik<LoginFormValues>({
     initialValues: { email: '', password: '' },
     async onSubmit({ email, password }) {
       setWrongCreds(false)
-      const res = await firstValueFrom(
+      const {
+        msg: { data: res },
+      } = await firstValueFrom(
         lib.priHttp
           .sub<SimpleEmailAuthExt>(
             'moodlenet-simple-email-auth',
@@ -25,12 +28,12 @@ export const Panel: FC = () => {
           })
           .pipe(lib.priHttp.dematMessage()),
       )
-      if (!res.msg.data.success) {
+      if (!res.success) {
         setWrongCreds(true)
         return
       }
       setWrongCreds(false)
-      alert('ok')
+      auth.setSessionToken(res.sessionToken)
     },
   })
   const shouldShowErrors = !!form.submitCount
