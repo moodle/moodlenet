@@ -1,4 +1,6 @@
 import { FC, PropsWithChildren, useContext } from 'react'
+import { Link } from 'react-router-dom'
+import { AuthCtx } from '../../../../../../react-app-lib/auth'
 // import Switch from '../../atoms/Switch/Switch'
 import { AddonCtx } from '../addons'
 import './Header.scss'
@@ -7,6 +9,7 @@ type HeaderProps = {}
 
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
   const addonCtx = useContext(AddonCtx)
+  const { clientSession } = useContext(AuthCtx)
   return (
     <div className="header">
       <div className="content">
@@ -20,6 +23,14 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
           {addonCtx.rightComponents.flatMap(({ addon: { StdHeaderItems } }, index) => {
             return (StdHeaderItems ?? []).map((Item, subIndex) => <Item key={`${index}:${subIndex}`} />)
           })}
+
+          {clientSession ? (
+            <span>
+              hello <strong>{clientSession.user.displayName}</strong>
+            </span>
+          ) : (
+            <Link to="/login">login</Link>
+          )}
         </div>
       </div>
     </div>
