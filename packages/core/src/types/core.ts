@@ -11,7 +11,7 @@ export type CoreExt = ExtDef<
     ext: {
       deployed: Port<'out', { extId: ExtId }>
       undeployed: Port<'out', { extId: ExtId }>
-      listDeployed: SubTopo<void, ExtInfo[]>
+      listDeployed: SubTopo<void, ExtInfo>
       deploy: SubTopo<
         {
           extId: ExtId
