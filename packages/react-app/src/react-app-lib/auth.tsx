@@ -28,6 +28,7 @@ export type AuthCtxT = {
     sessionToken: SessionToken,
   ): Promise<{ success: true; clientSession: ClientSession } | { success: false; msg: string }>
   clientSession: ClientSession | null
+  logout(): void
 }
 
 const srvSub = priHttp.sub<AuthenticationManagerExt>('moodlenet-authentication-manager', '0.1.10')
@@ -95,6 +96,10 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
     [setClientSession],
   )
 
+  const logout = useCallback<AuthCtxT['logout']>(() => {
+    setClientSession(null)
+    writeSessionToken(null)
+  }, [setClientSession])
   const setSessionToken = useCallback<AuthCtxT['setSessionToken']>(
     async token => {
       const res = await fetchClientSession(token)
@@ -115,8 +120,8 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   }, [fetchClientSession])
 
   const ctx = useMemo<AuthCtxT>(() => {
-    return { registerLogin, loginItems, signupItems, registerSignup, clientSession, setSessionToken }
-  }, [registerLogin, loginItems, signupItems, registerSignup, clientSession, setSessionToken])
+    return { registerLogin, loginItems, signupItems, registerSignup, clientSession, setSessionToken, logout }
+  }, [registerLogin, loginItems, signupItems, registerSignup, clientSession, setSessionToken, logout])
 
   return <AuthCtx.Provider value={ctx}>{children}</AuthCtx.Provider>
 }

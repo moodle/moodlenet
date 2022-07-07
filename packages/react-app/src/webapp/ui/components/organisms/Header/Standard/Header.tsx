@@ -9,7 +9,7 @@ type HeaderProps = {}
 
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
   const addonCtx = useContext(AddonCtx)
-  const { clientSession } = useContext(AuthCtx)
+  const { clientSession, logout } = useContext(AuthCtx)
   return (
     <div className="header">
       <div className="content">
@@ -27,6 +27,9 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
           {clientSession ? (
             <span>
               hello <strong>{clientSession.user.displayName}</strong>
+              <span style={{ cursor: 'pointer', marginLeft: '10px' }} onClick={logout}>
+                logout
+              </span>
             </span>
           ) : (
             <Link to="/login">login</Link>
