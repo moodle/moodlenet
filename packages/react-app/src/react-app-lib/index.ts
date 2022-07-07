@@ -1,5 +1,5 @@
 import * as ui from '../webapp/ui'
-import { useRegisterLogin, useRegisterSignup } from './auth'
+import * as auth from './auth'
 import { getExposed } from './getExposed'
 import priHttp from './pri-http'
 
@@ -10,10 +10,7 @@ declare global {
 const lib = {
   priHttp,
   ui,
-  auth: {
-    useRegisterSignup,
-    useRegisterLogin,
-  },
+  auth,
   getExposed,
 }
 

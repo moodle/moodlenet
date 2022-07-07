@@ -7,7 +7,9 @@ export type ProviderId = {
   uid: string
 }
 
-export type User = {
+export type User = UserData & {}
+
+export type UserData = {
   id: UserId
   displayName: string
   providerId: ProviderId

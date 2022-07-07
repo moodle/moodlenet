@@ -18,6 +18,7 @@ export default function userStore({ folder }: { folder: string }) {
     create,
     getById,
     getByProviderId,
+    delUser,
   }
 
   async function getByProviderId(pId: ProviderId): Promise<User | undefined> {
@@ -28,6 +29,10 @@ export default function userStore({ folder }: { folder: string }) {
   async function getById(id: UserId): Promise<User | undefined> {
     const users = await read()
     return users[id]
+  }
+
+  async function delUser(id: UserId) {
+    return patchUsers({ [id]: undefined } as any)
   }
 
   async function create(newUser: Omit<User, 'id' | 'created'>): Promise<User> {

@@ -1,14 +1,17 @@
+import type { AuthenticationManagerExt, SessionToken } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
 import userStore from './store'
-import { User } from './store/types'
 
 export type SimpleEmailAuthTopo = {
-  login: SubTopo<{ email: string; password: string }, { success: true } | { success: false }>
+  login: SubTopo<
+    { email: string; password: string },
+    { success: true; sessionToken: SessionToken } | { success: false }
+  >
   signup: SubTopo<
     { email: string; password: string; displayName: string },
-    { success: true; user: User } | { success: false; msg: string }
+    { success: true } | { success: false; msg: string }
   >
 }
 
@@ -42,16 +45,27 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
               },
             },
           }) {
-            const mUser = await store.getByEmail(email)
-            if (!mUser || mUser.password !== password) {
+            const user = await store.getByEmail(email)
+            if (!user || user.password !== password) {
               return { success: false }
             }
-            return { success: true }
+            const {
+              msg: { data: res },
+            } = await shell.lib.rx.firstValueFrom(
+              shell.lib.subDemat<AuthenticationManagerExt>(shell)(
+                'moodlenet-authentication-manager@0.1.10::getSessionToken',
+              )({ uid: user.id }),
+            )
+            if (!res.success) {
+              return { success: false }
+            }
+            const sessionToken = res.sessionToken
+            return { success: true, sessionToken }
           },
           async signup({
             msg: {
               data: {
-                req: { email, password /* , displayName */ },
+                req: { email, password, displayName },
               },
             },
           }) {
@@ -59,9 +73,23 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
             if (mUser) {
               return { success: false, msg: 'email exists' }
             }
+
             const user = await store.create({ email, password })
 
-            return { success: true, user }
+            const {
+              msg: { data: authRes },
+            } = await shell.lib.rx.firstValueFrom(
+              shell.lib.subDemat<AuthenticationManagerExt>(shell)(
+                'moodlenet-authentication-manager@0.1.10::registerUser',
+              )({ uid: user.id, displayName }),
+            )
+
+            if (!authRes.success) {
+              await store.delUser(user.id)
+              return authRes
+            }
+
+            return { success: true }
           },
         })
         return {}

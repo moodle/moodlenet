@@ -18,6 +18,7 @@ export default function userStore({ folder }: { folder: string }) {
     create,
     getById,
     getByEmail,
+    delUser,
   }
 
   async function getByEmail(searchEmail: Email): Promise<User | undefined> {
@@ -40,6 +41,10 @@ export default function userStore({ folder }: { folder: string }) {
 
   async function read(): Promise<Users> {
     return JSON.parse(await readFile(file(), 'utf-8'))
+  }
+
+  async function delUser(id: UserId) {
+    return patchUsers({ [id]: undefined } as any)
   }
 
   async function patchUsers(patch: Users) {
