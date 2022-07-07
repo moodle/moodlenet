@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import routes from './routes'
+import { Route, Routes } from 'react-router-dom'
+import routes from './ext-routes'
 import { Login } from './ui/components/pages/Access/Login/Login'
 import { RootLogin } from './ui/components/pages/Access/RootLogin/RootLogin'
 import { Signup } from './ui/components/pages/Access/Signup/Signup'
@@ -10,7 +10,7 @@ import { Landing } from './ui/components/pages/Landing/Landing'
 const AppRouter = () => {
   //console.log('Routes: ', routes)
   return (
-    <Router>
+    <>
       <Routes>
         <Route path="login">
           <Route index element={<Login />} />
@@ -34,7 +34,7 @@ const AppRouter = () => {
           )
         })}
       </Routes>
-    </Router>
+    </>
   )
 }
 
