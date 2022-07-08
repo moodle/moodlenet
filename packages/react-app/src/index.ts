@@ -3,7 +3,7 @@ import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager
 import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import { mkdir } from 'fs/promises'
-import { join, resolve } from 'path'
+import { resolve } from 'path'
 import { ResolveOptions } from 'webpack'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
 import { generateCtxProvidersModule } from './generateCtxProvidersModule'
@@ -42,14 +42,14 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
         shell.onExtInstance<MNHttpServerExt>('moodlenet-http-server@0.1.10', (inst /* , depl */) => {
           const { express, mount } = inst
           const mountApp = express()
-          const staticWebApp = express.static(latestBuildFolder, {})
+          const staticWebApp = express.static(latestBuildFolder, { index: 'index.html' })
           mountApp.use(staticWebApp)
           mountApp.get(`*`, (req, res, next) => {
             if (req.url.startsWith('/_/')) {
               next()
               return
             }
-            res.sendFile(join(latestBuildFolder, 'index.html'))
+            res.sendFile(resolve(latestBuildFolder, 'index.html'))
           })
           mount({ mountApp, absMountPath: '/' })
         })

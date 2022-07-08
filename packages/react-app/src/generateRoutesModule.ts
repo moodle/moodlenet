@@ -12,7 +12,7 @@ ${Object.values(extPluginsMap)
       ? null
       : `
 {
-rootPath: '${extPlugin.routes.rootPath}',
+rootPath: ${extPlugin.routes.rootPath ? `'${extPlugin.routes.rootPath}'` : undefined},
 extRoutingElement: require('file:${fixModuleLocForWebpackByOS(extPlugin.routes.moduleLoc)}').default,
 extName: '${extPlugin.extName}',
 extVersion:'${extPlugin.extVersion}',
@@ -27,4 +27,3 @@ export default routes
   
 `
 }
-
