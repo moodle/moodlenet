@@ -45,5 +45,8 @@
     "rules": {
       "@typescript-eslint/no-explicit-any": "warn"
     }
+  },
+  "dependencies": {
+    "csurf": "^1.11.0"
   }
 }
