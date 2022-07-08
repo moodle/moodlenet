@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "typeRoots": ["@types", "./node_modules/@types"],
     "rootDir": "src",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
