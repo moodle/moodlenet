@@ -8,7 +8,7 @@ export * from './types'
 export type Topo = {
   registerUser: SubTopo<
     { uid: string; displayName: string },
-    { success: true; user: User } | { success: false; msg: string }
+    { success: true; user: User; sessionToken: SessionToken } | { success: false; msg: string }
   >
   getSessionToken: SubTopo<
     { uid: string },
@@ -49,7 +49,9 @@ const ext: Ext<AuthenticationManagerExt, [CoreExt]> = {
                 uid,
               },
             })
-            return { success: true, user }
+            const sessionToken = await createSessionToken(user)
+
+            return { success: true, user, sessionToken }
           },
           async getSessionToken({ msg }) {
             const { extName } = shell.lib.splitExtId(msg.source)

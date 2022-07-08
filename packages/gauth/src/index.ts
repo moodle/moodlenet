@@ -26,7 +26,7 @@ const ext: Ext<SocialAuthExt, [CoreExt, ReactAppExt]> = {
     // by etto http://localhost:3000/_/moodlenet-gauth/auth/me/
     shell.onExtInstance<MNHttpServerExt>('moodlenet-http-server@0.1.10', inst => {
       const app = inst.express()
-      prepareApp(app)
+      prepareApp(shell, app)
       inst.mount({ mountApp: app })
     })
     shell.expose({})
