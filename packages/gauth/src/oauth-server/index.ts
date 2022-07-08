@@ -1,8 +1,12 @@
 // import csrf from 'csurf'
+import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
+import { Shell } from '@moodlenet/core'
 import type { Express } from 'express'
+import { SocialAuthExt } from '..'
+import { getAuthMngUidByOauthResult } from './lib'
 import getPassport from './passport'
 
-export function prepareApp(app: Express) {
+export function prepareApp(shell: Shell<SocialAuthExt>, app: Express) {
   const passport = getPassport()
 
   // app.use(csrf())
@@ -18,7 +22,39 @@ export function prepareApp(app: Express) {
 
   app.get('/oauth2/redirect/:providerName', async (req, res) => {
     // console.log('***', req.params.providerName, inspect(req.user, false, 10, true))
-    res.redirect(req.user ? `/moodlenet-gauth/login-success` : '/moodlenet-gauth/login-fail')
+    if (!req.user) {
+      res.redirect(`/moodlenet-gauth/login-fail?msg=couldn't authenticate`)
+      return
+    }
+    const authSrv = shell.lib.subDemat<AuthenticationManagerExt>(shell)
+    const uid = getAuthMngUidByOauthResult(req.user.oauth)
+    const {
+      msg: { data: getTokenData },
+    } = await shell.lib.rx.firstValueFrom(
+      authSrv('moodlenet-authentication-manager@0.1.10::getSessionToken')({
+        uid,
+      }),
+    )
+    let token: string
+    if (!getTokenData.success) {
+      const {
+        msg: { data: createUserRes },
+      } = await shell.lib.rx.firstValueFrom(
+        authSrv('moodlenet-authentication-manager@0.1.10::registerUser')({
+          uid,
+          displayName: req.user.oauth.profile.displayName,
+        }),
+      )
+      if (!createUserRes.success) {
+        res.redirect(`/moodlenet-gauth/login-fail?msg=couldn't create user`)
+        return
+      }
+      token = createUserRes.sessionToken
+    } else {
+      token = getTokenData.sessionToken
+    }
+
+    res.redirect(`/moodlenet-gauth/login-success?token=${token}`)
   })
 
   /* POST /logout
