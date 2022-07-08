@@ -14,7 +14,7 @@
 				<ul>
 					<li class="user"><%= user ? user.name || user.username : 'no user' %></li>
 					<li>
-						<form action="/_/moodlenet-gauth/a/logout" method="post">
+						<form action="/_/moodlenet-passport-auth/a/logout" method="post">
 							<button class="logout" type="submit">Sign out</button>
 							<input type="hidden" name="_csrf" value="<%=locals.csrfToken %>">
 						</form>

@@ -8,7 +8,7 @@ export const Icon: FC = () => <span>social</span>
 export const Panel: FC = () => {
   return (
     <>
-      <a href="/_/moodlenet-gauth/login/federated/google">
+      <a href="/_/moodlenet-passport-auth/login/federated/google">
         <PrimaryButton>Google</PrimaryButton>
       </a>
       <PrimaryButton onClick={unimplemented}>Facebook</PrimaryButton>
