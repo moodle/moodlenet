@@ -9,7 +9,7 @@ function getPassport() {
       {
         clientID: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL: '/_/moodlenet-gauth/oauth2/redirect/google',
+        callbackURL: '/_/moodlenet-passport-auth/oauth2/redirect/google',
         scope: ['profile'],
       },
       (accessToken, refreshToken, profile, done) => {

@@ -1,17 +1,17 @@
 {
-  "name": "@moodlenet/gauth",
+  "name": "@moodlenet/passport-auth",
   "version": "0.0.1",
   "license": "AGPL-3.0",
   "moodlenet": {
     "name": "extensions-manager moodlenet",
-    "shortDesc": "a desc for gauth moodlenet"
+    "shortDesc": "a desc for passport-auth moodlenet"
   },
   "files": [
     "lib/",
     "src/"
   ],
   "main": "lib/index.js",
-  "description": "moodlenet gauth package",
+  "description": "moodlenet passport-auth package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {

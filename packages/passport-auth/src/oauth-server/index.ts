@@ -23,7 +23,7 @@ export function prepareApp(shell: Shell<SocialAuthExt>, app: Express) {
   app.get('/oauth2/redirect/:providerName', async (req, res) => {
     // console.log('***', req.params.providerName, inspect(req.user, false, 10, true))
     if (!req.user) {
-      res.redirect(`/moodlenet-gauth/login-fail?msg=couldn't authenticate`)
+      res.redirect(`/moodlenet-passport-auth/login-fail?msg=couldn't authenticate`)
       return
     }
     const authSrv = shell.lib.subDemat<AuthenticationManagerExt>(shell)
@@ -46,7 +46,7 @@ export function prepareApp(shell: Shell<SocialAuthExt>, app: Express) {
         }),
       )
       if (!createUserRes.success) {
-        res.redirect(`/moodlenet-gauth/login-fail?msg=couldn't create user`)
+        res.redirect(`/moodlenet-passport-auth/login-fail?msg=couldn't create user`)
         return
       }
       token = createUserRes.sessionToken
@@ -54,7 +54,7 @@ export function prepareApp(shell: Shell<SocialAuthExt>, app: Express) {
       token = getTokenData.sessionToken
     }
 
-    res.redirect(`/moodlenet-gauth/login-success?token=${token}`)
+    res.redirect(`/moodlenet-passport-auth/login-success?token=${token}`)
   })
 
   /* POST /logout

@@ -5,15 +5,15 @@ import { resolve } from 'path'
 import { prepareApp } from './oauth-server'
 
 export type SocialAuthTopo = {}
-export type SocialAuthExt = ExtDef<'moodlenet-gauth', '0.1.10', SocialAuthTopo>
+export type SocialAuthExt = ExtDef<'moodlenet-passport-auth', '0.1.10', SocialAuthTopo>
 
 const ext: Ext<SocialAuthExt, [CoreExt, ReactAppExt]> = {
-  id: 'moodlenet-gauth@0.1.10',
-  displayName: 'gauth ext',
+  id: 'moodlenet-passport-auth@0.1.10',
+  displayName: 'passport-auth ext',
   requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
   enable(shell) {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
-      console.log(`moodlenet-gauth: onExtInstance<ReactAppExt>`, inst)
+      console.log(`moodlenet-passport-auth: onExtInstance<ReactAppExt>`, inst)
       inst.setup({
         routes: {
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'routes.tsx'),
@@ -23,7 +23,7 @@ const ext: Ext<SocialAuthExt, [CoreExt, ReactAppExt]> = {
         },
       })
     })
-    // by etto http://localhost:3000/_/moodlenet-gauth/auth/me/
+    // by etto http://localhost:3000/_/moodlenet-passport-auth/auth/me/
     shell.onExtInstance<MNHttpServerExt>('moodlenet-http-server@0.1.10', inst => {
       const app = inst.express()
       prepareApp(shell, app)
@@ -32,7 +32,7 @@ const ext: Ext<SocialAuthExt, [CoreExt, ReactAppExt]> = {
     shell.expose({})
     return {
       deploy() {
-        shell.lib.pubAll<SocialAuthExt>('moodlenet-gauth@0.1.10', shell, {})
+        shell.lib.pubAll<SocialAuthExt>('moodlenet-passport-auth@0.1.10', shell, {})
         return {}
       },
     }

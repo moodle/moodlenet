@@ -15,7 +15,7 @@
         "test-extension dev-build",
         "authentication-manager dev-build",
         "extensions-manager dev-build",
-        "gauth dev-build",
+        "passport-auth dev-build",
         "simple-email-auth dev-build"
       ],
       "presentation": {
@@ -110,11 +110,11 @@
     },
     {
       "type": "typescript",
-      "tsconfig": "packages/gauth/tsconfig.json",
+      "tsconfig": "packages/passport-auth/tsconfig.json",
       "option": "watch",
       "problemMatcher": ["$tsc-watch"],
       "group": "build",
-      "label": "gauth dev-build"
+      "label": "passport-auth dev-build"
       // "dependsOn": ["core dev-build", "react-app dev-build"]
     }
   ]
