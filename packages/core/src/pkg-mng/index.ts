@@ -6,7 +6,7 @@ import { PkgMngCfg } from './types'
 export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
   return {
     install,
-    getInstalledPackagesInfo: getAllInstalledPackagesInfo,
+    getAllInstalledPackagesInfo,
   }
 
   async function install(installPkgReq: InstallPkgReq) {
@@ -16,8 +16,10 @@ export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
 
     const tmpInstallPackageInfo = await getPackageInfo(tmpInstallationInfo.tmpInstallationFolder)
 
-    const sageInstallationFolder = getSafeFolderPkgName(tmpInstallPackageInfo.packageJson)
-    await rename(tmpInstallationInfo.tmpInstallationFolder, resolve(pkgsFolder, sageInstallationFolder))
+    const safeInstallationFolder = getSafeFolderPkgName(tmpInstallPackageInfo.packageJson)
+    await rename(tmpInstallationInfo.tmpInstallationFolder, resolve(pkgsFolder, safeInstallationFolder))
+    // npm install
+    // create info.json { installPkgReq: installPkgReq } (type InstalledPkgInfo )
   }
 
   async function getAllInstalledPackagesInfo(): Promise<InstalledPackageInfo[]> {
@@ -29,3 +31,18 @@ export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
     return getPackageInfo(resolve(pkgsFolder, folder))
   }
 }
+/*
+/pkgsFolder
+  __moodlenet__passpoprt-auth_sdh7a/
+    info.json
+    src/
+    lib/
+    package.json
+    node_modules/
+  __moodlenet__email-pass-auth_sdh7a/
+    info.json
+    src/
+    lib/
+    package.json
+    node_modules/
+*/

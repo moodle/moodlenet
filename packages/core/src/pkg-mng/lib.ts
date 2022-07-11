@@ -20,7 +20,7 @@ export function getSafeFolderPkgName(packageJson: SafePackageJson) {
   const [name, scope] = pkgNameScopeTuple as [name: string, scope?: string]
   const uid = Math.random().toString(36).substring(2, 8)
   const safeName = `${scope ? `__${scope}__` : ``}${name}`
-  const safeInstallationFolder = `${safeName}__${packageJson.version}__${uid} `
+  const safeInstallationFolder = `${safeName}__${packageJson.version}__${uid}`
   return safeInstallationFolder
 }
 
@@ -32,5 +32,6 @@ export async function getPackageInfo(folder: string): Promise<InstalledPackageIn
   return {
     packageJson,
     folder,
+    // info: info.json
   }
 }

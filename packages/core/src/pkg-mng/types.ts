@@ -9,6 +9,11 @@ export type TmpInstallationInfo = {
   tmpInstallationFolder: string
 }
 
+//info.json
+export type InstalledPkgInfo = {
+  installPkgReq: InstallPkgReq
+}
+
 export type InstallerType = 'folder' | 'npm' //| 'file' | 'git'
 export type _InstallPkgReq<Type extends InstallerType, More> = More & { type: Type }
 export type PkgTmpInstaller<Req extends InstallPkgReq> = (installPkgReq: Req) => Promise<TmpInstallationInfo>
