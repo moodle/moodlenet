@@ -1,8 +1,11 @@
-import { readdir, rename } from 'fs/promises'
-import { resolve } from 'path'
-import { getPackageInfo, getSafeFolderPkgName, InstalledPackageInfo } from './lib'
-import { folderTmpInstaller, InstallPkgReq, npmTmpInstaller } from './tmp-installers'
-import { PkgMngCfg } from './types'
+import { copyFile } from 'fs/promises';
+import { resolve } from 'path';
+import { getPackageInfo, getSafeFolderPkgName, InstalledPackageInfo } from './lib';
+import { folderTmpInstaller, InstallPkgReq, npmTmpInstaller } from './tmp-installers';
+import { PkgMngCfg } from './types';
+
+// const myDirInfo = installDirsInfo();
+
 export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
   return {
     install,
@@ -14,23 +17,36 @@ export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
       ? npmTmpInstaller(installPkgReq)
       : folderTmpInstaller(installPkgReq))
 
-    const tmpInstallPackageInfo = await getPackageInfo(tmpInstallationInfo.tmpInstallationFolder)
+console.log('pkg.mng install ddddd ', tmpInstallationInfo);
+console.log('pkg.mng pkgsFolder ', pkgsFolder);
 
+
+
+   const tmpInstallPackageInfo = await getPackageInfo(tmpInstallationInfo.tmpInstallationFolder)
+    console.log('pkg.mng tmpInstallPackageInfo ', tmpInstallPackageInfo);
     const safeInstallationFolder = getSafeFolderPkgName(tmpInstallPackageInfo.packageJson)
-    await rename(tmpInstallationInfo.tmpInstallationFolder, resolve(pkgsFolder, safeInstallationFolder))
+    console.log('pkg.mng safeInstallationFolder ', safeInstallationFolder);
+const newpath = resolve(pkgsFolder, safeInstallationFolder)
+    await copyFile(tmpInstallationInfo.tmpInstallationFolder, newpath) ;
+
+  // questa non funziona per le partizioni diverse su linux 
+   // await rename(tmpInstallationInfo.tmpInstallationFolder, resolve(pkgsFolder, safeInstallationFolder))
     // npm install
     // create info.json { installPkgReq: installPkgReq } (type InstalledPkgInfo )
   }
 
   async function getAllInstalledPackagesInfo(): Promise<InstalledPackageInfo[]> {
-    const dir = await readdir(pkgsFolder, { withFileTypes: true })
+    return []
+   /* const dir = await readdir(pkgsFolder, { withFileTypes: true })
     return Promise.all(dir.filter(_ => _.isDirectory()).map(({ name: folder }) => getInstalledPackageInfo(folder)))
+    */
   }
 
   async function getInstalledPackageInfo(folder: string): Promise<InstalledPackageInfo> {
     return getPackageInfo(resolve(pkgsFolder, folder))
   }
 }
+
 /*
 /pkgsFolder
   __moodlenet__passpoprt-auth_sdh7a/
@@ -46,3 +62,8 @@ export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
     package.json
     node_modules/
 */
+
+
+/*******************************
+
+  * */
