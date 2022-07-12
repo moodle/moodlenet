@@ -1,7 +1,8 @@
 import type { Observable, ObservableInput, Subject, Subscription } from 'rxjs'
 import type * as Core from '../core-lib'
+import { InstalledPackageInfo } from '../pkg-mng/types'
 import type { DataMessage, IMessage, MessagePush } from './message'
-import { PkgInfo, RegDeployment } from './reg'
+import { RegDeployment } from './reg'
 import type { PortBinding, PortPathData, PortPaths, Topo } from './topo'
 
 type CoreLib = typeof Core
@@ -59,7 +60,7 @@ export interface Shell<Def extends ExtDef = ExtDef> {
   onExt: OnExt
 
   expose: ExposePointers<Def>
-  pkgInfo: PkgInfo
+  installedPackageInfo: InstalledPackageInfo
 }
 
 export type OnExtDeployment = <Def extends ExtDef>(
@@ -88,13 +89,14 @@ export interface DeploymentShell {
   tearDown: Subscription
 }
 
-export type ExtBag = { ext: Ext<any>; pkgInfo: PkgInfo; deployWith?: Deploy }
+export type ExtBag = { installedPackageInfo: InstalledPackageInfo; extId: ExtId; deployWith?: Deploy }
 export type DeployableBag = {
   ext: Ext
   extDeployable: ExtDeployable
   shell: Shell
   $msg$: Subject<IMessage>
   deployWith?: Deploy
+  installedPackageInfo: InstalledPackageInfo
 }
 export type DeploymentBag = {
   depl: RegDeployment
@@ -158,4 +160,8 @@ export type ExposePointers<Def extends ExtDef = ExtDef> = (p: Partial<ExposedPoi
 
 export type ExposedPointerMap<Def extends ExtDef = ExtDef> = {
   [path in PortPaths<Def, 'in'>]: ExposedPointer
+}
+
+export type PkgExport = {
+  exts: Ext[]
 }

@@ -1,13 +1,4 @@
-import {
-  DefaultNpmRegistry,
-  LocalDeplConfigFileName,
-  NpmRegistry,
-  SysConfigFileName,
-  SysPkgStorageFolder,
-} from '../types/sys'
+import { NpmRegistry } from '../types/sys'
 
-export const sysConfigFileName: SysConfigFileName = 'sys-config.json'
-export const sysPkgStorageFolder: SysPkgStorageFolder = 'pkgs-storage'
-export const localDeplConfigFileName: LocalDeplConfigFileName = 'local-deployment-config.json'
-export const defaultNpmRegistry: DefaultNpmRegistry = 'https://registry.npmjs.org/'
-export const getRegistry = (_reg?: string | undefined): NpmRegistry => _reg ?? defaultNpmRegistry
+export const DEFAULT_NPM_REGISTRY = 'https://registry.npmjs.org/'
+export const getRegistry = (_reg?: string | undefined): NpmRegistry => _reg ?? DEFAULT_NPM_REGISTRY
