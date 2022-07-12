@@ -1,6 +1,6 @@
 import type { DataMessage, ExtDef, ExtName, ExtVersion, SubcriptionPaths, ValueData } from '@moodlenet/core'
 import type { RawSubOpts } from '@moodlenet/http-server'
-import { Observable, ObservableInput, throwError } from 'rxjs'
+import { firstValueFrom, Observable, ObservableInput, throwError } from 'rxjs'
 import { mergeMap } from 'rxjs/operators'
 export type Sub = typeof subRaw
 export const subRaw =
@@ -88,3 +88,15 @@ export function dematMessage<T>() {
         ) as unknown as { msg: DataMessage<T> }[])
   })
 }
+
+export const fetch =
+  <Def extends ExtDef>(extName: ExtName<Def>, extVersion: ExtVersion<Def>) =>
+  <Path extends SubcriptionPaths<Def>>(path: Path) => {
+    type HttpSubType = RawSubOpts<Def, Path>
+    return async (req: HttpSubType['req']) => {
+      const {
+        msg: { data },
+      } = await firstValueFrom(subRaw(extName, extVersion)(path)(req).pipe(dematMessage()))
+      return data
+    }
+  }
