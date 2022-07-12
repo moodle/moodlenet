@@ -1,19 +1,47 @@
-import assert from 'assert'
-import { readFile } from 'fs/promises'
-import { resolve } from 'path'
-import { SafePackageJson } from './types'
+import assert from 'assert';
+import fs from "fs";
+import { readFile } from 'fs/promises';
+import { resolve } from 'path';
+import { SafePackageJson } from './types';
 
 export type InstalledPackageInfo = {
   packageJson: SafePackageJson
   folder: string
 }
 
+export type installDirsInfo={
+  current:string;
+  pkgMng:string;
+  pkgMngTmp:string;
+}
+
+// imposta le folder sulla cartella riscrivibile 
+export function installDirsInfo():installDirsInfo{
+  const ignoreFolder = resolve(__dirname, '..', '..', '.ignore')
+  assert(fs.existsSync(ignoreFolder))
+  const pkgMng = resolve(ignoreFolder, 'pkgmngfolder')
+  if(!fs.existsSync(pkgMng)){
+    fs.mkdirSync(pkgMng);
+  }
+  const pkgMngTmp = resolve(pkgMng, 'tmp')
+  if(!fs.existsSync(pkgMngTmp)){
+    fs.mkdirSync(pkgMngTmp);
+  }
+
+  if(fs.existsSync(pkgMngTmp)){
+    console.log('tmp folder exist', pkgMngTmp)
+  } else throw new Error('cant create folder '+ pkgMngTmp)
+  return {current : __dirname, pkgMng, pkgMngTmp }
+}
+
 export function getSafeFolderPkgName(packageJson: SafePackageJson) {
-  const pkgNameScopeTuple = packageJson.name.split('@').reverse()
+  const pkgNameScopeTuple = packageJson.name.split('/').reverse()
+  console.log('split pkgNameScopeTuple xxx ',pkgNameScopeTuple );
+  console.log('split pkgNameScopeTuple xxx ',pkgNameScopeTuple );
   assert(
-    pkgNameScopeTuple.length > 2 ||
-      pkgNameScopeTuple.length < 1 ||
-      (pkgNameScopeTuple.length === 2 && !packageJson.name.startsWith('@')),
+    pkgNameScopeTuple.length > 0 &&
+      pkgNameScopeTuple.length < 3 &&
+      (pkgNameScopeTuple.length === 2 && packageJson.name.startsWith('@')),
     `unexpected package name format ${packageJson.name}`,
   )
 
