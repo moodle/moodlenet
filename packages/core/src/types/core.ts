@@ -1,7 +1,6 @@
 import { SubTopo } from '../core-lib'
+import { InstallPkgReq } from '../pkg-mng/types'
 import type { Ext, ExtDef, ExtId } from './ext'
-import { PkgInfo } from './reg'
-import { PkgName, SysPkgDeclNamed } from './sys'
 import type { Port } from './topo'
 
 export type CoreExt = ExtDef<
@@ -15,18 +14,18 @@ export type CoreExt = ExtDef<
       deploy: SubTopo<
         {
           extId: ExtId
-          pkgName: PkgName
+          installationFolder: string
         },
         void
       >
     }
     pkg: {
-      install: SubTopo<SysPkgDeclNamed, { extInfos: ExtInfo[] }>
+      install: SubTopo<{ installPkgReq: InstallPkgReq }, { extInfos: ExtInfo[] }>
     }
   }
 >
 
 export type ExtInfo = {
   ext: Omit<Ext, 'enable'>
-  pkgInfo: PkgInfo
+  installationFolder: string
 }

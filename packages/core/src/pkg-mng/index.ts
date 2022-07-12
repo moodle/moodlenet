@@ -1,49 +1,43 @@
-import { copyFile } from 'fs/promises';
-import { resolve } from 'path';
-import { getPackageInfo, getSafeFolderPkgName, InstalledPackageInfo } from './lib';
-import { folderTmpInstaller, InstallPkgReq, npmTmpInstaller } from './tmp-installers';
-import { PkgMngCfg } from './types';
+import { readdir } from 'fs/promises'
+import { resolve } from 'path'
+import { npmInstaller, symlinkInstaller } from './installers'
+import * as lib from './lib'
+import { InstalledPackageInfo, InstallPkgReq, PkgMngCfg } from './types'
 
 // const myDirInfo = installDirsInfo();
 
 export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
   return {
     install,
-    getAllInstalledPackagesInfo,
+    getAllInstalledPackagesInfo: getAllInstalledPackageInfo,
+    getInstalledPackageInfo,
   }
 
-  async function install(installPkgReq: InstallPkgReq) {
-    const tmpInstallationInfo = await (installPkgReq.type === 'npm'
-      ? npmTmpInstaller(installPkgReq)
-      : folderTmpInstaller(installPkgReq))
+  async function install(installPkgReq: InstallPkgReq, useFolderName?: string) {
+    const { installationFolder } = await (installPkgReq.type === 'npm'
+      ? npmInstaller({ installPkgReq, pkgsFolder, useFolderName })
+      : symlinkInstaller({ installPkgReq, pkgsFolder, useFolderName }))
+    await lib.writeInstallInfo({ absFolder: getAbsInstallationFolder(installationFolder), info: { installPkgReq } })
+    const installedPackageInfo = await getInstalledPackageInfo(installationFolder)
 
-console.log('pkg.mng install ddddd ', tmpInstallationInfo);
-console.log('pkg.mng pkgsFolder ', pkgsFolder);
-
-
-
-   const tmpInstallPackageInfo = await getPackageInfo(tmpInstallationInfo.tmpInstallationFolder)
-    console.log('pkg.mng tmpInstallPackageInfo ', tmpInstallPackageInfo);
-    const safeInstallationFolder = getSafeFolderPkgName(tmpInstallPackageInfo.packageJson)
-    console.log('pkg.mng safeInstallationFolder ', safeInstallationFolder);
-const newpath = resolve(pkgsFolder, safeInstallationFolder)
-    await copyFile(tmpInstallationInfo.tmpInstallationFolder, newpath) ;
-
-  // questa non funziona per le partizioni diverse su linux 
-   // await rename(tmpInstallationInfo.tmpInstallationFolder, resolve(pkgsFolder, safeInstallationFolder))
+    return installedPackageInfo
+    // questa non funziona per le partizioni diverse su linux
+    // await rename(InstallationInfo.InstallationFolder, resolve(pkgsFolder, safeInstallationFolder))
     // npm install
     // create info.json { installPkgReq: installPkgReq } (type InstalledPkgInfo )
   }
 
-  async function getAllInstalledPackagesInfo(): Promise<InstalledPackageInfo[]> {
-    return []
-   /* const dir = await readdir(pkgsFolder, { withFileTypes: true })
-    return Promise.all(dir.filter(_ => _.isDirectory()).map(({ name: folder }) => getInstalledPackageInfo(folder)))
-    */
+  async function getAllInstalledPackageInfo(): Promise<InstalledPackageInfo[]> {
+    const dir = await readdir(pkgsFolder, { withFileTypes: true })
+    const pkgFolderNames = dir.filter(_ => _.isDirectory() || _.isSymbolicLink()).map(({ name }) => name)
+    return Promise.all(pkgFolderNames.map(folder => getInstalledPackageInfo(folder)))
   }
 
   async function getInstalledPackageInfo(folder: string): Promise<InstalledPackageInfo> {
-    return getPackageInfo(resolve(pkgsFolder, folder))
+    return lib.getInstalledPackageInfo({ absFolder: getAbsInstallationFolder(folder) })
+  }
+  function getAbsInstallationFolder(folder: string) {
+    return resolve(pkgsFolder, folder)
   }
 }
 
@@ -62,7 +56,6 @@ const newpath = resolve(pkgsFolder, safeInstallationFolder)
     package.json
     node_modules/
 */
-
 
 /*******************************
 

@@ -1,6 +1,7 @@
-import { Ext, ExtInfo, PkgInfo } from '../types'
+import { InstalledPackageInfo } from '../pkg-mng/types'
+import { Ext, ExtInfo } from '../types'
 
-export function ext2ExtInfo({ ext, pkgInfo }: { ext: Ext; pkgInfo: PkgInfo }): ExtInfo {
+export function ext2ExtInfo({ ext, pkgInfo }: { ext: Ext; pkgInfo: InstalledPackageInfo }): ExtInfo {
   return {
     ext: {
       id: ext.id,
@@ -8,9 +9,6 @@ export function ext2ExtInfo({ ext, pkgInfo }: { ext: Ext; pkgInfo: PkgInfo }): E
       description: ext.description,
       requires: ext.requires,
     },
-    pkgInfo: {
-      name: pkgInfo.name,
-      version: pkgInfo.version,
-    },
+    installationFolder: pkgInfo.installationFolder,
   }
 }

@@ -1,19 +1,28 @@
 import { PackageJson } from 'type-fest'
-import { InstallPkgReq } from './tmp-installers'
+import { PkgExport } from '../types'
+import { NpmInstallReq, SymlinkInstallReq } from './installers'
+export * from './installers/types'
 
-export type SafePackageJson = Omit<PackageJson, 'name' | 'version'> & { name: string; version: string }
+export type InstallPkgReq = NpmInstallReq | SymlinkInstallReq
+
+export type SafePackageJson = PackageJson & { name: string; main: string; version: string }
 
 export type PkgMngCfg = { pkgsFolder: string }
 
-export type TmpInstallationInfo = {
-  tmpInstallationFolder: string
-}
-
 //info.json
-export type InstalledPkgInfo = {
+export type PkgInstallationInfo = {
   installPkgReq: InstallPkgReq
 }
 
-export type InstallerType = 'folder' | 'npm' //| 'file' | 'git'
-export type _InstallPkgReq<Type extends InstallerType, More> = More & { type: Type }
-export type PkgTmpInstaller<Req extends InstallPkgReq> = (installPkgReq: Req) => Promise<TmpInstallationInfo>
+export type InstalledPackageInfo = PackageInfo & {
+  pkgExport: PkgExport
+  installationInfo: PkgInstallationInfo
+}
+
+export type PackageInfo = {
+  packageJson: SafePackageJson
+  installationFolder: string
+  rootDir: string
+  rootDirPosix: string
+  mainModPath: string
+}

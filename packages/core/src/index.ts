@@ -1,7 +1,7 @@
 import { coreExtId } from './main/pkgJson'
 import { CoreExt, Ext } from './types'
 export * from './core-lib'
-export * as main from './main'
+export * from './main'
 export * from './types'
 
 export const coreExtDef: Omit<Ext<CoreExt>, 'enable'> = {
