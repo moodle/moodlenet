@@ -2,7 +2,6 @@ import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import { useFormik } from 'formik'
 import lib from 'moodlenet-react-app-lib'
 import { FC, useState } from 'react'
-import { firstValueFrom } from 'rxjs'
 import { SimpleEmailAuthExt } from '..'
 
 const { InputTextField, PrimaryButton, Card } = lib.ui.components.atoms
@@ -16,20 +15,14 @@ export const Panel: FC = () => {
     initialValues: { email: '', password: '', displayName: '' },
     async onSubmit({ email, password, displayName }) {
       setErrMsg('')
-      const res = await firstValueFrom(
-        lib.priHttp
-          .sub<SimpleEmailAuthExt>(
-            'moodlenet-simple-email-auth',
-            '0.1.10',
-          )('signup')({
-            displayName,
-            email,
-            password,
-          })
-          .pipe(lib.priHttp.dematMessage()),
-      )
-      if (!res.msg.data.success) {
-        setErrMsg(res.msg.data.msg)
+      const res = await lib.priHttp.fetch<SimpleEmailAuthExt>('moodlenet-simple-email-auth', '0.1.10')('signup')({
+        displayName,
+        email,
+        password,
+      })
+
+      if (!res.success) {
+        setErrMsg(res.msg)
         return
       }
       setEmailSent(true)

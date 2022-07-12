@@ -11,9 +11,7 @@ import {
   useState,
 } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { firstValueFrom } from 'rxjs'
 import priHttp from './pri-http'
-import { dematMessage } from './pri-http/xhr-adapter'
 
 export type LoginItemDef = { Icon: ComponentType; Panel: ComponentType }
 export type LoginItem = { def: LoginItemDef }
@@ -31,7 +29,7 @@ export type AuthCtxT = {
   logout(): void
 }
 
-const srvSub = priHttp.sub<AuthenticationManagerExt>('moodlenet-authentication-manager', '0.1.10')
+const srvFetch = priHttp.fetch<AuthenticationManagerExt>('moodlenet-authentication-manager', '0.1.10')
 
 export const AuthCtx = createContext<AuthCtxT>(null as any)
 
@@ -78,9 +76,7 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
 
   const fetchClientSession = useCallback(
     async (token: SessionToken) => {
-      const {
-        msg: { data: res },
-      } = await firstValueFrom(srvSub('getClientSession')({ token }).pipe(dematMessage()))
+      const res = await srvFetch('getClientSession')({ token })
       if (!res.success) {
         writeSessionToken(null)
         return { success: false, msg: 'invalid token' } as const
