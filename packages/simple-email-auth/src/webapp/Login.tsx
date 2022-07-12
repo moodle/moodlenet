@@ -1,7 +1,6 @@
 import { useFormik } from 'formik'
 import lib from 'moodlenet-react-app-lib'
 import { FC, useContext, useState } from 'react'
-import { firstValueFrom } from 'rxjs'
 import { SimpleEmailAuthExt } from '..'
 
 const { InputTextField, PrimaryButton, TertiaryButton } = lib.ui.components.atoms
@@ -15,19 +14,11 @@ export const Panel: FC = () => {
     initialValues: { email: '', password: '' },
     async onSubmit({ email, password }) {
       setWrongCreds(false)
-      const {
-        msg: { data: res },
-      } = await firstValueFrom(
-        lib.priHttp
-          .sub<SimpleEmailAuthExt>(
-            'moodlenet-simple-email-auth',
-            '0.1.10',
-          )('login')({
-            email,
-            password,
-          })
-          .pipe(lib.priHttp.dematMessage()),
-      )
+      const res = await lib.priHttp.fetch<SimpleEmailAuthExt>('moodlenet-simple-email-auth', '0.1.10')('login')({
+        email,
+        password,
+      })
+
       if (!res.success) {
         setWrongCreds(true)
         return
