@@ -1,18 +1,41 @@
 import lib from 'moodlenet-react-app-lib'
 import { FC } from 'react'
+import './Login.scss'
 
-const { PrimaryButton } = lib.ui.components.atoms
+const { SecondaryButton } = lib.ui.components.atoms
 export type LoginFormValues = { email: string; password: string }
 
-export const Icon: FC = () => <span>social</span>
+export const Icon: FC = () => (
+  <span>
+    <SecondaryButton>Other methods</SecondaryButton>
+  </span>
+)
 export const Panel: FC = () => {
   return (
     <>
       <a href="/_/moodlenet-passport-auth/login/federated/google">
-        <PrimaryButton>Google</PrimaryButton>
+        <SecondaryButton className="alternative-login-btn google" color="light-grey">
+          <div className="icon">
+            <img alt="google login" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
+          </div>
+          <div className="title">Login using Google</div>
+        </SecondaryButton>
       </a>
-      <PrimaryButton onClick={unimplemented}>Facebook</PrimaryButton>
-      <PrimaryButton onClick={unimplemented}>Twitter</PrimaryButton>
+      <SecondaryButton className="alternative-login-btn facebook" color="light-grey">
+        <div className="icon">
+          <img alt="google login" src="https://d35aaqx5ub95lt.cloudfront.net/images/facebook-blue.svg" />
+        </div>
+        <div className="title">Login using Facebook</div>
+      </SecondaryButton>
+      <SecondaryButton className="alternative-login-btn twitter" color="light-grey">
+        <div className="icon">
+          <img
+            alt="google login"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Twitter-logo.svg/512px-Twitter-logo.svg.png?20211104142029"
+          />
+        </div>
+        <div className="title">Login using Twitter</div>
+      </SecondaryButton>
     </>
   )
 }

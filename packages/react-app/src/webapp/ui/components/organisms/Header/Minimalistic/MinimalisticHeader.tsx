@@ -1,4 +1,5 @@
 import { FC, PropsWithChildren, useContext } from 'react'
+import { Link } from 'react-router-dom'
 // import Switch from '../../atoms/Switch/Switch'
 import { AddonCtx } from '../addons'
 import './MinimalisticHeader.scss'
@@ -11,10 +12,10 @@ const MinimalisticHeader: FC<PropsWithChildren<MinimalisticHeaderProps>> = (/* {
     <div className="minimalistic-header">
       <div className="content">
         <div className="left">
-          <div className="title">
+          <Link className="title" to={`/`}>
             <span className="mn">MoodleNet</span>
             <span className="bar">|</span>
-          </div>
+          </Link>
         </div>
         <div className="right">
           {addonCtx.rightComponents.flatMap(({ addon: { MinHeaderItems } }, index) => {

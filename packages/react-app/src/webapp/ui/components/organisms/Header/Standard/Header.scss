@@ -19,6 +19,8 @@
         font-size: 20px;
         font-family: 'Fredoka', sans-serif;
         font-family: 'Press Start 2P';
+        text-decoration: none;
+
         > .bar {
           margin-left: -6px;
           animation: blink 2s infinite linear;
@@ -76,6 +78,28 @@
 
     > .right {
       display: flex;
+      gap: 24px;
+      > .avatar-menu {
+        > .hover-element {
+          > .avatar {
+            height: 36px;
+            width: 36px;
+            border-radius: 50%;
+            &:hover {
+              box-shadow: 0px 1px 2px 0px rgb(60 64 67);
+              opacity: 0.9;
+            }
+          }
+        }
+        > .menu > .content > * {
+          > .profile > .avatar {
+            border-radius: 50%;
+            height: 28px;
+            width: 28px;
+            margin-right: 10px;
+          }
+        }
+      }
       > .dev-mode {
         display: flex;
         align-items: center;
