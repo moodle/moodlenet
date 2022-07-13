@@ -6,7 +6,7 @@ import { FC, useContext } from 'react'
 import lib from 'moodlenet-react-app-lib'
 import { Module, Package } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import { StateContext } from '../devModeContextProvider'
+import { StateContext } from '../ExtensionsProvider'
 import './styles.scss'
 
 export type ExtensionConfigProps = {
