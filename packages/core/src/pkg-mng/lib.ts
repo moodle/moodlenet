@@ -1,11 +1,13 @@
 import assert from 'assert'
 import { readFile, writeFile } from 'fs/promises'
-import { basename, posix, resolve } from 'path'
+import { basename, resolve } from 'path'
 import { InstalledPackageInfo, PackageInfo, PkgInstallationInfo, SafePackageJson } from './types'
 
 export async function getInstalledPackageInfo({ absFolder }: { absFolder: string }): Promise<InstalledPackageInfo> {
   const pkgInfo = await getPackageInfo({ absFolder })
-  const pkgMainMod = require(posix.resolve(absFolder, pkgInfo.mainModPath))
+  const mainModAbsPath = resolve(absFolder, pkgInfo.mainModPath??'')
+  //console.log({mainModAbsPath,absFolder, pkgInfo_mainModPath: pkgInfo.mainModPath})
+  const pkgMainMod = await import(mainModAbsPath)
   const hasDefault = 'default' in pkgMainMod
   const pkgExport = hasDefault ? pkgMainMod.default : pkgMainMod
   const installInfo = await readInstallInfoFileName({ absFolder })
@@ -21,15 +23,16 @@ export async function getPackageInfo({ absFolder }: { absFolder: string }): Prom
   assert(packageJson.name, 'package has no name')
   assert(packageJson.version, 'package has no version')
   const pkgMainModule = packageJson.main
-  console.log({ pkgMainModule })
-  const rootDirPosix = posix.resolve(absFolder)
-  return {
+  //const rootDirPosix = posix.normalize(absFolder)
+  const packageInfo:PackageInfo = {
     packageJson,
     installationFolder: basename(absFolder),
     mainModPath: pkgMainModule,
-    rootDir: absFolder,
-    rootDirPosix,
+    //rootDir: absFolder,
+    //rootDirPosix,
   }
+  console.log({ packageInfo })
+  return packageInfo 
 }
 
 export const installInfoFileName = ({ absFolder }: { absFolder: string }) => resolve(absFolder, INSTALL_INFO_FILENAME)

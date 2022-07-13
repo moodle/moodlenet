@@ -5,7 +5,7 @@ export * from './installers/types'
 
 export type InstallPkgReq = NpmInstallReq | SymlinkInstallReq
 
-export type SafePackageJson = PackageJson & { name: string; main: string; version: string }
+export type SafePackageJson = PackageJson & { name: string; version: string }
 
 export type PkgMngCfg = { pkgsFolder: string }
 
@@ -22,7 +22,7 @@ export type InstalledPackageInfo = PackageInfo & {
 export type PackageInfo = {
   packageJson: SafePackageJson
   installationFolder: string
-  rootDir: string
-  rootDirPosix: string
-  mainModPath: string
+  //rootDir: string
+  //rootDirPosix: string
+  mainModPath: string|undefined
 }
