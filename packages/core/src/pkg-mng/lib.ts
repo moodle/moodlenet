@@ -1,6 +1,6 @@
 import assert from 'assert'
 import { readFile, writeFile } from 'fs/promises'
-import { posix, resolve } from 'path'
+import { basename, posix, resolve } from 'path'
 import { InstalledPackageInfo, PackageInfo, PkgInstallationInfo, SafePackageJson } from './types'
 
 export async function getInstalledPackageInfo({ absFolder }: { absFolder: string }): Promise<InstalledPackageInfo> {
@@ -25,7 +25,7 @@ export async function getPackageInfo({ absFolder }: { absFolder: string }): Prom
   const rootDirPosix = posix.resolve(absFolder)
   return {
     packageJson,
-    installationFolder: absFolder,
+    installationFolder: basename(absFolder),
     mainModPath: pkgMainModule,
     rootDir: absFolder,
     rootDirPosix,
@@ -33,10 +33,12 @@ export async function getPackageInfo({ absFolder }: { absFolder: string }): Prom
 }
 
 export const installInfoFileName = ({ absFolder }: { absFolder: string }) => resolve(absFolder, INSTALL_INFO_FILENAME)
+
 export async function readInstallInfoFileName({ absFolder }: { absFolder: string }) {
   const info: PkgInstallationInfo = JSON.parse(await readFile(installInfoFileName({ absFolder }), 'utf-8'))
   return info
 }
+
 export async function writeInstallInfo({ absFolder, info }: { absFolder: string; info: PkgInstallationInfo }) {
   await writeFile(installInfoFileName({ absFolder }), JSON.stringify(info, null, 2))
 }

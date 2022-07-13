@@ -36,6 +36,7 @@ export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
   async function getInstalledPackageInfo(folder: string): Promise<InstalledPackageInfo> {
     return lib.getInstalledPackageInfo({ absFolder: getAbsInstallationFolder(folder) })
   }
+
   function getAbsInstallationFolder(folder: string) {
     return resolve(pkgsFolder, folder)
   }
