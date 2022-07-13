@@ -1,43 +1,27 @@
-import { ExtName, ExtVersion } from './ext'
+import { InstallPkgReq } from '../pkg-mng/types'
+import { ExtId, ExtName } from './ext'
 
-export type MainFolders = { system: string; deployment: string }
+export type MainFolders = { systemFolder: string; deploymentFolder: string }
 // SysConfig
-
+export type SystemPaths = MainFolders & {
+  sysConfigFile: string
+  localConfigFile: string
+  localPkgsFolder: string
+}
 export type SysConfig = {
-  installedPackages: SysPackages
-  enabledExtensions: SysEnabledExtensions
-  __FIRST_INSTALL?: true
+  installedPackages: { installationFolder: string; installPkgReq: InstallPkgReq }[]
+  enabledExtensions: { installationFolder: string; extId: ExtId }[]
 }
 
-export type SysEnabledExtensions = Record<ExtName, SysEnabledExtDecl>
-
-export type SysEnabledExtDecl = {
-  version: ExtVersion
-  pkg: PkgName
+export type ExtensionGlobalConfig = {
   config?: any
 }
 
-export type SysPackages = Record<PkgName, SysPkgDecl>
-
-export type SysPkgDeclNamed = SysPkgDecl & { name: PkgName }
-export type SysPkgDecl =
-  | {
-      type: 'npm'
-      version: PkgVersion
-      registry: NpmRegistry
-    }
-  | {
-      type: 'file'
-      location: FilePkgLocation
-    }
-
-// LocalDeploymentsConfig
-
 export type LocalDeploymentConfig = {
-  extensions: Record<ExtName, ExtensionDeploymentConfig>
+  extensions: Record<ExtName, ExtensionLocalConfig>
 }
 
-export type ExtensionDeploymentConfig = {
+export type ExtensionLocalConfig = {
   config?: any
   deployWith?: DeployWithModule
 }
@@ -48,9 +32,3 @@ export type DeployWithModule = string
 export type PkgName = string
 export type PkgVersion = string
 export type NpmRegistry = string
-export type FilePkgLocation = string
-
-export type SysConfigFileName = 'sys-config.json'
-export type LocalDeplConfigFileName = 'local-deployment-config.json'
-export type SysPkgStorageFolder = 'pkgs-storage'
-export type DefaultNpmRegistry = 'https://registry.npmjs.org/'

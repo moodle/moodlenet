@@ -12,8 +12,8 @@ export type PkgMngLib = ReturnType<typeof makePkgMng>
 export type InitResponse = 'newly-initialized-folder' | 'folder-was-already-npm-initialized'
 
 export function makePkgMng(mainFolders: MainFolders) {
-  const execa_opts: execa.Options = { cwd: mainFolders.deployment }
-  const sysRequirePath = resolve(mainFolders.deployment, 'node_modules')
+  const execa_opts: execa.Options = { cwd: mainFolders.deploymentFolder }
+  const sysRequirePath = resolve(mainFolders.deploymentFolder, 'node_modules')
   console.log({ sysRequirePath })
   const sysRequire = createRequire(sysRequirePath)
 
@@ -34,7 +34,7 @@ export function makePkgMng(mainFolders: MainFolders) {
   }
 
   async function initWd(): Promise<InitResponse> {
-    const wasInitialized = await stat(resolve(mainFolders.deployment, 'package.json')).then(
+    const wasInitialized = await stat(resolve(mainFolders.deploymentFolder, 'package.json')).then(
       _ => _.isFile(),
       () => false,
     )

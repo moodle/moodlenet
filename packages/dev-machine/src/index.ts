@@ -1,6 +1,7 @@
-import { main } from '@moodlenet/core'
+import { boot, install, InstallPkgReq, MainFolders } from '@moodlenet/core'
+import { defaultCorePackages } from '@moodlenet/core/lib/main/install'
 import { existsSync, lstatSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
-import path from 'path'
+import path, { resolve } from 'path'
 import prompt from 'prompt'
 import { sync as rimrafSync } from 'rimraf'
 
@@ -54,11 +55,27 @@ prompt.start()
         ).deploymentFolderName as string)
 
   const deploymentFolder = path.resolve(DEPLOYMENTS_FOLDER_BASE, deploymentFolderName)
+  const systemFolder = resolve(deploymentFolder, '_system')
 
+  const mainFolders: MainFolders = {
+    deploymentFolder,
+    systemFolder,
+  }
   console.log({ deploymentFolder })
   const deploymentFolderPathExists = existsSync(deploymentFolder)
   if (!deploymentFolderPathExists) {
     mkdirSync(deploymentFolder, { recursive: true })
+    const installPkgReqs = Object.keys(defaultCorePackages)
+      .map(dirName => resolve(__dirname, '..', '..', dirName))
+      .map<InstallPkgReq>(fromFolder => ({
+        type: 'symlink',
+        fromFolder,
+      }))
+
+    await install({
+      mainFolders,
+      installPkgReqs,
+    })
   } else {
     const deploymentFolderPathIsDir = lstatSync(deploymentFolder).isDirectory()
     if (!deploymentFolderPathIsDir) {
@@ -69,15 +86,6 @@ prompt.start()
   if (lastDeploymentFolderName !== deploymentFolderName) {
     writeFileSync(LAST_DEPLOYMENT_FOLDERNAME_FILE, deploymentFolderName)
   }
-  const folders = main.prepareFolders({
-    deployment: deploymentFolder,
-  })
 
-  const initResponse = await main.install({
-    folders,
-    _DEV_MODE_CORE_PKGS_FROM_FOLDER: true,
-  })
-
-  console.log('init response:', initResponse)
-  main.boot({ folders, devMode: true })
+  boot({ mainFolders, devMode: true })
 })()
