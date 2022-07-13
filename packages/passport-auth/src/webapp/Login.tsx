@@ -40,6 +40,6 @@ export const Panel: FC = () => {
   )
 }
 
-function unimplemented() {
-  alert('not implemented')
-}
+// function unimplemented() {
+//   alert('not implemented')
+// }

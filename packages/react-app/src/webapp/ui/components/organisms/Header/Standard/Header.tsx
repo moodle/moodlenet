@@ -13,6 +13,8 @@ type HeaderProps = {}
 
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
   const addonCtx = useContext(AddonCtx)
+  // console.log({ addonCtx })
+
   const { clientSession, logout } = useContext(AuthCtx)
 
   const avatar = {

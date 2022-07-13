@@ -20,9 +20,13 @@ export const AddonCtx = createContext<AddonCtxT>(null as any)
 export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   const [rightComponents, setRightComponents] = useState<AddonCtxT['rightComponents']>([])
   const addRightComponent: AddonCtxT['addRightComponent'] = useCallback(addon => {
+    // console.log('add RightComponent', addon)
     const rightComponentAddon: RightComponentAddon = { addon }
     setRightComponents(addons => addons.concat(rightComponentAddon))
-    return () => setRightComponents(addons => addons.filter(_ => _ !== rightComponentAddon))
+    return () => {
+      // console.log('rem RightComponent', addon)
+      setRightComponents(addons => addons.filter(_ => _ !== rightComponentAddon))
+    }
   }, [])
   const ctx = useMemo(() => {
     const ctx: AddonCtxT = {
@@ -31,6 +35,7 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
     }
     return ctx
   }, [addRightComponent, rightComponents])
+  // console.log({ rightComponents })
 
   return <AddonCtx.Provider value={ctx}>{children}</AddonCtx.Provider>
 }
