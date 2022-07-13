@@ -4,8 +4,9 @@ import lib from 'moodlenet-react-app-lib'
 import { FC, useState } from 'react'
 import { firstValueFrom } from 'rxjs'
 import { SimpleEmailAuthExt } from '..'
+import './Signup.scss'
 
-const { InputTextField, PrimaryButton, Card } = lib.ui.components.atoms
+const { InputTextField, PrimaryButton, TertiaryButton, Card } = lib.ui.components.atoms
 export type SignupFormValues = { email: string; password: string; displayName: string }
 
 export const Icon: FC = () => <span>email</span>
@@ -75,7 +76,14 @@ export const Panel: FC = () => {
         />
         <button id="signup-button" type="submit" style={{ display: 'none' }} />
       </form>
-      <PrimaryButton onClick={canSubmit ? form.submitForm : undefined}>Sign up</PrimaryButton>
+      <div className="bottom">
+        <PrimaryButton onClick={canSubmit ? form.submitForm : undefined}>Sign up</PrimaryButton>
+        {/* <Link href={userAgreementHref} target="__blank"> */}
+        <a>
+          <TertiaryButton>You agree to our Terms &amp; Conditions</TertiaryButton>
+        </a>
+        {/* </Link> */}
+      </div>
       <div hidden={!errMsg}>Signup error: {errMsg}</div>
       <div className={`success-content`} hidden={!emailSent}>
         {/* <div className={`success-content ${requestSent ? 'success' : ''}`}> */}
