@@ -17,9 +17,11 @@ export const ExtMngMainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
 export const DevModeBtn: FC = () => {
   const { devMode, setDevMode } = useContext(StateContext)
   return (
-    <div className="dev-mode">
-      <span className="label">Developer mode</span>
-      <Switch enabled={!!devMode} size="medium" onClick={() => setDevMode(p => !p)} />
-    </div>
+    devMode && (
+      <div className="dev-mode">
+        <span className="label">Developer mode</span>
+        <Switch enabled={!!devMode} size="medium" onClick={() => setDevMode(p => !p)} />
+      </div>
+    )
   )
 }
