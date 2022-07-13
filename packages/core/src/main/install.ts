@@ -1,112 +1,56 @@
 import assert from 'assert'
-import { resolve } from 'path'
-import { splitExtId } from '../core-lib'
-import { MainFolders, SysConfig, SysEnabledExtDecl, SysEnabledExtensions, SysPackages, SysPkgDecl } from '../types/sys'
-import { sysPackages2SysPkgDeclNamed } from '../util/packages'
-import { sequencePromises } from '../util/promises'
-import { getConfigs } from './configs'
-import corePkgs from './core-pkgs'
-import { getRegistry } from './default-consts'
-import { InitResponse, makePkgMng } from './npm-pkg-mng'
+import { InstallPkgReq } from '../pkg-mng/types'
+import { MainFolders } from '../types/sys'
+import { getMain } from './main'
 
 type InstallCfg = {
-  folders: MainFolders
-  registry?: string
-  _DEV_MODE_CORE_PKGS_FROM_FOLDER: boolean
+  mainFolders: MainFolders
+  installPkgReqs?: InstallPkgReq[]
 }
 
-export default async function install({
-  _DEV_MODE_CORE_PKGS_FROM_FOLDER = false,
-  folders,
-  registry,
-}: InstallCfg): Promise<InitResponse> {
-  const configs = getConfigs({ folders })
-  const pkgMng = makePkgMng(folders)
-
-  const initResponse = await pkgMng.initWd()
-
-  if (initResponse === 'folder-was-already-npm-initialized') {
-    console.log(`installation folder ${folders.deployment} already has an initialized package`)
-    return initResponse
-  }
-  assert(initResponse === 'newly-initialized-folder')
-
-  configs.createSysPkgStorageFolder()
-  const installedPackages = getCoreSysPackages()
-
-  const pkgDeclNameds = sysPackages2SysPkgDeclNamed(installedPackages)
-  const installThunks = pkgDeclNameds.map(pkgDeclNamed => () => pkgMng.install(pkgDeclNamed))
-  await sequencePromises(installThunks)
-
-  const enabledExtensions = Object.keys(installedPackages)
-    // .filter(pkgName => pkgName !== pkgInfo.name)
-    .map(pkgName => {
-      const { /* pkgDiskInfo, */ pkgExport } = pkgMng.extractPackage(pkgName)
-      // console.log({ pkgDiskInfo, pkgExport })
-      return pkgExport.exts.reduce<SysEnabledExtensions>((_acc, ext) => {
-        const { extName, version } = splitExtId(ext.id)
-        const sysEnabledExtDecl: SysEnabledExtDecl = {
-          pkg: pkgName,
-          version,
-        }
-        return { ..._acc, [extName]: sysEnabledExtDecl }
-      }, {})
-    })
-    .reduce<SysEnabledExtensions>((_acc, sysEnableExtensions) => {
-      Object.keys(sysEnableExtensions).forEach(extName =>
-        assert(!(extName in _acc), 'found duplicates ext name for sysEnableExtensions ${extName}'),
-      )
+export default async function install({ mainFolders, installPkgReqs = defaultInstallPkgReqs() }: InstallCfg) {
+  const main = await getMain({ mainFolders })
+  const installations = await Promise.all(
+    installPkgReqs.map(async installPkgReq => {
+      const { installationFolder, pkgExport } = await main.pkgMng.install(installPkgReq)
+      const firstExtId = pkgExport.exts[0]!.id
+      assert(firstExtId, `${installationFolder} has no exported ext!`)
       return {
-        ..._acc,
-        ...sysEnableExtensions,
+        installedPackage: {
+          installPkgReq,
+          installationFolder,
+        },
+        enabledExtension: {
+          installationFolder,
+          extId: firstExtId,
+        },
       }
-    }, {})
-  console.log({ enabledExtensions })
+    }),
+  )
 
-  const sysConfig: SysConfig = {
-    installedPackages,
-    enabledExtensions,
-    __FIRST_INSTALL: true,
-  }
+  await main.writeLocalDeplConfig({ extensions: {} })
+  const installedPackages = installations.map(({ installedPackage }) => installedPackage)
+  const enabledExtensions = installations.map(({ enabledExtension }) => enabledExtension)
+  await main.writeSysConfig({ installedPackages, enabledExtensions })
 
-  await configs.writeLocalDeplConfig({ extensions: {} })
-  await configs.writeSysConfig(sysConfig)
+  return main
+}
 
-  return initResponse
-  // const pkgDiskInfo = pkgDiskInfoOf(__dirname)
-  // await pkgMng.install({ pkgLocator: pkgDiskInfo.rootDir })
+function defaultInstallPkgReqs(): InstallPkgReq[] {
+  return Object.entries(defaultCorePackages).map<InstallPkgReq>(([name, version]) => {
+    return {
+      type: 'npm',
+      pkgId: `@moodlenet/${name}@${version}`,
+    }
+  })
+}
 
-  // async function installCorePackages(): Promise<InstallRes[]> {
-  //   _DEV_MODE_CORE_PKGS_FROM_FOLDER
-  //   const corePkgsInstallThunks = coreDeps
-  //     .npmCorePkgList({ _DEV_MODE_CORE_PKGS_FROM_FOLDER })
-  //     .map(pkgLocator => async (_: InstallRes[]) => {
-  //       console.log('install', pkgLocator)
-  //       const extPkg = await pkgMng.installAndExtract({ pkgLocator })
-  //       return [..._, { extPkg }]
-  //     })
-
-  //   const corePkgsInstallRes = await corePkgsInstallThunks.reduce((prev, next) => _ => prev(_).then(next))([])
-
-  //   return corePkgsInstallRes
-  // }
-
-  function getCoreSysPackages(): SysPackages {
-    const dev_packages_folder = resolve(__dirname, '..', '..', '..')
-    const sysPackages = Object.entries(corePkgs).reduce<SysPackages>((_acc, [pkgName, version]) => {
-      const pkgDecl: SysPkgDecl = _DEV_MODE_CORE_PKGS_FROM_FOLDER
-        ? {
-            type: 'file',
-            location: `file:${resolve(dev_packages_folder, pkgName)}`,
-          }
-        : {
-            type: 'npm',
-            version,
-            registry: getRegistry(registry),
-          }
-
-      return { ..._acc, [`@moodlenet/${pkgName}`]: pkgDecl }
-    }, {})
-    return sysPackages
-  }
+export const defaultCorePackages = {
+  'core': '0.0.1',
+  'http-server': '0.0.1',
+  'react-app': '0.0.1',
+  'authentication-manager': '0.0.1',
+  'simple-email-auth': '0.0.1',
+  'extensions-manager': '0.0.1',
+  'passport-auth': '0.0.1',
 }

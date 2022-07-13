@@ -1,39 +1,38 @@
-import { MainFolders, SysConfig, SysPackages } from '../types/sys'
-import { getConfigs } from './configs'
-import { createLocalDeploymentRegistry } from './ext-deployment-registry'
-import { makePkgMng } from './npm-pkg-mng'
+import { readFileSync, writeFileSync } from 'fs'
+import { createPkgMng } from '../pkg-mng'
+import { LocalDeploymentConfig, MainFolders, SysConfig } from '../types/sys'
+import prepareFileSystem from './prepareFileSystem'
 
 type Cfg = {
-  folders: MainFolders
+  mainFolders: MainFolders
 }
 
-export function getMain(cfg: Cfg) {
-  const configs = getConfigs({ folders: cfg.folders })
+export function getMain({ mainFolders }: Cfg) {
+  const { sysPaths } = prepareFileSystem({ mainFolders })
+  const pkgMng = createPkgMng({ pkgsFolder: sysPaths.localPkgsFolder })
 
-  const pkgMng = makePkgMng(configs.folders)
-  const deployments = createLocalDeploymentRegistry()
-
-  // await ensureInstallPackages()
   return {
-    deployments,
     pkgMng,
-    configs,
-    installPackages,
-    // ensureInstallPackages,
+    sysPaths,
+    getSysConfig,
+    getLocalDeplConfig,
+    writeSysConfig,
+    writeLocalDeplConfig,
   }
 
-  // async function ensureInstallPackages() {
-  //   const _sysConfig = await configs.getSysConfig()
-  //   await installPackages(_sysConfig.installedPackages)
-  // }
+  function getSysConfig(): SysConfig {
+    return JSON.parse(readFileSync(sysPaths.sysConfigFile, 'utf-8'))
+  }
 
-  async function installPackages(packages: SysPackages) {
-    const _sysConfig = await configs.getSysConfig()
-    const newSysConfig: SysConfig = {
-      ..._sysConfig,
-      installedPackages: { ..._sysConfig.installedPackages, ...packages },
-    }
-    await configs.writeSysConfig(newSysConfig)
-    return newSysConfig
+  function getLocalDeplConfig(): LocalDeploymentConfig {
+    return JSON.parse(readFileSync(sysPaths.localConfigFile, 'utf-8'))
+  }
+
+  function writeSysConfig(sysConfig: SysConfig) {
+    writeFileSync(sysPaths.sysConfigFile, JSON.stringify(sysConfig, null, 2))
+  }
+
+  function writeLocalDeplConfig(localDeploymentConfig: LocalDeploymentConfig) {
+    writeFileSync(sysPaths.localConfigFile, JSON.stringify(localDeploymentConfig, null, 2))
   }
 }
