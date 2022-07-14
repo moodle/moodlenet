@@ -95,7 +95,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
           <Card className="available-extensions">
             <div className="title">Compatible extensions</div>
             <div className="list">
-              {extensions ? extensions : [1, 2, 3, 4].map(_ => <div className="package loading"></div>)}
+              {extensions ? extensions : [1, 2, 3, 4].map(_ => <div key={_} className="package loading"></div>)}
             </div>
           </Card>
         </div>
