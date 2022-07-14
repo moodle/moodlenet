@@ -4,7 +4,11 @@
   "description": "",
   "files": [
     "lib/",
-    "src/"
+    "src/",
+    "index.html",
+    "_redirects",
+    "favicon.svg",
+    "moodlenet-react-app-lib.d.ts"
   ],
   "moodlenet": {
     "name": "moodlenet react-app",
