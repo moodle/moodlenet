@@ -1,6 +1,6 @@
 import lib from 'moodlenet-react-app-lib'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
-import { StateContext } from './devModeContextProvider'
+import { StateContext } from './ExtensionsProvider'
 import InstallExtension from './InstallExtension/InstallExtension'
 import { ExtMngMainLayout } from './MainLayout'
 import Modules, { ModulesProps } from './Modules/Modules'
