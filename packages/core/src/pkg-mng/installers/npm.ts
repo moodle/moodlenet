@@ -29,7 +29,7 @@ export const npmInstaller: PkgInstaller<NpmInstallReq> = async ({
     })
   })
   console.log('install deps')
-  await execa('npm', ['install'], { cwd: absInstallationFolder })
+  await execa('npm', ['install', '--force', '--omit', 'peer', '--omit', 'dev'], { cwd: absInstallationFolder })
 
   return { installationFolder: relInstallationFolder }
 }
