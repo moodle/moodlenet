@@ -16,9 +16,9 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'ExtensionsRoutes.tsx'),
           rootPath: 'extensions/',
         },
-        // ctxProvider: {
-        //   moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'ExtensionsProvider'),
-        // },
+        ctxProvider: {
+          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'ExtensionsProvider.tsx'),
+        },
       })
     })
     shell.expose({})

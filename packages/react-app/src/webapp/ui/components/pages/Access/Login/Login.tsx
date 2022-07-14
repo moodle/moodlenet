@@ -39,30 +39,29 @@ export const LoginBody: FC<LoginProps> = ({}) => {
       <div className="content">
         <Card>
           <div className="content">
-            <div>
-              {authCtx.loginItems.length > 1 && (
-                <>
-                  <span style={{ float: 'left', marginRight: '10px' }}>use:</span>
-                  {authCtx.loginItems.map((loginItem, index) => {
-                    const isCurrent = loginItem === currLoginItem
-                    const css: CSSProperties = {
-                      float: 'left',
-                      cursor: isCurrent ? undefined : 'pointer',
-                      fontWeight: isCurrent ? 'bold' : undefined,
-                    }
-                    const onClick = isCurrent ? undefined : () => chooseLoginItem(loginItem)
-
-                    return (
-                      <div key={index} style={css} onClick={onClick}>
-                        <loginItem.def.Icon />
-                      </div>
-                    )
-                  })}
-                </>
-              )}
-            </div>
             <div className="title">Log in</div>
             {currLoginItem ? <currLoginItem.def.Panel /> : <div>No Auth available</div>}
+            {authCtx.loginItems.length > 1 && (
+              <>
+                {/* <span style={{ float: 'left', marginRight: '10px' }}>use:</span> */}
+                {authCtx.loginItems.map((loginItem, index) => {
+                  const isCurrent = loginItem === currLoginItem
+                  const css: CSSProperties = {
+                    float: 'left',
+                    cursor: isCurrent ? undefined : 'pointer',
+                    fontWeight: isCurrent ? 'bold' : undefined,
+                    display: isCurrent ? 'none' : 'block',
+                  }
+                  const onClick = isCurrent ? undefined : () => chooseLoginItem(loginItem)
+
+                  return (
+                    <div key={index} style={css} onClick={onClick}>
+                      <loginItem.def.Icon />
+                    </div>
+                  )
+                })}
+              </>
+            )}
           </div>
         </Card>
         <Card hover={true}>
