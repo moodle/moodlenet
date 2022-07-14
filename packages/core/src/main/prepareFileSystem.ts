@@ -25,6 +25,6 @@ export default function prepareFileSystem({ mainFolders }: { mainFolders: MainFo
   console.log({ sysPaths })
   return { sysPaths }
 }
-const SYS_CONFIG_FILE_NAME = 'sys-config.json'
-const PKGS_FOLDER_NAME = 'pkgs-storage'
-const LOCAL_CONFIG_FILE_NAME = 'local-config.json'
+export const SYS_CONFIG_FILE_NAME = 'sys-config.json'
+export const PKGS_FOLDER_NAME = 'pkgs-storage'
+export const LOCAL_CONFIG_FILE_NAME = 'local-config.json'

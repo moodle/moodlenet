@@ -11,6 +11,7 @@ export type SystemPaths = MainFolders & {
 export type SysConfig = {
   installedPackages: { installationFolder: string; installPkgReq: InstallPkgReq }[]
   enabledExtensions: { installationFolder: string; extId: ExtId }[]
+  core: { installationFolder: string }
 }
 
 export type ExtensionGlobalConfig = {

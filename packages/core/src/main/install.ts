@@ -12,7 +12,7 @@ export default async function install({ mainFolders, installPkgReqs = defaultIns
   const main = await getMain({ mainFolders })
   const installations = await Promise.all(
     installPkgReqs.map(async installPkgReq => {
-      const { installationFolder, pkgExport } = await main.pkgMng.install(installPkgReq)
+      const { installationFolder, pkgExport, packageJson } = await main.pkgMng.install(installPkgReq)
       const firstExtId = pkgExport.exts[0]!.id
       assert(firstExtId, `${installationFolder} has no exported ext!`)
       return {
@@ -24,6 +24,7 @@ export default async function install({ mainFolders, installPkgReqs = defaultIns
           installationFolder,
           extId: firstExtId,
         },
+        core: packageJson.name === '@moodlenet/core',
       }
     }),
   )
@@ -31,8 +32,12 @@ export default async function install({ mainFolders, installPkgReqs = defaultIns
   await main.writeLocalDeplConfig({ extensions: {} })
   const installedPackages = installations.map(({ installedPackage }) => installedPackage)
   const enabledExtensions = installations.map(({ enabledExtension }) => enabledExtension)
-  await main.writeSysConfig({ installedPackages, enabledExtensions })
-
+  const coreInst = installations.find(({ core }) => core)!
+  await main.writeSysConfig({
+    installedPackages,
+    enabledExtensions,
+    core: { installationFolder: coreInst.installedPackage.installationFolder },
+  })
   return main
 }
 
@@ -45,8 +50,8 @@ function defaultInstallPkgReqs(): InstallPkgReq[] {
   })
 }
 
-const defaultCorePackages = {
-  // 'core': '0.0.1',
+export const defaultCorePackages = {
+  'core': '0.0.1',
   'http-server': '0.0.1',
   'react-app': '0.0.1',
   'authentication-manager': '0.0.1',
