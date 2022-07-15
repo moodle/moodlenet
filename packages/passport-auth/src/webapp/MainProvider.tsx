@@ -4,6 +4,7 @@ import * as loginComponents from './Login'
 
 export const MainProvider: ExtContextProviderComp = ({ children }) => {
   lib.auth.useRegisterLogin(loginComponents)
+  lib.auth.useRegisterSignup(loginComponents)
   return <>{children}</>
 }
 

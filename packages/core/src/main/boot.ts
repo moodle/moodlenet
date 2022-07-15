@@ -129,13 +129,13 @@ export default async function boot(cfg: BootCfg) {
             },
             'ext/listDeployed'() {
               // console.log({ deployments: deployments.reg })
-              const allInfo = Object.values(deployments.reg).map<ExtInfo>(({ ext, installedPackageInfo: pkgInfo }) =>
+              const extInfos = Object.values(deployments.reg).map<ExtInfo>(({ ext, installedPackageInfo: pkgInfo }) =>
                 ext2ExtInfo({
                   pkgInfo,
                   ext,
                 }),
               )
-              return allInfo
+              return [{ extInfos }]
             },
             async 'pkg/install'({
               msg: {
