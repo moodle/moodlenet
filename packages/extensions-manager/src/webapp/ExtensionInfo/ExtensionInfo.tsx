@@ -1,5 +1,5 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { FC, ReactNode, ReactPortal, useEffect, useState } from 'react'
+import { FC, ReactNode, ReactPortal, useCallback } from 'react'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
@@ -7,13 +7,13 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import lib from 'moodlenet-react-app-lib'
-import { Package } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import { CoreExt, PackageInfo } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
 import './styles.scss'
 
 export type ExtensionInfoProps = {
-  extension: Package
+  extension: PackageInfo
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
 const TertiaryButton = lib.ui.components.atoms.TertiaryButton
@@ -22,11 +22,6 @@ const Card = lib.ui.components.atoms.Card
 
 const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, onClickBackBtn }) => {
   // const stateContext = useContext(StateContext)
-  const [readme, setReadme] = useState<string>('')
-
-  useEffect(() => {
-    extension.readme && extension.readme.then(response => setReadme(response))
-  }, [])
 
   // const modulesList = extension?.modules.map(
   //   (module: Module, i) =>
@@ -37,7 +32,12 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, onClickBackBtn }) =>
   //       </div>
   //     ),
   // )
-
+  const install = useCallback(() => {
+    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+      installPkgReq: { type: 'symlink', fromFolder: extension.installationFolder },
+      deploy: true,
+    })
+  }, [extension.installationFolder])
   type CodeBlockProps = {
     node: any
     children: ReactNode & ReactNode[]
@@ -69,18 +69,18 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, onClickBackBtn }) =>
             <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
               <ArrowBackIcon />
             </TertiaryButton>
-            {extension.name}
+            {extension.packageJson.name}
           </div>
-          <PrimaryButton className="install-btn" onClick={() => alert('installing')}>
+          <PrimaryButton className="install-btn" onClick={install}>
             Install
           </PrimaryButton>
         </div>
 
-        <div>{extension.description}</div>
+        <div>{extension.packageJson.description}</div>
       </Card>
       <Card>
         <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
-          {readme}
+          {extension.readme}
         </ReactMarkdown>
       </Card>
     </div>

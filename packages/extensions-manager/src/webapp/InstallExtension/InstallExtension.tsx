@@ -1,17 +1,11 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
+import { CoreExt, PackageInfo } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
-import { FC, ReactNode, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
-import { Package } from '../fakeData'
-import {
-  capitalize,
-  getNumberFromString,
-  getPastelColor,
-  getReadmeFromRepo,
-  searchNpmPackages
-} from '../helpers/utilities'
+import { getNumberFromString, getPastelColor } from '../helpers/utilities'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import './styles.scss'
 
@@ -25,48 +19,16 @@ const PrimaryButton = lib.ui.components.atoms.PrimaryButton
 
 const InstallExtension: FC<InstallExtensionProps> = () => {
   const [localPathField, setLocalPathField] = useState('')
-  const [selectedPackage, setSelectedPackage] = useState<Package | undefined>(undefined)
-  const [extensions, setExtensions] = useState<ReactNode | undefined>()
+  const [selectedPackage, setSelectedPackage] = useState<PackageInfo>()
+  const [packageInfos, setPackageInfos] = useState<PackageInfo[]>([])
 
   useEffect(() => {
-    searchNpmPackages('moodlenet').then(response => {
-      setExtensions(
-        response.objects.map((o: any, i: number) => {
-          const id = getNumberFromString(o.package.name)
-          const p: Package = {
-            name: capitalize(o.package.name.replace('@moodlenet/', '')) || '',
-            creator: '',
-            description: capitalize(o.package.description),
-            modules: [],
-            logo: '',
-            links: {
-              homepage: o.package.links.homepage,
-            },
-            readme: getReadmeFromRepo(o.package.links.homepage ?? ''),
-          }
-          return (
-            <div
-              className="package"
-              key={i}
-              onClick={() => setSelectedPackage(p)} /* onClick={() => setSelectedPackage(o.package.name)} */
-            >
-              {/* <PackageIcon /> */}
-              <div className="left" onClick={() => setSelectedPackage(p)}>
-                <div className="logo" style={{ background: getPastelColor(id, 0.5) }}>
-                  <div className="letter">{p.name && p.name[0]?.toLocaleLowerCase()}</div>
-                  <div className="circle" style={{ background: getPastelColor(id) }} />
-                </div>
-                <div className="info">
-                  <div className="title">{p.name}</div>
-                  <div className="details">{p.description}</div>
-                </div>
-              </div>
-              <PrimaryButton className="install-btn">Details</PrimaryButton>
-            </div>
-          )
-        }),
-      )
-    })
+    lib.priHttp
+      .fetch<CoreExt>(
+        'moodlenet-core',
+        '0.1.10',
+      )('pkg/getPkgStorageInfos')()
+      .then(({ pkgInfos }) => setPackageInfos(pkgInfos))
   }, [])
 
   return (
@@ -95,7 +57,34 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
           <Card className="available-extensions">
             <div className="title">Compatible extensions</div>
             <div className="list">
-              {extensions ? extensions : [1, 2, 3, 4].map(_ => <div key={_} className="package loading"></div>)}
+              {packageInfos.map(pkgInfo => {
+                return (
+                  <div
+                    className="package"
+                    key={pkgInfo.installationFolder}
+                    onClick={() => setSelectedPackage(pkgInfo)} /* onClick={() => setSelectedPackage(o.package.name)} */
+                  >
+                    {/* <PackageIcon /> */}
+                    <div className="left" onClick={() => setSelectedPackage(pkgInfo)}>
+                      <div
+                        className="logo"
+                        style={{ background: getPastelColor(getNumberFromString(pkgInfo.packageJson.name), 0.5) }}
+                      >
+                        <div className="letter">{pkgInfo.packageJson.name.substring(0, 1).toLocaleLowerCase()}</div>
+                        <div
+                          className="circle"
+                          style={{ background: getPastelColor(getNumberFromString(pkgInfo.packageJson.name)) }}
+                        />
+                      </div>
+                      <div className="info">
+                        <div className="title">{pkgInfo.packageJson.name}</div>
+                        <div className="details">{pkgInfo.packageJson.description}</div>
+                      </div>
+                    </div>
+                    <PrimaryButton className="install-btn">Details</PrimaryButton>
+                  </div>
+                )
+              })}
             </div>
           </Card>
         </div>
