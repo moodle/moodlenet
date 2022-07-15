@@ -1,6 +1,6 @@
+import extCtxProviders from 'ext-context-providers-modules'
 import { FC, PropsWithChildren } from 'react'
 import * as auth from '../react-app-lib/auth'
-import extCtxProviders from './extContextProvidersModules'
 import * as header from './ui/components/organisms/Header'
 
 export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => {
