@@ -140,10 +140,17 @@ export default async function boot(cfg: BootCfg) {
             async 'pkg/install'({
               msg: {
                 data: {
-                  req: { installPkgReq },
+                  req: { installPkgReq, deploy },
                 },
               },
             }) {
+              if (installPkgReq.type === 'symlink') {
+                assert(
+                  !!main.sysPaths.pkgStorageFolder,
+                  `can't install symlink without a base package storage folder configured`,
+                )
+                installPkgReq.fromFolder = resolve(main.sysPaths.pkgStorageFolder, installPkgReq.fromFolder)
+              }
               const installedPackageInfo = await main.pkgMng.install(installPkgReq)
               const extInfos = installedPackageInfo.pkgExport.exts.map<ExtInfo>(ext =>
                 ext2ExtInfo({ ext, pkgInfo: installedPackageInfo }),
@@ -158,6 +165,22 @@ export default async function boot(cfg: BootCfg) {
                   { installationFolder: installedPackageInfo.installationFolder, installPkgReq },
                 ],
               })
+              if (deploy) {
+                const extId = installedPackageInfo.pkgExport.exts[0]!.id // @FIXME !!!
+                const extBag: ExtBag = { installedPackageInfo, extId }
+                console.log('*deploying installed', extBag)
+                await deployExtensions({
+                  extBags: [extBag],
+                })
+                const curr = main.getSysConfig()
+                main.writeSysConfig({
+                  ...curr,
+                  enabledExtensions: [
+                    ...curr.enabledExtensions,
+                    { extId, installationFolder: installedPackageInfo.installationFolder },
+                  ],
+                })
+              }
               return { extInfos }
             },
             async 'ext/deploy'({
@@ -170,14 +193,15 @@ export default async function boot(cfg: BootCfg) {
               const installedPackageInfo = await main.pkgMng.getInstalledPackageInfo({ installationFolder })
               const ext = installedPackageInfo.pkgExport.exts.find(ext => ext.id === extId)
               assert(ext, `Couldn't find extId:${extId} in packageId:${installationFolder}`)
-              // await deployExtensions({
-              //   extBags: [{ ext, pkgInfo: pkgDiskInfo }],
-              // })
+              await deployExtensions({
+                extBags: [{ installedPackageInfo, extId }],
+              })
               const curr = main.getSysConfig()
               main.writeSysConfig({
                 ...curr,
                 enabledExtensions: [...curr.enabledExtensions, { extId: ext.id, installationFolder }],
               })
+
               return
             },
           })
@@ -222,15 +246,15 @@ export default async function boot(cfg: BootCfg) {
       return []
     }
     //FIXME: dependency ordered
-    const deployableBags = extBags.map<DeployableBag>(({ installedPackageInfo, extId: deployExtId, deployWith }) => {
-      const ext = installedPackageInfo.pkgExport.exts.find(({ id }) => deployExtId === id)
-      assert(ext, `couldn't find ${deployExtId} in ${installedPackageInfo.installationFolder}`)
-      console.log('deployExtension', deployExtId)
-      const deployExtIdSplit = splitExtId(deployExtId)
-      const env = extEnv(deployExtId)
+    const deployableBags = extBags.map<DeployableBag>(({ installedPackageInfo, extId: myDeployExtId, deployWith }) => {
+      const ext = installedPackageInfo.pkgExport.exts.find(({ id }) => myDeployExtId === id)
+      assert(ext, `couldn't find ${myDeployExtId} in ${installedPackageInfo.installationFolder}`)
+      console.log('deployExtension', myDeployExtId)
+      const deployExtIdSplit = splitExtId(myDeployExtId)
+      const env = extEnv(myDeployExtId)
       const $msg$ = new Subject<DataMessage<any>>()
 
-      const push = pushMsg(deployExtId)
+      const push = pushMsg(myDeployExtId)
       const getExt: Shell['getExt'] = deployments.get as any
 
       const onExt: Shell['onExt'] = (extId, cb) => {
@@ -265,22 +289,23 @@ export default async function boot(cfg: BootCfg) {
         return subscription
       }
 
-      function assertMyRegDeployment(prefixErrMsg: string) {
-        const myRegDeployment = deployments.get(deployExtId)
-        if (!myRegDeployment) {
-          throw new Error(`${prefixErrMsg} ${deployExtId} deployment is missing`)
-        }
-        return myRegDeployment
-      }
+      // function assertMyRegDeployment(prefixErrMsg: string) {
+      //   const myRegDeployment = deployments.get(myDeployExtId)
+      //   assert(myRegDeployment, `${prefixErrMsg} my ${myDeployExtId} deployment is missing`)
+      //   return myRegDeployment
+      // }
       const onExtInstance: Shell['onExtInstance'] = (onExtId, cb) => {
         let cleanup: void | (() => void) = undefined
         const subscription = onExt(onExtId, regDeployment => {
           // console.log('onExtInstance', extId, `[${regDeployment?.extId}]`)
-          const myRegDeployment = assertMyRegDeployment(`onExtInstance(${onExtId}) subscription still receiving, but`)
-          if (!regDeployment?.inst) {
-            return cleanup?.()
-          }
-          cleanup = cb(regDeployment.inst?.({ depl: myRegDeployment }) /* --- , regDeployment as any */)
+          // const myRegDeployment = assertMyRegDeployment(`onExtInstance(${onExtId}) subscription still receiving, but`)
+          const sub = onExtDeployment(myDeployExtId, myRegDeployment => {
+            sub.unsubscribe()
+            if (!regDeployment?.inst) {
+              return cleanup?.()
+            }
+            cleanup = cb(regDeployment.inst?.({ depl: myRegDeployment }) /* --- , regDeployment as any */)
+          })
         })
         return subscription
       }
@@ -296,10 +321,15 @@ export default async function boot(cfg: BootCfg) {
         return subscription
       }
 
-      const libOf: Shell['libOf'] = ofExtId => {
-        const myRegDeployment = assertMyRegDeployment(`libOf(${ofExtId}), but`)
-        return deployments.get(ofExtId)?.lib?.({ depl: myRegDeployment as any })
-      }
+      const libOf: Shell['libOf'] = ofExtId =>
+        new Promise((resolve, reject) => {
+          // const myRegDeployment = assertMyRegDeployment(`libOf(${ofExtId}), but`)
+          const sub = onExtDeployment(myDeployExtId, myRegDeployment => {
+            sub.unsubscribe()
+            resolve(deployments.get(ofExtId)?.lib?.({ depl: myRegDeployment as any }))
+            return reject
+          })
+        })
 
       const expose: ExposePointers = expPnt => {
         console.log(`Expose `, deployExtIdSplit.extName, expPnt)
@@ -307,14 +337,14 @@ export default async function boot(cfg: BootCfg) {
       }
 
       const shell: Shell = {
-        extId: deployExtId,
+        extId: myDeployExtId,
         extName: deployExtIdSplit.extName,
         extVersion: deployExtIdSplit.version,
         env,
         msg$: $msg$.asObservable(),
         // removing `as any` on `push` compiler crashes with "Error: Debug Failure. No error for last overload signature"
         // ::: https://github.com/microsoft/TypeScript/issues/33133  ... related:https://github.com/microsoft/TypeScript/issues/37974
-        emit: path => (data, opts) => (push as any)('out')(deployExtId)(path)(data, opts),
+        emit: path => (data, opts) => (push as any)('out')(myDeployExtId)(path)(data, opts),
         send: destExtId => path => (data, opts) => (push as any)('in')(destExtId)(path)(data, opts),
         push,
         libOf,
