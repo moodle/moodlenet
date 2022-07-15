@@ -1,5 +1,5 @@
+import routes from 'ext-routes'
 import { Route, Routes } from 'react-router-dom'
-import routes from './ext-routes'
 import { Login } from './ui/components/pages/Access/Login/Login'
 import { RootLogin } from './ui/components/pages/Access/RootLogin/RootLogin'
 import { Signup } from './ui/components/pages/Access/Signup/Signup'

@@ -1,7 +1,7 @@
 import { InstallPkgReq } from '../pkg-mng/types'
 import { ExtId, ExtName } from './ext'
 
-export type MainFolders = { systemFolder: string; deploymentFolder: string }
+export type MainFolders = { systemFolder: string; deploymentFolder: string; pkgStorageFolder?: string }
 // SysConfig
 export type SystemPaths = MainFolders & {
   sysConfigFile: string

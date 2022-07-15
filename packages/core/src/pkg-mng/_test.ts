@@ -1,6 +1,8 @@
 import { mkdir, rm } from 'fs/promises'
+import { resolve } from 'path'
 import { inspect } from 'util'
 import { createPkgMng } from '.'
+import { getAllPackagesInfo } from './lib'
 ;(async function start() {
   const pkgsFolder = '../../.ignore/pkgmngfolder'
   await rm(pkgsFolder, { recursive: true, force: true })
@@ -11,6 +13,6 @@ import { createPkgMng } from '.'
     fromFolder: '/home/alec/MOODLENET/repo/moodlenet3/packages/passport-auth',
   })
   // await pkgMng.install({ type: 'npm', registry: 'https://registry.npmjs.org', pkgId: 'tiny' })
-  const allInfos = await pkgMng.getAllInstalledPackagesInfo()
+  const allInfos = await getAllPackagesInfo({ absFolder: resolve(__dirname, '..', '..', '..') })
   console.log(inspect(allInfos, false, 10, true))
 })()
