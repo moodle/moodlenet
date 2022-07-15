@@ -1,10 +1,12 @@
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import ExtensionIcon from '@material-ui/icons/Extension'
 import SettingsIcon from '@material-ui/icons/Settings'
 import { FC, PropsWithChildren, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthCtx } from '../../../../../../react-app-lib/auth'
 import { PrimaryButton, TertiaryButton } from '../../../atoms'
 import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
+import { SetCtx } from '../../../pages/Settings/set'
 // import Switch from '../../atoms/Switch/Switch'
 import { AddonCtx } from '../addons'
 import './Header.scss'
@@ -13,6 +15,7 @@ type HeaderProps = {}
 
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
   const addonCtx = useContext(AddonCtx)
+  const setCtx = useContext(SetCtx)
   // console.log({ addonCtx })
 
   const { clientSession, logout } = useContext(AuthCtx)
@@ -29,7 +32,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
       <div className="content">
         <div className="left">
           <Link className="title" to={`/`}>
-            <span className="mn">MoodleNet</span>
+            <span className="mn">{setCtx.instanceName}</span>
             <span className="bar">|</span>
           </Link>
         </div>
@@ -42,21 +45,13 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
             <FloatingMenu
               className="avatar-menu"
               menuContent={[
-                // <Link href={me.myProfileHref} className="profile">
-                //   <div style={avatar} className="avatar" />
-                //   <Trans>Profile</Trans>
-                // </Link>,
-                // <Link href={me.bookmarksHref}>
-                //   <BookmarksIcon />
-                //   <Trans>Bookmarks</Trans>
-                // </Link>,
-                // <Link href={me.followingHref}>
-                //   <ArrowsIcon />
-                //   <Trans>Following</Trans>
-                // </Link>,
-                <Link to="/extensions">
+                <Link to="/settings">
                   <SettingsIcon />
                   Settings
+                </Link>,
+                <Link to="/extensions">
+                  <ExtensionIcon />
+                  Extensions
                 </Link>,
                 <Link to="/" onClick={logout}>
                   <ExitToAppIcon />

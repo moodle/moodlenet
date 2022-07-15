@@ -1,7 +1,8 @@
-import { FC } from 'react'
+import { FC, useContext } from 'react'
 import defaultBackgroud from '../../../../static/img/default-landing-background.png'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import { MainLayout } from '../../layout'
+import { SetCtx } from '../Settings/set'
 import './Landing.scss'
 
 export type LandingProps = {
@@ -48,6 +49,7 @@ export const LandingBody: FC<LandingProps> = (
     // setSearchText,
   },
 ) => {
+  const setCtx = useContext(SetCtx)
   // const [isSearchboxInViewport, setIsSearchboxInViewport] =
   //   useState<boolean>(true)
   // const [isCreatingContent, setIsCreatingContent] = useState<boolean>(false)
@@ -61,9 +63,9 @@ export const LandingBody: FC<LandingProps> = (
     <div className="landing">
       <div className="landing-header" style={background}>
         <div className="landing-title">
-          <div className="title">{`Find, share and curate open educational resources`}</div>
+          <div className="title">{setCtx.landingTitle}</div>
           {/* <div className="title">{organization.title}</div> */}
-          <div className="subtitle">{`Search for resources, subjects, collections or people`}</div>
+          <div className="subtitle">{setCtx.landingSubtitle}</div>
           {/* <div className="subtitle">{organization.subtitle}</div> */}
         </div>
         {/* <Searchbox
