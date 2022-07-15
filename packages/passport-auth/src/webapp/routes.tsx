@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Route } from 'react-router-dom'
 const LoginSuccess = lazy(() => import('./LoginSuccess'))
 const LoginFail = lazy(() => import('./LoginFail'))
-const FormConfig = lazy(() => import('./FormConfig'))
+const FormConfig = lazy(() => import('./ListConfig'))
 
 const AuthRoutes = (
   <>
