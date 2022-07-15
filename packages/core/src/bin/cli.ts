@@ -2,7 +2,7 @@
 import { resolve } from 'path'
 // import boot from '../main/boot'
 import install from '../main/install'
-import { PKGS_FOLDER_NAME, SYS_CONFIG_FILE_NAME } from '../main/prepareFileSystem'
+import { INSTALLED_PKGS_FOLDER_NAME, SYS_CONFIG_FILE_NAME } from '../main/prepareFileSystem'
 import { MainFolders } from '../types/sys'
 const [cmd, _deploymentFolder, _systemFolder] = process.argv.slice(2)
 const deploymentFolder = _deploymentFolder ? resolve(process.cwd(), _deploymentFolder) : process.cwd()
@@ -21,7 +21,7 @@ if (cmd === 'boot') {
   const coreInstallationFolder = require(resolve(systemFolder, SYS_CONFIG_FILE_NAME)).core.installationFolder as string
   const bootModule = require(resolve(
     deploymentFolder,
-    PKGS_FOLDER_NAME,
+    INSTALLED_PKGS_FOLDER_NAME,
     coreInstallationFolder,
     'lib',
     'main',
