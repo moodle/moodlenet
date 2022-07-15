@@ -1,5 +1,3 @@
-import { ExtExpose } from '../types'
-
 _throw()
 const exp: Record<string, ExtExpose> = {}
 export default exp
