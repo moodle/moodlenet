@@ -14,7 +14,7 @@ export default function prepareFileSystem({ mainFolders }: { mainFolders: MainFo
 
   mkdirSync(localPkgsFolder, { recursive: true })
   mkdirSync(sysFolder, { recursive: true })
-  mkdirSync(mainFolders.pkgStorageFolder, { recursive: true })
+  mainFolders.pkgStorageFolder && mkdirSync(mainFolders.pkgStorageFolder, { recursive: true })
 
   const sysPaths: SystemPaths = {
     deploymentFolder: deploymentFolder,

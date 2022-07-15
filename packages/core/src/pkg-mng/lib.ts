@@ -3,6 +3,14 @@ import { readdir, readFile, writeFile } from 'fs/promises'
 import { basename, resolve } from 'path'
 import { InstalledPackageInfo, PackageInfo, PkgInstallationInfo, SafePackageJson } from './types'
 
+export async function getAllInstalledPackagesInfo({
+  absFolder,
+}: {
+  absFolder: string
+}): Promise<InstalledPackageInfo[]> {
+  const pkgFolderNames = await getAllFoldersIn({ absFolder })
+  return Promise.all(pkgFolderNames.map(({ abs }) => getInstalledPackageInfo({ absFolder: abs })))
+}
 export async function getInstalledPackageInfo({ absFolder }: { absFolder: string }): Promise<InstalledPackageInfo> {
   const pkgInfo = await getPackageInfo({ absFolder })
   const mainModAbsPath = resolve(absFolder, pkgInfo.mainModPath ?? '')
@@ -16,6 +24,18 @@ export async function getInstalledPackageInfo({ absFolder }: { absFolder: string
     pkgExport,
     installationInfo: installInfo,
   }
+}
+export async function getAllPackagesInfo({ absFolder }: { absFolder: string }): Promise<PackageInfo[]> {
+  const pkgFolderNames = await getAllFoldersIn({ absFolder })
+  return Promise.all(pkgFolderNames.map(({ abs }) => getPackageInfo({ absFolder: abs })))
+}
+
+export async function getAllFoldersIn({ absFolder }: { absFolder: string }) {
+  const dir = await readdir(absFolder, { withFileTypes: true })
+  const pkgFolderNames = dir
+    .filter(_ => _.isDirectory() || _.isSymbolicLink())
+    .map(({ name }) => resolve(absFolder, name))
+  return pkgFolderNames.map(name => ({ name, abs: resolve(absFolder, name) }))
 }
 
 export async function getPackageInfo({ absFolder }: { absFolder: string }): Promise<PackageInfo> {

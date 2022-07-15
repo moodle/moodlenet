@@ -9,7 +9,7 @@ type Cfg = {
 
 export function getMain({ mainFolders }: Cfg) {
   const { sysPaths } = prepareFileSystem({ mainFolders })
-  const pkgMng = createPkgMng({ pkgsFolder: sysPaths.localPkgsFolder, symlinkFolder: sysPaths.pkgStorageFolder })
+  const pkgMng = createPkgMng({ pkgsFolder: sysPaths.localPkgsFolder })
 
   return {
     pkgMng,
