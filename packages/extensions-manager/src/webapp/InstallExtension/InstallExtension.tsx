@@ -70,14 +70,18 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
                         className="logo"
                         style={{ background: getPastelColor(getNumberFromString(pkgInfo.packageJson.name), 0.5) }}
                       >
-                        <div className="letter">{pkgInfo.packageJson.name.substring(0, 1).toLocaleLowerCase()}</div>
+                        <div className="letter">
+                          {pkgInfo.packageJson.name.split('/').reverse().join('').substring(0, 1).toLocaleLowerCase()}
+                        </div>
                         <div
                           className="circle"
                           style={{ background: getPastelColor(getNumberFromString(pkgInfo.packageJson.name)) }}
                         />
                       </div>
                       <div className="info">
-                        <div className="title">{pkgInfo.packageJson.name}</div>
+                        <div className="title">
+                          {pkgInfo.packageJson.name} v{pkgInfo.packageJson.version}
+                        </div>
                         <div className="details">{pkgInfo.packageJson.description}</div>
                       </div>
                     </div>
