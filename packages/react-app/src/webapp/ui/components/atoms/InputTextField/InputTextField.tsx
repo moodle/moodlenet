@@ -71,8 +71,10 @@ export const InputTextField = forwardRef<
   return (
     <div
       className={`input-text-field ${className}${disabled ? ' disabled' : ''} ${
-        highlight || error ? ' highlight' : ''
-      } ${!disabled && !errorLeaves && error ? 'enter-error' : ''} ${!disabled && errorLeaves ? 'leave-error' : ''}`}
+        fieldProps.textarea ? ' textarea' : 'text'
+      } ${highlight || error ? ' highlight' : ''} ${!disabled && !errorLeaves && error ? 'enter-error' : ''} ${
+        !disabled && errorLeaves ? 'leave-error' : ''
+      }`}
       style={{ visibility: hidden ? 'hidden' : 'visible' }}
       hidden={hidden}
     >
