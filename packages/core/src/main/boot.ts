@@ -7,6 +7,7 @@ import * as CoreLib from '../core-lib'
 import { matchMessage } from '../core-lib/message'
 import { isExtIdBWC, joinPointer, splitExtId, splitPointer } from '../core-lib/pointer'
 import { depGraphAddNodes } from '../dep-graph'
+import * as pkgMngLib from '../pkg-mng/lib'
 import type {
   CoreExt,
   DataMessage,
@@ -112,8 +113,20 @@ export default async function boot(cfg: BootCfg) {
                 return { valid: true }
               },
             },
+            'pkg/getPkgStorageInfos/sub': {
+              validate() {
+                return { valid: true }
+              },
+            },
           })
           shell.lib.pubAll<CoreExt>('moodlenet-core@0.1.10', shell, {
+            async 'pkg/getPkgStorageInfos'() {
+              if (!main.sysPaths.pkgStorageFolder) {
+                return { pkgInfos: [] }
+              }
+              const pkgInfos = await pkgMngLib.getAllPackagesInfo({ absFolder: main.sysPaths.pkgStorageFolder })
+              return { pkgInfos }
+            },
             'ext/listDeployed'() {
               // console.log({ deployments: deployments.reg })
               const allInfo = Object.values(deployments.reg).map<ExtInfo>(({ ext, installedPackageInfo: pkgInfo }) =>
@@ -154,7 +167,7 @@ export default async function boot(cfg: BootCfg) {
                 },
               },
             }) {
-              const installedPackageInfo = await main.pkgMng.getInstalledPackageInfo(installationFolder)
+              const installedPackageInfo = await main.pkgMng.getInstalledPackageInfo({ installationFolder })
               const ext = installedPackageInfo.pkgExport.exts.find(ext => ext.id === extId)
               assert(ext, `Couldn't find extId:${extId} in packageId:${installationFolder}`)
               // await deployExtensions({
@@ -182,7 +195,7 @@ export default async function boot(cfg: BootCfg) {
         {
           extId: coreExtId,
           installedPackageInfo: {
-            ...(await main.pkgMng.getInstalledPackageInfo(resolve(__dirname, '..', '..'))),
+            ...(await main.pkgMng.getInstalledPackageInfo({ installationFolder: resolve(__dirname, '..', '..') })),
             pkgExport: { exts: [coreExt as any] },
           },
         },
@@ -467,7 +480,7 @@ export default async function boot(cfg: BootCfg) {
         .getSysConfig()
         .enabledExtensions.filter(({ extId }) => extId !== coreExtId)
         .map(async ({ extId, installationFolder }) => {
-          const installedPackageInfo = await main.pkgMng.getInstalledPackageInfo(installationFolder)
+          const installedPackageInfo = await main.pkgMng.getInstalledPackageInfo({ installationFolder })
           return { extId, installedPackageInfo }
         }),
     )

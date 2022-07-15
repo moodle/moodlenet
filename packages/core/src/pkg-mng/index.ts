@@ -1,18 +1,16 @@
-import { readdir } from 'fs/promises'
 import { resolve } from 'path'
 import { npmInstaller, symlinkInstaller } from './installers'
 import * as lib from './lib'
-import { InstalledPackageInfo, InstallPkgReq, PackageInfo } from './types'
+import { InstalledPackageInfo, InstallPkgReq } from './types'
 
 // const myDirInfo = installDirsInfo();
 
-export type PkgMngCfg = { pkgsFolder: string; symlinkFolder: string }
-export function createPkgMng({ pkgsFolder, symlinkFolder }: PkgMngCfg) {
+export type PkgMngCfg = { pkgsFolder: string }
+export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
   return {
     install,
     getAllInstalledPackagesInfo,
     getInstalledPackageInfo,
-    getAllSymlinkPackagesInfo,
   }
 
   async function install(installPkgReq: InstallPkgReq, useFolderName?: string) {
@@ -20,7 +18,7 @@ export function createPkgMng({ pkgsFolder, symlinkFolder }: PkgMngCfg) {
       ? npmInstaller({ installPkgReq, pkgsFolder, useFolderName })
       : symlinkInstaller({ installPkgReq, pkgsFolder, useFolderName }))
     await lib.writeInstallInfo({ absFolder: getAbsInstallationFolder(installationFolder), info: { installPkgReq } })
-    const installedPackageInfo = await getInstalledPackageInfo(installationFolder)
+    const installedPackageInfo = await getInstalledPackageInfo({ installationFolder })
 
     return installedPackageInfo
     // questa non funziona per le partizioni diverse su linux
@@ -30,26 +28,19 @@ export function createPkgMng({ pkgsFolder, symlinkFolder }: PkgMngCfg) {
   }
 
   async function getAllInstalledPackagesInfo(): Promise<InstalledPackageInfo[]> {
-    const dir = await readdir(pkgsFolder, { withFileTypes: true })
-    const pkgFolderNames = dir.filter(_ => _.isDirectory() || _.isSymbolicLink()).map(({ name }) => name)
-    return Promise.all(pkgFolderNames.map(folder => getInstalledPackageInfo(folder)))
+    return lib.getAllInstalledPackagesInfo({ absFolder: pkgsFolder })
   }
 
-  async function getAllSymlinkPackagesInfo(): Promise<PackageInfo[]> {
-    console.log('getAllSymlinkPackagesInfo', symlinkFolder)
-    const dir = await readdir(symlinkFolder, { withFileTypes: true })
-    const pkgFolderNames = dir
-      .filter(_ => _.isDirectory() || _.isSymbolicLink())
-      .map(({ name }) => resolve(symlinkFolder, name))
-    return Promise.all(pkgFolderNames.map(absFolder => lib.getPackageInfo({ absFolder })))
+  async function getInstalledPackageInfo({
+    installationFolder,
+  }: {
+    installationFolder: string
+  }): Promise<InstalledPackageInfo> {
+    return lib.getInstalledPackageInfo({ absFolder: getAbsInstallationFolder(installationFolder) })
   }
 
-  async function getInstalledPackageInfo(folder: string): Promise<InstalledPackageInfo> {
-    return lib.getInstalledPackageInfo({ absFolder: getAbsInstallationFolder(folder) })
-  }
-
-  function getAbsInstallationFolder(folder: string) {
-    return resolve(pkgsFolder, folder)
+  function getAbsInstallationFolder(installationFolder: string) {
+    return resolve(pkgsFolder, installationFolder)
   }
 }
 

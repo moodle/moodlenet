@@ -60,7 +60,7 @@ prompt.start()
   const mainFolders: MainFolders = {
     deploymentFolder,
     systemFolder,
-    pkgSymlinkFolder: resolve(__dirname, '..', '..'),
+    pkgStorageFolder: resolve(__dirname, '..', '..'),
   }
   console.log({ deploymentFolder })
   const deploymentFolderPathExists = existsSync(deploymentFolder)
