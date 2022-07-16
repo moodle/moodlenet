@@ -1,8 +1,13 @@
-import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
+import type { CoreExt, Ext, ExtDef, InstallPkgReq, SubTopo } from '@moodlenet/core'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
+import { searchPackagesFromRegistry } from './lib'
+import { SearchPackagesResObject, SearchPackagesResponse } from './types/data'
 
-export type ExtensionsManagerExt = ExtDef<'moodlenet-extensions-manager', '0.1.10', {}>
+export type ExtensionsManagerExtTopo = {
+  searchPackages: SubTopo<{ searchText: string; registry?: string }, SearchPackagesResponse>
+}
+export type ExtensionsManagerExt = ExtDef<'moodlenet-extensions-manager', '0.1.10', ExtensionsManagerExtTopo>
 
 const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
   id: 'moodlenet-extensions-manager@0.1.10',
@@ -21,14 +26,71 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
         },
       })
     })
-    shell.expose({})
+    shell.expose({
+      'searchPackages/sub': {
+        validate() {
+          return { valid: true }
+        },
+      },
+    })
     return {
       deploy() {
-        shell.lib.pubAll<ExtensionsManagerExt>('moodlenet-extensions-manager@0.1.10', shell, {})
+        shell.lib.pubAll<ExtensionsManagerExt>('moodlenet-extensions-manager@0.1.10', shell, {
+          async searchPackages({
+            msg: {
+              data: {
+                req: { searchText, registry = DEFAULT_NPM_REGISTRY },
+              },
+            },
+          }) {
+            const [
+              searchRes,
+              {
+                msg: {
+                  data: { extInfos: deployedList },
+                },
+              } /* ,
+              {
+                msg: {
+                  data: { pkgInfos: installedPackages },
+                },
+              }, */,
+            ] = await Promise.all([
+              searchPackagesFromRegistry({ registry, searchText }),
+              shell.lib.fetch<CoreExt>(shell)('moodlenet-core@0.1.10::ext/listDeployed')(),
+              // shell.lib.fetch<CoreExt>(shell)('moodlenet-core@0.1.10::pkg/getInstalledPackages')(),
+            ])
+            const objects = searchRes.objects.map<SearchPackagesResObject>(
+              ({ package: { name, description, keywords, version, links } }) => {
+                // const isInstalled = !!installedPackages.find(pkgInfo => pkgInfo.packageJson.name === name)
+                const deployedIn = deployedList
+                  .map(({ packageInfo }) => packageInfo)
+                  .find(packageInfo => packageInfo.packageJson.name === name)?.installationFolder
+                const installPkgReq: InstallPkgReq = {
+                  type: 'npm',
+                  registry,
+                  pkgId: version ? `${name}@${version}` : name,
+                }
+                return {
+                  name,
+                  description: description ?? '',
+                  keywords: keywords ?? [],
+                  version,
+                  registry,
+                  homepage: links?.homepage,
+                  ...(deployedIn ? { installPkgReq: undefined, deployedIn } : { deployedIn: undefined, installPkgReq }),
+                }
+              },
+            )
+            return { objects }
+          },
+        })
         return {}
       },
     }
   },
 }
+export const DEFAULT_NPM_REGISTRY = 'http://localhost:4873'
+// export const DEFAULT_NPM_REGISTRY = 'https://registry.npmjs.org/'
 
 export default { exts: [ext] }
