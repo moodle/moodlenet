@@ -10,7 +10,7 @@ export type CoreExt = ExtDef<
     ext: {
       deployed: Port<'out', { extId: ExtId }>
       undeployed: Port<'out', { extId: ExtId }>
-      listDeployed: SubTopo<void, {extInfos:ExtInfo[]}>
+      listDeployed: SubTopo<void, { extInfos: ExtInfo[] }>
       deploy: SubTopo<
         {
           extId: ExtId
@@ -22,11 +22,12 @@ export type CoreExt = ExtDef<
     pkg: {
       install: SubTopo<{ installPkgReq: InstallPkgReq; deploy?: boolean }, { extInfos: ExtInfo[] }>
       getPkgStorageInfos: SubTopo<void, { pkgInfos: PackageInfo[] }>
+      getInstalledPackages: SubTopo<void, { pkgInfos: PackageInfo[] }>
     }
   }
 >
 
 export type ExtInfo = {
   ext: Omit<Ext, 'enable'>
-  installationFolder: string
+  packageInfo: PackageInfo
 }

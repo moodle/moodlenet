@@ -1,6 +1,8 @@
 import execa from 'execa'
+import { cp, readFile, writeFile } from 'fs/promises'
 import http from 'http'
 import https from 'https'
+import { resolve } from 'path'
 import tar from 'tar'
 import { DEFAULT_NPM_REGISTRY } from '../../main/default-consts'
 import { makeInstallationFolder } from './lib'
@@ -16,7 +18,8 @@ export const npmInstaller: PkgInstaller<NpmInstallReq> = async ({
     pkgId,
     useFolderName,
   })
-  const { stdout: tarGzUrl } = await execa('npm', ['v', pkgId, 'dist.tarball', 'registry', registry])
+  console.log('getting tarGzUrl...', { registry, pkgId })
+  const { stdout: tarGzUrl } = await execa('npm', ['v', pkgId, 'dist.tarball', '--registry', registry])
   console.log('down lib', tarGzUrl)
   const useHttpLib = tarGzUrl.startsWith('https') ? https : http
   await new Promise((resolve, reject) => {
@@ -28,8 +31,16 @@ export const npmInstaller: PkgInstaller<NpmInstallReq> = async ({
       response.once('error', err => reject(err))
     })
   })
+  const pkgJsonFile = resolve(absInstallationFolder, 'package.json')
+  await cp(pkgJsonFile, `${pkgJsonFile}_backup`)
+  const pkgJson = JSON.parse(await readFile(pkgJsonFile, 'utf-8'))
+  delete pkgJson.devDependencies
+  delete pkgJson.peerDependencies
+  await writeFile(pkgJsonFile, JSON.stringify(pkgJson, null, 2))
   console.log('install deps')
-  await execa('npm', ['install', '--force', '--omit', 'peer', '--omit', 'dev'], { cwd: absInstallationFolder })
+  await execa('npm', ['install', /* '--registry', registry, */ '--production'], {
+    cwd: absInstallationFolder,
+  })
 
   return { installationFolder: relInstallationFolder }
 }

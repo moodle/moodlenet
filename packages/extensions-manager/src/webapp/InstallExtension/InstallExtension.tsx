@@ -1,7 +1,8 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
-import { CoreExt, PackageInfo } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
 import { FC, useEffect, useState } from 'react'
+import { ExtensionsManagerExt } from '../..'
+import { SearchPackagesResObject, SearchPackagesResponse } from '../../types/data'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
@@ -19,16 +20,16 @@ const PrimaryButton = lib.ui.components.atoms.PrimaryButton
 
 const InstallExtension: FC<InstallExtensionProps> = () => {
   const [localPathField, setLocalPathField] = useState('')
-  const [selectedPackage, setSelectedPackage] = useState<PackageInfo>()
-  const [packageInfos, setPackageInfos] = useState<PackageInfo[]>([])
+  const [selectedPackage, setSelectedPackage] = useState<SearchPackagesResObject>()
+  const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
 
   useEffect(() => {
     lib.priHttp
-      .fetch<CoreExt>(
-        'moodlenet-core',
+      .fetch<ExtensionsManagerExt>(
+        'moodlenet-extensions-manager',
         '0.1.10',
-      )('pkg/getPkgStorageInfos')()
-      .then(({ pkgInfos }) => setPackageInfos(pkgInfos))
+      )('searchPackages')({ searchText: 'moodlenet' })
+      .then(resp => setSearchPkgResp(resp))
   }, [])
 
   return (
@@ -57,32 +58,32 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
           <Card className="available-extensions">
             <div className="title">Compatible extensions</div>
             <div className="list">
-              {packageInfos.map(pkgInfo => {
+              {searchPkgResp?.objects.map(respObj => {
                 return (
                   <div
                     className="package"
-                    key={pkgInfo.installationFolder}
-                    onClick={() => setSelectedPackage(pkgInfo)} /* onClick={() => setSelectedPackage(o.package.name)} */
+                    key={respObj.name}
+                    onClick={() => setSelectedPackage(respObj)} /* onClick={() => setSelectedPackage(o.package.name)} */
                   >
                     {/* <PackageIcon /> */}
-                    <div className="left" onClick={() => setSelectedPackage(pkgInfo)}>
+                    <div className="left" onClick={() => setSelectedPackage(respObj)}>
                       <div
                         className="logo"
-                        style={{ background: getPastelColor(getNumberFromString(pkgInfo.packageJson.name), 0.5) }}
+                        style={{ background: getPastelColor(getNumberFromString(respObj.name), 0.5) }}
                       >
                         <div className="letter">
-                          {pkgInfo.packageJson.name.split('/').reverse().join('').substring(0, 1).toLocaleLowerCase()}
+                          {respObj.name.split('/').reverse().join('').substring(0, 1).toLocaleLowerCase()}
                         </div>
                         <div
                           className="circle"
-                          style={{ background: getPastelColor(getNumberFromString(pkgInfo.packageJson.name)) }}
+                          style={{ background: getPastelColor(getNumberFromString(respObj.name)) }}
                         />
                       </div>
                       <div className="info">
                         <div className="title">
-                          {pkgInfo.packageJson.name} v{pkgInfo.packageJson.version}
+                          {respObj.name} v{respObj.version}
                         </div>
-                        <div className="details">{pkgInfo.packageJson.description}</div>
+                        <div className="details">{respObj.description}</div>
                       </div>
                     </div>
                     <PrimaryButton className="install-btn">Details</PrimaryButton>
@@ -94,7 +95,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
         </div>
       )}
       {selectedPackage && (
-        <ExtensionInfo extension={selectedPackage} onClickBackBtn={() => setSelectedPackage(undefined)} />
+        <ExtensionInfo searchPackagesResObject={selectedPackage} onClickBackBtn={() => setSelectedPackage(undefined)} />
       )}
     </>
   )
