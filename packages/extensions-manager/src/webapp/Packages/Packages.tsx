@@ -33,7 +33,11 @@ const Packages: FC<PackagesProps> = () => {
       extinfoList.map(extInfo => {
         const extName = extInfo.ext.displayName
         return (
-          <div className="package" key={extInfo.installationFolder} onClick={() => setSelectedExtInfo(extInfo)}>
+          <div
+            className="package"
+            key={extInfo.packageInfo.installationFolder}
+            onClick={() => setSelectedExtInfo(extInfo)}
+          >
             {/* <PackageIcon /> */}
             <div className="left" onClick={() => setSelectedExtInfo(extInfo)}>
               <div

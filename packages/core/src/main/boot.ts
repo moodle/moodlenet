@@ -25,6 +25,7 @@ import type {
   ExtName,
   MessagePush,
   MWFn,
+  PackageInfo,
   PushMessage,
   PushOptions,
   RegDeployment,
@@ -97,29 +98,27 @@ export default async function boot(cfg: BootCfg) {
             /* , tearDown  */
           },
         ) {
+          const assumeValid = { validate: () => ({ valid: true }) }
           shell.expose({
-            'ext/listDeployed/sub': {
-              validate() {
-                return { valid: true }
-              },
-            },
-            'pkg/install/sub': {
-              validate() {
-                return { valid: true }
-              },
-            },
-            'ext/deploy/sub': {
-              validate() {
-                return { valid: true }
-              },
-            },
-            'pkg/getPkgStorageInfos/sub': {
-              validate() {
-                return { valid: true }
-              },
-            },
+            'ext/listDeployed/sub': assumeValid,
+            'pkg/install/sub': assumeValid,
+            'ext/deploy/sub': assumeValid,
+            'pkg/getPkgStorageInfos/sub': assumeValid,
           })
+
           shell.lib.pubAll<CoreExt>('moodlenet-core@0.1.10', shell, {
+            async 'pkg/getInstalledPackages'() {
+              const installedPkgInfos = await main.pkgMng.getAllInstalledPackagesInfo()
+              const pkgInfos = installedPkgInfos.map<PackageInfo>(_ => ({
+                installationFolder: _.installationFolder,
+                mainModPath: _.mainModPath,
+                packageJson: _.packageJson,
+                readme: _.readme,
+              }))
+              return {
+                pkgInfos,
+              }
+            },
             async 'pkg/getPkgStorageInfos'() {
               if (!main.sysPaths.pkgStorageFolder) {
                 return { pkgInfos: [] }
@@ -151,6 +150,7 @@ export default async function boot(cfg: BootCfg) {
                 )
                 installPkgReq.fromFolder = resolve(main.sysPaths.pkgStorageFolder, installPkgReq.fromFolder)
               }
+              console.log('installPkgReq ...', installPkgReq)
               const installedPackageInfo = await main.pkgMng.install(installPkgReq)
               const extInfos = installedPackageInfo.pkgExport.exts.map<ExtInfo>(ext =>
                 ext2ExtInfo({ ext, pkgInfo: installedPackageInfo }),
