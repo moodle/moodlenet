@@ -10,11 +10,11 @@ export type SearchPackagesResObject = {
   homepage?: string
 } & (
   | {
-      deployedIn: string
+      installationFolder: string
       installPkgReq: undefined
     }
   | {
-      deployedIn: undefined
+      installationFolder: undefined
       installPkgReq: InstallPkgReq
     }
 )

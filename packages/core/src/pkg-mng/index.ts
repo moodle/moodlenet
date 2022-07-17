@@ -1,4 +1,5 @@
-import { resolve } from 'path'
+import * as path from 'path'
+import rimraf from 'rimraf'
 import { npmInstaller, symlinkInstaller } from './installers'
 import * as lib from './lib'
 import { InstalledPackageInfo, InstallPkgReq } from './types'
@@ -9,10 +10,16 @@ export type PkgMngCfg = { pkgsFolder: string }
 export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
   return {
     install,
+    uninstall,
     getAllInstalledPackagesInfo,
     getInstalledPackageInfo,
   }
 
+  async function uninstall({ installationFolder }: { installationFolder: string }) {
+    return new Promise<void>((pResolve, pReject) =>
+      rimraf(getAbsInstallationFolder(installationFolder), err => (err ? pReject(err) : pResolve())),
+    )
+  }
   async function install(installPkgReq: InstallPkgReq, useFolderName?: string) {
     const { installationFolder } = await (installPkgReq.type === 'npm'
       ? npmInstaller({ installPkgReq, pkgsFolder, useFolderName })
@@ -40,7 +47,7 @@ export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
   }
 
   function getAbsInstallationFolder(installationFolder: string) {
-    return resolve(pkgsFolder, installationFolder)
+    return path.resolve(pkgsFolder, installationFolder)
   }
 }
 
