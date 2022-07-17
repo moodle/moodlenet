@@ -13,7 +13,7 @@ export default async function install({ mainFolders, installPkgReqs = defaultIns
   const installations = await Promise.all(
     installPkgReqs.map(async installPkgReq => {
       const { installationFolder, pkgExport, packageJson } = await main.pkgMng.install(installPkgReq)
-      const firstExtId = pkgExport.exts[0]!.id
+      const firstExtId = pkgExport.exts[0].id
       assert(firstExtId, `${installationFolder} has no exported ext!`)
       return {
         installedPackage: {

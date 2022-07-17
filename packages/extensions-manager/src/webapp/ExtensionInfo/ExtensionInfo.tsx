@@ -43,15 +43,19 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ searchPackagesResObject, onClic
   //       </div>
   //     ),
   // )
-  const install = useCallback(() => {
-    if (!searchPackagesResObject.installPkgReq) {
-      return
+  const isInstalled = !searchPackagesResObject.installPkgReq
+  const install_uninstall = useCallback(() => {
+    if (isInstalled) {
+      lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
+        installationFolder: searchPackagesResObject.installationFolder,
+      })
+    } else {
+      lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+        installPkgReq: searchPackagesResObject.installPkgReq,
+        deploy: true,
+      })
     }
-    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
-      installPkgReq: searchPackagesResObject.installPkgReq,
-      deploy: true,
-    })
-  }, [searchPackagesResObject.installPkgReq])
+  }, [isInstalled, searchPackagesResObject.installPkgReq])
   type CodeBlockProps = {
     node: any
     children: ReactNode & ReactNode[]
@@ -85,8 +89,8 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ searchPackagesResObject, onClic
             </TertiaryButton>
             {searchPackagesResObject.name}
           </div>
-          <PrimaryButton className="install-btn" onClick={install}>
-            Install
+          <PrimaryButton className="install-btn" onClick={install_uninstall}>
+            {isInstalled ? 'Uninstall' : 'Install'}
           </PrimaryButton>
         </div>
 

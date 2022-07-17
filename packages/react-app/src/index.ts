@@ -95,19 +95,31 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
                 if (plugin.addPackageAlias) {
                   const { loc, name } = plugin.addPackageAlias
                   wp.compiler.options.resolve.alias = {
-                    ...baseResolveAlias,
+                    ...wp.compiler.options.resolve.alias,
                     [name]: loc,
                   }
                 }
-                writeAliasModules().then(() => {
-                  // wp.compiler.compile(() => console.log('RE COMPILED'))
-                  wp.compiler.watching.invalidate(() => console.log('INVALIDATED'))
-                  // wp.compiler.watching.compiler.compile(() => console.log('RE COMPILED'))
-                })
+                writeAliasModulesAndRecompile()
                 console.log({ aloiases: wp.compiler.options.resolve.alias })
+                depl.tearDown.add(() => {
+                  console.log('removing react plugins')
+                  if (plugin.addPackageAlias) {
+                    const newAliases: any = {
+                      ...wp.compiler.options.resolve.alias,
+                    }
+                    delete newAliases[plugin.addPackageAlias.name]
+                    wp.compiler.options.resolve.alias = newAliases
+                  }
+                  delete extPluginsMap[depl.extId]
+                  writeAliasModulesAndRecompile()
+                })
               },
             }
           },
+        }
+        async function writeAliasModulesAndRecompile() {
+          await writeAliasModules()
+          wp.compiler.watching.invalidate(() => console.log('INVALIDATED'))
         }
         function writeAliasModules() {
           console.log('writeAliasModules!', extPluginsMap)
@@ -122,14 +134,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
             export default lib
           `,
             ),
-          ]) /* .then(() => {
-            console.log(
-              readFileSync(ExtRoutesModuleFile.target, 'utf-8'),
-              readFileSync(ExposeModuleFile.target, 'utf-8'),
-              readFileSync(ExtContextProvidersModuleFile.target, 'utf-8'),
-              readFileSync(LibModuleFile.target, 'utf-8'),
-            )
-          }) */
+          ])
         }
       },
     }

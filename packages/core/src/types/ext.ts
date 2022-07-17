@@ -163,5 +163,5 @@ export type ExposedPointerMap<Def extends ExtDef = ExtDef> = {
 }
 
 export type PkgExport = {
-  exts: Ext[]
+  exts: [Ext, ...Ext[]]
 }

@@ -15,11 +15,9 @@ export type InstallExtensionProps = {
 }
 
 const Card = lib.ui.components.atoms.Card
-const InputTextField = lib.ui.components.atoms.InputTextField
 const PrimaryButton = lib.ui.components.atoms.PrimaryButton
 
 const InstallExtension: FC<InstallExtensionProps> = () => {
-  const [localPathField, setLocalPathField] = useState('')
   const [selectedPackage, setSelectedPackage] = useState<SearchPackagesResObject>()
   const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
 
@@ -38,22 +36,6 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
         <div className="search-extensions">
           <Card className="install">
             <div className="title">Add extension...</div>
-
-            <div className="option">
-              <div className="name">Local path</div>
-              <div className="actions">
-                <InputTextField
-                  className="local-path"
-                  placeholder="Local path to package"
-                  value={localPathField}
-                  onChange={(t: any) => setLocalPathField(t.currentTarget.value)}
-                  name="package-name"
-                  edit
-                  // error={shouldShowErrors && editForm.errors.displayName}
-                />
-                <PrimaryButton disabled={localPathField === ''}>Install</PrimaryButton>
-              </div>
-            </div>
           </Card>
           <Card className="available-extensions">
             <div className="title">Compatible extensions</div>

@@ -63,7 +63,7 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
             const objects = searchRes.objects.map<SearchPackagesResObject>(
               ({ package: { name, description, keywords, version, links } }) => {
                 // const isInstalled = !!installedPackages.find(pkgInfo => pkgInfo.packageJson.name === name)
-                const deployedIn = deployedList
+                const installationFolder = deployedList
                   .map(({ packageInfo }) => packageInfo)
                   .find(packageInfo => packageInfo.packageJson.name === name)?.installationFolder
                 const installPkgReq: InstallPkgReq = {
@@ -78,7 +78,9 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
                   version,
                   registry,
                   homepage: links?.homepage,
-                  ...(deployedIn ? { installPkgReq: undefined, deployedIn } : { deployedIn: undefined, installPkgReq }),
+                  ...(installationFolder
+                    ? { installPkgReq: undefined, installationFolder }
+                    : { installationFolder: undefined, installPkgReq }),
                 }
               },
             )

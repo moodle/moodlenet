@@ -13,8 +13,7 @@ export type PackagesProps = {
   // menuItemPressed: boolean
 }
 
-const Card = lib.ui.components.atoms.Card
-const PrimaryButton = lib.ui.components.atoms.PrimaryButton
+const { Card } = lib.ui.components.atoms
 
 const Packages: FC<PackagesProps> = () => {
   const [selectedExtInfo, setSelectedExtInfo] = useState<ExtInfo>()
@@ -60,7 +59,7 @@ const Packages: FC<PackagesProps> = () => {
                 <div className="details">{extInfo.ext.description}</div>
               </div>
             </div>
-            <PrimaryButton
+            {/*  <PrimaryButton
               className="install-btn"
               onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                 alert('installing')
@@ -68,7 +67,7 @@ const Packages: FC<PackagesProps> = () => {
               }}
             >
               Details
-            </PrimaryButton>
+            </PrimaryButton> */}
           </div>
         )
       }),
@@ -86,7 +85,7 @@ const Packages: FC<PackagesProps> = () => {
         </div>
       )}
       {selectedExtInfo && (
-        <ExtensionConfig extension={selectedExtInfo} onClickBackBtn={() => setSelectedExtInfo(undefined)} />
+        <ExtensionConfig extInfo={selectedExtInfo} onClickBackBtn={() => setSelectedExtInfo(undefined)} />
       )}
     </>
   )
