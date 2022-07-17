@@ -20,6 +20,7 @@ export type CoreExt = ExtDef<
       >
     }
     pkg: {
+      uninstall: SubTopo<{ installationFolder: string }, void>
       install: SubTopo<{ installPkgReq: InstallPkgReq; deploy?: boolean }, { extInfos: ExtInfo[] }>
       getPkgStorageInfos: SubTopo<void, { pkgInfos: PackageInfo[] }>
       getInstalledPackages: SubTopo<void, { pkgInfos: PackageInfo[] }>

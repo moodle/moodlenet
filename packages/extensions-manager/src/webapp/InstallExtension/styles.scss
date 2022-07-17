@@ -15,29 +15,6 @@
     }
   }
 
-  > .install {
-    > .option {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-
-      > .name {
-        font-weight: bold;
-      }
-      > .actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 22px;
-
-        > .input-text-field {
-          height: 36px;
-          width: 100%;
-        }
-      }
-    }
-  }
-
   > .available-extensions {
     > .list {
       min-height: 30px;
