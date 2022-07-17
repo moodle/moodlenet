@@ -6,7 +6,7 @@ import { coreExtDef } from '..'
 import * as CoreLib from '../core-lib'
 import { matchMessage } from '../core-lib/message'
 import { isExtIdBWC, joinPointer, splitExtId, splitPointer } from '../core-lib/pointer'
-import { depGraphAddNodes } from '../dep-graph'
+import { depGraphAddNodes, depGraphRm } from '../dep-graph'
 import * as pkgMngLib from '../pkg-mng/lib'
 import type {
   CoreExt,
@@ -102,6 +102,7 @@ export default async function boot(cfg: BootCfg) {
           shell.expose({
             'ext/listDeployed/sub': assumeValid,
             'pkg/install/sub': assumeValid,
+            'pkg/uninstall/sub': assumeValid,
             'ext/deploy/sub': assumeValid,
             'pkg/getPkgStorageInfos/sub': assumeValid,
           })
@@ -166,7 +167,7 @@ export default async function boot(cfg: BootCfg) {
                 ],
               })
               if (deploy) {
-                const extId = installedPackageInfo.pkgExport.exts[0]!.id // @FIXME !!!
+                const extId = installedPackageInfo.pkgExport.exts[0].id // @FIXME !!!
                 const extBag: ExtBag = { installedPackageInfo, extId }
                 console.log('*deploying installed', extBag)
                 await deployExtensions({
@@ -182,6 +183,32 @@ export default async function boot(cfg: BootCfg) {
                 })
               }
               return { extInfos }
+            },
+            async 'pkg/uninstall'({
+              msg: {
+                data: {
+                  req: { installationFolder },
+                },
+              },
+            }) {
+              console.log('uninstallPkg...', installationFolder)
+              const installedPackageInfo = await main.pkgMng.getInstalledPackageInfo({ installationFolder })
+              const depl = deployments.get(installedPackageInfo.pkgExport.exts[0].id)
+              assert(depl, 'no deployment for ${installationFolder}')
+              undeployExtension(depl.ext)
+              await main.pkgMng.uninstall({ installationFolder })
+
+              const curr = main.getSysConfig()
+
+              main.writeSysConfig({
+                ...curr,
+                installedPackages: curr.installedPackages.filter(pkg => pkg.installationFolder !== installationFolder),
+                enabledExtensions: curr.enabledExtensions.filter(
+                  pkg => !(pkg.installationFolder === installationFolder && pkg.extId === depl.extId),
+                ),
+              })
+
+              return
             },
             async 'ext/deploy'({
               msg: {
@@ -210,7 +237,7 @@ export default async function boot(cfg: BootCfg) {
       }
     },
   }
-  // depGraphAddNodes(depGraph, [coreExt])
+  // depGraphAddNodes(_depGraph, [coreExt])
   // const pkgDiskInfo = pkgDiskInfoOf(__filename)
 
   const KDeployment = (
@@ -412,11 +439,13 @@ export default async function boot(cfg: BootCfg) {
     return deploymentBagsPr
   }
 
-  function undeployExtension(extName: ExtName) {
+  function undeployExtension(ext: Ext) {
+    const { extName } = splitExtId(ext.id)
     const deployment = deployments.unregister(extName)
     assert(deployment, `couldn't find deployment for ${extName}`)
-    deployment.tearDown.unsubscribe()
     deployment.$msg$.complete()
+    deployment.tearDown.unsubscribe()
+    depGraphRm(depGraph, [ext], [])
     return deployment
   }
 

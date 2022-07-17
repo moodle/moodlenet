@@ -1,16 +1,16 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { FC } from 'react'
+import { FC, useCallback } from 'react'
 // import { searchNpmExtensionConfig } from '../../../../../helpers/utilities'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import lib from 'moodlenet-react-app-lib'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 // import { StateContext } from '../ExtensionsProvider'
-import { ExtInfo } from '@moodlenet/core'
+import { CoreExt, ExtInfo } from '@moodlenet/core'
 import './styles.scss'
 
 export type ExtensionConfigProps = {
-  extension: ExtInfo
+  extInfo: ExtInfo
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
 
@@ -19,7 +19,7 @@ const PrimaryButton = lib.ui.components.atoms.PrimaryButton
 const Card = lib.ui.components.atoms.Card
 const TertiaryButton = lib.ui.components.atoms.TertiaryButton
 
-const ExtensionConfig: FC<ExtensionConfigProps> = ({ extension, onClickBackBtn }) => {
+const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) => {
   // const stateContext = useContext(StateContext)
 
   const modulesList = null /* extension?.modules.map(
@@ -31,7 +31,11 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extension, onClickBackBtn }
         </div>
       ),
   ) */
-
+  const uninstall = useCallback(() => {
+    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
+      installationFolder: extInfo.packageInfo.installationFolder,
+    })
+  }, [extInfo.packageInfo.installationFolder])
   return (
     <div className="extension-config">
       <Card className="header-card">
@@ -40,18 +44,14 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extension, onClickBackBtn }
             <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
               <ArrowBackIcon />
             </TertiaryButton>
-            {extension.ext.displayName}
+            {extInfo.ext.displayName}
           </div>
-          <PrimaryButton
-            className="install-btn"
-            disabled={false /* extension.mandatory */}
-            onClick={() => alert('installing')}
-          >
+          <PrimaryButton className="install-btn" disabled={false /* extension.mandatory */} onClick={uninstall}>
             Uninstall
           </PrimaryButton>
         </div>
 
-        <div>{extension.ext.description}</div>
+        <div>{extInfo.ext.description}</div>
       </Card>
       <Card className="modules">
         <div className="title">Modules</div>
