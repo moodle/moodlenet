@@ -1,6 +1,5 @@
 '/extensions'
 import { FC, useContext, useMemo, useState } from 'react'
-import { Navigate } from 'react-router-dom'
 import { Card, InputTextField } from '../../atoms'
 import { MainLayout } from '../../layout'
 import { SettingItem, SettingsCtx } from './SettingsContext'
@@ -135,5 +134,5 @@ const GeneralContent: FC = () => {
 
 const baseSettingsItems: SettingItem[] = [
   { def: { Menu: () => <span>General</span>, Content: GeneralContent } },
-  { def: { Menu: () => <span>Extensions</span>, Content: () => <Navigate to={'/extensions'} /> } },
+  // { def: { Menu: () => <span>Extensions</span>, Content: () => <Navigate to={'/extensions'} /> } },
 ]
