@@ -22,8 +22,8 @@
         color: black;
         &.selected {
           padding: 14px 48px 14px 42px;
-          background: rgba(248, 128, 18, 0.12);
-          border-left: 6px solid #f88012;
+          background: var(--primary-background-color);
+          border-left: 6px solid var(--primary-color);
         }
       }
     }
