@@ -1,7 +1,10 @@
-import { CSSProperties, FC, ReactNode } from 'react'
+import { CSSProperties, FC, ReactNode, useContext } from 'react'
+import { baseMoodleColor, baseStyle } from '../../styles/config'
+import { getColorPalette } from '../../styles/utilities'
 // import { StateContext } from '../../../../react-app-lib/devModeContextProvider'
 import MinimalisticHeader from '../organisms/Header/Minimalistic/MinimalisticHeader'
 import StandardHeader from '../organisms/Header/Standard/Header'
+import { SettingsCtx } from '../pages/Settings/SettingsContext'
 import './MainLayout.scss'
 // import { StateContext } from './Providers'
 
@@ -18,8 +21,18 @@ const MainLayout: FC<MainLayoutProps> = ({ headerType, style, children }) => {
 
   // const stateContext = useContext(StateContext)
 
+  const styleContext = useContext(SettingsCtx)
+
   return (
-    <div className="main-layout" style={style}>
+    <div
+      className="main-layout"
+      style={{
+        ...style,
+        ...baseStyle(),
+        ...getColorPalette(baseMoodleColor),
+        ...styleContext.style,
+      }}
+    >
       {headerType === 'default' && <StandardHeader />}
       {headerType === 'minimalistic' && <MinimalisticHeader />}
       {/* <div className="side-menu">

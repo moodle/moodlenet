@@ -1,0 +1,30 @@
+#colorpicker {
+  padding: 0;
+  /* Declare the color variable */
+  --color: black;
+  /* We will control height and width of input from here. */
+  width: 30px;
+  height: 30px;
+  position: relative;
+  margin: 8px 8px 8px 8px;
+}
+
+/* Create the pseudo class and add styling */
+#colorpicker::before {
+  content: '';
+  /* Used to center it on top of the input. */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* This allows you to click on the main input. */
+  pointer-events: none;
+  /* Set height and width more than that of input. */
+  width: 46px;
+  height: 46px;
+  /* Implement the background using css varible. */
+  background: var(--color);
+  /* All the above styles add basic functunality. We can add further styling below. */
+  border-radius: 7px;
+  box-shadow: 0 0 6px #dedede;
+}
