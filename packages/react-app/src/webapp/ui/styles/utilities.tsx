@@ -77,6 +77,11 @@ export const rgbToHsl = (rgbColor: RgbType): HslType => {
 
 type HslType = { h: number; s: number; l: number }
 
+const rgbToString = (rgb: RgbType): string => {
+  const { r, g, b } = rgb
+  return 'rgb(' + r + ' ' + g + ' ' + g + ')'
+}
+
 const hslToRgb = (hsl: HslType): RgbType => {
   let { h, s, l } = hsl
 
@@ -198,5 +203,6 @@ export const getColorPalette = (hex: string) => {
     ...colorPalette,
     ...getGrayScale(pureTone),
   }
+  console.log(colorPalette)
   return colorPalette
 }

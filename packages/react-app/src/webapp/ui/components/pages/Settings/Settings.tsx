@@ -1,9 +1,11 @@
 '/extensions'
 import { FC, useContext, useMemo, useState } from 'react'
-import { Card, InputTextField } from '../../atoms'
+import { Card } from '../../atoms'
 import { MainLayout } from '../../layout'
 import { SettingItem, SettingsCtx } from './SettingsContext'
 // import { Link } from '../../../../elements/link'
+import Appearance from './Appearance'
+import { GeneralContent } from './General'
 import './Settings.scss'
 
 export type SettingsProps = {}
@@ -74,65 +76,8 @@ export const SettingsBody: FC<SettingsProps> = ({}) => {
 
 Settings.displayName = 'SettingsPage'
 
-const GeneralContent: FC = () => {
-  const setCtx = useContext(SettingsCtx)
-  return (
-    <>
-      <Card>
-        <div className="title">General settings</div>
-        <div>Manage your preferences</div>
-      </Card>
-      <Card>
-        <div className="parameter">
-          <div className="name">Site name</div>
-          <div className="actions">
-            <InputTextField
-              className="instance-name"
-              placeholder="Give a name to your site"
-              value={setCtx.instanceName}
-              onChange={(t: any) => setCtx.setInstanceName(t.currentTarget.value)}
-              name="instance-name"
-              edit
-              // error={shouldShowErrors && editForm.errors.displayName}
-            />
-          </div>
-        </div>
-        <div className="parameter">
-          <div className="name">Landing page title</div>
-          <div className="actions">
-            <InputTextField
-              textarea={true}
-              className="landing-title"
-              placeholder="Give a title to the landing page"
-              value={setCtx.landingTitle}
-              onChange={(t: any) => setCtx.setLandingTitle(t.currentTarget.value)}
-              name="landing-title"
-              edit
-              // error={shouldShowErrors && editForm.errors.displayName}
-            />
-          </div>
-        </div>
-        <div className="parameter">
-          <div className="name">Landing page subtitle</div>
-          <div className="actions">
-            <InputTextField
-              textarea={true}
-              className="landing-subtitle"
-              placeholder="Give a subtitle to the landing page"
-              value={setCtx.landingSubtitle}
-              onChange={(t: any) => setCtx.setLandingSubtitle(t.currentTarget.value)}
-              name="landing-subtitle"
-              edit
-              // error={shouldShowErrors && editForm.errors.displayName}
-            />
-          </div>
-        </div>
-      </Card>
-    </>
-  )
-}
-
 const baseSettingsItems: SettingItem[] = [
   { def: { Menu: () => <span>General</span>, Content: GeneralContent } },
   // { def: { Menu: () => <span>Extensions</span>, Content: () => <Navigate to={'/extensions'} /> } },
+  { def: { Menu: () => <span>Appearance</span>, Content: Appearance } },
 ]
