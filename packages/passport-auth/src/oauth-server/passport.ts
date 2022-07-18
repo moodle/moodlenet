@@ -1,23 +1,33 @@
-import passport from 'passport'
+import { Shell } from '@moodlenet/core'
+import { Passport } from 'passport'
 import passportGoogle from 'passport-google-oauth20'
-import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from './config'
+import { PassportAuthExt } from '..'
 
-function getPassport() {
-  passport.use(
-    'google',
-    new passportGoogle.Strategy(
-      {
-        clientID: GOOGLE_CLIENT_ID,
-        clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL: '/_/moodlenet-passport-auth/oauth2/redirect/google',
-        scope: ['profile'],
-      },
-      (accessToken, refreshToken, profile, done) => {
-        // console.log('verifier ', { accessToken, refreshToken, profile })
-        done(null, { oauth: { type: 'google', accessToken, refreshToken, profile } })
-      },
-    ),
-  )
+async function getPassport(shell: Shell<PassportAuthExt>) {
+  const {
+    msg: {
+      data: { configs },
+    },
+  } = await shell.lib.fetch<PassportAuthExt>(shell)('moodlenet-passport-auth@0.1.10::get')()
+
+  const passport = new Passport()
+  if (configs.google) {
+    passport.use(
+      'google',
+      new passportGoogle.Strategy(
+        {
+          clientID: configs.google.apiKey,
+          clientSecret: configs.google.apiSecret,
+          callbackURL: '/_/moodlenet-passport-auth/oauth2/redirect/google',
+          scope: ['profile'],
+        },
+        (accessToken, refreshToken, profile, done) => {
+          // console.log('verifier ', { accessToken, refreshToken, profile })
+          done(null, { oauth: { type: 'google', accessToken, refreshToken, profile } })
+        },
+      ),
+    )
+  }
 
   return passport
 }
