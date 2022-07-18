@@ -1,14 +1,18 @@
-import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
+import type { CoreExt, Ext, ExtDef, SubTopo } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
 import { prepareApp } from './oauth-server'
 import configApiKeyStore from './store'
+import { PassportConfigs } from './store/types'
 
-export type SocialAuthTopo = {}
-export type SocialAuthExt = ExtDef<'moodlenet-passport-auth', '0.1.10', SocialAuthTopo>
+export type PassportAuthTopo = {
+  get: SubTopo<void, { configs: PassportConfigs }>
+  save: SubTopo<{ configs: PassportConfigs }, { configs: PassportConfigs }>
+}
+export type PassportAuthExt = ExtDef<'moodlenet-passport-auth', '0.1.10', PassportAuthTopo>
 
-const ext: Ext<SocialAuthExt, [CoreExt, ReactAppExt]> = {
+const ext: Ext<PassportAuthExt, [CoreExt, ReactAppExt]> = {
   id: 'moodlenet-passport-auth@0.1.10',
   displayName: 'Passport Auth',
   description: 'Use external authentication systems',
@@ -32,19 +36,27 @@ const ext: Ext<SocialAuthExt, [CoreExt, ReactAppExt]> = {
       inst.mount({ mountApp: app })
     })
     shell.expose({
-      'create/sub': { validate: () => ({ valid: true }) },
-      'getAll/sub': { validate: () => ({ valid: true }) },
+      'save/sub': { validate: () => ({ valid: true }) },
+      'get/sub': { validate: () => ({ valid: true }) },
     })
     return {
       deploy() {
         const store = configApiKeyStore({ folder: resolve(__dirname, '..', '.ignore', 'userStoreApiKey') })
-        shell.lib.pubAll<SocialAuthExt>('moodlenet-passport-auth@0.1.10', shell, {
-          async getAll(){
-            return await store.getAll()
+        shell.lib.pubAll<PassportAuthExt>('moodlenet-passport-auth@0.1.10', shell, {
+          async get() {
+            const configs = await store.read()
+            return { configs }
           },
-          async save(_:any){
-            return await store.save(_.msg.data.req)
-          }
+          async save({
+            msg: {
+              data: {
+                req: { configs: configsPatch },
+              },
+            },
+          }) {
+            const configs = await store.patchConfigs(configsPatch)
+            return { configs }
+          },
         })
         return {}
       },

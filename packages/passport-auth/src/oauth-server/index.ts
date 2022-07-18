@@ -2,23 +2,25 @@
 import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
 import { Shell } from '@moodlenet/core'
 import type { Express } from 'express'
-import { SocialAuthExt } from '..'
+import { PassportAuthExt } from '..'
 import { getAuthMngUidByOauthResult } from './lib'
 import getPassport from './passport'
 
-export function prepareApp(shell: Shell<SocialAuthExt>, app: Express) {
-  const passport = getPassport()
-
+export function prepareApp(shell: Shell<PassportAuthExt>, app: Express) {
   // app.use(csrf())
-  app.get('/login/federated/:providerName', (req, res, next) =>
-    passport.authenticate(req.params.providerName, { session: false })(req, res, next),
-  )
-
-  app.get('/oauth2/redirect/:providerName', (req, res, next) =>
+  app.get('/login/federated/:providerName', async (req, res, next) => {
+    const passport = await getPassport(shell)
     passport.authenticate(req.params.providerName, {
       session: false,
-    })(req, res, next),
-  )
+    })(req, res, next)
+  })
+
+  app.get('/oauth2/redirect/:providerName', async (req, res, next) => {
+    const passport = await getPassport(shell)
+    passport.authenticate(req.params.providerName, {
+      session: false,
+    })(req, res, next)
+  })
 
   app.get('/oauth2/redirect/:providerName', async (req, res) => {
     // console.log('***', req.params.providerName, inspect(req.user, false, 10, true))
