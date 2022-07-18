@@ -2,7 +2,7 @@ import extCtxProviders from 'ext-context-providers-modules'
 import { FC, PropsWithChildren } from 'react'
 import * as auth from '../react-app-lib/auth'
 import * as header from './ui/components/organisms/Header'
-import * as set from './ui/components/pages/Settings/set'
+import * as set from './ui/components/pages/Settings/SettingsContext'
 
 export const ProvideMainContexts: FC<PropsWithChildren<{}>> = ({ children }) => {
   const ctxProviderWrap = Object.values(extCtxProviders).reduce(
