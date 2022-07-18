@@ -7,6 +7,7 @@ import { SearchPackagesResObject, SearchPackagesResponse } from '../../types/dat
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
+import { DevModeBtn } from '../Extensions'
 import { StateContext } from '../ExtensionsProvider'
 import { getNumberFromString, getPastelColor } from '../helpers/utilities'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
@@ -19,6 +20,8 @@ export type InstallExtensionProps = {
 const { Card, PrimaryButton, InputTextField } = lib.ui.components.atoms
 
 const InstallExtension: FC<InstallExtensionProps> = () => {
+  lib.ui.components.organism.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
+
   const [selectedPackage, setSelectedPackage] = useState<SearchPackagesResObject>()
   const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
   const { devMode } = useContext(StateContext)

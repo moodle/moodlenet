@@ -77,10 +77,10 @@ export const rgbToHsl = (rgbColor: RgbType): HslType => {
 
 type HslType = { h: number; s: number; l: number }
 
-const rgbToString = (rgb: RgbType): string => {
-  const { r, g, b } = rgb
-  return 'rgb(' + r + ' ' + g + ' ' + g + ')'
-}
+// const rgbToString = (rgb: RgbType): string => {
+//   const { r, g, b } = rgb
+//   return 'rgb(' + r + ' ' + g + ' ' + g + ')'
+// }
 
 const hslToRgb = (hsl: HslType): RgbType => {
   let { h, s, l } = hsl
