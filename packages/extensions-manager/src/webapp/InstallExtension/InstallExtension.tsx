@@ -11,7 +11,7 @@ import { DevModeBtn } from '../Extensions'
 import { StateContext } from '../ExtensionsProvider'
 import { getNumberFromString, getPastelColor } from '../helpers/utilities'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import './styles.scss'
+import './InstallExtension.scss'
 
 export type InstallExtensionProps = {
   // menuItemPressed: boolean
