@@ -34,7 +34,7 @@ export const FormConfig: FC = () => {
             ref={apiSecretRef}
             type={'text'}
             placeholder={'Api Secret'}
-            defaultValue={ctx.configs.google?.apiKey}
+            defaultValue={ctx.configs.google?.apiSecret}
           />
         </label>
 
