@@ -1,11 +1,13 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
+import { CoreExt } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
-import { FC, useEffect, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { ExtensionsManagerExt } from '../..'
 import { SearchPackagesResObject, SearchPackagesResponse } from '../../types/data'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
+import { StateContext } from '../ExtensionsProvider'
 import { getNumberFromString, getPastelColor } from '../helpers/utilities'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import './styles.scss'
@@ -14,12 +16,12 @@ export type InstallExtensionProps = {
   // menuItemPressed: boolean
 }
 
-const Card = lib.ui.components.atoms.Card
-const PrimaryButton = lib.ui.components.atoms.PrimaryButton
+const { Card, PrimaryButton, InputTextField } = lib.ui.components.atoms
 
 const InstallExtension: FC<InstallExtensionProps> = () => {
   const [selectedPackage, setSelectedPackage] = useState<SearchPackagesResObject>()
   const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
+  const { devMode } = useContext(StateContext)
 
   useEffect(() => {
     lib.priHttp
@@ -29,14 +31,44 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
       )('searchPackages')({ searchText: 'moodlenet' })
       .then(resp => setSearchPkgResp(resp))
   }, [])
-
+  const [localPathField, setLocalPathField] = useState('')
+  const install = useCallback(() => {
+    if (!localPathField) {
+      return
+    }
+    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+      installPkgReq: { type: 'symlink', fromFolder: localPathField },
+      deploy: true,
+    })
+  }, [localPathField])
   return (
     <>
       {!selectedPackage && (
         <div className="search-extensions">
           <Card className="install">
-            <div className="title">Add extension...</div>
+            <div className="title">Add extension</div>
           </Card>
+          {devMode && (
+            <Card>
+              <div className="option">
+                <div className="name">Local path</div>
+                <div className="actions">
+                  <InputTextField
+                    className="local-path"
+                    placeholder="Local path to package"
+                    value={localPathField}
+                    onChange={(t: any) => setLocalPathField(t.currentTarget.value)}
+                    name="package-name"
+                    edit
+                    // error={shouldShowErrors && editForm.errors.displayName}
+                  />
+                  <PrimaryButton disabled={localPathField === ''} onClick={install}>
+                    Install
+                  </PrimaryButton>
+                </div>
+              </div>
+            </Card>
+          )}
           <Card className="available-extensions">
             <div className="title">Compatible extensions</div>
             <div className="list">
