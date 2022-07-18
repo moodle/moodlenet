@@ -12,8 +12,6 @@ import {
 
 export type SettingItemDef = { Menu: ComponentType; Content: ComponentType }
 export type SettingItem = { def: SettingItemDef }
-export type SignupItemDef = { Icon: ComponentType; Panel: ComponentType }
-export type SignupItem = { def: SignupItemDef }
 export type SetCtxT = {
   instanceName: string
   setInstanceName: React.Dispatch<React.SetStateAction<string>>
@@ -22,25 +20,16 @@ export type SetCtxT = {
   landingSubtitle: string
   setLandingSubtitle: React.Dispatch<React.SetStateAction<string>>
   settingsItems: SettingItem[]
-  signupItems: SignupItem[]
-  registerLogin(loginItemDef: SettingItemDef): void
-  registerSignup(signupItemDef: SignupItemDef): void
+  registerSettingsItem(settingsItemDef: SettingItemDef): void
 }
 
-export const SetCtx = createContext<SetCtxT>(null as any)
+export const SettingsCtx = createContext<SetCtxT>(null as any)
 
-export function useRegisterLogin({ Menu, Content }: SettingItemDef) {
-  const registerLogin = useContext(SetCtx).registerLogin
+export function useRegisterSettingsItem({ Menu, Content }: SettingItemDef) {
+  const registerSettingsItem = useContext(SettingsCtx).registerSettingsItem
   useEffect(() => {
-    return registerLogin({ Menu, Content })
-  }, [registerLogin, Menu, Content])
-}
-
-export function useRegisterSignup({ Icon, Panel }: SignupItemDef) {
-  const registerSignup = useContext(SetCtx).registerSignup
-  useEffect(() => {
-    return registerSignup({ Icon, Panel })
-  }, [registerSignup, Icon, Panel])
+    return registerSettingsItem({ Menu, Content })
+  }, [registerSettingsItem, Menu, Content])
 }
 
 export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
@@ -54,7 +43,7 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
   )
 
   const [settingsItems, setLoginItems] = useState<SetCtxT['settingsItems']>([])
-  const registerLogin = useCallback<SetCtxT['registerLogin']>(loginItemDef => {
+  const registerLogin = useCallback<SetCtxT['registerSettingsItem']>(loginItemDef => {
     const loginItem: SettingItem = {
       def: loginItemDef,
     }
@@ -62,18 +51,6 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
     return remove
     function remove() {
       setLoginItems(items => items.filter(_ => _ !== loginItem))
-    }
-  }, [])
-
-  const [signupItems, setSignupItems] = useState<SetCtxT['signupItems']>([])
-  const registerSignup = useCallback<SetCtxT['registerSignup']>(signupItemDef => {
-    const signupItem: SignupItem = {
-      def: signupItemDef,
-    }
-    setSignupItems(items => [...items, signupItem])
-    return remove
-    function remove() {
-      setSignupItems(items => items.filter(_ => _ !== signupItem))
     }
   }, [])
 
@@ -85,10 +62,8 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
       setLandingTitle,
       landingSubtitle,
       setLandingSubtitle,
-      registerLogin,
+      registerSettingsItem: registerLogin,
       settingsItems,
-      signupItems,
-      registerSignup,
     }
   }, [
     instanceName,
@@ -99,9 +74,7 @@ export const Provider: FC<PropsWithChildren<{}>> = ({ children }) => {
     setLandingSubtitle,
     registerLogin,
     settingsItems,
-    signupItems,
-    registerSignup,
   ])
 
-  return <SetCtx.Provider value={ctx}>{children}</SetCtx.Provider>
+  return <SettingsCtx.Provider value={ctx}>{children}</SettingsCtx.Provider>
 }
