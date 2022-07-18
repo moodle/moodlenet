@@ -6,7 +6,7 @@ const MainLayout = lib.ui.components.layout.MainLayout
 export const ExtMngMainLayout: FC<PropsWithChildren<{}>> = ({ children }) => {
   lib.ui.components.organism.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
   // lib.ui.components.organism.Header.useRightComponent({ Comp: DevModeBtn })
-  return <MainLayout>{children}</MainLayout>
+  return <MainLayout style={{ height: 'max(fit-content, 100%)' }}>{children}</MainLayout>
 }
 
 const Switch = lib.ui.components.atoms.Switch
