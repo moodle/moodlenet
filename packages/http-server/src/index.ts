@@ -14,7 +14,8 @@ export type MNHttpServerExt = Core.ExtDef<'moodlenet-http-server', '0.1.10', {},
 
 const ext: Core.Ext<MNHttpServerExt, [Core.CoreExt]> = {
   id: 'moodlenet-http-server@0.1.10',
-  displayName: 'http server',
+  displayName: 'HTTP server',
+  description: 'Client HTTP server for the frontend',
   requires: ['moodlenet-core@0.1.10'], //, 'moodlenet.sys-log@0.1.10'],
   enable(shell) {
     return {
