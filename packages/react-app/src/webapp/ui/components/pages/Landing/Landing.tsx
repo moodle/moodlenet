@@ -2,7 +2,7 @@ import { FC, useContext } from 'react'
 import defaultBackgroud from '../../../../static/img/default-landing-background.png'
 import PrimaryButton from '../../atoms/PrimaryButton/PrimaryButton'
 import { MainLayout } from '../../layout'
-import { SetCtx } from '../Settings/set'
+import { SettingsCtx } from '../Settings/SettingsContext'
 import './Landing.scss'
 
 export type LandingProps = {
@@ -49,7 +49,7 @@ export const LandingBody: FC<LandingProps> = (
     // setSearchText,
   },
 ) => {
-  const setCtx = useContext(SetCtx)
+  const setCtx = useContext(SettingsCtx)
   // const [isSearchboxInViewport, setIsSearchboxInViewport] =
   //   useState<boolean>(true)
   // const [isCreatingContent, setIsCreatingContent] = useState<boolean>(false)

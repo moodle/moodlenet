@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { AuthCtx } from '../../../../../../react-app-lib/auth'
 import { PrimaryButton, TertiaryButton } from '../../../atoms'
 import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
-import { SetCtx } from '../../../pages/Settings/set'
+import { SettingsCtx } from '../../../pages/Settings/SettingsContext'
 // import Switch from '../../atoms/Switch/Switch'
 import { AddonCtx } from '../addons'
 import './Header.scss'
@@ -15,7 +15,7 @@ type HeaderProps = {}
 
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
   const addonCtx = useContext(AddonCtx)
-  const setCtx = useContext(SetCtx)
+  const setCtx = useContext(SettingsCtx)
   // console.log({ addonCtx })
 
   const { clientSession, logout } = useContext(AuthCtx)
