@@ -11,10 +11,11 @@
   height: 32px;
   padding: 0 18px;
   width: fit-content;
-  cursor: pointer;
   color: white;
+  border: none;
   background-color: var(--primary-color);
   white-space: nowrap;
+  cursor: pointer;
 
   &.green {
     background-color: #00bd7e;
