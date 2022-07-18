@@ -13,7 +13,7 @@
   width: fit-content;
   cursor: pointer;
   color: white;
-  background-color: $primary-color;
+  background-color: var(--primary-color);
   white-space: nowrap;
 
   &.green {
@@ -41,7 +41,7 @@
   }
 
   &:hover {
-    background-color: $primary-color-hover;
+    background-color: var(--primary-color-hover);
     box-shadow: 0 1px 1px rgb(0 0 0 / 35%);
 
     &.green {
@@ -67,7 +67,7 @@
   }
 
   &:active {
-    background-color: $primary-color-active;
+    background-color: var(--primary-color-active);
 
     &.green {
       background-color: #01c483;
