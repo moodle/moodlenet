@@ -8,7 +8,7 @@ export type PrimaryButtonProps = {
   color?: '' | 'green' | 'red' | 'grey' | 'blue' | 'card' | 'light-gray'
   onHoverColor?: '' | 'green' | 'orange' | 'red' | 'green'
   children?: ReactNode
-}
+} & React.ButtonHTMLAttributes<HTMLButtonElement>
 
 export const PrimaryButton: FC<PrimaryButtonProps> = ({
   children,
@@ -17,16 +17,18 @@ export const PrimaryButton: FC<PrimaryButtonProps> = ({
   onHoverColor,
   disabled,
   onClick,
+  ...props
 }) => {
   return (
-    <div
+    <button
       className={`primary-button button ${className} ${onHoverColor} ${disabled ? 'disabled' : ''} ${color}`}
       tabIndex={!disabled ? 0 : undefined}
       onClick={!disabled ? onClick : () => {}}
       onKeyDown={e => !disabled && onClick && e.key === 'Enter' && onClick()}
+      {...props}
     >
       {children}
-    </div>
+    </button>
   )
 }
 
