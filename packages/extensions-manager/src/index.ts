@@ -11,7 +11,8 @@ export type ExtensionsManagerExt = ExtDef<'moodlenet-extensions-manager', '0.1.1
 
 const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
   id: 'moodlenet-extensions-manager@0.1.10',
-  displayName: 'extensions mng ext',
+  displayName: 'Extensions manager',
+  description: 'Manager for the application extensions',
   requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
   enable(shell) {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {

@@ -46,10 +46,11 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
       {!selectedPackage && (
         <div className="search-extensions">
           <Card className="install">
-            <div className="title">Add extension</div>
+            <div className="title">Add extensions</div>
           </Card>
           {devMode && (
             <Card>
+              <div className="subtitle">From local package</div>
               <div className="option">
                 <div className="name">Local path</div>
                 <div className="actions">
@@ -70,9 +71,10 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
             </Card>
           )}
           <Card className="available-extensions">
-            <div className="title">Compatible extensions</div>
+            <div className="subtitle">Compatible extensions</div>
             <div className="list">
               {searchPkgResp?.objects.map(respObj => {
+                const name = respObj.name.split('/').reverse()[0]
                 return (
                   <div
                     className="package"
@@ -80,25 +82,27 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
                     onClick={() => setSelectedPackage(respObj)} /* onClick={() => setSelectedPackage(o.package.name)} */
                   >
                     {/* <PackageIcon /> */}
-                    <div className="left" onClick={() => setSelectedPackage(respObj)}>
+                    <div
+                      className="logo"
+                      style={{ background: getPastelColor(getNumberFromString(respObj.name), 0.5) }}
+                    >
+                      <div className="letter">
+                        {respObj.name.split('/').reverse().join('').substring(0, 1).toLocaleLowerCase()}
+                      </div>
                       <div
-                        className="logo"
-                        style={{ background: getPastelColor(getNumberFromString(respObj.name), 0.5) }}
-                      >
-                        <div className="letter">
-                          {respObj.name.split('/').reverse().join('').substring(0, 1).toLocaleLowerCase()}
-                        </div>
-                        <div
-                          className="circle"
-                          style={{ background: getPastelColor(getNumberFromString(respObj.name)) }}
-                        />
+                        className="circle"
+                        style={{ background: getPastelColor(getNumberFromString(respObj.name)) }}
+                      />
+                    </div>
+                    <div className="info">
+                      <div className="title">
+                        {name} {/* v{respObj.version} */}
                       </div>
-                      <div className="info">
-                        <div className="title">
-                          {respObj.name} v{respObj.version}
-                        </div>
-                        <div className="details">{respObj.description}</div>
+                      <div className="details">
+                        Just a really long
+                        descriptioooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooon
                       </div>
+                      {/* <div className="details">{respObj.description}</div> */}
                     </div>
                     <PrimaryButton className="install-btn">Details</PrimaryButton>
                   </div>

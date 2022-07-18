@@ -19,7 +19,8 @@ export type SimpleEmailAuthExt = ExtDef<'moodlenet-simple-email-auth', '0.1.10',
 
 const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
   id: 'moodlenet-simple-email-auth@0.1.10',
-  displayName: 'simple email auth ext',
+  displayName: 'Email authentication',
+  description: 'Basic authentication using an email and a password',
   requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
   enable(shell) {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
