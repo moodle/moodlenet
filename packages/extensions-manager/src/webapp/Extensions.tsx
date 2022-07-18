@@ -2,7 +2,7 @@ import lib from 'moodlenet-react-app-lib'
 import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { StateContext } from './ExtensionsProvider'
 import InstallExtension from './InstallExtension/InstallExtension'
-import { ExtMngMainLayout } from './MainLayout'
+// import { ExtMngMainLayout } from './MainLayout.tsx__'
 import Modules, { ModulesProps } from './Modules/Modules'
 import Packages from './Packages/Packages'
 // import {
@@ -35,19 +35,20 @@ const sections: SectionType[] = [
 ]
 
 const sectionProps = {}
-export const Extensions: FC<ExtensionsProps> = () => {
-  return (
-    <ExtMngMainLayout>
-      <ExtensionsBody sectionProps={sectionProps} />
-    </ExtMngMainLayout>
-  )
-}
-export const ExtensionsBody: FC<ExtensionsProps> = ({
-  sectionProps,
-  section = 'InstallExtension' /* , headerPageTemplateProps */,
-}) => {
+export const Extensions: FC = () => {
+  //   return (
+  //     <ExtMngMainLayout>
+  //       <ExtensionsBody sectionProps={sectionProps} />
+  //     </ExtMngMainLayout>
+  //   )
+  // }
+  // export const ExtensionsBody: FC<ExtensionsProps> = ({
+  //   sectionProps,
+  //   section = 'InstallExtension' /* , headerPageTemplateProps */,
+  // }) => {
+  lib.ui.components.organism.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
   const stateContext = useContext(StateContext)
-  const [currentSection, setCurrentSection] = useState(section)
+  const [currentSection, setCurrentSection] = useState('InstallExtension')
   const [currentContent, setCurrentContent] = useState<any>(null)
   // const [menuItemPressed, setMenuItemPressed] = useState<any>(false)
   const menu = useMemo(
@@ -98,3 +99,14 @@ export const ExtensionsBody: FC<ExtensionsProps> = ({
 Extensions.displayName = 'ExtensionsPage'
 
 export default Extensions
+
+const Switch = lib.ui.components.atoms.Switch
+export const DevModeBtn: FC = () => {
+  const { devMode, setDevMode } = useContext(StateContext)
+  return (
+    <div className="dev-mode">
+      <span className="label">Developer mode</span>
+      <Switch enabled={!!devMode} size="medium" onClick={() => setDevMode(p => !p)} />
+    </div>
+  )
+}

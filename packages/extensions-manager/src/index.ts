@@ -18,10 +18,10 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
       console.log(`moodlenet-extensions-manager: onExtInstance<ReactAppExt>`, inst)
       inst.setup({
-        routes: {
-          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'ExtensionsRoutes.tsx'),
-          rootPath: 'extensions/',
-        },
+        // routes: {
+        //   moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'ExtensionsRoutes.tsx'),
+        //   rootPath: 'extensions/',
+        // },
         ctxProvider: {
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'ExtensionsProvider.tsx'),
         },
