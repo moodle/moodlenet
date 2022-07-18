@@ -98,11 +98,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
                       <div className="title">
                         {name} {/* v{respObj.version} */}
                       </div>
-                      <div className="details">
-                        Just a really long
-                        descriptioooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooon
-                      </div>
-                      {/* <div className="details">{respObj.description}</div> */}
+                      <div className="details">{respObj.description}</div>
                     </div>
                     <PrimaryButton className="install-btn">Details</PrimaryButton>
                   </div>
