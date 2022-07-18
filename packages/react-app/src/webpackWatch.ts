@@ -6,7 +6,7 @@ import { resolve } from 'path'
 import rimraf from 'rimraf'
 import webpack, { Configuration, ResolveOptions } from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
-import VirtualModulesPlugin from 'webpack-virtual-modules'
+// import VirtualModulesPlugin from 'webpack-virtual-modules'
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 const ReactRefreshTypeScript = require('react-refresh-typescript')
 // const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
@@ -22,14 +22,14 @@ async function start({
   overrideCfg = _ => _,
   buildFolder,
   latestBuildFolder,
-  virtualModules,
+  // virtualModules,
   baseResolveAlias,
 }: {
   baseResolveAlias: ResolveOptions['alias']
   latestBuildFolder: string
   buildFolder: string
   overrideCfg?: (_: Configuration) => Configuration
-  virtualModules: VirtualModulesPlugin
+  // virtualModules: VirtualModulesPlugin
 }) {
   const mode: Configuration['mode'] =
     process.env.NODE_ENV === 'test' ? 'none' : process.env.NODE_ENV ?? ('production' as any)
@@ -227,6 +227,8 @@ async function start({
                           before: [isDevelopment && ReactRefreshTypeScript()].filter(Boolean),
                         }),
                         transpileOnly: isDevelopment,
+                        // configFile: resolve(__dirname, '..', 'tsconfig.json'),
+                        compilerOptions: { sourceMap: true },
                       },
                     },
                   ]
@@ -263,7 +265,7 @@ async function start({
         // new BundleAnalyzerPlugin({
         //   analyzerMode: 'json',
         // }),
-        virtualModules,
+        // virtualModules,
       ].filter(Boolean),
     }
   }

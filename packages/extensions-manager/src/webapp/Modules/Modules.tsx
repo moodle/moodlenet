@@ -1,41 +1,44 @@
-import { FC, useContext } from 'react'
+import { FC, useCallback, useState } from 'react'
 // import { withCtrl } from '../../../../lib/ctrl'
 import lib from 'moodlenet-react-app-lib'
-import { packagesFake } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import { StateContext } from '../devModeContextProvider'
+import { CoreExt } from '@moodlenet/core'
 import './styles.scss'
 
 export type ModulesProps = {}
 
-const Card = lib.ui.components.atoms.Card
-const Switch = lib.ui.components.atoms.Switch
-
+const { Card, InputTextField, PrimaryButton } = lib.ui.components.atoms
 const Modules: FC<ModulesProps> = () => {
-  const stateContext = useContext(StateContext)
-
-  const modulesList = packagesFake.map(p => {
-    return p.modules.map(
-      (module, i) =>
-        (!module.mandatory || stateContext.devMode) && (
-          <div className="module" key={i}>
-            {/* <PackageIcon /> */}
-            <div className="name">{module.name}</div>
-            <Switch enabled={module.enabled} mandatory={module.mandatory} />
-          </div>
-        ),
-    )
-  })
+  const [localPathField, setLocalPathField] = useState('')
+  const install = useCallback(() => {
+    if (!localPathField) {
+      return
+    }
+    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+      installPkgReq: { type: 'symlink', fromFolder: localPathField },
+      deploy: true,
+    })
+  }, [localPathField])
   return (
     <div className="modules">
       <Card>
-        <div className="title">Modules</div>
-        <div>Manage your modules</div>
-      </Card>
-      <Card className="modules-list">
-        {/* <div className="title">Disabled Modules</div>
-        <div>A list of your inactive Modules</div> */}
-        <div className="list">{modulesList}</div>
+        <div className="option">
+          <div className="name">Local path</div>
+          <div className="actions">
+            <InputTextField
+              className="local-path"
+              placeholder="Local path to package"
+              value={localPathField}
+              onChange={(t: any) => setLocalPathField(t.currentTarget.value)}
+              name="package-name"
+              edit
+              // error={shouldShowErrors && editForm.errors.displayName}
+            />
+            <PrimaryButton disabled={localPathField === ''} onClick={install}>
+              Install
+            </PrimaryButton>
+          </div>
+        </div>{' '}
       </Card>
     </div>
   )

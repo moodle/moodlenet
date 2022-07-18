@@ -12,8 +12,8 @@ export default async function install({ mainFolders, installPkgReqs = defaultIns
   const main = await getMain({ mainFolders })
   const installations = await Promise.all(
     installPkgReqs.map(async installPkgReq => {
-      const { installationFolder, pkgExport } = await main.pkgMng.install(installPkgReq)
-      const firstExtId = pkgExport.exts[0]!.id
+      const { installationFolder, pkgExport, packageJson } = await main.pkgMng.install(installPkgReq)
+      const firstExtId = pkgExport.exts[0].id
       assert(firstExtId, `${installationFolder} has no exported ext!`)
       return {
         installedPackage: {
@@ -24,6 +24,7 @@ export default async function install({ mainFolders, installPkgReqs = defaultIns
           installationFolder,
           extId: firstExtId,
         },
+        core: packageJson.name === '@moodlenet/core',
       }
     }),
   )
@@ -31,8 +32,12 @@ export default async function install({ mainFolders, installPkgReqs = defaultIns
   await main.writeLocalDeplConfig({ extensions: {} })
   const installedPackages = installations.map(({ installedPackage }) => installedPackage)
   const enabledExtensions = installations.map(({ enabledExtension }) => enabledExtension)
-  await main.writeSysConfig({ installedPackages, enabledExtensions })
-
+  const coreInst = installations.find(({ core }) => core)!
+  await main.writeSysConfig({
+    installedPackages,
+    enabledExtensions,
+    core: { installationFolder: coreInst.installedPackage.installationFolder },
+  })
   return main
 }
 
@@ -52,5 +57,5 @@ export const defaultCorePackages = {
   'authentication-manager': '0.0.1',
   'simple-email-auth': '0.0.1',
   'extensions-manager': '0.0.1',
-  'passport-auth': '0.0.1',
+  // 'passport-auth': '0.0.1',
 }

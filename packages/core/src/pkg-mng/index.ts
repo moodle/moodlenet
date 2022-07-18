@@ -1,24 +1,31 @@
-import { readdir } from 'fs/promises'
-import { resolve } from 'path'
+import * as path from 'path'
+import rimraf from 'rimraf'
 import { npmInstaller, symlinkInstaller } from './installers'
 import * as lib from './lib'
-import { InstalledPackageInfo, InstallPkgReq, PkgMngCfg } from './types'
+import { InstalledPackageInfo, InstallPkgReq } from './types'
 
 // const myDirInfo = installDirsInfo();
 
+export type PkgMngCfg = { pkgsFolder: string }
 export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
   return {
     install,
-    getAllInstalledPackagesInfo: getAllInstalledPackageInfo,
+    uninstall,
+    getAllInstalledPackagesInfo,
     getInstalledPackageInfo,
   }
 
+  async function uninstall({ installationFolder }: { installationFolder: string }) {
+    return new Promise<void>((pResolve, pReject) =>
+      rimraf(getAbsInstallationFolder(installationFolder), err => (err ? pReject(err) : pResolve())),
+    )
+  }
   async function install(installPkgReq: InstallPkgReq, useFolderName?: string) {
     const { installationFolder } = await (installPkgReq.type === 'npm'
       ? npmInstaller({ installPkgReq, pkgsFolder, useFolderName })
       : symlinkInstaller({ installPkgReq, pkgsFolder, useFolderName }))
     await lib.writeInstallInfo({ absFolder: getAbsInstallationFolder(installationFolder), info: { installPkgReq } })
-    const installedPackageInfo = await getInstalledPackageInfo(installationFolder)
+    const installedPackageInfo = await getInstalledPackageInfo({ installationFolder })
 
     return installedPackageInfo
     // questa non funziona per le partizioni diverse su linux
@@ -27,18 +34,20 @@ export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
     // create info.json { installPkgReq: installPkgReq } (type InstalledPkgInfo )
   }
 
-  async function getAllInstalledPackageInfo(): Promise<InstalledPackageInfo[]> {
-    const dir = await readdir(pkgsFolder, { withFileTypes: true })
-    const pkgFolderNames = dir.filter(_ => _.isDirectory() || _.isSymbolicLink()).map(({ name }) => name)
-    return Promise.all(pkgFolderNames.map(folder => getInstalledPackageInfo(folder)))
+  async function getAllInstalledPackagesInfo(): Promise<InstalledPackageInfo[]> {
+    return lib.getAllInstalledPackagesInfo({ absFolder: pkgsFolder })
   }
 
-  async function getInstalledPackageInfo(folder: string): Promise<InstalledPackageInfo> {
-    return lib.getInstalledPackageInfo({ absFolder: getAbsInstallationFolder(folder) })
+  async function getInstalledPackageInfo({
+    installationFolder,
+  }: {
+    installationFolder: string
+  }): Promise<InstalledPackageInfo> {
+    return lib.getInstalledPackageInfo({ absFolder: getAbsInstallationFolder(installationFolder) })
   }
 
-  function getAbsInstallationFolder(folder: string) {
-    return resolve(pkgsFolder, folder)
+  function getAbsInstallationFolder(installationFolder: string) {
+    return path.resolve(pkgsFolder, installationFolder)
   }
 }
 

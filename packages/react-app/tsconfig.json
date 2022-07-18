@@ -3,6 +3,7 @@
   // "include": ["src/ui", "src/custom.d.ts"],
   "exclude": ["lib/**/*", "build", "latest-build"],
   "compilerOptions": {
+    "sourceMap": true,
     "rootDir": "src",
     "moduleResolution": "Node",
     "resolveJsonModule": true,

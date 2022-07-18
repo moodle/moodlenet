@@ -1,11 +1,19 @@
 import assert from 'assert'
-import { readFile, writeFile } from 'fs/promises'
+import { readdir, readFile, writeFile } from 'fs/promises'
 import { basename, resolve } from 'path'
 import { InstalledPackageInfo, PackageInfo, PkgInstallationInfo, SafePackageJson } from './types'
 
+export async function getAllInstalledPackagesInfo({
+  absFolder,
+}: {
+  absFolder: string
+}): Promise<InstalledPackageInfo[]> {
+  const pkgFolderNames = await getAllFoldersIn({ absFolder })
+  return Promise.all(pkgFolderNames.map(({ abs }) => getInstalledPackageInfo({ absFolder: abs })))
+}
 export async function getInstalledPackageInfo({ absFolder }: { absFolder: string }): Promise<InstalledPackageInfo> {
   const pkgInfo = await getPackageInfo({ absFolder })
-  const mainModAbsPath = resolve(absFolder, pkgInfo.mainModPath??'')
+  const mainModAbsPath = resolve(absFolder, pkgInfo.mainModPath ?? '')
   //console.log({mainModAbsPath,absFolder, pkgInfo_mainModPath: pkgInfo.mainModPath})
   const pkgMainMod = await import(mainModAbsPath)
   const hasDefault = 'default' in pkgMainMod
@@ -17,22 +25,38 @@ export async function getInstalledPackageInfo({ absFolder }: { absFolder: string
     installationInfo: installInfo,
   }
 }
+export async function getAllPackagesInfo({ absFolder }: { absFolder: string }): Promise<PackageInfo[]> {
+  const pkgFolderNames = await getAllFoldersIn({ absFolder })
+  return Promise.all(pkgFolderNames.map(({ abs }) => getPackageInfo({ absFolder: abs })))
+}
+
+export async function getAllFoldersIn({ absFolder }: { absFolder: string }) {
+  const dir = await readdir(absFolder, { withFileTypes: true })
+  const pkgFolderNames = dir
+    .filter(_ => _.isDirectory() || _.isSymbolicLink())
+    .map(({ name }) => resolve(absFolder, name))
+  return pkgFolderNames.map(name => ({ name, abs: resolve(absFolder, name) }))
+}
 
 export async function getPackageInfo({ absFolder }: { absFolder: string }): Promise<PackageInfo> {
   const packageJson: SafePackageJson = JSON.parse(await readFile(resolve(absFolder, 'package.json'), 'utf-8'))
   assert(packageJson.name, 'package has no name')
   assert(packageJson.version, 'package has no version')
   const pkgMainModule = packageJson.main
+  const rootfilenames = await readdir(absFolder, { withFileTypes: true })
+  const readmefile = rootfilenames.find(file => file.isFile() && file.name.toLowerCase().split('.').at(0) === 'readme')
+  const readme = readmefile?.name ? await readFile(resolve(absFolder, readmefile.name), 'utf-8') : ''
   //const rootDirPosix = posix.normalize(absFolder)
-  const packageInfo:PackageInfo = {
+  const packageInfo: PackageInfo = {
     packageJson,
+    readme,
     installationFolder: basename(absFolder),
     mainModPath: pkgMainModule,
     //rootDir: absFolder,
     //rootDirPosix,
   }
   console.log({ packageInfo })
-  return packageInfo 
+  return packageInfo
 }
 
 export const installInfoFileName = ({ absFolder }: { absFolder: string }) => resolve(absFolder, INSTALL_INFO_FILENAME)

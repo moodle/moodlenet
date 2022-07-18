@@ -9,6 +9,11 @@ export function ext2ExtInfo({ ext, pkgInfo }: { ext: Ext; pkgInfo: InstalledPack
       description: ext.description,
       requires: ext.requires,
     },
-    installationFolder: pkgInfo.installationFolder,
+    packageInfo: {
+      installationFolder: pkgInfo.installationFolder,
+      mainModPath: pkgInfo.mainModPath,
+      packageJson: pkgInfo.packageJson,
+      readme: pkgInfo.readme,
+    },
   }
 }

@@ -2,10 +2,10 @@
 import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
 import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
-import { mkdir } from 'fs/promises'
+import { mkdir, writeFile } from 'fs/promises'
+import { tmpdir } from 'os'
 import { resolve } from 'path'
 import { ResolveOptions } from 'webpack'
-import VirtualModulesPlugin from 'webpack-virtual-modules'
 import { generateCtxProvidersModule } from './generateCtxProvidersModule'
 import { generateExposedModule } from './generateExposedModule'
 import { generateRoutesModule } from './generateRoutesModule'
@@ -28,17 +28,29 @@ export type ReactAppExt = ExtDef<
     setup(_: ExtPluginDef): void
   }
 >
-const ExtRoutesModuleFile = './src/webapp/ext-routes.ts'
-const ExposeModuleFile = './src/react-app-lib/exposedExtModules.ts'
-const ExtContextProvidersModuleFile = './src/webapp/extContextProvidersModules.tsx'
+const tmpDir = resolve(tmpdir(), 'MN-react-app-modules')
+
+const LibModuleFile = { alias: 'moodlenet-react-app-lib', target: resolve(tmpDir, 'lib.ts') }
+const ExtRoutesModuleFile = {
+  alias: 'ext-routes',
+  target: resolve(tmpDir, 'ext-routes.ts'),
+}
+const ExposeModuleFile = {
+  alias: 'ext-exposed-modules',
+  target: resolve(tmpDir, 'exposedExtModules.ts'),
+}
+const ExtContextProvidersModuleFile = {
+  alias: 'ext-context-providers-modules',
+  target: resolve(tmpDir, 'extContextProvidersModules.tsx'),
+}
 const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]> = {
   id: 'moodlenet.react-app@0.1.10',
-  displayName: 'webapp',
+  displayName: 'Web application',
+  description: 'Frontend interface to interact with the backend',
   requires: ['moodlenet-core@0.1.10', 'moodlenet-http-server@0.1.10', 'moodlenet-authentication-manager@0.1.10'],
   enable(shell) {
     return {
       async deploy(/* { tearDown } */) {
-        await mkdir(buildFolder, { recursive: true })
         shell.onExtInstance<MNHttpServerExt>('moodlenet-http-server@0.1.10', (inst /* , depl */) => {
           const { express, mount } = inst
           const mountApp = express()
@@ -53,27 +65,22 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
           })
           mount({ mountApp, absMountPath: '/' })
         })
-
+        await mkdir(tmpDir, { recursive: true })
+        await mkdir(buildFolder, { recursive: true })
         const extPluginsMap: ExtPluginsMap = {}
-
-        const virtualModulesMap /* : VirtualModulesMap  */ = {
-          [ExtRoutesModuleFile]: generateRoutesModule({ extPluginsMap }),
-          [ExposeModuleFile]: generateExposedModule({ extPluginsMap }),
-          [ExtContextProvidersModuleFile]: generateCtxProvidersModule({ extPluginsMap }),
-          '../node_modules/moodlenet-react-app-lib.ts': `
-            import lib from '${fixModuleLocForWebpackByOS(resolve(__dirname, '..', 'src', 'react-app-lib'))}'
-            export default lib
-          `,
-        }
-
-        const virtualModules = new VirtualModulesPlugin(virtualModulesMap)
+        await writeAliasModules()
         const baseResolveAlias: ResolveOptions['alias'] = {
           'rxjs': resolve(__dirname, '..', 'node_modules', 'rxjs'),
           'react': resolve(__dirname, '..', 'node_modules', 'react'),
           'react-router-dom': resolve(__dirname, '..', 'node_modules', 'react-router-dom'),
+          [ExtRoutesModuleFile.alias]: ExtRoutesModuleFile.target,
+          [ExposeModuleFile.alias]: ExposeModuleFile.target,
+          [ExtContextProvidersModuleFile.alias]: ExtContextProvidersModuleFile.target,
+          [LibModuleFile.alias]: LibModuleFile.target,
         }
+        console.log({ baseResolveAlias })
 
-        const wp = await startWebpack({ buildFolder, latestBuildFolder, virtualModules, baseResolveAlias })
+        const wp = await startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
         return {
           inst({ depl }) {
             return {
@@ -89,23 +96,46 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
                 if (plugin.addPackageAlias) {
                   const { loc, name } = plugin.addPackageAlias
                   wp.compiler.options.resolve.alias = {
-                    ...baseResolveAlias,
+                    ...wp.compiler.options.resolve.alias,
                     [name]: loc,
                   }
                 }
-                const routesModuleContent = generateRoutesModule({ extPluginsMap })
-                virtualModules.writeModule(ExtRoutesModuleFile, routesModuleContent)
-
-                const exposedModuleContent = generateExposedModule({ extPluginsMap })
-                virtualModules.writeModule(ExposeModuleFile, exposedModuleContent)
-                //console.log({exposedModuleContent})
-
-                const ctxProvidersModuleContent = generateCtxProvidersModule({ extPluginsMap })
-                virtualModules.writeModule(ExtContextProvidersModuleFile, ctxProvidersModuleContent)
-                wp.compiler.watching.invalidate(() => console.log('INVALIDATED'))
+                writeAliasModulesAndRecompile()
+                console.log({ aloiases: wp.compiler.options.resolve.alias })
+                depl.tearDown.add(() => {
+                  console.log('removing react plugins')
+                  if (plugin.addPackageAlias) {
+                    const newAliases: any = {
+                      ...wp.compiler.options.resolve.alias,
+                    }
+                    delete newAliases[plugin.addPackageAlias.name]
+                    wp.compiler.options.resolve.alias = newAliases
+                  }
+                  delete extPluginsMap[depl.extId]
+                  writeAliasModulesAndRecompile()
+                })
               },
             }
           },
+        }
+        async function writeAliasModulesAndRecompile() {
+          await writeAliasModules()
+          wp.compiler.watching.invalidate(() => console.log('INVALIDATED'))
+        }
+        function writeAliasModules() {
+          console.log('writeAliasModules!', extPluginsMap)
+          return Promise.all([
+            writeFile(ExtRoutesModuleFile.target, generateRoutesModule({ extPluginsMap })),
+            writeFile(ExposeModuleFile.target, generateExposedModule({ extPluginsMap })),
+            writeFile(ExtContextProvidersModuleFile.target, generateCtxProvidersModule({ extPluginsMap })),
+            writeFile(
+              LibModuleFile.target,
+              `
+            import lib from '${fixModuleLocForWebpackByOS(resolve(__dirname, '..', 'src', 'react-app-lib'))}'
+            export default lib
+          `,
+            ),
+          ])
         }
       },
     }

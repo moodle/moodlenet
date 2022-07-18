@@ -20,7 +20,8 @@ export type AuthenticationManagerExt = ExtDef<'moodlenet-authentication-manager'
 
 const ext: Ext<AuthenticationManagerExt, [CoreExt]> = {
   id: 'moodlenet-authentication-manager@0.1.10',
-  displayName: 'auth mng ext',
+  displayName: 'Authenticator manager',
+  description: 'Manager for the multiple authentication systems',
   requires: ['moodlenet-core@0.1.10'],
   enable(shell) {
     shell.expose({

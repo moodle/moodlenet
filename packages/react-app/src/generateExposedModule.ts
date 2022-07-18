@@ -4,7 +4,6 @@ export function generateExposedModule({ extPluginsMap }: { extPluginsMap: ExtPlu
   console.log(`generate exposed.ts ..`)
 
   return `// - generated -
-import { ExtExpose } from '../types'
 const exp: Record<string, ExtExpose> = {
 ${Object.values(extPluginsMap)
   .map(extPlugin => {

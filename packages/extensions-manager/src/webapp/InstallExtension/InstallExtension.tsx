@@ -1,17 +1,14 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
+import { CoreExt } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
-import { FC, ReactNode, useEffect, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { ExtensionsManagerExt } from '../..'
+import { SearchPackagesResObject, SearchPackagesResponse } from '../../types/data'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
-import { Package } from '../fakeData'
-import {
-  capitalize,
-  getNumberFromString,
-  getPastelColor,
-  getReadmeFromRepo,
-  searchNpmPackages
-} from '../helpers/utilities'
+import { StateContext } from '../ExtensionsProvider'
+import { getNumberFromString, getPastelColor } from '../helpers/utilities'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import './styles.scss'
 
@@ -19,89 +16,100 @@ export type InstallExtensionProps = {
   // menuItemPressed: boolean
 }
 
-const Card = lib.ui.components.atoms.Card
-const InputTextField = lib.ui.components.atoms.InputTextField
-const PrimaryButton = lib.ui.components.atoms.PrimaryButton
+const { Card, PrimaryButton, InputTextField } = lib.ui.components.atoms
 
 const InstallExtension: FC<InstallExtensionProps> = () => {
-  const [localPathField, setLocalPathField] = useState('')
-  const [selectedPackage, setSelectedPackage] = useState<Package | undefined>(undefined)
-  const [extensions, setExtensions] = useState<ReactNode | undefined>()
+  const [selectedPackage, setSelectedPackage] = useState<SearchPackagesResObject>()
+  const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
+  const { devMode } = useContext(StateContext)
 
   useEffect(() => {
-    searchNpmPackages('moodlenet').then(response => {
-      setExtensions(
-        response.objects.map((o: any, i: number) => {
-          const id = getNumberFromString(o.package.name)
-          const p: Package = {
-            name: capitalize(o.package.name.replace('@moodlenet/', '')) || '',
-            creator: '',
-            description: capitalize(o.package.description),
-            modules: [],
-            logo: '',
-            links: {
-              homepage: o.package.links.homepage,
-            },
-            readme: getReadmeFromRepo(o.package.links.homepage ?? ''),
-          }
-          return (
-            <div
-              className="package"
-              key={i}
-              onClick={() => setSelectedPackage(p)} /* onClick={() => setSelectedPackage(o.package.name)} */
-            >
-              {/* <PackageIcon /> */}
-              <div className="left" onClick={() => setSelectedPackage(p)}>
-                <div className="logo" style={{ background: getPastelColor(id, 0.5) }}>
-                  <div className="letter">{p.name && p.name[0]?.toLocaleLowerCase()}</div>
-                  <div className="circle" style={{ background: getPastelColor(id) }} />
-                </div>
-                <div className="info">
-                  <div className="title">{p.name}</div>
-                  <div className="details">{p.description}</div>
-                </div>
-              </div>
-              <PrimaryButton className="install-btn">Details</PrimaryButton>
-            </div>
-          )
-        }),
-      )
-    })
+    lib.priHttp
+      .fetch<ExtensionsManagerExt>(
+        'moodlenet-extensions-manager',
+        '0.1.10',
+      )('searchPackages')({ searchText: 'moodlenet' })
+      .then(resp => setSearchPkgResp(resp))
   }, [])
-
+  const [localPathField, setLocalPathField] = useState('')
+  const install = useCallback(() => {
+    if (!localPathField) {
+      return
+    }
+    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+      installPkgReq: { type: 'symlink', fromFolder: localPathField },
+      deploy: true,
+    })
+  }, [localPathField])
   return (
     <>
       {!selectedPackage && (
         <div className="search-extensions">
           <Card className="install">
-            <div className="title">Add extension...</div>
-
-            <div className="option">
-              <div className="name">Local path</div>
-              <div className="actions">
-                <InputTextField
-                  className="local-path"
-                  placeholder="Local path to package"
-                  value={localPathField}
-                  onChange={(t: any) => setLocalPathField(t.currentTarget.value)}
-                  name="package-name"
-                  edit
-                  // error={shouldShowErrors && editForm.errors.displayName}
-                />
-                <PrimaryButton disabled={localPathField === ''}>Install</PrimaryButton>
-              </div>
-            </div>
+            <div className="title">Add extensions</div>
           </Card>
+          {devMode && (
+            <Card>
+              <div className="subtitle">From local package</div>
+              <div className="option">
+                <div className="name">Local path</div>
+                <div className="actions">
+                  <InputTextField
+                    className="local-path"
+                    placeholder="Local path to package"
+                    value={localPathField}
+                    onChange={(t: any) => setLocalPathField(t.currentTarget.value)}
+                    name="package-name"
+                    edit
+                    // error={shouldShowErrors && editForm.errors.displayName}
+                  />
+                  <PrimaryButton disabled={localPathField === ''} onClick={install}>
+                    Install
+                  </PrimaryButton>
+                </div>
+              </div>
+            </Card>
+          )}
           <Card className="available-extensions">
-            <div className="title">Compatible extensions</div>
+            <div className="subtitle">Compatible extensions</div>
             <div className="list">
-              {extensions ? extensions : [1, 2, 3, 4].map(_ => <div className="package loading"></div>)}
+              {searchPkgResp?.objects.map(respObj => {
+                const name = respObj.name.split('/').reverse()[0]
+                return (
+                  <div
+                    className="package"
+                    key={respObj.name}
+                    onClick={() => setSelectedPackage(respObj)} /* onClick={() => setSelectedPackage(o.package.name)} */
+                  >
+                    {/* <PackageIcon /> */}
+                    <div
+                      className="logo"
+                      style={{ background: getPastelColor(getNumberFromString(respObj.name), 0.5) }}
+                    >
+                      <div className="letter">
+                        {respObj.name.split('/').reverse().join('').substring(0, 1).toLocaleLowerCase()}
+                      </div>
+                      <div
+                        className="circle"
+                        style={{ background: getPastelColor(getNumberFromString(respObj.name)) }}
+                      />
+                    </div>
+                    <div className="info">
+                      <div className="title">
+                        {name} {/* v{respObj.version} */}
+                      </div>
+                      <div className="details">{respObj.description}</div>
+                    </div>
+                    <PrimaryButton className="install-btn">Details</PrimaryButton>
+                  </div>
+                )
+              })}
             </div>
           </Card>
         </div>
       )}
       {selectedPackage && (
-        <ExtensionInfo extension={selectedPackage} onClickBackBtn={() => setSelectedPackage(undefined)} />
+        <ExtensionInfo searchPackagesResObject={selectedPackage} onClickBackBtn={() => setSelectedPackage(undefined)} />
       )}
     </>
   )
