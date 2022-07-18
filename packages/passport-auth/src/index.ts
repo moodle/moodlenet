@@ -3,6 +3,7 @@ import type { MNHttpServerExt } from '@moodlenet/http-server'
 import type { ReactAppExt } from '@moodlenet/react-app'
 import { resolve } from 'path'
 import { prepareApp } from './oauth-server'
+import configApiKeyStore from './store'
 
 export type SocialAuthTopo = {}
 export type SocialAuthExt = ExtDef<'moodlenet-passport-auth', '0.1.10', SocialAuthTopo>
@@ -29,10 +30,21 @@ const ext: Ext<SocialAuthExt, [CoreExt, ReactAppExt]> = {
       prepareApp(shell, app)
       inst.mount({ mountApp: app })
     })
-    shell.expose({})
+    shell.expose({
+      'create/sub': { validate: () => ({ valid: true }) },
+      'getAll/sub': { validate: () => ({ valid: true }) },
+    })
     return {
       deploy() {
-        shell.lib.pubAll<SocialAuthExt>('moodlenet-passport-auth@0.1.10', shell, {})
+        const store = configApiKeyStore({ folder: resolve(__dirname, '..', '.ignore', 'userStoreApiKey') })
+        shell.lib.pubAll<SocialAuthExt>('moodlenet-passport-auth@0.1.10', shell, {
+          async getAll(){
+            return await store.getAll()
+          },
+          async save(_:any){
+            return await store.save(_.msg.data.req)
+          }
+        })
         return {}
       },
     }
