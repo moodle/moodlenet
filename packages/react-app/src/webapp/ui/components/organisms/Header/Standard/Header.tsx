@@ -1,6 +1,11 @@
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import SettingsIcon from '@material-ui/icons/Settings'
 import { FC, PropsWithChildren, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthCtx } from '../../../../../../react-app-lib/auth'
+import { PrimaryButton, TertiaryButton } from '../../../atoms'
+import FloatingMenu from '../../../atoms/FloatingMenu/FloatingMenu'
+import { SettingsCtx } from '../../../pages/Settings/SettingsContext'
 // import Switch from '../../atoms/Switch/Switch'
 import { AddonCtx } from '../addons'
 import './Header.scss'
@@ -9,15 +14,26 @@ type HeaderProps = {}
 
 const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } */) => {
   const addonCtx = useContext(AddonCtx)
+  const setCtx = useContext(SettingsCtx)
+  // console.log({ addonCtx })
+
   const { clientSession, logout } = useContext(AuthCtx)
+
+  const avatar = {
+    backgroundImage: 'url(https://moodle.net/static/media/default-avatar.2ccf3558.svg)',
+    // backgroundImage: 'url(' + defaultAvatar + ')',
+    // 'url(' + (me && me.avatar ? me.avatar : defaultAvatar) + ')',
+    backgroundSize: 'cover',
+  }
+
   return (
     <div className="header">
       <div className="content">
         <div className="left">
-          <div className="title">
-            <span className="mn">MoodleNet</span>
+          <Link className="title" to={`/`}>
+            <span className="mn">{setCtx.instanceName}</span>
             <span className="bar">|</span>
-          </div>
+          </Link>
         </div>
         <div className="right">
           {addonCtx.rightComponents.flatMap(({ addon: { StdHeaderItems } }, index) => {
@@ -25,14 +41,46 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
           })}
 
           {clientSession ? (
-            <span>
-              hello <strong>{clientSession.user.displayName}</strong>
-              <span style={{ cursor: 'pointer', marginLeft: '10px' }} onClick={logout}>
-                logout
-              </span>
-            </span>
+            <FloatingMenu
+              className="avatar-menu"
+              menuContent={[
+                <Link to="/settings">
+                  <SettingsIcon />
+                  Settings
+                </Link>,
+                /*  <Link to="/extensions">
+                  <ExtensionIcon />
+                  Extensions
+                </Link>, */
+                <Link to="/" onClick={logout}>
+                  <ExitToAppIcon />
+                  Log out
+                </Link>,
+              ]}
+              hoverElement={
+                <div style={avatar} className="avatar" />
+                // <Link
+                //   href={me.myProfileHref}
+                //   style={avatar}
+                //   className="avatar"
+                // />
+              }
+            />
           ) : (
-            <Link to="/login">login</Link>
+            // <span>
+            //   hello <strong>{clientSession.user.displayName}</strong>
+            //   <span style={{ cursor: 'pointer', marginLeft: '10px' }} onClick={logout}>
+            //     logout
+            //   </span>
+            // </span>
+            <>
+              <Link to="/login">
+                <PrimaryButton>Login</PrimaryButton>
+              </Link>
+              <Link to="/signup">
+                <TertiaryButton>Join now</TertiaryButton>
+              </Link>
+            </>
           )}
         </div>
       </div>

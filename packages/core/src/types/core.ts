@@ -1,5 +1,5 @@
 import { SubTopo } from '../core-lib'
-import { InstallPkgReq } from '../pkg-mng/types'
+import { InstallPkgReq, PackageInfo } from '../pkg-mng/types'
 import type { Ext, ExtDef, ExtId } from './ext'
 import type { Port } from './topo'
 
@@ -10,7 +10,7 @@ export type CoreExt = ExtDef<
     ext: {
       deployed: Port<'out', { extId: ExtId }>
       undeployed: Port<'out', { extId: ExtId }>
-      listDeployed: SubTopo<void, ExtInfo>
+      listDeployed: SubTopo<void, { extInfos: ExtInfo[] }>
       deploy: SubTopo<
         {
           extId: ExtId
@@ -20,12 +20,15 @@ export type CoreExt = ExtDef<
       >
     }
     pkg: {
-      install: SubTopo<{ installPkgReq: InstallPkgReq }, { extInfos: ExtInfo[] }>
+      uninstall: SubTopo<{ installationFolder: string }, void>
+      install: SubTopo<{ installPkgReq: InstallPkgReq; deploy?: boolean }, { extInfos: ExtInfo[] }>
+      getPkgStorageInfos: SubTopo<void, { pkgInfos: PackageInfo[] }>
+      getInstalledPackages: SubTopo<void, { pkgInfos: PackageInfo[] }>
     }
   }
 >
 
 export type ExtInfo = {
   ext: Omit<Ext, 'enable'>
-  installationFolder: string
+  packageInfo: PackageInfo
 }

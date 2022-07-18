@@ -3,7 +3,6 @@ import { CSSProperties, FC, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthCtx } from '../../../../../../react-app-lib/auth'
 import Card from '../../../atoms/Card/Card'
-import TertiaryButton from '../../../atoms/TertiaryButton/TertiaryButton'
 import { MainLayout } from '../../../layout'
 import './Signup.scss'
 
@@ -64,15 +63,15 @@ export const SignupBody: FC<SignupProps> = ({}) => {
             <div className="title">Sign up</div>
             {currSignupItem ? <currSignupItem.def.Panel /> : <div>No Auth available</div>}
 
-            <div className="bottom">
-              <div className="left">
-                {/* <Link href={userAgreementHref} target="__blank"> */}
-                <a>
+            {/* <div className="bottom">
+              <div className="left"> */}
+            {/* <Link href={userAgreementHref} target="__blank"> */}
+            {/* <a>
                   <TertiaryButton>You agree to our Terms &amp; Conditions</TertiaryButton>
-                </a>
-                {/* </Link> */}
-              </div>
-              {/* <div className="right" hidden>
+                </a> */}
+            {/* </Link> */}
+          </div>
+          {/* <div className="right" hidden>
                 <div className="icon">
                   <img
                     alt="apple Signup"
@@ -86,8 +85,8 @@ export const SignupBody: FC<SignupProps> = ({}) => {
                   />
                 </div>
               </div> */}
-            </div>
-          </div>
+          {/* </div> */}
+          {/* </div> */}
         </Card>
       </div>
     </div>

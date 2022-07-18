@@ -1,5 +1,5 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { FC, ReactNode, ReactPortal, useEffect, useState } from 'react'
+import { FC, ReactNode, ReactPortal, useCallback, useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
@@ -7,26 +7,32 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import lib from 'moodlenet-react-app-lib'
-import { Package } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
+import { CoreExt } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
+import { SearchPackagesResObject } from '../../types/data'
 import './styles.scss'
 
 export type ExtensionInfoProps = {
-  extension: Package
+  searchPackagesResObject: SearchPackagesResObject
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
 const TertiaryButton = lib.ui.components.atoms.TertiaryButton
 const PrimaryButton = lib.ui.components.atoms.PrimaryButton
 const Card = lib.ui.components.atoms.Card
 
-const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, onClickBackBtn }) => {
-  // const stateContext = useContext(StateContext)
-  const [readme, setReadme] = useState<string>('')
-
+const ExtensionInfo: FC<ExtensionInfoProps> = ({ searchPackagesResObject, onClickBackBtn }) => {
+  const [readme, setReadme] = useState('')
   useEffect(() => {
-    extension.readme && extension.readme.then(response => setReadme(response))
-  }, [])
+    fetch(
+      `${searchPackagesResObject.registry}/${searchPackagesResObject.name}` /* ${
+        searchPackagesResObject.version ? `/${searchPackagesResObject.version}` : ''
+      }` */,
+    )
+      .then(_ => _.json())
+      .then(({ readme }) => setReadme(readme))
+  }, [searchPackagesResObject.registry, searchPackagesResObject.name, searchPackagesResObject.version])
+  // const stateContext = useContext(StateContext)
 
   // const modulesList = extension?.modules.map(
   //   (module: Module, i) =>
@@ -37,7 +43,19 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, onClickBackBtn }) =>
   //       </div>
   //     ),
   // )
-
+  const isInstalled = !searchPackagesResObject.installPkgReq
+  const install_uninstall = useCallback(() => {
+    if (isInstalled) {
+      lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
+        installationFolder: searchPackagesResObject.installationFolder,
+      })
+    } else {
+      lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+        installPkgReq: searchPackagesResObject.installPkgReq,
+        deploy: true,
+      })
+    }
+  }, [isInstalled, searchPackagesResObject.installPkgReq])
   type CodeBlockProps = {
     node: any
     children: ReactNode & ReactNode[]
@@ -69,14 +87,14 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ extension, onClickBackBtn }) =>
             <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
               <ArrowBackIcon />
             </TertiaryButton>
-            {extension.name}
+            {searchPackagesResObject.name}
           </div>
-          <PrimaryButton className="install-btn" onClick={() => alert('installing')}>
-            Install
+          <PrimaryButton className="install-btn" onClick={install_uninstall}>
+            {isInstalled ? 'Uninstall' : 'Install'}
           </PrimaryButton>
         </div>
 
-        <div>{extension.description}</div>
+        <div>{searchPackagesResObject.description}</div>
       </Card>
       <Card>
         <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>

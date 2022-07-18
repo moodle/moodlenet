@@ -10,10 +10,11 @@ export default function prepareFileSystem({ mainFolders }: { mainFolders: MainFo
 
   const sysConfigFile = resolve(sysFolder, SYS_CONFIG_FILE_NAME)
   const localDeplConfigFile = resolve(deploymentFolder, LOCAL_CONFIG_FILE_NAME)
-  const localPkgsFolder = resolve(deploymentFolder, PKGS_FOLDER_NAME)
+  const localPkgsFolder = resolve(deploymentFolder, INSTALLED_PKGS_FOLDER_NAME)
 
   mkdirSync(localPkgsFolder, { recursive: true })
   mkdirSync(sysFolder, { recursive: true })
+  mainFolders.pkgStorageFolder && mkdirSync(mainFolders.pkgStorageFolder, { recursive: true })
 
   const sysPaths: SystemPaths = {
     deploymentFolder: deploymentFolder,
@@ -21,10 +22,11 @@ export default function prepareFileSystem({ mainFolders }: { mainFolders: MainFo
     sysConfigFile,
     localConfigFile: localDeplConfigFile,
     localPkgsFolder,
+    pkgStorageFolder: mainFolders.pkgStorageFolder,
   }
   console.log({ sysPaths })
   return { sysPaths }
 }
-const SYS_CONFIG_FILE_NAME = 'sys-config.json'
-const PKGS_FOLDER_NAME = 'pkgs-storage'
-const LOCAL_CONFIG_FILE_NAME = 'local-config.json'
+export const SYS_CONFIG_FILE_NAME = 'sys-config.json'
+export const INSTALLED_PKGS_FOLDER_NAME = 'installed-pkgs'
+export const LOCAL_CONFIG_FILE_NAME = 'local-config.json'

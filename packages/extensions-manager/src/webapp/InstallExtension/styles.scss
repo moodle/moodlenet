@@ -13,9 +13,10 @@
       font-size: 23px;
       font-weight: bold;
     }
-  }
-
-  > .install {
+    > .subtitle {
+      font-size: 20px;
+      font-weight: bold;
+    }
     > .option {
       display: flex;
       flex-direction: column;
@@ -45,11 +46,12 @@
       flex-direction: column;
       gap: 10px;
       > .package {
-        height: 74px;
         display: flex;
+        width: 100%;
+        height: 74px;
+        gap: 14px;
         align-items: center;
         position: relative;
-        gap: 14px;
         padding: 0 11px;
         border: 1px solid #ededed;
         border-radius: 10px;
@@ -59,53 +61,54 @@
           background-color: #f9f9f9;
         }
 
-        > .left {
-          display: flex;
-          width: 100%;
-          gap: 14px;
-          > .logo {
-            position: relative;
-            border-radius: 5px;
-            height: 40px;
-            width: 40px;
-            padding: 5px;
-            background-color: #fdb068;
-            > .circle {
-              height: 100%;
-              width: 100%;
-              border-radius: 100px;
-              background-color: #ff8e24;
-            }
-            > .letter {
-              position: absolute;
-              left: 4px;
-              right: 0;
-              top: 10px;
-              bottom: 0;
-              font-size: 28px;
-              text-align: center;
-              border-radius: 100px;
-              color: #ffffff;
-              font-weight: bolder;
-              font-family: 'Press Start 2P';
-              transform-style: preserve-3d;
-            }
+        > .logo {
+          position: relative;
+          border-radius: 5px;
+          height: 40px;
+          width: 40px;
+          flex: 0 0 40px;
+          padding: 5px;
+          background-color: #fdb068;
+          > .circle {
+            height: 100%;
+            width: 100%;
+            border-radius: 100px;
+            background-color: #ff8e24;
           }
+          > .letter {
+            position: absolute;
+            left: 4px;
+            right: 0;
+            top: 10px;
+            bottom: 0;
+            font-size: 28px;
+            text-align: center;
+            border-radius: 100px;
+            color: #ffffff;
+            font-weight: bolder;
+            font-family: 'Press Start 2P';
+            transform-style: preserve-3d;
+          }
+        }
 
-          > .info {
-            > .title {
-              font-size: 18px;
-            }
-            > .details {
-              font-size: 13px;
-              color: rgb(100, 100, 100);
-            }
+        > .info {
+          min-width: 0px;
+          > .title {
+            font-size: 18px;
+          }
+          > .details {
+            font-size: 13px;
+            color: rgb(100, 100, 100);
+          }
+          > * {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
           }
         }
 
         > .install-btn {
-          position: absolute;
-          right: 11px;
+          margin-left: auto;
         }
       }
     }

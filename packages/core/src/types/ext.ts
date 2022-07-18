@@ -82,7 +82,7 @@ export type GetExt = <Def extends ExtDef>(id: ExtId<Def>) => RegDeployment<Def> 
 
 // export type OnExtDeployment<Def extends ExtDef> = OnExtDeployable<Def> & { inst: ExtInst<Def> }
 // export type OnExtDeployable<Def extends ExtDef> = { version: Version; at: Date; pkgInfo: PkgInfo; lib: ExtLib<Def> }
-export type GetExtLib = <Def extends ExtDef>(id: ExtId<Def>) => ExtInst<Def> | void
+export type GetExtLib = <Def extends ExtDef>(id: ExtId<Def>) => Promise<ExtInst<Def> | void>
 
 //<Def extends ExtDef = ExtDef> {
 export interface DeploymentShell {
@@ -163,5 +163,5 @@ export type ExposedPointerMap<Def extends ExtDef = ExtDef> = {
 }
 
 export type PkgExport = {
-  exts: Ext[]
+  exts: [Ext, ...Ext[]]
 }

@@ -5,7 +5,6 @@ export type ExtRoute = ExtInfo & {
   rootPath?: string
   extRoutingElement: ReactElement
 }
-
 export type ExtRouteDef = {
   moduleLoc: string
   rootPath?: string

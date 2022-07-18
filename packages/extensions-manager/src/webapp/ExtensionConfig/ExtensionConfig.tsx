@@ -1,28 +1,28 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { FC, useContext } from 'react'
+import { FC, useCallback } from 'react'
 // import { searchNpmExtensionConfig } from '../../../../../helpers/utilities'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import lib from 'moodlenet-react-app-lib'
-import { Module, Package } from '../fakeData'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import { StateContext } from '../devModeContextProvider'
+// import { StateContext } from '../ExtensionsProvider'
+import { CoreExt, ExtInfo } from '@moodlenet/core'
 import './styles.scss'
 
 export type ExtensionConfigProps = {
-  extension: Package
+  extInfo: ExtInfo
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
 
 const PrimaryButton = lib.ui.components.atoms.PrimaryButton
-const Switch = lib.ui.components.atoms.Switch
+// const Switch = lib.ui.components.atoms.Switch
 const Card = lib.ui.components.atoms.Card
 const TertiaryButton = lib.ui.components.atoms.TertiaryButton
 
-const ExtensionConfig: FC<ExtensionConfigProps> = ({ extension, onClickBackBtn }) => {
-  const stateContext = useContext(StateContext)
+const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) => {
+  // const stateContext = useContext(StateContext)
 
-  const modulesList = extension?.modules.map(
+  const modulesList = null /* extension?.modules.map(
     (module: Module, i) =>
       (!module.mandatory || stateContext.devMode) && (
         <div className="module" key={i}>
@@ -30,8 +30,12 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extension, onClickBackBtn }
           <Switch enabled={module.enabled} mandatory={module.mandatory} />
         </div>
       ),
-  )
-
+  ) */
+  const uninstall = useCallback(() => {
+    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
+      installationFolder: extInfo.packageInfo.installationFolder,
+    })
+  }, [extInfo.packageInfo.installationFolder])
   return (
     <div className="extension-config">
       <Card className="header-card">
@@ -40,19 +44,19 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extension, onClickBackBtn }
             <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
               <ArrowBackIcon />
             </TertiaryButton>
-            {extension.name}
+            {extInfo.ext.displayName}
           </div>
-          <PrimaryButton className="install-btn" disabled={extension.mandatory} onClick={() => alert('installing')}>
+          <PrimaryButton className="install-btn" disabled={false /* extension.mandatory */} onClick={uninstall}>
             Uninstall
           </PrimaryButton>
         </div>
 
-        <div>{extension.creator}</div>
+        <div>{extInfo.ext.description}</div>
       </Card>
-      <Card className="modules">
+      {modulesList && <Card className="modules">
         <div className="title">Modules</div>
         <div className="list">{modulesList}</div>
-      </Card>
+      </Card>}
     </div>
   )
 }

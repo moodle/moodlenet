@@ -10,7 +10,8 @@ export type SocialAuthExt = ExtDef<'moodlenet-passport-auth', '0.1.10', SocialAu
 
 const ext: Ext<SocialAuthExt, [CoreExt, ReactAppExt]> = {
   id: 'moodlenet-passport-auth@0.1.10',
-  displayName: 'passport-auth ext',
+  displayName: 'Passport Auth',
+  description: 'Use external authentication systems',
   requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
   enable(shell) {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {

@@ -2,6 +2,7 @@
   "name": "@moodlenet/dev-machine",
   "version": "3.0.0",
   "main": "index.js",
+  "private": true,
   "license": "AGPL-3.0",
   "description": "moodlenet dev-machine package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
