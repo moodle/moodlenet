@@ -53,10 +53,10 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) 
 
         <div>{extInfo.ext.description}</div>
       </Card>
-      <Card className="modules">
+      {modulesList && <Card className="modules">
         <div className="title">Modules</div>
         <div className="list">{modulesList}</div>
-      </Card>
+      </Card>}
     </div>
   )
 }

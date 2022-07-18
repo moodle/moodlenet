@@ -45,7 +45,8 @@ const ExtContextProvidersModuleFile = {
 }
 const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]> = {
   id: 'moodlenet.react-app@0.1.10',
-  displayName: 'webapp',
+  displayName: 'Web application',
+  description: 'Frontend interface to interact with the backend',
   requires: ['moodlenet-core@0.1.10', 'moodlenet-http-server@0.1.10', 'moodlenet-authentication-manager@0.1.10'],
   enable(shell) {
     return {
