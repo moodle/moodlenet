@@ -92,7 +92,7 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
     }
   },
 }
-export const DEFAULT_NPM_REGISTRY = 'http://localhost:4873'
-// export const DEFAULT_NPM_REGISTRY = 'https://registry.npmjs.org/'
+// export const DEFAULT_NPM_REGISTRY = 'http://localhost:4873'
+export const DEFAULT_NPM_REGISTRY = 'https://registry.npmjs.org/'
 
 export default { exts: [ext] }

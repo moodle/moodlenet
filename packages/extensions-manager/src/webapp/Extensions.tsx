@@ -31,7 +31,7 @@ type SectionType = {
 const sections: SectionType[] = [
   { name: 'InstallExtension', component: InstallExtension, displayName: 'Add extensions' },
   { name: 'Packages', component: Packages, displayName: 'Extensions' },
-  { name: 'Modules', component: Modules, displayName: 'Modules' },
+  // { name: 'Modules', component: Modules, displayName: 'Modules' },
 ]
 
 const sectionProps = {}
@@ -69,7 +69,7 @@ export const ExtensionsBody: FC<ExtensionsProps> = ({
             </div>
           ),
       ),
-    [stateContext.devMode],
+    [stateContext.devMode, currentSection],
   )
 
   useEffect(() => {
