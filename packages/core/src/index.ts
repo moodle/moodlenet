@@ -7,7 +7,7 @@ export * from './types'
 export const coreExtDef: Omit<Ext<CoreExt>, 'enable'> = {
   id: coreExtId,
   displayName: 'Core',
-  description: 'Core',
+  description: 'The kernel of MoodleNet',
   requires: [],
 }
 

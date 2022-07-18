@@ -13,7 +13,7 @@ export type PackagesProps = {
   // menuItemPressed: boolean
 }
 
-const { Card } = lib.ui.components.atoms
+const { Card, PrimaryButton } = lib.ui.components.atoms
 
 const Packages: FC<PackagesProps> = () => {
   const [selectedExtInfo, setSelectedExtInfo] = useState<ExtInfo>()
@@ -38,36 +38,26 @@ const Packages: FC<PackagesProps> = () => {
             onClick={() => setSelectedExtInfo(extInfo)}
           >
             {/* <PackageIcon /> */}
-            <div className="left" onClick={() => setSelectedExtInfo(extInfo)}>
-              <div
-                className="logo"
-                style={{
-                  background:
-                    extName === 'moodlenet-core' ? '#fdb068' : getPastelColor(getNumberFromString(extName), 0.5),
-                }}
-              >
-                <div className="letter">{extName.substring(0, 1).toLocaleLowerCase()}</div>
-                <div
-                  className="circle"
-                  style={{
-                    background: extName === 'moodlenet-core' ? '#f88012' : getPastelColor(getNumberFromString(extName)),
-                  }}
-                />
-              </div>
-              <div className="info">
-                <div className="title">{extName}</div>
-                <div className="details">{extInfo.ext.description}</div>
-              </div>
-            </div>
-            {/*  <PrimaryButton
-              className="install-btn"
-              onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                alert('installing')
-                e.stopPropagation()
+            <div
+              className="logo"
+              style={{
+                background:
+                  extName === 'moodlenet-core' ? '#fdb068' : getPastelColor(getNumberFromString(extName), 0.5),
               }}
             >
-              Details
-            </PrimaryButton> */}
+              <div className="letter">{extName.substring(0, 1).toLocaleLowerCase()}</div>
+              <div
+                className="circle"
+                style={{
+                  background: extName === 'moodlenet-core' ? '#f88012' : getPastelColor(getNumberFromString(extName)),
+                }}
+              />
+            </div>
+            <div className="info">
+              <div className="title">{extName}</div>
+              <div className="details">{extInfo.ext.description}</div>
+            </div>
+            <PrimaryButton className="install-btn">Config</PrimaryButton>
           </div>
         )
       }),
