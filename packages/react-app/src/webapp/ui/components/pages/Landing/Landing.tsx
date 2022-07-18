@@ -25,7 +25,7 @@ export type LandingProps = {
 
 export const Landing: FC<LandingProps> = () => {
   return (
-    <MainLayout>
+    <MainLayout style={{ height: '100%' }}>
       <LandingBody />
     </MainLayout>
   )
