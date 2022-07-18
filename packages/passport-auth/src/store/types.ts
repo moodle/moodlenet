@@ -1,11 +1,11 @@
 export type Provider = string
 export type ConfigId = string
 
-export type ConfigApiKey = {
-    id:ConfigId,
-    provider?: Provider;
-    apiKey: string;
-    apiSecret?: string;
+export type GoogleConfig = {
+  apiKey: string
+  apiSecret: string
 }
 
-export type ApiConfigs = Record<ConfigId, ConfigApiKey>
+export type PassportConfigs = Partial<{
+  google: GoogleConfig
+}>
