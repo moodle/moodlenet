@@ -1,6 +1,9 @@
+import lib from 'moodlenet-react-app-lib'
 import React, { FC, useContext, useRef } from 'react'
 import { PassportConfigs } from '../store/types'
 import { PassportContext } from './MainProvider'
+
+const { Card, InputTextField, PrimaryButton } = lib.ui.components.atoms
 
 export const FormConfig: FC = () => {
   const apiKeyRef = useRef<HTMLInputElement>(null)
@@ -21,29 +24,34 @@ export const FormConfig: FC = () => {
   }
 
   return (
-    <div>
-      <h3>Google Config Api Key</h3>
+    <Card>
+      <div className="title">Google Config Api Key</div>
       <form onSubmit={handleSubmit}>
-        <label style={{ display: 'block' }}>
-          Api Key &nbsp;
-          <input ref={apiKeyRef} type={'text'} placeholder={'Api Key'} defaultValue={ctx.configs.google?.apiKey} />
-        </label>
-        <label style={{ display: 'block' }}>
-          Api Secret &nbsp;
-          <input
+        <div className="option">
+          <div className="name">Api Key</div>
+
+          <InputTextField
+            ref={apiKeyRef}
+            type={'text'}
+            placeholder={'Api Key'}
+            defaultValue={ctx.configs.google?.apiKey}
+            edit
+          />
+        </div>
+
+        <div className="option">
+          <div className="name">Api Secret</div>
+          <InputTextField
             ref={apiSecretRef}
             type={'text'}
             placeholder={'Api Secret'}
             defaultValue={ctx.configs.google?.apiSecret}
+            edit
           />
-        </label>
-
-        <div>
-          <button type="submit" style={{}}>
-            salva
-          </button>
         </div>
+
+        <PrimaryButton type="submit">Save</PrimaryButton>
       </form>
-    </div>
+    </Card>
   )
 }

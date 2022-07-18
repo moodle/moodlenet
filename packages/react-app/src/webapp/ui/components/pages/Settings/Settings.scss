@@ -45,6 +45,25 @@
         font-size: 23px;
         font-weight: bold;
       }
+      > .subtitle {
+        font-size: 20px;
+        font-weight: bold;
+      }
+      > .option,
+      > * .option {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        > .name {
+          font-weight: bold;
+        }
+
+        > .input-text-field {
+          height: 36px;
+          width: 100%;
+        }
+      }
 
       > .parameter {
         display: flex;
