@@ -1,5 +1,4 @@
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
-import ExtensionIcon from '@material-ui/icons/Extension'
 import SettingsIcon from '@material-ui/icons/Settings'
 import { FC, PropsWithChildren, useContext } from 'react'
 import { Link } from 'react-router-dom'
@@ -49,10 +48,10 @@ const Header: FC<PropsWithChildren<HeaderProps>> = (/* { devMode, setDevMode } *
                   <SettingsIcon />
                   Settings
                 </Link>,
-                <Link to="/extensions">
+                /*  <Link to="/extensions">
                   <ExtensionIcon />
                   Extensions
-                </Link>,
+                </Link>, */
                 <Link to="/" onClick={logout}>
                   <ExitToAppIcon />
                   Log out
