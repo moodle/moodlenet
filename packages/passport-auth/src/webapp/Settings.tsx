@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { FormConfig } from './FormConfig'
 
 export const Menu: FC = () => <span>Passport Auth</span>
-export const Content = () => <h1>Passport Auth Settings</h1>
+export const Content = FormConfig
