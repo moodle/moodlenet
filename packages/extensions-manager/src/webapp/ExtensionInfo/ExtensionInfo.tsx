@@ -25,9 +25,9 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ searchPackagesResObject, onClic
   const [readme, setReadme] = useState('')
   useEffect(() => {
     fetch(
-      `${searchPackagesResObject.registry}/${searchPackagesResObject.name}${
+      `${searchPackagesResObject.registry}/${searchPackagesResObject.name}` /* ${
         searchPackagesResObject.version ? `/${searchPackagesResObject.version}` : ''
-      }`,
+      }` */,
     )
       .then(_ => _.json())
       .then(({ readme }) => setReadme(readme))
