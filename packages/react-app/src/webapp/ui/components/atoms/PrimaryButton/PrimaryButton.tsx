@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react'
-import './styles.scss'
+import './PrimaryButton.scss'
 
 export type PrimaryButtonProps = {
   onClick?(arg0?: unknown): unknown | any
