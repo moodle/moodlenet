@@ -1,3 +1,4 @@
+import { PrimaryButton } from '@moodlenet/react-app/src/webapp/ui/components/atoms'
 import lib from 'moodlenet-react-app-lib'
 import { FC, useContext } from 'react'
 import './Login.scss'
@@ -8,7 +9,7 @@ export type LoginFormValues = { email: string; password: string }
 
 export const Icon: FC = () => (
   <span>
-    <SecondaryButton>Other methods</SecondaryButton>
+    <PrimaryButton color="blue">Other methods</PrimaryButton>
   </span>
 )
 export const Panel: FC = () => {

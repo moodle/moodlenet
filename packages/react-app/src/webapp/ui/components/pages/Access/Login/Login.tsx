@@ -11,7 +11,7 @@ export type LoginProps = {}
 
 export const Login: FC<LoginProps> = () => {
   return (
-    <MainLayout headerType="minimalistic">
+    <MainLayout headerType="minimalistic" style={{ height: '100%' }}>
       <LoginBody />
     </MainLayout>
   )
@@ -37,7 +37,7 @@ export const LoginBody: FC<LoginProps> = ({}) => {
   return (
     <div className="login-page">
       <div className="content">
-        <Card>
+        <Card className="login-card">
           <div className="content">
             <div className="title">Log in</div>
             {currLoginItem ? <currLoginItem.def.Panel /> : <div>No Auth available</div>}
