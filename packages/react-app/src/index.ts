@@ -80,6 +80,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
           'rxjs': resolve(__dirname, '..', 'node_modules', 'rxjs'),
           'react': resolve(__dirname, '..', 'node_modules', 'react'),
           'react-router-dom': resolve(__dirname, '..', 'node_modules', 'react-router-dom'),
+          'react-dom': resolve(__dirname, '..', 'node_modules', 'react-dom'),
           [ExtRoutesModuleFile.alias]: ExtRoutesModuleFile.target,
           [ExposeModuleFile.alias]: ExposeModuleFile.target,
           [ExtContextProvidersModuleFile.alias]: ExtContextProvidersModuleFile.target,
