@@ -40,10 +40,11 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
           async searchPackages({
             msg: {
               data: {
-                req: { searchText, registry = DEFAULT_NPM_REGISTRY },
+                req: { searchText, registry = getRegistry() },
               },
             },
           }) {
+            console.log(`searchPackages in ${registry}`)
             const [
               searchRes,
               {
@@ -93,7 +94,8 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
     }
   },
 }
-// export const DEFAULT_NPM_REGISTRY = 'http://localhost:4873'
-export const DEFAULT_NPM_REGISTRY = 'https://registry.npmjs.org/'
+const DEFAULT_NPM_REGISTRY = 'https://registry.npmjs.org/'
+export const getRegistry = (_reg?: string | undefined) =>
+  _reg ?? process.env.NPM_CONFIG_REGISTRY ?? DEFAULT_NPM_REGISTRY
 
 export default { exts: [ext] }
