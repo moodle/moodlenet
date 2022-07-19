@@ -1,6 +1,6 @@
 /// <reference path="../moodlenet-react-app-lib.d.ts" />
 import type { AuthenticationManagerExt } from '@moodlenet/authentication-manager'
-import type { CoreExt, Ext, ExtDef } from '@moodlenet/core'
+import type { CoreExt, Ext, ExtDef, Port, SubTopo } from '@moodlenet/core'
 import type { MNHttpServerExt } from '@moodlenet/http-server'
 import { mkdir, writeFile } from 'fs/promises'
 import { tmpdir } from 'os'
@@ -19,10 +19,16 @@ export * from './types'
 const buildFolder = resolve(__dirname, '..', 'build')
 const latestBuildFolder = resolve(__dirname, '..', 'latest-build')
 
+export type ReactAppExtTopo = {
+  webapp: {
+    updated: SubTopo<void, void>
+    recompiled: Port<'out', void>
+  }
+}
 export type ReactAppExt = ExtDef<
   'moodlenet.react-app',
   '0.1.10',
-  {},
+  ReactAppExtTopo,
   null,
   {
     setup(_: ExtPluginDef): void
@@ -49,6 +55,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
   description: 'Frontend interface to interact with the backend',
   requires: ['moodlenet-core@0.1.10', 'moodlenet-http-server@0.1.10', 'moodlenet-authentication-manager@0.1.10'],
   enable(shell) {
+    shell.expose({ 'webapp/updated/sub': { validate: () => ({ valid: true }) } })
     return {
       async deploy(/* { tearDown } */) {
         shell.onExtInstance<MNHttpServerExt>('moodlenet-http-server@0.1.10', (inst /* , depl */) => {
@@ -81,6 +88,20 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
         console.log({ baseResolveAlias })
 
         const wp = await startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
+        wp.compiler.hooks.afterCompile.tap('recompilation event', _compilation => {
+          shell.push('out')('moodlenet.react-app@0.1.10')('webapp/recompiled')()
+        })
+        shell.lib.pubAll<ReactAppExt>('moodlenet.react-app@0.1.10', shell, {
+          'webapp/updated'() {
+            return shell.msg$.pipe(
+              shell.lib.rx.filter(msg =>
+                shell.lib.matchMessage<ReactAppExt>()(msg, 'moodlenet.react-app@0.1.10::webapp/recompiled'),
+              ),
+              shell.lib.rx.take(1),
+              shell.lib.rx.map(() => void 0),
+            )
+          },
+        })
         return {
           inst({ depl }) {
             return {

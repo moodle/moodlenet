@@ -14,6 +14,7 @@ import { SearchPackagesResObject } from '../../types/data'
 import './styles.scss'
 
 export type ExtensionInfoProps = {
+  toggleIsInstalling(): unknown
   searchPackagesResObject: SearchPackagesResObject
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
@@ -21,7 +22,7 @@ const TertiaryButton = lib.ui.components.atoms.TertiaryButton
 const PrimaryButton = lib.ui.components.atoms.PrimaryButton
 const Card = lib.ui.components.atoms.Card
 
-const ExtensionInfo: FC<ExtensionInfoProps> = ({ searchPackagesResObject, onClickBackBtn }) => {
+const ExtensionInfo: FC<ExtensionInfoProps> = ({ toggleIsInstalling, searchPackagesResObject, onClickBackBtn }) => {
   const [readme, setReadme] = useState('')
   useEffect(() => {
     fetch(
@@ -45,16 +46,17 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ searchPackagesResObject, onClic
   // )
   const isInstalled = !searchPackagesResObject.installPkgReq
   const install_uninstall = useCallback(() => {
-    if (isInstalled) {
-      lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
-        installationFolder: searchPackagesResObject.installationFolder,
-      })
-    } else {
-      lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
-        installPkgReq: searchPackagesResObject.installPkgReq,
-        deploy: true,
-      })
-    }
+    toggleIsInstalling()
+    const promise = isInstalled
+      ? lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
+          installationFolder: searchPackagesResObject.installationFolder,
+        })
+      : lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+          installPkgReq: searchPackagesResObject.installPkgReq,
+          deploy: true,
+        })
+
+    promise.finally(toggleIsInstalling)
   }, [isInstalled, searchPackagesResObject.installPkgReq])
   type CodeBlockProps = {
     node: any
