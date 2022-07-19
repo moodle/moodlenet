@@ -63,16 +63,7 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
               // shell.lib.fetch<CoreExt>(shell)('moodlenet-core@0.1.10::pkg/getInstalledPackages')(),
             ])
             const objects = searchRes.objects.map<SearchPackagesResObject>(
-              ({
-                package: {
-                  name: pkgName,
-                  moodlenet: { displayName },
-                  description,
-                  keywords,
-                  version,
-                  links,
-                },
-              }) => {
+              ({ package: { name: pkgName, moodlenet, description, keywords, version, links } }) => {
                 // const isInstalled = !!installedPackages.find(pkgInfo => pkgInfo.packageJson.name === name)
                 const installationFolder = deployedList
                   .map(({ packageInfo }) => packageInfo)
@@ -84,7 +75,7 @@ const ext: Ext<ExtensionsManagerExt, [CoreExt, ReactAppExt]> = {
                 }
                 return {
                   pkgName,
-                  displayName,
+                  displayName: moodlenet?.displayName ?? pkgName,
                   description: description ?? '',
                   keywords: keywords ?? [],
                   version,
