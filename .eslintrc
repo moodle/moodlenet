@@ -7,6 +7,7 @@
   "extends": [
     "plugin:react/recommended",
     "airbnb",
+    "airbnb/hooks",
     "prettier",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended"
@@ -26,6 +27,8 @@
     "react/forbid-prop-types": ["off"],
     "import/prefer-default-export": ["off"],
     "semi": "off",
+    "no-unused-vars": "error",
+    "indent": ["error", 2],
     "@typescript-eslint/no-explicit-any": "warn"
   }
 }
