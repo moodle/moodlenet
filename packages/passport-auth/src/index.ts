@@ -16,11 +16,11 @@ const ext: Ext<PassportAuthExt, [CoreExt, ReactAppExt]> = { id: 'moodlenet-passp
   enable(shell) {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
       console.log(`moodlenet-passport-auth: onExtInstance<ReactAppExt>`, inst)
-      inst.setup({
+      inst.setup(   {
         routes: {
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'routes.tsx'),
         },
-        ctxProvider: {
+        ctxProvider: {   
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
         },
       })
