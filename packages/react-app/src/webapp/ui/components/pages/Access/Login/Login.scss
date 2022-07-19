@@ -33,7 +33,7 @@
     > .card {
       height: 100%;
     }
-    > .card:first-child {
+    > .login-card {
       width: 525px;
       min-height: 340px;
       height: min-content;
@@ -48,7 +48,7 @@
         justify-content: space-between;
         display: flex;
         padding: 53px 65px;
-        width: 100%;
+        max-width: calc(100% - 130px);
         height: 100%;
         gap: 33px;
 
