@@ -18,10 +18,10 @@ export default function configApiKeyStore({ folder }: { folder: string }) {
     write,
   }
 
-  async function patchConfigs(patch: PassportConfigs) {
-    const currConfigs = await      read()
-    const patchedConfigs = { ...currConfigs, ...patch}
-    await write(patchedConfigs  )
+   async async function patchConfigs(patch: PassportConfigs) {
+    const currConfigs = await read()
+    const patchedConfigs = { ...currConfigs, ...patch }
+    await write(patchedConfigs)
     return patchedConfigs
   }
 
@@ -29,7 +29,7 @@ export default function configApiKeyStore({ folder }: { folder: string }) {
     return JSON.parse(await readFile(file(), 'utf-8'))
   }
 
-  async function write(configs: any  ) {
+  async function write(configs: any) {
     await writeFile(file(), JSON.stringify(configs, null, 2))
   }
 
