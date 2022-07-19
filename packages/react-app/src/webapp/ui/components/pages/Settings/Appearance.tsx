@@ -28,6 +28,7 @@ export const Appearance: FC<AppearanceProps> = (
       // '--primary-background-color': setOpacity(color, 0.25),
     })
   }
+
   // const setStyle = (style: string) => {
   //   // const result = sass.compileString(style)
   //   styleContext.setStyle({

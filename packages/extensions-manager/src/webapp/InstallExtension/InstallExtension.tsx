@@ -84,24 +84,24 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
             <div className="subtitle">Compatible extensions</div>
             <div className="list">
               {searchPkgResp?.objects.map(respObj => {
-                const [name, scope] = splitPkgName(respObj.name)
+                const [name, scope] = splitPkgName(respObj.displayName)
                 return (
                   <div
                     className="package"
-                    key={respObj.name}
+                    key={respObj.displayName}
                     onClick={() => setSelectedPackage(respObj)} /* onClick={() => setSelectedPackage(o.package.name)} */
                   >
                     {/* <PackageIcon /> */}
                     <div
                       className="logo"
-                      style={{ background: getPastelColor(getNumberFromString(respObj.name), 0.5) }}
+                      style={{ background: getPastelColor(getNumberFromString(respObj.displayName), 0.5) }}
                     >
                       <div className="letter">
-                        {respObj.name.split('/').reverse().join('').substring(0, 1).toLocaleLowerCase()}
+                        {respObj.displayName.split('/').reverse().join('').substring(0, 1).toLocaleLowerCase()}
                       </div>
                       <div
                         className="circle"
-                        style={{ background: getPastelColor(getNumberFromString(respObj.name)) }}
+                        style={{ background: getPastelColor(getNumberFromString(respObj.displayName)) }}
                       />
                     </div>
                     <div className="info">
