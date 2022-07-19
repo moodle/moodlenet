@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
 import { resolve } from 'path'
-import { PassportConfigs } from './types' //emal, users
+import { PassportConfigs } from './types'; //emal, users
 
 export type ConfigsStore = ReturnType<typeof configApiKeyStore>
 export default function configApiKeyStore({ folder }: { folder: string }) {
@@ -19,9 +19,9 @@ export default function configApiKeyStore({ folder }: { folder: string }) {
   }
 
   async function patchConfigs(patch: PassportConfigs) {
-    const currConfigs = await read()
+    const currConfigs = await      read()
     const patchedConfigs = { ...currConfigs, ...patch }
-    await write(patchedConfigs)
+    await write(patchedConfigs  )
     return patchedConfigs
   }
 
@@ -29,7 +29,7 @@ export default function configApiKeyStore({ folder }: { folder: string }) {
     return JSON.parse(await readFile(file(), 'utf-8'))
   }
 
-  async function write(configs: any) {
+  async function write(configs: any  ) {
     await writeFile(file(), JSON.stringify(configs, null, 2))
   }
 
