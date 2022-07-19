@@ -5,10 +5,10 @@ import { FC, useState } from 'react'
 import { SimpleEmailAuthExt } from '..'
 import './Signup.scss'
 
-const { InputTextField, PrimaryButton, TertiaryButton, Card } = lib.ui.components.atoms
+const { InputTextField, PrimaryButton, TertiaryButton, Card, Snackbar } = lib.ui.components.atoms
 export type SignupFormValues = { email: string; password: string; displayName: string }
 
-export const Icon: FC = () => <span>email</span>
+export const Icon: FC = () => <PrimaryButton color="blue">Use email</PrimaryButton>
 export const Panel: FC = () => {
   const [emailSent, setEmailSent] = useState(false)
   const [errMsg, setErrMsg] = useState('')
@@ -88,6 +88,7 @@ export const Panel: FC = () => {
           </div>
         </Card>
       </div>
+      <Snackbar type="success">Signup success! Login to start</Snackbar>
     </>
   )
 }

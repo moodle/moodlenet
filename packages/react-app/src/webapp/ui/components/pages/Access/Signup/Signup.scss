@@ -47,8 +47,7 @@
     > .card {
       height: 100%;
     }
-    > .card:last-child,
-    .card:only-child {
+    > .signup-card {
       width: 525px;
       height: min-content;
       min-height: 400px;
@@ -60,7 +59,7 @@
       }
 
       > .content {
-        max-width: calc(100% - 165px);
+        max-width: calc(100% - 130px);
         flex-direction: column;
         justify-content: space-between;
         display: flex;
