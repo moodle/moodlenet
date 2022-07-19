@@ -1,6 +1,7 @@
 import assert from 'assert'
 import { InstallPkgReq } from '../pkg-mng/types'
 import { MainFolders } from '../types/sys'
+import { getRegistry } from './default-consts'
 import { getMain } from './main'
 
 type InstallCfg = {
@@ -46,6 +47,7 @@ function defaultInstallPkgReqs(): InstallPkgReq[] {
     return {
       type: 'npm',
       pkgId: `@moodlenet/${name}@${version}`,
+      registry: getRegistry(),
     }
   })
 }
