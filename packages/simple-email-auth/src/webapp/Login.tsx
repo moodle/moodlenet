@@ -6,7 +6,7 @@ import { SimpleEmailAuthExt } from '..'
 const { InputTextField, PrimaryButton, SecondaryButton, TertiaryButton } = lib.ui.components.atoms
 export type LoginFormValues = { email: string; password: string }
 
-export const Icon: FC = () => <SecondaryButton>Using email</SecondaryButton>
+export const Icon: FC = () => <PrimaryButton color="blue">Using email</PrimaryButton>
 export const Panel: FC = () => {
   const [wrongCreds, setWrongCreds] = useState(false)
   const auth = useContext(lib.auth.AuthCtx)

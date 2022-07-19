@@ -11,7 +11,7 @@ export type SignupProps = {}
 
 export const Signup: FC<SignupProps> = () => {
   return (
-    <MainLayout headerType="minimalistic">
+    <MainLayout headerType="minimalistic" style={{ height: '100%' }}>
       <SignupBody />
     </MainLayout>
   )
@@ -36,18 +36,21 @@ export const SignupBody: FC<SignupProps> = ({}) => {
             <CallMadeIcon />
           </Link>
         </Card>
-        <Card>
+        <Card className="signup-card">
           <div className="content">
+            <div className="title">Sign up</div>
+            {currSignupItem ? <currSignupItem.def.Panel /> : <div>No Auth available</div>}
             {authCtx.signupItems.length > 1 && (
               <>
                 <div>
-                  <span style={{ float: 'left', marginRight: '10px' }}>use:</span>
+                  {/* <span style={{ float: 'left', marginRight: '10px' }}>use:</span> */}
                   {authCtx.signupItems.map((signupItem, index) => {
                     const isCurrent = signupItem === currSignupItem
                     const css: CSSProperties = {
                       float: 'left',
                       cursor: isCurrent ? undefined : 'pointer',
                       fontWeight: isCurrent ? 'bold' : undefined,
+                      display: isCurrent ? 'none' : 'block',
                     }
                     const onClick = isCurrent ? undefined : () => chooseSignupItem(signupItem)
 
@@ -60,8 +63,6 @@ export const SignupBody: FC<SignupProps> = ({}) => {
                 </div>
               </>
             )}
-            <div className="title">Sign up</div>
-            {currSignupItem ? <currSignupItem.def.Panel /> : <div>No Auth available</div>}
 
             {/* <div className="bottom">
               <div className="left"> */}
