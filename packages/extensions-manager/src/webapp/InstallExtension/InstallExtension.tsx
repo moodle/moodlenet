@@ -1,7 +1,7 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
 import { CoreExt } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { ExtensionsManagerExt } from '../..'
 import { SearchPackagesResObject, SearchPackagesResponse } from '../../types/data'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
@@ -35,14 +35,21 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
       .then(resp => setSearchPkgResp(resp))
   }, [])
   const [localPathField, setLocalPathField] = useState('')
+  const [isInstalling, toggleIsInstalling] = useReducer((p: boolean) => !p, false)
   const install = useCallback(() => {
     if (!localPathField) {
       return
     }
-    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
-      installPkgReq: { type: 'symlink', fromFolder: localPathField },
-      deploy: true,
-    })
+    toggleIsInstalling()
+    lib.priHttp
+      .fetch<CoreExt>(
+        'moodlenet-core',
+        '0.1.10',
+      )('pkg/install')({
+        installPkgReq: { type: 'symlink', fromFolder: localPathField },
+        deploy: true,
+      })
+      .finally(toggleIsInstalling)
   }, [localPathField])
   return (
     <>
@@ -112,7 +119,16 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
         </div>
       )}
       {selectedPackage && (
-        <ExtensionInfo searchPackagesResObject={selectedPackage} onClickBackBtn={() => setSelectedPackage(undefined)} />
+        <ExtensionInfo
+          toggleIsInstalling={toggleIsInstalling}
+          searchPackagesResObject={selectedPackage}
+          onClickBackBtn={() => setSelectedPackage(undefined)}
+        />
+      )}
+      {isInstalling && (
+        <div style={{ position: 'fixed', top: '0', bottom: '0', left: '0', right: '0', background: 'rgba(0,0,0,0.6)' }}>
+          <h1 style={{ textAlign: 'center', color: 'white' }}>Spinner !</h1>
+        </div>
       )}
     </>
   )

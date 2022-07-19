@@ -1,5 +1,5 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { FC, useCallback } from 'react'
+import { FC, useCallback, useReducer } from 'react'
 // import { searchNpmExtensionConfig } from '../../../../../helpers/utilities'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
@@ -31,33 +31,49 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) 
         </div>
       ),
   ) */
+  const [isInstalling, toggleIsInstalling] = useReducer((p: boolean) => !p, false)
   const uninstall = useCallback(() => {
-    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
-      installationFolder: extInfo.packageInfo.installationFolder,
-    })
+    toggleIsInstalling()
+    lib.priHttp
+      .fetch<CoreExt>(
+        'moodlenet-core',
+        '0.1.10',
+      )('pkg/uninstall')({
+        installationFolder: extInfo.packageInfo.installationFolder,
+      })
+      .finally(toggleIsInstalling)
   }, [extInfo.packageInfo.installationFolder])
   return (
-    <div className="extension-config">
-      <Card className="header-card">
-        <div className="title">
-          <div className="title-and-back">
-            <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
-              <ArrowBackIcon />
-            </TertiaryButton>
-            {extInfo.ext.displayName}
+    <>
+      <div className="extension-config">
+        <Card className="header-card">
+          <div className="title">
+            <div className="title-and-back">
+              <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
+                <ArrowBackIcon />
+              </TertiaryButton>
+              {extInfo.ext.displayName}
+            </div>
+            <PrimaryButton className="install-btn" disabled={false /* extension.mandatory */} onClick={uninstall}>
+              Uninstall
+            </PrimaryButton>
           </div>
-          <PrimaryButton className="install-btn" disabled={false /* extension.mandatory */} onClick={uninstall}>
-            Uninstall
-          </PrimaryButton>
-        </div>
 
-        <div>{extInfo.ext.description}</div>
-      </Card>
-      {modulesList && <Card className="modules">
-        <div className="title">Modules</div>
-        <div className="list">{modulesList}</div>
-      </Card>}
-    </div>
+          <div>{extInfo.ext.description}</div>
+        </Card>
+        {modulesList && (
+          <Card className="modules">
+            <div className="title">Modules</div>
+            <div className="list">{modulesList}</div>
+          </Card>
+        )}
+      </div>
+      {isInstalling && (
+        <div style={{ position: 'fixed', top: '0', bottom: '0', left: '0', right: '0', background: 'rgba(0,0,0,0.6)' }}>
+          <h1 style={{ textAlign: 'center', color: 'white' }}>Spinner !</h1>
+        </div>
+      )}
+    </>
   )
 }
 ExtensionConfig.displayName = 'ExtensionConfig'
