@@ -9,7 +9,7 @@ import { SearchPackagesResObject, SearchPackagesResponse } from '../../types/dat
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
 import { DevModeBtn } from '../Extensions'
 import { StateContext } from '../ExtensionsProvider'
-import { getNumberFromString, getPastelColor } from '../helpers/utilities'
+import { getNumberFromString, getPastelColor, splitPkgName } from '../helpers/utilities'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import './InstallExtension.scss'
 
@@ -77,7 +77,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
             <div className="subtitle">Compatible extensions</div>
             <div className="list">
               {searchPkgResp?.objects.map(respObj => {
-                const name = respObj.name.split('/').reverse()[0]
+                const [name, scope] = splitPkgName(respObj.name)
                 return (
                   <div
                     className="package"
@@ -99,7 +99,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
                     </div>
                     <div className="info">
                       <div className="title">
-                        {name} {/* v{respObj.version} */}
+                        {name} {scope && `@ ${scope}`}
                       </div>
                       <div className="details">{respObj.description}</div>
                     </div>

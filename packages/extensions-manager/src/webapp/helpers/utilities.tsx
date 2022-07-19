@@ -4,6 +4,12 @@ export const searchNpmPackages = async (text: string) => {
   return await res.json()
 }
 
+export function splitPkgName(packageName: string) {
+  const [pkgName, _at_scope] = packageName.split('/').reverse() as [name: string, scope?: string]
+  const scope = _at_scope?.startsWith('@') ? _at_scope.substring(1) : _at_scope
+  return [pkgName, scope] as const
+}
+
 export const getReadmeFromRepo = async (endpoint: string) => {
   if (endpoint.includes('tree')) {
     endpoint = endpoint.replace('tree', 'raw').concat('/README.md')

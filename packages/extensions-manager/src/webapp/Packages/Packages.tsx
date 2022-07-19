@@ -1,7 +1,7 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
 import lib from 'moodlenet-react-app-lib'
 import { FC, useEffect, useMemo, useState } from 'react'
-import { getNumberFromString, getPastelColor } from '../helpers/utilities'
+import { getNumberFromString, getPastelColor, splitPkgName } from '../helpers/utilities'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionConfig from '../ExtensionConfig/ExtensionConfig'
@@ -30,7 +30,8 @@ const Packages: FC<PackagesProps> = () => {
   const extInfosListElements = useMemo(
     () =>
       extinfoList.map(extInfo => {
-        const extName = extInfo.ext.displayName
+        const [extName, pkgScope] = splitPkgName(extInfo.packageInfo.packageJson.name)
+        // const extName = extInfo.ext.displayName
         return (
           <div
             className="package"
@@ -41,23 +42,29 @@ const Packages: FC<PackagesProps> = () => {
             <div
               className="logo"
               style={{
-                background:
-                  extName === 'moodlenet-core' ? '#fdb068' : getPastelColor(getNumberFromString(extName), 0.5),
+                background: /* extName === 'moodlenet-core' ? '#fdb068' :  */ getPastelColor(
+                  getNumberFromString(extName),
+                  0.5,
+                ),
               }}
             >
               <div className="letter">{extName.substring(0, 1).toLocaleLowerCase()}</div>
               <div
                 className="circle"
                 style={{
-                  background: extName === 'moodlenet-core' ? '#f88012' : getPastelColor(getNumberFromString(extName)),
+                  background: /* extName === 'moodlenet-core' ? '#f88012' :  */ getPastelColor(
+                    getNumberFromString(extName),
+                  ),
                 }}
               />
             </div>
             <div className="info">
-              <div className="title">{extName}</div>
+              <div className="title">
+                {extName} {pkgScope && `@ ${pkgScope}`}
+              </div>
               <div className="details">{extInfo.ext.description}</div>
             </div>
-            <PrimaryButton className="install-btn">Config</PrimaryButton>
+            <PrimaryButton className="install-btn">Details</PrimaryButton>
           </div>
         )
       }),
