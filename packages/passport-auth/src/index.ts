@@ -6,7 +6,7 @@ import { prepareApp } from './oauth-server'
 import configApiKeyStore from './store'
 import { PassportConfigs } from './store/types'
 
-const a="fff"
+const a="fff" 
 console.log("s", a)
 export type PassportAuthTopo = {
   get: SubTopo<void, { configs: PassportConfigs }>
