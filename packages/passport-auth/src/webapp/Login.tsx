@@ -2,7 +2,7 @@ import lib from 'moodlenet-react-app-lib'
 import { FC, useContext } from 'react'
 import './Login.scss'
 import { PassportContext } from './MainProvider'
-
+const a=""
 const { SecondaryButton } = lib.ui.components.atoms
 export type LoginFormValues = { email: string; password: string }
 
