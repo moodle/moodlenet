@@ -16,7 +16,7 @@ const App: FC = () => {
         '0.1.10',
       )('webapp/updated')()
       .then(() => {
-        alert('webapp updated, will refresh')
+        // alert('webapp updated, will refresh')
         location.reload()
       })
   }, [])

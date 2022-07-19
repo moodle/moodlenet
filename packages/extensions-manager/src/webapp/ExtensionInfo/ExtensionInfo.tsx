@@ -98,11 +98,13 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ toggleIsInstalling, searchPacka
 
         <div>{searchPackagesResObject.description}</div>
       </Card>
-      <Card>
-        <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
-          {readme}
-        </ReactMarkdown>
-      </Card>
+      {readme && (
+        <Card>
+          <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
+            {readme}
+          </ReactMarkdown>
+        </Card>
+      )}
     </div>
   )
 }
