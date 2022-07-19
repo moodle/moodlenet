@@ -149,3 +149,16 @@ body {
 a {
   text-decoration: none;
 }
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+blockquote {
+  margin: 0;
+  padding: 0 10px;
+  font-style: italic;
+}
