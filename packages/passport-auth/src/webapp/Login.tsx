@@ -3,6 +3,7 @@ import { FC, useContext } from 'react'
 import './Login.scss'
 import { PassportContext } from './MainProvider'
 
+const a = ''
 const { SecondaryButton } = lib.ui.components.atoms
 export type LoginFormValues = { email: string; password: string }
 
@@ -12,12 +13,12 @@ export const Icon: FC = () => (
   </span>
 )
 export const Panel: FC = () => {
-  const { configFlags      } = useContext(PassportContext)
+  const { configFlags } = useContext(PassportContext)
 
   return (
     <>
       {configFlags.google && (
-        <a href={'/_/moodlenet-passport-auth/login/federated/google'}>
+        <a href="/_/moodlenet-passport-auth/login/federated/google">
           <SecondaryButton className="alternative-login-btn google" color="light-grey">
             <div className="icon">
               <img
