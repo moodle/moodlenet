@@ -3,7 +3,7 @@ import { CoreExt } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
 import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { ExtensionsManagerExt } from '../..'
-import { SearchPackagesResObject, SearchPackagesResponse } from '../../types/data'
+import { SearchPackagesResponse } from '../../types/data'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
@@ -22,7 +22,7 @@ const { Card, PrimaryButton, InputTextField } = lib.ui.components.atoms
 const InstallExtension: FC<InstallExtensionProps> = () => {
   lib.ui.components.organism.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
 
-  const [selectedPackage, setSelectedPackage] = useState<SearchPackagesResObject>()
+  const { selectedExtInfo, setSelectedExtInfo } = useContext(StateContext)
   const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
   const { devMode } = useContext(StateContext)
 
@@ -53,7 +53,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
   }, [localPathField])
   return (
     <>
-      {!selectedPackage && (
+      {!selectedExtInfo && (
         <div className="search-extensions">
           <Card className="install">
             <div className="title">Add extensions</div>
@@ -89,7 +89,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
                   <div
                     className="package"
                     key={respObj.displayName}
-                    onClick={() => setSelectedPackage(respObj)} /* onClick={() => setSelectedPackage(o.package.name)} */
+                    onClick={() => setSelectedExtInfo(respObj)} /* onClick={() => setSelectedPackage(o.package.name)} */
                   >
                     {/* <PackageIcon /> */}
                     <div
@@ -118,11 +118,11 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
           </Card>
         </div>
       )}
-      {selectedPackage && (
+      {selectedExtInfo && (
         <ExtensionInfo
           toggleIsInstalling={toggleIsInstalling}
-          searchPackagesResObject={selectedPackage}
-          onClickBackBtn={() => setSelectedPackage(undefined)}
+          searchPackagesResObject={selectedExtInfo}
+          onClickBackBtn={() => setSelectedExtInfo(null)}
         />
       )}
       {isInstalling && (
