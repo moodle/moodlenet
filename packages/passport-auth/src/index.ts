@@ -6,24 +6,26 @@ import { prepareApp } from './oauth-server'
 import configApiKeyStore from './store'
 import { PassportConfigs } from './store/types'
 
-const a='fff' 
-console.log("s", a)
 export type PassportAuthTopo = {
   get: SubTopo<void, { configs: PassportConfigs }>
   save: SubTopo<{ configs: PassportConfigs }, { configs: PassportConfigs }>
 }
 export type PassportAuthExt = ExtDef<'moodlenet-passport-auth', '0.1.10', PassportAuthTopo>
 
-const ext: Ext<PassportAuthExt, [CoreExt, ReactAppExt]> = { id: 'moodlenet-passport-auth@0.1.10', displayName: 'Passport Auth', description: 'Use external authentication systems', requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
+const ext: Ext<PassportAuthExt, [CoreExt, ReactAppExt]> = {
+  id: 'moodlenet-passport-auth@0.1.10',
+  displayName: 'Passport Auth',
+  description: 'Use external authentication systems',
+  requires: ['moodlenet-core@0.1.10', 'moodlenet.react-app@0.1.10'],
   enable(shell) {
     shell.onExtInstance<ReactAppExt>('moodlenet.react-app@0.1.10', inst => {
       console.log(`moodlenet-passport-auth: onExtInstance<ReactAppExt>`, inst)
-      inst.setup(   {
+      inst.setup({
         routes: {
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'routes.tsx'),
         },
-        ctxProvider: {   
-          moduleLoc:       resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
+        ctxProvider: {
+          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
         },
       })
     })
