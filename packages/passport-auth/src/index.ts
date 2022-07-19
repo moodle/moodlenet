@@ -21,7 +21,7 @@ const ext: Ext<PassportAuthExt, [CoreExt, ReactAppExt]> = { id: 'moodlenet-passp
           moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'routes.tsx'),
         },
         ctxProvider: {   
-          moduleLoc: resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
+          moduleLoc:       resolve(__dirname, '..', 'src', 'webapp', 'MainProvider.tsx'),
         },
       })
     })
