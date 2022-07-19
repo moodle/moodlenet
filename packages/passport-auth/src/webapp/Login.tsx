@@ -12,7 +12,7 @@ export const Icon: FC = () => (
   </span>
 )
 export const Panel: FC = () => {
-  const { configFlags } = useContext(PassportContext)
+  const { configFlags      } = useContext(PassportContext)
 
   return (
     <>
