@@ -35,7 +35,7 @@ export interface Package {
   author?: Author
   publisher?: Publisher
   maintainers?: Maintainer[]
-  moodlenet: {
+  moodlenet?: {
     displayName: string
   }
 }
