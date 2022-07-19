@@ -1,6 +1,6 @@
 import { InstallPkgReq } from '../types'
 
-export type NpmInstallReq = _InstallPkgReq<'npm', { registry?: string; pkgId: string }>
+export type NpmInstallReq = _InstallPkgReq<'npm', { registry: string; pkgId: string }>
 export type SymlinkInstallReq = _InstallPkgReq<'symlink', { fromFolder: string }>
 
 export type InstallerType = 'symlink' | 'npm' //| 'file' | 'git'
