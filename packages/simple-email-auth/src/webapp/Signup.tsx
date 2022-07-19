@@ -1,4 +1,3 @@
-import MailOutlineIcon from '@material-ui/icons/MailOutline'
 import { useFormik } from 'formik'
 import lib from 'moodlenet-react-app-lib'
 import { FC, useState } from 'react'
@@ -78,17 +77,17 @@ export const Panel: FC = () => {
         {/* </Link> */}
       </div>
       <div hidden={!errMsg}>Signup error: {errMsg}</div>
-      <div className={`success-content`} hidden={!emailSent}>
-        {/* <div className={`success-content ${requestSent ? 'success' : ''}`}> */}
-        <Card>
+      {/* <div className={`success-content`} hidden={!emailSent}> */}
+      {/* <div className={`success-content ${requestSent ? 'success' : ''}`}> */}
+      {/* <Card>
           <div className="content">
             <div className="title">Email sent!</div>
             <MailOutlineIcon className="icon" />
             <div className="subtitle">Check out your inbox and activate your account</div>
           </div>
         </Card>
-      </div>
-      <Snackbar type="success">Signup success! Login to start</Snackbar>
+      </div> */}
+      {emailSent && <Snackbar type="success">Signup success! Login to start</Snackbar>}
     </>
   )
 }
