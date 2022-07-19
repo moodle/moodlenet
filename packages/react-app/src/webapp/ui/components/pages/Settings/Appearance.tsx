@@ -1,5 +1,5 @@
 // import { Trans } from '@lingui/macro'
-import { CSSProperties, FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { getColorPalette } from '../../../styles/utilities'
 // import { Organization } from '../../../../types'
 import { Card, InputTextField } from '../../atoms'
@@ -28,13 +28,13 @@ export const Appearance: FC<AppearanceProps> = (
       // '--primary-background-color': setOpacity(color, 0.25),
     })
   }
-  const setStyle = (style: string) => {
-    // const result = sass.compileString(style)
-    styleContext.setStyle({
-      ...styleContext.style,
-      ...(style as CSSProperties),
-    })
-  }
+  // const setStyle = (style: string) => {
+  //   // const result = sass.compileString(style)
+  //   styleContext.setStyle({
+  //     ...styleContext.style,
+  //     ...(style as CSSProperties),
+  //   })
+  // }
 
   return (
     <>
