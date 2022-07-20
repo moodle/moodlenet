@@ -17,7 +17,7 @@ export type InstallExtensionProps = {
   // menuItemPressed: boolean
 }
 
-const { Card, PrimaryButton, InputTextField } = lib.ui.components.atoms
+const { Card, PrimaryButton, InputTextField, Loading } = lib.ui.components.atoms
 
 const InstallExtension: FC<InstallExtensionProps> = () => {
   lib.ui.components.organism.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
@@ -73,8 +73,17 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
                     edit
                     // error={shouldShowErrors && editForm.errors.displayName}
                   />
-                  <PrimaryButton disabled={localPathField === ''} onClick={install}>
-                    Install
+                  <PrimaryButton
+                    className={`${isInstalling ? 'loading' : ''}`}
+                    disabled={localPathField === ''}
+                    onClick={install}
+                  >
+                    <div className="loading" style={{ visibility: isInstalling ? 'visible' : 'hidden' }}>
+                      <Loading color="white" />
+                    </div>
+                    <div className="label" style={{ visibility: isInstalling ? 'hidden' : 'visible' }}>
+                      Install
+                    </div>
                   </PrimaryButton>
                 </div>
               </div>
@@ -118,11 +127,11 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
           onClickBackBtn={() => setSelectedExtInfo(null)}
         />
       )}
-      {isInstalling && (
+      {/* {isInstalling && (
         <div style={{ position: 'fixed', top: '0', bottom: '0', left: '0', right: '0', background: 'rgba(0,0,0,0.6)' }}>
           <h1 style={{ textAlign: 'center', color: 'white' }}>Spinner !</h1>
         </div>
-      )}
+      )} */}
     </>
   )
 }
