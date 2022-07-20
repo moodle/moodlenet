@@ -4,10 +4,11 @@
   "license": "AGPL-3.0",
   "moodlenet": {
     "creator": "MoodleNet",
-    "displayName": "arangodb moodlenet",
-    "shortDesc": "a desc for arangodb moodlenet"
+    "displayName": "arangodb moodlenet"
   },
-  "readme": "",
+  "keywords": [
+    "moodlenetPackage"
+  ],
   "files": [
     "lib/",
     "src/"

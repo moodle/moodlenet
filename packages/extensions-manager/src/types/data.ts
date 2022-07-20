@@ -4,7 +4,6 @@ export type SearchPackagesResponse = { objects: SearchPackagesResObject[] }
 export type SearchPackagesResObject = {
   pkgName: string
   description: string
-  displayName: string
   keywords: string[]
   version?: string
   registry: string

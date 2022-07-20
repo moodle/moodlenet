@@ -6,8 +6,10 @@
     "creator": "MoodleNet",
     "displayName": "Core"
   },
+  "keywords": [
+    "moodlenetPackage"
+  ],
   "description": "The kernel of MoodleNet",
-  "readme": "",
   "files": [
     "lib/",
     "src/",

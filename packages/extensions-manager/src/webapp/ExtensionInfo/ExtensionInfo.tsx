@@ -26,13 +26,13 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ toggleIsInstalling, searchPacka
   const [readme, setReadme] = useState('')
   useEffect(() => {
     fetch(
-      `${searchPackagesResObject.registry}/${searchPackagesResObject.displayName}` /* ${
+      `${searchPackagesResObject.registry}/${searchPackagesResObject.pkgName}` /* ${
         searchPackagesResObject.version ? `/${searchPackagesResObject.version}` : ''
       }` */,
     )
       .then(_ => _.json())
       .then(({ readme }) => setReadme(readme))
-  }, [searchPackagesResObject.registry, searchPackagesResObject.displayName, searchPackagesResObject.version])
+  }, [searchPackagesResObject.registry, searchPackagesResObject.pkgName, searchPackagesResObject.version])
   // const stateContext = useContext(StateContext)
 
   // const modulesList = extension?.modules.map(
@@ -89,14 +89,14 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ toggleIsInstalling, searchPacka
             <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
               <ArrowBackIcon />
             </TertiaryButton>
-            {searchPackagesResObject.displayName}
+            {searchPackagesResObject.description}
           </div>
           <PrimaryButton className="install-btn" onClick={install_uninstall}>
             {isInstalled ? 'Uninstall' : 'Install'}
           </PrimaryButton>
         </div>
 
-        <div>{searchPackagesResObject.description}</div>
+        <div>{searchPackagesResObject.pkgName}</div>
       </Card>
       {readme && (
         <Card>

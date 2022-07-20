@@ -6,8 +6,10 @@
     "creator": "MoodleNet",
     "displayName": "Email authentication"
   },
-  "description": "Basic authentication using an email and a password",
-  "readme": "",
+  "keywords": [
+    "moodlenetPackage"
+  ],
+  "description": "Basic authentication using email and password",
   "files": [
     "lib/",
     "src/"

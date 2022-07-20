@@ -105,6 +105,11 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) 
           <div className="list">{modulesList}</div>
         </Card>
       )}
+      {isInstalling && (
+        <div style={{ position: 'fixed', top: '0', bottom: '0', left: '0', right: '0', background: 'rgba(0,0,0,0.6)' }}>
+          <h1 style={{ textAlign: 'center', color: 'white' }}>Spinner !</h1>
+        </div>
+      )}
     </div>
   )
 }
