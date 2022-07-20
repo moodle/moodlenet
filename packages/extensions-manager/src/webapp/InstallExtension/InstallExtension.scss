@@ -35,6 +35,27 @@
           height: 36px;
           width: 100%;
         }
+
+        > .primary-button {
+          display: grid;
+          grid-template-columns: 1fr;
+          > div {
+            grid-row-start: 1;
+            grid-column-start: 1;
+
+            &.loading {
+              display: flex;
+              visibility: visible;
+              width: 100%;
+              align-items: center;
+              justify-content: center;
+            }
+          }
+
+          &.loading {
+            pointer-events: none;
+          }
+        }
       }
     }
   }

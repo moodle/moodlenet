@@ -1,5 +1,6 @@
 export { Card } from './Card/Card'
 export { InputTextField } from './InputTextField/InputTextField'
+export { Loading } from './Loading/Loading'
 export { PrimaryButton } from './PrimaryButton/PrimaryButton'
 export { SecondaryButton } from './SecondaryButton/SecondaryButton'
 export { Snackbar } from './Snackbar/Snackbar'
