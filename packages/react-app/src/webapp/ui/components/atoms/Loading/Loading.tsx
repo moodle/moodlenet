@@ -8,10 +8,10 @@ export type LoadingProps = {
   size?: number
 }
 
-const colorPalete = {
-  orange: '#f88012',
-  white: '#fff',
-}
+// const colorPalete = {
+//   orange: '#f88012',
+//   white: '#fff',
+// }
 
 export const Loading: FC<LoadingProps> = ({ color, size }) => {
   const style = { '--loading-color': color } as React.CSSProperties

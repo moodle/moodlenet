@@ -41,15 +41,11 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
       return
     }
     toggleIsInstalling()
-    lib.priHttp
-      .fetch<CoreExt>(
-        'moodlenet-core',
-        '0.1.10',
-      )('pkg/install')({
-        installPkgReq: { type: 'symlink', fromFolder: localPathField },
-        deploy: true,
-      })
-      .finally(toggleIsInstalling)
+    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+      installPkgReq: { type: 'symlink', fromFolder: localPathField },
+      deploy: true,
+    })
+    // .finally(toggleIsInstalling)
   }, [localPathField])
   return (
     <>
