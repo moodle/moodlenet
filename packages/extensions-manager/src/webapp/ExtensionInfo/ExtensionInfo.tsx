@@ -26,13 +26,13 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ toggleIsInstalling, searchPacka
   const [readme, setReadme] = useState('')
   useEffect(() => {
     fetch(
-      `${searchPackagesResObject.registry}/${searchPackagesResObject.name}` /* ${
+      `${searchPackagesResObject.registry}/${searchPackagesResObject.displayName}` /* ${
         searchPackagesResObject.version ? `/${searchPackagesResObject.version}` : ''
       }` */,
     )
       .then(_ => _.json())
       .then(({ readme }) => setReadme(readme))
-  }, [searchPackagesResObject.registry, searchPackagesResObject.name, searchPackagesResObject.version])
+  }, [searchPackagesResObject.registry, searchPackagesResObject.displayName, searchPackagesResObject.version])
   // const stateContext = useContext(StateContext)
 
   // const modulesList = extension?.modules.map(
@@ -89,7 +89,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ toggleIsInstalling, searchPacka
             <TertiaryButton className="back" color="black" onClick={onClickBackBtn}>
               <ArrowBackIcon />
             </TertiaryButton>
-            {searchPackagesResObject.name}
+            {searchPackagesResObject.displayName}
           </div>
           <PrimaryButton className="install-btn" onClick={install_uninstall}>
             {isInstalled ? 'Uninstall' : 'Install'}
@@ -98,11 +98,13 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ toggleIsInstalling, searchPacka
 
         <div>{searchPackagesResObject.description}</div>
       </Card>
-      <Card>
-        <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
-          {readme}
-        </ReactMarkdown>
-      </Card>
+      {readme && (
+        <Card>
+          <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
+            {readme}
+          </ReactMarkdown>
+        </Card>
+      )}
     </div>
   )
 }

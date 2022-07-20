@@ -3,15 +3,16 @@
   "version": "0.0.1",
   "license": "AGPL-3.0",
   "moodlenet": {
-    "name": "authentication-manager moodlenet",
-    "shortDesc": "a desc for authentication-manager moodlenet"
+    "creator": "MoodleNet",
+    "displayName": "Authentication manager"
   },
+  "description": "Manager for the multiple authentication systems",
+  "readme": "",
   "files": [
     "lib/",
     "src/"
   ],
   "main": "lib/index.js",
-  "description": "moodlenet authentication-manager package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "devDependencies": {

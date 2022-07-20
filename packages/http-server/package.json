@@ -3,15 +3,16 @@
   "version": "0.0.1",
   "license": "AGPL-3.0",
   "moodlenet": {
-    "name": "http server moodlenet",
-    "shortDesc": "a desc for http server moodlenet"
+    "creator": "MoodleNet",
+    "displayName": "HTTP server"
   },
+  "description": "Client HTTP server for the frontend",
+  "readme": "",
   "files": [
     "lib/",
     "src/"
   ],
   "main": "lib/index.js",
-  "description": "moodlenet http server package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {

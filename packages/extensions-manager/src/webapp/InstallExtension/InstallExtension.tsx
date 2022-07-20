@@ -3,7 +3,7 @@ import { CoreExt } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
 import { FC, useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { ExtensionsManagerExt } from '../..'
-import { SearchPackagesResObject, SearchPackagesResponse } from '../../types/data'
+import { SearchPackagesResponse } from '../../types/data'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionInfo from '../ExtensionInfo/ExtensionInfo'
@@ -22,7 +22,7 @@ const { Card, PrimaryButton, InputTextField } = lib.ui.components.atoms
 const InstallExtension: FC<InstallExtensionProps> = () => {
   lib.ui.components.organism.Header.useRightComponent({ StdHeaderItems: [DevModeBtn] })
 
-  const [selectedPackage, setSelectedPackage] = useState<SearchPackagesResObject>()
+  const { selectedExtInfo, setSelectedExtInfo } = useContext(StateContext)
   const [searchPkgResp, setSearchPkgResp] = useState<SearchPackagesResponse>()
   const { devMode } = useContext(StateContext)
 
@@ -53,7 +53,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
   }, [localPathField])
   return (
     <>
-      {!selectedPackage && (
+      {!selectedExtInfo && (
         <div className="search-extensions">
           <Card className="install">
             <div className="title">Add extensions</div>
@@ -84,24 +84,24 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
             <div className="subtitle">Compatible extensions</div>
             <div className="list">
               {searchPkgResp?.objects.map(respObj => {
-                const [name, scope] = splitPkgName(respObj.name)
+                const [name, scope] = splitPkgName(respObj.displayName)
                 return (
                   <div
                     className="package"
-                    key={respObj.name}
-                    onClick={() => setSelectedPackage(respObj)} /* onClick={() => setSelectedPackage(o.package.name)} */
+                    key={respObj.displayName}
+                    onClick={() => setSelectedExtInfo(respObj)} /* onClick={() => setSelectedPackage(o.package.name)} */
                   >
                     {/* <PackageIcon /> */}
                     <div
                       className="logo"
-                      style={{ background: getPastelColor(getNumberFromString(respObj.name), 0.5) }}
+                      style={{ background: getPastelColor(getNumberFromString(respObj.displayName), 0.5) }}
                     >
                       <div className="letter">
-                        {respObj.name.split('/').reverse().join('').substring(0, 1).toLocaleLowerCase()}
+                        {respObj.displayName.split('/').reverse().join('').substring(0, 1).toLocaleLowerCase()}
                       </div>
                       <div
                         className="circle"
-                        style={{ background: getPastelColor(getNumberFromString(respObj.name)) }}
+                        style={{ background: getPastelColor(getNumberFromString(respObj.displayName)) }}
                       />
                     </div>
                     <div className="info">
@@ -118,11 +118,11 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
           </Card>
         </div>
       )}
-      {selectedPackage && (
+      {selectedExtInfo && (
         <ExtensionInfo
           toggleIsInstalling={toggleIsInstalling}
-          searchPackagesResObject={selectedPackage}
-          onClickBackBtn={() => setSelectedPackage(undefined)}
+          searchPackagesResObject={selectedExtInfo}
+          onClickBackBtn={() => setSelectedExtInfo(null)}
         />
       )}
       {isInstalling && (

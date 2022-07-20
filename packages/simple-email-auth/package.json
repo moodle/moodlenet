@@ -3,15 +3,16 @@
   "version": "0.0.1",
   "license": "AGPL-3.0",
   "moodlenet": {
-    "name": "simple-email-auth moodlenet",
-    "shortDesc": "a desc for simple-email-auth moodlenet"
+    "creator": "MoodleNet",
+    "displayName": "Email authentication"
   },
+  "description": "Basic authentication using an email and a password",
+  "readme": "",
   "files": [
     "lib/",
     "src/"
   ],
   "main": "lib/index.js",
-  "description": "moodlenet simple-email-auth package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
