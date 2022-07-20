@@ -92,7 +92,11 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ toggleIsInstalling, searchPacka
             </TertiaryButton>
             {searchPackagesResObject.description}
           </div>
-          <PrimaryButton className="install-btn" onClick={install_uninstall}>
+          <PrimaryButton
+            className="install-btn"
+            onClick={install_uninstall}
+            disabled={searchPackagesResObject.pkgName === '@moodlenet/core'}
+          >
             {isInstalled ? 'Uninstall' : 'Install'}
           </PrimaryButton>
         </div>
