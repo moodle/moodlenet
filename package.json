@@ -40,7 +40,9 @@
     "test": "",
     "pre-commit": "lint-staged && lerna run --concurrency 1 --stream precommit --since HEAD --exclude-dependents",
     "prepare": "husky install",
-    "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx ."
+    "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
+    "prettier": "prettier --check --ignore-path .gitignore \"**/*.+(json|ts|tsx)\"",
+    "prettierjs": "prettier --check --ignore-path .gitignore \"**/*.+(js)\""
   },
   "eslintConfig": {
     "root": true,
