@@ -8,8 +8,8 @@ export type LoginFormValues = { email: string; password: string }
 
 export const Icon: FC = () => <span>email</span>
 export const Panel: FC = () => {
-  const [wrongCreds, setWrongCreds] = useState(false)   
-  const auth = useContext(lib.auth.AuthCtx);
+  const [wrongCreds, setWrongCreds] = useState(false)
+  const auth = useContext(lib.auth.AuthCtx)
   const form = useFormik<LoginFormValues>({
     initialValues: { email: '', password: '' },
     async onSubmit({ email, password }) {
