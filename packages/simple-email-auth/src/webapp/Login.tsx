@@ -3,10 +3,10 @@ import lib from 'moodlenet-react-app-lib'
 import { FC, useContext, useState } from 'react'
 import { SimpleEmailAuthExt } from '..'
 
-const { InputTextField, PrimaryButton, SecondaryButton, TertiaryButton } = lib.ui.components.atoms
+const { InputTextField, PrimaryButton, TertiaryButton } = lib.ui.components.atoms
 export type LoginFormValues = { email: string; password: string }
 
-export const Icon: FC = () => <SecondaryButton>Using email</SecondaryButton>
+export const Icon: FC = ()         => <span>email</span>
 export const Panel: FC = () => {
   const [wrongCreds, setWrongCreds] = useState(false)
   const auth = useContext(lib.auth.AuthCtx)
