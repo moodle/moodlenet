@@ -6,15 +6,18 @@ import { SimpleEmailAuthExt } from '..'
 const { InputTextField, PrimaryButton, TertiaryButton } = lib.ui.components.atoms
 export type LoginFormValues = { email: string; password: string }
 
-export const Icon: FC = ()         => <span>email</span>
+export const Icon: FC = () => <span>email</span>
 export const Panel: FC = () => {
-  const [wrongCreds, setWrongCreds] = useState(false)
+  const [wrongCreds, setWrongCreds] = useState(false)   
   const auth = useContext(lib.auth.AuthCtx)
   const form = useFormik<LoginFormValues>({
     initialValues: { email: '', password: '' },
     async onSubmit({ email, password }) {
       setWrongCreds(false)
-      const res = await lib.priHttp.fetch<SimpleEmailAuthExt>('moodlenet-simple-email-auth', '0.1.10')('login')({
+      const res = await lib.priHttp.fetch<SimpleEmailAuthExt>(
+        'moodlenet-simple-email-auth',
+        '0.1.10',
+      )('login')({
         email,
         password,
       })
