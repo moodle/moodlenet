@@ -1,7 +1,7 @@
 {
   "name": "@moodlenet/react-app",
   "version": "0.0.1",
-  "description": "",
+  "readme": "",
   "files": [
     "lib/",
     "src/",
@@ -11,9 +11,10 @@
     "moodlenet-react-app-lib.d.ts"
   ],
   "moodlenet": {
-    "name": "moodlenet react-app",
-    "shortDesc": "a desc for moodlenet react-app"
+    "creator": "MoodleNet",
+    "displayName": "Web application"
   },
+  "description": "Frontend interface to interact with the backend",
   "main": "lib/index.js",
   "node_engine": {
     "node": ">=10.16.0"

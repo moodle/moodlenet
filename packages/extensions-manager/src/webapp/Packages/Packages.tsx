@@ -1,12 +1,13 @@
 // import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace'
 import lib from 'moodlenet-react-app-lib'
-import { FC, useEffect, useMemo, useState } from 'react'
-import { getNumberFromString, getPastelColor, splitPkgName } from '../helpers/utilities'
+import { FC, useContext, useEffect, useMemo, useState } from 'react'
+import { getNumberFromString, getPastelColor } from '../helpers/utilities'
 // import { ReactComponent as PackageIcon } from '../../../../assets/icons/package.svg'
 // import { withCtrl } from '../../../../lib/ctrl'
 import ExtensionConfig from '../ExtensionConfig/ExtensionConfig'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
 import { CoreExt, ExtInfo } from '@moodlenet/core'
+import { StateContext } from '../ExtensionsProvider'
 import './styles.scss'
 
 export type PackagesProps = {
@@ -16,8 +17,8 @@ export type PackagesProps = {
 const { Card, PrimaryButton } = lib.ui.components.atoms
 
 const Packages: FC<PackagesProps> = () => {
-  const [selectedExtInfo, setSelectedExtInfo] = useState<ExtInfo>()
   const [extinfoList, setExtInfoList] = useState<ExtInfo[]>([])
+  const { selectedExtConfig, setSelectedExtConfig } = useContext(StateContext)
 
   useEffect(() => {
     lib.priHttp
@@ -30,13 +31,13 @@ const Packages: FC<PackagesProps> = () => {
   const extInfosListElements = useMemo(
     () =>
       extinfoList.map(extInfo => {
-        const [extName, pkgScope] = splitPkgName(extInfo.packageInfo.packageJson.name)
-        // const extName = extInfo.ext.displayName
+        // const [extName, pkgScope] = splitPkgName(extInfo.packageInfo.packageJson.name)
+        const extName = extInfo.packageInfo.packageJson.moodlenet.displayName
         return (
           <div
             className="package"
             key={extInfo.packageInfo.installationFolder}
-            onClick={() => setSelectedExtInfo(extInfo)}
+            onClick={() => setSelectedExtConfig(extInfo)}
           >
             {/* <PackageIcon /> */}
             <div
@@ -60,9 +61,11 @@ const Packages: FC<PackagesProps> = () => {
             </div>
             <div className="info">
               <div className="title">
-                {extName} {pkgScope && `@ ${pkgScope}`}
+                {extName}
+                {/*pkgScope && `@ ${pkgScope}`*/}
               </div>
-              <div className="details">{extInfo.ext.description}</div>
+              <div className="description">{extInfo.packageInfo.packageJson.description}</div>
+              {/* <div className="creator">{pkgScope}</div> */}
             </div>
             <PrimaryButton className="install-btn">Details</PrimaryButton>
           </div>
@@ -73,7 +76,7 @@ const Packages: FC<PackagesProps> = () => {
 
   return (
     <>
-      {!selectedExtInfo && (
+      {!selectedExtConfig && (
         <div className="packages">
           <Card className="installed-packages">
             <div className="title">Installed extensions</div>
@@ -81,8 +84,8 @@ const Packages: FC<PackagesProps> = () => {
           </Card>
         </div>
       )}
-      {selectedExtInfo && (
-        <ExtensionConfig extInfo={selectedExtInfo} onClickBackBtn={() => setSelectedExtInfo(undefined)} />
+      {selectedExtConfig && (
+        <ExtensionConfig extInfo={selectedExtConfig} onClickBackBtn={() => setSelectedExtConfig(null)} />
       )}
     </>
   )

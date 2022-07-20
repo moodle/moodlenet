@@ -3,14 +3,15 @@
   "version": "0.0.1",
   "license": "AGPL-3.0",
   "moodlenet": {
-    "name": "test-extension moodlenet",
-    "shortDesc": "a desc for test-extension moodlenet"
+    "creator": "MoodleNet",
+    "displayName": "Test extension"
   },
+  "description": "Just an extension to make tests",
+  "readme": "",
   "files": [
     "lib/"
   ],
   "main": "lib/index.js",
-  "description": "moodlenet test-extension package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "devDependencies": {

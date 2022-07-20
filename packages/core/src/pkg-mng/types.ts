@@ -5,7 +5,7 @@ export * from './installers/types'
 
 export type InstallPkgReq = NpmInstallReq | SymlinkInstallReq
 
-export type SafePackageJson = PackageJson & { name: string; version: string }
+export type SafePackageJson = PackageJson & { name: string; version: string; moodlenet: { displayName: string } }
 
 //info.json
 export type PkgInstallationInfo = {

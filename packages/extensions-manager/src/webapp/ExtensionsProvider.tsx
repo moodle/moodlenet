@@ -1,18 +1,35 @@
+import { ExtInfo } from '@moodlenet/core'
 import lib from 'moodlenet-react-app-lib'
 import React, { createContext, useState } from 'react'
+import { SearchPackagesResObject } from '../types/data'
 import * as SettingsEnabledExtComponents from './SettingsEnabledExt'
 import * as SettingsInstallComponents from './SettingsInstall'
 
-export type StateContextType = { devMode: boolean; setDevMode: React.Dispatch<React.SetStateAction<boolean>> }
+export type StateContextType = {
+  devMode: boolean
+  setDevMode: React.Dispatch<React.SetStateAction<boolean>>
+  selectedExtConfig: ExtInfo | null
+  setSelectedExtConfig: React.Dispatch<React.SetStateAction<ExtInfo | null>>
+  selectedExtInfo: SearchPackagesResObject | null
+  setSelectedExtInfo: React.Dispatch<React.SetStateAction<SearchPackagesResObject | null>>
+}
 
 export const StateContext = createContext<StateContextType>(null as any)
 
 const StateProvider = ({ children }: { children: any }) => {
   const [devMode, setDevMode] = useState(false)
+  const [selectedExtConfig, setSelectedExtConfig] = useState<ExtInfo | null>(null)
+  const [selectedExtInfo, setSelectedExtInfo] = useState<SearchPackagesResObject | null>(null)
   lib.settings.useRegisterSettingsItem(SettingsInstallComponents)
   lib.settings.useRegisterSettingsItem(SettingsEnabledExtComponents)
 
-  return <StateContext.Provider value={{ devMode, setDevMode }}>{children}</StateContext.Provider>
+  return (
+    <StateContext.Provider
+      value={{ devMode, setDevMode, selectedExtConfig, setSelectedExtConfig, selectedExtInfo, setSelectedExtInfo }}
+    >
+      {children}
+    </StateContext.Provider>
+  )
 }
 
 export default StateProvider

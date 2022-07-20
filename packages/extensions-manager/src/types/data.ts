@@ -2,8 +2,9 @@ import { InstallPkgReq } from '@moodlenet/core'
 
 export type SearchPackagesResponse = { objects: SearchPackagesResObject[] }
 export type SearchPackagesResObject = {
-  name: string
+  pkgName: string
   description: string
+  displayName: string
   keywords: string[]
   version?: string
   registry: string

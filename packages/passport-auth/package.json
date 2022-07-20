@@ -3,15 +3,16 @@
   "version": "0.0.1",
   "license": "AGPL-3.0",
   "moodlenet": {
-    "name": "extensions-manager moodlenet",
-    "shortDesc": "a desc for passport-auth moodlenet"
+    "creator": "MoodleNet",
+    "displayName": "Passport Auth"
   },
+  "description": "Use external authentication systems",
+  "readme": "",
   "files": [
     "lib/",
     "src/"
   ],
   "main": "lib/index.js",
-  "description": "moodlenet passport-auth package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {

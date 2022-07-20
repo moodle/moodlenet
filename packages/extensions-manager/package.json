@@ -3,15 +3,16 @@
   "version": "0.0.1",
   "license": "AGPL-3.0",
   "moodlenet": {
-    "name": "extensions-manager moodlenet",
-    "shortDesc": "a desc for extensions-manager moodlenet"
+    "creator": "MoodleNet",
+    "displayName": "Extensions manager"
   },
+  "description": "Manager for the application extensions",
+  "readme": "",
   "files": [
     "lib/",
     "src/"
   ],
   "main": "lib/index.js",
-  "description": "moodlenet extensions-manager package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {

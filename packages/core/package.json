@@ -3,9 +3,11 @@
   "version": "0.0.1",
   "license": "AGPL-3.0",
   "moodlenet": {
-    "name": "core moodlenet",
-    "shortDesc": "a desc for core moodlenet"
+    "creator": "MoodleNet",
+    "displayName": "Core"
   },
+  "description": "The kernel of MoodleNet",
+  "readme": "",
   "files": [
     "lib/",
     "src/",
@@ -13,7 +15,6 @@
   ],
   "bin": "./lib/bin/cli.js",
   "main": "lib/index.js",
-  "description": "moodlenet core package",
   "repository": "https://gitlab.com/moodlenet/moodlenet",
   "author": "https://github.com/aleclofabbro",
   "dependencies": {
