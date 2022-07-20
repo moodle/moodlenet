@@ -11,17 +11,14 @@ import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import rehypeRaw from 'rehype-raw'
-import './styles.scss'
+import './ExtensionConfig.scss'
 
 export type ExtensionConfigProps = {
   extInfo: ExtInfo
   onClickBackBtn?(arg0?: unknown): unknown | any
 }
 
-const PrimaryButton = lib.ui.components.atoms.PrimaryButton
-// const Switch = lib.ui.components.atoms.Switch
-const Card = lib.ui.components.atoms.Card
-const TertiaryButton = lib.ui.components.atoms.TertiaryButton
+const { Card, PrimaryButton, TertiaryButton, Loading } = lib.ui.components.atoms
 
 const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) => {
   // const stateContext = useContext(StateContext)
@@ -38,14 +35,11 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) 
   const [isInstalling, toggleIsInstalling] = useReducer((p: boolean) => !p, false)
   const uninstall = useCallback(() => {
     toggleIsInstalling()
-    lib.priHttp
-      .fetch<CoreExt>(
-        'moodlenet-core',
-        '0.1.10',
-      )('pkg/uninstall')({
-        installationFolder: extInfo.packageInfo.installationFolder,
-      })
-      .finally(toggleIsInstalling)
+
+    lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
+      installationFolder: extInfo.packageInfo.installationFolder,
+    })
+    // .finally(toggleIsInstalling)
   }, [extInfo.packageInfo.installationFolder])
 
   type CodeBlockProps = {
@@ -82,11 +76,16 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) 
             {extInfo.packageInfo.packageJson.moodlenet.displayName}
           </div>
           <PrimaryButton
-            className="install-btn"
+            className={`install-btn ${isInstalling ? 'loading' : ''}`}
             disabled={extInfo.packageInfo.packageJson.moodlenet.displayName === 'Core'}
             onClick={uninstall}
           >
-            Uninstall
+            <div className="loading" style={{ visibility: isInstalling ? 'visible' : 'hidden' }}>
+              <Loading color="white" />
+            </div>
+            <div className="label" style={{ visibility: isInstalling ? 'hidden' : 'visible' }}>
+              Uninstall
+            </div>
           </PrimaryButton>
         </div>
 
@@ -105,11 +104,11 @@ const ExtensionConfig: FC<ExtensionConfigProps> = ({ extInfo, onClickBackBtn }) 
           <div className="list">{modulesList}</div>
         </Card>
       )}
-      {isInstalling && (
+      {/* {isInstalling && (
         <div style={{ position: 'fixed', top: '0', bottom: '0', left: '0', right: '0', background: 'rgba(0,0,0,0.6)' }}>
           <h1 style={{ textAlign: 'center', color: 'white' }}>Spinner !</h1>
         </div>
-      )}
+      )} */}
     </div>
   )
 }

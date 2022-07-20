@@ -8,11 +8,12 @@ const { Card } = lib.ui.components.atoms
 // const { InputTextField, PrimaryButton, TertiaryButton, Card } = lib.ui.components.atoms
 export type SignupFormValues = { email: string; password: string; displayName: string }
 
-export const Menu: FC = () => <span>Email Authentication</span>
+export const Menu: FC = () => <span>Email Auth</span>
 export const Content: FC = () => {
   return (
     <Card>
-      <h1>Email settings</h1>
+      <div className="title">Email Auth</div>
+      <div>Manage extension preferences</div>
     </Card>
   )
 }

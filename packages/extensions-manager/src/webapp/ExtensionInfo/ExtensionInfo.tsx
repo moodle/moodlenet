@@ -8,7 +8,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 // import { withCtrl } from '../../../../lib/ctrl'
 import lib from 'moodlenet-react-app-lib'
 // import InputTextField from '../../../atoms/InputTextField/InputTextField'
-import { CoreExt } from '@moodlenet/core'
+// import { CoreExt } from '@moodlenet/core'
 import rehypeRaw from 'rehype-raw'
 import { SearchPackagesResObject } from '../../types/data'
 import './styles.scss'
@@ -47,17 +47,18 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ toggleIsInstalling, searchPacka
   const isInstalled = !searchPackagesResObject.installPkgReq
   const install_uninstall = useCallback(() => {
     toggleIsInstalling()
-    const promise = isInstalled
-      ? lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
-          installationFolder: searchPackagesResObject.installationFolder,
-        })
-      : lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
-          installPkgReq: searchPackagesResObject.installPkgReq,
-          deploy: true,
-        })
+    // const promise = isInstalled
+    //   ? lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/uninstall')({
+    //       installationFolder: searchPackagesResObject.installationFolder,
+    //     })
+    //   : lib.priHttp.fetch<CoreExt>('moodlenet-core', '0.1.10')('pkg/install')({
+    //       installPkgReq: searchPackagesResObject.installPkgReq,
+    //       deploy: true,
+    //     })
 
-    promise.finally(toggleIsInstalling)
+    // promise.finally(toggleIsInstalling)
   }, [isInstalled, searchPackagesResObject.installPkgReq])
+
   type CodeBlockProps = {
     node: any
     children: ReactNode & ReactNode[]
