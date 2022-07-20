@@ -84,31 +84,24 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
             <div className="subtitle">Compatible extensions</div>
             <div className="list">
               {searchPkgResp?.objects.map(respObj => {
-                const [name, scope] = splitPkgName(respObj.displayName)
+                const [pkgBaseName /* , pkgScope */] = splitPkgName(respObj.pkgName)
                 return (
                   <div
                     className="package"
-                    key={respObj.displayName}
+                    key={respObj.pkgName}
                     onClick={() => setSelectedExtInfo(respObj)} /* onClick={() => setSelectedPackage(o.package.name)} */
                   >
                     {/* <PackageIcon /> */}
-                    <div
-                      className="logo"
-                      style={{ background: getPastelColor(getNumberFromString(respObj.displayName), 0.5) }}
-                    >
-                      <div className="letter">
-                        {respObj.displayName.split('/').reverse().join('').substring(0, 1).toLocaleLowerCase()}
-                      </div>
+                    <div className="logo" style={{ background: getPastelColor(getNumberFromString(pkgBaseName), 0.5) }}>
+                      <div className="letter">{pkgBaseName.substring(0, 1).toLocaleLowerCase()}</div>
                       <div
                         className="circle"
-                        style={{ background: getPastelColor(getNumberFromString(respObj.displayName)) }}
+                        style={{ background: getPastelColor(getNumberFromString(pkgBaseName)) }}
                       />
                     </div>
                     <div className="info">
-                      <div className="title">
-                        {name} {scope && `@ ${scope}`}
-                      </div>
-                      <div className="details">{respObj.description}</div>
+                      <div className="title">{respObj.description}</div>
+                      <div className="details">{respObj.pkgName}</div>
                     </div>
                     <PrimaryButton className="install-btn">Details</PrimaryButton>
                   </div>

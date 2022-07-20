@@ -6,8 +6,10 @@
     "creator": "MoodleNet",
     "displayName": "Passport Auth"
   },
-  "description": "Use external authentication systems",
-  "readme": "",
+  "keywords": [
+    "moodlenetPackage"
+  ],
+  "description": "Use social authentication systems",
   "files": [
     "lib/",
     "src/"

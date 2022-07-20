@@ -6,8 +6,10 @@
     "creator": "MoodleNet",
     "displayName": "Extensions manager"
   },
-  "description": "Manager for the application extensions",
-  "readme": "",
+  "keywords": [
+    "moodlenetPackage"
+  ],
+  "description": "Manager for system extensions",
   "files": [
     "lib/",
     "src/"

@@ -35,9 +35,6 @@ export interface Package {
   author?: Author
   publisher?: Publisher
   maintainers?: Maintainer[]
-  moodlenet?: {
-    displayName: string
-  }
 }
 
 export interface Flags {
