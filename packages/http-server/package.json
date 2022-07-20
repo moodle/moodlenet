@@ -6,8 +6,10 @@
     "creator": "MoodleNet",
     "displayName": "HTTP server"
   },
-  "description": "Client HTTP server for the frontend",
-  "readme": "",
+  "keywords": [
+    "moodlenetPackage"
+  ],
+  "description": "Main system HTTP server",
   "files": [
     "lib/",
     "src/"

@@ -2,10 +2,14 @@
   "name": "@moodlenet/test-extension",
   "version": "0.0.1",
   "license": "AGPL-3.0",
+  "private": "true",
   "moodlenet": {
     "creator": "MoodleNet",
     "displayName": "Test extension"
   },
+  "keywords": [
+    "moodlenetPackage"
+  ],
   "description": "Just an extension to make tests",
   "readme": "",
   "files": [

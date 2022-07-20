@@ -6,8 +6,10 @@
     "creator": "MoodleNet",
     "displayName": "Authentication manager"
   },
-  "description": "Manager for the multiple authentication systems",
-  "readme": "",
+  "keywords": [
+    "moodlenetPackage"
+  ],
+  "description": "Manager for multiple authentication systems",
   "files": [
     "lib/",
     "src/"
