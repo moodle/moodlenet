@@ -17,7 +17,7 @@ export const Panel: FC = () => {
 
   return (
     <>
-      {configFlags.google && (
+      {configFlags.google      && (
         <a href="/_/moodlenet-passport-auth/login/federated/google">
           <SecondaryButton className="alternative-login-btn google" color="light-grey">
             <div className="icon">
