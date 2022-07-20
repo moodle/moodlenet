@@ -89,7 +89,7 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
         console.log({ baseResolveAlias })
 
         const wp = await startWebpack({ buildFolder, latestBuildFolder, baseResolveAlias })
-        wp.compiler.hooks.afterCompile.tap('recompilation event', _compilation => {
+        wp.compiler.hooks.afterDone.tap('recompilation event', _stats => {
           shell.push('out')('moodlenet.react-app@0.1.10')('webapp/recompiled')()
         })
         shell.lib.pubAll<ReactAppExt>('moodlenet.react-app@0.1.10', shell, {
