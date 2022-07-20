@@ -9,7 +9,7 @@ export type LoginFormValues = { email: string; password: string }
 
 export const Icon: FC = () => (
   <span>
-        <SecondaryButton>Other methods</SecondaryButton>
+         <SecondaryButton>Other methods</SecondaryButton>
   </span>
 )
 export const Panel: FC = () =>               {
