@@ -58,6 +58,7 @@ const ExtensionInfo: FC<ExtensionInfoProps> = ({ toggleIsInstalling, searchPacka
 
     promise.finally(toggleIsInstalling)
   }, [isInstalled, searchPackagesResObject.installPkgReq])
+
   type CodeBlockProps = {
     node: any
     children: ReactNode & ReactNode[]

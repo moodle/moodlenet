@@ -4,6 +4,6 @@ import Packages from './Packages/Packages'
 
 export const Menu: FC = () => {
   const { setSelectedExtConfig } = useContext(StateContext)
-  return <span onClick={() => setSelectedExtConfig(null)}>Installed Extensions</span>
+  return <span onClick={() => setSelectedExtConfig(null)}>Manage Extensions</span>
 }
 export const Content = Packages
