@@ -38,11 +38,12 @@
     "clean-bs": "yarn clean-dirs && yarn bs",
     "start": "lerna run start --parallel --stream",
     "test": "",
-    "pre-commit": "lint-staged && lerna run --concurrency 1 --stream precommit --since HEAD --exclude-dependents",
+    "pre-commit": "formatter.sh && lerna run --concurrency 1 --stream precommit --since HEAD --exclude-dependents",
     "prepare": "husky install",
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "prettier": "prettier --check --ignore-path .gitignore \"**/*.+(json|ts|tsx)\"",
-    "prettierjs": "prettier --check --ignore-path .gitignore \"**/*.+(js)\""
+    "prettierjs": "prettier --check --ignore-path .gitignore \"**/*.+(js)\"",
+    "xxx":"prettier  --loglevel debug  --write /home/etto/prj/moodle/moodlenet/packages/simple-email-auth/src/webapp/Login.tsx"
   },
   "eslintConfig": {
     "root": true,
