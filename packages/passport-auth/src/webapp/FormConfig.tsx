@@ -24,34 +24,40 @@ export const FormConfig: FC = () => {
   }
 
   return (
-    <Card>
-      <div className="title">Google Config Api Key</div>
-      <form onSubmit={handleSubmit}>
-        <div className="option">
-          <div className="name">Api Key</div>
+    <>
+      <Card>
+        <div className="title">Passport Auth settings</div>
+        <div>Manage extension preferences</div>
+      </Card>
+      <Card>
+        <div className="subtitle">Google Config Api Key</div>
+        <form onSubmit={handleSubmit}>
+          <div className="option">
+            <div className="name">Api Key</div>
 
-          <InputTextField
-            ref={apiKeyRef}
-            type={'text'}
-            placeholder={'Api Key'}
-            defaultValue={ctx.configs.google?.apiKey}
-            edit
-          />
-        </div>
+            <InputTextField
+              ref={apiKeyRef}
+              type={'text'}
+              placeholder={'Api Key'}
+              defaultValue={ctx.configs.google?.apiKey}
+              edit
+            />
+          </div>
 
-        <div className="option">
-          <div className="name">Api Secret</div>
-          <InputTextField
-            ref={apiSecretRef}
-            type={'text'}
-            placeholder={'Api Secret'}
-            defaultValue={ctx.configs.google?.apiSecret}
-            edit
-          />
-        </div>
+          <div className="option">
+            <div className="name">Api Secret</div>
+            <InputTextField
+              ref={apiSecretRef}
+              type={'text'}
+              placeholder={'Api Secret'}
+              defaultValue={ctx.configs.google?.apiSecret}
+              edit
+            />
+          </div>
 
-        <PrimaryButton type="submit">Save</PrimaryButton>
-      </form>
-    </Card>
+          <PrimaryButton type="submit">Save</PrimaryButton>
+        </form>
+      </Card>
+    </>
   )
 }

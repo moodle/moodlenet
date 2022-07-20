@@ -52,7 +52,7 @@ const InstallExtension: FC<InstallExtensionProps> = () => {
       {!selectedExtInfo && (
         <div className="search-extensions">
           <Card className="install">
-            <div className="title">Add extensions</div>
+            <div className="title">Install extensions</div>
           </Card>
           {devMode && (
             <Card>

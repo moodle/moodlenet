@@ -4,6 +4,6 @@ import InstallExtension from './InstallExtension/InstallExtension'
 
 export const Menu: FC = () => {
   const { setSelectedExtInfo } = useContext(StateContext)
-  return <span onClick={() => setSelectedExtInfo(null)}>Install Extensions</span>
+  return <span onClick={() => setSelectedExtInfo(null)}>Install extensions</span>
 }
 export const Content = InstallExtension

@@ -79,7 +79,7 @@ const Packages: FC<PackagesProps> = () => {
       {!selectedExtConfig && (
         <div className="packages">
           <Card className="installed-packages">
-            <div className="title">Installed extensions</div>
+            <div className="title">Manage extensions</div>
             <div className="list">{extInfosListElements}</div>
           </Card>
         </div>
