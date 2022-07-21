@@ -52,11 +52,10 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
             }
             const {
               msg: { data: res },
-            } = await shell.lib.rx.firstValueFrom(
-              shell.lib.subDemat<AuthenticationManagerExt>(shell)(
-                'moodlenet-authentication-manager@0.1.10::getSessionToken',
-              )({ uid: user.id }),
-            )
+            } = await shell.lib.fetch<AuthenticationManagerExt>(shell)(
+              'moodlenet-authentication-manager@0.1.10::getSessionToken',
+            )({ uid: user.id })
+
             if (!res.success) {
               return { success: false }
             }
@@ -79,11 +78,9 @@ const ext: Ext<SimpleEmailAuthExt, [CoreExt, ReactAppExt]> = {
 
             const {
               msg: { data: authRes },
-            } = await shell.lib.rx.firstValueFrom(
-              shell.lib.subDemat<AuthenticationManagerExt>(shell)(
-                'moodlenet-authentication-manager@0.1.10::registerUser',
-              )({ uid: user.id, displayName }),
-            )
+            } = await shell.lib.fetch<AuthenticationManagerExt>(shell)(
+              'moodlenet-authentication-manager@0.1.10::registerUser',
+            )({ uid: user.id, displayName })
 
             if (!authRes.success) {
               await store.delUser(user.id)
