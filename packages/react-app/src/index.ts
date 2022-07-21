@@ -98,7 +98,6 @@ const ext: Ext<ReactAppExt, [CoreExt, MNHttpServerExt, AuthenticationManagerExt]
               shell.lib.rx.filter(msg =>
                 shell.lib.matchMessage<ReactAppExt>()(msg, 'moodlenet.react-app@0.1.10::webapp/recompiled'),
               ),
-              shell.lib.rx.take(1),
               shell.lib.rx.map(() => void 0),
             )
           },

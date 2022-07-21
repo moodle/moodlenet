@@ -28,25 +28,22 @@ export function prepareApp(shell: Shell<PassportAuthExt>, app: Express) {
       res.redirect(`/moodlenet-passport-auth/login-fail?msg=couldn't authenticate`)
       return
     }
-    const authSrv = shell.lib.subDemat<AuthenticationManagerExt>(shell)
+    const authSrv = shell.lib.fetch<AuthenticationManagerExt>(shell)
     const uid = getAuthMngUidByOauthResult(req.user.oauth)
     const {
       msg: { data: getTokenData },
-    } = await shell.lib.rx.firstValueFrom(
-      authSrv('moodlenet-authentication-manager@0.1.10::getSessionToken')({
-        uid,
-      }),
-    )
+    } = await authSrv('moodlenet-authentication-manager@0.1.10::getSessionToken')({
+      uid,
+    })
+
     let token: string
     if (!getTokenData.success) {
       const {
         msg: { data: createUserRes },
-      } = await shell.lib.rx.firstValueFrom(
-        authSrv('moodlenet-authentication-manager@0.1.10::registerUser')({
-          uid,
-          displayName: req.user.oauth.profile.displayName,
-        }),
-      )
+      } = await authSrv('moodlenet-authentication-manager@0.1.10::registerUser')({
+        uid,
+        displayName: req.user.oauth.profile.displayName,
+      })
       if (!createUserRes.success) {
         res.redirect(`/moodlenet-passport-auth/login-fail?msg=couldn't create user`)
         return
