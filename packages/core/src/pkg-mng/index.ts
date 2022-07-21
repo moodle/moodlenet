@@ -17,7 +17,9 @@ export function createPkgMng({ pkgsFolder }: PkgMngCfg) {
 
   async function uninstall({ installationFolder }: { installationFolder: string }) {
     return new Promise<void>((pResolve, pReject) =>
-      rimraf(getAbsInstallationFolder(installationFolder), err => (err ? pReject(err) : pResolve())),
+      rimraf(getAbsInstallationFolder(installationFolder), { disableGlob: true }, err =>
+        err ? pReject(err) : pResolve(),
+      ),
     )
   }
   async function install(installPkgReq: InstallPkgReq, useFolderName?: string) {
